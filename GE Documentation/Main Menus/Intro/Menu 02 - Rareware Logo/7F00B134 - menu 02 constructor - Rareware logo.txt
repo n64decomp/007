@@ -1,0 +1,11 @@
+7F00B134:	3FC64	menu 02 constructor - Rareware logo
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F008BDC
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+7F008BDC:	3D70C	retrieve and display the Rareware logo

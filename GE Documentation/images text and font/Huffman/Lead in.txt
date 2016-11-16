@@ -1,0 +1,21 @@
+7F0C7DFC	0x	decompress Huffman compression types
+	accepts: A0=source, A1=target, A2=?, A3=?
+
+//7F0C8020:
+MULTU	S6,S7
+SLL	T5,V0,0x2	;T5=compression type->offset	(V0*4)	{V0=data nibble 8?}
+MFLO	S5		;S6*S7: width * height
+SLTI	AT,S5,2001
+BNEL	AT,R0,7F0C8044
+SLTIU	AT,V0,000A	;AT=TRUE if a valid compression format
+BEQ	R0,R0,7F0C8724
+OR	V0,R0,R0
+-	SLTIU	AT,V0,000A
+//7F0C8044:	jump to handler routine
+BEQ	AT,R0,7F0C8534	;branch if not a valid format
+LUI	AT,8006
+ADDU	AT,AT,T5
+LW	T5,BD30 (AT)	;T5=8005BD30+offset: TLB pointer to decompression routine
+JR	T5
+NOP
+

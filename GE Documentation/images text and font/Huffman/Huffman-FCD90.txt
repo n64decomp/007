@@ -1,0 +1,23 @@
+7F0C8268 	0xFCD90	compression type 5
+LW	T3,0080 (SP)	;T3=imgtype
+LUI	A1,8005
+ADDIU	A0,SP,00A8	;A0=SP+A8: p->samples
+SLL	T7,T3,0x2
+ADDU	A1,A1,T7
+JAL	7F0C9920
+LW	A1,9214 (A1)	;A1=80049214+offset: t#4val	bitcount for samples
+//7F0C827C 	0xFCDAC
+LW	T4,30AC (SP)	;T4=p->final
+LW	T9,0088 (SP)
+LW	T8,0080 (SP)	;T8=imgtype
+OR	A0,S6,R0	;A0=width
+ADDU	S0,T4,T9
+OR	A2,S0,R0	;A2=p->final + ?
+OR	A1,S7,R0	;A1=height
+ADDIU	A3,SP,00A8	;A3=SP+A8: p->samples
+SW	V0,0010 (SP)	;SP+10=?
+JAL	7F0CA890	;different final image generator
+SW	T8,0014 (SP)	;SP+14=imgtype
+//7F0C82A8 	0xFCDD8
+BEQ	R0,R0,0xFD08C
+OR	S1,V0,R0

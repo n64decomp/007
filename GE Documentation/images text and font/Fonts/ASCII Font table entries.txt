@@ -1,0 +1,14 @@
+2E63F0	first font table controller - small watch text
+2E6694	second font table controller - small watch text
+2E88A0	first font table controller - large
+2E8B44	second font table controller - large
+
+
+
+second controller format	0x18 each entry
+0x0	
+0x4	vertical offset
+0x8	height
+0xC	width
+0x10	
+0x14	offset to image	(converted to pointer at runtime)

@@ -1,0 +1,24 @@
+7F01667C	4B1AC	initialize menu 0D: mission complete
+LUI	AT,8003
+ADDIU	SP,SP,FFE8
+SW	R0,A8D4 (AT)	;0->8002A8D4: reset selected flag for folder tab 2
+SW	RA,0014 (SP)
+LUI	AT,8003
+JAL	7F00B8AC	;loads walletbond, used to construct main menus
+SW	R0,A8D8 (AT)	;0->8002A8D8: reset selected flag for folder tab 3
+JAL	7F015520	;load briefing and text; V0=# entries in briefing file
+NOP
+LUI	T6,8007
+LW	T6,9790 (T6)	;T6=80069790: TRUE if cheat unlocked
+LUI	A0,8006
+ADDIU	A1,R0,0102	;A1=SE 102: cymbal splash
+BEQ	T6,R0,7F0166C0	;return if no cheats unlocked
+OR	A2,R0,R0	;A2=NULL
+JAL	70008E08	;play sound effect A1
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+//7F0166C0:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+

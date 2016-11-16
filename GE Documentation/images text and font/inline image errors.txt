@@ -1,0 +1,23 @@
+Inline images break the game when shot because no code exists to accept them when determining bullet impact images.
+It presumes that the data is already expanded, but in this case it isn't.  Otherwise, any normal call would have worked.
+Instead, need to test if data is expanded, and if not handle.  This is probably going to be really annoying.
+
+
+
+BEQ	S5,T2,7F04D8A4
+NOP
+BNEL	AT,R0,7F04D88C
+LBU	T2,FFF8 (V0)
+//7F04D8A4:
+MUL.S	F6,F14,F14
+BNEL	V0,S3,7F04D8BC
+LW	V1,0004 (V0)	//V1=image ID or offset to image
+BEQ	R0,R0,7F04D8CC
+ADDIU	A0,R0,FFFF
+//7F04D8B8:	the culprit himself!
+LW	V1,0004 (V0)	//V1=image ID or offset to image
+LUI	AT,8000
+ADDIU	V1,V1,FFF8	//ID-8 (accounts for the image header?)
+OR	T1,V1,AT
+LHU	A0,0000 (T1)	//A0=
+//7F04D8CC:

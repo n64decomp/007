@@ -1,0 +1,7 @@
+0x0	float	x position.	+ moves to character's left, - to character's right
+0x4	float	z position.	+ moves in front of character, - backward
+0x8	float	x size (width)	width of image from side to side
+0xC	float	z size (length)	length of image from forward to back
+
+
+first byte in object table indicates number of group commands expected
