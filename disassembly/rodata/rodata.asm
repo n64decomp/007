@@ -16,4 +16,5 @@ insert rodata_rz, "021990.rz"
 base $8005D2E0
 rodata_end:
 
+insert padding,"pad_to_33590"
 

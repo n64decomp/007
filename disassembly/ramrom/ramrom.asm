@@ -3,7 +3,7 @@ ramrom_rom_start:
 
 //vaddr is unknown
 //base $vaddr
-ramrom_start:
+//ramrom_vaddr:
 
 insert ramrom_Dam_1, "Dam_1", (origin() - $002BF2D0)
 insert ramrom_Dam_2, "Dam_2",  (origin() - $002C44D0)
@@ -20,4 +20,4 @@ insert ramrom_Frigate_1, "Frigate_1",  (origin() - $002DD770)
 insert ramrom_Frigate_2, "Frigate_2",  (origin() - $002DF120)
 insert ramrom_Train, "Train",  (origin() - $002E2600)
 
-ramrom_end:
+ramrom_rom_end:
