@@ -7,8 +7,8 @@ origin $00000000
 include "rom/romheader.asm"
 include "boot.asm"
 include "libultra_rom.asm"
-include "rarezip/rarezip.asm"
 include "rodata/rodata.asm"
+include "rarezip/rarezip.asm"
 include "bss/bss.asm"
 include "bss/80300000.asm"
 
