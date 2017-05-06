@@ -11,6 +11,9 @@
 80023044 dword_80023044
 80023048 cart_hw_address
 8002304c debug_handler_table
+8002307c dword_8002307C
+80023094 display_stderror
+80023098 stderr_event_enabled
 800283d0 aBoot
 800283d8 aRmon
 800283e0 aIdle

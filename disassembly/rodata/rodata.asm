@@ -27,7 +27,18 @@ dw sp_shed, aShed
 dw sp_main, aMain
 dw sp_audi, aAudi
 
-insert rodata.bin_filler, "021990.bin", origin(), ($800283D0 - $8002307C)
+dword_8002307C:
+dw $00
+
+dw $00, $00, $00, $00, $00
+
+display_stderror:
+dw $00
+
+stderr_event_enabled:
+dw $00
+
+insert rodata.bin_filler, "021990.bin", origin(), ($800283D0 - $8002309C)
 
 base $800283D0
 aBoot:

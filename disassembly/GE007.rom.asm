@@ -7,7 +7,7 @@ origin $00000000
 
 include "rom/romheader.asm"
 include "code/boot.asm"
-include "rodata/rodata.inc"
+include "rodata/rodata.rz.asm"
 include "code/rarezip.asm"
 include "code/tlb_code.asm"
 include "unk/unknown.asm"

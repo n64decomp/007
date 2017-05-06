@@ -1,7 +1,3 @@
-
-base origin()
-rodata_rom_offset:
-
 base $80020D90
 rodata_start:
 
@@ -17,9 +13,5 @@ dword_80023044:
 base $80023048
 cart_hw_address:
 
-insert rodata_rz, "021990.rz"
 base $8005D2E0
 rodata_end:
-
-insert padding,"pad_to_33590"
-
