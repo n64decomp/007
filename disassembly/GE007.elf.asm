@@ -14,4 +14,4 @@ include "elf/section_header.asm"
 
 //Not for awhile, but doing this may be a necessary evil to deal with compressed
 //vs non compressed data in address space. Files are copied with little to no 
-//change from my ootmqd disassembly so don't expect any accurate info yet.
+//changes from my ootmqd disassembly which was copied from experiment's with a certain sdk based roms, so don't expect anything here to work at all.
