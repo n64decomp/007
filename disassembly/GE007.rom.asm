@@ -9,6 +9,8 @@ include "code/boot.asm"
 include "rodata/rodata.asm"
 include "code/rarezip.asm"
 include "code/tlb_code.asm"
+include "unk/unknown.asm"
+include "ramrom/ramrom.asm"
 
 include "bss/bss.asm"
 include "bss/80300000.asm"
