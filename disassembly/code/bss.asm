@@ -6,3 +6,4 @@ mainthread:
 
 base $8008E360
 bss_end:
+
