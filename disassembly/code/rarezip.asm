@@ -1,12 +1,13 @@
 base origin()
-rarezip_rom_start:
-
+seg_rarezip_rom_start:
 base $70200000
-RareZip_vaddr:
+seg_rarezip_vaddr_start:
 
 base $7020141C
 decompressfile:
 
 insert binaryrarezipcode, "rarezip.bin", (origin() - $033590)
+
+seg_rarezip_vaddr_end:
 base origin()
-rarezip_rom_end:
+seg_rarezip_rom_end:

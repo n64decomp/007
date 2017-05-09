@@ -1,10 +1,12 @@
 arch n64.cpu
 endian msb
 output "GE007.n64", create
-fill $00c00000, $FF
 include "lib/N64.INC"
-origin $00000000
-
+define romsize($C00000)
+fill {romsize}, $FF
+origin $00000000;rom_file_start:;rom_start:
+include "code/bss.asm"
+include "code/stack.asm"
 include "rom/romheader.asm"
 include "code/boot.asm"
 include "rodata/rodata.rz.asm"
@@ -28,7 +30,9 @@ insert ob_end.seg, "ob/ob_end.seg", (origin() - $008f7de0)
 
 include "images/images.asm"
 
-include "code/bss.asm"
-include "code/80300000.asm"
+rom_end:;base {romsize};rom_file_end:
+
+
+
 
 

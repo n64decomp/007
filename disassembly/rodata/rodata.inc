@@ -1,5 +1,5 @@
 base $80020D90
-rodata_start:
+seg_rodata_vaddr_start:
 
 base $80020D90
 rspcode_start:
@@ -14,4 +14,4 @@ base $80023048
 cart_hw_address:
 
 base $8005D2E0
-rodata_end:
+seg_rodata_vaddr_end:
