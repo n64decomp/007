@@ -17,17 +17,7 @@ include "unk/unknown.asm"
 include "ramrom/ramrom.asm"
 include "font/fonts.asm"
 include "m/music.asm"
-include "bg/bg.asm"
-include "chr/chr.asm"
-include "g_view/g_items.asm"
-include "props/props.asm"
-include "bg/Tbg.asm"
-include "brief/brief.asm"
-include "bg/setup.asm"
-include "text/text.asm"
-
-ob_end:
-insert ob_end.seg, "ob/ob_end.seg", (origin() - $008f7de0)
+include "ob/seg_ob.asm"
 
 include "images/images.asm"
 

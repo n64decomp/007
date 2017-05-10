@@ -29,4 +29,7 @@ sp_main:
 
 base $803B3950
 sp_audi:
+
+base $803B4950
+sp_unknown:
 seg_sp_end:
