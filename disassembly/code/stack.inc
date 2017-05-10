@@ -1,4 +1,6 @@
+
 base $80300000
+seg_sp_start:
 decompression_buffer:
 
 base $803AB400
@@ -27,3 +29,4 @@ sp_main:
 
 base $803B3950
 sp_audi:
+seg_sp_end:

@@ -11,7 +11,7 @@
   dw $000F // Initial Clock Rate
 
 // VECTOR
-  dw Start // Boot Address Offset
+  dw boot.start // Boot Address Offset
   dw $1447 // Release Offset
 
 // COMPLEMENT CHECK & CHECKSUM
