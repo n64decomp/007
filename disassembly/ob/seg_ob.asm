@@ -1,3 +1,4 @@
+ob_start:
 include "bg.asm"
 include "chr.asm"
 include "g_items.asm"
