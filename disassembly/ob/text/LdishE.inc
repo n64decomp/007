@@ -1,0 +1,7 @@
+define seg_LdishE_start($00000000)
+define seg_LdishE_header_start($00000000)
+define ptr_seg_LdishE_start($00000000)
+define seg_LdishE_header_end($00000004)
+define seg_LdishE_strings_start($00000004)
+define seg_LdishE_strings_end($00000004)
+define seg_LdishE_end($00000004)

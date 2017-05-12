@@ -1,0 +1,7 @@
+define seg_LwaxE_start($00000000)
+define seg_LwaxE_header_start($00000000)
+define ptr_seg_LwaxE_start($00000000)
+define seg_LwaxE_header_end($00000004)
+define seg_LwaxE_strings_start($00000004)
+define seg_LwaxE_strings_end($00000004)
+define seg_LwaxE_end($00000004)
