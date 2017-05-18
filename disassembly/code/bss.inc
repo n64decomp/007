@@ -19,6 +19,14 @@ audithread:
 base $80060C90
 debugthread:
 
+base $80068DF0
+__osBaseTimer:
+
+base $80069170
+bss_80069170:
+
 base $8008E360
 seg_bss_end:
+
+
 
