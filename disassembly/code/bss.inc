@@ -1,32 +1,32 @@
-base $8005D2E0
-seg_bss_start:
+constant seg_bss_start($8005D2E0)
 
-base $8005D2E0
-rmonthread:
 
-base $8005D490
-idlethread:
+constant rmonthread($8005D2E0)
 
-base $8005D640
-mainthread:
 
-base $8005D7F0
-shedthread:
+constant idlethread($8005D490)
 
-base $8005E530
-audithread:
 
-base $80060C90
-debugthread:
+constant mainthread($8005D640)
 
-base $80068DF0
-__osBaseTimer:
 
-base $80069170
-bss_80069170:
+constant shedthread($8005D7F0)
 
-base $8008E360
-seg_bss_end:
+
+constant audithread($8005E530)
+
+
+constant debugthread($80060C90)
+
+
+constant __osBaseTimer($80068DF0)
+
+
+constant bss_80069170($80069170)
+
+
+constant seg_bss_end($8008E360)
+
 
 
 
