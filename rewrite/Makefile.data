@@ -1,0 +1,4 @@
+TARGET = ge007.u
+LD_SCRIPT = $(TARGET).ld
+OBSEG_DIR = obseg
+
