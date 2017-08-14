@@ -1,7 +1,0 @@
-define seg_LlipE_start($00000000)
-define seg_LlipE_header_start($00000000)
-define ptr_seg_LlipE_start($00000000)
-define seg_LlipE_header_end($00000004)
-define seg_LlipE_strings_start($00000004)
-define seg_LlipE_strings_end($00000004)
-define seg_LlipE_end($00000004)

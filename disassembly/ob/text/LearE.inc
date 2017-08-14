@@ -1,7 +1,0 @@
-define seg_LearE_start($00000000)
-define seg_LearE_header_start($00000000)
-define ptr_seg_LearE_start($00000000)
-define seg_LearE_header_end($00000004)
-define seg_LearE_strings_start($00000004)
-define seg_LearE_strings_end($00000004)
-define seg_LearE_end($00000004)

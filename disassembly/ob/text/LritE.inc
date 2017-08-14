@@ -1,7 +1,0 @@
-define seg_LritE_start($00000000)
-define seg_LritE_header_start($00000000)
-define ptr_seg_LritE_start($00000000)
-define seg_LritE_header_end($00000004)
-define seg_LritE_strings_start($00000004)
-define seg_LritE_strings_end($00000004)
-define seg_LritE_end($00000004)

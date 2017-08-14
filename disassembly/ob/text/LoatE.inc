@@ -1,7 +1,0 @@
-define seg_LoatE_start($00000000)
-define seg_LoatE_header_start($00000000)
-define ptr_seg_LoatE_start($00000000)
-define seg_LoatE_header_end($00000004)
-define seg_LoatE_strings_start($00000004)
-define seg_LoatE_strings_end($00000004)
-define seg_LoatE_end($00000004)

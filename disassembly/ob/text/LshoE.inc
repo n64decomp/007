@@ -1,7 +1,0 @@
-define seg_LshoE_start($00000000)
-define seg_LshoE_header_start($00000000)
-define ptr_seg_LshoE_start($00000000)
-define seg_LshoE_header_end($00000004)
-define seg_LshoE_strings_start($00000004)
-define seg_LshoE_strings_end($00000004)
-define seg_LshoE_end($00000004)
