@@ -19,6 +19,6 @@ echo "size=$RZSIZE"
 echo "one byte at a time is slow, sorry"
 dd if=data_seg.rz of=$1.tmp obs=1 seek=137616 conv=notrunc
 rm data_seg data_seg.rz
+
 mv $1.tmp $1
-FILESIZE=$(stat -c%s $1)
-echo "romsize=$FILESIZE"
+
