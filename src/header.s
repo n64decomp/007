@@ -15,7 +15,7 @@
 .byte  0x00       # version
 
 boot:
-.incbin "bin/ge007.u.000040.boot.bin"
+.incbin "bin/boot.bin"
 boot_end:
 
 
