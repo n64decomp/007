@@ -11,7 +11,7 @@ Alot of labels made. Still have to do formatting and structuring of data.
 Started Makefile and linker scripts.
 
 KNOWN BUGS:
-1. i havent converted move d, s to or d, s, $zero yet in tlbcode, so rom is not byte accurate
+NONE!!!!
 
 
 Also, still need to take the big series of includes making a single object, and split to many objects linked to right spot. Deconstruction of individual files in ob_seg will happened during or as a result of this.
