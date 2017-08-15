@@ -20,3 +20,9 @@ jump_\location:
 .word \sp
 .word \string
 .endm
+
+.macro file_entry index, string, file
+.word \index
+.word \string
+.word \file
+.endm
