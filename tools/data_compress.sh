@@ -9,7 +9,7 @@ echo "truncate $1 to 0xC00000"
 cat $1 | head --bytes=12582912 > $1.tmp
 
 echo "compress data segment"
-tools/1172compress.sh data_seg
+tools/1172compress.sh data_seg data_seg.rz
 
 
 echo "inject data segment"
