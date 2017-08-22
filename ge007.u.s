@@ -9,16 +9,7 @@
 .include "macros.inc"
 
 .include "src/header.s"
-.include "src/entry.s"
-.include "src/code.s"
 
-.section .c_data, "a"
-Compressedrodata:
- # make a hole for when we compress .data segment
- .space 0x11C00
-Compressedrodata_end:
-
-.include "src/rarezip.s"
 .include "src/tlbcode.s"
 .include "bin/romfiles.s"
 .include "ramrom/ramrom.s"
@@ -30,7 +21,6 @@ Compressedrodata_end:
 # PADDING region BE6D10-C00000 [192F0]
 .space 0x192F0, 0xFF
 
-.include "src/data.s"
 .include "src/bss.s"
 .include "src/buffers.s"
 
