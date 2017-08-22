@@ -9,8 +9,13 @@
 .include "macros.inc"
 
 .include "src/header.s"
-
-#.include "src/tlbcode.s"
+.section .c_data, "a"
+.global Compressedrodata
+Compressedrodata:
+ # make a hole for when we compress .data segment
+ .space 0x11C00
+.global Compressedrodata_end
+Compressedrodata_end:
 .include "bin/romfiles.s"
 .include "ramrom/ramrom.s"
 .include "font/font.s"
