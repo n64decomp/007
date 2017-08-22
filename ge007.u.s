@@ -10,7 +10,7 @@
 
 .include "src/header.s"
 
-.include "src/tlbcode.s"
+#.include "src/tlbcode.s"
 .include "bin/romfiles.s"
 .include "ramrom/ramrom.s"
 .include "font/font.s"
