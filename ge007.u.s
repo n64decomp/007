@@ -26,7 +26,7 @@ Compressedrodata_end:
 # PADDING region BE6D10-C00000 [192F0]
 .space 0x192F0, 0xFF
 
-.include "src/bss.s"
+
 .include "src/buffers.s"
 
 
