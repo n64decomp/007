@@ -34,9 +34,6 @@
 .section .clipping_file, "a"
 .space 0x127F20
 
-.section .stack, "a"
-.space 0xB5000
-
 .section .framebuffer_1, "a"
 .space 0x25800
 
