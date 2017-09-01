@@ -16,6 +16,13 @@ Compressedrodata:
  .space 0x11C00
 .global Compressedrodata_end
 Compressedrodata_end:
+
+#define here till i figure out better way to get rom address
+.global rarezip_rom_start
+rarezip_rom_start:
+
+
+
 .include "bin/romfiles.s"
 .include "ramrom/ramrom.s"
 .include "font/font.s"
