@@ -10,16 +10,16 @@
 
 .include "src/header.s"
 .section .c_data, "a"
-.global Compressedrodata
-Compressedrodata:
+.global ROM_cdata_start
+ROM_cdata_start:
  # make a hole for when we compress .data segment
  .space 0x11C00
-.global Compressedrodata_end
-Compressedrodata_end:
+.global ROM_cdata_end
+ROM_cdata_end:
 
 #define here till i figure out better way to get rom address
-.global rarezip_rom_start
-rarezip_rom_start:
+.global ROM_rarezip_start
+ROM_rarezip_start:
 
 
 
