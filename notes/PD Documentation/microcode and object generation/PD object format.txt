@@ -1,0 +1,120 @@
+Gleaned from notes:
+
+PD Objects
+-------------------
+OBJ header:	0x1C	- nearly identical to GE header
+0x0	4	offset to OBJ table
+0x4	2	0
+0x6	2	possibly type of object.  9 for bodies, D for heads
+0x8	4	offset to OBJ offsets
+0xC	2	# OBJ offsets
+0xE	2	# object subsections - position types and 01 flags
+0x10	4	float value - whatever it did in GE it likely does same here
+0x14	2	0
+0x16	2	# image declarations
+0x18	4	offset to image declarations
+
+------------------
+OBJ offsets:	0x4 each
+offsets to OBJ table entries used to access parts of a model at runtime.  
+ie: placement of monitor images, limbs, etc.
+
+OBJ ints:	0x2 each; final entry padded to word
+one int for each header.  sequential
+ie:	0000 0001 0002 ... 
+
+------------------
+Image Declarations:	0xC each
+you know these.
+0x0	4	image ID # or offset within file to image
+0x4	1	width
+0x5	1	height
+0x6	1	type
+0x7	1	can't remember
+0x8	4	bitflags if I remember correctly, used to assign image attributes when expanded
+
+------------------
+OBJ Table:	0x18	- for the record, almost identical to GE!
+0x0	1	0 normally.  1 subset tag
+0x1	1	type	(these should look familiar)
+		01	
+		02	position
+		08	distance triggers
+		0A	dimentions
+		12	handle
+		17	placeholder for head
+		18	display list
+0x2	2	0000	reserved
+0x4	4	offset to data
+0x8	4	offset to parent
+0xC	4	offset to next entry in parent group
+0x10	4	offset to previous entry in parent group
+0x14	4	offset to child
+-------------------
+Type data:
+
+01	0xC	main object heading
+0x0	4	group order number
+0x4	4	(float) can't remember use
+0x8	4	0
+
+--
+02	0x18	position
+0x0	4	(float) x position
+0x4	4	(float) y position
+0x8	4	(float) z position
+0xC	2	
+0xE	2	
+0x10	2	
+0x12	2	
+0x14	4	(float) ???
+
+--
+04	0x14	display list
+0x0	4	offset to primary display list
+0x4	4	offset to secondary display list
+0x8	4	0
+0xC	4	offset to point table
+0x10	2	number of points
+0x12	2	??? - 3
+
+05 00 19 B0 
+05 00 1B 10 00 00 00 00 05 00 15 F8 00 4B 00 03 
+
+
+--
+08	0x10	distance trigger
+0x0	4	(float) nearest distance visible
+0x4	4	(float) furthest distance visible
+0x8	4	offset to OBJ table entry of target display list
+0xC	4		
+
+--
+0A	0x1C	dimentions
+0x0	4	group order number
+0x4	4	(float) x minimum
+0x8	4	(float) x maximum
+0xC	4	(float) y minimum
+0x10	4	(float) y maximum
+0x14	4	(float) z minimum
+0x18	4	(float) z maximum
+
+--
+12	0x8	handle
+0x0	4	offset to OBJ table entry of command to trigger (ie: activate display list)
+0x4	4	00000000	reserved
+
+--
+17	0x4	placeholder for head
+0x0	4	00000000	reserved for pointer to head
+
+--
+18	0x18	display list
+0x0	4	offset to primary display list
+0x4	4	offset to secondary display list
+0x8	4	
+0xC	4	offset to point table
+0x10	2	number of points
+0x12	2	??? - sometimes 3, sometimes 4.
+0x14	2	0
+0x16	2	number of colors (RGBA samples)

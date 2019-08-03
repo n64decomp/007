@@ -1,0 +1,130 @@
+rom to TLB	34B30:	7F000000
+
+8005DBF0-list of loaded? TLB entries
+
+looking to add:
+7F08C50C, from 7F08C000
+page size is from 0x1000 to 0x2000, that should be effective...
+
+Reading TLB entries when written:
+MTC0
+	EntryHi	Values used to recall data (ie. 70000000 for normal memory)
+	EntryLo0	size of thingy.  1F is largest I think, at 0x400000.
+	EntryLo1	???
+	context	*200=entryhi...
+	Index	index for an indexed entry
+	PageMask	/0x2000 to get register size
+		00000000	0x0000: 4KB   (0x1000 bytes)
+		00006000	0x0003: 16KB  (0x4000 bytes)
+		0001E000	0x000F: 64KB  (0x10000 bytes)
+		0007E000	0x003F: 256KB (0x40000 bytes)
+		001FE000	0x00FF: 1MB   (0x100000 bytes)
+		007FE000	0x03FF: 4MB   (0x400000 bytes)
+		01FFE000	0x0FFF: 16MB  (0x1000000 bytes)
+
+index0 in GE:
+	index	00000000
+	entrylo0	02000016	800000, noncoherant, valid
+	entrylo1	00000000
+	pagemask	0	0x1000
+	entryhi	C0000000	wait, that's weird...  C0 isn't mapped at runtime, is it?
+	
+
+
+Initial 70000000 write is at 80000450
+	index	00000001
+	entrylo0	0000001F	c=3(noncoherant), dirty, valid, global
+	entrylo1	00000001	global
+	pagemask	007FE000	3FF (4MB).  change to 01FFE000 (FFF) for 16MB
+	entryhi	70000000
+
+7000E880	generic TLBR, gets entryhi for index=A0
+MTC0	A0,Index
+NOP
+TLBR
+NOP
+NOP
+NOP
+MFC0	V0,EntryHi
+JR	RA
+NOP
+
+700018C0	really interesting routine.  Checks if a specific address space has already been loaded.  Loops through all indices using 7000E880
+70001920	calls above, and I think it fries the entry!
+7000D3D0	fries a TLB entry?
+
+
+
+80000000
+I always thought that this handled misses when something isn't loaded but already present in TLB.  Apparently this is nonsense
+	Index	80000000	(random?)
+	entrylo0	00000001
+	entrylo1	00000041
+	context	003F8000
+	PageMask	00000000
+	entryhi	7F000000
+
+
+ROM	0x2760
+40802800	MTC0	R0,PageMask
+00000000	NOP	
+401A2000	MFC0	K0,Context
+3C1B8006	LUI	K1,8006		*00000000	NOP
+277BE4A4	ADDIU	K1,K1,E4A4	*3C1B8006	LUI	K1,8006
+8F7B0000	LW	K1,0000 (K1)	*8F7BE4A4	LW	K1,E4A4 (K1)
+035BD021	ADDU	K0,K0,K1
+8F5B0000	LW	K1,0000 (K0)
+409B1000	MTC0	K1,EntryLo0
+00000000	NOP
+277B0040	ADDIU	K1,K1,0040
+409B1800	MTC0	K1,EntryLo1
+00000000	NOP
+42000006	TLBWR
+00000000	NOP
+00000000	NOP
+00000000	NOP
+00000000	NOP
+42000018	ERET
+00000000	NOP
+
+more appropriately...
+  ah, wait.  It just screwed up the context!  context should be 003F8340 for this routine...
+
+theoretical!
+  TLB miss drops the current spot into the BadVAddr slot
+  IF!  
+1)	grab BadVAddr
+2)	&FFFFE000 + >>9
+	-or-	/2000 (>>D) + <<4
+3)	MTC0 result, Context
+
+-or-
+1)	grab EntryHi
+2)	>>9
+
+
+new problem...
+in 70000EB4 [0EF8]: JAL 70007914
+	this is nonsense!  That's not executable code.  it's been butchered!  find out why...
+It's getting overwritten by loop at 7F0C6C2C-7F0C6C40!  Why?!?
+	V1=7914, saving T6 into it.  This occurs when double weapons are in use during rendered gameplay
+BP-W 80007914 to test.  Need to look at this routine's variables during solo+doubles.
+
+
+7F0C6BC8	this copies a loaded image to final memory location
+	expects a pointer stored to SP+0x10 before calling routine.	target address - [7F0C6BE4]
+	also expects source pointer in A0
+ called by 7F0C68F0
+	S0 is set to sp=0x10.  S0 is T1+S1.  T1 is just an offset when bad thing occurs, and S1=0...
+	T1 is set to SP at 7F0C6684
+7F0C665C:	list of stores before JAL 7F0CBF10
+
+
+Aegh!  Okay, what's really happening:
+  Overwrite occurs due to mirroring routine.  Pointer processing is failing, so it leaves weird pointer values.  On access, these will be used by write functions and PLSTOUIHWUNC, you get a huge mess
+
+  So...
+  Must figure out what's up with mirroring in MP.  Gotta get these pointers processed right!  That's the only hitch.
+
+Workaround...
+  Could remove 1st person lefty models altogether, or the guns on-screen.  Bad fix, but it would work perfectly!

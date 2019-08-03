@@ -1,0 +1,290 @@
+Look at things that read 8008C5F4 for root export address
+70005D08 calls write data to hardware...
+	7F0BFCD8	F4808	!finalize ramrom!
+	7F0BFD48	F4878	!finalize ramrom!
+	7F0C0048	F4B78	!on packet write!
+	7F0C06F4	F5224	!initialize at stage start!
+
+70005C44 aligns and calls read data from hardware...
+	7F0BFD00	F4830	!finalize ramrom!
+	7F0BFE3C	F496C	!load ramrom!
+	7F0C0280	F4DB0	iterate ramrom entries	generic
+	7F0C02D0	F4E00	iterate ramrom entries	generic
+	7F0C083C	F536C	replay from hardware	generic
+
+
+7F0D001C	called by load ramrom: name, source, @instance?
+7F0D005C	called by save ramrom: name, source, 
+7F0D0098	called by both: name, @instance?
+
+So really, could tell 70005D08 to detect if a DMA or PI request is called for and pipe accordingly
+Or, could be a real bugger and set all these to 70013850, which is memcpy(A0,A1,A2)
+	To do this, would need to set target as A0, source as A1, size A2
+Best would be to hack handlers to take either argument...
+
++_+
+
+7F0BFCD8	F4808	!finalize ramrom!
+7F0BFD00	F4830	!finalize ramrom!
+7F0BFD48	F4878	!finalize ramrom!
+
+7F0BFCB0	F47E0
+//7F0BFCE0:	read in what's already written to devtool
+LUI	V0,8009
+ADDIU	V0,V0,C5F4
+LW	T8,0000 (V0)	;T8=8008C5F4: ramrom hardware addy
+LUI	A0,8009
+ADDIU	A0,A0,C270	;A0=8008C270: ramrom target address
+ADDIU	T9,T8,0004	;T9=T8+4: next word...
+SW	T9,0000 (V0)
+LUI	A1,00F0		;A1=0xF00000: hardware address
+JAL	70005C44	;align and read A2 bytes of data from hardware A1 to A0
+ADDIU	A2,R0,00F0	;A2=0xF0: size
+//7F0BFD08:	set total size and time to ramrom and write to devtool
+LUI	V1,8005
+ADDIU	V1,V1,8468	;V1=80048468
+SW	V0,0000 (V1)	;V0->80048468: return address->demo block
+LUI	T0,8005
+LUI	T1,8005
+LW	T1,8374 (T1)	;T1=80048374: 1 if not paused
+LW	T0,837C (T0)	;T0=8004837C: ms time in stage
+LUI	T4,8009
+LUI	A1,00F0		;A1=0xF00000: devtool hardware address
+SUBU	T2,T0,T1	;T2=timer-clock
+SW	T2,007C (V0)	;T2->demo+7C: total time
+LW	T4,C5F4 (T4)	;T4=8008C5F4: ramrom hardware addy
+LW	T6,0000 (V1)	;T6=V1+0: p->ramrom
+ADDIU	A2,R0,00F0	;A2=0xF0: size
+SUBU	T5,T4,A1	;T5=current address - base address: size
+SW	T5,0080 (T6)	;size->ramrom+80: actual size of ramrom data
+JAL	70005D08	;copy A2 bytes from rdram A0 to hardware A1
+LW	A0,0000 (V1)	;A0=p->ramrom
+//7F0BFD50:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0048
+JR	RA
+NOP
+
++_+
+
+Other route:
+70005D08	6908	handles hardware write request
+	accepts: A0=p->rdram source, A1=p->hardware, A2=size
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	70005CA8
+NOP
+JAL	70005BF0
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+70005C1C	681C	handles hardware read request
+	accepts: A0=p->rdram, A1=p->hardware, A2=size
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	70005B90
+NOP
+JAL	70005BF0	;might test if transfer worked or something
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+Best solution is to hack these to detect 70 - C0 addresses, then memcpy() instead
+7000E8B0 returns > 0 when a valid pointer used, but would fail if a B0-extended ROM address used.
+	Could always test if < B0000000, then again for the price of a JAL could also test < 70000000...
+
+
+There's no room to really simplify.  Nesting subcomponents within write function, which accesses read via psychotic breakdown
+This relies heavily on jumpless CACHE routines, and hopefully nothing will overwrite my SP+10-1C...
+
+70005B90	6790	read A2 bytes from hardware A1 to rdram A0
+	reduced.  PI write accesses these subcomponents
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0024	SW	RA,0024 (SP)
+//70005B98:	test and redirect
+0C00173C	*JAL	test	;V0=FALSE if ROM address
+AFA40010	*SW	A0,0010 (SP)	;SP+10=A0: p->rdram
+10400005	*BEQ	V0,R0,+cache
+AFA5002C	SW	A1,002C (SP)	;SP+2C=A1: p->hardware
+0C004E14	*JAL	70013850	;memcpy(A0,A1,A2)
+00000000	*NOP
+1000000C	*BEQ	R0,R0,70005BE4	;heck, even have a couple extra lines!
+2402FFFF	*ADDIU	V0,R0,FFFF
+//70005BB8:	CACHE target
+AFA60014	*SW	A2,0014 (SP)	;SP+30=A2: size
+0C0042C8	JAL	70010B20	;cache A1 bytes at A0
+00C02825	OR	A1,A2,R0	;A1=A2: size
+//70005BC4:	send PI read request
+00003025	OR	A2,R0,R0	;A2=0
+//70005BC8:	joint function
+3C048006	-LUI	A0,8006
+249836F0	*ADDIU	T8,A0,36F0	;T8=800636F0
+248436D0	ADDIU	A0,A0,36D0	;A0=800636D0
+AFB80018	SW	T8,0018 (SP)	;SP+18= 800636F0
+00002825	OR	A1,R0,R0	;A1=0
+0C003DA8	JAL	7000F6A0	;send PI request
+8FA7002C	LW	A3,002C (SP)	;A3=p->hardware
+//70005BE4:	return
+8FBF0024	LW	RA,0024 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+
+70005CA8	68A8	writes A2 bytes of data from A0 to hardware address A1
+	simplified, same stipulation.  I feel dirty writing this...
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0024	SW	RA,0024 (SP)
+//70005CB0:	test and redirect
+0C00173C	*JAL	test	;V0=FALSE if ROM address
+AFA40010	*SW	A0,0010 (SP)	;SP+28=A0: p->rdram
+10400006	*BEQ	V0,R0,+cache
+AFA5002C	SW	A1,002C (SP)	;SP+2C=A1: p->hardware
+00802825	*OR	A1,A0,R0	;A1=p->source: p->rdram
+0C004E14	*JAL	70013850	;memcpy(A0,A1,A2)
+8FA4002C	*LW	A0,002C (SP)	;A0=p->target
+080016F9	*J	70005BE4	;sloppy end, I know...
+2402FFFF	*ADDIU	V0,R0,FFFF
+//70005CD4:	CACHE target
+AFA60014	*SW	A2,0014 (SP)	;SP+30=A2: size
+0C0042F4	JAL	70010BD0	;cache A1 bytes at A0
+00C02825	OR	A1,A2,R0	;A1=A2: size
+//70005CE0:	send PI write request
+080016F2	*J	70005BC8
+24060001	ADDIU	A2,R0,0001	;A2=1
+	*NOP
+	*NOP
+70005CF0	68F0	V0=TRUE if A1 not ROM address; fries AT
+3C017000	LUI	AT,7000
+00A1082B	SLTU	AT,A1,AT	;TRUE if addy < 70000000
+3C02B000	LUI	V0,B000
+00A2102B	SLTU	V0,A1,V0	;TRUE if addy < B0000000
+03E00008	JR	RA
+00411026	XOR	V0,V0,AT	;TRUE if normal addy, false if ROM or weird
+
+seems to work on its own...
+Now to change every instance of 00F00000 to 80400000...
+7F0BFCFC	F482C	finalize ramrom on hardware
+7F0BFD28	F4858	""
+7F0BFDD8	F4908	save ramrom to devtool
+7F0BFE24	F4954	load ramrom from devtool
+7F0BFE38	F4968	""
+7F0C06E8	F5218	record current stage
+7F0C08B4	F53E4	replay ramrom on devtool
+
+These also use devtool ranges:
+7000A5CC	B1CC	FFB000	command line options
+
+Also, to prevent permaloops due to lack of real devtools
+7F0BFDB2	F48E2	0000	no actual branch
+
+Ah crap!  When using the happy copy thing, 7000DDD0's SP is getting fried!
+70005CA8'S call to 70005BF0 call to 7000DDD0, wihtin 700107AC
+What it amounts to is that 70005BF0 does not like when you directly copy memory!  Should skip somehow...
+Okay, catch if 7000F6A0 didn't return 0 within its callers, then set -1 as normal return for direct copy.  Wow this is going to suck...
+70005D08	6908	handles hardware write request
+	accepts: A0=p->rdram source, A1=p->hardware, A2=size
+AFBFFFFC	*SW	RA,FFFC (SP)
+0C00172A	JAL	70005CA8
+27BDFFE8	ADDIU	SP,SP,FFE8
+04420004	*BLTZL	V0,70005C38
+8FBF0014	*LW	RA,0014 (SP)
+0C0016FC	JAL	70005BF0
+00000000	NOP
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+
+70005C1C	681C	handles hardware read request
+	accepts: A0=p->rdram, A1=p->hardware, A2=size
+AFBFFFFC	*SW	RA,FFFC (SP)
+0C0016E4	JAL	70005B90
+27BDFFE8	ADDIU	SP,SP,FFE8
+04420004	*BLTZL	V0,70005C38
+8FBF0014	*LW	RA,0014 (SP)
+0C0016FC	JAL	70005BF0	;might test if transfer worked or something
+00000000	NOP
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+
++_+
+
+Not good enough we can record sessions.  Now need to record MP!
+F5278	7F0C0748	record or replay at stage start
+F53A4	7F0C0874	replay recorded movie at hardware address A0
+
+Make alternate entry point for this guy...
+Use alternate entry to manually set A1
+7F01D5EC	5211C	set stage A0, opt. mode A1, briefing for ramrom replay
+	accepts: A0=stage#, (opt.)A1=mode
+	fries AT,V0,V1,(A1),T6,T7,T8
+00002825	*OR	A1,R0,R0
+	ADDIU	SP,SP,FFE8
+3C018003	-LUI	AT,8003
+	SW	RA,0014 (SP)
+AC25A8F0	*SW	A1,A8F0 (AT)	;0->8002A8F0: mode=solo
+	JAL	7F00DCC0	;V0=briefing for solo stage A0
+	SW	A0,A8F4 (AT)	;A0->8002A8F4: A0->selected stage
+	LW	RA,0014 (SP)
+	LUI	AT,8003		;not necessary.  AT doesn't change
+	SW	V0,A8F8 (AT)	;V0->8002A8F8: selected mission briefing page
+	JR	RA
+	ADDIU	SP,SP,0018
+
+now rig 'em up to use it!
+7F0C081C:	main replay routine, called for actual intro movies and also above
+		normal usage is from 7F0C0970
+	accepts: A0=hardware address
+	LUI	V1,8009
+	ADDIU	V1,V1,C5F4	//V1=8008C5F4	gets the address for the demo loaded
+	SW	A0,0000 (V1)	//A0->address for loaded demo
+	SW	RA,0014 (SP)
+	LUI	A0,8009
+	ADDIU	A0,A0,C270	//A0=8008C270:	target?
+	LW	A1,0000 (V1)	//A1=hardware address
+	JAL	70005C44
+	ADDIU	A2,R0,00E8	//A2=0xE8 size
+	LUI	V1,8009
+	ADDIU	V1,V1,C5F4	//V1=8008C5F4
+	LW	T6,0000 (V1)	//T6<-8008C5F4: p->loaded demo
+	LUI	A1,8005
+	ADDIU	A1,A1,8468	//A1=80048468	location the file is loaded to
+	ADDIU	T7,T6,00E8	//T7=T6+0xE8	T7=next memfile
+	SW	V0,0000 (A1)	//V0->80048468: p->demo block
+	SW	T7,0000 (V1)	//T7->8008C5F4: p->loaded demo
+	ADDIU	T8,R0,0001	//T8=1
+	LUI	AT,8005
+	SW	T8,847C (AT)	//T8->8004847C: demo running?
+//7F0C0870:	F53A0
+8C450084	*LW	A1,0084 (V0)	//A1=demo+84: mode
+0FC0757C	*JAL	7F01D5F0	//set stage A0, mode A1, p->briefing data
+8C440010	*LW	A0,0010 (V0)	//A0=demo+10: stage #
+	LUI	T0,8005
+	LW	T0,8468 (T0)	//T0<-80048468	T0=address of file
+	JAL	7F01D59C	//A0-> difficulty
+	LW	A0,0014 (T0)	//A0=difficulty
+	ADDIU	A0,R0,000B	//A0=0xB	menu mode (stage active)
+	JAL	7F01A5D4	;set menu A0 to mode A1
+	ADDIU	A1,R0,0001	//A1=1
+	LW	RA,0014 (SP)
+	ADDIU	SP,SP,0018
+	JR	RA
+	NOP
+
+...and now the other handler...
+//7F0C0728:	run demo
+	LUI	S0,8005
+	LUI	AT,8009
+	ADDIU	S0,S0,8468	;S0=80048468
+	SW	R0,C5F8 (AT)
+	LW	T0,0000 (S0)	;T0=80048468: p->demo block
+	JAL	7F01D59C	;A0->difficulty; fries AT,V0(difficulty)
+	LW	A0,0014 (T0)	;A0=demo+14: difficulty
+//7F0C0744:	F5274
+8D050084	*LW	A1,0084 (T0)	;T1=80048468: p->demo block
+0FC0757C	*JAL	7F01D5F0	;A0->stage, set solo, get p->briefing
+8D040010	*LW	A0,0010 (T0)	;A0=demo+10: stage#

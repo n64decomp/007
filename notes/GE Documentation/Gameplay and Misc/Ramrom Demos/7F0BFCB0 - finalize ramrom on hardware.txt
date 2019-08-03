@@ -1,0 +1,48 @@
+7F0BFCB0	F47E0	finalize ramrom on hardware
+ADDIU	SP,SP,FFB8
+OR	A0,SP,R0
+ADDIU	A0,A0,002F
+ORI	T6,A0,000F
+SW	RA,0014 (SP)
+XORI	A0,T6,000F	;A0=SP+20, to nearest quadword
+SB	R0,0000 (A0)
+SB	R0,0001 (A0)	;A0+0=0000
+LUI	A1,8009
+LW	A1,C5F4 (A1)	;A1=8008C5F4: ramrom hardware addy
+JAL	70005D08	;write A2 bytes from rdram A0 to hardware A1
+ADDIU	A2,R0,0010	;A2=0x10
+//7F0BFCE0:	read in what's already written to devtool
+LUI	V0,8009
+ADDIU	V0,V0,C5F4
+LW	T8,0000 (V0)	;T8=8008C5F4: ramrom hardware addy
+LUI	A0,8009
+ADDIU	A0,A0,C270	;A0=8008C270: ramrom target address
+ADDIU	T9,T8,0004	;T9=T8+4: next word...
+SW	T9,0000 (V0)
+LUI	A1,00F0		;A1=0xF00000: hardware address
+JAL	70005C44	;align and read A2 bytes of data from hardware A1 to A0
+ADDIU	A2,R0,00F0	;A2=0xF0: size
+//7F0BFD08:	set total size and time to ramrom and write to devtool
+LUI	V1,8005
+ADDIU	V1,V1,8468	;V1=80048468
+SW	V0,0000 (V1)	;V0->80048468: return address->demo block
+LUI	T0,8005
+LUI	T1,8005
+LW	T1,8374 (T1)	;T1=80048374: 1 if not paused
+LW	T0,837C (T0)	;T0=8004837C: ms time in stage
+LUI	T4,8009
+LUI	A1,00F0		;A1=0xF00000: devtool hardware address
+SUBU	T2,T0,T1	;T2=timer-clock
+SW	T2,007C (V0)	;T2->demo+7C: total time
+LW	T4,C5F4 (T4)	;T4=8008C5F4: ramrom hardware addy
+LW	T6,0000 (V1)	;T6=V1+0: p->ramrom
+ADDIU	A2,R0,00F0	;A2=0xF0: size
+SUBU	T5,T4,A1	;T5=current address - base address: size
+SW	T5,0080 (T6)	;size->ramrom+80: actual size of ramrom data
+JAL	70005D08	;copy A2 bytes from rdram A0 to hardware A1
+LW	A0,0000 (V1)	;A0=p->ramrom
+//7F0BFD50:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0048
+JR	RA
+NOP

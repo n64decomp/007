@@ -1,0 +1,70 @@
+
+MUSIC_DIR = assets/music
+
+$(BUILD_DIR)/$(MUSIC_DIR)/%.rz: $(MUSIC_DIR)/%.bin
+	$(RZ_COMP) $< $@
+
+MUSIC_RZ_FILES = \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Marchives.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Marchivesx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Maztec.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Maztecx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mbunker1.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mbunker1x.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mbunker2.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mbunker2x.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mcitadel.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mcontrol.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mcontrolx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mcradle.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mcradlex.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mcuba.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mdam.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mdamx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mdeathsolo.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mdepot.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mdepotx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Megyptian.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Megyptianx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Melevator_control.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Melevator_wc.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mfacility.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mfacilityx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mfolders.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mfrigate_outro.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mfrigate.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mfrigatex.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mintro_eye.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mjungle_perimeter_unused.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mjungle.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mjungle_unused.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mjunglex.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mmultideath_alt.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mmultiplayerdeath.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mnint_rare_logo.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mno_music.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mnull1.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mnull2.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mnull3.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mrunway_plane.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mrunway.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mrunwayx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msilo.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msilox.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msolo_death_abrev.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mstatue_ending.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mstatue.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mstatuex.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mstreets.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mstreetsx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msurface1.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msurface2_ending.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msurface2.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msurface1x.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Msurface2x.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mtrain.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mtrainx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mwatchmusic.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mwatercaverns.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mwatercavernsx.rz \
+    $(BUILD_DIR)/$(MUSIC_DIR)/Mwindblowing.rz

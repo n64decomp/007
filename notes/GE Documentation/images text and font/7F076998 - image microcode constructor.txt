@@ -1,0 +1,273 @@
+7F076998		
+	accepts: A0=@display list pointer, A1=, A2=, A3=
+SW	A1,0004 (SP)	;SP+4= A1: 
+ADDIU	T0,R0,0001
+BNE	A2,T0,7F076B84	;branch if A2=1: 
+LW	V0,0000 (A0)	;V0=p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F0769B0:	pipesync
+LUI	T6,E700
+SW	T6,0000 (V1)	;DL+0= pipesync.u
+SW	R0,0004 (V1)	;DL+4= setothermode_l.l: 	;DL+4= pipesync.l
+//7F0769BC:	setothermode_h
+OR	A1,V0,R0	;A1=V0: p->DL
+LUI	T7,BA00
+ORI	T7,T7,1402	;T7= setothermode_h | offset=14 | bits=2
+SW	T7,0000 (A1)	;DL+0= setothermode_h.u: cycle type
+SW	R0,0004 (A1)	;DL+4= setothermode_h.l: 1 cycle
+//7F0769D0:	
+LW	T8,0004 (SP)	;T8=	A1 from caller
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+ADDIU	AT,R0,0002
+BEQ	T8,T0,7F0769FC	;branch if 1: 
+NOP
+BEQ	T8,AT,7F076A74	;branch if 2: 
+ADDIU	AT,R0,0003
+BEQ	T8,AT,7F076AEC	;branch if 3: 
+ADDIU	AT,R0,0004
+BEQ	T8,AT,7F076B38	;branch if 4: 
+NOP
+//7F0769FC:	setothermode_l
+BEQ	A3,R0,7F076A54
+OR	V1,V0,R0	;V1=V0: p->DL
+SLTI	AT,A3,0002
+BNEZ	AT,7F076A34
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T9,B900
+LUI	T1,0055
+ORI	T1,T1,2D58
+ORI	T9,T9,031D	;T9= setothermode_l | offset=3 | bits=1D
+SW	T9,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T1,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, depth compare, image read | converge delta ST wrap | depthmode: depth decrement, alpha converge | blender= blend 1 machine, blend 1, blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076A34:	setothermode_l
+LUI	T2,B900
+LUI	T3,0055
+ORI	T3,T3,2078
+ORI	T2,T2,031D	;T2= setothermode_l | offset=3 | bits=1D
+SW	T2,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T3,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, depth compare, depth update, image read | converge delta-ST clamp | depthmode: alpha converge selection | blender= blend 1 machine, blend 1, blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076A54:	setothermode_l
+LUI	T4,B900
+LUI	T5,0055
+ORI	T5,T5,2048
+ORI	T4,T4,031D	;T4= setothermode_l | offset=3 | bits=1D
+SW	T4,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T5,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, image read | converge delta-ST clamp | depthmode: alpha converge selection | blender= blend 1 machine, blend 1, blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076A74:	setothermode_l
+BEQ	A3,R0,7F076ACC
+OR	V1,V0,R0	;V1=V0: p->DL
+SLTI	AT,A3,0002
+BNEZ	AT,7F076AAC
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T6,B900
+LUI	T7,0050
+ORI	T7,T7,4DD8
+ORI	T6,T6,031D	;T6= setothermode_l | offset=3 | bits=1D
+SW	T6,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T7,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, depth compare, image read, clear on converge | converge delta-ST wrap | depthmode: depth decrement, force blender | blender: blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076AAC:	setothermode_l
+LUI	T8,B900
+LUI	T9,0050
+ORI	T9,T9,49D8
+ORI	T8,T8,031D	;T8= setothermode_l | offset=3 | bits=1D
+SW	T8,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T9,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, depth compare, image read, clear on converge | converge delta-ST wrap | depthmode: depth exclusive, force blender | blender: blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076ACC:	setothermode_l
+LUI	T1,B900
+LUI	T2,0050
+ORI	T2,T2,41C8
+ORI	T1,T1,031D	;T1= setothermode_l | offset=3 | bits=1D
+SW	T1,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T2,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, image read, clear on converge | converge delta-ST wrap | depth mode: force blender | blender: blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076AEC:	setothermode_l
+BEQ	A3,R0,7F076B18
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T3,B900
+LUI	T4,0055
+ORI	T4,T4,3078
+ORI	T3,T3,031D	;T3= setothermode_l | offset=3 | bits=1D
+SW	T3,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T4,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, depth update, image read | converge delta-ST clamp | depthmode: converge x alpha, alpha converge selection | blender= blend 1 machine, blend 1, blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076B18:	setothermode_l
+LUI	T5,B900
+LUI	T6,0055
+ORI	T6,T6,3048
+ORI	T5,T5,031D	;T5= setothermode_l | offset=3 | bits=1D
+SW	T5,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T6,0004 (V1)	;DL+4= setothermode_l.l: render mode: antialias enabled, image read | converge delta-ST clamp | depthmode: converge x alpha, alpha converge selection | blender= blend 1 machine, blend 1, blend colour in, blend colour blender
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076B38:	setothermode_l
+BEQ	A3,R0,7F076B64
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T7,B900
+LUI	T8,0050
+ORI	T8,T8,4B50
+ORI	T7,T7,031D	;T7= setothermode_l | offset=3 | bits=1D
+SW	T7,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T8,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076B64:	setothermode_l
+LUI	T9,B900
+LUI	T1,0050
+ORI	T1,T1,4340
+ORI	T9,T9,031D	;T9= setothermode_l | offset=3 | bits=1D
+SW	T9,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T1,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076B84:	A2=1...	pipesync
+OR	V1,V0,R0	;V1=V0: p->DL
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+LUI	T2,E700
+SW	T2,0000 (V1)	;DL+0= pipesync.u
+SW	R0,0004 (V1)	;DL+4= setothermode_l.l: 	;DL+4= pipesync.l
+//7F076B98:	setothermode_h
+OR	A1,V0,R0	;A1=V0: p->DL
+LUI	T3,BA00
+ORI	T3,T3,1402	;T3= setothermode_h | offset=14 | bits=2
+LUI	T4,0010
+SW	T4,0004 (A1)	;DL+0= setothermode_h.u: cycle type
+SW	T3,0000 (A1)	;DL+4= setothermode_h.l: 2 cycle
+//7F076BB0:	
+LW	T5,0004 (SP)	;T5=	A1 from caller
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+ADDIU	AT,R0,0002
+BEQ	T5,T0,7F076BDC	;branch if 1: 
+NOP
+BEQ	T5,AT,7F076C54	;branch if 2: 
+ADDIU	AT,R0,0003
+BEQ	T5,AT,7F076CCC	;branch if 3
+ADDIU	AT,R0,0004
+BEQ	T5,AT,7F076D18	;branch if 4
+NOP
+//7F076BDC:	setothermode_l
+BEQ	A3,R0,7F076C34
+OR	V1,V0,R0	;V1=V0: p->DL
+SLTI	AT,A3,0002
+BNEZ	AT,7F076C14
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T6,B900
+LUI	T7,0C19
+ORI	T7,T7,2D58
+ORI	T6,T6,031D	;T6= setothermode_l | offset=3 | bits=1D
+SW	T6,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T7,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076C14:	setothermode_l
+LUI	T8,B900
+LUI	T9,0C19
+ORI	T9,T9,2078
+ORI	T8,T8,031D	;T8= setothermode_l | offset=3 | bits=1D
+SW	T8,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T9,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076C34:	setothermode_l
+LUI	T1,B900
+LUI	T2,0C19
+ORI	T2,T2,2048
+ORI	T1,T1,031D	;T1= setothermode_l | offset=3 | bits=1D
+SW	T1,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T2,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076C54:	setothermode_l
+BEQ	A3,R0,7F076CAC
+OR	V1,V0,R0	;V1=V0: p->DL
+SLTI	AT,A3,0002
+BNEZ	AT,7F076C8C
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T3,B900
+LUI	T4,0C18
+ORI	T4,T4,4DD8
+ORI	T3,T3,031D	;T3= setothermode_l | offset=3 | bits=1D
+SW	T3,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T4,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076C8C:	setothermode_l
+LUI	T5,B900
+LUI	T6,0C18
+ORI	T6,T6,49D8
+ORI	T5,T5,031D	;T5= setothermode_l | offset=3 | bits=1D
+SW	T5,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T6,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076CAC:	setothermode_l
+LUI	T7,B900
+LUI	T8,0C18
+ORI	T8,T8,41C8
+ORI	T7,T7,031D	;T7= setothermode_l | offset=3 | bits=1D
+SW	T7,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T8,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076CCC:	setothermode_l
+BEQ	A3,R0,7F076CF8
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T9,B900
+LUI	T1,0C19
+ORI	T1,T1,3078
+ORI	T9,T9,031D	;T9= setothermode_l | offset=3 | bits=1D
+SW	T9,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T1,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076CF8:	setothermode_l
+LUI	T2,B900
+LUI	T3,0C19
+ORI	T3,T3,3048
+ORI	T2,T2,031D	;T2= setothermode_l | offset=3 | bits=1D
+SW	T2,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T3,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076D18:	setothermode_l
+BEQ	A3,R0,7F076D44
+OR	V1,V0,R0	;V1=V0: p->DL
+OR	V1,V0,R0	;V1=V0: p->DL
+LUI	T4,B900
+LUI	T5,0C18
+ORI	T5,T5,4B50
+ORI	T4,T4,031D	;T4= setothermode_l | offset=3 | bits=1D
+SW	T4,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T5,0004 (V1)	;DL+4= setothermode_l.l: 
+BEQ	R0,R0,7F076D60
+ADDIU	V0,V0,0008	;V0+=8: next DL op
+//7F076D44:	setothermode_l
+LUI	T6,B900
+LUI	T7,0C18
+ORI	T7,T7,4340
+ORI	T6,T6,031D	;T6= setothermode_l | offset=3 | bits=1D
+SW	T6,0000 (V1)	;DL+0= setothermode_l.u: render mode + blender
+SW	T7,0004 (V1)	;DL+4= setothermode_l.l: 
+ADDIU	V0,V0,0008	;V0+=8: next DL op	;V0+=8: next DL op
+//7F076D60:	return
+JR	RA
+SW	V0,0000 (A0)	;A0=final p->DL

@@ -1,0 +1,1021 @@
+The other works fine, but te code can get convoluted.
+To simplify matters, copy selected set to buffer.
+MP and object gen will only use the copy.  Menus only mess with values.
+That will also allow the copy to be editted without destroying the original.
+
+If there isn't a generic memcpy, will need to write one.
+
+To save time and make the code more difficult to write (since it really othrwise is pointless)
+1) gen a set in the copy slot
+2) if random, randomly select a set number
+3) copy set to slot
+
++_+
+
+Since copy can be editted, MwtGX can be revised for all weapon sets.
+1) write an independant searcher that scans for duplicates in set
+2) scan for ammo-only item in slot F7
+3) if either is the case, replace with GG and rescan
+4) if still bad, random the slot and rescan.
+
+
+@_@
+
+You know what would be cool?  Set MP to display the weapon set + scenarios
+
+<_>
+
+0x870	right weapon
+0xC18	left weapon
+
+revise into a generic - test if A0 drawn
+7F08CF80:	C1AB0	0FC233E0	test if A0 drawn!  V0=# of that item held (0-2)
+	fries: T6, T7
+3C0E8008	LUI	T6,8008
+8DCEA0B0	LW	T6,A0B0 (T6)	;T6=cur.player data
+8DCF00D8	LW	T7,00D8 (T6)	;T7=player death attrib
+15E00007	BNEZ	T7,7F08CFAC	;skip if player dead or dying
+00001025	OR	V0,R0,R0
+8DCF0870	LW	T7,0870 (T6)	;T7=right weapon
+508F0001	BEQL	A0,T7,+1
+24420001	ADDIU	V0,V0,0001
+8DCF0C18	LW	T7,0C18 (T6)	;T7=right weapon
+508F0001	BEQL	A0,T7,+1
+24420001	ADDIU	V0,V0,0001
+//7F08CFAC:
+03E00008	JR	RA
+00000000	NOP
+00000000	NOP
+00000000	NOP
+
+CALLED:
+	B8908	7F083DD8	sets inhibitor to switch from flag...
+	F4574	7F0BFA44	funny enough, the only one to use this routine!
+
+//7F050AA0:	855D0	if flag held, disable BA pickup
+AFA20058	SW	V0,0058 (SP)
+0FC230C5	*JAL	7F08C314	;V0=TRUE if flag in inventory!
+24040058	*ADDIU	A0,R0,0058
+8FA30058	LW	V1,0058 (SP)
+AFA2005C	*SW	V0,005C (SP)	;SP+5C=1: BA uncollectable
+00000000	*NOP
+00000000	*NOP
+
+You know, I don't think we even need this routine any more ;*)
+//7F083DAC:	B88DC	test if MP
+ADDIU	T2,R0,0001
+JAL	7F09A464	;V0=#players
+SW	T2,0074 (SP)
+SLTIU	AT,V0,0002
+BNEL	AT,R0,7F083DF0
+LW	T3,0074 (SP)
+//7F083DC4:	B88F4	test if flag tag
+JAL	7F014758	;V0=scenario
+NOP
+ADDIU	AT,R0,0002
+BNEL	V0,AT,7F083DF0	;skip if not flag tag
+LW	T3,0074 (SP)
+//7F083DD8:	B8908	disable inventory if flag in possession
+JAL	7F08CF80	;return V0=1 if holding flag
+NOP
+BEQL	V0,R0,7F083DF0
+LW	T3,0074 (SP)
+SW	R0,0074 (SP)	;trash SP+0x74 if flag held (disable inventory)
+LW	T3,0074 (SP)	T3=1	;Keep Me!
+
+reduced to:
+240B0001	*ADDIU	T3,R0,0001
+AFAB0074	*SW	T3,0074 (SP)	;unnecessary (probably)
+
++_+
+
+//7F0BFA30:	F4560	this *was* used to force the flag out when owned
+0FC051D6	JAL	7F014758	;V0=scenario
+E4460038	SWC1	F6,0038 (V0)
+24010002	ADDIU	AT,R0,0002
+14410024	BNE	V0,AT,7F0BFAD0	;skip if not flag tag
+24070001	*ADDIU	A3,R0,0001	;V1=unarmed
+//7F0BFA44:	F4574	test if you have the item in inventory
+0FC230C5	*JAL	7F08C314	;V0=TRUE if flag in inventory!
+24040058	*ADDIU	A0,R0,0058
+1040001C	*BEQ	V0,R0,7F0BFAC0	;branch if they don't have the item available
+00000000	*NOP
+//7F0BFA54:	F4584	replace unarmed with the flag
+0FC17674	*JAL	7F05D9D0	;ret V0=right hand weapon
+24040000	*ADDIU	A0,R0,0000	;V0=right hand
+14470003	*BNE	V0,A3,+3
+24050058	*ADDIU	A1,R0,0058
+0FC17645	*JAL	7F05D914	;draw weapon A1 in hand A0
+24040000	*ADDIU	A0,R0,0000
+0FC17674	*JAL	7F05D9D0	;ret V0=right hand weapon
+24040001	*ADDIU	A0,R0,0001	;V0=left hand
+14470003	*BNE	V0,A3,+3
+24050058	*ADDIU	A1,R0,0058
+0FC17645	*JAL	7F05D914	;draw weapon A1 in hand A0
+24040001	*ADDIU	A0,R0,0001
+//7F0BFA84:	F45B4	test if you have a flag...
+0FC233E0	JAL	7F08CF80	;V0!=0 if weapon A0 drawn
+24040058	*ADDIU	A0,R0,0058	;A0=58: flag
+1040000C	BEQ	V0,R0,7F0BFAC0	;skip if flag not held
+3C038008	*LUI	V1,8008
+//7F0BFA94:	F45C4	advance flag time and set flag ownership
+8C63A0B4	*LW	V1,A0B4 (V1)	;V0=current player stat pointer
+3C0B8005	LUI	T3,8005
+8D6B8374	LW	T3,8374 (T3)	;T3=1 if not paused (used to advance flag time)
+8C6A0060	*LW	T2,0060 (V1)	;T2=flag held time
+55600001	*BNEZL	T3,+1
+01425021	*ADDU	T2,T2,V0
+AC6A0060	*SW	T2,0060 (V1)	;advance flag held time by number currently drawn
+906D0069	*LBU	T5,0069 (V1)
+35AD0001	*ORI	T5,T5,0001
+10000015	BEQ	R0,R0,7F0BFB10
+A06D0069	*SB	T5,0069 (V1)	;1->flag byte
+//7F0BFAC0:	F45F0	flag not held...
+
+half of that isn't necessary now!
+//7F0BFA30:	F4560	this *was* used to force the flag out when owned
+0FC051D6	JAL	7F014758	;V0=scenario
+E4460038	SWC1	F6,0038 (V0)
+24010002	ADDIU	AT,R0,0002
+14410024	BNE	V0,AT,7F0BFAD0	;skip if not flag tag
+24070001	*ADDIU	A3,R0,0001	;V1=unarmed
+//7F0BFA44:	F4574	test if you have a flag...
+0FC233E0	JAL	7F08CF80	;V0!=0 if weapon A0 drawn
+24040058	*ADDIU	A0,R0,0058	;A0=58: flag
+3C038008	*LUI	V1,8008
+8C63A0B4	*LW	V1,A0B4 (V1)	;V0=current player stat pointer
+906D0069	*LBU	T5,0069 (V1)
+50400008	*BEQL	V0,R0,7F0BFA7C	;skip if flag not held
+31ADFFFE	*ANDI	T5,T5,FFEF	;blank the flag byte
+//7F0BFA60:	F4590	advance flag time and set flag ownership
+3C0B8005	LUI	T3,8005
+8D6B8374	LW	T3,8374 (T3)	;T3=1 if not paused (used to advance flag time)
+8C6A0060	*LW	T2,0060 (V1)	;T2=flag held time
+55600001	*BNEZL	T3,+1
+01425021	*ADDU	T2,T2,V0
+AC6A0060	*SW	T2,0060 (V1)	;advance flag held time by number currently drawn
+35AD0001	*ORI	T5,T5,0010
+10000015	BEQ	R0,R0,7F0BFB10
+A06D0069	*SB	T5,0069 (V1)	;1->flag byte
+//7F0BFA84:	F45B4	
+
+//7F0BFAD0	F4600	set item ownership flag for MwtGX
+0FC051D6	JAL	7F014758
+00000000	NOP
+24010003	ADDIU	AT,R0,0003
+1441000C	*BNE	V0,AT,7F0BFB10	;branch if not scenario 3: MwtGX
+//7F0BFAE4		test if own GX
+3C088008	-LUI	T0,8008
+8D08A0B4	-LW	T0,A0B4 (T0)	;T0=p->stats
+91190069	*LBU	T9,0069 (T0)	;T9=scenario flags
+0FC13F66	-JAL	7F04FD98
+240400F7	-ADDIU	A0,R0,00F7
+50400002	*BEQL	V0,R0,+2	;branch if you don't have it or aren't alive
+3339FFFE	*ANDI	T9,T9,FFDF	;untoggle flag
+37390001	*ORI	T9,T9,0020	;toggle flag
+A1190069	*SB	T9,0069 (T0)
+//7F0BFB08		set GX ownership flag
+	*NOP
+	*NOP
+	*NOP
+//7F0BFB10		return
+8FBF0014	LW	RA,0014 (SP)
+27BD0030	ADDIU	SP,SP,0030
+03E00008	JR	RA
+00000000	NOP
+
+
+
+7F05D6FC breaks when you advance the thingy - tests for <21 on right+left weapon
+followed by 7F08C8BC - skips a bunch of stuff if a gadget
+
+7F08C4D4 breaks on collection - ret V0=1 if not a gadget
+
+7F08C424 breaks when drawn, I think...
+followed by 7F05DBF0 - saves value as previous right weapon
+
+quite possibly only need a few of these... C424
+
+=_=
+
+So it begins...  Multiplayer selectable gadgets
+8004915C	1	solo mode # weapons	(normally 0x21)
+8004915D	1	mulitplayer mode # weapons	(normally 0x59)
+8004915E	1	RESERVED - cheats mode # weapons, technically invalid
+
+
+7F002928	37458	0FC00A4A	V0=#weapons; uses mode to determine offset for #weapons
+	fries: AT
+3C018003	LUI	AT,8003
+8C21A8F0	LW	AT,A8F0 (AT)
+3C028005	LUI	V0,8005
+00221021	ADDU	V0,AT,V0
+03E00008	JR	RA
+9042915C	LBU	V0,915C (V0)
+potentially:
+	37458
+	45120
+	84328
+
+
+//7F08C8AC:	C13DC	a later branch jumps here
+24010001	ADDIU	AT,R0,0001
+14410016	*BNE	V0,AT,7F08C90C	;branch if not a right-handed weapon
+8E040004	-LW	A0,0004 (S0)
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+00000000	*NOP
+0082082A	*SLT	AT,A0,V0
+10200028	BEQ	AT,R0,7F08C968	;if >0x20 - gadget detected!
+0224082A	SLT	AT,S1,A0
+10200026	BEQ	AT,R0,7F08C968	;branch if next weapon < cur?
+00000000	NOP
+//7F08C8D4:	C1404	right weapon testing
+52400008	BEQL	S2,R0,7F08C8F8
+00808825	OR	S1,A0,R0	;S1=right weapon
+0FC17817	JAL	7F05E05C	;TRUE if ammo for right weapon
+00000000	NOP
+10400020	BEQ	V0,R0,7F08C968	;branch if out!
+3C038008	LUI	V1,8008
+8C63A0B0	LW	V1,A0B0 (V1)	;V1=p->BONDdata
+8E040004	LW	A0,0004 (S0)	;A0=right weapon
+00808825	OR	S1,A0,R0	;S1=right weapon
+//7F08C8F8:		
+10000027	BEQ	R0,R0,7F08C998
+00009825	OR	S3,R0,R0	;S3=left weapon
+//7F08C900:	C1430	double weapon set
+00000000	NOP
+00000000	NOP
+00000000	NOP
+24010003	ADDIU	AT,R0,0003
+14410015	BNE	V0,AT,7F08C968	;branch if not doubles!
+0224082A	-SLT	AT,S1,A0
+14200005	BNEZ	AT,7F08C930
+8E180008	-LW	T8,0008 (S0)	;T8=left weapon
+16240011	BNE	S1,A0,7F08C968
+0278082A	-SLT	AT,S3,T8
+1020000F	BEQ	AT,R0,7F08C968
+00000000	NOP
+//7F08C930:	C1460	
+12400008	BEQ	S2,R0,7F08C954
+00000000	NOP
+0FC17817	JAL	7F05E05C	;TRUE if ammo for right weapon
+00000000	NOP
+14400004	BNEZ	V0,7F08C954	;branch if you're out!
+00000000	NOP
+0FC17817	JAL	7F05E05C	;TRUE if ammo for left weapon
+8E040008	LW	A0,0008 (S0)	;A0=left weapon
+10400005	BEQ	V0,R0,7F08C968	;branch if you're out!
+//7F08C954:	C1484	correct your V1...
+3C038008	LUI	V1,8008
+8E110004	LW	S1,0004 (S0)	;S1=right weapon
+8E130008	LW	S3,0008 (S0)	;S3=left weapon
+1000000D	BEQ	R0,R0,7F08C998
+8C63A0B0	LW	V1,A0B0 (V1)	;V1=p->BONDdata
+//7F08C968:	
+...
+//7F08C990:		loop backward
+BNEL	S0,R0,7F08C8AC
+LW	V0,0000 (S0)
+
+-_-
+
+7F05D6D0:	92200	revert to weapon when advancing from gadget
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0014	SW	RA,0014 (SP)
+00002025	OR	A0,R0,R0	;A0=0: right hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0; doesn't touch A1...
+24050001	ADDIU	A1,R0,0001	;A1=mode (normal? previous?)
+AFA20024	SW	V0,0024 (SP)	;SP+20=next left weapon
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+AFA20020	SW	V0,0020 (SP)	;SP+24=next right weapon
+8FAE0020	*LW	T6,0020 (SP)	;T6=next left weapon
+8FAF0024	*LW	T7,0024 (SP)	;T6=next right weapon
+01E2082A	*SLTI	AT,T7,V0
+10200003	BEQ	AT,R0,7F05D714	;branch if right weapon a gadget
+01C2082A	*SLTI	AT,T6,V0
+14200008	BNEZ	AT,7F05D730	;branch if left weapon a gadget
+27A40024	ADDIU	A0,SP,0024	;A0=p->SP+24: pointer to next right weapon #
+//7F05D714:		right-hand gadget
+3C028008	LUI	V0,8008
+8C42A0B0	LW	V0,A0B0 (V0)	;V0=p->BONDdata
+8C4F0878	LW	T7,0878 (V0)	;T7=previous right weapon
+AFAF0024	SW	T7,0024 (SP)	;SP+24=previous right weapon
+8C580C20	LW	T8,0C20 (V0)	;T8=previous left weapon
+10000004	BEQ	R0,R0,7F05D73C
+AFB80020	SW	T8,0020 (SP)	;SP+20=previous left weapon
+//7F05D730:		left-hand gadget
+27A50020	ADDIU	A1,SP,0020	;A1=p->SP+20: p->left weapon
+0FC2321B	JAL	7F08C86C	;draw next weapon in cycle (I think...)
+00003025	OR	A2,R0,R0	;A2=0
+//7F05D73C:	set new weapons
+00002025	OR	A0,R0,R0	;A0=0: right hand
+8FA50024	LW	A1,0024 (SP)	;A1=right weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+24060001	ADDIU	A2,R0,0001	;A2=1 (mode?)
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+8FA50020	LW	A1,0020 (SP)	;A1=left weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+24060001	ADDIU	A2,R0,0001	;A2=1
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+
+
+7F05D768:	92298	same as above but backward through list
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0014	SW	RA,0014 (SP)
+00002025	OR	A0,R0,R0	;A0=0: right hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+2405FFFF	ADDIU	A1,R0,FFFF	;A1=mode (normal? previous?)
+AFA20024	SW	V0,0024 (SP)	;SP+24=next right weapon
+0FC1750D	*JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24040001	*ADDIU	A0,R0,0001	;A0=1: left hand
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+AFA20020	-SW	V0,0020 (SP)	;SP+20=next left weapon
+8FAF0020	*LW	T7,0020 (SP)	;T6=next right weapon
+8FAE0024	LW	T6,0024 (SP)	;T6=next right weapon
+01C2082A	*SLTI	AT,T6,V0
+10200003	BEQ	AT,R0,7F05D7AC	;branch if right weapon a gadget
+01E2082A	*SLTI	AT,T7,V0
+14200008	BNEZ	AT,7F05D7C8	;branch if left weapon a gadget
+27A40024	ADDIU	A0,SP,0024	;A0=p->SP+24: pointer to next right weapon #
+//7F05D7AC	922DC	right-hand gadget
+3C028008	LUI	V0,8008
+8C42A0B0	LW	V0,A0B0 (V0)	;V0=p->BONDdata
+8C4F0878	LW	T7,0878 (V0)	;T7=previous right weapon
+AFAF0024	SW	T7,0024 (SP)	;SP+24=previous right weapon
+8C580C20	LW	T8,0C20 (V0)	;T8=previous left weapon
+10000004	BEQ	R0,R0,7F05D7D4
+AFB80020	SW	T8,0020 (SP)	;SP+20=previous left weapon
+//7F05D7C8	922F8	left-hand gadget
+27A50020	ADDIU	A1,SP,0020	;A1=p->SP+20: p->left weapon
+0FC232C4	JAL	7F08CB10	;draw next weapon in cycle (I think...)
+00003025	OR	A2,R0,R0	;A2=0
+//7F05D7D4	92304	set new weapons
+00002025	OR	A0,R0,R0	;A0=0: right hand
+8FA50024	LW	A1,0024 (SP)	;A1=right weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+2406FFFF	ADDIU	A2,R0,FFFF	;A2=1 (mode?)
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+8FA50020	LW	A1,0020 (SP)	;A1=left weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+2406FFFF	ADDIU	A2,R0,FFFF	;A2=1
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0028	-ADDIU	SP,SP,0028
+
+7F05D800:	92330	another one, again not certain the use of it
+27BDFFD8	ADDIU	SP,SP,FFD0
+AFBF0014	SW	RA,0014 (SP)
+00002025	OR	A0,R0,R0	;A0=0: right hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24050001	ADDIU	A1,R0,0001	;A1=mode (normal? previous?)
+AFA2002C	SW	V0,002C (SP)	;SP+2C=next right weapon
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+AFA20024	-SW	V0,0024 (SP)	;SP+24=next right weapon
+00023025	*OR	A2,V0,R0
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24040001	-ADDIU	A0,R0,0001	;A0=1: left hand
+8FAE0024	LW	T6,0024 (SP)	;T6=next right weapon
+00401825	OR	V1,V0,R0
+AFA20020	SW	V0,0020 (SP)	;SP+20=next left weapon
+01C6082A	*SLT	AT,T6,A2
+10200003	BEQ	AT,R0,7F05D848	;branch if right weapon a gadget
+0046082A	*SLT	AT,V0,A2
+14200008	BNEZ	AT,7F05D864	;branch if left weapon a gadget
+8FB90024	LW	T9,0024 (SP)	;T6=next right weapon
+//7F05D848		right-hand gadget
+3C028008	LUI	V0,8008
+8C42A0B0	LW	V0,A0B0 (V0)	;V0=p->BONDdata
+8C4F0878	LW	T7,0878 (V0)	;T7=previous right weapon
+AFAF0024	SW	T7,0024 (SP)	;SP+24=previous right weapon
+8C580C20	LW	T8,0C20 (V0)	;T8=previous left weapon
+10000004	BEQ	R0,R0,7F05D8E4
+AFB80020	SW	T8,0020 (SP)	;SP+20=previous left weapon
+...
+//7F05D8E4	
+	OR	A0,R0,R0
+	LW	A1,0024 (SP)
+	JAL	7F05D4E0
+	ADDIU	A2,R0,0001
+	ADDIU	A0,R0,0001
+	LW	A1,0020 (SP)
+	JAL	7F05D4E0
+	ADDIU	A2,R0,0001
+	LW	RA,0014 (SP)
+	JR	RA
+	-ADDIU	SP,SP,0030
+
+=_=
+
+7F08C488:	C0FB8	collect weapon of type - returns V0=1 if gadget or all guns in effect
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+0FC230C5	JAL	7F08C314	;TRUE if item A0 is in inventory
+AFA40018	SW	A0,0018 (SP)	;SP+18=item#
+54400014	*BNEL	V0,R0,7F08C4FC	;if no ammo, return
+00001025	OR	V0,R0,R0	;V0=0: return FALSE
+...
+//7F08C4C4	C0FF4	
+3C188008	LUI	T8,8008
+8F18A0B0	LW	T8,A0B0 (T8)	;T8=p->BONDdata
+8FA80018	LW	T0,0018 (SP)	;T0=weapon type
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+8F1911EC	LW	T9,11EC (T8)	;T9=all guns flag
+0102082A	*SLT	AT,T0,V0	;TRUE if weapon, not gadget
+13200003	BEQ	T9,R0,7F08C500	;branch if all guns in effect
+24020001	*ADDIU	V0,R0,0001
+54200001	BNEL	AT,R0,7F08C500	;branch if not a gadget
+00001025	OR	V0,R0,R0
+//7F08C4EC	C101C	return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+00000000	NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	NOP
+//7F08C50C	
+
+*_*
+
+7F08C40C	C0F3C	
+3C0E8008	LUI	T6,8008
+8DCEA0B0	LW	T6,A0B0 (T6)	;T6=p->BONDdata
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+AFA5001C	SW	A1,001C (SP)	;SP+1C=A1: hand
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+8DCF11EC	-LW	T7,11EC (T6)	;T7=all guns flag
+11E00011	BEQ	T7,R0,7F08C470	;branch if all guns not set
+0082082A	*SLT	AT,A0,V0	
+1020000F	BEQ	AT,R0,7F08C470	;branch if weapon# is gadget
+00000000	NOP
+1485000D	BNE	A0,A1,7F08C470	;branch if hand != weapon?
+00000000	NOP
+0FC26919	JAL	7F09A464	;ret V0=# players
+AFA40018	SW	A0,0018 (SP)	;SP+18=A0: right weapon
+24010001	ADDIU	AT,R0,0001
+14410008	BNE	V0,AT,7F08C470	;branch if multiplayer
+8FA40018	LW	A0,0018 (SP)
+//7F08C454	solo - determine if capable of doubles?
+3C050010	LUI	A1,0010
+0FC1782D	JAL	7F05E0B4	;TRUE if mask 00100000 is set in weapon A0's stats
+AFA40018	SW	A0,0018 (SP)
+10400003	BEQ	V0,R0,7F08C470	;branch if it wasn't set
+8FA40018	LW	A0,0018 (SP)
+10000003	BEQ	R0,R0,7F08C478	;return TRUE!
+24020001	ADDIU	V0,R0,0001
+//7F08C470	multiplayer and default
+0FC230E7	JAL	7F08C39C	;TRUE if item A0 for hand A1 in inventory
+8FA5001C	LW	A1,001C (SP)
+//7F08C478	
+8FBF0014	LW	RA,0014 (SP)
+27BD0018	ADDIU	SP,SP,0018
+03E00008	JR	RA
+00000000	NOP
+
+
+
+/_/
+
+7F05DB54	92684
+//7F05DBE8	92718
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+00074080	SLL	T0,A3,0x2	;T0=ammo type->offset
+18A00004	BLEZ	A1,7F05DC04	;branch if no ammo for weapon
+00681821	*ADDU	V1,V1,T0	;V0=BONDdata+ammo type offset
+8C691130	*LW	T1,1130 (V1)	;T1=ammo total for weapon
+01255021	ADDU	T2,T1,A1	;T2=ammo total + clip ammo
+AC6A1130	*SW	T2,1130 (V1)	;T2=updated value
+//7F05DC04	92734
+00C2082A	*SLT	AT,A2,V0	;TRUE if original weapon not a gadget
+10200003	*BEQ	AT,R0,7F05DC18	;branch if a gadget
+8E2B0000	LW	T3,0000 (S1)	;T3=p->BONDdata
+01706021	ADDU	T4,T3,S0	;T4=BONDdata+handoffset
+AD860878	SW	A2,0878 (T4)	;save prev. weapon to BONDdata+878+hand
+//7F05DC18:
+
+flip through inventory backward 
+//7F08CB68	C1698	right-handed weapon
+0FC00A4A	*JAL	7F002928	;ret V0=#weapons before gadgets
+8E040004	-LW	A0,0004 (S0)	;A0=right weapon
+0082082A	*SLT	AT,A0,V0	;TRUE if original weapon not a gadget
+1020002D	-BEQ	AT,R0,7F08CC2C	;branch if a gadget
+0091082A	SLT	AT,A0,S1
+14200005	BNEZ	AT,7F08CB94	;branch if weapon code < cur.
+00000000	NOP
+16240029	BNE	S1,A0,7F08CC2C	;branch if not same item
+00000000	NOP
+1A600027	BLEZ	S3,7F08CC2C	;branch if left weapon invalid
+00000000	NOP
+
+
+left to do...
+7F050440	84F70
+7F05D834	92364	these two are used when using the last of an item
+7F05D83C	9236C	auto-advance, in other words ;*)
+7F0665B4	9B0E4
+7F0765F8	AB128	not related
+7F076604	AB134	not related and unused, thank you very much
+7F08C3E0	C0F10	tests availability if a gadget when drawn
+		all guns only!
+		actually, stuff passes 11 to this, so probably not
+7F08D0DC	C1C0C	-used when drawing weapon
+7F08D1DC	C1D0C	drawing a weapon under all guns
+		all guns
+7F09D018	D1B48
+7F0AEBB4	E36E4
+7F0AEC28	E3758
+
+uses of all guns flag...
+7F08C998	further along in advance routine
+	7F08CA30-7F08CAE8	MP+solo(single) all guns handler!
+	if you set the ADDIU x,y,0021's to 59, you've just made all gadgets available too
+	so, would need some conditional stuff to allow drawing items outside the inventory range...
+	if you move the solo branches further in the binary you can do MP-specific stuff
+	could test S0 versus 20
+		if true, see if A0 is larger
+			if also true, feed it that!
+//7F08C9B4	C14E4
+5441001D	BNEL	V0,AT,7F08CA2C	;branch if multiplayer
+8FAF0028	LW	T7,0028 (SP)	;note A0 still equals the weapon#
+...
+//7F08C9CC	C14FC
+5040001D	BEQL	V0,R0,7F08CA44
+8FAF0028	LW	T7,0028 (SP)
+...
+//7F08C9E8	C1518
+50200016	BEQL	AT,R0,7F08CA44
+8FAF0028	LW	T7,0028 (SP)
+...
+//7F08CA00	C1530
+50400010	BEQL	V0,R0,7F08CA44
+8FAF0028	LW	T7,0028 (SP)
+...
+//7F08CA18	C1548
+5020000A	BEQL	AT,R0,7F08CA44
+8FAF0028	LW	T7,0028 (SP)
+...	
+//7F08CA2C	C155C	new MP-only code
+2A010020	*SLTI	AT,S0,0020
+14200003	*BNE	AT,R0,+3	;branch if wep# < tank
+0204082A	*SLT	AT,S0,A0
+1420002A	*BNE	AT,R0,7F08CAE4	;branch if wep# < nextwep#
+00000000	*NOP
+//7F08CA40	C1570	all guns - single weapon drawn
+8FAF0028	LW	T7,0028 (SP)	;T7=p->right weapon# on stack
+24030021	ADDIU	V1,R0,0021	;V1=all-guns activated range
+8DF80000	LW	T8,0000 (T7)	;T8=right weapon
+16380003	*BNE	S1,T8,7F08CA5C	;branch if it isn't the same as the next weapon in inventory
+8FB9002C	-LW	T9,002C (SP)	;T9=p->left weapon# on stack
+8F280000	-LW	T0,0000 (T9)	;T0=left weapon
+16680022	*BNE	S3,T0,7F08CAE4	;branch if it isn't the same as the next left weapon
+//7F08CA5C	C158C	no more divison to ensure proper rollaround
+26100001	*ADDIU	S0,S0,0001	;T1=next weapon#
+0203082A	*SLT	AT,S0,V1
+50200001	*BEQL	AT,R0,+1
+00008025	*OR	S0,R0,R0	;roll around if 
+260A0001	-ADDIU	T2,S0,0001	;T2=next.wep
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	NOP
+00000000	*NOP
+//7F08CA84
+...
+//7F08CADC	C160C
+5611FFE0	*BNEL	S0,S1,7F08CA60
+26090001	*ADDIU	S0,S0,0001	;T1=next weapon#
+
+
+This is probably the worst.  Backtrack needs rewriting
+  Should decrement value, test against limit and inventory...
+  S0=r.weapon, A0 & S1=next according to inventory
+
+//7F08CC7C	C17AC	right-handed weapon
+2610FFFF	*ADDIU	S0,S0,FFFF	;S0=wep#-1
+5A000001	*BLEZL	S0,+1
+24100020	*ADDIU	S0,R0,0020
+0FC26919	*JAL	7F09A464	;V0=#players
+0203082B	*SLTU	AT,S0,V1	;TRUE if wep#-1 < 21
+28420002	*SLTI	V0,V0,0002
+14400013	*BNEZ	V0,+13	;branch if solo
+//7F08CC98		handle weird inventory during all guns multi
+00000000	*NOP
+50200001	*BEQL	AT,R0,+1	;if wep#-1 is still greater than 20, set to 20 for next thing to work
+24100020	*ADDIU	S0,R0,0020
+0211082A	*SLT	AT,S0,S1	;TRUE if cur < next
+14200066	*BNEZ	AT,7F08CE44
+00000000	*NOP
+//7F08CCB0
+*NOP
+NOP
+*NOP
+*NOP
+*NOP
+NOP
+*NOP
+//7F08CCCC
+*NOP
+*NOP
+*NOP
+*NOP
+NOP
+*NOP
+//7F08CCE4	C1814
+BNE	S0,S1,7F08CD60
+NOP
+
+
+7F08CD60 reroutes and handles multi-only when wep!=prevwep in inventory
+//7F08CDC8
+	OR	S1,S0,R0	;S1=S0: prevwep=wep
+	BEQ	R0,R0,7F08CE44
+	OR	S3,R0,R0	;S3=NULL left weapon, though already set
+it would work fine with this...
+	
+*.*
+	
+This definately is the worst!!	 jumps not allowed (yet)
+...
+//7F08D0C8	C1BF8	proceeding from weapon w/o ammo
+55420009	BNEL	T2,V0,7F08D0F0	;branch if not a right-handed weapon
+8CA5000C	LW	A1,000C (A1)	;doesn't increment V1...
+50800006	BEQL	A0,R0,7F08D0EC	;branch if all guns is not set
+24630001	ADDIU	V1,V1,0001
+8CAD0004	LW	T5,0004 (A1)	;T5=right weapon
+29A10059	SLTI	AT,T5,0021	;max entries to test
+54200003	BNEL	AT,R0,7F08D0F0	;branch if not a gadget
+8CA5000C	LW	A1,000C (A1)	;doesn't increment V1...
+//7F08D0E8	C1C18	various things branch here, so it can't move easily
+24630001	ADDIU	V1,V1,0001	;V1=counter?  everything likelies here
+8CA5000C	LW	A1,000C (A1)	;A1=p->next item in inventory
+10A60003	BEQ	A1,A2,7F08D100	;
+00000000	NOP
+54A0FFDD	BNEL	A1,R0,7F08D070
+8CA20000	LW	V0,0000 (A1)
+//7F08D100	C1C30	kill at EOL
+03E00008	JR	RA
+00601025	OR	V0,V1,R0
+
+oh heck... it was a glitch in the original, quite honestly
+
+~.~
+
+rewriting cheat menu to add in Dr. No, Line Mode, and more
+Dr. No		stage: complete Facility
+Line Mode	stage: 
+
+no need for a TLB...  Should be able to get away with one byte
+21990+0x30B10:
+C0	type of entry:
+	3	bitflag#
+	0-2	difficulty for stage
+3F	cheat bitflag# (0-17) or stage#
+value FF has a special meaning - cheat does not appear in menu
+
+MODIFIED VERSION
+7F009848:	3E378	0FC02612	detect if particular cheat is available in menu
+	accepts: A0=cheat#
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+2484FFFF	*ADDIU	A0,A0,FFFF	//T6=current cheat index-1
+2C81004A	*SLTIU	AT,A0,004A	//TRUE if not a valid cheat (0 or 4A+)
+50200016	BEQL	AT,R0,+return
+00001025	OR	V0,R0,R0
+//7F009860:	get cheat flag and folder#
+3C018005	LUI	AT,8005
+00240821	*ADDU	AT,AT,A0
+902E18A0	*LBU	T6,18A0 (AT)	//T6=800518A0+cheat# (test if cheat # available)
+2DC400FF	SLTIU	A0,T6,00FF	;branch if a stupidly ridiculous entry
+50800010	BEQL	A0,R0,+return
+00001025	OR	V0,R0,R0
+3C048003	*LUI	A0,8003
+8C84A8E8	*LW	A0,A8E8 (A0)	;A0=folder#
+//7F009874:	tear apart the entry
+000E3182	SRL	A2,T6,0x6	;T6>>6: bits C0
+2CC50003	SLTIU	A1,A2,0003	;branch if difficulty 0-2	
+14A00008	BNEZ	A1,+stages
+31C5003F	ANDI	A1,T6,003F
+//7F009888:	cheats
+0FC07771	JAL	7F01DDC4	;V0=p->eeprom folder A0
+AFA50010	SW	A1,0010 (SP)	;stash the cheat#
+00022025	OR	A0,V0,R0
+0FC07748	JAL	7F01DD20	;V0=1 if invincible unlocked
+8FA50010	LW	A1,0010 (SP)	;A1=cheat#
+10000003	BEQ	R0,R0,+return
+00000000	NOP
+//7F0098A4:	stages
+0FC07A7D	JAL	7F01E9F4
+00000000	NOP
+//7F0098B4:	return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+
+	
+7F009874:	default for non-menu cheats
+7F00987C:	[A1=1]	return V0=1 if invincible unlocked
+7F00989C:	[A1=13]	return V0=1 if All Guns unlocked
+7F0098BC:	[A1=6]	return V0=1 if No Radar Multi unlocked
+7F0098DC:	[A1=9]	return V0=1 if Fast Animation unlocked
+7F0098FC:	[A1=A]	return V0=1 if Bond Invisible unlocked
+7F00991C:	[A1=F]	return V0=1 if Infinite Ammo unlocked
+7F00993C:	[A1=2]	return V0=1 if DK Mode unlocked
+7F00995C:	[A1=7]	return V0=1 if Tiny Bond unlocked
+7F00997C:	[A1=C]	return V0=1 if Slow Animation unlocked
+7F00999C:	[A1=0]	return V0=1 if Paintball Mode unlocked
+7F0099BC:	[A1=D]	return V0=1 if Silver PP7 unlocked
+7F0099DC:	[A1=11]	return V0=1 if Gold PP7 unlocked
+7F0099FC:	[A1=B]	return V0=1 if Enemy Rockets unlocked
+7F009A1C:	[A1=4]	return V0=1 if 2x Rocket L. unlocked
+7F009A3C:	[A1=3]	return V0=1 if 2x Grenade L. unlocked
+7F009A5C:	[A1=10]	return V0=1 if 2x RC-P90 unlocked
+7F009A7C:	[A1=8]	return V0=1 if 2x Throwing Knife unlocked
+7F009A9C:	[A1=E]	return V0=1 if 2x Hunting Knife unlocked
+7F009ABC:	[A1=12]	return V0=1 if 2x Laser unlocked
+7F009ADC:	[A1=5]	return V0=1 if Turbo Mode unlocked
+7F009AFC:	3E62C	return V0=1 if  unlocked (Cradle completed)
+7F009B10:	3E640	return V0=1 if  unlocked	(Aztec completed)
+7F009B24:	3E654	return V0=1 if  unlocked	(Egypt completed)
+7F009B38:	3E668	sit and spin!
+7F009B44:	3E674	return
+
+
+7F01E9F4:	53524	0FC07A7D	V0=TRUE is stage A1 completed on difficulty A2 in folder A0
+	accepts: A0=eeprom folder#, A1=stage#, A2=difficulty (0-2)
+//7F01E9F4:	if 007 (or multi), set to 00 agent
+2CCE0003	+SLTIU	T6,A2,0003
+51C00001	+BEQL	T6,R0,+1
+24060002	+ADDIU	A2,R0,0002
+//7F01EA00:	53530	0FC07A80	start of actual routine
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+AFA40018	SW	A0,0018 (SP)	;SP+18=A0: eeprom folder#
+AFA50010	*SW	A1,0010 (SP)	;SP+10=A1: stage#
+AFA6000C	*SW	A2,000C (SP)	;SP+C= A2: difficulty
+//7F01EA14:	determine if stage A1 unlocked on difficulty
+24C20001	*ADDIU	V0,A2,0001	;V0=difficulty+1
+AFA2000C	*SW	V0,000C (SP)	;store next difficulty to test
+0FC078B0	JAL	7F01E2C0	;V0=TRUE if stage A1 complete on difficulty A2 in eeprom folder A0
+8FA50010	*LW	A1,0010 (SP)	;A1=stage#
+//7F01EA24:	return TRUE if it was a match
+384E0003	XORI	T6,V0,0003	;T6=V0^3: test if this was the highest difficulty completed
+2DC20001	SLTIU	V0,T6,0001	;V0=TRUE if highest difficulty completed
+14400003	BNEZ	V0,7F01EA44	;return TRUE if this was the highest difficulty unlocked
+8FA6000C	*LW	A2,000C (SP)	;A2=current difficulty
+//7F01EA34:	loop for each remaining difficulty
+2CCE0003	*SLTIU	T6,A2,0003	;only times for agent, secret, and 00 are saved
+15C0FFF7	*BNEZ	T6,7F01EA1C
+8FA40018	*LW	A0,0018 (SP)
+//7F01EA40:	return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+
+This is used in the above routines, and also in these:
+7F01EAD0:	53600	0FC07AB4	V0= TRUE if Cradle completed on any folder
+7F01EB20:	53650	0FC07AC8	V0= TRUE if Aztec completed on secret or 00 agent on any folder
+7F01EB70:	536A0	0FC07ADC	V0= TRUE if Egypt completed on 00 agent on any folder
+
+used at: (respectively)
+	4D650
+	4D670, 	4DBA4, 	4DBE4, 	4DC24, 	4DC88
+	4D690, 	4DCEC, 	4DD50, 	
+
+
+//7F01EAD0:	53600	0FC07AB4	V0= TRUE if Cradle completed on any folder
+24050011	ADDIU	A1,R0,0011
+10000006	BEQ	R0,R0,+6
+00003025	OR	A2,R0,R0
+//7F01EADC:	5360C	0FC07AB7	V0= TRUE if Aztec completed on secret or 00 agent on any folder
+24050012	ADDIU	A1,R0,0012
+10000003	BEQ	R0,R0,+3
+24060001	ADDIU	A2,R0,0001
+//7F01EAE8:	53618	0FC07ABA	V0= TRUE if Egypt completed on 00 agent on any folder
+24050013	ADDIU	A1,R0,0013
+24060002	ADDIU	A2,R0,0002
+//7F01EAF0:	53620	0FC07ABC	V0= TRUE if stage A1 completed on difficulties A2 and above
+27BDFFE0	ADDIU	SP,SP,FFE0
+AFBF001C	SW	RA,001C (SP)
+AFB00018	SW	S0,0018 (SP)
+AFB10014	SW	S1,0014 (SP)
+AFB20010	SW	S2,0010 (SP)
+00008025	OR	S0,R0,R0	;S0=0: init folder#
+00058825	*OR	S1,A1,R0	;S1=A1:	stage#
+00069025	*OR	S2,A2,R0	;S2=S2: difficulties to test
+//7F01EB8C:	loopus per folder
+00123025	*OR	A2,S2,R0
+00112825	*OR	A1,S1,R0
+0FC07A7D	JAL	7F01E9F4	;V0=TRUE is stage A1 completed on difficulties A2 and above in folder A0
+00102025	OR	A0,S0,R0	;A0=current folder
+14400003	*BNE	V0,R0,+return	;if unlocked, return
+2E040004	*SLTIU	A0,S0,0004
+1480FFF9	*BNEZ	A0,-loopus	;loopus for folders 0-3
+26100001	ADDIU	S0,S0,0001	;S0++: folder#++
+//7F01EBAC:	return
+8FBF001C	LW	RA,001C (SP)
+8FB00018	LW	S0,0018 (SP)
+8FB10014	LW	S1,0014 (SP)
+8FB20010	LW	S2,0010 (SP)
+03E00008	JR	RA
+27BD0020	ADDIU	SP,SP,0020
+
+
+~.~
+
+94163	set timed mine MP timer to 1.5 seconds
+
+7F05F648	94178	briefcase bomb...
+	rewritting to use the default 4 seconds.
+	however, it will explode +very+ large
+3C188002	*LUI	T8,8002
+8F18A8F0	*LW	T8,A8F0 (T8)
+13000002	*BEQL	T8,R0,+2	;branch if solo
+2419012C	*ADDIU	T9,R0,012C
+241900B4	ADDIU	T9,R0,00B4
+//7F05F65C:	set the 'splodie flag
+9218000C	*LBU	T8,000C (S0)
+37180080	*ORI	T8,T8,0080
+A218000C	*SB	T8,000C (S0)
+//7F05F668:
+10000010	BEQ	R0,R0,7F05F684
+A6190082	SH	T9,0082 (S0)
+
+@_@
+
+Time to hack the text displayed on weapon collection
+
+7F04F2EC does ammo collection using TLB pointers
+instead, will do a joint routine.  TLB pointers get replaced with an index:
+#	single
+0	nothing
+1	a
+2	an
+3	the
+
+all multiples become "some".
+
+that means the TLB table gets replaced with two tables.  Each value =2bits!
+type>>2 + table = byte
+(type&3) << 1 = shift
+(byte>>shift) & 3 = value
+in other words, bitwise...	44332211 88776655
+ammo types
+0 1 0 1 1 1 1 1 1 1 1 1 1 1 2 2 
+1 1 1 1 1 3 0 0 0 0 0 0 2 - - -
+
+44 55 55 A5 
+55 0D 00 02
+
+weapon types (start at 2)
+3 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1
+1 3 3 3 1 3 1 1 1 1 1 1 3 3 3 1
+0 1 1 1 1 1 1 1 1 1 3 1 3 1 1 1
+2 0 0 1 1 1 3 3 3 3 3 3 3 1 1 1
+1 3 3 3 3 2 1 1 1 0 0 3 0 1 0 1
+1 1 0 0 0 0 3 -
+
+57 55 55 65
+FD 5D 55 7F
+54 55 75 57
+42 F5 FF 57
+FD 5B C1 44
+05 30
+
+both tables redirected to 7F04F380	0x83EB0
+
+7F04F2EC:	83E1C	appends article before ammo type text
+	accepts: A0=p->final string, A1=ammo type, A2=quantity
+24AEFFFF	ADDIU	T6,A1,FFFF	;T6=A1-1: ammo types 1-1D
+2DC1001D	SLTIU	AT,T6,001D	;TRUE if valid ammo type
+10000005	BEQ	R0,R0,+7F04F30C
+00001025	OR	V0,R0,R0	;starts at start of table
+//7F04F2FC:	83E2C	0FC13CBF	weapon half
+24060001	ADDIU	A2,R0,0001	;default quantity is 1
+24AEFFFE	ADDIU	T6,A1,FFFE	;weapon list -2
+2DC10057	SLTIU	AT,T6,0057	;TRUE if hunting - token
+24020008	ADDIU	V0,R0,0008	;start of weapon type table
+//7F04F30C:	generic bit
+1020001A	BEQ	AT,R0,7F04F374	;branch if invalid type
+27BDFFE8	ADDIU	SP,SP,FFE8
+18C00018	BLEZ	A2,7F04F374	;branch if no ammo
+AFA40018	SW	A0,0018 (SP)	;SP+18=A0: p->final
+AFBF0014	SW	RA,0014 (SP)
+//7F04F320:	multiple ammo always defaults to "some"
+3404A401	ORI	A0,R0,A401	;A0=A401: "some"
+2CC10002	SLTIU	AT,A2,0002	;TRUE if ammo = 1
+5020000C	BEQL	AT,R0,7F04F35C	;branch if multiple ammo
+00000825	OR	AT,R0,R0
+//7F04F330:	determine individual ammo's article
+3C018005	LUI	AT,8005
+00220821	ADDU	AT,AT,V0	;add offset for start of block
+000E1082	SRL	V0,T6,0x2	;T6=ammo type -> offset
+00220821	ADDU	AT,AT,V0	;dd offset for byte in block
+90212F10	LBU	AT,2F10 (AT)	;AT=80052F10+offset: byte containing value
+31CE0003	ANDI	T6,T6,0003	;T6=sample # within byte
+000E7040	SLL	T6,T6,0x1	;T6*=2
+01C10806	SRLV	AT,AT,T6	;AT>>T6
+30210003	ANDI	AT,AT,0003	;AT=code
+//7F04F354:	test if code = 0 (no text)
+50200007	BEQL	AT,R0,7F04F374
+8FA40018	LW	A0,0018 (SP)
+//7F04F35C:	retrieve p->text ID
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID A0
+00812021	ADDU	A0,A0,AT	;A0=A401+code for article
+//7F04F364:	concatenate the newly-looted string
+10400003	BEQ	V0,R0,7F04F374
+8FA40018	LW	A0,0018 (SP)	;A0=SP+18: p->final
+0C0029FF	JAL	7000A7FC	;strcat(A0,A1)
+00402825	OR	A1,V0,R0	;A1=V0: p->article
+//7F04F374:	return
+8FBF0014	LW	RA,0014 (SP)
+//7F04F378:	return w/o pulling RA
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+
+#_#
+
+use 0FC13CBF to get article for weapon
+7F0670DC is long line, used normally
+7F0670A8 is short line, used on quad-screen view
+
+7F04FDE0:	84910	creates region-specific text @ A0 for item A1 collection
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFB00018	SW	S0,0018 (SP)
+00808025	OR	S0,A0,R0	;S0=A0: p->final string
+AFBF001C	SW	RA,001C (SP)
+AFA5002C	SW	A1,002C (SP)	;SP+2C=A1: item type
+//7F04FDF4:	get # players
+0FC26919	JAL	7F09A464	;V0=#players
+AE000000	SW	R0,0000 (S0)	;NULL the string first
+28410003	SLTI	AT,V0,0003
+3C0E8005	LUI	T6,8005
+81CE84D0	LB	T6,84D0 (T6)	;T6=800484D0: selected language
+15C0000B	BNEZ	T6,7F04FE38	;branch if !0 - japanese
+AFA10024	SW	AT,0024 (SP)	;SP+24=0 if inhibitted, 1 if not
+//7F04FE10:	english - "Picked up"
+10200006	BEQ	AT,R0,7F04FE2C
+00000000	NOP
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID A0
+3404A400	ORI	A0,R0,A400	;A0=A400: "Picked up"
+00102025	OR	A0,S0,R0	;A0=S0: p->final
+0C0029FF	JAL	7000A7FC	;strcat(A0,A1)
+00022825	OR	A1,V0,R0	;A1=V0: p->"Picked up"
+//7F04FE2C:	english - appropriate article
+00102025	OR	A0,S0,R0	;A0=S0: p->final
+0FC13CBF	JAL	7F04F2FC
+8FA5002C	LW	A1,002C (SP)	;A1=item type
+//7F04FE38:	both languages - weapon name, pulled from watch menu!
+8FA10024	LW	AT,0024 (SP)	;AT=inhibitor
+10200005	BEQ	AT,R0,7F04FE54
+8FA4002C	LW	A0,002C (SP)	;A1=item type
+0FC19C37	JAL	7F0670DC	;V0=long name
+00000000	NOP
+10000003	BEQ	R0,R0,7F04FE5C
+00000000	NOP
+//7F04FE54:	short line, used during quad-screen games
+0FC19C2A	JAL	7F0670A8	;V0=shortname
+00000000	NOP
+//7F04FE5C:	append!
+1040001A	BEQ	V0,R0,7F04FEC8
+00022825	OR	A1,V0,R0
+0C0029FF	JAL	7000A7FC	;strcat(A0,A1)
+00102025	OR	A0,S0,R0	;A0=S0: p->final
+//7F04FE6C:	get strlen
+0C004E1F	JAL	7001387C	;V0=strlen(A0)
+00102025	OR	A0,S0,R0	;A0=S0: p->final
+00505021	ADDU	T2,V0,S0	;T2=p->NULL at end of string
+//7F04FE78:	remove /r at end of string if present
+914BFFFF	LBU	T3,FFFF (T2)	;T3=last character
+2401000A	ADDIU	AT,R0,000A
+502B0001	BEQL	AT,T3,7F04FE88	;branch if not a /r
+A140FFFF	SB	R0,FFFF (T2)
+//7F04FE88:	determine region
+3C088005	LUI	T0,8005
+810884D0	LB	T0,84D0 (T0)	;T0=800484D0: selected language
+11000008	BEQ	T0,R0,7F04FEB4	;branch if english
+8FA10024	LW	AT,0024 (SP)	;T1=SP+24: inhibit "picked up.*" text
+10200006	BEQ	AT,R0,7F04FEB4	;branch if text inhibitted
+00000000	NOP
+//7F04FEA0:	japanese: append  "picked up" text
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID A0
+3404A400	ORI	A0,R0,A400	;A0=A400: " picked up."
+00102025	OR	A0,S0,R0	;A0=S0: p->final
+0C0029FF	JAL	7000A7FC	;strcat(A0,A1): append " picked up."
+00022825	OR	A1,V0,R0	;A1=V0: p->" picked up."
+//7F04FEB4:	append newline
+3C012E0A	LUI	AT,R0,2E0A	;3E0A0000 = .\r
+AFA10024	SW	AT,0024 (SP)
+27A50024	ADDIU	A1,SP,0024
+0C0029FF	JAL	7000A7FC	;strcat(A0,A1): append ".\r"
+00102025	OR	A0,S0,R0	;A0=S0:  p->final
+//7F04FEC8:	return
+8FBF001C	LW	RA,001C (SP)
+8FB00018	LW	S0,0018 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028

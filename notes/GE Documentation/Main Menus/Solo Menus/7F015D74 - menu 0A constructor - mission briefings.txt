@@ -1,0 +1,206 @@
+7F015D74	4A8A4	Menu 0A Constructor - Mission Briefings
+ADDIU	SP,SP,F3F0
+SW	RA,003C (SP)
+SW	S0,0038 (SP)
+OR	A1,R0,R0
+OR	A2,R0,R0
+JAL	700046D0	;setfillcolour("black")
+OR	A3,R0,R0
+JAL	70003EF8	;fillrect()
+OR	A0,V0,R0
+JAL	7F00D5E8
+OR	A0,V0,R0
+NOP
+NOP
+//7F015DA8:	set up text buffer
+ADDIU	T0,R0,0BB8
+ADDIU	T6,SP,004C	;T6=SP+4C: text buffer
+OR	T7,R0,R0
+ADDIU	T7,T7,000C
+ADDIU	T6,T6,000C
+SW	R0,FFF4 (T6)
+SW	R0,FFF8 (T6)
+BNE	T7,T0,7F015DB4	;loop to initialize buffer
+SW	R0,FFFC (T6)
+//7F015DCC:
+LUI	T7,0A00
+SW	T7,004C (SP)	;"\n"->text buffer
+JAL	7F0ACD98
+OR	A0,V0,R0
+OR	A0,V0,R0	;A0=V0: p->DL
+JAL	7F00EABC
+ADDIU	A1,SP,004C	;A1=p->text buffer
+LUI	T1,8003
+LW	T1,A914 (T1)	;T1=8002A914: current briefing page
+OR	S0,V0,R0	;S0=V0: p->DL
+SLTIU	AT,T1,0005
+BEQ	AT,R0,7F015E60	;skip if not a valid page
+//7F015DFC:
+ORI	A0,R0,9C5D	;A0=txt ID 9C5D: "PRIMARY OBJECTIVES:\n"
+JAL	7F0C1DD8	;V0=p->text A0
+ADDU	A0,A0,T1	;A0+=page#: title for page
+BEQ	R0,R0,7F015E60	;skip deleted lines of code
+SW	V0,0C0C (SP)	;SP+C0C= p->text
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F015E60:	write page title
+ADDIU	T2,R0,0037	;T2=xpos: 37
+ADDIU	T3,R0,008F	;T3=ypos: 8F
+SW	T2,0C08 (SP)	;SP+C08= xpos
+JAL	7000441C	;V0= text clip width
+SW	T3,0C04 (SP)	;SP+C04= ypos
+JAL	7000442C	;V0= text clip height
+SH	V0,0048 (SP)	;SP+48= text clip height
+LUI	T4,8004
+LUI	T5,8004
+LW	T5,0EB4 (T5)	;T5=80040EB4: p->1st font table
+LW	T4,0EB8 (T4)	;T4=80040EB8: p->2nd font table
+LH	T8,0048 (SP)
+ADDIU	T9,R0,00FF	;T9=000000FF: black
+SW	T9,0018 (SP)	;SP+18= colour
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	A1,SP,0C08	;A1=p->xpos
+ADDIU	A2,SP,0C04	;A2=p->ypos
+LW	A3,0C0C (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20= text clip width
+SW	R0,0024 (SP)	;SP+24= y offset
+SW	R0,0028 (SP)	;SP+28= x offset
+SW	T5,0014 (SP)	;SP+14= p->1st font table
+SW	T4,0010 (SP)	;SP+10= p->2nd font table
+JAL	7F009760	;write text
+SW	T8,001C (SP)	;SP+1C= text clip height
+//7F015EC4:
+LUI	V1,8003
+LW	V1,A914 (V1)	;V1=8002A914: current briefing page
+OR	S0,V0,R0	;S0=V0: p->DL
+ADDIU	AT,R0,0001
+BNEZ	V1,7F015EF4	;branch if not page 0
+OR	A0,V0,R0	;A0=V0: p->DL
+//7F015EDC:	page 0
+ADDIU	A1,R0,00A7
+ADDIU	A2,SP,004C
+JAL	7F015A08
+OR	A3,R0,R0
+BEQ	R0,R0,7F016014
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F015EF4:
+BEQ	V1,AT,7F015F28	;branch if page 1
+LUI	T0,8007
+ADDIU	AT,R0,0002
+BEQ	V1,AT,7F015F3C	;branch if page 2
+LUI	T7,8007
+ADDIU	AT,R0,0003
+BEQ	V1,AT,7F015F50	;branch if page 3
+LUI	T6,8007
+ADDIU	AT,R0,0004
+BEQ	V1,AT,7F015F64	;branch if page 4
+LUI	T1,8007
+BEQ	R0,R0,7F015F74
+NOP
+//7F015F28:	page 1: Background
+LW	T0,978C (T0)	;T0=8006978C: p->briefing data
+JAL	7F0C1DD8	;V0=p->text A0
+LHU	A0,0000 (T0)	;A0=text ID for "Background"
+BEQ	R0,R0,7F015F74
+SW	V0,0C0C (SP)	;SP+C0C= p->text
+//7F015F3C:	page 2: M Briefing
+LW	T7,978C (T7)	;T7=8006978C: p->briefing data
+JAL	7F0C1DD8	;V0=p->text A0
+LHU	A0,0002 (T7)	;A0=text ID for "M Briefing"
+BEQ	R0,R0,7F015F74
+SW	V0,0C0C (SP)	;SP+C0C= p->text
+//7F015F50:	page 3: Q Branch
+LW	T6,978C (T6)	;T6=8006978C: p->briefing data
+JAL	7F0C1DD8	;V0=p->text A0
+LHU	A0,0004 (T6)	;A0=text ID for "Q Branch"
+BEQ	R0,R0,7F015F74
+SW	V0,0C0C (SP)	;SP+C0C= p->text
+//7F015F64:	page 4: Moneypenny
+LW	T1,978C (T1)	;T1=8006978C: p->briefing data
+JAL	7F0C1DD8	;V0=p->text A0
+LHU	A0,0006 (T1)	;A0=text ID for "Moneypenny"
+SW	V0,0C0C (SP)	;SP+C0C= p->text
+//7F015F74:
+LUI	T4,8004
+LW	T4,0EB4 (T4)	;T4=80040EB4: p->1st font table
+ADDIU	T2,R0,0037
+ADDIU	T3,R0,00A7
+LUI	A3,8004
+SW	T2,0C08 (SP)	;SP+C08= width
+SW	T3,0C04 (SP)	;SP+C04= height
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,R0,0140	;A0= 140	max width
+LW	A1,0C0C (SP)	;A1=p->text
+ADDIU	A2,SP,004C	;A2=p->text buffer
+JAL	7F0AEB64	;A2=text A1 fit to width A0
+SW	T4,0010 (SP)	;SP+10= p->1st font table
+//7F015FA8:
+JAL	7F0ACBA0	;A0->80040E90
+ADDIU	A0,R0,0008	;A0=8
+//7F015FB0:
+JAL	7000441C	;V0= text clip width
+NOP
+JAL	7000442C	;V0= text clip height
+SH	V0,0048 (SP)	;SP+48= text clip height
+LUI	T5,8004
+LUI	T9,8004
+LW	T9,0EB4 (T9)	;T9=80040EB4: p->1st font table
+LW	T5,0EB8 (T5)	;T5=80040EB8: p->2nd font table
+LH	T0,0048 (SP)
+ADDIU	T8,R0,00FF	;T8=000000FF: black
+SW	T8,0018 (SP)	;SP+18= colour
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	A1,SP,0C08	;A1=p->width
+ADDIU	A2,SP,0C04	;A2=p->height
+ADDIU	A3,SP,004C	;A3=p->text
+SW	V0,0020 (SP)	;SP+20= text clip width
+SW	R0,0024 (SP)	;SP+24= y offset
+SW	R0,0028 (SP)	;SP+28= x offset
+SW	T9,0014 (SP)	;SP+14= p->1st font table
+SW	T5,0010 (SP)	;SP+10= p->2nd font table
+JAL	7F009760	;write text
+SW	T0,001C (SP)	;SP+1C= text clip height
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F01600C:
+JAL	7F0ACBA0	;A0->80040E90
+ADDIU	A0,R0,FFFF	;A0=-1
+JAL	7F00A080	;add tab 1: "START"
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F00A238	;add tab 3: "PREVIOUS"
+OR	A0,V0,R0	;A0=V0: p->DL
+LUI	T7,8003
+LW	T7,A914 (T7)	;T7=8002A914: current briefing page
+OR	S0,V0,R0	;S0=V0: p->DL
+SLTI	AT,T7,0004
+BEQ	AT,R0,7F016048	;branch if page 4
+NOP
+JAL	7F00A414	;add tab 2: "NEXT"
+OR	A0,V0,R0	;A0=V0: p->DL
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F016048:
+JAL	7F009F08	;loads selected icon for folder select
+OR	A0,S0,R0	;A0=S0: p->DL
+//7F016050:
+LW	RA,003C (SP)
+LW	S0,0038 (SP)
+ADDIU	SP,SP,0C10
+JR	RA
+NOP

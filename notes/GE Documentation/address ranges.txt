@@ -1,0 +1,1917 @@
+Listed are fixed areas of memory and registers for functions.
+-------------------------------------------------------------
+80000300	display type	0:PAL, 1:NTSC, 2:MPAL
+
+80010030	split screen mode	0=hor; 1=vert
+
+# Start 21990
+80020D90	RSP instructions
+80020E60
+
+800214AD	partial screen modes	0=1/2; 1=1/4
+
+80023044	
+80023048	hardware address for cart (?)
+8002304C	debug handler code/name table
+8002307C
+
+80023094	stderr: enabled
+80023098	stderr: activated
+8002309C	stderr: permitted
+800230A0
+
+80023224
+80023228
+8002322C
+80023230	counter for frames
+
+80023244	buffer for temp image data; ie. on legal screen
+8002329C
+800232A0
+800232A4	video1.settings
+800232A8	video2.settings
+800232AC	colour output mode.  used by RGBA conversion routines
+
+800232B4	
+800232B8	
+800232BC	
+
+800232C4	jpeg 16bit grab #	[70004758]
+800232C8	jpeg 32bit grab #	[700048D4]
+800232CC	rgb 16bit grab #	[70004A60]
+800232D0	rgb 32bit grab #	[70004BB4]
+
+80023304	debugger: processor error table
+800236DC	debugger: hardcoded pointers to thread SP allocations
+800236F0	debugger: hardcoded pointers to thread SP allocations
+80023704	debugger: hardcoded pointers to thread SP allocations
+80023718	stderr: display buffer
+80024000	stderr: printable font bitcode
+8002417C	p->video buffer 1
+80024180	p->video buffer 2
+
+
+800241A4	debug flag (FALSE/TRUE); can trigger stage update
+800241A8	stage# - offset for #players, used by fog, mem allocations, etc.
+800241AC	temp copy of -m value	amount of generally allocatable memory, forced
+800241B0	temp copy of -ma value	amount of memory dedicated to room models, offset to BONDdata
+800241B4	debug: "show mem use" flag
+800241B8	debug: "show mem bars" flag
+800241BC	stage memory allocation table
+800242EC
+
+800242FC	loaded stage#
+80024300	1- activate debug feature parsing (interface for debug menu and certain linked debug options)
+80024304
+80024308
+8002430C
+80024310
+80024314
+80024318
+8002431C
+
+80024324	"taskgrab" ram dump #, used at 700067E0
+
+80024334	music: track#
+80024338	music: 
+80024340	music: 
+80024358	music: 
+800243D8
+
+80024404	[tied to memory management]
+
+80024460	seed for random value
+80024464	current random value
+80024470	strstr: #strings
+80024474	strstr: p->current string#
+80024478-4518	strstr: p->each substring; 0x28 substrings maximum
+80024518	start resource
+
+80024FA0	debug: menu x position offset
+80024FA4	debug: menu y position offset
+80024FA8	debug: menu x text position
+80024FAC	debug: menu y text position
+80024FB0	stdout: display list
+80025030	stdout: debug menu screen display buffer
+80026610	stdout: primary color table
+80026710	stdout: enviroment color table
+80026810	stdout: colors in color tables
+80026814	pointers to {1B}[m values	(pos. part of vi_debug)
+80026898	dlend display list command
+800268A0	blank C0- image expansion command
+800268A8	stdout: text primary colour
+800268B0	stdout: text enviroment colour
+800268B4
+800268B8	stdout: % display list commands remaining in draw buffer
+800268BC
+
+800268C4	p->current point in controller input index
+	Each index 0x18 each, 0x6 per controller.
+	+1E0: index for previous button state
+	+1F0: index for current button state
+800268C8
+800268CC
+800268D0	flags indicating controllers plugged in
+800268D4
+800268D8	pl1: 1 if rumble pak ready or detected
+800268DC	pl2: 1 if rumble pak ready or detected
+800268E0	pl3: 1 if rumble pak ready or detected
+800268E4	pl4: 1 if rumble pak ready or detected
+800268E8	pl1: rumble/unrumble state (alternate on/off)
+800268EC	pl2: rumble/unrumble state (alternate on/off)
+800268F0	pl3: rumble/unrumble state (alternate on/off)
+800268F4	pl4: rumble/unrumble state (alternate on/off)
+800268F8	pl1: rumble time (ms)
+800268FC	pl2: rumble time (ms)
+80026900	pl3: rumble time (ms)
+80026904	pl4: rumble time (ms)
+80026908	pl1: shot fired or rumble on...
+8002690C	pl2: shot fired or rumble on...
+80026910	pl3: shot fired or rumble on...
+80026914	pl4: shot fired or rumble on...
+
+80026924	TRUE disables rumble
+80026928	p->TLB function to handle ramrom record
+
+80026930	pl1: incremented on controller presence failure (left/right)
+80026934	pl2: incremented on controller presence failure (left/right)
+80026938	pl3: incremented on controller presence failure (left/right)
+8002693C	pl4: incremented on controller presence failure (left/right)
+80026940	pl1: incremented on controller presence failure (up/down)
+80026944	pl2: incremented on controller presence failure (up/down)
+80026948	pl3: incremented on controller presence failure (up/down)
+8002694C	pl4: incremented on controller presence failure (up/down)
+80026950	pl1: incremented on controller presence failure (held)
+80026954	pl2: incremented on controller presence failure (held)
+80026958	pl3: incremented on controller presence failure (held)
+8002695C	pl4: incremented on controller presence failure (held)
+80026960	pl1: incremented on controller presence failure (pressed)
+80026964	pl2: incremented on controller presence failure (pressed)
+80026968	pl3: incremented on controller presence failure (pressed)
+8002696C	pl4: incremented on controller presence failure (pressed)
+80026970
+
+800269C0	VI settings for display modes 0-29
+800276E0
+
+80027730	
+80027734	
+
+80027740	stdout: background alpha
+80027760	
+80027764	stdout: background alpha
+80027788
+
+800277C0	
+
+800277D0	eye intro drift regulator
+80027FD0
+
+80027FE0	buffer
+80028040	p->buffer 1
+80028044	p->buffer 2
+80028048
+
+80028050	???; table of entries related to sound, 0x28 each
+800281E0
+
+800282F0	lower-case hex characters
+80028304	upper-case hex characters
+80028318
+
+80028320	
+80028370	
+800283C0
+
+800283D0	debug handler names
+80028400	TLB pointers at 7000159C
+80028420	speed display strings
+80028480
+80028490	debug: image grab console commands
+800287B0	debug: deb_c_debug error messages
+80028A70	allocation size strings for stages
+800290C0	"-level_" command line option, activates debug parsing on hit
+800290C8	default memory allocation string
+800290FC	"-m"	memory allocation keyword: search
+80029100	"-m"	memory allocation keyword: parse
+80029104	"-level_"	string keyword: search
+8002910C	"-level_"	string keyword: parse
+80029114	"-hard"	string keyword: search
+8002911C	"-hard"	string keyword: parse
+80029124	"-hard"	string keyword: parse
+8002912C	"-ma"	memory allocation keyword: search
+80029130	"-ma"	memory allocation keyword: parse
+80029134	memory dump: resource template "u64.taskgrab.%d.core"
+8002914C	boss_c_debug
+80029160	TLB pointers at 70007E80
+800291A0	memp_c_debug
+800291B0	"-mf"	memory allocation keyword: search
+800291B4	"-mf"	memory allocation keyword: parse
+800291B8	"-ml"	memory allocation keyword: search
+800291BC	"-ml"	memory allocation keyword: parse
+800291C0	"-me"	memory allocation keyword: search
+800291C4	"-me"	memory allocation keyword: parse
+800291C8	
+800291D0	mema_c_debug
+800291E0	debug memory display: "%d"	allocation amount template
+800291E4	debug memory display: "..."	unable to display allocation amount
+800291E8	"[%d]"	default strtok string
+800291F0
+800291F4	command line: "-d"	debug support keyword
+800291F8	command line: "-s"	disable sound keyword
+800291FC	command line: "-j"	japanese language support keyword
+80029200	vi_c_debug
+80029210	
+80029390	joy_c_debug
+800293A0	MI Interrupt Reg values
+80029420	(double)
+80029428	(double)
+80029430	(double)
+80029438
+80029440	offsets for selecting TLB handler for particular interrupts
+80029460	TLB pointers to interrupt handlers
+80029484
+80029490	TLB pointers used by 7001123C
+80029614	TLB pointers used by 70011A6C
+800296C4	
+
+800296F0	h (short), l (long), L (long long) c-string modifiers
+800296F4	space, +, -, #, 0 c-string modifiers
+800296FC	1<<0 through 1<<4
+80029714	TLB pointers used by 700138F0
+800297E4
+
+80029830	TLB pointers used by 70019480
+80029878
+
+80029890	debug: assertion fault string templates
+80029964
+80029968	TLB pointers used by 7001AE5C
+800299AC
+800299FC
+80029A50	TLB pointers used by 7001C45C
+80029BD4	TLB pointers used by 7001C45C
+80029C28	TLB pointers used by 7001CC7C
+80029C88
+
+80029CD8	float debug: "NaN"
+80029CDC	float debug: "Inf"
+80029CE0	float debug: "0"
+80029CE4
+
+80029CF0	TLB pointers used by 7001E610
+80029D10	TLB pointers used by 7001FFA8
+80029D30
+
+80029D6C	animation table pointers (1)
+8002A04C	animation table pointers (2)
+8002A05C
+8002A060	???; 0xC each		used as a temp buffer for copying global action block types
+8002A234
+8002A238
+8002A23C	debug weapon load: list of weapon models loaded on execute
+8002A25C
+8002A260	Monitor image animation controller
+8002A3BC
+
+8002A3D0	initialization values for item control blocks in BONDdata
+8002A778
+
+8002A7D0
+
+8002A860	RGBA table
+8002A870
+
+8002A8A0	intro: eye timer/counter
+8002A8A4	intro: state of red bleeding animation
+8002A8A8
+
+8002A8C0	current menu
+8002A8C4	update to given menu
+8002A8C8	
+8002A8CC	timer on folder select screen (resets at 30sec.)
+8002A8D0	1- folder tab 1 selected (usually 'next' or 'start')
+8002A8D4	1- folder tab 2 selected
+8002A8D8	1- folder tab 3 selected (usually 'back')
+8002A8DC	1- highlight folder tab 1
+8002A8E0	1- highlight folder tab 2
+8002A8E4	1- highlight folder tab 3
+8002A8E8	folder # (save slot selected)
+8002A8EC	copy of folder # (save slot previously selected)
+8002A8F0	Mode: -1 intros, 0-solo, 1-multi, 2-cheats.  7F00D558 sets return after stage
+8002A8F4	stage selected
+8002A8F8	selected mission briefing page (solo stage menu numbering, inc. groups)
+8002A8FC	difficulty	(-1-multi, 0-agent, 1-secret, 2-00, 3-007)
+8002A900	1- display cheat select mission
+8002A904	1- display cheat multi
+8002A908	(float) horizontal screen position on menus
+8002A90C	(float) vertical screen position on menus
+8002A910	last menu briefing page (menu 0A)
+8002A914	current menu briefing page (menu 0A)
+8002A918	icon on folder select screen (0-sight, 1-copy, 2-delete)
+8002A91C	folder selected for deletion or -1
+8002A920	delete folder minimenu selected option (0-confirm : 1-cancel)
+8002A924	0-failed; 1-aborted
+8002A928	0-aborted/failed; 1-killed in action
+8002A92C	TRUE if first time on legal screen (FALSE enables quick advance)
+8002A930	TRUE if first time through menus
+8002A934	keypress.prev
+8002A938	
+8002A93C	
+8002A940	screen size; 0:320x240, 1:440x330
+8002A944	
+8002A948	True if emulating Spectrum
+8002A94C	True if cheat menu available
+8002A950	p->DL target for nintendologo, goldeneyelogo, and walletbond object data
+8002A954	p->video buffer for menus (stderr?)
+8002A958
+8002A95C	p->folder object instance
+8002A960
+8002A964
+8002A968
+8002A96C
+8002A970	RGBA values
+8002A990
+
+8002A9A0	(float) 007: "Enemy reaction speed" setting
+8002A9A4	(float) 007: "Enemy health" setting
+8002A9A8	(float) 007: "Enemy accuracy" setting
+8002A9AC	(float) 007: "Enemy damage" setting
+8002A9B0	font: brown palette for japanese font
+8002A9C0
+
+8002A9CC	legal screen text entries
+8002AABC
+8002AB94
+
+8002ABC4	(float) folder select: copy left bound
+8002ABC8	(float) folder select: copy upper bound
+8002ABCC	(float) folder select: copy right bound
+8002ABD0	(float) folder select: copy lower bound
+8002ABD4	(float) folder select: erase left bound
+8002ABD8	(float) folder select: erase upper bound
+8002ABDC	(float) folder select: erase right bound
+8002ABE0	(float) folder select: erase lower bound
+8002ABE4	solo missions and briefings
+8002AF2C	???; used by folder select constructor
+8002AF38	???; used by folder select constructor
+8002AF44	???; used by folder select
+8002AF84
+
+8002AFB4-D0	???; used by MP character select
+8002AFD0-E4	cursor xpos table for mission select slots
+8002AFE4-F4	cursor ypos table for mission select slots
+8002AFF4	MP game length settings
+8002B054	MP scenario select and player restrictions
+8002B074	MP stage select menu
+8002B194	MP #selectable characters
+8002B198	MP character select menu options
+8002B498	MP handicap menu options
+8002B4F0	MP controller configuration menu options
+8002B510	MP sight & aim settings
+8002B520	# players selected on MP menu
+8002B524	player1 MP character
+8002B528	player2 MP character
+8002B52C	player3 MP character
+8002B530	player4 MP character
+8002B534	MP stage selected (0-B: Random <-> Egypt)
+8002B538	game length
+8002B53C	aim settings
+8002B540	scenario
+8002B544	unlock stage select (1-edit; 0-locked)
+8002B548	unlock game length
+8002B54C	unlock characters
+8002B550	unlock weapon select
+8002B554	unlock health
+8002B558	unlock control style
+8002B55C	unlock aim adjustment
+8002B560
+8002B564	solo mission target times
+8002B5DC
+8002B5E0
+8002B5E4	current option hovered on MP menu
+8002B5E8	do not play intro movie after actors
+8002B5EC	randomly-selected intro animation
+8002B5F0	intro animation count
+8002B5F4	
+8002B5F8	
+8002B5FC	if TRUE, actor intros play full character list
+8002B600	intro character table
+8002B8BC	intro animation table
+8002BA2C	
+8002BA30	
+8002BA34	
+8002BA38	intro rifle table
+8002BA50	intro pistol table
+8002BA78	
+8002BA7C	
+8002BA84	
+8002BA90	
+8002BA9C	
+8002BADC	
+
+8002BAF0	50% primary colors
+8002BB00	
+
+8002BB30	red screen animations
+8002C50C
+8002C510	eeprom 1 selected Bond actor
+8002C514	eeprom 2 selected Bond actor
+8002C518	eeprom 3 selected Bond actor
+8002C51C	eeprom 4 selected Bond actor
+8002C520	various eeprom reset/init samples
+8002C900	animation rate
+8002C904
+
+8002C940	???; tied to animations
+8002CC5C	debug: "show patrols" flag
+8002CC60	player 1 guard ID
+8002CC64	guard data pointer
+8002CC68	#guard
+
+8002CD00	# random bodies
+8002CD04	# male heads
+8002CD08	# female heads
+8002CD0C	random body table
+8002CDB8	random male head table
+8002CE20	random female head table
+8002CE34	current random body
+8002CE38	current random male head
+8002CE3C	current random female head
+8002CE40	difficulty: (float) AI accuracy modifier
+8002CE44	difficulty: (float) AI damage multiplier (value * AI's weapon damage)
+8002CE48	difficulty: (float) AI "health" multiplier - damage done by player per shot
+8002CE4C	difficulty: (float) ???
+8002CE50	difficulty: (float) ???
+8002CE54	struck character animation table
+8002E648	explosion death animations
+8002E93C	group offsets to jump to explosion animations
+8002E960	pointer to index of grouped random explosion animations
+8002E9A0	basic rifle firing animations
+8002ED28	pointers rediecting to rifle animation groups
+8002EDA8	basic pistol firing animations
+8002F408	pointers rediecting to pistol animation groups
+8002F488	basic doubles firing animations
+8002F6E0	pointers rediecting to doubles animation groups
+8002F760	crouched rifle firing animations
+8002F970	pointers rediecting to crouched rifle animation groups
+8002F9F0	crouched pistol firing animations
+8002FCD8	pointers rediecting to crouched pistol animation groups
+8002FD58	crouched doubles firing animations
+8002FFF8	pointers rediecting to crouched doubles animation groups
+80030078	special firing animations (ie. rolling) for all types
+80030660	walk/run for rifle, pistol, doubles, Xdoubles, then strafing
+80030978	objective registers
+8003097C	p->global action buffer
+80030980	#global actions (1xxx type)
+80030984
+
+800309F8	male guard SE when shot
+80030A2C	female guard SE when shot
+80030A34	male guard SE counter
+80030A38	female guard SE counter
+80030A3C	METAL ricochet SE for helmets
+80030A44
+
+80030AA0	p->object position data for current object
+80030AA4	p->object position list first entry (8006 table)
+80030AA8	p->object position list final entry
+80030AAC	difficulty: (float) ???
+
+80030AC0	alarm	-timer
+80030AC4	p->alarm sound effect or NULL
+80030AC8	(float) toxic gas sound timer
+80030ACC	1- activate gas sound timer
+80030AD0	??? - (float) toxic gas
+80030AD4	??? - (float) toxic gas
+80030AD8	??? - (float) toxic gas
+
+80030AE0	gas counter
+80030AE8	show/hide[1] clock
+80030AEC	clock on/off[0]
+80030AF0	clock	-timer
+80030AF4	remote mine trigger	1,2,4,8 flags for each player
+
+80030B14	difficulty: (float) ???
+80030B18	difficulty: (float) ???
+80030B1C	difficulty: (float) ???
+80030B20	difficulty: (float) ???
+80030B24	difficulty: (float) ???
+80030B28	difficulty: (float) ammo multiplier
+80030B2C	throwing knife SE
+80030B34
+
+80030B74	microcode for monitor animations
+80031FD0
+
+80032094	blank 07 object
+80032114	blank 11 object
+80032194	blank 08 explosive object
+8003221C	blank 08 object
+800322A4
+
+800322F0	highest valid objective number
+
+80032440	RGBA values
+80032450
+
+8003245C	
+
+8003246C	ejected cartridge headers and text lookup pointers
+80032494	weapon statistics
+80033924	watch and equipment menu
+80034C9C
+
+80035EEC	ammo totals and HUD positions
+80036054
+
+80036074	
+80036078	
+
+8003608C	???; p->function
+
+800360CC	ammo on item collection
+80036328
+
+80036414	
+80036418	
+8003641C	
+
+80036424	
+80036428	resolution(?)	(0:140xF0 (78 MP); 1:1B8x14A)
+8003642C	hires flag	(0:off; 1:on - used for cuba)
+80036430	
+80036434	
+80036438	
+8003643C	state of credits (1=start, 2=finished)
+80036440	pointer to credits text to display
+80036444	plastique explosions
+80036448	1 if in tank
+8003644C	p->first object being parsed?
+80036450	p->current object being parsed
+
+80036464	(float) tied to tank?	SP+DC, used in math
+80036468
+8003646C	(float) tied to tank?	SP+C8
+80036470
+80036474	(float) tied to tank?	SP+CC
+
+80036494	current camera mode.
+	0	1st person mode - mp
+	1	intro camera
+	2	fade-out to swirl
+	3	swirl
+	4	1st person mode
+	5	??? - used between fadeout and respawn
+	6	
+	7	camera position (ie. at end)
+	8	1st person (no control - possibly end of stage)
+	9	mp camera!  Don't get your hopes up, can't trigger.
+set to 3 for fade-in, 2 to restart the swirl animation, 1 to do the cameras
+80036498	1- move around after cinema scene
+8003649C
+800364A0
+800364A4	(float)
+800364A8
+800364AC	p->first command in intro rotating camera (03)
+800364B0
+800364B4
+800364B8	p->last 06 intro camera entry
+800364BC	# 06 intro camera entries
+800364C0	p->randomly selected 06 intro camera entry
+800364C4	1=visible to guards (solo invisibility=0)
+800364C8	1=object collisions (Bond Phase=0)
+800364CC
+
+800364D8	player death animation list
+8003650C	total player death animations
+80036510
+80036514	selected stage intro animation
+80036518	stage intro animation table
+800365A8	watch transition time
+800365AC	PP7 08 object copied to stack during player creation
+80036634
+
+80036898	status bar text buffer index
+8003689C	display status bar
+	queued number of items to display (max=5, disabled=0)
+	display timer is 11DC offset of BONDData (unlike upper text window's timer)
+800368A0	copy of 1st font table
+800368A4	copy of second font table
+800368A8	upper text buffer index
+800368AC	display upper text window
+	queued number of items to display (max=2, disabled=0)
+800368B0	timer for upper text window
+800368B4	
+800368B8	debug manpos: cardinal directions and tolerance
+800368D8	???; animation table
+80036ACC
+
+80036B70	debug menu: control mode, copied to control mode buffer at 80036F70
+80036B74	debug menu: p->last group
+80036B78	debug menu: p->text pointers
+80036B7C	debug menu: p->positions
+80036B80	debug menu: # groups
+80036B84	debug menu: p->groups
+80036B88
+
+80036BA4	debug menu: column groupings
+80036BC8	debug menu: on-screen positions
+80036E30	debug menu: text pointers
+80036F64	FALSE does not render anything (raster only, I think)	default=2
+80036F68	FALSE freezes processing	default=2
+80036F6C	FALSE limits control to 3D stick only	default=2
+80036F70	control mode (default=2)
+80036F74	debug: display speed flag
+80036F78	debug: draw background flag
+80036F7C	debug: draw objects flag
+80036F80	
+80036F84	debug: stan hit flag
+80036F88	debug: stan region flag
+80036F8C	debug: stan problems flag
+80036F90	debug: print man pos flag
+80036F94	debug: print room loads flag
+80036F98	debug: joy2 sky edit flag
+80036F9C	debug: joy2 hits edit flag
+80036FA0	debug: joy2 detail edit flag
+80036FA4	debug: explosion info flag
+80036FA8	debug: line mode flag
+80036FAC	debug: 007 flag
+80036FB0	debug: agent flag
+80036FB4	debug: all flag
+80036FB8	debug: character number flag
+80036FBC	debug: gun watch pos flag
+80036FC0	debug: profile flag
+80036FC4	debug: grab task flag
+80036FC8	debug: show manpos flag
+80036FCC	debug: turbo mode flag
+80036FD0	debug: objectives flag
+80036FD4
+
+80036FF8	return state of debug menu.  1 sets menu visible, copied to 80024300
+80036FFC	debug: grab rgb screenshot flag
+80037000	debug: grab jpeg screenshot flag
+80037004
+
+80037070	default action blocks & table
+800374DC
+
+800374E8	stage setup pointer table
+800375D0	object (p...z) headers
+8003A050	object archetypes
+8003A224
+8003A228	object pointers to header, text string, scale
+8003B224	object explosion details
+8003C4D0	object archetypes
+8003C580	player gait
+8003C644
+8003C674	object archetypes
+8003C7C0	object (g...z) headers
+8003D340	object archetypes
+8003D410	object (c...z) headers
+8003DE10	character/head table
+8003E464
+8003F430	button sequences for button cheat codes
+8003F80C	button cheat codes
+8003FCBC
+8003FCC0	linked by 7F09343C when texture 5E4 detected	i, 64x64
+8003FD28	linked by 7F09365C when texture 5E7 detected	ci, 20x20
+8003FD90
+
+8003FDA0	
+80040148
+
+80040170	explosions: ???
+80040174	
+80040178	difficulty: (float) ???
+8004017C	smoke data table
+80040284	explosion data table
+800407C4	explosion: frame display list offsets
+80040800
+80040804	current scorch entry#
+80040808	current impact entry#
+8004080C	list of impact image sizes and types
+	0x0	4	(float) width
+	0x4	4	(float) height
+	0x8	1	application type
+		0	random dark grey:	00 - 27
+		1	random light grey:	FF - D8
+		2	random primary color
+	0x9	1	
+	0xA	1	
+800408FC
+
+80040920	default vertex data for scorches
+80040930	default vertex data for bullet impacts
+80040940
+
+# solo watch settings page
+80040994	selected page
+80040998	highlighted controls page selection
+8004099C	highlighted options page selection
+800409A0	briefing page selection
+800409A4	abort display selection
+800409A8	1-selected highlighted setting
+800409AC	
+800409B0	current scroll position
+800409B4	final scroll position
+800409B8	highlighted inventory selection
+800409BC	(float) position of entry in scrolling list
+800409C0	0- scroll to entry
+800409C4	1- display watch inventory item name
+800409C8	(float) 
+800409CC	(float) 
+800409D0	
+800409D4	(float) 
+800409D8	#control styles available: 8 if 1 controller, 4 otherwise
+800409DC	control style labels
+80040A7C	solo watch setting labels
+80040A84	look up/down setting
+80040A88	auto-aim setting text
+80040A90	auto-aim setting
+80040A94	aim control setting text
+80040A9C	aim control setting
+80040AA0	sight on-screen setting text
+80040AA8	sight on-screen setting
+80040AAC	look ahead setting text
+80040AB4	look ahead setting
+80040AB8	ammo on-screen setting text
+80040AC0	ammo on-screen setting
+80040AC4	screen setting text
+80040ACC	screen setting
+80040AD0	ratio setting text
+80040AD8	ratio setting
+80040ADC	TRUE enables control stick input
+
+80040AF4	solo watch mission status colour
+80040AF8	solo watch mission status colour timer
+80040AFC	solo watch objective colour
+80040B00	solo watch objective colour timer
+80040B04	watch static line register; set bitflag to zero to trigger effect
+80040B08
+
+80040DFC	???; table
+80040E38	???; table
+80040E40	???; table
+80040E7C
+80040E80
+80040E84	font: text spacing	negative increases gap, positive decreases
+80040E88	font: orientation	nonzero flips vertical (90deg. clockwise)
+80040E8C	font: #spaces following wordwrap
+80040E90	font: negative value does overlap correction?
+80040E94	font: texture filter mode: 0-bi-level, 1-average
+80040E98	font: x
+80040E9C	font: y
+80040EA0	font: s
+80040EA4	font: t
+80040EA8	font: 1-allow japanese character lookup
+80040EAC	font: p->1st font table(S) [@2E63F0 in ROM]
+80040EB0	font: p->2nd font table(S)	[@2E6694 in ROM]
+80040EB4	font: p->1st font table(L)	[@2E88A0 in ROM]
+80040EB8	font: p->2nd font table(L)	[@2E8B44 in ROM]
+80040EBC	ia16 'palette' for japanese text and window overlay	iiaa format
+80040EDC	ia16 'palette' for japanese text and window overlay	iiaa format
+80040EFC
+
+80040F44	(float) ???, multiplier from explosions (tied to stage scale?)
+80040F48
+# clipping data:
+80040F4C	increments for tiles in clipping files
+80040F58	calculated address for tile "0000"
+80040F5C	start of file
+80040F60	end of file
+
+80040FB4	debug: stanlinelog activated flag
+80040FB8
+
+# room data:
+800413F4	(float) 
+800413F8	(float) 
+800413FC	(float) 
+80041400	# rooms in stage
+80041404	
+80041414	room information block
+800442F4	max #rooms
+800442F8
+800442FC	???; bg-related table
+800443C4
+
+8004448C	stage: bg/clipping/scale table
+8004481C
+
+# global visibility
+80044838	???; cur. room?
+
+800448A8	???; global vis. table of 0x14 entries
+800448F8	total entries in 800448A8 table
+800448FC	FALSE if cur.room unconditionally globally visible
+
+80044940	DL components
+80044D88	pointers to DL components
+# current sky/enviroment values:
+80044DB0	stage ID multiple
+80044DB4	
+80044DB8	
+80044DBC	
+80044DC0	
+80044DC4	(float) 
+80044DC8	(float) 
+80044DCC	near intensity
+80044DD0	far intensity
+80044DD4	sky color & cloud tag
+80044DD8	(float) cloud repeat
+80044DDC	sky image table offset
+80044DDE	RESERVED
+80044DE0	(float) clouds: red
+80044DE4	(float) clouds: green
+80044DE8	(float) clouds: blue
+80044DEC	
+80044DF0	
+80044DF4	
+80044DF8	
+80044DFC	
+80044E00	
+80044E04	
+80044E08	
+80044E0C	
+80044E10	stage skies/enviroment table
+80045F50	reduced stage skies enviroment table
+80046030	# light fixtures
+80046034
+
+# ROM resources
+80046054	ROM resource table
+800482D4	# resource entries/final entry
+
+800482E0	-mgfx allocations for 0-4 players
+800482F0	-mvtx allocations for 0-4 players
+80048304	display backdrops
+80048358
+8004835C
+80048360	???; sent as data for "lv_c_debug" debug.notice
+80048364	stage#, used to grab music track
+80048368
+8004836C	current music track
+80048370
+80048374	part of a monitor image timer	(used in a scewy FPS control code)
+80048378	(float) multiplier used in a monitor image rotation routine as well as player motion calculations...
+8004837C	ms current of some sort.
+80048380	music???
+80048384	difficulty
+80048390
+80048394	MP current time, from 0.  long value in seconds.
+80048398	MP time setting copy
+8004839C	MP kill setting copy
+800483A0
+800483A4	float: MP current time in seconds
+800483A8	larger counter
+800483AC	float: 800483A4 / 60	(MP current in minutes?)
+800483B0	milliseconds in current stage
+800483B4	float: 800483B0 / 60	(seconds in stage)
+800483B8	ms in game (from power on)
+800483BC	float: 800483B8 / 60	(seconds since you turned on the game)
+800483C0	1 if clock on.  0 if paused
+800483C4	most recent texture shot.  changes depending on surface you shoot.
+		guards = FFFFFFFF
+800483C8	joy2 detail edit: pointer to table of custom LOD values or NULL
+800483CC	debug port cmds: portal index
+800483D0	debug port cmds: previous state (4) of A button on ctrls 1,2
+800483D4	debug port cmds: previous state (3) of A button on ctrls 1,2
+800483D8	debug port cmds: previous state (2) of A button on ctrls 1,2
+800483DC	debug port cmds: previous state (1) of A button on ctrls 1,2
+800483E0	debug port cmds: current state of A button on ctrls 1,2
+
+800483F0	table of ramrom ROM addresses
+800483F4
+
+# ramrom runtime values
+80048468	address for demo block
+8004846C	demo code block buffer address
+80048470	0x20 worth of code from headings
+80048474	1 if demo loaded or running or something
+80048478
+8004847C	1- run demo at next stage load
+80048480	1- if a ramrom tool running?
+80048484	1 if replaying recorded stage from devtool?
+80048488	1- record next stage loaded
+80048490	previous sum of bytes
+80048494	current sum of bytes
+80048498	first value in command (difference b/w values)	also, TRUE runs game clock when player alive
+8004849C	previous ???
+800484A0	current ???
+800484A8	difference b/w above
+# 
+800484AC	previous COP0 Count
+800484B0	current COP0 Count
+800484B4	
+
+800484D0	language
+800484D4	text call values for each text bank
+80048640	MP award text list
+80048664
+80048668
+8004866C
+80048670	MP weapon set data
+800490F0	MP weapon set menu text and pointers to data
+80049160	selected MP weapon set
+80049164
+
+# images and image compression
+80049178	Huffman table sizes
+800491AC	Huffman table sizes
+800491E0	Huffman table sizes
+80049214	Huffman table sizes
+80049248	Huffman table sizes
+8004927C	Huffman table sizes
+800492B0	Huffman table sizes
+800492E4
+
+80049300	image offset list
+8004E760	impact sounds & images
+8004E86C	pointers to image impact/SE entries
+8004E8A0	pointers to text handles for each impact type
+8004E8D4
+8004E8D8
+8004E8DC
+8004E8E0	RareZip (zlib) tables and registers
+# RSP manager
+8004E9E4	upper bound of RSP workspace allocation (+A000)
+8004E9E8	lower bound of RSP workspace allocation
+8004E9EC
+
+8004EAB0
+
+8004EAC4	Indy Status
+8004EAC8	1- allows saving resources to Indy devtool
+
+8004EB00	p->viewport buffer or NULL
+
+8004EB10	solo music selection table
+8004EBD0	MP music selection table
+8004EC30
+# Spectrum manager
+8004EC34	Spectrum keyboard buffer; reset to FF on reads
+	unset bits count as pressed!
+	FF.FF.FF.F7.FF.FF.FF.FF	'4' key
+	FF.FF.FF.FD.FF.FF.FF.FF	'2' key
+	FF.FF.FF.FE.FF.FF.FF.FF	'1' key
+	FF.FF.FF.FF.FE.FF.FF.FF	'0' key (sabre: A,B button)
+	(10 left, 08 right, 04 down, 02 up, 01 action)
+8004EC3D
+8004EC40	Spectrum Kempston joystick reg (ACTION | UP | DOWN | LEFT | RIGHT)
+8004EC41	RESERVED
+8004EC44
+
+8004ED04	Spectrum: 
+8004ED08	Spectrum: 
+8004ED0C	Spectrum palette
+8004ED2C	p->Spectrum game names; only first 5 are accessible
+8004ED54	set to 'value' by OUT port,value opcodes
+
+8004ED80	
+
+8004ED90	"-nochr"	string keyword disabling characters
+8004ED98	"-noprop"	string keyword disabling all props
+8004EDA0	"-noobj"	string keyword disabling objects
+8004EDA8	"-noprop"	string keyword disabling all props
+8004EDB0	NULL field copied as base for setup name lookup
+8004EEB0	"_mp"	used to rectify mp stage names
+8004EEB4	(float) 0.000001	used as a floor value at 7F002604
+8004EEB8	TLB pointers assigning default models for held weapons
+8004EF30	TLB pointers for MP ammo crate expansion
+8004EF50
+8004EF54	???; used during autoturret expansion
+8004EF58
+8004EF5C	y rotation factor for all doors
+
+8004EF68	TLB pointers for object expansion
+8004F024	(float)
+8004F028	(float)
+8004F02C	TLB pointers for weapon expansion
+8004F0E0	(float) 0.9
+8004F0E4	(float) -Pi
+8004F0E8
+8004F0EC
+8004F0F0	TLB pointers for models assigned to thrown objects
+8004F1A8
+8004F1AC	TLB pointers to execute intro block commands
+8004F1D0
+
+8004F210	TLB pointers
+8004F2CC
+
+# Eye intro
+8004F2E0	TLB pointers for eye intro steps
+8004F2FC	(float) 1390.0	length of step 2 in Eye intro
+8004F300	(float) 1276.0	initial value for step 3 in Eye intro
+8004F304	(float) 5.8	iteration length of step 3 in Eye intro
+8004F308
+8004F30C
+# briefings
+8004F310	briefing: text values for screens
+8004F488	briefing: "/n"
+8004F48C	briefing: "."
+8004F490	briefing: "/n"
+8004F494	briefing: "1./n"
+8004F498	briefing: "2./n"
+8004F49C	briefing: "3./n"
+8004F4A0	briefing: "/n"
+8004F4A4	briefing: ": "	colon following "Mission #" in title
+8004F4A8	briefing: "/n"	newline following chapter name in  title
+8004F4AC	briefing: ": "	colon following "Part #" in title
+8004F4B0	briefing: "/n"	newline following 1st stage name in title
+8004F4B4	briefing: initialization field for briefing text buffer
+8005006C	briefing: "%d./r"	numerals next to difficulty
+80050074	briefing: "/r"	initialization field for 007 SETTINGS text
+80050C2C	briefing: 007 percentage display	"%d%%"	"%d%%"	"%d%%"	"%d%%"
+80050C4C	"%d"	#players on MP options menu
+80050C50	briefing: "a."	a., b., etc sample for PRIMARY OBJECTIVES list
+80050C54	briefing: "/r"	initialization field for MISSION BRIEFING text
+8005180C	stage statistic string display templates
+800518A0	TLB pointers for determining cheat availability
+800519C8	(float) 0.075	???
+800519CC	(float) 0.075	???
+800519D0	(float) 0.075	???
+800519D4	(float) 0.075	???	
+800519D8	(float) 130.5	lower bounds for upper tab on menus
+800519DC	(float) 399.0	default horizontal cursor position
+800519E0	(float) 130.5	???
+800519E4	(float) 1.3-	???, used by legal screen
+800519E8	(float) 10000.0	???, used by legal screen
+800519EC	(float) 1.3-	???, used by menu 17
+800519F0	(float) 10000.0	???, used by menu 17
+
+800519FC	(float) ???, used by Nintendo logo
+80051A00	(float) ???, used by Nintendo logo
+
+80051A10	(float) ???, used by GE splash screen
+80051A14	(float) ???, used by GE splash screen
+80051A18
+80051A1C	(float) 4-folder layer x/z dimentions
+80051A24	(float) 4-folder menu: folder scale
+80051A28	(float) 4-folder menu: COPY icon y (vertical) position
+80051A2C	(float) 4-folder menu: ERASE icon x pos
+80051A30	(float) 4-folder menu: ERASE icon y pos
+80051A34	(float) 4-folder menu: SELECT FILE y pos
+80051A38	(float) main menu folder x/z dimentions
+80051A40	(float) main menu folder option selection spacing values (vert. bounds for Cheat)
+80051A44	(float) solo stage select folder x/z dimentions
+80051A4C	(float) DIFFICULTY folder x/z dimentions
+80051A54	(float) DIFFICULTY folder option selection spacing values
+80051A58	(float) 007 options folder x/z dimentions
+80051A60	TLB pointers to set scenario-specific settings on MP menus
+80051A80	(float) MP settings folder x/z dimentions
+80051A88	(float) MP character select folder x/z dimentions
+80051A90	(float) MP handicap folder x/z dimentions
+80051A98	(float) MP control style folder x/z dimentions
+80051AA0	(float) MP stage select folder x/z dimentions
+80051AA8	(float) MP scenario folder x/z dimentions
+80051AB0	(float) MP team select folder x/z dimentions
+80051AB8	(float) BRIEFING folder x/z dimentions
+80051AC0	TLB pointers to display proper name on each briefing page; ie. "Q Branch"
+80051AD4	(float) DEBRIEFING folder x/z dimentions
+80051ADC	(float) STATISTICS folder x/z dimentions
+80051AE4	(float) CHEAT folder x/z dimentions
+80051AEC	TLB pointers to select random Bond in intro movies
+80051B00
+80051B04
+80051B08	(float) cast intro screen width
+
+80051B44	(float) smaller menu sizing
+80051B48	(float) larger menu sizing
+80051B4C	TLB pointers for menu updates
+80051BB4	TLB pointers for menu initializations
+80051C1C	TLB pointers for menu interfaces
+80051C84	TLB pointers for menu constructors
+80051CEC
+
+80051D90	(float) global character scale modifier	0.1
+80051D94	(float) further global character scale value for special case	0.8
+
+80051F7C	TLB pointers
+80051FC8
+
+80052070	TLB pointers
+800520D0
+
+80052100	TLB pointers for length of each action block command
+800524F4	(float) 
+800524F8	TLB pointers for action block executables
+800528EC	(float) (default 3DCCCCCD)
+800528F0	(float) (default 3DCCCCCD)
+800528F4	(float) (default 3DCCCCCD)
+800528F8	(float) (default 3DCCCCCD)
+800528FC	TLB pointers
+80052974
+
+80052980	TLB pointers
+800529C0
+
+800529D0	"\r"	appended to japanese " picked up." ammo collection text
+800529D4	".\r"	appended to english ammo collection text
+800529D8	NULL initialization field for ammo collection string
+80052A3C	japanese: NULL starting weapon collection text
+80052A40	"\r"	appended to japanese " picked up." weapon collection text
+80052A44	":\r"	used in ??? text
+
+80052A58	???	tied to projectile deflection off walls (non-clipping impact)
+
+80052A94	proximity mine activation distance (characters), squared
+
+80052AA4	projectile gravity modifier
+
+80052B98	TLB pointers to set addresses for monitor animation command lists
+80052C68	(float) 
+80052C6C	TLB pointers to process monitor animation commands
+80052CA8
+
+80052D9C	TLB pointers
+80052DF0	TLB pointers test TRUE if a non-collectable standard object type
+80052EAC	TLB pointers test TRUE if a collectable object type
+80052EF4
+
+80052F10	TLB pointers to append "some", "a", "an", or "the" when ammo is collected
+80052F84	TLB pointers to append name of ammo type collected
+80052FEC	TLB pointers to set sound effects on ammo collection
+80053060	TLB pointers to set amount of ammo received from ammo clips; first 0xE ammo types only
+80053098	TLB pointers to set amount of ammo received from weapons; first 0xE ammo types only
+800530D0	TLB pointers to appends weapon name for weapon collection text
+8005322C	TLB pointers to ammo collection
+800532E0
+
+800532EC	proximity mine activation distance (objects), squared
+
+800532F4	TLB pointers
+80053324
+
+8005334C	TLB pointers
+8005345C
+
+80053490	TLB pointers for size in words of each setup object type
+8005354C	TLB pointers return p->setup object or NULL if OBJECTIVE
+80053608
+8005360C
+80053610	NULL initialization field for "objective x: status" message buffer (0x32 large)
+80053644	"%s [0x80]%c "	japanese "objective x: status" template
+8005364C	"%s %c: "	english "objective x: status" template
+80053654
+
+80053BF4	ammo display template	%d	%s: %d
+80053C00	died x times template	%s %d %s
+80053C0C	suicide count template	%s: %d
+80053C14
+
+80053CB0	TLB pointers to expand group values in object model data
+80053D3C	TLB pointers for item type-specific data
+
+80053E04	global scale modifier for 1st person weapons
+
+80053E38	TLB pointers
+80053E88
+
+80053F24	TLB pointers for ??? - 1st person weapon attribute
+80054084	TLB pointers for ??? - 1st person weapon attribute
+80054170
+80054174	(float) weapon recoil multiplier: initial volley
+80054178	(float) weapon recoil multiplier: recoil backward
+8005417C	(float) weapon recoil multiplier: reset to stationary
+
+80054194	TLB pointers for sound when drawing/reloading item
+8005428C	(float) 0.698132	1st person weapon draw speed
+80054290	(float) 0.698132	1st person weapon reload speed
+80054294	TLB pointers to inhibit reload sound for items
+8005438C
+
+80054404	expended shell gravity modifier
+80054408	expended shell scale multiplier
+8005440C	far clipping for expended shells
+80054410	near clipping for expended shells
+
+80054420	debug: drawjointlist error text
+80054490
+
+80054490	TLB pointers, per obj.table command types
+800544E4	TLB pointers, per obj.table command types
+80054538	TLB pointers
+80054598	TLB pointers
+800545F8
+800545FC
+80054600	debug: object parsing error text
+80054AF8	TLB pointers used to compute and tally obj.table group numbers
+80054B58	(float)
+80054B5C	(float)
+80054B60	TLB pointers
+80054BB4
+
+80054C20	TLB pointers, per obj.table command types
+80054C80	TLB pointers, per obj.table command types
+80054CE0	TLB pointers, per obj.table command types
+80054D40
+
+80054D54	TLB pointers, per obj.table command types
+80054DB4	TLB pointers, per obj.table command types
+80054E14	TLB pointers to expand offsets in model data types
+80054F88
+
+80054F90	(float) 0.999999
+80054F94	(float) 0.999999	used in a ceil() routine at 7F0766AC
+80054F98	(float) 0.999999
+80054F9C	(float) 0.999999
+
+80054FC0	debug: manpos display template	%8s	x %4.0f	y %4.0f	z %4.0f	%s %3d
+80054FE4	TLB pointers to solo bodies (assigned by cuff)
+80055008	TLB pointers to solo heads  (assigned by cuff)
+8005502C
+
+8005507C	(float) 5.9	zoom factor for main watch page, used on entry
+80055080	(float)
+80055084	(float)
+80055088	(float) 0.1	multiplied by scale value for watch to make final (0.01)
+8005508C	(float) 1.7	maximum watch transition speed
+80055090	(float) 1.1	watch transition multiplier
+
+800550D4	(float) 1st person weapon vertical movement restrictor
+800550D8	(float) 1st person weapon horizontal movement restrictor
+
+80055168	(float) movement rate in aiming mode; setting to 1.125 or above forces sight to edge of screen
+
+80055290	TLB pointers
+800552AC
+
+800552B0	(float) Pi
+800552B4	(float) Pi*2
+800552B8	(float) Pi*2	[used by 7F089F10]
+800552BC	(float) Pi
+
+800552D0	(float) Pi*2
+
+800552FC	modifier for player perspective
+
+80055340	debug: menu text
+800556FC	TLB pointers to execute debug menu options
+80055830	TLB pointers to completely unnecessary jumps after debug option handling
+80055844
+
+80055860	(float) Pi*2	used by "intro pos" for rotation correction
+
+80055870	stage setup text lookup pointers
+800572B0
+
+800572B0	TLB pointers to activate in-game cheats and text
+800573D8	[float]	0.05 multiplayer invisibility factor (%5 visible)
+800573DC	TLB pointers to deactivate in-game cheats and text
+80057504
+
+80057538	(float)	??? used by 7F094298
+8005753C	(float)	??? used by 7F094298
+
+80057544	TLB pointers
+80057584
+
+80057590	TLB pointers
+800575D0
+
+8005762C	TLB pointers to model loaded when a weapon drops, etc.
+800576AC
+800576B0	(float) 
+800576B4	(float) 2Pi	
+
+80057760	debug: controller display template	"%d, %d\n"
+80057768	debug: solo inventory template	"%d, %d\n%d %f\n"
+80057778	controller setting labels	(A)	(B)	(Z)	(L)	(R)	(C)	(+)	(S)	(3D)
+800577C0	"\n"	initialization field	(used at 7F0AC260)
+80057DB0	NULL initialization field used in 70015E10
+80057DB8	NULL initialization field used in 70015E60, 70015EA4
+80058378	NULL initialization field used in 7F0AC4EC
+80058438
+8005843C
+# solo watch menus
+80058440	" \n"	watch objectives: 
+80058444	" \n\n"	watch objectives: 
+80058448	"%c: "	watch objectives: display letter next to objective
+80058450	" \n"	watch objectives: 
+80058454	" \n\n"	watch objectives: 
+80058458	(float) zoom for main->objective/briefing watch menu	[40933333]
+8005845C	(float) zoom for main->inventory watch menu		[40933333]
+80058460	(float) zoom for inventory->main watch menu		[40BCCCCD]
+80058464	(float) zoom for inventory->control watch menu		[407CCCCD]
+80058468	(float) unused zoom for control->options watch menu	[407CCCCD]
+8005846C	(float) zoom for control->inventory watch menu		[40933333]
+80058470	(float) zoom for options->objective/briefing watch menu	[40933333]
+80058474	(float) zoom for objective/briefing->options watch menu	[407CCCCD]
+80058478	(float) zoom for objective/briefing->main watch menu	[40BCCCCD]
+8005847C	(float)
+80058480	(float)
+80058484	(float) low bound for advancement through watch menu items; -=auto backward
+80058488	(float) bound for quick advancement through watch menu items
+8005848C	(float) advance rate though inventory
+80058490	(float) quick advance rate through inventory
+
+800584CC	TLB pointers to retrieve selected watch menu option for each page
+80058508
+
+80058570	TLB pointers to briefing page names in watch menu	(txtID->7F0C1DD8)
+80058584	TLB pointers to set up each of the 5 watch menu pages
+80058598
+
+800585A0	debug: clipping pad name template	"%c%d%c%c"	triggered by -stanlinelog
+800585CC
+
+80058648	debug: portal templates	"PORT%d	ROOM%d"
+80058658
+
+80058C58	TLB pointers to execute camera modes 0-8
+80058C7C	(float)
+80058C80	TLB pointers to global visibility command processing	types 50-5C
+80058CB4	TLB pointers to global visibility command processing	types 0-27
+80058D54
+
+80058D5C	(float)
+
+80058D80	TLB pointers
+80058D94
+
+80058DA4	ROM main lookup handles
+8005B66C	1172	RareZip compression header check, byte 1 (11)
+8005B670	1172	RareZip compression header check, byte 2 (72)
+8005B674	"ob_c_debug"
+8005B680	"dyn_c_debug"
+8005B68C	"-mgfx"	memory allocation keyword: search
+8005B694	"-mgfx"	memory allocation keyword: parse
+8005B69C	"-mvtx"	memory allocation keyword: search
+8005B6A4	"-mvtx"	memory allocation keyword: parse
+8005B6B0	"lv_c_debug"
+8005B6BC	"-stanshow_"	string keyword: search
+8005B6C8	"-stanshow_"	string keyword: parse
+8005B6D4	"-stanshow_"	string keyword: search
+8005B6E0	"-stanshow_"	string keyword: parse
+8005B6EC	"-stanshow_"	string keyword: search
+8005B6F8	"-stanshow_"	string keyword: parse
+8005B704	One Minute Left
+8005B714	debug: setdetail template	"setdetail %d %d %d %d %d %d %d %d %d"
+8005B73C
+
+8005B750	"replay/demo.%d"
+8005B760	"replay/demo.%d"
+8005B770	"replay/demo.load"
+8005B784
+8005B788
+8005B78C
+8005B790	TLB pointers
+8005B7AC	TLB pointers
+8005B7E4	(float)
+8005B7E8	TLB pointers
+8005B874
+
+8005BB60	TLB pointers for stage-specific text bank assignment
+8005BC18
+8005BC1C
+8005BC20	"%d"	MP watch menu	(used at 7F0C35A0)
+8005BC24	NULL	MP watch menu window text for blank window	(used at 7F0C4118)
+8005BC28	"<"	MP watch menu left of window text
+8005BC2C	">"	MP watch menu right of window text
+8005BC30	"%s%d %s"	P# KILLS
+8005BC38	"%s%d %s"	P# LOSSES
+8005BC40	TLB pointers to advance right on MP menu pages
+8005BC60	TLB pointers to advance left on MP menu pages
+8005BC80	(float) 
+8005BC84	(float) 
+8005BC88	TLB pointers for MP overlays, scoring, scenario
+8005BCA0	TLB pointers for MP scoring (watch menu & duration)
+8005BCC0	TLB pointers for MP overlays, scoring, scenario
+8005BCE0	TLB pointers for MP overlays, scoring, scenario
+8005BD00	TLB pointers for set MP menu window text
+8005BD20	(float) Pi	used in radar display
+8005BD24	(float) 
+8005BD28	
+8005BD2C	
+8005BD30	TLB pointers for huffman decompression routines (9 types)
+8005BD58	TLB pointers
+8005BE80	Impact type handles
+8005BF20	TLB pointers used @ 7F0CE1D0; corresponds to DL types B1-C0
+8005BF60	TLB pointers used @ 7F0CE2B4; used in converting C0- image ID recall types (&7 with upper command)
+8005BF74
+8005BF78
+8005BF7C
+8005BF80	1172	compression header detection for RareZip
+8005BFA8
+8005BFAC
+8005BFB0	"rsp_c_debug"
+8005BFC0	debug: close port PC command	"sleep 5; /etc/killall ghost gload"
+8005BFF0	"game_c_debug"
+8005C000	debug: build date	"Jun 29 1997 20:46:05"
+8005C020	Spectrum: game file names
+8005C114	Spectrum: 16k program manager filename
+8005C12C	Spectrum: TLB pointers for opcodes 00-FF
+8005C52C	Spectrum: TLB pointers for opcode CB extensions
+8005C62C	Spectrum: TLB pointers for SET opcode types
+8005C64C	Spectrum: TLB pointers for RES opcode types
+8005C66C	Spectrum: TLB pointers for BIT opcode types
+8005C68C	Spectrum: TLB pointers for BIT opcode targets
+8005C6AC	Spectrum: TLB pointers for opcode ED extensions A0-BB
+8005C71C	Spectrum: TLB pointers for opcode ED extensions 40-7E
+8005C818
+
+8005CA90	RSP signature string
+8005CAF0
+8005CB00
+
+8005D0DE
+# end of 21990 region
+8005D2E0	thread: Indy board detection
+8005D490	thread: NULL
+8005D640	thread: main game loop
+8005D7F0
+
+8005DA40
+8005DAB8
+
+8005DB30	target for DP Cmd clock, buffer counter, pipe counter, and tmem counter
+8005DBF0	TLB manager table, 0x10 each
+	0x0	4	Context value
+	0x4	4	page#
+	0x8	8	RESERVED?
+8005E3F0	TLB manager, shorts indicating pages mapped to random slots in buffer
+8005E4A4
+
+8005E530	thread: sound manager
+8005E6E0
+
+8005F400	display list 0
+8005FC50	display list 1
+800604A0	display list bank (0,1)
+800604A4	
+800604A8	
+800604AC
+800607B0	
+800607BC
+800607C0	
+800607CC
+800607D0	
+800607DC
+
+80060C90	thread: video manager
+80060E40	thread SP: video manager
+80061340
+
+80063640	buffer for interrupt entry C
+
+# indy.read.buf entries follow format: long resourceID, two strings
+80063664	current indy.read.buf.resourceID
+80063668	p->string1 in indy.read.buf
+8006366C	p->string2 in indy.read.buf
+80063670	60 byte indy.read.buffer	(data copied from 00E00000 hardware range)
+800636D0	
+800636D4	
+800636D8	
+800636DC	???; 14 byte buffer
+800636F0	???; 14 byte buffer
+80063704	???; 14 byte buffer
+80063718	
+8006371C	
+80063720	p->sound effect buffer
+80063724
+80063728	p->1st.music controller block
+8006372C	p->2nd.music controller block
+80063730	p->3rd.music controller block
+80063734	p->music data table
+	0x0	2	#entries
+	0x2	2	fill?
+	0x4	var.	entries
+	entry format:	0x8 each
+		0x0	4	ROM address
+		0x4	2	decompressed size
+		0x6	2	compressed size
+
+80063BB0	memory bank pointers	0x8 each entry
+	0		
+	1		
+	2		
+	3		
+	4	-ma	volatile	(memory allocation string)
+	5		
+	6		permanent memory (primary text banks, tables, etc)
+
+80063BF0	p->model room buffer
+
+80063C20	secondary p->model room buffer
+80063C24	size of model room buffer
+80063C28
+80063C2C
+80063C30	index of address/count for loaded rooms
+
+80064F30	controller input index (0x1FC)
+8006512C
+
+80065350	interrupt entry 5 buffer (thread list)
+800653E8	pl1: controller status from pif?
+800653EC	pl2: controller status from pif?
+800653F0	pl3: controller status from pif?
+800653F4	pl4: controller status from pif?
+800653F8	player controller packets	0x68 each
+	0x0	4	
+	0x4	4	p->[80065350]
+	0x8	4	controller#
+	0xC	20	data from block 1 of mempak!
+	0x2C	20	data from block 7 of mempak!
+	0x4C	4	[block1+0x1B]
+	0x50	4	0x10
+	0x54	4	0x8
+	0x58	4	8 + 8*[packet+0x64]
+	0x5C	4	[packet+0x58] + 8*[packet+0x64]
+	0x60	4	3 + 2*[packet+0x64]
+	0x64	1	[block1+0x1A]
+	0x65	1	device type: 80-rumble pak, 84-transfer pak
+	0x66	2	
+	
+80065598
+8006559C
+800655A0+	rumble-off packet buffer	0x40 each player
+800656A0+	rumble-on packet buffer	0x40 each player
+800657A0	rumble-on buffer	0x20
+800657C0	rumble-off buffer	0x20
+800657E0	
+
+800657F0	thread: ???
+800659A0	thread SP: ???
+800669A0	interrupt entry buffer
+
+
+80066A10	interrupt entry table
+	entries:	0x8 each
+	0x0	4	p->data
+	0x4	4	ID value
+	types:
+	entry 5: SI interrupt
+	entry 6: AI interrupt
+	entry 7: VI interrupt
+	entry 8: PI interrupt
+	entry 9: MI interrupt
+
+80066AD0	thread: ???
+80066C80	thread SP: ???
+80067C80
+
+80067CA0	0x40 buffer for PIFram command writes
+80067CE0	tied to SI requests...
+
+80067D70	0x40 buffer for PIFram command writes
+
+80069538	p->animation table
+8006953C
+80069540	-1, or last MP weapon set #
+
+80069558	matrix buffer; 2 0x40 byte entries, used by Rare logo
+8006955C	matrix buffer; 1 0x40 byte entry, used by Eye
+80069560	matrix buffer; 2 0x40 byte entries, used by Rare logo
+80069564	matrix buffer; 2 0x40 byte entries, used by Rare logo
+80069568	matrix buffer; 2 0x40 byte entries, used by Eye
+8006956C	matrix buffer; 2 0x40 byte entries, used by Bond backdrop in intro
+80069570	matrix buffer; 2 0x40 byte entries, used by Bond in intro
+
+800695A0	(float) 
+800695A4	(float) 
+800695A8	(float) 
+800695AC	(float) 
+800695B0	(float) 
+800695B4	(float) 
+800695B8	(float) 
+800695BC	(float) 
+800695C0	(float) 
+
+800695E4
+800695E8	three float values
+800695F4
+
+80069650-A0	TRUE if cheat available; one byte per cheat
+800696A0-F0	TRUE if cheat activated; one byte per cheat
+800696F0	player 1 favored right weapon
+800696F4	player 1 favored left weapon
+800696F8	player 2 favored right weapon
+800696FC	player 2 favored left weapon
+80069700	player 3 favored right weapon
+80069704	player 3 favored left weapon
+80069708	player 4 favored right weapon
+8006970C	player 4 favored left weapon
+80069710-20	MP char menu selection (1 word per player)
+80069720-30	MP char menu previous selection (1 word per player)
+80069730-40
+80069740-50	1 if player's MP char selected (1 word per player)
+80069750-60	size of a selected MP select image (1 word per player)
+	Usually 0-B.  Max around 18
+
+8006977C	current MP stage highlighted, used for jump-to
+80069780	
+80069784	mission difficulty option highlighted
+80069788	
+8006978C	
+80069790	
+80069794	highlight "Enemy reaction speed"
+80069798	highlight "Enemy health"
+8006979C	highlight "Enemy accuracy"
+800697A0	highlight "Enemy damage"
+800697A4	
+800697A8	player1 handicap 0-A (5 default)
+800697AC	player2 handicap
+800697B0	player3 handicap
+800697B4	player4 handicap
+800697B8	player1 control style (0-7: Honey <->Goodhead)
+800697BC	player2 control style
+800697C0	player3 control style
+800697C4	player4 control style
+800697C8	1- highlight players
+800697CC	1- highlight scenario
+800697D0	1- highlight stage select
+800697D4	1- highlight game length
+800697D8	1- highlight character
+800697DC	1- highlight weapon select
+800697E0	1- highlight health
+800697E4	1- highlight control style
+800697E8	1- highlight aim adjustment
+
+80069920	various save slot positions
+80069980	
+800699E0	
+80069A40	
+80069AA0	
+80069B00+	current mem save.  changes are applied and saved to proper addresses before
+80069B70+	sound effect slots 0-7.  0x18 each
+
+80069C30	p->list of object lookup indices
+80069C34	# object position data entries
+80069C38+	pos.data entries
+
+80071618	p->room lookup buffer (?)
+8007161C
+
+80071E00+	table of pointers to temp proximity mines?
+80071E78	when !0 damages player periodically - gas damage flag
+80071E7C	(float) toxic gas cutoff time
+80071E80+	autogenerated weapons
+
+80075D00	setup file: p->path.tbl
+80075D04	setup file: p->path.link
+80075D08	setup file: p->intro
+80075D0C	setup file: p->objects
+80075D10	setup file: p->path.sets
+80075D14	setup file: p->actions
+80075D18	setup file: p->0xxx presets
+80075D1C	setup file: p->2xxx presets
+
+80075D30	objective pointers (10 total)
+80075D58	
+80075D80	p->last tag entry (type 16)
+80075D84	p->last briefing setup entry (type 23)
+80075D88	p->last "enter room" subobjective entry (type 20)
+80075D8C	p->last "depositted in room" subobjective entry (type 21)
+80075D90	p->last "photograph object" subobjective entry (type 1E)
+
+80079930	???; p->allocation
+80079934	???; p->allocation
+
+800799E0	starting right-hand weapon
+800799E4	starting left-hand weapon (when applicable)
+
+80079A00	cuba camera - lateral rotation (float - radians)
+80079A04	cuba camera - lateral rotation speed (float - radians per tick)
+80079A08	cuba camera - lateral distance from target (float)
+80079A0C	cuba camera - vertical distance from target (float)
+80079A10	cuba camera - vertical offset from target (float)
+80079A14	cuba camera - target preset
+
+80079A18	camera - focus on bond flag (1 - target bond) - set by D5 sub-action (first 2 argument bytes)
+80079A1C	camera - unused last 2 bytes for D5 sub-action argument (probably was lat/vert target flags then combined into 1 flag)
+
+80079A20	SP current time, from 0.  long value in seconds.
+80079A24	watch time
+
+80079A28	status bar text buffer 1 [length 101]
+80079A8D	status bar text buffer 2 [length 101]
+80079AF2	status bar text buffer 3 [length 101]
+80079B57	status bar text buffer 4 [length 101]
+80079BBC	status bar text buffer 5 [length 101]
+80079C70	upper text window buffer 1 [length 150]
+80079D07	upper text window buffer 2 [length 150]
+
+80079E04	(float) 
+80079E08	(float) 
+80079E0C	(float) 
+80079E10	(float) 
+
+80079EE0	player data pointers
+80079EF0	player 1 statistics
+80079F60	player 2 statistics
+80079FD0	player 3 statistics
+8007A040	player 4 statistics
+8007A0B0	current player data pointer	(0x2A80 in size)
+8007A0B4	current player stat pointer
+8007A0B8	player#
+8007A0BC	??? - random byte
+
+8007A0D0
+8007A0D4
+8007A0D8
+8007A0DC
+
+8007A0E0	???; p->allocation, 10 * @8007A0D0
+8007A0E4	???; p->allocation, 10 * @8007A0D8
+8007A0E8	???; p->allocation, 14 * @8007A0D4
+8007A0EC	???; p->allocation, 14 * @8007A0DC
+8007A0F0	???; same as 8007A0D0
+
+8007A100
+
+8007A140	p->smoke buffer	0x198 per entry, 20 entries total (0x14)
+8007A144	p->explosion buffer	0x3E0 per entry, 6 entries total
+8007A148	maximum casings
+8007A14C	p->ejected casings buffer
+8007A150	p->scorching buffer
+	entries:	0x58 each
+	0x0	2	room# (-1 if invalid)
+	0x2	2	image index (unused)
+	0x4	4	(float) min x
+	0x8	4	(float) min y
+	0xC	4	(float) max x
+	0x10	4	(float) max y
+	0x14	40	four vertices to map image
+8007A154	p->bullet impacts buffer
+	entries:	0x50 each
+	0x0	2	room# (-1 if invalid)
+	0x2	2	image index
+	0x4	4	RESERVED
+	0x8	40	four vertices to map image
+	0x48	8	00000000 FF000000
+
+8007BF90	p->background data
+8007BF94	p->clipping (read only)
+
+8007BFA0	list of visible rooms in cur. global.vis packet
+8007C038	#visible rooms in cur. global.vis packet
+
+8007FF80	p->bgdata: portals
+8007FF84	p->bgdata: offsets
+8007FF88	
+8007FF8C	p->bgdata: room file/position list
+
+8007FFA0	
+	entries:	0x1C each; 0xD total
+	0x0	4	index
+	0x4	4	int
+	0x8	4	(float) 
+	0xC	4	(float) 
+	0x10	4	(float) 
+	0x14	4	(float) 
+	0x18	4	int
+
+80081600
+80081618	table for portals; 0x14 each, 0xC8 total
+800825B8
+
+800825C0	TRUE if sky enabled
+800825C4	p->near fog enviroment values
+
+# light fixtures
+80082660-80082B10	0xC each, 0x64 total; light fixture table
+	0x0	2	index
+	0x2	2	RESERVED
+	0x4	4	p->start of pertinent display list
+	0x8	4	p->end of pertinent display list
+80082B10	cur. entry in light fixture table [80082660]
+80082B12	index of cur. entry in light fixture table [80082660]
+
+80082B18	???; table used by light fixtures
+80083318
+
+8008C5F4	gets the address for the demo loaded
+
+80086CF4	p->???, used in intro and loaded prior to global text banks
+80086CF8	p->image?, used in intro and loaded prior to global text banks
+
+800888B0	table of resource lookup data
+	format:	0x14 each entry
+	0x0	4	ROM filesize
+	0x4	4	(temp copy of remaining)
+	0x8	4	temp filesize for PC files
+	0xC	4	remaining size of buffer
+	0x10	1	mem bank loaded into
+	0x11	1	
+	0x12	2	RESERVED
+8008C230	p->mgfx[0] allocation start
+8008C234	p->mgfx[1] allocation start
+8008C238	p->mgfx allocation end
+8008C23C
+8008C240	p->mvtx[0] allocation start
+8008C244	p->mvtx[1] allocation start
+8008C248	p->mvtx allocation end	(p->images	[800C31E0])
+8008C24C	p->mvtx current pos
+8008C250	(byte) bank#: index in 8008C230 allocation table
+8008C254	
+
+8008C260	p->jfont.DL
+
+8008C270-C358	target for loaded ramrom data
+
+8008C5F0	record slot #
+8008C5F4	hardware address ramrom is saved to.  Masked with 0x00FFFFFF and extended with 0x01000000
+
+8008C640
+8008C644	table of text pointers
+8008C6F4	p->japanese char data buffer [0x2E80]
+8008C6F8	p->japanese char registry [0x100]
+8008C6FC
+8008C700	nonzero stops play.  players still control menus
+8008C704	TRUE when game over
+8008C710	time-triggered flag to alternate GAME OVER / PRESS... messages
+8008C714	
+8008C718	TRUE if paused
+8008C71C	player# who paused game
+8008C720	p->start of texture allocation
+8008C724	p->end of texture allocation
+8008C728	p->next available space
+8008C72C	p->last entry in 'facemapper' image list (list spans backward from end of region)
+
+8008D0B0	value added to global bank (02000000) to get rdram address it was loaded to
+8008D0B4	p->start of bank (explosion ucode)
+8008D0B8-8008D140	subsection pointers to each group in global bank
+8008D140	cur. BA- setothermode_h settings
+8008D144	
+8008D148-8008D348	tied to setothermode_h settings
+
+8008E310	viewport.buf.width
+8008E314	viewport.buf.height
+
+8008E320	p->temp buffer for spectrum monitor data
+8008E324	p->temp buffer for spectrum game data
+8008E328	p->spectrum buffer (10000); first 4000 is 16K monitor program of the Spectrum (file="em/data/spec_rom.seg.rz"), remaining spectrum game binary
+8008E32C	???; p->allocation (300)
+8008E330	???; p->allocation (6000)
+8008E334	p->PC keyboard table allocation (100)
+8008E338	spectrum.header[16:15]: AF
+8008E33A	spectrum.header[E:D]: BC
+8008E33C	spectrum.header[C:B]: DE
+8008E33E	spectrum.header[A:9]: HL
+8008E340	spectrum.header[8:7]: AF'
+8008E342	spectrum.header[6:5]: BC'
+8008E344	spectrum.header[4:3]: DE'
+8008E346	spectrum.header[2:1]: HL'
+8008E348	spectrum.header[0]: I
+8008E349	spectrum.header[14]: R
+8008E34A	True if spectrum.header[13]&4: IFF2, interrupt enabled if set
+8008E34B	True if spectrum.header[13]&4: IFF2, interrupt enabled if set
+8008E34C	spectrum.header[19] or spectrum.header[19]+1 if > 0: IM	interrupt mode IM0 or IM2
+8008E34D	cur.spectrum game#
+8008E34E	spectrum.header[12:11]: IX
+8008E350	spectrum.header[10: F]: IY
+8008E352	spectrum.header[18:17]: SP	stack pointer
+8008E354	spectrum.PC (cur.pos, init. to emu+spectrum.header[18:17])
+8008E356
+
+8008E360	room model buffer
+
+---------------------
+Room Information:	0x50 each
+0x0	4	bitflags probably
+		xxxx01xx	set when the model binaries have been loaded (prior to collisions)
+0x4	4	pointer to point index in model buffer or NULL
+0x8	4	pointer to expanded mapping information in model buffer or NULL
+0xC	4	pointer to secondary expanded mapping information in model buffer or NULL
+0x10	4	compressed size of point index binary or 0
+0x14	4	compressed size of primary display list or 0
+0x18	4	compressed size of secondary display list or 0
+0x1C	4	uncompressed size of point index binary or 0
+0x20	4	uncompressed and expanded size of primary display list or 0
+0x24	4	uncompressed and expanded size of secondary display list or 0
+0x28	4	total size dedicated to current room 
+		(above binaries are increased +0x4-0x10 bits to align to 128bit bounds)
+0x2C	4	pointer to index of unique points used in room for collision purposes
+		(xxx1yyy1zzz1,xxx2yyy2zzz2,etc.)
+0x30	4	bitflags probably
+0x34	4	0000FFFF when room is not loaded
+0x38	4	float: minimum x bounds
+0x3C	4	float: minimum y bounds
+0x40	4	float: minimum z bounds
+0x44	4	float: maximum x bounds
+0x48	4	float: maximum y bounds
+0x4C	4	float: maximum z bounds
+---------------------
+[800D2060]	BONDdata1	0x2A80
+[800D4AE0]	BONDdata2	0x2A80
+[800D7560]	display list buffer
+[800F0560]	
+[80109560]	
+[80115D60]	
+[80122560]	start of image buffer - runs to at least 80173C10
+[80176DE0]	ASCII font, loaded from 0x2E63F0 - 0x2EBDE0
+[8017C7D0]	nintendologo, goldeneyelogo, and walletbond object data; p->data at 8002A950
+[801867D0]	images for above files?  ; p->data @ 8006958C
+...
+[801C40E0]	possible start of image buffer (aka facemapper buffer)
+[801C4D60]	???
+[801C5000]	main image bank	0x29D160 - 0x29E560
+[801C6400]	0x2AE280 - 0x2AE840
+[801C6BD0]	0x2A4D50 - 0x2BF2D0
+[801CCB50]	BG file
+[801CE0E0]	clipping
+[801D4000]	
+[801E1150]	
+---------------------

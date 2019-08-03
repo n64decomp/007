@@ -1,0 +1,100 @@
+#chr
+$(BUILD_DIR)/$(OBSEG_DIR)/chr/%.rz: $(OBSEG_DIR)/chr/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/chr/%.rz: $(BUILD_DIR)/$(OBSEG_DIR)/chr/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/chr/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/chr/%.elf
+	$(OBJCOPY) $< $@ -O binary
+
+$(BUILD_DIR)/$(OBSEG_DIR)/chr/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/chr/%.o
+	$(LD) -T assets/obseg/chr/Cname.ld -o $@
+	rm build/assets/obseg/chr/Cname.o
+
+$(BUILD_DIR)/$(OBSEG_DIR)/chr/%.o: $(OBSEG_DIR)/chr/%.c
+	$(CC) -c $(CFLAGS) -o $@ -O2 $<
+	mv $@ build/assets/obseg/chr/Cname.o
+
+CHR_RZ_FILES = \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CarmourguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CbaronsamediZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CbluecamguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CbluemanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CbluewomanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CboilerbondZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CboilertrevZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CborisZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CcamguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CcardimanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CcheckmanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CcommguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CdjbondZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CfattechwomanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/Cgreatguard2Z.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CgreatguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CgreyguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CgreymanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadalanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbalaclavaZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbikeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbrosnanboilerZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbrosnansnowZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbrosnansuitZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbrosnantimberZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbrosnanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadbZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadchrisZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheaddaveZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheaddesZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadduncanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheaddwayneZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadgrahamZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadgrantZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadjimZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/Cheadjoe2Z.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadjoelZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadjoeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadkarlZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadkenZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadleeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadmandyZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadmarionZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadmarkZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadmartinZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadmishkinZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadneilZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadpeteZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadrobinZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadsallyZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadscottZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadshaunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadsteveeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadstevehZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CheadvivienZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CjawsZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CjeanwomanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CmaydayZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CmoonfemaleZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CmoonguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CnatalyaZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CnavyguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CoddjobZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/ColiveguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CorumovZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CpilotZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CredmanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CrusguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CsnowbondZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CsnowguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CspicebondZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CsuitbondZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/Csuit_lf_handZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CtechmanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CtechwomanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CtimberbondZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CtrevelyanZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CtrevguardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CvalentinZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/chr/CxeniaZ.rz
+

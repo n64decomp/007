@@ -1,0 +1,91 @@
+Weapons are generated when players draw them or use them.
+{side: halfword at 0x82 is timer for mines/grenades}
+
+//7F05F534:
+LW	A1,0038 (SP)
+BNEZ	S0,7F05F5A8
+ADDIU	T0,A1,FFE5
+SLTIU	AT,T0,0023
+BEQ	AT,R0,7F05F598
+ADDIU	A0,R0,00C7	//set remote mine model (default)
+SLL	T0,T0,0x2
+LUI	AT,8005
+ADDU	AT,AT,T0
+LW	T0,3CB0 (AT)	//T0=80053CB0+offset	TIMED MINE-GEkey
+JR	T0
+NOP
+...	7F05F564:	set proximity mine model
+BEQ	R0,R0,7F05F598
+ADDIU	A0,R0,00C8
+...	7F05F56C:	set timed mine model
+BEQ	R0,R0,7F05F598
+ADDIU	A0,R0,00C9
+...	7F05F574:	set bombcase model
+BEQ	R0,R0,7F05F598
+ADDIU	A0,R0,00E2
+...	7F05F57C:	set bug model
+BEQ	R0,R0,7F05F598
+ADDIU	A0,R0,00F5
+...	7F05F584:	set microcamera model
+BEQ	R0,R0,7F05F598
+ADDIU	A0,R0,00F6
+...	7F05F58C:	set goldeneye key model
+BEQ	R0,R0,7F05F598
+ADDIU	A0,R0,00F8
+...	7F05F594:	set plastique model
+ADDIU	A0,R0,0111
+//7F05F598:
+JAL	7F05206C
+NOP
+//7F05F5A0:
+OR	S0,V0,R0
+LW	A1,0038 (SP)
+BEQ	S0,R0,7F05F728
+ADDIU	T1,A1,FFE5
+SLTIU	AT,T1,0023
+BEQ	AT,R0,7F05F67C
+SLL	T1,T1,0x2
+LUI	AT,8005
+ADDU	AT,AT,T1
+LW	T1,3D3C (AT)	//T1=80053D3C+offset	TIMED MINE-GEkey
+JR	T1
+NOP
+...
+7F05F5D0:	remote mine timer (after 3 seconds, you can activate)
+JAL	7F09A464	//returns V0=#players playing
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F05F5F0
+ADDIU	T3,R0,00B4	//T3=3sec (180)
+ADDIU	T2,R0,012C	//T2=5sec (300)
+BEQ	R0,R0,7F05F684	//solo timer
+SH	T2,0082 (S0)	//save 5sec initial time on timer halfword
+BEQ	R0,R0,7F05F684	//mp timer
+SH	T3,0082 (S0)	//save 3sec initial time on timer halfword
+...
+7F05F5F8:	proximity mine timer	3 sec. MP, 5 sec. solo
+...
+7F05F620:	timed mine timer	3 seconds MP, 5 solo
+...
+7F05F648:	bombcase	3 sec. MP, 5 sec. solo
+...
+7F05F670:	plastique, bug, microcamera, GE Key	instantly active
+ADDIU	T0,R0,0001
+BEQ	R0,R0,7F05F684
+SH	T0,0082 (S0)	//1ms timer  eek!
+...
+7F05F67C:	default for non-timed weapons within mine-gekey range
+ADDIU	T1,R0,00F0
+SH	T1,0082 (S0)	//save 4sec initial time on timer halfword
+...
+7F05F684:
+LW	T2,0064 (S0)	//T2=object attribute field
+LUI	AT,FFF9
+ORI	AT,AT,FFFF	//AT=FFF9FFFF
+AND	T3,T2,AT
+JAL	7F09B150	//returns V0=8007A0B8
+SW	T3,0064 (S0)	//untoggle bits 00060000
+//7F05F69C:
+
+Countdown:	7f043df0
+checks if a grenade, NULL 57 and 56, plastique, bomb case, etc.

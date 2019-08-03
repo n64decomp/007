@@ -1,0 +1,208 @@
+7F0A4868	0xD9398	initialize watch menu variables at stage load
+LUI	AT,8004
+SW	R0,0994 (AT)	selected page
+LUI	AT,8004
+SW	R0,0998 (AT)	highlighted control page selection
+LUI	AT,8004
+SW	R0,099C (AT)	highlighted option page selection
+LUI	AT,8004
+ADDIU	T6,R0,0004
+SW	T6,09A0 (AT)	briefing page selection
+LUI	AT,8004
+SW	R0,09A4 (AT)	selected option on Abort dialog
+LUI	AT,8004
+SW	R0,09A8 (AT)	edit flag
+LUI	AT,8004
+SW	R0,09AC (AT)	?
+LUI	AT,8004
+SW	R0,09B0 (AT)	current position in scrolling lists
+LUI	AT,8004
+SW	R0,09B4 (AT)	final position in scrolling list
+MTC1	R0,F0
+LUI	AT,8004
+SW	R0,09B8 (AT)	highlighted inventory selection
+LUI	AT,8004
+SWC1	F0,09BC (AT)	position of entry in scrolling list
+LUI	AT,8004
+SW	R0,09C0 (AT)	0=scroll list to entry
+LUI	AT,8004
+SW	R0,09C4 (AT)	?
+LUI	AT,8004
+SWC1	F0,09C8 (AT)	?
+LUI	AT,8004
+LUI	T8,8005
+SWC1	F0,09CC (AT)	?
+LW	T8,84D0 (T8)	T8=J_text flag
+LUI	AT,8004
+ADDIU	T7,R0,FFFF
+SW	T7,09D0 (AT)	?
+ADDIU	SP,SP,FFE8
+LUI	AT,8004
+SW	RA,0014 (SP)
+BEQ	T8,R0,0xD9448
+SWC1	F0,09D4 (AT)	?
+BEQ	R0,R0,0xD9448	Japanese only, but nothing to be done
+NOP
+//0xD9448
+
+
+7F0A69A8	DB4D8	initialize watch menu variables on open
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7000B9F8	;V0= #controllers plugged in
+NOP
+SLTI	AT,V0,0002
+BEQ	AT,R0,7F0A69D4	;branch if not exactly 1 controller
+ADDIU	T7,R0,0008
+ADDIU	T6,R0,0004
+LUI	AT,8004
+BEQ	R0,R0,7F0A69DC
+SW	T6,09D8 (AT)	;4->800409D8
+//7F0A69D4:	DB504
+LUI	AT,8004
+SW	T7,09D8 (AT)	;8->800409D8
+//7F0A69DC:	DB50C
+JAL	7F0A4F44
+		LUI	AT,8004
+		JR	RA
+		SW	R0,09A8 (AT)
+NOP
+LUI	AT,8004
+SW	R0,0994 (AT)	set to main page
+LUI	AT,8004
+ADDIU	T8,R0,0004
+SW	T8,09A0 (AT)	set objective page top
+LUI	AT,8006
+LWC1	F4,84B0 (AT)	800584B0: 3F7FBE77 (0.999)
+LUI	AT,8004
+SWC1	F4,09C8 (AT)
+LUI	AT,8006
+LWC1	F6,84B4 (AT)	800584B4: 3F7FF972 (0.9999)
+LUI	AT,8004
+JAL	7F08D8E0
+SWC1	F6,09CC (AT)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+Called every time you enter the thing.  Used here:
+//7F07F9E0
+JAL	7F0A69A8
+NOP
+
+//7F07FBA4	called when you reopen as it is closing
+JAL	7F0A69A8
+SW	R0,01C4 (T3)
+
+//7F07FBD8	arm is moving to left
+JAL	7F0A69A8
+SW	R0,01C4 (T3)
+
+//7F07FC0C	
+JAL	7F0A69A8
+SW	R0,01C4 (T3)
+
+
+at stage load uses a different routine, 7F0A4868, to intialize values
+could NOP the menu init during gameplay.  Only trouble is it doesn't set zoom until you flip pages.  Would have to reprogram the watch thingie to do that
+
+
+7F07E400:	trigger watch zoom; fries: V0,V1,T6,T7,T8,F4,F6
+	accepts: F12=final, F14=time
+LUI	V1,8008
+ADDIU	V1,V1,A0B0
+LW	T6,0000 (V1)
+MTC1	R0,F4
+NOP
+SWC1	F4,11BC (T6)	reset timer
+LW	T7,0000 (V1)
+SWC1	F14,11C0 (T7)	set time for transition
+LW	V0,0000 (V1)
+LWC1	F6,11C4 (V0)
+SWC1	F6,11C8 (V0)	copy current to initial value
+LW	T8,0000 (V1)
+JR	RA
+SWC1	F12,11CC (T8)	set final value
+
+
+7F07E52C:	call watch zoom during entry; called only when opening
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	AT,8005
+LWC1	F12,507C (AT)	F12=main page's zoom factor; can just target zooms here
+LUI	AT,4234
+MTC1	AT,F8
+SUB.S	F6,F12,F4
+LUI	AT,8005
+LWC1	F16,5080 (AT)
+MTC1	R0,F18
+MUL.S	F10,F6,F8
+DIV.S	F14,F10,F16	F14=time factor, which should always be positive
+C.LT.S	F14,F18
+NOP
+BC1F	7F07E57C
+NOP
+NEG.S	F14,F14
+//7F07E57C:
+JAL	7F07E400
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+7F07E594	call watch zoom on exit
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	AT,4270
+MTC1	AT,F12
+LWC1	F4,11C4 (T6)
+LUI	AT,4234
+MTC1	AT,F8
+SUB.S	F6,F12,F4
+LUI	AT,8005
+LWC1	F16,5084 (AT)
+MTC1	R0,F18
+MUL.S	F10,F6,F8
+DIV.S	F14,F10,F16
+C.LT.S	F14,F18
+NOP
+BC1F	7F07E5E4
+NOP
+NEG.S	F14,F14
+JAL	7F07E400	zoom!
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+zoom values for transition are retrieved from a table using current->next/prev thingy
+80058458	376C8	zoom for main->objective/briefing watch menu	[40933333]
+8005845C	376CC	zoom for main->inventory watch menu		[40933333]
+80058460	376D0	zoom for inventory->main watch menu		[40BCCCCD]
+80058464	376D4	zoom for inventory->control watch menu		[407CCCCD]
+80058468	376D8	unused zoom for control->options watch menu	[407CCCCD]
+8005846C	376DC	zoom for control->inventory watch menu		[40933333]
+80058470	376E0	zoom for options->objective/briefing watch menu	[40933333]
+80058474	376E4	zoom for objective/briefing->options watch menu	[407CCCCD]
+80058478	376E8	zoom for objective/briefing->main watch menu	[40BCCCCD]
+
+MAIN MENU	40BCCCCD	5.9
+INVENTORY	40933333	4.6
+CONTROLLER	407CCCCD	3.95
+OPTION MENU	407CCCCD	3.95
+OBJECTIVES	40933333	4.6
+
+80040994	1FC04	selected page
+			(0:main, 1:inventory, 2:control, 3:options, 4:brief)
+
+All follow this pattern.  Should kill the 21990 dependancy, and make a routine to 

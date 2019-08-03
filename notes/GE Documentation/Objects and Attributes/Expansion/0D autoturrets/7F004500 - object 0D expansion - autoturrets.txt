@@ -1,0 +1,168 @@
+runtime autogun offsets:
+0x80	preset used to center turret
+0x84	(float) lateral turret rotation, based on targetted preset
+0x88	(float) converted positive range
+0x8C	(float) converted negative range
+0x90	(float) ??? - initialized to 0.0; prob. cur.rotation
+0x94	(float) ??? - initialized to 0.0
+0x98	(float) turret elevation, based on targetted preset
+0x9C	(float) ??? - initialized to 0.0; prob. cur.elevation
+0xA0	(float) ??? - initialized to 0.0
+0xA4	(float) converted rotation rate
+0xA8	(float) converted activation distance
+0xAC	??? - initialized to 0; probably #shots fired
+0xB0	(float) timer for rotating turret - initialized to 0.0
+0xB4	(float) ??? - initialized to 0.0
+0xB8	??? - initialized to -1
+0xBC	??? - initialized to -1
+0xC0	??? - initialized to -1
+0xC4	p->allocated data (0xC0 bytes) while active only; NULL otherwise
+0xC8	p->allocated data (0x10 bytes) while active only; NULL otherwise
+0xCC	p->allocated memory segment (0x30 bytes)
+0xD0	TRUE if active
+0xD4	(float) ??? - initialized to 0.0
+
+allocated data block:
+0x0	1	state; when set acts as a timer
+
+0x1C	4	(float) ???
+0x20	4	(float) ???
+
+0x28	4	(float) ???
+
+//7F004500	39030	object 0D expansion - autoturrets
+BEQ	S8,R0,7F004AFC	;skip if not activated
+NOP
+LW	T6,000C (S2)
+OR	A0,S5,R0
+OR	A1,S2,R0
+AND	T8,T6,S4
+BNEZ	T8,7F004AFC	;skip if inhibitted
+NOP
+JAL	7F002C58	;expand object
+OR	A2,S3,R0
+BEQ	R0,R0,7F004AFC
+NOP
+
+7F002C58	37788	expand 0D object - autoturrets
+	accepts: A0=, A1=p->object data, A2=
+ADDIU	SP,SP,FFC8
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+JAL	7F001D9C	;prepares and loads object
+OR	S0,A1,R0	;S0=A1: p->obj.data
+//7F002C6C:
+LW	T6,00A4 (S0)	;T6=obj.data+A4: turnrate
+LW	T7,00A8 (S0)	;T7=obj.data+A8: activation distance
+LUI	AT,4780
+MTC1	T6,F4
+MTC1	AT,F2		;F2=65536.0	[47800000]
+LUI	AT,8005
+CVT.S.W	F6,F4	;F6=(float) turnrate
+LWC1	F12,EF54 (AT)	;F12=8004EF54: ???
+MTC1	T7,F16
+LUI	AT,42C8
+MTC1	AT,F4		;F4=100.0	[42C80000]
+CVT.S.W	F18,F16	;F18=(float) act.dist
+MUL.S	F8,F6,F12	;F8= turnrate * value
+LW	T8,0088 (S0)	;T8=obj.data+88: up/left range
+LW	T9,008C (S0)	;T9=obj.data+8C: down/right range
+MTC1	R0,F0
+ADDIU	V1,R0,FFFF
+MUL.S	F6,F18,F4	;F6=act.dist * 100.0
+SW	R0,00AC (S0)	; 0-> obj.data+AC
+SW	V1,00B8 (S0)	;-1-> obj.data+B8
+SW	V1,00BC (S0)	;-1-> obj.data+BC
+SW	V1,00C0 (S0)	;-1-> obj.data+C0
+SW	R0,00C4 (S0)	; 0-> obj.data+C4
+DIV.S	F10,F8,F2	;F10=(turnrate * value) / 65536.0
+SW	R0,00C8 (S0)	; 0-> obj.data+C8
+ADDIU	A0,R0,0030	;A0=30: # bytes to allocate
+ADDIU	A1,R0,0004	;A1=4: bank 4
+SWC1	F0,0090 (S0)	; 0-> obj.data+90
+SWC1	F0,0094 (S0)	; 0-> obj.data+94
+SWC1	F0,0084 (S0)	; 0-> obj.data+84
+SWC1	F0,009C (S0)	; 0-> obj.data+9C
+SWC1	F0,00A0 (S0)	; 0-> obj.data+A0
+SWC1	F0,0098 (S0)	; 0-> obj.data+98
+SWC1	F0,00B0 (S0)	; 0-> obj.data+B0
+SWC1	F0,00B4 (S0)	; 0-> obj.data+B4
+DIV.S	F8,F6,F2	;F8=(act.dist * 100.0) / 65536.0
+SWC1	F10,00A4 (S0)	;obj.data+A4= converted turnrate
+MTC1	T8,F10
+MTC1	T9,F6
+CVT.S.W	F16,F10	;F16=(float) up/left range
+MUL.S	F18,F16,F12	;F18=pos.range * value
+SWC1	F8,00A8 (S0)	;obj.data+A8= converted act.dist
+CVT.S.W	F8,F6	;F8=(float) down/right range
+DIV.S	F4,F18,F2	;F4=(pos.range * value) / 65536.0
+MUL.S	F10,F8,F12	;F10=neg.range * value
+DIV.S	F16,F10,F2	;F16=(neg.range * value) / 65536.0
+SWC1	F4,0088 (S0)	;obj.data+88= converted pos.range
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+SWC1	F16,008C (S0)	;obj.data+8C= converted neg.range
+//7F002D30:	determine type of preset to center toward
+ADDIU	V1,R0,FFFF
+SW	V0,00CC (S0)	;obj.data+CC= p->allocated memory
+SB	V1,0000 (V0)	;-1->mem(0)
+LW	A0,0080 (S0)	;A0=obj.data+80: preset#
+MTC1	R0,F0
+SW	R0,00D0 (S0)	; 0->obj.data+D0
+BLTZ	A0,7F002E08	;if A0 < 0, return
+SWC1	F0,00D4 (S0)	; 0->obj.data+D4
+SLTI	AT,A0,2710
+BEQ	AT,R0,7F002D80	;branch if 2xxx preset
+SLL	T2,A0,0x4
+//7F002D5C:	0xxx presets
+SLL	T0,A0,0x2
+SUBU	T0,T0,A0
+SLL	T0,T0,0x2
+LUI	T1,8007
+LW	T1,5D18 (T1)	;T1=80075D18: p->0xxx preset list
+SUBU	T0,T0,A0
+SLL	T0,T0,0x2
+BEQ	R0,R0,7F002DA0
+ADDU	V1,T0,T1	;V1=p->preset data
+//7F002D80:	378B0	2xxx presets
+LUI	T3,8007
+LW	T3,5D1C (T3)	;T3=80075D1C: p->2xxx preset bank
+ADDU	T2,T2,A0
+SLL	T2,T2,0x2
+LUI	AT,FFF5
+ORI	AT,AT,9FC0	;AT=FFF59FC0: correction for 2710 offset
+ADDU	V1,T2,T3
+ADDU	V1,V1,AT	;V1=p->preset data
+//7F002DA0:	378D0	center object on preset by default
+LW	V0,0010 (S0)	;V0=obj.data+10: p->obj.posdata (8006)
+LWC1	F6,0004 (V1)	;F6=preset+4: ypos
+LWC1	F18,0000 (V1)	;F18=preset+0: xpos
+LWC1	F8,000C (V0)	;F8=obj.posdata+C: ypos
+LWC1	F4,0008 (V0)	;F4=obj.posdata+8: xpos
+SUB.S	F10,F6,F8	;F10=p.ypos - o.ypos
+SUB.S	F12,F18,F4	;F12=p.xpos - o.xpos
+SWC1	F10,0028 (SP)	;SP+28= dif.ypos
+LWC1	F16,0008 (V1)	;F16=preset+8: zpos
+LWC1	F18,0010 (V0)	;F18=obj.posdata+10: zpos
+SWC1	F12,002C (SP)	;SP+2C= dif.xpos
+SUB.S	F14,F16,F18	;F14=p.zpos - o.zpos
+JAL	7F05AA30	;F0=angle between x vector and z vector
+SWC1	F14,0024 (SP)	;SP+24= dif.zpos
+//7F002DD8:	37908	
+LWC1	F2,002C (SP)	;F2=dif.xpos
+LWC1	F14,0024 (SP)	;F14=dif.zpos
+SWC1	F0,0084 (S0)	;obj.data+84=F0: lateral turret rotation
+MUL.S	F4,F2,F2	;F4=(dif.xpos)^2
+NOP
+MUL.S	F6,F14,F14	;F6=(dif.zpos)^2
+JAL	7001F7E0	;F0= sqrt(F12): distance to preset
+ADD.S	F12,F4,F6	;F12=(dif.xpos)^2 + (dif.zpos)^2
+LWC1	F12,0028 (SP)	;F12=dif.ypos
+JAL	7F05AA30	;computes angle between vectors F12 and F14
+MOV.S	F14,F0		;F14=F0: distance to preset
+SWC1	F0,0098 (S0)	;obj.data+98= vertical elevation of turret
+//7F002E08:	37938	return
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0038
+JR	RA
+NOP

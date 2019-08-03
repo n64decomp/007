@@ -1,0 +1,94 @@
+7F0ACA28	E1558	display current solo watch page text
+	accepts: A0=p->DL, A1=, A2=interface mode (1-on; 0-off)
+ADDIU	SP,SP,FFE0
+SW	A1,0024 (SP)	;SP+24=A1: 
+SW	S0,0018 (SP)
+LUI	A1,8008
+LW	A1,A0B0 (A1)	;A1=8007A0B0: p->cur.BONDdata
+OR	S0,A0,R0	;S0=A0: p->DL
+SW	RA,001C (SP)
+LUI	A0,8004
+SW	A2,0028 (SP)	;SP+28=A2: 
+LW	A0,0994 (A0)	;A0=80040994: selected solo watch page
+JAL	7F0A70AC
+ADDIU	A1,A1,1878	;A1=BONDdata+1878: 
+LW	V0,0028 (SP)	;V0=SP+28: interface mode
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F0ACB34	;branch if not 1: 
+NOP
+//7F0ACA68:	1: watch interface available
+JAL	7F07EAD0	;A0->BONDdata+1CC
+OR	A0,R0,R0	;A0=0
+JAL	7F0BD8FC	;A0->pause
+OR	A0,R0,R0	;A0=0
+LUI	T6,8004
+LW	T6,0994 (T6)	;T6=80040994: selected solo watch page
+ADDIU	AT,R0,0001
+OR	A0,R0,R0	;A0=0
+BEQ	T6,AT,7F0ACAA8	;branch if page 1: Inventory
+NOP
+//7F0ACA90:	look for non-inventory select
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ORI	A1,R0,A000	;A1=A000: A, Z buttons
+BEQ	V0,R0,7F0ACAA8	;branch if none pressed
+NOP
+JAL	7F0A4EF8
+NOP
+//7F0ACAA8:	load specific watch page handler
+LUI	T7,8004
+LW	T7,0994 (T7)	;T7=80040994: selected solo watch page
+SLTIU	AT,T7,0005
+BEQ	AT,R0,7F0ACB5C	;return if an invalid page#
+SLL	T7,T7,0x2
+LUI	AT,8006
+ADDU	AT,AT,T7
+LW	T7,8584 (AT)	;T7=80058584+offset: sets up each solo watch page
+JR	T7
+NOP
+//7F0ACAD0:	page 0: Main Page
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F0A830C	display text for solo watch page 0: Main Page
+LW	A1,0024 (SP)
+BEQ	R0,R0,7F0ACB5C
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ACAE4:	page 1: Inventory
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F0A8424	display text for solo watch page 1: Inventory
+LW	A1,0024 (SP)
+BEQ	R0,R0,7F0ACB5C
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ACAF8:	page 2: Controls
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F0AB4B8	display text for solo watch page 2: Controls
+LW	A1,0024 (SP)
+BEQ	R0,R0,7F0ACB5C
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ACB0C:	page 3: Options
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F0ABDFC	display text for solo watch page 3: Options - slidebar constructor and interface
+LW	A1,0024 (SP)
+BEQ	R0,R0,7F0ACB5C
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ACB20:	page 4: Briefing
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F0AC168	display text for solo watch page 4: Briefing
+LW	A1,0024 (SP)
+BEQ	R0,R0,7F0ACB5C
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ACB34:	0: watch interface closed
+BNEL	V0,R0,7F0ACB60	;return if V0 isn't zero
+LW	RA,001C (SP)
+JAL	7F0BD8FC	;A0->pause
+ADDIU	A0,R0,0001	;A0=1: pause game
+JAL	7F07EAD0	;A0->BONDdata+1CC: 
+ADDIU	A0,R0,0001
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F0A77A8
+LW	A1,0024 (SP)
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ACB5C:	return
+LW	RA,001C (SP)
+OR	V0,S0,R0	;V0=S0: p->DL
+LW	S0,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0020

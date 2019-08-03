@@ -1,0 +1,49 @@
+7F0C0970	F54A0	select and replay random ramrom demo
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+JAL	7F01E998	;V0=TRUE if Egypt complete on any difficulty in any folder
+NOP
+LUI	T6,8005
+LW	T6,83F0 (T6)	;T6=800483F0: ramrom ROM address
+OR	A0,V0,R0	;A0=V0: TRUE if Egypt complete
+OR	V1,R0,R0	;V1=0	count
+BEQ	T6,R0,7F0C09D8	;branch if end of ramrom table
+LUI	T7,8005
+LW	T7,83F4 (T7)	;T7=800483F4: ramrom lock
+LUI	T9,8005
+ADDIU	T9,T9,83F0	:T9=800483F0
+SLT	AT,V0,T7	;TRUE if egypt complete < lock
+BNE	AT,R0,7F0C09D8	;branch if locked
+SLL	T8,V1,0x3	;T8=count*8: offset to entry
+ADDU	V0,T8,T9	;V0=800483F0+offset
+//7F0C09B4:	loop until a locked entry or end of list
+LW	T0,0008 (V0)	;T0=next ramrom ROM address
+ADDIU	V1,V1,0001	;V1++	count++
+ADDIU	V0,V0,0008	;V0+=8	next entry
+BEQ	T0,R0,7F0C09D8	;quit counting if NULL entry
+NOP
+LW	T1,0004 (V0)	;T1=lock
+SLT	AT,A0,T1	;TRUE if locked
+BEQL	AT,R0,7F0C09B8	;loop if not locked
+LW	T0,0008 (V0)
+//7F0C09D8:	grab random entry from unlocked list
+JAL	7000A450	;V0=random#
+SW	V1,001C (SP)	;SP+1C=V1: total entry count
+LW	V1,001C (SP)	;V1=total entry count
+LUI	A0,8005
+DIVU	V0,V1
+MFHI	T2		;T2=random % total
+SLL	T3,T2,0x3	;T3=value->offset
+ADDU	A0,A0,T3
+BNE	V1,R0,7F0C0A04	;branch if no division by zero
+NOP
+BREAK	00001C00
+//7F0C0A04:	play ramrom file
+LW	A0,83F0 (A0)	;A0=800483F0+offset: ROM address of ramrom file
+JAL	7F0C081C	;replay demo at hardware A0
+NOP
+//7F0C0A10:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP

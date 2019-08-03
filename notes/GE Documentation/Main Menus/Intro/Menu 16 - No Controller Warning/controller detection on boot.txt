@@ -1,0 +1,699 @@
+Cheap method to add controller detection to 'no controller' screen:
+7F00A760	NOP
+03F290	0004	00000000
+
+7F01AE3C	JAL	7F00A6DC
+04F96E	0002	29B7
+
+Just replaces the normal menu 16 interface with legal's, changing a bit to loop the bugger
+It isn't really ideal.  It only updates when the timer rolls around.
+Ideally, write one specificly for it that works instantly.  It isn't intricate:
+SW	RA,FFFC (SP)
+JAL	7000B9F8	V0= #controllers plugged in
+ADDIU	SP,SP,FFE8
+BLEZ	V0,+3
+//:	set 'Nintendo'
+ADDIU	A0,R0,0001
+JAL	7F01A5D4	
+ADDIU	A1,R0,0001
+//:	RETURN
+LW	RA,0014 (SP)
+JR	RA
+ADDIU	SP,SP,0018
+
++-+
+
+Set SI interrupt: DRAM addy
+70015ED0:	0x20320	copy/paste SI Reg. operations
+	accepts: A0=mode (0:read; 1:write), A1=p->dram
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A0,0018 (SP)	;A0=mode: 1=write to PIF, 0=read from
+JAL	7001F720	;V0= TRUE if SI not ready, FALSE otherwise
+SW	A1,001C (SP)	;A1=RDRAM address copied to SI+0x0
+BEQ	V0,R0,70015EF4	;continue if no issue
+NOP
+BEQ	R0,R0,70015F6C	;return invalid (-1)
+ADDIU	V0,R0,FFFF
+//70015EF4:
+LW	T6,0018 (SP)	;T6=mode
+ADDIU	AT,R0,0001
+BNE	T6,AT,70015F10	;branch if reading PIF
+NOP
+//70015F04:	cache if writing
+LW	A0,001C (SP)	;A0=address of PIFram data in memory
+JAL	70010BD0	;cache A1 bytes at A0 prior to write request
+ADDIU	A1,R0,0040	;A1=0x40: length of PIFram data expected
+//70015F10:	resolve RDRAM address
+JAL	7000E8B0	;V0= offset corresponding to address A0
+LW	A0,001C (SP)	;A0=SP+1C: p->RDRAM target or source
+LUI	T7,A480
+SW	V0,0000 (T7)	;V0->A4800000: RDRAM address
+LW	T8,0018 (SP)	;T8=mode
+BNEZ	T8,70015F40	;branch if writing
+NOP
+//70015F2C:	PIF reading
+LUI	T9,1FC0
+ORI	T9,T9,07C0	;T9=1FC007C0: PIF dedicated to attached stuff
+LUI	T0,A480
+BEQ	R0,R0,70015F50
+SW	T9,0004 (T0)	;PIFram->A4800004: SI Read.64
+//70015F40:	PIF writing
+LUI	T1,1FC0
+ORI	T1,T1,07C0	;T1=1FC007C0: PIF dedicated to attached stuff
+LUI	T2,A480
+SW	T1,0010 (T2)	;PIFram->A4800010: SI Write.64
+//70015F50:	cache PIF read target
+LW	T3,0018 (SP)	;T3=mode
+BNEZ	T3,70015F68	;branch if writing
+NOP
+//70015F5C:	cache target area
+LW	A0,001C (SP)	;A0=p->RDRAM address
+JAL	70010B20	;cache A1 bytes at A0 prior to hardware read request
+ADDIU	A1,R0,0040	;A1=0x40: size
+//70015F68:	return okay
+OR	V0,R0,R0
+//70015F6C:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+//70014AB4:	lift DATA for each controller, or error codes if a problem
+LW	A0,0084 (SP)
+JAL	70014AF8	SEE BELOW
+LW	A1,0088 (SP)
+//70014AC0:	
+LUI	AT,8006
+JAL	70015E10
+SB	R0,7CE0 (AT)
+//70014ACC:
+
+
+After above hits, first read from 80067CA0
+70014AF8:	0x	Copy DATA for each controller or error codes if not available
+LUI	T7,8006
+LBU	T7,7CE1 (T7)
+ADDIU	SP,SP,FFE8
+LUI	T6,8006
+ADDIU	T6,T6,7CA0		T6=80067CA0: RDRAM address for attachments (PIFram)
+SB	R0,0007 (SP)
+SW	T6,0014 (SP)	save PIFram
+BLEZ	T7,70014BB8
+SW	R0,0008 (SP)
+//70014B1C:
+LW	T9,0014 (SP)	T9=PIFram
+ADDIU	T8,SP,000C
+LWL	AT,0000 (T9)
+LWR	AT,0003 (T9)	AT=controller 1 status
+SW	AT,0000 (T8)	save
+LWL	T1,0004 (T9)
+LWR	T1,0007 (T9)	T1=controller 1 data
+SW	T1,0004 (T8)	save
+LBU	T2,000E (SP)	T2=controller 1 status+0x2: data size and error codes
+ANDI	T3,T2,00C0		T3=test for io error and presence flags
+SRA	T4,T3,0x4
+SB	T4,0003 (A1)	save
+LBU	T5,0003 (A1)	T5=error flags
+BNEZ	T5,70014B8C		branch if controller is screwed up
+NOP
+LBU	T6,0011 (SP)
+LBU	T0,0010 (SP)
+ADDIU	T3,R0,0001
+SLL	T7,T6,0x8
+OR	T8,T7,T0
+SH	T8,0000 (A1)
+LBU	T9,0012 (SP)
+SB	T9,0002 (A1)
+LW	T2,0008 (SP)
+LBU	T1,0007 (SP)
+SLLV	T4,T3,T2
+OR	T5,T1,T4
+SB	T5,0007 (SP)
+//70014B8C:	next command
+LW	T6,0008 (SP)	T6=count
+LUI	T9,8006
+LBU	T9,7CE1 (T9)	T9=80067CE1: count for thingies
+LW	T0,0014 (SP)	T0=PIFram
+ADDIU	T7,T6,0001		T7=count+1
+SLT	AT,T7,T9		1 if still more to test
+ADDIU	T8,T0,0008
+SW	T8,0014 (SP)	save next PIFram command address (+8)
+SW	T7,0008 (SP)	save new count
+BNEZ	AT,70014B1C
+ADDIU	A1,A1,0004		A1=slot for next controller data
+//70014BB8
+LBU	T3,0007 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+SB	T3,0000 (A0)
+(800653E8 is address for copy of error codes detected)
+
+
+70014E34:	0x	copy data or error for controllers; different from above
+LUI	T7,8006
+LBU	T7,7CE1 (T7)	#expected PIFram entries
+LUI	T6,8006
+ADDIU	SP,SP,FFF0
+ADDIU	T6,T6,7CA0		T6=80067CA0: RDRAM PIFram address
+SW	T6,000C (SP)
+BLEZ	T7,70014ED4
+SW	R0,0000 (SP)
+//70014E54:
+LW	T9,000C (SP)	T9=RDRAM PIFram
+ADDIU	T8,SP,0004
+LWL	AT,0000 (T9)
+LWR	AT,0003 (T9)
+SW	AT,0000 (T8)	save controller command+status
+LWL	T1,0004 (T9)
+LWR	T1,0007 (T9)
+SW	T1,0004 (T8)	save controller data
+LBU	T2,0006 (SP)	T2=length and error 
+ANDI	T3,T2,00C0		T3=io and disconnect error flags
+SRA	T4,T3,0x4
+SB	T4,0004 (A0)	save error codes	[80064F4C+]
+LBU	T5,0004 (A0)
+BNEZ	T5,70014EA8		skip data read if error present
+NOP
+//70014E90:	copy data segment - should be three bytes
+LHU	T6,0008 (SP)
+SH	T6,0000 (A0)
+LB	T7,000A (SP)
+SB	T7,0002 (A0)
+LB	T0,000B (SP)
+SB	T0,0003 (A0)
+//70014EA8:	NEXT COMMAND
+LW	T8,0000 (SP)	T8=count
+LUI	T3,8006
+LBU	T3,7CE1 (T3)	T3=total PIFram commands
+LW	T1,000C (SP)	T1=RDRAM PIFram
+ADDIU	T9,T8,0001
+SLT	AT,T9,T3
+ADDIU	T2,T1,0008
+SW	T2,000C (SP)	save next PIFram addy
+SW	T9,0000 (SP)	save count++
+BNEZ	AT,70014E54
+ADDIU	A0,A0,0006		data address +6
+//70014ED4:
+JR	RA
+ADDIU	SP,SP,0010
+
+
+FIRST THING THAT CHECKS THE ERROR RETRIEVED
+from errors in 70014AF8:
+7000B810:
+...
+//7000B88C:
+LUI	T8,8006
+LBU	T8,53EB (T8)	error code
+LUI	T0,8006
+LUI	T2,8006
+ANDI	T9,T8,0008		T9=test for disconnect error on controller 1
+BEQ	T9,R0,7000B8AC
+LUI	T4,8006
+ADDIU	S0,R0,000E		S0=E (unset 0x1)
+//7000B8AC:
+LBU	T0,53EF (T0)
+LUI	AT,8002
+ANDI	T1,T0,0008		T1=test for disconnect error on controller 2
+BEQ	T1,R0,7000B8C4
+NOP
+ADDIU	S0,S0,FFFE		S0=unset 0x2
+//7000B8C4:
+LBU	T2,53F3 (T2)
+ANDI	T3,T2,0008		T3=test for disconnect error on controller 3
+BEQ	T3,R0,7000B8D8
+NOP
+ADDIU	S0,S0,FFFC		S0=unset 0x4
+//7000B8D8:
+LBU	T4,53F7 (T4)
+ANDI	T5,T4,0008		T5=test for disconnect error on controller 4
+BEQ	T5,R0,7000B8EC
+NOP
+ADDIU	S0,S0,FFF8		S0=unset 0x8
+//7000B8EC:
+SB	S0,68D0 (AT)	S0->800268D0
+OR	S0,R0,R0
+ADDIU	S0,S0,0001
+//7000B8F8:		completely USELESS routine...
+SLL	T8,S0,0x18
+SRA	S0,T6,0x18
+SLTI	AT,S0,0004
+BNEL	AT,R0,7000B8F8
+ADDIU	S0,S0,0001
+//7000B90C:
+LUI	A3,8002
+LUI	A2,8002
+ADDIU	A2,A2,68D8
+ADDIU	A3,A3,68D4
+OR	S0,R0,R0
+LUI	T9,8002
+LBU	T9,68D0 (T9)	T9=detected controller bitflags from before
+ADDIU	T8,R0,0001
+SLLV	A1,T8,S0
+AND	T0,T9,A1		test if bit for controller 1 present
+BEQ	T0,R0,7000B9B0
+LBU	V1,0000 (A3)
+...
+//7000B9B0:
+AND	T9,V1,A1
+BEQ	T9,R0,7000B9CC
+...
+//7000B9CC:
+ADDIU	S0,S0,0001
+SLL	T3,S0,0x18
+SRA	S0,T3,0x18
+SLTI	AT,S0,0004
+BNEZ	AT,7000B920
+NOP
+//7000B9E4:
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0038
+JR	RA
+NOP
+
+
+from errors in 70014E34:
+//7000BED4:
+JAL	70014E34
+SW	V1,0040 (SP)
+...
+//7000BF2C:
+LUI	A1,8006
+ADDIU	A1,A1,4F30		A1=80064F30: start of some controller functions...
+LW	V0,01E8 (A1)
+SLL	T9,V0,0x2
+SUBU	T9,T9,V0
+SLL	T9,T9,0x3
+ADDU	A2,A1,T9
+OR	A0,R0,R0
+ADDIU	A3,R0,0006
+//7000BF50:
+MULTU	A0,A3
+MFLO	V0
+ADDU	T3,A2,V0
+LBU	V1,0004 (T3)
+BNEZ	V1,7000BF8C		if error code in controller, branch
+NOP
+//7000BF68:
+...
+//7000BF8C:
+BEQ	V1,R0,7000BFC8
+ADDIU	A0,A0,0001
+LW	T9,01EC (A1)
+SLL	T3,T9,0x2
+SUBU	T3,T3,T9
+SLL	T3,T3,0x3
+ADDU	T4,A1,T3
+ADDU	T5,T4,V0
+LBU	T6,0004 (T5)
+BNEL	T6,R0,7000BFCC
+SLL	T7,A0,0x18		T7=A0 * 01000000
+JAL	7000B810		would usually take jump...
+NOP
+BEQ	R0,R0,7000BFDC
+NOP
+//7000BFC8:
+SLL	T7,A0,0x18		T7=A0 * 01000000
+SRA	A0,T7,0x18		A0=same, converted to negative if 80
+SLTI	AT,A0,0004
+BNEZ	AT,7000BF50
+NOP
+//7000BFDC:
+JAL	7000BA7C
+NOP
+...
+
+
++ +
+ +
++ +
+
+other half - setting the menu
+7F000000	34B30	initialize menus and all at load
+LUI	AT,3F80
+MTC1	AT,F0
+ADDIU	V0,R0,FFFF
+LUI	AT,8003
+SW	V0,A8C0 (AT)	;-1->8002A8C0: current menu
+LUI	AT,8003
+SW	R0,A8C4 (AT)	;0->8002A8C4: update for current menu
+LUI	AT,8003
+SW	V0,A8C8 (AT)	;-1->8002A8C8
+LUI	AT,8003
+SW	R0,A8CC (AT)	;0->8002A8CC: timer on folder select screen
+LUI	AT,8003
+SW	V0,A8F4 (AT)	;-1->8002A8F4: selected stage
+LUI	AT,8003
+SW	V0,A8F8 (AT)	;-1->8002A8F8: selected mission briefing page
+LUI	AT,8003
+SW	V0,A8FC (AT)	;-1->8002A8FC: difficulty
+LUI	AT,8003
+SW	R0,A940 (AT)	;0->8002A940: 320x240
+LUI	AT,8003
+SW	R0,A918 (AT)	;0->8002A918: icon on folder select screen = sight
+LUI	AT,8003
+SW	R0,A8E8 (AT)	;0->8002A8E8: folder#
+LUI	AT,8003
+SW	R0,A924 (AT)	;0->8002A924: mission failed
+ADDIU	V1,R0,0001
+LUI	AT,8003
+SW	V1,A92C (AT)	;1->8002A92C: TRUE if first time on legal screen
+LUI	AT,8003
+SW	V1,A930 (AT)	;1->8002A930: TRUE if first time through menus
+LUI	AT,8003
+SW	R0,A934 (AT)	;0->8002A934
+MTC1	R0,F4
+LUI	AT,8003
+SW	V1,A93C (AT)	;1->8002A93C
+LUI	AT,8003
+SWC1	F4,A9A0 (AT)	;0.0->8002A9A0: 007: "Enemy reaction speed" setting
+LUI	AT,8003
+SWC1	F0,A9A4 (AT)	;1.0->8002A9A4: 007: "Enemy health" setting
+LUI	AT,8003
+SWC1	F0,A9A8 (AT)	;1.0->8002A9A8: 007: "Enemy accuracy" setting
+LUI	AT,8003
+SWC1	F0,A9AC (AT)	;1.0->8002A9AC: 007: "Enemy damage" setting
+LUI	AT,8003
+SW	R0,B5E8 (AT)	;0->8002B5E8: do not play ramrom after actors
+LUI	AT,8003
+SW	R0,B5EC (AT)	;0->8002B5EC: randomly-selected intro animation
+LUI	AT,8003
+SW	R0,B5F0 (AT)	;0->8002B5F0: intro animation count
+LUI	AT,8003
+SW	R0,B5F4 (AT)	;0->8002B5F4
+LUI	AT,8003
+SW	R0,B5F8 (AT)	;0->8002B5F8
+LUI	AT,8003
+JR	RA
+SW	R0,B5FC (AT)	;0->8002B5FC: if TRUE, actor intros play full character list
+
+
+7F000D20	35850	initialize menus prior to first display
+ADDIU	V0,R0,FFFF
+LUI	AT,8003
+SW	V0,A8C0 (AT)	;-1-> 8003A8C0: menu.cur
+LUI	AT,8003
+SW	V0,A8C8 (AT)	;-1-> 8003A8C8: menu.next
+LUI	AT,8003
+SW	R0,A940 (AT)	;0 -> 8002A940: 320x240
+ADDIU	V1,R0,0001
+LUI	AT,8003
+SW	V1,A944 (AT)	;1 -> 8002A944: 
+LUI	AT,8003
+SW	R0,A948 (AT)	;0 -> 8002A948: True if emulating Spectrum
+LUI	AT,8003
+SW	R0,A918 (AT)	;0 -> 8002A918: icon on folder select screen = sight
+LUI	AT,8003
+SW	V0,A91C (AT)	;-1-> 8002A91C: no folder selected for deletion
+LUI	AT,8003
+SW	V1,A920 (AT)	;1 -> 8002A920: delete folder minimenu selected option = cancel
+LUI	AT,8003
+SW	R0,A8DC (AT)	;0 -> 8002A8DC: dehighlight folder tab 1
+LUI	AT,8003
+SW	R0,A8E0 (AT)	;0 -> 8002A8E0: dehighlight folder tab 2
+LUI	T6,8003
+LW	T6,A934 (T6)	;T6= 8002A934: keypress.prev
+LUI	AT,8003
+SW	R0,A8E4 (AT)	;0 -> 8002A8E4: dehighlight folder tab 3
+//7F000D88:	skip if nothing pressed
+ADDIU	SP,SP,FFE8
+LUI	AT,8003
+SW	RA,0014 (SP)
+BEQ	T6,R0,7F000DAC
+SW	V1,A93C (AT)	;1 -> 8002A93C: 
+//7F000D9C:	if pressed, set 'main folder select'
+LUI	V0,8003
+ADDIU	V0,V0,A8C4
+ADDIU	T7,R0,0005
+SW	T7,0000 (V0)	;5->menu update: set 'MAIN FOLDER SELECT'
+//7F000DAC:
+LUI	V0,8003
+ADDIU	V0,V0,A8C4
+LW	T8,0000 (V0)	;T8=menu.update
+LUI	A0,0007
+ADDIU	T9,R0,0005
+BGEZ	T8,7F000DCC
+ORI	A0,A0,8000	;A0=78000
+SW	T9,0000 (V0)	;5->menu update: set 'MAIN FOLDER SELECT'
+//7F000DCC:	allocate buffers for stdout and stderr displays...
+JAL	70009720	;V0= p->A0 bytes allocated in memory bank A1
+ADDIU	A1,R0,0004	;A1=bank 4
+LUI	AT,8003
+LUI	A0,0004
+SW	V0,A950 (AT)	;V0->8002A950: p->DL target for nintendologo, goldeneyelogo, and walletbond object data
+ORI	A0,A0,B040	;A0=4B040
+JAL	70009720	;V0= p->A0 bytes allocated in memory bank A1
+ADDIU	A1,R0,0004	;A1=bank 4
+LUI	V1,8003
+ADDIU	T1,V0,003F
+ADDIU	AT,R0,FFC0
+ADDIU	V1,V1,A954
+AND	T2,T1,AT
+SW	V0,0000 (V1)	;V0->8002A954: p->data
+SW	T2,0000 (V1)	;resave, aligned to 0x40 boundry
+//7F000E04:
+LUI	AT,8003
+SW	R0,A95C (AT)	;NULL -> p->folder object instance
+LUI	AT,8003
+SW	R0,A960 (AT)
+LUI	AT,8003
+SW	R0,A964 (AT)
+LUI	AT,8003
+JAL	7F000C70
+SW	R0,A968 (AT)
+//7F000E2C:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+Actual bugger that sets the timer for legal and skips to next screen:
+7F00A6DC	0x	Legal Screen Processing
+ADDIU	SP,SP,FFE8
+LUI	AT,4270
+SW	RA,0014 (SP)
+MTC1	AT,F12
+JAL	70004544
+NOP
+LUI	AT,8005
+JAL	70004590	;F12->video2 page width [p@800232A8+C] and something else...
+LWC1	F12,19E4 (AT)
+LUI	AT,42C8
+MTC1	AT,F12
+LUI	AT,8005
+JAL	70004650
+LWC1	F14,19E8 (AT)
+JAL	70004534	;A0->video2+24
+OR	A0,R0,R0
+LUI	V0,8003
+ADDIU	V0,V0,A8CC
+LUI	T7,8005
+LW	T7,8374 (T7)	;T7=80048374: 
+LW	T6,0000 (V0)	;T6=8002A8CC: timer on folder select screen
+OR	A0,R0,R0
+ADDU	T8,T6,T7
+SLTI	AT,T8,00F1
+BNEZ	AT,7F00A788	;branch when legal screen timer still running
+SW	T8,0000 (V0)
+//7F00A744:
+JAL	7000B9F8	V0= #controllers plugged in
+	LUI	T6,8002
+	LW	T6,68C4 (T6)	T6=800268C4: index of controller read requests
+	LUI	V0,8002
+	LW	V1,01F8 (T6)	V1=80064F30+1F8: controller index
+	BLTZ	V1,7000BA20
+	NOP
+	SLL	V0,V1,0x18
+	SRA	T7,V0,0x18
+	JR	RA
+	OR	V0,T7,R0
+	//7000BA20:
+	...etc
+	
+NOP
+BGTZ	V0,7F00A774
+LUI	T0,8003
+LW	T0,A92C (T0)
+ADDIU	A0,R0,0016	A0=no controller menu
+BEQL	T0,R0,7F00A778
+ADDIU	A0,R0,0001	A0=Nintendo menu
+//7F00A764:	set 'no controller'
+JAL	7F01A5D4	
+ADDIU	A1,R0,0001
+BEQ	R0,R0,7F00A7D8
+LW	RA,0014 (SP)
+//7F00A774:	set 'Nintendo'
+ADDIU	A0,R0,0001
+JAL	7F01A5D4	
+ADDIU	A1,R0,0001
+BEQ	R0,R0,7F00A7D8
+LW	RA,0014 (SP)
+//7F00A788:	legal screen timer advance
+JAL	7000C3AC
+ORI	A1,R0,FFFF
+BEQ	V0,R0,7F00A7D4
+LUI	T1,8003
+LW	T1,A92C (T1)	T1=8002A92C
+LUI	T2,8003
+BNEL	T1,R0,7F00A7D8	if set, no advance possible
+LW	RA,0014 (SP)
+LW	T2,A930 (T2)	T2=8002A930
+ADDIU	A1,R0,0001
+ADDIU	A0,R0,0001
+BNEZ	T2,7F00A7CC	if set, advance to Nintendo, not files
+NOP
+JAL	7F01A5D4	set 'select file'
+ADDIU	A0,R0,0005
+BEQ	R0,R0,7F00A7D8
+LW	RA,0014 (SP)
+//7F00A7CC:
+JAL	7F01A5D4	set 'Nintendo'
+ADDIU	A1,R0,0001
+LW	RA,0014 (SP)
+//7F00A7D8:
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+
+THING RESPONSIBLE FOR SETTING THE MENU - A0=menu#, A1=mode: 1=update, 2=return
+7F01A5D4	0x	
+ADDIU	AT,R0,000B
+BEQ	A0,AT,7F01A5E8	;branch if stage active selected
+ADDIU	T6,R0,0001
+ADDIU	AT,R0,0019
+BNE	A0,AT,7F01A5F0
+//7F01A5E8:
+LUI	AT,8003
+SW	T6,A948 (AT)	;if menu 19, 1->8002A948: set if emulating Spectrum
+//7F01A5F0:
+BEQ	A1,R0,7F01A604
+LUI	AT,8003
+LUI	AT,8003
+JR	RA
+SW	A0,A8C4 (AT)	;set to update
+//7F01A604:
+SW	A0,A8C8 (AT)	;set as return
+JR	RA
+NOP
+
+
+7F01AEFC	0x	constructs the menu pages themselves, or at least text, etc.
+LUI	T6,8003
+LW	T6,A8C0 (T6)
+ADDIU	SP,SP,FFE0
+SW	S0,0018 (SP)
+SLTIU	AT,T6,001A
+OR	S0,A0,R0
+BEQ	AT,R0,7F01B0C0
+SW	RA,001C (SP)
+SLL	T6,T6,0x2
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,1C84 (AT)
+JR	T6
+NOP
+//7F01AF34:	menu 00-legal
+//7F01AF44:	menu 17-switch
+JAL	7F00ABA8
+	ADDIU	SP,SP,FFE8
+	SW	RA,0014 (SP)
+	JAL	7F01C0D0	looks like it constructs the thing!
+	NOP
+	LW	RA,0014 (SP)
+	ADDIU	SP,SP,0018
+	JR	RA
+	NOP
+OR	A0,S0,R0
+BEQ	R0,R0,7F01B0C0
+OR	S0,V0,R0
+//7F01AF54:	menu 01-Nintendo
+//7F01AF64:	menu 02-Rare
+//7F01AF74:	menu 03-Eye
+//7F01AF84:	menu 04-GE splash
+//7F01AF94:	menu 05-file select
+//7F01AFA4:	menu 06-main folder menu
+//7F01AFB4:	menu 07-mission select
+//7F01AFC4:	menu 08-objectives
+//7F01AFD4:	menu 09-007 options
+//7F01AFE4:	menu 0A-briefings
+//7F01AFF4:	menu 0C-Failed
+//7F01B004:	menu 0D-Complete
+//7F01B014:	menu 0E-MP options
+//7F01B024:	menu 13-scenario
+//7F01B034:	menu 0F-character select
+//7F01B044:	menu 14-teams
+//7F01B054:	menu 10-handicap
+//7F01B064:	menu 11-control
+//7F01B074:	menu 12-MP stage select
+//7F01B084:	menu 15-cheats
+//7F01B094:	menu 16-no controller
+//7F01B0A4:	menu 18-actor intro
+//7F01B0B4:	menu 19-Spectrum emulator
+//7F01B0C0:	menu 0B-active play, general return
+LW	RA,001C (SP)
+OR	V0,S0,R0
+LW	S0,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0020
+
++ +
+ +
++ +
+
+POTENTIAL REWRITE!
+//7F00A73C:	0x3F26C
+14200007	*BNEZ	AT,7F00A75C	branch when legal screen timer still running
+AC580000	+SW	T8,0000 (V0)
+//7F00A744:
+0C002E7E	+JAL	7000B9F8	V0= #controllers plugged in
+00000000	+NOP
+1840000D	*BLEZ	V0,7F00A784	if controller count silly, show no controller screen
+24040016	*ADDIU	A0,R0,0016	A0=no controller menu
+1000000B	*BEQ	R0,R0,7F00A784
+24040001	*ADDIU	A0,R0,0001	A0=Nintendo menu
+//7F00A75C:	legal screen timer advance
+0C0030EB	JAL	7000C3AC
+3405FFFF	ORI	A1,R0,FFFF
+10400009	*BEQ	V0,R0,7F00A78C
+3C0A8003	*LUI	T2,8003
+8D49A92C	*LW	T1,A92C (T2)	T1=8002A92C
+15200006	*BNE	T1,R0,7F00A78C	if set, no advance possible
+8D4AA930	LW	T2,A930 (T2)	T2=8002A930
+24040001	ADDIU	A0,R0,0001
+51400001	*BEQL	T2,R0,+1	if set, advance to Nintendo, not files
+24040005	ADDIU	A0,R0,0005
+//7F00A784:
+0FC06975	JAL	7F01A5D4	set 'Nintendo'
+24050001	ADDIU	A1,R0,0001
+//7F00A78C:
+8FBF0014	*LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	*ADDIU	SP,SP,0018
+
+7F00A798:	0x3F2C8	type 16 cheats and borrows from prior routine!
+AFBFFFFC	SW	RA,FFFC (SP)
+0C002E7E	JAL	7000B9F8	V0= #controllers plugged in
+27BDFFE8	ADDIU	SP,SP,FFE8
+1000FFEF	BEQ	R0,R0,7F00A764
+NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+-NOP
+

@@ -1,0 +1,119 @@
+7000A100	AD00	generate ordered list of 200 largest allocated blocks of memory
+	note this list is set to SP+54, which is not printed and invalid on return...
+ADDIU	SP,SP,EF98
+LUI	A0,8006
+LW	A0,3C38 (A0)	;A0=80063C38: p->first entry in allocation table
+SW	S5,002C (SP)
+SW	S0,0018 (SP)
+ADDIU	S5,R0,FFFF	;S5= -1
+SW	S2,0020 (SP)
+LUI	S0,8006
+SW	RA,003C (SP)
+SW	S8,0038 (SP)
+SW	S7,0034 (SP)
+SW	S6,0030 (SP)
+SW	S4,0028 (SP)
+SW	S3,0024 (SP)
+SW	S1,001C (SP)
+//7000A13C:
+LUI	V1,8000
+OR	S2,R0,R0	;S2=0	linecount
+ADDIU	S0,S0,3C38	;S0=80063C38
+BEQ	S5,A0,7000A16C	;branch if first entry -1	-1=end of list
+OR	V0,R0,R0	;V0=0	size=0
+//7000A150:	loop for each entry
+LW	T7,0008 (S0)	;T7=next entry+0: p->next block
+LW	T6,0004 (S0)	;T6=entry+4: p->cur.size
+ADDIU	S0,S0,0008	;S0+=8	p->next entry
+BNE	S5,T7,7000A150	;loop until end of list
+ADDU	V0,V0,T6	;V0+=size	total allocated size
+LUI	S0,8006
+ADDIU	S0,S0,3C38	;S0=80063C38
+//7000A16C:	ready loop...
+LUI	S8,8003
+LUI	S6,8003
+ADDIU	S1,SP,0054	;S1=SP+54: p->buffer
+ADDIU	S6,S6,91E0	;S6=800291E0: "%d"
+ADDIU	S8,S8,91E4	;S8=800291E4: "..."
+OR	S3,R0,R0	;S3=0	largest allocated size
+OR	S4,R0,R0	;S4=0
+ADDIU	S7,R0,00C8	;S7=0xC8
+//7000A18C:
+BEQ	S5,A0,7000A1C4	;branch if no list
+NOP
+//7000A194:	loop to find largest allocation
+LW	V0,0004 (S0)	;V0=entry+4: size
+SLTU	AT,V0,V1	;TRUE if V0 < 0x80000000
+BEQ	AT,R0,7000A1B4	;branch if size negative or pointer
+SLTU	AT,S3,V0	;TRUE if largest < cur.size
+BEQL	AT,R0,7000A1B8	;branch if largest entry smaller than this one
+LW	T8,0008 (S0)
+OR	S3,V0,R0	;S3=V0: largest allocation = cur.size
+ADDIU	S4,S4,0001	;S4++	#entries labelled largest
+//7000A1B4:	loop to grab largest size
+LW	T8,0008 (S0)	;T8=next entry+0: p->block
+ADDIU	S0,S0,0008	;S0+=8	next entry
+BNEL	S5,T8,7000A198	;loop if not end of list
+LW	V0,0004 (S0)
+//7000A1C4:	append string with allocation values
+BEQ	S4,R0,7000A250	;branch if first entry was largest
+LUI	S0,8006
+ADDIU	S0,S0,3C38	;S0=80063638
+BEQ	S5,A0,7000A244	;branch if no valid entries
+OR	S4,R0,R0	;S4=0
+LW	V0,0004 (S0)	;V0=entry+4: size
+SLTI	AT,S2,00C8	;TRUE if linecount < 0xC8: within screen bounds
+BNEL	S3,V0,7000A228	;branch if not largest allocation
+LW	T0,0008 (S0)
+//7000A1E8:	largest allocation is displayed if more lines
+BEQ	AT,R0,7000A20C	;branch if linecount larger than 0xC8
+OR	A0,S1,R0	;A0=S1: p->buffer
+ADDIU	A2,V0,0200	;A2=size+0x200: round up
+SRL	T9,A2,0xA	;T9=size/0x400: #mem.segments
+OR	A2,T9,R0	;A2=#memory segments
+JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+OR	A1,S6,R0	;A1=S6: 800291E0: "%d "
+BEQ	R0,R0,7000A220
+ADDU	S1,S1,V0	;S1+=V0: p->string+strlen	allows concatenation
+//7000A20C:	S2=0xC8 displays etc when unable to display more (...)
+BNE	S2,S7,7000A220	;branch if S2 isn't 0xC8
+OR	A0,S1,R0	;A0=S1: p->buffer
+JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+OR	A1,S8,R0	;A1=S6: 800291E0: "..."
+ADDU	S1,S1,V0	;S1+=V0: p->string+strlen	allows concatenation
+//7000A220:	increment line count
+ADDIU	S2,S2,0001	;S2++	linecount++
+//7000A224:
+LW	T0,0008 (S0)	;T0=next entry+0: p->block
+ADDIU	S0,S0,0008	;S0+=8	next entry
+BNEL	S5,T0,7000A1DC	;loop while entries still exist
+LW	V0,0004 (S0)
+//7000A234:	loop to print next largest allocated block
+LUI	S0,8006
+LUI	A0,8006
+LW	A0,3C38 (A0)	;A0=80063C38: p->1st block
+ADDIU	S0,S0,3C38	;S0=80063C38
+OR	V1,S3,R0	;V1=S3: largest allocated size
+BEQ	R0,R0,7000A18C
+OR	S3,R0,R0	;S3=0	size=0
+//7000A250:	if all lines can't be displayed, list the total entries
+SLTI	AT,S2,00C9	;TRUE if linecount < 0xC9
+BNE	AT,R0,7000A26C	;return if linecount okay
+OR	A0,S1,R0	;A0=S1: p->string
+LUI	A1,8003
+ADDIU	A1,A1,91E8	;A1=800291E8: "[%d]"
+JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+OR	A2,S2,R0	;A2=S2: linecount
+//7000A26C:	return
+LW	RA,003C (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S3,0024 (SP)
+LW	S4,0028 (SP)
+LW	S5,002C (SP)
+LW	S6,0030 (SP)
+LW	S7,0034 (SP)
+LW	S8,0038 (SP)
+JR	RA
+ADDIU	SP,SP,1068

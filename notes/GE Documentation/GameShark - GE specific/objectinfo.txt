@@ -1,0 +1,350 @@
+GoldenEye 007
+C:CODE DESCRIPTION|CODE|CREATOR|NOTE
+EX: C:Infinite Health|80124FAC 004F|Awesome Hacker|Only works in single player 
+
+versus info at 8003a228.  Ch per object.  
+8003,75d0|8005,5a60|3dcc,cccd
+prior object line
+object load
+size
+
+0000    Palarm1Z                double alarm
+0001    Palarm2Z                alarm [05]
+0002    PexplosionbitZ          white pyramid
+0003    Pammo_crate1Z           ammo box - light brown [14]
+0004    Pammo_crate2Z           ammo box - brown [14]
+0005    Pammo_crate3Z           ammo box - green [14]
+0006    Pammo_crate4Z           ammo box - green + white text[14]
+0007    Pammo_crate5Z           ammo box - green double-brace[14]
+0008    Pbin1Z                  piece of Egyptian collumn
+0009    Pblotter1Z              desk blotter
+000A    Pbook1Z                 red book
+000B    Pbookshelf1Z            full bookshelf
+000C    Pbridge_console1aZ      bridge console W/ Keyboard
+000D    Pbridge_console1bZ      bridge console, controls on right
+000E    Pbridge_console2aZ      bridge console W/ Keyboard
+000F    Pbridge_console2bZ      bridge console, 3 controls
+0010    Pbridge_console3aZ      bridge console W/ Keyboard
+0011    Pbridge_console3bZ      bridge console, keyboard on Left
+0012    Pcard_box1Z             cardboard box, Kapto|enb [03]
+0013    Pcard_box2Z             cardboard box,red arrow, BaHko [03]
+0014    Pcard_box3Z             cardboard box, scrawled text, baHaH [03]
+0015    Pcard_box4_lgZ          cardboard box, three seams [03]
+0016    Pcard_box5_lgZ          cardboard box, 4 seams, arrow, baHaH [03]
+0017    Pcard_box6_lgZ          cardboard box, dark Arrow, BaHko [03]
+0018    PcctvZ                  surveillance camera [06]
+0019    Pconsole1Z              double screen console [0B]
+001A    Pconsole2Z              double screen console [0B]
+001B    Pconsole3Z              double screen console [0B]
+001C    Pconsole_sevaZ          console W/ Keyboard
+001D    Pconsole_sevbZ          console, keyboard + monitor
+001E    Pconsole_sevcZ          console
+001F    Pconsole_sevdZ          console
+0020    Pconsole_sev2aZ         console [03]
+0021    Pconsole_sev2bZ         console(monitor, keyboard, controls) [0A]
+0022    Pconsole_sev2cZ         console [03]
+0023    Pconsole_sev2dZ         console [16]
+0024    Pconsole_sev_GEaZ	24 [03]
+0025    Pconsole_sev_GEbZ       controls only
+0026    Pdesk1Z                 desk W/ Kickplate [03]
+0027    Pdesk2Z                 white table [03]
+0028    Pdesk_lamp2Z            Archives desk lamp
+0029    Pdisc_readerZ           part of Aztec DAT box
+002A    Pdisk_drive1Z           other part of Aztec DAT box
+002B    Pfiling_cabinet1Z       two drawer white cabinet [03]
+002C    Pjerry_can1Z            jerry can
+002D    Pkeyboard1Z             computer keyboard [03]
+002E    Pkit_units1Z            4 door & drawer bench [03]
+002F    Pletter_tray1Z          desk in-tray
+0030    Pmainframe1Z            mainframe [03]
+0031    Pmainframe2Z            mainframe [03]
+0032    Pmetal_chair1Z          chair [03]
+0033    Pmetal_crate1Z          metal crate,6 top corner [03]
+0034    Pmetal_crate2Z          metal crate,6 bottom corner [03]
+0035    Pmetal_crate3Z          metal crate,skull & crossbones [03]
+0036    Pmetal_crate4Z          ribbed steel box
+0037    Pmissile_rackZ          small missle in rack
+0038    Pmissile_rack2Z         4 models in a row
+0039    Poil_drum1Z             oil drum,single stripe - ribbed [03]
+003A    Poil_drum2Z             oil drum,single stripe - ribbed + crossbones [03]
+003B    Poil_drum3Z             oil drum,single stripe - ribbed + hazard [03]
+003C    Poil_drum5Z             oil drum,double striped - hazard [03]
+003D    Poil_drum6Z             oil drum,hazard [03]
+003E    Poil_drum7Z             oil drum,double dashes - crossbones [03]
+003F    PpadlockZ               padlock
+0040    Pphone1Z                phone
+0041    Pradio_unit1Z           radio tuner[03]
+0042    Pradio_unit2Z           radio tuner 2[03]
+0043    Pradio_unit3Z           radio tuner w/ knobs[03]
+0044    Pradio_unit4Z           radio tuner w/ knobs.  higher Frequency[03]
+0045    Psat1_reflectZ          enlarged Silo goldeneye sattelite
+0046    PsatdishZ               Antenna dish from Dam [03]
+0047    PsatboxZ                small tape recorder or remote control?
+0048    Pstool1Z                wooden stool
+0049    Pswivel_chair1Z         swivel chair [03]
+004A    Ptorpedo_rackZ          rack of 3 blue rockets
+004B    Ptv1Z                   small television or monitor [0A]
+004C    Ptv_holderZ             hanging monitor rack [0C]
+004D    PtvscreenZ              wall monitor screen [0A]
+004E    Ptv4screenZ             wall monitor screen [0A]
+004F    Pwood_lg_crate1Z        wooden crate [03]
+0050    Pwood_lg_crate2Z        wooden crate [03]
+0051    Pwood_md_crate3Z        wooden crate [03]
+0052    Pwood_sm_crate4Z        wooden crate [03]
+0053    Pwood_sm_crate5Z        wooden crate [03]
+0054    Pwood_sm_crate6Z        wooden crate [03]
+0055    Pwooden_table1Z         Archives PP7 wooden table [03]
+0056    Pswipe_card2Z           Floppy disc
+0057    Pborg_crateZ            blue & gold printed circuit cube
+0058    Pboxes4x4Z              metal crate stack, 4x4
+0059    Pboxes3x4Z              metal crate stack, 4x3
+005A    Pboxes2x4Z              metal crate stack, 4x2
+005B    Psec_panelZ             red button on vertical slab (enlarged?)
+005C    PICBM_noseZ             small rocket
+005D    PICBMZ                  Silo rocket, full size (one of the biggest items!)
+005E    Ptuning_console1Z       double console on castors
+005F    Pdesk_arecibo1Z         counter or bar
+0060    Plocker3Z               locker set [03]
+0061    Plocker4Z               locker set [03]
+0062    ProofgunZ               ceiling drone gun [0D]
+0063    Pdest_engineZ           Frigate Engine.
+0064    Pdest_exocetZ           Frigate square pack rocket launcher, pointing up.
+0065    Pdest_gunZ              Frigate gun turret
+0066    Pdest_harpoonZ          Frigate rocket rack
+0067    Pdest_seawolfZ          Runway rocket launcher [03]
+0068    PwindowZ                window glass [2A & 2F]
+0069    Pwindow_lib_lg1Z        window lattice frame
+006A    Pwindow_lib_sm1Z        half size window lattice
+006B    Pwindow_cor11Z          smaller lattice
+006C    Pjungle3_treeZ          Jungle big tree (another whopper, best viewed on Dam) [03]
+006D    PpalmZ                  Jungle palm [03]
+006E    PpalmtreeZ              Jungle palm resprouting after loss of fronds [03]
+006F    Pplant2bZ               Jungle low shrub [03]
+0070    PlabbenchZ              shrunken Facility laboratory bench
+0071    PgasbarrelZ             Facility, Runway white rubbish bin
+0072    PgasbarrelsZ            set of 4 white bins [03]
+0073    PbodyarmourZ            body armour [15]
+0074    PbodyarmourvestZ        body armour [15]
+0075    PgastankZ               shrunken Facility gas tank
+0076    Pglassware1Z            a glass
+0077    PhatchboltZ             train floor plate securing strips [03]
+0078    PbrakeunitZ             Train brake controller [03]
+0079    Pak47magZ               gun magazine [07]
+007A    Pm16magZ                gun magazine [07]
+007B    Pmp5kmagZ               gun magazine [07]
+007C    PskorpionmagZ           gun magazine [07]
+007D    PspectremagZ            gun magazine [07]
+007E    PuzimagZ                gun magazine [07]
+007F    PsilencerZ              silencer [07]
+0080    PchrextinguisherZ       fire extinguisher
+0081    PboxcartridgesZ         small box bullets
+0082    Pfnp90magZ              rolled up newspaper?
+0083    PgoldenshellsZ          small box bullets
+0084    PmagnumshellsZ
+0085    PwppkmagZ
+0086    Ptt33magZ               ammo clip [07]
+0087    Psev_doorZ              Grey door with warning strips on it [01]
+0088    Psev_door3Z             Silo Door - Arrow Left [01]
+0089    Psev_door3_windZ        Wierd Beta Door (Flashes) [01]
+008A    Psev_door4_windZ        Silo Door (Again) - Arrow Left [01]
+008B    Psev_trislideZ          Clear Glass Door [01]
+008C    Psev_door_v1Z           A diffent silo Door - Arrow Up [03]
+008D    Psteel_door1Z           The silver Silo doors (Corragated,With warning strips) [01]
+008E    Psteel_door2Z           Rusty Old Door [01]
+008F    Psteel_door3Z           Door With rust on it-double cross brace (Archives) [01]
+0090    Psilo_lift_doorZ        Metalic Blue Elevator Door - Silo [01]
+0091    Psteel_door2bZ          A different rusty old door [01]
+0092    Pdoor_roller1Z          Stripey Blue door [01]
+0093    Pdoor_roller2Z          Blue door (With holes in it) [01]
+0094    Pdoor_roller3Z          Same [01]
+0095    Pdoor_roller4Z          Part of Runway Shutters [01]
+0096    Pdoor_st_arec1Z         Blue corrugated door w/ Red and white diagonal lines [01]
+0097    Pdoor_st_arec2Z         Same but reversed [01]
+0098    Pdoor_dest1Z            Silo normal door (Grey With indents in) [01]
+0099    Pdoor_dest2Z            Same but with Keep clear on it [01]
+009A    Pgas_plant_sw_do1Z      Grey Door With blue stripe - Very cool [01]
+009B    Pgas_plant_sw2_do1Z     The grey door in Facility [01]
+009C    Pgas_plant_sw3_do1Z     Same [01]
+009D    Pgas_plant_sw4_do1Z     Plain Wood door (looks like Sand) [01]
+009E    Pgas_plant_met1_do1Z    Facility Normal (Big Brown ones) [01]
+009F    Pgas_plant_wc_cub1Z     Facility Bathroom Door [01]
+00A0    Pgasplant_clear_doorZ   Clear Glass Door - From Labs in Facility [01]
+00A1    Ptrain_doorZ            Brown Wooden Door - Train [01]
+00A2    Ptrain_door2Z           Brown door with glass in it [01]
+00A3    Ptrain_door3Z           Brown door with glass in it (Unbreakable) [01]
+00A4    Pdoor_eyelidZ           Very wierd door that goes up and down [01]
+00A5    Pdoor_irisZ             Water Caverns Door [01]
+00A6    PsevdoorwoodZ           Door from Huts on Surface [01]
+00A7    PsevdoorwindZ           Wierd green door with glass in it [01]
+00A8    PsevdoornowindZ         Plain green door [01]
+00A9    PsevdoormetslideZ       bunker outer door, Cradle Door [01]
+00AA    Pcryptdoor1aZ           Stone door w/ prints on it [01]
+00AB    Pcryptdoor1bZ           Sand door w/ prints on it [01]
+00AC    Pcryptdoor2aZ           Darker Stone door w/ prints on it [01]
+00AD    Pcryptdoor2bZ           Light brown wood door [01]
+00AE    Pcryptdoor3Z            Egyptian Door [01]
+00AF    Pcryptdoor4Z            Sand/Brown door [01]
+00B0    PvertdoorZ              Blast Door - Control [01]
+00B1    PhatchdoorZ             Train Floor Plate [01]
+00B2    PdamgatedoorZ           A different Blast Door - Control [01]
+00B3    PdamtundoorZ            Dam Blast Room Door [01]
+00B4    PdamchaindoorZ          Dam Mesh Door [01]
+00B5    PsilotopdoorZ           Blown Up door [01]
+00B6    Pdoorprison1Z           Stack/Basement Gate [01]
+00B7    PdoorstatgateZ          Statue Gates [01]
+00B8    PchrkalashZ             Soviet KF7 [08]
+00B9    PchrgrenadelaunchZ      Grenade Laucher [08]
+00BA    PchrknifeZ              Throwing Knife [08]
+00BB    PchrlaserZ              Moonraker Laser [08]
+00BC    Pchrm16Z                AR33 Assault Rifle [08]
+00BD    Pchrmp5kZ               D5K [08]
+00BE    PchrrugerZ              Cougar Magnum [08]
+00BF    PchrwppkZ               PP7 [08]
+00C0    PchrshotgunZ            Shotgun [08]
+00C1    PchrskorpionZ           Klobb [08]
+00C2    PchrspectreZ            Phantom [08]
+00C3    PchruziZ                ZMG [08]
+00C4    PchrgrenadeZ            Grenade [08]
+00C5    Pchrfnp90Z              RCP-90 [08]
+00C6    PchrbriefcaseZ          Briefcase [08]
+00C7    PchrremotemineZ         Remote Mine [08]
+00C8    PchrproximitymineZ      Proximity Mine [08]
+00C9    PchrtimedmineZ          Timed Mine [08]
+00CA    PchrrocketZ             Rocket [08]
+00CB    PchrgrenaderoundZ       Grenade Launcher shot [08]
+00CC    PchrwppksilZ            Silenced PP7 [08]
+00CD    Pchrtt33Z               Dostovei DD44 [08]
+00CE    Pchrmp5ksilZ            Silenced D5K [08]
+00CF    PchrautoshotZ           Auto Shotgun [08]
+00D0    PchrgoldenZ             Golden Gun [08]
+00D1    PchrthrowknifeZ         Hunting Knife [08]
+00D2    PchrsniperrifleZ        Sniper Rifle [08]
+00D3    PchrrocketlaunchZ       Rocket laucher [08]
+00D4    PhatfurryZ              black hat [11]
+00D5    PhatfurrybrownZ         black hat [11]
+00D6    PhatfurryblackZ         black hat [11]
+00D7    PhattbirdZ              black hat [11]
+00D8    PhattbirdbrownZ         green hat [11]
+00D9    PhathelmetZ             helmet [11]
+00DA    PhathelmetgreyZ         helmet [11]
+00DB    PhatmoonZ               moonraker helmet [11]
+00DC    PhatberetZ              black hat [11]
+00DD    PhatberetblueZ          blue special forces hat [11]
+00DE    PhatberetredZ           red special forces hat [11]
+00DF    PhatpeakedZ             officers hat [11]
+00E0    PchrwristdartZ		BETA
+00E1    PchrexplosivepenZ	BETA
+00E2    PchrbombcaseZ		Briefcase lying down
+00E3    PchrflarepistolZ	BETA pickup
+00E4    PchrpitongunZ		BETA pickup
+00E5    PchrfingergunZ		BETA pickup
+00E6    PchrsilverwppkZ		BETA pickup
+00E7    PchrgoldwppkZ		BETA pickup
+00E8    PchrdynamiteZ		BETA pickup
+00E9    PchrbungeeZ		BETA pickup
+00EA    PchrdoordecoderZ	Keypad
+00EB    PchrbombdefuserZ	Buttons, Switches, and Display
+00EC    PchrbugdetectorZ	BETA pickup
+00ED    PchrsafecrackercaseZ	briefcase lying down
+00EE    PchrcameraZ		push-advance camera
+00EF    PchrlockexploderZ	BETA pickup
+00F0    PchrdoorexploderZ	BETA pickup
+00F1    PchrkeyanalysercaseZ    briefcase laying down
+00F2    PchrweaponcaseZ         briefcase standing up
+00F3    PchrkeyyaleZ            yale key [04]
+00F4    PchrkeyboltZ            bolt key [04]
+00F5    PchrbugZ                covert modem/tracker bug
+00F6    PchrmicrocameraZ        small video camera with aerial
+00F7    PfloppyZ                floppy disc
+00F8    PchrgoldeneyekeyZ       goldeneye key [08]
+00F9    PchrpolarizedglassesZ   sunglasses
+00FA    PchrcreditcardZ		BETA pickup
+00FB    PchrdarkglassesZ	BETA pickup
+00FC    PchrgaskeyringZ		triangular shaped thing
+00FD    PchrdatathiefZ		circuitboard with dealie
+00FE    PsafeZ                  safe without door [2B]
+00FF    PbombZ			BETA pickup
+0100    PchrplansZ              classified folder (game intro)
+0101    PchrspyfileZ		BETA pickup
+0102    PchrblueprintsZ         Pirate prints
+0103    PchrcircuitboardZ       circuitboard
+0104    PchrmapZ                bunker2 plans
+0105    PchrspooltapeZ		BETA pickup
+0106    PchraudiotapeZ          audiotape
+0107    PchrmicrofilmZ		BETA pickup
+0108    PchrmicrocodeZ		BETA pickup
+0109    PchrlectreZ		BETA pickup
+010A    PchrmoneyZ		BETA pickup
+010B    PchrgoldbarZ		BETA pickup
+010C    PchrheroinZ		BETA pickup
+010D    PchrclipboardZ          red card
+010E    PchrdossierredZ         red dossier [03]
+010F    PchrstafflistZ          Bunker staff list [03]
+0110    PchrdattapeZ            DAT
+0111    PchrplastiqueZ		plastique	
+0112    PchrblackboxZ           orange helicopter "black" box
+0113    PchrvideotapeZ          cctv tape [03]
+0114    PnintendologoZ          Nintendo logo
+0115    PgoldeneyelogoZ         Goldeneye logo
+0116    PwalletbondZ            Folder with royal crest in sky [07]
+0117    PmiltruckZ              Dam truck [27]
+0118    PjeepZ                  jeep [27]
+0119    ParticZ                 red prime mover [28]
+011A    PhelicopterZ            brown helicopter [28]
+011B    PtigerZ                 pirate helicopter [28]
+011C    PmilcopterZ             hound helicopter [28]
+011D    PhindZ                  soviet camouflage chopper [28]
+011E    PartictrailerZ          black trailer [07]
+011F    PmotorbikeZ             motorcycle [07]
+0120    PtankZ                  tank [2D]
+0121    PapcZ                   amphibious vehicle [07]
+0122    PspeedboatZ             speedboat [07]
+0123    PplaneZ                 Runway aeroplane [28]
+0124    Pgun_runway1Z           wall mount drone gun [0D when working, or 0C just to appear]
+0125    PsafedoorZ              safe door [01]
+0126    Pkey_holderZ            Bunker2 key rack [03]
+0127    PhatchsevxZ             Bunker2 sliding glass door
+0128    PsevdishZ               Surface satellite dish, from top of building [28]
+0129    Parchsecdoor1Z
+012A    Parchsecdoor2Z
+012B    PgroundgunZ             free standing drone gun [0D]
+012C    PtrainextdoorZ          Depot train door
+012D    PcarbmwZ                Streets small white car
+012E    PcarescortZ             Streets small white car
+012F    PcargolfZ               Streets small white car
+0130    PcarweirdZ              Streets small red car
+0131    PcarzilZ                Ouromov's car [27]
+0132    Pshuttle_door_lZ        vertical door with spikes
+0133    Pshuttle_door_rZ
+0134    Pdepot_gate_entryZ      red star on panel
+0135    Pdepot_door_steelZ      shutters
+0136    Pglassware2Z            beaker with blue
+0137    Pglassware3Z            erlenmeyer
+0138    Pglassware4Z            5 beaker set
+0139    PlandmineZ              blue Streets mines
+013A    Pplant1Z                jungle bush
+013B    Pplant11Z               jungle bush
+013C    Pplant2Z                jungle bush
+013D    Pplant3Z                pointy jungle bush
+013E    Pjungle5_treeZ
+013F    PlegalpageZ             Goldeneye intro screen
+0140    Pst_pete_room_1iZ       Streets roads and buildings
+0141    Pst_pete_room_2iZ       Streets
+0142    Pst_pete_room_3tZ       Streets
+0143    Pst_pete_room_5cZ       Streets
+0144    Pst_pete_room_6cZ       Streets
+0145    Pdoor_rollertrainZ      roller door
+0146    Pdoor_winZ              Aztec vertical glass slider
+0147    Pdoor_aztecZ            Aztec first stone vert slider
+0148    PshuttleZ               Shuttle
+0149    Pdoor_azt_deskZ         girder within girder?
+014A    Pdoor_azt_desk_topZ     piece of concrete with two brass pipe chimneys
+014B    Pdoor_azt_chairZ        cube of rock
+014C    Pdoor_mfZ               mainframe door from Aztec
+014D    PflagZ                  flag tag flag
+014E    PbarricadeZ             road barrier
+014F    PmodemboxZ              Dam screen for covert modem [0A]
+0150    PdoorpanelZ             Dam sliding door activator [0B]
+0151    PdoorconsoleZ           standing console, no screen
+0152    PchrtesttubeZ           flare? lipstick?
+0153    PbollardZ               solid stone cairn

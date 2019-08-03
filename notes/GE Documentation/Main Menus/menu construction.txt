@@ -1,0 +1,168 @@
+menu constructions	16cc6c
+points start at offset 0D48!
+
+16d518	00	(0D48)
+main folder backdrop (behind folders)
+
+16D5B8	01	(0DE8)
+tabs on side of folders
+
+16D718	02
+folder 1
+(most menus)
+
+16D888	03
+folder #2
+(cheats, multi, briefings)
+
+16D948	04
+solo stage select (black stage borders, filmstrip, bottom of folder, etc)
+
+16E718	05
+? - rather large, actually...
+
+16F1E0	07
+FOR YOUR EYES ONLY
+
+16F300	08
+OHMSS
+
+16F3A0	09
+Briefing Confidential
+
+16F440	0A
+multi confidential
+
+16F440	0B
+classified
+
+16F580	0C
+shadow under bond pic
+
+16F610	0D
+Bond Photo
+
+16F730	0E
+Beta Bond Photo 2
+
+16F850	0F
+Beta Bond Photo 3
+
+16F970	10
+Beta Bond Photo 4
+
+16FA88	11
+Photo Paper Clip
+
+16FAE8	12
+Dam Briefing Image
+
+16FC18	13
+Facility Briefing Image
+
+16FCB8	14
+Runway Briefing Image
+
+16FD38	15
+Surface Briefing Image
+
+16FDF8	16
+Bunker1 Briefing Image
+
+16FE98	17
+Silo Briefing Image
+
+16FF38	18
+Frigate Briefing Image
+
+16FFD8	19
+Surface2 Briefing Image
+
+170078	1A
+Bunker2 Briefing Image
+
+170118	1B
+Statue Briefing Image
+
+1701B8	1C
+Archives Briefing Image
+
+170258	1D
+Streets Briefing Image
+
+1702F8	1E
+Depot Briefing Image
+
+170390	1F
+Train Briefing Image
+
+170438	20
+Jungle Briefing Image
+
+1704D8	21
+Control Briefing Image
+
+170578	22
+Caverns Briefing Image
+
+170618	23
+Cradle Briefing Image
+
+1706B8	24
+Aztec Briefing Image
+
+170758	25
+Egypt Briefing Image
+
+1707F0	08
+Briefing paper clip
+
+170850	26
+4 Folders - folder, sheet, shadow, symbol
+
+170AD0	27
+4 Folder Bond Pic Shadow
+
+170B60	28
+4 Folder Bond Pic
+
+170C80	29
+4 Folder Beta Bond Pic 2
+
+170DA0	2A
+4 Folder Beta Bond Pic 3
+
+170EC8	2B
+4 Folder Beta Bond Pic 4
+
+170FD8	10
+4 Folder Paper Clip
+
+-----------------
+other pointer assemblies...
+pointer assemblies follow simple order...
+00120000	address_for_points	table_home	next_in_set	prev_in_set	pointer_to_00040000
+00040000	handle_for_point_table	pointer_to_00120000
+pointed at by block preceeding
+can use this to ID each handle to point table.
+
+16c7d0.  pointers to 16ccB4+
+
+	16cc84	(171030)	Backdrop for folders	000A0000 8016D4F8 8016CC6C 00000000 00000000 8016CC9C -> 00040000 8016D598 8016CC84 8016CCB4 00000000 00000000
+16C7D0	16CCB4	(171140)	tabs on side of folder	00120000 8016d5ac 8016cc84 8016cce4 8016cc9c 8016cccc -> 00040000 8016d6f8 8016ccb4 00000000 00000000 00000000
+	16cce4		folder 1		00120000 8016d70c 8016cc84 8016cd14 8016ccb4 8016ccfc -> 00040000 8016d868 8016cce4 00000000 00000000 00000000
+	16CDA4		For Your Eyes Only	
+	16CDD4		OHMSS			
+	16ce04		briefing confidential
+	16ce34		multiplayer confidential
+	16ce64		Classified
+	16ce94		shadow under bond pic	00120000 8016F574 8016CC84 8016CF9C 8016CE64 8016CEAC -> 00040000 8016F5F0 8016CE94 8016CEAC 00000000 00000000
+16c7f0	16ceC4		Bond Photo	00120000 8016F604 8016CE94 8016CEF4 8016CEAC 8016CEDC -> 00040000 8016F710 8016CEC4 00000000 00000000 00000000
+	16cef4		Bond Photo 2	00120000 8016F724 8016CE94 8016CF24 8016CEC4 00000000 -> 00040000 8016F830 8016CEF4 00000000 00000000 00000000
+	16CF24		Bond Photo 3	00120000 8016F844 8016CE94 8016CF54 8016CEF4 00000000 -> (SHOUDL BE 8016CF3C) 00040000 8016F950 8016CF24 00000000 00000000 00000000
+	16CF54		Bond Photo 4	00120000 8016F964 8016CE94 8016CF84 8016CF24 00000000 -> 00040000 8016FA70 8016CF54 00000000 00000000 00000000
+PAPER CLIP!	+ 00040000 8016FAC8 8016CE94 00000000 8016CF54
+
+16C7D0	to 16CCB4.  pic 2
+16c7f0	to 16cec4.  
+16c870	to 16d32c

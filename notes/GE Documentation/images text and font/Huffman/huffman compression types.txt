@@ -1,0 +1,93 @@
+compression header:
+reserved    :8	00
+img_type    :4	0-C
+width       :8	image width
+height      :8	image height
+compression :4	0-9
+type        :3	0-7
+
+ROM->TLB	7EFCB4D0
+
+7F0C805C 	0xFCB8C	0
+7F0C805C 	0xFCB8C	1
+7F0C8084 	0xFCBB4	2
+7F0C8120 	0xFCC50	3
+7F0C81D8 	0xFCD08	4
+7F0C8268 	0xFCD90	5
+7F0C82B8 	0xFCDE8	6
+7F0C8324 	0xFCE54	7
+7F0C838C 	0xFCEBC	8
+7F0C8464 	0xFCF94	9
+
+  The seven value tables, as far as I can tell, are as such:
+283E8	80049178	#1	#bytes in pixel data for image
+04 03 03 03 02 02 01 01 01 01 01 01 01 
+
+2841C	800491AC	#2	1=alphagrab.  Grabs 1 bit of alpha data for each pixel
+00 01 00 00 00 00 01 00 00 00 00 00 00 
+
+28450	800491E0	#3	#bits in 'samples', *2	-1=bitmask
+0100 0020 0100 0020 0100 0010 0008 0100 0010 0100 0010 0100 0010 
+
+28484	80049214	#4	bitcount for pixel data
+20 10 18 0F 10 08 04 08 04 10 10 10 10 
+
+284B8	80049248	#5	N64 image types (0=color, 1=YUV, 2=indexed, 3=IA, 4=I)
+00 00 00 00 03 03 03 04 04 02 02 02 02 
+
+284EC	8004927C	#6	N64 pixel sizes (0=4bit, 1=8bit, 2=16bit, 3=32bit)
+03 02 03 02 02 01 00 01 00 01 00 01 00 
+
+28520	800492B0	#7	imageflip values for indexed types
+0000 0000 0000 0000 0000 0000 0000 0000 0000 8000 8000 C000 C000 
+
+
+  Image types are as such:
+0	32bit color image
+1	16bit color image
+2	24bit color image, forced to 32bit fixed alpha
+3	15bit color image, with forced alpha
+4	16bit IA
+5	 8bit IA
+6	 4bit IA
+7	 8bit I
+8	 4bit I
+9	256 color indexed - inverted
+A	 16 color indexed - inverted
+B	256 color indexed - inverted pervert
+C	 16 color indexed - inverted pervert
+
+SP+80		nibble#3	(table, actually image type)
+SP+88		[0]
+SP+30AC	A1=final target	[800C31E8]
+SP+30B0	A2=	[0]
+SP+30B4	A3=	[0]
+
+8008D090	if A2!=0, loads value, multiplies by 0x10, adds to 8008C730, does stuff
+	note: 7F0CBF10 sets 8008D0A0->A0 and initializes D0A4+D0A8
+8008D0A0	curpos
+8008D0A4	cur datatable
+8008D0A8	bitcount
+8008D0AC	
+8008D0B0	
+
+JUMPS:
+7F0C91D0	generates a sample table and dumps data into image
+	???
+	7F0C8084 	0xFCBB4
+	7F0C8120 	0xFCC50
+
+7F0C9A48
+	A0, A1
+	7F0C8084 	0xFCBB4
+	7F0C8120 	0xFCC50
+
+7F0C9A9C	;copy and link final image
+	A0:, A1, A2, A3
+	7F0C805C 	0xFCB8C
+
+7F0C9DA4	;generate and link final image
+	A0,A1,A2,A3, SP+10
+	7F0C8084 	0xFCBB4
+	7F0C8120 	0xFCC50
+

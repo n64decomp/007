@@ -1,0 +1,23 @@
+Fix: timers at -1 do not detonate.
+Remote mines ignore timers.  As a side effect, can detonate stray remotes as player 1 and re-detonate mines not removed.
+Note: should NSNA rewrite the whole thing, decreasing timers on all collectables globally.  Not that remotes even need timers, since these are ignored.
+
+Future: stagger explosions via setting flag only when explosion routine returns TRUE
+
+Fix: timers at -1 do not detonate
+//7F043FA4:	78AD4	handle triggered remote mines
+	LUI	V1,8003
+	LW	V1,0AF4 (V1)	;V1=80030AF4: remote mine trigger
+	LUI	T0,8005
+1060000C	*BEQ	V1,R0,7F043FE4	;branch if players didn't trigger theirs
+	LH	V0,0082 (A2)
+0440008D	+BLTZ	V0,7F0441F0	;return if timer at -1
+8CE20064	LW	V0,0064 (A3)	;V0=obj.data+64: flags.run
+3C010006	LUI	AT,0006
+240F0001	ADDIU	T7,R0,0001
+00416824	AND	T5,V0,AT	;T5=flags.run & 00060000: player ownership flags
+000D7442	SRL	T6,T5,0x11	;T6=flags / 0x20000
+01CFC004	SLLV	T8,T7,T6	;T8=1<<player#: ownership->bitmask
+0078C824	AND	T9,V1,T8	;T9= mine reg & ownership: TRUE if detonated mine
+57200001	*BNEL	T9,R0,+1	;set as detonated if triggered
+	SH	R0,0082 (A2)	;0->timer

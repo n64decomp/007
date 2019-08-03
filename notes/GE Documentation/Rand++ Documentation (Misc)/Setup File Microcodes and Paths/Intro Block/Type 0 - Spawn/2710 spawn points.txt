@@ -1,0 +1,231 @@
+What this does:
+1) moves spawn count to 80079C28, list to 80079C2C.  allows a couple more entries
+2) allows 2710 spawn points
+3) links in a better smartspawns
+
+smartspawns uses upper nibble of the set# byte
+don't use if the flag is set for #:
+80	4player
+40	3player
+20	2player
+10	1player
+
+
+//7F088920:	0x	does re-equip, etc. at respawn
+JAL	7F0793EC
+LW	S0,5D08 (S0)	S0=pointer to intro block data
+
++-+-+-+-+
+
+7F005A7C:	0x3A5AC	parse spawn data and fill pointers
+LUI	T6,8007
+LW	T6,5D18 (T6)	T6=p->0xxx preset types
+BEQ	T6,R0,7F005AE8	skip if there aren't any (like that would ever happen...)
+NOP
+JAL	7F0C0A20
+NOP
+LW	T7,0008 (S0)	T7=set#
+LUI	T2,8007
+LUI	AT,8008
+BNE	V0,T7,7F005AE8
+NOP
+//7F005AA8:
+LW	T0,0004 (S0)
+LUI	V0,8008
+LW	V0,9C68 (V0)
+SLL	T1,T0,0x2
+SUBU	T1,T1,T0
+LW	T2,5D18 (T2)
+SLL	T1,T1,0x2
+SUBU	T1,T1,T0
+SLL	T1,T1,0x2
+SLL	T4,V0,0x2
+ADDU	AT,AT,T4
+ADDU	T3,T1,T2
+SW	T3,9C28 (AT)
+LUI	AT,8008
+ADDIU	T5,V0,0001
+SW	T5,9C68 (AT)
+//7F005AE8:
+BEQ	R0,R0,7F005DE4
+ADDIU	S0,S0,000C
+
+
++-+-+-+-+
+REWRITTEN ROUTINE FROM SMARTSPAWNS
+rewrite:
+LUI	T6,8007
+LW	T6,5D18 (T6)	//T6=offset to 0xxx preset table
+BEQ	T6,R0,7F005AE8	//abort if no 0xxx presets!
+NOP
+JAL	7F0C0A20	//returns set number when demos are running.  V0 only !0 when demo running!
+			//T2, T7, and AT not affected, so exploiting!
+*LUI	at,8008
+*bne	V0,R0,test
+LW	T7,0008 (S0)	//T7=set#
+//set0 in multi always on
+*beq	t7,r0,expando!
+*lui	v0,8003
+*lw	v0,b520 (v0)	//v0=#players (essentially, same as parsing sets)
+//test
+*bne	v0,t7,end
+//expando!
+LUI	T2,8007
+LW	T0,0004 (S0)	//preset
+*LW	V0,9C68 (at)	//V0=80079C68 (SPAWN COUNTER)
+SLL	T1,T0,0x2
+SUBU	T1,T1,T0
+LW	T2,5D18 (T2)	//T2=0xxx preset list
+SLL	T1,T1,0x2
+SUBU	T1,T1,T0
+SLL	T1,T1,0x2	//T1=offset to preset (preset * 0x2C)
+SLL	T4,V0,0x2	//T4=offset in spawn pointer list
+*ADDU	T4,AT,T4
+ADDU	T3,T1,T2	//T3=address of preset
+*SW	T3,9C28 (T4)	//save address of preset
+ADDIU	T5,V0,0001	//count++
+SW	T5,9C68 (AT)	//save new count
+//7F0C5AE8:	end
+BEQ	R0,R0,7F005DE4
+ADDIU	S0,S0,000C	//S0=next command
+
++-+-+-+-+-+
+FINAL REWRITE
+available:	AT,V0,V1,T0,T1,T2,T3,T4,T5,T6,T7,T8 (jumped it here),T9
+
+7F005A7C:	0x3A5AC	
+0FC26919	JAL	7F09A464	//ret. V0=#players
+24010008	*ADDIU	AT,R0,0008	//T2, T7, and AT not affected, so exploiting!
+0FC30288	JAL	7F0C0A20	//returns set number when demos are running.  V0 only !0 when demo running!
+00415004	SLLV	T2,AT,V0	T2=2^(#players)
+920F000B	LBU	T7,000B (S0)	//T7=set#
+31E8000F	ANDI	T0,T7,000F	T0=just set numbers
+144800BB	*bne	V0,T0,end
+3C018008	*LUI	at,8008
+//player total sorting
+014F4024	AND	T0,T2,T7
+150000B8	*BNEZ	T0,end
+8C249C28	*LW	V0,9C28 (at)	//V0=80079C28 (SPAWN COUNTER)
+//expando!
+8E080004	LW	T0,0004 (S0)	//preset
+3C0A8007	LUI	T2,8007
+290F2710	SLTI	T7,T0,2710
+55E00004	BNEZL	T7,[grab]
+3409002C	ORI	T1,R0,002C
+34090044	ORI	T1,R0,0044
+254A0004	ADDIU	T2,T2,0004	
+2508D8F0	ADDIU	T0,T0,D8F0	//'unsigned' just means no overflow
+//grab
+01280019	MULTU	T1,T0
+00027880	SLL	T7,V0,0x2	//T4=offset in spawn pointer list
+8D4A5D18	LW	T2,5D18 (T2)	//T2=0xxx preset list
+002F7821	*ADDU	T7,AT,T7
+00004812	MFLO	T1	//T4=offset in spawn pointer list
+012A4021	ADDU	T0,T1,T2	//T3=address of preset
+ADE89C2C	*SW	T0,9C2C (T7)	//save address of preset
+24420001	ADDIU	V0,V0,0001	//count++
+//7F005AE8:	end
+100000A6	BEQ	R0,R0,7F005D84	//borrow the +0C to position from another routine...
+AC229C28	SW	V0,9C28 (AT)	//save new count
+
+DEBUG FOR MULTIPLAYER...
+
+------------
+++++++++++++
+------------
+
+Moving the spawn registry
+Things that use the index number (80079C68)
+
+//7F0058CC:	3A3FC	reset spawn # counter
+*SW	R0,9C68 (AT)
+
+
+7F005A7C	already addressed
+
+
+//7F005E98:	3A9C8	
+*LW	T0,9C68 (T0)
+BLEZL	T0,7F005F50
+ADDIU	A0,SP,008C
+JAL	7F09A464
+NOP
+SLTI	AT,V0,0002
+BNEZ	AT,7F005ED4
+LUI	T1,8008
+*LW	T1,9C68 (T1)
+BLEZL	T1,7F005ED8
+OR	V1,R0,R0
+JAL	7F0790F0
+NOP
+BEQ	R0,R0,7F005ED8
+OR	V1,V0,R0
+//7F005ED4:
+OR	V1,R0,R0
+//7F005ED8:
+LUI	T2,8008
+*ADDIU	T2,T2,9C28	start of spawn pointer list
+...
+
+
+//7F00F814:	44344
+
+
+//7F079130:	ADC60
+*LW	T6,9C68 (T6)
+OR	S2,V0,R0
+ADDIU	S1,R0,0001
+BLEZ	T6,7F07925C
+OR	S7,R0,R0
+LUI	AT,447A		spawning radius limit
+LUI	S8,8008
+LUI	S5,8008
+LUI	S4,8008
+MTC1	AT,F20
+ADDIU	S4,S4,9EE0
+*ADDIU	S5,S5,9C28
+ADDIU	S8,S8,A0B0
+LW	V0,0000 (S8)
+LUI	T1,8008
+ADDIU	S7,S7,0001
+LW	T7,29E0 (V0)
+OR	S1,R0,R0
+OR	S0,R0,R0
+ADDIU	T8,T7,0001
+SW	T8,29E0 (V0)
+LW	T9,0000 (S8)
+//7F079188:	ADCB8
+*LW	T1,9C68 (T1)
+LW	T0,29E0 (T9)
+DIV	T0,T1
+MFHI	S3
+BNEZ	T1,7F0791A4
+NOP
+...	THIS IS THE PART THAT HANDLES distance calculation!!
+
+//7F079248:	ADD78
+*LW	T7,9C68 (T7)
+
+//7F07926C:	ADD9C
+*ADDIU	S5,S5,9C28
+
+//7F079280:	ADDB0
+*LW	T8,9C68 (T8)
+
+//7F0792BC:	ADDEC
+*LW	T3,9C68 (T3)
+
+//7F079378:	ADEA8
+*LW	T9,9C68 (T9)
+
+//7F07939C:	ADECC
+*LW	T0,9C68 (T0)
+
+
+
+//7F0889A8:	BD4D8	respawn!	also seems to do a lot of distance calculations...
+*LW	T1,9C68 (T1)
+
+//7F0889D4:	BD504
+*LW	V0,9C28 (V0)
+

@@ -1,0 +1,68 @@
+Models that Merge Points
+------------------------
+
+  It isn't as confusing as you think.  It only applies to models that use the point usage tables - 18 display lists.  Points from one piece in a model can be borrowed by another.  No fudging involved.  It always really works.
+
+-----------------------
+  Before rendering the object's display list, you have to change the points used in the point table.  The changes are outlined in the 'collision' point table.
+
+Collision Point Table
+FF9B 001E FFB2 0000 00000000 FFFF 0000 
+FF9B FFC8 FFB8 0001 00000000 FFFF 0000 
+FF9B 004B 00A2 0002 00000000 FFFF 0000 
+FF9B FFCE 00AB 0003 00000000 FFFF 0000 
+FFBF 0026 0094 0004 00000000 FFFF 0000 
+FFF7 0030 FFFC 0005 05000190 000D 0000 
+FFFC FFDC FFCC 0006 05000190 0011 0000 
+FFBD FFEB 00AF 0007 00000000 FFFF 0000 
+0002 000C FFBF 0008 05000190 000F 0000 
+0003 FFE1 FFEF 0009 05000190 0010 0000 
+0002 FFE7 0015 000A 05000190 000E 0000 
+FFFB 0020 FFE1 000B 05000190 000C 0000 
+
+  Notice how some points have offset values at 0x8.  These are offsets to other 18 render commands that you'll steal points from.  The short value following the offset (0xA) is the point in the linked 'collision' table that will be used.  The fastest thing is to look up the entry in the point usage table, a weird little list of short values.  'Collision' points are the unique points in the piece, and the usage table indicates which points are shared by other points in the model.  This sample is the usage list targetted by the point table above.
+0xF28:	Usage point table for display list linked at 0x190
+	0020 0016 0017 001A 001B 0014 0015 000C 001E 000D 001F 0018 001C 0019 FFFF FFFF FFFF 
+	FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF 001D FFFF FFFF FFFF FFFF 0028 
+	002A FFFF 0025 FFFF 002D 002C FFFF FFFF FFFF FFFF FFFF FFFF 
+
+  Usage tables have one entry for each point in the display list's point table.  The first point in the table is the first entry, second the second, etc.  If a point is reused then the slot's number is given in the table.  For instance, the first point is shared by point 32 (0x20).  If you look at the 'collision' point table, there will not be an entry with ID 0x20, but there will be one for 0x0.   
+  Every point in the table is given a number (offset 0x6), but if it isn't present you will need to check the point usage table to see which point is equivalent.
+
+  Taking the running example, let's swap out point 05 in the first table with the shared model's point.  Point five is:
+FFF7 0030 FFFC 0005 05000190 000D 0000 
+  It calls the 18 command at offset 0x190, and merges with point 0xD.  The 18 command's data is found at offset 05000F84...
+
+point display struct:	0x190	right shin
+0xF84	05005F48 00000000 05000AA8 002E 001A 05000D88 05000F28 0003 0000 00000000 
+	mapping @ 0x5F48
+	normal point table @ 0xAA8; 2E normal points
+	collision point table @ 0xD88; 1A collision points
+	point usage table @ 0xF28
+
+  First, check the point usage table to ensure it isn't dummied up somehow.  Scan through entries 0-C, and if 000D isn't found, the point will be a unique entry in the list:
+0020 0016 0017 001A 001B 0014 0015 000C 001E*000D*001F 0018
+  Unfortuantely the point is not unique, but it is the same as point 0x9.  So, search the 'collision' point list for the new position:
+0x9	FE25 FFE2 FFB5 0009 00000000 FFFF 0000 
+
+  All you need are the x, y, and z coordinates.  These get copied onto the other model's point data.
+  Remember, because this point is from another piece of the object, you have to make certain that the point's position is corrected for that piece's position, etc.  In this example (Bond's right leg) no conversion is necessary; the foot and shin share the same position.  Otherwise, determine what positions affect the part you're stealing from and which ones affect the target to determine a global position.
+
+
+  Now, all you have to do is replace the point in the original piece.  You copy the new data over point 05's x,y,z data - and anything that shares that point!  To see if anything shares the point, you need to refer to the original model's point usage table.  
+0xA40	FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF 
+  Good.  The point is unique.  Replace the x,y,z of fifth point in the normal point table.  That point should now be merged with the leg.
+
+
+
+Note:
+  If the point wasn't unique (something else used point five) you would change it and any entry that refers to it.  Say the table looked more like this:
+FFFF FFFF FFFF FFFF FFFF 0006 0007 0008 FFFF
+  Order of operations: point five is shared by point 6.  Point 7 is set after point 6 is corrected, so it is also the same as 5.  Point 8 is also sharing point 7's corrected data, so it is the same as 5.
+
+
+-------------------------
+Another note:
+  The plane *does not* use merging.  Any render problems are due to some other sizing issue.  No points in the collision table use offsets.
+
+  I haven't ID'd any objects that use merging yet, but the same rules apply.  Undoubtedly there must be a few...

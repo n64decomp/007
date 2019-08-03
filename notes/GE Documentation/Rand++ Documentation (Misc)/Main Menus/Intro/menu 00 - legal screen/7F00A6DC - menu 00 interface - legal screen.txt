@@ -1,0 +1,53 @@
+7F00A6DC	3F20C	menu 00 interface: legal screen
+ADDIU	SP,SP,FFE8
+LUI	AT,4270
+SW	RA,0014 (SP)
+MTC1	AT,F12		;F12= [42700000]
+JAL	70004544
+NOP
+LUI	AT,8005
+JAL	70004590
+LWC1	F12,19E4 (AT)	;F12=800519E4: 1.3...
+LUI	AT,42C8
+MTC1	AT,F12		;F12= [42C80000]
+LUI	AT,8005
+JAL	70004650
+LWC1	F14,19E8 (AT)	;F14=800519E8: 10000.0
+JAL	70004534	;A0->p@800232A8+24
+OR	A0,R0,R0
+//7F00A71C:	advance and test timer
+LUI	V0,8003
+ADDIU	V0,V0,A8CC	;V0=8002A8CC
+LUI	T7,8005
+LW	T7,8374 (T7)	;T7=80048374: clock timer
+LW	T6,0000 (V0)	;T6=8002A8CC: menu timer
+OR	A0,R0,R0	;A0=0: player 1
+ADDU	T8,T6,T7	;T8=T6+T7; timer + advance
+SLTI	AT,T8,00F1	;AT=TRUE if time < 241 (0xF1)
+BNEZ	AT,7F00A75C	;branch if timer still running
+SW	T8,0000 (V0)	;T8->8002A8CC: advance menu timer
+JAL	7000B9F8	;V0= #controllers plugged in
+NOP
+BLEZ	V0,7F00A784	;branch if no controllers
+ADDIU	A0,R0,0016	;A0=16: menu 16 - no controller warning
+BEQ	R0,R0,7F00A784	;update menu
+ADDIU	A0,R0,0001	;A0=1: menu 01 - Nintendo logo
+//7F00A75C:	timer running, test for input
+JAL	7000C3AC	;test if button pressed
+ORI	A1,R0,FFFF	;A1=FFFF: any button
+BEQ	V0,R0,7F00A78C	;return if nothing pressed
+LUI	T2,8003
+//7F00A76C:	test if quick advance possible
+LW	T1,A92C (T2)	;T1=8002A92C: quick advance
+BNEZ	T1,7F00A78C	;return if set
+LW	T2,A930 (T2)	;T2=8002A930: TRUE if first time through menus
+ADDIU	A0,R0,0001	;A0=1: menu 01 - Nintendo logo
+BEQL	T2,R0,7F00A784	;branch if quick advance enabled
+ADDIU	A0,R0,0005	;A0=5: menu 05 - folder selection screen
+//7F00A784:	update menu
+JAL	7F01A5D4	;set to menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=1: return
+//7F00A78C:	return
+LW	RA,0014 (SP)
+JR	RA
+ADDIU	SP,SP,0018

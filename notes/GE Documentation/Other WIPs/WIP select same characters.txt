@@ -1,0 +1,297 @@
+8002B524	player1 MP character
+8002B528	player2 MP character
+8002B52C	player3 MP character
+8002B530	player4 MP character
+
+Select the same characters
+USA	046744	0001	10
+JAP	0467C4	0001	10
+PAL	044504	0001	10
+
+++++++++++++++++++++++++++++++++++++
+//7F01AA80:
+LUI	V0,8003
+LW	V0,A8C8 (V0)	//
+LUI	A0,8003
+ADDIU	A0,A0,A8C0	//A0=8002A8C0=cur menu
+BLTZ	V0,7F01ACB8
+ADDIU	T7,R0,FFFF	//T7=-1
+LUI	AT,8003
+SW	T7,A8C8 (AT)	//-1->8002A8C8
+LW	T8,0000 (A0)	//T8=cur menu
+SLTIU	AT,T8,001A
+BEQ	AT,R0,7F01ACB8
+SLL	T8,T8,0x2	//T8=menu#->offset
+LUI	AT,8005
+ADDU	AT,AT,T8
+LW	T8,1BB4 (AT)	//T8=80051BB4+
+JR	T8
+NOP
+
+7F01AAC8:
+JAL	7F00A5E8
+...
+
+7F01AADC:
+JAL	7F00ABC8
+...
+
+7F01AAF0:
+JAL	7F00B064
+...
+
+7F01AB04:
+JAL	7F00B154
+...
+
+7F01AB18:
+JAL	7F00B258
+...
+
+7F01AB2C:
+JAL	7F00B9E8
+...
+
+7F01AB40:
+JAL	7F00D250
+...
+
+7F01AB54:
+JAL	7F00DE50
+...
+
+7F01AB68:
+JAL	7F00E780
+...
+
+7F01AB7C:
+JAL	7F00F300
+...
+
+7F01AB90:
+JAL	7F0155F4
+...
+
+7F01ABA4:
+JAL	7F016064
+...
+
+7F01ABB8:
+JAL	7F016094
+...
+
+7F01ABCC:
+JAL	7F01667C
+...
+
+7F01ABE0:
+JAL	7F01073C
+...
+
+7F01ABF4:	
+JAL	7F014764
+...
+
+7F01AC08:	call the character selection screen
+JAL	7F011C3C	//set the player selections and build menu
+NOP
+LUI	A0,8003
+BEQ	R0,R0,7F01ACB8
+ADDIU	A0,A0,A8C0	//A0=8002A8C0	current menu
+
+7F01AC1C:	
+JAL	7F014CC0
+...
+
+7F01AC30:
+JAL	7F012E30
+...
+
+7F01AC44:
+JAL	7F013574
+...
+
+7F01AC58:
+JAL	7F013D78
+...
+
+7F01AC6C:
+JAL	7F017B50
+...
+
+7F01AC80:
+JAL	7F018438
+...
+
+7F01AC94:
+JAL	7F01869C
+...
+
+7F01ACA8:
+JAL	7F01A39C
+...
+
+7F01ACB8:	return from all above routines
+LW	T9,0000 (A0)	//T9=menu#
+SLTIU	AT,T9,001A
+BEQ	AT,R0,7F01AEEC
+SLL	T9,T9,0x2	//T9=menu#->offset
+LUI	AT,8005
+ADDU	AT,AT,T9
+LW	T9,1C1C (AT)	//T9=80051C1C+
+JR	T9
+NOP
+
+
+---------------------------------------------
+7F011C3C:	MP character selection screen
+SKIP A FEW...
+//7F011D84:	
+LUI	S2,8003
+LUI	S3,8003
+SW	T3,0000 (S1)	//store # MP characters available->8002B194
+ADDIU	S3,S3,B534	//S3=mp stage selected
+ADDIU	S2,S2,B524	//S2=selected characters
+LW	V0,0000 (S1)	//V0=#available characters
+//7F011D9C:	loopus per char
+LW	T4,0000 (S2)	//T4=selected char
+SLT	AT,T4,V0	//TRUE if valid selection
+BNEL	AT,R0,7F011DE0
+	ADDIU	S2,S2,0004
+BLEZ	V0,7F011DD8	//deal with screwy number of available characters
+OR	S0,R0,R0
+//7F011DB4:
+JAL	7F011BD8
+OR	A0,S0,R0	//A0=S0=0
+BEQL	V0,R0,7F011DDC
+	SW	S0,0000 (S2)	//select BOND
+LW	T5,0000 (S1)	//T5=#available chars
+ADDIU	S0,S0,0001
+SLT	AT,S0,T5
+BNEZ	AT,7F011DB4
+NOP
+//7F011DD8:
+SW	S0,0000 (S2)	//store a valid selection in slot
+//7F011DDC:
+ADDIU	S2,S2,0004	//next char slot
+BNEL	S2,S3,7F011D9C	//more pointers equals more work
+	LW	V0,0000 (S1)	//V0=#available chars
+//7F011DE8:
+LUI	V0,8003
+LW	V0,B524 (V0)	//V0=8002B524=P1 char
+LUI	AT,8007
+LUI	V1,8003
+SW	V0,9710 (AT)	//P1->80069710
+LUI	AT,8007
+SW	V0,9720 (AT)	//P1->80069720
+LUI	AT,8007
+SW	R0,9730 (AT)	//0->80069730
+LUI	AT,8007
+SW	R0,9740 (AT)	//0->80069740
+//7F011E14:
+LW	V1,B528 (V1)	//V1=8002B528=P2 char
+LUI	AT,8007
+SW	R0,9750 (AT)	//0->80069750
+LUI	AT,8007
+SW	V1,9714 (AT)	//P2->80069714
+LUI	AT,8007
+SW	V1,9724 (AT)	//P2->80069724
+LUI	AT,8007
+SW	R0,9734 (AT)	//0->80069734
+LUI	AT,8007
+SW	R0,9744 (AT)	//0->80069744
+//7F011E40:
+LUI	A0,8003
+LW	A0,B52C (A0)	//A0=8002B52C=P3 char
+LUI	AT,8007
+SW	R0,9754 (AT)	//0->80069754
+LUI	AT,8007
+SW	A0,9718 (AT)	//P3->80069718
+LUI	AT,8007
+SW	A0,9728 (AT)	//P3->80069728
+LUI	AT,8007
+SW	R0,9738 (AT)	//0->80069738
+LUI	AT,8007
+SW	R0,9748 (AT)	//0->80069748
+//7F011E70:
+LUI	A1,8003
+LW	A1,B530 (A1)	//A1=8002B530=P4 char
+LUI	AT,8007
+SW	R0,9758 (AT)	//0->80069758
+LUI	AT,8007
+SW	A1,971C (AT)	//P4->8006971C
+LUI	AT,8007
+SW	A1,972C (AT)	//P4->8006972C
+LUI	AT,8007
+SW	R0,973C (AT)	//0->8006973C
+LUI	AT,8007
+SW	R0,974C (AT)	//0->8006974C
+LUI	AT,8007
+JAL	7F00B8AC
+SW	R0,975C (AT)	//0->8006975C
+//7F011EA8:
+LW	RA,002C (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S3,0024 (SP)
+LW	S4,0028 (SP)
+JR	RA
+ADDIU	SP,SP,0030
+
++++++++++++++++++++++++++++++
+
+Upon selection:	[above was all creation...]
+
+//7F0120A8:
+LW	T1,0000 (S1)	//selected slot from 80069710 line
+ADDU	AT,AT,S3	//offset to player's char slot
+ADDIU	V0,R0,0001	//V0=1
+ADDU	T2,S7,S3	//T2=player slot on 80069750
+SW	T1,B524 (AT)	//save selected char to player char slot
+SW	V0,0000 (T2)	//1-> 80069750 line
+SW	V0,0000 (S4)	//1-> 80069740 line
+LW	A0,0000 (S8)	//A0=80063720
+ADDIU	A1,R0,00C7	//A1=C7
+JAL	70008E08
+OR	A2,R0,R0	//A2=0
+BEQ	R0,R0,7F012168
+LW	A1,0000 (S5)	//A1=selected slot on the 80069720 line
+
+
+
+=============================
+7F00B8AC:	
+
+=============================
+7F011BD8:	checks for identical slots	return V0=1 if selected
+LUI	A1,8003
+LW	A1,B520 (A1)	//A1=8002B520=#players
+OR	A2,A0,R0	//A2=A0
+OR	V1,R0,R0	//V1=0
+BLEZ	A1,7F011C34	//do feed it a valid # players
+OR	V0,R0,R0
+LUI	T6,8007
+SLL	T7,A1,0x2	//T7=#players to offset
+LUI	A1,8003
+ADDIU	A0,T6,9740	//A0=80069740
+ADDU	A3,T7,A0	//A3=A0+offset
+ADDIU	A1,A1,B524	//A1=8002B524
+//7F011C08
+LW	T8,0000 (A0)	//T8=selected tag
+ADDIU	A0,A0,0004	//next value...
+SLTU	AT,A0,A3	//TRUE if haven't made it through selected char list yet
+BEQ	T8,R0,7F011C2C	//branch if player hasn't selected anything
+			//!!!  The Culprit!  I Smite You Now !!!
+ADDU	T9,A1,V0
+LW	T0,0000 (T9)	//T0=selected character
+BNE	A2,T0,7F011C2C
+NOP
+ADDIU	V1,R0,0001	//NEXT!
+//7F011C2C
+BNEZ	AT,7F011C08
+ADDIU	V0,V0,0004	//inc offset
+//7F011C34
+JR	RA
+OR	V0,V1,R0	//V0=return value
+

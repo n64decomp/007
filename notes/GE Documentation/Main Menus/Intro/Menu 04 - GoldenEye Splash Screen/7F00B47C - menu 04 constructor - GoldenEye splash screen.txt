@@ -1,0 +1,186 @@
+7F00B47C:	3FFAC	menu 04 constructor: GoldenEye splash screen
+	accepts: A0=p->display list target
+ADDIU	SP,SP,FE80
+SW	S2,0040 (SP)
+LUI	T6,8003
+ADDIU	S2,SP,0140	;S2=SP+0140: copy buffer
+SW	S4,0048 (SP)
+ADDIU	T6,T6,AB54	;T6=8002AB54
+OR	S4,A0,R0	;S4=A0: DL
+SW	RA,004C (SP)
+SW	S3,0044 (SP)
+SW	S1,003C (SP)
+SW	S0,0038 (SP)
+ADDIU	T9,T6,003C	;T9=8002AB90: end of data; buffer is 0x40 large
+OR	T1,S2,R0	;T1=S2: buffer
+//7F00B4B0:	copy first 0x3C bytes to buffer
+LW	AT,0000 (T6)
+ADDIU	T6,T6,000C
+ADDIU	T1,T1,000C
+SW	AT,FFF4 (T1)
+LW	AT,FFF8 (T6)
+SW	AT,FFF8 (T1)
+LW	AT,FFFC (T6)
+BNE	T6,T9,7F00B4B0
+SW	AT,FFFC (T1)
+//7F00B4D4:	
+LW	AT,0000 (T6)	;AT=8002AB94: last word
+OR	A0,S4,R0	;A0=S4: DL
+OR	A1,R0,R0	;A1=0: red
+OR	A2,R0,R0	;A2=0: green
+OR	A3,R0,R0	;A3=0: blue
+JAL	700046D0	;setfillcolour(&A0,"black")
+SW	AT,0000 (T1)	;last word -> buffer
+JAL	70003EF8	;fillrect
+OR	A0,V0,R0	;A0=V0: DL
+OR	S4,V0,R0	;S4=V0: DL
+JAL	7F0BD6F8
+ADDIU	A0,R0,0002	;A0=2: 
+//7F00B504:
+MTC1	R0,F0		;F0=0.0
+LUI	AT,457A
+MTC1	AT,F4		;F4=4000.0 [457A0000]
+LUI	AT,3F80
+MTC1	AT,F6		;F6=1.0 [3F800000]
+MFC1	A2,F0		;A2=0
+MFC1	A3,F0		;A3=0
+OR	S0,V0,R0	;S0=V0: DL
+ADDIU	A0,SP,00B0	;A0=SP+B0: buffer
+OR	A1,V0,R0	;A1=V0: DL
+SWC1	F0,0014 (SP)	;SP+14=0: 
+SWC1	F0,0018 (SP)	;SP+18=0: 
+SWC1	F0,001C (SP)	;SP+1C=0: 
+SWC1	F0,0020 (SP)	;SP+20=0: 
+SWC1	F0,0028 (SP)	;SP+28=0: 
+SWC1	F4,0010 (SP)	;SP+10=4000.0: 
+JAL	70017370
+SWC1	F6,0024 (SP)	;SP+24=1.0
+//7F00B54C:	move stuff
+OR	V0,S4,R0	;V0=S4: DL
+ADDIU	S4,S4,0008	;S4+=8: next op
+LUI	T2,BC00
+LUI	T3,8000
+ORI	T3,T3,0040	;T3=80000040
+ORI	T2,T2,0002	;T2=BC000002
+OR	V1,S4,R0	;V1=S4: DL+8
+ADDIU	S4,S4,0008	;S4+=8: next op
+SW	T2,0000 (V0)	;T2->DL+0: moveword - matrix
+SW	T3,0004 (V0)	;T3->DL+4: moveword - address/offset
+LUI	T4,0386
+LUI	T5,8003
+ADDIU	T5,T5,A978	;T5=8002A978
+ORI	T4,T4,0010	;T4=03860010
+OR	A0,S4,R0	;A0=S4: DL+10
+ADDIU	S4,S4,0008	;S4+=8: next op
+SW	T4,0000 (V1)	;T4->DL+8: movemem - light[0]
+SW	T5,0004 (V1)	;T5->DL+C: movemem - address(8002A978)
+LUI	T8,0388
+LUI	T7,8003
+ADDIU	T7,T7,A970	;T7=8002A970
+ORI	T8,T8,0010	;T8=02880010
+OR	A1,S4,R0	;A1=S4: DL+18
+SW	T8,0000 (A0)	;T8->DL+10: movemem - light[1]
+SW	T7,0004 (A0)	;T7->DL+14: movemem - address(8002A970)
+LUI	T9,0384
+ORI	T9,T9,0010	;T9=03840010
+MTC1	R0,F0		;F0=0
+SW	T9,0000 (A1)	;T9->DL+18: movemem - lookatx
+SW	S0,0004 (A1)	;S0->DL+1C: DL
+ADDIU	S4,S4,0008	;S4+=8: next op
+OR	T0,S4,R0	;T0=S4: DL+20
+LUI	T6,0382
+ORI	T6,T6,0010	;T6=03820010
+ADDIU	T1,S0,0010	;T1=S0+10: DL+10
+SW	T1,0004 (T0)	;T1->SP+24: DL+10
+SW	T6,0000 (T0)	;T6->SP+20: movemem - lookaty
+//7F00B5E0:	
+LUI	AT,3F80
+MTC1	AT,F8		;F8=1.0 [3F800000]
+ADDIU	S1,SP,00F8	;S1=SP+F8: buffer
+LUI	A3,453B
+MFC1	A1,F0		;A1=0.0
+MFC1	A2,F0		;A2=0.0
+ADDIU	S4,S4,0008	;S4+=8: next op
+ORI	A3,A3,8000	;A3=453B8000
+OR	A0,S1,R0	;A0=buffer
+SWC1	F0,0024 (SP)	;SP+24=0: 
+SWC1	F0,001C (SP)	;SP+1C=0: 
+SWC1	F0,0018 (SP)	;SP+18=0: 
+SWC1	F0,0014 (SP)	;SP+14=0: 
+SWC1	F0,0010 (SP)	;SP+10=0: 
+JAL	7F059694
+SWC1	F8,0020 (SP)	;SP+20=1.0: 
+//7F00B620:
+LUI	S3,8003
+ADDIU	S3,S3,A958	;S3=8002A958
+LW	T2,0000 (S3)	;T2=obj.instance
+SW	S1,0140 (SP)
+LW	T3,0008 (T2)	;T3=p->obj.header
+LH	A0,000E (T3)	;A0=#parts
+SLL	T4,A0,0x6	;T4=#parts * 0x40
+JAL	7F0BD714	;Allocates A0 memory in geometry mem
+OR	A0,T4,R0	;A0=T4: #parts * 0x40
+//7F00B644:
+LUI	AT,8005
+SW	V0,0150 (SP)
+LWC1	F12,1A18 (AT)	;F12=80051A18: 
+JAL	7F058A7C	;multiply matrix A1 by F12
+OR	A1,S1,R0	;A1=S1: buffer
+OR	A0,S1,R0	;A0=S1: buffer
+JAL	7F058020	;copy matrix from A0 to A1
+LW	A1,0150 (SP)	;A1=p->allocated memory
+//7F00B664:
+LW	T5,0150 (SP)	;T5=p->allocated memory
+LW	T8,0000 (S3)	;T8=p->obj.instance
+SW	T5,000C (T8)	;T5->T8+C: submatrix for obj.instance
+JAL	7F06EFC4
+LW	A0,0000 (S3)	;A0=p->obj.instance
+//7F00B678:
+ADDIU	T7,R0,0003
+SW	T7,0148 (SP)	; 3->SP+148: 
+SW	R0,0144 (SP)	; 0->SP+144: 
+SW	S4,014C (SP)	;S4->SP+14C: DL
+OR	A0,S2,R0	;A0=S2: buffer
+JAL	7F074684
+LW	A1,0000 (S3)	;A1=S3: p->obj.instance
+//7F00B694:	move each part's matrix
+LW	V0,0000 (S3)	;V0=S3: p->obj.instance
+LW	S4,014C (SP)	;S4=DL
+OR	S0,R0,R0	;S0=0
+LW	T9,0008 (V0)	;T9=p->obj.header
+OR	S1,R0,R0	;S1=0
+ADDIU	S2,SP,005C	;S2=SP+5C: buffer
+LH	T6,000E (T9)	;T6=#parts
+BLEZL	T6,7F00B704	;branch if none or invalid
+LW	RA,004C (SP)
+//7F00B6B8:	loop for each part
+LW	T1,000C (V0)	;T1=submatrix
+OR	A1,S2,R0	;A1=S2: buffer
+JAL	7F058020	;copy matrix from A0 to A1
+ADDU	A0,T1,S1	;A0=submatrix + offset: matrix entry for part
+//7F00B6C8
+LW	T2,0000 (S3)	;T2=S3: p->obj.instance
+SLL	T4,S0,0x6	;T4=S0*0x40: # * size of data
+OR	A0,S2,R0	;A0=S2: buffer
+LW	T3,000C (T2)	;T3=p->submatrix
+JAL	7F058C9C
+ADDU	A1,T3,T4	;A1=p->matrix
+//7F00B6E0:
+LW	V0,0000 (S3)	;V0=S3: p->obj.instance
+ADDIU	S0,S0,0001	;S0+=1: next part #
+ADDIU	S1,S1,0040	;S1+=40: offset to next matrix
+LW	T5,0008 (V0)	;T5=V0+8: p->obj.header
+LH	T8,000E (T5)	;T8=#parts
+SLT	AT,S0,T8	;AT=TRUE if part# < #parts
+BNEL	AT,R0,7F00B6BC	;branch while more parts remain
+LW	T1,000C (V0)
+//7F00B700:	return
+LW	RA,004C (SP)
+OR	V0,S4,R0	;V0=S4: new DL
+LW	S4,0048 (SP)
+LW	S0,0038 (SP)
+LW	S1,003C (SP)
+LW	S2,0040 (SP)
+LW	S3,0044 (SP)
+JR	RA
+ADDIU	SP,SP,0180

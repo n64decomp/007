@@ -1,0 +1,92 @@
+70016C30:		calls 70016C60, adding +4000 to the value
+	accepts: A0=previous value
+ADDIU	SP,SP,FFE8	;SP-=18
+SW	A0,0018 (SP)	;SP+18=A0
+OR	A1,A0,R0	;A1=A0
+ADDIU	A0,A1,4000	;A0+=4000: either force 2nd table or force invert if 2nd table
+SW	RA,0014 (SP)
+ANDI	T6,A0,FFFF
+JAL	70016C60	;get value from table
+OR	A0,T6,R0	;A0->short
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+
+70016C60:	retrieve next coded value in sequence
+	accepts: A0=previous value
+ANDI	T6,A0,FFFF	;T6=A0->short
+SRL	T7,T6,0x4
+ANDI	T8,T7,FFFF	;T8=A0>>4: 0XXX
+ANDI	T9,T8,0400	;T9=A0 & 4000
+SW	A0,0000 (SP)	;SP+0=A0: ???
+BEQ	T9,R0,70016C98	;branch if bit not set
+OR	V0,T8,R0	;V0=0XXX
+//70016C7C:
+ANDI	T0,T8,03FF	;T3=V0 & 0x3FF
+SLL	T1,T0,0x1	;T1=value->offset
+LUI	V1,8002
+ADDU	V1,V1,T2	;V1=80027FCE+offset: value in table
+BEQ	R0,R0,70016CAC
+LH	V1,7FCE (V1)	;V1=80027FCE: last short in table
+//70016C98:
+ANDI	T3,V0,03FF	;T3=V0 & 0x3FF
+SLL	T4,T3,0x1	;T4=value->offset
+LUI	V1,8002
+ADDU	V1,V1,T4	;V1=800277D0+offset: value in table
+LH	V1,77D0 (V1)	;V1=800277D0: eye motion table
+//70016CAC:
+ANDI	T5,V0,0800	;T5=V0 & 0x800
+BEQ	T5,R0,70016CC8	;branch if not set
+OR	V0,V1,R0	;V0=V1: value in table
+SUBU	V0,R0,V1	;V0=0-value
+SLL	T6,V0,0x10
+JR	RA
+SRA	V0,T6,0x10	;V0=(0-value) sign extended
+//70016CC8:
+JR	RA
+NOP
+
++_+
+
+called at 7F073E4C:
+//7F073E4C:		sets up, just before bleeding
+JAL	7000A450	;V0=random
+OR	S1,V1,R0
+SLL	T9,V0,0xA	;T9=V0*0x400: initial value (FC00)
+SH	T9,0056 (SP)	;SP+56=initial value
+JAL	70016C30	;retrieve coded value+4000
+ANDI	A0,T9,FFFF	;A0=initial value
+//7F073E64:
+LBU	T8,0004 (S1)
+LHU	A0,0056 (SP)	;A0=initial value
+MULTU	V0,T8
+MFLO	T1		;T1=value*
+SLL	T5,T1,0x2
+SUBU	T5,T5,T1
+SLL	T5,T5,0x2
+SUBU	T5,T5,T1
+SLL	T5,T5,0x2
+ADDU	T5,T5,T1
+SLL	T5,T5,0x2
+ADDU	T5,T5,T1	;T5*=0xB5
+SRA	T4,T5,0x12	;T4=T5/0x4000: 
+JAL	70016C60	;retrieve next value
+SW	T4,0050 (SP)	;SP+50=(value*0xB5)/0x4000
+//7F073EA0:
+
+and again...
+//7F009550:
+LUI	V1,8007
+LUI	A2,8003
+ADDIU	A2,A2,A8A0	;A2=8002A8A0
+ADDIU	V1,V1,9584	;V1=80069584
+LH	T3,0000 (V1)	;T3=80069584: 
+LW	T5,0000 (A2)	;T5=8002A8A0: 
+SW	A1,0018 (SP)
+ADDIU	T4,T3,038E
+ADDIU	T7,T5,0001
+SH	T4,0000 (V1)	;@80069584+=0x38E
+SW	T7,0000 (A2)	;@8002A8A0++
+JAL	70016C60	;retrieve next value
+ANDI	A0,T4,FFFF	;A0=T4: value+0x38E
+//7F009584:

@@ -1,0 +1,42 @@
+7F0CDE18		???; A2 through SP+10 derived from C0 command @A0
+	accepts: A0=p->command, A1=p->'facemapper' entry, A2=S mirror(2)|clamp(1), A3=T mirror(2)|clamp(1), SP+10=ST settilesize offset
+ADDIU	SP,SP,FFD8
+SW	RA,0024 (SP)
+SW	A2,0030 (SP)	;SP+30=A2: S mirror/clamp
+SW	A1,002C (SP)	;SP+2C=A1: p->facemapper entry
+SW	A3,0034 (SP)	;SP+34=A3: T mirror/clamp
+JAL	7F0CD078
+OR	A2,R0,R0	;A2=0
+//7F0CDE34:
+LW	T6,0038 (SP)	;T6=ST settilesize offset
+OR	A0,V0,R0	;A0=V0: DL
+LW	A1,002C (SP)	;A1=entry
+LW	A2,0030 (SP)	;A2=S mirror/clamp
+LW	A3,0034 (SP)	;A3=T mirror/clamp
+SW	R0,0014 (SP)	;SP+14=0
+SW	R0,0018 (SP)	;SP+18=0
+JAL	7F0CD430
+SW	T6,0010 (SP)	;SP+10=ST settilesize offset
+//7F0CDE58:
+LW	A1,002C (SP)	;A1=entry
+ADDIU	AT,R0,0001
+OR	A0,V0,R0	;A0=V0: DL
+LBU	T7,000B (A1)	;T7=entry+B
+LW	A2,0030 (SP)	;A2=S mirror/clamp
+LW	A3,0034 (SP)	;A3=T mirror/clamp
+SRL	T8,T7,0x5	;T8=&E0
+BNE	T8,AT,7F0CDE94	;branch if =2x
+LW	T9,0038 (SP)	;T9=ST settilesize offset
+//7F0CDE7C:
+ADDIU	T0,R0,0001
+SW	T0,0014 (SP)	;SP+14=1
+SW	T9,0010 (SP)	;SP+10=ST settilesize offset
+JAL	7F0CD430
+SW	R0,0018 (SP)	;SP+18=0
+OR	A0,V0,R0	;A0=V0: DL
+//7F0CDE94:	return
+LW	RA,0024 (SP)
+ADDIU	SP,SP,0028
+OR	V0,A0,R0	;V0=A0: DL
+JR	RA
+NOP

@@ -1,0 +1,51 @@
+7F000A00	35530	expand animation table entries (animation source at ROM 0x124AC0)
+	accepts: A0=p->list of animation table entries
+LW	V1,0000 (A0)
+LUI	A2,8007
+OR	V0,A0,R0	;V0=A0: p->
+BEQ	V1,R0,7F000A6C
+ADDIU	A2,A2,9538	;A2=80069538
+LW	V1,0000 (A0)
+ADDIU	A1,R0,0001	;A1=1: default animation value
+//7F000A1C:
+BEQL	A1,V1,7F000A58	;branch if entry 1
+LW	V1,0004 (V0)
+LW	T6,0000 (A2)	;T6=80069538: p->animation table
+ADDU	T7,V1,T6
+SW	T7,0000 (V0)
+LW	T9,0000 (A2)	;T9=80069538: p->animation table
+LW	T8,0008 (T7)
+ADDU	T0,T8,T9
+SW	T0,0008 (T7)
+LW	V1,0000 (V0)
+LW	T2,0000 (A2)	;T2=80069538: p->animation table
+LW	T1,0010 (V1)
+ADDU	T3,T1,T2
+SW	T3,0010 (V1)
+//7F000A54:
+LW	V1,0004 (V0)
+ADDIU	V0,V0,0004	;V0+=4: next entry
+BNE	V1,R0,7F000A1C	;loop while more entries in table
+NOP
+OR	V0,A0,R0	;V0=A0: p->
+LW	V1,0000 (A0)
+//7F000A6C:
+BEQ	V1,R0,7F000AA4	;return if end of table
+ADDIU	A1,R0,0001	;A1=1
+LUI	A0,0012
+ADDIU	A0,A0,4AC0	;A0=0x124AC0
+LW	V1,0000 (V0)
+//7F000A80:	generate ROM offsets if not 1
+BEQL	A1,V1,7F000A98	;branch if 1
+LW	V1,0004 (V0)
+LW	T4,0000 (V1)	;T4=V0+0: offset
+ADDU	T5,T4,A0	;T5=T4+0x124AC0: 
+SW	T5,0000 (V1)	;@V1+=0x124AC0: offset->ROM address
+//7F000A94:
+LW	V1,0004 (V0)
+ADDIU	V0,V0,0004	;V0+=4: next entry
+BNE	V1,R0,7F000A80	;loop while more data in table
+NOP
+//7F000AA4:	return
+JR	RA
+NOP

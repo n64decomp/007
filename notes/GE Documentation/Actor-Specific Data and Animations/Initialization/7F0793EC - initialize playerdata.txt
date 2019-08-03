@@ -1,0 +1,346 @@
+7F0793EC	ADF1C	initialize playerdata
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F09A464	;V0=#players
+NOP
+SLTI	AT,V0,0002
+BNEZ	AT,7F07943C	;branch if solo
+NOP
+//7F079408:	multiplayer only...
+JAL	7F09B150	;V0=cur.player#
+NOP
+JAL	7F0100BC	;V0= player A0's control style
+OR	A0,V0,R0	;A0=V0: player#
+LUI	V1,8008
+ADDIU	V1,V1,A0B0
+LW	T6,0000 (V1)	;T6=8007A0B0: cur.player data pointer
+JAL	7F09B150	;V0=cur.player#
+SW	V0,0430 (T6)	;cur.player+430: control style
+JAL	7F0100BC	;V0= player A0's control style
+OR	A0,V0,R0	;A0=V0: player#
+JAL	7F0A4DD0	;set control style A0 to current playerdata
+OR	A0,V0,R0	;A0=V0: control style
+//7F07943C:
+LUI	V1,8008
+ADDIU	V1,V1,A0B0
+MTC1	R0,F0		;F0=0
+LW	T7,0000 (V1)	;T7=8007A0B0: cur.BONDdata pointer
+LUI	AT,3F80
+MTC1	AT,F2		;F2=1.0	[3F800000]
+SWC1	F0,0038 (T7)	;BONDdata+38= 0.0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+ADDIU	A3,R0,0002	;A3=2
+ADDIU	A1,R0,0001	;A1=1
+SWC1	F0,003C (T8)	;BONDdata+3C= 0.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+ADDIU	A2,R0,FFFF	;A2=-1
+LUI	AT,C080
+SWC1	F0,0040 (T9)	;BONDdata+40= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+MTC1	AT,F4		;F4=-4.0	[C0800000]
+LUI	AT,43B4
+SWC1	F0,0044 (T0)	;BONDdata+44= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F0,0048 (T1)	;BONDdata+48= 0.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SWC1	F0,004C (T2)	;BONDdata+4C= 0.0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,0050 (T3)	;BONDdata+50= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SWC1	F0,0054 (T4)	;BONDdata+54= 0.0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SWC1	F0,0058 (T5)	;BONDdata+58= 0.0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SW	R0,0000 (T6)	;BONDdata+0= 0
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SWC1	F0,0004 (T7)	;BONDdata+4= 0.0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SWC1	F0,0008 (T8)	;BONDdata+8= 0.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F0,000C (T9)	;BONDdata+C= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F0,0010 (T0)	;BONDdata+10= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F0,0014 (T1)	;BONDdata+14= 0.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SWC1	F2,0018 (T2)	;BONDdata+18= 1.0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,001C (T3)	;BONDdata+1C= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SWC1	F2,0020 (T4)	;BONDdata+20= 1.0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SWC1	F0,0024 (T5)	;BONDdata+24= 0.0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SWC1	F0,0028 (T6)	;BONDdata+28= 0.0
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SWC1	F0,002C (T7)	;BONDdata+2C= 0.0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SWC1	F0,0030 (T8)	;BONDdata+30= 0.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SW	R0,0034 (T9)	;BONDdata+34= 0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F0,03C4 (T0)	;BONDdata+3C4= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F0,03C8 (T1)	;BONDdata+3C8= 0.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SWC1	F2,03CC (T2)	;BONDdata+3CC= 1.0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,0084 (T3)	;BONDdata+84= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SWC1	F0,0088 (T4)	;BONDdata+88= 0.0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SW	R0,008C (T5)	;BONDdata+8C= 0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SWC1	F0,0090 (T6)	;BONDdata+90= 0.0
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SW	R0,0094 (T7)	;BONDdata+94= 0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SWC1	F0,0098 (T8)	;BONDdata+98= 0.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F0,1274 (T9)	;BONDdata+1274= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F0,1278 (T0)	;BONDdata+1278= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F0,127C (T1)	;BONDdata+127C= 0.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SW	A3,009C (T2)	;BONDdata+9C= 2
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SW	A3,29FC (T3)	;BONDdata+29FC= 2
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SWC1	F0,00A0 (T4)	;BONDdata+A0= 0.0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SWC1	F0,00A4 (T5)	;BONDdata+A4= 0.0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SW	A1,00AC (T6)	;BONDdata+AC= 1
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SW	R0,00D0 (T7)	;BONDdata+D0= 0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SW	R0,00D8 (T8)	;BONDdata+D8= 0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F2,00DC (T9)	;BONDdata+DC= 1.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F0,00E0 (T0)	;BONDdata+E0= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F2,00E4 (T1)	;BONDdata+E4= 1.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SWC1	F0,00E8 (T2)	;BONDdata+E8= 0.0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F2,00EC (T3)	;BONDdata+EC= 1.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SWC1	F0,00F0 (T4)	;BONDdata+F0= 0.0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SW	A2,00F4 (T5)	;BONDdata+F4= -1
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SW	A2,00F8 (T6)	;BONDdata+F8= -1
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SW	R0,01C0 (T7)	;BONDdata+1C0= 0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SW	R0,01C4 (T8)	;BONDdata+1C4= 0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SW	R0,01C8 (T9)	;BONDdata+1C8= 0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SW	A1,01CC (T0)	;BONDdata+1CC= 1
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SW	R0,01D0 (T1)	;BONDdata+1D0= 0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SW	R0,01A0 (T2)	;BONDdata+1A0= 0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,019C (T3)	;BONDdata+19C= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SWC1	F0,014C (T4)	;BONDdata+14C= 0,0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SWC1	F2,0150 (T5)	;BONDdata+150= 1.0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SWC1	F0,0154 (T6)	;BONDdata+154= 0.0
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SWC1	F4,0158 (T7)	;BONDdata+158= -4.0
+//7F079650:
+LW	A0,0000 (V1)	;A0=p->cur.BONDdata
+LWC1	F6,0158 (A0)	;F6=-4.0
+SWC1	F6,015C (A0)	;BONDdata+15C= -4.0
+LW	A0,0000 (V1)	;A0=p->cur.BONDdata
+LWC1	F12,015C (A0)	;F12= -4.0
+C.LT.S	F12,F0
+NOP
+BC1FL	7F07968C	;branch if -4.0 >= 0.0, which it never will be...
+SWC1	F0,0160 (A0)
+MTC1	AT,F8		;F8=360.0	[43B40000]
+NOP
+ADD.S	F10,F12,F8	;F10=-4.0 + 360.0: 356.0
+SWC1	F10,015C (A0)	;BONDdata+15C= 356.0	[43B20000]
+LW	A0,0000 (V1)	;A0=p->cur.BONDdata
+//7F079688:
+SWC1	F0,0160 (A0)	;BONDdata+160=0.0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+ADDIU	V0,R0,00FF	;V0=FF
+LUI	AT,BF80
+SWC1	F2,0164 (T8)	;BONDdata+164= 1.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+MTC1	AT,F12		;F12=-1	[BF800000]
+LUI	AT,4170
+SWC1	F0,0168 (T9)	;BONDdata+168= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+MTC1	AT,F16		;F16=15.0	[41700000]
+SWC1	F0,016C (T0)	;BONDdata+16C= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F0,0170 (T1)	;BONDdata+170= 0.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SWC1	F0,0174 (T2)	;BONDdata+174= 0.0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,2A4C (T3)	;BONDdata+2A4C= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SWC1	F2,0178 (T4)	;BONDdata+178= 1.0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SW	R0,017C (T5)	;BONDdata+17C= 0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SWC1	F0,0180 (T6)	;BONDdata+180= 0.0
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SWC1	F0,0184 (T7)	;BONDdata+184= 0.0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SWC1	F0,0188 (T8)	;BONDdata+188= 0.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SW	R0,0104 (T9)	;BONDdata+104= 0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SW	R0,0108 (T0)	;BONDdata+108= 0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SW	R0,010C (T1)	;BONDdata+10C= 0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SW	R0,0110 (T2)	;BONDdata+110= 0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SW	A1,0114 (T3)	;BONDdata+114= 1
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SW	A1,0118 (T4)	;BONDdata+118= 1
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SW	R0,011C (T5)	;BONDdata+11C= 0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SW	A1,0120 (T6)	;BONDdata+120= 1
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SW	R0,0124 (T7)	;BONDdata+124= 0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SW	A1,0128 (T8)	;BONDdata+128= 1
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F0,012C (T9)	;BONDdata+12C= 0.O
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SW	R0,0130 (T0)	;BONDdata+130= 0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SW	A2,0134 (T1)	;BONDdata+134=-1
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SW	A1,0138 (T2)	;BONDdata+138= 1
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,013C (T3)	;BONDdata+13C= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SW	R0,0140 (T4)	;BONDdata+140= 0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SW	A2,0144 (T5)	;BONDdata+144=-1
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SW	V0,03D0 (T6)	;BONDdata+3D0= FF
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SW	V0,03D4 (T7)	;BONDdata+3D4= FF
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SW	V0,03D8 (T8)	;BONDdata+3D8= FF
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F0,03DC (T9)	;BONDdata+3DC= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F12,03E0 (T0)	;BONDdata+3E0=-1.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F12,03E4 (T1)	;BONDdata+3E4=-1.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SW	V0,03E8 (T2)	;BONDdata+3E8= FF
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SW	V0,03EC (T3)	;BONDdata+3EC= FF
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SW	V0,03F0 (T4)	;BONDdata+3F0= FF
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SW	V0,03F4 (T5)	;BONDdata+3F4= FF
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SW	V0,03F8 (T6)	;BONDdata+3F8= FF
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SW	V0,03FC (T7)	;BONDdata+3FC= FF
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SWC1	F0,0400 (T8)	;BONDdata+400= 0.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F0,0404 (T9)	;BONDdata+404= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F12,018C (T0)	;BONDdata+18C=-1.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SWC1	F12,0190 (T1)	;BONDdata+190=-1.0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SWC1	F0,0194 (T2)	;BONDdata+194= 0.0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,0198 (T3)	;BONDdata+198= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SW	A3,042C (T4)	;BONDdata+42C= 2
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SW	R0,0430 (T5)	;BONDdata+430= 0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SWC1	F0,0204 (T6)	;BONDdata+204= 0.0
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SWC1	F0,0208 (T7)	;BONDdata+208= 0.0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SWC1	F0,020C (T8)	;BONDdata+20C= 0.0
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F0,0210 (T9)	;BONDdata+210= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F0,0214 (T0)	;BONDdata+214= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SW	R0,0218 (T1)	;BONDdata+218= 0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SW	R0,0220 (T2)	;BONDdata+220= 0
+LW	T3,0000 (V1)	;T3=p->cur.BONDdata
+SWC1	F0,0224 (T3)	;BONDdata+224= 0.0
+LW	T4,0000 (V1)	;T4=p->cur.BONDdata
+SW	R0,0200 (T4)	;BONDdata+200= 0
+LW	T5,0000 (V1)	;T5=p->cur.BONDdata
+SH	R0,03B4 (T5)	;BONDdata+3B4= 0
+LW	T6,0000 (V1)	;T6=p->cur.BONDdata
+SH	R0,03B6 (T6)	;BONDdata+3B6= 0
+LW	T7,0000 (V1)	;T7=p->cur.BONDdata
+SWC1	F16,29C0 (T7)	;BONDdata+29C0= 15.0
+LW	T8,0000 (V1)	;T8=p->cur.BONDdata
+SH	A2,2A04 (T8)	;BONDdata+2A04=-1
+LW	T9,0000 (V1)	;T9=p->cur.BONDdata
+SWC1	F0,2A08 (T9)	;BONDdata+2A08= 0.0
+LW	T0,0000 (V1)	;T0=p->cur.BONDdata
+SWC1	F0,2A0C (T0)	;BONDdata+2A0C= 0.0
+LW	T1,0000 (V1)	;T1=p->cur.BONDdata
+SW	R0,2A6C (T1)	;BONDdata+2A6C= 0
+LW	T2,0000 (V1)	;T2=p->cur.BONDdata
+SW	R0,2A70 (T2)	;BONDdata+2A70= 0
+//7F0798A8:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
++_+
+
+7F0A4DD0	D9900	set control style A0 to current playerdata
+	accepts: A0=control style
+	fries: V0,V1,T0,T1,T2,T3,T4,T6,T7,T8,T9,F4,F6
+LUI	V1,8008
+ADDIU	V1,V1,A0B0
+LW	T6,0000 (V1)	;T6=cur.BONDdata
+MTC1	A0,F4
+LUI	T9,8005
+SW	A0,2A58 (T6)	;BONDdata+2A58= style
+LW	T7,0000 (V1)	;T7=cur.BONDdata
+CVT.S.W	F6,F4	;F6=(float) style
+ADDIU	V0,R0,000A
+SW	A0,2A5C (T7)	;BONDdata+2A5C= style
+LW	T8,0000 (V1)	;T8=cur.BONDdata
+SWC1	F6,2A60 (T8)	;BONDdata+2A60= (float) style
+LB	T9,84D0 (T9)	;T9=800484D0: selected language
+BLEZ	T9,+3	;if english-ish, V0=A
+NOP
+BEQ	R0,R0,+1	;if japanese-ish, V0=E
+ADDIU	V0,R0,000E
+//
+MULTU	V0,A0
+LW	T2,0000 (V1)	;T2=cur.BONDdata
+ADDIU	T3,R0,0001
+MFLO	T0		;T0=style * language vertical spacing
+SUBU	T1,R0,T0	;T1=0-spacing
+SW	T1,2A64 (T2)	;BONDdata+2A64= vertical spacing to entry
+LW	T4,0000 (V1)	;T4=cur.BONDdata
+JR	RA
+SW	T3,2A68 (T4)	;BONDdata+2A68=1: 

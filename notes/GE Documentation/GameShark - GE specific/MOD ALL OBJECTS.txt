@@ -1,0 +1,1734 @@
+size alterations:
+16 Bond's Weapons (Don't Use With Shrink/Enlarge Codes) 81053E04 ???? 
+17 Bond's Perspective (Don't Use With Shrink/Enlarge Codes) 810552FC ???? 
+18 Enemies 81051D90 ???? 
+
+
+GoldenEye 007
+C:double alarm 0000 value 1|8103A22A ????|Viper187 & Delta FORCE
+C:double alarm 0000 value 2|8103A22E ????|Viper187 & Delta FORCE
+C:double alarm 0000 size 1|8103A230 ????|Viper187 & Delta FORCE
+C:double alarm 0000 size 2|8103A232 ????|Viper187 & Delta FORCE|most size changes only require the first size digits
+
+C:alarm 0001 value 1|8103A236 ????|Viper187 & Delta FORCE
+C:alarm 0001 value 2|8103A23A ????|Viper187 & Delta FORCE
+C:alarm 0001 size 1|8103A23C ????|Viper187 & Delta FORCE
+C:alarm 0001 size 2|8103A23E ????|Viper187 & Delta FORCE
+
+C:pyramid 0002 value 1|8103A242 ????|Viper187 & Delta FORCE
+C:pyramid 0002 value 2|8103A246 ????|Viper187 & Delta FORCE
+C:pyramid 0002 size 1|8103A248 ????|Viper187 & Delta FORCE
+C:pyramid 0002 size 2|8103A24A ????|Viper187 & Delta FORCE
+
+C:brown ammo box 0003 value 1|8103A24E ????|Viper187 & Delta FORCE
+C:brown ammo box 0003 value 2|8103A252 ????|Viper187 & Delta FORCE
+C:brown ammo box 0003 size 1|8103A254 ????|Viper187 & Delta FORCE
+C:brown ammo box 0003 size 2|8103A256 ????|Viper187 & Delta FORCE
+
+C:brown ammo box 0004 value 1|8103A25A ????|Viper187 & Delta FORCE
+C:brown ammo box 0004 value 2|8103A25E ????|Viper187 & Delta FORCE
+C:brown ammo box 0004 size 1|8103A260 ????|Viper187 & Delta FORCE
+C:brown ammo box 0004 size 2|8103A262 ????|Viper187 & Delta FORCE
+
+C:green ammo box 0005 value 1|8103A266 ????|Viper187 & Delta FORCE
+C:green ammo box 0005 value 2|8103A26A ????|Viper187 & Delta FORCE
+C:green ammo box 0005 size 1|8103A26C ????|Viper187 & Delta FORCE
+C:green ammo box 0005 size 2|8103A26E ????|Viper187 & Delta FORCE
+
+C:green ammo box 0006 value 1|8103A272 ????|Viper187 & Delta FORCE
+C:green ammo box 0006 value 2|8103A276 ????|Viper187 & Delta FORCE
+C:green ammo box 0006 size 1|8103A278 ????|Viper187 & Delta FORCE
+C:green ammo box 0006 size 2|8103A27A ????|Viper187 & Delta FORCE
+
+C:green ammo box 0007 value 1|8103A27E ????|Viper187 & Delta FORCE
+C:green ammo box 0007 value 2|8103A282 ????|Viper187 & Delta FORCE
+C:green ammo box 0007 size 1|8103A284 ????|Viper187 & Delta FORCE
+C:green ammo box 0007 size 2|8103A286 ????|Viper187 & Delta FORCE
+
+C:Egypt block 0008 value 1|8103A28A ????|Viper187 & Delta FORCE
+C:Egypt block 0008 value 2|8103A28E ????|Viper187 & Delta FORCE
+C:Egypt block 0008 size 1|8103A290 ????|Viper187 & Delta FORCE
+C:Egypt block 0008 size 2|8103A292 ????|Viper187 & Delta FORCE
+
+C:desk blotter 0009 value 1|8103A296 ????|Viper187 & Delta FORCE
+C:desk blotter 0009 value 2|8103A29A ????|Viper187 & Delta FORCE
+C:desk blotter 0009 size 1|8103A29C ????|Viper187 & Delta FORCE
+C:desk blotter 0009 size 2|8103A29E ????|Viper187 & Delta FORCE
+
+C:red book 000A value 1|8103A2A2 ????|Viper187 & Delta FORCE
+C:red book 000A value 2|8103A2A6 ????|Viper187 & Delta FORCE
+C:red book 000A size 1|8103A2A8 ????|Viper187 & Delta FORCE
+C:red book 000A size 2|8103A2AA ????|Viper187 & Delta FORCE
+
+C:bookshelf 000B value 1|8103A2AE ????|Viper187 & Delta FORCE
+C:bookshelf 000B value 2|8103A2B2 ????|Viper187 & Delta FORCE
+C:bookshelf 000B size 1|8103A2B4 ????|Viper187 & Delta FORCE
+C:bookshelf 000B size 2|8103A2B6 ????|Viper187 & Delta FORCE
+
+C:bridge console 000C value 1|8103A2BA ????|Viper187 & Delta FORCE
+C:bridge console 000C value 2|8103A2BE ????|Viper187 & Delta FORCE
+C:bridge console 000C size 1|8103A2C0 ????|Viper187 & Delta FORCE
+C:bridge console 000C size 2|8103A2C2 ????|Viper187 & Delta FORCE
+
+C:bridge console 000D value 1|8103A2C6 ????|Viper187 & Delta FORCE
+C:bridge console 000D value 2|8103A2CA ????|Viper187 & Delta FORCE
+C:bridge console 000D size 1|8103A2CC ????|Viper187 & Delta FORCE
+C:bridge console 000D size 2|8103A2CE ????|Viper187 & Delta FORCE
+
+C:bridge console 000E value 1|8103A2D2 ????|Viper187 & Delta FORCE
+C:bridge console 000E value 2|8103A2D6 ????|Viper187 & Delta FORCE
+C:bridge console 000E size 1|8103A2D8 ????|Viper187 & Delta FORCE
+C:bridge console 000E size 2|8103A2DA ????|Viper187 & Delta FORCE
+
+C:bridge console 000F value 1|8103A2DE ????|Viper187 & Delta FORCE
+C:bridge console 000F value 2|8103A2E2 ????|Viper187 & Delta FORCE
+C:bridge console 000F size 1|8103A2E4 ????|Viper187 & Delta FORCE
+C:bridge console 000F size 2|8103A2E6 ????|Viper187 & Delta FORCE
+
+C:bridge console 0010 value 1|8103A2EA ????|Viper187 & Delta FORCE
+C:bridge console 0010 value 2|8103A2EE ????|Viper187 & Delta FORCE
+C:bridge console 0010 size 1|8103A2F0 ????|Viper187 & Delta FORCE
+C:bridge console 0010 size 2|8103A2F2 ????|Viper187 & Delta FORCE
+
+C:bridge console 0011 value 1|8103A2F6 ????|Viper187 & Delta FORCE
+C:bridge console 0011 value 2|8103A2FA ????|Viper187 & Delta FORCE
+C:bridge console 0011 size 1|8103A2FC ????|Viper187 & Delta FORCE
+C:bridge console 0011 size 2|8103A2FE ????|Viper187 & Delta FORCE
+
+C:cardboard ammo box 0012 value 1|8103A302 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0012 value 2|8103A306 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0012 size 1|8103A308 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0012 size 2|8103A30A ????|Viper187 & Delta FORCE
+
+C:cardboard ammo box 0013 value 1|8103A30E ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0013 value 2|8103A312 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0013 size 1|8103A314 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0013 size 2|8103A316 ????|Viper187 & Delta FORCE
+
+C:cardboard ammo box 0014 value 1|8103A31A ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0014 value 2|8103A31E ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0014 size 1|8103A320 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0014 size 2|8103A322 ????|Viper187 & Delta FORCE
+
+C:cardboard ammo box 0015 value 1|8103A326 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0015 value 2|8103A32A ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0015 size 1|8103A32C ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0015 size 2|8103A32E ????|Viper187 & Delta FORCE
+
+C:cardboard ammo box 0016 value 1|8103A332 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0016 value 2|8103A336 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0016 size 1|8103A338 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0016 size 2|8103A33A ????|Viper187 & Delta FORCE
+
+C:cardboard ammo box 0017 value 1|8103A33E ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0017 value 2|8103A342 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0017 size 1|8103A344 ????|Viper187 & Delta FORCE
+C:cardboard ammo box 0017 size 2|8103A346 ????|Viper187 & Delta FORCE
+
+*
+C:surveillance camera 0018 value 1|8103A34A ????|Viper187 & Delta FORCE
+C:surveillance camera 0018 value 2|8103A34E ????|Viper187 & Delta FORCE
+C:surveillance camera 0018 size 1|8103A350 ????|Viper187 & Delta FORCE
+C:surveillance camera 0018 size 2|8103A352 ????|Viper187 & Delta FORCE
+
+C:double screen console 0019 value 1|8103A356 ????|Viper187 & Delta FORCE
+C:double screen console 0019 value 2|8103A35A ????|Viper187 & Delta FORCE
+C:double screen console 0019 size 1|8103A35C ????|Viper187 & Delta FORCE
+C:double screen console 0019 size 2|8103A35E ????|Viper187 & Delta FORCE
+
+C:double screen console 001A value 1|8103A362 ????|Viper187 & Delta FORCE
+C:double screen console 001A value 2|8103A366 ????|Viper187 & Delta FORCE
+C:double screen console 001A size 1|8103A368 ????|Viper187 & Delta FORCE
+C:double screen console 001A size 2|8103A36A ????|Viper187 & Delta FORCE
+
+C:double screen console 001B value 1|8103A36E ????|Viper187 & Delta FORCE
+C:double screen console 001B value 2|8103A372 ????|Viper187 & Delta FORCE
+C:double screen console 001B size 1|8103A374 ????|Viper187 & Delta FORCE
+C:double screen console 001B size 2|8103A376 ????|Viper187 & Delta FORCE
+
+C:console 001C value 1|8103A37A ????|Viper187 & Delta FORCE
+C:console 001C value 2|8103A37E ????|Viper187 & Delta FORCE
+C:console 001C size 1|8103A380 ????|Viper187 & Delta FORCE
+C:console 001C size 2|8103A382 ????|Viper187 & Delta FORCE
+
+C:console 001D value 1|8103A386 ????|Viper187 & Delta FORCE
+C:console 001D value 2|8103A38A ????|Viper187 & Delta FORCE
+C:console 001D size 1|8103A38C ????|Viper187 & Delta FORCE
+C:console 001D size 2|8103A38E ????|Viper187 & Delta FORCE
+
+C:console 001E value 1|8103A392 ????|Viper187 & Delta FORCE
+C:console 001E value 2|8103A396 ????|Viper187 & Delta FORCE
+C:console 001E size 1|8103A398 ????|Viper187 & Delta FORCE
+C:console 001E size 2|8103A39A ????|Viper187 & Delta FORCE
+
+C:console 001F value 1|8103A39E ????|Viper187 & Delta FORCE
+C:console 001F value 2|8103A3A2 ????|Viper187 & Delta FORCE
+C:console 001F size 1|8103A3A4 ????|Viper187 & Delta FORCE
+C:console 001F size 2|8103A3A6 ????|Viper187 & Delta FORCE
+
+C:console 0020 value 1|8103A3AA ????|Viper187 & Delta FORCE
+C:console 0020 value 2|8103A3AE ????|Viper187 & Delta FORCE
+C:console 0020 size 1|8103A3B0 ????|Viper187 & Delta FORCE
+C:console 0020 size 2|8103A3B2 ????|Viper187 & Delta FORCE
+
+C:console 0021 value 1|8103A3B6 ????|Viper187 & Delta FORCE
+C:console 0021 value 2|8103A3BA ????|Viper187 & Delta FORCE
+C:console 0021 size 1|8103A3BC ????|Viper187 & Delta FORCE
+C:console 0021 size 2|8103A3BE ????|Viper187 & Delta FORCE
+
+C:console 0022 value 1|8103A3C2 ????|Viper187 & Delta FORCE
+C:console 0022 value 2|8103A3C6 ????|Viper187 & Delta FORCE
+C:console 0022 size 1|8103A3C8 ????|Viper187 & Delta FORCE
+C:console 0022 size 2|8103A3CA ????|Viper187 & Delta FORCE
+
+C:console 0023 value 1|8103A3CE ????|Viper187 & Delta FORCE
+C:console 0023 value 2|8103A3D2 ????|Viper187 & Delta FORCE
+C:console 0023 size 1|8103A3D4 ????|Viper187 & Delta FORCE
+C:console 0023 size 2|8103A3D6 ????|Viper187 & Delta FORCE
+
+C:console 0024 value 1|8103A3DA ????|Viper187 & Delta FORCE
+C:console 0024 value 2|8103A3DE ????|Viper187 & Delta FORCE
+C:console 0024 size 1|8103A3E0 ????|Viper187 & Delta FORCE
+C:console 0024 size 2|8103A3E2 ????|Viper187 & Delta FORCE
+
+C:single screen console 0025 value 1|8103A3E6 ????|Viper187 & Delta FORCE
+C:single screen console 0025 value 2|8103A3EA ????|Viper187 & Delta FORCE
+C:single screen console 0025 size 1|8103A3EC ????|Viper187 & Delta FORCE
+C:single screen console 0025 size 2|8103A3EE ????|Viper187 & Delta FORCE
+
+C:white table 0026 value 1|8103A3F2 ????|Viper187 & Delta FORCE
+C:white table 0026 value 2|8103A3F6 ????|Viper187 & Delta FORCE
+C:white table 0026 size 1|8103A3F8 ????|Viper187 & Delta FORCE
+C:white table 0026 size 2|8103A3FA ????|Viper187 & Delta FORCE
+
+C:white table 0027 value 1|8103A3FE ????|Viper187 & Delta FORCE
+C:white table 0027 value 2|8103A402 ????|Viper187 & Delta FORCE
+C:white table 0027 size 1|8103A404 ????|Viper187 & Delta FORCE
+C:white table 0027 size 2|8103A406 ????|Viper187 & Delta FORCE
+
+C:desk lamp 0028 value 1|8103A40A ????|Viper187 & Delta FORCE
+C:desk lamp 0028 value 2|8103A40E ????|Viper187 & Delta FORCE
+C:desk lamp 0028 size 1|8103A410 ????|Viper187 & Delta FORCE
+C:desk lamp 0028 size 2|8103A412 ????|Viper187 & Delta FORCE
+
+C:part of Aztec DAT box 0029 value 1|8103A416 ????|Viper187 & Delta FORCE
+C:part of Aztec DAT box 0029 value 2|8103A41A ????|Viper187 & Delta FORCE
+C:part of Aztec DAT box 0029 size 1|8103A41C ????|Viper187 & Delta FORCE
+C:part of Aztec DAT box 0029 size 2|8103A41E ????|Viper187 & Delta FORCE
+
+C:part of Aztec DAT box 002A value 1|8103A422 ????|Viper187 & Delta FORCE
+C:part of Aztec DAT box 002A value 2|8103A426 ????|Viper187 & Delta FORCE
+C:part of Aztec DAT box 002A size 1|8103A428 ????|Viper187 & Delta FORCE
+C:part of Aztec DAT box 002A size 2|8103A42A ????|Viper187 & Delta FORCE
+
+C:white cabinet 002B value 1|8103A42E ????|Viper187 & Delta FORCE
+C:white cabinet 002B value 2|8103A432 ????|Viper187 & Delta FORCE
+C:white cabinet 002B size 1|8103A434 ????|Viper187 & Delta FORCE
+C:white cabinet 002B size 2|8103A436 ????|Viper187 & Delta FORCE
+
+C:jerry can 002C value 1|8103A43A ????|Viper187 & Delta FORCE
+C:jerry can 002C value 2|8103A43E ????|Viper187 & Delta FORCE
+C:jerry can 002C size 1|8103A440 ????|Viper187 & Delta FORCE
+C:jerry can 002C size 2|8103A442 ????|Viper187 & Delta FORCE
+
+C:keyboard 002D value 1|8103A446 ????|Viper187 & Delta FORCE
+C:keyboard 002D value 2|8103A44A ????|Viper187 & Delta FORCE
+C:keyboard 002D size 1|8103A44C ????|Viper187 & Delta FORCE
+C:keyboard 002D size 2|8103A44E ????|Viper187 & Delta FORCE
+
+C:4 door & drawer bench 002E value 1|8103A452 ????|Viper187 & Delta FORCE
+C:4 door & drawer bench 002E value 2|8103A456 ????|Viper187 & Delta FORCE
+C:4 door & drawer bench 002E size 1|8103A458 ????|Viper187 & Delta FORCE
+C:4 door & drawer bench 002E size 2|8103A45A ????|Viper187 & Delta FORCE
+
+C:desk in-tray 002F value 1|8103A45E ????|Viper187 & Delta FORCE
+C:desk in-tray 002F value 2|8103A462 ????|Viper187 & Delta FORCE
+C:desk in-tray 002F size 1|8103A464 ????|Viper187 & Delta FORCE
+C:desk in-tray 002F size 2|8103A466 ????|Viper187 & Delta FORCE
+
+C:mainframe 0030 value 1|8103A46A ????|Viper187 & Delta FORCE
+C:mainframe 0030 value 2|8103A46E ????|Viper187 & Delta FORCE
+C:mainframe 0030 size 1|8103A470 ????|Viper187 & Delta FORCE
+C:mainframe 0030 size 2|8103A472 ????|Viper187 & Delta FORCE
+
+C:mainframe 0031 value 1|8103A476 ????|Viper187 & Delta FORCE
+C:mainframe 0031 value 2|8103A47A ????|Viper187 & Delta FORCE
+C:mainframe 0031 size 1|8103A47C ????|Viper187 & Delta FORCE
+C:mainframe 0031 size 2|8103A47E ????|Viper187 & Delta FORCE
+
+C:chair 0032 value 1|8103A482 ????|Viper187 & Delta FORCE
+C:chair 0032 value 2|8103A486 ????|Viper187 & Delta FORCE
+C:chair 0032 size 1|8103A488 ????|Viper187 & Delta FORCE
+C:chair 0032 size 2|8103A48A ????|Viper187 & Delta FORCE
+
+C:metal crate 0033 value 1|8103A48E ????|Viper187 & Delta FORCE
+C:metal crate 0033 value 2|8103A492 ????|Viper187 & Delta FORCE
+C:metal crate 0033 size 1|8103A494 ????|Viper187 & Delta FORCE
+C:metal crate 0033 size 2|8103A496 ????|Viper187 & Delta FORCE
+
+C:metal crate 0034 value 1|8103A49A ????|Viper187 & Delta FORCE
+C:metal crate 0034 value 2|8103A49E ????|Viper187 & Delta FORCE
+C:metal crate 0034 size 1|8103A4A0 ????|Viper187 & Delta FORCE
+C:metal crate 0034 size 2|8103A4A2 ????|Viper187 & Delta FORCE
+
+C:metal crate 0035 value 1|8103A4A6 ????|Viper187 & Delta FORCE
+C:metal crate 0035 value 2|8103A4AA ????|Viper187 & Delta FORCE
+C:metal crate 0035 size 1|8103A4AC ????|Viper187 & Delta FORCE
+C:metal crate 0035 size 2|8103A4AE ????|Viper187 & Delta FORCE
+
+C:ribbed steel box 0036 value 1|8103A4B2 ????|Viper187 & Delta FORCE
+C:ribbed steel box 0036 value 2|8103A4B6 ????|Viper187 & Delta FORCE
+C:ribbed steel box 0036 size 1|8103A4B8 ????|Viper187 & Delta FORCE
+C:ribbed steel box 0036 size 2|8103A4BA ????|Viper187 & Delta FORCE
+
+C:model of Silo rocket 0037 value 1|8103A4BE ????|Viper187 & Delta FORCE
+C:model of Silo rocket 0037 value 2|8103A4B2 ????|Viper187 & Delta FORCE
+C:model of Silo rocket 0037 size 1|8103A4C4 ????|Viper187 & Delta FORCE
+C:model of Silo rocket 0037 size 2|8103A4C6 ????|Viper187 & Delta FORCE
+
+C:4 Silo rockets 0038 value 1|8103A4CA ????|Viper187 & Delta FORCE
+C:4 Silo rockets 0038 value 2|8103A4CE ????|Viper187 & Delta FORCE
+C:4 Silo rockets 0038 size 1|8103A4D0 ????|Viper187 & Delta FORCE
+C:4 Silo rockets 0038 size 2|8103A4D2 ????|Viper187 & Delta FORCE
+
+C:oil drum 0039 value 1|8103A4D6 ????|Viper187 & Delta FORCE
+C:oil drum 0039 value 2|8103A4DA ????|Viper187 & Delta FORCE
+C:oil drum 0039 size 1|8103A4DC ????|Viper187 & Delta FORCE
+C:oil drum 0039 size 2|8103A4DE ????|Viper187 & Delta FORCE
+
+C:oil drum 003A value 1|8103A4E2 ????|Viper187 & Delta FORCE
+C:oil drum 003A value 2|8103A4E6 ????|Viper187 & Delta FORCE
+C:oil drum 003A size 1|8103A4E8 ????|Viper187 & Delta FORCE
+C:oil drum 003A size 2|8103A4EA ????|Viper187 & Delta FORCE
+
+C:oil drum 003B value 1|8103A4EE ????|Viper187 & Delta FORCE
+C:oil drum 003B value 2|8103A4F2 ????|Viper187 & Delta FORCE
+C:oil drum 003B size 1|8103A4F4 ????|Viper187 & Delta FORCE
+C:oil drum 003B size 2|8103A4F6 ????|Viper187 & Delta FORCE
+
+C:oil drum 003C value 1|8103A4FA ????|Viper187 & Delta FORCE
+C:oil drum 003C value 2|8103A4FE ????|Viper187 & Delta FORCE
+C:oil drum 003C size 1|8103A500 ????|Viper187 & Delta FORCE
+C:oil drum 003C size 2|8103A502 ????|Viper187 & Delta FORCE
+
+C:oil drum 003D value 1|8103A506 ????|Viper187 & Delta FORCE
+C:oil drum 003D value 2|8103A50A ????|Viper187 & Delta FORCE
+C:oil drum 003D size 1|8103A50C ????|Viper187 & Delta FORCE
+C:oil drum 003D size 2|8103A50E ????|Viper187 & Delta FORCE
+
+C:oil drum 003E value 1|8103A512 ????|Viper187 & Delta FORCE
+C:oil drum 003E value 2|8103A516 ????|Viper187 & Delta FORCE
+C:oil drum 003E size 1|8103A518 ????|Viper187 & Delta FORCE
+C:oil drum 003E size 2|8103A51A ????|Viper187 & Delta FORCE
+
+C:padlock 003F value 1|8103A51E ????|Viper187 & Delta FORCE
+C:padlock 003F value 2|8103A522 ????|Viper187 & Delta FORCE
+C:padlock 003F size 1|8103A524 ????|Viper187 & Delta FORCE
+C:padlock 003F size 2|8103A526 ????|Viper187 & Delta FORCE
+
+C:phone 0040 value 1|8103A52A ????|Viper187 & Delta FORCE
+C:phone 0040 value 2|8103A52E ????|Viper187 & Delta FORCE
+C:phone 0040 size 1|8103A530 ????|Viper187 & Delta FORCE
+C:phone 0040 size 2|8103A532 ????|Viper187 & Delta FORCE
+
+C:radio 0041 value 1|8103A536 ????|Viper187 & Delta FORCE
+C:radio 0041 value 2|8103A53A ????|Viper187 & Delta FORCE
+C:radio 0041 size 1|8103A53C ????|Viper187 & Delta FORCE
+C:radio 0041 size 2|8103A53E ????|Viper187 & Delta FORCE
+
+C:radio 0042 value 1|8103A542 ????|Viper187 & Delta FORCE
+C:radio 0042 value 2|8103A546 ????|Viper187 & Delta FORCE
+C:radio 0042 size 1|8103A548 ????|Viper187 & Delta FORCE
+C:radio 0042 size 2|8103A54A ????|Viper187 & Delta FORCE
+
+C:radio 0043 value 1|8103A54E ????|Viper187 & Delta FORCE
+C:radio 0043 value 2|8103A552 ????|Viper187 & Delta FORCE
+C:radio 0043 size 1|8103A554 ????|Viper187 & Delta FORCE
+C:radio 0043 size 2|8103A556 ????|Viper187 & Delta FORCE
+
+C:radio 0044 value 1|8103A55A ????|Viper187 & Delta FORCE
+C:radio 0044 value 2|8103A55E ????|Viper187 & Delta FORCE
+C:radio 0044 size 1|8103A560 ????|Viper187 & Delta FORCE
+C:radio 0044 size 2|8103A562 ????|Viper187 & Delta FORCE
+
+C:sattelite 0045 value 1|8103A566 ????|Viper187 & Delta FORCE
+C:sattelite 0045 value 2|8103A56A ????|Viper187 & Delta FORCE
+C:sattelite 0045 size 1|8103A56C ????|Viper187 & Delta FORCE
+C:sattelite 0045 size 2|8103A56E ????|Viper187 & Delta FORCE
+
+C:Dam Antenna dish 0046 value 1|8103A572 ????|Viper187 & Delta FORCE
+C:Dam Antenna dish 0046 value 2|8103A576 ????|Viper187 & Delta FORCE
+C:Dam Antenna dish 0046 size 1|8103A578 ????|Viper187 & Delta FORCE
+C:Dam Antenna dish 0046 size 2|8103A57A ????|Viper187 & Delta FORCE
+
+C:tape recorder 0047 value 1|8103A57E ????|Viper187 & Delta FORCE
+C:tape recorder 0047 value 2|8103A582 ????|Viper187 & Delta FORCE
+C:tape recorder 0047 size 1|8103A584 ????|Viper187 & Delta FORCE
+C:tape recorder 0047 size 2|8103A586 ????|Viper187 & Delta FORCE
+
+C:wooden stool 0048 value 1|8103A58A ????|Viper187 & Delta FORCE
+C:wooden stool 0048 value 2|8103A58E ????|Viper187 & Delta FORCE
+C:wooden stool 0048 size 1|8103A590 ????|Viper187 & Delta FORCE
+C:wooden stool 0048 size 2|8103A592 ????|Viper187 & Delta FORCE
+
+C:swivel chair 0049 value 1|8103A596 ????|Viper187 & Delta FORCE
+C:swivel chair 0049 value 2|8103A59A ????|Viper187 & Delta FORCE
+C:swivel chair 0049 size 1|8103A59C ????|Viper187 & Delta FORCE
+C:swivel chair 0049 size 2|8103A59E ????|Viper187 & Delta FORCE
+
+C:rack of 3 blue rockets 004A value 1|8103A5A2 ????|Viper187 & Delta FORCE
+C:rack of 3 blue rockets 004A value 2|8103A5A6 ????|Viper187 & Delta FORCE
+C:rack of 3 blue rockets 004A size 1|8103A5A8 ????|Viper187 & Delta FORCE
+C:rack of 3 blue rockets 004A size 2|8103A5AA ????|Viper187 & Delta FORCE
+
+C:small television 004B value 1|8103A5AE ????|Viper187 & Delta FORCE
+C:small television 004B value 2|8103A5B2 ????|Viper187 & Delta FORCE
+C:small television 004B size 1|8103A5B4 ????|Viper187 & Delta FORCE
+C:small television 004B size 2|8103A5B6 ????|Viper187 & Delta FORCE
+
+C:hanging monitor rack 004C value 1|8103A5BA ????|Viper187 & Delta FORCE
+C:hanging monitor rack 004C value 2|8103A5BE ????|Viper187 & Delta FORCE
+C:hanging monitor rack 004C size 1|8103A5C0 ????|Viper187 & Delta FORCE
+C:hanging monitor rack 004C size 2|8103A5C2 ????|Viper187 & Delta FORCE
+
+C:wall monitor screen 004D value 1|8103A5C6 ????|Viper187 & Delta FORCE
+C:wall monitor screen 004D value 2|8103A5CA ????|Viper187 & Delta FORCE
+C:wall monitor screen 004D size 1|8103A5CC ????|Viper187 & Delta FORCE
+C:wall monitor screen 004D size 2|8103A5CE ????|Viper187 & Delta FORCE
+
+C:wall monitor screen 004E value 1|8103A5D2 ????|Viper187 & Delta FORCE
+C:wall monitor screen 004E value 2|8103A5D6 ????|Viper187 & Delta FORCE
+C:wall monitor screen 004E size 1|8103A5D8 ????|Viper187 & Delta FORCE
+C:wall monitor screen 004E size 2|8103A5DA ????|Viper187 & Delta FORCE
+
+C:wooden crate 004F value 1|8103A5DE ????|Viper187 & Delta FORCE
+C:wooden crate 004F value 2|8103A5E2 ????|Viper187 & Delta FORCE
+C:wooden crate 004F size 1|8103A5E4 ????|Viper187 & Delta FORCE
+C:wooden crate 004F size 2|8103A5E6 ????|Viper187 & Delta FORCE
+
+C:wooden crate 0050 value 1|8103A5EA ????|Viper187 & Delta FORCE
+C:wooden crate 0050 value 2|8103A5EE ????|Viper187 & Delta FORCE
+C:wooden crate 0050 size 1|8103A5F0 ????|Viper187 & Delta FORCE
+C:wooden crate 0050 size 2|8103A5F2 ????|Viper187 & Delta FORCE
+
+C:wooden crate 0051 value 1|8103A5F6 ????|Viper187 & Delta FORCE
+C:wooden crate 0051 value 2|8103A5FA ????|Viper187 & Delta FORCE
+C:wooden crate 0051 size 1|8103A5FC ????|Viper187 & Delta FORCE
+C:wooden crate 0051 size 2|8103A5FE ????|Viper187 & Delta FORCE
+
+C:wooden crate 0052 value 1|8103A602 ????|Viper187 & Delta FORCE
+C:wooden crate 0052 value 2|8103A606 ????|Viper187 & Delta FORCE
+C:wooden crate 0052 size 1|8103A608 ????|Viper187 & Delta FORCE
+C:wooden crate 0052 size 2|8103A60A ????|Viper187 & Delta FORCE
+
+C:wooden crate 0053 value 1|8103A60E ????|Viper187 & Delta FORCE
+C:wooden crate 0053 value 2|8103A612 ????|Viper187 & Delta FORCE
+C:wooden crate 0053 size 1|8103A614 ????|Viper187 & Delta FORCE
+C:wooden crate 0053 size 2|8103A616 ????|Viper187 & Delta FORCE
+
+C:wooden crate 0054 value 1|8103A61A ????|Viper187 & Delta FORCE
+C:wooden crate 0054 value 2|8103A61E ????|Viper187 & Delta FORCE
+C:wooden crate 0054 size 1|8103A620 ????|Viper187 & Delta FORCE
+C:wooden crate 0054 size 2|8103A622 ????|Viper187 & Delta FORCE
+
+C:wooden table 0055 value 1|8103A626 ????|Viper187 & Delta FORCE
+C:wooden table 0055 value 2|8103A62A ????|Viper187 & Delta FORCE
+C:wooden table 0055 size 1|8103A62C ????|Viper187 & Delta FORCE
+C:wooden table 0055 size 2|8103A62E ????|Viper187 & Delta FORCE
+
+C:Floppy disc 0056 value 1|8103A632 ????|Viper187 & Delta FORCE
+C:Floppy disc 0056 value 2|8103A636 ????|Viper187 & Delta FORCE
+C:Floppy disc 0056 size 1|8103A638 ????|Viper187 & Delta FORCE
+C:Floppy disc 0056 size 2|8103A63A ????|Viper187 & Delta FORCE
+
+C:Borg cube 0057 value 1|8103A63E ????|Viper187 & Delta FORCE
+C:Borg cube 0057 value 2|8103A642 ????|Viper187 & Delta FORCE
+C:Borg cube 0057 size 1|8103A644 ????|Viper187 & Delta FORCE
+C:Borg cube 0057 size 2|8103A646 ????|Viper187 & Delta FORCE
+
+C:4X4 crate stack 0058 value 1|8103A64A ????|Viper187 & Delta FORCE
+C:4X4 crate stack 0058 value 2|8103A64E ????|Viper187 & Delta FORCE
+C:4X4 crate stack 0058 size 1|8103A650 ????|Viper187 & Delta FORCE
+C:4X4 crate stack 0058 size 2|8103A652 ????|Viper187 & Delta FORCE
+
+C:4X3 crate stack 0059 value 1|8103A656 ????|Viper187 & Delta FORCE
+C:4X3 crate stack 0059 value 2|8103A65A ????|Viper187 & Delta FORCE
+C:4X3 crate stack 0059 size 1|8103A65C ????|Viper187 & Delta FORCE
+C:4X3 crate stack 0059 size 2|8103A65E ????|Viper187 & Delta FORCE
+
+C:4X2 crate stack 005A value 1|8103A662 ????|Viper187 & Delta FORCE
+C:4X2 crate stack 005A value 2|8103A666 ????|Viper187 & Delta FORCE
+C:4X2 crate stack 005A size 1|8103A668 ????|Viper187 & Delta FORCE
+C:4X2 crate stack 005A size 2|8103A66A ????|Viper187 & Delta FORCE
+
+C:red button 005B value 1|8103A66E ????|Viper187 & Delta FORCE
+C:red button 005B value 2|8103A672 ????|Viper187 & Delta FORCE
+C:red button 005B size 1|8103A674 ????|Viper187 & Delta FORCE
+C:red button 005B size 2|8103A676 ????|Viper187 & Delta FORCE
+
+C:small rocket 005C value 1|8103A67A ????|Viper187 & Delta FORCE
+C:small rocket 005C value 2|8103A67E ????|Viper187 & Delta FORCE
+C:small rocket 005C size 1|8103A680 ????|Viper187 & Delta FORCE
+C:small rocket 005C size 2|8103A682 ????|Viper187 & Delta FORCE
+
+C:full size ICBM 005D value 1|8103A686 ????|Viper187 & Delta FORCE
+C:full size ICBM 005D value 2|8103A68A ????|Viper187 & Delta FORCE
+C:full size ICBM 005D size 1|8103A68C ????|Viper187 & Delta FORCE
+C:full size ICBM 005D size 2|8103A68E ????|Viper187 & Delta FORCE
+
+C:double console on castors 005E value 1|8103A692 ????|Viper187 & Delta FORCE
+C:double console on castors 005E value 2|8103A696 ????|Viper187 & Delta FORCE
+C:double console on castors 005E size 1|8103A698 ????|Viper187 & Delta FORCE
+C:double console on castors 005E size 2|8103A69A ????|Viper187 & Delta FORCE
+
+C:counter 005F value 1|8103A69E ????|Viper187 & Delta FORCE
+C:counter 005F value 2|8103A6A2 ????|Viper187 & Delta FORCE
+C:counter 005F size 1|8103A6A4 ????|Viper187 & Delta FORCE
+C:counter 005F size 2|8103A6A6 ????|Viper187 & Delta FORCE
+
+C:locker set 0060 value 1|8103A6AA ????|Viper187 & Delta FORCE
+C:locker set 0060 value 2|8103A6AE ????|Viper187 & Delta FORCE
+C:locker set 0060 size 1|8103A6B0 ????|Viper187 & Delta FORCE
+C:locker set 0060 size 2|8103A6B2 ????|Viper187 & Delta FORCE
+
+C:locker set 0061 value 1|8103A6B6 ????|Viper187 & Delta FORCE
+C:locker set 0061 value 2|8103A6BA ????|Viper187 & Delta FORCE
+C:locker set 0061 size 1|8103A6BC ????|Viper187 & Delta FORCE
+C:locker set 0061 size 2|8103A6BE ????|Viper187 & Delta FORCE
+
+C:ceiling drone gun 0062 value 1|8103A6C2 ????|Viper187 & Delta FORCE
+C:ceiling drone gun 0062 value 2|8103A6C6 ????|Viper187 & Delta FORCE
+C:ceiling drone gun 0062 size 1|8103A6C8 ????|Viper187 & Delta FORCE
+C:ceiling drone gun 0062 size 2|8103A6CA ????|Viper187 & Delta FORCE
+
+C:Frigate rocket launcher (POINTING DOWN) 0063 value 1|8103A6CE ????|Viper187 & Delta FORCE
+C:Frigate rocket launcher (POINTING DOWN) 0063 value 2|8103A6D2 ????|Viper187 & Delta FORCE
+C:Frigate rocket launcher (POINTING DOWN) 0063 size 1|8103A6D4 ????|Viper187 & Delta FORCE
+C:Frigate rocket launcher (POINTING DOWN) 0063 size 2|8103A6D6 ????|Viper187 & Delta FORCE
+
+C:Frigate rocket launcher (POINTING UP) 0064 value 1|8103A6DA ????|Viper187 & Delta FORCE
+C:Frigate rocket launcher (POINTING UP) 0064 value 2|8103A6DE ????|Viper187 & Delta FORCE
+C:Frigate rocket launcher (POINTING UP) 0064 size 1|8103A6E0 ????|Viper187 & Delta FORCE
+C:Frigate rocket launcher (POINTING UP) 0064 size 2|8103A6E2 ????|Viper187 & Delta FORCE
+
+C:Frigate gun turret 0065 value 1|8103A6E6 ????|Viper187 & Delta FORCE
+C:Frigate gun turret 0065 value 2|8103A6EA ????|Viper187 & Delta FORCE
+C:Frigate gun turret 0065 size 1|8103A6EC ????|Viper187 & Delta FORCE
+C:Frigate gun turret 0065 size 2|8103A6EE ????|Viper187 & Delta FORCE
+
+C:Frigate rocket rack 0066 value 1|8103A6F2 ????|Viper187 & Delta FORCE
+C:Frigate rocket rack 0066 value 2|8103A6F6 ????|Viper187 & Delta FORCE
+C:Frigate rocket rack 0066 size 1|8103A6F8 ????|Viper187 & Delta FORCE
+C:Frigate rocket rack 0066 size 2|8103A6FA ????|Viper187 & Delta FORCE
+
+C:Runway rocket launcher 0067 value 1|8103A6FE ????|Viper187 & Delta FORCE
+C:Runway rocket launcher 0067 value 2|8103A702 ????|Viper187 & Delta FORCE
+C:Runway rocket launcher 0067 size 1|8103A704 ????|Viper187 & Delta FORCE
+C:Runway rocket launcher 0067 size 2|8103A706 ????|Viper187 & Delta FORCE
+
+C:glass 0068 value|8103A70A ????|Viper187 & Delta FORCE
+C:glass 0068 image|8103A70E ????|Viper187 & Delta FORCE
+C:glass 0068 size 1|8103A710 ????|Viper187 & Delta FORCE
+C:glass 0068 size 2|8103A712 ????|Viper187 & Delta FORCE
+
+C:window lattice frame 0069 value 1|8103A716 ????|Viper187 & Delta FORCE
+C:window lattice frame 0069 value 2|8103A71A ????|Viper187 & Delta FORCE
+C:window lattice frame 0069 size 1|8103A71C ????|Viper187 & Delta FORCE
+C:window lattice frame 0069 size 2|8103A71E ????|Viper187 & Delta FORCE
+
+C:smaller lattice frame 006A value 1|8103A722 ????|Viper187 & Delta FORCE
+C:smaller lattice frame 006A value 2|8103A726 ????|Viper187 & Delta FORCE
+C:smaller lattice frame 006A size 1|8103A728 ????|Viper187 & Delta FORCE
+C:smaller lattice frame 006A size 2|8103A72A ????|Viper187 & Delta FORCE
+
+C:smaller lattice frame 006B value 1|8103A72E ????|Viper187 & Delta FORCE
+C:smaller lattice frame 006B value 2|8103A732 ????|Viper187 & Delta FORCE
+C:smaller lattice frame 006B size 1|8103A734 ????|Viper187 & Delta FORCE
+C:smaller lattice frame 006B size 2|8103A736 ????|Viper187 & Delta FORCE
+
+C:Jungle big tree 006C value 1|8103A73A ????|Viper187 & Delta FORCE
+C:Jungle big tree 006C value 2|8103A73E ????|Viper187 & Delta FORCE
+C:Jungle big tree 006C size 1|8103A740 ????|Viper187 & Delta FORCE
+C:Jungle big tree 006C size 2|8103A742 ????|Viper187 & Delta FORCE
+
+C:Jungle palm 006D value 1|8103A746 ????|Viper187 & Delta FORCE
+C:Jungle palm 006D value 2|8103A74A ????|Viper187 & Delta FORCE
+C:Jungle palm 006D size 1|8103A74C ????|Viper187 & Delta FORCE
+C:Jungle palm 006D size 2|8103A74E ????|Viper187 & Delta FORCE
+
+C:palm resprouting 006E value 1|8103A752 ????|Viper187 & Delta FORCE
+C:palm resprouting 006E value 2|8103A756 ????|Viper187 & Delta FORCE
+C:palm resprouting 006E size 1|8103A758 ????|Viper187 & Delta FORCE
+C:palm resprouting 006E size 2|8103A75A ????|Viper187 & Delta FORCE
+
+C:Jungle low shrub 006F value 1|8103A75E ????|Viper187 & Delta FORCE
+C:Jungle low shrub 006F value 2|8103A762 ????|Viper187 & Delta FORCE
+C:Jungle low shrub 006F size 1|8103A764 ????|Viper187 & Delta FORCE
+C:Jungle low shrub 006F size 2|8103A766 ????|Viper187 & Delta FORCE
+
+C:laboratory bench 0070 value 1|8103A76A ????|Viper187 & Delta FORCE
+C:laboratory bench 0070 value 2|8103A76E ????|Viper187 & Delta FORCE
+C:laboratory bench 0070 size 1|8103A770 ????|Viper187 & Delta FORCE
+C:laboratory bench 0070 size 2|8103A772 ????|Viper187 & Delta FORCE
+
+C:rubbish bin 0071 value 1|8103A776 ????|Viper187 & Delta FORCE
+C:rubbish bin 0071 value 2|8103A77A ????|Viper187 & Delta FORCE
+C:rubbish bin 0071 size 1|8103A77C ????|Viper187 & Delta FORCE
+C:rubbish bin 0071 size 2|8103A77E ????|Viper187 & Delta FORCE
+
+C:4 white bins 0072 value 1|8103A782 ????|Viper187 & Delta FORCE
+C:4 white bins 0072 value 2|8103A786 ????|Viper187 & Delta FORCE
+C:4 white bins 0072 size 1|8103A788 ????|Viper187 & Delta FORCE
+C:4 white bins 0072 size 2|8103A78A ????|Viper187 & Delta FORCE
+
+C:body armour 0073 value 1|8103A78E ????|Viper187 & Delta FORCE
+C:body armour 0073 value 2|8103A792 ????|Viper187 & Delta FORCE
+C:body armour 0073 size 1|8103A794 ????|Viper187 & Delta FORCE
+C:body armour 0073 size 2|8103A796 ????|Viper187 & Delta FORCE
+
+C:body armour 0074 value 1|8103A79A ????|Viper187 & Delta FORCE
+C:body armour 0074 value 2|8103A79E ????|Viper187 & Delta FORCE
+C:body armour 0074 size 1|8103A7A0 ????|Viper187 & Delta FORCE
+C:body armour 0074 size 2|8103A7A2 ????|Viper187 & Delta FORCE
+
+C:Facility gas tank 0075 value 1|8103A7A6 ????|Viper187 & Delta FORCE
+C:Facility gas tank 0075 value 2|8103A7AA ????|Viper187 & Delta FORCE
+C:Facility gas tank 0075 size 1|8103A7AC ????|Viper187 & Delta FORCE
+C:Facility gas tank 0075 size 2|8103A7AE ????|Viper187 & Delta FORCE
+
+C:a glass 0076 value 1|8103A7B2 ????|Viper187 & Delta FORCE
+C:a glass 0076 value 2|8103A7B6 ????|Viper187 & Delta FORCE
+C:a glass 0076 size 1|8103A7B8 ????|Viper187 & Delta FORCE
+C:a glass 0076 size 2|8103A7BA ????|Viper187 & Delta FORCE
+
+C:train floor plate strips 0077 value 1|8103A7BE ????|Viper187 & Delta FORCE
+C:train floor plate strips 0077 value 2|8103A7C2 ????|Viper187 & Delta FORCE
+C:train floor plate strips 0077 size 1|8103A7C4 ????|Viper187 & Delta FORCE
+C:train floor plate strips 0077 size 2|8103A7C6 ????|Viper187 & Delta FORCE
+
+C:Train brake controller 0078 value 1|8103A7CA ????|Viper187 & Delta FORCE
+C:Train brake controller 0078 value 2|8103A7CE ????|Viper187 & Delta FORCE
+C:Train brake controller 0078 size 1|8103A7D0 ????|Viper187 & Delta FORCE
+C:Train brake controller 0078 size 2|8103A7D2 ????|Viper187 & Delta FORCE
+
+C:ammo clip 0079 value 1|8103A7D6 ????|Viper187 & Delta FORCE
+C:ammo clip 0079 value 2|8103A7DA ????|Viper187 & Delta FORCE
+C:ammo clip 0079 size 1|8103A7DC ????|Viper187 & Delta FORCE
+C:ammo clip 0079 size 2|8103A7DE ????|Viper187 & Delta FORCE
+
+C:ammo clip 007A value 1|8103A7E2 ????|Viper187 & Delta FORCE
+C:ammo clip 007A value 2|8103A7E6 ????|Viper187 & Delta FORCE
+C:ammo clip 007A size 1|8103A7E8 ????|Viper187 & Delta FORCE
+C:ammo clip 007A size 2|8103A7EA ????|Viper187 & Delta FORCE
+
+C:ammo clip 007B value 1|8103A7EE ????|Viper187 & Delta FORCE
+C:ammo clip 007B value 2|8103A7F2 ????|Viper187 & Delta FORCE
+C:ammo clip 007B size 1|8103A7F4 ????|Viper187 & Delta FORCE
+C:ammo clip 007B size 2|8103A7F6 ????|Viper187 & Delta FORCE
+
+C:ammo clip 007C value 1|8103A7FA ????|Viper187 & Delta FORCE
+C:ammo clip 007C value 2|8103A7FE ????|Viper187 & Delta FORCE
+C:ammo clip 007C size 1|8103A800 ????|Viper187 & Delta FORCE
+C:ammo clip 007C size 2|8103A802 ????|Viper187 & Delta FORCE
+
+C:ammo clip 007D value 1|8103A806 ????|Viper187 & Delta FORCE
+C:ammo clip 007D value 2|8103A80A ????|Viper187 & Delta FORCE
+C:ammo clip 007D size 1|8103A80C ????|Viper187 & Delta FORCE
+C:ammo clip 007D size 2|8103A80E ????|Viper187 & Delta FORCE
+
+C:ammo clip 007E value 1|8103A812 ????|Viper187 & Delta FORCE
+C:ammo clip 007E value 2|8103A816 ????|Viper187 & Delta FORCE
+C:ammo clip 007E size 1|8103A818 ????|Viper187 & Delta FORCE
+C:ammo clip 007E size 2|8103A81A ????|Viper187 & Delta FORCE
+
+C:ammo clip 007F value 1|8103A81E ????|Viper187 & Delta FORCE
+C:ammo clip 007F value 2|8103A822 ????|Viper187 & Delta FORCE
+C:ammo clip 007F size 1|8103A824 ????|Viper187 & Delta FORCE
+C:ammo clip 007F size 2|8103A826 ????|Viper187 & Delta FORCE
+
+C:fire extinguisher 0080 value 1|8103A82A ????|Viper187 & Delta FORCE
+C:fire extinguisher 0080 value 2|8103A82E ????|Viper187 & Delta FORCE
+C:fire extinguisher 0080 size 1|8103A830 ????|Viper187 & Delta FORCE
+C:fire extinguisher 0080 size 2|8103A832 ????|Viper187 & Delta FORCE
+
+C:shotgun shells 0081 value 1|8103A836 ????|Viper187 & Delta FORCE
+C:shotgun shells 0081 value 2|8103A83A ????|Viper187 & Delta FORCE
+C:shotgun shells 0081 size 1|8103A83C ????|Viper187 & Delta FORCE
+C:shotgun shells 0081 size 2|8103A83E ????|Viper187 & Delta FORCE
+
+C:gun clip 0082 value 1|8103A842 ????|Viper187 & Delta FORCE
+C:gun clip 0082 value 2|8103A846 ????|Viper187 & Delta FORCE
+C:gun clip 0082 size 1|8103A848 ????|Viper187 & Delta FORCE
+C:gun clip 0082 size 2|8103A84A ????|Viper187 & Delta FORCE
+
+C:golden bullets 0083 value 1|8103A84E ????|Viper187 & Delta FORCE
+C:golden bullets 0083 value 2|8103A852 ????|Viper187 & Delta FORCE
+C:golden bullets 0083 size 1|8103A854 ????|Viper187 & Delta FORCE
+C:golden bullets 0083 size 2|8103A856 ????|Viper187 & Delta FORCE
+
+C:magnum shells 0084 value 1|8103A85A ????|Viper187 & Delta FORCE
+C:magnum shells 0084 value 2|8103A85E ????|Viper187 & Delta FORCE
+C:magnum shells 0084 size 1|8103A860 ????|Viper187 & Delta FORCE
+C:magnum shells 0084 size 2|8103A862 ????|Viper187 & Delta FORCE
+
+C:pp7 ammo 0085 value 1|8103A866 ????|Viper187 & Delta FORCE
+C:pp7 ammo 0085 value 2|8103A86A ????|Viper187 & Delta FORCE
+C:pp7 ammo 0085 size 1|8103A86C ????|Viper187 & Delta FORCE
+C:pp7 ammo 0085 size 2|8103A86E ????|Viper187 & Delta FORCE
+
+C:ammo clip 0086 value 1|8103A872 ????|Viper187 & Delta FORCE
+C:ammo clip 0086 value 2|8103A876 ????|Viper187 & Delta FORCE
+C:ammo clip 0086 size 1|8103A878 ????|Viper187 & Delta FORCE
+C:ammo clip 0086 size 2|8103A87A ????|Viper187 & Delta FORCE
+
+C:Grey door with warning strips 0087 value 1|8103A87E ????|Viper187 & Delta FORCE
+C:Grey door with warning strips 0087 value 2|8103A882 ????|Viper187 & Delta FORCE
+C:Grey door with warning strips 0087 size 1|8103A884 ????|Viper187 & Delta FORCE
+C:Grey door with warning strips 0087 size 2|8103A886 ????|Viper187 & Delta FORCE
+
+C:Silo Door Arrow Left 0088 value 1|8103A88A ????|Viper187 & Delta FORCE
+C:Silo Door Arrow Left 0088 value 2|8103A88E ????|Viper187 & Delta FORCE
+C:Silo Door Arrow Left 0088 size 1|8103A890 ????|Viper187 & Delta FORCE
+C:Silo Door Arrow Left 0088 size 2|8103A892 ????|Viper187 & Delta FORCE
+
+C:Beta Door 0089 value 1|8103A896 ????|Viper187 & Delta FORCE
+C:Beta Door 0089 value 2|8103A89A ????|Viper187 & Delta FORCE
+C:Beta Door 0089 size 1|8103A89C ????|Viper187 & Delta FORCE
+C:Beta Door 0089 size 2|8103A89E ????|Viper187 & Delta FORCE
+
+C:Silo Door Arrow Left 008A value 1|8103A8A2 ????|Viper187 & Delta FORCE
+C:Silo Door Arrow Left 008A value 2|8103A8A6 ????|Viper187 & Delta FORCE
+C:Silo Door Arrow Left 008A size 1|8103A8A8 ????|Viper187 & Delta FORCE
+C:Silo Door Arrow Left 008A size 2|8103A8AA ????|Viper187 & Delta FORCE
+
+C:Clear Glass Door 008B value 1|8103A8AE ????|Viper187 & Delta FORCE
+C:Clear Glass Door 008B value 2|8103A8B2 ????|Viper187 & Delta FORCE
+C:Clear Glass Door 008B size 1|8103A8B4 ????|Viper187 & Delta FORCE
+C:Clear Glass Door 008B size 2|8103A8B6 ????|Viper187 & Delta FORCE
+
+C:silo Door Arrow Up 008C value 1|8103A8BA ????|Viper187 & Delta FORCE
+C:silo Door Arrow Up 008C value 2|8103A8BE ????|Viper187 & Delta FORCE
+C:silo Door Arrow Up 008C size 1|8103A8C0 ????|Viper187 & Delta FORCE
+C:silo Door Arrow Up 008C size 2|8103A8C2 ????|Viper187 & Delta FORCE
+
+C:Corragated Door With warning strips 008D value 1|8103A8C6 ????|Viper187 & Delta FORCE
+C:Corragated Door With warning strips 008D value 2|8103A8CA ????|Viper187 & Delta FORCE
+C:Corragated Door With warning strips 008D size 1|8103A8CC ????|Viper187 & Delta FORCE
+C:Corragated Door With warning strips 008D size 2|8103A8CE ????|Viper187 & Delta FORCE
+
+C:Rusty Old Door 008E value 1|8103A8D2 ????|Viper187 & Delta FORCE
+C:Rusty Old Door 008E value 2|8103A8D6 ????|Viper187 & Delta FORCE
+C:Rusty Old Door 008E size 1|8103A8D8 ????|Viper187 & Delta FORCE
+C:Rusty Old Door 008E size 2|8103A8DA ????|Viper187 & Delta FORCE
+
+C:Rusty Old Door 008F value 1|8103A8DE ????|Viper187 & Delta FORCE
+C:Rusty Old Door 008F value 2|8103A8E2 ????|Viper187 & Delta FORCE
+C:Rusty Old Door 008F size 1|8103A8E4 ????|Viper187 & Delta FORCE
+C:Rusty Old Door 008F size 2|8103A8E6 ????|Viper187 & Delta FORCE
+
+C:Blue Elevator Door 0090 value 1|8103A8EA ????|Viper187 & Delta FORCE
+C:Blue Elevator Door 0090 value 2|8103A8EE ????|Viper187 & Delta FORCE
+C:Blue Elevator Door 0090 size 1|8103A8F0 ????|Viper187 & Delta FORCE
+C:Blue Elevator Door 0090 size 2|8103A8F2 ????|Viper187 & Delta FORCE
+
+C:Rusty Old Door 0091 value 1|8103A8F6 ????|Viper187 & Delta FORCE
+C:Rusty Old Door 0091 value 2|8103A8FA ????|Viper187 & Delta FORCE
+C:Rusty Old Door 0091 size 1|8103A8FC ????|Viper187 & Delta FORCE
+C:Rusty Old Door 0091 size 2|8103A8FE ????|Viper187 & Delta FORCE
+
+C:Striped Blue door 0092 value 1|8103A902 ????|Viper187 & Delta FORCE
+C:Striped Blue door 0092 value 2|8103A906 ????|Viper187 & Delta FORCE
+C:Striped Blue door 0092 size 1|8103A908 ????|Viper187 & Delta FORCE
+C:Striped Blue door 0092 size 2|8103A90A ????|Viper187 & Delta FORCE
+
+C:Blue door with holes 0093 value 1|8103A90E ????|Viper187 & Delta FORCE
+C:Blue door with holes 0093 value 2|8103A912 ????|Viper187 & Delta FORCE
+C:Blue door with holes 0093 size 1|8103A914 ????|Viper187 & Delta FORCE
+C:Blue door with holes 0093 size 2|8103A916 ????|Viper187 & Delta FORCE
+
+C:striped blue door 0094 value 1|8103A91A ????|Viper187 & Delta FORCE
+C:striped blue door 0094 value 2|8103A91E ????|Viper187 & Delta FORCE
+C:striped blue door 0094 size 1|8103A920 ????|Viper187 & Delta FORCE
+C:striped blue door 0094 size 2|8103A922 ????|Viper187 & Delta FORCE
+
+C:Runway Shutters 0095 value 1|8103A926 ????|Viper187 & Delta FORCE
+C:Runway Shutters 0095 value 2|8103A92A ????|Viper187 & Delta FORCE
+C:Runway Shutters 0095 size 1|8103A92C ????|Viper187 & Delta FORCE
+C:Runway Shutters 0095 size 2|8103A92E ????|Viper187 & Delta FORCE
+
+C:Blue door with Red and white lines 0096 value 1|8103A932 ????|Viper187 & Delta FORCE
+C:Blue door with Red and white lines 0096 value 2|8103A936 ????|Viper187 & Delta FORCE
+C:Blue door with Red and white lines 0096 size 1|8103A938 ????|Viper187 & Delta FORCE
+C:Blue door with Red and white lines 0096 size 2|8103A93A ????|Viper187 & Delta FORCE
+
+C:Blue door with white and Red lines 0097 value 1|8103A93E ????|Viper187 & Delta FORCE
+C:Blue door with white and Red lines 0097 value 2|8103A942 ????|Viper187 & Delta FORCE
+C:Blue door with white and Red lines 0097 size 1|8103A944 ????|Viper187 & Delta FORCE
+C:Blue door with white and Red lines 0097 size 2|8103A946 ????|Viper187 & Delta FORCE
+
+C:Frigate door 0098 value 1|8103A94A ????|Viper187 & Delta FORCE
+C:Frigate door 0098 value 2|8103A94E ????|Viper187 & Delta FORCE
+C:Frigate door 0098 size 1|8103A950 ????|Viper187 & Delta FORCE
+C:Frigate door 0098 size 2|8103A952 ????|Viper187 & Delta FORCE
+
+C:Keep clear Door 0099 value 1|8103A956 ????|Viper187 & Delta FORCE
+C:Keep clear Door 0099 value 2|8103A95A ????|Viper187 & Delta FORCE
+C:Keep clear Door 0099 size 1|8103A95C ????|Viper187 & Delta FORCE
+C:Keep clear Door 0099 size 2|8103A95E ????|Viper187 & Delta FORCE
+
+C:Grey Door With blue stripe 009A value 1|8103A962 ????|Viper187 & Delta FORCE
+C:Grey Door With blue stripe 009A value 2|8103A966 ????|Viper187 & Delta FORCE
+C:Grey Door With blue stripe 009A size 1|8103A968 ????|Viper187 & Delta FORCE
+C:Grey Door With blue stripe 009A size 2|8103A96A ????|Viper187 & Delta FORCE
+
+C:grey door 009B value 1|8103A96E ????|Viper187 & Delta FORCE
+C:grey door 009B value 2|8103A972 ????|Viper187 & Delta FORCE
+C:grey door 009B size 1|8103A974 ????|Viper187 & Delta FORCE
+C:grey door 009B size 2|8103A976 ????|Viper187 & Delta FORCE
+
+C:facility door 009C value 1|8103A97A ????|Viper187 & Delta FORCE
+C:facility door 009C value 2|8103A97E ????|Viper187 & Delta FORCE
+C:facility door 009C size 1|8103A980 ????|Viper187 & Delta FORCE
+C:facility door 009C size 2|8103A982 ????|Viper187 & Delta FORCE
+
+C:Wood door 009D value 1|8103A986 ????|Viper187 & Delta FORCE
+C:Wood door 009D value 2|8103A98A ????|Viper187 & Delta FORCE
+C:Wood door 009D size 1|8103A98C ????|Viper187 & Delta FORCE
+C:Wood door 009D size 2|8103A98E ????|Viper187 & Delta FORCE
+
+C:Brown door 009E value 1|8103A992 ????|Viper187 & Delta FORCE
+C:Brown door 009E value 2|8103A996 ????|Viper187 & Delta FORCE
+C:Brown door 009E size 1|8103A998 ????|Viper187 & Delta FORCE
+C:Brown door 009E size 2|8103A99A ????|Viper187 & Delta FORCE
+
+C:Facility Bathroom Door 009F value 1|8103A99E ????|Viper187 & Delta FORCE
+C:Facility Bathroom Door 009F value 2|8103A9A2 ????|Viper187 & Delta FORCE
+C:Facility Bathroom Door 009F size 1|8103A9A4 ????|Viper187 & Delta FORCE
+C:Facility Bathroom Door 009F size 2|8103A9A6 ????|Viper187 & Delta FORCE
+
+C:Facility Lab Door 00A0 value 1|8103A9AA ????|Viper187 & Delta FORCE
+C:Facility Lab Door 00A0 value 2|8103A9AE ????|Viper187 & Delta FORCE
+C:Facility Lab Door 00A0 size 1|8103A9B0 ????|Viper187 & Delta FORCE
+C:Facility Lab Door 00A0 size 2|8103A9B2 ????|Viper187 & Delta FORCE
+
+C:Train Wooden Door 00A1 value 1|8103A9B6 ????|Viper187 & Delta FORCE
+C:Train Wooden Door 00A1 value 2|8103A9BA ????|Viper187 & Delta FORCE
+C:Train Wooden Door 00A1 size 1|8103A9BC ????|Viper187 & Delta FORCE
+C:Train Wooden Door 00A1 size 2|8103A9BE ????|Viper187 & Delta FORCE
+
+C:Brown door with glass 00A2 value 1|8103A9C2 ????|Viper187 & Delta FORCE
+C:Brown door with glass 00A2 value 2|8103A9C6 ????|Viper187 & Delta FORCE
+C:Brown door with glass 00A2 size 1|8103A9C8 ????|Viper187 & Delta FORCE
+C:Brown door with glass 00A2 size 2|8103A9CA ????|Viper187 & Delta FORCE
+
+C:Brown door with glass 00A3 value 1|8103A9CE ????|Viper187 & Delta FORCE
+C:Brown door with glass 00A3 value 2|8103A9D2 ????|Viper187 & Delta FORCE
+C:Brown door with glass 00A3 size 1|8103A9D4 ????|Viper187 & Delta FORCE
+C:Brown door with glass 00A3 size 2|8103A9D6 ????|Viper187 & Delta FORCE
+
+C:Caverns Eye Door 00A4 value 1|8103A9DA ????|Viper187 & Delta FORCE
+C:Caverns Eye Door 00A4 value 2|8103A9DE ????|Viper187 & Delta FORCE
+C:Caverns Eye Door 00A4 size 1|8103A9E0 ????|Viper187 & Delta FORCE
+C:Caverns Eye Door 00A4 size 2|8103A9E2 ????|Viper187 & Delta FORCE
+
+C:Caverns Iris Door 00A5 value 1|8103A9E6 ????|Viper187 & Delta FORCE
+C:Caverns Iris Door 00A5 value 2|8103A9EA ????|Viper187 & Delta FORCE
+C:Caverns Iris Door 00A5 size 1|8103A9EC ????|Viper187 & Delta FORCE
+C:Caverns Iris Door 00A5 size 2|8103A9EE ????|Viper187 & Delta FORCE
+
+C:Surface Door 00A6 value 1|8103A9F2 ????|Viper187 & Delta FORCE
+C:Surface Door 00A6 value 2|8103A9F6 ????|Viper187 & Delta FORCE
+C:Surface Door 00A6 size 1|8103A9F8 ????|Viper187 & Delta FORCE
+C:Surface Door 00A6 size 2|8103A9FA ????|Viper187 & Delta FORCE
+
+C:Surface Door with glass 00A7 value 1|8103A9FE ????|Viper187 & Delta FORCE
+C:Surface Door with glass 00A7 value 2|8103AA02 ????|Viper187 & Delta FORCE
+C:Surface Door with glass 00A7 size 1|8103AA04 ????|Viper187 & Delta FORCE
+C:Surface Door with glass 00A7 size 2|8103AA06 ????|Viper187 & Delta FORCE
+
+C:green door 00A8 value 1|8103AA0A ????|Viper187 & Delta FORCE
+C:green door 00A8 value 2|8103AA0E ????|Viper187 & Delta FORCE
+C:green door 00A8 size 1|8103AA10 ????|Viper187 & Delta FORCE
+C:green door 00A8 size 2|8103AA12 ????|Viper187 & Delta FORCE
+
+C:Cradle Door 00A9 value 1|8103AA16 ????|Viper187 & Delta FORCE
+C:Cradle Door 00A9 value 2|8103AA1A ????|Viper187 & Delta FORCE
+C:Cradle Door 00A9 size 1|8103AA1C ????|Viper187 & Delta FORCE
+C:Cradle Door 00A9 size 2|8103AA1E ????|Viper187 & Delta FORCE
+
+C:Stone door with prints 00AA value 1|8103AA22 ????|Viper187 & Delta FORCE
+C:Stone door with prints 00AA value 2|8103AA26 ????|Viper187 & Delta FORCE
+C:Stone door with prints 00AA size 1|8103AA28 ????|Viper187 & Delta FORCE
+C:Stone door with prints 00AA size 2|8103AA2A ????|Viper187 & Delta FORCE
+
+C:Sand door with prints 00AB value 1|8103AA2E ????|Viper187 & Delta FORCE
+C:Sand door with prints 00AB value 2|8103AA32 ????|Viper187 & Delta FORCE
+C:Sand door with prints 00AB size 1|8103AA34 ????|Viper187 & Delta FORCE
+C:Sand door with prints 00AB size 2|8103AA36 ????|Viper187 & Delta FORCE
+
+C:Dark Stone with prints 00AC value 1|8103AA3A ????|Viper187 & Delta FORCE
+C:Dark Stone with prints 00AC value 2|8103AA3E ????|Viper187 & Delta FORCE
+C:Dark Stone with prints 00AC size 1|8103AA40 ????|Viper187 & Delta FORCE
+C:Dark Stone with prints 00AC size 2|8103AA42 ????|Viper187 & Delta FORCE
+
+C:Light brown wood door 00AD value 1|8103AA46 ????|Viper187 & Delta FORCE
+C:Light brown wood door 00AD value 2|8103AA4A ????|Viper187 & Delta FORCE
+C:Light brown wood door 00AD size 1|8103AA4C ????|Viper187 & Delta FORCE
+C:Light brown wood door 00AD size 2|8103AA4E ????|Viper187 & Delta FORCE
+
+C:Egyptian Door 00AE value 1|8103AA52 ????|Viper187 & Delta FORCE
+C:Egyptian Door 00AE value 2|8103AA56 ????|Viper187 & Delta FORCE
+C:Egyptian Door 00AE size 1|8103AA58 ????|Viper187 & Delta FORCE
+C:Egyptian Door 00AE size 2|8103AA5A ????|Viper187 & Delta FORCE
+
+C:Sand/Brown door 00AF value 1|8103AA5E ????|Viper187 & Delta FORCE
+C:Sand/Brown door 00AF value 2|8103AA62 ????|Viper187 & Delta FORCE
+C:Sand/Brown door 00AF size 1|8103AA64 ????|Viper187 & Delta FORCE
+C:Sand/Brown door 00AF size 2|8103AA66 ????|Viper187 & Delta FORCE
+
+C:Blast Door 00B0 value 1|8103AA6A ????|Viper187 & Delta FORCE
+C:Blast Door 00B0 value 2|8103AA6E ????|Viper187 & Delta FORCE
+C:Blast Door 00B0 size 1|8103AA70 ????|Viper187 & Delta FORCE
+C:Blast Door 00B0 size 2|8103AA72 ????|Viper187 & Delta FORCE
+
+C:Train Floor Plate 00B1 value 1|8103AA76 ????|Viper187 & Delta FORCE
+C:Train Floor Plate 00B1 value 2|8103AA7A ????|Viper187 & Delta FORCE
+C:Train Floor Plate 00B1 size 1|8103AA7C ????|Viper187 & Delta FORCE
+C:Train Floor Plate 00B1 size 2|8103AA7E ????|Viper187 & Delta FORCE
+
+C:Blast Door 00B2 value 1|8103AA82 ????|Viper187 & Delta FORCE
+C:Blast Door 00B2 value 2|8103AA86 ????|Viper187 & Delta FORCE
+C:Blast Door 00B2 size 1|8103AA88 ????|Viper187 & Delta FORCE
+C:Blast Door 00B2 size 2|8103AA8A ????|Viper187 & Delta FORCE
+
+C:Dam Shutter 00B3 value 1|8103AA8E ????|Viper187 & Delta FORCE
+C:Dam Shutter 00B3 value 2|8103AA92 ????|Viper187 & Delta FORCE
+C:Dam Shutter 00B3 size 1|8103AA94 ????|Viper187 & Delta FORCE
+C:Dam Shutter 00B3 size 2|8103AA96 ????|Viper187 & Delta FORCE
+
+C:Fencing 00B4 value 1|8103AA9A ????|Viper187 & Delta FORCE
+C:Fencing 00B4 value 2|8103AA9E ????|Viper187 & Delta FORCE
+C:Fencing 00B4 size 1|8103AAA0 ????|Viper187 & Delta FORCE
+C:Fencing 00B4 size 2|8103AAA2 ????|Viper187 & Delta FORCE
+
+C:Blown Up door 00B5 value 1|8103AAA6 ????|Viper187 & Delta FORCE
+C:Blown Up door 00B5 value 2|8103AAAA ????|Viper187 & Delta FORCE
+C:Blown Up door 00B5 size 1|8103AAAC ????|Viper187 & Delta FORCE
+C:Blown Up door 00B5 size 2|8103AAAE ????|Viper187 & Delta FORCE
+
+C:Stack Gate 00B6 value 1|8103AAB2 ????|Viper187 & Delta FORCE
+C:Stack Gate 00B6 value 2|8103AAB6 ????|Viper187 & Delta FORCE
+C:Stack Gate 00B6 size 1|8103AAB8 ????|Viper187 & Delta FORCE
+C:Stack Gate 00B6 size 2|8103AABA ????|Viper187 & Delta FORCE
+
+C:Statue Gates 00B7 value 1|8103AABE ????|Viper187 & Delta FORCE
+C:Statue Gates 00B7 value 2|8103AAC2 ????|Viper187 & Delta FORCE
+C:Statue Gates 00B7 size 1|8103AAC4 ????|Viper187 & Delta FORCE
+C:Statue Gates 00B7 size 2|8103AAC6 ????|Viper187 & Delta FORCE
+
+*****************************
+
+C:Soviet KF7 00B8 value 1|8103AACA ????|Viper187 & Delta FORCE
+C:Soviet KF7 00B8 value 2|8103AACE ????|Viper187 & Delta FORCE
+C:Soviet KF7 00B8 size 1|8103AAD0 ????|Viper187 & Delta FORCE
+C:Soviet KF7 00B8 size 2|8103AAD2 ????|Viper187 & Delta FORCE
+
+C:Grenade Laucher 00B9 value 1|8103AAD6 ????|Viper187 & Delta FORCE
+C:Grenade Laucher 00B9 value 2|8103AADA ????|Viper187 & Delta FORCE
+C:Grenade Laucher 00B9 size 1|8103AADC ????|Viper187 & Delta FORCE
+C:Grenade Laucher 00B9 size 2|8103AADE ????|Viper187 & Delta FORCE
+
+C:Throwing Knife 00BA value 1|8103AAE2 ????|Viper187 & Delta FORCE
+C:Throwing Knife 00BA value 2|8103AAE6 ????|Viper187 & Delta FORCE
+C:Throwing Knife 00BA size 1|8103AAE8 ????|Viper187 & Delta FORCE
+C:Throwing Knife 00BA size 2|8103AAEA ????|Viper187 & Delta FORCE
+
+C:Moonraker Laser 00BB value 1|8103AAEE ????|Viper187 & Delta FORCE
+C:Moonraker Laser 00BB value 2|8103AAF2 ????|Viper187 & Delta FORCE
+C:Moonraker Laser 00BB size 1|8103AAF4 ????|Viper187 & Delta FORCE
+C:Moonraker Laser 00BB size 2|8103AAF6 ????|Viper187 & Delta FORCE
+
+C:AR33 Assault Rifle 00BC value 1|8103AAFA ????|Viper187 & Delta FORCE
+C:AR33 Assault Rifle 00BC value 2|8103AAFE ????|Viper187 & Delta FORCE
+C:AR33 Assault Rifle 00BC size 1|8103AB00 ????|Viper187 & Delta FORCE
+C:AR33 Assault Rifle 00BC size 2|8103AB02 ????|Viper187 & Delta FORCE
+
+C:D5K 00BD value 1|8103AB06 ????|Viper187 & Delta FORCE
+C:D5K 00BD value 2|8103AB0A ????|Viper187 & Delta FORCE
+C:D5K 00BD size 1|8103AB0C ????|Viper187 & Delta FORCE
+C:D5K 00BD size 2|8103AB0E ????|Viper187 & Delta FORCE
+
+C:Cougar Magnum 00BE value 1|8103AB12 ????|Viper187 & Delta FORCE
+C:Cougar Magnum 00BE value 2|8103AB16 ????|Viper187 & Delta FORCE
+C:Cougar Magnum 00BE size 1|8103AB18 ????|Viper187 & Delta FORCE
+C:Cougar Magnum 00BE size 2|8103AB1A ????|Viper187 & Delta FORCE
+
+C:PP7 00BF value 1|8103AB1E ????|Viper187 & Delta FORCE
+C:PP7 00BF value 2|8103AB22 ????|Viper187 & Delta FORCE
+C:PP7 00BF size 1|8103AB24 ????|Viper187 & Delta FORCE
+C:PP7 00BF size 2|8103AB26 ????|Viper187 & Delta FORCE
+
+C:Shotgun 00C0 value 1|8103AB2A ????|Viper187 & Delta FORCE
+C:Shotgun 00C0 value 2|8103AB2E ????|Viper187 & Delta FORCE
+C:Shotgun 00C0 size 1|8103AB30 ????|Viper187 & Delta FORCE
+C:Shotgun 00C0 size 2|8103AB32 ????|Viper187 & Delta FORCE
+
+C:Klobb 00C1 value 1|8103AB36 ????|Viper187 & Delta FORCE
+C:Klobb 00C1 value 2|8103AB3A ????|Viper187 & Delta FORCE
+C:Klobb 00C1 size 1|8103AB3C ????|Viper187 & Delta FORCE
+C:Klobb 00C1 size 2|8103AB3E ????|Viper187 & Delta FORCE
+
+C:Phantom 00C2 value 1|8103AB42 ????|Viper187 & Delta FORCE
+C:Phantom 00C2 value 2|8103AB46 ????|Viper187 & Delta FORCE
+C:Phantom 00C2 size 1|8103AB48 ????|Viper187 & Delta FORCE
+C:Phantom 00C2 size 2|8103AB4A ????|Viper187 & Delta FORCE
+
+C:ZMG 00C3 value 1|8103AB4E ????|Viper187 & Delta FORCE
+C:ZMG 00C3 value 2|8103AB52 ????|Viper187 & Delta FORCE
+C:ZMG 00C3 size 1|8103AB54 ????|Viper187 & Delta FORCE
+C:ZMG 00C3 size 2|8103AB56 ????|Viper187 & Delta FORCE
+
+C:Grenade 00C4 value 1|8103AB5A ????|Viper187 & Delta FORCE
+C:Grenade 00C4 value 2|8103AB5E ????|Viper187 & Delta FORCE
+C:Grenade 00C4 size 1|8103AB60 ????|Viper187 & Delta FORCE
+C:Grenade 00C4 size 2|8103AB62 ????|Viper187 & Delta FORCE
+
+C:RCP-90 00C5 value 1|8103AB66 ????|Viper187 & Delta FORCE
+C:RCP-90 00C5 value 2|8103AB6A ????|Viper187 & Delta FORCE
+C:RCP-90 00C5 size 1|8103AB6C ????|Viper187 & Delta FORCE
+C:RCP-90 00C5 size 2|8103AB6E ????|Viper187 & Delta FORCE
+
+C:Briefcase 00C6 value 1|8103AB72 ????|Viper187 & Delta FORCE
+C:Briefcase 00C6 value 2|8103AB76 ????|Viper187 & Delta FORCE
+C:Briefcase 00C6 size 1|8103AB78 ????|Viper187 & Delta FORCE
+C:Briefcase 00C6 size 2|8103AB7A ????|Viper187 & Delta FORCE
+
+C:Remote Mine 00C7 value 1|8103AB7E ????|Viper187 & Delta FORCE
+C:Remote Mine 00C7 value 2|8103AB82 ????|Viper187 & Delta FORCE
+C:Remote Mine 00C7 size 1|8103AB84 ????|Viper187 & Delta FORCE
+C:Remote Mine 00C7 size 2|8103AB86 ????|Viper187 & Delta FORCE
+
+C:Proximity Mine 00C8 value 1|8103AB8A ????|Viper187 & Delta FORCE
+C:Proximity Mine 00C8 value 2|8103AB8E ????|Viper187 & Delta FORCE
+C:Proximity Mine 00C8 size 1|8103AB90 ????|Viper187 & Delta FORCE
+C:Proximity Mine 00C8 size 2|8103AB92 ????|Viper187 & Delta FORCE
+
+C:Timed Mine 00C9 value 1|8103AB96 ????|Viper187 & Delta FORCE
+C:Timed Mine 00C9 value 2|8103AB9A ????|Viper187 & Delta FORCE
+C:Timed Mine 00C9 size 1|8103AB9C ????|Viper187 & Delta FORCE
+C:Timed Mine 00C9 size 2|8103AB9E ????|Viper187 & Delta FORCE
+
+C:Rocket for rocket launcher 00CA value 1|8103ABA2 ????|Viper187 & Delta FORCE
+C:Rocket for rocket launcher 00CA value 2|8103ABA6 ????|Viper187 & Delta FORCE
+C:Rocket for rocket launcher 00CA size 1|8103ABA8 ????|Viper187 & Delta FORCE
+C:Rocket for rocket launcher 00CA size 2|8103ABAA ????|Viper187 & Delta FORCE
+
+C:Grenade Launcher shot 00CB value 1|8103ABAE ????|Viper187 & Delta FORCE
+C:Grenade Launcher shot 00CB value 2|8103ABB2 ????|Viper187 & Delta FORCE
+C:Grenade Launcher shot 00AB size 1|8103ABB4 ????|Viper187 & Delta FORCE
+C:Grenade Launcher shot 00CB size 2|8103ABB6 ????|Viper187 & Delta FORCE
+
+C:Silenced PP7 00CC value 1|8103ABBA ????|Viper187 & Delta FORCE
+C:Silenced PP7 00CC value 2|8103ABBE ????|Viper187 & Delta FORCE
+C:Silenced PP7 00CC size 1|8103ABC0 ????|Viper187 & Delta FORCE
+C:Silenced PP7 00CC size 2|8103ABC2 ????|Viper187 & Delta FORCE
+
+C:Dostovei DD44 00CD value 1|8103ABC6 ????|Viper187 & Delta FORCE
+C:Dostovei DD44 00CD value 2|8103ABCA ????|Viper187 & Delta FORCE
+C:Dostovei DD44 00CD size 1|8103ABCC ????|Viper187 & Delta FORCE
+C:Dostovei DD44 00CD size 2|8103ABCE ????|Viper187 & Delta FORCE
+
+C:Silenced D5K 00CE value 1|8103ABD2 ????|Viper187 & Delta FORCE
+C:Silenced D5K 00CE value 2|8103ABD6 ????|Viper187 & Delta FORCE
+C:Silenced D5K 00CE size 1|8103ABD8 ????|Viper187 & Delta FORCE
+C:Silenced D5K 00CE size 2|8103ABDA ????|Viper187 & Delta FORCE
+
+C:Auto Shotgun 00CF value 1|8103ABDE ????|Viper187 & Delta FORCE
+C:Auto Shotgun 00CF value 2|8103ABE2 ????|Viper187 & Delta FORCE
+C:Auto Shotgun 00CF size 1|8103ABE4 ????|Viper187 & Delta FORCE
+C:Auto Shotgun 00CF size 2|8103ABE6 ????|Viper187 & Delta FORCE
+
+C:Golden Gun 00D0 value 1|8103ABEA ????|Viper187 & Delta FORCE
+C:Golden Gun 00D0 value 2|8103ABEE ????|Viper187 & Delta FORCE
+C:Golden Gun 00D0 size 1|8103ABF0 ????|Viper187 & Delta FORCE
+C:Golden Gun 00D0 size 2|8103ABF2 ????|Viper187 & Delta FORCE
+
+C:Hunting Knife 00D1 value 1|8103ABF6 ????|Viper187 & Delta FORCE
+C:Hunting Knife 00D1 value 2|8103ABFA ????|Viper187 & Delta FORCE
+C:Hunting Knife 00D1 size 1|8103ABFC ????|Viper187 & Delta FORCE
+C:Hunting Knife 00D1 size 2|8103ABFE ????|Viper187 & Delta FORCE
+
+C:Sniper Rifle 00D2 value 1|8103AC02 ????|Viper187 & Delta FORCE
+C:Sniper Rifle 00D2 value 2|8103AC06 ????|Viper187 & Delta FORCE
+C:Sniper Rifle 00D2 size 1|8103AC08 ????|Viper187 & Delta FORCE
+C:Sniper Rifle 00D2 size 2|8103AC0A ????|Viper187 & Delta FORCE
+
+C:Rocket laucher 00D3 value 1|8103AC0E ????|Viper187 & Delta FORCE
+C:Rocket laucher 00D3 value 2|8103AC12 ????|Viper187 & Delta FORCE
+C:Rocket laucher 00D3 size 1|8103AC14 ????|Viper187 & Delta FORCE
+C:Rocket laucher 00D3 size 2|8103AC16 ????|Viper187 & Delta FORCE
+
+C:black hat 00D4 value 1|8103AC1A ????|Viper187 & Delta FORCE
+C:black hat 00D4 value 2|8103AC1E ????|Viper187 & Delta FORCE
+C:black hat 00D4 size 1|8103AC20 ????|Viper187 & Delta FORCE
+C:black hat 00D4 size 2|8103AC22 ????|Viper187 & Delta FORCE
+
+C:black hat 00D5 value 1|8103AC26 ????|Viper187 & Delta FORCE
+C:black hat 00D5 value 2|8103AC2A ????|Viper187 & Delta FORCE
+C:black hat 00D5 size 1|8103AC2C ????|Viper187 & Delta FORCE
+C:black hat 00D5 size 2|8103AC2E ????|Viper187 & Delta FORCE
+
+C:black hat 00D6 value 1|8103AC32 ????|Viper187 & Delta FORCE
+C:black hat 00D6 value 2|8103AC36 ????|Viper187 & Delta FORCE
+C:black hat 00D6 size 1|8103AC38 ????|Viper187 & Delta FORCE
+C:black hat 00D6 size 2|8103AC3A ????|Viper187 & Delta FORCE
+
+C:black hat 00D7 value 1|8103AC3E ????|Viper187 & Delta FORCE
+C:black hat 00D7 value 2|8103AC42 ????|Viper187 & Delta FORCE
+C:black hat 00D7 size 1|8103AC44 ????|Viper187 & Delta FORCE
+C:black hat 00D7 size 2|8103AC46 ????|Viper187 & Delta FORCE
+
+C:green hat 00D8 value 1|8103AC4A ????|Viper187 & Delta FORCE
+C:green hat 00D8 value 2|8103AC4E ????|Viper187 & Delta FORCE
+C:green hat 00D8 size 1|8103AC50 ????|Viper187 & Delta FORCE
+C:green hat 00D8 size 2|8103AC52 ????|Viper187 & Delta FORCE
+
+C:helmet 00D9 value 1|8103AC56 ????|Viper187 & Delta FORCE
+C:helmet 00D9 value 2|8103AC5A ????|Viper187 & Delta FORCE
+C:helmet 00D9 size 1|8103AC5C ????|Viper187 & Delta FORCE
+C:helmet 00D9 size 2|8103AC5E ????|Viper187 & Delta FORCE
+
+C:helmet 00DA value 1|8103AC62 ????|Viper187 & Delta FORCE
+C:helmet 00DA value 2|8103AC66 ????|Viper187 & Delta FORCE
+C:helmet 00DA size 1|8103AC68 ????|Viper187 & Delta FORCE
+C:helmet 00DA size 2|8103AC6A ????|Viper187 & Delta FORCE
+
+C:Moonraker helmet 00DB value 1|8103AC6E ????|Viper187 & Delta FORCE
+C:Moonraker helmet 00DB value 2|8103AC72 ????|Viper187 & Delta FORCE
+C:Moonraker helmet 00DB size 1|8103AC74 ????|Viper187 & Delta FORCE
+C:Moonraker helmet 00DB size 2|8103AC76 ????|Viper187 & Delta FORCE
+
+C:black hat 00DC value 1|8103AC7A ????|Viper187 & Delta FORCE
+C:black hat 00DC value 2|8103AC7E ????|Viper187 & Delta FORCE
+C:black hat 00DC size 1|8103AC80 ????|Viper187 & Delta FORCE
+C:black hat 00DC size 2|8103AC82 ????|Viper187 & Delta FORCE
+
+C:blue special forces hat 00DD value 1|8103AC86 ????|Viper187 & Delta FORCE
+C:blue special forces hat 00DD value 2|8103AC8A ????|Viper187 & Delta FORCE
+C:blue special forces hat 00DD size 1|8103AC8C ????|Viper187 & Delta FORCE
+C:blue special forces hat 00DD size 2|8103AC8E ????|Viper187 & Delta FORCE
+
+C:red special forces hat 00DE value 1|8103AC92 ????|Viper187 & Delta FORCE
+C:red special forces hat 00DE value 2|8103AC96 ????|Viper187 & Delta FORCE
+C:red special forces hat 00DE size 1|8103AC98 ????|Viper187 & Delta FORCE
+C:red special forces hat 00DE size 2|8103AC9A ????|Viper187 & Delta FORCE
+
+C:officers hat 00DF value 1|8103AC9E ????|Viper187 & Delta FORCE
+C:officers hat 00DF value 2|8103ACA2 ????|Viper187 & Delta FORCE
+C:officers hat 00DF size 1|8103ACA4 ????|Viper187 & Delta FORCE
+C:officers hat 00DF size 2|8103ACA6 ????|Viper187 & Delta FORCE
+
+C:wrist dart 00E0 value 1|8103ACAA ????|Viper187 & Delta FORCE
+C:wrist dart 00E0 value 2|8103ACAE ????|Viper187 & Delta FORCE
+C:wrist dart 00E0 size 1|8103ACB0 ????|Viper187 & Delta FORCE
+C:wrist dart 00E0 size 2|8103ACB2 ????|Viper187 & Delta FORCE
+
+C:explosive pen 00E1 value 1|8103ACB6 ????|Viper187 & Delta FORCE
+C:explosive pen 00E1 value 2|8103ACBA ????|Viper187 & Delta FORCE
+C:explosive pen 00E1 size 1|8103ACBC ????|Viper187 & Delta FORCE
+C:explosive pen 00E1 size 2|8103ACBE ????|Viper187 & Delta FORCE
+
+C:bombcase 00E2 value 1|8103ACC2 ????|Viper187 & Delta FORCE
+C:bombcase 00E2 value 2|8103ACC6 ????|Viper187 & Delta FORCE
+C:bombcase 00E2 size 1|8103ACC8 ????|Viper187 & Delta FORCE
+C:bombcase 00E2 size 2|8103ACCA ????|Viper187 & Delta FORCE
+
+C:flare pistol 00E3 value 1|8103ACCE ????|Viper187 & Delta FORCE
+C:flare pistol 00E3 value 2|8103ACD2 ????|Viper187 & Delta FORCE
+C:flare pistol 00E3 size 1|8103ACD4 ????|Viper187 & Delta FORCE
+C:flare pistol 00E3 size 2|8103ACD6 ????|Viper187 & Delta FORCE
+
+C:piton gun 00E4 value 1|8103ACDA ????|Viper187 & Delta FORCE
+C:piton gun 00E4 value 2|8103ACDE ????|Viper187 & Delta FORCE
+C:piton gun 00E4 size 1|8103ACE0 ????|Viper187 & Delta FORCE
+C:piton gun 00E4 size 2|8103ACE2 ????|Viper187 & Delta FORCE
+
+C:finger gun 00E5 value 1|8103ACE6 ????|Viper187 & Delta FORCE
+C:finger gun 00E5 value 2|8103ACEA ????|Viper187 & Delta FORCE
+C:finger gun 00E5 size 1|8103ACEC ????|Viper187 & Delta FORCE
+C:finger gun 00E5 size 2|8103ACEE ????|Viper187 & Delta FORCE
+
+C:silver pp7 00E6 value 1|8103ACF2 ????|Viper187 & Delta FORCE
+C:silver pp7 00E6 value 2|8103ACF6 ????|Viper187 & Delta FORCE
+C:silver pp7 00E6 size 1|8103ACF8 ????|Viper187 & Delta FORCE
+C:silver pp7 00E6 size 2|8103ACFA ????|Viper187 & Delta FORCE
+
+C:gold pp7 00E7 value 1|8103ACFE ????|Viper187 & Delta FORCE
+C:gold pp7 00E7 value 2|8103AD02 ????|Viper187 & Delta FORCE
+C:gold pp7 00E7 size 1|8103AD04 ????|Viper187 & Delta FORCE
+C:gold pp7 00E7 size 2|8103AD06 ????|Viper187 & Delta FORCE
+
+C:dynamite 00E8 value 1|8103AD0A ????|Viper187 & Delta FORCE
+C:dynamite 00E8 value 2|8103AD0E ????|Viper187 & Delta FORCE
+C:dynamite 00E8 size 1|8103AD10 ????|Viper187 & Delta FORCE
+C:dynamite 00E8 size 2|8103AD12 ????|Viper187 & Delta FORCE
+
+C:bungee 00E9 value 1|8103AD16 ????|Viper187 & Delta FORCE
+C:bungee 00E9 value 2|8103AD1A ????|Viper187 & Delta FORCE
+C:bungee 00E9 size 1|8103AD1C ????|Viper187 & Delta FORCE
+C:bungee 00E9 size 2|8103AD1E ????|Viper187 & Delta FORCE
+
+C:door decoder 00EA value 1|8103AD22 ????|Viper187 & Delta FORCE
+C:door decoder 00EA value 2|8103AD26 ????|Viper187 & Delta FORCE
+C:door decoder 00EA size 1|8103AD28 ????|Viper187 & Delta FORCE
+C:door decoder 00EA size 2|8103AD2A ????|Viper187 & Delta FORCE
+
+C:bomb defuser 00EB value 1|8103AD2E ????|Viper187 & Delta FORCE
+C:bomb defuser 00EB value 2|8103AD32 ????|Viper187 & Delta FORCE
+C:bomb defuser 00EB size 1|8103AD34 ????|Viper187 & Delta FORCE
+C:bomb defuser 00EB size 2|8103AD36 ????|Viper187 & Delta FORCE
+
+C:bug detector 00EC value 1|8103AD3A ????|Viper187 & Delta FORCE
+C:bug detector 00EC value 2|8103AD3E ????|Viper187 & Delta FORCE
+C:bug detector 00EC size 1|8103AD40 ????|Viper187 & Delta FORCE
+C:bug detector 00EC size 2|8103AD42 ????|Viper187 & Delta FORCE
+
+C:safe cracker 00ED value 1|8103AD46 ????|Viper187 & Delta FORCE
+C:safe cracker 00ED value 2|8103AD4A ????|Viper187 & Delta FORCE
+C:safe cracker 00ED size 1|8103AD4C ????|Viper187 & Delta FORCE
+C:safe cracker 00ED size 2|8103AD4E ????|Viper187 & Delta FORCE
+
+C:camera 00EE value 1|8103AD52 ????|Viper187 & Delta FORCE
+C:camera 00EE value 2|8103AD56 ????|Viper187 & Delta FORCE
+C:camera 00EE size 1|8103AD58 ????|Viper187 & Delta FORCE
+C:camera 00EE size 2|8103AD5A ????|Viper187 & Delta FORCE
+
+C:lock exploder 00EF value 1|8103AD5E ????|Viper187 & Delta FORCE
+C:lock exploder 00EF value 2|8103AD62 ????|Viper187 & Delta FORCE
+C:lock exploder 00EF size 1|8103AD64 ????|Viper187 & Delta FORCE
+C:lock exploder 00EF size 2|8103AD66 ????|Viper187 & Delta FORCE
+
+C:door exploder 00F0 value 1|8103AD6A ????|Viper187 & Delta FORCE
+C:door exploder 00F0 value 2|8103AD6E ????|Viper187 & Delta FORCE
+C:door exploder 00F0 size 1|8103AD70 ????|Viper187 & Delta FORCE
+C:door exploder 00F0 size 2|8103AD72 ????|Viper187 & Delta FORCE
+
+C:briefcase laying down 00F1 value 1|8103AD76 ????|Viper187 & Delta FORCE
+C:briefcase laying down 00F1 value 2|8103AD7A ????|Viper187 & Delta FORCE
+C:briefcase laying down 00F1 size 1|8103AD7C ????|Viper187 & Delta FORCE
+C:briefcase laying down 00F1 size 2|8103AD7E ????|Viper187 & Delta FORCE
+
+C:briefcase standing up 00F2 value 1|8103AD82 ????|Viper187 & Delta FORCE
+C:briefcase standing up 00F2 value 2|8103AD86 ????|Viper187 & Delta FORCE
+C:briefcase standing up 00F2 size 1|8103AD88 ????|Viper187 & Delta FORCE
+C:briefcase standing up 00F2 size 2|8103AD8A ????|Viper187 & Delta FORCE
+
+C:yale key 00F3 value 1|8103AD8E ????|Viper187 & Delta FORCE
+C:yale key 00F3 value 2|8103AD92 ????|Viper187 & Delta FORCE
+C:yale key 00F3 size 1|8103AD94 ????|Viper187 & Delta FORCE
+C:yale key 00F3 size 2|8103AD96 ????|Viper187 & Delta FORCE
+
+C:bolt key 00F4 value 1|8103AD9A ????|Viper187 & Delta FORCE
+C:bolt key 00F4 value 2|8103AD9E ????|Viper187 & Delta FORCE
+C:bolt key 00F4 size 1|8103ADA0 ????|Viper187 & Delta FORCE
+C:bolt key 00F4 size 2|8103ADA2 ????|Viper187 & Delta FORCE
+
+C:tracker bug 00F5 value 1|8103ADA6 ????|Viper187 & Delta FORCE
+C:tracker bug 00F5 value 2|8103ADAA ????|Viper187 & Delta FORCE
+C:tracker bug 00F5 size 1|8103ADAC ????|Viper187 & Delta FORCE
+C:tracker bug 00F5 size 2|8103ADAE ????|Viper187 & Delta FORCE
+
+C:video camera 00F6 value 1|8103ADB2 ????|Viper187 & Delta FORCE
+C:video camera 00F6 value 2|8103ADB6 ????|Viper187 & Delta FORCE
+C:video camera 00F6 size 1|8103ADB8 ????|Viper187 & Delta FORCE
+C:video camera 00F6 size 2|8103ADBA ????|Viper187 & Delta FORCE
+
+C:floppy disc 00F7 value 1|8103ADBE ????|Viper187 & Delta FORCE
+C:floppy disc 00F7 value 2|8103ADC2 ????|Viper187 & Delta FORCE
+C:floppy disc 00F7 size 1|8103ADC4 ????|Viper187 & Delta FORCE
+C:floppy disc 00F7 size 2|8103ADC6 ????|Viper187 & Delta FORCE
+
+C:goldeneye key 00F8 value 1|8103ADCA ????|Viper187 & Delta FORCE
+C:goldeneye key 00F8 value 2|8103ADCE ????|Viper187 & Delta FORCE
+C:goldeneye key 00F8 size 1|8103ADD0 ????|Viper187 & Delta FORCE
+C:goldeneye key 00F8 size 2|8103ADD2 ????|Viper187 & Delta FORCE
+
+C:polarized glasses 00F9 value 1|8103ADD6 ????|Viper187 & Delta FORCE
+C:polarized glasses 00F9 value 2|8103ADDA ????|Viper187 & Delta FORCE
+C:polarized glasses 00F9 size 1|8103ADDC ????|Viper187 & Delta FORCE
+C:polarized glasses 00F9 size 2|8103ADDE ????|Viper187 & Delta FORCE
+
+C:credit card 00FA value 1|8103ADE2 ????|Viper187 & Delta FORCE
+C:credit card 00FA value 2|8103ADE6 ????|Viper187 & Delta FORCE
+C:credit card 00FA size 1|8103ADE8 ????|Viper187 & Delta FORCE
+C:credit card 00FA size 2|8103ADEA ????|Viper187 & Delta FORCE
+
+C:dark glasses 00FB value 1|8103ADEE ????|Viper187 & Delta FORCE
+C:dark glasses 00FB value 2|8103ADF2 ????|Viper187 & Delta FORCE
+C:dark glasses 00FB size 1|8103ADF4 ????|Viper187 & Delta FORCE
+C:dark glasses 00FB size 2|8103ADF6 ????|Viper187 & Delta FORCE
+
+C:gas key ring 00FC value 1|8103ADFA ????|Viper187 & Delta FORCE
+C:gas key ring 00FC value 2|8103ADFE ????|Viper187 & Delta FORCE
+C:gas key ring 00FC size 1|8103AE00 ????|Viper187 & Delta FORCE
+C:gas key ring 00FC size 2|8103AE02 ????|Viper187 & Delta FORCE
+
+C:datathief 00FD value 1|8103AE06 ????|Viper187 & Delta FORCE
+C:datathief 00FD value 2|8103AE0A ????|Viper187 & Delta FORCE
+C:datathief 00FD size 1|8103AE0C ????|Viper187 & Delta FORCE
+C:datathief 00FD size 2|8103AE0E ????|Viper187 & Delta FORCE
+
+C:safe without door 00FE value 1|8103AE12 ????|Viper187 & Delta FORCE
+C:safe without door 00FE value 2|8103AE16 ????|Viper187 & Delta FORCE
+C:safe without door 00FE size 1|8103AE18 ????|Viper187 & Delta FORCE
+C:safe without door 00FE size 2|8103AE1A ????|Viper187 & Delta FORCE
+
+C:bomb 00FF value 1|8103AE1E ????|Viper187 & Delta FORCE
+C:bomb 00FF value 2|8103AE22 ????|Viper187 & Delta FORCE
+C:bomb 00FF size 1|8103AE24 ????|Viper187 & Delta FORCE
+C:bomb 00FF size 2|8103AE26 ????|Viper187 & Delta FORCE
+
+C:classified folder 0100 value 1|8103AE2A ????|Viper187 & Delta FORCE
+C:classified folder 0100 value 2|8103AE2E ????|Viper187 & Delta FORCE
+C:classified folder 0100 size 1|8103AE30 ????|Viper187 & Delta FORCE
+C:classified folder 0100 size 2|8103AE32 ????|Viper187 & Delta FORCE
+
+C:spy file 0101 value 1|8103AE36 ????|Viper187 & Delta FORCE
+C:spy file 0101 value 2|8103AE3A ????|Viper187 & Delta FORCE
+C:spy file 0101 size 1|8103AE3C ????|Viper187 & Delta FORCE
+C:spy file 0101 size 2|8103AE3E ????|Viper187 & Delta FORCE
+
+C:start folder 0102 value 1|8103AE42 ????|Viper187 & Delta FORCE
+C:start folder 0102 value 2|8103AE46 ????|Viper187 & Delta FORCE
+C:start folder 0102 size 1|8103AE48 ????|Viper187 & Delta FORCE
+C:start folder 0102 size 2|8103AE4A ????|Viper187 & Delta FORCE
+
+C:DAT 0103 value 1|8103AE4E ????|Viper187 & Delta FORCE
+C:DAT 0103 value 2|8103AE52 ????|Viper187 & Delta FORCE
+C:DAT 0103 size 1|8103AE54 ????|Viper187 & Delta FORCE
+C:DAT 0103 size 2|8103AE56 ????|Viper187 & Delta FORCE
+
+C:bunker2 plans 0104 value 1|8103AE5A ????|Viper187 & Delta FORCE
+C:bunker2 plans 0104 value 2|8103AE5E ????|Viper187 & Delta FORCE
+C:bunker2 plans 0104 size 1|8103AE60 ????|Viper187 & Delta FORCE
+C:bunker2 plans 0104 size 2|8103AE62 ????|Viper187 & Delta FORCE
+
+C:spool tape 0105 value 1|8103AE66 ????|Viper187 & Delta FORCE
+C:spool tape 0105 value 2|8103AE6A ????|Viper187 & Delta FORCE
+C:spool tape 0105 size 1|8103AE6C ????|Viper187 & Delta FORCE
+C:spool tape 0105 size 2|8103AE6E ????|Viper187 & Delta FORCE
+
+C:audio tape 0106 value 1|8103AE72 ????|Viper187 & Delta FORCE
+C:audio tape 0106 value 2|8103AE76 ????|Viper187 & Delta FORCE
+C:audio tape 0106 size 1|8103AE78 ????|Viper187 & Delta FORCE
+C:audio tape 0106 size 2|8103AE7A ????|Viper187 & Delta FORCE
+
+C:microfilm 0107 value 1|8103AE7E ????|Viper187 & Delta FORCE
+C:microfilm 0107 value 2|8103AE82 ????|Viper187 & Delta FORCE
+C:microfilm 0107 size 1|8103AE84 ????|Viper187 & Delta FORCE
+C:microfilm 0107 size 2|8103AE86 ????|Viper187 & Delta FORCE
+
+C:microcode 0108 value 1|8103AE8A ????|Viper187 & Delta FORCE
+C:microcode 0108 value 2|8103AE8E ????|Viper187 & Delta FORCE
+C:microcode 0108 size 1|8103AE90 ????|Viper187 & Delta FORCE
+C:microcode 0108 size 2|8103AE92 ????|Viper187 & Delta FORCE
+
+C:lectre 0109 value 1|8103AE96 ????|Viper187 & Delta FORCE
+C:lectre 0109 value 2|8103AE9A ????|Viper187 & Delta FORCE
+C:lectre 0109 size 1|8103AE9C ????|Viper187 & Delta FORCE
+C:lectre 0109 size 2|8103AE9E ????|Viper187 & Delta FORCE
+
+C:money 010A value 1|8103AEA2 ????|Viper187 & Delta FORCE
+C:money 010A value 2|8103AEA6 ????|Viper187 & Delta FORCE
+C:money 010A size 1|8103AEA8 ????|Viper187 & Delta FORCE
+C:money 010A size 2|8103AEAA ????|Viper187 & Delta FORCE
+
+C:gold bar 010B value 1|8103AEAE ????|Viper187 & Delta FORCE
+C:gold bar 010B value 2|8103AEB2 ????|Viper187 & Delta FORCE
+C:gold bar 010B size 1|8103AEB4 ????|Viper187 & Delta FORCE
+C:gold bar 010B size 2|8103AEB6 ????|Viper187 & Delta FORCE
+
+C:heroin 010C value 1|8103AEBA ????|Viper187 & Delta FORCE
+C:heroin 010C value 2|8103AEBE ????|Viper187 & Delta FORCE
+C:heroin 010C size 1|8103AEC0 ????|Viper187 & Delta FORCE
+C:heroin 010C size 2|8103AEC2 ????|Viper187 & Delta FORCE
+
+C:red card 010D value 1|8103AEC6 ????|Viper187 & Delta FORCE
+C:red card 010D value 2|8103AECA ????|Viper187 & Delta FORCE
+C:red card 010D size 1|8103AECC ????|Viper187 & Delta FORCE
+C:red card 010D size 2|8103AECE ????|Viper187 & Delta FORCE
+
+C:red dossier 010E value 1|8103AED2 ????|Viper187 & Delta FORCE
+C:red dossier 010E value 2|8103AED6 ????|Viper187 & Delta FORCE
+C:red dossier 010E size 1|8103AED8 ????|Viper187 & Delta FORCE
+C:red dossier 010E size 2|8103AEDA ????|Viper187 & Delta FORCE
+
+C:Bunker staff list 010F value 1|8103AEDE ????|Viper187 & Delta FORCE
+C:Bunker staff list 010F value 2|8103AEE2 ????|Viper187 & Delta FORCE
+C:Bunker staff list 010F size 1|8103AEE4 ????|Viper187 & Delta FORCE
+C:Bunker staff list 010F size 2|8103AEE6 ????|Viper187 & Delta FORCE
+
+C:credit card 0110 value 1|8103AEEA ????|Viper187 & Delta FORCE
+C:credit card 0110 value 2|8103AEEE ????|Viper187 & Delta FORCE
+C:credit card 0110 size 1|8103AEF0 ????|Viper187 & Delta FORCE
+C:credit card 0110 size 2|8103AEF2 ????|Viper187 & Delta FORCE
+
+C:plastique 0111 value 1|8103AEF6 ????|Viper187 & Delta FORCE
+C:plastique 0111 value 2|8103AEFA ????|Viper187 & Delta FORCE
+C:plastique 0111 size 1|8103AEFC ????|Viper187 & Delta FORCE
+C:plastique 0111 size 2|8103AEFE ????|Viper187 & Delta FORCE
+
+C:helicopter black box 0112 value 1|8103AF02 ????|Viper187 & Delta FORCE
+C:helicopter black box 0112 value 2|8103AF06 ????|Viper187 & Delta FORCE
+C:helicopter black box 0112 size 1|8103AF08 ????|Viper187 & Delta FORCE
+C:helicopter black box 0112 size 2|8103AF0A ????|Viper187 & Delta FORCE
+
+C:cctv tape 0113 value 1|8103AF0E ????|Viper187 & Delta FORCE
+C:cctv tape 0113 value 2|8103AF12 ????|Viper187 & Delta FORCE
+C:cctv tape 0113 size 1|8103AF14 ????|Viper187 & Delta FORCE
+C:cctv tape 0113 size 2|8103AF16 ????|Viper187 & Delta FORCE
+
+C:Nintendo logo 0114 value 1|8103AF1A ????|Viper187 & Delta FORCE
+C:Nintendo logo 0114 value 2|8103AF1E ????|Viper187 & Delta FORCE
+C:Nintendo logo 0114 size 1|8103AF20 ????|Viper187 & Delta FORCE
+C:Nintendo logo 0114 size 2|8103AF22 ????|Viper187 & Delta FORCE
+
+C:Goldeneye logo 0115 value 1|8103AF26 ????|Viper187 & Delta FORCE
+C:Goldeneye logo 0115 value 2|8103AF2A ????|Viper187 & Delta FORCE
+C:Goldeneye logo 0115 size 1|8103AF2C ????|Viper187 & Delta FORCE
+C:Goldeneye logo 0115 size 2|8103AF2E ????|Viper187 & Delta FORCE
+
+C:Folder with royal crest 0116 value 1|8103AF32 ????|Viper187 & Delta FORCE
+C:Folder with royal crest 0116 value 2|8103AF36 ????|Viper187 & Delta FORCE
+C:Folder with royal crest 0116 size 1|8103AF38 ????|Viper187 & Delta FORCE
+C:Folder with royal crest 0116 size 2|8103AF3A ????|Viper187 & Delta FORCE
+
+C:Dam truck 0117 value 1|8103AF3E ????|Viper187 & Delta FORCE
+C:Dam truck 0117 value 2|8103AF42 ????|Viper187 & Delta FORCE
+C:Dam truck 0117 size 1|8103AF44 ????|Viper187 & Delta FORCE
+C:Dam truck 0117 size 2|8103AF46 ????|Viper187 & Delta FORCE
+
+C:jeep 0118 value 1|8103AF4A ????|Viper187 & Delta FORCE
+C:jeep 0118 value 2|8103AF4E ????|Viper187 & Delta FORCE
+C:jeep 0118 size 1|8103AF50 ????|Viper187 & Delta FORCE
+C:jeep 0118 size 2|8103AF52 ????|Viper187 & Delta FORCE
+
+C:red Truck 0119 value 1|8103AF56 ????|Viper187 & Delta FORCE
+C:red Truck 0119 value 2|8103AF5A ????|Viper187 & Delta FORCE
+C:red Truck 0119 size 1|8103AF5C ????|Viper187 & Delta FORCE
+C:red Truck 0119 size 2|8103AF5E ????|Viper187 & Delta FORCE
+
+C:brown helicopter 011A value 1|8103AF62 ????|Viper187 & Delta FORCE
+C:brown helicopter 011A value 2|8103AF66 ????|Viper187 & Delta FORCE
+C:brown helicopter 011A size 1|8103AF68 ????|Viper187 & Delta FORCE
+C:brown helicopter 011A size 2|8103AF6A ????|Viper187 & Delta FORCE
+
+C:pirate helicopter 011B value 1|8103AF6E ????|Viper187 & Delta FORCE
+C:pirate helicopter 011B value 2|8103AF72 ????|Viper187 & Delta FORCE
+C:pirate helicopter 011B size 1|8103AF74 ????|Viper187 & Delta FORCE
+C:pirate helicopter 011B size 2|8103AF76 ????|Viper187 & Delta FORCE
+
+C:hound helicopter 011C value 1|8103AF7A ????|Viper187 & Delta FORCE
+C:hound helicopter 011C value 2|8103AF7E ????|Viper187 & Delta FORCE
+C:hound helicopter 011C size 1|8103AF80 ????|Viper187 & Delta FORCE
+C:hound helicopter 011C size 2|8103AF82 ????|Viper187 & Delta FORCE
+
+C:soviet camo chopper 011D value 1|8103AF86 ????|Viper187 & Delta FORCE
+C:soviet camo chopper 011D value 2|8103AF8A ????|Viper187 & Delta FORCE
+C:soviet camo chopper 011D size 1|8103AF8C ????|Viper187 & Delta FORCE
+C:soviet camo chopper 011D size 2|8103AF8E ????|Viper187 & Delta FORCE
+
+C:black trailer 011E value 1|8103AF92 ????|Viper187 & Delta FORCE
+C:black trailer 011E value 2|8103AF96 ????|Viper187 & Delta FORCE
+C:black trailer 011E size 1|8103AF98 ????|Viper187 & Delta FORCE
+C:black trailer 011E size 2|8103AF9A ????|Viper187 & Delta FORCE
+
+C:motorcycle 011F value 1|8103AF9E ????|Viper187 & Delta FORCE
+C:motorcycle 011F value 2|8103AFA2 ????|Viper187 & Delta FORCE
+C:motorcycle 011F size 1|8103AFA4 ????|Viper187 & Delta FORCE
+C:motorcycle 011F size 2|8103AFA6 ????|Viper187 & Delta FORCE
+
+C:tank 0120 value 1|8103AFAA ????|Viper187 & Delta FORCE
+C:tank 0120 value 2|8103AFAE ????|Viper187 & Delta FORCE
+C:tank 0120 size 1|8103AFB0 ????|Viper187 & Delta FORCE
+C:tank 0120 size 2|8103AFB2 ????|Viper187 & Delta FORCE
+
+C:amphibious vehicle 0121 value 1|8103AFB6 ????|Viper187 & Delta FORCE
+C:amphibious vehicle 0121 value 2|8103AFBA ????|Viper187 & Delta FORCE
+C:amphibious vehicle 0121 size 1|8103AFBC ????|Viper187 & Delta FORCE
+C:amphibious vehicle 0121 size 2|8103AFBE ????|Viper187 & Delta FORCE
+
+C:speedboat 0122 value 1|8103AFC2 ????|Viper187 & Delta FORCE
+C:speedboat 0122 value 2|8103AFC6 ????|Viper187 & Delta FORCE
+C:speedboat 0122 size 1|8103AFC8 ????|Viper187 & Delta FORCE
+C:speedboat 0122 size 2|8103AFCA ????|Viper187 & Delta FORCE
+
+C:Runway aeroplane 0123 value 1|8103AFCE ????|Viper187 & Delta FORCE
+C:Runway aeroplane 0123 value 2|8103AFD2 ????|Viper187 & Delta FORCE
+C:Runway aeroplane 0123 size 1|8103AFD4 ????|Viper187 & Delta FORCE
+C:Runway aeroplane 0123 size 2|8103AFD6 ????|Viper187 & Delta FORCE
+
+C:wall mount drone gun plans 0124 value 1|8103AFDA ????|Viper187 & Delta FORCE
+C:wall mount drone gun plans 0124 value 2|8103AFDE ????|Viper187 & Delta FORCE
+C:wall mount drone gun plans 0124 size 1|8103AFE0 ????|Viper187 & Delta FORCE
+C:wall mount drone gun plans 0124 size 2|8103AFE2 ????|Viper187 & Delta FORCE
+
+C:safe door 0125 value 1|8103AFE6 ????|Viper187 & Delta FORCE
+C:safe door 0125 value 2|8103AFEA ????|Viper187 & Delta FORCE
+C:safe door 0125 size 1|8103AFEC ????|Viper187 & Delta FORCE
+C:safe door 0125 size 2|8103AFEE ????|Viper187 & Delta FORCE
+
+C:Bunker2 key rack 0126 value 1|8103AFF2 ????|Viper187 & Delta FORCE
+C:Bunker2 key rack 0126 value 2|8103AFF6 ????|Viper187 & Delta FORCE
+C:Bunker2 key rack 0126 size 1|8103AFF8 ????|Viper187 & Delta FORCE
+C:Bunker2 key rack 0126 size 2|8103AFFA ????|Viper187 & Delta FORCE
+
+C:Bunker2 sliding glass door 0127 value 1|8103AFFE ????|Viper187 & Delta FORCE
+C:Bunker2 sliding glass door 0127 value 2|8103B002 ????|Viper187 & Delta FORCE
+C:Bunker2 sliding glass door 0127 size 1|8103B004 ????|Viper187 & Delta FORCE
+C:Bunker2 sliding glass door 0127 size 2|8103B006 ????|Viper187 & Delta FORCE
+
+C:satellite dish 0128 value 1|8103B00A ????|Viper187 & Delta FORCE
+C:satellite dish 0128 value 2|8103B00E ????|Viper187 & Delta FORCE
+C:satellite dish 0128 size 1|8103B010 ????|Viper187 & Delta FORCE
+C:satellite dish 0128 size 2|8103B012 ????|Viper187 & Delta FORCE
+
+C:arch sec door 0129 value 1|8103B016 ????|Viper187 & Delta FORCE
+C:arch sec door 0129 value 2|8103B01A ????|Viper187 & Delta FORCE
+C:arch sec door 0129 size 1|8103B01C ????|Viper187 & Delta FORCE
+C:arch sec door 0129 size 2|8103B01E ????|Viper187 & Delta FORCE
+
+C:arch sec door 012A value|8103B022 ????|Viper187 & Delta FORCE
+C:arch sec door 012A image|8103B026 ????|Viper187 & Delta FORCE
+C:arch sec door 012A size 1|8103B028 ????|Viper187 & Delta FORCE
+C:arch sec door 012A size 2|8103B02A ????|Viper187 & Delta FORCE
+
+C:free standing drone gun 012B value|8103B02E ????|Viper187 & Delta FORCE
+C:free standing drone gun 012B image|8103B032 ????|Viper187 & Delta FORCE
+C:free standing drone gun 012B size 1|8103B034 ????|Viper187 & Delta FORCE
+C:free standing drone gun 012B size 2|8103B036 ????|Viper187 & Delta FORCE
+
+C:Depot train door 012C value 1|8103B03A ????|Viper187 & Delta FORCE
+C:Depot train door 012C value 2|8103B03E ????|Viper187 & Delta FORCE
+C:Depot train door 012C size 1|8103B040 ????|Viper187 & Delta FORCE
+C:Depot train door 012C size 2|8103B042 ????|Viper187 & Delta FORCE
+
+C:white car 012D value 1|8103B046 ????|Viper187 & Delta FORCE
+C:white car 012D value 2|8103B04A ????|Viper187 & Delta FORCE
+C:white car 012D size 1|8103B04C ????|Viper187 & Delta FORCE
+C:white car 012D size 2|8103B04E ????|Viper187 & Delta FORCE
+
+C:white car 012E value 1|8103B052 ????|Viper187 & Delta FORCE
+C:white car 012E value 2|8103B056 ????|Viper187 & Delta FORCE
+C:white car 012E size 1|8103B058 ????|Viper187 & Delta FORCE
+C:white car 012E size 2|8103B05A ????|Viper187 & Delta FORCE
+
+C:white car 012F value 1|8103B05E ????|Viper187 & Delta FORCE
+C:white car 012F value 2|8103B062 ????|Viper187 & Delta FORCE
+C:white car 012F size 1|8103B064 ????|Viper187 & Delta FORCE
+C:white car 012F size 2|8103B066 ????|Viper187 & Delta FORCE
+
+C:red car 0130 value 1|8103B06A ????|Viper187 & Delta FORCE
+C:red car 0130 value 2|8103B06E ????|Viper187 & Delta FORCE
+C:red car 0130 size 1|8103B070 ????|Viper187 & Delta FORCE
+C:red car 0130 size 2|8103B072 ????|Viper187 & Delta FORCE
+
+C:Ouromovs car 0131 value 1|8103B076 ????|Viper187 & Delta FORCE
+C:Ouromovs car 0131 value 2|8103B07A ????|Viper187 & Delta FORCE
+C:Ouromovs car 0131 size 1|8103B07C ????|Viper187 & Delta FORCE
+C:Ouromovs car 0131 size 2|8103B07E ????|Viper187 & Delta FORCE
+
+C:helicopter black box 0132 value 1|8103B082 ????|Viper187 & Delta FORCE
+C:helicopter black box 0132 value 2|8103B086 ????|Viper187 & Delta FORCE
+C:helicopter black box 0132 size 1|8103B088 ????|Viper187 & Delta FORCE
+C:helicopter black box 0132 size 2|8103B08A ????|Viper187 & Delta FORCE
+
+C:shuttle door with spikes 0133 value 1|8103B08E ????|Viper187 & Delta FORCE
+C:shuttle door with spikes 0133 value 2|8103B092 ????|Viper187 & Delta FORCE
+C:shuttle door with spikes 0133 size 1|8103B094 ????|Viper187 & Delta FORCE
+C:shuttle door with spikes 0133 size 2|8103B096 ????|Viper187 & Delta FORCE
+
+C:red star on panel 0134 value 1|8103B09A ????|Viper187 & Delta FORCE
+C:red star on panel 0134 value 2|8103B09E ????|Viper187 & Delta FORCE
+C:red star on panel 0134 size 1|8103B0A0 ????|Viper187 & Delta FORCE
+C:red star on panel 0134 size 2|8103B0A2 ????|Viper187 & Delta FORCE
+
+C:shutters 0135 value 1|8103B0A6 ????|Viper187 & Delta FORCE
+C:shutters 0135 value 2|8103B0AA ????|Viper187 & Delta FORCE
+C:shutters 0135 size 1|8103B0AC ????|Viper187 & Delta FORCE
+C:shutters 0135 size 2|8103B0AE ????|Viper187 & Delta FORCE
+
+C:beaker with blue 0136 value 1|8103B0B2 ????|Viper187 & Delta FORCE
+C:beaker with blue 0136 value 2|8103B0B6 ????|Viper187 & Delta FORCE
+C:beaker with blue 0136 size 1|8103B0B8 ????|Viper187 & Delta FORCE
+C:beaker with blue 0136 size 2|8103B0BA ????|Viper187 & Delta FORCE
+
+C:beaker 0137 value 1|8103B0BE ????|Viper187 & Delta FORCE
+C:beaker 0137 value 2|8103B0C2 ????|Viper187 & Delta FORCE
+C:beaker 0137 size 1|8103B0C4 ????|Viper187 & Delta FORCE
+C:beaker 0137 size 2|8103B0C6 ????|Viper187 & Delta FORCE
+
+C:5 beaker set 0138 value 1|8103B0CA ????|Viper187 & Delta FORCE
+C:5 beaker set 0138 value 2|8103B0CE ????|Viper187 & Delta FORCE
+C:5 beaker set 0138 size 1|8103B0D0 ????|Viper187 & Delta FORCE
+C:5 beaker set 0138 size 2|8103B0D2 ????|Viper187 & Delta FORCE
+
+C:mines 0139 value 1|8103B0D6 ????|Viper187 & Delta FORCE
+C:mines 0139 value 2|8103B0DA ????|Viper187 & Delta FORCE
+C:mines 0139 size 1|8103B0DC ????|Viper187 & Delta FORCE
+C:mines 0139 size 2|8103B0DE ????|Viper187 & Delta FORCE
+
+C:jungle bush 013A value 1|8103B0E2 ????|Viper187 & Delta FORCE
+C:jungle bush 013A value 2|8103B0E6 ????|Viper187 & Delta FORCE
+C:jungle bush 013A size 1|8103B0E8 ????|Viper187 & Delta FORCE
+C:jungle bush 013A size 2|8103B0EA ????|Viper187 & Delta FORCE
+
+C:jungle bush 013B value 1|8103B0EE ????|Viper187 & Delta FORCE
+C:jungle bush 013B value 2|8103B0F2 ????|Viper187 & Delta FORCE
+C:jungle bush 013B size 1|8103B0F4 ????|Viper187 & Delta FORCE
+C:jungle bush 013B size 2|8103B0F6 ????|Viper187 & Delta FORCE
+
+C:jungle bush 013C value 1|8103B0FA ????|Viper187 & Delta FORCE
+C:jungle bush 013C value 2|8103B0FE ????|Viper187 & Delta FORCE
+C:jungle bush 013C size 1|8103B100 ????|Viper187 & Delta FORCE
+C:jungle bush 013C size 2|8103B102 ????|Viper187 & Delta FORCE
+
+C:pointy jungle bush 013D value 1|8103B106 ????|Viper187 & Delta FORCE
+C:pointy jungle bush 013D value 2|8103B10A ????|Viper187 & Delta FORCE
+C:pointy jungle bush 013D size 1|8103B10C ????|Viper187 & Delta FORCE
+C:pointy jungle bush 013D size 2|8103B10E ????|Viper187 & Delta FORCE
+
+C:jungle tree 013E value 1|8103B112 ????|Viper187 & Delta FORCE
+C:jungle tree 013E value 2|8103B116 ????|Viper187 & Delta FORCE
+C:jungle tree 013E size 1|8103B118 ????|Viper187 & Delta FORCE
+C:jungle tree 013E size 2|8103B11A ????|Viper187 & Delta FORCE
+
+C:intro screen 013F value 1|8103B11E ????|Viper187 & Delta FORCE
+C:intro screen 013F value 2|8103B122 ????|Viper187 & Delta FORCE
+C:intro screen 013F size 1|8103B124 ????|Viper187 & Delta FORCE
+C:intro screen 013F size 2|8103B126 ????|Viper187 & Delta FORCE
+
+C:Street buildings 0140 value 1|8103B12A ????|Viper187 & Delta FORCE
+C:Street buildings 0140 value 2|8103B12E ????|Viper187 & Delta FORCE
+C:Street buildings 0140 size 1|8103B130 ????|Viper187 & Delta FORCE
+C:Street buildings 0140 size 2|8103B132 ????|Viper187 & Delta FORCE
+
+C:Street buildings 0141 value 1|8103B136 ????|Viper187 & Delta FORCE
+C:Street buildings 0141 value 2|8103B13A ????|Viper187 & Delta FORCE
+C:Street buildings 0141 size 1|8103B13C ????|Viper187 & Delta FORCE
+C:Street buildings 0141 size 2|8103B13E ????|Viper187 & Delta FORCE
+
+C:Street buildings 0142 value 1|8103B142 ????|Viper187 & Delta FORCE
+C:Street buildings 0142 value 2|8103B146 ????|Viper187 & Delta FORCE
+C:Street buildings 0142 size 1|8103B148 ????|Viper187 & Delta FORCE
+C:Street buildings 0142 size 2|8103B14A ????|Viper187 & Delta FORCE
+
+C:Street buildings 0143 value 1|8103B14E ????|Viper187 & Delta FORCE
+C:Street buildings 0143 value 2|8103B152 ????|Viper187 & Delta FORCE
+C:Street buildings 0143 size 1|8103B154 ????|Viper187 & Delta FORCE
+C:Street buildings 0143 size 2|8103B156 ????|Viper187 & Delta FORCE
+
+C:Street buildings 0144 value 1|8103B15A ????|Viper187 & Delta FORCE
+C:Street buildings 0144 value 2|8103B15E ????|Viper187 & Delta FORCE
+C:Street buildings 0144 size 1|8103B160 ????|Viper187 & Delta FORCE
+C:Street buildings 0144 size 2|8103B162 ????|Viper187 & Delta FORCE
+
+C:roller door 0145 value 1|8103B166 ????|Viper187 & Delta FORCE
+C:roller door 0145 value 2|8103B16A ????|Viper187 & Delta FORCE
+C:roller door 0145 size 1|8103B16C ????|Viper187 & Delta FORCE
+C:roller door 0145 size 2|8103B16E ????|Viper187 & Delta FORCE
+
+C:Aztec vertical glass slider 0146 value 1|8103B172 ????|Viper187 & Delta FORCE
+C:Aztec vertical glass slider 0146 value 2|8103B176 ????|Viper187 & Delta FORCE
+C:Aztec vertical glass slider 0146 size 1|8103B178 ????|Viper187 & Delta FORCE
+C:Aztec vertical glass slider 0146 size 2|8103B17A ????|Viper187 & Delta FORCE
+
+C:Aztec first stone vert slider 0147 value 1|8103B17E ????|Viper187 & Delta FORCE
+C:Aztec first stone vert slider 0147 value 2|8103B182 ????|Viper187 & Delta FORCE
+C:Aztec first stone vert slider 0147 size 1|8103B184 ????|Viper187 & Delta FORCE
+C:Aztec first stone vert slider 0147 size 2|8103B186 ????|Viper187 & Delta FORCE
+
+C:Shuttle 0148 value 1|8103B18A ????|Viper187 & Delta FORCE
+C:Shuttle 0148 value 2|8103B18E ????|Viper187 & Delta FORCE
+C:Shuttle 0148 size 1|8103B190 ????|Viper187 & Delta FORCE
+C:Shuttle 0148 size 2|8103B192 ????|Viper187 & Delta FORCE
+
+C:girder within girder 0149 value 1|8103B196 ????|Viper187 & Delta FORCE
+C:girder within girder 0149 value 2|8103B19A ????|Viper187 & Delta FORCE
+C:girder within girder 0149 size 1|8103B19C ????|Viper187 & Delta FORCE
+C:girder within girder 0149 size 2|8103B19E ????|Viper187 & Delta FORCE
+
+C:concrete with two brass pipe chimneys 014A value 1|8103B1A2 ????|Viper187 & Delta FORCE
+C:concrete with two brass pipe chimneys 014A value 2|8103B1A6 ????|Viper187 & Delta FORCE
+C:concrete with two brass pipe chimneys 014A size 1|8103B1A8 ????|Viper187 & Delta FORCE
+C:concrete with two brass pipe chimneys 014A size 2|8103B1AA ????|Viper187 & Delta FORCE
+
+C:cube of rock 014B value 1|8103B1AE ????|Viper187 & Delta FORCE
+C:cube of rock 014B value 2|8103B1B2 ????|Viper187 & Delta FORCE
+C:cube of rock 014B size 1|8103B1B4 ????|Viper187 & Delta FORCE
+C:cube of rock 014B size 2|8103B1B6 ????|Viper187 & Delta FORCE
+
+C:mainframe with green 014C value 1|8103B1BA ????|Viper187 & Delta FORCE
+C:mainframe with green 014C value 2|8103B1BE ????|Viper187 & Delta FORCE
+C:mainframe with green 014C size 1|8103B1C0 ????|Viper187 & Delta FORCE
+C:mainframe with green 014C size 2|8103B1C2 ????|Viper187 & Delta FORCE
+
+C:flag 014D value 1|8103B1C6 ????|Viper187 & Delta FORCE
+C:flag 014D value 2|8103B1CA ????|Viper187 & Delta FORCE
+C:flag 014D size 1|8103B1CC ????|Viper187 & Delta FORCE
+C:flag 014D size 2|8103B1CE ????|Viper187 & Delta FORCE
+
+C:road barrier 014E value 1|8103B1D2 ????|Viper187 & Delta FORCE
+C:road barrier 014E value 2|8103B1D6 ????|Viper187 & Delta FORCE
+C:road barrier 014E size 1|8103B1D8 ????|Viper187 & Delta FORCE
+C:road barrier 014E size 2|8103B1DA ????|Viper187 & Delta FORCE
+
+C:screen for covert modem 014F value 1|8103B1DE ????|Viper187 & Delta FORCE
+C:screen for covert modem 014F value 2|8103B1E2 ????|Viper187 & Delta FORCE
+C:screen for covert modem 014F size 1|8103B1E4 ????|Viper187 & Delta FORCE
+C:screen for covert modem 014F size 2|8103B1E6 ????|Viper187 & Delta FORCE
+
+C:Dam sliding door activator 0150 value 1|8103B1EA ????|Viper187 & Delta FORCE
+C:Dam sliding door activator 0150 value 2|8103B1EE ????|Viper187 & Delta FORCE
+C:Dam sliding door activator 0150 size 1|8103B1F0 ????|Viper187 & Delta FORCE
+C:Dam sliding door activator 0150 size 2|8103B1F2 ????|Viper187 & Delta FORCE
+
+C:standing console 0151 value 1|8103B1F6 ????|Viper187 & Delta FORCE
+C:standing console 0151 value 2|8103B1FA ????|Viper187 & Delta FORCE
+C:standing console 0151 size 1|8103B1FC ????|Viper187 & Delta FORCE
+C:standing console 0151 size 2|8103B1FE ????|Viper187 & Delta FORCE
+
+C:test tube 0152 value 1|8103B202 ????|Viper187 & Delta FORCE
+C:test tube 0152 value 2|8103B206 ????|Viper187 & Delta FORCE
+C:test tube 0152 size 1|8103B208 ????|Viper187 & Delta FORCE
+C:test tube 0152 size 2|8103B20A ????|Viper187 & Delta FORCE
+
+C:solid stone cairn 0153 value 1|8103B20E ????|Viper187 & Delta FORCE
+C:solid stone cairn 0153 value 2|8103B202 ????|Viper187 & Delta FORCE
+C:solid stone cairn 0153 size 1|8103B204 ????|Viper187 & Delta FORCE
+C:solid stone cairn 0153 size 2|8103B206 ????|Viper187 & Delta FORCE
+*********************************
+heads
+FORM|8103DE12
+IMAGE|8103DE16
+SIZE|8103DE18
+HEIGHT|8103DE1C
+VALUE|8003DE20
+
+FORM|8103DE26
+IMAGE|8103DE2A
+SIZE|8103DE2C
+SIZE|8103DE30
+VALUE|8003DE34
+
+NATALYA 10 FORM|8103DF52
+NATALYA 10 IMAGE|810DF56
+NATALYA 10 SIZE|8103DF58
+NATALYA 10 SIZE|8103DF5C
+NATALYA 10 VALUE|8003DF60
+
+BONDBOILER 4A FORM|8103E3DA
+BONDBOILER 4A IMAGE|8103E3DE
+BONDBOILER 4A SIZE|8103E3F0
+BONDBOILER 4A SIZE|8103E3F4
+BONDBOILER 4A VALUE|8003E3F8

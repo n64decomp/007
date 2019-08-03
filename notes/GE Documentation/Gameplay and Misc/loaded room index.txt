@@ -1,0 +1,30 @@
+Room index runs from 80041424 - 800442F4 at runtime only.
+800442F4 denotes maximum number of rooms.
+
+Room Information:	0x50 each
+0x0	2	bitflags probably
+0x2	1	set when the model binaries have been loaded (prior to collisions)
+0x3	1	bitflags probably
+0x4	4	pointer to point index in model buffer or NULL
+0x8	4	pointer to expanded mapping information in model buffer or NULL
+0xC	4	pointer to secondary expanded mapping information in model buffer or NULL
+0x10	4	compressed size of point index binary or 0
+0x14	4	compressed size of primary display list or 0
+0x18	4	compressed size of secondary display list or 0
+0x1C	4	uncompressed size of point index binary or 0
+0x20	4	uncompressed and expanded size of primary display list or 0
+0x24	4	uncompressed and expanded size of secondary display list or 0
+0x28	4	total size dedicated to current room 
+		(above binaries are increased +0x4-0x10 bits to align to 128bit bounds)
+0x2C	4	pointer to index of unique points used in room for collision purposes
+		(xxx1yyy1zzz1,xxx2yyy2zzz2,etc.)
+0x30	4	bitflags probably
+0x34	1	0000FFFF when room is not loaded
+0x35	1	
+0x36	2	
+0x38	4	float: minimum x bounds
+0x3C	4	float: minimum y bounds
+0x40	4	float: minimum z bounds
+0x44	4	float: maximum x bounds
+0x48	4	float: maximum y bounds
+0x4C	4	float: maximum z bounds

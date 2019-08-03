@@ -1,0 +1,230 @@
+7F0C35A0	F80D0	Displays player data on MP menu screens; returns V0=new DL pos.
+	accepts: A0=p->DL, A1=x pos., A2=y pos., A3=p->data arguments, SP+10=display type
+	display types:
+		0	green
+		1	green highlighted
+		2	red
+		3	red highlighted
+		4	blue
+		5	blue highlighted
+
+ADDIU	SP,SP,FFA0
+SW	S0,0034 (SP)
+OR	S0,A1,R0	;S0=A1: x position
+SW	S1,0038 (SP)
+OR	S1,A0,R0	;S1=A0: p->DL
+SW	RA,003C (SP)
+SW	A2,0068 (SP)	;SP+68=A2: 
+LUI	A1,8006
+ADDIU	A1,A1,BC20	;A1=8005BC20: p->"%d"
+OR	A2,A3,R0	;A2=A3: p->data arguments
+JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+ADDIU	A0,SP,0048	;A0=SP+48: p->buffer for new string
+LUI	T6,8004
+LW	T6,0EAC (T6)	;T6=80040EAC: p->1st font table
+LUI	A3,8004
+LW	A3,0EB0 (A3)	;A3=80040EB0: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: p->ret.height
+ADDIU	A1,SP,0054	;A1=SP+54: p->ret.width
+ADDIU	A2,SP,0048	;A2=SP+48: p->text
+SW	R0,0014 (SP)	;SP+14=0	???
+JAL	7F0AE98C	;proportions of string A2
+SW	T6,0010 (SP)	;SP+10=p->1st font table
+//7F0C35F8:
+LW	T7,0054 (SP)	;T7=str.width
+LW	T1,0070 (SP)	;T1=SP+70 (SP+10 from caller): disp.type
+LW	T0,0068 (SP)	;T0=SP+68: y pos.
+SRA	T8,T7,0x1
+SUBU	T9,S0,T8	;T9=x pos. - (width/2)
+SLTIU	AT,T1,0006	;TRUE if type 0-5
+SW	T9,005C (SP)	;SP+5C= T9: x pos.
+BEQ	AT,R0,7F0C38C0	;skip if not valid type
+SW	T0,0058 (SP)	;SP+58= T0: ypos
+SLL	T1,T1,0x2
+LUI	AT,8006
+ADDU	AT,AT,T1
+LW	T1,BC88 (AT)	;T1=8005BC88+offset: display routine
+JR	T1
+NOP
+
+7F0C3634		green text - normal
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S0,V0,0x10
+SRA	T2,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T2,R0	;S0=clip width
+LUI	T3,8004
+LUI	T4,8004
+LW	T4,0EAC (T4)	;T4=80040EAC: p->1st font table 
+LW	T3,0EB0 (T3)	;T3=80040EB0: p->2nd font table
+LUI	T5,00FF
+ORI	T5,T5,00B0	;T5=00FF00B0	green
+SW	T5,0018 (SP)	;SP+18=font colour
+OR	A0,S1,R0	;A0=S1: p->DL
+ADDIU	A1,SP,005C	;A1=SP+5C: x pos.
+ADDIU	A2,SP,0058	;A2=SP+58: y pos.
+ADDIU	A3,SP,0048	;A3=SP+48: p->text
+SW	S0,001C (SP)	;SP+1C= clip width
+SW	V0,0020 (SP)	;SP+20= clip height
+SW	R0,0024 (SP)	;SP+24= y offset (0)
+SW	R0,0028 (SP)	;SP+28= x offset (0)
+SW	T4,0014 (SP)	;SP+14= p->1st font table
+JAL	7F0ADABC	;display monotone text on MP menu
+SW	T3,0010 (SP)	;SP+10=  p->2nd font table
+BEQ	R0,R0,7F0C38C0
+OR	S1,V0,R0
+
+7F0C369C		green text highlighted
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S0,V0,0x10
+SRA	T6,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T6,R0	;S0=clip width
+LUI	T7,8004
+LUI	T8,8004
+LW	T8,0EAC (T8)	;T8=80040EAC: p->1st font table 
+LW	T7,0EB0 (T7)	;T7=80040EB0: p->2nd font table
+LUI	T9,A0FF
+LUI	T0,0070
+ORI	T0,T0,00A0	;T0=007000A0	bg colour (dark green)
+ORI	T9,T9,A0F0	;T9=A0FFA0F0	fg colour (light green)
+SW	T9,0018 (SP)	;SP+18= fg colour
+SW	T0,001C (SP)	;SP+1C= bg colour
+OR	A0,S1,R0	;A0=S1: p->DL
+ADDIU	A1,SP,005C	;A1=SP+5C: p->x position
+ADDIU	A2,SP,0058	;A2=SP+58: p->y position
+ADDIU	A3,SP,0048	;A3=SP+48: p->text
+SW	S0,0020 (SP)	;SP=20= clip height
+SW	V0,0024 (SP)	;SP+24= clip width
+SW	R0,0028 (SP)	;SP=28= y offset (0)
+SW	R0,002C (SP)	;SP+2C= x offset (0)
+SW	T8,0014 (SP)	;SP+14= p->1st font table
+JAL	7F0AE6EC	;display 2-tone text on MP menu
+SW	T7,0010 (SP)	;SP+10= p->2nd font table
+BEQ	R0,R0,7F0C38C0
+OR	S1,V0,R0
+
+7F0C3710		red text normal
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S0,V0,0x10
+SRA	T1,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T1,R0
+LUI	T2,8004
+LUI	T3,8004
+LW	T3,0EAC (T3)	;T3=80040EAC: p->1st font table 
+LW	T2,0EB0 (T2)	;T2=80040EB0: p->2nd font table
+LUI	T4,FF40
+ORI	T4,T4,40B0	;T4=FF4040B0	red
+SW	T4,0018 (SP)
+OR	A0,S1,R0
+ADDIU	A1,SP,005C
+ADDIU	A2,SP,0058
+ADDIU	A3,SP,0048
+SW	S0,001C (SP)
+SW	V0,0020 (SP)
+SW	R0,0024 (SP)
+SW	R0,0028 (SP)
+SW	T3,0014 (SP)
+JAL	7F0ADABC	;display monotone text on MP menu
+SW	T2,0010 (SP)
+BEQ	R0,R0,7F0C38C0
+OR	S1,V0,R0
+
+7F0C3778		red text highlighted
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S0,V0,0x10
+SRA	T5,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T5,R0
+LUI	T6,8004
+LUI	T7,8004
+LW	T7,0EAC (T7)
+LW	T6,0EB0 (T6)
+LUI	T8,FFA0
+LUI	T9,7000
+ORI	T9,T9,00A0	;T9=700000A0	bg colour (dk. red)
+ORI	T8,T8,A0F0	;T8=FFA0A0F0	fg colour (lt. red)
+SW	T8,0018 (SP)
+SW	T9,001C (SP)
+OR	A0,S1,R0
+ADDIU	A1,SP,005C
+ADDIU	A2,SP,0058
+ADDIU	A3,SP,0048
+SW	S0,0020 (SP)
+SW	V0,0024 (SP)
+SW	R0,0028 (SP)
+SW	R0,002C (SP)
+SW	T7,0014 (SP)
+JAL	7F0AE6EC	;display 2-tone text on MP menu
+SW	T6,0010 (SP)
+BEQ	R0,R0,7F0C38C0
+OR	S1,V0,R0
+
+7F0C37EC		blue text normal
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S0,V0,0x10
+SRA	T0,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T0,R0
+LUI	T1,8004
+LUI	T2,8004
+LW	T2,0EAC (T2)
+LW	T1,0EB0 (T1)
+LUI	T3,4040
+ORI	T3,T3,FFB0	;T3=4040FFB0	blue
+SW	T3,0018 (SP)
+OR	A0,S1,R0
+ADDIU	A1,SP,005C
+ADDIU	A2,SP,0058
+ADDIU	A3,SP,0048
+SW	S0,001C (SP)
+SW	V0,0020 (SP)
+SW	R0,0024 (SP)
+SW	R0,0028 (SP)
+SW	T2,0014 (SP)
+JAL	7F0ADABC	;display monotone text on MP menu
+SW	T1,0010 (SP)
+BEQ	R0,R0,7F0C38C0
+OR	S1,V0,R0
+
+7F0C3854		blue text highlighted
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S0,V0,0x10
+SRA	T4,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T4,R0
+LUI	T5,8004
+LUI	T6,8004
+LW	T6,0EAC (T6)
+LW	T5,0EB0 (T5)
+LUI	T7,A0A0
+ORI	T7,T7,FFF0	;T7=A0A0FFF0	fg colour (lt. blue)
+ADDIU	T8,R0,70A0	;T8=000070A0	bg colour (dk. blue)
+SW	T8,001C (SP)
+SW	T7,0018 (SP)
+OR	A0,S1,R0
+ADDIU	A1,SP,005C
+ADDIU	A2,SP,0058
+ADDIU	A3,SP,0048
+SW	S0,0020 (SP)
+SW	V0,0024 (SP)
+SW	R0,0028 (SP)
+SW	R0,002C (SP)
+SW	T6,0014 (SP)
+JAL	7F0AE6EC	;display 2-tone text on MP menu
+SW	T5,0010 (SP)
+OR	S1,V0,R0
+//7F0C38C0:	return
+LW	RA,003C (SP)
+OR	V0,S1,R0	;V0=S1: p->DL
+LW	S1,0038 (SP)
+LW	S0,0034 (SP)
+JR	RA
+ADDIU	SP,SP,0060

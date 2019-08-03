@@ -1,0 +1,212 @@
+neo-27: set word at address.  27.xxxxxxxx.yyyyyyyy
+If you only wanted to mess with dram (80000000 - 80800000) then only 8 bytes needed in action.  This is way more dynamic though.  You can fiddle with hardware registers if you *really* wanted to.  Plus, the read routine is shorter if you just pull non-aligned addresses.
+
+Tested this bugger on console.  If you're lucky it may work under emulation.
+
+size of type:
+JR	RA	03E00008
+ADDIU	V1,R0,0009	24020009
+note: V1= #bytes in type.  If an existing type has same size, can just link to it.
+
+action type code:
+LWL	A1,0001 (S1)	8A250001
+LWR	A1,0003 (S1)	9A250004
+LUI	RA,7F03		3C1F7F03
+LWL	A0,0005 (S1)	8A240005
+LWR	A0,0007 (S1)	9A240008
+ORI	RA,RA,558C	37FF558C
+SW	A0,0000 (A1)	ACA40000
+ADDIU	S2,S2,0008	26520009
+JR	RA		03E00008
+ADDIU	S1,S1,0008	26310009
+note: remember, you can't have two LWL/LWR in a row!  Be certain there's an op between them as above.
+
+-and here's the code!
+"New Action 27 #28" .off
+8105219C 8040
+8105219E 002C
+8140002C 03E0
+8140002E 0008
+81400030 2402
+81400032 0009
+81052594 8040
+81052596 0034
+81400034 8A25
+81400036 0001
+81400038 9A25
+8140003A 0004
+8140003C 3C1F
+8140003E 7F03
+81400040 8A24
+81400042 0005
+81400044 9A24
+81400046 0008
+81400048 37FF
+8140004A 558C
+8140004C ACA4
+8140004E 0000
+81400050 2652
+81400052 0009
+81400054 03E0
+81400056 0008
+81400058 2631
+8140005A 0009
+
+
+Here's a few things you can do with it!  Well, NTSC at least...
+27.8002A8EB.0000000x	folder you selected (sets which file is saved to)
+27.8002A928.0000000x	Autofail!  At end of stage will say "aborted"(0) or "killed in action"(1).
+27.8002CC68.0000000x	hide or show guards
+
+27.80030AC4.0000000x	turn alarm off (0) or on(1)
+27.80030ACC.0000000x	turn toxic gas off (0) or on(1)
+27.80036444.0000000x	start(1) or stop(0) those killer spawned explosions!
+27.80036494.0000000x	current display mode.
+	1 starts intro camera,
+	2 the fade-out to swirl (use this to restart swirl), 
+	3 the swirl (use this to restart fade-in), 
+	4 1st person mode
+	7 any other camera position
+	9 mp rotating camera (can't trigger it though)
+
+27.800364B4.0000000x	disable(1) or enable(0) player pickups
+27.8003689C.00000000	disable lower text displays
+27.800368AC.00000000	disable upper text displays
+
+  Heck, you can edit virtualy anything with this code!  Change some values in the music table, mess with the sky or fog, autotrigger cheats, or anything else gs codes can do.
+  Hah!  There's one! Set a console that enables and disables line mode.
+
+-----------------------
+-----------------------
+
+Load Level List.  set folder number (8002A8E8) to A0
+JAL	7F01F4A0
+	this JAL 7F01DDC4, but can go right to that.
+ADDIU	SP,SP,FFD8
+SW	RA,0024 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+JAL	7F01DDC4
+SW	S0,0018 (SP)
+BEQ	V0,R0,7F01F514
+OR	S1,V0,R0
+LBU	T6,0009 (V0)	//test if debug 007 flag toggled!
+OR	S0,R0,R0
+ADDIU	S2,R0,0014
+ANDI	T7,T6,0001
+BEQ	T7,R0,7F01F4E0	//if not flagged, branch
+NOP
+BEQ	R0,R0,7F01F518
+ADDIU	V0,R0,0001
+//7F01F4E0:
+OR	A0,S1,R0
+OR	A1,S0,R0
+JAL	7F01DC60
+ADDIU	A2,R0,0002
+OR	A1,S0,R0
+JAL	7F01DC60
+ADDIU	A2,R0,0002
+BEQ	V0,R0,7F01F504
+NOP
+ADDIU	S0,S0,0001
+BNEL	S0,S2,7F01F4E4
+	OR	A0,S1,R0
+BNEL	S0,S2,7F01F518
+	OR	V0,R0,R0
+BEQ	R0,R0,7F01F518
+ADDIU	V0,R0,0001
+OR	V0,R0,R0
+//7F01F518:
+LW	RA,0024 (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+JR	RA
+ADDIU	SP,SP,0028
+
+
+7F01DDC4:	returns V0=pointer of current sram file!
+ADDIU	SP,SP,FFD8
+SW	S1,001C (SP)
+SW	A0,0018 (SP)
+SW	S2,0020 (SP)
+LUI	S0,8007
+LUI	S1,8007
+OR	S2,A0,R0
+SW	RA,0024 (SP)
+ADDIU	S1,S1,9B00
+ADDIU	S0,S0,9920
+JAL	7F01D954
+OR	A0,S0,R0
+//7F01DDF4:
+BNEL	V0,R0,7F01DE18
+	ADDIU	S0,S0,0060
+JAL	7F01D8C8
+OR	A0,S0,R0
+BNEL	V0,S2,7F01DE18
+	ADDIU	S0,S0,0060
+BEQ	R0,R0,7F01DE38
+OR	V0,S0,R0
+//7F01DE14:
+ADDIU	S0,S0,0060
+//7F01DE18:
+BNE	S0,S1,7F01DDEC
+NOP
+OR	V0,R0,R0
+LUI	V0,8007
+BEQ	R0,R0,7F01DE38
+ADDIU	V0,V0,9B00
+//7F01DE38:
+LW	RA,0024 (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+JR	RA
+ADDIU	SP,SP,0028
+
+
+7F01D954:
+LBU	V0,0008 (A0)
+ANDI	T6,V0,0080
+JR	RA
+SLTU	V0,R0,T6
+
+7F01D8C8:
+LBU	V0,0008 (A0)
+ANDI	T6,V0,0007
+JR	RA
+OR	V0,T6,R0
+
+-----------------------------
+-----------------------------
+-----------------------------
+New type: if address, return
+
+??.##.xxxxxxxx.yyyyyyyy.rr
+
+##		some feature like type of comparison
+xxxxxxxx	target address
+yyyyyyyy	comparison value
+rr		return value
+
+LWL	A1,0002 (S1)	8A250002
+LWR	A1,0005 (S1)	9A250005
+LUI	RA,7F03		3C1F7F03
+LWL	A0,0006 (S1)	8A240006
+LWR	A0,0009 (S1)	9A240009
+
+LW	A1,0000 (A1)	4C
+
+ORI	RA,RA,558C	37FF558C
+ADDIU	S2,S2,0008	26520009
+JR	RA		03E00008
+ADDIU	S1,S1,0008	26310009
+
+
+test if toggled:	and, then should match original value
+AND	A0,A1,A0
+BEQ	A0,A1,
+
+test if untoggled:
+AND	A0,A1,A0
+BGTZ	A0,

@@ -1,0 +1,784 @@
+7F0AD0F8		construct microcode for font character
+	returns A1=new xpos, A2=new ypos
+	accepts: A0=p->display list, A1=@xpos, A2=@ypos, A3=p->table2 entry, SP+10=p->, SP+14=p->table1, SP+18=ulx, SP+1C=uly, SP+20=lrx, SP+24=lry, SP+28=
+ADDIU	SP,SP,FF10
+LW	T9,0100 (SP)	;T9=SP+100: 
+SW	RA,001C (SP)
+SW	S1,0018 (SP)
+SW	S0,0014 (SP)
+SW	A1,00F4 (SP)	;SP+F4=A1: @xpos
+LW	T4,0010 (T9)	;T4=T9+10: 
+LW	T6,0000 (A2)	;T6=A2+0: cur.ypos
+LW	T7,0118 (SP)	;T7=SP+118: 
+SLL	T5,T4,0x2
+SUBU	T5,T5,T4
+LW	T8,0104 (SP)	;T8=SP+104: p->1st font table
+SLL	T5,T5,0x2
+LW	T9,0010 (A3)	;T9=charentry+10: 
+ADDU	T5,T5,T4
+ADDU	T1,T6,T7	;T1=T6+T7: cur.ypos+???
+SLL	T6,T5,0x2	;T6=T4 * 0x34: 
+ADDU	T7,T8,T6	;T7=1st table + offset: 
+SLL	T4,T9,0x2	;T4=T9*4: charentry+10 -> offset
+ADDU	T5,T7,T4	;T5=1st table + offset + word#: 
+LUI	T6,8004
+LW	T6,0E84 (T6)	;T6=80040E84: 
+LW	T8,0000 (T5)	;T8=1st table value
+LW	T7,0000 (A1)	;T7=cur.xpos
+OR	S0,A0,R0	;S0=A0: p->DL
+ADDU	V0,T8,T6	;V0=1st table value + 80040E84 value
+SUBU	T4,T7,V0	;T4=T7-V0: cur.xpos - value
+ADDIU	T5,T4,0001	;T5=difference+1
+SW	T5,0000 (A1)	;update cur.xpos
+//7F0AD16C:
+LUI	T8,8004
+LW	T8,0E88 (T8)	;T8=80040E88: 
+OR	S1,A3,R0	;S1=A3: p->charentry
+BNEL	T8,R0,7F0AD1CC	;branch if isn't zero
+LW	A0,0108 (SP)
+BLEZL	T5,7F0ADA94	;return if negative xpos
+LW	T4,00F4 (SP)
+JAL	7000441C	;V0= text clip width
+SW	T1,00E0 (SP)	;SP+E0=T1: cur.ypos
+LW	T6,00F4 (SP)	;T6=SP+F4: @width
+LW	T1,00E0 (SP)	;T1=cur.ypos
+LW	T7,0000 (T6)	;T7=cur.xpos
+SLT	AT,V0,T7	;TRUE if clip width < cur.xpos
+BNEL	AT,R0,7F0ADA94	;return if text clipped!
+LW	T4,00F4 (SP)
+JAL	7000442C	;V0= text clip height
+SW	T1,00E0 (SP)	;SP+E0= cur.ypos
+LW	T1,00E0 (SP)	;T1=cur.ypos
+LW	T4,0004 (S1)	;T4=charentry+4: vertical offset
+ADDU	T9,T1,T4	;T9=cur.ypos+y.off
+SLT	AT,V0,T9	;TRUE if clip height < cur.ypos
+BNEL	AT,R0,7F0ADA94	;return if text clipped!
+LW	T4,00F4 (SP)
+//7F0AD1C8:	calculate disp.xpos
+LW	A0,0108 (SP)	;A0=SP+108: ulx
+LW	T8,0110 (SP)	;T8=SP+110: max x
+LW	T6,00F4 (SP)	;T6=SP+F4: @width
+LW	T2,010C (SP)	;T2=SP+10C: uly
+ADDU	T5,A0,T8	;T5=ulx+max.x
+SW	T5,0024 (SP)	;SP+24=T5: ulx+max.x
+//7F0AD1E0:	catch invalid character writes
+LW	V0,0000 (T6)	;V0=cur.width
+LW	T4,0114 (SP)	;T4=SP+114: max y
+SLT	AT,T5,V0	;TRUE if max+pos < cur.width, which is crazy
+BNEL	AT,R0,7F0ADA94	;return if crazy
+LW	T4,00F4 (SP)
+LW	T9,0004 (S1)	;T9=charentry+4: y.off
+ADDU	T3,T2,T4	;T3=uly+max.y
+ADDU	V1,T9,T1	;V1=y.off+cur.ypos
+SLT	AT,T3,V1	;TRUE if max+pos < textpos, which is also crazy
+BNEZ	AT,7F0ADA90	;return if crazy
+SLT	AT,V0,A0	;TRUE if cur.width+pos < ulx
+BNEL	AT,R0,7F0ADA94	;return if negative width, basically
+LW	T4,00F4 (SP)
+LW	T8,0008 (S1)	;T8=charentry+8: height
+ADDU	T5,V1,T8	;T5=V1+T8: cur.ypos+y.off+height: final y
+SLT	AT,T5,T2	;TRUE if ypos < uly
+BNEL	AT,R0,7F0ADA94	;return if negative height, basically
+LW	T4,00F4 (SP)
+//7F0AD228:	sort out japanese
+LW	T6,0000 (S1)	;T6=charentry+0: #
+LUI	A1,8004
+ADDIU	A1,A1,0EA8	;A1=80040EA8
+SLTI	AT,T6,0080	;TRUE if entry < 0x80: ASCII character
+BEQ	AT,R0,7F0AD3F8	;branch if codetype
+OR	V0,S0,R0	;V0=S0: p->DL
+//7F0AD240:	[ASCII] setothermode_h
+OR	V0,S0,R0	;V0=S0: p->DL
+LUI	T7,BA00
+ORI	T7,T7,0E02	;T7=BA000E02
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	T7,0000 (V0)	;V0+0= setothermode_h.u: texture lut: none
+SW	R0,0004 (V0)	;V0+4= setothermode_h.l: 
+OR	V1,S0,R0	;V1=S0: p->DL
+//7F0AD25C:	[ASCII] settextureimage
+LUI	T4,FD90
+SW	T4,0000 (V1)	;V1+0= settextureimage.u: i 16bit
+LW	T9,0014 (S1)	;T9=charentry+14: p->image
+ADDIU	S0,S0,0008	;S0+=8	next DL
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	T9,0004 (V1)	;V1+4= settextureimage.l
+OR	A1,S0,R0	;A1=S0: p->DL
+//7F0AD27C:	[ASCII] settile
+LUI	T8,F590
+LUI	T5,0700
+SW	T5,0004 (A0)	;A0+4= settile.l: i 16bit
+SW	T8,0000 (A0)	;A0+0= settile.u: tile=7
+ADDIU	S0,S0,0008	;S0+=8	next DL
+//7F0AD290:	[ASCII] loadsync
+LUI	T6,E600
+SW	T6,0000 (A1)	;A1+0= loadsync.u
+OR	T0,S0,R0	;T0=S0: p->DL
+SW	R0,0004 (A1)	;A1+4= loadsync.l
+//7F0AD2A0:	[ASCII] loadblock
+LUI	T7,F300
+SW	T7,0000 (T0)	;T0+0: loadblock.u: uls=0, ult=0
+LW	V1,000C (S1)	;V1=charentry+C: width
+LW	T9,0008 (S1)	;T9=charentry+8: height
+ADDIU	S0,S0,0008	;S0+=8	next DL
+ADDIU	V1,V1,0007
+ANDI	T4,V1,00F8
+MULTU	T4,T9
+OR	V1,T4,R0	;V1=width to nearest 0x8 boundry
+ADDIU	A2,R0,07FF	;A2=0x7FF	default #pixels
+MFLO	V0		;V0=width*height
+ADDIU	V0,V0,0001
+SRA	T8,V0,0x1	;T8=width*height/2: #pixels to nearest pixel
+ADDIU	V0,T8,FFFF	;V0=#pixels-1: value 0-x, instead of 1-x
+SLTI	AT,V0,07FF	;TRUE if image < 0x800 pixels
+BEQ	AT,R0,7F0AD2EC	;branch if false
+NOP
+BEQ	R0,R0,7F0AD2EC
+OR	A2,V0,R0	;A2=V0: #pixels
+//7F0AD2EC:
+BGEZ	V1,7F0AD2FC	;branch if width not negative, which it can't be due to the AND
+SRA	V0,V1,0x3	;V0=width/8
+ADDIU	AT,V1,0007
+SRA	V0,AT,0x3	;V0=width to nearest 0x8 bounds, /8
+//7F0AD2FC:
+BGTZ	V0,7F0AD30C	;branch if not zero or negative
+ANDI	T9,A2,0FFF	;T9=#pixels & FFF
+BEQ	R0,R0,7F0AD310	;default width to 1
+ADDIU	A3,R0,0001
+//7F0AD30C:
+OR	A3,V0,R0	;A3=width
+BGTZ	V0,7F0AD320	;branch if width <=0
+ADDIU	T5,A3,07FF	;T5=width+7FF
+BEQ	R0,R0,7F0AD324	;default width to 1
+ADDIU	A1,R0,0001	;A1=1
+//7F0AD320:
+OR	A1,V0,R0	;A1=width
+DIV	T5,A1
+BNEZ	A1,7F0AD334	;branch if width not zero, which at tis point it couldn't be
+NOP
+BREAK
+//7F0AD334:
+ADDIU	AT,R0,FFFF
+BNE	A1,AT,7F0AD34C	;branch if width not -1
+LUI	AT,8000
+BNE	T5,AT,7F0AD34C	;branch if width+7FF not 80000000
+NOP
+BREAK
+//7F0AD34C:
+MFLO	T6		;T5/A1: width+7FF / width
+ANDI	T7,T6,0FFF	;T7=lrt
+LUI	AT,0700		;AT=07000000: tile=7
+OR	T4,T7,AT	;T4=tile | lrt
+SLL	T8,T9,0xC	;T8=#pixels*0x1000: lrs
+OR	T5,T4,T8	;T5=tile | lrs | lrt
+SW	T5,0004 (T0)	;T0+4= loadblock.l: tile=7, lrs, lrt
+//7F0AD368:	[ASCII] pipesync
+OR	V0,S0,R0	;V0=S0: p->DL
+LUI	T6,E700
+SW	T6,0000 (V0)	;V0+0: pipesync.u
+SW	R0,0004 (V0)	;V0+4: pipesync.l
+//7F0AD378:	[ASCII] settile
+LW	T7,000C (S1)	;T7=charentry+C: width
+ADDIU	S0,S0,0008	;S0+=8	next DL
+OR	V1,S0,R0	;V1=S0: p->DL
+ADDIU	T9,T7,0007
+ANDI	T4,T9,00F8	;T4=width to nearest 0x8 bound
+ADDIU	T8,T4,0007
+SRA	T5,T8,0x3	;T5=ceil(width)/8: line
+ANDI	T6,T5,01FF	;T6= line & 0x1FF
+SLL	T7,T6,0x9	;T7=line
+LUI	AT,F588
+OR	T9,T7,AT	;T9=i | 8bit | line
+ADDIU	S0,S0,0008	;S0+=8	next DL
+OR	A0,S0,R0	;A0=S0: p->DL
+SW	T9,0000 (V1)	;V1+0= settile.u: i 8bit
+LUI	T4,F200
+SW	R0,0004 (V1)	;V1+4= settile.l: tile=0
+//7F0AD3B8:	[ASCII] settilesize
+SW	T4,0000 (A0)	;A0+0= settilesize.u: uls=0, ult=0
+LW	T8,000C (S1)	;T8=charentry+C: width
+ADDIU	S0,S0,0008	;S0+=8	next DL
+ADDIU	T5,T8,0007
+ANDI	T6,T5,00F8	;T6=width to nearest 0x8 bound
+LW	T5,0008 (S1)	;T5=charentry+8: height
+ADDIU	T7,T6,FFFF	;T7=width-1: 0-x, not 1-x
+SLL	T9,T7,0x2	;T9=width*4: #words
+ANDI	T4,T9,0FFF	;T4=width&FFF
+ADDIU	T6,T5,FFFF	;T6=height-1: 0-x, not 1-x
+SLL	T7,T6,0x2	;T7=height*4: #words
+ANDI	T9,T7,0FFF	;T9=height&FFF
+SLL	T8,T4,0xC	;T8=width*0x1000:lrs
+OR	T4,T8,T9	;T4=lrs|lrt
+BEQ	R0,R0,7F0AD6A4
+SW	T4,0004 (A0)	;A0+4= settilesize.l: tile=0, lrs, lrt
+//7F0AD3F8:	[JSHFT] pipesync
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LUI	T5,E700
+SW	T5,0000 (V0)	;V0+0= pipesync.u
+SW	R0,0004 (V0)	;V0+4= pipesync.l
+//7F0AD408:	[JSHFT] setothermode_h
+OR	V1,S0,R0	;V1=S0: p->DL
+LUI	T6,BA00
+ORI	T6,T6,0E02	;T6= texture lut
+ORI	T7,R0,C000
+SW	T7,0004 (V1)	;V1+4= setothermode_h.l: ia16
+SW	T6,0000 (V1)	;V1+0= setothermode_h.u: texture look-up table
+//7F0AD420:	[JSHFT] check if you can look up the characters
+LW	T8,0000 (A1)	;T8=80040EA8: 1 allows j-character lookup...
+ADDIU	S0,S0,0008	;S0+=8	next DL
+OR	A3,S0,R0	;A3=S0: p->DL
+BEQ	T8,R0,7F0AD588	;branch if zero
+//7F0AD410:	[JSHFT] settextureimage
+LUI	T9,FD10
+SW	R0,0000 (A1)	;0->80040EA8: disallow more j-char lookup until reinitialized
+SW	T9,0000 (A3)	;A3+0= settextureimage.u: rgba 16bit
+LUI	A0,8004
+ADDIU	A0,A0,0EBC	;A0=80040EBC: p->japanese font palette
+SW	T3,0020 (SP)	;SP+20=T3: max.y+y.off
+SW	T1,00E0 (SP)	;SP+E0=T1: cur.ypos
+SW	A3,00B4 (SP)	;SP+B4=A3: p->DL
+JAL	7000E8B0	;V0= offset corresponding to address A0
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LW	A3,00B4 (SP)	;A3=SP+B4: p->DL
+LW	T1,00E0 (SP)
+LW	T3,0020 (SP)
+OR	V1,S0,R0	;V1=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	V0,0004 (A3)	;A3+4= settextureimage.l: o->palette
+//7F0AD470:	[JSHFT] tilesync
+OR	A0,S0,R0	;A0=S0: p->DL
+LUI	T4,E800
+LUI	T5,F500
+ORI	T5,T5,0100
+SW	T4,0000 (V1)	;V1+0= tilesync.u
+SW	R0,0004 (V1)	;V1+4= tilesync.l
+//7F0AD488:	[JSHFT] settile
+SW	T5,0000 (A0)	;A0+0= settile.u: ci 16bit
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LUI	T6,0700
+SW	T6,0004 (A0)	;A0+4= settile.l: tile=7, pal=0, no clamp/mirror/mask/shift
+//7F0AD498:	[JSHFT] loadsync
+OR	A1,S0,R0	;A1=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+OR	A2,S0,R0	;A2=S0: p->DL
+LUI	T7,E600
+SW	T7,0000 (A1)	;A!+0= loadsync.u
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	R0,0004 (A1)	;A1+4= loadsync.l
+//7F0AD4B4:	[JSHFT] loadtlut
+LUI	T9,0703
+ORI	T9,T9,C000	;T9=tile=7, size=F (0x3C/4), start=0
+OR	T0,S0,R0	;T0=S0: p->DL
+LUI	T8,F000
+SW	T8,0000 (A2)	;A2+0= loadtlut.u: x0=0, y0=0
+SW	T9,0004 (A2)	;A2+4= loadtlut.l: tile=7, size=F (0x3C/4), start=0
+//7F0AD4CC:	[JSHFT] pipesync
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LUI	T4,E700
+SW	T4,0000 (T0)	;T0+0= pipesync.u
+SW	R0,0004 (T0)	;T0+4= pipesync.l
+//7F0AD4DC:	[JSHFT] settextureimage
+OR	A3,S0,R0	;A3=S0: p->DL
+LUI	T5,FD10
+SW	T5,0000 (A3)	;A3+0= settextureimage.u: rgba 16bit
+LUI	A0,8004
+ADDIU	A0,A0,0EDC	;A0=80040EDC: other japanese greyscale palette
+SW	A3,009C (SP)	;SP+9C=A3: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	T1,00E0 (SP)
+JAL	7000E8B0	;V0= offset corresponding to address A0
+SW	T3,0020 (SP)
+LW	A3,009C (SP)	;A3=SP+9C: p->DL
+LW	T1,00E0 (SP)
+LW	T3,0020 (SP)
+OR	V1,S0,R0	;V1=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LUI	T6,E800
+SW	V0,0004 (A3)	;A3+4= settextureimage.l: o->palette
+//7F0AD520:	[JSHFT] tilesync
+SW	T6,0000 (V1)	;V1+0= tilesync.u
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	R0,0004 (V1)	;V1+4= tilesync.l
+//7F0AD530:	[JSHFT] settile
+LUI	T7,F500
+ORI	T7,T7,0110
+OR	A1,S0,R0	;A1=S0: p->DL
+LUI	T8,0700
+SW	T8,0004 (A0)	;A0+4= settile.l: tile=7, pal=0, no clamp/mirror/mask/shift
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	T7,0000 (A0)	;A0+0= settile.u: 16bit ci, tmem=110
+//7F0AD54C:	[JSHFT] loadsync
+OR	A2,S0,R0	;A2=S0: p->DL
+LUI	T9,E600
+SW	T9,0000 (A1)	;A1+0= loadsync.u
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	R0,0004 (A1)	;A1+4= loadsync.l
+//7F0AD560:	[JSHFT] loadtlut
+LUI	T5,0703
+ORI	T5,T5,C000	;T5=tile=7, size=F (0x3C/4), start=0
+OR	T0,S0,R0	;T0=S0: p->DL
+LUI	T4,F000
+SW	T4,0000 (A2)	;A2+0= loadtlut.u: x0=0, y0=0
+SW	T5,0004 (A2)	;A2+4= loadtlut.l: tile=7, size=F (0x3C/4), start=0
+//7F0AD578:	[JSHFT] pipesync
+LUI	T6,E700
+SW	T6,0000 (T0)	;T0+0= pipesync.u
+SW	R0,0004 (T0)	;T0+4= pipesync.l
+ADDIU	S0,S0,0008	;S0+=8	next DL
+//7F0AD588:	[JSHFT] settextureimage
+OR	A1,S0,R0	;A1=S0: p->DL
+LUI	T7,FD50
+SW	T7,0000 (A1)	;A1+0= settextureimage.u: ci 16bit
+LW	A0,0014 (S1)	;A0=charentry+14: p->image
+SW	T3,0020 (SP)
+SW	T1,00E0 (SP)
+SW	A1,0084 (SP)
+JAL	7000E8B0	;V0= offset corresponding to address A0
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LW	A1,0084 (SP)
+LW	T1,00E0 (SP)
+LW	T2,010C (SP)	;T2=SP+10C: uly
+LW	T3,0020 (SP)
+OR	V1,S0,R0	;V1=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SW	V0,0004 (A1)	;A1+4= settextureimage.l: 
+//7F0AD5C8:	[JSHFT] settile
+LUI	T0,0700
+LUI	T8,F550
+OR	A0,S0,R0	;A0=S0: p->DL
+SW	T8,0000 (V1)	;V1+0= settile.u: ci 16bit
+SW	T0,0004 (V1)	;V1+4= settile.l: tile=7, pal=0, no clamp/mirror/mask/shift
+//7F0AD5DC:	[JSHFT] loadsync
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LUI	T9,E600
+SW	T9,0000 (A0)	;A0+0= loadsync.u
+SW	R0,0004 (A0)	;A0+4= loadsync.l
+//7F0AD5EC:	[JSHFT] loadblock
+OR	A2,S0,R0	;A2=S0: p->DL
+LUI	T4,F300
+SW	T4,0000 (A2)	;A2+0= loadblock.u: uls=0, ult=0
+LW	A3,0008 (S1)	;A3=charentry+8: height
+ADDIU	S0,S0,0008	;S0+=8	next DL
+OR	V0,S0,R0	;V0=S0: p->DL
+SLL	T5,A3,0x2	;T5=height*4
+ADDIU	A3,T5,FFFF	;A3=height*4-1: 0-x, not 1-x
+SLTI	AT,A3,07FF	;TRUE if valid size
+BEQ	AT,R0,7F0AD620	;set to default if too large
+ADDIU	S0,S0,0008	;S0+=8	next DL
+BEQ	R0,R0,7F0AD624
+OR	A1,A3,R0	;A1=A3: height
+//7F0AD620:
+ADDIU	A1,R0,07FF	;A1=7FF: default height
+//7F0AD624:
+ANDI	T6,A1,0FFF	;T6=height & FFF
+SLL	T7,T6,0xC	;T7=height*0x1000: lrs
+OR	T8,T7,T0	;T8= tile=7 | lrs
+ORI	T9,T8,0800	;T9= tile=7 | lrs | lrt=800
+SW	T9,0004 (A2)	;A2+4= loadblock.l
+//7F0AD638:	[JSHFT] pipesync
+LUI	T4,E700
+LUI	T5,F540
+SW	T4,0000 (V0)	;V0+0= pipesync.u
+SW	R0,0004 (V0)	;V0+4= pipesync.l
+//7F0AD648:	[JSHFT] settile
+ORI	T5,T5,0200
+OR	V1,S0,R0	;V1=S0: p->DL
+SW	T5,0000 (V1)	;V1+0= settile.u: ci 4bit, line=1
+LW	T7,0000 (S1)	;T7=charentry+0: char#
+LUI	AT,0008
+ADDIU	S0,S0,0008	;S0+=8	next DL
+ANDI	T8,T7,0001	;T8=TRUE if second in nehe set
+SLL	T9,T8,0x14	;palette=1 if nehe second image
+OR	T4,T9,AT	;T4= pal | clampt
+ORI	T5,T4,0200	;T5= pal | clampt | clamps
+SW	T5,0004 (V1)	;V1+4= settile.l: pal | clampt | clamps
+//7F0AD674:	[JSHFT] settilesize
+OR	A0,S0,R0	;A0=S0: p->DL
+LUI	T6,F200
+SW	T6,0000 (A0)	;A0+0= settilesize.u: 
+LW	T7,0008 (S1)	;T7=charentry+8: height
+LUI	AT,0003
+ORI	AT,AT,C000	;AT=0003C000
+ADDIU	T8,T7,FFFF	;T8=height-1
+SLL	T9,T8,0x2	;T9=2(height-1)
+ANDI	T4,T9,0FFF	;T4=lrt
+OR	T5,T4,AT	;T5= lrs=3C | lrt
+SW	T5,0004 (A0)	;A0+4= settilesize.l: 
+ADDIU	S0,S0,0008	;S0+=8	next DL
+//7F0AD6A4:	[jointly] work out how to display character
+LW	T6,00F4 (SP)	;T6=@xpos
+LW	T8,000C (S1)	;T8=S1+C: width
+LW	T9,0024 (SP)	;T9=SP+24: cutoff.xpos
+LW	T7,0000 (T6)	;T7=cur.xpos
+ADDU	T0,T7,T8	;T0=cur.xpos+width
+SLT	AT,T9,T0	;TRUE if cutoff.xpos < cur.xpos+width
+BNEL	AT,R0,7F0ADA94	;return if cur.position exceeds maximum display cutoff
+LW	T4,00F4 (SP)	;T4=@xpos
+LW	A0,0004 (S1)	;A0=charentry+4: y.off
+ADDU	V1,A0,T1	;V1=y.off + cur.ypos: disp.uly
+SLT	AT,V1,T2	;TRUE if disp.uly < uly
+BNEL	AT,R0,7F0AD9A4	;branch if disp.min < min image display position
+LW	T6,0008 (S1)
+LW	T4,0008 (S1)	;T4=charentry+8: height
+LUI	T5,8004
+ADDU	V0,V1,T4	;V0=y.off + cur.ypos + height: lry
+SLT	AT,T3,V0	;TRUE if lry < disp.lry
+BNEL	AT,R0,7F0AD8C8	;branch if given lry < disp.lry
+SLT	AT,T3,V1
+LW	T5,0E88 (T5)	;T5=80040EB8: p->2nd font table
+LUI	A2,8004
+ADDIU	A2,A2,0E98	;A2=80040E98
+BEQ	T5,R0,7F0AD7F8	;use normal texrect if NULL pointer to table2
+LUI	A3,8004
+//7F0AD704:	[jointly] texrectflip
+LUI	A2,8004
+ADDIU	A2,A2,0E98	;A2=80040E98
+LW	T7,0000 (A2)	;T7=80040E98: 
+LUI	A3,8004
+SLL	T6,T0,0x2	;T6=(cur.xpos+width)*4: lrx
+ADDIU	A3,A3,0E9C	;A3=80040E9C
+ADDU	T8,T6,T7	;T8= lrx+offset?
+LW	T7,0000 (A3)	;T7=80040E9C: 
+ANDI	T9,T8,0FFF	;T9= lrx & FFF
+SUBU	T5,T1,A0	;T5=cur.ypos-y.off
+SLL	T6,T5,0x2	;T6=(cur.ypos-y.off)*4: lry
+LUI	AT,E500
+OR	T4,T9,AT	;T4= texrectflip | lrx
+ADDU	T8,T6,T7	;T8= lry+offset?
+ANDI	T9,T8,0FFF	;T9= lry & FFF
+SLL	T5,T9,0xC	;T5= lry * 0x1000
+OR	T6,T4,T5	;T6= texrectflip | lry | lrx
+OR	V0,S0,R0	;V0=S0: p->DL
+SW	T6,0000 (V0)	;V0+0= texrectflip.u.u: lry, lrx
+//7F0AD750:	[jointly] texrectflip.u.l
+LW	T7,00F4 (SP)	;T7=@xpos
+LW	T4,0000 (A2)	;T4=80040E98: 
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LW	T8,0000 (T7)	;T8=cur.xpos
+LW	T7,0004 (S1)	;T7=charentry+4: y.off
+OR	V1,S0,R0	;V1=S0: p->DL
+SLL	T9,T8,0x2	;T9=cur.xpos*4
+ADDU	T5,T9,T4	;T5=cur.xpos+offset?: ulx
+LW	T9,0008 (S1)	;T9=charentry+8: height
+SUBU	T8,T1,T7	;T8=cur.ypos-y.off
+LW	T7,0000 (A3)	;T7=80040E9C: 
+ANDI	T6,T5,0FFF	;T6=ulx & FFF
+SUBU	T4,T8,T9	;T4=cur.ypos+y.off-height
+SLL	T5,T4,0x2	;T5=(cur.ypos+y.off-height)*4
+ADDU	T8,T5,T7	;T8=cur.ypos+offset?: uly
+ANDI	T9,T8,0FFF	;T9=uly & FFF
+SLL	T4,T9,0xC	;T4=uly*0x1000
+OR	T5,T6,T4	;T5= uly | ulx
+SW	T5,0004 (V0)	;V0+4= texrectflip.u.l: tile=0, uly, ulx
+//7F0AD79C:	[jointly] rdphalf_1 - texrectflip.l.u
+LUI	T7,B400
+SW	T7,0000 (V1)	;V1+0= rdphalf_1
+LW	T8,0008 (S1)	;T8=charentry+8: height
+LUI	T4,8004
+LW	T4,0EA0 (T4)	;T4=80040EA0: base t
+ADDIU	T9,T8,FFFF	;T9=height-1
+SLL	T6,T9,0x5	;T6=(height-1) * 0x20
+LUI	T8,8004
+LW	T9,0EA4 (T8)	;T9=80040EA4: s
+ADDU	T5,T6,T4	;T5=t+offset?: t
+ANDI	T7,T5,FFFF	;T7= t & FFFF
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SLL	T6,T9,0x10	;T6= offset * 0x10000: s
+OR	T4,T6,T7	;T4= s | t
+OR	A1,S0,R0	;A1=S0: p->DL
+LUI	T8,0400
+ORI	T8,T8,FC00	;T8=0400FC00
+SW	T4,0004 (V1)	;V1+4= texrectflip.l.u: s, t
+//7F0AD7E4:	[jointly] rdphalf_2 - texrectflip.l.l
+LUI	T5,B300
+SW	T5,0000 (A1)	;A1+0= rdphalf_2
+SW	T8,0004 (A1)	;A1+4= texrectflip.l.l: dsdx=0400, dtdy=-400
+BEQ	R0,R0,7F0ADA90
+ADDIU	S0,S0,0008	;S0+=8	next DL
+//7F0AD7F8:	[jointly] texrect: 
+LW	T6,0000 (A2)	;T6=80040E98: 
+SLL	T9,T0,0x2	;T9=(cur.xpos+width)*4: lrx
+ADDIU	A3,A3,0E9C	;A3=80040E9C
+ADDU	T7,T9,T6	;T7= lrx+offset
+LW	T6,0000 (A3)	;T6=80040E9C: 
+ANDI	T4,T7,0FFF	;T4= lrx & FFF
+SLL	T5,T4,0xC	;T5= lrx * 0x1000
+SLL	T9,V0,0x2	;T9=(y.off + cur.ypos + height)*4: lry
+LUI	AT,E400
+ADDU	T7,T9,T6	;T7= lry+offset
+ANDI	T4,T7,0FFF	;T4= lry & FFF
+OR	T8,T5,AT	;T8= texrect.u,u | lrx
+OR	T5,T8,T4	;T5= texrect.u.u | lrx | lry
+OR	V1,S0,R0	;V1=S0: p->DL
+SW	T5,0000 (V1)	;V1+0= texrect.u.u: lrx, lry
+//7F0AD834:	[jointly] texrect.u.l
+LW	T9,00F4 (SP)	;T9=@xpos
+LW	T8,0000 (A2)	;T8=80040E98: 
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LW	T6,0000 (T9)	;T6=cur.xpos
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SLL	T7,T6,0x2	;T7= cur.xpos * 4: ulx
+LW	T6,0004 (S1)	;T6=charentry+4: y.off
+ADDU	T4,T7,T8	;T4= ulx + offset
+ANDI	T5,T4,0FFF	;T5= ulx & FFF
+LW	T4,0000 (A3)	;T4=80040E9C: 
+ADDU	T7,T1,T6	;T7=cur.ypos + y.off
+SLL	T8,T7,0x2	;T8=(cur.ypos + y.off)*4: uly
+SLL	T9,T5,0xC	;T9=ulx * 0x1000
+ADDU	T5,T8,T4	;T5=uly + offset
+ANDI	T6,T5,0FFF	;T6= uly & FFF
+OR	T7,T9,T6	;T7= ulx | uly
+SW	T7,0004 (V1)	;V1+4= texrect.u.l: tile=0, ulx, uly
+//7F0AD87C:	[jointly] rdphalf_1 - texrect.l.u
+LUI	T8,B400
+SW	T8,0000 (A0)	;A0+0= rdphalf_1
+LUI	T4,8004
+LW	T5,0EA0 (T4)	;T5=80040EA0: base s
+LUI	T6,8004
+LW	T6,0EA4 (T6)	;T6=80040EA4: base t
+SLL	T9,T5,0x10	;T9=s * 0x10000
+LUI	T5,0400
+ANDI	T7,T6,FFFF	;T7= t & FFFF
+OR	T8,T9,T7	;T8= uls | ult
+OR	A1,S0,R0	;A1=S0: p->DL
+SW	T8,0004 (A0)	;A0+4= texrect.l.u: uls, ult
+//7F0AD8AC:	[jointly] rdphalf_2 - texrect.l.l
+ORI	T5,T5,0400
+LUI	T4,B300
+SW	T4,0000 (A1)	;A1+0= rdphalf_2
+SW	T5,0004 (A1)	;A1+4= texrect.l.l: dsdx=0400, dtdy=400
+BEQ	R0,R0,7F0ADA90
+ADDIU	S0,S0,0008	;S0+=8	next DL
+//7F0AD8C4:	[jointly] texrect: given.lry < disp.lry
+SLT	AT,T3,V1	;TRUE if max.ypos < (cur.ypos+y.off)
+BNEZ	AT,7F0ADA90	;return if out of bounds
+//7F0AD8CC:	[jointly] texrect.u.u
+LUI	A2,8004
+ADDIU	A2,A2,0E98	;A2=80040E98
+LW	T9,0000 (A2)	;T9=80040E98: 
+LUI	A3,8004
+SLL	T6,T0,0x2	;T6=(cur.xpos+width)*4: lrx
+ADDIU	A3,A3,0E9C	;A3=80040E9C
+ADDU	T7,T6,T9	;T7=lrx + offset
+LW	T6,0000 (A3)	;T6=80040E9C: 
+ANDI	T8,T7,0FFF	;T8= lrx & FFF
+SLL	T4,T8,0xC	;T4= lrx * 0x1000
+LUI	AT,E400
+ADDU	T9,T3,T6	;T9=max.ypos + offset
+ANDI	T7,T9,0FFF	;T7= lry & FFF
+OR	T5,T4,AT	;T5= texrect.u,u | ulx
+OR	T8,T5,T7	;T8= texrect.u,u | ulx | uly
+OR	V0,S0,R0	;V0=S0: p->DL
+SW	T8,0000 (V0)	;V0+0= texrect.u,u: ulx, uly
+//7F0AD910:	[jointly] texrect.u.l
+LW	T4,00F4 (SP)	;T4=@xpos
+LW	T5,0000 (A2)	;T5=80040E98: 
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LW	T6,0000 (T4)	;T6=cur.xpos
+OR	V1,S0,R0	;V1=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SLL	T9,T6,0x2	;T9=cur.xpos * 4: ulx
+LW	T6,0004 (S1)	;T6=charentry+4: y.off
+ADDU	T7,T9,T5	;T7= ulx + offset
+ANDI	T8,T7,0FFF	;T8= ulx & FFF
+LW	T7,0000 (A3)	;T7=80040E9C: 
+ADDU	T9,T1,T6	;T9=cur.ypos+y.off
+SLL	T5,T9,0x2	;T5=(cur.ypos+y.off) * 4: uly
+SLL	T4,T8,0xC	;T4=ulx * 0x1000
+ADDU	T8,T5,T7	;T8=uly + offest
+ANDI	T6,T8,0FFF	;T6=uly & FFF
+OR	T9,T4,T6	;T9= ulx | uly
+SW	T9,0004 (V0)	;V0+4= texrect.u.l: tile=0, ulx, uly
+//	[jointly] rdphalf_1 - texrect.l.u
+LUI	T5,B400
+SW	T5,0000 (V1)	;V1+0= rdphalf_1
+LUI	T7,8004
+LW	T8,0EA0 (T7)	;T8=80040EA0: base s
+LUI	T6,8004
+LW	T6,0EA4 (T6)	;T6=80040EA4: base t
+SLL	T4,T8,0x10	;T4= s * 0x10000
+LUI	T8,0400
+ANDI	T9,T6,FFFF	;T9= t & FFFF
+OR	T5,T4,T9	;T5= s | t
+OR	A0,S0,R0	;A0=S0: p->DL
+SW	T5,0004 (V1)	;V1+4= texrect.l.u: uls, ult
+//7F0AD988:	[jointly] rdphalf_2 - texrect.l.l
+ORI	T8,T8,0400
+LUI	T7,B300
+SW	T7,0000 (A0)	;A0+0= rdphalf_2
+SW	T8,0004 (A0)	;A0+4= texrect.l.l: dsdx=0400, dtdy=400
+BEQ	R0,R0,7F0ADA90
+ADDIU	S0,S0,0008	;S0+=8	next DL
+//7F0AD9A0:	[jointly] texrect: disp.uly < given.uly
+LW	T6,0008 (S1)	;T6=charentry+8: height
+LUI	A2,8004
+ADDIU	A2,A2,0E98	;A2=80040E98
+ADDU	V0,V1,T6	;V0=(cur.ypos+y.off)+height
+SLT	AT,V0,T2	;TRUE if disp.ypos < uly
+BNEZ	AT,7F0ADA90	;return if not within bounds
+LUI	A3,8004
+//7F0AD9BC:	[jointly] texrect.u,u
+LW	T9,0000 (A2)	;T9=80040E98: 
+SLL	T4,T0,0x2	;T0=(cur.xpos+width)*4
+ADDIU	A3,A3,0E9C	;A3=80040E9C
+ADDU	T5,T4,T9	;T5=lrx + offset
+LW	T9,0000 (A3)	;T9=80040E9C: 
+ANDI	T7,T5,0FFF	;T7=lrx & FFF
+SLL	T8,T7,0xC	;T8=lrx * 0x1000
+SLL	T4,V0,0x2	;T4=(y.off + cur.ypos + height)*4: lry
+LUI	AT,E400
+ADDU	T5,T4,T9	;T5=lry+offset
+ANDI	T7,T5,0FFF	;T7=lry & FFF
+OR	T6,T8,AT	;T6= texrect.u,u | lrx
+OR	T8,T6,T7	;T8= texrect.u,u | lrx | lry
+OR	V1,S0,R0	;V1=S0: p->DL
+SW	T8,0000 (V1)	;V1+0= texrect.u,u: lrx, lry
+//7F0AD9F8:	[jointly] texrect.u,l
+LW	T4,00F4 (SP)	;T4=@xpos
+LW	T6,0000 (A2)	;T6=80040E98: 
+ADDIU	S0,S0,0008	;S0+=8	next DL
+LW	T9,0000 (T4)	;T9=cur.xpos
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	S0,S0,0008	;S0+=8	next DL
+SLL	T5,T9,0x2	;T5=cur.xpos*4: ulx
+ADDU	T7,T5,T6	;T7=ulx + offset
+LW	T5,0000 (A3)	;T5=80040E9C: 
+ANDI	T8,T7,0FFF	;T8= ulx & FFF
+SLL	T9,T2,0x2	;T9=uly * 4 (from calling function): uly
+ADDU	T6,T9,T5	;T6=uly + offset
+ANDI	T7,T6,0FFF	;T7=uly & FFF
+SLL	T4,T8,0xC	;T4=ulx * 0x1000
+OR	T8,T4,T7	;T8= ulx | uly
+SW	T8,0004 (V1)	;V1+4= texrect.u.l: tile=0, ulx, uly
+//	[jointly] rdphalf_1 - texrect.l.u
+LUI	T9,B400
+SW	T9,0000 (A0)	;V1+0= rdphalf_1
+LW	T6,0004 (S1)	;T6=charentry+4: y.off
+SUBU	T5,T2,T1	;T5=uly - cur.ypos
+LUI	T8,8004
+SUBU	T4,T5,T6	;T4=uly - cur.ypos - y.off
+LW	T8,0EA4 (T8)	;T8=80040EA4: base t
+SLL	T7,T4,0x5	;T7=(uly - cur.ypos - y.off) * 20
+LUI	T6,8004
+LW	T4,0EA0 (T6)	;T4=80040EA0: base s
+ADDU	T9,T7,T8	;T9=(uly - cur.ypos - y.off) * 20 + t: correction for negative y?
+ANDI	T5,T9,FFFF
+SLL	T7,T4,0x10	;T7= s * 0x10000
+OR	T8,T7,T5	;T8=s | t
+OR	A1,S0,R0	;A1=S0: p->DL
+SW	T8,0004 (A0)	;A0+4= texrect.l.u: uls, ult
+//7F0ADA78:	[jointly] rdphalf_2 - texrect.l.l
+LUI	T6,0400
+ORI	T6,T6,0400	;T6=04000400: change in s/t to change in x/y
+LUI	T9,B300
+SW	T9,0000 (A1)	;A1+0= rdphalf_2
+SW	T6,0004 (A1)	;A1+4= texrect.l.l: dsdx=0400, dtdy=400
+ADDIU	S0,S0,0008	;S0+=8	next DL
+//7F0ADA90:	[return] set new x position
+LW	T4,00F4 (SP)	;T4=SP+F4: @width
+LW	T5,000C (S1)	;T5=charentry+C: width
+OR	V0,S0,R0	;V0=S0: p->DL
+LW	T7,0000 (T4)	;T7=cur.width
+ADDU	T8,T7,T5	;T8=cur.width+width
+SW	T8,0000 (T4)	;update cur.width
+//7F0ADAA8:	return
+LW	RA,001C (SP)
+LW	S1,0018 (SP)
+LW	S0,0014 (SP)
+JR	RA
+ADDIU	SP,SP,00F0
+
++_+
+
+7000E8B0		V0=rdram offset derived from pointer A0; used to produce microcode memory addresses for ops
+	Must be a valid pointer, but may be to rdram, uncached memory, or a TLB address
+	accepts: A0=pointer
+ADDIU	SP,SP,FFE8
+SW	A0,0018 (SP)	;SP+18=A0: pointer
+LW	T6,0018 (SP)	;T6=pointer
+LUI	AT,8000
+SW	RA,0014 (SP)
+SLTU	AT,T6,AT	;AT=TRUE if isn't rdram address (offset)
+BNEZ	AT,7000E8E8	;branch if 80000000 or above
+LUI	AT,A000
+SLTU	AT,T6,AT	;AT=TRUE if between rdram and mirror (normal address)
+BEQ	AT,R0,7000E8E8	;branch if isn't a ram address
+LUI	AT,1FFF
+ORI	AT,AT,FFFF	;AT=1FFFFFFF
+BEQ	R0,R0,7000E91C
+AND	V0,T6,AT	;V0=pointer & mask
+//7000E8E8:	check if in uncached memory
+LW	T7,0018 (SP)	;T7=p->palette
+LUI	AT,A000
+SLTU	AT,T7,AT	;TRUE if rdram or ROM address
+BNEZ	AT,7000E914	;branch if someplace there
+LUI	AT,C000
+SLTU	AT,T7,AT	;TRUE if in rdram mirror (A0-C0)
+BEQ	AT,R0,7000E914	;branch if isn't in mirror
+LUI	AT,1FFF
+ORI	AT,AT,FFFF	;AT=1FFFFFFF
+BEQ	R0,R0,7000E91C
+AND	V0,T7,AT	;V0=pointer & mask
+//7000E914:	see if it's a TLB address
+JAL	70019020	;V0=offset corresponding to TLB address
+LW	A0,0018 (SP)	;A0=pointer
+//7000E91C:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+70019020	19C20	V0=rdram offset corresponding to TLB address A0, or -1 if invalid
+	fries: AT,T0,T1,T2,T3,T4,T5
+MFC0	T0,EntryHi	;T0=TLB address corresponding to Index
+ANDI	T1,T0,00FF	;T1=TLB address offset, which should always be 0
+ADDIU	AT,R0,E000	;AT=FFFFE000: mask for 0x2000 partitions
+AND	T2,A0,AT	;T2=address & mask: TLB entry start
+OR	T1,T1,T2	;T1+=offset	likely always 0
+MTC0	T1,EntryHi	;EntryHi=TLB address to probe
+NOP
+NOP
+NOP
+TLBP			;probe TLB for EntryHi
+NOP
+NOP
+MFC0	T3,Index	;T3=index for matching entry if found
+LUI	AT,8000
+AND	T3,T3,AT	;T3=TRUE if invalid
+BNEZ	T3,700190C8	;reurn invalid if can't be read
+NOP
+TLBR			;read TLB Index's entry
+NOP
+NOP
+NOP
+MFC0	T3,PageMask	;T3=pagemask
+ADDI	T3,T3,2000	;T3+=2000: next page
+SRL	T3,T3,0x1	;T3/=2
+AND	T4,T3,A0	;T4=p->TLB & pagemask
+BNEZ	T4,70019098	;use EntryLo1 if mask found
+ADDI	T3,T3,FFFF	;T3--	convert to mask
+MFC0	V0,EntryLo0
+BEQ	R0,R0,7001909C	;use EntryLo0 otherwise
+NOP
+//70019098:
+MFC0	V0,EntryLo1
+//7001909C:
+ANDI	T5,V0,0002
+BEQ	T5,R0,700190C8	;return invalid if 0x2 detected
+NOP
+LUI	AT,3FFF
+ORI	AT,AT,FFC0	;AT=3FFFFFC0
+AND	V0,V0,AT	;V0=Entry & mask: offset & mask to get beginning of TLB segment
+SLL	V0,V0,0x6	;V0*=0x40: offset in rdram to start of TLB segment
+AND	T5,A0,T3	;T5=address & pagemask: offset from start of segment
+ADD	V0,V0,T5	;V0=rdram offset to segment + offset from start of segment: rdram offset
+BEQ	R0,R0,700190CC
+NOP
+//700190C8:	return invalid (-1)
+ADDIU	V0,R0,FFFF
+//700190CC:	return
+MTC0	T0,EntryHi	;stuff original EntryHi back onto COP0
+JR	RA
+NOP

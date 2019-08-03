@@ -1,0 +1,285 @@
+  Strangely, left all the ramrom recording tools in, minus the debugger interface.
+  Just need to trigger manually...
+  
+[+_+]
+
+Part 1: MP replay support
+
+7F0BFC9C	F268C	replay ramrom file at hardware address A0
+//7F0BFCF0:	F26E0	
+LW	T9,0000 (A1)	;T9=p->demo
+JAL	7F01D440	;A0->stage, set solo, get p->briefing
+LW	A0,0010 (T9)	;A0=demo+10: stage#
+
+//7F0BFBC4:	F25B4	
+LW	T1,0000 (T8)	;T9=p->demo
+JAL	7F01D440	;A0->stage, set solo, get p->briefing
+LW	A0,0010 (T1)	;A0=demo+10: stage#
+
+7F01D440	4FE30	A0->stage, set solo, get p->briefing
+	accepts: A0=stage#
+LUI	AT,8002
+ADDIU	SP,SP,FFE8
+SW	R0,5E40 (AT)	;0->80025E40: mode=0	solo
+SW	RA,0014 (SP)
+LUI	AT,8002
+JAL	7F00DBD0	;V0=briefing for solo stage A0
+SW	A0,5E44 (AT)	;A0->80025E44: stage#
+LW	RA,0014 (SP)
+LUI	AT,8002
+SW	V0,5E48 (AT)	;V0->80025E48: p->briefing
+JR	RA
+ADDIU	SP,SP,0018
+
+Hack!
+7F01D440	4FE30	A0->stage, set solo, get p->briefing
+	accepts: A0=stage#, (A1=mode#)
+00002825	*OR	A1,R0,R0
+--------	ADDIU	SP,SP,FFE8
+3C018002	*LUI	AT,8002
+--------	SW	RA,0014 (SP)
+AC255E40	*SW	A1,5E40 (AT)
+--------	JAL	7F00DBD0	;V0=briefing for solo stage A0
+--------	SW	A0,5E44 (AT)	;A0->80025E44: stage#
+
+7F0BFC9C	F268C	replay ramrom file at hardware address A0
+//7F0BFCF0:	F26E0	
+8C450084	*LW	A1,0084 (V0)	//A1=demo+84: mode
+0FC07511	*JAL	7F01D444	//set stage A0, mode A1, p->briefing data
+8C440010	*LW	A0,0010 (V0)	//A0=demo+10: stage #
+
+//7F0BFBC4:	F25B4	
+8D050084	*LW	A1,0084 (T0)	;T1=80048468: p->demo block
+0FC07511	*JAL	7F01D444	;A0->stage, set solo, get p->briefing
+8D040010	*LW	A0,0010 (T0)	;A0=demo+10: stage#
+
+[+_+]
+
+Part 2: recording support
+
+hardware request occurances
+F1B6C
+F1B98
+F1C48
+F1C94
+F1CA8
+F2558
+F2724
+Hack!
+7000503C	5C3C	handles hardware read request
+AFBFFFFC	*SW	RA,FFFC (SP)
+0C0013EC	-JAL	70004FB0
+27BDFFE8	-ADDIU	SP,SP,FFE8
+04420004	*BLTZL	V0,70005C58
+8FBF0014	*LW	RA,0014 (SP)
+0C001404	-JAL	70005010
+00000000	-NOP
+8FBF0014	-LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	-ADDIU	SP,SP,0018
+
+70005128	5D28	handles hardware write request
+AFBFFFFC	*SW	RA,FFFC (SP)
+0C001432	-JAL	700050C8
+27BDFFE8	-ADDIU	SP,SP,FFE8
+04420004	*BLTZL	V0,70005144
+8FBF0014	*LW	RA,0014 (SP)
+0C001404	-JAL	70005010
+00000000	-NOP
+8FBF0014	-LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	-ADDIU	SP,SP,0018
+
+
+70004FB0	5BB0	reads A2 bytes from hardware A1 to rdram A0
+	ADDIU	SP,SP,FFD8
+	SW	RA,0024 (SP)
+//70004FB8:	test and redirect
+0C001444	*JAL	70005110	;V0=FALSE if ROM address
+AFA40010	*SW	A0,0010 (SP)	;SP+10=A0: p->rdram
+10400005	*BEQ	V0,R0,+cache
+AFA5002C	SW	A1,002C (SP)	;SP+2C=A1: p->hardware
+0C004C20	*JAL	70013080	;memcpy(A0,A1,A2)
+00000000	*NOP
+1000000C	*BEQ	R0,R0,return	;heck, even have a couple extra lines!
+2402FFFF	*ADDIU	V0,R0,FFFF
+//70004FD8:	CACHE target
+AFA60014	*SW	A2,0014 (SP)	;SP+30=A2: size
+0C0040D4	JAL	70010350	;cache A1 bytes at A0
+00C02825	OR	A1,A2,R0	;A1=A2: size
+//70004FE4:	send PI read request
+00003025	OR	A2,R0,R0	;A2=0
+//70004FE8:
+3C048005	-LUI	A0,8005
+249868D0	*ADDIU	T8,A0,38D0	;T8=800568D0
+248468B0	ADDIU	A0,A0,38B0	;A0=800568B0
+AFB80018	SW	T8,0018 (SP)	;SP+18= 800636F0
+00002825	OR	A1,R0,R0	;A1=0
+0C003BB4	JAL	7000EED0
+8FA7002C	LW	A3,002C (SP)	;A3=p->hardware
+//70005004:	return
+8FBF0024	LW	RA,0024 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+
+700050C8	5CC8	writes A2 bytes from rdram A0 to hardware A1
+	ADDIU	SP,SP,FFD8
+	SW	RA,0024 (SP)
+//700050D0:	test and redirect
+0C001444	*JAL	70005110	;V0=FALSE if ROM address
+AFA40010	*SW	A0,0010 (SP)	;SP+28=A0: p->rdram
+10400006	*BEQ	V0,R0,+cache
+AFA5002C	SW	A1,002C (SP)	;SP+2C=A1: p->hardware
+00802825	*OR	A1,A0,R0	;A1=p->source: p->rdram
+0C004C20	*JAL	70013080	;memcpy(A0,A1,A2)
+8FA4002C	*LW	A0,002C (SP)	;A0=p->target
+08001401	*J	70005004	;sloppy end, I know...
+2402FFFF	*ADDIU	V0,R0,FFFF
+//700050F4:	CACHE target
+AFA60014	*SW	A2,0014 (SP)	;SP+30=A2: size
+0C004100	JAL	70010400	;cache
+00C02825	OR	A1,A2,R0	;A1=A2: size
+//70005100:	send PI write request
+080013FA	*J	70004FE8
+24060001	ADDIU	A2,R0,0001	;A2=1
+00000000	*NOP
+00000000	*NOP
+
+70005110	5D10	V0=TRUE if A1 not ROM address; fries AT
+3C017000	LUI	AT,7000
+00A1082B	SLTU	AT,A1,AT	;TRUE if addy < 70000000
+3C02B000	LUI	V0,B000
+00A2102B	SLTU	V0,A1,V0	;TRUE if addy < B0000000
+03E00008	JR	RA
+00411026	XOR	V0,V0,AT	;TRUE if normal addy, false if ROM or weird
+
+[+_+]
+
+Part 3: interface
+
+Recording occurs when 80041108 = 1
+Recording ceases when 80041104 = 0
+
+Requires three interface hacks.
+1) L + R (c = set#) on MP options
+2) L + R (c = set#) on objectives
+3) c-up + c-down in gameplay
+
+Activation is silly but effective.  Hold L+R to activate, and use c-button combinations to set the set number.
+L + R is set 0, L + R + c-right is set 1, L + R + c-left is set 2, L + R + c-right + c-left is set 3, etc.
+Pass the result to 7F0BFC3C
+
+7F00D198	3FB88	menu 06 interface: mode select screen
+7F00E6F0	410E0	menu 08 interface: mission objectives
+7F010738	43128	menu 0E interface: multiplayer options
+7F081A18	B4408	player motion and view interface
+
+0C002C48	JAL	7000B120	;V0=pressed A1
+0C002C20	JAL	7000B080	;V0=held A1
+
+need to inject something like this...	9 lines
+00002025	OR	A0,R0,R0
+0C002C20	JAL	7000B080	;V0=buttons held
+3405003F	ORI	A1,R0,003F
+38440030	XORI	A0,V0,0030	;A0=set# or something invalid
+2C810010	SLTIU	AT,A0,0010	;TRUE only if L+R held
+10200003	BEQ	AT,R0,+3
+00000000	NOP
+0FC2FF0F	JAL	7F0BFC3C	;record ramrom, set A0
+00000000	NOP
+
+pure C up+down
+00002025	OR	A0,R0,R0
+0C002C20	JAL	7000B080	;V0=buttons held
+3405000C	ORI	A1,R0,000C
+3841000C	XORI	AT,V0,000C	;A0=0 if pressed
+10200003	BEQ	AT,R0,+3
+00000000	NOP
+0FC2FF15	JAL	7F0BFC54	;stop recording
+00000000	NOP
+
+menu 08 interface
+7F00E6F0	410E0	menu 08 interface: mission objectives
+//7F00E93C:	4132C	test for tab 2 selected: "NEXT"
+00002025	OR	A0,R0,R0
+0C002C20	JAL	7000B080	;V0=buttons held
+3405003F	ORI	A1,R0,003F
+38440030	XORI	A0,V0,0030	;A0=set# or something invalid
+2C810010	SLTIU	AT,A0,0010	;TRUE only if L+R held
+10200003	BEQ	AT,R0,+3
+00000000	NOP
+0FC2FF0F	JAL	7F0BFC3C	;record ramrom, set A0
+00000000	NOP
+//
+0FC026A1	JAL	7F009A84	;control stick tracking
+00000000	NOP
+3C0D8002	-LUI	T5,8005
+8DAB5E24	*LW	T3,A8D4 (T5)	;T3=8002A8D4: TRUE if tab 2 selected
+1160000B	-BEQ	T3,R0,7F00EA70	;branch if tab 2 not selected
+8DAC5E4C	*LW	T4,A8FC (T5)	;T4=8002A8FC: difficulty
+24010003	-ADDIU	AT,R0,0003
+24040009	-ADDIU	A0,R0,0009	;A0=9: 007 options page
+55810001	*BNEL	T4,AT,+1	;branch if difficulty not 3: not 007
+2404000A	-ADDIU	A0,R0,000A	;A0=A: mission objectives page
+0FC0690E	JAL	7F01A438	;set menu A0 to mode A1
+00002825	OR	A1,R0,R0	;A1=0: immediate
+0FC028BC	JAL	7F00A2F0	;set cursor position to tab 2
+00000000	NOP
+10000011	BEQ	R0,R0,7F00EAB0
+8FBF0014	LW	RA,0014 (SP)
+//7F00EA70:	advance to mission objectives page
+
+
+menu 0E interface
+//7F0107F0:	431E0	
+0C002C20	JAL	7000B080	;test if buttons held
+3405A000	ORI	A1,R0,A000	;A1=A000: A, Z button
+1440007A	BNEZ	V0,7F010AF4	;branch if something held
+00002025	*OR	A0,R0,R0
+0C002C20	JAL	7000B080	;test if buttons held
+3405003F	*ORI	A1,R0,003F	;A1=003F: L, R, C buttons
+38440030	*XORI	A0,V0,0030	;A0=set# or something invalid
+2C810010	*SLTIU	AT,A0,0010	;TRUE only if L+R held
+50200004	*BEQL	AT,R0,+4
+3C018002	-LUI	AT,8002
+0FC2FF0F	*JAL	7F0BFC3C	;record ramrom, set A0
+00000000	*NOP
+3C018002	-LUI	AT,8002
+AC205E34	-SW	R0,5E34 (AT)	;0->80025E34: tab 3 highlight
+AC205E30	-SW	R0,5E30 (AT)	;0->80025E30: tab 2 highlight
+AC205E2C	-SW	R0,5E2C (AT)	;0->80025E2C: tab 1 highlight
+3C018006	-LUI	AT,8006
+AC208710	-SW	R0,8710 (AT)	;0->80058710: highlight stage
+AC208718	SW	R0,8718 (AT)	;0->80058718: highlight character
+AC208714	-SW	R0,8714 (AT)	;0->80058714: highlight length
+AC20871C	SW	R0,871C (AT)	;0->8005871C: highlight weapon
+AC208720	SW	R0,8720 (AT)	;0->80058720: highlight handicap
+AC20870C	-SW	R0,870C (AT)	;0->8005870C: highlight scenario
+AC208724	SW	R0,8724 (AT)	;0->80058724: highlight control style
+AC208708	-SW	R0,8708 (AT)	;0->80058708: highlight players
+0FC028A7	JAL	7F00A29C	;V0=1 if cursor on tab 3
+AC208728	SW	R0,8728 (AT)	;0->80058728: highlight aim
+
+7F081A18	B4408	player motion and view interface
+//7F081BB4:	B45A4	test if gameplay stopped, etc.
+//7F081C00:	B45F0	figure out control type and set masks
+97AD01CA	LHU	T5,01CA (SP)	;T5=SP+1CA: controller 1 cur.
+31A1000C	*ANDI	AT,T5,000C	;AT= c-up | c-down
+3821000C	*XORI	AT,AT,000C	;FALSE if c-up + c-down
+14200003	*BNEZ	AT,+3
+AFAD005C	-SW	T5,005C (SP)	;SP+5C= controller 1 button cur. input
+0FC2FF15	*JAL	7F0BFC54	;stop recording
+00000000	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+0FC29038	JAL	7F0A4DC0	;V0= cur.player's control type [BONDdata+2A58]
+00000000	NOP
+2C410004	*SLTIU	AT,V0,0004	;TRUE if single controller types
+142001C3	*BNE	AT,R0,7F0822B8	;branch if not type 4: 2.1
+00000000	NOP

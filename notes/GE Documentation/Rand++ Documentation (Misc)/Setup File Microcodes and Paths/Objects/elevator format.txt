@@ -1,0 +1,86 @@
+!Proposal!
+This is a variably-sized block, just to let you know.  It allows for an elevator with 16 stops.  Any more would require a word for a whopping 32 stops.  16 is overkill.  No turbolifts - only vertical motion can be used in GE!
+0x0	2	total size of block
+0x2	1	state: 1=enabled (ready for motion)
+0x3	1	31 - the type identifier.
+0x4	2	offset to trigger chunk
+0x6	2	offset to tile chunk
+0x8	2	offset to connection chunk
+0xA	2	current y offset (signed value)
+0xC	2	current timer, counting down to zero
+0xE	1	direction, 1=up, 0=disabled, -1=down.
+0xF	1	step number
+0x10	2	request slots
+0x12	2	rate of travel, in clipping units
+0x14	2	time spent on each floor	(copied to current timer on arrival to floor)
+
+Step Chunk	always at offset 0x16
+0x0	1	# entries
+0x1	1	reserved
+	-entries
+	0x0	2	y offset from original tile position for floor
+
+Trigger Chunk	sets off action events at particular floors if requested.
+0x0	1	# entries
+	-entries
+	0x0	1	step number
+	0x1	2	action block trigger number
+
+Tile Chunk	tiles that compose the elevator floor; what you're moving, in other words
+0x0	1	# entries
+	-entries
+	0x0	4	tile ID, converted to pointer at runtime
+
+Connection Chunk	sets a link between two tiles when at the specified floors
+0x0	1	# entries
+	-entries
+	0x0	1	step number to set connection at
+	0x1	4	tile ID 1, converted to pointer at runtime
+	0x5	1	edge of tile 1 to set connection for
+	0x6	4	tile ID 2, converted to pointer at runtime
+	0xA	1	edge of tile 2 to set connection for
+
+The object is then padded to the nearest word, to keep from breaking anything else
+
+
++-+-+-+-+
+
+This effectively would be an example of a two-stop, simple platform type elevator consisting of two tiles:
+004C 00 31 0000 001A 0023
+0000 0000 01 00 0000 0001 001E
+02 00
+	0000
+	0100
+02
+	01020310
+	01020410
+02
+	00 01020310 02 05060712 01
+	01 01020310 02 08090A14 00
+
+In this example, the total size of the object is 0x4A + 2 bytes of padding, bringing it to 0x4C.
+  The elevator moves one unit at a time and waits on each floor 30 seconds (roughly).
+  There are two stops, at +0 and +0x100.
+  The trigger chunk is not present, so its offset is zero.
+  Two tiles are moved, tile 010203 in room 10 and tile 010204 in the same room.  For the most part, elevators need either their own room or some global vis settings to appear correctly.
+  There will be two connections.  At step 0, tile 010203-10's third edge is linked to tile 050607-10.  It links back along edge two.  At step 1, tile 010203-10's third edge is linked to tile 08090A-14, and its first edge links back.
+
++_+
+
+  The way this is set in motion is rather nifty.  When a request is set, the timer is copied to the current timer slot and decremented until reaching zero.  When it reaches zero, the elevator is set to be enabled.  Give it a cycle or two to allow other objects or actions to manipulate this, just in case a door is jammed or something.  When all is confirmed the connections for the current floor are killed.
+  To figure out the next floor number, the request slot is looked at.  If it is the same as the current floor then the flag is just flipped.  Otherwise, slots are checked from the current floor in the direction the direction value was set to.  If zero, it gets set to 1.  If there are no stops in that direction, the direction flag is negated and tested in the other direction.  The floor is set as the new destination.
+  Once a destination is chosen, the direction value is multiplied by the step number and added to both the y positions of the tiles in the tile list and to the current y for the elevator.  When this value reaches that for the floor, the elevator stops and the floor's bitflag is flipped.
+  Once stopped, the connection chunk is checked to set any required connections for the floor.  That's as simple as taking the pointer for tile connections (someplace in 8003 - can't remember now), subtracting the pointer for the target from it, and dividing by 8.  The value is set in the appropriate edge slots.  On arrival, the enable flag is set back to 0.  Then the request slot is checked for nonzero, and if something is set if begins the timer and whatnot all over again.
+
+  Naturally, it will help to set some action blocks that can read the state of the object so doors and whatnot can be triggered appropriately.  The trigger event may be good enough for most doors, but a hack to the object interlink command to read and write to the enable flag would be ideal.  Essentially, we just need a set request action for the most part.
+  Request setting is simple.  When you 'activate' the object it would write the given bitflag to the elevator.  That allows for remote-enabled type elevators.  A mode set would also be useful to lock the elevator on a floor, though this can be handled via interlinking.
+
+#_#
+
+  For the record, this functions using the principle that y correction occurs for objects on a given tile.  The elevator object and any objects riding in the elevator must reside on one of these tiles and is carried up along with it.  The only noticable problem with this scheme revolves around the issue of stops set on each clipping tile.  A stop creates a sort of wall and can inhibit movement near the stop, not just specificly on the edge of the tile.  However, restricting movement of the elevator by tying it with doors, not killing connections on each floor, or a little hacking of the y correction system would solve that.
+
+@_@
+
+  How practically can it be implemented?  Well, it +can+ be implemented.  Making enough space to embed the code will be the most restrictive issue.  As for setting objects over the type 30 kill flag, that's not that hard.  Don't test for 30, and set a TLB pointer that points to its normal lead-out code.  That's backwards and forwards-compatible.  Writting a type itself is not actually difficult.  Code-wise, looking up tiles by ID is borrowed code.  Timers are also borrowed, y inc/decrement is easy to write, connection setting can be borrowed but would require about five lines total.  Non-aligned words are two commands instead of one, sure, but no biggie.  By setting the block size in the first two bytes it makes moving past a variably-sized chunk really simple.  There are already custom action block commands.  Seriously, this is quite feasible.  
+
+-Zoinkity

@@ -1,0 +1,100 @@
+7F091B64 used for text-related activated cheats
+only called at beginning of stage if a cheat is active - otherwise ignored
+
+7F091AAC decides its fate...
+
+7F091A5C:	0xC658C	tests if at last applicable gameplay cheat#
+ADDIU	AT,R0,001C
+BNE	A0,AT,7F091A70
+OR	V0,R0,R0
+JR	RA
+ADDIU	V0,R0,0001
+//7F091A70:
+JR	RA
+NOP
+
+7F091A78:	0xC65A8	V0=1 if MP flag for cheat# A0 set
+SLL	T6,A0,0x4
+LUI	T7,8004
+ADDU	T7,T7,T6
+LW	T7,F808 (T7)
+ADDIU	AT,R0,0004
+OR	V0,R0,R0
+ANDI	T8,T7,0004
+BNE	T8,AT,7F091AA4
+NOP
+JR	RA
+ADDIU	V0,R0,0001
+//7F091AA4:
+JR	RA
+NOP
+
+
+7F091AAC	0xC65DC	
+	activate cheat# A0; loops for all players in multiplayer
+ADDIU	SP,SP,FFD0
+SW	S0,0018 (SP)
+LUI	S0,8004
+SLL	T6,A0,0x4	;T6=cheat# A0 * offset for each entry
+SW	RA,0024 (SP)
+SW	S2,0020 (SP)
+ADDU	S0,S0,T6
+OR	S2,A0,R0	;S2=cheat#
+SW	S1,001C (SP)
+JAL	7F09B150	;V0=cur.player#
+LW	S0,F808 (S0)	;S0=cheat's activation flags
+JAL	7F09A464	;ret. V0=#players
+SW	V0,0028 (SP)	;SP+28=cur.player#
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F091AFC	;branch if multi
+OR	S1,V0,R0	;S1=#players
+//7F091AEC:	solo only yo
+JAL	7F091B64	;activate cheat A0
+OR	A0,S2,R0
+BEQ	R0,R0,7F091B50
+LW	RA,0024 (SP)
+//7F091AFC:	multiplayer
+ANDI	T7,S0,0004
+BEQ	T7,R0,7F091B4C	;flag 04 must be set to allow in multiplayer!
+ANDI	T8,S0,0020
+BEQ	T8,R0,7F091B20	;loop for each character flag
+NOP
+JAL	7F091B64	;activate cheat# A0
+OR	A0,S2,R0	;A0=cheat#
+BEQ	R0,R0,7F091B50
+LW	RA,0024 (SP)
+//7F091B20:
+BLEZ	V0,7F091B44	;skips if player# invalid
+OR	S0,R0,R0	;player#=0
+//7F091B28:
+JAL	7F09B10C	;set cur. player
+OR	A0,S0,R0	;A0=S0: player#
+JAL	7F091B64	;activate cheat# A0
+OR	A0,S2,R0	;A0=S2: cheat#
+ADDIU	S0,S0,0001	;S0++
+BNE	S0,S1,7F091B28	;loop for each player
+NOP
+//7F091B44:
+JAL	7F09B10C	;set back to original player; at least, in theory
+LW	A0,0028 (SP)
+//7F091B4C:
+LW	RA,0024 (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+JR	RA
+ADDIU	SP,SP,0030
+
+I believe this is all the source of a bug, making it difficult to properly assign global cheats to all players in multiplayer.
+The routine above loops for each player, but notice that in that routine it sets all player bitflags to activated.
+This inhibits toggle-like commands, and confuses matters when deactivating cheats.
+
+So, to straighten things out is going to be pleasant. 
+1) the 0x20 flag must loop the activation/deactivation for each player within the de/activation routine.
+2) at the start of multiplayer stages, all cheats should loop for each player to ensure all players are affected unless the 0x20 flag is set.
+3) any non-global cheat effect should inhibit the 0x20 flag.  Examples would be all guns, inf.ammo, etc.  Cheats that require this flag would be fast/slow animation and motion, paintball, etc.
+4) multiplayer should allow for individual activation of cheats.
+
+//7F0BDC0C:	runs through the list of cheats and calls for each
+
+//7F0BEC4C:	one used in multiplayer or stage load or something, iterates them and stuff

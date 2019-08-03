@@ -1,0 +1,356 @@
+7F0A6A80	DB5B0	solo watch menu interface
+	note: this file reflects NSNA binary...
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+OR	A0,R0,R0	;A0=0: player1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,1000	;A1=Start button
+BEQ	V0,R0,7F0A6AA4	;branch if start not pressed
+NOP
+JAL	7F07F860	;1->BONDdata+1D0: 
+NOP
+//7F0A6AA4:	reset control stick press registers
+LUI	T6,8004
+LW	T6,0ADC (T6)	;T6=80040ADC: TRUE if l/r stick enabled
+BNEZ	T6,7F0A6B4C	;branch if stick enabled
+NOP
+JAL	7000C0EC	;V0=current position left/right on player A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,FFF6	;TRUE if left
+BNEZ	AT,7F0A6AE8	;branch if pressing left
+NOP
+JAL	7000C0EC	;V0=current position left/right on player A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,000B	;TRUE if not right
+BEQ	AT,R0,7F0A6AE8	;branch if pressing right
+ADDIU	T7,R0,0001
+LUI	AT,8004
+BEQ	R0,R0,7F0A6B4C
+SW	T7,0ADC (AT)	;1->80040ADC: re-enable stick
+//7F0A6AE8:	
+JAL	7000C0EC	;V0=current position left/right on player A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,000B	;TRUE if not right
+BEQ	AT,R0,7F0A6B1C	;branch if pressing right
+NOP
+JAL	7000C174	;V0= previous position left<->right of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,000B	;TRUE if not right
+BNEZ	AT,7F0A6B1C	;branch if wasn't right
+ADDIU	T8,R0,0001
+LUI	AT,8004
+BEQ	R0,R0,7F0A6B4C
+SW	T8,0ADC (AT)	;1->80040ADC: re-enable stick
+//7F0A6B1C:	
+JAL	7000C0EC	;V0=current position left/right on player A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,FFF6	;TRUE if left
+BNEZ	AT,7F0A6B4C
+NOP
+JAL	7000C174	;V0= previous position left<->right of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,FFF6	;TRUE if was left
+BEQ	AT,R0,7F0A6B4C	;branch if wasn't left
+ADDIU	T9,R0,0001
+LUI	AT,8004
+SW	T9,0ADC (AT)	;1->80040ADC: re-enable stick
+//7F0A6B4C:
+LUI	T0,8004
+LW	T0,0AE0 (T0)	;T0=80040AE0: TRUE if up/down on control stick enabled
+BNEZ	T0,7F0A6BF4	;branch if enabled
+NOP
+JAL	7000C1FC	;V0= current position up<->down of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,FFF6	;TRUE if down pressed
+BNEZ	AT,7F0A6B90	;branch if down pressed
+NOP
+JAL	7000C1FC	;V0= current position up<->down of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,000B	;TRUE if up wasn't pressed
+BEQ	AT,R0,7F0A6B90	;branch if up pressed
+ADDIU	T1,R0,0001
+LUI	AT,8004
+BEQ	R0,R0,7F0A6BF4
+SW	T1,0AE0 (AT)	;1->80040AE0: re-enable stick
+//7F0A6B90:
+JAL	7000C1FC	;V0= current position up<->down of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,000B	;TRUE if up wasn't pressed
+BEQ	AT,R0,7F0A6BC4	;branch if up pressed
+NOP
+JAL	7000C284	;V0= previous position up<->down of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,000B	;TRUE if up wasn't pressed
+BNEZ	AT,7F0A6BC4	;branch if up wasn't pressed
+ADDIU	T2,R0,0001
+LUI	AT,8004
+BEQ	R0,R0,7F0A6BF4
+SW	T2,0AE0 (AT)	;1->80040AE0: re-enable stick
+//7F0A6BC4:
+JAL	7000C1FC	;V0= current position up<->down of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,FFF6	;TRUE if down pressed
+BNEZ	AT,7F0A6BF4	;branch if down pressed
+NOP
+JAL	7000C284	;V0= previous position up<->down of controller A0's control stick
+OR	A0,R0,R0	;A0=player1
+SLTI	AT,V0,FFF6	;TRUE if down pressed
+BEQ	AT,R0,7F0A6BF4	;branch if down wasn't pressed
+ADDIU	T3,R0,0001
+LUI	AT,8004
+SW	T3,0AE0 (AT)	;1->80040AE0: re-enable stick
+//7F0A6BF4:	tick down blink/fade timer for Mission Status
+LUI	V1,8004
+ADDIU	V1,V1,0AF8	;V1=80040AF8
+LW	V0,0000 (V1)	;V0=80040AF8: timer
+BGEZ	V0,7F0A6C20	;branch if timer hasn't run down
+ADDIU	T6,V0,FFFF	;T6=V0-1: timer--
+LUI	A0,8004
+ADDIU	A0,A0,0AF4	;A0=80040AF4
+LW	T4,0000 (A0)	;T4=80040AF4: font colour
+LUI	AT,FFF0
+ADDU	T5,T4,AT	;T5=colour - FFF00000
+SW	T5,0000 (A0)	;80040AF4-=FFF00000:	colour fade 
+//7F0A6C20:	detect if faded too far
+LUI	A0,8004
+ADDIU	A0,A0,0AF4
+LW	T7,0000 (A0)	;T7=80040AF4: colour?
+LUI	AT,005F
+ORI	AT,AT,00A1	;AT=005F00A1
+SLTU	AT,T7,AT	;TRUE if colour < 005F00A1
+BEQ	AT,R0,7F0A6C54	;branch if false
+SW	T6,0000 (V1)	;80040AF8-=1
+//7F0A6C40:	restore to green
+LUI	T8,00FF
+ORI	T8,T8,00A0	;T8=00FF00A0: green
+ADDIU	T9,R0,000F
+SW	T8,0000 (A0)
+SW	T9,0000 (V1)	;80040AF8= 0xF
+//7F0A6C54:	tick down blink/fade timer for objectives
+LUI	V1,8004
+ADDIU	V1,V1,0B00	;V1=80040B00
+LW	V0,0000 (V1)	;V0=80040B00: timer
+LUI	A0,8004
+ADDIU	A0,A0,0AFC	;A0=80040AFC
+BGEZ	V0,7F0A6C7C	;branch if time left
+LUI	T6,8005
+LW	T0,0000 (A0)	;T0=80040AFC: colour
+ADDIU	T1,T0,FFF0
+SW	T1,0000 (A0)	;FFF00000->colour
+//7F0A6C7C:	check if ticked over
+LUI	A0,8004
+ADDIU	A0,A0,0AFC	;A0=80040AFC
+LW	T3,0000 (A0)	;T3=80040AFC: bg colour
+ADDIU	T2,V0,FFFF
+SW	T2,0000 (V1)	;T2=timer--
+SLTIU	AT,T3,0060	;TRUE if timer < 60
+BEQ	AT,R0,7F0A6CA8	;branch if roll over
+//7F0A6C98:	restore colour and timer
+ADDIU	T4,R0,00FF
+ADDIU	T5,R0,000F
+SW	T4,0000 (A0)	;80040AFC=000000FF: black
+SW	T5,0000 (V1)	;80040B00= 0xF: timer
+//7F0A6CA8:
+LW	T6,8498 (T6)	;T6=80048498: TRUE advances game clock while player is alive
+LUI	AT,8004
+LWC1	F4,0B1C (AT)	;F4=80040B1C: 
+MTC1	T6,F6
+LUI	AT,8006
+LWC1	F16,84C8 (AT)	;F16=800584C8: 
+CVT.S.W	F8,F6	;F8=1.0 when advancing time
+LUI	AT,43B4
+MTC1	AT,F6		;F6=	[43B40000]
+LUI	V0,8004
+ADDIU	V0,V0,0B14	;V0=80040B14
+MUL.S	F10,F4,F8
+LWC1	F8,0000 (V0)	;F8=80040B14: 
+MUL.S	F18,F10,F16
+DIV.S	F4,F18,F6
+ADD.S	F10,F8,F4
+SWC1	F10,0000 (V0)	;F10->80040B14: 
+JAL	7F0A6A2C	;correct for full rotation
+LWC1	F12,0000 (V0)	;F12=80040B14: 
+LUI	V0,8004
+ADDIU	V0,V0,0B14	;V0=80040B14
+SWC1	F0,0000 (V0)	;F0->80040B14: 
+//7F0A6D00:	trigger random static
+LUI	T7,8004
+LW	T7,0B0C (T7)	;T7=80040B0C: 
+SLL	T8,T7,0x10
+JAL	7000A450	;V0=random#
+SW	T8,001C (SP)
+LW	T9,001C (SP)
+SLTU	AT,T9,V0
+BEQ	AT,R0,7F0A6D2C	;branch if # > rand: don't set static
+NOP
+JAL	7F0A51D8	;sets watch static effect	[80040B04 |= 0x80]
+NOP
+//7F0A6D2C:
+LUI	A0,8004
+ADDIU	A0,A0,0B04	;A0=80040B04
+LW	V1,0000 (A0)	;V1=80040B04: watch effect flag registers
+SLTI	AT,V1,00E0
+BEQL	AT,R0,7F0A6D68	;branch if watch static, etc not set
+SLTI	AT,V1,00E1
+JAL	7000A450	;V0=random
+NOP
+LUI	A0,8004
+ADDIU	A0,A0,0B04	;A0=80040B04
+LW	T0,0000 (A0)	;T0=80040B04: watch effect flag registers
+SRL	T1,V0,0x1E	;T1=V0 / 40000000
+ADDU	V1,T0,T1	;V1=watch flags + 0-3
+SW	V1,0000 (A0)	;update watch effect flags
+//7F0A6D64:	mostly to catch 0x3 overflows from above
+SLTI	AT,V1,00E1	;TRUE if E1 or more flags set
+BNEZ	AT,7F0A6D78	;branch if E0 or fewer flags set
+ADDIU	T0,R0,0156
+ADDIU	V1,R0,00E0	;V1=E0
+SW	V1,0000 (A0)	;reset flags to E0
+//7F0A6D78:
+SUBU	T4,R0,V1	;T4= !flags
+SLL	T5,T4,0x2	;T5= !flags * 4
+LUI	A0,8004
+ADDIU	T6,T5,0380	;T6= !flags * 4 + 380
+LUI	AT,8004
+ADDIU	A0,A0,0B40	;A0=80040B40
+SW	T6,0B08 (AT)	;80040B08= !flags * 4 + 380: 
+LW	T7,0000 (A0)	;T7=80040B40: 
+ADDIU	V0,T7,FFFC	;V0=T7-4: 
+SLTI	AT,V0,0157
+BNEZ	AT,7F0A6DB0	;branch if less than 157
+SW	V0,0000 (A0)	;80040B40-=4
+ADDIU	V0,R0,FEAA
+SW	V0,0000 (A0)	;80040B40-=156: 0, or -156
+//7F0A6DB0:	reset if -156
+SLTI	AT,V0,FEAA
+BEQ	AT,R0,7F0A6DC0	;branch if not < -156
+LUI	V0,8004
+SW	T0,0000 (A0)	;80040B40=156: 
+//7F0A6DC0:
+ADDIU	V0,V0,0B44	;V0=80040B44
+LH	T1,0000 (V0)	;T1=80040B44: 
+LUI	T5,8004
+ADDIU	T2,T1,0001
+SH	T2,0000 (V0)
+LH	T3,0000 (V0)
+ANDI	T4,T3,0001
+SH	T4,0000 (V0)	;80040B44^=1
+//7F0A6DE0:
+LW	T5,0994 (T5)	;T5=80040994: page
+SLTIU	AT,T5,0005
+BEQ	AT,R0,7F0A6ED8	;branch if not pages 0-4: invalid
+SLL	T5,T5,0x1	;T5=page#->offset
+LUI	AT,7F0A
+ADDU	T5,AT,T5
+LH	T5,6EA0 (T5)	;T5=7F0A6EA0+offset: TLB offset	note, this has been hacked in!
+ADDU	T5,AT,T5	;T5=7F0A0000+offset: TLB pointer for page handler
+JR	T5
+NOP
+//7F0A6E08:	page 0: main
+JAL	7F0A526C	;page advance f/ main page of watch menu
+NOP
+BEQ	R0,R0,7F0A6ED8
+NOP
+//7F0A6E18:	page 2: controls
+LUI	V0,8004
+LW	V0,0998 (V0)	;V0=80040998: highlighted controls page selection
+BNEZ	V0,7F0A6E38	;branch if control type not selected
+ADDIU	AT,R0,0001
+JAL	7F0A5860	;advance up/down on "controls::control style" submenu of watch menu
+NOP
+BEQ	R0,R0,7F0A6E48
+NOP
+//7F0A6E38:	controller selected
+BNE	AT,V0,7F0A6E48	;branch if controller not selected
+NOP
+JAL	7F0A5900	;advance up/down on "controls::controller" submenu of watch menu
+NOP
+//7F0A6E48:	advance page
+JAL	7F0A55C4	;page advance f/ control page of watch menu
+NOP
+BEQ	R0,R0,7F0A6ED8
+NOP
+NOP
+NOP
+//7F0A6E60:	page 3: options
+LUI	T6,8004
+LW	T6,099C (T6)	;T6=8004099C: highlighted options page selection
+SLTIU	AT,T6,000A
+BEQ	AT,R0,7F0A6E90	;skip if not selection 0-9
+LUI	V0,7F0A
+ADDIU	V0,V0,5998	;V0=7F0A5998: advance up/down on selected "options" submenu of watch menu
+BEQL	AT,T6,7F0A6E80
+ADDIU	V0,V0,015C	;V0=7F0A5AF4: advance up/down on "options::effects" submenu of watch menu
+BEQL	R0,T6,7F0A6E88
+ADDIU	V0,V0,00CC	;V0=7F0A5A64: advance up/down on "options::music" submenu of watch menu
+JALR	RA,V0
+NOP
+//7F0A6E90:
+JAL	7F0A56A4	;page advance f/ options page of watch menu
+NOP
+BEQ	R0,R0,7F0A6ED8
+NOP
+//7F0A6EA0:	TLB offsets for each page	NSNA hack
+6E08	6ED0
+6E18	6E60
+6EC0	0000
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F0A6EC0:	page 4: briefing
+JAL	7F0A5784	;page advance f/ objectives/briefing page of watch menu
+NOP
+BEQ	R0,R0,7F0A6EDC
+LW	RA,0014 (SP)
+//7F0A6ED0:	page 1: inventory
+JAL	7F0A53D8	;page advance f/ inventory page of watch menu
+NOP
+//7F0A6ED8:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+
++_+
+
+Just a note, since this uses a float from above and happens to do something odd with it...
+//7F0A8954:
+LUI	AT,8004
+LWC1	F18,09BC (AT)	;F18=800409BC: position
+LUI	T6,8004
+LW	T6,09B8 (T6)	;T6=800409B8: highlighted inventory selection
+CVT.D.S	F4,F18
+LUI	A1,8005
+LUI	A2,8004
+LUI	A3,8004
+SW	V0,004C (SP)
+LW	A3,09B4 (A3)	;A3=800409B4: final scroll position
+LW	A2,09B0 (A2)	;A2=800409B0: current scroll position
+ADDIU	A1,A1,7768	;A1=80057768: p->"%d, %d\n%d %f\n"
+SDC1	F4,0018 (SP)	;SP+18= position
+ADDIU	A0,SP,0060	;A0=SP+60: text buffer
+JAL	7000AC94	;sprintf(A0,A1,A2,...)
+SW	T6,0010 (SP)	;SP+10= highlighted inventory selection
+//7F0A8994:
+JAL	7F0ACD98
+LW	A0,0928 (SP)
+SW	V0,0928 (SP)
+ADDIU	A0,SP,0050	;A0=@height
+ADDIU	A1,SP,0054	;A1=@width
+ADDIU	A2,SP,0060	;A2=SP+60: p->string
+LW	A3,0058 (SP)	;A3=SP+58: 2nd font table
+SW	S0,0010 (SP)	;SP+10=S0: 1st font table
+JAL	7F0AE98C	;proportions of string A2
+SW	R0,0014 (SP)	;SP+14=NULL
+//7F0A89BC:
+LUI	T7,8004
+LW	T7,09C0 (T7)	;T7=800409C0: 0 scrolls to entry
+LUI	T8,8005
+ADDIU	A0,SP,0050
+BEQ	T7,R0,7F0A8AFC	;skip if not displaying item text
+ADDIU	A1,SP,0054
+//7F0A89D4:
+nothing else is related, so must have NOPed the display routine

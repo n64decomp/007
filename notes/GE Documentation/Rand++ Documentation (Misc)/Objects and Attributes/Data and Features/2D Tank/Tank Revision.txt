@@ -1,0 +1,1236 @@
+-want these three feature added:
+1) set weapon to be added to inventory when entered, drawn from object
+2) set vehicle sound when running
+3) set player ID code for multiplayer (aegh...)
+
+  If MP weapon set is revised could tack the MP weapon to draw up.  That would set ammo and weapon with one byte.  Tank should be 1E in list
+  firing effect test should be one byte or one bit, not short
+  upper halfword of firing effect slot will be sound when running
+  Player # or ID replaces in-tank value. Each tank must be processed seperately
+  Tank's SE could be:
+	003E	tank in motion
+	0042	ignition/engine idle
+
+available slots for data in tank object:
+	B4	4
+	B8	4
+	BC	4
+	C0	4
+	C4	2
+
+Also, kill a bug present in GE!
+  When the tank steals your ammo, it doesn't take it from the curent clip
+  So, by exitting the tank, bringing up the weapon, then reentering, you get an additional round - the one from the clip!
+  Fix this by swapping weapons first, +then+ nop the ammo stock
+
++_+
+
+0xC6	4	!0 triggers firing effect
+0xD8	4	ammo total added to inventory at stage load
+
+Tank is offset from current position, not physically moved (similiar to animated objects)
+
+7F07CE78	pulls 80036448	!0 when player in tank
+
+other instances of 7F07CE78:
+7F080DFC
+7F0828C4	handles turret when in tank and right weapon = 20
+7F082DD4	tank motion
+7F0836B4	tank skips to 7F08383C
+	7F083850	tank skips to 7F083B40 if BONDdata+104 != 0
+7F083AFC	handles vertical limit on turret
+	tests if 800799B8=2. (turret? aimer?)
+	If so, tests if vertical rot. < -20.  sets the value to -20 if it is
+7F083C54
+7F0847BC	tank skips to 7F08497C
+	7F08497C	if not tank skips to 7F0851D8	rotation?
+7F07D9F0	triggers a series of object-related tests dealing with tank when occupied
+7F07CF8C	start of routine that also tests for tank - maybe copies position etc?
+7F085318	non-tank jumps to 7F085B48, which is fairly close to forward motion routines
+	800799B8=0	7F08533C-7F085630
+	800799B8=1	7F08563C-7F08569C
+	800799B8=2	7F0856A0	TANK IN MOTION!
+	7F0859E0: 
+
+-_-
+
+Reading firing effect trigger
+//7F049190:
+LW	A1,0020 (V1)
+JAL	7F06C79C	;returns V0=5th entry in proportion data
+OR	A0,S4,R0
+//7F049198:	read at all times?
+LW	T0,00C4 (S1)	;T0=word at +0xC4 in object (S1): firing effect register
+SH	T0,0000 (V0)	;V0=[801D9DF8]: object instance entry
+LW	T3,0008 (S4)	;T3=[801D1070]+8: p->object load line (8003 address)
+LW	V1,0008 (T3)	;V1=obj load line+8: p->object binary in rdram
+LW	A1,0020 (V1)	;A1=object offset #8: turret controller!
+BEQL	A1,R0,7F0491C8	;skip if there isn't a turret!
+LW	T7,0008 (S4)	;T7=[801D1070]+8: p->object load line (8003 address)
+//7F0491B8:
+JAL	7F06C79C
+OR	A0,S4,R0	;A0=[801D1070]: object block controller
+SW	R0,0000 (V0)	;clear firing effect saved from above
+LW	T7,0008 (S4)	;T7=[801D1070]+8: p->object load line (8003 address)
+//7F0491C8:
+
+writes it back regularly here:
+//7F0864A8:
+OR	A0,R0,R0	;A0=0	test right hand
+...
+//7F0864C8:
+JAL	7F05D9D0	;returns V0=right hand weapon
+SW	T8,0130 (SP)
+XORI	V1,V0,0020	;weapon^20	V1=0 if tank in use
+SLTIU	A0,V1,0001	;A0=1 if tank in use
+BEQL	A0,R0,7F0864F0	;skip if not tank.  They could have tested equality...
+SW	A0,00C4 (S0)
+//7F0864E0:
+JAL	7F05DC88	;returns V0=firing status for hand A0
+OR	A0,R0,R0	;A0=right hand
+SLTU	A0,R0,V0	;A0=1 if V0!=0
+SW	A0,00C4 (S0)	;save firing effect register
+//7F0864EC:	continues with position-type stuff.
+
+
+7F05DC88	Returns V0=current player's weapon firing status
+	accepts: A0=arm right=0:left=1
+	fries:   T6,T7,T8
+SLL	T7,A0,0x3
+SUBU	T7,T7,A0
+SLL	T7,T7,0x2
+ADDU	T7,T7,A0
+LUI	T6,8008
+LW	T6,A0B0 (T6)	;T6=8007A0B0	p->current BONDdata
+SLL	T7,T7,0x2
+ADDU	T7,T7,A0
+SLL	T7,T7,0x3	;T7=A0*0x3A8
+ADDU	T8,T6,T7
+JR	RA
+LB	V0,087C (T8)	;V0=current gun's firing status
+
+=_=
+
+Ammo total:
+  This gets saved to the player when entering the vehicle and saved back to the object when exitting
+This routine is patched into a player's B-button handler
+//7F0829D0:	bail from the tank; copies ammo back to tank object
+LW	T3,01B0 (SP)
+BEQ	T3,R0,7F082C2C	;skip tank stuff if T3 isn't set.  T3 is the B-button identifier
+LUI	T5,8003
+LW	T5,6448 (T5)	;T5=80036448: tank occupied flag
+ADDIU	AT,R0,0001
+LUI	T4,8003
+BNE	T5,AT,7F082AA4	;branch if tank flag not set - enter it, not exit!
+LUI	V0,8003
+LW	T4,6450 (T4)	;T4=80036450: p->obj position entry (8006 table)
+ADDIU	A0,R0,0020	;A0=20	tank
+LW	T8,0004 (T4)	;T8=obj pos entry+4: p->object f/ setup
+JAL	7F069450	;ret V0= cur. amount of tank ammo in inventory
+SW	T8,00F4 (SP)	;SP+F4=p->object
+//7F082A04:	fry player's tank ammo
+LW	T6,00F4 (SP)	;T6=p->object
+ADDIU	A0,R0,0020	;A0=20	tank
+OR	A1,R0,R0	;A1=0	cur ammo+0
+JAL	7F069484	;Add 0 tank ammo to player's inventory
+SW	V0,00D8 (T6)	;save amount of tank ammo to tank's register
+//7F082A18:	fry player's tank item
+JAL	7F08C61C	;probably removes tank item from inventory...
+ADDIU	A0,R0,0020	;A0=tank item
+//7F082A20:	if tank, determine ammo on the clip
+JAL	7F05D9D0	;ret V0=right hand weapon
+OR	A0,R0,R0	;A0=0	right hand
+ADDIU	AT,R0,0020
+BNEL	V0,AT,7F082A54	;branch if not tank
+LW	T2,00F4 (SP)
+JAL	7F069344	;ret V0=right hand's clip ammo
+OR	A0,R0,R0	;A0=right hand
+//7F082A3C:	add in ammo on clip, then cycle weapon
+LW	V1,00F4 (SP)	;V1=p->object
+LW	T7,00D8 (V1)	;T7=tank ammo register
+ADDU	T9,T7,V0	;ammo + clip
+JAL	7F05D800	;cycle weapon?
+SW	T9,00D8 (V1)	;save new total
+//7F082A50:	kill the firing effect
+LW	T2,00F4 (SP)	;T2=p->object
+LUI	AT,8003
+OR	V0,R0,R0
+SW	R0,00C4 (T2)	;0->tank+C4: FIRING EFFECT OFF
+SW	R0,6448 (AT)	;0->80036448: tank not occupied
+LW	T3,0000 (S0)
+ADDIU	V1,R0,000C
+SWC1	F20,016C (T3)
+LW	T5,0000 (S0)
+SWC1	F20,0174 (T5)
+LW	T4,0000 (S0)
+SWC1	F20,014C (T4)
+//7F082A80:
+LW	T8,0000 (S0)
+ADDU	T6,T8,V0
+ADDIU	V0,V0,0004
+BNE	V0,V1,7F082A80
+SWC1	F20,0180 (T6)
+LW	T9,0000 (S0)
+ADDIU	T7,R0,0002
+BEQ	R0,R0,7F082C2C
+SW	T7,009C (T9)
+
+//7F082AA4	below are called when shoving a player into the tank!
+LW	V0,6450 (V0)	;V0=p->current obj being parsed: tank
+BEQL	V0,R0,7F082C24	;branch on a NULL activation pointer
+LW	T5,0000 (S0)
+LBU	T2,0000 (V0)	;V0=8006+0: 1 when active?
+ADDIU	AT,R0,0001
+BNEL	T2,AT,7F082C24	;branch if it isn't whatever they're testing for...
+LW	T5,0000 (S0)
+LW	A1,0004 (V0)	;A1=8006+4: p->tank object
+ADDIU	AT,R0,002D	;AT=2D: tank object type
+LUI	T5,8003
+LBU	T3,0003 (A1)	;T3=obj+3: object type
+BNEL	T3,AT,7F082C24	;skip if object not tank (2D)
+LW	T5,0000 (S0)
+LW	T5,6480 (T5)	;T5=80036480: 1 when you are standing on the turret
+//7F082ADC:	add tank to inventory
+ADDIU	A0,R0,0020	;A0=20	tank
+BEQL	T5,R0,7F082C24	;skip if 80036480=0.  not sure use
+LW	T5,0000 (S0)	
+JAL	7F08C488	;add item A0 to inventory
+SW	A1,00EC (SP)	;SP+EC= p->tank
+//7F082AF0:	add tank ammo as per tank object
+LW	V1,00EC (SP)	;V1=p->tank
+ADDIU	A0,R0,0020	;A0=20	weapon=tank
+JAL	7F069484	;add A1 ammo of type A0=tank
+LW	A1,00D8 (V1)	;A1=tank ammo register
+//7F082B00:
+LW	V1,00EC (SP)
+LUI	A0,8003
+ADDIU	A0,A0,646C
+LWC1	F6,00C8 (V1)
+SW	R0,00D8 (V1)	;set tank's slot to 0, since you have it's ammo stock!
+...
+//7F082B34:
+ADDIU	T4,R0,0001
+ADDIU	T9,R0,0001
+...
+//7F082B90:
+LUI	AT,8003
+SW	T4,6448 (AT)	;1->tank register	note that T9 still=1
+
+
+
+7F069450	returns V0=ammo total for weapon A0 in current player's inventory
+	accepts: A0=weapon type
+	fries:  V1,T6,T7,T8,T9
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F05C8B4	;ret V0=handle to weapon A0's weapon data
+NOP
+LW	T7,001C (V0)	;T7=ammo type for weapon
+LUI	T6,8008
+LW	T6,A0B0 (T6)	;T6=8007A0B0: p->current BONDdata
+LW	RA,0014 (SP)
+SLL	T8,T7,0x2	;T8=T7->offset
+ADDU	T9,T6,T8
+LW	V0,1130 (T9)	;V0=BONDdata+1130+offset: ammo of type
+JR	RA
+ADDIU	SP,SP,0018
+
+%_%
+
+Movement rate:
+okay, below it turns out has little to do with this.  Those all have to do with the intensity of SE when tank is in motion
+Actual tank motion modifiers are applied to BONDdata directly via:
+	7F0830D4-	tank: breaks only in motion
+	7F085B40-	tank: always breaks
+
+//7F082DD0:	detect tank
+LUI	T4,8003
+LW	T4,6448 (T4)
+ADDIU	AT,R0,0001
+LW	T6,0194 (SP)
+BNE	T4,AT,7F0830FC	;branch if player is not in tank
+LUI	V0,8003
+//7F082DE8:	handle player-driven tank motion
+...
+//70F82F7C:
+BC1FL	7F082F90
+MTC1	AT,F6
+BEQ	R0,R0,7F082FAC
+MOV.S	F0,F2
+//7F082F8C:
+MTC1	AT,F6		;F6=-1.0
+LUI	AT,BF80
+C.LT.S	F0,F6
+NOP
+BC1FL	7F082FB0	;if F0<-1, set it to -1
+LUI	AT,4170
+MTC1	AT,F0		;F0=-1.0
+NOP
+LUI	AT,4170
+//7F082FB0:
+MTC1	AT,F16		;F16=15.0	max speed?
+LUI	V1,8003
+ADDIU	V1,V1,6490
+MUL.S	F12,F0,F16	;F12=F0*15.0
+LW	V0,0000 (V1)	;V0=80036490: 
+LUI	AT,3F00
+BLEZ	V0,7F082FEC
+MOV.S	F2,F12
+//7F082FD0:
+MTC1	AT,F8		;F8=1.0
+LW	T4,8374 (T4)	;T4=80048374: timer tied to FPS control!?
+LUI	AT,4080
+MTC1	AT,F14
+SUBU	T8,V0,T4
+MUL.S	F2,F12,F8
+SW	T8,0000 (V1)
+//7F082FEC
+LWC1	F0,0174 (T0)	;F0=speed
+C.EQ.S	F2,F0
+NOP
+BC1T	7F0830F4	;do nothing if speed=max speed
+NOP
+C.LT.S	F0,F2
+LUI	AT,3E80
+BC1FL	7F083080	;branch if speed >= max speed?
+C.LT.S	F2,F0
+//7F083010:	tank accel
+SUB.S	F4,F2,F0	;!difference!	F4=MAX-speed!
+MTC1	AT,F18		;F18=0.25
+LUI	AT,3F00
+MTC1	AT,F8		;F8=0.5	acceleration step
+MUL.S	F10,F4,F18	;F10=F4/4
+LUI	AT,4120
+DIV.S	F6,F10,F16	;F6=F10/F16	[F16=15.0]
+MTC1	AT,F10		;!difference!	F10=10
+LUI	AT,4270
+ADD.S	F4,F6,F8	;F4=F8+0.5
+MTC1	AT,F8		;F8=60
+LUI	AT,8005
+MUL.S	F18,F4,F14	;F18=F4*F14	[F14=1.0]
+LWC1	F4,8378 (AT)	;F4=80048378:  1.0	clock cycle rate counter maybe?  multiplier is used in many different animation applications...
+MUL.S	F6,F18,F10	;F6=F18*10
+DIV.S	F12,F6,F8	;F12=F6/60
+MUL.S	F18,F12,F4	;F18=F12*1.0
+ADD.S	F10,F0,F18	;F10=speed+F18
+SWC1	F10,0174 (T0)	;F10->player's speed
+LW	T0,0000 (S0)	;T0=p->BONDdata
+LWC1	F6,0174 (T0)	;F6=speed
+C.LT.S	F2,F6
+NOP
+BC1F	7F0830F4	;if max speed < speed, set speed to max
+NOP
+BEQ	R0,R0,7F0830F4
+SWC1	F2,0174 (T0)	;max speed -> player's speed
+//7F08307C:	tank decel?
+C.LT.S	F2,F0
+LUI	AT,3E80
+BC1F	7F0830F4	;branch if max >= speed	(F0=speed)
+NOP
+SUB.S	F8,F0,F2	;F8=speed-F2
+MTC1	AT,F4		;F4=0.25
+LUI	AT,3F00
+MTC1	AT,F6		;F6=0.5	decelleration rate
+MUL.S	F18,F8,F4	;F18=F8/4
+LUI	AT,C120
+DIV.S	F10,F18,F16	;F10=F18/F16	[F16=15.0]
+MTC1	AT,F18		;F18=-10.0
+LUI	AT,4270
+ADD.S	F8,F10,F6	;F8=F10+0.5
+MTC1	AT,F6		;F6=60.0
+LUI	AT,8005
+MUL.S	F4,F8,F14	;F4=F8*F14	[F14=1.0]
+LWC1	F8,8378 (AT)	;F8=80048378: 1.0	clock cycle rate counter maybe?  multiplier is used in many different animation applications...
+MUL.S	F10,F4,F18	;F10=F4 * -10.0
+DIV.S	F12,F10,F6	;F12=F10/60.0
+MUL.S	F4,F12,F8	;F4=F12*1.0
+ADD.S	F18,F0,F4	;F18=speed + ((F8/60+0.5)*-1/6)
+SWC1	F18,0174 (T0)	;F18->player's speed
+LW	T0,0000 (S0)	;T0=p->BONDdata
+LWC1	F10,0174 (T0)	;F10=speed
+C.LT.S	F10,F2
+NOP
+BC1F	7F0830F4	;if speed < max, set it to max!
+NOP
+SWC1	F2,0174 (T0)	;F2->player's speed
+//7F0830F4:
+BEQ	R0,R0,7F083394
+LW	T0,0000 (S0)	;T0=p->BONDdata
+//7F0830FC:	handle normal player motion
+
+vertical!
+LW	T4,6448 (T4)
+BNEL	T4,AT,7F083B40
+LW	T6,01A4 (SP)
+//7F083B08:	test for movement
+LW	T8,99B8 (T8)	;T8=800799B8: 
+ADDIU	AT,R0,0002
+BNEL	T8,AT,7F083B40
+LW	T6,01A4 (SP)
+//7F083B18:	test y sight elevation versus cutoff
+LW	T0,0000 (S0)
+LUI	AT,C1A0
+MTC1	AT,F0		;F0=-20:	limit on downward rotation
+LWC1	F8,0158 (T0)	;F8=vertical rotation
+C.LT.S	F8,F0
+NOP
+BC1FL	7F083B40	;if vert. rot. < limit, set to limit
+LW	T6,01A4 (SP)
+SWC1	F0,0158 (T0)	;limit->vertical rotation
+LW	T6,01A4 (SP)
+//7F083B40:	both routines continue forth...
+incidentally, tank itself can't really get over 41AE59AE either...
+
+lateral correction for aim!
+//7F083C50:	test tank
+LUI	T2,8003
+LW	T2,6448 (T2)	;T2=80036448: tank flag
+ADDIU	AT,R0,0001
+LUI	T3,8008
+BNEL	T2,AT,7F083D90	;branch if not tank
+LW	T6,014C (SP)
+//7F083C68:	test motion
+LW	T3,99B8 (T3)
+ADDIU	AT,R0,0002
+LW	T5,01A4 (SP)
+BNEL	T3,AT,7F083D88
+LW	T8,0000 (S0)
+//7F083C7C:
+BEQ	T5,R0,7F083CA0
+MOV.S	F2,F20
+LW	T4,0000 (S0)
+LUI	AT,8005
+LWC1	F10,514C (AT)	;F10=8005514C: 
+LWC1	F18,014C (T4)
+MUL.S	F2,F18,F10
+BEQ	R0,R0,7F083D00
+NOP
+//7F083CA0:
+LWC1	F4,017C (SP)
+LWC1	F8,0178 (SP)
+C.LT.S	F20,F4
+NOP
+BC1FL	7F083CD8
+C.LT.S	F20,F8
+JAL	7F080228
+MOV.S	F12,F14
+LUI	AT,8005
+LWC1	F6,5150 (AT)
+MUL.S	F2,F0,F6
+BEQ	R0,R0,7F083D00
+NOP
+//7F083CD4:
+C.LT.S	F20,F8
+LUI	AT,BF80
+BC1F	7F083D00
+NOP
+MTC1	AF,F12
+JAL	7F080228
+NOP
+LUI	AT,8005
+LWC1	F18,5154 (AT)
+MUL.S	F2,F0,F18
+NOP
+//7F083D00:
+LUI	V1,8005
+LW	V1,8374 (V1)	;V1=80048374: 
+OR	V0,R0,R0
+LW	T0,0000 (S0)
+BLEZ	V1,7F083D64
+LUI	AT,8005
+LUI	A0,8003
+ADDIU	A0,A0,6460	;A0=80036460
+...
+...
+//7F083D64:
+LUI	A0,8003
+ADDIU	A0,A0,6460
+LUI	AT,8005
+LWC1	F18,515C (AT)	;F18=8005515C: 
+LWC1	F8,0000 (A0)	;F8=80036460: 
+MUL.S	F10,F8,F18
+BEQ	R0,R0,7F083D8C
+SWC1	F10,014C (T0)	;F10->lat. rot. correction
+//7F083D84:
+LW	T8,0000 (S0)	;T8=p->BONDdata
+SWC1	F20,014C (T8)	;F20->lat. rot. correction degree
+LW	T6,014C (SP)	;T6=lat. rot. correction
+//7F083D90:	both routines continue...
+
+7F08497C starts off rotation, maybe?  seems a long way off from this stuff here...
+
+SERIOUSLY, THIS IS STUPID.  who bloody well cares?
+//7F084E58:	breaks when you turn left
+BEQ 	R0,R0,7F084E80
+SUB.S	F2,F2,F4
+
+7F084E64:	this big segment of code...
+//7F08550E0:	standard rotation
+ADD.S	F16,F18,F0
+SWC1	F16,0000 (V1)
+LUI	AT,43B4
+MTC1	AT,F14
+LUI	V1,8003
+ADDIU	V1,V1,647C
+LUI	AT,8005
+LWC1	F4,51D0 (AT)
+LWC1	F6,0000 (V1)
+LW	T0,0000 (S1)
+LUI	AT,4060
+MUL.S	F2,F6,F4
+MTC1	AT,F8
+LWC1	F10,014C (T0)
+LUI	AT,8005
+LWC1	F4,51D4 (AT)
+MUL.S	F6,F10,F8
+LUI	AT,4080
+MTC1	AT,F8
+LUI	AT,8003
+MUL.S	F10,F6,F4
+LWC1	F4,6464 (AT)
+LUI	AT,4080
+MUL.S	F6,F10,F8
+ADD.S	F10,F4,F12
+MTC1	AT,F4
+LUI	AT,8005
+ADD.S	F8,F10,F6
+MUL.S	F10,F2,F4
+ADD.S	F6,F8,F10
+LWC1	F8,51D8 (AT)
+MUL.S	F4,F6,F14
+DIV.S	F10,F4,F8
+//7F085164:	saves rotation when in tank
+SWC1	F10,0148 (T0)
+
+
+first, how normal movement rates are established:
+//7F085DC8	trips during normal movement, not tank!
+fast motion system for normal movement
+//7F085E90:	determine player's speed
+JAL	7F091018	;returns V0=fast motion flag
+SW	T4,0200 (SP)
+BEQL	V0,R0,7F085F20	;branch if not set
+LW	T9,0000 (S1)	;T9=p->BONDdata	(S1=8007A0B0)
+//7F085EA0:	fast motion
+LW	T0,0000 (S1)	;T0=p->BONDdata
+LUI	AT,4120
+MTC1	AT,F0		;F0=10.0	probably rate of motion
+LWC1	F4,0498 (T0)	;F4=BONDdata+498: ?-used by manpos
+LWC1	F10,0174 (T0)	;F10=BONDdata+174	speed
+LWC1	F6,04A0 (T0)	;F6=BONDdata+4A0: ?-used by manpos
+LUI	AT,8005
+MUL.S	F8,F4,F10
+LWC1	F4,016C (T0)	;F4=BONDdata+16C	1.0 if strafing (-left:+right)
+LWC1	F14,8378 (AT)	;F14=80048378: 1.0	100% rate increase?
+SUB.S	F6,F8,F10
+LWC1	F10,03AC (SP)
+MUL.S	F4,F6,F14
+NOP
+MUL.S	F8,F4,F0
+ADD.S	F6,F10,F8
+SWC1	F6,03AC (SP)
+LWC1	F10,0174 (T0)
+LWC1	F4,04A0 (T0)
+LWC1	F6,0498 (T0)
+MUL.S	F8,F4,F10
+LWC1	F4,016C (T0)
+MUL.S	F10,F6,F4
+ADD.S	F6,F8,F10
+LWC1	F10,03B4 (SP)
+MUL.S	F4,F6,F14
+NOP
+MUL.S	F8,F4,F0
+ADD.S	F6,F10,F8
+SWC1	F6,03B4 (SP)
+LW	T9,0000 (S1)
+//7F085F20:	both speed functions...
+
+3F9DFD13 walking top speed?
+3F7CC8xx	gait messes this up...
+
+415B6Dxx may be tank top speed...
+C15B6Dxx in reverse
+nicely, this ties into the SE routines below
+//7F0856A0:	tank in motion
+LW	T0,0000 (S1)	;T0=p->BONDdata
+LUI	AT,4170
+MTC1	AT,F8		;F8=15.0	rate at which engine volume increases
+LWC1	F10,0174 (T0)	;F10=BONDdata+174	speed
+LUI	AT,8005
+LWC1	F4,51E8 (AT)	;F4=800551E8: 0.3	
+DIV.S	F0,F10,F8	;F0=speed/15	rate engine volume increases
+LWC1	F6,014C (T0)	;F10=BONDdata+14C	lateral rot. degree from center
+DIV.S	F2,F6,F4	;F2=lat rot. cor. / 0.3	rate engine vol. inc. while rotating
+C.LT.S	F0,F20
+NOP
+BC1FL	7F0856DC
+C.LT.S	F2,F20
+NEG.S	F0,F0
+C.LT.S	F2,F20
+//7F0856DC:
+NOP
+BC1FL	7F0856F0
+C.LT.S	F0,F2
+NEG.S	F2,F2
+C.LT.S	F0,F2
+//7F0856F0:
+MOV.S	F12,F0
+BC1FL	7F085704
+C.LT.S	F20,F12
+MOV.S	F12,F2
+C.LT.S	F20,F12
+//7F085704:
+NOP
+BC1F	7F085818
+LUI	AT,3F80
+MTC1	AT,F10		;F10=1.0
+LUI	S0,8003
+ADDIU	S0,S0,6458	;S0=80036458: 
+C.LT.S	F10,F12
+LUI	AT,3F80
+BC1FL	7F085738
+LW	T9,0004 (S0)
+MTC1	AT,F12		;F12=1.0
+NOP
+LW	T9,0004 (S0)
+//7F085738:	if not set, sound the motion SE
+BNEL	T9,R0,7F085774
+LW	A0,0004 (S0)
+JAL	7F0BFC04
+SWC1	F12,0244 (SP)
+BNEZ	V0,7F085770
+LWC1	F12,0244 (SP)
+LUI	A0,8006
+LUI	A2,8003
+ADDIU	A2,A2,645C	;A2=8003645C: 
+LW	A0,3720 (A0)	;A0=80063720: 
+ADDIU	A1,R0,003E	;A1=03E: SE
+JAL	70008E08	;set SE 03E: tank in motion
+SWC1	F12,0244 (SP)
+LWC1	F12,0244 (SP)
+//7F085770:	play with volume of SE
+LW	A0,0004 (S0)	;A0=p->can't remember...
+LUI	AT,8005
+ADDIU	A1,R0,0008	;A1=8
+BEQL	A0,R0,7F085850
+LW	T6,0000 (S0)
+//7F085784:
+LWC1	F0,51EC (AT)	;F0=800551EC: intensity rate for motion SE vs speed
+ADDIU	A2,R0,7FFF	;default sound values for SE regs 4 & C
+LUI	AT,8005
+C.LT.S	F12,F0
+NOP
+BC1F	7F0857C0
+NOP
+LUI	AT,8005
+LWC1	F8,51F0 (AT)	;F8=800551F0: 
+MUL.S	F6,F12,F8	;F6=intensity of motion SE.  smaller F12=louder
+DIV.S	F4,F6,F0
+TRUNC.W.S	F10,F4
+MFC1	A2,F10
+BEQ	R0,R0,7F085808
+NOP
+//7F0857C0:
+LWC1	F8,51F4 (AT)	;F8=800551F4: 
+LUI	AT,8005
+C.LT.S	F12,F8
+NOP
+BC1F	7F085808
+NOP
+SUB.S	F6,F12,F0
+LWC1	F4,51F8 (AT)	;F4=800551F8: 
+LUI	AT,3F40
+MTC1	AT,F8
+MUL.S	F10,F6,F4
+LUI	AT,8005
+LWC1	F4,51FC (AT)	;F4=800551FC: 
+DIV.S	F6,F10,F8
+ADD.S	F10,F6,F4
+TRUNC.W.S	F8,F10
+MFC1	A2,F8
+NOP
+//7F085808:
+JAL	70009184	;accepts A0=p->source, A1=slot?[8], A2=volume?
+SWC1	F12,0244 (SP)
+BEQ	R0,R0,7F08584C
+LWC1	F12,0244 (SP)
+//7F085818:
+...
+//7F08584C:
+
+@_@
+
+Sound effect:
+note: no obvious connection with tank object.  SP+300 probably not absolute
+need to link into the tank object and draw up SE overrides
+if Tank's SE = 0, use default (BEQL SE,R0,+1, ADDIU A1,R0,00SE)
+
+set when you enter the tank
+//7F085634:
+BNE	V0,AT,7F0856A0
+LUI	S0,8003
+ADDIU	T3,R0,0002	;T3=2
+LUI	AT,8008
+ADDIU	S0,S0,6458	;S0=80036458	sound effect data
+SW	T3,99B8 (AT)	;T3=800799B8: 
+LW	T8,0000 (S0)	;T8=80036458: 
+BNEL	T8,R0,7F08567C	;skip setting sound effect if 80036458 !=2
+LW	A0,0000 (S0)	;A0=80036458: 
+JAL	7F0BFC04	;V0=80048370: 
+NOP
+//7F085660:	start up tank
+BNEZ	V0,7F085678	;skip setting sound if 80048370 != 0
+LUI	A0,8006
+LW	A0,3720 (A0)	;A0=80063720: p->SE handle?
+ADDIU	A1,R0,0042	;A1=SE 042: ignition+idle
+JAL	70008E08
+OR	A2,S0,R0	;A2=S0: SE data (0x18)
+//7F085678:
+LW	A0,0000 (S0)
+ADDIU	A1,R0,0008	;A1=8
+JAL	70009184
+ADDIU	A2,R0,61A8	;A2=61A8
+//7F085688:
+LUI	V0,8008
+ADDIU	V0,V0,99B4	;V0=800799B4
+ADDIU	T4,R0,61A8	;T4=61A8
+SW	T4,0000 (V0)	;61A8->800799B4
+BEQ	R0,R0,7F0859E0
+LW	T0,0000 (S1)	;T0=p->cur BONDdata
+//7F0856A0:	tank in motion
+...
+//7F085750:
+LUI	A0,8006
+LUI	A2,8003
+ADDIU	A2,A2,645C
+LW	A0,3720 (A0)
+ADDIU	A1,R0,003E	;tank motion SE
+JAL	70008E08
+SWC1	F12,0244 (SP)
+...
+//7F0857B8:
+BEQ	R0,R0,7F085808
+NOP
+//7F0857C0:
+
+seperate routine, when you eject.  switch SE
+//7F065EA8:
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00E8	;switch SE
+JAL	70008E08
+OR	A2,R0,R0
+
+
+otake!
+known SE occurances:
+SNEEZE!
+LUI	A0,8006
+ADDIU	A1,R0,0101
+C.LT.S	F0,F8
+OR	A2,R0,R0
+BC1FL	+8
+LW	T4,0014 (S0)
+JAL	70008E08
+LW	A0,3720 (A0)
+
+electronic
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00F3
+JAL	70008E08
+OR	A2,R0,R0
+
+klaxon
+LUI	A0,8006
+LUI	A2,8005
+ADDIU	A2,A2,83A0
+LW	A0,3720 (A0)
+JAL	70008E08
+ADDIU	A1,R0,00A1
+
+out of ammo!
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,002B
+JAL	70008E08
+OR	A2,R0,R0
+
+zappity laserish sound
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,005B
+JAL	70008E08
+SW	A2,0060 (SP)
+
+squish bullet noise (impact snow?)
+ADDIU	AT,R0,0002
+BNE	A3,AT,+8
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,004A
+JAL	70008E08
+SW	A2,0060 (SP)
+
+bullet impact glass
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0046
+JAL	70008E08
+SW	V0,001C (SP)
+
+clip empty? switch?
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0059
+JAL	70008E08
+OR	A2,R0,R0
+
+switch to laser
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00F2
+JAL	70008E08
+OR	A2,R0,R0
+
+switch to knives
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00E9
+JAL	70008E08
+OR	A2,R0,R0
+
+switch to mines
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00EB
+JAL	70008E08
+OR	A2,R0,R0
+
+switch to gun
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00E8
+JAL	70008E08
+OR	A2,R0,R0
+
+watch beep
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,009F
+JAL	70008E08
+OR	A2,R0,R0
+
+watch static
+LUI	A0,8006
+SW	T6,0B04 (AT)
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00EC
+JAL	70008E08
+OR	A2,R0,R0
+
+another watch beep
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,009F
+JAL	70008E08
+OR	A2,R0,R0
+
+tank: run over guy
+//7F0867e4:
+ADDIU	A1,R0,00B7	;SCREAM
+LW	A0,3720 (A0)
+JAL	70008E08
+OR	A2,R0,R0
+
+tank: crush
+//7F086820:
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00D5
+JAL	70008E08
+OR	A2,R0,R0
+
+woosh (knife or slappers?)
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0069
+JAL	70008E08
+OR	A2,R0,R0
+
+object respawn sound
+//7F03C8AC:	713DC
+LBU	T8,0003 (S0)
+ADDIU	AT,R0,0015
+LUI	A0,8006
+BNE	T8,AT,7F03C8C8	;branch if not obj 15: body armour
+ADDIU	A1,R0,0052
+LWC1	F6,0080 (S0)
+SWC1	F6,0084 (S0)
+BNEZ	S3,+6
+OR	A2,R0,R0
+JAL	70008E08
+LW	A0,3720 (A0)
+
+watch beep
+LUI	A0,8006
+ADDIU	A1,R0,009F
+BEQ	T6,R0,+5
+OR	A2,R0,R0
+JAL	70008E08
+LW	A0,3720 (A0)
+
+casing hitting ground
+LUI	A0,8006
+ADDIU	A1,R0,007A
+BEQ	V1,T8,+7
+NOP
+LW	A0,3720 (A0)
+JAL	70008E08
+SW	A3,0028 (SP)
+
+latch or small clicking noise	empty?
+LUI	A0,8006
+ADDIU	A1,R0,00F1
+ANDI	T0,V0,0008
+BEQ	T0,R0,+3
+OR	A2,R0,R0
+ORI	T1,V0,0010
+SB	T1,0001 (S3)
+JAL	70008E08
+LW	A0,3720 (A0)
+
+gasping, like gas leak
+ADDIU	A1,R0,0044
+OR	A2,R0,R0
+SW	R0,00F8 (T4)
+JAL	70008E08
+LW	A0,3720 (A0)
+
+starting tank
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0042
+JAL	70008E08
+OR	A2,S0,R0
+
+moving tank
+LUI	A0,8006
+LUI	A2,8003
+ADDIU	A2,A2,645C
+LW	A0,3720 (A0)
+ADDIU	A1,R0,003E
+JAL	70008E08
+SWC1	F12,0244 (SP)
+
+engine idling
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0041
+OR	A2,S0,R0
+JAL	70008E08
+SWC1	F12,0244 (SP)
+
+cough twice
+ADDIU	A1,R0,0062
+OR	A2,R0,R0
+BC1FL	+6
+LUI	AT,44E1
+JAL	70008E08
+LW	A0,3720 (A0)
+
+gas leak
+LUI	A0,8006
+LUI	A2,8003
+ADDIU	A2,A2,0AE4
+LW	A0,3720 (A0)
+JAL	70008E08
+ADDIU	A1,R0,0066
+
+alarm
+LUI	A0,8006
+LUI	A2,8003
+ADDIU	A2,A2,0AC4
+LW	A0,3720 (A0)
+JAL	70008E08
+ADDIU	A1,R0,00A3
+
+door closing, but also used on main menus when moving from folder to folder
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00C7
+JAL	70008E08
+OR	A2,R0,R0
+
+same, but for different instance
+LUI	A0,8006
+SW	T9,A8D8 (AT)
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00C7
+JAL	70008E08
+OR	A2,R0,R0
+(few more follow these.  same effect, different menus)
+
+watch beep
+LUI	A0,8006
+SW	T7,09C4 (AT)
+LW	A0,3720 (A0)
+ADDIU	A1,R0,009F
+JAL	70008E08
+OR	A2,R0,R0
+
+throwing knife hitting ground
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0003
+JAL	70008E08
+OR	A2,R0,R0
+
+grenade hitting ground
+LW	A0,3720 (A0)
+ADDIU	A1,R0,002D
+JAL	70008E08
+OR	A2,R0,R0
+
+running engine
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0041
+JAL	70008E08
+ADDIU	A2,S1,00AC
+
+locked door
+LUI	A0,8006
+ADDIU	A1,R0,00BA
+BNE	T7,AT,+D
+OR	A2,R0,R0
+JAL	70008E08
+LW	A0,3720 (A0)
+
+switch guns
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00EA
+JAL	70008E08
+OR	A2,R0,R0
+
+switch mines
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00EB
+JAL	70008E08
+OR	A2,R0,R0
+
+switch knives
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00E9
+JAL	70008E08
+OR	A2,R0,R0
+
+switch laser
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00F2
+JAL	70008E08
+OR	A2,R0,R0
+
+open lab door	- door SE 1
+ADDIU	A1,R0,00D3
+LW	A0,3720 (A0)
+JAL	70008E08
+OR	A2,A3,R0
+
+close lab door	- door SE 1
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00D2
+OR	A2,R0,R0
+JAL	70008E08
+SW	A3,0018 (SP)
+
+open elevator	- door SE 2
+LUI	A0,8006
+BEQ	A3,R0,+13
+ADDIU	A1,R0,0007
+LW	A0,3720 (A0)
+JAL	70008E08
+OR	A2,A3,R0
+
+close elevator	- door SE 2
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00CA
+OR	A2,R0,R0
+JAL	70008E08
+SW	A3,0018 (SP)
+
+looping automated door moving	- door SE 3
+LUI	A0,8006
+BEQ	A3,R0,+3
+ADDIU	A1,R0,00CC
+LW	A0,3720 (A0)
+JAL	70008E08
+OR	A2,A3,R0
+
+somehting with door
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00D6
+OR	A2,R0,R0
+JAL	70008E08
+SW	A3,0018 (SP)
+
+open automated door	- door SE 4
+ADDIU	A1,R0,00D8
+LW	A0,3720 (A0)
+JAL	70008E08
+OR	A2,A3,R0
+
+close sliding door	- door SE 7
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00C0
+OR	A2,R0,R0
+JAL	70008E08
+SW	A3,0018 (SP)
+
+open sliding door	- door SE 7
+ADDIU	A1,R0,00BF
+LW	A0,3720 (A0)
+JAL	70008E08
+OR	A2,A3,R0
+
+open light door	- door SE 5
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00BC
+OR	A2,R0,R0
+JAL	70008E08
+SW	A3,0018 (SP)
+
+open ding	- door SE 2, 6, 8, B, 11
+ADDIU	A1,R0,0007
+LW	A0,3720 (A0)
+JAL	70008E08
+OR	A2,A3,R0
+
+open garage door	- door SE 9
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00C2
+JAL	70008E08
+OR	A2,A3,R0
+
+open ding	- door SE 2, 6, 8, B, 11
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0007
+OR	A2,R0,R0
+JAL	70008E08
+SW	A3,0018 (SP)
+
+open mechanical door	- door SE E
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00DA
+JAL	70008E08
+OR	A2,A3,R0
+
+open stone door	- door SE F
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00E1
+JAL	70008E08
+OR	A2,A3,R0
+
+open UNKNOWN door
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00D6
+JAL	70008E08
+OR	A2,R0,R0
+
+etc.
+
+open watch
+LUI	A0,8006
+ADDIU	A1,R0,00ED
+BEQ	T9,R0,+6
+OR	A2,R0,R0
+JAL	70008E08
+LW	A0,3720 (A0)
+
+close watch
+LUI	A0,8006
+SW	T5,01C0 (T6)
+LW	T7,A0B0 (T7)
+ADDIU	A1,R0,00EE
+OR	A2,R0,R0
+SW	R0,01C4 (T7)
+JAL	70008E08
+LW	A0,3720 (A0)
+
+launch rocket
+ADDIU	A1,R0,0001
+...
+LUI	A0,8006
+LW	T6,0098 (V0)
+ADDIU	A2,V0,0098
+BNEL	T6,R0,+6
+LW	T7,009C (V0)
+JAL	70008E08
+LW	A0,3720 (A0)
+and here...
+LUI	A0,8006
+ADDIU	A1,R0,0001
+BNEZ	T7,+3
+ADDIU	A2,V0,009C
+JAL	70008E08
+LW	A0,3720 (A0)
+
+higher-pitch prop noise
+LW	A0,3720 (A0)
+ADDIU	A1,R0,003A
+JAL	70008E08
+ADDIU	A2,S1,00B0
+
+autogun firing
+LUI	A0,8006
+ADDIU	A1,R0,00FD
+BNEZ	T2,+A
+ADDIU	A2,S0,00C4
+ADDIU	T6,S3,0008
+SW	T6,0070 (SP)
+JAL	70008E08
+LW	A0,3720 (A0)
+and here...
+LUI	A0,8006
+ADDIU	A1,R0,00FD
+BNEZ	T5,+8
+ADDIU	A2,S0,00C8
+ADDIU	T8,S3,0008
+SW	T8,0070 (SP)
+JAL	70008E08
+LW	A0,3720 (A0)
+
+reloading
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,0032
+JAL	70008E08
+OR	A2,R0,R0
+
+floppy or key reader
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00F5
+JAL	70008E08
+OR	A2,R0,R0
+
+watch magnet attract
+LUI	A0,8006
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00F6
+JAL	70008E08
+ADDIU	A2,A3,01D4
+

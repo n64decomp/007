@@ -1,0 +1,43 @@
+object respawn flag is obj+2, bit 04
+
+7F001D9C:	prepares object for play
+...
+//7F001E14:	multiplayer-only object expansion code - sets respawn
+JAL	7F09A464
+SWC1	F4,0074 (S1)
+SLTI	AT,V0,0002
+BNEZ	AT,7F001E90	;branch if solo
+ADDIU	V1,R0,0001
+//7F001E28:	object generator - scenario-specific to FlagTag
+JAL	7F014758	;ret V0=scenario
+SW	V1,0074 (SP)
+ADDIU	AT,R0,0002
+BNE	V0,AT,7F001E54	;branch if not flag tag
+LW	V1,0074 (SP)
+//7F001E3C:	test if object is a flag
+LH	T8,0004 (S1)	;T8=model	(S1=p->obj.data)
+ADDIU	AT,R0,014D
+BNE	T8,AT,7F001E54	;branch if not using flag model (14D)
+NOP
+BEQ	R0,R0,7F001E7C	;V1=0: inhibit respawn
+OR	V1,R0,R0
+//7F001E54:	object generator - scenario-specific to MwtGG
+JAL	7F014758	;ret V0=scenario
+SW	V1,0074 (SP)
+ADDIU	AT,R0,0003
+BNE	V0,AT,7F001E7C	;branch if not MwtGG
+LW	V1,0074 (SP)
+//7F001E68:	test if GG
+LH	T9,0004 (S1)	;T9=model	(S1=p->obj.data)
+ADDIU	AT,R0,00D0
+BNE	T9,AT,7F001E7C	;branch if not using GG model (0D0)
+NOP
+OR	V1,R0,R0	;V1=0: inhibit respawn
+//7F001E7C:	if not scenario item, set respawn flag
+BEQL	V1,R0,7F001E94	;branch if scenario item
+LW	V1,0008 (S1)
+LBU	T0,0002 (S1)	;T0=obj.data+2: 
+ORI	T1,T0,0004
+SB	T1,0002 (S1)	;obj.data+2 |= 0x04: respawn flag!
+//7F001E90:
+...	;etc

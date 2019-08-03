@@ -1,0 +1,87 @@
+  Sadly original game hardcodes these.  Well, since all the motion has to be eaten anyway to get good vehicles working, will rewrite!
+
+  High byte is controller 1, low byte controller two.  Uses a simplified button key.
+  START is always pause (hardcoded), so hijacking it for control stick.  Sadly, if only one button per feature could have used nibbles and single byte for both controllers O.o
+  Also, don't need to set all c's and +'s, so will simple denote when they are used.  Otherwise, the format will double in size.  Besides, these wind up being specially-handled either way if set to move/look.
+	80	A button
+	40	B button
+	20	Z button
+	10	Control stick
+	08	+ pad
+	04	C pad
+	02	L button
+	01	R button
+Format:
+	0x0	AIM
+	0x2	LOOK
+	0x4	ACTION
+	0x6	WEAPON
+	0x8	FIRE
+	0xA	MOVE
+
+1.1	Honey		0300.0C00.4000.8000.2000.1000
+AIM	L,R
+LOOK	C,+
+ACTION	B
+WEAPON	A
+FIRE	Z
+MOVE	stick1
+
+1.2	Solitaire	0300.1000.4000.8000.2000.0C00
+AIM	L,R
+LOOK	stick1
+ACTION	B
+WEAPON	A
+FIRE	Z
+MOVE	C,+
+
+1.3	Kissy		2000.0C00.4000.0300.8000.1000
+AIM	Z
+LOOK	C,+
+ACTION	B
+WEAPON	L,R
+FIRE	A
+MOVE	stick1
+
+1.4	Goodnight	2000.1000.4000.0300.8000.0C00
+AIM	Z
+LOOK	stick1
+ACTION	B
+WEAPON	L,R
+FIRE	A
+MOVE	C,+
+
+2.1	Plenty		0020.0010.4040.8080.2000.1000
+AIM	Z2
+LOOK	stick2
+ACTION	B1,B2
+WEAPON	A1,A2
+FIRE	Z1
+MOVE	stick1
+
+2.2	Galore		0020.1000.4040.8080.2000.0010
+AIM	Z2
+LOOK	stick1
+ACTION	B1,B2
+WEAPON	A1,A2
+FIRE	Z1
+MOVE	stick2
+
+2.3	Domino		2000.0010.4040.8080.0020.1000
+AIM	Z1
+LOOK	stick2
+ACTION	B1,B2
+WEAPON	A1,A2
+FIRE	Z2
+MOVE	stick1
+
+2.4	Goodhead	2000.1000.4040.8080.0020.0010
+AIM	Z1
+LOOK	stick1
+ACTION	B1,B2
+WEAPON	A1,A2
+FIRE	Z2
+MOVE	stick2
+
+
+  Otherwise, can double the format to allow individual key assignments.  

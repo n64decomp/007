@@ -1,0 +1,404 @@
+Setting Textured and Untextured Geometry in GoldenEye
+
+  Image application is done via microcode commands (herein called OPs regardless the inaccuracy of the word).  There are four OPs you must keep track of, and in this document I'll mostly refer to them by number and not name.  They are listed here in the order they are usually used:
+B9	SetOtherModeLow: sets how the image is applied to geometry
+FC	SetCombine: dictates how alpha and color are combined
+BA	SetOtherModeHigh: sets how the image is applied to geometry
+BB	Texture: size and application of image data
+
+  There are also two more important commands:
+C0	Normally NOP, used here to do image recall
+E7	SyncPipe: waits for all geometry data to finish before proceeding
+  Before you change any B9, BA, of FC OPs, you need to set an E7 command.  Otherwise, you could wind up applying the wrong settings accidentally while the RSP catches up to you.  You only need one sync between the old data and the new, such as:
+
+E7000000 00000000
+BA001402 00100000
+B900031D 0C182078
+FC26A004 1F1093FF
+
+NOT:
+
+E7000000 00000000
+BA001402 00100000
+E7000000 00000000
+B900031D 0C182078
+E7000000 00000000
+FC26A004 1F1093FF
+
+  The format for a C0 command is more complicated and is covered in more depth in a dedicated document.  These examples will mostly deal with type 02 OPs, whose format is as follows:
+C0000000 00000000	basic command
+00800000 00000000	mirror S
+00400000 00000000	clamp S
+00200000 00000000	mirror T
+00100000 00000000	clamp T
+000C0000 00000000	ST offset, 2 avoids pixelized edges
+00000002 00000000	type, which here is 2
+00000000 00000FFF	image ID
+
+  Suffice it to say your command will almost always look like:
+C0080002 00000###	;# is image ID value
+
+  Other commands have more complex formatting that described above.  S and T above are what are usually called U and V coordinates; these map a position in the image to the vertex, pinning it to your geometry.
+
+  As a final note before moving onto the next section, you only need to change a setting if it isn't the same as the current one.  For instance, if you have two images using the same size and same format, you probably won't have to set anything at all.  This will be mentioned in the examples below as well.
+
++_+
+
+Basics of Textured and Untextured Geometry
+
+  The difference between textured and untextured geometry is more than just including an image.  You must provide the correct settings to render the difference.  This example comes from the start of a room and will be explained in one moment.
+
+Textured:
+E7000000 00000000	;Always start by flushing the pipe
+BA001402 00100000	;2 cycle when textured
+B900031D 0C182078	;color image - ignore alpha
+FC26A004 1F1093FF	;ignores image and vertex alpha
+BA001001 00010000	;images use lod
+BB002801 FFFFFFFF	;on, level 5, tile 0, ignore ST
+C0080002 00000iii	;type 02 image #iii
+
+Untextured:
+E7000000 00000000	;Always start by flushing the pipe
+BA001402 00000000	;1 cycle when untextured
+B900031D 00502078	;only uses vertex and enviroment colors
+FCFFFFFF FFFE793C	;only applies vertex and enviroment color
+(BA001001 00000000)	;not included: already set to tile
+BB000001 FFFFFFFF	;on, level 0, tile 0, ignore ST
+
+  In the untextured example the OP in parathesis is not actually included in the script.  When a value is already set you do not need to include it.  Here it was inserted for your benefit.
+  As a brief note, the settings above refer to a room binary.  At runtime extra flags are toggled and all this will be mentioned below.  Take it as it comes for now.
+
+Breakdown:
+  The pipe is flushed at the beginning because geometry modes and combiners are going to change.  The first BA command is also a point-in-fact.  It must be set to 2-cycle in order to manage textures and 1-cycle to operate more efficiently on untextured triads.  The second BA is not entirely necessary but takes advantage of level-of-detail.  This will use different scale textures at different distances, and when textures are in use you will almost always want to flag it on.
+
+  In the following section B9 commands will be expressed in more depth, but the thing to note here is how you set them for color and texture.  The upper word (B900031D) merely says what settings are being changed and this will always be the same.  The lower word contains the settings themselves.  The actual settings are complicated, but the only operative change is:
+0C182078	img-a:  blend alpha shade, blend 0
+00502078	no img: color blender
+
+  In other words, everything within 0x1FFFFF is the same.  Textureless geometry sets the 00400000 flag, and images do not.
+
+  The combiner is a far more invloved case, and due to the math and hardware background involved will not be covered at all in this document.  Suffice it to say there are only four settings that ever need to be applied in GE, and they are:
+FC26A004 1F1093FF	image-alpha
+FC26A004 1F1493FF	color image+alpha
+FC26A004 1FFC93FF	greyscale+alpha (ia)
+FCFFFFFF FFFE793C	no image
+
+  These include flags to allow, when B9 permits, merging with enviroment color alpha.  Setting them even when unused has no adverse results, so might as well ;*)
+
+  BB texture commands used regardless if textures are applied.  They require you to know a little about the texture you're using, it any.  A quick breakdown:
+BB000000 00000000	basic command
+00FF0000 00000000	bowtie, usually 0.  +4 kills a scanline!
+00003800 00000000	level, or size of tile in dmem.  0-7
+00000700 00000000	tile, used to save it in memory.  usually 0
+00000001 00000000	on(1) or off(0).  You want on.
+00000000 FFFF0000	S offset.  Leave at -1 (FFFF)
+00000000 0000FFFF	T offset.  Leave at -1 (FFFF)
+
+  The tile value allows you to store a image for recall with a bunch of restrictions.  In GE this is a bad idea since you'd overwrite things the programmers placed in those slots and generally make a mess.  So, for new objects and rooms use 0.
+  S and T offsets are usually left at -1,-1 (FFFFFFFF) so the ST for each vertex is used instead.  They would usually be set only when a different tile is being used, such as applying luster.  The different tile will include the "reflection" and be applied using funny ST offsets to stretch the image and make it look like the reflection is offset from the sample.
+
+  The level refers to the size of your image when assembled and sent off.  That's the width, the height, and the format multiplied together.  For indexed images, imagine each index is replaced by the color sample.
+level	image binary total size
+7	8192	0x2000
+6	4096	0x1000
+5	2048	0x800
+4	1024	0x400
+3	512	0x200
+2	256	0x100
+1	128	0x80
+0	0	0x0	(more likely no image)
+  As in 32x32 16bit = 800, 32x64 ia = 1000.  Max of 2000.  The largest color image would be 64x64, 16bit color making it 0x2000, or tile 7.  It's BB command would look like: 
+BB003801 FFFFFFFF
+  32x32 color images, used more than anything, are level 5:
+BB002801 FFFFFFFF
+
+  Note that untextured images don't have an image source.  That's why they use level 0.  That's the meaning behind BB000001 FFFFFFFF.
+
+
+  Now that you are thoroughly confused, the following sections discuss practical application of multisized images in different types of geometry files.
+
++_+
+
+Rooms: Type 02 Texture Application
+
+  Lets start with applying type 02 textures, as this is the most prevalent method to apply images and is common to all image formats.  Note this assumes you have already added the texture into the ROM and know its ID, size, and format.  This outlines how you set the microcode to properly apply it.
+
+  Rooms and objects are handled slightly differently due to certain settings rolling over.  Lets start with rooms first.
+
+  Texture settings come before all other data in any kind of telemetry file.  The actual formula is very simple and requires only the below.
+  The example is for a 32x32 ci image using image alpha and BG alpha if present.  Color comes from both the image and vertex colors.  That's the most common scenario in GE.
+
+	E7000000 00000000	;Always start by flushing the pipe
+if(image)
+	BA001402 00100000	;2 cycle when textured
+	B900031D 0C184978	;color image - use image alpha
+	FC26A004 1F1493FF	;color: img A + BG A, no vtx A
+	BA001001 00010000	;images use lod
+	BB002801 FFFFFFFF	;on: level 5, tile 0, default ST
+	C0080002 00000iii	;type 2 image #iii, presumed 32x32 ci
+else(color)
+	BA001402 00000000	;1 cycle when color
+	B900031D 00502078	;use vertex color only
+	FCFFFFFF FFFE793C	;apply vertex and bg color only
+	BB000001 FFFFFFFF	;on: level 0, tile 0, default ST
+if(not yet set)
+	BA001102 00000000	;clamp
+	BA000C02 00002000	;bi-level interpretation
+	B7000000 00002000	;cull back
+	FB000000 000000FF	;background color
+;insert geometry here
+
+
+  First thing to note: included are the OPs to use just vertex color as well.  You can simply switch between them as you see fit.  That's included here for reference, but for now we'll only deal with the image part of it now.
+
+  Before playing with commands, a word about the "if not yet set" section.  These commands only need to be set once at the start of the file.  You never need to tinker with them again unless you honestly want to.  Set them after the first texture call to ensure nothing alters them behind your back.
+  GE files expect images to be clamped and yours probably will be anyway.  To be consistent you'll have to use bi-level interpretation.  Point and average will not mesh well with any of the original geometry.  In general you don't want to use point anyway, as it tends to pixelate much like the graphics in Doom.  
+  Cull back is set to prevent rendering the back side of geometry.  This way only the side facing you is rendered, not the back as well.  Gives a performance boost.  If you use two-sided geometry be sure to set it back afterward!
+  The background (or enviroment) color is used to flatten against.  In particular, you need to make sure the alpha value is set to FF unless you want translucent walls--yours or unexpectantly others.
+
+
+  Everything else worth saying has to do with the "image" section.  Only four commands in the entire script will change depending on your image, and of them only three are worth mentioning.
+B9	changes based on image format
+FC	changes based on image format
+BB	changes based on image size
+C0	call a different image ID
+
+  B9 is the most difficult to set simply because of the large degree of options available.  By comparison FC and BB are simple.  So, first, B9.  To save time and energy, the most common settings are listed here as well as when to apply them.
+  The upper part of the command will always be B900031D and states you'll be changing render mode, convergance, depthmode, and blender settings.  The bottom word will change depending on your specific image and what effects you'll want to use.  The most common scenarios are these:
+B900031D 00502078	no image, no BG color
+B900031D 0C182048	greyscale - alpha, BG alpha
+B900031D 0C104DD8	intensity+alpha, no BG color
+B900031D 0C182078	color image - alpha, BG alpha
+B900031D 0C184978	color image + alpha, BG alpha
+
+  Certain flags have different uses, and most enable modes for the combiner to use without directly having their own impact.  The flags of most importance here are these:
+00400000	no image
+00080000	enables BG alpha using the FB OP
+00004000	enables image alpha; not used with below
+00002000	alpha converge selection; no img. alpha
+
+  Actually working out exactly what you want is beyond the scope of this.  You would have to refer to documentation on the RSP microcode.  The generic settings above though should serve for almost any image and scenario you run into.
+
+
+  FC is easy to set.  If no alpha is used use one of the first two settings.  If no image is used use one of the last two settings.  If the image uses alpha, pick the appropriate one for color or greyscale (I/IA) image.
+FC26A004 1F1093FC	image-alpha
+FC26A004 1F1093FF	image-alpha, BG alpha
+
+FC26A004 1F1493FC	color image+alpha
+FC26A004 1F1493FF	color image+alpha, BG alpha
+
+FC26A004 1FFC93FC	greyscale+alpha (ia)
+FC26A004 1FFC93FF	greyscale+alpha (ia), BG alpha
+
+FCFFFFFF FFFE793C	no image
+FCFFFFFF FFFE793F	no image, BG alpha
+
+  Working out the exact settings is more of a chore.  The individual flags combine based on selected render settings to combine the final output.  Again, well beyond the scope of this document.
+
+
+  BB is also easy to set so long as you know what size the image is.  The key is the image format and size.
+Width * Height * Depth = Size
+  Multiply the width and height, then multiply this by the size of the color data.  If the image is indexed, use the size of the color key in the table.  Remember there's 16bits in a byte.  
+level	image binary total size
+7	8192	0x2000
+6	4096	0x1000
+5	2048	0x800
+4	1024	0x400
+3	512	0x200
+2	256	0x100
+1	128	0x80
+0	0	0x0	(more likely no image)
+
+Here's some examples:
+32x32 ci, 16bit color
+	32 * 32 * 2bytes = 4096 bytes:	level 6
+32x32 i, 8bit
+	32 * 32 * 1byte  = 2048 bytes:	level 5
+
+If you fall between levels, round up:
+12x12 32bit color
+	12 * 12 * 4bytes = 576 bytes
+	round up to 1024:	level 4
+
+  Now you stuff the level value into the OP.
+level	OP
+0	BB000001 FFFFFFFF
+1	BB000801 FFFFFFFF
+2	BB001001 FFFFFFFF
+3	BB001801 FFFFFFFF
+4	BB002001 FFFFFFFF
+5	BB002801 FFFFFFFF
+6	BB003001 FFFFFFFF
+7	BB003801 FFFFFFFF
+
+
++_+
+
+Changing Textures Within a Room
+
+  Most interesting rooms will use more than one texture.  When swapping textures you only need to include the code that changes.  Also, you only need to sync the pipe (E7 OP) when a B9, BA, or FC OP changes.
+  As an example, here's a sample room illustrating a few texture changes.  The types of textures are noted.
+
+	E7000000 00000000	;Always start by flushing the pipe
+	BA001402 00100000	;2 cycle when textured
+	B900031D 0C184978	;color image - use image alpha
+	FC26A004 1F1493FF	;color: img A + BG A, no vtx A
+	BA001001 00010000	;images use lod
+	BB002801 FFFFFFFF	;on: level 5, tile 0, default ST
+	C0080002 00000iii	;type 2 image #iii, 32x32 ci
+	BA001102 00000000	;clamp
+	BA000C02 00002000	;bi-level interpretation
+	B7000000 00002000	;cull back
+	FB000000 000000FF	;background color
+;insert geometry here
+;example 1: same type+size
+	C0080002 00000iii	;type 2 image #iii, 32x32 ci
+;more geometry
+;example 2: different size
+	BB003001 FFFFFFFF	;on: level 6, tile 0, default ST
+	C0080002 00000iii	;type 2 image #iii, 64x32 ci
+;more geometry
+;example 3: change render mode
+	E7000000 00000000	;changing settings
+	B900031D 0C182078	;color image - no image alpha
+	C0080002 00000iii	;type 2 image #iii, 64x32 ci
+;more geometry
+;example 4: complete change
+	E7000000 00000000	;changing settings
+	B900031D 0C102048	;greyscale image - no image alpha
+	FC26A004 1F1093FF	;image without alpha + BG alpha
+	BB002001 FFFFFFFF	;on: level 4, tile 0, default ST
+	C0080002 00000iii	;type 2 image #iii, 32x32 i8
+
+  Each in series.  Example 1 shows that if the image is exactly the same as the previous settings, you just add a new texture call.  It's that easy.
+  Example 2 shows how you call an image that has the same format as the current image but differs in size.  Simply write in the new BB and CO OPs.  No pipe is necessary.
+  Example 3 illustrates changing the render mode in a B9 OP, here ignoring the alpha channel.  A flush OP (E7) is needed because a B9 command will be used.  The new render setting is applied and the texture OP is written.  As a side note, by disabling alpha in B9 you do not need to change the FC command.  You could also achieve the same effect by altering FC if you like, but disabling it from B9 saves you from having to write a million FCs.
+  Example 4 is a complete texture swap.  All four commands are used and a flush is called beforehand.  
+
+
+  You can also switch between textured and untextured, presuming you watch the settings.  In this example, you start out untextured, then swap to using textures:
+	E7000000 00000000	;Always start by flushing the pipe
+	BA001402 00000000	;1 cycle when color
+	B900031D 00502078	;use vertex color only
+	FCFFFFFF FFFE793C	;apply vertex and bg color only
+	BB000001 FFFFFFFF	;on: level 0, tile 0, default ST
+	BA001102 00000000	;clamp
+	BA000C02 00002000	;bi-level interpretation
+	B7000000 00002000	;cull back
+	FB000000 000000FF	;background color
+;insert geometry here
+;switch to textures
+	E7000000 00000000	;changing settings
+	BA001402 00100000	;2 cycle when textured
+	B900031D 0C184978	;color image - use image alpha
+	FC26A004 1F1493FF	;color: img A + BG A, no vtx A
+	BA001001 00010000	;images use lod
+	BB002801 FFFFFFFF	;on: level 5, tile 0, default ST
+	C0080002 00000iii	;type 2 image #iii, presumed 32x32 ci
+;insert more geometry here
+
+  In order to switch, you flush, set the cycle rate back to 2, set LOD, then do your normal texture commands.  You won't need to clamp, cull, set the BG, or set the interpretation level again.  If you wanted, you could also change back from textured to untextured.  Simply turn off LOD, set the cycles back to 1, and set the OPs for colour.
+
++_+
+
+Unorthodox Texture Application
+
+  The simplest change can be used with the settings given above.  It adds a fixed amount of translucency to any geometry following it by setting the background enviroment color.  The OP is FB and simply takes a 32bit color value:
+FB000000 00000000	basic command
+00000000 FF000000	red
+00000000 00FF0000	green
+00000000 0000FF00	blue
+00000000 000000FF	alpha
+
+
+  By altering the render mode you can also use this to make the black in a greyscale image lacking alpha act like alpha.  For instance:
+B900031D 0C1849D8	;intensity, BG alpha
+FC26A004 1F1093FF	;image-alpha, BG alpha
+BB003001 FFFFFFFF	;on: level 6, tile 0
+C0080002 00000iii	;image, expected to be greyscale
+FB000000 00000080	;50% translucent
+
+
+  Ever wonder how to add luster to a surface?  It is as simple as making a small change to your BB command and setting two flags.  For instance:
+BB002801 08000800
+C0080002 00000iii
+B7000000 00060000
+
+  The B7 setting here sets lighting and texture gen, and this causes luster on the surface.  Note the ST settings in the BB command.  By setting these you offset the texture, effectively setting the repeat rate of the lusterous overlay.  After the shiny part of the model and definately before ending the display list you must reset the flags using this line:
+B6000000 00060000
+
+  Otherwise, the effect will leak onto every other piece of geometry that follows it, and this can also crash the game.
+
+
+  Type 01 texture commands load two images, one visible at a distance and the other close up.  It can also be used to add detail to an image when close but keep from rendering it far away.  Examples would be the rock walls in Dam and the stone walls in Grid.  This example comes from Dam:
+B900031D 0C1849D8	;uses convergence and depth comparisons
+FC26E404 1F10FFFF	;uses LOD fraction
+BB002801 FFFFFFFF	;on: level 5, tile 0, default ST
+C01B8001 FA 9A1 4B1	;type 1: 9A1 near, 4B1 far, dist. FA
+BA001102 00040000	;enable colour dither
+
+  The format for the type 1 C0 OP is more complicated, and here it is in detail:
+C0000000 00000000	basic command
+00800000 00000000	S mirror
+00400000 00000000	S clamp
+00200000 00000000	T mirror
+00100000 00000000	T clamp
+000C0000 00000000	ST offset
+0003C000 00000000	S shift
+00003C00 00000000	T shift
+00000001 00000000	type 1 command
+00000000 FF000000	distance for replacement
+00000000 00iii000	near image ID	(base)
+00000000 00000iii	far image ID	(overlay)
+
+  The important parts are the level and two image IDs.  In simplest form you have C0080001 FAiiiIII, where i is image 1 and I image 2.
+
+  The level is the distance at which replacement occurs.  Set to FF no replacement happens.  For "detail textures" you want a value roughly F8 to FB.  Finding the right value is more a matter of trial-and-error.  Technically this sets a PrimaryColor alpha level which converges with the overlay texture, but you don't have to worry about that.
+  Oddly, the near image will always be present.  The far image acts as an overlay that fades as you near the level set in the command.
+
+  For best effect you want the two images to be the same size and preferably the same format.  If the size differs, set the difference in the S and T to the appropriate shift values.  The example above uses S shift to account for image misalignment.
+
+  Remember too to enable colour dither in BA and disable it when you're done.  This allows the transition to smoothly blend the two images.  Otherwise, the effect can be very ugly.
+
++_+
+
+
+Objects
+
+  As mentioned before, objects use a slightly different set of commands.  In particular, rooms will automatically set certain flags in B9 commands.  There's also certain OPs that must be included and omitted from the display list.  
+  As before, here's the general initialization for a 32x32 ci image without alpha.  Note the difference from rooms.
+
+	E7000000 00000000	;Always start by flushing the pipe
+if(image)
+	BA001001 00010000	;images use LOD
+	BB002801 FFFFFFFF	;on: level 5, tile 0, default ST
+	C0080002 00000iii	;type 2 image, presumed 32x32 ci
+	if(not yet set)
+		BA001102 00000000	;clamp
+		BA000C02 00002000	;bi-level interpretation
+else(color)
+	BA001402 00000000
+	B900031D 00552078
+	FCFFFFFF FFFE793C
+if(not yet set)
+	B7000000 00002000	;cull back	
+	01020040 03000000	;basic matrix
+
+
+  If images are in use you also have to set clamp and bi-level interp.  Pure color doesn't require it, but images will.  Also note the addition of the matrix command.  This loads a default matrix for the object.  It is required, and failing to do so will cause bad things to happen.
+  It is more obvious what you don't need.  2-cycle is already set, and the BG color should already be set to black.  Objects presume B9 is already set to C8102078.  That's the equivalent of 0C102078 in rooms.  In general, XOR room values with C4000000 to get this table:
+
+Common B9 values:
+B900031D 00552078	no image, no BG color
+B900031D C8182048	greyscale - alpha, BG alpha
+B900031D C8104DD8	intensity+alpha, no BG color
+B900031D C8182078	color image - alpha, BG alpha
+B900031D C8184978	color image + alpha, BG alpha
+
+  Otherwise, all other settings should be identical to rooms.  Note you do need to set B9 if it differs from the default, and because the values aren't automatically corrected at runtime you have more control over how to set them.
+
++_+
+
+  Note only a fraction of the above applies to other N64 titles and is not written as a general guide to display list editting.  It is presented with generic values to allow the average hacker with little experience in N64 display lists to custom hex edit pre-generated output.  Please refer to RSP / RDP microcode documentation for a better reference of available render and combiner settings.
+
+-Zoinkity

@@ -1,0 +1,118 @@
+7F016064	4AB94	menu 0B initialization - copies stage and difficulty
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	A0,8003
+JAL	70006950	;stage#->800242FC: loaded stage
+LW	A0,A8F4 (A0)	;A0=8002A8F4: stage#
+LUI	A0,8003
+JAL	7F0BFC1C	;A0->80048384: difficulty
+LW	A0,A8FC (A0)	;A0=8002A8FC: selected difficulty
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+then calls the 'interface', which only sets return menu
+
+70006884:	this was the branch followed by complex, 2pl.
+	it isn't really that pertinent right now...
+
+//7F003CB8:	387E8
+SLTI	AT,S5,003B
+BEQ	AT,R0,7F004E10	;branch if 'stage#' > 0x3B
+SLL	T7,S5,0x2	;T7=stage#->offset
+LUI	T8,8003
+ADDIU	T8,T8,74E4	;T8=800374E4: p->setup pointers for each stage
+ADDU	S0,T7,T8	;S0=p->stage T7's setup pointer
+LW	V0,0000 (S0)	;V0=p->setup filename
+LUI	T9,8005
+ADDIU	S1,SP,0174	;S1=p->final string
+BEQ	V0,R0,7F004E10	;branch if no setup file
+ADDIU	T9,T9,EDB0	;T9=8004EDB0: 0x100 of zeroes
+OR	T2,S1,R0	;T2=S1: p->final string
+ADDIU	T1,T9,00FC	;T1=T9+FC: endpoint
+//7F003CEC:	3881C	prepare buffer for string: copy buffer to target
+LW	AT,0000 (T9)
+ADDIU	T9,T9,000C
+ADDIU	T2,T2,000C
+SW	AT,FFF4 (T2)
+LW	AT,FFF8 (T9)
+SW	AT,FFF8 (T2)
+LW	AT,FFFC (T9)
+BNE	T9,T1,7F003CEC
+SW	AT,FFFC (T2)
+//7F003D10:	38840	copy last entry and write first byte to buffer
+LW	AT,0000 (T9)
+OR	S4,R0,R0
+OR	S3,R0,R0
+SW	AT,0000 (T2)	;0x100 of zeroes in final string buffer
+LBU	T3,0000 (V0)	;T3=first byte of filename
+SB	R0,0175 (SP)	;write NULL after first byte
+//7F003D28:	38858	test if MP or solo
+JAL	7F09A464	;ret V0=#players
+SB	T3,0174 (SP)	;1st byte->buffer
+SLTI	AT,V0,0002
+BNEZ	AT,7F003D48	;branch if solo
+//7F003D38:	38868	loads "mp_" string for string extension
+LUI	A1,8005
+ADDIU	A1,A1,EEB0	;A1=8004EEB0: "mp_"
+JAL	7000A7FC	;append string A1 to A0
+OR	A0,S1,R0	;A0=S1: p->string on stack
+//7F003D48:	append setup name
+LW	A1,0000 (S0)	;A1=p->solo setup name for stage
+OR	A0,S1,R0	;A0=S1: p->string on stack
+JAL	7000A7FC
+ADDIU	A1,A1,0001	;A1++ skip the 'U'
+//7F003D58:
+OR	A0,S1,R0	;A0=S1: setup name
+ADDIU	A1,R0,0001	;A1=1: ???
+ADDIU	A2,R0,0100	;A2=0100: ???
+JAL	7F0BCD04	;load setup file into memory and stuff
+ADDIU	A3,R0,0004	;A3=4: bank 4
+//7F003D6C
+LUI	V1,8007
+ADDIU	V1,V1,5D28
+SW	V0,0000 (V1)	;V0->80075D28: p->setup file in memory
+
++_+
+
+7F0BCD04:	load resource using string value
+	accepts: A0=p->name, A1=?, A2=?, A3=bank#
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A1,001C (SP)
+SW	A2,0020 (SP)
+JAL	7F0BD254	;ret V0=ID# for resource A0
+SW	A3,0024 (SP)
+OR	A0,V0,R0	;A0=V0: ID#
+LW	A1,001C (SP)
+LW	A2,0020 (SP)
+JAL	7F0BCE0C	;load ID# A0, A1=?, A2=?, A3=bank#
+LBU	A3,0027 (SP)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+-----------------
+7F0C1DD8:	returns pointer to text string in given block
+expects	A0=2byte text value
+each text block can contain up to 3FF entries
+SRA	T6,A0,0xA	//mask FC00
+SLL	T7,T6,0x2	//T7=most of the first byte of text value
+LUI	V0,8009
+ADDU	V0,V0,T7	//V0=offset to block pointer
+LW	V0,C640 (V0)	//V0=8008C640+	(pointer to text table)
+ANDI	T8,A0,03FF	//T8=specific text entry
+SLL	T9,T8,0x2	//T9=entry# to offset
+ADDU	T0,V0,T9	//T0=pointer in table to text offset
+LW	V1,0000 (T0)	//V1=offset to text
+OR	A0,R0,R0
+BEQ	V1,R0,7F0C1E14
+NOP
+ADDU	A0,V1,V0	//A0=pointer to text
+JR	RA
+OR	V0,A0,R0	//V0=A0
+//7F0C1E14:	if a NULL entry, set a NULL pointer...
+JR	RA
+OR	V0,A0,R0	//V0=A0=0

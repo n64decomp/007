@@ -1,0 +1,614 @@
+7F0AB7D8:	E0308	solo watch menu - options page toggles interface
+	accepts: A0=setting (0-7)
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A0,0018 (SP)	;SP+18=A0: 
+OR	A0,R0,R0	;A0=0: player 1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,0222	;A1=0222: left c, +, or shoulder
+BNEZ	V0,7F0AB804	;branch if pressed
+NOP
+JAL	7F0A4FB0	;V0= TRUE if pressed left on control stick (0x2E)
+NOP
+BEQ	V0,R0,7F0AB86C	;branch if not pressing left
+//7F0AB804:	pressing left...
+LUI	T6,8004
+LW	T6,09A8 (T6)	;T6=800409A8: highlighted setting selected register
+LW	T7,0018 (SP)	;T7=SP+18: setting
+LUI	T9,8004
+BEQ	T6,R0,7F0AB86C	;branch if not selected
+SLL	T8,T7,0x2
+SUBU	T8,T8,T7
+SLL	T8,T8,0x2	;T8=T7*0xC: offset to setting
+ADDIU	T9,T9,0A7C
+ADDU	V0,T8,T9	;V0=80040A7C+offset: watch setting label list
+LW	V1,0008 (V0)	;V1=setting
+ADDIU	AT,R0,0001
+ADDIU	A0,V0,0008	;A0=p->setting
+BNEL	V1,AT,7F0AB854	;branch if setting not=1
+ADDIU	AT,R0,0002
+JAL	7F0AB7A4	;revise setting: wrap around to 0
+OR	A1,R0,R0	;A1=0
+BEQ	R0,R0,7F0AB8FC
+LW	RA,0014 (SP)
+//7F0AB850:	set to option 1
+ADDIU	AT,R0,0002
+BNE	V1,AT,7F0AB8F8	;branch if setting not=2
+ADDIU	A0,V0,0008	;A0=p->setting
+JAL	7F0AB7A4	;revise setting
+ADDIU	A1,R0,0001	;A1=1
+BEQ	R0,R0,7F0AB8FC
+LW	RA,0014 (SP)
+//7F0AB86C:	test if pressing right
+OR	A0,R0,R0	;A0=0: player 1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,0111	;A1=0111: right c, +, shoulder
+BNEZ	V0,7F0AB88C	;branch if pressed
+NOP
+JAL	7F0A4FEC	;V0= TRUE if pressed right on control stick (0x2E)
+NOP
+BEQ	V0,R0,7F0AB8F8	;branch if not pressed
+//7F0AB88C:	right pressed...
+LUI	T0,8004
+LW	T0,09A8 (T0)	;T0=800409A8: highlighted setting selected register
+LW	T1,0018 (SP)	;T1=SP+18: setting
+LUI	T3,8004
+BEQ	T0,R0,7F0AB8F8	;branch if not selected
+SLL	T2,T1,0x2
+SUBU	T2,T2,T1
+SLL	T2,T2,0x2	;T2=setting*0xC
+ADDIU	T3,T3,0A7C
+ADDU	V0,T2,T3,	;V0=80040A7C+offset: watch setting label list
+LW	V1,0008 (V0)	;V1=V0+8: cur.setting
+ADDIU	A0,V0,0008	;A0=V0+8: p->cur.setting
+ADDIU	AT,R0,0001
+BNEZ	V1,7F0AB8D8	;branch if not set to 0
+NOP
+JAL	7F0AB7A4	;revise setting
+ADDIU	A1,R0,0001	;A1=1
+BEQ	R0,R0,7F0AB8FC
+LW	RA,0014 (SP)
+//7F0AB8D8:	detect 3rd option
+BNEL	V1,AT,7F0AB8FC	;branch if not set to 1
+LW	RA,0014 (SP)
+LHU	T4,0006 (V0)	;T4=3rd option text label
+ADDIU	A0,V0,0008	;A0=V0+8: p->cur.setting
+BEQL	T4,R0,7F0AB8FC	;branch if not present
+LW	RA,0014 (SP)
+JAL	7F0AB7A4	;revise setting
+ADDIU	A1,R0,0002	;A1=2: 
+//7F0AB8F8:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+7F0AB7A4:	E02D4	change toggle options in watch menu
+	accepts: A0=p->setting register,A1=new setting
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F0A4FA4	;0->80040ADC: update menu?
+SW	A1,0000 (A0)	;A1->A0: new setting -> register
+LUI	A0,8006
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+ADDIU	A1,R0,002B	;A1=SE 02B
+JAL	70008E08	;play sound A1
+OR	A2,R0,R0	;A2=NULL
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+7F0AB908:	E0438	solo watch menu - options page - options list and interface
+	accepts: A0=p->display list target, A1=ypos, A2=setting#, A3=highlight mode (0-2)
+LUI	V1,8005
+LB	V1,84D0 (V1)	;V1=800484D0: language
+ADDIU	SP,SP,FFA0
+LUI	V0,0080
+ORI	T2,V0,0080	;T2=00800080 - normal colour
+SW	RA,0034 (SP)
+SW	A0,0060 (SP)	;SP+60=A0: DL
+SW	A1,0064 (SP)	;SP+64=A1: y position
+OR	T1,T2,R0	;T1=00800080 - normal colour
+BLEZ	V1,7F0AB93C	;branch if english or below
+SW	T2,0054 (SP)	;SP+54=00800080 - normal colour
+BEQ	R0,R0,7F0AB940
+ADDIU	A1,R0,00AA	;A1=00AA: japanese
+//7F0AB93C:
+ADDIU	A1,R0,00B4	;A1=00B4: english
++BEQ	V1,R0,7F0AB954	;branch if english or below
+ADDIU	T7,R0,00E1
+ADDIU	T6,R0,00DC
+BEQ	R0,R0,7F0AB958
+SW	T6,004C (SP)	;SP+4C=00DC: japanese
+//7F0AB954:	determine type of highlighting
+SW	T7,004C (SP)	;SP+4C=00E1: english
+BEQ	A3,R0,7F0AB990	;branch if A3=0
+SLL	T3,A2,0x2
+ADDIU	V1,R0,0001
+BEQ	A3,V1,7F0AB9E8	;branch if A3=1
+SLL	T6,A2,0x2
+ADDIU	AT,R0,0002
+BEQ	A3,AT,7F0ABA3C	;branch if A3=2
+SLL	T8,A2,0x2
+SUBU	T8,T8,A2
+LUI	T9,8004
+ADDIU	T9,T9,0A7C
+SLL	T8,T8,0x2	;T8=A2*0xC: offset to setting data
+BEQ	R0,R0,7F0ABAB8
+ADDU	T0,T8,T9	;T0=80040A7C+offset: watch setting label list
+//7F0AB990:	determine set option: option=0
+SUBU	T3,T3,A2
+LUI	T4,8004
+ADDIU	T4,T4,0A7C
+SLL	T3,T3,0x2	;T3=A2*0xC: offset to setting data
+ADDU	T0,T3,T4	;T0=80040A7C+offset: watch setting label list
+LW	V0,0008 (T0)	;V0=cur.setting
+ADDIU	V1,R0,0001
+BNEZ	V0,7F0AB9C0	;branch if not option 0
+NOP
+LUI	T1,00FF
+BEQ	R0,R0,7F0ABAB8
+ORI	T1,T1,00B0	;T1=00FF00B0 - highlight colour
+//7F0AB9C0:	option=1
+BNE	V1,V0,7F0AB9D4	;branch if not option 1
+ADDIU	AT,R0,0002
+LUI	T2,00FF
+BEQ	R0,R0,7F0ABAB8
+ORI	T2,T2,00B0	;T2=00FF00B0 - highlight colour
+//7F0AB9D4:	option=2
+BNE	V0,AT,7F0ABAB8	;branch if not option 2
+LUI	T5,00FF
+ORI	T5,T5,00B0
+BEQ	R0,R0,7F0ABAB8
+SW	T5,0054 (SP)	;SP+54=T5: 00FF00B0 - highlight colour
+//7F0AB9E8:
+SUBU	T6,T6,A2
+LUI	T7,8004
+ADDIU	T7,T7,0A7C
+SLL	T6,T6,0x2	;T6=A2*0xC: offset to setting data
+ADDU	T0,T6,T7	;T0=80040A7C+offset: watch setting label list
+LW	V0,0008 (T0)	;V0=cur.setting
+BNEZ	V0,7F0ABA14	;branch if not 0
+NOP
+LUI	T1,00FF
+BEQ	R0,R0,7F0ABAB8
+ORI	T1,T1,00B0	;T1=00FF00B0 - highlight colour
+//7F0ABA14:	option=1
+BNE	V1,V0,7F0ABA28	;branch if not 1
+ADDIU	AT,R0,0002
+LUI	T2,00FF
+BEQ	R0,R0,7F0ABAB8
+ORI	T2,T2,00B0	;T2=00FF00B0 - highlight colour
+//7F0ABA28:	option=2
+BNE	V0,AT,7F0ABAB8
+LUI	T8,00FF
+ORI	T8,T8,00B0
+BEQ	R0,R0,7F0ABAB8
+SW	T8,0054 (SP)	;SP+54=T8: 00FF00B0 - highlight colour
+//7F0ABA3C:	detect setting changes
+OR	A0,A2,R0	;A0=A2: setting#
+SW	A1,0050 (SP)	;SP+50=A1: language-specific value (y position)
+SW	A2,0068 (SP)	;SP+68=A2: setting#
+SW	T1,005C (SP)	;SP+5C=T1: 00800080 - normal colour
+JAL	7F0AB7D8	;switch left/right option A0 (0-7) on solo watch options page 
+SW	T2,0058 (SP)	;SP+58=T2: 00800080 - normal colour
+//7F0ABA54:
+LW	A2,0068 (SP)	;A2=setting#
+LUI	T3,8004
+ADDIU	T3,T3,0A7C
+SW	T9,A2,0x2
+SUBU	T9,T9,A2
+SLL	T9,T9,0x2	;T9=A2*0xC: offset to setting data
+ADDU	T0,T9,T3	;T0=80040A7C+offset: watch setting label list
+LW	V0,0008 (T0)	;V0=cur.setting
+ADDIU	V1,R0,0001
+LW	A1,0050 (SP)	;A1=y position
+LW	T1,005C (SP)	;T1=00800080 - normal colour
+BNEZ	V0,7F0ABA94	;branch if option not 0
+LW	T2,0058 (SP)	;T2=00800080 - normal colour
+LUI	T1,A0FF
+BEQ	R0,R0,7F0ABAB8
+ORI	T1,T1,A0F0	;T1=A0FFA0F0 - selected colour
+//7F0ABA94:	option=1
+BNE	V1,V0,7F0ABAA8	;branch if option not 1
+ADDIU	AT,R0,0002
+LUI	T2,A0FF
+BEQ	R0,R0,7F0ABAB8
+ORI	T2,T2,A0F0	;T2=A0FFA0F0 - selected colour
+//7F0ABAA8:
+BNE	V0,AT,7F0ABAB8	;branch if option not 2
+LUI	T4,A0FF
+ORI	T4,T4,A0F0
+SW	T4,0054 (SP)	;SP+54=T4: A0FFA0F0 - selected colour
+//7F0ABAB8:
+LHU	T5,0006 (T0)	;T5=3rd label
+BNEZ	T5,7F0ABAF4	;branch if present
+LUI	V1,8005
+LB	V1,84D0 (V1)	;V1=800484D0: language
+ADDIU	A1,R0,00C8	;A1=00C8: english
+ADDIU	T7,R0,00FA	;T7=00FA
+BLEZ	V1,7F0ABAE0	;branch if english or less
+ADDIU	T6,R0,00FA	;T6=00FA
+BEQ	R0,R0,7F0ABAE0
+ADDIU	A1,R0,00BE	;A1=00BE: japanese
+//7F0ABAE0:
+BEQL	V1,R0,7F0ABAF4	;branch if english
+SW	T7,004C (SP)	;SP+4C=00FA
+BEQ	R0,R0,7F0ABAF4	;japanese, same as english
+SW	T6,004C (SP)	;SP+4C=00FA
+//7F0ABAF0:	write 1st label
+SW	T7,004C (SP)
+LHU	A0,0002 (T0)	;A0=1st label
+SW	A1,0050 (SP)	;SP+50=A1: language-specific value
+SW	T0,003C (SP)	;SP+3C=T0: p->watch setting label list
+SW	T1,005C (SP)	;SP+5C=T1: 
+JAL	7F0C1DD8	;V0=p->text A0
+SW	T2,0058 (SP)	;SP+58=T2: 
+LW	T1,005C (SP)	;T1 recovered
+LUI	T3,0030
+ORI	T3,T3,00B0
+ADDIU	T8,R0,FFFF
+ADDIU	T9,R0,0001
+SW	T9,001C (SP)	;SP+1C=1
+SW	T8,0018 (SP)	;SP+18=-1
+SW	T3,0024 (SP)	;SP+24=003000B0: backdrop colour
+LW	A1,0050 (SP)	;A1=x position (language-specific value)
+LW	A0,0060 (SP)	;A0=DL
+LW	A2,0064 (SP)	;A2=y position
+OR	A3,V0,R0	;A3=V0: p->text
+SW	R0,0014 (SP)	;SP+14=0: 
+SW	R0,0020 (SP)	;SP+20=0
+SW	R0,0028 (SP)	;SP+28=0
+JAL	7F0A9398	;display text
+SW	T1,0010 (SP)	;SP+10=text colour
+//7F0ABB50:	write 2nd label
+LW	T0,003C (SP)	;T0=p->watch setting label list
+SW	V0,0060 (SP)	;SP+60=V0: DL
+JAL	7F0C1DD8	;V0=p->text A0
+LHU	A0,0004 (T0)	;A0=2nd label
+LW	T2,0058 (SP)
+LUI	T6,0030
+ORI	T6,T6,00B0
+ADDIU	T4,R0,FFFF
+ADDIU	T5,R0,0001
+SW	T5,001C (SP)	;SP+1C=1
+SW	T4,0018 (SP)	;SP+18=-1
+SW	T6,0024 (SP)	;SP+24=003000B0: backdrop colour
+LW	A0,0060 (SP)	;A0=DL
+LW	A1,004C (SP)	;A1=x position
+LW	A2,0064 (SP)	;A2=y position
+OR	A3,V0,R0	;A3=V0: p->text
+SW	R0,0014 (SP)	;SP+14=0: 
+SW	R0,0020 (SP)	;SP+20=0
+SW	R0,0028 (SP)	;SP+28=0
+JAL	7F0A9398	;display text
+SW	T2,0010 (SP)	;SP+10=text colour
+//7F0ABBA4:	write 3rd label
+LW	T0,003C (SP)	;T0=p->watch setting label list
+SW	V0,0060 (SP)	;SP+60=V0: DL
+LHU	V1,0006 (T0)	;V1=3rd label
+BEQL	V1,R0,7F0ABC0C	;branch if no 3rd label
+LW	RA,0034 (SP)
+JAL	7F0C1DD8	;V0=p->text A0
+OR	A0,V1,R0	;A0=V1: 3rd label
+LW	T7,0054 (SP)	;T7=highlight colour
+LUI	T3,0030
+ORI	T3,T3,00B0
+ADDIU	T8,R0,FFFF
+ADDIU	T9,R0,0001
+SW	T9,001C (SP)	;SP+1C=1
+SW	T8,0018 (SP)	;SP+18=-1
+SW	T3,0024 (SP)	;SP+24=003000B0: backdrop colour
+LW	A0,0060 (SP)	;A0=DL
+ADDIU	A1,R0,010E	;A1=010E
+LW	A2,0064 (SP)	;A2=y position
+OR	A3,V0,R0	;A3=V0: p->text
+SW	R0,0014 (SP)	;SP+14=0: 
+SW	R0,0020 (SP)	;SP+20=0
+SW	R0,0028 (SP)	;SP+28=0
+JAL	7F0A9398	;display text
+SW	T7,0010 (SP)	;SP+10=text colour
+SW	V0,0060 (SP)
+//7F0ABC08:
+LW	RA,0034 (SP)
+LW	V0,0060 (SP)
+ADDIU	SP,SP,0060
+JR	RA
+NOP
+
+
+7F0ACD98:		
+	accepts: A0=p->display list target
+OR	V0,A0,R0	;V0=A0: DL
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+LUI	T6,E700
+SW	T6,0000 (V0)	;DL+0 =T6: E7000000 - rdp_pipesync: upper word
+SW	R0,0004 (V0)	;DL+4 =R0: 00000000 - rdp_pipesync: lower word
+OR	V1,A0,R0	;V1=DL
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+LUI	T7,BA00
+ORI	T7,T7,1402
+OR	A1,A0,R0	;A1=DL
+SW	T7,0000 (V1)	;DL+8 =T7: BA001402 - rsp_setothermode_h: cycle type
+SW	R0,0004 (V1)	;DL+C =R0: 00000000 - rsp_setothermode_h: 1cycle
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+LUI	T8,BA00
+ORI	T8,T8,0602
+ADDIU	T9,R0,00C0
+OR	A2,A0,R0	;A2=DL
+SW	T9,0004 (A1)	;DL+10=T9: BA000602 - rsp_setothermode_h: RGB dither
+SW	T8,0000 (A1)	;DL+14=T8: 000000C0 - rsp_setothermode_h: disable?  bayer/noise?
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+LUI	T0,B900
+LUI	T1,0050
+ORI	T1,T1,41C8
+ORI	T0,T0,031D
+OR	A3,A0,R0	;A3=DL
+SW	T0,0000 (A2)	;DL+18=T0: B900031D - rsp_setothermode_l: render mode
+SW	T1,0004 (A2)	;DL+1C=T1: 005041C8 - rsp_setothermode_l: antialias, image read, clear on converge, converge delta-ST wrap, force blender, blend colour in, blend colour blender
+LUI	T2,FCFF
+LUI	T3,FF2D
+ORI	T3,T3,FEFF
+ORI	T2,T2,97FF
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+SW	T2,0000 (A3)	;DL+20=T2: FCFF97FF - rdp_setcombine: 
+SW	T3,0004 (A3)	;T3+24=T3: FF2DFEFF - rdp_setcombine: 
+OR	V0,A0,R0	;V0=DL
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+LUI	T4,BA00
+ORI	T4,T4,1301
+OR	V1,A0,R0	;V1=DL
+SW	T4,0000 (V0)	;DL+28=T4: BA001301 - rsp_setothermode_h: texture perspective
+SW	R0,0004 (V0)	;DL+2C=R0: 00000000 - rsp_setothermode_h: off
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+LUI	T5,B900
+ORI	T5,T5,0002
+OR	A1,A0,R0	;A1=DL
+SW	T5,0000 (V1)	;DL+30=T5: B9000002 - rsp_setothermode_l: alpha compare
+SW	R0,0004 (V1)	;DL+34=R0: 00000000 - rsp_setothermode_l: none
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+LUI	T6,BA00
+ORI	T6,T6,1001
+OR	A2,A0,R0	;A2=DL
+SW	T6,0000 (A1)	;DL+38=T6: BA001001 - rsp_setothermode_h: texture LOD
+SW	R0,0004 (A1)	;DL+3C=R0: 00000000 - rsp_setothermode_h: tile
+LUI	T7,BA00
+ORI	T7,T7,0903
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+ADDIU	T8,R0,0C00
+SW	T8,0004 (A2)	;DL+44=T8: 00000C00 - rsp_setothermode_h: filter
+SW	T7,0000 (A2)	;DL+40=T7: BA000903 - rsp_setothermode_h: texture conversion
+OR	A3,A0,R0	;A3=DL
+LUI	T9,BA00
+ORI	T9,T9,0E02
+SW	T9,0000 (A3)	;DL+48=T9: BA000E02 - rsp_setothermode_h: texture LUT
+SW	R0,0004 (A3)	;DL+4C=R0: 00000000 - rsp_setothermode_h: none
+LUI	T0,8004
+LW	T0,0E94 (T0)	;T0=80040E94: 
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+OR	V0,A0,R0	;V0=DL
+BEQ	T0,R0,7F0ACED4	;branch if not set
+LUI	T3,BA00
+//7F0ACEB0:	80040E94 set
+OR	V0,A0,R0	;V0=DL
+LUI	T1,BA00
+ORI	T1,T1,0C02
+ADDIU	T2,R0,3000
+SW	T2,0004 (V0)	;DL+50=T2: BA000C02 - rsp_setothermode_h: texture filter
+SW	T1,0000 (V0)	;SL+54=T1: 00003000 - rsp_setothermode_h: average
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+JR	RA
+OR	V0,A0,R0	;V0=A0: final DL
+//7F0ACED4:	80040E94 unset
+ORI	T3,T3,0C02
+ADDIU	T4,R0,2000
+SW	T4,0004 (V0)	;DL+54=T4: 00002000 - rsp_setothermode_h: bi-level interpretation
+SW	T3,0000 (V0)	;DL+50=T3: BA000C02 - rsp_setothermode_h: texture filter
+ADDIU	A0,A0,0008	;A0+=8: next DL op
+JR	RA
+OR	V0,A0,R0	;V0=A0: final DL
+
+
+7F0ABDFC:		solo watch menu options page - slidebars
+ADDIU	SP,SP,FFA0
+SW	RA,003C (SP)
+SW	S0,0038 (SP)
+JAL	7F0A714C
+OR	A2,R0,R0	;A2=0
+JAL	7F07E5FC	;V0=TRUE if watch page transition running
+OR	S0,V0,R0	;S0=V0: p->DL
+ADDIU	AT,R0,0001
+BEQL	V0,AT,7F0AC0D8	;return if still running
+LW	RA,003C (SP)
+//7F0ABE24:
+JAL	7F0A91C8
+OR	A0,S0,R0	;A0=S0: p->DL
+JAL	7F0A8FEC
+OR	A0,V0,R0	;A0=V0: p->DL
+LUI	T6,8004
+LUI	T7,8004
+LW	T6,0EAC (T6)
+LW	T7,0EB0 (T7)
+OR	A0,V0,R0	;A0=V0: p->DL
+SW	T6,0044 (SP)
+JAL	7F0ACD98	;microcode...
+SW	T7,0040 (SP)
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ABE48:
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,AC35	;A0=AC35: "MUSIC\n"
+LUI	T0,8004
+LW	T0,099C (T0)	;T0=8004099C: selection on page
+ADDIU	T8,R0,0040
+ADDIU	T9,R0,0025
+LUI	V1,00FF
+OR	A2,V0,R0
+SW	T8,0054 (SP)
+SW	T9,0050 (SP)
+BNEZ	T0,7F0ABEA4	;branch if not highlighted
+ORI	V1,V1,00B0	;V1=00FF00B0: green
+LUI	T1,8004
+LW	T1,09A8 (T1)	;T1=800409A8: TRUE if selected
+LUI	V1,A0FF
+ORI	V1,V1,A0F0	;V1=A0FFA0F0: bright green
+BEQL	T1,R0,7F0ABEA8	;branch if not selected
+LW	T2,0044 (SP)
+ADDIU	V1,R0,FFFF	;V1=FFFFFFFF: black
+//7F0ABEA4:
+LW	T2,0044 (SP)
+ADDIU	A0,SP,0048
+ADDIU	A1,SP,004C
+LW	A3,0040 (SP)
+SW	R0,0014 (SP)
+SW	V1,005C (SP)
+SW	A2,0058 (SP)
+JAL	7F0AE98C	;V0=width of string
+SW	T2,0010 (SP)
+LUI	T3,8004
+LW	T3,09A8 (T3)	;T3=800409A8: TRUE if selected
+LW	V1,005C (SP)
+LW	A3,0058 (SP)
+BEQ	T3,R0,7F0ABF4C	;branch if not selected
+LUI	T4,8004
+LW	T4,099C (T4)	;T4=8004099C: selection on page
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	A1,SP,0054
+BNEZ	T4,7F0ABF4C	;branch if not highlighted
+ADDIU	A2,SP,0050
+LW	T8,004C (SP)
+SW	V1,0018 (SP)
+LW	T5,0040 (SP)
+LW	T6,0044 (SP)
+LW	T0,0048 (SP)
+LUI	V1,00FF
+LUI	T7,0070
+ORI	T7,T7,00A0	;T7=007000A0: dk.green
+ORI	V1,V1,00B0	;V1=00FF00B0: green
+ADDIU	T9,T8,0001
+SW	T9,0020 (SP)
+SW	V1,005C (SP)
+SW	T7,001C (SP)
+SW	R0,0028 (SP)
+SW	R0,002C (SP)
+SW	T5,0010 (SP)
+SW	T6,0014 (SP)
+JAL	7F0AE6EC	;display 2-tone text
+SW	T0,0024 (SP)
+LW	V1,005C (SP)
+BEQ	R0,R0,7F0ABF9C
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ABF4C:	not highlighted or selected...
+SW	V1,0018 (SP)
+LW	T1,0040 (SP)
+LW	T2,0044 (SP)
+LW	T3,004C (SP)
+LW	T4,0048 (SP)
+LUI	V1,00FF
+ORI	V1,V1,00B0	;V1=00FF00B0: green
+SW	V1,005C (SP)
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	A1,SP,0054
+ADDIU	A2,SP,0050
+SW	R0,0024 (SP)
+SW	R0,0028 (SP)
+SW	T1,0010 (SP)
+SW	T2,0014 (SP)
+SW	T3,001C (SP)
+JAL	7F0ADABC	;display monotone text
+SW	T4,0020 (SP)
+LW	V1,005C (SP)
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0ABF9C:
+ORI	A0,R0,AC36	;A0=AC36: "FX\r"
+JAL	7F0C1DD8	;V0=text A0
+SW	V1,005C (SP)
+LUI	T7,8004
+LW	T7,099C (T7)	;T7=8004099C: selection on page
+ADDIU	T5,R0,0040
+ADDIU	T6,R0,003B
+ADDIU	AT,R0,0001
+LW	V1,005C (SP)
+OR	A2,V0,R0
+SW	T5,0054 (SP)
+BNE	T7,AT,7F0ABFEC	;branch if option 2 not selected
+SW	T6,0050 (SP)
+LUI	T8,8004
+LW	T8,09A8 (T8)	;T8=800409A8: TRUE if selected
+LUI	V1,A0FF
+ORI	V1,V1,A0F0	;V1=A0FFA0F0: lt.green
+BEQL	T8,R0,7F0ABFF0	;branch if not selected
+LW	T9,0044 (SP)
+ADDIU	V1,R0,FFFF	;V1=FFFFFFFF: black
+//7F0ABFEC:
+LW	T9,0044 (SP)
+ADDIU	A0,SP,0048
+ADDIU	A1,SP,004C
+LW	A3,0040 (SP)
+SW	R0,0014 (SP)
+SW	V1,005C (SP)
+SW	A2,0058 (SP)
+JAL	7F0AE98C	;V0=width of string
+SW	T9,0010 (SP)
+LUI	T0,8004
+LW	T0,09A8 (T0)	;T0=800409A8: TRUE if selected
+LW	V1,005C (SP)
+LW	A3,0058 (SP)
+BEQ	T0,R0,7F0AC088	;branch if not selected
+LUI	T1,8004
+LW	T1,099C (T1)	;T1=8004099C: selection on page
+ADDIU	AT,R0,0001
+OR	A0,S0,R0	;A0=S0: p->DL
+BNE	T1,AT,7F0AC088	;branch if not highlighted
+ADDIU	A1,SP,0054
+LW	T5,004C (SP)
+LW	T2,0040 (SP)
+LW	T3,0044 (SP)
+LW	T7,0048 (SP)
+LUI	T4,0070
+ORI	T4,T4,00A0	;T4=007000A0: dk.green
+ADDIU	T6,T5,0001
+SW	T6,0020 (SP)
+SW	T4,001C (SP)
+ADDIU	A2,SP,0050
+SW	V1,0018 (SP)
+SW	R0,0028 (SP)
+SW	R0,002C (SP)
+SW	T2,0010 (SP)
+SW	T3,0014 (SP)
+JAL	7F0AE6EC	;display 2-tone text
+SW	T7,0024 (SP)
+BEQ	R0,R0,7F0AC0C8
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0AC088:
+LW	T8,0040 (SP)
+LW	T9,0044 (SP)
+LW	T0,004C (SP)
+LW	T1,0048 (SP)
+OR	A0,S0,R0	;A0=S0: p->DL
+ADDIU	A1,SP,0054
+ADDIU	A2,SP,0050
+SW	V1,0018 (SP)
+SW	R0,0024 (SP)
+SW	R0,0028 (SP)
+SW	T8,0010 (SP)
+SW	T9,0014 (SP)
+SW	T0,001C (SP)
+JAL	7F0ADABC	;display monotone text
+SW	T1,0020 (SP)
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0AC0C8:
+JAL	7F0ABC1C	;draw options and handle selection
+OR	A0,S0,R0	;A0=S0: p->DL
+OR	S0,V0,R0	;S0=V0: p->DL
+//7F0AC0D4:	return
+LW	RA,003C (SP)
+OR	V0,S0,R0	;V0=S0: p->DL
+LW	S0,0038 (SP)
+JR	RA
+ADDIU	SP,SP,0060
+
+
+

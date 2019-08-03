@@ -1,0 +1,169 @@
+Background Data
+---------------
+
+  Background data consists of three seperate orders of files.  The primary background file is an uncompressed binary.  This binary contains offsets to the 1172 (z-custom) compressed room data.  Room data is partitioned into one or two display lists and a point table.  The final file is an 1172 compressed clipping file that dictates the playable area.  This will be covered in a seperate document.
+
+  The primary background file consists of several sections.  First are a list of offsets to the room mapping and point binaries.  Second is a list of special globalized visibility, triggering multiple rooms to be visible at once through pseudocode.  Lastly are the room portals and a table relating what rooms are interlinked.
+
+  The background file's header indicates at what offset each of these is located at.  All offsets are relative to the location of the primary background file in ROM and are preceeded by a value, indicating the scope of that offset.  Only use the lower three bytes of each offset, and add it to the initial ROM location of the file.
+
+0x0	4	reserved
+0x4	4	offset to room data table
+0x8	4	offset to portal data table
+0xC	4	offset to global visibility commands
+
+---------------
+Room Data Table
+
+  The room data table contains a wide assortment of data.  Each room is positioned within the level using the position data given here.  It also contains pointers to each of the mapping and point table blocks used to construct the room.  The beginning of the table is given at bg_file offset 0x4, starting with room 0.  Room 0 is always invalid, so all the values in this struct will be set to zero.  The last entry is also not a valid room.  It exists for the sole purpose of demarking the filesizes of the previous room's entries.
+
+  Each rooms' x, y, and z positions are given as floating-point numbers.  To ensure the model aligns with the possible clipping coordinates, these values will always translate to integer values.  All values are relative to the stage centerpoint; 0,0,0.
+
+  The file offsets are offsets from the ROM location of the bg_file.  The first byte of each offset should be masked to remove the value indicating scope, ie. 0x00FFFFFF & offset.  The size of each binary can be determined by retrieving the next entry in the table.
+  At no point are the total number of room entries given, though it can be calculated from the visibility offset or more simply determined by comparing the first room's primary mapping offset to the point table offset of the current room.  If the two match, the current 'room' is the final dummy entry.  Each struct is 0x18 bytes large, so you can divide the difference in the first and current offsets by this value to return the room number.
+
+  All room binaries are compressed with 1172 compression.  The primary mapping is always present and is used to draw the majority of the room.  Secondary mapping is optional; gunfire does not collide with polygons drawn by this block.  For this reason, secondary mapping is used for overlays, railings, and other effects.  Point tables are shared by both mapping types and contain a full list of the positions needed to draw the room.
+
+0x0	4	(float) x position
+0x4	4	(float) y position
+0x8	4	(float) z position
+0xC	4	offset to point table binary
+0x10	4	offset to primary mapping binary
+0x14	4	offset to secondary mapping binary, when preset
+
+  There is a certain pattern to the room binaries.  All the point tables are listed immediately after the primary bg_file.  Following these are the primary, then secondary mapping for each room.  To determine the size of a binary:
+
+Point tables:
+	Subtract offset for current binary from following room's point table offset
+
+Primary Mapping Only:
+	Subtract offset for current binary from following room's primary mapping offset
+
+Primary + Secondary Mapping:
+	Subtract offset of primary mapping from secondary mapping
+	Subtract offset of secondary mapping from following room's primary mapping
+
+---------------
+Portal Data Table
+
+  Portals allow rooms to be activated when within sight.  Each acts as a window connecting one unique room to another.  The portal table consists of offsets to actual portal polygonal data and a list of rooms interlinked.  An offset to the portal table can be found at bg_file offset 0x8.
+
+0x0	4	offset to portal address (mask offset with 0x0F000000)
+0x4	1	connected room 1
+0x5	1	connected room 2
+0x6	2	control bytes for special attributes, beyond the scope of file parsing
+
+  The table terminates with a NULL entry - all values equal to zero.
+
+  When a player enters a room, the room ID is searched for in the table.  If the value matches either connected room ID, then the portal at the offset is activated.  When the player is within sight of a portal, both rooms connected to that portal are activated.  Technically, rooms connected directly to the current room are usually pre-loaded even when not within visible range to ensure smooth gameplay.  
+
+
+  Portals themselves are stored at the end of the bg_file, just before the compressed room data.  They are a simple list of x, y, and z positions storeed as floating-point numbers.  All points proceed clockwise around to form a polygon, and all points are relative to the centerpoint of the stage, 0,0,0.  To properly integrate them with clipping, each float should be an integer value.  The first byte of the first word indicates the number of points following, 1-n, and each portal can consist of as many points as desired.
+
+0x0	1	number of points in portal
+0x1	3	filler bytes	(000000)
+0x4	4	(float) first X position
+0x8	4	(float) first y position
+0xC	4	(float) first z position
+etc...
+
+---------------
+Global Visibility Commands
+
+  Global visibility commands are used to activate and deactivate rooms and portals through triggered events.  They are used, among other times, to render the cliff faces around the Dam, the roof in the lower storage area of Archives, and the gas containers in two of the bottling rooms of Facility.
+  The pseudocode is built from 32bit values and begins at the offset given at 0xC in the bg_file.  Commands are processed until a terminator is reached, command 00010000 00000000.  Most commands are container classes that contain lists of other command types.
+
+Basic Commands:
+00010000 00000000	terminator
+21010000 00000000	starts a block of visibility commands, ending any previous blocks
+
+Containers:
+14030000 00000000	activated rooms are visible from every room between room #1 to room #2
+	expects:	65000000 000000#1 65000000 000000#2 5A010000 00000000
+5A010000 00000000	end 14 list
+1E010000 00000000	activated rooms are visible without portals
+	expects:	5C010000 00000000
+1F020000 00000000	activated rooms are visible through the following portals
+	expects:	64000000 0F###### ...
+	further entries	22020000 00000000 64000000 0F######
+	end list	5C010000 00000000
+5C010000 00000000	end 1E or 1F list
+20020000 00000000	following rooms (65 commands) are activated
+	expects:	65000000 000000#1
+24020000 00000000	following room (65 command) is ?
+	expects:	65000000 000000#1
+25030000 00000000	following rooms (65 commands) are ?
+	expects:	65000000 000000#1 65000000 000000#2 ?
+	further entries	26020000 00000000 65000000 000000#n
+26020000 00000000	following room (65 command) is ?
+	expects:	65000000 000000#1
+27030000 00000000	following rooms (65 commands) are ?
+	expects:	65000000 000000#1 65000000 000000#2 ?
+
+Sub-Commands (always within containers):
+22020000 00000000	AND statement linking multiple 64 commands when listed
+64000000 0Fxxxxxx	offset within file, typically to portal data (0F relates scope)
+26020000 00000000	AND statement linking multiple 65 commands when listed
+65000000 000000xx	room number.  multiple entries do not require 2202 commands
+
+  This is not as complex as it seems.  To make a single room visible when a player is within one of four sequential rooms, this code would apply.
+21010000 00000000		\\start block
+14030000 00000000		\\room is visible from following rooms
+	65000000 0000001C	\\from room 1C...
+	65000000 0000001F	\\...to room 1F
+	5A010000 00000000	\\end list
+1E010000 00000000		\\activated room doesn't need portals to any of the above rooms
+	5C010000 00000000	\\end command
+20020000 00000000		\\room to be activated
+	65000000 00000010	\\room 10 is activated when in rooms 1C, 1D, 1E, or 1F
+00010000 00000000		\\end global visibility
+
+  Lets assume though you want to make the room visible not just when you are standing inside of rooms 18-1F, bt also when you look in the windows to the room.  This just requires a 1F command.
+21010000 00000000		\\start block
+14030000 00000000		\\room is visible from following rooms
+	65000000 00000018	\\from room 18...
+	65000000 0000001F	\\...to room 1F
+	5A010000 00000000	\\end list
+1E010000 00000000		\\activated room doesn't need portals to any of the above rooms
+	5C010000 00000000	\\end command
+1F020000 00000000		\\activate room when looking in the following portals
+	64000000 0F00148C	\\portal at offset 0x148C
+	22020000 00000000	\\and...
+	64000000 0F001374	\\portal at offset 0x1374
+	22020000 00000000	\\and...
+	64000000 0F0014C0	\\portal at offset 0x14C0
+	22020000 00000000	\\and...
+	64000000 0F0014F4	\\portal at offset 0x14FC
+	5C010000 00000000	\\end list of portals
+20020000 00000000		\\rooms to be activated
+	65000000 00000010	\\room 10 is activated in all the above
+00010000 00000000		\\end global visibility
+
+  Also, multiple rooms can be activated at one time by adding more 2002 commands...
+...
+20020000 00000000		\\rooms to be activated
+	65000000 00000010	\\room 10
+20020000 00000000		\\rooms to be activated
+	65000000 00000011	\\room 11
+
+  2101 commands end one list and start another. Only use the 0001 to end the entire global visibility block.
+21010000 00000000		\\start FIRST block
+14030000 00000000		\\room is visible from following rooms
+	65000000 0000001C	\\from room 1C...
+	65000000 0000001F	\\...to room 1F
+	5A010000 00000000	\\end list
+1E010000 00000000		\\activated room doesn't need portals to any of the above rooms
+	5C010000 00000000	\\end command
+20020000 00000000		\\room to be activated
+	65000000 00000010	\\room 10 is activated when in rooms 1C, 1D, 1E, or 1F
+21010000 00000000		\\start SECOND block, ending FIRST
+14030000 00000000		\\room is visible from following rooms
+	65000000 00000020	\\from room 20...
+	65000000 00000023	\\...to room 23
+	5A010000 00000000	\\end list
+1E010000 00000000		\\activated room doesn't need portals to any of the above rooms
+	5C010000 00000000	\\end command
+20020000 00000000		\\room to be activated
+	65000000 00000011	\\room 11 is activated when in rooms 20, 21, 22, or 23
+
+-Zoinkity

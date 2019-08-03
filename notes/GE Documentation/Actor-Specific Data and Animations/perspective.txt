@@ -1,0 +1,1055 @@
+7F0234A8:
+ADDIU	SP,SP,FFE0
+LW	T6,0030 (SP)
+SW	RA,001C (SP)
+SW	R0,0014 (SP)
+JAL	7F0232E8
+SW	T6,0010 (SP)
+LW	RA,001C (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+7F0232E8:	process body (A0) + head (A1); A2=body obj.header, A3=head obj.header
+SLL	T7,A0,0x2	A0=body#
+ADDU	T7,T7,A0
+LUI	T8,8004
+ADDIU	T8,T8,DE10
+SLL	T7,T7,0x2
+ADDU	V0,T7,T8	V0=body/head entry in table (A0*0x14)
+LUI	AT,8005
+LWC1	F6,1D90 (AT)	F6=80051D90: global body scale multiplier?	0.1
+LWC1	F4,0008 (V0)	obj. scale
+ADDIU	SP,SP,FFC8
+LWC1	F10,000C (V0)	obj. y off.
+MUL.S	F8,F4,F6	obj. scale * 0.1
+SW	RA,001C (SP)
+SW	S1,0018 (SP)	
+SW	S0,0014 (SP)	save {8003DE10: body/head table}
+SW	A0,0038 (SP)	save body#
+OR	S0,A2,R0	S0=body obj.header
+OR	S1,A3,R0	S1=head obj.header
+SW	A1,003C (SP)	save head#
+SWC1	F8,0034 (SP)	save converted scale
+SW	R0,002C (SP)
+ADDIU	A0,R0,000C	linked routine now grabs 80079E3C
+SW	V0,0024 (SP)	save table address for body
+JAL	7F0927BC
+		ADDIU	SP,SP,FFE8
+		SW	RA,0014 (SP)
+		JAL	7F09B150
+				LUI	V0,8008
+				JR	RA
+				LW	V0,A0B8 (V0)
+		SW	A0,0018 (SP)
+		LW	T6,0018 (SP)
+		LUI	T7,8008
+		LW	RA,0014 (SP)
+		ADDU	T7,T7,T6
+		LBU	T7,9E30 (T7)	T7=80079E30+offset
+		ADDIU	SP,SP,0018
+		SRAV	V0,T7,V0
+		ANDI	T8,V0,0001
+		JR	RA
+		OR	V0,T8,R0
+SWC1	F10,0030 (SP)	save obj. y off.
+//7F02334C:	if it returned true, multiply further by 0.8...
+BEQ	V0,R0,7F023364
+LWC1	F16,0034 (SP)	F16=converted scale
+LUI	AT,8005
+LWC1	F18,1D94 (AT)	F18=80051D94: another scale mod?	0.8
+MUL.S	F4,F16,F18
+SWC1	F4,0034 (SP)
+//7F023364:
+LW	T9,0000 (S0)	T9=pointer to body's object table; S0=body obj.header
+LW	T0,0024 (SP)	T0=body table address
+BNEZ	T9,7F02337C
+OR	A0,S0,R0	A0=body obj. header
+JAL	7F07654C
+LW	A1,0004 (T0)
+//7F02337C:	
+JAL	7F075CF4	prep object for use
+		ADDIU	SP,SP,FFE8
+		SW	RA,0014 (SP)
+		ADDIU	T6,R0,0001
+		OR	A1,A0,R0	A1=obj.header
+		SW	T6,001C (A0)	set object as in-use!
+		LW	A0,0000 (A0)	A0=pointer to object table
+		JAL	7F075B1C	compute #group entries, and probably prep
+		SW	A1,0018 (SP)
+		LW	A1,0018 (SP)	A1=obj.header
+		SH	V0,0014 (A1)	save #group entries
+		LW	RA,0014 (SP)
+		ADDIU	SP,SP,0018
+		JR	RA
+		NOP
+OR	A0,S0,R0	A0=body obj. header
+LW	T1,0024 (SP)	T1=body table address
+LW	V0,003C (SP)	V0=head#
+LBU	T2,0011 (T1)	T2=head flag
+BNEL	T2,R0,7F0233F4	skip if head is merged
+LW	T1,004C (SP)
+BLTZL	V0,7F0233F4	skip if head# is random or invalid (negative)
+LW	T1,004C (SP)
+LW	T3,0008 (S0)	T3=pointer to body's obj.offsets
+LW	T4,0010 (T3)	T4=pointer to offset for head placeholder (I think...)
+BEQ	T4,R0,7F0233F0	skip if there isn't one...
+SW	T4,002C (SP)	save head placeholder
+LW	T6,0000 (S1)	T6=pointer to head obj.table
+SLL	T7,V0,0x2
+ADDU	T7,T7,V0
+BNEZ	T6,7F0233D8	
+OR	A0,S1,R0	A0=head obj.header
+SLL	T7,T7,0x2
+LUI	A1,8004
+ADDU	A1,A1,T7	A1=head table address
+JAL	7F07654C	load body/head using recall string A1
+LW	A1,DE14 (A1)	A1=pointer to head's text recall string
+//7F0233D8:
+JAL	7F075CF4	prep object for use
+OR	A0,S1,R0	A0=head obj.header
+LH	T8,0014 (S0)	T8=#group entries in body	should be 0x61
+LH	T9,0014 (S1)	T9=#group entries in head	should be 0x2
+ADDU	T0,T8,T9
+SH	T0,0014 (S0)	save total group entries to body (should be 0x63)
+LW	T1,004C (SP)	??? - came from caller	{this run=0}
+//7F0233F4:	produce and fill an object instance entry if not present?
+BNEL	T1,R0,7F02340C
+LW	T2,004C (SP)
+JAL	7F06C23C	I think this produces and fills an object instance entry...
+OR	A0,S0,R0	A0=body obj.header
+SW	V0,004C (SP)	save object instance entry address
+LW	T2,004C (SP)	T2=same
+//7F02340C:
+BEQ	T2,R0,7F023490	
+OR	A0,T2,R0	A0=more of the same
+JAL	7F06CE78	save [float] object's scale (A1) to obj. instance entry (A0)
+		MTC1	A1,F12
+		JR	RA
+		SWC1	F12,0014 (A0)
+LW	A1,0034 (SP)	A1=converted scale value
+LW	A0,004C (SP)	A0=object instance entry
+JAL	7F06CE84
+		MTC1	A1,F12
+		JR	RA
+		SWC1	F12,00B8 (A0)
+LW	A1,0030 (SP)	A1=obj y off.
+BEQ	S1,R0,7F023490	quit if head obj.header not present or invalid
+LW	T3,0024 (SP)	T3=body table address
+LBU	T4,0011 (T3)	T4=head flag
+BNEL	T4,R0,7F023494	quit if merged head
+LW	RA,001C (SP)
+LH	T5,0014 (S0)	T5=body group# total
+LH	T6,0014 (S1)	T6=head group# total
+OR	A2,S1,R0	A2=head obj.header
+SUBU	T7,T5,T6
+SH	T7,0014 (S0)	save the original body group# total (0x61)
+LW	A1,002C (SP)	A1=head placeholder pointer
+JAL	7F06C3B4	I think this sets up the head pointers and stuff
+		ADDIU	SP,SP,FFE8
+		SW	A2,0020 (SP)	A2=head obj.header
+		OR	A2,A1,R0	A2=head placeholder pointer
+		SW	RA,0014 (SP)
+		SW	A1,001C (SP)	save head placeholder pointer
+		LW	A1,0008 (A0)	A1=body obj.header (f/obj instance)
+		SW	A0,0018 (SP)	save body obj.header
+		JAL	7F076030
+		LW	A3,0020 (SP)	A3=head obj.header
+		LW	T6,0020 (SP)	T6=head obj.header
+		LW	A0,0018 (SP)	A0=body obj.header
+		JAL	7F075D2C
+		LW	A1,0000 (T6)	A1=head obj.table
+		LW	RA,0014 (SP)
+		ADDIU	SP,SP,0018
+		JR	RA
+		NOP
+LW	A0,004C (SP)	A0=object instance entry (?)
+LW	T8,0048 (SP)	??? - from caller	{0 this run}
+BNEL	T8,R0,7F023494
+LW	RA,001C (SP)
+LH	T9,000C (S1)	T9=#obj.offsets in head
+BLEZL	T9,7F023494	quit if invalid
+LW	RA,001C (SP)
+LW	T0,0008 (S1)	T0=pointer to head's obj.offsets
+LW	A1,0000 (T0)	A1=sunglasses offset
+BEQL	A1,R0,7F023494	skip if shades aren't present
+LW	RA,001C (SP)
+JAL	7F06C79C	rip table command, probably for the pointer to DL used
+		ADDIU	SP,SP,FFE0
+		SW	RA,0014 (SP)
+		LHU	T6,0000 (A1)	T6=obj.table command type
+		OR	A2,R0,R0
+		LW	A3,0010 (A0)
+		ANDI	T7,T6,00FF
+		ADDIU	T8,T7,FFFF	T8=command alone -1
+		SLTIU	AT,T8,0018
+		BEQ	AT,R0,7F06C840	if not one of the 18, too bad...
+		SLL	T8,T8,0x2
+		LUI	AT,8005
+		ADDU	AT,AT,T8
+		LW	T8,4AF8 (AT)	offset into TLB table @ 80054AF8
+		JR	T8
+		NOP
+		etc...
+LW	A0,004C (SP)	A0=object instance entry (?)
+SW	R0,0000 (V0)
+LW	RA,001C (SP)
+//7F023494:	return!
+LW	V0,004C (SP)
+LW	S0,0014 (SP)
+LW	S1,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0038
+
++-+-+-+-+-+
+Bond from eye intro:
+//7F009088:
+ADDIU	A0,R0,0005
+ADDIU	A1,R0,004E
+LW	A2,0064 (SP)
+LW	A3,0618 (SP)
+JAL	7F0234A8	set up character instance
+SW	R0,0010 (SP)
+//7F0090A0:
+LUI	S1,8003
+ADDIU	S1,S1,A7F4	S1=8002A7F4 [9A64]: 
+
+Perspective is same as y offset!
+character	perspective	y offset
+nat		0.966100	0.966100
+ourumov		1.077800	1.077800
+boris		0.970200	0.970200
+valentin	0.932400	0.932400
+jaws		1.199000	1.199000
+oddjob		0.787800	0.787800
+rosika		0.885300	0.885300
+develpers	1.044600	1.044600
+
+remove perspective.  use y offset instead
+remove scale but do test if lf_hand.  If so, use 0.1	(ignore camonat)
+all are accurate to ten-thousandths, so maybe just divide by 10000 (2710 | 461C4000)
+
+Fun!  it loads the watch menu *directly* from the weapon index
+ - doesn't even use the character menu entry *at all*!
+
+!eliminate need for scale in watch!
+0B334F	0005	05C4245088
+
+Routine that calls watch menu (suit_lf_hand)
+7F07E7CC:
+...
+//7F07E81C:	0xB334C	recall scale
+LUI	AT,8004
+LWC1	F4,E14C (AT)	direct call of scale value!
+LUI	AT,8005
+LWC1	F6,5088 (AT)	F6=80055088: 
+LUI	A0,8008
+LW	A0,A0B0 (A0)	A0=playerdata
+MUL.S	F8,F4,F6	F8=0.01	(0.1 * 0.1)
+ADDIU	A0,A0,0230
+MFC1	A1,F8
+JAL	7F06CE78
+		MTC1	A1,F12
+		JR	RA
+		SWC1	F12,0014 (A0)
+NOP
+//7F07E848:
+LUI	AT,3F00
+MTC1	AT,F10		F10=0.5
+LUI	AT,8003
+LWC1	F16,65A8 (AT)	F16=800365A8=1.1:	???
+MTC1	R0,F0
+LUI	A0,8008
+MUL.S	F18,F10,F16	F18=0.55
+LUI	T8,8007
+LW	T8,9538 (T8)	T8=80069538: 
+LW	A0,A0B0 (A0)
+LUI	T9,0000
+ADDIU	T9,T9,42C8
+MFC1	A3,R0
+SWC1	F18,0010 (SP)
+OR	A2,R0,R0
+SWC1	F0,0014 (SP)
+ADDU	A1,T8,T9	A1=pointer T8 + 0x42C8...
+JAL	7F06FCA8
+ADDIU	A0,A0,0230
+//7F07E894:	resets the watch hand's movement registers
+LUI	T0,8008
+LW	T0,A0B0 (T0)
+SW	R0,0220 (T0)	0->playerdata+0x220
+//7F07E8A0:
+LW	RA,001C (SP)
+ADDIU	SP,SP,0028
+JR	RA
+NOP
+
+reset all objects
+7F000F50:
+LUI	T6,8004
+LW	T6,DE10 (T6)
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+BEQ	T6,R0,7F000F88
+SW	A0,0018 (SP)
+LUI	T7,8004
+ADDIU	V0,T7,DE10
+LW	V1,0000 (V0)
+SW	R0,0000 (V1)
+//7F000F78:	pull header pointer, then set in-use flag to 0
+LW	V1,0014 (V0)
+ADDIU	V0,V0,0014
+BNEL	V1,R0,7F000F78
+SW	R0,0000 (V1)
+//7F000F88:
+ORI	T0,R0,0002
+JAL	7000A450
+LUI	T8,8003
+ADDU	AT,T8,T0
+LB	T8,CD00 (AT)
+BEQL	T8,R0,7F000FB0
+SB	T8,CD04 (AT)
+DIVU	V0,T8
+MFHI	T9
+SB	T9,CD04 (AT)
+//7F000FB0:
+BGTZ	T0,7F000F8C
+ADDI	T0,T0,FFFF
+LW	RA,0014 (SP)
+JR	RA
+ADDIU	SP,SP,0018
+
++-+-+-+-+
+Stuff that writes to the perspective register
+
+init at startup, before legal:
+7F09A2E0:	init floats in player statistics
+LUI	AT,3F80
+MTC1	AT,F0
+LUI	AT,8008
+SWC1	F0,9F54 (AT)	1.0->perspective pl.1
+LUI	AT,8008
+SWC1	F0,9F4C (AT)	1.0->handicap (health) pl.1
+LUI	AT,8008
+SWC1	F0,9FC4 (AT)	1.0->perspective pl.2
+LUI	AT,8008
+SWC1	F0,9FBC (AT)	1.0->handicap (health) pl.2
+LUI	AT,8008
+SWC1	F0,A034 (AT)	1.0->perspective pl.3
+LUI	AT,8008
+SWC1	F0,A02C (AT)	1.0->handicap (health) pl.3
+LUI	AT,8008
+SWC1	F0,A0A4 (AT)	1.0->perspective pl.4
+LUI	AT,8008
+JR	RA
+SWC1	F0,A09C (AT)	1.0->handicap (health) pl.4
+
+
+
+PROBLEM!!!
+	This bugger here writes perspective before setting up playerdata/guardata
+	Going to have to push perspective write into character load/write
+	On the plus side, this would fix the solo perspective writting issue...
+solo perspective setting routine:
+//7F0BDC94:	test if multiplayer
+JAL	7F09A464	ret. V0=#players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F0BDCC8	branch on multi
+OR	S0,R0,R0
+//7F0BDCA8:	solo perspective
+LUI	AT,3F80
+MTC1	AT,F4
+MTC1	AT,F6
+SB	R0,006A (S4)	0->?
+SB	R0,006B	(S4)	0->?
+SWC1	F4,005C (S4)	1.0->handicap (health)
+BEQ	R0,R0,7F0BDD34
+SWC1	F6,0064 (S4)	1.0->perspective
+//7F0BDCC8:	multi perspective
+LUI	S1,8008
+ADDIU	S1,S1,9EF0
+JAL	7F014758	RETURNS V0=scenario
+		LUI	V0,8003
+		JR	RA
+		LW	V0,B540 (V0)	V0=8002B540: 
+NOP
+BNE	V0,S3,7F0BDCE8	branch if not "License to Kill"
+NOP
+BEQ	R0,R0,7F0BDCF4
+SWC1	F20,005C (S1)	43480000->handicap (LtK)
+JAL	7F0103AC	returns handicap for player
+		SLL	T6,A0,0x2
+		LUI	T7,8007
+		ADDU	T7,T7,T6
+		LW	T7,97A8 (T7)	T7=800697A8+offset: player's handicap setting
+		LUI	AT,8003
+		SLL	T8,T7,0x3
+		ADDU	AT,AT,T8
+		JR	RA
+		LWC1	F0,B49C (AT)	F0=setting's value
+OR	A0,S0,R0	A0=player#
+SWC1	F0,005C (S1)	save handicap
+//7F0BDCF4:
+JAL	7F0103D0	retrieves F0=perspective based on selected character setting
+		SLL	T6,A0,0x2
+		LUI	V0,8003
+		ADDU	V0,V0,T6
+		LW	V0,B524 (V0)	V0=player's MPchar setting
+		SLL	T7,A0,0x2
+		LUI	AT,8003
+		BGEZ	V0,7F010408
+		SLL	T8,V0,0x2
+		SUBU	T7,T7,A0
+		SLL	T7,T7,0x2	T7=player# *0xC, used as default for MPchar
+		LUI	AT,8003
+		ADDU	AT,AT,T7
+		JR	RA
+		LWC1	F0,B1A0 (AT)
+		//7F010408:	when a character selected (not default -1)
+		SUBU	T8,T8,V0
+		SLL	T8,T8,0x2	T8=MPchar# * 0xC
+		ADDU	AT,AT,T8
+		LWC1	F0,B1A0 (AT)	F0=perspective from the mpcharacter menu
+		JR	RA
+		NOP
+OR	A0,S0,R0
+ADDIU	S0,S0,0001	S0=next player
+ADDIU	S1,S1,0070	S1=next entry's address
+BNE	S0,S3,7F0BDCD0
+SWC1	F0,FFF4 (S1)	save player's perspective
+JAL	7F010420
+		LUI	T6,8003
+		LW	T6,B538 (T6)	T6=game length setting
+		LUI	V0,8003
+		SLL	T7,T6,0x2
+		SUBU	T7,T7,T6
+		SLL	T7,T7,0x2	game length * 0xC
+		ADDU	V0,V0,T7
+		JR	RA
+		LW	V0,AFF8 (V0)	V0=time limit
+NOP
+JAL	7F0BFC28
+OR	A0,V0,R0	A0=time limit
+JAL	7F010444
+		LUI	T6,8003
+		LW	T6,B538 (T6)
+		LUI	V0,8003
+		SLL	T7,T6,0x2
+		SUBU	T7,T7,T6
+		SLL	T7,T7,0x2
+		ADDU	V0,V0,T7
+		JR	RA
+		LW	V0,AFFC (V0)	V0=score limit
+NOP
+JAL	7F0BFC34
+OR	A0,V0,R0
+JAL	7F0101D8	copy aim/sight settings to all players
+		LUI	T6,8003
+		LW	T6,B53C (T6)
+		LUI	T8,8003
+		ADDIU	T8,T8,B510
+		SLL	T7,T6,0x2
+		ADDU	V0,T7,T8
+		LBU	V1,0003 (V0)
+		LUI	AT,8008
+		SB	V1,9F5A (AT)
+		LBU	A0,0002 (V0)
+		LUI	AT,8008
+		SB	A0,9F5B (AT)
+		LUI	AT,8008
+		SB	V1,9FCA (AT)
+		LUI	AT,8008
+		SB	A0,9FCB (AT)
+		LUI	AT,8008
+		SB	V1,A03A (AT)
+		LUI	AT,8008
+		SB	A0,A03B (AT)
+		LUI	AT,8008
+		SB	V1,A0AA (AT)
+		LUI	AT,8008
+		JR	RA
+		SB	A0,A0AB (AT)
+NOP
+//7F0BDD34:
+
+
+later, who knows what it does...
+7F0798B8:
+LUI	T6,8008
+LW	T6,A0B4 (T6)
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	AT,4339
+MTC1	AT,F6
+LWC1	F4,0064 (T6)	F4=player's perspective
+LUI	AT,3F80
+MTC1	AT,F10
+MUL.S	F8,F4,F6	F8=PERSPECTIVE/185
+...
+
+
+later...	DEFINATELY THE DISPLAY VIEWPORT
+7F081478:
+LUI	V1,8008
+LUI	T0,8008
+ADDIU	T0,T0,A0B0
+ADDIU	V1,V1,A0B4
+LW	T6,0000 (V1)
+LW	V0,0000 (T0)
+ADDIU	SP,SP,FFC8
+SW	RA,001C (SP)
+LWC1	F6,0064 (T6)	F6=perspective
+LWC1	F4,0500 (V0)	???	0x500 in playerdata
+LUI	AT,41F0
+MTC1	AT,F2
+...
++-+-+-+-+
+7F079CF0-7F07A4A0	solo character load
+ADDIU	SP,SP,FEE8
+SW	RA,001C (SP)
+JAL	7F089EE4
+NOP
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+SWC1	F0,0114 (SP)
+LW	T7,00A8 (T6)
+LW	V0,0004 (T7)
+BNEL	V0,R0,7F07A440
+LW	T7,001C (V0)
+JAL	7F05CF30
+OR	A0,R0,R0
+SW	V0,00F0 (SP)
+JAL	7F05CF30
+ADDIU	A0,R0,0001
+SW	V0,00EC (SP)
+SW	R0,00E8 (SP)
+JAL	7F05CF48
+OR	A0,R0,R0
+SW	V0,00E4 (SP)
+JAL	7F05CF48
+ADDIU	A0,R0,0001
+//7F079D4C:	copy a generic 08 PP7 to stack...	this section extroneous
+LUI	T9,8003
+ADDIU	T9,T9,65AC	T9=800265AC: a copy of a 08 PP7 object from the 21990 binary
+SW	V0,00E0 (SP)
+ADDIU	T4,T9,0084
+ADDIU	T8,SP,0054
+//7F079D60:	iterate to copy yo
+LW	AT,0000 (T9)
+ADDIU	T9,T9,000C
+ADDIU	T8,T8,000C
+SW	AT,FFF4 (T8)
+LW	AT,FFF8 (T9)
+SW	AT,FFF8 (T8)
+LW	AT,FFFC (T9)
+BNE	T9,T4,7F079D60
+SW	AT,FFFC (T8)
+//7F079D84:	
+LW	AT,0000 (T9)
+OR	A0,R0,R0	A0=right hand
+JAL	7F05DA44	ret. V0=ammo in wep.
+SW	AT,0000 (T8)
+ADDIU	T5,R0,0017	default body
+ADDIU	T6,R0,004B	default head
+LUI	A0,8008
+SW	V0,0048 (SP)
+SW	T5,0044 (SP)
+SW	T6,0040 (SP)
+SW	R0,0038 (SP)
+JAL	7F07DE64
+LW	A0,A0B0 (A0)
+JAL	7F09A464	returns V0=#players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F079F60	branch if multi!
+NOP
+JAL	7F01D56C	WOULD HAVE RETURNED V0=folder#
+NOP
+//7F079DD4:	solo bodies
+LUI	T7,8008
+LW	T7,A0B0 (T7)
+LW	V1,041C (T7)	V1=cuff
+SLTIU	AT,V1,0009
+BEQ	AT,R0,7F079EA4	skip if not a valid cuff
+SLL	T3,V1,0x2
+LUI	AT,8005
+ADDU	AT,AT,T3
+LW	T3,4FE4 (AT)
+JR	T3
+NOP
+//7F079E00:	cuff 3 - Boiler
+ADDIU	T2,R0,0016
+BEQ	R0,R0,7F079EA4
+SW	T2,0044 (SP)
+//7F079E0C:	cuff 2 - Jungle
+ADDIU	T4,R0,0018
+BEQ	R0,R0,7F079EA4
+SW	T4,0044 (SP)
+//7F079E18:	cuff 4 - Snowsuit
+ADDIU	T9,R0,0019
+BEQ	R0,R0,7F079EA4
+SW	T9,0044 (SP)
+//7F079E24:	cuff 1 - Brosnan Tux
+ADDIU	T8,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T8,0044 (SP)
+//7F079E30:	cuff 5 - Connery
+ADDIU	T5,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T5,0044 (SP)
+//7F079E3C:	cuff 6 - Moore
+ADDIU	T6,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T6,0044 (SP)
+//7F079E48:	cuff 7 - Dalton
+ADDIU	T7,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T7,0044 (SP)
+//7F079E54:	choose one of four bond models!
+BEQ	V0,R0,7F079E88
+ADDIU	T3,R0,0005
+ADDIU	AT,R0,0001
+BEQ	V0,AT,7F079E90
+ADDIU	T2,R0,0005
+ADDIU	AT,R0,0002
+BEQ	V0,AT,7F079E98
+ADDIU	T4,R0,0005
+ADDIU	AT,R0,0003
+BEQ	V0,AT,7F079EA0
+ADDIU	T9,R0,0005
+BEQ	R0,R0,7F079EA4
+NOP
+//7F079E88:
+BEQ	R0,R0,7F079EA4
+SW	T3,0044 (SP)
+//7F079E90:
+BEQ	R0,R0,7F079EA4
+SW	T2,0044 (SP)
+//7F079E98:
+BEQ	R0,R0,7F079EA4
+SW	T4,0044 (SP)
+//7F079EA0:
+SW	T9,0044 (SP)
+//7F079EA4:
+BEQ	V0,R0,7F079ED8
+SLTIU	AT,V1,0009
+ADDIU	AT,R0,0001
+BEQ	V0,AT,7F079F48
+ADDIU	T8,R0,004E
+ADDIU	AT,R0,0002
+BEQ	V0,AT,7F079F50
+ADDIU	T5,R0,004E
+ADDIU	AT,R0,0003
+BEQ	V0,AT,7F079F58
+ADDIU	T6,R0,004E
+BEQ	R0,R0,F7079F84
+NOP
+//7F079ED8:	solo heads
+BEQ	AT,R0,7F079F84
+SLL	T8,V1,0x2
+LUI	AT,8005
+ADDU	AT,AT,T8
+LW	T8,5008 (AT)
+JR	T8
+NOP
+//7F079EF4:	cuff 3 - Boiler
+ADDIU	T5,R0,004A
+BEQ	R0,R0,7F079F84
+SW	T5,0040 (SP)
+//7F079F00:	cuff 2 - Jungle
+ADDIU	T6,R0,004C
+BEQ	R0,R0,7F079F84
+SW	T6,0040 (SP)
+//7F079F0C:	cuff 1 - Brosnan Tux
+ADDIU	T7,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T7,0040 (SP)
+//7F079F18:	cuff 5 - Connery
+ADDIU	T3,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T3,0040 (SP)
+//7F079F24:	cuff 6 - Moore
+ADDIU	T2,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T2,0040 (SP)
+//7F079F30:	cuff 7 - Dalton
+ADDIU	T4,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T4,0040 (SP)
+//7F079F3C:	cuff 8 - Selected Bond Head
+ADDIU	T9,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T9,0040 (SP)
+//7F079F48:
+BEQ	R0,R0,7F079F84
+SW	T8,0040 (SP)
+//7F079F50:
+BEQ	R0,R0,7F079F84
+SW	T5,0040 (SP)
+//7F079F58:
+BEQ	R0,R0,7F079F84
+SW	T6,0040 (SP)
+//7F079F60:	AEA90	multiplayer bodies/heads
+JAL	7F09B150	;cur.player
+NOP
+JAL	7F01035C	;selected MP body for player A0
+OR	A0,V0,R0	;A0=V0: cur.player
+JAL	7F09B150	;cur.player
+SW	V0,0044 (SP)	;SP+44=body#
+JAL	7F0102BC	;selected MP head for player A0
+OR	A0,V0,R0
+SW	V0,0040 (SP)	;SP+40=head#
+//7F079F84:	AEAB4	determine if camera code parsing...
+LUI	T7,8003
+LW	T7,6494 (T7)	;T7=80036494: cur.camera mode
+ADDIU	AT,R0,0003
+BNE	T7,AT,7F079FA0	;branch if not 3: mp rotating swirly
+LUI	T3,8008
+LW	T3,99E0 (T3)	;T3=800799E0: starting r.hand weapon
+SW	T3,0048 (SP)	;SP+48=r.weapon
+//7F079FA0:	AEAD0	load and initialize solo character
+JAL	7F09A464	;ret. V0=#players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F07A1BC	;branch if multi
+LW	T7,0044 (SP)
+JAL	7F05CF5C	;clear left hand
+ADDIU	A0,R0,0001
+JAL	7F05CF5C	;clear right hand
+OR	A0,R0,R0
+//7F079FC4:	AEAF4	copy data for body to playerdata and obj. instance
+ADDIU	A0,SP,0100	;A0=SP+100: 
+LW	A1,00EC (SP)	;A1=: 
+JAL	7F0CBAF4
+LW	A2,00E0 (SP)	;A2=: 
+JAL	7F05CF18		returns V0=address of one of the obj.headers
+OR	A0,R0,R0	;A0=0
+LW	T2,0044 (SP)	T2=body
+//7F079FE0:
+LUI	T9,8004
+ADDIU	T9,T9,DE10
+SLL	T4,T2,0x2	change to SLL, T4,T2,0x1 for mini table
+ADDU	T4,T4,T2
+SLL	T4,T4,0x2
+ADDU	V1,T4,T9
+LW	T8,0000 (V1)	T8=body obj.header
+SW	V0,00FC (SP)
+ADDIU	T3,SP,0100
+LW	AT,0000 (T8)	copy obj.header to 0x810 in playerdata!
+OR	A0,V0,R0
+SW	AT,0000 (V0)
+LW	T7,0004 (T8)
+SW	T7,0004 (V0)
+LW	AT,0008 (T8)
+SW	AT,0008 (V0)
+LW	T7,000C (T8)
+SW	T7,000C (V0)
+LW	AT,0010 (T8)
+SW	AT,0010 (V0)
+LW	T7,0014 (T8)
+SW	T7,0014 (V0)
+LW	AT,0018 (T8)
+SW	AT,0018 (V0)
+LW	T7,001C (T8)
+SW	T7,001C (V0)
+SW	V1,0028 (SP)	save body's table entry pointer
+SW	T3,0010 (SP)	save SP+0x100
+//7F07A050:	prep the object for load, filling header and such
+LW	A3,00E4 (SP)	0x14820, same as SP+0xE0.  could be a memory total...
+LW	A2,00F0 (SP)	immediately after an object, so pointer to next, or instance?
+JAL	7F0764A4	loads object and fills in the header data
+LW	A1,0004 (V1)	A1=body's string pointer
+LW	V1,0028 (SP)	V1=body's table entry pointer
+JAL	7F0BD188	please pretty please tell me this isn't the decompressor...
+LW	A0,0004 (V1)	A0=body's string pointer
+//7F07A06C:	copy data for body to playerdata and obj. instance
+LW	T5,0040 (SP)	T5=head#
+LUI	T7,8004
+ADDIU	T7,T7,DE10
+SLL	T8,T5,0x2	for smaller table change to SLL	T8,T5,0x1
+ADDU	T8,T8,T5
+SLL	T8,T8,0x2
+ADDU	V1,T8,T7
+LW	T3,0000 (V1)	T3=head's obj.header
+ADDIU	T0,V0,003F	T0=V0+0x3F	V0=size of last model+0x3F - here, body
+LW	T1,00F0 (SP)	T1=pointer to body's model in rdram
+ORI	T2,T0,003F
+LW	AT,0000 (T3)	AT=offset to object table if already loaded...
+XORI	T4,T2,003F	T4=size pushed to the 0x40 boundry
+ADDIU	T0,T4,005F
+ORI	T9,T0,003F
+ADDU	A0,T1,T4	A0=end of last object, start of next
+XORI	T0,T9,003F	T0=size + 0x40, pushed to 0x40 boundry (T4+0x40)
+SW	AT,0000 (A0)	
+LW	T9,0004 (T3)	copy obj.header to this crazy address
+ADDIU	T5,SP,0100
+ADDU	A2,T1,T0	A2=location for next model binary
+SW	T9,0004 (A0)
+LW	AT,0008 (T3)
+SW	AT,0008 (A0)
+LW	T9,000C (T3)
+SW	T9,000C (A0)
+LW	AT,0010 (T3)
+SW	AT,0010 (A0)
+LW	T9,0014 (T3)
+SW	T9,0014 (A0)
+LW	AT,0018 (T3)
+SW	AT,0018 (A0)
+LW	T9,001C (T3)
+SW	T9,001C (A0)
+LW	T6,00E4 (SP)	T6=max size?  14820
+SW	T0,00E8 (SP)	T0=size of model in rdram
+SW	A0,00F8 (SP)
+SW	V1,0028 (SP)
+SW	T5,0010 (SP)
+LW	A1,0004 (V1)	A1=pointer to head string	[V1=head table entry]
+JAL	7F0764A4	loads object and fills in header data
+SUBU	A3,T6,T0	A3=amount of available memory left (14820-body size)
+LW	V1,0028 (SP)	V1=head table entry
+JAL	7F0BD188	ret. V0=size of object in rdram	expansion?
+LW	A0,0004 (V1)	A0=pointer to head string
+//7F07A120:
+LW	V1,00E8 (SP)	V1=body size
+LW	T4,00F0 (SP)	T4=pointer to body model in rdram
+LW	A0,00FC (SP)	A0=playerdata + 0x810
+ADDU	V1,V0,V1	V1=update amount of memory already cluttered
+ADDIU	V1,V1,003F
+ORI	T8,V1,003F
+XORI	T7,T8,003F
+ADDIU	V1,T7,00FB
+ORI	T3,V1,003F
+XORI	T9,T3,003F	T9=total used memory pushed to 0x40 boundry
+ADDU	T2,T4,T7	T2=start of next model
+SW	T2,0038 (SP)	save next model location
+JAL	7F075CF4	prep body for use?
+SW	T9,00E8 (SP)	save total used memory
+JAL	7F075CF4	prep head for use; set use flag, compute group numbers
+LW	A0,00F8 (SP)	A0=pointer to a copy of head's header in model data area
+//7F07A160:
+LW	A1,00FC (SP)	A1=body header in playerdata
+LW	T7,00F8 (SP)	T7=copy of head's header in model data
+LW	V1,00E8 (SP)	V1=total used memory
+LH	T8,0014 (A1)	T8=body's group #	(61 if head not present)
+LH	T4,0014 (T7)	T4=head's group #	(2 if head)
+LW	T6,00F0 (SP)	T6=body model in rdram
+LW	A0,0038 (SP)	A0=next object!
+ADDU	V0,T8,T4	V0=sum of groupcodes (should be 63 for characters)
+ADDIU	V0,V0,000A	offset for the space made to copy header, etc
+SLL	T2,V0,0x2	multiply by 4...
+ADDU	A2,T6,V1	A2=next object's address
+ADDU	V1,T2,V1	total memory used + group codes->offset
+ADDIU	V1,V1,003F
+ORI	T3,V1,003F
+XORI	T9,T3,003F	total ushed to 0x40 boundry
+SW	T9,00E8 (SP)	save it yo
+JAL	7F075FAC
+SW	V0,0030 (SP)	save group# + A
+LW	V0,0030 (SP)
+LW	T6,0038 (SP)	save object instance pointer
+SH	V0,0002 (T6)
+BEQ	R0,R0,7F07A234
+LW	A3,00F8 (SP)	A3=head's header copied to model area in rdram
+//7F07A1BC:	AECEC	load and initialize multi character
+SLL	T8,T7,0x2	for smaller table use SLL	T8,T7,0x1
+ADDU	T8,T8,T7
+LUI	T4,8004
+ADDIU	T4,T4,DE10	;T4=8003DE10: body/head table
+SLL	T8,T8,0x2
+ADDU	V1,T8,T4	;V1=p->entry
+LW	T2,0000 (V1)	;T2=p->body header
+SW	T2,00FC (SP)	;SP+FC=T2: p->body header
+LW	T9,0000 (T2)	;T9=body header+0: p->table (nonzero if object loaded)
+OR	A0,T2,R0	;A0=T2: p->body header
+BNEL	T9,R0,7F07A1F8	;branch if already loaded
+LW	T5,0040 (SP)
+JAL	7F07654C	;loads in object name A1 with header A0
+LW	A1,0004 (V1)	;A1=p->recall string
+//7F07A1F4:
+LW	T5,0040 (SP)
+LUI	T7,8004
+ADDIU	T7,T7,DE10	;T4=8003DE10: body/head table
+SLL	T6,T5,0x2	for smaller table use SLL	T6,T5,0x1
+ADDU	T6,T6,T5
+SLL	T6,T6,0x2
+ADDU	V1,T6,T7	;V1=p->entry
+LW	A3,0000 (V1)	;A3=p->body header
+LW	T8,0000 (A3)	;T8=body header+0: p->table (nonzero if object loaded)
+OR	A0,A3,R0	;A0=A3: p->body header
+BNEL	T8,R0,7F07A238	;branch if already loaded
+LW	T4,0038 (SP)
+LW	A1,0004 (V1)	;A1=p->recall string
+JAL	7F07654C	;loads in object name A1 with header A0
+SW	A3,00F8 (SP)	;SP+F8= p->body header
+LW	A3,00F8 (SP)	;A3=p->head header
+//7F07A234:	load models
+LW	T4,0038 (SP)	;T4=SP+38: 
+LW	A0,0044 (SP)	;A0=body
+LW	A1,0040 (SP)	;A1=head
+LW	A2,00FC (SP)	;A2=p->body header
+SW	R0,0010 (SP)	;SP+10=sunglasses flag
+JAL	7F0232E8	;load body and head
+SW	T4,0014 (SP)	;SP+14: 
+LUI	V1,8008
+ADDIU	V1,V1,A0B0
+LW	T2,0000 (V1)	T2=playerdata
+LUI	AT,8005
+SW	V0,00D4 (T2)	save obj. instance pointer!
+LW	T9,0000 (V1)	T9=playerdata
+LWC1	F6,502C (AT)	F6=8005502C:	???
+LW	A0,00D4 (T9)	A0=obj. instance pointer
+LWC1	F4,0014 (A0)	F4=object scale
+MUL.S	F8,F4,F6
+MFC1	A1,F8
+JAL	7F06CE78	save converted scale
+NOP
+//7F07A284:	handle player position
+LUI	V1,8008
+LW	V1,A0B0 (V1)
+LW	A3,0114 (SP)
+LW	A0,00A8 (V1)	A0=obj. position pointer (8006)
+LW	A1,00D4 (V1)	A1=obj. instance pointer
+LW	T3,0014 (A0)	T3=room pointer
+SW	R0,0014 (SP)
+ADDIU	A2,A0,0008	A2=offset to xyz positions
+JAL	7F0200BC	copies positions or adjusts them or something
+SW	T3,0010 (SP)
+//7F07A2AC:
+LUI	A3,8008
+ADDIU	A3,A3,A0B0
+LW	T6,0000 (A3)	T6=playerdata
+ADDIU	T5,R0,0006
+LW	T7,00A8 (T6)	T7=obj. position pointer (8006)
+SB	T5,0000 (T7)	type specify to 6 (character)
+LW	T8,0000 (A3)
+LW	T4,00A8 (T8)	T4=p->obj. pos
+LW	A2,0004 (T4)	A2=p->guarddata
+LW	T2,0014 (A2)	T2='guard' bitflags
+ORI	T9,T2,0001
+SW	T9,0014 (A2)	uhm, it can't have just set sunglasses on...
+LW	V1,0000 (A3)	V1=playerdata
+LW	A1,00A8 (V1)	A1=p->obj. pos
+LW	A0,00D4 (V1)	A0=obj. instance
+SW	A2,0110 (SP)	save guarddata pointer
+JAL	7F06CC0C
+ADDIU	A1,A1,0008	A1=offset to xyz position
+//7F07A2F4:
+LUI	T3,8008
+LW	T3,A0B0 (T3)
+LW	A1,0114 (SP)
+JAL	7F06CD3C
+LW	A0,00D4 (T3)	A0=obj. instance
+JAL	7F09B244	ret. V0=3rd person model based on the item# used
+LW	A0,0048 (SP)	weapon (1-0x20)
+BLTZ	V0,7F07A428	returns model for selected weapon
+SW	V0,004C (SP)	save it yo
+JAL	7F09A464	returns # players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F07A3FC	branch if multiplayer
+LW	T6,00F0 (SP)	T6=body model
+//7F07A32C:
+LW	V0,00E8 (SP)	V0=memory consumed by the character+data
+ADDIU	A0,R0,0001
+ADDU	T5,T6,V0	T5=end of character data
+ADDIU	V0,V0,00C7
+ORI	T7,V0,003F
+XORI	T8,T7,003F
+SW	T5,00DC (SP)	save endpoint
+JAL	7F05CF18	returns, in this case, playerdata + 0x830
+SW	T8,00E8 (SP)	effectively, size - 0x40
+LW	T4,004C (SP)	T4=3rd person object in hand
+LUI	T9,8004
+ADDIU	T9,T9,A228	object,header,&scale table
+SLL	T2,T4,0x2
+SUBU	T2,T2,T4
+SLL	T2,T2,0x2
+ADDU	V1,T2,T9
+LW	T3,0000 (V1)	header for object
+SW	V0,00F4 (SP)
+ADDIU	T5,SP,0100
+LW	AT,0000 (T3)	copy weapon header to playerdata
+OR	A0,V0,R0
+SW	AT,0000 (V0)
+LW	T7,0004 (T3)
+SW	T7,0004 (V0)
+LW	AT,0008 (T3)
+SW	AT,0008 (V0)
+LW	T7,000C (T3)
+SW	T7,000C (V0)
+LW	AT,0010 (T3)
+SW	AT,0010 (V0)
+LW	T7,0014 (T3)
+SW	T7,0014 (V0)
+LW	AT,0018 (T3)
+SW	AT,0018 (V0)
+LW	T7,001C (T3)
+SW	T7,001C (V0)
+LW	T4,00E8 (SP)	T4=memory consumed
+LW	T2,00E4 (SP)	T2=max memory
+LW	T8,00F0 (SP)	T8=body model (start of this clump)
+SW	V1,0028 (SP)	save p->weapon's table entry
+SW	T5,0010 (SP)	save SP+0x100
+LW	A1,0004 (V1)	A1=model's string
+SUBU	A3,T2,T4	A3=room left
+JAL	7F0764A4	loads object and fills in header data
+ADDU	A2,T8,T4	A2=address for next model data
+LW	V1,0028 (SP)	V1=p->weapon's table entry
+JAL	7F0BD188	load or expand or whatnot
+LW	A0,0004 (V1)	A0=model's string
+JAL	7F075CF4	set object in use
+LW	A0,00F4 (SP)
+BEQ	R0,R0,7F07A408
+LW	T6,00DC (SP)	T6=endpoint
+//7F07A3FC:
+SW	R0,00DC (SP)
+SW	R0,00F4 (SP)
+LW	T6,00DC (SP)
+//7F07A408:
+LW	T3,00F4 (SP)	T3=weapon header in playerdata
+LW	A0,0110 (SP)	A0=guardata
+LW	A1,004C (SP)	A1=3rd person weapon#
+LW	A2,0048 (SP)	A2=weapon type (ie. 5=silpp7)
+OR	A3,R0,R0
+SW	T6,0010 (SP)	save model endpoint
+JAL	7F052214	returns V0=obj. position entry for weapon
+SW	T3,0014 (SP)	save weapon header in playerdata
+//7F07A428:
+LW	A0,0110 (SP)	A0=guarddata
+JAL	7F023A94
+ADDIU	A1,R0,0000
+BEQ	R0,R0,7F07A494
+LW	RA,001C (SP)
+//7F07A43C:		Multi!
+LW	T7,001C (V0)
+OR	A0,V0,R0
+LW	T8,0020 (T7)
+BNEL	T8,R0,7F07A494
+LW	RA,001C (SP)
+LW	T4,0014 (V0)
+ADDIU	A1,R0,0000
+ORI	T2,T4,0001
+JAL	7F023A94
+SW	T2,0014 (V0)
+LUI	V1,8008
+LW	V1,A0B0 (V1)
+LW	A1,00A8 (V1)
+LW	A0,00D4 (V1)
+JAL	7F06CC0C
+ADDIU	A1,A1,0008
+LUI	T9,8008
+LW	T9,A0B0 (T9)
+LW	A1,0114 (SP)
+JAL	7F06CD3C
+LW	A0,00D4 (T9)
+LW	RA,001C (SP)
+//7F07A494:
+ADDIU	SP,SP,0118
+JR	RA
+NOP
+
++-+-+-+-+
+hack these routines for scale and perspective:
+7F02370C	09 actors: looks up values from table
+7F023590	the thing that returns the gender flag!
+7F018908	intro routine that loads the heads/bodies; look further into code
+	thing that pulls perspective; grab from char. table, maybe offset for head

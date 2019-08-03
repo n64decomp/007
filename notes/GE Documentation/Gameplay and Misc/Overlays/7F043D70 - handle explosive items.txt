@@ -1,0 +1,364 @@
+7F043D70	788A0	handle explosive objects
+	accepts: A0=p->position data
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+SW	A0,0020 (SP)	;SP+20=A0: p->pos.data
+LW	A3,0004 (A0)	;A3=pos.data+4: p->obj.data
+JAL	7F09B150	;V0= cur player #
+SW	A3,001C (SP)	;SP+1C= p->obj.data
+JAL	7F09B4D8
+OR	A0,V0,R0	;A0=V0: player#
+BNE	V0,R0,7F0441F0	;return if weird entry or something
+LW	A3,001C (SP)	;A3=p->obj.data
+LBU	V0,0003 (A3)	;V0=obj.type
+ADDIU	AT,R0,0007
+BNEL	V0,AT,7F043DE0	;branch if not an ammo clip
+ADDIU	AT,R0,0008
+//7F043DA8:	ammo clips
+LW	T7,0008 (A3)	;T7=obj.data+8= 1st bitflag field
+LW	A0,0020 (SP)	;A0=p->pos.data
+ADDIU	A1,R0,000C
+SLL	T8,T7,0x3	;T8=flags.1*8: test for 10000000
+BGEZL	T8,7F0441F4	;return if 10000000 not set
+LW	RA,0014 (SP)
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)	;SP+1C= p->obj.data
+LW	A3,001C (SP)	;A3=p->obj.data
+LW	T9,0064 (A3)	;T9=obj.data+64= runtime flags
+ORI	T0,T9,0004	;flags.run | 4: ???
+BEQ	R0,R0,7F0441F0	;return
+SW	T0,0064 (A3)	;update flags.run
+//7F043DDC:	collectable item
+ADDIU	AT,R0,0008
+BNE	V0,AT,7F0441F0	;branch if not an item
+LW	T1,0020 (SP)	;T1=p->pos.data
+LW	A2,0004 (T1)	;A2=pos.data+4: p->obj.data
+ADDIU	AT,R0,001A	;AT=1A: grenades
+LB	V1,0080 (A2)	;V1=item type
+BEQ	V1,AT,7F043E04	;branch if grenades
+ADDIU	AT,R0,0057
+BNEL	V1,AT,7F043E6C	;branch if not type 57: ???
+ADDIU	AT,R0,0056
+//7F043E04:	grenades
+LH	V0,0082 (A2)	;V0=obj.data+82: timer
+LUI	T2,8005
+BLTZL	V0,7F043E6C	;branch if -1: timer stopped
+ADDIU	AT,R0,0056
+LW	T2,8374 (T2)	;T2=80048374: 1 if not paused
+SUBU	T3,V0,T2	;T3=timer-clock
+SH	T3,0082 (A2)	;update timer
+LH	T4,0082 (A2)	;V0=obj.data+82: timer
+LW	A0,0020 (SP)	;A0=p->pos.data
+BGEZL	T4,7F0441F4	;return if timer running
+LW	RA,0014 (SP)
+LW	T5,000C (A3)	;T5=obj.data+C: flags.2
+ADDIU	A1,R0,000D	;A1=normal explosion radius
+SLL	T6,T5,0x0	;T6=T5: useless OP!
+BGEZ	T6,7F043E4C	;branch if 80000000 not set: large explosions
+NOP
+BEQ	R0,R0,7F043E4C
+ADDIU	A1,R0,0011	;A1=room-wide explosion radius
+//7F043E4C:	detonate
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)	;SP+1C=A3: p->obj.data
+LW	A3,001C (SP)	;A3=p->obj.data
+LW	T7,0064 (A3)	;T7=obj.data+64: flags.run
+ORI	T8,T7,0004	;flags.run | 4
+BEQ	R0,R0,7F0441F0
+SW	T8,0064 (A3)	;update flags
+//7F043E68:	beta item 0x56
+ADDIU	AT,R0,0056
+BNEL	V1,AT,7F043EC0	;branch if not 0x56
+ADDIU	AT,R0,0022
+LH	T9,0082 (A2)	;T9=timer
+LW	A0,0020 (SP)	;A0=p->pos.data
+BNEL	T9,R0,7F0441F4	;return if not zero
+LW	RA,0014 (SP)
+LW	T0,000C (A3)
+ADDIU	A1,R0,000D	;A1=normal explosion radius
+SLL	T1,T0,0x0
+BGEZ	T1,7F043EA0	;branch if 80000000 not set: large explosions
+NOP
+BEQ	R0,R0,7F043EA0
+ADDIU	A1,R0,0011	;A1=room-wide explosion radius
+//7F043EA0:	detonate
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)
+LW	A3,001C (SP)	;A3=p->obj.data
+LW	T2,0064 (A3)	;T2=obj.data+64: flags.run
+ORI	T3,T2,0004	;flags.run | 4
+BEQ	R0,R0,7F0441F0
+SW	T3,0064 (A3)	;update flags
+//7F043EC0:	plastique
+ADDIU	AT,R0,0022
+BNEL	V1,AT,7F043F14	;branch if not plastique
+ADDIU	AT,R0,001B
+LH	T4,0082 (A2)	;T4=timer
+LW	A0,0020 (SP)	;A0=p->pos.data
+ADDIU	A1,R0,0011	;A1=room-wide explosion radius
+BNEL	T4,R0,7F0441F4	;return if timer running
+LW	RA,0014 (SP)
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)
+LW	A3,001C (SP)	;A3=p->obj.data
+ADDIU	A0,R0,0078	;A0=explosion delay: 120
+LW	T5,0064 (A3)	;T5=obj.data+64: flags.run
+ORI	T6,T5,0004	;T6= flags.run | 4
+JAL	7F08BFC4	;trigger explosions around players
+SW	T6,0064 (A3)	;update flags
+ADDIU	A0,R0,0002	;A0=clock lock 2: plastique
+JAL	7F056160	;set clock lock A0
+OR	A1,R0,R0	;A1=set lock
+BEQ	R0,R0,7F0441F4
+LW	RA,0014 (SP)
+//7F043F10:	timed explosives
+ADDIU	AT,R0,001B
+BEQ	V1,AT,7F043F24	;branch if timed mines
+ADDIU	AT,R0,0021
+BNEL	V1,AT,7F043F9C	;skip if not bombcase
+ADDIU	AT,R0,001D
+//7F043F24:	timed mines/bombcase
+LH	V0,0082 (A2)	;V0=timer
+LUI	T7,8005
+BLTZL	V0,7F043F9C	;branch if more time left
+ADDIU	AT,R0,001D
+LW	T7,8374 (T7)	;T7=80048374: 1 if not paused
+SUBU	T8,V0,T7	;T8=timer-clock
+SH	T8,0082 (A2)	;update timer
+LH	T9,0082 (A2)	;T9=timer
+LW	A0,0020 (SP)	;A0=p->pos.data
+BGEZL	T9,7F0441F4	;branch if more time left
+LW	RA,0014 (SP)
+LW	T0,000C (A3)	;T0=flags.2
+ADDIU	A1,R0,000D	;A1=normal explosion radius
+SLL	T1,T0,0x0
+BGEZ	T1,7F043F6C	;branch if 80000000 not set: large explosions
+NOP
+BEQ	R0,R0,7F043F6C
+ADDIU	A1,R0,0011	;A1=room-wide explosion radius
+//7F043F6C:	detonate
+SW	A2,0018 (SP)
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)
+LW	A2,0018 (SP)	;p->obj.data
+LW	A3,001C (SP)	;p->obj.data
+ADDIU	T2,R0,FFFF
+SH	T2,0082 (A2)	;-1 -> timer
+LW	T3,0064 (A3)	;T3=obj.data+64: flags.run
+ORI	T4,T3,0004	;T4=flags.run | 4
+BEQ	R0,R0,7F0441F0
+SW	T4,0064 (A3)	;update flags
+//7F043F98:	handle triggered remote mines
+ADDIU	AT,R0,001D	;AT=1D: remote mines
+BNEL	V1,AT,7F0440C4	;branch if not remotes
+ADDIU	AT,R0,001C
+LUI	V1,8003
+LW	V1,0AF4 (V1)	;V1=80030AF4: remote mine trigger
+LUI	T0,8005
+BEQL	V1,R0,7F043FE4	;branch if players didn't trigger theirs
+LH	V0,0082 (A2)
+LW	V0,0064 (A3)	;V0=obj.data+64: flags.run
+LUI	AT,0006
+ADDIU	T7,R0,0001
+AND	T5,V0,AT	;T5=flags.run & 00060000: player ownership flags
+SRL	T6,T5,0x11	;T6=flags / 0x20000
+SLLV	T8,T7,T6	;T8=1<<player#: ownership->bitmask
+AND	T9,V1,T8	;T9= mine reg & ownership: TRUE if detonated mine
+BEQL	T9,R0,7F043FE4	;branch if not triggered
+LH	V0,0082 (A2)
+SH	R0,0082 (A2)	;0->timer
+//7F043FE0:	decrement timer but ensure not < 0 (not sure if this would alter detonation)
+LH	V0,0082 (A2)	;V0=timer
+SLTI	AT,V0,0002	;TRUE if < 2
+BNE	AT,R0,7F044018	;branch if time expired
+NOP
+LW	T0,8374 (T0)	;T0=80048374: 1 if not paused
+ADDIU	T3,R0,0001
+SUBU	T1,V0,T0	;T1=timer-clock
+SH	T1,0082 (A2)	;update timer
+LH	T2,0082 (A2)	;T2=timer
+SLTI	AT,T2,0002	;TRUE if time < 2
+BEQL	AT,R0,7F0441F4	;return if not ready
+LW	RA,0014 (SP)
+BEQ	R0,R0,7F0441F0	;return
+SH	T3,0082 (A2)	;1->timer
+//7F044018:	determine explosion radius
+BNEL	V0,R0,7F0441F4	;branch if timer not 0	only 0 when triggered, 1 when ready
+LW	RA,0014 (SP)
+LW	T4,000C (A3)	;T4=flags.2
+LW	A0,0020 (SP)	;A0=p->pos.data
+ADDIU	A1,R0,0011
+SLL	T5,T4,0x0
+BGEZL	T5,7F044054	;branch if 80000000 not set: large explosions
+SW	A2,0018 (SP)
+SW	A2,0018 (SP)
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)
+LW	A2,0018 (SP)	;A2=p->pos.data
+BEQ	R0,R0,7F0440A8
+LW	A3,001C (SP)	;A3=p->pos.data
+//7F044050:	normal explosions
+SW	A2,0018 (SP)
+JAL	7000695C	;stage#
+SW	A3,001C (SP)
+ADDIU	AT,R0,0022	;AT=stage 22: Cuba
+LW	A2,0018 (SP)
+BNE	V0,AT,7F04408C	;branch if not Cuba
+LW	A3,001C (SP)
+LW	A0,0020 (SP)	;A0=p->pos.data
+ADDIU	A1,R0,0013
+SW	A2,0018 (SP)
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)
+LW	A2,0018 (SP)
+BEQ	R0,R0,7F0440A8
+LW	A3,001C (SP)
+//7F04408C:	normal explosions
+LW	A0,0020 (SP)	;A0=p->pos.data
+ADDIU	A1,R0,000D
+SW	A2,0018 (SP)
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)
+LW	A2,0018 (SP)
+//7F0440A4:	update timer and flags
+LW	A3,001C (SP)	;A3=p->obj.data
+ADDIU	T6,R0,FFFF
+SH	T6,0082 (A2)	;-1 -> timer
+LW	T7,0064 (A3)	;T7=flags.run
+ORI	T8,T7,0004	;flags.run | 4
+BEQ	R0,R0,7F0441F0
+SW	T8,0064 (A3)	;update flags
+//7F0440C0:	proximity mines
+ADDIU	AT,R0,001C
+BNEL	V1,AT,7F0441F4	;branch if not proxies
+LW	RA,0014 (SP)
+LH	V0,0082 (A2)	;V0=timer
+LUI	T9,8005
+SLTI	AT,V0,0002
+BNEL	AT,R0,7F044124	;branch if < 2
+ADDIU	AT,R0,0001
+LW	T9,8374 (T9)	;T9=80048374: 1 if not paused
+ADDIU	T2,R0,0001
+OR	A0,A2,R0	;A0=A2: p->obj.data
+SUBU	T0,V0,T9	;T0=timer-clock
+SH	T0,0082 (A2)	;update timer
+LH	T1,0082 (A2)
+SLTI	AT,T1,0002
+BEQL	AT,R0,7F04419C	;branch if more time
+LH	T4,0082 (A2)
+SH	T2,0082 (A2)	;1->timer
+SW	A3,001C (SP)
+JAL	7F051B5C
+SW	A2,0018 (SP)
+LW	A2,0018 (SP)
+BEQ	R0,R0,7F044198
+LW	A3,001C (SP)
+//7F044120:	primed proximity mine
+ADDIU	AT,R0,0001
+BNEL	V0,AT,7F04419C	;skip if already detonating
+LH	T4,0082 (A2)
+SW	A2,0018 (SP)
+JAL	7F089798	;V0= p->cur.player.pos
+SW	A3,001C (SP)
+LW	T3,0020 (SP)	;A0=p->pos.data
+LWC1	F4,0008 (V0)	;F4=cur.x.pos
+LWC1	F8,000C (V0)	;F8=cur.y.pos
+LWC1	F6,0008 (T3)	;F6=obj.x.pos
+LWC1	F10,000C (T3)	;F10=obj.y.pos
+LWC1	F16,0010 (V0)	;F16=cur.z.pos
+SUB.S	F0,F4,F6	;F0=dx.pos
+LWC1	F18,0010 (T3)	;F18=obj.z.pos
+LUI	AT,8005
+SUB.S	F2,F8,F10	;F2=dy.pos
+MUL.S	F4,F0,F0	;F4=dx.pos^2
+LW	A2,0018 (SP)
+SUB.S	F12,F16,F18	;F12=dz.pos
+MUL.S	F6,F2,F2	;F6=dy.pos^2
+LWC1	F18,2A94 (AT)	;F18=80052A94: activation distance, squared
+LW	A3,001C (SP)
+MUL.S	F10,F12,F12	;F10=dz.pos^2
+ADD.S	F8,F4,F6
+ADD.S	F16,F8,F10	;F16=dx^2 + dy^2 + dz^2
+C.LT.S	F16,F18
+NOP
+BC1FL	7F04419C	;skip if not within range
+LH	T4,0082 (A2)
+SH	R0,0082 (A2)	;0->timer
+//7F044198:
+LH	T4,0082 (A2)	;T4=timer
+LW	A0,0020 (SP)	;A0=p->pos.data
+BNEL	T4,R0,7F0441F4	;branch if not detonating
+LW	RA,0014 (SP)
+LW	T5,000C (A3)	;T5=flags.2
+ADDIU	A1,R0,000D
+SLL	T6,T5,0x0
+BGEZ	T6,7F0441C4	;branch if 80000000 not set: large explosions
+NOP
+BEQ	R0,R0,7F0441C4
+ADDIU	A1,R0,0011
+//7F0441C4:	detonate
+SW	A2,0018 (SP)
+JAL	7F043B7C	;generate explosion at object position
+SW	A3,001C (SP)
+LW	A0,0018 (SP)	;A0=SP+18: p->obj.data
+LW	A3,001C (SP)	;A3=SP+1C: p->obj.data
+ADDIU	T7,R0,FFFF
+SH	T7,0082 (A0)	;-1 -> timer
+LW	T8,0064 (A3)	;T8=flags.run
+ORI	T9,T8,0004	;flags.run | 4
+JAL	7F051B94	;remove proxy entry A0 from list
+SW	T9,0064 (A3)	;update flags
+//7F0441F0:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
++_+
+
+7F051B94	866C4	remove temp proximity mine table entry A0
+	accepts: A0=p->object data
+LUI	V1,8007
+LUI	V0,8007
+ADDIU	V0,V0,1E78	;V0=80071E78: end of table
+ADDIU	V1,V1,1E00	;V1=80071E00: start of ? table
+//7F051BA4:	866D4
+LW	T6,0000 (V1)
+BNEL	A0,T6,7F051BBC	;branch if doesn't match A0
+ADDIU	V1,V1,0004
+JR	RA
+SW	R0,0000 (V1)	;NULL entry if found
+//7F051BB8:	866E8	loop until end of list
+ADDIU	V1,V1,0004	;V1+=4	next entry
+BNEL	V1,V0,7F051BA8	;loop for 0x78 entries
+LW	T6,0000 (V1)
+JR	RA
+NOP
+
++_+
+
+7F09B4D8		V0=
+	accepts: A0=player#
+LUI	A1,8008
+LUI	A3,8008
+LUI	A2,8008
+OR	V1,R0,R0	;V1=0	#valid entries
+ADDIU	A2,A2,9EE0	;A2=80079EE0: BONDdata pointer table
+ADDIU	A3,A3,A0D0	;A3=8007A0D0: endpoint
+ADDIU	A1,A1,A0C0	;A1=8007A0C0: start
+LW	V0,0000 (A1)	;V0=
+//7F09B4F8:	test # valid linked players
+ADDIU	A1,A1,0004	;A1+=4: next entry
+BEQ	A0,V0,7F09B520	;branch if same as player#
+SLL	T6,V0,0x2	;T6=#->offset
+ADDU	T7,A2,T6	;T7=p->BONDdata entry + offset
+LW	T8,0000 (T7)	;T8=p->player V0's BONDdata
+BEQ	T8,R0,7F09B518	;iterate if invalid
+NOP
+ADDIU	V1,V1,0001	;V1++	count++
+//7F09B518:	loopus
+BNEL	A1,A3,7F09B4F8	;loop for each entry in table
+LW	V0,0000 (A1)
+//7F09B520:	return
+JR	RA
+OR	V0,V1,R0	;V0=V1: #active players

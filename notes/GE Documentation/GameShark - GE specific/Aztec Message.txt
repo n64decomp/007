@@ -1,0 +1,93 @@
+I made a few different flavors of this clipping hack.  Some are large, some not so much.
+There was a *slight* problem.  The way the tiles are divided one needed to be pushed and a tile placed in the right corner.  That just expands the number of codes necessary.
+Also included are codes to jump to the blast door platform from the platform with the console on it.
+
+As a note, the reason clipping hacks never became popular is related to how players are either at the top or the bottom of ladders.  There is no inbetween.  In all honestly though this isn't nearly as bad as Temple.
+
+First, these are used to just drop from the platform to the blast doors or from the blast doors to the floor. They are very short but you usually can't climb them back up.  (the facility sidestep trick works though)
+
+You can still occationaly slip out on the left side, which is actually correctable but does increase the codeset a bit.  At that point, the platform->blast needs changing too, which is just silly.
+-----------
+"Platform->Blast #2" .off
+811D198A 0A68
+811D16CA 0ABF
+
+"Blast->Floor #8" .off
+811D15AA 0A82
+811D17A2 0A44
+811D1588 0330
+811D15B0 0330
+811D15C8 0330
+811D15F0 0330
+811D1688 0330
+811D16B0 0330
+
+-----------
+This replaces the blast->floor code from above.  It lets a player climb the wall or drop down from above.  You can still use the simple Platform->Blast codes if you want.
+Attempts to make a shorter 4-sided tile caused some issues, so you wind up with two triangles.
+-----------
+"Blast->Floor #30" .off
+811D15AA 0A24
+811D17A2 0A20
+811D1588 0330
+811D15B0 0330
+811D15C8 0330
+811D15F0 0330
+811D1688 0330
+811D16B0 0330
+801D1478 0038
+811D147C FB6C
+811D147E 00D0
+811D1480 0330
+811D1484 FB6C
+811D1486 0034
+811D1488 015B
+811D148A 0A82
+811D148C FB6C
+811D148E 0034
+811D1490 0330
+801D1498 0038
+811D149C FB6C
+811D149E 00D0
+811D14A0 0330
+811D14A2 0A44
+811D14A4 FB6C
+811D14A6 00D0
+811D14A8 011A
+811D14AC FB6C
+811D14AE 0034
+811D14B0 015B
+
+---------------
+Likewise, this creates a ladder up to the high platform.  Replaces the old code, can use with either blast->floor
+---------------
+"Platform->Blast #24" .off
+811D198A 0A28
+811D16CA 0A2C
+801D14B8 0033
+811D14BC FB6C
+811D14BE 00D0
+811D14C0 011A
+811D14C4 FB6C
+811D14C6 016D
+811D14C8 0057
+811D14CA 0ABF
+811D14CC FB6C
+811D14CE 016D
+811D14D0 015B
+801D14D8 0033
+811D14DC FB6C
+811D14DE 00D0
+811D14E0 011A
+811D14E2 0A68
+811D14E4 FB6C
+811D14E6 00D0
+811D14E8 0057
+811D14EC FB6C
+811D14EE 016D
+811D14F0 0057
+
+--------------
+There 'ya go.  54 codes for full ladder support.  Tested it on console 4 player, so hopefully it will work on emulators.
+
+-Zoinkity

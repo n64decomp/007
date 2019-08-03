@@ -1,0 +1,45 @@
+  This is a sort of side project that developed out of analyzing a guard to death.
+
+  Guard Part Ordering (though any object will do)
+-------------------------------------------------
+
+  Each 'piece' of an object model is given a label so it can be identified in-game.  Up until now the numbering system has been neglected; it usually isn't necessary to know what piece is which.  It usually is only used during collision detection, as when shooting a head versus a foot.  For our purposes it is more likely to be used to rebuild models though.
+
+
+  The ordering system is generated using the 02 position commands in the object's table.  Here's an example of the 02 command and a breakdown of the features:
+0x0	4	relative x position
+0x4	4	relative y position
+0x8	4	relative z position
+0xC	2	*current command order number*
+0xE	2	*first piece order #*
+0x10	2	*second piece order #*	(FFFF if not present)
+0x12	2	*third piece order #*	(FFFF if not present)
+0x14	4	offset to child 02 command (if applicable)
+0x18	4	unknown float value
+
+0x5C8	C35E742B 4274E7D1 00000000 0007 0011 0013 FFFF 050005E0 438B53D1
+
+  In this example, the 02 command shown is #7 in the model.  If some bizare function requests 7's data, it will retrieve this command.
+  There are two piece entries to this command as well, 11 and 13.  In this particular case it is the left hand and left forearm of a character, but it could be any two pieces of the model.  
+  It is rather important to note that command numbers and piece numbers form two different lists!  Commands span from 1+ but piece numbers start at 0.  
+
+
+  Child entries are those entries that are linked together in the main object table.  Piece numbers are assigned to the child entry alone.  Command numbers are assigned to the 02 commands that set the piece numbers.
+{02:5C8	{02:5E0	{0A:5F8	{18:610}}
+	0A:628	{08:640	{18:658}
+		08:670	{18:688}}
+	}
+
+  0x5C8 has two children: 0x5E0 and 0x628.  0x5E0 is labelled #11, and 0x628 is labelled #13.  Since only render commands (dimentions, distance, and display structs) are in 0x628's group, piece 13 is exclusively the value for the left forearm model.
+
+  Now for a quick look at part #11 - an 02 command used in the hand.  0x5E0 set its piece number to 11.  If the entire piece, including the command needs to be grabbed, this number can be used.  However, it also assigns a piece number to its children:
+0x5E0	C38411CD 3FAEB13E 00000000 0009 0012 FFFFFFFF 00000000 4306DABA 
+
+ 0x5E0's COMMAND number is set to 09 while its piece number is 11.  The 0A and 18 child commands are now assigned piece number 12.  When something wants to access the hand model alone it can use piece number 12 to do so.
+
+--------------------------------
+Complicated, eh?
+It can also skip command numbers and probably piece numbers as well.  Bodies without heads skip commands 3-4, for instance.
+
+Also, this has no bearing on the IDs assigned to the dimention data.  That's just in a sort of random numerical order starting at 1.
+

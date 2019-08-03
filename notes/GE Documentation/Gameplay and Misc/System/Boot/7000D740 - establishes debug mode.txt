@@ -1,0 +1,82 @@
+7000D740	E340	establishes debug mode
+	accepts: A0=p->???
+	fries: AT,V0,A0,A1,A2,A3,T0,T1,T2,T6,T7,T8,T9
+ADDIU	SP,SP,FFC8
+SW	RA,0024 (SP)
+SW	A0,0038 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+JAL	700185F0	;V0= COP0 status interrupt enabled flag
+SW	S0,0018 (SP)
+LW	T6,0038 (SP)
+OR	S0,V0,R0	;S0=V0: COP0 int.enabled
+BNEZ	T6,7000D774	;branch if a valid pointer
+NOP
+BEQ	R0,R0,7000D77C
+ADDIU	S1,R0,0004	;S1=4	NULL pointers default to 4
+//7000D774:	pull value from pointer
+LW	T7,0038 (SP)
+LHU	S1,0010 (T7)	;S1=T7+10: 
+//7000D77C:
+OR	S2,S1,R0	;S2=S1: value (power of 2)
+ADDIU	AT,R0,0002
+BEQ	S2,AT,7000D7C4	;branch if 2
+ADDIU	AT,R0,0004
+BEQ	S1,AT,7000D7A4	;branch if 4
+ADDIU	AT,R0,0008
+BEQ	S2,AT,7000D7C4	;branch if 8
+NOP
+BEQ	R0,R0,7000D7E0	;return by default
+NOP
+//7000D7A4:	4
+LUI	T9,8002
+LW	T9,7730 (T9)	;T9=80027730: [8005D640]
+ADDIU	T8,R0,0001
+OR	A0,R0,R0	;A0=0
+JAL	700107AC	;odd, isn't this an exception handler?
+SH	T8,0010 (T9)	;1->[@80027730]
+BEQ	R0,R0,7000D7E0
+NOP
+//7000D7C4:	2,8
+LW	T1,0038 (SP)
+ADDIU	T0,R0,0001
+SH	T0,0010 (T1)	;replace 2,8 with 1
+LW	T2,0038 (SP)
+LW	A0,0008 (T2)	;A0=T2+8: p->???
+JAL	70010A90
+OR	A1,T2,R0	;A1=p->???
+//7000D7E0:	reset status
+JAL	70018610	;Set flags A0 in COP0 status
+OR	A0,S0,R0	;A0=S0: int.enabled flag, others unmasked!
+//7000D7E8:	return
+LW	RA,0024 (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+JR	RA
+ADDIU	SP,SP,0038
+
++_+
+
+70010A90
+	accepts: A0=p->???, A1=p->???
+	fries: A2,A3,T6
+OR	A2,A0,R0	;A2=A0: 
+LW	A3,0000 (A2)	;A3=
+ADDIU	SP,SP,FFF8
+BEQ	A3,R0,70010AC8	;return if NULL
+NOP
+//70010AA4:
+BNE	A3,A1,70010AB8	;branch if pointers not identical
+NOP
+LW	T6,0000 (A1)
+BEQ	R0,R0,70010AC8	;return
+SW	T6,0000 (A2)	;@A1 -> @A2
+//70010AB8:
+OR	A2,A3,R0	;A2=A3: 
+LW	A3,0000 (A2)	;A3=A2+0: 
+BNEZ	A3,70010AA4	;loop until a match or NULL pointer
+NOP
+//70010AC8:	return
+JR	RA
+ADDIU	SP,SP,0008

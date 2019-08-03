@@ -1,0 +1,141 @@
+7F00105C	35B8C	allocate false actor GUARDdata to execute global actions in setup file (1xxx type)
+LUI	T5,8007
+ADDIU	T5,T5,5D00
+LW	A1,0014 (T5)	;A1=80075D00+14: p->setup.actions
+LUI	V0,8003
+LUI	A2,8003
+ADDIU	A2,A2,097C	;A2=8003097C
+ADDIU	V0,V0,0980	;V0=80030980: #global actions (1xxx type)
+ADDIU	SP,SP,FDF8
+SW	RA,0014 (SP)
+SW	R0,0000 (A2)	;NULL->8003097C
+BEQ	A1,R0,7F001248	;return if NULL
+SW	R0,0000 (V0)	;0->80030980
+//7F00108C:
+LW	T6,0000 (A1)	;T6=setup.actions.code
+OR	V1,A1,R0	;V1=A1: p->setup.actions
+OR	A3,R0,R0
+BEQ	T6,R0,7F0010CC	;skip if NULL
+ADDIU	A1,R0,0004	;A1= bank 4
+//7F0010A0:
+LW	T7,0004 (V1)	;T7=setup.actions.type
+SLTI	AT,T7,1000
+BNEL	AT,R0,7F0010C0	;skip if local type
+LW	T6,0008 (V1)
+//7F0010B0:	inc. global type count
+LW	T8,0000 (V0)
+ADDIU	T9,T8,0001
+SW	T9,0000 (V0)	;80030980+=1
+//7F0010BC:	loop for each action entry
+LW	T6,0008 (V1)
+ADDIU	V1,V1,0008	;V1+=8	next action
+BNEL	T6,R0,7F0010A4
+LW	T7,0004 (V1)
+//7F0010CC:	allocate space for each global action
+LW	V1,0000 (V0)	;V1=80030980: #global actions
+OR	T0,R0,R0
+BLEZ	V1,7F001248	;return if none
+SLL	A0,V1,0x4
+SUBU	A0,A0,V1
+SLL	A0,A0,0x3
+SUBU	A0,A0,V1
+SLL	A0,A0,0x2
+ADDIU	A0,A0,000F
+ORI	T7,A0,000F
+XORI	A0,T7,000F	;A0= (1DC*V1)->quadword boundry
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+SW	A3,0200 (SP)	;SP+200 = 0: index
+//7F001100:	set p->allocated memory
+LUI	T5,8007
+ADDIU	T5,T5,5D00
+LW	A1,0014 (T5)	;A1=80075D14: p->setup.actions
+LUI	A2,8003
+ADDIU	A2,A2,097C
+SW	V0,0000 (A2)	;V0->8003097C: set p->global actions buffer
+LW	T9,0000 (A1)	;T9=setup.actions.code
+LW	A3,0200 (SP)	;A3=index
+OR	A0,R0,R0	;A0= actions offset
+BEQ	T9,R0,7F001248	;return if end of list (NULL)
+OR	V1,A1,R0	;V1=A1: p->setup.actions
+//7F00112C:	setup for loop
+LUI	T0,8003
+ADDIU	T0,T0,A060	;T0=8002A060: start
+ADDIU	T4,R0,001A
+ADDIU	T3,R0,FFFF
+ADDIU	T2,R0,00FE
+ADDIU	T1,R0,01DC
+ADDIU	A1,SP,0024	;A1=SP+24: p->buffer
+//7F001148:	If the entry is a global type...
+LW	T6,0004 (V1)	;T6= setup.actions.type
+OR	T9,T0,R0	;T9=8002A060: cur
+ADDIU	T8,T0,01D4	;T8=8002A234: end
+SLTI	AT,T6,1000
+BNE	AT,R0,7F001234	;iterate if not a global type
+OR	T6,A1,R0	;T6=p->buffer
+//7F001160:	...copy 8002A060 -> buffer...
+LW	AT,0000 (T9)
+ADDIU	T9,T9,000C
+ADDIU	T6,T6,000C
+SW	AT,FFF4 (T6)
+LW	AT,FFF8 (T9)
+SW	AT,FFF8 (T6)
+LW	AT,FFFC (T9)
+BNE	T9,T8,7F001160
+SW	AT,FFFC (T6)
+//7F001184:	...work out offset to entry...
+MULTU	A3,T1
+LW	AT,0000 (T9)
+SW	AT,0000 (T6)
+LW	T8,0004 (T9)
+SW	T8,0004 (T6)
+LW	T7,0000 (A2)	;T7=p->actions.global.buffer
+MFLO	V0		;V0=index * 1DC
+ADDIU	T6,A1,01D4	;T6=p->end of buffer
+ADDU	T8,T7,V0	;T8=actions.global.buffer[index]
+OR	T7,A1,R0	;T7=p->start of buffer
+//7F0011AC:	...copy buffer to actions.global.buffer[index]...
+LW	AT,0000 (T7)
+ADDIU	T7,T7,000C
+ADDIU	T8,T8,000C
+SW	AT,FFF4 (T8)
+LW	AT,FFF8 (T7)
+SW	AT,FFF8 (T8)
+LW	AT,FFFC (T7)
+BNE	T7,T6,7F0011AC
+SW	AT,FFFC (T8)
+//7F0011D0:	...and set up false actor to execute code indefinately.
+LW	AT,0000 (T7)
+ADDIU	A3,A3,0001	;A3+=1	index+=1
+SW	AT,0000 (T8)
+LW	T6,0004 (T7)
+SW	T6,0004 (T8)
+LW	T9,0000 (A2)
+ADDU	T6,T9,V0
+SH	T2,0000 (T6)	;FE -> actions.global.buffer[index]+0: ID 00FE
+LW	T7,0014 (T5)	;T7=p->setup.actions
+LW	T6,0000 (A2)
+ADDU	T8,T7,A0	;T8=setup.actions+offset
+LW	T9,0000 (T8)	;T9=setup.actions.code
+ADDU	T7,T6,V0
+SW	T9,0104 (T7)	;setup.actions.code -> actions.global.buffer[index]+104: p->action code
+LW	T8,0000 (A2)
+ADDU	T6,T8,V0
+SH	R0,0108 (T6)	;0 ->actions.global.buffer[index]+108: offset in action to cur. command
+LW	T9,0000 (A2)
+ADDU	T7,T9,V0
+SH	T3,010A (T7)	;-1->actions.global.buffer[index]+10A: action return value
+LW	T8,0000 (A2)
+ADDU	T6,T8,V0
+SB	T4,0007 (T6)	;14->actions.global.buffer[index]+7: cur. action type (throw grenade, which is more like 'other')
+LW	T9,0014 (T5)
+ADDU	V1,T9,A0
+LW	T7,0008 (V1)	;T7=next setup.actions.code
+ADDIU	A0,A0,0008	;A0+=8	next offset
+ADDIU	V1,V1,0008	;A1+=8	next setup.action
+BNEL	T7,R0,7F00114C	;loop until NULL
+LW	T6,0004 (V1)
+//7F001248:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0208
+JR	RA
+NOP

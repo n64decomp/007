@@ -1,0 +1,46 @@
+Memory banks for allocated data:
+80063BB0	0x10 each (probably)
+
+default:
+0	8008E360	00000000	802F6000	00000000
+1	8008E360	00000000	8008E360	00000000
+2	8008E360	00000000	8008E360	00000000
+3	8008E360	00000000	8008E360	00000000
+4	8008E360	00000000	802AC000	00000000
+5 font	802AC000	00000000	802AC000	00000000
+6 text	802AC000	00000000	802F6000	00000000
+
+when LgunE loaded, text bank (6) becomes:
+802AC000	802ACF20	802F6000	802AC000
+start of bank	next entry	endpoint	???
+
+In the case memory can not be allocated to another bank, it is placed in bank 6.
+
++_+
+
+0
+1
+2
+3
+4	-ma * 0x400, -mgfx * 0x800, -mvtx * 0x800, -mt * 0x400
+5
+6
+
+-ma	val * 0x400 -> 800241B0
+-mgfx	val * 0x400 -> 800482E0+(#players*4)
+-mvtx	val * 0x400 -> 800482F0+(#players*4)
+-mt	val * 0x400 -> 80049170	8008C720
+
+Embedding "-nochr", "-noprop", or "-noobj" in memory allocation strings removes said thingy from processing when loading stage code.  Handled at 7F003BF0.
+"-level_"+"##" -> 800241A8 (stage#)	level number must be 2 digits, decimal not hex!  (ie. 09=level 9 or 18=level 0x12)
+"-hard"+"#" -> 7F01D59C & 7F0BFC1C (difficulty)	number 0-3 for selected difficulty agent-007
+
+700093AC uses -mf, -ml, -me when found
+	-mf value->SP+24
+	-ml value->SP+2C	language
+	-me value->SP+34
+	if -me zero, SP+34=language-specific allocation, SP+2C=memsize - allocation, SP+24=0
+	allocates end of mem allocation block for segments 4,5,6
+
+new menus will need, minumum, A59D0 for images, C60 for its index, making 0x29A or 666
+700 will do ;*)

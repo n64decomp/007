@@ -1,0 +1,220 @@
+7F0166D8	4B208	Menu 0D Interface: Mission Complete
+ADDIU	SP,SP,FFE8
+LUI	AT,4270
+SW	RA,0014 (SP)
+MTC1	AT,F12
+JAL	70004544
+NOP
+LUI	AT,8005
+JAL	70004590	;set page width
+LWC1	F12,1ADC (AT)	;F12=80051ADC: x dimention
+LUI	AT,42C8
+MTC1	AT,F12		;F12= [42C80000]
+LUI	AT,8005
+JAL	70004650	;set page height
+LWC1	F14,1AE0 (AT)	;F14=80051AE0: z dimention
+JAL	70004534
+OR	A0,R0,R0
+//
+LUI	AT,8003
+SW	R0,A8E4 (AT)	;0->8002A8E4: reset highlight flag for folder tab 3
+LUI	AT,8003
+JAL	7F00A39C	;V0=TRUE if cursor on tab 3
+SW	R0,A8E0 (AT)	;0->8002A8E0: reset highlight flag for folder tab 2
+BEQ	V0,R0,7F016740	;branch if not highlighted
+ADDIU	V1,R0,0001
+LUI	AT,8003
+BEQ	R0,R0,7F016768
+SW	V1,A8E4 (AT)	;1->8002A8E4: folder tab 3 selected
+//7F016740:
+JAL	7F00A578	;V0=TRUE if cursor on tab 2
+NOP
+BEQ	V0,R0,7F016760	;branch if not highlighted
+ADDIU	V1,R0,0001
+ADDIU	V1,R0,0001
+LUI	AT,8003
+BEQ	R0,R0,7F016768
+SW	V1,A8E0 (AT)	;1->8002A8E0: folder tab 2 selected
+//7F016760:	silly really.  select either way
+LUI	AT,8003
+SW	V1,A8E0 (AT)	;1->8002A8E0: folder tab 2 selected
+//7F016768:
+OR	A0,R0,R0	;A0=player 1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ORI	A1,R0,B000	;A1=Z,A,Start button
+BEQ	V0,R0,7F0167DC	;branch if none pressed
+ADDIU	V1,R0,0001
+LUI	T6,8003
+LW	T6,A8E0 (T6)	;T6=8002A8E0: folder tab 2 selected
+LUI	AT,8003
+LUI	A0,8006
+BEQ	T6,R0,7F0167B0	;branch if it wasn't, though it always is...
+LUI	T7,8003
+SW	V1,A8D4 (AT)	;1->8002A8D4: tab 2 selected
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+ADDIU	A1,R0,00C7	;A1=SE 0C7
+JAL	70008E08	;play sound A1
+OR	A2,R0,R0	;A2=NULL
+BEQ	R0,R0,7F01680C
+NOP
+//7F0167B0:
+LW	T7,A8E4 (T7)	;T7=TRUE if tab 3 selected
+LUI	AT,8003
+LUI	A0,8006
+BEQ	T7,R0,7F01680C	;branch if not selected
+ADDIU	A1,R0,00C7	;A1=SE 0C7
+SW	V1,A8D8 (AT)	;1->8002A8D8: tab 3 selected
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+JAL	70008E08	;play sound A1
+OR	A2,R0,R0	;A2=NULL
+BEQ	R0,R0,7F01680C
+NOP
+//7F0167DC:	test if backtracking
+OR	A0,R0,R0	;A0=player 1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,4000	;A1=B button
+BEQ	V0,R0,7F01680C	;branch if not pressed
+ADDIU	V1,R0,0001
+LUI	AT,8003
+LUI	A0,8006
+SW	V1,A8D8 (AT)	;1->8002A8D8: tab 3 selected
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+ADDIU	A1,R0,00C7	;A1=SE 0C7
+JAL	70008E08	;play sound A1
+OR	A2,R0,R0	;A2=NULL
+//7F01680C:	build folder backdrop
+LUI	A0,8003
+JAL	7F00B724	;disable all switches in object A0 (hide all)
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+OR	A1,R0,R0	;A1=0: item #: tabs on side of folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0001	;A1=1: item #: basic folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0003	;A1=3: item #: OHMSS
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0006	;A1=6: item #: CLASSIFIED
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=visible
+JAL	7F009B84	;control stick tracking
+NOP
+//
+LUI	T8,8003
+LW	T8,A8D4 (T8)	;T8=8002A8D4: TRUE if tab 2 selected
+LUI	T1,8003
+BEQ	T8,R0,7F0169B4	;branch if not selected
+NOP
+JAL	7F01631C
+NOP
+BEQ	V0,R0,7F0169A0
+LUI	T9,8003
+LW	T9,A900 (T9)	;T9=8002A900: TRUE if displaying cheat select mission
+LUI	T0,8003
+ADDIU	T0,T0,A8F8	;T0=8002A8F8: selected mission briefing page
+BNEL	T9,R0,7F0169A4	;branch if cheating
+ADDIU	A0,R0,000A
+LW	A1,0000 (T0)	;A1=selected mission briefing page
+ADDIU	A3,R0,001C
+LUI	A2,8003
+MULTU	A1,A3		;A1=selected page * 0x1C
+ADDIU	A2,A2,ABE4	;A2=8002ABE4: table of missions and briefings
+ADDIU	AT,R0,0011
+ADDIU	A0,R0,000B	;A0=stage active
+MFLO	T1
+ADDU	T2,A2,T1	;T2=p->mission briefing
+LW	V0,0014 (T2)	;V0=stage slot#
+BNEL	V0,AT,7F0168F4	;branch if not stage 11: Cradle
+SLTI	AT,V0,0012
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A1,R0,0001
+ADDIU	T3,R0,0036	;T3=36: cuba
+LUI	AT,8003
+BEQ	R0,R0,7F0169F8
+SW	T3,A8F4 (AT)	;cuba->8002A8F4: stage selected
+//7F0168F0:	current mission
+SLTI	AT,V0,0012
+BNEZ	AT,7F01693C	;branch if stages Dam-Cradle
+ADDIU	V1,A1,0001	;V1=selected page + 1
+ADDIU	A0,R0,0007	;A0=7: 
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+LUI	T0,8003
+ADDIU	T0,T0,A8F8	;T0=8002A8F8
+LW	T4,0000 (T0)	;T4=8002A8F8: selected mission briefing page
+ADDIU	A3,R0,001C
+LUI	A2,8003
+MULTU	T4,A3
+ADDIU	A2,A2,ABE4	;A2=8002ABE4: table of missions and briefings
+MFLO	T5
+ADDU	T6,A2,T5	;T6=p->selected mission
+JAL	7F00E3E0	;set cursor to stage A0 on mission select
+LW	A0,0014 (T6)	;A0=mission+14: menu slot
+BEQ	R0,R0,7F0169FC
+LW	RA,0014 (SP)
+//7F01693C:	next mission!
+MULTU	V1,A3
+OR	A1,R0,R0
+MFLO	T7
+ADDU	V0,A2,T7	;V0=p->next mission
+LHU	A0,0004 (V0)	;A0=text ID for stage name 1
+BEQ	A0,R0,7F016978	;branch if not present
+NOP
+//7F016958:	loop until you hit a stage entry
+LW	T8,0008 (V0)	;T8=stage# to load
+BGEZ	T8,7F016978	;branch if not a chapter heading
+NOP
+LHU	A0,0020 (V0)	;A0=next mission's text ID
+ADDIU	V1,V1,0001	;V1++	next slot#
+ADDIU	V0,V0,001C	;V0+=1C: next mission entry
+BNEL	A0,R0,7F01695C	;loop if not present
+LW	T8,0008 (V0)	;T8=stage# to load
+//7F016978:
+BEQ	A0,R0,7F016990	;branch if invalid stage
+NOP
+LW	T9,0008 (V0)	;T9=stage# to load
+SW	V1,0000 (T0)	;V1->selected mission briefing page
+LUI	AT,8003
+SW	T9,A8F4 (AT)	;T9->8002A8F4: stage selected
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A0,R0,000A	;A0=A: briefing page
+BEQ	R0,R0,7F0169FC
+LW	RA,0014 (SP)
+//
+ADDIU	A0,R0,000A	;A0=A: briefing page
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+BEQ	R0,R0,7F0169FC	;return
+LW	RA,0014 (SP)
+//	set cursor on page if returning to mission select
+LW	T1,A8D8 (T1)	;T1=8002A8D8: tab 3 selected
+ADDIU	A0,R0,0007	;A0=7: mission select page
+BEQL	T1,R0,7F0169FC	;return if not selected
+LW	RA,0014 (SP)
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+LUI	T0,8003
+ADDIU	T0,T0,A8F8
+LW	T2,0000 (T0)	;T2=8002A8F8: selected mission briefing page
+ADDIU	A3,R0,001C
+LUI	A2,8003
+MULTU	T2,A3
+ADDIU	A2,A2,ABE4	;A2=8002ABE4: table of missions and briefings
+MFLO	T3		;T3=briefing * 0x1C: offset to mission entry
+ADDU	T4,A2,T3	;T4=p->mission entry
+JAL	7F00E3E0	;set cursor to stage A0 on mission select
+LW	A0,0014 (T4)	;A0=stage slot #
+//7F0169F8:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP

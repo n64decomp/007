@@ -1,0 +1,255 @@
+7F04F40C:	83F3C	append ammo name to string
+	accepts: A0=p->final, A1=type, A2=quantity
+ADDIU	SP,SP,FFE0
+SW	S0,0018 (SP)
+ADDIU	V0,R0,0001
+OR	S0,A0,R0	;S0=A0: p->final
+SW	RA,001C (SP)
+BEQ	A1,V0,7F04F43C	;branch if type=1
+SW	A2,0028 (SP)	;SP+28=A2: quantity
+ADDIU	AT,R0,0002
+BEQ	A1,AT,7F04F43C	;branch if type=2
+ADDIU	AT,R0,0003
+BNEL	A1,AT,7F04F45C	;branch if type!=3
+ADDIU	AT,R0,000A
+//7F04F43C:	standard ammo - types 1-3
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A405	;A0=A405: "ammo"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F778
+LW	RA,001C (SP)
+//7F04F458:	throwing knives
+ADDIU	AT,R0,000A
+BNEL	A1,AT,7F04F4C4	;branch if not type A
+ADDIU	AT,R0,0013
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A40F	;A0=A40F: "throwing "
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+LW	T6,0028 (SP)	;T6=quantity
+ADDIU	AT,R0,0001
+BNE	T6,AT,7F04F4A4	;branch if multiple
+NOP
+//7F04F488:	single knife
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A410	;A0=A410: "knife"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F778
+LW	RA,001C (SP)
+//7F04F4A4:	multiple knives
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A411	;A0=A411: "knives"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F778
+LW	RA,001C (SP)
+//7F04F4C0:	dynamite
+ADDIU	AT,R0,0013
+BNE	A1,AT,7F04F524	;branch if not type 13
+ADDIU	T8,A1,FFFC	;T8=A1-4: type-4
+LW	T7,0028 (SP)	;T7=quantity
+BNE	T7,V0,7F04F4F4	;branch if multiples
+NOP
+//7F04F4D8:	single
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A419	;A0=A419: "stick "
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F508
+NOP
+//7F04F4F4:	multiple
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A41A	;A0=A41A: "sticks "
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+//7F04F508:	-of dynamite
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A418	;A0=A418: "of dynamite"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F778
+LW	RA,001C (SP)
+//7F04F524:	all non-special case ammo types
+SLTIU	AT,T8,001A
+BEQ	AT,R0,7F04F750	;branch if not type 4-1D
+SLL	T8,T8,0x2	;T8=type->offset
+LUI	AT,8005
+ADDU	AT,AT,T8
+LW	T8,2F84 (AT)	;T8=80052F84+offset: TLB jump to handle each type
+JR	T8
+NOP
+//7F04F544	display "shotgun cartridge"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A406	;A0=A406: "shotgun cartridge"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F560	display "magnum bullet"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A407	;A0=A407: "magnum bullet"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F57C	display "golden bullet"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A408	;A0=A408: "golden bullet"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F598	display "hand grenade"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A409	;A0=A409: "hand grenade"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F5B4	display "grenade round"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A40A	;A0=A40A: "grenade round"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F5D0	display "rocket"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A40B	;A0=A40B: "rocket"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F5EC	display "remote mine"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A40C	;A0=A40C: "remote mine"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F608	display "proximity mine"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A40D	;A0=A40D: "proximity mine"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F624	display "timed mine"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A40E	;A0=A40E: "timed mine"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F640	display "dart"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A413	;A0=A413: "dart"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F65C	display "explosive pen"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A414	;A0=A414: "explosive pen"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F678	display "explosive case"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A415	;A0=A415: "explosive case"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F694	display "flare"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A416	;A0=A416: "flare"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F6B0	display "piton"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A417	;A0=A417: "piton"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F6CC	display "bug"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A41B	;A0=A41B: "bug"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F6E8	display "micro camera"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A41C	;A0=A41C: "micro camera"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F704	display "GoldenEye key"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A41D	;A0=A41D: "GoldenEye key"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F720	display "token"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A41E	;A0=A41E: "token"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+BEQ	R0,R0,7F04F754
+LW	T9,0028 (SP)
+//7F04F73C	display "plastique"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A41F	;A0=A41F: "plastique"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+LW	T9,0028 (SP)
+//7F04F754:	pluralize if required
+SLTI	AT,T9,0002
+BNEL	AT,R0,7F04F778	;branch if singular
+LW	RA,001C (SP)
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A412	;A0=A412: "s"
+OR	A0,S0,R0	;A0=S0: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->text
+//7F04F774:	return
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP

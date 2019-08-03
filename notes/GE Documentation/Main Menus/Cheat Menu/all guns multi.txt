@@ -1,0 +1,152 @@
+complex 2pl
+800ADA4C	player 1 all guns toggle
+800B04CC	player 2 all guns
+800B2F4C	player 3 all guns
+800B59CC	player 4 all guns
+
+
+nemu - temple 2pl
+800A854C
+800AAFCC
+---------------------------------
+MAIN CALL ROUTINE:
+(partial, unsure on start 7F090684?)
+7F090758:
+SLTIU	AT,V0,004D	//V0=option value
+BEQ	AT,R0,7F090E74	//if move view, branch
+SLL	T9,V0,0x2	//T9=V0->a pointer offset
+LUI	AT,8005
+ADDU	AT,AT,T9
+LW	T9,56FC (AT)	//T9=debug option table pointer
+JR	T9
+NOP
+
+refs table pointer table @800556FC
+
+
+
+7F0908F4:
+JAL	7F09B10C
+LW	A0,005C (SP)	//A0=player tally
+
+7F09B10C:
+SLL	T6,A0,0x2	//T6=4*players=offset to pointer
+LUI	T7,8008
+ADDU	T7,T7,T6
+LW	T7,9EE0 (T7)	//T7=player pointer
+LUI	AT,8008
+SW	A0,A0B8 (AT)	//8007A0B8=player tally
+SLL	T8,A0,0x3	//T8=8*tally=8
+SUBU	T8,T8,A0	//
+LUI	T9,8008
+ADDIU	T9,T9,9EF0	//T9=80079EF0=
+SLL	T8,T8,0x4	//T8=T8*0x10
+SW	T7,A0B0 (AT)	//8007A0B0=T7=800A9DE0
+LUI	AT,8008
+ADDU	T0,T8,T9	//T0=80079EF0
+JR	RA
+SW	T0,A0B4 (AT)	//
+
+7F0908FC:
+JAL	7F08C2AC
+NOP
+
+7F08C2AC:
+LUI	T6,8008
+LW	T6,A0B0 (T6)	//T6=8007A0B0=800A9DE0
+JR	RA
+LW	V0,11EC (T6)	//V0=800711EC=0
+
+write 1pl f/ debug	(800A854C=toggle)
+off of 7F090904:
+JAL	7F08C29C
+SLTIU	A0,V0,0001
+
+7F08C29C:
+LUI	T6,8008
+LW	T6,A0B0
+JR	RA
+SW	A0,11EC (T6)
+
+return 7F09090C:
+LW	T2,005C (SP)	//T2=803B3724=0
+ADDIU	T3,T2,0001	//T3=T2++=1
+JAL	7F09A464
+SW	T3,005C (SP)	//803B3724=1
+
+7F09A464:
+LUI	T6,8008
+LW	T6,9EE0 (T6)	//T6=80079EE0=800A7360
+OR	V1,R0,R0	//V1=0
+LUI	T7,8008
+BEQ	T6,R0,7F09A480	//branch if no more players
+LUI	T8,8008
+ADDIU	V1,R0,0001	//V1=1
+LW	T7,9EE4 (T7)	//T7=80079EE4=800A9DE0
+LUI	T9,8008
+BEQ	T7,R0,7F09A494	//branch if only one player
+NOP
+ADDIU	V1,V1,0001	//V1++ (V1=2)
+LW	T8,9EE8 (T8)	//T8=80079EE8=third player stuff pointer
+BEQ	T8,R0,7F09A4A4
+NOP
+ADDIU	V1,V1,0001	//V1++
+LW	T9,9EEC (T9)	//T9=80079EEC=fourth player pointer
+BEQ	T9,R0,7F09A4B4
+NOP
+ADDIU	V1,V1,0001	//V1++
+JR	RA		//7F09A4B4, so routine ends here
+OR	V0,V1,R0	//V0=# players
+
+return to 7F09091C:
+LW	T4,005C (SP)	//T4=counter of players already dealt with
+SLT	AT,T4,V0	//TRUE if more to go
+BNEZ	AT,7F0908F4
+NOP
+else:
+BEQ	R0,R0,7F090E78
+LW	T8,0018 (SP)
+
+--------------------
+tracing inf ammo cheat:
+starts somewhere around 7F0BDBB0
+
+7F0BDC20:
+LBU	T1,0000 (S1)	//T1=800696A8 (inf ammo toggle)
+BEQL	T1,R0,7F0BDC48
+ADDIU	S0,S0,0001
+JAL	7F091A5C
+OR	A0,S0,R0	//A0=S0=cheat number=B
+
+7F091A5C:
+ADDIU	AT,R0,001C	//AT=001C
+BNE	A0,AT,7F091A70
+OR	V0,R0,R0	//V0=0
+	JR	RA
+	ADDIU	V0,R0,0001
+JR	RA
+NOP
+
+7F0BDC34:
+BEQL	V0,R0,7F0BDC48
+	ADDIU	S0,S0,0001	//S0=cheat#+1
+
+7F0BDC48:
+BNE	S0,S2,7F0BDC20
+ADDIU	S1,S1,0001	//active cheat toggle address +1
+
+7F0BDC20:
+LBU	
+
+no........  this is closer to actual executions:
+
+
+...7F0BEC74
+LW	V1,001C (SP)
+BNEZ	V0,7F0BEC94
+LW	A0,0194 (SP)
+SW	V1,001C (SP)
+JAL	7F091AAC
+SW	A0,0194 (SP)
+
+8007A0B8 - player stats?

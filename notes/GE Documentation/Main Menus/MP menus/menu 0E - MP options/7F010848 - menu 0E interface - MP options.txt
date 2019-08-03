@@ -1,0 +1,553 @@
+note that this routine is the hacked version as of rand++ 0.8
+
+01	stage select lock
+02	game length lock
+04	weapon select lock
+08	character lock
+10	health lock
+20	control style lock
+40	aim adjustment lock
+80	[new] point lock
+
+7F010848:	45378	menu 0E - interface for MP options
+ADDIU	SP,SP,FFC0
+LUI	AT,4270
+SW	RA,0014 (SP)
+MTC1	AT,F12
+SW	R0,003C (SP)
+SW	R0,0038 (SP)
+SW	R0,0034 (SP)
+SW	R0,0030 (SP)
+SW	R0,002C (SP)
+SW	R0,0028 (SP)
+SW	R0,0024 (SP)
+SW	R0,0020 (SP)
+JAL	70004544
+SW	R0,001C (SP)
+LUI	AT,8005
+JAL	70004590	;F12->page width
+LWC1	F12,1A80 (AT)
+LUI	AT,42C8
+MTC1	AT,F12
+LUI	AT,8005
+JAL	70004650	;set page height
+LWC1	F14,1A84 (AT)
+JAL	70004534
+OR	A0,R0,R0
+//7F0108B8:	back one menu if only 1 player
+JAL	7000B9F8	;#controllers plugged in
+NOP
+SLTI	AT,V0,0002	;AT=TRUE if fewer that 2 controllers
+BEQ	AT,R0,7F0108D0	;branch if still multiplayer
+ADDIU	A0,R0,0006	;A0=6: menu 6: mode select folder
+JAL	7F01A5D4	;set to menu A0 in mode A1
+OR	A1,R0,R0	;A1=0: current menu
+LUI	A0,8003
+JAL	7F00D7FC	;set cursor position to A0
+LW	A0,A8F0 (A0)	;A0=8002A8F0: selected mode
+//7F0108D0:	set # players to max if invalid
+JAL	7000B9F8	;#controllers plugged in
+NOP
+LUI	T6,8003
+LW	T6,B520 (T6)	;T6=8002B520: # players selected
+SLT	AT,V0,T6	;TRUE if #controllers < #players
+BEQL	AT,R0,7F010900	;branch if still okay
+OR	A0,R0,R0
+JAL	7000B9F8	;#controllers plugged in
+NOP
+JAL	7F010608	;initialize MP menu
+OR	A0,V0,R0	;A0=V0: #players
+OR	A0,R0,R0	;A0=0: player 1
+//7F010900:		fry all highlighting before revision
+JAL	7000C30C	;test if buttons held
+ORI	A1,R0,A000	;A1=A000: A, Z button
+BNEZ	V0,7F010AF4	;branch if something held
+LUI	AT,8003
+SW	R0,A8E4 (AT)	;0->8002A8E4: tab 3 highlight
+LUI	AT,8003
+SW	R0,A8E0 (AT)	;0->8002A8E0: tab 2 highlight
+LUI	AT,8003
+SW	R0,A8DC (AT)	;0->8002A8DC: tab 1 highlight
+LUI	AT,8007
+SW	R0,97C8 (AT)	;0->800697C8: highlight players
+LUI	AT,8007
+SW	R0,97CC (AT)	;0->800697CC: highlight scenario
+LUI	AT,8007
+SW	R0,97D0 (AT)	;0->800697D0: highlight stage
+LUI	AT,8007
+SW	R0,97D4 (AT)	;0->800697D4: highlight length
+LUI	AT,8007
+SW	R0,97D8 (AT)	;0->800697D8: highlight character
+LUI	AT,8007
+SW	R0,97DC (AT)	;0->800697DC: highlight weapon
+LUI	AT,8007
+SW	R0,97E0 (AT)	;0->800697E0: highlight handicap
+LUI	AT,8007
+SW	R0,97E4 (AT)	;0->800697E4: highlight control style
+LUI	AT,8007
+JAL	7F00A39C	;V0=1 if cursor on tab 3
+SW	R0,97E8 (AT)	;0->800697E8: highlight aim
+//7F010970:		test if tab 3 highlighted
+BEQ	V0,R0,7F010984
+ADDIU	T7,R0,0001
+LUI	AT,8003
+BEQ	R0,R0,7F010AF4
+SW	T7,A8E4 (AT)	;1->8002A8DE4: highlight tab 3
+//7F010984:		test if tab 1 highlighted
+JAL	7F00A1E4	;V0=1 if cursor on tab 1
+NOP
+BEQ	V0,R0,7F0109A4
+LUI	AT,8003
+ADDIU	V1,R0,0001
+LUI	AT,8003
+BEQ	R0,R0,7F010AF4
+SW	V1,A8DC (AT)	;1->8002A8DC: highlight tab 1
+//7F0109A4:		vertical rollover tests
+LWC1	F4,A90C (AT)	;F4=8002A90C: vertical screen position
+LUI	T2,8003
+TRUNC.W.S	F6,F4
+MFC1	V0,F6		;V0=(long) screen position
+ADDIU	V1,R0,0001
+LBU	T2,B544 (T2)	;T2=8002B544: lock stage
+LUI	T1,8007
+//7F0109C0:		rollover trigger bypasses for locked MP options
+SLTI	AT,V0,0119
+BNEZ	AT,7F0109E0
+ANDI	T0,T2,0040	;T0=aim adjustment lock
+BNEL	T0,R0,7F010AF4
+SW	V1,97E8 (T1)
+NOP
+NOP
+NOP
+//7F0109E0:	
+SLTI	AT,V0,0105
+BNEZ	AT,7F010A08
+ANDI	T0,T2,0020	;T0=control style lock
+BNEL	T0,R0,7F010AF4
+SW	V1,97E4 (T1)
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F010A08:
+SLTI	AT,V0,00F1
+BNEZ	AT,7F010A30
+ANDI	T0,T2,0010	;T0=health lock
+BNEL	T0,R0,7F010AF4
+SW	V1,97E0 (T1)
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F010A30:
+SLTI	AT,V0,00DD
+BNEZ	AT,7F010A58
+ANDI	T0,T2,0008	;T0=character lock
+BNEL	T0,R0,7F010AF4
+SW	V1,97D8 (T1)
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F010A58:
+SLTI	AT,V0,00C9
+BNEZ	AT,7F010A80
+ANDI	T0,T2,0004	;T0=weapon select lock
+BNEL	T0,R0,7F010AF4
+SW	V1,97DC (T1)
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F010A80:
+SLTI	AT,V0,00B5
+BNEZ	AT,7F010AA8
+ANDI	T0,T2,0002	;T0=game length lock
+BNEL	T0,R0,7F010AF4
+SW	V1,97D4 (T1)
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F010AA8:
+SLTI	AT,V0,00A1
+BNEZ	AT,7F010AD0
+ANDI	T0,T2,0001	;T0=stage select lock
+BNEL	T0,R0,7F010AF4
+SW	V1,97D0 (T1)
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F010AD0:	
+SLTI	AT,V0,008D
+BNEL	AT,R0,7F010AF4
+SW	V1,97C8 (T1)	;V1=800697C8: highlight players
+SW	V1,97CC (T1)	;V1=800697CC: highlight scenario
+NOP
+NOP
+NOP
+NOP
+NOP
+//7F010AF4:		start controller detection
+OR	A0,R0,R0
+JAL	7000C3AC	;TRUE if player 1 pressed start
+ADDIU	A1,R0,1000
+BEQ	V0,R0,7F010B2C	;branch if they didn't press start
+ADDIU	V1,R0,0001
+//7F010B08:		start a multiplayer game
+LUI	AT,8003
+LUI	A0,8006
+SW	V1,A8D0 (AT)	;1->8002A8D0: tab1 selected - same as 'start'
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+ADDIU	A1,R0,00C7
+JAL	70008E08	;play sound 0C7: folder switch
+OR	A2,R0,R0	;A2=NULL pointer to data (no SE source)
+BEQ	R0,R0,7F010CB0
+NOP
+//7F010B2C:	detect selecting currently highlighted option
+OR	A0,R0,R0
+JAL	7000C3AC	;TRUE if player 1 pressed A or Z
+ORI	A1,R0,A000	;A1=mask: A + Z button
+BEQ	V0,R0,7F010C80	;branch if neither button pressed
+ADDIU	V1,R0,0001	;V1=1
+//7F010B40:	detect if tab 3 selected
+LUI	T6,8003
+LW	T6,A8E4 (T6)	;T6=8002A8E4: TRUE if folder tab 3 highlighted
+LUI	T7,8003
+LUI	A0,8006
+BEQ	T6,R0,7F010B60	;branch if tab 3 not highlighted
+ADDIU	A1,R0,00C7	;A1=0C7: folder switch SE
+LUI	AT,8003
+SW	V1,A8D8 (AT)	;1->8002A8D8: tab3 selected
+//7F010B60:	detect if tab 1 selected
+LW	T7,A8DC (T7)	;T7=8002A8DC: TRUE if folder tab 1 highlighted
+LUI	AT,8003
+LUI	T8,8007
+BEQ	T7,R0,7F010B7C	;branch if tab 1 not highlighted
+OR	A2,R0,R0	;A2=0: NULL pointer to data (no SE source)
+BEQ	R0,R0,7F010C70
+SW	V1,A8D0 (AT)	;1->8002A8D0: tab1 selected
+//7F010B7C:	detect if players selected
+LW	T8,97C8 (T8)	;T8=800697C8: TRUE if #players highlighted
+ADDIU	T9,R0,0001
+LUI	T0,8007
+BEQ	T8,R0,7F010B98	;branch if not highlighted
+NOP
+BEQ	R0,R0,7F010C70
+SW	T9,003C (SP)	;1->SP+3C: #players selected
+//7F010B98:	detect if scenario selected
+LW	T0,97CC (T0)	;T0=800697CC: TRUE if scenario highlighted
+ADDIU	T1,R0,0001
+LUI	T2,8007
+BEQ	T0,R0,7F010BB4
+NOP
+BEQ	R0,R0,7F010C70
+SW	T1,0038 (SP)	;1->SP+38: scenario selected
+//7F010BB4:	detect if stage select selected
+LW	T2,97D0 (T2)	;T2=800697D0: TRUE if stage select highlighted
+ADDIU	T3,R0,0001
+LUI	T4,8007
+BEQ	T2,R0,7F010BD0
+NOP
+BEQ	R0,R0,7F010C70
+SW	T3,0034 (SP)	;1->SP+34: stage select selected
+//7F010BD0:	detect if game length selected
+LW	T4,97D4 (T4)	;T4=800697D4: TRUE if game length highlighted
+ADDIU	T5,R0,0001
+LUI	T6,8007
+BEQ	T4,R0,7F010BEC
+NOP
+BEQ	R0,R0,7F010C70
+SW	T5,0030 (SP)	;1->SP+30: game length selected
+//7F010BEC:	detect if character selected
+LW	T6,97D8 (T6)	;T6=800697D8: TRUE if character highlighted
+ADDIU	T7,R0,0001
+LUI	T8,8007
+BEQ	T6,R0,7F010C08
+NOP
+BEQ	R0,R0,7F010C70
+SW	T7,002C (SP)	;1->SP+2C: character selected
+//7F010C08:	detect if weapon select selected
+LW	T8,97DC (T8)	;T8=800697DC: TRUE if weapon select highlighted
+ADDIU	T9,R0,0001
+LUI	T0,8007
+BEQ	T8,R0,7F010C24
+NOP
+BEQ	R0,R0,7F010C70
+SW	T9,0028 (SP)	;1->SP+28: weapon select selected
+//7F010C24:	detect if health selected
+LW	T0,97E0 (T0)	;T0=800697E0: TRUE if health highlighted
+ADDIU	T1,R0,0001
+LUI	T2,8007
+BEQ	T0,R0,7F010C40
+NOP
+BEQ	R0,R0,7F010C70
+SW	T1,0024 (SP)	;1->SP+24: health selected
+//7F010C40:	detect if control style selected
+LW	T2,97E4 (T2)	;T2=800697E4: TRUE if control style highlighted
+ADDIU	T3,R0,0001
+LUI	T4,8007
+BEQ	T2,R0,7F010C5C
+NOP
+BEQ	R0,R0,7F010C70
+SW	T3,0020 (SP)	;1->SP+20: control style selected
+//7F010C5C:	detect if aim adjustment selected
+LW	T4,97E8 (T4)	;T4=800697E8: TRUE if aim adjustment highlighted
+ADDIU	T5,R0,0001
+BEQ	T4,R0,7F010C70
+NOP
+SW	T5,001C (SP)	;1->SP+1C: aim adjustment selected
+//7F010C70:	457A0	play selected sound effect
+JAL	70008E08	;play SE 0C7: selected folder option
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+BEQ	R0,R0,7F010CB0	;proceed to figure out what to do with selected option
+NOP
+//7F010C80:	detect if B button pressed
+OR	A0,R0,R0
+JAL	7000C3AC	;TRUE if player 1 pressed B button
+ADDIU	A1,R0,4000	;A1=4000: B button
+BEQ	V0,R0,7F010CB0
+ADDIU	V1,R0,0001	;V1=1;
+//7F010C94:	B button pressed
+LUI	AT,8003
+LUI	A0,8006
+SW	V1,A8D8 (AT)	;1->8002A8D8: tab 3 selected (same as 'back')
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+ADDIU	A1,R0,00C7	;A1=0C7: SE
+JAL	70008E08	;play SE 0C7 for folder switch
+OR	A2,R0,R0	;A2=NULL pointer to data (no source)
+//7F010CB0:	show folder components
+LUI	A0,8003
+JAL	7F00B724	;disable all switches in object A0 (hide all)
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+OR	A1,R0,R0	;A1=0: item #: tabs on side of folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0001	;A1=1: item #: basic folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0003	;A1=3: item #: OHMSS
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0005	;A1=5: item #: CONFIDENTIAL - multi
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+JAL	7F009B84	;control stick tracking
+NOP
+//7F010D14:	detect if 'back' selected
+LUI	T6,8003
+LW	T6,A8D8 (T6)	;T6=8002A8D8: TRUE if tab3 selected
+ADDIU	A0,R0,0006	;A0=6: menu 6 - mode select folder
+LUI	T7,8003
+BEQ	T6,R0,7F010D48	;branch if not backtracking
+NOP
+//7F010D2C:	backtrack one folder...
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0	;A1=0: current menu
+LUI	A0,8003
+JAL	7F00D7FC
+LW	A0,A8F0 (A0)	;A0=8002A8F0: mode
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010D48:	detect if 'start' selected
+LW	T7,A8D0 (T7)	;T7=8002A8D0: TRUE if tab1 selected
+LUI	T8,8003
+LW	T3,003C (SP)	;T3=TRUE if #players selected
+BEQ	T7,R0,7F010DF4	;branch if 'start' not selected
+NOP
+//7F010D5C:	start MP game!
+LW	T8,B534 (T8)	;T8=8002B534: MP stage selected
+LUI	V0,8003
+LUI	AT,8003
+SLL	T9,T8,0x2
+SUBU	T9,T9,T8
+SLL	T9,T9,0x3	;T9=MPstage * 0x18: offset to stage entry
+ADDU	V0,V0,T9
+LW	V0,B07C (V0)	;V0=8002B07C+offset: stage#
+BGEZ	V0,7F010DD0	;branch if not random
+NOP
+//7F010D84:	handle random stage select
+JAL	7000A450	;V0=random#
+NOP
+ADDIU	AT,R0,000B	;AT=# stage entries
+DIVU	V0,AT
+MFHI	V1		;V1=rand % #entries: MP stage entry in that range
+SLL	T0,V1,0x2
+SUBU	T0,T0,V1
+SLL	T0,T0,0x3	;T0=MPstage * 0x18
+LUI	T1,8003
+ADDU	T1,T1,T0
+LW	T1,B094 (T1)	;T1=8002B094+offset: stage#
+LUI	AT,8003
+ADDIU	A0,V1,0001	;A0=MPstage#+1: MPstage from 1-B (no rand)
+JAL	7F0100D0	;V0=TRUE if MP stage A0 unlocked
+SW	T1,A8F4 (AT)	;stage#->8002A8F4: stage selected
+BEQ	V0,R0,7F010D84	;branch if stage# still = 0
+NOP
+BEQ	R0,R0,7F010DD8
+ADDIU	T2,R0,FFFF
+//7F010DD0:
+SW	V0,A8F4 (AT)
+ADDIU	T2,R0,FFFF
+//7F010DD8:	press A: start stage
+LUI	AT,8003
+SW	T2,A8F8 (AT)	;-1->8002A8F8: no briefing data
+ADDIU	A0,R0,000B	;A0=B: -stage active-
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=1: return
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010DF4:	press A: 'Players' selected
+BEQ	T3,R0,7F010E34
+LW	T4,0038 (SP)
+JAL	7000B9F8	;V0= # controllers plugged in
+NOP
+LUI	V1,8003
+LW	V1,B520 (V1)	;V1=8002B520: # players selected on MP menu
+ADDIU	V1,V1,0001	;V1+=1
+SLT	AT,V0,V1	;AT=TRUE if #controllers < #selected
+BEQ	AT,R0,7F010E24	;branch if false
+OR	A0,V1,R0	;A0=updated # controllers
+BEQ	R0,R0,7F010E24
+ADDIU	A0,R0,0002	;A0=2: 2 players default
+//7F010E24:
+JAL	7F010608	;initialize MP menu
+NOP
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010E34:	press A: 'Scenario' selected
+BEQ	T4,R0,7F010E50
+LW	T5,0034 (SP)
+ADDIU	A0,R0,0013	;A0=13: menu 13: scenario select
+JAL	7F01A5D4	;set to menu A0 in mode A1
+OR	A1,R0,R0	;A1=0: current menu
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010E50:	press A: 'Level' selected
+BEQ	T5,R0,7F010E6C
+LW	T6,0030 (SP)
+ADDIU	A0,R0,0012	;A0=12: menu 12: MP stage select
+JAL	7F01A5D4	;set to menu A0 in mode A1
+OR	A1,R0,R0	;A1=0: current menu
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010E6C:	press A: 'Game Length' selected
+BEQ	T6,R0,7F010E84
+LW	T7,002C (SP)
+JAL	7F010170	;selects next game length accounting for scenarios
+NOP
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010E84:	press A: 'Select Character' selected
+BEQ	T7,R0,7F010EA0
+LW	T8,0028 (SP)
+ADDIU	A0,R0,000F	;A0=F: menu F: character select
+JAL	7F01A5D4	;set to menu A0 in mode A1
+OR	A1,R0,R0	;A1=0: current menu
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010EA0:	press A: 'Weapons' selected
+BEQ	T8,R0,7F010EB8
+LW	T9,0024 (SP)
+JAL	7F0C65CC	;advance MP weapon set menu one option
+NOP
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010EB8:	press A: 'Health' selected
+BEQ	T9,R0,7F010ED4
+LW	T0,0020 (SP)
+ADDIU	A0,R0,0010	;A0=10: menu 10: handicap settings
+JAL	7F01A5D4	;set to menu A0 in mode A1
+OR	A1,R0,R0	;A1=0: current menu
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010ED4	press A: 'Control Style' selected
+BEQ	T0,R0,7F010EF0
+LW	T1,001C (SP)
+ADDIU	A0,R0,0011	;A0=11: menu 11: MP control settings
+JAL	7F01A5D4	;set to menu A0 in mode A1
+OR	A1,R0,R0	;A1=0: current menu
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010EF0:		press A: 'Aim' selected
+BEQL	T1,R0,7F010F04
+LW	RA,0014 (SP)
+JAL	7F01023C	;advance aim settings selection
+NOP
+//7F010F00:		return!
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0040
+JR	RA
+NOP
+
++_+
+
+various minor advancement routines
+
+7F010170:	44CA0	advance game length selection
+LUI	T6,8003
+LW	T6,B540 (T6)	;T6=8002B540: scenario
+ADDIU	AT,R0,0002
+LUI	V0,8003
+BEQ	T6,AT,7F0101B0	;branch if scenario 2: Flag Tag
+ADDIU	V0,V0,B538	;V0=8002B538
+//7F010188:	normal select - time and points
+LUI	V0,8003
+ADDIU	V0,V0,B538	;V0=8002B538
+LW	T7,0000 (V0)	;T7=8002B538: game length
+ADDIU	AT,R0,0007
+ADDIU	T8,T7,0001	;T8=game length + 1
+DIV	T8,AT
+MFHI	T9		;T9=(length+1) % 7
+SW	T9,0000 (V0)	;new length -> 8002B538
+JR	RA
+NOP
+//7F0101B0:	time only
+LW	T0,0000 (V0)	;T0=8002B538: game length
+ADDIU	T1,T0,0001	;T1=length +1
+BGEZ	T1,7F0101CC	;branch if not negative
+ANDI	T2,T1,0003	;T2=length 3 or less
+BEQ	T2,R0,7F0101CC	;branch if 0, since this would be -4
+NOP
+ADDIU	T2,T2,FFFC	;T2=-1
+//7F0101CC:
+SW	T2,0000 (V0)	;new length -> 8002B538
+JR	RA
+NOP
+
+
+7F01023C:	44D6C	advance aim settings selection
+LUI	V0,8003
+ADDIU	V0,V0,B53C	;V0=8002B53C: aim settings
+LW	T6,0000 (V0)	;T6=current setting
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+ADDIU	T7,T6,0001	;T7=T6+1: next setting
+BGEZ	T7,7F010268	;branch if >=0
+ANDI	T8,T7,0003	;T8=next & 3
+BEQ	T8,R0,7F010268	;branch if equal to 0 (which is what you'd want to reset to
+NOP
+ADDIU	T8,T8,FFFC	;subtract 4 otherwise, but this assumes you'd be above 4...
+//7F010268:
+JAL	7F0101D8	;copy autoaim and sight settings to player stats
+SW	T8,0000 (V0)	;T8->V0: save new setting
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+

@@ -1,0 +1,73 @@
+general objective format
+______________
+create mission objective
+00000017 000000ii 0000TTTT 0000000*
+
+00000017	start objective
+000000..	objective number. just an ordered list, probably doesn't even use it
+0000TTTT	text to display.  usually from stage text, but could be any loaded text bank
+0000000*	minimum difficulty: 0=agent, 1=secret agent, 2=00 agent, 3-007
+______________
+end objective
+...00000018
+
+end objective
+______________
+destroy object
+00000019 xxxxxxxx
+
+xxxx	value of corresponding tagged object to be destroyed (tagged with 16 object type)
+______________
+complete if return true
+0000001A xxxxxxxx
+
+objective is completed if value given is equal to return from block data type 9A
+______________
+failed if return true
+0000001B xxxxxxxx
+
+objective is failed if value given is equal to return from block data type 9A
+
+______________
+collect object
+0000001C xxxxxxxx
+
+xxxx	value of corresponding tagged object to be collected (tagged with 16 object type)
+______________
+deposit object (no target)
+0000001D xxxxxxxx
+
+xxxx	value of corresponding tagged object to be deposited (tagged with 16 object type)
+______________
+photograph object
+0000001E xxxxxxxx 00000000 00000000
+
+xxxx	value of corresponding tagged object to be photographed (tagged with 16 object type)
+	second value must be set to zero; used at runtime to determine if completed
+	third value used at runtime
+
+______________
+invalid type
+0000001F
+
+
+______________
+enter room
+00000020 0000xxxx 00000000 00000000
+
+xxxx	preset within target room
+	second value must be set to zero; used at runtime to determine if completed
+	third value used at runtime
+______________
+deposit object in room
+00000021 000000xx 000000yy 00000000 00000000
+
+xx	weapon index number of object to be thrown
+yy	preset within target room
+	third value must be set to zero; used at runtime to determine if completed
+	fourth value used at runtime
+______________
+copy item
+00000022
+
+use key analyzer on following objective

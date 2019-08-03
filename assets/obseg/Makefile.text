@@ -1,0 +1,107 @@
+#text
+$(BUILD_DIR)/$(OBSEG_DIR)/text/%.rz: $(OBSEG_DIR)/text/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/text/%.rz: $(BUILD_DIR)/$(OBSEG_DIR)/text/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/text/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/text/%.elf
+	$(OBJCOPY) $< $@ -O binary
+
+$(BUILD_DIR)/$(OBSEG_DIR)/text/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/text/%.o
+	$(LD) -T assets/obseg/text/LnameX.ld -o $@
+	rm build/assets/obseg/text/LnameX.o
+
+$(BUILD_DIR)/$(OBSEG_DIR)/text/%.o: $(OBSEG_DIR)/text/%.c
+	$(CC) -c $(CFLAGS) -o $@ -O2 $<
+	mv $@ build/assets/obseg/text/LnameX.o
+
+TEXT_RZ_FILES := \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LameJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LarchJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LarecJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LarkJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LashJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LaztJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcatJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcaveJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcradJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcrypJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdamJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdepoJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdestJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdishJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LearJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LeldJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LgunJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LimpJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LjunJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LleeJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LlenJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LlipJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LlueJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LmiscJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LmpmenuJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LmpweaponsJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LoatJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LoptionsJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LpamJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LpeteJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LpropobjJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LrefJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LritJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LrunJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevbJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevxbJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevxJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LshoJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsiloJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LstatJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LtitleJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LtraJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LwaxJ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LameE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LarchE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LarecE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LarkE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LashE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LaztE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcatE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcaveE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcradE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LcrypE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdamE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdepoE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdestE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LdishE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LearE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LeldE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LgunE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LimpE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LjunE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LleeE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LlenE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LlipE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LlueE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LmiscE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LmpmenuE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LmpweaponsE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LoatE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LoptionsE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LpamE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LpeteE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LpropobjE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LrefE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LritE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LrunE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevbE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevxbE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsevxE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LshoE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LsiloE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LstatE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LtitleE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LtraE.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/text/LwaxE.rz 

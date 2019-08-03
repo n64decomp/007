@@ -1,0 +1,105 @@
+70004758	5358	image capture routine: 16bit jpeg
+ADDIU	SP,SP,FEC8
+SW	S1,0024 (SP)
+SW	S2,0028 (SP)
+SW	S0,0020 (SP)
+LUI	S1,8003
+SW	RA,002C (SP)
+ADDIU	S1,S1,8490	;S1=80028490: "grab.%d.jpeg"
+ADDIU	S0,SP,0038	;S0=SP+38: buffer for string
+ADDIU	S2,SP,0034	;S2=SP+34: p->instance
+//7000477C:
+LUI	A2,8002
+LW	A2,32C4 (A2)	;A2=800232C4: cur.jpeg16bit
+OR	A0,S0,R0	;A0=S0: p->buffer
+JAL	7000AC94	;sprintf(A0,A1,A2,A3,...)
+OR	A1,S1,R0	;A1=S1
+OR	A0,S0,R0	;A0=S0: p->string
+JAL	7F0D0098	;V0=TRUE if resource named A0 found on Indy and filesize set to A1
+OR	A1,S2,R0	;A1=S2: @filesize
+BEQ	V0,R0,700047B8	;branch if unique
+//700047A0:	loop and increment value if found
+LUI	A2,8002
+LW	A2,32C4 (A2)
+LUI	AT,8002
+ADDIU	A2,A2,0001
+BEQ	R0,R0,7000477C
+SW	A2,32C4 (AT)	;cur.jpeg16bit +=1
+//700047B8: 
+LUI	A2,8002
+LUI	A1,8003
+LW	A2,32C4 (A2)	;A2=800232C4: cur.jpeg16bit
+ADDIU	A1,A1,84A0	;A1=800284A0: "grab.%d.temp.uix"
+JAL	7000AC94	;sprintf(A0,A1,A2,A3,...)
+OR	A0,S0,R0
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S1,V0,0x10
+SRA	T6,S1,0x10
+JAL	7000442C	;V0= text clip height
+OR	S1,T6,R0
+MULTU	V0,S1
+LUI	T7,8002
+LW	T7,32A8 (T7)	;T7=800232A8: p->viewport
+OR	A0,S0,R0	;A0=S0: p->text
+LW	A1,0028 (T7)	;A1= p->data
+MFLO	A2		;A2=width * height
+SLL	T8,A2,0x1
+JAL	7F0CFFE0	;send capture data A1 of size A2 named A0
+OR	A2,T8,R0	;A2=width * height * 2: size of VI buffer
+//7000480C:	send command line: Uix2pix -xs{width} grab.{instance}.temp.Uix
+LUI	A2,8002
+LUI	A1,8003
+LW	A2,32C4 (A2)	;A2=800232C4: cur.jpeg16bit
+ADDIU	A1,A1,84B4	;A1=800284B4: "uix2pix grab.%d.temp.uix"
+JAL	7000AC94	;sprintf(A0,A1,A2,A3,...)
+OR	A0,S0,R0
+JAL	7F0D00E0	;V0= response from command string A0 sent to host PC via Indy
+OR	A0,S0,R0
+//7000482C:	send command line: fromalias - probably a copy/rename routine
+LUI	A2,8002
+LW	A2,32C4 (A2)	;A2=800232C4: cur.jpeg16bit
+LUI	A1,8003
+ADDIU	A1,A1,84D0	;A1=800284D0: "fromalias grab.%d.temp.pix grab.%d.temp.rgb"
+OR	A0,S0,R0
+JAL	7000AC94	;sprintf(A0,A1,A2,A3,...)
+OR	A3,A2,R0
+JAL	7F0D00E0	;V0= response from command string A0 sent to host PC via Indy
+OR	A0,S0,R0
+//70004850:	send command line: imagecopy - format is jfif, converting raw rgb into jpeg
+LUI	A2,8002
+LW	A2,32C4 (A2)	;A2=800232C4: cur.jpeg16bit
+LUI	A1,8003
+ADDIU	A1,A1,84FC	;A1=800284FC: "imgcopy -fjfif grab.%d.temp.rgb grab.%d.jpeg"
+OR	A0,S0,R0
+JAL	7000AC94	;sprintf(A0,A1,A2,A3,...)
+OR	A3,A2,R0
+JAL	7F0D00E0	;V0= response from command string A0 sent to host PC via Indy
+OR	A0,S0,R0
+//70004874:	remove intermediate images
+LUI	A2,8002
+LW	A2,32C4 (A2)	;A2=800232C4: cur.jpeg16bit
+LUI	A1,8003
+ADDIU	A1,A1,852C	;A1=8002852C: "rm grab.%d.temp.uix grab.%d.temp.pix grab.%d.temp.rgb"
+OR	A0,S0,R0
+OR	A3,A2,R0
+JAL	7000AC94	;sprintf(A0,A1,A2,A3,...)
+SW	A2,0010 (SP)
+JAL	7F0D00E0	;V0= response from command string A0 sent to host PC via Indy
+OR	A0,S0,R0
+//7000489C:	open image in imgview
+LUI	A2,8002
+LUI	A1,8003
+LW	A2,32C4 (A2)	;A2=800232C4: cur.jpeg16bit
+ADDIU	A1,A1,8564	;A1=80028564: "imgview grab.%d.jpeg"
+JAL	7000AC94	;sprintf(A0,A1,A2,A3,...)
+OR	A0,S0,R0
+JAL	7F0D00E0	;V0= response from command string A0 sent to host PC via Indy
+OR	A0,S0,R0
+//700048BC:	return
+LW	RA,002C (SP)
+LW	S0,0020 (SP)
+LW	S1,0024 (SP)
+LW	S2,0028 (SP)
+JR	RA
+ADDIU	SP,SP,0138

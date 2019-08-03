@@ -1,0 +1,205 @@
+Reducing 21990 compression size
+-------------------------------
+[note: ` denotes a new item from last revision]
+
+1) Erasing Unused Data (the easy part)
+2) Table Lookup String Reassignment
+
+Section 1:
+Erasing Unused Data (the easy part)
++++++++++++++++++++++++++++++++++++
+
+  The following memory blocks can be set to zero as their data is not used.  Each of the lines below list what you are removing, the start offset, then the size of data.
+offset	size	feature
+`0x22BC	0x30	various debuggers
+0x2574	0x3D8	RSP debugger
+`0x294C	0x3C	pointers
+`0x3788	0xB18	image and DL for unused feature
+0x5A84	0x84	0x1B[# values and associated pointers
+`0x69B0	0x20	debug display background alpha
+`0x69D4	0x20	debug display background alpha
+0x8480	0x190
+0x7640	0x30	debug text
+0x7690	0x50	
+0x7700	0x32C	Image capture
+0x7A30	0x2B0	TLB & COP debugger
+0x83A4	0x2C	
+0x8410	0x28	Memory allocation debugger
+0x8440	0x3C	
+0x8B00	0xD4	Assertation fault error messages
+0x2DF9C	0x28	Spectrum games and associated pointers
+0x3B290	0x10C
+0x33690	0x70	Failure to draw objects
+0x33870	0x4F8	DL & data parsing errors
+0x369D0	0x64	controller debuggery
+0x37810	0x2C	Clipping debuggery
+0x37EAC	0x1C	BG debuggery
+0x3A8DC	0x20	
+0x3A920	0x54	
+0x3A984	0x28	Det detail level
+0x3A9C0	0x34	Debug recorded intro movies
+0x3B1F0	0x28	Fake compressed files
+0x3B220	0x68	RSP debuggery
+0x3BD00	0x60	RSP signature
+0x22BC	0x30	Remove Debug Menu (MCM)
+0x15E38	0x39C
+0x345B0	0x504
+
+optional: delete manpos cheat - not recommended
+0x15B28	0x1C	cardinal directions
+0x34230	0x24	display formatting
+		also, write 0x01 -> 0x1EBFC.  This reroutes a linked cheat code
+
+Optional special case:	delete MP weapon TLB pointers
+First, if -ROM- 0x37384 = 01C00008	(JR T6)
+  set ROM 0x37384 = 10000006	(BEQ R0,R0,+6)
+then, in 21990, set the following to 0:
+  0x2E1A0	0x20	MP weapon set expansion
+
+
+
+Section 2:
+Table Lookup String Reassignment
+++++++++++++++++++++++++++++++++
+  Most of the size reduction is done using this method. This matches the strings kept in various tables through 21990 to the same string in the main text index.  The pointer is set to the position of the matching text in the main index, and the original string is deleted.
+
+  The main text bank starts at 0x38010, ending at 0x3A8DC.  This is the search range for the text matchup routine.  Each string is NULL terminated and extended to the nearest word.  For convenience, it may be easiest to preprocess the list by retrieving each string and their initial offsets in the file.
+
+  To condense all the data below, convert the pointer for the entry into an offset in the 21990 by subtracting 0x80020D90.  Then, retrieve the NULL-terminated string sample.  Compare the sample to all the strings in the main index.  In the rare case of a miss, ignore the entry and move to the next.  On a hit:
+1) delete the original sample string by setting it to zero.
+2) take the offset for the matching entry in the main index and add 0x80020D90 to convert it to a pointer
+3) replace the original pointer with this new one
+
+Example:
+  The first BG text pointer is to 800585F0.
+1) Subtract 0x80020D90 to convert it to a file offset: 0x37860.
+2) Retrieve the NULL-terminated string at this offset: bg/bg_sev_all_p.seg
+3) Search for a match to this string in the main text table (0x38010)
+	The matching string is at 0x38014.
+4) Convert this offset into a pointer by adding 0x80020D90: 80058DA4
+5) Remove the original string at 0x37860 by setting it to zero
+6) set the pointer from 800585F0->80058DA4
+
+  Given are instructions on how to parse each of the tables to retreive the text pointers.  I also threw in the data structs for reference.
+
+
+-Stage BG and Clipping Table:
+  Table starts at 0x236FC.  Table ends at 0x23A8C.  Each entry is 0x18 in size.
+struct{
+	long stageID;
+	unsigned long Pbg_file;
+	unsigned long Pclipping;
+	float scale;
+	float visibility;
+	float unknown;
+	}
+
+  Grab the pointer at +0x4.  Retrieve the text at the offset and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.
+  Grab the pointer at +0x8.  Retrieve the text at the offset and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.
+  Increment by 0x18 to test next entry.  Table ends at 0x23A8C.
+
+
+-Stage Setup Pointer Table:
+  Table starts at 0x16758.  Table ends at 0x16840.  Each entry is a pointer to a text string or NULL.
+
+  If the pointer is NULL, do nothing.
+  Otherwise, retrieve the text at the offset and look it up in the table at 0x38010.  On a hit, delete the original string and set a new pointer.  On a miss, do not edit the original string.  This is important as this table requires text entries taht may not appear in the main text index.
+
+
+-Ejected Shell Casings:
+  Table starts at 0x116DC and ends at 0x11704.  There are 5 entries of 0x8 each.
+struct{
+	unsigned long Pheader;
+	unsigned long Pname;
+	}
+
+  Grab the pointer at +0x4.  Retrieve the text at the offset and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.
+
+-G_weapon and Watch index:
+  Table starts at 0x12B94 and ends at 0x13F48.  Each entry is 0x38 in size.
+
+  Grab the pointer at +0x4.  If NULL do nothing.  Otherwise, retrieve the text at the offset and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.
+
+
+-Standard Object Table:
+  Table starts at 0x19498 and ends at 0x1A494.  Each entry is 0xC in size.  Alternately, the table ends when the header pointer (+0x0) is NULL.
+struct{
+	unsigned long Pheader;
+	unsigned long Pname;
+	float scale;
+	}
+
+  Grab the pointer at +0x4.  Retrieve the text at the offset and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.
+
+
+-Character Bodies and Heads:
+  Table starts at 0x1D080 and ends at 0x1D6D4.  Each entry is 0x14 in size.
+struct{
+	unsigned long Pheader;
+	unsigned long Pname;
+	float hor_scale;
+	float vert_scale;
+	char gender;	//1=male, 0 female
+	char head;	//1=head or included head, 0 body only
+	short RESERVED;	//filler
+	}
+
+  Grab the pointer at +0x4.  If NULL, ignore.  Otherwise, retrieve the text at the offset and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.  
+
+
+-Text Table:
+  Table starts at 0x27744 and ends at 0x278AC.  Each entry is a pointer to a text string or NULL.  Two pointers are given for each text ID; pointers at +0x8 and +0xC correspond to 04XX text, +0x10 & +0x14 to 08XX text, etc.  The first pointer is to English text, the second to Japanese.
+
+struct{
+	unsigned long Penglish;
+	unsigned long Pjapanese;
+	}
+
+  If the pointer is NULL ignore.
+  Otherwise, retrieve the text at the offset and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.  
+
+  In this particular case you may want to eliminate all the japanese text offsets.  Those would be at offsets +0x4.  Alternately, you may also want to remove any text that does not have a string offset assigned to it.  These can be reassigned later by directly jumping to the correct offset.  Formula for english text is:
+(First byte of ID)*8 + 0x27744 = offset to matching english text
+
+  If requested, I can make a patch that removes the placeholders for japanese text as well, effectively doubling the number of possible text banks.
+
+
+-Briefing Menus:	Basic Reassignment
+  Table starts at 0x9E54 and ends at 0xA19C.  Each entry is 0x1C in size.
+struct{
+	unsigned long Pchaptertxt;
+	unsigned short txtID_1;
+	unsigned short txtID_2;
+	long stage;	//stage ID or -1
+	long row;	//0=top row, 1=second row, 2=third, etc
+	long option;	//stage in list; Dam=0, Facility=1, Runway=2, etc. -1 if catagory
+	long catagory;	//0 if selectable stage, 1 if catagory
+	unsigned long Pname;
+	}
+
+  If the pointer is NULL ignore.
+  Otherwise, retrieve the text pointer at +0x18 and look it up in table at 0x38010.  On a hit, delete the original string and set the new pointer.
+
+
+-Briefing Menus:	Optional - Advanced Menu Reconstruction
+  This redesigns the menu and makes it dramatically more efficient.  This is a two-step operation.
+
+  Reiterate through the briefing menu table.  Retrieve the text pointer at 0x0 and eliminate the original text value. Depending on the original string value the following pointer will be assigned:
+1	8004F310
+2	8004F312
+3	8004F314
+4	8004F316
+5	8004F318
+6	8004F31A
+7	8004F31C
+8	8004F31E
+9	8004F320
+i	8004F324
+ii	8004F323
+iii	8004F322
+iv	8004F326
+v	8004F327
+
+  Then replace the binary at 0x2E580 with PATCH   >¼‰žU
+V<ÇôÑ·[ç¥E‡ü|Ìÿ¹ÖÉn6»þ…SÈ<¾ôÿ’jþüÛ%ÃMÛ4d”úOÒnã¿Ugø@Iü­B™ýøZ(~”ò+!íŸs*ÙDþïºÄÞÆ’—B/ó|ô¾¶P8JÏÐƒ^rvYÞ¥â/ù¥Ó/Ú/IÓûÅùã?†ëÉß¹c¦¤þÆ_œ?ËŸ‰zògNÊ›©ø³$éÍ¸TüY»üïz¥g<›¿³è¥ŸÃ_Z=Øê"ôDþ+c=èic)ôÒ»üåÒð—ÑEïÒð—™ô¿ñç/½þ\çð—Õåã/½þ\çðgK‰/FcáÕºƒúeVgÞžù#
+èœó;CIiâmgß”1{J|Ñé-:=Íÿn¯

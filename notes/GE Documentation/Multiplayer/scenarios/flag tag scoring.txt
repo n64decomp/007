@@ -1,0 +1,1002 @@
+The problem lies with flag tag returning a millisecond value instead of a proper score.  So, to keep from breaking the scoring routine, it still needs to return V0=score but when testing game length read a V0/3600 value.  This way, it is testing if the flag was held for a full minute.
+
+5 kill/10 min would essentially end the match if a player has the flag for a full five minutes.  squee!
+
++++++++++++++++++++++++++++++++
+part of MP initialization...  called four times (despite # players)
+//7F0BDD0C:	retrieve and store MP time
+JAL	7F010420	returns V0=game length: time
+NOP
+JAL	7F0BFC28	A0->80048398
+OR	A0,V0,R0	A0=V0=time
+//7F0BDD1C:	retrieve and store MP kills
+JAL	7F010444	returns V0=game length: kills
+NOP
+JAL	7F0BFC34	A0->8004839C
+OR	A0,V0,R0	A0=V0=#kills
+//7F0BDD2C:	F285C
+JAL	7F0101D8	copy autoaim and sight settings to player stats
+NOP
+MTC1	R0,F8
+MTC1	R0,F10
+LUI	V0,7FFF
+ORI	V0,V0,FFFF
+SW	R0,0034 (S4)
+SW	R0,003C (S4)
+SW	V0,0044 (S4)
+SW	R0,0048 (S4)
+SW	R0,0054 (S4)
+SW	R0,0058 (S4)
+SW	R0,004C (S4)
+SW	V0,0050 (S4)
+SB	R0,0068 (S4)
+SW	R0,0060 (S4)
+SWC1	F8,0038 (S4)
+SWC1	F10,0040 (S4)
+LUI	T3,8008
+ADDIU	T3,T3,A0B0
+ADDIU	S2,S2,0070
+ADDIU	S4,S4,0070
+SW	R0,FFC0 (S2)
+SW	R0,FFBC (S2)
+SW	R0,FFB8 (S2)
+BNE	S2,T3,7F0BDC94
+SW	R0,FFB4 (S2)
+//7F0BDD98:
+JAL	7F004EC0
+NOP
+etc...
+
+---------------------------------
+Flag Tag stage length check
+(generic routine, really)
+
+//7F0BED7C:	recover MP time
+LUI	V1,8005
+LW	V1,8398 (V1)	V1=MP time
+LUI	V0,8005
+LUI	T9,8005
+BLEZ	V1,7F0BEEB4	invalid time = skip time test
+NOP
+//7F0BED94:	MP time test: one minute left
+LW	V0,8394 (V0)	V0=80048394=curtime
+LW	T9,8374 (T9)	T9=80048374=1 if not paused!
+ADDIU	A0,V1,F1F0	A0=time-1min (3600 sec.)
+SLT	AT,V0,A0	TRUE if curtime<1minleft
+ADDU	T6,T9,V0	T6=nextV0
+SW	T6,0180 (SP)	[incremented V0 (nexttime)]
+BEQ	AT,R0,7F0BEE04
+SW	V0,0184 (SP)	[current V0 (curtime)]
+SLT	AT,T6,A0	TRUE if counter(T6) < time-1min
+BNEZ	AT,7F0BEE04	if not at 1 minute left, branch
+NOP
+JAL	7F09A464
+SW	R0,017C (SP)
+BLEZ	V0,7F0BEE04
+NOP
+//7F0BEDD0:
+JAL	7F09B10C
+LW	A0,017C (SP)
+LUI	A0,8006
+JAL	7F08A3C8
+ADDIU	A0,A0,B704
+LW	T7,017C (SP)
+ADDIU	T8,T7,0001
+JAL	7F09A464
+SW	T8,017C (SP)
+LW	T9,017C (SP)
+SLT	AT,T9,V0
+BNEZ	AT,7F0BEDD0
+NOP
+//7F0BEE04:	MP time test: 10 second warning
+LUI	T7,8005
+LW	T7,8398 (T7)	T7=MPtime
+LW	T6,0180 (SP)	T6=nexttime
+LUI	T9,8005
+ADDIU	T8,T7,FDA8	T8=MPtime-10sec
+SLT	AT,T6,T8	TRUE if nexttime<10sec warning
+BNEZ	AT,7F0BEE54
+NOP
+LW	T9,83A0 (T9)	T9=800483A0=?
+BNEZ	T9,7F0BEE54
+NOP
+LW	T9,83A0 (T9)	T9=800483A0=?
+BNEZ	T9,7F0BEE54
+NOP
+JAL	7F0BFC04	returns V0=80048370	1 locks player controls?
+NOP
+BNEZ	V0,7F0BEE54
+LUI	A0,8006
+LUI	A2,8005
+ADDIU	A2,A2,83A0	A2=800483A0
+LW	A0,3720 (A0)	A0=80063720
+JAL	70008E08	get and set SE to use; A1=sound, A0=buffer loc?
+ADDIU	A1,R0,00A1
+//7F0BEE54:
+JAL	7F0BFC04	V0=80048370=?	toggle, initial=0
+NOP
+BEQ	V0,R0,7F0BEE88
+LUI	A0,8005
+LW	A0,83A0 (A0)
+BEQ	A0,R0,7F0BEE88
+NOP
+JAL	70008DF0
+NOP
+BEQ	V0,R0,7F0BEE88
+LUI	A0,8005
+JAL	70009020
+LW	A0,8320 (A0)
+//7F0BEE88:
+LUI	V1,8005
+LW	V1,8398 (V1)	V1=80048398=MPtime
+LW	T7,0184 (SP)	T7=curtime
+LW	T6,0180 (SP)	T6=nexttime
+SLT	AT,T7,V1	TRUE if curtime<MPtime
+BEQ	AT,R0,7F0BEEB4
+SLT	AT,T6,V1	TRUE if nexttime<MPtime
+BNEZ	AT,7F0BEEB4	branch if not at stage end, which you aren't
+NOP
+JAL	7F0C2530
+OR	A0,R0,R0
+//7F0BEEB4:	MP kill test
+LUI	T8,8005
+LW	T8,839C (T8)	T8=MPkill
+LUI	T9,8005
+BLEZ	T8,7F0BEFB8	if invalid kills, don't test
+NOP
+LW	T9,8374 (T9)	T9=80048374=paused if 0
+BEQ	T9,R0,7F0BEFB8
+NOP
+//7F0BEED4:
+JAL	7F09A464	V0=#players
+NOP
+OR	A3,V0,R0	A3=V0=#players
+OR	A1,R0,R0	A1=0
+OR	A2,R0,R0	A2=0
+BLEZ	V0,7F0BEF90	lets hope the player total isn't invalid...
+OR	A0,R0,R0	A0=0
+LUI	V1,8008
+MTC1	R0,F0		F0=0
+ADDIU	V1,V1,9EE0	V1=80079EE0=player data pointers
+//7F0BEEFC:	0xF3A2C
+8C620000	LW	V0,0000 (V1)	;V0=playerdata
+8C4F00D8	LW	T7,00D8 (V0)	;T7=player death register
+51E0000E	BEQL	T7,R0,7F0BEF40	;skip this if player is alive
+AFA3001C	SW	V1,001C (SP)
+8C4E0424	LW	T6,0424 (V0)	;1: dying (allow respawn: Press Start)
+51C0000A	BEQL	T6,R0,7F0BEF3C
+24A50001	ADDIU	A1,A1,0001
+8C580428	LW	T8,0428 (V0)	;1 when screen fading to black
+53000007	BEQL	T8,R0,7F0BEF3C
+24A50001	ADDIU	A1,A1,0001
+C44803E4	LWC1	F8,03E4 (V0)
+4608003E	C.LE.S	F0,F8
+00000000	NOP
+45020003	BC1FL	7F0BEF40
+AFA3001C	SW	V1,001C (SP)
+24A50001	ADDIU	A1,A1,0001
+//7F0BEF3C:
+AFA3001C	SW	V1,001C (SP)
+//7F0BEF40:	compute and compare scores
+AFA40174	SW	A0,0174 (SP)
+AFA50170	SW	A1,0170 (SP)
+AFA6016C	SW	A2,016C (SP)
+0FC30E36	JAL	7F0C38D8	;returns V0=score
+AFA70178	SW	A3,0178 (SP)
+3C198005	LUI	T9,8005
+8F39839C	LW	T9,839C (T9)	;T9=8004839C=MP kill
+44800000	MTC1	R0,F0
+8FA3001C	LW	V1,001C (SP)	;V1=player data pointer
+0059082A	SLT	AT,V0,T9	;TRUE if target score < players score
+8FA40174	LW	A0,0174 (SP)
+8FA50170	LW	A1,0170 (SP)
+8FA6016C	LW	A2,016C (SP)
+14200002	BNEZ	AT,7F0BEF80
+8FA70178	LW	A3,0178 (SP)
+24C60001	ADDIU	A2,A2,0001	A2++	indicate a winner
+//7F0BEF80:
+ADDIU	A0,A0,0001	A0++
+SLT	AT,A0,A3	TRUE if nextplayer# < maxplayer#
+BNEZ	AT,7F0BEEFC	CHECK NEXT PLAYER DATA
+ADDIU	V1,V1,0004
+BLEZ	A2,7F0BEFB8
+NOP
+BNEZ	A1,7F0BEFB0
+NOP
+JAL	7F0C2530
+OR	A0,R0,R0
+BEQ	R0,R0,7F0BEFB8
+NOP
+//7F0BEFB0:
+JAL	7F0C2520	1->8008C700	stop play
+NOP
+
+//7F0BEFB8:	You Only Live Twice
+JAL	7F014758	;RETURNS V0=scenario
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F0BF1E0	;branch if not "You Only Live Twice"
+LUI	T7,8005
+LW	T7,8374 (T7)
+BEQ	T7,R0,7F0BF1E0	;branch if game running
+NOP
+JAL	7F09A464	;V0=#PLAYERS
+NOP
+//7F0BEFE0
+MTC1	R0,F0
+OR	T2,V0,R0	;T2=V0=#PLAYERS
+OR	T5,R0,R0	;T5=0
+OR	RA,R0,R0	;RA=0
+BLEZ	V0,7F0BF1AC	;skip if invalid #players
+OR	T4,R0,R0	;T4=0:	current player#
+OR	A1,R0,R0	;A1=0: personal # deaths?
+//7F0BEFFC:	loop for each character...
+OR	A2,R0,R0	;A2=0
+BLEZ	V0,7F0BF124	;branch if invalid # players, again(?)
+OR	A3,R0,R0	;A3=0
+ANDI	T1,V0,0003
+BEQ	T1,R0,7F0BF074	;branch if 4 player...
+SLL	T3,T4,0x2	;T3=cur.player->offset
+LUI	T8,8008
+ADDIU	T8,T8,9EE0	;T8=p->BONDdata
+SLL	T6,R0,0x2	
+SLL	T9,R0,0x3	
+SUBU	T9,T9,R0
+ADDU	V1,T6,T8	;V1=p->player's BONDdata
+LUI	T6,8008
+SLL	T9,T9,0x4	;T9=offset to player's stats (0*0x70)
+ADDU	T7,T9,T3	;T7=offset to stats + offset to playeroffset to pull kills
+ADDIU	T6,T6,9EF0	;T6=playerstats
+ADDU	A0,T7,T6	;A0=player's stats+offset to player's death register
+OR	T0,T1,R0	;T0=T1: #players
+//7F0BF044:	pull # deaths from each player's statistics
+LW	T8,0000 (V1)	;T8=BONDdata
+ADDIU	A3,A3,0001	;A3++	playercount++
+ADDIU	V1,V1,0004	;V1+=4	p->next player's BONDdata
+LW	T9,00D8 (T8)	;T9!=0 if dead	player button control
+BNEL	T9,R0,7F0BF064	;branch if dead
+LW	T7,0024 (A0)	;T7=playerkills
+ADDIU	A2,A2,0001	;A2++	A2=#players living
+LW	T7,0024 (A0)	;T7=playerkills
+//7F0BF064:	loop for each player
+ADDIU	A0,A0,0070	;A0=next player's stat offset
+BNE	T0,A3,7F0BF044	;loop if the playercount doesn't match total players
+ADDU	A1,A1,T7	;A1=death count
+BEQ	A3,V0,7F0BF124	;branch if playercount matches total players, which will always return true...
+//7F0BF074:	test player 1's pulse - skip first iteration above if 4 player
+//		redundant, insofar as the routine above works well anyway...
+LUI	T8,8008
+SLL	T9,A3,0x3
+SUBU	T9,T9,A3
+ADDIU	T8,T8,9EE0
+SLL	T6,A3,0x2
+ADDU	V1,T6,T8	;V1=80079EE0+offset: p->BONDdata
+SLL	T9,T9,0x4
+ADDU	T7,T9,T3
+LUI	T6,8008
+ADDIU	T6,T6,9EF0
+SLL	T9,T2,0x2
+ADDU	T0,T9,T8
+ADDU	A0,T7,T6	;A0=80079EF0+offset: stats
+LW	T7,0000 (V1)	;T7=BONDdata
+LW	T6,00D8 (T7)	;T6=player button control	!0 if dead
+BNEL	T6,R0,7F0BF0C0	;branch if dead
+LW	T8,0004 (V1)	;T8=next BONDdata
+ADDIU	A2,A2,0001	;A2++
+LW	T8,0004 (V1)
+//7F0BF0C0:	test player 2's pulse
+LW	T9,0024 (A0)	;T9=stats+24: player1kills
+LW	T7,00D8 (T8)	;T7=player button control	!0 if dead
+ADDU	A1,A1,T9	;A1+=playerkills	total kills
+BNEL	T7,R0,7F0BF0DC	;branch if dead
+LW	T9,0008 (V1)	;T9=next BONDdata
+ADDIU	A2,A2,0001	;A2++
+LW	T9,0008 (V1)
+//7F0BF0DC:	test player 3's pulse
+LW	T6,0094 (A0)	;next player's player2kills
+LW	T8,00D8 (T9)	;T8=player button control	!0 if dead
+ADDU	A1,A1,T6	;A1+=playerkills	total kills
+BNEL	T8,R0,7F0BF0F8	;branch if dead
+LW	T6,000C (V1)	;T6=next BONDdata
+ADDIU	A2,A2,0001	;A2++
+LW	T6,000C (V1)
+//7F0BF0F8:	test player 4's pulse
+LW	T7,0104 (A0)	;next player's player3kills
+ADDIU	V1,V1,0010	;V1+=10
+LW	T9,00D8 (T6)	;T8=player button control	!0 if dead
+ADDU	A1,A1,T7
+BNEL	T9,R0,7F0BF118
+LW	T8,0174 (A0)	;next player's player4kills
+ADDIU	A2,A2,0001	;A2++
+LW	T8,0174 (A0)
+//7F0BF118:
+ADDIU	A0,A0,01C0
+BNE	V1,T0,7F0BF0A8	;branch if stats not for current player?
+ADDU	A1,A1,T8	;tally of all kills/suicides
+//7F0BF124:	set the order of death when each player drops
+SLTI	AT,A1,0002	;TRUE if tally < 2	this is what sets the game to end after Twice
+BNEZ	AT,7F0BF19C	;check next character if tally < 2
+SLL	T7,T4,0x3	;T7=T4*0x70: offset to player T4's stats
+SUBU	T7,T7,T4
+LUI	T6,8008
+ADDIU	T6,T6,9EF0
+SLL	T7,T7,0x4
+ADDU	V1,T7,T6	;V1=stats
+LBU	T7,0068 (V1)	;T7=stats+68: order you lost in YOLX
+LUI	T8,8008
+ADDIU	T8,T8,9EE0
+SLL	T9,T4,0x2	;T9=offset to player T4's BONDdata pointer
+BNEZ	T7,7F0BF164	;branch if set
+ADDU	A0,T9,T8	;A0=p->BONDdata
+ADDIU	T6,A2,0001	;T6=A2+1
+SB	T6,0068 (V1)	;T6->loser register
+//7F0BF164:
+LW	V1,0000 (A0)	;V1=BONDdata
+ADDIU	T5,T5,0001
+LW	T9,0424 (V1)	;T9=dying register	1: dying (allow respawn)
+BEQL	T9,R0,7F0BF1A0	;branch still dying
+ADDIU	T4,T4,0001
+LW	T8,0428 (V1)	;T8=blacken	1: fading to black
+BEQL	T8,R0,7F0BF1A0	;branch still dying
+ADDIU	T4,T4,0001
+LWC1	F10,03E4 (V1)	;time to next respawn?  Animation?  Fade?
+C.LT.S	F10,F0		;branch when it isn't -1, which signals end
+NOP
+BC1FL	7F0BF1A0	;final confirmation, probably against some kind of timer
+ADDIU	T4,T4,0001
+ADDIU	RA,RA,0001	;RA++	confirmed player out
+ADDIU	T4,T4,0001
+//7F0BF1A0:	loop for each character
+SLT	AT,T4,T2	;branch if count < #players
+BNEL	AT,R0,7F0BEFFC	;loop for each character
+OR	A1,R0,R0
+//7F0BF1AC:	test if finally dead?
+ADDIU	V1,V0,FFFF	;V1=V0-1: #players-1
+SLT	AT,RA,V1	;TRUE if RA < #players-1
+BNEL	AT,R0,7F0BF1D0	;branch if not at end yet
+SLT	AT,T5,V1
+JAL	7F0C2530
+OR	A0,R0,R0	;A0=0: 
+BEQ	R0,R0,7F0BF1E0
+NOP
+//7F0BF1CC:	test if end of match
+SLT	AT,T5,V1	;TRUE #deceased < #players-1
+BNEZ	AT,7F0BF1E0	;branch if not at end yet
+NOP
+JAL	7F0C2520	;stop play
+NOP
+
+//7F0BF1E0:	test if game running, then deal with the final score screen
+LUI	V0,8005
+LUI	T7,8005
+LW	T7,8394 (T7)	;T7=MP cur time
+LW	V0,8374 (V0)	;V0=pause flag
+LUI	AT,4270
+MTC1	AT,F0		;F0=60
+ADDU	T6,T7,V0	;T6=cur time + 1 if unpaused (nextime)
+MTC1	T6,F16
+LUI	AT,8005
+SW	T6,8394 (AT)	;save nexttime to curtime
+CVT.SW	F18,F16		;F18=nexttime
+LUI	V1,8005
+LUI	AT,8005
+ADDIU	V1,V1,83A8	;V1=800483A8
+OR	A0,R0,R0	;A0=0
+ORI	A1,R0,FFFF	;A1=0000FFFF
+DIV.S	F4,F18,F0	;F4=time in seconds (instead of ms)
+SWC1	F4,83A4 (AT)	;save MP current time in sec
+LW	T9,0000 (V1)	;T9=cycle counter maybe?
+LUI	AT,8005
+ADDU	T7,T9,V0
+MTC1	T7,F6
+SW	T7,0000 (V1)
+CVT.SW	F8,F6
+DIV.S	F10,F8,F0
+JAL	7000C3AC	;test player 1's controller for any button
+SWC1	F10,83AC (AT)
+//7F0BF24C:
+
+
+
+=================================
+7000C3AC:	tests player A0's controller for button mask A1
+LUI	V1,8002
+LW	V1,68C4 (V1)	V1=800268C4=[80064F30]
+SW	A0,0000 (SP)
+SW	A1,0004 (SP)
+LW	T9,01F8 (V1)	T9=
+SLL	T6,A0,0x18
+SRA	T7,T6,0x18
+ANDI	T8,A1,FFFF
+OR	A1,T8,R0	A1=org limitted to 2 bytes
+BGEZ	T9,7000C410
+OR	A0,T7,R0	A0=org limited to 2 bytes
+LUI	T0,8002
+LBU	T0,68D0 (T0)	T0=800268D0=[0F]
+LUI	T4,8002
+ADDIU	T4,T4,6960	T4=80026960
+SRAV	T1,T0,T7
+ANDI	T2,T1,0001
+BNEZ	T2,7000C410
+SLL	T3,T7,0x2
+ADDU	V1,T3,T4
+LW	T5,0000 (V1)
+OR	V0,R0,R0
+ADDIU	T6,T5,0001
+JR	RA
+SW	T6,0000 (V1)
+//7000C410:
+SLL	T7,A0,0x1
+ADDU	T8,V1,0x1
+LHU	T9,01F0 (T8)
+AND	V0,T9,A1
+ANDI	T0,V0,FFFF
+OR	V0,T0,R0
+JR	RA
+NOP
+
+=================================
+7F0101D8:	set player aim settings
+LUI	T6,8003
+LW	T6,B53C (T6)	//T6=selected aim settings
+LUI	T8,8003
+ADDIU	T8,T8,B510	//T8=8002B510
+SLL	T7,T6,0x2	//setting->offset
+ADDU	V0,T7,T8	//V0=pointer to selected settings
+LBU	V1,0003 (V0)	//V1=autoaim [1:on]
+LUI	AT,8008
+SB	V1,9F5A (AT)	//set player 1 autoaim	80079F5A
+LBU	A0,0002 (V0)	//A0=sight [1:on]
+LUI	AT,8008
+SB	A0,9F5B (AT)	//set player 1 sight	80079F5B
+LUI	AT,8008
+SB	V1,9FCA (AT)	//set player 2 autoaim	80079FCA
+LUI	AT,8008
+SB	A0,9FCB (AT)	//set player 2 sight	80079FCB
+LUI	AT,8008
+SB	V1,A03A (AT)	//set player 3 autoaim	8007A03A
+LUI	AT,8008
+SB	A0,A03B (AT)	//set player 3 sight	8007A03B
+LUI	AT,8008
+SB	V1,A0AA (AT)	//set player 4 autoaim	8007A0AA
+LUI	AT,8008
+JR	RA
+SB	A0,A0AB (AT)	//set player 4 sight	8007A0AB
+
+---------------------------------
+7F010420:	recovers time from selected MP length setting
+	0x44F50-E	-J	-P
+LUI	T6,8003
+LW	T6,B538 (T6)	//T6=selected game length
+LUI	V0,8003
+SLL	T7,T6,0x2
+SUBU	T7,T7,T6
+SLL	T7,T7,0x2	//T7=length*0xC	(offset)
+ADDU	V0,V0,T7
+JR	RA
+LW	V0,AFF8 (V0)	//V0=8002AFF8+offset	selected time
+
+---------------------------------
+7F010444:	recovers kills from selected MP length setting
+	0x44F74-E	-J	-P
+LUI	T6,8003
+LW	T6,B538 (T6)	//T6=selected game length
+LUI	V0,8003
+SLL	T7,T6,0x2
+SUBU	T7,T7,T6
+SLL	T7,T7,0x2	//T7=length*0xC	(offset)
+ADDU	V0,V0,T7
+JR	RA
+LW	V0,AFFC (V0)	//V0=8002AFFC+offset	selected #kills
+
+---------------------------------
+7F0BFC28:	save MP time setting; A0->80048398, FRY AT
+	0xF4758-E	-J	-P
+LUI	AT,8005
+JR	RA
+SW	A0,8398 (AT)
+
+---------------------------------
+7F0BFC34:	save MP kills setting; A0->8004839C, FRY AT
+	0xF4764-E	-J	-P
+LUI	AT,8005
+JR	RA
+SW	A0,839C (AT)
+
+---------------------------------
+7F0C2520:
+ADDIU	T6,R0,0001	T6=1
+LUI	AT,8009
+JR	RA
+SW	T6,C700 (AT)	1->8008C700
+
+---------------------------------
+7F0C38D8:	returns V0=#points
+	ACCEPTS A0=player#
+SLL	T6,A0,0x3
+LUI	V1,8008
+SUBU	T6,T6,A0
+ADDIU	V1,V1,9EF0	V1=player stat offset
+SLL	T6,T6,0x4	T6=A0*0x70	(next player)
+ADDIU	SP,SP,FFC8
+ADDU	T3,V1,T6	T3=Player A0's stats
+LBU	A3,0069 (T3)	A3=flag/GG ownership byte
+SW	RA,0014 (SP)
+SW	T3,0018 (SP)
+SW	A0,0038 (SP)
+JAL	7F09A464	returns V0=#players
+SW	A3,0034 (SP)
+SW	R0,0024 (SP)
+JAL	7F014758	V0=scenario
+SW	V0,0030 (SP)
+LUI	V1,8008
+SLTIU	AT,V0,0008	TRUE if scenario < 8
+ADDIU	V1,V1,9EF0	V1=80079EF0=player stat offset
+LW	A0,0024 (SP)	A0=0
+LW	A1,0038 (SP)	A1=player#
+LW	A3,0034 (SP)	A3=flag/GG ownership
+LW	T2,0030 (SP)	T2=# players
+BEQ	AT,R0,7F0C3C80
+LW	T3,0018 (SP)	T3=player stats
+SLL	T7,V0,0x2
+LUI	AT,8006
+ADDU	AT,AT,T7
+LW	T7,BCA0 (AT)	T7=8005BCA0+offset	specific routine for scenario
+JR	T7
+NOP
+...	7F0C3954:	Normal, Licence to Kill, Man with the Golden Gun
+BLEZ	T2,7F0C3AF8	skip if invalid # players
+OR	T1,R0,R0	T1=0 (testchar)
+ANDI	T0,T2,0003	
+BEQ	T0,R0,7F0C39C0
+OR	V0,T0,R0
+//7F0C3968:	tally point total (player kills only)
+BEQ	T1,A1,7F0C3994	if matches player#, branch	suicide count
+SLL	T8,T1,0x3	T8=8*testchar
+SLL	T8,A1,0x3	T8=8*player#
+SUBU	T8,T8,A1
+SLL	T8,T8,0x4	T8=player# * 0x70
+ADDU	T9,V1,T8	T9=offset to playerstats
+SLL	T5,T1,0x2	T5=offset to testchar's death total
+ADDU	T6,T9,T5
+LW	T7,0024 (T6)	T7=player kill register
+BEQ	R0,R0,7F0C39B0
+ADDU	A0,A0,T7	A0+=playerkill	keeps a running tally
+//7F0C3994:	suicide...
+SUBU	T8,T8,T1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8	offset to playerstats
+ADDU	T6,T9,T5
+LW	T7,0024 (T6)	T7=player kill register
+SUBU	A0,A0,T7	A-=playerkill	keeps a running tally
+//7F0C39B0:
+ADDIU	T1,T1,0001	next testchar
+BNE	V0,T1,7F0C3968	loop until A0=full player score
+NOP
+BEQ	T1,T2,7F0C3AF8
+//7F0C39C0:
+ADDIU	V0,A1,FFFF	V0=player#-1
+ADDIU	A2,A1,FFFE	A2=player#-2
+ADDIU	A3,A1,FFFD	A3=player#-3
+//7F0C39CC:
+BEQ	T1,A1,7F0C39F8
+SLL	T8,T1,0x3
+SLL	T8,A1,0x3
+SUBU	T8,T8,A1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8	T9=offset to playerstats
+SLL	T5,T1,0x2
+ADDU	T6,T9,T5
+LW	T7,0024 (T6)	T7=
+BEQ	R0,R0,7F0C3A14
+ADDU	A0,A0,T7
+//7F0C39F8:	suicide counts...
+SUBU	T8,T8,T1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8
+SLL	T5,A1,0x2
+ADDU	T6,T9,T5
+LW	T7,0024 (T6)
+SUBU	A0,A0,T7
+//7F0C3A14:
+BEQ	T1,V0,7F0C3A40
+SLL	T8,T1,0x3
+SLL	T8,A1,0X3
+SUBU	T8,T8,A1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8	T9=playerstats
+SLL	T5,T1,0x2
+ADDU	T6,T9,T5
+LW	T7,0028 (T6)	P2 kills...
+BEQ	R0,R0,7F0C3A5C
+ADDU	A0,A0,T7
+//7F0C3A40:
+SUBU	T8,T8,T1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8	T9=playerstats
+SLL	T5,A1,0x2
+ADDU	T6,T9,T5
+LW	T7,0094 (T6)	uh, next player's kill totals...
+SUBU	A0,A0,T7
+//7F0C3A5C:
+BEQ	T1,A2,7F0C3A88
+SLL	T8,T1,0x3
+SLL	T8,A1,0x3
+SUBU	T8,T8,A1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8
+SLL	T5,T1,0x2
+ADDU	T6,T9,T5
+LW	T7,002C (T6)	P3's kills...
+BEQ	R0,R0,7F0C3AA4
+ADDU	A0,A0,T7
+//7F0C3A88:
+SUBU	T8,T8,T1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8
+SLL	T5,A1,0x2
+ADDU	T6,T9,T5
+LW	T7,0104 (T6)	third player's kill totals...
+SUBU	A0,A0,T7
+//7F0C3AA4:
+BEQ	T1,A3,7F0C3AD0
+SLL	T8,T1,0x3
+SLL	T8,A1,0x3
+SUBU	T8,T8,A1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8
+SLL	T5,T1,0x2
+ADDU	T6,T9,T5
+LW	T7,0030 (T6)	P4 kills
+BEQ	R0,R0,7F0C3AEC
+ADDU	A0,A0,T7
+//7F0C3AD0:
+SUBU	T8,T8,T1
+SLL	T8,T8,0x4
+ADDU	T9,V1,T8
+SLL	T5,A1,0x2
+ADDU	T6,T9,T5
+LW	T7,0174 (T6)	fourth player's kills...
+SUBU	A0,A0,T7
+ADDIU	T1,T1,0004
+BNE	T1,T2,7F0C39CC
+NOP
+//7F0C3AF8:
+LW	T8,0020 (T3)	T8=0x20 in player stats...
+ADDIU	T9,T2,FFFE	T9=#players-2
+MULTU	T8,T9
+MFLO	T5
+ADDU	A0,A0,T5
+BEQ	R0,R0,7F0C3C84
+LW	RA,0014 (SP)
+
+...	7F0C3B14:	You Only Live Twice
+LBU	T6,0068 (T3)	T6=death counter
+ADDIU	T7,R0,0004	T7=4
+BEQ	R0,R0,7F0C3C80
+SUBU	A0,T7,T6	A0=4-death counter
+	
+...	7F0C3B24:	The Living Daylights
+BEQ	R0,R0,7F0C3C80
+LW	A0,0060 (T3)	A0=flag timer counter
+
+...	7F0C3B2C:	Teams
+BLEZ	T2,7F0C3C80	Should be valid # players
+OR	T1,R0,R0	T1=0
+LUI	T4,8008
+ADDIU	T4,T4,9EF0	T4=80079EF0=player stat offset
+//7F0C3B3C:
+LBU	T8,0069 (T4)	T8=Flag/GG ownership//Team flag
+BNEL	A3,T8,7F0C3C78	if flag doesn't match player flag, next!
+ADDIU	T1,T1,0001
+BLEZ	T2,7F0C3C74	loop until out of players
+OR	A1,R0,R0	A1=0
+SLL	T9,T1,0x3
+SUBU	T9,T9,T1
+LUI	T5,8008
+ADDIU	T5,T5,9EF0	T5=80079EF0
+SLL	T9,T9,0x4	T9=matching player # * 0x70
+ANDI	T0,T2,0003
+BEQ	T0,R0,7F0C3BC0
+ADDU	T3,T9,T5
+SLL	T7,R0,0x3
+SUBU	T7,T7,R0
+SLL	T7,T7,0x4
+SLL	T6,R0,0x2
+ADDU	V0,T3,T6
+ADDU	V1,T7,T5
+OR	A2,T0,R0
+//7F0C3B8C:
+LBU	T8,0069 (V1)
+ADDIU	A1,A1,0001
+ADDIU	V1,V1,0070
+BEQL	A3,T8,7F0C3BB0
+LW	T7,0024 (V0)
+LW	T9,0024 (V0)
+BEQ	R0,R0,7F0C3BB4
+ADDU	A0,A0,T9
+//7F0C3BAC:
+LW	T7,0024 (V0)
+//7F0C3BB0:
+SUBU	A0,A0,T7
+//7F0C3BB4:
+BNE	A2,A1,7F0C3B8C
+ADDIU	V0,V0,0004
+BEQ	A1,T2,7F0C3C74
+//7F0C3BC0:
+SLL	T5,A1,0x3
+SUBU	T5,T5,A1
+LUI	T6,8008
+ADDIU	T6,T6,9EF0
+SLL	T5,T5,0x4
+SLL	A2,A1,0x2
+ADDU	V0,T3,A2
+ADDU	V1,T5,T6
+SLL	T0,T2,0x2
+//7F0C3BE4:
+LBU	T8,0069 (V1)
+ADDIU	A2,A2,0010
+BEQL	A3,T8,7F0C3C04
+LW	T7,0024 (V0)
+LW	T9,0024 (V0)
+BEQ	R0,R0,7F0C3C08
+ADDU	A0,A0,T9
+//7F0C3C00:
+LW	T7,0024 (V0)
+//7F0C3C04:
+SUBU	A0,A0,T7
+//7F0C3C08:
+LBU	T5,00D9 (V1)
+BEQL	A3,T5,7F0C3C24
+LW	T8,0028 (V0)
+LW	T6,0028 (V0)
+BEQ	R0,R0,7F0C3C28
+ADDU	A0,A0,T6
+//7F0C3C20:
+LW	T8,0028 (V0)
+//7F0C3C24:
+SUBU	A0,A0,T8
+//7F0C3C28:
+LBU	T9,0149 (V1)
+BEQL	A3,T9,7F0C3C44
+LW	T5,002C (V0)
+LW	T7,002C (V0)
+BEQ	R0,R0,7F0C3C48
+ADDU	A0,A0,T7
+//7F0C3C40:
+LW	T5,002C (V0)
+//7F0C3C44:
+SUBU	A0,A0,T5
+//7F0C3C48:
+LBU	T6,01B9 (V1)
+ADDIU	V1,V1,01C0
+BEQL	A3,T6,7F0C3C68
+LW	T9,0030 (V0)
+LW	T8,0030 (V0)
+BEQ	R0,R0,7F0C3C6C
+ADDU	A0,A0,T8
+//7F0C3C64:
+LW	T9,0030 (V0)
+//7F0C3C68:
+SUBU	A0,A0,T9
+//7F0C3C6C:
+BNE	A2,T0,7F0C3BE4
+ADDIU	V0,V0,0010
+//7F0C3C74:
+ADDIU	T1,T1,0001
+BNE	T1,T2,7F0C3B3C
+ADDIU	T4,T4,0070
+//7F0C3C80:	return...
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0038
+OR	V0,A0,R0	V0=A0=score data
+JR	RA
+NOP
+
+========================================
+========================================
+
+Flag possession tests
+
+basically, anything that calls this bugger:
+
+-7F08CF80:	test if possess flag
+LUI	T6,8008
+LW	T6,A0B0 (T6)	//T6=cur.player data
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LW	T7,00D8 (T6)	//T7=player death attrib
+OR	V0,R0,R0
+BNEZ	T7,7F08CFB0	//skip if player dead or dying
+NOP
+JAL	7F08C314	//returns V0=1 if flag posessed
+ADDIU	A0,R0,0058
+BEQ	R0,R0,7F08CFB4
+LW	RA,0014 (SP)
+//7F08CFB0:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+----------------------
+
+part of larger routine...
+//7F083DAC:
+ADDIU	T2,R0,0001
+JAL	7F09A464	;V0=#players
+SW	T2,0074 (SP)
+SLTIU	AT,V0,0002
+BNEL	AT,R0,7F083DF0
+LW	T3,0074 (SP)
+JAL	7F014758	;V0=scenario
+NOP
+ADDIU	AT,R0,0002
+BNEL	V0,AT,7F083DF0	;skip if not flag tag
+LW	T3,0074 (SP)
+//7F083DD8:	kill inventory if flag possessed
+JAL	7F08CF80	;return V0=1 if holding flag
+NOP
+BEQL	V0,R0,7F083DF0
+LW	T3,0074 (SP)
+SW	R0,0074 (SP)	;trash SP+0x74 if flag held (disable inventory)
+LW	T3,0074 (SP)	;T3=1
+//7F083DF0:
+BEQL	T3,R0,7F083E24	
+LW	T8,01BC (SP)
+LW	T5,0174 (SP)
+BEQL	T5,R0,7F083E10
+LW	T4,0170 (SP)
+JAL	7F05D768
+NOP
+LW	T4,0170 (SP)
+//7F083E10:
+BEQL	T4,R0,7F083E24
+LW	T8,01BC (SP)
+JAL	7F05D6D0
+NOP
+LW	T8,01BC (SP)
+//7F083E24:
+BEQL	T8,R0,7F083E3C
+LW	T7,01B8 (SP)
+LW	T6,0000 (S0)
+BEQ	R0,R0,7F083E50
+SW	R0,0430 (T6)
+//7F083E3C:
+BEQL	T7,R0,7F083E54
+LW	T3,0000 (S0)
+LW	T2,0000 (S0)
+ADDIU	T9,R0,0002
+SW	T9,0430 (T2)
+//7F083E50:
+LW	T3,0000 (S0)
+LW	V0,0430 (T3)
+BNEL	V0,R0,7F083F64
+ADDIU	AT,R0,0002
+JAL	7F067AA4
+OR	A0,R0,R0
+...ETC...
+
+
+ANOTHER ROUTINE
+//7F0BFA30:	this is used to force the flag out when owned
+	0xF4560-E
+0FC051D6	JAL	7F014758	V0=scenario
+E4460038	SWC1	F6,0038 (V0)
+24010002	ADDIU	AT,R0,0002
+14410024	BNE	V0,AT,7F0BFAD0	skip if not flag tag
+00000000	NOP
+0FC233E0	JAL	7F08CF80	V0=1 if flag held
+00000000	NOP
+1040001C	BEQ	V0,R0,7F0BFAC0	skip if flag not held
+00000000	NOP
+0FC17674	JAL	7F05D9D0	V0=weapon# in use
+00002025	OR	A0,R0,R0	check right gun (A0=0)
+24010058	ADDIU	AT,R0,0058
+1041000B	BEQ	V0,AT,7F0BFA90	if flag already set get to scoring
+00002025	OR	A0,R0,R0	draw right weapon (A0=0)
+0FC17645	JAL	7F05D914	1st person draw weapon
+24050058	ADDIU	A1,R0,0058	draw flag (A1=58)
+3C028008	LUI	V0,8008
+8C42A0B0	LW	V0,A0B0 (V0)	V0=current player data
+24010002	ADDIU	AT,R0,0002	AT=2
+24090005	ADDIU	T1,R0,0005	T1=5
+8C480894	LW	T0,0894 (V0)	FIDDLE with the weapon state flag
+15010002	BNE	T0,AT,7F0BFA90	if playerdata+0x894==2, set to 5
+00000000	NOP
+AC490894	SW	T1,0894 (V0)	set playerdata+0x894 to 5
+//7F0BFA90:	advance flag time and set flag ownership
+3C038008	LUI	V1,8008
+2463A0B4	ADDIU	V1,V1,A0B4
+8C620000	LW	V0,0000 (V1)	V0=current player stat pointer
+3C0B8005	LUI	T3,8005
+8D6B8374	LW	T3,8374 (T3)	T3=1 if not paused (used to advance flag time)
+8C4A0060	LW	T2,0060 (V0)	T2=flag held time
+240D0001	ADDIU	T5,R0,0001
+014B6021	ADDU	T4,T2,T3
+AC4C0060	SW	T4,0060 (V0)	advance flag held time one more millisecond
+8C6E0000	LW	T6,0000 (V1)	T6=current player stat pointer
+10000015	BEQ	R0,R0,7F0BFB10
+A1CD0069	SB	T5,0069 (T6)	1->flag byte
+//7F0BFAC0:	flag not held...
+3C0F8008	LUI	T7,8008
+8DEFA0B4	LW	T7,A0B4 (T7)	T7=current player stat pointer
+10000011	BEQ	R0,R0,7F0BFB10
+A1E00069	SB	R0,0069 (T7)	blank the flag byte
+//7F0BFAD0:
+0FC051D6	JAL	7F014758
+00000000	NOP
+
+
+also..
+//7F050A94:	855C4	disable BA collection
+ADDIU	AT,R0,0002
+BNE	V0,AT,7F050ABC	branch if not flag tag
+OR	V1,V0,R0
+JAL	7F08CF80	V0=1 if flag held
+SW	V0,0059 (SP)
+BEQ	V0,R0,7F050ABC
+LW	V1,0058 (SP)
+ADDIU	T1,R0,0001
+BEQ	R0,R0,7F050ADC
+SW	T1,005C (SP)
+//7F050ABC:
+ADDIU	AT,R0,0003
+BNEL	V1,AT,7F050AE0	branch if not MwtGG
+LW	T3,005C (SP)
+JAL	7F08CFC0	V0=1 if GG held
+NOP
+BEQ	V0,R0,7F050ADC
+ADDIU	T2,R0,0001
+SW	T2,005C (SP)
+//7F050ADC:
+LW	T3,005C (SP)
+BEQ	T3,R0,7F050AF0	other scenarios...
+NOP
+BEQ	R0,R0,7F050D20	if either are held, end the routine...
+OR	V0,R0,R0
+
+
+7F0503F0:	test if remote mines
+ADDIU	AT,R0,001D
+LB	A0,0080 (T5)
+BNEL	A0,AT,7F050414
+ADDIU	AT,R0,0058
+//7F000400:	add detonator too!
+JAL	7F08C488
+ADDIU	A0,R0,001E
+BEQ	R0,R0,7F050428
+LW	T6,006C (SP)
+//7F050410:	Test if collected item is the flag.  If so, place in hand
+ADDIU	AT,R0,0058	//this command is missed when jump used (7F0503F8)
+BNE	A0,AT,7F050424	[beq r0,r0 etc	10000003 disables flag draw thingy]
+ADDIU	A1,R0,0058
+JAL	7F05D914
+OR	A0,R0,R0
+//7F050424:	I think this is the left-hand weapon test
+LW	T6,006C (SP)
+LW	T9,0048 (SP)	//T9=object data pointer
+LW	T7,0064 (T6)	//This should be the runtime bitflag field being tested for 00000400
+ANDI	T8,T7,0400
+BEQ	T8,R0,7F0504A4
+NOP
+LB	T0,0080 (T9)
+SLTI	AT,T0,0021
+
+
+
+
+read amount of ammo for weapon A0 current player has
+7F069450:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F05C8B4	V0=address of weapon A0's data
+NOP
+LW	T7,001C (V0)	T7=ammo type
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+LW	RA,0014 (SP)
+SLL	T8,T7,0x2	T8=ammo type->offset
+ADDU	T9,T6,T8
+LW	V0,1130 (T9)	V0=amount of ammo owned by current player
+JR	RA
+ADDIU	SP,SP,0018

@@ -1,0 +1,156 @@
+7F014758:	return V0=scenario
+LUI	V0,8003
+JR	RA
+LW	V0,B540
+
+
+
+//7F0BDCC8:	Test LTK
+LUI	S1,8008
+ADDIU	S1,S1,9EF0	//S1=80079EF0=player statistics
+//7F0BDCD0:	Loopus
+JAL	7F014758	//returns V0=scenario
+NOP
+BNE	V0,S3,7F0BDCE8	//if scenario=4, set a funny float value
+NOP
+BEQ	R0,R0,7F0BDCF4
+SWC1	F20,005C (S1)	//200.->mystery float value in stats
+//7F0BDCE8:	when not LTK, get the normal multiplier
+JAL	7F0103AC
+OR	A0,S0,R0	//A0=player#
+SWC1	F0,005C (S1)
+//7F0BDCF4:
+JAL	7F0103D0
+OR	A0,S0,R0	//A0=player#
+ADDIU	S0,S0,0001	//S0++=next player
+ADDIU	S1,S1,0070	//S1=offset to next player's stats
+BNE	S0,S3,7F0BDCD0	//no more than four players!
+SWC1	F0,FFF4 (S1)	//F0->player perspective stat
+//7F0BDD0C:
+
+
+-7F0103AC:	
+SLL	T6,A0,0x2	//T6=player# to offset
+LUI	T7,8007
+ADDU	T7,T7,T6
+LW	T7,97A8 (T7)	//T7=800697A8+=player handicap
+LUI	AT,8003
+SLL	T8,T7,0x3	//T8=8*handicap value
+ADDU	AT,AT,T8	//to offset
+JR	RA
+LWC1	F0,B49C (AT)	//F0=8002B49C (handicap)
+
+
+================================================
+PART OF PLAYER DEATH ATTRIBUTEMENT:
+7F089CE0:
+JAL	7F09A464	//returns # players
+NOP
+SLTI	AT,V0,0002	//TRUE if not MP
+BNEZ	AT,7F089DC8
+NOP
+JAL	7F09B150	//v0=8007A0B8=victim
+NOP
+SW	V0,002C (SP)	//save victim #
+7F089D00:
+JAL	7F014758	//returns V0=scenario
+SW	R0,0028 (SP)	//0->0x28 (not GG)
+ADDIU	AT,R0,0003
+BNEL	V0,AT,7F089D2C	//branch if not "Man with the Golden Gun"
+LW	T0,002C (SP)	//T0=victim
+JAL	7F08CFC0	//returns V0=1 if have Golden Gun
+NOP
+BEQ	V0,R0,7F089D28
+ADDIU	T9,R0,0001
+SW	T9,0028 (SP)	//1->0x28 (GG!)
+LW	T0,002C (SP)	//T0=victim
+//7F089D2C:	attribute the score
+LW	T1,004C (SP)	//T1=player to attribute score
+BEQ	T0,T1,7F089D48	//branch if suicide!
+NOP
+JAL	7F05677C
+NOP
+JAL	7F06A95C
+NOP
+//7F089D48:
+JAL	7F09B10C
+LW	A0,004C (SP)
+ETC...
+//7F089DC8:	joint solo/multi score attributement
+
+================================================
+these are routines used to detect flag and golden gun
+hack the GG one to pull weapon 8 in set, and BAM!  you've got MwtGX
+
+-7F08CF80:	test if possess flag
+7F08CF80:	test if possess flag
+3C0E8008	LUI	T6,8008
+8DCEA0B0	LW	T6,A0B0 (T6)	//T6=cur.player data
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+8DCF00D8	LW	T7,00D8 (T6)	//T7=player death attrib
+00001025	OR	V0,R0,R0
+15E00005	BNEZ	T7,7F08CFB0	//skip if player dead or dying
+00000000	NOP
+0FC230C5	JAL	7F08C314	//returns V0=1 if flag posessed
+24040058	ADDIU	A0,R0,0058
+10000002	BEQ	R0,R0,7F08CFB4
+8FBF0014	LW	RA,0014 (SP)
+//7F08CFB0:
+8FBF0014	LW	RA,0014 (SP)
+27BD0018	ADDIU	SP,SP,0018
+03E00008	JR	RA
+00000000	NOP
+
+-7F08CFC0:	test if possess golden gun
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+0FC230C5	JAL	7F08C314
+24040013	ADDIU	A0,R0,0013	//A0=13	test if Golden Gun
+8FBF0014	LW	RA,0014 (SP)
+27BD0018	ADDIU	SP,SP,0018
+03E00008	JR	RA
+00000000	NOP
+[hack: pull A0=MP weapon F7]
+
+
+-7F08C314:	returns V0=1 if item=A0 is in inventory
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F08C2BC	//returns V0=entry in inventory or NULL
+NOP
+LW	RA,0014 (SP)
+SLTU	T6,R0,V0	//80 addresses have sign bit set!  TRUE if not NULL
+OR	V0,T6,R0
+JR	RA
+ADDIU	SP,SP,0018
+
+-7F08C2BC:	searches inventory for weapon type set to A0
+		returns V0=pointer to entry or NULL
+note:	7F08CFE0 does same for 0x0 entry=2
+
+LUI	T6,8008
+LW	T6,A0B0 (T6)	//T6=8007A0B0	cur.player data pointer
+ADDIU	A1,R0,0001
+LW	V0,11E0 (T6)	//V0=Pointer to player inventory
+BEQ	V0,R0,7F08C308	//branch if NULL
+OR	V1,V0,R0	//V1=cur entry, V0=1st entry
+LW	T7,0000 (V1)	//T7=hand?  usually 1
+//7F08C2D8:
+BNEL	A1,T7,7F08C2F8	//next entry
+LW	V1,000C (V1)	//V1=pointer to next entry
+LW	T8,0004 (V1)	//T8=item type
+BNEL	A0,T8,7F08C2F8	//if not equal to tested weapon, next!
+LW	V1,000C (V1)
+JR	RA
+OR	V0,V1,R0	//V0=pointer to matching inventory line
+...
+//7F08C2F8:
+BEQL	V1,V0,7F08C30C	//test for end of list
+OR	V0,R0,R0
+BNEL	V1,R0,7F08C2D8	//do next if not NULL
+LW	T7,0000 (V1)
+//7F08C308:
+OR	V0,R0,R0
+JR	RA
+NOP

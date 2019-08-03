@@ -1,0 +1,286 @@
+55370	move view
+5537C	stan view
+55388	bond view
+55394	level
+5539C	region
+553A4	scale
+553AC	play title
+553B8	bond die
+
+553C0	select anim
+553D0	gun pos
+553D8	flash colour
+553E8	hit colour
+553F4	music
+553FC	sfx
+55400	invincible
+5540C	visible
+55414	collisions
+55420	all guns
+5542C	max ammo
+
+55438	display speed
+55448	background
+55454	props
+5545C	stan hit
+55468	stan region
+55474	stan problems
+55484	print man pos
+55494	port close
+554A0	port inf
+554AC	port approx
+554B8	pr room loads
+554C8	show mem use
+554D8	show mem bars
+554E8	grab rbg
+554F4	grab jpeg
+55500	grab task
+
+5550C	rnd walk
+55518	record ramrom
+55528	record 1
+55534	record 2
+55540	record 3
+5554C	replay ramrom
+5555C	save ramrom
+55568	load ramrom
+55574	auto y aim
+55580	auto x aim
+55588	007
+55590	agent
+55598	all
+5559C	fast
+
+	objectives
+	marg top
+	marg bot
+	marg left
+	marg right
+	marg reset
+	screen size
+	screen pos
+	show patrols
+	intro
+	intro edit
+	intro pos
+	world pos
+	gun key pos
+	vis cvg
+	chr num
+	room blocks
+	profile
+	obj load
+	weapon load
+	joy 2 sky edit
+	joy2 hits edit
+	joy2 detail edit
+	explosion info
+	magic fog
+	gun watch pos
+	testing man pos
+	fog
+
+------------
+58C48	PORT and ROOM displays
+54FC0	pos xyz and rotation display
+
+
+(starts at 7F08AAE8)
+-7F08ADC0:	//display room#
+LUI	A1,8005
+ADDIU	A1,A1,4FC0
+ADDIU	A0,SP,00C4
+JAL	7000AC94
+OR	A2,V0,R0
+-7008ADD4:	//display x pos
+LUI	T0,8008
+LW	T0,A0B0 (T0)	//T0= handle to BONDdata
+LUI	A1,8005
+ADDIU	A1,A1,4FC4	//A1= handle to display string
+LWC1	F18,048C (T0)	//F18= BOND xpos
+ADDIU	A0,SP,00B4
+CVT.D.S	F4,F18
+MFC1	A3,F4
+MFC1	A2,F5
+JAL	7000AC94
+NOP
+-7008AE00:	//display y pos
+LUI	T1,8008
+LW	T1,A0B0 (T1)	//T1= handle to BONDdata
+LUI	A1,8005
+ADDIU	A1,A1,4FC4	//A1= handle to display string
+LWC1	F6,0490 (T1)	//F6= BOND ypos
+ADDIU	A0,SP,00A4
+CVT.D.S	F8,F6
+MFC1	A3,F8
+MFC1	A2,F9
+JAL	7000AC94
+NOP
+-7008AE2C:	//display z pos
+LUI	T2,8008
+LW	T2,A0B0 (T2)	//T2= handle to BONDdata
+LUI	A1,8005
+ADDIU	A1,A1,4FC4	//A1= handle to display string
+LWC1	F10,0494 (T2)	//F10= BOND zpos
+ADDIU	A0,SP,0094
+CVT.D.S	F16,F10
+MFC1	A3,F16
+MFC1	A2,F17
+JAL	7000AC94
+NOP
+-7008AE58:	//display rotation
+LW	A3,0068 (SP)
+ADDIU	AT,R0,002D
+LUI	A1,8005
+ADDIU	T6,A3,0016
+DIV	T6,AT
+MFLO	T5
+SLL	T3,T5,0x2
+SUBU	T3,T3,T5
+ADDIU	T4,SP,004C
+ADDU	A2,T3,T4
+ADDIU	A1,A1,4FDC
+JAL	7000AC94
+ADDIU	A0,SP,0084
+-7008AE8C:	//and now...
+JAL	70004514	//returns V0=800232C8= 0000
+NOP
+ADDIU	T7,V0,0011	//T7= 11
+JAL	70004524	//returns V0=800232CA= 0001
+SW	T7,0080 (SP)
+ADDIU	A2,V0,0011
+ADDIU	T8,A2,000A
+SW
+SW
+
+
+
+-7000AC94:	C-parser
+ADDIU	SP,SP,FFE0
+SW	A0,0020 (SP)
+SW	RA,0014 (SP)
+SW	A1,0024 (SP)
+SW	A2,0028 (SP)
+SW	A3,002C (SP)
+LUI	A0,7001
+ADDIU	A0,A0,AC70
+ADDIU	A3,SP,0028
+LW	A2,0024 (SP)
+JAL	70013F60
+LW	A1,0020 (SP)
+-7000ACC4:
+BLTZ	V0,7000ACD8	//V0= #characters in display string
+OR	V1,V0,R0	//V1= V0
+LW	T6,0020 (SP)
+ADDU	T7,T6,V0	//T7= end of string buffer
+SB	R0,0000 (T7)	//write EOL
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+ADDIU	V0,V1,FFFF
+JR	RA
+NOP
+
+
+70013F60:	display text to screen
+ADDIU	SP,SP,FF20
+SW	S7,0034 (SP)
+SW	S6,0030 (SP)
+SW	S5,002C (SP)
+SW	S8,0038 (SP)
+SW	S4,0028 (SP)
+SW	S3,0024 (SP)
+SW	A3,00EC (SP)
+LUI	S5,8002
+LUI	S6,8003
+LUI	S7,8002
+OR	A3,A2,R0
+OR	S3,A1,R0
+OR	S4,A0,R0
+SW	RA,003C (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+SW	S0,0018 (SP)
+SW	A2,00E8 (SP)
+SW	R0,00D4 (SP)
+ADDIU	S7,S7,7740	//S7= 80027740	32 " "'s
+ADDIU	S6,S6,96F4	//S6= 800296F4	" +-#0"
+ADDIU	S5,S5,7764	//S5= 80027764	32 "30"'s
+ADDIU	S8,R0,000A
+-70013FC0:
+LBU	S0,0000 (A3)	//A3=pointer to display string
+ADDIU	S2,A3,0001
+ADDIU	V1,R0,0025
+BLEZ	S0,70013FF4
+OR	A0,S3,R0
+-70013FD4:
+BNEL	V1,S0,70013FE8	//display %- printf() type stuff
+	LBU	S0,0000 (S2)
+BEQ	R0,R0,70013FF4
+ADDIU	S2,S2,FFFF
+-70013FE4:
+LBU	S0,0000 (S2)
+-70013FE8:
+ADDIU	S2,S2,0001
+BGTZ	S0,70013FD4
+NOP
+-70013FF4:
+SUBU	V0,S2,A3
+BLEZ	V0,7001402C
+OR	A1,A3,R0
+OR	S1,V0,R0
+JALR	RA,S4	//jal to 7000AC70
+OR	A2,V0,R0
+BEQ	V0,R0,70014024
+OR	S3,V0,R0
+LW	T6,00D4 (SP)
+ADDU	T7,T6,S1
+BEQ	R0,R0,7001402C
+SW	T7,00D4 (SP)
+-70014024:
+BEQ	R0,R0,70014574
+LW	V0,00D4 (SP)
+-7001402C:
+BNEZ	S0,7001403C
+ADDIU	S2,S2,0001
+BEQ	R0,R0,70014574
+LW	V0,00D4 (SP)
+-7001403C:
+SW	R0,00D8 (SP)
+LBU	A1,0000 (S2)
+JAL	700138A4
+OR	A0,S6,R0
+BEQ	V0,R0,7001408C
+OR	S0,V0,R0
+SUBU	T9,S0,S6
+SLL	T6,T9,0x2
+LUI	T7,8003
+ADDU	T7,T7,T6
+LW	T7,96FC (T7)
+LW	T8,00D8 (SP)
+ADDIU	S2,S2,0001
+OR	A0,S6,R0
+OR	T9,T8,T7
+SW	T9,00D8 (SP)
+JAL	700138A4
+LBU	A1,0000 (S2)
+BNEZ	V0,70014054
+OR	S0,V0,R0
+LBU	T6,0000 (S2)
+ADDIU	V0,R0,002A
+LW	T8,00EC (SP)
+BNE	V0,T6,700140E0
+LUI	A0,8003
+
+70014574:	RETURN
+LW	RA,003C (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S3,0024 (SP)
+LW	S4,0028 (SP)
+LW	S5,002C (SP)
+LW	S6,0030 (SP)
+LW	S7,0034 (SP)
+LW	S8,0038 (SP)
+JR	RA
+ADDIU	SP,SP,00E0

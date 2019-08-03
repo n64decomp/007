@@ -1,0 +1,70 @@
+need one more image mention...
+0xC	00150000	05000054	00000000	00000000	00000000	05000024
+0x24	000A0000	05000068	0500000C	00000000	00000000	0500003C
+0x3C	00040000	05000528	05000024	00000000	00000000	00000000
+
+15 position:	[0xC]
+0x54	3FB2DA12	430FA786	42002C60	00000000	431463E9
+	1.397280	143.654388	32.043335	00000000	148.390274
+
+0A bounds:	[0x24]
+0x68	0000006E
+	C2C60000	42CE0000	-99	103
+	C26C0000	42860000	-59	67
+	C2FA0000	42FC0000	-125	126
+
+{point table @ 0x88}
+
+04 display list:	[0x3C]
+0x528	05000540	00000000	0000 0000	05000088	004A 0400	00000000
+	primary display list @ 0x540
+	no secondary display lists
+	point table @ 0x88; 0x4A (74) entries
+	index 04
+
+
+{display list @ 0x540}
+E7000000	00000000	rdp_pipesync
+BA001001	00010000	rsp_setothermode_h	texture level-of-detail: 8bit lod
+BB001801	FFFFFFFF	rsp_texture	mipmap level 3; use s/t from point table
+C0580002	00000796	expand/apply texture 796...
+BA001102	00000000	rsp_setothermode_h	texture detail: 16bit clamp
+BA000C02	00002000	rsp_setothermode_h	texture filter: 16bit bilerp
+B6000000	00003000	rsp_cleargeometrymode	clear CULL_BACK, CULL_FRONT
+01020040	03000000	rsp_matrix	modelview load nopush; segment 3
+04F00100	05000088	rsp_vertex	15; 0x100 copied f/ 0x88
+B1997632	56541210	rsp_tri4
+B100FEBA	DEDC9A98	rsp_tri4
+04F00100	05000188	rsp_vertex	15; 0x100 copied f/ 0x188
+B1005632	74541210	rsp_tri4
+B100FCB5	EDABA987	rsp_tri4
+04E000F0	05000288	rsp_vertex	14; 0xF0 copied f/ 0x288
+B1009652	87454310	rsp_tri4
+B1000EDA	00CDCB89	rsp_tri4
+04E000F0	05000378	rsp_vertex	14; 0xF0 copied f/ 0x378
+B1009632	87542010	rsp_tri4
+B1000CD9	00EBCBA8	rsp_tri4
+04B000C0	05000468	rsp_vertex	11; 0xC0 copied f/ 0x468
+B1007622	64543110	rsp_tri4
+B100008A	0000BA98	rsp_tri4
+B8000000	00000000	rsp_enddl
+
+
++++++++++++++++++++++++++++++++++++++++++
+
+mask of time
+position (maybe...)
+3FB2DA12	430FA786	42002C60	00000000	431463E9
+
+bounds
+0000006E
+44094000	4495C000	0225	04AE
+C495E000	439B0000	FB51	0136
+C4398000	44398000	FD1A	02E6
+
+
++_+
+
+Evil!  
+  Embedded images break when shot.  No default is set for impact, and lookup will fail in main list.  Must create a workaround.  Should always use a default!
+

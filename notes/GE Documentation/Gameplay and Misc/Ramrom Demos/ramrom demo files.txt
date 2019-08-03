@@ -1,0 +1,462 @@
+0x0	double: seed for random value	-> 80024460
+0x8	double: randomizer			-> 80040160
+0x10	stage number
+0x14	difficulty
+0x18	size of commands in words (# controllers)
+0x1C - 0x7C eeprom save file.  The whole block is copied to 80069B00.
+0x7C	total time in ms	used in 7F0C0364	-3C, then compare to event ms timer.
+0x80	size of entire file
+0x84	stored to 8002A8F0	Mode: 0-solo, 1-multi, 2-cheats.  7F00D558 sets return after stage
+0x88	read by intro block	record slot #, usually 0-3 (set#)
+
+0x8C	stored to 8002B520	# players
+0x90	stored to 8002B540	scenario
+0x94	stored to 8002B534	MP stage selected (0-B: Random <-> Egypt)
+0x98	stored to 8002B538	game length
+0x9C	stored to 80049160	MP weapon set
+0xA0	stored to 8002B524	player1 MP character
+0xA4	stored to 8002B528	player2 MP character
+0xA8	stored to 8002B52C	player3 MP character
+0xAC	stored to 8002B530	player4 MP character
+0xB0	stored to 800697A8	player1 handicap 0-A (5 default)
+0xB4	stored to 800697AC	player2 handicap
+0xB8	stored to 800697B0	player3 handicap
+0xBC	stored to 800697B4	player4 handicap
+0xC0	stored to 800697B8	player1 control style (0-7: Honey <->Goodhead)
+0xC4	stored to 800697BC	player2 control style
+0xC8	stored to 800697C0	player3 control style
+0xCC	stored to 800697C4	player4 control style
+0xD0	stored to 8002B53C	aiming option
+0xD4	stored to 80079F58	player1 scenario flags, aim, sight settings
+0xD8	stored to 80079FC8	player2 scenario flags, aim, sight settings
+0xDC	stored to 8007A038	player3 scenario flags, aim, sight settings
+0xE0	stored to 8007A0A8	player4 scenario flags, aim, sight settings
+
+0xE8	start controller state packets
+
++_+
+
+also, COP0 count is stored to 800484B0.  Current count - saved count, used to SLTU against 5EB61
+
+intro demos
+ address	size	command	stage
+[2BF2D0]	51FC	3	21 (Dam) 00
+[2C44D0]	1FC8	1	21 (Dam) 01
+[2C64A0]	1AAC	1	22 (Facility) 00
+[2C7F50]	23DC	1	22 (Facility) 01
+[2CA330]	1C64	1	22 (Facility) 02
+[2CBFA0]	2748	2	23 (Runway) 00
+[2CE6F0]	2910	2	23 (Runway) 01
+[2D1000]	338C	2	09 (Bunker I) 00
+[2D4390]	5278	2	09 (Bunker I) 01
+[2D9610]	2190	1	14 (Silo) 00
+[2DB7A0]	1FC8	1	14 (Silo) 01
+[2DD770]	19B0	1	1A (Frigate) 00
+[2DF120]	34DC	2	1A (Frigate) 01
+[2E2600]	3DE8	2	19 (Train) 00
+
+2DF120 - frigate: starts at bottom of stairs.  runs up to door, opens.  Shoots guy, turns to left shooting down stairs.  turns right, moves to door, opens, moves in and left, fires at guard
+
+You can find the location the file is loaded to by looking at 80048468
+
+8008C5F4	gets the address for the demo loaded
+
+8004846C stores address for actual code block, one block at a time.
+80048470 (0x20) lists code under each "heading", running to next heading
+
+80048490=previous sum of bytes
+80048494=current sum of bytes
+80048498=first value in command (difference b/w values)
+
+8004849C=previous ???
+800484A0=current ???
+800484A8=difference b/w above
+
+Here's how it works:
+0x18 gives the size of each code.  Multiply by 4 and save.  Code blocks start at 0xE8 in file.
+Grab first 4 bytes at 0xE8.  Multiply byte 0x1 by size and that should give the block's size.
+For instance:
+2CE6F0 - 0x18 = 2.  2*4 = 8 (size)
+
+@ 0xE8: 	01 12 CC 51 
+12 * 8 (size) = 0x90
+
+@ 0x17C:	08 01 9A A4 
+1 * 8 (size) = 0x8
+
+@ 0x188:	03 03 D4 DD 
+3 * 8 (size) = 0x18
+
+@ 0x1A4:	02 03 EB F8 
+3 * 8 (size) = 0x18
+
+etc.
+
+------
+data packets:
+
+data - read
+copies bytes to different address
+0x0	->	0x2 [80065146]
+0x1	->	0x3 [80065147]
+0x2	(byteswapped with 0x3 below as shown)
+0x3	SLL 8, OR 0x2 byte, -> 0x0 [80065144]
+
+(0x0 + 0x1 + 0x2 + 0x3) AND 0x00FF.  Use this to keep a register of value
+converts between ordinary controller feed and PIF format
+
+
+command header:
+0x0	used when value 0x2 = @80024464
+0x1	# commands to follow
+0x2	compared to value at 80024464
+0x3	should be equal to total sum of header values plus commands in block, AND 0xFF
+
+when 0x2=@80024464, add (0x0 + 0x1 + 0x2 + 0x3) AND 0xFF + sum of computed commands.  should be equal to 0x3
+
+------
+command usage:
+7000BC6C:
+LHU	A1,0000 (T5)	//A1=command (8006512C)
+LHU	T3,01F0 (V1)	//T3=8006531C
+NOR	T4,T0,R0	//T4=FFFFFFFF
+BNEZ	T1,7000BC84
+NOP
+BREAK
+//7000BC84
+ADDIU	AT,R0,FFFF
+BNE	T1,AT,7000BC9C
+LUI	AT,8000
+BNE	T6,AT,7000BC9C
+NOP
+BREAK
+//7000BC9C
+AND	T5,A1,T4
+OR	T6,T3,T5
+SH	T6,01F0 (V1)	//T6->8006531C
+LW	T7,01E0 (A0)	//T7=8006530C
+ADDIU	T8,A2,0001
+BEQL	A2,T7,7000BCF0
+ADDIU	V0,V0,0001
+DIV	T8,T1
+MFHI	A2
+BNEZ	T1,7000BCCC
+NOP
+BREAK
+//7000BCCC
+ADDIU	AT,R0,FFFF
+BNE	T1,AT,7000BCE4
+LUI	AT,8000
+BNE	T8,AT,7000BCE4
+NOP
+BREAK
+//7000BCE4
+BEQ	R0,R0,7000BC38
+ADDIU	T6,A2,0013
+
+----------------------
+----------------------
+usage of first randomizer:
+7000A450:
+LUI	A0,8002
+LD	A0,4460 (A0)	//A0<-80024460; random seed value for most calculations
+LUI	AT,8002
+DSLL32	A2,A0,0x1F	//A2=A0<<63	80000000 00000000
+DSLL	A1,A0,0x1F	//A1=A0<<31	D82912C3 80000000
+DSRL	A2,A2,0x1F	//A2=A2>>31	00000001 00000000
+DSRL32	A1,A1,0x0	//A1=A1>>32	00000000 D82912C3
+DSLL32	A0,A0,0xC	//A0=A0<<44	22586000 00000000
+OR	A2,A2,A1	//A2|=A1	00000001 D82912C3
+DSRL32	A0,A0,0x0	//A0=A0>>32	00000000 22586000
+XOR	A2,A2,A0	//A2^=A0	00000001 FA7172C3
+DSRL	A0,A2,0x14	//A0=A2>>20	00000000 00000225
+ANDI	A0,A0,0x0FFF	//A0&=0xFFF	00000000 00000225
+XOR	A0,A0,A2	//A0^=A2	00000001 FA7170E6 - end result
+DSLL32	V0,A0,0x0	//V0=A0<<32
+SD	A0,4460 (AT)	//A0->80024460; save it back, yo
+JR	RA
+DSRA32	V0,V0,0x0	//V0=V0>>32; copy the sign bit
+
+---------------usage of second double, prior to block load possibly
+---------------
+7F0C03A8:	save current values before overwrite
+ADDIU	SP,SP,FFE0
+LUI	T6,8002
+LUI	T7,8002
+LW	T7,4464 (T7)	//T7<-80024464 (seed1 upper)
+LW	T6,4460 (T6)	//T6<-80024460 (seed1 lower)
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+SW	T7,0004 (A0)	//T7->8008C384
+SW	T6,0000 (A0)	//T6->8008C380
+LUI	T8,8004
+LUI	T9,8004
+LW	T9,0164 (T9)	//T9<-80040164 (seed2 upper)
+LW	T8,0160 (T8)	//T8<-80040160 (seed2 lower)
+LUI	T0,8003
+SW	T9,000C (A0)	//T9->8008C38C
+SW	T8,0008 (A0)	//T8->8008C388
+LW	T0,A8F0 (T0)	//T0<-8002A8F0 (mode)
+LUI	T1,8003
+LUI	T2,8003
+SW	T0,0084 (A0)	//mode->8008C404
+LW	T1,B520 (T1)	//T1<-8002B520 (# players)
+LUI	T3,8003
+LUI	T4,8003
+SW	T1,008C (A0)	//# players->8008C40C
+LW	T2,B540 (T2)	//T2<-8002B540 (scenario)
+OR	S0,A0,R0	//S0=A0
+SW	T2,0090 (A0)	//scenario->8008C410
+LW	T3,B534 (T3)	//T3<-8002B534 (mp stage selected)
+SW	T3,0094 (A0)	//mp stage->8008C414
+LW	T4,B538 (T4)	//T4<-8002B538 (game length)
+JAL	7F0C663C
+SW	T4,0098 (A0)	//game length->8008C418
+
+7F0C663C:	returns V0=selected MP weapon set
+LUI	V0,8005
+JR	RA
+LW	V0,9160 (V0)	//V0<-80049160 (selected MP weapon set)
+
+etc... while it makes a copy of all your data
+
+------------------
+------------------
+7F0C04F4:	called by 7F0C0640 to copy demo stuff to current
+ADDIU	SP,SP,FFE0
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+LW	T6,0000 (A0)	//T6<-8008C270 (seed1 upper)
+LW	T7,0004 (A0)	//T7<-8008C274 (seed1 lower)
+LUI	AT,8002
+SW	T6,4460 (AT)	//T6->80024460
+LUI	AT,8002
+SW	T7,4464 (AT)	//T7->80024464
+LW	T8,0008 (A0)	//T8<-8008C278 (seed2 upper)
+LW	T9,000C (A0)	//T9<-8008C27C (seed2 lower)
+LUI	AT,8004
+SW	T8,0160 (AT)	//T8->80040160
+LUI	AT,8004
+SW	T9,0164 (AT)	//T9->80040164
+LW	T0,0084 (A0)	//T0<-8008C2F4 (mode)
+LUI	AT,8003
+OR	S0,A0,R0	//S0=A0
+SW	T0,A8F0 (AT)	//mode->8002A8F0
+LW	T1,008C (A0)	//T1<-8008C2FC (# players)
+LUI	AT,8003
+SW	T1,B520 (AT)	//# players->8002B520
+LW	T2,0090 (A0)	//T2<-8008C300 (scenario)
+LUI	AT,8003
+SW	T2,B540 (AT)	//scenario->8002B540
+LW	T3,0094 (A0)	//T3<-8008C304 (mp stage selected)
+LUI	AT,8003
+SW	T3,B534 (AT)	//mp stage->8002B534
+LW	T4,0098 (A0)	//T4<-8008C308 (game length)
+LUI	AT,8003
+SW	T4,B538 (AT)	//game length->8002B538
+JAL	7F0C6630
+LW	A0,009C (A0)	//A0<-8008C30C (mp weapon set)
+LW	T5,00A0 (S0)	//T5<-8008C310 (p1 mp char)
+LUI	V0,8003
+ADDIU	V0,V0,B524	//V0=8002B524
+SW	T5,0000 (V0)	//p1 mp char->8002B524
+LW	T6,00A4 (S0)	//T6<-8008C314 (p2 mp char)
+LUI	V1,8007
+ADDIU	V1,V1,97A8	//V1=800697A8
+SW	T6,0004 (V0)	//p2 mp char->8002B528
+LW	T7,00A8 (S0)	//T7<-8008C318 (p3 mp char)
+LUI	A2,8007
+ADDIU	A2,A2,97B8	//A2=800697B8
+SW	T7,0008 (V0)	//p3 mp char->8002B52C
+LW	T8,00AC (S0)	//T8<-8008C31C (p4 mp char)
+LUI	AT,8003
+OR	A0,R0,R0
+SW	T8,000C (V0)	//p4 mp char->8002B530
+LW	T9,00B0 (S0)	//T9<-8008C320 (p1 handicap)
+SW	T9,0000 (V1)	//p1 handicap->800697A8
+LW	T0,00B4 (S0)	//T0<-8008C324 (p2 handicap)
+SW	T0,0004 (V1)	//p2 handicap->800697AC
+LW	T1,00B8 (S0)	//T1<-8008C328 (p3 handicap)
+SW	T1,0008 (V1)	//p3 handicap->800697B0
+LW	T2,00BC (S0)	//T2<-8008C32C (p4 handicap)
+SW	T2,000C (V1)	//p4 handicap->800697B4
+LW	T3,00C0 (S0)	//T3<-8008C330 (p1 control)
+SW	T3,0000 (A2)	//p1 control->800697B8
+LW	T4,00C4 (S0)	//T4<-8008C334 (p2 control)
+SW	T4,0004 (A2)	//p2 control->800697BC
+LW	T5,00C8 (S0)	//T5<-8008C338 (p3 control)
+SW	T5,0008 (A2)	//p3 control->800697C0
+LW	T6,00CC (S0)	//T6<-8008C33C (p4 control)
+SW	T6,000C (A2)	//p4 control->800697C4
+LW	T7,00D0 (S0)	//T7<-8008C340 (aiming option)
+SW	T7,B53C (AT)	//aim->8002B53C
+JAL	7F014CA4
+LW	A1,00D4 (S0)	//A1<-8008C344 (p1 data)
+ADDIU	A0,R0,0001
+JAL	7F014CA4
+LW	A1,00D8 (S0)	//A1<-8008C348 (p2 data)
+ADDIU	A0,R0,0002
+JAL	7F014CA4
+LW	A1,00DC (S0)	//A1<-8008C34C (p3 data)
+ADDIU	A0,R0,0003
+JAL	7F014CA4
+LW	A1,00E0 (S0)	//A1<-8008C350 (p4 data)
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+--7F014CA4:
+SLL	T6,A0,0x3	//T6=A0*8; sets offset
+SUBU	T6,T6,A0	//T6=A0*7 (0,7,E,15)
+SLL	T6,T6,0x4	//T6=T6*0x10 (0,70,E0,150)
+LUI	AT,8008
+ADDU	AT,AT,T6	//80080000 + offset
+JR	RA
+SB	A1,9F59 (AT)	//A1->80079F59, 80079FC0, 8007A039, 8007A0A9
+
+//7F0C0770:
+ADDIU	A0,R0,0001
+LUI	AT,8005
+SW	V0,8474 (AT)	//1->80048474
+LUI	AT,8005
+SW	V0,8478 (AT)	//1->80048478
+LW	T2,0000 (S0)	//T2=80048468 (location for demo file)
+LUI	A0,7F0C
+ADDIU	A0,A0,0080	//A0=7F0C0080
+JAL	7000BBA8
+LW	A1,0018 (T2)	//A1<-8008C288 (# controllers)
+JAL	7000C930
+ADDIU	A0,R0,0001	//A0=1
+LUI	AT,8005
+SW	R0,847C (AT)	//0->8004847C
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+--7000BBA8:
+LUI	AT,8002
+SW	A0,6924 (AT)	//7F0C0080->80026924
+LUI	AT,8006
+JR	RA
+SW	A1,5324 (AT)	//# controllers->80065324
+
+--7000C930:
+SLL	T6,A0,0x7	//T6=80 (A0 * 0x80)
+SUBU	T6,T6,A0	//T6=7F (A0 * 0x7F)
+LUI	T7,8006
+ADDIU	T7,T7,4F30	//T7=80064F30
+SLL	T6,T6,0x2	//T6=1FC (T6 * 4)
+ADDU	T8,T6,T7	//T8=80064F30 + 1FC (8006512C)
+LUI	AT,8002
+JR	RA
+SW	T8,68C4 (AT)	//8006512C->800268C4
+
+-------------------
+-------------------
+7F0C034C:	A0=first byte of command
+LUI	T6,8005
+LW	T6,84B0 (T6)	//T6<-800484B0 (last cycle's cop0 count)
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	AT,8005
+SW	A0,0018 (SP)
+JAL	7000D8E0	//returns V0= count
+SW	T6,84AC (AT)	//last cycle's cop0 count->800484AC
+LUI	A0,8005
+LUI	AT,8005
+SW	V0,84B0 (AT)	//cop 0 count->800484B0
+ADDIU	A0,A0,8494	//A0=80048494
+LW	V1,0000 (A0)	//V1<-80048494
+LW	A3,0018 (SP)	//A3=first byte of command
+LUI	AT,8005
+SW	V1,8490 (AT)	//V1->80048490; set current sum to previous
+ADDU	T7,V1,A3	//T7=sum + first byte
+SW	T7,0000 (A0)	//T7->80048494; current sum
+LUI	AT,8005
+SW	A3,8498 (AT)	//first byte->80048498
+LW	V1,0000 (A0)	//V1<-80048494 (V1=T7)
+LUI	A1,8005
+ADDIU	A1,A1,84A0	//A1=800484A0
+LW	T8,0000 (A1)	//T8<-800484A0 ()
+LUI	A2,8005
+ADDIU	A2,A2,849C	//A2=8004849C
+ANDI	T0,V1,0001	//T0= V1 & 1
+SW	T8,0000 (A2)	//T8->8004849C; previous sum
+BGEZ	V1,7F0C0B20
+SRA	T9,V1,0x1	//T9=V1*2
+ADDIU	AT,V1,0001	//AT=V1+1
+SRA	T9,AT,0x1	//T9=AT/2 (2*V1+1)/2
+//7F0C0B20:
+SW	T9,0000 (A1)	//T9->800484A0
+LUI	AT,8005
+SW	T0,84A4 (AT)	//T0->800484A4
+LW	T2,0000 (A2)	//T2<-8004849C
+LW	T1,0000 (A1)	//T1<-800484A0
+LW	RA,0014 (SP)
+LUI	AT,8005
+SUBU	T3,T1,T2	//T3=cur-prev
+SW	T3,84A8 (AT)	//difference->800484A8
+JR	RA
+ADDIU	SP,SP,0018
+
+
+----  This tampers with the count
+7000646C:
+LUI	T5,8005
+LW	T5,84B0 (T5)	//T5<-800484B0 (cop0 count)
+LUI	AT,0005
+ORI	AT,AT,EB61	//AT<-0005EB61
+SUBU	V1,V0,T5	//V1=current count - old count
+SLTU	AT,V1,AT	//AT ? difference < 5EB61
+BEQ	AT,R0,70006498
+LUI	V0,8002
+LUI	V0,8002
+BEQ	R0,R0,700068A4
+LW	V0,42FC (V0)	//V0<-800242FC ()
+//70006498:
+LW	V0,42FC (V0)
+SLTIU	AT,S8,0002
+BGEZ	V0,700068A4
+NOP
+
+
+----
+7F0C0354:
+LUI	T9,8005
+LW	T9,8468 (T9)	//T9<-80048468 (header)
+LUI	V0,8005
+LW	V0,837C (V0)	//V0<-8004837C (# sec so far)
+LW	V1,007C (T9)	//V1=time
+LUI	T1,8005
+ADDIU	V1,V1,FFC4	//V1=time-0x3C (60)
+SLT	AT,V0,V1	//AT=V0<V1
+BNEL	AT,R0,7F0C039C
+	LW	RA,0014 (SP)
+LW	T1,8374 (T1)	//T1<-80048374 ()
+SUBU	T2,V0,T1	//T2=#sec-T1
+SLT	AT,T2,V1	//AT ? T2< (time-1sec)
+BEQL	AT,R0,7F0C039C
+LW	RA,0014 (SP)
+JAL	7F0C08C8
+NOP
+LW	RA,0014 (SP)
+//7F0C039C:
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+-------------
+-------------
+7F0C01BC:
+LUI	T7,8002
+LW	T7,4464 (T7)	//T7<-80024464 (seed1 lower)
+LBU	V1,0002 (V0)	//V1<-8008C470 (third byte in command)
+ANDI	T9,T7,00FF	//T9=last byte in lower seed1
+BEQL	T9,V1,7F0C01F0
+	LBU	T4,0000 (V0)	//T4<-first byte in command
+
+between commands pushes that seed over 100 times!

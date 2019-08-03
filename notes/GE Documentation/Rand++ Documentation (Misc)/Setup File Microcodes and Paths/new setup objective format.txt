@@ -1,0 +1,65 @@
+Minor edit to object type 17 to handle individual difficulty and player values.
+Places new masks in first bytes of command word
+
+d.p.0000.17 000000.ii 0000.TTTT 0000000.*
+
+0x0	1	flags
+	F0	difficulty mask (1-agent, 2-secret, 4-00, 8-007)
+	0F	player mask (1-pl1, 2-pl2, 4-pl3, 8-pl4)
+0x1	2	RESERVED
+0x3	1	17	start objective
+0x4	4	objective number
+0x8	2	RESERVED
+0xA	2	text ID
+0xC	4	minimum difficulty: 0=agent, 1=secret agent, 2=00 agent, 3-007
+
+Difficulty and player masks omit the entire objective on that setting.  Normal operation is zero.
+Note the minimum difficulty must still be set properly and setting these flags will only disallow the objective.  This behaviour ensures backward compatability.
+To merely hide the objective temporarily, use the new objective occlusion flags.
+
++_+
+
+New objective commands can utilize the 1F command as a container.
+xxxx.tt.1F
+0x0	2	data
+0x2	1	type	must be 00 if data halfword only!
+0x3	1	1F	ensures this word will be ignored by unhacked game
+
++_+
+
+01	remove occlusion flags for objective if objective flags unset
+02	remove occlusion flags for objective if objective flags set
+03	set occlusion flags for objective if objective flags unset
+04	set occlusion flags for objective if objective flags set
+
++_+
+
+Types 1-4	alter occlusion flags for objective
+
+These four are magic:
+  -1 to type: 0,1,2,3.  &1 is objective flag test, &2 is set flags versus remove
+  Set flags uses OR, unset ~&.  When occlusion masks are equal, objective appears and is used.
+  When difficulty/player mask set ignores under given scenario.  Can occlude objective under certain difficulties or # players automatically.
+  Normal usage to make an occluded objective appear is using types 3 or 4
+
+Format for all four types:
+d.p.mm.tt.1F	ffff.00.1F	ffff.00.1F
+0x0	1	flags
+	F0	difficulty mask (1-agent, 2-secret, 4-00, 8-007)
+	0F	player mask (1-pl1, 2-pl2, 4-pl3, 8-pl4)
+0x1	1	occlusion mask
+0x2	1	type
+0x3	1	1F
+0x4	2	upper half of objective bitflag field
+0x6	2	001F
+0x8	2	lower half of objective bitflag field
+0xA	2	001F
+
++_+
+
+  Tables need to be reconfigured.
+  80075D30 starts list of pointers to objectives (type 17 entries).  10 entries, 0x28 total.
+  80075D58 starts list of words indicating state of objective.  10 entries, 0x28 total.
+  
+  Best bet is to relocate the objective pointers and use full space for state.  Set state as halfwords: upper byte locks, lower byte state, never mind the six useless flags.
+  

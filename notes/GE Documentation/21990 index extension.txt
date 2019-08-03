@@ -1,0 +1,1279 @@
+conversion value for 21990 pointers
+JAP	-0x20DD0
+USA	-0x20D90
+PAL	-0x1EC50
+  Subtract that value from any pointer within the respective file to return an offset within 21990.  Likewise, add it to any offset to return a pointer at runtime.
+
+Note, offsets below only refer to USA offsets.  These +will+ differ in the other regions!
+
++_+
+
+    0-D0	RSP ASM: gets copied to SP IMEM 04001000-040010D0
+   D0-A00	RSP ASM?
+ A00-22B0	RSP ASM?
+ 22B0
+ 22B4
+ 22B8
+ 22BC-22EC	
+	pointer to 803AB400, pointer to debug text
+	803AB400	boot
+	803AB410	rmon
+	803AB710	idle
+	803AB750	shed
+	803AB950	main
+	803B3950	audi
+	uses text from 7640-7670
+	******safe to delete******
+
+ 2304	RESERVED	display stderr
+ 2308	RESERVED	stderr event enabled
+ 230C	RESERVED	display stderr event
+ 2310	RESERVED
+ 
+ 236C
+ 2370	#entries following
+ 2374-2454	???	entries 0x20 each
+ 2454-24B4	???	entries 0x8 each
+ 24A0	RESERVED	counter for frames
+ 24A4	RESERVED	
+ 24B4-250C	???, data for images on legal screen	entries 0x2C each
+	0x0	4	p->?
+	0x4	2	image width
+	0x6	2	image height
+	0x8	4	[float] ? (60.0)
+	0xC	4	[float] page width (1.3)
+	0x10	4	[float] ? (30.0)
+	0x14	4	[float] ? (10000.0)
+	0x18	2	? width
+	0x1A	2	? height
+	0x1C	2	lrx width
+	0x1E	2	lry height
+	0x20	4	ulx (0)
+	0x24	4	uly (1)
+	0x28	4	p->data
+ 250C	???
+ 2510	???
+ 2514	p->80023244 [24B4]: viewport 1	can be commandereed for other images
+ 2518	p->80023244 [24B4]: viewport 2	can be commandereed for other images
+ 251C	colour output mode.  used by RGBA conversion routines
+ 
+ 2534	1	jpeg 16bit grab # [70004758]
+ 2538	1	jpeg 32bit grab # [700048D4]
+ 253C	1	rgb 16bit grab # [70004A60]
+ 2540	1	rgb 32bit grab # [70004BB4]
+ 
+ 2550	???	used in 70004E2C
+ 2554	
+ 2558	???	p->table...  used at 70004E98.  pointer to table or zero
+ 
+ 2574-294C	part of debug messages: RSP register display, error & exceptions, etc.
+	long value, long value, pointer to text displayed
+	uses text from 7A30-7CE0
+	******safe to delete******
+ 294C-2988	hardcoded pointers to thread stack pointer allocations, apparently unused
+	******safe to delete******
+ 2988-3268	stderr buffer; typically 0x47 per line, 0x1F lines; overruns unprintable bitcode range
+ 31F0-33EC	bitcode for each char in stderr; each nibble is 1bit black/white code; printable chars from +3270
+ 33EC	RESERVED	p->video buffer 1
+ 33F0	RESERVED	p->video buffer 2
+
+ 3414	RESERVED	update stage flag
+ 3418	RESERVED	current stage #
+ 341C	RESERVED	"-m" current allocation value
+ 3420	RESERVED	"-ma" current allocation value
+ 3424	RESERVED	"show mem use" flag
+ 3428	RESERVED	"show mem bars" flag
+ 342C-355C	Memory Allocation Table
+	stage ID, followed by pointer
+	allocation text from 7CE0-8330
+
+ 356C	loaded stage.  -1 until a stage starts
+ 3570	when =1, activates debug menu
+
+ 3594	1	"u64.taskgrab.#.core" ram dump #, used at 700067E0
+ 
+ 35A4	RESERVED music track#
+ 35A8-35C8	track run values?  no idea...
+ 35C8-3648	don't know, but necessary for music.  each track 0x2
+
+ 36D0-36D8	seed for random value
+ 36D8-36E0
+ 36E0	RESERVED	strstr: #strings
+ 36E4	RESERVED	strstr: p->current string#
+ 36E8-3788	strstr: p->each substring; 0x28 substrings maximum
+ 3788-4210	image!	0xA80
+ 4210	RESERVED	debug menu x position offset
+ 4214	RESERVED	debug menu y position offset
+ 4218	RESERVED	debug menu x text position
+ 421C	RESERVED	debug menu y text position
+ 4220 - 42A0	display list
+	calls 80024520	[0x3788]
+	**used by stdout (debug display)**
+ 42A0-5880	stdout: debug menu screen display buffer
+	sequential entries write one complete column, so each character in a row is 0x46 bytes apart.
+	note it does not span the entire screen width!
+	format:	entries 0x2 bytes each; 0x50 by 0x23
+		0x0	1	character to display
+		0x1	1	indexed colour code (0-1F)
+ 5880-5980	RESERVED	primary colour table for stdout (debug display)
+	format:	entries 0x8 bytes each; 0x20 entries total
+		0x0	4	rdp_setprimcolour upper command [FA000000]
+		0x0	4	32bit colour
+ 5980-5A80	RESERVED	enviroment colour table for stdout (debug display)
+	format:	entries 0x8 bytes each; 0x20 entries total
+		0x0	4	rdp_setenvcolour upper command [FB000000]
+		0x0	4	32bit colour
+ 5A80	RESERVED	#enviroment colours in previous table
+ 5A84-5B08	pointers to {1B}[m values	(pos. part of vi_debug)
+	values from 8480-8600
+	******safe to delete******
+ 5B08-5B10	RESERVED	end display list command
+ 5B10-5B18	RESERVED	blank C0- image expansion command
+ 5B18-5B1C	RESERVED	stdout text primary colour
+ 5B20-5B24	RESERVED	stdout text enviroment colour
+ 5B28
+ 5B2C
+
+ 5B34	RESERVED	p->current point in controller input index (80064F30)
+
+ 5B40	RESERVED	flags indicating controllers plugged in
+
+ 5B48-5B58	RESERVED	controllers 1-4: True if rumble pak inserted
+ 5B58-5B68	RESERVED	controllers 1-4: rumble/unrumble state
+ 5B68-5B78	RESERVED	controllers 1-4: rumble duration (milliseconds)
+ 5B78-5B88	RESERVED	controllers 1-4: shot fired or rumble on...
+
+ 5B94	RESERVED	disable all rumble
+ 5B98	RESERVED	p->TLB function to handle ramrom record
+
+ 5C30-6950	DISPLAY MODES 0-29	0x50 each entry
+	0x0	4	index
+	0x4	4	base mask for status?
+	0x8	4	h width
+	0xC	4	timing
+	0x10	4	v sync
+	0x14	4	h sync
+	0x18	4	h sync leap
+	0x1C	4	h video
+	0x20	4	x scale (probably)
+	0x24	4	?
+	0x28	4	set 1: h width?
+	0x2C	4	set 1: y scale (probably)
+	0x30	4	set 1: v video
+	0x34	4	set 1: v burst
+	0x38	4	set 1: v interrupt reg
+	0x3C	4	set 2: h width?
+	0x40	4	set 2: y scale
+	0x44	4	set 2: v video
+	0x48	4	set 2: v burst
+	0x4C	4	set 2: v interrupt reg
+
+ 69A0	RESERVED for p->???
+ 69A4	RESERVED for p->???
+
+ 69B0-69D0	stdout (debug display) background alpha
+ 69D4-69F4	stdout (debug display) background alpha
+
+ 6A00	RESERVED	TRUE when ??? loaded
+ 6A04	RESERVED	p->???
+ 6A08	RESERVED	p->???
+
+ 6A30	RESERVED
+ 6A40-7240	causes the eye in the intro to drift left and right
+ 7240	pointer to 80068DF0	???
+
+ 7250-7280	???
+ 7280-72B0	???
+ 72B0	pointer to 80028010 [0x7280]	???
+ 72B4	pointer to 80027FE0 [0x7250]	???
+ 72B8-7450	???	dynamically constructed?
+ 7450-754E	???	table of shorts used in debug message display (7001ABB4)
+ 754E-7560	???	second table of shorts used in debug message display (7001ABB4)
+ 7560-7570	hex (lower case) characters
+ 7574-7584	hex (upper case) characters
+ 
+ 7590-75E0	VI settings
+ 75E0-7630	VI settings
+ 7630-7640
+ 7640-7670	debug text: debug handler names
+	******safe to delete******
+ 7670-7690	TLB	used at 7000159C
+ 7690-76D0	debug text: speed display
+	******safe to delete******
+ 76D0-7700	unknown debug text and binary values
+ 7700-7A20	text for image capture tools
+	******safe to delete******
+ 7A20-7CDC	text for error type
+ 7CD0-8330	stage memory allocation strings
+ 8330-8338	"-level_"	string keyword: activate debug parsing on hit
+ 8338-836C	default memory allocation string?
+ 836C-8370	"-m"	memory allocation keyword: search
+ 8370-8374	"-m"	memory allocation keyword: parse
+ 8374-837C	"-level_"	string keyword: search
+ 837C-8384	"-level_"	string keyword: parse
+	sets level to following stage number.  Numeral must be a 2-digit decimal number or else!
+ 8384-838C	"-hard"	string keyword: search
+ 838C-8394	"-hard"	string keyword: parse
+ 8394-839C	"-hard"	string keyword: parse
+	sets difficulty to following number.  Numeral must be a single-digit decimal number 0-3 or else!
+ 839C-83A0	"-ma"	memory allocation keyword: search
+ 83A0-83A4	"-ma"	memory allocation keyword: parse
+ 83A4-83BC	"u64.taskgrab.%d.core"	used for memory dump
+ 83BC-83CC	"boss_c_debug"
+	******safe to delete******
+ 83D0-8410	TLB	used at 70007E80
+ 8410-841C	"memp_c_debug"
+	******safe to delete******
+ 8420-8424	"-mf"	memory allocation keyword: search
+ 8424-8428	"-mf"	memory allocation keyword: parse
+ 8428-842C	"-ml"	memory allocation keyword: search
+ 842C-8430	"-ml"	memory allocation keyword: parse
+ 8430-8434	"-me"	memory allocation keyword: search
+ 8434-8438	"-me"	memory allocation keyword: parse
+	see "memory allocation and memory bank" doc for more details
+ 8440-8450	"mema_c_debug"
+	******safe to delete******
+ 8450	"%d "	debug memory display: allocation amount template
+ 8454	"..."	debug memory display: unable to display allocation amount
+ 8458	"[%d]"	default strtok string
+ 8464	"-d"	debug mode command line argument test value
+ 8468	"-s"	no sound command line argument test value
+ 846C	"-j"	japanese command line argument test value
+ 8470-847C	"vi_c_debug"
+	******safe to delete******
+ 8480-8600	0x1B[#m	probably memory allocation debug
+	******safe to delete******
+ 8600-8610	joy_c_debug
+	******safe to delete******
+ 8610-8690	MI Interrupt Reg values (though they sure as heck don't look like them)
+	refer to 7000DD30 for explaination
+ 8690
+
+ 86B0-86D0	offsets for selecting TLB handler for particular interrupts
+ 86D0-86F4	TLB	interrupt handlers
+ 8700-8880	TLB	???	used at 7001123C	0x60
+ 8884-8934	TLB	???	used at 70011A6C	0x18
+ 8934	[float]
+
+ 8960-8964	"hlL"	half and long characters for c-string variables
+ 8964-896C	" +-#0"	special characters for ints in c-string variables
+ 896C	1	1<<0
+ 8970	2	1<<1
+ 8974	4	1<<2
+ 8978	8	1<<3
+ 897C	10	1<<4
+ 8980	0
+ 8984-8A54	TLB	used at 700138F0
+
+ 8AA0-8AE8	TLB	used at 70019480
+
+ 8B00-8BD4	display assertation fault error text
+	******safe to delete******
+ 8BD4	[float]	???
+ 8BD8-8C1C	TLB	used at 7001AE5C
+
+ 8CC0-8E44	TLB	used at 7001C45C
+ 8E44-8E98	TLB	used at 7001C45C
+ 8E98-8EF8	TLB	used at 7001CC7C
+
+ 8F48	NaN	***unknown use***
+ 8F4C	Inf	***unknown use***
+
+ 8F60-8F80	TLB	used at 7001E610
+ 8F80-8FA0	TLB	used at 7001FFA8
+
+ 8FD0
+ 8FD4
+ 8FD8
+ 8FDC-92CC	offset table for animations
+ 92D0-94AC	???; used as a temp buffer for copying global action block types
+ 94AC-94CC	list of weapon models for debug option 'weapon load'
+	******safe to delete - do not allow weapon load******
+ 94D0-9544	Monitor image object animation controller
+ 9544-95B8	? object animation controller
+ 95B8-962C	Taser object animation controller
+
+ 9640-99E8	used to initialize BONDdata right and left item buffers (+0x864 & +0xC0C respectively)
+ 99E8
+ 99EC
+ 99F0-99FC	
+ 99FC
+ 
+ 9A40	RESERVED
+ 9A44	RESERVED
+
+ 9AD0-9AE0	RGBA values: DCDCDC00 DCDCDC00 FFFFFF00 FFFFFF00
+
+ 9B10	RESERVED	???; used in step 4 of Eye intro
+ 9B14	RESERVED	???; used as state of bleeding animation in Eye intro
+ 
+ 9B30-9B78	RESERVED for runtime settings
+	9B30	RESERVED current menu
+	9B34	RESERVED update to current menu
+	9B38	RESERVED 
+	9B3C	RESERVED timer for folder select screen (resets at 30sec.)
+	9B40	RESERVED tab 1 selected
+	9B44	RESERVED tab 2 selected
+	9B48	RESERVED tab 3 selected
+	9B4C	RESERVED tab 1 highlight
+	9B50	RESERVED tab 2 highlight
+	9B54	RESERVED tab 3 highlight
+	9B58	RESERVED selected folder #
+	9B5C	RESERVED copy of selected folder #
+	9B60	RESERVED mode: 0-solo, 1-multi, 2-cheats
+	9B64	RESERVED selected stage
+	9B68	RESERVED p->briefing data for selected stage
+	9B6C	RESERVED selected difficulty: -1-multi, 0-agent, 1-secret, 2-00, 3-007
+	9B70	RESERVED append "cheat " to select mission
+	9B74	RESERVED append "cheat " to multiplayer
+ 9B78	[float]	horiontal cursor position
+ 9B7C	[float]	vertical cursor position
+ 9B80	RESERVED final menu briefing page (menu 0A)
+ 9B84	RESERVED current menu briefing page (menu 0A)
+ 9B88	RESERVED icon on folder select screen (0-sight, 1-copy, 2-delete)
+ 9B8C	RESERVED -1 or folder selected for deletion
+ 9B90	RESERVED delete folder minimenu selected option (0-confirm : 1-cancel)
+ 9B94	RESERVED 0-failed; 1-aborted
+ 9B98	RESERVED 0-aborted/failed; 1-killed in action
+ 9B9C	RESERVED TRUE if first time on legal screen
+ 9BA0	RESERVED TRUE if first time through main menus
+ 9BA4	RESERVED previous keypress
+ 
+ 9BB0	RESERVED screen size; 0:320x240, 1:440x330
+ 9BB4	RESERVED 
+ 9BB8	RESERVED TRUE if emulating Spectrum
+ 9BBC	RESERVED TRUE if cheat menu available
+ 9BC0	RESERVED p->DL target for nintendologo, goldeneyelogo, and walletbond object data
+ 9BC4	RESERVED p->video buffer for menus
+ 9BC8	RESERVED ???, called by legal screen constructor
+ 9BCC	RESERVED p->folder object instance
+
+ 9BE0-9C00	RGBA values: 	96969600 96969600 FFFFFF00 FFFFFF00 4D4D2E00 00000000 FFFFFF00 FFFFFF00
+
+ 9C10-9C20	RESERVED floats for 007 mode slidebars - initialized at runtime
+ 9C20-9C30	japanese text brown palette for main folder menus (RGBA)
+
+ 9C3C-9D2C	text on legal screen	0x14 each entry
+	long h_pos, long v_pos, long flag, long=1, short txtID, short RESERVED
+ 9D2C-9E04	???	0x4C each entry
+	first 0x40 copied by 7F00A914
+	prematurely ends before last three entries
+
+ 9E34	[float] folder option COPY left bound
+ 9E38	[float] folder option COPY upper bound
+ 9E3C	[float] folder option COPY right bound
+ 9E40	[float] folder option COPY lower bound
+ 9E44	[float] folder option ERASE left bound
+ 9E48	[float] folder option ERASE upper bound
+ 9E4C	[float] folder option ERASE right bound
+ 9E50	[float] folder option ERASE lower bound
+ 9E54-A19C	solo missions and briefings	0x1C each entry
+ A19C-A1A8	??? - used by 4-folder constructor
+ A1A8-A1B4	??? - used by 4-folder constructor
+ A1B4-A1F4	??? - copied by 05 main folder select menu
+
+ A224-A240	??? - copied by MP character select [7F00D5E8]
+ A240-A254	mission select cursor - x position of slots
+ A254-A264	mission select cursor - y position of slots
+ A264-A2C4	MP game length settings	0xC each
+ A2C4-A2E4	MP scenario select and player restrictions	0x4 each
+ A2E4-A404	MP stage select menu	0x18 each
+ A404	RESERVED #mp selectable characters
+ A408-A708	MP character selection menu	0x18 each
+ A708-A760	MP handicap menu	0x8 each
+ A760-A780	MP controller configuration menu	0x4 each
+ A780-A790	MP sight & aim settings	0x4 each
+ A790-A7D4	RESERVED MP settings
+	A790	RESERVED selected # players
+	A794	player 1 character	set to -1; this causes handicap/control init.
+	A798	player 2 character
+	A79C	player 3 character
+	A7A0	player 4 character
+	A7A4	MP stage selected
+	A7A8	game length
+	A7AC	aim and sight adjustment
+	A7B0	scenario
+	A7B4	1=unlock stage select
+	A7B8	1=unlock game length
+	A7BC	1=unlock characters
+	A7C0	1=unlock weapon select
+	A7C4	1=unlock handicap
+	A7C8	1=unlock control style
+	A7CC	1=unlock aim and sight
+	A7D0	
+ A7D4-A84C	solo target mission times	0x6 each
+	values are in # seconds - 60 (0x3C)=1 minute
+	0x0	2	agent time
+	0x2	2	secret agent time
+	0x4	2	00 agent time
+ A850
+ A854	RESERVED option selected on MP menu
+ A858-A870	RESERVED intro settings
+ A870-AB2C	intros	0x14 each	condense!
+	long body, long head, short text, short text, short text, short RESERVED, long flag
+ AB2C-AC9C	random intro animation table
+	animation ID, [float] start frame offset , [float] playback speed, camera movement preset (0-2)
+ AC9C	
+ ACA0	
+ ACA4	
+ ACA8-ACC0	list of random rifles used in intro
+ ACC0-ACEC	list of random pistols used in intro
+
+ AD60-AD70	8 16bit palette entries: 50% primary colours.  Used by 7F01A4E0
+
+ ADA0-B77C	red screen animations
+	compressed images; 50x60, on side
+	ADA0	ADBA	ADDD	AE1B	AE6C	AEBB	AF20
+	AF85	AFE2	B037	B077	B0B5	B0F4	B13C
+	B187	B1C2	B1FD	B234	B276	B2B2	B2EA
+	B325	B357	B38D	B3CE	B426	B487	B4BB
+	B4EE	B524	B55E	B594	B5D0	B612	B64F
+	B688	B6C1	B6FA	B725	B741	B758	B76F
+ B77C	RESERVED
+ B780	RESERVED for eeprom folder 1's selected Bond
+ B784	RESERVED for eeprom folder 2's selected Bond
+ B788	RESERVED for eeprom folder 3's selected Bond
+ B78C	RESERVED for eeprom folder 4's selected Bond
+ B790-B7F0	eeprom-ish copy for reset?
+ B7F0-B8D0	eeprom-ish copy for reset?	0x60 each; x4 copies
+ B8D0-B930	eeprom-ish copy for unlocked stages?	0x60
+ B930-BAB0	eeprom-ish copy for reset?	0x60 each; x4 copies
+ BAB0-BB10	eeprom-ish working copy?	0x60
+ BB10-BB70	blank eeprom file for reset	0x60
+ BB70	RESERVED for animation rate
+
+ BBB0-BEC8	unknown	linked to animations	0x2C each	ends 1st value= -1
+ BECC	1=show patrols
+ BED0	1388, which is the guardID for player 1...
+ BED4-BEDC	RESERVED guard data pointer + # cur guard
+
+ BF70	RESERVED for # bodies
+ BF74	RESERVED for # male heads
+ BF78	RESERVED for # female heads
+ BF7C-C028	list of bodies		longs, terminated with -1
+ C028-C090	random male heads	longs, terminated with -1
+ C090-C0A4	random female heads	longs, terminated with -1
+ C0A4	RESERVED for current random body
+ C0A8	RESERVED for current random male head
+ C0AC	RESERVED for current random female head
+ C0B0-C0C4	RESERVED for 007 settings
+ C0C4-D8B8	Struck Character Animation Table	0x1C each entry
+	guard death animations, probably
+	long offset, long flag, float, float, float, float, float
+ D8B8-DBAC	explosion death animations	0x1C each
+	long ani off., long mirror, float rate, float start, float end?, f ->guarddata0x30, float ?
+ DBAC-DBD0	group offsets used by the DBD0 table to jump to explosion animations
+ DBD0-DC10	pointer to index of grouped random explosion animations
+	0xDBAC	forward	6	0,1,2,3,4,5
+	0xDBB4	f/left	3	7,9,B
+	0xDBBC	left	3	C,F,11
+	0xDBC4	back	4	14,15,16,17[,12,18]
+	0xDBCC	b/left	2	13,19
+	0xDBC0	right	3	D,E,10
+	0xDBB8	f/right	3	6,8,A
+	members 12,18 probably belong to a deleted set for b/right
+ DC10-DF98	basic rifle firing animations
+	0x48 each, 0x4 for routing pointers + 0x4 RESERVED # entries in group
+ DF98-E018	pointers rediecting to previous animation groups
+ E018-E678	basic pistol firing animations
+ E678-E6F8	pointers rediecting to previous animation groups
+ E6F8-E950	basic doubles firing animations
+ E950-E9D0	pointers rediecting to previous animation groups
+ E9D0-EBE0	crouched rifle firing animations
+ EBE0-EC60	pointers rediecting to previous animation groups
+ EC60-EF48	crouched pistol firing animations
+ EF48-EFC8	pointers rediecting to previous animation groups
+ EFC8-F268	crouched doubles firing animations
+ F268-F2E8	pointers rediecting to previous animation groups
+ F2E8-F8D0	special firing animations (ie. rolling) for all types
+ F8D0-FBE8	walk/run for rifle, pistol, doubles, Xdoubles, then strafing
+ FBE8-FBF4	RESERVED objective registers
+
+ FC68-FC9C	male guard yelps (SE when shot)	0x2 each, 0x19 total
+ FC9C-FCA4	female guard yelps (SE when shot)	0x2 each, 3 total
+ FCA4	RESERVED male guard yelp counter
+ FCA8	RESERVED female guard yelp counter
+ FCAC-FCB4	METAL ricochet SE for helmets
+ FCB4	
+ FCB8	
+ FCBC	
+ FCC0-FCD8	sound of body hitting floor, or melee or something
+
+ FD30-FD40	RESERVED alarm and gas counters - initialized at runtime
+ FD58-FD64	RESERVED clock, etc.
+
+ FD98	[float] 1.0	solo ammo multiplier - multiplies ammo recieved from ammo crates
+ FD9C-FDA4	throwing knife SE
+
+ FDE4-11240	microcode that constructs the monitor animations
+
+11304-11384	blank 07 object (preset -1, fall to ground set)
+11384-11404	blank 11 object (attached set)
+11404-1148C	blank 08 object (unarmed, preset 0001)	explosive ordinance (ie. GL round, rocket, mine, etc)
+1148C-11514	blank 08 object (unarmed, preset 4001)
+
+11560	RESERVED	#objective pointers
+
+11580	[float] ???
+11584	[float] ???
+
+11590-1160C	???	table of short values, used in couplets
+1160C-1168C	???	table of short values, used in couplets
+1168C-116??	???	table of short values, used in couplets
+
+116B0-116C0	RGBA values: 	96969600 96969600 FFFFFF00 FFFFFF00
+116C4
+116C8
+116CC	14820	allocation size
+116D0	14820	
+116D4	7530	
+116D8	7530	
+116DC-11704	ejected cartridge headers and text lookup pointers	0x8 each
+11704-12B94	weapon statistics	0x70 each
+12B94-13F0C	watch and equipment menu	0x38 each
+
+1515C-152C4	ammo totals 
+	long max, long 0x02000000+img offset in main bank, float img y offset (+ up, - down)
+
+152E0	RESERVED	
+152E4	RESERVED	
+152E8
+152EC
+152F4	RESERVED	???, used in cast intro
+152F8	
+152FC	RESERVED	p->???, TLB subroutine?
+15300	RESERVED	p->???, TLB subroutine?
+15304-15310
+15310-1531C
+1531C-15328
+15328-15334
+	long, long, long
+15334-1533C
+1533C-15598(?)	ammo on item collection	0xC each entry
+	long amount, long image from index, long scale for image
+
+15660	RESERVED	???, used in cast intros
+
+15684	RESERVED	
+15688	RESERVED	
+1568C	RESERVED	
+15690	
+15694	1=disable 1st person weapons	-unverified, from GScentral
+15698	RESERVED	
+
+156AC-156BC	RESERVED credits, plastique, tank - init. @ run
+
+15704-1570C	RESERVED camera mode
+
+15728	RESERVED p->last 06 intro entry
+1572C	RESERVED # 06 intro entries
+
+15734	1=visible to guards (solo invisibility=0)
+15738	1=object collisions (Bond Phase=0)
+1573C	1="float 20ft off ground"	-unverified, from GScentral
+
+15748-1577C	player death animation list
+1577C	RESERVED total of above entries
+15780
+15784	animation to use during spiral camera; uses list below
+15788-15818	animations for intro block type 4	0x10 each
+	offset, float, float, float
+15818	watch transition time; higher means faster watch entry/exit
+	corrected: replaced if 8005508C (0x342FC) lesser than cur*80055090's
+1581C-158A4	PP7 08 object copied to stack during player creation
+	Extroneous; patch to eliminate entirely
+
+15B0C	RESERVED 1-display status line
+
+15B1C	RESERVED 1-display upper text box - init @ run
+15B20	part of debug routine	(15B18 in J)
+15B24
+15B28-15B44	debug cardinal direction	part of manpos
+	******safe to delete - do not allow cheat pos******
+15B48-15D3C	pointer to animation list + values...	0x14 each
+
+15DE0	RESERVED	debug menu: control mode, copied to control mode buffer at 161E0
+15DE4	RESERVED	debug menu: p->last group
+15DE8	RESERVED	debug menu: p->text pointers
+15DEC	RESERVED	debug menu: p->positions
+15DF0	RESERVED	debug menu: # groups
+15DF4	RESERVED	debug menu: p->groups
+
+15E14-15E38	debug menu column groupings (new column at given value)
+15E38-160A0	debug menu on-screen positions
+	******safe to delete - do not allow debug******
+160A0-161D4	debug menu text pointers
+	******safe to delete - do not allow debug******
+161D4	=0 do not render anything (raster only, I think)	default=2
+161D8	=0 freezes processing	default=2
+161DC	=0 limits control to 3D stick only	default=2
+161E0	control mode buffer, copied to 161DC	default=2
+161E4	1=display speed display
+161E8	1=draw background
+161EC	1=draw objects
+161F0	1=???
+161F4	1=stan hit
+161F8	1=stan region
+161FC	1=stan problems
+16200	1=print man pos
+16204	1=print room loads
+16208	1=joy2 sky edit
+1620C	1=joy2 hits edit
+16210	1=joy2 detail edit
+16214	1=explosion info
+16218	1=line mode
+1621C	1=007
+16220	1=agent
+16224	1=all
+16228	1=character number
+1622C	1=gun watch pos	movable inventory item model (pan: c buttons, zoom: shoulder buttons)
+16230	1=profile debug feature
+16234	1=grab task
+16238	1=show manpos position debugger
+1623C	1=turbo mode
+16240	1=objectives
+
+1626C	1=grab rgb
+16270	1=grab jpeg
+
+162E0-1674C	default action blocks & table
+
+16758-16840	stage setup pointers (stages 1-38?)
+16840-192C0	headers for objects
+192C0-19494	archetypes
+19498-1A494	object pointers to header, text string, scale	0xC each
+1A494-1B740	object explosion details	0xE each
+1B740-1B7F0	archetypes
+1B7F0-1B8B4	player gait (bounce in step)
+	1B860	player at rest
+	1B87C	x gait	f1=amplitude, f2=period, f3=0
+	1B898	z gait
+1B8B4-1B8E4	???
+1B8E4-1BA30	archetypes
+1BA30-1C5B0	g_z HEADERS
+1C5B0-1C680	archetypes
+1C680-1D080	C_Z headers
+1D080-1D6D4	character/head table	0x14 each
+1D6D4-1E6A0	UNIDENTIFIED FLOAT VALUES - FIND OUT USE
+1E6A0-1EA7C	button sequences for button cheat codes	0x14 each
+1EA7C-1EF2C	button cheat codes	0x10 each
+1EF30-1EF98	linked by 7F09343C when texture 5E4 detected	i, 64x64?
+1EF98-1F000	linked by 7F09365C when texture 5E7 detected	ci, 20x20?
+
+1F010-1F3B8	
+
+1F3E0	???	tied to explosions
+1F3E4	
+1F3E8	
+1F3EC-1F4F4	smoke types	0x18 each entry, 0xB entries
+1F4F4-1FA34	explosion type data table	0x40 each entry, 0x15 entries
+1FA34-1FA70	global image bank offsets to explosion frame display lists
+1FA70
+1FA74	RESERVED current scorch entry#
+1FA78	RESERVED current impact entry#
+1FA7C-1FB6C	impact image sizes and types
+1FB6C
+
+1FB90-1FBA0	default vertex sample for scorches
+1FBA0-1FBB0	default vertex sample for impacts
+
+1FC04	RESERVED selected page (0:main, 1:inventory, 2:control, 3:options, 4:brief)
+1FC08	RESERVED highlighted control option (0:style, 1:controller)
+1FC0C	RESERVED highlighted watch menu option (0:music, 1:fx, etc)
+1FC10	RESERVED selected watch briefing page (0:bg, 1:M, 2:Q, 3:MP, 4:objectives)
+1FC14	RESERVED Abort ? "cancel":"confirm"
+1FC18	RESERVED 1 if highlighted option selected (allows editting)
+1FC1C	RESERVED 
+1FC20	RESERVED current position in scrolling lists
+1FC24	RESERVED final position in scrolling list
+1FC28	RESERVED item # selected from watch inventory
+1FC2C	RESERVED [float] position for entry in scrolling list
+1FC30	RESERVED 0= scrolling list to entry
+1FC34	RESERVED 1= display watch inventory item name
+1FC38	RESERVED [float] 
+1FC3C	RESERVED [float] 
+1FC40	RESERVED 
+1FC44	RESERVED [float] 
+1FC48	number of control schemes in following list
+1FC4C-1FCEC	solo control types and labels for each control	0x14 each
+	0x0	2	control type
+	0x2	2	A button label
+	0x4	2	B button label
+	0x6	2	Z button label
+	0x8	2	L button label
+	0xA	2	R button label
+	0xC	2	C button label
+	0xE	2	+ button label
+	0x10	2	Start button label
+	0x12	2	Control Stick label
+1FCEC-1FD4C	solo watch setting labels
+	0x0	2	name of setting
+	0x2	2	option 1
+	0x4	2	option 2
+	0x6	2	option 3 (usually blank)
+	0x8	4	setting default value
+1FD4C	RESERVED	enable control stick input	[highlighted]
+
+1FD64	RESERVED solo watch mission status colour
+1FD68	RESERVED solo watch mission status colour timer
+1FD6C	RESERVED solo watch objective colour
+1FD70	RESERVED solo watch objective colour timer
+1FD74	watch static line register; set bitflag to zero to trigger effect
+	80	green background
+	40	long line
+	20	short line
+
+2006C-200A8	table of long values, -1 entry terminates
+200A8-200B0	table of long values, -1 entry terminates
+200B0-200EC	table of long values, -1 entry terminates
+200F0
+200F4	RESERVED text spacing
+200F8	RESERVED text orientation
+200FC	RESERVED #spaces following wordwrap
+20100	RESERVED negative value does overlap correction
+20104	RESERVED texture filter mode
+20108	RESERVED x
+2010C	RESERVED y
+20110	RESERVED s
+20114	RESERVED t
+20118	RESERVED 1-allow japanese character lookup
+2011C	RESERVED p->1st font table(S) [@2E63F0 in ROM]
+20120	RESERVED p->2nd font table(S)	[@2E6694 in ROM]
+20124	RESERVED p->1st font table(L)	[@2E88A0 in ROM]
+20128	RESERVED p->2nd font table(L)	[@2E8B44 in ROM]
+2012C-2014C	ia16 'palette' for japanese text and window overlay	iiaa format
+2014C-2016C	ia16 'palette' for japanese text and window overlay	iiaa format
+
+201B4	RESERVED [float] explosion scale multiplier
+201B8
+201BC-201C8	increments for tiles in clipping files
+201C8	RESERVED calculated address for tile "0000"
+201CC	RESERVED start of clipping
+201D0	RESERVED end of clipping
+201D4
+
+20224	RESERVED -stanlinelog activated
+
+20694-23564	RESERVED room data index (run-time)
+23564	00000096	possibly max # rooms in a stage?
+
+236FC-23A8C	stage bg/clipping/scale table
+
+23BB0-23FF8	UNKNOWN - components for a display list generation routine?
+23FF8-24020	UNKNOWN - pointers into begin. of tables of stuff above
+24020-24080	current sky/enviroment values
+24080-251C0	stage skies/enviroment	0x5C each entry
+251C0-252A0	reduced stage skies enviroment	0x38 each entry
+252C4-27544	main ROM address index
+27544	# entries in main ROM address index - required!
+
+27550-27564	RESERVED	-mgfx allocations for 0-4 players
+27560-27574	RESERVED	-mvtx allocations for 0-4 players (0 overlaps previous table)
+27574-275C8	three upper text display backdrops...
+	**possibly unused?**
+
+275D0	RESERVED ???; sent as data for "lv_c_debug" debug.notice
+275D4	RESERVED stage#, used to grab music track
+275D8
+275DC	RESERVED current music track
+275E0-27638	RESERVED time counters, runtime registers, etc
+	27608	MP time setting copy	*****safe to delete - reinit at runtime*****
+	2760C	MP kill setting copy	*****safe to delete - reinit at runtime*****
+27638	RESERVED joy2 detail edit: pointer to table of custom LOD values or NULL
+2763C	RESERVED debug port cmds: portal index
+27640	RESERVED debug port cmds: previous state (4) of A button on ctrls 1,2
+27644	RESERVED debug port cmds: previous state (3) of A button on ctrls 1,2
+27648	RESERVED debug port cmds: previous state (2) of A button on ctrls 1,2
+2764C	RESERVED debug port cmds: previous state (1) of A button on ctrls 1,2
+27650	RESERVED debug port cmds: current state of A button on ctrls 1,2
+
+27660-276D8	ROM addresses for ramrom files
+276D8-2771C	RESERVED ramrom demo block runtime values; 1->+0x20 when ready to record
+2771C	RESERVED previous COP0 Count
+27720	RESERVED current COP0 Count
+27724	???	A0->800484B4 @ 7F0C0BE4
+
+27730	???	tied to solo watch menu
+
+27740	language, acting as offset into below.  1=J_text trigger.
+27744-278AC	text call values for each text bank
+278B0-278D4	MP award text list
+278E0-28360	MP weapon set data
+28360-283D0	MP weapon set menu text and pointers to data
+283D0	RESERVED selected mp weapon set
+
+283E8-2841C	Huffman table sizes	0x34
+2841C-28450	Huffman table sizes	0x34
+28450-28484	Huffman table sizes	0x34
+28484-284B8	Huffman table sizes	0x34
+284B8-284EC	Huffman table sizes	0x34
+284EC-28520	Huffman table sizes	0x34
+28520-28554	Huffman table sizes	0x34
+
+28570-2D9D0	image offset list
+2D9D0-2DADC	impact sounds & images
+2DADC-2DB10	pointers to SE/impact list entries
+2DB10-2DB44	pointers to text handles for each impact type
+
+2DB50-2DC54	zlib tables and registers
+2DC54	RESERVED	alloocated RSP workspace upper bound
+2DC58	RESERVED	alloocated RSP workspace lower bound
+
+2DC60-2DD20	???
+2DD20	RESERVED	pointer to 0x2DC60
+
+2DD34	RESERVED Indy Status
+2DD38	RESERVED 1- allows saving resources to Indy devtool
+
+2DD70	RESERVED	p->viewport buffer or NULL
+
+2DD80-2DEA0	stage music table
+2DEA0
+2DEA4-2DEAD	Spectrum keyboard buffer; reset to FF on reads
+2DEB0	RESERVED Spectrum Kempston joystick reg (ACTION | UP | DOWN | LEFT | RIGHT)
+
+2DEB4-2DF74	image (ia, 8bit)
+
+2DF74	RESERVED Spectrum: ???
+2DF78	RESERVED Spectrum: ???
+2DF7C-2DF9C	Spectrum palette: 16 colour, 16bit
+2DF9C-2DFC4	pointers to spectrum game list handles
+2DFC4	RESERVED Spectrum: set to 'value' by OUT port,value opcodes
+
+2DFF0	(float) 
+
+2E000-2E008	-nochr		string keyword disabling characters
+2E008-2E010	-noprop	string keyword disabling all props
+2E010-2E018	-noobj		string keyword disabling objects
+2E018-2E020	-noprop	string keyword disabling all props
+2E020-2E120	NULL field copied as base for setup name lookup
+2E120	_mp	used to rectify mp stage names
+2E124	[float] 0.000001	used as a floor value at 7F002604
+2E128-2E1A0	TLB	assigns default models for held weapons
+	deleted in rand++ 08 weapon expansion rewrite
+2E1A0-2E1C0	TLB	mp ammo crate expansion (all ironically the same)
+	can be deleted with use of ROM hack
+2E1C4	??? - used in 0D autoturret expansion
+2E1C8
+2E1CC	RESERVED y rotation for all doors?
+
+2E1D8-2E294	TLB	expansion routines for object types
+2E294	[float] ???
+2E298	[float] ???
+2E29C-2E350	TLB	weapon expansion routines
+2E350	[float] 0.9	
+2E354	[float] -Pi
+2E358
+2E35C
+2E360-2E418	TLB	models assigned to thrown objects of particular types
+2E418	[float] 0.909091 default zoom speed (used for 15818/800365A8)
+2E41C-2E440	TLB	execute intro block commands
+
+2E480-2E53C	TLB	...should know this.  tied to objects
+
+2E550-2E56C	TLB	7F00B238 eye intro steps (starting at step 2)
+2E56C	[float] 1390.0	length of step 2 in Eye intro
+2E570	[float] 1276.0	initial value for step 3 in Eye intro
+2E574	[float] 5.8	iteration length of step 3 in Eye intro
+
+2E580-2E6F8	text values for briefing screens
+2E6F8-2E6FC	"/n"	
+2E6FC-2E700	"."
+2E700-2E704	"/n"	
+2E704-2E708	"1./n"	
+2E708-2E70C	"2./n"	
+2E70C-2E710	"3./n"	
+2E710-2E714	"/n"	
+2E714-2E718	": "	colon following "Mission #" in briefing title
+2E718-2E71C	"/n"	newline following chapter name in briefing title
+2E71C-2E720	": "	colon following "Part #" in briefing title
+2E720-2E724	"/n"	newline following 1st stage name in briefing title
+2E724-2F2DC	region copied to 
+2F2DC-2F2E4	%d./r	numerals next to difficulty	used at 7F00EFFC
+2F2E4-2FE9C	/r	buffer for 007 SETTINGS text	used at 7F00F7C4
+	followed by 0xBB4 of blank copy data
+	-can be eliminated via rom hack-
+2FE9C-2FEBC	007 percentage display	%d%%	%d%%	%d%%	%d%%
+2FEBC-2FEC0	%d	#players on MP options menu
+2FEC0-2FEC4	a.	a., b., etc on PRIMARY OBJECTIVES list
+2FEC4-30A7C	\r	buffer for MISSION BRIEFING text	used at 7F015DA0
+	followed by 0xBB4 of blank copy data
+	-can be eliminated via rom hack-	
+30A7C-30B10	end of stage statistic string display	
+30B10-30C38	TLB	determines if cheats are available in cheat menu
+30C38	[float] 0.075	???
+30C3C	[float] 0.075	???
+30C40	[float] 0.075	???
+30C44	[float] 0.075	???	
+30C48	[float] 130.5	lower bounds for upper tab on menus
+30C4C	[float] 399.0	default horizontal cursor position
+30C50	[float] 130.5	???
+30C54	[float] 1.3-	???, used by legal screen
+30C58	[float] 10000.0	???, used by legal screen
+30C5C	[float] 1.3-	???, used by menu 17
+30C60	[float] 10000.0	???, used by menu 17
+
+30C6C	[float] 	???, used by Nintendo logo
+30C70	[float] 	???, used by Nintendo logo
+
+
+30C80	[float] 	???, used by GE splash screen
+30C84	[float] 	???, used by GE splash screen
+30C88
+30C8C-30C94	[float]	4-folder layer x/z dimentions
+30C94	[float]	4-folder menu: folder scale
+30C98	[float]	4-folder menu: COPY icon y (vertical) position
+30C9C	[float]	4-folder menu: ERASE icon x pos
+30CA0	[float]	4-folder menu: ERASE icon y pos
+30CA4	[float]	4-folder menu: SELECT FILE y pos
+30CA8-30CB0	[float]	main menu folder x/z dimentions
+30CB0	[float]	main menu folder option selection spacing values (vert. bounds for Cheat)
+30CB4-30CBC	[float]	solo stage select folder x/z dimentions
+30CBC-30CC4	[float]	DIFFICULTY folder x/z dimentions
+30CC4	[float]	DIFFICULTY folder option selection spacing values
+30CC8-30CD0	[float]	007 options folder x/z dimentions
+30CD0-30CF0	TLB	set scenario-specific settings on MP menus
+30CF0-30CF8	[float]	MP settings folder x/z dimentions
+30CF8-30D00	[float]	MP character select folder x/z dimentions
+30D00-30D08	[float]	MP handicap folder x/z dimentions
+30D08-30D10	[float]	MP control style folder x/z dimentions
+30D10-30D18	[float]	MP stage select folder x/z dimentions
+30D18-30D20	[float]	MP scenario folder x/z dimentions
+30D20-30D28	[float]	MP team select folder x/z dimentions
+30D28-30D30	[float]	BRIEFING folder x/z dimentions
+30D30-30D44	TLB	display proper name on each briefing page; ie. "Q Branch"
+	**can eliminate through ROM hacking - incrementation**
+30D44-30D4C	[float]	DEBRIEFING folder x/z dimentions
+30D4C-30D54	[float]	STATISTICS folder x/z dimentions
+30D54-30D5C	[float]	CHEAT folder x/z dimentions
+30D5C-30D70	TLB	select random Bond in intro movies
+	**can eliminate through ROM hacking**
+30D70	
+30D74	
+30D78	[float]	cast intro screen width
+
+30DB4	[float]	smaller menu sizing
+30DB8	[float]	larger menu sizing
+30DBC-30E24	TLB	menu updates
+30E24-30E8C	TLB	menu initializations
+30E8C-30EF4	TLB	menu interfaces
+30EF4-30F5C	TLB	menu constructors
+
+31000	[float] global character scale modifier	0.1
+31004	[float] further global character scale value for special case	0.8
+
+311EC-31238	TLB	
+
+312E0-31340	TLB	
+
+31370-31764	TLB	length of each action block command in bytes
+31764	[float]	???
+31768-31B5C	TLB	action block executables
+
+31B6C-31BE4	TLB	
+
+31BF0-31C30	TLB	
+
+31C40	0x0A	\r - appended to japanese " picked up." ammo collection text
+31C44	2E0A	.\r - appended to english ammo collection text
+31C48-31CAC	NULL field to initialize ammo collection string
+31CAC	NULL	japanese: NULL starting weapon collection text
+31CB0	0x0A	\r - appended to japanese " picked up." weapon collection text
+31CB4	3A0A	:\r - used in ??? text
+
+31CC8	???	tied to projectile deflection off walls (non-clipping impact)
+
+31D04	[float] 62500.0	proximity mine detonation distance (characters), squared	250: saves SQRTing the distance
+
+31D08	[float]	0.277778 rocket inital gravity modifier
+31D14	[float]	0.277778 prop/projectile gravity modifier
+
+31E08-31ED8	TLB	set addresses for monitor animation command lists
+31ED8	[float]	???
+31EDC-31F18	TLB	process monitor animation commands
+
+3200C-32060	TLB	
+32060-3211C	TLB	TRUE if a non-collectable standard object type
+3211C-32164	TLB	TRUE if a collectable object type
+
+32180-321F4	TLB	append "some", "a", "an", or "the" when ammo is collected
+321F4-3225C	TLB	append name of ammo type collected
+3225C-322D0	TLB	set sound effects on ammo collection
+322D0-32308	TLB	sets amount of ammo received from ammo clips; first 0xE ammo types only
+32308-32340	TLB	sets amount of ammo received from weapons; first 0xE ammo types only
+32340-3249C	TLB	appends weapon name for weapon collection text.  starts at 7F04FE9C
+3249C-32550	TLB	ammo collection: some trigger sound effects (watch, knives, BA, laser for instance)
+			7F0502C4-7F05062C(default)
+
+3255C	proximity mine detonation distance (objects), squared
+
+32564-32594	TLB	returns V0=4,1,3,5,0, or 2, depending on which selected...
+
+325BC-326CC	TLB	
+
+32700-327BC	TLB	size in words of each setup object type
+327BC-32878	TLB	returns p->setup object or NULL if OBJECTIVE
+32880-328B4	NULL field to initialize "objective x: status" message buffer (0x32 large)
+328B4-328BC	"%s [0x80]%c "	japanese "objective x: status" message
+328BC-328C4	"%s %c: "	english "objective x: status" message
+
+3292C	[float]	0.277778 NPC gravity modifier
+
+32E64-32E70	ammo display	%d	%s: %d
+32E70-32E7C	died x times	%s %d %s
+32E7C-32E84	suicide count: x	%s: %d
+
+32F20-32FAC	TLB	expands group values in object model data?
+32FAC-33038	TLB	item type specific
+
+33074	[float]	global G_Z scale mod
+
+330A8-330F8	TLB	
+
+33194-332F4	TLB	??? - 1st person weapon attribute
+332F4-333E0	TLB	??? - 1st person weapon attribute
+333E4	[float]	weapon recoil multiplier: initial volley
+333E8	[float]	weapon recoil multiplier: recoil backward
+333EC	[float]	weapon recoil multiplier: reset to stationary
+
+33404-334FC	TLB	sound when drawing/reloading item
+334FC	[float] 0.698132	1st person weapon draw speed
+33500	[float] 0.698132	1st person weapon reload speed
+33504-335FC	TLB	inhibits reload sound for items
+
+33648	[float]	0.277778 expended shell inital gravity modifier (pistol)
+33670	[float]	0.277778 expended shell inital gravity modifier (non-pistols)
+33674	[float]	0.277778 expended shell gravity modifier (all)
+33678	[float]	expended shell scale multiplier
+3367C	[float]	far clipping for expended shells	note: clipping values hide the DL from view unless within range
+33680	[float]	near clipping for expended shells; closer than 20.0 will usually clip shells on ejection
+
+33690-33700	debug text: failure to draw objects
+	******safe to delete******
+33700-33754	TLB	???, per obj.table command types
+33754-337A8	TLB	???, per obj.table command types
+337A8-33808	TLB	0x18 entries
+33808-33868	TLB	0x18 entries
+33868-33870	???	fill zeroes?
+33870-33D68	debug text: DL parsing or data errors
+	******safe to delete******
+33D68-33DC8	TLB	used to compute and tally obj.table group numbers
+33DC8	[float]	???
+33DCC	[float]	???
+33DD0-33E24	TLB	
+
+33E90-33EF0	TLB	???, per obj.table command types
+33EF0-33F50	TLB	???, per obj.table command types
+33F50-33FB0	TLB	???, per obj.table command types
+
+33FC4-34024	TLB	???, per obj.table command types
+34024-34084	TLB	???, per obj.table command types
+34084-341F8	TLB	expand offsets in model data types
+
+34200	[float] 0.999999
+34204	[float] 0.999999	used in a ceil() routine at 7F0766AC
+34208	[float] 0.999999
+3420C	[float] 0.999999
+
+34230-34254	debug pos display	%8s	x %4.0f	y %4.0f	z %4.0f	%s %3d
+	******safe to delete - do not allow cheat pos******
+34254-34278	TLB	solo bodies (assigned by cuff)
+34278-3429C	TLB	solo heads  (assigned by cuff)
+
+342EC	[float] 5.9	zoom factor for main watch page, used on entry
+342F0	[float]	
+342F4	[float]		
+342F8	[float] 0.1	multiplied by scale value for watch to make final (0.01)
+342FC	[float] 1.7	maximum watch transition speed
+34300	[float] 1.1	watch transition multiplier
+
+34360	[float]	0.277778 player gravity modifier
+34364	[float]	0.277778 player view (suspension) gravity modifier
+
+34344	[float] 1st person weapon vertical movement restrictor
+34348	[float] 1st person weapon horizontal movement restrictor
+
+343D8	[float] movement rate in aiming mode; setting to 1.125 or above forces sight to edge of screen
+
+34500-3451C	TLB	???
+
+34520	[float] Pi
+34524	[float] Pi*2
+34528	[float] Pi*2	[used by 7F089F10]
+3452C	[float] Pi
+
+34540	[float] Pi*2
+
+3456C	[float] player perspective modifier
+
+345B0-3496C	debug menu text
+	******safe to delete - do not allow debug******
+3496C-34AA0	TLB	execute debug menu option
+	******safe to delete - do not allow debug******
+34AA0-34AB4	TLB	completely unnecessary jumps after debug option handling
+	******safe to delete - do not allow debug or use ROM hack******
+
+34AD0	[float] Pi*2	used by "intro pos" for rotation correction
+
+34AE0-36520?	stage setup text lookup handles
+
+36520-36648	TLB	activate in-game cheats and text
+36648	[float]	0.05 multiplayer invisibility factor (%5 visible)
+3664C-36774	TLB	deactivate in-game cheats and text	(txtID=A0->7F0C1DD8)
+
+367A8	[float]	??? used by 7F094298
+367AC	[float]	??? used by 7F094298
+
+367B4-367F4	TLB	???	float-math intensive stuff...
+
+36800-36840	TLB	???	multiply one set of float values by another...
+
+3689C-3691C	TLB	model loaded when a weapon drops, etc. called by: 7F09B264
+
+369D0-369D8	controller debug display?
+		%d, %d\n
+369D8-369E8	solo inventory debug
+		%d, %d\n%d %f\n
+		current scroll pos., final scroll pos\nitem#, position
+369E8-36A30	controller setting labels
+		(A)	(B)	(Z)	(L)	(R)	(C)	(+)	(S)	(3D)
+36A30-37020	\n	used to initialize ???	(used at 7F0AC260)
+37020-37028	NULL field used in 70015E10
+37028-375E8	NULL field used in 70015E60, 70015EA4
+375E8-376A8	NULL field used to initialize ???	(used at 7F0AC4EC)
+
+376B0-376B4	" \n"
+376B4-376B8	" \n\n"
+376B8-376C0	"%c: "		display letter next to objective
+376C0-376C4	" \n"
+376C4-376C8	" \n\n"
+	watch mission objective
+	Used to assemble the watch objective list.  can tamper with and remove lines
+	*safe to edit - do not delete*
+376C8	[float]	zoom for main->objective/briefing watch menu	[40933333]
+376CC	[float]	zoom for main->inventory watch menu		[40933333]
+376D0	[float]	zoom for inventory->main watch menu		[40BCCCCD]
+376D4	[float]	zoom for inventory->control watch menu		[407CCCCD]
+376D8	[float]	unused zoom for control->options watch menu	[407CCCCD]
+376DC	[float]	zoom for control->inventory watch menu		[40933333]
+376E0	[float]	zoom for options->objective/briefing watch menu	[40933333]
+376E4	[float]	zoom for objective/briefing->options watch menu	[407CCCCD]
+376E8	[float]	zoom for objective/briefing->main watch menu	[40BCCCCD]
+376EC	[float]	
+376F0	[float]	
+376F4	[float]	low bound for advancement through watch menu items; -=auto backward
+376F8	[float]	bound for quick advancement through watch menu items
+376FC	[float]	advance rate though inventory
+37700	[float]	quick advance rate through inventory
+
+3773C-37778	TLB	retrieve selected watch menu option for each page
+
+377E0-377F4	TLB	briefing page names in watch menu	(txtID->7F0C1DD8)
+377F4-37808	TLB	set up each of the 5 watch menu pages
+
+37810-3783C	clipping debug	%c%d%c%c	stan_c_debug	-stanlinelog
+		would have displayed the current PAD# (p##a#)
+	******safe to delete******
+
+37EB8-378C8	PORT%d	ROOM%d
+	******safe to delete******
+
+37EC8-37EEC	TLB	executes camera modes 0-8
+37EEC	[float]	???
+37EF0-37F24	TLB	global visibility command processing	types 50-5C
+37F24-37FC4	TLB	global visibility command processing	types 0-27
+
+37FCC	[float]	
+
+37FF0-38004	TLB	???	uses random selection, with 10 samples...
+
+38014-3A8DC	ROM main lookup handles
+3A8DC	1172	likely keysearch for compressed data
+3A8E0	1172	likely parsekey for compressed data
+3A8E4-3A8F0	"ob_c_debug"
+3A8F0-3A8FC	"dyn_c_debug"
+	******safe to delete******
+3A8FC-3A904	"-mgfx"	memory allocation keyword: search
+3A904-3A90C	"-mgfx"	memory allocation keyword: parse
+3A90C-3A914	"-mvtx"	memory allocation keyword: search
+3A914-3A91C	"-mvtx"	memory allocation keyword: parse
+	see "memory allocation and memory bank" doc for more details
+3A920-3A92C	"lv_c_debug"
+3A92C-3A938	"-stanshow_"	string keyword: search
+3A938-3A944	"-stanshow_"	string keyword: parse
+3A944-3A950	"-stanshow_"	string keyword: search
+3A950-3A95C	"-stanshow_"	string keyword: parse
+3A95C-3A968	"-stanshow_"	string keyword: search
+3A968-3A974	"-stanshow_"	string keyword: parse
+	would have displayed tile as colour in debugger
+	******safe to delete******
+3A974-3A984	One Minute Left
+3A984-3A9AC	"setdetail %d %d %d %d %d %d %d %d %d"
+	******safe to delete******
+
+3A9C0-3A9D0	"replay/demo.%d"
+3A9D0-3A9E0	"replay/demo.%d"
+3A9E0-3A9F4	"replay/demo.load"
+	******safe to delete******
+3AA00-3AA1C	TLB	???	CALLS FROM 0x3AA1C-3AA54
+3AA1C-3AA54	TLB	???
+3AA54	[float]	???
+3AA58-3AAE4	TLB	
+
+3ADD0-3AE88	TLB	stage-specific text; <<2 to convert to txtID upper byte!
+	sets V0=values:	(might be errors...)  theoretical are marked as well
+	1E	!?	!?	!?	!?	!?	!?	!?
+	!?	!?	!?	22	!?	23	08	02
+	24	0D	1D	05	19	0C	1A	0A
+	0B	03	1C	1F	12	0E	07	!? [06]
+	09	!? [21]	20	!? [10]	11	04	!? [16]	01
+	!? [1B]	17	!? [0F]	!? [13]	!? [15]	14	-- [25]	-- [18]
+3AE90	"%d"	MP watch menu	(used at 7F0C35A0)
+3AE94	NULL	MP watch menu window text for blank window	(used at 7F0C4118)
+3AE98	"<"	MP watch menu left of window text
+3AE9C	">"	MP watch menu right of window text
+3AEA0-3AEA8	"%s%d %s"	P# KILLS
+3AEA8-3AEB0	"%s%d %s"	P# LOSSES
+3AEB0-3AEF0	TLB	advance right on MP menu pages
+3AED0-3AEF0	TLB	advance left on MP menu pages
+3AEF0	[float] 
+3AEF4	[float] 
+3AEF8-3AF10	TLB	MP overlays, scoring, scenario
+3AF10-3AF30	TLB	MP scoring (watch menu & duration)
+3AF30-3AF50	TLB	MP overlays, scoring, scenario
+3AF50-3AF70	TLB	MP overlays, scoring, scenario
+3AF70-3AF90	TLB	set MP menu window text
+3AF90	[float] Pi	used in radar display
+3AF94	[float] 
+3AF98	
+3AF9C	
+3AFA0-3AFC8	TLB	huffman decompression routines (9 types)
+3AFC8-3B0F0	TLB	
+3B0F0-3B190	Impact type handles
+3B190-3B1D0	TLB	??? - used @ 7F0CE1D0; corresponds to DL types B1-C0
+3B1D0-3B1E4	TLB	??? - used @ 7F0CE2B4; used in converting C0- image ID recall types (&7 with upper command)
+3B1F0-3B218	1172	compression header detection for RareZip
+	******safe to delete******
+3B220-3B288	UNUSED?	rsp_c_debug	sleep 5; /etc/killall ghost gload
+		game_c_debug	Jun 29 1997 20:46:05
+	******safe to delete******
+3B290-3B384	spectrum game filenames; only first 5 entries linked
+3B384-3B39C	spectrum 16k program manager filename
+3B39C-3B79C	TLB	spectrum opcodes 0-FF
+3B79C-3B89C	TLB	spectrum CB extensions 0-3F
+3B89C-3B8BC	TLB	spectrum CB extensions for SET commands
+3B8BC-3B8DC	TLB	spectrum CB extensions for RES commands
+3B8DC-3B8FC	TLB	spectrum CB extensions for BIT commands
+3B8FC-3B91C	TLB	spectrum CB extensions for SET/RES/BIT register targets
+3B91C-3B98C	TLB	spectrum ED extensions A0-BB
+3B98C-3BA88	TLB	spectrum ED extensions 40-7E
+
+3BD00-3BD60	RSP SIGNATURE
+	RSP SW Version: 2.0G, 09-30-96
+	SGI U64 GFX SW TEAM: S Anderson, S Carr, H Cheng, K Luster, R Moo
+	******safe to delete******
+	note: SW revision 2.0G is based off 2.0D, which was Mario.  Obvious addition is tri4, plus point buffer citation
+3BD60-3BD70	???	each byte is incremental; +0xA each
+
+3C34E-3C550	???
+3C550	end of file

@@ -1,0 +1,282 @@
+7F015A08	4A538	print objective list to main menus
+	accepts: A0=p->DL, A1=y offset, A2=p->text buffer, A3=TRUE if printing objective status
+ADDIU	SP,SP,FF60
+SW	S5,004C (SP)
+SW	S4,0048 (SP)
+SW	S8,0058 (SP)
+SW	S6,0050 (SP)
+SW	S3,0044 (SP)
+LUI	S4,8004
+LUI	S5,8004
+OR	S3,A2,R0	;S3=A2: p->text buffer
+OR	S6,A0,R0	;S6=A0: p->DL
+SW	RA,005C (SP)
+SW	S7,0054 (SP)
+SW	S2,0040 (SP)
+SW	S1,003C (SP)
+SW	S0,0038 (SP)
+SW	A1,00A4 (SP)	;SP+A4=A1: y offset
+SW	A3,00AC (SP)	;SP+AC=A3: status flag
+SW	R0,0098 (SP)	;SP+98=0: letter offset (entry#)
+OR	S8,R0,R0	;S8=0	#lines
+ADDIU	S5,S5,0EB4	;S5=80040EB4: p->1st font table
+ADDIU	S4,S4,0EB8	;S4=80040EB8: p->2nd font table
+OR	T0,R0,R0	;T0=0	entry#
+OR	T1,R0,R0	;T1=0	offset to entry
+//7F015A64:	determine if valid objective
+LUI	T6,8007
+LW	T6,978C (T6)	;T6=8006978C: p->briefing data
+LUI	T7,8003
+ADDU	V0,T6,T1	;V0=data+offset to next entry
+LHU	V1,0008 (V0)	;V1=objective text ID
+BEQL	V1,R0,7F015D34	;loop if dead entry
+ADDIU	T0,T0,0001
+LW	T7,A8FC (T7)	;T7=8002A8FC: difficulty
+LHU	T8,000A (V0)	;T8=objective min.difficulty
+OR	A0,V1,R0	;A0=V1: objective text ID
+OR	S7,R0,R0	;S7=0
+SLT	AT,T7,T8	;TRUE if difficulty < min.difficulty
+BNEL	AT,R0,7F015D34	;loop if entry isn't pertinent
+ADDIU	T0,T0,0001
+//7F015A9C:	figure out leading letter and print
+SW	T1,006C (SP)	;SP+6C=T1: offset to entry
+JAL	7F0C1DD8	;V0=p->text A0
+SW	T0,009C (SP)	;SP+9C=T0: entry#
+LUI	A1,7F01
+OR	S1,V0,R0	;S1=V0: p->text
+ADDIU	A1,A1,EFBD	;A1=7F00EFBD: "a.\n"	org.80050C50
+JAL	7000A770	;V0= strcpy(A0,A1)
+OR	A0,S3,R0	;A0=S3: p->buffer
+LBU	T9,0000 (S3)	;T9="a"
+LW	T2,0098 (SP)	;T2= letter offset
+ADDIU	A0,SP,0094	;A0=SP+94: @height
+ADDIU	A1,SP,0090	;A1=SP+90: @width
+ADDU	T3,T9,T2	;T3="a"+offset: a-z
+SB	T3,0000 (S3)	;letter->buffer
+LW	T4,0000 (S5)	;T4=p->1st font table
+SW	R0,0094 (SP)	;SP+94=0: @height
+SW	R0,0090 (SP)	;SP+90=0: @width
+SW	R0,0014 (SP)	;SP+14=NULL
+LW	A3,0000 (S4)	;A3=p->2nd font table
+OR	A2,S3,R0	;A2=S3: p->text
+JAL	7F0AE98C	;proportions of string A2
+SW	T4,0010 (SP)	;SP+10= p->1st font table
+LW	T6,0094 (SP)	;T6=height
+LW	T8,00A4 (SP)	;T8=SP+A4: y offset
+ADDIU	T5,R0,0037	;T5=37
+MULTU	T6,S8
+SW	T5,008C (SP)	;SP+8C=37: xpos
+MFLO	T7		;T7=height * #lines: line offset
+ADDU	T9,T7,T8	;T9=y offset + line offset
+ADDU	T2,T9,S7	;T2=y offset + line offset + offset: ypos
+JAL	7000441C	;V0= text clip width
+SW	T2,0088 (SP)	;SP+88=T2: ypos
+SLL	S0,V0,0x10
+SRA	T3,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T3,R0	;S0= text clip width
+LW	T4,0000 (S4)	;T4=p->2nd font table
+LW	T5,0000 (S5)	;T5=p->1st font table
+ADDIU	T6,R0,00FF	;T6=000000FF	black
+SW	T6,0018 (SP)	;SP+18= colour
+OR	A0,S6,R0	;A0=S6: p->DL
+ADDIU	A1,SP,008C	;A1=SP+8C: xpos
+ADDIU	A2,SP,0088	;A2=SP+88: ypos
+OR	A3,S3,R0	;A3=S3: p->text
+SW	S0,001C (SP)	;SP+1C= text clip width
+SW	V0,0020 (SP)	;SP+20= text clip height
+SW	R0,0024 (SP)	;SP+24= y offset
+SW	R0,0028 (SP)	;SP+28= x offset
+SW	T4,0010 (SP)	;SP+10= p->2nd font table
+JAL	7F009760	;write text
+SW	T5,0014 (SP)	;SP+14= p->1st font table
+//7F015B68:	fit line to width accounting for status when present
+LW	T8,0094 (SP)	;T8=SP+94: @height
+LW	T2,00A4 (SP)	;T2=SP+A4: y offset
+LW	T5,00AC (SP)	;T5=SP+AC: status
+MULTU	T8,S8
+ADDIU	T7,R0,004B	;T7=4B	xpos
+OR	S6,V0,R0	;S6=V0: p->DL
+SW	T7,008C (SP)	;SP+8C= xpos
+ADDIU	A0,R0,0140	;A0=140: default width
+OR	A1,S1,R0	;A1=S1: p->text
+OR	A2,S3,R0	;A2=S3: p->buffer
+MFLO	T9		;T9=height*#lines: line offset
+ADDU	T3,T9,T2	;T3=line offset + y offset
+ADDU	T4,T3,S7	;T4=line offset + y offset + offset: ypos
+BEQ	T5,R0,7F015BD8	;branch if not displaying status
+SW	T4,0088 (SP)	;SP+88= ypos
+//7F015BA4:	handle status display wordwrap
+JAL	7F0ACB94	;A0-> #spaces following wordwrap [80040E8C]
+ADDIU	A0,R0,0002	;A0=2
+LW	T6,0000 (S5)	;T6=p->1st font table
+ADDIU	A0,R0,00DC	;A0=DC: width
+OR	A1,S1,R0	;A1=S1: p->text
+OR	A2,S3,R0	;A2=S3: p->buffer
+LW	A3,0000 (S4)	;A3=p->2nd font table
+JAL	7F0AEB64	;A2=text A1 fit to width A0
+SW	T6,0010 (SP)	;SP+10= p->1st font table
+JAL	7F0ACB94	;A0-> #spaces following wordwrap [80040E8C]
+OR	A0,R0,R0	;A0=0
+BEQ	R0,R0,7F015BE8
+NOP
+//7F015BD8:	no status display
+LW	T7,0000 (S5)	;T7=p->1st font table
+LW	A3,0000 (S4)	;A3=p->2nd font table
+JAL	7F0AEB64	;A2=text A1 fit to width A0
+SW	T7,0010 (SP)	;SP+10= p->1st font table
+//7F015BE8:	display objective text
+JAL	7000441C	;V0= text clip width
+NOP
+SLL	S0,V0,0x10
+SRA	T8,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T8,R0	;S0= text clip width
+LW	T9,0000 (S4)	;T9=p->2nd font table
+LW	T2,0000 (S5)	;T2=p->1st font table
+ADDIU	T3,R0,00FF	;T3=000000FF	black
+SW	T3,0018 (SP)	;SP+18= colour
+OR	A0,S6,R0	;A0=S6: p->DL
+ADDIU	A1,SP,008C	;A1= p->xpos
+ADDIU	A2,SP,0088	;A2= p->ypos
+OR	A3,S3,R0	;A3=S3: p->text
+SW	S0,001C (SP)	;SP+1C= text clip width
+SW	V0,0020 (SP)	;SP+20= text clip height
+SW	R0,0024 (SP)	;SP+24= y offset
+SW	R0,0028 (SP)	;SP+28= x offset
+SW	T9,0010 (SP)	;SP+10= p->2nd font table
+JAL	7F009760	;write text
+SW	T2,0014 (SP)	;SP+14= p->1st font table
+//7F015C3C:	skip if status not displayed
+LW	T4,00AC (SP)	;T4=SP+AC: status
+OR	S6,V0,R0	;S6=V0: p->DL
+BEQ	T4,R0,7F015D10	;branch if status isn't displayed
+NOP
+//7F015C4C:
+JAL	7F057238	;V0=TRUE if objective A0 complete
+LW	A0,009C (SP)	;A0=SP+9C: entry#
+BEQ	V0,R0,7F015C88	;branch if failed (0)
+ADDIU	AT,R0,0001
+BEQ	V0,AT,7F015C78	;branch if complete (1)
+ORI	A0,R0,9C5B	;A0=9C5B: "Completed\n"
+ADDIU	AT,R0,0002
+BEQL	V0,AT,7F015C8C	;branch if incomplete (2)
+LUI	S2,7800
+BEQ	R0,R0,7F015C8C	;else, assume incomplete
+LUI	S2,7800
+//7F015C78:	complete
+JAL	7F0C1DD8	;V0=p->text A0
+ADDIU	S2,R0,00FF	;S2=000000FF	black
+BEQ	R0,R0,7F015C9C
+OR	S1,V0,R0
+//7F015C88:	incomplete or failed
+LUI	S2,7800
+ORI	S2,S2,00FF	;S2=780000FF	red
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,9C5C	;A0=9C5C: "FAILED\n"
+//7F015C98:	display status
+OR	S1,V0,R0	;S1=V0: p->text
+LW	T6,0094 (SP)	;T6= @height
+LW	T8,00A4 (SP)	;T8= y offset
+ADDIU	T5,R0,0136	;T5=136	xpos
+MULTU	T6,S8
+SW	T5,008C (SP)	;SP+8C= xpos
+MFLO	T7		;T7=height * #lines: line offset
+ADDU	T9,T7,T8
+ADDU	T2,T9,S7	;T2=line offset + y offset + offset: ypos
+JAL	7000441C	;V0= text clip width
+SW	T2,0088 (SP)	;SP+88= ypos
+SLL	S0,V0,0x10
+SRA	T3,S0,0x10
+JAL	7000442C	;V0= text clip height
+OR	S0,T3,R0	;S0= text clip width
+LW	T4,0000 (S4)	;T4=p->2nd font table
+LW	T5,0000 (S5)	;T5=p->1st font table
+OR	A0,S6,R0	;A0=S6: p->DL
+ADDIU	A1,SP,008C	;A1=p->xpos
+ADDIU	A2,SP,0088	;A2=p->ypos
+OR	A3,S1,R0	;A3=S1: p->text
+SW	S2,0018 (SP)	;SP+18= colour
+SW	S0,001C (SP)	;SP+1C= text clip width
+SW	V0,0020 (SP)	;SP+20= text clip height
+SW	R0,0024 (SP)	;SP+24= y offset
+SW	R0,0028 (SP)	;SP+28= x offset
+SW	T4,0010 (SP)	;SP+10= p->2nd font table
+JAL	7F009760	;write text
+SW	T5,0014 (SP)	;SP+14= p->1st font table
+OR	S6,V0,R0	;S6=V0: p->DL
+//7F015D10:
+JAL	7F0AC0E8	;V0= #newlines in string A0
+OR	A0,S3,R0	;A0=S3: p->text
+LW	T6,0098 (SP)	;T6=letter offset
+ADDU	S8,S8,V0	;S8+=V0: #lines+=#newlines
+LW	T1,006C (SP)	;T1= offset	offset*4
+ADDIU	T7,T6,0001	;T7=letter+1
+SW	T7,0098 (SP)	;update letter offset
+LW	T0,009C (SP)	;T0= entry#
+//7F015D30:	loop for each objective
+ADDIU	T0,T0,0001	;T0++	entry#
+ADDIU	AT,R0,000A	;AT= A
+BNE	T0,AT,7F015A64	;loop until 10 entries read
+ADDIU	T1,T1,0004	;T1+=4: offset
+//7F015D40:	return
+LW	RA,005C (SP)
+OR	V0,S6,R0	;V0=S6: p->DL
+LW	S6,0050 (SP)
+LW	S0,0038 (SP)
+LW	S1,003C (SP)
+LW	S2,0040 (SP)
+LW	S3,0044 (SP)
+LW	S4,0048 (SP)
+LW	S5,004C (SP)
+LW	S7,0054 (SP)
+LW	S8,0058 (SP)
+JR	RA
+ADDIU	SP,SP,00A0
+
++_+
+
+7F0AC0E8	E0C18	V0=#newlines in string A0
+	accepts: A0=p->text
+	fries: V1,A0,A1
+LBU	V0,0000 (A0)	;V0=char
+OR	V1,R0,R0	;V1=0	count=0
+ADDIU	A1,R0,000A	;A1="\n"
+BEQ	V0,R0,7F0AC118	;quit if NULL detected
+NOP
+//7F0AC0FC:	count newlines
+BNEL	A1,V0,7F0AC10C	;branch if not a newline
+LBU	V0,0001 (A0)
+ADDIU	V1,V1,0001	;V1++
+//7F0AC108:	loop through string
+LBU	V0,0001 (A0)	;V0=next char
+ADDIU	A0,A0,0001	;A0++	p->next char in string
+BNEZ	V0,7F0AC0FC	;loop until NULL character
+NOP
+//7F0AC118:	return
+JR	RA
+OR	V0,V1,R0	;V0=V1: #newlines
+
+7F0AC120	E0C50	V0= p->string following final newline
+	accepts: A0=p->text
+	fries: V1,A0,A1,T6
+LBU	V0,0000 (A0)	;V0=char
+OR	V1,A0,R0	;V1=A0: p->string
+ADDIU	A1,R0,000A	;A1="\n"
+BEQ	V0,R0,7F0AC160	;quit if NULL detected
+NOP
+//7F0AC134:
+BNEL	A1,V0,7F0AC154	;branch if not newline
+LBU	V0,0001 (A0)
+LBU	T6,0001 (A0)	;T6=next char
+ADDIU	A0,A0,0001	;A0++	p->next char in string
+BEQL	T6,R0,7F0AC154	;branch if NULL
+LBU	V0,0001 (A0)
+OR	V1,A0,R0	;V1=A0	p->string following newline
+//7F0AC150:	loop through string
+LBU	V0,0001 (A0)	;V0=next char
+ADDIU	A0,A0,0001	;A0++	p->next char in string
+BNEZ	V0,7F0AC134	;loop until NULL
+NOP
+JR	RA
+OR	V0,V1,R0	;V0=V1: p->string

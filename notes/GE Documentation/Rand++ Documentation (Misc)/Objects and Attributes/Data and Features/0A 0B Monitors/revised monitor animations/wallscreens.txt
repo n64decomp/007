@@ -1,0 +1,118 @@
+animated wallscreen presets
+animation values
+00	beta bond - scrolling
+01	desktops, sattelite - scrolling
+02	10 screens... earths, galaxies, targetting, shuttles
+03	3 wave patterns
+04	sine wave pattern
+05	scrolling green text (up)
+06	scrolling dark red text (down)
+07	scrolling dark green text (down)
+08	red bar graph (increment)
+09	blue bar graph (increment)
+0A	green bar graph (decrement)
+0B	radar display
+0C	spinning cube
+0D	3 screens... location, weapon armed, severnaya
+0E	red target in center of bunker display
+0F	7 screens... sattelite, targetting, orbit, telemetric
+10	green global map - scrolling
+11	karl yelling
+12	skateboard
+13	police guy
+14	N/A
+15	scrolling green text (up)
+16 - 2D	same set as #2/#F, with all possible techniques used
+(2e, 2f used on pushbuttons)
+2E	red brightening screen
+2F	green brightening screen
+30	grey solid screen
+31	red solid screen
+32	green solid screen
+33	black solid screen
+
+individual screen images
+(from global uncompressed image bank in ROM)
+
+00 - Bond Silhouette
+01 - NOKAYOH
+02 - BENOH APM3A
+03 - TAPI3T
+04 - C383PHAEA
+05 - NOPATYAPRET
+06 - White Emblem
+07 - Slanted Earth View
+08 - Jewish Star Screen
+09 - Hot Green/Orange Planet
+0A - Asteroid With Lines
+0B - Blue Computer Screen
+0C - Wheels and Squares of colour
+0D - Satellite Above Planet
+0E - Shuttle Info and Pic
+0F - Computer Windows
+10 - White 3D Box
+11 - Shuttle Slanted Blasting Off
+12 - Shuttle Blasting Off
+13 - Earth On Whole Screen
+14 - Earth On Whole Screen
+15 - Galaxy With Star
+16 - Galaxy With Star
+17 - Saturn 
+18 - Earth Great Lakes View
+19 - Crosshair On Earth
+1A - Galaxy
+1B - Fizzled Screen
+1C - Radio Wave (Squiggle)
+1D - Green Text
+1E - Bar Graph
+1F - Squares Around Larger Squares
+20 - Russian With Hat (From Surface 2 If You Press Computer)
+21 - Russian With Hat Arm Up
+22 - Russian With Hat Arm Up More
+23 - Russian With Hat Arm Up More
+24 - Silhouette With SkateBoard (From Bunker 2 In First Room After Cells)
+25 - Silhouette With SkateBoard Moving
+26 - Silhouette With SkateBoard Moving More
+27 - Silhouette With SkateBoard Moving More
+28 - Person Talking (From Bunker 2 In First Room After Cells)
+29 - Person Talking With Mouth Open
+2A - Person Talking With Mouth Open More
+2B - Person Talking With Mouth Closed
+2C - World Map From Large Screens
+2D - 3D Cube
+2E - 3D Cube Other Direction
+2F - 3D Cube Other Direction
+30 - White Flag With Black Piece
+31 - Sink?
+32 - Sky?
+33 - Dots? 
+34 - Blue?
+35 - Copier From Folder Screen!
+36 - Eraser From Folder Screen!
+37 - SELECT FILE
+38 - A Check (After Completing An Agent Level, The Red Check)
+39 - An X
+3A - Opal-Shaped Dot
+3B - ? (Looks like Texture of Exploding Cans)
+3C - Bond Multi Image Piece
+3D - Bond Multi Image Piece
+3E - Bond Multi Image Piece
+3F - Bond Multi Image Piece
+40 - Beta Bond Multi Image Piece
+41 - Beta Bond Multi Image Piece
+42 - Beta Bond Multi Image Piece
+43 - Beta Bond Multi Image Piece
+44 - Beta Bond 2Multi Image Piece
+45 - Beta Bond 2Multi Image Piece
+46 - Beta Bond 2Multi Image Piece
+47 - Beta Bond 2Multi Image Piece
+48 - Beta Bond 3Multi Image Piece
+49 - Beta Bond 3Multi Image Piece
+4A - Beta Bond 3Multi Image Piece
+4B - Beta Bond 3Multi Image Piece
+4C - Boris Multi Piece
+4D - Boris Multi Piece
+4E - Boris Multi Piece
+4F - Boris Multi Piece
+50 - Ourumov Multi Picture
+51 - ?  

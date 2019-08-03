@@ -1,0 +1,46 @@
+Output nerfed.
+Likely a tile debugger.  Used player's position versus the tile to determine if you were on it, printing result in colour of the tile.
+
+Detects selection at 7F086950:
+//7F086950:
+JAL	7F090F7C	;V0= print man pos debugger flag
+NOP
+BEQL	V0,R0,7F08697C
+LW	RA,002C (SP)
+//7F086960:	print man pos
+LW	T0,0000 (S1)	;T0=p->BONDdata
+ADDIU	A3,SP,005C	;A3=SP+5C: p->buffer
+LW	A0,0488 (T0)	;A0=BONDdata+488: p->tile
+LW	A1,048C (T0)	;A1=BONDdata+48C: x position
+JAL	7F0B2C2C	;copies tile A0's rgb to A3
+LW	A2,0494 (T0)	;A2=BONDdata+494: z position
+//7F086978:	return
+LW	RA,002C (SP)
+LDC1	F20,0018 (SP)
+LW	S0,0024 (SP)
+LW	S1,0028 (SP)
+JR	RA
+ADDIU	SP,SP,03B8
+
++_+
+
+7F0B2C2C	E775C	copy tile RGB as 24bit RGB to A3
+	accepts: A0=p->tile, A1=xpos, A2=zpos, A3=p->target
+SW	A1,0004 (SP)	;SP+4= A1: xpos
+SW	A2,0008 (SP)	;SP+8= A2: zpos
+LH	V1,0004 (A0)	;V1=tile+4: lighting and type
+SRA	V0,V1,0x8
+ANDI	T7,V0,000F	;T7=red
+SRA	A1,V1,0x4
+ANDI	T9,A1,000F	;T9=green
+SLL	T4,T7,0x4	;T4= R.
+OR	T5,T4,T7	;T5=red.red
+SLL	T6,T9,0x4	;T6= G.
+ANDI	T3,V1,000F	;T3=blue
+OR	T7,T6,T9	;T7=green.green
+SLL	T8,T3,0x4	;T8= B.
+OR	T9,T8,T3	;T9=blue.blue
+SB	T5,0000 (A3)	;target+0= red
+SB	T7,0001 (A3)	;target+1=green
+JR	RA
+SB	T9,0002 (A3)	;target+2=blue

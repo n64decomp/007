@@ -1,0 +1,86 @@
+7000C980	D580	send rumble off packet to PIFram [800655A0+offset]
+	accepts: A0=p->packet
+	returns: V0=0 if okay, 4 if I/O error, 8 if not present
+ADDIU	SP,SP,FFB0
+SW	RA,0014 (SP)
+JAL	70015E60
+SW	A0,0050 (SP)	;A0->SP+50: 
+LW	T7,0050 (SP)	;T7=SP+50: 
+ADDIU	T6,R0,0003
+LUI	AT,8006
+SB	T6,7CE0 (AT)	;3->80067CE0: PIFcomand-write mempak
+LW	T8,0008 (T7)	;T8=packet+8: controller#?
+LUI	T0,8006
+ADDIU	T0,T0,55A0	;T0=800655A0: 
+SLL	T9,T8,0x6	;T9=T8 * 0x40
+ADDU	A1,T9,T0	;A1=800655A0 + offset: p->data to be written
+JAL	70015ED0	;PIFram access
+ADDIU	A0,R0,0001	;A0=1: write
+//7000C9BC:
+LW	T1,0050 (SP)	;T1=SP+50: p->controller.packet
+OR	A1,R0,R0	;A1=NULL
+ADDIU	A2,R0,0001	;A2=1
+JAL	7000DDD0
+LW	A0,0004 (T1)	;A0=packet+4: p->???
+LUI	A1,8006
+ADDIU	A1,A1,7D70	;A1=80067D70: p->target
+JAL	70015ED0	;PIFram access
+OR	A0,R0,R0	;A0=0: read
+//7000C9E0:
+LW	T2,0050 (SP)	;T2=SP+50: p->controller.packet
+OR	A1,R0,R0
+ADDIU	A2,R0,0001
+JAL	7000DDD0
+LW	A0,0004 (T2)	;A0=packet+4: p->???
+//7000C9F4:	offset target address for correct channel#
+LW	T3,0050 (SP)	;T3=SP+50: p->controller.packet
+LUI	V1,8006
+ADDIU	V1,V1,7D70	;V1=80067D70: p->target/source
+LW	A0,0008 (T3)	;A0=packet+8: #
+ADDIU	T4,SP,001C	;T4=SP+1C: space for data on stack
+BEQL	A0,R0,7000CA2C	;branch if A0=0: channel 0 (controller 1)
+OR	T7,V1,R0
+BLEZ	A0,7000CA28
+OR	V0,R0,R0	;V0=0
+//7000CA18:	skip to start of channel
+ADDIU	V0,V0,0001	;V0++
+SLT	AT,V0,A0	;TRUE if count < A0: 
+BNE	AT,R0,7000CA18
+ADDIU	V1,V1,0001	;V1++	p->source++
+//7000CA28:	copy data from buffer to stack
+OR	T7,V1,R0	;T7=p->source
+ADDIU	T6,V1,0024	;T6=end of source
+//7000CA30:	loop
+LWL	AT,0000 (T7)
+LWR	AT,0003 (T7)	;AT=word from target
+ADDIU	T7,T7,000C
+ADDIU	T4,T4,000C
+SW	AT,FFF4 (T4)
+LWL	AT,FFF8 (T7)
+LWR	AT,FFFB (T7)
+SW	AT,FFF8 (T4)
+LWL	AT,FFFC (T7)
+LWR	AT,FFFF (T7)
+BNE	T7,T6,7000CA30
+SW	AT,FFFC (T4)
+//7000CA60:	determine error status for retrieved data
+LWL	AT,0000 (T7)
+LWR	AT,0003 (T7)
+SW	AT,0000 (T4)
+LBU	V0,001E (SP)	;V0=SP+1E: r byte (error flag return)
+LBU	T0,0042 (SP)	;T0=SP+42: data.CRC
+ANDI	T8,V0,00C0
+SRA	A0,T8,0x4	;A0&=0xC0 / 0x10
+BNE	A0,R0,7000CA90	;branch if something set
+NOP
+BEQ	T0,R0,7000CA90	;branch if data.CRC 0
+NOP
+ADDIU	A0,R0,0004	;4->SP+48: force "I/O error"
+//7000CA90:
+JAL	70015EA4
+SW	A0,0048 (SP)	;SP+48=error status
+LW	RA,0014 (SP)
+LW	V0,0048 (SP)	;V0=error status
+ADDIU	SP,SP,0050
+JR	RA
+NOP

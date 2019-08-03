@@ -1,0 +1,97 @@
+700019D8:	25D8	translates and loads ROM based on TLB address
+	accepts: A0=TLB address
+LUI	V0,8002
+ADDIU	V0,V0,30D0	;V0=800230D0
+LW	T6,0000 (V0)	;T6=800230D0: # TLB page entries?
+LUI	AT,7FFF
+ADDIU	SP,SP,FFB0
+ORI	AT,AT,E000	;AT=7FFFE000: address mask for TLB address (0x2000 pages)
+SW	RA,001C (SP)
+AND	A0,A0,AT	;A0&=7FFFE000: TLB address & mask
+ADDIU	T7,T6,0001	;T7=T6+1
+SW	S0,0018 (SP)
+SW	T7,0000 (V0)	;count at 800230D0++
+JAL	70001920
+SW	A0,0028 (SP)	;SP+28=A0: TLB address mask
+JAL	70001B10
+NOP
+//70001A14:
+ADDIU	AT,R0,005A	;AT=0x5A
+DIVU	V0,AT
+MFHI	A0		;A0=V0/0x5A
+LUI	V1,8002
+ADDIU	V1,V1,30D4	;V1=800230D4
+SW	A0,0000 (V1)	;A0->800230D4: segment# (0x2000 block #)
+JAL	70001954
+OR	S0,A0,R0	;S0=A0
+//70001A34:
+LW	V0,0028 (SP)	;V0=SP+28: TLB address mask
+LUI	T9,8006
+LW	T9,E4A8 (T9)	;T9=8005E4A8: p->next bit of open memory?
+LUI	AT,00FF
+ORI	AT,AT,E000	;AT=FFE000: ROM address mask
+SLL	T0,S0,0xD	;T0=S0 * 0x2000: offset to memory
+LUI	T2,0003
+AND	T1,V0,AT	;T1=V0 & FFE000: range - 7F-extension
+ADDIU	T2,T2,4B30	;T2=0x34B30: start of TLB ROM range
+ADDU	A0,T9,T0	;A0=p->memory + offset to block
+SW	A0,0034 (SP)	;SP+34=rdram target
+ADDU	A1,T1,T2	;A1=offset + ROM address
+OR	V0,T1,R0	;V0=offset
+SW	T1,0024 (SP)	;SP+24=offset
+JAL	70005C1C	;loads A2 bytes from A1 to A2
+ADDIU	A2,R0,2000	;A2=0x2000: size
+//70001A74:
+LUI	A0,4000		;A0=40000000
+JAL	7000D350
+LUI	A1,4000		;A1=40000000
+LUI	A0,8000		;A0=80000000
+JAL	7000D350
+LUI	A1,1000		;A1=10000000
+//70001A8C:
+LW	A1,0024 (SP)	;A1=SP+24: offset
+LUI	T5,8006
+ADDIU	T5,T5,DBF0	;T5=8005DBF0: table indicating loaded TLB blocks
+SRL	T3,A1,0xD	;T3=offset/0x2000: block#
+SLL	T4,T3,0x4	;T4=block# *0x10: 
+ADDU	A2,T4,T5	;A2=address of block's index
+SW	S0,0004 (A2)	;S0->block index+4: offset to memory
+SW	A2,0020 (SP)	;SP+20=A2: address of block's index
+SW	T3,0028 (SP)	;SP+28=T3: block#
+JAL	7000E8B0
+LW	A0,0034 (SP)	;A0=SP+34: rdram target
+//70001AB8:
+LW	RA,001C (SP)
+SRL	T6,V0,0xC	;T6=V0/0x1000
+SLL	T9,S0,0x1	;T9=S0*2: offset to memory * 2
+LUI	T0,8006
+LW	A1,0028 (SP)	;A1=SP+28: block#
+LW	A2,0020 (SP)	;A2=SP+20: address of block's index
+SLL	T7,T6,0x6	;T7=4(V0/0x100)
+ADDIU	T0,T0,E3F0	;T0=8005E3F0
+ORI	T8,T7,001F	;T8=4(V0/0x100) | 0x1F
+ADDU	V1,T9,T0	;V1=8005E3F0 + offset to memory * 2
+LW	S0,0018 (SP)	;S0=SP+18: offset to memory
+SB	R0,0000 (V1)	;0-> 8005E3F0 + offset to memory * 2
+ADDIU	SP,SP,0050
+SB	A1,0001 (V1)	;block# -> 8005E3F1 + offset to memory * 2
+JR	RA
+SW	T8,0000 (A2)	;4(V0/0x100) | 0x1F -> address of block's index
+
+
+70001920:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	700018C0
+NOP
+SLL	T6,V0,0x0
+BLTZ	T6,70001944
+OR	A0,V0,R0
+JAL	7000D3D0
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+

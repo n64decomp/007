@@ -1,0 +1,163 @@
+(best viewed without wordwrap)
+This is long, but it's mostly because its rather hard to explain this stuff.
+
+---------------------------
+provided examples:
+Butchered.bin is an example of a simplified path system for Runway.
+It removes both PAD offsets and all their pointers
+There is only one PathLink set containing all the PathPreset values,
+ the PathPreset table only contains presets that are used for paths,
+ and the PathPreset.Offset arrays are as simple as possible.
+The paths themselves are indistinguishable.
+
+worse.bin is an example of creating new paths.
+Two new paths were created, and guards assigned to them.
+  The guards pace in long circuits along the length of the runway.
+  To make it easier to spot them, they are all female moonrakers.
+One is rather close to the start, so you may want to go invisible.
+
+Both patches can only be used on a byteswapped ROM.
+(seriously, non-byteswapped is much easier to work with...)
+
+---------------------------
+Path Data Explaination
+
+There are three tables of path data.
+These are the offsets to each block of data
+0x0	path preset table
+0x4	path preset linkage table
+0x10	path table
+
+these two are not used by the game and should be omitted
+set these offsets to zero to avoid expansion problems
+0x20	path preset table: offsets to PAD values 
+0x24	path preset linkage table: offsets to PAD values 
+
+Path Preset Table
+-------------------------
+path preset table struct:
+struct PathPreset
+{long Preset; /*0xxx preset #*/
+long Offset;  /*points to a series of values connecting each table entry*/
+long Link;    /*entry in the linkage table that contains this path entry*/
+long Filler;  /*used in game.  set to 0*/
+}
+
+the table ends with a preset = -1
+Only 0xxx presets may be used as .Preset values.
+The link value is the number of a path linkage set including this path preset(see below)
+The points may be in any order and unused ones do not need to be included
+(see butchered.bin or worse.bin [0x68E8] for an example)
+
+
+The PathPresets.Offset points to an array of long values used to jump to other path presets.
+They can not refer to the current PathPreset, and any presets linked together must refer to each other.
+There must be a value present!  Do not just set to -1
+Each list ends with an entry = -1.
+for example, these three entries could be used to link three different path presets:
+Table1:  00000001 00000002 FFFFFFFF
+Table2:  00000000 00000002 FFFFFFFF
+Table3:  00000000 00000001 FFFFFFFF
+
+every preset should be linked, but the links may be as simple as:
+Table 1  :  00000001 FFFFFFFF
+Table 2  :  00000000 00000002 FFFFFFFF
+Table 3  :  00000001 00000003 FFFFFFFF
+etc...
+Table x-1:  00000x-2 0000000x FFFFFFFF
+Table x  :  00000x-1 FFFFFFFF
+(see butchered.bin [0x6464] for an example)
+
+PathPreset.Link value is the same as the PathLinkage that includes this PathPreset
+See below for more details.
+
+
+Path Linkage Table
+---------------------------
+path preset linkage struct:
+struct PathLinkage
+{long SetNumberOffset; /*offset to an array linking each path linkage*/
+long PresetOffset;     /*offset to an array of the path presets in this set*/
+long Terminator;       /*set to zero*/
+}
+table ends with an entry with NULL offsets
+
+SetNumberOffset points to an array of long values, each corresponding to a PathLinkage
+Only one set is necessary.
+If there is only one set, this will point to FFFFFFFF
+otherwise, it will be a table similar to this:
+Table1:  00000001 FFFFFFFF
+Table2:  00000000 FFFFFFFF
+each array ends with -1
+(see butchered.bin [0x5C98 & 0x5DE4] for an example of only one set)
+
+PresetOffset points to another array of long values, indicating a PathPreset.
+The corresponding PathPreset.Link value will be the same as the PathLinkage that contains it
+The list ends with -1.
+for instance:
+PathLinkage[1] Preset offset table:
+00000000 00000001 FFFFFFFF
+
+links to PathPreset[0] and PathPreset[1]
+PathPreset[0].Link == 1
+PathPreset[1].Link == 1
+
+
+Path Table
+---------------------
+Path tables are directly accessed by action block type 20.
+The maximum number of paths is assumed to be 255.
+the path struct is:
+struct PathTable
+{long Offset;        /*address of array of path presets*/
+unsigned char ID;    /*PathTable instance number*/
+unsigned char NULL1; /*unused*/
+unsigned char NULL2; /*unused*/
+unsigned char NULL3; /*unused*/
+}
+
+PathTable[#].ID matches #.  Obviously each path must be assigned a different number and they must be sequential.
+
+PathTable[].Offset is the address of a long array that specifies a series of PathPresets.
+Each value retrieves the PathPresets[].Preset given.
+The object will move from the first given PathPresets[].Preset to the next sequentially,
+ so unlike the other tables PathPresets[].Preset values may be reused.
+The path ends with a PathPresets[] value of -1
+
+for example:
+PathPreset table: (offset.. is unimportant in this example)
+PathPresets[0] = 00000120 offset.. 00000000 00000000
+PathPresets[1] = 00000050 offset.. 00000000 00000000
+PathPresets[2] = 00000084 offset.. 00000000 00000000
+PathPresets[3] = FFFFFFFF 00000000 00000000 00000000
+
+PathTable table:
+PathTable[0] = address0 00000000
+PathTable[1] = address1 01000000
+
+address0: (path0)
+00000000 00000001 00000002 FFFFFFFF
+
+address1: (path1)
+00000002 00000001 00000002 00000000 00000001 FFFFFFFF
+
+in this example, path0 will move an object from preset 0120, to 0050, and end at 0084
+path1 moves it from preset 0084 to 0050, back to 0084, then 0120, and finishes at 0050
+(see butchered.bin [0x6A90] for an example)
+
+The only really important concern is that if two paths follow the same points,
+ objects that spawn on those paths may not load in order to keep them from hitting one another.
+Still, that's the problem of whoever wrote the path.
+
+--------------------------
+PADs.
+The PAD pointers, the offsets they link to, and the PAD values found in certain stages, are all completely useless.
+The offsets are expanded during offset expansion, but they are never used.
+Originally there was a failsafe planned when the above path data or an action block met invalid data.
+However, the failsafe was either removed or never implemented.
+In the case of invalid data a flag is set indicating an error, and if the PAD pointer is preset it is retrieved.
+  Even if it is not preset, the current routine breaks and jumps to the "error handling" routine.
+  The "error handling" routine does not handle errors but creates a vastly worse one - an infinite loop.
+
+--------------------------
+Hope that helps read them in and spit them out.

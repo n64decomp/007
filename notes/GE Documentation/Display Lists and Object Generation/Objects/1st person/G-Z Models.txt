@@ -1,0 +1,116 @@
+G-Z Models
+----------
+  G-Z models are 1st person models, used either as weapons, gadgets, discharged shells, etc.  These models are used in both the watch menu and when the object is in use in the first-person menu.  Because they are only displayed, no collision information is stored.
+
+  The primary display list type used in 1st person objects is the 04 command.  The breakdown is such:
+04 command:
+0x0	4	offset to primary mapping
+0x4	4	offset to secondary mapping
+0x8	4	reserved
+0xC	4	offset to point table
+0x10	2	number of points in point table
+0x12	2	0300 - unknown
+
+  Both primary and secondary mapping may be present - and usually are.  Secondary tends to be used special effects or transparently mapped areas, just like with room models.  In particular, one may point toward mapping while the other points toward nothing, allowing that part of the model to 'disappear' when need be.  In this case, the mapping used is set at runtime using linked 12 commands.
+
+  09 commands are also common.  They are used for more than placing hats on character's heads.  What they do is set a placement for a seperate model that is loaded simulatiously with the current one.  For instance, the character's arm appears when some weapons and items are in use.  There are many different character arm models, and storing the each object with copies of each arm is ineffecient.  Instead, 09 commands in the weapon load the arm's components and place them appropriately.  Because each component is loaded specificly to a given location, this also eliminates hand/object misalignment.
+
+  Most models are used for player items, so they have a series of offsets used for fingers, gun attributes, and other items.  Obviously not all the offsets will be used, depending on the item.  Some objects that aren't used as items, such as discharged shells, do not follow this pattern.
+
+(fill in with offset coorespondance here before sending it off)
+offsets:	(28/36)
+	watch laser	autoshot	SHOTGUN 	AK47-SOVIET	golden gun	GOLD PP7	G-LAUNCH	HUNT-KNIFE	R-LAUNCH	taser   	throwknife	sil PP7
+0x0	00000000	050001E0	0500049C	050003F0	0500012C	050001A4	00000000	00000000	00000000	00000000	00000000	050001B0	15 command
+0x4	00000000	05000168	05000124	05000180	05000144	0500012C	0500015C	00000000	00000000	00000000	00000000	05000138
+0x8	00000000	05000198	05000154	050001B0	05000174	0500015C	0500018C	00000000	00000000	00000000	00000000	05000168
+0xC	050001B0	05000180	0500013C	05000198	0500015C	05000144	05000174	00000000	05000120	00000000	00000000	05000150
+0x10	00000000	00000000	00000000	00000000	00000000	00000000	05000204	00000000	00000000	00000000	00000000	00000000
+0x14	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000
+0x18	05000318	00000000	00000000	00000000	05000204	05000264	00000000	00000000	00000000	00000000	00000000	05000390
+0x1C	00000000	00000000	00000000	00000000	00000000	050003E4	00000000	00000000	00000000	00000000	00000000	050004E0
+0x20	00000000	00000000	00000000	00000000	050001EC	0500024C	00000000	0500018C	00000000	05000188	05000144	05000258
+0x24	00000000	00000000	00000000	00000000	05000234	050002AC	00000000	0500039C	00000000	050001E8	0500036C	05000498
+0x28	00000000	00000000	00000000	00000000	05000294	050002F4	00000000	050001D4	00000000	05000458	0500018C	05000450
+0x2C	00000000	00000000	00000000	00000000	00000000	0500039C	00000000	0500030C	00000000	05000428	050002C4	050002B8
+0x30	00000000	00000000	00000000	00000000	05000354	050004BC	00000000	00000000	00000000	00000000	00000000	05000378
+0x34	00000000	00000000	00000000	00000000	00000000	05000504	00000000	00000000	00000000	00000000	00000000	050003F0
+0x38	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	0500039C	00000000	throwing knife 12
+0x3C	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	0500033C	00000000	throwing knife blade 12
+0x40	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	05000410	00000000	00000000	taser placeholder for animation (18)
+0x44	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	050003F8	00000000	00000000	taser 12 for animation
+0x48	00000000	05000708	050003F4	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	shotgun shell 1
+0x4C	00000000	05000498	05000394	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	shotgun shell 2
+0x50	00000000	05000540	05000424	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	shotgun shell 3
+0x54	00000000	05000678	05000454	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	shotgun shell 4
+0x58	00000000	050005E8	0500031C	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	shotgun shell 5
+0x5C	00000000	050006C0	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	autoshotgun shell
+0x60	00000000	05000450	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	autoshotgun shell
+0x64	00000000	050004F8	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	autoshotgun shell
+0x68	00000000	05000630	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	autoshotgun shell
+0x6C	00000000	050005A0	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	autoshotgun shell
+[these eight offsets only present on weapons]
+[they do not appear on collectables (blueprints, black box, etc.)]
+0x70	05000348	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	watch 0F command
+0x74	050002A0	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	watch boiler cuff
+0x78	05000240	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	watch black tuxedo cuff
+0x7C	05000270	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	watch connery cuff
+0x80	050001E0	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	watch blue cuff
+0x84	05000210	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	watch jungle cuff
+0x88	050002D0	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	00000000	watch snowsuit cuff
+0x8C	00000000	00000000	not present	00000000	00000000	00000000	00000000	00000000	00000000	not present	00000000	050001E0	pp7 silencer
+
+-------------------
+-------------------
+
+Pchr-Z Item Models
+---------------
+  Item pickups - especially weapons - differ slightly from other P-Z models insofar as different commands are used.
+
+  Most other objects use 02 commands to position pieces in the model.  Most item pickups utilize the 15 position command instead.  Just like the 02 commands, each command is relative to the last.  The breakdown is such:
+15 command:
+0x0	4	(float) X Position
+0x4	4	(float) Y Position
+0x8	4	(float) Z Position
+0xC	2	command ID number
+0xE	2	unknown - probably piece ID number or reserved
+0x10	4	(float) unknown
+
+  Many use the 04 display type as the primary display list type, and commonly 12 commands are also used.  12 commands are little more than a pointer to other commands, allowing the piece to either be selected independant from the object or selectively deactivated when rendering the object as a whole.  Rendering these pieces is optional in most cases.
+04 command:
+0x0	4	offset to primary mapping
+0x4	4	offset to secondary mapping
+0x8	4	reserved
+0xC	4	offset to point table
+0x10	2	number of points in point table
+0x12	2	0300 - unknown
+
+12 command:
+0x0	4	offset to command in table
+0x4	4	reserved
+
+  Another command, used with most weapon pickups, is the 0C command.  This sets the position and image used for the gunfire flare rendered when the player is using the weapon in 3rd person.  The flare appears at the end of the firearm.
+0C Command:
+0x0	4	(float) X Position
+0x4	4	(float) Y Position
+0x8	4	(float) Z Position
+0xC	4	(float) Width
+0x10	4	(float) Height
+0x14	4	(float) Depth
+0x18	4	offset to image declaration for gunfire (0x847)
+0x1C	4	(float) unknown
+
+  Occationally type 16 display lists are used.  They are a special animation type to build gunfire.  These are incredibly simple, despite the animation.
+16 command:	gunfire
+0x0	4	number of flares created (4 points each, 1 04+B1-mapping command for each)
+0x4	4	offset to point table
+0x8	4	offset to mapping
+  It renders only one of the flares at a time, then switches to the next flare in the list.  Notice this is different from the generic weapon flare when a weapon fires.  It is probably the actual gunfire from the weapon.  Note that most weapons use image 0x374, but the laser uses 0x851, colourshifted to 00B6FF (light blue).  You probably will never render these commands, unless you are building objects or creating a port/clone.
+
+
+  Weapon pickups also utilize three offsets at the beginning of the file, not all of which are set for every weapon.
+0x0	offset to 0C gunfire command in table
+0x4	offset to 15 position command for gunfire animation
+0x8	offset to 12 reference command for gunfire animation
+
+  Notice only weapons - and certain weapons at that - specify a special gunfire animation or flare when firing.  When not present, these fields are left NULL (00000000).
+

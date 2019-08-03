@@ -1,0 +1,185 @@
+7F004760: ammo box routine
+JAL	7F09A464
+ADDIU	S0,R0,0001	//S0=1
+
+7F09A464:	# players
+LUI	T6,8008
+LW	T6,9EE0 (T6)	//T6=80079EE0=800A7360
+OR	V1,R0,R0	//V1=0
+LUI	T7,8008
+BEQ	T6,R0,7F09A480	//if pointer NULL, branch
+LUI	T8,8008
+//ELSE:
+ADDIU	V1,R0,0001	//V1=1
+LW	T7,9EE4 (T7)	//T7=80079EE4=800A9DE0
+LUI	T9,8008
+BEQ	T7,R0,7F09A494	//if pointer NULL, branch
+NOP
+//ELSE:
+ADDIU	V1,V1,0001	//V1++ = 2
+LW	T8,9EE8 (T8)	//T8=80079EE8=0
+BEQ	T8,R0,7F09A4A4	//if NULL, branch
+NOP
+	ADDIU	V1,V1,0001
+LW	T9,9EEC (T9)	//T9=80079EEC=0
+BEQ	T9,R0,7F09A4B4
+NOP
+	ADDIU	V1,V1,0001
+JR	RA
+OR	V0,V1,R0	//V0=V1=2
+
+7F004768:
+SLTI	AT,V0,0002	//if V0<2, AT=1
+BNEZ	AT,7F0047A8	//if more than 2 pointers, branch
+NOP
+JAL	7F0C6614
+NOP
+
+7F0C6614:	increment for weapon set number
+LUI	T6,8005
+LW	T6,9160 (T6)	//T6=80049160=B
+LUI	V0,8005
+SLL	T7,T6,3		//T7=T6*8=58
+ADDU	V0,V0,T7	//V0=80050058
+JR	RA
+LW	V0,90F4 (V0)	//V0=800490F4=80048EB0
+
+7F00477C:	increment for weapon in set
+LUI	T6,8007
+LW	T6,9540 (T6)	//T6=80069540=0
+SLL	T8,T6,2		//T8=T6*4=0
+SUBU	T8,T8,T6	//T8=0
+SLL	T8,T8,3		//T8=T8*8=0
+ADDU	V1,V0,T8	//V1=pointer to weapon=80048EB0
+LW	A0,000C (V1)	//A0=ammo type
+LW	S0,0010 (V1)	//S0=ammo amount
+SLL	T0,A0,2		//T0=A0*4=4
+ADDU	T1,S2,T0	//T1=obj address + offset to ammo type (4)
+SH	S0,007E (T1)	//store ammo amount into correct ammo slot
+BLEZ	S0,7F004AFC	//if there was no ammo, abort ammo box!
+NOP
+BEQ	S8,R0,7F004AFC	//if S8 = 0, abort as well (S8=1)
+NOP
+LW	T9,000C (S2)	//load bitflags (00000000)
+OR	S1,R0,R0	//S1=0
+OR	S0,S2,R0	//S0=S2=object pointer
+AND	T2,T9,S4	//if flags 00400008 are set, toggle T2
+BNEZ	T2,7F004AFC	//If something set, abort!
+NOP
+//okay, still going...
+LHU	T3,0082 (S0)	//T3=type 1 ammo
+BLEZL	T3,7F0047F4	//if type1 ammo <= 0, branch...
+	ADDIU	S1,S1,0004
+LHU	A0,0080 (S0)	//loads the FFFF prior to ammo 1...
+BEQL	S6,A0,7F0047F4	//should always be true, since S6=FFFF=A0
+ADDIU	S1,S1,0004	//S1+=4=4
+//if ever it isn't, jal
+JAL	7F056C38
+NOP
+ADDIU	S1,S1,0004
+
+7F0047F4:
+BNE	S1,S7,7F0047D0	//loop this routine until all ammo tested
+ADDIU	S0,S0,0004
+//ELSE:
+
+
+
+-----------------------------------------------
+lets say you follow JAL...
+7F056C38	load model A0.  Returns V0=1 if successful
+	accepts: A0=model#
+SLL	T6,A0,0x2
+SUBU	T6,T6,A0
+LUI	T7,8004
+ADDIU	T7,T7,A228	//T7=8003A228	Object List!  (motorcyclelauncher.txt)
+SLL	T6,T6,0x2	//T6=A0*C
+ADDU	V0,T6,T7	//V0=object in object list
+LW	A2,0000 (V0)	//A2=first pointer in list (8003 addy - OBJ header data)
+ADDIU	SP,SP,FFE0	//SP=803B3450
+SW	RA,0014 (SP)	//803B3464=RA(7F0047F0)
+LW	T8,0000 (A2)	//T8=p->object table
+OR	A0,A2,R0	//A0=A2: p->object header
+BNEL	T8,R0,7F056C90	//fail if valid pointer (already loaded)
+	OR	V0,R0,R0
+LW	A1,0004 (V0)	//A1=p->text call line
+JAL	7F07654C	//load object A1 using header A0
+SW	V0,001C (SP)	//SP+1C=Object in object list
+LW	V0,001C (SP)	//V0=Object in object list
+JAL	7F075CF4
+LW	A0,0000 (V0)	;A0=p->object header
+BEQ	R0,R0,7F056C90	;return success
+ADDIU	V0,R0,0001
+//7F056C8C:	failure
+OR	V0,R0,R0
+//7F056C90:	quit
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+7F07654C:
+ADDIU	SP,SP,FFE0	//803B3430
+SW	RA,001C (SP)	//803B344C=7F056C78
+SW	R0,0010 (SP)	//803B3440=0
+OR	A2,R0,R0	//A2=0
+JAL	7F0764A4
+OR	A3,R0,R0	//A3=0
+
+7F0764A4:
+ADDIU	SP,SP,FFE0	//803B3410
+SW	S0,0018 (SP)	//803B3428=801A3208 (obj in setup)
+OR	S0,A0,R0	//S0=A0=first pointer in list
+SW	RA,001C (SP)	//803B342C=7F076564
+SW	A1,0024 (SP)	//803B3434=second pointer in list
+BEQ	A2,R0,7F0764D4
+SW	A2,0028 (SP)	//803B3438=content of first pointer
+
+LW	A0,0024 (SP)	//A0=second word
+OR	A1,R0,R0	//A1=0
+ADDIU	A2,R0,0100	//A2=0100
+JAL	7F0BCD04
+ADDIU	A3,R0,0004	//A3=4
+
+7F0BCD04:
+ADDIU	SP,SP,FFE8	//SP=803B33F8
+SW	RA,0014 (SP)	//803B340C=7F0764E8
+SW	A1,001C (SP)	//803B3414=0
+SW	A2,0020 (SP)	//803B3418=100
+JAL	7F0BD254
+SW	A3,0024 (SP)	//803B341C=4
+
+7F0BD254:
+ADDIU	SP,SP,FFC0	//803B33B8
+SW	S2,001C (SP)	//803B33D4=obj in setup
+LUI	S2,8005
+ADDIU	S2,S2,82D4	//S2=800482D4 (NOT SURE)
+LW	V0,0000 (S2)	//V0=2D7
+SW	S3,0020 (SP)
+SW	S1,0018 (SP)
+SLTI	AT,V0,0002
+OR	S3,A0,R0
+SW	RA,0024 (SP)
+SW	S0,0014 (SP)
+BNEZ	AT,7F0BD2CC
+ADDIU	S1,R0,0001
+
+ETC...  BORED NOW
+/*******************************************
+
+
+*******************************************/
+READ AMMO ROUTINE:
+7F0509CC
+LHU	T4,0082 (V1)
+BLEZL	T4,7F050A18
+	ADDIU	AT,R0,000D
+SW	V1,0030 (SP)
+SW	A0,0064 (SP)
+JAL	7F069240
+SW	A1,0034 (SP)
+
+7F050A18:
+OR	V0,A1,R0
+BNE	A1,AT,7F0509B8
+ADDIU	V1,V1,0004

@@ -1,0 +1,564 @@
+7F079CF0-7F07A4A0	solo character load
+ADDIU	SP,SP,FEE8
+SW	RA,001C (SP)
+JAL	7F089EE4
+NOP
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+SWC1	F0,0114 (SP)
+LW	T7,00A8 (T6)
+LW	V0,0004 (T7)
+BNEL	V0,R0,7F07A440
+LW	T7,001C (V0)
+JAL	7F05CF30
+OR	A0,R0,R0
+SW	V0,00F0 (SP)
+JAL	7F05CF30
+ADDIU	A0,R0,0001
+SW	V0,00EC (SP)
+SW	R0,00E8 (SP)
+JAL	7F05CF48
+OR	A0,R0,R0
+SW	V0,00E4 (SP)
+JAL	7F05CF48
+ADIU	A0,R0,0001
+//7F079D4C:	copy a generic 08 PP7 to stack...	this section extroneous
+LUI	T9,8003
+ADDIU	T9,T9,65AC	;T9=800265AC: a copy of a 08 PP7 object from the 21990 binary
+SW	V0,00E0 (SP)
+ADDIU	T4,T9,0084
+ADDIU	T8,SP,0054
+//7F079D60:	iterate to copy yo
+LW	AT,0000 (T9)
+ADDIU	T9,T9,000C
+ADDIU	T8,T8,000C
+SW	AT,FFF4 (T8)
+LW	AT,FFF8 (T9)
+SW	AT,FFF8 (T8)
+LW	AT,FFFC (T9)
+BNE	T9,T4,7F079D60
+SW	AT,FFFC (T8)
+//7F079D84:	
+LW	AT,0000 (T9)
+OR	A0,R0,R0	;A0=right hand
+JAL	7F05DA44	;ret. V0=ammo in wep.
+SW	AT,0000 (T8)
+ADDIU	T5,R0,0017	;default body
+ADDIU	T6,R0,004B	;default head
+LUI	A0,8008
+SW	V0,0048 (SP)
+SW	T5,0044 (SP)
+SW	T6,0040 (SP)
+SW	R0,0038 (SP)
+JAL	7F07DE64
+LW	A0,A0B0 (A0)
+JAL	7F09A464	;returns V0=#players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F079F60	;branch if multi!
+NOP
+JAL	7F01D56C	;WOULD HAVE RETURNED V0=folder#
+		ADDIU	SP,SP,FFE8
+		SW	RA,0014 (SP)
+		LUI	A0,8003
+		JAL	7F01EBC0
+				SW	A0,0000 (SP)
+				JR	RA
+				OR	V0,R0,R0
+		LW	A0,A8E8 (A0)
+		LW	RA,0014 (SP)
+		JR	RA
+		NOP
+NOP
+//7F079DD4:	solo bodies
+LUI	T7,8008
+LW	T7,A0B0 (T7)
+LW	V1,041C (T7)	;V1=cuff
+SLTIU	AT,V1,0009
+BEQ	AT,R0,7F079EA4	;skip if not a valid cuff
+SLL	T3,V1,0x2
+LUI	AT,8005
+ADDU	AT,AT,T3
+LW	T3,4FE4 (AT)
+JR	T3
+NOP
+//7F079E00:	
+ADDIU	T2,R0,0016
+BEQ	R0,R0,7F079EA4
+SW	T2,0044 (SP)
+//7F079E0C:	
+ADDIU	T4,R0,0018
+BEQ	R0,R0,7F079EA4
+SW	T4,0044 (SP)
+//7F079E18:	
+ADDIU	T9,R0,0019
+BEQ	R0,R0,7F079EA4
+SW	T9,0044 (SP)
+//7F079E24:	
+ADDIU	T8,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T8,0044 (SP)
+//7F079E30:	
+ADDIU	T5,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T5,0044 (SP)
+//7F079E3C:	
+ADDIU	T6,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T6,0044 (SP)
+//7F079E48:	
+ADDIU	T7,R0,0005
+BEQ	R0,R0,7F079EA4
+SW	T7,0044 (SP)
+//7F079E54:	choose one of four bond models!
+BEQ	V0,R0,7F079E88
+ADDIU	T3,R0,0005
+ADDIU	AT,R0,0001
+BEQ	V0,AT,7F079E90
+ADDIU	T2,R0,0005
+ADDIU	AT,R0,0002
+BEQ	V0,AT,7F079E98
+ADDIU	T4,R0,0005
+ADDIU	AT,R0,0003
+BEQ	V0,AT,7F079EA0
+ADDIU	T9,R0,0005
+BEQ	R0,R0,7F079EA4
+NOP
+//7F079E88:
+BEQ	R0,R0,7F079EA4
+SW	T3,0044 (SP)
+//7F079E90:
+BEQ	R0,R0,7F079EA4
+SW	T2,0044 (SP)
+//7F079E98:
+BEQ	R0,R0,7F079EA4
+SW	T4,0044 (SP)
+//7F079EA0:
+SW	T9,0044 (SP)
+//7F079EA4:
+BEQ	V0,R0,7F079ED8
+SLTIU	AT,V1,0009
+ADDIU	AT,R0,0001
+BEQ	V0,AT,7F079F48
+ADDIU	T8,R0,004E
+ADDIU	AT,R0,0002
+BEQ	V0,AT,7F079F50
+ADDIU	T5,R0,004E
+ADDIU	AT,R0,0003
+BEQ	V0,AT,7F079F58
+ADDIU	T6,R0,004E
+BEQ	R0,R0,F7079F84
+NOP
+//7F079ED8:	solo heads
+BEQ	AT,R0,7F079F84
+SLL	T8,V1,0x2
+LUI	AT,8005
+ADDU	AT,AT,T8
+LW	T8,5008 (AT)
+JR	T8
+NOP
+//7F079EF4:
+ADDIU	T5,R0,004A
+BEQ	R0,R0,7F079F84
+SW	T5,0040 (SP)
+//7F079F00:
+ADDIU	T6,R0,004C
+BEQ	R0,R0,7F079F84
+SW	T6,0040 (SP)
+//7F079F0C:
+ADDIU	T7,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T7,0040 (SP)
+//7F079F18:
+ADDIU	T3,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T3,0040 (SP)
+//7F079F24:
+ADDIU	T2,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T2,0040 (SP)
+//7F079F30:
+ADDIU	T4,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T4,0040 (SP)
+//7F079F3C:
+ADDIU	T9,R0,004E
+BEQ	R0,R0,7F079F84
+SW	T9,0040 (SP)
+//7F079F48:
+BEQ	R0,R0,7F079F84
+SW	T8,0040 (SP)
+//7F079F50:
+BEQ	R0,R0,7F079F84
+SW	T5,0040 (SP)
+//7F079F58:
+BEQ	R0,R0,7F079F84
+SW	T6,0040 (SP)
+//7F079F60:	multiplayer bodies/heads
+JAL	7F09B150
+NOP
+JAL	7F01035C
+OR	A0,V0,R0
+JAL	7F09B150
+SW	V0,0044 (SP)
+JAL	7F0102BC
+OR	A0,V0,R0
+SW	V0,0040 (SP)
+//7F079F84:
+LUI	T7,8003
+LW	T7,6494 (T7)
+ADDIU	AT,R0,0003
+BNE	T7,AT,7F079FA0
+LUI	T3,8008
+LW	T3,99E0 (T3)
+SW	T3,0048 (SP)
+//7F079FA0:		load and initialize solo character
+JAL	7F09A464	;ret. V0=#players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F07A1BC	;branch if multi
+LW	T7,0044 (SP)
+JAL	7F05CF5C	;clear left hand
+ADDIU	A0,R0,0001
+JAL	7F05CF5C	;clear right hand
+OR	A0,R0,R0
+//7F079FC4:	copy data for body to playerdata and obj. instance
+ADDIU	A0,SP,0100
+LW	A1,00EC (SP)
+JAL	7F0CBAF4
+		ADDU	V0,A1,A2
+		SW	A1,0000 (A0)	;??? POINTER
+		SW	V0,0004 (A0)	;??? pointer + 0x14820
+		SW	A1,0008 (A0)
+		JR	RA
+		SW	V0,000C (A0)
+LW	A2,00E0 (SP)
+JAL	7F05CF18		;returns V0=address of one of the obj.headers
+		LUI	T6,8008
+		LW	T6,A0B0 (T6)
+		SLL	T7,A0,0x5
+		ADDU	V0,T6,T7
+		JR	RA
+		ADDIU	V0,V0,0810
+OR	A0,R0,R0
+LW	T2,0044 (SP)	;T2=body
+//7F079FE0:
+LUI	T9,8004
+ADDIU	T9,T9,DE10
+SLL	T4,T2,0x2	;change to SLL, T4,T2,0x1 for mini table
+ADDU	T4,T4,T2
+SLL	T4,T4,0x2
+ADDU	V1,T4,T9
+LW	T8,0000 (V1)	;T8=body obj.header
+SW	V0,00FC (SP)
+ADDIU	T3,SP,0100
+LW	AT,0000 (T8)	;copy obj.header to 0x810 in playerdata!
+OR	A0,V0,R0
+SW	AT,0000 (V0)
+LW	T7,0004 (T8)
+SW	T7,0004 (V0)
+LW	AT,0008 (T8)
+SW	AT,0008 (V0)
+LW	T7,000C (T8)
+SW	T7,000C (V0)
+LW	AT,0010 (T8)
+SW	AT,0010 (V0)
+LW	T7,0014 (T8)
+SW	T7,0014 (V0)
+LW	AT,0018 (T8)
+SW	AT,0018 (V0)
+LW	T7,001C (T8)
+SW	T7,001C (V0)
+SW	V1,0028 (SP)	;save body's table entry pointer
+SW	T3,0010 (SP)	;save SP+0x100
+//7F07A050:	prep the object for load, filling header and such
+LW	A3,00E4 (SP)	;0x14820, same as SP+0xE0.  could be a memory total...
+LW	A2,00F0 (SP)	;immediately after an object, so pointer to next, or instance?
+JAL	7F0764A4	;loads object and fills in the header data
+LW	A1,0004 (V1)	;A1=body's string pointer
+LW	V1,0028 (SP)	;V1=body's table entry pointer
+JAL	7F0BD188	;please pretty please tell me this isn't the decompressor...
+LW	A0,0004 (V1)	;A0=body's string pointer
+//7F07A06C:	copy data for body to playerdata and obj. instance
+LW	T5,0040 (SP)	;T5=head#
+LUI	T7,8004
+ADDIU	T7,T7,DE10
+SLL	T8,T5,0x2	;for smaller table change to SLL	T8,T5,0x1
+ADDU	T8,T8,T5
+SLL	T8,T8,0x2
+ADDU	V1,T8,T7
+LW	T3,0000 (V1)	;T3=head's obj.header
+ADDIU	T0,V0,003F	;T0=V0+0x3F	V0=size of last model+0x3F - here, body
+LW	T1,00F0 (SP)	;T1=pointer to body's model in rdram
+ORI	T2,T0,003F
+LW	AT,0000 (T3)	;AT=offset to object table if already loaded...
+XORI	T4,T2,003F	;T4=size pushed to the 0x40 boundry
+ADDIU	T0,T4,005F
+ORI	T9,T0,003F
+ADDU	A0,T1,T4	;A0=end of last object, start of next
+XORI	T0,T9,003F	;T0=size + 0x40, pushed to 0x40 boundry (T4+0x40)
+SW	AT,0000 (A0)	
+LW	T9,0004 (T3)	;copy obj.header to this crazy address
+ADDIU	T5,SP,0100
+ADDU	A2,T1,T0	;A2=location for next model binary
+SW	T9,0004 (A0)
+LW	AT,0008 (T3)
+SW	AT,0008 (A0)
+LW	T9,000C (T3)
+SW	T9,000C (A0)
+LW	AT,0010 (T3)
+SW	AT,0010 (A0)
+LW	T9,0014 (T3)
+SW	T9,0014 (A0)
+LW	AT,0018 (T3)
+SW	AT,0018 (A0)
+LW	T9,001C (T3)
+SW	T9,001C (A0)
+LW	T6,00E4 (SP)	;T6=max size?  14820
+SW	T0,00E8 (SP)	;T0=size of model in rdram
+SW	A0,00F8 (SP)
+SW	V1,0028 (SP)
+SW	T5,0010 (SP)
+LW	A1,0004 (V1)	;A1=pointer to head string	[V1=head table entry]
+JAL	7F0764A4	;loads object and fills in header data
+SUBU	A3,T6,T0	;A3=amount of available memory left (14820-body size)
+LW	V1,0028 (SP)	;V1=head table entry
+JAL	7F0BD188	;ret. V0=size of object in rdram	expansion?
+LW	A0,0004 (V1)	;A0=pointer to head string
+//7F07A120:
+LW	V1,00E8 (SP)	;V1=body size
+LW	T4,00F0 (SP)	;T4=pointer to body model in rdram
+LW	A0,00FC (SP)	;A0=playerdata + 0x810
+ADDU	V1,V0,V1	;V1=update amount of memory already cluttered
+ADDIU	V1,V1,003F
+ORI	T8,V1,003F
+XORI	T7,T8,003F
+ADDIU	V1,T7,00FB
+ORI	T3,V1,003F
+XORI	T9,T3,003F	;T9=total used memory pushed to 0x40 boundry
+ADDU	T2,T4,T7	;T2=start of next model
+SW	T2,0038 (SP)	;save next model location
+JAL	7F075CF4	;prep body for use?
+SW	T9,00E8 (SP)	;save total used memory
+JAL	7F075CF4	;prep head for use; set use flag, compute group numbers
+LW	A0,00F8 (SP)	;A0=pointer to a copy of head's header in model data area
+//7F07A160:
+LW	A1,00FC (SP)	;A1=body header in playerdata
+LW	T7,00F8 (SP)	;T7=copy of head's header in model data
+LW	V1,00E8 (SP)	;V1=total used memory
+LH	T8,0014 (A1)	;T8=body's group #	(61 if head not present)
+LH	T4,0014 (T7)	;T4=head's group #	(2 if head)
+LW	T6,00F0 (SP)	;T6=body model in rdram
+LW	A0,0038 (SP)	;A0=next object!
+ADDU	V0,T8,T4	;V0=sum of groupcodes (should be 63 for characters)
+ADDIU	V0,V0,000A	;offset for the space made to copy header, etc
+SLL	T2,V0,0x2	;multiply by 4...
+ADDU	A2,T6,V1	;A2=next object's address
+ADDU	V1,T2,V1	;total memory used + group codes->offset
+ADDIU	V1,V1,003F
+ORI	T3,V1,003F
+XORI	T9,T3,003F	;total ushed to 0x40 boundry
+SW	T9,00E8 (SP)	;save it yo
+JAL	7F075FAC
+SW	V0,0030 (SP)	;save group# + A
+LW	V0,0030 (SP)
+LW	T6,0038 (SP)	;save object instance pointer
+SH	V0,0002 (T6)
+BEQ	R0,R0,7F07A234
+LW	A3,00F8 (SP)	;A3=head's header copied to model area in rdram
+//7F07A1BC:		load and initialize multi character
+SLL	T8,T7,0x2	;for smaller table use SLL	T8,T7,0x1
+ADDU	T8,T8,T7
+LUI	T4,8004
+ADDIU	T4,T4,DE10
+SLL	T8,T8,0x2
+ADDU	V1,T8,T4
+LW	T2,0000 (V1)
+SW	T2,00FC (SP)
+LW	T9,0000 (T2)
+OR	A0,T2,R0
+BNEL	T9,R0,7F07A1F8
+LW	T5,0040 (SP)
+JAL	7F07654C
+LW	A1,0004 (V1)
+LW	T5,0040 (SP)
+LUI	T7,8004
+ADDIU	T7,T7,DE10
+SLL	T6,T5,0x2	;for smaller table use SLL	T6,T5,0x1
+ADDU	T6,T6,T5
+SLL	T6,T6,0x2
+ADDU	V1,T6,T7
+LW	A3,0000 (V1)
+LW	T8,0000 (A3)
+OR	A0,A3,R0
+BNEL	T8,R0,7F07A238
+LW	T4,0038 (SP)
+LW	A1,0004 (V1)
+JAL	7F07654C
+SW	A3,00F8 (SP)
+LW	A3,00F8 (SP)	;A3=head's header copied to model area in rdram
+//7F07A234:
+LW	T4,0038 (SP)	;T4=object instance pointer!
+LW	A0,0044 (SP)	;A0=body#
+LW	A1,0040 (SP)	;A1=head#
+LW	A2,00FC (SP)	;A2=copy of body header in playerdata (+0x810)
+SW	R0,0010 (SP)
+JAL	7F0232E8	;returns V0=obj. instance pointer, filled and everything
+SW	T4,0014 (SP)
+LUI	V1,8008
+ADDIU	V1,V1,A0B0
+LW	T2,0000 (V1)	;T2=playerdata
+LUI	AT,8005
+SW	V0,00D4 (T2)	;save obj. instance pointer!
+LW	T9,0000 (V1)	;T9=playerdata
+LWC1	F6,502C (AT)	;F6=8005502C:	???
+LW	A0,00D4 (T9)	;A0=obj. instance pointer
+LWC1	F4,0014 (A0)	;F4=object scale
+MUL.S	F8,F4,F6
+MFC1	A1,F8
+JAL	7F06CE78	;save converted scale
+NOP
+//7F07A284:	handle player position
+LUI	V1,8008
+LW	V1,A0B0 (V1)
+LW	A3,0114 (SP)
+LW	A0,00A8 (V1)	;A0=obj. position pointer (8006)
+LW	A1,00D4 (V1)	;A1=obj. instance pointer
+LW	T3,0014 (A0)	;T3=room pointer
+SW	R0,0014 (SP)
+ADDIU	A2,A0,0008	;A2=offset to xyz positions
+JAL	7F0200BC	;copies positions or adjusts them or something
+SW	T3,0010 (SP)
+//7F07A2AC:
+LUI	A3,8008
+ADDIU	A3,A3,A0B0
+LW	T6,0000 (A3)	;T6=playerdata
+ADDIU	T5,R0,0006
+LW	T7,00A8 (T6)	;T7=obj. position pointer (8006)
+SB	T5,0000 (T7)	;type specify to 6 (character)
+LW	T8,0000 (A3)
+LW	T4,00A8 (T8)	;T4=p->obj. pos
+LW	A2,0004 (T4)	;A2=p->guarddata
+LW	T2,0014 (A2)	;T2='guard' bitflags
+ORI	T9,T2,0001
+SW	T9,0014 (A2)	;uhm, it can't have just set sunglasses on...
+LW	V1,0000 (A3)	;V1=playerdata
+LW	A1,00A8 (V1)	;A1=p->obj. pos
+LW	A0,00D4 (V1)	;A0=obj. instance
+SW	A2,0110 (SP)	;save guarddata pointer
+JAL	7F06CC0C
+ADDIU	A1,A1,0008	;A1=offset to xyz position
+//7F07A2F4:
+LUI	T3,8008
+LW	T3,A0B0 (T3)
+LW	A1,0114 (SP)
+JAL	7F06CD3C
+LW	A0,00D4 (T3)	;A0=obj. instance
+JAL	7F09B244	;ret. V0=3rd person model based on the item# used
+LW	A0,0048 (SP)	;weapon (1-0x20)
+BLTZ	V0,7F07A428	;returns model for selected weapon
+SW	V0,004C (SP)	;save it yo
+JAL	7F09A464	;returns # players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F07A3FC	;branch if multiplayer
+LW	T6,00F0 (SP)	;T6=body model
+//7F07A32C:
+LW	V0,00E8 (SP)	;V0=memory consumed by the character+data
+ADDIU	A0,R0,0001
+ADDU	T5,T6,V0	;T5=end of character data
+ADDIU	V0,V0,00C7
+ORI	T7,V0,003F
+XORI	T8,T7,003F
+SW	T5,00DC (SP)	;save endpoint
+JAL	7F05CF18	;returns, in this case, playerdata + 0x830
+SW	T8,00E8 (SP)	;effectively, size - 0x40
+LW	T4,004C (SP)	;T4=3rd person object in hand
+LUI	T9,8004
+ADDIU	T9,T9,A228	;object,header,&scale table
+SLL	T2,T4,0x2
+SUBU	T2,T2,T4
+SLL	T2,T2,0x2
+ADDU	V1,T2,T9
+LW	T3,0000 (V1)	;header for object
+SW	V0,00F4 (SP)
+ADDIU	T5,SP,0100
+LW	AT,0000 (T3)	;copy weapon header to playerdata
+OR	A0,V0,R0
+SW	AT,0000 (V0)
+LW	T7,0004 (T3)
+SW	T7,0004 (V0)
+LW	AT,0008 (T3)
+SW	AT,0008 (V0)
+LW	T7,000C (T3)
+SW	T7,000C (V0)
+LW	AT,0010 (T3)
+SW	AT,0010 (V0)
+LW	T7,0014 (T3)
+SW	T7,0014 (V0)
+LW	AT,0018 (T3)
+SW	AT,0018 (V0)
+LW	T7,001C (T3)
+SW	T7,001C (V0)
+LW	T4,00E8 (SP)	;T4=memory consumed
+LW	T2,00E4 (SP)	;T2=max memory
+LW	T8,00F0 (SP)	;T8=body model (start of this clump)
+SW	V1,0028 (SP)	;save p->weapon's table entry
+SW	T5,0010 (SP)	;save SP+0x100
+LW	A1,0004 (V1)	;A1=model's string
+SUBU	A3,T2,T4	;A3=room left
+JAL	7F0764A4	;loads object and fills in header data
+ADDU	A2,T8,T4	;A2=address for next model data
+LW	V1,0028 (SP)	;V1=p->weapon's table entry
+JAL	7F0BD188	;load or expand or whatnot
+LW	A0,0004 (V1)	;A0=model's string
+JAL	7F075CF4	;set object in use
+LW	A0,00F4 (SP)
+BEQ	R0,R0,7F07A408
+LW	T6,00DC (SP)	;T6=endpoint
+//7F07A3FC:
+SW	R0,00DC (SP)
+SW	R0,00F4 (SP)
+LW	T6,00DC (SP)
+//7F07A408:
+LW	T3,00F4 (SP)	;T3=weapon header in playerdata
+LW	A0,0110 (SP)	;A0=guardata
+LW	A1,004C (SP)	;A1=3rd person weapon#
+LW	A2,0048 (SP)	;A2=weapon type (ie. 5=silpp7)
+OR	A3,R0,R0
+SW	T6,0010 (SP)	;save model endpoint
+JAL	7F052214	;returns V0=obj. position entry for weapon
+SW	T3,0014 (SP)	;save weapon header in playerdata
+//7F07A428:
+LW	A0,0110 (SP)	;A0=guarddata
+JAL	7F023A94
+ADDIU	A1,R0,0000
+BEQ	R0,R0,7F07A494
+LW	RA,001C (SP)
+//7F07A43C:		Multi!
+LW	T7,001C (V0)
+OR	A0,V0,R0
+LW	T8,0020 (T7)
+BNEL	T8,R0,7F07A494
+LW	RA,001C (SP)
+LW	T4,0014 (V0)
+ADDIU	A1,R0,0000
+ORI	T2,T4,0001
+JAL	7F023A94
+SW	T2,0014 (V0)
+LUI	V1,8008
+LW	V1,A0B0 (V1)
+LW	A1,00A8 (V1)
+LW	A0,00D4 (V1)
+JAL	7F06CC0C
+ADDIU	A1,A1,0008
+LUI	T9,8008
+LW	T9,A0B0 (T9)
+LW	A1,0114 (SP)
+JAL	7F06CD3C
+LW	A0,00D4 (T9)
+LW	RA,001C (SP)
+//7F07A494:
+ADDIU	SP,SP,0118
+JR	RA
+NOP

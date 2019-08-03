@@ -1,0 +1,120 @@
+7F04054C	7507C	initialize standard object
+	accepts: A0=p->object, A1=p->obj header, A2=p->obj.position data or NULL, A3=p->obj.instance controller or NULL
+ADDIU	SP,SP,FFE0
+SW	S1,0018 (SP)
+SW	S0,0014 (SP)
+OR	S0,A0,R0	;S0=A0: p->obj
+OR	S1,A2,R0	;S1=A2: p->obj.posdata
+BNE	A2,R0,7F040580	;branch if you already have posdata
+SW	RA,001C (SP)
+//7F040568:	generate posdata for object
+SW	A1,0024 (SP)
+JAL	7F03A430	;remove last obj.pos.data entry
+SW	A3,002C (SP)
+LW	A1,0024 (SP)
+LW	A3,002C (SP)
+OR	S1,V0,R0	;S1=V0: p->final entry
+//7F040580:
+BNE	A3,R0,7F0405B4	;skip if you already have an instance controller
+NOP
+LBU	T6,0003 (S0)	;T6=obj.type
+ADDIU	AT,R0,0028
+BNE	T6,AT,7F0405A8	;branch if not aircraft, handled specially
+NOP
+JAL	7F06C23C	;V0=obj.instance controller for aircraft A0
+OR	A0,A1,R0	;A0=A1: p->obj.header
+BEQ	R0,R0,7F0405B4
+OR	A3,V0,R0
+//7F0405A8:	generates all other object instance controller types
+JAL	7F06C094	;V0=obj.instance controller for nonaircraft A0
+OR	A0,A1,R0	;A0=A1: p->obj.header
+OR	A3,V0,R0
+//7F0405B4:	initialize the object
+BEQ	S1,R0,7F04069C	;skip if NULL obj.posdata
+NOP
+BEQ	A3,R0,7F04069C	;skip if NULL obj instance controller
+NOP
+LW	T7,0008 (S0)	;T7=obj.flags.u
+SW	A3,0014 (S0)	;A3->obj+14: obj.objinst
+SW	R0,0068 (S0)	;NULL->obj.coldata
+ANDI	T8,T7,0100
+BEQ	T8,R0,7F0405F8	;skip if collisions not set (obj.flags.u & 100)
+//7F0405D8:	allocate collision data
+ADDIU	A0,R0,0050	;A0= 50 bytes
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+ADDIU	A1,R0,0004	;A1= bank 4
+LBU	T9,0002 (S0)
+SW	V0,0068 (S0)	;V0->obj+68: save p->obj.coldata
+ORI	T0,T9,0008
+BEQ	R0,R0,7F040604
+SB	T0,0002 (S0)	;obj.state|=8
+//7F0405F8:	otherwise, remove the collision present flag
+LBU	T1,0002 (S0)
+ANDI	T2,T1,FFF7
+SB	T2,0002 (S0)	;obj.state &= (~8)
+//7F040604:
+MTC1	R0,F0
+LW	T4,0014 (S0)	;T4 =obj.inst
+SW	S1,0010 (S0)	;S1->obj.posdata
+SW	R0,006C (S0)	;0 ->obj+6C: 
+SB	R0,0078 (S0)
+SB	R0,0079 (S0)
+SB	R0,007A (S0)
+SB	R0,007B (S0)
+SB	R0,007C (S0)
+SB	R0,007D (S0)
+SB	R0,007E (S0)
+SB	R0,007F (S0)	;0->obj+78 through 7F
+ADDIU	T3,R0,FFFF
+SWC1	F0,0070 (S0)	;0.0->obj+70
+SH	T3,0000 (T4)	;-1 -> obj.inst+0
+LW	T5,0014 (S0)
+LUI	A1,8004
+SW	R0,0004 (T5)	;0->obj.inst+4
+LH	T6,0004 (S0)	;T6=S0+4: objID
+LW	A0,0014 (S0)	;A0=obj.inst
+SLL	T7,T6,0x2
+SUBU	T7,T7,T6
+SLL	T7,T7,0x2
+ADDU	A1,A1,T7
+JAL	7F06CE78	;set scale A1 to obj.inst(A0)+14
+LW	A1,A230 (A1)	;A1=8003A228+8+offset: (float) scale
+MTC1	R0,F0
+ADDIU	T8,R0,0001
+SB	T8,0000 (S1)	;1->obj.posdata+0: posdata.type = normal
+SW	S0,0004 (S1)	;posdata+4 = p->obj
+SWC1	F0,0008 (S1)	;0.0->posdata.xpos
+SWC1	F0,0058 (S0)	;0.0->obj.xpos
+SWC1	F0,000C (S1)	;0.0->posdata.ypos
+SWC1	F0,005C (S0)	;0.0->obj.ypos
+SWC1	F0,0010 (S1)	;0.0->posdata.zpos
+SWC1	F0,0060 (S0)	;0.0->obj.zpos
+BEQ	R0,R0,7F0406E0	;return
+SW	R0,0014 (S1)	;NULL->posdata.tile
+//7F04069C:
+BEQ	A3,R0,7F0406CC	;skip if NULL obj.inst
+NOP
+LBU	T9,0003 (S0)	;T9=obj.type
+ADDIU	AT,R0,0028
+BNE	T9,AT,7F0406C4	;branch if not an aircraft
+NOP
+JAL	7F06C3F8	;set aircraft obj.inst scale to 0.0
+OR	A0,A3,R0
+BEQ	R0,R0,7F0406CC
+NOP
+//7F0406C4:
+JAL	7F06C234	;set obj.inst scale to 0.0
+OR	A0,A3,R0
+//7F0406CC:
+BEQL	S1,R0,7F0406E4	;return if NULL obj.posdata
+LW	RA,001C (SP)
+JAL	7F03A484	;set A0 as p->last obj.posdata
+OR	A0,S1,R0	;A0=S1: obj.posdata
+OR	S1,R0,R0	;S1=NULL
+//7F0406E0:	return
+LW	RA,001C (SP)
+OR	V0,S1,R0	;V0=S1: p->obj.posdata
+LW	S1,0018 (SP)
+LW	S0,0014 (SP)
+JR	RA
+ADDIU	SP,SP,0020

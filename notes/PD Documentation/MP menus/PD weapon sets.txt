@@ -1,0 +1,182 @@
+Weapon Sets and Weapon Data in NPDE v1.1
+
+  This takes a lot of the stupidity out of modifying MP weapon sets.  All this stuff is present dual-res, so you can even set up your stuff lo-res using memory editor.
+
+  These addresses are specific to v1.1, but you can look for the data in the other ROMs to find their addresses.  Keep in mind PAL uses different text values.
+
+80087268:	MP item data
+	format: 0xA each entry; 0x27 entries
+		0x0	1	weapon type
+		0x1	1	ammo type 1
+		0x2	1	ammo amount 1
+		0x3	1	ammo type 2
+		0x4	1	ammo amount 2
+		0x5	1	flags
+			80	weapon present
+			7F	lock byte
+		0x6	2	weapon model #
+		0x8	2	scale
+
+
+800873F0:	weapon sets
+	format: 0x12 each entry; 0xC entries
+		0x0	2	text ID
+		0x2	1	weapon 0
+		0x3	1	weapon 1
+		0x4	1	weapon 2
+		0x5	1	weapon 3
+		0x6	1	weapon 4
+		0x7	1	weapon 5
+		0x8	1	weapon lock test 1
+		0x9	1	weapon lock test 2
+		0xA	1	weapon lock test 3
+		0xB	1	weapon lock test 4
+		0xC	1	alternate weapon 0
+		0xD	1	alternate weapon 1
+		0xE	1	alternate weapon 2
+		0xF	1	alternate weapon 3
+		0x10	1	alternate weapon 4
+		0x11	1	alternate weapon 5
+
+@_@
+
+  First,  lets cover MP item data.  These are the guys that determine what weapon each slot corresponds to, the amount of ammo on box collection, the model for the weapon, and if a pickup is present.  It also contains a lock value that is tested to ensure you unlocked the thing.
+
+  The items in this table are used by the weapon sets to retrieve the weapons used in play.  If, for instance, you alter the shield to some other item, any weapon set that used the shield will use that item instead.  However, this change does not affect solo stages.
+
+  These are the default MP items.  Note that the default weapon from GE (DD44) just happens to be set as the default model for "nothing".  Just interesting.
+
+[code]00 0000 0000 80 0118 0100	nothing
+02 0150 0000 80 00F5 0100	Falcon 2
+03 0150 0000 85 00FB 0100	Falcon 2 (silenced)
+04 0150 0000 86 00FC 0100	Falcon 2 (scope)
+05 0150 0000 80 00F6 0100	Magsec 4
+06 015C 0000 87 00F7 0100	Mauler
+07 0140 0000 88 00FA 0100	Phoenix
+08 0A32 0000 80 00F8 0100	DY357 Magnum
+09 0A32 0000 89 00F9 0100	DY357-LX
+0A 0264 0000 80 00FD 0100	CMP150
+0B 0296 0000 80 0102 0100	Cyclone
+0C 0296 0000 8A 0103 0100	Callisto NTG
+0D 0296 0000 8D 0104 0100	RC-P120
+0E 0296 0000 8B 0105 0100	Laptop Gun
+0F 0496 0000 80 00FF 0100	Dragon
+10 0496 0000 8C 0101 0100	K7 Avenger
+11 0464 0000 80 00FE 0100	AR34
+12 0496 0B10 83 0100 0100	SuperDragon
+13 0510 0000 8E 0106 0100	Shotgun
+14 0FC8 0000 8F 0107 0100	Reaper
+15 0432 0000 80 010C 0100	Sniper Rifle
+16 060A 0000 81 010B 0100	Farsight XR-20
+17 0B10 0000 90 0109 0100	Devastator
+18 0803 0000 80 0108 0100	Rocket Launcher
+19 0803 0000 84 010A 0100	Slayer
+1A 0905 0000 80 010F 0100	Combat Knife
+1B 030A 0000 91 010D 0100	Crossbow
+1C 1332 0000 82 010E 0100	Tranquilizer
+1E 0705 0000 00 0112 0100	Grenade
+1F 1203 0000 12 0110 0100	N-Bomb
+20 0E05 0000 00 0113 0180	Timed Mine
+21 0D05 0000 13 0114 0180	Proximity Mine
+22 0C05 0000 14 0115 0180	Remote Mine
+1D 0000 0000 CF 0195 0200	Laser
+2F 0000 0000 95 00F3 0100	X-ray Scanner
+31 0000 0000 97 012E 0100	Cloaking Device
+23 0000 0000 98 012F 0100	Combat Boost
+5B 0000 0000 96 00F4 0100	Shield
+5C 0000 0000 00 0000 0000	Disabled[/code]
+
+  The GE weapons are not in this list, but they would be the following, in case you want to replace something from above ;*)  Please note that as-is, simulants can not use these items.  
+[code]24 0150 0000 80 0117 0100	PP9i
+25 0150 0000 80 0118 0100	CC13
+26 0264 0000 80 0119 0100	KLO1313
+27 0464 0000 80 011A 0100	KF7 Special
+28 0264 0000 80 011B 0100 	ZZT
+29 0296 0000 80 011C 0100	DMC
+2A 0496 0000 80 011D 0100	AR33
+2B 0296 0000 80 011E 0100	RC-P45[/code]
+
+  Locks will be covered below.
+
+
+@_@
+
+  Now weapon sets.  Each weapon set is actually two sets.  The first is the set most of you are likely familiar with, and the second is an alternate set when all the weapons within the set haven't been unlocked.  It should be noted that if the first value of an alternate set is 0x5C (disabled), the entire alternate set is ignored.
+
+These are the original weapon sets:
+[code]5437	02 05 07 06 5B 5C	08 07 00 00	02 05 02 08 5B 5C	Pistols
+5436	02 0A 0E 11 5B 5C	0B 00 00 00	02 0A 0F 11 5B 5C	Automatics
+5435	05 08 13 0D 5B 5C	0E 0D 00 00	05 08 0F 11 5B 5C	Power
+5434	07 0B 0C 16 5B 5C	01 0A 00 00	5C 5C 5C 5C 5C 5C	Farsight
+5433	02 0A 0F 1C 5B 5C	02 00 00 00	5C 5C 5C 5C 5C 5C	Tranquilliser
+5432	06 10 14 12 5B 5C	03 07 0C 0F	5C 5C 5C 5C 5C 5C	Heavy
+5431	03 1E 0A 09 5B 5C	05 09 00 00	5C 5C 5C 5C 5C 5C	Golden Magnum
+5430	17 17 12 12 5B 5C	03 10 00 00	5C 5C 5C 5C 5C 5C	Explosive
+542F	05 0A 11 17 5B 5C	10 00 00 00	5C 5C 5C 5C 5C 5C	Grenade Launcher
+542E	06 0B 0F 18 5B 5C	07 00 00 00	02 0B 0F 18 5B 5C	Rocket Launcher
+542D	05 0E 10 21 5B 5C	0B 0C 13 00	5C 5C 5C 5C 5C 5C	Proximity mine
+542C	1A 1A 20 1B 5B 5C	11 00 00 00	1A 1A 20 20 5B 5C	Close Combat[/code]
+
+  It isn't difficult to write your own sets.  The weapon values correspond to the MP item data in the section above.  You could write up your own GE sets as well.  5075 (NTSC) is "Classic".
+
+
+@_@
+
+  Locks look up a value in a table to determine if MP settings have been unlocked.  A more complete copy is found in the documentation, but this should be enough for your own purposes.  You can find this table at 800ACCC8.
+[code]00	always returns 1 (unlocked)
+01	Farsight XR-20
+02	Tranquilizer
+03	SuperDragon
+04	Slayer
+05	Falcon 2 (Silencer)
+06	Falcon 2 (Scope)
+07	Mauler
+08	Phoenix
+09	DY357-LX
+0A	Callisto NTG
+0B	Laptop Gun
+0C	K7 Avenger	1 from start of game
+0D	RC-P120
+0E	Shotgun
+0F	Laser, Reaper
+10	Devastator
+11	Crossbow
+12	N-Bomb
+13	Proximity Mine
+14	Remote Mine
+15	X-Ray Scanner
+16	Body Armour	1 from start of game
+17	Cloaking Device
+18	Combat Boost
+19	HardSim
+1A	PerfectSim
+1C	DarkSim
+1F	King Of The Hill	1 from start of game
+20	Hold The Briefcase
+21	Capture The Case
+23	Car Park
+24	Complex
+25	Warehouse
+26	Ravine
+27	Temple
+28	G5 Building (MP)
+29	Grid
+2A	Felicity
+2B	Villa (MP)
+2C	Sewers
+2D	Ruins
+2E	Base
+2F	
+30	Fortress[/code]
+
+
+[url="http://two.xthost.info/zoinkity/PerfectDark/MPext.rar"]+_+[/url]
+
+  As for extending the table via ROM hacking, it is stupidly convoluted.  Not impossible or even impractical, but just requiring a lot of work--unless we move the MP weapons to a different memory location.
+  Ideally the weapon set data would be reduced by removing the test values.  Instead, it would teast each weapon in series and have replacement values for each.  Since each set also uses only five slots, fifth set to shield, we could just get away with a four-slot format.  That would amount to 10 bytes each entry, so every GE weapon could be fit into the custom select menu with space for an additional weapon or set entry.
+  The only trouble is that it would require rewritting the weapon set copier, both set lookup routines, as well as minor edits to both weapon lookup routines.
+
++_+
+
+  Documentation of some newer stuff:
+http://two.xthost.info/zoinkity/PerfectDark/PD%20Documentation.7z

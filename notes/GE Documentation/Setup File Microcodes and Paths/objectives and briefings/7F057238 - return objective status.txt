@@ -1,0 +1,182 @@
+7F057238	8BD68	V0= status of objective A0
+	accepts: A0=objective#
+ADDIU	SP,SP,FFD0
+SW	S3,0024 (SP)
+SLTI	AT,A0,000A	;TRUE if objective# < 10
+SW	RA,002C (SP)
+SW	S4,0028 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+SW	S0,0018 (SP)
+BEQ	AT,R0,7F057484	;return if unacceptable objective#
+ADDIU	S3,R0,0001	;S3=1	complete by default
+SLL	V0,A0,0x2	;V0=objective * 4
+LUI	A0,8007
+ADDU	A0,A0,V0
+LW	A0,5D30 (A0)	;A0=80075D30+offset: objective pointers
+BNEL	A0,R0,7F05728C	;branch if not a NULL pointer
+LBU	V1,0003 (A0)
+//7F057278:	handle an unloaded stage...
+LUI	S3,8007
+ADDU	S3,S3,V0
+BEQ	R0,R0,7F057484
+LW	S3,5D58 (S3)	;S3=80075D58+offset: completion status saved from solo
+//7F057288:	parse objective microcode
+LBU	V1,0003 (A0)	;V1=objective type
+ADDIU	AT,R0,0018
+OR	S2,A0,R0	;S2=A0: p->objective command
+BEQ	V1,AT,7F057484	;return if type 18: end
+ADDIU	S4,R0,0001	;S4=1	default status: complete
+ADDIU	T6,V1,FFE9	;T6=type-17: occlude obj.types 0-16
+//7F0572A0:	loop through objective commands to determine status
+SLTIU	AT,T6,000C	;TRUE if 17-22
+BEQ	AT,R0,7F057438	;return if not an objective type
+OR	S1,S4,R0	;S1=S4: status
+SLL	T6,T6,0x2	;T6=type->offset
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,3654 (AT)	;T6=80053654+offset: p->objective type handler
+JR	T6
+NOP
+//7F0572C4:	type19	destroy object
+JAL	7F0570C0	;V0=p->tagged obj.A0's data
+LW	A0,0004 (S2)	;A0=objective+4: tagged obj.#
+BEQ	V0,R0,7F057438	;ignore if NULL pointer
+OR	A0,V0,R0	;A0=V0: p->obj.data
+LW	T7,0010 (V0)	;T7=obj.data+10: p->obj.pos.data
+BEQ	T7,R0,7F057438	;ignore if NULL pointer
+NOP
+JAL	7F04EF34	;V0= TRUE if object not destroyed
+NOP
+BEQ	V0,R0,7F057438	;don't change status if object destroyed
+NOP
+BEQ	R0,R0,7F057438
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F0572F8:	type1A	complete if TRUE
+OR	A0,R0,R0	;A0=0
+JAL	7F033338	;V0=TRUE if any of objective flags A1 set
+LW	A1,0004 (S2)	;A1=objective+4: flags
+BNEZ	V0,7F057438	;don't change status if something set
+NOP
+BEQ	R0,R0,7F057438
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F057314:	type1B	failed if TRUE
+OR	A0,R0,R0	;A0=0
+JAL	7F033338	;V0=TRUE if any of objective flags A1 set
+LW	A1,0004 (S2)	;A1=objective+4: flags
+BEQ	V0,R0,7F057438	;don't change status if 
+NOP
+BEQ	R0,R0,7F057438
+ADDIU	S1,R0,0002	;S1=2	status: failed
+//7F057330:	type1C	collect object
+JAL	7F0570C0	;V0=p->tagged obj.A0's data
+LW	A0,0004 (S2)	;A0=objective+4: tagged obj.#
+BEQ	V0,R0,7F05735C	;ignore if NULL pointer
+OR	S0,V0,R0	;S0=V0: p->obj.data
+LW	T8,0010 (V0)	;T8=obj.data+10: p->obj.pos.data
+BEQ	T8,R0,7F05735C	;ignore if NULL pointer
+NOP
+JAL	7F04EF34	;V0= TRUE if object not destroyed
+OR	A0,V0,R0	;A0=V0: p->obj.data
+BNEZ	V0,7F057364	;branch if not destroyed
+NOP
+BEQ	R0,R0,7F057438	;fail if destroyed
+ADDIU	S1,R0,0002	;S1=2: mission failed
+//7F057364:
+JAL	7F08CFE0	;V0= TRUE if item A0 in cur.player inventory
+LW	A0,0010 (S0)	;A0=obj.data+10: p->obj.pos.data
+BNEZ	V0,7F057438	;don't change status if collected
+NOP
+BEQ	R0,R0,7F057438
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F05737C:	type1D	deposit object
+JAL	7F0570C0	;V0=p->tagged obj.A0's data
+LW	A0,0004 (S2)	;A0=objective+4: tagged obj.#
+BEQ	V0,R0,7F057438	;ignore if NULL pointer
+NOP
+LW	T9,0010 (V0)	;T9=obj.data+10: p->obj.pos.data
+BEQ	T9,R0,7F057438	;ignore if NULL pointer
+NOP
+JAL	7F08CFE0	;V0= TRUE if item A0 in cur.player inventory
+OR	A0,T9,R0	;A0=T9: p->obj.pos.data
+BEQ	V0,R0,7F057438	;don't change status if deposited
+NOP
+BEQ	R0,R0,7F057438
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F0573B0:	type1E	photograph object
+JAL	7F0570C0	;V0=p->tagged obj.A0's data
+LW	A0,0004 (S2)	;A0=objective+4: tagged obj.#
+LW	T0,0008 (S2)	;T0=objective+8: nonzero when photographed
+OR	A0,V0,R0	;A0=V0: p->obj.data
+BNEZ	T0,7F057438	;ignore if NULL pointer
+NOP
+BEQ	V0,R0,7F0573EC	;fail if NULL obj.data pointer
+NOP
+LW	T1,0010 (V0)	;T1=obj.data+10: p->obj.pos.data
+BEQ	T1,R0,7F0573EC	;fail if NULL obj.pos.data pointer
+NOP
+JAL	7F04EF34	;V0= TRUE if object not destroyed
+NOP
+BNEZ	V0,7F0573F4	;incomplete if object not destroyed
+NOP
+//7F0573EC:	fail when object doesn't exist to photograph
+BEQ	R0,R0,7F057438
+ADDIU	S1,R0,0002	;S1=2	status: failed
+//7F0573F4:	return incomplete
+BEQ	R0,R0,7F057438
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F0573FC:	type20	enter room
+LW	T2,0008 (S2)	;T0=objective+8: nonzero when entered
+BNEZ	T2,7F057438	;don't change status when entered
+NOP
+BEQ	R0,R0,7F057438
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F057410:	type21	deposit object in room
+LW	T3,000C (S2)	;T0=objective+C: nonzero when completed
+BNEZ	T3,7F057438	;don't change status when complete
+NOP
+BEQ	R0,R0,7F057438
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F057424:	type22	use key analyzer on object
+JAL	7F066EF8	;V0= cur.player's key analyzer flag
+NOP
+BNEZ	V0,7F057438	;don't change status if flag set
+NOP
+OR	S1,R0,R0	;S1=0	status: incomplete
+//7F057438:	default: set status if not complete
+BNE	S3,S4,7F057450	;branch if saved status not complete
+NOP
+BEQ	S1,S4,7F057464	;branch if cur.status: complete
+NOP
+BEQ	R0,R0,7F057464
+OR	S3,S1,R0	;S3=S1: save status if failed or incomplete
+//7F057450:	set incomplete over failed
+BNEZ	S3,7F057464	;branch if saved status not incomplete
+ADDIU	AT,R0,0002
+BNE	S1,AT,7F057464	;branch if cur.status not failed
+NOP
+OR	S3,S1,R0	;S3=S1: replace failed with incomplete
+//7F057464:	advance to next objective and loop
+JAL	7F0568F4	;V0= size in words of setup object types
+OR	A0,S2,R0	;A0=S2: p->objective
+SLL	T4,V0,0x2	:T4=#words*4: offset
+ADDU	S2,T4,S2	;S2+=offset: p->next objective
+LBU	V1,0003 (S2)	;V1=objective type
+ADDIU	AT,R0,0018
+BNEL	V1,AT,7F0572A0	;loop if not type 18: end
+ADDIU	T6,V1,FFE9
+//7F057484:	test if forcing all objectives complete...
+JAL	7F091030	;V0= objectives debugger flag
+NOP
+BEQ	V0,R0,7F057498	;branch if not set
+LW	S0,0018 (SP)
+ADDIU	S3,R0,0001	;S3=completed if debug flag set
+//7F057498:	return
+LW	RA,002C (SP)
+OR	V0,S3,R0	;V0=S3: objective status
+LW	S3,0024 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S4,0028 (SP)
+JR	RA
+ADDIU	SP,SP,0030

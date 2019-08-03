@@ -1,0 +1,390 @@
+
+NPDE-1.1
+ROM	size	RDRAM
+  1000	  2050	80001000-80003050
+  3050	 2BA1C	80003050-80059FE0
+ 2EA6C	  2000	repeat of 1050-2050	
+ 30A6C	  8DE4	incomplete file - copy of 0x3050 compressed binary
+ 39850	 10F40	80059FE0-8008AE20
+ 4A790	  40C0	zeroes
+ 4E850	  13F0	RareZip (1173) decompression routine
+ 4FC40	1074E4	TLB index and binaries
+157124	   6EA	zeroes
+15780E		TLB binaries 7F1B9000 - 7F220000
+194B30
+
+ E82000		Music Table (Number of Entries, Offset, Uncompressed Size, Compressed Size) 
+ E823BC		Music Files, 0x77 
+ ED83A0		Assorted Files, 0x7DE (Backgrounds, Tiles, Setups, Texts, Objects, etc) 
+1D5CA00		Internal Names Offset Table 
+1D5E980		Internal Name Strings 
+1D65740		Null (0x800) 
+1D65F40		Textures 
+1FF7CA0		Texture Offset Table (Offsets Down from 01D65F40) 
+1FFEA20		1173 Compressed File (unknown, 0xB30 compressed, 0xBE20 uncompressed) 
+1FFF550		1173 Compressed File (unknown, 0x8B0 compressed, 0xBE20 uncompressed) 
+1FFFE00		Fill
+2000000	ROM End 
+
++_+
+
+3050.1173	primary compressed boot binary
++-+-+-+-+
+
+0-4F3E0	ASM Segment
+
+4F3E0-56F90	Data Segment
+
+4F4C8	float display string: NaN
+4F4CC	float display string: Inf
+4F4D0	float display string: 0
+
+4F5CC-4F680	rarezip debug strings
+
+4F690-4FC50	assertation fault / MIPS error debug strings
+4FC50-50A84	memory allocation strings
+50A84-50A8C	-hard
+50A8C-50A94	-hard
+50A94-50A98	-ma
+50A98-50A9C	-ma
+50A9C-50AA4	-play
+50AA4-50AAC	-play
+50AAC-50AB4	-coop
+50AB4-50ABC	-anti
+50ABC-50AC4	-mpbots
+50AC4-50ACC	-play
+50AD0-50C34	MP3 debug strings
+50C34	[float] ???
+50C38	[float] ???
+50C3C	[float] ???
+50C40	[float] ???
+50C44	[float] ???
+50C48	[float] ???
+
+50C58-50F74	sound and music debug strings
+50F74-50FA0	TLB	???	11 entries
+50FA4-50FA8	-d
+50FA8-50FAC	-s
+50FAC-50FB0	-j
+50FB0-50FB8	-level
+50FC0-50FC4	s1
+50FC4-50FCC	str.c
+50FCC-50FD0	s2
+50FD0-50FD8	str.c
+50FE0-51008	lower-case ASCII set	0-9,a-z
+51008-51030	upper-case ASCII set	0-9,A-Z
+51030-51194	joypad debug strings
+51194-511AC	TLB	???	6 entries
+
+favorite debug line:
+"#@! Another Perfect Crash (tm)"
+
+=_=
+
+
+39850.1173	secondary compressed boot binary
++-+-+-+-+
+
+111B4-15F38	item data
+	format:	variable - typically 0x50 each entry
+		0x0	2	
+		0x2	2	
+		0x4	4	p->primary mode ???
+		0x8	4	p->secondary mode ???
+		0xC	4	
+		0x10	2
+		0x12	1	effect bitflags
+			80	
+			40	explosion on impact
+			20	
+			10	
+			08	
+			04	disarm on impact
+			02	woozy on impact
+			01	
+		0x13	1	
+		0x14	4	p->primary mode stats
+		0x18	4	p->secondary mode stats
+		0x1C	4	p->
+		0x20	4	
+		0x24	4	p->
+		0x28	4	[float] 
+		0x2C	4	[float] 
+		0x30	4	[float] 
+		0x34	4	[float] 
+		0x38	4	[float] 
+		0x3C	4	p->
+		0x40	4	p->
+		0x44	2	text ID: short name
+		0x46	2	text ID: long name
+		0x48	2	text ID: manufacturer name
+		0x4A	2	text ID: description
+		0x4C	2	8 normal, 2 scope
+		0x4E	2	
+15F38-160B0	item data pointer table; 0x5E entries
+160B0
+
+19AB0-19C00	built-in cheat menu
+	format: 0x8 each entry; 0x2A entries
+		0x0	2	text ID
+		0x2	2	
+		0x4	1	
+		0x5	1	
+		0x6	1	
+		0x7	1	
+19C00
+
+22F24-23B04	body/head index
+	format: 0x14 each entry; 0x98 entries
+		0x0	2	flags
+			8000	1=male : 0=female
+			4000
+			2000
+			1000
+			0800
+			0400
+			0200
+			0100
+			0080
+			0040
+			0020
+			0010
+			0008
+			0004
+			0002
+			0001
+		0x2	2	ROM index
+		0x4	4	[float] width
+		0x8	4	[float] height
+		0xC	4	RESERVED - rdram address at runtime
+		0x10	2	arm index
+		0x12	2	RESERVED
+23B04
+
+28080-2A000	ROM index; each entry a literal ROM address in sequence, 0x4 each
+2A000
+
+2ABB8-2AC20	MP stage select
+	format:	0x6 each entry; final entry is stage=0
+		0x0	2	stage#
+		0x2	1	lock type
+		0x3	1	RESERVED
+		0x4	2	text ID
+2AC20-2AC38	MP stage select subsections
+	format: 0x8 each entry; 3 entries
+		0x0	4	appears before this entry in MP list
+		0x4	2	text ID
+		0x6	2	RESERVED
+2AC38	
+
+2D168-2D18C	MP scenario select
+	format: 0x6 each entry; 6 entries
+		0x0	2	text ID: scenario menu
+		0x2	2	text ID: MP menu
+		0x4	1	lock
+		0x5	1	team requirement flag
+2D18C-2D19C	MP scenario subdivisions
+	format: 0x8 each entry; 2 entries
+		0x0	4	position in entry list
+		0x4	2	text ID
+		0x6	2	RESERVED
+2D19C
+
+2D288-2D40E	MP weapons
+	format: 0xA each entry; 0x27 entries
+		0x0	1	weapon type
+		0x1	1	ammo type 1
+		0x2	1	ammo amount 1
+		0x3	1	ammo type 2
+		0x4	1	ammo amount 2
+		0x5	1	flags
+			80	weapon present
+			7F	lock byte
+		0x6	2	weapon model #
+		0x8	2	scale
+2D410-2D4E8	MP weapon sets
+	format: 0x12 each entry; 0xC entries
+		0x0	2	text ID
+		0x2	1	weapon 0
+		0x3	1	weapon 1
+		0x4	1	weapon 2
+		0x5	1	weapon 3
+		0x6	1	weapon 4
+		0x7	1	weapon 5
+		0x8	1	weapon lock test 1
+		0x9	1	weapon lock test 2
+		0xA	1	weapon lock test 3
+		0xB	1	weapon lock test 4
+		0xC	1	alternate weapon 0
+		0xD	1	alternate weapon 1
+		0xE	1	alternate weapon 2
+		0xF	1	alternate weapon 3
+		0x10	1	alternate weapon 4
+		0x11	1	alternate weapon 5
+2D4E8	RESERVED	selected MP weapon set
+2D4EC-2D50E	MP "awards"
+	format: 0x2 each entry; 0x11 entries
+		0x0	2	text ID
+2D510
+
+2D74C-2D7DC	simulant types
+	format: 0x8 each entry; 0x12 entries
+		0x0	1	type
+		0x1	1	difficulty
+		0x2	2	text ID
+		0x4	1	RESERVED
+		0x5	1	MP character
+		0x6	1	lock
+		0x7	1	RESERVED
+2D7DC-2D9C4	MP character list
+	format: 0x8 each entry; 0x3D entries
+		0x0	1	RESERVED
+		0x1	1	body
+		0x2	2	text ID
+		0x4	2	head; 0x3E8 if no associated head
+		0x6	1	lock byte
+		0x7	1	RESERVED
+2D9C4
+
+2DA90-2DB8C	music
+	format: 0x6 each entry; 0x2A entries
+		0x0	1	
+		0x1	1	
+		0x2	2	text ID
+		0x4	2	unlock when level complete
+2DB8C-2DCDC	MP default scenarios
+	format: 0x18 each entry; 0xE entries
+		0x0	2	text ID
+		0x2	2	
+		0x4	4	
+		0x8	4	
+		0xC	4	
+		0x10	4	
+		0x14	4	
+2DCDC
+
+2DE14-2DE4C	simulant orders
+	format: 0x4 each entry; 0xE entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2DE4C
+
+2E4B4-2E7D4	Challenges
+	format: 0x18 each entry; 0x entries
+		0x0	4	
+		0x4	4	
+		0x8	4	
+		0xC	2	text ID
+		0xE	2	challenge description data entry; value * 0x140 creates offset to description and simulant names
+		0x10	4	
+		0x14	4	
+2E7D4
+
+2E7E4-2E7EC	ROM 7D1C20: challenge descriptions and simulant names
+	format: 0x8 each entry; 1 entry
+		0x0	4	start ROM address
+		0x4	4	end ROM address
+2E7EC-2E7F4	ROM 7D5320: challenge descriptions
+	format: 0x8 each entry; 1 entry
+		0x0	4	start ROM address
+		0x4	4	end ROM address
+2E7F4-2E7FC	ROM 7D8A20: challenge descriptions and simulant names
+	format: 0x8 each entry; 1 entry
+		0x0	4	start ROM address
+		0x4	4	end ROM address
+2E7FC-2E804	ROM 7DC120: challenge descriptions and simulant names
+	format: 0x8 each entry; 1 entry
+		0x0	4	start ROM address
+		0x4	4	end ROM address
+2E804-2E80C	ROM 7DF820: challenge descriptions and simulant names
+	format: 0x8 each entry; 1 entry
+		0x0	4	start ROM address
+		0x4	4	end ROM address
+2E80C-2E814	ROM 7E2F20: challenge descriptions and simulant names
+	format: 0x8 each entry; 1 entry
+		0x0	4	start ROM address
+		0x4	4	end ROM address
+2E814-2E81C	ROM 7E6620: challenge descriptions and simulant names
+	format: 0x8 each entry; 1 entry
+		0x0	4	start ROM address
+		0x4	4	end ROM address
+2E81C
+
+2E8C4-2E984	Character bios 
+	format: 0x10 each entry; 0xC entries
+		0x0	2	RESERVED
+		0x2	2	text ID: name
+		0x4	2	RESERVED
+		0x6	2	text ID: race/gender
+		0x8	2	RESERVED
+		0xA	2	text ID: age
+		0xC	2	RESERVED
+		0xE	2	text ID: biographical notes
+2E984-2EA64	location descriptions
+	format: 0x10 each entry; 0xE entries
+		0x0	2	RESERVED
+		0x2	2	RESERVED
+		0x4	2	RESERVED
+		0x6	2	text ID: location
+		0x8	2	RESERVED
+		0xA	2	text ID: description
+		0xC	2	RESERVED
+		0xE	2	RESERVED
+2EA64-2EAF4	object descriptions
+	format: 0x10 each entry; 0x9 entries
+		0x0	2	RESERVED
+		0x2	2	RESERVED
+		0x4	2	RESERVED
+		0x6	2	text ID: name
+		0x8	2	RESERVED
+		0xA	2	text ID: description
+		0xC	2	RESERVED
+		0xE	2	RESERVED
+
+2EB5C-2EB84	Gadget training descriptions
+	format: 0x4 each entry; 0xA entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EB84-2EB84	Gadget training hints
+	format: 0x4 each entry; 0xA entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EB84-2EBD4	Gadget training completion hints
+	format: 0x4 each entry; 0xA entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EBD4
+
+2EBE8-2EC04	Holo training menu
+	format: 0x4 each entry; 0x7 entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EC04
+
+2EC24-2EC40	Holo training descriptions
+	format: 0x4 each entry; 0x7 entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EC40-2EC5C	Holo training hint
+	format: 0x4 each entry; 0x7 entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EC5C-2EC78	Holo training completion hint
+	format: 0x4 each entry; 0x7 entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EC78-2EC8C	firing range target stats (zones, state)
+	format: 0x4 each entry; 0x5 entries
+		0x0	2	RESERVED
+		0x2	2	text ID
+2EC8C
+2EC90-2EC98	medals
+	format: 0x2 each entry; 0x3 entries
+		0x0	2	text ID
+2EC98-2ECA4	firing range completion messages
+	format: 0x2 each entry; 0x5 entries
+		0x0	2	text ID
+2ECA4-2ECAC	medals
+	format: 0x2 each entry; 0x3 entries
+		0x0	2	text ID
+2ECAC

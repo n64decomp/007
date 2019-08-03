@@ -1,0 +1,104 @@
+jungle setup trace:
+00047adc for rom address pull (86B000)
+
+7F0BCEB4 grabs the rom address of loaded anything, stores to T3
+A1 gets from S0 1271d0
+7F9BCAC8	A2 grabs from 8008B4E8 the size of the compressed binary
+7F0BCAFC	A1=ROM ADDRESS, later stored to stack
+
+70005BD0	A3=ROM ADDRESS, stored back to stack 7000F6BC
+7000F728	T8=ROM ADDRESS, stored to T9 (800636D0)
+
+7001E834	A1=rom address, a2= target address (2A4EB0, in this case), a3=size,T9=jump 7000CF90
+
+7000CFE0	PI_DRAM set (V0)
+7000CFF0	T2=rom address
+7000D000	T4=immediate rom address, then store to PI_CART_ADDR
+7000D028	T6=size, set to PI_WR_LEN
+
+80000180:	thing is written, now some interupt stuff.  Can swap stuff in now if need be
+3C1A7001	LUI	K0,7001
+275A01A0	ADDIU	K0,K0,01A0
+03400008	JR	K0
+00000000	NOP
+regs:
+V0=00000000 002A4EB0	sometimes...(target address immediate)
+A0=FFFFFFFF 802A4EB0	(target address)
+A2=FFFFFFFF 802A4EB0	(target address)
+t2=00000000 0086B000	(rom address)
+t3=FFFFFFFF B086B000	(rom address mirror)
+t4=00000000 1085B000	(rom address immediate)
+t6=00000000 00007150	(size)
+k0 is safe.
+s0-s7=0 on rom load but should be reset to original values and only used if detection true!
+
+decompression:
+7F0CE7F0
+A0=1172 address, copied to 8008D350.
+A1=target address, copied at 8008D354
+T5=current offset in file, copied over 8008D350
+
+----------------------
+This copies over a loaded compressed file with one uploaded
+
+/*jump out of an interupt. WTF?*/
+80000180:	thing is written, now some interupt stuff.  Can swap stuff in now if need be
+3C1A8040	LUI	K0,8040
+275A0000	ADDIU	K0,K0,0000
+03400008	JR	K0
+00000000	NOP
+
+except the GS stole my handle!  moved to 0120
+
+/*check T3 against the original rom address
+start list with num entries following (8040007C)
+list at 80400080 is romaddy targetaddy size filler (0B000000, 80xxxxxx, xxxxxxxxx, 00000000)
+can't use anything other than K0 + K1 until detecting a rom address...
+thankfully there's a lot of room to spare*/
+
+80400000:	/*check if a rom address was loaded (faster this way)*/
+3C1AFF00	LUI	K0,FF00
+034BD824	AND	K1,K0,T3	/*T3=address if returned from PI*/
+3C1AB000	LUI	K0,B000
+177A0017	BNE	K0,K1, +17	/*if not B0000000, return*/
+3C1A8040	LUI	K0,8040
+
+80400014:	/*set up loop for check.  S0-S7 dirty so long as you reset to 0*/
+8F50007C	LW	S0,007C (K0)	/*S0 gets the # replaced thingies*/
+1A000012	BLEZ	S0, +12	/*go to return if nothing replaced*/
+2610FFFF	ADDIU	S0,S0,FFFF
+
+80400020:	/*read list to check for replacement*/
+00108900	SLL	S1,S0,0x4
+023A8821	ADDU	S1,S1,K0
+8E3B0080	LW	K1,0080 (S1)	/*K1=rom address to check against*/
+536B0005	BEQL	K1,T3, +5	/*go to copy routine if same address*/
+8E3B0084	LW	K1,0084 (S1)	/*grab target address*/
+5E00FFFA	BGTZL	S0, +FFFA	/*repeat read loop*/
+2610FFFF	ADDIU	S0,S0,FFFF	/*S0-1*/
+	
+1000000A	BEQ	R0,R0, +A	/*go unconditionally to cleanup*/
+00008025	OR	S0,R0,R0
+
+80400044:	/*setup copy routine.  K1 has already been passed the address of the replacement binary*/
+8E310088	LW	S1,0088 (S1)	//S1=size of file
+0004D025	OR	K0,R0,A0	//K0=target address
+
+8040004C:	/*actually copy.  to ensure signed addresses don't screw this up, both addresses are manually incremented*/
+83700000	LB	S0,0000 (K1)	/*grab new info*/
+A3500000	SB	S0,0000 (K0)	/*copy to new location*/
+275A0001	ADDIU	K0,K0,0001
+277B0001	ADDIU	K1,K1,0001	/*inc both addresses*/
+5E20FFFB	BGTZL	S1, +FFFB	/*copy loop*/
+2631FFFF	ADDIU	S1,S1,FFFF	/*S1-1*/
+
+00008025	OR	S0,R0,R0	/*reset S0*/
+
+80400068:	/*cleanup from above routine*/
+00008825	OR	S1,R0,R0
+
+8040006C:	/*return*/
+3C1A7001	LUI	K0,7001
+275A01A0	ADDIU	K0,K0,01A0
+03400008	JR	K0
+00000000	NOP

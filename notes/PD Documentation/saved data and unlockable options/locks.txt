@@ -1,0 +1,119 @@
+Uncertain the true number, so just dumped a bunch of entries in here
+
+Buffer lies at:
+NPDE 1.0	NPDE 1.1	NPDJ	NPDP
+		800ACCC8			
+
+00	always returns 1 (unlocked)
+01	Farsight XR-20
+02	Tranquilizer
+03	SuperDragon
+04	Slayer
+05	Falcon 2 (Silencer)
+06	Falcon 2 (Scope)
+07	Mauler
+08	Phoenix
+09	DY357-LX
+0A	Callisto NTG
+0B	Laptop Gun
+0C	K7 Avenger	1 from start of game
+0D	RC-P120
+0E	Shotgun
+0F	Laser, Reaper
+10	Devastator
+11	Crossbow
+12	N-Bomb
+13	Proximity Mine
+14	Remote Mine
+15	X-Ray Scanner
+16	Body Armour	1 from start of game
+17	Cloaking Device
+18	Combat Boost
+19	HardSim
+1A	PerfectSim
+1B	
+1C	DarkSim
+1D	
+1E	
+1F	King Of The Hill	1 from start of game
+20	Hold The Briefcase
+21	Capture The Case
+22	
+23	Car Park
+24	Complex
+25	Warehouse
+26	Ravine
+27	Temple
+28	G5 Building (MP)
+29	Grid
+2A	Felicity
+2B	Villa (MP)
+2C	Sewers
+2D	Ruins
+2E	Base
+2F	
+30	Fortress
+31	
+32	dataDyne Female Guard
+33	Office Suit, Office Casual
+34	Carrington Villa Set: Joanna Negotiator, Negotiator, dataDyne Sniper
+35	Trent Easton
+36	NSA Lackey
+37	G5 Set: Joanna Leather, G5 Guard, G5 SWAT Guard
+38	Mr. Blonde
+39	CIA Agent, FBI Agent
+3A	Rescue Set: Joanna Lab Tech., Area 51 Guard, Area 51 Trooper, Pilot, Overalls
+3B	Investigation Set: Male Lab Technician, Female Lab Technician, dataDyne Lab Technician
+3C	Biotechnician
+3D	Attack Ship Set: Elvis, Maian, Elvis (Waistcoat), Maian Soldier
+3E	Alaskan Guard
+3F	Air Force 1 Set: Joanna Stewardess, Air Force One Pilot, Steward, Stewardess, Head Stewardess
+40	Dinner Jacket Set: Connery, Dalton, Moore, Bronsnan
+41	Carrington Institute Set: Joanna Frocks, Carrington Evening Wear, The President
+42	Crash Site Set: President's Clone
+43	Presidential Security
+44	NSA Bodyguard
+45	Pelagic II Set: Joanna Wet Suit, Joanna Aqualung, Pelagic II Guard
+46	Joanna Trenchcoat
+47	
+48	
+49	
+4A	Joanna Arctic
+4B	
+4C	Jonathan
+4D	Pop a Cap
+4E	Hacker Central
+4F	
+50	
+51	
+52	
+53	
+54	
+55	
+56	
+57	
+58	
+59	
+5A	
+5B	
+5C	
+5D	
+5E	
+5F	
+60	
+61	
+62	
+63	
+64	
+65	
+66	
+67	
+68	
+69	
+6A	
+6B	
+6C	
+6D	
+6E	
+6F	
+70	

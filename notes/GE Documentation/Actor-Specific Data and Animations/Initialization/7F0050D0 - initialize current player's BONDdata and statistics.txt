@@ -1,0 +1,234 @@
+7F0050D0	39C00	initialize current player's BONDdata and statistics
+ADDIU	SP,SP,FC30
+LUI	T7,8003
+ADDIU	T7,T7,A3D0
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+ADDIU	T0,T7,03A8
+ADDIU	T6,SP,0024
+//7F0050EC:	copy 8002A3D0-8002A778 to stack
+LW	AT,0000 (T7)
+ADDIU	T7,T7,000C
+ADDIU	T6,T6,000C
+SW	AT,FFF4 (T6)
+LW	AT,FFF8 (T7)
+SW	AT,FFF8 (T6)
+LW	AT,FFFC (T7)
+BNE	T7,T0,7F0050EC
+SW	AT,FFFC (T6)
+//7F005110:	allocate a right item buffer
+LUI	A0,8003
+LW	A0,245C (A0)	;A0=8003245C: [14820]
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+ADDIU	A1,R0,0004	;A1= bank 4
+LUI	S0,8008
+ADDIU	S0,S0,A0B0
+LW	T1,0000 (S0)	;T1=cur.BONDdata
+JAL	7F09A464	;V0= # players
+SW	V0,0808 (T1)	;V0->BONDdata+808: right weapon buffer
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F005154	;skip if multiplayer
+//7F00513C:	allocate a left item buffer
+LUI	A0,8003
+LW	A0,2460 (A0)	;A0=80032460: [14820]
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+ADDIU	A1,R0,0004	;A1= bank 4
+LW	T2,0000 (S0)
+SW	V0,080C (T2)	;V0->BONDdata+80C: left weapon buffer
+//7F005154:
+LW	T3,0000 (S0)
+ADDIU	A1,R0,FFFF
+ADDIU	V1,SP,0024
+SW	R0,07F8 (T3)	; 0->BONDdata+7F8: 1st person right invisible
+LW	T4,0000 (S0)
+ADDIU	T3,V1,03A8
+OR	V0,R0,R0
+SW	R0,07FC (T4)	; 0->BONDdata+7FC: 1st person left invisible
+LW	T5,0000 (S0)
+OR	T4,V1,R0
+SW	R0,0800 (T5)	;0->BONDdata+800: NULL item right #
+LW	T9,0000 (S0)
+SW	R0,0804 (T9)	;0->BONDdata+804: NULL item left #
+LW	T8,0000 (S0)
+SW	A1,2A44 (T8)	;-1->BONDdata+2A44: 
+LW	T0,0000 (S0)
+ADDIU	T8,V1,03A8
+SW	A1,2A48 (T0)	;-1->BONDdata+2A48: 
+LW	T7,0000 (S0)
+OR	T0,V1,R0
+LUI	V1,8008
+SW	R0,2A50 (T7)	; 0->BONDdata+2A50: right item model unlocked
+LW	T6,0000 (S0)
+ADDIU	V1,V1,A0B4
+SW	R0,2A54 (T6)	; 0->BONDdata+2A54: left item model unlocked
+LW	T1,0000 (S0)
+//7F0051BC:	copy right item controller initialization from buffer to BONDdata
+LW	AT,0000 (T4)
+ADDIU	T4,T4,000C
+ADDIU	T1,T1,000C
+SW	AT,0864 (T1)
+LW	AT,FFF8 (T4)
+SW	AT,0868 (T1)
+LW	AT,FFFC (T4)
+BNE	T4,T3,7F0051BC
+SW	AT,086C (T1)
+LW	T5,0000 (S0)
+//7F0051E4:	copy left item controller initialization from buffer to BONDdata
+LW	AT,0000 (T0)
+ADDIU	T0,T0,000C
+ADDIU	T5,T5,000C
+SW	AT,0C0C (T5)
+LW	AT,FFF8 (T0)
+SW	AT,0C10 (T5)
+LW	AT,FFFC (T0)
+BNE	T0,T8,7F0051E4
+SW	AT,0C14 (T5)
+//7F005208:	initialize inventory
+LW	T7,0000 (S0)
+ADDU	T6,T7,V0
+ADDIU	V0,V0,0004
+SLTI	AT,V0,0078
+BNE	AT,R0,7F005208
+SW	R0,1130 (T6)	; 0->BONDdata+1130 - +11A8
+//7F005220:	initialize statistics
+LW	T2,0000 (V1)
+ADDIU	A0,R0,0003
+SLL	V0,A0,0x2
+SW	R0,0000 (T2)	;0->cur.player.stats+0: reset shots fired
+LW	T3,0000 (V1)
+LUI	AT,3F80
+MTC1	AT,F2
+SW	R0,0004 (T3)	;0->cur.player.stats+4: reset hits.head
+LW	T4,0000 (V1)
+LUI	AT,8005
+MTC1	R0,F0
+SW	R0,0008 (T4)	;0->cur.player.stats+8: reset hits.body
+LW	T1,0000 (V1)
+OR	A0,R0,R0	;A0= right hand
+ADDU	T9,T1,V0
+SW	R0,0000 (T9)	;0->cur.player.stats+C: reset hits.leg
+LW	T8,0000 (V1)
+ADDU	T0,T8,V0
+SW	R0,0004 (T0)	;0->cur.player.stats+10: reset hits.weapon
+LW	T5,0000 (V1)
+ADDU	T7,T5,V0
+SW	R0,0008 (T7)	;0->cur.player.stats+14: reset hits.hat
+LW	T6,0000 (V1)
+ADDU	T2,T6,V0
+SW	R0,000C (T2)	;0->cur.player.stats+18: reset hits.objects
+LW	T3,0000 (V1)
+LWC1	F12,F0E0 (AT)	;F12=8004F0E0: 0.9
+ADDIU	V0,R0,00FF
+SW	R0,006C (T3)	;0->cur.player.stats+6C: reset civilians killed
+LW	T4,0000 (V1)
+LUI	AT,8005
+SW	R0,001C (T4)	;0->cur.player.stats+1C: reset kill count
+LW	T1,0000 (V1)
+SW	R0,0020 (T1)	;0->cur.player.stats+20: MwtGX kills
+//7F0052A8:
+LW	T9,0000 (S0)
+SW	R0,29D8 (T9)	; 0->BONDdata+29D8: reset #deaths
+LW	T8,0000 (S0)
+SW	R0,29DC (T8)	; 0->BONDdata+29DC: reset #suicides
+LW	T0,0000 (S0)
+SWC1	F2,0FC0 (T0)	;1.0->BONDdata+FC0: 
+LW	T5,0000 (S0)
+SWC1	F2,0FC4 (T5)	;1.0->BONDdata+FC4: 
+LW	T7,0000 (S0)
+ADDIU	T5,R0,0001
+SW	R0,0FC8 (T7)	; 0->BONDdata+FC8: 
+LW	T6,0000 (S0)
+SW	R0,0FCC (T6)	; 0->BONDdata+FCC: 
+LW	T2,0000 (S0)
+SW	R0,0FD0 (T2)	; 0->BONDdata+FD0: 
+LW	T3,0000 (S0)
+SW	R0,0FD4 (T3)	; 0->BONDdata+FD4: 
+LW	T4,0000 (S0)
+SW	R0,0FD8 (T4)	; 0->BONDdata+FD8: 
+LW	T1,0000 (S0)
+SB	V0,0FDC (T1)	;-1->BONDdata+FDC: 
+LW	T9,0000 (S0)
+SB	V0,0FDD (T9)	;-1->BONDdata+FDD: 
+LW	T8,0000 (S0)
+SB	V0,0FDE (T8)	;-1->BONDdata+FDE: 
+LW	T0,0000 (S0)
+SB	R0,0FDF (T0)	; 0->BONDdata+FDF: 
+LW	T7,0000 (S0)
+SW	T5,0FE0 (T7)	; 1->BONDdata+FE0: 
+LW	T6,0000 (S0)
+SW	R0,0FE4 (T6)	; 0->BONDdata+FE4: 
+LW	T2,0000 (S0)
+SWC1	F0,0FE8 (T2)	;0.0->BONDdata+FE8: 
+LW	T3,0000 (S0)
+SWC1	F0,0FEC (T3)	;0.O->BONDdata+FEC: 
+LW	T4,0000 (S0)
+SWC1	F0,0FF0 (T4)	;0.0->BONDdata+FF0: 
+LW	T1,0000 (S0)
+SWC1	F0,0FF4 (T1)	;0.0->BONDdata+FF4: 
+LW	T9,0000 (S0)
+SWC1	F12,0FF8 (T9)	;0.9->BONDdata+FF8: 
+LW	T8,0000 (S0)
+SWC1	F0,0FFC (T8)	;0.0->BONDdata+FFC: 
+LW	T0,0000 (S0)
+SWC1	F0,1000 (T0)	;0.0->BONDdata+1000: 
+LW	T5,0000 (S0)
+SWC1	F0,1004 (T5)	;0.0->BONDdata+1004: 
+LW	T7,0000 (S0)
+SWC1	F0,1008 (T7)	;0.0->BONDdata+1008: 
+LW	T6,0000 (S0)
+SWC1	F12,100C (T6)	;0.9->BONDdata+100C: 
+LW	T2,0000 (S0)
+SWC1	F0,1010 (T2)	;0.0->BONDdata+1010: 
+LW	T3,0000 (S0)
+LWC1	F4,F0E4 (AT)	;F4=8004F0E4: -Pi
+SWC1	F4,1014 (T3)	;-Pi->BONDdata+1014: 
+LW	T4,0000 (S0)
+SWC1	F0,1018 (T4)	;0.0->BONDdata+1018: 
+LW	T1,0000 (S0)
+SW	R0,1060 (T1)	; 0->BONDdata+1060: reset GEkey analyzed used flag
+LW	T9,0000 (S0)
+SW	A1,1270 (T9)	;-1->BONDdata+1270: 
+LW	T8,0000 (S0)
+SWC1	F0,106C (T8)	;0.0->BONDdata+106C: 
+LW	T0,0000 (S0)
+SWC1	F0,1070 (T0)	;0.0->BONDdata+1070: 
+LW	T5,0000 (S0)
+SWC1	F0,1074 (T5)	;0.0->BONDdata+1074: 
+LW	T7,0000 (S0)
+SW	R0,1078 (T7)	; 0->BONDdata+1078: 
+LW	T6,0000 (S0)
+SWC1	F0,107C (T6)	;0.0->BONDdata+107C: 
+LW	T2,0000 (S0)
+//7F0053CC:
+JAL	7F05C980
+SWC1	F0,1080 (T2)	;0.0->BONDdata+1080: 
+JAL	7F05C980
+OR	A0,R0,R0	;A0= right hand
+JAL	7F05C980
+OR	A0,R0,R0	;A0= right hand
+JAL	7F05C980
+ADDIU	A0,R0,0001	;A0= left hand
+JAL	7F05C980
+ADDIU	A0,R0,0001	;A0= left hand
+JAL	7F05C980
+ADDIU	A0,R0,0001	;A0= left hand
+//7F0053FC:
+LW	T3,0000 (S0)
+ADDIU	T4,R0,0002
+LUI	AT,8003
+SW	R0,1064 (T3)	; 0->BONDdata+1064: reset flags
+LW	T1,0000 (S0)
+SW	T4,1128 (T1)	; 2->BONDdata+1128: reset more flags
+LW	T9,0000 (S0)
+LWC1	F6,2C38 (AT)	;F6=80032C38: item 11+34: sniper rifle zoom
+LUI	AT,8003
+SWC1	F6,1084 (T9)	;zoom->BONDdata+1084: sniper zoom
+LW	T8,0000 (S0)
+LWC1	F8,36B8 (AT)	;F8=800336B8: item 29+34: camera zoom
+SWC1	F8,1088 (T8)	;zoom->BONDdata+1088: camera zoom
+//7F005430:	return
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,03D0
+JR	RA
+NOP

@@ -1,0 +1,197 @@
+70006E7C	7A7C	play music track A0
+	accepts: A0=music track#
+LUI	T6,8002
+LB	T6,43F8 (T6)	;T6=800243F8: nonzero when sound can't be played...
+ADDIU	SP,SP,DEB8
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+BNEZ	T6,70006FBC	;return if sound can't be played
+SW	A0,2148 (SP)	;SP+2148= A0: track#
+LUI	T7,8002
+LW	T7,4334 (T7)	;T7=80024334: cur.track#
+BEQL	T7,R0,70006EB4	;branch if nothing playing
+LW	T8,2148 (SP)
+JAL	70006FD0	;stop playing first music track
+NOP
+//70006EB0:	set new track number and wait for previous to stop
+LW	T8,2148 (SP)	;T8=track#
+LUI	S0,8006
+LUI	AT,8002
+ADDIU	S0,S0,3728	;S0=80063728: p->1st.music controller block
+SW	T8,4334 (AT)	;track#->80024334: set new track number
+JAL	70012230	;TRUE if playing
+LW	A0,0000 (S0)	;A0=80063728: p->1st.music controller block
+BEQ	V0,R0,70006EE4	;branch if not playing
+NOP
+//70006ED4:	loop until not playing...
+JAL	70012230	;TRUE if playing
+LW	A0,0000 (S0)	;A0=80063728: p->1st.music controller block
+BNEZ	V0,70006ED4	;loop until stopped playing
+NOP
+//70006EE4:
+LUI	A3,8002
+LW	A3,4334 (A3)	;A3=80024334: track#
+LUI	T9,8006
+LW	T9,3734 (T9)	;T9=80063734: p->music data table
+SLL	T1,A3,0x3	;T1=track * 8: offset
+LUI	AT,0001
+ADDU	T2,T9,T1	;T2=music.data + offset
+LW	A1,0004 (T2)	;A1=ROM address for track
+LUI	V1,8006
+SLL	V0,A3,0x1	;V0=track*2
+SLTU	AT,A1,AT	;TRUE if address < 00010000, which is used as NULL entry
+BEQ	AT,R0,70006F28	;branch if valid entry
+ADDU	V1,V1,V0
+//70006F18:	play default music, solo death
+JAL	70006E7C	;play music A0
+ADDIU	A0,R0,0001	;A0=1: solo death
+BEQ	R0,R0,70006FC0
+LW	RA,001C (SP)
+//70006F28:	load compressed music file from ROM
+LHU	V1,3738 (V1)	;V1=80063738+offset: decompressed size, to nearest halword boundry
+LUI	A2,8006
+ADDU	A2,A2,V0
+LHU	A2,37B8 (A2)	;A2=800637B8+offset: compressed size, to nearest halword boundry, which they already are...
+LUI	T0,8006
+ADDIU	V1,V1,000F
+LW	T0,3838 (T0)	;T0=80063838: p->decompression target address
+ORI	T3,V1,000F
+XORI	T4,T3,000F	;T4=decompressed size, to 0x10 boundry
+ADDIU	A2,A2,000F
+ADDIU	V1,T4,0040	;V1=dec.size+0x40
+ORI	T5,A2,000F
+XORI	A2,T5,000F	;A2=compressed size, to 0x10 boundry
+ADDU	T7,T0,V1	;T7=address + suspected size
+SUBU	A0,T7,A2	;A0=address + suspected size - comp.size
+SW	A0,0028 (SP)	;SP+28= address+difference in dec and comp sizes
+JAL	70005C1C	;loads A2 bytes from A1 to A0: comp.size from ROM to end of target buffer
+SW	T0,2140 (SP)	;SP+2140= p->target
+//70006F70:	
+LW	A0,0028 (SP)	;A0=p->compressed
+LW	A1,2140 (SP)	;A1=p->decompressed
+JAL	7F0CE7F0	;decompress data A0 to A1, advancing past header
+ADDIU	A2,SP,0034	;A2=SP+34: 
+//70006F80:	play the track (maybe...)
+LUI	A0,8006
+LUI	A1,8006
+LW	A1,3838 (A1)	;A1=80063838: p->music binary
+JAL	7001279C
+ADDIU	A0,A0,3860	;A0=80063860: 
+JAL	70012D00	;do something to music at controller A0
+LW	A0,0000 (S0)	;A0=80063728: p->1st.music controller block
+JAL	70007030	;V0=80024338: 
+NOP
+JAL	7000703C	;sets something for currently running music track
+ANDI	A0,V0,FFFF	;A0=V0-1: 
+JAL	70012D40	;do something to music at controller A0
+LW	A0,0000 (S0)	;A0=80063728: p->1st.music controller block
+//70006FBC:
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,2148
+JR	RA
+NOP
+
+
+70006FD0	7BD0	stop playing first music track
+LUI	T6,8002
+LB	T6,43F8 (T6)	;T6=800243F8: TRUE if can't play sound
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+BNEZ	T6,70007020	;return if can't play sound
+LUI	T7,8002
+LW	T7,4334 (T7)	;T7=80024334: cur.track#
+LUI	AT,8002
+SW	R0,434C (AT)	;0->8002434C: 
+BEQ	T7,R0,70007018	;branch if track 0: no music
+LUI	A0,8006
+JAL	70012230	;V0=A0+2C: TRUE if playing
+LW	A0,3728 (A0)	;A0=80063728: p->1st.music controller block
+ADDIU	AT,R0,0001
+BNE	V0,AT,70007018	;branch if not playing
+LUI	A0,8006
+JAL	70012D70	;do something to music at controller A0
+LW	A0,3728 (A0)	;A0=80063728: p->1st.music controller
+//70007018:	kill music: track#=0
+LUI	AT,8002
+SW	R0,4334 (AT)	;0->80024334: track 0
+//70007020:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+7000703C	7C3C	??? - sets something for currently running music track...
+	accepts: A0=value
+LUI	T6,8002
+LW	T6,4334 (T6)	;T6=80024334: music track#
+LUI	T8,8002
+ANDI	A2,A0,FFFF	;A2=(short) A0
+SLL	T7,T6,0x1
+ADDU	T8,T8,T7
+LH	T8,4358 (T8)	;T8=80024358+offset: value for track in bank
+ADDIU	SP,SP,FFE8
+SW	A0,0018 (SP)	;SP+18= A0
+MULTU	A2,T8
+SW	RA,0014 (SP)
+LUI	AT,8002
+LUI	A0,8006
+SH	A2,4338 (AT)	;(short) A0->80024338: 
+LW	A0,3728 (A0)	;A0=80063728: p->1st.music controller block
+MFLO	V0		;V0=value * A0: 
+SRL	T9,V0,0xF
+SLL	A1,T9,0x10	;A1=(value * A0)*2 & FFFF0000
+SRA	T0,A1,0x10
+JAL	70012DA0
+OR	A1,T0,R0	;A1=upper short of 2(value * A0)
+//70007090:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+700091E8	9DE8	set first 7 entries in [@80063BA8] table to A0
+	accepts: A0=value
+ADDIU	SP,SP,FFE0
+SW	S1,0018 (SP)
+SW	S0,0014 (SP)
+ANDI	S1,A0,FFFF	;S1=(short) A0
+SW	RA,001C (SP)
+SW	A0,0020 (SP)
+OR	S0,R0,R0	;S0=0	count
+//70009204:
+ANDI	A0,S0,00FF	;A0=entry#
+JAL	70009284	;set entry A0 to A1 in @80063BA8 table, sorta-kinda
+ANDI	A1,S1,FFFF	;A1=value
+ADDIU	S0,S0,0001	;S0++	count++
+ANDI	T6,S0,00FF
+SLTI	AT,T6,0007	;TRUE if 0-6
+BNEZ	AT,70009204	;loop for 7 ou of 8 entries
+OR	S0,T6,R0
+//70009224:	return
+LW	RA,001C (SP)
+LW	S0,0014 (SP)
+LW	S1,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0020
+
+70012DA0	139A0	??? - tied to sound effects
+	accepts: A0=p->???, A1=value
+ADDIU	SP,SP,FFD8
+SW	RA,0014 (SP)
+SW	A1,002C (SP)	;SP+2C= A1
+OR	T6,A1,R0
+ADDIU	T7,R0,000A
+SH	T7,0018 (SP)	;SP+18= 0xA<<10
+SH	T6,001C (SP)	;SP+1C= A1<<10
+ADDIU	A1,SP,0018	;A1=p->four values on stack
+ADDIU	A0,A0,0048	;A0+=48: 
+JAL	70012EFC
+OR	A2,R0,R0	;A2=0
+//70012DCC:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0028
+JR	RA
+NOP

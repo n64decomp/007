@@ -1,0 +1,897 @@
+7F010F10:	45A40	menu 0E constructor - MP options
+	accepts: A0=p->display list target
+ADDIU	SP,SP,FF98
+SW	RA,003C (SP)
+SW	S0,0038 (SP)
+OR	A1,R0,R0
+OR	A2,R0,R0
+JAL	700046D0	;setfillcolour("black")
+OR	A3,R0,R0
+JAL	70003EF8	;fillrect()
+OR	A0,V0,R0
+JAL	7F00D5E8
+OR	A0,V0,R0
+JAL	7F0ACD98	;???	some kind of microcode constructor
+OR	A0,V0,R0
+OR	S0,V0,R0	;S0=V0: DL
+//7F010F48:	Page Title
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,9C4C	;A0=9C4C: "MULTIPLAYER OPTIONS:\r"
+ADDIU	T6,R0,0037
+ADDIU	T7,R0,005F
+SW	V0,0064 (SP)
+SW	T6,0058 (SP)
+JAL	7000441C	;V0=clip height
+SW	T7,0054 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T8,8004
+LUI	T9,8004
+LW	T9,0EB4 (T9)	;T9=80040EB4: p->1st font table
+LW	T8,0EB8 (T8)	;T8=80040EB8: p->2nd font table
+LH	T1,0044 (SP)
+ADDIU	T0,R0,00FF
+SW	T0,0018 (SP)	;SP+18=T6: font colour
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T9,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T8,0010 (SP)	;SP+10=T4: p->2nd font table
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F010FB8:	display "Players:"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,9C4D	;A0=9C4D: "Players:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)	;SP+64=p->text
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97C8 (T5)	;T5=800697C8: TRUE if highlighted "Players"
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,0079
+SW	T3,0058 (SP)	;SP+58=x pos
+BEQ	T5,R0,7F011038	;branch if not highlighted
+SW	T4,0054 (SP)	;SP+54=y pos
+//7F011008:	draw highlight box for "Players:"
+LW	A3,004C (SP)	;A3=width
+ADDIU	T6,R0,0087
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,0078	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F011038:	display text
+JAL	7000441C	;V0=clip height
+NOP
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T8,8004
+LUI	T9,8004
+LW	T9,0EB4 (T9)	;T9=80040EB4: p->1st font table
+LW	T8,0EB8 (T8)	;T8=80040EB8: p->2nd font table
+LH	T1,0044 (SP)
+ADDIU	T0,R0,00FF
+SW	T0,0018 (SP)	;SP+18=T6: font colour
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T9,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T8,0010 (SP)	;SP+10=T4: p->2nd font table
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011090:
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,9C4E	;A0=9C4E: "Scenario:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97CC (T5)	;T5=800697CC: TRUE if "Scenario" highlighted
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,008D
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F011110	;branch if not highlighted
+SW	T4,0054 (SP)
+//7F0110E4:	draw highlight box for "Scenario"
+LW	A3,004C (SP)
+ADDIU	T6,R0,009B
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,008C	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F011110:	display text
+JAL	7000441C	;V0=clip height
+NOP
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T8,8004
+LUI	T9,8004
+LW	T9,0EB4 (T9)	;T9=80040EB4: p->1st font table
+LW	T8,0EB8 (T8)	;T8=80040EB8: p->2nd font table
+LH	T1,0044 (SP)
+ADDIU	T0,R0,00FF
+SW	T0,0018 (SP)	;SP+18=T6: font colour
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T9,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T8,0010 (SP)	;SP+10=T4: p->2nd font table
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011168:	display label for "Level"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+ORI	A0,R0,9C4F	;A0=9C4F: "Level:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97D0 (T5)	;T5=800697D0: TRUE if "Level" highlighted
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,00A1
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F0111E8	;branch if not highlighted
+SW	T4,0054 (SP)
+//7F0111BC:	draw highlight box for "Level"
+LW	A3,004C (SP)
+ADDIU	T6,R0,00AF
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,00A0	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F0111E8:	determine text colour
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: MP locks
+ANDI	T8,T8,0001
+NOP
+BNEL	T8,R0,7F011204	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F011204:	draw text
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F01125C:	display label for "Game Length"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+ORI	A0,R0,9C50	;A0=9C50: "Game Length:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97D4 (T5)	;T5=800697D4: TRUE if game length highlighted
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,00B5
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F0112DC	;branch if not highlighted
+SW	T4,0054 (SP)
+//7F0112B0:	draw highlight box for "Game Length"
+LW	A3,004C (SP)
+ADDIU	T6,R0,00C3
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,00B4	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F0112DC:	determine font colour
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: MP locks
+ANDI	T8,T8,0002
+NOP
+BNEL	T8,R0,7F0112F8	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F0112F8:	draw text
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011350:	display label for "Weapons"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+ORI	A0,R0,9C51	;A0=9C51: "Weapons:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97DC (T5)	;T5=800697DC: TRUE if weapon select highlighted
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,00C9
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F0113D0	;branch if not highlighted
+SW	T4,0054 (SP)
+//7F1013A4:	draw highlight box for "Weapons"
+LW	A3,004C (SP)
+ADDIU	T6,R0,00D7
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,00C8	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F1013D0:	determine font colour
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: MP locks
+ANDI	T8,T8,0004
+NOP
+BNEL	T8,R0,7F0113EC	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F0113EC:	draw text
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011444:	display label for "Characters"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+ORI	A0,R0,9C52	;A0=9C52: "Characters:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97D8 (T5)	;T5=800697D8: TRUE if character highlighted
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,00DD
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F0114C4	;branch if unhighlighted
+SW	T4,0054 (SP)
+//7F011498:	draw highlight box for "Characters"
+LW	A3,004C (SP)
+ADDIU	T6,R0,00EB
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,00DC	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F0114C4:	determine font colour
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: MP locks
+ANDI	T8,T8,0008	;T8=mask for weapons
+NOP
+BNEL	T8,R0,7F0114E0	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F0114E0:	draw text
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011538:	display label for "Health"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+ORI	A0,R0,9C53	;A0=9C53: "Health:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97E0 (T5)	;T5=800697E0: TRUE if health highlighted
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,00F1
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F0115B8	;branch if not highlighted
+SW	T4,0054 (SP)
+//7F01158C:	draw highlight box for "Health"
+LW	A3,004C (SP)
+ADDIU	T6,R0,00FF
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,00F0	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F0115B8:	determine font colour
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: MP locks
+ANDI	T8,T8,0010
+NOP
+BNEL	T8,R0,7F0115D4	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F0115D4:	draw text
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F01162C:	display label for "Control Style"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+ORI	A0,R0,9D1E	;A0=9D1E: "Control Style\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97E4 (T5)	;T5=800697E4: TRUE if control style highlighted
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,0105
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F0116AC	;branch if unhighlighted
+SW	T4,0054 (SP)
+//7F011680:	draw highlight box for "Control Style"
+LW	A3,004C (SP)
+ADDIU	T6,R0,0113
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,0104	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F0116AC:	determine font colour
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: MP locks
+ANDI	T8,T8,0020
+NOP
+BNEL	T8,R0,7F0116C8	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F0116C8:	draw text
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011720:	display label for "Aim"
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+ORI	A0,R0,9C54	;A0=9C54: "Aim:\r"
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LUI	A3,8004
+SW	V0,0064 (SP)
+LW	A3,0EB8 (A3)	;A3=80040EB8: p->2nd font table
+ADDIU	A0,SP,0050	;A0=SP+50: @height of string
+ADDIU	A1,SP,004C	;A1=SP=4C: @width of string
+OR	A2,V0,R0	;A2=p->text
+SW	R0,0014 (SP)	;SP+14=0
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)	;SP+10=p->1st font table
+LUI	T5,8007
+LW	T5,97E8 (T5)
+ADDIU	T3,R0,0039
+ADDIU	T4,R0,0119
+SW	T3,0058 (SP)
+BEQ	T5,R0,7F0117A0
+SW	T4,0054 (SP)
+//7F011774:	draw highlight box for "Aim"
+LW	A3,004C (SP)
+ADDIU	T6,R0,0127
+ADDIU	T7,R0,0032
+SW	T7,0014 (SP)	;SP+14=colour
+SW	T6,0010 (SP)	;SP+10=lry
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,R0,0037	;A1=ulx
+ADDIU	A2,R0,0118	;A2=uly
+JAL	7F0AD014	;draw coloured box
+ADDIU	A3,A3,003C	;A3=lrx
+OR	S0,V0,R0	;S0=V0: DL
+//7F0117A0:	462D0	determine font colour
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: MP locks
+ANDI	T8,T8,0040	;T8=mask for Aim
+NOP
+BNEL	T8,R0,7F0117BC	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F0117BC:	462EC	draw text
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011814:	46344	display selected players
+LUI	A1,8005
+LUI	A2,8003
+OR	S0,V0,R0	;S0=V0: DL
+LW	A2,B520 (A2)	;A2=8002B520: #players selected
+ADDIU	A1,A1,0C4C	;A1=80050C4C: "%d"
+JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+ADDIU	A0,SP,005C	;A0=SP+5C: buffer for text
+ADDIU	T2,R0,00A0
+ADDIU	T3,R0,0079
+SW	T2,0058 (SP)	;SP+58=0xA0	 x position
+JAL	7000441C	;V0=clip height
+SW	T3,0054 (SP)	;SP+54=0x79	y position
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+//7F01183C:	write to screen
+LUI	T4,8004
+LUI	T5,8004
+LW	T5,0EB4 (T5)	;T5=80040EB4: p->1st font table
+LW	T4,0EB8 (T4)	;T4=80040EB8: p->2nd font table
+LH	T7,0044 (SP)	;T7=SP+44: clip height
+ADDIU	T6,R0,00FF	;T6=000000FF: black
+SW	T6,0018 (SP)	;SP+18=T6: font colour
+OR	A0,S0,R0	;A0=S0: display list target
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+ADDIU	A3,SP,005C	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T5,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T4,0010 (SP)	;SP+10=T4: p->2nd font table
+JAL	7F009760	;write text
+SW	T7,001C (SP)	;SP+1C=T7: clip height
+//7F011884:	display selected scenario
+LUI	T8,8003
+LW	T8,B540 (T8)	;T8=8002B540: selected scenario
+LUI	A0,8003
+OR	S0,V0,R0	;S0=V0: DL
+SLL	T9,T8,0x2	;T9=scenario ->offset
+ADDU	A0,A0,T9
+JAL	7F0C1DD8	;V0=text ID A0
+LHU	A0,B054 (A0)	;A0=8002B054+offset: scenario name
+ADDIU	T0,R0,00A0
+ADDIU	T1,R0,008D
+SW	V0,0064 (SP)	;SP+64=V0: p->text
+SW	T0,0058 (SP)	;SP+58: x pos
+JAL	7000441C	;V0=clip height
+SW	T1,0054 (SP)	;SP+54: y pos
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T2,8004
+LUI	T3,8004
+LW	T3,0EB4 (T3)	;T3=80040EB4: p->1st font table
+LW	T2,0EB8 (T2)	;T2=80040EB8: p->2nd font table
+LH	T5,0044 (SP)
+ADDIU	T4,R0,00FF
+SW	T4,0018 (SP)	;SP+18=T6: font colour
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T3,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T2,0010 (SP)	;SP+10=T4: p->2nd font table
+JAL	7F009760	;write text
+SW	T5,001C (SP)	;SP+1C: clip height
+//7F01191C:	display selected stage
+LUI	T6,8003
+LH	T6,B534 (T6)	;T6=MP stage selected
+LUI	A0,8003
+OR	S0,V0,R0	;S0=V0: DL
+SLL	T7,T6,0x2
+SUBU	T7,T7,T6
+SLL	T7,T7,0x3	;T7=T6 * 0x18: offset to MP stage selected
+ADDU	A0,A0,T7
+JAL	7F0C1DD8	;V0=text ID A0
+LHU	A0,B074 (A0)	;A0=8002B074: selected stage name
+LUI	T0,8003
+LBU	T0,B544 (T0)	;T0=8002B544: MP locks
+ADDIU	T8,R0,00A0
+ADDIU	T9,R0,00A1
+SW	V0,0064 (SP)
+SW	T8,0058 (SP)
+ANDI	T0,T0,0001	;mask for Stage Select
+SW	T9,0054 (SP)
+BNEL	T0,R0,7F011970	;branch if unlocked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T1,8004
+LUI	T2,8004
+LW	T2,0EB4 (T2)	;T2=80040EB4: p->1st font table
+LW	T1,0EB8 (T1)	;T1=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T3,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T2,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T1,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T3,001C (SP)	;SP+1C: clip height
+//7F0119C8:	display selected length
+LUI	T4,8003
+LW	T4,B538 (T4)	;T4=8002B538: selected game length
+LUI	A0,8003
+OR	S0,V0,R0	;S0=V0: DL
+SLL	T5,T4,0x2
+SUBU	T5,T5,T4
+SLL	T5,T5,0x2	;T5=T4 * 0xC: offset to game length
+ADDU	A0,A0,T5
+JAL	7F0C1DD8	;V0=text ID A0
+LHU	A0,AFF4 (A0)	;A0=8002AFF4+offset: game length name
+LUI	T8,8003
+LBU	T8,B544 (T8)	;T8=8002B544: stage select lock
+ADDIU	T6,R0,00A0
+ADDIU	T7,R0,00B5
+SW	V0,0064 (SP)
+SW	T6,0058 (SP)
+ANDI	T8,T8,0002	;mask for Game Length
+SW	T7,0054 (SP)
+BNEL	T8,R0,7F011A1C	;branch if unlocked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+//7F011A1C:
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T9,8004
+LUI	T0,8004
+LW	T0,0EB4 (T0)	;T0=80040EB4: p->1st font table
+LW	T9,0EB8 (T9)	;T9=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T1,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T0,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T9,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T1,001C (SP)	;SP+1C: clip height
+//7F011A74:	display selected weapon set
+JAL	7F0C6614	;V0=p->selected weapon set data
+OR	S0,V0,R0	;S0=V0: DL
+JAL	7F0C1DD8	;V0=text ID A0
+LHU	A0,0010 (V0)	;A0=V0+10: name of weapon set
+LUI	T4,8003
+LBU	T4,B544 (T4)	;T4=8002B544: MP locks
+ADDIU	T2,R0,00A0
+ADDIU	T3,R0,00C9
+SW	V0,0064 (SP)
+SW	T2,0058 (SP)
+ANDI	T4,T4,0004	;mask for Weapon Set
+SW	T3,0054 (SP)
+BNEL	T4,R0,7F011AB0	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T5,8004
+LUI	T6,8004
+LW	T6,0EB4 (T6)	;T6=80040EB4: p->1st font table
+LW	T5,0EB8 (T5)	;T5=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T7,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T6,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T5,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T7,001C (SP)	;SP+1C: clip height
+//7F011B08:	display selected aim
+LUI	T8,8003
+LW	T8,B53C (T8)	;T8=8002B53C: selected aim setting
+LUI	A0,8003
+OR	S0,V0,R0	;S0=V0: DL
+SLL	T9,T8,0x2	;T9=aim -> offset
+ADDU	A0,A0,T9
+JAL	7F0C1DD8	;V0=text ID A0
+LHU	A0,B510 (A0)	;A0=8002B510: name of aim setting
+LUI	T2,8003
+LBU	T2,B544 (T2)	;T2=8002B544: MP locks
+ADDIU	T0,R0,00A0
+ADDIU	T1,R0,0119
+SW	V0,0064 (SP)
+SW	T0,0058 (SP)
+ANDI	T2,T2,0040	;mask for Aim Setting
+SW	T1,0054 (SP)
+BNEL	T2,R0,7F011B54	;branch if not locked
+ADDIU	V1,R0,00FF	;V1=black
+ADDIU	V1,R0,0070	;V1=grey
+JAL	7000441C	;V0=clip height
+SW	V1,0048 (SP)
+JAL	7000442C	;V0=clip width
+SH	V0,0044 (SP)
+LUI	T3,8004
+LUI	T4,8004
+LW	T4,0EB4 (T4)	;T4=80040EB4: p->1st font table
+LW	T3,0EB8 (T3)	;T3=80040EB8: p->2nd font table
+LW	V1,0048 (SP)
+LH	T5,0044 (SP)
+OR	A0,S0,R0	;A0=S0: p->display list
+ADDIU	A1,SP,0058	;A1=p->x position
+ADDIU	A2,SP,0054	;A2=p->y position
+LW	A3,0064 (SP)	;A3=p->text
+SW	V0,0020 (SP)	;SP+20=V0: clip width
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T4,0014 (SP)	;SP+14=T5: p->1st font table
+SW	T3,0010 (SP)	;SP+10=T4: p->2nd font table
+SW	V1,0018 (SP)	;SP+18=T6: font colour
+JAL	7F009760	;write text
+SW	T5,001C (SP)	;SP+1C: clip height
+//7F011BAC:	sidebar and cursor
+JAL	7F00A238	;add tab 3: "PREVIOUS"
+OR	A0,V0,R0
+JAL	7F00A080	;add tab 1: "START"
+OR	A0,V0,R0
+JAL	7F009F08	;loads selected icon for folder select
+OR	A0,V0,R0
+//7F011BC4:	return
+LW	RA,003C (SP)
+LW	S0,0038 (SP)
+ADDIU	SP,SP,0068
+JR	RA
+NOP
+
++_+
+
+70003EF8:		generate a generic fillrect, probably untextured
+	accepts: A0=display list target
+LUI	T6,BA00
+ORI	T6,T6,1402
+LUI	T7,0030
+SW	T7,0004 (A0)	;A0+4= 00300000	setothermode_h: cycle type-fill
+SW	T6,0000 (A0)	;A0+0= BA001402	setothermode_h: 
+LUI	A2,8002
+LW	A2,32A8 (A2)	;A2=800232A8: 
+ADDIU	A1,A0,0008	;A1=A0+8: next DL op
+LUI	AT,F600
+LH	T8,0018 (A2)	;T8=halfword @ 800232A8+18: lr y
+LH	T3,001A (A2)	;T8=halfword @ 800232A8+1A: lr x
+ADDIU	A3,A1,0008	;A3=A0+10: next next DL op
+ADDIU	T9,T8,FFFF
+ANDI	T0,T9,03FF	;T0=(T8-1) & 0x3FF
+ADDIU	T4,T3,FFFF
+ANDI	T5,T4,03FF	;T5=(T3-1) & 0x3FF
+SLL	T1,T0,0xE	;T1=T0 * 0x4000
+OR	T2,T1,AT
+SLL	T6,T5,0x2	;T6=T5 * 4
+OR	T7,T2,T6
+SW	T7,0000 (A1)	;A0+8= F6.FFC.FFC	fillrect
+SW	R0,0004 (A1)	;A0+C= 00000000 	lr x+y = 0
+LUI	T8,E700
+SW	T8,0000 (A3)	;A0+10: E7000000	pipesync
+SW	R0,0004 (A3)	;A0+14: 00000000
+JR	RA
+ADDIU	V0,A3,0008	;V0=A0+18: next DL op address

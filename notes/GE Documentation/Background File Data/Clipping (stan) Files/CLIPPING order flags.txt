@@ -1,0 +1,39 @@
+7001385C:	copy part of decompression
+
+The tile advance offset address can be changed.  The routine can be rewritten a bit, changing 7F0B2FB8:
+SLL	T8,T6,0x3
+ADDIU	T8,T8,0008
+000EC0C0
+27180008
+
+ALSO DO 7F0B2ED4:
+SLL	T5,T3,0x3
+ADDIU	T5,T5,0008
+
+Otherwise, you could just change the value on line 7F0B2F6C (0xE7A9C in rom) to '24C60F49', then change the values in 21990 @ 0x201BC to '20283038 40485058 60687078'.  That would support up to 14 point tiles.
+
+
+
+7F0B2FAC:	
+LH	V1,0006 (V0)	//V1=tile's special
+SRA	T5,V1,0xC	//T5=#points
+ANDI	T6,T5,000F	//T6=#points (limit of 15)
+ADDU	T7,A2,T6	//T7=80040F4C+#points
+LBU	T8,0000 (T7)	//T8=offset for given number of points
+ADDU	V0,T8,V0	//V0=address for next tile
+LW	T9,0000 (V0)	//T9=p-for next tile
+BNEL	T9,R0,7F0B2FAC
+SW	V0,0000 (A1)	//current tile address->80040F60
+JR	RA
+SW	A0,0000 (T0)	//address for start of clipping file->8007B120
+
+
+7F0AF144:
+LH	S0,0006 (A0)	//S0=tile's special
+SLL	T7,A2,0x2	//T7=room# * 4
+SUBU	T7,T7,A2	//T7=room# * 3
+SRA	T9,S0,0xC	//T9=#points
+ANDI	S0,T9,000F	//S0=#points (limit of 15)
+BLEZ	S0,7F0AF1D4
+OR	S1,A0,R0	//S1=address of tile
+

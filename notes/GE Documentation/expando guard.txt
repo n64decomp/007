@@ -1,0 +1,659 @@
+8006 position data:	0x34 each
+0x0	type
+	1	normal obj
+	2	door
+	3	guard
+	4	weapon (pickup)
+	5
+	6	player
+	7	explosion
+
+0x1	state	0 if not loaded
+	1	activated?  usually set for monitors
+	2	actually on screen
+	4	possibly "use position data given here"...
+	8	has been loaded (or on-screen?)
+
+0x2	blank
+0x4	p->object data
+0x8	xpos
+0xC	ypos
+0x10	zpos
+0x14	p->clipping tile	room pointer
+0x18	rotation
+0x1C	
+0x20	
+0x24	p->previous entry
+0x28	p->next entry
+0x2C-0x30	list of room numbers (8 max)
+	FF indicates end of list
+
+-----------
+80073DC0	0xEC	slave object during movement routine (00000080 tag)
+max of 20 (0x14)
+
+0xCC	room#
+0xCD	FFFF
+
+0xE4	OBJdata
+
+-----------
+80075030	0x48	object position offset data (00000040 tag)
+primarily only used to offset from another preset point
+(only known use is by 0C hanging monitor type, but could be fiddled with)
+
+0x0
+0x4
+0x8
+0xC
+0x10
+0x14
+0x18
+0x1C
+0x20
+0x24
+0x28
+0x2C
+0x30
+0x34
+0x38
+0x3C
+0x40
+0x44	pointer to assigned 73dc0 slot (when applicable)
+
+-----------
+-----------
+-----------
+Guard data	0x1DC	P->8002CC64
+
+offsets:
+0x0		set by type 8E; Technically first byte of ID; 1388=player 1
+0x1	guard ID
+
+0x2	accuracy? reaction time? ???
+0x3	accuracy? reaction time? ???	
+
+0x4	rounds fired from right gun?
+0x5	rounds fired from left gun?
+0x6	head
+0x7	current action type
+	1	standing
+	2	freeze guard animation...
+	3	wasting time (ie. swatting flies)
+	4	dying
+	5	fade-away (removed)
+	6	getting shot
+	7	limping sort of animation
+	8	firing (standstill)
+	9	firing (walking)
+	A	firing (running or rolling)
+	B	step to side
+	C	hop to side
+	D	run to side
+	E	walk along path
+	F	moving (any speed)
+	10	surrendering
+	11	freeze guard animation...
+	12	look around self
+	13	trigger alarm (activate object)
+	14	throw grenade
+
+0x8	?	set=0 when fading actor
+0x9	?	set=0 when init. players (7F0201F0)
+0xA	number of shots near guard (ie. over head)
+0xB	# times shot
+
+0xC	???	recalled by invis.multi, converted to float, added to 256...
+0xD	accuracy? reaction time? ???
+0xE	???	set to 0A by type 08
+0xF	body
+
+0x10	beligerancy	set by type 8D	higher=cooler animations (ie. grenade)
+0x11	
+0x12	bitflags
+	x2xx	enable path
+	x1xx	set when xyz pointer invalid
+	xx4x	enable loop counter
+	xx2x	eliminate guard
+	xxx2	??? - tested by action 39
+	xxx1	kicks hat off head.  This shouldn't be set when helmets or moonraker hats in use.
+
+0x14	guard bitflags
+	80000000
+	40000000
+	20000000
+	10000000
+	08000000
+	04000000
+	02000000
+	01000000
+	00800000
+	00400000
+	00200000	shot/shot at	F8 unsets this
+	00100000	scientist (civilian) flag
+	00080000
+	00040000
+	00020000
+	00010000
+	00008000
+	00004000
+	00002000
+	00001000
+	00000800
+	00000400
+	00000200
+	00000100
+	00000080
+	00000040
+	00000020
+	00000010	???	Doak-facility
+	00000008	loaded - has been on screen?
+	00000004	invisible.  used by DD to blank all guards
+	00000002	currently doing action?
+	00000001	use sunglasses (when applicable)
+0x18	handle to position data
+0x1C	handle to model data handle
+0x20	???	CALLED BY ACTION61
+0x24	???
+0x28	???
+0x2C	???	set to FFFFFFFF when fading guard, 0 when standing still
+0x30	???	type 08 sets to 0; 0x14 of struck animation copied here
+0x34	???	type 08 sets to 0
+0x36	???	
+0x37	???	
+0x38	???	type 08 sets to 0
+0x3C	???	type 08 sets to 2
+0x40	???	type 08 sets this to 0, then 1.  sometimes=pathpreset addy
+0x44	timer?	base value + random value/120
+0x48	
+0x4C	flags
+	60	???
+	01	0 when moving toward point; 1 when still
+0x50	
+0x54	
+0x58	type of motion	???
+0x59	dec distance counter	???
+0x5A	distance from target
+
+0xA4	[float] ?
+0xA8	[float] ?
+0xAC	[float] ?
+0xB0	[float] ?
+0xB4	[float] ?
+0xB8	[float] ?
+0xBC	(float) x position
+0xC0	(float) y position
+0xC4	(float) z position
+0xC8	?	set=0 when init. players (7F0201EC)
+0xCC	?	=val @ 8004837C during player init.
+0xD0	(float) "reaction" time (ability to react to Bond and fire)
+0xD4	?	set=0 when init. players
+0xD8	[float] ?
+0xDC	[float] ?
+0xE0	[float] ?
+0xE4	?	set=0 when init. players
+0xE8	?	set=0 when init. players
+0xEC	(float)	guard's hearing	(reaction time?)
+	whenever you fire a gun, multiplies this vs "sound" and alarms if too high
+0xF0	?	set=0 when init. players
+0xF4	?	LOADED DURING PLAYER INIT, COPIED TO 0xF4+
+0xF5	""
+0xF6	""
+0xF7	""
+0xF8	?	LOADED DURING PLAYER INIT, COPIED TO 0xF4+
+0xF9	""
+0xFA	""
+0xFB	""
+0xFC	(float) damage recieved.  BA subtracts from this number, like AC-10
+0x100	(float) health
+0x104	pointer to action block controlling character
+0x108	offset within action block
+0x10A	action block return
+0x10C	user byte #1
+0x10D	user byte #2
+0x10E	bitflags	guard type (80 sets scientist at least)
+0x10F	set as random value
+0x110	loop counter
+0x114	preset of object to interact with (2328 preset)
+0x116	FC target
+0x118	FA target
+0x11A	FB target
+
+0x13C	[float] ?
+
+0x140	[float] ?
+0x144	[float] ?
+0x148	[float] ?
+0x14C	[float] ?
+0x150	???	blanked in type 08
+0x154	???	blanked in type 08
+0x158	???	blanked in type 08
+0x15C	???	blanked in type 08
+0x160	handle to position data of right gun
+0x164	handle to position data of left gun	used by type 62
+0x168	p->SE buffer	NULL when init. players
+0x16C	p->SE buffer	NULL when init. players
+0x170	p->SE buffer	NULL when init. players
+0x174	p->SE buffer	NULL when init. players
+0x178	?	set=0 when init. players
+0x17C	?	set=0 when init. players
+0x180	?	set=0 when init. players	1BYTE
+
+0x1AC	?	set=0 when init. players	1BYTE
+
+0x1D8	handle to position data of hat
+---------
+---------
+model data handle attached to guard (GUARD+1C)	0xBC
+0x0
+0x2
+0x4	GUARDdata
+0x8	body model load line
+0xC	
+0x10	actual model
+0x14	(float) scale
+0x20	
+
+
+
+---------
+---------
+modifiers:
+800528EC	multiplied by health check value
+
+800528F4	multiplied by health set value
+800528F8	multiplied by BA set value
+---------
+---------
+BONDdata	0x2A80	p->8007A0B0
+E:	80079EE0, 80079EE4, 80079EE8, 80079EEC for players 1-4
+J:	80079F50, 80079F54, 80079F58, 80079F5C
+P:	800689F0, 800689F4, 800689F8, 800689FC
+
+0x0	???
+0x4	xpos
+0x8	ypos
+0xC	zpos
+0x10	another xpos
+0x14	another xpos
+0x18	another xpos
+0x1C	xoffset?
+0x20	yoffset?
+0x24	zoffset?
+0x28	another another xpos
+0x2C	another another ypos
+0x30	another another zpos
+0x34	room pointer
+0x38	current model x pos?
+0x3C	current model y pos?
+0x40	current model z pos?
+0x44	prev. model x pos, copied from 0x38 [7F087664]
+0x48	prev. model y pos, copied from 0x3C [7F087664]
+0x4C	prev. model z pos, copied from 0x40 [7F087664]
+0x50	X current room position
+0x54	Y current room position
+0x58	Z current room position
+
+0x9C	
+
+0xA8	8006 position data	+4 in this leads to player's guarddata
+
+0xB4	z position
+0xB8	x position
+0xC4	z position
+0xC8	x position
+
+0xD0	
+0xD4	pointer to character's object instance
+0xD8	player button control
+0xDC	health in watch display?	(255-0 / 437F0000-00000000)
+	[call 7F08A2EC to return F0 = health; breaks T6]
+0xE0	body armour in watch display?
+	[call 7F08A2FC to return F0 = health; breaks T6]
+
+0xEC	display watch health total (copied f/ 0xDC), used in MP menus
+0xF0	display watch armour total (copied f/ 0xE0), used in MP menus
+0xF4	
+0xF8	
+
+0x118	look-ahead setting
+
+0x124	TRUE when aiming
+0x128	solo auto-aim y setting
+0x12C	[float]
+
+0x138	solo auto-aim x setting
+0x13C	[float] 
+
+0x148	[float] lateral rotation 1st
+0x14C	[float] lateral rot. correction degree	drains to +-0 at rest	(-left:+right)	movement only - not sight/turret!
+
+0x158	[float] vertical rotation 1st
+0x15C
+0x160	[float] 
+
+0x16C	[float] 1.0 if strafing (-left:+right)
+0x170	[float] copy of +0x16C?
+0x174	[float] speed	current rate of motion forward or back
+
+0x18C	viewport alpha; these four words act as a timer to fade in/out character
+0x190	degree of change (?)
+0x194	TIMER; smaller = faster.  usually set to 1
+0x198	final alpha level
+0x19C	
+
+0x1C0
+0x1C4
+0x1C8	
+0x1CC	TRUE when minute ticks appear around border of solo watch menu
+0x1D0	open/close solo watch menu
+
+0x204	???; vertical rot. copied here
+0x208
+0x20C	
+0x210
+
+0x218	
+0x21C	
+0x220	step in watch menu entry/exit animation
+	0	start
+	1	set while head going down and arm coming out
+	2	starts the arm moving back to left; if not set, disappears
+	3	set once zoom starts
+0x224	x watch pos?  starts zoom when equal to 41A00000
+
+0x230	???	used as base for a watch scale storage value; watch obj. instance?
+0x244	???	watch scale destination
+
+0x3D0	???	set by 7F0807B0 (A0)
+0x3D4	???	set by 7F0807B0 (A1)
+0x3D8	???	set by 7F0807B0 (A2)
+0x3DC	[float] ???	set by 7F0807B0 (A3)
+
+0x3E4	[float] timer for fade; finished when time < 0
+
+0x408	x position (from 8006)
+0x40C	y position 
+0x410	z position 
+0x41C	cuff selected
+
+0x424	1: dying (allow respawn)
+0x428	1: fading to black
+0x42C	
+0x430	control style
+
+0x488	current tile address
+0x48C	x position (from 8006)	used by the debug position feature
+0x490	y position 
+0x494	z position
+0x498	used by pos. debug
+0x4A0	used by pos. debug
+0x4A4	x position (on-screen character?)
+0x4A8	y position (on-screen, for sure)
+0x4AC	z position (on-screen character?)
+0x4B0	rotation laterally?
+0x4B4	x position (from 8006)
+0x4B8	y position (from 8006)
+0x4BC	z position (from 8006)
+	0x1E5D5C (2pl) in G5 also retains on-screen character position
+
+0x4D8	current tile address
+
+0x7F0	viewport width
+0x7F2	viewport height
+0x7F4	viewport ulx
+0x7F6	viewport uly
+0x7F8	!0 right gun visible
+0x7FC	!0 left gun visible
+0x800	right gun number
+0x804	left gun number
+0x808	p->right item buffer
+0x80C	p->left item buffer (solo)
+0x810	0x20	copy of body's obj.header
+0x830	0x20	copy of right weapon's obj.header
+
+//0x864 - 0xC0C: right item info buffer
+0x864	
+0x870	right weapon
+0x874	right gun attack (f/ wep#)
+0x878	previous right weapon
+0x87C	right gun firing status
+0x894	??? - 0 when detonating mines
+0x898	right gun's current animation
+	0	standby
+	1	fire pistol	step 1	trigger
+	2	fire pistol	step 2	gunfire
+	3	fire pistol	step 3	recoil
+	4	fire pistol	step 4	return to standby
+	5	draw pistol	step 1	drop off-screen
+	6	draw pistol	step 2	switch
+	7	draw pistol	step 3	rise on-screen
+	8	draw pistol	step 4
+	9	draw pistol	step 5	return to standby
+	A	draw rifle	step 1	drop off-screen
+	B	draw rifle	step 2	switch
+	C	draw rifle	step 3	rise on-screen
+	D	fire rifle	step 1
+	E	reload weapon	step 1	drop off-screen
+	F	reload weapon	step 2	restore clip ammo
+	10	reload weapon	step 3	rise on-screen
+	11	slap (attack)	step 1	SE
+	12	slap (attack)	step 2	damage
+	13	slap (attack)	step 3	swing up+right, then slap down+left
+	14	slap (attack)	step 1	SE
+	15	slap (attack)	step 2	damage
+	16	slap (attack)	step 3	swing up+left, then slap down+right
+	17	chop (attack)	step 1	swing back
+	18	chop (attack)	step 2	damage
+	19	chop (attack)	step 3	follow through to standby
+	1A	lift and fire	step 1	weapon to upper left + fire
+	1B	lift and fire	step 2	drop back to standby
+	1C	throw knife	step 1	swing back + release
+	1D	throw knife	step 2	follow through to standby
+	1E	slap (attack)	step 1	damage
+	1F	slap (attack)	step 2	swing up+right, then slap down+left
+	20	slap (attack)	step 1	damage
+	21	slap (attack)	step 2	swing up+left, then slap down+right
+	22	default to standby
+0x89C	right gun clip ammo
+0x8AC	right gun next weapon to draw
+0x8B4	0 - trigger right gun animation
+
+//0xC0C - 0xFB4: left item info buffer
+0xC0C
+0xC18	left weapon
+0xC1C	left gun attack (f/ wep#)
+0xC20	previous left weapon
+0xC24	left gun firing status
+0xC40	left gun animation
+0xC44	left gun clip ammo
+0xC54	left gun next weapon to draw
+0xC5C	0 - trigger left gun animation
+
+0xFB4
+
+0xFC0	[float]
+0xFC4	[float]
+0xFC8	
+0xFCC	
+0xFD0	
+0xFD4	
+0xFD8	
+0xFDC	
+0xFDD	
+0xFDE	
+0xFDF	
+0xFE0	
+0xFE4	
+0xFE8	[float]
+0xFEC	[float]
+0xFF0	[float]
+0xFF4	[float]
+0xFF8	[float]
+0xFFC	[float]
+0x1000	[float]
+0x1004	[float]
+0x1008	[float]
+0x100C	[float]
+0x1010	[float]
+0x1014	[float] -Pi...
+0x1018	[float]
+
+
+0x1060	!0 if key analyzer used on GEkey.
+0x1064	flags (?)
+	00000001	ammo on-screen
+
+0x106C	[float]
+0x1070	[float]
+0x1074	[float]
+0x1078	
+0x107C	[float]
+0x1080	[float]
+0x1084	[float]	set to sniper rifle zoom factor
+0x1088	[float]	set to camera zoom factor
+0x108C
+0x1090	[float]	screen width?
+0x1094	[float]	screen height?
+0x1098	[float]	???
+0x109C	[float]	???
+0x10A0	[float]	???
+0x10A4	[float]	???
+0x10A8	[float]	???
+0x10AC	[float]	1/2 screen width?
+0x10B0	[float]	1/2 screen height?
+0x10B4	
+0x10B8	
+0x10BC	
+0x10C0	
+0x10C4	
+0x10C8	
+0x10CC	
+0x10D0	
+0x10D4	
+0x10D8	
+0x10DC	
+0x10E0	
+0x10E4	
+0x10E8	
+0x10EC	
+0x10F0	
+0x10F4	
+0x10F8	
+0x10FC	
+
+0x1118	[float]	these four floats are copied when setting global visibility: no portals required
+0x111C	[float]	
+0x1120	[float]	
+0x1124	[float]
+0x1128	???	bitflags of some sort
+	00000001	hide sight
+	00000002	tied to gunfire?
+
+0x1130	0x11A8	ammo totals - 1 long per value
+0x11A8	p->red screen animation block
+
+0x11BC	[float]	watch menu screen swap - current timer
+0x11C0	[float]	end time; while running, only watch, not menu overlay, visible
+0x11C4	[float]	watch menu current size
+0x11C8	[float]	watch menu initial size
+0x11CC	[float]	watch menu final size; must change this value to affect cur size
+0x11D0	[float]	watch menu current size; unsure this one's use
+0x11D4	[float]	???
+0x11D8	???	set=0 by stationary intro camera
+0x11DC	???	set=-1 by stationary intro camera
+0x11E0	p->inventory (first in cycle)
+0x11E4	p->inventory (right weapon? last in set?)
+0x11E8	max inventory entries (used to search inventory)
+	inventory format:
+		0x0	4	availability
+				-1 end of list
+				0  not available
+				1  right hand available
+				2  pointer to item
+				3  double weapon set
+		0x4	4	right weapon code or p->obj.pos (8006)
+		0x8	4	left weapon code (when applicable)
+		0xC	4	p->next item in cycle
+		0x10	4	p->previous item in cycle
+
+0x11EC	1=all guns
+
+0x11F4	p->???
+	0x20	???
+	0x24	???
+0x11F8	index of time spent using items	0x78 - 10 (0xA) entries
+	0x0	right item type
+	0x4	left item type
+	0x8	time (ms) item was in use
+0x1270
+
+0x1284	player's current animation
+
+0x12B4	(byte) used in displaying text, after 12B5 test
+0x12B5	(byte) used when testing if you can display a cheat text... screen?
+0x12B6	(byte) 1= invincible
+0x12B7	
+0x12B8	???; related to armour display (equiv. of 1598)
+
+0x1598	???; related to health display (equiv. of 12B8)
+
+0x1878	buffer for vertices, used to generate green backdrop in solo watch HUD
+
+0x2858	buffer for display lists, used to generate green backdrop in solo watch HUD
+
+0x29C4	TRUE when MP in-game menu activated
+0x29C8	selected page in MP in-game menu? 0-7
+	0	awards
+	1	player losses
+	2	player kills
+	3	scores
+	4	pause
+	5	exit
+	6	exit: cancel / confirm
+	7	waiting for players to exit
+0x29CC	selection on MP page 6 (0-cancel,1-confirm)
+0x29D0	press stick register--TRUE allows input	used by 7F0C1EF8, 7F0C1F68
+0x29D4	
+0x29D8	#deaths
+0x29DC	#suicides
+
+0x29E0	
+
+0x29F8	
+
+0x2A00	show health display timer	nonzero displays health
+0x2A04
+0x2A06
+
+0x2A10	p->text for 1st multiplayer award
+0x2A14	p->text for 2nd mulitplayer award
+
+0x2A38	
+0x2A3C	Health register.  Probably actual.  0xDC is likely for watch display
+0x2A40	BA register.  Probably actual.  0xE0 is likely for watch display
+0x2A44	-1
+0x2A48	-1
+
+0x2A50	!0 lock right gun model
+0x2A54	!0 lock left gun model
+0x2A58	control type (0 - honey, etc)
+0x2A5C	control type (0 - honey, etc)
+0x2A60	(float) control type (0 - honey, etc)
+0x2A64	negative vertical spacing for control type entry, language-specific
+0x2A68	1	set after assigning control type data
+
++-+-+-+-+-+
+OBJECT INSTANCE ENTRIES
+more specificaly, those for player characters:
+pointer to entry @ playerdata+0xD4
+size is variable; 0x40 minimum.  Add group# * 4 for each
+
+0x2	2	group#, which amounts to # entries
+0x4	4	pointer to guarddata(?)
+
+0x8	4	pointer to body's header
+
+0x14	4	[float]	scale
+
+0xB8	4	[float] y offset, so midpoint isn't in the ground

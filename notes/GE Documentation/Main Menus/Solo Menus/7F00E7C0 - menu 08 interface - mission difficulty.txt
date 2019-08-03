@@ -1,0 +1,205 @@
+7F00E7C0:	432F0	menu 08 interface: mission objectives
+LUI	T6,8003
+LW	T6,A8F8 (T6)	;T6=8002A8F8: selected mission briefing page
+ADDIU	SP,SP,FFE0
+LUI	A0,8003
+SLL	T7,T6,0x3
+SUBU	T7,T7,T6
+SLL	T7,T7,0x2	;T7=selected mission * 0x1C
+SW	RA,0014 (SP)
+ADDU	A0,A0,T7
+JAL	7F00DD60	;highest unlocked difficulty for solo stage A0
+LW	A0,ABF8 (A0)	;A0=8002ABF8+offset: solo stage #
+LUI	AT,4270
+MTC1	AT,F12
+JAL	70004544
+SW	V0,001C (SP)	;SP+1C=V0: highest unlocked difficulty
+LUI	AT,8005
+JAL	70004590	;F12->page width
+LWC1	F12,1A4C (AT)	;F12=80051A4C: mission difficulty page width
+LUI	AT,42C8
+MTC1	AT,F12
+LUI	AT,8005
+JAL	70004650	;set page height
+LWC1	F14,1A50 (AT)	;F14=80051A50: 
+JAL	70004534
+OR	A0,R0,R0	;A0=0
+//7F00E824:	display folder backdrop
+LUI	A0,8003
+JAL	7F00B724	;disable all switches in object A0 (hide all)
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+OR	A1,R0,R0	;A1=0: item #: tabs on side of folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0001	;A1=1: item #: basic folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0003	;A1=3: item #: OHMSS
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0004
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+//7F00E880:	test tab 3 highlight
+LUI	V1,8007
+LUI	AT,8003
+ADDIU	V1,V1,9784	;V1=80069784: option highlighted
+SW	R0,A8E4 (AT)	;0->8002A8E4: reset highlight flag for folder tab 3
+ADDIU	T8,R0,FFFF
+JAL	7F00A39C	;V0=TRUE if cursor on tab 3
+SW	T8,0000 (V1)	;-1 ->80069784: no option highlighted
+LUI	V1,8007
+BEQ	V0,R0,7F00E8B8	;branch if tab3 not highlighted
+ADDIU	V1,V1,9784	;V1=80069784: option highlighted
+ADDIU	T9,R0,0001
+LUI	AT,8003
+BEQ	R0,R0,7F00E95C
+SW	T9,A8E4 (AT)	;1->8002A8E4: tab 3 highlighted
+//7F00E8B8:	test 007 highlighted
+LW	A0,001C (SP)	;A0=SP+1C: highest unlocked difficulty
+LUI	V0,8003
+ADDIU	V0,V0,A90C	;V0=8002A90C: vert.pos.
+SLTI	AT,A0,0003
+BNEZ	AT,7F00E8F4	;branch if A0 < 3: 007 not unlocked
+LUI	AT,8005
+LWC1	F6,1A54 (AT)	;F6=80051A54: 007.vert.pos
+LWC1	F4,0000 (V0)	;F4=8002A90C: vert.pos.
+ADDIU	T0,R0,0003
+C.LE.S	F6,F4
+NOP
+BC1F	7F00E8F4	;branch if vert.pos higher than 007.vert.pos
+NOP
+BEQ	R0,R0,7F00E95C
+SW	T0,0000 (V1)	;3->80069784: 007 highlighted
+//7F00E8F4:	test 00 Agent highlighted
+LUI	V0,8003
+SLTI	AT,A0,0002
+BNEZ	AT,7F00E92C	;branch if A0 < 2: 00 Agent not unlocked
+ADDIU	V0,V0,A90C	;V0=8002A90C
+LUI	AT,4373
+MTC1	AT,F10
+LWC1	F8,0000 (V0)	;F8=8002A90C: vert.pos.
+ADDIU	T1,R0,0002
+C.LE.S	F10,F8
+NOP
+BC1F	7F00E92C	;branch if vert.pos higher than 00Agent.vert.pos
+NOP
+BEQ	R0,R0,7F00E95C
+SW	T1,0000 (V1)	;2->80069784: 00 Agent highlighted
+//7F00E92C:	test Secret Agent highlighted
+BLEZ	A0,7F00E958	;branch if A0 0 or invalid: Agent
+LUI	AT,4353
+LWC1	F16,0000 (V0)	;F16=8002A90C: vert.pos.
+MTC1	AT,F18
+ADDIU	A3,R0,0001
+C.LE.S	F18,F16
+NOP
+BC1FL	7F00E95C	;branch if vert.pos higher than SecretAgent.vert.pos
+SW	R0,0000 (V1)
+BEQ	R0,R0,7F00E95C
+SW	A3,0000 (V1)	;1->80069784: Secret Agent highlighted
+//7F00E958:	default to Agent
+SW	R0,0000 (V1)	;0->80069784: Agent highlighted
+//7F00E95C:	test if highlighted option selected
+OR	A0,R0,R0	;A0=0: player 1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ORI	A1,R0,B000	;A1= A, Z, Start buttons
+LUI	V1,8007
+ADDIU	V1,V1,9784	;V1=80069784: option highlighted
+BEQ	V0,R0,7F00E9DC	;branch if buttons not pressed
+ADDIU	A3,R0,0001
+LUI	T2,8003
+LW	T2,A8E4 (T2)	;T2=8002A8E4: TRUE if folder tab 3 highlighted
+LUI	AT,8003
+LUI	A0,8006
+BEQ	T2,R0,7F00E9A8	;branch if tab 3 not highlighted
+ADDIU	A1,R0,00C7	;A1=SE 0C7: folder switch SE
+SW	A3,A8D8 (AT)	;1->8002A8D8: tab 3 selected
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+JAL	70008E08	;play sound effect A1
+OR	A2,R0,R0	;A2=NULL
+BEQ	R0,R0,7F00EA0C
+NOP
+//7F00E9A8:	option or tab 2 selected
+LW	V0,0000 (V1)	;V0=80069784: option highlighted
+LUI	AT,8003
+LUI	A0,8006
+BLTZ	V0,7F00EA0C	;branch if tab 2 highlighted instead
+ADDIU	A1,R0,004D	;A1=SE 04D: 
+SW	V0,A8FC (AT)	;highlighted option -> 8002A8FC: difficulty
+LUI	AT,8003
+SW	A3,A8D4 (AT)	;1->8002A8D4: tab 2 selected
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+JAL	70008E08	;play sound effect A1
+OR	A2,R0,R0	;A2=NULL
+BEQ	R0,R0,7F00EA0C
+NOP
+//7F00E9DC:	test for backtrack
+OR	A0,R0,R0	;A0=0: player 1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,4000	;B button
+BEQ	V0,R0,7F00EA0C	;branch if B not pressed
+ADDIU	A3,R0,0001
+LUI	AT,8003
+LUI	A0,8006
+SW	A3,A8D8 (AT)	;1->8002A8D8: tab 3 selected
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+ADDIU	A1,R0,00C7	;A1=SE 0C7: folder switch SE
+JAL	70008E08	;play sound effect A1
+OR	A2,R0,R0	;A2=NULL
+//7F00EA0C:	test for tab 2 selected: "NEXT"
+JAL	7F009B84	;control stick tracking
+NOP
+LUI	T3,8003
+LW	T3,A8D4 (T3)	;T3=8002A8D4: TRUE if tab 2 selected
+LUI	T4,8003
+LUI	T5,8003
+BEQ	T3,R0,7F00EA70	;branch if tab 2 not selected
+NOP
+LW	T4,A8FC (T4)	;T4=8002A8FC: difficulty
+ADDIU	AT,R0,0003
+OR	A1,R0,R0	;A1=0: immediate
+BNE	T4,AT,7F00EA58	;branch if difficulty not 3: not 007
+ADDIU	A0,R0,000A	;A0=A: mission objectives page
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A0,R0,0009	;A0=9: 007 options page
+JAL	7F00A3F0	;set cursor position to tab 2
+NOP
+BEQ	R0,R0,7F00EAB0
+LW	RA,0014 (SP)
+//7F00EA58:	advance to mission objectives page
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0	;A1=0: immediate
+JAL	7F00A3F0	;set cursor position to tab 2
+NOP
+BEQ	R0,R0,7F00EAB0
+LW	RA,0014 (SP)
+//7F00EA70:	backtrack to solo select menu
+LW	T5,A8D8 (T5)	;T5=8002A8D8: TRUE if tab3 selected
+ADDIU	A0,R0,0007	;A0=7: solo stage select menu
+BEQL	T5,R0,7F00EAB0	;branch if tab 3 not selected
+LW	RA,0014 (SP)
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0	;A1=0: immediate
+LUI	T6,8003
+LW	T6,A8F8 (T6)	;T6=8002A8F8: selected mission briefing page
+LUI	A0,8003
+SLL	T7,T6,0x3
+SUBU	T7,T7,T6
+SLL	T7,T7,0x2	;T7=selected mission * 0x1C
+ADDU	A0,A0,T7
+JAL	7F00E3E0	;set cursor to stage A0 on mission select
+LW	A0,ABF8 (A0)	;A0=8002ABF8+offset: solo stage#
+//7F00EAAC:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP

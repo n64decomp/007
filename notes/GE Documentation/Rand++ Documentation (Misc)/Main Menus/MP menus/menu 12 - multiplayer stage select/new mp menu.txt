@@ -1,0 +1,614 @@
+OLD stage menu specs:	18bytes
+0x0	2	stage name
+0x2	2	selected stage
+0x4	4	picture
+0x8	4	stage# or -1 for random
+0xC	4	min stages before selectable
+0x10	4	1 if selectable
+0x14	4	max # players
+
+
+new stage menu specs:	8bytes
+8002B074	2	total stages in list
+8002B076	2	current entry (set by rand)
+8002B078	x	stage entries
+
+0x0	2	stage name (one name, long acceptable)
+0x2	1	picture
+0x3	1	stage# or FF for random
+0x4	2	ID# for setup file
+0x6	C0	difficulty mask for stage# below
+		0	agent or above
+		1	secret agent or above
+		2	00 agent or above
+		3	007
+	3F	min stages before selectable
+0x7	80	red
+	40	green
+	20	blue
+	10	lock 4 player
+	08	lock 3 player
+	04	lock 2 player
+	02	lock 1 player
+	01	randomly-unselectable
+
+0xD standard entries
+9C9A 10 FF 0000 00 80	Random
+9C9C 0C 26 0263 00 00	Temple
+9C9E 0E 1F 0266 00 00	Complex
+9CA2 0F 32 0265 00 00	Caves
+9CA0 0D 2D 025C 00 00	Library
+9D0D 0D 2D 0264 00 00	Basement
+9D0F 0D 2D 025F 00 00	Stack
+9CA4 04 22 025E 01 00	Facility
+9CA6 00 1B 0267 08 00	Bunker II
+9CA8 02 18 025D 0A 00	Archives
+9CAA 01 27 0260 10 00	Caverns
+9CAC 0A 20 0262 12 00	Egyptian
+9C86 07 16 0268 09 00	Statue
+9C93 08 29 0261 11 00	Cradle
+
+
+also, 8002B534 needs to be a byte or short, not a word...
+	steal other half of address to resolve randomized entry
+go with short - that will more than support everything
+
+
+Without moving anything, that makes for 34 entries.
+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+most important bit: getting it to accept a custom mp_setup file
+only need the 'setup pointers' if solo in use.
+Otherwise, need to use the ROM index #
+
+cleans out 8004EDB0 (0x100)
+
+will need to rewrite the random stage code to save some semblance of the set used:
+stage value = halfword write.  lower halfword is MP set
+7F000000	no rewrite necessary
+42980	7F00DE50	;save when disp. solo stage select
+42E20	7F00E2F0	;save when disp. mission briefings
+458EC	7F010DBC	;save random MP stage
+45900	7F010DD0	;save MP stage
+4AB9C	7F01606C	;load stage
+4B414	7F0168E4
+4B4B8	7F016988
+4F9E4	7F01AEB4	;load solo stage
+5212C	7F01D5FC	;save demo stage
+
+7F0106F8:	LW	->	LH	84-	*
+7F010724:	SW	->	SH	A4-	*
+7F0107D0:	LW	->	LH	84-	*
+7F0107E0:	SW	->	SH	A4-	*
+7F010D5C:	LW	->	LH	87-	*
+7F011920:	LW	->	LH	85-	*
+7F013F70:	SW	->	SH	A4-	*
+
+7F0C0414:	LW	->	LH	85-	*	ramrom
+7F0C0560:	SW	->	SH	A4-	*
+
+better yet, since it needs a halfword to know the number of entries, 
+  dedicate first halfword at address to #entries, then second to current
+  random will just have to set it
+
+//7F003CB8:	387E8
+2AA1003B	SLTI	AT,S5,003B
+10200454	BEQ	AT,R0,7F004E10	;branch if 'stage#' > 0x3B
+00157880	SLL	T7,S5,0x2	;T7=stage#->offset
+3C188003	LUI	T8,8003
+271874E4	ADDIU	T8,T8,74E4	;T8=800374E4: p->setup pointers for each stage
+01F88021	ADDU	S0,T7,T8	;S0=p->stage T7's setup pointer
+//7F003CD0:	38800	prepare buffer for string: copy buffer to target
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+//7F003D14:	38844	test if MP or solo
+0FC26919	JAL	7F09A464	;ret V0=#players
+00009825	OR	S3,R0,R0
+28410002	SLTI	AT,V0,0002
+1420000C	*BNEZ	AT,7F003D58	;branch if solo
+0000A025	OR	S4,R0,R0
+//7F003D2C:	38868	loads "mp_" string for string extension
+3C018003	*LUI	AT,8003
+8424B076	*LH	A0,B076 (AT)	;selected MP stage
+000420C0	*SLL	A0,A0,0x3	;A0=selection * 8: offset to data
+00240821	*ADDU	AT,AT,A0
+9424B07C	*LHU	A0,B07C (AT)	;ROM index ID
+00042840	*SLL	A1,A0,0x1
+00A42821	*ADDU	A1,A1,A0
+00052880	*SLL	A1,A1,0x2	;A1=index * C
+3C018004	*LUI	AT,8004
+00250821	*ADDU	AT,AT,A1
+24306058	*ADDIU	S0,AT,6058	;A0=p->ROM lookup string
+//7F003D58:	38888
+8E040000	*LW	A0,0000 (S0)	;A0=S1: setup name
+1080042D	*BEQ	A0,R0,7F004E10	;branch if no setup file (0x39940)
+24050001	ADDIU	A1,R0,0001	;A1=1: ???
+24060100	ADDIU	A2,R0,0100	;A2=0100: ???
+0FC2F341	JAL	7F0BCD04	;load setup file into memory and stuff
+24070004	ADDIU	A3,R0,0004	;A3=4: bank 4
+//7F003D6C:	3889C
+3C038007	LUI	V1,8007
+24635D28	ADDIU	V1,V1,5D28
+AC620000	SW	V0,0000 (V1)	;V0->80075D28: p->setup file in memory
+
+
++_+
+
+changes to menu 12 constructor
+//7F0142B8:	48DE8
+26D6B078	*ADDIU	S6,S6,B078	;S6=8002B074: MP stage list
+...	SW	R0,00B4 (SP)	;SP+B4=0: row count
+...	SWC1	F10,00DC (SP)	;SP+DC: image y position
+...	ADDIU	S8,R0,000C	;S8=0xC:	size of image declaration
+24170008	*ADDIU	S7,R0,0008	;S7=0x18:	size of MP stage entry
+
+//7F01431C:	48E4C
+83190002	*LB	T9,0002 (T8)	;T9=T8+4: image
+
+//7F014564:	49094
+0015C8C0	*SLL	T9,S5,0x3
+00000000	*NOP
+	LUI	T1,8003
+2529B078	*ADDIU	T1,T1,B078	;T1=8002B074: MP stage list
+00000000	*NOP
+
+//7F014588:	490B8
+	JAL	7F0C1DD8	;ret V0=p->text A0
+96640000	*LHU	A0,0000 (S3)	;A0=stage name text
+
+//7F0145F0:	49120
+	JAL	7F0C1DD8	;ret V0=p->text A0
+96640000	*LHU	A0,0000 (S3)	;A0=stage name text
+
+//7F01465C:	4918C
+96640000	*LHU	A0,0000 (S3)	;A0=stage name text
+
+
+MP menu itself (name, randomizer)
+//7F010D5C:	4588C	start MP game!
+	LH	T8,B534 (T8)	;T8=8002B534: MP stage selected
+00000000	*NOP
+3C088003	*LUI	T0,8003
+0018C8C0	*SLL	T9,T8,0x3
+A518B076	*SH	T8,B076 (T0)	
+00000000	*NOP
+01191021	*ADDU	V0,T0,T9
+8042B07B	*LB	V0,B07B (V0)	;V0=8002B07C+offset: stage#
+04410014	*BGEZ	V0,7F010DD0	;branch if not random
+AD02A8F4	*SW	V0,A8F4 (T0)	;V0=8002A8F4: stage selected
+//7F010D84:	458B4	handle random stage select
+	JAL	7000A450	;V0=random#
+3C088003	*LUI	T0,8003
+9501B074	*LHU	AT,B074 (T0)	;total # entries
+	DIVU	V0,AT
+	MFHI	V1		;V1=rand % #entries: MP stage entry in that range
+24640001	-ADDIU	A0,V1,0001	;A0=MPstage#+1: MPstage from 1-B (no rand)
+000408C0	*SLL	AT,A0,0x3
+01014821	*ADDU	T1,T0,AT
+9122B07F	*LBU	V0,B07F (T1)
+30420001	*ANDI	V0,V0,0001	;randomly-unselectable flag
+1440FFF5	*BNE	V0,R0,7F010D84
+8122B07B	*LB	V0,B07B (T1)	;T1=8002B094+offset: stage#
+AD02A8F4	*SW	V0,A8F4 (T0)	;stage#->8002A8F4: stage selected
+	JAL	7F0100D0	;V0=TRUE if MP stage A0 unlocked
+A504B076	*SH	A0,B076 (T0)	;8002B076=A0: MP stage
+	BEQ	V0,R0,7F010D84	;branch if not available
+	NOP
+00000000	*NOP
+00000000	*NOP
+//7F010DD0:
+00000000	*NOP
+	ADDIU	T2,R0,FFFF
+
+Since this is a little less temporary than originally planned, here's a small revision...
+7F014574:	490A4
+03299821	-ADDU	S3,T9,T1
+24050096	*ADDIU	A1,R0,0096
+56AA0001	*BNEL	S5,T2,7F014588
+240500FF	*ADDIU	A1,R0,00FF
+92640007	*LBU	A0,0007 (S3)
+//00042143	*SRA	A0,A0,0x5
+00042142	*SRL	A0,A0,0x5
+50800001	*BEQL	A0,R0,+1
+34040007	*ORI	A0,R0,0007	;default setting
+0FC054F1	*JAL	7F0153C4
+	*NOP
+345200FF	*ORI	S2,V0,00FF
+0FC30776	JAL	7F0C1DD8
+96640000	LHU	A0,0000 (S3)
+00028825	*OR	S1,V0,R0
+	LUI	T3,8004
+	LW	T3,0EAC (T3)
+	ADDIU	A0,SP,0128
+	ADDIU	A1,SP,0124
+	OR	A2,V0,R0
+	LW	A3,0000 (S8)
+	SW	R0,0014 (SP)
+	JAL	7F0AE98C
+	SW	T3,0010 (SP)
+	LW	V1,0128 (SP)
+	LW	T4,0090 (SP)
+	LW	T5,0124 (SP)
+	ADDIU	S4,S6,FFE1
+	SUBU	A2,T4,V1
+	ADDU	T6,A2,V1
+	OR	A1,S4,R0
+	SW	T6,0010 (SP)
+	SW	A2,012C (SP)
+	SW	S4,0130 (SP)
+	LW	A0,0138 (SP)
+	SW	R0,0014 (SP)
+	JAL	7F0AD014
+	ADDU	A3,S4,T5
+0C001107	-JAL	7000441C
+//7F0145F0:	49120
+AFA20138	-SW	V0,0138 (SP)
+	SLL	S0,V0,0x10
+	SRA	T7,S0,0x10
+	JAL	7000442C
+	OR	S0,T7,R0
+	LUI	T9,8004
+	LW	T9,0EAC (T9)
+	LW	T8,0000 (S8)
+	*SW	S2,0018 (SP)
+	LW	A0,0138 (SP)
+	ADDIU	A1,SP,0130
+	ADDIU	A2,SP,012C
+	OR	A3,S1,R0
+	SW	S0,001C (SP)
+	SW	V0,0020 (SP)
+	SW	R0,0024 (SP)
+	SW	R0,0028 (SP)
+	SW	T9,0014 (SP)
+	JAL	7F0ADABC
+	SW	T8,0010 (SP)
+//7F014650:	49180
+	LW	V1,0128 (SP)
+	LW	T2,0090 (SP)
+	SW	V0,0138 (SP)
+	SUBU	A2,T2,V1
+	SW	A2,012C (SP)
+0C001107	-JAL	7000441C
+AFB40130	SW	S4,0130 (SP)
+	SLL	S0,V0,0x10
+	SRA	T3,S0,0x10
+	JAL	7000442C
+	OR	S0,T3,R0
+	LUI	T5,8004
+	LW	T5,0EAC (T5)
+	LW	T4,0000 (S8)
+3A4E009B	*XORI	T6,S2,009B
+	SW	T6,0018 (SP)
+	LW	A0,0138 (SP)
+	ADDIU	A1,SP,0130
+	ADDIU	A2,SP,012C
+	OR	A3,S1,R0
+	SW	S0,001C (SP)
+	SW	V0,0020 (SP)
+	SW	R0,0024 (SP)
+	SW	R0,0028 (SP)
+	SW	T5,0014 (SP)
+	JAL	7F0ADABC
+	SW	T4,0010 (SP)
+	SW	V0,0138 (SP)
+//7F0146CC:	491FC
+
+
+-------------
+
+7F0100D0:	44C00	returns V0=1 if stage in slot is selectable
+	accepts: A0=MP stage entry#
+27BDFFE0	-ADDIU	SP,SP,FFE0
+AFBF0014	-SW	RA,0014 (SP)
+000470C0	*SLL	T6,A0,0x3
+3C0F8003	LUI	A0,8003
+95EEB074	*LHU	T7,B074 (A0)
+01C41023	*SUBU	V0,T7,A0	;TRUE if # entries <= total entries
+04420019	*BLTZL	V0,7F010160	;fail if not even a valid entry
+00001025	*OR	V0,R0,R0
+25EFB078	*ADDIU	T7,T7,B078	//T7=8002B074 (MP stage list)
+01CF1821	*ADDU	V1,T6,T7	//V1=offset to slot data
+//
+0FC040A4	JAL	7F010290	//returns V0=players selected
+80790007	*LB	T9,0007 (V1)	//T9=max players
+00591006	*SRLV	V0,T9,V0	;leading bit will be player mask
+30410001	*ANDI	AT,V0,0001	;TRUE if locked for # players
+54200010	*BNEL	AT,R0,7F010160
+00001025	*OR	V0,R0,R0
+//7F0100E8:	unlock all stages when 007
+8C84A8E8	*LW	A0,A8E8 (A0)	//A0=8002A8E8	(folder#)
+0FC07D28	JAL	7F01F4A0
+AFA30018	SW	V1,0018 (SP)
+1440000A	BNE	V0,R0,7F01015C
+8FA30018	LW	V1,0018 (SP)
+90650006	*LBU	A1,0006 (V1)	//A1=stages before selectable
+//7F01012C:	44C5C
+10A00007	*BEQ	A1,R0,7F01015C
+00053182	*SRL	A2,A1,0x6	;difficulty
+30A5003F	*ANDI	A1,A1,003F
+3C048003	*LUI	A0,8003
+//7F010144:	check stages completed
+0FC078B0	JAL	7F01E2C0	//returns V0=1 if stage completed
+8C84A8E8	LW	A0,A8E8 (A0)	//A0=8002A8E8	(folder#)
+50400002	*BEQL	V0,R0,7F010160
+00001025	OR	V0,R0,R0
+24020001	ADDIU	V0,R0,0001
+//7F010160:
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0020	ADDIU	SP,SP,0020
+	*NOP
+	*NOP
+	*NOP
+	
++_+
+
+MP menu defaults
+//7F0106F0:	45220
+3C028003	LUI	V0,8003
+0FC04034	*JAL	7F0100D0	;V0=TRUE if selectable
+8444B534	*LH	A0,V0,B534	//V0=8002B534
+3C018003	*LUI	AT,8003
+//7F010700:	45230
+50400001	*BEQL	V0,R0,+1
+AC20B534	*SH	R0,B534 (AT)
+8FBF001C	-LW	RA,001C (SP)
+8FB00018	-LW	S0,0018 (SP)
+03E00008	-JR	RA
+27BD0020	-ADDIU	SP,SP,0020
+//7F010718:
+	blanked!
+
++_+
+
+MP options menu
+
+//7F01191C:	4644C
+	LUI	T6,8003
+	LH	T6,B534 (T6)	;T6=MP stage selected
+	LUI	A0,8003
+	OR	S0,V0,R0
+000E78C0	*SLL	T7,T6,0x3
+00000000	*NOP
+00000000	*NOP
+	ADDU	A0,A0,T7
+	JAL	7F0C1DD8	;V0=text ID A0
+9484B078	*LHU	A0,B078 (A0)	;A0=8002B074: selected stage name
+
++_+
+-_-
+
+temporary replacement menu, until new scrolling one made:
+uses index to offset from start of list for each page
+8002B536 keeps track of menu offset.  +C each, 0 if over total
+//7F0142B8:	48DE8
+96D7B536	*LHU	S7,B536 (S6)	;S7=offset to entries displayed
+26D6B078	*ADDIU	S6,S6,B078	;S6=8002B074: MP stage list
+AFA000B4	SW	R0,00B4 (SP)	;SP+B4=0: row count
+E7AA00DC	SWC1	F10,00DC (SP)	;SP+DC: image y position
+241E000C	ADDIU	S8,R0,000C	;S8=0xC:	size of image declaration
+
+//7F0142EC:	48E1C	load images for each stage in row
+2A21000C	SLTI	AT,S1,000C	;TRUE if current < total entries (C)
+5020007A	BEQL	AT,R0,7F0144DC
+C7B200D8	LWC1	F18,00D8 (SP)
+02377821	*ADDU	T7,S1,S7
+3C0A8009	LUI	T2,8009
+8D4AD134	LW	T2,D134 (T2)	;T2=8008D134: MP stage select images
+240B0002	ADDIU	T3,R0,0002	;T3=2
+02602025	OR	A0,S3,R0
+24060001	ADDIU	A2,R0,0001	;A2=1
+00003825	OR	A3,R0,R0	;A3=0
+000F78C0	*SLL	T7,T7,0x3
+02CFC021	ADDU	T8,S6,T7	;T8=p->MP stage entry
+
+//7F014540:	49070
+2AA1000C	SLTI	AT,S5,000C	;AT=TRUE if selected < C
+50200062	*BEQ	AT,R0,7F0146D0
+26F70001	*ADDIU	S7,S7,0001	;S7++
+3C138003	+LUI	S3,8003
+9664B536	*LHU	A0,B536 (S3)
+02A49021	*ADDU	S2,S5,A0
+0FC04034	JAL	7F0100D0	;V0=TRUE if MP stage A0 unlocked
+00122025	*OR	A0,S2,R0	;A0+=S5: entry
+1040005A	`BEQ	V0,R0,7F0146CC	-3
+3C0A8007	LUI	T2,8007
+8D4A977C	LW	T2,977C (T2)	;T2=8006977C: highlighted MP stage
+0012C8C0	*SLL	T9,S2,0x3
+2669B078	*ADDIU	T1,S3,B078	;T1=8002B074: MP stage list
+3C129696	-LUI	S2,9696
+36529600	*LW	S2,S2,9600	;S2=96969600: grey
+	BNE	S5,T2,7F014588
+	ADDU	S3,T9,T1	;S3=p->selected MP stage entry
+	ADDIU	S2,R0,FF00	;S2=FFFFFF00: white
+//7F014588:
+
+=_=
+
+temporary interface hack
+//7F013E20:	48950
+14400038	BNEZ	V0,7F013F18	;branch if flags not set
+
+//7F013E24:	48954
+3C038003	*LUI	V1,8003
+AC60A8E4	*SW	R0,A8E4 (V1)	;0->8002A8E4: NO highlight folder tab 3
+AC60A8E0	-SW	R0,A8E0 (V1)	;0->8002A8E0: NO highlight folder tab 2
+//7F013E30:	detect if over tab 3
+0FC028E7	JAL	7F00A39C	;V0=TRUE if cursor on tab 3
+AC60A8DC	*SW	R0,A8DC (V1)	;0->8002A8DC: NO highlight folder tab 1
+14400032	BNEZ	V0,7F013F18	;branch otherwise
+AC62A8E4	*SW	V0,A8E4 (V1)	;1->8002A8E4: highlight tab 3
+0FC0295E	JAL	7F00A578	;V0=TRUE if cursor on tab 2
+00000000	NOP
+1440003E	*BNEZ	V0,7F013F18
+AC62A8E0	*SW	V0,A8E0 (V1)	;1->8002A8E0: highlight tab 2
+//7F013E58:	detect vertical cursor position
+3C018003	LUI	AT,8003
+C424A90C	LWC1	F4,A90C (AT)	;F4=8002A90C: vert.pos.
+C428A908	-LWC1	F8,A908 (AT)	;F8=8002A908: horz.pos
+3C108007	LUI	S0,8007
+2610977C	ADDIU	S0,S0,977C	;S0=8006977C: highlighted stage
+4600218D	TRUNC.W.S	F6,F4
+44023000	MFC1	V0,F6		;V0=vert.pos
+9429B536	*LHU	T1,B536 (AT)	;selection offset
+//7F013E74:	rows
+24030002	*ADDIU	V1,R0,0002	;V1=2: 	3rd row
+284100F0	SLTI	AT,V0,00F0	;TRUE if pos < 0xF0: third row
+00611823	*SUBU	V1,V1,AT
+284100AA	SLTI	AT,V0,00AA
+00611823	*SUBU	V1,V1,AT
+//7F013E88:	second+first row
+//7F013EA0:	horizontal cursor position
+0003C880	SLL	T9,V1,0x2	;T9=row * 4: #entries per row
+4600428D	TRUNC.W.S	F10,F8
+44025000	MFC1	V0,F10		;V0=horz.pos
+0329C821	*ADDU	T9,T9,T1
+//7F013E94:	columns
+24030003	*ADDIU	V1,R0,0003	;V0=3: 4th column
+28410124	SLTI	AT,V0,0124	;TRUE if pos < 124: 4th column
+00611823	*SUBU	V1,V1,AT
+284100CF	SLTI	AT,V0,00CF
+00611823	*SUBU	V1,V1,AT
+2841007A	SLTI	AT,V0,007A	;TRUE if pos < CF: 3rd column
+00611823	*SUBU	V1,V1,AT
+//7F013EB0:	determine if highlighted stage unlocked
+03232021	*ADDU	A0,T9,V1	;A0=T9+V0: (row*4)+column
+0FC04034	JAL	7F0100D0	;V0=TRUE if MP stage A0 unlocked
+AE040000	SW	A0,0000 (S0)	;A0->S0: MP stage#
+14400011	BNEZ	V0,7F013F18	;branch if available
+//7F013EC0:	if not available, try previous entry
+8E090000	-LW	T1,0000 (S0)
+2524FFFF	ADDIU	A0,T1,FFFF	;A0--
+3C098003	*LUI	T1,8003
+9522B536	*LHU	V0,B536 (T1)	;
+0082082A	*SLT	AT,A0,V0
+1020FFF7	*BEQ	AT,R0,-9
+	*NOP
+A520A8D4	*SH	R0,A8D4 (T1)	;roll to next page
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+//7F013F18:	select option
+3C108007	LUI	S0,8007
+2610977C	ADDIU	S0,S0,977C	;S0=8006977C: highlighted stage
+00002025	OR	A0,R0,R0	;A0=0
+0C0030EB	JAL	7000C3AC	;V0=TRUE if A, Z, START pressed
+3405B000	ORI	A1,R0,B000	;A1=B000: 
+1040000F	BEQ	V0,R0,7F013F74	;branch if none set
+24030001	ADDIU	V1,R0,0001	;V1=1
+//7F013F34:	tab 3 selected sets previous
+3C0B8003	LUI	T3,8003
+8D61A8E4	*LW	AT,A8E4 (T3)	;T3=8002A8E4: folder tab 3 highlight
+14200018	*BNE	AT,R0,7F013FA0	;branch if not over tab 3
+AD61A8D8	*SW	AT,A8D8 (T3)	;1->8002A8D8: tab 3 selected
+//7F013F30:	tab 2 selected sets next
+8D61A8E0	*LW	AT,A8E0 (T3)	;T3=8002A8E0: folder tab 2 highlight
+14200015	*BNE	AT,R0,7F013FA0	;branch if not over tab 2
+AD61A8D4	*SW	AT,A8D4 (T3)	;1->8002A8D4: tab 2 selected
+//7F013F3C:	48A6C	stage selected sets tab 3
+8E020000	LW	V0,0000 (S0)	;V0=highlighted stage
+3C018003	LUI	AT,8003
+9424B536	*LHU	A0,B536 (AT)	;
+00441021	*ADDU	V0,V0,A0
+AD63A8D8	SW	V1,A8D8 (T3)	;1->8002A8D8: tab 3 selected
+1000000E	BEQ	R0,R0,7F013FA0
+A562B534	SH	V0,B534 (T3)	;8002B534=highlighted stage
+//7F013F6C:	B button pressed - back
+00002025	OR	A0,R0,R0	;A0=0: player 1
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+24054000	ADDIU	A1,R0,4000	;A1=4000: B button
+3C018003	LUI	AT,8003
+14400008	BNEZ	V0,7F013FA0	;branch if B button isn't pressed
+AC22A8D8	*SW	V0,A8D8 (AT)	;1->8002A8D8: tab 3 selected
+//7F013F84:	48AB4	R - next page
+00002025	OR	A0,R0,R0	;A0=0: player 1
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+24050010	ADDIU	A1,R0,0111	;A1=0010: R button, +right, cright
+3C018003	LUI	AT,8003
+10400007	BEQ	V0,R0,7F013FB4	;branch if B button isn't pressed
+AC22A8D4	*SW	V0,A8D4 (AT)	;1->8002A8D4: tab 3 selected
+00000000	NOP
+//7F013F8C:	play SE
+240500C7	ADDIU	A1,R0,00C7	;A1=SE 0C7
+00003025	OR	A2,R0,R0	;A2=0: NULL data pointer
+3C048006	-LUI	A0,8006
+0C002382	JAL	70008E08	;play sound A1
+8C843720	LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+//7F013FB4:	toggle stuff on
+
+//7F013FFC:	48B2C	tab 2 selected - stage selected
+3C0C8003	*LUI	T4,8003
+8D8DA8D4	LW	T5,A8D4 (T4)	;T4=8002A8D4: tab 2 selected
+11A00008	-BEQ	T5,R0,7F014024	;branch if not selected
+9584B536	*LHU	A0,B536 (T4)	;cur
+9585B074	*LHU	A1,B074 (T4)	;total
+2484000C	*ADDIU	A0,A0,000C
+00A42823	*SUBU	A1,A1,A0
+04A20001	*BLTZL	A1,+1
+00002025	*OR	A0,R0,R0
+10000006	*BEQ	R0,R0,7F01403C
+A584B536	*SH	A0,B536 (T4)
+//7F014024:	tab 3 selected - previous
+8D8DA8D8	LW	T5,A8D8 (T4)	;T5=8002A8D8: tab 3 selected
+11A00003	*BEQ	T5,R0,7F01403C	;branch if not selected
+2404000E	ADDIU	A0,R0,000E	;A0=E
+0FC06975	JAL	7F01A5D4	;set MP options (menu E) as current
+00002825	OR	A1,R0,R0	;A1=0
+//7F01403C:	48B6C
+3C0D8007	*LUI	T5,8007
+9584B536	*LHU	A0,B536 (T4)
+8DA50000	*LW	A1,977C (T5)
+00A42823	*SUBU	A1,A1,A0
+ADA50000	*SW	A1,977C (T5)
+
+8FBF001C	LW	RA,001C (SP)
+
+set the killswitch for visible stages
+//7F01440C:	48F3C	display stage icon if unlocked
+3C0B8003	*LUI	T3,8003
+956BB536	*LHU	T3,B536 (T3)	;T3=set offset
+0FC04034	-JAL	7F0100D0	;V0=TRUE if MP stage A0 unlocked
+022B2021	*ADDU	A0,S1,T3
+10400018	*BEQ	V0,R0,7F014480	;branch if unavailable
+02602025	-OR	A0,S3,R0	;A0=S3: p->DL
+2418002C	-ADDIU	T8,R0,002C
+24190001	-ADDIU	T9,R0,0001
+240B006E	ADDIU	T3,R0,006E
+240C00FF	ADDIU	T4,R0,00FF
+AFAC002C	SW	T4,002C (SP)	;SP+2C=FF
+AFAB0028	SW	T3,0028 (SP)	;SP+28=6E
+AFAB0024	*SW	T3,0024 (SP)	;SP+24=6E
+AFAB0020	*SW	T3,0020 (SP)	;SP+20=6E
+
+
+add happy tab
+//7F014700:	49230
+0FC2B366	JAL	7F0ACD98
+8FA40138	LW	A0,0138 (SP)
+0FC0288E	-JAL	7F00A238	;add tab 3: "PREVIOUS"
+00402025	-OR	A0,V0,R0
+0FC02905	*JAL	7F00A414	;add tab 2: "NEXT"
+00402025	*OR	A0,V0,R0
+0FC027C2	JAL	7F009F08	;loads selected icon for folder select
+00402025	OR	A0,V0,R0

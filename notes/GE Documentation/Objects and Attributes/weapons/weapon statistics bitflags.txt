@@ -1,0 +1,92 @@
+0x0	4	[float]
+0x4	4	[float] position horizontally from center of screen
+0x8	4	[float] position vertically from center of screen
+0xC	4	[float] position from player's viewport; -depth places in view
+0x10	4	[float] elevating movement speed
+0x14	4	[float] decending movement speed
+0x18	4	[float] horizontal movement speed
+0x1C	4	ammo type
+0x20	2	ammo on clip
+0x22	1	shot delay (1-255)
+0x23	1	time b/w shots
+0x24	1	# piercable objects
+0x25	1	
+0x26	2	firing SE
+0x28	4	p->object model header
+0x2C	4	[float] damage
+0x30	4	[float] inaccuracy
+0x34	4	[float] zoom
+0x38	4	[float]
+0x3C	4	[float]
+0x40	4	[float]
+0x44	1	
+0x45	1	
+0x46	1	
+0x47	1	
+0x48	4	[float]
+0x4C	4	[float] recoil
+0x50	4	[float]
+0x54	4	[float] volume per round fired
+0x58	4	[float] maximum volume
+0x5C	4	[float]
+0x60	4	[float]
+0x64	4	[float]
+0x68	4	[float]
+0x6C	4	weapon bitflags
+	00400000	no ammo clip/reloads - draw straight from ammo supply (right of icon)
+	00200000	limit ammo to assigned value on clip
+	00100000	capable of doubles
+	00080000	do not display ammo on-screen
+	00040000	
+	00020000	
+	00010000	count hits in player statistics
+	00008000	can not crouch
+	00004000	hide 1st person model in menu
+	00002000	hide 1st person model in hand
+	00001000	
+	00000800	display 1st person model
+	00000400	mirror double weapon, not copy
+	00000200	hold up as weapon.  untoggle for gadgets
+	00000100	hold like pistol, not rifle
+	00000080	
+	00000040	
+	00000020	
+	00000010	
+	00000008	auto-aim capable
+	00000004	fire three-round burst
+	00000002	skip from fire to reload animation; item "disappears" after use, redrawn from off-screen
+	00000001	
+
+
+samples:
+00000110	Nothing, Left Hand, Joypad, NULL1, NULL2
+00064D91	Unarmed
+00160D91	Hunting Knives
+00560D83	Throwing Knives
+00170FB9	PP7, PP7 (sil), DD44, Magnum, Silver PP7, Gold PP7
+00170B79	Klobb
+00171A7C	KF7, AR33
+00171B79	ZMG
+00171A79	D5K, D5K (sil), Phantom
+00171A78	RC-P90
+00170AF9	Shotgun, Autoshotgun
+00178A70	Sniper Rifle
+00170F99	Golden Gun
+00170B99	Laser
+00600F91	Watch Laser
+00120AF1	Grenade Launcher
+00120FF1	Rocket Launcher
+00422982	Grenades
+00422D82	Timed Mines, Proximity Mines, Remote Mines
+00000890	Detonator
+00620F70	Taser
+00076781	Tank
+00402D82	Briefcase Bomb
+00422D82	Plastique
+00000AF1	Flare Pistol, Piton Gun
+00402982	Bug, Micro Camera
+00602980	Watch Magnet Attract
+00482982	GoldenEye Key
+0000A990	Camera
+00082182	Token
+

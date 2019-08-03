@@ -1,0 +1,40 @@
+#brief
+$(BUILD_DIR)/$(OBSEG_DIR)/brief/%.rz: $(OBSEG_DIR)/brief/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/brief/%.rz: $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/brief/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.elf
+	$(OBJCOPY) $< $@ -O binary
+
+$(BUILD_DIR)/$(OBSEG_DIR)/brief/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.o
+	$(LD) -T assets/obseg/brief/Ubrief.ld -o $@
+	rm build/assets/obseg/brief/Ubrief.o
+
+$(BUILD_DIR)/$(OBSEG_DIR)/brief/%.o: $(OBSEG_DIR)/brief/%.c
+	$(CC) -c $(CFLAGS) -o $@ -O2 $<
+	mv $@ build/assets/obseg/brief/Ubrief.o
+
+BRIEF_RZ_FILES = \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefarchZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefarkZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefaztZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefcaveZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefcontrolZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefcradZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefcrypZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefdamZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefdepoZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefdestZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefjunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefpeteZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefrunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefsevbunkerZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefsevbZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefsevxbZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefsevxZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefsiloZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefstatueZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbrieftraZ.rz
+

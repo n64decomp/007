@@ -1,0 +1,132 @@
+7F0ACBAC	E16DC	allocate and initialize font tables
+LUI	AT,8004
+SW	R0,0E84 (AT)	;0->80040E84: reset text spacing
+LUI	AT,8004
+SW	R0,0E88 (AT)	;0->80040E88: normal orientation
+LUI	AT,8004
+SW	R0,0E8C (AT)	;0->80040E8C: zero spaces following wordwrap
+LUI	AT,8004
+ADDIU	T6,R0,FFFF
+SW	T6,0E90 (AT)	;-1->80040E90: overlap correction
+LUI	AT,8004
+SW	R0,0E94 (AT)	;0->80040E94: bi-level texture filter mode
+LUI	AT,8004
+SW	R0,0E98 (AT)	;0->80040E98: x
+LUI	AT,8004
+SW	R0,0E9C (AT)	;0->80040E9C: y
+LUI	AT,8004
+LUI	T7,0000
+LUI	T8,0000
+ADDIU	SP,SP,FFD8
+SW	R0,0EA0 (AT)	;0->80040EA0: s
+ADDIU	T8,T8,0000
+ADDIU	T7,T7,24B0
+SW	RA,0014 (SP)
+LUI	AT,8004
+SUBU	A2,T7,T8	;A2= 24B0 - 0
+SW	R0,0EA4 (AT)	;0->80040EA4: t
+OR	A0,A2,R0	;A0= 24B0 bytes
+SW	A2,001C (SP)
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+ADDIU	A1,R0,0004	;A1= bank 4
+//7F0ACC24:	load small tables to allocated memory
+LUI	A3,8004
+LUI	T0,8004
+ADDIU	T0,T0,0EB0
+ADDIU	A3,A3,0EAC
+ADDIU	T9,V0,02A4
+LUI	A1,002E
+SW	V0,0000 (A3)	;V0 -> 80040EAC: font.small1
+LW	A2,001C (SP)	;A2= size
+SW	T9,0000 (T0)	;V0+2A4 -> 80040EB0: font.small2
+OR	A0,V0,R0	;A0=V0: p->target
+JAL	70005C1C	;read A2 bytes from hardware A1 to rdram A0
+ADDIU	A1,A1,63F0	;A1=2E63F0: font.small
+//7F0ACC54:	expand offsets
+LUI	A3,8004
+LUI	T0,8004
+ADDIU	T0,T0,0EB0
+ADDIU	A3,A3,0EAC
+OR	V1,R0,R0	;V1=0	init. offset
+//7F0ACC68:	loop to expand 5E entries
+LW	T1,0000 (T0)	;T1=font.small2
+LW	T3,0000 (A3)	;T3=font.small1
+ADDU	V0,T1,V1
+LW	T2,0014 (V0)	;T2=offset
+ADDIU	V1,V1,0018	;V1+=18	next entry
+SLTI	AT,V1,08D0
+ADDU	T4,T2,T3
+BNE	AT,R0,7F0ACC68
+SW	T4,0014 (V0)	;offset += base
+//7F0ACC8C:	allocate memory for large table
+LUI	T5,0000
+LUI	T6,0000
+ADDIU	T6,T6,0000
+ADDIU	T5,T5,3540
+SUBU	A2,T5,T6	;A2= 3540 - 0
+OR	A0,A2,R0	;A0= 3540 bytes
+SW	A2,001C (SP)
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+ADDIU	A1,R0,0004	;A1= bank 4
+//7F0ACCB0:
+LUI	A3,8004
+LUI	T0,8004
+ADDIU	T0,T0,0EB8
+ADDIU	A3,A3,0EB4
+ADDIU	T7,V0,02A4
+LUI	A1,002F
+SW	V0,0000 (A3)	;V0 -> 80040EB4: font.large1
+LW	A2,001C (SP)	;A2= size: 3540
+SW	T7,0000 (T0)	;V0+2A4 -> 80040EB8: font.large2
+OR	A0,V0,R0	;A0=V0: p->target
+JAL	70005C1C	;read A2 bytes from hardware A1 to rdram A0
+ADDIU	A1,A1,88A0	;A1=2E88A0: font.large
+//7F0ACCE0:	expand offsets in each entry
+LUI	T0,8004
+ADDIU	T0,T0,0EB8
+LW	V0,0000 (T0)
+LUI	A3,8004
+ADDIU	A3,A3,0EB4
+LW	T9,0000 (A3)
+LW	T8,0014 (V0)	;T8=entry+14: offset
+ADDIU	V1,R0,0030
+ADDIU	A0,R0,08D0
+ADDU	T1,T8,T9
+SW	T1,0014 (V0)	;offset+=base
+LW	V0,0000 (T0)
+LW	T3,0000 (A3)
+LW	T2,002C (V0)	;T2=entry+18+14: next offset
+ADDU	T4,T2,T3
+SW	T4,002C (V0)	;offset+=base
+//7F0ACD20:	loop for remaining
+LW	T5,0000 (T0)
+LW	T7,0000 (A3)
+ADDU	V0,T5,V1
+LW	T6,0014 (V0)
+ADDU	T8,T6,T7
+SW	T8,0014 (V0)	;offset+=base
+LW	T9,0000 (T0)
+LW	T2,0000 (A3)
+ADDU	V0,T9,V1
+LW	T1,002C (V0)
+ADDU	T3,T1,T2
+SW	T3,002C (V0)	;offset+=base
+LW	T4,0000 (T0)
+LW	T6,0000 (A3)
+ADDU	V0,T4,V1
+LW	T5,0044 (V0)
+ADDU	T7,T5,T6
+SW	T7,0044 (V0)	;offset+=base
+LW	T8,0000 (T0)
+LW	T1,0000 (A3)
+ADDU	V0,T8,V1
+LW	T9,005C (V0)
+ADDIU	V1,V1,0060
+ADDU	T2,T9,T1
+BNE	V1,A0,7F0ACD20
+SW	T2,005C (V0)	;offset+=base
+//7F0ACD88:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0028
+JR	RA
+NOP

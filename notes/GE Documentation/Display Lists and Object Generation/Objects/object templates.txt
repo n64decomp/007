@@ -1,0 +1,281 @@
+Object Templates
+----------------------------------------------------------
+From object load line, follow the pointer at offset 0x4
+This designates a list of each object's primary header commands
+These don't account for *all* of the header, just the main sections required for the object to be valid.
+
+At pointer:
+0x0	2	Number of entries in block
+0x2	2	reserved
+0x4	4	pointer to block
+0x8	2	total command index value
+
+At block:
+0x0	2	type of header command; ie: type15 part position, 02 display list, etc.
+0x4	2	ID of part 1 (first index in command itself)
+0x6	2	ID of part 2 or same value (second index in command itself)
+	note each block is padded to the nearest word.
+
+  Just like with object index values, you don't add the 0015/xx01 commands to the tally.  Only 0002 commands are added, +3 for each.  Order follows that in the object header.  ID values likewise coincide with internal numbering format, such as that used by bodies.  In other words, part lookup and by extension animation is entirely facilitated by this function.
+
+  Each block command entry corresponds to one expected offset value in the object header.  The command this offset points to will be the same as the type declared in the block, and likewise its IDs.  Note that these cite the bare minimum number of entries; for a complete list of expectant entries, refer to the object offset documentation.
+
+  For all intents and purposes it isn't necessary to tinker with the table itself.  All that needs to be done is assign the correct pointer for each object type to 0x4 in that object's header.  In fact, tampering with the table can render an entire object class useless!
+
+
+most normal objects (alarms, crates, etc) use 8003C4D8
+8003C4D8:
+00010000 8003C4D0	[0002.0000.0000	pos: primary model
+			]
+00030000 
+
+Pchr*Z
+8003C4FC:	item pickups; 3 offsets, var. parts
+00020000 8003C4F0	[0015.0000.0000	pos: primary model
+			 0015.0001.0001	pos: gunfire effect
+			]
+00000000
+
+Phat*Z
+8003A21C:	hats; 0 offsets, 1 part
+00010000 8003A214	[0015.0000.0000	pos: primary model
+			]
+00000000
+
+PtankZ
+8003A208:	tank; 9 offsets, 5 parts
+00050000 8003A1E8	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: cupola
+			 0002.0006.0006	pos: group 2 (turret swivel)
+			 0002.0009.0009	pos: group 3 (turret)
+			 0002.000C.000C	pos: group 4 (turret effect)
+			]
+000F0000
+
+Psev_door4_windZ, Psev_trislideZ, Pgasplant_clear_doorZ, Ptrain_door2Z, Ptrain_door3Z, PsevdoorwoodZ, PsevdoorwindZ
+8003A1DC:	doors w/ windows; 4 offsets, 1 part
+00010000 8003A1D4	[0002.0000.0000	pos: primary model
+			]
+00030000
+
+PhelicopterZ, PtigerZ, PmilcopterZ, PhindZ, PplaneZ
+8003A1C8:	aircraft; 6 offsets, 4 parts (hind=5)
+00050000 8003A1A8	[0401.0000.0000	main object container
+			 0002.0000.0000	pos: primary model
+			 0015.0003.0003	pos: forward prop
+			 0015.0004.0004	pos: rear prop
+			 0015.0005.0005	pos: tertiary model (turret)
+			]
+00030000
+
+PmiltruckZ, PjeepZ, ParticZ, PcarbmwZ, PcarzilZ	(3 other cars not set to this!)
+8003A19C:	wheeled vehicles; B offsets, 5 parts
+00050000 8003A17C	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: wheel 1
+			 0002.0006.0006	pos: wheel 2
+			 0002.0009.0009	pos: wheel 3
+			 0002.000C.000C	pos: wheel 4
+			]
+000F0000
+
+PwalletbondZ
+8003A170:	unique; 2B offsets, 1 part
+00010000 8003A168	[0002.0000.0000	pos: primary model
+			]
+00030000
+
+Pdoor_irisZ
+8003A15C:	iris; D offsets, D parts
+000D0000 8003A10C	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: inner spline 1
+			 0002.0006.0006	pos: outer track 1
+			 0002.0009.0009	pos: inner spline 2
+			 0002.000C.000C	pos: outer track 2
+			 0002.000F.000F	pos: inner spline 3
+			 0002.0012.0012	pos: outer track 3
+			 0002.0015.0015	pos: inner spline 4
+			 0002.0018.0018	pos: outer track 4
+			 0002.001B.001B	pos: inner spline 5
+			 0002.001E.001E	pos: outer track 5
+			 0002.0021.0021	pos: inner spline 6
+			 0002.0024.0024	pos: outer track 6
+			]
+00270000
+
+Pdoor_eyelidZ
+8003A100:	eye; 3 offsets, 3 parts
+00030000 8003A0EC	[0002.0000.0000	pos: primary
+			 0002.0003.0003	pos: top segment
+			 0002.0006.0006	pos: bottom segment
+			]
+00090000
+
+ProofgunZ, Pgun_runwayZ, PsevdishZ, PgroundgunZ
+8003A0E0:	autogun; 8 offsets, 5 parts
+00060000 8003A0BC	[0002.0000.0000	pos: primary model (base)
+			 0002.0003.0003	pos: horizontal swivel
+			 0002.0006.0006	pos: vertical swivel
+			 0002.0009.0009	pos: turret(s)
+			 0002.000C.000C	pos: gunfire 1
+			 0002.000F.000F	pos: gunfire 2
+			]
+00120000
+
+Ptv_holderZ
+8003A0B0:	hanging rack; 4 offsets 5 parts
+00050000 8003A090	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: monitor 1
+			 0002.0006.0006	pos: monitor 2
+			 0002.0009.0009	pos: monitor 3
+			 0002.000C.000C	pos: monitor 4
+			]
+000F0000
+
+Pbridge_console1aZ, Pbridge_console2aZ, Pbridge_console3aZ, Pbridge_console3bZ, Pconsole1Z, Pconsole2Z, Pconsole3Z, Ptv4screenZ, PdoorpanelZ
+8003A084:	used with monitor types; 4 screen offsets
+00010000 8003A07C	[0002.0000.0000	pos: primary
+			]
+00030000
+
+Pbridge_console1bZ, Pconsole_sevbZ, Ptv1Z, PtvscreenZ, PtuningconsoleZ, PmodemboxZ, PdoorconsoleZ
+8003A070:	used with monitor types; 1 screen offset
+00010000 8003A068	[0002.0000.0000	pos: primary
+			]
+00030000
+
+PcctvZ
+8003A05C:	used with camera; 4 offsets 2 parts, destroyed when glass broken
+00020000 8003A050	[0002.0000.0000	pos: primary
+			 0002.0003.0003	pos: glass
+			]
+00060000
+
+++++++++++++++++++++
+
+Most GweaponsZ use this one
+8003C714:	24 or 1C offsets, 6 parts or less
+00060000 8003C6F0	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: 
+			 0002.0006.0006	pos: 
+			 0015.000F.000F	pos: 
+			 0002.0009.0009	pos: 
+			 0002.000C.000C	pos: 
+			]
+000F0000
+
+8003C728:	unassigned, so probably null placeholder; 1 part
+00010000 8003C720	[0002.0000.0000	pos: primary model
+			]
+00030000
+
+GrugerZ, GgrenadelaunchZ
+8003C76C:	24 offsets, 7 parts
+00070000 8003C740	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: 
+			 0002.0006.0006	pos: 
+			 0002.0009.0009	pos: 
+			 0002.000C.000C	pos: rotating barrel
+			 0002.000F.000F	pos: 
+			 0002.0012.0012	pos: 
+			]
+00150000
+
+GuziZ
+8003C7AC:	24 offsets, 5 parts
+00070000 8003C780	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: 
+			 0002.0006.0006	pos: 
+			 0002.0009.0009	pos: 
+			 0015.0012.0012	pos: flash effect
+			 0002.000C.000C	pos: 
+			 0002.000F.000F	pos: 
+			]
+00120000
+
+GjoypadZ
+8003D390:	E offsets, D parts
+000D0000 8003D340	[0002.0000.0000	pos: primary model
+			 0002.0003.0003	pos: start
+			 0002.0006.0006	pos: D-pad
+			 0002.0009.0009	pos: control stick
+			 0002.000C.000C	pos: c
+			 0002.000F.000F	pos: c
+			 0002.0012.0012	pos: c
+			 0002.0015.0015	pos: c
+			 0002.0018.0018	pos: a
+			 0002.001B.001B	pos: b
+			 0002.001E.001E	pos: r
+			 0002.0021.0021	pos: l
+			 0002.0024.0024	pos: z
+			]
+00270000
+
+++++++++++++++++++++
+Characters use this
+
+8003D400:	7 offsets, 14-15 parts
+00100000 8003D3A0	[0410.0000.0000	primary model container
+			 0002.0000.0000	pos: 
+			 0002.0003.0003	pos: 
+			 0002.0006.0006	pos: 
+			 0002.0009.000C	pos: 
+			 0002.000C.0009	pos: 
+			 0002.000F.0012	pos: 
+			 0002.0012.000F	pos: 
+			 0002.0015.0018	pos: 
+			 0002.0018.0015	pos: 
+			 0002.001B.001E	pos: 
+			 0002.001E.001B	pos: 
+			 0002.0021.0024	pos: 
+			 0002.0024.0021	pos: 
+			 0002.0027.002A	pos: 
+			 0002.002A.0027	pos: 
+			]
+002D0000
+
+++++++++++++++++++++
+LeftHand
+8003C6E4:	A offsets, 9 items
+00130000 8003C670	[0401.0000.0000	primary model container
+			 0002.0000.0000	pos: 
+			 0002.0003.0003	pos: 
+			 0002.0006.0006	pos: 
+			 0002.0009.000C	pos: 
+			 0002.000C.0009	pos: 
+			 0002.000F.0012	pos: 
+			 0002.0012.000F	pos: 
+			 0002.0015.0018	pos: 
+			 0002.0018.0015	pos: 
+			 0002.001B.001E	pos: 
+			 0002.001E.001B	pos: 
+			 0002.0021.0024	pos: 
+			 0002.0024.0021	pos: 
+			 0002.0027.002A	pos: 
+			 0002.002A.0027	pos: 
+			 0015.002D.002D	DL: 
+			 0015.002E.002E	DL: 
+			 0015.002F.002F	DL: 
+			]
+002D0000
+
+
+Character again? Unknown model.  Called from line @ 8003C650 (note: rare logo decompressed in ROM)
+8003C570:	4 items
+00100000 8003C510	[0410.0000.0000	primary model container
+			 0002.0000.0000	pos: 
+			 0002.0003.0003	pos: 
+			 0002.0006.0006	pos: 
+			 0002.0009.000C	pos: 
+			 0002.000C.0009	pos: 
+			 0002.000F.0012	pos: 
+			 0002.0012.000F	pos: 
+			 0002.0015.0018	pos: 
+			 0002.0018.0015	pos: 
+			 0002.001B.001E	pos: 
+			 0002.001E.001B	pos: 
+			 0002.0021.0024	pos: 
+			 0002.0024.0021	pos: 
+			 0002.0027.002A	pos: 
+			 0002.002A.0027	pos: 
+			]
+002D0000

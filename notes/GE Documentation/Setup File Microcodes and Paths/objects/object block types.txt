@@ -1,0 +1,1167 @@
+01	doors
+	-see seperate list
+----------------
+02	global door scale modifier
+
+format:
+00000002 xxxxxxxx
+
+x	converted to float and divided by 65536 (0x10000)
+value is stored to 8002A3C0.
+The value is used for door calculations.  Changing it will shrink/enlarge doors.
+Why they ever made it is beyond me.
+
+----------------
+03	standard object 
+almost all objects can be set to this type
+
+example:
+00:	01 00 00 03 00 60 27 33 00 00 01 E1 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+
+SSSS 0003 oooo pxxx mm ii *f rr 00 00 ii 00
+00:	two bytes.  scale as a hex percent.  ie: 03.80 is 3 1/2
+02:	current state.  RESERVED for runtime.  kinda stupid setting it, but here's some settings
+	8x	destroyed
+	4x	datathief/defuser/decoder used on obj (activated?)
+	2x
+	1x
+	x8	external allocated collision block present
+	x4	respawn enabled
+	x2
+	x1	damaged
+03:	type
+04:	object ID
+06:	preset ID.  0000+ or 2710+ to use standard presets.
+	FFFF, FFFE...FFxx to set this object inside the previous object. (solo only)
+	if control nibble 4x is set at 0xB, then this number matches the ID of a guard
+08:	binary flags:
+	8x	indicates right-handed gun assignment
+	4x	08 weapon does not provide ammunition when collected
+	2x	indicates object in motion or special function is activated
+	1x	indicates left-handed normal pickup or opposite alignment
+	0x	indicates no control features set
+	x8
+	x4	(unknown) Jungle bushes
+	x2	(unknown) pete grenade
+	x1	indicates embedded crate or other object, creating a chain of boxes, for example
+	x0	indicates normal preset, or beginning/end of chain
+
+09:	flags:
+	8x	
+	4x	immobile
+	2x	(unknown) Silo DAT tape
+	1x	uncollectable
+	x8	
+	x4	allows object pickup (chr_name objects only)
+	x2	invincibility
+	x1	
+0A:	binary flags:
+	8x	indicates contained within another object (forward or back # objects = preset value)
+	4x	indicates object does not use normal presets but is assigned to guard #preset
+	2x	(unknown) part of forced collectable objects
+	1x	think this sets object to absolute position.  (similar to 2xxx type)
+	x8	something to do with free-standing glass (glass walls)
+	x4	(unknown) streets buildings/roadblocks
+	x2	seems to align image to preset values for glass
+	x1	force collisions (2xxx presets, mostly)
+
+0B:	binary flags:
+0xxx presets:
+	00	default, on ground
+	x1	forced to ground
+	x2	room upper limit, rotated y 90 degrees.  top faces direction, front faces up
+	x4	room upper limit, upside-down
+	x8	room upper limit, right side up
+2xxx presets:
+	x1	normal placement
+	x2	rotated y 90 degrees.  top faces direction, front faces up. (use on obj 68-6B)
+	x4	upside-down
+	x8	in-air
+	1x	scale object to fit completely within preset bounds
+	2x	x set to preset bounds
+	4x	y set to preset bounds
+	8x	z set to preset bounds
+
+0C:	8x	force maximum explosion radius/disable detecting player
+	4x	autoturrets: reset to default, not preset position
+	2x	no AI interaction
+	1x	1-way lock (back)
+	x8	1-way lock (front)
+	x4
+	x2	Objects (rockets, mines, etc) do not collide with object
+	x1	don't load 4 player
+0D:	8x	don't load 3 player
+	4x	don't load 2 player
+	2x	immune to explosions (only gunfire damages object)
+	1x	bulletproof
+	x8	invisible! can't shoot, but can hit with rockets, bugs, etc.  not counted as a hit
+	x4 
+	x2	(unknown) streets buildings
+	x1
+0E:	8x	Can fire through object
+	4x	immune to gunfire (Only explosives damage object)
+	2x	Remove from game when destroyed (anything on top doesn't fall off!  Just Poof! gone)
+	1x
+	x8	only activate at close range
+	x4
+	x2	explode on contact with tank?
+	x1	(unknown) jungle bush
+0F:	8x	don't load on 007
+	4x	don't load on 00 agent
+	2x	don't load on secret agent
+	1x	don't load on agent
+	x8	don't load multiplayer (difficulty = -1)
+	x4	disable activation text
+	x2	lightweight (previous: 2xxx drops to ground when destroyed)
+	x1	used on stuff in egyptian, sevx
+
+10:	runtime - p->object position data (8006)
+14:	runtime - p->object instance controller
+18:	runtime - matrix
+
+58:	(float) runtime x position
+5C:	(float) runtime y position
+60:	(float) runtime z position
+64:	runtime bitflags;	during gameplay, filled with bitflags when activated, etc.
+	10000000	
+	00060000	owner (0-3); used to attribute kills to players
+	00004000	activated
+	00000200	only set with disabled or destroyed doors
+	00000080	depositted (thrown)
+	00000004	removes object when set
+68:	p->allocated collision data block or NULL
+6C:	
+70:	(float) 
+74:	2 bytes.  amount of health.  multiple of 00E4 (approx 1 gunshot).  glassware is 000A
+78:	
+79:	
+7A:	
+7B:	
+7C:	
+7D:	
+7E:	
+7F:	
+
+examples of usage:
+invincible crate:
+00:	01 00 00 03 00 57 00 10 00 02 01 E1 00 00 00 00 ...
+crate resistant to all but explosives:
+00:	01 00 00 03 00 57 00 10 00 00 01 E1 00 00 40 00 ...
+
+dropped by a guard when killed
+00:	01 00 00 03 00 57 00 10 00 00 40 00 00 00 00 00 ...
+inside previous object
+00:	01 00 00 03 00 57 FF FF 00 00 80 00 00 00 00 00 ...
+
+several objects dropped by parent object (only first 0x10 are given)
+#1	01 00 00 03 00 52 00 2C 00 00 01 01 00 00 00 00 ...	parent
+#2	00 99 00 03 00 57 FF FF 00 00 80 01 00 00 00 00 ...	object 1 dropped by parent
+#3	00 99 00 03 00 57 FF FE 00 00 80 01 00 00 00 00 ...	object 2 dropped by parent
+#4	00 99 00 03 00 57 FF FD 00 00 80 01 00 00 00 00 ...	object 3 dropped by parent
+
+
+embedded chain of objects, f/ caverns (only first 0x10 are given):
+all are linked forward, not backward
+#1	01 00 00 08 00 BC 00 02 10 00 80 00 00 00 00 00 ...	within monitor 1 (#3)
+#2	01 00 00 08 00 BC 00 02 00 00 80 00 00 00 00 00 ...	within monitor 2 (#4)
+#3	01 00 00 0A 00 4B 00 02 11 00 80 01 00 00 00 00 ...	monitor 1, within box 1 (#5)
+#4	01 00 00 0A 00 4B 00 01 11 00 80 01 00 00 00 00 ...	monitor 2, within box 1 (#5)
+#5	00 66 00 03 00 52 00 01 01 00 80 01 00 00 00 00 ...	box 1, within box 2 (#6)
+#6	00 99 00 03 00 52 00 01 01 00 80 01 00 00 00 00 ...	box 2, within box 3 (#7)
+#7	00 CC 00 03 00 52 00 01 01 00 80 01 00 00 00 00 ...	box 3, within box 4 (#8)
+#8	01 00 00 03 00 52 00 9B 00 00 01 01 00 00 00 00 ...	box 4
+
+padlocking a door:
+lock	01 00 00 03 00 3F 27 5B 01 00 00 08 00 00 00 02 ...
+handle1	00 00 00 26 FF FF FF FE FF FF FF FF 00 00 00 00 
+handle2	00 00 00 26 FF FF FF FC FF FF FF FE 00 00 00 00 
+then doors...
+
+DAT pickup
+02 00 00 03 01 10 00 3C 01 24 40 00 00 00 00 00 ...
++ pickup type rename
+00000025 FFFFFFFF 00000049 ...
+
+key holder (bunker2)
+00:	01 00 00 03 01 26 27 5B 00 00 10 E8 00 00 01 00 
+
+
+note:	first 0x80 is standard for most types
+	any object can be assigned to be dropped by a guard.
+----------------
+04	key
+keys, floppy disks, etc.
+
+0x80 std, + key 
+
+example
+00:	01 00 00 04 00 56 00 39 00 00 40 00 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 00 06 
+
+80:	lock bit values.  Door locks are masked with these values in order to open them.
+
+note:	always followed traditionally by a type 25-rename block.
+
+----------------
+05	alarm
+00-01, most other objects will also work
+sounds an alarm when activated
+
+0x80 std
+
+01 00 00 05 00 01 27 56 00 00 00 02 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+
+----------------
+06	surveillance camera
+0018 only
+(autoguns can be exchanged for these, but they probably won't look right)
+
+0x80 std + some funny stuff
+
+00:	01 00 00 06 00 18 27 38 00 00 00 02 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 00 57 00 00 00 00 00 00 00 00 00 00 00 00 
+90:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+A0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+B0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+C0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 15 55 
+D0:	FF FF EA AB 00 00 00 00 00 00 00 00 00 00 00 F2 
+E0:	00 00 00 00 00 00 00 00 FF FF FF 9C 
+
+0x82	2byte	preset used to *center* camera.  This is the default middle position.  all rotation data is applied to this angle.
+	*note: below seem like typical rotation values.  user might have ot fiddle with it a bit...  
+0xCC	2byte	how far camera can rotate upward.  positive value (N/A)
+0xCE	2byte	how far camera can rotate left from preset. positive value.
+0xD0	2byte	how far camera can rotate downward.  negative value. (N/A)
+0xD2	2byte	how far right it can rotate.  negative value.
+
+0xDE	2byte	speed.  how fast the camera turns
+
+0xE8	2byte	detection arc up/down from current position
+0xEA	2byte	detection arc left/right from current position
+This sets up the line of sight.  When bond is in the detection arc for five seconds, it triggers the alarm.  Set this high enough and the camera can look in teh opposite direction but still see you.
+FFFF,FF9C are the default values
+
+note: for free rotation left/right, set both to 0000
+note: vertical rotation should be set to default.  Camera can't move this way.
+	defaults should be 0000xxxxFFFFxxxx
+
+
+----------------
+07	ammo clip
+0079-0086 specifically, though most objects will work
+
+0x80 std
+then 000000## which is type of ammo on pickup
+adds default amount of ammo of given type number
+can add ammo of any type, not just the first 13
+
+example:
+00:	01 00 00 07 00 7E FF FF 00 00 80 00 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 00 01 
+
+80:	type of ammo on pickup.  Adds default pickup ammount for that type
+	(same as amount of ammo on gun pickup)
+note: this type is almost exclusively found inside other objects
+
+----------------
+08	weapon pickup
+weapon objects specifically, or really most objects
+
+all 08 types are invincible
+
+0x80 contains some added tags
+then ??FFFFFF 00000000
+?? is replaced with inventory pickup value, or F# for multiplayer value.
+next byte is also replaced if a linked weapon
+
+normal example:
+00:	02 00 00 08 01 4D 00 2A 00 00 00 01 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	58 FF FF FF 00 00 00 00 
+
+
+80:	item type
+81:	linked item type
+82:	timer
+84:	p->linked item or NULL
+
+inventory addition on pickup:
+80:	58 FF FF FF 00 00 00 00 
+multi example:
+80:	...F0 FF FF FF 00 00 00 00
+weapons are F0 - F7, for the 8 weaopns in each weapon set
+
+linked guard weapons:  (xenia in jungle)
+note:	0x8 settings 80+90 are used to designate right (80) and left (90) handed weapons that are EQUIPPED
+right
+00:	01 00 00 08 00 C5 00 00 80 00 40 00 00 00 00 00 ...
+80:	...0E FF FF FF 00 00 00 00 
+left
+00:	01 00 00 08 00 B9 00 00 90 00 40 00 00 00 00 00 ...
+80:	...18 FF FF FF 00 00 00 00 
+
+linked pickups within a crate
+note:	0x8 settings 00+10 are used to designate right (00) and left (10) handed weapon PICKUPS only
+left
+00:	01 00 00 08 00 BC 00 02 10 00 80 00 00 00 00 00 ...
+80:	...0D FF FF FF 00 00 00 00 
+right
+00:	01 00 00 08 00 BC 00 02 00 00 80 00 00 00 00 00 ...
+80:	...0D FF FF FF 00 00 00 00 
+
+82:	2 bytes	timer for thrown explosives
+
+---------------
+09	guards
+use head/body values
+
+example:
+00000009 0000 0000 0004 0002 FFFFFFFF 03E8 0064 0000 FFFF 00000000 
+path example:
+00000009 0017 006E 0025 0401 FFFFFFFF 02EE 0032 0000 FFFF 00000000 
+
+format:
+00000009 iiii 0xxx bbbb aaaa pppp ???? llll rrrr ???? hhhh --------
+i	ID number
+0xxx	0xxx preset to be spawned at
+b	body
+a	action/path assignment
+p	preset of an object to trigger or other preset value (default FFFF)	set to 0x114.  !!Functions that use the preset 2328 are loading this value!!
+?	unknown (default FFFF)
+l	life (health).  1 bullet ~E4
+r	reaction time
+?	unknown (default FFFF)
+h	head.  random=FFFF
+-	reserved; replaced with pointer to guard data at runtime
+
+---------------
+0A	single monitor display
+use the value of a object with a viewing pane (consoles, etc)
+4D is specifically dedicated as a stand-alone viewscreen
+
+0x80 std
+then, fill to 0xF0
+00000000 FFFFFFFF FFFFFFFF 000000##
+## is animation sequence.
+
+00:	01 00 00 0A 00 4B 00 02 11 00 80 01 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+90:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+A0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+B0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+C0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+D0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+E0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+F0:	00 00 00 00 FF FF FF FF FF FF FF FF 00 00 00 10 
+
+0x80	4	[runtime] p->animation routine
+0x84	2	[runtime] cur. #commands from start of routine
+0x86	2	[runtime] loop counter
+0x88	4	[runtime] monitor image# or p->image header
+0x8C	4	[runtime] [float] rotation
+0x90	4	[runtime] [float] cur. horizontal zoom
+0x94	4	[runtime] [float] cur. h.zoom time
+0x98	4	[runtime] [float] final h.zoom time
+0x9C	4	[runtime] [float] initial h.zoom
+0xA0	4	[runtime] [float] final h.zoom
+0xA4	4	[runtime] [float] cur. vertical zoom
+0xA8	4	[runtime] [float] cur. v.zoom time
+0xAC	4	[runtime] [float] final v.zoom time
+0xB0	4	[runtime] [float] initial v.zoom
+0xB4	4	[runtime] [float] final v.zoom
+0xB8	4	[runtime] [float] cur. horizontal position
+0xBC	4	[runtime] [float] cur. h.scroll time
+0xC0	4	[runtime] [float] final h.scroll time
+0xC4	4	[runtime] [float] initial h.pos.
+0xC8	4	[runtime] [float] final h.pos.
+0xCC	4	[runtime] [float] cur. vertical position
+0xD0	4	[runtime] [float] cur. v.scroll time
+0xD4	4	[runtime] [float] final v.scroll time
+0xD8	4	[runtime] [float] initial v.pos.
+0xDC	4	[runtime] [float] final v.pos.
+0xE0	1	[runtime] cur. Red
+0xE1	1	[runtime] initial R
+0xE2	1	[runtime] final R
+0xE3	1	[runtime] cur. Green
+0xE4	1	[runtime] initial G
+0xE5	1	[runtime] final G
+0xE6	1	[runtime] cur. Blue
+0xE7	1	[runtime] initial B
+0xE8	1	[runtime] final B
+0xE9	1	[runtime] cur. Alpha
+0xEA	1	[runtime] initial A
+0xEB	1	[runtime] final A
+0xEC	4	[runtime] [float] cur. colour transition time
+0xF0	4	[runtime] [float] final colour transition time
+0xF4	4	backward monitor link
+0xF8	4	forward monitor link
+0xFC	4	animation#
+
+
+if set to hanging rack:
+preset remains at FFFF for all attached monitors
+0xF4 is decremented 1 for each subsequent monitor (like you would normally to preset)
+F8 is changed from FFFFFFFF to long value for that monitor.  ie. 00000000, 00000001, etc.
+***see type 0C for example of proper notation
+
+---------------
+0B	multiple-screen displays
+use an object with multiple viewing panes (ie. double consoles)
+4E is dedicated as a stand-alone multi-viewscreen
+
+0x80 std
+last line...  10141414
+four values, each one a different possible screen
+can display up to four unique screens
+first is primary, others are overlayed
+
+00:	01 00 00 0B 00 4E 27 3C 60 00 00 62 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+90:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+A0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+B0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+C0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+D0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+E0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+F0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+100:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+110:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+120:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+130:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+140:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+150:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+160:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+170:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+180:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+190:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+1A0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+1B0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+1C0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+1D0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+1E0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+1F0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+200:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+210:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+220:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+230:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+240:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+250:	10 14 14 14 
+
+---------------
+0C	hanging monitor rack
+4C !only!
+must be followed by set number of 0A types, per example
+
+0x80 std except 0x0B sets number of monitors to hang on rack
+
+example:
+01 00 00 0C 00 4C 00 33 00 00 00 04 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+
+must be followed by number of 0A-type presets set at 0xB
+example of 0A subobjects, first and last lines only given
+00:	01 33 00 0A 00 4B FF FF 10 00 00 00 00 00 00 00 ...
+F0:	00 00 00 00 FF FF FF FF 00 00 00 00 00 00 00 xx 
+
+00:	01 33 00 0A 00 4B FF FF 10 00 00 00 00 00 00 00 ...
+F0:	00 00 00 00 FF FF FF FE 00 00 00 01 00 00 00 xx 
+
+00:	01 33 00 0A 00 4B FF FF 10 00 00 00 00 00 00 00 ...
+F0:	00 00 00 00 FF FF FF FD 00 00 00 02 00 00 00 xx 
+
+00:	01 33 00 0A 00 4B FF FF 10 00 00 00 00 00 00 00 ...
+F0:	00 00 00 00 FF FF FF FC 00 00 00 03 00 00 00 xx 
+
+---------------
+0D	autoguns
+autogun models only
+(0062,0124,012B only)
+
+0x80 std + extra info
+
+00:	01 00 00 0D 00 62 00 27 00 00 00 04 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 00 71 00 00 00 00 00 02 00 00 FF FE 00 00 
+90:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+A0:	00 00 00 00 00 00 00 DA 00 0A 00 00 00 00 00 00 
+B0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+C0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+D0:	00 00 00 00 00 00 00 00 
+
+bitflags:
+0x8	20	detect and rotate toward player; typically set automatically
+0xC	80	disables detecting player
+	40	???
+
+0x82	2byte	preset used to *center* gun.  aims at this when it doesn't aim at you.
+	*note: below seem like typical rotation values.  user might have to fiddle with it a bit...  
+0x88	2byte	how far gun can rotate upward.  positive value
+0x8A	2byte	how far the gun can rotate left from preset. positive value.
+0x8C	2byte	how far the gun can rotate downward.  negative value.
+0x8E	2byte	how far right it can rotate.  negative value.
+
+0xA6	2byte	speed.  how fast the turret turns
+0xA8	2byte	distance before deactivating.  same as clipping/model distances
+
+note: for free rotation left/right, set both to 0000
+note: vertical rotation must be set or any non-ground autogun can't find Bond
+	defaults should be 0000xxxxFFFFxxxx or 0002xxxxFFFExxxx. it doesn't really matter much
+
+last note: this data is also shared by cameras.  They expand on this basic stuff.
+
+---------------
+0E	Link Pickups
+any chr_name pickup
+
+format:
+0000000E xxxxxxxx yyyyyyyy
+x	# objects to weapon pickup 1
+y	# objects to weapon pickup 2
+
+example:
+00 00 00 0E FF FF FF FE FF FF FF FC 
+
+might be possible to double weapons with this...
+just to remove weird glitchiness of pickups in hard-to-reach areas
+
+---------------
+0F	???
+
+unknown
+
+format:
+0000000F
+
+---------------
+10	???
+
+unknown
+
+format:
+00000010
+
+---------------
+11	hat
+D4-DF specific, possibly other objects as well
+
+0x80 std.  always assigned to a guard!
+
+example:
+00:	01 00 00 11 00 D8 00 0B 00 00 40 00 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+
+note: 	0x6 is always the id of the guard wearing the hat.
+	0xA is always 40, indicating the hat is equipped.
+
+---------------
+12	Set Guard Attribute
+Allows you to set special attributes to guards, such as "civilian" or capable of shooting guards
+
+00000012 xxxxxxxx 000000yy
+x	guard ID#
+y	attribute to set
+
+known attributes:
+07	
+3F	civilian (scientist)
+
+---------------
+13	switch
+links player interaction between objects
+interact with controlling object to open/close controlled door, for example
+
+00000013 xxxxxxxx yyyyyyyy 00000000
+x	# objects to controlling object
+y	# objects to controlled object
+
+examples:
+	01 00 00 0B 01 50 27 66 00 02 01 02 00 00 08 00 
+00 00 00 13 FF FF FF FF FF FF FF FD 00 00 00 00 
+	01 00 00 0B 01 50 27 67 00 02 01 02 00 00 08 00 
+00 00 00 13 FF FF FF FF FF FF FF FB 00 00 00 00 
+	01 00 00 0B 01 50 27 68 00 02 01 02 00 00 08 00 
+00 00 00 13 FF FF FF FF FF FF FF FA 00 00 00 00 
+	01 00 00 0B 01 50 27 69 00 02 01 02 00 00 08 00 
+00 00 00 13 FF FF FF FF FF FF FF F8 00 00 00 00 
+
+used to link to these two doors:
+01 00 00 01 00 B2 00 13 40 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 F3 33 00 01 00 00 00 00 00 10 
+00 00 00 10 00 00 00 CC 00 0C 00 00 00 00 00 80 
+00 00 05 DC 00 00 00 03 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+
+01 00 00 01 00 B3 00 15 40 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 C0 00 00 00 C0 00 00 00 00 51 
+00 00 00 51 00 00 02 22 00 00 00 04 00 00 00 00 
+00 00 05 DC 00 00 00 03 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+
+---------------
+14	ammo box
+0003-0007 specifically, although other objects will work
+
+normal 0x80
+then 13 sets of FFFF ####, where # specifies amount of ammo
+
+example:
+00:	00 99 00 14 00 05 00 31 00 00 00 01 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	FF FF 00 01 FF FF 00 02 FF FF 00 03 FF FF 00 04 
+90:	FF FF 00 05 FF FF 00 06 FF FF 00 07 FF FF 00 08 
+A0:	FF FF 00 09 FF FF 00 0A FF FF 00 0B FF FF 00 0C 
+B0:	FF FF 00 0D 
+
+ammo types are:
+1	9mm Ammo
+2	(beta) also 9mm Ammo
+3	Rifle Ammo
+4	Shotgun Cartridges
+5	Hand Grenades
+6	Rockets
+7	Remote Mines
+8	Proximity Mines
+9	Timed Mines
+A	Throwing Knives
+B	Grenade Launcher Rounds
+C	Magnum Rounds
+D	Golden Bullets
+
+note: in multiplayer, ammo amounts and types are set based on last defined weapon.
+set all amounts to zero on multiplayer (unless doing something really crazy...)
+
+---------------
+15	body armour
+0072 & 0073 specifically, although most objects will work
+
+normal 0x80, 
+then AAAA.aaaa 00000000
+A.a is a hex percent, like 00028000, which is 2 1/2 times normal BA
+
+example:
+00:	01 80 00 15 00 73 00 00 00 00 00 01 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 01 00 00 00 00 00 00 
+
+---------------
+16	tag object
+target object can be manipulated or read via this tag.
+
+00000016 xxxx#### 00000000 00000000
+
+xxxx	ID number used for this block.
+####	number of objects forward (0001, 0002, etc) or backward (FFFF, FFFE, etc) to target block
+
+______________
+17	create mission objective
+00000017 000000ii 0000TTTT 0000000*
+
+00000017	start objective
+000000..	objective number. just an ordered list, probably doesn't even use it
+0000TTTT	text to display.  usually from stage text, but could be any loaded text bank
+0000000*	minimum difficulty: 0=agent, 1=secret agent, 2=007 agent
+______________
+18	end objective
+...00000018
+
+end objective
+______________
+19	destroy object
+00000019 0000xxxx
+
+xxxx	value of corresponding 000000016 preset preceeding object to be destroyed
+______________
+1A	complete if return true
+0000001A xxxxxxxx
+
+objective is completed if value given is equal to return from block data type 9A
+______________
+1B	failed if return true
+0000001B xxxxxxxx
+
+objective is failed if value given is equal to return from block data type 9A
+
+______________
+1C	collect object
+0000001C 0000xxxx
+
+xxxx	value of corresponding 000000016 preset preceeding object to be collected
+______________
+1D	deposit object (no target)
+0000001D 0000xxxx
+
+xxxx	value of corresponding 00000016 preset preceeding object to be deposited
+______________
+1E	photograph object
+0000001E 0000xxxx 00000000 00000000
+
+xxxx	value of corresponding 00000016 preset preceeding object to photograph
+______________
+1F	NULL
+0000001F
+______________
+20	enter room
+00000020 0000xxxx 00000000 00000000
+
+xxxx	preset within target room
+______________
+21	deposit object in room
+00000021 000000xx 000000yy 00000000 00000000
+
+xx	weapon index number of object to be thrown
+yy	preset within target room
+______________
+22	copy item (modifier)
+00000022 ...
+
+use key analyzer on following objective
+______________
+23	watch menu objective text
+00000023 0000000x 0000tttt 00000000
+x	menu option to fill
+t	text to display
+
+menu options:
+0	title of stage
+1	overview
+2	M briefing
+3	Q briefing
+4	Moneypenny
+
+---------------
+24	gas-releasing object
+when destroyed, the stage fills with toxic gas
+
+same as std 03 type.
+
+---------------
+25	rename function
+renames inventory object
+
+example:
+00:	00 00 00 25 FF FF FF FF 00 00 00 51 00 00 0C 3A 
+10:	00 00 0C 3B 00 00 0C 3C 00 00 0C 3D 00 00 0C 3E 
+20:	00 00 00 00 00 00 00 00 
+
+04:	target objects forward/back. if zero, affects all instances of that one object in inventory
+08:	inventory value to alter
+0C:	watch main top
+10:	watch main bottom
+14:	inventory select name
+18:	on default pickup
+1C:	interaction text (pick up, activate, open, etc.)
+
+notes:	fields not entered will use defaults for that object
+	can rename any item pickup (keys, weapons, etc)
+	can also be used with doors or other objects, such as when you try to open a locked door
+
+---------------
+26	lock door
+used to target padlock and open doors.  doors remain locked until first argument is destroyed
+
+format:
+00000026 yyyyyyyy xxxxxxxx 00000000
+x	object # before/after to locking object
+y	locked object # before/after
+
+
+example:
+00 00 00 26 FF FF FF FE FF FF FF FF 00 00 00 00 
+
+linking this lock:
+01 00 00 03 00 3F 27 5B 01 00 00 08 00 00 00 02 ...
+
+
+to these two linked doors:
+01 00 00 01 00 B4 00 0A 40 00 00 00 00 00 80 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+00 00 00 01 00 00 F3 33 00 01 00 00 00 00 00 51 
+00 00 00 51 00 00 02 22 00 08 00 00 00 00 00 00 
+00 00 05 DC 00 00 00 03 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+
+01 00 00 01 00 B4 00 0B 40 00 00 00 00 00 80 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+FF FF FF FF 00 00 F3 33 00 01 00 00 00 00 00 51 
+00 00 00 51 00 00 02 22 00 08 00 00 00 00 00 00 
+00 00 05 DC 00 00 00 03 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+
+---------------
+27	wheeled vehicles
+117-119, 121, 12D-131
+
+0x80 std.  be sure to set flag
+
+truck f/ dam:
+00:	01 19 00 27 01 17 01 3D 20 02 01 01 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 04 0A 00 00 00 00 00 00 00 00 00 00 00 00 
+90:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+A0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+
+
+for movement...
+06:	preset must be part of a path
+08:	set to 0010xxxx
+80:	jal to action block
+---------------
+28	aircraft
+011A-011D, 0123 (cars will work, just not properly...)
+
+example:
+00:	00 40 00 28 01 1C 00 1F 30 22 01 01 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 00 0A 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 04 2A 00 00 00 00 00 00 00 00 00 00 00 00 
+90:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+A0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+B0:	00 00 00 00 
+
+for prop motion:
+08:	set to 0010xxxx
+80:	rate of motion.
+(it may also be possible to move them along a path...)
+
+helicopter in cradle...
+02 4C 00 28 01 1A 00 93 10 02 00 08 00 08 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+00 00 04 21 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 
+
+
+---------------
+29	???
+unknown
+
+format:
+00000029
+
+---------------
+2A	normal glass
+0068 - 006B specifically, as well some other objects.  Defines the glass shatter effect
+
+normal 0x80, although the 2xxx presets may require specific rotation...
+
+example:
+01 00 00 2A 00 68 27 10 04 00 0B 62 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+beaker
+01 00 00 2A 01 36 00 C9 00 00 00 09 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 0A 00 00 00 00 00 00 00 00 00 00 
+
+---------------
+2B	Safe
+00FE only, + 0125 for safe door
+
+std 0x80
+
+example:
+00:	01 00 00 2B 00 FE 27 59 00 02 01 E8 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+
+-safe door f/ bunker 2
+01 00 00 01 01 25 00 4A 00 00 00 00 20 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 5A 00 00 03 E8 00 00 00 00 0F 5C 
+00 00 0F 5C 00 01 00 00 00 08 00 05 00 00 00 30 
+0F FF FF FF 00 00 00 10 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+
+alert that safe is locked (basic "door is locked" text override:
+00 00 00 25 FF FF FF FF 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 74 65 
+00 00 00 00 00 00 00 00 
+
+1st item in safe (first 0x10):
+01 00 00 08 00 CC 00 2B 00 00 00 08 00 00 00 00 ...
+
+link object into safe
+00 00 00 2C FF FF FF FF FF FF FF FC FF FF FF FD 00 00 00 00 
+
+2nd item in safe (first 0x10):
+01 00 00 08 00 CC 00 2D 00 00 00 08 00 00 00 00 ...
+
+link object into safe
+00 00 00 2C FF FF FF FF FF FF FF FA FF FF FF FB 00 00 00 00 
+
+probably not safe specific, but when one silencer is picked up, both are
+00 00 00 0E FF FF FF FE FF FF FF FC 
+
+3rd item in safe (first 0x10):
+02 00 00 03 01 0E 00 2C 00 04 00 08 00 00 00 00 ...
+
+link item into safe:
+00 00 00 2C FF FF FF FF FF FF FF F7 FF FF FF F8 00 00 00 00 
++ rename
+00 00 00 25 FF FF FF FE 00 00 00 42 ...
+
+
+
+---------------
+2C	Safe items
+used to place items within a safe
+
+format:
+0000002C oooooooo xxxxxxxx yyyyyyyy 00000000
+o	objects forward/back to object placed within safe
+x	objects forward/back to safe object (00FE)
+y	objects forward/back to safe door (0125)
+
+example, f/ bunker 2 safe:
+00 00 00 2C FF FF FF FF FF FF FF FC FF FF FF FD 00 00 00 00 
+
+
+---------------
+2D	tank
+0120 only!
+
+0x80 std.
+0xD8 assigns amount of tank ammo to recieve
+
+tank on runway
+00:	01 14 00 2D 01 20 00 2C 00 02 01 01 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+90:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+A0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+B0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+C0:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+D0:	00 00 00 00 00 00 00 00 00 00 00 1E 00 00 00 00 
+
+C6:	2 bytes.  set >0 for firing effect
+D8:	tank ammo,  max=50 (0x32)
+
+note: can not be used effectively multiplayer.
+  Will not assign clipping change and correct player assignment.
+
+---------------
+2E	Cut-Scene Coordinates
+sets coordinates and rotation for in/outro camera sequences
+uses the same format as those 06 intro camera shots following object data
+
+format:
+00:	00 00 00 2E 00 0E 20 1F 00 01 0C F9 FF D5 75 25 
+10:	00 03 25 07 00 06 2D B0 00 00 27 14 
+
+04:	x coordinate offset
+08:	y coordinate offset
+0C:	z coordinate offset
+10:	lateral rotation
+14:	vertical rotation
+18:	preset.  used to illuminate the correct room.
+
+note - any vertical rotation around 0006xxxx will be near the horizon.
+
+---------------
+2F	Tinted Glass
+sets opacity and visibility distance for tinted glass panels
+
+format:
+00:	01 00 00 2F 00 68 27 8A 10 00 02 62 00 00 00 00 
+10:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+20:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+30:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+40:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+50:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+60:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+70:	00 00 00 00 03 E8 00 00 00 00 00 00 00 00 00 00 
+80:	00 00 01 90 00 00 02 58 00 00 00 00 FF FF FF FF 
+90:	00 00 00 00 
+
+80:	+/- 4byte	distance to full illumination
+84:	+/- 4byte	distance before you can see through window
+both distances use general model/clipping values.
+
+The difference between the distances sets the fade for the glass.
+setting a low first value and high second value makes a pane that gradually gets more visible.
+setting the first value the same as the second will mean that once you reach the given distance the pane immediately becomes clear.
+setting the first value negative can be used to make glass that never becomes visible. or only partially so.
+
+---------------
+30+	End Setup Object List
+all invalid types indicate the end of the setup file
+no arguments
+
+format:
+00000030

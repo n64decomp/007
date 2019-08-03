@@ -1,0 +1,2739 @@
+800697F0 borrowed from cheat menu for scenario menu tables
+
+8002B054 [A2C4] for scenario entries, although could move to TLB
+relocated!	allocating 0xF0 for these scenarios + 1 dead entry (potentially 20 of each type)
+7F0118A8	463D8
+format:
+0x0	2	text ID
+0x2	1	type flags
+	E0	RESERVED	player lock bitflags.  Allow when =1
+	0F	type of entry
+		02	score scenarios
+		01	time scenarios
+		00	bitflag entries
+0x3	1	RESERVED	MP select option mask?
+	list ends with a null text entry
+
+800697C8	1-highlighted score option
+800697C9	1-highlighted time option
+800697CA	highlighted bitflag or -1
+
+800697F0	p->bitflag options
+800697F4	p->time options
+800697F8	p->score options
+800697FC	#bitflag options
+800697FD	#time options
+800697FE	#score options
+800697FF	bitflag offset, used for entries 8-16
+80069800	start data tables
+	Table consists of entry numbers to offset into the original entry table
+	Order is essential!  Order of entries indicates which flags are used and must match hardcoded entries!
+
+Filling is easy.
+	Loop 3 times
+	pull entry type
+	test against loop #
+	if match, add matching index to corresponding table and increase count
+	save total entries
+
+To potentially support 16 bitflag entries, activate "next" if over 8 entries
+	Then, set it to offset 8 in the bitflag list.
+	The scenario types will still appear on both pages.
+
+scenario flags	stats+0x69
+07	RGBA value
+08	"team selected" flag, though don't need to copy it actually
+10	The Living Daylights
+20	MwtGX
+	
+	
++_+
+
+Initialize:
+7F014784	(probably move)	initialize scenario select menu
+better yet, write this code and manage a jump to 7F014784
+admittantly, this could be better written
+7F013598	480C8	
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+//process a list of stuff
+3C018007	LUI	AT,8007
+24389800	ADDIU	T8,AT,9800	;output point
+0000C825	OR	T9,R0,R0	;iteration - do this 3 times
+//type
+00002025	OR	A0,R0,R0	;count of entries
+00004025	OR	T0,R0,R0	;count of entries for type
+00191080	SLL	V0,T9,0x2
+00221821	ADDU	V1,AT,V0	;V1=800697F0+offset
+AC7897F0	SW	T8,97F0 (V1)
+//entry
+0FC04D60	*JAL	7F013580	;V0=text ID, V1=type
+00000000	*NOP
+10400008	*BEQ	V0,R0,iterate	;try next type if NULL text
+30620003	*ANDI	V0,V1,0003	;V0=type
+14590004	BNE	V0,T9,next	;try next entry if this doesn't match
+25CE0004	ADDIU	T6,T6,0004
+//hit
+A3040000	SB	A0,0000 (T8)	;save hit to table
+27180001	ADDIU	T8,T8,0001	;iterate table
+25080001	ADDIU	T0,T0,0001
+//next
+1000FFF6	BEQ	R0,R0,entry
+24840001	ADDIU	A0,A0,0001
+//iterate
+00391021	ADDU	V0,AT,T9
+A04897FC	SB	T0,97FC (V0)	;save #entries for type
+2F220002	SLTIU	V0,T9,0002
+1440FFEC	BNE	V0,R0,type	;loop for all three types
+27390001	ADDIU	T9,T9,0001
+//then the generic stuff
+0BC051E3	J	7F01478C	;generic initialize
+A02097FF	SB	R0,97FF (AT)
+//return
+
+generic bit is
+0->8002A8D0-8002A8E4
+then JAL	7F00B8AC
+
+
+Use this to pull values easier
+7F013580	480B0	pull V0=text ID, V1=type for scenario entry A0
+00041080	SLL	V0,A0,0x2
+3C038003	LUI	V1,8003
+00431821	ADDU	V1,V1,V0
+9462B054	LHU	V0,B054 (V1)
+03E00008	JR	RA
+9063B056	LBU	V1,B056 (V1)
+
+
+Constructor:
+7F014A48	49578	Menu 13 Constructor: Scenario Select
+27BDFF68	ADDIU	SP,SP,FF68
+AFBF005C	SW	RA,005C (SP)
+AFBE0058	SW	S8,0058 (SP)
+AFB70054	SW	S7,0054 (SP)
+AFB60050	SW	S6,0050 (SP)
+AFB5004C	SW	S5,004C (SP)
+AFB40048	SW	S4,0048 (SP)
+AFB30044	SW	S3,0044 (SP)
+AFB20040	SW	S2,0040 (SP)
+AFB1003C	SW	S1,003C (SP)
+AFB00038	SW	S0,0038 (SP)
+00002825	OR	A1,R0,R0
+00003025	OR	A2,R0,R0
+0C0011B4	JAL	700046D0	;setfillcolour("black")
+00003825	OR	A3,R0,R0
+0C000FBE	JAL	70003EF8	;fillrect()
+00022025	OR	A0,V0,R0
+0FC0357A	JAL	7F00D5E8
+00022025	OR	A0,V0,R0
+0FC2B366	JAL	7F0ACD98
+00022025	OR	A0,V0,R0
+00028025	*OR	S0,V0,R0	;S0=V0: DL
+3C1E8007	`LUI	S8,8007
+//7F014AA0:	Page Title
+0FC30776	JAL	7F0C1DD8	;ret V0=p->text A0
+34049C57	ORI	A0,R0,9C57	;A0="scenario:"
+24040037	*ADDIU	A0,R0,0037
+2405005F	*ADDIU	A1,R0,005F
+0FC046B5	*JAL	7F011AD4	;display::black
+00023825	*OR	A3,V0,R0
+//7F014AB8:	Score Scenario select box
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID A0
+3404xxxx	*ORI	A0,R0,xxxx	;A0=xxxx: "Score:"
+83CE97C8	`LB	T6,97C8 (S8)	;T5=800697C8: TRUE if highlighted "Players"
+11C00005	*BEQ	T6,R0,7F014ADC	;branch if not highlighted
+AFA20064	*SW	V0,0064 (SP)	;SP+64=p->text
+//7F014ACC:	highlight
+24040039	*ADDIU	A0,R0,0039
+24050079	*ADDIU	A1,R0,0079
+0FC046CE	*JAL	7F011B38	;box::default
+00023025	*OR	A2,V0,R0
+//7F014ADC:	display text
+24040039	*ADDIU	A0,R0,0039
+24050079	*ADDIU	A1,R0,0079
+0FC046B5	*JAL	7F011AD4	;display::black
+8FA70064	*LW	A3,0064 (SP)	;p->text
+//7F014AEC:	Time Scenario select box
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID A0
+34049C69	ORI	A0,R0,9C69	;A0=xxxx: "Time:"
+83CE97C9	`LB	T6,97C9 (S8)	;T5=800697C8: TRUE if highlighted "
+11C00005	*BEQ	T6,R0,7F014B10	;branch if not highlighted
+AFA20064	SW	V0,0064 (SP)
+//7F014B00:	draw highlight box
+24040039	*ADDIU	A0,R0,0039
+2405008D	*ADDIU	A1,R0,008D
+0FC046CE	*JAL	7F011B38	;box::default
+00023025	*OR	A2,V0,R0
+//7F014B10:	display text
+24040039	*ADDIU	A0,R0,0039
+2405008D	*ADDIU	A1,R0,008D
+0FC046B5	*JAL	7F011AD4	;display::black
+8FA70064	*LW	A3,0064 (SP)	;p->text
+//7F014B20:	selected scenarios
+8FC597F4	`LW	A1,97F4 (S8)	;A1=800697F4: p->entries for time scenario
+0FC051DB	JAL	7F01476C	;V0/V1=selected scenarios
+8FC497F8	`LW	A0,97F8 (S8)	;A0=800697F8: p->entries for score scenario
+00832021	ADDU	A0,A0,V1	;A0+=selected entry: p->score scenario entry
+00A22821	ADDU	A1,A1,V0	;A1+=selected entry: p->time scenario entry
+AFA50064	SW	A1,0064 (SP)	;save time scenario until next iteration
+24140079	ADDIU	S4,R0,0079
+//7F014B3C:	4966C	score, then time
+0FC04D60	`JAL	7F013580
+90840000	LBU	A0,0000 (A0)	;A0=entry# for score scenario
+//	Borrowed 2 lines
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID
+00022025	*OR	A0,V0,R0
+240400A0	*ADDIU	A0,R0,00A0
+00142825	OR	A1,R0,S4
+24060001	*ADDIU	A2,R0,0001
+0FC046B0	*JAL	7F011AC0	;display::mask
+00023825	*OR	A3,V0,R0
+2E81008D	SLTIU	AT,S4,008D
+26940014	ADDIU	S4,S4,0014	;S4+=20: next line.  Used in bitflag scenarios as well
+1420FFF4	BNE	AT,R0,7F014B3C
+8FA40064	LW	A0,0064 (SP)
+//7F014B78:	Bitflag scenarios
+0FC051D6	*JAL	7F014758	;V0=scenario::flags
+8FD397F0	`LW	S3,97F0 (S8)	;S3=p->entries appearing in table
+0002B825	*OR	S7,V0,R0	;S3=bitflags
+93D697FF	`LBU	S6,97FF (S8)	;AT=8 if page 2; first entry # appearing on page
+93D597FC	`LBU	S5,97FC (S8)	;S1=total entries
+02B68823	*SUBU	S1,S5,S6	;S1=entries-offset, to correct number to appear on page
+2E210008	*SLTIU	AT,S1,0008
+50200001	*BEQL	AT,R0,+1
+00008825	*OR	S1,R0,R0
+02769821	*ADDU	S3,S3,S6	;S3=p->entries + offset to first
+00009025	OR	S2,R0,R0	;S2=0: count=0
+//7F014B98:	496C8	display next eight bitflag scenarios
+0FC04D60	`JAL	7F013580
+92640000	*LBU	A0,0000 (S3)	;p->entry#
+//	borrowed two lines
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID
+00022025	*OR	A0,V0,R0
+83CE97CA	`LB	T6,97CA (S8)	;T5=80069780: TRUE if highlighted "
+15D20005	*BNE	T6,S2,7F014BCC	;branch if not highlighted
+AFA20064	SW	V0,0064 (SP)
+//7F014BBC:	draw highlight box
+24040059	*ADDIU	A0,R0,0059
+00142825	*OR	A1,R0,S4	;vertical position
+0FC046CE	*JAL	7F011B38	;box::default
+00023025	*OR	A2,V0,R0
+//7F014BCC:	display text
+24040059	*ADDIU	A0,R0,0050
+00142825	*OR	A1,R0,S4	;vertical position
+0FC046B5	*JAL	7F011AD4	;display::black
+8FA70064	*LW	A3,0064 (SP)	;p->text
+//7F014BDC:	4970C	detect flags
+02560821	*ADDU	AT,S6,S2
+00370807	*SRAV	AT,S7,AT	;leading bit now the one you want
+30210001	ANDI	AT,AT,0001	;TRUE if flag set
+1020000C	BEQ	AT,R0,7F014C1C
+AFB00064	*SW	S0,0064 (SP)	;SP+64=p->DL
+//7F014BF0:	49720	draw a checkmark
+//	note: since this must be embedded here and text follows, link in an additional jump to 7F0AD0DC [E1C0C]
+//	7F0AD0DC: set V1=DL, return V0=new DL; fries T2,T7
+27A40064	*ADDIU	A0,SP,0064	;A0=DL
+3C058009	LUI	A1,8009
+8CA5D128	LW	A1,D128 (A1)	;A1=8008D128: p->folder images
+24A50030	ADDIU	A1,A1,0030	;A1=p->checkmark
+00143825	*ADDIU	A3,S4,000A	;A3=ypos
+24010004	ADDIU	AT,R0,0004	;AT=vert flip
+AFA10010	SW	AT,0010 (SP)
+0FC04667	JAL	7F0119A4	;gen.image::red (checkmark, X)
+24060043	ADDIU	A2,R0,0043	;A2=xpos
+8FB00064	*LW	S0,0064 (SP)	;SP+64=p->DL
+//7F014C1C:	loop for each entry
+26730001	*ADDIU	S3,S3,0001
+26520001	ADDIU	S2,S2,0001
+0251082B	SLTU	AT,S2,S1
+1420FFDB	BNE	AT,R0,7F014B98
+26940014	ADDIU	S4,S4,0014	;S4+=20: next line.  Used in bitflag scenarios as well
+//	since it doesn't fit, tack in a redirect to handle lower right column
+0FC04604	*JAL	7F011810	;lower right column
+00000000	*NOP
+
+//7F014C34	49764	set details
+26A1FFF8	*ADDIU	AT,S5,FFF8
+04200003	BLTZ	AT,+3		;write tab if 9-16 entries
+00101025	*OR	V0,S0,R0
+0FC02905	JAL	7F00A414	;add tab 2: "NEXT"
+00022025	OR	A0,V0,R0
+0FC0288E	JAL	7F00A238	;add tab 3: "PREVIOUS"
+00022025	OR	A0,V0,R0
+0FC027C2	JAL	7F009F08	;loads selected icon for folder select
+00022025	OR	A0,V0,R0
+//	return
+8FBF005C	LW	RA,005C (SP)
+8FB00038	LW	S0,0038 (SP)
+8FB1003C	LW	S1,003C (SP)
+8FB20040	LW	S2,0040 (SP)
+8FB30044	LW	S3,0044 (SP)
+8FB40048	LW	S4,0048 (SP)
+8FB5004C	LW	S5,004C (SP)
+8FB60050	LW	S6,0050 (SP)
+8FB70054	LW	S7,0054 (SP)
+8FBE0058	LW	S8,0058 (SP)
+03E00008	JR	RA
+27BD0098	ADDIU	SP,SP,0098
+
+7F011810	46340	lower right column redirect (won't fit otherwise)
+	YOLT#	0100 00A1
+	teams	0100 00B5
+	only S5 and S0 matter at this point, so you can the other SX's
+27BDFF80	ADDIU	SP,SP,FF80
+AFBF007C	SW	RA,007C (SP)
+//	"Live %i Time%s"
+0FC04117	JAL	7F01045C	;#lives (YOLT)
+83D497CB	LB	S4,97CB (S8)	;T5=800697C8: which option is highlighted (-1 default, # otherwise)
+00023025	OR	A2,V0,R0	;A2=lives (replace %i)
+0FC046ED	JAL	7F011BB4	;plural
+00022025	OR	A0,V0,R0
+AFA2001C	SW	V0,001C (SP)	;
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID A0
+3404B033	ORI	A0,R0,B033	;A0=9c58: "Select Teams"
+27A40040	ADDIU	A0,SP,0020
+00022825	OR	A1,V0,R0	;A1=src.string
+0C002B25	JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+27A7001C	ADDIU	A3,SP,001C
+//	draw highlight box
+16800004	BNE	S4,R0,+4	;branch if not highlighted
+27A60040	ADDIU	A2,SP,0020
+24040100	ADDIU	A0,R0,0100
+0FC046CE	JAL	7F011B38	;box::default
+240500A1	ADDIU	A1,R0,00A1
+//	display text
+24040100	ADDIU	A0,R0,0100
+240500A1	ADDIU	A1,R0,00A1
+0FC046B5	JAL	7F011AD4	;display::black
+27A70040	ADDIU	A3,SP,0020	;p->text
+//
+//	display "Select Teams"	
+0FC30776	JAL	7F0C1DD8	;V0=p->text ID A0
+34049C58	ORI	A0,R0,9C58	;A0=9c58: "Select Teams"
+1A800005	BLEZ	S4,+5	;branch if not highlighted
+AFA20078	SW	V0,0078 (SP)
+//:	draw highlight box
+24040100	ADDIU	A0,R0,0100
+240500B5	ADDIU	A1,R0,00B5
+0FC046CE	JAL	7F011B38	;box::default
+00023025	OR	A2,V0,R0
+//:	display text
+24040100	*ADDIU	A0,R0,0100
+240500B5	*ADDIU	A1,R0,00B5
+0FC046B5	*JAL	7F011AD4	;display::black
+8FA70078	*LW	A3,0078 (SP)	;p->text
+//	return
+8FBF007C	LW	RA,007C (SP)
+03E00008	JR	RA
+27BD0080	ADDIU	SP,SP,0080
+
+
++_+
+
+Very important:	plaster generic image to location
+
+7F0119B4/C	464E4	draw image to screen
+	accepts: A0=p->DL, A1=p->img.decl., A2=xpos, A3=ypos, SP+10=type | flip (4=vert, 2=horz, 1=rot), SP+14=colour (opt.)
+
+//7F01199C:	464CC	red as default; used by checkmarks, X's, and a few other things
+3C01B400	LUI	AT,B400
+10000002	BEQ	R0,R0,+2
+342100FF	ORI	AT,AT,00FF
+//7F0119A8:	464D8	white as default
+2401FFFF	ADDIU	AT,R0,FFFF
+AFA10010	SW	AT,0014 (SP)
+//7F0119B0:	464E0	normal operation: feed it SP+14=colour
+27BDFF90	ADDIU	SP,SP,FF90	;SP-70
+AFBF006C	SW	RA,006C (SP)
+AFB00068	SW	S0,0068 (SP)
+AFB20064	SW	S2,0064 (SP)
+00049025	OR	S2,A0,R0	;S2=p->DL
+00058025	OR	S0,A1,R0	;S0=p->img.decl.
+//7F0119C8:	464F8
+3C013F00	LUI	AT,3F00
+44810000	MTC1	AT,F0		;F0=0.5	[3F000000]
+44864000	MTC1	A2,F8
+46804120	CVT.S.W	F4,F8	;F4=xpos
+44874000	MTC1	A3,F8
+E7A40048	SWC1	F4,0048 (SP)	;SP+9C= (float) x position
+46804120	CVT.S.W	F4,F8	;F4=ypos
+92090004	LBU	T1,0004 (S0)	;T0=width
+E7A4004C	SWC1	F4,004C (SP)	;SP+A0= (float) y position
+44894000	MTC1	T1,F8
+468041A0	CVT.S.W	F6,F8	;F6=(float) width
+3C014F80	LUI	AT,4F80
+05210002	BGEZ	T1,+2		;branch if not negative
+44815000	MTC1	AT,F10		;F10=4294967296.0	[4F800000]
+460A3180	ADD.S	F6,F6,F10
+//7F011A04:
+46003282	MUL.S	F10,F6,F0	;F16=(float) width * 0.5
+E7AA0040	SWC1	F10,0040 (SP)	;SP+94=(float) width
+92090005	LBU	T1,0005 (S0)	;T4=height
+44894000	MTC1	T1,F8
+468041A0	CVT.S.W	F6,F8	;F18=(float) height
+05210002	BGEZ	T1,+2	;branch if not negative
+93A60082	*LBU	A2,0082 (SP)	;A2=format	???
+460A3180	ADD.S	F6,F6,F10
+//7F011A24:
+46003282	MUL.S	F10,F6,F0	;F10=(float) height * 0.5
+00003825	OR	A3,R0,R0	;A3=0	???
+AFA00010	SW	R0,0010 (SP)	;SP+10=0	???
+0FC1DB5A	JAL	7F076D68	;generates a display list for image declaration A1
+E7AA0044	SWC1	F10,0044 (SP)	;SP+98=(float) height
+//7F011A38:
+92070004	LBU	A3,0004 (S0)	;width
+920F0005	LBU	T7,0005 (S0)	;height
+AFAF0010	SW	T7,0010 (SP)	;SP+10= image height
+93A90087	LBU	T1,0087 (SP)
+AFA9002C	SW	T1,002C (SP)	;SP+2C= alpha	FF
+93A90086	LBU	T1,0086 (SP)
+AFA90028	SW	T1,0028 (SP)	;SP+28= green	FF
+93A90085	LBU	T1,0085 (SP)
+AFA90024	SW	T1,0024 (SP)	;SP+24= blue	FF
+93A90084	LBU	T1,0084 (SP)
+AFA90020	SW	T1,0020 (SP)	;SP+20= red	FF
+93A90083	LBU	T1,0083 (SP)	;T1=flip
+312F0001	ANDI	T7,T1,0001
+AFAF0014	SW	T7,0014 (SP)	;SP+14= don't rotate left 90deg.
+312F0002	ANDI	T7,T1,0002
+AFAF0018	SW	T7,0018 (SP)	;SP+18= no horizontal flip
+312F0004	ANDI	T7,T1,0004
+AFAF001C	SW	T7,001C (SP)	;SP+1C= flip vertically
+920F0006	LBU	T7,0006 (S0)	;T3=format
+AFA00034	SW	R0,0034 (SP)	;SP+34= ???	0
+00122025	OR	A0,S2,R0	;A0=S2: DL
+000F482A	SLT	T1,R0,T7
+AFA90030	SW	T1,0030 (SP)	;SP+30: !format
+27A50048	ADDIU	A1,SP,0048	;A1=SP+9C: p->positions
+0FC1ABFA	JAL	7F06AFE8	;display image at position on screen
+27A60040	ADDIU	A2,SP,0040	;A2=SP+94: p->dimentions
+//7F011AA0:	this allows you to immediately follow the image with text.  It only burns 8 bytes either way, so it won't break the bank
+0FC2B436	JAL	7F0AD0D8	;sets combiner back to normal setting	!TEST! 0FC0D294
+8E430000	LW	V1,0000 (S2)
+AE420000	SW	V0,0000 (S2)
+//7F011AAC:	return
+8FB20064	LW	S2,0064 (SP)
+8FB00068	LW	S0,0068 (SP)
+8FBF006C	LW	RA,006C (SP)
+03E00008	JR	RA
+27BD0070	ADDIU	SP,SP,0070	;SP-70
+//7F011AC0:	465F0
+
+apparently normal combiner for text
+BA001402	00000000	cycle type: 1 cycle
+BA000602	000000C0	rgb dither: disable
+B900031D	005041C8	render mode: antialias enable, image read, clear on converge, converge delta-ST wrap, force blender, blend colour in, blend colour blender
+FCFF97FF	FF2DFEFF
+BA001301	00000000	texture lut: none
+B9000002	00000000	alpha compare: none
+BA001001	00000000	texture lod: tile
+BA000903	00000C00	texture convert: filter
+BA000E02	00000000	texture lut: none
+BA000C02	00002000	texture filter: bi-level interpretation
+trouble likely isn't with the combiner but with the rendermode options
+What I wouldn't give for some documentation on this stuff...
+
+as a test, see what this does:
+7F034A50	69580	!test only!
+3C02BA00	LUI	V0,BA00
+AC620000	SW	V0,0000 (V1)	;BA001402	00000000	cycle type: 1 cycle
+AC600004	SW	R0,0004 (V1)
+AC620008	SW	V0,0008 (V1)	;BA000602	000000C0	rgb dither: disable
+AC620020	SW	V0,0020 (V1)	;BA001301	00000000	texture lut: none
+AC600024	SW	R0,0024 (V1)
+AC620030	SW	V0,0030 (V1)	;BA000908	00002C00	texture convert: filter, texture filter: bi-level interpretation, texture lut: none, texture lod: tile
+3C02B900	LUI	V0,B900
+AC620010	SW	V0,0010 (V1)	;B900031D	005041C8	render mode: antialias enable, image read, clear on converge, converge delta-ST wrap, force blender, blend colour in, blend colour blender
+AC620028	SW	V0,0028 (V1)	;B9000002	00000000	alpha compare: none
+AC60002C	SW	R0,002C (V1)
+34021402	ORI	V0,R0,1402
+A4620002	SH	V0,0002 (V1)
+34020602	ORI	V0,R0,0602
+A462000A	SH	V0,000A (V1)
+340200C0	ORI	V0,R0,00C0
+AC62000C	SW	V0,000C (V1)
+34021301	ORI	V0,R0,1301
+A4620022	SH	V0,0022 (V1)
+34020908	ORI	V0,R0,0908
+A4620032	SH	V0,0032 (V1)
+34022C00	ORI	V0,R0,2C00
+AC620034	SW	V0,0034 (V1)
+3402031D	ORI	V0,R0,031D
+A4620012	SH	V0,0012 (V1)
+3C020050	LUI	V0,0050
+344241C8	ORI	V0,V0,41C8
+AC620014	SW	V0,0014 (V1)
+34020002	ORI	V0,R0,0002
+A462002A	SH	V0,002A (V1)
+3C02FCFF	LUI	V0,FCFF
+344297FF	ORI	V0,V0,97FF	;FCFF97FF	FF2DFEFF
+AC620018	SW	V0,0018 (V1)
+3C02FF2D	LUI	V0,FF2D
+3442FEFF	ORI	V0,V0,FEFF
+AC62001C	SW	V0,001C (V1)
+03E00008	JR	RA
+24620038	ADDIU	V0,V1,0038
+
++_+
+
+hack the folder select menu to use the new image command
+//7F00CEA4:	419D4	rig up rollover detection
+3C138003	LUI	S3,8003
+AFA201B8	SW	V0,01B8 (SP)
+27B201B8	ADDIU	S2,SP,01B8
+3C014351	LUI	AT,4351
+AE61ABC4	SW	AT,ABC4 (S3)	;copy-left bound
+3C01439F	LUI	AT,439F
+AE61ABD4	SW	AT,ABD4 (S3)	;erase-left bound
+8FA100F8	LW	AT,00F8 (SP)	;copy text width
+242100F7	ADDIU	AT,AT,00F7
+44814000	MTC1	AT,F8
+3C014387	LUI	AT,4387
+468042A0	CVT.S.W	F10,F8
+AE61ABC8	SW	AT,ABC8 (S3)	;copy-upper bound
+AE61ABD8	SW	AT,ABD8 (S3)	;erase-upper bound
+E66AABCC	SWC1	F10,ABCC (S3)	;copy-right bound	
+8FA100F4	LW	AT,00F4 (SP)	;erase text width
+24210165	ADDIU	AT,AT,0165
+44814000	MTC1	AT,F8
+3C014395	LUI	AT,4395
+468042A0	CVT.S.W	F10,F8
+AE61ABD0	SW	AT,ABD0 (S3)	;copy-lower bound
+AE61ABE0	SW	AT,ABE0 (S3)	;erase-lower bound
+E66AABDC	SWC1	F10,ABDC (S3)	;erase-right bound	
+//7F00CF00:	41A30	copy icon
+00122025	OR	A0,S2,R0
+3C058009	LUI	A1,8009
+8CA5D128	LW	A1,D128 (A1)	;A1=p->copy img.decl.
+24010004	ADDIU	AT,R0,0004
+AFA10010	SW	AT,0010 (SP)	;SP+10: mirror vertically
+240600E1	ADDIU	A2,R0,00E1	;A2=xpos
+0FC0466B	JAL	7F0119AC	;place image::white
+2407011D	ADDIU	A3,R0,011D	;A3=ypos
+//7F00CF20:	41A50	erase icon
+00122025	OR	A0,S2,R0
+3C058009	LUI	A1,8009
+8CA5D128	LW	A1,D128 (A1)
+24A5000C	ADDIU	A1,A1,000C	;A1=p->erase img.decl.
+24010004	ADDIU	AT,R0,0004
+AFA10010	SW	AT,0010 (SP)	;SP+10: mirror vertically
+2406014F	ADDIU	A2,R0,014F	;A2=xpos
+0FC0466B	JAL	7F0119AC	;place image::white
+2407011D	ADDIU	A3,R0,011D	;A3=ypos
+//7F00CF44:	41A74	Select Mission
+00122025	OR	A0,S2,R0
+3C058009	LUI	A1,8009
+8CA5D128	LW	A1,D128 (A1)
+24A5000C	ADDIU	A1,A1,0018	;A1=p->select mission img.decl.
+24010004	ADDIU	AT,R0,0004
+AFA10010	SW	AT,0010 (SP)	;SP+10: mirror vertically
+2406006E	ADDIU	A2,R0,006E	;A2=xpos
+0FC0466B	JAL	7F0119AC	;place image::white
+2407011D	ADDIU	A3,R0,011D	;A3=ypos
+//7F00CF68:	41A98
+
++_+
+
+rig up the sight scenario
+7F0101D8	44D08	
+LUI	AT,8008
+LUI	V0,8003
+ADDIU	T6,R0,0003
+//7F0101E4
+LHU	A0,B540 (V0)
+ANDI	A0,A0,0008	;flag for a view to a kill
+BNEL	A0,R0,+2
+OR	A0,R0,R0
+LBU	A0,B53C (V0)
+SRL	V1,A0,0x1
+ANDI	V1,V1,0001
+ANDI	A0,A0,0001
+SB	V1,9F5A (AT)
+SB	A0,9F5B (AT)
+ADDIU	AT,AT,0070
+ADDIU	V0,V0,0000
+BNEZ	T6,7F0101E4
+ADDIU	T6,T6,FFFF
+JR	RA
+NOP
+
+
++_+
+
+Scenario menu interface rewrite
+800697C8	1-highlighted score option
+800697C9	1-highlighted time option
+800697CA	highlighted bitflag or -1
+
+7F0147B8	492E8	Menu 13 interface - MP scenario select
+27BDFFD0	ADDIU	SP,SP,FFD0
+3C014270	LUI	AT,4270
+AFBF0024	SW	RA,0024 (SP)
+44816000	MTC1	AT,F12
+AFB20020	SW	S2,0020 (SP)
+AFB1001C	SW	S1,001C (SP)
+AFB00018	SW	S0,0018 (SP)
+0C001151	JAL	70004544
+AFA0002C	SW	R0,002C (SP)
+3C018005	LUI	AT,8005
+0C001164	JAL	70004590
+C42C1AA8	LWC1	F12,1AA8 (AT)
+3C0142C8	LUI	AT,42C8
+44816000	MTC1	AT,F12
+3C018005	LUI	AT,8005
+0C001194	JAL	70004650
+C42E1AAC	LWC1	F14,1AAC (AT)
+0C00114D	JAL	70004534
+00002025	OR	A0,R0,R0
+//7F01499C:	construct folder
+3C108003	LUI	S0,8003
+2610A95C	ADDIU	S0,S0,A95C
+0FC02DC9	JAL	7F00B724	;disable all switches in object A0 (hide all)
+8E040000	LW	A0,0000 (S0)
+8E040000	LW	A0,0000 (S0)
+00002825	OR	A1,R0,R0	;A1=item 0: 
+0FC02DF0	JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+24060001	ADDIU	A2,R0,0001	;A2=ON
+8E040000	LW	A0,0000 (S0)
+24050001	ADDIU	A1,R0,0001	;A1=item 1: 
+0FC02DF0	JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+24060001	ADDIU	A2,R0,0001	;A2=ON
+8E040000	LW	A0,0000 (S0)
+24050003	ADDIU	A1,R0,0003	;A1=item 3: 
+0FC02DF0	JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+24060001	ADDIU	A2,R0,0001	;A2=ON
+8E040000	LW	A0,0000 (S0)
+24050006	ADDIU	A1,R0,0006	;A1=item 6: 
+0FC02DF0	JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+24060001	ADDIU	A2,R0,0001	;A2=ON
+0FC026E1	JAL	7F009B84	;control stick tracking
+00008825	*OR	S1,R0,R0
+//7F01485C:
+2401FFFF	*ADDIU	AT,R0,FFFF
+3C0E8007	*LUI	T6,8007
+ADC097C8	*SW	R0,97C8 (T6)	;reset all page highlighting
+A5C197CA	*SH	AT,97CA (T6)	;default for bitflags is -1
+//7F01486C:	detect highlight tab 3
+3C0F8003	*LUI	T7,8003
+0FC028E7	-JAL	7F00A39C	;V0=TRUE if cursor on tab 3
+ADE0A8DC	*SW	R0,A8DC (T7)	;0->8002A8E4: 1- highlight folder tab 1
+1440002B	*BNE	V0,R0,+controller
+ADE2A8E4	*SW	V0,A8E4 (T7)	;0->8002A8E4: 1- highlight folder tab 3
+//7F014880:	detect highlight tab 2
+91E897FC	*LBU	T0,97FC (T7)	;T0=#bitflag scenarios
+2C280008	*SLTIU	AT,T0,0008
+14200005	*BNE	AT,R0,+buttons
+ADE0A8E0	*SW	R0,A8E0 (T7)	;0->8002A8E4: 1- highlight folder tab 2
+0FC0295E	*JAL	7F00A578	;V0=TRUE if cursor on tab 2
+00000000	*NOP
+14400023	*BNE	V0,R0,+controller
+ADE2A8E0	*SW	V0,A8E0 (T7)	;0->8002A8E0: 1- highlight folder tab 2
+//7F0148A0:	highlight buttons
+C5E4A90C	-LWC1	F4,A90C (T7)	;F4=(float) vertical screen position on menus
+4600218D	-TRUNC.W.S	F6,F4
+C5E4A908	*LWC1	F4,A908 (T7)	;F4=(float) vertical screen position on menus
+44193000	-MFC1	T9,F6		;T9=vertical pos.
+4600218D	*TRUNC.W.S	F6,F4
+//7F0148B8:	score scenario
+2F21008D	*SLTIU	AT,T9,008D
+44183000	*MFC1	T8,F6		;T8=horzontal pos.
+5420001A	*BNEL	AT,R0,+controller
+A1C197C8	*SB	AT,97C8 (T6)	;800697C8= highlight score
+//7F0148C8:	time scenario
+2F2100A1	*SLTIU	AT,T9,00A1
+54200017	*BNEL	AT,R0,+controller
+A1C197C9	*SB	AT,97C9 (T6)	;800697C9= highlight time
+//7F0148D4:	any special-case stuff goes here
+2F010100	*SLTIU	AT,T8,0100
+14200006	*BNE	AT,R0,+bitflags	;branch if left side
+2F2100B5	*SLTIU	AT,T9,00B5
+54200012	*BNEL	AT,R0,+controller	;#lives
+A1C097CB	*SB	R0,97CB (T6)
+2F2100C9	*SLTIU	AT,T9,00C9
+5420000F	*BNEL	AT,R0,+controller	;team setup
+A1C197CB	*SB	AT,97CB (T6)
+//7F0148F8:	bitflag scenarios
+240900B5	*ADDIU	T1,R0,00B5	;vertical for first option
+91E197FF	*LBU	AT,97FF (T7)	;AT=offset in option list
+01019023	*SUBU	S2,T0,AT	;S2=total-offset
+2E410008	*SLTIU	AT,S2,0008
+50200001	*BEQL	AT,R0,+1
+24120008	*ADDIU	S2,R0,0008
+//7F014910:	loop for each entry
+0329082B	*SLTU	AT,T9,T1
+54200004	*BNEL	AT,R0,+controller
+A1D197CA	*SB	S1,97CA (T6)	;800697CA= highlight option #S1
+26310001	*ADDIU	S1,S1,0001
+1632FFFB	*BNE	S1,S2,-loop
+25290014	*ADDIU	T1,T1,0014
+//7F014928:	controller detection
+00002025	-OR	A0,R0,R0
+0C0030EB	-JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+3405F000	-ORI	A1,R0,F000	;A1=A, Z, B, Start buttons
+30418000	*ANDI	AT,V0,8000
+54200002	*BNEL	AT,R0,+2
+24110001	*ADDIU	S1,R0,0001
+2411FFFF	*ADDIU	S1,R0,FFFF
+1040003B	-BEQ	V0,R0,+return	;branch if not pressed
+30525000	*ANDI	S2,V0,5000	;start, B button
+//7F01494C:	play sound effect
+3C048006	-LUI	A0,8006
+8C843720	-LW	A0,3720 (A0)
+240500C7	-ADDIU	A1,R0,00C7
+0C002382	-JAL	70008E08	;play sound effect A1
+00003025	-OR	A2,R0,R0
+//7F014960	redirect to proper handler
+3C0F8003	*LUI	T7,8003
+8DE2A8E4	*LW	V0,A8E4 (T7)	;8002A8E4: 1- highlight folder tab 3
+14400003	*BNEZ	V0,+backtrack
+2404000E	-ADDIU	A0,R0,000E	;A0=E: MP options
+12400004	*BEQ	S2,R0,+selected	;branch if A or Z (selected highlighted option)
+8DE1A8E0	*LW	AT,A8E0 (T7)	;8002A8E0: 1- highlight folder tab 2
+//7F014978:	backtrack
+0FC06975	-JAL	7F01A5D4	;set to menu A0 to mode A1
+00002825	-OR	A1,R0,R0	;A1=0: current
+1000002B	*BEQ	R0,R0,+return
+//7F014984:	handle selected option: tab 2
+3C0E8007	*LUI	T6,8007
+10200005	*BEQ	AT,R0,+score
+91C197FF	*LBU	AT,97FF (T6)
+24210008	*ADDIU	AT,AT,0008
+3021000F	*ANDI	AT,AT,000F
+10000024	*BEQ	R0,R0,+return
+A1C197FF	*SB	AT,97FF (T6)
+//7F0149A0:	handle selecting score
+81C197C8	*LB	AT,97C8 (T6)	;score selected
+91C697FE	*LBU	A2,97FE (T6)	;A1=800697FE: #score scenarios
+54200005	*BNEL	AT,R0,+score/time
+25E4B543	*ADDIU	A0,T7,B543
+81C197C9	*LB	AT,97C9 (T6)	;time selected
+91C697FD	*LBU	A2,97FD (T6)	;A1=800697FD: #time scenarios
+10200005	*BEQ	AT,R0,+bitflags
+25E4B542	*ADDIU	A0,T7,B542
+//7F0149C0:	score/time
+0FC04F5E	*JAL	7F013D78	;generic thingy advance::default
+00112825	*OR	A1,R0,S1
+10000019	*BEQ	R0,R0,return
+00000000	*NOP
+//7F0149D0:	bitflag scenarios
+81C197CA	*LB	AT,97CA (T6)	;AT=bitflag selected (-1 is none)
+04200008	*BLTZ	AT,R0,+more
+91C297FF	*LBU	V0,97FF (T6)	;V0=offset in flag register
+00220821	*ADDU	AT,AT,V0	;AT=bitflag#
+24020001	*ADDIU	V0,R0,0001
+00220804	*SLLV	AT,V0,AT	;AT=1<<bitflag#
+95E2B540	*LHU	V0,B540 (T7)
+00221026	*XOR	V0,V0,AT	;toggle bitflag
+1000000F	*BEQ	R0,R0,+return
+A5E2B540	*SH	V0,B540 (T7)
+//	special scenario triggers
+//7F0149F8	49528	YOLX
+81C197CB	*LB	AT,97CB (T6)	;AT=bitflag selected (-1 is none)
+14200008	*BNE	AT,R0,+more	;0=YOLX redirect
+3C048005	*LUI	A0,8005
+2484839F	*ADDIU	A0,A0,839F
+00112825	*OR	A1,R0,S1
+2406000B	*ADDIU	A2,R0,000B	;1-10 lives
+0FC04F5F	*JAL	7F013D7C	;generic thingy advance::min
+24070001	*ADDIU	A3,R0,0001
+10000005	*BEQ	R0,R0,+return
+00000000	NOP
+//	any other scenarios go here
+//7F014A20:	team setup redirect
+04200003	*BLTZ	AT,R0,+more	;1=team redirect (-1 is none)
+24040014	*ADDIU	A0,R0,0014	;A0=14: team setup
+0FC06975	*JAL	7F01A5D4	;set to menu A0 to mode A1
+00002825	*OR	A1,R0,R0	;A1=0: current
+//7F014A30:	return
+8FBF0024	LW	RA,0024 (SP)
+8FB00018	LW	S0,0018 (SP)
+8FB1001C	LW	S1,001C (SP)
+8FB20020	LW	S2,0020 (SP)
+03E00008	JR	RA
+27BD0030	ADDIU	SP,SP,0030
+	
+
+	
++_+
+
+7F013D78	488A8	generic thingy advance
+	accepts: A0=p->value, A1=inc/decrement, A2=maximum value, A3=minimum value (opt., def=0)
+	fries: AT
+00003825	OR	A3,R0,R0
+//7F013D7C	488AC	set your minimum
+90820000	LBU	V0,0000 (A0)
+00451021	ADDU	V0,V0,A1
+0046082A	SLT	AT,V0,A2	;TRUE if new value < max
+50200001	BEQL	AT,R0,+1
+00071025	OR	V0,R0,A3
+0047082A	SLTU	AT,V0,A3	;TRUE if new value < min
+54200001	BNEL	AT,R0,+1
+00C61021	ADDU	V0,A2,A1
+03E00008	JR	RA
+A0820000	SB	V0,0000 (A0)
+
++_+
+
+Must revise "end of game" condition for You Only Live Twice
+
+REVISION:
+//7F0BEFB8:	F3AE8	You Only Live Twice
+0FC051D7	JAL	7F01475C	;RETURNS V0=scenario
+24030001	ADDIU	V1,R0,0001
+3C0F8005	-LUI	T7,8005
+10400086	BEQ	V0,R0,7F0BF1E0	;branch if not "You Only Live Twice"
+8DEF8374	LW	T7,8374 (T7)
+11E00084	BEQ	T7,R0,7F0BF1E0	;branch if game running
+00006825	-OR	T5,R0,R0	;T5=0	iterate!
+0FC26919	-JAL	7F09A464	;V0=#players
+00003025	-OR	A2,R0,R0	;A2=0	total fools deceased
+244AFFFF	*ADDIU	T2,V0,FFFF	;T2=V0=#PLAYERS-1, so 0-3 instead of 1-4
+0FC04117	JAL	7F01045C	;#lives (YOLT)
+3C188008	-LUI	T8,8008
+0002C825	*OR	T9,V0,R0	;T9=#lives
+00007825	*OR	T7,R0,R0	;T7 reserved for dead player flags
+//7F0BEFF0:	F3B20
+8F029EE0	-LW	V0,9EE0 (T8)	;T8=p->BONDdata
+1040000A	*BEQ	V0,R0,+recycle
+27180004	*ADDIU	T8,T8,0004	;T8+=4	next BONDdata pointer
+//	grab each player's #deaths
+8C4529D8	*LW	A1,29D8 (V0)	;A1=0	current deaths
+8C4229DC	*LW	V0,29DC (V0)	;#suicides
+00A22821	*ADDU	A1,A1,V0	;A1=total deaths
+00B9102B	*SLTU	V0,A1,T9	;TRUE if deaths < lives
+14400004	*BNE	V0,R0,+recycle	;branch if they're still alive
+//	I see dead people	tell interpretter to look at them
+24030001	*ADDIU	V1,R0,0001
+24C60001	*ADDIU	A2,A2,0001	;A2++	one more poor soul
+01A31804	*SLLV	V1,V1,T5	;1<<count
+006F7825	*OR	T7,T7,V1	;update T7 flags
+//	recycle
+01AA102A	*SLT	V0,T5,T2	;TRUE if not all players tested (# < TOTAL)
+1440FFF2	*BNE	V0,R0,7F0BEFF0	;loop for each player slot
+25AD0001	*ADDIU	T5,T5,0001	;T5++	count++
+//
+//	interpret
+00062825	-OR	A1,A2,R0	;A1=total of very dead players, used below
+00006825	-OR	T5,R0,R0	;T5=0	iterate!
+3C188008	-LUI	T8,8008
+27039EF0	*ADDIU	V1,9EF0 (T8)	;V1=p->pl1 stats
+//	loop for each dead player
+01AF0806	*SRLV	AT,T7,T5	;AT=flags>>count
+30210001	*ANDI	AT,AT,0001	;TRUE if flag set
+1020000D	*BEQ	AT,R0,+loopdeloo
+000D1080	*SLL	V0,T5,0x2	;V0=count->offset
+//	deal with dead guy
+90610068	*LBU	AT,0068 (V1)
+50200001	*BEQL	AT,R0,+1	;if not set, set order of death.  should allow ties...
+A0660068	*SB	A2,0068 (V1)
+//	determine how dead they are...
+00581021	*ADDU	V0,T8,V0
+8C429EE0	*LW	V0,9EE0 (V0)	;p->player's BONDdata
+8C410424	*LW	AT,0424 (V0)
+10200005	*BEQ	AT,R0,+loopdeloo
+8C410428	*LW	AT,0428 (V0)
+10200003	*BEQ	AT,R0,+loopdeloo
+8C4103E4	*LW	AT,03E4 (V0)	;AT= (float) fade timer.  -1 is finished, and negative floats set leading bit!
+04220001	*BLTZL	AT,+1
+//	addum
+24A50001	*ADDIU	A1,A1,0001	;A1--	keeps count of only completely dead individuals
+//	loopdeloo
+24630070	*ADDIU	V1,V1,0070	;next player's stats
+15AAFFEE	*BNE	T5,T2,-deceased
+25AD0001	*ADDIU	T5,T5,0001
+//
+//fix for teams.  if set, detect if only one team left and falsely trigger end
+0FC051D7	JAL	7F01475C	;RETURNS V0=scenario
+24030002	ADDIU	V1,R0,0002
+10400010	BEQ	V0,R0,+EOM
+00006825	-OR	T5,R0,R0	;T5=0	iterate!
+00003825	-OR	A0,R0,R0	;A0=0	living player team flags
+2402FFFF	-ADDIU	V0,R0,FFFF	;V0=-1	#players on team, -1
+//7F0BF0A0:	living team flags
+01AF0806	*SRLV	AT,T7,T5	;AT=flags>>count
+30210001	*ANDI	AT,AT,0001	;TRUE if flag set
+14200006	*BNE	AT,R0,+next
+93019F59	*LBU	AT,9F59 (T8)	;AT=team flag
+30210007	*ANDI	AT,AT,0007
+50800001	BEQL	A0,R0,+1	;if default, set to current
+00012025	OR	A0,AT,R0
+14810005	BNE	A0,AT,+EOM	;if current and previous don't match, fail
+24420001	ADDIU	V0,V0,0001	;#players on team++
+//	next + falsify
+27180070	*ADDIU	T8,T8,0070	;next player's stats
+15AAFFF5	*BNE	T5,T2,-deceased
+25AD0001	*ADDIU	T5,T5,0001
+//	if made it this far, must be same team
+01425023	SUBU	T2,T2,V0	;#players-1 - #"identical" players on team
+//7F0BF1CC:	test if end of match
+00CA082A	*SLT	AT,A2,T2	;TRUE if dead people < #players-1
+14200003	BNEZ	AT,+3	;branch if T5 < (V0-1)
+00AA102A	*SLT	V0,A1,T2	;TRUE if #very dead < #players-1
+0FC30948	JAL	7F0C2520	;stop play
+00000000	NOP
+14400003	BNEZ	V0,+3
+00000000	NOP
+0FC3094C	JAL	7F0C2530
+00002025	OR	A0,R0,R0
+
++_+
+
+7F014C88	V0=player A0's scenario flag; fries T6
+Team Setup Menu Initializer
+
+Team Setup Menu constructor
+7F015138	49C68	Menu 14 Constructor: Team Setup
+	accepts: A0=@display list target
+27BDFFC0	ADDIU	SP,SP,FFC0
+AFBF003C	SW	RA,003C (SP)
+AFB3002C	SW	S3,002C (SP)
+AFB20028	SW	S2,0028 (SP)
+AFB10024	SW	S1,0024 (SP)
+//7F01514C:	set up screen
+0FC0551E	JAL	7F015478	;quad-screen
+AFB00020	SW	S0,0020 (SP)
+0FC040A4	JAL	7F010290	;V0=selected #players
+00028025	OR	S0,V0,R0
+00028825	OR	S1,V0,R0	;S1=#players
+00009825	OR	S3,R0,R0	;S3=count
+//7F015164:	first thing - set the scissor for window
+00132825	OR	A1,S3,R0
+0FC054FD	JAL	7F0153F4	;set scissors to region
+00102025	OR	A0,S0,R0
+00028025	OR	S0,V0,R0
+//7F015174:	get box colour
+3C0E8003	LUI	T6,8003
+01C57021	ADDU	T6,T6,A1
+91D2B560	LBU	S2,B560 (T6)	;S2=team selection
+240500B4	ADDIU	A1,R0,00B4
+0FC054F1	JAL	7F0153C4	;V0=RGBA from 3bit colour
+32440007	*ANDI	A0,S2,0007
+AFA20014	SW	V0,0014 (SP)	;SP+14=RGBA
+//7F015190:	if this works, the scissors will clip it for you!
+00102025	OR	A0,S0,R0
+24050026	ADDIU	A1,R0,0026	;A1=ulx
+2406001E	ADDIU	A2,R0,001E	;A2=uly
+24070184	ADDIU	A3,R0,0184	;A3=lrx
+24020136	ADDIU	V0,R0,0136
+0FC2B405	JAL	7F0AD014	;draw coloured box
+AFA20010	SW	V0,0010 (SP)	;SP+10=lry
+//7F0151AC:	49CDC	display text while unselected
+00028025	OR	S0,V0,R0	;S0=DL
+3C018007	+LUI	AT,8007
+90219740	+LBU	AT,9740 (AT)	;selection flags
+02610807	+SRAV	AT,AT,S3
+30220001	*ANDI	V0,AT,0001
+1440001D	BNE	V0,R0,+loopus
+//7F0151B8:	figure out text offset
+2A2B0003	SLTI	T3,S1,0003
+0FC30776	JAL	7F0C1DD8	;ret V0=p->text A0
+34049C58	ORI	A0,R0,9C58	;A0="Select Teams"
+AFA20030	SW	V0,0030 (SP)	;SP+50= p->text
+55600002	BNEL	T3,R0,+2
+3405015B	ORI	A1,R0,015B	;1-2 player region width
+340500AA	ORI	A1,R0,00AA	;3-4 player region width
+34060087	ORI	A2,R0,0087	;region height
+//	determine position while the variables still exist
+01731024	AND	V0,T3,S3	;TRUE if player 2 in a 2-player stint
+340B0028	ORI	T3,R0,0028	;T3=default x pos
+54400008	BNEL	V0,R0,+8
+340200AE	ORI	V0,R0,00AE
+32620001	ANDI	V0,S3,0001
+54400001	BNEL	V0,R0,+1
+340B00D9	ORI	T3,R0,00D9
+32620002	ANDI	V0,S3,0002
+54400002	BNEL	V0,R0,+2
+340200AE	ORI	V0,R0,00AE
+34020020	ORI	V0,R0,0020
+AFAB0034	SW	T3,0034 (SP)	;SP+54: x pos
+AFA20038	SW	V0,0038 (SP)	;SP+58: y pos
+//	get the offets for text
+0FC054D6	JAL	7F015358	;center text to region	;A0=xoffset, A1=yoffset
+8FA40030	LW	A0,0030 (SP)	;p->text
+//	write text
+8FA60034	LW	A2,0034 (SP)
+00C42021	ADDU	A0,A2,A0
+8FA60038	LW	A2,0038 (SP)
+00C52821	ADDU	A1,A2,A1
+0FC046B5	JAL	7F011AD4	;display::black
+8FA70030	LW	A3,0030 (SP)
+//	loopus
+26730001	ADDIU	S3,S3,0001	;playercount++
+1671FFC9	BNE	S3,S1,-scissors	;loop while more players
+//	return
+8FB20028	LW	S2,0028 (SP)
+8FB3002C	LW	S3,002C (SP)
+8FB10024	LW	S1,0024 (SP)
+0FC2B3BC	JAL	7F0ACEF0	;combiner: bayer, lod, perspective.  Necessary?
+00102025	OR	A0,S0,R0
+8FB00020	LW	S0,0020 (SP)
+8FBF003C	LW	RA,003C (SP)
+03E00008	JR	RA
+27BD0040	ADDIU	SP,SP,0040
+
+
+7F015358	49E88	generic center text in region (width x height)
+	accepts: A0=p->text, A1=width, A2=height
+	returns: A0=xpos, A1=ypos
+	fries: A0,A1,A2,A3,T6
+27BDFF30	ADDIU	SP,SP,FF30
+AFBF0064	SW	RA,0064 (SP)
+00052843	SRA	A1,A1,0x1	;width/2
+AFA50040	SW	A1,0040 (SP)
+00063043	SRA	A2,A2,0x1	;height/2
+AFA60044	SW	A2,0044 (SP)
+//
+00043025	OR	A2,A0,R0
+27A500A0	ADDIU	A1,SP,00A0	;A1=@width
+27A400A4	ADDIU	A0,SP,00A4	;A0=@height
+3C078004	LUI	A3,8004
+8CEE0EB4	LW	T6,0EB4 (A3)
+AFAE0010	SW	T6,0010 (SP)
+8CE70EB8	LW	A3,0EB8 (A3)
+0FC2BA63	JAL	7F0AE98C	;proportions of string A2
+AFA00014	SW	R0,0014 (SP)
+//7F015394:
+8FA40040	LW	A0,0040 (SP)	;width/2
+8FAE00A0	LW	T6,00A0 (SP)	;txtwidth
+000E7043	SRA	T6,T6,0x1
+008E2023	SUBU	A0,A0,T6
+8FA50044	LW	A1,0044 (SP)	;height/2
+8FAE00A4	LW	T6,00A4 (SP)	;txtheight
+000E7043	SRA	T6,T6,0x1
+00AE2823	SUBU	A1,A1,T6
+//	return
+8FBF0064	LW	RA,0064 (SP)
+03E00008	JR	RA
+27BD00D0	ADDIU	SP,SP,00D0
+
+
+
+7F015478	49FA8	generic quad-split display
+27BDFFD0	ADDIU	SP,SP,FFD0
+AFBF002C	SW	RA,002C (SP)
+//
+0FC040A4	JAL	7F010290	;V0=selected #players
+00002825	OR	A1,R0,R0
+AFA20028	SW	V0,0028 (SP)	;SP+CC= #players
+00003025	OR	A2,R0,R0
+0C0011B4	JAL	700046D0	;setfillcolour("black")
+00003825	OR	A3,R0,R0
+0C000FBE	JAL	70003EF8	;fillrect()
+00022025	OR	A0,V0,R0
+0FC0357A	JAL	7F00D5E8
+00022025	OR	A0,V0,R0
+0FC2B366	JAL	7F0ACD98
+00022025	OR	A0,V0,R0
+//	horizontal bar
+240E00AB	ADDIU	T6,R0,00AB	;SP+10=lry
+AFAE0010	SW	T6,0010 (SP)
+240E0090	ADDIU	T6,R0,0090	;SP+14=RGBA
+AFAE0014	SW	T6,0014 (SP)
+00022025	OR	A0,V0,R0	;A0=V0: DL
+24050026	ADDIU	A1,R0,0026	;A1=ulx
+240600A9	ADDIU	A2,R0,00A9	;A2=uly
+0FC2B405	JAL	7F0AD014	;draw coloured box
+24070184	ADDIU	A3,R0,0184	;A3=lrx
+//	vertical bar
+8FA10028	LW	AT,0028 (SP)	;T8= #players
+28210003	SLTI	AT,AT,0003	;S1=TRUE if 1-2 players
+14200009	BNEZ	AT,return	;branch if 2 players
+00022025	OR	A0,V0,R0
+240500D4	ADDIU	A1,R0,00D4
+240E0148	ADDIU	T6,R0,0148	;real is 136; bottom of screen in 148
+AFAE0010	SW	T6,0010 (SP)
+240E0080	ADDIU	T6,R0,0080
+AFAE0014	SW	T6,0014 (SP)
+2406001E	ADDIU	A2,R0,001E
+0FC2B405	JAL	7F0AD014	;draw coloured box
+240700D6	ADDIU	A3,R0,00D6
+//	return V0=DL
+8FBF002C	LW	RA,002C (SP)
+03E00008	JR	RA
+27BD0030	ADDIU	SP,SP,0030
+
+
+Scissor, specific for window
+dimentions below display margins and multiplier (*4)
+horizontals:	+2C margin +2 line	+A4 between segments
+	0x2C	0xB0	0x36C
+verticals:	+1E margin, +5 line	+8C between segments, size +87
+	0x78	0x2A8
+
+7F0153F4	49F24	scissor generic menu window A0
+	accepts: A0=DL, A1=window# (0-3)
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0024	SW	RA,0024 (SP)
+//
+0FC040A4	JAL	7F010290	;V0=selected #players
+AFB00020	SW	S0,0020 (SP)
+28500003	SLTI	S0,V0,0003	;S0=TRUE if 1-2 player
+30A10001	ANDI	AT,A1,0001	;TRUE if 1/3
+00307024	AND	T6,AT,S0	;TRUE if both set
+340200A0	ORI	V0,R0,00A0	;default x
+34030080	ORI	V1,R0,0080	;default y
+55C00008	BNEL	T6,R0,+write	;if 2 players and second screen, feed it the y
+340302B8	ORI	V1,R0,02B8
+54200001	BNEL	AT,R0,+1	;if right screen, set x position
+34020364	ORI	V0,R0,0364
+30A10002	ANDI	AT,A1,0002
+54200001	BNEL	AT,R0,+1	;if lower row, set y position
+340302B8	ORI	V1,R0,02B8
+52000002	BEQL	S0,R0,+2	;if 3-4 player, set lrx spacing
+244E02A4	ADDIU	T6,V0,02A4	;T6+=A3<<2
+//write
+240E0608	ADDIU	T6,R0,0608	;T6=0x610 (184<<2)
+00021300	SLL	V0,V0,0xC
+00621025	OR	V0,V0,V1	;ulx | uly
+000E7300	SLL	T6,T6,0xC
+01C31825	OR	V1,T6,V1	;lrx | unconverted y
+2463021C	ADDIU	V1,V1,021C	;T6=lower word + y height offset (0x74<<2)
+3C01ED00	LUI	AT,ED00
+00220825	OR	AT,AT,V0
+AC810000	SW	AT,0000 (A0)	;DL+0: rdp_setscissor (U)
+AC830004	SW	V1,0004 (A0)	;DL+4: rdp_setscissor (L)
+24820008	ADDIU	V0,A0,0008
+//	return
+8FB00020	LW	S0,0020 (SP)
+8FBF0024	LW	RA,0024 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+
+7F0153C0	49EF0	convert 3bit colour to RGBA; fries T6
+	accepts: A0=RGB bits, A1=value (opt.)
+340500FF	ORI	A1,R0,00FF
+//7F0153C4	49EF4	cite your own colour
+30820001	ANDI	V0,A0,0001	;blue
+308E0002	ANDI	T6,A0,0002	;green
+000E71C0	SLL	T6,T6,0x7
+004E1025	OR	V0,V0,T6	;_gb
+308E0004	ANDI	T6,A0,0004	;red
+000E7380	SLL	T6,T6,0xE
+004E1025	OR	V0,V0,T6	;rgb
+00021200	SLL	V0,V0,0x8
+34420001	ORI	V0,V0,0001	;rgba
+00450019	MULTU	V0,A1
+03E00008	JR	RA
+00001012	MFLO	V0
+
+multi-purpose, though not implemented yet (only if required)
+//default value, alpha present
+10000003	BEQ	R0,R0,+3
+//default value, no alpha present
+340500FF	ORI	A1,R0,00FF
+//cite value, no alpha present
+00042040	SLL	A0,A0,0x1
+34840001	ORI	A0,A0,0001
+//7F0153C4	49EF4	cite value, alpha present
+30820001	ANDI	V0,A0,0002	;blue
+308E0002	ANDI	T6,A0,0004	;green
+000E7180	SLL	T6,T6,0x6
+004E1025	OR	V0,V0,T6	;_gb
+308E0004	ANDI	T6,A0,0008	;red
+000E7340	SLL	T6,T6,0xD
+004E1025	OR	V0,V0,T6	;rgb
+000211C0	SLL	V0,V0,0x7
+308E0002	ANDI	T6,A0,0004	;green
+004E1025	OR	V0,V0,T6	;rgba
+00450019	MULTU	V0,A1
+03E00008	JR	RA
+00001012	MFLO	V0
+	
+
++_+
+
+Team Setup Menu Initializer
+7F014CC0	497F0	initialize menu 14: team setup
+LUI	AT,8003
+SW	R0,A8D0 (AT)	;0->8002A8D0: reset selected flag for folder tab 1
+SW	R0,A8DC (AT)	;0->8002A8DC: reset highlight flag for folder tab 1
+SW	R0,A8D4 (AT)	;0->8002A8D4: reset selected flag for folder tab 2
+SW	R0,A8E0 (AT)	;0->8002A8E0: reset highlight flag for folder tab 2
+SW	R0,A8D8 (AT)	;0->8002A8D8: reset selected flag for folder tab 3
+LW	T6,B540 (AT)	;T6=8002B540: scenario
+SW	R0,A8E4 (AT)	;0->8002A8E4: reset highlight flag for folder tab 3
+ADDIU	SP,SP,FFE8
+ADDIU	AT,R0,0007
+BNE	T6,AT,7F014D00	;branch if not "team 2vs1"
+SW	RA,0014 (SP)
+//7F014CF0:
+ADDIU	T7,R0,0002
+LUI	AT,8007
+BEQ	R0,R0,7F014D0C
+SW	T7,9740 (AT)	;2->80069740: team setting
+//7F014D00:
+ADDIU	T8,R0,0003
+LUI	AT,8007
+SW	T8,9740 (AT)	;3->80069740: team setting
+//7F014D0C:
+LUI	AT,8003
+JAL	7F00B8AC	;loads walletbond, used to construct main menus
+SW	R0,B560 (AT)	;0->8002B560: blink register
+LW	RA,0014 (SP)
+JR	RA
+ADDIU	SP,SP,0018
+
+reorganize 7F012E30 and redirect there
+3C018007	LUI	AT,8007
+AC20974C	SW	R0,974C (AT)	;0->8006974C: reset selected flag for player 4 MP character
+AC20976C	SW	R0,976C (AT)	;0->8006976C: reset selected flag for player 4 control/heath menu
+AC209768	SW	R0,9768 (AT)	;0->80069768: reset selected flag for player 3 control/heath menu
+AC209748	SW	R0,9748 (AT)	;0->80069748: reset selected flag for player 3 MP character
+AC209764	SW	R0,9764 (AT)	;0->80069764: reset selected flag for player 2 control/heath menu
+AC209740	SW	R0,9740 (AT)	;0->80069740: reset selected flag for player 1 MP character
+AC209744	SW	R0,9744 (AT)	;0->80069744: reset selected flag for player 2 MP character
+AC209760	SW	R0,9760 (AT)	;0->80069760: reset selected flag for player 1 control/heath menu
+//	
+3C018003	LUI	AT,8003
+AC20A8D0	SW	R0,A8D0 (AT)	;0->8002A8D0: reset selected flag for folder tab 1
+AC20A8DC	SW	R0,A8DC (AT)	;0->8002A8DC: reset highlight flag for folder tab 1
+AC20A8D4	SW	R0,A8D4 (AT)	;0->8002A8D4: reset selected flag for folder tab 2
+AC20A8E0	SW	R0,A8E0 (AT)	;0->8002A8E0: reset highlight flag for folder tab 2
+AC20A8D8	SW	R0,A8D8 (AT)	;0->8002A8D8: reset selected flag for folder tab 3
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+0FC02E2B	JAL	7F00B8AC
+AC20A8E4	SW	R0,A8E4 (AT)	;0->8002A8E4: reset highlight flag for folder tab 3
+//	return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+	
+
+
+Team Setup Menu Interface
+80069740	1	current finish flags
+80069741	1	previous finish flags
+80069742	2	reserved for whatever
+
+
+7F0A4FB4	;TRUE if stick left
+7F0A4FF0	;TRUE if stick right
+do the +1/-1 with these, if neither found bail out
+then just use the generic advance with range 1-8.  should roll around to 1-7
+
+7F013D7C	;advance value
+	A0=address, A1=+/-value, A2=cap, A3=min
+
+A, Z, Start toggles 0x8 flag.
+B always untoggles 0x8 flag.
+SE if 0x8 flag changes
+
+return if all 0x8 flags are set
+
+7F014D48	49878	Menu 14 Interface: Team Setup
+27BDFFDC	ADDIU	SP,SP,FFDC
+3C014270	LUI	AT,4270
+AFBF001C	SW	RA,001C (SP)
+44816000	MTC1	AT,F12		;F12= [42700000]
+AFB20020	+SW	S2,0020 (SP)
+AFB10018	SW	S1,0018 (SP)
+0C001151	JAL	70004544
+AFB00014	SW	S0,0014 (SP)
+3C013FAB	*LUI	AT,3FAB
+0C001164	JAL	70004590
+44816000	*MTC1	AT,F12		;F12=80051AB0: 3FAB0000
+3C0142C8	LUI	AT,42C8
+44816000	MTC1	AT,F12		;F12= [42C80000]
+3C01461C	*LUI	AT,461C
+0C001194	JAL	70004650
+44817000	*MTC1	AT,F14		;F14=80051AB4: 461C0000
+0C00114D	JAL	70004534	;0->p@800232A8+24
+00002025	OR	A0,R0,R0
+//7F014D90:	construct the folder now, while there's still a chance!
+3C128007	LUI	S2,8007
+0FC054C4	JAL	7F015310
+26529740	ADDIU	S2,S2,9740
+//7F014D9C:	set up the loop!
+0FC040A4	JAL	7F010290	;V0=#players
+00008025	OR	S0,R0,R0	;S0=0: count
+2451FFFF	ADDIU	S1,V0,FFFF	;S1=#players-1 (0-3)
+92410000	LBU	AT,0000 (S2)
+A2410001	SB	AT,0001 (S2)
+//7F014DB0:	figure bitmask	A2 is safe
+24060001	ADDIU	A2,R0,0001
+02063004	SLLV	A2,A2,S0
+92470000	LBU	A3,0000 (S2)
+//7F014DBC:	detect deselection
+00102025	OR	A0,R0,S0	;A0=0: player 1
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+24054000	ADDIU	A1,R0,4000	;A1= B button
+10400002	BEQ	V0,R0,+Abutton
+00060827	NOR	AT,R0,A2
+00273824	AND	A3,AT,A3
+//7F014DD4:	detect selection
+00102025	OR	A0,R0,S0	;A0=0: player 1
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+2405B000	ADDIU	A1,R0,B000	;A1= A, Z, Start button
+54400001	BNEL	V0,R0,+1
+00C73825	OR	A3,A2,A3
+
+//7F014DE8:	change team	must follow the de/select routines
+00C72024	AND	A0,A2,A3
+14800019	*BNE	A0,R0,+loopus
+A2470000	SB	A3,0000 (S2)	;save updated flags
+//7F014DF4:	right on stick
+0FC293FC	JAL	7F0A4FF0	;V0= TRUE if A0 pressed right on stick
+00102025	OR	A0,R0,S0
+5440000C	BNEL	V0,R0,+switch
+24050001	ADDIU	A1,R0,0001
+//7F014E04:	left on stick
+0FC293ED	JAL	7F0A4FB4	;V0= TRUE if A0 pressed left on stick
+00102025	OR	A0,R0,S0
+14400007	BNE	V0,R0,+switch-1
+//7F014E14:	buttons
+00102025	OR	A0,R0,S0	;A0=0: player 1
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+24050303	ADDIU	A1,R0,0303	;A1= C right (1), + right, c left (2) + left
+1040000D	*BEQ	V0,R0,+loopus	;branch if buttons pressed
+30420101	ANDI	V0,V0,0101
+54400002	BNEL	V0,R0,+2
+24050001	ADDIU	A1,R0,0001
+2405FFFF	ADDIU	A1,R0,FFFF
+//7F014E30:	+addmendum
+3C048004	+LUI	A0,8004
+00902023	+SUBU	A0,A0,S0
+A0800ADF	+SB	R0,0ADF (A0)	;80040ADC: player 4,3,2,1
+//7F014E30:	switch
+3C048003	LUI	A0,8003
+2484B560	ADDIU	A0,A0,B560
+00902021	ADDU	A0,A0,S0
+24060008	ADDIU	A2,R0,0008
+0FC04F5F	JAL	7F013D7C
+24070001	ADDIU	A3,R0,0001
+//
+0FC05440	JAL	7F015100	;resets controller flag so you get a pressed, not constant action
+00102025	OR	A0,S0,R0
+//7F014E48:	loopus
+1611FFD4	*BNE	S0,S1,-detect
+26100001	ADDIU	S0,S0,0001
+//	read control sticks
+0FC026E1	JAL	7F009B84	;control stick tracking (necessary?)
+00000000	NOP
+//	sound effect for all selections
+92440000	LBU	A0,0000 (S2)
+92450001	LBU	A1,0001 (S2)
+10850005	BEQ	A0,A1,+backtrack
+240500C7	-ADDIU	A1,R0,00C7	;A1=SE 0C7
+3C048006	-LUI	A0,8006
+8C843720	-LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+0C002382	JAL	70008E08	;play sound A1
+00003025	OR	A2,R0,R0	;A2=NULL
+//	backtrack	use this as an oportunity to set the flags for recall
+00002025	OR	A0,R0,R0
+00002825	ADDIU	A1,R0,R0
+92460000	LBU	A2,0000 (S2)	;A2=flags
+//
+30C10001	ANDI	AT,A2,0001	;TRUE if flag set
+00812021	ADDU	A0,A0,AT
+00063043	SRA	A2,A2,0x1
+14B1FFFC	BNE	A1,S1,-count
+24A50001	ADDIU	A1,A1,0001
+//7F015104	back to scenario menu
+26310001	+ADDIU	S1,S1,0001
+14910003	BNE	A0,S1,+return
+24040013	ADDIU	A0,R0,0013	;A0=menu 13: Scenario menu
+0FC06975	JAL	7F01A5D4	;set to menu A0 to mode A1
+00002825	OR	A1,R0,R0	;A1=0: current
+//7F015124:	return
+8FBF001C	LW	RA,001C (SP)
+8FB00014	LW	S0,0014 (SP)
+8FB10018	LW	S1,0018 (SP)
+8FB20020	LW	S2,0020 (SP)
+03E00008	JR	RA
+27BD0024	ADDIU	SP,SP,0024
+
+Expecting that the controller hack will be reused a bit, this will reset when at "static" (+/- 0xC)
+7F015100:	49C30	reset left<->right pressed register for player A0
+27BDFFE4	ADDIU	SP,SP,FFE4
+AFBF0018	SW	RA,0018 (SP)
+0C00303B	JAL	7000C0EC	;V0= current position left<->right of controller A0's control stick
+AFA40014	SW	A0,0014 (SP)
+//
+24420010	ADDIU	V0,V0,0010	;allows +/-
+2C420020	SLTIU	V0,V0,0020	;allow play of +/- 0x10, which coincides with smallest detectable controller test
+8FA40014	LW	A0,0014 (SP)
+3C038004	LUI	V1,8004
+00641823	SUBU	V1,V1,A0
+54400001	BNEZL	V0,+1
+A0620ADF	SB	V0,0ADF (V1)
+//	return
+8FBF0018	LW	RA,0018 (SP)
+03E00008	JR	RA
+27BD001C	ADDIU	SP,SP,001C
+
+7F0150C8	49BF8	reset up<->down pressed register for player A0
+27BDFFE4	ADDIU	SP,SP,FFE4
+AFBF0018	SW	RA,0018 (SP)
+0C00307F	JAL	7000C1FC	;V0= current position up<->down of controller A0's control stick
+AFA40014	SW	A0,0014 (SP)
+//
+24420010	ADDIU	V0,V0,0010	;allows +/-
+2C420020	SLTIU	V0,V0,0020	;allow play of +/- 0x10, which coincides with smallest detectable controller test
+8FA40014	LW	A0,0014 (SP)
+3C038004	LUI	V1,8004
+00641823	SUBU	V1,V1,A0
+54400001	BNEZL	V0,+1
+A0620AE3	SB	V0,0AE3 (V1)
+//	return
+8FBF0018	LW	RA,0018 (SP)
+03E00008	JR	RA
+27BD001C	ADDIU	SP,SP,001C
+
+these are MP in-game menu controller state routines
+7F0C1EF8	F6A28	V0=TRUE if player A0 pressed right
+	ADDIU	SP,SP,FFE0
+	SLL	A0,A0,0x18
+	SW	RA,0014 (SP)
+	SRA	T6,A0,0x18	;T6=player# & FF
+	OR	A0,T6,R0	;A0=player#
+	SW	T6,0018 (SP)	;SP+18=player#
+	ADDIU	A1,R0,FFFE	;A1=range left
+	JAL	7000C4B4	;V0=horz.control stick state
+	ADDIU	A2,R0,0001	;A2=range right
+	LW	A0,0018 (SP)	;A0=player#
+	SW	V0,001C (SP)	;SP+1C= horz.state
+	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+	ADDIU	A1,R0,0101	;A1=c right, + right
+	BNEZ	V0,7F0C1F58	;return true if pressed
+	LW	RA,0014 (SP)
+	LW	T7,001C (SP)	;T7=horz.state
+	LUI	T8,8008
+	OR	V0,R0,R0	;V0=FALSE
+	BLEZ	T7,7F0C1F60	;return false if left
+	NOP
+	LW	T8,A0B0 (T8)	;T8=p->BONDdata
+	LW	T9,29D0 (T8)	;T9=BONDdata+29D0: press register
+	BEQ	T9,R0,7F0C1F60	;return FALSE if press register reset
+	NOP
+//7F0C1F58:	return TRUE
+	BEQ	R0,R0,7F0C1F60
+	ADDIU	V0,R0,0001	;V0=TRUE
+//7F0C1F60:	return
+	JR	RA
+	ADDIU	SP,SP,0020
+
+7F0C1F68	F6A98	V0=TRUE if player A0 pressed left
+	ADDIU	SP,SP,FFE0
+	SLL	A0,A0,0x18
+	SW	RA,0014 (SP)
+	SRA	T6,A0,0x18	;T6=player# & FF
+	OR	A0,T6,R0	;A0=player#
+	SW	T6,0018 (SP)	;SP+18=player#
+	ADDIU	A1,R0,FFFE	;A1=range left
+	JAL	7000C4B4	;V0=horz.control stick state
+	ADDIU	A2,R0,0001	;A2=range right
+	LW	A0,0018 (SP)	;A0=player#
+	SW	V0,001C (SP)	;SP+1C= horz.state
+	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+	ADDIU	A1,R0,0202	;A1=c left, + left
+	BNEZ	V0,7F0C1FCC	;return true if pressed
+	LW	RA,0014 (SP)
+	LW	T7,001C (SP)	;T7=horz.state
+	LUI	T8,8008
+	OR	V0,R0,R0	;V0=FALSE
+	SLTI	AT,T7,FFFF	;TRUE if state < -1
+	BEQ	AT,R0,7F0C1FD4	;return false if right
+	NOP
+	LW	T8,A0B0 (T8)	;T8=p->BONDdata
+	LW	T9,29D0 (T8)	;T9=BONDdata+29D0: press register
+	BEQ	T9,R0,7F0C1FD4	;return FALSE if press register reset
+	NOP
+//7F0C1FCC:	return TRUE
+	BEQ	R0,R0,7F0C1FD4
+	ADDIU	V0,R0,0001	;V0=TRUE
+//7F0C1FD4:	return
+	JR	RA
+	ADDIU	SP,SP,0020
+
+REDIRECT
+7F0C1F68	->	7F0C1F04
+0FC307DA	->	0FC307C1
+
+joint routine...
+7F0C1EF8	F6A28	V0=TRUE if player A0 pressed right
+24050001	ADDIU	A1,R0,0001
+10000003	BEQ	R0,R0,+3
+34020101	ORI	V0,R0,0101
+//7F0C1F04:	F6A34	V0=TRUE if player A0 pressed left
+34020202	ORI	V0,R0,0202
+2405FFFE	ADDIU	A1,R0,FFFE
+//7F0C1F0C:	F6A3C	generic
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0014	SW	RA,0014 (SP)
+AFA40018	SW	A0,0018 (SP)	;SP+18= player#
+AFA2001C	SW	V0,001C (SP)	;SP+1C= button mask
+AFA50020	SW	A1,0020 (SP)	;SP+20= controller state
+//7F0C1F20:	F6A50	pull state and test it
+2405FFFE	ADDIU	A1,R0,FFFE	;A1=range left
+0C00312D	JAL	7000C4B4	;V0=horz.control stick state
+24060001	ADDIU	A2,R0,0001	;A2=range right
+8FA50020	LW	A1,0020 (SP)	;A1=test state
+3C068008	LUI	A2,8008
+8CC6A0B0	LW	A2,A0B0 (A2)	;A2=p->BONDdata
+14450002	BNE	V0,A1,+buttons
+8CC229D0	LW	V0,29D0 (A2)	;V0=BONDdata+29D0: press register
+14400005	BNE	V0,R0,+return
+//7F0C1F44:	F6A74	test buttons if stick silly
+8FA40018	LW	A0,0018 (SP)	;A0=player#
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+8FA5001C	LW	A1,001C (SP)	;A1=button mask
+2C420001	SLTIU	V0,V0,0001	;V0=TRUE if nothing pressed
+38420001	XORI	V0,V0,0001	;V0=TRUE if something pressed
+//7F0C1F58:	F6A88	return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+
+duplicate and change jump/registers to do up/down	
+7F0C1F64	F6A94	V0=TRUE if player A0 pressed up
+24050001	ADDIU	A1,R0,0001
+10000003	BEQ	R0,R0,+3
+34020808	ORI	V0,R0,0808
+//7F0C1F70:	F6AA0	V0=TRUE if player A0 pressed down
+34020404	ORI	V0,R0,0404
+2405FFFE	ADDIU	A1,R0,FFFE
+//7F0C1F0C:	F6A3C	generic
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0014	SW	RA,0014 (SP)
+AFA40018	SW	A0,0018 (SP)	;SP+18= player#
+AFA2001C	SW	V0,001C (SP)	;SP+1C= button mask
+AFA50020	SW	A1,0020 (SP)	;SP+20= controller state
+//7F0C1F20:	F6A50	pull state and test it
+2405FFFE	ADDIU	A1,R0,FFFE	;A1=range left
+0C00314A	JAL	7000C528	;V0=vert.control stick state
+24060001	ADDIU	A2,R0,0001	;A2=range right
+8FA50020	LW	A1,0020 (SP)	;A1=test state
+3C068008	LUI	A2,8008
+8CC6A0B0	LW	A2,A0B0 (A2)	;A2=p->BONDdata
+14450002	BNE	V0,A1,+buttons
+8CC229D0	LW	V0,29D0 (A2)	;V0=BONDdata+29D0: press register
+14400005	BNE	V0,R0,+return
+//7F0C1F44:	F6A74	test buttons if stick silly
+8FA40018	LW	A0,0018 (SP)	;A0=player#
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+8FA5001C	LW	A1,001C (SP)	;A1=button mask
+2C420001	SLTIU	V0,V0,0001	;V0=TRUE if nothing pressed
+38420001	XORI	V0,V0,0001	;V0=TRUE if something pressed
+//7F0C1F58:	F6A88	return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+
+Could always combine the two of them...
+7F0C1EF8	F6A28	V0=TRUE if player A0 pressed right
+24050001	ADDIU	A1,R0,0001
+34020101	ORI	V0,R0,0101
+10000009	BEQ	R0,R0,+9
+//7F0C1F04:	F6A34	V0=TRUE if player A0 pressed left
+3406C4B4	ORI	A2,R0,C4B4
+10000006	BEQ	R0,R0,+generic-1
+34020202	ORI	V0,R0,0202
+//7F0C1F10:	F6A40	V0=TRUE if player A0 pressed up
+24050001	ADDIU	A1,R0,0001
+34020808	ORI	V0,R0,0808
+10000003	BEQ	R0,R0,+3
+//7F0C1F1C:	F6A4C	V0=TRUE if player A0 pressed down
+3406C528	ORI	A2,R0,C528
+34020404	ORI	V0,R0,0404
+2405FFFE	ADDIU	A1,R0,FFFE
+//7F0C1F28:	F6A58	generic
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0014	SW	RA,0014 (SP)
+AFA40018	SW	A0,0018 (SP)	;SP+18= player#
+AFA2001C	SW	V0,001C (SP)	;SP+1C= button mask
+AFA50020	SW	A1,0020 (SP)	;SP+20= controller state
+3C027000	+LUI	V0,7000
+00461025	+OR	V0,V0,A2
+//7F0C1F44:	F6A74	pull state and test it
+2405FFFE	ADDIU	A1,R0,FFFE	;A1=range left
+0040F809	*JALR	RA,V0
+24060001	ADDIU	A2,R0,0001	;A2=range right
+8FA50020	LW	A1,0020 (SP)	;A1=test state
+3C068008	LUI	A2,8008
+8CC6A0B0	LW	A2,A0B0 (A2)	;A2=p->BONDdata
+14450002	BNE	V0,A1,+buttons
+8CC229D0	LW	V0,29D0 (A2)	;V0=BONDdata+29D0: press register
+14400005	BNE	V0,R0,+return
+//7F0C1F68:	F6A98	test buttons if stick silly
+8FA40018	LW	A0,0018 (SP)	;A0=player#
+0C0030EB	JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+8FA5001C	LW	A1,001C (SP)	;A1=button mask
+2C420001	SLTIU	V0,V0,0001	;V0=TRUE if nothing pressed
+38420001	XORI	V0,V0,0001	;V0=TRUE if something pressed
+//7F0C1F7C:	F6AAC	return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+//7F0C1F88:	F6AB8
+
++_+
+
+Since at least three menus use this, make a generic routine
+//7F015310:	49E40	construct folder backdrop
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFB00020	SW	S0,0020 (SP)
+AFBF0024	SW	RA,0024 (SP)
+//
+3C108003	-LUI	S0,8003
+2610A95C	-ADDIU	S0,S0,A95C	;S0=8002A95C
+0FC02DC9	JAL	7F00B724	;disable all switches in object A0 (hide all)
+8E040000	LW	A0,0000 (S0)	;A0=8002A95C: p->object instance
+8E040000	LW	A0,0000 (S0)	;A0=8002A95C: p->object instance
+00002825	OR	A1,R0,R0	;A1=0: item #: tabs on side of folder
+0FC02DF0	JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+24060001	ADDIU	A2,R0,0001	;A2=1: visible
+8E040000	LW	A0,0000 (S0)	;A0=8002A95C: p->object instance
+2405002A	ADDIU	A1,R0,002A	;A1=2A: 
+0FC02DF0	JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+24060001	ADDIU	A2,R0,0001	;A2=1: visible
+//
+8FB00020	LW	S0,0020 (SP)
+8FBF0024	LW	RA,0024 (SP)
+03E00008	JR	RA
+27BD0028	ADDIU	SP,SP,0028
+
++_+
+
+Strange controller command modifiers
+7F0A4F50	D9A80	V0= TRUE if holding at least 0x2E left on control stick
+00002025	*OR	A0,R0,R0	;player 1
+//7F0A4F54	D9A84	A0=controller#
+AFBFFFFC	*SW	RA,FFFC (SP)	;SP+14=RA
+0C00303B	JAL	7000C0EC
+27BDFFE8	*ADDIU	SP,SP,FFE8
+
+7F0A4F74	D9AA4	V0= TRUE if holding at least 0x2E right on control stick
+00002025	*OR	A0,R0,R0	;player 1
+//7F0A4F78	D9A98	A0=controller#
+AFBFFFFC	*SW	RA,FFFC (SP)	;SP+14=RA
+0C00303B	JAL	7000C0EC
+27BDFFE8	*ADDIU	SP,SP,FFE8
+
+7F0A4FB0	D9AE0	V0= TRUE if pressed left on control stick (0x2E)
+00002025	*OR	A0,R0,R0
+//7F0A4FB4	D9BE4	A0=controller#
+27BDFFE8	*SW	RA,FFFC (SP)
+AFBF0014	*ADDIU	SP,SP,FFE8
+0FC293D5	*JAL	7F0A4F54
+27FF0038	*ADDIU	RA,RA,0038
+(zeroes to next function)
+
+7F0A4FEC	D9B1C	V0= TRUE if pressed right on control stick (0x2E)
+00002025	*OR	A0,R0,R0
+//7F0A4FF0	D9B20	A0=controller#
+AFBFFFFC	*SW	RA,FFFC (SP)
+0FC293DE	*JAL	7F0A4F78
+27BDFFE8	*ADDIU	SP,SP,FFE8
+
+did the same to the other upsy-downsy types
+
+copy team settings into playerdata	(stats+69)
+
+try using these
+7F0C1EF8	right
+7F0C1F68	left
+
++_+
+	
+
+MP radar overlay, generic.
+Team colour fills box
+Outer box changes with collectables
+GG is orange border, Flag blue border
+
+as per scenario flags:
+80	outer: purple	FF80FF
+40	outer: red	FF4080
+20	outer: orange	FF8040
+10	outer: blue	4040C0
+08	outer: green	408040
+07	inner: team colour as defined
+
+base transparency is 60.  double it when same character
+
+
+7F0C6090	FABC0	display positions on MP radar
+	accepts: A0=p->display list
+27BDFF78	ADDIU	SP,SP,FF78
+AFBF006C	SW	RA,006C (SP)
+AFB70068	SW	S7,0068 (SP)
+AFB60064	SW	S6,0064 (SP)
+AFB50060	SW	S5,0060 (SP)
+AFB4005C	SW	S4,005C (SP)
+AFB30058	SW	S3,0058 (SP)
+AFB20054	SW	S2,0054 (SP)
+AFB10050	SW	S1,0050 (SP)
+AFB0004C	SW	S0,004C (SP)
+F7BE0040	SDC1	F30,0040 (SP)
+F7BC0038	SDC1	F28,0038 (SP)
+F7BA0030	SDC1	F26,0030 (SP)
+F7B80028	SDC1	F24,0028 (SP)
+F7B60020	SDC1	F22,0020 (SP)
+F7B40018	SDC1	F20,0018 (SP)
+//7F0C60D0:
+0FC051D6	JAL	7F014758	;V0=scenario
+AFA40088	SW	A0,0088 (SP)	;SP+88= DL
+0FC26C54	JAL	7F09B150	;V0=8007A0B8: cur.player#
+0040A025	OR	S4,V0,R0	;S4=V0: scenario
+0FC26919	JAL	7F09A464	;V0=#players
+AFA20070	SW	V0,0070 (SP)	;SP+70= cur.player#
+24010001	ADDIU	AT,R0,0001
+5041----	*BEQL	V0,AT,7F0C6374	;return if solo
+8FA20088	-LW	V0,0088 (SP)
+AFA20074	SW	V0,0074 (SP)	;SP+74= #players
+//7F0C60FC:	multiplayer
+3C178008	LUI	S7,8008
+26F7A0B0	ADDIU	S7,S7,A0B0	;S7=8008A0B0: p->BONDdata
+8EE20000	LW	V0,0000 (S7)
+8C4E29C4	LW	T6,29C4 (V0)	;T6=BONDdata+29C4: menu activated
+55C0----	*BNEZL	T6,7F0C6374	;return if set
+8FA20088	-LW	V0,0088 (SP)
+8C4F00D8	LW	T7,00D8 (V0)	;T7=SP+0x50
+55E0----	*BNEL	T7,R0,7F0C6374
+8FA20088	-LW	V0,0088 (SP)
+//7F0C6128:	test if no radar
+0FC249EF	JAL	7F0927BC	;V0= TRUE if cheat A0 activated for cur.player
+24040017	ADDIU	A0,R0,0017	;A0=17: "No Radar (Multi)" cheat
+5440----	BNEL	V0,R0,7F0C6374	;continue if radar present
+8FA20088	-LW	V0,0088 (SP)
+//7F0C6140:
+0C001145	JAL	70004514	;V0= [p@800232A8+20]
+00000000	NOP
+00028400	SLL	S0,V0,0x10
+0010C403	SRA	T8,S0,0x10
+0C001127	JAL	7000449C	;V0= [p@800232A8+1C]
+03008025	OR	S0,T8,R0
+0050A821	ADDU	S5,V0,S0
+0C001149	JAL	70004524	;V0= [p@800232A8+22]
+26B5FFD7	ADDIU	S5,S5,FFD7	;S5-=0x29: x position
+8FB90074	LW	T9,0074 (SP)	;T9=#players
+2456001A	ADDIU	S6,V0,001A	;S6=V0+1A: y position
+27A40088	ADDIU	A0,SP,0088
+2B210003	SLTI	AT,T9,0003	;TRUE if 2 player
+14200005	BNEZ	AT,7F0C6190	;branch if 2 player
+3C058009	LUI	A1,8009
+8FA90070	LW	T1,0070 (SP)	;T1=SP+70: cur.player#
+312A0001	ANDI	T2,T1,0001	;T2= TRUE if player 2 or 4 (right side of screen)
+55400001	*BEQL	T2,R0,7F0C6190
+26B5000F	-ADDIU	S5,S5,000F
+//7F0C6190:	insert radar backdrop
+00153025	OR	A2,S5,R0
+00163825	+OR	A3,S6,R0
+8CA5D12C	LW	A1,D12C (A1)	;A1=8008D12C: radar backdrop
+34010200	ORI	AT,R0,0200
+AFA10010	SW	AT,0010 (SP)
+340100A0	ORI	AT,R0,00A0
+0FC0466C	JAL	7F0119B0	;insert image
+AFA10014	SW	AT,0014 (SP)
+//7F0C61B0:	draw the radar to screen
+
+alternate insert radar backdrop
+//7F0C6190:
+24060002	ADDIU	A2,R0,0002
+AFA60010	SW	A2,0010 (SP)
+8CA5D12C	LW	A1,D12C (A1)	;A1=8008D12C: radar backdrop
+0FC1DB5A	JAL	7F076D68	;append image to p->DL A0 using image declaration A1
+00003825	OR	A3,R0,R0
+0FC2B366	JAL	7F0ACD98	;microcode
+8FA40088	LW	A0,0088 (SP)
+//7F0C61B0:	set combiner
+3C09FCFF	LUI	T1,FCFF
+3C0AFF65	LUI	T2,FF65
+3529B3FF	ORI	T1,T1,B3FF	;T5=FCFFB3FF: 
+354AFEFF	ORI	T2,T2,FEFF	;T6=FF65FEFF: 
+AC490000	SW	T1,0000 (V0)
+AC4A0004	SW	T2,0004 (V0)
+//7F0C61D0:	set foreground colour
+3C09FA00	LUI	T1,FA00
+240A00A0	ADDIU	T2,R0,00A0	;T1=000000A0:	fg colour	[black]
+AC490008	SW	T1,0008 (V0)	;DL+0= rdp_setprimcolour (U)
+AC4A000C	SW	T2,000C (V0)	;DL+4= rdp_setprimcolour (L)
+//7F0C61F0:	set textured rectangle
+00154880	SLL	T1,S5,0x2	;x * 4
+31290FFF	ANDI	T1,T1,0FFF
+00165080	SLL	T2,S6,0x2	;y * 4
+314A0FFF	ANDI	T2,T2,0FFF
+00094B00	SLL	T1,T1,0xC
+012A4825	OR	T1,T1,T2	;T1= x | y
+3C010004	LUI	AT,0004
+34210040	ORI	AT,AT,0040	;T2=00040040
+01215023	SUBU	T2,T1,AT	;this works properly only when set to positions > 0x10
+01214821	ADDU	T1,T1,AT	;or positions < 0x10
+3C01E400	LUI	AT,E400
+01214825	ORI	T1,T1,AT
+AC490010	SW	T1,0010 (V0)	;DL+0: rdp_texrect (U)
+AC4A0014	SW	T2,0014 (V0)	;DL+4: rdp_texrect (L)	
+;;	ADDIU	T4,S5,0010	;T4=S5+10: x position right offset
+;;	SLL	T5,T4,0x2	;T5=T4*4: upper left x
+;;	ANDI	T6,T5,0FFF
+;;	ADDIU	T9,S6,0010	;T9=S6+10: y position upper offset
+;;	SLL	T1,T9,0x2	;T1=T9*4: upper left y
+;;	SLL	T7,T6,0xC	;T7=ulx
+;;	LUI	AT,E400
+;;	OR	T8,T7,AT	;T8=texrect | ulx
+;;	ANDI	T2,T1,0FFF	;T2=uly
+;;	ADDIU	T4,S5,FFF0	;T4=S6-10: x position left offset
+;;	SLL	T5,T4,0x2	;T5=T4*4: lower right x
+;;	ADDIU	T9,S6,FFF0	;T9=S6-10: y position lower offset
+;;	SLL	T1,T9,0x2	;T1=T9*4: lower right y
+;;	ANDI	T6,T5,0FFF
+;;	OR	T3,T8,T2	;T3=texrect | ulx | uly
+;;	ANDI	T8,T1,0FFF
+;;	SLL	T7,T6,0xC	;T7=lrx
+;;	OR	T2,T7,T8	;T2=lrx | lry
+;;	SW	T2,0014 (V0)	;DL+4: rdp_texrect (L)
+;;	SW	T3,0010 (V0)	;DL+0: rdp_texrect (U)
+//7F0C6248:	second half of textured rectangle (mapping)
+3C090010	LUI	T1,0010
+35290010	ORI	T1,T1,0010	;T6=00100010: upper left s | upper left t
+AC490018	SW	T1,0018 (V0)	;DL+4: rdp_texrect_2 (U)
+;;	3C0AB400	LUI	T2,B400
+;;	AC4A0018	SW	T2,0018 (V0)	;DL+0: rsp_uc05_rdphalf_1 (U)
+;;	AC49001C	SW	T1,001C (V0)	;DL+4: rdp_texrect_2 (U)
+//7F0C6268:
+00095180	SLL	T2,T1,0x6	;T1=04000400: delta-s delta-x | delta-t delta-y
+AC4A001C	SW	T2,001C (V0)	;DL+4: rdp_texrect_2 (L)
+24490020	ADDIU	T1,V0,0020
+;;	3C09B300	LUI	T1,B300
+;;	AC490020	SW	T1,0020 (V0)	;DL+0: rsp_uc05_rdphalf_2 (U)
+;;	AC4A0024	SW	T2,0024 (V0)	;DL+4: rdp_texrect_2 (L)
+;;	24490028	ADDIU	T1,V0,0028
+AFA90088	SW	T1,0088 (SP)	;SP+88= DL
+
+
+all of this is current-player stuff that will get cut
+routine below will handle all players, including current one
+use scenario flags to determine box colours, player number comparison to determine alpha level
+//7F0C6194:	FAE8C
+8FB80074	LW	T8,0074 (SP)	;T8=#players
+00009825	OR	S3,R0,R0	;S3=0	count=0
+1B000075	*BLEZ	T8,7F0C6374	;quit if invalid
+3C014334	LUI	AT,4334
+4481F000	MTC1	AT,F30		;F30=180.0 [43340000]
+//7F0C61A8:	draw squares for players
+00135880	SLL	T3,S3,0x2
+3C048008	LUI	A0,8008
+008B2021	ADDU	A0,A0,T3
+8C849EE0	LW	A0,9EE0 (A0)	;A0=80079EE0+offset: player S3's p->BONDdata
+8C8C00D8	LW	T4,00D8 (A0)	;T4=player button control
+55800067	*BNEL	T4,R0,7F0C635C	;try next if not disabled (dead)
+8FB80074	LW	T8,0074 (SP)
+8EED0000	LW	T5,0000 (S7)	;T5=p->org.BONDdata
+8C8200A8	LW	V0,00A8 (A0)	;V0=S3's p->positiondata
+3C014180	LUI	AT,4180
+8DA300A8	LW	V1,00A8 (T5)	;V1=org p->positiondata
+C45C0008	LWC1	F28,0008 (V0)	;F28=cur.xpos
+C4520010	LWC1	F18,0010 (V0)	;F18=cur.zpos
+C4700008	LWC1	F16,0008 (V1)	;F18=org.xpos
+C46A0010	LWC1	F10,0010 (V1)	;F10=org.zpos
+44814000	MTC1	AT,F8		;F8=16.0 [41800000]
+4610E501	SUB.S	F20,F28,F16	;F20=difference in xpos
+3C01457A	LUI	AT,457A
+44818000	MTC1	AT,F16		;F16=4000.0 [457A0000]
+460A9581	SUB.S	F22,F18,F10	;F22=difference in ypos
+240E0010	ADDIU	T6,R0,0010
+448E5000	MTC1	T6,F10
+46104683	DIV.S	F26,F8,F16	;F26=16.0 / 4000.0 = 0.004
+4600A306	MOV.S	F12,F20		;F12=xdif
+4600B386	MOV.S	F14,F22		;F14=ydif
+0FC16A8C	JAL	7F05AA30	;F0=lateral rotation
+46805620	CVT.S.W	F24,F10	;F24=(float) 16.0
+//7F0C6214:	determine vector (direction + distance)
+461E0182	MUL.S	F6,F0,F30	;F6=rotation * 180.0
+3C018006	LUI	AT,8006
+C428BD20	LWC1	F8,BD20 (AT)	;F8=8005BD20: Pi
+4614A102	MUL.S	F4,F20,F20	;F4=xdif^2
+8EF90000	LW	T9,0000 (S7)	;T9=org.BONDdata
+C7300148	LWC1	F16,0148 (T9)	;F16=org.lateral rotation
+46083283	DIV.S	F10,F6,F8	;F10=rotation * 180.0/Pi	that's either into or out of radians
+4616B182	MUL.S	F6,F22,F22	;F6=ydif^2
+46062300	ADD.S	F12,F4,F6	;F12=xdif^2 + ydif^2
+46105480	ADD.S	F18,F10,F16	;F18=org.rotation + cur.rotation
+0C007DF8	JAL	7001F7E0	;F0=sqrt(F12)	distance
+461E9700	ADD.S	F28,F18,F30	;F28=org.rotation + cur.rotation + 180.0
+//7F0C6244:	determine scenario
+//as per scenario flags:	outer 40/80	inner 60/A0
+//80	outer: purple	FF80FF
+//40	outer: red	FF4080
+//20	outer: orange	FF8040
+//10	outer: blue	4040C0
+//08	outer: green	408040
+//07	inner: team colour as defined: start with defaults
+461A0082	MUL.S	F2,F0,F26	;F2=distance * 0.004
+001348C0	-SLL	T1,S3,0x3
+01334823	-SUBU	T1,T1,S3
+46001586	-MOV.S	F22,F2		;F22=distance * 0.004
+3C11FFFF	*LUI	S1,FFFF
+8FAA0070	*LW	T2,0070 (SP)	;V0=cur.player#
+36310060	*ORI	S1,S1,0060	;S1=yellow
+51530001	*BEQL	T2,S3,+1
+3631FF00	*ORI	S1,S1,FF00	;yellow->white
+//7F0C6268:	colourized radar boxes
+4618103C	C.LT.S	F2,F24
+3C0F8008	LUI	T7,8008
+25EF9EF0	ADDIU	T7,T7,9EF0
+00094900	SLL	T1,T1,0x4
+45020001	*BC1FL	+1		;branch if 0.004*distance >= 16.0
+4600C586	-MOV.S	F22,F24		;F22=F24: set to 16.0 - edge of radar
+012F1021	ADDU	V0,T1,T7	;V0=80079EF0+offset: p->cur.stats
+90580069	LBU	T8,0069 (V0)	;T8=cur.stats::scenario flags
+37020100	`ORI	V0,T8,0100	;forced cutoff
+3C037F0C	`LUI	V1,7F0C
+30410008	`ANDI	AT,V0,0008
+8C696400	`LW	T1,6400 (V1)
+00021042	`SRL	V0,V0,0x1
+1020FFFC	`BEQ	AT,R0,-4
+2463FFFC	`ADDIU	V1,V1,FFFC
+33040007	*ANDI	A0,T8,0007
+10800004	*BEQ	A0,R0,+4	;default colours
+AFA90080	*SW	T1,0080 (SP)
+//7F0C6294:	team colours
+0FC054F0	*JAL	7F0153C0	;V0=RGBA from 3bit colour
+00000000	*NOP
+2451FF61	*ADDIU	S1,V0,FF61
+//7F0C62A0:	more alpha when current player
+51530001	*BEQL	T2,S3,+1
+26310040	*ADDIU	S1,S1,0040
+//7F0C62A8:	
+don't need this stuff either
+//7F0C62A8:	FB010
+3C018006	LUI	AT,8006
+C428BD24	LWC1	F8,BD24 (AT)	;F8=8005BD24: 0.017453	Pi/180
+4608E502	MUL.S	F20,F28,F8	;rotation * radian conversion
+0FC15FAB	JAL	7F057EAC
+4600A306	MOV.S	F12,F20		;F12=F20: rotation
+46160282	MUL.S	F10,F0,F22
+4600A306	MOV.S	F12,F20
+4600540D	TRUNC.W.S	F16,F10
+440C8000	MFC1	T4,F16
+0FC15FA8	JAL	7F057EA0
+01958021	ADDU	S0,T4,S5
+//7F0C62D4:	draw black base box on radar
+//as per scenario flags:	outer 40/80	inner 60/A0
+46160482	MUL.S	F18,F0,F22
+//7F0C6340:	collected stuff box::colour
+8FA90080	*LW	T1,0080 (SP)	;V0=cur.stats::scenario flags
+51200002	+BEQL	T1,R0,+2
+34090040	ORI	T1,R0,0040
+2409FF20	+ADDIU	T1,R0,FF20
+//7F0C62F8:	correct alpha
+8FA20070	+LW	V0,0070 (SP)	;V0=cur.player#
+50530001	+BEQL	V0,S3,+1
+25290040	+ADDIU	T1,T1,0040
+AFA90014	SW	T1,0014 (SP)	;SP+14= rgba
+8FA40088	LW	A0,0088 (SP)	;A0=SP+88: DL
+2605FFFE	ADDIU	A1,S0,FFFE
+4600910D	TRUNC.W.S	F4,F18
+440E2000	MFC1	T6,F4
+26070002	ADDIU	A3,S0,0002
+01D61021	ADDU	V0,T6,S6
+24590002	ADDIU	T9,V0,0002
+00409025	OR	S2,V0,R0
+AFB90010	SW	T9,0010 (SP)
+0FC2B405	JAL	7F0AD014	;draw coloured box
+2446FFFE	ADDIU	A2,V0,FFFE
+//7F0C6334:	draw inner box on top of it
+264F0001	ADDIU	T7,S2,0001
+AFA20088	SW	V0,0088 (SP)
+AFAF0010	SW	T7,0010 (SP)
+00402025	OR	A0,V0,R0
+2605FFFF	ADDIU	A1,S0,FFFF
+2646FFFF	ADDIU	A2,S2,FFFF
+26070001	ADDIU	A3,S0,0001
+0FC2B405	JAL	7F0AD014	;draw coloured box
+AFB10014	SW	S1,0014 (SP)	;SP+14=rgba
+AFA20088	SW	V0,0088 (SP)
+//7F0C6360:	draw collected box
+8FA90080	+LW	T1,0080 (SP)
+11200008	+BEQ	T1,R0,+8
+AFB20010	+SW	S2,0010 (SP)
+00123025	+OR	A2,S2,R0
+00102825	+OR	A1,S0,R0
+00103825	+OR	A3,S0,R0
+8FA40088	+LW	A0,0088 (SP)
+0FC2B405	+JAL	7F0AD014	;draw coloured box
+AFA90014	+SW	T1,0014 (SP)	;SP+14= rgba
+AFA20088	+SW	V0,0088 (SP)
+//7F0C635C:	loop for each player
+8FB80074	LW	T8,0074 (SP)	;T8=#players
+26730001	ADDIU	S3,S3,0001	;S3++	count++
+5678FF86	BNEL	S3,T8,7F0C61A8	;loop for all players
+8FAA0070	LW	T2,0070 (SP)
+//7F0C636C:	reset combiner
+0FC2B3BC	JAL	7F0ACEF0	;set combiner: bayer, lod, perspective
+8FA40088	LW	A0,0088 (SP)	;A0=SP+88: DL
+//7F0C6374:	return
+8FBF006C	LW	RA,006C (SP)
+D7B40018	LDC1	F20,0018 (SP)
+D7B60020	LDC1	F22,0020 (SP)
+D7B80028	LDC1	F24,0028 (SP)
+D7BA0030	LDC1	F26,0030 (SP)
+D7BC0038	LDC1	F28,0038 (SP)
+D7BE0040	LDC1	F30,0040 (SP)
+8FB0004C	LW	S0,004C (SP)
+8FB10050	LW	S1,0050 (SP)
+8FB20054	LW	S2,0054 (SP)
+8FB30058	LW	S3,0058 (SP)
+8FB4005C	LW	S4,005C (SP)
+8FB50060	LW	S5,0060 (SP)
+8FB60064	LW	S6,0064 (SP)
+8FB70068	LW	S7,0068 (SP)
+03E00008	JR	RA
+27BD0088	ADDIU	SP,SP,0088
+
+place bitflag RGBA samples here:
+7F0C63EC:
+00000000	default
+408040C0	08: unregistered
+4040C0C0	10: Flag	blue
+C08000C0	20: MwtGX	orange
+FFFF80C0	40: unregistered
+FF80FFC0	80: unregistered
+
+
+buglist (so far)
+----------------
+fix team scoring so killing teammates isn't good
+
++_+
+
+TODO
+MP scoring screen, generic.
+When time scenario in use, display time on score page
+When lonely YOLT, disable display altogether
+
+7F0C3C94	F87C4	determine/display rank
+7F0C4024	watch menu page handler
+
+//7F0C45BC:	page 3--scores
+	BLEZ	T6,7F0C45F4	;branch if stupid #players
+	OR	A0,R0,R0	;A0=playercount
+	ADDIU	V1,SP,0094	;V1=SP+94: buffer for scores
+//7F0C45C8:	collect scores
+	SW	V1,0044 (SP)
+	JAL	7F0C38D8	;returns V0=score (in NSNA: V0=score, V1=time)
+	SW	A0,0090 (SP)	;SP+90= count
+	ADDU	V0,V0,V1	;V0=total score in NSNA
+	LW	V1,0044 (SP)
+	LW	A0,0090 (SP)	;A0=count
+	SW	V0,0000 (V1)
+	LW	T7,00D0 (SP)	;T7=#players
+	ADDIU	A0,A0,0001	;A0++	count++
+	BNE	A0,T7,7F0C45C8	;loop for each player
+	ADDIU	V1,V1,0004	;V1+=4	next word in buffer
+//7F0C45F4:
+	LUI	A0,8009
+	LW	A0,C704 (A0)	;A0=8008C704: TRUE when game over
+	SLTIU	T9,A0,0001	;TRUE if game running
+	BEQ	T9,R0,7F0C4618	;branch if game over
+	OR	A0,T9,R0	;A0=0
+	LUI	A0,8009
+	LW	A0,C700 (A0)	;A0=8008C700: TRUE if play stopped
+	SLTIU	T8,A0,0001	;TRUE if playing
+	OR	A0,T8,R0	;A0=!play
+//7F0C4618:	determine if displaying ranks...
+	JAL	7F0C3F5C
+	NOP
+	BEQ	V0,R0,7F0C46F4
+	ADDIU	A0,SP,00AC
+//7F0C4628:	display rank
+	JAL	7F0C3C94	;print rank of player A1 to A0
+	LW	A1,00D4 (SP)
+	LUI	T2,8004
+	LW	T2,0EAC (T2)
+	LUI	A3,8004
+	LW	A3,0EB0 (A3)
+	ADDIU	A0,SP,00BC
+	ADDIU	A1,SP,00C0
+	ADDIU	A2,SP,00AC
+	SW	R0,0014 (SP)
+	JAL	7F0AE98C	;proportions of string A2
+	SW	T2,0010 (SP)
+	JAL	70004514	;V0= [p@800232A8+20]
+	NOP
+	LW	T1,00A8 (SP)
+	LW	T4,00C0 (SP)
+	ADDU	T3,V0,T1
+	SRA	T5,T4,0x1
+	SUBU	A0,T3,T5
+	ADDIU	A0,A0,0050
+	JAL	70004524	;V0= [p@800232A8+22]
+	SW	A0,00CC (SP)
+	LW	T6,00BC (SP)
+	SRA	T7,T6,0x1
+	SUBU	T9,V0,T7
+	ADDIU	T8,T9,0025
+	JAL	7000441C	;V0= text clip width
+	SW	T8,00C8 (SP)
+	SLL	S0,V0,0x10
+	SRA	T2,S0,0x10
+	JAL	7000442C	;V0= text clip height
+	OR	S0,T2,R0
+	LUI	T1,8004
+	LUI	T4,8004
+	LW	T4,0EAC (T4)
+	LW	T1,0EB0 (T1)
+	LUI	T3,00FF
+	ORI	T3,T3,00B0	;T3=00FF00B0	font colour	[green]
+	SW	T3,0018 (SP)
+	OR	A0,S1,R0
+	ADDIU	A1,SP,00CC
+	ADDIU	A2,SP,00C8
+	ADDIU	A3,SP,00AC
+	SW	S0,001C (SP)
+	SW	V0,0020 (SP)
+	SW	R0,0024 (SP)
+	SW	R0,0028 (SP)
+	SW	T4,0014 (SP)
+	JAL	7F0ADABC	;display text (details unknown)
+	SW	T1,0010 (SP)
+	OR	S1,V0,R0
+//7F0C46F4:	display scores...
+	LUI	A0,8009
+	LW	A0,C704 (A0)	;A0=8008C704: TRUE when game over
+	SLTIU	T5,A0,0001	;!game over
+	BEQ	T5,R0,7F0C4718	;branch if game over
+	OR	A0,T5,R0	;A0=0
+	LUI	A0,8009
+	LW	A0,C700 (A0)	;A0=8008C700: TRUE if play stopped
+	SLTIU	T6,A0,0001	;!play stopped
+	OR	A0,T6,R0	;A0=!play stopped
+//7F0C4718:	determine if displaying text...
+	JAL	7F0C3FCC	;V0= TRUE if displaying score in MP menu
+	NOP
+	BEQ	V0,R0,7F0C4C50
+	NOP
+//7F0C4728:	F9258
+	*NOP
+	NOP
+	*NOP
+	JAL	7F0C1DD8	;V0=p->text A0
+	ORI	A0,R0,A01B	;A0=ID A01B: "SCORES"
+	LUI	T7,8004
+	LW	T7,0EAC (T7)	;T7=80040EAC: 
+	LUI	A3,8004
+	SW	V0,00A4 (SP)	;SP+A4= p->text
+	LW	A3,0EB0 (A3)	;A3=80040EB0: 
+	ADDIU	A0,SP,00BC
+	ADDIU	A1,SP,00C0
+	OR	A2,V0,R0
+	SW	R0,0014 (SP)
+	JAL	7F0AE98C	;proportions of string A2
+	SW	T7,0010 (SP)
+	JAL	70004514	;V0= [p@800232A8+20]
+	NOP
+	LW	T9,00A8 (SP)
+	LW	T2,00C0 (SP)
+	ADDU	T8,V0,T9
+	SRA	T1,T2,0x1
+	SUBU	A0,T8,T1
+	ADDIU	A0,A0,0050
+	JAL	70004524	;V0= [p@800232A8+22]
+	SW	A0,00CC (SP)
+	LW	T4,00BC (SP)
+	SRA	T3,T4,0x1
+	SUBU	T5,V0,T3
+	ADDIU	T6,T5,0035
+	JAL	7000441C	;V0= text clip width
+	SW	T6,00C8 (SP)
+	SLL	S0,V0,0x10
+	SRA	T7,S0,0x10
+	JAL	7000442C	;V0= text clip height
+	OR	S0,T7,R0
+	LUI	T9,8004
+	LUI	T2,8004
+	LW	T2,0EAC (T2)
+	LW	T9,0EB0 (T9)
+	LUI	T8,00FF
+	ORI	T8,T8,00B0	;T8=00FF00B0: font colour	[green]
+	SW	T8,0018 (SP)
+	OR	A0,S1,R0
+	ADDIU	A1,SP,00CC
+	ADDIU	A2,SP,00C8
+	LW	A3,00A4 (SP)
+	SW	S0,001C (SP)
+	SW	V0,0020 (SP)
+	SW	R0,0024 (SP)
+	SW	R0,0028 (SP)
+	SW	T2,0014 (SP)
+	JAL	7F0ADABC	;display monotone text
+	SW	T9,0010 (SP)
+
+//7F0C4800:	F9330
+//	everything up to here is just really messy.
+//	so begins the fun part...
+0FC051DB	*JAL	7F01476C	;V0=scenario::scoring
+00408825	OR	S1,V0,R0	;S1=V0: DL
+00021400	*SLL	V0,V0,0x10	;T6=scenario::time
+AFA20080	*SW	V0,0080 (SP)	;V1=SP+80: scenario::flags
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+//7F0C4834:	F9364
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+//7F0C485C:	team 1 (red)
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+//7F0C4878:	team 2	(blue)
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+//7F0C4888:	default
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+//7F0C4898:	2 player display
+8FAC00D0	LW	T4,00D0 (SP)	;T4=SP+D0: #players
+24010002	ADDIU	AT,R0,0002
+1581004E	BNE	T4,AT,7F0C49DC	;branch if 3-4 player
+00000000	NOP
+0C001145	JAL	70004514	;V0= [p@800232A8+20]
+00000000	NOP
+00028400	SLL	S0,V0,0x10
+00105C03	SRA	T3,S0,0x10
+0C001149	JAL	70004524	;V0= [p@800232A8+22]
+01608025	OR	S0,T3,R0
+8FA800D4	LW	T0,00D4 (SP)	;T0=cur.player#
+00021C00	SLL	V1,V0,0x10
+00036C03	SRA	T5,V1,0x10
+01A01825	OR	V1,T5,R0
+8FA10080	+LW	AT,0080 (SP)
+15000003	*BNEZ	T0,7F0C48E0	;branch if not player 1
+AFA10050	*SW	AT,0050 (SP)
+240E0001	*ADDIU	T6,R0,0001
+A3AE0050	*SB	T6,0050 (SP)	;SP+50=highlighted colour
+//7F0C48E0:	determine if current player's team
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+3C068008	*LUI	A2,8008
+90C69F59	*LBU	A2,9F59 (A2)	;T7=player 1's team flag
+//7F0C4914:
+A3A60053	*SB	A2,0053 (SP)	;SP+50=team colour
+8FB800A8	LW	T8,00A8 (SP)
+8FA90050	LW	T1,0050 (SP)
+02202025	OR	A0,S1,R0
+02182821	ADDU	A1,S0,T8
+24A50050	ADDIU	A1,A1,0050	;40/60 in 3-4pl. code
+24660046	ADDIU	A2,V1,0046
+8FA70094	LW	A3,0094 (SP)
+0FC30D68	JAL	7F0C35A0	;display player data to MP menu
+AFA90010	SW	T1,0010 (SP)
+0C001145	JAL	70004514	;V0= [p@800232A8+20]
+00408825	OR	S1,V0,R0
+00028400	SLL	S0,V0,0x10
+00106403	SRA	T4,S0,0x10
+0C001149	JAL	70004524	;V0= [p@800232A8+22]
+01808025	OR	S0,T4,R0
+8FA400D4	LW	A0,00D4 (SP)
+00021C00	SLL	V1,V0,0x10
+00035C03	SRA	T3,V1,0x10
+24010001	ADDIU	AT,R0,0001
+14810002	*BNE	A0,AT,7F0C4978
+01601825	OR	V1,T3,R0
+A3A10050	*SB	AT,0050 (SP)
+	*NOP
+	*NOP
+//7F0C4978:
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+3C068008	*LUI	A2,8008
+90C69FC9	*LBU	A2,9FC9 (A2)	;T6=player 2's stats::scenario flags
+//7F0C49AC:
+A3A60053	*SB	A2,0053 (SP)
+8FB800A8	LW	T8,00A8 (SP)
+8FA90050	LW	T1,0050 (SP)
+02202025	OR	A0,S1,R0
+02182821	ADDU	A1,S0,T8
+24A50050	ADDIU	A1,A1,0050	;40/60 in 3-4pl. code
+24660056	ADDIU	A2,V1,0056
+8FA70098	LW	A3,0098 (SP)
+0FC30D68	JAL	7F0C35A0	;display player data to MP menu
+AFA90010	SW	T1,0010 (SP)
+1000009E	BEQ	R0,R0,7F0C4C50
+00408825	OR	S1,V0,R0
+//7F0C49DC:	3-4 player
+0C001145	JAL	70004514	;V0= [p@800232A8+20]
+00000000	NOP
+00028400	SLL	S0,V0,0x10
+00106403	SRA	T4,S0,0x10
+0C001149	JAL	70004524	;V0= [p@800232A8+22]
+01808025	OR	S0,T4,R0
+8FA800D4	LW	T0,00D4 (SP)
+00021C00	SLL	V1,V0,0x10
+00035C03	SRA	T3,V1,0x10
+01601825	-OR	V1,T3,R0
+15000003	*BNEZ	T0,7F0C4A14
+AFA00050	*SW	R0,0050 (SP)
+24090001	*ADDIU	T1,R0,0001
+A3A90050	*SB	T1,0050 (SP)
+	*NOP
+//7F0C4A14:
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+3C068008	*LUI	A2,8008
+90C69F59	*LBU	A2,9F59 (A2)
+//7F0C4A48:
+A3A60053	*SB	A2,0053 (SP)
+8FAA00A8	LW	T2,00A8 (SP)
+8FB80050	LW	T8,0050 (SP)
+02202025	OR	A0,S1,R0
+020A2821	ADDU	A1,S0,T2
+24A50040	ADDIU	A1,A1,0040
+24660046	ADDIU	A2,V1,0046
+8FA70094	LW	A3,0094 (SP)
+0FC30D68	JAL	7F0C35A0	;display player data to MP menu
+AFB80010	SW	T8,0010 (SP)
+0C001145	JAL	70004514	;V0= [p@800232A8+20]
+00408825	OR	S1,V0,R0
+00028400	SLL	S0,V0,0x10
+00104C03	SRA	T1,S0,0x10
+0C001149	JAL	70004524	;V0= [p@800232A8+22]
+01208025	OR	S0,T1,R0
+8FA800D4	LW	T0,00D4 (SP)
+00021C00	SLL	V1,V0,0x10
+00036403	SRA	T4,V1,0x10
+24010001	ADDIU	AT,R0,0001
+01801825	-OR	V1,T4,R0
+15010002	*BNE	T0,AT,7F0C4AAC
+AFA00050	*SW	R0,0050 (SP)
+A3A10050	*SB	AT,0050 (SP)
+	*NOP
+//7F0C4AAC:
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+3C068008	*LUI	A2,8008
+90C69FC9	*LBU	A2,9FC9 (A2)	;T5=80079FC9: 
+//7F0C4AE0:
+A3A60053	*SB	A2,0053 (SP)
+8FAE00A8	LW	T6,00A8 (SP)
+8FAA0050	LW	T2,0050 (SP)
+02202025	OR	A0,S1,R0
+020E2821	ADDU	A1,S0,T6
+24A50060	ADDIU	A1,A1,0060
+24660046	ADDIU	A2,V1,0046
+8FA70098	LW	A3,0098 (SP)
+0FC30D68	JAL	7F0C35A0	;display player data to MP menu
+AFAA0010	SW	T2,0010 (SP)
+0C001145	JAL	70004514	;V0= [p@800232A8+20]
+00408825	OR	S1,V0,R0
+00028400	SLL	S0,V0,0x10
+0010C403	SRA	T8,S0,0x10
+0C001149	JAL	70004524	;V0= [p@800232A8+22]
+03008025	OR	S0,T8,R0
+8FA800D4	LW	T0,00D4 (SP)
+00021C00	SLL	V1,V0,0x10
+00034C03	SRA	T1,V1,0x10
+24010002	ADDIU	AT,R0,0002
+01201825	-OR	V1,T1,R0
+15010002	*BNE	T0,AT,7F0C4B44
+AFA00050	*SW	R0,0050 (SP)
+A3A10050	*SB	AT,0050 (SP)
+	*NOP
+//7F0C4B44:
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+3C068008	*LUI	A2,8008
+90C6A039	*LBU	A2,A039 (A2)
+//7F0C4B78:
+A3A60053	*SB	A2,0053 (SP)
+8FB900A8	LW	T9,00A8 (SP)
+8FAE0050	LW	T6,0050 (SP)
+02202025	OR	A0,S1,R0
+02192821	ADDU	A1,S0,T9
+24A50040	ADDIU	A1,A1,0040
+24660056	ADDIU	A2,V1,0056
+8FA7009C	LW	A3,009C (SP)
+0FC30D68	JAL	7F0C35A0	;display player data to MP menu
+AFAE0010	SW	T6,0010 (SP)
+8FAA00D0	LW	T2,00D0 (SP)	;T2=SP+D0: #players
+24010004	ADDIU	AT,R0,0004
+00408825	OR	S1,V0,R0
+15410028	BNE	T2,AT,7F0C4C50	;branch if not 4 players
+00000000	NOP
+0C001145	JAL	70004514	;V0= [p@800232A8+20]
+00000000	NOP
+00028400	SLL	S0,V0,0x10
+0010C403	SRA	T8,S0,0x10
+0C001149	JAL	70004524	;V0= [p@800232A8+22]
+03008025	OR	S0,T8,R0
+8FA400D4	LW	A0,00D4 (SP)
+00021C00	SLL	V1,V0,0x10
+00034C03	SRA	T1,V1,0x10
+24010003	ADDIU	AT,R0,0003
+01201825	-OR	V1,T1,R0
+14810002	*BNE	A0,AT,7F0C4BF0
+AFA00050	*SW	R0,0050 (SP)
+A3A10050	*SB	AT,0050 (SP)
+	*NOP
+//7F0C4BF0:
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+3C068008	*LUI	A2,8008
+90C6A0A9	*LBU	A2,A0A9 (A2)
+//7F0C4C24:
+A3A60053	*SB	A2,0053 (SP)
+8FAE00A8	LW	T6,00A8 (SP)
+8FAA0050	LW	T2,0050 (SP)
+02202025	OR	A0,S1,R0
+020E2821	ADDU	A1,S0,T6
+24A50060	ADDIU	A1,A1,0060
+24660056	ADDIU	A2,V1,0056
+8FA700A0	LW	A3,00A0 (SP)
+0FC30D68	JAL	7F0C35A0	;display player data to MP menu
+AFAA0010	SW	T2,0010 (SP)
+00408825	OR	S1,V0,R0
+//7F0C4C50:
+	LUI	V1,8008
+	BEQ	R0,R0,7F0C5B44
+	LW	V1,A0B0 (V1)	;V1=8007A0B0: p->cur.BONDdata
+	
+
+7F0153C0	49EF0	convert 3bit colour to RGBA; fries T6
+have the value display run this.
+normal colours run at B0
+	run colour
+	run 40404040, & FF00
+	fg: colour | backdrop
+	bg: zero (shouldn't be present)
+highlights run at 70
+	run colour
+	run A0A0A0A0
+	bg: colour + 30
+	fg: colour | backdrop
+
+assumes that 1-colour output is basically single-layer (bg=0)
+
++_+
+	
+This function displays the player data in team colour
+7F0C35A0	F80D0	Displays player data on MP menu screens; returns V0=new DL pos.
+	accepts: A0=p->DL, A1=x pos., A2=y pos., A3=p->data argument, SP+10=special, SP+11=display type, SP+13=3bit colour code
+		SP+10 format:
+			04	align left
+			02	align right
+			01	highlight
+	display types: 0: score, 1: time, 2: string
+27BDFFA0	ADDIU	SP,SP,FFA0
+AFB00034	SW	S0,0034 (SP)
+00058025	OR	S0,A1,R0	;S0=A1: x position
+AFB10038	SW	S1,0038 (SP)
+00048825	OR	S1,A0,R0	;S1=A0: p->DL
+AFBF003C	SW	RA,003C (SP)
+AFA60068	SW	A2,0068 (SP)	;SP+68=A2: y position
+//	figure out display type
+83A90071	*LB	T1,0071 (SP)
+00073025	OR	A2,A3,R0	;A2=A3: p->data arguments
+1120000C	+BEQ	T1,R0,+normal score
+3C052564	*LUI	A1,2564
+//	time, not usual score: converts 'score' into "mins:secs"
+24090E10	+ADDIU	T1,R0,0E10
+00C9001A	+DIV	A2,T1
+34A53A25	*ORI	A1,A1,3A25
+3C043032	*LUI	A0,3032
+00003012	+MFLO	A2
+34846400	*ORI	A0,A0,6400
+00003810	+MFHI	A3
+2409003C	+ADDIU	T1,R0,003C
+00E9001A	+DIV	A3,T1
+AFA40044	*SW	A0,0044 (SP)	;string="%d:%02d"
+00003812	+MFLO	A3
+//	normal score
+AFA50040	*SW	A1,0040 (SP)	;A1=: p->"%d"
+//	parse the c-string
+27A50040	+ADDIU	A1,SP,0040
+0C002B25	JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+27A40048	ADDIU	A0,SP,0048	;A0=SP+48: p->buffer for new string
+//
+3C078004	LUI	A3,8004
+8CEE0EAC	LW	T6,0EAC (A3)	;T6=80040EAC: p->1st font table
+8CE70EB0	LW	A3,0EB0 (A3)	;A3=80040EB0: p->2nd font table
+27A40050	ADDIU	A0,SP,0050	;A0=SP+50: p->ret.height
+27A50054	ADDIU	A1,SP,0054	;A1=SP+54: p->ret.width
+27A60048	ADDIU	A2,SP,0048	;A2=SP+48: p->text
+AFA00014	SW	R0,0014 (SP)	;SP+14=0	???
+0FC2BA63	JAL	7F0AE98C	;proportions of string A2
+AFAE0010	SW	T6,0010 (SP)	;SP+10=p->1st font table
+//7F0C35F8:
+8FAF0054	LW	T7,0054 (SP)	;T7=str.width
+93A40073	*LBU	A0,0073 (SP)	;T1=SP+73 (SP+10 from caller): colour code
+30840007	+ANDI	A0,A0,0007	;drop unnecessary flags
+50800001	*BEQL	A0,R0,+1	;default to green if no team
+24040002	*ADDIU	A0,R0,0002
+8FA80068	LW	T0,0068 (SP)	;T0=SP+68: y pos.
+000FC043	SRA	T8,T7,0x1
+0218C823	SUBU	T9,S0,T8	;T9=x pos. - (width/2)
+AFB9005C	SW	T9,005C (SP)	;SP+5C= T9: x pos.
+83AE0070	*LB	T6,0070 (SP)	;T6=SP+70 (SP+10 from caller): highlight flag
+141C0007	*BNEZ	T6,+highlight
+AFA80058	SW	T0,0058 (SP)	;SP+58= T0: ypos
+//7F0C3624:	no highlight
+0FC054F1	*JAL	7F0153C4	;3-bit colour conversion - A1=value
+240500B0	*ADDIU	A1,R0,00B0
+3C094040	*LUI	T1,4040
+35294000	*ORI	T1,T1,4000	;T1=40404000
+10000006	*BEQ	R0,R0,+display!-1
+3045FF00	*ANDI	A1,V0,FF00	;A1=bg: no alpha
+//7F0C3640:	highlight
+0FC054F1	*JAL	7F0153C4	;3-bit colour conversion - A1=value
+24050070	*ADDIU	A1,R0,0070
+3C09A0A0	*LUI	T1,A0A0
+3529A0A0	*ORI	T1,T1,A0A0
+24450030	*ADDIU	A1,V0,0030
+00492025	*OR	A0,V0,T1
+//	display!
+AFA40018	*SW	A0,0018 (SP)	;SP+18= fg colour
+0C001107	JAL	7000441C	;V0= text clip width
+AFA5001C	*SW	A1,001C (SP)	;SP+1C= bg colour
+00028400	SLL	S0,V0,0x10
+00108403	*SRA	S0,S0,0x10
+0C00110B	JAL	7000442C	;V0= text clip height
+3C0F8004	LUI	T7,8004
+8DF80EAC	*LW	T8,0EAC (T7)	;T8=80040EAC: p->1st font table 
+8DEF0EB0	LW	T7,0EB0 (T7)	;T7=80040EB0: p->2nd font table
+00112025	OR	A0,S1,R0	;A0=S1: p->DL
+27A5005C	ADDIU	A1,SP,005C	;A1=SP+5C: p->x position
+27A60058	ADDIU	A2,SP,0058	;A2=SP+58: p->y position
+27A70048	ADDIU	A3,SP,0048	;A3=SP+48: p->text
+AFB00020	SW	S0,0020 (SP)	;SP=20= clip height
+AFA20024	SW	V0,0024 (SP)	;SP+24= clip width
+AFA00028	SW	R0,0028 (SP)	;SP=28= y offset (0)
+AFA0002C	SW	R0,002C (SP)	;SP+2C= x offset (0)
+AFB80014	SW	T8,0014 (SP)	;SP+14= p->1st font table
+0FC2B9BB	JAL	7F0AE6EC	;display 2-tone text on MP menu
+AFAF0010	SW	T7,0010 (SP)	;SP+10= p->2nd font table
+00028825	OR	S1,V0,R0
+//7F0C38C0:	return
+8FBF003C	LW	RA,003C (SP)
+00111025	OR	V0,S1,R0	;V0=S1: p->DL
+8FB10038	LW	S1,0038 (SP)
+8FB00034	LW	S0,0034 (SP)
+03E00008	JR	RA
+27BD0060	ADDIU	SP,SP,0060
+
+second revision, to allow strings to be output.  format=2
+third revision, to allow alignment types
+27BDFF10	*ADDIU	SP,SP,FF10
+AFB00034	SW	S0,0034 (SP)
+00058025	OR	S0,A1,R0	;S0=A1: x position
+AFB10038	SW	S1,0038 (SP)
+00048825	OR	S1,A0,R0	;S1=A0: p->DL
+AFBF003C	SW	RA,003C (SP)
+AFA60050	*SW	A2,0050 (SP)	;SP+68=A2: y position
+//	figure out display type
+83A90101	*LB	T1,0101 (SP)
+00073025	OR	A2,A3,R0	;A2=A3: p->data arguments
+1120000F	*BEQ	T1,R0,+normal score
+3C052564	LUI	A1,2564
+39290002	+XORI	T1,T1,0002
+5120000C	+BEQL	T1,R0,+normal score
+3C052573	+LUI	A1,2573	;"%s"
+//	time, not usual score: converts 'score' into "mins:secs"
+24090E10	ADDIU	T1,R0,0E10
+00C9001A	DIV	A2,T1
+34A53A25	ORI	A1,A1,3A25
+3C043032	LUI	A0,3032
+00003012	MFLO	A2
+34846400	ORI	A0,A0,6400
+00003810	MFHI	A3
+2409003C	ADDIU	T1,R0,003C
+00E9001A	DIV	A3,T1
+AFA40044	SW	A0,0044 (SP)	;string="%d:%02d"
+00003812	MFLO	A3
+//	normal score
+AFA50040	SW	A1,0040 (SP)	;A1=: p->"%d"
+//	parse the c-string
+27A50040	ADDIU	A1,SP,0040
+0C002B25	JAL	7000AC94	;sprintf(A0,A1,A2,A3)
+27A40058	*ADDIU	A0,SP,0058	;A0=SP+48: p->buffer for new string
+//
+3C078004	LUI	A3,8004
+8CEE0EAC	LW	T6,0EAC (A3)	;T6=80040EAC: p->1st font table
+8CE70EB0	LW	A3,0EB0 (A3)	;A3=80040EB0: p->2nd font table
+27A40048	*ADDIU	A0,SP,0048	;A0=SP+50: p->ret.height
+27A5004C	*ADDIU	A1,SP,004C	;A1=SP+54: p->ret.width
+27A60058	*ADDIU	A2,SP,0058	;A2=SP+48: p->text
+AFA00014	SW	R0,0014 (SP)	;SP+14=0	???
+0FC2BA63	JAL	7F0AE98C	;proportions of string A2
+AFAE0010	SW	T6,0010 (SP)	;SP+10=p->1st font table
+//7F0C35F8:
+8FAF004C	*LW	T7,004C (SP)	;T7=str.width
+93A40103	*LBU	A0,0103 (SP)	;T1=SP+73 (SP+10 from caller): colour code
+30840007	ANDI	A0,A0,0007	;drop unnecessary flags
+50800001	BEQL	A0,R0,+1	;default to green if no team
+24040002	ADDIU	A0,R0,0002
+8FA80050	*LW	T0,0050 (SP)	;T0=SP+68: y pos.
+//	these lines added to do screen alignment
+//	0=center(xpos-halfwidth), 2=right-align (xpos-width), 4=left-align (at location)
+83AE0100	+LB	T6,0100 (SP)	;T6=SP+70 (SP+10 from caller): highlight flag
+31C20004	+ANDI	V0,T6,0004
+14400004	+BNE	V0,R0,+4	;skip correction when aligning left
+31C20002	+ANDI	V0,T6,0002
+50400001	+BEQL	V0,R0,+1	;when not set, use halfwidth.  When set, use fullwidth
+000F7843	*SRA	T7,T7,0x1	;T7=halfwidth
+020F8023	*SUBU	S0,S0,T7	;T9=x pos. - (width/2)
+AFB00054	*SW	S0,0054 (SP)	;SP+5C= T9: x pos.
+31CE0001	*ANDI	T6,T6,0001	;T6=SP+70 (SP+10 from caller): highlight flag
+//	no more changes past this point
+15C00007	BNEZ	T6,+highlight
+AFA80050	*SW	T0,0050 (SP)	;SP+58= T0: ypos
+//7F0C3624:	no highlight
+0FC054F1	JAL	7F0153C4	;3-bit colour conversion - A1=value
+240500B0	ADDIU	A1,R0,00B0
+3C094040	LUI	T1,4040
+35294000	ORI	T1,T1,4000	;T1=40404000
+10000006	BEQ	R0,R0,+display!-1
+3045FF00	ANDI	A1,V0,FF00	;A1=bg: no alpha
+//7F0C3640:	highlight
+0FC054F1	JAL	7F0153C4	;3-bit colour conversion - A1=value
+24050070	ADDIU	A1,R0,0070
+3C09A0A0	LUI	T1,A0A0
+3529A0A0	ORI	T1,T1,A0A0
+24450030	ADDIU	A1,V0,0030
+00492025	OR	A0,V0,T1
+//	display!
+AFA40018	SW	A0,0018 (SP)	;SP+18= fg colour
+0C001107	JAL	7000441C	;V0= text clip width
+AFA5001C	SW	A1,001C (SP)	;SP+1C= bg colour
+00028400	SLL	S0,V0,0x10
+00108403	SRA	S0,S0,0x10
+0C00110B	JAL	7000442C	;V0= text clip height
+3C0F8004	LUI	T7,8004
+8DF80EAC	LW	T8,0EAC (T7)	;T8=80040EAC: p->1st font table 
+8DEF0EB0	LW	T7,0EB0 (T7)	;T7=80040EB0: p->2nd font table
+00112025	OR	A0,S1,R0	;A0=S1: p->DL
+27A50054	*ADDIU	A1,SP,0054	;A1=SP+5C: p->x position
+27A60050	*ADDIU	A2,SP,0050	;A2=SP+58: p->y position
+27A70058	*ADDIU	A3,SP,0058	;A3=SP+48: p->text
+AFB00020	SW	S0,0020 (SP)	;SP=20= clip height
+AFA20024	SW	V0,0024 (SP)	;SP+24= clip width
+AFA00028	SW	R0,0028 (SP)	;SP=28= y offset (0)
+AFA0002C	SW	R0,002C (SP)	;SP+2C= x offset (0)
+AFB80014	SW	T8,0014 (SP)	;SP+14= p->1st font table
+0FC2B9BB	JAL	7F0AE6EC	;display 2-tone text on MP menu
+AFAF0010	SW	T7,0010 (SP)	;SP+10= p->2nd font table
+00028825	OR	S1,V0,R0
+//7F0C38C0:	return
+8FBF003C	LW	RA,003C (SP)
+00111025	OR	V0,S1,R0	;V0=S1: p->DL
+8FB10038	LW	S1,0038 (SP)
+8FB00034	LW	S0,0034 (SP)
+03E00008	JR	RA
+27BD00F0	*ADDIU	SP,SP,00F0
+
+
+correction for static calls:
+//7F0C5380:	F9EB0
+ADDIU	T1,R0,0003	->	0004
+
+//7F0C5440:	F9F70
+ADDIU	T9,R0,0003	->	0004
+
+//7F0C54F8:	FA028
+ADDIU	T6,R0,0003	->	0004
+
+//7F0C55BC:	FA0EC
+ADDIU	T9,R0,0003	->	0004
+
+//7F0C5680:	FA1B0
+ADDIU	T3,R0,0003	->	0004
+
+//7F0C5750:	FA280
+ADDIU	T7,R0,0003	->	0004
+
+rewrite this so it doesn't use TLB pointers
+also, should default to "score"
+//7F0C40A0:	F8BD0	2 player	SP+A8=0x50
+	LW	T9,A0B0 (T9)	;T9=8007A0B0: p->BONDdata
+	LW	T1,29C8 (T9)	;T1=BONDdata+29C8: selected page in menu
+24010007	*ADDIU	AT,R0,0007
+10290088	*BEQ	AT,T1,7F0C42D0	;skip write if no text appears
+24010004	*ADDIU	AT,R0,0004
+1029001C	*BEQ	AT,T1,7F0C4128
+24010005	*ADDIU	AT,R0,0005
+1029	*BEQ	AT,T1,7F0C4170
+24010006	*ADDIU	AT,R0,0006
+1029	*BEQ	AT,T1,7F0C4170
+//7F0C40C8:	pages 0,1,2,3 - play
+00000000	*NOP
+3C0B8009	*LUI	T3,8009
+8D6AC704	*LW	T2,C704 (T3)	;T2=8008C704: TRUE when game over
+
+for the record, passing 7F0AE6EC (2-tone) an invisible as the background colour is the same as the monotone function

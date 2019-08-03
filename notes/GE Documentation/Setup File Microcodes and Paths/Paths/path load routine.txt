@@ -1,0 +1,645 @@
+0x0	path preset table
+0x4	path preset linkage table
+0x10	paths
+0x20	path preset table: offsets to PAD values (deprecated)
+0x24	path preset linkage table: offsets to PAD values (deprecated)
+
+first hit
+---------
+7F003E24:	-Expand Path Preset Block-
+LW	A1,0000 (A3)
+BEQL	A1,R0,7F003E6C
+	LW	A1,0004 (A3)
+LW	T2,0000 (A1)	//first preset in path preset block
+OR	V1,R0,R0	//V1=0
+OR	V0,A1,R0	//V0=path preset offset
+BLTZL	T2,7F003E6C	//preset better be a valid one
+	LW	A1,0004 (A3)
+LW	T3,0004 (V0)	//T3=offset following preset (to linkage)
+//7F003E48: read each preset
+ADDIU	V1,V1,0010	//V1+=10
+ADDU	T4,T3,S1	//T4=T3(offset)+Start of Setup
+SW	T4,0004 (V0)	//Replace offset with pointer
+LW	T5,0000(A3)	//T5=path preset pointer
+ADDU	V0,T5,V1	//V0=Next Preset
+LW	T6,0000(V0)	//T6=Preset
+BGEZL	T6,7F003E48	//repeat for each point until end
+	LW	T3,0004(V0)
+LW	A1,0004(A3)
+
+//A1=80075D04
+
+7F003E6C:	-Expand Path Linkage Table-
+BEQL	A1,R0,7F003EC4
+	LW	A2,0014(A3)	//A2=Block data pointer
+LW	T7,0000(A1)	//T7=first linkage offset
+OR	V1,R0,R0	//V1=0
+OR	V0,A1,R0	//V0=80075D04
+BEQL	T7,R0,7F003EC4	//Keep reading until a NULL Link
+	LW	A2,0014(A3)
+LW	A0,0000(A1)	//A0=first linkage offset
+ADDU	T8,A0,S1	//T8=offset + start of setup
+//7F003E90: read each link
+SW	T8,0000(V0)	//first offset changed to pointer
+LW	T0,0004(A3)	//T0=Path linkage pointer
+ADDU	V0,T0,V1	//V0=Next link
+LW	T1,0004(V0)	//T1=second offset in linky thing
+ADDIU	V1,V1,000C	//V1+=C (next linkage)
+ADDU	T9,T1,S1	//T9=offset + start of setup 
+SW	T9,0004(V0)	//second offset changed to pointer
+LW	T2,0004(A3)	//T2=80075D04
+ADDU	V0,T2,V1	//V0=next linkage
+LW	A0,0000(V0)	//A0=next linkage offset
+BNEL	A0,R0,7F003E90	//Keep goingig until a NULL link
+	ADDU	T8,A0,S1
+LW	A2,0014(A3)	//
+
+//A2=80075D14
+
+7F003EC4:	-Block Data Expansion-
+BEQL	A2,R0,7F003F08
+	LW	V0,0010(A3)
+LW	T3,0000(A2)	//T3=offset to action
+OR	A1,R0,R0	//A1=counter
+OR	V0,A2,R0	//V0=Block pointer
+BEQL	T3,R0,7F003F08	//Kill if NULL offset
+	LW	V0,0010(A3)
+LW	V1,0000(A2)	//V1=offset
+ADDU	T4,V1,S1	//T4=offset + start of setup 
+SW	T4,0000(V0)	//replace offset with pointer
+LW	T5,0014(A3)	//T5=80075D14
+ADDIU	A1,A1,0008	//A1+=8 (next entry)
+ADDU	V0,T5,A1	//V0=P. Next entry
+LW	V1,0000(V0)	//V1=offset
+BNEL	V1,R0,7F003EE8	//Repeat till NULL
+	ADDU	T4,V1,S1
+LW	V0,0010(A3)
+
+//V0=80075D10
+
+7F003F08:	-Path Expansion-
+BEQL	V0,R0,7F003F8C
+	LW	T2,0018(A3)
+LW	T6,0000(V0)	//T6=path offset
+OR	A1,R0,R0	//A1=counter
+OR	A2,V0,R0	//A2=V0=offset to path data
+BEQL	T6,R0,7F003F8C	//Kill if NULL offset
+	LW	T2,0018(A3)
+LW	A0,0000(V0)	//A0=path offset
+ADDU	T7,A0,S1	//T7=offset + start of setup
+//7F003F2C:	repeat
+SW	T7,0000(A2)	//replace offset with pointer
+LW	T8,0010(A3)	//T8=80075D10
+OR	V1,R0,R0	//V1=steps in path counter
+ADDU	A2,T8,A1	//A2=path pointer + counter
+LW	A0,0000(A2)	//A0=pointer created from offset
+LW	T0,0000(A0)	//T0=preset value in path
+OR	V0,A0,R0	//V0=A0=pointer to path
+BLTZL	T0,7F003F70	//if preset is bad, jump over count
+	SH	V1,0006(A2)
+LW	T1,0004(V0)	//T1=next preset
+//7F003F54:	-count presets
+ADDIU	V1,V1,0001	//V1++
+ADDIU	V0,V0,0004	//V0=address of next preset
+BGEZL	T1,7F003F54	//Keep going until no more presets (FFFFFFFF)
+	LW	T1,0004(V0)
+LUI	A3,8007
+ADDIU	A3,A3,5D00	//A3=80075D00 (silly, since it already is...)
+SH	V1,0006(A2)	//count of path steps stored after pointer
+//7F003F70:	-when preset is bad
+LW	T9,0010(A3)	//T9=Pointer to Path data
+ADDIU	A1,A1,0008	//A1+=8 (next path pointer)
+ADDIU	A2,T9,A1	//A2=P. next path offset
+LW	A0,0000(A2)	//A0=next path offset
+BNEL	A0,R0,7F003F2C	//repeat until none left
+	T7,A0,S1
+LW	T2,0018(A3)
+
+7F003F8C:	-0xxx Preset Expansion-
+
+7F004004:	-2xxx Preset Expansion-
+
+7F0040E0:	-Path Preset PADs (deprecated)-
+BEQL	A1,R0,7F004124	//If no P.P.PADs, skip
+	LW	A1,0024(A3)
+LW	T6,0000(A1)	//T6=PAD offset
+OR	V0,R0,R0	//V0=counter
+OR	V1,A1,R0	//V1=A1=pointer
+BEQL	T6,R0,7F004124	//If NULL, skip
+	LW	A1,0024(A3)
+LW	A0,0000(A1)	//A0=PAD offset
+ADDU	T7,A0,S1	//T7=offset + start of setup
+//7F004104:	repeat
+SW	T7,0000(V1)	//replace offset with pointer
+LW	T8,0020(A3)	//T8=80075D20
+ADDIU	V0,V0,0004	//V0+=4 (next offset)
+ADDU	V1,T8,V0	//V1=P. next offset
+LW	A0,0000(V1)	//A0=next offset
+BNEL	A0,R0,7F004104	//keep doing them until NULL offset
+	ADDU	T7,A0,S1
+LW	A1,0024(A3)
+
+//A1=80075D24
+
+7F004124:	-Path Linkage PADs (deprecated)-
+BEQL	A1,R0,7F004164
+	LW	T2,0278(SP)
+LW	T0,0000(A1)	//T0=offset
+OR	V0,R0,R0	//V0=counter
+OR	V1,A1,R0	//V1=A1=80075D24
+BEQ	T0,R0,7F004160	//skip if no PADs
+OR	A0,T0,R0	//A0=offset
+ADDU	T1,A0,S1	//T1=offset + start of setup
+//7F004144:	repeat
+SW	T1,0000(V1)	//replace offset with pointer
+LW	T9,0024(A3)	//T9=80075D24
+ADDIU	V0,V0,0004	//V0+=4 (next offset)
+ADDU	V1,T9,V0	//V1=P. next offset
+LW	A0,0000(V1)	//A0=next offset
+BNEL	A0,R0,7F004144	//repeat until NULL offset
+	ADDU	T1,A0,S1
+
+//7F004160:	--
+LW	T2,0278(SP)
+BEQ	T2,R0,7F0041B0
+NOP
+
+-----------------------
+-----------------------
+second hit
+
+
+7F0068A4:
+LW	S0,0000(S4)	//S0=80075D00
+LW	T6,0004(S4)	//T6=80075D04
+SW	S6,0030(SP)	//803B3640=80029134
+SW	RA,003C(SP)	//803B364C=7F0BDE3C
+SW	S8,0038(SP)	//803B3648=0
+SW	S7,0034(SP)	//803B3644=803B3780
+SW	S5,002C(SP)	//803B363C=8007A0B0
+SW	S3,0024(SP)	//803B3634=00000004
+SW	S2,0020(SP)	//803B3630=8007A0B0
+SW	S1,001C(SP)	//803B362C=800696A1
+OR	S6,R0,R0	//S6=0
+
+7F0068D0:	-Path Preset Table ???-
+BEQ	S0,R0,7F0069AC
+SW	T6,00D8(SP)	//803B36E8=Path Linkage Pointer
+LW	T7,0000(S0)	//T7=preset in table (S0=Path Preset Pointer)
+OR	A3,R0,R0	//A3=0 (counter)
+OR	T5,S0,R0	//T5=S0=Path Preset Pointer(PPP)
+BLTZL	T7,7F0069B0	//Kill if at end of list
+	LW	T6,00D8(SP)
+LW	V0,0004(T5)	//V0=pointer following preset
+//7F0068F0:	-next preset entry
+LW	A2,0000(V0)	//A2=value at pointer
+OR	T0,V0,R0	//T0=V0=pointer following preset
+BLTZL	A2,7F006998	//if nothing listed, continue
+	ADDIU	A3,A3,0001	//A3++
+//7F006900:	-next value in preset group-
+BNE	A2,A3,7F006920	//if not redundant with table entry, branch
+SLL	T9,A2,0x4	//T9=A2*0x10 (offset within table)
+//else!  (PADs AREN'T defunct after all!)
+LW	T8,0020(S4)	//T8=80075D20
+ADDIU	S6,R0,0001	//S6=1
+BEQL	T8,R0,7F006988	//if no PADs, jump
+	LW	A2,0004(T0)	//load next value at pointer
+BEQ	R0,R0,7F006988
+LW	A2,0004(T0)	//otherwise do the EXACT SAME THING...
+//7F006920:	-good value
+ADDU	V1,T9,S0	//V1=table start + offset to ref'd entry
+LW	A1,0004(V1)	//A1=pointer in that preset entry
+OR	A0,R0,R0	//A0=0 (counter for ref"d entry)
+LW	T6,0000(A1)	//first value at ref'd pointer
+BLTZL	T6,7F006970	//If end of values, Branch
+	SLL	T9,A0,0x2	//T9=A0*4
+BEQ	A3,T6,7F00696C	//Go if search value found
+SLL	V0,R0,0x2	//V0=0 (stupid command, really)
+ADDIU	V0,V0,0004	//V0+=4 (next entry in ref'd table)
+//7F006944:	-inc through ref'd table until hit found
+ADDU	T8,A1,V0	//T8=P. next ref"d value
+LW	T9,0000(T8)	//T9=next ref"d value
+ADDIU	A0,A0,0001	//A0++ (entry #+1)
+BLTZL	T9,7F006970	//branch on table end
+	SLL	T9,A0,0x2
+LW	T6,0004(V1)	//T6=ref'd preset's pointer entry
+ADDU	T7,T6,V0	//T7=P. value at ref"d pointer + offset
+LW	T8,0000(T7)	//T8=value at ref"d pointer
+BNEL	A3,T8,7F006944	//if not a match, repeat
+	ADDIU	V0,V0,0004	//V0+=4 (next ref'd value)
+//7F00696C:	-search value found-
+SLL	T9,A0,0x2	//T9=#things to hit * 4
+//7F006970:	-entry not found in ref'd preset-
+ADDU	T6,A1,T9	//T6=P. corresponding value in ref'd
+LW	T7,0000(T6)	//T7=corresponding value in ref'd
+BEQL	A3,T7,7F006988	//if both correspond, branch
+	LW	A2,0004(T0)	//A2=next value in org
+ADDIU	S6,R0,0001	//S6=1
+LW	A2,0004(T0)	//A2=next value in org
+//7F006988:	-skips here if tried PADs-
+ADDIU	T0,T0,0004	//T0+=4 (P. next value)
+BGEZ	A2,7F006900	//next value in group
+NOP
+ADDIU	A3,A3,0001	//A3++ (next preset)
+//7F006998:	-finshed reading values at pointer in table-
+SLL	T8,A3,0x4	//T8=#entries *0x10 (to offset)
+ADDU	T5,T8,S0	//T5=P. next preset
+LW	T9,0000(T5)	//T9=next preset
+BGEZL	T9,7F0068F0	//if good, repeat
+LW	V0,0004(T5)	//V0=P. next pointer in table
+
+
+
+7F0069AC:	-Path Linkage ???-
+LW	T6,00D8(SP)
+BEQ	T6,R0,7F006B04	//T6=Pointer to path linkage
+NOP
+LW	T7,0000(T6)	//T7=first path link pointer
+OR	S1,R0,R0	//S1=0 (counter)
+OR	S5,T6,R0	//S5=Pointer to path linkage
+BEQ	T7,R0,7F006B04	//if first path link NULL, skip
+ADDIU	S8,SP,00A0	//S8=SP+00A0=803B36B0
+SW	T6,0048(SP)	//803B3658=Pointer to path linkage
+ADDIU	S7,R0,000C	//S7=000C
+LW	T8,0000(S5)	//T8=first path link
+//7F0869D8:	-new path link
+OR	S3,R0,R0	//S3=0 (counter for link values)
+LW	V0,0000(T8)	//V0=value at first path link
+BLTZL	V0,7F006AEC	//if no values, branch
+	LW	T6,0048(SP)	//T6=Pointer to path linkage
+//7F0069E8:	-
+BNE	V0,S1,F006A08	//branch if not redundant value
+NOP
+//else, use the PAD values
+LW	T9,0024(S4)	//T9=80075D24=P.L.PADs
+ADDIU	S6,R0,0001	//S6=1
+BEQL	T9,R0,7F006AD4	//if no P.L.PAD pointer, branch
+	LW	T9,0000(S5)
+BEQ	R0,R0,7F006AD4	//otherwise, do the EXACT SAME THING...
+LW	T9,0000(S5)	//T9=first path link
+//7F006A08:	-when value is not redundant
+MULTU	V0,S7	//link# * C to get increment to next link set(reads MultLO)
+LW	T6,00D8(SP)	//T6=803B36E8=start of path links
+OR	A1,R0,R0	//A1=0
+MFLO	T7		//T7=result of 7F006A08 (offset to ref'd link)
+ADDU	S2,T7,T6	//S2=&ref'd link
+LW	A2,0000(S2)	//A2=ref'd link's first pointer
+OR	A0,S2,R0	//A0=S2=ref'd link
+LW	T8,0000(A2)	//T8=value at ref'd link"s first pointer
+BLTZL	T8,7F006A70	//continue if there"s something there
+	SLL	T7,A1,0x2
+//7F006A30
+LW	T9,0000(A2)	//T9=value at ref'd link
+SLL	V0,R0,0x2	//V0=0 (weird way to do it...)
+ADDU	V1,A2,V0	//V1=A2=ref'd link
+BEQL	S1,T9,7F006A70	//branch if link found
+	SLL	T7,A1,0x2	//T7=offset to it (counter *4)
+LW	T7,0004(V1)	//T7=ref'd link +4 (next value)
+//7F006A48:	-match value and ref'd value
+ADDIU	A1,A1,0001	//A1++ (counter to next value)
+ADDIU	V0,V0,0004	//V0+=4 (inc offset)
+BLTZ	T7,7F006A6C	//if no more values, branch
+ADDIU	V1,V1,0004	//V1+=4 (next value at ref'd link)
+LW	T6,0000(A0)	//T6=ref'd link
+ADDU	T8,T6,V0	//T8=P. next value at ref'd link
+LW	T9,0000(T8)	//T9=next value at ref'd link
+BNEL	S1,T9,7F006A48	//repeat until match found
+	LW	T7,0004(V1)
+
+SLL	T7,A1,0x2	//value# * 4
+//7F006A70:	-ref'd link stuff done
+ADDU	T6,A2,T7	//T6=P. to matching ref'd value
+LW	T8,0000(T6)	//T8=value
+BEQL	S1,T8,7F006A9C	//branch if current link# = ref'd value
+	LW	T7,0000(S4)
+LW	T9,0024(S4)	//T9=P.L.PADs
+ADDIU	S6,R0,0001	//S6=1
+BEQL	T9,R0,7F006AD4	//if no PADs, branch
+	LW	T9,0000(S5)
+BEQ	R0,R0,7F006AD4	//else, do the EXACT SAME THING...
+LW	T9,0000(S5)	//T9=Path Link
+
+LW	T7,0000(S4)	//T7=Path Preset table offset
+//7F006A9C:	-link value matches
+OR	A0,S5,R0	//A0=S5=Path Link
+OR	A1,S2,R0	//A1=S2=ref'd link
+BEQ	T7,R0,7F006AD0	//if no path presets, branch
+OR	A2,S8,R0	//A2=S8=SP+A0=803B36B0
+JAL	7F08F438
+ADDIU	A3,SP,009C	//A3=803B36AC
+//7F006AB4:
+LW	T6,00A0(SP)	//T6=path preset address
+LW	T8,009C(SP)	//T8=path preset address
+BEQL	T6,R0,7F006AD0	//if NULL pointer, branch
+	ADDIU	S6,R0,0001
+BNEL	T8,R0,7F006AD4	//if not a NULL pointer, branch
+	LW	T9,0000(S5)
+ADDIU	S6,R0,0001	//S6=1
+LW	T9,0000(S5)	//T9=S5=Path linkage
+//7F006AD4:	-value is dealt with or something bad happened
+ADDIU	S3,S3,0004	//S3+=4 (next path set)
+ADDU	T7,T9,S3	//T7=P. next value in first path linkage set
+LW	V0,0000(T7)	//V0=said value
+BGEZ	V0,7F0069E8	//if done with set, branch
+NOP
+LW	T6,0048(SP)	//T6=current path link
+//7F006AEC:	-all values at link read
+ADDIU	S1,S1,0001	//S1++ (next path linkage)
+ADDIU	S5,T6,000C	//S5=&next path link
+SW	S5,0048(SP)	//803B3658=&next path link
+LW	T9,0000(S5)	//T9=first pointer at new path link
+BNEL	T9,R0,7F0069D8	//if not NULL, branch
+	LW	T8,0000(S5)	//T8=first pointer at new path link
+
+//7F006B04:	--
+BEQ	S0,R0,7F006D4C	//S0=Path Preset Table
+LW	T7,00D8(SP)	//T7=Path Link Table
+BEQ	T7,R0,7F006D4C
+NOP
+LW	V1,0000(T7)	//V1=PLT:set1pointer1
+OR	T1,R0,R0	//T1=0 (counter)
+OR	T3,T7,R0	//T3=T7=PLT
+BEQ	V1,R0,7F006BA0	//if there isn"t any set data left, jump
+OR	S7,S0,R0	//S7=S0=PPT(path preset table addy)
+OR	T5,T7,R0	//T5=T7=PLT
+
+//7F006B2C:	-grab setpointer2 for each set
+LW	A0,0004(T3)	//A0=set1pointer2
+OR	A3,R0,R0	//A3=0 (counter)
+LW	V1,0000(A0)	//V1=set1pointer2 value1
+BLTZ	V1,7F006B80	//jump out if no more setpointer2 values
+SLL	T6,V1,0x4	//T6=value converted to offset in PPT
+
+//7F006B40	-Pull, set, and test valuepresetset#
+ADDU	A1,T6,S0	//A1=set1pointer2 value1preset
+LW	A2,0008(A1)	//A2=set1pointer2 value1presetset#
+BGEZ	A2,7F006B60	//branch if valid
+NOP
+SW	T1,0008(A1)	//otherwise, store set number to value1presetset#
+LW	A0,0004(T3)	//A0=set1pointer2
+BEQ	R0,R0,7F006B6C
+ADDU	V0,A0,A3	//V0=address of current set (start + 4*set#)
+
+//7F006B60:	if valuepresetset# valid (x >= 0)
+BEQ	T1,A2,7F006B6C	//branch if set#==value1presetset#
+ADDU	V0,A0,A3	//V0=address of current set
+ADDIU	S6,R0,0001	//S6=1
+//7F006B6C:	when you had to set valuepresetset#...
+LW	V1,0004(V0)	//V1=set1pointer2 value++
+ADDIU	A3,A3,0004	//A3+=4 (4*set#)
+ADDIU	V0,V0,0004	//V0+=4 (set1pointer2 value++)
+BGEZL	V1,7F006B40	//continue until no more values in setpointer2
+	SLL	T6,V1,0x4	//T6=value converted to offset in PPT
+//7F006B80:	-no more setpointer2 values
+LW	T8,000C(T5)	//T8=set++pointer1
+ADDIU	T5,T5,000C	//T5=address set++
+OR	T3,T5,R0	//T3=T5=setpointer1
+BNEZ	T8,7F006B2C	//continue until no more sets
+ADDIU	T1,T1,0001	//T1++ (set#++)
+LW	T3,00D8(SP)	//T3=PLT
+OR	T1,R0,R0	//T1=0 (reset set#)
+LW	V1,0000(T3)	//V1=set1pointer1
+//7F006BA0:	-no more set data (setpointer1=0)
+LW	T7,0000(S7)	//T7=preset1
+OR	A2,S7,R0	//A2=S7=PPT
+LW	T5,00D8(SP)	//T5=PLT
+BLTZ	T7,7F006BD8	//branch if no presets
+ADDIU	A3,R0,0001	//A3=1
+LW	T6,0008(A2)	//T6=presetset#
+//7F006BB8:	-check preset set#
+ADDIU	T1,T1,0001	//T1++ (preset#++)
+SLL	T8,T1,0x4	//T8=offset created from preset#
+BGEZ	T6,7F006BCC	//if valid set# number, branch
+ADDU	A2,T8,S0	//A2=next address preset#
+ADDIU	S6,R0,0001	//S6=1
+//7F006BCC:
+LW	T9,0000(A2)	//T9=next preset
+BGEZL	T9,7F006BB8	//continue until no more presets
+	LW	T6,0008(A2)	//T6=presetset#
+
+//7F006BD8	-no more presets
+BEQ	V1,R0,7F006D4C	//exit routine if no more sets
+NOP
+LW	A0,0004(T3)	//A0=setpointer2
+OR	V1,R0,R0	//V1=0 (counter)
+OR	T0,R0,R0	//T0=0 (counter)
+LW	A1,0000(A0)	//A1=setpointer2 value
+OR	T4,R0,R0	//T4=0 (counter)
+OR	T1,R0,R0	//T1=0 (counter)
+BLTZ	A1,7F006C44	//branch if no move values in setpointer2
+OR	V0,A1,R0	//V0=A1=setpointer2 value
+//7F006C00:
+BNEZ	T1,7F006C18	//skip after first iteration
+SLL	T8,V0,0x4	//T8=setpointer2 value -> offset in PPT
+SLL	T7,V0,0x4	//T7=setpointer2 value -> offset in PPT
+ADDU	T6,T7,S0	//T6=address of setpointer2 valuepreset
+BEQ	R0,R0,7F006C20
+SW	A3,000C(T6)	//valuepresettag=1 (A3 always=1? starts at that...)
+//7F006C18:
+ADDU	T9,T8,S0	//T9=&setpointer valuepreset
+SW	R0,000C(T9)	//valuepresettag=0
+//7F006C20:	-next value at setpointer2
+LW	A0,0004(T3)	//A0=setpointer2 value
+ADDIU	T1,T1,0004	//T1+=4 (4*value#++)
+ADDU	T7,A0,T1	//T7=&setpointer2 value++
+LW	V0,0000(T7)	//V0=setpointer2 value++
+BGEZ	V0,7F006C00	//continue until out of values
+NOP
+LW	A1,0000(A0)	//A1=setpointer2 value
+OR	V1,R0,R0	//V1=0
+OR	V0,A1,R0	//V0=A1=setpointer2 value
+//7F006C44:	-no more values
+BLTZ	V0,7F006CC8	//branch if there are no values in set
+OR	T1,R0,R0	//T1=0
+SLL	T6,V0,0x4	//T6=offset in PPT
+//7F006C50:	-pull setpointer2value
+ADDU	A2,T6,S0	//A2=&setpointer2 valuepreset
+LW	T8,000C(A2)	//T8=setpointer2value presettag
+ADDIU	T1,T1,0004	//T1+=4 (4*count++)
+BNEL	A3,T8,7F006CB0	//branch if the valuepresettag!=1
+	ADDU	T8,A0,T1	//T8=&next setpointer2 value
+LW	A1,0004(A2)	//A1=setpointer2value presetpointer
+OR	V1,R0,R0	//V1=0
+LW	V0,0000(A1)	//V0=setpointer2value presetpointervalue
+BLTZ	V0,7F006CAC	//branch if there are no values
+SLL	T9,V0,0x4	//T9=presetpointervalue -> offset
+//7F006C78:	-loop for each presetpointervalue
+ADDU	A0,T9,S0	//A0=&presetpointervalue preset
+LW	T7,000C(A0)	//T7=presetpointervalue presettag
+ADDIU	V1,V1,0004	//V1+=4 (4*presetpointervalue#++)
+BEQL	A3,T7,7F006C9C	//branch if tag==1
+	ADDU	T6,A1,V1	//T6=&next presetpointervalue
+SW	A3,000C(A0)	//presetpointervalue presettag == 1
+LW	A1,0004(A2)	//A1=setpointer2value presetpointer
+OR	T0,A3,R0	//T0=A3=1
+ADDU	T6,A1,V1	//T6=&next presetpointervalue
+//7F006C9C:	-presetpointervalue presettag == 1
+LW	V0,0000(T6)	//V0=next presetpointervalue
+BGEZL	V0,7F006C78	//continue until no more presetpointervalue
+	SLL	T9,V0,0x4	//T9=presetpointervalue -> offset
+LW	A0,0004(T3)	//A0=setpointer2
+//7F006CAC:	-no presetpointervalues
+ADDU	T8,A0,T1	//T8=&next setpointer2value
+//7F006CB0:	-valuepresettag = 0
+LW	V0,0000(T8)	//V0=next setpointer2value
+BGEZL	V0,7F006C50	//continue until no more setpointer2value
+	SLL	T6,V0,0x4	//T6=value -> offset
+LW	A1,0000(A0)	//A1=setpointer2value
+OR	V1,R0,R0	//V1=0 (counter)
+OR	V0,A1,R0	//V0=A1=setpointer2value
+//7F006CC8:	-no values at setpointer2
+BLTZ	V0,7F006CFC	//branch if no more setpointer2value
+SLL	T9,V0,0x4	//T9=value -> offset
+
+//7F006CD0:	-setpointer2value checks each ref'd preset for tag being set
+ADDU	T7,T9,S0	//T7=&setpointer2value preset
+LW	T6,000C(T7)	//T6=setpointer2value presettag
+ADDIU	V1,V1,0001	//count++
+SLL	T8,V1,0x2	//T8=4*count++
+BEQ	A3,T6,7F006CF0	//if tag==1, branch
+ADDU	T9,A0,T8	//T9=&next setpointer2value
+BEQ	R0,R0,7F006CFC
+OR	T4,A3,R0	//T4=A3=1
+//7F006CF0:	-tag==1
+LW	V0,0000(T9)	//V0=setpointer2 value
+BGEZL	V0,7F006CD0	//continue for each setpointer2 value
+	SLL	T9,V0,0x4	//T9=value -> offset
+//7F006CFC:	-no more setpointer2value
+BEQ	T0,R0,7F006D0C	//branch if T0 not set in above loop
+OR	V1,R0,R0	//V1=0
+BNEZ	T4,7F006D2C	//if T4 set to A3(1) above, then branch
+OR	V0,A1,R0	//V0=A1
+//7F006D0C	-
+BEQL	T4,R0,7F006D3C	//if T4=0
+	LW	T6,000C(T5)	//T6=&next set
+//7F006D14	-try and use PLT TBL pointers
+LW	T7,0024(S4)	//T7=80075D24=PLT TBL pointers
+ADDIU	S6,R0,0001	//S6=1
+BEQL	T7,R0,7F006D3C	//if no PLT TBL, branch
+	LW	T6,000C(T5)	//T6=&next set
+BEQ	R0,R0,7F006D3C	//otherwise, do the EXACT same thing
+LW	T6,000C(T5)
+
+//7F006D2C:
+OR	T0,R0,R0	//T0=0
+BEQ	R0,R0,7F006C44
+OR	T4,R0,R0	//T4=0
+
+//7F006D38:
+LW	T6,000C(T5)	//T6=&next set
+//7F006D3C:	-next set
+ADDIU	T5,T5,000C	//T5=&next set
+OR	T3,T5,R0	//T3=T5=&next set
+BNEL	T6,R0,7F006BE4	//continue if no more sets
+	LW	A0,0004(T3)	//A0=setpointer2
+
+
+//-My favorite routine of all!
+//7F006D4C:	-check for any errors that may have been flagged-
+BEQ	S6,R0,7F006D5C	//S6=1 if error occured somewhere
+LW	S0,0018(SP)
+BEQ	R0,R0,7F006D54	//WTF?!? an infinite loop?  -and they do this in case an error occured?
+NOP
+
+//7F006D5C	-reset to original values-
+LW	RA,003C(SP)
+LW	S1,001C(SP)
+LW	S2,0020(SP)
+LW	S3,0024(SP)
+LW	S4,0028(SP)
+LW	S5,002C(SP)
+LW	S6,0030(SP)
+LW	S7,0034(SP)
+LW	S8,0038(SP)
+JR	RA
+ADDIU	SP,SP,00E0
+
+----------------
+7F08F438:	-Path link+Path preset routine
+ADDIU	SP,SP,FFF8	//SP-8=803B3608
+SW	S0,0004(SP)	//803B360C=Path preset table
+SW	A2,0010(SP)	//803B3618=803B36B0
+SW	A3,0014(SP)	//803B361C=803B36AC
+LW	T0,0004(A0)	//T0=second path link
+LUI	T2,8007
+ADDIU	T2,T2,5D00	//T2=80075D00
+LW	T1,0000(T0)	//T1=value at second path link
+OR	S0,A1,R0	//S0=A1=ref'd link
+LW	V0,0000(T2)	//V0=path table
+BLTZ	T1,7F08F4D4	//if at end of table, skip
+LW	V1,0004(T2)	//V1=path linkage
+ADDIU	T2,R0,000C	//T2=000C
+SLL	T6,T1,0x4	//T6=T1*0x10 (to offset)
+//7F08F470:	-next value in second path link table
+ADDU	A0,T6,V0	//A0=path preset ref'd
+LW	A1,0004(A0)	//pointer at ref'd preset
+LW	A2,0000(A1)	//A2=value at ref'd preset pointer
+BLTZ	A2,7F08F4C4	//if there isn"t one, skip
+SLL	T7,A2,0x4	//T7=value*0x10 (to offset)
+//7F08F484:	-next path link value
+ADDU	A3,T7,V0	//A3=pointer of preset ref'd by value at first one
+LW	T8,0008(A3)	//T8=ref'd preset value +8 (set number)
+MULTU	T8,T2		//set number*C
+MFLO	T9		//T9=result
+ADDU	T3,T9,V1	//T3=set in path linkage ref'd
+BNEL	S0,T3,7F08F4B8	//if not same set, branch
+	LW	A2,0004(A1)
+LW	T4,0010(SP)	//T4=803B36B0
+SW	A0,0000(T4)	//803B36B0=Path preset
+LW	T5,0014(SP)	//T5=803B36B4
+BEQ	R0,R0,7F08F4E4	//quit this mess
+SW	A3,0000(T5)	//803B36B4=path preset ref'd by first path preset
+
+LW	A2,0004(A1)	//A2=next value in path preset list
+//7F08F4B8:	-set is different
+ADDIU	A1,A1,0004	//A1+=4 (next value in path preset value list)
+BGEZL	A2,7F08F484	//branch if no more values in path preset list
+	SLL	T7,A2,0x4
+//7F08F4C4:	-no value @ preset pointer
+LW	T1,0004(T0)	//T1=next value in second path link pointer
+ADDIU	T0,T0,0004	//T0+=4 (next value)
+BGEZL	T1,7F08F470	//if more, branch
+	SLL	T6,T1,0x4
+//7F08F4D4:	-done with second pointer's table
+LW	T6,0014(SP)	//
+SW	R0,0000(T6)	//
+LW	T7,0010(SP)	//
+SW	R0,0000(T7)	//
+//7F08F4E4:	-
+LW	S0,0004(SP)	//S0=path presets
+JR	RA
+ADDIU	SP,SP,0008	//SP=803B3608
+
+
+----------------------------
+3RD reference:	call and do something with &path @ 80075D10 (PATHS)
+PATHS:
+pointer ## 00 step
+
+
+
+//7F035434:	-parse paths-
+LUI	A1,8007
+LW	A1,5D10(A1)	//A1=PATHS
+OR	V1,R0,R0	//V1=0 (pathcount)
+LW	T6,0000(A1)	//T6=pathpointer
+OR	V0,A1,R0	//V0=PATHS
+BEQL	T6,R0,7F03547C	//return if a NULL pathpointer
+	OR	V0,R0,R0	//V0=0
+LBU	T7,0004(V0)	//T7=path#
+//7F035454	-
+BNE	A0,T7,7F035464	//branch if path# !=called number
+SLL	T8,V1,0x3	//T8=8*pathcount
+JR	RA	//7F0362C0
+ADDU	V0,T8,A1	//V0=&target pathpointer
+//7F035464	-load next path
+LW	T9,0008(V0)	//T9=next pathpointer
+ADDIU	V1,V1,0001	//V1++
+ADDIU	V0,V0,0008	//V0+=8
+BNEL	T9,R0,7F035454	//branch if this pathpointer not NULL
+	LBU	T7,0004(V0)	//T7=path#
+LBU	T7,0004(V0)	//T7=path#
+OR	V0,R0,R0	//V0=0
+//7F03547C	-return
+JR	RA
+NOP

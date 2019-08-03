@@ -1,0 +1,112 @@
+#gun
+$(BUILD_DIR)/$(OBSEG_DIR)/gun/%.rz: $(OBSEG_DIR)/gun/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/gun/%.rz: $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/gun/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.elf
+	$(OBJCOPY) $< $@ -O binary
+
+$(BUILD_DIR)/$(OBSEG_DIR)/gun/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.o
+	$(LD) -T assets/obseg/gun/Gname.ld -o $@
+	rm build/assets/obseg/gun/Gname.o
+
+$(BUILD_DIR)/$(OBSEG_DIR)/gun/%.o: $(OBSEG_DIR)/gun/%.c
+	$(CC) -c $(CFLAGS) -o $@ -O2 $<
+	mv $@ build/assets/obseg/gun/Gname.o
+
+GUN_RZ_FILES = \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/Gak47Z.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GaudiotapeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GautoshotZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GblackboxZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GblueprintsZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GbombcaseZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GbombdefuserZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GbriefcaseZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GbugdetectorZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GbugZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GbungeeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GcameraZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GcartblueZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GcartridgeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GcartrifleZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GcartshellZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GcircuitboardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GclipboardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GcreditcardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GdarkglassesZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GdatathiefZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GdattapeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GdoordecoderZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GdoorexploderZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GdossierredZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GdynamiteZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GexplosivefloppyZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GexplosivepenZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GextinguisherZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GfingergunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GfistZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GflarepistolZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/Gfnp90Z.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GgaskeyringZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GgoldbarZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GgoldeneyekeyZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GgoldengunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GgoldwppkZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GgrenadelaunchZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GgrenadeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GheroinZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GjoypadZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GkeyanalysercaseZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GkeyboltZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GkeycardZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GkeyyaleZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GknifeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GlaserZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GlectreZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GlockexploderZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/Gm16Z.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GmapZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GmicrocameraZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GmicrocodeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GmicrofilmZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GmoneyZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/Gmp5ksilZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/Gmp5kZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GpitongunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GplansZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GplastiqueZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GpolarizedglassesZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GproximitymineZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GremotemineZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GrocketlaunchZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GrugerZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GsafecrackercaseZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GshotgunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GsilverwppkZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GskorpionZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GsniperrifleZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GspectreZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GspooltapeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GspyfileZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GstafflistZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GtaserZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GthrowknifeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GtimedmineZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GtriggerZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/Gtt33Z.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GuziZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GvideotapeZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwatchcommunicatorZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwatchgeigercounterZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwatchidentifierZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwatchlaserZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwatchmagnetattractZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwatchmagnetrepelZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GweaponcaseZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwppksilZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwppkZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/gun/GwristdartZ.rz
+

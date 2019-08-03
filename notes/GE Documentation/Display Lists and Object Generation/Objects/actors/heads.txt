@@ -1,0 +1,91 @@
+simple heads:
+Simple heads only have one head model (no distance model present).  They follow a very simple header format as shown here (taken from Trevhead).  All require 2 offsets at the beginning of the file and only contain one line of points and mapping.
+
+header:
+00000000	00000000	00000000	0002 0001 
+433E9EA3	0000 0004	00000000	00000000 
+2 offsets, 4 images
+
+offsets: (2)
+0x0	00000000 
+0x4	00000000 
+
+images: (4)
+000007F4 20200000 02000000 
+000007F8 20400000 02000000 
+000007F9 20400000 02000000 
+000007FC 20200000 02000000 
+
+Table:
+00180000 05002390 00000000 00000000 00000000 00000000 
+
+point display struct:
+050023B0 00000000 05000050 0198 0069 050019D0 05002060 0003 0000 00000000 
+	mapping at 0x23B0
+	normal point table at 0x50; 0x198 entries
+	collision point table at 0x19D0; 0x69 entries
+	point usage table at 0x2060
+--------
+Complex heads:
+Complex heads have mulitple head models (distance-specific models) or multiple objects attached to the head, such as sunglasses.  These use slightly more complicated file tables.  This example is of CheadmartinZ.  Run headmartinZ run.
+
+Complex heads *will* have 1-2 offset values preset.
+  First is to the 12-relative command for sunglasses.
+  Second is to 12-relative command for distance model (low-res)
+
+
+header:
+00000000	00000000	00000000	0002 0001 
+435E5914	0000 0006	00000000	00000000 
+2 offsets, 6 images
+
+offsets: (2)
+0x0	050000B0 
+0x4	05000068 
+
+images: (6)
+0x8	000007CC 20200600 02000000 
+0x14	000007CB 10200600 02000000 
+0x20	0000073E 20400000 02000000 
+0x2C	0000073F 20400000 02000000 
+0x38	0000073D 20400000 02000000 
+0x44	00000740 20300400 02000200 
+
+Table:
+0x50		00120000 050000E0 00000000 00000000 00000000 05000068 
+0x68		00120000 050000E8 05000050 05000098 00000000 05000080 
+	0x80	00180000 050001BC 05000068 00000000 00000000 00000000 
+	0x98	00180000 05000780 05000050 050000B0 05000068 00000000 
+0xB0		00120000 050007A0 05000050 00000000 05000098 050000C8 
+	0xC8	00180000 05000A30 050000B0 00000000 00000000 00000000 
+
+relative:
+0xE0	05000068 00000000 
+
+relative:
+0xE8	05000080 00000000 
+
+point display struct:	//low-res head
+0x1BC	05000A50 00000000 050000F0 0006 0006 05000150 050001B0 0003 0000 00000000 
+	mapping @ 0xA50
+	normal point table @ 0xF0; 6 normal points
+	collision points @ 0x150; 6 collision points
+	point usage table @ 0x1B0
+
+point display struct:	//hi-res head
+0x780	05000AB0 00000000 050001E0 0038 001B 05000560 05000710 0003 0000 00000000 
+	mapping @ 0xAB0
+	normal point table @ 0x1E0; 38 normal points
+	collision points @ 0x560; 1B collision points
+	point usage table @ 0x710
+
+relative:
+0x7A0	050000C8 00000000 
+
+point display struct:	//sunglasses
+0xA30	05000B98 05000BF0 050007A8 0014 0012 050008E8 05000A08 0003 0000 00000000 
+	mapping @ 0xB98
+	collisionless mapping @ 0xBF0
+	normal point table @ 0x7A8; 14 normal points
+	collision points @ 0x8E8; 12 collision points
+	point usage table @ 0xA08

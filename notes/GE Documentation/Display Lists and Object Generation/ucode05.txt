@@ -1,0 +1,1170 @@
+Microcode05 - RSP SW 2.0G - GE/PD
+
+--Zoinkity----------------------------------------------------------------------
+	superficially similiar to mario's, but tri4 and combiner differences
+--------------------------------------------------------------------------------
+
+Mario is Fast3D however while digging through the sdk I found that there is a 
+possibility that GE might be F3DEX. As for the combiner differences, these
+are really odd and rare have a look-up table to correct them.
+It seems that MultiGen must have output Binary D-Lists but got the combiner
+command wrong, so Rare "fixes" them at runtime.
+
+Interesting note on SW 2.0G:----------------------------------------------------
+10/15/96:
+	Release 2.0g.
+        * Supports L3DEX ucode which can accept 32 vertices cache.
+--------------------------------------------------------------------------------
+
+So, 2.0G really should be using F3DEX since this is a caption from the F3DEX 
+ChangeLog
+Also, the release date is Pre-GE release
+
+================================================================================
+			Fast3D / F3DEX GBI 
+	(F3DEX2 uses non-immediate commands (Ex and Dx commands
+	eg E2 = G_setothermode_l or E200013D = SetRendermode())
+================================================================================
+Command Bit Layout-
+|00xx xxxx| = DMA		0,..,127
+|10xx xxxx| = Immediate Mode	-65,..,-128	
+|11xx xxxx| = RDP cmds		-1,..,-64	
+
+RDP hardware only looks at the lower 6 bits of the command byte
+
+/* DMA commands: */
+00	rsp noop
+01	rsp_uc05_matrix
+02	rsp_reserved0
+03	rsp_uc05_movemem
+04	rsp_uc05_vertex
+05	rsp_reserved1
+06	rsp_uc05_displaylist
+07	rsp_reserved2
+08	rsp_reserved3
+09	rsp_uc05_sprite2d
+
+
+/* IMMEDIATE commands: */   	To Calculate these, SDK lists as G_IMMFIRST=-65 then -n. 
+				This means set Calculator to Byte.
+				In Decimal do 0-65-n= then click hex to see value.
+				Eg, G_SETOTHERMODE_L=(G_IMMFIRST-6) = 0-65-6=-71 = B9
+
+if F3DEX
+	AF	G_LOAD_UCODE	
+	B0	G_BRANCH_Z	
+	B1	G_TRI2		GE_TRI4
+	B2	G_MODIFYVTX 
+else	
+	B2	G__rdphalf_cont //Fast3D
+endif
+B3	rsp_uc05_rdphalf_2
+B4	rsp_uc05_rdphalf_1
+B5	rsp_uc05_line3d
+B6	rsp_uc05_cleargeometrymode
+B7	rsp_uc05_setgeometrymode
+B8	rsp_uc05_enddl
+B9	rsp_uc05_setothermode_l
+BA	rsp_uc05_setothermode_h
+BB	rsp_uc05_texture	/	rdp_texture
+BC	rsp_uc05_moveword
+BD	rsp_uc05_popmatrix
+BE	rsp_uc05_culldl
+BF	rsp_uc05_tri1
+
+/* RDP commands: */
+C0	rdp_noop		GETexture()
+
+/* 
+ * The following commands are the "generated" RDP commands; the user
+ * never sees them, the RSP microcode generates them.
+ *
+ * The layout of the bits is magical, to save work in the ucode.
+ * These id's are -56, -52, -54, -50, -55, -51, -53, -49, ...
+ *                                 edge, shade, texture, zbuff bits:  estz
+ */
+
+	C8	rdp_trifill
+	C9	rdp_trifillz
+	CA	rdp_tritxtr
+	CB	rdp_tritxtrz
+	CC	rdp_trishade
+	CD	rdp_trishadez
+	CE	rdp_trishadetxtr
+	CF	rdp_trishadetxtrz
+
+
+RDP Commands - Pass through RSP
+E4	rdp_texrect
+E5	rdp_texrectflip
+E6	rdp_loadsync
+E7	rdp_pipesync
+E8	rdp_tilesync
+E9	rdp_fullsync
+EA	rdp_setkeygb
+EB	rdp_setkeyr
+EC	rdp_setconvert
+ED	rdp_setscissor
+EE	rdp_setprimdepth
+EF	rdp_setothermode
+F0	rdp_loadtlut
+F2	rdp_settilesize
+F3	rdp_loadblock
+F4	rdp_loadtile
+F5	rdp_settile
+F6	rdp_fillrect
+F7	rdp_setfillcolour
+F8	rdp_setfogcolour
+F9	rdp_setblendcolour
+FA	rdp_setprimcolour
+FB	rdp_setenvcolour
+FC	rdp_setcombine
+FD	rdp_settextureimage
+FE	rdp_setdepthimage
+FF	rdp_setcolourimage
+
+================================================================================
+
+01	rsp_uc05_matrix G_MTX
+
+gsSPMatrix(m, p)	gsDma1p(G_MTX, m, sizeof(Mtx), p)
+#define	gsDma1p(G_MTX, m, sizeof(Mtx), p)						\
+{									\
+	(_SHIFTL((G_MTX), 24, 8) | _SHIFTL((p), 16, 8) | 			\
+	 _SHIFTL((sizeof(Mtx)), 0, 16)), 						\
+        (unsigned int)(m)						\
+}
+
+# define G_MTX_MODELVIEW	0x00 	/* matrix types (p)*/
+# define G_MTX_PROJECTION	0x01 001
+# define G_MTX_MUL		0x00	/* concat or load */
+# define G_MTX_LOAD		0x02 010
+# define G_MTX_NOPUSH		0x00 	/* push or not */
+# define G_MTX_PUSH		0x04 100
+
+
+a 4x4 veiwing matrix. It can be multiplied and pushed to the stack.
+
+upper word
+xxx0xxxx	modelview	mul	nopush	000
+xxx1xxxx	projection	mul	nopush  001
+xxx2xxxx	modelview	load	nopush	010
+xxx3xxxx	projection	load	nopush	011
+xxx4xxxx	modelview	mul	push	100
+xxx5xxxx	projection	mul	push	101
+xxx6xxxx	modelview	load	push	110
+xxx7xxxx	projection	load	push	111
+
+lower word
+address or offset in file (m)
+
+================================================================================
+
+03	rsp_uc05_movemem
+
+upper word
+xx80xxxx	move viewport
+xx82xxxx	look at y
+xx84xxxx	look at x
+xx86xxxx	light [0]
+xx88xxxx	light [1]
+xx8Axxxx	light [2]
+xx8Cxxxx	light [3]
+xx8Exxxx	light [4]
+xx90xxxx	light [5]
+xx92xxxx	light [6]
+xx94xxxx	light [7]
+xx96xxxx	texture at T
+xx98xxxx	matrix [0]
+xx9Axxxx	matrix [1]
+xx9Cxxxx	matrix [2]
+xx9Exxxx	matrix [3]
+
+lower word
+0f000000	segment (like 05 used for offsets)
+00ffffff	address or offset in file
+
+================================================================================
+
+04	rsp_uc05_vertex //Warning RARE format for Tri4, does not match F3DEX!
+
+--F3DEX vtx --------------------
+ * Included for completness
+ * F3DEX_GBI: G_VTX GBI format was changed to support 64 vertice.
+ *
+ *        +--------+--------+------+----------+
+ *  G_VTX |  cmd:8 |  v0:8  |  n:6 |length:10 |
+ *        +-+---+--+--------+------+----------+
+ *        | |seg|          address            |
+ *        +-+---+-----------------------------+
+ */
+# define	gSPVertex(pkt, v, n, v0) \
+				gDma1p((pkt),G_VTX,(v),((n)<<10)|(sizeof(Vtx)*(n)-1),(v0)*2)
+# define	gsSPVertex(v, n, v0) \
+				gsDma1p(G_VTX,(v),((n)<<10)|(sizeof(Vtx)*(n)-1),(v0)*2)
+#else
+# define	gSPVertex(pkt, v, n, v0) \
+				gDma1p(pkt, G_VTX, v, sizeof(Vtx)*(n),((n)-1)<<4|(v0))
+# define	gsSPVertex(v, n, v0) \
+				gsDma1p(G_VTX, v, sizeof(Vtx)*(n), ((n)-1)<<4|(v0))
+
+#define	gsDma1p(c, s, l, p)						\
+{									\
+	(_SHIFTL((c), 24, 8) | _SHIFTL((p), 16, 8) | 			\
+	 _SHIFTL((l), 0, 16)), 						\
+		(unsigned int)(s)						\
+}
+
+upper word
+00FF0000	vertex index to start loading from (0-31)
+0000FFFF	number Vertexes to load (0-31)
+
+lower word
+0f000000	segment
+00ffffff	offset in point table
+
+-------------------------------------------------------------------------------
+
+--RARE vtx --------------------------------------------------------------------
+
+upper word
+00F00000	number of points
+000FFFFF	number of bytes to grab
+
+lower word
+0f000000	segment
+00ffffff	offset in point table
+
+================================================================================
+
+06	rsp_uc05_displaylist
+
+upper word
+xx00xxxx	push display list
+xx01xxxx	branch to display list
+
+lower word
+0f000000	segment (like 05 used for offsets)
+00ffffff	address or offset in file
+
+================================================================================
+07	rsp_colour
+This PD-specific command declares offset to RGBA data
+
+upper word
+00FF0000	number of bytes to grab, -4
+0000FFFF	number of bytes to grab
+
+lower word
+0f000000	segment
+00ffffff	address or offset in file
+
+================================================================================
+AF	rsp_load_ucode
+Loads ucode
+Preceeded by rdp_half_1
+
+upper word
+0000FFFF	size of data section, -1
+
+lower word
+FFFFFFFF	start text section
+
+
+================================================================================
+B0	rsp_branch_z
+Branch if the z position of model is <= screen
+Preceeded by rdp_half_1
+
+upper word
+00FFF000	vertex*5, specificly the z value
+00000FFE	vertex, specificly the z value
+
+lower word
+
+in perspective mode:
+(1-(near plane)/(screen depth)) / (1-(near plane)/(far plane)) * (zmax - zmin)
+
+in orthographic mode:
+((screen depth)-(near plane))/((far plane)-(near plane)) * (zmax - zmin)
+
+-or you can use the raw screen depth value
+
+================================================================================
+B1	GE_tri4
+Draws up to four triangles at a time.
+Expects values from 0-F, corresponding with # points declared by vertex command.
+Triangles with all points set to 0 are not drawn.
+Vertex Buffer reduced to 16 due to only being able to address 0-F
+
+upper word
+0000F000	fourth triangle point 3
+00000F00	third triangle point 3
+000000F0	second triangle point 3
+0000000F	first triangle point 3
+
+lower word
+f0000000	fourth triangle point 2
+0f000000	fourth triangle point 1
+00f00000	third triangle point 2
+000f0000	third triangle point 1
+0000f000	second triangle point 2
+00000f00	second triangle point 1
+000000f0	first triangle point 2
+0000000f	first triangle point 1
+
+================================================================================
+B2	rsp_uc05_rdphalf_cont
+Usage unknown.  Used by sky and water generators in GE
+Follows B4 rdphalf_1 command.  Acts as an indicator that the command continues with the given lower word.
+This is used only when operators longer than 64bits are in use.
+
+B4000000 CE80 01DB
+B2000000 01DB 0028
+B4000000 013F C000
+B2000000 F8AA 0000
+  In this context, each represents a position value, converted from float to short.
+  Most likely this constructs the field for the sky and water, creating commands using upper/lower word pairs:
+CE8001DB 01DB0028
+013FC000 F8AA0000
+
+================================================================================
+B3	rsp_uc05_rdphalf_2
+Generates the lower word of a 64bit microcode op in conjunction with a rsp_rdphalf_1 op.
+These words are then combined to form a single 64bit microcode op.
+
+B4000000 0FDB 9B21
+B3000000 4F6E 0274
+
+================================================================================
+B4	rsp_uc05_rdphalf_1
+Preceeds "branch on z", "load ucode", and rdphalf_continued commands
+Also can be used following textrects to set the s/t upper data word.  In this case, rsp_rdphalf_2 is used to generate the lower data word.
+
+upper word
+00000000
+lower word
+FFFFFFFF	display list to branch to for "branch on z"
+FFFFFFFF	start of data section for "load ucode"
+
+================================================================================
+B5	rsp_line3d
+draws a 3d line using two vectors (essentially points).  Kinda like 3d functions.
+Possibly used for gunfire, but highly unlikely.
+width works in half-pixels, and the base value is 1.5
+
+lower word
+00FE0000	vector 0
+0000FE00	vector 1
+000000FF	width (.5width + 1.5)
+
+================================================================================
+B6	rsp_uc05_cleargeometrymode
+
+when following bitflags set, attributes are removed from surfaces if they were already enabled. 
+
+F3DEX	lower word	
+1	0x00800000	clipping	(Perfect Dark only)
+2	0x00000000	clipping2
+1/2	0x00000001	depth buffer
+1	0x00000002	texture enable	Microcode Use Only
+2 	0x00000000	texture enable2 Ignored
+1/2	0x00000004	shade 
+1/2	0x000000F8	+only used in setup seemingly
+1	0x00000200	shade smooth 
+2	0x00200000	shade smooth2 
+1	0x00001000	cull front
+2	0x00000200	cull front2
+1	0x00002000	cull back
+2	0x00000400	cull back2
+1/2	0x00010000	fog
+1/2	0x00020000	lighting
+1/2	0x00040000	texture gen
+1/2	0x00080000	texture gen linear
+1/2	0x00100000	lod Not Implemented (doesn't seem like many games implement this...)
+
+================================================================================
+
+B7	rsp_uc05_setgeometrymode
+
+when following bitflags set, attributes applied to surfaces
+
+F3DEX	lower word	
+1	0x00800000	clipping	(Perfect Dark only)
+2	0x00000000	clipping2
+1/2	0x00000001	depth buffer
+1	0x00000002	texture enable	Microcode Use Only
+2 	0x00000000	texture enable2 Ignored
+1/2	0x00000004	shade (enable use of vertex colours  - if not set, use primcolor/envcolor to make triangles visible)
+1/2	0x000000F8	+only used in setup seemingly
+1	0x00000200	shade smooth (uses Gourand interpolation - if not set, first vertex defines the surface's colour)
+2	0x00200000	shade smooth2 (uses Gourand interpolation - if not set, first vertex defines the surface's colour)
+1	0x00001000	cull front
+2	0x00000200	cull front2
+1	0x00002000	cull back
+2	0x00000400	cull back2
+1/2	0x00010000	fog
+1/2	0x00020000	lighting
+1/2	0x00040000	texture gen
+1/2	0x00080000	texture gen linear
+1/2	0x00100000	lod Not Implemented (doesn't seem like many games implement this...)
+
+*******************************************
+*19  16 1512 11  9   8 7654 3210 BitNumber*
+*gGLfog 00BF 00smooth0 0000 0s0z	  *
+*******************************************
+
+ * Further explanation:
+ * G_SHADE is necessary in order to see the color that you passed
+ * down with the vertex. If G_SHADE isn't set, you need to set the DP
+ * appropriately and use primcolor to see anything.
+ *
+ * G_SHADING_SMOOTH enabled means use all 3 colors of the triangle.
+ * If it is not set, then do 'flat shading', where only one vertex color 
+ * is used (and all 3 vertices are set to that same color by the ucode)
+ * See the man page for gSP1Triangle().
+ *
+
+
+
+================================================================================
+======	GeometryMode(c,s) F3DEX2 Combines Set, Clear and Load Geometry Modes into 1 command with a header command.
+
+
+
+
+================================================================================
+B8	rsp_enddl
+Marks the end of a display list.
+If the current list was called by an 06 command, returns from branch.  
+Otherwise, processing returns to the calling function.
+
+No options
+
+================================================================================
+
+B9	rsp_uc05_setothermode_l
+
+
+
+
+*****************************************
+*					*
+*	MOVED TO SETOTHERMODE_L.HTM	*
+*					*
+*****************************************
+
+
+
+
+
+================================================================================
+
+BA	rsp_uc05_setothermode_h
+
+
+
+
+
+*****************************************
+*					*
+*	MOVED TO SETOTHERMODE_H.HTM	*
+*					*
+*****************************************
+
+
+
+
+
+================================================================================
+
+BB	rsp_uc05_texture
+
+typedef struct {
+		unsigned char	cmd;
+		unsigned char	lodscale; //level
+		unsigned char	tile;
+		unsigned char	on;
+		unsigned short	s;
+		unsigned short	t;
+} Gtexture;
+
+Needs to be set on to texture following triangles, ie: BB002801 FFFFFFFF 
+Can also map one of 6 pre-loaded imagemaps to triangles.
+s and t refer to the two mapping pins included with each point struct.
+Ordinarily don't set these masks, unless using preloaded image or surfaces do not declare ST.
+
+upper word
+00FF0000	bowtie of some kind.  +4 chops one scanline from surface
+00003800	level? seems like format, most of the time
+00000700	tile t0
+000000FF	on(1) or off(0)
+
+lower word
+FFFF0000	s
+0000FFFF	t
+
+
+# define gsSPTexture(s, t, level, tile, on)				\
+{{									\
+	(_SHIFTL(G_TEXTURE,24,8)|_SHIFTL(BOWTIE_VAL,16,8)|		\
+	 _SHIFTL((level),11,3)|_SHIFTL((tile),8,3)|_SHIFTL((on),0,8)),	\
+        (_SHIFTL((s),16,16)|_SHIFTL((t),0,16))				\
+}}
+
+31      24    23     16      13 11    8   7  4 3  0  	31            16 15             0
+[0000 0000]  [0000 0000]  00[00 0] [000] [0000 0000] 	0000000000000000 0000000000000000
+Texture      Bowtie=0        Lod   Tile      on		  ShiftS	  ShiftT
+Char cmd     char ? 	  charLod chartile char On
+
+
+Bowtie is not editable by arguments, it is set by GBI.h and it = 0.
+it only applies to Hardware v1 and is not always needed.
+
+My Guess is that LODScale/Level sets how many Mip-Map levels to use, Tile sets the base Mip-Map Level.
+If tile = 0 then use highest res image.
+Tile must be set to 1 for Detail Maps (to allow detail to use slot 0).
+
+/n64man/gsp/gSPTexture.htm
+Ok, so yes, LODScale is the number of Mip-Map levels -1, i.e. 8 Levels = 7.
+
+
+=F3DEX2=========================================================================
+# define gsSPTexture(s, t, level, tile, on)				\	|
+{{									\	|
+	(_SHIFTL(G_TEXTURE,24,8) | _SHIFTL(BOWTIE_VAL,16,8) |		\	|
+	 _SHIFTL((level),11,3) | _SHIFTL((tile),8,3) | _SHIFTL((on),1,7)),\	|
+        (_SHIFTL((s),16,16) | _SHIFTL((t),0,16))			\	|
+}}										|
+================================================================================
+
+================================================================================
+
+BC	rsp_uc05_moveword
+by default moves entire matrix.  Otherwise, this dictates what stuff is being fiddled with
+
+upper word
+types	00000000	matrix
+	00020000	#lights
+	00040000	clip
+	00060000	segment
+	00080000	fog
+	000A0000	light colour
+	000C0000	point
+	000E0000	perspective normal
+offsets:
+	00000000	integer matrix
+(per	00000080	floating-point matrix
+type)	00000000	matrix XX XY
+	00000010	matrix XZ XW
+	00000020	matrix YX YY
+	00000030	matrix YZ YW
+	00000040	matrix ZX ZY
+	00000050	matrix ZZ ZW
+	00000060	matrix WX WY
+	00000070	matrix WZ WW
+	00000000	light vectors or fog
+	00000010	clip -x
+	00000030	clip -y
+	00000050	clip +x
+	00000070	clip +y
+	0000003C	segment 0-F
+	00000000	light a
+	00000010	light b
+	00000380	light 0-8
+	00000040	point RGBA
+	00000050	point ST
+	00000060	point XY screen
+	00000070	point Z screen
+
+lower word
+if fog/light not selected, set address
+	0x0f000000	segment
+	0x00ffffff	address or offset in file
+if fog, fog depth values (2 16bit integers)
+if light colour, rgb+fog (ie. FF000001 for red fog, active cloud layer)
+
+
+
+
+-----------------------
+gsSPSegment(segment, base)							
+  1	gsMoveWd( G_MW_SEGMENT, (segment)*4, 	base) 			// G_MW_SEGMENT = 06
+  	gsMoveWd( index, 	offset, 	data)	
+  2	gsImmp21( G_MOVEWORD, 	offset, 	index, 		data)	// G_MOVEWORD = BC
+	gsImmp21( c, 		p0, 		p1, 		dat)	// data = base
+	{{							
+	_SHIFTL((c), 24, 8) | _SHIFTL((p0), 8, 16) | _SHIFTL((p1), 0, 8),
+        (unsigned int) (dat)						
+	
+	// BC p0 p0 06  dd dd at tt
+	// BC Segment 06     Base
+	}}
+F3DEX2	gsDma1p( G_MOVEWORD, data, offset, index)
+	gsDma1p( c, 		s,      l,     p)						\
+	{{									\
+	(_SHIFTL((c), 24, 8) | _SHIFTL((p), 16, 8) | 			\
+	 _SHIFTL((l), 0, 16)), 						\
+        (unsigned int)(s)						\
+
+	// BC 06 pp pp   ss ss ss ss
+	}}
+
+segment
+ the segment ID (0-15) * 4. [ e.g. 15(F) *4 = 60(3C) ]
+base 
+ the base physical address 
+
+Sets the Address (Base) of the start of the SegmentID (Segment)
+
+
+
+
+
+
+
+
+
+================================================================================
+BD	rsp_popmatrix	adrs,len,idx,ofs
+upper word
+00FF0000	Perfect Dark: offset, typically 0
+0000FF00	Perfect Dark: size of block, -1 (0x3F)
+000000FF	Perfect Dark: 2
+
+lower word
+FFFFFFFF	matrix number to pop or address of matrix (num*64)
+
+================================================================================
+BE	rsp_culldl
+upper word
+0000FFFE	start
+
+lower word
+0000FFFE	end
+
+================================================================================
+BF	rsp_tri1
+Create one triangle.
+Divide each value by 10 (0xA) to return the point number in current list.  
+Note the point order is opposite that for the tri4 command.
+Requires a vertex list offset is set by rsp_vertex command.
+ie.	00	point 0
+	0A	point 1
+	...
+	8C	point 14
+	96	point 15
+
+lower word
+00ff0000	point 1
+0000ff00	point 2
+000000ff	point 3
+
+---------------------------
+RSP generated RDP commands:
+  These are formulaic triangle draw commands, generated at runtime.
+  Note you can also create these with rsp_half commands.
+
+upper word:
+C8000000	base for all command types
+06000000	triangle type
+	0	fill
+	1	texture
+	2	shade
+01000000	z-buffer triangle
+0000FFFF	x pos
+
+lower word
+FFFF0000	y pos
+0000FFFF	z pos
+
+etc...
+
+C8	rdp_trifill
+C9	rdp_trifillz
+CA	rdp_tritxtr
+CB	rdp_tritxtrz
+CC	rdp_trishade
+CD	rdp_trishadez
+CE	rdp_trishadetxtr
+CF	rdp_trishadetxtrz
+
+================================================================================
+E4	rdp_texrect
+Draws text in rectangles, especially fonts.
+Virtually all 2D objects are mapped with this type unless sprite microcode in use.
+64bit command.  First 32 bits set size of tile, second 32 bits image alignment
+
+upper word
+00FFF000	upper left x
+00000FFF	upper left y
+
+lower word
+07000000	tile
+00FFF000	lower right x
+00000FFF	lower right y
+
+command 2
+upper word
+FFFF0000	upper left s
+0000FFFF	upper left t
+
+lower word
+FFFF0000	change in s per change in x (dsdx, as in delta-s delta-x)
+0000FFFF	dtdy
+================================================================================
+E5	rdp_texrectflip
+Suspiciously similiar to E4: rdp_texrect
+
+upper word
+00FFF000	lower right x
+00000FFF	lower right y
+
+lower word
+07000000	tile
+00FFF000	upper left x
+00000FFF	upper left y
+
+command 2
+upper word
+FFFF0000	upper left t
+0000FFFF	upper left s
+
+lower word
+FFFF0000	change in s per change in x (dsdx, as in delta-s delta-x)
+0000FFFF	dtdy
+
+================================================================================
+E6	rdp_loadsync
+Called after any data request to allow processor time to load data.
+
+No options
+
+================================================================================
+E7	rdp_pipesync
+The pipe is used as a generic term for peripheral interface or co-processor activity.
+Waits for data to be loaded from ROM or RAM, or waits for co-processor to clear.
+Display lists will almost always start with this command to ensure all previous display lists are completely executed.  
+
+No options
+
+================================================================================
+E8	rdp_tilesync
+Called after requesting tile data load.  Waits for processor activity to end.
+
+No options
+
+================================================================================
+E9	rdp_fullsync
+Combined effect of all syncs.  Not common, actually.
+
+No options
+
+================================================================================
+EA	rdp_setkeygb
+Sets green + blue key components; typically used with EB: rdp_setkeyr below
+
+upper word
+00FFF000	Water:	Green
+00000FFF	Water:	Blue
+
+lower word
+FF000000	Cloud:	Green
+00FF0000	Sky:	Green
+0000FF00	Cloud:	Blue
+000000FF	Sky:	Blue
+
+================================================================================
+EB	rdp_setkeyr
+Sets red key component; typically used with EA: rdp_setkeygb above
+
+upper word
+
+lower word
+0FFF0000	Water:	Red
+0000FF00	Cloud:	Red
+000000FF	Sky:	Red
+
+================================================================================
+EC	rdp_setconvert
+All values are 9 bits; note that K2 spans both upper and lower word
+
+upper word
+003FE000	k0
+00001FF0	k1
+0000000F	k2 (upper)
+
+lower word
+F8000000	k2 (lower)
+07FC0000	k3
+0003FE00	k4
+000001FF	k5
+
+================================================================================
+ED	rdp_setscissor
+
+upper word
+00FFF000	upper left x
+00000FFF	upper left y
+
+lower word
+02000000	interlace
+01000000	odd when interlaced
+00FFF000	lower right x
+00000FFF	lower right y
+
+================================================================================
+EE	rdp_setprimdepth
+
+lower word
+FFFF0000	depth (z)
+0000FFFF	change in depth (dz)
+
+
+
+#define	gDPSetPrimDepth(pkt, z, dz)					\
+		gDPSetColor(pkt, G_SETPRIMDEPTH, 			\
+			    _SHIFTL(z, 16, 16) | _SHIFTL(dz, 0, 16))
+#define	gsDPSetPrimDepth(z, dz)						\
+		gsDPSetColor(G_SETPRIMDEPTH, _SHIFTL(z, 16, 16) | 	\
+			     _SHIFTL(dz, 0, 16))
+
+*********************************************
+* For Final Command structure see GSetColor. *
+*********************************************
+
+USAGE: 
+gsDPSetRenderMode(AA_ZB_XLU_DEC)
+tri4() 	//decal1
+gsDPSetPrimDepth(0,-1) 	//EE000000 0000FFFF
+tri4	//decal2 under decal1
+gsDPSetPrimDepth(0,2) 	//EE000000 00000002
+tri4 	//decal3
+gsDPEndDL()
+
+================================================================================
+EF	rdp_setothermode
+Zoinkity: This is a crazy command.  It seems like it can take a whole slew of different arguments!
+
+upper word
+00FFFFFF	uses options from lower word of setothermode_h
+	Pipeline Mode
+	Cycle Type
+	Texture Perspective
+	Texture Detail
+	Texture LOD
+	Texture LUT
+	Texture Filter
+	Texture Convert
+	Combine Key
+	colour Dither
+	Alpha Dither
+
+lower word
+FFFFFFFF		uses these options from lower word of setothermode_l
+	alpha compare
+	depth source
+	render mode
+
+================================================================================
+F0	rdp_loadtlut
+
+#define	gsDPLoadTLUTCmd(tile, count)					\
+{									\
+	_SHIFTL(G_LOADTLUT, 24, 8),					\
+	_SHIFTL((tile), 24, 3) | _SHIFTL((count), 14, 10)		\
+}
+
+used to load texture look-up tables (palettes); technically same format as the other load types
+upper word
+00FFF000	x0 (# entries)
+00000FFF	y0
+
+lower word
+07000000	tile
+00FFF000	count/x1 (size in bytes of palette)
+00000FFF	palette start/y1
+
+================================================================================
+
+F2	rdp_settilesize
+#define	gDPSetTileSize(pkt, t, uls, ult, lrs, lrt)
+#define gsDPLoadTileGeneric(c, tile, uls, ult, lrs, lrt)		\
+{									\
+	_SHIFTL(c, 24, 8) | _SHIFTL(uls, 12, 12) | _SHIFTL(ult, 0, 12),	\
+	_SHIFTL(tile, 24, 3) | _SHIFTL(lrs, 12, 12) | _SHIFTL(lrt, 0, 12)\
+}
+
+
+Sets size of image to be mapped.  Best if it actually matches the image's proportions...
+Screwing up the mapping aspect can seriously damage the tile's appearance.
+width=(lrs-uls)/4 + 1
+height=(lrt-ult)/4 + 1
+
+upper word
+00FFF000	upper left s
+00000FFF	upper left t
+
+lower word
+07000000	tile
+00FFF000	lower right s
+00000FFF	lower right t
+
+================================================================================
+
+F3	rdp_loadblock
+used to load blocks of either image or palette data.
+
+upper word
+00FFF000	upper left s
+00000FFF	upper left t
+
+lower word
+07000000	tile
+00FFF000	lower right s (must be less than 2047 else = 2047)
+00000FFF	(dxt) 
+		if (Twidth*(Bitdepth/8)/8) > 1 then
+			(2048+(Twidth*(Bitdepth/8)/8)-1)/(Twidth*(Bitdepth/8)/8) 
+		else (2048+1-1)/1 = 2048
+
+================================================================================
+
+F4	rdp_loadtile
+width= (lrs-uls)/4 + 1
+height= (lrt-ult)/4 + 1
+
+upper word
+00FFF000	upper-left S
+00000FFF	upper-left T
+
+lower word
+07000000	tile
+00FFF000	lower-right S
+00000FFF	lower-right T
+
+================================================================================
+
+F5	rdp_settile
+
+*****************************************
+*					*
+*	MOVED TO SETTILE.HTM	        *
+*					*
+*****************************************
+
+================================================================================
+
+F6	rdp_fillrect
+This is predominantly used when mapping text or "2D" objects
+colour is set either by rdp_setblendcolour or rdp_setfillcolour
+upper word
+00FFC000	lower right x
+00003000	lr x fraction
+00000FFC	lower right y
+00000003	lr y fraction
+
+lower word
+00FFC000	upper left x
+00003000	ul x fraction
+00000FFC	upper left y
+00000003	ul y fraction
+
+================================================================================
+
+F7	rdp_setfillcolour
+Sets the fill colour.  Uses 16bit colour it can fill 4px a cycle 
+
+lower word
+0000F800	red	5
+000007C0	green	5
+0000003E	blue	5
+00000001	alpha	1
+
+*Theroetically acording to sdk*
+F8000000	red	5
+07C00000	green	5
+003E0000	blue	5
+00010000	alpha	1
+
+if both are used it indicates a 32bit colour and will reduce the fill rate to 2px a cycle. Just use LowerHalfWord.
+
+================================================================================
+
+F8	rdp_setfogcolour
+
+Sets the FOG Colour Register, a Special Use register of the Blender. Used for setting the Colour of FOG, the colour that vertextes will change to with distance.
+
+SetBlendColor is redefined as SetColor used by all Colour Registers of the Colour Combiner and Blender
+
+#define	gsDPSetFogColor(r, g, b, a)	//SetFOGColour Command. This is then Redefined as...
+	   gsDPSetColor(G_SETFOGCOLOR, (_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8))) 	
+
+*********************************************
+* For Final Command structure see GSetColor. *
+*********************************************
+
+================================================================================
+
+F9	rdp_setblendcolour
+
+Sets the Blender Colour Register, a General Use register of the Blender. While given the name Blend, it can be used for any colour value.
+
+SetBlendColor is redefined as SetColor used by all Colour Registers of the Colour Combiner and Blender
+
+#define	gsDPSetBlendColor(r, g, b, a)	//SetBlendColour Command. This is then Redefined as...
+	   gsDPSetColor(G_SETBLENDCOLOR, (_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8))) 	
+
+*********************************************
+* For Final Command structure see GSetColor. *
+*********************************************
+
+================================================================================
+
+FA	rdp_setprimcolour
+Sets the Primitive Colour Register, a General Use 6 Byte register of the Colour Combiner. While given the name Primitive, it can be used for any colour value.
+
+SetPrimColor is similar to SetColor used by all Colour Registers of the Colour Combiner and Blender except it accepts 2 more arguments, prim_min_level and prim_LOD_Frac
+
+--Zoinks Note------------------------------------------------------------
+|Blends into background (enviroment) colour.				 |	
+|Many fonts, for instance, use I images blended colour(prim)->alpha(env) |
+-------------------------------------------------------------------------
+Fonts may be true but top line is not strictly true.
+
+The structure of the Command is identical to Set Colour
+
+#define	gsDPSetPrimColor(m, l, r, g, b, a)				\
+{{									\
+	(_SHIFTL(G_SETPRIMCOLOR, 24, 8) | _SHIFTL(m, 8, 8) |		\
+	 _SHIFTL(l, 0, 8)),						\
+	(_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | _SHIFTL(b, 8, 8) |	\
+	 _SHIFTL(a, 0, 8))						\
+}}
+
+upper word
+0000FF00	minimum level
+000000FF	level
+
+lower word
+rrggbbaa	red, green, blue, alpha components
+
+================================================================================
+
+FB	rdp_setenvcolour G_SETENVCOLOR
+
+Sets the Environment Colour Register, a General Use register of the Colour Combiner. While given the name Environment, it can be used for any colour value.
+
+SetEnvColor is redefined as SetColor used by all Colour Registers of the Colour Combiner and Blender
+
+#define	gsDPSetEnvColor(r, g, b, a)	//SetEnvColour Command. This is then Redefined as...
+	   gsDPSetColor(G_SETENVCOLOR, (_SHIFTL(r, 24, 8) | _SHIFTL(g, 16, 8) | _SHIFTL(b, 8, 8) | _SHIFTL(a, 0, 8))) 	
+
+*********************************************
+* For Final Command structure see GSetColor. *
+*********************************************
+
+
+================================================================================
+
+=====	RDP GSetColor ==========================================================
+
+
+typedef struct {
+		int		cmd:8; //SetEnvColor, SetPrimColor, SetFogColor, SetBlendColor, SetFillColor, SetPrimDepth
+		unsigned char	pad;
+		unsigned char	prim_min_level;	//00 - FF = 0.0 - 1.0
+		unsigned char	prim_level;	//00 - FF = 0.0 - 1.0, possible use includes setting this dynamically at runtime to "morph" texture tiles, somewhat similar to peach/bowser except that you dont need to move.
+		unsigned long	color; 		//RRGGBBAA
+} Gsetcolor;
+
+upper word
+FF000000	Command
+0000FF00	minimum level
+000000FF	level
+
+lower word
+rrggbbaa
+
+================================================================================
+
+FC	rdp_setcombine
+
+
+*****************************************
+*					*
+*	MOVED TO SETCOMBINE.HTM		*
+*					*
+*****************************************
+
+
+================================================================================
+
+FD	rdp_settextureimage
+#define	gsSetImage(cmd, fmt, siz, width, i)				\
+{									\
+	_SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) |			\
+	_SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12),		\
+	(unsigned int)(i)						\
+}
+
+Bitmap
+xxxx xxxx fmt sz xxxxxxx [--width---]
+1111 1101 100 10 0000000000000000000
+also used for camspy effect in PD, but that's just crazy and not included here
+upper word
+format	0x00000000	rgba
+	0x00200000	yuv
+	0x00400000	ci
+	0x00600000	ia
+	0x00800000	i
+depth	0x00000000	4bit
+	0x00080000	8bit
+	0x00100000	16bit
+	0x00180000	32bit
+	0x00000FFF	width-1
+
+lower word
+0f000000	segment (like 05 used for offsets)
+00ffffff	address or offset in file
+
+
+================================================================================
+
+FE	rdp_setdepthimage
+Not certain, but seems like the format and size always equal 0, and width always equals 1
+Most likely only accepts a 1bit alpha table or something silly like that
+
+upper word
+format	0x00000000	rgba
+	0x00200000	yuv
+	0x00400000	ci
+	0x00600000	ia
+	0x00800000	i
+size	0x00000000	4bit
+	0x00080000	8bit
+	0x00100000	16bit
+	0x00180000	32bit
+	0x00000FFF	width-1
+
+lower word
+0f000000	segment (like 05 used for offsets)
+00ffffff	address or offset in file
+
+================================================================================
+
+FF	rdp_setcolourimage
+format	0x00000000	rgba
+	0x00200000	yuv
+	0x00400000	ci
+	0x00600000	ia
+	0x00800000	i
+size	0x00000000	4bit
+	0x00080000	8bit
+	0x00100000	16bit
+	0x00180000	32bit
+	0x00000FFF	width
+
+lower word
+0f000000	segment (like 05 used for offsets)
+00ffffff	address or offset in file
+

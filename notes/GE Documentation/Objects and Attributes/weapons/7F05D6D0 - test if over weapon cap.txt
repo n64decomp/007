@@ -1,0 +1,117 @@
+7F05D6D0:	92200	advance through weapon set
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0014	SW	RA,0014 (SP)
+00002025	OR	A0,R0,R0	;A0=0: right hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24050001	ADDIU	A1,R0,0001	;A1=mode (normal? previous?)
+AFA20024	SW	V0,0024 (SP)	;SP+24=next right weapon
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24050001	ADDIU	A1,R0,0001	;A1=mode (normal? previous?)
+8FAE0024	LW	T6,0024 (SP)	;T6=next right weapon
+AFA20020	SW	V0,0020 (SP)	;SP+20=next left weapon
+29C10021	SLTI	AT,T6,0021
+10200003	BEQ	AT,R0,7F05D710	;branch if right weapon a gadget
+28410021	SLTI	AT,V0,0021
+14200008	BNEZ	AT,7F05D72C	;branch if left weapon a gadget
+27A40024	ADDIU	A0,SP,0024	;A0=p->SP+24: pointer to next right weapon #
+//7F05D710:		right-hand gadget
+3C028008	LUI	V0,8008
+8C42A0B0	LW	V0,A0B0 (V0)	;V0=p->BONDdata
+8C4F0878	LW	T7,0878 (V0)	;T7=previous right weapon
+AFAF0024	SW	T7,0024 (SP)	;SP+24=previous right weapon
+8C580C20	LW	T8,0C20 (V0)	;T8=previous left weapon
+10000004	BEQ	R0,R0,7F05D738
+AFB80020	SW	T8,0020 (SP)	;SP+20=previous left weapon
+//7F05D72C:		left-hand gadget
+27A50020	ADDIU	A1,SP,0020	;A1=p->SP+20: p->left weapon
+0FC2321B	JAL	7F08C86C	;draw next weapon in cycle (I think...)
+00003025	OR	A2,R0,R0	;A2=0
+//7F05D738:	set new weapons
+00002025	OR	A0,R0,R0	;A0=0: right hand
+8FA50024	LW	A1,0024 (SP)	;A1=right weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+24060001	ADDIU	A2,R0,0001	;A2=1 (mode?)
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+8FA50020	LW	A1,0020 (SP)	;A1=left weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+24060001	ADDIU	A2,R0,0001	;A2=1
+8FBF0014	LW	RA,0014 (SP)
+27BD0028	ADDIU	SP,SP,0028
+03E00008	JR	RA
+00000000	NOP
+
+
+7F05D768:	92298	advance backward through weapon set
+27BDFFD8	ADDIU	SP,SP,FFD8
+AFBF0014	SW	RA,0014 (SP)
+00002025	OR	A0,R0,R0	;A0=0: right hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+2405FFFF	ADDIU	A1,R0,FFFF	;A1=mode (normal? previous?)
+AFA20024	SW	V0,0024 (SP)	;SP+24=next right weapon
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+2405FFFF	ADDIU	A1,R0,FFFF	;A1=mode (normal? previous?)
+8FAE0024	LW	T6,0024 (SP)	;T6=next right weapon
+AFA20020	SW	V0,0020 (SP)	;SP+20=next left weapon
+29C10021	SLTI	AT,T6,0021
+10200003	BEQ	AT,R0,7F05D7A8	;branch if right weapon a gadget
+28410021	SLTI	AT,V0,0021
+14200008	BNEZ	AT,7F05D7C4	;branch if left weapon a gadget
+27A40024	ADDIU	A0,SP,0024	;A0=p->SP+24: pointer to next right weapon #
+//7F05D7A8	922D8	right-hand gadget
+3C028008	LUI	V0,8008
+8C42A0B0	LW	V0,A0B0 (V0)	;V0=p->BONDdata
+8C4F0878	LW	T7,0878 (V0)	;T7=previous right weapon
+AFAF0024	SW	T7,0024 (SP)	;SP+24=previous right weapon
+8C580C20	LW	T8,0C20 (V0)	;T8=previous left weapon
+10000004	BEQ	R0,R0,7F05D7D0
+AFB80020	SW	T8,0020 (SP)	;SP+20=previous left weapon
+//7F05D7C4	922F4	left-hand gadget
+27A50020	ADDIU	A1,SP,0020	;A1=p->SP+20: p->left weapon
+0FC232C4	JAL	7F08CB10	;draw next weapon in cycle (I think...)
+00003025	OR	A2,R0,R0	;A2=0
+//7F05D7D0	92300	set new weapons
+00002025	OR	A0,R0,R0	;A0=0: right hand
+8FA50024	LW	A1,0024 (SP)	;A1=right weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+2406FFFF	ADDIU	A2,R0,FFFF	;A2=1 (mode?)
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+8FA50020	LW	A1,0020 (SP)	;A1=left weapon
+0FC17538	JAL	7F05D4E0	;probably draw weapon A1 in hand A0, mode A2
+2406FFFF	ADDIU	A2,R0,FFFF	;A2=1
+8FBF0014	LW	RA,0014 (SP)
+27BD0028	ADDIU	SP,SP,0028
+03E00008	JR	RA
+00000000	NOP
+
+7F05D800:	92330	auto-advance when last of ammo for weapon spent
+27BDFFD8	ADDIU	SP,SP,FFD0
+AFBF0014	SW	RA,0014 (SP)
+00002025	OR	A0,R0,R0	;A0=0: right hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24050001	ADDIU	A1,R0,0001	;A1=mode (normal? previous?)
+AFA20024	SW	V0,002C (SP)	;SP+2C=next right weapon
+AFA20024	SW	V0,0024 (SP)	;SP+24=next right weapon
+24040001	ADDIU	A0,R0,0001	;A0=1: left hand
+0FC1750D	JAL	7F05D434	;V0=next weapon in cycle for hand A0
+24050001	ADDIU	A1,R0,0001	;A1=mode (normal? previous?)
+8FAE0024	LW	T6,0024 (SP)	;T6=next right weapon
+00401825	OR	V1,V0,R0
+AFA20020	SW	V0,0020 (SP)	;SP+20=next left weapon
+29C10021	SLTI	AT,T6,0021
+10200003	BEQ	AT,R0,7F05D848	;branch if right weapon a gadget
+28410021	SLTI	AT,V0,0021
+14200008	BNEZ	AT,7F05D864	;branch if left weapon a gadget
+8FB90024	LW	T9,0024 (SP)	;T6=next right weapon
+//7F05D848		right-hand gadget
+3C028008	LUI	V0,8008
+8C42A0B0	LW	V0,A0B0 (V0)	;V0=p->BONDdata
+8C4F0878	LW	T7,0878 (V0)	;T7=previous right weapon
+AFAF0024	SW	T7,0024 (SP)	;SP+24=previous right weapon
+8C580C20	LW	T8,0C20 (V0)	;T8=previous left weapon
+10000004	BEQ	R0,R0,7F05D8E4
+AFB80020	SW	T8,0020 (SP)	;SP+20=previous left weapon
+//7F05D864:
+
+

@@ -1,0 +1,91 @@
+7F00B330:	3FE60	menu 04 interface: GoldenEye splash screen
+ADDIU	SP,SP,FFE8
+LUI	AT,4270
+SW	RA,0014 (SP)
+MTC1	AT,F12		;F12= [42700000]
+JAL	70004544
+NOP
+LUI	AT,8005
+JAL	70004590
+LWC1	F12,1A10 (AT)	;F12=80051A10: 
+LUI	AT,42C8
+MTC1	AT,F12		;F12= [42C80000]
+LUI	AT,8005
+JAL	70004650
+LWC1	F14,1A14 (AT)	;F14=80051A14: 
+JAL	70004534
+OR	A0,R0,R0	;A0=0
+//7F00B370:
+LUI	V1,8003
+ADDIU	V1,V1,A8CC	;V1=8002A8CC
+LUI	T7,8005
+LW	T7,8374 (T7)	;T7=80048374: clock timer
+LW	T6,0000 (V1)	;T6=8002A8CC: menu timer
+LUI	T9,8003
+ADDU	T8,T6,T7	;T8=menu timer + clock timer; update time
+SW	T8,0000 (V1)	;T8->8002A8CC: update menu timer
+LW	T9,A930 (T9)	;T9=8002A930: TRUE if first time through menus
+SLTI	AT,T8,00B5	;TRUE if time < 181 (0xB5)
+BEQL	T9,R0,7F00B3C8	;branch if quick advance enabled
+LW	T1,0000 (V1)
+BEQ	AT,R0,7F00B3C4	;branch if time expired
+LUI	T0,8003
+LW	T0,A938 (T0)	;T0=8002A938: 
+SLTI	AT,T8,005B	;TRUE if time < 91 (0x5B)
+OR	A0,R0,R0	;A0=0
+BEQ	T0,R0,7F00B454	;branch if [8002A938]=0
+NOP
+BNEZ	AT,7F00B454	;return if time < 91
+NOP
+//7F00B3C4:	advance to folder select on timeout after pressing key
+LW	T1,0000 (V1)	;T1=8002A8CC: menu timer
+LUI	T2,8003
+OR	A0,R0,R0	;A0=0: player 1
+SLTI	AT,T1,00B5	;TRUE if time < 181 (0xB5)
+BNEZ	AT,7F00B418	;branch if timer running
+NOP
+LW	T2,A934 (T2)	;T2=8002A934: key pressed earlier
+ADDIU	A0,R0,0005	;A0=5: menu 5 - folder select screen
+BEQ	T2,R0,7F00B3FC	;branch if not set
+NOP
+JAL	7F01A5D4	;set to menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=1: return
+BEQ	R0,R0,7F00B470
+LW	RA,0014 (SP)
+//7F00B3FC:	set actor intro - normal timeout advance
+JAL	7F018670	;play actor intro
+OR	A0,R0,R0	;A0=0: normal intro
+ADDIU	A0,R0,0018	;A0=18: menu 18 - actor intro
+JAL	7F01A5D4	;set to menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=1: return
+BEQ	R0,R0,7F00B470
+LW	RA,0014 (SP)
+//7F00B418:	detect keypresses
+JAL	7000C3AC	;test if button pressed
+ORI	A1,R0,FFFF	;A1=FFFF: any button
+BNEZ	V0,7F00B440	;branch if pressed
+LUI	T3,8003
+LW	T3,A930 (T3)	;T3=8002A930: TRUE if first time through menus
+LUI	T4,8003
+BEQL	T3,R0,7F00B470	;branch if quick advance enabled
+LW	RA,0014 (SP)
+LW	T4,A938 (T4)	;T4=8002A938: key pressed
+BEQ	T4,R0,7F00B46C	;return if 
+//7F00B440:	advance to folder select on keypress
+ADDIU	A0,R0,0005	;A0=5: menu 5 - folder select screen
+JAL	7F01A5D4	;set to menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=1: return
+BEQ	R0,R0,7F00B470
+LW	RA,0014 (SP)
+//7F00B454:	detect keypress
+JAL	7000C3AC	;test if button pressed
+ORI	A1,R0,FFFF	;A1=FFFF: any button
+BEQ	V0,R0,7F00B46C	;branch if not pressed
+ADDIU	T5,R0,0001
+LUI	AT,8003
+SW	T5,A938 (AT)	;1->8002A938: key pressed
+//7F00B46C:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP

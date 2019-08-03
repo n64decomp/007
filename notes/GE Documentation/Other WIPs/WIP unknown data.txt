@@ -1,0 +1,284 @@
+pointer at 8002A260	to 80030B74
+7F001958	0x36488	CALLED DURING STAGE LOAD, AT LEAST...
+
++-+-+-+-+
+!SOLVED!
+0x1581C	PP7 08 object
+
+copied to stack during player creation, but apparently unused
+can be eliminated with this sloppy patch:
+
+//7F079D4C:	0xAE87C	this section extroneous
+10000010	*BEQ	R0,R0,+16
+00002025	*OR	A0,R0,R0
+	SW	V0,00E0 (SP)
+	ADDIU	T4,T9,0084
+	ADDIU	T8,SP,0054
+//7F079D60:	iterate to copy yo
+	LW	AT,0000 (T9)
+	ADDIU	T9,T9,000C
+	ADDIU	T8,T8,000C
+	SW	AT,FFF4 (T8)
+	LW	AT,FFF8 (T9)
+	SW	AT,FFF8 (T8)
+	LW	AT,FFFC (T9)
+	BNE	T9,T4,7F079D60
+	SW	AT,FFFC (T8)
+//7F079D84:	
+	LW	AT,0000 (T9)
+	OR	A0,R0,R0	A0=right hand
+	JAL	7F05DA44	ret. V0=ammo in wep.
+0FC17691	*JAL	7F05DA44	ret. V0=ammo in wep.
+
+or just do this to avoid rewritting the whole routine:
+0AE89D	0001	00
+0AE8A5	0001	00
+0AE8B1	0001	00
+0AE8C1	0001	00
+
++-+-+-+-+
+
+!SOLVED!
+Values at 8002A23C	0x94AC
+
+look to be models.  used in debug weapon load	can delete!
+
+7F00140C:	0x35F3C	copies values someplace...
+  sole caller is 7F090E54, a debug option...  weapon load
+ADDIU	SP,SP,FFB0
+LUI	T7,8003
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+ADDIU	T7,T7,A23C	T7=8002A23C: list of values
+LW	AT,0000 (T7)
+LW	T0,0004 (T7)
+ADDIU	T6,SP,0030
+SW	AT,0000 (T6)
+SW	T0,0004 (T6)
+LW	T0,000C (T7)
+LW	AT,0008 (T7)
+ADDIU	S0,SP,0030
+SW	T0,000C (T6)
+SW	AT,0008 (T6)
+LW	AT,0010 (T7)
+LW	T0,0014 (T7)
+SW	AT,0010 (T6)
+SW	T0,0014 (T6)
+LW	T0,001C (T7)
+LW	AT,0018 (T7)
+SW	T0,001C (T6)
+SW	AT,0018 (T6)
+LW	T1,0030 (SP)
+BLTZL	T1,0x35FC4
+LW	RA,001C (SP)
+LW	A0,0000 (S0)
+//0x35FA8:
+JAL	7F056C38
+NOP
+LW	A0,0004 (S0)
+ADDIU	S0,S0,0004
+BGEZ	A0,0x35FA8
+NOP
+LW	RA,001C (SP)
+//0x35FC4
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0050
+JR	RA
+NOP
+
+
+--------------------
+
+values at 8002A9B0 [0x9C20]
+!SOLVED!	palette for Jtext on menus
+
+loaded as bytes within routine 7Fxxxxxx	[0x3E290]
+
+7F009760	0x3E290
+LUI	T6,8005
+LW	T6,84D0 (T6)	T6=800484D0: J_text flag
+ADDIU	SP,SP,FFC8
+SW	RA,0034 (SP)
+BEQ	T6,R0,0x3E328	branch if english
+LW	T5,0048 (SP)
+//0x3E2A8:	J_text only
+LUI	T0,8003
+LUI	T2,8003
+LBU	T2,A9B4 (T2)	T2=8002A9B4: 96
+LBU	T0,A9B0 (T0)	T0=8002A9B0: A0
+LW	T8,004C (SP)
+LUI	T5,8003
+LBU	T5,A9B8 (T5)	T5=8002A9B8: 28
+LW	T7,0048 (SP)
+SLL	T3,T2,0x10	T3=00960000
+SLL	T1,T0,0x18	T1=A0000000
+SW	T8,0014 (SP)
+LW	T9,0050 (SP)
+LUI	T8,8003
+OR	T4,T1,T3
+LBU	T8,A9BC (T8)	T8=8002A9BC: 8C
+SLL	T6,T5,0x8	T6=00002800
+SW	T7,0010 (SP)
+LW	T3,0060 (SP)
+LW	T1,005C (SP)
+LW	T0,0054 (SP)
+LW	T2,0058 (SP)
+OR	T7,T4,T6
+SW	T9,0018 (SP)
+OR	T9,T7,T8	T9=A096288C
+SW	T9,001C (SP)
+SW	T3,002C (SP)
+SW	T1,0028 (SP)
+SW	T0,0020 (SP)
+JAL	7F0AE6EC
+SW	T2,0024 (SP)
+BEQ	R0,R0,0x3E364
+OR	A0,V0,R0
+//0x3E328:
+LW	T4,004C (SP)
+LW	T6,0050 (SP)
+LW	T7,0054 (SP)
+LW	T8,0058 (SP)
+LW	T9,005C (SP)
+LW	T0,0060 (SP)
+SW	T5,0010 (SP)
+SW	T4,0014 (SP)
+SW	T6,0018 (SP)
+SW	T7,001C (SP)
+SW	T8,0020 (SP)
+SW	T9,0024 (SP)
+JAL	7F0ADABC
+SW	T0,0028 (SP)
+OR	A0,V0,R0
+//0x3E364:
+LW	RA,0034 (SP)
+ADDIU	SP,SP,0038
+OR	V0,A0,R0
+JR	RA
+NOP
+
+
+!REVISED!	mostly to amke it less idiotic and open up some space
+	0x3E290
+3C0E8005	-LUI	T6,8005
+8DCE84D0	-LW	T6,84D0 (T6)	T6=800484D0: J_text flag
+27BDFFC8	-ADDIU	SP,SP,FFC8
+AFBF0034	-SW	RA,0034 (SP)
+8FAC004C	LW	T4,004C (SP)
+8FAD0048	-LW	T5,0048 (SP)
+8FB90050	LW	T9,0050 (SP)
+AFAD0010	SW	T5,0010 (SP)
+AFAC0014	SW	T4,0014 (SP)
+AFB90018	SW	T9,0018 (SP)
+8FAF0054	LW	T7,0054 (SP)
+8FB80058	LW	T8,0058 (SP)
+8FB9005C	LW	T9,005C (SP)
+11C0000B	BEQ	T6,R0,0x3E2F4	branch if english
+8FA80060	LW	T0,0060 (SP)
+//0x3E2CC:	J_text only
+AFA8002C	SW	T0,002C (SP)
+AFB90028	SW	T9,0028 (SP)
+AFAF0020	SW	T7,0020 (SP)
+AFB80024	SW	T8,0024 (SP)
+3C088003	-LUI	T0,8003
+9D08A9B0	*LWU	T0,A9B0 (T0)	T0=8002A9B0: A0
+0FC2B9BB	JAL	7F0AE6EC
+AFA8001C	*SW	T0,001C (SP)
+10000006	BEQ	R0,R0,0x3E308
+00000000	NOP
+//0x3E2F4:
+AFAF001C	SW	T7,001C (SP)
+AFB80020	SW	T8,0020 (SP)
+AFB90024	SW	T9,0024 (SP)
+0FC2B6AF	JAL	7F0ADABC
+AFA80028	SW	T0,0028 (SP)
+//0x3E308:
+8FBF0034	-LW	RA,0034 (SP)
+27BD0038	ADDIU	SP,SP,0038
+03E00008	JR	RA
+00402025	OR	A0,V0,R0	it used to copy V0->A0, then back...
+-NOP
+
+OPENS UP 0x3E318-0x3E378	0x60
+
+
+-------------------
++++++++++++++++++++
+-------------------
+
+animations when actors get hurt:
+uses at least three tables for explosions at least
+
+[all here pertains to explosion animations]
+8002E960	second value (# entries?) used to randomly select
+	added to pointer (1st value) to recover byte
+V1= byte * 0x1C + 8002E648 [base for explosion animatoin table]
+
+broken up into 8 groups, based on cardinal directions. select one within group
+
+//7F027AD4:
+LUI	AT,4100
+LUI	T3,8007
+LW	T3,9538 (T3)	pointer to animation binaries
+MTC1	AT,F6
+LWC1	F8,0008 (V1)	F8=rate
+LW	T2,0000 (V1)	offset to animation
+LW	A3,000C (V1)	start point
+LW	A2,0004 (V1)	?, either 0 or 1
+LW	A0,0054 (SP)	obj. instance
+SWC1	F6,0014 (SP)	save ?
+SWC1	F8,0010 (SP)	save rate
+JAL	7F06FCA8
+ADDU	A1,T2,T3	A1=p->animation
+
+
+++++++++++++++++
+----------------
+++++++++++++++++
+
+!SOLVED!
+
+unknown values at 800309F8	[0xFC68]
+sound effects played when you shoot a male guard in solo!
+
+//7F027168:
+LUI	T3,8003
+ADDIU	V0,SP,0028
+ADDIU	T3,T3,09F8	T3=800309F8
+ADDIU	T5,T3,0030	T5=80030A28
+OR	T6,V0,R0
+//7F02717C:	loopus
+LW	AT,0000 (T3)
+ADDIU	T3,T3,000C
+ADDIU	T6,T6,000C
+SW	AT,FFF4 (T6)
+LW	AT,FFF8 (T3)
+SW	AT,FFF8 (T6)
+LW	AT,FFFC (T3)
+BNE	T3,T5,7F02717C	copies table of values to SP+0x28 to later retrieve one value
+SW	AT,FFFC (T6)
+LHU	AT,0000 (T3)
+LUI	T7,8003
+LUI	A0,8006
+SH	AT,0000 (T6)	copy last value
+LW	T7,0A34 (T7)	T7=80030A34: ?
+LW	A0,3720 (A0)	A0=80063720: ?
+OR	A2,R0,R0
+SLL	T8,T7,0x1
+ADDU	T9,V0,T8	T9=SP+0x28 + val->offset
+JAL	70008E08
+LH	A1,0000 (T9)	A1=one of the values in table
+//7F0271CC:
+LUI	V1,8003
+LW	V1,0A34 (V1)
+LUI	AT,8003
+OR	A0,V0,R0
+ADDIU	V1,V1,0001
+SW	V1,0A34 (AT)
+SLTI	AT,V1,0019
+BNEZ	AT,7F02725C
+LUI	AT,8003
+BEQ	R0,R0,7F02725C	reset counter if over maximum
+SW	R0,0A34 (AT)
+//7F0271F8:
+

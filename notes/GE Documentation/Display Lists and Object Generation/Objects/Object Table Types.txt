@@ -1,0 +1,143 @@
+type 01  0x10  main object heading
+	4	ID	command ID
+	4	child	child entry
+	2	grp1	group 1 ID
+	2	grp2	group 2 ID
+	2	TAG
+	2	RESERVED
+
+type 02	0x1C   position
+	float	xpos	relative x,y,z position to parent
+	float	ypos
+	float	zpos
+	1	grp1	command ID
+	1	grp2	group 2 ID or 0
+	1	grp3	group 3 ID or -1
+	1	grp4	group 4 ID or -1
+	4	child	child subcommand TBL offset
+	float	unknown
+
+type 03 ????   unknown type
+
+type 04 0x14   display list
+	4	DL1	primary display list
+	4	DL2	secondary display list or NULL
+	2	grp1	group ID 1
+	2	grp2	group ID 2
+	4	PIN	point table
+	2	pinnum	# points in block
+	1	TAG
+	1	RESERVED
+
+type 05 ????   unknown type
+
+type 06 ????   unknown type
+
+type 07 ????   unknown type
+
+type 08 0x10   distance trigger
+	float	min	minimum distance from viewport
+	float	max	maximum distance from viewport
+	4	target	display list used when within range
+	2	TAG
+	2	RESERVED
+
+type 09 0x24   head/hat placement
+	float	xmin	dimentions
+	float	xmax
+	float	ymin
+	float	ymax
+	float	zmin
+	float	zmax
+	4	head	head DL or 17 placeholder
+	4	neck	neckline display list
+	2	RESERVED
+	2	TAG
+
+type 0A 0x1C   dimentions
+	4	group
+	float	xmin
+	float	xmax
+	float	ymin
+	float	ymax
+	float	zmin
+	float	zmax
+
+type 0B ????   unknown
+
+type 0C 0x28   gunfire
+	float	xpos	could also be xmin/xmax, etc.
+	float	ypos
+	float	zpos
+	float	xdim
+	float	ydim
+	float	zdim
+	4	imgdecl	offset to entry in IMG block for firing effect
+	float	unknown
+	2	TAG
+	2	RESERVED
+	4	RESERVED2
+
+type 0D 0x24   shadow
+0x0	float		x position.	+ moves to character's left, - to character's right
+0x4	float		z position.	+ moves in front of character, - backward
+0x8	float		x size (width)	width of image from side to side
+0xC	float		z size (length)	length of image from forward to back
+	4	imgdecl	offset to entry in IMG block for shadow
+	4	parent	gleans model offset from type01 parent
+	float	unknown
+	2	TAG
+	2	RESERVED
+
+type 0E ????   unknown
+
+type 0F 0x1C   interlinkage
+	float	xpos
+	float	ypos
+	float	zpos
+	float	unknown1
+	float	unknown2
+	float	unknown3
+	float	unknown4
+
+type 10 ????   unknown
+
+type 11 ????   unknown
+
+type 12 0x8    handle/switch
+	4	target
+	2	TAG
+	2	RESERVED
+
+type 13 ????   unknown
+
+type 14 ????   unknown
+
+type 15 0x14   position - held items, especially
+	float	xpos	xyz position relative to parent
+	float	ypos
+	float	zpos
+	2	grp1	model group 1 ID
+	2	grp2	model group 2 ID
+	float	unknown
+
+type 16 0x10   display list - simple
+	2	unknown
+	2	ID
+	4	PIN
+	4	DL
+	4	RESERVED
+
+type 17 0x4    placeholder for pointer to head
+0x0	4	RESERVED
+
+type 18 0x1C   display list
+	4	DL1	primary display list
+	4	DL2	secondary display list or NULL
+	4	PIN	point table offset
+	2	PINnum	# points in table
+	2	MRGnum	# points in merge table
+	4	MRG	merge table offset
+	4	USE	usage table offset
+	2	TAG
+	2	RESERVED

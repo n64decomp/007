@@ -1,0 +1,229 @@
+
+rsp_cleargeometrymode	B6000000 00060000
+	lighting	texture gen	
+rsp_texture	BB002801 FFFFFFFF
+	Mipmap Level 5	tile t0 0	on	Bowtie: -0 scanlines
+	ST (-1,-1)
+rdp_pipesync	E7000000 00000000
+rsp_setothermode_high	BA001402 00100000
+	Shift 20 bits, 2 bits of data	Mask: 00300000
+	Cycle Type:	2 cycle
+rdp_setcombine	FC169003 1F0C93FF
+	a0 texel0	Alpha texel0		a1 combined	Alpha combined
+	b0 texel0	Alpha texel0		b1 K5	Alpha 0
+	c0 LOD fraction	Alpha combined		c1 primitive	Alpha primitive
+	d0 texel0	Alpha primitive		d1 combined alpha	Alpha 0
+rsp_setothermode_high	BA001001 00010000
+	Shift 16 bits, 1 bits of data	Mask: 00010000
+	Texture LOD:	lod
+rdp_settextureimage	FD100000 02000020
+	16bit RGBA	width 0
+rdp_settile	F5100000 07000000
+	16bit RGBA	line 0	tmem 0	tile 7	palette 0
+	S: shift 0	mask 0
+	T: shift 0	mask 0
+rdp_loadsync	E6000000 00000000
+rdp_loadblock	F3000000 0755B000
+	tile: 7	UL ST (0,0)	LR ST (342,0)
+rdp_settile	F5101000 00014050
+	16bit RGBA	line 8	tmem 0	tile 0	palette 0
+	S: shift 0	mask 5
+	T: shift 0	mask 5
+rdp_settilesize	F2002002 0007E07E
+	tile 0	UL ST (2,2)	LR ST(126,126)
+rdp_settile	F5100900 01010441
+	16bit RGBA	line 4	tmem 256	tile 1	palette 0
+	S: shift 1	mask 4
+	T: shift 1	mask 4
+rdp_settilesize	F2002002 0103E03E
+	tile 1	UL ST (2,2)	LR ST(62,62)
+rdp_settile	F5100540 0200C832
+	16bit RGBA	line 2	tmem 320	tile 2	palette 0
+	S: shift 2	mask 3
+	T: shift 2	mask 3
+rdp_settilesize	F2002002 0201E01E
+	tile 2	UL ST (2,2)	LR ST(30,30)
+rdp_settile	F5100350 03008C23
+	16bit RGBA	line 1	tmem 336	tile 3	palette 0
+	S: shift 3	mask 2
+	T: shift 3	mask 2
+rdp_settilesize	F2002002 0300E00E
+	tile 3	UL ST (2,2)	LR ST(14,14)
+rdp_settile	F5100354 04005014
+	16bit RGBA	line 1	tmem 340	tile 4	palette 0
+	S: shift 4	mask 1
+	T: shift 4	mask 1
+rdp_settilesize	F2002002 04006006
+	tile 4	UL ST (2,2)	LR ST(6,6)
+rdp_settile	F5100356 05001405
+	16bit RGBA	line 1	tmem 342	tile 5	palette 0
+	S: shift 5	mask 0
+	T: shift 5	mask 0
+rdp_settilesize	F2002002 05002002
+	tile 5	UL ST (2,2)	LR ST(2,2)
+rsp_setothermode_low	B900031D 0F0A4000
+	Shift 3 bits, 29 bits of data	Mask: FFFFFFF8
+	Render Mode:	no antialiasing
+	Converge ST:	converge delta-ST clamp
+	Depth Mode:	depth opa
+	Converge:	force blender
+	Blender:	blend alpha memory	blend 0	blend alpha in	blend alpha fog	blend alpha shade	blend 0	
+rsp_vertex (RARE)	04D000E0 02002C18
+	# 13	total bytes 0xE0
+rsp_tri1 (RARE)	BF000000 00823C00
+	Triangle 1	{13, 6, 0}
+rsp_tri1 (RARE)	BF000000 0082000A
+	Triangle 1	{13, 0, 1}
+rdp_pipesync	E7000000 00000000
+rdp_settextureimage	FD100000 02000AE0
+	16bit RGBA	width 0
+rdp_settile	F5100000 07000000
+	16bit RGBA	line 0	tmem 0	tile 7	palette 0
+	S: shift 0	mask 0
+	T: shift 0	mask 0
+rdp_loadsync	E6000000 00000000
+rdp_loadblock	F3000000 0755B000
+	tile: 7	UL ST (0,0)	LR ST (342,0)
+rdp_settile	F5101000 00014050
+	16bit RGBA	line 8	tmem 0	tile 0	palette 0
+	S: shift 0	mask 5
+	T: shift 0	mask 5
+rdp_settilesize	F2002002 0007E07E
+	tile 0	UL ST (2,2)	LR ST(126,126)
+rdp_settile	F5100900 01010441
+	16bit RGBA	line 4	tmem 256	tile 1	palette 0
+	S: shift 1	mask 4
+	T: shift 1	mask 4
+rdp_settilesize	F2002002 0103E03E
+	tile 1	UL ST (2,2)	LR ST(62,62)
+rdp_settile	F5100540 0200C832
+	16bit RGBA	line 2	tmem 320	tile 2	palette 0
+	S: shift 2	mask 3
+	T: shift 2	mask 3
+rdp_settilesize	F2002002 0201E01E
+	tile 2	UL ST (2,2)	LR ST(30,30)
+rdp_settile	F5100350 03008C23
+	16bit RGBA	line 1	tmem 336	tile 3	palette 0
+	S: shift 3	mask 2
+	T: shift 3	mask 2
+rdp_settilesize	F2002002 0300E00E
+	tile 3	UL ST (2,2)	LR ST(14,14)
+rdp_settile	F5100354 04005014
+	16bit RGBA	line 1	tmem 340	tile 4	palette 0
+	S: shift 4	mask 1
+	T: shift 4	mask 1
+rdp_settilesize	F2002002 04006006
+	tile 4	UL ST (2,2)	LR ST(6,6)
+rdp_settile	F5100356 05001405
+	16bit RGBA	line 1	tmem 342	tile 5	palette 0
+	S: shift 5	mask 0
+	T: shift 5	mask 0
+rdp_settilesize	F2002002 05002002
+	tile 5	UL ST (2,2)	LR ST(2,2)
+rsp_tri1 (RARE)	BF000000 00141E28
+	Triangle 1	{2, 3, 4}
+rsp_tri1 (RARE)	BF000000 00142832
+	Triangle 1	{2, 4, 5}
+rdp_pipesync	E7000000 00000000
+rdp_settextureimage	FD100000 020015A0
+	16bit RGBA	width 0
+rdp_settile	F5100000 07000000
+	16bit RGBA	line 0	tmem 0	tile 7	palette 0
+	S: shift 0	mask 0
+	T: shift 0	mask 0
+rdp_loadsync	E6000000 00000000
+rdp_loadblock	F3000000 0755B000
+	tile: 7	UL ST (0,0)	LR ST (342,0)
+rdp_settile	F5101000 00014050
+	16bit RGBA	line 8	tmem 0	tile 0	palette 0
+	S: shift 0	mask 5
+	T: shift 0	mask 5
+rdp_settilesize	F2002002 0007E07E
+	tile 0	UL ST (2,2)	LR ST(126,126)
+rdp_settile	F5100900 01010441
+	16bit RGBA	line 4	tmem 256	tile 1	palette 0
+	S: shift 1	mask 4
+	T: shift 1	mask 4
+rdp_settilesize	F2002002 0103E03E
+	tile 1	UL ST (2,2)	LR ST(62,62)
+rdp_settile	F5100540 0200C832
+	16bit RGBA	line 2	tmem 320	tile 2	palette 0
+	S: shift 2	mask 3
+	T: shift 2	mask 3
+rdp_settilesize	F2002002 0201E01E
+	tile 2	UL ST (2,2)	LR ST(30,30)
+rdp_settile	F5100350 03008C23
+	16bit RGBA	line 1	tmem 336	tile 3	palette 0
+	S: shift 3	mask 2
+	T: shift 3	mask 2
+rdp_settilesize	F2002002 0300E00E
+	tile 3	UL ST (2,2)	LR ST(14,14)
+rdp_settile	F5100354 04005014
+	16bit RGBA	line 1	tmem 340	tile 4	palette 0
+	S: shift 4	mask 1
+	T: shift 4	mask 1
+rdp_settilesize	F2002002 04006006
+	tile 4	UL ST (2,2)	LR ST(6,6)
+rdp_settile	F5100356 05001405
+	16bit RGBA	line 1	tmem 342	tile 5	palette 0
+	S: shift 5	mask 0
+	T: shift 5	mask 0
+rdp_settilesize	F2002002 05002002
+	tile 5	UL ST (2,2)	LR ST(2,2)
+rsp_vertex (RARE)	04F00100 02002CF8
+	# 15	total bytes 0x100
+rsp_tri1 (RARE)	BF000000 00505A64
+	Triangle 1	{8, 9, 10}
+rsp_tri1 (RARE)	BF000000 0050646E
+	Triangle 1	{8, 10, 11}
+rdp_pipesync	E7000000 00000000
+rdp_settextureimage	FD100000 02002060
+	16bit RGBA	width 0
+rdp_settile	F5100000 07000000
+	16bit RGBA	line 0	tmem 0	tile 7	palette 0
+	S: shift 0	mask 0
+	T: shift 0	mask 0
+rdp_loadsync	E6000000 00000000
+rdp_loadblock	F3000000 0755B000
+	tile: 7	UL ST (0,0)	LR ST (342,0)
+rdp_settile	F5101000 00014050
+	16bit RGBA	line 8	tmem 0	tile 0	palette 0
+	S: shift 0	mask 5
+	T: shift 0	mask 5
+rdp_settilesize	F2002002 0007E07E
+	tile 0	UL ST (2,2)	LR ST(126,126)
+rdp_settile	F5100900 01010441
+	16bit RGBA	line 4	tmem 256	tile 1	palette 0
+	S: shift 1	mask 4
+	T: shift 1	mask 4
+rdp_settilesize	F2002002 0103E03E
+	tile 1	UL ST (2,2)	LR ST(62,62)
+rdp_settile	F5100540 0200C832
+	16bit RGBA	line 2	tmem 320	tile 2	palette 0
+	S: shift 2	mask 3
+	T: shift 2	mask 3
+rdp_settilesize	F2002002 0201E01E
+	tile 2	UL ST (2,2)	LR ST(30,30)
+rdp_settile	F5100350 03008C23
+	16bit RGBA	line 1	tmem 336	tile 3	palette 0
+	S: shift 3	mask 2
+	T: shift 3	mask 2
+rdp_settilesize	F2002002 0300E00E
+	tile 3	UL ST (2,2)	LR ST(14,14)
+rdp_settile	F5100354 04005014
+	16bit RGBA	line 1	tmem 340	tile 4	palette 0
+	S: shift 4	mask 1
+	T: shift 4	mask 1
+rdp_settilesize	F2002002 04006006
+	tile 4	UL ST (2,2)	LR ST(6,6)
+rdp_settile	F5100356 05001405
+	16bit RGBA	line 1	tmem 342	tile 5	palette 0
+	S: shift 5	mask 0
+	T: shift 5	mask 0
+rdp_settilesize	F2002002 05002002
+	tile 5	UL ST (2,2)	LR ST(2,2)
+rsp_tri1 (RARE)	BF000000 00968C82
+	Triangle 1	{15, 14, 13}
+rsp_tri1 (RARE)	BF000000 00968278
+	Triangle 1	{15, 13, 12}
+rsp_endDL	B8000000 00000000

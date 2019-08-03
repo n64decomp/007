@@ -1,0 +1,604 @@
+80044DC0	current sky
+80044E10	start of list
+
+7F0BAA64:		locate and copy enviroment values
+	accepts: A0=stage#, A1=0 if MP?
+ADDIU	SP,SP,FFD8
+SW	RA,0014 (SP)
+SW	A1,002C (SP)	;SP+2C=A1: ?
+SW	R0,001C (SP)
+JAL	7F09A464	;V0=#players
+SW	A0,0028 (SP)	;SP+28=A0: stage#
+ADDIU	AT,R0,0001
+LW	A2,001C (SP)	;A2=0
+LW	A3,0028 (SP)	;A3=stage#
+BNE	V0,AT,7F0BAA94	;branch if not 1 player
+OR	T0,V0,R0	;T0=#players
+OR	T0,R0,R0	;T0=0 if solo
+//7F0BAA94:	set default enviroment
+LUI	AT,8006
+LWC1	F4,8D70 (AT)	;F4=80058D70: 7F7FFFFF - default near fog
+LW	T6,002C (SP)	;T6=SP+2C: ?
+LUI	AT,8004
+MTC1	R0,F6
+SWC1	F4,4DC4 (AT)	;7F7FFFFF->80044DC4: near fog value
+LUI	AT,8004
+BEQ	T6,R0,7F0BAB1C	;skip cutscene env. tests if zero
+SWC1	F6,4DC8 (AT)	;0->80044DC8: near fog * intensity of zero
+//7F0BAAB8:	cutscene env. testing
+LUI	T1,8004
+ADDIU	V1,T1,4E10	;V1=80044E10: env.table 1
+LW	T7,0000 (V1)	;T7=env.stage#
+LUI	T8,8004
+ADDIU	T8,T8,4E10	;T8=80044E10: env.table 1
+BEQ	T7,R0,7F0BAB1C	;branch if at end of list
+ADDIU	A0,A3,0384	;A0=stage#+0x384: cutscene env.set offset
+//7F0BAAD8:	copy enviroment on hit
+LW	V0,0000 (T8)	;V0=env.stage#
+BNE	A0,V0,7F0BAB0C	;branch if env.# doesn't match cutscene#
+LUI	V0,8008
+ADDIU	V0,V0,25E8
+SW	V1,0000 (V0)	;V1->800825E8: save env.table hit
+LUI	AT,8008
+SW	V1,25EC (AT)	;V1->800825EC: save env.table match start
+LUI	AT,8008
+ADDIU	T9,V1,005C	;T9=V1+0x5C: p->end of entry (next entry)
+SW	T9,25F0 (AT)	;T9->800825F0: save env.table match endpoint
+JAL	7F0BA758	;copy table 1 enviroment to current
+LW	A0,0000 (V0)	;A0=p->env.tabel match
+BEQ	R0,R0,7F0BAC9C
+LW	RA,0014 (SP)
+//7F0BAB0C:	loop for each entry
+LW	V0,005C (V1)	;V0=next env.stage#
+ADDIU	V1,V1,005C	;V1+=0x5C: p->next entry
+BNEZ	V0,7F0BAAD8	;branch if not at end of list
+NOP
+//7F0BAB1C:	offset stage# to current # players
+LUI	T1,8004
+ADDIU	T1,T1,4E10	;T1=80044E10: env.table 1
+LW	A1,0000 (T1)	;A1=env.stage#
+LUI	T2,8004
+ADDIU	T2,T2,4E10	;T2=80044E10: env.table 1
+BEQ	A1,R0,7F0BAB98	;branch if at end of list
+OR	V1,T1,R0	;V1=T1: env.table 1
+SLL	T3,T0,0x2
+SUBU	T3,T3,T0
+SLL	T3,T3,0x3
+ADDU	T3,T3,T0
+SLL	T3,T3,0x2	;T3=#players * 100 (0x64)
+ADDU	A0,A3,T3	;A0=MPstage#
+LW	V0,0000 (T2)	;V0=env.stage#
+//7F0BAB54:
+BNE	A0,V0,7F0BAB88	;branch if no match
+LUI	V0,8008
+ADDIU	V0,V0,25E8
+SW	V1,0000 (V0)	;V1->800825E8: save env.table hit
+LUI	AT,8008
+SW	V1,25EC (AT)	;V1->800825EC: save env.table match start
+LUI	AT,8008
+ADDIU	T4,V1,005C
+SW	T4,25F0 (AT)	;T4->800825F0: save env.table match endpoint
+JAL	7F0BA758	;copy table 1 enviroment to current
+LW	A0,0000 (V0)	;A0=p->env.table match
+BEQ	R0,R0,7F0BAC9C
+LW	RA,0014 (SP)
+//7F0BAB88:	loop for each entry
+LW	V0,005C (V1)	;V0=next env.stage#
+ADDIU	V1,V1,005C	;V1+=0x5C: p->next entry
+BNEZ	V0,7F0BAB54	;branch if not at end of list
+NOP
+//7F0BAB98:	MP-specific enviroment test, although this was covered in previous segment...
+SLTI	AT,T0,0002
+BNEL	AT,R0,7F0BAC14	;branch if solo
+LUI	AT,4170
+BEQ	A1,R0,7F0BAC10	;branch if table 1 contains no entries
+OR	V1,T1,R0	;V1=T1: env.table 1
+SLL	A0,T0,0x2
+SUBU	A0,A0,T0
+SLL	A0,A0,0x3
+LUI	T5,8004
+ADDIU	T5,T5,4E10	;T5=80044E10: env.table 1
+ADDU	A0,A0,T0
+SLL	A0,A0,0x2	;A0=#players * 100: offset to MPstage#
+LW	V0,0000 (T5)	;V0=env.stage#
+//7F0BABCC:
+BNE	A0,V0,7F0BAC00	;branch if no match
+LUI	V0,8008
+ADDIU	V0,V0,25E8
+SW	V1,0000 (V0)	;V1->800825E8: save env.table hit
+LUI	AT,8008
+SW	V1,25EC (AT)	;V1->800825EC: save env.table match start
+LUI	AT,8008
+ADDIU	T6,V1,005C
+SW	T6,25F0 (AT)	;T6->800825F0: save env.table match endpoint
+JAL	7F0BA758	;copy table 1 enviroment to current
+LW	A0,0000 (V0)	;A0=p->env.table match
+BEQ	R0,R0,7F0BAC9C
+LW	RA,0014 (SP)
+//7F0BAC00:	loop for each entry
+LW	V0,005C (V1)	;V0=next env.stage#
+ADDIU	V1,V1,005C	;V1+=0x5C: p->next entry
+BNEZ	V0,7F0BABCC	;branch if not at end of list
+NOP
+//7F0BAC10:
+LUI	AT,4170
+MTC1	AT,F12		;F12=15.0
+LUI	AT,8006
+LWC1	F14,8D74 (AT)	;F14=80058D74: 10000.0 [461C4000]
+SW	A2,001C (SP)	;A2=SP+1C: 0
+JAL	70004650	;set page height
+SW	A3,0028 (SP)	;A3=SP+28: stage#
+LUI	A0,8004
+LUI	AT,8008
+ADDIU	A0,A0,5F50	;A0=80045F50: env.table 2
+SW	R0,25C0 (AT)	;0->800825C0: 
+LW	T7,0000 (A0)	;T7=env.stage#
+LW	A2,001C (SP)	;A2=SP+1C: 0
+LW	A3,0028 (SP)	;A3=SP+28: stage#
+BEQ	T7,R0,7F0BAC78	;branch if no entries in list
+OR	V1,A0,R0	;V1=80045F50: env.table 2
+LUI	T8,8004
+ADDIU	T8,T8,5F50	;T8=80045F50: env.table 2
+LW	V0,0000 (T8)	;V0=env.stage#
+//7F0BAC5C:	save hits
+BNEL	A3,V0,7F0BAC6C	;branch if no match
+LW	V0,0038 (V1)
+OR	A2,V1,R0	;A2=V1: env.table hit
+//7F0BAC68:	loop for all entries
+LW	V0,0038 (V1)	;V0=next env.stage#
+ADDIU	V1,V1,0038	;V1+=0x38: p->env.entry
+BNEZ	V0,7F0BAC5C	;branch if not at end of list
+NOP
+//7F0BAC78:	set default otherwise
+BNEZ	A2,7F0BAC84	;branch if hit found
+NOP
+OR	A2,A0,R0	;A2=A0: p->default entry
+//7F0BAC84:
+JAL	7F0BA9D0	;copy table 2 enviroment to current
+OR	A0,A2,R0	;A0=A2: p->env.data
+LUI	V0,8008
+ADDIU	V0,V0,25E8
+SW	R0,0000 (V0)	;0->800825E8: fry env.table hit buffer
+//7F0BAC98:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0028
+JR	RA
+NOP
+
+7F0BA758:	EF288	0FC2E9D6	copy large enviroment bank to current
+ADDIU	SP,SP,FFC8
+SW	RA,0014 (SP)
+LWC1	F14,0008 (A0)	;F14=far fog
+LWC1	F12,0004 (A0)	;F12=pervasiveness
+JAL	70004650	;set page height
+SW	A0,0038 (SP)	;SP+38=A0: p->env.data
+JAL	700046AC
+ADDIU	A0,SP,0030	;A0=SP+30: 
+JAL	7F0B4878	;ret F0=800413FC: 1.0
+NOP
+LWC1	F4,0030 (SP)	;F4=pervasiveness
+LWC1	F8,0034 (SP)	;F8=far fog
+LW	A1,0038 (SP)	;A1=p->env.data
+DIV.S	F6,F4,F0	;F6=F4/1.0:	pervasiveness
+LUI	AT,447A
+LUI	A0,8008
+ADDIU	A0,A0,25E4	;A0=800825E4: 
+LUI	A2,8008
+ADDIU	A2,A2,25E0	;A2=800825E0: buffer for far ambient light
+LUI	V1,8008
+ADDIU	V1,V1,25C8	;V1=800825C8: buffer for pervasiveness
+LUI	V0,8004
+ADDIU	V0,V0,4DCC	;V0=80044DCC: p->current data, starting at BG light
+DIV.S	F10,F8,F0	;F10=F8/1.0: far fog
+SWC1	F6,0030 (SP)	;SP+30=F6: pervasiveness
+MTC1	AT,F8		;F8= 1000.0 [447A0000]
+SWC1	F10,0034 (SP)	;SP+34=F10: far fog
+//7F0BA7C4:
+LW	T6,0020 (A1)	;T6=BG dif.in light
+MTC1	T6,F4
+NOP
+CVT.S.W	F6,F4	;F6=(float) BG dif.in light
+DIV.S	F10,F6,F8	;F10=BG dif.light / 1000.0
+MTC1	AT,F8
+LUI	AT,8004
+SWC1	F10,0000 (A0)	;BG dif.light->800825E4
+//7F0BA7E4:
+LW	T7,0024 (A1)	;T7=far ambient light
+MTC1	T7,F4
+ADDIU	T7,A1,000C	;T7=p->near fog in env.data
+CVT.S.W	F6,F4	;F6=(float) far ambient light
+LWC1	F4,0034 (SP)	;F4=far fog
+DIV.S	F10,F6,F8	;F10=far ambient light / 1000.0
+LWC1	F6,0030 (SP)	;F6=pervasiveness
+SUB.S	F14,F4,F6	;F14=far fog - pervasiveness
+SWC1	F10,0000 (A2)	;F10->800825E0: buffer for far ambient light
+//7F0BA808:	finalize near fog value
+LWC1	F16,0000 (A2)	;F16=far ambient light %%
+MUL.S	F8,F14,F16	;F8=F14*F16: (far fog - pervasiveness) * far ambient light%%
+ADD.S	F10,F6,F8	;F10=F6+F8: pervasiveness + ""
+SWC1	F10,4DC4 (AT)	;F10->80044DC4: near fog value
+//7F0BA818:	finalize intensity
+LWC1	F2,0000 (A0)	;F2=BG dif.light
+LUI	AT,8004
+MUL.S	F4,F14,F2	;F4=F14*F2: (far fog - pervasiveness) * BG dif.light
+ADD.S	F8,F6,F4	;F8=F6+F4: pervasiveness + ""
+SWC1	F8,4DC8 (AT)	;F8->80044DC8: intensity
+//7F0BA82C:
+LWC1	F10,0004 (A1)	;F10=pervasiveness
+LUI	AT,4300
+DIV.S	F6,F10,F0	;F6=F10/F0: pervasiveness / 1.0
+SUB.S	F10,F16,F2	;F10=far ambient light - BG dif.light
+SWC1	F6,0000 (V1)	;pervasiveness->800825C8: buffer for pervasiveness
+//7F0BA840:
+LWC1	F4,0008 (A1)	;F4=far fog
+SWC1	F10,0018 (SP)	;SP+18=(far ambient light - BG dif.light)
+MTC1	AT,F6		;F6= 128.0 [43000000]
+DIV.S	F8,F4,F0	;F8=F4/F0: far fog / 1.0
+LWC1	F4,0018 (SP)	;F4=(far ambient light - BG dif.light)
+LUI	AT,3F00
+MTC1	AT,F10		;F10=0.5 [3F000000]
+LUI	AT,4380
+LWC1	F18,0000 (V1)	;F18=pervasiveness
+SWC1	F8,0004 (V1)	;far fog->800825CC
+//7F0BA868:
+DIV.S	F8,F6,F4	;F8=F6/F4: 128.0 / (far ambient light - BG dif.light)
+LWC1	F12,0004 (V1)	;F12=far fog
+SUB.S	F6,F10,F2	;F6=F10-F2: 0.5 - BG dif.light
+SWC1	F8,0020 (SP)	;SP+20=128.0 / (far ambient light - BG dif.light)
+//7F0BA878:
+MTC1	AT,F8		;F8=256.0 [43800000]
+LUI	AT,3F80
+MUL.S	F10,F6,F8	;F10=F6*F8: (0.5 - BG dif.light) * 256.0
+SUB.S	F8,F12,F18	;F8=F12-F18: far fog - pervasiveness
+SWC1	F8,0018 (SP)	;SP+18=F8: far fog - pervasiveness
+//7F0BA88C:
+MTC1	AT,F8		;F8=1.0 [3F800000]
+DIV.S	F6,F10,F4	;F6=F10-F4: 256(0.5 - BG dif.light) / (far ambient light - BG dif.light)
+LWC1	F10,0020 (SP)	;F10=128.0 / (far ambient light - BG dif.light)
+LUI	AT,437F
+NEG.S	F4,F10		;F4=-128.0 / (far ambient light - BG dif.light)
+ADD.S	F10,F18,F8	;F10=F18+F8: pervasiveness++
+LWC1	F8,0018 (SP)	;F8=far fog - pervasiveness
+SWC1	F6,001C (SP)	;SP+1C=F6= 256(0.5 - BG dif.light) / (far ambient light - BG dif.light)
+//7F0BA8AC:
+MUL.S	F6,F4,F12	;F6=F4*F12: -128.0*far fog / (far ambient light - BG dif.light)
+NOP
+MUL.S	F4,F6,F10	;F4=F6*F10: -128.0*far fog*pervasiveness++ / (far ambient light - BG dif.light)
+MTC1	AT,F10		;F10=255.0 [437F0000]
+LUI	AT,3F80
+DIV.S	F6,F4,F8	;F6=F4/F8: (-128.0*far fog*pervasiveness++) / (far ambient light - BG dif.light)(far fog - pervasiveness)
+MTC1	AT,F8		;F8=1.0 [3F800000]
+LUI	AT,437F
+DIV.S	F4,F6,F10	;F4=F6/F10: (-128.0*far fog*pervasiveness++) / 255(far ambient light - BG dif.light)(far fog - pervasiveness)
+LWC1	F10,0020 (SP)	;F10=128.0 / (far ambient light - BG dif.light)
+ADD.S	F6,F12,F8	;F6=F12+F8: far fog++
+LWC1	F8,0018 (SP)	;F8=far fog - pervasiveness
+SWC1	F4,0010 (V1)	;F4->800825D8
+//7F0BA8E0:
+MUL.S	F4,F6,F10	;F4= F6*F10: 128(far fog++) / (far ambient light - BG dif.light)
+LWC1	F10,001C (SP)	;F10= 256(0.5 - BG dif.light) / (far ambient light - BG dif.light)
+DIV.S	F6,F4,F8	;F6=F4/F8: 128(far fog++) / (far ambient light - BG dif.light)(far fog - pervasiveness)
+MTC1	AT,F8		;F8=255.0 [437F0000]
+LUI	AT,8008
+ADD.S	F4,F6,F10	;F4=F6+F10: 128(far fog++) / (far ambient light - BG dif.light)(far fog - pervasiveness)  +  256(0.5 - BG dif.light) / (far ambient light - BG dif.light)
+DIV.S	F6,F4,F8	;F6=F4/F8: (128(far fog++) / (far ambient light - BG dif.light)(far fog - pervasiveness)  +  256(0.5 - BG dif.light) / (far ambient light - BG dif.light)) / 255.0
+SWC1	F6,0014 (V1)	;F6=800825DC
+//7F0BA900:	light values
+LW	T8,0020 (A1)	;T8=env.+20: BG dif.in light
+SW	T8,0000 (V0)	;T8->80044DCC
+LW	T9,0024 (A1)	;T8=far ambient light
+ADDIU	T8,R0,0001
+SW	T9,0004 (V0)	;T9->80044DD0
+//7F0BA914:	fog values
+LBU	T0,0028 (A1)	;T0=fog red component
+SB	T0,0008 (V0)	;T0->80044DD4
+LBU	T1,0029 (A1)	;T1=fog green component
+SB	T1,0009 (V0)	;T1->80044DD5
+LBU	T2,002A (A1)	;T2=fog blue component
+SB	T2,000A (V0)	;T2->80044DD6
+//7F0BA92C:	cloud values
+LBU	T3,002B (A1)	;T3=cloud flag
+SB	T3,000B (V0)	;T3->80044DD7
+LWC1	F10,002C (A1)	;F10=cloud repeat value
+SWC1	F10,000C (V0)	;F10->80044DD8
+LH	T4,0030 (A1)	;T4=cloud image offset
+SH	T4,0010 (V0)	;T4->80044DDC
+LWC1	F4,0034 (A1)	;F4=cloud red channel
+SWC1	F4,0014 (V0)	;F4->80044DE0
+LWC1	F8,0038 (A1)	;F8=cloud green channel
+SWC1	F8,0018 (V0)	;F8->80044DE4
+LWC1	F6,003C (A1)	;F6=cloud blue channel
+SWC1	F6,001C (V0)	;F6->80044DE8
+//7F0BA95C:	water values
+LBU	T5,0040 (A1)	;T5=water flag
+SB	T5,0020 (V0)	;T5->80044DEC
+LWC1	F10,0044 (A1)	;F10=water repeat value
+SWC1	F10,0024 (V0)	;F10->80044DF0
+LH	T6,0048 (A1)	;T6=water image offset
+SH	T6,0028 (V0)	;T6->80044DF4
+LWC1	F4,004C (A1)	;F4=water red channel
+SWC1	F4,002C (V0)	;F4->80044DF8
+LWC1	F8,0050 (A1)	;F8=water green channel
+MTC1	R0,F4
+SWC1	F8,0030 (V0)	;F8->80044DFC
+LWC1	F6,0054 (A1)	;F6=water blue channel
+SWC1	F6,0034 (V0)	;F6->80044E00
+//7F0BA990:	concavity distort
+LWC1	F10,0058 (A1)	;F10=world concavity distort
+SWC1	F10,0038 (V0)	;F10->80044E04
+//7F0BA998:
+LWC1	F8,000C (A1)	;F8=near fog
+C.EQ.S	F4,F8
+NOP
+BC1F	7F0BA9B8	;branch if 0!=near fog
+NOP
+LUI	AT,8008
+BEQ	R0,R0,7F0BA9BC
+SW	R0,25C4 (AT)	;0->800825C4: NULL near fog pointer
+//7F0BA9B8:
+SW	T7,25C4 (AT)	;save p->near fog
+//7F0BA9BC:
+LW	RA,0014 (SP)
+LUI	AT,8008
+SW	T8,25C0 (AT)	;1->800825C0: enviroment table 1 entry in use
+JR	RA
+ADDIU	SP,SP,0038
+
+7F0BA9D0:		0FC2EA74	copy short enviroment bank to current
+	accepts: A0=p->enviroment data
+LBU	T6,0004 (A0)	;T6=fog red component
+LUI	V0,8004
+ADDIU	V0,V0,4DCC	;V0=80044DCC: current env.data
+SB	T6,0008 (V0)	;T6->80044DD4
+LBU	T7,0005 (A0)	;T7=fog green component
+SB	T7,0009 (V0)	;T7->80044DD5
+LBU	T8,0006 (A0)	;T8=fog blue component
+SB	T8,000A (V0)	;T8->80044DD6
+LBU	T9,0007 (A0)	;T9=cloud flag
+SB	T9,000B (V0)	;T9->80044DD7
+//7F0BA9F8:	clouds 
+LWC1	F4,0008 (A0)	;F4=cloud image repeat
+SWC1	F4,000C (V0)	;F4->80044DD8
+LH	T0,000C (A0)	;T0=cloud image index
+SH	T0,0010 (V0)	;T0->80044DDC
+LWC1	F6,0010 (A0)	;F6=cloud red component
+SWC1	F6,0014 (V0)	;F6->80044DE0
+LWC1	F8,0014 (A0)	;F8=cloud green component
+SWC1	F8,0018 (V0)	;F8->80044DE4
+LWC1	F10,0018 (A0)	;F10=cloud blue component
+SWC1	F10,001C (V0)	;F10->80044DE8
+//7F0BAA20:	water
+LBU	T1,001C (A0)	;T1=water flag
+SB	T1,0020 (V0)	;T1->80044DEC
+LWC1	F16,0020 (A0)	;F16=water image repeat
+SWC1	F16,0024 (V0)	;F16->80044DF0
+LH	T2,0024 (A0)	;T2=water image index
+SH	T2,0028 (V0)	;T2->80044DF4
+LWC1	F18,0028 (A0)	;F18=water red component
+SWC1	F18,002C (V0)	;F18->80044DF8
+LWC1	F4,002C (A0)	;F4=water green component
+SWC1	F4,0030 (V0)	;F4->80044DFC
+LWC1	F6,0030 (A0)	;F6=water blue component
+SWC1	F6,0034 (V0)	;F6->80044E00
+LWC1	F8,0034 (A0)	;F8=world concavity distort
+JR	RA
+SWC1	F8,0038 (V0)	;F8->80044E04
+
+
+70004650		set page height
+	accepts: F12=?, F14=?
+ADDIU	SP,SP,FFE8
+LUI	V1,8002
+ADDIU	V1,V1,32A8
+SWC1	F12,0018 (SP)	;SP+18=F12: 
+LWC1	F4,0018 (SP)	;F4=F12
+LW	T6,0000 (V1)	;T6=800232A8: 	p->?
+SW	RA,0014 (SP)
+SWC1	F14,001C (SP)	;SP+1C=F14: 
+SWC1	F4,0010 (T6)	;F12-> p+0x10
+LW	T7,0000 (V1)	;T7=800232A8: 	p->?
+LWC1	F6,001C (SP)	;F6=F14
+SWC1	F6,0014 (T7)	;F14-> p+0x14
+LW	V0,0000 (V1)	;V0=800232A8: 	p->?
+LWC1	F12,0010 (V0)	;F12=F12
+LWC1	F14,0008 (V0)	;F14=?
+JAL	7F077C30
+LW	A2,000C (V0)	;A2=?
+JAL	7F077C5C
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+700046AC:	???
+	accepts: A0=p->target
+LUI	V0,8002
+ADDIU	V0,V0,32A8
+LW	T6,0000 (V0)	;T6=800232A8: p->?
+LWC1	F4,0010 (T6)
+SWC1	F4,0000 (A0)	;F4->target+0
+LW	T7,0000 (V0)	;T6=800232A8: p->?
+LWC1	F6,0014 (T7)
+JR	RA
+SWC1	F6,0004 (A0)	;F6->target+4
+
+
+7F077C30:	??? copies floats to BONDdata
+	accepts: A2=?, F12=?, F14=?
+LUI	V0,8008
+ADDIU	V0,V0,A0B0
+LW	T6,0000 (V0)
+SW	A2,0008 (SP)
+SWC1	F12,10A0 (T6)
+LW	T7,0000 (V0)
+SWC1	F14,10A4 (T7)
+LW	T8,0000 (V0)
+LWC1	F4,0008 (SP)
+JR	RA
+SWC1	F4,10A8 (T8)
+
+7F054B80:	
+ADDIU	SP,SP,FFE0
+LUI	AT,3F80
+MTC1	AT,F16		;F16=1.0
+SW	RA,0014 (SP)
+SW	A0,0020 (SP)	;SP+20=A0: 
+SW	A1,0024 (SP)	;SP+24=A1: 
+JAL	7F0BB398	;V0=p->fog values [800825C4]
+SWC1	F16,001C (SP)	;SP+1C=1.0
+BEQ	V0,R0,7F054C44	;branch if not present
+LWC1	F16,001C (SP)	;F16=1.0
+//7F054BA8:
+LW	T6,0020 (SP)
+LWC1	F4,0008 (V0)	;F4=obj.obfuscation range
+LWC1	F6,0018 (T6)	;F6=T6+18: 
+C.LT.S	F4,F6
+NOP
+BC1FL	7F054C48	;branch if obj.obfuscation range >= F6
+LW	RA,0014 (SP)
+SW	V0,0018 (SP)	;SP+18=V0: p->fog values
+JAL	7F078484	;F0= BONDdata+10F8
+SWC1	F16,001C (SP)	;SP+1C=1.0
+//7F054BD0:
+LW	V1,0018 (SP)	;V1=p->fog values
+LW	T7,0020 (SP)
+LUI	AT,42C8
+LWC1	F2,0008 (V1)	;F2=obj.obfuscation range
+LWC1	F8,0018 (T7)
+MTC1	AT,F18		;F18=100.0
+LWC1	F6,0024 (SP)
+SUB.S	F10,F8,F2	;F10=F8-obj.obfuscation range
+LWC1	F14,0004 (V1)	;F14=max obj vis. range
+LWC1	F16,001C (SP)	;F16=SP+1C: 1.0
+MUL.S	F4,F10,F18	;F4=100.0(F8-obj.obfuscation range)
+DIV.S	F8,F4,F6	;F8=100.0(F8-obj.obfuscation range)/F6
+ADD.S	F10,F8,F2	;F10=100.0(F8-obj.obfuscation range)/F6 + obj.obfuscation range
+MUL.S	F12,F10,F0	;F12=(BONDdata+10F8) * (100.0(F8-obj.obfuscation range)/F6 + obj.obfuscation range)
+C.LE.S	F14,F12
+NOP
+BC1FL	7F054C28	;branch if max obj vis. range > F12
+LWC1	F0,0000 (V1)
+MTC1	R0,F16		;F16=0
+BEQ	R0,R0,7F054C48
+LW	RA,0014 (SP)
+//7F054C24:
+LWC1	F0,0000 (V1)	;F0=near fog value
+C.LT.S	F0,F12
+NOP
+BC1FL	7F054C48	;branch if near fog value >= F12
+LW	RA,0014 (SP)
+SUB.S	F10,F14,F12	;F10=max obj vis. range - F12
+SUB.S	F4,F14,F0	;F4=max obj vis. range - near fog value
+DIV.S	F16,F18,F4	;F16=100/(max obj vis. range - near fog value)
+//7F054C44:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+MOV.S	F0,F16		;F0=F16: percentage visibility?
+JR	RA
+NOP
+
+7F054C58:	
+ADDIU	SP,SP,FFC8
+SW	RA,0014 (SP)
+ADDIU	T6,R0,0001
+SW	A0,0038 (SP)	;SP=38=A0: 
+SW	A1,003C (SP)	;SP+3C=A1: 
+JAL	7F0BB398	;V0=p->fog values [800825C4]
+SW	T6,0034 (SP)	;SP+34=1: true return
+BEQL	V0,R0,7F054D5C	;branch if 0
+LW	RA,0014 (SP)
+//7F054C7C:
+JAL	7F089FD4	;V0=p->position
+SW	V0,0030 (SP)	;SP+30=p->fog values
+JAL	7F0783C4	;V0= BONDdata+0x10CC
+SW	V0,001C (SP)	;SP+1C=p->position
+//7F054C8C:
+LW	V1,001C (SP)	;V1=p->position
+LW	A1,0038 (SP)
+LW	A0,0030 (SP)	;A0=p->fog values
+LWC1	F6,0000 (V1)	;F6=x position
+LWC1	F4,0000 (A1)
+SUB.S	F8,F4,F6
+SWC1	F8,0024 (SP)	;SP+24=?-xpos
+LWC1	F16,0004 (V1)	;F16=y position
+LWC1	F10,0004 (A1)
+SUB.S	F18,F10,F16
+LWC1	F10,0024 (SP)	;F10=F8
+SWC1	F18,0028 (SP)	;SP+28=?-ypos
+LWC1	F6,0008 (V1)	;F6=z position
+LWC1	F4,0008 (A1)
+SUB.S	F8,F4,F6
+LWC1	F4,0028 (SP)	;F4=F18
+SWC1	F8,002C (SP)	;SP+2C=?-zpos
+LWC1	F16,0000 (V0)	;F16=BONDdata+10CC
+LWC1	F6,0004 (V0)	;F6=BONDdata+10D0
+MUL.S	F18,F10,F16	;F18=(?-xpos)*(BONDdata+10CC)
+LWC1	F16,0008 (V0)	;F16=BONDdata+10D4
+MUL.S	F8,F4,F6	;F8=(?-ypos)*(BONDdata+10D0)
+LWC1	F4,002C (SP)	;F4=(?-zpos)
+MUL.S	F6,F16,F8	;F6=(BONDdata+10D4)*(?-ypos)*(BONDdata+10D0)
+LWC1	F18,0008 (A0)	;F18=obj.obfuscation range
+ADD.S	F12,F6,F10	;F12=(BONDdata+10D4)*(?-ypos)*(BONDdata+10D0) + (?-xpos)
+C.LT.S	F18,F12
+NOP
+BC1FL	7F054D5C	;branch if obj.obfuscation range >= F12
+LW	RA,0014 (SP)
+//7F054D08:
+SW	A0,0030 (SP)	;SP+30=A0: same as before
+JAL	7F078484	;F0= BONDdata+10F8
+SWC1	F12,0020 (SP)	;SP+20=F12
+LW	A0,0030 (SP)	;A0=SP+30: p->fog values
+LWC1	F12,0020 (SP)	;F12=SP+20
+LUI	AT,42C8
+LWC1	F2,0008 (A0)	;F2=A0+8: obj.obfuscation range
+MTC1	AT,F16		;F16=100.0
+LWC1	F6,003C (SP)	;F6=SP+3C: 
+SUB.S	F8,F12,F2	;F8=F12-obj.obfuscation range
+MUL.S	F4,F8,F16	;F4=100.0(F12-obj.obfuscation range)
+LWC1	F8,0004 (A0)	;F8=max.obj.vis.range
+DIV.S	F10,F4,F6	;F10=100.0(F12-obj.obfuscation range) / F6
+ADD.S	F18,F10,F2	;F18=100.0(F12-obj.obfuscation range) / F6 + obj.obfuscation range
+MUL.S	F12,F18,F0	;F12=(100.0(F12-obj.obfuscation range) / F6 + obj.obfuscation range) * F0
+C.LE.S	F8,F12
+NOP
+BC1FL	7F054D5C	;branch if max.obj.vis.range > F12
+LW	RA,0014 (SP)
+SW	R0,0034 (SP)	;SP+34=0: false return
+//7F054D58:
+LW	RA,0014 (SP)
+LW	V0,0034 (SP)	;V0=SP+34: return value
+ADDIU	SP,SP,0038
+JR	RA
+NOP
+
++_+
+
+for the record, the sky is constructed here:
+//7F096E2C:
+
+
+here's a sample 'cloud' mapping:
+//at 7F096E2C
+E7000000 00000000
+E7000000 00000000
+BA001402 00000000
+B900031D 00552048
+BB000001 FFFFFFFF
+BA001001 00000000
+FC121824 FF33FFFF
+FD700000 0015DE78
+F5700000 07000000
+E6000000 00000000
+F3000000 077FF100
+E7000000 00000000
+BA000E02 00000000
+F5681000 00018060
+F2002002 000FE0FE
+//at 7F096E7C
+FB000000 280000FF
+//at 7F006EDC:
+FC40FE81 55FEF97C
+//at 7F098E84
+B4000000 CE8002A1	;
+B2000000 0

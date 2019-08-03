@@ -1,0 +1,268 @@
+7F013980:	484B0	menu 11 constructor: control style
+	accepts: A0=display list target
+ADDIU	SP,SP,FF30
+SW	RA,0064 (SP)
+SW	S1,0044 (SP)
+OR	S1,A0,R0	;S1=A0: DL
+SW	S8,0060 (SP)
+SW	S7,005C (SP)
+SW	S6,0058 (SP)
+SW	S5,0054 (SP)
+SW	S4,0050 (SP)
+SW	S3,004C (SP)
+SW	S2,0048 (SP)
+SW	S0,0040 (SP)
+JAL	7F010290	;V0=players selected
+SDC1	F20,0038 (SP)
+//7F0139B8:
+SW	V0,00CC (SP)	;SP+CC=V0: #players
+OR	A0,S1,R0	;A0=DL
+OR	A1,R0,R0	;A1=0
+OR	A2,R0,R0	;A2=0
+JAL	700046D0	;setfillcolour("black")
+OR	A3,R0,R0	;A3=0
+JAL	70003EF8	;fillrect()
+OR	A0,V0,R0	;A0=DL
+JAL	7F00D5E8
+OR	A0,V0,R0	;A0=DL
+JAL	7F0ACD98
+OR	A0,V0,R0	;A0=DL
+//7F0139E8:	horizontal division
+ADDIU	T6,R0,00AB
+ADDIU	T7,R0,0090
+SW	T7,0014 (SP)	;SP+14=T7: 00000090: RGBA fill
+SW	T6,0010 (SP)	;SP+10=0xAB: lry
+OR	A0,V0,R0	;A0=DL
+ADDIU	A1,R0,0026	;A1=26: ulx
+ADDIU	A2,R0,00A9	;A2=A9: uly
+JAL	7F0AD014	;draws coloured rectangle
+ADDIU	A3,R0,0184	;A3=184: lrx
+//7F013A0C:	draw vertical division if required
+LW	T0,00CC (SP)	;T0=#players
+OR	S1,V0,R0	;S1=DL
+OR	A0,S1,R0	;A0=DL
+SLTI	AT,T0,0003
+BNEZ	AT,7F013A48	;branch if not 3-4 player
+ADDIU	A1,R0,00D4	;A1=D4: ulx
+ADDIU	T8,R0,0136
+ADDIU	T9,R0,0080
+SW	T9,0014 (SP)	;SP+14=00000080: RGBA fill
+SW	T8,0010 (SP)	;SP+10=136: lry
+ADDIU	A2,R0,001E	;A2=1E: uly
+JAL	7F0AD014	;draws coloured rectangle
+ADDIU	A3,R0,00D6	;A3=D6: lrx
+OR	S1,V0,R0	;S1=DL
+LW	T0,00CC (SP)	;T0=#players
+//7F013A48:
+BLEZ	T0,7F013D3C	;branch if invalid # players
+OR	S6,R0,R0	;S6=0
+LUI	T1,8007
+LUI	T2,8007
+LUI	AT,4080
+ADDIU	T2,T2,97B8	;T2=800697B8
+ADDIU	T1,T1,9740	;T1=80069740
+LUI	S8,8004
+LUI	S7,8004
+MTC1	AT,F20		;F20= [40800000]
+ADDIU	S7,S7,0EB8	;S7=80040EB8
+ADDIU	S8,S8,0EB4	;S8=80040EB4
+SW	T1,0074 (SP)	;T1->SP+74: TRUE if selection made
+SW	T2,0070 (SP)	;T2->SP+70: selected control style
+LW	T0,00CC (SP)	;T0=#players
+ADDIU	AT,R0,0002
+ADDIU	S3,R0,0026	;S3=0x26
+BNE	T0,AT,7F013AB0	;branch if not 2 player
+ANDI	T3,S6,0001
+BLEZ	S6,7F013AA4
+ADDIU	S5,R0,015E
+BEQ	R0,R0,7F013AE0
+ADDIU	S2,R0,00AA
+//7F013AA4:
+OR	V1,R0,R0
+BEQ	R0,R0,7F013AE0
+ADDIU	S2,V1,001E
+//7F013AB0:
+SLTI	AT,S6,0002
+BNEZ	AT,7F013AC4
+ADDIU	S5,R0,00AF
+BEQ	R0,R0,7F013AC8
+ADDIU	V1,R0,008C
+//7F013AC4:
+OR	V1,R0,R0
+BEQ	T3,R0,7F013AD8
+ADDIU	S2,V1,001E
+BEQ	R0,R0,7F013ADC
+ADDIU	V1,R0,00AF
+//7F013AD8:
+OR	V1,R0,R0
+ADDIU	S3,V1,0026
+//7F013AE0:	set scissor
+ADDIU	T4,S3,0006	;T4=V1+2C: account for left margin
+MTC1	T4,F4
+ADDIU	T1,S2,0005	;T1=S2+5: account for upper edge
+MTC1	T1,F16
+CVT.S.W	F6,F4	;F6=(float) horizontal position
+LUI	AT,ED00
+ADDIU	S1,V0,0008
+CVT.S.W	F18,F16	;F18=(float) vertical position
+MUL.S	F8,F6,F20	;F8=horz.pos * F20: 
+TRUNC.W.S	F10,F8
+MUL.S	F4,F18,F20	;F4=vert.pos.* F20
+MFC1	T6,F10		;T6=F10: upper left x position
+NOP
+ANDI	T7,T6,0FFF
+TRUNC.W.S	F6,F4
+SLL	T8,T7,0xC
+ADDU	T6,S3,S5
+ADDIU	T7,T6,FFFA
+MFC1	T3,F6		;T3=F6: upper left y position
+MTC1	T7,F8
+OR	T9,T8,AT	;T9=rdp_setscissor (U) | ulx
+ANDI	T4,T3,0FFF
+OR	T5,T9,T4
+ADDIU	T9,S2,0087
+CVT.S.W	F10,F8	;F10= 0xCF
+MTC1	T9,F4
+SW	T5,0000 (V0)	;T5->DL+0: rdp_setscissor (U)
+CVT.S.W	F6,F4	;F6= 0x87
+MUL.S	F16,F10,F20
+NOP
+MUL.S	F8,F6,F20
+TRUNC.W.S	F18,F16
+TRUNC.W.S	F10,F8
+MFC1	T1,F18
+MFC1	T5,F10
+ANDI	T2,T1,0FFF
+SLL	T3,T2,0xC
+ANDI	T6,T5,0FFF
+OR	T7,T3,T6
+SW	T7,0004 (V0)	;T7->DL+4: rdp_setscissor (L)
+//7F013B80:
+LW	T8,0074 (SP)	;T8=p->select table
+LW	T1,0000 (T8)	;T1=TRUE if selection made
+BNEZ	T1,7F013C48	;branch if selected
+NOP
+//7F013B90:
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,9D1D	;A0=9D1D: "Select Control Style*"
+LW	T2,0000 (S8)	;T2=80040EB4: p->1st font table
+OR	S4,V0,R0	;S4=V0: p->text
+ADDIU	A0,SP,00A4	;A0=SP+A4: p->width?
+ADDIU	A1,SP,00A0	;A1=SP+A0: p->height?
+OR	A2,V0,R0	;A2=p->text
+LW	A3,0000 (S7)	;A3=80040EB8: p->2nd font table
+SW	R0,0014 (SP)	; 0->SP+14: 
+JAL	7F0AE98C	;computes width and height of string
+SW	T2,0010 (SP)	;T2->SP+10: p->1st font table
+//7F013BBC:
+LW	T7,00A4 (SP)	;T7=p->width?
+LW	T5,00A0 (SP)	;T5=p->height?
+SRA	T9,S5,0x1	;T9=port width/2 (center of port)
+SRA	T8,T7,0x1	;T8=width/2 (center of string)
+ADDU	T4,T9,S3
+SUBU	T1,S2,T8	;T1=window width - centerpoint
+SRA	T3,T5,0x1
+SUBU	T6,T4,T3
+ADDIU	T2,T1,0037	;T2=T1+37: text display offset
+SW	T6,009C (SP)	;SP+9C=T6: x position
+SW	T2,0098 (SP)	;SP+98=T2: y position
+JAL	7F0ACD98
+OR	A0,S1,R0
+JAL	7000441C
+OR	S1,V0,R0
+SLL	S0,V0,0x10
+SRA	T9,S0,0x10
+JAL	7000442C
+OR	S0,T9,R0
+LW	T5,0000 (S7)	;T5=80040EB8: p->2nd font table
+LW	T4,0000 (S8)	;T4=80040EB4: p->1st font table
+ADDIU	T3,R0,00FF
+SW	T3,0018 (SP)	;SP+18=000000FF: "black"
+OR	A0,S1,R0	;A0=S1: DL
+ADDIU	A1,SP,009C	;A1=SP+9C: x position
+ADDIU	A2,SP,0098	;A2=SP+98: y position
+OR	A3,S4,R0	;A3=p->text
+SW	S0,001C (SP)	;SP+1C=S0: clip width
+SW	V0,0020 (SP)	;SP+20=V0: clip height
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: x offset
+SW	T5,0010 (SP)	;SP+10=T5: p->2nd font table
+JAL	7F009760	;writes text to screen at absolute coordinates
+SW	T4,0014 (SP)	;SP+14=T4: p->1st font table
+OR	S1,V0,R0	;S1=V0: DL
+LW	T6,0070 (SP)	;T6=SP+70: p->selected control style
+LUI	A0,8003
+SRA	T1,S5,0x1	;port width/2
+LW	T7,0000 (T6)	;T7=selected control style
+ADDU	S0,T1,S3
+ADDIU	S4,S2,0046
+SLL	T8,T7,0x2	;control style->offset
+ADDU	A0,A0,T8
+JAL	7F0C1DD8	;V0=p->text A0
+LHU	A0,B4F0 (A0)	;A0=8002B4F0+offset: text label
+LW	T2,0000 (S8)
+OR	S2,V0,R0
+ADDIU	A0,SP,0090
+ADDIU	A1,SP,008C
+OR	A2,V0,R0	;A2=V0: p->text
+LW	A3,0000 (S7)
+SW	R0,0014 (SP)
+JAL	7F0AE98C	;computes width and height of string A2 for cur. font set
+SW	T2,0010 (SP)
+LW	T3,0090 (SP)
+LW	T9,008C (SP)
+OR	A0,S1,R0
+SRA	T6,T3,0x1
+SUBU	T7,S4,T6
+SRA	T5,T9,0x1
+SUBU	T4,S0,T5
+ADDIU	T8,T7,000F
+SW	T4,0088 (SP)
+JAL	7F0ACD98
+SW	T8,0084 (SP)
+JAL	7000441C
+OR	S1,V0,R0
+SLL	S0,V0,0x10
+SRA	T1,S0,0x10
+JAL	7000442C
+OR	S0,T1,R0
+LW	T2,0000 (S7)
+LW	T9,0000 (S8)
+ADDIU	T5,R0,00FF	;T5=000000FF: "black"
+SW	T5,0018 (SP)
+OR	A0,S1,R0	;A0=S1: DL
+ADDIU	A1,SP,0088	;A1=SP+88: x position
+ADDIU	A2,SP,0084	;A2=SP+84: y position
+OR	A3,S2,R0	;A3=S2: p->text
+SW	S0,001C (SP)	;SP+1C=S0: clip width
+SW	V0,0020 (SP)	;SP+20=V0: clip height
+SW	R0,0024 (SP)	;SP+24=0: y offset
+SW	R0,0028 (SP)	;SP+28=0: y offset
+SW	T2,0010 (SP)	;SP+10=T2: p->2nd font table
+JAL	7F009760	;writes text
+SW	T9,0014 (SP)	;SP+14=T9: p->1st font table
+LW	T4,0074 (SP)
+LW	T6,0070 (SP)
+LW	T8,00CC (SP)
+ADDIU	S6,S6,0001
+ADDIU	T3,T4,0004
+ADDIU	T7,T6,0004
+SW	T7,0070 (SP)
+SW	T3,0074 (SP)
+BNE	S6,T8,7F013A80
+OR	S1,V0,R0
+JAL	7F0ACEF0
+OR	A0,S1,R0
+LW	RA,0064 (SP)
+LDC1	F20,0038 (SP)
+LW	S0,0040 (SP)
+LW	S1,0044 (SP)
+LW	S2,0048 (SP)
+LW	S3,004C (SP)
+LW	S4,0050 (SP)
+LW	S5,0054 (SP)
+LW	S6,0058 (SP)
+LW	S7,005C (SP)
+LW	S8,0060 (SP)
+JR	RA
+ADDIU	SP,SP,00D0

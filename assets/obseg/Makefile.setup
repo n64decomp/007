@@ -1,0 +1,55 @@
+
+#setup
+$(BUILD_DIR)/$(OBSEG_DIR)/setup/%.rz: $(OBSEG_DIR)/setup/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/setup/%.rz: $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.bin
+	$(RZ_COMP) $< $@
+
+$(BUILD_DIR)/$(OBSEG_DIR)/setup/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.elf
+	$(OBJCOPY) $< $@ -O binary
+
+$(BUILD_DIR)/$(OBSEG_DIR)/setup/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.o
+	$(LD) -T assets/obseg/setup/Usetup.ld -o $@
+	rm build/assets/obseg/setup/Usetup.o
+
+$(BUILD_DIR)/$(OBSEG_DIR)/setup/%.o: $(OBSEG_DIR)/setup/%.c
+	$(CC) -c $(CFLAGS) -o $@ -O2 $<
+	mv $@ build/assets/obseg/setup/Usetup.o
+
+SETUP_RZ_FILES = \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupameZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setuparchZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setuparkZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupashZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupcaveZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupcradZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupcrypZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupdishZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupimpZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupoatZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setuprefZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupsevbZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupstatueZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetuparchZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetuparkZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupaztZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupcaveZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupcontrolZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupcradZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupcrypZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupdamZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupdepoZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupdestZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupjunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetuplenZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetuppeteZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetuprunZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupsevbZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupsevbunkerZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupsevxZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupsevxbZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupsiloZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetupstatueZ.rz \
+    $(BUILD_DIR)/$(OBSEG_DIR)/setup/UsetuptraZ.rz
+    

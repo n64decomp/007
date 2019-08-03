@@ -1,0 +1,169 @@
+7F001258	35D88	load all objects mentioned in current action table
+ADDIU	SP,SP,FFC8
+LUI	T6,8007
+LW	T6,5D14 (T6)	;T6=80075D14: p->action block table
+SW	RA,0034 (SP)
+SW	S7,0030 (SP)
+SW	S6,002C (SP)
+SW	S5,0028 (SP)
+SW	S4,0024 (SP)
+SW	S3,0020 (SP)
+SW	S2,001C (SP)
+SW	S1,0018 (SP)
+SW	S0,0014 (SP)
+//7F001288:	get p->actions and search types
+LW	S0,0000 (T6)	;S0=T6+0: p->action block data
+ADDIU	S5,R0,00BF	;S5=0xBF: spawn item
+ADDIU	S6,R0,00C0	;S6=0xC0: spawn hat
+BEQ	S0,R0,7F0013E0	;return if NULL pointer
+OR	S7,R0,R0	;S7=0
+ADDIU	S4,R0,00BE	;S4=0xBE: respawn actor
+ADDIU	S3,R0,00BD	;S3=0xBD: spawn actor
+ADDIU	S2,R0,001B	;S2=0x1B: drop item
+ADDIU	S1,R0,0004	;S1=0x04: terminate
+//7F0012AC:	test if 04: terminate
+LBU	V1,0000 (S0)	;V1=action command type
+LUI	T7,8007
+BNE	S1,V1,7F0012C8	;branch if not type 04: 
+NOP
+LW	T7,5D14 (T7)	;T7=80075D14: p->action table
+BEQ	R0,R0,7F0013CC	;handle next table entry
+ADDU	V0,T7,S7	;V0=table+offset
+//7F0012C8:	test for each command
+BEQL	V1,S2,7F0012FC	;branch if 1B: drop item
+LBU	T8,0001 (S0)
+BEQ	V1,S3,7F001320	;branch if BD: spawn actor
+NOP
+BEQ	V1,S4,7F00134C	;branch if BE: respawn actor
+NOP
+BEQL	V1,S5,7F00137C	;branch if BF: spawn item
+LBU	T2,0001 (S0)
+BEQL	V1,S6,7F0013A8	;branch if C0: spawn hat
+LBU	T5,0001 (S0)
+BEQ	R0,R0,7F0013BC	;everything else is skipped
+OR	A0,S0,R0
+//7F0012F8:	1B: drop item
+LBU	T8,0001 (S0)	;T8=model.u
+LBU	T0,0002 (S0)	;T0=model.l
+SLL	T9,T8,0x8
+OR	V0,T9,T0	;V0=model
+JAL	7F056C38	;load model A0
+ANDI	A0,V0,FFFF	;A0=model&0xFFFF
+BEQL	V0,R0,7F0013BC	;ironically, branches nicely even on load failure
+OR	A0,S0,R0
+BEQ	R0,R0,7F0013BC
+OR	A0,S0,R0
+//7F001320:	BD: spawn actor
+JAL	7F023290	;load body/head entry A0 if not already loaded
+LBU	A0,0001 (S0)	;A0=body
+LB	A0,0002 (S0)	;A0=head
+BLTZL	A0,7F0013BC	;skip if random head
+OR	A0,S0,R0
+JAL	7F023290	;load body/head entry A0 if not already loaded
+NOP
+BEQL	V0,R0,7F0013BC	;ironically, branches nicely even on load failure
+OR	A0,S0,R0
+BEQ	R0,R0,7F0013BC
+OR	A0,S0,R0
+//7F00134C:	BE: respawn actor
+JAL	7F023290	;load body/head entry A0 if not already loaded
+LBU	A0,0001 (S0)	;A0=body
+LB	A0,0002 (S0)	;A0=head
+BLTZL	A0,7F0013BC	;skip if random head
+OR	A0,S0,R0
+JAL	7F023290	;load body/head entry A0 if not already loaded
+NOP
+BEQL	V0,R0,7F0013BC	;ironically, branches nicely even on load failure
+OR	A0,S0,R0
+BEQ	R0,R0,7F0013BC
+OR	A0,S0,R0
+//7F001378:	BF: spawn item
+LBU	T2,0001 (S0)	;T2=model.u
+LBU	T4,0002 (S0)	;T4=model.l
+SLL	T3,T2,0x8
+JAL	7F056C38	;load model A0
+OR	A0,T3,T4	;A0=model
+JAL	7F005710	;load 3rd person model for item A0
+LBU	A0,0003 (S0)	;A0=inventory item#
+BEQL	V0,R0,7F0013BC	;ironically, branches nicely even on load failure
+OR	A0,S0,R0
+BEQ	R0,R0,7F0013BC
+OR	A0,S0,R0
+//7F0013A4:	C0: spawn hat
+LBU	T5,0001 (S0)	;T5=model.u
+LBU	T7,0002 (S0)	;T7=model.l
+SLL	T6,T5,0x8
+JAL	7F056C38	;load model A0
+OR	A0,T6,T7	;A0=model
+//7F0013B8:	get next command from block
+OR	A0,S0,R0	;A0=S0: p->cur.action
+JAL	7F0349FC	;V0=size of action command in block A0 at offset A1
+OR	A1,R0,R0	;A1=0
+BEQ	R0,R0,7F0012AC
+ADDU	S0,S0,V0	;S0+=V0: p->action+=size: p->next action
+//7F0013CC:	next action block
+LW	S0,0008 (V0)	;S0=V0+8: p->next action block
+ADDIU	S7,S7,0008	;S7+=8	table offset
+ADDIU	V0,V0,0008	;V0+=8	next action entry
+BNEL	S0,R0,7F0012B0	;loop until NULL entry
+LBU	V1,0000 (S0)
+//7F0013E0:	return
+LW	RA,0034 (SP)
+LW	S0,0014 (SP)
+LW	S1,0018 (SP)
+LW	S2,001C (SP)
+LW	S3,0020 (SP)
+LW	S4,0024 (SP)
+LW	S5,0028 (SP)
+LW	S6,002C (SP)
+LW	S7,0030 (SP)
+JR	RA
+ADDIU	SP,SP,0038
+
++_+
+
+7F00140C	35F3C	weapon load debug feature
+ADDIU	SP,SP,FFB0
+LUI	T7,8003
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+ADDIU	T7,T7,A23C	;T7=8002A23C: list of debug weapon models
+LW	AT,0000 (T7)
+LW	T0,0004 (T7)
+ADDIU	T6,SP,0030	;T6=SP+30: p->copy of table on stack
+SW	AT,0000 (T6)
+SW	T0,0004 (T6)
+LW	T0,000C (T7)
+LW	AT,0008 (T7)
+ADDIU	S0,SP,0030	;S0=SP+30: p->copy of table
+SW	T0,000C (T6)
+SW	AT,0008 (T6)
+LW	AT,0010 (T7)
+LW	T0,0014 (T7)
+SW	AT,0010 (T6)
+SW	T0,0014 (T6)
+LW	T0,001C (T7)
+LW	AT,0018 (T7)
+SW	T0,001C (T6)	;copy 0x20 from 8002A23C to stack
+SW	AT,0018 (T6)
+//7F001468:	load each entry in table
+LW	T1,0030 (SP)	;T1=SP+30: 1st entry
+BLTZL	T1,7F001494	;branch if end of list
+LW	RA,001C (SP)
+LW	A0,0000 (S0)	;A0=entry+0: model#
+//7F001478:	loop to load each model
+JAL	7F056C38	;load model A0
+NOP
+LW	A0,0004 (S0)	;A0=next entry: model#
+ADDIU	S0,S0,0004	;S0+=4: next entry
+BGEZ	A0,7F001478	;loop while more items left to load
+NOP
+//7F001490:	return
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0050
+JR	RA
+NOP
+
+Uses a pre-arranged list of item types at 8002A23C.
+Table ends with an entry -1.  Each entry is one word.

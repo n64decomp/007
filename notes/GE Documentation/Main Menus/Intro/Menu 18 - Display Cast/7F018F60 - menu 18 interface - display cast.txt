@@ -1,0 +1,264 @@
+7F018F60	4DA90	menu 18 interface - display cast
+	note: reflects new NSNA entry format
+ADDIU	SP,SP,FFD8
+LUI	AT,4238
+SW	RA,0024 (SP)
+MTC1	AT,F12		;F12=	[42380000]
+SW	S3,0020 (SP)
+SW	S2,001C (SP)
+SW	S1,0018 (SP)
+JAL	70004544
+SW	S0,0014 (SP)
+LUI	AT,4120
+MTC1	AT,F12		;F12=	[41200000]
+LUI	AT,44FA
+MTC1	AT,F14		;F14=	[44FA0000]
+JAL	70004650
+NOP
+JAL	70004534
+ADDIU	A0,R0,0001	;A0=1
+//7F018FA4:	set screen and view dimentions
+LUI	AT,8005
+JAL	70004590	;set page width
+LWC1	F12,1B08 (AT)	;F12=80051B08: 
+ADDIU	A0,R0,01B8	;A0=1B8: screen width
+JAL	7F09B1DC	;Store screen width A0 & height A1 to current player
+ADDIU	A1,R0,014A	;A1=14A: screen height
+ADDIU	A0,R0,01B8	;A0=1B8: viewport width
+JAL	7000443C	;set viewport width (A0) and height (A1)
+ADDIU	A1,R0,014A	;A1=14A: viewport height
+OR	A0,R0,R0	;A0=0
+JAL	7F09B1F8	;Store viewport width A0 & viewport height A1 to current player
+OR	A1,R0,R0	;A1=0
+OR	A0,R0,R0	;A0=0
+JAL	700044BC	;set viewport ulx (A0) and uly (A1)
+OR	A1,R0,R0	;A1=0
+//7F018FE0:
+LUI	V0,8003
+ADDIU	V0,V0,A8CC	;V0=8002A8CC
+LUI	T7,8005
+LW	T7,8374 (T7)	;T7=80048374: 1 if not paused
+LW	T6,0000 (V0)	;T6=8002A8CC: menu timer
+LUI	S0,8003
+OR	A0,R0,R0	;A0=0
+ADDU	T8,T6,T7	;T8=timer+clock
+SLTI	AT,T8,00B5	;TRUE if < 3 sec.
+BNEZ	AT,7F0192E4	;check player advance if within 3 seconds...
+SW	T8,0000 (V0)	;update timer
+//7F01900C:
+ADDIU	S0,S0,B5E8	;S0=8002B5E8
+LW	T0,0000 (S0)	;T0=8002B5E8: entry count
+LUI	S1,8003
+ADDIU	S1,S1,B600	;S1=8002B600
+ADDIU	T1,T0,0001	;T1=T0+1: entry++
+SW	T1,0000 (S0)	;update value
+ADDIU	S3,R0,2710
+ADDIU	S2,R0,000A
+//7F01902C:	check when character appears
+LW	V1,0000 (S0)	;V1=8002B5E8: entry#
+LUI	T4,8003
+MULTU	V1,S2
+MFLO	T2		;T2=entry# * A: offset to entry
+ADDU	V0,S1,T2	;V0=S1+offset: cast entry in 8002B600 table
+LB	T3,0008 (V0)	;T3=TRUE if only appears in credits
+BEQL	T3,R0,7F019068	;branch if will always appear
+LB	T6,0000 (V0)
+LW	T4,B5FC (T4)	;T4=8002B5FC: TRUE plays full cast call
+ADDIU	T5,V1,0001	;T5=entry#+1
+BNEL	T4,R0,7F019068	;branch if playing them all
+LB	T6,0000 (V0)
+BEQ	R0,R0,7F01902C	;try next character
+SW	T5,0000 (S0)	;update entry#
+//7F019064:	only display moonraker(m) after Aztec
+LB	T6,0000 (V0)	;T6=body
+ADDIU	AT,R0,0027
+BNEL	T6,AT,7F019098	;branch if not body 27: moonraker(m)
+LW	T9,0000 (S0)
+JAL	7F01EADC	;V0= TRUE if Aztec completed on secret or 00 agent on any folder
+NOP
+BNEL	V0,R0,7F019098	;branch if it was
+LW	T9,0000 (S0)
+LW	T7,0000 (S0)	;T7=8002B5E8: entry#
+ADDIU	T8,T7,0001	;T8=entry+1
+BEQ	R0,R0,7F01902C	;try next character if Aztec wasn't finished
+SW	T8,0000 (S0)	;update entry#
+//7F019094:	only display moonraker(f) after Aztec
+LW	T9,0000 (S0)	;T9=entry#
+ADDIU	AT,R0,0028
+MULTU	T9,S2
+MFLO	T0		;T0=entry# * A: offset to entry
+ADDU	T1,S1,T0	;T1=8002B600+offset: p->entry in cast call
+LB	T2,0000 (T1)	;T2=body
+BNEL	T2,AT,7F0190D8	;branch if not body 28: moonraker(f)
+LW	T5,0000 (S0)
+JAL	7F01EADC	;V0= TRUE if Aztec completed on secret or 00 agent on any folder
+NOP
+BNEL	V0,R0,7F0190D8	;branch if it was
+LW	T5,0000 (S0)
+LW	T3,0000 (S0)	;T3=entry#
+ADDIU	T4,T3,0001	;T4=entry#+1
+BEQ	R0,R0,7F01902C	;try next character if Aztec wasn't finished
+SW	T4,0000 (S0)	;update entry#
+//7F0190D4:	only display Mayday after Aztec
+LW	T5,0000 (S0)	;T5=entry#
+ADDIU	AT,R0,000E
+MULTU	T5,S2
+MFLO	T6		;T6=entry# * A: offset to entry
+ADDU	T7,S1,T6	;T7=8002B600+offset: p->entry in cast call
+LB	T8,0000 (T7)	;T8=body
+BNEL	T8,AT,7F01913C	;branch if not body E: Mayday
+LW	T2,0000 (S0)
+JAL	7F01EADC	;V0= TRUE if Aztec completed on secret or 00 agent on any folder
+NOP
+BNEL	V0,R0,7F01913C	;branch if it was
+LW	T2,0000 (S0)
+JAL	7000A450	;V0=random
+NOP
+DIVU	V0,S3
+MFHI	T9		;T9=0-270F
+BNEZ	S3,7F019120	;catch division by zero
+NOP
+BREAK
+//7F019120:
+BEQL	T9,R0,7F01913C	;you have a 1/10000 chance of displaying it anyway!
+LW	T2,0000 (S0)
+LW	T0,0000 (S0)	;T0=entry#
+ADDIU	T1,T0,0001	;T1=entry+1
+BEQ	R0,R0,7F01902C	;try next character
+SW	T1,0000 (S0)	;update entry#
+//7F019138:	only display Jaws after Aztec
+LW	T2,0000 (S0)	;T2=entry#
+ADDIU	AT,R0,000D
+MULTU	T2,S2
+MFLO	T3
+ADDU	T4,S1,T3
+LB	T5,0000 (T4)	;T5=body
+BNEL	T5,AT,7F0191A0	;branch if not body D: Jaws
+LW	T9,0000 (S0)
+JAL	7F01EADC	;V0= TRUE if Aztec completed on secret or 00 agent on any folder
+NOP
+BNEL	V0,R0,7F0191A0	;branch if it was
+LW	T9,0000 (S0)
+JAL	7000A450	;V0=random
+NOP
+DIVU	V0,S3
+MFHI	T6		;T6=0-270F
+BNEZ	S3,7F019184	;catch division by zero
+NOP
+BREAK
+//7F019184:
+BEQL	T6,R0,7F0191A0	;you have a 1/10000 chance of displaying it anyway!
+LW	T9,0000 (S0)
+LW	T7,0000 (S0)	;T7=entry#
+ADDIU	T8,T7,0001	;T8=entry+1
+BEQ	R0,R0,7F01902C	;try next character
+SW	T8,0000 (S0)	;update entry#
+//7F01919C:	only display Oddjob after Egypt
+LW	T9,0000 (S0)	;T9=entry#
+ADDIU	AT,R0,000F
+MULTU	T9,S2
+MFLO	T0
+ADDU	T1,S1,T0
+LB	T2,0000 (T1)	;T2=body
+BNEL	T2,AT,7F019204	;branch if not body F: Oddjob
+LW	T6,0000 (S0)
+JAL	7F01EAE8	;V0= TRUE if Egypt completed on 00 agent on any folder
+NOP
+BNEL	V0,R0,7F019204	;branch if it was
+LW	T6,0000 (S0)
+JAL	7000A450	;V0=random
+NOP
+DIVU	V0,S3
+MFHI	T3		;T3=0-270F
+BNEZ	S3,7F0191E8	;catch division by zero
+NOP
+BREAK	
+//7F0191E8:
+BEQL	T3,R0,7F019204	;you have a 1/10000 chance of displaying it anyway!
+LW	T6,0000 (S0)
+LW	T4,0000 (S0)	;T1=entry#
+ADDIU	T5,T4,0001	;T5=entry+1
+BEQ	R0,R0,7F01902C	;try next character
+SW	T5,0000 (S0)	;update entry
+//7F019200:	only display Baron Samedi after Egypt
+LW	T6,0000 (S0)	;T6=entry#
+ADDIU	AT,R0,000C
+MULTU	T6,S2
+MFLO	T7
+ADDU	T8,S1,T7
+LB	T9,0000 (T8)	;T9=body
+BNEL	T9,AT,7F019268	;branch if not body C: Baron Samedi
+LW	V1,0000 (S0)
+JAL	7F01EAE8	;V0= TRUE if Egypt completed on 00 agent on any folder
+NOP
+BNEL	V0,R0,7F019268	;branch if it was
+LW	V1,0000 (S0)
+JAL	7000A450	;V0=random
+NOP
+DIVU	V0,S3
+MFHI	T0		;T0=0-270F
+BNEZ	S3,7F01924C	;catch division by zero
+NOP
+BREAK
+//7F01924C:
+BEQL	T0,R0,7F019268	;you have a 1/10000 chance of displaying it anyway!
+LW	V1,0000 (S0)
+LW	T1,0000 (S0)	;T1=entry#
+ADDIU	T2,T1,0001	;T2=entry+1
+BEQ	R0,R0,7F01902C	;try next character
+SW	T2,0000 (S0)	;update entry
+//7F019264:	test for the end of the list
+LW	V1,0000 (S0)	;V1=entry#
+ADDIU	A0,R0,0018	;A0=menu 18: cast call
+LUI	T6,8003
+MULTU	V1,S2
+MFLO	T3
+ADDU	T4,S1,T3
+LB	T3,0009 (T4)	;T3=kill byte
+BEQ	T3,R0,7F019290	;branch if list isn't ending
+LB	T5,0000 (T4)	;T5=body
+SW	R0,0000 (S0)	;0->entry#
+OR	V1,R0,R0	;V1=0
+//7F019290:	calling menu 18 again runs the next actor!
+BLEZ	V1,7F0192A8	;branch if invalid or final valid entry#
+NOP
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=1	on return
+BEQ	R0,R0,7F019310
+LW	RA,0024 (SP)
+//7F0192A8:	set return to stage select menu after Cradle
+LW	T6,B5FC (T6)	;T6=8002B5FC: TRUE plays full cast call
+ADDIU	A0,R0,0007	;A0=menu 7: select mission
+BEQ	T6,R0,7F0192D4	;branch if wasn't triggered by Cradle
+NOP
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=1	on return
+JAL	7F00E3E0	;set cursor position to stage A0 on solo mission select page
+ADDIU	A0,R0,0011	;A0=11: Aztec
+LUI	AT,8003
+BEQ	R0,R0,7F01930C
+SW	R0,B5FC (AT)	;0->8002B5FC: reset flag
+//7F0192D4:	run an intro movie
+JAL	7F0C0970	;select and run an intro movie
+NOP
+BEQ	R0,R0,7F019310
+LW	RA,0024 (SP)
+//7F0192E4:	detect player advancing past menu
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ORI	A1,R0,FFFF	;A1=any button
+BEQ	V0,R0,7F01930C	;branch if nothing pressed
+LUI	T7,8003
+LW	T7,B5FC (T7)	;T7=8002B5FC: TRUE plays full cast call
+ADDIU	A0,R0,0005	;A0=menu 5: main folder select
+BNEL	T7,R0,7F019310	;can't advance when playing from Cradle
+LW	RA,0024 (SP)
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A1,R0,0001	;A1=on return
+//7F01930C:	return
+LW	RA,0024 (SP)
+LW	S0,0014 (SP)
+LW	S1,0018 (SP)
+LW	S2,001C (SP)
+LW	S3,0020 (SP)
+JR	RA
+ADDIU	SP,SP,0028

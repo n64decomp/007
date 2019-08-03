@@ -1,0 +1,249 @@
+7F1791C8:	determine if MP stage is accessible
+ADDIU	SP,SP,FFA8
+LUI	T7,8008
+SW	RA,0024 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+SW	S0,0018 (SP)
+SW	A1,005C (SP)
+ADDIU	T7,T7,4C00	;T7=80084C00: MP stage subsection table
+LW	AT,0000 (T7)	;AT=subsection insertion point
+ADDIU	T6,SP,0040	;T6+SP+40
+LW	T0,0004 (T7)	;T0=subsection text <<16
+SW	AT,0000 (T6)	;copy MP stage subsection section table to SP+40
+LW	AT,0008 (T7)
+SW	T0,0004 (T6)
+LW	T0,000C (T7)
+SW	AT,0008 (T6)
+LW	AT,0010 (T7)
+SW	T0,000C (T6)
+LW	T0,0014 (T7)
+ADDIU	T1,A0,FFFF
+SW	AT,0010 (T6)
+SLTIU	AT,T1,0007
+OR	S2,A2,R0
+OR	S1,R0,R0	;S1=0: stage count=0
+BEQ	AT,R0,7F179498
+SW	T0,0014 (T6)
+SLL	T1,T1,0x2
+LUI	AT,7F1C
+ADDU	AT,AT,T1
+LW	T1,805C (AT)	;T1=7F1B805C: TLB jump table
+JR	T1
+NOP
+
+7F179248:
+LUI	S0,8008
+ADDIU	S0,S0,4B98	;S0=80084B98: base address for MP stage select
+//7F179250:
+JAL	7F19C910	;V0=TRUE if lock byte #A0 unlocked; fries T6
+LBU	A0,0002 (S0)	;lock flags
+BEQ	V0,R0,7F179264
+ADDIU	S0,S0,0006	;S0+=6: next stage#
+ADDIU	S1,S1,0001	;S1++
+LUI	T2,8008
+ADDIU	T2,T2,4BFE	;T2=80084BFE: table cutoff
+BNE	S0,T2,7F179250	;loop for each entry
+NOP
+BEQ	R0,R0,7F179498
+SW	S1,0000 (S2)
+
+7F17927C:
+LUI	S0,8008
+ADDIU	S0,S0,4B98	;S0=80084B98: base address for MP stage select
+//7F179284:
+JAL	7F19C910	;V0=TRUE if unlocked
+LBU	A0,0002 (S0)	;A0=lock flag
+BEQ	V0,R0,7F1792B4	;check next entry if locked
+LUI	T4,8008
+LW	T3,0000 (S2)
+BNEL	S1,T3,7F1792B4
+ADDIU	S1,S1,0001	;S1++
+JAL	7F16E7C4
+LHU	A0,0004 (S0)	;A0=text ID
+BEQ	R0,R0,7F1794A0
+LW	RA,0024 (SP)
+//7F1792B0:
+ADDIU	S1,S1,0001
+ADDIU	S0,S0,0006	;S0+=6: next entry
+ADDIU	T4,T4,4BFE	;T4=80084BFE: end of list
+BNE	S0,T4,7F179284	;branch for each entry
+NOP
+BEQ	R0,R0,7F17949C
+OR	V0,R0,R0
+
+7F1792CC:
+LUI	S0,8008
+ADDIU	S0,S0,4B98	;S0=80084B98: MP stage list
+//7F1792D4:
+JAL	7F19C910
+LBU	A0,0002 (S0)	;A0=lock flag
+BEQ	V0,R0,7F1792F0
+LUI	T9,8008
+LW	T5,0000 (S2)
+BEQ	S1,T5,7F179300
+ADDIU	S1,S1,0001	;S1++
+//7F1792F0:
+ADDIU	S0,S0,0006
+ADDIU	T9,T9,4BFE	;T9=80074BFE: end of list
+BNE	S0,T9,7F1792D4
+NOP
+//7F179300:
+LH	T8,0000 (S0)	;T8=stage#
+LUI	AT,800B
+BEQ	R0,R0,7F179498
+SB	T8,CB99 (AT)	;stage#->800ACB99
+
+7F179310:
+LUI	S0,8008
+ADDIU	S0,S0,4B98	;S0=80084B98: MP stage list
+//7F179318:
+LUI	T6,800B
+LBU	T6,CB99 (T6)
+LH	T7,0000 (S0)	;T7=stage#
+BNE	T6,T7,7F179330
+NOP
+SW	S1,0000 (S2)
+//7F179330:
+JAL	7F19C910
+LBU	A0,0002 (S0)	;A0=lock flag
+BEQ	V0,R0,7F179344
+ADDIU	S0,S0,0006	;S0+=6: next entry
+ADDIU	S1,S1,0001	;S1++
+//7F179344:
+LUI	T0,8008
+ADDIU	T0,T0,4BFE	;80084BFE: end of list
+BNE	S0,T0,7F179318	;lather rinse repeat
+NOP
+BEQ	R0,R0,7F17949C
+OR	V0,R0,R0
+
+7F17935C:	determine if "Classic" should appear
+ADDIU	T1,R0,0003
+SW	T1,0000 (S2)	;3->S2: # stage subsections in table
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,0024	;A0=lock 24: complex
+BNEL	V0,R0,7F17949C	;quit if Complex unlocked
+OR	V0,R0,R0	;V0=0
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,0027	;A0=lock 27: Temple
+BNEL	V0,R0,7F17949C	;quit if Temple unlocked
+OR	V0,R0,R0	;V0=0
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,002A	;A0=lock 2A: Felicity
+BNEL	V0,R0,7F17949C	;quit if Felicity unlocked
+OR	V0,R0,R0	;V0=0
+LW	T2,0000 (S2)	;T2=# subsections
+ADDIU	T3,T2,FFFF	;T3=# - 1
+BEQ	R0,R0,7F179498
+SW	T3,0000 (S2)	;save 2 subsections ("Classic" missing)
+
+7F1793A4:	display subsection text when applicable
+LW	S1,0000 (S2)	;S1=# subsections
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,0024	;A0=lock 24: complex
+BNEL	V0,R0,7F1793E8	;branch if Complex unlocked
+SLL	T4,S1,0x3
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,0027	;A0=lock 27: Temple
+BNEL	V0,R0,7F1793E8	;branch if Temple unlocked
+SLL	T4,S1,0x3
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,002A	;A0=lock 2A: Felicity
+BNEL	V0,R0,7F1793E8	;branch if Felicity unlocked
+SLL	T4,S1,0x3
+BLEZL	S1,7F1793E8	;branch if no subsections
+SLL	T4,S1,0x3
+ADDIU	S1,S1,0001	;S1++
+//7F1793E4:
+SLL	T4,S1,0x3	;T4=S1*8: subsection # -> offset
+ADDU	A0,SP,T4	;A0=SP+offset to entry
+JAL	7F16E7C4
+LHU	A0,0044 (A0)	;A0=subsection text ID
+BEQ	R0,R0,7F1794A0
+LW	RA,0024 (SP)
+
+7F1793FC:
+LW	S0,0000 (S2)	;S0=# subsections
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,0024	;A0=lock 24: complex
+BNEL	V0,R0,7F179440	;branch if Complex unlocked
+SLL	T5,S0,0x3
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,0027	;A0=lock 27: Temple
+BNEL	V0,R0,7F179440	;branch if Temple unlocked
+SLL	T5,S0,0x3
+JAL	7F19C910	;V0=TRUE if unlocked
+ADDIU	A0,R0,002A	;A0=lock 2A: Felicity
+BNEZ	V0,7F17943C	;branch if Felicity unlocked
+ADDIU	AT,R0,0001
+BNEL	S0,AT,7F179440	;branch if more than 1 subsection
+SLL	T5,S0,0x3
+ADDIU	S0,S0,0001	;S0=2
+//7F17943C:
+SLL	T5,S0,0x3	;T5=S0*8: subsection# -> offset
+ADDIU	T9,SP,0040	;T9=SP+40: p->copied MP stage subsection table
+ADDU	A1,T5,T9	;A1=p->subsection entry
+LW	T8,0000 (A1)	;T8=subsection insertion point
+LUI	S0,8008
+ADDIU	S0,S0,4B98	;S0=80084B98: MP stage list
+BLEZ	T8,7F179494
+OR	V1,R0,R0
+//7F17945C:
+LBU	A0,0002 (S0)	;A0=lock flag
+SW	V1,003C (SP)
+JAL	7F19C910	;V0=TRUE if unlocked
+SW	A1,002C (SP)	;SP+2C=A1: save p->copy of subsection
+LW	V1,003C (SP)
+BEQ	V0,R0,7F17947C
+LW	A1,002C (SP)	;A1=p->copy of subsection
+ADDIU	S1,S1,0001
+//7F17947C:
+LW	T6,0000 (A1)	;T6=subsection insertion point
+ADDIU	V1,V1,0001
+ADDIU	S0,S0,0006	;S0+=6: next entry
+SLT	AT,V1,T6
+BNEL	AT,R0,7F179460
+LBU	A0,0002 (S0)
+SW	S1,0008 (S2)
+//7F179498:
+OR	V0,R0,R0
+LW	RA,0024 (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+JR	RA
+ADDIU	SP,SP,0058
+
++_+
+
+7F17F024:	pull text ID for given stage #
+ADDIU	SP,SP,FFE8
+SW	A0,0018 (SP)
+LUI	A0,8008
+LUI	V1,800B
+LUI	V0,8008
+SW	RA,0014 (SP)
+ADDIU	V0,V0,4B98	;V0=80084B98: 
+LBU	V1,CB99 (V1)	;V1=800ACB99: 
+ADDIU	A0,A0,4BFE	;A0=80084BFE
+//7F17F048:	pull stage#
+LH	T6,0000 (V0)	;T6=stage#
+BNEL	V1,T6,7F17F068
+ADDIU	V0,V0,0006
+//7F17F054:
+JAL	7F16E7C4
+LHU	A0,0004 (V0)	;A0=V0+4: text ID
+BEQ	R0,R0,7F17F07C	;return
+LW	RA,0014 (SP)
+//7F17F064:
+ADDIU	V0,V0,0006	;V0+=6: next entry
+BNEL	V0,A0,7F17F04C
+LH	T6,0000 (V0)
+LUI	V0,7F1C
+ADDIU	V0,V0,8050	;V0=7F1C8050: 
+//7F17F078:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP

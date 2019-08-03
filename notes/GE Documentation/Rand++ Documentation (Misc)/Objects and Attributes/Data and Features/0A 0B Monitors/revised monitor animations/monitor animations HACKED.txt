@@ -1,0 +1,691 @@
+starts @ 0xFDE4, ends at 0x11240	editted if 0xFDE4 does not equal 00000007
+use halfwords, not full words for all microcode commands
+	friendlier, but not as happy, as bytes
+	that reduces all hex percents, delays, rotations to shorts
+	pointers use LWL/LWR, RGBA bytewise (it might as well be anyway)
+
+New format similar to text files:
+table of short ints declare #shorts to selected ani# from initial for table
+followed by command lists
+
+New command list-
+
+Stop Scroll:
+0000
+kills x/y scroll timers
+
+Horizontal Scroll:
+0001	xxxx	tttt
+[x] 'width' value like in image mapping to shift the image; short hex percent
+[t]ime the move occurs in
+
+Vertical Scroll:
+0002	yyyy	tttt
+[y] 'height' value like in image mapping to shift image; short hex percent
+[t]ime the move occurs in
+
+Horizontal Scroll Nonadditive:
+0003	xxxx	tttt
+[x] 'width' value shifting the image from original position; short hex percent
+[t]ime the move occurs in
+
+Vertical Scroll Nonadditive:
+0004	yyyy	tttt
+[y] 'height' value shifting the image from original position; short hex percent
+[t]ime the move occurs in
+
+Zoom Width:
+0005	xxxx	tttt
+[x] zoom factor as a short hex percentage
+[t]ime for complete zoom
+
+Zoom Height:
+0006	yyyy	tttt
+[x] zoom factor as a short hex percentage
+[t]ime for complete zoom
+
+Use image:
+0007	00xx
+xx is image number in global image list, starting with 0=BOND
+technically can eb negative to search backward in list...
+
+Hold for Time:
+0008	tttt
+[t]ime to hold; breaks execution so play resumes
+ensured to make at least one break; must, since emu clock hacks would cause inf. loops
+
+Jump to Routine:
+0009	aa xx
+[a]nimation group number to jump to
+[x] number of shorts in group to start at
+writes a new command start pointer from ani# and starts at offset.  reset restarts at pointer, not at given offset in
+
+Jump on Chance:
+000A	aa xx	rrrr
+[a]nimation group number to jump to
+[x] number of shorts in group to start at
+[r] value to test against a random value.  Jump if rand < rrrr
+
+Loop:
+000B
+restarts group from the beginning of the current animation
+
+Stop Animation:
+000C
+Unconditionally breaks processing animations, similar to 03 action block command
+
+RGBA:
+000D	RRGGBBAA	tttt
+New [R]ed, [G]reen, [B]lue, and [A]lpha components
+[t]ime for complete transition
+
+Set Rotation:
+000E	rrrr.rrrr
+set image [r]otation; 0x2000 rotates 360 degrees
+primarily used to reset rotation to 0
+
+Rotate Image:
+000F	rrrr.rrrr
+[r]otate image incrementally rrrr.rrrr%; B6~=1 degree
+0x2000 (1FFE) rotates approximately 45 degrees, 0x1554 to mimic a clock
+
+
+!NEW!	Branch on Chance:
+0010	xxxx	rrrr
+[r] value to test against a random value.  Jump if rand < rrrr
+[x] value added to position of next command to create branch; pointer not affected
+on a miss advances normally to next command
+on a hit, offset is in shorts from start of next op; FFFD would make an endless loop
+
+!NEW! Jump and Set:
+0011	aa xx
+[a]nimation group number to jump to
+[x] number of shorts in group to set start at
+Sets restart location to a given offset in given command and jumps to position.  
+Essentially treats target like subroutines from original blocks
+Used primarily for loops after a single-execution section, similar to lead-in of a song.
+For instance, could show bootup, then sequence windows using a new start position.  
+
+!NEW! Branch and Link:
+0012	xxxx
+[x] value added to current position to create branch
+Sets pointer to next command, just like the JAL or B-AL opcodes
+branches from this position to set number of opcodes forward/back; use 000B to return
+note that you will need to reset the start position or something for normal repeats
+Sorry its an annoying format, but the whole thing is a tad bit limitted space-wise
+
+!NEW! Branch
+0013	xxxx
+[x] value added to current position to create branch
+simply skips from following op without setting the pointer
+
+!NEW! Loop
+0014	tttt	xxxx
+[t]ime to hold; necessary to break loops, like the 03 action command
+[x] value added to current position to create branch; must be negative to loop!
+Note that an 08 command can not be placed within the looped section
+Breaks execution like the 08 and 0C commands.
+Branches backward the given number of shorts each time the counter is set.
+Resumes normally after the given number of cycles
+Especially useful to loop the rotatary types:
+000F 000000B6	0014 0168 FFFD	loops around 360 degrees, one degree at a time
+
++ +
+ +
++ +
+
+7F049F48:	Process monitor microcode
+...
+//7F049FEC:	7EB1C
+OR	S1,R0,R0
+*LH	V0,0004 (S0)	V0=offset in ani code; S0=ani values at 0x80 in 0A objects
+//7F049FF4:	7EB24
+	LW	T1,0000 (S0)	T1=pointer to animation microcode from object
+-40	*SLL	T2,V0,0x1
+	ADDU	V1,T1,T2
+84-	*LH	T3,0000 (V1)	T3=command type; V1=offset to command
+	*SLTIU	AT,T3,0012	being unsigned would catch negative invalids
+	BEQ	AT,R0,7F04A468
+	SLL	T3,T3,0x2
+	LUI	AT,8005
+	ADDU	AT,AT,T3
+	*LW	T3,2B98 (AT)	T3=80052B98: moved TLB table for more entries!
+	JR	T3
+	NOP
+
+//7F04A024:	7EB54	command 00: stop scroll
+ADDIU	T4,V0,0001
+SWC1	F20,0040 (S0)	0->reset x timer
+SWC1	F20,0054 (S0)	0->reset y timer
+BEQ	R0,R0,7F04A468
+SH	T4,0004 (S0)	save offset
+
+//7F04A038:	7EB68	command 01: horizontal scroll; redirect 03 here, and do command test to see if addition occurs
+	SWC1	F20,003C (S0)	0->
+	*LHU	T5,0004 (V1)	time value, unsigned since it is always positive
+	LUI	AT,4F80
+	MTC1	T5,F4
+	BGEZ	T5,7F04A05C
+	CVT.S.W	F6,F4
+	MTC1	AT,F8
+	NOP
+	ADD.S	F6,F6,F8
+//7F04A05C:
+	DIV.S	F10,F24,F6
+	LWC1	F0,0038 (S0)
+	ADDIU	T7,V0,0003
+	SWC1	F0,0044 (S0)
+	SWC1	F10,0040 (S0)
+	*LH	T6,0002 (V1)	scroll can be negative
+	SH	T7,0004 (S0)
+	MTC1	T6,F18
+84610000	*LH	AT,0000 (V1)	get command for comparison
+	CVT.S.W	F4,F18
+	MUL.S	F8,F4,F22
+2021FFFF	*ADDI	AT,AT,FFFF
+50200001	*BEQL	AT,R0,+1	command 1 triggers addition, but 3 doesn't
+46080200	+*ADD.S	F8,F0,F8
+	+BEQ	R0,R0,7F04A468
+E6080048	+*SWC1	F8,0048 (S0)
+
+//7F04A09C:	7EBCC	command 02: vertical scroll; redirect 04 here, and do command test to see if addition occurs
+	SWC1	F20,0050 (S0)
+	*LHU	T8,0004 (V1)	time can't be negative anyway
+	LUI	AT,4F80
+	MTC1	T8,F10
+	BGEZ	T8,7F04A0B8
+	CVT.S.W	F18,F10
+	MTC1	AT,F4
+	NOP
+	ADD.S	F18,F18,F4
+//7F04A0B8:
+	DIV.S	F8,F24,F18
+	LWC1	F0,004C (S0)
+	ADDIU	T0,V0,0003
+	SWC1	F0,0058 (S0)
+	SWC1	F8,0054 (S0)
+	*LH	T9,0002 (V1)	scroll can be though
+	SH	T0,0004 (S0)
+	MTC1	T9,F6
+84610000	*LH	AT,0000 (V1)
+	CVT.S.W	F10,F6
+	MUL.S	F4,F10,F22
+2021FFFE	*ADDI	AT,AT,FFFE
+50200001	*BEQL	AT,R0,+1
+46040100	+*ADD.S	F4,F0,F4
+	+BEQ	R0,R0,7F04A468
+E604005C	+*SWC1	F4,005C (S0)
+
+***
+new command 10 instered here:
+//7F04A100:	7EC30	command 10: branch if rand < x
+0C002914	JAL	7000A450	ret. V0=rand
+AFA30094	SW	V1,0094 (SP)
+8FA30094	LW	V1,0094 (SP)
+00021402	SRL	V0,V0,0x10	T1=rand / 0x10000
+946A0004	*LHU	T2,0004 (V1)	+rand
+34090000	ORI	T1,R0,0000		normal command offset
+004A082B	SLTU	AT,V0,T2
+50200001	BEQL	AT,R0,+1	don't jump ani if rand < given value
+84690002	*LH	T1,0002 (V1)
+860A0004	LH	T2,0004 (S0)
+01494821	ADDU	T1,T1,T2
+25290003	ADDIU	T1,T1,0003
+A6090004	SH	T1,0004 (S0)	update offset from pointer here
+3C014780	LUI	AT,4780
+100000CB	BEQ	R0,R0,7F04A468
+44811000	MTC1	AT,F2		F2=65536
+***
+new command 11 inserted here:
+//7F04A140	7EC6C	command 11: jump and set new start (jump to subroutine)
+90650002	LBU	A1,0002 (V1)
+0FC12726	JAL	7F049C98	set pointer; A0=obj, A1=ani#
+02002025	OR	A0,S0,R0
+90610003	LB	AT,0003 (V1)
+00010840	SLL	AT,AT,0x1
+8E020000	LW	V0,0000 (S0)
+00221021	ADDU	V0,V0,AT
+AE020000	SW	V0,0000 (S0)
+3C014780	LUI	AT,4780
+100000C0	-BEQ	R0,R0,7F04A468
+44811000	MTC1	AT,F2		F2=65536
+***
+new command 12 inserted here:
+//7F04A16C	7EC9C	command 12: branch and link
+84690002	LH	T1,0002 (V1)	branch value
+24630004	ADDIU	V1,V1,0004	V1=pointer to next op
+AE030000	SW	V1,0000 (S0)
+100000BB	BEQ	R0,R0,7F04A468
+A6090004	SH	T1,0004 (S0)	update offset from pointer here
+***
+new command 13 inserted here:
+//7F04A180	7ECB0	command 13: branch
+84620002	LH	V0,0002 (V1)	branch value
+86090004	LH	T1,0004 (S0)
+00494821	ADDU	T1,T1,V0
+25290002	ADDIU	T1,T1,0002	account for op
+100000B6	BEQ	R0,R0,7F04A468
+A6090004	SH	T1,0004 (S0)	update offset from pointer here
+***
+new command 14 inserted here:
+//7F04A194	7ECC4	command 14:
+
+
+***
+
+//7F04A1A0:	7ECD0	combination zoom
+//15 dual zoom
+24190001	ADDIU	T9,R0,0001	;special - loops for 15 command
+10000005	BEQ	R0,R0,+combo
+00107825	OR	T7,S0,R0
+//05 X zoom
+10000002	BEQ	R0,R0,+combo
+00107825	OR	T7,S0,R0
+//06 Y zoom
+260F0014	ADDIU	T7,S0,0014
+0000C825	*OR	T9,R0,R0
+//combo:
+E5F40014	*SWC1	F20,0014 (T7)
+94680004	*LHU	T0,0004 (V1)	+time
+3C014F80	LUI	AT,4F80
+44884000	MTC1	T0,F8
+44815000	MTC1	AT,F10
+05010002	BGEZ	T0,7F04A1C4
+468044A0	CVT.S.W	F18,F8
+460A9480	ADD.S	F18,F18,F10
+//7F04A1C4:
+4612C103	DIV.S	F4,F24,F18
+E5E40018	*SWC1	F4,0018 (T7)
+84690002	*LH	T1,0002 (V1)	+-zoom
+44894000	MTC1	T1,F8
+C5E60010	*LWC1	F6,0010 (T7)
+E5E6001C	*SWC1	F6,001C (T7)
+468042A0	CVT.S.W	F10,F8
+46165482	MUL.S	F18,F10,F22
+17200087	BNE	T9,R0,-yzoom
+E5F20020	*SWC1	F18,0020 (T7)
+//return and advance
+244A0003	ADDIU	T2,V0,0003
+10000087	BEQ	R0,R0,7F04A468
+A60A0004	SH	T2,0004 (S0)
+
+
+//7F04A1A0:	7ECD0	command 05: Zoom X
+	SWC1	F20,0014 (S0)
+	*LHU	T7,0004 (V1)	+time
+	LUI	AT,4F80
+	MTC1	T7,F10
+	BGEZ	T7,7F04A1C4
+	CVT.S.W	F6,F10
+	MTC1	AT,F4
+	NOP
+	ADD.S	F6,F6,F4
+//7F04A1C4:
+	DIV.S	F8,F24,F6
+	LWC1	F18,0010 (S0)
+	ADDIU	T9,V0,0003
+	SWC1	F18,001C (S0)
+	SWC1	F8,0018 (S0)
+	*LH	T8,0002 (V1)	zoom either way
+	SH	T9,0004 (S0)
+	MTC1	T8,F10
+	NOP
+	CVT.S.W	F4,F10
+	MUL.S	F6,F4,F22
+	BEQ	R0,R0,7F04A468
+	SWC1	F6,0020 (S0)
+
+//7F04A1F8:	7ED28	command 06: Zoom Y
+	SWC1	F20,0028 (S0)
+	*LHU	T0,0004 (V1)	+time
+	LUI	AT,4F80
+	MTC1	T0,F8
+	BGEZ	T0,7F04A1C4
+	CVT.S.W	F18,F8
+	MTC1	AT,F10
+	NOP
+	ADD.S	F18,F18,F10
+//7F04A1C4:
+	DIV.S	F4,F24,F18
+	LWC1	F6,0024 (S0)
+	ADDIU	T2,V0,0003
+	SWC1	F6,0030 (S0)
+	SWC1	F4,002C (S0)
+	*LH	T1,0002 (V1)	+-zoom
+	SH	T2,0004 (S0)
+	MTC1	T1,F8
+	NOP
+	CVT.S.W	F10,F8
+	MUL.S	F18,F10,F22
+	BEQ	R0,R0,7F04A468
+	SWC1	F18,0034 (S0)
+
+
+//7F04A250:	7ED80	command 07: use image from global monitor image list
+	OR	A0,S0,R0
+	JAL	7F049F40
+		JR	RA
+		SW	A1,0008 (A0)	save image to obj
+	*LH	A1,0002 (V1)	+image index
+	*LH	T3,0004 (S0)
+	LUI	AT,4780
+	MTC1	AT,F2		F2=65536
+	ADDIU	T4,T3,0002
+	BEQ	R0,R0,7F04A468
+	SH	T4,0004 (S0)
+
+REWRITE to add loop type
+//7F04A274:	7EDA4	command 08/14: halt processing for time/loop
+24110001	ADDIU	S1,R0,0001		set the break flag
+86020006	LH	V0,0006 (S0)	get the current stall counter
+946F0000	LHU	T7,0000 (V1)	command type
+000F7902	SRL	T7,T7,0x4		8=0,14=1
+04420001	BLTZL	V0,+1
+84620002	LH	V0,0002 (V1)	if not set, get new stall counter
+3C0D8005	LUI	T5,8005
+8DAD8374	LW	T5,8374 (T5)	T5=80048374: increment only during play
+004D7023	SUBU	T6,V0,T5
+A60E0006	SH	T6,0006 (S0)	dec it one and save
+86180004	LH	T8,0004 (S0)	offset in command list
+05C20005	BLTZL	T6,7F04A2B8		if -1, then its done; set offset
+27180002	ADDIU	T8,T8,0002
+55E00003	BNEL	T7,R0,7F04A2B8	if type 14, use a loop not a wait
+846F0004	LH	T7,0004 (V1)	sneaky: loads branch and uses normal movement
+1000006D	BEQ	R0,R0,7F04A468
+00000000	NOP
+//7F04A2B8:	when you're done waiting, move to next command
+01F8C021	ADDU	T8,T8,T7
+1000006A	BEQ	R0,R0,7F04A468
+A6180004	SH	T8,0004 (S0)
+
+
+//7F04A2C4:	7EDF4	command 09: jump
+90650002	*LBU	A1,0002 (V1)
+90610003	*LBU	AT,0003 (V1)
+0FC12727	*JAL	7F049C9C	set pointer; A0=obj, A1=ani#, AT=offset
+02002025	OR	A0,S0,R0
+3C014780	LUI	AT,4780
+	-BEQ	R0,R0,7F04A468
+44811000	MTC1	AT,F2		F2=65536
+
+//7F04A2E0:	7EE10	command 0A: jump if rand < x
+	-JAL	7000A450	ret. V0=rand
+	-SW	V1,0094 (SP)
+	-LW	V1,0094 (SP)
+	-SRL	T1,V0,0x10	T1=rand / 0x10000
+	-OR	A0,S0,R0
+946A0006	*LHU	T2,0006 (V1)	+rand
+	-SLTU	AT,T1,T2
+	-BEQL	AT,R0,7F04A320	don't jump ani if rand < given value
+	-LHU	T3,0004 (S0)
+90650002	*LBU	A1,0002 (V1)
+0FC12727	*JAL	7F049C9C
+90610003	*LBU	AT,0005 (V1)
+3C014780	LUI	AT,4780
+	-BEQ	R0,R0,7F04A468
+44811000	MTC1	AT,F2		F2=65536
+	-LHU	T3,0004 (S0)
+//7F04A320:
+	-LUI	AT,4780
+	-MTC1	AT,F2		F2=65536
+	*ADDIU	T4,T3,0003
+	-SH	T4,0004 (S0)
+	-BEQ	R0,R0,7F04A468
+	-NOP
+
+//7F04A338:	7EE68	command 0B: restart group
+BEQ	R0,R0,7F04A468
+SH	R0,0004 (S0)
+
+//7F04A340:	7EE70	command 0C: stop animation
+BEQ	R0,R0,7F04A468
+ADDIU	S1,R0,0001
+
+//7F04A348:	7EE78	command 0D: colour transition
+	SWC1	F20,006C (S0)
+	*LHU	T5,0006 (V1)	+time
+	LUI	AT,4F80
+	MTC1	T5,F4
+	BGEZ	T5,7F04A36C
+	CVT.S.W	F6,F4
+	MTC1	AT,F8
+	NOP
+	ADD.S	F6,F6,F8
+//7F04A36C:
+	DIV.S	F10,F24,F6
+	LBU	T6,0060 (S0)	T6=cur R
+	LBU	T0,0063 (S0)	T0=cur G
+	LBU	T4,0066 (S0)	T4=cur B
+	SB	T6,0061 (S0)	move cur R->0x61
+	LBU	T8,0069 (S0)	T8=cur A
+	SWC1	F10,0070 (S0)
+-79-	*LBU	T9,0002 (V1)	T7=new R
+	SB	T0,0064 (S0)	move cur G->0x64
+	*NOP
+	SB	T9,0062 (S0)	final R->0x62
+-6B-	*LBU	T3,0003 (V1)	T1=new G
+	SB	T4,0067 (S0)	move cur B->0x67
+	*NOP
+	SB	T3,0065 (S0)	final G->0x65
+-6F-	*LBU	T7,0004 (V1)	T5=new B
+	SB	T8,006A (S0)	move cur A->0x6A
+	*ADDIU	T1,V0,0004	one more command now
+	*NOP
+	SB	T7,0068 (S0)	final B->0x68
+	*LBU	T0,0005 (V1)	T0=new A
+	SH	T1,0004 (S0)
+	BEQ	R0,R0,7F04A468
+	SB	T0,006B (S0)	final A->0x6B
+
+//7F04A3CC:	7EEFC	command 0E: set image rotation	
+THIS WORKS STUPID, would be best to overhaul
+886A0002	*LWL	T2,0002 (V1)
+986A0005	*LWR	T2,0005 (V1)
+244B0003	*ADDIU	T3,V0,0003
+448A9000	-MTC1	T2,F18
+A60B0004	SH	T3,0004 (S0)	new com offset
+	-CVT.S.W	F4,F18
+	-MUL.S	F8,F4,F26	F26=pi*2
+	-DIV.S	F6,F8,F2	F2=65536
+	-BEQ	R0,R0,7F04A468
+	-SWC1	F6,000C (S0)
+
+//7F04A3F4:	7EF24	command 0F: rotate image from current
+886C0002	*LWL	T4,0002 (V1)
+986C0005	*LWR	T4,0005 (V1)
+3C018005	LUI	AT,8005
+	-MTC1	T4,F18
+C42A8378	LWC1	F10,8378 (AT)	F10=80048378: ?
+	-CVT.S.W	F4,F18
+	-MUL.S	F8,F10,F4
+	-LWC1	F10,000C (S0)
+	-MUL.S	F6,F8,F26	F26=pi*2
+	-DIV.S	F18,F6,F2	F2=65536
+	-ADD.S	F4,F10,F18
+	-SWC1	F4,000C (S0)
+	-LWC1	F12,000C (S0)
+	-C.LE.S	F26,F12
+	-NOP
+	-BC1FL	7F04A448
+	-C.LT.S	F12,F20
+	-SUB.S	F8,F12,F26
+	-SWC1	F8,000C (S0)
+	-LWC1	F12,000C (S0)
+	-C.LT.S	F12,F20
+//7F04A448:
+	-NOP
+	-BC1FL	7F04A460
+	*LH	T5,0004 (S0)
+	-ADD.S	F6,F12,F26
+	-SWC1	F6,000C (S0)
+	*LH	T5,0004 (S0)
+//7F04A460:
+	*ADDIU	T6,T5,0003
+	-SH	T6,0004 (S0)
+//7F04A468:	iterate to next command if not stopped
+BEQL	S1,R0,7F049FF4
+*LH	V0,0004 (S0)
+...
+//7F04AC18:
+JR	RA
+ADDIU	SP,SP,00B0
+
+
+potential new type  JAL
+90650002	LBU	A1,0002 (V1)
+90610003	LB	AT,0003 (V1)
+0FC12727	JAL	7F049C9C
+02002025	OR	A0,S0,R0
+AE030000	SW	V1,0000 (S0)
+	SUBU	A1,A1,V1
+00052842	SRL	A1,A1,0x1
+86010004	LH	AT,0004 (S0)
+00A10821	ADDU	AT,AT,A1
+100000	BEQ	R0,R0,7F04A468
+A6010004	SH	AT,0004 (S0)
+
++ +
+ +
++ +
+
+routine to set the thingies for each object:
+7F049C98		accepts A1=ani to use, A0=target ani block to fill
+ADDIU	SP,SP,FFE8
+LUI	A2,8003
+SLTIU	AT,A1,0034	0x34 valid entries
+SW	RA,0014 (SP)
+BEQ	AT,R0,7F049F28
+ADDIU	A2,A2,0B74	A2=80030B74: start of table (BOND)
+SLL	T6,A1,0x2
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,2B98 (AT)	T6=80052B98: TLB that sets the address for each animation
+JR	T6
+NOP
+
+//7F049F28:	return and default
+JAL	7F049C8C
+	SW	A1,0000 (A0)
+	JR	RA
+	SH	R0,0004 (A0)
+OR	A1,A2,R0
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+Okay, this method is stupid.  Need an index starting at 80030B74, each short lists #shorts to start of block.
+Also, eliminating jump to do a direct write.  It kills code and allows other blocks to function without error
+Tee Hee!  this whole routine is one command shorter than just the reroute from before!
+7F049C98	7E7C8	accepts A1=ani to use, A0=target ani block to fill
+			!NOW! uses AT for group offset; can jump in one command late to set it yourself!
+00000825	OR	AT,R0,R0
+3C068003	LUI	A2,8003
+24C60B74	ADDIU	A2,A2,0B74	A2=80030B74: start of table (BOND)
+00052840	SLL	A1,A1,0x1	A1=offset to index
+00C52821	ADDU	A1,A2,A1
+94A50000	LHU	A1,0000 (A1)
+00052840	SLL	A1,A1,0x1	A1=#shorts to group * 2
+00C52821	ADDU	A1,A2,A1
+AC850000	SW	A1,0000 (A0)
+03E00008	JR	RA
+A4810004	SH	AT,0004 (A0)
+
++ +
+ +
++ +
+
+Rewrite repeat copier.  Just generate a copy, don't read from 21990.
+Normal first-word (80030B74) becomes three monitor ani#s: 
+00, 34, 00(35)	Normal, Unknown, Taser
+
+REVISION OF BELOW, DOESN'T REALLY USE STACK
+7F001958:	0x36488
+27BDFFF8	ADDIU	SP,SP,FFF8	only 0x8 - +4 for RA
+AFBF0004	SW	RA,0004 (SP)
+3C048007	LUI	A0,8007
+24845B98	ADDIU	A0,A0,5B98	A0=target
+00001025	OR	V0,R0,R0	counter
+2405FFFF	ADDIU	A1,R0,FFFF
+//7F001970:	setup header for block
+AC850004	SW	A1,0004 (A0)
+AC800008	SW	R0,0008 (A0)
+AC80000C	SW	R0,000C (A0)
+3C058003	LUI	A1,8003
+00452821	ADDU	A1,A1,V0
+0FC12726	JAL	7F049C98	A0=base for copy, A1=ani to use
+90A5A260	LBU	A1,A260 (A1)
+//7F00198C:	loop to copy the 1,0,0,1,1 pattern; after first two change float
+3C063F80	LUI	A2,3F80
+AC86006C	SW	A2,006C (A0)
+24050003	ADDIU	A1,R0,0003
+24010002	ADDIU	AT,R0,0002
+//7F00199C:	loopus
+AC860010	SW	A2,0010 (A0)
+AC800014	SW	R0,0014 (A0)
+AC800018	SW	R0,0018 (A0)
+AC86001C	SW	A2,001C (A0)
+AC860020	SW	A2,0020 (A0)
+24840014	ADDIU	A0,A0,0014
+50A10001	BEQL	A1,AT,+1
+3C063F00	LUI	A2,3F00
+14A0FFF7	+BNE	A1,R0,7F001998	at end, A1=-1
+24A5FFFF	+ADDIU	A1,A1,FFFF
+//7F0019C4:	RGBA and last timers
+AC850010	SW	A1,0010 (A0)
+AC850014	SW	A1,0014 (A0)
+AC850018	SW	A1,0018 (A0)
+AC800020	SW	R0,0020 (A0)
+AC800024	SW	R0,0024 (A0)
+//7F0019D8:
+24840028	ADDIU	A0,A0,0028
+1441FFE4	BNE	V0,AT,7F001970
+24420001	ADDIU	V0,V0,0001
+//7F0019E4:
+8FBF0004	LW	RA,0004 (SP)
+03E00008	JR	RA
+27BD0008	ADDIU	SP,SP,0008
+
+
+For now route the taser directly to the BOND animation, other to its own entry.
+eliminates need for copy block.  just need the three ani# bytes
+
+
+More Fun - Explosions manually set pointers!
+For this, use entry#4 in that table thingy with the default, unknown, taser setting
+Can set 'black' (normal), 'off' (personal favorite), or make your own
+//7F04E5D8:	0x83108	handle a destroyed 0A object!
+	ADDIU	A0,S0,0080
+	LUI	A1,8003
+0FC12726	*JAL	7F049C98
+90A5A263	*LBU	A1,A263 (A1)
+	BEQ	R0,R0,7F04E6CC
+	NOP
+
+//7F04E60C:	0x8313C	handle a destroyed 0B object!
+	ADDIU	A0,S0,0080
+	LUI	A1,8003
+0FC12726	*JAL	7F049C8C	set monitor 1
+90A5A263	*LBU	A1,A263 (A1)
+	LUI	A1,8003
+90A5A263	*LBU	A1,A263 (A1)
+0FC12726	*JAL	7F049C8C	set monitor 2
+	ADDIU	A0,S0,00F4
+	LUI	A1,8003
+90A5A263	*LBU	A1,A263 (A1)
+0FC12726	*JAL	7F049C8C	set monitor 3
+	ADDIU	A0,S0,0168
+	LUI	A1,8003
+90A5A263	*LBU	A1,A263 (A1)
+0FC12726	*JAL	7F049C8C	set monitor 4
+	ADDIU	A0,S0,01DC
+	BEQ	R0,R0,7F04E6CC
+	NOP
+
+
+Also, must find all other animation-related stuff
+
+Also also, must rewrite all ani blocks.  In theory, can super-minimize the big bunker one through the new 'rand'.  Subroutines can use 'jump and set'.  Only one does that?
+
+MUST SET OFFSET THINGY TO LH, NOT LHU

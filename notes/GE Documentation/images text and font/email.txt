@@ -1,0 +1,115 @@
+ Much simplified doc on different image applications.
+  I'm assuming you use type 02 C0 commands
+  C0080002 00000###
+  
+  Besides those, there are only four others that need setting B9, BA, BB, and FC.  You only need to use a pipesync (E7) if B9, BA, or FC change.
+  
+  Following are generic settings for each based on image type and format.
+  
+  B9 is different in rooms than in objects.  Stuff carries over.
+Room files
+B900031D 00502078    no image, no BG color
+B900031D 0C182048    greyscale - alpha, BG alpha
+B900031D 0C104DD8    intensity+alpha, no BG color
+B900031D 0C182078    color image - alpha, BG alpha
+B900031D 0C184978    color image + alpha, BG alpha
+  
+Object files
+B900031D 00552078    no image, no BG color
+B900031D C4182048    greyscale - alpha, BG alpha
+B900031D C4104DD8    intensity+alpha, no BG color
+B900031D C4182078    color image - alpha, BG alpha
+B900031D C4184978    color image + alpha, BG alpha
+
+  FC commands.  If the image doesn't use alpha, it doesn't matter if it is greyscale or color.  I suggest the BG Alpha ones.  They allow you to set translucency with FB commands (enviroment color).
+FC26A004 1F1093FC    image-alpha
+FC26A004 1F1093FF    image-alpha, BG alpha
+FC26A004 1F1493FC    color image+alpha
+FC26A004 1F1493FF    color image+alpha, BG alpha
+FC26A004 1FFC93FC    greyscale+alpha (ia)
+FC26A004 1FFC93FF    greyscale+alpha (ia), BG alpha
+FCFFFFFF FFFE793C    no image
+
+  BB requires a quick computation.  Do width  height  size of colorgrey key to find total size.  That gives you the level value set to bits 00003800.  If the image is indexed, use the size of the color, not the index value.  If you fall between levels, round up to the next highest.
+command    level    image binary total size
+BB003801    7    8192    0x2000
+BB003001    6    4096    0x1000
+BB002801    5    2048    0x800
+BB002001    4    1024    0x400
+BB001801    3    512    0x200
+BB001001    2    256    0x100
+BB000801    1    128    0x80
+BB000001    0    0    0x0    (more likely no image)
+  Leave the lower word FFFFFFFF unless you're doing luster or something like that.
+  Examples
+  32x32 ci image, 16bit color    32x32x2 = 2048    BB002801 FFFFFFFF
+  64x64 greyscale, 8bit color    64x64x1 = 4096    BB003001 FFFFFFFF
+  
+  I think it corrects for this though.
+
++_+
+  
+  General formulas
+  
+  Rooms
+    E7000000 00000000    ;B9, BA, andor FC are changing
+if(image)
+    BA001402 00100000    ;2 cycle when textured
+    B900031D 0C184978    ;color image - use image alpha
+    FC26A004 1F1493FF    ;color img A + BG A, no vtx A
+    BA001001 00010000    ;images use lod
+    BB002801 FFFFFFFF    ;on level 5, tile 0, default ST
+    C0080002 00000iii    ;type 2 image #iii, presumed 32x32 ci
+else(color)
+    BA001402 00000000    ;1 cycle when color
+    B900031D 00502078    ;use vertex color only
+    FCFFFFFF FFFE793C    ;apply vertex and bg color only
+    BB000001 FFFFFFFF    ;on level 0, tile 0, default ST
+if(not yet set)
+    BA001102 00000000    ;clamp
+    BA000C02 00002000    ;bi-level interpretation
+    B7000000 00002000    ;cull back
+    FB000000 000000FF    ;background color
+;insert geometry here
+
+  To switch images, just give it the values that changed.  If a B9, BA, of FC value changes, remember to also set a E7 pipe command before it.  The else(color) lines are in case you have untextured geometry.  That does only vertex color.  It's rigged up so if you change the alpha in the background color line it will make all the following tiles translucent.
+  
+  Objects
+    E7000000 00000000    ;B9, BA, andor FC are changing
+if(image)
+    BA001001 00010000    ;images use LOD
+    BB002801 FFFFFFFF    ;on level 5, tile 0, default ST
+    C0080002 00000iii    ;type 2 image, presumed 32x32 ci
+    if(not yet set)
+        BA001102 00000000    ;clamp
+        BA000C02 00002000    ;bi-level interpretation
+else(color)
+    BA001402 00000000    ;1 cycle when color
+    B900031D 00552078    ;use vertex color only
+    FCFFFFFF FFFE793C    ;apply vertex and bg color only
+if(not yet set)
+    B7000000 00002000    ;cull back
+    01020040 03000000    ;basic matrix
+
+  Same deal, slightly different requirements.  You need the matrix command and don't need a few others.  FC and B9 are preset to do color.
+  
+  +_+
+  
+  Cheap Tricks
+  
+  To add luster, alter the BB lines from above and tack in an additional command.  The ST offsets act as the repeat value for the reflection.
+BB002801 08000800    ;on tile 0, set level as needed; set the ST values for repeat
+C0080002 00000iii    ;image as usual
+B7000000 00060000    ;lighting + texture gen
+
+  When done, use B6000000 00060000 to reset to normal.  Otherwise the effect will leak onto any geometry following it.
+  
+
+  To treat the black in a greyscale image as alpha (manhole covers from Dam) use these settings
+Rooms
+B900031D 0C1849D8    ;intensity, BG alpha
+FC26A004 1F1093FF    ;image-alpha, BG alpha
+BB003001 FFFFFFFF    ;on level 6, tile 0
+C0080002 00000iii    ;image, expected to be greyscale
+FB000000 00000000    ;0% visible or whatever other level you want
+

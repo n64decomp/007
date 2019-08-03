@@ -1,0 +1,53 @@
+++++++++++++++++++++++++++
+HIJACK cheat activated at 80069655
+test if 01 at 800696A5.  If !=0 (toggled), branch to 7F004AFC!
+
+7F0045C0:	0x390F0	new type 15
+BEQ	S8,R0,7F004AFC	//S8 better equal 1 (test if object loaded)
+NOP
+*LUI	T4,8007		3C0C8007
+*LB	T7,96A5 (T4)	818F96A5
+BNEZ	T7,7F004AFC	//if cheat active, branch
+NOP
+LW	T6,0080 (S2)	//T6=BA value
+LUI	AT,4780
+MTC1	AT,F6		//F6=65536.
+MTC1	T6,F18
+OR	A0,S5,R0	//A0=S5=obj#
+OR	A1,S2,R0	//A1=S2=cur obj pointer
+CVT.SW	F4,F18		//F4=BA value (as float)  ie. 65536=00010000
+OR	A2,S3,R0	//A2=S3=validity flag
+DIV.S	F8,F4,F6	//F8=armor as percentage (100%=65536/65536)
+SWC1	F8,0080 (S2)	//save float version of armor
+LWC1	F10,0080 (S2)	//F10=armor value
+*BEQ	R0,R0,7F004738	1000004C	//piggyback 03 object validity test
+SWC1	F10,0084 (S2)	//armor value copied to obj offset 0x84
+
+
++_+
+
+Final revision for rand++ (Never Say Never Again)
+7F0045C0:	390F0	type 15: Body Armor expansion routine
+13C0014E	BEQ	S8,R0,7F004AFC	//S8 better equal 1 (valid)
+8E4C000C	LW	T4,000C (S2)	//T4=lower 32 bitflags
+01946024	*AND	T4,T4,S4	//true if any insidious bitflags toggled
+1580014B	*BNEZ	T4,7F004AFC	//if any killtags assigned, abort!
+//7F0045D0:	test if no body armor cheat activated
+3C0C8007	*LUI	T4,8007
+818C96A5	*LB	T4,96A5 (T4)	;T4= Dr. No cheat
+15800148	*BNEZ	T4,7F004AFC
+//7F0045DC:	convert BA value into a floating-point number
+8E4E0080	LW	T6,0080 (S2)	//T6=BA value
+3C014780	LUI	AT,4780
+44813000	MTC1	AT,F6		//F6=65536.
+448E9000	MTC1	T6,F18
+02A02025	OR	A0,S5,R0	//A0=S5=obj#
+02402825	OR	A1,S2,R0	//A1=S2=cur obj pointer
+46809120	CVT.SW	F4,F18		//F4=BA value (as float)
+02603025	OR	A2,S3,R0	//A2=S3=validity flag
+46062203	DIV.S	F8,F4,F6	//F8=armor as percentage
+E6480080	SWC1	F8,0080 (S2)	//save float version of armor
+0FC00767	JAL	7F001D9C	//expands data into a valid object
+E6480084	*SWC1	F8,0084 (S2)	//armor value copied to obj offset 0x84
+1000013B	BEQ	R0,R0,7F004AFC
+00000000	NOP

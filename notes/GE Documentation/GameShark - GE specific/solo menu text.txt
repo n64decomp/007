@@ -1,0 +1,361 @@
+80023304 pointers to error/ debug messages
+
+8002A8C3 current menu displayed
+8102a8c6 value used to update menu.  updates when long value becomes positive.
+-----------
+00 - legal splash screen
+01 - Nintendo logo
+02 - rare logo
+03 - *eye* intro
+04 - Goldeneye intro splash
+05 - Main Folder Menu 
+06 - 1P/Multi/Cheats Folder Screen 
+07 - Select Mission Screen 
+08 - Mission Objectives (First Page) 
+09 - 007 Special Options 
+0A - Mission Folder Briefing 
+0B - stage active
+0c - Mission Failed screen
+0d - Mission Completed screen
+0E - multiplayer option screen
+0F - Select Character Modifier 
+10 - Health Folder 
+11 - Control Style 
+12 - level folder (multi)
+13 - scenario select
+14 - team setup screen
+15 - Cheats Menu Folder 
+16 - no controller in socket 1 warning
+17 - (crashes - seems to be *switch* character)
+18 - *actors* intro sequence
+
+8002A8FB 00??	briefing
+01 - Dam
+02 - Facility
+03 - Runway
+05 - Surface A
+06 - Bunker A
+08 - Silo
+0A - Frigate
+0C - Surface B
+0D - Bunker B
+0F - Statue
+10 - Archives
+11 - Streets
+12 - Depot
+13 -Train
+14 - Secret Room (Bunker)
+15 -Jungle
+16 - Control
+17 - Caverns
+18 - Cradle
+1A - Aztec
+1C - Egyptian
+
+8002a8ff 000?	difficulty modifier
+0 - agent
+1 - secret agent
+2 - 00 agent
+3 - 007
+
+8002a943 zoom on menu, used for going "into" a folder, but basically resizes text layer of menus
+
+8002a94f cheat option lock	(00 locked)
+pointer to 8016c7d0
+array of pointers here
+
+8002A9A4	intro splash screen text
+8002abe4	solo stage select menu
+8002aff4	multiplayer game length select
+		(name(i), then time(l) or kills(l) - 9xxx.0000.time.kills)
+8002b054	multiplayer scenario select
+		(name(i), then min(c) and max(c) players - 9xxx.mn.mx)
+8002b074	multiplayer stage select
+8002b198	multiplayer character select
+8002b498	health settings and names
+8002b4f0	names and settings for control style
+8002b510	names and settings for autoaim
+
+8002b8bc	not sure, but nifty table with float
+
+-----------------
+solo stage select
+part name also acts as name in menu if not set
+changing the stage that loads usually causes the game to lock when you leave the stage.
+(it has no clue what menu to return to)
+
+Mission 1 - arkangelsk
+pointer to mission number|8102abe4,8102abe6
+mission name in briefing|8102ABE8
+value 1|8002ABF7
+
+Part i - Dam
+pointer to part numeral|8102AC00,8102AC02
+part name in briefing|8102AC04
+name in menu|8102AC06
+stage load|8002AC0B
+order in menu|8002AC17
+pointer to briefing call|8102AC18,8102AC1A
+
+Part ii - Facility
+pointer to part numeral|8102AC1C,8102AC1E
+part name in briefing|8102AC20
+name in menu|8102AC22
+stage load|8002AC26
+order in menu|8002AC33
+pointer to briefing call|8102AC34,8102AC36
+
+Part iii - Runway
+pointer to part numeral|8102AC38,8102AC3A
+part name in briefing|8102AC3C
+name in menu|8102AC3E
+stage load|8002AC43
+order in menu|8002AC4F
+pointer to briefing call|8102AC50,8102AC52
+
+Mission 2 - Severnaya
+pointer to mission number|8102AC54,8102AC56
+mission name in briefing|8102AC58
+value 1-4|8002AC67
+
+Part i - Surface 1
+pointer to part numeral|8102AC70,8102AC72
+part name in briefing|8102AC74
+name in menu|8102AC76
+stage load|8002AC7B
+order in menu|8002AC87
+pointer to briefing call|8102AC88,8102AC8A
+
+Part ii - Bunker 1
+pointer to part numeral|8102AC8C,8102AC8E
+part name in briefing|8102AC90
+name in menu|8102AC92
+stage load|8002AC96
+order in menu|8002ACA3
+pointer to briefing call|8102ACA4,8102AA6
+
+Mission 3 - Kirghizstan
+pointer to mission number|8102ACA8,8102ACAA
+mission name in briefing|8102ACAC
+value = 1|8002ACB7
+value = 1|8002ACBB
+
+Part i - Silo
+pointer to part numeral|8102ACC4,8102ACC6
+part name in briefing|8102ACC8
+name in menu|8102ACCA
+stage load|8002ACCF
+value = 1|8002ACD3
+order in menu|8002ACDB
+pointer to briefing call|8102ACDC,8102ACDE
+
+Mission 4 - Monte Carlo
+pointer to mission number|8102ACE0,8102ACE2
+mission name in briefing|8102ACE4
+value = 1|8002ACEF
+value = 1|8002ACF3
+
+Part i - Frigate
+pointer to part numeral|8102ACFC,8102ACFE
+part name in briefing|8102AD00
+name in menu|8102AD02
+stage load|8002AD07
+value = 1|8002AD0B
+order in menu|8002AD13
+pointer to briefing call|8102AD14,8102AD16
+
+Mission 5 - Severnaya
+pointer to mission number|8102AD18,8102AD1A
+mission name in briefing|8102AD1C
+value = 1|8002AD27
+value = 1|8002AD2B
+
+Part i - Surface 2
+pointer to part numeral|8102AD34,8102AD36
+part name in briefing|8102AD38
+name in menu|8102AD3A
+stage load|8002AD3F
+value = 1|8002AD43
+order in menu|8002AD4B
+pointer to briefing call|8102AD4C,8102AD4E
+
+Part ii - Bunker 2
+pointer to part numeral|8102AD50,8102AD52
+part name in briefing|8102AD54
+name in menu|8102AD56
+stage load|8002AD5B
+value = 1|8002AD5F
+order in menu|8002AD67
+pointer to briefing call|8102AD68,8102AD6A
+
+Mission 6 - St. Petersburg
+pointer to mission number|8102AD6C,8102AD6E
+mission name in briefing|8102AD70
+value = 2|8002AD7B
+value = 1|8002AD7F
+
+Part i - Statue
+pointer to part numeral|8102AD88,8102AD8A
+part name in briefing|8102AD8C
+name in menu|8102AD8E
+stage load|8002AD93
+value = 2|8002AD97
+order in menu|8002AD9F
+pointer to briefing call|8102ADA0,8102ADA2
+
+Part ii - Archives
+pointer to part numeral|8102ADA4,8102ADA6
+part name in briefing|8102ADA8
+name in menu|8102ADAA
+stage load|8002ADAF
+value = 2|8002ADB3
+order in menu|8002ADBB
+pointer to briefing call|8102ADBC,8102ADBE
+
+Part iii - Streets
+pointer to part numeral|8102ADC0,8102ADC2
+part name in briefing|8102ADC4
+name in menu|8102ADC6
+stage load|8002ADCB
+value = 2|8002ADCF
+order in menu|8002ADD7
+pointer to briefing call|8102ADD8,8102ADDA
+
+Part iv - Depot
+pointer to part numeral|8102ADDC,8102ADDE
+part name in briefing|8102ADE0
+name in menu|8102ADE2
+stage load|8002ADE7
+value = 2|8002ADEB
+order in menu|8002ADF3
+pointer to briefing call|8102ADF4,8102ADF6
+
+Part v - Train
+pointer to part numeral|8102ADF8,8102ADFA
+part name in briefing|8102ADFC
+name in menu|8102ADFE
+stage load|8002AE03
+row value?|8002AE07
+order in menu|8002AE0F
+pointer to briefing call|8102AE10,8102AE12
+
+Mission 7 - Cuba
+pointer to mission number|8102AE14,8102AE16
+mission name in briefing|8102AE18
+value = 3|8002AE23
+value = 1|8002AE27
+
+Part i - Jungle
+pointer to part numeral|8102AE30,8102AE32
+part name in briefing|8102AE34
+name in menu|8102AE36
+stage load|8002AE3B
+value = 3|8002AE3F
+order in menu|8002AE47
+pointer to briefing call|8102AE48,8102AE4A
+
+Part ii - Control
+pointer to part numeral|8102AE4C,8102AE4E
+part name in briefing|8102AE50
+name in menu|8102AE52
+stage load|8002AE57
+value = 3|8002AE5B
+order in menu|8002AE63
+pointer to briefing call|8102AE64,8102AE66
+
+Part iii - Caverns
+pointer to part numeral|8102AE68,8102AE6A
+part name in briefing|8102AE6C
+name in menu|8102AE6E
+stage load|8002AE73
+value = 3|8002AE77
+order in menu|8002AE7F
+pointer to briefing call|8102AE80,8102AE82
+
+Part iv - Cradle
+pointer to part numeral|8102AE84,8102AE86
+part name in briefing|8102AE88
+name in menu|8102AE8A
+stage load|8002AE8F
+value = 3|8002AE93
+order in menu|8002AE9B
+pointer to briefing call|8102AE9C,8102AE9E
+
+Mission 8 - Teotihuaca'n
+pointer to mission number|8102AEA0,8102AEA2
+mission name in briefing|8102AEA4
+value = 4|8002AEAF
+value = 1|8002AEB3
+
+Part i - Aztec
+pointer to part numeral|8102AEBC,8102AEBE
+part name in briefing|8102AEC0
+name in menu|8102AEC2
+stage load|8002AEC7
+value = 4|8002AECB
+order in menu|8002AED3
+pointer to briefing call|8102AED4,8102AED6
+
+Mission 9 - el-Saghira
+pointer to mission number|8102AED8,8102AEDA
+mission name in briefing|8102AEDC
+value = 4|8102AEE7
+value = 1|8002AEEB
+
+Part i - Egyptian
+pointer to part numeral|8102AEF4,8102AEF6
+part name in briefing|8102AEF8
+name in menu|8102AEFA
+stage load|8002AEFF
+value = 4|8002AF03
+order in menu|8002AF0B
+pointer to briefing call|8102AF0C,8102AF0E
+
+note...
+8004f494	'1.' before 'select mission'
+8004f498	'2.' before 'multiplayer'
+8004f49c	'3.' before 'cheat options'
+
+8004f4a4 ': ' used in mission line
+8004f4ac ': ' used in part line
+
+
+80023234 multiplayer menu option lock (01 locked)
+
+multiplayer menu options:
+8002:
+b523 # players
+b527 player 1 char selected
+b52b player 2 char selected
+b52f player 3 char selected
+b533 player 4 char selected
+b537 # multiplayer stage slot selected (0-11)
+b53b # text for game length on option screen 
+b53f # auto aim setting
+b543 # text for scenario on option screen 0-8 (random crashes when you press start)
+b547 lock stage select (00 lock, 01 open)
+b54b lock game length
+b54f lock character select
+b553 lock weapon select
+b557 lock health
+b55b lock control style
+b55f lock aim adjustment
+
+game length
+00 unlimitted
+01 5 min
+02 10 min
+03 20 min
+04 5 points
+05 10 points
+06 20 points
+07 last person alive wins
+08 normal
+09 man w/ golden gun
+0a team:3vs1
+
+auto aim
+00 sight off,aim off
+01 sight on,aim off
+02 sight off,aim on
+03 sight on,aim on

@@ -1,0 +1,83 @@
+Clipping Files	-	1172 (z-custom) compressed binaries
+--------------
+  Clipping files outline the area players and objects can validly be located.  In addition, they also set the spectral lighting for a given region.  The clipping file is composed of tiles, each of which is a 3-10 sided polygon.  The format supports up to 15-sided forms, but these can not be processed without patching the handling routine.
+
+  The start of the file itself consists of a series of offsets.  The first is always NULL, technically linked to a removed TLB routine but of no use nowadays.  The second always points to the first tile in the list, and must do so; it is used as the basis of all the connection values described below.
+  Further offsets can be included if desired but are not used at runtime.  Rare typically used these to indicate tiles belonging to removed rooms.  One NULL offset indicates the end of the file offset section.
+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+  Tile headers are the first 8 bytes of the tile data.  They contain a specific 3-byte selection ID, the room ID that appears when a player or object is on the tile, the colour of the light on the tile, and other flags indicating the attributes of the polygon data.
+  The first three bytes act as a unique tile ID.  They are converted to a textual format in setup files and used to look up the tile in the list, linking object positions to unique areas in the stage.  The text appears as:
+"P" + first two values of header as unsigned decimal value + third byte alpha-numeric value
+  The first two bytes of the header are an unsigned short integer, converted to decimal form.  The third byte is a alpha-numeric string based on this format:
+a  00
+a1 01
+a2 02
+a3 03
+a4 04
+a5 05
+a6 06
+a7 07
+b  08
+b1 09
+b2 0A
+b3 0B
+b4 0C
+b5 0D
+b6 0E
+b7 0F
+etc.
+  The highest values used in the release game were "p#", 78-7F.  The physical limit is "z#", C8-CF.
+  As an example, here are some textual strings and their corresponding header values.
+Header	string
+014E 02	"p334a2"
+0070 1A	"p112d2"
+0494 0A	"p1148b2"
+
+  The last three nibbles all indicate points in the tile.  These three points are the three extremes of the tile.  If you were to circumscribe the polygon, using these three points would contain either the entire form or the largest portion of it.  They are actually used for radial triangle generation, which is beyond the scope of this document.  Suffice it to say, this should make a triangle that encompasses most of the tile within it.
+  These values will always be 012 for a triangle, as the first, second, and third points will invariably be at the furthest extremes.  Most quads tend to be rectangular, so either 012 or 013 may be used.
+
+---------------
+  X, Y, and Z positions are signed short values relative to the center of the stage.  Points in each tile are expected to be counter-clockwise.  Each face, or series of two points, also has a connection value.  If set to 0000, the player can not walk past that edge of the tile.  If set to some other value, this creates a link to another tile in the file.
+
+  Connection values start at 0010, as the initial offset to clipping data is offset by 0x80.  To determine the connection value of a given tile, take the current file offset of that tile's header, subtract the initial offset of the first tile, add an additional 0x80 to account for the offset, then divide the result by 8. 
+  This example retrieves the connection value to link to a tile at offset 0x20C, assuming the first tile starts at 0xC.
+*subtract initial from target:
+0x20C-0xC = 0x200
+*add 0x80, the initial offset for all tiles:
+0x200-0x80 = 0x280
+*divide by 8 for the final offset:
+0x280/8 = 0x0050
+
+  The final offset is 0x0050.
+
+  It is very important the Room # matches that of the room to be visualized.  Otherwise, objects in the room will not appear unless that room is currently loaded, and players in the room will disappear until stepping on another tile.  Since it affects the one room which should be visible, do not allow tiles to cross portals!
+
+--------------
+Header Format:
+FFFFFF00 00000000	3-byte selection ID
+000000FF 00000000	Room # (1-FF)
+00000000 30000000	special attribute
+			0	normal tile
+			1	kneeling
+			3	ladder
+00000000 0F000000	4-bit Red lighting component
+00000000 00F00000	4-bit Green lighting component
+00000000 000F0000	4-bit Blue lighting component
+00000000 0000F000	number points in tile (3-F)
+00000000 00000F00	extreme point 1
+00000000 000000F0	extreme point 2
+00000000 0000000F	extreme point 3
+
+Point Format:
+FFFF0000 00000000	X position
+0000FFFF 00000000	y position
+00000000 FFFF0000	Z position
+00000000 0000FFFF	connection value
+
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+  The list of tiles ends with a NULL tile header.  This is typically followed by the string "unstrict" and extended to 0x20 bytes.  This ensures that the routine does not break on a read of 0 points, as all tiles 0-3 points are expected to contain 0x20 data total.
+
+-Zoinkity

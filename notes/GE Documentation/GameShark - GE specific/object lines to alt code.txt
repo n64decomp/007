@@ -1,0 +1,536 @@
+Viper187 & Delta FORCE
+VALUES
+8003 8005
+75D0 5A60 -  - 0000 double alarm
+75F0 5A6C -  - 0001 alarm
+7610 5A78 -  - 0002 white pyramid
+7630 5A88 -  - 0003 ammo box - brown
+7650 5A98 -  - 0004 ammo box - brown
+7670 5AA8 -  - 0005 ammo box - green
+7690 5AB8 -  - 0006 ammo box - green
+76B0 5AC8 -  - 0007 ammo box - green
+76D0 5AD8 -  - 0008 piece of Egyptian collumn
+76F0 5AE0 -  - 0009 desk blotter
+7710 5AEC -  - 000A red book
+7730 5AF4 -  - 000B full bookshelf
+7750 5B04 -  - 000C bridge console
+7770 5B18 -  - 000D bridge console
+7790 5B2C -  - 000E bridge console
+77B0 5B40 -  - 000F bridge console
+77D0 5B54 -  - 0010 bridge console
+77F0 5B68 -  - 0011 bridge console
+7810 5B7C -  - 0012 cardboard pistol ammo box
+7830 5B88 -  - 0013 cardboard pistol ammo box
+7850 5B94 -  - 0014 cardboard pistol ammo box
+7870 5BA0 -  - 0015 cardboard pistol ammo box
+7890 5BB0 -  - 0016 cardboard pistol ammo box
+78B0 5BC0 -  - 0017 cardboard pistol ammo box
+78D0 5BD0 -  - 0018 surveillance camera
+78F0 5BD8 -  - 0019 double screen console
+7910 5BE4 -  - 001A double screen console
+7930 5BF0 -  - 001B double screen console
+7950 5BFC -  - 001C console
+7970 5C0C -  - 001D console
+7990 5C1C -  - 001E console
+79B0 5C2C -  - 001F console
+79D0 5C3C -  - 0020 console
+79F0 5C4C -  - 0021 console
+7A10 5C5C -  - 0022 console
+7A30 5C6C -  - 0023 console
+7A50 5C7C -  - 0024 console
+7A70 5C90 -  - 0025 single screen consoles
+7A90 5CA4 -  - 0026 white table
+7AB0 5CAC -  - 0027 white table
+7AD0 5CB4 -  - 0028 Archives desk lamp
+7AF0 5CC4 -  - 0029 part of Aztec DAT box
+7B10 5CD4 -  - 002A other part of Aztec DAT box
+7B30 5CE4 -  - 002B two drawer white cabinet
+7B50 5CF8 -  - 002C jerry can
+7B70 5D08 -  - 002D computer keyboard
+7B90 5D14 -  - 002E 4 door & drawer bench
+7BB0 5D24 -  - 002F desk in-tray
+7BD0 5D34 -  - 0030 mainframe
+7BF0 5D44 -  - 0031 mainframe
+7C10 5D54 -  - 0032 chair
+7C30 5D64 -  - 0033 metal crate
+7C50 5D74 -  - 0034 metal crate
+7C70 5D84 -  - 0035 metal crate
+7C90 5D94 -  - 0036 ribbed steel box
+7CB0 5DA4 -  - 0037 model of Silo rocket
+7CD0 5DB4 -  - 0038 4 models in a row
+7CF0 5DC4 -  - 0039 oil drum
+7D10 5DD0 -  - 003A oil drum
+7D30 5DDC -  - 003B oil drum
+7D50 5DE8 -  - 003C oil drum
+7D70 5DF4 -  - 003D oil drum
+7D90 5E00 -  - 003E oil drum
+7DB0 5E0C -  - 003F padlock
+7DD0 5E18 -  - 0040 phone
+7DF0 5E24 -  - 0041 radio
+7E10 5E34 -  - 0042 radio
+7E30 5E44 -  - 0043 radio
+7E50 5E54 -  - 0044 radio
+7E70 5E64 -  - 0045 Silo goldeneye sattelite
+7E90 5E74 -  - 0046 Antenna dish from Dam
+7EB0 5E80 -  - 0047 small tape recorder
+7ED0 5E8C -  - 0048 wooden stool
+7EF0 5E98 -  - 0049 swivel chair
+7F10 5EA8 -  - 004A rack of 3 blue rockets
+7F30 5EB8 -  - 004B small television or monitor
+7F50 5EC0 -  - 004C hanging monitor rack
+7F70 5ECC -  - 004D wall monitor screen
+7F90 5ED8 -  - 004E wall monitor screen
+7FB0 5EE4 -  - 004F wooden crate
+7FD0 5EF8 -  - 0050 wooden crate
+7FF0 5F0C -  - 0051 wooden crate
+8010 5F20 -  - 0052 wooden crate
+8030 5F34 -  - 0053 wooden crate
+8050 5F48 -  - 0054 wooden crate
+8070 5F5C -  - 0055 Archives PP7 wooden table
+8090 5F6C -  - 0056 Floppy disc
+80B0 5F7C -  - 0057 blue & gold printed circuit cube
+80D0 5F8C -  - 0058 metal crate stack, 4x4
+80F0 5F98 -  - 0059 metal crate stack, 4x3
+8110 5FA4 -  - 005A metal crate stack, 4x2
+8130 5FB0 -  - 005B red button on vertical slab
+8150 5FBC -  - 005C small rocket
+8170 5FC8 -  - 005D Silo rocket, full size
+8190 5FD0 -  - 005E double console on castors
+81B0 5FE4 -  - 005F counter or bar
+81D0 5FF4 -  - 0060 locker set
+81F0 6000 -  - 0061 locker set
+8210 600C -  - 0062 ceiling drone gun
+8230 6018 -  - 0063 Frigate square pack rocket launcher, pointing down.
+8250 6028 -  - 0064 Frigate square pack rocket launcher, pointing up.
+8270 6038 -  - 0065 Frigate gun turret
+8290 6044 -  - 0066 Frigate rocket rack
+82B0 6054 -  - 0067 Runway rocket launcher
+82D0 6064 -  - 0068 window glass
+82F0 6070 -  - 0069 window lattice frame
+8310 6084 -  - 006A half size window lattice
+8330 6098 -  - 006B smaller lattice
+8350 60A8 -  - 006C Jungle big tree
+8370 60B8 -  - 006D Jungle palm
+8390 60C0 -  - 006E Jungle palm resprouting after loss of fronds
+83B0 60CC -  - 006F Jungle low shrub
+83D0 60D8 -  - 0070 shrunken Facility laboratory bench
+83F0 60E4 -  - 0071 Facility, Runway white rubbish bin
+8410 60F0 -  - 0072 set of 4 white bins
+8430 6100 -  - 0073 body armour
+8450 6110 -  - 0074 body armour
+8470 6124 -  - 0075 shrunken Facility gas tank
+8490 6130 -  - 0076 a glass
+84B0 6140 -  - 0077 train floor plate securing strips
+84D0 614C -  - 0078 Train brake controller
+84F0 6158 -  - 0079 ammo clip
+8510 6164 -  - 007A ammo clip
+8530 6170 -  - 007B ammo clip
+8550 617C -  - 007C ammo clip
+8570 618C -  - 007D ammo clip
+8590 619C -  - 007E ammo clip
+85B0 61A8 -  - 007F ammo clip
+85D0 61B4 -  - 0080 fire extinguisher
+85F0 61C8 -  - 0081 small box of shotgun shells
+8610 61D8 -  - 0082 gun clip
+8630 61E4 -  - 0083 small box of golden bullets
+8650 61F4 -  - 0084 magnum shells
+8670 6204 -  - 0085 pp7 ammo
+8690 6210 -  - 0086 ammo clip
+86B0 621C -  - 0087 Grey door with warning strips on it
+86D0 6228 -  - 0088 Silo Door - Arrow Left
+86F0 6234 -  - 0089 Beta Door
+8710 6248 -  - 008A Silo Door- Arrow Left
+8730 625C -  - 008B Clear Glass Door
+8750 626C -  - 008C silo Door - Arrow Up
+8770 627C -  - 008D Silo doors Corragated,With warning strips
+8790 628C -  - 008E Rusty Old Door
+87B0 629C -  - 008F Door With rust on it-double cross brace
+87D0 62AC -  - 0090 Metalic Blue Elevator Door - Silo
+87F0 62C0 -  - 0091 A different rusty old door
+8810 62D0 -  - 0092 Striped Blue door
+8830 62E0 -  - 0093 Blue door (With holes in it)
+8850 62F0 -  - 0094 striped blue door
+8870 6300 -  - 0095 Part of Runway Shutters
+8890 6310 -  - 0096 Blue corrugated door w/ Red and white diagonal lines
+88B0 6320 -  - 0097 Same but reversed
+88D0 6330 -  - 0098 Frigate normal door
+88F0 6340 -  - 0099 Same but with Keep clear on it
+8910 6350 -  - 009A Grey Door With blue stripe
+8930 6364 -  - 009B The grey door in Facility
+8950 6378 -  - 009C facility door
+8970 638C -  - 009D Plain Wood door
+8990 63A0 -  - 009E Facility Brown door
+89B0 63B8 -  - 009F Facility Bathroom Door
+89D0 63CC -  - 00A0 Clear Glass Door - From Labs in Facility
+89F0 63E4 -  - 00A1 Brown Wooden Door - Train
+8A10 63F4 -  - 00A2 Brown door with glass in it
+8A30 6404 -  - 00A3 Brown door with glass in it (Unbreakable)
+8A50 6414 -  - 00A4 Caverns Eye Door
+8A70 6424 -  - 00A5 Caverns Iris Door
+8A90 6430 -  - 00A6 Door from Huts on Surface
+8AB0 6440 -  - 00A7 Surface green door with glass in it
+8AD0 6450 -  - 00A8 Plain green door
+8AF0 6460 -  - 00A9 bunker outer door, Cradle Door
+8B10 6474 -  - 00AA Stone door w/ prints on it
+8B30 6484 -  - 00AB Sand door w/ prints on it
+8B50 6494 -  - 00AC Darker Stone door w/ prints on it
+8B70 64A4 -  - 00AD Light brown wood door
+8B90 64B4 -  - 00AE Egyptian Door
+8BB0 64C4 -  - 00AF Sand/Brown door
+8BD0 64D4 -  - 00B0 Blast Door - Control
+8BF0 64E0 -  - 00B1 Train Floor Plate
+8C10 64EC -  - 00B2 A different Blast Door - Control
+8C30 64FC -  - 00B3 Dam Blast Room Door
+8C50 650C -  - 00B4 Dam Mesh Door
+8C70 651C -  - 00B5 Blown Up door
+8C90 652C -  - 00B6 Stack/Basement Gate
+8CB0 653C -  - 00B7 Statue Gates
+8CD0 654C -  - 00B8 Soviet KF7
+8CF0 6558 -  - 00B9 Grenade Laucher
+8D10 656C -  - 00BA Throwing Knife
+8D30 6578 -  - 00BB Moonraker Laser
+8D50 6584 -  - 00BC AR33 Assault Rifle
+8D70 6590 -  - 00BD D5K
+8D90 659C -  - 00BE Cougar Magnum
+8DB0 65A8 -  - 00BF PP7
+8DD0 65B4 -  - 00C0 Shotgun
+8DF0 65C4 -  - 00C1 Klobb
+8E10 65D4 -  - 00C2 Phantom
+8E30 65E4 -  - 00C3 ZMG
+8E50 65F0 -  - 00C4 Grenade
+8E70 6600 -  - 00C5 RCP-90
+8E90 660C -  - 00C6 Briefcase
+8EB0 661C -  - 00C7 Remote Mine
+8ED0 662C -  - 00C8 Proximity Mine
+8EF0 6640 -  - 00C9 Timed Mine
+8F10 6650 -  - 00CA Rocket for rocket launcher
+8F30 665C -  - 00CB Grenade Launcher shot
+8F50 6670 -  - 00CC Silenced PP7
+8F70 6680 -  - 00CD Dostovei DD44
+8F90 668C -  - 00CE Silenced D5K
+8FB0 669C -  - 00CF Auto Shotgun
+8FD0 66AC -  - 00D0 Golden Gun
+8FF0 66B8 -  - 00D1 Hunting Knife
+9010 66C8 -  - 00D2 Sniper Rifle
+9030 66DC -  - 00D3 Rocket laucher
+9050 66F0 -  - 00D4 black hat
+9070 66FC -  - 00D5 black hat
+9090 670C -  - 00D6 black hat
+90B0 671C -  - 00D7 black hat
+90D0 6728 -  - 00D8 green hat
+90F0 6738 -  - 00D9 helmet
+9110 6744 -  - 00DA helmet
+9130 6754 -  - 00DB moonraker helmet
+9150 6760 -  - 00DC black hat
+9170 676C -  - 00DD blue special forces hat
+9190 677C -  - 00DE red special forces hat
+91B0 678C -  - 00DF officers hat
+91D0 6798 -  - 00E0 wrist dart
+91F0 67A8 -  - 00E1 explosive pen
+9210 67BC -  - 00E2 bombcase
+9230 67CC -  - 00E3 flare pistol
+9250 67E0 -  - 00E4 piton gun
+9270 67F0 -  - 00E5 finger gun
+9290 6800 -  - 00E6 silver pp7
+92B0 6810 -  - 00E7 gold pp7
+92D0 6820 -  - 00E8 dynamite
+92F0 6830 -  - 00E9 bungee
+9310 683C -  - 00EA door decoder
+9330 6850 -  - 00EB bomb defuser
+9350 6864 -  - 00EC bug detector
+9370 6878 -  - 00ED safe cracker case
+9390 6890 -  - 00EE camera
+93B0 689C -  - 00EF lock exploder
+93D0 68B0 -  - 00F0 door exploder
+93F0 68C4 -  - 00F1 briefcase laying down
+9410 68DC -  - 00F2 briefcase standing up
+9430 68EC -  - 00F3 yale key
+9450 68FC -  - 00F4 bolt key
+9470 690C -  - 00F5 covert modem/tracker bug
+9490 6918 -  - 00F6 small video camera with aerial
+94B0 692C -  - 00F7 floppy disc
+94D0 6938 -  - 00F8 goldeneye key
+94F0 694C -  - 00F9 polarized glasses
+9510 6964 -  - 00FA credit card
+9530 6974 -  - 00FB dark glasses
+9550 6988 -  - 00FC gas key ring
+9570 6998 -  - 00FD datathief
+9590 69A8 -  - 00FE safe without door
+95B0 69B0 -  - 00FF bomb
+95D0 69B8 -  - 0100 classified folder (game intro)
+95F0 69C4 -  - 0101 spy file
+9610 69D4 -  - 0102 start folder
+9630 69E4 -  - 0103 DAT
+9650 69F8 -  - 0104 bunker2 plans
+9670 6A04 -  - 0105 spool tape
+9690 6A14 -  - 0106 audio tape
+96B0 6A24 -  - 0107 microfilm
+96D0 6A34 -  - 0108 microcode
+96F0 6A44 -  - 0109 lectre
+9710 6A50 -  - 010A money
+9730 6A5C -  - 010B gold bar
+9750 6A6C -  - 010C heroin
+9770 6A78 -  - 010D red card
+9790 6A88 -  - 010E red dossier
+97B0 6A98 -  - 010F Bunker staff list
+97D0 6AA8 -  - 0110 credit card
+97F0 6AB8 -  - 0111 plastique
+9810 6AC8 -  - 0112 orange helicopter "black" box
+9830 6AD8 -  - 0113 cctv tape
+9850 6AE8 -  - 0114 Nintendo logo
+9870 6AF8 -  - 0115 Goldeneye logo
+9890 6B08 -  - 0116 Folder with royal crest in sky
+98B0 6B18 -  - 0117 Dam truck
+98D0 6B24 -  - 0118 jeep
+98F0 6B2C -  - 0119 red prime mover
+9910 6B34 -  - 011A brown helicopter
+9930 6B44 -  - 011B pirate helicopter
+9950 6B4C -  - 011C hound helicopter
+9970 6B58 -  - 011D soviet camouflage chopper
+9990 6B60 -  - 011E black trailer
+99B0 6B70 -  - 011F motorcycle
+99D0 6B7C -  - 0120 tank
+99F0 6B84 -  - 0121 amphibious vehicle
+9A10 6B8C -  - 0122 speedboat
+9A30 6B98 -  - 0123 Runway aeroplane
+9A50 6BA0 -  - 0124 wall mount drone gun
+9A70 6BB0 -  - 0125 safe door
+9A90 6BBC -  - 0126 Bunker2 key rack
+9AB0 6BCC -  - 0127 Bunker2 sliding glass door
+9AD0 6BD8 -  - 0128 Surface satellite dish, from top of building
+9AF0 6BE4 -  - 0129 arch sec door1
+9B10 6BF4 -  - 012A arch sec door2
+9B30 6C04 -  - 012B free standing drone gun
+9B50 6C10 -  - 012C Depot train door
+9B70 6C20 -  - 012D Streets small white car
+9B90 6C2C -  - 012E Streets small white car
+9BB0 6C38 -  - 012F Streets small white car
+9BD0 6C44 -  - 0130 Streets small red car
+9BF0 6C50 -  - 0131 Ouromov's car
+9C10 6C5C -  - 0132 shuttle vertical door with spikes
+9C30 6C70 -  - 0133 shuttle door r
+9C50 6C84 -  - 0134 red star on panel
+9C70 6C98 -  - 0135 shutters
+9C90 6CAC -  - 0136 beaker with blue
+9CB0 6CBC -  - 0137 beaker
+9CD0 6CCC -  - 0138 5 beaker set
+9CF0 6CDC -  - 0139 blue Streets mines
+9D10 6CE8 -  - 013A jungle bush
+9D30 6CF4 -  - 013B jungle bush
+9D50 6D00 -  - 013C jungle bush
+9D70 6D0C -  - 013D pointy jungle bush
+9D90 6D18 -  - 013E jungle tree
+9DB0 6D28 -  - 013F Goldeneye intro screen
+9DD0 6D34 -  - 0140 Streets roads and buildings
+9DF0 6D48 -  - 0141 Streets
+9E10 6D5C -  - 0142 Streets
+9E30 6D70 -  - 0143 Streets
+9E50 6D84 -  - 0144 Streets
+9E70 6D98 -  - 0145 roller door
+9E90 6DAC -  - 0146 Aztec vertical glass slider
+9EB0 6DB8 -  - 0147 Aztec first stone vert slider
+9ED0 6DC8 -  - 0148 Shuttle
+9EF0 6DD4 -  - 0149 girder within girder?
+9F10 6DE4 -  - 014A piece of concrete with two brass pipe chimneys
+9F30 6DF8 -  - 014B cube of rock
+9F50 6E0C -  - 014C mainframe with green bits on front
+9F70 6E18 -  - 014D flag tag flag
+9F90 6E20 -  - 014E road barrier
+9FB0 6E2C -  - 014F Dam screen for covert modem
+9FD0 6E38 -  - 0150 Dam sliding door activator
+9FF0 6E44 -  - 0151 standing console, no screen
+A010 6E54 -  - 0152 test tube
+A030 6E64 -  - 0153 solid stone cairn
+
+Most objects are 3DCCCCCD or 3F800000 in size, although most values work.
+
+HEADS (14H each)
+8003 8005   WIDTH      HEIGHT    G  HEAD
+D410 6E80 * 3F800000 * 3F800000 /01 00 - 00 jungle commando
+D430 6E8C * 3F800000 * 3F800000 /01 00 - 01 st. pete
+D450 6E98 * 3F800000 * 3F800000 /01 00 - 02 rus. soldier
+D470 6EA8 * 3F800000 * 3F800000 /01 00 - 03 rus. infantry
+D490 6EB4 * 3F800000 * 3F800000 /01 00 - 04 janus sp. forces
+D910 6EC0 * 3F800000 * 3F85B574 /01 00 - 05 Dinner Jacket
+D4B0 6ECC * 3F800000 * 3F785F07 /01 01 - 06 boris
+D4D0 6ED4 * 3F800000 * 3F89F55A /01 01 - 07 ouromov
+D4F0 6EE0 * 3F800000 * 3F800000 /01 01 - 08 trevelian
+D510 6EEC * 3F800000 * 3F800000 /01 01 - 09 006
+D530 6EFC * 3F800000 * 3F6EB1C4 /01 01 - 0a valentine
+D550 6F08 * 3F800000 * 3F800000 /00 01 - 0b xenia
+D570 6F10 * 3F800000 * 3F800000 /01 01 - 0c samedi
+D590 6F20 * 3F800000 * 3F9978D5 /01 01 - 0d jaws
+D5B0 6F28 * 3F800000 * 3F800000 /00 01 - 0e mayday
+D5D0 6F34 * 3F800000 * 3F49AD43 /01 01 - 0f oddjob
+D5F0 6F40 * 3F800000 * 3F775254 /00 01 - 10 natalya
+D610 6F4C * 3F800000 * 3F800000 /01 00 - 11 janus marine
+D630 6F5C * 3F800000 * 3F800000 /01 00 - 12 rus. commander
+D650 6F68 * 3F800000 * 3F800000 /01 00 - 13 siberian
+D670 6F78 * 3F800000 * 3F800000 /01 00 - 14 naval
+D690 6F84 * 3F800000 * 3F800000 /01 01 - 15 siberian special forces
+D890 6F90 * 3F800000 * 3F85288D /01 00 - 16 Bond Boiler Suit
+D8B0 6FA0 * 3F800000 * 3F876C8B /01 00 - 17 Bond Blue Suit
+D8D0 6FAC * 3F800000 * 3F859B3D /01 00 - 18 Bond Jungle Suit
+D8F0 6FBC * 3F800000 * 3F859B3D /01 00 - 19 Bond Snowsuit
+D6B0 6FC8 * 3F800000 * 3F62A305 /00 00 - 1a Skirt
+D6D0 6FD4 * 3F800000 * 3F62A305 /00 00 - 1b Cleaning Staff
+D6F0 6FE4 * 3F800000 * 3F6A7EFA /00 00 - 1c Scientist Female
+D710 6FF0 * 3F800000 * 3F62A305 /00 00 - 1d civilian female
+D730 6FFC * 3F800000 * 3F800000 /01 00 - 1e grey suit
+D750 7008 * 3F800000 * 3F800000 /01 00 - 1f blue civilian
+D770 7014 * 3F800000 * 3F800000 /01 00 - 20 red civilian
+D790 7020 * 3F800000 * 3F800000 /01 00 - 21 blue vested civilian
+D7B0 702C * 3F800000 * 3F800000 /01 00 - 22 purple civilian
+D7D0 7038 * 3F800000 * 3F800000 /01 00 - 23 scientist male
+D7F0 7044 * 3F800000 * 3F800000 /01 01 - 24 Helicopter Pilot
+D810 704C * 3F800000 * 3F800000 /01 00 - 25 Siberian
+D830 705C * 3F800000 * 3F800000 /01 00 - 26 arctic commando
+D850 706C * 3F800000 * 3F800000 /01 00 - 27 Moonraker
+D870 7078 * 3F800000 * 3F62A305 /00 00 - 28 Moonraker Fem.
+
+D930 7088/3bd8 * 3DCCCCCD * 3F800000 /01 00 - 29 left arm 800336F4
+
+D950 7098 * 3F800000 * 3F800000 /01 01 - 2A Karl
+D970 70A4 * 3F800000 * 3F800000 /01 01 - 2B Alan
+D990 70B0 * 3F800000 * 3F800000 /01 01 - 2C Pete
+D9B0 70BC * 3F800000 * 3F800000 /01 01 - 2D Martin
+D9D0 70CC * 3F800000 * 3F800000 /01 01 - 2E Mark
+D9F0 70D8 * 3F800000 * 3F800000 /01 01 - 2F Duncan
+DA30 70E8 * 3F800000 * 3F800000 /01 01 - 30 Shaun
+DA50 70F4 * 3F800000 * 3F800000 /01 01 - 31 Wayne
+DA10 7104 * 3F800000 * 3F800000 /01 01 - 32 B
+DA70 710C * 3F800000 * 3F800000 /01 01 - 33 Dave
+DA90 7118 * 3F800000 * 3F800000 /01 01 - 34 Grant
+DAB0 7124 * 3F800000 * 3F800000 /01 01 - 35 Des
+DAD0 7130 * 3F800000 * 3F800000 /01 01 - 36 Chris
+DAF0 713C * 3F800000 * 3F800000 /01 01 - 37 Lee
+DB10 7148 * 3F800000 * 3F800000 /01 01 - 38 Neil
+DB30 7154 * 3F800000 * 3F800000 /01 01 - 39 Jim
+DB50 7160 * 3F800000 * 3F800000 /01 01 - 3A Robin
+DB70 716C * 3F800000 * 3F800000 /01 01 - 3B Steve H.
+DB90 717C * 3F800000 * 3F800000 /01 01 - 3C Terrorist
+DBB0 718C * 3F800000 * 3F800000 /01 01 - 3D Biker
+DBD0 7198 * 3F800000 * 3F800000 /01 01 - 3E Graham
+DBF0 71A8 * 3F800000 * 3F800000 /01 01 - 3F Steve E.
+DC10 71B8 * 3F800000 * 3F800000 /01 01 - 40 Joel
+DC30 71C4 * 3F800000 * 3F800000 /01 01 - 41 Scott
+DC50 71D0 * 3F800000 * 3F800000 /01 01 - 42 Joe
+DC70 71DC * 3F800000 * 3F800000 /01 01 - 43 Ken
+DC90 71E8 * 3F800000 * 3F800000 /01 01 - 44 Joe2
+DCB0 71F4 * 3F800000 * 3F800000 /01 01 - 45 Mishkin
+DCD0 7204 * 3F800000 * 3F800000 /00 01 - 46 Sally
+DCF0 7210 * 3F800000 * 3F800000 /00 01 - 47 Marion
+DD10 7220 * 3F800000 * 3F800000 /00 01 - 48 Mandy
+DD30 722C * 3F800000 * 3F800000 /00 01 - 49 Vivien
+DD50 723C * 3F800000 * 3F800000 /01 01 - 4A Brosnan Boiler
+DD70 7250 * 3F800000 * 3F800000 /01 01 - 4B Brosnan Suit
+DD90 7264 * 3F800000 * 3F800000 /01 01 - 4C Brosnan Jungle
+DDB0 7278 * 3F800000 * 3F800000 /01 01 - 4D Brosnan Snow
+DDD0 728C * 3F800000 * 3F800000 /01 01 - 4E Brosnan
+
+DDF0 729C * 3F733333 * 3F775254 /00 01 - 4F Natalya jungle suit
+
+the 8003 address...
+gets filled on actual load.  address appears after pointer to image location
+pointer | address (body) | pointer | type . # parts?
+float...| tables. images | pointer | -
+
+hand/watch inventory
+chart at 80033950 or something
+33924 (38) to 4cd4?
+8003:	8005:
+c7c0	37b4	80032654	pp7
+c7e0	37bc	800326c4	silent pp7
+c800	37c8	80032734	dd44
+c820	37D0	800327A4	Klobb
+c840	37DC	80032814	KF7
+c860	37E4	80032884	ZMG
+c880	37EC	800328F4	D5K
+c8a0	37F4	80032964	D5K (Silenced)
+c8c0	380C	80032A44	AR33
+c8e0	3814	80032AB4	RC-P90
+c900	
+c920	3844	80032C74	Magnum
+c940	384C	80032CE4	Golden Gun
+c960	381C	80032B24	Shotgun
+c980	3828	80032B94	Autoshotgun
+c9a0	388C	80032F14	Grenade Launcher
+c9c0	3800	800329D4	Phantom
+c9e0	3874	80032E34	Laser
+ca00	389C	80032F84	Rocket Launcher
+ca20	379C	80032574	Hunting Knives
+ca40	37a4	800325e4	throwing knives
+ca60	38F0	80033224	Tazer
+ca80	38D4	80033144	Remote Mines
+caa0	38C4	800330D4	Proximity Mines
+cac0	38B8	80033064	Timed Mines
+cae0	38E4	800331B4	Detonator
+cb00	38AC	80032FF4	Grenades
+cb20	3794	80032504	fist
+cb40	3834	80032c04	sniper rifle
+cb60	3760		GcartridgeZ spent 9mm ammo casings
+cb80	376c		GcartrifleZ spent rifle ammo casings
+cba0	3778		GcartblueZ  some kind of ammo...
+cbc0	3784		GcartshellZ spent shotgun round?
+cbe0	3be8	80033764	joypad (N64 controller in options)
+cc00	
+cc20	
+cc40	38F8	80033304	Bombcase
+cc60	3910	800333E4	Flare Pistol
+cc80	3920	80033454	Piton Gun
+cca0	
+ccc0	3858	80032D54	Silver PP7
+cce0	3868	80032DC4	Golden PP7
+cd00	
+cd20	392c		bungee
+cd40	3938		door decoder
+cd60	3948		bomb defuser
+cd80	39e0		bug detector
+cda0	39a0		safe cracker
+cdc0	3958	80033684	Camera
+cde0	3964		Lock Exploder
+ce00	3974		Door Exploder
+ce20	39b4		key anaylizer
+ce40	3990		weapon case
+ce60	3bb4		card key
+ce80	3bc0		yale key
+cea0	3bcc		bolt key
+cec0	39c8	800334c4	bug
+cee0	39d0	80033534	micro camera
+cf00	39f0		explosive floppy
+cf20	3ac0	80033614	goldeneye key
+cf40	3a04		polarized glasses
+cf60	3a28		credit card
+cf80	3a18		dark glasses
+cfa0	3a54		watch identifier
+cfc0	3a68		watch communicator
+cfe0	387c	80032ea4	watch laser
+d000	3a7c		watch geiger counter
+d020	3a94		watch magnet repel
+d040	3aa8	800335a4	watch magnet attract
+d060	3a38		gaskeyring
+d080	3a48		datatheif
+d0a0	3984		briefcase
+d0c0	3ad0		black box
+d0e0	3904	80033374	plastique
+d100	3b4c		video tape
+d120	3aec		clipboard
+d140	3af8		staff list
+d160	3b04		dossier
+d180	3b40		audio tape
+d1a0	3b58		DAT tape
+d1c0	3b14		plans
+d1e0	3b1c		spyfile
+d200	3b28		blueprints
+d220	3adc		circuitboard
+d240	3b38		map
+d260	3b64		spooltape
+d280	3b70		microfilm
+d2a0	3b7c		microcode
+d2c0	3b88		lectre
+d2e0	3b94		money
+d300	3b9c		gold bar
+d320	3ba8		heroin
+
+92 entries- weapons?  loads the spent ammo shells...
+check load words: 80053760-3bf4

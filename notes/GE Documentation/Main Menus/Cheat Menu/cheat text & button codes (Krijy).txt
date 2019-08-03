@@ -1,0 +1,165 @@
+Originally compiled by Krijy
+
+802A
+efe0-Invincible  -efeb
+efec-All Guns    -eff7
+eff8-Super x2 Health0-f007
+f008-Super 2x Armor  -f017
+f018-Bond Invisible  -f027
+f028-Bond Phase -f033
+f034-Infinite Ammo   -f043
+f044-DK Mode  -f04b
+f04c-Tiny Bond  -f057
+f058-Super x10 Health    -f06b
+f06c-Magnum  -fo73
+f074-Laser   -f07b
+f07c-Golden Gun  -f087
+f088-Silver PP7  -f093
+f094-Gold PP7    -f09f
+(+ terminate in 0A, appear on screen)
+f0a0-invincibility on+   -f0b3
+f0b4-all guns on+    -f0c3
+f0c4-maximum ammo+   -f0d2
+f0d4-super x2 health+   -f0e7
+f0e8-super x2 armor+ -f0f7
+f0f8-invisibility on+   -f10b
+f10c-bond phase on+ -f11b
+f11c-infinate ammo on+  -f12b
+f12c-dk mode on+ -f13b
+f13c-extra weapons+  -f14b
+f14c-tiny bond on+   -f15b
+f15c-paintball mode on+  -f16f
+f170-super x10 health+   -f183
+f184-happy now karl?+    -f197
+f198-fast mode on+   -f1a7
+f1a8-invincibility off+  -f1bb
+f1bc-all guns off+   -f1cb
+f1cc-invisibility off+   -f1df
+f1e0-bond phase off+ -f1ef
+f1f0-infinate ammo off+  -f203
+f204-dk mode off+    -f213
+f214-tiny bond off+  -f223
+f224-paintball mode off+ -f237
+f238-radar on+   -f243
+f244-fast mode off+  -f253
+f254-NO NAME E R R O R+  -f267
+f268-no briefing for this mission+   -f287
+(dropped one maybe?)
+f288-+   -f28b
+f28c-objective   -f297
+f298-completed+  -f2a3
+f2a4-incomplete+ -f2af
+f2b0-failed+ -f2b7
+f2b8-slowest motion+ -f2c7
+f2c8-very slow motion+   -f2db
+f2dc-slow motion+    -f2eb
+f2ec-normal motion+  -f2fb
+f2fc-fast motion+    -f30b
+f30c-very fast motion+   -f31f
+f320-fastest motion+ -f32f
+f330-Line Mode   -f33b
+f33c-Paintball Mode  -f34b
+f34c-Enemy Rockets   -f35b
+f35c-2x Rocket L.    -f36b
+f36c-2x Grenade L.   -f37b
+f37c-2x RC-P90   -f387
+f388-2x Throwing Knife   -f39b
+f39c-2x Hunting Knife    -f3af
+f3b0-2x Laser    -f3bb
+f3bc-Turbo Mode  -f3c7
+f3c8-Fast Animation  -f3d7
+f3d8-Slow Animation  -f3e7
+f3e8-No Radar [Multi]    -f3fb(ff?)
+
+Change Invincibility In-game activation code: (Press C-Right ten times) 
+8103F444 0001 
+8103F446 0001 
+8103F448 0001 
+8103F44A 0001 
+8103F44C 0001 
+8103F44E 0001 
+8103F450 0001 
+8103F452 0001 
+8103F454 0001 
+8103F456 0001 
+8103F81C XX0A 
+
+01 - Extra Multiplayer Characters - Character Select Menu 
+02 - Invincibility - In-game with text 
+03 - All Guns - - In-game with text 
+04 - Maximum Ammo - In-game with text - BETA
+05 - ??? - 0820 0011 0014 0032 0230 0130 0410 0018 0011 0430 
+06 - ??? - 0110 0220 0220 0810 0420 0014 0022 0031 0420 0028 
+07 - Line Mode - In-game with text 
+08 - Super 2x Health - In-game with text - BETA 
+09 - Super 2x Armour - In-game with text - BETA 
+0A - Invisibility - In-game with text 
+0B - Infinite Ammo - In-game with text
+0C - DK Mode - In-game with text
+0D - Extra Weapons (Gives you Magnum, Golden Gun, Golden and Silver PP7 + max ammo for these weapons) - In-game with text - BETA 
+0E - Tiny Bond - In-game with text
+0F - Paintball Mode - In-game with text
+10 - Super 10x Health - In-game with text - BETA 
+11 - Magnum - In-game with text
+12 - Laser - In-game with text
+13 - Golden Gun - In-game with text
+14 - Silver PP7 - In-game with text
+15 - Gold PP7 - In-game with text
+16 - Invisibility [Multi] - BETA
+17 - No Radar [Multi] - In-game with text
+18 - Fast Mode - In-game with text
+19 - Debug Mode (Bar at the top of the screen showing room number, x, y and z 
+coords and direction you're looking in) - In-game - BETA 
+1A - Fast Motion - In-game with text
+1B - Slow Motion - In-game with text
+1C - Enemy Rockets - In-game with text
+1D - 2x Rocket L. - In-game with text
+1E - 2x Grenade L. - In-game with text
+1F - 2x RC-P90 - In-game with text
+20 - 2x Throwing K. - In-game with text
+21 - 2x Hunting K. - In-game with text
+22 - 2x Laser - In-game with text
+23 to 36 - Unlocks all the cheats at the Cheat Menu 
+37 - ??? - 0038 0210 0014 0024 0810 0420 0011 0120 0130 0014 
+38 to 4A - Complete levels after one another - One-player mission select
+
+Extra Multiplayer Character ASM!
+318280:	
+240E 0040 
+3C01 8003 
+03E0 0008 
+AC2E B194 
+3C0E 8003 
+8DCE A8F0 
+2401 0001 
+2402 0001 
+15C1 0004 
+0000 0000 
+
+-----------------------
+-----------------------
+format of above button codes:
+
+List at 8003F80C:
+ccbb0000 pppppppp tttt0000 000000ff
+[c]ode number from above to activate
+[b]utton code for selected cheat when set to 0A (toggle on/off)
+[p]ointer to string defining controller input used to activate cheat
+[t]ext displayed when de/activated
+[f]lags indicating aloowable times for usage
+	00000001	on main menus/folder screens
+	00000010	at start: solo
+	00000100	at start: multi
+	00001000	
+	00010000	player 1 exclusively
+	00100000	constant: solo
+	01000000	constant: multi
+	10000000	
+
+------------------------
+80069651 - 8006969A	cheat options above are available in cheat folder menu
+800696A1 - 800696EA	cheat options above are activated
+
+80067770	pointer to word "Start"
+80069778	pointer to word "Previous"
+800697F0	list of cheat option numbers as they appear in-order for display in cheat menu.

@@ -1,0 +1,228 @@
+7F013DD4:	menu 12 interface: MP stage select
+ADDIU	SP,SP,FFE0
+LUI	AT,4270
+SW	RA,001C (SP)
+MTC1	AT,F12		;F12=60.0 [42700000]
+JAL	70004544
+SW	S0,0018 (SP)
+//7F013DEC:
+LUI	AT,8005
+JAL	70004590
+LWC1	F12,1AA0 (AT)	;F12=80051AA0: 
+//7F013DF8:
+LUI	AT,42C8
+MTC1	AT,F12		;F12=100.0 [42C80000]
+LUI	AT,8005
+JAL	70004650
+LWC1	F14,1AA4 (AT)	;F14=80051AA4: 
+JAL	70004534	;A0->p@800232A8+24
+OR	A0,R0,R0	;A0=0
+//7F013E14:
+OR	A0,R0,R0	;A0=0: 
+JAL	7000C30C
+ORI	A1,R0,B000	;A1=B000: 
+BNEZ	V0,7F013F18	;branch if flags not set
+LUI	AT,8003
+SW	R0,A8E4 (AT)	;0->8002A8E4: NO highlight folder tab 3
+LUI	AT,8003
+SW	R0,A8E0 (AT)	;0->8002A8E0: NO highlight folder tab 2
+LUI	AT,8003
+//7F013E38:	detect if over tab 3
+JAL	7F00A39C	;V0=TRUE if cursor on tab 3
+SW	R0,A8DC (AT)	;0->8002A8DC: NO highlight folder tab 1
+BEQ	V0,R0,7F013E58	;branch otherwise
+LUI	AT,8003
+ADDIU	T6,R0,0001
+LUI	AT,8003
+BEQ	R0,R0,7F013F18
+SW	T6,A8E4 (AT)	;1->8002A8E4: highlight tab 3
+//7F013E58:	detect vertical cursor position
+LWC1	F4,A90C (AT)	;F4=8002A90C: vert.pos.
+LUI	S0,8007
+ADDIU	S0,S0,977C	;S0=8006977C: highlighted stage
+TRUNC.W.S	F6,F4
+MFC1	V0,F6		;V0=vert.pos
+NOP
+//7F013E70:	third row
+SLTI	AT,V0,00F0	;TRUE if pos < 0xF0: third row
+BNEL	AT,R0,7F013E88	;branch if not 3rd row
+SLTI	AT,V0,00AA
+BEQ	R0,R0,7F013E98
+ADDIU	V1,R0,0002	;V1=2: 3rd row
+//7F013E84:	second+first row
+SLTI	AT,V0,00AA	;AT=TRUE if pos < 0xAA: second row
+BNEZ	AT,7F013E98	;branch if not 2nd row
+OR	V1,R0,R0	;V1=0: 1st row
+BEQ	R0,R0,7F013E98
+ADDIU	V1,R0,0001	;V1=1: 2nd row
+//7F013E98:	horizontal cursor position
+LUI	AT,8003
+LWC1	F8,A908 (AT)	;F8=8002A908: horz.pos
+SLL	T9,V1,0x2	;T9=row * 4: #entries per row
+TRUNC.W.S	F10,F8
+MFC1	V0,F10		;V0=horz.pos
+NOP
+//7F013EB0:	4th column
+SLTI	AT,V0,0124	;TRUE if pos < 124: 4th column
+BNEL	AT,R0,7F013EC8	;branch if not 4th column
+SLTI	AT,V0,00CF
+BEQ	R0,R0,7F013EEC
+ADDIU	V0,R0,0003	;V0=3: 4th column
+//7F013EC4:	3rd column
+SLTI	AT,V0,00CF	;TRUE if pos < CF: 3rd column
+BNEL	AT,R0,7F013EDC	;branch if not 3rd column
+SLTI	AT,V0,007A
+BEQ	R0,R0,7F013EEC
+ADDIU	V0,R0,0002	;V0=2: 3rd column
+//7F013ED8:
+SLTI	AT,V0,007A	;TRUE if pos < 7A: 2nd column
+BNEZ	AT,7F013EEC	;branch if not 2nd column
+OR	V0,R0,R0	;V0=0: 1st column
+BEQ	R0,R0,7F013EEC
+ADDIU	V0,R0,0001	;V0=1: 2nd column
+//7F013EEC:	determine if highlighted stage unlocked
+ADDU	A0,T9,V0	;A0=T9+V0: (row*4)+column
+JAL	7F0100D0	;V0=TRUE if MP stage A0 unlocked
+SW	A0,0000 (S0)	;A0->S0: MP stage#
+BNEZ	V0,7F013F18	;branch if available
+NOP
+//7F013F00:	if not available, try previous entry
+LW	T1,0000 (S0)
+ADDIU	A0,T1,FFFF	;A0--
+JAL	7F0100D0	;V0=TRUE if MP stage A0 unlocked
+SW	A0,0000 (S0)	;A1-- -> S0: MP stage#
+BEQL	V0,R0,7F013F04	;branch until a hit
+LW	T1,0000 (S0)
+//7F013F18:	select option
+LUI	S0,8007
+ADDIU	S0,S0,977C	;S0=8006977C: highlighted stage
+OR	A0,R0,R0	;A0=0
+JAL	7000C3AC	;V0=TRUE if A, Z, START pressed
+ORI	A1,R0,B000	;A1=B000: 
+BEQ	V0,R0,7F013F84	;branch if none set
+ADDIU	V1,R0,0001	;V1=1
+//7F013F34:	tab 3 selected sets previous
+LUI	T3,8003
+LW	T3,A8E4 (T3)	;T3=8002A8E4: folder tab 3 highlight
+LUI	A0,8006
+ADDIU	A1,R0,00C7	;A1=SE 0C7
+BEQ	T3,R0,7F013F58	;branch if not over tab 3
+OR	A2,R0,R0	;A2=0: NULL data pointer
+LUI	AT,8003
+BEQ	R0,R0,7F013F74
+SW	V1,A8D8 (AT)	;1->8002A8D8: tab 3 selected
+//7F013F58:	stage selected sets tab 2
+LW	V0,0000 (S0)	;V0=highlighted stage
+LUI	AT,8003
+BLTZ	V0,7F013F74	;branch if invalid
+NOP
+SW	V1,A8D4 (AT)	;1->8002A8D4: tab 2 selected
+LUI	AT,8003
+SW	V0,B534 (AT)	;8002B534=highlighted stage
+//7F013F74:
+JAL	70008E08	;play sound A1
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+BEQ	R0,R0,7F013FB4
+NOP
+//7F013F84:	B button pressed - back
+OR	A0,R0,R0	;A0=0: player 1
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,4000	;A1=4000: B button
+BEQ	V0,R0,7F013FB4	;branch if B button isn't pressed
+ADDIU	V1,R0,0001
+LUI	AT,8003
+LUI	A0,8006
+SW	V1,A8D8 (AT)	;1->8002A8D8: tab 3 selected
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+ADDIU	A1,R0,00C7	;A1=SE 0C7
+JAL	70008E08	;play sound A1
+OR	A2,R0,R0	;A2=p->NULL data
+//7F013FB4:	toggle stuff on
+LUI	S0,8003
+ADDIU	S0,S0,A95C	;S0=8002A95C: p->obj.instance
+JAL	7F00B724
+LW	A0,0000 (S0)	;A0=obj.instance
+LW	A0,0000 (S0)	;A0=obj.instance
+OR	A1,R0,R0	;A1=item 0
+JAL	7F00B7C0	;set item 0 in A0 visible
+ADDIU	A2,R0,0001	;A2=visible
+LW	A0,0000 (S0)	;A0=obj.instance
+ADDIU	A1,R0,002A	;A1=item 2A
+JAL	7F00B7C0	;set item 0 in A0 visible
+ADDIU	A2,R0,0001	;A2=visible
+LW	A0,0000 (S0)	;A0=obj.instance
+ADDIU	A1,R0,0003	;A1=item 3
+JAL	7F00B7C0	;set item 0 in A0 visible
+ADDIU	A2,R0,0001	;A2=visible
+JAL	7F009B84
+NOP
+//7F013FFC:	tab 2 selected - stage selected
+LUI	T4,8003
+LW	T4,A8D4 (T4)	;T4=8002A8D4: tab 2 selected
+ADDIU	A0,R0,000E	;A0=E
+LUI	T5,8003
+BEQ	T4,R0,7F014024	;branch if not selected
+NOP
+JAL	7F01A5D4	;set MP options (menu E) as current
+OR	A1,R0,R0	;A1=0
+BEQ	R0,R0,7F014040
+LW	RA,001C (SP)
+//7F014024:	tab 3 selected - previous
+LW	T5,A8D8 (T5)	;T5=8002A8D8: tab 3 selected
+ADDIU	A0,R0,000E	;A0=E
+BEQL	T5,R0,7F014040	;branch if not selected
+LW	RA,001C (SP)
+JAL	7F01A5D4	;set MP options (menu E) as current
+OR	A1,R0,R0	;A1=0
+LW	RA,001C (SP)
+//7F014040:	return
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+
+7000C30C:	
+LUI	V1,8002
+LW	V1,68C4 (V1)	;V1=800268C4:
+SW	A0,0000 (SP)
+SW	A1,0004 (SP)
+LW	T9,01F8 (V1)	;T9=V1+1F8: 
+SLL	T6,A0,0x18
+SRA	T7,T6,0x18
+ANDI	T8,A1,FFFF
+OR	A1,T8,R0	;A1&=FFFF
+BGEZ	T9,7000C370	;branch if not -1
+OR	A0,T7,R0	;A0=A0 & 0xFF
+//7000C338:
+LUI	T0,8002
+LBU	T0,68D0 (T0)	;T0=800268D0: 
+LUI	T4,8002
+ADDIU	T4,T4,6950	;T4=80026950:
+SRAV	T1,T0,T7	;T1=T0 >> A0
+ANDI	T2,T1,0001	;T2=TRUE if bit A0 toggled
+BNEZ	T2,7000C370	;branch if bit set
+SLL	T3,T7,0x2	;T3=A0*4
+//7000C358:	return false
+ADDU	V1,T3,T4	;V1=80026950 + A0->offset: 
+LW	T5,0000 (V1)
+OR	V0,R0,R0	;V0=0: false return
+ADDIU	T6,T5,0001
+JR	RA
+SW	T6,0000 (V1)	;80026950+offset ++
+//7000C370:	return true
+LW	T7,01E0 (V1)	;T7=V1+1E0: 
+SLL	T0,A0,0x2
+SUBU	T0,T0,A0
+SLL	T8,T7,0x2
+SUBU	T8,T8,T7
+SLL	T8,T8,0x3	;T8-T7*0x18:
+ADDU	T9,V1,T8	;T9=V1+T8: [80064F30]+offset
+SLL	T0,T0,0x1	;T0=A0*6: 
+ADDU	T1,T9,T0	;T1=[80064F30]+(T7*0x18)+(A0*0x6)
+LHU	T2,0000 (T1)	;T2=
+AND	V0,T2,A1	;V0=T2 & A1: 
+ANDI	T3,V0,FFFF
+OR	V0,T3,R0	;V0=(T2 & A1) & 0xFFFF
+JR	RA
+NOP

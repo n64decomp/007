@@ -1,0 +1,247 @@
+HEAD:
+0x0	sunglasses toggle
+0x4	distant head toggle
+
+CAM:	cctv cameras
+0x0	camera position
+0x4	glass
+0x8	glass dimentions
+0xC	camera toggle
+
+TV1:
+0x0	DL for screen
+
+TV4:	note that NULL is used if the screen is not present (ie. only 1-3 screens)
+0x0	DL for screen 1
+0x4	DL for screen 2
+0x8	DL for screen 3
+0xC	DL for screen 4
+
+RACK:	main object is in group 0.  position data alone exists for groups 1-4
+0x0	position for monitor 1 (pos:grp 0001 0001)
+0x4	position for monitor 2 (pos:grp 0002 0002)
+0x8	position for monitor 3 (pos:grp 0003 0003)
+0xC	position for monitor 4 (pos:grp 0004 0004)
+
+AUTOGUN:	[note: only first three needed for SWIVEL objects]
+0x0	group 0 position	position of base
+0x4	group 1 position	position of horizontal swivel bar (gun mount)
+0x8	group 2 position	position of vertical swivel point/main body
+0xC	group 3 position	position of autogun turret(s)
+0x10	group 4 position	position of gunfire; used when only gunfire 1 present
+0x14	gunfire 1
+0x18	group 5/4 position	position of gunfire/object; used on groundgun
+0x1C	gunfire 2
+
+EYE_DOOR:
+0x0	group 0 position	base position of door
+0x4	group 1 position	position for top?
+0x8	group 2 position	position for bottom?
+
+IRIS_DOOR:
+0x0	group 0 position	base position of door
+0x4	group 1 position	position of inner spline
+0x8	group 2 position	position of outer track
+0xC	group 3 position	position of inner spline
+0x10	group 4 position	position of outer track
+0x14	group 5 position	position of inner spline
+0x18	group 6 position	position of outer track
+0x1C	group 7 position	position of inner spline
+0x20	group 8 position	position of outer track
+0x24	group 9 position	position of inner spline
+0x28	group A position	position of outer track
+0x2C	group B position	position of inner spline
+0x30	group C position	position of outer track
+
+MENU:
+0x0	toggle for tabs on side of folder
+0x4	toggle for basic folder
+0x8	toggle for FOR YOUR EYES ONLY
+0xC	toggle for OHMSS
+0x10	toggle for CONFIDENTIAL - briefing
+0x14	toggle for CONFIDENTIAL - multi
+0x18	toggle for CLASSIFIED
+0x1C	toggle for shadow beneath character image
+0x20	toggle for 1st selected file image (Connery)
+0x24	toggle for 2st selected file image (Dalton)
+0x28	toggle for 3st selected file image (Moore)
+0x2C	toggle for 4st selected file image (Brosnan)
+0x30	toggle for shadow beneath briefing image
+0x34	toggle for main folder select screen
+0x38	toggle for shadow beneath slot selection pic
+0x3C	toggle for 1st slot selection pic (Connery)
+0x40	toggle for 2st slot selection pic (Dalton)
+0x44	toggle for 3st slot selection pic (Moore)
+0x48	toggle for 4st slot selection pic (Brosnan)
+0x4C	toggle for solo stage select
+0x50	toggle for solo selection table (stage imgs)
+0x54	solo selection table (stage imgs)
+0x58	toggle for Dam briefing image
+0x5C	toggle for Facility briefing image
+0x60	toggle for Runway briefing image
+0x64	toggle for Surface I briefing image
+0x68	toggle for Bunker I briefing image
+0x6C	toggle for Silo briefing image
+0x70	toggle for Frigate briefing image
+0x74	toggle for Surface II briefing image
+0x78	toggle for Bunker II briefing image
+0x7C	toggle for Statue briefing image
+0x80	toggle for Archives briefing image
+0x84	toggle for Streets briefing image
+0x88	toggle for Depot briefing image
+0x8C	toggle for Train briefing image
+0x90	toggle for Jungle briefing image
+0x94	toggle for Control briefing image
+0x98	toggle for Caverns briefing image
+0x9C	toggle for Cradle briefing image
+0xA0	toggle for Aztec briefing image
+0xA4	toggle for Egypt briefing image
+0xA8	toggle to secondary folder (multi, cheats, briefings)
+
+CAR:
+0x0	main object position
+0x4	wheel 1 position
+0x8	wheel 2 position
+0xC	wheel 3 position
+0x10	wheel 4 position
+0x14	
+0x18	dimentions wheel 1
+0x1C	dimentions wheel 2
+0x20	dimentions wheel 3
+0x24	dimentions wheel 4
+0x28	dimentions main body
+
+AIRCRAFT:
+0x0	main 01 heading
+0x4	main position
+0x8	forward prop
+0xC	rear prop
+0x10	position for turret
+0x14	prop dimention
+
+WIN_DOOR:	note that first glass DL is dud, second generates glass
+0x0	dimentions of door
+0x4	toggle for glass
+0x8	dimentions of glass
+0xC	glass
+	Generic DUD glass display list:
+	E7000000 00000000	pipesync
+	BA000C02 00002000	setothermode.h: bi-level interpretation
+	B8000000 00000000	enddl
+
+TANK:
+0x0	144	main position
+0x4	18c	position of cupola
+0x8	204	group 2 position	parent of turret, antennae, etc
+0xC	21c	group 3 position
+0x10	234	group 4 position 	child of group 3; parent of firing effect
+0x14	15c	dimentions of tank chassis
+0x18	1a4	dimentions of cupolla
+0x1C	24c	firing effect (0C)
+0x20	264	toggle for turret
+
+HAT:
+none
+
+STD_OBJ:
+none
+
+CHR_OBJ:	note when fields aren't present set to NULL
+0x0	gunfire
+0x4	group 1 position	rifles: isolated 15 command
+0x8	toggle secondary flare	rifles: horizontal flare
+
+RARE:
+Unknown Object...
+
+ARM:
+0x0	watch hour hand position
+0x4	watch minute hand position
+0x8	watch second hand position
+0xC	toggle watch dial face
+0x10	boiler suit cuff toggle
+0x14	brosnan tux cuff toggle
+0x18	connery tux cuff toggle
+0x1C	blue suit cuff toggle
+0x20	jungle suit cuff toggle
+0x24	snowsuit cuff toggle
+
+STD_GUN:	hands are optional!
+0x0	position (15), possibly of ejected shells (projectile weapons only)
+0x4	gunfire toggle (on-screen blast from gun barrel)
+0x8	gunfire flash position (linked to render for flash)
+0xC	gunfire position (origin of rendered beam)
+0x10	horiz. gunfire flash/special feature position
+0x14	hammer position
+0x18	position of index [trigger] finger
+0x1C	position for 09 linked to trigger/slide
+0x20	toggle (12) for fingers (first joint)
+0x24	toggle (12) for index [trigger] finger
+0x28	toggle (12) for 09s linked to tips of middle/ring/pinky fingers
+0x2C	toggle (12) for thumb
+0x30	toggle (12) for flesh of hand
+0x34	toggle (12) for arm
+0x38	throwing knife toggle
+0x3C	throwing knife blade toggle
+0x40	taser animation display list
+0x44	taser animation toggle
+0x48	shotgun shell toggle
+0x4C	shotgun shell toggle
+0x50	shotgun shell toggle
+0x54	shotgun shell toggle
+0x58	shotgun shell toggle
+0x5C	autoshotgun shell toggle
+0x60	autoshotgun shell toggle
+0x64	autoshotgun shell toggle
+0x68	autoshotgun shell toggle
+0x6C	autoshotgun shell toggle
+//these and below are hand...
+0x70	button? 0F type
+0x74	boiler arm toggle
+0x78	tux arm toggle
+0x7C	connery arm toggle
+0x80	bluesuit arm toggle
+0x84	jungle arm toggle
+0x88	snowsuit toggle
+0x8C	toggle (12) for barrel (odd that.  Could be to kill entire weapon...)
+
+NULL_OBJ:
+N/A
+
+BARREL_GUN:	all fields appear valid
+same as STD_GUN, except entry #5
+...
+0x10	rotating barrel
+...
+
+UZI_GUN:	only first five fields filled; rest appear valid
+same as STD_GUN; uses a special flash effect in entry #5
+...
+0x10	gunfire flash position (linked to plane with second gunfire effect)
+...
+
+CTRL:
+0x0	primary position data (all commands are its children)
+0x4	start button position
+0x8	directional pad position
+0xC	control stick position
+0x10	c button position
+0x14	c button position
+0x18	c button position
+0x1C	c button position
+0x20	a button position
+0x24	b button position
+0x28	r button position
+0x2C	l button position
+0x30	z button position
+0x34	switch for body (12 type)
+
+ACTOR:
+0x0	right arm position
+0x4	right hand position
+0x8	left hand position
+0xC	left hand position
+0x10	head position or placeholder (17)
+0x14	right hand position
+0x18	hat position
+

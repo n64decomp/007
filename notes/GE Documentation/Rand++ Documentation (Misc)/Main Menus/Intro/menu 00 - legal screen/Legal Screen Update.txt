@@ -1,0 +1,151 @@
+Text appearing on legal screen spans 8002A9CC-8002AABC	[0x9C3C-0x9D2C]
+Init. for legal screen object 8002AABC-8002AAF8	[0x9D2C-0x9D68]
+
+8002AABC:
+0,1,3,0,
+0,0,0,0,
+0,0,0,0,
+0,0,0,0
+
+
+converted so as not to require offset value:
+00DC	0017	01	9C07
+0022	004C	00	9C08
+00E2	004D	00	9C09
+00E2	005A	00	9C0A
+00E2	0067	00	9C0B
+00E2	0073	00	9C0C
+00E3	007F	00	9C0D
+0132	00CC	01	9C0E
+003C	00A2	00	9C0F
+003C	00C2	00	9C10
+00DC	0103	01	9C11
+00DC	0111	01	9C12
+
+hacked format:
+0x0	2	x pos
+0x2	2	y pos
+0x4	1	alignment
+0x5	1	final entry if !=0
+0x6	2	textID#
+
+Note: could save more room by changing order of below.
+	Should go back and determine exactly what is being done and minimize.
+7F00A8E0	3F410	displays legal screen
+	accepts: A0=p->display list
+27BDFED8	ADDIU	SP,SP,FED8
+AFBF0044	SW	RA,0044 (SP)
+AFB40040	SW	S4,0040 (SP)
+AFB3003C	SW	S3,003C (SP)
+AFB20038	SW	S2,0038 (SP)
+AFB10034	SW	S1,0034 (SP)
+AFB00030	SW	S0,0030 (SP)
+//7F00A938:	display image
+0FC07034	JAL	7F01C0D0	;insert image DL via data @ 800232A8
+27B100E4	ADDIU	S1,SP,00E4	;S1=SP+E4: p->buffer
+0040A025	OR	S4,V0,R0	;S4=V0: update DL
+//7F00A904:	buffer can init to 0
+//Utility.memset0 patch version:
+02202025	OR	A0,S1,R0
+0FC00020	JAL	7F000080
+24050040	ADDIU	A1,R0,0040
+//else:
+2625003C	ADDIU	A1,S1,003C
+ACA00000	SW	R0,0000 (A1)
+14B1FFFD	BNE	A1,S1,-2
+24A5FFFC	ADDIU	A1,A1,FFFC
+//7F00A988:
+3C138003	LUI	S3,8003
+8E73A958	LW	S3,A958 (S3)	;S3=8002A958
+8E6A0008	LW	T2,0008 (S3)	;T2=p->header entry for legal screen
+8552000E	LH	S2,000E (T2)	;A0=header+E: #obj.groups
+0FC2F5C5	JAL	7F0BD714	;p->A0 allocated space in geometry mem
+00122180	SLL	A0,S2,0x6	;A0<<=6: A0*=40
+AE220010	SW	V0,0010 (S1)	;S1+10=V0: p->mem
+AE62000C	SW	V0,000C (S3)	;T5+C= p->mem: save to obj.instance; org. followed this JAL
+//7F00A948:
+3C013F80	LUI	AT,3F80
+00002825	OR	A1,R0,R0	;A1=0
+00003025	OR	A2,R0,R0	;A2=0
+00402025	OR	A0,V0,R0	;A0=S0: p->buffer
+3C07457A	LUI	A3,457A		;A3=4000.0	(457A0000)
+AFA00010	SW	R0,0010 (SP)	;SP+10=0
+AFA00014	SW	R0,0014 (SP)	;SP+14=0
+AFA00018	SW	R0,0018 (SP)	;SP+18=0
+AFA0001C	SW	R0,001C (SP)	;SP+1C=0
+AFA10020	SW	AT,0020 (SP)	;SP+20=1.0
+0FC165A5	JAL	7F059694
+AFA00024	SW	R0,0024 (SP)	;SP+24=0
+//
+0FC1BBF1	JAL	7F06EFC4	;NSNA:	0FC1BBDA	JAL	7F06EF68
+02602025	OR	A0,S3,R0	;A0=S3: p->obj.instance
+24180003	ADDIU	T8,R0,0003
+AE380008	SW	T8,0008 (S1)	;3->S1+8: already initialized to value
+AE34000C	SW	S4,000C (S1)	;S1+C=S4: save DL
+02202025	OR	A0,S1,R0	;A0=S1: p->buffer
+0FC1D1A1	JAL	7F074684
+02602825	OR	A1,S3,R0	;A1=p->obj.instance for legal screen
+//
+00008025	OR	S0,R0,R0	;S0=0	init.count
+00008825	OR	S1,R0,R0	;S1=0	init.offset
+//	loop from here
+0212082A	SLT	AT,S0,S2
+1020000B	BEQ	AT,R0,7F00AA58	;branch if count<#groups
+8E6E000C	LW	T6,000C (S3)	;T6=p->mem
+//7F00AA10:	fiddle with each object group
+27A50058	ADDIU	A1,SP,0058	;A1=S2: p->buffer
+0FC16008	JAL	7F058020
+01D12021	ADDU	A0,T6,S1	;A0=T6+S1: mem+offset
+27A40058	ADDIU	A0,SP,0058	;A0=S2: p->buffer
+8E69000C	LW	T1,000C (S3)	;T1=p->mem
+0FC16327	JAL	7F058C9C
+01312821	ADDU	A1,T1,S1	;A1=T1+S1: mem+offset
+26100001	ADDIU	S0,S0,0001	;S0++	count++
+1000FFF4	BEQ	R0,R0,7F00AA14	;check for more groups
+26310040	ADDIU	S1,S1,0040	;S1+=40	offset+=40
+//7F00AA58:	begin text display
+0FC2B366	JAL	7F0ACD98	;microcode initializer for text
+8E24000C	*LW	A0,000C (S1)	;A0=S4: p->DL, updated by routine up there
+//7F00AA60:	base addresses for entries and font controllers
+3C10	LUI	S0,7Fxx
+3C138004	LUI	S3,8004
+8E720EB8	LW	S2,0EB8 (S3)
+8E730EB4	LW	S3,0EB4 (S3)
+//7F00AA74:	display each one aligned at said position
+0040A025	OR	S4,V0,R0	;S4=V0: update DL
+0FC30776	JAL	7F0C1DD8	;V0=p->text
+9604	LHU	A0,xxx6 (S0)	;A0=base+6: textID
+8605	LH	A1,xxx0 (S0)	;A1=base+0: xpos
+8606	LH	A2,xxx2 (S0)	;A2=base+2: ypos
+8207	LB	A3,xxx4 (S0)	;A3=base+4: alignment
+AFA20014	SW	V0,0014 (SP)	;SP+14=p->text
+02802025	OR	A0,S4,R0	;A0=S4: p->DL
+AFA00010	SW	R0,0010 (SP)	;SP+10=width multiplier, which is now nonexistant
+AFB20018	SW	S2,0018 (SP)	;SP+18=font controller 1
+0FC029F9	JAL	7F00A7E4	;display aligned white text to screen
+AFB3001C	SW	S3,001C (SP)	;SP+1C=font controller 2
+820D	LB	T5,xxx5 (S0)	;T5=base+5: flag
+15A0FFF2	BNEZ	T5,7F00AA74	;loop so long as nonzero
+26100008	ADDIU	S0,S0,0008	;S0+=8	next entry
+//7F00AAB0:	return
+8FBF0044	LW	RA,0044 (SP)
+8FB00030	LW	S0,0030 (SP)
+8FB10034	LW	S1,0034 (SP)
+8FB20038	LW	S2,0038 (SP)
+8FB3003C	LW	S3,003C (SP)
+8FB40040	LW	S4,0040 (SP)
+03E00008	JR	RA
+27BD0128	ADDIU	SP,SP,0128
+
+//7F00AA3C	3F56C
+entries
+//7F00AAEC	3F61C	next subroutine
+
+How did I kill the images on the screen?
+Copies to allocated okay.
+800B9220
+3F800000	00000000	80000000	00000000
+80000000	3F800000	80000000	00000000
+00000000	00000000	3F800000	00000000
+80000000	80000000	C57A0000	3F800000
+

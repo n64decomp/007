@@ -1,0 +1,483 @@
+Can't go roomwise, but can rewrite original to random select from spawns outside distance.
+Otherwise, worst case chooses the one everybody is furthest from.
+
+7F089F68	A0->invisible to guards flag
+7F089F74	V0= invisible to guards flag
+
+use this new NSNA function:
+7F0796C0	AE1F0	F0=distance between two positions
+	accepts: A0=p->xyz (@+8,C,10), A1=p->xyz (@+8,C,10)
+
+You need distances anyway.  Generate list of all distances, and use upper segment as a list of all valids.
+
+compensating for stage scale:
+Facility	3F9A6DF0	1.206480	MP arena is 6200x4500 (rooms sometimes 1000 each!) spawns are all ~1000 away though, so maybe okay here
+Archives	3F01BCB6	0.506786	1000 okay
+BunkerII	3F0A1081	0.539314	1000.0 okay!	1200 would be better, maybe even 1500
+Statue  	3DDB8D2D	0.107203	2000x200	even 250/300 would be okay...
+Caverns 	3E895721	0.268243	2000x2700	1000 okay, but 500 would be better
+Cradle  	3E715F16	0.235714	4000x4000	500 would be a lot better
+Egyptian	3E831CEB	0.256080	2000x3000	500 would be okay, though 1000 would also work
+Temple  	3EF15F16	0.471429	3400x3100	1000 is okay
+Complex 	3F715F16	0.942857	4200x4850	1500 would be more fair..., 2000 even
+Stacks  	3F28F5C2	0.660000	should be closer to 2000 or at least 1500
+Caves   	3E10D2A7	0.141429	400x200
+
+NSNA/smartspawns should include type 0A, 8bytes with this format:
+0x0	3	smartspawn flags; push >>8 for actual
+0x3	1	0A
+0x4	4	(float) distance
+  Nonpatched should ignore, since float must be set nonzero.  Using full float allows you to be really specific.
+  
+  That requires a slight amendment below, reading F20's value from whatever location you stuffed it in.
+  Also remember to tack something into MP initialization (or generic init) to set the default value of 1000.0.
+
++_+
+
+7F0790F0	ADC20	V0=selected spawn#
+	note: spawncap extension hack shown below!
+3C018008	LUI	AT,8008
+8C219C28	LW	AT,9C28 (AT)	;T6=80079C28: #spawns (hack)
+00011080	SLL	V0,AT,0x2	;V0=#spawns->offset
+27BDFFA0	ADDIU	SP,SP,FFA0
+03A2E823	SUBU	SP,SP,V0	;SP-=space for all spawns
+AFBF0040	SW	RA,0040 (SP)
+AFB60038	SW	S6,0038 (SP)
+AFB50034	SW	S5,0034 (SP)
+AFB40030	SW	S4,0030 (SP)
+AFB3002C	SW	S3,002C (SP)
+AFB20028	SW	S2,0028 (SP)
+AFB10024	SW	S1,0024 (SP)
+AFB00020	SW	S0,0020 (SP)
+F7B40018	SDC1	F20,0018 (SP)
+00208025	OR	S0,AT,R0	;S8=#spawns
+1A000033	BLEZ	S0,7F0791F8	;return if invalid #spawns
+00009825	OR	S3,R0,R0	;S3=0	init spawncount
+//7F079130:	CHANGE NEXT TWO LINES to LUI AT,addy; LWC1 F20,addy (AT) for smartspawn4 extension
+3C01447A	LUI	AT,447A		;	;3C018005	LUI	AT,8005
+4481A000	MTC1	AT,F20		;F20=1000.0	;C4345290	LWC1	F20,5290 (AT)
+3C158008	LUI	S5,8008
+26B59C2C	ADDIU	S5,S5,9C2C	;S5=80079C2C: spawn pointers
+00009025	OR	S2,R0,R0	;count of valid spawns
+0000A025	OR	S4,R0,R0	;spawn iterator
+44802000	MTC1	R0,F4		;F4=furthest distance
+//7F07914C:	loop to find longest distance
+2416000C	ADDIU	S6,R0,000C
+3C017F80	LUI	AT,7F80
+44811000	MTC1	AT,F2
+//7F079158:	figure shortest distance between each point and any player
+3C058008	LUI	A1,8008
+00B62021	ADDU	A0,A1,S6
+8C849EE0	LW	A0,9EE0 (A0)
+1080000A`	BEQ	A0,R0,7F079190
+8CA5A0B0	LW	A1,A0B0 (A1)
+10850008`	BEQ	A0,A1,7F079190
+24840484	ADDIU	A0,A0,0484	;A0=BONDdata+484: xyzpos-8, to be compatible with thingy
+8EA50000	LW	A1,0000 (S5)
+0FC1E5B0	JAL	7F0796C0	;F0=distance
+24A5FFF8	ADDIU	A1,A1,FFF8	;A1=p->spawn preset-8, to be compatible
+4602003C	C.LT.S	F0,F2
+00000000	NOP
+45030001	BC1TL	7F079190	;branch if greater than given value
+46000086	MOV.S	F2,F0	;F2=value
+16C0FFF1`	BNEZ	S6,7F079158
+26D6FFFC	ADDIU	S6,S6,FFFC	;S7-=4
+//7F079198:	keep ID for furthest overall distance
+4604103C	C.LT.S	F2,F4
+00000000	NOP
+45010003	BC1T	7F0791B0	;branch if new value (F2) < old one (F4)
+00000000	NOP
+46001106	MOV.S	F4,F2	;F4=value
+02809825	OR	S3,S4,R0	;S3=spawn index
+//7F0791B0:	if < 1000, save ID
+4614103C	C.LT.S	F2,F20
+00121080	SLL	V0,S2,0x2
+45010003	BC1T	7F0791C8
+005D1021	ADDU	V0,V0,SP	;V0=p->indices on stack
+AC540050	SW	S4,0050 (V0)
+26520001	ADDIU	S2,S2,0001
+//7F0791C8:	loop for each spawn
+26940001	ADDIU	S4,S4,0001	;spawn#
+1690FFDF`	BNE	S4,S0,7F07914C
+26B50004	ADDIU	S5,S5,0004	;p->next spawn
+//7F0791D4:	choose one of these IDs
+12400008	BEQ	S2,R0,7F0791F8	;branch if no valid spawns; S3 from above becomes return value
+00000000	NOP
+0C002914	JAL	7000A450	;V0= random
+00000000	NOP
+0052001B	DIVU	V0,S2
+00009810	MFHI	S3		;V0=rand % #spawns; sorry for burning cycles
+00131080	SLL	V0,S3,0x2
+005D1021	ADDU	V0,V0,SP
+8C530050	LW	S3,0050 (V0)	;S3=randomly selected index from list
+//7F0791F8:	return
+8FBF0044	LW	RA,0040 (SP)
+02601025	OR	V0,S3,R0	;V0=spawn#
+00100880	SLL	AT,S0,0x2	;V0=#spawns->offset
+D7B40018	LDC1	F20,0018 (SP)
+8FB00020	LW	S0,0020 (SP)
+8FB10024	LW	S1,0024 (SP)
+8FB20028	LW	S2,0028 (SP)
+8FB3002C	LW	S3,002C (SP)
+8FB40030	LW	S4,0030 (SP)
+8FB50034	LW	S5,0034 (SP)
+8FB60038	LW	S6,0038 (SP)
+03A1E821	ADDU	SP,SP,AT	;tack back on offset for spawn list
+03E00008	JR	RA
+27BD0060	ADDIU	SP,SP,0060
+
+  Note this would need to be revised for proper spawning with bots, unless you don't really care about them ;*)
+
++_+
+
+7F091B64 is used to activate a particular cheat#.  That's looped per-player in the ordinary route 7F091AAC.  However, it really only activates the cheat for the cur.player#.
+7F091B64	accepts: A0=activate cheat# for cur.player
+7F0927BC	V0=TRUE if cheat A0 activated
+	You're testing for #22 (0x16)
+This kills dependance on 80055290-800552AC!
+
+7F0888E8	BD418	MP respawn
+	accepts: no arguments
+27BDFFA8	ADDIU	SP,SP,FFA8
+3C0F8003	LUI	T7,8003
+AFBF001C	SW	RA,001C (SP)
+AFB10018	SW	S1,0018 (SP)
+AFB00014	SW	S0,0014 (SP)
+8DE1688C	*LW	AT,688C (T7)	;AT=8003688C: NULL.xpos
+AFA1004C	*SW	AT,004C (SP)
+8DE16890	*LW	AT,6890 (T7)	;T0=80036890: NULL.ypos
+AFA10050	*SW	AT,0050 (SP)
+8DE16894	LW	AT,6894 (T7)	;AT=80036894: NULL.zpos
+AFA10054	*SW	AT,0054 (SP)	;copy 8003688C-94 -> SP+4C-58
+3C108007	LUI	S0,8007
+0FC1E4FB	JAL	7F0793EC	;initialize playerdata
+8E105D08	LW	S0,5D08 (S0)	;S0=80075D08: p->setup.intro
+0FC1E62E	JAL	7F0798B8
+3C118008	LUI	S1,8008
+//7F088930:
+8E31A0B0	*LW	S1,A0B0 (S1)	;S1=8007A0B0: cur.playerdata
+240C0001	ADDIU	T4,R0,0001
+24020007	ADDIU	V0,R0,0007
+AE2000D8	SW	R0,00D8 (S1)	;0->BONDdata+D8: disable player button control
+240F0002	ADDIU	T7,R0,0002
+2404FFFF	ADDIU	A0,R0,FFFF
+AE200428	*SW	R0,0428 (S1)	;0->BONDdata+428: 
+AE200424	*SW	R0,0424 (S1)	;0->BONDdata+424: 
+AE2C0420	*SW	T4,0420 (S1)	;1->BONDdata+420: 
+AE2229B8	*SW	V0,29B8 (S1)	;7->BONDdata+29B8: 
+AE2229D4	*SW	V0,29D4 (S1)	;7->BONDdata+29D4: 
+AE201064	*SW	R0,1064 (S1)	;0->BONDdata+1064: 
+0FC228E0	JAL	7F08A380	;unset flags A0 at BONDdata+11D8
+AE2F1128	*SW	T7,1128 (S1)	;2->BONDdata+1128: 
+0FC22A4A	JAL	7F08A928	;unset flags A0 at 800368B4
+2404FFFF	ADDIU	A0,R0,FFFF	;A0= -1
+0FC26919	JAL	7F09A464	;V0=#players
+00000000	NOP
+//7F08899C:	note: spawncap extension hack shown below!
+28410002	SLTI	AT,V0,0002
+54200008	*BNEL	AT,R0,7F088998	;branch if solo
+00001825	OR	V1,R0,R0	;index=0
+3C098008	LUI	T1,8008
+8D299C28	LW	T1,9C28 (T1)	;T1=80079C28: #spawns
+59200004	BLEZL	T1,7F088998	;branch if invalid or zero
+00001825	OR	V1,R0,R0
+0FC1E43C	JAL	7F0790F0	;V0=selected spawn#
+00000000	NOP
+00021825	OR	V1,V0,R0	;V1=V0: index
+//7F088998:	set player position to selected spawn
+00035080	SLL	T2,V1,0x2	;T2=spawn#->offset
+3C028008	LUI	V0,8008
+004A1021	ADDU	V0,V0,T2
+8C429C2C	LW	V0,9C2C (V0)	;V0=80079C2C: p->spawns
+C4440000	LWC1	F4,0000 (V0)	;F4=spawn.xpos
+E7A4004C	SWC1	F4,004C (SP)	;SP+4C=spawn.xpos
+C4460008	LWC1	F6,0008 (V0)	;F6=spawn.zpos
+8FA5004C	LW	A1,004C (SP)	;A1=xpos
+E7A60054	SWC1	F6,0054 (SP)	;SP+54=spawn.zpos
+8C440028	LW	A0,0028 (V0)	;A0= +28: p->tile
+8FA60054	LW	A2,0054 (SP)	;A2=zpos
+0FC20358	JAL	7F080D60
+AFA40044	SW	A0,0044 (SP)	;SP+44=p->tile
+C62829BC	*LWC1	F8,29BC (S1)	;F8=BONDdata+29BC
+46004280	ADD.S	F10,F8,F0
+E7AA0050	SWC1	F10,0050 (SP)
+E6200070	*SWC1	F0,0070 (S1)	;F0->BONDdata+70
+0C002914	JAL	7000A450	;V0=random
+E7A0003C	SWC1	F0,003C (SP)
+44828000	MTC1	V0,F16
+3C018005	LUI	AT,8005
+C42C5284	LWC1	F12,5284 (AT)	;F12=80055284: 
+C7A2003C	LWC1	F2,003C (SP)
+04410005	BGEZ	V0,7F088A0C	;branch if positive
+468084A0	CVT.S.W	F18,F16	;F18=(float) random
+3C014F80	LUI	AT,4F80
+44812000	MTC1	AT,F4		;F4=4294967296.0	[4F800000]
+00000000	NOP
+46049480	ADD.S	F18,F18,F4	;make positive
+//7F088A0C:	move player to position
+3C012F80	LUI	AT,2F80
+44813000	MTC1	AT,F6
+3C0143B4	LUI	AT,43B4
+44815000	MTC1	AT,F10		;F10=360.0	[43B40000]
+46069202	MUL.S	F8,F18,F6
+3C018005	LUI	AT,8005
+460C4002	MUL.S	F0,F8,F12
+27A5004C	ADDIU	A1,SP,004C	;A1=SP+4C: p->xyz positions
+460A0402	MUL.S	F16,F0,F10
+E7A00048	SWC1	F0,0048 (SP)
+460C8103	DIV.S	F4,F16,F12
+E6240148	*SWC1	F4,0148 (S1)	;F4->BONDdata+148: lateral rotation 1st
+E6220074	*SWC1	F2,0074 (S1)
+C4325288	LWC1	F18,5288 (AT)	;F18=80055288: 
+46121183	DIV.S	F6,F2,F18
+E626006C	*SWC1	F6,006C (S1)
+8FA60044	LW	A2,0044 (SP)	;A2=SP+44: p->target tile
+0FC1F1CC	JAL	7F07C730	;move player to location
+26240488	*ADDIU	A0,S1,0488	;A0=BONDdata+488: p->cur.tile, though really position block
+//7F088AA0:	move player's viewport etc. to position
+0FC15FAB	JAL	7F057EAC
+C7AC0048	LWC1	F12,0048 (SP)
+46000207	NEG.S	F8,F0
+44805000	MTC1	R0,F10
+E6280498	*SWC1	F8,0498 (S1)	;F8->BONDdata+498
+E62A049C	*SWC1	F10,049C (S1)	;F10->BONDdata+49C
+0FC15FA8	JAL	7F057EA0
+C7AC0048	LWC1	F12,0048 (SP)
+3C018005	LUI	AT,8005
+C42C528C	LWC1	F12,528C (AT)	;F12=8005528C: 0.1	[3DCCCCD0]
+E62004A0	*SWC1	F0,04A0 (S1)	;F0->BONDdata+4A0
+C7A2004C	LWC1	F2,004C (SP)
+E6220408	*SWC1	F2,0408 (S1)	;F2->BONDdata+408: xpos
+8E2900A8	*LW	T1,00A8 (S1)	;T1=p->pos.data
+E5220008	SWC1	F2,0008 (T1)	;F2->pos.data.x
+C7A20050	LWC1	F2,0050 (SP)
+E622040C	*SWC1	F2,040C (S1)	;F2->BONDdata+40C: ypos
+E522000C	*SWC1	F2,000C (T1)	;F2->pos.data.y
+C7A20054	LWC1	F2,0054 (SP)
+E6220410	*SWC1	F2,0410 (S1)	;F2->BONDdata+410: zpos
+E5220010	*SWC1	F2,0010 (T1)	;F2->pos.data.z
+8FAE0044	LW	T6,0044 (SP)
+AD2E0014	*SW	T6,0014 (T1)	;T6->pos.data.tile
+C63004B4	*LWC1	F16,04B4 (S1)	;F16=BONDdata+4B4: xpos
+460C8103	DIV.S	F4,F16,F12	;F4=xpos/10
+E62403B8	*SWC1	F4,03B8 (S1)	;F4->BONDdata+3B8
+C63004B8	*LWC1	F16,04B8 (S1)	;F18=BONDdata+4B8: ypos
+460C8103	DIV.S	F4,F16,F12	;F6=ypos/10
+E62403BC	*SWC1	F4,03BC (S1)	;F6->BONDdata+3BC
+C63004BC	*LWC1	F16,04BC (S1)	;F8=BONDdata+4BC: zpos
+460C8103	DIV.S	F4,F16,F12	;F10=zpos/10
+0FC22FFC	JAL	7F08BFF0	;reinitialize player inventory
+E62403C0	*SWC1	F4,03C0 (S1)	;F10->BONDdata+3C0
+//7F088ADC:	fry ammo totals
+26241130	*ADDIU	A0,S1,1130
+0FC0186C	*JAL	7F0061B0	;initialize A1 bytes at A0 (wordish)
+24050078	*ADDIU	A1,R0,0078
+//7F088AF4:	parse intro block
+12000020	*BEQ	S0,R0,7F088B78	;skip if no intro block
+//7F088AF8:	offset past intro type's data
+3C017F00	*LUI	AT,7F00
+92020003	*LBU	V0,0003 (S0)	;V0=intro.type
+00220821	*ADDU	AT,AT,V0
+90215F00	*LBU	AT,5F00 (AT)	;AT=length of command
+02018021	*ADDU	S0,S0,AT	;S0=p->next command
+//7F088BCC:	loop for each type, looking for items and ammo
+24010009	*ADDIU	AT,R0,0009
+10410019	BEQ	V0,AT,7F088B78	;quit if type 9 (EOL)
+24010001	*ADDIU	AT,R0,0001
+//7F088BF0:	intro type 1: weapon
+1422000D	*BNE	AT,V0,7F088B50	;branch if not type 1
+24010002	*ADDIU	AT,R0,0002
+0FC017AD	JAL	7F006EB4	;smartspawn
+8E04FFFC	*LW	A0,FFFC (S0)
+1040FFF3	*BEQ	V0,R0,7F088AF8	;branch if set mismatch
+8E05FFF8	LW	A1,FFF8 (S0)	;A1=cmd+8: left weapon
+3C027F09	*LUI	V0,7F09
+04A20002	BLTZL	A1,+2		;branch if single weapon
+2442C488	*ADDIU	V0,V0,C488
+2442C50C	*ADDIU	V0,V0,C50C
+0040F809	*JALR	RA,V0
+8E04FFF4	LW	A0,FFF4 (S0)	;A0=cmd+4: right weapon
+1000FFEB	*BEQ	R0,R0,7F088AF8
+00000000	*NOP
+//7F088B50:	intro type 2: ammo
+1422FFE9	*BNE	AT,V0,7F088AF8
+00000000	*NOP
+0FC017AD	JAL	7F006EB4	;smartspawn
+8E04FFFC	*LW	A0,FFFC (S0)
+1040FFE5	*BEQ	V0,R0,7F088AF8	;branch if set mismatch
+8E04FFF4	LW	A0,FFF4 (S0)	;A0=cmd+4: type
+0FC1A44C	JAL	7F069130	;add ammo type A0, total A1 to inventory
+8E05FFF8	LW	A1,FFF8 (S0)	;A1=cmd+8: quantity
+//7F088C50:
+1000FFE1	*BEQ	R0,R0,7F088AF8
+00000000	NOP
+//7F088C8C:	BD7BC	fade in
+3C018005	LUI	AT,8005
+AE200078	*SW	R0,0078 (S1)	;BONDdata+0x78= 0.0
+C43052AC	LWC1	F16,52AC (AT)	;F16=800552AC:	-0.0001 [B8D1B717]
+3C0142F0	LUI	AT,42F0
+44816000	MTC1	AT,F12		;F12= 120.0 [42F00000]	timer (ms.)
+E630007C	*SWC1	F16,007C (S1)	;BONDdata+0x7C= -0.0001
+3C013F80	LUI	AT,3F80
+44817000	MTC1	AT,F14		;F14= 1.0 [3F800000]	final level 100%
+0FC20284	JAL	7F080A10	;set cur. player fade
+AE200080	*SW	R0,0080 (S1)	;BONDdata+0x80= 0.0
+//7F088BA0:	New bit - activate pertinent cheats
+2410004B	ADDIU	S0,R0,004B	;S2=4B	#possible cheats
+//7F088BAC:	loop for each remaining cheat!
+3C028007	LUI	V0,8007
+00501021	ADDU	V0,V0,S0	;V0+=S0: p->cheat's activated flag
+904296A0	LBU	V0,96A0 (V0)	;T1=activated flag
+10400007	BEQ	V0,R0,7F088BDC	;skip if not set
+00000000	NOP
+0FC24697	JAL	7F091A5C	;V0=TRUE if gameplay cheat
+02002025	OR	A0,S0,R0	;A0=S0: cur.cheat#
+14400003	BNE	V0,R0,7F088BDC	;skip if not pertinent
+2631FFFF	ADDIU	S1,S1,FFFF	;#cheats--	even if not pertinent you have an activation hit
+0FC246D9	JAL	7F091B64	;activate cheat A0 for cur.player
+02002025	OR	A0,S0,R0	;A0=S0: cur.cheat#
+2E020002	SLTIU	V0,S0,0002	;TRUE if 1 (final entry)
+1040FFF2	BEQ	V0,R0,7F088BAC	;loop for remaining cheats
+2610FFFF	ADDIU	S0,S0,FFFF	;S0--	count--
+//7F088BE8:	return
+8FBF001C	LW	RA,001C (SP)
+8FB10018	LW	S1,0018 (SP)
+8FB00014	LW	S0,0014 (SP)
+03E00008	JR	RA
+27BD0058	ADDIU	SP,SP,0058
+//
+	NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+
+remember to overhaul 8002A900 to be #cheats, not just any amount of cheats...
+
+Moving this to make it "generic", as in unreliant on other patched features.
+maybe add in a memory initializer
+//7F00007C:	34BAC	memset A0 -> A1
+00A42823	SUBU	A1,A1,A0
+//7F000080:	34BB0	normal entry point: memset A1 bytes at A0 (wordwise)
+2CA10011	SLTIU	AT,A1,0011
+14200008	BNE	AT,R0,single
+00801025	OR	V0,A0,R0
+AC400000	SW	R0,0000 (V0)
+AC400004	SW	R0,0004 (V0)
+AC400008	SW	R0,0008 (V0)
+AC40000C	SW	R0,000C (V0)
+24420010	ADDIU	V0,V0,0010
+1000FFF7	BEQ	R0,R0,-loop
+24A5FFF0	ADDIU	A1,A1,FFF0
+//
+2CA10005	SLTIU	AT,A1,0005
+24A5FFFC	ADDIU	A1,A1,FFFC
+24420004	ADDIU	V0,V0,0004
+5020FFFC	BEQL	AT,R0,words
+AC40FFFC	SW	R0,FFFC (V0)
+//
+24420001	ADDIU	V0,V0,0001
+24A5FFFF	ADDIU	A1,A1,FFFF
+04A3FFFD	BGEZL	A1,R0,-3
+A040FFFF	SB	R0,FFFF (V0)
+03E00008	JR	RA
+00000000	NOP
+(switch 0FC0186B/0FC0186C with 0FC0001F/0FC00020)
+
+General cheat activation works like this at 7F0BDBFC and 7F0BEC44:
+(note 7F0BEC44 tests for nongameplay cheats, so would need flag to detect!)
+Would save space with those, but need something player-specific for above.
+	ADDIU	SP,SP,FFE0
+	SW	RA,001C (SP)
+	SW	S0,0018 (SP)
+	SW	S1,0014 (SP)
+	SW	A0,0010 (SP)
+//:
+	ADDIU	S0,R0,004B	;S0=4B	#possible cheats
+	LUI	V0,8003
+	LW	S1,A900 (V0)	;S1=8002A900: #active cheats
+//:	loop for each remaining cheat
+	BEQ	S1,R0,[7F0BDC50]	;skip if no cheats; note: omitting unimportant lines
+	LUI	V0,8007
+	ADDU	V0,V0,S0	;V0+=S0: p->cheat's activated flag
+	LBU	V0,96A0 (V0)	;T1=activated flag
+	BEQ	V0,R0,7F0BDC48	;skip if not set
+	NOP
+	JAL	7F091A5C	;V0=TRUE if last applicable gameplay cheat
+	OR	A0,S0,R0	;A0=S0: cur.cheat#
+	LW	AT,0010 (SP)	;AT=mode (0 if gameplay, 1 otherwise)
+	BEQ	V0,AT,7F0BDC48	;skip if not pertinent
+	ADDIU	S1,S1,FFFF
+	JAL	7F091AAC	;tests and reroutes cheat# A0 to activation routine
+	OR	A0,S0,R0	;A0=S0: cur.cheat#
+//:
+	SLTIU	V0,S0,0002	;TRUE if 1 (final entry)
+	BEQ	V0,R0,7F0BDC20	;loop for remaining cheats
+	ADDIU	S0,S0,FFFF	;S0--	count--
+//:
+	LW	S1,0014 (SP)
+	LW	S0,0018 (SP)
+	LW	RA,001C (SP)
+	JR	RA
+	ADDIU	SP,SP,FFE0
+
+rewrite so this isn't a stupid routine:
+7F091A5C	C658C	TRUE if not a gameplay cheat
+2C82001C	SLTIU	V0,A0,001C	;TRUE if gameplay cheat 1-1B
+03E00008	JR	RA
+38420001	XORI	V0,V0,0001	;V0=FALSE if gameplay
+
+This breaks DK mode.  You get ever smaller.  It's rigged to do the first 10 guards listed in guarddata instead of, say, a global or at least cur.#guards.
+Just fix DK instead.  Above works fine otherwise.
+
+Also, 1x weapons can now be patched to work MP.

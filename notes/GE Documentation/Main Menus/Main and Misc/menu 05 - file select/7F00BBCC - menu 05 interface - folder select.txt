@@ -1,0 +1,596 @@
+7F00BBCC:	406FC	menu 05 interface: folder select screen
+ADDIU	SP,SP,FEF0
+SW	RA,0044 (SP)
+SW	S3,0040 (SP)
+SW	S2,003C (SP)
+SW	S1,0038 (SP)
+SW	S0,0034 (SP)
+SDC1	F20,0028 (SP)
+OR	A0,R0,R0
+JAL	7000C3AC	;V0=buttons A1 pressed
+ORI	A1,R0,FFFF	;A1=any button
+BNEZ	V0,7F00BC4C	;branch if you pressed something
+NOP
+JAL	7000C0EC	;V0= current position left<->right of controller A0's control stick
+OR	A0,R0,R0
+SLTI	AT,V0,FFFB
+BNEZ	AT,7F00BC4C
+NOP
+JAL	7000C0EC	;V0= current position left<->right of controller A0's control stick
+OR	A0,R0,R0
+SLTI	AT,V0,0006
+BEQ	AT,R0,7F00BC4C
+NOP
+JAL	7000C1FC	;V0= current position up<->down of controller A0's control stick
+OR	A0,R0,R0
+SLTI	AT,V0,FFFB
+BNEZ	AT,7F00BC4C
+NOP
+JAL	7000C1FC	;V0= current position up<->down of controller A0's control stick
+OR	A0,R0,R0
+SLTI	AT,V0,0006
+BNEZ	AT,7F00BC58
+LUI	T6,8003
+//7F00BC4C:		reset inactivity timer
+LUI	AT,8003
+BEQ	R0,R0,7F00BC70
+SW	R0,A8CC (AT)	;0->8002A8CC: timer
+//7F00BC58:		increment inactivity timer
+LUI	T7,8005
+LW	T7,8374 (T7)	;T7=80048374: value tied to FPS control and monitor timers
+LW	T6,A8CC (T6)	;T6=8002A8CC: timer
+LUI	AT,8003
+ADDU	T8,T6,T7	;T8=timer+value
+SW	T8,A8CC (AT)	;revised time -> 8002A8CC
+//7F00BC70:
+LUI	AT,4270
+MTC1	AT,F12
+JAL	70004544
+NOP
+LUI	AT,8005
+JAL	70004590
+LWC1	F12,1A1C (AT)
+LUI	AT,42C8
+MTC1	AT,F12
+LUI	AT,8005
+JAL	70004650
+LWC1	F14,1A20 (AT)
+JAL	70004534
+OR	A0,R0,R0
+LUI	T9,8003
+ADDIU	T9,T9,AB94	;T9=8002AB94: 
+LUI	S0,8003
+LUI	S1,8007
+MTC1	R0,F20
+ADDIU	S1,S1,9620	;S1=80069620: 
+ADDIU	S0,S0,A95C	;S0=8002A95C: p->object instance
+SW	T9,0054 (SP)
+OR	S2,R0,R0
+ADDIU	S3,SP,0088
+LUI	AT,3F80
+MTC1	AT,F4
+MFC1	A1,F20
+MFC1	A2,F20
+ADDIU	A0,SP,00C8
+LUI	A3,457A
+SWC1	F20,0010 (SP)
+SWC1	F20,0014 (SP)
+SWC1	F20,0018 (SP)
+SWC1	F20,001C (SP)
+SWC1	F20,0024 (SP)
+JAL	7F059694
+SWC1	F4,0020 (SP)
+LW	A0,0054 (SP)
+JAL	7F058964	;initializes A1 and copies position data from A0 to A1+30
+OR	A1,S3,R0
+LUI	AT,8005
+LWC1	F12,1A24 (AT)
+JAL	7F058A7C	;multiply matrix A1 by F12?
+OR	A1,S3,R0
+ADDIU	A0,SP,00C8
+JAL	7F058068
+OR	A1,S3,R0
+LW	T0,0000 (S0)
+LW	T1,0008 (T0)
+LH	A0,000E (T1)
+SLL	T2,A0,0x6
+JAL	7F0BD714	;allocates A0 space in geometry memory [8008C24C]
+OR	A0,T2,R0
+LW	T3,0000 (S0)
+OR	A0,S3,R0
+SW	V0,000C (T3)
+LW	T4,0000 (S0)
+JAL	7F058020
+LW	A1,000C (T4)
+LW	A0,0000 (S0)
+LW	T5,000C (A0)
+LWC1	F6,0030 (T5)
+SWC1	F6,0000 (S1)
+LW	T6,000C (A0)
+LWC1	F8,0034 (T6)
+SWC1	F8,0004 (S1)
+LW	T7,000C (A0)
+LWC1	F10,0038 (T7)
+JAL	7F00B724	;disable all switches in object A0
+SWC1	F10,0008 (S1)
+JAL	7F01EBD0
+OR	A0,S2,R0
+LW	A0,0000 (S0)
+JAL	7F00B808	;selects and loads the Bond picture used on folders
+OR	A1,V0,R0
+LW	A0,0000 (S0)
+ADDIU	A1,R0,000E	;A1=E: shadow beneath photo
+JAL	7F00B7C0	;set offset A1 in obj.inst. A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LW	A0,0000 (S0)
+ADDIU	A1,R0,000D	;A1=D: folder select screen
+JAL	7F00B7C0	;set offset A1 in obj.inst. A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LW	T8,0054 (SP)
+ADDIU	S2,S2,0001
+ADDIU	AT,R0,0004
+ADDIU	T9,T8,000C
+SW	T9,0054 (SP)
+ADDIU	S0,S0,0004
+BNE	S2,AT,7F00BCD0
+ADDIU	S1,S1,000C
+LUI	V0,8003
+ADDIU	V0,V0,A8E8	;V0=8002A8E8
+LW	A0,0000 (V0)	;A0=8002A8E8: sel.folder#
+ADDIU	AT,R0,0064
+BLTZ	A0,7F00BE30	;branch if -1 (none selected)
+NOP
+BNE	A0,AT,7F00BE04	;branch if != 64 (blank)
+LUI	T0,8003
+LW	A0,A8EC (T0)	;A0=8002A8EC: folder# on stack?
+SW	A0,0000 (V0)	;folder#->8002A8E8: sel.folder#
+//7F00BE04:
+BLTZ	A0,7F00BE14	;branch if no folder# selected
+SLTI	AT,A0,0004
+BNEZ	AT,7F00BE1C	;branch if valid folder 0-3
+NOP
+//7F00BE14:
+SW	R0,0000 (V0)	;0->8002A8E8: sel.folder# = 0 (default)
+OR	A0,R0,R0	;A0=0
+//7F00BE1C:
+JAL	7F00BB68	;toggle deletion minimenu on folder A0
+NOP
+ADDIU	S1,R0,FFFF
+LUI	AT,8003
+SW	S1,A8E8 (AT)	;-1->8002A8E8: no folder selected
+//7F00BE30:		interface for folder deletion minimenu: press left on minimenu
+LUI	T1,8003
+LW	T1,A91C (T1)	;T1=8002A91C: folder# being deleted
+ADDIU	S1,R0,FFFF	;S1=-1
+OR	S2,R0,R0	;S2=0
+BLTZ	T1,7F00BFEC	;branch if -1 (not deleting a folder)
+LUI	S0,8003
+OR	A0,R0,R0	;A0=0: controller 1
+JAL	7000C3AC	;V0=buttons A1 pressed
+ADDIU	A1,R0,0222	;A1=0222: d-left, c-left, L
+BEQ	V0,R0,7F00BE90	;branch if buttons not pressed
+LUI	S0,8003
+ADDIU	S0,S0,A920	;S0=8002A920
+LW	T2,0000 (S0)	;T2=8002A920: selected option (0-confirm : 1-cancel)
+LUI	S3,8006
+ADDIU	S3,S3,3720	;S3=80063720
+BNEZ	T2,7F00BE90	;branch if cancel already highlighted
+ADDIU	T3,R0,0001
+SW	T3,0000 (S0)	;1->8002A920: highlight cancel
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+ADDIU	A1,R0,0012	;A1=012: tap SE
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+OR	A2,R0,R0	;A2=0: NULL p->data
+BEQ	R0,R0,7F00BED0
+NOP
+//7F00BE90:		press right on deletion minimenu
+LUI	S0,8003
+ADDIU	S0,S0,A920	;S0=8002A920
+OR	A0,R0,R0	;A0=0: controller 1
+JAL	7000C3AC	;V0=buttons A1 pressed
+ADDIU	A1,R0,0111	;A1=0111: d-right, c-right, R
+BEQ	V0,R0,7F00BED0	;branch if no puttons pressed
+NOP
+LW	T4,0000 (S0)	;T4=8002A920: highlighted option
+LUI	S3,8006
+ADDIU	S3,S3,3720	;S3=80063720
+BEQ	T4,R0,7F00BED0	;branch if confirm already highlighted
+ADDIU	A1,R0,0012	;A1=012: tap SE
+SW	R0,0000 (S0)	;0->8002A920: confirm selected
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+OR	A2,R0,R0	;A2=0: NULL p->data
+//7F00BED0:		detect control stick left on minimenu
+LUI	S3,8006
+ADDIU	S3,S3,3720	;S3=80063720
+JAL	7000C0EC	;return state of control stick L<->R
+OR	A0,R0,R0	;A0=0: controller 1
+SLTI	AT,V0,FFD3
+BEQ	AT,R0,7F00BF14	;branch if not left enough
+NOP
+LW	T5,0000 (S0)	;T5=8002A920: highlighted option
+ADDIU	T6,R0,0001
+ADDIU	A1,R0,0012	;A1=012: tap SE
+BNEZ	T5,7F00BF14	;branch if already selected
+OR	A2,R0,R0	;A2=0: NULL p->data
+SW	T6,0000 (S0)	;1->8002A920: cancel selected
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+BEQ	R0,R0,7F00BF4C
+OR	A0,R0,R0	;A0=0: controller 1
+//7F00BF14:		detect control stick right on minimenu
+JAL	7000C0EC	;return state of control stick L<->R
+OR	A0,R0,R0	;A0=0: controller 1
+SLTI	AT,V0,002E
+BNEL	AT,R0,7F00BF4C	;branch if not right enough
+OR	A0,R0,R0	;A0=0: controller 1
+LW	T7,0000 (S0)	;T7=8002A920: highlighted option
+ADDIU	A1,R0,0012	;A1=012: tap SE
+OR	A2,R0,R0	;A2=0: NULL p->data
+BEQL	T7,R0,7F00BF4C	;branch if already set
+OR	A0,R0,R0
+SW	R0,0000 (S0)	;0->8002A920: confirm highlighted
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+OR	A0,R0,R0	;A0=0: controller 1
+//7F00BF4C:		test if selected highlighted minimenu option
+JAL	7000C3AC	;V0=buttons A1 pressed
+ORI	A1,R0,B000	;A1=B000: A, Z, start
+BEQL	V0,R0,7F00BFB4	;branch if no button pressed
+OR	A0,R0,R0
+LW	T8,0000 (S0)	;T8=8002A920: highlighted option
+LUI	A0,8003
+ADDIU	A1,R0,0076	;A1=076: SE
+BNEZ	T8,7F00BF90	;branch if cancel is selected
+OR	A2,R0,R0	;A2=NULL p->data
+JAL	7F01EC04	;delete eeprom file A0
+LW	A0,A91C (A0)	;A0=8002A91C: folder# being deleted
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+ADDIU	A1,R0,0076	;A1=076: SE
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+OR	A2,R0,R0	;A2=NULL p->data
+BEQ	R0,R0,7F00BF98
+NOP
+//7F00BF90:		cancel minimenu
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+//7F00BF98:		remove menu from screen
+LUI	A0,8003
+JAL	7F00BB68	;toggle deletion minimenu on folder A0
+LW	A0,A91C (A0)	;A0=8002A91C: folder# being deleted
+LUI	AT,8003
+BEQ	R0,R0,7F00C31C
+SW	S1,A91C (AT)	;S1->8002A91C: reset to -1 (no folder selected for deletion)
+//7F00BFB0:		test if exiting minimenu
+OR	A0,R0,R0	;A0=0: controller 1
+JAL	7000C3AC	;V0=buttons A1 pressed
+ADDIU	A1,R0,4000	;A1=4000: B
+BEQ	V0,R0,7F00C31C	;branch if no button pressed
+LUI	A0,8003
+JAL	7F00BB68	;toggle deletion minimenu on folder A0
+LW	A0,A91C (A0)	;A0=8002A91C: folder# being deleted
+LUI	AT,8003
+SW	S1,A91C (AT)	;S1->8002A91C: reset to -1 (no folder selected for deletion)
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+ADDIU	A1,R0,0076	;A1=076: SE
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+OR	A2,R0,R0	;A2=NULL p->data
+BEQ	R0,R0,7F00C31C
+NOP
+//7F00BFEC:
+LUI	S1,8007
+ADDIU	S1,S1,9620	;S1=80069620 
+ADDIU	S0,S0,A95C	;S0=8002A95C
+ADDIU	S3,SP,007C
+ADDIU	T9,SP,0074
+SW	T9,0010 (SP)
+LW	A0,0000 (S0)	;A0=8002A95C: p->object instance
+ADDIU	A1,SP,0080
+OR	A2,S3,R0
+JAL	7F03F90C
+ADDIU	A3,SP,0078
+ADDIU	T0,SP,0064
+SW	T0,0010 (SP)
+OR	A0,S1,R0	;A0=S1: 80069620
+OR	A1,S3,R0	;A1=S3: 
+ADDIU	A2,SP,0074
+JAL	7F03F948
+ADDIU	A3,SP,006C
+LUI	AT,8003
+LWC1	F2,A908 (AT)	;F2=8002A908: horz.cur.pos.
+LWC1	F16,006C (SP)
+LWC1	F18,0064 (SP)
+C.LE.S	F16,F2
+NOP
+BC1FL	7F00C188
+ADDIU	S2,S2,0001
+C.LE.S	F2,F18
+LUI	AT,8003
+LWC1	F4,0070 (SP)
+BC1FL	7F00C188
+ADDIU	S2,S2,0001
+LWC1	F0,A90C (AT)	;F0=8002A90C: vert.cur.pos.
+LWC1	F6,0068 (SP)
+C.LE.S	F4,F0
+NOP
+BC1FL	7F00C188
+ADDIU	S2,S2,0001
+C.LE.S	F0,F6
+OR	A0,S2,R0
+ADDIU	A1,SP,0060
+BC1FL	7F00C188
+ADDIU	S2,S2,0001
+JAL	7F01E874
+ADDIU	A2,SP,005C
+OR	A0,R0,R0	;A0=0: controller 1
+JAL	7000C3AC	;V0=buttons A1 pressed
+ORI	A1,R0,B000	;A1=B000: A, Z, start
+BEQL	V0,R0,7F00C188	;branch if none pressed
+ADDIU	S2,S2,0001
+LUI	S1,8003
+ADDIU	S1,S1,A918
+LW	V0,0000 (S1)
+LUI	S3,8006
+ADDIU	S3,S3,3720
+BNEZ	V0,7F00C0EC
+LUI	AT,8003
+SW	S2,A8E8 (AT)
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+ADDIU	A1,R0,004D	;A1=04D: SE
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+OR	A2,R0,R0	;A2=NULL p->data
+LUI	S3,8006
+BEQ	R0,R0,7F00C1A8
+ADDIU	S3,S3,3720
+//7F00C0EC:		
+ADDIU	AT,R0,0001
+BNEL	V0,AT,7F00C12C
+ADDIU	AT,R0,0002
+JAL	7F01EDA0
+OR	A0,S2,R0
+LUI	S3,8006
+ADDIU	S3,S3,3720
+SW	R0,0000 (S1)
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+ADDIU	A1,R0,004F	;A1=04F: SE
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+OR	A2,R0,R0	;A2=NULL p->data
+LUI	S3,8006
+BEQ	R0,R0,7F00C1A8
+ADDIU	S3,S3,3720
+//7F00C128:		
+ADDIU	AT,R0,0002
+BNE	V0,AT,7F00C178
+NOP
+LW	T1,0060 (SP)
+LUI	S3,8006
+ADDIU	S3,S3,3720
+BLTZ	T1,7F00C168
+ADDIU	A1,R0,0012	;A1=012: SE
+LW	T2,005C (SP)
+LUI	S0,8003
+ADDIU	S0,S0,A920	;S0=8002A920
+BLTZ	T2,7F00C168	;branch if not deleting
+LUI	AT,8003
+SW	S2,A91C (AT)	;S2->8002A91C: folder# selected for deleteion
+ADDIU	T3,R0,0001
+SW	T3,0000 (S0)	;1->8002A920: set to cancel
+//7F00C168:		
+SW	R0,0000 (S1)
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+OR	A2,R0,R0	;A2=NULL p->data
+//7F00C178:		
+LUI	S3,8006
+BEQ	R0,R0,7F00C1A8
+ADDIU	S3,S3,3720	;S3=80063720: SE buffer
+//7F00C184:		
+ADDIU	S2,S2,0001
+ADDIU	AT,R0,0004
+ADDIU	S0,S0,0004
+BNE	S2,AT,7F00BFFC
+ADDIU	S1,S1,000C
+LUI	S3,8006
+LUI	S1,8003
+ADDIU	S1,S1,A918	;S1=8002A918
+ADDIU	S3,S3,3720	;S3=80063720
+//7F00C1A8:		detect if something is selected
+OR	A0,R0,R0	;A0=0: controller 1
+JAL	7000C3AC	;V0=buttons A1 pressed
+ORI	A1,R0,B000	;A1=B000: A, Z, start
+BEQ	V0,R0,7F00C2E0	;branch if no buttons were pressed
+LUI	V0,8003
+//7F00C1BC:		detect if copy selected
+ADDIU	V0,V0,ABC4	;V0=8002ABC4
+LUI	AT,8003
+LWC1	F2,A908 (AT)	;F2=8002A908: horz.cursor pos.
+LWC1	F8,0000 (V0)
+C.LE.S	F8,F2
+NOP
+BC1F	7F00C23C
+NOP
+LWC1	F10,0008 (V0)
+LUI	AT,8003
+C.LE.S	F2,F10
+NOP
+BC1F	7F00C23C
+NOP
+LWC1	F0,A90C (AT)
+LWC1	F16,0004 (V0)
+C.LE.S	F16,F0
+NOP
+BC1F	7F00C23C
+NOP
+LWC1	F18,000C (V0)
+ADDIU	T4,R0,0001
+ADDIU	A1,R0,00DE	;A1=0DE: SE
+C.LE.S	F0,F18
+OR	A2,R0,R0	;A2=NULL p->data
+BC1F	7F00C23C
+NOP
+SW	T4,0000 (S1)	;1->8002A918: use copy icon
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+BEQ	R0,R0,7F00C314
+NOP
+//7F00C23C:		detect if delete icon was selected
+LUI	V0,8003
+ADDIU	V0,V0,ABD4	;V0=8002ABD4
+LWC1	F4,0000 (V0)	;F4=8002ABD4: delete horz. left bounds
+C.LE.S	F4,F2
+NOP
+BC1FL	7F00C2BC	;branch if l.bounds>=horz.cur.pos.
+LW	T6,0000 (S1)	;T6=8002A918: cursor icon
+LWC1	F6,0008 (V0)	;F6=8002ABDC: delete horz. right bounds
+LUI	AT,8003
+C.LE.S	F2,F6
+NOP
+BC1FL	7F00C2BC	;branch if horz.cur.pos.>=r.bounds
+LW	T6,0000 (S1)	;T6=8002A918: cursor icon
+LWC1	F0,A90C (AT)	;F0=8002A90C: vert.cur.pos
+LWC1	F8,0004 (V0)	;F8=8002ABD8: delete vert. upper bounds
+C.LE.S	F8,F0
+NOP
+BC1FL	7F00C2BC	;branch if u.bounds>=vert.cur.pos.
+LW	T6,0000 (S1)	;T6=8002A918: cursor icon
+LWC1	F10,000C (V0)	;F10=8002ABE0: delete vert. lower bound
+ADDIU	T5,R0,0002
+ADDIU	A1,R0,00DE	;A1=0DE: SE
+C.LE.S	F0,F10
+OR	A2,R0,R0	;A2=NULL p->data
+BC1FL	7F00C2BC	;branch if vert.cur.pos>=l.bound
+LW	T6,0000 (S1)	;T6=8002A918: cursor icon
+SW	T5,0000 (S1)	;2->8002A918: set to delete icon
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+BEQ	R0,R0,7F00C314
+NOP
+//7F00C2B8:		if no folder or icon was target, set to sight
+LW	T6,0000 (S1)	;T6=8002A918: cursor icon
+ADDIU	A1,R0,0076	;A1=076: SE
+OR	A2,R0,R0	;A2=NULL p->data
+BEQ	T6,R0,7F00C314	;skip if already set to sight icon
+NOP
+SW	R0,0000 (S1)	;0->8002A918: set to sight icon
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+BEQ	R0,R0,7F00C314
+NOP
+//7F00C2E0:	on cancel, set cursor to sight icon
+OR	A0,R0,R0	;A0=0: controller 1
+JAL	7000C3AC	;V0=buttons A1 pressed
+ADDIU	A1,R0,4000	;A1=4000: B
+BEQ	V0,R0,7F00C314	;branch if not pressed
+NOP
+LW	T7,0000 (S1)	;T7=8002A918: cursor icon
+ADDIU	A1,R0,0076	;A1=076: SE
+OR	A2,R0,R0	;A2=NULL p->data
+BEQ	T7,R0,7F00C314	;skip if already set to sight icon
+NOP
+SW	R0,0000 (S1)	;0->8002A918: set to sight icon
+JAL	70008E08	;play SE A1 in buffer A0 using data A2
+LW	A0,0000 (S3)	;A0=80063720: SE buffer
+//7F00C314:
+JAL	7F009B84	;probably detects if a folder is selected
+NOP
+//7F00C31C:		advance to selected folder
+LUI	T8,8003
+LW	T8,A8E8 (T8)	;T8=8002A8E8: selected folder#
+BLTZ	T8,7F00C344	;branch if -1 (not selected)
+ADDIU	A0,R0,0006	;A0=6: mode select
+JAL	7F01A5D4	;set menu A0 in mode A1: replace w/ mode select
+OR	A1,R0,R0	;A1=0: current
+JAL	7F00D7FC	;??? - uses mode A0
+OR	A0,R0,R0	;A0=0: mode=solo
+BEQ	R0,R0,7F00C368	;return
+LW	RA,0044 (SP)
+//7F00C344:		if timer over 30sec, return to legal screen
+LUI	T9,8003
+LW	T9,A8CC (T9)	;T9=8002A8CC: timer
+OR	A0,R0,R0	;A0=0: legal screen
+SLTI	AT,T9,0709	;TRUE if timer < 709 (30 secs)
+BNEL	AT,R0,7F00C368	;branch if still time left
+LW	RA,0044 (SP)
+JAL	7F01A5D4	;set menu A0 in mode A1: legal screen on return
+ADDIU	A1,R0,0001	;A1=1: return
+LW	RA,0044 (SP)
+//7F00C368:		return
+LDC1	F20,0028 (SP)
+LW	S0,0034 (SP)
+LW	S1,0038 (SP)
+LW	S2,003C (SP)
+LW	S3,0040 (SP)
+JR	RA
+ADDIU	SP,SP,0110
+
++_+
+
+7F00BB68	40698	toggle minimenu
+	accepts: A0=folder#
+SLL	T6,A0,0x2
+ADDIU	SP,SP,FFE0
+SUBU	T6,T6,A0
+LUI	T7,8007
+SW	RA,0014 (SP)
+ADDIU	T7,T7,9620
+SLL	T6,T6,0x2	;T6=A0*0xC
+ADDU	A0,T6,T7	;A0=80069620+offset: 
+JAL	7F077FF4	;retrieve screen coordinates
+ADDIU	A1,SP,0018	;A1=SP+18: 
+//7F00BB90:	
+LUI	AT,BF80
+MTC1	AT,F6		;F6=-1.0 (BF800000)
+LWC1	F4,0018 (SP)	;F4=SP+18: xpos
+LUI	AT,8003
+LWC1	F10,001C (SP)	;F10=SP+1C: ypos
+ADD.S	F8,F4,F6	;F8=F4-1: 
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+SWC1	F8,A908 (AT)	;F8->8002A908: xcurpos=xpos-1
+LUI	AT,41A0
+MTC1	AT,F16		;F16=20.0 (41A00000)
+LUI	AT,8003
+ADD.S	F18,F10,F16	;F18=F10+20: 
+JR	RA
+SWC1	F18,A90C (AT)	;F18->8002A90C: ycurpos=ypos+20
+
++_+
+
+7F077FF4
+	accepts: A0=p->screen positions, A1=&ret.positions
+	Struct for A0:
+		0x0	4	[float] x position
+		0x4	4	[float] y position
+		0x8	4	[float] z position
+	Struct for A1:
+		0x0	4	[float] x position
+		0x4	4	[float] y position
+LUI	AT,3F80
+MTC1	AT,F4		;F4=1.0 (3F800000)
+LWC1	F6,0008 (A0)	;F6=A0+8: 
+LWC1	F8,0004 (A0)	;F8=A0+4: 
+LUI	V1,8008
+DIV.S	F0,F4,F6	;F0=1 / F6
+ADDIU	V1,V1,A0B0
+LW	V0,0000 (V1)	;V0=8007A0B0: BONDdata
+LWC1	F16,10C0 (V0)	;F16=BONDdata+10C0: 
+LWC1	F4,109C (V0)	;F4=BONDdata+109C:
+LWC1	F6,10B0 (V0)	;F6=BONDdata+10B0:
+MUL.S	F10,F8,F0	;F10=A0+4 / A0+8
+ADD.S	F8,F4,F6	;F8=BONDdata+109C + BONDdata+10B0
+MUL.S	F18,F10,F16	;F18=F10 * BONDdata+10C0
+ADD.S	F10,F18,F8	;F10=F18+F8
+SWC1	F10,0004 (A1)	;F10->A1+4
+//
+LWC1	F18,0000 (A0)	;F18=A0+0: 
+LW	V0,0000 (V1)	;V0=8007A0B0: BONDdata
+MUL.S	F8,F18,F0	;F8=A0+0 / A0+8
+LWC1	F16,1098 (V0)	;F16=BONDdata+1098: 
+LWC1	F4,10AC (V0)	;F4=BONDdata+10AC: 
+LWC1	F10,10BC (V0)	;F10=BONDdata+10BC: 
+ADD.S	F6,F16,F4	;F6=F16+F4
+MUL.S	F16,F8,F10	;F16=F8 * F10
+SUB.S	F4,F6,F16	;F4=F6-F16
+JR	RA
+SWC1	F4,0000 (A1)	;F4->A1+0: 
+

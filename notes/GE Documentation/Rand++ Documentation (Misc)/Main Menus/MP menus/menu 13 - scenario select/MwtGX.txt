@@ -1,0 +1,985 @@
+Garoad - MwtGX
+Scenario hack setting Man w/ the Golden Gun to use a generic weapon F7
+
+scenario flags (apparently)	stats+0x69
+0F	teams
+10	TLD
+20	MwtGX
+
+
+Scenario hack - MwtGX
+hack: pull A0=MP weapon F7
+7F0693F4 is fed A0=F7, returning V0=p->data.
+read byte 1 from this, setting to A0, and send it to the doohick
+
+First, simplify Flag test for more room.
+Maybe hack it so it tests if you have the flag out...  probably not now...
+7F05D9D0	V0=hand A0's weapon
+7F069258	V0=total ammo of type...  this may be useful, since it would allow other ammo-based objectives
+
+7F08CF80:	C1AB0	0FC233E0	test if possess flag
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+3C0E8008	LUI	T6,8008
+8DCEA0B0	LW	T6,A0B0 (T6)	;T6=cur.player data
+8DCF00D8	LW	T7,00D8 (T6)	;T7=player death attrib
+15E00003	BNEZ	T7,7F08CFA4	;skip if player dead or dying
+00001025	OR	V0,R0,R0
+0FC230C5	JAL	7F08C314	;returns V0=1 if flag in inventory
+24040058	ADDIU	A0,R0,0058
+//7F08CFA4:
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+00000000	NOP
+00000000	NOP
+00000000	NOP
+CALLED:
+	855D0	7F050AA0
+	B8908	7F083DD8	sets inhibitor to switch from flag...
+	F4574	7F0BFA44	would need to change to a flag ammo test or the like
+				forces weapon out and all.  look at the flag docs
+
+Now the scenario you want!
+7F08CFC0:	C1AF0	0FC233F0	test if possess golden gun
+redirected to 7F08CFBC	C1AEC	0FC233EF
+	accepts: A0=MP weapon code!
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+0FC1A4FD	JAL	7F0693F4	;V0=p->MP weapon F7 data - GG slot
+00000000	NOP;240400F7	ADDIU	A0,R0,00F7
+0FC230C5	JAL	7F08C314	;V0=TRUE if F7 in inventory
+90440000	LBU	A0,0000 (V0)	;A0=weapon code
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+CALLED:
+	F4614	7F0BFAE4
+	855F8	7F050AC8
+	BE844	7F089D14
+
+slight revision...
+moved!
+7F04FD98:	848C8	0FC13F66	test if possess item A0 while alive
+	can accept an MP weapon# or a literal
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+3C0E8008	LUI	T6,8008
+8DCEA0B0	LW	T6,A0B0 (T6)	;T6=cur.player data
+8DCF00D8	LW	T7,00D8 (T6)	;T7=player death attrib
+15E00009	BNEZ	T7,7F08CFA4	;skip if player dead or dying
+00001025	OR	V0,R0,R0
+//test if MP weapon...
+2C820059	SLTIU	V0,A0,0059	;TRUE if a natural weapon
+14400004	BNE	V0,R0,+4
+00000000	NOP
+0FC1A4FD	JAL	7F0693F4	;V0=p->MP weapon F7 data - GG slot
+00000000	NOP
+90440000	LBU	A0,0000 (V0)	;A0=weapon code
+//process this weapon
+0FC230C5	JAL	7F08C314	;returns V0=1 if A0 in inventory
+00000000	NOP
+//7F08CFA4:		return
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+
+
+set the MP menu defaults to lock all sets GG and below
+GG set is now #E
+always inhibit flag - there isn't a case where you wouldn't want to
+	especially since it otherwise does nothing at all...
+
+maybe make a read 8002A8F0 at 0x35684
+
+now to set the spawn inhibitor for weapon F7...
+stupidly, this uses model# comparisons, so we'll need to hack it a little...
+instead, should detect type of item, then weapon code.
+
+//7F001E14:	36944	multiplayer-only object expansion code - sets respawn
+3C028003	*LUI	V0,8003
+E6240074	SWC1	F4,0074 (S1)
+8C41A8F0	*LW	AT,A8F0 (V0)	;AT=mode: solo-0, multi-1, cheats-2
+1020001B	*BEQ	AT,R0,7F001E90	;branch if solo
+24030004	*ADDIU	V1,R0,0004	;respawn flag is its own mask
+//7F001E28:	test if 08 weapon
+92220003	*LBU	V0,0003 (S1)
+24010008	*ADDIU	AT,R0,0008
+14410014	*BNE	V0,AT,7F001E7C	;branch if not a weapon
+92380080	*LBU	T8,0080 (S1)
+//7F001E44:	scenario-specific inhibitors
+0FC051D6	JAL	7F014758	;ret V0=scenario
+24010003	*ADDIU	AT,R0,0003
+1441000E	BNE	V0,AT,7F001E74	;branch if not MwtGG
+24020058	*ADDIU	V0,R0,0058	;V0=flag - always inhibit flags
+//7F001E40:	man w/ the GG
+0FC1A4FD	*JAL	7F0693F4	;V0=p->MP weapon F7 data - GG slot
+240400F7	*ADDIU	A0,R0,00F7
+90420000	*LBU	V0,0000 (V0)	;A0=weapon code
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+//7F001E7C:	test if scenario item V0 matches item T8
+50580001	*BEQL	V0,T8,+1
+00001825	OR	V1,R0,R0	;V1=0: inhibit respawn
+//7F001E84:	if not scenario item, set respawn flag
+92280002	LBU	T0,0002 (S1)	;T0=obj.data+2: 
+00684026	*XOR	T0,T0,V1	;mask with flag or nothing, depending
+A2280002	*SB	T0,0002 (S1)	;obj.data+2 |= 0x04: respawn flag!
+//7F001E90:
+...	;etc
+
+:_:	UTTERLY PSYCHOTIC rollovers
+
+option lock system needs retrofitting, which means rollovers need it as well
+oy...
+all MP option locks kept in one byte @ 8002B544
+80	RESERVED
+40	aim adjustment lock
+20	control style lock
+10	health lock
+08	character select lock
+04	weapon select lock
+02	game length lock
+01	stage select lock
+
+//7F0109A4:	454D4	vertical rollover tests
+C424A90C	LWC1	F4,A90C (AT)	;F4=8002A90C: vertical screen position
+3C0A8003	*LUI	T2,8003
+4600218D	TRUNC.W.S	F6,F4
+44023000	MFC1	V0,F6		;V0=(long) screen position
+24030001	*ADDIU	V1,R0,0001
+914AB544	*LBU	T2,B544 (T2)	;T9=lock byte
+3C098007	*LUI	T1,8007
+//7F0109C0:	454F0	rollover trigger bypasses for locked MP options
+28410119	SLTI	AT,V0,0119
+14200006	*BNEZ	AT,7F0109E0
+31480040	*ANDI	T0,T2,0040	;T0=aim adjustment lock bit
+55000049	*BNEL	T0,R0,7F010AF4
+AD2397E8	*SW	V1,97E8 (T1)
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F0109E0:	45510
+28410105	SLTI	AT,V0,0105
+14200008	BNEZ	AT,7F010A08
+310A0020	*ANDI	T0,T2,0020	;T0=control style lock bit
+55000041	*BNEL	T0,R0,7F010AF4
+AD2397E4	*SW	V1,97E4 (T1)	;1->800697E4: 
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F010A08:	45538
+284100F1	SLTI	AT,V0,00F1
+14200008	BNEZ	AT,7F010A30
+310A0010	*ANDI	T0,T2,0010	;T0=health lock bit
+55000037	*BNEL	T0,R0,7F010AF4
+AD2397E0	*SW	V1,97E0 (T1)
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F010A30:	45560
+284100DD	SLTI	AT,V0,00DD
+14200008	BNEZ	AT,7F010A58
+310A0008	*ANDI	T0,T2,0008	;T0=character lock bit
+5500002D	*BNEL	T0,R0,7F010AF4
+AD2397D8	*SW	V1,97D8 (T1)
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F010A58:	45588
+284100C9	SLTI	AT,V0,00C9
+14200008	BNEZ	AT,7F010A80
+310A0004	*ANDI	T0,T2,0004	;T0=weapon select lock bit
+55000023	*BNEL	T0,R0,7F010AF4
+AD2397DC	*SW	V1,97DC (T1)
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F010A80:	455B0
+284100B5	SLTI	AT,V0,00B5
+14200008	BNEZ	AT,7F010AA8
+310A0002	*ANDI	T0,T2,0002	;T0=game length lock
+55000019	*BNEL	T0,R0,7F010AF4
+AD2397D4	*SW	V1,97D4 (T1)
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F010AA8:	455D8
+284100A1	SLTI	AT,V0,00A1
+14200008	BNEZ	AT,7F010AD0
+310A0001	*ANDI	T0,T2,0001	;T0=stage select lock
+5500000F	*BNEL	T0,R0,7F010AF4
+AD2397D0	*SW	V1,97D0 (T1)
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F010AD0:	45600	scenarios and # players
+2841008D	SLTI	AT,V0,008D
+54200007	*BNEZL	AT,7F010AF4	;# players is the default otherwise
+AD2397C8	*SW	V1,97C8 (T1)	;players selected
+AD2397CC	*SW	V1,97CC (T1)	;scenarios selected
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+00000000	*NOP
+//7F010AF4: 	45624
+
+also need to hack all the MP scenario default revisors to use new format...
+gets rid of TLB pointers at 80051A60 (0x30CD0)
+
+7F010468:	44F98	set default MP menu settings for scenario A0
+27BDFFE8	ADDIU	SP,SP,FFE8
+AFBF0014	SW	RA,0014 (SP)
+3C018003	*LUI	AT,8003
+240800FF	*ADDIU	T0,R0,00FF	;start with all bits unset
+AC24B540	SW	A0,B540 (AT)	;A0->8002B540: save scenario
+//7F01047C:	if "Last ..Alive" set, unset it
+8C22B538	*LW	V0,B538 (AT)	;length setting
+2442FFFA	*ADDIU	V0,V0,FFFA	;V0-=6: 7=1, all else <=0
+5C400001	*BGTZL	V0,+1
+AC22B538	*SW	V0,B538 (AT)	;1->length setting if already =7
+//7F01048C:	set you only live twice scenario specific settings
+//note: further massacred when revising game length routine
+24030001	*ADDIU	V1,R0,0001
+14830004	*BEQ	A0,V1,+4
+24020002	*ADDIU	V0,R0,0002
+	*NOP
+	*NOP
+3108007F	*ANDI	T0,T0,007F	;untoggle length+points bit
+//7F0104A4:	set the living daylights scenario specific settings
+14820004	*BNE	A0,V0,+4
+8C22B538	*LW	V0,B538 (AT)
+28420004	*SLTI	V0,V0,0004
+50400001	*BEQL	V0,R0,+1
+AC22B538	*SW	V1,B538 (AT)
+//7F0104B8:	set license to kill scenario specific settings:
+24020004	*ADDIU	V0,R0,0004
+50820001	*BEQL	A0,V0,+1
+310800EF	*ANDI	T0,T0,00EF	;untoggle health bit
+//7F0104C4:	set man with the golden gun scenario specific settings
+24020003	*ADDIU	V0,R0,0003
+14820006	*BNE	A0,V0,+6
+3C038005	*LUI	V1,8005
+0FC3198F	*JAL	7F0C6640	;A0->selected MP weapon set
+9064915F	*LBU	A0,915F (V1)
+0044102A	*SLT	V0,V0,A0	;V0=TRUE if # < minimum
+54400001	*BNEL	V0,R0,+1	;only set the flag if < minimum
+A0649162	*SB	A0,9162 (V1)	;set selected weapon set to A0
+//7F0104E4:	finish up
+A028B544	*SB	T0,B544 (AT)	;save new scenario mask
+8FBF0014	LW	RA,0014 (SP)
+03E00008	JR	RA
+27BD0018	ADDIU	SP,SP,0018
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	NOP
+	*NOP
+	NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	*NOP
+	NOP
+	
+also also need to hack MP default routine to use new format...
+Hahahahahaha!
+No need!  It doesn't set this stuff.  %Joy%
+	
+also also also need to deal with the menu constructor...
+//7F0111E8:	45D18	test stage select lock
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+33180001	*ANDI	T8,T8,0001
+00000000	*NOP
+57000002	*BNEL	T8,R0,+2	;70->Alpha if locked
+240300FF	ADDIU	V1,R0,00FF
+//7F011200:	45D30	locked
+24030070	ADDIU	V1,R0,0070
+//7F011204:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F0112DC:	45E0C	test game length lock
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+33180002	*ANDI	T8,T8,0002
+00000000	*NOP
+57000002	*BNEL	T8,R0,+2	;70->Alpha if locked
+240300FF	ADDIU	V1,R0,00FF
+//7F0112F4:	locked
+24030070	ADDIU	V1,R0,0070
+//7F0112F8:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F0113D0:	45F00	test weapon select lock
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+33180004	*ANDI	T8,T8,0004
+00000000	*NOP
+57000002	*BNEL	T8,R0,+2	;70->Alpha if locked
+240300FF	ADDIU	V1,R0,00FF
+//7F0113E8:	locked
+24030070	ADDIU	V1,R0,0070
+//7F0113EC:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F0114C4:	45FF4	test character select lock
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+33180008	*ANDI	T8,T8,0008
+00000000	*NOP
+57000002	*BNEL	T8,R0,+2	;70->Alpha if locked
+240300FF	ADDIU	V1,R0,00FF
+//7F0114DC:	locked
+24030070	ADDIU	V1,R0,0070
+//7F0114E0:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F0115B8:	460E8	test health lock
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+33180010	*ANDI	T8,T8,0010
+00000000	*NOP
+57000002	*BNEL	T8,R0,+2	;70->Alpha if locked
+240300FF	ADDIU	V1,R0,00FF
+//7F0115D0:	locked
+24030070	ADDIU	V1,R0,0070
+//7F0115D4:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F0116AC:	461DC	test controller style lock
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+33180020	*ANDI	T8,T8,0020
+00000000	*NOP
+57000002	*BNEL	T8,R0,+2	;70->Alpha if locked
+240300FF	ADDIU	V1,R0,00FF
+//7F0116C4:	locked
+24030070	ADDIU	V1,R0,0070
+//7F0116C8:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F0117A0:	462D0	test aim adjustment lock
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+33180040	*ANDI	T8,T8,0040
+00000000	*NOP
+57000002	*BNEL	T8,R0,+2	;70->Alpha if locked
+24030070	ADDIU	V1,R0,00FF
+//7F0117B8:	locked
+24030070	ADDIU	V1,R0,0070
+//7F0117BC:	save and do stuff
+24030070	JAL	7000441C
+24030070	SW	V1,0048 (SP)
+...
+	
+//7F011944:	46474	test stage select lock - name of stage
+3C088003	LUI	T0,8003
+9108B544	*LBU	T0,B544 (T0)
+241800A0	ADDIU	T8,R0,00A0
+241900A1	ADDIU	T9,R0,00A1
+AFA20064	SW	V0,0064 (SP)
+AFB80058	SW	T8,0058 (SP)
+31080001	*ANDI	T0,T0,0001
+AFB90054	SW	T9,0054 (SP)
+55000002	*BNEL	T0,R0,7F011970	;FF->Alpha if unlocked
+240300FF	ADDIU	V1,R0,00FF
+//7F01196C:	locked
+24030070	ADDIU	V1,R0,0070
+//7F011970:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F0119F0:	46520	test game length lock - name of length
+3C188003	LUI	T8,8003
+9318B544	*LBU	T8,B544 (T8)
+240E00A0	ADDIU	T6,R0,00A0
+240F00B5	ADDIU	T7,R0,00B5
+AFA20064	SW	V0,0064 (SP)
+AFAE0058	SW	T6,0058 (SP)
+33180002	*ANDI	T8,T8,0002
+AFAF0054	SW	T7,0054 (SP)
+57000002	*BNEL	T8,R0,7F011A1C	;FF->Alpha if unlocked
+240300FF	ADDIU	V1,R0,00FF
+//7F011A18:	locked
+24030070	ADDIU	V1,R0,0070
+//7F011A1C:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F011A84:	465B4	test weapon select lock - name of set
+3C0C8003	LUI	T4,8003
+918CB544	*LBU	T4,B544 (T4)
+240A00A0	ADDIU	T2,R0,00A0
+240B00C9	ADDIU	T3,R0,00C9
+AFA20064	SW	V0,0064 (SP)
+AFAA0058	SW	T2,0058 (SP)
+318C0004	*ANDI	T4,T4,0004
+AFAB0054	SW	T3,0054 (SP)
+55800002	*BNEL	T4,R0,7F011AB0	;FF->Alpha if unlocked
+240300FF	ADDIU	V1,R0,00FF
+//7F011AAC:	locked
+24030070	ADDIU	V1,R0,0070
+//7F011AB0:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+	
+//7F011B28:	46658	test aim adjustment lock - name of setting
+3C0A8003	LUI	T2,8003
+914AB544	*LBU	T2,B544 (T2)
+240800A0	ADDIU	T0,R0,00A0
+24090119	ADDIU	T1,R0,0119
+AFA20064	SW	V0,0064 (SP)
+AFA80058	SW	T0,0058 (SP)
+314A0040	*ANDI	T2,T2,0040
+AFA90054	SW	T1,0054 (SP)
+55400002	*BNEL	T2,R0,7F011B54	;FF->Alpha if unlocked
+240300FF	ADDIU	V1,R0,00FF
+//7F011B50:	locked
+24030070	ADDIU	V1,R0,0070
+//7F011B54:	save and do stuff
+0C001107	JAL	7000441C
+AFA30048	SW	V1,0048 (SP)
+...
+
+also also also also (aegh...) need to set menu to only use valid weapon sets
+This utilizes the byte at 8004915F	(0x283CF)
+That sets the minimum weapon set number when the scenario is active
+7F0C65CC:	FB0FC	0FC31973	advance MP weapon set menu one option; saves updated value
+	revised to account for variable entry numbers...
+	fries: AT,V0,T6,T7,T8
+3C028005	LUI	V0,8005
+804E9162	LB	T6,9162 (V0)	;T6=cur selection
+80419160	LB	AT,9160 (V0)	;AT=max entries
+25CE0001	ADDIU	T6,T6,0001	;T7=T6+1: set++
+24210001	ADDIU	AT,AT,0001	;accounts for random entry
+01C1001A	DIV	T6,AT
+3C018003	*LUI	AT,8003
+8C21B540	*LW	AT,B540 (AT)	;AT=scenario bits
+240F0003	*ADDIU	T7,R0,0003
+142F0003	*BNE	AT,T7,+3	;skip if not MwtGX
+00007010	-MFHI	T6		;T8=set % total
+51C00001	*BEQL	T6,R0,+1
+904E915F	*LBU	T6,915F (V0)	;minimum value for scenario
+03E00008	JR	RA
+A04E9162	*SB	T6,9162 (V0)	;save revised set number
+
+7F0C65F4	FB124	0FC3197D	->	7F0C6614	FB144	0FC31985
+	occurance @ 0x465A4
+7F0C6600	FB130	0FC31980	->	7F0C6620	FB150	0FC31988
+	occurance @ 0x9DF28
+7F0C6630	FB160	0FC3198C	->	7F0C664C	FB17C	0FC31993
+	occurance @ 0xF50A0
+	
+Oh, and revise the 21990...
+
+
+"_"
+
+revision of Casino Royale code
+If, perchance, it happens to make sets with 8 unique weapons,
+	then it would be acceptable for MwtGX
+
+7F082BD0	B7700	0FC20AF4	generates random weapons for set
+	manually rigged to overwrite last set
+	fries: AT,V0,A0,A1,A2,T6,T7,T8,T9
+AFBFFFE0	SW	RA,FFE0 (SP)
+3C188005	*LUI	T8,8005
+0FC31982	*JAL	7F0C6608	;V0=p->final set
+93189161	*LBU	T8,9161 (T8)	;T8=#selectable
+244F0007	*ADDIU	T7,V0,0007	;endpoint
+00027025	*OR	T6,V0,R0
+00024025	*OR	T0,V0,R0
+//randomizer
+0C002914	JAL	7000A450	;fries AT,A0,A1,A2,V0
+0008C825	*OR	T9,R0,T0
+0058001B	*DIVU	V0,T8
+00001010	MFHI	V0		;T8=set % total
+24420001	ADDIU	V0,V0,0001	;gets knives - tank
+//test set for duplicates
+93260000	*LBU	A2,0000 (T9)
+1046FFF9	*BEQ	V0,A2,-7
+	*NOP
+572EFFFC	*BNEL	T9,T6,-4
+27390001	*ADDIU	T9,T9,0001
+//save to set and iterate
+A1C20000	SB	V0,0000 (T6)
+34420080	ORI	V0,V0,0080	;double if possible
+A1C20008	SB	V0,0008 (T6)
+55CFFFF2	*BNEL	T6,T7,-14
+25CE0001	ADDIU	T6,T6,0001	;next slot
+//no double for F7 - set BA instead
+24020025	ADDIU	V0,R0,0025	;V0=BA
+8FBFFFE0	LW	RA,FFE0 (SP)
+03E00008	JR	RA
+A1C20008	SB	V0,0008 (T6)
+
+I'll have to move it somplace new now...
+7F0028F0	0x37420
+7F0104F4	0x45024
+7F04FCC0	0x847F0
+
+7F082BD0	B7700	0FC20AF4
+to
+7F002940	37470	0FC00A50
+
+move Casino Royale to end of MP set list
+will need to use a different injection point to keep intro movies from auto-closing
+//7F0BDCD0	F2800	set player's handicap
+0FC00A50	*JAL	7F002940	;Casino Royale
+00000000	NOP
+0FC051D6	-JAL	7F014758	;ret V0=scenario
+00000000	NOP
+50530004	*BEQL	V0,S3,7F0BDCF4
+E634005C	SWC1	F20,005C (S1)
+
+
+oh, need to link in something to test that Casino Royale's final weapon slot is a firearm, not box-ish thing
+Ideally, the current set can be copied to a buffer and drawn out of there
+	that thing can be tested for the two nasties:
+	1) replicated weapon
+	2) ammo-only type
+	if either is the case, F7 is replaced with the golden gun
+granted that requires rewritting all the existing code...
+On the plus side, it would allow you to play MwtGX with any weapon set ;*)
+
+well, I'll get to that someday.  Expect it in revision 2
+
+
+Squee!  All done!  
+
+revised to be consistant with other routines
+now T6 is p->player stats, V0=# kills with GX
+that means all the routines will set T6=p->stats and V0 as the data!
+7F06A934:	9F464	
+3C0E8008	LUI	T6,8008
+8DCEA0B4	LW	T6,T6,A0B4	;p->stats
+8DC20020	LW	V0,0020 (T6)	;V0=# kills of MwtGX owner
+24420001	ADDIU	V0,V0,0001
+03E00008	JR	RA
+ADC20020	SW	V0,0020 (T6)	;save new count
+
++_+
+
+Final addition
+  Special weapon will keep its own kills, added temporarily to the owner.
+  Register for this will be at 8007FF5C, although kills could just as easily be a short value.
+  Tank eats 8007FF60-80, so work backwards if more values required.
+  
+7F06A934:	9F464	reset MwtGX register
+00002025	OR	A0,R0,R0
+//7F06A938:	9F468	set MwtGX register to A0
+10000003	BEQ	R0,R0,+3
+//7F06A93C:	9F46C	increment MwtGX register
+3C028008	*LUI	V0,8008
+9444FF5C	*LHU	A0,V0,FF5C	;p->stats
+24440001	ADDIU	A0,A0,0001
+03E00008	JR	RA
+A444FF5C	SH	A0,FF5C (V0)	;save new count
+
+7F06A950:	9F480	retrieve MwtGX register
+3C028008	LUI	V0,8008
+03E00008	JR	RA
+9442FF5C	LHU	V0,FF5C (V0)
+
+Aegh!  scoring!
+//7F089D04:	BE834	test scenario-specific handlers: note MP weapon patch shown in this dASM
+AFA2002C	SW	V0,002C (SP)	;SP+2C=V0: killed
+//7F089D08:	BE838
+0FC159DF	JAL	7F05677C	;dump inventory
+00000000	NOP
+8FA2002C	LW	V0,002C (SP)
+8FA9004C	LW	T1,004C (SP)	;T1=killer
+14490005	*BNE	V0,T1,7F089D24	;branch if not a suicide
+00000000	NOP
+//7F089D18:	BE848	suicides...
+0FC1AA86	JAL	7F06AA18	;increment #suicides and display MP
+00000000	NOP
+10000018	BEQ	R0,R0,7F089D8C
+00000000	NOP
+//7F089D24:	BE854
+0FC1AA57	JAL	7F06A95C	;increment #deaths
+00000000	NOP
+0FC26C43	JAL	7F09B10C	;set cur. player to A0
+8FA4004C	LW	A0,004C (SP)	;A0=killer
+//7F089D44:	BE874	player kills
+0FC051D6	JAL	7F014758	;V0=scenario [8002B540]
+24010003	ADDIU	AT,R0,0003
+1422000C	BNE	AT,V0,7F089D84	;branch if not MwtGX
+00000000	NOP
+0FC1A4FD	JAL	7F0693F4	;V0=p->MP weapon F7 data - GG slot
+240400F7	ADDIU	A0,R0,00F7	;A0=F7: weapon in slot F7: GX
+0FC233E0	*JAL	7F08CF80	;V0!=0 if weapon A0 drawn
+90440000	*LBU	A0,0000 (V0)	;A0=item type
+10400006	*BEQ	V0,R0,7F089D70	;branch if no GX held
+3C048008	*LUI	A0,8008
+//7F089D5C:	BE88C	MwtGX specific
+8C84A0B4	*LW	A0,A0B4 (A0)
+8C82001C	*LW	V0,001C (A0)
+2442FFFF	*ADDIU	V0,V0,FFFF
+0FC1AA4F	JAL	7F06A93C	;inc. # times killed w/ GX
+AC82001C	*SW	V0,001C (A0)	;GX stole your kill!
+//7F089D70:	BE8A0
+0FC1A9E0	JAL	7F06A780	;increment kill count and display MP
+00000000	NOP
+00000000	NOP
+00000000	NOP
+//7F089D8C:	BE8BC
+
+oh, and initialize at start of game
+//7F00542C:	INSERT THIS COMMAND, push all else forward
+JAL	7F06A934	;fries A0,V0
+
+and now score...
+SP+18	T3	stats
+SP+34	A3	Flag/GG/Team byte
+	T2	total players
+SP+38	A1	player#
+
+yeah, it could be smaller.  Seriously though, it isn't that big a deal...
+
+7F0C38D8:	F8408	returns V0=#points
+	accepts A0=player#
+000470C0	SLL	T6,A0,0x3
+3C038008	LUI	V1,8008
+01C47023	SUBU	T6,T6,A0
+24639EF0	ADDIU	V1,V1,9EF0	;V1=player stat offset
+000E7100	SLL	T6,T6,0x4	;T6=A0*0x70	(next player)
+27BDFFC8	ADDIU	SP,SP,FFC8
+006E5821	ADDU	T3,V1,T6	;T3=Player A0's stats
+91670069	LBU	A3,0069 (T3)	;A3=flag/GG ownership byte
+AFBF0014	SW	RA,0014 (SP)
+AFAB0018	SW	T3,0018 (SP)
+-0FC26919	JAL	7F09A464	;returns V0=#players
+AFA40038	SW	A0,0038 (SP)
+//trial
+0FC051DB	*JAL	7F01476C	;V0=scenario::score
+AFA20030	SW	V0,0030 (SP)
+00036025	*OR	T4,V1,R0	;T4=scenario::points
+00027025	OR	T6,V0,R0	;T6=scenario::time
+00002025	OR	A0,R0,R0	;A0=0: score
+8FA50038	LW	A1,0038 (SP)	;A1=player#
+00003025	OR	A2,R0,R0	;time=0
+0FC044EC	*JAL	7F0113B0	;V0=TRUE if YOLT alone
+8FAA0030	-LW	T2,0030 (SP)	;T2=# players
+00000000	*NOP
+1440002B	*BNE	V0,R0,7F0C3C80	;branch if YOLT alone...
+8FAB0018	LW	T3,0018 (SP)	;T3=player stats
+
+//original
+0FC051D6	-JAL	7F014758	;V0=scenario
+AFA20030	-SW	V0,0030 (SP)
+00020A02	*SRL	AT,V0,0x10	;AT=upper two bytes
+00027025	*OR	T6,V0,R0	;T6=scenario
+00002025	*OR	A0,R0,R0	;A0=0: score
+8FA50038	LW	A1,0038 (SP)	;A1=player#
+00003025	*OR	A2,R0,R0	;time=0
+8FAA0030	LW	T2,0030 (SP)	;T2=# players
+14200002	*BNE	AT,R0,+2	;branch if not YOLT - special scoring if alone
+31C10001	*ANDI	AT,T6,0001	;AT=FFFF0001: mask for YOLT
+1420002B	*BNE	AT,R0,7F0C3C80	;branch if YOLT alone...
+8FAB0018	LW	T3,0018 (SP)	;T3=player stats
+
+//7F0C3934:	F8464	Normal, Licence to Kill, Man with the Golden Gun
+2D480005	*SLTIU	T0,T2,0005
+1100002C	*BEQ	T0,R0,7F0C3AF8	;KILL if invalid character
+30EF000F	*ANDI	T7,A3,000F	;nonzero indicates a team effort
+0005C025	*OR	T8,A1,R0	;T8 is first character
+;;	0018C880	*SLL	T9,T8,0x2	;player#->offset
+//7F0C3948:	F847C	tally point total (player kills only)
+	+SLTIU	T1,T6,0002	;TRUE if point scenario 0,1 (norm, MwtGX)
+	+BEQ	T1,R0,7F0C39A8	;jump to time scenarios
+00004025	*OR	T0,R0,R0
+01684821	*ADDU	T1,T3,T0
+8D220024	*LW	V0,0024 (T1)
+51190002	*BEQL	T0,T9,+2
+00822023	*SUBU	A0,A0,V0
+00822021	*ADDU	A0,A0,V0
+2D02000C	*SLTIU	V0,T0,000C
+1440FFF9	*BNE	V0,R0,7F0C394C
+25080004	*ADDIU	T0,T0,0004
+//7F0C398C:	F84BC	POINT SCENERIOS
+91620069	*LBU	V0,0069 (T3)	;T8=0x69 in player stats...
+30420020	*ANDI	V0,V0,0020	;T9=mask for GX
+10400004	*BEQ	V0,R0,+4
+00000000	*NOP//24010002	*ADDIU	AT,R0,0002	;AT=2: TLD
+0FC1AA54	*JAL	7F06A950	;MwtGX global register
+00000000	*NOP
+00822021	*ADDU	A0,A0,V0
+//7F0C39A8:	F84D8	TIME SCENERIOS
+0FC30F1D	*JAL	7F0C3C74	//142E0002	*BNE	AT,T6,+2	;branch if Flag tag
+00001025	*OR	V0,R0,R0	//8D620060	*LW	V0,0060 (T3)	;V1=flag time
+00C23021	*ADDU	A2,A2,V0
+//7F0C39B4:	determine if team effort
+11E00011	*BEQ	T7,R0,7F0C3A0C	;jump to scenario-stuff if no teams
+27180001	*ADDIU	T8,T8,0001
+//7F0C39BC:	next character
+030A102B	*SLTU	V0,T8,T2	;TRUE if # < total players
+50400001	*BEQL	V0,R0,+1
+0000C025	*OR	T8,R0,R0
+//7F0C39C8:	correct T3, then figure if rolled around
+001858C0	*SLL	T3,T8,0x3
+01785823	*SUBU	T3,T3,T8
+000B5900	*SLL	T3,T3,0x4
+3C028008	*LUI	V0,8008
+24429EF0	*ADDIU	V0,V0,9EF0	;V0=base for stats
+1305000B	*BEQ	T8,A1,7F0C3C84	;jump to scenario-stuff if rolled around
+004B5821	*ADDU	T3,T3,V0	;T3=p->player T8's stats
+//7F0C39E4:	finally, figure if a teammate
+91620069	*LBU	V0,0069 (T3)
+3042000F	*ANDI	V0,V0,000F
+11E2FFDE	*BEQ	T7,V0,7F0C396C	;add to score if on team
+0018C880	*SLL	T9,T8,0x2
+//7F0C39F4:
+1000FFF1	*BEQ	R0,R0,7F0C3994	;iterate and test next character
+27180001	*ADDIU	T8,T8,0001
+
+//7F0C39FC:	You Only Live Twice special handler
+91620068	LBU	V0,0068 (T3)	;V0=death counter
+24010004	*ADDIU	AT,R0,0004	;V1=4
+00222023	*SUBU	A0,AT,V0	;A0=4-death counter
+//7F0C3A0C:	return
+8FBF0014	LW	RA,0014 (SP)
+27BD0038	ADDIU	SP,SP,0038
+00C01825	OR	V1,A2,R0	;V1=time
+03E00008	JR	RA
+00801025	OR	V0,A0,R0	;V0=points
+
+
+Another huge revision, now that scoring needs finalization
+//7F0C3934:	F8464	Normal, Licence to Kill, Man with the Golden Gun
+2D480005	*SLTIU	T0,T2,0005
+1100002B	*BEQ	T0,R0,7F0C3AF8	;KILL if invalid character
+//	figure out which players on team and stuff in 8007FF58
+3C198008	LUI	T9,8008
+AF20FF58	SW	R0,FF58 (T9)
+27389EF0	ADDIU	T8,T9,9EF0	;T8=p->stats
+00004825	OR	T1,R0,R0
+//	loopus
+24010001	ADDIU	AT,R0,0001
+51250007	BEQL	T1,A1,+next	;set if this player
+A321FF58	SB	AT,FF58 (T9)
+830F0069	LB	T7,0069 (T8)
+31EF0007	ANDI	T7,T7,0007	;T7=team flags
+11E00003	BEQ	T7,R0,+next	;branch if no team
+30E20007	*ANDI	V0,A3,0007	;nonzero indicates a team effort
+51E20001	BEQL	T7,V0,+1
+A321FF58	SB	AT,FF58 (T9)
+//	next
+27390001	ADDIU	T9,T9,0001
+25290001	ADDIU	T1,T1,0001
+012A082B	*SLTU	AT,T1,T2	;TRUE if # < total players
+1420FFF3	BNE	AT,R0,-loopus
+27180070	ADDIU	T8,T8,0070
+
+0005C025	*OR	T8,A1,R0	;T8 is first character
+//7F0C3948:	F847C	tally point total (player kills only)
+0FC30E80	JAL	7F0C3A00	;V0=points for scenario
+00001025	OR	V0,R0,R0
+00822021	ADDU	A0,A0,V0
+//7F0C39A8:	F84D8	TIME SCENERIOS
+0FC30F19	*JAL	7F0C3C74	//142E0002	*BNE	AT,T6,+2	;branch if Flag tag
+00001025	*OR	V0,R0,R0	//8D620060	*LW	V0,0060 (T3)	;V1=flag time
+00C23021	*ADDU	A2,A2,V0
+//7F0C39BC:	next character
+27180001	*ADDIU	T8,T8,0001	;T8=next character
+030A102B	*SLTU	V0,T8,T2	;TRUE if # < total players
+14400003	*BNE	V0,R0,+3
+3C028008	*LUI	V0,8008
+244B9E80	*ADDIU	T3,V0,9E80	;V0=base for stats-70
+0000C025	*OR	T8,R0,R0
+//7F0C39C8:	correct T3, then figure if rolled around
+1305000A	*BEQ	T8,A1,7F0C3C84	;jump to scenario-stuff if rolled around
+256B0070	ADDIU	T3,T3,0070
+//7F0C39E4:	finally, LOOP for each teammate
+00581021	ADDU	V0,V0,T8
+8042FF58	LB	V0,FF58 (V0)
+1440FFEF	BNE	V0,R0,-tally
+00000000	NOP
+//7F0C39F4:
+1000FFF3	*BEQ	R0,R0,-next character
+00000000	NOP
+
+
+Seperate routine to more easily calculate the point scenarios
+currently at 7F0C3A00	F8530
+
+T8=cur.player#
+2D890003	SLTIU	T1,T4,0003	;TRUE if point scenario 0,1,2 (norm, MwtGX,SnS)
+11200011	BEQ	T1,R0,7F0C39A8	;jump to other scenarios
+//normal + MwtGX, plus any others that tack into normal scoring
+2548FFFF	ADDIU	T0,T2,FFFF
+//loop
+00081880	SLL	V1,T0,0x2
+01634821	ADDU	T1,T3,V1
+8D230024	LW	V1,0024 (T1)
+3C098008	LUI	T1,8008
+0128C821	ADDU	T9,T1,T0
+8339FF58	LB	T9,FF58 (T9)
+54190002	BNEZL	T9,+2
+00431023	SUBU	V0,V0,V1	;subtract if friendly
+00431021	ADDU	V0,V0,V1	;add if not
+1500FFF6	BNE	T0,R0,loop
+2508FFFF	ADDIU	T0,T0,FFFF
+//	MwtGX subsection
+91630069	LBU	V1,0069 (T3)	;V0=0x69 in player stats...
+30630020	ANDI	V1,V1,0020	;V0=mask for GX
+54600001	BNEL	V1,R0,+1
+8523FF5C	LH	V1,FF5C (T1)
+00621021	ADDU	V0,V0,V1
+//	Shaken, not Stirred
+;;	24090002	ADDIU	T1,R0,0002
+;;	152C0001	BNE	T1,T4,+return
+;;	00000000	NOP
+//return
+03E00008	JR	RA
+00000000	NOP
+
+team scoring:
+check players for matching team flag
+if match or cur.player, place 1 in register
+if zero or differ, place 0 in register
+then just look at register to determine if adding or subtracting value
+
+for team scores, do above then repeat for each matching player
+
+
+
+
+
+Seperate routine to more easily calculate the timed scenarios
+currently at	7F0C3C64	F8794	
+//Live and Let Die
+24010002	ADDIU	AT,R0,0002
+142E0006	BNE	AT,T6,next
+24010001	ADDIU	AT,R0,0001
+8D62004C	LW	V0,004C (T3)
+00C2182A	SLT	V1,A2,V0	;this works only because increasing float values are incrementally higher
+50600002	BEQL	V1,R0,+2	;if old value is larger than new value, abandon new value
+00001025	OR	V0,R0,R0	;new value is lost
+00003025	OR	A2,R0,R0	;original value is lost
+//The Living Daylights
+502E0001	BEQL	AT,T6,RETURN
+8D620060	LW	V0,0060 (T3)
+//return
+03E00008	JR	RA
+00000000	NOP
+
+Even crazier:
+  Make a "tack on scenario score" feature.
+  Takes the scenario and works out the scoring thingy for each
+  Yes, that means rewriting the above code, again...
+  Basically like before, but kills is wrapped into the "score" jump, and all timed are wrapped into time.
+  If YOLT is alone, special handler grabs that.
+
+Also need to set scenarios so they use bitflags
+Teams will need to set value 1-F, indicating colour
+That also means hacking the radar...
+This isn't going to be ready by tomorrow...
+
+7F014758	49288	V0="scenario" bitflags
+2404FFFF	ADDIU	V1,R0,FFFF
+3C028003	LUI	V0,8003
+9442B540	LHU	V0,B540 (V0)
+03E00008	JR	RA
+00441024	AND	V0,V0,V1
+
+7F01476C	4929C	V0=time, V1=point scenarios
+3C028003	LUI	V0,8003
+9043B543	LBU	V1,B543 (V0)
+03E00008	JR	RA
+9042B542	LBU	V0,B542 (V0)

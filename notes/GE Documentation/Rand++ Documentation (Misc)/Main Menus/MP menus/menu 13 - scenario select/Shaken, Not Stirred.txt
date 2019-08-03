@@ -1,0 +1,48 @@
+  Each type of hit worth a certain value.  This is multiplied by accuracy.
+  To keep within sane limits, 1.00 is 100% accuracy.  All displayed values are ints.
+head = 4
+body = 2
+else = 1
+
+T3=p->stats
+
+//:7F0C3A4C	F857C	calculate #hits
+24090002	ADDIU	T1,R0,0002
+152C001B	BNE	T1,T4,+return
+8D690018	LW	T1,0018 (T3)	;V1=object hits (don't count); total hits
+8D630014	LW	V1,0014 (T3)	;AT=hat hits
+8D610010	LW	AT,0010 (T3)	;AT=weapon hits
+00231821	ADDU	V1,V1,AT	;V1=points
+8D61000C	LW	AT,000C (T3)	;AT=limb hits
+00231821	ADDU	V1,V1,AT
+8D610008	LW	AT,0008 (T3)	;AT=body hits
+00231821	ADDU	V1,V1,AT
+00694821	ADDU	T1,T1,V1
+00231821	ADDU	V1,V1,AT
+8D610004	LW	AT,0004 (T3)	;AT=head hits
+00294821	ADDU	T1,T1,AT	;total shots
+00010880	SLL	AT,AT,0x2
+00231821	ADDU	V1,V1,AT	;total score
+//:		calculate accuracy
+8D680000	LW	T0,0000 (T3)	;V0=total shots
+1900000B	BLEZ	T0,+create	;don't bother if didn't fire
+44890000	MTC1	T1,F0
+44882000	MTC1	T0,F4
+46800020	CVT.S.W	F0,F0	;F6=(float) hits
+46802120	CVT.S.W	F4,F4	;F18=(float) shots
+46040003	DIV.S	F0,F0,F4	;F0=hits * 100.0 / shots
+//:		create value
+44832000	MTC1	V1,F4
+46802120	CVT.S.W	F4,F4	;F18=(float) score
+46040002	MUL.S	F0,F0,F4
+//:		convert to value and add to score
+4600000D	TRUNC.W.S	F0,F0	;back to word
+44030000	MFC1	V1,F0
+00621021	ADDU	V0,V0,V1
+
+  Come to think of it, this would be very messy with teams.  Hopefully nobody shoots their buddy...
+
++_+
+
+registry:
+B025.02.00

@@ -1,0 +1,68 @@
+NTSC - North America only
+Select the "Dr. No" cheat in your cheat folder to eliminate body armor in all stages. 
+"Dr. No (no BA multi)#8" .off
+812AF254 4472
+812AF256 2E20
+812AF258 4E6F
+812AF25A 0000
+80069651 0001
+8104EFBA 45C0
+D00696A1 0001
+8104EFBA 4AFC
+
+PAL - Europe
+Select the "Dr. No" cheat in your cheat folder to eliminate body armour in all stages. 
+"Dr. No (no BA multi)#8" .off
+8129F3C8 4472
+8129F3CA 2E20
+8129F3CC 4E6F
+8129F3CE 0000
+80058591 0001
+81047402 454C
+D00585E1 0001
+81047402 4A90
+
+-------------
+They've been tested now and do work on their respective regions.  Let me explain how these work though.
+First, this adds a cheat into the in-game "Cheat" menu called "Dr. No".  When on, body armor/armour will not appear in either solo or multiplayer stages.  When off, they still appear normally.
+
+Also, this is an ASM (assembly) hack.  What that means is that emulators don't like them.  Most emulators won't allow the thing to work unless you either reset after activating the codes or activate the code before turning on the game.  Why?  Most emulators cache opcodes to increase performance, but that also means you can't edit or add in a few of your own.  If you've ever had problems getting this or the new scenarios to work, that's probably why.
+
+----------------------------
+----------------------------	no ammo boxes (solo/multi)
+----------------------------
+
+If you don't want to be able to turn the cheats off in play, use this:
+NTSC	8104EFB6 4AFC
+PAL	810473FE 4A90
+
+The ones below add a cheat into the in-game cheat menu you can toggle.
+
+NTSC - North America only
+Select the "Dr. No" cheat in your cheat folder to eliminate ammo boxes in all stages. 
+"Dr. No (no ammo boxes)#8" .off
+812AF254 4472
+812AF256 2E20
+812AF258 4E6F
+812AF25A 0000
+80069651 0001
+8104EFB6 4760
+D00696A1 0001
+8104EFB6 4AFC
+
+PAL - Europe
+Select the "Dr. No" cheat in your cheat folder to eliminate ammo boxes in all stages. 
+"Dr. No (no ammo boxes)#8" .off
+8129F3C8 4472
+8129F3CA 2E20
+8129F3CC 4E6F
+8129F3CE 0000
+80058591 0001
+810473FE 46FC
+D00585E1 0001
+810473FE 4A90
+
+They've been tested now and do work on their respective regions.  Let me explain how these work though.
+First, this adds a cheat into the in-game "Cheat" menu called "Dr. No".  When on, ammo boxes will not appear in either solo or multiplayer stages.  When off, they still appear normally.
+
+Also, this is an ASM (assembly) hack.  What that means is that emulators don't like them.  Most emulators won't allow the thing to work unless you either reset after activating the codes or activate the code before turning on the game.  Why?  Most emulators cache opcodes to increase performance, but that also means you can't edit or add in a few of your own.  If you've ever had problems getting this or the new scenarios to work, that's probably why.  You know, you should probably just assume nothing I write up works on emulators...

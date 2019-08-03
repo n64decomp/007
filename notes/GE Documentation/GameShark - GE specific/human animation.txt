@@ -1,0 +1,244 @@
+Do a little dance, make a little love (Goldeneye animation mods) 
+USE THIS START POINT, AGENT, FACILITY to start right at Trevelyan. 
+8106EDB4 45FB 
+8106EDB8 C39B 
+8106EDBC C598 
+8106EDC0 801A 
+8106EDC2 70AC 
+Trev Facility 
+D0064F30 0010 
+811E8414 XXXX 
+D0064F30 0010 
+811E8416 YYYY 
+Press L 
+
+Cuba 
+Bond 
+8118B020 XXXX 
+8118B022 YYYY 
+Natalya 
+8118B054 XXXX 
+8118B056 YYYY 
+
+Table at: 80029D6C 
+
+Offset below * 4 
+Assume can replace certain animations with any other 
+XXXXYYYY 
+(same pointers all levels!) 
+802AF4C0 default (nothing)
+802AF4DC walk 
+802AF604 aim to fire 
+802AF6D4 bow-legged aim gun 
+802AF7D8 firing position 
+802AF884 side aim 
+802AFAD0 up aim 
+802AFCD4 hunched position 
+802AFE50 hunched slanted position 
+802B0044 hunched 
+802B0274 hold for fire 
+802B04E8 stand 
+802B07F4 low position for firing 
+802B0A38 low position slightly higher for firing 
+802B0C74 very low hunched for firing and missing bullets 
+802B0D2C very low gunslinging behind him *cool* 
+802B0E44 hit in shoulder by bullet clutching it 
+802B0F2C clutching stomach 
+802B1014 clutching stomach forward 
+802B115C looking around for bullet hitting 
+802B1300 bent over from being hit 
+802B1444 standing 
+802B15F4 stepping slightly 
+802B1CEC on ground clutching 
+802B1E5C feet in ground 
+802B2324 clutching neck 
+802B2454 on ground face up 
+802B2578 face down on ground 
+802B269C dead face up 
+802B2788 dead face up sprawled out 
+802B286C face down huddled 
+802B2994 crossed feet face up death 
+802B2A88 face down 
+802B2B98 face up sort of crossed legs 
+802B2D0C dying on knees then face down 
+802B2E80 dead on ground 
+802B2FB0 huddled in fetal position 
+802B30D0 huddled in fetal position opposite direction 
+802B31C4 face up 
+802B325C feet in ground 
+802B3460 roll to fire 
+802B34D8 walking 
+802B3530 running 
+802B3594 running 
+802B3604 walking semi fast gun down 
+802B3758 walking then turn to fire *cool* 
+802B3788 atten-hut! *cool* *USED?* 
+802B3844 surrendering 
+802B39C4 surrendering and moving feet a bit 
+802B3A34 walking and firing 
+802B3A8C running to fire 
+00000001 
+00000001 
+802B3C7C jumping to side *cool* 
+802B3F00 hopping to side 
+802B41A0 shot in butt 
+802B43D4 shot in butt stammering around for a while *cool* 
+802B4684 shot and sort of dying 
+802B48CC dying on side 
+802B4960 in ground, moving about a bit 
+802B4A14 standing 
+802B4B44 on ground lifeless 
+802B4C04 start0 - standing gun to right 
+802B4E24 throwing grenade 
+802B51D0 moving hand at you 
+802B53B0 standing 
+802B5594 standing hands down 
+802B5714 start1 - draw gun and point
+802B583C body spread out a little less 
+802B5944 body spread out a little less 
+802B5A14 body spread out a little less 
+802B5B04 body spread out a little less 
+802B5BF8 pointing gun to side to aim 
+802B5CC8 arms at sides 
+802B5E0C aim at side to fire 
+802B5ED8 standing arms at side 
+802B60D8 kneel to fire 
+802B6210 feet in ground 
+802B63C8 standing 
+802B64CC standing 
+802B6690 kneel to fire for a sec 
+802B67C4 body spread out standing up 
+802B68F0 body spread out standing up 
+802B6964 walking gun pointed out *cool* 
+802B69D4 walking gun to side 
+802B6A48 walking gun to right side 
+802B6AAC running gun forward 
+802B6B10 running gun to right 
+802B6B78 running aiming to side 
+802B6BD4 running very fast gun full forward 
+802B6C3C running slow with gun 
+802B6C94 running fast 
+00000001 
+00000001 
+00000001 
+00000001 
+00000001 
+00000001 
+802B6D88 start2 - holstering gun 
+802B6F68 start3 - holstering gun kneeling 
+802B710C start4 - aiming leaning forward 
+802B71C4 start5 - standing gun forward 
+802B7298 crossing arms *cool* 
+802B73CC start6 - standing gun a little forward 
+802B7474 start7 - standing gun a little forward more 
+802B7540 bond completed mission pose, crossed arm, gun up 
+802B7624 checking gun standing 
+802B7654 standing then move a little in successive moves 
+802B76C4 walking casually 
+802B7734 walking gun forward 
+802B77A0 walking hold guns forward in slash *cool* 
+802B7800 running hands out 
+802B7864 running guns crossed 
+802B78C4 fast running fast guns full out *cool* 
+802B791C running fast guns full out crossed 
+802B7984 walking casually 
+802B79E0 running sort of girly 
+802B7B58 holding guns out kneeled to fire 
+802B7CC0 standing 
+802B7E38 standing bit tighter 
+802B7F6C standing bit tighter 
+802B80B0 standing 
+802B81E8 standing legs a bit farther back 
+802B82DC standing legs and arms a bit farther back 
+802B83EC standing 
+802B8544 move gun up for a sec then back to standing 
+802B8654 standing tight 
+802B87AC move gun up for a sec then back to standing 
+802B8904 standing holding gun into other 
+802B8ABC standing holding gun into other bit prouder 
+802B8C7C arms down and holding gun one hand 
+802B8D88 sort of sleeping mid-air? sniper on ground? 
+802B8EEC sprawled death 
+802B9008 leg a little in dead sprawled on floor 
+802B910C sprawled death hands up 
+802B921C sprawled slanty death 
+802B9304 sprawled sideways 
+802B9408 sprawled on side 
+802B9554 dying sprawled legs crossed 
+802B9678 sprawled face down 
+802B97B8 weird cross legged slanted death 
+802B98E4 sideways cross legged face down 
+802B99F8 sideways cross legged little different 
+802B9B10 dead on ground slightly angled 
+00000001 
+00000001 
+00000001 
+00000001 
+802B9B70 HAHAHA RUNNING prancing flailing arms surrender *very cool* 
+802B9BC4 running around like a madman surrendering 
+802B9D7C aiming gun up and down at you 
+802B9E0C turning gun side to side 
+802B9E9C gun aim 
+802BA16C checking gun 
+802BA634 little head movement checking gun 
+802BA76C shaking head moving hand to face 
+802BA9E8 swatting flies 
+802BAB70 kicking leg a bit, hunching for a sec 
+802BAC88 standing gun pose 
+802BAD14 standing gun pose feet a little back 
+802BAE68 hunching over once 
+802BB100 talking and moving arm 
+802BB440 laughing 
+802BB6E4 standing legs slant 
+802BB8D0 standing gun across face pondering 
+802BBA04 hands up surrender stationary 
+802BBCF8 gun up coiling from being hit 
+802BC038 being hit and coming back 
+802BC32C sort of kneel being hit 
+802BC568 standing prim and proper 
+00000001 
+802BC808 DANCING!!!? 
+802BCA0C fast dancing!? 
+802BCAA4 standing arms down 
+802BCB28 standing arms down 
+802BCBB8 standing arms down 
+802BCBE8 standing arms down head a little lower 
+802BCD5C start8 - aiming gun 
+802BD0A4 jumping off dam! 
+802BD1E0 UHH? He takes a step, then jumps straight down through floor 
+802BD51C running and jumping (onto cradle helicopter) 
+802BD54C falling off cradle! 
+802BD57C probably fixing suit with arms motion 
+802BD64C leg up arms out a little 
+00000000 
+802BD930 slanted whole body 
+802BDAB4 slanted almost like got punched in face backwards 
+802BDC80 body GOES ABSOLUTELY CRAZY and flutters to the sky 
+
+Everybody's dances! Well, it works Cuba, not sure about other levels. 
+(or replace for everyone does anything) 
+5000FF04 0000 
+81029D6C 802B 
+5000FF04 0000 
+81029D6E C808 
+
+Everybody Arms flailing 
+5000FF04 0000 
+81029D6C 802B 
+5000FF04 0000 
+81029D6E 9B70 
+
+http://home.worldnet.att.net/~MKleiman/animationmod.zip
+
+
+__________________
+facility guard invisibility!
+801D927C 0025 
+801D9458 0025 
+801D9634 0025 
+801D9810 0025 
+801D99EC 0025 
+801D9BC8 0025 
+801D9DA4 0025 
+801D9F80 0025 
+

@@ -1,0 +1,201 @@
+refer to '08 weapon object type' for more info.
+
+rearranging the normal weapon routine.  
+Also, all MP weapons just jump to 7F002870, since they do anyway.  
+F0-FF are now valid, as opposed to F0-F8
+Best of all, will accept an Armor object.  uses type FF
+
+7F00282C:
+LBU	V0,0080 (A3)	//V0=type
+SLTI	AT,V0,0059	//tests if weapon is valid (<59)
+BNEZ	AT,7F00285C	//retrieve type for MP or use current
+ADDIU	T6,V0,FF10	//T6=MP weapon # converted to index
+//7F00283C:	this only applies to MP weapons
+SLTIU	AT,T6,0008
+BEQ	AT,R0,7F00296C	//if < 8, doesn't think it is an MP weapon
+SLL	T6,T6,0x2
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,EF30 (AT)	//T6=8004EF30 + offset	(all 8 = 7F002870)
+JR	T6
+NOP
+
+7F00285C:	write 08 object fields; deal with flag first
+ADDIU	AT,R0,0058
+BEQL	V0,AT,7F002950	//branch if flag
+SW	A1,0018 (SP)
+BEQ	R0,R0,7F002970	//branch if a normal weapon pickup
+LB	A0,0080 (A3)	//A0=weapon type
+
+7F002870:	figure out MP weapon type
+JAL	7F0C6614	//returns V0=pointer to weapon set
+SW	A3,002C (SP)
+LW	A3,002C (SP)	//A3=object address
+LUI	AT,8007
+ADDIU	T1,R0,0001
+LBU	A0,0080 (A3)	//A0=weapon type
+ADDIU	A0,A0,FF10	//A0=0-F
+SLL	T7,A0,0x2
+SUBU	T7,R7,A0
+SLL	T7,T7,0x3	//T7=offset	type*0x18
+SW	A0,9540 (AT)	//converted type->80069540...
+ADDU	V1,V0,T7	//V1=pointer to specific weapon data in set
+LW	T8,0000 (V1)	//T8=weapon type
+LUI	AT,4380
+MTC1	AT,F6
+SB	T8,0080 (A3)	//change object's weapon type to literal
+LW	T9,0004 (V1)	//T9=model type
+LUI	AT,4F00
+SH	T9,0004 (A3)	//change model type
+LWC1	F4,0008 (V1)	//F4=scale
+MUL.S	F8,F4,F6	//F8=scale * 256
+...
+//7F002930:
+NOP
+BLTZ	T1,7F002924
+NOP
+CTC1	T0,F31
+SH	T1,0000 (A3)	//scale->header
+BEQ	R0,R0,7F00296C
+LW	A1,0014 (V1)	//A1=1 if weapon pickup present
+
+//7F00294C:	//Flag tag check
+SW	A1,0018 (SP)
+JAL	7F014758	//returns V0=8002B540=scenario
+SW	A3,002C (SP)
+ADDIU	AT,R0,0002
+LW	A1,0018 (SP)
+BEQ	V0,AT,7F00296C	//available if flag tag...
+LW	A3,002C (SP)	//A3=object data
+OR	A1,R0,R0	//A1=0 (no pickup!)
+
+
+========================================
+7F002800-7F002818 are presumed available
+
+//not sure if these are still necessary.  Add if needed...
+ADDIU	A1,R0,0001
+SW	A1,0018 (SP)
+//These three lines are left untouched
+7F002820:
+*ADDIU	T5,R0,FFFF	//T5=-1
+*LUI	AT,8007
+*SW	T5,9540 (AT)	//-1->80069540	mp weapon to draw ammo from (used in 14 ammo box routine)
+
+
+rearrange the tests.
+7F00282C:	0x3735C-E
+	LBU	V0,0080 (A3)	//V0=type
+	SLTI	AT,V0,0059	//tests if weapon is valid (<59)
+1020000C	*BEQ	AT,R0,7F002868	//jump smack to the MP listing if MP item
+			//only trouble is all invalid weapons go there too!
+244EFF10 	ADDIU	T6,V0,FF10	//T6=MP weapon # converted to index
+//7F00283C:	test for flag and normal; do flag tag stuff
+24010058	ADDIU	AT,R0,0058
+1422004A	*BNE	V0,AT,7F00296C	//branch if a normal weapon pickup
+24010002	*ADDIU	AT,R0,0002
+0FC051D6	*JAL	7F014758	//returns V0=8002B540=scenario
+8FA7002C	*LW	A3,002C (SP)	//A3=object data
+54220046	*BNEL	V0,AT,7F00296C
+00002825	*OR	A1,R0,R0
+8FA7002C	*BEQ	R0,R0,7F00296C
+8FA50018	*LW	A1,0018 (SP)
+
+(two available ops - save for scenario->bitflag hacks)
+*NOP
+*NOP
+
+//7F002868
+05C20040	*BLTZL	T6,7F00296C	//if not F0-FF, weapon will not appear
+00002825	*OR	A1,R0,R0	
+
+//7F002928:
+ADDIU	T1,R0,0100
+
+//7F002930:	hack the test.  assume T5 still = -1
+	0x37460
+	NOP
+	BLTZ	T1,7F002924
+	NOP
+	CTC1	T0,F31
+	SH	T1,0000 (A3)	//scale->header
+80E40080	*LB	A0,0080 (A3)
+148D0009	*BNE	A0,T5,7F002970	//if type = -1, make some BA
+8C650014	*LW	A1,0014 (V1)	//A1=1 if weapon pickup present
+//7F002950:	//BA check; 
+	0x37480
+8FBF0014	*LW	RA,0014 (SP)
+24010015	*ADDIU	AT,R0,0015
+A0E10003	*SB	AT,0003 (A3)	make 15 obj type (BA)
+3C010001	*LUI	AT,0001
+ACE10080	*SW	AT,0080 (A3)	SET amount (100%)
+1000000D	*BEQ	R0,R0,7F00299C
+27FF0160	*ADDIU	RA,RA,0160	offset from return to obj15 stuff
+
+
+**********************
+slight edit to above.   We're inserting the flag test at the end, possibly with a branch.
+Reason is you can then handle sets that don't include flag tag.  Plus, multiflag etc. possible then.
+Worth testing for.
+
+However!  Do need to add a test to see if inf. ammo is on.  If so, should force weapon available and kill ammo box
+
+7F00282C:	0x3735C-E
+	*LBU	A0,0080 (A3)	//V0=type
+	*SLTI	AT,A0,0059	//tests if weapon is valid (<59)
+1420004D	*BNE	AT,R0,7F00296C	//skip MP listing if a valid object
+244EFF10 	*ADDIU	T6,A0,FF10	//T6=MP weapon # converted to index
+//7F00283C:	test if MP
+05C10040	*BGEZ	T6,7F002870	//if not F0-FF, weapon will not appear
+24010058	ADDIU	AT,R0,0058
+
+//7F002844:
+5422004A	*BNEL	A0,AT,7F00299C	//branch if an invalid (nonflag) that got routed here
+00002825	*OR	A1,R0,R0
+0FC051D6	*JAL	7F014758	//returns V0=8002B540=scenario
+24010002	*ADDIU	AT,R0,0002
+54220046	*BNEL	V0,AT,7F00299C
+00002825	*OR	A1,R0,R0
+	*BEQ	R0,R0,7F00297C
+	*LW	A1,002C (SP)	//A1=object offset
+
+
+//7F002928:
+ADDIU	T1,R0,0100
+
+//7F002930:	hack the test.  assume T5 still = -1
+	0x37460
+	NOP
+	BLTZ	T1,7F002924
+	NOP
+	CTC1	T0,F31
+	SH	T1,0000 (A3)	//scale->header
+80E40080	*LB	A0,0080 (A3)
+148D0008	*BNE	A0,T5,7F00296C	//if type = -1, make some BA
+8C650014	*LW	A1,0014 (V1)	//A1=1 if weapon pickup present
+//7F002950:	//BA check; 
+	0x37480
+8FBF0014	*LW	RA,0014 (SP)
+24010015	*ADDIU	AT,R0,0015
+A0E10003	*SB	AT,0003 (A3)	make 15 obj type (BA)
+3C010001	*LUI	AT,0001
+ACE10080	*SW	AT,0080 (A3)	SET amount (100%)
+1000000D	*BEQ	R0,R0,7F00299C
+27FF0160	*ADDIU	RA,RA,0160	offset from return to obj15 stuff
+//7F00296C
+	*BEQ	A1,R0,7F00299C	//skip if no pickup
+	*SLTI	AT,A0,0058	//1 if not flag or invalid
+	*BEQL	AT,R0,7F002844
+24010058	*ADDIU	AT,R0,0058
+	*BEQ	A0,R0,7F00299C	//skip if type 0
+	*any stupid thing...
+	*JAL	7F005710	//sets throwable models. returns V0=1 loaded model
+	*SW	A3,002C (SP)	//save the object offset
+	*LW	A1,002C (SP)	//A1=object offset
+	*LW	A0,0028 (SP)
+	*JAL	7F001D9C	//expand object
+	*LW	A2,0030 (SP)
+//7F00299C
+	*LW	RA,0014 (SP)
+	JR	RA
+	*ADDIU	SP,SP,0028

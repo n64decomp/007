@@ -1,0 +1,82 @@
+7F04F2EC:	83E1C	appends article before ammo type text
+	accepts: A0=p->final string, A1=ammo type, A2=quantity
+ADDIU	T6,A1,FFFF	;T6=A1-1: ammo types 1-1D
+ADDIU	SP,SP,FFE8
+SLTIU	AT,T6,001D	;TRUE if valid ammo type
+SW	RA,0014 (SP)
+BEQ	AT,R0,7F04F3FC	;branch if invalid type
+SW	A0,0018 (SP)	;SP+18=A0: p->final
+SLL	T6,T6,0x2	;T6=ammo type -> offset
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,2F10 (AT)	;T6=80052F10+offset: TLB redirect for text displayed
+JR	T6
+NOP
+//7F04F31C:	"some"/"some"
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A401	;A0=A401: "some"
+LW	A0,0018 (SP)	;A0=SP+18: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->article
+BEQ	R0,R0,7F04F400
+LW	RA,0014 (SP)
+//7F04F388:	"a"/"some" - single
+ADDIU	AT,R0,0001
+BNE	A2,AT,7F04F360	;branch if multiple ammo
+NOP
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A402	;A0=A402: "a"
+LW	A0,0018 (SP)	;A0=SP+18: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->article
+BEQ	R0,R0,7F04F400
+LW	RA,0014 (SP)
+//7F04F360:	"a"/"some" - multiple
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A401	;A0=A401: "some"
+LW	A0,0018 (SP)	;A0=SP+18: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->article
+BEQ	R0,R0,7F04F400
+LW	RA,0014 (SP)
+//7F04F37C:	"an"/"some" - single
+ADDIU	AT,R0,0001
+BNE	A2,AT,7F04F3A4
+NOP
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A403	;A0=A403: "an"
+LW	A0,0018 (SP)	;A0=SP+18: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->article
+BEQ	R0,R0,7F04F400
+LW	RA,0014 (SP)
+//7F04F3A4:	"an"/"some" - multiple
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A401	;A0=A401: "some"
+LW	A0,0018 (SP)	;A0=SP+18: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->article
+BEQ	R0,R0,7F04F400
+LW	RA,0014 (SP)
+//7F04F3C0:	"the"/"some" - single
+ADDIU	AT,R0,0001
+BNE	A2,AT,7F04F3E8
+NOP
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A404	;A0=A404: "the"
+LW	A0,0018 (SP)	;A0=SP+18: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->article
+BEQ	R0,R0,7F04F400
+LW	RA,0014 (SP)
+//7F04F3E8:	"the"/"some" - multiple
+JAL	7F0C1DD8	;V0=p->text ID A0
+ORI	A0,R0,A401	;A0=A401: "some"
+LW	A0,0018 (SP)	;A0=SP+18: p->final
+JAL	7000A7FC	;strcat(A0,A1)
+OR	A1,V0,R0	;A1=V0: p->article
+//7F04F3FC:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP

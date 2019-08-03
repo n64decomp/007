@@ -1,0 +1,57 @@
+No need for TLB or jumps
+Only revision is written here.  It would be stupid to write everything else.
+
+7F0349FC:	6952C	V0=length of command in block A0 at offset A1
+	fries: AT,T6
+00851021	ADDU	V0,A0,A1
+904E0000	LBU	T6,0000 (V0)
+2DC100FD	SLTIU	AT,T6,00FD	;normal cap is FD.  You can extend this, however
+5020000C	*BEQL	AT,R0,+quit	;should strike these three, concidering could just set 3 bytes...
+24020001	*ADDIU	V0,R0,0001
+//7F034A10:	handle string type AD
+240100AD	*ADDIU	AT,R0,00AD
+542E0007	*BNEL	AT,T6,+norm
+3C018005	*LUI	AT,8005
+00027025	*OR	T6,V0,R0	;T6=V0
+80410000	*LB	AT,0000 (V0)
+1420FFFE	*BNE	AT,R0,-2	;loop until NULL terminator found
+24420001	*ADDIU	V0,V0,0001
+03E00008	*JR	RA
+004E1023	*SUBU	V0,V0,T6
+//7F034A34:	normal return
+002E0821	*ADDU	AT,AT,T6
+90222100	*LBU	V0,2100 (AT)
+//7F034A3C:	quit
+03E00008	*JR	RA
+00000000	*NOP
+
+This isn't in use yet, but pending the table require expansion, this would handle the length issue...
+At this point, I'm not sure what terrifying calamities befall those who use FD as a command.  I'm assuming a lock, but maybe a return.
+Currently, assuming FD.-- is the formula...
+
+00851021	ADDU	V0,A0,A1
+904E0000	LBU	T6,0000 (V0)
+//7F034A10:	handle string type AD
+240100AD	*ADDIU	AT,R0,00AD
+542E0007	*BNEL	AT,T6,+norm
+240100FD	*ADDIU	AT,R0,00FD
+00027025	*OR	T6,V0,R0	;T6=V0
+80410000	*LB	AT,0000 (V0)
+1420FFFE	*BNE	AT,R0,-2	;loop until NULL terminator found
+24420001	*ADDIU	V0,V0,0001
+03E00008	*JR	RA
+004E1023	*SUBU	V0,V0,T6
+//7F034A34:	discern normal types
+142E0006	BNE	AT,T6,+retrieve	;branch if not the FD entension indicator
+3C018005	*LUI	AT,8005
+24210100	ADDIU	AT,AT,0100	;next half of table
+904E0001	LBU	T6,0001 (V0)	;T6=FD type extension
+2DC20000	SLTIU	V0,T6,00XX	;TRUE if within cap
+50400003	BEQL	V0,R0,+return
+24020002	ADDIU	V0,R0,0002	;default size of command should include FD byte
+//	retrieve size
+002E0821	*ADDU	AT,AT,T6
+90222100	*LBU	V0,2100 (AT)
+//7F034A3C:	quit
+03E00008	*JR	RA
+00000000	*NOP

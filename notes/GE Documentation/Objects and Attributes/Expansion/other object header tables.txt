@@ -1,0 +1,42 @@
+  The last page of the 21990 has the feature so you can edit the header data for the normal object list.  There are two more lists that can be added on this page, one for the G_Z models and the other for heads/bodies.
+
+  Listed below is a breakdown of the lists that call the headers.  Header data is the same for all types of objects (including PD minus last word).  To properly match them up, grab the string name and then grab the header address.  Pull the header from the converted offset.
+
+Head/Body List:
+0x1D080 - (normally) 0x1D6D4	[note: I made a patch that may break this...]
+each entry is 0x14 in size
+0x0	4	pointer to header - subtract 0x20D90 to create offset in 21990 binary
+0x4	4	pointer to string - subtract 0x20D90 to create offset in 21990 binary
+0x8	4	[float] width
+0xC	4	[float] height
+0x10	1	gender; 0:female, 1:male
+0x11	1	!0 if object contains a head or is a head
+[note: all these headers usually lie in 1C680-1D080 unless hacked]
+
+
+G_Z 1st Person Model List:
+0x12B94 - 0x13F0C
+each entry is 0x38 in size
+0x0	4	pointer to header - subtract 0x20D90 to create offset in 21990 binary
+0x4	4	pointer to string - subtract 0x20D90 to create offset in 21990 binary
+0x8	4	no fire = 1?
+0xC	4	pointer to weapon statistics: fire rate, ammo type, position, etc.
+0x10	2	watch inventory text (selected)
+0x12	2	watch inventory text (selected)
+0x14	4	[float] x value, unknown use.
+0x18	4	[float] y value, unknown use.
+0x1C	4	[float] z value, unknown use.
+0x20	4	[float]  unknown use.
+0x24	4	[float]  unknown use.
+0x28	2	inventory text
+0x2A	2	inventory text
+0x2C	4	[float]  unknown use.
+0x30	4	[float]  unknown use.
+0x34	4	[float]  unknown use.
+[note: all these headers usually lie in 1BA30-1C5B0 unless hacked]
+
+  In both cases, suck up the string to use as the label for the box.  Then, suck up the header data from the offset given.  It is important to do it this way, since some entries are not found in the main index and when renaming occurs it can screw up the name and data association.
+
+-Zoinkity
+
+

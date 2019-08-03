@@ -1,0 +1,6766 @@
+S7= pointer to current GUARD data
+0x0	FD - current guard
+//these three can be set.
+0x116	FC	set with action F9
+0x118	FA
+0x11A	FB	set to guardID# of guard visibly shot
+
+F9	guardID# + 0x2710
+F8	player801D6D10
+
+
+-7000695C:	//V0= stage#
+-7F0101D8:	//copy autoaim and sight settings to player stats
+-7F010420:	//V0= selected MP time
+-7F010444:	//V0= selected MP kills
+-7F014758:	//V0=8002B540=scenario
+-7F033040:	//V0= handle to guard ID# (A1= #)
+-7F0570C0:	//V0= handle to tagged object # (A0= #)
+-7F056160:	timer mode bits.
+	A1= mode (1-set, 0-unset)
+	A0= bits to toggle.  1x	unknown; x1 show timer
+-7F05C8B4:	//feed A0=weapon type; V0= handle to weapon data
+-7F07CE78:	//V0= (80036448)
+-7F07A528:	//V0= current mode. (80036494)
+-7F09A464:	//returns V0=# players (T6,T7,T8,T9,V1,V0 fried)
+-7F09B150:	//V0= 8007A0B8
+-7F0BFBF8:	//A0->80048370
+-7F0BFC04:	//V0= 80048370
+-7F0BFC10:	//V0= difficulty
+-7F0BFC1C:	//A0= difficulty
+-7F0BFC28:	//A0->80048398	selected MP time
+-7F0BFC34:	//A0->8004839C	selected MP kills
+-7F0BFC40:	//F0= 800483A4
+-7F0BFC4C:	//F0= 800483AC
+-7F0BFC58:	//F0= stage time in seconds
+-7F0BFC64:	//F0= time since power on, in seconds
+-7F0BFC70:	//reset 80048468,C,70 to 0
+-7F0BFC8C:	//V0= 80048474
+-7F0BFC98:	//V0= 80048480
+-7F0BFCA4:	//V0= 8004847C
+-7F0C65F8:	//returns V0= pointer to selected weapon set text
+-7F0C6614:	//V0= pointer to weapon set data
+-7F0C6630:	//A0->weapon set (fries AT)
+-7F0C663C:	//V0= selected weapon set #
+
+
+-------------------
+object type 9 - guard data.  mostly to make sense of other stuff
+7F023720:
+A1	pointer to object
+A0/V1	9 (type)
+A2/S3	79?  not sure what this is
+
+LHU	T6,0006 (A1)	//T6= preset
+LUI	T8,8007
+LW	T8,5D18 (T8)	//T8= pointer to 0xxx presets
+SLL	T7,T6,0x2
+SUBU	T7,T7,T6
+SLL	T7,T7,0x2
+SUBU	T7,T7,T6
+SLL	T7,T7,0x2
+OR	S0,A1,R0	//S0= pointer to object
+ADDU	A0,T7,T8	//A0= address of preset
+LW	A1,0028 (A0)	//A1= room pointer
+ADDIU	T9,SP,0054
+SW	T9,0010 (SP)
+SW	A0,005C (SP)
+LUI	A2,41A0
+JAL	7F056850	//grabs data from preset
+ADDIU	A3,SP,0048
+BEQ	V0,R0,7F0238FC
+ADDIU	T0,R0,FFFF
+SW	T0,0030 (SP)
+LHU	V0,0008 (S0)	//V0= body
+ORI	AT,R0,FFFF
+BNEL	V0,AT,7F023794	//branch if not -1
+SW	V0,0034 (SP)
+JAL	7F023590	//random body?!?
+NOP
+-7F023790:
+SW	V0,0034 (SP)
+LW	T1,0034 (SP)
+LUI	T3,8004
+SLL	T2,T1,0x2
+ADDU	T2,T2,T1
+SLL	T2,T2,0x2
+ADDU	T3,T3,T2
+LBU	T3,DE21 (T3)	//gender tag
+BNEL	T3,R0,7F0237DC
+LW	A0,0034 (SP)
+-7F0237D4:
+SW	V0,0030 (SP)
+LW	A0,0034 (SP)
+LW	A1,0030 (SP)
+JAL	7F0234D0
+LHU	A2,0014 (S0)	//A2= 0x14 (0)
+
+
+
+-------------------
+0A action type
+0000	FFFF FFFF 0610	FFFF FFFF 4410	FFFF 0002 0610	0002 FFFF 0610
+0001	FFFF FFFF 0410
+0002	FFFF 0002 0600(plane/helicopter rotors...)
+000B	0014 003C 0010	0014 003C 0210
+001E	0053 0054 0410
+0028	FFFF FFFF 0610
+002A	FFFF FFFF 0610
+0041	0015 0028 0410
+0042	0000 0014 0410
+0052	FFFF FFFF 0610
+0053	0000 0022 0010
+0054	0000 0024 0010
+0059	FFFF FFFF 0610
+005A	FFFF FFFF 0610
+	0007 FFFF 0610
+0061	0000 0001 0410
+	0001 FFFF 0410
+	FFFF 00AF 0410
+0062	007F FFFF 8610
+	0000 0001 0410
+	0001 FFFF 0410
+	FFFF 0063 0410
+0063	0000 0001 0610
+	0001 FFFF 0610
+	FFFF 0042 0610
+	FFFF 0060 0410
+	0000 0095 0010
+	FFFF FFFF 0410(runway intro)
+0064	0000 0001 0410
+	0001 FFFF 0410
+0065	0033 FFFF 0610
+	0022 FFFF 0610
+	FFFF 0022 0610
+	0008 006D 0410
+0066	0000 0001 0410
+	0001 FFFF 0410
+0067	0000 0001 0410
+	0001 FFFF 0410
+0068	0000 FFFF 0610
+	FFFF FFFF 0610
+0069	0000 001D 0610
+	001D 00A0 0610
+006A	FFFF FFFF 0610
+	FFFF FFFF 0600
+	FFFF FFFF 4400
+006B	FFFF FFFF 0610
+	FFFF FFFF 8610
+0073	FFFF FFFF 0610
+0093	0000 0019 0010
+0094	0000 0011 0010
+0096	0000 0056 0010
+0097	0000 0056 0010
+009A	0000 00C1 1810
+009B	0000 0126 1810
+009C	0000 00B7 1810
+009D	0000 007B 1810
+009E	0000 0038 1810
+009F	0000 0089 1810
+00A3	0000 008C 0010
+	00AA 0128 0010
+00A8	003C 0078 0010
+00AC	0000 0045 0010
+00AD	0000 004A 0010
+00AE	0000 004F 0010
+00AF	0000 0059 0010
+00B1	FFFF 0003 2410
+	0003 005A 0410
+	0050 FFFF 0410
+00B2	0014 FFFF 0618
+00B3	0002 FFFF 0610
+00B4	FFFF FFFF 0610
+00B5	FFFF FFFF 0600
+	009E 00FA 4420
+	0103 FFFF 4420
+00B6	FFFF FFFF 0600
+	009E 00FA 4420
+	0103 FFFF 4420
+
+set data read (intro movies)
+7F005A94:
+LW	T7,0008 (S0)	//grab set # from CAM0(preset) type
+LUI	T2,8007
+LUI	AT,8008
+BNE	V0,T7,7F005AE8	//V0=test set number (1), should match pulled value
+NOP
+LW	T0,0004 (S0)	//grab preset number
+LUI	V0,8008
+LW	V0,9C68 (V0)	//V0=80079C68=0
+SLL	T1,T0,0x2	//T1=008B*4=22C
+SUBU	T1,T1,T0	//T1=1A1
+LW	T2,5D18 (T2)	//T2=80075D18=0xxx preset pointer
+SLL	T1,T1,0x2	//T1=T1*4=684
+SUBU	T1,T1,T0	//T1=5F9
+SLL	T1,T1,0x2	//T1=17E4
+SLL	T4,V0,0x2	//T4=V0*4=0
+ADDU	AT,AT,T4	//AT+=offset in table
+ADDU	T3,T1,T2	//T3=offset to preset
+SW	T3,9C28 (AT)	//T3->80079C28
+LUI	AT,8008
+ADDIU	T5,V0,0001	//counter++
+SW	T5,9C68 (AT)	//counter->80079C68
+BEQ	R0,R0,7F005DE4
+ADDIU	S0,S0,000C	//next type
+
+read it again:
+7F005E98:
+LW	T0,9C68 (T0)	//T0=#spawns
+BLEZL	T0,7F005F50
+	ADDIU	A0,SP,008C
+JAL	7F09A464
+NOP
+
+7F09A464:	V0= # players loaded
+	fries: T6,V1,T7,T8, T9, V0
+LUI	T6,8008
+LW	T6,9EE0 (T6)	//T6=80079EE0=800C6760 (player1 pointer)
+OR	V1,R0,R0	//V1=playercount
+LUI	T7,8008
+BEQ	T6,R0,7F09A480	//if NULL branch
+LUI	T8,8008
+ADDIU	V1,R0,0001
+LW	T7,9EE4 (T7)	//T7=player2 pointer
+LUI	T9,8008
+BEQ	T7,R0,7F09A494
+NOP
+ADDIU	V1,V1,0001
+LW	T8,9EE8 (T8)	//T8=player3 pointer
+BEQ	T8,R0,7F09A4A4
+NOP
+ADDIU	V1,V1,0001
+LW	T9,9EEC (T9)	//T9=player4 pointer
+BEQ	T9,R0,7F09A4B4
+NOP
+ADDIU	V1,V1,0001
+JR	RA
+OR	V0,V1,R0	//V0=#players
+
+7F005EAC:
+SLTI	AT,V0,0002
+BNEZ	AT,7F005ED4
+LUI	T1,8008
+
+
+
+-------------------
+guard data follows level-specific text
+Pointer @ 8002CC64
+objective pointers starting at 80075d30
+
+BP facility 801d22d4 (00000012 00000033 0000003F)
+7F004388:
+LBU	S0,000B (S2)	//S0=yy (3F, in this case)
+JAL	7f022FC8
+LW	A0,0004 (S2)	//A0=xxxxxxxx (00000033, in this case)
+
+7F022FC8:
+LUI	V1,8003
+LW	V1,CC68 (V1)	//V1=8003CC68=0000004B (# GUARDS)
+OR	A3,A0,R0	//A3=A0=33
+LUI	A0,8003
+BLEZ	V1,7F023020
+OR	V0,R0,R0
+LW	A0,CC64 (A0)	//A0=8002CC64=801D9270 (guard data handle)
+OR	A1,R0,R0
+OR	A2,A0,R0
+7F022FEC:
+LW	T6,001C (A2)	//T6=801D928C=801E55B0
+ADDIU	V0,V0,0001
+SLT	AT,V0,V1
+BEQL	T6,R0,7F023018	//if T6=NULL, branch
+	ADDIU	A1,A1,01DC
+LH	T7,0000 (A2)	//T7=801D9270=0
+BNEL	A3,T7,7F023018	//branch once A3=T7 (T7=33)
+	ADDIU	A1,A1,01DC
+JR	RA
+ADDU	V0,A1,A0	//V0=base address + offset=801DED8C
+7F023018:
+BNEZ	AT,7F022FEC
+ADDIU	A2,A2,01DC
+
+7F004394:
+BEQ	V0,R0,7F004AFC	//branch if NULL pointer
+NOP
+LW	T1,0018 (V0)	//T1=801DEDA4=8006D580	(handle to the 8006 stuff stored when expanding objects)
+BEQ	T1,R0,7F004AFC	//branch if NULL
+NOP
+LW	T9,001C (V0)	//T9=801DEDA8=801E79AC
+BEQ	T9,R0,7F004AFC	//branch if NULL
+NOP
+BEQ	R0,R0,7F004AFC
+SB	S0,0010 (V0)	//3F->801DED9C (just before 8006 and 801E pointers)
+
+7F004AFC:
+JAL	7F0568F4	//increment to next object routine
+OR	A0,S2,R0
+----------
+02 type expansion:
+7F004410:
+LW	T4,0004(S2)	//T4=data to be converted to float
+LUI	AT,4780
+MTC1	AT,F10		//F10=47800000 [65536.]
+MTC1	T4,F6		//F6=value
+LUI	AT,8003
+CVT.S.W	F8,F6		//F8=F6->float=4B800000 [1.677722e7]
+DIV.S	F16,F8,F10	//F16=F8/F10=43800000 [256]
+BEQ	R0,R0,7F004AFC
+SWC1	F16,A3C0(AT)	//43800000->8002A3C0
+
+format:
+00000002 xxxxxxxx
+
+x	converted to float and divided by 65536 (0x10000)
+value is stored to 8002A3C0.  Possibly a scale modifer or some such nonsense.
+The value is used for door calculations.  Changing it will shrink/enlarge doors.
+Why they ever made it is beyond me.
+
+----------
+
+1F type expansion:
+7F056AEC:
+LBU	T8,0003 (S1)
+ADDIU	S0,S0,0001	//S0=counter of objects
+BNE	S2,T8,7F056ACC	//if not at end of list, branch
+NOP
+
+7F056ACC:	this conditional isn't taken, but I'm curious
+BNE	S0,S3,7F056ADC
+NOP
+BEQ	R0,R0,7F056B00
+OR	V0,S1,R0
+7F056ADC:
+JAL	7F0568F4
+OR	A0,S1,R0
+
+7F056B00:
+LW	RA,0024(SP)
+LW	S0,0014(SP)
+LW	S1,0018(SP)
+LW	S3,0020(SP)
+JR	RA
+ADDIU	SP,SP,0028
+
+7F003BD0:
+BEQ	R0,R0,7F003BDC
+SW	V0,00C8(S1)
+7F003BDC:
+LW	RA,0034(SP)
+LW	S0,002C(SP)
+LW	S1,0030(SP)
+JR	RA
+ADDIU	SP,SP,01D8
+
+7F004408:
+BEQ	R0,R0,7F004AFC
+NOP
+
+7F004AFC:
+JAL	7F0568F4
+OR	A0,S2,R0
+
+
+
+----------
+objective block tracing:
+7F057264:
+LUI	A0,8007
+ADDU	A0,A0,V0
+LW	A0,5D30 (A0)	//objective pointer grabbed from 80075D30 pointers
+BNEL	A0,R0,7F05728C	//if pointer valid branch
+LBU	V1,0003 (V0)	//get objective type
+
+7F05728C:
+ADDIU	AT,R0,0018
+OR	S2,A0,R0	//S2=A0=pointer to objective
+BEQ	V1,AT,7F057484	//test if objective end (18)
+ADDIU	S4,R0,0001	//S4=1
+ADDIU	T6,V1,FFE9	//objective - 17
+SLTIU	AT,T6,000C	//AT=1 if type 17-22
+BEQ	AT,R0,7F057438
+OR	S1,S4,R0	//S1=1
+SLL	T6,T6,0x2	//convert to offset
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,3654 (AT)	//80053654 TABLE
+JR	T6
+NOP
+
+7F057438:	//END OF ROUTINE, LOOP
+BNE	S3,S4,7F057450
+NOP
+BEQ	S1,S4,7F057464
+NOP
+BEQ	R0,R0,7F057464
+OR	S3,S1,R0
+7F057450:
+BNEZ	S3,7F057464
+ADDIU	AT,R0,0002
+BNE	S1,AT,7F057464
+NOP
+OR	S3,S1,R0
+7F057464:
+JAL	7F0568F4	//advance a code type
+OR	A0,S2,R0
+
+type 07	7F005D14:	watch time
+SW	R0,0000 (S1)	//0->80079A24
+LW	A0,0008 (S0)	//A0=second value (34)
+ADDIU	AT,R0,003C
+BLEZL	A0,7F005D50	//second value should be valid
+	LW	V0,0004 (S0)	//V0=first value
+DIV	A0,AT		//34/3C
+MFHI	T7		//T7=%result
+SLL	T0,T7,0x3	//T0=value * 8=1A0
+SUBU	T0,T0,T7	//T0= org value *7 after all that=16C
+SLL	T0,T0,0x5	//T0*0x20 = 2D80
+ADDU	T0,T0,T7	//T0+org value = 2DB4
+SLL	T0,T0,0x4	//T0*0x10(move over a few places)=2DB40
+LUI	AT,8008
+SW	T0,9A24 (AT)	//2DB40->80079A24
+LW	V0,0004 (S0)	//V0=first value
+7F005D50:
+ADDIU	AT,R0,000C
+BLEZ	V0,7F005D84	//first value should be valid
+NOP
+DIV	V0,AT		//B/C
+MFHI	T3		//T3=%result
+LUI	AT,0003
+ORI	AT,AT,4BC0	//AT=34BC0
+MULTU	T3,AT		//B*34BC0=00244140
+LW	T2,0000 (S1)	//T2=result from above (2DB40)
+LUI	AT,8008
+MFLO	T4		//T4=244140
+ADDU	T5,T2,T4	//T5=244140+2DB40=271C80
+SW	T5,9A24 (AT)	//271C80->80079A24
+BEQ	R0,R0,7F005DE4
+ADDIU	S0,S0,000C	//advance to next address
+
+value pulled at 7F0873D4:	increment time
+LUI	T3,8005
+LW	T3,8498 (T3)	//T3=80048498=1
+LW	T2,0000 (V0)	//T2=271C80
+LUI	T5,8003
+7F0873E4:
+ADDU	T4,T2,T3	//T4=271C80 + 1	//to go backwards!-014B6023
+SW	T4,0000 (V0)	//save it back
+LW	T5,64A0 (T5)	//T5=800364A0=0
+BEQ	T5,R0,7F08750C
+NOP
+in watch menu pulls it at 7F0880E0	update display for hands
+
+
+NEXT...
+7F005DE4:
+LW	V0,0000 (S0)
+ADDIU	AT,R0,0009
+BNEL	V0,AT,7F005A60	//branch if not at end
+	SLTIU	AT,V0,0009
+
+type 3 swirly camera:
+
+7F07B354:	bitflag read
+LW	T5,0004 (V0)	//T5=bitflag following camera type3
+ADDIU	A2,A2,0001	//A2=step#?
+ANDI	T6,T5,0002	//T6=test for 2
+BEQL	T6,R0,7F07B3C4	//if not 2, branch
+	LWC1	F16,0008 (V0)
+LW	V1,0000 (T1)	//V1=8007A0B0=800B3B60
+LWC1	F6,0008 (V0)	//F6=X value
+LWC1	F10,0010 (V0)	//F10=Z value
+LWC1	F4,04A0 (V1)	//F4=800B4000=3F800000
+LWC1	F16,0498 (V1)	//F16=800B3FF8=338885A3
+MUL.S	F8,F4,F6	//F8=F4*F6=resultant x value
+NOP
+MUL.S	F18,F10,F16	//F18=F10*F16=resultant z value
+ADD.S	F4,F8,F18	//F4=F18+F8
+SWC1	F4,000C (A1)	//F4=
+LWC1	F6,000C (V0)	//
+SWC1	F6,0010 (A1)	//
+LWC1	F10,0010 (V0)	//
+LWC1	F16,04A0 (V1)	//
+LWC1	F4,0008 (V1)	//
+LWC1	F18,0498 (V1)	//
+MUL.S	F8,F10,F16	//
+NOP
+MUL.S	F6,F18,F4	//
+SUB.S	F10,F8,F6	//
+BEQ	R0,R0,7F07B3D8
+SWC1	F10,0014 (A1)	//
+7F07B3C0:
+
+----------
+----------
+----------
+action/intro block
+7F005A38:
+LW	V0,0000 (S0)	//V0=action/intro type
+ADDIU	AT,R0,0009
+LUI	S2,8008
+BEQ	V0,AT,7F005DF4	//if type=9, end
+LUI	AT,42C8
+MTC1	AT,F22
+LUI	AT,4780
+MTC1	AT,F20
+ADDIU	S2,S2,A0B0	//S2=8007A0B0
+SLTIU	AT,V0,0009
+7F005A60:
+BEQ	AT,R0,7F005DE0
+SLL	T8,V0,0x2	//convert to pointer offset
+LUI	AT,8005
+ADDU	AT,AT,T8
+LW	T8,F1AC (AT)	//TBL entry @ 8004F1AC
+JR	T8
+NOP
+
+-------
+-------
+--
+type 4	7F005C28:	use Bond default intro animation #
+LW	T8,0004 (S0)	//grab value following type
+LUI	AT,8003
+ADDIU	S0,S0,0008	//advance address to next command
+BEQ	R0,R0,7F005DE4
+SW	T8,6514 (AT)	//store value to 80036514
+
+-when screen goes black after intro camera (loading bond):	7F07ABBC grabs this value!
+7F07ABBC:	although usually 0, in Bunker1=1
+LUI	T0,8003
+LW	T0,6514 (T0)	//T0=mystery value
+LUI	T2,8003
+LUI	S0,8008
+ADDIU	T2,T2,6518	//T2=80036518
+SLL	T1,T0,0x4	//T1=T0 * 0x10=0x10
+ADDIU	S0,S0,A0B0	//S0=8007A0B0	BONDdata
+ADDU	V0,T1,T2	//V0=80036518+10=80036528
+LW	T5,0000 (S0)	//T5=800B3B60
+LWC1	F0,0004 (V0)	//F0=40E00000	(otherwise, =42BE0000)
+LUI	T4,8007
+LW	T4,9538 (T4)	//T4=80069538=802AF4C0
+LW	T3,0000 (V0)	//T3=80036528=6254	(otherwise, =5744)
+LWC1	F12,0008 (V0)	//F12=42200000 (otherwise, =BF800000)
+LWC1	F2,000C (V0)	//F2=3F000000 (otherwise, =3CA3D70A)
+MTC1	R0,F10
+LW	A0,00D4 (T5)	//A0=800B3C34=80236F50
+MFC1	A3,F0		//A3=40E00000
+OR	A2,R0,R0
+ADDU	A1,T3,T4	//A1=802AF4C0+6254=802B5714
+SWC1	F12,0078 (SP)
+SWC1	F1,0010 (SP)
+JAL	7F06FCA8
+SWC1	F10,0014 (SP)	//SPcurrent=803B3638
+7F07AC1C:	(return)
+LWC1	F12,0078 (SP)
+MTC1	R0,F16
+NOP
+C.LT.S	F16,F12		//F16=0,F12=42200000
+NOP
+BC1FL	7F07AC4C
+	LW	T7,0000 (S0)	//T7=8007A0B0=800B3B60
+7F07AC38:
+LW	T6,0000 (S0)	//T6=8007A0B0=800B3B60
+MFC1	A1,F12		//A1=42200000
+JAL	7F06FDE8
+LW	A0,00D4 (T6)	//A0=800B3C34=80236F50
+7F07AC48:
+LW	T7,0000 (S0)	//T7=8007A0B0=800B3B60	BONDdata
+ADDIU	T9,R0,0017	//T9=0017
+LW	T8,00A8 (T7)	//T8=800B3C08=8006BC84
+LW	V0,0004 (T8)	//V0=8006BC88=801D99B0
+SB	T9,0007 (V0)	//17->801D99B7
+SB	R0,0008 (V0)	//00->801D99B8
+LW	T0,0000 (S0)	//T0=8007A0B0=800B3B60
+BEQ	R0,R0,7F07B190
+SW	R0,0034 (T0)	//0->800B3B94
+
+7F07B190:
+LW	RA,002C (SP)	//RA=803B3664=7F07B1F8
+LW	S0,0028 (SP)	//S0=803B3660=800B3B60
+ADDIU	SP,SP,0088	//803B36C0
+JR	RA
+NOP
+
+7F07B1F8:
+BEQ	R0,R0,7F07B294
+LW	RA,0014 (SP)	//RA=803B36D4=7F087524
+
+-animation values!	80036518
+actionoff	
+00005744	42BE0000	BF800000	3CA3D70A
+00006254	40E00000	42200000	3F000000
+000078C8	00000000	BF800000	3F000000
+00007AA8	00000000	BF800000	3F000000
+00007C4C	00000000	BF800000	3F000000
+00007D04	00000000	BF800000	3F000000
+00007F0C	00000000	BF800000	3F000000
+00007FB4	00000000	BF800000	3F000000
+0000D89C	00000000	BF800000	3F000000
+
+--
+type 5	7F005C3C:
+LW	T6,0004 (S0)	//T6=value following type
+LW	T7,0000 (S2)	//handle to character data
+ADDIU	S0,S0,0008	//advance address to next command
+BEQ	R0,R0,7F005DE4
+SW	T6,041C (T7)	//character/cuff-> data+41C
+--
+	6.xxxx	set RA to this block
+--
+
+----------
+
+action block 97 scientist tag is 80
+action block 97 just before ouromov says "lay down your weapons" 01 (can hurt guards?)
+
+FACILITY
+attrib 07: 0,4,9,E,13,18,1D,22,27,2A,2C,2E,30
+
+ARCHIVES	(mostly used by the mishkin-ish guys)
+attrib 19: 14,15,16,9,A,D
+attrib 0C: B,C,1A,1B,1C
+
+AZTEC
+attrib 7F: 3,6,7,8,9,A,B,C,D
+
+caverns
+attrib 19: 1D,22,27,2C,31,36
+attrib E5: 30,39,46,47
+attrib FF: 58
+
+control	(all guards set to 040C)
+attrib FF: 17,18,1A,1B
+
+Cradle
+attrib FF: 0 (trev)
+
+Frigate
+attrib 19: 10,1A,22
+
+Jungle	(all in a row...)
+attrib CC: 18,7,A,1D,22,1E
+
+Streets
+attrib 19: 2,6,9,C,E,F,11,15,17,19
+
+Runway	(only one of these is not spawned)
+attrib 19: 8,B,E,10,12,14
+
+Bunker1
+attrib 0C: 0,8,A,B,18	(keycard guys + 
+attrib 19: C,12	(red special forces, officer)
+
+Surface 2
+attrib 0C: 12
+
+Bunker2:	none
+Surface 1:	none
+Silo:	none
+Statue:	none
+Egyptian:	none
+Dam:	none
+Depot:	none
+
+
+attrib defaults:
+health	100%
+damage	100%
+accuracy	10%
+reaction speed	0%
+
+---------------------
+action block
+---------------------
+7F035768	08	?????
+JAL	7F0335D4
+OR	A0,S7,R0	//A0=801E0794 (guard data pointer)
+(followed by return to 7F03558C)
+
+7F0335D4:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F02A258
+SW	A0,0018 (SP)	//save a copy of the guard data pointer
+BEQL	V0,R0,7F033600	//if guard shot, dead, or dying, branch
+	OR	V0,R0,R0
+JAL	7F023E48	
+LW	A0,0018 (SP)
+BEQ	R0,R0,7F033600
+ADDIU	V0,R0,0001
+7F033600:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+7F02A258:	if guard not getting shot, dead, or dying, returns V0=1
+LB	V0,0007 (A0)	//7th byte of guard data (0xF in this case)
+ADDIU	AT,R0,0004
+BEQ	V0,AT,7F02A290
+ADDIU	AT,R0,0005
+BEQ	V0,AT,7F02A290
+ADDIU	AT,R0,0007
+BEQ	V0,AT,7F02A290
+ADDIU	AT,R0,0006
+BNEL	V0,AT,7F02A29C	//if !=6 (getting shot), V0=1
+	ADDIU	V0,R0,0001
+LW	T6,0014 (A0)	//T6=guard bitflags
+ANDI	T7,T6,0200
+BNEL	T7,R0,7F02A29C
+	ADDIU	V0,R0,0001
+7F02A290:
+JR	RA
+OR	V0,R0,R0
+ADDIU	V0,R0,0001
+7F02A29C:
+JR	RA
+NOP
+
+7F023E48:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F023CB8
+SW	A0,0018 (SP)
+LW	T7,0018 (SP)	//T7= GUARDdata
+ADDIU	T6,R0,0001
+SW	T6,0040 (T7)	//1->GUARDdata 0x40
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+7F023CB8:
+ADDIU	SP,SP,FFD0
+SW	RA,0024 (SP)
+SW	S0,0020 (SP)
+LB	T6,0007 (A0)	//7th byte of guard data
+ADDIU	AT,R0,0002
+OR	S0,A0,R0
+BNE	T6,AT,7F023DF8	//if guard value!=2, branch
+LUI	A1,4180
+JAL	7F02D184
+NOP
+
+7F023DF8:
+JAL	7F023A94
+OR	A0,S0,R0
+LW	RA,0024 (SP)
+LW	S0,0020 (SP)
+ADDIU	SP,SP,0030
+JR	RA
+NOP
+
+--7F023A94:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A1,001C (SP)
+JAL	7F02D184
+SW	A0,0018 (SP)
+LW	A0,0018 (SP)	//A0= GUARDdata
+ADDIU	T6,R0,0001
+ADDIU	T7,R0,0002
+SB	T6,0007 (A0)	//1-> GUARD action type (stand still)
+SW	R0,002C (A0)
+SW	R0,0030 (A0)
+SW	R0,0034 (A0)
+SW	R0,0038 (A0)
+SW	T7,003C (A0)
+JAL	7000A450	//tinkers with value at 80024460
+SW	R0,0040 (A0)
+ADDUI	AT,R0,0078
+DIVU	V0,AT		//result from fnction / 0x78
+LW	A0,0018 (SP)	//A0= GUARDdata
+MFHI	T8
+LWC1	F12,001C (SP)	//F12= 41800000
+LW	T0,001C (A0)	//T0= GUARD model data handle
+ADDIU	T9,T8,00B4
+LUI	AT,3F80
+SW	T9,0044 (A0)
+MTC1	AT,F4
+LWC1	F2,00A4 (T0)
+LUI	AT,42FE
+MOV.S	F0,F12
+C.EQ.S	F4,F2		//if F2 = 1.0, branch
+NOP
+BC1TL	7F023B20
+	MTC1	AT,F2
+DIV.S	F0,F12,F2
+MTC1	AT,F2
+-7F023B20
+NOP
+C.LT.S	F2,F0
+NOP
+BC1FL	7F023B3C
+	TRUNC.W.S	F6,F0
+MOV.S	F0,F2
+TRUNC.W.S	F6,F0
+-7F023B3C
+MFC1	A1,F12
+MFC1	T2,F6
+JAL	7F023948
+SB	T2,0008 (A0)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+--7F02D184
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A0,0018 (SP)
+OR	A1,R0,R0
+JAL	7F02D118	//check if a right hand weapon
+OR	A2,R0,R0
+LW	A0,0018 (SP)
+ADDIU	A1,R0,0001
+JAL	7F02D118	//check if a left hand weapon
+OR	A2,R0,R0
+JAL	7F02D0F8	//fry some guard data?
+LW	A0,0018 (SP)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+---7F02D0F8:	fry a bunch of guard data
+MTC1	R0,F0
+ADDIU	T6,R0,000A
+SB	T6,000E (A0)	//0A-> GUARDdata 0xE
+SWC1	F0,0154 (A0)	//00-> GUARDdata 0x154
+SWC1	F0,0150 (A0)	//00-> GUARDdata 0x150
+SWC1	F0,0158 (A0)	//00-> GUARDdata 0x158
+JR	RA
+SWC1	F0,015C (A0)	//00-> GUARDdata 0x15C
+
+---7F02D118:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F02302C	//A1=hand (1-L, 0-R); returns V0=8006 for guard weapon
+SW	A2,0020 (SP)
+BEQ	V0,R0,...
+OR	A0,V0,R0	//A0=V0= GUN 8006
+JAL	7F052574
+LW	A1,0020 (SP)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+---7F052574:
+save RA position...
+SW	A1,0024 (SP)
+LW	V0,0004 (A0)	//V0= GUNdata
+LW	A2,0014 (V0)	//A2= P->funny data tying model to object instance
+BEQL	A2,R0,...
+	...
+LW	V0,0008 (A2)	//V0= P->model load line
+LUI	T6,8004
+ADDIU	T6,T6,C4FC	//T6= 8003C4FC (last entry?)
+LW	T7,0004 (V0)	//T7= 
+BNEL	T6,T7,...
+	...
+LW	V1,0008 (V0)
+OR	A0,A2,R0
+LW	A1,0000 (V1)
+BEQL	A1,R0,7F0525DC
+	LW	A1,0008 (V1)
+JAL	7F06C79C
+SW	A2,0018 (SP)
+LW	T8,0024 (SP)
+LW	A2,0018 (SP)
+SH	T8,0000 (V0)
+LW	T9,0008 (A2)
+LW	V1,0008 (T9)
+LW	A1,0008 (V1)
+-7F0525DC
+BEQL	A1,R0,...
+	...
+JAL	7F06C79C
+OR	A0,A2,R0
+LW	T0,0024 (SP)
+SW	T0,0000 (V0)
+reset vars and RETURN...
+
+-------
+7F03577C	type 9 - guard kneels
+JAL	7F0336C4
+OR	A0,S7,R0
+ADDIU	S2,S2,0001
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0001
+
+7F0336C4:
+
+
+-------
+7F03589C	0B.rr	if guard is wasting time, return
+LB	T3,0007 (S7)	//T3= action type
+ADDIU	AT,R0,0003
+OR	A0,S6,R0
+BNE	T3,AT,7F0358C4	//if =3, (should be wasting time or rolling)return
+OR	A1,S2,R0
+JAL	7F0352F0
+LBU	A2,0001 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+7F0358C4:
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+-------
+
+7F0358D0	0C	shuffle feet?
+there's distance checking, and within certain ranges guards will look around.  If it is beyond a certain range, the guards don't do anything at all...  checks if guard has a weapon, but as to what it *does*...
+
+JAL	7F033610
+OR	A0,S7,R0	//A0= GUARDdata
+ADDIU	S2,S2,0001
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0001
+
+-7F033610:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F02A258	//returns V0=1 if the guy isn't dead, shot, etc.
+SW	A0,0018 (SP)
+BEQL	V0,R0,...
+	OR	V0,R0,R0
+JAL	7F024418
+LW	A0,0018 (SP)	//A0= GUARDdata
+BEQ	R0,R0,...
+OR	V0,R0,R0
+ETC.
+
+--7F024418:
+ADDIU	SP,SP,FFE0
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+JAL	7F032C4C	//returns F0= difference between current and BOND
+OR	S0,A0,R0	//S0= GUARDdata
+LUI	AT,8005
+LWC1	F4,1DA0 (AT)	//F4=80051DA0= some sort of min range...
+LUI	AT,8005
+OR	A0,S0,R0	//A0= GUARDdata
+C.LT.S	F0,F4
+NOP
+BC1T	7F024460
+NOP
+LWC1	F6,1DA4 (AT)	//F6=80051DA4= some sort of max range
+C.LT.S	F6,F0
+NOP
+BC1F	7F024480
+NOP
+-7F024460	//when < value at 80051DA4
+JAL	7F024334	//not entirely sure, but checks weapons and stuff...
+LUI	A1,4180
+JAL	7F02D184
+OR	A0,S0,R0	//A0= GUARDdata
+ADDIU	T6,R0,0012
+SB	T6,0007 (S0)	//look around self
+BEQ	R0,R0,...
+SB	R0,0008 (S0)
+-7F024480	//when beyond range...
+JAL	7F029C5C	//check if doing anything useful...
+OR	A0,S0,R0	//A0= GUARDdata
+BNEL	V0,R0,...
+	...
+JAL	7F023CB8
+OR	A0,S0,R0	//A0= GUARDdata
+UNFUNK AND RETURN
+
+--7F032C5C
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F089798	//returns V0= BONDdata 8006
+SW	A0,0018 (SP)
+LW	A0,0018 (SP)
+JAL	7F032BD8	//returns F0= distance between current and BOND
+ADDIU	A1,V0,0008	//A1= BONDxpos
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+7F0358E4	type D - guard looks around when shot at
+JAL	7F033688
+OR	A0,S7,R0
+ADDIU	S2,S2,0001
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0001
+
+--
+7F0359E8	0E.rr	step sideways, return
+JAL	7F02A2C8
+OR	A0,S7,R0
+...if !V0, STD. RETURN
+
+-7F02A2C8:
+ADDIU	SP,SP,FFB0
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+JAL	7F02A258	//returns V0= 1 if guard NOT hurt, dead, or dying
+OR	S0,A0,R0	//S0= P->GUARDdata
+BEQL	V0,R0,7F02A414
+	OR	V0,R0,R0
+LW	T6,0018 (S0)	//T6= GUARD 8006
+JAL	7F089798	//returns V0= handle to BOND8006
+SW	T6,004C (SP)
+LW	A0,001C (S0)	//A0=model data handle
+JAL	7F06CC80
+SW	V0,0048 (SP)
+LW	V0,004C (SP)	//V0= GUARD 8006
+LW	V1,0048 (SP)	//V1= BOND 8006
+LWC1	F6,0008 (V0)	//F6= GUARDxpos
+LWC1	F10,0010 (V0)	//F10= GUARDzpos
+LWC1	F4,0008 (V1)	//F4= BONDxpos
+LWC1	F8,0010 (V1)	//F8= BONDzpos
+SWC1	F0,0040 (SP)
+SUB.S	F12,F4,F6	//F12= D.xpos
+JAL	7F05AA30
+SUB.S	F14,F8,F10	//F14= D.zpos
+LWC1	F16,0040 9SP)	//F16= guard scale
+LUI	AT,8005
+C.LT.S	F0,F16		//if computed difference less than "bubble"...
+SUB.S	F12,F0,F16
+BC1F	7F02A344
+MOV.S	F2,F12
+LWC1	F18,1E38 (AT)	//F18=80051E38= 
+ADD.S	F2,F12,F18
+LUI	AT,8005
+-7F02A344
+LWC1	F4,1E3C (AT)	//F4=80051E3C= 
+LUI	AT,8005
+C.LT.S	F2,F4
+NOP
+BC1T	7F02A3A4
+NOP
+LWC1	F6,1E40 (AT)	//F6=80051E40= 
+LUI	AT,8005
+C.LT.S	F6,F2
+NOP
+BC1T	7F02A3A4
+NOP
+LWC1	F8,1E44 (AT)	//F8=80051E44=
+LUI	AT,8005
+C.LT.S	F8,F2
+NOP
+BC1FL	7F02A414
+OR	V0,R0,R0
+LWC1	F10,1E48 (AT)
+C.LT.S	F2,F10
+NOP
+BC1FL	7F02A414
+OR	V0,R0,R0
+JAL	7000A450
+NOP
+ANDI	A1,V0,0001
+SLTIU	T7,A1,0001
+OR	A1,T7,R0
+SW	T7,002C (SP)
+OR	A0,S0,R0
+JAL	7F02A1E8
+LUI	A2,42C8
+BEQ	V0,R0,7F02A3E4
+LW	A3,002C (SP)
+OR	A0,S0,R0
+...
+...
+-7F02A414
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0050
+JR	RA
+NOP
+
+
+-7F02A258:	if flags !=4,5,6,7, return 1 
+--current action type tests: dying, fading, limping, shot
+LB	V0,0007 (A0)	//V0= GUARDdata +7 (flag?)
+ADDIU	AT,R0,0004
+BEQ	V0,AT,...
+ADDIU	AT,R0,0005
+BEQ	V0,AT,...
+ADDIU	AT,R0,0007
+BEQ	V0,AT,...
+ADDIU	AT,R0,0006
+BNEL	V0,AT,...	//if flags=!6, V0=1
+	ADDIU	V0,R0,0001
+LW	T7,T6,0200	//T6= function that called this, so function+200?
+BNEL	T7,R0,...	
+	ADDIU	V0,R0,0001
+JR	RA
+OR	V0,R0,R0
+
+-7F06CC80:	load model if not loaded and pull the scale modifier for it...
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+BNEZ	A0,7F06CCA4
+SW	A0,0018 (SP)
+//if there isn't attached model info...
+LUI	A0,8005
+JAL	7000CF44
+ADDIU	A0,A0,473C	//A0=8005473C
+JAL	7F06C46C
+NOP
+-7F06CCA4
+LW	T7,0018 (SP)	//T7=A0= attached model info pointer
+LUI	A0,8005
+LW	V0,0008 (T7)	//V0= body model load line
+BNEL	V0,R0,7F06CCD4
+	LW	V1,0000 (V0)
+//if model not attached or loaded...
+JAL	7000CF44
+ADDIU	A0,A0,4754	//A0= 80054754
+JAL	7F06C46C
+NOP
+LW	T8,0018 (SP)
+LW	V0,0008 (T8)
+LW	V1,0000 (V0)	//V1= body model data pointer directory
+-7F06CCD4
+LUI	A0,8005
+BNEL	V1,R0,7F06CD00
+	LHU	T1,0000 (V1)
+//if the data hasn't been loaded yet, load it!
+JAL	7000CF44
+ADDIU	A0,A0,4778	//A0= 80054778
+JAL	7F06C46C
+NOP
+LW	T9,0018 (SP)
+LW	T0,0008 (T9)
+LW	V1,0000 (T0)
+LHU	T1,0000 (V1)	//header ID byte for group
+-7F06CD00
+ADDIU	AT,R0,0001
+OR	A1,V1,R0	//A1=V1= body model data pointers
+ANDI	T2,T1,00FF	//T2= header ID#
+BNEL	T2,AT,7F06CD28
+	MTC1	R0,F0
+//if it does equal 1, which it very well should...
+JAL	7F06C79C
+LW	A0,0018 (SP)	//A0= attached model info pointer
+BEQ	R0,R0,7F06CD2C
+LWC1	F0,0014 (V0)	//scale of guard(?)
+-7F06CD28
+NOP
+-7F06CD2C
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+--7F06C79C:	returns V0= P->5th entry in proportion data.  
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+LHU	T6,0000 (A1)	//T6= header ID for group
+OR	A2,R0,R0
+LW	A3,0010 (A0)	//A3= pointer to proportion data?  (can't remember...)
+ANDI	T7,T6,00FF	//T7= header ID
+ADDIU	T8,T7,FFFF	//T8= header ID-1
+SLTIU	AT,T8,0018	//TRUE if < 18 (validifies model, really)
+BEQ	AT,R0,7F06C840
+SLL	T8,T8,0x2	//T8*=4
+LUI	AT,8005
+ADDU	AT,AT,T8
+LW	T8,4AF8 (AT)	//T8=80054AF8 + offset
+JR	T8
+NOP
+
+--
+7F035A1C	0F.rr	hop sideways, return
+--
+7F035A50	10.rr	run sideways, return
+--
+7F035A84	11.rr	walk while firing, return
+--
+7F035AB8	12.rr	run while firing, return
+--
+7F035AEC	13.rr	roll, fire crouched; return
+--
+7F035B20	14.xxxx.####.rr	stand and aim at guard
+A2= ####
+A1= xxxx
+check if GUARDdata+7 !=4,5,6,7 (guard not dying or getting killed)
+check right weapon valid
+check left weapon valid
+...
+OR	A2,T6,T7	//A2=####
+JAL	7F02AA1C
+OR	A1,T9,T1	//A1=xxxx
+BEQ	V0,R0,7F035B68	//if V0!=0, return value
+OR	A0,S6,R0
+STD. RETURN
+
+7F02AA1C:	typically A2=0, A1=1
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A0,0018 (SP)	//save guarddata
+SW	A1,001C (SP)	//save xxxx
+JAL	7F02A258	//returns V0=0 if guard gettiing shot or killed
+SW	A2,0020 (SP)	//save ####
+BEQ	V0,R0,7F02AA74
+LW	A0,0018 (SP)	//A0=GUARDDATA
+JAL	7F02303C	//returns V0=1 if right weapon valid
+OR	A1,R0,R0
+BNEZ	V0,7F02AA5C	//skip left check if right found
+LW	A0,0018 (SP)	//A0=guarddata
+JAL	7F02303C	//returns V0=1 if left weapon valid
+ADDIU	A1,R0,0001
+BEQL	V0,R0,7F02AA78	//if no weapon, abandon this
+	OR	V0,R0,R0
+//7F02AA5C:
+LW	A0,0018 (SP)	//A0=guarddata
+LW	A1,001C (SP)	//A1=xxxx
+JAL	7F025560
+LW	A2,0020 (SP)	//A2=####
+BEQ	R0,R0,7F02AA78
+ADDIU	V0,R0,0001
+//7F02AA74:
+OR	V0,R0,R0
+//7F02AA78:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+
+
+-7F02303C:	[A1]=weapon to test 0-r, 1-l; returns V0= 1 if weapon valid
+ADDIU	SP,SP,FFE0
+SLL	T6,A1,0x2
+SW	RA,0014 (SP)
+ADDU	T7,A0,T6	//T7= GUARDdata + offset
+LW	V1,0160 (T7)	//V1= 8006 for right weapon [A1=0] or left [A1=1]
+BEQL	V1,R0,7F02307C
+	LW	RA,0014 (SP)
+LW	V0,0004 (V1)	//V0= WEPdata pointer
+ADDIU	A1,R0,0200
+LB	A0,0080 (V0)	//A0= weapon #
+JAL	7F05E0B4	//confirm if weapon type valid
+SW	V1,001C (SP)
+BNEZ	V0,7F023078
+LW	V1,001C (SP)	//V1= 8006 for weapon
+OR	V1,R0,R0
+-7F023078
+LW	RA,0014 (SP)
+-7F02307C
+ADDIU	SP,SP,0020
+OR	V0,V1,R0
+JR	RA
+NOP
+
+-7F025560:
+ADDIU	SP,SP,FFB0
+SW	RA,0024 (SP)
+SW	A1,0054 (SP)
+SW	A0,0050 (SP)
+SW	A2,0058 (SP)
+JAL	7F02302C	//A1=hand (1-L, 0-R); returns V0=8006 for guard weapon
+ADDIU	A1,R0,0001
+SW	V0,004C (SP)
+LW	A0,0050 (SP)	//A0= GUARDdata
+JAL	7F02302C
+OR	A1,R0,0000	//returns V0=8006 for right gun
+LUI	T7,8003
+ADDIU	T7,T7,09B8	//T7= 800309B8
+LW	A0,004C (SP)	//A0= left hand 8006
+LW	AT,0000 (T7)	//0
+LW	T0,0004 (T7)	//0
+ADDIU	T6,SP,0038
+OR	A1,V0,R0	//A1= 8006 right gun
+SW	AT,0000 (T6)	//AT->SP+38
+BEQ	A0,R0,7F025660	//branch if right weapon only
+SW	T0,0004 (T6)
+...
+-7F025660
+JAL	7F023910
+SW	A1,0048 (SP)
+BNEZ	V0,7F025680
+LW	A1,0048 (SP)
+JAL	7F023910
+OR	A0,A1,R0
+BEQL	V0,R0,7F0256A4
+	LW	V0,004C (SP)
+...
+-7F0256A4
+LUI	A1,8003
+ADDIU	A1,A1,ED28
+SLTU	A2,R0,V0
+SLTIU	T0,A2,0001
+...
+
+--
+7F035B74	15.xxxx.####.rr	kneel and aim at guard
+--
+7F035C50	16.xxxx.####.rr	stand and aim at guard
+
+--
+7F035CA4	17.xxxx.####.rr	face guard
+--
+7F035CF8	18.##.xx.ww	shoot guardID# in the X w/[W]eapon#
+x=6E to shoot their hat off?
+x=8 usually used.  very lethal
+
+OR	A0,S7,R0
+JAL	7F033040	//returns V0= guard ID handle
+LBU	A1,0001 (S1)
+LUI	T8,8003
+ADDIU	T8,T8,0A70	//T8=80030A70
+LW	AT,0000 (T8)
+ADDIU	T7,SP,06F4
+LW	T1,0004 (T8)
+SW	AT,0000 (T7)	//SW AT,06F4 (SP)
+LW	AT,0008 (T8)
+OR	A0,V0,R0	//A0= P->tagged OBJ
+SW	T1,0004 (T7)	//SW T1,06F8 (SP)
+BEQ	V0,R0,...
+SW	AT,0008 (T7)	//SW AT,06FC (SP)
+LW	T2,0018 (V0)	//T2= GUARDcur 8006 data
+BEQL	T2,R0,...
+	...
+LB	A1,0002 (S1)
+LBU	A3,0003 (S1)	(should be a weapon type value)
+SW	R0,0010 (SP)
+JAL	7F02727C
+ADDIU	A2,SP,06F4
+RETURN...
+
+18.00.08.06
+00=NAT
+
+-7F02727C:
+ADDIU	SP,SP,FF98	//SP-68
+SW	RA,0024 (SP)
+SW	S0,0020 (SP)
+SW	A1,006C (SP)
+SW	A2,0070 (SP)
+SW	A3,0074 (SP)
+LW	T6,0018 (A0)	//T6= GUARD 8006 position data
+ADDIU	AT,R0,006E
+OR	S0,A0,R0	//S0= GUARDdata
+BNE	A1,AT,7F02734C	//if x==6E, do this stuff
+SW	T6,0060 (SP)
+LW	A0,01D8 (A0)	//A0= HAT 8006
+BEQL	A0,R0,7F027350	//no hat? then skip this!
+	LW	T7,0078 (SP)	//T7= 0 in both types 18 & 19
+JAL	7F052684
+NOP
+ADDIU	AT,R0,0005
+BNE	V0,AT,7F0272D0
+ADDIU	T8,R0,0008
+BEQ	R0,R0,7F02734C
+SW	T8,006C (SP)
+-7F0272D0
+ADDIU	AT,R0,0003
+BEQ	V0,AT,7F0272F8
+LUI	T2,8003
+LW	A0,01D8 (S0)
+JAL	7F04BFD0
+ADDIU	A1,R0,0004
+LHU	T9,0012 (SP)
+ORI	T0,T9,0001
+BEQ	R0,R0,7F02734C
+SH	T0,0012 (S0)
+-7F0272F8
+ADDIU	T2,T2,0A3C
+LW	AT,0000 (T2)
+ADDIU	T1,SP,0054
+SW	AT,0004 (T1)
+LHU	AT,0004 (T2)
+JAL	7000A450
+SH	AT,0004 (T1)
+ADDIU	AT,R0,0003
+DIVU	V0,AT
+MFHI	T5
+SLL	T6,T5,0x1
+ADDU	A1,SP,T6
+LUI	A0,8006
+LW	A0,3720 (A0)
+LH	A1,0054 (A1)
+JAL	70008E08
+OR	A2,R0,R0
+LW	A1,0018 (S0)
+OR	A0,V0,R0
+JAL	7F053A10
+ADDIU	A1,A1,0008
+-7F02734C	//POST-HAT code
+LW	T7,0078 (SP)	//T7=0 in both 18 & 19
+-7F027350
+LW	T8,006C (SP)	//T8= x
+BEQL	T7,R0,7F0273EC
+	LW	T3,0014 (S0)	//T3= GUARD bitflags
+BEQ	T8,R0,7F0273E8	//branch x=0
+ADDIU	AT,R0,0007
+BEQ	T8,AT,7F0273D0	//branch x=7
+LW	A0,0074 (SP)	//A0= weapon value
+ADDIU	AT,R0,0008
+BEQ	T8,AT,7F0273A0	//branch x=8
+ADDIU	A1,R0,0001
+ADDIU	AT,R0,000F
+BEQ	T8,AT,7F0273D0	//branch x=F
+ADDIU	AT,R0,0064
+BEQ	T8,AT,7F0273B0	//branch x=64
+LW	A0,0074 (SP)	//A0= weapon value
+ADDIU	AT,R0,006E
+BEQ	T8,AT,7F0273C0	//branch x=6E
+LW	A0,0074 (SP)	//A0= weapon value
+BEQ	R0,R0,7F0273E0
+LW	A0,0074 (SP)	//A0= weapon value
+-7F0273A0	//////////x=8
+JAL	7F06A6F8
+LW	A0,0074 (SP)
+BEQ	R0,R0,7F0273EC
+LW	T3,0014 (S0)	//T3=guard bitflags
+-7F0273B0	/////////x=64
+JAL	7F06A6F8
+ADDIU	A1,R0,0004
+BEQ	R0,R0,7F0273EC
+LW	T3,0014 (S0)	//T3=guard bitflags
+.......
+.......
+-7F0273EC
+LB	T9,000B (S0)	//T9= # times shot
+LUI	AT,0020
+OR	T1,T3,AT	//T1= toggled bitflag
+ANDI	T4,T1,0010
+ADDIU	T0,T9,0001
+SB	T0,000B (S0)	//# times shot +1? does it shoot the guard?
+BEQ	T4,R0,7F02741C	//test if 0010 toggled
+SW	T1,0014 (S0)	//save amended bitflags
+JAL	7F0206D4
+OR	A0,S0,R0	//A0= GUARDdata
+BEQ	R0,R0,7F0277F0
+OR	V0,R0,R0
+-7F02741C
+LB	V0,0007 (S0)	//V0= that funny flag thingy
+ADDIU	AT,R0,0004
+BEQ	V0,AT,7F0277EC	//shouldn't be dying
+ADDIU	AT,R0,0005
+BEQL	V0,AT,7F0277F0	//or fading away for that matter
+	ADDIU	V0,R0,0001
+JAL	7F05DF84	//returns F0= weapon data[V0] offset 0x2C
+LW	A0,0074 (SP)	//A0= weapon type
+LW	T5,0078 (SP)	//T5= the old T7 value...
+MOV.S	F2,F0		//F2=F0
+BEQL	T5,R0,7F027474	
+	LW	V0,0070 (SP)
+JAL	7F09A464
+SWC1	F2,003C (SP)
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F027470
+LWC1	F2,003C (SP)
+LUI	AT,8003
+LWC1	F4,CE48 (AT)	//F4= 8002CE48
+MUL.S	F2,F2,F4
+NOP
+-7F027470
+LW	V0,0070 (SP)	//V0= pointer to Difference between positions
+LW	T6,0060 (SP)	//T6= GUARD 8006
+OR	A0,S0,R0	//A0=S0= GUARDdata
+LWC1	F8,0000 (V0)	//F8= saved xpos
+LWC1	F6,0008 (T6)	//F6= GUARD xpos
+ADDIU	A1,SP,0044
+SUB.S	F10,F6,F8	//F10= D.xpos
+SWC1	F10,0044 (SP)
+LWC1	F18,0004 (V0)	//F18= saved ypos
+LWC1	F16,000C (T6)	//F16= GUARDypos
+SUB.S	F4,F16,F18	//F4=  D.ypos
+SWC1	F4,0048 (SP)
+LWC1	F8,0008 (V0)	//F8= saved zpos
+LWC1	F6,0010 (T6)	//F6= GUARDzpos
+SWC1	F2,003C (SP)
+SUB.S	F10,F6,F8	//F10= D.zpos
+JAL	7F032BD8
+SWC1	F10,004C (SP)
+-7F0274B8
+*****************keep going from here
+-7F0277F0	//RETURN!
+LW	RA,0024 (SP)
+LW	S0,0020 (SP)
+ADDIU	SP,SP,0068
+JR	RA
+NOP
+
+
+--7F06A6F8
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A1,001C (SP)
+JAL	7F05E0B4	returns V1= P-> weapon handler for weapon A1
+LUI	A1,0001
+BEQ	V0,R0,...
+LUI	T6,8008
+LW	T7,001C (SP)	//T7= x
+LW	T6,A0B4 (T6)	//T6=80079EF0= ???
+SLL	T8,T7,0x2	//T8= x*4
+ADDU	V0,T6,T8	//V0= 80079EF0 + offset
+LW	T9,0000 (V0)
+ADDIU	T0,T9,0001	//T0=T9++
+SW	T0,0000 (V0)	//increment xth word at 80079EF0 by 1
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+--
+7F035D5C	19.#1.#2.xx	GuardID#1 shoots GuardID#2 in the x
+OR	A0,S7,R0
+JAL	7F033040	//returns V0= guard ID handle
+LBU	A1,0001 (S1)
+OR	S0,V0,R0	//S0= GUARD#1 handle
+OR	A0,S7,R0
+JAL	7F033040
+LBU	A1,0002 (S1)
+BEQ	S0 or V0=0, ...
+SW	V0,06E8 (SP)
+OR	S3,V0,R0	//S3= GUARD#2 handle
+LW	T3,0018 (S0)	//T3= GUARD#1 8006
+BEQL	T3,R0,...
+	...
+LW	T4,0018 (V0)	//T4= GUARD#2 8006
+OR	A0,S0,R0	//A0= GUARD#1 handle
+BEQL	T4,R0,...
+	...
+JAL	7F02303C	//V0=1 if GUARD#1 has a GUNrh
+OR	A1,R0,R0
+LUI	T6,8003
+ADDIU	T6,T6,0A7C
+LW	AT,0000 (T6)	//AT=80030A7C= 
+ADDIU	T5,SP,06D4
+LW	T7,0004 (T6)
+SW	AT,0000 (T5)	//SW AT,06D4 (SP)
+LW	AT,0008 (T6)
+OR	V1,V0,R0
+SW	T7,0004 (T5)	//SW T7,06D8 (SP)
+BNEZ	V0,7F035DE8
+SW	AT,0008 (T5)	//SW AT,06DC (SP)
+...  just checks if there"s a left_handed weapon on guard#1
+-7F035DE8
+BEQL	V0,R0,...
+	...
+LW	T8,0018 (S3)	//T8= GUARD#2 8006
+LW	T1,0018 (S0)	//T1= GUARD#1 8006
+ADDIU	A0,SP,06D4
+LWC1	F18,0008 (T8)	//F18= GUARD#1 xpos
+LWC1	F4,0008 (T1)	//F4=  GUARD#2 xpos
+ADDIU	A1,SP,06D8
+ADDIU	A2,SP,06DC
+SUB.S	F6,F18,F4	//F6= D.xpos
+SWC1	F6,06D4 (SP)
+LW	T3,0018 (S0)	//T3= GUARD#1 8006
+LW	T2,0018 (S3)	//T2= GUARD#2 8006
+LWC1	F10,000C (T3)	//F10= GUARD#1 ypos
+LWC1	F8,000C (T2)	//F8=  GUARD#2 ypos
+SUB.S	F16,F8,F10	//F6= D.ypos
+SWC1	F16,06D8 (SP)
+LW	T9,0018 (S0)	//T9= GUARD#1 8006
+LW	T4,0018 (S3)	//T4= GUARD#2 8006
+LWC1	F4,0010 (T9)	//F4= GUARD#1 zpos
+LWC1	F18,0010 (T4)	//F18=GUARD#2 zpos
+SW	V1,06E4 (SP)
+SUB.S	F6,F18,F4	//F6= D.zpos
+JAL	7001F750
+SWC1	F6,06DC (SP)
+LW	V1,06E4 (SP)
+LB	A1,0003 (S1)	//A1= x
+OR	A0,S3,R0	//A0= GUARD#2 handle
+LW	V0,0004 (V1)
+ADDIU	A2,SP,06D4	//A2= Pointer to difference between two positions
+LB	A3,0080 (V0)	//A3= weapon type
+JAL	7F02727C
+SW	R0,0010 (SP)
+RETURN...
+
+--
+7F035E78	1A.rr	throw grenade
+JAL	7F03457C
+OR	A0,S7,R0
+BEQ	V0,R0,7F035EA0
+OR	A0,S6,R0
+OR	A1,S2,R0
+JAL	7F0352F0
+LBU	A2,0001 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C	//return
+ADDU	S1,S6,V0
+//7F035EA0
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+//7F03457C:	
+through 7F0345A4:	tests if random value/256 < 0x10 Offset
+7F0345B4	JAL 7F032DE4 (handles position info)
+through 7F0345D0:	tests if player too close
+7F0345E0	JAL 7F02A258 (V0=0 if dying, getting shot, etc)
+
+//7F0345F0:	check left hand weapon
+JAL	7F02302C	//A1=hand (1-L, 0-R); returns V0=8006 for guard weapon
+ADDIU	A1,R0,0000
+SW	V0,0024 (SP)
+OR	A0,S0,R0
+JAL	7F02302C	//V0=right hand weapon 8006
+OR	A1,R0,R0
+LW	A1,0024 (SP)	//A1=lefty weapon
+BEQ	V0,R0,7F034644	//branch if right hand empty
+SW	V0,0020 (SP)
+//7F034614:	left hand
+LW	V1,0004 (V0)	//V1=weapon data offset
+ADDIU	AT,R0,001A	//AT=grenade type
+OR	A0,S0,R0	//A0=guarddata
+LB	T8,0080 (V1)	//T8=weapon type
+OR	A2,R0,R0	//A2=right hand?
+OR	A3,R0,R0
+BNE	T8,AT,7F034644	//branch if not a grenade
+NOP
+//7F034634:	chuck it!
+JAL	7F024238
+OR	A1,V0,R0	//A1=V0=8006 for weapon
+BEQ	R0,R0,7F0346E8
+ADDIU	V0,R0,0001
+//7F034644:	right hand weapon test
+BEQ	A1,R0,7F034678	//branch if hand empty
+NOP
+LW	V1,0004 (A1)	//V1=weapon object data
+ADDIU	AT,R0,001A	//AT=grenade type
+OR	A0,S0,R0
+LB	T9,0080 (V1)	//T9=held weapon type
+ADDIU	A2,R0,0001	//A2=left hand?
+BNE	T9,AT,7F034678	//I ain't got no limbs left!
+NOP
+//7F034668:	chuck it!
+JAL	7F024238
+OR	A3,R0,R0
+BEQ	R0,R0,7F0346E8
+ADDIU	V0,R0,0001
+//7F034678:	messy redirection
+BEQ	A1,R0,7F034688	//keep going if hand was empty
+OR	A0,S0,R0	//A0=guarddata
+BNEL	V0,R0,7F0346E8	//kill it if you've got a weapon
+	OR	V0,R0,R0
+//7F034688:
+BEQ	V0,R0,7F034694
+OR	A3,R0,R0	//if no weapons at all, A3=0.  Otherwise, A3=10000000
+LUI	A3,1000
+ADDIU	A1,R0,00C4	//A1=grenade model
+JAL	7F0523D4	//loads a grenade to empty hand!
+ADDIU	A2,R0,001A	//A2=grenade type
+BEQ	V0,R0,7F0346E4	//if new 8006 NULL, skip out
+OR	A1,V0,R0	//A1=new object 8006
+LW	V1,0004 (V0)	//V1=object data for weapon (80071E80, for instance)
+OR	A0,S0,R0
+ADDIU	A2,R0,0001	/A2=1
+LW	T0,0064 (V1)	//T0=0x64 in object data.  Can't remember use
+ORI	T1,T0,0800
+SW	T1,0064 (V1)
+LW	T2,0020 (SP)	//T2=right hand weapon 8006
+BNEZ	T2,7F0346D4	//replace left (A2=1)
+NOP
+BEQ	R0,R0,7F0346D4	//replace right (A2=0)
+OR	A2,R0,R0
+//7F0346D4:	chuck the thing!  A2=that which is chucked
+JAL	7F024238	//chuck hand=A2.  A3=1 when permanent
+ADDIU	A3,R0,0001
+BEQ	R0,R0,7F0346E8	//happy return=1
+ADDIU	V0,R0,0001
+//7F0346E4
+OR	V0,R0,R0	//V0=0 when nothing is chucked
+LW	RA,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0028
+JR	RA
+NOP
+
+
+7F0523D4:	guard draws new weapon of type, returns V0=8006 for it
+	accepts: A1=wep model, A2=wep type
+ADDIU	SP,SP,FFE0
+SW	RA,001C (SP)
+SW	R0,0010 (SP)
+JAL	7F052214
+SW	R0,0014 (SP)
+LW	RA,001C (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+-7F024238	throw object from hand
+	expects: A2=hand(0R 1L),A3=1 if temp object, S0=guarddata
+
+
+7F02302C:	retrieve current guard weapon 8006 data
+	expects A0=guarddata, A1=right-0:left-1	FRIES T7
+	returns V0=8006 for weapon in hand
+SLL	T6,A1,0x2
+ADDU	T7,A0,T6
+JR	RA
+LW	V0,0160 (T7)
+
+--
+7F035EAC:	type 1B - 1B.xxXX.yy.rr	drop armed weapon
+LBU	T5,0001 (S1)
+LBU	T7,0002 (S1)
+OR	A0,S7,R0
+SLL	T6,T5,0x8
+OR	V0,T6,T7
+ANDI	A1,V0,FFFF	//A1=2byte x value
+JAL	7F0346FC
+LBU	A2,0003 (S1)	//A2=type of weapon
+
+-7F0346FC:
+ADDIU	SP,SP,FFE0
+SW	A0,0020 (SP)
+SW	RA,0014 (SP)
+ANDI	T6,A2,00FF	//T6=1byte weapon value
+OR	A0,A1,R0
+SW	A2,0028 (SP)
+JAL	7F05206C	//A0=model, A1=type.  loads weapon (probably)
+OR	A1,T6,R0
+
+7F038AF4:	type BE - spawn weapon
+
+--
+7F036218:	type 1C - 1C.xxXX	jog to preset
+LBU	T4,0001 (S1)	//T4=x	upper half of preset
+LBU	T5,0002 (S1)	//T5=X	lower half of preset
+OR	A0,S7,R0	//A0=pointer to guard block
+SLL	T9,T4,0x8	//T9=T4*0x100
+OR	V0,T9,T5	//V0=preset
+ANDI	A1,V0,FFFF	//A1=V0 reduced to a 2byte short
+JAL	7F02ABB4	//A2 -> jog to preset
+ADDIU	A2,R0,0001
+ADDIU	S2,S2,0003	//inc offset
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0003
+
+--
+7F036244:	type 1D - 1D	jog to alarm (preset noted in guard data)
+OR	A0,S7,R0	//A0=pointer to guard block
+LH	A1,0114 (S7)	//A1=guard data + 0x114
+JAL	7F02ABB4
+ADDIU	A2,R0,0001	//jog to A1 preset...
+ADDIU	S2,S2,0001
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0001
+
+-7F02ABB4:	set guard movement.	A0=address, A1=preset, A2=speed
+
+guard data amendment:
+type 09:
+00000009 iiii 0xxx bbbb aaaa pppp ???? llll rrrr ???? hhhh ????????
+i	ID number
+0xxx	0xxx preset to be spawned at
+b	body
+a	action/path assignment
+p	preset of an alarm to trigger or other path-related object (default FFFF)	set to 0x114
+?	unknown (default FFFF)
+l	life (health).  1 bullet ~E4
+r	reaction time?  accuracy?
+?	unknown (default FFFF)
+h	head.  random=FFFF
+?	last 8 bytes unknown.
+
+--
+7F036260:	type 1E - 1E.xxXX	walk to preset
+same as 1C, except passes 0 as action to take
+--
+7F03628C:	type 1F - 1F.xxXX	run to preset
+same as 1C, except passes 2 as action to take
+--
+7F0362B8:	type 20 - 20.xx	activate path
+JAL	7F035434	//V0=p->path
+LBU	A0,0001 (S1)	//A0=path#
+OR	A0,S7,R0
+JAL	7F02AD54
+OR	A1,V0,R0
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+--
+7F035EF8	21	surrender
+JAL	7F033364
+OR	A0,S7,R0
+
+--
+7F035F0C	22	fade away guard
+JAL	7F0333A0
+OR	A0,S7,R0
+
+-7F0333A0:
+JAL	7F0247B8
+
+-7F0247B8:
+...
+LB	T6,0007 (A0)
+ADDIU	AT,R0,0005
+BEQL	T6,AT,...
+	...
+JAL	7F02D184
+SW	A0,0018 (SP)
+LW	A0,0018 (SP)	//A0= GUARDdata
+ADDIU	T7,R0,0005
+ADDIU	T8,R0,FFFF
+SB	T7,0007 (A0)	//fade away action
+SW	T8,002C (A0)
+SB	R0,0008 (A0)
+reset vars and RETURN
+
+--
+7F035F20	23.##	eliminate guard ID#
+OR	A0,S7,R0
+JAL	7F033040	//returns V0= GUARDdata for ID#
+LBU	A1,0001 (S1)
+BEQ	V0,R0,...
+...
+LW	T1,0018 (V0)	//T1= GUARD 8006
+BEQ	T1,R0,...
+NOP
+LHU	T2,0012 (V0)	//T2= typically set by loop counter...
+ORI	T3,T2,0020	//eliminate guard!
+SH	T3,0012 (V0)	//toggle 0x0020 on GUARDdata 0x12
+RETURN...
+
+--
+7F035F54:	type 24 - 24.xxXX.rr	activate object at preset
+LBU	T4,0001 (S1)
+LBU	T5,0002 (S1)
+OR	A0,S7,R0
+SLL	T9,T4,0x8
+OR	V0,T9,T5
+JAL	7F034514	//tests...
+ANDI	A1,V0,FFFF	//A1=2byte x value
+BEQ	V0,R0,7F035F90
+OR	A0,S6,R0
+OR	A1,S2,R0
+JAL	7F0352F0	//return A2
+LBU	A2,0003 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+7F035F90:
+ADDIU	S2,S2,0004
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0004
+
+-7F034514:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F032F94	//handle 2328 presets
+SW	A0,0018 (SP)	//A0=guard pointer
+SW	V0,001C (SP)	//+1C=preset value
+JAL	7F02A258	//test if guard getting shot or something...
+LW	A0,0018 (SP)	//A0=guard pointer
+BEQL	V0,R0,7F03456C	//if last test FALSE, return
+	OR	V0,R0,R0
+JAL	7F03FA44
+LW	A0,001C (SP)	//A0=preset value
+BEQ	V0,R0,7F034568	//V0=pointer to object at that location
+OR	A0,V0,R0
+JAL	7F04EF34
+NOP
+BEQL	V0,R0,7F03456C
+	OR	V0,R0,R0
+JAL	7F024150
+LW	A0,0018 (SP)
+BEQ	R0,R0,7F03456C
+ADDIU	V0,R0,0001
+7F034568:
+OR	V0,R0,R0
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+-7F032F94:	handle 2328 presets
+ADDIU	AT,R0,2328
+BNE	A1,AT,7F032FA4	//if not previously loaded value "2328"
+NOP
+LH	A1,0114 (A0)	//grab preloaded value
+7F032FA0:
+JR	RA
+OR	V0,A1,R0	//V0=preset value
+
+-7F02A258:	if getting shot or ???, V0=1
+LB	V0,0007 (A0)	//V0=guard data +0x7 (activity? 01 walk, etc?)
+ADDIU	AT,R0,0004
+BEQ	V0,AT,7F02A290	//if dying, V0=0
+ADDIU	AT,R0,0005
+BEQ	V0,AT,7F02A290	//if fading away, V0=0
+ADDIU	AT,R0,0007
+BEQ	V0,AT,7F02A290	//if ???, V0=0
+ADDIU	AT,R0,0006
+BEQ	V0,AT,7F02A29C	//if getting shot, V0=1
+ADDIU	V0,R0,0001
+LW	T6,0014 (A0)	//T6=guard bitflags
+ANDI	T7,T6,0200	//T7=test for 00000200
+BNEL	T7,R0,7F02A29C
+	ADDIU	V0,R0,0001
+7F02A290:	return FALSE
+JR	RA
+OR	V0,R0,R0
+ADDIU	V0,R0,0001
+7F02A29C:	return TRUE
+JR	RA
+NOP
+
+--
+7F035F9C:	type 25 - 25	turn on alarm
+JAL	7F055DC8
+NOP
+ADDIU	S2,S2,0001
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0001
+
+-7F055DC8:	start alarm
+LUI	V0,8003
+ADDIU	V0,V0,0AC0	//V0=80030AC0
+LW	T6,0000 (V0)
+ADDIU	T7,R0,0001
+BGTZ	T6,7F055DE4	//if already on, branch
+NOP
+SW	T7,0000 (V0)	//1->80030AC0
+7F055DE4:
+JR	RA
+NOP
+--
+7F005FB0:	type 26 - 26	turn off alarm
+JAL	7F055E2C
+NOP
+ADDIU	S2,S2,0001
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0001
+
+-7F055E2C:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	AT,8003
+JAL	7F055DEC
+SW	R0,0AC0 (AT)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+-7F055DEC:	alarm routine?
+LUI	A0,8003
+LW	A0,0AC4 (A0)	//A0= pointer...
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+BEQL	A0,R0,7F055E20	//if not valid, just return
+	LW	RA,0014 (SP)
+JAL	70008DF0	//looks at pointer and stores 0x3F-> V0
+NOP
+7F055E0C:
+BEQ	V0,R0,7F055E1C	//V0 either =1 or 0
+LUI	A0,8003
+JAL	70009020
+LW	A0,0AC4 (A0)	//A0=value @ 80030AC4
+7F055E1C:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+--
+7F035FC4	type 27 - 27.rr	invalid type (only returns false)
+JAL	7F0344FC
+OR	A0,S7,R0	//current guard address
+BEQ	V0,R0,7F035FEC
+OR	A0,S6,R0
+OR	A1,S2,R0
+JAL	7F0352F0	//return A2
+LBU	A2,0001 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+7F035FEC:
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+-7F0344FC:
+SW	A0,0000 (SP)	//store guard address
+JR	RA
+OR	V0,R0,R0	//V0=0
+
+--
+7F035FF8	type 28 - 28.rr	jog to bond
+OR	A0,S7,R0
+JAL	7F0334A0
+ADDIU	A1,R0,0001
+
+STD.RETURN
+
+-7F0334A0:	guard to bond position
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A0,0018 (SP)	//store guard pointer
+JAL	7F02A258
+SW	A1,001C (SP)	//store speed
+BEQ	V0,R0,7F0334F8
+LUI	T6,8003
+LW	T6,CE50 (T6)	//T6=8002CE50=?
+SLTI	AT,T6,000A
+BEQL	AT,R0,7F0334FC
+	OR	V0,R0,R0
+JAL	7F089798
+NOP
+LW	A0,0018 (SP)	//A0=p->guarddata
+ADDIU	A1,V0,0008	//A1=p->cur.player xyz pos
+LW	A2,0014 (V0)	//A2=player's room
+JAL	7F028DDC
+LW	A3,001C (SP)	//A3=speed
+BEQL	V0,R0,7F0334FC
+	OR	V0,R0,R0
+BEQ	R0,R0,7F0334FC
+ADDIU	V0,R0,0001
+7F0334F8:
+OR	V0,R0,R0
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+--
+7F036030	type 29 - 29.rr	walk to bond
+same as 28, A1=0
+--
+7F036068	type 2A - 2A.rr	run to bond
+same as 28, A1=2
+--
+7F0360A0	type 2B - 2B.rr	invalid type (only returns false)
+JAL	7F034508
+OR	A0,S7,R0	//A0=guard address
+
+STD. RETURN
+
+-7F034508:	always return false?  That can't be it... stores guardaddy
+SW	A0,0000 (SP)
+JR	RA
+OR	V0,R0,R0
+
+--
+7F0360D4	type 2C - 2C.xx.rr	jog to character position
+OR	A0,S7,R0
+LBU	A1,0001 (S1)	//A1=x value
+JAL	7F03350C
+ADDIU	A2,R0,0001	//A2=1
+
+STD.RETURN
+
+-7F03350C:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A0,0018 (SP)	//store guard addy
+SW	A1,001C (SP)	//store x value
+JAL	7F02A258
+SW	A2,0020 (SP)	//store movement type
+BEQ	V0,R0,7F033590
+LUI	T6,8003
+LW	T6,CE50 (T6)	//T6=8002CE50=???
+LW	A0,0018 (SP)	//A0=guard addy
+SLTI	AT,T6,000A
+BEQL	AT,R0,7F033594
+	OR	V0,R0,R0
+JAL	7F033040	//returns V0=target guard addy
+LW	A1,001C (SP)	//A1=x value
+BEQL	V0,R0,7F033594
+	OR	V0,R0,R0
+LW	T7,001C (V0)	//T7=?
+BEQL	T7,R0,7F033594
+	OR	V0,R0,R0
+LW	T8,0018 (V0)	//T8= 8006 data
+BEQL	T8,R0,7F033594
+	OR	V0,R0,R0
+LW	V0,0018 (V0)	//V0= 8006 position data
+LW	A0,0018 (SP)
+LW	A3,0020 (SP)	//A3= movement type
+ADDIU	A1,V0,0008	//A1= xyz for guard
+JAL	7F028DDC
+LW	A2,0014 (V0)	//room pointer
+BEQL	V0,R0,7F033594
+	OR	V0,R0,R0
+BEQ	R0,R0,7F033594
+ADDIU	V0,R0,0001
+7F033590:
+OR	V0,R0,R0
+7F033594:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+-7F033040:	//returns V0= pointer to guardID#[A1]'s data
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F032FAC
+NOP
+OR	A0,V0,R0	//A0=result from 7F032FAC
+JAL	7F022FC8
+SW	V0,001C (SP)	//save result
+LW	A2,001C (SP)	//A2=result from 7F032FAC
+BNEZ	V0,7F0330B0
+OR	T0,V0,R0
+LUI	A1,8003
+LW	A1,0980 (A1)	//A1=80030980=value?
+OR	V0,R0,R0
+LUI	A3,8003
+BLEZL	A1,7F0330B4
+	LW	RA,0014 (SP)
+LW	A3,097C (A3)	//A3=8003097C=pointer
+OR	A0,R0,R0
+OR	V1,A3,R0
+7F03308C:
+LH	T6,0000 (V1)
+ADDIU	V0,V0,0001
+SLT	AT,V0,A1
+BNE	A2,T6,7F0330A8
+ADDIU	V1,V1,01DC
+BEQ	R0,R0,7F0330B0
+ADDU	T0,A0,A3
+7F0330A8:
+BNEZ	AT,7F03308C
+ADDIU	A0,A0,01DC
+7F0330B0:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+OR	V0,T0,R0
+JR	RA
+NOP
+
+-7F032FAC:	returns V0= guardID#
+ADDIU	AT,R0,00FA
+BNEL	A1,AT,7F032FC4	//test x==FA
+ADDIU	AT,R0,00FB
+JR	RA
+LH	V0,0118 (A0)	//V0=offset 0x118 (FA)
+7F032FC4:
+BNEL	A1,AT,7F032FD8	//test x==FB
+ADDIU	AT,R0,00FC
+JR	RA
+LH	V0,011A (A0)	//V0=offset 0x11A (FB)
+7F032FD8:
+BNEL	A1,AT,7F032FEC
+ADDIU	AT,R0,00FD	//test x==FC
+JR	RA
+LH	V0,0116 (A0)	//V0=offset 0x116 (FC)
+7F032FEC:
+BNEL	A1,AT,7F033000
+ADDIU	AT,R0,00F9	//test x==FD
+JR	RA
+LH	V0,0000 (A0)	//V0=offset 0 (F9)
+7F033000:
+BNEL	A1,AT,7F033018	//test x==F9
+ADDIU	AT,R0,00F8
+LH	A1,0000 (A0)	//A1=current guardID#
+JR	RA
+ADDIU	V0,A1,2710	//V0=2710+current guardID#
+7F033018:
+BNEL	A1,AT,7F033038	//test x==F8
+LUI	T6,8008
+LW	T6,A0B0 (T6)	//T6=8007A0B0=pointer
+LW	T7,00A8 (T6)	//8006 position data
+LW	V0,0004 (T7)	//pointer to object data
+BEQ	V0,R0,7F033038	//if pointer NULL, branch
+NOP
+LH	A1,0000 (V0)
+7F033038:
+JR	RA
+OR	V0,A1,R0	//V0=A1=original value
+
+
+--
+7F036110	type 2D - 2D.xx.rr	walk to character position
+same as 2C, A2=0
+--
+7F03614C	type 2E - 2E.xx.rr	run to character position
+same as 2C, A2=2
+--
+7F0358F8	type 2F - 2F.rr	return if guard not moving
+JAL	7F029C5C
+...
+BEQ	V0,R0,...
+...
+STD. RETURN
+
+-7F029C5C:
+
+
+--
+7F03592C	30.##.rr	if guardID# killed, return
+...get guard pointer
+JAL	7F02A2A4
+NOP
+BEQ	V0,R0,...
+...
+STD. RETURN
+
+-7F02A2A4:	check if guard dying flag set
+LB	V1,0007 (A0)	//V1= GUARDdata action type
+XORI	V0,V1,0004	//V0= bit toggled (dying)
+SLTIU	V0,V0,0001	//TRUE if dying
+BNEZ	V0,7F02A2C0	//if anything other than 1 toggled, return
+NOP
+XORI	V0,V1,0005	//V0= untoggle 4 and 1 (fade away)
+SLTIU	V0,V0,0001	//TRUE if fading away
+JR	RA
+NOP
+
+--
+7F035974	31.xx.rr	if bond in room with guardID#, return
+OR	A0,S7,R0
+JAL	7F033040	//RETURNS V0=handle to guardID
+LBU	A1,0001 (S1)
+BEQ	V0,R0,7F035990
+
+--
+7F0359B4	32.rr	if bond in sight, return
+--
+7F036188	33	seed random byte
+
+-7000A450:	create psuedo-random byte
+LUI	A0,8002
+LD	A0,4460 (A0)	//create and store twiddled seed at 80024460
+
+	
+--
+7F0361A0	type 34 - 34.xx.rr	val>seed, return
+LBU	T8,010F (S7)	//	S7=guard data pointer
+LBU	T1,0001 (S1)	//T1=valuex	S1=pointer to command
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T8,T1	//seed < x
+BEQL	AT,R0,7F0361D4
+	ADDIU	S2,S2,0003
+JAL	7F0352F0	//return A2
+LBU	A2,0002 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+ADDIU	S2,S2,0003
+7F0361D4:
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0003
+
+--
+7F0361DC	type 35 - 35.xx.rr	val<seed, return
+LBU	T2,0001 (S1)	//T2=valueX
+LBU	T3,010F (S7)	//T3=0x10F byte of guard data...
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T2,T3	//x < seed
+BEQL	AT,R0,7F036210
+	ADDIU	S2,S2,0003
+JAL	7F0352F0	//return A2
+LBU	A2,0002 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+ADDIU	S2,S2,0003
+7F036210:
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0003
+--
+7F0362D8	type 36 - 36.rr	same as type 37 but saves GUARDcur to SP 0x0 in stack.
+JAL	7F033760
+OR	A0,S7,R0	//A0=guard pointer offset
+BEQ	V0,R0,7F036300	
+OR	A0,S6,R0	//A0=action block address
+OR	A1,A2,R0
+JAL	7F0352F0	//return A2
+LBU	A2,0001 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+7F036300:
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+-7F033760:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F055E50	//V0=1 if alarm set
+SW	A0,0018 (SP)	//store action block address
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+--
+7F03630C	type 37 - if alarm active, return
+JAL	7F055E50
+NOP
+BEQ	V0,R0,7F036334	//if alarm not set return
+OR	A0,S6,R0	//A0=action block address
+OR	A1,S2,R0	//A1=offset within action block
+JAL	7F0352F0	//return A2
+LBU	A2,0001 (S1)	//A2=value to return
+OR	S2,V0,R0	
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+7F036334:
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+-7F055E50:
+LUI	V0,8003
+LW	V0,0AC0 (V0)
+SLT	T6,R0,V0	//True is alarm was set
+JR	RA
+OR	V0,T6,R0	//V0=1 if set
+
+
+7F036340	38.rr	if toxic gas has been released, return
+JAL	7F055F38
+NOP
+BEQ	V0,R0,7F036368
+OR	A0,S6,R0
+OR	A1,S2,R0
+JAL	7F0352F0
+LBU	A2,0001 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+7F036368:	return
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDiU	S1,S1,0002
+
+7F055F38:
+LUI	AT,8003
+LWC1	F6,0AC8 (AT)	//F6= time since gas released
+MTC1	R0,F4		//F4=0
+OR	V0,R0,R0	//V0=0
+C.LT.S	F4,F6		//TRUE if F6 > 0
+NOP
+BC1F	7F055F5C	//return V0=1 if F6 > 0
+NOP
+ADDIU	V0,R0,0001
+7F055F5C:
+JR	RA
+NOP
+
+---also seen at:
+7F055FC4
+ADDIU	V1,V1,0AC8
+LWC1	F0,0000 (V1)
+LUI	T7,8003
+C.LT.S	F16,F0
+NOP
+BC1FL	7F056154	//if F16 <= 0, kill
+	LW	RA,001C (SP)
+LW	T7,64B4 (T7)	//T7= 800364B4 (object collisions?)
+LUI	AT,8007
+BNEL	T7,R0,7F056154
+	LW	RA,001C (SP)
+LWC1	F18,1E78 (AT)	//F18=80071E78= something like sky density
+JAL	7F0BACA8
+DIV.S	F12,F0,F18	//
+
+---------
+7F036374	39.rr	
+JAL	7F033354
+OR	A0,S7,R0
+
+-7F033354:
+LHU	V0,0012 (A0)	;V0=bitflags
+ANDI	T6,V0,0002
+JR	RA
+SLTU	V0,R0,T6	;TRUE if flag 02 set
+
+--
+7F0363A8	3A.rr	return if FA target has been set
+--
+7F0363DC	3B.rr	return if FB target has been set
+--
+7F036410	3C.rr	
+JAL	7F0294BC
+OR	A0,S7,R0
+--
+7F036444	3D.rr
+JAL	7F033DC4
+OR	A0,S7,R0
+BEQ	V0,R0,...
+...
+STD. RETURN
+
+-7F033DC4:
+...
+SW	S1,0028 (SP)
+SW	S0,0024 (SP)
+JAL	7F089798	//returns V0= BOND 8006
+SW	A0,0060 (SP)
+LW	T6,0060 (SP)	//T6= GUARDcur
+OR	S1,V0,R0	//S1= BONDdata
+LW	S0,0018 (T6)	//S0= GUARDcur 8006
+LW	T7,0014 (S0)	//T7= room pointer
+JAL	7F0B1CC4
+SW	T7,0054 (SP)
+LWC1	F4,0010 (S1)	//F4= BOND zpos
+LW	A1,0008 (S0)	//A1= GUARDcur xpos
+LW	A2,0010 (S0)	//A2= GUARDcur zpos
+LW	A3,0008 (S1)	//A3= BOND xpos
+ADDIU	A0,SP,0054
+JAL	7F0B0BE4
+SWC1	F4,0010 (SP)
+BEQ	V0,R0,7F033E20
+ADDIU	A0,SP,0048
+BEQ	R0,R0,...
+OR	V0,R0,R0
+-7F033E20
+JAL	7F0B28B0
+ADDIU	A1,SP,003C
+LW	A2,0014 (S0)	//A2= GUARDcur room pointer
+ADDIU	V1,S1,0008	//V1= BOND xyz
+SW	V1,0010 (SP)
+LW	T8,0014 (S1)	//T8= BOND room pointer
+ADDIU	A1,S0,0008	//A1= GUARDcur xyz
+SW	A1,0038 (SP)
+SW	V1,0034 (SP)
+SW	R0,0018 (SP)
+LW	A0,0060 (SP)	//A0= GUARDcur
+ADDIU	A3,SP,0048
+JAL	7F0304AC
+SW	T8,0014 (SP)
+LW	V1,0034 (SP)	//V1= BOND xyz
+BNEZ	V0,7F033E8C
+LW	A1,0038 (SP)	//A1= GUARDcur xyz
+LW	A2,0014 (S0)	//A2= GUARDcur room pointer
+SW	V1,0010 (SP)
+LW	T9,0014 (S1)	//T9= BOND room pointer
+SW	R0,0018 (SP)
+LW	A0,0060 (SP)	//A0= GUARDcur
+ADDIU	A3,SP,003C
+JAL	7F0304AC
+SW	T9,0014 (SP)
+BEQL	V0,R0,...
+OR	V0,R0,R0
+-7F033E8C
+BEQ	...
+ADDIU	V0,R0,0001
+RESET VARS AND RETURN
+
+
+--7F0B1CC4:
+LUI	AT,8008
+SW	R0,B9E4 (AT)	//0->8007B9E4
+LUI	AT,8008
+SW	R0,B9E8 (AT)	//0->8007B9E8
+LUI	AT,8004
+JR	RA
+SW	R0,13BC (AT)	//0->800413BC
+
+--7F0B0BE4:
+ADDIU	SP,SP,FFD8
+MTC1	A1,F12		//F12= GUARDcur xpos
+MTC1	A2,F14		//F14= GUARDcur zpos
+LWC1	F4,0038 (SP)	//F4= BOND zpos	[SP+10]
+SW	RA,0024 (SP)
+MFC1	A1,F12		//A1= GUARDcur xpos
+MFC1	A2,F14		//A2= GUARDcur zpos
+SW	A3,0034 (SP)	//A3->SP=34: BOND xpos
+SW	R0,0014 (SP)
+SW	R0,0018 (SP)
+JAL	7F0B0914
+SWC1	F4,0010 (SP)	//SP+10=F4: BOND zpos
+LW	RA,0024 (SP)
+ADDIU	SP,SP,0028
+JR	RA
+NOP
+
+--
+7F036478	3E.rr	if shot return?
+JAL	7F032B68
+OR	A0,S7,R0
+--
+7F0364AC	3F.rr	if heard player return?
+JAL	7F032BA0
+OR	A0,S7,R0
+--
+7F0364E0	40.##.rr	if current guard in the same room as GUARD#, return
+(not completely sure)
+OR	A0,S7,R0
+JAL	7F033040	//returns V0= handle to guardID#
+LBU	A1,0001 (S1)
+BEQL	V0,R0,7F036538
+	ADDIU	S2,S2,0003
+LW	T6,0018 (V0)	//T6= guard 8006 position data
+BEQL	T6,R0,7F036538
+	ADDIU	S2,S2,0003
+LW	V0,0018 (V0)	//V0= guard 8006 position data
+OR	A0,S7,R0	//A0= pointer to current guardID
+ADDIU	A1,V0,0008	//A1= P->xyz for guard
+JAL	7F0295D0
+LW	A2,0014 (V0)	//A2= room pointer
+BEQ	V0,R0,7F036534
+OR	A0,S6,R0
+OR	A1,S2,R0
+STD. RETURN
+
+-7F0295D0:
+...
+SW	A1,0044 (SP)
+SW	A2,0048 (SP)
+LUI	AT,41A0
+MTC1	AT,F6		//F6= 41A00000	20.0
+LWC1	F4,0028 (A0)	//
+LW	V0,0018 (A0)	//V0= GUARD 8006
+SW	R0,0030 (SP)
+SUB.S	F0,F4,F6	//F0= guard float-41A00000
+SW	A0,0040 (SP)
+OR	A1,R0,R0
+SW	V0,003C (SP)
+JAL	7F01F5E8	//sets GUARD 0x12 if xyz pointer invalid (unsets if not)
+SWC1	F0,0034 (SP)
+LW	V0,003C (SP)	//V0= GUARD 8006
+LW	V1,0044 (SP)	//V1= GUARD xyz
+LWC1	F0,0034 (SP)	//F0= converted float
+LW	T6,0014 (V0)	//T6= room pointer
+LUI	AT,3F80
+MTC1	AT,F16		//F16= 3F800000	1.0
+SW	T6,0038 (SP)
+LWC1	F8,0008 (V1)	//F8= zpos
+LW	A2,0010 (V0)	//A2= zpos
+LW	A1,0008 (V0)	//A1= xpos
+LW	A3,0000 (V1)	//A3= xpos
+MTC1	R0,F10
+ADDIU	T7,R0,0113
+SW	T7,0014 (SP)
+ADDIU	A0,SP,0038
+SWC1	F0,001C (SP)
+SWC1	F0,0018 (SP)
+SWC1	F16,0024 (SP)
+SWC1	F8,0010 (SP)
+JAL	7F0B0E24
+SWC1	F10,0020 (SP)
+BEQ	V0,R0,7F029680
+ADDIU	A1,R0,0001
+LW	T8,0038 (SP)	//T8= room pointer
+LW	T9,0048 (SP)	//T9= room pointer
+ADDIU	T0,R0,0001
+BNE	T8,T9,7F029680
+NOP
+SW	T0,0030 (SP)
+-7F029680
+JAL	7F01F5E8	//sets GUARD 0x12 if xyz pointer invalid (unsets if not)
+LW	A0,0040 (SP)
+LW	RA,002C (SP)
+LW	V0,0030 (SP)	//V0= 1 if room pointers match
+ADDIU	SP,SP,0040
+JR	RA
+NOP
+
+--7F01F5E8:	if xyz pointer invalid set 0100 @GUARD 0x12.  unset if valid
+BEQL	A1,R0,7F01F604
+	LHU	T8,0012 (A0)
+LHU	T6,0012 (A0)
+ANDI	T7,T6,FEFF
+JR	RA
+SH	T7,0012 (A0)
+-7F01F604		//if P->GUARDxyz invalid
+ORI	T9,T8,0100
+SH	T9,0012 (A0)
+JR	RA
+NOP
+
+7f02b800	if seen guard get shot, sets that ID to viewer and returns
+--
+7F036540	41.rr	guard has been loaded/on screen
+LW	T7,0014 (S7)	//T7= GUARDcur bitflags
+OR	A0,S6,R0
+OR	A1,S2,R0
+ANDI	T8,T7,0008	//T8= test for 8 (loaded - has been seen?)
+BNEL	T8,R0,...
+	ADDIU	S2,S2,0002
+STD. RETURN
+
+--
+7F036578	42.rr	if current guard on screen, return
+LW	T1,0018 (S7)	//T1= GUARDcur 8006 position data
+OR	A0,S6,R0
+OR	A1,S2,R0
+LBU	T2,0001 (T1)	//T2= 8006 type or state data...
+ANDI	T3,T2,0002	//T3= test for 2 (physically on screen)
+BEQL	T3,R0, ...
+	ADDIU	S2,S2,0002
+STD. RETURN
+
+--
+7F0365B4	43.rr	if guard in a room currently loaded, return
+LW	T4,0018 (S7)	//T4= GUARDcur 8006
+JAL	7F0B2FD8	//returns V0= room number
+LW	A0,0014 (T4)	//A0= GUARDcur room pointer
+JAL	7F0B5E50	//returns V0= pointer of loaded room data
+OR	A0,V0,R0
+BEQ	V0,R0,...
+...
+STD. RETURN
+
+--
+7F0365F4	44.xxxx.rr	if room containing preset[x] is loaded, return
+
+LBU	T9,0001 (S1)
+LBU	T6,0002 (S1)
+OR	A0,S7,R0
+SLL	T5,T9,0x8
+OR	V0,T5,T6
+JAL	7F032EFC	//grabs room data from preset value x
+ANDI	A1,V0,FFFF	//A1= xxxx
+BEQ	V0,R0,7F036630	//if room loaded, return
+OR	A0,S6,R0
+OR	A1,S2,R0
+STD. RETURN
+
+-7F032EFC:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F032F94	//returns V0= preset (sorts out 2328)
+NOP
+SLTI	AT,V0,2710
+BEQ	AT,R0,7F032F3C
+SLL	T8,V0,0x4
+SLL	T6,V0,0x2
+SUBU	T6,T6,V0
+SLL	T6,T6,0x2
+LUI	T7,8007
+LW	T7,5D18 (T7)
+SUBU	T6,T6,V0
+SLL	T6,T6,0x2
+BEQ	R0,R0,7F032F5C
+ADDU	V1,T6,T7
+LUI	T9,8007	//0xxx preset
+LW	T9,5D1C (T9)
+ADDU	T8,T8,V0
+SLL	T8,T8,0x2
+LUI	AT,FFF5
+ORI	AT,AT,9FC0
+ADDU	V1,T8,T9
+ADDU	V1,V1,AT
+-7F032F5C:	//V1= pointer to preset
+LW	A0,0028 (V1)	//A0= preset room pointer
+OR	V0,R0,R0
+BEQ	A0,R0,7F032F84
+NOP
+JAL	7F0B2FD8	//V0= A0+0x3 (room number)
+NOP
+JAL	7F0B5E50	//returns V0= pointer to loaded room data
+OR	A0,V0,R0	//A0= room#
+BEQ	R0,R0,7F032F88
+LW	RA,0014 (SP)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+-7F0B5E50:
+SLL	T6,A0,0x2	//T6= 4#
+ADDU	T6,T6,A0	//T6= 5#
+SLL	T6,T6,0x4	//T6= 50# (80*ROOM NUMBER)
+LUI	V0,8004
+ADDU	V0,V0,T6
+JR	RA
+LBU	V0,1414 (V0)	//V0=80041414= loaded room data
+
+--
+7F03663C	45.rr	return when guard on screen and within autoaim bounds
+
+JAL	7F0333F8
+OR	A0,S7,R0
+BEQ	V0,R0,7F036664
+OR	A0,S6,R0
+STD. RETURN
+
+-7F0333F8:
+...
+JAL	7F029760
+SW	A0,0048 (SP)
+BEQ	V0,R0,7F03347C
+LW	T6,0048 (SP)	//T6= GUARDdata
+LW	A0,001C (T6)	//A0= GUARD model data
+JAL	7F06D00C
+SW	A0,0044 (SP)
+LUI	AT,8005
+LWC1	F4,20D8 (AT)	//F4= 800520D8
+ADDIU	A0,SP,0038
+ADDIU	A1,SP,002C
+MUL.S	F6,F0,F4
+JAL	7F068190
+SWC1	F6,001C (SP)
+LW	A0,0044 (SP)	//A0= GUARD model data
+JAL	7F06CB98
+ADDIU	A1,SP,0020
+JAL	7F0783C4	//returns V0= BONDdata 0x10CC
+NOP
+OR	A0,V0,R0
+JAL	7F058474
+ADDIU	A1,SP,0020
+ADDIU	A0,SP,0038
+ADDIU	A1,SP,002C
+ADDIU	A2,SP,0020
+JAL	7F041074	//returns V0= 1 if visible guard shot at
+LW	A3,001C (SP)
+BEQL	V0,R0,7F033480
+	OR	V0,R0,R0
+BEQ	R0,R0,7F033480
+ADDIU	V0,R0,0001
+-7F03347C
+OR	V0,R0,R0
+-7F033480
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0048
+JR	RA
+NOP
+
+-7F041074:
+long story short, returns 1 if visible guard was shot at
+
+--
+7F036670	46.rr	return if invisible
+JAL	7F033490
+OR	A0,S7,R0
+BEQ	V0,R0,7F03....
+OR	A0,S6,R0
+STD. RETURN
+
+-7F033490:
+
+--//47-4A: x->float. might be sight/distance or notice thingies.
+7F0366A4	47.xx.rr	if x > distance between current and Bond, return
+JAL	7F032C4C
+OR	A0,S7,R0
+
+-7F032C4C:
+...
+JAL	7F089798	//returns V0= BOND 8006
+SW	A0,0018 (SP)
+LW	A0,0018 (SP)	//A0= GUARDcur
+JAL	7F032BD8
+ADDIU	A1,V0,0008	//A1= BONDxyz
+reset and RETURN...
+
+--7F032BD8:	returns F0= distance between current and BOND
+
+--
+7F036718	48.xx.rr	if x < distance between current and Bond, return
+--
+7F03678C	49.xx.rr	if x > F0, return	angle b/w guard and player
+JAL	7F032D70
+OR	A0,S7,R0
+
+-7F032D70:
+...
+JAL	7F089EE4
+JAL	7F089798	//returns V0= BOND 8006
+JAL	7F05AA30
+
+--7F089EE4:
+LUI	T6,8008
+LW	T6,A0B0 (T6)	//T6= BONDdata
+LUI	AT,43B4
+MTC1	AT,F2		//F2= 43B40000
+LWC1	F4,0148 (T6)	//F4= BONDdata 0x148
+LUI	AT,8005
+LWC1	F8,52B4 (AT)
+SUB.S	F6,F2,F4
+MUL.S	F10,F6,F8
+JR	RA
+DIV.S	F0,F10,F2
+
+--
+7F036800	4A.xx.rr	if x < F0, return	?????
+--
+7F036874	4B.xxxx.rr	return if within x units of Bond
+--
+7F0368DC	4C.xxxx.rr	return if not within x units of Bond
+--
+7F036944	4D.##.xxxx.pppp.rr	if GuardID# within x units of preset, return
+--
+7F0369D4	4E.##.xxxx.pppp.rr	if GuardID# not within x units of preset, return
+--
+7F036A64	4F.xxxx.##.rr	If current is within x units of GuardID#, return
+...long story short, T4= xxxx
+MTC1	T4,F8
+NOP
+CVT.S.W	F10,F8
+MUL.S	F16,F10,F24	//F16= x converted to float and translated to scale
+SWC1	F16,05CC (SP)
+JAL	7F0330C4	//distance between guards
+LBU	A1,0003 (S1)
+LWC1	F18,05CC (SP)	//F18= x
+OR	A0,S6,R0
+OR	A1,S2,R0
+C.LT.S	F0,F18		//if guards closer than x, return
+NOP
+BC1FL	7F036AC8
+ADDIU	S2,S2,0005
+STD. RETURN
+
+-7F0330C4:	//returns F0= distance between current guard and guardID#[A1]
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+LW	V1,0018 (A0)	//V1= current guard 8006 position data
+JAL	7F033040	//returns V0= handle to GuardID#
+SW	V1,001C (SP)
+MTC1	R0,F2
+BEQ	V0 invalid
+LW	V1,001C (SP)	//V1= GUARDorg 8006
+LW	T6,001C (V0)	//T6= GUARD# equipment handle?
+BEQL	T6 invalid
+...
+LW	T7,0018 (V0)	//T7= GUARD# 8006
+BEQL	T7 invalid
+...
+LW	V0,0018 (V0)	//V0= GUARD# 8006
+LWC1	F6,0008 (V1)	//F6= GUARDorg xpos
+LWC1	F10,000C (V1)	//F10=GUARDorg ypos
+LWC1	F4,0008 (V0)	//F4= GUARDID# xpos
+LWC1	F8,000C (V0)	//F8= GUARDID# ypos
+LWC1	F18,0010 (V1)	//F18=GUARDorg zpos
+SUB.S	F0,F4,F6	//F0= xpos-xpos
+LWC1	F16,0010 (V0)	//F16=GUARDID# zpos
+SUB.S	F2,F8,F10	//F2= ypos-ypos
+MUL.S	F4,F0,F0	//F4= F0^2
+SUB.S	F14,F16,F18	//F14= zpos-zpos
+MUL.S	F6,F2,F2	//F6= F2^2
+ADD.S	F8,F4,F6	//F8= xpos^2 + ypos^2
+MUL.S	F10,F14,F14	//F10= F14^2
+JAL	7001F7E0	//returns F0= sqrt(F12)
+ADD.S	F12,F8,F10	//F12= xpos^2 + ypos^2 + zpos^2
+MOV.S	F2,F0
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+MOV.S	F0,F2
+JR	RA
+NOP
+
+
+--
+7F036AD0	50.xxxx.##.rr	opposite of 4F
+--
+7F036B3C	51.xxxx.rr	if current is within x units of another guard, return
+checks if a guard is visible within x units of it.  If a room uses special visibilty, this type will not work
+
+...long story short, T3= x
+MTC1	T3,F16
+NOP
+...	F0= (float)x, converted to stage scale
+MFC1	A1,F0
+JAL	7F033B38
+NOP
+BEQ	V0,R0,7F036B8C
+OR	A0,S6,R0
+STD. RETURN
+
+-7F033B38:
+ADDIU	SP,SP,FF98
+MTC1	A1,F12		//F12= x converted
+SW	RA,0064 (SP)
+SW	S5,005C (SP)
+OR	S5,A0,R0
+S0->SPx60
+S4->SPx58
+S3->SPx54
+S2->SPx50
+S1->SPx4C
+S0->SPx48
+D30->SPx40
+D28->SPx38
+D26->SPx30
+D24->SPx28
+D22->SPx20
+D20->SPx18
+JAL	7F01F530	//returns V0= #guards
+D12->SPx6C
+LW	V1,0018 (S5)	//V1= guard 8006
+LWC1	F12,006C (SP)	//F12= x
+OR	S4,V0,R0	//S4= #guards
+LWC1	F0,0008 (V1)	//F0= xpos
+LWC1	F2,000C (V1)	//F2= ypos
+LWC1	F14,0010 (V1)	//F14=zpos
+LW	T6,0014 (V1)	//T6= room pointer
+OR	S1,R0,R0
+SUB.S	F20,F0,F12	//F20=xpos-x
+LBU	S3,0003 (T6)	//S3= room#
+ADD.S	F22,F0,F12	//F22=xpos+x
+SUB.S	F24,F2,F12	//F24=ypos-x
+ADD.S	F26,F2,F12	//F26=ypos+x
+SUB.S	F28,F14,F12	//F28=zpos-x
+BLEZ	V0,7F033CB0
+ADD.S	F30,F14,F12	//F30=zpos+x
+LUI	S6,8003
+ADDIU	S6,S6,CC64	//S6=8002CC64 (guard data)
+OR	S2,R0,R0
+-7F033BD0:	//check all guards
+LW	T7,0000 (S6)	//T7=GUARDdata handle
+ADDU	S0,S2,T7	//S0=GUARDx handle
+BEQL	S0,S5,7F033CA4
+	ADDIU	S1,S1,0001
+LW	T8,001C (S0)	//T8=GUARDx equipment handle?
+BEQL	T8,R0,7F033CA4
+	ADDIU	S1,S1,0001
+JAL	7F02A2A4
+OR	A0,S0,R0
+BNEL	V0,R0,7F033CA4	//THOSE FLAGS BETTER HAVE BEEN SET
+	ADDIU	S1,S1,0001
+LW	V1,0018 (S0)	//V1= GUARDx 8006
+ADDIU	V0,V1,0008	//V0= GUARDx xyz
+//see if xpos falls within cur_xpos+-X
+LWC1	F0,0000 (V0)	//F0= GUARDx xpos
+C.LE.S	F20,F0
+NOP
+BC1FL	7F033CA4
+	ADDIU	S1,S1,0001
+C.LE.S	F0,F22
+NOP
+BC1FL	7F033CA4
+	ADDIU	S1,S1,0001
+//see if ypos falls within cur_ypos+-X
+LWC1	F0,0004 (V0)
+C.LE.S	F24,F0
+NOP
+BC1FL	7F033CA4
+	ADDIU	S1,S1,0001
+C.LE.S	F0,F26
+NOP
+BC1FL	7F033CA4
+	ADDIU	S1,S1,0001
+//see if zpos falls within cur_zpos+-X
+LWC1	F0,0008 (V0)
+C.LE.S	F28,F0
+NOP
+BC1FL	7F033CA4
+	ADDIU	S1,S1,0001
+C.LE.S	F0,F30
+NOP
+BC1FL	7F033CA4
+	ADDIU	S1,S1,0001
+//check room pointer
+LW	T9,0014 (V1)	//T9= room pointer
+LBU	A1,0003 (T9)	//A1= room#
+BEQL	S3,A1,7F033C94
+	LH	T0,0000 (S0)	//T0=guardID#
+JAL	7F0B8FD0	//returns 1 if visible across standard room boundry
+OR	A0,S3,R0
+BEQL	V0,R0,7F033CA4
+	ADDIU	S1,S1,0001
+LH	T0,0000 (S0)
+-7F033C94:	//if within range and in same room
+ADDIU	V0,R0,0001
+BEQ	R0,R0,7F033CB4
+SH	T0,0116 (S5)	//GuardID#-> FC value
+-7F033CA0:
+ADDIU	S1,S1,0001
+-7F033CA4:
+SLT	AT,S1,S4	//TRUE if S1(count) < #guards
+BNEZ	AT,7F033BD0
+ADDIU	S2,S2,01DC	//S2= next guard addy
+OR	V0,R0,R0
+-7F033CB4:
+RESTORE AND RETURN
+
+-7F02A2A4:	//check if guard dying flag set
+LB	V1,0007 (A0)	//V1= weird flag...
+XORI	V0,V1,0004
+SLTIU	V0,V0,0001
+BNEZ	V0,7F02A2C0
+NOP
+XORI	V0,V1,0005
+SLTIU	V0,V0,0001
+-7F02A2C0:
+JR	RA
+NOP
+
+-7F0B8FD0:	//check if guards are just across a visible room boundry
+//returns 1 if visible through boundry, 0 if not
+LUI	V1,8008
+LW	V1,FF80 (V1)	//V1= pointer to portal table
+OR	A2,A0,R0	//A2= guard's room#
+LW	T6,0000 (V1)	//T6= pointer to portal
+OR	A0,V1,R0	//A0= pointer to portal table
+BEQL	T6,R0,7F0B9038
+	OR	V0,R0,R0
+LBU	V0,0004 (A0)	//V0= room#1
+-7F0B8FF0:
+LBU	V1,0005 (A0)	//V1= room#2
+BNE	V0,A2,7F0B900C	//if room#1 != GUARDcur's room, branch
+NOP
+BNE	V1,A1,7F0B900C	//if room#2 != GUARDx's room, branch
+NOP
+JR	RA
+ADDIU	V0,R0,0001
+-7F0B900C:
+BNEL	V1,A2,7F0B9028	//if room#2 != GUARDcur's room, branch
+	LW	T7,0008 (A0)
+BNEL	V0,A1,7F0B9028	//if room#1 != GUARDx's room, branch
+	LW	T7,0008 (A0)
+JR	RA
+ADDIU	V0,R0,0001
+-7F0B9028:	//keep checking until out of pointers
+ADDIU	A0,A0,0008
+BNEL	T7,R0,7F0B8FF0
+	LBU	V0,0004 (A0)
+OR	V0,R0,R0
+JR	RA
+NOP
+
+--
+7F036B98	52.xxxx.pppp.rr	if within x units of preset, return
+
+LBU	T7,0001 (S1)
+LBU	T1,0002 (S1)
+LBU	T4,0003 (S1)
+SLL	T8,T7,0x8
+OR	T2,T8,T1	//T2=xxxx
+MTC1	T2,F4		//F4=xxxx
+LBU	T5,0004 (S1)
+SLL	T9,T4,0x8
+CVT.S.W	F6,F4		//F6=float(xxxx)
+OR	V0,T9,T5	//V0=pppp
+ANDI	A1,V0,FFFF	//A1=V0=pppp
+OR	A0,S7,R0	//A0=S7= current guard addy?
+MUL.S	F8,F6,F24	//F8= x * scale modifier or some such nonsense.
+JAL	7F033154
+SWC1	F8,05B0 (SP)
+LWC1	F10,05B0 (SP)	//F10=F8 from above
+OR	A0,S6,R0
+OR	A1,S2,R0
+C.LT.S	F0,F10
+NOP
+BC1FL	7F036C08	//return value if distance < F10
+	ADDIU	S2,S2,0006
+JAL	7F0352F0
+LBU	A2,0005 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+ADDIU	S2,S2,0006
+//7F036C08:
+BEQ	R0,R0,7F03558C
+ADDIU	A1,A1,0006
+
+-7F033154:	returns F0= distance b/w BOND and preset
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+SW	A0,0020 (SP)
+JAL	7F089798	//returns V0=handle to BOND
+SW	A1,0024 (SP)
+LW	A0,0020 (SP)
+LW	A1,0024 (SP)
+JAL	7F032F94	//returns V0=resolved preset
+SW	V0,001C (SP)
+SLTI	AT,V0,2710
+BEQ	AT,R0,7F0331A8	//branch if a 2710 preset
+LW	A2,001C (SP)	//A2=BOND handle
+SLL	T6,V0,0x2	//0xxx preset handle to V1
+SUBU	T6,T6,V0
+SLL	T6,T6,0x2
+LUI	T7,8007
+LW	T7,5D18 (T7)
+SUBU	T6,T6,V0
+SLL	T6,T6,0x2
+BEQ	R0,R0,7F0331CC
+ADDU	V1,T6,T7
+//7F0331A8:	2xxx preset handle to V1
+LUI	T9,8007
+LW	T9,5D1C (T9)
+SLL	T8,V0,0x4
+ADDU	T8,T8,V0
+SLL	T8,T8,0x2
+LUI	AT,FFF5
+ORI	AT,AT,9FC0
+ADDU	V1,T8,T9
+ADDU	V1,V1,AT
+//7F0331CC:	//compute distance
+LWC1	F4,0000 (V1)	//preset x coord
+LWC1	F6,0008 (A2)	//BOND x coord
+LWC1	F8,0004 (V1)	//preset y coord
+LWC1	F10,000C (A2)	//BOND y coord
+SUB.S	F0,F4,F6	//F0= x1-x2
+LWC1	F16,0008 (V1)	//preset z coord
+LWC1	F18,0010 (A2)	//BOND z coord
+SUB.S	F2,F8,F10	//F2= y1-y2
+MUL.S	F4,F0,F0	//F4= F0^2
+SUB.S	F14,F16,F18	//F14= z1-z2
+MUL.S	F6,F2,F2	//F6= F2^2
+ADD.S	F8,F4,F6	//F8= X+Y
+MUL.S	F10,F14,F14	//F10= F14^2
+JAL	7001F7E0	//returns sqrt(F10)-> F0
+ADD.S	F12,F8,F10	//F12= X+Y+Z
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+--
+7F036C10	53.xxxx.pppp.rr	if not within x units of preset, return
+--
+7F036C88	54.##.pppp.rr	when GuardID# at preset, return
+...
+ANDI	A2,V0,FFFF
+JAL	7F034388
+LBU	A1,0001 (S1)
+--
+7F036CD4	55.xxxx.rr	when at preset xxxx, return
+--
+7F036D1C	56.##.rr	if collected tagged item, return
+JAL	7F0570C0	;V0=p->obj.data
+LBU	A0,0001 (S1)	;A0=obj tag#
+BEQL	V0,R0,+10	;quit if invalid
+ADDIU	S2,S2,0003
+LW	T1,0010 (V0)	;T1=p->obj.pos.data
+BEQL	T1,R0,+D	;quit if invalid
+ADDIU	S2,S2,0003
+JAL	7F08CFE0
+LW	A0,0010 (V0)	;A0=p->obj.pos.data
+etc...
+--
+7F036D6C	57.ii.rr	if item# deposited, return
+	can only be used with 08 weapon types, seemingly
+JAL	7F051AEC
+LBU	A0,0001 (S1)
+--
+7F036DA0	58.ii.##.rr	if deposited item on tagged obj#, return
+---------
+7F036E2C	59.##.rr	if weapon value = ##, return rr
+--
+7F036E78	5A.##.rr	if type16# obj loaded, return
+	actually tests if 0x10 != 0
+	std. objs only return if the 8006 pointer is preset, which is only available when the object is loaded.  ie. the flag in MP only would return if flag tag was on.  You can test for BA in solo this way, since it only appears if certain difficulty levels are set.
+	most types that aren't standard objects would return false.  However, the most common tagged types (guards, cutscene cameras) would return because data is stored at that offset.
+
+--
+7F036EBC	5B.##.rr	if tagged object not destroyed, return
+--
+7F036F0C	5C.##.rr	if tagged object# activated, return
+--
+7F036F70	5D.##.rr	use gadget on object
+get handle to object
+grab object's 8006
+test state vs. 40	(obj +2)
+if toggled, untoggles and returns
+
+weapons that set flag:
+bomb defuser
+door decoder
+datathief
+
+--
+7F036FD0	5E.xx	type 16#xx activates
+--
+7F037038	5F.xx	detonate type 16#xx
+--
+7F0370B4	60.xx	Guard Drops type 16#xx
+--
+7F037118	61.##	kill guard#
+A0= guard handle
+T6= guard 8006
+JAL	7F021B20	//called when a guard dies.  throw equipment?  kill guard?
+
+-7F021B20:
+seems to do the same thing as type 62, but also includes the hat
+checks 8006+0x20 to see if a hat, then compares to hat pointer from guard data 
+
+--
+7F03714C	62.##	guard# throws gun
+get handle to guard
+pull guard 8006
+
+7F03716C:
+LW	T8,0160 (V0)	//T8= weapon 8006
+ADDIU	A1,R0,0001
+BEQL	T8,R0,7F037194
+	LW	A0,0164 (S0)
+JAL	7F04BFD0	//----called in the drop type#16, and at guard death
+LW	A0,0160 (V0)	//A0= weapon 8006
+LHU	T1,0012 (S0)	//T1= bit set by loop counter...
+ORI	T2,T1,0001	//T2= toggle first bit
+SH	T2,0012 (S0)	//save back to thing set by loop counter
+LW	A0,0164 (S0)	//A0= ???
+-7F037194:
+BEQL	A0,R0,7F0371B4
+	ADDIU	S2,S2,0002
+JAL	7F04BFD0
+ADDIU	A1,R0,0001
+LHU	T3,0012 (S0)	//T3= bit set by loop counter...
+ORI	T4,T3,0001	//T4= first bit toggled
+SH	T4,0012 (S0)	//save back
+RETURN...
+
+--
+7F0371BC	63.##	guard gives bond type16#xx item
+get obj handle
+send obj 8006 to 7F050250	//bond picks up object
+send obj 8006 & ? to 7F03C2BC
+
+--
+7F0371FC	64.##.gg	tagged obj#; [g]uard#	???
+either [g]uard gives obj# to bond or picks up obj#
+
+JAL	7F0570C0	//returns V0= handle to tagged object
+LBU	A0,0001 (S1)	//A0= #
+OR	S0,V0,R0	//S0= obj handle
+OR	A0,S7,R0
+JAL	7F033040	//returns V0= handle to [g]uardID#
+LBU	A1,0002 (S1)	//A1= gg
+BEQ	S0,R0,7F037294
+OR	S3,V0,R0	//S3= guard handle
+LW	A0,0010 (S0)	//A0= 8006 for obj
+BEQL	A0,R0,7F037298
+	ADDIU	S2,S2,0003
+BEQL	A0,R0,7F037298
+	ADDIU	S2,S2,0003
+LW	T5,001C (A0)	//T5= I'm not even sure if this = anything but 0
+BEQ	T5,R0,7F03724C
+NOP
+JAL	7F04C044
+NOP
+BEQ	R0,R0,7F037268
+LBU	T6,0003 (S0)
+-7F03724C:
+JAL	7F03E18C
+NOP
+JAL	7F03A538
+LW	A0,0010 (S0)	//A0= 8006 of obj
+JAL	7F03A414
+LW	A0,0010 (S0)	//A0= 8006 of obj
+LBU	T6,0003 (S0)	//T6= obj type
+-7F037268:
+ADDIU	AT,R0,0008
+OR	A0,S0,R0	//A0= obj handle
+BNEL	T6,AT,7F03728C	//branch if not a weapon
+	LW	A0,0010 (S0)	//A0= 8006 of obj
+JAL	7F051E1C
+OR	A1,S3,R0	//A1= guard handle
+BNEL	V0,R0,7F037298
+	ADDIU	S2,S2,0003
+LW	A0,0010 (S0)
+-7F03728C:
+JAL	7F03A5A4
+LW	A1,0018 (S3)	//A1= 8006 of guard
+-7F037294:
+ADDIU	S2,S2,0003
+-7F037298:
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0003
+
+--
+7F0372A0	65.##.xxxx	move object to preset
+--
+7F0373BC	66.##	open tagged door
+--
+7F037400	67.##	close tagged door
+JAL	7F0570C0	//returns V0=handle to tagged object
+LBU	A0,0001 (S1)
+BEQ	V0,R0,7F037438
+OR	A2,V0,R0	//A2= obj handle
+LW	A0,0010 (V0)	//A0= 8006 position data
+BEQL	A0,R0,7F03743C
+	ADDIU	S2,S2,0002
+LBU	T8,0000 (A0)	//T8= 
+ADDIU	AT,R0,0002
+OR	A0,V0,R0
+BNEL	T8,AT,7F03743C
+	ADDIU	S2,S2,0002
+JAL	7F054988	//set door state
+ADDIU	A1,R0,0002
+STD. RETURN
+--
+7F037444	68.##.ss.rr	check [s]tate of door type16#, [r]eturn if true.
+LBU	A0,0001 (S1)
+JAL	7F0570C0	//returns V0= tagged obj data
+OR	S0,R0,R0
+BEQ	V0,R0,7F0374F0
+OR	A0,S6,R0
+LW	T1,0010 (V0)	//T1= 8006 position data
+BEQ	T1,R0,7F0374F0
+NOP
+LBU	T2,0003 (V0)
+ADDIU	AT,R0,0001
+BNE	T2,AT,7F0374F0	//if not a door, kill
+NOP
+LB	V1,00BC (V0)
+ADDIU	AT,R0,0001
+BNEZ	V1,7F0374B8
+NOP
+etc...
+--
+7F037518	69.##.rr	if object is a valid loaded door, return
+JAL	7F0570C0	//returns V0= handle to tagged object#
+LBU	A0,0001 (S1)	//A0= #
+BEQL	V0,R0,7F037574
+ADDIU	S2,S2,0003
+LW	T2,0010 (V0)	//T2= 8006 position data
+BEQL	T2,R0,7F037574
+ADDIU	S2,S2,0003
+LBU	T3,0003 (V0)	//T3= object type
+ADDIU	AT,R0,0001
+BNEL	T3,AT,7F037574	//abort if not a door
+ADDIU	S2,S2,0003
+LW	T4,0064 (V0)	//T4= ...  not certain.  ordinarily not set
+OR	A0,S6,R0
+OR	A1,S2,R0
+ANDI	T9,T4,0200	//T9= tests 00000200
+BEQL	T9,R0,7F037574	//I've never seen this toggled, so should be okay
+ADDIU	S2,S2,0003
+STD. RETURN
+
+--
+7F03757C	6A.##.xx	set lock value to x for door type16#
+--
+7F0375C0	6B.##.xx	unset lock value for door type16#
+--
+7F037608	6C.##.xx.rr	if door lock bits toggled, return
+LBU	A0,0001 (S1)	//A0= xx
+JAL	7F0570C0	//V0= handle to type16#
+OR	S0,R0,R0
+BEQ	V0,R0,7F037650
+OR	A1,S2,R0
+LW	A0,0010 (V0)	//A0= 8006 address of object
+BEQ	A0,R0,7F037650
+NOP
+LBU	T4,0000 (A0)	//type byte from 8006 address
+ADDIU	AT,R0,0002
+BNE	T4,AT,7F037650	//ABORT if type = 2
+NOP
+LBU	V1,0002 (S1)	//V1= xx
+LW	T9,009C (V0)	//T9= door lock
+AND	T5,T9,V1	//T5= test if bits toggled	(ie. 6&2= 2)
+BNE	V1,T5,7F037650	//return if lock bits toggled (ie. 2=2)
+NOP
+ADDIU	S0,R0,0001	//RETURN!
+-7F037650:
+BEQ	S0,R0,7F03766C
+OR	A0,S6,R0
+STD. RETURN
+
+--
+7F037678	6D.##.rr	if objective# complete, return
+JAL	7F0571A8
+NOP
+LBU	A1,0001 (S1)
+SLT	AT,A1,V0
+BEQL	AT,R0,...	//quit if # higher than #total objectives
+	S2,S2,0003
+JAL	7F057238
+OR	A0,A1,R0
+ADDIU	AT,R0,0001
+BNE	V0,AT,...
+STD. RETURN
+
+-7F0571A8:
+LUI	V0,8003
+LW	V0,22F0 (V0)	//V0=800322F0= #objectives
+JR	RA
+ADDIU	V0,V0,0001	//V0= #objectives to int
+
+-7F057238:
+...
+SW	S3,0024 (SP)
+SLTI	AT,A0,000A	//there can't be more than 10 objectives...
+...
+SW	S4,0028 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+SW	S0,0018 (SP)
+BEQ	AT,R0,7F057484	//too big a #, quit...
+ADDIU	S3,R0,0001
+SLL	V0,A0,0x2	//V0= objective# * 4
+LUI	A0,8007
+ADDU	A0,A0,V0
+LW	A0,5D30 (A0)	//A0=80075D30 + off.= pointers to objective in obj block
+BNEL	A0,R0,7F05728C
+	LBU	V1,0003 (A0)	//V1= objective type
+LUI	S3,8007
+ADDU	S3,S3,V0
+BEQ	R0,R0,7F057484
+LW	S3,5D58 (S3)	//S3=80075D58 + offset = ?
+-7F05728C		//When there's a pointer to the objective (always...)
+ADDIU	AT,R0,0018
+OR	S2,A0,R0	//S2= Pobjective
+BEQ	V1,AT,7F057484	//quit if at end of objective block (type18)
+ADDIU	S4,R0,0001
+ADDIU	T6,V1,FFE9	//T6= objective type -0x16 (limit just to objective types)
+-7F0572A0		//keep checking the different objective types...
+SLTIU	AT,T6,000C	//TRUE if a valid objective 17-22
+BEQ	AT,R0,7F057438
+OR	S1,S4,R0
+SLL	T6,T6,0x2	//
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,3654 (AT)	//T6=80053654 + offset= jump...
+JR	T6
+NOP
+
+--7F057438:	iterate to next objective type in clump
+
+--
++7F05737C	type 1D check (deposit object)
+JAL	7F0570C0	//returns V0= obj to deposit (checks 0010 @ obj+64)
+LW	A0,0004 (S2)	//A0= obj# deposit
+BEQ	V0,R0,...
+NOP
+LW	T9,0010 (V0)
+BEQ	T9,R0,...
+NOP
+JAL	7F08CFE0	//
+OR	A0,T9,R0	//A0= obj 8006 data
+BEQ	V0,R0,...
+NOP
+BEQ	...
+OR	S1,R0,R0
+
+--
++7F0573B0	type 1E check (photograph object)
+JAL	7F0570C0	//returns V0= obj to be photographed
+LW	A0,0004 (S2)
+LW	T0,0008 (S2)	//T0= next value...
+OR	A0,V0,R0	//A0= obj to be photographed
+BNEZ	T0,...
+NOP
+BEQ	V0,R0,7F0573EC	//should be valid handle
+NOP
+LW	T1,0010 (V0)	//T1= obj 8006
+BEQ	T1,R0,7F0573EC
+NOP
+JAL	7F04EF34	//returns V0=1 if object not destroyed
+NOP
+BNEZ	V0,7F0573F4
+NOP
+-7F0573EC
+BEQ	...
+ADDIU	S1,R0,0002
+-7F0573F4		S1=0  if object not destroyed
+BEQ	...
+OR	S1,R0,R0
+
+++7F04EF34:	returns 1 if object not destroyed
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F03FFC0	//returns V0=0 if object not destroyed
+NOP
+LW	RA,0014 (SP)
+SLTIU	T6,V0,0001	//TRUE if obj not destroyed
+OR	V0,T6,R0	//V0=T6
+JR	RA
+ADDIU	SP,SP,0018
+
+++7F03FFC0:		test if object is destroyed...
+LBU	T6,0002 (A0)
+ANDI	T7,T6,0080	//test if object is destroyed
+BNEL	T7,R0,7F03FFDC
+	LWC1	F4,0070 (A0)	//F4= 
+JR	RA
+OR	V0,R0,R0
+-7F03FFDC		//if object is destroyed...
+TRUNC.W.S	F6,F4
+MFC1	V0,F6
+NOP
+SRA	T9,V0,0x2
+ADDIU	V0,T9,0001
+JR	RA
+NOP
+
+--
++7F057424	type22 check (use key analyzer)
+JAL	7F066EF8
+NOP
+BNEZ	V0,...
+NOP
+OR	S1,R0,R0
+
+++7F066EF8:	do check...
+LUI	T6,8008
+LW	T6,A0B0 (T6)	//T6= BONDdata
+JR	RA
+LW	V0,1060 (T6)	//V0= 
+
+--
+7F0376C8	6E.xx.rr	return if guard's 2328 is set by function
+x value tells you where to pull the preset to save to guard's 2328
+options:
+20	next step in path
+10	go to Bond's position
+08	
+04	go to Bond if within range
+02	go to Bond if within mid range
+01	go to Bond if within short range
+
+Note: unlike most types, it uses path preset table, link sets, and Pad values to compute where Bond is roughly within the stage.  This may require more extensive path preset tables than before.  These two types are the reason for the overly-complex path tables.
+
+OR	A0,S7,R0	//A0= current guard
+JAL	7F033998
+LBU	A1,0001 (S1)
+BEQ	V0,R0,7F0376F4
+...
+STD. RETURN
+
+-7F033998:
+ADDIU	SP,SP,FFB8
+SW	S0,0014 (SP)
+ANDI	S0,A1,00FF	//S0= x VALUE (0-FF)
+SW	S1,0018 (SP)
+ADDIU	AT,R0,0010	//AT= 0010
+OR	S1,A0,R0	//S1=A0= current guard
+SW	RA,001C (SP)
+SW	A1,004C (SP)
+BEQ	S0,AT,7F0339CC	//branch if x=10
+OR	A2,S0,R0	//A2= x
+ADDIU	AT,R0,0020	//AT= 0x20
+BNE	S0,AT,7F033A60	//branch on anything but 20
+NOP
+-7F0339CC:	if x == 0x10 or 0x20
+LW	S0,0018 (S1)	//S0= handle to guard position
+JAL	7F089798	//returns V0= handle to bond
+SW	A2,0020 (SP)
+LW	A1,0014 (S0)	//A1= room pointer
+SW	V0,0040 (SP)	//save BOND8006
+JAL	7F027CD4	//returns V0= addy of path preset
+ADDIU	A0,S0,0008	//A0= direct handle to guard xyz
+LW	V1,0040 (SP)	//V1= handle to bond
+OR	S0,V0,R0	//S0=V0= addy of path preset
+ADDIU	A0,V1,0008	//A0= direct handle to bond xyz
+JAL	7F027CD4
+LW	A1,0014 (V1)	//A1= bond room pointer
+LW	A2,0020 (SP)	//A2= x
+BEQ	S0,R0,7F033A94	//branch on NULL pointer
+OR	A1,V0,R0	//A1= addy of Bond path preset?
+BEQ	V0,R0,7F033A94	//branch on NULL pointer
+ADDIU	AT,R0,0010
+BNE	A2,AT,7F033A40	//branch if x= 20
+OR	A0,S0,R0	//A0=S0= addy of path preset
+-7F033A18	x=10	
+ADDIU	A2,SP,002C	
+JAL	7F08F4F0	//sets 27xx and returns 3?
+ADDIU	A3,R0,0003
+SLTI	AT,V0,0003	//V0 should be >= 3
+BNEZ	AT,7F033A94
+LW	T6,0030 (SP)	//T6= path preset addy (2711)
+LW	T7,0000 (T6)	//T7= actual preset
+ADDIU	V0,R0,0001
+BEQ	R0,R0,7F033A98
+SH	T7,0114 (S1)	//T7-> guard's 2328 value
+-7F033A40:	x=20	get next preset in path and store to 2328!
+JAL	7F08FB90	//returns V0= addy of next path preset in path
+OR	A0,S0,R0	//A0=S0= pointer to a path preset
+BEQL	V0,R0,7F033A98
+	OR	V0,R0,R0
+LW	T8,0000 (V0)	//T8= preset at path preset
+ADDIU	V0,R0,0001
+BEQ	R0,R0,7F033A98
+SH	T8,0114 (S1)	//T8-> guard's 2328 value
+-7F033A60:	if other than 0x10 and 0x20
+JAL	7F06CC80	//debug objinst errors (if A0 or V0 are invalid)
+LW	A0,001C (S1)	//A0= handle to model data handle
+LW	V0,0018 (S1)	//V0= handle to guard position
+MFC1	A2,F0		//A2= F0 (stage scale?)
+ANDI	A3,S0,00FF	//A3=S0= x
+ADDIU	A0,V0,0008	//A0= pointer to guard xyz
+JAL	7F033834
+LW	A1,0014 (V0)	//A1= room pointer
+BLTZL	V0,7F033A98	//preset returned should be valid
+	OR	V0,R0,R0
+SH	V0,0114 (S1)	//V0-> guard's 2328 value
+BEQ	R0,R0,7F033A98
+ADDIU	V0,R0,0001	//will return value!
+-7F033A94:
+OR	V0,R0,R0
+-7F033A98:
+LW	RA,001C (SP)
+LW	S0,0014 (SP)
+LW	S1,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0048
+
+-7F027CD4: grabs 2328 from GUARDcur & returns V0= address of matching path preset
+
+-7F06CC80: an interesting routine that pops up messages for objinst errors
+
+-7F033834:	figures out what you want to test and returns V0= preset value
+	A1=room#; A3/S0= x
+ADDIU	SP,SP,FFC8
+SDC1	F20,0018 (SP)
+MTC1	A2,F20		//F20= A2 (RETURN F/7F06CC80. 3F864A11 ~1.05) 
+SW	RA,0034 (SP)
+SW	S4,0030 (SP)
+SW	S0,0020 (SP)
+ANDI	S0,A3,00FF	//S0= x
+OR	S4,A0,R0	//S4= BOND xyz
+SW	S3,002C (SP)
+SW	S2,0028 (SP)
+SW	S1,0024 (SP)
+JAL	7F027CD4	//returns V0= addy of path preset (same as current2328)
+SW	A3,0044 (SP)
+BEQ	V0,R0,7F033970
+OR	S3,V0,R0	//S3=V0= P.P.
+ADDIU	AT,R0,0001
+BEQ	S0,AT,7F0338A0	//x=1
+OR	A0,S3,R0	//A0=S3=V0= P.P.
+ADDIU	AT,R0,0002
+BEQ	S0,AT,7F0338B0	//x=2
+ADDIU	AT,R0,0004
+BEQ	SO,AT,7F0338C0	//x=4
+ADDIU	AT,R0,0008
+BEQ	S0,AT,7F0338CC	//x=8
+NOP
+BEQ	R0,R0,7F0338CC	//everything else is just assumed option 8
+NOP
+-7F0338A0	//x=1!
+LUI	AT,8005
+LWC1	F4,20E8 (AT)	//F4=800520E8= 40490FDB
+BEQ	R0,R0,7F0338CC
+ADD.S	F20,F20,F4
+-7F0338B0	//x=2!
+LUI	AT,8005
+LWC1	F6,20EC (AT)	//F6=800520EC= 3FC90FDB
+BEQ	R0,R0,7F0338CC
+ADD.S	F20,F20,F6
+-7F0338C0	//x=4!
+LUI	AT,8005
+LWC1	F8,20F0 (AT)	//F8=800520F0= 4096CBE4
+ADD.S	F20,F20,F4
+-7F0338CC	//x=8! (or anything else!)
+LUI	AT,8005
+LWC1	F0,20F4 (AT)	//F0=800520F4= 40C90FDB [6.28]
+C.LE.S	F0,F20
+NOP
+BC1FL	7F0338EC	//skip if F0>F20
+	MFC1	A2,F20
+SUB.S	F20,F20,F0	//F20-=F0 (F0 must be greater)
+MFC1	A2,F20		//A2= F20
+-7F0338EC
+JAL	7F033780	//returns V0=1 if stuff happened (gets preset, etc)
+OR	A1,S4,R0	//A1=S4= BONDxyz
+BEQL	V0,R0,7F033908
+	LW	T6,0004 (S3)
+BEQ	R0,R0,7F033974
+LW	V0,0000 (S3)	//V0= preset at path preset address
+-7F033908
+LUI	S2,8007
+ADDIU	S2,S2,5D00	//S2= addy path preset table
+LW	S1,0000 (T6)
+OR	S0,R0,R0
+BLTZL	S1,7F033974
+	ADDIU	V0,R0,FFFF
+LW	T8,0000 (S2)
+-7F033924
+SLL	T7,S1,0x4
+MFC1	A2,F20
+OR	A1,S4,R0
+JAL	7F033780
+ADDU	A0,T7,T8
+BEQL	V0,R0,7F033958
+	LW	T2,0004 (S3)
+LW	T9,0000 (S2)
+SLL	T0,S1,0x4
+ADDU	T1,T9,T0
+BEQ	R0,R0,7F033974
+LW	V0,0000 (T1)
+-7F033954
+LW	T2,0004 (S3)
+-7F033958
+ADDIU	S0,S0,0001
+SLL	T3,S0,0x2
+ADDU	T4,T2,T3
+LW	S1,0000 (T4)
+BGEZL	S1,7F033924
+	LW	T8,0000 (S2)
+-7F033970
+ADDIU	V0,R0,FFFF
+-7F033974
+LW	RA,0034 (SP)
+LDC1	F20,0018 (SP)
+LW	S0,0020 (SP)
+LW	S1,0024 (SP)
+LW	S2,0028 (SP)
+LW	S3,002C (SP)
+LW	S4,0030 (SP)
+JR	RA
+ADDIU	SP,SP,0038
+
+-7F08F4F0:	set the 27xx and return 3?
+ADDIU	SP,SP,FF90
+SW	S0,0018 (SP)
+LUI	S0,8007
+LW	S0,5D04 (S0)	//S0= path preset link table
+SW	S6,0030 (SP)
+SW	S4,0028 (SP)
+SW	S1,001C (SP)
+OR	S1,A3,R0	//S1=A3= 3
+OR	S6,A0,R0	//S6=A0= addy of path preset
+SW	RA,003C (SP)
+SW	S8,0038 (SP)
+SW	S7,0034 (SP)
+SW	S5,002C (SP)
+SW	S3,0024 (SP)
+SW	S2,0020 (SP)
+SW	A1,0074 (SP)
+SW	A2,0078 (SP)
+BEQ	S0,R0,7F08F634	//S0 should = path preset link table
+OR	S4,A2,R0	//S4=A2= offset from SP
+LW	T6,0008 (A0)	//T6= set of path preset
+ADDIU	V0,R0,000C
+LW	T9,0008 (A1)	//T9= set of other path preset
+MULTU	T6,V0
+OR	A2,S0,R0	//A2=S0= path preset link table
+MFLO	T7
+ADDU	S3,T7,S0	//S3= offset for set data
+OR	A0,S3,R0	//A0=S3= offset for set data
+MULTU	T9,V0
+MFLO	T0
+ADDU	S8,T0,S0	//S8= offset for other set data
+JAL	7F08EF1C
+OR	A1,S8,R0	//A1=S8= offset for other set data
+BEQL	V0,R0,7F08F638	//should have returned 1, unless set data bad
+	SW	R0,0000 (S4)
+LW	S0,0008 (S3)	//S0= 27xx just set
+LW	T1,0008 (S8)	//T1= same as S3, so same value (probably set-specific)
+OR	S5,S6,R0	//S5=S6= path preset addy
+ADDIU	S0,S0,0001	//27xx++
+SLT	AT,T1,S0	//check if first 27xx+1 > second 27xx
+BNEZ	AT,7F08F614
+OR	S2,S3,R0	//S2=S3= set address in link table
+SLTI	AT,S1,0002
+BNEZ	AT,7F08F614
+ADDIU	S7,SP,0044
+ADDIU	S6,SP,0048
+LW	A0,0000 (S2)
+-7F08F5A8
+JAL	7F08ED60
+OR	A1,S0,R0
+OR	S3,V0,R0
+OR	A0,S2,R0
+OR	A1,V0,R0
+OR	A2,S6,R0
+JAL	7F08F438
+OR	A3,S7,R0
+OR	A0,S5,R0
+LW	A1,0048 (SP)
+OR	A2,S4,R0
+JAL	7F08F350
+OR	A3,S1,R0
+LW	T4,0008 (S8)
+ADDIU	S0,S0,0001
+ADDIU	T2,V0,FFFF
+SUBU	S1,S1,V0
+SLL	T3,T2,0x2
+SLT	AT,T4,S0
+ADDIU	S1,S1,0001
+ADDU	S4,S4,T3
+LW	S5,0044 (SP)
+BNEZ	AT,7F08F614
+OR	S2,S3,R0
+SLTI	AT,S1,0002
+BEQL	AT,R0,7F08F5A8
+	LW	A0,0000 (S2)
+-7F08F614
+OR	A0,S5,R0	//A0=S5= path preset addy
+LW	A1,0074 (SP)	//A1= other path preset addy
+OR	A2,S4,R0	//A2=S4= offset from SP
+JAL	7F08F350
+OR	A3,S1,R0	//A3=S1= 3
+ADDIU	T5,V0,FFFF	//T5= 3-1
+SLL	T6,T5,0x2	//T6= 2*4 (V0->offset)
+ADDU	S4,S4,T6	//S4= offset from SP
+-7F08F634
+SW	R0,0000 (S4)	//0->offset from SP
+-7F08F638
+LW	T7,0078 (SP)	//T7=offset from SP
+ADDIU	S4,S4,0004	//next point on stack offset
+LW	RA,003C (SP)
+SUBU	V0,S4,T7	//V0= difference in stack offset and S4
+SRA	T8,V0,0x2	//T8= 3
+LW	S4,0028 (SP)
+LW	S8,0038 (SP)
+LW	S7,0034 (SP)
+LW	S6,0030 (SP)
+LW	S5,002C (SP)
+LW	S3,0024 (SP)
+LW	S2,0020 (SP)
+LW	S1,001C (SP)
+LW	S0,0018 (SP)
+ADDIU	SP,SP,0070
+JR	RA
+OR	V0,T8,R0	//V0=T8= 3
+
+--7F08EF1C:	generate the 27xx things for path preset link table
+ADDIU	SP,SP,FFD0
+SW	RA,001C (SP)
+SW	S1,0018 (SP)
+SW	S0,0014 (SP)
+SW	A1,0034 (SP)
+JAL	7F08EE70
+OR	A3,R0,R0
+LW	A1,0034 (SP)	//A1= addy of set data for P.P
+BEQ	V0,R0,7F08EF88
+SW	V0,0024 (SP)
+LW	S0,0008 (A1)	//check if end of link list?
+OR	S1,A1,R0	//S1=A1= add of set data for P.P
+ADDIU	S0,S0,FFFF
+BLTZL	S0,7F08EF80	//if not already set to a 27xx value, do so
+	LW	T8,0008 (S1)	//T8= that value again
+-7F08EF58		run through set data
+LW	T6,0008 (S1)
+LW	A0,0000 (S1)
+OR	A1,S0,R0
+ADDIU	T7,T6,2710
+JAL	7F08ED60
+SW	T7,0008 (S1)
+ADDIU	S0,S0,FFFF
+BGEZ	S0,7F08EF58
+OR	S1,V0,R0
+LW	T8,0008 (S1)
+-7F08EF80
+ADDIU	T9,T8,2710	//T9+=2710
+SW	T9,0008 (S1)	//set to end of link offsets
+-7F08EF88		reset and return
+LW	RA,001C (SP)
+LW	V0,0024 (SP)
+LW	S0,0014 (SP)
+LW	S1,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0030
+
+-7F08FB90: returns V0= addy of next path preset in path
+LUI	A2,8007
+LW	A2,5D04 (A2)	//A2= path preset link table
+ADDIU	SP,SP,FFA8
+SW	S1,0018 (SP)	//save S1 (GUARDdata)
+OR	S1,A0,R0	//S1=A0= addy current path preset used
+SW	RA,001C (SP)
+BEQ	A2,R0,7F08FD04	//branch if there isn't a path preset table
+SW	S0,0014 (SP)	//save S0 (addy cur path preset)
+LW	T6,0008 (A0)	//T6= path preset group #
+ADDIU	V0,R0,000C	//V0= 0xC
+LW	T8,0008 (A1)	//T8= different path preset group #
+MULTU	T6,V0		//set # * 12
+OR	A3,R0,R0
+MFLO	T7		//T7= offset to path group
+ADDU	S0,T7,A2	//S0= addy of set link table
+NOP
+MULTU	T8,V0		//other set # * 12
+MFLO	T9		//T9= offset to other path group
+ADDU	A0,T9,A2	//A0= addy of other set link table
+BNE	S0,A0,7F08FC38	//if it isn't the same table, branch
+NOP
+JAL	7F08F67C	//resets last entry in following path presets
+SW	A1,005C (SP)
+LW	A0,005C (SP)	//A0=A1= different path preset address
+OR	A1,S1,R0	//A1=S1= path preset address
+JAL	7F08F1D8	//sets last entry in path presets (from set order)
+ADDIU	A2,R0,0001
+LW	A0,0004 (S1)	//A0= pointer in table
+JAL	7F08F6B0	//returns V0= addy of next path preset in path
+ADDIU	A1,R0,FFFF
+BEQL	V0,R0,7F08FC1C	//better be valid!
+	LW	A1,000C (S1)
+BEQ	R0,R0,7F08FD0C
+LW	RA,001C (SP)
+-7F08FC18
+LW	A1,000C (S1)
+LW	A0,0004 (S1)
+JAL	7F08F6B0
+ADDIU	A1,A1,0001
+BEQL	V0,R0,7F08FD08
+	OR	V0,R0,R0
+BEQ	R0,R0,7F08FD0C
+LW	RA,001C (SP)
+-7F08FC38		//Do this if the sets are not the same!
+...
+-7F08FD0C
+LW	S0,0014 (SP)	//S0= path preset addy
+LW	S1,0018 (SP)	//S1= GUARDdata
+JR	RA
+ADDIU	SP,SP,0058
+
+
+--7F08F67C:	reset last entry in table to -1 (from 27xx)
+LUI	V0,8007
+LW	V0,5D00 (V0)	//V0= addy path preset table
+ADDIU	V1,R0,FFFF	//V1= -1
+LW	T6,0000 (V0)	//T6= preset in P.P.T
+BLTZ	T6,7F08F6A8	//if end of path preset table, QUIT
+NOP
+LW	T7,0010 (V0)	//T7= next preset
+-7F08F698		//Copy over following presets' last entry
+SW	V1,000C (V0)	//27xx copied over with -1
+ADDIU	V0,V0,0010	//advance to next preset
+BGEZL	T7,7F08F698
+	LW	T7,0010 (V0)
+-7F08F6A8
+JR	RA
+NOP
+
+
+--
+7F037700	6F.xx.rr	same as 6E?
+20	next point in path; same as 6E
+10	go to Bond; same as 6E
+08
+04
+02
+01
+
+OR	A0,S7,R0
+JAL	7F033AAC
+LBU	A1,0001 (S1)
+BEQ	V0,R0,don't return
+
+-7F033AAC:
+ADDIU	SP,SP,FFE0
+ANDI	A3,A1,00FF	//A3= x
+ADDIU	AT,R0,0010
+SW	RA,0014 (SP)
+SW	A0,0020 (SP)	//save GUARDcur
+SW	A1,0024 (SP)	//save x
+BEQ	A3,AT,7F033AD8	//test x=10
+OR	V0,A3,R0	//V0= x
+ADDIU	AT,R0,0020
+BNE	V0,AT,7F033AEC	//test x!=20
+NOP
+-7F033AD8		*x=10/20
+LW	A0,0020 (SP)	//A0= GUARDcur
+JAL	7F033998	//this is the main block from the 6E type...
+ANDI	A1,A3,00FF	//A1= x
+BEQ	R0,R0,7F033B2C
+LW	RA,0014 (SP)
+-7F033AEC		*x<10
+JAL	7F089EE4
+SB	A3,0027 (SP)	//save x
+JAL	7F089798	//returns V0= handle to BOND 8006
+SWC1	F0,001C (SP)	//stage scale?  ???
+LBU	A3,0027 (SP)	//A3= x
+ADDIU	A0,V0,0008	//A0= BOND xyz
+LW	A1,0014 (V0)	//A1= BOND room pointer
+JAL	7F033834	//x-specific stuff
+LW	A2,001C (SP)	//A2= stage scale? ???
+BLTZ	V0,7F033B24
+LW	T6,0020 (SP)	//T6= GUARDcur
+SH	V0,0114 (T6)	//set GUARD 2328 preset
+BEQ	R0,R0,7F033B28	//return TRUE!
+ADDIU	V0,R0,0001
+-7F033B24
+OR	V0,R0,R0	//dud return
+-7F033B28
+LW	RA,0014 (SP)
+-7F033B2C
+ADIU	SP,SP,0020
+JR	RA
+NOP
+
+
+---------
+---------
+7F037A94	type 70 - 70.xx.rr	if difficulty<x, return
+JAL	7F0BFC10
+NOP
+LBU	T1,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,V0,T1
+BEQL	AT,R0,7F037ACC
+ADDIU	S2,S2,0003
+STD. RETURN
+
+-7F0BFC10:	//snag difficulty
+LUI	V0,8005
+JR	RA
+LW	V0,8384 (V0)	//V0=80048384=difficulty value!
+
+--
+7F037AD4	type 71 - 71.xx.rr	if difficulty > x, return
+JAL	7F0BFC10
+NOP
+LBU	T2,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T2,V0
+BEQL	AT,R0,7F037B0C
+ADDIU	S2,S2,0003
+STD. RETURN
+
+--
+7F037B14	type 72 - 72.XXxx.rr	if x > time in stage, return
+LBU	T3,0001 (S1)
+LBU	T9,0002 (S1)
+SLL	T4,T3,0x8
+OR	T5,T4,T9	//T5=XXxx
+MTC1	T5,F4		//F4=T5
+NOP
+CVT.S.W	F8,F4		//F8=(float)F4
+JAL	7F0BFC40
+SWC1	F8,0400 (SP)
+LWC1	F10,0400 (SP)	//F10=(float)xxxx
+OR	A0,S6,R0
+OR	A1,S2,R0
+C.LT.S	F0,F10		//branch if time<value
+NOP
+BC1FL	7F037B6C
+ADDIU	S2,S2,0004
+STD. RETURN
+
+-7F0BFC40:	//seconds in game
+LUI	AT,8005
+JR	RA
+LWC1	F0,83A4 (AT)	//F0=800483A4=3C888889
+--
+7F037B74	type 73 - 73.XXxx.rr	if x < time in stage, return
+LBU	T6,0001 (S1)
+LBU	T8,0002 (S1)
+SLL	T7,T6,0x8
+OR	T1,T7,T8	//T1=xxxx (0x00F0 in this example)
+MTC1	T1,F18		//F18=xxxx
+NOP
+CVT.S.W	F6,F18		//F6=(float)xxxx (0x43700000)
+JAL	7F0BFC40	//grabs value.  F0=.2666667 (0x3E888889)
+SWC1	F6,03F8 (SP)
+LWC1	F16,03F8 (SP)	//F16=(float)xxxx
+OR	A0,S6,R0
+OR	A1,S2,R0
+C.LT.S	F16,F0
+NOP
+BC1FL	7F037BCC	//branch if time>value
+ADDIU	S2,S2,0004
+STD. RETURN
+--
+7F037BD4	type 74 - 74.XXxx.rr	x > time since power on, return
+LBU	T2,0001 (S1)
+LBU	T4,0002 (S1)
+SLL	T3,T2,0x8
+OR	T9,T3,T4
+MTC1	T9,F4
+NOP
+CVT.S.W	F8,F4
+JAL	7F0BFC4C
+SWC1	F10,03F0 (SP)
+LWC1	F18,03F0 (SP)
+OR	A0,S6,R0
+OR	A1,S2,R0
+C.LT.S	F0,F18
+NOP
+BC1FL	7F037C30
+ADDIU	S2,S2,0004
+STD. RETURN
+
+-7F0BFC4C:	//time since power on
+LUI	AT,8005
+JR	RA
+LWC1	F0,83AC (AT)	//F0=800483AC=4190CCCD
+
+--
+7F037C38	type 75 - 75.XXxx.rr	opposite of 74
+LBU	T5,0001 (S1)
+LBU	T7,0002 (S1)
+SLL	T6,T5,0x8
+OR	T8,T6,T7
+MTC1	T8,F6
+NOP
+CVT.S.W	F16,F6
+JAL	7F0BFC4C
+SWC1	F4,03E8 (SP)
+LWC1	F8,03E8 (SP)
+OR	A0,S6,R0
+OR	A1,S2,R0
+C.LT.S	F8,F0
+NOP
+BC1FL	7F037C94
+ADDIU	S2,S2,0004
+STD. RETURN
+
+--
+7F037C9C	type 76 - 76.xx.rr	if stage# < x, return
+JAL	7000695C
+NOP
+LBU	T1,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,V0,T1	//stage<x
+BEQL	AT,R0,7F037CD4
+ADDIU	S2,S2,0003
+STD. RETURN
+
+-7000695C:	returns V0=stage#
+LUI	V0,8002
+JR	RA
+LW	V0,41A8 (V0)	//V0=800241A8=stage#!!
+--
+7F037CDC	type 77 - 77.xx.rr	if stage# > x, return
+JAL	7000695C
+NOP
+LBU	T2,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T2,V0	//x<stage
+BEQL	AT,R0,7F037D14
+ADDIU	S2,S2,0003
+STD. RETURN
+
+--
+--
+7F037738	type 78 - 78.xx.rr	if shot guard fewer than x times, return
+JAL	7F0335A4
+OR	A0,S7,R0
+LBU	T6,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,V0,T6
+BEQL	AT,R0,7F0377B0	//return if x > times shot
+ADDIU	S2,S2,0003
+STD. RETURN
+
+-7F0335A4:	//guard data + 0xB (times shot)
+JR	RA
+LB	V0,000B (A0)
+
+--
+7F037778	type 79 - 79.xx.rr	if shot guard more than x times, return
+JAL	7F0335A4	//V0= # times shot
+OR	A0,S7,R0
+LBU	T7,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T7,V0	//return if x < times shot
+BEQL	AT,R0,7F0377B0
+ADDIU	S2,S2,0003
+STD. RETURN
+
+--
+7F0377B8	7A.xx.rr	if x > 	number of near-miss shots, return
+JAL	7F0335AC	//returns V0=GUARD offset 0xA
+OR	A0,S7,R0
+LBU	T8,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,V0,T8
+BEQL	AT,R0,7F0377F0
+ADDIU	S2,S2,0003
+STD. RETURN
+
+--
+7F0377F8	7B.xx.rr	if x < 	number of near-miss shots, return
+JAL	7F0335AC	//returns V0=GUARD offset 0xA
+OR	A0,S7,R0
+LBU	T1,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T1,V0	//A1 TRUE if x < V0
+BEQL	AT,R0,7F037830
+ADDIU	S2,S2,0003
+STD. RETURN
+
+-7F0335AC:	//GUARD attrib 0x000A
+JR	RA
+LB	V0,000A (A0)
+
+--
+7F037838	type 7C - 7C.##.xx.rr	if guard# health > x, return
+LBU	T2,0002 (S1)
+LUI	AT,4F80
+MTC1	T2,F4
+BGEZ	T2,7F037858
+CVT.S.W	F6,F4	//F6=(float)xx
+MTC1	AT,F8
+NOP
+ADD.S	F6,F6,F8
+7F037858:
+LUI	AT,8005
+LWC1	F10,28EC (AT)	//F10= 800528EC=float...
+OR	A0,S7,R0
+MUL.S	F16,F6,F10	//F16= x * multiplier
+SWC1	F16,0438 (SP)
+JAL	7F033040	//resolve guard# (A1=#)
+LBU	A1,0001 (S1)
+BEQL	V0,R0,7F0378BC	//if V0= NULL, branch
+ADDIU	S2,S2,0004
+LWC1	F18,0100 (V0)	//F18=GUARD +0x100
+LWC1	F4,00FC (V0)	//F4= GUARD + 0xFC
+LWC1	F6,0438 (SP)	//F6= x
+OR	A0,S6,R0
+SUB.S	F8,F18,F4	//F8=health (life - damage?)
+OR	A1,S2,R0
+C.LT.S	F8,F6
+NOP
+BC1FL	7F0378BC	//return if F8(health) > F6(x value)
+ADDIU	S2,S2,0004
+STD. RETURN
+--
+7F0378C4	type 7D - 7D.##.xx.rr	if guard# health < x, return
+--
+7F037950	type 7E - 7E.##.rr	if guard#'s bitflag 01000000 set, return
+OR	A0,S7,R0
+JAL	7F033040	//returns V0=guard handle
+LBU	A1,0001 (S1)
+BEQL	V0,R0,7F0379A4	//if V0= NULL, abort
+ADDIU	S2,S2,0003
+LW	T4,0014 (V0)	//T4= GUARD + 0x14
+ADDIU	AT,R0,FEFF
+ANDI	T9,T4,0100
+BEQL	T9,R0,7F0379A4	//if 0100 flag set, return rr
+ADDIU	S2,S2,0003
+LW	T5,0014 (V0)
+OR	A0,S6,R0
+OR	A1,S2,R0
+AND	T6,T5,AT	//unset 0100 flag
+SW	T6,0014 (V0)
+JAL	7F0352F0
+LBU	A2,0002 (S1)
+
+-7F033040:	//
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F032FAC
+NOP
+OR	A0,V0,R0
+JAL	7F022FC8
+SW	V0,001C (SP)
+LW	A2,001C (SP)
+BNEZ	V0,7F0330B0
+OR	T0,V0,R0
+
+--
+7F0379AC	type 7F - 7F.xx.rr	if health < x, return
+
+LBU	T7,0001 (S1)
+LUI	AT,4F80
+MTC1	T7,F4		//F4=T7=xx=health
+BGEZ	T7,7F0379CC
+CVT.S.W	F8,F4		//F8=(float)health
+MTC1	AT,F10		//F10=AT=4F800000 (absurdly high value)
+ADD.S	F8,F8,F10
+//7F0379CC:
+LUI	AT,437F
+MTC1	AT,F18		//F18=AT= 255.
+NOP
+DIV.S	F6,F8,F18	//F6= health/255
+JAL	7F08A2EC	//returns F0=player health
+SWC1	F6,0418 (SP)
+LWC1	F16,0418 (SP)	//F16= health/255
+OR	A0,S6,R0
+OR	A1,S2,R0
+C.LT.S	F0,F16
+NOP
+BC1FL	7F037A18
+	ADDIU	S2,S2,0003
+JAL	7F0352F0	//RETURN
+LBU	A2,0002 (S1)
+OR	S2,V0,R0
+BEQ	R0,R0,7F03558C
+ADDU	S1,S6,V0
+//7F037A18:		//DON'T RETURN
+BEQ	R0,R0,7F03558C
+ADDU	S1,S1,0003
+---------
+---------
+
+---------
+---------
+7F037D1C	81.xx	set GUARDoffset 0x10C
+--
+7F037D30	82.xx	adds x to G.o. 0x10C or limits to FF
+--
+7F037D70	83.xx	subtracts x from G.o. 0x10C or reduces to 0
+--
+7F037DA4	84.xx.rr	if x > GUARDoffset 0x10C, return
+--
+7F037DE0	85.rr	if GUARDoffsets 0x10C < 0x10F, return
+--
+7F037E1C	86.xx	set GUARDoffset 0x10D
+--
+7F037E30	87.xx	adds x to G.o. 0x10D or limits to FF
+LBU	A1,0001 (S1)	//A1= x
+LBU	V0,010D (S7)	//V0= GUARDoffset 0x10D
+ADDIU	T9,R0,00FF
+SUBU	T5,T9,A1	//T5= x - FF (x-1)
+SLT	AT,T5,V0	//AT=1 if x-1 < V0
+BEQ	AT,R0,7F037E60
+ADDU	T7,V0,A1
+ADDIU	T6,R0,00FF
+SB	T6,010D (S7)	//GUARDoffset 0x10D = FF
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C	//RETURN
+ADDIU	S1,S1,0002
+7F037E60:
+SB	T7,010D (S7)	//GUARDoffset 0x10D += x
+RETURN...
+
+--
+7F037E70	88.xx	subtracts x from G.o. 0x10D or reduces to 0
+LBU	V0,010D (S7)
+LBU	A1,0001 (S1)
+SLT	AT,V0,A1	//AT=1 if x > GUARDoffset 0x10D
+BEQ	AT,R0,7F037E94
+SUBU	T8,V0,A1
+SB	R0,010D (S7)	//GUARDoffset 0x10D = 0
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+7F037E94:
+SB	T8,010D (S7)	//GUARDoffset 0x10D -= x
+RETURN...
+
+--
+7F037EA4	89.xx.rr	if x > GUARDoffset 0x10D, return
+LBU	T1,010D (S7)
+LBU	T2,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T1,T2	//AT=1 if x > GUARDoffset 0x10D
+BEQL	AT,R0,7F037ED8
+ADDIU	S2,S2,0003
+STD. RETURN
+
+--
+7F037EE0	8A.rr	if GUARDoffsets 0x10D < 0x10F, return
+LBU	T3,010D (S7)
+LBU	T4,010F (S7)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,T3,T4	//AT=1 if T3 < 33
+BEQL	AT,R0,7F037F14
+ADDIU	S2,S2,0002
+STD. RETURN
+
+--
+7F037F1C	8B.XXxx	set GUARDoffset 0xEC	(hearing ability)
+LBU	T9,0001 (S1)
+LBU	T6,0002 (S1)
+LUI	AT,447A
+SLL	T5,T9,0x8
+OR	T7,T5,T6	//T7= xxxx
+MTC1	T7,F10		//F10= T7
+MTC1	AT,F6		//F6=447A0000
+ADDIU	S2,S2,0003
+CVT.S.W	F18,F10		//F18= (float)xxxx
+ADDIU	S1,S1,0003
+DIV.S	F0,F18,F6	//F0= F18/
+BEQ	R0,R0,7F03558C
+SWC1	F0,00EC (S7)	//F0-> GUARDoffset 0xEC
+--
+7F037F50	8C.xx	set GUARDoffset 0xD0	(reaction time)
+LBU	T8,0001 (S1)
+LUI	AT,4F80
+ADDIU	S2,S2,0002
+MTC1	T8,F16		//F16= T8
+ADDIU	S1,S1,0002
+BGEZ	T8,7F037F78	//if x is a negative value, convert to negative float
+CVT.S.W	F4,F16		//F4= (float)x
+MTC1	AT,F8		//F8= 4F800000
+NOP
+ADD.S	F4,F4,F8	//F4= x converted to proper negative
+7F037F78:
+BEQ	R0,R0,7F03558C	//return
+SWC1	F4,00D0 (S7)	//F4-> GUARDoffset 0xD0
+--
+7F037F80	8D.xx	set GUARDoffset 0x10
+--
+7F037F94	8E.xx	set GUARDoffset 0x0 (ID#)
+--
+7F037FA8	8F.xxxx	set guard health
+--
+7F037FE8	90.xxxx	set guard BA amount
+--
+7F038028	91.xx	set GUARDoffset 0x3
+--
+7F03803C	92.xx	set GUARDoffset 0xD
+--
+7F038050	93.xx	set GUARDoffset 0x2
+--
+7F038064	94.xx	mask GUARDoffset 0x10E	(guard type)
+--
+7F03807C	95.xx	unmask GUARDoffset 0x10E	(guard type)
+--
+7F038094	96.xx.rr	if GUARDoffset 0x10E bits masked, return (guard type)
+--
+7F0380CC	97.##.xx	mask guard# type with x
+OR	A0,S7,R0
+LBU	A1,0001 (S1)	//A1= guardID#
+JAL	7F033260
+LBU	A2,0002 (S1)	//A2= xx
+ADDIU	S2,S2,0003
+BEQ	R0,R0,7F03558C	//RETURN
+ADDIU	S1,S1,0003
+
+-7F033260:	//grab handle to guardID# and send xx
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F033040	//returns V0= pointer to guard#
+SW	A2,0020 (SP)
+BEQ	V0,R0,7F033280	//abort if V0= NULL
+OR	A0,V0,R0	//A0=V0=GUARDPOINTER
+JAL	7F033218
+LBU	A1,0023 (SP)	//A1=xx
+LW	RA,0014 (SP)	//return to 7F0380DC
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+-7F033218:
+SW	A1,0004 (SP)
+LBU	T7,010E (A0)
+OR	T8,T7,A1	//T8= GUARDoffset 0x10E | x
+JR	RA
+SB	T8,010E (A0)	//
+
+--
+7F0380E8	98.##.xx	unmask guard# type with x
+--
+7F038104	99.##.xx.rr	if guard# type set, return
+--
+7F038140	9A.xxxxxxxx	Set Objective Bits
+--
+7F03817C	9B.xxxxxxxx	Unset Objective Bits
+--
+7F0381B8	9C.xxxxxxxx.rr	if Objective Bits Set, Return
+--
+7F038214	9D.xxxxxxxx	set Guard bits (0x14 offset)
+--
+7F038254	9E.xxxxxxxx	unset guard bits (0x14 offset)
+--
+7F038298	9F.xxxxxxxx.rr	if Guard Bits Set, Return (0x14 offset)
+--
+7F0382F4	A0.##.xxxxxxxx	set Guard# bits (0x14 offset)
+
+LBU	T3,0002 (S1)
+LBU	T5,0003 (S1)
+LBU	T8,0004 (S1)
+SLL	T4,T3,0x18
+SLL	T9,T5,0x10
+LBU	T2,0005 (S1)
+OR	T6,T4,T9
+SLL	T7,T8,0x8
+OR	T1,T6,T7
+OR	A0,S7,R0
+LBU	A1,0001 (S1)	//A1=guardID #
+JAL	7F033040	//returns V0=guarddata or NULL
+OR	S0,T1,T2	//S0=xxxxxxxx
+BEQ	V0,R0,7F03833C
+ADDIU	S2,S2,0006
+LW	T3,0014 (V0)	//toggle given bitflags!
+OR	T5,T3,S0
+SW	T5,0014 (V0)
+//7F03833C:
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0006
+
+-7F033040:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F032FAC	//returns V0=guardID
+NOP
+OR	A0,V0,R0	//A0=guardID
+JAL	7F022FC8	//returns handle to guardID data or null if other (player, etc.)
+SW	V0,001C (SP)
+LW	A2,001C (SP)	//A2=guardID
+BNEZ	V0,7F0330B0	//if good pointer, branch
+OR	T0,V0,R0
+LUI	A1,8003
+LW	A1,0980 (A1)	//A1=80030980...
+OR	V0,R0,R0
+LUI	A3,8003
+BLEZL	A1,7F0330B4
+	LW	RA,0014 (SP)
+LW	A3,097C (A3)	//A3=8003097C...  holds an array of guarddata? with pointers to action groups.
+OR	A0,R0,R0
+OR	V1,A3,R0
+//7F03308C:		//loop this crap until something matches the ID from before
+LH	T6,0000 (V1)
+ADDIU	V0,V0,0001
+SLT	AT,V0,A1
+BNE	A2,T6,7F0330A8
+ADDIU	V1,V1,01DC
+BEQ	R0,R0,7F0330B0
+ADDU	T0,A0,A3
+//7F0330A8:
+BNEZ	AT,7F03308C
+ADDIU	A,A0,01DC
+//7F0330B0:		//returns V0=guard data pointer or NULL
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+OR	V0,T0,R0
+JR	RA
+NOP
+
+
+--
+7F038344	A1.##.xxxxxxxx	unset guard# bits (0x14 offset)
+--
+7F038398	A2.##.xxxxxxxx.rr	if Guard Bits Set, Return (0x14 offset)
+--
+7F03840C	A3.##.xxxxxxxx	set type16# bits (0x8 offset)
+JAL	7F0570C0	//V0= handle to type16# object
+LW	T5,0008 (V0)	//T5= bitflag field at offset 0x8
+
+--
+7F038464	A4.##.xxxxxxxx	unset type16# bits (0x8 offset)
+--
+7F0384C0	A5.##.xxxxxxxx.rr	if type16#'s bits set, return
+--
+7F03853C	A6.##.xxxxxxxx	set type16# bits (0xC offset)
+--
+7F038594	A7.##.xxxxxxxx	unset type16# bits (0xC offset)
+--
+7F0385F0	A8.##.xxxxxxxx.rr	if type16#'s bits set, return
+--
+7F03866C	A9.##	set FC value for guard to #
+OR	A0,S7,R0
+JAL	7F033CF4
+LBU	A1,0001 (S1)
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+-7F033CF4:	//register guardID to FC
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F032FAC	//A0= preset resolved
+SW	A0,0018 (SP)
+LW	T6,0018 (SP)	//T6= S7
+SH	V0,0116 (SP)	//V0-> FC
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+--
+7F038684	AA.#1.#2	set FC value for guardID#1 to #2
+OR	A0,S7,R0
+LBU	A1,0001 (S1)
+JAL	7F033D1C
+LBU	A2,0002 (S1)
+RETURN...
+
+-7F033D1C:
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+SW	A0,0020 (SP)
+JAL	7F033040	//V0= handle of guard#
+SW	A2,0028 (SP)
+BEQ	V0,R0,7F033D4C
+LW	A0,0020 (SP)	
+LW	A1,0028 (SP)	//A1= xx
+JAL	7F032FAC	//A0= preset resolved
+SW	V0,001C (SP)
+LW	V1,001C (SP)	//V1= guard handle
+SH	V0,0116 (V1)
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+--
+7F0386A0	AB.xxxx	set guard's 2328 value to x
+LBU	T2,0001 (S1)
+LBU	T3,0002 (S1)
+LW	T9,07AC (SP)
+SLL	T4,T2,0x8
+OR	V0,T4,T3
+ANDI	T8,V0,FFFF	//T8= xxxx
+BEQ	S7,R0,7F0386D8	//if current guard pointer NULL, branch
+OR	V0,T8,R0	//V0= xxxx
+OR	A0,S7,R0	//A0= current guard handle
+JAL	7F033D5C
+OR	A1,T8,R0
+RETURN...
+
+--
+7F0386EC	AC.##.xxxx	set guardID#'s 2328 value to x
+LBU	T7,0002 (S1)
+LBU	T5,0003 (S1)
+OR	A0,S7,R0
+SLL	T6,T7,0x8
+OR	V0,T6,T5
+ANDI	A2,V0,FFFF	//A2=xxxx
+JAL	7F033D84
+LBU	A1,0001 (S1)
+RETURN...
+
+-7F033D84:
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+SW	A0,0020 (SP)
+JAL	7F033040	//returns V0= handle to guard
+SW	A2,0028 (SP)
+BEQ	V0,R0,7F033DB4
+LW	A0,0020 (SP)
+LW	A1,0028 (SP)	//A1= xxxx
+JAL	7F032F94	//returns V0= resolved preset
+SW	V0,001C (SP)
+LW	V1,001C (SP)	//V1= handle to guard
+SH	V0,0114 (SP)	//V0-> 2328 preset position
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+--
+7F038718	AD	comment string, null terminated
+--
+//these are guard related, actually.  may have to do with paths and such
+
+7F038730	AE	reset and enable loop counter
+JAL	7F0333C4
+OR	A0,S7,R0
+STD. RETURN
+
+LHU	T6,0012 (A0)	//T6=GUARDcur + 0x12
+SW	R0,0110 (A0)	//0->GUARDcur + 0x110 (loop counter)
+ORI	T7,T6,0040
+JR	RA
+SH	T7,0012 (A0)	//toggle 0040 and store to GUARDcur +0x12
+--
+7F038744	AF	reset loop counter
+SW	R0,0110 (S7)	//blank loop counter
+STD. RETURN
+--
+7F038754	B0	disable loop counter
+LHU	T2,0012 (S7)	//pull bitflags
+...
+ANDI	T4,T2,FFBF	//unset loop counter
+...
+SH	T4,0012 (S7)	save it back
+--
+7F03876C	B1	enable loop counter
+--
+7F038784	B2.rr	if loop counter enabled, return
+--
+7F0387BC	B3.xxxxxx.rr	if counter > x, return
+--
+7F038840	B4.xxxxxx.rr	if counter < x, return
+--
+7F0388C4	B5	show timer	(80030AE8)
+7F056160	set timer mode
+--
+7F0388DC	B6	hide timer
+--
+7F0388F4	B7.xxxx	set timer to x	(80030AF0)
+--
+7F038928	B8	stop timer	(80030AEC)
+7F0561C8	start[1]/stop[0] timer	A0=mode
+--
+7F03893C	B9	start timer
+--
+7F038950	BA.rr	returns if timer running
+--
+7F038984	BB.xxxx.rr	if timer < x, return
+--
+7F0389E8	BC.xxxx.rr	if timer > x, return
+--
+7F038A4C	BD.bb.hh.pppp.aaaa.xxxxxxxx.rr	guard:
+[b]ody
+[h]ead
+[p]reset
+[a]ction
+[x] flags
+[r]eturn if loaded
+
+LBU	T6,0003 (S1)
+LBU	T1,0004 (S1)
+LBU	T2,0007 (S1)
+SLL	T7,T6,0x8
+LBU	T3,0008 (S1)
+OR	S0,T7,T1
+LBU	T6,0009 (S1)
+ANDI	T5,S0,FFFF
+OR	S0,T5,R0	//S0= preset
+LBU	T5,000A (S1)
+SLL	T4,T2,0x18
+SLL	T8,T3,0x10
+OR	T9,T4,T8
+SLL	T7,T6,0x8
+OR	T1,T9,T7
+OR	T2,T1,T5	//T2= bitflags
+SW	T2,0280 (SP)	//SP+280=T2: bitflags
+LBU	T3,0005 (S1)
+LBU	T8,0006 (S1)
+SLL	T4,T3,0x8
+OR	V0,T4,T8
+JAL	7F035398	//returns V0= pointer to action
+ANDI	A0,V0,FFFF	//A0= action
+LW	T9,0280 (SP)	//T9= bitflags
+LBU	A1,0001 (S1)	//A1= body
+LB	A2,0002 (S1)	//A2= head
+SW	V0,0010 (SP)
+OR	A0,S7,R0	//A0= current GUARD
+OR	A3,S0,R0	//A3= GUARDdata
+JAL	7F034258
+SW	T9,0014 (SP)	//SP+14=bitflags
+BEQ	V0,R0,7F038AE8	//if NULL, quit
+STD. RETURN
+
+
+--
+7F038AF4	BE.bb.hh.##.aaaa.xxxxxxxx.rr	guard:
+[b]ody
+[h]ead
+ID[#]
+[a]ction
+[x] flags
+[r]etrun if loaded
+--
+7F038B7C	BF.mmmm.##.xxxxxxxx.rr	weapon: [m]odel, wep#, x= flags; return
+--
+7F038C80	C0.mmmm.xxxxxxxx.rr	hat: [m]odel, x= flags; return if loaded
+--
+7F038D10	C1.##.xxxx.rr	guard# does action x if hears a lot of gunfire, return when action complete
+LBU	T8,0002 (S1)
+LBU	T7,0003 (S1)
+SW	R0,020C (SP)
+SLL	T6,T8,0x8
+OR	V0,T6,T7
+ANDI	A0,V0,FFFF	//A0=xxxx
+SW	R0,0210 (SP)
+SW	R0,0234 (SP)
+OR	S3,R0,R0
+JAL	7F035398	//returns V0= pointer to action
+OR	S4,R0,R0
+OR	S0,V0,R0	//S0=V0= action pointer
+OR	A0,S7,R0	//A0= pointer to guard
+JAL	7F033040	//returns V0= handle to guard#
+LBU	A1,0001 (S1)	//A1=  guardID#
+BEQ	V0,R0,7F038E94
+OR	S5,V0,R0	//S5= pointer to guard#
+LW	T5,0014 (V0)	//T5= guard bitflags
+OR	A0,S7,R0	//A0= guard pointer
+ANDI	T2,T5,0002	//T2= test for 00000002 (doing something?)
+BEQL	T2,R0,7F038E98
+LW	T1,0234 (SP)	//T1= 0
+LB	A1,000F (V0)	//A1= ??? (from guard data)
+LH	A3,0000 (V0)	//A3= guard preset
+SW	R0,0014 (SP)
+SW	S0,0010 (SP)
+JAL	7F034308
+ADDIU	A2,R0,FFFF	//A2= -1
+BEQL	V0,R0,7F038E98
+LW	T1,0234 (SP)
+LW	T1,0004 (V0)	//T1= state flags?
+OR	A0,S7,R0
+SW	T1,0218 (SP)
+-7F038E94:
+LH	S0,0000 (S5)	//S0= guard preset
+-7F038E98:
+ADDIU	S0,S0,2710	//S0= door preset converted to normal
+JAL	7F033040	//V0= pointer to preset
+OR	A1,S0,R0	//A1= S0
+BNEZ	V0,7F038DB4
+OR	A0,S5,R0	//A0= guard data pointer
+LW	T4,0218 (SP)	//T4= 
+SH	S0,0000 (T4)	//preset stored back to guard
+-7F038DB4:
+JAL	7F02302C
+OR	A1,R0,R0
+BEQL	7F038DF0
+OR	A0,S5,R0
+LW	S4,0004 (V0)	//S4= state flags?
+LW	A0,0218 (SP)	//A0= 
+OR	A3,R0,R0
+LH	A1,0004 (S4)
+JAL	7F0523D4
+LB	A2,0080 (S4)
+BEQL	V0,R0,7F038DF0
+OR	A0,S5,R0
+LW	T3,0004 (V0)
+SW	T3,020C (SP)
+OR	A0,S5,R0
+-7F038DF0:
+JAL	7F02302C
+ADDIU	A1,R0,0001
+BEQ	V0,R0,7F038E28
+NOP
+LW	S3,0004 (V0)
+LW	A0,0218 (SP)
+LUI	A3,1000
+LH	A1,0004 (S3)
+JAL	7F0523D4
+LB	A2,0080 (S3)
+BEQ	V0,R0,7F038E28
+NOP
+LW	T8,0004 (V0)
+SW	T8,0210 (SP)
+-7F038E28:
+BEQL	S3,R0,7F038E70
+LW	V1,01D8 (S5)
+BEQL	S4,R0,7F038E6C
+LW	T6,0210 (SP)
+BEQ	T6,R0,7F038E6C
+LW	T7,020C (SP)
+BEQL	T7,R0,7F038E70
+LW	V1,01D8 (S5)
+LW	T9,0084 (S3)
+BNEL	S4,T9,7F038E70
+LW	V1,01D8 (S5)
+LW	T5,0084 (S4)
+OR	A0,T6,R0
+BNEL	S3,T5,7F038E70
+LW	V1,01D8 (S5)
+JAL	7F051D74
+OR	A1,T7,R0
+-7F038E6C:
+LW	V1,01D8 (S5)
+-7F038E70:
+LW	A0,0218 (SP)
+BEQL	V1,R0,7F038E90
+ADDIU	T2,R0,0001
+LW	V0,0004 (V1)
+OR	A2,R0,R0
+JAL	7F0510C0
+LH	A1,0004 (V0)
+ADDIU	T2,R0,0001
+-7F038E90:
+SW	T2,0234 (SP)
+LW	T1,0234 (SP)
+OR	A0,S6,R0
+OR	A1,S2,R0
+BEQL	T1,R0,7F038EC0
+ADDIU	S2,S2,0005
+STD. RETURN
+
+-7F034308:	//
+ADDIU	SP,SP,FFD0
+SW	RA,0024 (SP)
+SW	A1,0034 (SP)
+SW	A2,0038 (SP)	//A2= -1
+JAL	7F033040	//returns V0= pointer
+OR	A1,A3,R0
+LW	T6,0014 (V0)	//T6= guard bitflags
+ANDI	T7,T6,0008	//test if dead or not moving or something?
+BNEL	T7,R0,7F034378
+OR	V0,R0,R0
+LW	A0,001C (V0)	//A0= handle to equipment
+JAL	7F06CC80
+SW	V0,002C (SP)
+LW	V1,002C (SP)	//V1= guard handle
+LW	T8,0040 (SP)
+LW	T9,0044 (SP)
+LW	V0,0018 (V1)	//V0= handle to position data (8006)
+LW	A0,0034 (SP)	//A0= action flag?
+LW	A1,0038 (SP)	//A1= -1
+LW	A3,0014 (SP)	//A3= 0
+SWC1	F0,0010 (SP)
+SW	T8,0014 (SP)
+SW	T9,0018 (SP)
+JAL	7F03415C
+ADDIU	A2,V0,0008
+BEQ	R0,R0,7F03437C
+LW	RA,0024 (SP)
+OR	V0,R0,R0
+LW	RA,0024 (SP)
+ADDIU	SP,SP,0030
+JR	RA
+NOP
+
+--
+7F038EC8	C2.xxxx	lower text display
+922C0001	LBU	T4,0001 (S1)	
+92380002	LBU	T8,0002 (S1)
+000C5A00	SLL	T3,T4,0x8
+0FC30776	JAL	7F0C1DD8	;ret V0=p->text A0
+01782025	OR	A0,T3,T8	;A0=xxxx: text ID
+0FC228F2	JAL	7F08A3C8	;display text at A0 in lower left
+00402025	OR	A0,V0,R0	;A0=p->text
+26520003	ADDIU	S2,S2,0003
+1000F1A8	BEQ	R0,R0,7F03558C
+26310003	ADDIU	S1,S1,0003
+
+--
+7F038EF0	C3.xxxx	upper text display
+--
+SE registers
+0x0	pointer to sound effect data
+0x4		(default 00007FFF)
+0x8	audible range	(default FFFFFFFF)
+0xC		(default 00007FFF)
+0x10	address of preset to emenate sound from
+0x14	address of object to emenate sound from
+
+7F038F18	C4.ssss.##	set [s]ound effect to slot #
+LBU	T7,0001 (S1)
+LBU	T1,0002 (S1)
+LB	A0,0003 (S1)	//A0= ##
+SLL	T2,T7,0x8
+OR	A1,T2,T1	//A1= ssss
+SLL	T4,A1,0x10	//T4= ssss0000
+JAL	7F034924
+SRA	A1,T4,0x10	//A1= 1000ssss	(SRA duplicates the sign bit if toggled)
+ADDIU	S2,S2,0004
+BEQ	R0,R0,7F03558C	//RETURN
+ADDIU	S1,S1,0004
+
+-7F034924:	//
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+SW	A1,0024 (SP)
+BLTZ	A0,7F03499C	//if y > 7F, branch
+OR	A2,R0,R0
+SLTI	AT,A0,0008
+BEQ	AT,R0,7F03499C	//or if y < 8, branch
+SLL	T6,A0,0x2
+SUBU	T6,T6,A0	//T6= A0*3
+LUI	T7,8007
+ADDIU	T7,T7,9B70	//T7=80069B70
+SLL	T6,T6,0x3	//T6*=8
+ADDU	V1,T6,T7	//V1= offset (seems like 0x18 each)
+LW	A1,0000 (V1)	//A1= pointer?
+BEQ	A1,R0,7F03497C
+OR	A0,A1,R0	//A0=A1
+SW	V1,0018 (SP)
+JAL	70008DF0	//if A0=NULL, V0=0; else, V0= A0+0x3F
+SW	R0,001C (SP)
+LW	V1,0018 (SP)	//V1= offset to sound
+BNEZ	V0,7F03499C
+LW	A2,001C (SP)	//A2= 0
+-7F03497C:	//fill in data that apparently was not set
+ADDIU	V0,R0,7FFF	//V0= 7FFF
+ADDIU	T8,R0,FFFF	//T8= -1
+OR	A2,V1,R0	//A2= offset
+SW	V0,000C (V1)	//7FFF-> sound+0xC
+SW	V0,0004 (V1)	//7FFF-> sound+0x4
+SW	T8,0008 (V1)	//FFFFFFFF-> sound+0x8
+SW	R0,0010 (V1)	//0-> sound+0x10
+SW	R0,0014 (V1)	//0-> sound+0x14
+-7F03499C:
+LUI	A0,8006
+LW	A0,3720 (A0)	//A0=80063720: p->SE buffer?
+JAL	70008E08
+LH	A1,0026 (SP)	//A1= xxxx
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+-70008E08:	get and set sound effect to use
+ADDIU 	SP, SP, 0xFF80
+LUI 	T7, 0x8002
+LB 	T7, 0x43F8 (T7)	//T7= 800243F8= ???
+SW 	S1, 0x001C (SP)
+SLL 	S1, A1, 0x10	//S1= A1*1000
+SRA 	T6, S1, 0x10	//T6= A1
+SW 	S8, 0x0038 (SP)
+SW 	S7, 0x0034 (SP)
+SW 	S4, 0x0028 (SP)
+OR 	S8, A0, R0	//S8= offset to sounds?
+OR 	S1, T6, R0	//S1=T6= A1
+SW 	RA, 0x003C (SP)
+SW 	S6, 0x0030 (SP)
+SW 	S5, 0x002C (SP)
+SW 	S3, 0x0024 (SP)
+SW 	S2, 0x0020 (SP)
+SW 	S0, 0x0018 (SP)
+SW 	A1, 0x0084 (SP)
+SW 	A2, 0x0088 (SP)
+OR 	S7, R0, R0
+SH 	R0, 0x006E (SP)
+BEQ 	T7, R0, 0x70008E6C	//skip SE if T7 set already!
+OR 	S4, R0, R0
+BEQ 	R0, R0, 0x70008FF0
+OR 	V0, R0, R0
+-70008E6C
+BNEZ 	S1, 0x70008E7C	//if there's a sound, branch
+ADDIU 	S6, SP, 0x0050
+BEQ 	R0, R0, 0x70008FF0
+OR 	V0, R0, R0
+-70008E7C
+LUI 	S5, 0x8002
+ADDIU 	S5, S5, 0x43F0	//S5= 800243F0
+LW 	S3, 0x0064 (SP)
+LW 	T8, 0x000C (S8)	//T8= pointer to run info?
+SLL 	T9, S1, 0x2	//T9= sound to offset
+OR 	A0, S8, R0	//A0=S8= sound data offset?
+ADDU 	T0, T8, T9	//T0= sound sample root + offset
+LW 	S2, 0x000C (T0)	//S2= sample address?
+JAL 	70008B70
+OR 	A1, S2, R0	//A1= S2
+BEQ 	V0, R0, 0x70008F48
+OR 	S0, V0, R0
+LW 	T1, 0x0000 (S5)	//T1= 80063B50
+ADDIU 	T2, R0, 0x0001
+OR 	A1, S6, R0
+SW 	V0, 0x003C (T1)	//V0-> 80063B8C
+SH 	T2, 0x0050 (SP)
+SW 	V0, 0x0054 (SP)
+LW 	T3, 0x0004 (S2)
+LBU 	T5, 0x003E (V0)
+LBU 	S3, 0x0001 (T3)
+ANDI 	T6, T5, 0x0010
+SLL 	T4, S3, 0x6
+ADDU 	T4, T4, S3
+SLL 	T4, T4, 0x3
+ADDU 	T4, T4, S3
+SLL 	T4, T4, 0x2
+SUBU 	T4, T4, S3
+SLL 	T4, T4, 0x2
+ADDU 	T4, T4, S3
+SLL 	T4, T4, 0x2
+ADDU 	T4, T4, S3
+BEQ 	T6, R0, 0x70008F34
+OR 	S3, T4, R0
+LBU 	T7, 0x003E (V0)
+OR 	A1, S6, R0
+ADDIU 	A2, S4, 0x0001
+ANDI 	T8, T7, 0xFFEF
+SB 	T8, 0x003E (V0)
+LW 	A0, 0x0000 (S5)	;A0=80063B50
+JAL 	0x70012EFC
+ADDIU 	A0, A0, 0x0014	;A0=80063B64
+ADDIU 	T9, S3, 0x0001
+SW 	T9, 0x0068 (SP)
+BEQ 	R0, R0, 0x70008F44
+SH 	S1, 0x006E (SP)
+-70008F34
+LW 	A0, 0x0000 (S5)
+ADDIU 	A2, S3, 0x0001
+JAL 	0x70012EFC
+ADDIU 	A0, A0, 0x0014
+-70008F44
+OR 	S7, S0, R0
+-70008F48
+LW 	V0, 0x0004 (S2)
+ADDU 	S4, S4, S3
+LBU 	T1, 0x0002 (V0)
+LBU 	T0, 0x0000 (V0)
+ANDI 	T2, T1, 0x00C0
+SLL 	T3, T2, 0x2
+ADDU 	S1, T0, T3
+SLL 	T4, S1, 0x10
+SRA 	S1, T4, 0x10
+BEQ 	S1, R0, 0x70008F80
+NOP
+BNEL 	S0, R0, 0x70008E8C
+	LW 	T8, 0x000C (S8)
+SW 	S3, 0x0064 (SP)
+--70008F80
+BEQL 	S7, R0, 0x70008FE0
+	LW T4, 0x0088 (SP)
+LBU 	T6, 0x003E (S7)
+ADDIU 	T0, R0, 0x0200
+ADDIU 	A1, SP, 0x0040
+ORI 	T7, T6, 0x0001
+SB 	T7, 0x003E (S7)
+LW 	T8, 0x0088 (SP)
+ORI	T2, T7, 0x0010
+SW 	T8, 0x0030 (S7)
+LH 	T9, 0x006E (SP)
+BEQL 	T9, R0, 0x70008FE0
+	LW 	T4, 0x0088 (SP)
+SB 	T2, 0x003E (S7)
+LH 	T3, 0x006E (SP)
+LW 	A0, 0x0000 (S5)
+SH 	T0, 0x0040 (SP)
+SW 	S7, 0x0044 (SP)
+SW 	S8, 0x004C (SP)
+LW 	A2, 0x0068 (SP)
+SW 	T3, 0x0048 (SP)
+JAL 	0x70012EFC
+ADDIU 	A0, A0, 0x0014
+LW 	T4, 0x0088 (SP)
+--70008FE0
+OR 	V0, S7, R0
+BEQ	T4, R0, 0x70008FF0
+NOP
+SW 	S7, 0x0000 (T4)
+--70008FF0
+LW 	RA, 0x003C (SP)
+LW 	S0, 0x0018 (SP)
+LW 	S1, 0x001C (SP)
+LW 	S2, 0x0020 (SP)
+LW 	S3, 0x0024 (SP)
+LW 	S4, 0x0028 (SP)
+LW 	S5, 0x002C (SP)
+LW 	S6, 0x0030 (SP)
+LW 	S7, 0x0034 (SP)
+LW 	S8, 0x0038 (SP)
+JR 	RA
+ADDIU 	SP, SP, 0x0080
+
+
+--
+7F0390C4	C5.##.JJ.xxxx	emanate sound in slot# from ob[J]ect; x is audible range
+  JJ = tagged obj
+xxxx-> 69B78
+   0-> 69B80
+Pobj-> 69B84
+
+--
+7F039160	C6.##.pppp.xxxx
+called in bunker2, when nat checks console
+# sound slot (0-7), [p]reset, x probably sound value
+xxxx-> 69B78
+PtoP-> 69B80
+   0-> 69B84
+LBU	T5,0002 (S1)
+LBU	T7,0003 (S1)
+LBU	T1,0004 (S1)
+LBU	T3,0005 (S1)
+SLL	T6,T5,0x8
+OR	V0,T6,T7	//V0= [p]reset
+SLL	T4,T1,0x8
+ANDI	T2,V0,FFFF	//T2= [p]reset
+OR	A1,T4,T3
+ANDI	T8,A1,FFFF	//T8= xxxx
+SLTI	AT,T2,2710	//AT=TRUE if a normal preset
+OR	A1,T8,R0	//A1= xxxx
+BEQ	AT,R0,7F0391BC	//branch if a 2710 preset
+OR	V1,T2,R0	//V1= preset
+-7F039198:	//convert 0xxx preset to address
+SLL	T9,T2,0x2
+SUBU	T9,T9,T2
+SLL	T9,T9,0x2
+LUI	T5,8007
+LW	T5,5D18 (T5)	//T5= 0xxx offset
+SUBU	T9,T9,T2
+SLL	T9,T9,0x2
+BEQ	R0,R0,7F0391E0
+ADDU	A0,T9,T5	//A0= offset to preset
+-7F0391BC:	//convert 2xxx preset to address
+LUI	T7,8007
+LW	T7,5D1C (T7)
+SLL	T6,V1,0x4
+ADDU	T6,T6,V1
+SLL	T6,T6,0x2
+LUI	AT,FFF5
+ORI	AT,AT,9FC0	//AT= FFF59FC0
+ADDU	A0,T6,T7
+ADDU	A0,A0,AT	//A0= offset to preset
+-7F0391E0:
+LB	V1,0001 (S1)	//V1= #
+BLTZ	V1,7F039254	
+SLTI	AT,V1,0008	//AT=TRUE if V1<8
+BEQL	AT,R0,7F039258	//accept only within 8 (otherwise, into obj8006)
+	ADDIU	S2,S2,0006
+BEQ	A0,R0,7F039254
+SLL	T2,V1,0x2	//T2= # * 4
+SUBU	T2,T2,V1	//T2-= #
+SLL	T2,T2,0x3	//T2*= 8	(max, 0xC0. 0x18 each)
+LUI	AT,8007
+ADDU	AT,AT,T2	//AT= offset into 80069B78 table
+SW	A1,9B78 (AT)	//xxxx -> 80069B78+(x * 0x18)
+LB	T1,0001 (S1)
+LUI	AT,8007
+SLL	T4,T1,0x2
+SUBU	T4,T4,T1
+SLL	T4,T4,0x3
+ADDU	AT,AT,T4
+SW	A0,9B80 (AT)	//pppp -> 80069B80+(x * 0x18)
+LB	T3,0001 (S1)
+LUI	AT,8007
+SLL	T8,T3,0x2
+SUBU	T8,T8,T3
+SLL	T8,T8,0x3
+ADDU	AT,AT,T8
+BNEZ	A1,7F039254
+SW	R0,9B84 (AT)	//0 -> 80069B84+(x * 0x18)
+JAL	7F0347A0	//if your s=0, do this	(sound jump)
+LB	A0,0001 (S1)
+-7F039254:	//done.
+ADDIU	S2,S2,0006
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0006
+
+
+
+--
+7F038F58	C7.##.vvvv.xxxx	sound # crecendos to [v]olume over [x] milliseconds
+A0= vvvv
+t3= xxxx
+
+xxxx->80069B78	audible range.  if zero, resets to default
+vvvv->80069B7C	max volume
+0   ->80069B80
+0   ->80069B84
+74 counts up to value at 7C
+--
+7F039008	C8.##.vvvv.xxxx	sound# fades from [v]olume to nothing over [x] milliseconds
+t2/f10/f12=ssss
+t8=xxxx
+0   ->80069B80
+vvvv->80069B7C	???	v in this case is converted to float, however...
+xxxx->80069B78	audible range
+74 counts down to value at 7C (0)
+--
+7F038F44	C9.##	shut off sound #
+--
+7F039260	CA.##.ssss.rr	s > value, return	???
+test 80069B74+(x * 0x18) < ssss
+
+--
+7F0392D4	CB.##
+JAL	7F035434	//returns V0= pointer to path#
+LBU	A0,0001 (S1)	//A0= path#
+LW	T3,07B0 (SP)
+ADDIU	S2,S2,0002
+BEQ	T3,R0,7F0392F4
+NOP
+SW	V0,00A4 (T3)	//store path pointer to obj0xA4
+SW	R0,00A8 (T3)	//blank obj0xA8
+BEQ	R0,R0,7F03558C	//end.
+ADDIU	S1,S1,0002
+
+-7F035434:
+LUI	A1,8007
+LW	A1,5D10 (A1)	//A1= PATH pointer
+OR	V1,R0,R0
+LW	T6,0000 (A1)	//T6= PATHs
+OR	V0,A1,R0	//V0= PATH pointer
+BEQL	T6,R0,7F03547C
+OR	V0,R0,R0
+LBU	T7,0004 (V0)	//T7= PATH#
+-7F035454:
+BNE	A0,T7,7F035464	//branch if not your path
+SLL	T8,V1,0x3	//T8= V1*8
+JR	RA
+ADDU	V0,T8,A1	//V0= pointer to path#
+-7F035464:
+LW	T9,0008 (V0)
+ADDIU	V1,V1,0001
+ADDIU	V0,V0,0008
+BNEL	T9,R0,7F035454
+LBU	T7,0004 (V0)
+OR	V0,R0,R0
+-7F03547C:
+JR	RA
+NOP
+
+--
+7F0392FC	CC.xxxx.yyyy	speed of 27object; x= speed, y= accel rate
+speed -> obj0x94
+accel -> obj0x98
+
+--
+7F039360	CD.xxxx.yyyy	speed of rotor; x= speed, y= accel rate
+speed -> obj0x90
+accel -> obj0x94
+
+--
+7F0393BC	CE.rr	return if in the intro camera
+80036494 = 
+1= intro camera
+2= fade from camera
+--
+7F039408	CF.rr	return if in the spiral
+3= intro swirl
+(4= first-person mode)
+--
+7F039440	D0.##.xx.ii	change tagged monitor#'s xth image
+--
+7F0394CC	D1.rr	if in tank, return
+JAL	7F07CE78	//V0= 80036448 (usually 0, tests for 1)
+NOP
+return if V0==1
+
+-7F07CE78:	//
+LUI	V0,8003
+JR	RA
+LW	V0,6448 (V0)	//V0=80036448= 1 if in tank
+
+-tested for at:
+	7F080DFC
+	7F082DD4
+	7F0836B4
+	7F083AFC
+	7F083C54
+
+also tested for at 7F0828C4.  if =1, does the following:
+LW	T6,0000 (S0)	//T6= BONDdata
+LW	T7,0124 (T6)	//T7= 
+BEQL	T7,R0,7F082964 (same jump as if 80036448=0)
+	LW	T8,005C (SP)
+JAL	7F05D9D0	//returns V0= right gun being used
+OR	A0,R0,R0
+ADDIU	AT,R0,0020
+BNE	V0,AT,7F08290C	//if not tank, branch
+LWC1	F8,018C (SP)
+ADDIU	T9,R0,0001
+SW	R0,0134 (SP)
+BEQ	R0,R0,7F082958
+SW	T9,01A8 (SP)
+-7F08290C
+C.EQ.S	F8,F20
+LWC1	F10,0188 (SP)
+BCIFL	7F08295C
+	SWC1	F20,017C (SP)
+C.EQ.S	F10,F20
+LWC1	F18,017C (SP)
+BC1FL	7F08295C
+	SWC1	F20,017C (SP)
+C.LT.S	F20,F18
+NOP
+BC1FL	7F082944
+	LWC1	F4,0178 (SP)
+SWC1	F18,018C (SP)
+LWC1	F4,0178 (SP)
+-7F082944
+C.LT.S	F20,F4
+NOP
+BC1FL	7F08295C
+	SWC1	F20,017C (SP)
+SWC1	F4,0188 (SP)
+-7F082958
+SWC1	F20,017C (SP)
+-7F08295C
+SWC1	F20,0178 (SP)
+LW	T8,005C (SP)
+-7F082964
+
+--
+7F039504	D2	exit level
+--
+7F039550	D3	return from camera
+JAL	7F07A9B8
+ADDIU	A0,R0,0008
+RETURN...
+
+--
+7F039564	D4.xxxx	Camera looks at Bond from Preset x
+probably set Bond's position to preset xxxx
+
+LBU	T2,0001 (S1)
+LBU	T4,0002 (S1)
+LUI	T7,8007
+SLL	T1,T2,0x8
+OR	V0,T1,T4
+ANDI	T3,V0,FFFF	//T3= xxxx (preset)
+SLTI	AT,T3,2710
+BEQ	AT,R0,7F0395B4
+OR	V1,T3,R0	//V1= preset
+SLL	T8,T3,0x2	//0xxx Preset
+SUBU	T8,T8,T3
+LUI	T9,8007
+LW	T9,5D18 (T9)
+SLL	T8,T8,0x2
+SUBU	T8,T8,T3
+SLL	T8,T8,0x2
+LUI	AT,8008
+ADDU	T5,T8,T9	//T5= address of preset data
+BEQ	R0,R0,7F0395DC
+SW	T5,99F8 (AT)	//preset addy -> 800799F8
+-7F0395B4:	//2xxx Preset
+LW	T7,5D1C (T7)
+SLL	T6,V1,0x4
+ADDU	T6,T6,V1
+SLL	T6,T6,0x2
+LUI	AT,FFF5
+ORI	AT,AT,9FC0
+ADDU	T2,T6,T7
+ADDU	T1,T2,AT	//T1= address of preset data
+LUI	AT,8008
+SW	T1,99F8 (AT)	//preset addy -> 800799F8	camera position to preset
+-7F0395DC:
+JAL	7F07A9B8
+ADDIU	A0,R0,0007
+RETURN...
+
+-7F07A9B8:
+ADDIU	SP,SP,FF78
+SW	S0,0028 (SP)
+LUI	S0,8003
+ADDIU	S0,S0,6494	//S0= 80036494
+SW	A0,0000 (S0)	//7->80036494	set camera position mode.
+LUI	AT,8003
+SW	R0,6498 (AT)	//0->80036498
+LW	V0,0000 (S0)	//V0= 7
+ADDIU	V1,R0,0001
+SW	RA,002C (SP)
+BNE	V1,V0,7F07AA80	//if A0!=1, branch
+ADDIU	AT,R0,0002
+...for A0=7...
+-7F07B0E8:
+JAL	7F079CF0
+NOP
+LUI	S0,8008
+ADDIU	S0,S0,A0B0
+LW	T7,0000 (S0)	//S0=8007A0B0 (P->BONDdata)
+BEQ	R0,R0,7F07B190
+SW	R0,0034 (T7)	//0->BONDdata +0x34 (KILL BOND'S ROOM POINTER)
+-7F07B190:
+LW	RA,002C (SP)
+LW	S0,0028 (SP)
+ADDIU	SP,SP,0088
+JR	RA
+NOP
+
+
+--
+7F0395F0	D5.##.xxxx.yyyy	Go to camera ##
+if x = 1 the camera stays fixed on Bond, not camera rotation.
+y can be set but the value isn't read.  Rare never set it either
+
+JAL	7F057080	//returns V0= t16->CAMdata
+LBU	A0,0001 (S1)
+BEQ	V0,R0,...
+OR	S0,V0,R0	//S0= t16->CAMdata
+JAL	7F056B1C	//returns V0= which #obj in file the type16 is
+OR	A0,V0,R0	//A0= t16->CAMdata
+BLTZL	V0,...
+	ADDIU	S2,S2,0006
+LH	T4,0006 (S0)	//T4= #objects to CAMdata
+JAL	7F056A88	//returns V0= CAMdata
+ADDU	A0,T4,V0	//A0= which #obj in file is the camera in question
+LUI	AT,8008
+SW	R0,99F8 (AT)	//0->800799F8	(not a preset, a camera)
+LUI	AT,8008
+SW	V0,99FC (AT)	//CAMdata->800799FC	(set camera pov)
+LBU	T3,0002 (S1)
+LBU	T9,0003 (S1)
+LUI	AT,8008
+SLL	T8,T3,0x8
+OR	T5,T8,T9	//T5= xxxx
+SW	T5,9A18 (AT)	//xxxx->80079A18
+LBU	T6,0004 (S1)
+LBU	T2,0005 (S1)
+LUI	AT,8008
+SLL	T7,T6,0x8
+OR	T1,T7,T2	//T1= yyyy
+SW	T1,9A1C (AT)	//yyyy->80079A1C
+JAL	7F07A9B8
+ADDIU	A0,R0,0007
+RETURN...
+
+-7F057080:	returns V0= type16 handle with corresponding ID#[A0]
+LUI	V1,8007
+LW	V1,5D80 (V1)	//V1=80075D80= type16 handle
+ANDI	V0,A0,FFFF	//V0= #--
+BEQL	V1,R0,...
+	OR	V0,R0,R0
+LHU	T6,0004 (V1)	//T6= type16 id#
+BNEL	V0,T6,7F0570AC	//if it doesn"t match, iterate
+	LW	V1,0008 (V1)	//V1= prior type16
+JR	RA
+OR	V0,V1,R0	//V0=V1= refereced object handle
+-7F0570AC
+BNEL	V1,R0,7F057098
+	LHU	T6,0004 (V1)	//T6= next type16 id#
+OR	V0,R0,R0
+JR	RA
+NOP
+
+-7F07A9B8:
+...
+SW	S0,0028 (SP)
+LUI	S0,8003
+ADDIU	S0,S0,6494
+SW	A0,0000 (S0)
+LUI	AT,8003
+SW	R0,6498 (AT)
+LW	V0,0000 (S0)
+ADDIU	V1,R0,0001
+...
+BNE	V1,V0,7F07AA80
+ADDIU	AT,R0,0002
+LUI	T6,8003
+LW	T6,64C0 (T6)
+BEQ	T6,R0,7F07AA70
+NOP
+JAL	7F0BFC98
+NOP
+BNEZ	V0,7F07AA70
+NOP
+JAL	7F0BFC8C
+NOP
+BNEZ	V0,7F07AA70
+LUI	AT,8003
+MTC1	R0,F4
+OR	A0,R0,R0
+OR	A1,R0,R0
+OR	A2,R0,R0
+LUI	A3,3F80
+JAL	7F0807B0
+SWC1	F4,64A4 (AT)
+LUI	AT,4270
+MTC1	AT,F12
+MTC1	R0,F14
+JAL	7F080858
+NOP
+JAL	7000695C	//returns stage #...
+NOP
+OR	A0,V0,R0
+JAL	7F0BAA64
+ADDIU	A1,R0,0001
+LUI	S0,8008
+ADDIU	S0,S0,A0B0
+LW	T7,0000 (S0)
+BEQ	...,7F07B190
+SW	R0,0034 (T7)
+-7F07AA70
+ETC...
+
+--
+7F039670	D6
+--
+7F0396DC	D7.xx	Disables text.
+	by default, disables on-screen ammo
+	subsequent calls will re-enable text
+	also see type D8
+bitflag controls:
+	xxx1	do not disable upper text display
+	xx1x	do not disable lower text display
+	x1xx	do not disable on-screen clock
+
+note: the clock is disabled differently than types B5/B6, so you must use D7 or D8 to re-enable
+
+ADDIU	A0,R0,0004
+JAL	7F06A5A8	//set bit 4 in BONDdata 0x1128
+OR	A1,R0,R0
+ADDIU	A0,R0,0002
+JAL	7F0690F4	//set bit 2 in BONDdata 0x1064
+OR	A1,R0,R0
+LBU	A1,0001 (S1)
+ANDI	T7,A1,0002
+BNEL	T7,R0,7F039714	//if x==2, branch
+	ANDI	T2,A1,0001
+//!2
+JAL	7F08A39C	//sets 2 in BONDdata 0x11D8
+ADDIU	A0,R0,0002
+LBU	A1,0001 (S1)
+ANDI	T2,A1,0001
+-7F039714:	//test x==1...
+BNEL	T2,R0,7F03972C
+	ANDI	T1,A1,0004	//test if A1=4
+//!1
+JAL	7F08A944	//sets 2 to 800368B4
+ADDIU	A0,R0,0002
+LBU	A1,0001 (S1)
+ANDI	T1,A1,0004
+-7F03972C:	//test if x==4
+BNEZ	T1,7F03973C
+ADDIU	A0,R0,0010
+//!4
+JAL	7F056160	//hide clock;  sets 0x10 to clock value...
+OR	A1,R0,R0
+-7F03973C:
+LUI	AT,8003
+SW	R0,64B0 (AT)	//0->800364B0
+-7F039744:
+ADDIU	S2,S2,0002
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+-7F06A5A8:	//un/mask BONDdata 0x1128; A1=0 toggle on, A1=1 toggle off
+BEQ	A1,R0,7F06A5CC
+LUI	V0,8008
+-7F06A5B0:	//toggle off A0
+LUI	V0,8008
+LW	V0,A0B0 (V0)
+NOR	T7,A0,R0	//T7= ~A0
+LW	T6,1128 (V0)
+AND	T8,T6,T7	//unset bits given in A0
+JR	RA
+SW	T8,1128 (V0)
+-7F06A5CC:	//toggle on A0
+LW	V0,A0B0 (V0)	//V0=8007A0B0= BONDdata pointer
+LW	T9,1128 (V0)	//T8= BONDdata + 0x1128
+OR	T0,T9,A0
+SW	T0,1128 (V0)	//set bits given in A0
+JR	RA
+NOP
+
+
+-7F0690F4:	//on-screen ammo control; A1=0 toggle on, A1=1 toggle off
+set to 2 to disable
+BEQ	A1,R0,7F069118
+LUI	V0,8008
+-7F0690FC:	//toggle off A0
+LUI	V0,8008
+LW	V0,A0B0 (V0)
+NOR	T7,A0,R0
+LW	T6,1064 (V0)
+AND	T8,T6,T7
+JR	RA
+SW	T8,1064 (V0)
+-7F039118:	//toggle on A0
+LW	V0,A0B0 (V0)
+LW	T9,1064 (V0)
+OR	T0,T9,A0
+SW	T0,T9,A0
+SW	T0,1064 (V0)	//set bits given in A0
+JR	RA
+NOP
+
+-7F056160:	//un/mask Clock!; A1=0 toggle on, A1=1 toggle off
+BEQ	A1,R0,7F056184
+LUI	V0,8003
+-7F036168:	//toggle off A0
+LUI	V0,8003
+ADDIU	V0,V0,0AE8	//V0=80030AE8 (clock on/off)
+LW	T6,0000 (V0)
+NOR	T7,A0,R0
+AND	T8,T6,T7	//send 10, so this function has exclusive control of clock
+JR	RA
+SW	T8,0000 (V0)
+-7F036184:	//toggle on A0
+ADDIU	V0,V0,0AE8
+LW	T9,0000 (V0)
+OR	T0,T9,A0
+SW	T0,0000 (V0)
+JR	RA
+NOP
+
+!1	//upper text display control
+set to 2 to disable.  subseqent calls can re-enable
+-7F08A944:	//set bits from A0 to 800368B4
+LUI	V0,8003
+ADDIU	V0,V0,68B4	//V0=800368B4
+LW	T6,0000 (V0)
+OR	T7,T6,A0
+JR	RA
+SW	T7,0000 (V0)
+
+!2	//lower text display control
+set to 2 to disable.  subseqent calls can re-enable
+-7F08A39C:	//
+LUI	V0,8008
+LW	V0,A0B0 (V0)
+LW	T6,11D8 (V0)
+OR	T7,T6,A0
+JR	RA
+SW	T7,11D8 (V0)
+
+--
+7F039750	D8	enable all on-screen text displays
+	undoes changes from the D7 thingy.  either hides or shows all text
+ADDIU	A0,R0,0004
+JAL	7F06A5A8	//Toggle off 4 @ BONDdata 0x1128	uncertain...
+ADDIU	A1,R0,0001
+ADDIU	A0,R0,0002
+JAL	7F0690F4	//Toggle off 2 @ BONDdata 0x1064	on-screen ammo
+ADDIU	A1,R0,0001
+JAL	7F08A380	//Toggle off 2 @ BONDdata 0x11D8	lower text
+ADDIU	A0,R0,0002
+JAL	7F08A928	//Toggle off 2 @ 800368B4	upper text
+ADDIU	A0,R0,0002
+ADDIU	A0,R0,0010
+JAL	7F056160	//Toggle off bit 0x10 on clock mode
+ADDIU	A1,R0,0001
+ADDIU	T4,R0,0001
+LUI	AT,8003
+SW	T4,64B0 (AT)	//1->800364B0
+ADDIU	S2,S2,0001
+BEQ	R0,R0,7F03558C	//END.
+ADDIU	S1,S1,0001
+
+-7F06A5A8:	toggle on[A1=0] or off[A1=1] bits [A0] of BONDdata 0x1128
+-7F0690F4:	toggle on[A1=0] or off[A1=1] bits [A0] of BONDdata 0x1064
+-7F08A380:	toggle off bits [A0] of BONDdata 0x11D8
+-7F08A928:	toggle off bits [A0] at 800368B4
+
+--
+7F03979C	D9.##.xxxx.rr
+--
+7F039964	DA	fade to black
+800364A0= fade
+--
+7F0399A4	DB	fade in from black
+--
+7F0399E0	DC.rr	return when fade complete
+--
+7F039A24	DD	hide guards
+-7F01F530:	V0= value @ 8002CC68
+--
+7F039A80	DE	show guards
+--
+7F039AD4	DF.##	open tagged door#
+--
+7F039B30	E0.##.xx	guardID# draws weapon x
+--
+7F039B58	E1.xx.rr	if at fewer than x #players playing, return
+JAL	7F09A464	//V0= # players
+NOP
+LB	T2,0001 (S1)
+OR	A0,S6,R0
+OR	A1,S2,R0
+SLT	AT,V0,T2	//AT=1 if #players < x
+BEQL	AT,R0,7F039B90
+ADDIU	S2,S2,0003
+STD. RETURN
+
+-7F09A464:	//returns V0= # players!
+LUI	T6,8008
+LW	T6,9EE0 (T6)
+OR	V1,R0,R0
+LUI	T7,8008
+BEQ	T6,R0,7F09A480
+LUI	T8,8008
+ADDIU	V1,R0,0001
+-7F09A480:
+LW	T7,9EE4 (T7)
+LUI	T9,8008
+BEQ	T7,R0,7F09A494
+NOP
+ADDIU	V1,V1,0001
+-7F09A494:
+LW	T8,9EE8 (T8)
+BEQ	T8,R0,7F09A4A4
+NOP
+ADDIU	V1,V1,0001
+-7F09A4A4:
+LW	T9,R0,7F09A4B4
+NOP
+ADDIU	V1,V1,0001
+-7F09A4B4:
+JR	RA
+OR	V0,V1,R0
+
+--
+7F039B98	E2.##.xx.rr	if x > total ammo of type#, return
+JAL	7F069258	//returns V0= total ammo of type A0
+LB	A0,0001 (S1)
+LB	T1,0002 (S1)
+...
+SLT	AT,V0,T1	//return if total ammo < x
+BEQL	AT,R0,7F039BD0
+ADDIU	S2,S2,0004
+STD. RETURN
+
+-7F069258:
+ADDIU	SP,SP,FFE0
+SW	RA,001C (SP)
+SW	S0,0018 (SP)
+JAL	7F069240	//V0= amount of ammo type A0
+SW	A0,0020 (SP)
+OR	S0,V0,R0	//S0= amount of ammo A0
+//right weapon
+JAL	7F05D9D0	//returns V0= weapon# being used (f/ammo indicator)
+OR	A0,R0,R0
+JAL	7F06942C	//returns V0= ammo type used by wep#[A0]
+OR	A0,V0,R0
+LW	T6,0020 (SP)	//T6= ammo type
+BNE	V0,T6,7F069298
+NOP
+JAL	7F069344	//returns V0= right gun ammo
+OR	A0,R0,R0
+ADDU	S0,S0,V0
+-7F069298:	//same for left weapon
+JAL	7F05D9D0
+ADDIU	A0,R0,0001
+JAL	7F06942C	//
+OR	A0,V0,R0
+LW	T7,0020 (SP)	//T6= ammo type
+BNEL	V0,T7,7F0692C4
+	LW	RA,001C (SP)
+JAL	7F069344	//returns V0= left gun ammo
+ADDIU	A0,R0,0001
+ADDU	S0,S0,V0
+LW	RA,001C (SP)
+-7F0692C4:
+OR	V0,S0,R0	//V0= total ammo of type
+LW	S0,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0020
+
+
+-7F069240:	//returns V0= amount of ammo type A0
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+SLL	T7,A0,0x2
+ADDU	T8,T6,T7
+JR	RA
+LW	V0,1130 (T8)
+
+-7F05D9D0:
+SLL	T7,A0,0x3	*8
+SUBU	T7,T7,A0	-1
+SLL	T7,T7,0x2	*4
+ADDU	T7,T7,A0	+1
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+SLL	T7,T7,0x2	*4
+ADDU	T7,T7,A0	+1
+SLL	T7,T7,0x3	*8
+ADDU	T8,T6,T7
+JR	RA
+LW	V0,0870 (T8)
+
+-7F05C8B4:	A0= weapon#; returns V0= address to weapon data
+SLL	T6,A0,0x3
+SUBU	T6,T6,A0
+LUI	T7,8003
+ADDIU	T7,T7,3924	//T7= 80033924 (gun inventory)
+SLL	T6,T6,0x3
+ADDU	V1,T6,T7
+LW	T8,0008 (V1)	//T8= flag indicating if weapon has pointers to data
+BNEZ	T8,7F05C8E0
+NOP
+JR	RA
+LW	V0,000C (V1)	//V0= weapon data
+-7F05C8E0:
+LUI	V0,8003
+ADDIU	V0,V0,2494	//V0= default (80032494)
+JR	RA
+NOP
+
+--
+7F039BD8	E3.ww	draw right gun (1st person)
+OR	A0,R0,R0
+JAL	7F05D914
+LB	A1,0001 (S1)
+ADDIU	A0,R0,0001
+JAL	7F05D914
+OR	A1,R0,R0
+RETURN...
+
+7F05D914:	set gun[A1] into player hand[A0] - 1st person
+SLL	V0,A0,0x3
+SUBU	V0,V0,A0
+LUI	V1,8008
+SLL	V0,V0,0x2
+ADDIU	V1,V1,A0B0
+ADDU	V0,V0,A0
+LW	T7,0000 (V1)	T7=cur. player data
+SLL	V0,V0,0x2
+ADDU	V0,V0,A0
+SLL	V0,V0,0x3	V0=0x3A8	difference b/w R/L guns
+ADDIU	T6,R0,0005	T6=initial gun state
+ADDU	T8,T7,V0
+SW	T6,0898 (T8)	set gun state [next]
+LW	T9,0000 (V1)	T9=cur. player data
+ADDU	T0,T9,V0
+SW	A1,08AC (T0)	gun->1st person hand slot
+LW	T1,0000 (V1)
+ADDU	T2,T1,V0
+JR	RA
+SW	R0,08B4 (T2)	no update?
+
+--
+7F039BFC	E4.ww	draw right gun (3rd person)
+OR	A0,R0,R0
+JAL	7F05DB54
+LB	A1,0001 (S1)
+ADDIU	A0,R0,0001
+JAL	7F05DB54
+OR	A1,R0,R0
+RETURN...
+
+7F05DB54:	set weapon [A1] into current player hand [A0] - 3rd person
+ADDIU	SP,SP,FFD8
+SLL	T6,A0,0x3
+SW	S1,0018 (SP)
+SUBU	T6,T6,A0
+LUI	S1,8008
+SLL	T6,T6,0x2
+ADDIU	S1,S1,A0B0
+ADDU	T6,T6,A0
+LW	T7,0000 (S1)	T7=cur. player data
+SLL	T6,T6,0x2
+SW	S0,0014 (SP)
+ADDU	T6,T6,A0
+SLL	S0,T6,0x3	S0=0x3A8	difference b/w R/L guns
+SW	RA,001C (SP)
+SW	A0,0028 (SP)	SP+28=hand
+SW	A1,002C (SP)	SP+2C=weapon
+ADDU	T8,T7,S0
+LW	A0,0870 (T8)	A0=ammo? has to be type...
+JAL	7F06942C	V0=ammo type used by weapon A0
+SW	A0,0024 (SP)	SP+24=ammo? has to be type...
+LW	V1,0000 (S1)	V1=cur. player data
+LW	A2,0024 (SP)	A2=ammo?
+OR	A3,V0,R0	A3=V0=ammo used by weapon
+ADDU	A0,V1,S0
+LW	T9,0874 (A0)	T9=attack?
+LW	A1,002C (SP)	A1=weapon
+BGEZL	T9,7F05DBE8	I think if a close-range weapon, do the following...
+LW	A1,089C (A0)
+LW	A0,0028 (SP)	A0=hand
+SW	A2,0024 (SP)	SP+24=type?
+JAL	7F05CFA4	update model in hand
+SW	V0,0020 (SP)	SP+20=ammo used by weapon
+LW	V1,0000 (S1)
+LW	A2,0024 (SP)
+LW	A3,0020 (SP)
+ADDU	A0,V1,S0
+LW	A1,089C (A0)	A1=ammo on screen?
+//7F05DBE8:	mess with ammo
+SLL	T0,A3,0x2	T0=offset to ammo
+ADDU	V0,V1,T0
+BLEZ	A1,7F05DC04	ammo on screen? should be positive
+SLTI	AT,A2,0021	TRUE if animation valid
+LW	T1,1130 (V0)	T1=ammo of type
+ADDU	T2,T1,A1
+SW	T2,1130 (V0)	save new value
+//7F05DC04:
+BEQ	AT,R0,7F05DC18
+NOP
+LW	T3,0000 (S1)	T3=cur. player data
+ADDU	T4,T3,S0
+SW	A2,0878 (T4)	uhm, now I'm really confused...  save type...
+//7F05DC18:
+JAL	7F09A464	V0=#players
+NOP
+SLTI	AT,V0,0002	TRUE if solo
+BNEZ	AT,7F05DC34	MP only yo!
+NOP
+JAL	7F09B368	flip weapon/s runtime flag 0x4
+LW	A0,0028 (SP)	A0=hand
+//7F05DC34:
+JAL	7F05FB00
+LW	A0,0028 (SP)
+LW	T6,0000 (S1)
+LW	T5,002C (SP)
+ADDU	T7,T6,S0
+SW	T5,0870 (T7)
+LW	T8,0000 (S1)
+ADDU	T9,T8,S0
+SW	R0,089C (T9)
+LW	T0,0000 (S1)
+ADDU	T1,T0,S0
+SW	R0,0A4C (T1)
+LW	T2,0000 (S1)
+ADDU	T3,T2,S0
+JAL	7F08D8E0
+SW	R0,0A50 (T3)
+LW	RA,001C (SP)
+W	S0,0014 (SP)
+LW	S1,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0028
+
+7F05CFA4:	update 1st person weapon [A1] in hand [A0] if not set
+LUI	A2,8008
+ADDIU	A2,A2,A0B0
+LW	T6,0000 (A2)	T6=cur. player data
+SLL	V0,A0,0x2	V0=hand->offset
+ADDU	V1,T6,V0
+LW	T7,2A50 (V1)	T7=update model flag
+BNEZ	T7,7F05D010	quit if no update flag set
+NOP
+LW	T8,07F8 (V1)	weapon visible flag
+BLTZL	T8,7F05CFF8	
+LW	T3,0800 (V1)
+LW	T9,0800 (V1)	T9=weapon #
+ADDIU	T0,R0,FFFF	T0=-1
+BEQ	A1,T9,7F05D010	if current is same as new weapon, quit
+NOP
+SW	T0,07F8 (V1)	-1->visible (makes visible)
+LW	T1,0000 (A2)	T1=cur. player data
+ADDU	T2,T1,V0
+JR	RA
+SW	A1,2A44 (T2)	set new wep
+//7F05CFF8:	if weapon is not visible, make it so
+ADDIU	T4,R0,0001
+BEQL	A1,T3,7F05D010
+SW	T4,07F8 (V1)	set weapon visible
+JR	RA
+SW	A1,2A44 (V1)
+//7F05D010:	if no update flag set, quit
+JR	RA
+NOP
+
+7F09B368:
+LUI	T6,8008
+LW	T6,A0B0 (T6)
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LW	T7,00A8 (T6)	T7=8006 pos. data
+OR	A1,A0,R0	A1=hand
+JAL	7F0521E8	flip weapon runtime flag 0x4 in guard's hand
+LW	A0,0004 (T7)	A0=player equiv. of guard data
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+7F0521E8:	toggle 0x4 in run. flags for weapon in hand [A1] of guard [A0]
+SLL	T6,A1,0x2	T6=hand->offset
+ADDU	T7,A0,T6	add to guarddata pointer
+LW	V0,0160 (T7)	V0=position data of weapon in hand
+BEQ	V0,R0,7F05220C	quit if NULL
+NOP
+LW	V1,0004 (V0)	V1=weapon data
+LW	T8,0064 (V1)	T8=runtime object bitflags
+ORI	T9,T8,0004
+SW	T9,0064 (V1)	save toggled flags
+//7F05220C:
+JR	RA
+NOP
+
+--
+7F039C20	E5.xx.zz	set Bond's speed for external control
+LB	T4,0001 (S1)
+LUI	V0,8008
+ADDIU	V0,V0,9990	//V0=80079990
+MTC1	T4,F8		//F8= xx
+SWC1	F20,0004 (V0)	//F20-> 80079994 (usually 0)
+ADDIU	S2,S2,0003
+CVT.S.W	F4,F8		//F4= (float)x
+ADDIU	S1,S1,0003
+SWC1	F4,0000 (V0)	//(float)x -> 80079990
+LB	T3,FFFF (S1)	//T3= zz
+MTC1	T3,F6
+NOP
+CVT.S.W	F10,F6		//F10= (float)z
+BEQ	R0,R0,7F03558C
+SWC1	F10,0008 (V0)	//(float)y -> 80079998
+
+--
+7F039C5C	E6.##.xxxx.rr	return if tagged object and preset are in same room
+LBU	T8,0002 (S1)
+LBU	T5,0003 (S1)
+LBU	A0,0001 (S1)
+SLL	T9,T8,0x8
+OR	S0,T9,T5
+ANDI	T6,S0,FFFF	//T6= xxxx
+JAL	7F0570C0	//returns V0= tagged obj
+OR	S0,T6,R0	//S0=T6= xxxx
+SLTI	AT,S0,2710
+BEQ	AT,R0,7F039CAC
+OR	V1,S0,R0
+SLL	T7,V1,0x2	//get address of 0xxx preset
+SUBU	T7,T7,V1
+SLL	T7,T7,0x2
+LUI	T2,8007
+LW	T2,5D18 (T2)
+SUBU	T7,T7,V1
+SLL	T7,T7,0x2
+BEQ	R0,R0,7F039CD0
+ADDU	A0,T7,T2	//A0= pointer to 0xxx preset
+-7F039CAC:	//get address of 2xxx preset
+LUI	T4,8007
+LW	T4,5D1C (T4)
+SLL	T1,V1,0x4
+ADDU	T1,T1,V1
+SLL	T1,T1,0x2
+LUI	AT,FFF5
+ORI	AT,AT,9FC0
+ADDU	A0,T1,T4
+ADDU	A0,A0,AT	//A0= pointer to 2xxx preset
+-7F039CD0:
+LW	V1,0028 (A0)	//V1= room pointer f/ preset
+BEQL	V1,R0,7F039D24
+	ADDIU	S2,S2,0005
+BEQL	V0,R0,7F039D24
+	ADDIU	S2,S2,0005
+LW	A0,0010 (V0)	//A0= 8006 position data for tagged obj
+BEQL	A0,R0,7F039D24
+	ADDIU	S2,S2,0005
+LW	T3,0014 (A0)	//T3= room pointer for obj
+LBU	T9,0003 (V1)	//T9= room# preset is within
+OR	A0,S6,R0
+LBU	T8,0003 (T3)	//T8= room# obj is within
+OR	A1,S2,R0
+BNEL	T8,T9,7F039D24	//return if object and preset within the same room
+ADDIU	S2,S2,0005
+STD. RETURN
+
+
+--
+7F035BC8	E7.rr	if guard walking or running while shooting, return
+checks if guard is shooting and moving
+
+LB	T8,0007 (S7)	//T8= GUARDdata +0x7 (uncertain flags)
+ADDIU	AT,R0,0008
+BNEL	T8,AT,7F035C14	//if not shooting, branch
+	ADDIU	S2,S2,0002
+LW	T9,0058 (S7)	//T9= GUARDdata +0x58 must =0
+BNEL	T9,R0,7F035C14
+	ADDIU	S2,S2,0002
+LW	T1,004C (S7)	//T1= GUARDdata 0x4C
+OR	A0,S6,R0
+OR	A1,S2,R0
+ANDI	T2,T1,0040	//test if closer than 40 (probably)
+BEQL	T2,R0,7F035C14	//branch if not in motion
+	ADDIU	S2,S2,0002
+STD. RETURN
+
+--
+7F035C1C	E8.rr	if guard is shooting, return
+LB	T3,0007 (S7)	//T3= GUARDdata action type
+ADDIU	AT,R0,0008
+OR	A0,S6,R0
+BNE	T3,AT,7F035C44	//return if =8
+OR	A1,S2,R0
+STD. RETURN
+
+--
+7F039D2C	E9	instantly switch to solo sky 2
+only instance: train 1009.  triggered when you step on preset 0062
+preset is under the train floor panel.  triggers when you fall down.
+RELATED TO SKY/FOG
+
+LUI	AT,3F80
+MTC1	AT,F12	//F12= 1.0f
+JAL	7F0BACA8
+NOP
+RETURN...
+
+-7F0BACA8:	A MASSIVE CONVOLUTED MESS
+LUI	V0,8008
+LW	V0,25EC (V0)	//V0=800825EC= 80044F24	(env.table match start)
+LUI	A0,8008
+ADDIU	A0,A0,25F8	//A0=800825F8= 19 (train level #)
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+OR	T0,A0,R0
+OR	T9,V0,R0
+ADDIU	T8,V0,0054
+-7F0BACCC		//copy lower address data to upper address
+LW	AT,0000 (T9)
+ADDIU	T9,T9,000C
+ADDIU	T0,T0,000C
+SW	AT,FFF4 (T0)
+LW	AT,FFF8 (T9)
+SW	AT,FFF8 (T0)
+LW	AT,FFFC (T9)
+BNE	T9,T8,7F0BACCC
+SW	AT,FFFC (T0)
+			//
+LW	AT,0000 (T9)
+LUI	V1,8008
+SW	AT,0000 (T0)
+LW	T8,0004 (T9)
+LUI	AT,8008
+SW	T8,0004 (T0)
+LW	V1,25F0 (V0)	//V1=800825F0= 80044F80 (env.table match endpoint)
+LWC1	F0,0004 (V0)
+LWC1	F4,0004 (V1)
+SUB.S
+...ETC.  copies sky 2 data to sky info @ 800825FC
+
+--
+7F039D48	EA	stop time!
+LUI	T5,8003
+LW	T5,64A0 (T5)	//T5=800364A0	pause timer=1
+ADDIU	T6,R0,0001
+LUI	AT,8003
+BNEZ	T5,7F039D64
+ADDIU	S2,S2,0001
+SW	T6,64A0 (AT)
+-7F039D64:
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0001
+
+--
+7F039D6C	EB.rr	return if button pressed	
+reads BONDdata 0xD8
+--
+7F039DA8	EC	disable player pickups
+800364B4= 1 to disable
+--
+7F039DC0	ED	hide 1st person display
+7F05CF5C-send A0=0(clear right hand), A0=1(clear left hand)
+
+-7F05CF5C:	//clear 1st person gun model
+	accepts A0= 0(clear right hand), 1(clear left hand)
+
+LUI	V1,8008
+ADDIU	V1,V1,A0B0
+LW	T6,0000 (V1)	//T6= handle to BONDdata
+SLL	V0,A0,0x2	//V0= #words -> offset
+ADDIU	T0,R0,FFFF
+ADDU	T7,T6,V0	//T7= offset in BONDdata
+SW	R0,07F8 (T7)	//0-> BONDdata +0x7F8 +offset	show hand
+LW	T8,0000 (V1)	//T8= handle to BONDdata
+ADDIU	T3,R0,0001
+ADDU	T9,T8,V0	//T9= offset in BONDdata
+SW	R0,0800 (T9)	//0-> BONDdata +0x800 +offset	#gun in hand
+LW	T1,0000 (V1)	//T1= handle to BONDdata
+ADDU	T2,T1,V0	//T2= offset in BONDdata
+SW	T0,2A44 (T2)	//-1 -> BONDdata +0x2A44	seemingly always -1
+LW	T4,0000 (V1)
+ADDU	T5,T4,V0	//T5= offset in BONDdata
+JR	RA
+SW	T3,2A50 (T5)	//1-> BONDdata +2A50 +offset	don't update model
+
+
+--
+7F039DDC	EE	cuba circular camera
+EE.012C.0064.0012.002E.FFBA.1C71
+  .    .    .    .ppp6.
+expanded data written to 80079A00
+3F882E37 3AE231D6 43960000 42C80000
+C28C0000 0000002E
+
+--
+7F039EE8	EF	Start cuba credits
+ADDIU	T7,R0,0001
+LUI	AT,8003
+SW	T7,643C (AT)	//1->8003643C
+RETURN...
+
+--
+7F039F00	F0.rr	return when credits finished
+LUI	T2,8003
+LW	T2,643C (T2)	//T2=8003643C
+ADDIU	AT,R0,0002
+OR	A0,S6,R0
+BNE	T2,AT,7F039F2C	//return if 8003643C=2
+OR	A1,S2,R0
+
+--
+7F039F38	F1.rr	if objectives complete, return
+--
+7F039F6C	F2.##.rr	if selected Bond# (0-3), return
+JAL	7F01D56C
+NOP
+LB	T1,0001 (S1)
+...
+BNEL	V0,T1,7F039FA0
+
+7F01D56C:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	A0,8003
+JAL	7F01EBC0
+LW	A0,A8E8 (A0)	//A0=8002A8E8	folder#
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+
+7F01EBC0:
+SW	A0,0000 (SP)
+JR	RA
+OR	V0,R0,R0
+
+--
+7F039FA8	F3.rr	if player pickups disabled, return
+LUI	T4,8003
+LW	T4,64B4 (T4)
+...
+BEQL	T4,R0,7F039FD8
+...
+
+--
+7F039FE0	F4.0s.xx.yy	Plays X-themes	slot# =0-3; play for x/y seconds
+OR	V0,S1,R0
+ADDIU	S1,S1,0004
+ADDIU	S2,S2,0004
+LB	A0,0001 (V0)
+LBU	A1,0002 (V0)
+JAL	7F0C14FC
+LBU	A2,0003 (V0)
+
+
+-7F0C14FC:
+LUI	T6,8009
+ADDIU	T6,T6,C608	//T6= 8008C608
+SLL	V0,A0,0x2	//V0= s * 4
+ADDU	V1,V0,T6	//V1= 8008C608 + offset
+LW	T7,0000 (V1)
+ADDIU	A0,R0,003C
+BNEZ	T7,7F0C1550	//if not 0, kill
+NOP
+MULTU	A1,A0
+ADDIU	T8,R0,0001
+LUI	AT,8009
+SW	T8,0000 (V1)	//1-> 8008C608 + offset
+ADDU	AT,AT,V0
+MFLO	T9		//T9= x * 60
+SW	T9,C618 (AT)	//T9 -> 8008C618 + offset
+LUI	AT,8009
+MULTU	A2,A0
+ADDU	AT,AT,V0
+MFLO	T0		//T0= y * 60
+SW	T0,C628 (AT)	//A0*A2 -> 8008C628 + offset
+NOP
+JR	RA
+NOP
+
+--CALLED @
+7F0C13F8:
+LW	A1,0000 (A3)	//A1= first value byte
+BNEL	A1,R0,7F0C1414
+	LW	V0,0000 (A0)	//V0= second value
+			//if you don"t have music, do this:
+LW	T6,0000 (A0)
+BLEZL	T6,7F0C1488	//test next music sample
+	ADDIU	A0,A0,0004
+LW	V0,0000 (A0)
+-7F0C1414		//there"s some music yo
+LUI	T7,8009
+ADDIU	T7,T7,C628	//T7= 8008C628
+SLT	AT,V0,A2	//TRUE if second value < 1
+BNEZ	AT,7F0C1434
+ADDU	V1,T0,T7	//V1= P->third value
+			//if > 1, --value and save back
+SUBU	T8,V0,A2	//T8= second value - 1
+BEQ	R0,R0,7F0C1438
+SW	T8,0000 (A0)
+-7F0C1434		//if <1, set to zero
+SW	R0,0000 (A0)	//second value = 0
+-7F0C1434
+LW	V0,0000 (V1)	//V0= third value
+BEQ	V0,R0,7F0C1484
+SLT	AT,V0,A2	//TRUE if third value < 1
+BNEZ	AT,7F0C1454
+SUBU	T9,V0,A2	//T9= value--
+BEQ	R0,R0,7F0C1458
+SW	T9,0000 (V1)	//save third value back
+-7F0C1454
+SW	R0,0000 (V1)	//if <=1, third value =0
+-7F0C1458
+LW	T3,0000 (V1)	//T3= third value
+BEQL	T3,R0,7F0C1484
+	SW	R0,0000 (A3)
+BNEZ	A1,7F0C1478	//if first value=0, check second value instead
+NOP
+LW	T4,0000 (A0)	//T4= second value
+BEQL	T4,R0,7F0C1488
+	ADDIU	A0,A0,0004
+-7F0C1478
+BEQ	R0,R0,7F0C1484
+ADDIU	T2,R0,0001	//T2= 1
+Then itterate to next music thingy
+
+--
+7F03A004	F5.xx	turn off music in slot 0-3 or all music (FF)
+(should not be larger than 0x3.  if < 0, resets all values at 8008C608)
+OR	V0,S1,R0
+ADDIU	S1,S1,0002
+ADDIU	S2,S2,0002
+JAL	7F0C1558
+LB	A0,0001 (V0)
+RETURN...
+
+-7F0C1558:
+BLTZ	A0,7F0C1574
+LUI	AT,8009
+-7F0C1560:
+SLL	T6,A0,0x2	//T6= A0->pointer offset
+LUI	AT,8009
+ADDU	AT,AT,T6
+JR	RA
+SW	R0,C608 (AT)	//0-> 8008C608 + 4*A0
+-7F0C1574:	//reset (A0 < 0)
+SW	R0,C608 (AT)	//0->8008C608
+LUI	AT,8009
+SW	R0,C618 (AT)
+LUI	AT,8009
+SW	R0,C628 (AT)
+LUI	AT,8009
+SW	R0,C60C (AT)
+LUI	AT,8009
+SW	R0,C61C (AT)
+LUI	AT,8009
+SW	R0,C62C (AT)
+LUI	AT,8009
+SW	R0,C610 (AT)
+LUI	AT,8009
+SW	R0,C620 (AT)
+LUI	AT,8009
+SW	R0,C630 (AT)
+LUI	AT,8009
+SW	R0,C614 (AT)
+LUI	AT,8009
+SW	R0,C624 (AT)
+LUI	AT,8009
+SW	R0,C634 (AT)
+JR	RA
+NOP
+
+
+
+--
+7F03A020	F6	BLOW THE SNOT OUT OF EVERYTHING
+-7F08BFC4:	accepts A0=delay to trigger
+LUI	T7,8005
+LW	T7,837C (T7)	//T7=8004837C= ???
+ADDIU	T6,R0,0001
+LUI	AT,8003
+SW	T6,6444 (AT)	//1-> 80036444	plastique!
+LUI	AT,8008
+ADDU	T8,A0,T7
+SW	T8,999C (AT)	//offset from current time to execution
+LUI	AT,8008
+JR	RA
+SW	R0,99A0 (AT)	//0-> 800799A0	timer to event trigger
+
+--
+7F03A034	F7.##.rr	if # < dead scientists, return
+JAL	7F06A770
+NOP
+COMPARE AND RETURN
+
+-7F06A770:
+LUI	T6,8008
+LW	T6,A0B4 (T6)	//T6=8007A0B4= 80079EF0
+JR	RA
+LW	V0,006C (T6)	//V0= +0x6C.  guess these are player statistics...
+
+--
+7F03A074	F8.##.rr	if guardID#'s 00200000 flag set, unset and return ???
+OR	A0,S7,R0
+JAL	7F033040	//returns V0= guard handle
+LBU	A1,0001 (S1)
+BEQL	V0,R0,7F03A0CC
+	ADDIU	S2,S2,0003
+LW	T8,0014 (V0)	//T8= guard bitflags
+LUI	AT,FFDF
+ORI	AT,AT,FFFF	//AT= FFDFFFFF
+SLL	T9,T8,0xA	//T9= T8 * 0x400
+BGEZL	T9,7F03A0CC
+	ADDIU	S2,S2,0003
+LW	T5,0014 (V0)	//T5= guard bitflags
+OR	A0,S6,R0
+OR	A1,S2,R0
+AND	T6,T5,AT	//T6= flags with 00200000 untoggled
+SW	T6,0014 (V0)	//save it back
+STD. RETURN
+
+--
+7F03A0D4	F9	set "Killed in Action"
+ADDIU	T7,R0,0001
+LUI	AT,8003
+SW	T7,A928 (AT)	//1->8002A928
+RETURN...
+
+--
+7F03A0EC	FA	Fawn on shoulder
+used only in "Nat follows you" routines (train, bunker, archives)
+
+JAL	7F03364C
+OR	A0,S7,R0
+RETURN...
+
+-7F03364C: (not all listed)
+JAL	7F02A258	//test if guard not dead
+SW	A0,0018 (SP)
+...	if V0 not valid, return V0=0
+JAL	7F0244AC
+LW	A0,0018 (SP)
+ADDIU	V0,R0,0001
+
+-7F0244AC: (NOT ALL LISTED)				START HERE!!!!!!!!!!!!
+SW	S0,0020 (SP)
+JAL	7F02D184
+OR	S0,A0,R0	//S0= GUARDdata
+ADDIU	T6,R0,0012
+SB	T6,0007 (S0)	//T6= guard looks around self
+JAL	7000A450
+SB	R0,0008 (S0)
+LUI	A1,3EB3
+LUI	A2,3F0F
+ORI	A2,A2,5C29	//A2= 3F0F5C29
+ORI	A1,A1,3333	//A1= 3EB33333
+SW	V0,0028 (SP)
+JAL	7F023B5C
+OR	A0,S0,R0	//A0= GUARDdata
+LW	A2,0028 (SP)	//A2=V0= ???
+LUI	T7,8007
+LUI	AT,4180
+MTC1	AT,F4
+LW	T7,9538 (T7)	//T7= 80079538
+LUI	T8,0000
+ADDIU	T8,T8,4384	//T8= 00004384
+LW	A0,001C (S0)	//A0= model data handle
+ANDI	T9,A2,0001
+OR	A2,T9,R0	//A2= test for 1
+SWC1	F0,0010 (SP)
+ADDIU	A3,R0,0000
+SWC1	F4,0014 (SP)
+JAL	7F06FCA8
+ADDU	A1,T7,T8
+LW	A0,001C (S0)
+JAL	7F06FDE8
+LUI	A1,40E0
+reset vars and RETURN...
+
+--7F06FDE8:
+LW	V0,0020 (A0)	//V0= 
+MTC1	A1,F12
+LUI	AT,BF80
+BEQL	V0,R0,7F06FE2C
+	MTC1	AT,F8
+LHU	T6,0004 (V0)
+ADDIU	T7,T6,FFFF
+MTC1	T7,F4
+NOP
+CVT.S.W	F6,F4
+C.LT.S	F12,F6
+NOP
+BC1FL	7F06FE2C
+MTC1	AT,F8
+JR	RA
+SWC1	F8,003C (A0)
+-7F06FE2C
+NOP
+SWC1	F8,003C (A0)
+JR	RA
+NOP
+
+--
+7F03A100	FB	switch to x-sky (if gas-releasing objects, sets them off)
+LUI	T2,8003
+ADDIU	T2,T2,0A88	//T2= 80030A88
+LW	AT,0000 (T2)	//AT= ???
+ADDIU	A0,SP,0090
+SW	AT,0000 (A0)	//??? -> SP+0x90
+LW	T3,0004 (T2)	//T3= ???+4
+SW	T3,0004 (A0)	//T3 -> SP+0x94
+LW	AT,0008 (T2)	//AT= ???+8
+JAL	7F055E64
+SW	AT,0008 (A0)	//AT -> SP+0x98
+RETURN...
+
+--
+7F03A134	FC.##	drop tagged obj from rack, guard, etc
+speculative, but seems to unlink tagged object from whatever it is linked to.
+ie: drop a monitor from a hanging monitor rack, guard drops weapon, etc
+40 tag only used by monitor rack, 80 tag set when an object falls to ground.
+links to 75030 and 73DC0, both of which are used to slave object position.
+
+JAL	7F0570C0	//returns V0= handle to tagged obj.
+LBU	A0,0001 (S1)
+BEQL	V0,R0,7F03A1E4
+	ADDIU	S2,S2,0002
+LW	T8,0010 (V0)	//T8= 8006 of tagged obj
+BEQL	T8,R0,7F03A1E4
+	ADDIU	S2,S2,0002
+LW	A0,0010 (V0)	//A0= 8006 of tagged obj
+JAL	7F03FDA8	//mess with position offset smidgeons
+SW	V0,0088 (SP)
+LW	V1,0088 (SP)	//V1= obj. handle
+LW	T9,0064 (V1)	//T9= obj + 0x64 (object flag field)
+ANDI	T5,T9,0080
+BEQL	T5,R0,7F03A1E4	//keep going if 00000080 toggled
+	ADDIU	S2,S2,0002
+LW	V0,006C (V1)	//V0= obj + 0x6C (pointer to position offset data)
+LW	T6,0000 (V0)	//T6= value there
+ORI	T7,T6,0601
+SW	T7,0000 (V0)	//store the value back masked w/ 00000601
+LW	A0,0010 (V1)	//A0= 8006 of tagged obj.
+JAL	7F03FE14	//sets rooms at 0xCC,0xCD
+SW	V1,0088 (SP)
+LW	V1,0088 (SP)	//V1= obj. handle
+LW	A0,006C (V1)	//A0= obj + 0x6C (pointer to position offset data)
+JAL	7F057FD0	//set up smidgeon data
+ADDIU	A0,A0,0020
+LW	V1,0088 (SP)	//V1= obj. handle
+LUI	AT,8005
+LW	T4,006C (V1)	//T4= obj + 0x6C (pointer to position offset data)
+SWC1	F20,0004 (T4)
+LWC1	F8,2974 (AT)	//F8=80052974= 
+LW	T1,006C (V1)	//T1= obj +0x6C (pointer to position offset data)
+LUI	AT,8005
+SWC1	F8,0008 (T1)	//
+LW	T2,006C (V1)	//T2= obj +0x6C (pointer to position offset data)
+SWC1	F20,000C (T2)
+LW	T3,006C (V1)	//T3= obj +0x6C (pointer to position offset data)
+SWC1	F20,0010 (T3)
+LWC1	F4,2978 (AT)	//F8=80052978= 
+LW	T8,006C (V1)	//T8= obj +0x6C (pointer to position offset data)
+SWC1	F4,0014 (T8)
+LW	T9,006C (V1)	//T9= obj +0x6C (pointer to position offset data)
+SWC1	F20,0018 (T9)
+ADDIU	S2,S2,0002
+-7F03A1E4:
+BEQ	R0,R0,7F03558C
+ADDIU	S1,S1,0002
+
+--7F03FDA8:	routine that translates a slaved object to an ordinary one
+ie. when guards drop guns, you shoot an object, etc
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+LW	V1,0004 (A0)	//V1= obj data handle
+LW	V0,0064 (V1)	//V0= obj +0x64 (object flag field)
+ANDI	T6,V0,0040
+BEQ	T6,R0,7F03FDDC	//continue if flags= 00000040	(slave obj position)
+ANDI	T8,V0,0080
+JAL	7F03FC80	//returns V0= 73D30 smidgeon data
+SW	V1,001C (SP)
+LW	V1,001C (SP)	//V1= obj data handle
+LW	T7,006C (V1)	//T7= obj +0x6C (pointer to position offset data)
+BEQ	R0,R0,7F03FE04
+SW	V0,0044 (T7)	//smidgeon handle -> position offset +0x44
+-7F03FDDC
+BNEL	T8,R0,7F03FE08	//return if flags= 00000080
+	LW	RA,0014 (SP)
+JAL	7F03FC80	//returns V0= 73D30 smidgeon data
+SW	V1,001C (SP)
+LW	V1,001C (SP)	//V1= obj data handle
+BEQ	V0,R0,7F03FE04
+SW	V0,006C (V1)
+LW	T9,0064 (V1)	//T9= obj +0x64
+ORI	T0,T9,0080	//T0= obj with 00000080 untoggled
+SW	T0,0064 (V1)	//save it back
+-7F03FE04
+LW	RA,0014 (SP)
+-7F03FE08
+ADDIU	SP,SP,0020
+JR	RA
+NOP
+
+--7F03FE14:
+LW	V0,0004 (A0)	//V0= OBJdata
+OR	V1,R0,R0
+LW	A1,0064 (V0)	//A1= obj flag field
+ANDI	T6,A1,0040
+BEQ	T6,R0,7F03FE38	//if not controlled by another object, branch
+ANDI	T8,A1,0080
+LW	T7,006C (V0)	//T7= obj position offset data
+BEQ	R0,R0,7F03FE44
+LW	V1,0044 (T7)	//V1= obj position offset data +0x44 (?)
+-7F03FE38
+BEQ	T8,R0,7F03FE44	//if not 00000080, branch
+NOP
+LW	V1,006C (V0)	//V1= obj position offset data
+-7F03FE44
+BEQ	V1,R0,7F03FE80
+NOP
+LW	T9,0000 (V1)	//T9= obj position offset 0x0 (type ID?)
+ADDIU	T2,R0,00FF
+ADDIU	T3,R0,00FF
+ORI	T0,T9,0004
+SW	T0,0000 (V1)	//toggle 0x4 on ID value
+LW	V0,0014 (A0)	//V0= room pointer
+BEQL	V0,R0,7F03FE80
+	SB	T3,00CC (V1)
+LBU	T1,0003 (V0)	//T1= room#
+SB	T2,00CD (V1)
+JR	RA
+SB	T1,00CC (V1)
+-7F03FE80
+JR	RA
+NOP
+
+--7F057FD0:	blank data at slave position +0x20
+MTC1	R0,F2		//F2= 0.0
+LUI	AT,3F80
+MTC1	AT,F0		//F0= 3F800000 (1.0)
+SWC1	F2,0004 (A0)	//
+SWC1	F2,0008 (A0)
+SWC1	F2,000C (A0)
+SWC1	F2,0010 (A0)
+SWC1	F2,0018 (A0)
+SWC1	F2,001C (A0)
+SWC1	F2,0020 (A0)
+SWC1	F2,0024 (A0)
+SWC1	F2,002C (A0)
+SWC1	F2,0030 (A0)
+SWC1	F2,0034 (A0)
+SWC1	F2,0038 (A0)
+SWC1	F2,0000 (A0)
+SWC1	F2,0014 (A0)
+SWC1	F2,0028 (A0)
+JR	RA
+SWC1	F0,003C (A0)
+
+--7F03FC80:
+ADDIU	SP,SP,FFD0
+LUI	V0,8007
+LUI	A0,8007
+SW	RA,0014 (SP)
+ADDIU	A2,R0,FFFF
+ADDIU	A0,A0,5030	//A0= 80075030	(00000040 obj smidgeon)
+ADDIU	V0,V0,3DC0	//V0= 80073DC0	(00000080 obj smidgeon)
+OR	A1,R0,R0
+LUI	V1,8000
+-7F03FCA4		//test for 80000000 in 0080 smideon table
+LW	T6,0000 (V0)	//T6= tableID
+ADDIU	V0,V0,00EC
+SLTU	AT,V0,A0	//20 (0x14) of these max.  TRUE if at end of list
+AND	T7,T6,V1
+BEQ	T7,R0,7F03FCD4	//keep searching for 80000000
+LUI	A3,8007
+ADDIU	A3,A3,3DC0
+ADDU	A0,A3,A1	//A0= current smidgeon (offset + base)
+JAL	7F03FBFC	//blank out (reset) smidgeon info
+SW	A0,0020 (SP)
+BEQ	R0,R0,7F03FD98
+LW	V0,0020 (SP)	//V0= current smidgeon
+-7F03FCD4
+BNEZ	AT,7F03FCA4
+ADDIU	A1,A1,00EC
+			//
+LUI	V0,8007
+LUI	A3,8007
+ADDIU	A3,A3,3DC0	//A3= 80073DC0
+ADDIU	V0,V0,3DC0	//V0= 80073DC0
+OR	V1,R0,R0
+ADDIU	A1,R0,00EC
+ADDIU	A0,R0,0014
+-7F03FCF8
+LW	T8,00E4 (V0)	//T8= smidgeon +0xE4 (OBJdata)
+BEQL	T8,R0,7F03FD34
+	ADDIU	V1,V1,0001
+BLTZL	A2,7F03FD30	//first run, A2=counter
+	OR	A2,V1,R0
+MULTU	A2,A1		//A2*size
+LW	T9,00E8 (V0)	//T9= smidgeonCUR +0xE8 (???)
+MFLO	T1
+ADDU	T2,A3,T1	//T2= prior smidgeon
+LW	T3,00E8 (T2)	//T3= smidgeonLAST +0xE8 (???)
+SLT	AT,T9,T3	//TRUE if currrent smidgeon less than prior
+BEQL	AT,R0,7F03FD34	//save counter to A2 if true
+	ADDIU	V1,V1,0001
+OR	A2,V1,R0	//A2=counter
+-7F03FD30
+ADDIU	V1,V1,0001
+-7F03FD34
+BNE	V1,A0,7F03FCF8
+ADDIU	V0,V0,00EC
+			//
+BLTZ	A2,7F03FD98	//branch if a counter wasn't saved
+OR	V0,R0,R0
+MULTU	A2,A1
+MFLO	V1		//V1= offset to smidgeon
+ADDU	T0,A3,V1	//T0= nifty smidgeon
+LW	T4,00E4 (T0)	//T4= smidgeon +0xE4 (OBJdata)
+LW	A0,0010 (T4)	//A0= OBJ 8006
+SW	T0,0020 (SP)
+JAL	7F040CF0	//trashes the flags and position data pointer
+SW	V1,0024 (SP)
+LW	T0,0020 (SP)	//T0= nifty smidgeon
+LW	V1,0024 (SP)	//V1= offset to smidgeon
+LUI	A3,8007
+LW	V0,00E4 (T0)	//V0= smidgeon +0xE4 (OBJdata)
+ADDIU	A3,A3,3DC0	//A3= 80073DC0
+ADDU	A0,A3,V1	//A0= nifty smidgeon
+LW	T5,0064 (V0)	//T5= object flaggy things
+ORI	T6,T5,0004
+SW	T6,0064 (V0)	//save it back with 04 toggled
+JAL	7F03FBFC	//blank out (reset) smidgeon info
+SW	A0,001C (SP)
+BEQ	R0,R0,7F03FD98
+LW	V0,001C (SP)	//V0= nifty smidgeon
+-7F03FD98		//return...
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0030
+JR	RA
+NOP
+
+--7F040CF0:
+ADDIU	SP,SP,FFE0
+SW	RA,0014 (SP)
+LW	V0,0004 (A0)	//V0= OBJdata
+LW	V1,0064 (V0)	//V1= obj flaggy flags
+ANDI	T6,V1,0040
+BEQ	T6,R0,7F040D5C	//branch if not an 0040
+ANDI	T8,V1,0080
+LW	A0,006C (V0)	//A0= obj position offset data
+BEQL	A0,R0,7F040D4C
+	ADDIU	AT,R0,FFBF
+LW	A1,0044 (A0)	//A1= position offset data 0x44 (???)
+BEQ	A1,R0,7F040D38
+NOP
+OR	A0,A1,R0
+JAL	7F03FB70
+SW	V0,001C (SP)
+LW	V0,001C (SP)	//V0= OBJdata
+LW	A0,006C (V0)	//A0= obj position offset data
+-7F040D38		//no pointer @ position offset data 0x44
+JAL	7F03FE88
+SW	V0,001C (SP)
+LW	V0,001C (SP)	//V0= OBJdata
+LW	V1,0064 (V0)	//V1= obj flaggy flags
+ADDIU	AT,R0,FFBF
+-7F040D4C		//no position offset data available...
+AND	T7,V1,AT	//untoggle the 00000040 flag
+SW	R0,006C (V0)	//kill the position offset data
+BEQ	R0,R0,7F040D88
+SW	T7,0064 (V0)
+-7F040D5C		//0040 not toggled
+BEQL	T8,R0,7F040D8C	//if not at least an 0080, leave...
+	LW	RA,0014 (SP)
+LW	A0,006C (V0)	//A0= obj position offset data
+JAL	7F03FB70
+SW	V0,001C (SP)
+LW	V0,001C (SP)	//V0= OBJdata
+ADDIU	AT,R0,FF7F
+LW	T9,0064 (V0)	//T9= obj flaggy flags
+SW	R0,006C (V0)	//kill the position offset data
+AND	T0,T9,AT
+SW	T0,0064 (V0)	//untoggle 00000080 from flags
+-7F040D88
+LW	RA,0014 (SP)
+-7F040F8C
+ADDIU	SP,SP,0020
+JR	RA
+NOP

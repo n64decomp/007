@@ -1,0 +1,823 @@
+To disable cursor, just don't call the "draw cursor" routine.
+If disabled, also skip over "control stick tracking".
+
+
+7F010848:	MP options interface
+ADDIU	SP,SP,FFC0
+LUI	AT,4270
+SW	RA,0014 (SP)
+MTC1	AT,F12
+SW	R0,003C (SP)
+SW	R0,0038 (SP)
+SW	R0,0034 (SP)
+SW	R0,0030 (SP)
+SW	R0,002C (SP)
+SW	R0,0028 (SP)
+SW	R0,0024 (SP)
+SW	R0,0020 (SP)
+JAL	70004544
+SW	R0,001C (SP)
+//
+LUI	AT,8005
+JAL	70004590	;F12->page width
+LWC1	F12,1A80 (AT)	;F12=80051A80: 
+LUI	AT,42C8
+MTC1	AT,F12
+LUI	AT,8005
+JAL	70004650	;set page height
+LWC1	F14,1A84 (AT)	;F14=80051A84: 
+JAL	70004534
+OR	A0,R0,R0
+//7F0108B8:	back one menu if only 1 player
+JAL	7000B9F8	;V0= #controllers plugged in
+NOP
+SLTI	AT,V0,0002
+BEQ	AT,R0,7F0108D0	;branch if >1
+ADDIU	A0,R0,0006	;A0=6: Mode menu
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0	;A1=0
+LUI	A0,8003
+JAL	7F00D7FC	;set cursor position to mode setting A0
+LW	A0,A8F0 (A0)	;A0=8002A8F0: mode
+//7F0108D0:	45400	set # players to max if invalid
+JAL	7000B9F8	;V0= #controllers plugged in
+NOP
+LUI	T6,8003
+LW	T6,B520 (T6)	;T6=8002B520: 
+SLT	AT,V0,T6
+*BEQ	AT,R0,7F010900
+*NOP
+JAL	7000B9F8	;V0= #controllers plugged in
+NOP
+JAL	7F010608	;initialize MP menu
+OR	A0,V0,R0	;A0=V0: #players
+//7F0108FC:	45430	detect submenus
+*LUI	AT,8003
+*LB	V0,B53B (AT)	;8002B53B=TRUE if editting game length
+*BEQ	V0,R0,+7F010900	;disregard if not in submenu
+SW	R0,97CC (AT)
+//7F010908:	detect button controls
+OR	A0,R0,R0
+JAL	7000C3AC	;V0= player A0's buttons A1 held
+ORI	A1,R0,EF3F	;A,Z,B,left, right, up	;less expensive to just mask for what you want
+*OR	A2,R0,V0
+//7F010918:	detect left
+*JAL	7F0A4F50	;V0=TRUE if holding left on stick
+*ANDI	AT,A2,0222	;TRUE if left pressed
+//7F010920:	buttons
+*OR	AT,AT,V0
+*BEQ	AT,R0,+4	;branch if not left
+*LUI	A1,8007
+*ADDIU	AT,R0,0001
+*SB	AT,97D1 (A1)
+*SB	R0,97D2 (A1)
+//7F010938:	detect right
+*JAL	7F0A4F74	;V0=TRUE if holding right on stick
+*ANDI	AT,A2,0111
+*OR	AT,AT,V0
+*LUI	T2,8003
+*LBU	T2,B544 (T2)	;8002B544: mask flags
+*ANDI	V0,T2,0080	;TRUE if points locked
+*XORI	V0,V0,0080
+*OR	AT,AT,V0
+*BEQ	AT,R0,+3
+*ADDIU	AT,R0,0001
+*SB	AT,97D2 (A1)
+*SB	R0,97D1 (A1)
+//7F010968:	kill menu
+*ANDI	AT,A2,E000	;TRUE if A,Z,B
+*BEQ	AT,R0,+3	;branch if not killing menu
+*NOP
+*JAL	7F010170	;Toggle menu and flags
+NOP
+//7F01097C:	detect up
+*JAL	7F0A5028	;holding up on stick
+*ANDI	AT,A2,0808
+*OR	AT,AT,V0
+*BNEZL	AT,+alter
+*ADDIU	A0,R0,0001
+//7F010990:	detect down
+*JAL	7F0A504C	;holding down on stick
+*ANDI	AT,A2,0404
+*OR	AT,AT,V0
+*BNEZL	V0,R0,+alter
+*ADDIU	A0,R0,FFFF
+*OR	A0,R0,R0
+//7F0109A8:	alter
+*LB	V0,97D1 (A1)	;TRUE if points highlighted
+*BEQ	V0,+3		;branch if changing points
+NOP
+*JAL	7F010EE0	;change points
+NOP
+*BNE	V0,+3
+NOP
+//7F0109C4:	minutes
+*JAL	7F010198	;change minutes
+NOP
+*BEQ	R0,R0,7F010F00
+NOP
+//7F0109D4:	45504	fry all highlighting before revision
+OR	A0,R0,R0
+JAL	7000C30C	;V0= player A0's buttons A1 held
+ORI	A1,R0,A000	;A,Z button
+BNEZ	V0,7F010AF4
+LUI	AT,8003
+SW	R0,A8E4 (AT)
+SW	R0,A8DC (AT)
+SW	R0,A8E0 (AT)
+LUI	AT,8007
+SW	R0,97C8 (AT)
+SW	R0,97D0 (AT)
+//7F010970:		test if tab 3 highlighted
+JAL	7F00A39C	;V0=TRUE if cursor on tab 3
+-ADDIU	V1,R0,0001
+BEQ	V0,R0,7F010984
+*LUI	T7,8003
+BEQ	R0,R0,7F010AF4
+*SW	V1,A8E4 (T7)
+//7F010984:		test if tab 1 highlighted
+JAL	7F00A1E4	;V0=1 if cursor on tab 1
+NOP
+BEQ	V0,R0,7F0109A4
+-LWC1	F4,A90C (T7)	;F4=8002A90C: vert.pos.
+BEQ	R0,R0,7F010AF4
+*SW	V1,A8DC (T7)
+//7F0109A4:		vertical rollover tests
+TRUNC.W.S	F6,F4
+MFC1	V0,F6		;V0=vert.pos
+*LBU	T2,B544 (T7)	;T2=8002B544: MP option locks
+LUI	T1,8007
+//7F0109C0:		rollover trigger bypasses for locked MP options
+SLTI	AT,V0,0119
+BNEZ	AT,7F0109E0
+ANDI	T0,T2,0040	;T0=aim adjustment lock
+BNEL	T0,R0,7F010AF4
+SB	V1,97D0 (T1)
+//7F0109E0:	
+SLTI	AT,V0,0105
+BNEZ	AT,7F010A08
+ANDI	T0,T2,0020	;T0=control style lock
+BNEL	T0,R0,7F010AF4
+SB	V1,97CF (T1)
+//7F010A08:
+SLTI	AT,V0,00F1
+BNEZ	AT,7F010A30
+ANDI	T0,T2,0010	;T0=health lock
+BNEL	T0,R0,7F010AF4
+SB	V1,97CE (T1)
+//7F010A30:
+SLTI	AT,V0,00DD
+BNEZ	AT,7F010A58
+ANDI	T0,T2,0008	;T0=character lock
+BNEL	T0,R0,7F010AF4
+SB	V1,97CC (T1)
+//7F010A58:
+SLTI	AT,V0,00C9
+BNEZ	AT,7F010A80
+ANDI	T0,T2,0004	;T0=weapon select lock
+BNEL	T0,R0,7F010AF4
+SB	V1,97CD (T1)
+//7F010A80:	455B0
+SLTI	AT,V0,00B5
+BNEZ	AT,7F010AA8
+ANDI	T0,T2,0002	;T0=game length lock
+BNEL	T0,R0,7F010AF4
+SB	V1,97CB (T1)
+//7F010AA8:
+SLTI	AT,V0,00A1
+BNEZ	AT,7F010AD0
+ANDI	T0,T2,0001	;T0=stage select lock
+BNEL	T0,R0,7F010AF4
+SB	V1,97CA (T1)
+//7F010AD0:	
+SLTI	AT,V0,008D
+BNEL	AT,R0,7F010AF4
+SB	V1,97C8 (T1)	;V1=800697C8: highlight players
+SB	V1,97C9 (T1)	;V1=800697CC: highlight scenario
+//7F010AF4:		start controller detection
+OR	A0,R0,R0
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,1000
+BEQ	V0,R0,7F010B2C
+ADDIU	V1,R0,0001
+//7F010B08:		start a multiplayer game
+LUI	AT,8003
+LUI	A0,8006
+SW	V1,A8D0 (AT)
+LW	A0,3720 (A0)
+ADDIU	A1,R0,00C7
+JAL	70008E08
+OR	A2,R0,R0
+BEQ	R0,R0,7F010CB0
+NOP
+//7F010B2C:	detect selecting currently highlighted option
+OR	A0,R0,R0
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ORI	A1,R0,A333
+BEQ	V0,R0,7F010C80	;try B instead if none found
+ANDI	V1,V0,2626
+BEQ	V1,R0,7F010B4C
+ADDIU	V1,R0,0001
+ADDIU	V1,R0,FFFF
+LUI	AT,8003
+LW	T8,A8E4 (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,A8D8 (AT)
+LW	T8,A8DC (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,A8D0 (AT)
+//7F010B68:	detect if players selected
+LUI	AT,8007
+LB	T8,97C8 (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,003C (SP)
+//7F010B7C:	detect if scenario selected
+LB	T8,97C9 (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,0038 (SP)
+//7F010B84:	detect if stage select selected
+LB	T8,97CA (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,0034 (SP)
+//7F010B90:	detect if game length selected
+LB	T8,97CB (AT)
+BNEL	T8,R0,7F010BDC
+*SB	V1,0030 (SP)
+//7F010B9C:	detect if character selected
+LB	T8,97CC (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,002C (SP)
+//7F010BA8:	detect if weapon select selected
+LB	T8,97CD (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,0028 (SP)
+//7F010BB4:	detect if health selected
+LB	T8,97CE (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,0024 (SP)
+//7F010BC0:	detect if control style selected
+LB	T8,97CF (AT)
+BNEL	T8,R0,7F010BDC
+SW	V1,0020 (SP)
+//7F010BCC:	detect if aim adjustment selected
+LB	T8,97D0 (AT)
+*BNEL	T8,R0,7F010BDC
+*SW	V1,001C (SP)
+//7F010C80:	detect if B button pressed
+OR	A0,R0,R0
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,4000
+BEQ	V0,R0,7F010CB0
+ADDIU	V1,R0,0001
+LUI	AT,8003
+SW	V1,A8D8 (AT)	;V1->8002A8D8: tab 3 selected (same as 'back')
+//7F010BDC:	play selected sound effect
+OR	A2,R0,R0
+ADDIU	A1,R0,00C7
+LUI	A0,8006
+JAL	70008E08
+LW	A0,3720 (A0)
+//7F010CB0:	show folder components
+LUI	A0,8003
+JAL	7F00B724	;disable all switches in object A0 (hide all)
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+OR	A1,R0,R0	;A1=0: item #: tabs on side of folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0001	;A1=1: item #: basic folder
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0003	;A1=3: item #: OHMSS
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+LUI	A0,8003
+LW	A0,A95C (A0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,0005	;A1=5: item #: CONFIDENTIAL - multi
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1: visible
+//stick tracking is placed earlier
+JAL	7F009B84	;control stick tracking
+NOP
+//7F010D14:	detect if 'back' selected
+*LUI	T7,8003
+*LW	T6,A8D8 (T7)	;T6=8002A8D8: TRUE if tab3 selected
+BEQ	T6,R0,7F010D48	;branch if selected
+*ADDIU	A0,R0,0006	;A0=6: menu 6 - mode select folder
+//7F010D2C:	backtrack one folder...
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0	;A1=0: current menu
+LUI	A0,8003
+JAL	7F00D7FC	;set cursor position to mode setting A0
+LW	A0,A8F0 (A0)	;A0=8002A8F0: mode
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010D48:	detect if 'start' selected
+*LW	T6,A8D0 (T7)	;T7=8002A8D0: TRUE if tab1 selected
+LW	T3,003C (SP)
+*BEQ	T6,R0,7F010DF4
+//7F010D5C:	start MP game!
+*LH	T8,B534 (T7)
+SLL	T9,T8,0x3
+*SH	T8,B076 (T7)
+*ADDU	V0,T7,T9
+LB	V0,B07B (V0)
+BGEZ	V0,7F010DD0
+*SW	V0,A8F4 (T7)
+//7F010D84:	handle random stage select
+JAL	7000A450
+LUI	T0,8003
+LHU	AT,B074 (T0)
+DIVU	V0,AT
+MFHI	V1
+ADDIU	A0,V1,0001
+SLL	AT,A0,0x3
+ADDU	T1,T0,AT
+LBU	V0,B07F (T1)
+ANDI	V0,V0,0001
+BNEZ	V0,7F010D84
+LB	V0,B07B (T1)
+SW	V0,A8F4 (T0)
+JAL	7F0100D0
+SH	A0,B076 (T0)
+BEQ	V0,R0,7F010D84
+NOP
+//7F010DD4:
+ADDIU	T2,R0,FFFF
+LUI	AT,8003
+SW	T2,A8F8 (AT)
+ADDIU	A0,R0,000B
+JAL	7F01A5D4	;set menu A0 to mode A1
+ADDIU	A1,R0,0001
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//
+NOP
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+*NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+*NOP
+NOP
+NOP
+NOP
+NOP
+//7F010DF4:	press A: 'Players' selected
+BEQ	T3,R0,7F010E34
+LW	T4,0038 (SP)
+JAL	7000B9F8	;V0= #controllers plugged in
+ADDIU	T4,R0,0001
+LUI	V1,8003
+LW	V1,B520 (V1)	;V1=8002B520: 
+ADDU	A0,V1,T3
+SLT	AT,V0,A0
+BNEL	AT,R0,7F010E24
+ADDIU	A0,R0,0002
+BEQL	A0,T4,7F010E24
+ADDU	A0,R0,V0	;A0=V0: #players
+JAL	7F010608	;initialize MP menu
+NOP
+BEQ	R0,R0,7F010F00
+NOP
+//7F010E34:	press A: 'Scenario' selected
+BEQ	T4,R0,7F010E50
+LW	T5,0034 (SP)
+ADDIU	A0,R0,0013
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010E50:	press A: 'Level' selected
+BEQ	T5,R0,7F010E6C
+*LB	T6,0030 (SP)
+ADDIU	A0,R0,0012
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010E6C:	press A: 'Game Length' selected
+BEQ	T6,R0,7F010E84
+LW	T7,002C (SP)
+JAL	7F010170	;Toggle menu and flags
+*NOP
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010E84:	press A: 'Select Character' selected
+BEQ	T7,R0,7F010EA0
+LW	T8,0028 (SP)
+ADDIU	A0,R0,000F
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010EA0:	press A: 'Weapons' selected
+BEQ	T8,R0,7F010EB8
+LW	T9,0024 (SP)
+JAL	7F0C65CC
+OR	A0,R0,T8
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010EB8:	press A: 'Health' selected
+BEQ	T9,R0,7F010ED4
+LW	T0,0020 (SP)
+ADDIU	A0,R0,0010
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010ED4	press A: 'Control Style' selected
+BEQ	T0,R0,7F010EF0
+LW	T1,001C (SP)
+ADDIU	A0,R0,0011
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0
+BEQ	R0,R0,7F010F04
+LW	RA,0014 (SP)
+//7F010EF0:		press A: 'Aim' selected
+BEQL	T1,R0,7F010F04
+LW	RA,0014 (SP)
+JAL	7F01023C
+OR	A0,R0,T1
+//7F010F00:	45A30	return!
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0040
+JR	RA
+NOP
+
++_+
+
+7F010170	44CA0	toggle game length editting; ONLY use when hovering over thingy
+3C018003	LUI	AT,8003
+802EB53B	LB	T6,B53B (AT)	;T6=menu flag
+39CE0001	XORI	T6,T6,0001
+A02EB53B	SB	T6,B53B (AT)	;toggle menu
+3C018006	LUI	AT,8007
+AC2097D0	SW	R0,97D0 (AT)
+A02E97D1	SB	T6,97D1 (AT)
+39CE0001	XORI	T6,T6,0001
+03E00008	JR	RA
+A02E97CB	SB	T6,97CB (AT)
+//7F010198
+
+7F010ED8/7F010EE0		advance points/Lives
+	accepts: A0=increment/decrement,
+//7F010ED8:	45A08	lives
+10000002	BEQ	generic
+24050002	ADDIU	A1,R0,0002
+//7F010EE0:	45A10	points
+00002825	OR	A1,R0,R0
+//7F010EE4:	45A14	generic; be sure A1 is set
+3C018005	LUI	AT,8005
+00250821	ADDU	AT,AT,A1
+842E839C	LH	T6,839C (AT)
+01C47021	ADDU	T6,T6,A0
+05C20001	BLTZL	T6,+1
+240E0064	ADDIU	T6,R0,0064
+25C4FF9C	ADDIU	A0,T6,FF9C
+5C800001	BGTZL	A0,+1
+00007021	OR	T6,R0,R0
+03E00008	JR	RA
+A42E839C	SH	T6,839C (AT)
+
+7F010198	44CC8	advance minutes/flag
+	accepts: A0=increment/decrement
+24010E10	ADDIU	AT,0E10
+00240019	MULTU	AT,A0
+3C018005	LUI	AT,8005
+8C2E8398	LW	T6,8398 (AT)
+00002012	MFLO	A0
+01C47021	ADDU	T6,T6,A0
+3C040003	LUI	A0,0003
+34844BC0	ORI	A0,4BC0 (A0)
+05C20001	BLTZL	T6,+1
+00047021	OR	T6,A0,R0
+01C42023	SUBU	A0,A0,T6
+5C800001	BGTZL	A0,+1
+00007021	OR	T6,R0,R0
+03E00008	JR	RA
+AC2E8398	SW	T6,8398 (AT)
+
++_+
+
+Flag and other time-based scores need hacking!
+7F0C38D8	V0=score, but need a V1=time as well
+used in 3 places:
+7F0BEF4C	F3A7C	run MP game
+7F0C3CD4	F8804	
+7F0C45CC	F90FC	MP watch display
+
+
+This is a slight edit, getting proper scoring for revised score thingy
+7F0C3C94	F87C4	display rank
+//7F0C3CB4:	F87E4
+AFA20078	*SW	V0,0078 (SP)
+...
+//7F0C3CD0:	F8800
+0FC30E36	-JAL	7F0C38D8	;now returns V0=score(ms), V1=time
+AFA5003C	-SW	A1,003C (SP)
+00431021	*ADDU	V0,V0,V1	;time is worth a lot more: 1 kill = 1ms!
+
+likewise here, in another display routine
+//7F0C45C8:	F90F8
+AFA30044	SW	V1,0044 (SP)
+0FC30E36	JAL	7F0C38D8
+AFA40090	SW	A0,0090 (SP)
+00431021	*ADDU	V0,V0,V1
+8FA30044	-LW	V1,0044 (SP)
+8FA40090	-LW	A0,0090 (SP)
+AC620000	-SW	V0,0000 (V1)
+8FAF00D0	-LW	T7,00D0 (SP)
+24840001	-ADDIU	A0,A0,0001
+148FFFF6	*BNE	A0,T7,7F0C45CC
+24630004	-ADDIU	V1,V1,0004
+
+The whole scoring doohick needs hacking, but for now this will patch it to play nicely with everyone else
+7F0C38D8	F8408	now returns V0=score, V1=time
+//7F0C3AF8:
+	LW	T8,0020 (T3)	T8=0x20 in player stats...
+	ADDIU	T9,T2,FFFE	T9=#players-2
+	MULTU	T8,T9
+	MFLO	T5
+0FC051D6	*JAL	7F014758	;V0=scenario
+//7F0C3B0C:	F863C
+24030002	*ADDIU	V1,R0,0002
+1443005B	*BNE	V0,V1,7F0C3C80	;branch if not The Living Daylights
+//7F0C3B14:	F8644	The Living Daylights
+008D2021	-ADDU	A0,A0,T5
+1000005A	-BEQ	R0,R0,7F0C3C84
+8D630060	*LW	V1,0060 (T3)	;A0=flag timer counter
+//7F0C3B20:	F8650	You Only Live Twice
+916E0068	LBU	T6,0068 (T3)	;T6=death counter
+240F0004	ADDIU	T7,R0,0004	;T7=4
+10000055	BEQ	R0,R0,7F0C3C80
+01EE2023	SUBU	A0,T7,T6	;A0=4-death counter	
+//next one starts one command too late
+
+*OR	V1,R0,R0	;V1=A1=time data
+//7F0C3C84:	F87B4	return...
+-LW	RA,0014 (SP)
+-ADDIU	SP,SP,0038
+-JR	RA
+-OR	V0,A0,R0	;V0=A0=score data
+
+Now, the game runtime checks
+//7F0BEED4:
+JAL	7F09A464	V0=#players
+-OR	A1,R0,R0	A1=0
+-OR	A3,V0,R0	A3=V0=#players
+-OR	A2,R0,R0	A2=0
+-BLEZ	V0,7F0BEF90	lets hope the player total isn't invalid...
+-OR	A0,R0,R0	A0=0
+-LUI	V1,8008
+-MTC1	R0,F0		F0=0
+ADDIU	V1,V1,9EE0	;V1=80079EE0=player data pointers
+//7F0BEEFC:	0xF3A2C	inserted: skip score test if points manually disabled on menu
+00000000	*NOP
+3C028003	*LUI	V0,8003
+9042B544	*LBU	V0,B544 (V0)
+30410080	*ANDI	AT,V0,0080	;YOLT scenario mask
+10200000	*BEQ	AT,R0,7F0BEFB8	;branch if points disabled
+//7F0BEF0C:	0xF3A3C
+8C620000	LW	V0,0000 (V1)	;V0=playerdata
+8C4F00D8	LW	T7,00D8 (V0)	;T7=player death register
+11E00009	*BEQ	T7,R0,7F0BEF3C	;skip this if player is alive
+8C4E0424	-LW	T6,0424 (V0)	;1: dying (allow respawn: Press Start)
+11C00006	*BEQ	T6,R0,7F0BEF38
+8C580428	LW	T8,0428 (V0)	;1 when screen fading to black
+13000004	*BEQ	T8,R0,7F0BEF38
+C44803E4	LWC1	F8,03E4 (V0)
+4608003E	C.LE.S	F0,F8
+00000000	NOP
+45030001	*BC1TL	+1
+24A50001	-ADDIU	A1,A1,0001
+//7F0BEF3C:
+AFA3001C	SW	V1,001C (SP)
+//7F0BEF4C:	F3A7C	compute and compare scores
+AFA40174	SW	A0,0174 (SP)
+AFA50170	SW	A1,0170 (SP)
+AFA6016C	SW	A2,016C (SP)
+0FC30E36	JAL	7F0C38D8	;returns V0=score, V1=time
+AFA70178	SW	A3,0178 (SP)
+0FC04111	*JAL	7F010444	;V0=gamelength: points
+0002C825	*OR	T9,V0,R0	;T9=8004839C=MP kills
+44800000	MTC1	R0,F0
+8FA3001C	LW	V1,001C (SP)	;V1=player data pointer
+0322082A	*SLT	AT,T9,V0	;TRUE if target score < players score
+8FA40174	LW	A0,0174 (SP)
+8FA50170	LW	A1,0170 (SP)
+8FA6016C	LW	A2,016C (SP)
+14200002	BNEZ	AT,7F0BEF80
+8FA70178	LW	A3,0178 (SP)
+24C60001	ADDIU	A2,A2,0001	;A2++	indicate a winner
+
+//7F0BEFB8:	You Only Live Twice
+	JAL	7F014758	;RETURNS V0=scenario
+	NOP
+	ADDIU	AT,R0,0001
+	BNE	V0,AT,7F0BF1E0	;branch if not "You Only Live Twice"
+	LUI	T7,8005
+	LW	T7,8374 (T7)
+	BEQ	T7,R0,7F0BF1E0	;branch if game running
+	NOP
+	JAL	7F09A464	;V0=#PLAYERS
+	-MTC1	R0,F0
+//7F0BEFE0
+	-NOP
+	OR	T2,V0,R0	;T2=V0=#PLAYERS
+	OR	T5,R0,R0	;T5=0
+	OR	RA,R0,R0	;RA=0
+	BLEZ	V0,7F0BF1AC	;skip if invalid player #
+	OR	T4,R0,R0	;T4=0
+	OR	A1,R0,R0	;A1=0
+	OR	A2,R0,R0	;A2=0
+	BLEZ	V0,7F0BF124
+	OR	A3,R0,R0	;A3=0
+	ANDI	T1,V0,0003
+	BEQ	T1,R0,7F0BF074
+	SLL	T3,T4,0x2
+	LUI	T8,8008
+	ADDIU	T8,T8,9EE0	;T8=p->BONDdata
+	SLL	T6,R0,0x2	
+	SLL	T9,R0,0x3	
+	SUBU	T9,T9,R0
+	ADDU	V1,T6,T8	;V1=p->player's BONDdata
+	LUI	T6,8008
+	SLL	T9,T9,0x4	;T9=offset to player's stats
+	ADDU	T7,T9,T3
+	ADDIU	T6,T6,9EF0	;T6=playerstats
+	ADDU	A0,T7,T6	;A0=player's stats
+	OR	T0,T1,R0	;T0=T1: #players
+//7F0BF044:
+	LW	T8,0000 (V1)	;T8=BONDdata
+	ADDIU	A3,A3,0001	;A3++	playercount++
+	ADDIU	V1,V1,0004
+	LW	T9,00D8 (T8)	;T9!=0 if dead	player button control
+	BNEL	T9,R0,7F0BF064	;branch if dead
+	LW	T7,0024 (A0)	;T7=playerkills
+	ADDIU	A2,A2,0001	;A2++	A2=#players dead
+	LW	T7,0024 (A0)	;T7=playerkills
+//7F0BF064:	loop for each player
+	ADDIU	A0,A0,0070	;A0=next player's stat offset
+	BNE	T0,A3,7F0BF044
+	ADDU	A1,A1,T7	;A1=death count
+	BEQ	A3,V0,7F0BF124
+//7F0BF074:	test player 1's pulse
+	LUI	T8,8008
+	SLL	T9,A3,0x3
+	SUBU	T9,T9,A3
+	ADDIU	T8,T8,9EE0
+	SLL	T6,A3,0x2
+	ADDU	V1,T6,T8	;V1=80079EE0+offset: p->BONDdata
+	SLL	T9,T9,0x4
+	ADDU	T7,T9,T3
+	LUI	T6,8008
+	ADDIU	T6,T6,9EF0
+	SLL	T9,T2,0x2
+	ADDU	T0,T9,T8
+	ADDU	A0,T7,T6	;A0=80079EF0+offset: stats
+	LW	T7,0000 (V1)	;T7=BONDdata
+	LW	T6,00D8 (T7)	;T6=player button control	!0 if dead
+	BNEL	T6,R0,7F0BF0C0	;branch if dead
+	LW	T8,0004 (V1)	;T8=next BONDdata
+	ADDIU	A2,A2,0001	;A2++
+	LW	T8,0004 (V1)
+//7F0BF0C0:	test player 2's pulse
+	LW	T9,0024 (A0)	;T9=stats+24: player1kills
+	LW	T7,00D8 (T8)	;T7=player button control	!0 if dead
+	ADDU	A1,A1,T9	;A1+=playerkills	total kills
+	BNEL	T7,R0,7F0BF0DC	;branch if dead
+	LW	T9,0008 (V1)	;T9=next BONDdata
+	ADDIU	A2,A2,0001	;A2++
+	LW	T9,0008 (V1)
+//7F0BF0DC:	test player 3's pulse
+	LW	T6,0094 (A0)	;next player's player2kills
+	LW	T8,00D8 (T9)	;T8=player button control	!0 if dead
+	ADDU	A1,A1,T6	;A1+=playerkills	total kills
+	BNEL	T8,R0,7F0BF0F8	;branch if dead
+	LW	T6,000C (V1)	;T6=next BONDdata
+	ADDIU	A2,A2,0001	;A2++
+	LW	T6,000C (V1)
+//7F0BF0F8:	test player 4's pulse
+	LW	T7,0104 (A0)	;next player's player3kills
+	ADDIU	V1,V1,0010	;V1+=10
+	LW	T9,00D8 (T6)	;T8=player button control	!0 if dead
+	ADDU	A1,A1,T7
+	BNEL	T9,R0,7F0BF118
+	LW	T8,0174 (A0)	;next player's player4kills
+	ADDIU	A2,A2,0001	;A2++
+	LW	T8,0174 (A0)
+//7F0BF118:
+	ADDIU	A0,A0,01C0
+	BNE	V1,T0,7F0BF0A8	;branch if stats not for current player?
+	ADDU	A1,A1,T8	;tally of all kills/suicides
+	SLTI	AT,A1,0002	;TRUE if tally < 2	this is what sets the game to end after Twice
+	BNEZ	AT,7F0BF19C	;branch if tally < 2
+	SLL	T7,T4,0x3
+	SUBU	T7,T7,T4
+	LUI	T6,8008
+	ADDIU	T6,T6,9EF0
+	SLL	T7,T7,0x4
+	ADDU	V1,T7,T6
+	LBU	T7,0068 (V1)	;T7=stats+68: order you lost in YOLX
+	LUI	T8,8008
+	ADDIU	T8,T8,9EE0
+	SLL	T9,T4,0x2
+	BNEZ	T7,7F0BF164	;branch if set
+	ADDU	A0,T9,T8	;A0=p->BONDdata
+	ADDIU	T6,A2,0001	;T6=A2+1
+	SB	T6,0068 (V1)	;T6->loser register
+//7F0BF164:
+	LW	V1,0000 (A0)	;V1=BONDdata
+	ADDIU	T5,T5,0001
+	LW	T9,0424 (V1)	;T9=dying register	1: dying (allow respawn)
+	BEQL	T9,R0,7F0BF1A0	;branch if not set
+	ADDIU	T4,T4,0001
+	LW	T8,0428 (V1)	;T8=blacken	1: fading to black
+	BEQL	T8,R0,7F0BF1A0	;branch if not set
+	ADDIU	T4,T4,0001
+	LWC1	F10,03E4 (V1)
+	C.LT.S	F10,F0
+	NOP
+	BC1FL	7F0BF1A0
+	ADDIU	T4,T4,0001
+	ADDIU	RA,RA,0001
+	ADDIU	T4,T4,0001
+//7F0BF1A0:
+	SLT	AT,T4,T2
+	BNEL	AT,R0,7F0BEFFC	;branch if set
+	OR	A1,R0,R0
+	ADDIU	V1,V0,FFFF	;V1=V0-1
+	SLT	AT,RA,V1
+	BNEL	AT,R0,7F0BF1D0	;branch if RA < (V0-1)
+	SLT	AT,T5,V1
+	JAL	7F0C2530
+	OR	A0,R0,R0
+	BEQ	R0,R0,7F0BF1E0
+	NOP
+//7F0BF1CC:	test if end of match
+	SLT	AT,T5,V1
+	BNEZ	AT,7F0BF1E0	;branch if T5 < (V0-1)
+	NOP
+	JAL	7F0C2520	;stop play
+	NOP
+	
+	
++_+
+	
+Set YOLX to use 7F010ED8
+Also, rig it to not tamper with the game length
+	
+//7F01048C:	44FBC	set you only live twice scenario specific settings
+24030001	*ADDIU	V1,R0,0001
+14830004	*BEQ	A0,V1,+4
+24020002	*ADDIU	V0,R0,0002
+	*NOP
+	*NOP
+3108007F	*ANDI	T0,T0,007F	;untoggle length+points bit
+	
++_+
+probably tied to it...
+//7F0C5F0C:	FAA3C
+JAL	7F014758	;V0=8002B540: scenario
+SW	A0,0058 (SP)	;SP+58=A0: #deaths
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F0C5F2C	;branch if not You Only Live Twice
+LW	A0,0058 (SP)	;A0=#deaths
+SLTI	AT,A0,0002	;TRUE if died fewer than two times
+BEQL	AT,R0,7F0C6034	;skip if no lives to live
+OR	V0,S1,R0

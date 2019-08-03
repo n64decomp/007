@@ -1,0 +1,329 @@
+patch into routine pointer @ 8004EFB8
+
+
+7F004368:	load the specific routine for object
+SLTIU	AT,T0,002F
+BEQ	AT,R0,7F004AFC
+SLL	T0,T0,0x2
+LUI	AT,8005
+ADDU	AT,AT,T0	//AT=offset (4*type)
+LW	T0,EF68 (AT)
+JR	T0
+NOP
+	
+
+7F0045C0:	type 15: Body Armor expansion routine
+0x390F0	USA
+0x	JAP
+0x	PAL
+13C0014E	BEQ	S8,R0,7F004AFC	//S8 better equal 1 (valid)
+00000000	NOP
+8E4C000C	LW	T4,000C (S2)	//T4=lower 32 bitflags
+01947824	AND	T7,T4,S4	//true if any insidious bitflags toggled
+			//this run, checked 00400008 (2pl,stack,norm)
+15E0014A	BNEZ	T7,7F004AFC	//if any killtags assigned, abort!
+00000000	NOP
+8E4E0080	LW	T6,0080 (S2)	//T6=BA value
+3C014780	LUI	AT,4780
+44813000	MTC1	AT,F6		//F6=65536.
+448E9000	MTC1	T6,F18
+02A02025	OR	A0,S5,R0	//A0=S5=obj#
+02402825	OR	A1,S2,R0	//A1=S2=cur obj pointer
+46809120	CVT.SW	F4,F18		//F4=BA value (as float)
+02603025	OR	A2,S3,R0	//A2=S3=validity flag
+46062203	DIV.S	F8,F4,F6	//F8=armor as percentage
+E6480080	SWC1	F8,0080 (S2)	//save float version of armor
+C64A0080	LWC1	F10,0080 (S2)	//F10=armor value
+0FC00767	JAL	7F001D9C	//expands data into a valid object
+E64A0084	SWC1	F10,0084 (S2)	//armor value copied to obj offset 0x84
+1000013B	BEQ	R0,R0,7F004AFC
+00000000	NOP
+
+7F001D9C:	generic object expansion
+expands most object data.  
+--------------------------
+can piggyback the validity test from object 03 (7F004730)
+That routine reads:
+BEQ	S8,R0,7F004AFC
+NOP
+LW	T4,000C (S2)	//lower 32 bitflags
+OR	A0,S5,R0
+OR	A1,S2,R0
+AND	T7,T4,S4
+BNEZ	T7,7F004AFC
+NOP
+JAL	7F001D9C
+OR	A2,S3,R0
+BEQ	R0,R0,7F004AFC
+NOP
+++++++++++++++++++++++++++
+HIJACK cheat activated at 80069655
+test if 01 at 800696A5.  If !=0 (toggled), branch to 7F004AFC!
+
+7F0045C0:	0x390F0	new type 15
+BEQ	S8,R0,7F004AFC	//S8 better equal 1 (test if object loaded)
+NOP
+*LUI	T4,8007		3C0C8007
+*LB	T7,96A5 (T4)	818F96A5
+BNEZ	T7,7F004AFC	//if cheat active, branch
+NOP
+LW	T6,0080 (S2)	//T6=BA value
+LUI	AT,4780
+MTC1	AT,F6		//F6=65536.
+MTC1	T6,F18
+OR	A0,S5,R0	//A0=S5=obj#
+OR	A1,S2,R0	//A1=S2=cur obj pointer
+CVT.SW	F4,F18		//F4=BA value (as float)  ie. 65536=00010000
+OR	A2,S3,R0	//A2=S3=validity flag
+DIV.S	F8,F4,F6	//F8=armor as percentage (100%=65536/65536)
+SWC1	F8,0080 (S2)	//save float version of armor
+LWC1	F10,0080 (S2)	//F10=armor value
+*BEQ	R0,R0,7F004738	1000004C	//piggyback 03 object validity test
+SWC1	F10,0084 (S2)	//armor value copied to obj offset 0x84
+
+0390F8	08	3C0C8007818F96A5
+039134	04	1000004C
+
+--------------------------
+curiosity stuff...
+7F004300:
+JAL	7F0BFC10	//returns V0=difficulty (-1 for multi)
+NOP
+ADDIU	T4,V0,0004	//T4=difficulty+4
+ADDIU	T5,R0,0001	//T5=1
+JAL	7F09A464	//returns V0=#players
+SLLV	S4,T5,T4	//S4=difficulty mask:	00000008	multi	(-1)
+						00000010	agent	(0)
+						00000020	secret	(1)
+						00000040	00	(2)
+						00000080	007	(3)
+SLTI	AT,V0,0002	//true if solo
+BNEZ	AT,7F00433C
+NOP
+JAL	7F09A464	//and do it again for some stupid reason...
+NOP
+ADDIU	T6,V0,0014	//T6=#players+14
+ADDIU	T7,R0,0001	//T7=1
+SLLV	T8,T7,T6	//T8=player mask	00400000	2 player
+						00800000	3 player
+						01000000	4 player
+OR	S4,S4,T8	//S4 is a lower32 bitflag mask to kill object load
+//7F00433C:
+LUI	S2,8007
+LW	S2,5D0C (S2)	//S2=pointer to object list
+ADDIU	AT,R0,0030	//AT=30 (max types)
+OR	S3,R0,R0	//S3=0 (counter)
+LBU	V1,0003 (S2)	//V1=type
+ADDIU	S7,R0,0034	//S7=34
+BEQL	V1,AT,7F004B30	//branch if no objects in list
+	LBU	V1,0003 (S2)	//V1=type
+MTC1	R0,F20		//F20=0
+ORI	S6,R0,FFFF	//S6=-1
+ADDIU	T0,V1,FFFF	//T0=type-1
+//7F004368:	listed above.  this section is looped, to determine if valid type
+
+
+
+7F0BFC10:	returns V0=selected difficulty
+LUI	V0,8005
+JR	RA
+LW	V0,8384 (V0)	//V0=80048384=difficulty
+
+7F09A464:	V0= # players loaded
+	fries: T6,V1,T7,T8, T9, V0
+
+***********************************
+***********************************
+***********************************
+THE OTHER HALF:
+eeprom cheat settings
+800518A0	table of 'cheat unlocked' detection routines
+
+7F00D298:	0x41DC8 USA	
+27BDFFD0	ADDIU	SP,SP,FFD0
+AFB00018	SW	S0,0018 (SP)
+3C018003	LUI	AT,8003
+3C038007	LUI	V1,8007
+AFBF001C	SW	RA,001C (SP)
+AC20A94C	SW	R0,A94C (AT)
+24639651	ADDIU	V1,V1,9651
+24100001	ADDIU	S0,R0,0001
+//7F00D2B8:	iterate through cheat list to see if menu should be available
+02002025	OR	A0,S0,R0
+0FC02612	JAL	7F009848
+AFA30024	SW	V1,0024 (SP)
+10400007	BEQ	V0,R0,7F00D2E4	//if cheat isn't unlocked, branch
+8FA30024	LW	V1,0024 (SP)
+240E0001	ADDIU	T6,R0,0001	//T6=1
+A06E0000	SB	T6,0000 (V1)	//1->cheat list slot
+240F0001	ADDIU	T7,R0,0001	//T7=1
+3C018003	LUI	AT,8003
+10000002	BEQ	R0,R0,7F00D2E8
+AC3FA94C	SW	T7,A94C (AT)	//1->8002A94C (cheat menu available)
+//7F00D2E4:
+A0600000	SB	R0,0000 (V1)	//0->cheat list slot
+26100001	ADDIU	S0,S0,0001	//S0++ (cheat# counter)
+2401004B	ADDIU	AT,R0,004B	//AT=4B (max cheats)
+1601FFF1	BNE	S0,AT,7F00D2B8
+24630001	ADDIU	V1,V1,0001	//V1++ (next cheat list slot)
+//7F00D2F8
+
+7F009848:	detect if particular cheat is available in menu
+ADDIU	T6,A0,FFFF	//T6=current cheat index-1
+ADDIU	SP,SP,FFE8
+SLTIU	AT,T6,004A	//TRUE if not a valid cheat
+BEQ	AT,R0,7F009B38
+SW	RA,0014 (SP)
+SLL	T6,T6,0x2	//T6=cheat to offset
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,18A0 (AT)	//T6=800518A0+offset (test if cheat # available)
+JR	T6
+NOP
+
+7F009874:	default for non-menu cheats
+BEQ	R0,R0,7F009B40
+OR	V0,R0,R0
+7F00987C:	check if invincible unlocked
+LUI	A0,8003
+JAL	7F01DDC4
+LW	A0,A8E8 (A0)	//A0=8002A8E8=folder#
+OR	A0,V0,R0
+JAL	7F01DD20	//V0=1 if invincible unlocked
+ADDIU	A1,R0,0001
+BEQ	R0,R0,7F009B44
+LW	RA,0014 (SP)
+
+[the following are all identical to 7F00987C, except A1 differs]
+7F00989C:	[A1=13]	return V0=1 if All Guns unlocked
+7F0098BC:	[A1=6]	return V0=1 if No Radar Multi unlocked
+7F0098DC:	[A1=9]	return V0=1 if Fast Animation unlocked
+7F0098FC:	[A1=A]	return V0=1 if Bond Invisible unlocked
+7F00991C:	[A1=F]	return V0=1 if Infinite Ammo unlocked
+7F00993C:	[A1=2]	return V0=1 if DK Mode unlocked
+7F00995C:	[A1=7]	return V0=1 if Tiny Bond unlocked
+7F00997C:	[A1=C]	return V0=1 if Slow Animation unlocked
+7F00999C:	[A1=0]	return V0=1 if Paintball Mode unlocked
+7F0099BC:	[A1=D]	return V0=1 if Silver PP7 unlocked
+7F0099DC:	[A1=11]	return V0=1 if Gold PP7 unlocked
+7F0099FC:	[A1=B]	return V0=1 if Enemy Rockets unlocked
+7F009A1C:	[A1=4]	return V0=1 if 2x Rocket L. unlocked
+7F009A3C:	[A1=3]	return V0=1 if 2x Grenade L. unlocked
+7F009A5C:	[A1=10]	return V0=1 if 2x RC-P90 unlocked
+7F009A7C:	[A1=8]	return V0=1 if 2x Throwing Knife unlocked
+7F009A9C:	[A1=E]	return V0=1 if 2x Hunting Knife unlocked
+7F009ABC:	[A1=12]	return V0=1 if 2x Laser unlocked
+7F009ADC:	[A1=5]	return V0=1 if Turbo Mode unlocked
+
+7F009AFC:	return V0=1 if  unlocked (Cradle completed)
+LUI	A0,8003
+JAL	7F01E9F4
+LW	A0,A8E8 (A0)	//A0=8002A8E8=folder#
+BEQ	R0,R0,7F009B44
+LW	RA,0014 (SP)
+7F009B10:	return V0=1 if  unlocked	(Aztec completed)
+LUI	A0,8003
+JAL	7F01EA5C
+LW	A0,A8E8 (A0)	//A0=8002A8E8=folder#
+BEQ	R0,R0,7F009B44
+LW	RA,0014 (SP)
+7F009B24:	return V0=1 if  unlocked	(Egypt completed)
+		USA	0x3E654
+LUI	A0,8003
+JAL	7F01EAA8
+LW	A0,A8E8 (A0)	//A0=8002A8E8=folder#
+BEQ	R0,R0,7F009B44
+LW	RA,0014 (SP)
+7F009B38:	sit and spin!
+		USA	0x3E668
+BEQ	R0,R0,7F009B38
+NOP
+7F009B44:
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+
+
+7F01DD20:	returns V0=1 if requested cheat (A1) is unlocked in mempak
+0x52850	USA
+0x52A40	JAP
+0x50570	PAL
+BLTZ	A1,7F01DD68	//must be 0-14
+SLTI	AT,A1,0014	//TRUE if requested over bitflag 20 (change me!)
+BEQ	AT,R0,7F01DD68
+ADDIU	T3,R0,0001	//T3=1
+LBU	A2,0010 (A0)	//eeprom cheats byte 3 (z)
+LBU	T6,000E (A0)	//eeprom cheats byte 1 (x)
+LBU	T1,000F (A0)	//eeprom cheats byte 2 (y)
+SLL	T7,A2,0x18	//T7=zz000000
+SLL	T9,A2,0x10	//T9=00zz0000
+OR	T8,T6,T7	//T8=zz0000xx
+OR	T0,T8,T9	//T0=zzzz00xx
+SLL	T2,T1,0x8	//T2=0000yy00
+OR	V1,T0,T2	//V1=zzzzyyxx
+SLLV	T4,T3,A1	//T4=offset to bitflag (A1_request*2)
+AND	V0,T4,V1	//V0 != if selected is toggled
+SLTU	T5,R0,V0	//TRUE if flag set
+JR	RA
+OR	V0,T5,R0	//V0= TRUE/FALSE
+//7F01DD68:
+OR	V0,R0,R0	//V0=false
+JR	RA
+NOP
+
+
+7F01E2C0:	returns completion time for stage
+	accepts:	A1=solo stage; A2=difficulty; A0=folder#
++++++++++++++++++++++++++++++++++++
+Okay, we're going to HIJACK 7F00D2B8 to do two things.
+First, it will be streamlined, saving V0-> V1, since TRUE is active and false inactive anyway.
+Secondly, it will auto-available Dr. No, assuming other cheats are unlocked.  That saves 21990 hacking, and also saves 'unlocking' the cheat.  So, what about the extra code?  Lets add in a hack to check if egypt is complete for the line mode cheat.  To save 21990, just test prior to loop or something.
+
+//7F00D2AC:	0x41DDC	hack cheats open, Dr. No available
+340FB01C	*ORI	T7,R0,B01C
+24639651	ADDIU	V1,V1,9651
+24100001	ADDIU	S0,R0,0001	//T7=1
+AC30A94C	*SW	S0,A94C (AT)	//1->8002A94C (cheat menu available)
+3C018004	*LUI	AT,8004
+A42FF854	*SH	T7,F854 (AT)	//save text mod
+3C018005	*LUI	AT,8005
+340F9B38	*ORI	T7,R0,9B38
+A42F18B2	*SH	T7,18B2 (AT)	//Dr. No always available
+A42F18BA	*SH	T7,18BA (AT)	//Line Mode always available
+//7F00D2D4:
+02002025	*OR	A0,S0,R0
+0FC02612	*JAL	7F009848
+AFA30024	*SW	V1,0024 (SP)
+8FA30024	*LW	V1,0024 (SP)
+//7F00D2E4:
+A0620000	*SB	V0,0000 (V1)	//0->cheat list slot
+26100001	ADDIU	S0,S0,0001	//S0++ (cheat# counter)
+2401004B	ADDIU	AT,R0,004B	//AT=4B (max cheats)
+1601FFF8	*BNE	S0,AT,7F00D2D4
+24630001	ADDIU	V1,V1,0001	//V1++ (next cheat list slot)
+
+7F009B38:	force toggled!
+24020001	*ADDIU	V0,R0,0001	//V0=1
+00000000	NOP
+8FBF0014	LW	RA,0014 (SP)
+
+
+***********************************
+test any cheat bitflags in eeprom:
+USA	052857	0001	18
+JAP	052A47	0001	18
+PAL	050577	0001	18
+
+USA BA cheat test (check cheat 5)
+0390F8	0008	3C0C8007818F96A5
+039134	0004	1000004C
+
+USA 21990-friendly cheats
+041DDC	0004	340FB01C
+041DE8	002E	AC30A94C3C018004A42FF8543C018005340F9B38A42F18B2A42F18BA020020250FC02612AFA300248FA30024A062
+041E23	0001	F8
+03E668	0004	24020001
+
+rename 1C in LmiscE	("happy now karl?")
+"Dr. No!"

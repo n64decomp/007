@@ -1,0 +1,75 @@
+#  ROM splitter configuration file
+name: "Goldeneye 007"
+
+#  checksums from ROM header offsets 0x10 and 0x14
+#  used for auto configuration detection
+checksum1: 0x0414CA61
+checksum2: 0x2E57B8AA
+
+#  base filename used for outputs (please, no spaces]
+basename: "ge007.e"
+
+
+ranges:
+   - [0x00000000, 0x000040, "header", "header"]
+   - [0x00000040, 0x001000, "bin", "boot"]
+   - [0x00001000, 0x01F850, "asm", "code", 0x80000400]
+   - [0x0001F850, 0x031450, "bin", "Compressedrodata"]
+   - [0x00031450, 0x0329F0, "asm", "rarezip", 0x70200000]
+   - [0x000329F0, 0x1047F0, "asm", "codeTLB", 0x7F000000]
+   
+labels:
+   - [0x80000400, "entry"]
+   - [0x80000450, "establishrootTLB"]
+   - [0x800004BC, "get_rodata_vaddr"]
+   - [0x800004C8, "get_cdataSegmentRomStart"]
+   - [0x800004D4, "get_cdataSegmentRomEnd"]
+   - [0x800004E0, "get_rarezipSegmentRomStart"]
+   - [0x800004EC, "get_rarezipSegmentRomEnd"]
+   - [0x800004F8, "jump_decompressfile"]
+   - [0x80000510, "init"]
+   - [0x800006F0, "stack_init"]
+   - [0x800006FC, "proc_700006FC"]
+   - [0x80000718, "idle_entry"]
+   - [0x80000738, "start_idle_thread"]
+   - [0x80000790, "start_rmon_thread"]
+   - [0x800007EC, "setup_message_queue_for_scheduler"]
+   - [0x8000089C, "main_entry"]
+   - [0x80000908, "setuplastentryofdebughandler"]
+   - [0x80000970, "stderr.activated.set"]
+   - [0x8000097C, "stderr.enable.set"]
+   - [0x80000988, "stderr.permitted.set"]
+   - [0x80000994, "user.Compare"]
+   - [0x800009A0, "testtodisplaystderrandupdatecount"]
+   - [0x800009F8, "testtodisplaystderrorevery16thframe"]
+   - [0x80000A88, "storecurrentcountto800230a4"]
+   - [0x80000AAC, "scheduler"]
+   - [0x80000C70, "proc_70000C70"]
+   ###############################
+   #rarezipsegment.o
+   #rarezipsegment.s
+   - [0x70200000, "decompress.buildtable"]
+   - [0x70200654, "decompress.inflate"]
+   - [0x70200A48, "decompress.type0"]
+   - [0x70200B9C, "decompress.type1"]
+   - [0x70200D04, "decompress.type2"]
+   - [0x70201228, "decompress.table"]
+   - [0x70201348, "decompress.start"]
+   - [0x7020141C, "decompress.entry"]
+   #.data
+   - [0x70201480, "rarezip.ptr_source"]
+   - [0x70201484, "rarezip.ptr_target"]
+   - [0x70201488, "rarezip.curoffset"]
+   - [0x7020148C, "rarezip.decompressed_count"]
+   - [0x70201490, "rarezip.ptrbuffer"]
+   - [0x70201494, "rarezip.order"]
+   - [0x702014A8, "rarezip.lbase"]
+   - [0x702014E8, "rarezip.lextra"]
+   - [0x70201508, "rarezip.dbase"]
+   - [0x70201544, "rarezip.dextra"]
+   - [0x70201564, "rarezip.sample"]
+   - [0x70201568, "rarezip.bits_in_sample"]
+   - [0x7020156C, "rarezip.masks"]
+   - [0x70201590, "rarezip.data1"]
+   - [0x70201594, "rarezip.data2"]
+   - [0x70201598, "rarezip.data3"]

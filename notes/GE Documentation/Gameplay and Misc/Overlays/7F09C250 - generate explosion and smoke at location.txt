@@ -1,0 +1,374 @@
+7F09C250	D0D80	generates explosions and smoke at location
+	accepts: A0=p->source object or NULL, A1=p->positions, A2=p->tile, A3=explosion type, SP+10=force to ground, SP+14=owner's player#, SP+18=p->room# list, SP+1C=(sets object loaded flag)
+ADDIU	SP,SP,FFB8
+SLL	T6,A3,0x10
+SRA	T7,T6,0x10
+LUI	T9,8004
+SW	S1,0020 (SP)
+ADDIU	T9,T9,0284	;T9=80040284
+SLL	T8,T7,0x6	;T8=explody.type * 0x40: type->offset
+SW	S3,0028 (SP)
+SW	A3,0054 (SP)	;SP+54=explody.type
+ADDU	S1,T8,T9	;S1=80040284+offset: p->explody.data
+ADDIU	AT,R0,0010
+OR	A3,T7,R0	;A3=(byte) A3
+OR	S3,A1,R0	;S3=A1: p->position
+SW	RA,002C (SP)
+SW	S2,0024 (SP)
+SW	S0,001C (SP)
+SW	A0,0048 (SP)	;SP+48=A0: p->object.data or NULL
+SW	A2,0050 (SP)	;SP+50=A2: p->tile
+SW	S1,0044 (SP)	;SP+44=S1: p->explody.data
+BEQ	T7,AT,7F09C2B8	;branch if explosion type 0x10
+OR	T0,R0,R0	;T0=0: NULL pointer
+ADDIU	AT,R0,0001
+BEQ	T7,AT,7F09C2B8	;branch if explody type 1
+ADDIU	T6,R0,0006
+LUI	AT,8004
+SW	T6,0170 (AT)	;6->80040170: 
+//7F09C2B8:	search explosion buffer for an empty entry
+LUI	A0,8008
+LW	A0,A144 (A0)	;A0=8007A144: p->explosion buffer
+OR	V0,R0,R0	;V0=0	offset
+OR	V1,A0,R0	;V1=A0: p->explosion buffer
+//7F09C2C8:	find an available entry
+LW	T7,0000 (V1)	;T7=explody+0: p->pos.data or NULL
+BNEL	T7,R0,7F09C2E0	;branch if entry already set
+ADDIU	V0,V0,03E0
+BEQ	R0,R0,7F09C2EC
+ADDU	T0,V0,A0	;T0=8007A144+offset: p->target entry
+//7F09C2DC:	loop until all entries tested
+ADDIU	V0,V0,03E0	;V0+=0x3E0: next entry
+SLTI	AT,V0,1740	;TRUE if offset<0x1740	six entries total
+BNE	AT,R0,7F09C2C8	;loop until all entries tested
+ADDIU	V1,V1,03E0	;V1+=3E0: p->next entry
+BEQL	T0,R0,7F09C794	;return if NULL pointer
+LW	RA,002C (SP)
+//7F09C2F4:	play sound effect
+SH	A3,0056 (SP)	;SP+56=A3: explody.type
+JAL	7F03A430	;remove last pos.data entry
+SW	T0,0040 (SP)	;SP+40=T0: p->explody.buf
+LBU	V1,0039 (S1)	;V1=explody.data+39: sound effect
+LW	T0,0040 (SP)	;T0=p->explody.buf
+OR	A3,V0,R0	;A3=V0: p->pos.data	source location
+BLEZ	V1,7F09C348	;branch if no sound
+LUI	A0,8006
+SLL	A1,V1,0x10
+SRA	T8,A1,0x10
+OR	A1,T8,R0	;A1=(byte) SE
+LW	A0,3720 (A0)	;A0=80063720: p->SE buffer
+OR	A2,R0,R0	;A2=NULL
+SW	V0,0030 (SP)	;SP+30=p->pos.data
+JAL	70008E08	;play sound A1
+SW	T0,0040 (SP)	;SP+40=T0: p->explody.buf
+OR	A0,V0,R0	;A0=V0: p->SE entry
+JAL	7F053A10	;set position as source of SE
+OR	A1,S3,R0	;A1=S3: p->xyz pos
+LW	A3,0030 (SP)	;A3=p->pos.data
+LW	T0,0040 (SP)	;T0=p->explody.buf
+//7F09C348:	fill in object position data
+BEQ	A3,R0,7F09C790	;return if NULL pos.data
+LW	A2,0060 (SP)	;A2=SP+60: p->room# list
+LBU	T6,0001 (A3)	;T6=pos.data+1: state
+ADDIU	T9,R0,0007
+SB	T9,0000 (A3)	;7->pos.data+0: type=explosion
+ORI	T7,T6,0002	;T7=state|2: on-screen
+SB	T7,0001 (A3)	;update state
+SW	T0,0004 (A3)	;T0->pos.data+4: p->explody.buffer, acting as object data
+LW	T8,0050 (SP)	;T8=SP+50: p->tile
+ADDIU	A1,R0,00FF
+OR	S0,R0,R0	;S0=0
+SW	T8,0014 (A3)	;T8->pos.data+14: p->tile
+LWC1	F4,0000 (S3)	;F4=pos+0: xpos
+ADDIU	T6,R0,00FF
+SWC1	F4,0008 (A3)	;F4->pos.data+8: xpos
+LWC1	F6,0004 (S3)	;F6=pos+4: ypos
+SWC1	F6,000C (A3)	;F6->pos.data+C: ypos
+LWC1	F8,0008 (S3)	;F8=pos+8: zpos
+SWC1	F8,0010 (A3)	;F8->pos.data+10: zpos
+LBU	T9,0000 (A2)	;T9=1st room#
+BEQ	A1,T9,7F09C3CC	;branch if room invalid
+ADDU	V1,A3,R0	;V1=A3: pos.data
+ADDU	V0,A2,R0	;V0=A2: p->room list
+LBU	A0,0000 (A2)	;A0=room#
+ADDIU	S2,R0,0007	;S2=7	8 rooms per list
+//7F09C3AC:	copy list of room#s
+SB	A0,002C (V1)	;A0->pos.data+2C: room#->list
+LBU	A0,0001 (V0)	;A0=next room#
+ADDIU	S0,S0,0001	;S0++	count
+ADDIU	V1,V1,0001	;V1++	next target
+BEQ	A1,A0,7F09C3CC	;quit on invalid entry
+ADDIU	V0,V0,0001	;V0++	next source
+BNEL	S0,S2,7F09C3B0	;loop for 8 room numbers
+SB	A0,002C (V1)
+//7F09C3CC:	set 8 to state if required
+ADDU	T7,A3,S0	;T7=pos.data+count: p->next slot
+SB	T6,002C (T7)	;FF->final pos.data room#
+LW	T8,0064 (SP)	;T8=???	[SP+1C]
+ADDIU	S2,R0,0007	;S2=7
+OR	S0,R0,R0	;S0=0	shrapnel bit count
+BEQ	T8,R0,7F09C3F4	;branch if T8=0
+OR	A0,A3,R0	;A0=A3: p->pos.data
+LBU	T9,0001 (A3)	;T9=pos.data+1: state
+ORI	T6,T9,0008	;state | 8: loaded?
+SB	T6,0001 (A3)	;update state
+//7F09C3F4:	wrap and activate pos.data entry
+SW	A3,0030 (SP)	;SP+30=A3: p->pos.data
+JAL	7F03A4F0	;wrap pos.data entries
+SW	T0,0040 (SP)	;SP+40=T0: p->explody.buf
+JAL	7F03A404	;4->pos.data.state
+LW	A0,0030 (SP)	;A0=p->pos.data
+//7F09C408:	initialize explosion buffer
+LW	T0,0040 (SP)	;T0=p->explody.buf
+LW	V0,0058 (SP)	;V0=SP+58: TRUE forces to ground [SP+10]
+LW	A3,0030 (SP)	;A3=SP+30: p->pos.data
+LW	T1,0048 (SP)	;T1=SP+48: [A0]
+LH	T7,0056 (SP)	;T7=SP+56: explody.type
+ADDIU	T8,R0,FFFF
+SH	R0,03C8 (T0)	; 0->explody.buf+3C8: 
+SH	T8,03CA (T0)	;-1->explody.buf+3CA: 
+SB	V0,03CD (T0)	;V0->explody.buf+3CD: forced to ground flag
+SW	A3,0000 (T0)	;A3->explody.buf+0: p->pos.data
+SW	T1,0004 (T0)	;T1->explody.buf+4: 
+SB	T7,03CC (T0)	;T7->explody.buf+3CC: type
+LW	T9,005C (SP)	;T9=SP+5C: owner's player#[SP+14]
+LUI	AT,8005
+BEQ	V0,R0,7F09C4F8	;branch if V0=0: midair
+SB	T9,03CE (T0)	;T9->explody.buf+3CE: player#
+//7F09C448:	check for alternate position source
+BEQL	T1,R0,7F09C4B0	;branch if T1 NULL
+LWC1	F6,0000 (S3)
+LW	T6,0014 (T1)	;T6=T1+14: 
+BEQL	T6,R0,7F09C4B0	;branch if T6=0
+LWC1	F6,0000 (S3)
+//7F09C45C:	source: alternate pos.data
+LWC1	F10,0008 (T1)	;F10=alt.pos.data+8: xpos
+SWC1	F10,03D0 (T0)	;F10->explody.buf+3D0: xpos
+LW	A2,0010 (T1)	;A2=alt.pos.data+10: zpos
+LW	A1,0008 (T1)	;A1=alt.pos.data+8:  xpos
+LW	A0,0014 (T1)	;A0=alt.pos.data+14: p->tile
+JAL	7F0B2970	;F0=ypos of tile A0 at (A1,A2)
+SW	T0,0040 (SP)	;SP+40=T0
+LUI	AT,4080
+MTC1	AT,F16
+LW	T0,0040 (SP)	;T0=p->explody.buf
+LW	T1,0048 (SP)
+ADD.S	F18,F0,F16	;F18=ypos + 4.0: offset from base of tile
+SWC1	F18,03D4 (T0)	;F18->explody.buf+3D4: ypos
+LWC1	F4,0010 (T1)	;F4=alt.pos.data+10: zpos
+SWC1	F4,03D8 (T0)	;F4->explody.buf+3D8: zpos
+JAL	7F0B2FD8	;V0=room# of tile A0
+LW	A0,0014 (T1)	;A0=T1+14: p->tile
+LW	T0,0040 (SP)	;T0=p->explody.buf
+BEQ	R0,R0,7F09C500
+SH	V0,03DC (T0)	;V0->explody.buf+3DC: room#
+//7F09C4AC:	source: use original position data and tile
+LWC1	F6,0000 (S3)	;F6=pos+0: xpos
+SWC1	F6,03D0 (T0)	;F6->explody.buf+3D0: xpos
+LW	A2,0008 (S3)	;A2=pos+8: zpos
+LW	A1,0000 (S3)	;A1=pos+0: xpos
+SW	T0,0040 (SP)	;SP+40=p->explody.buf
+JAL	7F0B2970	;F0=ypos of tile A0 at (A1,A2)
+LW	A0,0050 (SP)	;A0=SP+50: p->tile
+LUI	AT,4080
+MTC1	AT,F8
+LW	T0,0040 (SP)	;T0=p->explody.buf
+ADD.S	F10,F0,F8	;F10=ypos+4.0: offest from base of tile
+SWC1	F10,03D4 (T0)	;F10->explody.buf+3D4: ypos
+LWC1	F16,0008 (S3)	;F16=pos+8: zpos
+SWC1	F16,03D8 (T0)	;F16->explody.buf+3D8: zpos
+JAL	7F0B2FD8	;V0=room# of tile A0
+LW	A0,0050 (SP)	;A0=SP+50: p->tile
+LW	T0,0040 (SP)	;T0=p->explody.buf
+BEQ	R0,R0,7F09C500
+SH	V0,03DC (T0)	;V0->explody.buf+3DC: room#
+//7F09C4F8:	
+LWC1	F18,76B0 (AT)	;F18=800576B0: 999999.9
+SWC1	F18,03D0 (T0)	;F18->explody.buf+3D0: xpos
+//7F09C500:	grab random value
+JAL	7000A450	;V0=random#
+SW	T0,0040 (SP)	;SP+40=p->explody.buf
+MTC1	V0,F4
+LUI	AT,4F80
+BGEZ	V0,7F09C524	;branch if not negative
+CVT.S.W	F6,F4	;F6=(float) rand
+MTC1	AT,F8		;F8=4294967296.0
+NOP
+ADD.S	F6,F6,F8	;F6=rand+sign change
+//7F09C524:	compute size of explosion
+LUI	AT,2F80
+MTC1	AT,F10		;F10=some miniscule value
+LUI	AT,3F00
+MTC1	AT,F18		;F18=0.5
+MUL.S	F16,F6,F10	;F16=rand * ???
+LUI	AT,3F80
+MTC1	AT,F8		;F8=1.0
+LWC1	F10,0010 (S1)	;F10=explody.data+10: size
+MUL.S	F4,F16,F18	;F4=F16/2
+ADD.S	F6,F4,F8	;F6=1.0 + (F16 / 2)
+MUL.S	F16,F6,F10	;F16=size * randomizer
+//7F09C550:	get random value
+JAL	7000A450	;V0=random#
+SWC1	F16,003C (SP)	;SP+3C=size
+MTC1	V0,F18
+LUI	AT,4F80
+BGEZ	V0,7F09C574	;branch if not negative
+CVT.S.W	F4,F18	;F4=(float) random
+MTC1	AT,F8
+NOP
+ADD.S	F4,F4,F8	;F4=rand+sign change
+//7F09C574:
+LUI	AT,2F80
+MTC1	AT,F6
+LUI	AT,8005
+LWC1	F16,76B4 (AT)	;F16=800576B4: 2Pi
+MUL.S	F10,F4,F6	;F10=rand*???
+NOP
+MUL.S	F12,F10,F16	;F12=rand * value
+//7F09C590:	set explosion size
+JAL	7F057EA0	;F0=???
+SWC1	F12,0038 (SP)	;F12->SP+38: 
+LWC1	F18,003C (SP)	;F18=SP+3C: size
+LW	T0,0040 (SP)	;T0=p->explody.buf
+MUL.S	F8,F0,F18	;F8=size * value: size.max
+SWC1	F8,0014 (T0)	;F8->explody.buf+14: size.max
+//7F09C5A8:
+JAL	7F057EAC	;F0=???
+LWC1	F12,0038 (SP)	;F12=SP+38: degrees
+LWC1	F4,003C (SP)	;F4=SP+3C: size
+LW	T0,0040 (SP)	;T0=p->explody.buf
+ADDIU	T7,R0,0001
+MUL.S	F6,F0,F4	;F6=?? * size: size.min
+SH	T7,001C (T0)	;1->explody.buf+1C: display frame
+SWC1	F6,0018 (T0)	;F6->explody.buf+18: size.min
+//7F09C5C8:	fill in position for frame
+LWC1	F10,0000 (S3)	;F10=pos+0: xpos
+SWC1	F10,0008 (T0)	;F10->explody.buf+8: xpos
+LWC1	F16,0004 (S3)	;F16=pos+4: ypos
+SWC1	F16,000C (T0)	;F16->explody.buf+C: ypos
+LWC1	F18,0008 (S3)	;F18=pos+8: zpos
+SWC1	F18,0010 (T0)	;F18->explody.buf+10: zpos
+//7F09C5E0:	shrapnel
+LH	T8,0024 (S1)	;T8=explody.data+24: shrapnel
+BLEZ	T8,7F09C620	;skip if not valid amount
+NOP
+//7F09C5EC:	loop for each bit
+LWC1	F8,0028 (S1)	;F8=explody.data+28: shrapnel.size
+LW	A1,002C (S1)	;A1=explody.data+2C: shrapnel.dist
+LW	A2,0030 (S1)	;A2=explody.data+30: shrapnel.h
+LW	A3,0034 (S1)	;A3=explody.data+34: shrapnel.v
+OR	A0,S3,R0	;A0=S3: p->pos
+JAL	7F09F254	;generate shrapnel bit
+SWC1	F8,0010 (SP)	;SP+10=shrapnel.size
+LW	T9,0044 (SP)	;T9=SP+44: p->explody.data
+ADDIU	S0,S0,0001	;S0++	count++
+LH	T6,0024 (T9)	;T6=explody.data+24: #bits
+SLT	AT,S0,T6
+BNEL	AT,R0,7F09C5F0	;loop for each bit
+LWC1	F8,0028 (S1)
+//7F09C620:	multiplayer-specific
+JAL	7F09A464	;V0=# players
+NOP
+SLTI	AT,V0,0002
+BNE	AT,R0,7F09C790	;return if solo
+OR	A2,R0,R0	;A2=0	offset
+LUI	T5,8008
+LUI	T3,8004
+ADDIU	T3,T3,017C	;T3=8004017C: smoke table
+ADDIU	T5,T5,A140	;T5=8007A140: p->smoke buffer
+ADDIU	RA,R0,1FE0	;RA=0x1FE0
+ADDIU	T4,R0,0018	;T4=0x18	size of smoke entry
+ADDIU	T2,R0,0009
+ADDIU	T1,R0,0008
+//7F09C654:	loop and find an empty smoke entry
+LW	V1,0000 (T5)	;V1=8007A140: p->smoke.buf
+ADDU	A1,V1,A2	;A1=smoke.buf+offset
+LW	T7,0000 (A1)	;T7=smoke.buf+0: p->pos.data or NULL if empty
+ADDU	A3,A2,V1	;A3=smoke.buf+offset
+BEQL	T7,R0,7F09C6AC	;branch if empty
+LW	T7,0198 (A1)
+LH	V0,0006 (A3)	;V0=smoke.data+6: size
+BEQL	S2,V0,7F09C6AC	;branch if size = 7
+LW	T7,0198 (A1)
+LH	T0,0006 (A3)	;T0=smoke.data+6: size
+BEQL	T1,T0,7F09C6AC	;branch if size = 8
+LW	T7,0198 (A1)
+BEQL	T2,T0,7F09C6AC	;branch if size = 9
+LW	T7,0198 (A1)
+MULTU	V0,T4
+MFLO	T8
+ADDU	T9,T3,T8
+LH	T6,0000 (T9)
+SH	T6,0004 (A3)
+LW	V1,0000 (T5)
+ADDU	A1,V1,A2
+//7F09C6A8:
+LW	T7,0198 (A1)
+ADDU	A0,A2,V1
+BEQL	T7,R0,7F09C6F8
+LW	T7,0330 (A1)
+LH	V0,019E (A0)
+ADDIU	A0,A0,0198
+BEQL	S2,V0,7F09C6F8
+LW	T7,0330 (A1)
+BEQL	T1,V0,7F09C6F8
+LW	T7,0330 (A1)
+BEQL	T2,V0,7F09C6F8
+LW	T7,0330 (A1)
+MULTU	V0,T4
+MFLO	T8
+ADDU	T9,T3,T8
+LH	T6,0000 (T9)
+SH	T6,0004 (A0)
+LW	V1,0000 (T5)
+ADDU	A1,V1,A2
+//7F09C6F4:
+LW	T7,0330 (A1)
+ADDU	A0,A2,V1
+BEQL	T7,R0,7F09C744
+LW	T7,04C8 (A1)
+LH	V0,0336 (A0)
+ADDIU	A0,A0,0330
+BEQL	S2,V0,7F09C744
+LW	T7,04C8 (A1)
+BEQL	T1,V0,7F09C744
+LW	T7,04C8 (A1)
+BEQL	T2,V0,7F09C744
+LW	T7,04C8 (A1)
+MULTU	V0,T4
+MFLO	T8
+ADDU	T9,T3,T8
+LH	T6,0000 (T9)
+SH	T6,0004 (A0)
+LW	V1,0000 (T5)
+ADDU	A1,V1,A2
+//7F09C740:
+LW	T7,04C8 (A1)
+ADDU	A0,A2,V1
+BEQL	T7,R0,7F09C788
+ADDIU	A2,A2,0660
+LH	V0,04CE (A0)
+ADDIU	A0,A0,04C8
+BEQL	S2,V0,7F09C788
+ADDIU	A2,A2,0660
+BEQL	T1,V0,7F09C788
+ADDIU	A2,A2,0660
+BEQL	T2,V0,7F09C788
+ADDIU	A2,A2,0660
+MULTU	V0,T4
+MFLO	T8
+ADDU	T9,T3,T8
+LH	T6,0000 (T9)
+SH	T6,0004 (A0)
+//7F09C784:
+ADDIU	A2,A2,0660
+BNEL	A2,RA,7F09C658
+LW	V1,0000 (T5)
+//7F09C790:	return
+LW	RA,002C (SP)
+LW	S0,001C (SP)
+LW	S1,0020 (SP)
+LW	S2,0024 (SP)
+LW	S3,0028 (SP)
+JR	RA
+ADDIU	SP,SP,0048

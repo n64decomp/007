@@ -1,0 +1,620 @@
+S1=p->current command	[801B68EC]
+command structure:
+0x0	1	type
+0x1	1	minimum number of commands expected in type
+0x2	2	reserved
+0x4	4	data
+
+parsing through 7F0B8480
+processing uses commands @ 80058C80 (0xD) and 80058CB4 (0x28)
+
+7F0B84D0	type 00	normal termination	[set position to start and break]
+7F0B84D8	type 01	push to stack
+7F0B84F8	type 02	pull from stack
+7F0B8518	type 03	& and merge last two on stack
+7F0B8548	type 04	| and merge last two on stack
+7F0B8578	type 05	! last on stack
+7F0B85A0	type 06	^ last two on stack
+7F0B89F0	type 07	terminate (invalid type)
+7F0B89F0	type 08	terminate (invalid type)
+7F0B89F0	type 09	terminate (invalid type)
+7F0B89F0	type 0A	terminate (invalid type)
+7F0B89F0	type 0B	terminate (invalid type)
+7F0B89F0	type 0C	terminate (invalid type)
+7F0B89F0	type 0D	terminate (invalid type)
+7F0B89F0	type 0E	terminate (invalid type)
+7F0B89F0	type 0F	terminate (invalid type)
+7F0B89F0	type 10	terminate (invalid type)
+7F0B89F0	type 11	terminate (invalid type)
+7F0B89F0	type 12	terminate (invalid type)
+7F0B89F0	type 13	terminate (invalid type)
+7F0B85D0	type 14	push true/false if in range of rooms
+7F0B89F0	type 15	terminate (invalid type)
+7F0B89F0	type 16	terminate (invalid type)
+7F0B89F0	type 17	terminate (invalid type)
+7F0B89F0	type 18	terminate (invalid type)
+7F0B89F0	type 19	terminate (invalid type)
+7F0B89F0	type 1A	terminate (invalid type)
+7F0B89F0	type 1B	terminate (invalid type)
+7F0B89F0	type 1C	terminate (invalid type)
+7F0B89F0	type 1D	terminate (invalid type)
+7F0B8614	type 1E	force visible
+7F0B8654	type 1F	match portal visibility
+7F0B8788	type 20	add visible room
+7F0B8914	type 21	remove visibility	[save S7->S4]
+7F0B86A8	type 22	visible if seen through portal
+7F0B8714	type 23	not visible if not seen through portal
+7F0B87F4	type 24	disable room
+7F0B8828	type 25	disable range of rooms
+7F0B8884	type 26	preload room
+7F0B88B8	type 27	preload range of rooms
+
+7F0B8930	type 50	if statement
+7F0B896C	type 51	don't execute commands even on return
+7F0B8954	type 52	endif and continue executing commands
+7F0B89F0	type 53	terminate (invalid type)
+7F0B89F0	type 54	terminate (invalid type)
+7F0B89F0	type 55	terminate (invalid type)
+7F0B89F0	type 56	terminate (invalid type)
+7F0B89F0	type 57	terminate (invalid type)
+7F0B89F0	type 58	terminate (invalid type)
+7F0B89F0	type 59	terminate (invalid type)
+7F0B8990	type 5A	if(pull from stack) statement
+7F0B89C8	type 5B	toggle execute vs read only
+7F0B89E0	type 5C	endif
+
+Actual execution is more complex than originaly deemed.  There are multiple tables of entries, and entries can be toggled on-off during processing.  Execution only occurs when breaks are intered, so table management is key.  Aegh...
+
++-+	types in detail
+
+7F0B8374	ECEA4	push A0 onto 800448A8 table; V0=value written
+	accepts: A0=value to set onto table
+LUI	A1,8004
+ADDIU	A1,A1,48F8
+LW	V1,0000 (A1)	;V1=800448F8: index.cur, or alternately total entries
+LUI	AT,8004
+OR	V0,A0,R0	;V0=A0: value
+SLL	T6,V1,0x2
+ADDU	AT,AT,T6
+SW	A0,48A8 (AT)	;A0->800448A8+offset: save value to final (current) entry
+ADDIU	AT,R0,0014	;AT=0x14
+ADDIU	T7,V1,0001	;T7=?+1	increment index
+DIV	T7,AT
+MFHI	T8		;T8=T7%0x14
+SW	T8,0000 (A1)	;save new index
+JR	RA
+NOP
+
+7F0B83B0	ECEE0	pull V0 from 800448A8 table
+LUI	A0,8004
+ADDIU	A0,A0,48F8
+LW	T6,0000 (A0)	;T6=800448F8: index.cur
+ADDIU	AT,R0,0014	;AT=0x14
+LUI	V1,8004
+ADDIU	T7,T6,0013	;previous
+DIV	T7,AT
+MFHI	T8
+SLL	T0,T8,0x2	;T0=previous index -> offset
+ADDU	V1,V1,T0
+SW	T8,0000 (A0)	;save new index value to 800448F8
+JR	RA
+LW	V0,48A8 (V1)	;V0=800448A8+offset: value pulled from table
+
+7F0B83E4	ECF14	pull V0 from entry A0 in 800458A8 table
+	accepts: A0=entry to pull
+LUI	T6,8004
+LW	T6,48F8 (T6)	;T6=800448F8: #entries
+ADDIU	AT,R0,0014	;AT=0x14
+LUI	V0,8004
+SUBU	T7,T6,A0	;T7=index.cur-A0: nth entry from end to start
+ADDIU	T8,T7,0013	;T8=T7-1: previous entry
+DIV	T8,AT
+MFHI	T9		;T9=T8%0x14
+SLL	T0,T9,0x2	;T0=T9->offset
+ADDU	V0,V0,T0
+JR	RA
+LW	V0,48A8 (V0)	;V0->800448A8+offset: value pulled from table[A0]
+
++_+
+
+7F0B8414	ECF44	parse global visibility command list
+	accepts: A0=p->cmd, A1=mode
+ADDIU	SP,SP,FF80
+SW	S3,0024 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+LUI	AT,8008
+OR	S1,A0,R0	;S1=A0: p->cmd
+OR	S2,A1,R0	;S2=A1: mode
+SW	RA,003C (SP)
+SW	S8,0038 (SP)
+SW	S7,0034 (SP)
+SW	S6,0030 (SP)
+SW	S5,002C (SP)
+SW	S4,0028 (SP)
+SW	S0,0018 (SP)
+ADDIU	S3,R0,0001	;S3=1
+BNEZ	A0,7F0B8460	;return if A0 NULL
+SW	R0,1610 (AT)	;0->80081610: return value for 'conditional' types
+BEQ	R0,R0,7F0B89F4
+OR	V0,A0,R0
+//7F0B8460:
+LUI	S8,8008
+LUI	S6,8008
+LUI	S4,8004
+ADDIU	S4,S4,48FC	;S4= 800448FC
+ADDIU	S6,S6,1600	;S6= 80081600
+ADDIU	S8,S8,A0B0	;S8= 8007A0B0: p->BONDdata
+ADDIU	S7,R0,0001	;S7= 1
+ADDIU	S5,R0,0001	;S5= 1
+//7F0B8480:	process command
+LBU	A0,0000 (S1)	;A0=cmd.type
+SLTI	AT,A0,0028
+BNEZ	AT,7F0B84B0	;skip if 0-27
+ADDIU	T6,A0,FFB0
+//7F0B8490:	commands 50-5C
+SLTIU	AT,T6,000D
+BEQ	AT,R0,7F0B89F0	;return if invalid
+SLL	T6,T6,0x2
+LUI	AT,8006
+ADDU	AT,AT,T6
+LW	T6,8C80 (AT)	;T6=80058C80+offset: handler for types 50-5C
+JR	T6
+NOP
+//7F0B84B0:	commands 0-27
+SLTIU	AT,A0,0028
+BEQ	AT,R0,7F0B89F0	;return if invalid
+SLL	T7,A0,0x2
+LUI	AT,8006
+ADDU	AT,AT,T7
+LW	T7,8CB4 (AT)	;T6=80058CB4+offset: handler for types 50-5C
+JR	T7
+NOP
+
+7F0B84D0	type 00	break
+BEQ	R0,R0,7F0B89F4	;return V0=p->cmd
+OR	V0,S1,R0
+
+7F0B84D8	type 01	???; push DATA onto 800448A8 stack
+BEQL	S2,R0,7F0B84EC	;if mode 0, ignore command
+LBU	T8,0001 (S1)
+JAL	7F0B8374	;push A0 onto table
+LW	A0,0004 (S1)	;A0=data
+//7F0B84E8:	advance
+LBU	T8,0001 (S1)	;cmd.size
+SLL	T9,T8,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T9	;S1=next cmd
+
+7F0B84F8	type 02	???; pull V0 off 800448A8 stack
+BEQL	S2,R0,7F0B850C	;if mode 0, ignore command
+LBU	T0,0001 (S1)
+JAL	7F0B83B0	;pull V0 from stack
+NOP
+//7F0B8508:
+LBU	T0,0001 (S1)	;cmd.size
+SLL	T1,T0,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T1	;S1=next cmd
+
+7F0B8518	type 03	???; AND last two values on stack and replace
+BEQL	S2,R0,7F0B853C	;if mode 0, ignore command
+LBU	T2,0001 (S1)
+JAL	7F0B83B0	;pull V0 off stack
+NOP
+JAL	7F0B83B0	;pull V0 off stack
+OR	S0,V0,R0	;S0=V0: value 1
+JAL	7F0B8374	;push A0 onto stack
+AND	A0,V0,S0	;A0=value2 & value1
+//7F0B8538:
+LBU	T2,0001 (S1)	;cmd.size
+SLL	T3,T2,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T3	;S1=next cmd
+
+7F0B8548	type 04	???	OR last two values on stack and replace
+BEQL	S2,R0,7F0B856C	;if mode 0, ignore command
+LBU	T4,0001 (S1)
+JAL	7F0B83B0	;pull V0 off stack
+NOP
+JAL	7F0B83B0	;pull V0 off stack
+OR	S0,V0,R0	;S0=V0: value 1
+JAL	7F0B8374	;push A0 onto stack
+OR	A0,V0,S0	;A0=V0 | S0
+//7F0B8568:
+LBU	T4,0001 (S1)	;cmd.size
+SLL	T5,T4,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T5	;S1=next cmd
+
+7F0B8578	type 05	???	! last value on stack
+BEQL	S2,R0,7F0B8594	;if mode 0, ignore command
+LBU	T6,0001 (S1)
+JAL	7F0B83B0	;pull V0 off stack
+NOP
+JAL	7F0B8374	;push A0 onto stack
+SLTIU	A0,V0,0001	;A0=!V0
+//7F0B8590:
+LBU	T6,0001 (S1)	;cmd.size
+SLL	T7,T6,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T7	;S1=next cmd
+
+7F0B85A0	type 06	???	XOR last two values on stack
+BEQL	S2,R0,7F0B85C4	;if mode 0, ignore command
+LBU	T8,0001 (S1)
+JAL	7F0B83B0	;pull V0 off stack
+NOP
+JAL	7F0B83B0	;pull V0 off stack
+OR	S0,V0,R0	;S0=V0: value 1
+JAL	7F0B8374	;push A0 onto stack
+XOR	A0,V0,S0	;A0=value2^value1
+//7F0B85C0:
+LBU	T8,0001 (S1)	;cmd.size
+SLL	T9,T8,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T9	;S1=next cmd
+
+7F0B85D0	type 14	range of rooms capable of sight
+BEQ	S2,R0,7F0B8604	;if mode 0, ignore command
+LUI	V0,8004
+LW	V0,4838 (V0)	;V0=80044838: current room?
+LW	T0,000C (S1)	;T0=room #1
+SLT	A0,V0,T0
+XORI	A0,A0,0001	;A0=TRUE if ? >= room1
+BEQ	A0,R0,7F0B85FC	;branch if included in range
+NOP
+LW	T1,0014 (S1)	;T1=room #2
+SLT	A0,T1,V0
+XORI	A0,A0,0001	;A0=TRUE if room2 >= ?
+//7F0B85FC:	pushes 1 to stack if cur. within range
+JAL	7F0B8374	;push A0 onto stack
+NOP
+//7F0B8604:
+LBU	T2,0001 (S1)	;cmd.size
+SLL	T3,T2,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T3	;S1=next cmd
+
+7F0B8614	type 1E	force room visible without need of portals
+BEQL	S2,R0,7F0B8648	;if mode 0, ignore command
+LBU	T4,0001 (S1)
+LW	V0,0000 (S8)	;V0=p->BONDdata
+LWC1	F4,1118 (V0)
+SWC1	F4,0000 (S6)	;BONDdata+1118 -> 80081600+0
+LWC1	F6,111C (V0)
+SWC1	F6,0004 (S6)	;BONDdata+111C -> 80081600+4
+LWC1	F8,1120 (V0)
+SWC1	F8,0008 (S6)	;BONDdata+1120 -> 80081600+8
+LWC1	F10,1124 (V0)
+SW	R0,0000 (S4)	;0->800448FC
+SWC1	F10,000C (S6)	;BONDdata+1124 -> 80081600+C
+//7F0B8644:
+LBU	T4,0001 (S1)	;cmd.size
+SLL	T5,T4,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T5	;S1=next cmd
+
+7F0B8654	type 1F	match portal visibility
+BEQ	S2,R0,7F0B8698	;if mode 0, ignore command
+OR	A1,S6,R0	;A1= 80081600
+JAL	7F0B5864
+LW	A0,000C (S1)	;A0=portal
+BNEL	V0,R0,7F0B8678	;disable unless referenced
+LW	A1,0000 (S8)
+BEQ	R0,R0,7F0B8698
+SW	S7,0000 (S4)	;1->800448FC
+//7F0B8674:	V0!=0
+LW	A1,0000 (S8)	;A1=p->BONDdata
+OR	A0,S6,R0	;A0= 80081600
+JAL	7F0B5BDC	;V0=TRUE if A0 in line-of-sight with A1
+ADDIU	A1,A1,1118	;A1=BONDdata+1118
+BNEL	V0,R0,7F0B8698	;if set, make visible: 0->800448FC
+SW	R0,0000 (S4)
+BEQ	R0,R0,7F0B8698	;else 1->800448FC
+SW	S7,0000 (S4)	;1->800448FC
+//7F0B8694:
+SW	R0,0000 (S4)
+//7F0B8698:
+LBU	T6,0001 (S1)	;cmd.size
+SLL	T7,T6,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T7	;S1=next cmd
+
+7F0B8788	type 20	add visible room
+BEQL	S2,R0,7F0B87E8	;if mode 0, ignore command
+LBU	T7,0001 (S1)
+LW	T4,0000 (S4)
+OR	A1,S6,R0	;A1=S6: 80081600
+BNEL	T4,R0,7F0B87E8	;ignore if 800448FC set: not visible
+LBU	T7,0001 (S1)
+JAL	7F0B5208
+LW	A0,000C (S1)	;A0=room#
+BEQ	V0,R0,7F0B87E4	;ignore if FALSE
+OR	A1,R0,R0	;A1=0
+LW	A0,000C (S1)	;A0=room#
+OR	A2,S6,R0	;A2=S6: 80081600
+JAL	7F0B39BC
+OR	A3,R0,R0	;A3=0
+//7F0B87C0:	add room to list and increment total
+LUI	V1,8008
+LW	V1,C038 (V1)	;V1=8007C038: number of visible rooms in list
+LW	T5,000C (S1)	;T5=room#
+LUI	AT,8008
+ADDU	AT,AT,V1
+SB	T5,BFA0 (AT)	;T5->8007BFA0+offset: save room# to list
+LUI	AT,8008
+ADDIU	T6,V1,0001	;T6=V1+1
+SW	T6,C038 (AT)	;T6->8007C038: save new count
+//7F0B87E4:
+LBU	T7,0001 (S1)	;cmd.size
+SLL	T8,T7,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T8	;S1=next cmd
+
+7F0B8914	type 21	begin new block; set not visible
+BEQL	S2,R0,7F0B8924	;if mode 0, ignore command
+LBU	T5,0001 (S1)
+SW	S7,0000 (S4)	;1->800448FC
+//7F0B8920:
+LBU	T5,0001 (S1)	;cmd.size
+SLL	T6,T5,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T6	;S1=next cmd
+
+7F0B86A8	type 22	make visible if portal can view room
+BEQ	S2,R0,7F0B8704	;if mode 0, ignore command
+ADDIU	A1,SP,0068	;A1=SP+68
+JAL	7F0B5864
+LW	A0,000C (S1)	;A0=cmd+C: portal#
+BEQL	V0,R0,7F0B8708	;ignore if not referenced
+LBU	T9,0001 (S1)
+LW	A1,0000 (S8)	;A1=p->cur.BONDdata
+ADDIU	A0,SP,0068	;A0=SP+68
+JAL	7F0B5BDC	;V0=TRUE if A0 in line-of-sight with A1
+ADDIU	A1,A1,1118	;A1=p->cur.BONDdata+1118: unknown float use in no_portals_necessary
+BEQL	V0,R0,7F0B8708	;ignore if portal not visible
+LBU	T9,0001 (S1)
+//7F0B86D8:	copy perspective info or something like that
+LW	T8,0000 (S4)	;T8=800448FC: current visibility setting
+ADDIU	A1,SP,0068	;A1=SP+68
+OR	A0,S6,R0	;A0=S6: 
+BEQ	T8,R0,7F0B86FC	;skip if room already set visible
+NOP
+JAL	7F0B5D58	;copies 4 floats from A1->A0
+OR	A0,S6,R0	;A0=S6: 80081600
+BEQ	R0,R0,7F0B8704
+SW	R0,0000 (S4)	;0->800448FC: make visible
+//7F0B86FC:
+JAL	7F0B5CC0
+ADDIU	A1,SP,0068	;A1=SP+68
+//7F0B8704:
+LBU	T9,0001 (S1)	;cmd.size
+SLL	T0,T9,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T0	;S1=next cmd
+
+7F0B8714	type 23	remove visibility if portal can not view room
+BEQL	S2,R0,7F0B877C	;if mode 0, ignore command
+LBU	T2,0001 (S1)
+LW	T1,0000 (S4)	;T1=800448FC
+ADDIU	A1,SP,0058	;A1=SP+58
+BNEL	T1,R0,7F0B877C	;ignore command if T1!=0
+LBU	T2,0001 (S1)
+JAL	7F0B5864
+LW	A0,000C (S1)	;A0=portal#
+BNEL	V0,R0,7F0B8748
+LW	A1,0000 (S8)
+BEQ	R0,R0,7F0B8778
+SW	S7,0000 (S4)	;1->800448FC
+//7F0B8744:	when V0!=0
+LW	A1,0000 (S8)
+ADDIU	A0,SP,0058	;A0=SP+58
+JAL	7F0B5BDC	;V0=TRUE if A0 in line-of-sight with A1
+ADDIU	A1,A1,1118	;A1=cur.BONDdata+1118
+BNEZ	V0,7F0B8764	;if not in line-of-sight, kill visibility
+OR	A0,S6,R0	;A0=S6: 80081600
+BEQ	R0,R0,7F0B8778
+SW	S7,0000 (S4)	;1->800448FC
+//7F0B8764:
+JAL	7F0B5BDC	;V0=TRUE if A0 in line-of-sight with A1
+ADDIU	A1,SP,0058	;A1=SP+58
+BNEL	V0,R0,7F0B877C	;if not within perspective also kill visibility
+LBU	T2,0001 (S1)
+SW	S7,0000 (S4)	;1->800448FC
+//7F0B8778:
+LBU	T2,0001 (S1)	;cmd.size
+SLL	T3,T2,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T3	;S1=next cmd
+
+7F0B87F4	type 24	save 1 to entry +34 in room table
+BEQL	S2,R0,7F0B881C	;if mode 0, ignore command
+LBU	T1,0001 (S1)
+LW	T9,000C (S1)	;T9=room#
+LUI	AT,8004
+SLL	T0,T9,0x2
+ADDU	T0,T0,T9
+SLL	T0,T0,0x4	;T0=T9*0x50
+ADDU	AT,AT,T0
+SB	S5,1448 (AT)	;1->80041414+34+offset: 
+//7F0B8818:
+LBU	T1,0001 (S1)	;cmd.size
+SLL	T2,T1,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T2	;S1=next cmd
+
+7F0B8828	type 25	set flag for rooms between val1 and val2
+BEQL	S2,R0,7F0B8878	;if mode 0, ignore command
+LBU	T7,0001 (S1)
+LW	V0,000C (S1)	;V0=room.start
+LW	T3,0014 (S1)	;T3=room.end
+LUI	T5,8004
+SLL	T4,V0,0x2
+SLT	AT,T3,V0
+BNEZ	AT,7F0B8874	;end if room.end < room.start
+ADDU	T4,T4,V0
+SLL	T4,T4,0x4	;T4=value1*0x50
+ADDIU	T5,T5,1414
+ADDU	V1,T4,T5	;V1=80041414+offset: p->room
+SB	S5,0034 (V1)	;1->V1+34: ?->80041414+val1offset+34
+//7F0B885C:	loop while cur>=end
+LW	T6,0014 (S1)	;T6=end
+ADDIU	V0,V0,0001	;V0++	next room
+ADDIU	V1,V1,0050	;V1+=50	next entry
+SLT	AT,T6,V0
+BEQL	AT,R0,7F0B885C
+SB	S5,0034 (V1)	;1->room+34: 
+//7F0B8874:
+LBU	T7,0001 (S1)	;cmd.size
+SLL	T8,T7,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T8	;S1=next cmd
+
+7F0B8884	type 26	preload room
+BEQL	S2,R0,7F0B88AC	;if mode 0, ignore command
+LBU	T0,0001 (S1)
+BEQL	S3,R0,7F0B88AC	;skip if room.loaded flag not set
+LBU	T0,0001 (S1)
+JAL	7F0B6314
+LW	A0,000C (S1)	;A0=room#
+SLTIU	S3,V0,0001	;S3= !value: TRUE if room.loaded flag set
+ANDI	T9,S3,00FF
+OR	S3,T9,R0	;(byte) S3
+//7F0B88A8:
+LBU	T0,0001 (S1)	;cmd.size
+SLL	T1,T0,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T1	;S1=next cmd
+
+7F0B88B8	type 27	preload range of rooms
+BEQL	S2,R0,7F0B8908	;if mode 0, ignore command
+LBU	T3,0001 (S1)
+LW	S0,000C (S1)	;S0=room.start
+LW	V1,0014 (S1)	;V1=room.end
+SLT	AT,V1,S0	;TRUE if end<start
+BNEL	AT,R0,7F0B8908
+LBU	T3,0001 (S1)
+//7F0B88D4:	while val2<val1
+BEQL	S3,R0,7F0B88F8	;skip if room.loaded flag not set
+ADDIU	S0,S0,0001	;S0++	val1++
+JAL	7F0B6314
+OR	A0,S0,R0	;A0=room#
+SLTIU	S3,V0,0001	;S3= !value: TRUE if room.loaded flag set
+ANDI	T2,S3,00FF
+OR	S3,T2,R0	;(byte) S3
+LW	V1,0014 (S1)	;V1=end
+ADDIU	S0,S0,0001	;S0++	room#++
+//7F0B88F8:
+SLT	AT,V1,S0	;TRUE if end<cur
+BEQ	AT,R0,7F0B88D4
+NOP
+//7F0B8904:
+LBU	T3,0001 (S1)	;cmd.size
+SLL	T4,T3,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T4	;S1=next cmd
+
+7F0B8930	type 50	re-entrant: calls following command block as its own 'thread'
+LBU	T7,0001 (S1)	;cmd.size
+OR	A1,S2,R0	;A1=S2: preserve mode
+SLL	T8,T7,0x3
+JAL	7F0B8414	;calls this command parser using next command as start!
+ADDU	A0,T8,S1	;A0=next command
+LBU	T9,0001 (V0)	;cmd.size
+SLL	T0,T9,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,V0,T0
+
+7F0B896C	type 51	ignore commands; disable reading commands on return if read org. enabled
+LBU	T3,0001 (S1)	;cmd.size
+SLTU	V0,R0,S2	;TRUE if S2
+OR	S2,R0,R0	;S2=0	no longer read commands
+SLL	T4,T3,0x3
+BEQ	V0,R0,7F0B8480	;set 80081610 if reading commands
+ADDU	S1,S1,T4	;S1=next cmd
+LUI	AT,8008
+BEQ	R0,R0,7F0B8480
+SW	S7,1610 (AT)	;1->80081610
+
+7F0B8954	type 52	return and permit reading commands
+LBU	T1,0001 (S1)	;cmd.size
+LUI	AT,8008
+SW	R0,1610 (AT)	;0->80081610
+SLL	T2,T1,0x3
+BEQ	R0,R0,7F0B89F4	;return V0=p->next command
+ADDU	V0,S1,T2
+
+7F0B8990	type 5A	re-entrant: calls parser in previously set mode, setting mode on return
+JAL	7F0B83B0	;pull V0 off stack
+NOP
+LBU	T5,0001 (S1)	;cmd.size
+AND	A1,V0,S2	;A1= mode & result
+SLL	T6,T5,0x3
+JAL	7F0B8414	;calls this command parser using next command
+ADDU	A0,T6,S1
+LUI	T7,8008
+LW	T7,1610 (T7)	;T7=80081610
+OR	S1,V0,R0
+BEQL	T7,R0,7F0B8484	;if 80081610 set, set mode to 0 (ignore command)
+LBU	A0,0000 (S1)
+BEQ	R0,R0,7F0B8480
+OR	S2,R0,R0
+
+7F0B89C8	type 5B	toggle S2 flag (read/ignore commands)
+LBU	T9,0001 (S1)	;cmd.size
+XORI	T8,S2,0001
+OR	S2,T8,R0	;untoggle S2 flag
+SLL	T0,T9,0x3
+BEQ	R0,R0,7F0B8480
+ADDU	S1,S1,T0	;S1=next cmd
+
+7F0B89E0	type 5C	return p->next command
+LBU	T1,0001 (S1)	;cmd.size
+SLL	T2,T1,0x3
+BEQ	R0,R0,7F0B89F4
+ADDU	V0,S1,T2	;V0=p->next command
+
+7F0B89F0	terminate
+OR	V0,S1,R0	;return V0=p->cmd
+//7F0B89F4:	return
+LW	RA,003C (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S3,0024 (SP)
+LW	S4,0028 (SP)
+LW	S5,002C (SP)
+LW	S6,0030 (SP)
+LW	S7,0034 (SP)
+LW	S8,0038 (SP)
+JR	RA
+ADDIU	SP,SP,0080
+
++_+
+
+7F0B6314	EAE44	
+	accepts: A0=room#
+SLL	T6,A0,0x2
+ADDU	T6,T6,A0
+LUI	T7,8004
+ADDIU	T7,T7,1414
+SLL	T6,T6,0x4	;T6=A0*0x50
+ADDU	V0,T6,T7
+LBU	T9,0002 (V0)	;80041414+2+offset: rooms.loaded
+ADDIU	SP,SP,FFE8
+ADDIU	T8,R0,0001
+SW	RA,0014 (SP)
+BNEZ	T9,7F0B6354	;return FALSE if models already loaded
+SB	T8,0035 (V0)	;1->rooms+35: 
+JAL	7F0B6368
+NOP
+BEQ	7F0B6358	;return TRUE
+ADDIU	V0,R0,0001
+//7F0B6354:	return FALSE
+OR	V0,R0,R0
+//7F0B6358:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP

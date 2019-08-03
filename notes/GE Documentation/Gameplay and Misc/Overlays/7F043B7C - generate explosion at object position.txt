@@ -1,0 +1,135 @@
+7F043B7C	786AC	generate explosion of type A1 at object position A0
+	accepts: A0=p->std.object's pos.data, A1=type of explosion
+ADDIU	SP,SP,FFA0
+SW	RA,002C (SP)
+SW	S0,0028 (SP)
+SW	A1,0064 (SP)	;SP+64=A1: explody.type
+LW	T0,0004 (A0)	;T0=pos.data+4: p->obj.data
+LUI	AT,0006
+OR	S0,A0,R0	;S0=A0: p->pos.data
+LW	T6,0064 (T0)	;T6=obj.data+64: flags.runtime
+ADDIU	T9,S0,002C	;T9=pos.data+2C: p->pos.data.rooms
+AND	T7,T6,AT	;T7=flags.run & 00060000: owner
+SRL	T8,T7,0x11	;T8=owner's player#
+SW	T8,0058 (SP)	;SP+58=T8: player#
+LW	A2,001C (A0)	;A2=pos.data+1C: pos.data.parent?
+OR	A0,R0,R0	;A0=0
+BEQL	A2,R0,7F043D10	;branch if NULL: object is source
+LW	V0,0008 (T0)
+LW	V0,001C (A2)	;V0=pos.data+1C: pos.data.parent?
+OR	V1,A2,R0	;V1=A2: parental guidance suggested
+BEQL	V0,R0,7F043BE0	;branch if owner found
+LW	T9,0014 (V1)
+//7F043BCC:	loop to find parent
+OR	V1,V0,R0	;V1=V0: parental guidance suggested
+LW	V0,001C (V0)	;V0=pos.data+1C: pos.data.parent?
+BNEL	V0,R0,7F043BD0	;loop if parent found
+OR	V1,V0,R0
+//7F043BDC:
+LW	T9,0014 (V1)	;T9=pos.data+14: p->tile
+SW	T9,0050 (SP)	;SP+50=p->tile
+LBU	T1,0001 (S0)	;T1=org.pos.data+1: state
+ANDI	T2,T1,0002	;T2=state&2: on-screen
+BEQL	T2,R0,7F043C40	;branch if not on-screen
+LWC1	F10,0008 (V1)
+LW	A0,0014 (T0)	;A0=obj.data+14: obj.instance controller
+SW	T0,005C (SP)	;SP+5C=T0: p->obj.data
+JAL	7F06C6A0
+SW	V1,0054 (SP)	;SP+54=V1: p->pos.data
+LWC1	F4,0030 (V0)
+SWC1	F4,0044 (SP)
+LWC1	F6,0034 (V0)
+SWC1	F6,0048 (SP)
+LWC1	F8,0038 (V0)
+JAL	7F078444	;V0= BONDdata+10D4: 
+SWC1	F8,004C (SP)
+ADDIU	S0,SP,0044	;S0=SP+44: p->position buffer
+OR	A1,S0,R0	;A1=S0: p->pos
+JAL	7F058474
+OR	A0,V0,R0
+LW	V1,0054 (SP)	;V1=p->pos.data
+BEQ	R0,R0,7F043C58
+LW	T0,005C (SP)	;T0=SP+5C: p->obj.data
+//7F043C3C:	copy position data to buffer
+LWC1	F10,0008 (V1)	;F10=pos.data+8: xpos
+ADDIU	S0,SP,0044	;S0=SP+44: p->position buffer
+SWC1	F10,0044 (SP)	;F10->SP+44: pos.xpos
+LWC1	F16,000C (V1)	;F16=pos.data+C: ypos
+SWC1	F16,0048 (SP)	;F16->SP+48: pos.ypos
+LWC1	F18,0010 (V1)	;F18=pos.data+10: zpos
+SWC1	F18,004C (SP)	;F18->SP+4C: pos.zpos
+//7F043C58:
+LBU	T3,0001 (V1)	;T3=pos.data+1: state
+ADDIU	A0,SP,0050	;A0=SP+50: 
+LW	A3,0044 (SP)	;A3=SP+44: xpos2
+ANDI	T4,T3,0008	;T4=state&8: has been loaded
+BNE	T4,R0,7F043CD4	;branch if has been loaded or on-screen
+LWC1	F4,004C (SP)	;F4=SP+4C: zpos
+LW	A1,0008 (V1)	;A1=pos.data+8: xpos1
+LW	A2,0010 (V1)	;A2=pos.data+10: zpos1
+SW	T0,005C (SP)	;SP+5C=T0: p->obj.data
+SW	V1,0054 (SP)	;SP+54=V1: p->pos.data
+JAL	7F0B0BE4
+SWC1	F4,0010 (SP)	;SP+10=zpos2
+LW	V1,0054 (SP)	;V1=SP+54: p->pos.data
+BEQ	V0,R0,7F043CD4	;branch if ???
+LW	T0,005C (SP)	;T0=p->obj.data
+LW	T5,0008 (T0)	;T5=obj.data+8: flags.1
+LW	T8,0058 (SP)	;T8=SP+58: player#
+ADDIU	T9,V1,002C	;T9=pos.data+2C: pos.data.rooms
+ANDI	T6,T5,000E	;T6=flags.1 & 0xE: midair
+SLTIU	T7,T6,0001	;T7=TRUE if not midair
+SW	T7,0010 (SP)	;SP+10=TRUE if forced to ground
+SW	T9,0018 (SP)	;SP+18=p->room list
+SW	R0,001C (SP)	;SP+1C=0: 
+OR	A0,R0,R0	;A0=0
+OR	A1,S0,R0	;A1=S0: p->pos.buf
+LW	A2,0050 (SP)	;A2=SP+50: p->tile
+LH	A3,0066 (SP)	;A3=SP+66: explody.type
+JAL	7F09C250	;generates explosions and smoke at location
+SW	T8,0014 (SP)	;SP+14=T8: player#
+BEQ	R0,R0,7F043D60	;return
+LW	RA,002C (SP)
+//7F043CD4:	midair explosion, set as loaded
+LW	T1,0058 (SP)	;T1=SP+58: player#
+ADDIU	T2,V1,002C	;T2=pos.data+2C: pos.data.rooms
+ADDIU	T3,R0,0001
+SW	T3,001C (SP)	;SP+1C=TRUE: set as loaded
+SW	T2,0018 (SP)	;SP+18= pos.data.rooms
+OR	A0,R0,R0	;A0=NULL
+OR	A1,S0,R0	;A1=S0: p->pos.buf
+LW	A2,0050 (SP)	;A2=SP+50: p->tile
+LH	A3,0066 (SP)	;A3=SP+66: explody.type
+SW	R0,0010 (SP)	;SP+10=FALSE: midair
+JAL	7F09C250	;generates explosions and smoke at location
+SW	T1,0014 (SP)	;SP+14= player#
+BEQ	R0,R0,7F043D60
+LW	RA,002C (SP)
+//7F043D0C:	use object's current position
+LW	V0,0008 (T0)	;V0=obj.data+8: flags.1
+ANDI	T4,V0,000E	;T4=flags.1 & 0xE: midair
+SLTIU	V0,T4,0001	;V0=TRUE if not midair
+BEQL	V0,R0,7F043D30	;branch if midair
+LW	T8,0058 (SP)
+LBU	V0,0001 (S0)	;V0=org.pos.data+1: state
+ANDI	T6,V0,0008	;T6=state&8: loaded
+SLTIU	V0,T6,0001	;V0=TRUE if not loaded
+//7F043D2C:	generate explosion at object
+LW	T8,0058 (SP)	;T8=SP+58: player#
+LW	A2,0014 (S0)	;A2=org.pos.data+14: p->tile
+SW	T9,0018 (SP)	;SP+18= p->pos.data.rooms
+SW	V0,0010 (SP)	;SP+10= TRUE if midair and unloaded
+SW	T8,0014 (SP)	;SP+14= player#
+LBU	T1,0001 (S0)	;T1=org.pos.data+1: state
+ADDIU	A1,T0,0058	;A1=obj.data+58: p->pos
+LH	A3,0066 (SP)	;A3=SP+66: explody.type
+ANDI	T2,T1,0008	;T2=state&8: loaded
+SLTU	T3,R0,T2	;T3=TRUE if loaded
+JAL	7F09C250	;generates explosions and smoke at location
+SW	T3,001C (SP)	;SP+1C: TRUE if loaded
+//7F043D5C:	return
+LW	RA,002C (SP)
+LW	S0,0028 (SP)
+ADDIU	SP,SP,0060
+JR	RA
+NOP

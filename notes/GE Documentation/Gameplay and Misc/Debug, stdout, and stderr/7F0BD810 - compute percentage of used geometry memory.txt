@@ -1,0 +1,80 @@
+7F0BD810	F2340	F12=percentage of used geometry memory
+	accepts: A0=p->display list
+LUI	V0,8009
+LBU	V0,C250 (V0)	;V0=8008C250: [1]
+LUI	T0,8009
+ADDIU	T0,T0,C230	;T0=8008C230
+SLL	T6,V0,0x2	;T6=V0->offset
+ADDU	T7,T0,T6	;T7=8008C230+offset
+SLL	T1,V0,0x2	;T1=V0->offset
+LW	V1,0004 (T7)	;V1=8008C234+offset: p->end of cur, DL buffer
+ADDU	T2,T0,T1
+LW	T3,0000 (T2)	;T3=8008C230+offset: p->start of cur. DL buffer
+OR	A3,A0,R0	;A3=A0: p->DL
+SUBU	T8,V1,A3
+SUBU	T4,V1,T3
+SRA	T5,T4,0x3	;T5=(start-cur.DL pos)/8: #commands used
+SRA	T9,T8,0x3	;T9=(end-start)/8: #commands total
+MTC1	T9,F4
+MTC1	T5,F6
+ADDIU	SP,SP,FFE8
+CVT.S.W	F4,F4	;F4=(float) #commands to end of DL bank
+SW	RA,0014 (SP)
+LUI	A0,8005
+ADDIU	A0,A0,8320	;A0=80048320: "========================="
+CVT.S.W	F6,F6	;F6=(float) #commands used in DL bank
+MFC1	A1,F4		;A1=(float) #commands total in DL bank
+MFC1	A2,F6		;A2=(float) #commands used in DL bank
+JAL	7F0BD7CC	;V0=strlen(A0), F12=A1/A2
+NOP
+//7F0BD87C:	compute remaining geometry memory
+LUI	V0,8009
+LBU	V0,C250 (V0)	;V0=8008C250
+LUI	A3,8009
+ADDIU	A3,A3,C240	;A3=8008C240
+SLL	T6,V0,0x2
+ADDU	T7,A3,T6
+SLL	T1,V0,0x2
+LW	V1,0004 (T7)	;V1=8008C244+offset: p->end of geo.memory
+ADDU	T2,A3,T1
+LUI	T8,8009
+LW	T8,C24C (T8)	;T8=8008C24C: p->cur.geometry memory
+LW	T3,0000 (T2)	;T3=8008C240+offset: p->start of geo.memory
+LUI	A0,8005
+SUBU	T9,V1,T8	;T9=end-cur.
+SUBU	T4,V1,T3	;T4=end-start
+MTC1	T4,F10
+MTC1	T9,F8
+ADDIU	A0,A0,8320	;A0=80048320: "========================="
+CVT.S.W	F10,F10	;F10=(float) size of geometry memory
+CVT.S.W	F8,F8	;F8= (float) size of remaining geo.mem
+MFC1	A2,F10		;A2=(float) size of geometry memory
+MFC1	A1,F8		;A1=(float) size of remaining geo.mem
+JAL	7F0BD7CC	;V0=strlen(A0), F12=ratio remaining memory
+NOP
+//7F0BD8DC:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+7F0BD7CC	F22FC	V0=strlen of A0, F12=ratio of remaining/total
+	accepts: A0=p->string, A1=(float)size remaining, A2=(float)total size
+MTC1	A1,F12
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A2,0020 (SP)	;SP+20=A2: #previous ops
+JAL	7001387C	;V0=strlen(A0)
+SWC1	F12,001C (SP)	;SP+1C=A1: #remaining ops
+LWC1	F12,001C (SP)	;F12=A1: #remaining ops
+LWC1	F4,0020 (SP)	;F4=A2: #previous ops
+MTC1	R0,F0
+LW	RA,0014 (SP)
+DIV.S	F12,F12,F4	;F12=remaining/previous: ratio of left::used
+C.LT.S	F12,F0		;TRUE if negative output
+NOP
+BC1F	7F0BD808	;silly useless command...
+NOP
+//7F0BD808:	return
+JR	RA
+ADDIU	SP,SP,0018

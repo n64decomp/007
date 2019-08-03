@@ -1,0 +1,783 @@
+uses a variety of microcode!
+starts @ 0xFDE4
+
+Stop Scolling:
+00000000
+Sets both scroll timers to zero
+
+Horizontal Scroll:
+00000001	xxxxxxxx	tttttttt
+[x] 'width' value like in image mapping to shift the image; short hex percent
+[t]ime the move occurs in
+
+Vertical Scroll:
+00000002	yyyyyyyy	tttttttt
+[y] 'height' value like in image mapping to shift image; short hex percent
+[t]ime the move occurs in
+
+Horizontal Scroll Nonadditive:
+00000003	xxxxxxxx	tttttttt
+[x] 'width' value shifting the image from original position; short hex percent
+[t]ime the move occurs in
+
+Vertical Scroll Nonadditive:
+00000004	yyyyyyyy	tttttttt
+[y] 'height' value shifting the image from original position; short hex percent
+[t]ime the move occurs in
+
+Zoom Width:
+00000005	xxxxxxxx	tttttttt
+[x] zoom factor as a short hex percentage
+[t]ime for complete zoom
+
+Zoom Height:
+00000006	yyyyyyyy	tttttttt
+[x] zoom factor as a short hex percentage
+[t]ime for complete zoom
+
+Use image:
+00000007	000000xx
+xx is image number in global image list, starting with 0=BOND
+
+Hold for Time:
+00000008	tttttttt
+[t]ime to hold; necessary to break loops, like the 03 action command
+
+Jump to Routine:
+00000009	pppppppp
+[p]ointer to another animation routine where processing resumes
+
+Jump on Chance:
+0000000A	pppppppp	0000xxxx
+[p]ointer to another animation routine where processing resumes
+[x] value to test against a random value.  Jump if rand < xxxx
+
+Loop:
+0000000B
+restarts group from the beginning of the current animation
+
+Stop Animation:
+0000000C
+Unconditionally stops the animation using the S1 flag.
+
+RGBA:
+0000000D	RRGGBBAA	tttttttt
+New [R]ed, [G]reen, [B]lue, and [A]lpha components
+[t]ime for complete transition
+
+Set Rotation:
+0000000E	rrrrrrrr
+set image [r]otation; 0x2000 rotates 360 degrees
+primarily used to reset rotation to 0
+
+Rotate Image:
+0000000F	rrrr.rrrr
+[r]otate image incrementally rrrr.rrrr%; 
+0x2000 rotates approximately 45 degrees, 0x1555 to mimic a clock
+
++ +
+ +
++ +
+
+7F049F48:	Process monitor microcode
+...
+//7F049FEC:
+OR	S1,R0,R0
+LHU	V0,0004 (S0)	V0=offset in ani code; S0=ani values at 0x80 in 0A objects
+//7F049FF4:
+LW	T1,0000 (S0)	T1=pointer to animation microcode from object
+SLL	T2,V0,0x2
+ADDU	V1,T1,T2
+LW	T3,0000 (V1)	T3=command type; V1=offset to command
+SLTIU	AT,T3,0010
+BEQ	AT,R0,7F04A468
+SLL	T3,T3,0x2
+LUI	AT,8005
+ADDU	AT,AT,T3
+LW	T3,2C6C (AT)	T3=80052C6C: TLB table for processing command types
+JR	T3
+NOP
+
+//7F04A024:	command 00: stop scrolling
+ADDIU	T4,V0,0001
+SWC1	F20,0040 (S0)	0->reset x offsetting
+SWC1	F20,0054 (S0)	0->reset y offsetting
+BEQ	R0,R0,7F04A468
+SH	T4,0004 (S0)	save offset
+
+//7F04A038:	command 01: horizontal scroll
+SWC1	F20,003C (S0)	0->
+LW	T5,0008 (V1)
+LUI	AT,4F80
+MTC1	T5,F4
+BGEZ	T5,7F04A05C
+CVT.S.W	F6,F4
+MTC1	AT,F8
+NOP
+ADD.S	F6,F6,F8
+//7F04A05C:
+DIV.S	F10,F24,F6
+LWC1	F0,0038 (S0)	cur. x pos?
+ADDIU	T7,V0,0003
+SWC1	F0,0044 (S0)	saved to 'start x' slot
+SWC1	F10,0040 (S0)	time for shift
+LW	T6,0004 (V1)
+SH	T7,0004 (S0)
+MTC1	T6,F18
+NOP
+CVT.S.W	F4,F18
+MUL.S	F8,F4,F22
+ADD.S	F6,F0,F8
+BEQ	R0,R0,7F04A468
+SWC1	F6,0048 (S0)	save 'end x' slot
+
+//7F04A094:	command 02: vertical scroll
+SWC1	F20,0050 (S0)
+LW	T8,0008 (V1)
+LUI	AT,4F80
+MTC1	T8,F10
+BGEZ	T8,7F04A0B8
+CVT.S.W	F18,F10
+MTC1	AT,F4
+NOP
+ADD.S	F18,F18,F4
+//7F04A0B8:
+DIV.S	F8,F24,F18
+LWC1	F0,004C (S0)
+ADDIU	T0,V0,0003
+SWC1	F0,0058 (S0)
+SWC1	F8,0054 (S0)
+LW	T9,0004 (V1)
+SH	T0,0004 (S0)
+MTC1	T9,F6
+NOP
+CVT.S.W	F10,F6
+MUL.S	F4,F10,F22
+ADD.S	F18,F0,F4
+BEQ	R0,R0,7F04A468
+SWC1	F18,005C (S0)
+
+//7F04A0F0:	command 03: same as 01, but doesn't add to previous (obj+0x38)
+SWC1	F20,003C (S0)
+LW	T1,0008 (V1)
+LUI	AT,4F80
+MTC1	T1,F8
+BGEZ	T1,7F04A114
+CVT.S.W	F6,F8
+MTC1	AT,F10
+NOP
+ADD.S	F6,F6,F10
+//7F04A114:
+DIV.S	F4,F24,F6
+LWC1	F18,0038 (S0)
+ADDIU	T3,V0,0003
+SWC1	F18,0044 (S0)
+SWC1	F4,0040 (S0)
+LW	T2,0004 (V1)
+SH	T3,0004 (S0)
+MTC1	T2,F8
+NOP
+CVT.S.W	F10,F8
+MUL.S	F6,F10,F22
+BEQ	R0,R0,7F04A468
+SWC1	F6,0048 (S0)
+
+//7F04A148:	command 04: same as 02, but doesn't add to previous (obj+0x4C)
+SWC1	F20,0050 (S0)
+LW	T4,0008 (V1)
+LUI	AT,4F80
+MTC1	T4,F4
+BGEZ	T4,7F04A0B8
+CVT.S.W	F18,F4
+MTC1	AT,F8
+NOP
+ADD.S	F18,F18,F8
+//7F04A0B8:
+DIV.S	F10,F24,F18
+LWC1	F6,004C (S0)
+ADDIU	T6,V0,0003
+SWC1	F6,0058 (S0)
+SWC1	F10,0054 (S0)
+LW	T5,0004 (V1)
+SH	T6,0004 (S0)
+MTC1	T5,F4
+NOP
+CVT.S.W	F8,F4
+MUL.S	F18,F8,F22
+BEQ	R0,R0,7F04A468
+SWC1	F18,005C (S0)
+
+//7F04A1A0:	command 05: Zoom X
+SWC1	F20,0014 (S0)
+LW	T7,0008 (V1)
+LUI	AT,4F80
+MTC1	T7,F10
+BGEZ	T7,7F04A1C4
+CVT.S.W	F6,F10
+MTC1	AT,F4
+NOP
+ADD.S	F6,F6,F4
+//7F04A1C4:
+DIV.S	F8,F24,F6
+LWC1	F18,0010 (S0)
+ADDIU	T9,V0,0003
+SWC1	F18,001C (S0)
+SWC1	F8,0018 (S0)
+LW	T8,0004 (V1)
+SH	T9,0004 (S0)
+MTC1	T8,F10
+NOP
+CVT.S.W	F4,F10
+MUL.S	F6,F4,F22
+BEQ	R0,R0,7F04A468
+SWC1	F6,0020 (S0)
+
+//7F04A1F8:	command 06: Zoom Y
+SWC1	F20,0028 (S0)
+LW	T0,0008 (V1)
+LUI	AT,4F80
+MTC1	T0,F8
+BGEZ	T0,7F04A1C4
+CVT.S.W	F18,F8
+MTC1	AT,F10
+NOP
+ADD.S	F18,F18,F10
+//7F04A1C4:
+DIV.S	F4,F24,F18
+LWC1	F6,0024 (S0)
+ADDIU	T2,V0,0003
+SWC1	F6,0030 (S0)
+SWC1	F4,002C (S0)
+LW	T1,0004 (V1)
+SH	T2,0004 (S0)
+MTC1	T1,F8
+NOP
+CVT.S.W	F10,F8
+MUL.S	F18,F10,F22
+BEQ	R0,R0,7F04A468
+SWC1	F18,0034 (S0)
+
+//7F04A250:	command 07: use image from global monitor image list
+OR	A0,S0,R0
+JAL	7F049F40
+	JR	RA
+	SW	A1,0008 (A0)	save image to obj
+LW	A1,0004 (V1)
+LHU	T3,0004 (S0)
+LUI	AT,4780
+MTC1	AT,F2		F2=65536
+ADDIU	T4,T3,0002
+BEQ	R0,R0,7F04A468
+SH	T4,0004 (S0)
+
+//7F04A274:	command 08: halt processing for time
+LH	V0,0006 (S0)
+LUI	T5,8005
+BLTZL	V0,7F04A2B8
+LW	T0,0004 (V1)
+LW	T5,8374 (T5)	T5=80048374: ?	also used in FPS control...  Processor step?
+SUBU	T6,V0,T5
+SH	T6,0006 (S0)
+LH	T7,0006 (S0)
+BLTZL	T7,7F04A2A8
+LHU	T8,0004 (S0)
+BEQ	R0,R0,7F04A468
+ADDIU	S1,R0,0001
+LHU	T8,0004 (S0)
+//7F04A2A8:	add to delay time counter
+ADDIU	T9,T8,0002
+BEQ	R0,R0,7F04A468
+SH	T9,0004 (S0)
+LW	T0,0004 (V1)
+//7F04A2B8:	when not already set copy directly
+ADDIU	S1,R0,0001
+BEQ	R0,R0,7F04A468
+SH	T0,0006 (S0)
+
+//7F04A2C4:	command 09: jump
+OR	A0,S0,R0
+JAL	7F049C8C
+	SW	A1,0000 (A0)	pointer to routine
+	JR	RA
+	SH	R0,0004 (A0)	count in routine
+LW	A1,0004 (V1)
+LUI	AT,4780
+MTC1	AT,F2		F2=65536
+BEQ	R0,R0,7F04A468
+NOP
+
+//7F04A2E0:	command 0A: jump if rand < x
+JAL	7000A450	ret. V0=rand
+SW	V1,0094 (SP)
+LW	V1,0094 (SP)
+SRL	T1,V0,0x10	T1=rand / 0x10000
+OR	A0,S0,R0
+LW	T2,0008 (V1)
+SLTU	AT,T1,T2
+BEQL	AT,R0,7F04A320	don't jump ani if rand < given value
+LHU	T3,0004 (S0)
+JAL	7F049C8C
+	SW	A1,0000 (A0)	pointer to routine
+	JR	RA
+	SH	R0,0004 (A0)	count in routine
+LW	A1,0004 (V1)
+LUI	AT,4780
+MTC1	AT,F2		F2=65536
+BEQ	R0,R0,7F04A468
+NOP
+LHU	T3,0004 (S0)
+//7F04A320:
+LUI	AT,4780
+MTC1	AT,F2		F2=65536
+ADDIU	T4,T3,0003
+SH	T4,0004 (S0)
+BEQ	R0,R0,7F04A468
+NOP
+
+//7F04A338:	command 0B: restart group
+BEQ	R0,R0,7F04A468
+SH	R0,0004 (S0)
+
+//7F04A340:	command 0C: stop animation
+BEQ	R0,R0,7F04A468
+ADDIU	S1,R0,0001
+
+//7F04A348:	command 0D: 
+SWC1	F20,006C (S0)
+LW	T5,0008 (V1)
+LUI	AT,4F80
+MTC1	T5,F4
+BGEZ	T5,7F04A36C
+CVT.S.W	F6,F4
+MTC1	AT,F8
+NOP
+ADD.S	F6,F6,F8
+//7F04A36C:
+DIV.S	F10,F24,F6
+LBU	T6,0060 (S0)	T6=cur R
+LBU	T0,0063 (S0)	T0=cur G
+LBU	T4,0066 (S0)	T4=cur B
+SB	T6,0061 (S0)	move cur R->0x61
+LBU	T8,0069 (S0)	T8=cur A
+SWC1	F10,0070 (S0)
+LW	T7,0004 (V1)	T7=new RGBA
+SB	T0,0064 (S0)	move cur G->0x64
+SRL	T9,T7,0x18
+SB	T9,0062 (S0)	final R->0x62
+LW	T1,0004 (V1)	T1=new RGBA
+SB	T4,0067 (S0)	move cur B->0x67
+SRL	T3,T1,0x10
+SB	T3,0065 (S0)	final G->0x65
+LW	T5,0004 (V1)	T5=new RGBA
+SB	T8,006A (S0)	move cur A->0x6A
+ADDIU	T1,V0,0003
+SRL	T7,T5,0x8
+SB	T7,0068 (S0)	final B->0x68
+LW	T0,0004 (V1)	T0=new RGBA
+SH	T1,0004 (S0)
+BEQ	R0,R0,7F04A468
+SB	T0,006B (S0)	final A->0x6B
+
+//7F04A3CC:	command 0E: set image rotation	
+LW	T2,0004 (V1)
+ADDIU	T3,V0,0002
+SH	T3,0004 (S0)	new com offset
+MTC1	T2,F18
+NOP
+CVT.S.W	F4,F18
+MUL.S	F8,F4,F26	F26=pi*2
+DIV.S	F6,F8,F2	F2=65536
+BEQ	R0,R0,7F04A468
+SWC1	F6,000C (S0)
+
+//7F04A3F4:	command 0F: rotate image from current
+LW	T4,0004 (V1)
+LUI	AT,8005
+LWC1	F10,8378 (AT)	F10=80048378: ?
+MTC1	T4,F18
+NOP
+CVT.S.W	F4,F18
+MUL.S	F8,F10,F4
+LWC1	F10,000C (S0)
+MUL.S	F6,F8,F26	F26=pi*2
+DIV.S	F18,F6,F2	F2=65536
+ADD.S	F4,F10,F18
+SWC1	F4,000C (S0)
+LWC1	F12,000C (S0)
+C.LE.S	F26,F12
+NOP
+BC1FL	7F04A448
+C.LT.S	F12,F20
+SUB.S	F8,F12,F26
+SWC1	F8,000C (S0)
+LWC1	F12,000C (S0)
+C.LT.S	F12,F20
+//7F04A448:
+NOP
+BC1FL	7F04A460
+LHU	T5,0004 (S0)
+ADD.S	F6,F12,F26
+SWC1	F6,000C (S0)
+LHU	T5,0004 (S0)
+//7F04A460:
+ADDIU	T6,T5,0002
+SH	T6,0004 (S0)
+//7F04A468:	iterate to next command if not stopped
+BEQL	S1,R0,7F049FF4
+LHU	V0,0004 (S0)
+...
+//7F04AC18:
+JR	RA
+ADDIU	SP,SP,00B0
+
++ +
+ +
++ +
+
+routine to set the thingies for each object:
+7F049C98	7E7C8	accepts A1=ani to use, A0=target ani block to fill
+ADDIU	SP,SP,FFE8
+LUI	A2,8003
+SLTIU	AT,A1,0034
+SW	RA,0014 (SP)
+BEQ	AT,R0,7F049F28
+ADDIU	A2,A2,0B74	A2=80030B74: start of table (BOND)
+SLL	T6,A1,0x2
+LUI	AT,8005
+ADDU	AT,AT,T6
+LW	T6,2B98 (AT)	T6=80052B98: TLB that sets the address for each animation
+JR	T6
+NOP
+
+
+//7F049F28:	return and default
+JAL	7F049C8C
+	SW	A1,0000 (A0)
+	JR	RA
+	SH	R0,0004 (A0)
+OR	A1,A2,R0
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
++ +
+ +
++ +
+
+object animation controller	0x74
+0x0	4	pointer to animation
+0x4	2	offset to current command, in words
+0x6	2	wait counter; FFFF indicates currently running
+0x8	4	image # from monitor image bank
+0xC	4	[float] rotation
+0x10	4	[float] current zoom X
+0x14	4	[float] 0= start zoom X
+0x18	4	[float] zoom X timer
+0x1C	4	[float] initial zoom X
+0x20	4	[float] final zoom X
+0x24	4	[float] current zoom Y
+0x28	4	[float] 0= start zoom Y
+0x2C	4	[float] zoom Y timer
+0x30	4	[float] initial zoom Y
+0x34	4	[float] final zoom Y
+0x38	4	[float] current horizontal position
+0x3C	4	[float] 0= start horizontal scroll
+0x40	4	[float] horizontal scroll timer
+0x44	4	[float] horizontal initial position
+0x48	4	[float] horizontal final position
+0x4C	4	[float] current vertical position
+0x50	4	[float] 0= start vertical scroll
+0x54	4	[float] vertical scroll timer
+0x58	4	[float] vertical initial position
+0x5C	4	[float] vertical final position
+0x60	1	current red component
+0x61	1	initial red component
+0x62	1	final red component
+0x63	1	current green component
+0x64	1	initial green component
+0x65	1	final green component
+0x66	1	current blue component
+0x67	1	initial blue component
+0x68	1	final blue component
+0x69	1	current alpha component
+0x6A	1	initial alpha component
+0x6B	1	final alpha component
+0x6C	4	[float] 0= start colour shift
+0x70	4	[float] colour shift timer
+0x74	4	[float] 
+
+
+object animation controller copies
+8002A260/80075B98	94D0-9544	Monitor image object animation controller
+8002A2D4/80075C10	9544-95B8	? object animation controller
+8002A348/80075C88	95B8-962C	Taser object animation controller
+
+
+CALLED BY A LARGER ROUTINE...
+7F001750:
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F001958
+NOP
+JAL	7F001B08
+		LUI	AT,8007
+		SW	R0,1E00 (AT)
+		LUI	AT,8007
+		LUI	V1,8007
+		LUI	V0,8007
+		ADDIU	V0,V0,1E78
+		ADDIU	V1,V1,1E08
+		SW	R0,1E04 (AT)
+		//7F001B28:
+		ADDIU	V1,V1,0010
+		SW	R0,FFF4 (V1)
+		SW	R0,FFF8 (V1)
+		SW	R0,FFFC (V1)
+		BNE	V1,V0,7F001B28
+		SW	R0,FFF0 (V1)
+		JR	RA
+		NOP
+NOP
+...
+//7F001900:
+LUI	AT,8003
+ADDIU	SP,SP,0018
+JR	RA
+SWC1	F0,0828 (AT)
+
+
+7F001958	COPIES 8002-s to stack, then from stack to 8007-s
+ADDIU	SP,SP,FEA0
+LUI	T6,8003
+ADDIU	V0,SP,00EC	V0=spot on stack for #3 - standard controller
+ADDIU	T6,T6,A260	T6=8002A260: start of block
+ADDIU	V1,SP,0078	V1=spot on stack for #2 - unknown controller
+ADDIU	A0,SP,0004	A0=spot on stack for #1 - Taser controller
+ADDIU	T9,T6,006C	T9=addy for last word of block
+OR	T0,V0,R0	T0=copy spot 3
+//7F001978:	copy standard controller onto stack
+LW	AT,0000 (T6)
+ADDIU	T6,T6,000C
+ADDIU	T0,T0,000C
+SW	AT,FFF4 (T0)
+LW	AT,FFF8 (T6)
+SW	AT,FFF8 (T0)
+LW	AT,FFFC (T6)
+BNE	T6,T9,7F001978	copy standard controller onto stack to end
+SW	AT,FFFC (T0)
+//7F00199C:		final entries and prep write
+LW	AT,0000 (T6)
+LUI	T1,8007
+ADDIU	T1,T1,5B98	T1=80075B98: target copy address
+SW	AT,0000 (T0)	second to last entry
+LW	T9,0004 (T6)
+OR	T5,V0,R0	T5=copy spot #3
+ADDIU	T4,V0,006C	T4=endpoint
+SW	T9,0004 (T0)	final entry
+//7F0019BC:	write standard controller to 80075B98
+LW	AT,0000 (T5)
+ADDIU	T5,T5,000C
+ADDIU	T1,T1,000C
+SW	AT,FFF4 (T1)
+LW	AT,FFF8 (T5)
+SW	AT,FFF8 (T1)
+LW	AT,FFFC (T5)
+BNE	T6,T9,7F0019BC
+SW	AT,FFFC (T1)
+//7F0019E0:
+LW	AT,0000 (T5)
+LUI	T8,8003
+ADDIU	T8,T8,A2D4	T8=8002A2D4: Unknown controller
+SW	AT,0000 (T1)
+LW	T4,0004 (T5)
+ADDIU	T6,T8,006C	T6=endpoint
+OR	T0,V1,R0	T0=copy spot #2
+SW	T4,0004 (T1)
+//7F001A00:
+LW	AT,0000 (T8)
+ADDIU	T8,T8,000C
+ADDIU	T0,T0,000C
+SW	AT,FFF4 (T0)
+LW	AT,FFF8 (T8)
+SW	AT,FFF8 (T0)
+LW	AT,FFFC (T8)
+BNE	T6,T9,7F001A00
+SW	AT,FFFC (T0)
+//7F001A24:
+LW	AT,0000 (T8)
+LUI	T3,8007
+ADDIU	T3,T3,5C10
+SW	AT,0000 (T0)
+LW	T6,0004 (T8)
+OR	T1,V1,R0
+ADDIU	T5,V1,006C
+SW	T6,0004 (T0)
+//7F001A44:
+LW	AT,0000 (T1)
+ADDIU	T1,T1,000C
+ADDIU	T3,T3,000C
+SW	AT,FFF4 (T3)
+LW	AT,FFF8 (T1)
+SW	AT,FFF8 (T3)
+LW	AT,FFFC (T1)
+BNE	T6,T9,7F001A44
+SW	AT,FFFC (T3)
+//7F001A68:
+LW	AT,0000 (T1)
+LUI	T9,8003
+ADDIU	T9,T9,A348
+SW	AT,0000 (T3)
+LW	T5,0004 (T1)
+ADDIU	T8,T9,006C
+OR	T0,A0,R0
+SW	T5,0004 (T3)
+//7F001A88:
+LW	AT,0000 (T9)
+ADDIU	T9,T9,000C
+ADDIU	T0,T0,000C
+SW	AT,FFF4 (T0)
+LW	AT,FFF8 (T9)
+SW	AT,FFF8 (T0)
+LW	AT,FFFC (T9)
+BNE	T6,T9,7F001A44
+SW	AT,FFFC (T0)
+//7F001AAC:
+LW	AT,0000 (T9)
+LUI	T4,8007
+ADDIU	T4,T4,5C88
+SW	AT,0000 (T0)
+LW	T8,0004 (T9)
+OR	T3,A0,R0
+ADDIU	T1,A0,006C
+SW	T8,0004 (T0)
+//7F001ACC:
+LW	AT,0000 (T3)
+ADDIU	T3,T3,000C
+ADDIU	T4,T4,000C
+SW	AT,FFF4 (T4)
+LW	AT,FFF8 (T3)
+SW	AT,FFF8 (T4)
+LW	AT,FFFC (T3)
+BNE	T6,T9,7F001ACC
+SW	AT,FFFC (T4)
+//7F001AF0:
+LW	AT,0000 (T3)
+SW	AT,0000 (T4)
+LW	T1,0004 (T3)
+ADDIU	SP,SP,0160
+JR	RA
+SW	T1,0004 (T4)
+
+
++ +
+ +
++ +
+
+Used animation routines:	(ensure no ruptures!)
+1	desktops
+2	10 screens
+3	3 wave patterns
+5	scrolling green text (up)
+8	red bar graph +
+B	radar
+C	spinning cube
+D	3 screens
+E	red target
+F	7 screens
+10	world map
+11	karl yelling
+12	skateboard
+13	police guy
+16	BUNKER SCREENS 16	(first entry)
+2E	red brighten
+2F	green brighten
+30	grey solid
+31	red solid
+32	green solid
+33	black solid
+34	special
+35	taser
+
++ +
+ +
++ +
+
+TASER read directly from 80075C88
+
+read for image offset:
+//7F04A7CC:
+LW	V0,0008 (S0)
+SLTIU	AT,V0,0064	only +img offsets allowed; what test retains pointer support?
+BEQ	AT,R0,7F04A7F4
+OR	S1,V0,R0	assumes it is a pointer
+SLL	T5,V0,0x2
+LW	T7,D120 (T7)	T7=8008D120: pointer to monitor images in global img table
+SUBU	T5,T5,V0
+SLL	T5,T5,0x2	T5=img# * 0xC; offset to entry in global img table
+BEQ	R0,R0,7F04A7F4
+ADDU	S1,T5,T7
+//7F04A7F4:
+BEQ	S1,R0,7F04AA9C
+LUI	AT,3F00
+
++ +
+ +
++ +
+
+More Fun - Explosions manually set pointers!
+//7F04E5BC:	0x	handle a destroyed 0A object!
+ADDIU	AT,R0,000A
+BNEL	V0,AT,7F04E5F4
+ADDIU	AT,R0,000B
+JAL	7F03FFC0
+	LBU	T6,0002 (A0)
+	ANDI	T7,T6,0080
+	BNEL	T7,R0,7F03FFDC
+	LWC1	F4,0070 (A0)
+	JR	RA
+	OR	V0,R0,R0
+	//7F03FFDC:
+	TRUNC.W.S	F6,F4
+	MFC1	V0,F6
+	NOP
+	SRA	T9,V0,0x2
+	ADDIU	V0,T9,0001
+	JR	RA
+	NOP
+OR	A0,S0,R0
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F04E6CC
+ADDIU	A0,S0,0080
+LUI	A1,8003
+JAL	7F049C8C
+ADDIU	A1,A1,1EE8
+BEQ	R0,R0,7F04E6CC
+NOP
+
+//7F04E5F0:	0x	handle a destroyed 0B object!
+ADDIU	AT,R0,000A
+BNEL	V0,AT,7F04E658
+ADDIU	AT,R0,0024
+JAL	7F03FFC0
+OR	A0,S0,R0
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F04E6CC
+ADDIU	A0,S0,0080
+LUI	A1,8003
+JAL	7F049C8C	set monitor 1
+ADDIU	A1,A1,1EE8
+LUI	A1,8003
+ADDIU	A1,A1,1EE8
+JAL	7F049C8C	set monitor 2
+ADDIU	A0,S0,00F4
+LUI	A1,8003
+ADDIU	A1,A1,1EE8
+JAL	7F049C8C	set monitor 3
+ADDIU	A0,S0,0168
+LUI	A1,8003
+ADDIU	A1,A1,1EE8
+JAL	7F049C8C	set monitor 4
+ADDIU	A0,S0,01DC
+BEQ	R0,R0,7F04E6CC
+NOP

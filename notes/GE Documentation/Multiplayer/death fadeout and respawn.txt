@@ -1,0 +1,150 @@
+7F080A10:	B5540	Executes player fades
+	F12=time, in ms (usually 300)
+	F14=target opactity (1.0=100%)
+	
+
+
+//7F089584:	BE0B4	CALL FADEOUT
+JAL	7F080A10	;set cur. player fade
+NOP
+//7F08958C:	RETURN FROM FADEOUT CALL
+JAL	7F08088C	;V0=TRUE if done with fade
+		LUI	T6,8008
+		LW	T6,A0B0 (T6)	;T6=p->BONDdata
+		MTC1	R0,F6
+		OR	V0,R0,R0	;V0=0
+		LWC1	F4,03E4 (T6)	;F4=BONDdata+0x3E4: 
+		C.LT.S	F4,F6
+		NOP
+		BC1F	7F0808B4	;branch if value >= 0
+		NOP
+		ADDIU	V0,R0,0001	;V0=1
+		//7F0808B4:
+		JR	RA
+		NOP
+NOP
+BEQ	V0,R0,7F089658
+NOP
+JAL	7F09A464	;V0=# players
+NOP
+ADDIU	AT,R0,0001
+BNE	V0,AT,7F0895C0	;branch if multiplayer
+NOP
+JAL	7F07A9B8	;use intro camera mode A0
+ADDIU	A0,R0,0005
+BEQ	R0,R0,7F089658
+NOP
+//7F0895C0:	BE0F0	multiplayer
+JAL	7F014758	;V0=8002B540: scenario
+NOP
+JAL	7F09B150	;V0=8007A0B8: cur.player#
+SW	V0,0040 (SP)	;SP+40= scenario
+JAL	7F09A464	;V0=# players
+SW	V0,003C (SP)	;SP+3C= cur.player#
+OR	A1,V0,R0	;A1=V0: #players
+OR	A0,R0,R0
+BLEZ	V0,7F089614	;branch if invalid #players
+OR	V1,R0,R0	;V1=0
+LW	T0,003C (SP)	;T0= player killed
+LUI	T2,8008
+ADDIU	T2,T2,9EF0	;T2=80079EF0
+SLL	T1,T0,0x2	;T1= player->offset: offset to #playerkills, to compute total deaths
+ADDU	V0,T1,T2	;V0=80079EF0+offset: base for player data, offset for player kills to pull
+//7F0895FC:	grab #deaths for You Only Live Twice
+LW	T3,0024 (V0)	;T3=#times player killed this guy
+ADDIU	V1,V1,0001	;V1++	playercount
+SLT	AT,V1,A1	;TRUE if count < total
+ADDIU	V0,V0,0070	;V0+=0x70: next player's stats
+BNEZ	AT,7F0895FC	;loop until all losses computed
+ADDU	A0,A0,T3	;A0+=T3: running total of losses
+//YOLT
+LW	T4,0040 (SP)	;T4=scenario
+ADDIU	AT,R0,0001
+BNE	T4,AT,7F08962C	;branch if not "You Only Live Twice"
+SLTI	AT,A0,0002	;TRUE if died less than twice
+BEQ	AT,R0,7F089658	;skip if you're out!
+NOP
+//7F08962C:	Test if player pressing button to respawn
+JAL	7F09B150	;V0=8007A0B8: cur.player#
+NOP
+SLL	A0,V0,0x18
+SRA	T5,A0,0x18
+OR	A0,T5,R0
+JAL	7000C30C	;V0= player A0's buttons A1 held
+ORI	A1,R0,B000	;A1= A, Z, Start buttons
+BEQ	V0,R0,7F089658	;branch if not pressed
+NOP
+JAL	7F0888E8
+NOP
+//7F089658:
+JAL	7F08A4E4
+NOP
+JAL	7F08A5FC
+LW	A0,0058 (SP)
+JAL	7F08A9F8
+SW	V0,0058 (SP)
+JAL	7F08AAE8
+LW	A0,0058 (SP)
+SW	V0,0058 (SP)
+JAL	7F06A5E4
+ADDIU	A0,SP,0058
+JAL	7F069CF4
+LW	A0,0058 (SP)
+SW	V0,0058 (SP)
+JAL	7F056210
+OR	A0,V0,R0
+SW	V0,0058 (SP)
+JAL	7F0C6090	;Display red/blue positions on radar; uses scenario flags for TLD, MwtGX, and all the teams
+OR	A0,V0,R0
+SW	V0,0058 (SP)
+JAL	7F0804E0
+OR	A0,V0,R0
+LW	RA,001C (SP)
+ADDIU	SP,SP,0058
+JR	RA
+NOP
+
+
++-+-+-+
+
+upon respawn, triggers a fade-in
+(throw a test on this to unstupid MP invisibility)
+
+called by 7F088CBC
+anyone's guess how to tack in an invisibility test...
+//7F088C8C:	BD7BC	fade in - last thing you do...	V0 not important
+MTC1	R0,F0		;F0=0.0
+LW	T4,0000 (S1)	;T4=cur playerdata	[S1=8007A0B0]
+LUI	AT,8005
+SWC1	F0,0078 (T4)	;BONDdata+0x78= 0.0
+LW	T5,0000 (S1)
+LWC1	F16,52AC (AT)	;F16=800552AC:	-0.0001 [B8D1B717]
+LUI	AT,42F0
+MTC1	AT,F12		;F12= 120.0 [42F00000]	timer (ms.)
+SWC1	F16,007C (T5)	;BONDdata+0x7C= -0.0001
+LW	T9,0000 (S1)
+LUI	AT,3F80
+MTC1	AT,F14		;F14= 1.0 [3F800000]	final level 100%
+JAL	7F080A10	;set cur. player fade
+SWC1	F0,0080 (T9)	;BONDdata+0x80= 0.0
+//7F088CC4:	return...
+
+
+efficient this up a bit...
+!REVISED!
+//7F088C8C:	fade in - last thing you do...	V0 not important
+	*NOP
+	LW	T4,0000 (S1)
+	LUI	AT,8005
+	*SW	R0,0078 (T4)
+	*NOP
+	LWC1	F16,52AC (AT)
+	LUI	AT,42F0
+	MTC1	AT,F12
+	SWC1	F16,007C (T4)
+	*NOP
+	LUI	AT,3F80
+	MTC1	AT,F14
+	JAL	7F080A10
+	*SW	R0,0080 (T4)	;assume no need for F0=0
+//7F088CC4:	return...

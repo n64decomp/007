@@ -1,0 +1,129 @@
+in ram-
+80069920
+80069980
+800699E0
+80069A40
+80069AA0
+80069B00
+
+0x0	4	checksum value 1
+0x4	4	checksum value 2
+0x8	1	completion bitflags:
+		80	???
+		60	selected Bond
+		18	???
+		07	folder# (0-3; 4 is special case)
+0x9	1	bitflags:
+		01	007 mode flag (all solo stages available)
+0xA	1	music volume (00-FF off<->full)
+0xB	1	sound effect volume (00-FF off<->full)
+0xC	1	controller config (0-7 Honey<->Goodhead)
+		0x00	1.1 Honey
+		0x01	1.2 Solitaire
+		0x02	1.3 Kissy
+		0x03	1.4 Goodnight
+		0x04	2.1 Plenty
+		0x05	2.2 Galore
+		0x06	2.3 Domino
+		0x07	2.4 Goodhead
+		0x08	Screen Mode: cinema
+0xD	1	options
+		0x80	Screen Ratio:	0-normal; 1-16:9
+		0x40	Screen Mode:	0-full; 1-wide
+		0x20	Ammo On-Screen:	0-off; 1-on
+		0x10	Look Ahead:	0-off; 1-on
+		0x08	Sight On-Screen	0-off; 1-on
+		0x04	Aim Control:	0-hold; 1-toggle
+		0x02	Auto Aim:	0-off; 1-on
+		0x01	Look Up/Down:	0-reverse; 1-upright
+0xE	1	unlocked cheats
+		0x01	0  Paintball Mode
+		0x02	1  Invincible
+		0x04	2  DK Mode
+		0x08	3  2x Grenade L.
+		0x10	4  2x Rocket L.
+		0x20	5  Turbo Mode
+		0x40	6  No Radar (Multi)
+		0x80	7  Tiny Bond
+0xF	1	unlocked cheats
+		0x01	8  2x Throwing Knife
+		0x02	9  Fast Animation
+		0x04	A  Bond Invisible
+		0x08	B  Enemy Rockets
+		0x10	C  Slow Animation
+		0x20	D  Silver PP7
+		0x40	E  2x Hunting Knife
+		0x80	F  Infinite Ammo
+0x10	1	unlocked cheats
+		0x01	10 2x RC-P90
+		0x02	11 Gold PP7
+		0x04	12 2x Laser
+		0x08	13 All Guns
+		0x10	14 [invalid]
+		0x20	15 [invalid]
+		0x40	16 [invalid]
+		0x80	17 [invalid]
+
+Each stage uses 10bits to define the best completion time.  First Agent, then Secret Agent, then 00 Agent.  007 is not stored.  0 designates incomplete.  Valid times range from 1-3FF (1 second to 17:03)
+
+0x12	10bits	Agent: Dam
+	10bits	Agent: Facility
+	10bits	Agent: Runway
+	10bits	Agent: Surface I
+0x17	10bits	Agent: Bunker I
+	10bits	Agent: Silo
+	10bits	Agent: Frigate
+	10bits	Agent: Surface II
+0x1C	10bits	Agent: Bunker II
+	10bits	Agent: Statue
+	10bits	Agent: Archives
+	10bits	Agent: Streets
+0x21	10bits	Agent: Depot
+	10bits	Agent: Train
+	10bits	Agent: Jungle
+	10bits	Agent: Control
+0x26	10bits	Agent: Caverns
+	10bits	Agent: Cradle
+	10bits	Agent: Aztec
+	10bits	Agent: Egyptian
+0x2B	10bits	Secret Agent: Dam
+	10bits	Secret Agent: Facility
+	10bits	Secret Agent: Runway
+	10bits	Secret Agent: Surface I
+0x30	10bits	Secret Agent: Bunker I
+	10bits	Secret Agent: Silo
+	10bits	Secret Agent: Frigate
+	10bits	Secret Agent: Surface II
+0x35	10bits	Secret Agent: Bunker II
+	10bits	Secret Agent: Statue
+	10bits	Secret Agent: Archives
+	10bits	Secret Agent: Streets
+0x3A	10bits	Secret Agent: Depot
+	10bits	Secret Agent: Train
+	10bits	Secret Agent: Jungle
+	10bits	Secret Agent: Control
+0x3F	10bits	Secret Agent: Caverns
+	10bits	Secret Agent: Cradle
+	10bits	Secret Agent: Aztec
+	10bits	Secret Agent: Egytpian
+0x44	10bits	00 Agent: Dam
+	10bits	00 Agent: Facility
+	10bits	00 Agent: Runway
+	10bits	00 Agent: Surface I
+0x49	10bits	00 Agent: Bunker I
+	10bits	00 Agent: Silo
+	10bits	00 Agent: Frigate
+	10bits	00 Agent: Surface II
+0x4E	10bits	00 Agent: Bunker II
+	10bits	00 Agent: Statue
+	10bits	00 Agent: Archives
+	10bits	00 Agent: Streets
+0x53	10bits	00 Agent: Depot
+	10bits	00 Agent: Train
+	10bits	00 Agent: Jungle
+	10bits	00 Agent: Control
+0x58	10bits	00 Agent: Caverns
+	10bits	00 Agent: Cradle
+	10bits	00 Agent: Aztec
+	10bits	00 Agent: Egyptian
+0x5D	3	unused bytes

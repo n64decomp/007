@@ -1,0 +1,337 @@
+81021406 3FF0	wall colours
+81021424 0000
+
+8102143C 0001	texture thingy
+81021433 FFFF	flowing walls
+
+versus info at 8003a218.  Ch per object.  
+8003,75d0|8005,5a60|3dcc,cccd
+prior object line
+object load
+size
+
+Quantity Digits to Accompany Gun Equipped Modifier Codes 
+1st Value - 2nd Value - Item/Prop Description
+75D0 - 5A60 - 00 - Double Alarm (beta)
+75F0 - 5A6C - 01 - Alarm (Dambunkers)
+7610 - 5A78 - 02 - Tiny Pyramid?
+7630 - 5A88 - 03 - Ammo Pickup Box #1 Brown
+7650 - 5A98 - 04 - Ammo Pickup Box #2 Brown
+7670 - 5AA8 - 05 - Ammo Pickup Box #1 Green
+7690 - 5AB8 - 06 - Ammo Pickup Box #2 Green
+76B0 - 5AC8 - 07 - Ammo Pickup Box #3 Green
+76D0 - 5AD8 - 08 - Iron Pillar?
+76F0 - 5AE0 - 09 - Drawing Board? (Surfaces?)
+7710 - 5AEC - 0a - Book (Surfaces)
+7730 - 5AF4 - 0b - Bookshelf (Surfaces? Arch?)
+7750 - 5B04 - 0c - Computer Console(CC) #1
+7770 - 5B18 - 0d - CC #2
+7790 - 5B2C - 0e - CC #3
+77B0 - 5B40 - 0f - CC #4
+77D0 - 5B54 - 10 - CC#5
+77F0 - 5B68 - 11 - CC #6
+7810 - 5B7C - 12 - Wooden Crate (WC) #1
+7830 - 5B88 - 13 - WC #2
+7850 - 5B94 - 14 - WC #3
+7870 - 5BA0 - 15 - WC #4
+7890 - 5BB0 - 16 - WC #5
+78B0 - 5BC0 - 17 - WC #6
+78D0 - 5BD0 - 18 - ?
+78F0 - 5BD8 - 19 - Computer Consol (CC) #7
+7910 - 5BE4 - 1a - CC #8
+7930 - 5BF0 - 1b - CC #9
+7950 - 5BFC - 1c - CC #10
+7970 - 5C0C - 1d - CC #11
+7990 - 5C1C - 1e - CC #12
+79B0 - 5C2C - 1f - cc #13
+79D0 - 5C3C - 20 - CC #14
+79F0 - 5C4C - 21 - CC #15
+7A10 - 5C5C - 22 - CC #16
+7A30 - 5C6C - 23 - CC #17
+7A50 - 5C7C - 24 - CC #18
+7A70 - 5C90 - 25 - CC #19
+7A90 - 5CA4 - 26 - Computer Table #1
+7AB0 - 5CAC - 27 - Computer Table #2
+7AD0 - 5CB4 - 28 - Table Light (Surfacesarch)
+7AF0 - 5CC4 - 29 - Computer Drive (Aztec)
+7B10 - 5CD4 - 2a - Disk Drive (Aztec)
+7B30 - 5CE4 - 2b - Fileing Cabinet (Runwayarch)
+7B50 - 5CF8 - 2c - Gas Canister (Surfaces)
+7B70 - 5D08 - 2d - Computer Keyboard
+7B90 - 5D14 - 2e - Wall Cabinet (Bunkers)
+7BB0 - 5D24 - 2f - wood panels, bunker 1
+7BD0 - 5D34 - 30 - Computer Mainframe #1 (Dambunkersetc)
+7BF0 - 5D44 - 31 - Computer Mainframe #2 (Dambunkersetc)
+7C10 - 5D54 - 32 - Chair (Runwayetc)
+7C30 - 5D64 - 33 - Steel Crate #1
+7C50 - 5D74 - 34 - Steel Crate #2
+7C70 - 5D84 - 35 - Steel Crate #3
+7C90 - 5D94 - 36 - Steel Crate #4
+7CB0 - 5DA4 - 37 - Land To Air Missile Launcher?
+7CD0 - 5DB4 - 38 - Group Of Land To Air Missile Launchers?
+7CF0 - 5DC4 - 39 - Iron Small Pillar #1?
+7D10 - 5DD0 - 3a - Iron Small Pillar #2?
+7D30 - 5DDC - 3b - Iron Small Pillar #3?
+7D50 - 5DE8 - 3c - Toxic Waste Drum #1?
+7D70 - 5DF4 - 3d - Toxic Waste Drum #2?
+7D90 - 5E00 - 3e - Toxic Waste Drum #3?
+7DB0 - 5E0C - 3f - Gate Lock (Dam)
+7DD0 - 5E18 - 40 - Telephone?
+7DF0 - 5E24 - 41 - Radio Transmitter #1 (Caverns?etc)
+7E10 - 5E34 - 42 - Radio Transmitter #2 (Caverns?etc)
+7E30 - 5E44 - 43 - Radio Transmitter #3 (Caverns?etc)
+7E50 - 5E54 - 44 - Radio Transmitter #4 (Caverns?etc)
+7E70 - 5E64 - 45 - Warhead (Silo)
+7E90 - 5E74 - 46 - Satellite Dish (Dam)
+7EB0 - 5E80 - 47 - Electrical Box?
+7ED0 - 5E8C - 48 - Stool (As In A Chair)?
+7EF0 - 5E98 - 49 - Blue Chair (Fac)
+7F10 - 5EA8 - 4a - Torpedoe Rack?
+7F30 - 5EB8 - 4b - TV
+7F50 - 5EC0 - 4c - TV Holder (Bunkers)
+7F70 - 5ECC - 4d - Piece Of Paper?
+7F90 - 5ED8 - 4e - Piece Of Paper?
+7FB0 - 5EE4 - 4f - Wooden Crate(WC) #7
+7FD0 - 5EF8 - 50 - WC #8
+7FF0 - 5F0C - 51 - WC #9
+8010 - 5F20 - 52 - WC #10
+8030 - 5F34 - 53 - WC #11
+8050 - 5F48 - 54 - WC #12
+8070 - 5F5C - 55 - Wood Table
+8090 - 5F6C - 56 - Card?
+80B0 - 5F7C - 57 - Blue Electrical Unit?
+80D0 - 5F8C - 58 - Bunch Of Stacked Steel Crates #1
+80F0 - 5F98 - 59 - Bunch Of Stacked Steel Crates #2
+8110 - 5FA4 - 5a - Bunch Of Stacked Steel Crates #3
+8130 - 5FB0 - 5b - Door Identity Checker (Silo)
+8150 - 5FBC - 5c - Warhead Capsule (Silo)
+8170 - 5FC8 - 5d - Nuclear Missile (Silo)
+8190 - 5FD0 - 5e - Moveable Computer Console (Silo)
+81B0 - 5FE4 - 5f - Computer Table (Control)
+81D0 - 5FF4 - 60 - Locker #1 (Fac etc)
+81F0 - 6000 - 61 - Locker #2 (Fac etc)
+8210 - 600C - 62 - ?
+8230 - 6018 - 63 - Frigate Engine
+8250 - 6028 - 64 - Frigate Missile Launcher #1
+8270 - 6038 - 65 - Frigate Gun Turret
+8290 - 6044 - 66 - Frigate Missile Launcher #2
+82B0 - 6054 - 67 - Frigate Missile Launcher #3
+82D0 - 6064 - 68 - Small Glass Window
+82F0 - 6070 - 69 - tall glass arc.(not door tile)
+8310 - 6084 - 6a - small glass arch. light (not door tile)
+8330 - 6098 - 6b - small glass arch. dark (not door tile)
+8350 - 60A8 - 6c - Tree #1
+8370 - 60B8 - 6d - Tree #2
+8390 - 60C0 - 6e - Small Tree
+83B0 - 60CC - 6f - Plant #1
+83D0 - 60D8 - 70 - Concrete Science Table (Fac)
+83F0 - 60E4 - 71 - Small Gas Tank (Fac)
+8410 - 60F0 - 72 - Group Of Small Gas Tanks (Facrunway)
+8430 - 6100 - 73 - Bullet Proof Vest #1
+8450 - 6110 - 74 - Bullet Proof Vest #2
+8470 - 6124 - 75 - Big Gas Tank (Fac)
+8490 - 6130 - 76 - Glass Vile? (Can Use To Make Doors Glass)
+84B0 - 6140 - 77 - Large Iron Sheet?
+84D0 - 614C - 78 - Train Brake
+84F0 - 6158 - 79 - Gun Clip(GC) #1
+8510 - 6164 - 7a - GC #2
+8530 - 6170 - 7b - GC #3
+8550 - 617C - 7c - GC #4
+8570 - 618C - 7d - GC #5
+8590 - 619C - 7e - GC #6
+85B0 - 61A8 - 7f - Gun Clip?
+85D0 - 61B4 - 80 - Fire Extinguisher?
+85F0 - 61C8 - 81 - Shotgun Shells
+8610 - 61D8 - 82 - Gun Clip?
+8630 - 61E4 - 83 - Gun Shells?
+8650 - 61F4 - 84 - Gun Shells
+8670 - 6204 - 85 - Gun Clip #7
+8690 - 6210 - 86 - Gun Clip #8
+86B0 - 621C - 87 - Steel Door w/ window (Bunkers)
+86D0 - 6228 - 88 - Steel Door #1 (Bunkers)
+86F0 - 6234 - 89 - Steel Door? (Bunkers)
+8710 - 6248 - 8a - Steel Door #2 (Bunkers)
+8730 - 625C - 8b - Mini-steel Door? (Bunkers)
+8750 - 626C - 8c - Steel Door #3 (Bunkers)
+8770 - 627C - 8d - Steel Door #4
+8790 - 628C - 8e - Steel Door???
+87B0 - 629C - 8f - Steel Door (Arch)
+87D0 - 62AC - 90 - Elevator Door #1 (blue w/ yellow tape) Caverns
+87F0 - 62C0 - 91 - Steel Door?
+8810 - 62D0 - 92 - Blue Steel Plate?
+8830 - 62E0 - 93 - Blue Steel Plate?
+8850 - 62F0 - 94 - Blue Steel Plate?
+8870 - 6300 - 95 - Steel Plate Door (Runway)
+8890 - 6310 - 96 - Blue Steel Door w/red tape
+88B0 - 6320 - 97 - Blue Steel Door w/red tape
+88D0 - 6330 - 98 - Frigate Door #1
+88F0 - 6340 - 99 - Frigate Door #2
+8910 - 6350 - 9a - Steel Door? (Fac)
+8930 - 6364 - 9b - Steel Door #1 (Fac)
+8950 - 6378 - 9c - Steel Door #2 (Fac)
+8970 - 638C - 9d - Wood Door?
+8990 - 63A0 - 9e - Sliding Steel Door (Fac,dam)
+89B0 - 63B8 - 9f - Restroom Door (Fac)
+89D0 - 63CC - a0 - Glass Lab Door (Fac)
+89F0 - 63E4 - a1 - Train Door
+8A10 - 63F4 - a2 - Train Door?
+8A30 - 6404 - a3 - Train Door?
+8A50 - 6414 - a4 - Caverns clam-type door
+8A70 - 6424 - a5 - Caverns iris-type door
+8A90 - 6430 - a6 - Wood Door (Surfaces)
+8AB0 - 6440 - a7 - Green Door #1 (Surfaces)
+8AD0 - 6450 - a8 - Green Door #2 (Surfaces)
+8AF0 - 6460 - a9 - Sliding Steel Door (Silo?, surfaces, bunker)
+8B10 - 6474 - aa - Egypt Block Door?
+8B30 - 6484 - ab - Egypt Block Door?
+8B50 - 6494 - ac - Gray Block Door?
+8B70 - 64A4 - ad - Egypt Block Door?
+8B90 - 64B4 - ae - Block Door?
+8BB0 - 64C4 - af - Block Door?
+8BD0 - 64D4 - b0 - Large Steel Shutter (Control, Caverns)
+8BF0 - 64E0 - b1 - Single Tile?
+8C10 - 64EC - b2 - Steel Door (Dam?)
+8C30 - 64FC - b3 - Steel Door (Dam Tunnel)
+8C50 - 650C - b4 - Gate Fence (Dam)
+8C70 - 651C - b5 - ?
+8C90 - 652C - b6 - bar door (divider in stack)
+8CB0 - 653C - b7 - Gate (Statue)
+8CD0 - 654C - b8 - KF7
+8CF0 - 6558 - b9 - Grenade Launcher
+8D10 - 656C - ba - throwing Knife
+8D30 - 6578 - bb - Laser Gun
+8D50 - 6584 - bc - AR-33
+8D70 - 6590 - bd - DK5
+8D90 - 659C - be - Cougar Magnum
+8DB0 - 65A8 - bf - PP7
+8DD0 - 65B4 - c0 - Shotgun
+8DF0 - 65C4 - c1 - Klobb
+8E10 - 65D4 - c2 - Phantom
+8E30 - 65E4 - c3 - 9MM
+8E50 - 65F0 - c4 - Grenade
+8E70 - 6600 - c5 - RCP-90
+8E90 - 660C - c6 - Briefcase #1
+8EB0 - 661C - c7 - Remote Mine
+8ED0 - 662C - c8 - Green Mine?
+8EF0 - 6640 - c9 - Blue Mine?
+8F10 - 6650 - ca - Rocket
+8F30 - 665C - cb - Grenade Launcher Grenade
+8F50 - 6670 - cc - Silenced PP7
+8F70 - 6680 - cd - Dusty
+8F90 - 668C - ce - Silenced DK5
+8FB0 - 669C - cf - Auto Shotgun
+8FD0 - 66AC - d0 - Golden Gun
+8FF0 - 66B8 - d1 - Hunting Knife
+9010 - 66C8 - d2 - Sniper Rifle
+9030 - 66DC - d3 - Rocket Launcher
+9050 - 66F0 - d4 - Black Guard Hat?
+9070 - 66FC - d5 - Black Guard Hat?
+9090 - 670C - d6 - Black Guard Hat?
+90B0 - 671C - d7 - Green Guard Hat?
+90D0 - 6728 - d8 - Green Guard Hat?
+90F0 - 6738 - d9 - Steel Guard Hat?
+9110 - 6744 - da - Steel Guard Hat?
+9130 - 6754 - db - Guard Hat? (Aztec?)
+9150 - 6760 - dc - Black Guard Hat?
+9170 - 676C - dd - Blue Guard Hat?
+9190 - 677C - de - Red Guard Hat?
+91B0 - 678C - df - Brown Guard Hat?
+
+9210 - 67BC - e2 - Briefcase #2
+
+9310 - 683C - ea - Door Opener (Fac)
+
+9330 - 6850 - ec - Timer/calculator?
+9370 - 6878 - ed - Briefcase #3
+9390 - 6890 - ee - Camera?
+
+93F0 - 68C4 - f1 - Briefcase #4
+9410 - 68DC - f2 - Standing Briefcase?
+9430 - 68EC - f3 - Key?
+9450 - 68FC - f4 - Key?
+9470 - 690C - f5 - Tracking Bug (Damfrig)
+9490 - 6918 - f6 - Tracking Camera?
+94B0 - 692C - f7 - Hard Disk?
+94D0 - 6938 - f8 - Goldeneye Disk (Bunkers)
+94F0 - 694C - f9 - Sunglasses?
+
+9550 - 6988 - fc - Gas Keyring
+9570 - 6998 - fd - Circuit Board?
+9590 - 69A8 - fe - Safe (without Door)
+95D0 - 69B8 - ff - Standing Folder?
+9610 - 69D4 - (01) - Helicopter Plans?
+9630 - 69E4 - (02) - Circuit Board?
+9650 - 69F8 - (03) - Bunker Plans?
+9690 - 6A14 - (05) - Tape Cassette?
+
+9770 - 6A78 - (0d) - Clipboard? (Bunkers?)
+9790 - 6A88 - (0e) - Red Standing Folder? (Bunkers?)
+97B0 - 6A98 - (0f) - Folder? (Bunkers?)
+97D0 - 6AA8 - (10) - Tape Cassette?
+97F0 - 6AB8 - (11) - Bomb (plastic Explosive? Frig)
+9810 - 6AC8 - (12) - Flight Recorder
+9830 - 6AD8 - (13) - Video Tape (Bunkers)
+9850 - 6AE8 - (14) - (Nintendo Screen???)
+9870 - 6AF8 - (15) - (Goldeneye Screen???)
+9890 - 6B08 - (16) - (Folder Select Screen???)
+98B0 - 6B18 - (17) - Truck (Dam)
+98D0 - 6B24 - (18) - Jeep
+98F0 - 6B2C - (19) - Red Truck?
+9910 - 6B34 - (1a) - ?
+9930 - 6B44 - (1b) - ?
+9950 - 6B4C - (1c) - ?
+9970 - 6B58 - (1d) - ?
+9990 - 6B60 - (1e) - Truck Trailer?
+99B0 - 6B70 - (1f) - Motorcycle
+99D0 - 6B7C - 20 - Tank (it's Body Atleast)
+99F0 - 6B84 - (21) - All Terrain Attack Vehicle???!!!!!!!!
+9A10 - 6B8C - (22) - Speed Boat?!
+9A30 - 6B98 - (23) - ?
+9A50 - 6BA0 - (24) - ?
+9A70 - 6BB0 - 0125 - Safe Door
+9A90 - 6BBC - (26) - Key Holder (Bunkers)
+9AB0 - 6BCC - 0127 - Sliding glass in bunker
+9AD0 - 6BD8 - (28) - ?
+9AF0 - 6BE4 - 0129 - Block Door #1 (Arch)
+9B10 - 6BF4 - 012a - Block Door #2 (Arch)
+9B30 - 6C04 - (012b) - ?
+9B50 - 6C10 - (2c) - Train Door (Depot)
+9B70 - 6C20 - (2d) - Car #1
+9B90 - 6C2C - (2e) - Car #2
+9BB0 - 6C38 - (2f) - Car #3
+9BD0 - 6C44 - (30) - Red Car
+9BF0 - 6C50 - (31) - Black Volvo!???
+9C10 - 6C5C - (32) - Door? (Control?)
+9C30 - 6C70 - (33) - Door? (Control?)
+9C50 - 6C84 - (34) - Gate (Depotstr?)
+9C70 - 6C98 - (35) - Steel Door?
+9C90 - 6CAC - (36) - Blue Vile (Fac)
+9CB0 - 6CBC - (37) - Beaker (Fac)
+9CD0 - 6CCC - (38) - Vile Stand (Fac)
+9CF0 - 6CDC - (39) - Land Mine (Str)
+9D10 - 6CE8 - (3a) - Plant #2
+9D30 - 6CF4 - (3b) - Plant #3
+9D50 - 6D00 - (3c) - Plant #4
+9D70 - 6D0C - (3d) - Plant #5
+9D90 - 6D18 - (3e) - ?(game Freezes)
+9DB0 - 6D28 - (3f) - (Title Screen???)
+9DD0 - 6D34 - (0140) - City Street Block(CSB) #1
+9DF0 - 6D48 - (41) - CSB #2
+9E10 - 6D5C - (42) - CSB #3
+9E30 - 6D70 - (43) - CSB #4
+9E50 - 6D84 - (44) - CSB #5
+9E70 - 6D98 - 0145 - Steel Garage Door (red)
+9E90 - 6DAC - 0146 - Window Glass (glass pillar, egypt)
+9EB0 - 6DB8 - 0147 - Piece Of Wall from temple (impassible)
+9ED0 - 6DC8 - (48) - Shuttle! (Aztec)
+9EF0 - 6DD4 - (49) - Steel Plate (Aztec)
+9F10 - 6DE4 - (4a) - Steel Plate (Aztec)
+9F30 - 6DF8 - (4b) - Small Steel Piece?
+9F50 - 6E0C - (4c) - Computer Mainframe?
+9F70 - 6E18 - 014d - White Flag On Stick?
+9F90 - 6E20 - (014e) - Yellow Traffic Barrier (Str)
+9FB0 - 6E2C - (4f) - Door Opener (Dam)
+9FD0 - 6E38 - (50) - Door Opener? (Dam?)
+9FF0 - 6E44 - (51) - Computer Console #20
+A010 - 6E54 - (52) - Vile?
+A030 - 6E64 - (53) - Stone Pillar? (Str?) 

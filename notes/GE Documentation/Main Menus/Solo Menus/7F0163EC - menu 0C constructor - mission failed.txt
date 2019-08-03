@@ -1,0 +1,178 @@
+7F0163EC	4AF1C	Menu 0C Constructor: Mission Failed
+ADDIU	SP,SP,F3E8
+SW	RA,003C (SP)
+SW	S0,0038 (SP)
+OR	A1,R0,R0
+OR	A2,R0,R0
+JAL	700046D0	;setfillcolour("black")
+OR	A3,R0,R0
+JAL	70003EF8	;fillrect()
+OR	A0,V0,R0	;A0=V0: p->DL
+JAL	7F00D5E8	;microcode
+OR	A0,V0,R0	;A0=V0: p->DL
+JAL	7F0ACD98	;microcode
+OR	A0,V0,R0	;A0=V0: p->DL
+OR	A0,V0,R0	;A0=V0: p->DL
+JAL	7F00EABC	;print "part #: stage name" string to screen
+ADDIU	A1,SP,0058	;A1=SP+58: buffer
+SW	V0,0C18 (SP)
+//
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,9C62	;A0="REPORT:\n"
+ADDIU	T6,R0,0037
+ADDIU	T7,R0,008F
+OR	S0,V0,R0
+SW	T6,0C14 (SP)
+JAL	7000441C	;V0= text clip width
+SW	T7,0C10 (SP)
+JAL	7000442C	;V0= text clip height
+SH	V0,0044 (SP)
+LUI	T8,8004
+LUI	T9,8004
+LW	T9,0EB4 (T9)
+LW	T8,0EB8 (T8)
+LH	T1,0044 (SP)
+ADDIU	T0,R0,00FF
+SW	T0,0018 (SP)
+LW	A0,0C18 (SP)
+ADDIU	A1,SP,0C14
+ADDIU	A2,SP,0C10
+OR	A3,S0,R0
+SW	V0,0020 (SP)
+SW	R0,0024 (SP)
+SW	R0,0028 (SP)
+SW	T9,0014 (SP)
+SW	T8,0010 (SP)
+JAL	7F009760	;write text
+SW	T1,001C (SP)
+SW	V0,0C18 (SP)
+//
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,9C63	;A0="Mission status:\n"
+LUI	T2,8004
+LW	T2,0EB4 (T2)
+LUI	A3,8004
+OR	S0,V0,R0
+SW	R0,0048 (SP)
+SW	R0,004C (SP)
+LW	A3,0EB8 (A3)
+ADDIU	A0,SP,004C
+ADDIU	A1,SP,0048
+OR	A2,V0,R0
+SW	R0,0014 (SP)
+JAL	7F0AE98C	;proportions of string A2
+SW	T2,0010 (SP)
+ADDIU	T3,R0,0037
+ADDIU	T4,R0,00A7
+SW	T3,0C14 (SP)
+JAL	7000441C	;V0= text clip width
+SW	T4,0C10 (SP)
+JAL	7000442C	;V0= text clip height
+SH	V0,0044 (SP)
+LUI	T5,8004
+LUI	T6,8004
+LW	T6,0EB4 (T6)
+LW	T5,0EB8 (T5)
+LH	T8,0044 (SP)
+ADDIU	T7,R0,00FF
+SW	T7,0018 (SP)
+LW	A0,0C18 (SP)
+ADDIU	A1,SP,0C14
+ADDIU	A2,SP,0C10
+OR	A3,S0,R0
+SW	V0,0020 (SP)
+SW	R0,0024 (SP)
+SW	R0,0028 (SP)
+SW	T6,0014 (SP)
+SW	T5,0010 (SP)
+JAL	7F009760	;write text
+SW	T8,001C (SP)
+//	figure out how you lost...
+LUI	T9,8003
+LW	T9,A928 (T9)	;T9=8002A928: 0-aborted; 1-killed in action
+SW	V0,0C18 (SP)
+LUI	T0,8003
+BEQ	T9,R0,7F016574	;branch if aborted
+NOP
+//	killed in action
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,9C64	;A0=" KILLED IN ACTION\n"
+LUI	V1,7800
+OR	S0,V0,R0
+BEQ	R0,R0,7F0165D0
+ORI	V1,V1,00FF	;V1=780000FF: red 50%
+//	figure out if aborted or failed mission
+LW	T0,A924 (T0)	;T0=8002A924: 0-failed, 1-aborted
+BEQ	T0,R0,7F016598	;branch if failed
+NOP
+//	aborted
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,9C65	;A0=" ABORTED\n"
+LUI	V1,7800
+OR	S0,V0,R0
+BEQ	R0,R0,7F0165D0
+ORI	V1,V1,00FF	;V1=780000FF: red 50%
+//	test if completed with failure or full-on failed mission
+JAL	7F01631C
+NOP
+BEQ	V0,R0,7F0165BC	;branch if full-on failed mission
+NOP
+//	completed
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,9C66	;A0=" Completed\n"
+OR	S0,V0,R0
+BEQ	R0,R0,7F0165D0
+ADDIU	V1,R0,00FF	;V1=000000FF: black
+//	failed
+JAL	7F0C1DD8	;V0=p->text A0
+ORI	A0,R0,9C67	;A0=" FAILED\n"
+LUI	V1,7800
+OR	S0,V0,R0
+ORI	V1,V1,00FF	;V1=780000FF: red 50%
+//	display status
+LW	T1,0048 (SP)
+ADDIU	T3,R0,00A7
+SW	T3,0C10 (SP)
+ADDIU	T2,T1,0037
+SW	T2,0C14 (SP)
+JAL	7000441C	;V0= text clip width
+SW	V1,0050 (SP)
+JAL	7000442C	;V0= text clip height
+SH	V0,0044 (SP)
+LUI	T4,8004
+LUI	T5,8004
+LW	T5,0EB4 (T5)
+LW	T4,0EB8 (T4)
+LW	V1,0050 (SP)
+LH	T6,0044 (SP)
+LW	A0,0C18 (SP)
+ADDIU	A1,SP,0C14
+ADDIU	A2,SP,0C10
+OR	A3,S0,R0
+SW	V0,0020 (SP)
+SW	R0,0024 (SP)
+SW	R0,0028 (SP)
+SW	T5,0014 (SP)
+SW	T4,0010 (SP)
+SW	V1,0018 (SP)
+JAL	7F009760	;write text
+SW	T6,001C (SP)
+//	print objectives and their status
+OR	A0,V0,R0	;A0=V0: p->DL
+ADDIU	A1,R0,00BF	;A1=0xBF: y offset
+ADDIU	A2,SP,0058	;A2=SP+58: p->string buffer
+JAL	7F015A08	;print objective list
+ADDIU	A3,R0,0001	;A3=1: print status
+//	menu interface components
+JAL	7F00A414	;add tab 2: "NEXT"
+OR	A0,V0,R0
+JAL	7F00A238	;add tab 3: "PREVIOUS"
+OR	A0,V0,R0
+JAL	7F009F08	;loads selected icon for folder select
+OR	A0,V0,R0
+//	return
+LW	RA,003C (SP)
+LW	S0,0038 (SP)
+ADDIU	SP,SP,0C18
+JR	RA
+NOP

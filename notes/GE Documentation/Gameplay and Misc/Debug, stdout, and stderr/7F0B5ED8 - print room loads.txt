@@ -1,0 +1,55 @@
+7F0B5ED8	EAA08	generate room load string when applicable
+	note this string is not displayed and becomes invalid on return
+ADDIU	SP,SP,FF40
+SW	RA,0014 (SP)
+JAL	7F090FD0	;print room loads flag
+NOP
+BEQ	V0,R0,7F0B5F7C	;return if flag not set
+//7F0B5EEC:
+LUI	A3,8004
+LW	A3,42F4 (A3)	;A3=800442F4: max rooms, also end of room data index
+LUI	V1,8004
+ADDIU	V1,V1,1464	;V1=80041464: room data index, starting at room 1
+SLTI	AT,A3,0002
+BNE	AT,R0,7F0B5F74	;branch if 1 or fewer rooms
+ADDIU	A0,R0,0001	;A0=1	room count
+ADDIU	V0,SP,0029	;V0=SP+29: p->buffer
+ADDIU	A2,R0,002E	;A2="."
+ADDIU	A1,R0,000A	;A1=0xA, used for converting to decimal numerals
+//7F0B5F14:
+LBU	T6,0002 (V1)	;T6=room+2: loaded flag
+ADDIU	V1,V1,0050	;V1+=50	next entry
+BEQL	T6,R0,7F0B5F64	;branch if not loaded
+SB	A2,0000 (V0)
+DIV	A0,A1
+MFHI	T7		;T7=count%10
+ADDIU	T8,T7,0030	;T8=value->ASCII
+BNE	A1,R0,7F0B5F3C	;catch division by zero
+NOP
+BREAK	00001C00
+//7F0B5F3C:	catch funky division
+ADDIU	AT,R0,FFFF
+BNE	A1,AT,7F0B5F54	;catch negative division
+LUI	AT,8000
+BNE	A0,AT,7F0B5F54	;catch negative division or pointers
+NOP
+BREAK	00001800
+//7F0B5F54:	print room #
+SB	T8,0000 (V0)	;save room number
+BEQ	R0,R0,7F0B5F68
+ADDIU	A0,A0,0001	;A0++	count++
+//7F0B5F60:	room not listed
+SB	A2,0000 (V0)	;"."->list
+ADDIU	A0,A0,0001	;A0++	count++
+//7F0B5F68:
+SLT	AT,A0,A3	;TRUE if count < max
+BNE	AT,R0,7F0B5F14	;loop for each room
+ADDIU	V0,V0,0001	;V0++	next byte in string
+//7F0B5F74:	NULL terminate string
+ADDU	T9,SP,A0	;T9=SP+A0
+SB	R0,0028 (T9)	;0->NULL to last character
+//7F0B5F7C:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,00C0
+JR	RA
+NOP

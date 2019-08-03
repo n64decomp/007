@@ -1,0 +1,142 @@
+revision of solo character selection
+part of larger function - only pertinent section written here
+
+I know this is weird, but these are the memory addresses for the lists
+8002C514	3x	selected Bond body/head/cuff sets
+80054FE4	1	number of entries in cuff list
+80054FE5	3x	body/head/cuff sets
+
+sets include cuff as well, as this allows you to mask existing entries after the models have been chosen
+a bit messy, sure, but it does allow more characters (sort of)
+to include random bodies and heads, use FF.
+to use selected Bond value for body or head, use FE
+
+selected Bond sets:	8002C514
+05	4E	FF	Brosnan Tux
+05	4E	FF	Connery Tux
+05	4E	FF	Moore Tux
+05	4E	FF	Dalton Tux
+
+default body/head/cuff sets	80054FE8
+17	4B	00	blue suit	(use 0 to correct invalid entries)
+05	4E	FF	Brosnan Tux
+18	4C	FF	jungle camo
+16	4A	FF	boiler suit
+19	4B	FF	snowsuit
+05	4E	FF	Connery Tux
+05	4E	FF	Moore Tux
+05	4E	FF	Dalton Tux
+FE	FE	FE	selected Bond
+others...	entry -1	80054FE5
+00	00	00	special user-designated slot using hacked command!
+
+examples:
+06	FF	02	Boris
+08	FF	03	Trevelyan (Janus)
+09	FF	03	Trevelyan (006)
+0A	FF	00	Valentin
+0C	FF	05	Baron Samedi
+0D	FF	04	Jaws
+0F	FF	06	Oddjob
+
+default value, if invalid, is 17/4B/00
+//7F079DC8:	AE8F8
+3C0F8008	LUI	T7,8008
+0FC0755B	JAL	7F01D56C	;V0=selected Bond
+8DEFA0B0	LW	T7,A0B0 (T7)
+8DE3041C	LW	V1,041C (T7)	;V1=cuff
+3C0B8005	*LUI	T3,8005
+81614FE4	*LB	AT,4FE4 (T3)	;use signed value to catch -1 special case
+0061082A	*SLT	AT,V1,AT
+50200001	*BEQL	AT,R0,+1	;branch if using an invalid cuff
+00001825	*OR	V1,R0,R0	;default to cuff 0 if invalid
+//7F079DEC:	AE91C	figure offsets within this block and selected Bond
+3C0A8003	*LUI	T2,8003
+00020880	*SLL	AT,V0,0x2
+00220823	*SUBU	AT,AT,V0
+002A5021	*ADDU	T2,T2,AT	;T2=80030000 + selected Bond * 3
+00030880	*SLL	AT,V1,0x2
+00230823	*SUBU	AT,AT,V1
+002B5821	*ADDU	T3,T3,AT	;T3=80050000 + cuff * 3
+//7F079E08:	AE938	determine if a cuff-swap is in order
+81624FEA	*LB	V0,4FEA (T3)	;V0=cuff value from cuff table
+24410002	*ADDIU	AT,V0,0002	;0 if sel.Bond
+50200001	*BEQL	AT,R0,+1	;test if selected Bond value
+8142C516	*LB	V0,C516 (T2)	;V0=body value from sel. Bond table
+04430001	*BGEZL	V0,+1
+ADE2041C	*SW	V0,041C (T7)	;V0=NEW cuff
+//7F079E20:	AE950	read body
+340300FE	*ORI	V1,R0,00FE	;trigger for selected Bond value
+341900FF	+ORI	T9,R0,00FF	;trigger for random value - bodies and heads must be unsigned...
+91624FE8	*LBU	V0,4FE8 (T3)	;V0=body value from cuff table
+50430001	*BEQL	V0,V1,+1	;test if selected Bond value
+9142C514	*LBU	V0,C514 (T2)	;V0=body value from sel. Bond table
+14590003	+BNE	V0,T9,+3
+00000000	+NOP
+0FC08D88	+JAL	7F023620
+00000000	+NOP
+AFA20044	*SW	V0,0044 (SP)
+//7F079E48:	AE978	read head
+91624FE9	*LBU	V0,4FE9 (T3)	;V0=head value from cuff table
+50430001	*BEQL	V0,V1,+1	;test if selected Bond value
+9142C515	*LBU	V0,C515 (T2)	;V0=head value from sel. Bond table
+14590003	+BNE	V0,T9,+3
+00000000	+NOP
+0FC08D98	+JAL	7F023660
+8FA40044	+LW	A0,0044 (SP)
+//7F079E64:	AE994	branch to next segment
+10000047	*BEQ	R0,R0,7F079F84
+AFA20040	*SW	V0,0040 (SP)
+//7F079E6C:	AE99C	ALL of this code has been removed!
+...
+//7F079F60:	AEA90	multiplayer bodies and heads
+JAL	7F09B150	;ret V0=player#
+NOP
+JAL	7F01035C	;ret V0=body for player A0
+OR	A0,V0,R0	;A0=V0: player#
+JAL	7F09B150	;ret V0=player#
+SW	V0,0044 (SP)
+JAL	7F0102BC	;ret V0=head for player A0
+OR	A0,V0,R0	;A0=V0: player#
+SW	V0,0040 (SP)
+//7F079F84:
+
++_+
+
+revision to 05 type: sets body/head/cuff for -1
+using this on an unhacked ROM merely sticks you with bluesuit bond
+
+will need to move or something...
+
+7F005C3C	3A76C	character/cuff command
+	00000005 BBHHCC##
+
+0FC026CB	JAL	7F009B2C	;copies data to special command
+8E4F0000	LW	T7,0000 (S2)	;handle to character data
+26100008	ADDIU	S0,S0,0008	;advance address to next command
+10000066	BEQ	R0,R0,7F005DE4
+ADEE041C	SW	T6,041C (T7)	;character/cuff-> data+41C
+
+7F009B2C	3E65C	subroutine to avoid doing anything weird
+3C018005	LUI	AT,8005
+820E0004	LB	T6,0004 (S0)	;T6=body code
+A02E4FE5	SB	T6,4FE5 (AT)	;body->8002C515
+820E0005	LB	T6,0005 (S0)	;T6=head code
+A02E4FE6	SB	T6,4FE6 (AT)	;head->8002C516
+820E0006	LB	T6,0006 (S0)	;T6=cuff code
+A02E4FE7	SB	T6,4FE7 (AT)	;cuff->8002C516
+03E00008	JR	RA
+820E0007	LB	T6,0007 (S0)	;T6=entry in cuff table
+
+
+-_-
+
+still need to patch in turning randomized values into true ones...
+
+for MP:
+7F023620	V0=random body	within 7F01035C
+	fries AT,A0,A1,A2,T0,T6,T7
+7F023660	V0=random head	within 7F0102BC
+	fries AT,V1,A0,A1,A2,T0,T6,T7,T8,T9
+
+	

@@ -1,0 +1,296 @@
+7F011ED4:	menu 0F interface: MP character select
+ADDIU	SP,SP,FFB0
+SW	RA,003C (SP)
+SW	S8,0038 (SP)
+SW	S7,0034 (SP)
+SW	S6,0030 (SP)
+SW	S5,002C (SP)
+SW	S4,0028 (SP)
+SW	S3,0024 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+JAL	7F010290	;V0=#players
+SW	S0,0018 (SP)
+LUI	AT,4270
+MTC1	AT,F12
+SW	V0,004C (SP)	;SP+4C=#players
+JAL	70004544
+SW	R0,0044 (SP)
+LUI	AT,8005
+JAL	70004590	;set page width
+LWC1	F12,1A88 (AT)
+LUI	AT,42C8
+MTC1	AT,F12
+LUI	AT,8005
+JAL	70004650	;set page height
+LWC1	F14,1A8C (AT)
+JAL	70004534
+OR	A0,R0,R0
+//7F011F40:
+LW	T6,004C (SP)	;T6=#players
+OR	S6,R0,R0	;S6=0	cur.player#
+OR	S3,R0,R0	;S3=0	cur.player->offset
+BLEZ	T6,7F012228	;branch if invalid #players
+LUI	S4,8007
+LUI	S5,8007
+LUI	S1,8007
+LUI	S2,8007
+LUI	S8,8006
+LUI	S7,8007
+ADDIU	S7,S7,9750	;S7=80069750: size of selected pic
+ADDIU	S8,S8,3720	;S8=80063720: p->SE buffer
+ADDIU	S2,S2,9730	;S2=80069730: selection buffer
+ADDIU	S1,S1,9710	;S1=80069710: cur.selections
+ADDIU	S5,S5,9720	;S5=80069720: org.selections
+ADDIU	S4,S4,9740	;S4=80069740: selected flag
+//7F011F80:	grow image on select
+LW	T7,0000 (S4)	;T7=selected flag
+SLL	A0,S6,0x18	;A0=S6 * 1000000
+ADDU	V0,S7,S3	;V0=size.reg + S3
+BEQ	T7,R0,7F011FE0	;branch if none selected
+SRA	T1,A0,0x18	;T1=S6 & FF
+LW	V1,0000 (V0)	;V1=picsize
+OR	A0,T1,R0	;A0=T1: cur.player
+SLTI	AT,V1,000B	;TRUE if picsize small
+BEQ	AT,R0,7F011FC0	;branch if at max size
+NOP
+LW	T8,0000 (S5)	;T8=org.selection
+LW	T9,0000 (S1)	;T9=highlighted selection
+ADDIU	T0,V1,0001	;T0=picsize++
+BNE	T8,T9,7F011FC0	;branch if not the same
+NOP
+SW	T0,0000 (V0)	;increase picsize
+//7F011FC0:	reset selection on "B"
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,4000	;A1=B button
+BEQ	V0,R0,7F011FE0	;branch if not backtracking
+ADDIU	A1,R0,00C7	;A1=SE 0C7
+SW	R0,0000 (S4)	;S4=0: reset selected flag
+LW	A0,0000 (S8)	;A0=p->SE buffer
+JAL	70008E08	;play sound effect A1
+OR	A2,R0,R0	;A2=NULL
+//7F011FE0:	shrink image on deselect
+LW	A2,0000 (S4)	;A2=selected flag
+ADDU	V0,S7,S3	;V0=size.reg+player.offset
+BNEZ	A2,7F012004	;branch if selection already made
+NOP
+LW	V1,0000 (V0)	;V1=picsize
+BLEZ	V1,7F012004	;skip if normal size
+ADDIU	T2,V1,FFFF	;T2=picsize-1
+BEQ	R0,R0,7F012164
+SW	T2,0000 (V0)	;shrink picsize
+//7F012004:	test for left button presses
+BNEZ	A2,7F012164	;branch if selection already made
+SLL	S0,S6,0x18
+SRA	T3,S0,0x18
+SLL	A0,T3,0x18
+SRA	T4,A0,0x18
+OR	A0,T4,R0	;A0=cur.player#
+OR	S0,T3,R0	;S0=cur.player#
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,0202	;A1=c.left, +.left
+BEQ	V0,R0,7F012044	;branch if not pressed
+SLL	A0,S0,0x18
+LW	V0,0000 (S1)	;V0=highlighted entry
+BLEZ	V0,7F012164	;branch if all the way left
+ADDIU	T5,V0,FFFF	;T5=entry-1
+BEQ	R0,R0,7F012164
+SW	T5,0000 (S1)	;update highlighted entry
+//7F012044:	test for right pressed
+SRA	T6,A0,0x18
+OR	A0,T6,R0	;A0=cur.player#
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ADDIU	A1,R0,0101	;A1=c.right, +.right
+BEQ	V0,R0,7F012080
+SLL	A0,S0,0x18
+LUI	T7,8003
+LH	T7,B194 (T7)	;T7=8002B194: #characters
+LW	V0,0000 (S1)	;V0=highlighted entry
+ADDIU	T8,T7,FFFF	;T8=#entries-1: last entry#
+SLT	AT,V0,T8	;TRUE if can still move right one
+BEQ	AT,R0,7F012164	;skip if can't
+ADDIU	T9,V0,0001	;T9=entry+1
+BEQ	R0,R0,7F012164
+SW	T9,0000 (S1)	;update highlighted entry
+//7F012080:	detect if selection made
+SRA	T0,A0,0x18
+OR	A0,T0,R0
+JAL	7000C3AC	;V0= player A0's buttons A1 pressed
+ORI	A1,R0,B000	;A1=A, Z, Start buttons
+BEQ	V0,R0,7F0120DC
+SLL	A0,S0,0x18
+JAL	7F011BD8	;V0= #players who selected MP character A0
+LW	A0,0000 (S1)	;A0=highlighted selection
+BNEZ	V0,7F012164	;branch on duplicate
+LUI	AT,8003
+LW	T1,0000 (S1)	;T1=highlighted selection
+ADDU	AT,AT,S3
+ADDIU	V0,R0,0001
+ADDU	T2,S7,S3	;T2=size.reg + pl.offset
+SW	T1,B524 (AT)	;8002B524+offset: save cur.selection
+SW	V0,0000 (T2)	;1->size.reg
+SW	V0,0000 (S4)	;1->selected.reg
+LW	A0,0000 (S8)
+ADDIU	A1,R0,00C7
+JAL	70008E08	;play sound effect A1
+OR	A2,R0,R0
+BEQ	R0,R0,7F012168
+LW	A1,0000 (S5)
+//7F0120DC:	check if stick right
+SRA	T3,A0,0x18
+OR	A0,T3,R0	;A0=T3: player#
+ADDIU	A1,R0,FFFE	;A1=left limit
+JAL	7000C4B4	;V0=horz.control stick state
+ADDIU	A2,R0,0001	;A2=right limit
+BLEZ	V0,7F012128	;branch if not right
+SLL	A0,S0,0x18
+LW	T4,0000 (S2)	;T4=TRUE if selection made
+LUI	T5,8003
+BNEL	T4,R0,7F012168	;skip if already selected
+LW	A1,0000 (S5)
+LH	T5,B194 (T5)	;T5=8002B194: #characters
+LW	V0,0000 (S1)	;V0=highlighted selection
+ADDIU	T6,T5,FFFF	;T6=#characters-1: #entries
+SLT	AT,V0,T6	;TRUE if can move right one
+BEQ	AT,R0,7F012164
+ADDIU	T7,V0,0001	;T7=highlighted entry+1
+BEQ	R0,R0,7F012164
+SW	T7,0000 (S1)	;update highlighted entry
+//7F012128:	pressed check if stick left
+SRA	T8,A0,0x18
+OR	A0,T8,R0	;A0=T8: player#
+ADDIU	A1,R0,FFFE	;A1=left limit
+JAL	7000C4B4	;V0=horz.control stick state
+ADDIU	A2,R0,0001	;A2=right limit
+SLTI	AT,V0,FFFF	;TRUE if left (-2)
+BEQL	AT,R0,7F012168	;branch if not left
+LW	A1,0000 (S5)
+LW	T9,0000 (S2)	;T9=TRUE if selection made
+BNEL	T9,R0,7F012168	;skip if already selected
+LW	A1,0000 (S5)
+LW	V0,0000 (S1)	;V0=highlighted selection
+BLEZ	V0,7F012164	;branch if left-most entry
+ADDIU	T0,V0,FFFF	;T0=entry-1
+SW	T0,0000 (S1)	;update highlighted entry
+//7F012164:
+LW	A1,0000 (S5)	;A1=org.selections
+ADDIU	A3,R0,0054
+LW	T2,0000 (S1)	;T2=highlighted entry
+MULTU	A1,A3
+LW	V0,0000 (S2)
+ADDIU	S6,S6,0001	;S6++
+ADDIU	S4,S4,0004	;S4+=4: next player's selected register
+ADDIU	S1,S1,0004	;S1+=4: next player's highlighted entry
+LW	A2,FFFC (S4)	;A2=TRUE if selected character
+ADDU	T9,S7,S3
+ADDIU	T3,V0,FFF4
+MFLO	T1		;T1=org.sel * 54: 
+ADDU	V1,V0,T1
+NOP
+MULTU	T2,A3
+MFLO	A0
+SLT	AT,A0,V1
+BEQL	AT,R0,7F0121D0
+SLT	AT,V1,A0
+BGEZ	T3,7F0121F4
+SW	T3,0000 (S2)
+ADDIU	T4,T3,0054
+ADDIU	T5,A1,FFFF
+SW	T4,0000 (S2)
+BEQ	R0,R0,7F0121F4
+SW	T5,0000 (S5)
+//7F0121CC:
+SLT	AT,V1,A0
+BEQ	AT,R0,7F0121F4
+ADDIU	T6,V0,000C
+SLTI	AT,T6,0054
+BNEZ	AT,7F0121F4
+SW	T6,0000 (S2)
+ADDIU	T7,T6,FFAC
+ADDIU	T8,A1,0001
+SW	T7,0000 (S2)
+SW	T8,0000 (S5)
+//7F0121F4:
+BEQL	A2,R0,7F012218	;branch if selection wasn't made
+LW	T3,004C (SP)
+LW	T0,0000 (T9)	;T0=pic.size
+LW	T1,0044 (SP)	;T1=total selections
+ADDIU	AT,R0,000B
+BNE	T0,AT,7F012214	;branch if pic size is still small
+ADDIU	T2,T1,0001	;T2=total+1
+SW	T2,0044 (SP)	;update total selections
+//7F012214:	loop for each player
+LW	T3,004C (SP)	;T3=#players
+ADDIU	S3,S3,0004	;S3+=4
+ADDIU	S5,S5,0004	;S5+=4
+BNE	S6,T3,7F011F80	;loop for each player
+ADDIU	S2,S2,0004	;S2+=4
+//7F012228:	set folder backdrop and controller interface
+LUI	S0,8003
+ADDIU	S0,S0,A95C	;S0=8002A95C
+JAL	7F00B724	;disable all switches in object A0 (hide all)
+LW	A0,0000 (S0)	;A0=8002A95C: p->object instance
+LW	A0,0000 (S0)	;A0=8002A95C: p->object instance
+OR	A1,R0,R0	;A1=0: 
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1	visible
+LW	A0,0000 (S0)	;A0=8002A95C: p->object instance
+ADDIU	A1,R0,002A	;A1=2A: 
+JAL	7F00B7C0	;sets item A1 in object A0 to mode A2
+ADDIU	A2,R0,0001	;A2=1	visible
+JAL	7F009B84	;control stick tracking
+NOP
+//7F012260:	return to options menu when players everyone has selected
+LW	T4,0044 (SP)	;T4=SP+44: total selection
+LW	T5,004C (SP)	;T5=#players
+BNE	T4,T5,7F012278	;branch while indecisive
+ADDIU	A0,R0,000E	;A0=menu E: MP options
+JAL	7F01A5D4	;set menu A0 to mode A1
+OR	A1,R0,R0	;A1=0	immediate
+//7F012278:	return
+LW	RA,003C (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S3,0024 (SP)
+LW	S4,0028 (SP)
+LW	S5,002C (SP)
+LW	S6,0030 (SP)
+LW	S7,0034 (SP)
+LW	S8,0038 (SP)
+JR	RA
+ADDIU	SP,SP,0050
+
++_+
+
+7F011BD8	46708	V0= #players who have selected MP character A0
+	accepts: A0=multiplayer character entry#
+	fries: AT,V1,A0,A1,A2,A3,T0,T6,T7,T8,T9
+LUI	A1,8003
+LW	A1,B520 (A1)	;A1=8002B520: #players selected
+OR	A2,A0,R0	;A2=A0: 
+OR	V1,R0,R0	;V1=0
+BLEZ	A1,7F011C34	;return if invalid #players
+OR	V0,R0,R0	;V0=FALSE
+LUI	T6,8007
+SLL	T7,A1,0x2	;T7=#players->offset
+LUI	A1,8003
+ADDIU	A0,T6,9740	;A0=80069740
+ADDU	A3,T7,A0	;A3=p->last word to be checked
+ADDIU	A1,A1,B524	;A1=8002B524
+//7F011C08:	detect if selection made and which one
+LW	T8,0000 (A0)	;T8=TRUE if player's MP character selected
+ADDIU	A0,A0,0004	;A0+=4	next entry
+SLTU	AT,A0,A3	;TRUE if not last entry
+BEQ	T8,R0,7F011C2C	;branch if not selected
+ADDU	T9,A1,V0	;T9=8002B524+offset: p->player's selected character
+LW	T0,0000 (T9)	;T0=selected character
+BNE	A2,T0,7F011C2C	;branch if not character tested for
+NOP
+ADDIU	V1,R0,0001	;V1++
+//7F011C2C:	loop for each player
+BNEZ	AT,7F011C08	;loop for each player
+ADDIU	V0,V0,0004	;V0+=4	offset to next character's selection
+//7F011C34:	return
+JR	RA
+OR	V0,V1,R0	;V0=V1: 

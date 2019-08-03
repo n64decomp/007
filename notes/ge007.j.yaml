@@ -1,0 +1,48 @@
+#  ROM splitter configuration file
+name: "Goldeneye 007"
+
+#  checksums from ROM header offsets 0x10 and 0x14
+#  used for auto configuration detection
+checksum1: 0xA24F4CF1
+checksum2: 0xA82327BA
+
+#  base filename used for outputs (please, no spaces]
+basename: "ge007.j"
+
+
+ranges:
+   - [0x00000000, 0x000040, "header", "header"]
+   - [0x00000040, 0x001000, "bin", "boot"]
+   - [0x00001000, 0x0219D0, "asm", "start", 0x80000400]
+   - [0x000219D0, 0x0335D0, "bin", "Compressedrodata"]
+   - [0x000335D0, 0x034B70, "asm", "rarezip", 0x70200000]
+   - [0x00034B70, 0x117880, "asm", "codeTLB", 0x7F000000]
+labels:
+   ###############################
+   #rarezipsegment.o
+   #rarezipsegment.s
+   - [0x70200000, "decompress.buildtable"]
+   - [0x70200654, "decompress.inflate"]
+   - [0x70200A48, "decompress.type0"]
+   - [0x70200B9C, "decompress.type1"]
+   - [0x70200D04, "decompress.type2"]
+   - [0x70201228, "decompress.table"]
+   - [0x70201348, "decompress.start"]
+   - [0x7020141C, "decompress.entry"]
+   #.data
+   - [0x70201480, "rarezip.ptr_source"]
+   - [0x70201484, "rarezip.ptr_target"]
+   - [0x70201488, "rarezip.curoffset"]
+   - [0x7020148C, "rarezip.decompressed_count"]
+   - [0x70201490, "rarezip.ptrbuffer"]
+   - [0x70201494, "rarezip.order"]
+   - [0x702014A8, "rarezip.lbase"]
+   - [0x702014E8, "rarezip.lextra"]
+   - [0x70201508, "rarezip.dbase"]
+   - [0x70201544, "rarezip.dextra"]
+   - [0x70201564, "rarezip.sample"]
+   - [0x70201568, "rarezip.bits_in_sample"]
+   - [0x7020156C, "rarezip.masks"]
+   - [0x70201590, "rarezip.data1"]
+   - [0x70201594, "rarezip.data2"]
+   - [0x70201598, "rarezip.data3"]

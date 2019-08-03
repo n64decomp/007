@@ -1,0 +1,117 @@
+NTSC USA list of addresses
+rom address given first, then TLB address, ASM, then description
+Except for the last section specificly stating 21990 mods, all addresses given are actual rom addresses.
+These affect TLB-loaded routines used to set default multiplayer values.
+
+
+45188	7F010658	ADDIU	T1,R0,0005
+Sets player default handicap to 5 (normal)
+
+45230	7F010700	ADDIU	T3,R0,0001
+Sets default MP stage to slot 2 (Temple, unless hacked)
+Possible values 0-B
+
+
+Note:	Settings below are the default reset values, used when scenarios are selected.
+	Setting them affects all scenarios!
+	You can use it to block off health/aim/etc. settings for tournament play
+
+44FAC	7F01047C	AC22B544	SW V0,B544 (AT)
+lock (R0~AC20B544) or unlock (V0~AC22B544) stage select
+
+44FB4	7F010484	AC22B548	SW V0,B548 (AT)
+lock (R0) or unlock (V0) game length
+
+44FBC	7F01048C	AC22B54C	SW V0,B54C (AT)
+lock (R0) or unlock (V0) character select
+
+44FC4	7F010494	AC22B550	SW V0,B550 (AT)
+lock (R0) or unlock (V0) weapon select
+
+44FCC	7F01049C	AC22B554	SW V0,B554 (AT)
+lock (R0) or unlock (V0) health
+
+44FD4	7F0104A4	AC22B558	SW V0,B558 (AT)
+lock (R0) or unlock (V0) control style
+
+44FDC	7F0104AC	AC22B55C	SW V0,B55C (AT)
+lock (R0) or unlock (V0) aim adjustment
+
+45020	7F0104F0	24180002	ADDIU T8,R0,0002
+Normal and Team default game length
+Valid Entries: 0-6	(7 if manually set for 'Last Person Alive' entry)
+
+45040	7F010510	2404000D	ADDIU A0,R0,000D
+Normal and Team default selected weapon (golden gun)
+Valid entries: 0-D
+
+45054	7F010524	24190007	ADDIU T9,R0,0007
+'You Only Live Twice' default game length (Last Person Alive)
+
+45070	7F010540	2404000D	ADDIU A0,R0,000D
+'You Only Live Twice' default selected weapon
+
+4507C	7F01054C	AC20B548	SW R0,B548 (AT)
+'You Only Live Twice' game length lock
+Set to NOP to keep game length unlocked
+
+4508C	7F01055C	24090002	ADDIU T1,R0,0002
+'The Living Daylights' default game length
+Valid entries: 0-3	(all are valid with flag-tag patch)
+
+450B8	7F010588	2404000D	ADDIU A0,R0,000D
+'The Living Daylights' default selected weapon
+
+450D0	7F0105A0	240B0002	ADDIU T3,R0,0002
+'Man with the Golden Gun' default game length
+
+450E8	7F0105B8	2404000D	ADDIU A0,R0,000D
+'Man with the Golden Gun' default selected weapon
+Don't change this without hacking the scenario, as it tests actual pickup type for scoring
+Without a GG, the scenario will not work!
+
+450F4	7F0105C4	AC20B550	SW R0,B550 (AT)
+'Man with the Golden Gun' weapon select lock
+Set to NOP to allow weapon selection.
+Don't change this without hacking the scenario, as it tests actual pickup type for scoring
+Without a GG, the scenario will not work!
+
+45100	7F0105D0	240D0002	ADDIU T5,R0,0002
+'License to Kill' default game length
+
+45118	7F0105E8	0FC3198C	JAL 7F0C6630
+'License to Kill' weapon reset
+NOP this to avoid resetting the weapon
+
+4511C	7F0105EC	24040001	ADDIU A0,R0,0001
+'License to Kill' default selected weapon
+
+45124	7F0105F4	AC20B554	SW R0,B554 (AT)
+'License to Kill' handicap lock
+NOP to remove the lock on the handicap menu
+
+
+21990 addresses for other defautl values:
+0xA7AB	game length
+	0	unlimitted
+	1	5 Minutes
+	2	10 Minutes
+	3	20 Minutes
+	4	5 Kills
+	5	10 Kills
+	6	20 Kills
+	7	Last Person Alive Wins
+
+0xA7AF	aim (xxx1) and sight(xx1x)
+	0	sight off / aim off
+	1	sight on  / aim off
+	2	sight off / aim on
+	3	sight on  / aim on
+
+0xA7B3	scenario
+	0	Normal
+	1	You Only Live Twice
+	2	The Living Daylights
+	3	Man with the Golden Gun
+	4	License to Kill
+	5	Team (all settings)

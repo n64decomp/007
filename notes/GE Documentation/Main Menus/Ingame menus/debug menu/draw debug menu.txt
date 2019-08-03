@@ -1,0 +1,586 @@
+80036B70	highlighted debug option
+80036B74	p->last group cutoff (# entries)
+80036B78	p->text pointers
+80036B7C	p->positions
+80036B80	number of groups
+80036B84	p->groupings (group cutoff entries)
+80036B88	[2]
+80036B8C-F	4 bytes: [7,7,7,0]	x offset multiplier
+80036B90-3	4 bytes: [4,4,4,0]	y offset mutliplier
+
+7F090490	C4FC0	send out to draw menu
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	A0,8003
+LUI	A1,8003
+LUI	A2,8003
+ADDIU	A2,A2,6BA4	;A2=80036BA4: p->groupings
+ADDIU	A1,A1,6BC8	;A1=80036BC8: p->positions
+JAL	7F08FE14	;initialize debug menu values
+ADDIU	A0,A0,6E30	;A0=80036E30: p->text pointers for each entry
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+7F08FE14	C4944	initialize debug menu values
+	accepts: A0=p->text, A1=p->positions, A2=p->groupings
+LUI	AT,8003
+SW	A0,6B78 (AT)	;p->text -> 80036B78: 
+LUI	AT,8003
+SW	A1,6B7C (AT)	;p->positions -> 80036B7C: 
+LUI	AT,8003
+SW	A2,6B84 (AT)	;p->groupings -> 80036B84: 
+LW	T6,0000 (A2)	;T6=1st group cutoff
+OR	V0,R0,R0	;V0=0
+OR	V1,A2,R0	;V1=p->groups
+BLTZL	T6,7F08FE58	;branch if end of list
+SLL	T8,V0,0x2
+//7F08FE40:	figure out number of groups
+LW	T7,0004 (V1)	;T7=next group cutoff
+ADDIU	V0,V0,0001	;V0++	count++
+ADDIU	V1,V1,0004	;V1+=4	next group entry
+BGEZL	T7,7F08FE44	;loop until end of list entry
+LW	T7,0004 (V1)
+//7F08FE54:	save group end and #
+SLL	T8,V0,0x2	;T8=#groups->offset
+ADDU	T9,A2,T8	;T9=p->end of groups
+LW	T0,FFFC (T9)	;T0=p->last group
+LUI	AT,8003
+SW	T0,6B74 (AT)	;p->last group -> 80036B74
+LUI	AT,8003
+JR	RA
+SW	V0,6B80 (AT)	;V0->80036B80: # groups
+
+
+7F08FE74	C49A4	print debug menu to stdout; returns V0=A0
+	accepts: A0=(unused)
+ADDIU	SP,SP,FFC0
+LUI	V0,8003
+LW	V0,6B88 (V0)	;V0=80036B88: [2]
+LUI	T6,8003
+LW	T6,6B74 (T6)	;T6=80036B74: last group (# entries)
+SW	S8,0038 (SP)
+SW	S7,0034 (SP)
+LUI	S7,8003
+LUI	S8,8003
+SW	S0,0018 (SP)
+ADDU	S7,S7,V0
+ADDU	S8,S8,V0
+SW	RA,003C (SP)
+SW	S6,0030 (SP)
+SW	S5,002C (SP)
+SW	S4,0028 (SP)
+SW	S3,0024 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+SW	A0,0040 (SP)
+LBU	S7,6B8C (S7)	;S7=80036B8C+offset: [7] x offset multiplier
+LBU	S8,6B90 (S8)	;S8=80036B90+offset: [4] y offset multiplier
+BLEZ	T6,7F08FFD8	;branch if invalid #entries
+OR	S0,R0,R0	;S0=0
+//7F08FED4
+LUI	S6,8003
+LUI	S4,8003
+LUI	S3,8003
+ADDIU	S3,S3,6B70	;S3=80036B70: highlighted option #
+ADDIU	S4,S4,6B7C	;S4=80036B7C: p->positions
+ADDIU	S6,S6,6B78	;S6=80036B78: p->text pointers
+OR	S1,R0,R0	;S1=0: offset in positions table
+OR	S2,R0,R0	;S2=0: offset in text table
+ADDIU	S5,R0,0007	;S5=7
+//7F08FEF8
+JAL	7F08FE00	;does nothing!
+NOP
+LW	T7,0000 (S3)	;T7=80036B70: highlighted option
+ADDIU	A0,R0,00C0	;A0=C0	red
+ADDIU	A1,R0,00C0	;A1=C0	green
+BNE	S0,T7,7F08FF30
+ADDIU	A2,R0,00C0	;A2=C0	blue
+//7F08FF14:	highlighted red text
+ADDIU	A0,R0,00C0	;A0=C0	red
+OR	A1,R0,R0	;A1=00	green
+OR	A2,R0,R0	;A2=00	blue
+JAL	7000B06C	;colour -> 800268AC
+ADDIU	A3,R0,00C0	;A3=C0	alpha
+BEQ	R0,R0,7F08FF3C
+LW	T8,0000 (S4)
+//7F08FF30:	grey text
+JAL	7000B06C	;colour -> 800268AC
+ADDIU	A3,R0,00C0	;A3=C0	alpha
+//7F08FF38:
+LW	T8,0000 (S4)	;T8=positions
+ADDU	V0,T8,S1	;V0=T8+S1: block+offset to entry's position
+LW	T9,0000 (V0)	;T9=x position
+LW	T1,0004 (V0)	;T1=y position
+MULTU	T9,S7
+MFLO	A0		;A0=xpos * x offset mutliplier
+ADDIU	A0,A0,FFEC	;A0-=0x14
+BGEZ	A0,7F08FF64	;branch if on-screen
+SRA	T0,A0,0x2	;T0=xpos/4
+ADDIU	AT,A0,0003
+SRA	T0,AT,0x2	;T0=(xpos+3)/4
+//7F08FF64
+MULTU	T1,S8
+OR	A0,T0,R0	;A0=T0: xpos/4
+MFLO	T2		;T2=ypos *yoffset multiplier
+ADDIU	T3,T2,FFF8	;T3=T2-8: ypos-8
+NOP
+DIV	T3,S5
+MFLO	A1		;A1=ypos/7
+BNEZ	S5,7F08FF8C	;branch if no division by zero
+NOP
+BREAK
+//7F08FF8C
+ADDIU	AT,R0,FFFF
+BNE	S5,AT,7F08FFA4	;branch if not -1
+LUI	AT,8000
+BNE	T3,AT,7F08FFA4	;branch if not address or invalid
+NOP
+BREAK
+//7F08FFA4
+JAL	7000B040	;save final debug text positions
+NOP
+LW	T4,0000 (S6)	;T4=p->text pointers
+ADDU	T5,T4,S2	;T5=p->text for entry
+JAL	7000B1E8	;write string A0 to stdout
+LW	A0,0000 (T5)	;A0=p->text
+LUI	T6,8003
+LW	T6,6B74 (T6)	;T6=80036B74: #entries
+ADDIU	S0,S0,0001
+ADDIU	S1,S1,0008
+SLT	AT,S0,T6
+BNEZ	AT,7F08FEF8
+ADDIU	S2,S2,0004
+//7F08FFD8	return
+LW	RA,003C (SP)
+LW	V0,0040 (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S3,0024 (SP)
+LW	S4,0028 (SP)
+LW	S5,002C (SP)
+LW	S6,0030 (SP)
+LW	S7,0034 (SP)
+LW	S8,0038 (SP)
+JR	RA
+ADDIU	SP,SP,0040
+
+
+7000B06C	AC6C	save debug menu text colour w/ alpha inverted
+	accepts: A0=red, A1=green, A2=blue, A3=alpha
+	fries: T0,T3,T6,T7,T8,T9
+SLL	T6,A0,0x18	;T6=RR000000
+SLL	T7,A1,0x10	;T7=00GG0000
+OR	T8,T6,T7	;T8=RRGG0000
+SLL	T9,A2,0x8	;T9=0000BB00
+ADDIU	T1,R0,00FF
+SUBU	T2,T1,A3	;T2=FF-alpha: alpha inverted
+OR	T0,T8,T9	;T0=RRGGBB00
+OR	T3,T0,T2	;T3=RRGGBBaa
+LUI	AT,8002
+JR	RA
+SW	T3,68AC (AT)	;colour -> 800268AC: debug text colour
+
+7000B040	AC40	saves final debug menu text position
+	accepts: A0=xpos, A1=ypos
+	fries: AT,A0,A1,T6,T7
+LUI	T6,8002
+LW	T6,4FA0 (T6)	;T6=80024FA0: [5]
+LUI	T7,8002
+LW	T7,4FA4 (T7)	;T7=80024FA4: [1]
+LUI	AT,8002
+ADDU	A0,A0,T6	;xpos+=xoffset
+SW	A0,4FA8 (AT)	;xpos->80024FA8
+LUI	AT,8002
+ADDU	A1,A1,T7	;ypos+=yoffset
+JR	RA
+SW	A1,4FAC (AT)	;ypos->80024FAC
+
+7000B1E8	ADE8	write string A0 to stdout
+	accepts: A0=p->text
+ADDIU	SP,SP,FFE0
+SW	RA,001C (SP)
+SW	S1,0018 (SP)
+SW	S0,0014 (SP)
+LBU	S0,0000 (A0)	;S0=char
+OR	S1,A0,R0	;S1=A0: p->text
+BEQ	S0,R0,7000B21C	;branch if NULL
+ANDI	A0,S0,00FF	;A0=absolutely unsigned char
+//7000B208:	read in string
+JAL	7000B0C4	;write one character
+ADDIU	S1,S1,0001	;S1++	next char in string
+LBU	S0,0000 (S1)	;S0=char
+BNEL	S0,R0,7000B208	;loop if not NULL
+ANDI	A0,S0,00FF	;A0=absolutely unsigned char
+//7000B21C:	return
+LW	RA,001C (SP)
+LW	S0,0014 (SP)
+LW	S1,0018 (SP)
+JR	RA
+ADDIU	SP,SP,0020
+
+7000B0C4	BCC4	writes char A0 to screen
+ADDIU	SP,SP,FFD8
+SW	RA,0014 (SP)
+JAL	7000441C
+SW	A0,0028 (SP)	;SP+28=A0: char
+ADDIU	T6,V0,FFF3
+BGEZ	T6,7000B0E8
+SRA	T7,T6,0x2
+ADDIU	AT,T6,0003
+SRA	T7,AT,0x2
+//7000B0E8:
+JAL	7000442C
+SW	T7,0024 (SP)
+ADDIU	T0,V0,FFF6
+ADDIU	AT,R0,0007	;AT=7
+DIV	T0,AT
+LBU	A2,002B (SP)	;A2=char
+MFLO	T0		;T0/=7: 
+LUI	V0,8002
+BEQ	A2,R0,7000B120	;branch if NULL
+OR	V1,A2,R0	;V1=A2: char
+SLTI	AT,V1,0020
+BNEZ	AT,7000B148	;branch if control char
+SLTI	AT,V1,007F
+BEQ	AT,R0,7000B148	;branch if not ANSI standard
+//7000B120:	valid characters...
+LUI	A3,8002
+ADDIU	A3,A3,4FAC	;A3=80024FAC
+ADDIU	V0,V0,4FA8	;V0=80024FA8
+LW	A0,0000 (V0)	;A0=80024FA8: x position
+LW	A1,0000 (A3)	;A1=80024FAC: y position
+SW	V1,001C (SP)	;SP+1C=char
+JAL	7000ADD0	;display text to coordinates...
+SW	T0,0020 (SP)	;SP+20=T0: 
+LW	V1,001C (SP)	;SP+1C=char
+LW	T0,0020 (SP)
+//7000B148:	control and invalid characters
+LUI	V0,8002
+ADDIU	V0,V0,4FA8	;V0=80024FA8
+LW	T9,0000 (V0)	;T9=80024FA8: x position
+LUI	A3,8002
+ADDIU	AT,R0,000D	;AT=D
+ADDIU	T1,T9,0001	;T1=T9+1: xpos+1
+ADDIU	A3,A3,4FAC	;A3=80024FAC
+BEQ	V1,AT,7000B184	;branch if char is newline (or is it return?  always mix those up...)
+SW	T1,0000 (V0)	;save updated xpos
+ADDIU	AT,R0,000A
+BEQ	V1,AT,7000B184	;branch if char is return (newline? can't remember)
+LW	T3,0024 (SP)
+SLT	AT,T1,T3
+BNEL	AT,R0,7000B1B4	;branch if not on-screen?
+LW	RA,0014 (SP)
+//7000B184:	else wordwrap?
+LW	T5,0000 (A3)	;T5=80024FAC: y position
+LUI	T4,8002
+LW	T4,4FA0 (T4)	;T4=80024FA0: [5]
+ADDIU	T6,T5,0001	;T6=T5+1: ypos+1
+SLT	AT,T6,T0
+SW	T6,0000 (A3)	;save updated ypos
+BNEZ	AT,7000B1B0	;branch if still on-screen?
+SW	T4,0000 (V0)	;[5]->xpos
+LUI	T8,8002
+LW	T8,4FA4 (T8)	;T8=80024FA4: ypos
+SW	T8,0000 (A3)	;T8->80024FAC
+//7000B1B0:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0028
+JR	RA
+NOP
+
+7000ADD0	B9D0	place character into screen display position
+	accepts: A0=xpos, A1=ypos, A2=char
+SW	A2,0008 (SP)	;SP+8=A2: char
+ANDI	T6,A2,00FF	;T6=char
+LUI	V1,8002
+LUI	T0,8002
+LUI	T2,8002
+LUI	T1,8002
+OR	A2,T6,R0	;A2&=0xFF
+SW	A0,0000 (SP)	;SP+0=A0: xpos
+ADDIU	T1,T1,68B0	;T1=800268B0
+ADDIU	T2,T2,6710	;T2=80026710
+ADDIU	T0,T0,6610	;T0=80026610
+LW	V1,68AC (V1)	;V1=800268AC: debug text colour
+OR	V0,R0,R0	;V0=0
+OR	A3,R0,R0	;A3=0
+//7000AE08:	check if colour is already in index
+LW	T7,0004 (T0)	;T7=80026614: 
+ADDIU	T0,T0,0008	;T0+=8
+ADDU	T9,T2,A3	;T9=T2+offset: 
+BNEL	V1,T7,7000AE30	;branch if colour isn't same as 80026614
+ADDIU	V0,V0,0001	;V0++
+//7000AE1C:
+LW	T8,0004 (T1)	;T8=800268B4: colour
+LW	T3,0004 (T9)	;T3=80026714+offset: 
+BEQL	T8,T3,7000AEA8	;branch if colour same as value
+LW	T6,0000 (SP)	;T6=xpos
+//7000AE2C:	loop until done checking the colour index
+ADDIU	V0,V0,0001	;V0++
+SLTI	AT,V0,0020
+BNEZ	AT,7000AE08	;branch if count<20
+ADDIU	A3,A3,0008	;A3+=8: 
+//7000AE3C:	add colour to index (I think...)
+LUI	A3,8002
+ADDIU	A3,A3,6810	;A3=80026810
+LW	V1,0000 (A3)	;V1=80026810: #registered colours 
+LUI	T6,8002
+ADDIU	T6,T6,68A8	;T6=800268A8
+LW	AT,0000 (T6)	;AT=800268A8: 
+LUI	T4,8002
+ADDIU	T4,T4,6610	;T4=80026610
+SLL	A0,V1,0x3	;A0=V1->offset
+ADDU	T5,A0,T4	;T5=80026610+offset to entry
+SW	AT,0000 (T5)	;AT->80026610+offset: 
+LW	T9,0004 (T6)	;T9=800268AC: debug text colour
+ADDU	T8,T2,A0	;T8=80026710+offset: 
+ADDIU	T7,V1,0001	;T7=V1+1: updated colour count
+SW	T9,0004 (T5)	;debug text colour -> next entry in 80026610
+LW	AT,0000 (T1)	;AT=800268B0: 
+SW	AT,0000 (T8)	;AT -> 80026710+offset
+LW	T4,0004 (T1)	;T4=800268B4: colour
+SW	T4,0004 (T8)	;T4 -> 80026714+offset
+BGEZ	T7,7000AE9C	;branch if valid number
+ANDI	T5,T7,001F	;T5=entry 0-1F
+BEQ	T5,R0,7000AE9C	;branch if entry 0
+NOP
+ADDIU	T5,T5,FFE0	;T5-=20: correct register
+//7000AE9C:	write text entry - char in position, colour
+SW	T5,0000 (A3)	;T5=80026810: new # registered colours
+OR	V0,T5,R0	;V0=T5
+LW	T6,0000 (SP)	;T6=xpos
+SLL	T3,A1,0x1	;T3=ypos*2
+LUI	T4,8002
+SLL	T9,T6,0x3
+ADDU	T9,T9,T6
+SLL	T9,T9,0x2
+SUBU	T9,T9,T6
+SLL	T9,T9,0x1	;T9=xpos * 0x46
+ADDU	T8,T9,T3	;T8=(xpos*0x46)+(ypos*2)
+ADDIU	T4,T4,5030	;T4=80025030
+ADDU	V1,T8,T4	;V1=80025030+offset
+SB	A2,0000 (V1)	;char -> 80025030 table
+JR	RA
+SB	V0,0001 (V1)	;vcolour index -> 80025031 table
+
+
+7000B27C	BE7C	read screen display block and write characters to positions
+	accepts: A0=p->display list target
+	uses offset within J-text image bank (probably), acting as an s/t formula
+ADDIU	SP,SP,FF78
+SW	S5,002C (SP)
+SW	S1,001C (SP)
+SW	S0,0018 (SP)
+LUI	A3,8002
+OR	S0,A0,R0	;S0=A0: DL
+SW	RA,003C (SP)
+SW	S8,0038 (SP)
+SW	S7,0034 (SP)
+SW	S6,0030 (SP)
+SW	S4,0028 (SP)
+SW	S3,0024 (SP)
+SW	S2,0020 (SP)
+OR	S1,A0,R0	;S1=A0: DL
+ADDIU	A2,R0,FFFF	;A2=-1
+ADDIU	A3,A3,6610	;A3=80026610: #colours
+OR	S5,R0,R0	;S5=0
+OR	T0,R0,R0	;T0=0: offset to current entry
+//7000B2C4:	set entry in column
+LUI	T6,8002
+ADDIU	A1,T6,5030	;A1=80025030: p->screen entries
+ADDU	A0,T0,A1	;A0=p->current entry
+//7000B2D0:	read entries to allocate space
+LBU	V0,0000 (A0)	;V0=char
+ADDIU	A1,A1,0046	;A1+=46: next entry in row
+LBU	V1,0001 (A0)	;V1=colour#
+BEQ	V0,R0,7000B2F8	;branch if no entry
+NOP
+BEQL	V1,A2,7000B2F8	;branch if invalid colour
+ADDIU	S1,S1,0018
+ADDIU	S1,S1,0010	;S1+=10: 
+OR	A2,V1,R0	;A2=colour#
+ADDIU	S1,S1,0018	;S1+=18: 
+//7000B2F8:	loop for each row and column
+BNE	A1,A3,7000B2D0	;loop until end of screen
+ADDIU	A0,A0,0046	;A0+=46: next entry in row
+ADDIU	T0,T0,0002	;T0+=2: next entry in column
+SLTI	AT,T0,0046
+BNEZ	AT,7000B2C4	;loop for each entry in column
+NOP
+//7000B310:
+JAL	7F0BD77C	;V0=#commands that can fit in block
+OR	A0,S0,R0	;A0=S0: DL start
+SUBU	A0,S1,S0	;A0=S1-S0: allocated size
+BGTZ	A0,7000B32C	;branch if something to write
+ADDIU	V1,V0,F800	;V1=#commands-0x800
+BEQ	R0,R0,7000B528	;return if nothing to write
+OR	V0,S0,R0	;V0=S0: DL
+//7000B32C:
+BGTZ	V1,7000B340	;branch if at least 0x800 commands can be written
+ADDIU	S4,R0,FFFF	;S4=-1
+LUI	AT,8002
+BEQ	R0,R0,7000B398
+SW	R0,68B8 (AT)	;0->800268B8: 
+//7000B340:
+SLT	AT,V1,A0
+BEQ	AT,R0,7000B38C
+SLL	T7,V1,0x8
+SUBU	T7,T7,V1
+DIV	T7,A0
+BNEZ	A0,7000B360
+NOP
+BREAK
+//7000B360:
+ADDIU	AT,R0,FFFF
+BNE	A0,AT,7000B378
+LUI	AT,8000
+BNE	T7,AT,7000B378
+NOP
+BREAK
+//7000B378:
+LUI	AT,8002
+MFLO	T8
+SW	T8,68B8 (AT)
+BEQ	R0,R0,7000B39C
+OR	V0,S0,R0
+//7000B38C:
+ADDIU	T9,R0,0100
+LUI	AT,8002
+SW	T9,68B8 (AT)	;0x100 -> 800268B8: 
+//7000B398:
+OR	V0,S0,R0	;V0=S0: DL
+LUI	T2,8002
+ADDIU	T2,T2,4FB0	;T2=80024FB0: display list snippet
+LUI	T1,0600
+SW	T1,0000 (V0)	;06000000 -> DL+0: rsp_displaylist: push
+SW	T2,0004 (V0)	;80024FB0 -> DL+4: rsp_displaylist: use display list snippet
+LUI	S8,8002
+LUI	S7,8002
+ADDIU	S0,S0,0008	;S0+=8: next DL
+ADDIU	S7,S7,6610	;S7=80026610: primary colour index
+ADDIU	S8,S8,6710	;S8=80026710: enviroment colour index
+SW	R0,0040 (SP)	;SP+40=0
+OR	S5,R0,R0	;S%=0
+ADDIU	S6,R0,0050	;S6=0x50
+//7000B3D0:
+LW	T3,0040 (SP)	;T3=offset to entry in column
+LUI	T4,8002
+ADDIU	T4,T4,5030	;T4=80025030: p->screen entries
+OR	S1,R0,R0	;S1=0	count
+ADDU	S2,T3,T4	;S2=p->entry in column
+//7000B3E4:	grab entry
+LBU	S3,0000 (S2)	;S3=char
+LBU	V1,0001 (S2)	;V1=colour#
+BEQL	S3,R0,7000B504	;skip if no text
+ADDIU	S1,S1,0001
+BEQ	V1,S4,7000B42C	;branch if colour# -1 (invalid)
+SLL	V0,V1,0x3	;V0=colour#*8	colour->offset
+//7000B3FC:	write colourizer ops
+ADDU	T5,S7,V0	;T5=80026610+offset: p->foreground colour
+LW	AT,0000 (T5)	;AT=prim colour upper op [FA000000]
+ADDU	T8,S8,V0	;T8=80026710+offset: p->background colour
+ADDIU	S0,S0,0010	;S0+=10: next 2 DL ops
+SW	AT,FFF0 (S0)	;AT->DL-10: rdp_setprimcolour upper half
+LW	T7,0004 (T5)	;T7=80026614+offset: prim colour
+OR	S4,V1,R0	;S4=V1: offset in colour tables
+SW	T7,FFF4 (S0)	;T7->DL-C:  rdp_setprimcolour: colour
+LW	AT,0000 (T8)	;AT=env colour upper op [FB000000]
+SW	AT,FFF8 (S0)	;AT->DL-8:  rdp_setenvcolour upper half
+LW	T1,0004 (T8)	;T7=80026714+offset: background colour
+SW	T1,FFFC (S0)	;T1->DL-4:  rdp_setenvcolour: colour
+//7000B42C:	test if you can draw text, apparently skipped randomly
+JAL	7000A450	;V0=random#
+NOP
+LUI	T3,8002
+LW	T3,68B8 (T3)	;T3=800268B8: ???
+ANDI	T2,V0,00FF	;T2=random byte
+SLTU	AT,T2,T3
+BEQL	AT,R0,7000B504	;branch if rand < value
+ADDIU	S1,S1,0001
+JAL	7F0BD77C	;V0=#commands that can fit in block
+OR	A0,S0,R0	;A0=S0: DL
+SLTI	AT,V0,0400
+BNEZ	AT,7000B500	;don't write if there isn't at least 0x400 commands available
+OR	V0,S0,R0	;V0=S0: DL
+//7000B460:	draw text using textrect
+SLL	V1,S1,0x4	;V1=S1*0x10: count*0x10
+SLL	A0,S5,0x3
+SUBU	A0,A0,S5
+ADDIU	T4,V1,0010	;T4=(S1+1)*10
+ANDI	T6,T4,0FFF	;T6=((S1+1)*10) & 0xFFF
+SLL	A0,A0,0x2	;A0=S5*1C
+ANDI	T2,V1,0FFF	;T2=(S1*0x10) & 0xFFF
+SLL	T3,T2,0xC	;T3=T2 * 0x1000: lower right x
+SLL	T5,T6,0xC	;T5=T6 * 0x1000: upper left x
+ADDIU	T9,A0,001C	;T9=(S5+1)*1C
+ANDI	T4,A0,0FFF	;T4=(S5*1C) & 0xFFF: lower right y
+LUI	AT,E400
+ADDIU	A2,S3,FFE0	;A2=char-0x20
+SRA	T2,A2,0x5	;T2=(char-0x20) / 0x20
+OR	T7,T5,AT	;T7=E4000000 | ulx
+OR	T6,T3,T4	;T6=lrx | lry
+ANDI	T8,T9,0FFF	;T8=(S5+1)*1C) & 0xFFF: upper left y
+OR	T1,T7,T8	;T1=E4000000 | ulx | uly
+SLL	T3,T2,0x3
+SUBU	T3,T3,T2
+ADDIU	S0,S0,0008	;S0+=8: next DL op
+OR	A1,S0,R0	;A1=S0: DL
+SLL	T3,T3,0x5	;T3=(char-0x20) / 0x20 * 0xE0: bank#
+SW	T1,0000 (V0)	;T1->DL+0: rdp_texrect: upper word
+ANDI	T8,A2,001F	;T8=(char-0x20) & 0x1F
+SW	T6,0004 (V0)	;T6->DL+4: rdp_texrect: lower word
+SLL	T1,T8,0x17	;T1=((char-0x20) & 0x1F)*0x800000: entry in bank [0F800000]
+ANDI	T4,T3,FFFF	;T4=T3->short
+ADDIU	S0,S0,0008	;S0+=8: next DL op
+LUI	T5,B400
+SW	T5,0000 (A1)	;T5->DL+8: rsp_rdphalf_1: upper word
+OR	A3,S0,R0	;A3=S0: DL
+OR	T6,T1,T4	;T6=entry in bank | bank#: upper left s | upper left t
+SW	T6,0004 (A1)	;T6->DL+C: rsp_rdphalf_1: lower word, of formula 0F80.01C0
+LUI	T9,0400
+ORI	T9,T9,0400	;T9=04000400: dsdx|dtdy
+LUI	T5,B300
+SW	T5,0000 (A3)	;T5->DL+10: rsp_rdphalf_2: upper word
+SW	T9,0004 (A3)	;T9->DL+14: rsp_rdphalf_2: change in s/x, t/y
+ADDIU	S0,S0,0008	;S0+=8: next DL op
+//7000B500:	loop for each row and column (in a rather silly way...)
+ADDIU	S1,S1,0001	;S1++
+BNE	S1,S6,7000B3E4	;branch if count < 0x50
+ADDIU	S2,S2,0046	;S2+=46: next character in row
+LW	T7,0040 (SP)	;T7=SP+40: offset to entry in column
+ADDIU	S5,S5,0001	;S5++	count++
+ADDIU	AT,R0,0023	;AT=0x23: #characters in a column
+ADDIU	T8,T7,0002	;T8=T7+2: next entry in column
+BNE	S5,AT,7000B3D0	;loop for each character in column
+SW	T8,0040 (SP)	;save updated value
+OR	V0,S0,R0	;V0=S0: DL
+//7000B528:	return
+LW	RA,003C (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+LW	S3,0024 (SP)
+LW	S4,0028 (SP)
+LW	S5,002C (SP)
+LW	S6,0030 (SP)
+LW	S7,0034 (SP)
+LW	S8,0038 (SP)
+JR	RA
+ADDIU	SP,SP,0088
+
+
+7F0BD77C	F22AC	compute number of microcode commands that can fit in memory chunk
+	accepts: A0=p->display list target
+LUI	T6,8009
+LBU	T6,C250 (T6)	;T6=8008C250: 
+LUI	T8,8009
+SLL	T7,T6,0x2	;T7=value->offset
+ADDU	T8,T8,T7
+LW	T8,C234 (T8)	;T8=8008C234+offset: 
+SUBU	V0,T8,A0	;V0=size of block between T8 and A0
+SRA	T9,V0,0x3	;T9=size/8: #ucode commands between blocks
+JR	RA
+OR	V0,T9,R0	;V0=#commands possible
