@@ -1,0 +1,39 @@
+7F0904C4	C4FF4	toggle "move view" debug feature
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F0916F4	;initialize floating camera position (80037014) to cur.player's location
+NOP
+JAL	7F0901B0	;V0=value @ 80036B70
+NOP
+LW	RA,0014 (SP)
+LUI	V1,8003
+LUI	A0,8003
+ADDIU	A0,A0,6F68
+ADDIU	V1,V1,6F70
+SW	V0,0000 (V1)	;V0->80036F70: 
+SW	V0,0000 (A0)	;V0->80036F68: 
+LUI	AT,8003
+SW	V0,6F64 (AT)	;V0->80036F64: 
+JR	RA
+ADDIU	SP,SP,0018
+
++_+
+
+7F0916F4		initialize floating camera position (80037014) to cur.player's location
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+JAL	7F089FD4	;V0= p->cur.player's position
+NOP
+LWC1	F4,0000 (V0)	;F4=cur.player's x.pos
+LUI	V1,8003
+ADDIU	V1,V1,7014	;V1=80037014: p->floating camera position
+SWC1	F4,0000 (V1)	;F4->80037014: copy pos.x to camera.x
+LWC1	F6,0004 (V0)	;F6=cur.player's pos.y
+LW	RA,0014 (SP)
+LUI	AT,8008
+SWC1	F6,0004 (V1)	;F6->80037018: copy pos.y to camera.y
+LWC1	F8,0008 (V0)	;F8=cur.player's pos.z
+ADDIU	SP,SP,0018
+SWC1	F8,0008 (V1)	;F8->8003701C: copy pos.z to camera.z
+JR	RA
+SW	R0,9E20 (AT)

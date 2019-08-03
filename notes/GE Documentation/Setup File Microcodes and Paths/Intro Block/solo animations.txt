@@ -1,0 +1,34 @@
+80036514	selected solo animation
+80036518	15788-15818	animations for intro block type 4	0x10 each
+
+reset just prior to parsing the intro block commands:
+//7F005A10:	SW	R0,6514 (AT)
+
+7F005C28:	writes value set in intro block command to 80036514 register
+
+
+//7F07ABBC:	0x	use, to load the animation!
+LUI	T0,8003
+LW	T0,6514 (T0)	T0=80036514: animation register
+LUI	T2,8003
+LUI	S0,8008
+ADDIU	T2,T2,6518	T2=80036518: base address for animations
+SLL	T1,T0,0x4
+ADDIU	S0,S0,A0B0	S0=8007A0B0
+ADDU	V0,T1,T2	V0=address for chosen ani data
+LW	T5,0000 (S0)	T5=cur. playerdata
+LWC1	F0,0004 (V0)	F0=val1
+LUI	T4,8007
+LW	T4,9538 (T4)	T4=80069538: pointer to animation binaries
+LW	T3,0000 (V0)	T3=offset to ani
+LWC1	F12,0008 (V0)	F12=val2
+LWC1	F2,000C (V0)	F2=val3
+MTC1	R0,F10
+LW	A0,00D4 (T5)	A0=player's obj.instance
+MFC1	A3,F0		A3=val1
+OR	A2,R0,R0	A2=0
+ADDU	A1,T3,T4	A1=pointer to selected ani binary
+SWC1	F12,0078 (SP)	save val2
+SWC1	F2,0010 (SP)	save val3
+JAL	7F06FCA8
+SWC1	F10,0014 (SP)	0->SP+14

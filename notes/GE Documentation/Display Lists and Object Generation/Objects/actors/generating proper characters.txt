@@ -1,0 +1,59 @@
+First group code for each positioning command:
+1	waist	(complete body)
+2	chest	(complete upper body)
+3	head + collar
+4	R bicep	(+ forearm + hand)
+5	L bicep (+ forearm + hand)
+6	R forearm (+ hand)
+7	L forearm (+ hand)
+8	R hand
+9	L hand
+A	L shank	(+ shin + foot)
+B	R shank	(+ shin + foot)
+C	L shin	(+ foot)
+D	R shin	(+ foot)
+E	L foot
+F	R foot
+
+Dimention group code for each part:	Note that these indicate impact and part type!
+1	L foot
+2	L shin
+3	L shank
+4	R foot
+5	R shin
+6	R shank
+7	waist
+8	collar + head
+9	R hand
+A	R forearm
+B	R bicep
+C	L hand
+D	L forearm
+E	L bicep
+F	chest
+64	held items
+6E	hat
+
+
+Merge values for each position:
+0	head/collar{chest}
+1	chest{head - or - waist}
+2	Rbicep{chest}
+3	Lbicep{chest}
+4	(01 superheading? shadow?)
+5	waist{chest}
+6	Rshank{waist}
+7	Rshin{Rshank}
+8	Rfoot{Rshin}
+9	Rshin{Rfoot}
+A	Lshank{waist}
+B	Lshin{Lshank}
+C	Lfoot{Lshin}
+D	Lshin{Lfoot}
+E	Rforearm{Rbicep}
+F	Rhand{Rforearm}
+10	Rforearm{Rhand}
+11	Lforearm{Lbicep}
+12	Lhand{Lforearm}
+13	Lforearm{Lhand}
+14	chest{head - or - waist}

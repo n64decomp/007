@@ -1,0 +1,21 @@
+7F01D5EC	5211C	set stage, mode, briefing for ramrom replay
+	accepts: A0=stage#
+LUI	AT,8003
+ADDIU	SP,SP,FFE8
+SW	R0,A8F0 (AT)	;0->8002A8F0: mode=solo
+SW	RA,0014 (SP)
+LUI	AT,8003
+JAL	7F00DCC0	;V0=briefing for solo stage A0
+SW	A0,A8F4 (AT)	;A0->8002A8F4: A0->selected stage
+LW	RA,0014 (SP)
+LUI	AT,8003
+SW	V0,A8F8 (AT)	;V0->8002A8F8: selected mission briefing page
+JR	RA
+ADDIU	SP,SP,0018
+
+[+_+]
+
+used three times:
+ 6D0C	7000610C	
+F5278	7F0C0748	record or replay at stage start
+F53A4	7F0C0874	replay recorded movie at hardware address A0

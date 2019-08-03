@@ -1,0 +1,4 @@
+7F0BFCA4:	F47D4	menu 0B interface: -active gameplay-
+LUI	V0,8005
+JR	RA
+LW	V0,847C (V0)

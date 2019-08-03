@@ -1,0 +1,15 @@
+BUILD_DIR := build
+
+OBSEGMENT := obsegment.o
+OBSEG_DIR := assets/obseg
+
+
+include assets/obseg/Makefile.bg
+include assets/obseg/Makefile.chr
+include assets/obseg/Makefile.gun
+include assets/obseg/Makefile.prop
+include assets/obseg/Makefile.stan
+include assets/obseg/Makefile.brief
+include assets/obseg/Makefile.setup
+include assets/obseg/Makefile.text
+

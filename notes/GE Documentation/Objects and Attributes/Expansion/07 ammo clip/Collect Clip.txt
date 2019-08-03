@@ -1,0 +1,11 @@
+7F050310:	
+	OR	S0,V1,R0
+	JAL	7F04FC3C	;ret V0=ammo for clip
+	OR	A0,V1,R0	;A0=V1: type of ammo
+	LW	A0,0080 (S0)	;A0=ammo type
+	OR	A1,V0,R0	;A1=V0: amount of ammo
+	ADDIU	A2,R0,0001	;A2=play sound (sound flag=TRUE)
+	JAL	7F04FA68	;add A1 of type A0 ammo to player's stock
+	LW	A3,0074 (SP)	;A3=display text flag
+	BEQ	R0,R0,7F050674
+	ADDIU	V1,R0,0001

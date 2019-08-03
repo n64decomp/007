@@ -1,0 +1,39 @@
+7F0C81D8 	0xFCD08	compression type 4
+LW	S4,0080 (SP)	;S4=nibble3 (imgtype)
+LUI	T3,8005
+OR	A0,S8,R0	;A0=p->samples
+SLL	T6,S4,0x2
+ADDU	T3,T3,T6
+LW	T3,9178 (T3)	;T3=80049178+offset: t#1val
+OR	S4,T6,R0	;S4=table offset
+MULTU	T3,S6
+MFLO	T7
+NOP	
+NOP	
+MULTU	T7,S7
+MFLO	A1		;A1=t#1val * width * height
+JAL	7F0C96BC	;funny get samples
+NOP
+//7F0C8214 	0xFCD44
+LUI	T4,8005
+ADDU	T4,T4,S4
+LW	T4,91AC (T4)	;T4=800491AC+offset: t#2val
+SLL	T9,S5,0x2
+SUBU	T9,T9,S5	;T9=width*height*3
+BEQ	T4,R0,0xFCD68	;branch if alpha not needed
+ADDU	A0,S8,T9	;A0=p->samples + width*height*3
+JAL	7F0C9A48	;grab alpha bit values
+OR	A1,S5,R0	;A1=width*height
+//7F0C8238 	0xFCD68	spit out an image
+LW	T8,30AC (SP)
+LW	T5,0088 (SP)
+LW	T6,0080 (SP)
+OR	A0,S8,R0
+ADDU	S0,T8,T5
+OR	A3,S0,R0
+OR	A1,S6,R0
+OR	A2,S7,R0
+JAL	7F0C9DA4	;generate and link final image
+SW	T6,0010 (SP)
+BEQ	R0,R0,0xFD08C
+OR	S1,V0,R0

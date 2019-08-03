@@ -1,0 +1,11 @@
+7F0C805C 	0xFCB8C	'store' compression types 0 & 1
+LW	T6,30AC (SP)	;T6=final target
+LW	T3,0088 (SP)	;T3=?
+OR	A1,S6,R0	;A1=S6: width
+OR	A2,S7,R0	;A2=S7: height
+ADDU	S0,T6,T3
+OR	A0,S0,R0	;A0=final target
+JAL	7F0C9A9C	;copy and link final image
+LW	A3,0080 (SP)	;A3=table#	(data nibble 3)
+BEQ	R0,R0,0xFD08C
+OR	S1,V0,R0	;S1=V0: (return from 7F0C9A9C)

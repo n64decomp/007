@@ -1,0 +1,21 @@
+.section .font
+
+.global _fonttablectlsmall1SegmentRomStart
+_fonttablectlsmall1SegmentRomStart:
+.incbin "assets/font/font_first_font_table_controller_small.bin"
+_fonttablectlsmall1SegmentRomEnd:
+
+.global font_second_font_table_controller_small
+font_second_font_table_controller_small:
+.incbin "assets/font/font_second_font_table_controller_small.bin"
+font_second_font_table_controller_small_end:
+
+.global _fonttablectllarge1SegmentRomStart
+_fonttablectllarge1SegmentRomStart:
+.incbin "assets/font/font_first_font_table_controller_large.bin"
+_fonttablectllarge1SegmentRomEnd:
+
+.global font_second_font_table_controller_large
+font_second_font_table_controller_large:
+.incbin "assets/font/font_second_font_table_controller_large.bin"
+font_second_font_table_controller_large_end:

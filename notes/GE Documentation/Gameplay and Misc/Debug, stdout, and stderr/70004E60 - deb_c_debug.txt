@@ -1,0 +1,51 @@
+70004E2C	5A2C	deb_c_debug
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	A0,8002
+LUI	A1,8003
+ADDIU	A1,A1,87B0	;A1=800287B0: "deb_c_debug"
+JAL	70004E60
+ADDIU	A0,A0,32E0	;A0=800232E0: 
+JAL	70004EE0
+NOP
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+70004E60	5A60	
+	accepts: A0=p->???, A1=p->string
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+SW	A0,0018 (SP)
+SW	A1,001C (SP)
+JAL	70004D20
+OR	A0,A1,R0	;A0=A1: p->string
+//70004E78:
+BNEZ	V0,70004E88
+LW	A0,001C (SP)	;A0=p->string
+JAL	70004DE0
+LW	A1,0018 (SP)
+//70004E88:
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP
+
+70004E98	5A98	parses table at @800232E8
+	always returns zero or loops indefinately
+LUI	V0,8002
+LW	V0,32E8 (V0)	;V0=800232E8: 
+BEQ	V0,R0,70004EB4	;branch if no entries
+NOP
+//70004EA8:	parse table
+LW	V0,0000 (V0)	;V0=p->next entry: 
+BNEZL	V0,70004EAC	;loop until it isn't zero
+LW	V0,0000 (V0)
+//70004EB4:	return
+JR	RA
+NOP
+
+70004EBC	5ABC	unconditional return
+JR	RA
+NOP

@@ -1,0 +1,28 @@
+7000A29C	AE9C	debug memory table sort and merge function: generate list of allocated memory, sort and merge table, then generate a new list
+ADDIU	SP,SP,FFD8
+SW	RA,0024 (SP)
+SW	S2,0020 (SP)
+SW	S1,001C (SP)
+JAL	7000A100	;generate ordered list of allocated memory blocks
+SW	S0,0018 (SP)
+//7000A2B4:	sort allocation table A0
+LUI	S1,8006
+ADDIU	S1,S1,3C28	;S1=80063C28: table of memory allocations
+OR	S0,R0,R0	;S0=0	count=0
+ADDIU	S2,R0,01FC	;S2=1FC
+//7000A2C4:	loop for each possible entry
+JAL	70009A50	;sort and merge entries in allocation table A0
+OR	A0,S1,R0	;A0=S1: p->allocation table
+ADDIU	S0,S0,0001	;S0++	count++
+BNE	S0,S2,7000A2C4	;loop 0x1FC times
+NOP
+//7000A2D8:
+JAL	7000A100	;generate ordered list of allocated memory blocks
+NOP
+//7000A2E0:	return
+LW	RA,0024 (SP)
+LW	S0,0018 (SP)
+LW	S1,001C (SP)
+LW	S2,0020 (SP)
+JR	RA
+ADDIU	SP,SP,0028

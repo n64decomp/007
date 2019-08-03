@@ -1,0 +1,37 @@
+7F007320	3BE50	set -mt texture allocation
+ADDIU	SP,SP,FFE8
+SW	RA,0014 (SP)
+LUI	AT,8009
+LUI	A1,8005
+SW	R0,D090 (AT)
+ADDIU	A1,A1,F200	;A1=8004F200: "-mt"
+JAL	7000A6A0	;V0=p->A0th instance of token A1
+ADDIU	A0,R0,0001	;A0= 1st
+BEQ	V0,R0,7F007370
+//7F007344:	retrieves and sets new mt value
+ADDIU	A0,R0,0001	;A0= 1st
+JAL	7000A6A0	;V0=p->A0th instance of token A1
+ADDIU	A1,A1,F204	;A1=8004F204: "-mt"
+OR	A0,V0,R0	;A0=V0: p->value string
+OR	A1,R0,R0	;A1= NULL
+JAL	7000A9E0	;V0=strtol(A0,A1,A2)
+OR	A2,R0,R0	;A2= default
+SLL	T6,V0,0xA
+LUI	AT,8005
+SW	T6,9170 (AT)	;value*400 -> 80049170
+//7F007370:	allocate memory and set pointer
+LUI	A0,8005
+LW	A0,9170 (A0)	;A0=80049170: most recent mt value
+JAL	70009720	;V0=p->A0 bytes allocated in bank A1
+ADDIU	A1,R0,0004	;A1= bank 4
+LUI	A0,8009
+LUI	A2,8005
+LW	A2,9170 (A2)	;A2=80089170: size
+ADDIU	A0,A0,C720	;A0= 8008C720
+JAL	7F0CBAF4	;set start and end of block to A0
+OR	A1,V0,R0	;A1=V0: p->data
+//7F007398:	return
+LW	RA,0014 (SP)
+ADDIU	SP,SP,0018
+JR	RA
+NOP

@@ -1,0 +1,45 @@
+floor in Complex:
+in non-compacted table
+@ 8004A6B0	276	0x9A41C6
+
+on image hit call:
+7F03B7B8:	702E8	recover random impact sound
+SLL	T4,T3,0x3	//image ID (T3) *8
+LUI	T5,8005
+ADDU	T5,T5,T4
+LBU	T5,9300 (T5)	//first byte of image call value
+//7F03B7C8:
+LUI	S0,8005
+ANDI	T6,T5,000F	//second nibble dictates the collision
+SLL	T7,T6,0x2	//*4=offset
+LW	S0,E86C (S0)	//impact (image?) tables
+BEQ	S1,R0,7F03B868
+NOP
+
+gets random value (7000A450), retrieves 0xA from impact table (indicates # images), then divides random by this value.
+Cool!  I can lift this to make the random weapon select routine!
+
+7F03B8DC:	7040C
+LUI	V0,8005
+ADDIU	AT,R0,0005
+SLL	T6,T5,0x3
+ADDU	V0,V0,T6
+LBU	V0,9300 (V0)
+ANDI	T7,V0,000F
+
+
+7F064898:	993C8	recover impact sound
+LW	T3,0088 (SP)
+LUI	T5,8005
+BLTZ	T3,7F064924
+SLL	T6,T3,0x3	//image ID (T3) *8
+ADDU	T5,T5,T6
+LW	T5,9300 (T5)	//full image call value
+//7F0648B0
+LUI	V0,8005
+SRL	T8,T5,0x1C	//first nibble of value
+SLL	T4,T8,0x2
+ADDU	V0,V0,T4
+LW	V0,E86C (V0)	//impact (sound?) table
+
+

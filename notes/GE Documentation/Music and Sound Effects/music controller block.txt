@@ -1,0 +1,52 @@
+80063728: p->1st.music controller block
+8006372C: p->2nd.music controller block
+80063730: p->3rd.music controller block
+80063734: p->music data table
+
+
+Music Data Table Format:
+0x0	2	#entries
+0x2	2	RESERVED
+0x4	var.	entries
+	Format:	0x8 each entry
+	0x0	4	ROM address
+	0x4	2	decompressed size
+	0x6	2	compressed size
+
+
+Music Controller Block Format:	0x80 each, usually 4 allocated
+0x0	4	p->prev.entry in table or NULL
+0x4	4	p->this entry in table
+0x8	4	???	TLB pointer?  usually 70011A6C
+0xC	4	
+0x10	2	positive value
+0x12	2	negative value
+0x14	4	p->	[8005E750]
+0x18	4	p->	[80063860]
+0x1C	2	[0411]
+0x1E	2	[FE00]
+0x20	4	p->	[802CB6B8]
+0x24	4	
+0x28	4	[3E80]
+0x2C	4	1 when playing music
+0x30	2	[00FF]
+0x32	2	[6664]
+0x34	4	[10000000]
+0x38	4	[00090000]
+0x3C	4	[00000050]
+0x40	4	p->	[8005E750]
+0x44	4	p->	[802CEA50]
+0x48	4	p->	[802EC1BC]
+0x4C	4	
+0x50	4	p->	[802EC0C0]
+0x54	4	
+0x58	4	
+0x5C	4	[3E80]
+0x60	4	p->start of table	[802EB690]
+0x64	4	p->	[802EB8E0]
+0x68	4	p->	[802EB918]
+0x6C	4	p->	[802EB870]
+0x70	4	
+0x74	4	
+0x78	4	
+0x7C	4	

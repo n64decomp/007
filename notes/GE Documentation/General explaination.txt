@@ -1,0 +1,7 @@
+  This "documentation" is two-fold.  It serves as an annotated record of disassembled GE binaries first and foremost.  In addition, it documents code changes made during various hacking projects.  Concidering all of these projects rely not on compiling code but directly editing assembly-level or runtime code, this is about the closest thing to open-source as you can get.
+
+  This was also released freely to avoid the common issue of having to replicate the work of others.  All information in here is freely available to the community in the hopes it will save them the time and effort of locating, disassembling, and deciphering the often convoluted codework used.  Anyone who has followed the Zelda64 fiasco should know how important this is.
+
+  Also, it should be noted these documents may be freely distributed without recieving prior express authority.
+
+-Zoinkity

@@ -1,3 +1,0 @@
-  Huffman compressed images use a horrible implementation.  Instead of the rational thing, namely compressing data then processing it, these types process the data as it is being decompressed.  That means for every compression type there are seperate implementations for decompressing certain image formats.
-
-  In total, there are nine huffman compression formats (1-9) and nine possible image formats: 32bit, 16bit, 24bit, 15bit, ai16, ai8, ai4, i8, and i4.  Yep, that means there's a total of 81 different subroutines all dedicated to outputting huffman compressed images.

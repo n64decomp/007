@@ -1,0 +1,12 @@
+  Music table occurs at 0x419790 (NGEE).  First entry is a short indicating number of samples (0x3F).  A list of sample entries starts at 0x419794:
+0x0	4	offset from 0x419790 to music data
+0x4	2	size of data decompressed
+0x6	2	size of data compressed
+  Samples are 1172 compressed.
+
+  Internal format differs slightly from normal music macros.  Each is preceeded by a table of offsets.  Once music data can be parsed these can be identified more clearly.
+0x0	4	offset in file to start of music data.  This is usually 0x44, so I'm using that in this example
+0x4+	4	table of long values, probably indicating loop points or other data deemed imporatant
+data-4	4	always 0x180.  Unsure usage, though probably indicates some playback feature like "loop me" or rate
+0x44	~	music data
+

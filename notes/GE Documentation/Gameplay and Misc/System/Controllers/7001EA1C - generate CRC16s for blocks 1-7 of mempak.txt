@@ -1,0 +1,30 @@
+7001EA1C	1F61C	generate CRC16s for 0x1C bytes of mempak data
+	accepts: A0=p->source, A1=p->(short) CRC, A2=p->(short) invert CRC
+ADDIU	SP,SP,FFF8
+SH	R0,0006 (SP)	;0->SP+6: current short
+SH	R0,0000 (A2)	;0->A2+0: invert tally
+LHU	T6,0000 (A2)	;T6=A2+0: 0
+SH	T6,0000 (A1)	;0->A1+0: tally
+SW	R0,0000 (SP)	;0->SP+0: count
+//7001EA34:	generate checksum
+LW	T7,0000 (SP)	;T7=SP+0: count
+ADDU	T8,A0,T7	;T8=source+count
+LHU	T9,0000 (T8)	;T9=short f/ source
+SH	T9,0006 (SP)	;T9->SP+6: save current short from stream
+LHU	T0,0000 (A1)	;T0=A1+0: tally
+ADDU	T1,T0,T9	;T1=tally+cur.
+SH	T1,0000 (A1)	;update tally
+LHU	T3,0006 (SP)	;T3=SP+6: current
+LHU	T2,0000 (A2)	;T2=A2+0: invert tally
+NOR	T4,T3,R0	;T4=~current
+ADDU	T5,T2,T4	;T5= invert+~current
+SH	T5,0000 (A2)	;update invert tally
+LW	T6,0000 (SP)	;T6=SP+0: count
+ADDIU	T7,T6,0002	;T7=count+2
+SLTIU	AT,T7,001C	;TRUE for first 0x1C bytes
+BNEZ	AT,7001EA34	;loop for packet
+SW	T7,0000 (SP)	;update count
+//7001EA78:	return
+OR	V0,R0,R0	;V0=0	return 0
+JR	RA
+ADDIU	SP,SP,0008
