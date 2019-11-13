@@ -26,7 +26,7 @@ glabel osSetEventMesg
 /* 00E864 7000DC64 0C00617C */  jal   __osDisableInt
 /* 00E868 7000DC68 AFB00018 */   sw    $s0, 0x18($sp)
 /* 00E86C 7000DC6C 8FAE0028 */  lw    $t6, 0x28($sp)
-/* 00E870 7000DC70 3C188006 */  lui   $t8, %hi(__osEventStateTab) # $t8, 0x8006
+/* 00E870 7000DC70 3C188006 */  lui   $t8, %hi(__osEventStateTab) 
 /* 00E874 7000DC74 8FA8002C */  lw    $t0, 0x2c($sp)
 /* 00E878 7000DC78 27186A10 */  addiu $t8, %lo(__osEventStateTab) # addiu $t8, $t8, 0x6a10
 /* 00E87C 7000DC7C 000E78C0 */  sll   $t7, $t6, 3

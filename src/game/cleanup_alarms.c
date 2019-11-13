@@ -1,5 +1,5 @@
 #include "ultra64.h"
-#include "game/actionblock.h"
+#include "game/chrai.h"
 #include "game/cleanup_alarms.h"
 
 

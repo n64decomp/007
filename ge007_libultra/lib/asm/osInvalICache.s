@@ -33,7 +33,7 @@ glabel osInvalICache
 	 nop   
 
 .L80323730:
-	lui   $t0, %hi(D_80000020) # $t0, 0x8000
+	lui   $t0, %hi(D_80000020) 
 	addu  $t1, $t0, $t3
 	addiu $t1, $t1, -0x20
 .L8032373C:

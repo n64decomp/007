@@ -70,7 +70,7 @@ glabel osRecvMesg
 /* 00EA18 7000DE18 10000036 */  b     .L7000DEF4
 /* 00EA1C 7000DE1C 2402FFFF */   li    $v0, -1
 .L7000DE20:
-/* 00EA20 7000DE20 3C088002 */  lui   $t0, %hi(__osRunningThread) # $t0, 0x8002
+/* 00EA20 7000DE20 3C088002 */  lui   $t0, %hi(__osRunningThread) 
 /* 00EA24 7000DE24 8D087730 */  lw    $t0, %lo(__osRunningThread)($t0)
 /* 00EA28 7000DE28 24190008 */  li    $t9, 8
 /* 00EA2C 7000DE2C A5190010 */  sh    $t9, 0x10($t0)

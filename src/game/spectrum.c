@@ -113,7 +113,7 @@ glabel sub_GAME_7F0D28E0
 /* 107458 7F0D2928 01C41021 */  addu  $v0, $t6, $a0
 /* 10745C 7F0D292C 1160000A */  beqz  $t3, .L7F0D2958
 /* 107460 7F0D2930 01205025 */   move  $t2, $t1
-/* 107464 7F0D2934 3C0C8005 */  lui   $t4, %hi(D_8004EC40+0xC4) # $t4, 0x8005
+/* 107464 7F0D2934 3C0C8005 */  lui   $t4, %hi(D_8004EC40+0xC4) 
 /* 107468 7F0D2938 918CED04 */  lbu   $t4, %lo(D_8004EC40+0xC4)($t4)
 /* 10746C 7F0D293C 01201825 */  move  $v1, $t1
 /* 107470 7F0D2940 306D0007 */  andi  $t5, $v1, 7
@@ -232,7 +232,7 @@ void sub_GAME_7F0D2A84(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F0D2A84
-/* 1075B4 7F0D2A84 3C028005 */  lui   $v0, %hi(D_8004ED08) # $v0, 0x8005
+/* 1075B4 7F0D2A84 3C028005 */  lui   $v0, %hi(D_8004ED08)
 /* 1075B8 7F0D2A88 2442ED08 */  addiu $v0, %lo(D_8004ED08) # addiu $v0, $v0, -0x12f8
 /* 1075BC 7F0D2A8C 904E0000 */  lbu   $t6, ($v0)
 /* 1075C0 7F0D2A90 24010019 */  li    $at, 25
@@ -256,7 +256,7 @@ glabel sub_GAME_7F0D2A84
 /* 107608 7F0D2AD8 1720001B */  bnez  $t9, .L7F0D2B48
 /* 10760C 7F0D2ADC A04F0000 */   sb    $t7, ($v0)
 /* 107610 7F0D2AE0 A0400000 */  sb    $zero, ($v0)
-/* 107614 7F0D2AE4 3C168009 */  lui   $s6, %hi(ptr_300alloc) # $s6, 0x8009
+/* 107614 7F0D2AE4 3C168009 */  lui   $s6, %hi(ptr_300alloc)
 /* 107618 7F0D2AE8 26D6E32C */  addiu $s6, %lo(ptr_300alloc) # addiu $s6, $s6, -0x1cd4
 /* 10761C 7F0D2AEC 24020001 */  li    $v0, 1
 /* 107620 7F0D2AF0 00001825 */  move  $v1, $zero
@@ -276,14 +276,14 @@ glabel sub_GAME_7F0D2A84
 /* 107654 7F0D2B24 24630004 */  addiu $v1, $v1, 4
 /* 107658 7F0D2B28 1461FFF2 */  bne   $v1, $at, .L7F0D2AF4
 /* 10765C 7F0D2B2C A1E20003 */   sb    $v0, 3($t7)
-/* 107660 7F0D2B30 3C028005 */  lui   $v0, %hi(D_8004EC40+0xC4) # $v0, 0x8005
+/* 107660 7F0D2B30 3C028005 */  lui   $v0, %hi(D_8004EC40+0xC4)
 /* 107664 7F0D2B34 2442ED04 */  addiu $v0, %lo(D_8004EC40+0xC4) # addiu $v0, $v0, -0x12fc
 /* 107668 7F0D2B38 90580000 */  lbu   $t8, ($v0)
 /* 10766C 7F0D2B3C 24190001 */  li    $t9, 1
 /* 107670 7F0D2B40 03384023 */  subu  $t0, $t9, $t8
 /* 107674 7F0D2B44 A0480000 */  sb    $t0, ($v0)
 .L7F0D2B48:
-/* 107678 7F0D2B48 3C168009 */  lui   $s6, %hi(ptr_300alloc) # $s6, 0x8009
+/* 107678 7F0D2B48 3C168009 */  lui   $s6, %hi(ptr_300alloc)
 /* 10767C 7F0D2B4C 26D6E32C */  addiu $s6, %lo(ptr_300alloc) # addiu $s6, $s6, -0x1cd4
 /* 107680 7F0D2B50 AFA00058 */  sw    $zero, 0x58($sp)
 .L7F0D2B54:
@@ -407,9 +407,9 @@ glabel spectrum_p1controller_to_kempston
 /* 107800 7F0D2CD0 0C00314A */  jal   get_controller_3dstick_U_D
 /* 107804 7F0D2CD4 AFA2001C */   sw    $v0, 0x1c($sp)
 /* 107808 7F0D2CD8 240E00FF */  li    $t6, 255
-/* 10780C 7F0D2CDC 3C018005 */  lui   $at, %hi(D_8004EC34) # $at, 0x8005
-/* 107810 7F0D2CE0 3C048005 */  lui   $a0, %hi(D_8004EC34+1) # $a0, 0x8005
-/* 107814 7F0D2CE4 3C058005 */  lui   $a1, %hi(D_8004EC3C+1) # $a1, 0x8005
+/* 10780C 7F0D2CDC 3C018005 */  lui   $at, %hi(D_8004EC34)
+/* 107810 7F0D2CE0 3C048005 */  lui   $a0, %hi(D_8004EC34+1)
+/* 107814 7F0D2CE4 3C058005 */  lui   $a1, %hi(D_8004EC3C+1)
 /* 107818 7F0D2CE8 8FA70020 */  lw    $a3, 0x20($sp)
 /* 10781C 7F0D2CEC 8FA8001C */  lw    $t0, 0x1c($sp)
 /* 107820 7F0D2CF0 24A5EC3D */  addiu $a1, %lo(D_8004EC3C+1) # addiu $a1, $a1, -0x13c3
@@ -461,7 +461,7 @@ glabel spectrum_p1controller_to_kempston
 /* 1078B4 7F0D2D84 24060001 */   li    $a2, 1
 /* 1078B8 7F0D2D88 AFA60030 */  sw    $a2, 0x30($sp)
 .L7F0D2D8C:
-/* 1078BC 7F0D2D8C 3C038009 */  lui   $v1, %hi(byte_CODE_bss_8008E34D) # $v1, 0x8009
+/* 1078BC 7F0D2D8C 3C038009 */  lui   $v1, %hi(byte_CODE_bss_8008E34D)
 /* 1078C0 7F0D2D90 9063E34D */  lbu   $v1, %lo(byte_CODE_bss_8008E34D)($v1)
 /* 1078C4 7F0D2D94 24040002 */  li    $a0, 2
 /* 1078C8 7F0D2D98 8FA60030 */  lw    $a2, 0x30($sp)
@@ -496,13 +496,13 @@ glabel spectrum_p1controller_to_kempston
 /* 10792C 7F0D2DFC 30F8C000 */   andi  $t8, $a3, 0xc000
 .L7F0D2E00:
 /* 107930 7F0D2E00 13000005 */  beqz  $t8, .L7F0D2E18
-/* 107934 7F0D2E04 3C028005 */   lui   $v0, %hi(D_8004EC34) # $v0, 0x8005
+/* 107934 7F0D2E04 3C028005 */   lui   $v0, %hi(D_8004EC34)
 /* 107938 7F0D2E08 2442EC34 */  addiu $v0, %lo(D_8004EC34) # addiu $v0, $v0, -0x13cc
 /* 10793C 7F0D2E0C 90590004 */  lbu   $t9, 4($v0)
 /* 107940 7F0D2E10 332900FE */  andi  $t1, $t9, 0xfe
 /* 107944 7F0D2E14 A0490004 */  sb    $t1, 4($v0)
 .L7F0D2E18:
-/* 107948 7F0D2E18 3C028005 */  lui   $v0, %hi(D_8004EC34) # $v0, 0x8005
+/* 107948 7F0D2E18 3C028005 */  lui   $v0, %hi(D_8004EC34)
 /* 10794C 7F0D2E1C 10830003 */  beq   $a0, $v1, .L7F0D2E2C
 /* 107950 7F0D2E20 2442EC34 */   addiu $v0, %lo(D_8004EC34) # addiu $v0, $v0, -0x13cc
 /* 107954 7F0D2E24 24010008 */  li    $at, 8
@@ -592,8 +592,8 @@ glabel spectrum_p1controller_to_kempston
 /* 107A64 7F0D2F34 30ED0020 */  andi  $t5, $a3, 0x20
 .L7F0D2F38:
 /* 107A68 7F0D2F38 11A00013 */  beqz  $t5, .L7F0D2F88
-/* 107A6C 7F0D2F3C 3C018005 */   lui   $at, %hi(D_8004EC40) # $at, 0x8005
-/* 107A70 7F0D2F40 3C028009 */  lui   $v0, %hi(ptr_spectrum_roms) # $v0, 0x8009
+/* 107A6C 7F0D2F3C 3C018005 */   lui   $at, %hi(D_8004EC40)
+/* 107A70 7F0D2F40 3C028009 */  lui   $v0, %hi(ptr_spectrum_roms)
 /* 107A74 7F0D2F44 2442E328 */  addiu $v0, %lo(ptr_spectrum_roms) # addiu $v0, $v0, -0x1cd8
 /* 107A78 7F0D2F48 00001825 */  move  $v1, $zero
 /* 107A7C 7F0D2F4C 24044000 */  li    $a0, 16384
@@ -649,7 +649,7 @@ glabel init_spectrum_game
 /* 107B00 7F0D2FD0 24040100 */  li    $a0, 256
 /* 107B04 7F0D2FD4 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 107B08 7F0D2FD8 24050004 */   li    $a1, 4
-/* 107B0C 7F0D2FDC 3C068009 */  lui   $a2, %hi(ptr_pc_keyboard_table_alloc) # $a2, 0x8009
+/* 107B0C 7F0D2FDC 3C068009 */  lui   $a2, %hi(ptr_pc_keyboard_table_alloc)
 /* 107B10 7F0D2FE0 24C6E334 */  addiu $a2, %lo(ptr_pc_keyboard_table_alloc) # addiu $a2, $a2, -0x1ccc
 /* 107B14 7F0D2FE4 ACC20000 */  sw    $v0, ($a2)
 /* 107B18 7F0D2FE8 00002025 */  move  $a0, $zero
@@ -686,12 +686,12 @@ glabel init_spectrum_game
 /* 107B80 7F0D3050 24046000 */  li    $a0, 24576
 /* 107B84 7F0D3054 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 107B88 7F0D3058 24050004 */   li    $a1, 4
-/* 107B8C 7F0D305C 3C018009 */  lui   $at, %hi(ptr_6000alloc) # $at, 0x8009
+/* 107B8C 7F0D305C 3C018009 */  lui   $at, %hi(ptr_6000alloc)
 /* 107B90 7F0D3060 AC22E330 */  sw    $v0, %lo(ptr_6000alloc)($at)
 /* 107B94 7F0D3064 24040300 */  li    $a0, 768
 /* 107B98 7F0D3068 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 107B9C 7F0D306C 24050004 */   li    $a1, 4
-/* 107BA0 7F0D3070 3C038009 */  lui   $v1, %hi(ptr_300alloc) # $v1, 0x8009
+/* 107BA0 7F0D3070 3C038009 */  lui   $v1, %hi(ptr_300alloc)
 /* 107BA4 7F0D3074 2463E32C */  addiu $v1, %lo(ptr_300alloc) # addiu $v1, $v1, -0x1cd4
 /* 107BA8 7F0D3078 AC620000 */  sw    $v0, ($v1)
 /* 107BAC 7F0D307C 24020001 */  li    $v0, 1
@@ -706,18 +706,18 @@ glabel init_spectrum_game
 /* 107BCC 7F0D309C 3C040001 */  lui   $a0, 1
 /* 107BD0 7F0D30A0 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 107BD4 7F0D30A4 24050004 */   li    $a1, 4
-/* 107BD8 7F0D30A8 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 107BD8 7F0D30A8 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 107BDC 7F0D30AC 2508E328 */  addiu $t0, %lo(ptr_spectrum_roms) # addiu $t0, $t0, -0x1cd8
-/* 107BE0 7F0D30B0 3C048006 */  lui   $a0, %hi(aEmDataSpec_rom_seg_rz) # $a0, 0x8006
+/* 107BE0 7F0D30B0 3C048006 */  lui   $a0, %hi(aEmDataSpec_rom_seg_rz)
 /* 107BE4 7F0D30B4 AD020000 */  sw    $v0, ($t0)
 /* 107BE8 7F0D30B8 2484C114 */  addiu $a0, %lo(aEmDataSpec_rom_seg_rz) # addiu $a0, $a0, -0x3eec
 /* 107BEC 7F0D30BC 24050001 */  li    $a1, 1
 /* 107BF0 7F0D30C0 24060100 */  li    $a2, 256
 /* 107BF4 7F0D30C4 0FC2F341 */  jal   _load_resource_named_to_membank
 /* 107BF8 7F0D30C8 24070004 */   li    $a3, 4
-/* 107BFC 7F0D30CC 3C038009 */  lui   $v1, %hi(ptr_sectrum_monitor_data_temp_buf) # $v1, 0x8009
+/* 107BFC 7F0D30CC 3C038009 */  lui   $v1, %hi(ptr_sectrum_monitor_data_temp_buf)
 /* 107C00 7F0D30D0 2463E320 */  addiu $v1, %lo(ptr_sectrum_monitor_data_temp_buf) # addiu $v1, $v1, -0x1ce0
-/* 107C04 7F0D30D4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 107C04 7F0D30D4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 107C08 7F0D30D8 2508E328 */  addiu $t0, %lo(ptr_spectrum_roms) # addiu $t0, $t0, -0x1cd8
 /* 107C0C 7F0D30DC AC620000 */  sw    $v0, ($v1)
 /* 107C10 7F0D30E0 00002025 */  move  $a0, $zero
@@ -732,7 +732,7 @@ glabel init_spectrum_game
 /* 107C30 7F0D3100 1420FFF8 */  bnez  $at, .L7F0D30E4
 /* 107C34 7F0D3104 A1380000 */   sb    $t8, ($t1)
 /* 107C38 7F0D3108 8FAA0018 */  lw    $t2, 0x18($sp)
-/* 107C3C 7F0D310C 3C038009 */  lui   $v1, %hi(byte_CODE_bss_8008E34D) # $v1, 0x8009
+/* 107C3C 7F0D310C 3C038009 */  lui   $v1, %hi(byte_CODE_bss_8008E34D)
 /* 107C40 7F0D3110 2463E34D */  addiu $v1, %lo(byte_CODE_bss_8008E34D) # addiu $v1, $v1, -0x1cb3
 /* 107C44 7F0D3114 314200FF */  andi  $v0, $t2, 0xff
 /* 107C48 7F0D3118 28410005 */  slti  $at, $v0, 5
@@ -749,10 +749,10 @@ glabel init_spectrum_game
 /* 107C70 7F0D3140 24060100 */  li    $a2, 256
 /* 107C74 7F0D3144 0FC2F341 */  jal   _load_resource_named_to_membank
 /* 107C78 7F0D3148 24070004 */   li    $a3, 4
-/* 107C7C 7F0D314C 3C038009 */  lui   $v1, %hi(ptr_sectrum_game_data_temp_buf) # $v1, 0x8009
+/* 107C7C 7F0D314C 3C038009 */  lui   $v1, %hi(ptr_sectrum_game_data_temp_buf)
 /* 107C80 7F0D3150 2463E324 */  addiu $v1, %lo(ptr_sectrum_game_data_temp_buf) # addiu $v1, $v1, -0x1cdc
 /* 107C84 7F0D3154 AC620000 */  sw    $v0, ($v1)
-/* 107C88 7F0D3158 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 107C88 7F0D3158 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 107C8C 7F0D315C 2508E328 */  addiu $t0, %lo(ptr_spectrum_roms) # addiu $t0, $t0, -0x1cd8
 /* 107C90 7F0D3160 3402C000 */  li    $v0, 49152
 /* 107C94 7F0D3164 00002025 */  move  $a0, $zero
@@ -784,87 +784,87 @@ glabel init_spectrum_game
 /* 107CF8 7F0D31C8 1482FFE7 */  bne   $a0, $v0, .L7F0D3168
 /* 107CFC 7F0D31CC A1AA4003 */   sb    $t2, 0x4003($t5)
 /* 107D00 7F0D31D0 8C620000 */  lw    $v0, ($v1)
-/* 107D04 7F0D31D4 3C018009 */  lui   $at, %hi(spec_I) # $at, 0x8009
-/* 107D08 7F0D31D8 3C058009 */  lui   $a1, %hi(spec_IFF2_upper) # $a1, 0x8009
+/* 107D04 7F0D31D4 3C018009 */  lui   $at, %hi(spec_I)
+/* 107D08 7F0D31D8 3C058009 */  lui   $a1, %hi(spec_IFF2_upper)
 /* 107D0C 7F0D31DC 904F0000 */  lbu   $t7, ($v0)
 /* 107D10 7F0D31E0 24A5E34B */  addiu $a1, %lo(spec_IFF2_upper) # addiu $a1, $a1, -0x1cb5
-/* 107D14 7F0D31E4 3C068009 */  lui   $a2, %hi(spec_SP) # $a2, 0x8009
+/* 107D14 7F0D31E4 3C068009 */  lui   $a2, %hi(spec_SP)
 /* 107D18 7F0D31E8 A02FE348 */  sb    $t7, %lo(spec_I)($at)
 /* 107D1C 7F0D31EC 90590001 */  lbu   $t9, 1($v0)
-/* 107D20 7F0D31F0 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E347) # $at, 0x8009
+/* 107D20 7F0D31F0 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E347)
 /* 107D24 7F0D31F4 24C6E352 */  addiu $a2, %lo(spec_SP) # addiu $a2, $a2, -0x1cae
 /* 107D28 7F0D31F8 A039E347 */  sb    $t9, %lo(byte_CODE_bss_8008E347)($at)
 /* 107D2C 7F0D31FC 904E0002 */  lbu   $t6, 2($v0)
-/* 107D30 7F0D3200 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E346) # $at, 0x8009
-/* 107D34 7F0D3204 3C078009 */  lui   $a3, %hi(spec_IM) # $a3, 0x8009
+/* 107D30 7F0D3200 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E346)
+/* 107D34 7F0D3204 3C078009 */  lui   $a3, %hi(spec_IM)
 /* 107D38 7F0D3208 A02EE346 */  sb    $t6, %lo(byte_CODE_bss_8008E346)($at)
 /* 107D3C 7F0D320C 90580003 */  lbu   $t8, 3($v0)
-/* 107D40 7F0D3210 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E345) # $at, 0x8009
+/* 107D40 7F0D3210 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E345)
 /* 107D44 7F0D3214 24E7E34C */  addiu $a3, %lo(spec_IM) # addiu $a3, $a3, -0x1cb4
 /* 107D48 7F0D3218 A038E345 */  sb    $t8, %lo(byte_CODE_bss_8008E345)($at)
 /* 107D4C 7F0D321C 90490004 */  lbu   $t1, 4($v0)
-/* 107D50 7F0D3220 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E344) # $at, 0x8009
+/* 107D50 7F0D3220 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E344)
 /* 107D54 7F0D3224 A029E344 */  sb    $t1, %lo(off_CODE_bss_8008E344)($at)
 /* 107D58 7F0D3228 904B0005 */  lbu   $t3, 5($v0)
-/* 107D5C 7F0D322C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E343) # $at, 0x8009
+/* 107D5C 7F0D322C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E343)
 /* 107D60 7F0D3230 A02BE343 */  sb    $t3, %lo(byte_CODE_bss_8008E343)($at)
 /* 107D64 7F0D3234 904C0006 */  lbu   $t4, 6($v0)
-/* 107D68 7F0D3238 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E342) # $at, 0x8009
+/* 107D68 7F0D3238 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E342)
 /* 107D6C 7F0D323C A02CE342 */  sb    $t4, %lo(byte_CODE_bss_8008E342)($at)
 /* 107D70 7F0D3240 904A0007 */  lbu   $t2, 7($v0)
-/* 107D74 7F0D3244 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E341) # $at, 0x8009
+/* 107D74 7F0D3244 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E341)
 /* 107D78 7F0D3248 A02AE341 */  sb    $t2, %lo(byte_CODE_bss_8008E341)($at)
 /* 107D7C 7F0D324C 904D0008 */  lbu   $t5, 8($v0)
-/* 107D80 7F0D3250 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E340) # $at, 0x8009
+/* 107D80 7F0D3250 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E340)
 /* 107D84 7F0D3254 A02DE340 */  sb    $t5, %lo(off_CODE_bss_8008E340)($at)
 /* 107D88 7F0D3258 904F0009 */  lbu   $t7, 9($v0)
-/* 107D8C 7F0D325C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33F) # $at, 0x8009
+/* 107D8C 7F0D325C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33F)
 /* 107D90 7F0D3260 A02FE33F */  sb    $t7, %lo(byte_CODE_bss_8008E33F)($at)
 /* 107D94 7F0D3264 9059000A */  lbu   $t9, 0xa($v0)
-/* 107D98 7F0D3268 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33E) # $at, 0x8009
+/* 107D98 7F0D3268 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33E)
 /* 107D9C 7F0D326C A039E33E */  sb    $t9, %lo(byte_CODE_bss_8008E33E)($at)
 /* 107DA0 7F0D3270 904E000B */  lbu   $t6, 0xb($v0)
-/* 107DA4 7F0D3274 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33D) # $at, 0x8009
+/* 107DA4 7F0D3274 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33D)
 /* 107DA8 7F0D3278 A02EE33D */  sb    $t6, %lo(byte_CODE_bss_8008E33D)($at)
 /* 107DAC 7F0D327C 9058000C */  lbu   $t8, 0xc($v0)
-/* 107DB0 7F0D3280 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E33C) # $at, 0x8009
+/* 107DB0 7F0D3280 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E33C)
 /* 107DB4 7F0D3284 A038E33C */  sb    $t8, %lo(off_CODE_bss_8008E33C)($at)
 /* 107DB8 7F0D3288 9049000D */  lbu   $t1, 0xd($v0)
-/* 107DBC 7F0D328C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33B) # $at, 0x8009
+/* 107DBC 7F0D328C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33B)
 /* 107DC0 7F0D3290 A029E33B */  sb    $t1, %lo(byte_CODE_bss_8008E33B)($at)
 /* 107DC4 7F0D3294 904B000E */  lbu   $t3, 0xe($v0)
-/* 107DC8 7F0D3298 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33A) # $at, 0x8009
+/* 107DC8 7F0D3298 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33A)
 /* 107DCC 7F0D329C A02BE33A */  sb    $t3, %lo(byte_CODE_bss_8008E33A)($at)
 /* 107DD0 7F0D32A0 904C0010 */  lbu   $t4, 0x10($v0)
 /* 107DD4 7F0D32A4 904D000F */  lbu   $t5, 0xf($v0)
-/* 107DD8 7F0D32A8 3C018009 */  lui   $at, %hi(spec_IY) # $at, 0x8009
+/* 107DD8 7F0D32A8 3C018009 */  lui   $at, %hi(spec_IY)
 /* 107DDC 7F0D32AC 000C5200 */  sll   $t2, $t4, 8
 /* 107DE0 7F0D32B0 014D7821 */  addu  $t7, $t2, $t5
 /* 107DE4 7F0D32B4 A42FE350 */  sh    $t7, %lo(spec_IY)($at)
 /* 107DE8 7F0D32B8 90590012 */  lbu   $t9, 0x12($v0)
 /* 107DEC 7F0D32BC 90580011 */  lbu   $t8, 0x11($v0)
-/* 107DF0 7F0D32C0 3C018009 */  lui   $at, %hi(spec_IX) # $at, 0x8009
+/* 107DF0 7F0D32C0 3C018009 */  lui   $at, %hi(spec_IX)
 /* 107DF4 7F0D32C4 00197200 */  sll   $t6, $t9, 8
 /* 107DF8 7F0D32C8 01D84821 */  addu  $t1, $t6, $t8
 /* 107DFC 7F0D32CC A429E34E */  sh    $t1, %lo(spec_IX)($at)
 /* 107E00 7F0D32D0 904B0013 */  lbu   $t3, 0x13($v0)
-/* 107E04 7F0D32D4 3C018009 */  lui   $at, %hi(spec_IFF2_lower) # $at, 0x8009
+/* 107E04 7F0D32D4 3C018009 */  lui   $at, %hi(spec_IFF2_lower)
 /* 107E08 7F0D32D8 000B6083 */  sra   $t4, $t3, 2
 /* 107E0C 7F0D32DC 318D0001 */  andi  $t5, $t4, 1
 /* 107E10 7F0D32E0 A0AD0000 */  sb    $t5, ($a1)
 /* 107E14 7F0D32E4 A02DE34A */  sb    $t5, %lo(spec_IFF2_lower)($at)
 /* 107E18 7F0D32E8 904F0014 */  lbu   $t7, 0x14($v0)
-/* 107E1C 7F0D32EC 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E349) # $at, 0x8009
+/* 107E1C 7F0D32EC 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E349)
 /* 107E20 7F0D32F0 A02FE349 */  sb    $t7, %lo(byte_CODE_bss_8008E349)($at)
 /* 107E24 7F0D32F4 90590015 */  lbu   $t9, 0x15($v0)
-/* 107E28 7F0D32F8 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E339) # $at, 0x8009
+/* 107E28 7F0D32F8 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E339)
 /* 107E2C 7F0D32FC A039E339 */  sb    $t9, %lo(byte_CODE_bss_8008E339)($at)
 /* 107E30 7F0D3300 904E0016 */  lbu   $t6, 0x16($v0)
-/* 107E34 7F0D3304 3C018009 */  lui   $at, %hi(spectrum_header16_15) # $at, 0x8009
+/* 107E34 7F0D3304 3C018009 */  lui   $at, %hi(spectrum_header16_15)
 /* 107E38 7F0D3308 A02EE338 */  sb    $t6, %lo(spectrum_header16_15)($at)
 /* 107E3C 7F0D330C 90580018 */  lbu   $t8, 0x18($v0)
 /* 107E40 7F0D3310 904B0017 */  lbu   $t3, 0x17($v0)
-/* 107E44 7F0D3314 3C018009 */  lui   $at, %hi(spec_PC) # $at, 0x8009
+/* 107E44 7F0D3314 3C018009 */  lui   $at, %hi(spec_PC)
 /* 107E48 7F0D3318 00184A00 */  sll   $t1, $t8, 8
 /* 107E4C 7F0D331C 012B6021 */  addu  $t4, $t1, $t3
 /* 107E50 7F0D3320 A4CC0000 */  sh    $t4, ($a2)
@@ -910,9 +910,9 @@ glabel run_spectrum_game
 /* 107EB0 7F0D3380 00000000 */   nop   
 /* 107EB4 7F0D3384 0FC34E0B */  jal   spectrum_hw_emulation
 /* 107EB8 7F0D3388 00000000 */   nop   
-/* 107EBC 7F0D338C 3C048009 */  lui   $a0, %hi(ptr_spectrum_roms) # $a0, 0x8009
+/* 107EBC 7F0D338C 3C048009 */  lui   $a0, %hi(ptr_spectrum_roms)
 /* 107EC0 7F0D3390 8C84E328 */  lw    $a0, %lo(ptr_spectrum_roms)($a0)
-/* 107EC4 7F0D3394 3C058009 */  lui   $a1, %hi(ptr_6000alloc) # $a1, 0x8009
+/* 107EC4 7F0D3394 3C058009 */  lui   $a1, %hi(ptr_6000alloc)
 /* 107EC8 7F0D3398 8CA5E330 */  lw    $a1, %lo(ptr_6000alloc)($a1)
 /* 107ECC 7F0D339C 0FC34AA1 */  jal   sub_GAME_7F0D2A84
 /* 107ED0 7F0D33A0 24844000 */   addiu $a0, $a0, 0x4000
@@ -952,7 +952,7 @@ glabel spectrum_draw_screen
 /* 107F1C 7F0D33EC AC4B0000 */  sw    $t3, ($v0)
 /* 107F20 7F0D33F0 AC400004 */  sw    $zero, 4($v0)
 /* 107F24 7F0D33F4 00801825 */  move  $v1, $a0
-/* 107F28 7F0D33F8 3C0E8005 */  lui   $t6, %hi(D_8004ED0C) # $t6, 0x8005
+/* 107F28 7F0D33F8 3C0E8005 */  lui   $t6, %hi(D_8004ED0C) 
 /* 107F2C 7F0D33FC 25CEED0C */  addiu $t6, %lo(D_8004ED0C) # addiu $t6, $t6, -0x12f4
 /* 107F30 7F0D3400 24840008 */  addiu $a0, $a0, 8
 /* 107F34 7F0D3404 3C10FD10 */  lui   $s0, 0xfd10
@@ -1011,7 +1011,7 @@ glabel spectrum_draw_screen
 /* 108008 7F0D34D8 2419FFFF */  li    $t9, -1
 /* 10800C 7F0D34DC ACF90004 */  sw    $t9, 4($a3)
 /* 108010 7F0D34E0 ACF80000 */  sw    $t8, ($a3)
-/* 108014 7F0D34E4 3C138009 */  lui   $s3, %hi(ptr_6000alloc) # $s3, 0x8009
+/* 108014 7F0D34E4 3C138009 */  lui   $s3, %hi(ptr_6000alloc)
 /* 108018 7F0D34E8 3C16073F */  lui   $s6, (0x073FF200 >> 16) # lui $s6, 0x73f
 /* 10801C 7F0D34EC 3C17BA00 */  lui   $s7, (0xBA000E02 >> 16) # lui $s7, 0xba00
 /* 108020 7F0D34F0 3C1FF540 */  lui   $ra, (0xF5400800 >> 16) # lui $ra, 0xf540
@@ -1161,7 +1161,7 @@ glabel spectrum_input_handling
 /* 10821C 7F0D36EC AFA40000 */  sw    $a0, ($sp)
 /* 108220 7F0D36F0 14410030 */  bne   $v0, $at, .L7F0D37B4
 /* 108224 7F0D36F4 AFA60008 */   sw    $a2, 8($sp)
-/* 108228 7F0D36F8 3C068005 */  lui   $a2, %hi(D_8004EC34) # $a2, 0x8005
+/* 108228 7F0D36F8 3C068005 */  lui   $a2, %hi(D_8004EC34)
 /* 10822C 7F0D36FC 240300FF */  li    $v1, 255
 /* 108230 7F0D3700 24C6EC34 */  addiu $a2, %lo(D_8004EC34) # addiu $a2, $a2, -0x13cc
 /* 108234 7F0D3704 00001025 */  move  $v0, $zero
@@ -1256,10 +1256,10 @@ glabel sub_GAME_7F0D37DC
 /* 108320 7F0D37F0 AFA7000C */  sw    $a3, 0xc($sp)
 /* 108324 7F0D37F4 15C1000A */  bne   $t6, $at, .L7F0D3820
 /* 108328 7F0D37F8 30EF00FF */   andi  $t7, $a3, 0xff
-/* 10832C 7F0D37FC 3C188005 */  lui   $t8, %hi(D_8004ED54) # $t8, 0x8005
+/* 10832C 7F0D37FC 3C188005 */  lui   $t8, %hi(D_8004ED54) 
 /* 108330 7F0D3800 9318ED54 */  lbu   $t8, %lo(D_8004ED54)($t8)
 /* 108334 7F0D3804 31E20007 */  andi  $v0, $t7, 7
-/* 108338 7F0D3808 3C018005 */  lui   $at, %hi(D_8004ED54) # $at, 0x8005
+/* 108338 7F0D3808 3C018005 */  lui   $at, %hi(D_8004ED54)
 /* 10833C 7F0D380C 10580002 */  beq   $v0, $t8, .L7F0D3818
 /* 108340 7F0D3810 00000000 */   nop   
 /* 108344 7F0D3814 A022ED54 */  sb    $v0, %lo(D_8004ED54)($at)
@@ -1758,14 +1758,14 @@ glabel spectrum_hw_emulation
 /* 108360 7F0D3830 3C0E0001 */  lui   $t6, (0x00011100 >> 16) # lui $t6, 1
 /* 108364 7F0D3834 35CE1100 */  ori   $t6, (0x00011100 & 0xFFFF) # ori $t6, $t6, 0x1100
 /* 108368 7F0D3838 AFAE0280 */  sw    $t6, 0x280($sp)
-/* 10836C 7F0D383C 3C0E8009 */  lui   $t6, %hi(byte_CODE_bss_8008E341) # $t6, 0x8009
+/* 10836C 7F0D383C 3C0E8009 */  lui   $t6, %hi(byte_CODE_bss_8008E341) 
 /* 108370 7F0D3840 91CEE341 */  lbu   $t6, %lo(byte_CODE_bss_8008E341)($t6)
-/* 108374 7F0D3844 3C0D8009 */  lui   $t5, %hi(off_CODE_bss_8008E340) # $t5, 0x8009
-/* 108378 7F0D3848 3C0F8009 */  lui   $t7, %hi(byte_CODE_bss_8008E342) # $t7, 0x8009
-/* 10837C 7F0D384C 3C188009 */  lui   $t8, %hi(byte_CODE_bss_8008E343) # $t8, 0x8009
-/* 108380 7F0D3850 3C198009 */  lui   $t9, %hi(off_CODE_bss_8008E344) # $t9, 0x8009
-/* 108384 7F0D3854 3C088009 */  lui   $t0, %hi(byte_CODE_bss_8008E345) # $t0, 0x8009
-/* 108388 7F0D3858 3C098009 */  lui   $t1, %hi(byte_CODE_bss_8008E346) # $t1, 0x8009
+/* 108374 7F0D3844 3C0D8009 */  lui   $t5, %hi(off_CODE_bss_8008E340) 
+/* 108378 7F0D3848 3C0F8009 */  lui   $t7, %hi(byte_CODE_bss_8008E342) 
+/* 10837C 7F0D384C 3C188009 */  lui   $t8, %hi(byte_CODE_bss_8008E343) 
+/* 108380 7F0D3850 3C198009 */  lui   $t9, %hi(off_CODE_bss_8008E344) 
+/* 108384 7F0D3854 3C088009 */  lui   $t0, %hi(byte_CODE_bss_8008E345) 
+/* 108388 7F0D3858 3C098009 */  lui   $t1, %hi(byte_CODE_bss_8008E346) 
 /* 10838C 7F0D385C 91ADE340 */  lbu   $t5, %lo(off_CODE_bss_8008E340)($t5)
 /* 108390 7F0D3860 91EFE342 */  lbu   $t7, %lo(byte_CODE_bss_8008E342)($t7)
 /* 108394 7F0D3864 9318E343 */  lbu   $t8, %lo(byte_CODE_bss_8008E343)($t8)
@@ -1780,7 +1780,7 @@ glabel spectrum_hw_emulation
 /* 1083B8 7F0D3888 A3A002A4 */  sb    $zero, 0x2a4($sp)
 /* 1083BC 7F0D388C A3A002A6 */  sb    $zero, 0x2a6($sp)
 /* 1083C0 7F0D3890 A3AE02A5 */  sb    $t6, 0x2a5($sp)
-/* 1083C4 7F0D3894 3C0E8009 */  lui   $t6, %hi(byte_CODE_bss_8008E349) # $t6, 0x8009
+/* 1083C4 7F0D3894 3C0E8009 */  lui   $t6, %hi(byte_CODE_bss_8008E349) 
 /* 1083C8 7F0D3898 A3AD02A6 */  sb    $t5, 0x2a6($sp)
 /* 1083CC 7F0D389C A3AF02A4 */  sb    $t7, 0x2a4($sp)
 /* 1083D0 7F0D38A0 A3B802A3 */  sb    $t8, 0x2a3($sp)
@@ -1788,15 +1788,15 @@ glabel spectrum_hw_emulation
 /* 1083D8 7F0D38A8 A3A802A1 */  sb    $t0, 0x2a1($sp)
 /* 1083DC 7F0D38AC A3A902A0 */  sb    $t1, 0x2a0($sp)
 /* 1083E0 7F0D38B0 91CEE349 */  lbu   $t6, %lo(byte_CODE_bss_8008E349)($t6)
-/* 1083E4 7F0D38B4 3C0A8009 */  lui   $t2, %hi(byte_CODE_bss_8008E347) # $t2, 0x8009
-/* 1083E8 7F0D38B8 3C0B8009 */  lui   $t3, %hi(spec_IFF2_lower) # $t3, 0x8009
-/* 1083EC 7F0D38BC 3C0C8009 */  lui   $t4, %hi(spec_IFF2_upper) # $t4, 0x8009
-/* 1083F0 7F0D38C0 3C0D8009 */  lui   $t5, %hi(spec_I) # $t5, 0x8009
-/* 1083F4 7F0D38C4 3C0F8009 */  lui   $t7, %hi(spec_IM) # $t7, 0x8009
-/* 1083F8 7F0D38C8 3C188009 */  lui   $t8, %hi(spec_IX) # $t8, 0x8009
-/* 1083FC 7F0D38CC 3C198009 */  lui   $t9, %hi(spec_IY) # $t9, 0x8009
-/* 108400 7F0D38D0 3C088009 */  lui   $t0, %hi(spec_SP) # $t0, 0x8009
-/* 108404 7F0D38D4 3C098009 */  lui   $t1, %hi(spec_PC) # $t1, 0x8009
+/* 1083E4 7F0D38B4 3C0A8009 */  lui   $t2, %hi(byte_CODE_bss_8008E347) 
+/* 1083E8 7F0D38B8 3C0B8009 */  lui   $t3, %hi(spec_IFF2_lower) 
+/* 1083EC 7F0D38BC 3C0C8009 */  lui   $t4, %hi(spec_IFF2_upper) 
+/* 1083F0 7F0D38C0 3C0D8009 */  lui   $t5, %hi(spec_I) 
+/* 1083F4 7F0D38C4 3C0F8009 */  lui   $t7, %hi(spec_IM) 
+/* 1083F8 7F0D38C8 3C188009 */  lui   $t8, %hi(spec_IX) 
+/* 1083FC 7F0D38CC 3C198009 */  lui   $t9, %hi(spec_IY) 
+/* 108400 7F0D38D0 3C088009 */  lui   $t0, %hi(spec_SP) 
+/* 108404 7F0D38D4 3C098009 */  lui   $t1, %hi(spec_PC) 
 /* 108408 7F0D38D8 914AE347 */  lbu   $t2, %lo(byte_CODE_bss_8008E347)($t2)
 /* 10840C 7F0D38DC 916BE34A */  lbu   $t3, %lo(spec_IFF2_lower)($t3)
 /* 108410 7F0D38E0 918CE34B */  lbu   $t4, %lo(spec_IFF2_upper)($t4)
@@ -1826,14 +1826,14 @@ glabel spectrum_hw_emulation
 /* 108470 7F0D3940 A7A00294 */  sh    $zero, 0x294($sp)
 /* 108474 7F0D3944 A7A00296 */  sh    $zero, 0x296($sp)
 /* 108478 7F0D3948 AFA00288 */  sw    $zero, 0x288($sp)
-/* 10847C 7F0D394C 3C108009 */  lui   $s0, %hi(spectrum_header16_15) # $s0, 0x8009
-/* 108480 7F0D3950 3C118009 */  lui   $s1, %hi(byte_CODE_bss_8008E339) # $s1, 0x8009
-/* 108484 7F0D3954 3C128009 */  lui   $s2, %hi(byte_CODE_bss_8008E33A) # $s2, 0x8009
-/* 108488 7F0D3958 3C138009 */  lui   $s3, %hi(byte_CODE_bss_8008E33B) # $s3, 0x8009
-/* 10848C 7F0D395C 3C148009 */  lui   $s4, %hi(off_CODE_bss_8008E33C) # $s4, 0x8009
-/* 108490 7F0D3960 3C158009 */  lui   $s5, %hi(byte_CODE_bss_8008E33D) # $s5, 0x8009
-/* 108494 7F0D3964 3C168009 */  lui   $s6, %hi(byte_CODE_bss_8008E33E) # $s6, 0x8009
-/* 108498 7F0D3968 3C178009 */  lui   $s7, %hi(byte_CODE_bss_8008E33F) # $s7, 0x8009
+/* 10847C 7F0D394C 3C108009 */  lui   $s0, %hi(spectrum_header16_15)
+/* 108480 7F0D3950 3C118009 */  lui   $s1, %hi(byte_CODE_bss_8008E339)
+/* 108484 7F0D3954 3C128009 */  lui   $s2, %hi(byte_CODE_bss_8008E33A)
+/* 108488 7F0D3958 3C138009 */  lui   $s3, %hi(byte_CODE_bss_8008E33B)
+/* 10848C 7F0D395C 3C148009 */  lui   $s4, %hi(off_CODE_bss_8008E33C)
+/* 108490 7F0D3960 3C158009 */  lui   $s5, %hi(byte_CODE_bss_8008E33D)
+/* 108494 7F0D3964 3C168009 */  lui   $s6, %hi(byte_CODE_bss_8008E33E)
+/* 108498 7F0D3968 3C178009 */  lui   $s7, %hi(byte_CODE_bss_8008E33F) 
 /* 10849C 7F0D396C 34211100 */  ori   $at, (0x00011100 & 0xFFFF) # ori $at, $at, 0x1100
 /* 1084A0 7F0D3970 AFBF0034 */  sw    $ra, 0x34($sp)
 /* 1084A4 7F0D3974 A3A00286 */  sb    $zero, 0x286($sp)
@@ -1862,7 +1862,7 @@ glabel spectrum_hw_emulation
 /* 108500 7F0D39D0 93AB0285 */  lbu   $t3, 0x285($sp)
 /* 108504 7F0D39D4 15603B91 */  bnez  $t3, .L7F0E281C
 .L7F0D39D8:
-/* 108508 7F0D39D8 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 108508 7F0D39D8 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10850C 7F0D39DC 93AC0286 */  lbu   $t4, 0x286($sp)
 /* 108510 7F0D39E0 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 108514 7F0D39E4 97AE0298 */  lhu   $t6, 0x298($sp)
@@ -1895,7 +1895,7 @@ spectrum_op_00:
 spectrum_op_01:
 /* 10857C 7F0D3A4C 8FAF028C */  lw    $t7, 0x28c($sp)
 /* 108580 7F0D3A50 97B90298 */  lhu   $t9, 0x298($sp)
-/* 108584 7F0D3A54 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 108584 7F0D3A54 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 108588 7F0D3A58 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10858C 7F0D3A5C 25F8000A */  addiu $t8, $t7, 0xa
 /* 108590 7F0D3A60 AFB8028C */  sw    $t8, 0x28c($sp)
@@ -1917,7 +1917,7 @@ spectrum_op_02:
 /* 1085CC 7F0D3A9C 25F80007 */  addiu $t8, $t7, 7
 /* 1085D0 7F0D3AA0 14200008 */  bnez  $at, .L7F0D3AC4
 /* 1085D4 7F0D3AA4 AFB8028C */   sw    $t8, 0x28c($sp)
-/* 1085D8 7F0D3AA8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 1085D8 7F0D3AA8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 1085DC 7F0D3AAC 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 1085E0 7F0D3AB0 00127200 */  sll   $t6, $s2, 8
 /* 1085E4 7F0D3AB4 01D35825 */  or    $t3, $t6, $s3
@@ -1930,13 +1930,13 @@ spectrum_op_02:
 /* 1085FC 7F0D3ACC 29A15800 */  slti  $at, $t5, 0x5800
 /* 108600 7F0D3AD0 1420000F */  bnez  $at, .L7F0D3B10
 /* 108604 7F0D3AD4 00126A00 */   sll   $t5, $s2, 8
-/* 108608 7F0D3AD8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 108608 7F0D3AD8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10860C 7F0D3ADC 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 108610 7F0D3AE0 0012C200 */  sll   $t8, $s2, 8
 /* 108614 7F0D3AE4 03134025 */  or    $t0, $t8, $s3
 /* 108618 7F0D3AE8 01E8C821 */  addu  $t9, $t7, $t0
 /* 10861C 7F0D3AEC A3300000 */  sb    $s0, ($t9)
-/* 108620 7F0D3AF0 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 108620 7F0D3AF0 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 108624 7F0D3AF4 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 108628 7F0D3AF8 00125A00 */  sll   $t3, $s2, 8
 /* 10862C 7F0D3AFC 01734825 */  or    $t1, $t3, $s3
@@ -1948,7 +1948,7 @@ spectrum_op_02:
 /* 108640 7F0D3B10 01B3C025 */  or    $t8, $t5, $s3
 /* 108644 7F0D3B14 2B014000 */  slti  $at, $t8, 0x4000
 /* 108648 7F0D3B18 14203B38 */  bnez  $at, .L7F0E27FC
-/* 10864C 7F0D3B1C 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10864C 7F0D3B1C 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 108650 7F0D3B20 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 108654 7F0D3B24 00124200 */  sll   $t0, $s2, 8
 /* 108658 7F0D3B28 0113C825 */  or    $t9, $t0, $s3
@@ -1956,7 +1956,7 @@ spectrum_op_02:
 /* 108660 7F0D3B30 A1700000 */  sb    $s0, ($t3)
 /* 108664 7F0D3B34 00124A00 */  sll   $t1, $s2, 8
 /* 108668 7F0D3B38 01337025 */  or    $t6, $t1, $s3
-/* 10866C 7F0D3B3C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 10866C 7F0D3B3C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 108670 7F0D3B40 0012C200 */  sll   $t8, $s2, 8
 /* 108674 7F0D3B44 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 108678 7F0D3B48 03134025 */  or    $t0, $t8, $s3
@@ -2035,7 +2035,7 @@ spectrum_op_05:
 /* 108790 7F0D3C60 01C09025 */   move  $s2, $t6
 spectrum_op_06:
 /* 108794 7F0D3C64 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 108798 7F0D3C68 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 108798 7F0D3C68 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10879C 7F0D3C6C 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1087A0 7F0D3C70 97B80298 */  lhu   $t8, 0x298($sp)
 /* 1087A4 7F0D3C74 25CC0007 */  addiu $t4, $t6, 7
@@ -2153,7 +2153,7 @@ spectrum_op_09:
 /* 108944 7F0D3E14 01A08825 */   move  $s1, $t5
 spectrum_op_0A:
 /* 108948 7F0D3E18 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10894C 7F0D3E1C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10894C 7F0D3E1C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 108950 7F0D3E20 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 108954 7F0D3E24 00127A00 */  sll   $t7, $s2, 8
 /* 108958 7F0D3E28 01F3C825 */  or    $t9, $t7, $s3
@@ -2231,7 +2231,7 @@ spectrum_op_0D:
 /* 108A6C 7F0D3F3C 03009825 */   move  $s3, $t8
 spectrum_op_0E:
 /* 108A70 7F0D3F40 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 108A74 7F0D3F44 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 108A74 7F0D3F44 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 108A78 7F0D3F48 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 108A7C 7F0D3F4C 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 108A80 7F0D3F50 270D0007 */  addiu $t5, $t8, 7
@@ -2271,7 +2271,7 @@ spectrum_op_10:
 /* 108B00 7F0D3FD0 10003A0A */  b     .L7F0E27FC
 /* 108B04 7F0D3FD4 A7B80298 */   sh    $t8, 0x298($sp)
 .L7F0D3FD8:
-/* 108B08 7F0D3FD8 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 108B08 7F0D3FD8 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 108B0C 7F0D3FDC 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 108B10 7F0D3FE0 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 108B14 7F0D3FE4 8FA9028C */  lw    $t1, 0x28c($sp)
@@ -2287,7 +2287,7 @@ spectrum_op_10:
 spectrum_op_11:
 /* 108B3C 7F0D400C 8FAE028C */  lw    $t6, 0x28c($sp)
 /* 108B40 7F0D4010 97A80298 */  lhu   $t0, 0x298($sp)
-/* 108B44 7F0D4014 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 108B44 7F0D4014 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 108B48 7F0D4018 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 108B4C 7F0D401C 25D8000A */  addiu $t8, $t6, 0xa
 /* 108B50 7F0D4020 AFB8028C */  sw    $t8, 0x28c($sp)
@@ -2309,7 +2309,7 @@ spectrum_op_12:
 /* 108B8C 7F0D405C 25D80007 */  addiu $t8, $t6, 7
 /* 108B90 7F0D4060 14200008 */  bnez  $at, .L7F0D4084
 /* 108B94 7F0D4064 AFB8028C */   sw    $t8, 0x28c($sp)
-/* 108B98 7F0D4068 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 108B98 7F0D4068 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 108B9C 7F0D406C 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 108BA0 7F0D4070 00145A00 */  sll   $t3, $s4, 8
 /* 108BA4 7F0D4074 0175C825 */  or    $t9, $t3, $s5
@@ -2322,13 +2322,13 @@ spectrum_op_12:
 /* 108BBC 7F0D408C 29815800 */  slti  $at, $t4, 0x5800
 /* 108BC0 7F0D4090 1420000F */  bnez  $at, .L7F0D40D0
 /* 108BC4 7F0D4094 00146200 */   sll   $t4, $s4, 8
-/* 108BC8 7F0D4098 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 108BC8 7F0D4098 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 108BCC 7F0D409C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 108BD0 7F0D40A0 0014C200 */  sll   $t8, $s4, 8
 /* 108BD4 7F0D40A4 03156825 */  or    $t5, $t8, $s5
 /* 108BD8 7F0D40A8 01CD4021 */  addu  $t0, $t6, $t5
 /* 108BDC 7F0D40AC A1100000 */  sb    $s0, ($t0)
-/* 108BE0 7F0D40B0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 108BE0 7F0D40B0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 108BE4 7F0D40B4 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 108BE8 7F0D40B8 0014CA00 */  sll   $t9, $s4, 8
 /* 108BEC 7F0D40BC 03355025 */  or    $t2, $t9, $s5
@@ -2340,7 +2340,7 @@ spectrum_op_12:
 /* 108C00 7F0D40D0 0195C025 */  or    $t8, $t4, $s5
 /* 108C04 7F0D40D4 2B014000 */  slti  $at, $t8, 0x4000
 /* 108C08 7F0D40D8 142039C8 */  bnez  $at, .L7F0E27FC
-/* 108C0C 7F0D40DC 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 108C0C 7F0D40DC 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) 
 /* 108C10 7F0D40E0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 108C14 7F0D40E4 00146A00 */  sll   $t5, $s4, 8
 /* 108C18 7F0D40E8 01B54025 */  or    $t0, $t5, $s5
@@ -2348,7 +2348,7 @@ spectrum_op_12:
 /* 108C20 7F0D40F0 A3300000 */  sb    $s0, ($t9)
 /* 108C24 7F0D40F4 00145200 */  sll   $t2, $s4, 8
 /* 108C28 7F0D40F8 01555825 */  or    $t3, $t2, $s5
-/* 108C2C 7F0D40FC 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 108C2C 7F0D40FC 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 108C30 7F0D4100 0014C200 */  sll   $t8, $s4, 8
 /* 108C34 7F0D4104 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 108C38 7F0D4108 03156825 */  or    $t5, $t8, $s5
@@ -2427,7 +2427,7 @@ spectrum_op_15:
 /* 108D50 7F0D4220 0160A025 */   move  $s4, $t3
 spectrum_op_16:
 /* 108D54 7F0D4224 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 108D58 7F0D4228 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 108D58 7F0D4228 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 108D5C 7F0D422C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 108D60 7F0D4230 97B80298 */  lhu   $t8, 0x298($sp)
 /* 108D64 7F0D4234 25690007 */  addiu $t1, $t3, 7
@@ -2457,7 +2457,7 @@ spectrum_op_17:
 /* 108DC0 7F0D4290 01C08825 */   move  $s1, $t6
 spectrum_op_18:
 /* 108DC4 7F0D4294 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 108DC8 7F0D4298 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 108DC8 7F0D4298 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 108DCC 7F0D429C 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 108DD0 7F0D42A0 97A80298 */  lhu   $t0, 0x298($sp)
 /* 108DD4 7F0D42A4 272F0007 */  addiu $t7, $t9, 7
@@ -2551,7 +2551,7 @@ spectrum_op_19:
 /* 108F1C 7F0D43EC 03008825 */   move  $s1, $t8
 spectrum_op_1A:
 /* 108F20 7F0D43F0 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 108F24 7F0D43F4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 108F24 7F0D43F4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 108F28 7F0D43F8 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 108F2C 7F0D43FC 00146200 */  sll   $t4, $s4, 8
 /* 108F30 7F0D4400 01957825 */  or    $t7, $t4, $s5
@@ -2629,7 +2629,7 @@ spectrum_op_1D:
 /* 109044 7F0D4514 01A0A825 */   move  $s5, $t5
 spectrum_op_1E:
 /* 109048 7F0D4518 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 10904C 7F0D451C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10904C 7F0D451C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 109050 7F0D4520 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 109054 7F0D4524 97B90298 */  lhu   $t9, 0x298($sp)
 /* 109058 7F0D4528 25B80007 */  addiu $t8, $t5, 7
@@ -2669,7 +2669,7 @@ spectrum_op_20:
 /* 1090D8 7F0D45A8 10003894 */  b     .L7F0E27FC
 /* 1090DC 7F0D45AC A7B80298 */   sh    $t8, 0x298($sp)
 .L7F0D45B0:
-/* 1090E0 7F0D45B0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1090E0 7F0D45B0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1090E4 7F0D45B4 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1090E8 7F0D45B8 8FA9028C */  lw    $t1, 0x28c($sp)
 /* 1090EC 7F0D45BC 014EC821 */  addu  $t9, $t2, $t6
@@ -2688,7 +2688,7 @@ spectrum_op_21:
 /* 10911C 7F0D45EC 25B8000A */  addiu $t8, $t5, 0xa
 /* 109120 7F0D45F0 15C0000D */  bnez  $t6, .L7F0D4628
 /* 109124 7F0D45F4 AFB8028C */   sw    $t8, 0x28c($sp)
-/* 109128 7F0D45F8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 109128 7F0D45F8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10912C 7F0D45FC 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 109130 7F0D4600 272B0001 */  addiu $t3, $t9, 1
 /* 109134 7F0D4604 3168FFFF */  andi  $t0, $t3, 0xffff
@@ -2706,7 +2706,7 @@ spectrum_op_21:
 /* 109160 7F0D4630 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 109164 7F0D4634 1701000B */  bne   $t8, $at, .L7F0D4664
 /* 109168 7F0D4638 97AD0298 */   lhu   $t5, 0x298($sp)
-/* 10916C 7F0D463C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10916C 7F0D463C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 109170 7F0D4640 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 109174 7F0D4644 018E5021 */  addu  $t2, $t4, $t6
 /* 109178 7F0D4648 91490001 */  lbu   $t1, 1($t2)
@@ -2717,7 +2717,7 @@ spectrum_op_21:
 /* 10918C 7F0D465C 1000000A */  b     .L7F0D4688
 /* 109190 7F0D4660 A7AB0296 */   sh    $t3, 0x296($sp)
 .L7F0D4664:
-/* 109194 7F0D4664 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 109194 7F0D4664 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 109198 7F0D4668 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10919C 7F0D466C 030D7021 */  addu  $t6, $t8, $t5
 /* 1091A0 7F0D4670 91CA0001 */  lbu   $t2, 1($t6)
@@ -2733,7 +2733,7 @@ spectrum_op_21:
 /* 1091C4 7F0D4694 A7AB0298 */   sh    $t3, 0x298($sp)
 spectrum_op_22:
 /* 1091C8 7F0D4698 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 1091CC 7F0D469C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1091CC 7F0D469C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1091D0 7F0D46A0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1091D4 7F0D46A4 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 1091D8 7F0D46A8 27380010 */  addiu $t8, $t9, 0x10
@@ -2753,7 +2753,7 @@ spectrum_op_22:
 /* 109210 7F0D46E0 29415B00 */  slti  $at, $t2, 0x5b00
 /* 109214 7F0D46E4 14200006 */  bnez  $at, .L7F0D4700
 /* 109218 7F0D46E8 97A8025A */   lhu   $t0, 0x25a($sp)
-/* 10921C 7F0D46EC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10921C 7F0D46EC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 109220 7F0D46F0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 109224 7F0D46F4 01CA4821 */  addu  $t1, $t6, $t2
 /* 109228 7F0D46F8 1000001F */  b     .L7F0D4778
@@ -2762,9 +2762,9 @@ spectrum_op_22:
 /* 109230 7F0D4700 29015800 */  slti  $at, $t0, 0x5800
 /* 109234 7F0D4704 1420000C */  bnez  $at, .L7F0D4738
 /* 109238 7F0D4708 97AE025A */   lhu   $t6, 0x25a($sp)
-/* 10923C 7F0D470C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10923C 7F0D470C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 109240 7F0D4710 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
-/* 109244 7F0D4714 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 109244 7F0D4714 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 109248 7F0D4718 240B0001 */  li    $t3, 1
 /* 10924C 7F0D471C 01887821 */  addu  $t7, $t4, $t0
 /* 109250 7F0D4720 A1F70000 */  sb    $s7, ($t7)
@@ -2776,9 +2776,9 @@ spectrum_op_22:
 .L7F0D4738:
 /* 109268 7F0D4738 29C14000 */  slti  $at, $t6, 0x4000
 /* 10926C 7F0D473C 1420000E */  bnez  $at, .L7F0D4778
-/* 109270 7F0D4740 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 109270 7F0D4740 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) 
 /* 109274 7F0D4744 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
-/* 109278 7F0D4748 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 109278 7F0D4748 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 10927C 7F0D474C 240C0001 */  li    $t4, 1
 /* 109280 7F0D4750 014E4821 */  addu  $t1, $t2, $t6
 /* 109284 7F0D4754 A1370000 */  sb    $s7, ($t1)
@@ -2793,7 +2793,7 @@ spectrum_op_22:
 .L7F0D4778:
 /* 1092A8 7F0D4778 97AE025A */  lhu   $t6, 0x25a($sp)
 /* 1092AC 7F0D477C 97AD025A */  lhu   $t5, 0x25a($sp)
-/* 1092B0 7F0D4780 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1092B0 7F0D4780 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1092B4 7F0D4784 25C90001 */  addiu $t1, $t6, 1
 /* 1092B8 7F0D4788 29215B00 */  slti  $at, $t1, 0x5b00
 /* 1092BC 7F0D478C 14200005 */  bnez  $at, .L7F0D47A4
@@ -2806,9 +2806,9 @@ spectrum_op_22:
 /* 1092D4 7F0D47A4 2B215800 */  slti  $at, $t9, 0x5800
 /* 1092D8 7F0D47A8 1420000C */  bnez  $at, .L7F0D47DC
 /* 1092DC 7F0D47AC 97AE025A */   lhu   $t6, 0x25a($sp)
-/* 1092E0 7F0D47B0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1092E0 7F0D47B0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1092E4 7F0D47B4 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
-/* 1092E8 7F0D47B8 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 1092E8 7F0D47B8 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 1092EC 7F0D47BC 240C0001 */  li    $t4, 1
 /* 1092F0 7F0D47C0 030D5821 */  addu  $t3, $t8, $t5
 /* 1092F4 7F0D47C4 A1760001 */  sb    $s6, 1($t3)
@@ -2821,13 +2821,13 @@ spectrum_op_22:
 /* 10930C 7F0D47DC 25C80001 */  addiu $t0, $t6, 1
 /* 109310 7F0D47E0 29014000 */  slti  $at, $t0, 0x4000
 /* 109314 7F0D47E4 14203805 */  bnez  $at, .L7F0E27FC
-/* 109318 7F0D47E8 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 109318 7F0D47E8 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10931C 7F0D47EC 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 109320 7F0D47F0 240D0001 */  li    $t5, 1
 /* 109324 7F0D47F4 032EC021 */  addu  $t8, $t9, $t6
 /* 109328 7F0D47F8 A3160001 */  sb    $s6, 1($t8)
 /* 10932C 7F0D47FC 97AB025A */  lhu   $t3, 0x25a($sp)
-/* 109330 7F0D4800 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 109330 7F0D4800 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 109334 7F0D4804 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 109338 7F0D4808 256A0001 */  addiu $t2, $t3, 1
 /* 10933C 7F0D480C 31491800 */  andi  $t1, $t2, 0x1800
@@ -2845,7 +2845,7 @@ spectrum_op_22:
 /* 109368 7F0D4838 29615B00 */   slti  $at, $t3, 0x5b00
 /* 10936C 7F0D483C 14200007 */  bnez  $at, .L7F0D485C
 /* 109370 7F0D4840 97AF025A */   lhu   $t7, 0x25a($sp)
-/* 109374 7F0D4844 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 109374 7F0D4844 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 109378 7F0D4848 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10937C 7F0D484C 97A90296 */  lhu   $t1, 0x296($sp)
 /* 109380 7F0D4850 014B6021 */  addu  $t4, $t2, $t3
@@ -2855,10 +2855,10 @@ spectrum_op_22:
 /* 10938C 7F0D485C 29E15800 */  slti  $at, $t7, 0x5800
 /* 109390 7F0D4860 1420000D */  bnez  $at, .L7F0D4898
 /* 109394 7F0D4864 97A9025A */   lhu   $t1, 0x25a($sp)
-/* 109398 7F0D4868 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 109398 7F0D4868 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10939C 7F0D486C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1093A0 7F0D4870 97B90296 */  lhu   $t9, 0x296($sp)
-/* 1093A4 7F0D4874 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 1093A4 7F0D4874 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 1093A8 7F0D4878 010F6821 */  addu  $t5, $t0, $t7
 /* 1093AC 7F0D487C A1B90000 */  sb    $t9, ($t5)
 /* 1093B0 7F0D4880 97AA025A */  lhu   $t2, 0x25a($sp)
@@ -2870,14 +2870,14 @@ spectrum_op_22:
 .L7F0D4898:
 /* 1093C8 7F0D4898 29214000 */  slti  $at, $t1, 0x4000
 /* 1093CC 7F0D489C 1420000F */  bnez  $at, .L7F0D48DC
-/* 1093D0 7F0D48A0 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1093D0 7F0D48A0 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1093D4 7F0D48A4 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1093D8 7F0D48A8 97AC0296 */  lhu   $t4, 0x296($sp)
 /* 1093DC 7F0D48AC 24190001 */  li    $t9, 1
 /* 1093E0 7F0D48B0 01097821 */  addu  $t7, $t0, $t1
 /* 1093E4 7F0D48B4 A1EC0000 */  sb    $t4, ($t7)
 /* 1093E8 7F0D48B8 97AD025A */  lhu   $t5, 0x25a($sp)
-/* 1093EC 7F0D48BC 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 1093EC 7F0D48BC 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 1093F0 7F0D48C0 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 1093F4 7F0D48C4 31B81800 */  andi  $t8, $t5, 0x1800
 /* 1093F8 7F0D48C8 001850C3 */  sra   $t2, $t8, 3
@@ -2893,7 +2893,7 @@ spectrum_op_22:
 /* 10941C 7F0D48EC 29E15B00 */  slti  $at, $t7, 0x5b00
 /* 109420 7F0D48F0 14200007 */  bnez  $at, .L7F0D4910
 /* 109424 7F0D48F4 250B0001 */   addiu $t3, $t0, 1
-/* 109428 7F0D48F8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 109428 7F0D48F8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10942C 7F0D48FC 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 109430 7F0D4900 00186A03 */  sra   $t5, $t8, 8
 /* 109434 7F0D4904 014C7021 */  addu  $t6, $t2, $t4
@@ -2903,10 +2903,10 @@ spectrum_op_22:
 /* 109440 7F0D4910 29615800 */  slti  $at, $t3, 0x5800
 /* 109444 7F0D4914 1420000E */  bnez  $at, .L7F0D4950
 /* 109448 7F0D4918 97AB025A */   lhu   $t3, 0x25a($sp)
-/* 10944C 7F0D491C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10944C 7F0D491C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 109450 7F0D4920 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 109454 7F0D4924 97B90296 */  lhu   $t9, 0x296($sp)
-/* 109458 7F0D4928 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 109458 7F0D4928 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10945C 7F0D492C 01E8C021 */  addu  $t8, $t7, $t0
 /* 109460 7F0D4930 00194A03 */  sra   $t1, $t9, 8
 /* 109464 7F0D4934 A3090001 */  sb    $t1, 1($t8)
@@ -2921,14 +2921,14 @@ spectrum_op_22:
 /* 109484 7F0D4954 2B214000 */  slti  $at, $t9, 0x4000
 /* 109488 7F0D4958 142037A8 */  bnez  $at, .L7F0E27FC
 /* 10948C 7F0D495C 97AF0296 */   lhu   $t7, 0x296($sp)
-/* 109490 7F0D4960 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 109490 7F0D4960 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 109494 7F0D4964 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 109498 7F0D4968 000F4203 */  sra   $t0, $t7, 8
 /* 10949C 7F0D496C 240C0001 */  li    $t4, 1
 /* 1094A0 7F0D4970 012BC021 */  addu  $t8, $t1, $t3
 /* 1094A4 7F0D4974 A3080001 */  sb    $t0, 1($t8)
 /* 1094A8 7F0D4978 97AD025A */  lhu   $t5, 0x25a($sp)
-/* 1094AC 7F0D497C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 1094AC 7F0D497C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 1094B0 7F0D4980 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 1094B4 7F0D4984 25AA0001 */  addiu $t2, $t5, 1
 /* 1094B8 7F0D4988 314E1800 */  andi  $t6, $t2, 0x1800
@@ -2941,7 +2941,7 @@ spectrum_op_22:
 .L7F0D49A4:
 /* 1094D4 7F0D49A4 97B8025A */  lhu   $t8, 0x25a($sp)
 /* 1094D8 7F0D49A8 97B9025A */  lhu   $t9, 0x25a($sp)
-/* 1094DC 7F0D49AC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1094DC 7F0D49AC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1094E0 7F0D49B0 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 1094E4 7F0D49B4 54200007 */  bnezl $at, .L7F0D49D4
 /* 1094E8 7F0D49B8 2B215800 */   slti  $at, $t9, 0x5800
@@ -2954,10 +2954,10 @@ spectrum_op_22:
 .L7F0D49D4:
 /* 109504 7F0D49D4 1420000D */  bnez  $at, .L7F0D4A0C
 /* 109508 7F0D49D8 97AD025A */   lhu   $t5, 0x25a($sp)
-/* 10950C 7F0D49DC 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10950C 7F0D49DC 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 109510 7F0D49E0 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 109514 7F0D49E4 97AF0294 */  lhu   $t7, 0x294($sp)
-/* 109518 7F0D49E8 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 109518 7F0D49E8 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 10951C 7F0D49EC 01794821 */  addu  $t1, $t3, $t9
 /* 109520 7F0D49F0 A12F0000 */  sb    $t7, ($t1)
 /* 109524 7F0D49F4 97AE025A */  lhu   $t6, 0x25a($sp)
@@ -2969,14 +2969,14 @@ spectrum_op_22:
 .L7F0D4A0C:
 /* 10953C 7F0D4A0C 29A14000 */  slti  $at, $t5, 0x4000
 /* 109540 7F0D4A10 1420000F */  bnez  $at, .L7F0D4A50
-/* 109544 7F0D4A14 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 109544 7F0D4A14 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 109548 7F0D4A18 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10954C 7F0D4A1C 97AA0294 */  lhu   $t2, 0x294($sp)
 /* 109550 7F0D4A20 240F0001 */  li    $t7, 1
 /* 109554 7F0D4A24 016DC821 */  addu  $t9, $t3, $t5
 /* 109558 7F0D4A28 A32A0000 */  sb    $t2, ($t9)
 /* 10955C 7F0D4A2C 97A9025A */  lhu   $t1, 0x25a($sp)
-/* 109560 7F0D4A30 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 109560 7F0D4A30 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 109564 7F0D4A34 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 109568 7F0D4A38 31281800 */  andi  $t0, $t1, 0x1800
 /* 10956C 7F0D4A3C 000870C3 */  sra   $t6, $t0, 3
@@ -2992,7 +2992,7 @@ spectrum_op_22:
 /* 109590 7F0D4A60 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 109594 7F0D4A64 14200007 */  bnez  $at, .L7F0D4A84
 /* 109598 7F0D4A68 25780001 */   addiu $t8, $t3, 1
-/* 10959C 7F0D4A6C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10959C 7F0D4A6C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1095A0 7F0D4A70 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1095A4 7F0D4A74 00084A03 */  sra   $t1, $t0, 8
 /* 1095A8 7F0D4A78 01CA6021 */  addu  $t4, $t6, $t2
@@ -3002,10 +3002,10 @@ spectrum_op_22:
 /* 1095B4 7F0D4A84 2B015800 */  slti  $at, $t8, 0x5800
 /* 1095B8 7F0D4A88 1420000E */  bnez  $at, .L7F0D4AC4
 /* 1095BC 7F0D4A8C 97B8025A */   lhu   $t8, 0x25a($sp)
-/* 1095C0 7F0D4A90 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 1095C0 7F0D4A90 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 1095C4 7F0D4A94 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 1095C8 7F0D4A98 97AF0294 */  lhu   $t7, 0x294($sp)
-/* 1095CC 7F0D4A9C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 1095CC 7F0D4A9C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 1095D0 7F0D4AA0 032B4021 */  addu  $t0, $t9, $t3
 /* 1095D4 7F0D4AA4 000F6A03 */  sra   $t5, $t7, 8
 /* 1095D8 7F0D4AA8 A10D0001 */  sb    $t5, 1($t0)
@@ -3020,14 +3020,14 @@ spectrum_op_22:
 /* 1095F8 7F0D4AC8 29E14000 */  slti  $at, $t7, 0x4000
 /* 1095FC 7F0D4ACC 1420374B */  bnez  $at, .L7F0E27FC
 /* 109600 7F0D4AD0 97B90294 */   lhu   $t9, 0x294($sp)
-/* 109604 7F0D4AD4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 109604 7F0D4AD4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 109608 7F0D4AD8 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10960C 7F0D4ADC 00195A03 */  sra   $t3, $t9, 8
 /* 109610 7F0D4AE0 240A0001 */  li    $t2, 1
 /* 109614 7F0D4AE4 01B84021 */  addu  $t0, $t5, $t8
 /* 109618 7F0D4AE8 A10B0001 */  sb    $t3, 1($t0)
 /* 10961C 7F0D4AEC 97A9025A */  lhu   $t1, 0x25a($sp)
-/* 109620 7F0D4AF0 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 109620 7F0D4AF0 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 109624 7F0D4AF4 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 109628 7F0D4AF8 252E0001 */  addiu $t6, $t1, 1
 /* 10962C 7F0D4AFC 31CC1800 */  andi  $t4, $t6, 0x1800
@@ -3238,7 +3238,7 @@ spectrum_op_26:
 /* 109928 7F0D4DF8 258E0007 */  addiu $t6, $t4, 7
 /* 10992C 7F0D4DFC 15200007 */  bnez  $t1, .L7F0D4E1C
 /* 109930 7F0D4E00 AFAE028C */   sw    $t6, 0x28c($sp)
-/* 109934 7F0D4E04 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 109934 7F0D4E04 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 109938 7F0D4E08 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10993C 7F0D4E0C 97A80298 */  lhu   $t0, 0x298($sp)
 /* 109940 7F0D4E10 010FC821 */  addu  $t9, $t0, $t7
@@ -3248,7 +3248,7 @@ spectrum_op_26:
 /* 10994C 7F0D4E1C 24010001 */  li    $at, 1
 /* 109950 7F0D4E20 1541000C */  bne   $t2, $at, .L7F0D4E54
 /* 109954 7F0D4E24 97B90298 */   lhu   $t9, 0x298($sp)
-/* 109958 7F0D4E28 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 109958 7F0D4E28 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10995C 7F0D4E2C 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 109960 7F0D4E30 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 109964 7F0D4E34 97A90296 */  lhu   $t1, 0x296($sp)
@@ -3260,7 +3260,7 @@ spectrum_op_26:
 /* 10997C 7F0D4E4C 1000000A */  b     .L7F0D4E78
 /* 109980 7F0D4E50 A7AF0296 */   sh    $t7, 0x296($sp)
 .L7F0D4E54:
-/* 109984 7F0D4E54 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 109984 7F0D4E54 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 109988 7F0D4E58 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10998C 7F0D4E5C 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 109990 7F0D4E60 032A6821 */  addu  $t5, $t9, $t2
@@ -3370,7 +3370,7 @@ spectrum_op_27:
 /* 109B10 7F0D4FE0 AFB80048 */  sw    $t8, 0x48($sp)
 /* 109B14 7F0D4FE4 A3A8024F */  sb    $t0, 0x24f($sp)
 .L7F0D4FE8:
-/* 109B18 7F0D4FE8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 109B18 7F0D4FE8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 109B1C 7F0D4FEC 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 109B20 7F0D4FF0 93AB0256 */  lbu   $t3, 0x256($sp)
 /* 109B24 7F0D4FF4 02196821 */  addu  $t5, $s0, $t9
@@ -3388,7 +3388,7 @@ spectrum_op_28:
 /* 109B50 7F0D5020 250E0007 */  addiu $t6, $t0, 7
 /* 109B54 7F0D5024 1140000C */  beqz  $t2, .L7F0D5058
 /* 109B58 7F0D5028 AFAE028C */   sw    $t6, 0x28c($sp)
-/* 109B5C 7F0D502C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 109B5C 7F0D502C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 109B60 7F0D5030 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 109B64 7F0D5034 25C80005 */  addiu $t0, $t6, 5
 /* 109B68 7F0D5038 032D5821 */  addu  $t3, $t9, $t5
@@ -3646,7 +3646,7 @@ spectrum_op_29:
 /* 109F0C 7F0D53DC 03008825 */   move  $s1, $t8
 spectrum_op_2A:
 /* 109F10 7F0D53E0 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 109F14 7F0D53E4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 109F14 7F0D53E4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 109F18 7F0D53E8 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 109F1C 7F0D53EC 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 109F20 7F0D53F0 272B0010 */  addiu $t3, $t9, 0x10
@@ -3673,7 +3673,7 @@ spectrum_op_2A:
 /* 109F70 7F0D5440 97AC022E */  lhu   $t4, 0x22e($sp)
 /* 109F74 7F0D5444 1541000B */  bne   $t2, $at, .L7F0D5474
 /* 109F78 7F0D5448 97A9022E */   lhu   $t1, 0x22e($sp)
-/* 109F7C 7F0D544C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 109F7C 7F0D544C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 109F80 7F0D5450 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 109F84 7F0D5454 01CCC821 */  addu  $t9, $t6, $t4
 /* 109F88 7F0D5458 932B0001 */  lbu   $t3, 1($t9)
@@ -3684,7 +3684,7 @@ spectrum_op_2A:
 /* 109F9C 7F0D546C 100034E3 */  b     .L7F0E27FC
 /* 109FA0 7F0D5470 A7AD0296 */   sh    $t5, 0x296($sp)
 .L7F0D5474:
-/* 109FA4 7F0D5474 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 109FA4 7F0D5474 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 109FA8 7F0D5478 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 109FAC 7F0D547C 01496021 */  addu  $t4, $t2, $t1
 /* 109FB0 7F0D5480 91990001 */  lbu   $t9, 1($t4)
@@ -3889,7 +3889,7 @@ spectrum_op_2E:
 /* 10A294 7F0D5764 25F80007 */  addiu $t8, $t7, 7
 /* 10A298 7F0D5768 15200007 */  bnez  $t1, .L7F0D5788
 /* 10A29C 7F0D576C AFB8028C */   sw    $t8, 0x28c($sp)
-/* 10A2A0 7F0D5770 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10A2A0 7F0D5770 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10A2A4 7F0D5774 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10A2A8 7F0D5778 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 10A2AC 7F0D577C 016D5021 */  addu  $t2, $t3, $t5
@@ -3899,7 +3899,7 @@ spectrum_op_2E:
 /* 10A2B8 7F0D5788 24010001 */  li    $at, 1
 /* 10A2BC 7F0D578C 1501000B */  bne   $t0, $at, .L7F0D57BC
 /* 10A2C0 7F0D5790 97AD0298 */   lhu   $t5, 0x298($sp)
-/* 10A2C4 7F0D5794 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10A2C4 7F0D5794 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10A2C8 7F0D5798 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 10A2CC 7F0D579C 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 10A2D0 7F0D57A0 97B80296 */  lhu   $t8, 0x296($sp)
@@ -3910,7 +3910,7 @@ spectrum_op_2E:
 /* 10A2E4 7F0D57B4 10000009 */  b     .L7F0D57DC
 /* 10A2E8 7F0D57B8 A7AB0296 */   sh    $t3, 0x296($sp)
 .L7F0D57BC:
-/* 10A2EC 7F0D57BC 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10A2EC 7F0D57BC 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10A2F0 7F0D57C0 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10A2F4 7F0D57C4 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 10A2F8 7F0D57C8 01AA4021 */  addu  $t0, $t5, $t2
@@ -3948,7 +3948,7 @@ spectrum_op_30:
 /* 10A36C 7F0D583C 100033EF */  b     .L7F0E27FC
 /* 10A370 7F0D5840 A7AD0298 */   sh    $t5, 0x298($sp)
 .L7F0D5844:
-/* 10A374 7F0D5844 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10A374 7F0D5844 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10A378 7F0D5848 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10A37C 7F0D584C 8FAF028C */  lw    $t7, 0x28c($sp)
 /* 10A380 7F0D5850 01486021 */  addu  $t4, $t2, $t0
@@ -3962,7 +3962,7 @@ spectrum_op_30:
 /* 10A3A0 7F0D5870 AFAE0228 */   sw    $t6, 0x228($sp)
 spectrum_op_31:
 /* 10A3A4 7F0D5874 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 10A3A8 7F0D5878 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10A3A8 7F0D5878 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10A3AC 7F0D587C 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 10A3B0 7F0D5880 97A80298 */  lhu   $t0, 0x298($sp)
 /* 10A3B4 7F0D5884 256D000A */  addiu $t5, $t3, 0xa
@@ -3979,7 +3979,7 @@ spectrum_op_31:
 /* 10A3E0 7F0D58B0 A7AB0298 */   sh    $t3, 0x298($sp)
 spectrum_op_32:
 /* 10A3E4 7F0D58B4 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 10A3E8 7F0D58B8 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10A3E8 7F0D58B8 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10A3EC 7F0D58BC 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10A3F0 7F0D58C0 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10A3F4 7F0D58C4 25AA000D */  addiu $t2, $t5, 0xd
@@ -3996,7 +3996,7 @@ spectrum_op_32:
 /* 10A420 7F0D58F0 A7AB0226 */  sh    $t3, 0x226($sp)
 /* 10A424 7F0D58F4 14200006 */  bnez  $at, .L7F0D5910
 /* 10A428 7F0D58F8 A7AD0298 */   sh    $t5, 0x298($sp)
-/* 10A42C 7F0D58FC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10A42C 7F0D58FC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10A430 7F0D5900 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10A434 7F0D5904 030AC821 */  addu  $t9, $t8, $t2
 /* 10A438 7F0D5908 100033BC */  b     .L7F0E27FC
@@ -4004,12 +4004,12 @@ spectrum_op_32:
 .L7F0D5910:
 /* 10A440 7F0D5910 97AF0226 */  lhu   $t7, 0x226($sp)
 /* 10A444 7F0D5914 97B80226 */  lhu   $t8, 0x226($sp)
-/* 10A448 7F0D5918 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10A448 7F0D5918 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10A44C 7F0D591C 29E15800 */  slti  $at, $t7, 0x5800
 /* 10A450 7F0D5920 5420000C */  bnezl $at, .L7F0D5954
 /* 10A454 7F0D5924 2B014000 */   slti  $at, $t8, 0x4000
 /* 10A458 7F0D5928 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
-/* 10A45C 7F0D592C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 10A45C 7F0D592C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 10A460 7F0D5930 24080001 */  li    $t0, 1
 /* 10A464 7F0D5934 012F7021 */  addu  $t6, $t1, $t7
 /* 10A468 7F0D5938 A1D00000 */  sb    $s0, ($t6)
@@ -4021,9 +4021,9 @@ spectrum_op_32:
 /* 10A480 7F0D5950 2B014000 */  slti  $at, $t8, 0x4000
 .L7F0D5954:
 /* 10A484 7F0D5954 142033A9 */  bnez  $at, .L7F0E27FC
-/* 10A488 7F0D5958 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10A488 7F0D5958 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10A48C 7F0D595C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
-/* 10A490 7F0D5960 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 10A490 7F0D5960 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 10A494 7F0D5964 24090001 */  li    $t1, 1
 /* 10A498 7F0D5968 0158C821 */  addu  $t9, $t2, $t8
 /* 10A49C 7F0D596C A3300000 */  sb    $s0, ($t9)
@@ -4068,7 +4068,7 @@ spectrum_op_34:
 /* 10A528 7F0D59F8 97AF0294 */  lhu   $t7, 0x294($sp)
 /* 10A52C 7F0D59FC AFAF0048 */  sw    $t7, 0x48($sp)
 .L7F0D5A00:
-/* 10A530 7F0D5A00 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10A530 7F0D5A00 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10A534 7F0D5A04 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 10A538 7F0D5A08 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 10A53C 7F0D5A0C 8FA90048 */  lw    $t1, 0x48($sp)
@@ -4079,7 +4079,7 @@ spectrum_op_34:
 /* 10A550 7F0D5A20 01095021 */  addu  $t2, $t0, $t1
 /* 10A554 7F0D5A24 A7AA0224 */  sh    $t2, 0x224($sp)
 .L7F0D5A28:
-/* 10A558 7F0D5A28 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10A558 7F0D5A28 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10A55C 7F0D5A2C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10A560 7F0D5A30 97B90224 */  lhu   $t9, 0x224($sp)
 /* 10A564 7F0D5A34 032E7821 */  addu  $t7, $t9, $t6
@@ -4110,7 +4110,7 @@ spectrum_op_34:
 /* 10A5C8 7F0D5A98 AFA90044 */  sw    $t1, 0x44($sp)
 /* 10A5CC 7F0D5A9C 14200006 */  bnez  $at, .L7F0D5AB8
 /* 10A5D0 7F0D5AA0 A3AD0223 */   sb    $t5, 0x223($sp)
-/* 10A5D4 7F0D5AA4 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10A5D4 7F0D5AA4 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10A5D8 7F0D5AA8 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10A5DC 7F0D5AAC 01485821 */  addu  $t3, $t2, $t0
 /* 10A5E0 7F0D5AB0 10003352 */  b     .L7F0E27FC
@@ -4118,13 +4118,13 @@ spectrum_op_34:
 .L7F0D5AB8:
 /* 10A5E8 7F0D5AB8 97AD0224 */  lhu   $t5, 0x224($sp)
 /* 10A5EC 7F0D5ABC 97A90224 */  lhu   $t1, 0x224($sp)
-/* 10A5F0 7F0D5AC0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10A5F0 7F0D5AC0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10A5F4 7F0D5AC4 29A15800 */  slti  $at, $t5, 0x5800
 /* 10A5F8 7F0D5AC8 5420000D */  bnezl $at, .L7F0D5B00
 /* 10A5FC 7F0D5ACC 29214000 */   slti  $at, $t1, 0x4000
 /* 10A600 7F0D5AD0 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10A604 7F0D5AD4 93B90223 */  lbu   $t9, 0x223($sp)
-/* 10A608 7F0D5AD8 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 10A608 7F0D5AD8 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10A60C 7F0D5ADC 01ED7021 */  addu  $t6, $t7, $t5
 /* 10A610 7F0D5AE0 A1D90000 */  sb    $t9, ($t6)
 /* 10A614 7F0D5AE4 97AA0224 */  lhu   $t2, 0x224($sp)
@@ -4136,14 +4136,14 @@ spectrum_op_34:
 /* 10A62C 7F0D5AFC 29214000 */  slti  $at, $t1, 0x4000
 .L7F0D5B00:
 /* 10A630 7F0D5B00 1420333E */  bnez  $at, .L7F0E27FC
-/* 10A634 7F0D5B04 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10A634 7F0D5B04 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10A638 7F0D5B08 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10A63C 7F0D5B0C 93AB0223 */  lbu   $t3, 0x223($sp)
 /* 10A640 7F0D5B10 24190001 */  li    $t9, 1
 /* 10A644 7F0D5B14 01E96821 */  addu  $t5, $t7, $t1
 /* 10A648 7F0D5B18 A1AB0000 */  sb    $t3, ($t5)
 /* 10A64C 7F0D5B1C 97AE0224 */  lhu   $t6, 0x224($sp)
-/* 10A650 7F0D5B20 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10A650 7F0D5B20 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10A654 7F0D5B24 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 10A658 7F0D5B28 31CC1800 */  andi  $t4, $t6, 0x1800
 /* 10A65C 7F0D5B2C 000C50C3 */  sra   $t2, $t4, 3
@@ -4176,7 +4176,7 @@ spectrum_op_35:
 /* 10A6BC 7F0D5B8C 97A90294 */  lhu   $t1, 0x294($sp)
 /* 10A6C0 7F0D5B90 AFA90048 */  sw    $t1, 0x48($sp)
 .L7F0D5B94:
-/* 10A6C4 7F0D5B94 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10A6C4 7F0D5B94 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10A6C8 7F0D5B98 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10A6CC 7F0D5B9C 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 10A6D0 7F0D5BA0 8FAA0048 */  lw    $t2, 0x48($sp)
@@ -4187,7 +4187,7 @@ spectrum_op_35:
 /* 10A6E4 7F0D5BB4 01CAC021 */  addu  $t8, $t6, $t2
 /* 10A6E8 7F0D5BB8 A7B80220 */  sh    $t8, 0x220($sp)
 .L7F0D5BBC:
-/* 10A6EC 7F0D5BBC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10A6EC 7F0D5BBC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10A6F0 7F0D5BC0 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10A6F4 7F0D5BC4 97A80220 */  lhu   $t0, 0x220($sp)
 /* 10A6F8 7F0D5BC8 32380001 */  andi  $t8, $s1, 1
@@ -4220,7 +4220,7 @@ spectrum_op_35:
 /* 10A764 7F0D5C34 01808825 */  move  $s1, $t4
 /* 10A768 7F0D5C38 14200007 */  bnez  $at, .L7F0D5C58
 /* 10A76C 7F0D5C3C AFA90044 */   sw    $t1, 0x44($sp)
-/* 10A770 7F0D5C40 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10A770 7F0D5C40 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10A774 7F0D5C44 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10A778 7F0D5C48 93B8021F */  lbu   $t8, 0x21f($sp)
 /* 10A77C 7F0D5C4C 01487021 */  addu  $t6, $t2, $t0
@@ -4229,13 +4229,13 @@ spectrum_op_35:
 .L7F0D5C58:
 /* 10A788 7F0D5C58 97AB0220 */  lhu   $t3, 0x220($sp)
 /* 10A78C 7F0D5C5C 97B80220 */  lhu   $t8, 0x220($sp)
-/* 10A790 7F0D5C60 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10A790 7F0D5C60 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10A794 7F0D5C64 29615800 */  slti  $at, $t3, 0x5800
 /* 10A798 7F0D5C68 5420000D */  bnezl $at, .L7F0D5CA0
 /* 10A79C 7F0D5C6C 2B014000 */   slti  $at, $t8, 0x4000
 /* 10A7A0 7F0D5C70 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10A7A4 7F0D5C74 93A9021F */  lbu   $t1, 0x21f($sp)
-/* 10A7A8 7F0D5C78 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 10A7A8 7F0D5C78 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10A7AC 7F0D5C7C 01EB6821 */  addu  $t5, $t7, $t3
 /* 10A7B0 7F0D5C80 A1A90000 */  sb    $t1, ($t5)
 /* 10A7B4 7F0D5C84 97AA0220 */  lhu   $t2, 0x220($sp)
@@ -4247,14 +4247,14 @@ spectrum_op_35:
 /* 10A7CC 7F0D5C9C 2B014000 */  slti  $at, $t8, 0x4000
 .L7F0D5CA0:
 /* 10A7D0 7F0D5CA0 142032D6 */  bnez  $at, .L7F0E27FC
-/* 10A7D4 7F0D5CA4 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10A7D4 7F0D5CA4 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10A7D8 7F0D5CA8 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10A7DC 7F0D5CAC 93AE021F */  lbu   $t6, 0x21f($sp)
 /* 10A7E0 7F0D5CB0 24090001 */  li    $t1, 1
 /* 10A7E4 7F0D5CB4 01F85821 */  addu  $t3, $t7, $t8
 /* 10A7E8 7F0D5CB8 A16E0000 */  sb    $t6, ($t3)
 /* 10A7EC 7F0D5CBC 97AD0220 */  lhu   $t5, 0x220($sp)
-/* 10A7F0 7F0D5CC0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10A7F0 7F0D5CC0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10A7F4 7F0D5CC4 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 10A7F8 7F0D5CC8 31AC1800 */  andi  $t4, $t5, 0x1800
 /* 10A7FC 7F0D5CCC 000C50C3 */  sra   $t2, $t4, 3
@@ -4287,7 +4287,7 @@ spectrum_op_36:
 /* 10A85C 7F0D5D2C 97B80294 */  lhu   $t8, 0x294($sp)
 /* 10A860 7F0D5D30 AFB80048 */  sw    $t8, 0x48($sp)
 .L7F0D5D34:
-/* 10A864 7F0D5D34 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10A864 7F0D5D34 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10A868 7F0D5D38 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10A86C 7F0D5D3C 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 10A870 7F0D5D40 8FAA0048 */  lw    $t2, 0x48($sp)
@@ -4303,7 +4303,7 @@ spectrum_op_36:
 /* 10A894 7F0D5D64 97A90298 */  lhu   $t1, 0x298($sp)
 /* 10A898 7F0D5D68 29015B00 */  slti  $at, $t0, 0x5b00
 /* 10A89C 7F0D5D6C 14200007 */  bnez  $at, .L7F0D5D8C
-/* 10A8A0 7F0D5D70 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10A8A0 7F0D5D70 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10A8A4 7F0D5D74 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10A8A8 7F0D5D78 01385821 */  addu  $t3, $t1, $t8
 /* 10A8AC 7F0D5D7C 916C0000 */  lbu   $t4, ($t3)
@@ -4314,10 +4314,10 @@ spectrum_op_36:
 /* 10A8BC 7F0D5D8C 29415800 */  slti  $at, $t2, 0x5800
 /* 10A8C0 7F0D5D90 1420000F */  bnez  $at, .L7F0D5DD0
 /* 10A8C4 7F0D5D94 97B9021C */   lhu   $t9, 0x21c($sp)
-/* 10A8C8 7F0D5D98 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10A8C8 7F0D5D98 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10A8CC 7F0D5D9C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10A8D0 7F0D5DA0 97B90298 */  lhu   $t9, 0x298($sp)
-/* 10A8D4 7F0D5DA4 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 10A8D4 7F0D5DA4 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 10A8D8 7F0D5DA8 01CA5821 */  addu  $t3, $t6, $t2
 /* 10A8DC 7F0D5DAC 032E7821 */  addu  $t7, $t9, $t6
 /* 10A8E0 7F0D5DB0 91E90000 */  lbu   $t1, ($t7)
@@ -4332,13 +4332,13 @@ spectrum_op_36:
 /* 10A900 7F0D5DD0 2B214000 */  slti  $at, $t9, 0x4000
 /* 10A904 7F0D5DD4 14200011 */  bnez  $at, .L7F0D5E1C
 /* 10A908 7F0D5DD8 97AF0298 */   lhu   $t7, 0x298($sp)
-/* 10A90C 7F0D5DDC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10A90C 7F0D5DDC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10A910 7F0D5DE0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10A914 7F0D5DE4 24080001 */  li    $t0, 1
 /* 10A918 7F0D5DE8 01EE5021 */  addu  $t2, $t7, $t6
 /* 10A91C 7F0D5DEC 91490000 */  lbu   $t1, ($t2)
 /* 10A920 7F0D5DF0 01D95821 */  addu  $t3, $t6, $t9
-/* 10A924 7F0D5DF4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 10A924 7F0D5DF4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 10A928 7F0D5DF8 A1690000 */  sb    $t1, ($t3)
 /* 10A92C 7F0D5DFC 97AC021C */  lhu   $t4, 0x21c($sp)
 /* 10A930 7F0D5E00 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
@@ -4371,7 +4371,7 @@ spectrum_op_38:
 /* 10A990 7F0D5E60 25190007 */  addiu $t9, $t0, 7
 /* 10A994 7F0D5E64 1120000C */  beqz  $t1, .L7F0D5E98
 /* 10A998 7F0D5E68 AFB9028C */   sw    $t9, 0x28c($sp)
-/* 10A99C 7F0D5E6C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10A99C 7F0D5E6C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10A9A0 7F0D5E70 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10A9A4 7F0D5E74 27280005 */  addiu $t0, $t9, 5
 /* 10A9A8 7F0D5E78 01786021 */  addu  $t4, $t3, $t8
@@ -4471,7 +4471,7 @@ spectrum_op_39:
 /* 10AB04 7F0D5FD4 01208825 */   move  $s1, $t1
 spectrum_op_3A:
 /* 10AB08 7F0D5FD8 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10AB0C 7F0D5FDC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10AB0C 7F0D5FDC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10AB10 7F0D5FE0 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10AB14 7F0D5FE4 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 10AB18 7F0D5FE8 254F000D */  addiu $t7, $t2, 0xd
@@ -4552,7 +4552,7 @@ spectrum_op_3D:
 /* 10AC38 7F0D6108 01608025 */   move  $s0, $t3
 spectrum_op_3E:
 /* 10AC3C 7F0D610C 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 10AC40 7F0D6110 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10AC40 7F0D6110 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10AC44 7F0D6114 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10AC48 7F0D6118 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10AC4C 7F0D611C 25780007 */  addiu $t8, $t3, 7
@@ -4671,7 +4671,7 @@ spectrum_op_46:
 /* 10ADD0 7F0D62A0 97AB0294 */  lhu   $t3, 0x294($sp)
 /* 10ADD4 7F0D62A4 AFAB0048 */  sw    $t3, 0x48($sp)
 .L7F0D62A8:
-/* 10ADD8 7F0D62A8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10ADD8 7F0D62A8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10ADDC 7F0D62AC 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10ADE0 7F0D62B0 97A80298 */  lhu   $t0, 0x298($sp)
 /* 10ADE4 7F0D62B4 8FA90048 */  lw    $t1, 0x48($sp)
@@ -4682,7 +4682,7 @@ spectrum_op_46:
 /* 10ADF8 7F0D62C8 01897021 */  addu  $t6, $t4, $t1
 /* 10ADFC 7F0D62CC A7AE020C */  sh    $t6, 0x20c($sp)
 .L7F0D62D0:
-/* 10AE00 7F0D62D0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10AE00 7F0D62D0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10AE04 7F0D62D4 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10AE08 7F0D62D8 97AF020C */  lhu   $t7, 0x20c($sp)
 /* 10AE0C 7F0D62DC 01F95821 */  addu  $t3, $t7, $t9
@@ -4787,7 +4787,7 @@ spectrum_op_4E:
 /* 10AF58 7F0D6428 97A80294 */  lhu   $t0, 0x294($sp)
 /* 10AF5C 7F0D642C AFA80048 */  sw    $t0, 0x48($sp)
 .L7F0D6430:
-/* 10AF60 7F0D6430 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10AF60 7F0D6430 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10AF64 7F0D6434 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10AF68 7F0D6438 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 10AF6C 7F0D643C 8FB80048 */  lw    $t8, 0x48($sp)
@@ -4798,7 +4798,7 @@ spectrum_op_4E:
 /* 10AF80 7F0D6450 01786821 */  addu  $t5, $t3, $t8
 /* 10AF84 7F0D6454 A7AD020A */  sh    $t5, 0x20a($sp)
 .L7F0D6458:
-/* 10AF88 7F0D6458 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10AF88 7F0D6458 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10AF8C 7F0D645C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10AF90 7F0D6460 97A9020A */  lhu   $t1, 0x20a($sp)
 /* 10AF94 7F0D6464 012E4021 */  addu  $t0, $t1, $t6
@@ -4903,7 +4903,7 @@ spectrum_op_56:
 /* 10B0E0 7F0D65B0 97AA0294 */  lhu   $t2, 0x294($sp)
 /* 10B0E4 7F0D65B4 AFAA0048 */  sw    $t2, 0x48($sp)
 .L7F0D65B8:
-/* 10B0E8 7F0D65B8 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10B0E8 7F0D65B8 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10B0EC 7F0D65BC 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10B0F0 7F0D65C0 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10B0F4 7F0D65C4 8FAF0048 */  lw    $t7, 0x48($sp)
@@ -4914,7 +4914,7 @@ spectrum_op_56:
 /* 10B108 7F0D65D8 010FC821 */  addu  $t9, $t0, $t7
 /* 10B10C 7F0D65DC A7B90208 */  sh    $t9, 0x208($sp)
 .L7F0D65E0:
-/* 10B110 7F0D65E0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10B110 7F0D65E0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10B114 7F0D65E4 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10B118 7F0D65E8 97B80208 */  lhu   $t8, 0x208($sp)
 /* 10B11C 7F0D65EC 030D5021 */  addu  $t2, $t8, $t5
@@ -5019,7 +5019,7 @@ spectrum_op_5E:
 /* 10B268 7F0D6738 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 10B26C 7F0D673C AFAC0048 */  sw    $t4, 0x48($sp)
 .L7F0D6740:
-/* 10B270 7F0D6740 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10B270 7F0D6740 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10B274 7F0D6744 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10B278 7F0D6748 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 10B27C 7F0D674C 8FA90048 */  lw    $t1, 0x48($sp)
@@ -5030,7 +5030,7 @@ spectrum_op_5E:
 /* 10B290 7F0D6760 01497021 */  addu  $t6, $t2, $t1
 /* 10B294 7F0D6764 A7AE0206 */  sh    $t6, 0x206($sp)
 .L7F0D6768:
-/* 10B298 7F0D6768 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10B298 7F0D6768 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10B29C 7F0D676C 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10B2A0 7F0D6770 97AF0206 */  lhu   $t7, 0x206($sp)
 /* 10B2A4 7F0D6774 01F96021 */  addu  $t4, $t7, $t9
@@ -5254,7 +5254,7 @@ spectrum_op_66:
 /* 10B590 7F0D6A60 97AE0294 */  lhu   $t6, 0x294($sp)
 /* 10B594 7F0D6A64 AFAE0048 */  sw    $t6, 0x48($sp)
 .L7F0D6A68:
-/* 10B598 7F0D6A68 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10B598 7F0D6A68 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10B59C 7F0D6A6C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10B5A0 7F0D6A70 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 10B5A4 7F0D6A74 8FB80048 */  lw    $t8, 0x48($sp)
@@ -5265,7 +5265,7 @@ spectrum_op_66:
 /* 10B5B8 7F0D6A88 03386021 */  addu  $t4, $t9, $t8
 /* 10B5BC 7F0D6A8C A7AC0204 */  sh    $t4, 0x204($sp)
 .L7F0D6A90:
-/* 10B5C0 7F0D6A90 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10B5C0 7F0D6A90 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10B5C4 7F0D6A94 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10B5C8 7F0D6A98 97AD0204 */  lhu   $t5, 0x204($sp)
 /* 10B5CC 7F0D6A9C 01A97021 */  addu  $t6, $t5, $t1
@@ -5498,7 +5498,7 @@ spectrum_op_6E:
 /* 10B8D4 7F0D6DA4 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 10B8D8 7F0D6DA8 AFAC0048 */  sw    $t4, 0x48($sp)
 .L7F0D6DAC:
-/* 10B8DC 7F0D6DAC 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10B8DC 7F0D6DAC 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10B8E0 7F0D6DB0 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10B8E4 7F0D6DB4 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 10B8E8 7F0D6DB8 8FA80048 */  lw    $t0, 0x48($sp)
@@ -5509,7 +5509,7 @@ spectrum_op_6E:
 /* 10B8FC 7F0D6DCC 01C84821 */  addu  $t1, $t6, $t0
 /* 10B900 7F0D6DD0 A7A90202 */  sh    $t1, 0x202($sp)
 .L7F0D6DD4:
-/* 10B904 7F0D6DD4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10B904 7F0D6DD4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10B908 7F0D6DD8 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10B90C 7F0D6DDC 97B90202 */  lhu   $t9, 0x202($sp)
 /* 10B910 7F0D6DE0 03386021 */  addu  $t4, $t9, $t8
@@ -5562,7 +5562,7 @@ spectrum_op_70:
 /* 10B9B4 7F0D6E84 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 10B9B8 7F0D6E88 AFAC0048 */  sw    $t4, 0x48($sp)
 .L7F0D6E8C:
-/* 10B9BC 7F0D6E8C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10B9BC 7F0D6E8C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10B9C0 7F0D6E90 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10B9C4 7F0D6E94 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 10B9C8 7F0D6E98 8FA90048 */  lw    $t1, 0x48($sp)
@@ -5575,7 +5575,7 @@ spectrum_op_70:
 .L7F0D6EB4:
 /* 10B9E4 7F0D6EB4 97B90200 */  lhu   $t9, 0x200($sp)
 /* 10B9E8 7F0D6EB8 97AD0200 */  lhu   $t5, 0x200($sp)
-/* 10B9EC 7F0D6EBC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10B9EC 7F0D6EBC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10B9F0 7F0D6EC0 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 10B9F4 7F0D6EC4 54200006 */  bnezl $at, .L7F0D6EE0
 /* 10B9F8 7F0D6EC8 29A15800 */   slti  $at, $t5, 0x5800
@@ -5587,9 +5587,9 @@ spectrum_op_70:
 .L7F0D6EE0:
 /* 10BA10 7F0D6EE0 1420000C */  bnez  $at, .L7F0D6F14
 /* 10BA14 7F0D6EE4 97B80200 */   lhu   $t8, 0x200($sp)
-/* 10BA18 7F0D6EE8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10BA18 7F0D6EE8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10BA1C 7F0D6EEC 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
-/* 10BA20 7F0D6EF0 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 10BA20 7F0D6EF0 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 10BA24 7F0D6EF4 24090001 */  li    $t1, 1
 /* 10BA28 7F0D6EF8 01CD4021 */  addu  $t0, $t6, $t5
 /* 10BA2C 7F0D6EFC A1120000 */  sb    $s2, ($t0)
@@ -5601,9 +5601,9 @@ spectrum_op_70:
 .L7F0D6F14:
 /* 10BA44 7F0D6F14 2B014000 */  slti  $at, $t8, 0x4000
 /* 10BA48 7F0D6F18 14202E38 */  bnez  $at, .L7F0E27FC
-/* 10BA4C 7F0D6F1C 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10BA4C 7F0D6F1C 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10BA50 7F0D6F20 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
-/* 10BA54 7F0D6F24 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10BA54 7F0D6F24 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10BA58 7F0D6F28 240E0001 */  li    $t6, 1
 /* 10BA5C 7F0D6F2C 03386021 */  addu  $t4, $t9, $t8
 /* 10BA60 7F0D6F30 A1920000 */  sb    $s2, ($t4)
@@ -5640,7 +5640,7 @@ spectrum_op_71:
 /* 10BAD0 7F0D6FA0 97B90294 */  lhu   $t9, 0x294($sp)
 /* 10BAD4 7F0D6FA4 AFB90048 */  sw    $t9, 0x48($sp)
 .L7F0D6FA8:
-/* 10BAD8 7F0D6FA8 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10BAD8 7F0D6FA8 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10BADC 7F0D6FAC 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 10BAE0 7F0D6FB0 97B80298 */  lhu   $t8, 0x298($sp)
 /* 10BAE4 7F0D6FB4 8FAB0048 */  lw    $t3, 0x48($sp)
@@ -5653,7 +5653,7 @@ spectrum_op_71:
 .L7F0D6FD0:
 /* 10BB00 7F0D6FD0 97A901FE */  lhu   $t1, 0x1fe($sp)
 /* 10BB04 7F0D6FD4 97AC01FE */  lhu   $t4, 0x1fe($sp)
-/* 10BB08 7F0D6FD8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10BB08 7F0D6FD8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10BB0C 7F0D6FDC 29215B00 */  slti  $at, $t1, 0x5b00
 /* 10BB10 7F0D6FE0 54200006 */  bnezl $at, .L7F0D6FFC
 /* 10BB14 7F0D6FE4 29815800 */   slti  $at, $t4, 0x5800
@@ -5665,9 +5665,9 @@ spectrum_op_71:
 .L7F0D6FFC:
 /* 10BB2C 7F0D6FFC 1420000C */  bnez  $at, .L7F0D7030
 /* 10BB30 7F0D7000 97AE01FE */   lhu   $t6, 0x1fe($sp)
-/* 10BB34 7F0D7004 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10BB34 7F0D7004 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10BB38 7F0D7008 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
-/* 10BB3C 7F0D700C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 10BB3C 7F0D700C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 10BB40 7F0D7010 240B0001 */  li    $t3, 1
 /* 10BB44 7F0D7014 010C6821 */  addu  $t5, $t0, $t4
 /* 10BB48 7F0D7018 A1B30000 */  sb    $s3, ($t5)
@@ -5679,9 +5679,9 @@ spectrum_op_71:
 .L7F0D7030:
 /* 10BB60 7F0D7030 29C14000 */  slti  $at, $t6, 0x4000
 /* 10BB64 7F0D7034 14202DF1 */  bnez  $at, .L7F0E27FC
-/* 10BB68 7F0D7038 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10BB68 7F0D7038 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10BB6C 7F0D703C 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
-/* 10BB70 7F0D7040 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10BB70 7F0D7040 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10BB74 7F0D7044 24080001 */  li    $t0, 1
 /* 10BB78 7F0D7048 012EC821 */  addu  $t9, $t1, $t6
 /* 10BB7C 7F0D704C A3330000 */  sb    $s3, ($t9)
@@ -5718,7 +5718,7 @@ spectrum_op_72:
 /* 10BBEC 7F0D70BC 97A90294 */  lhu   $t1, 0x294($sp)
 /* 10BBF0 7F0D70C0 AFA90048 */  sw    $t1, 0x48($sp)
 .L7F0D70C4:
-/* 10BBF4 7F0D70C4 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10BBF4 7F0D70C4 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10BBF8 7F0D70C8 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10BBFC 7F0D70CC 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 10BC00 7F0D70D0 8FAA0048 */  lw    $t2, 0x48($sp)
@@ -5731,7 +5731,7 @@ spectrum_op_72:
 .L7F0D70EC:
 /* 10BC1C 7F0D70EC 97AB01FC */  lhu   $t3, 0x1fc($sp)
 /* 10BC20 7F0D70F0 97B901FC */  lhu   $t9, 0x1fc($sp)
-/* 10BC24 7F0D70F4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10BC24 7F0D70F4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10BC28 7F0D70F8 29615B00 */  slti  $at, $t3, 0x5b00
 /* 10BC2C 7F0D70FC 54200006 */  bnezl $at, .L7F0D7118
 /* 10BC30 7F0D7100 2B215800 */   slti  $at, $t9, 0x5800
@@ -5743,9 +5743,9 @@ spectrum_op_72:
 .L7F0D7118:
 /* 10BC48 7F0D7118 1420000C */  bnez  $at, .L7F0D714C
 /* 10BC4C 7F0D711C 97A801FC */   lhu   $t0, 0x1fc($sp)
-/* 10BC50 7F0D7120 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10BC50 7F0D7120 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10BC54 7F0D7124 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
-/* 10BC58 7F0D7128 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 10BC58 7F0D7128 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 10BC5C 7F0D712C 240A0001 */  li    $t2, 1
 /* 10BC60 7F0D7130 01B96021 */  addu  $t4, $t5, $t9
 /* 10BC64 7F0D7134 A1940000 */  sb    $s4, ($t4)
@@ -5757,9 +5757,9 @@ spectrum_op_72:
 .L7F0D714C:
 /* 10BC7C 7F0D714C 29014000 */  slti  $at, $t0, 0x4000
 /* 10BC80 7F0D7150 14202DAA */  bnez  $at, .L7F0E27FC
-/* 10BC84 7F0D7154 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10BC84 7F0D7154 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10BC88 7F0D7158 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
-/* 10BC8C 7F0D715C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10BC8C 7F0D715C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10BC90 7F0D7160 240D0001 */  li    $t5, 1
 /* 10BC94 7F0D7164 01684821 */  addu  $t1, $t3, $t0
 /* 10BC98 7F0D7168 A1340000 */  sb    $s4, ($t1)
@@ -5796,7 +5796,7 @@ spectrum_op_73:
 /* 10BD08 7F0D71D8 97AB0294 */  lhu   $t3, 0x294($sp)
 /* 10BD0C 7F0D71DC AFAB0048 */  sw    $t3, 0x48($sp)
 .L7F0D71E0:
-/* 10BD10 7F0D71E0 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10BD10 7F0D71E0 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10BD14 7F0D71E4 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10BD18 7F0D71E8 97A80298 */  lhu   $t0, 0x298($sp)
 /* 10BD1C 7F0D71EC 8FB80048 */  lw    $t8, 0x48($sp)
@@ -5809,7 +5809,7 @@ spectrum_op_73:
 .L7F0D7208:
 /* 10BD38 7F0D7208 97AA01FA */  lhu   $t2, 0x1fa($sp)
 /* 10BD3C 7F0D720C 97A901FA */  lhu   $t1, 0x1fa($sp)
-/* 10BD40 7F0D7210 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10BD40 7F0D7210 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10BD44 7F0D7214 29415B00 */  slti  $at, $t2, 0x5b00
 /* 10BD48 7F0D7218 54200006 */  bnezl $at, .L7F0D7234
 /* 10BD4C 7F0D721C 29215800 */   slti  $at, $t1, 0x5800
@@ -5821,9 +5821,9 @@ spectrum_op_73:
 .L7F0D7234:
 /* 10BD64 7F0D7234 1420000C */  bnez  $at, .L7F0D7268
 /* 10BD68 7F0D7238 97AD01FA */   lhu   $t5, 0x1fa($sp)
-/* 10BD6C 7F0D723C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10BD6C 7F0D723C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10BD70 7F0D7240 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
-/* 10BD74 7F0D7244 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 10BD74 7F0D7244 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 10BD78 7F0D7248 24180001 */  li    $t8, 1
 /* 10BD7C 7F0D724C 0189C821 */  addu  $t9, $t4, $t1
 /* 10BD80 7F0D7250 A3350000 */  sb    $s5, ($t9)
@@ -5835,9 +5835,9 @@ spectrum_op_73:
 .L7F0D7268:
 /* 10BD98 7F0D7268 29A14000 */  slti  $at, $t5, 0x4000
 /* 10BD9C 7F0D726C 14202D63 */  bnez  $at, .L7F0E27FC
-/* 10BDA0 7F0D7270 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10BDA0 7F0D7270 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10BDA4 7F0D7274 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
-/* 10BDA8 7F0D7278 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10BDA8 7F0D7278 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10BDAC 7F0D727C 240C0001 */  li    $t4, 1
 /* 10BDB0 7F0D7280 014D5821 */  addu  $t3, $t2, $t5
 /* 10BDB4 7F0D7284 A1750000 */  sb    $s5, ($t3)
@@ -5874,7 +5874,7 @@ spectrum_op_74:
 /* 10BE24 7F0D72F4 97AA0294 */  lhu   $t2, 0x294($sp)
 /* 10BE28 7F0D72F8 AFAA0048 */  sw    $t2, 0x48($sp)
 .L7F0D72FC:
-/* 10BE2C 7F0D72FC 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10BE2C 7F0D72FC 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10BE30 7F0D7300 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10BE34 7F0D7304 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 10BE38 7F0D7308 8FAE0048 */  lw    $t6, 0x48($sp)
@@ -5887,7 +5887,7 @@ spectrum_op_74:
 .L7F0D7324:
 /* 10BE54 7F0D7324 97B801F8 */  lhu   $t8, 0x1f8($sp)
 /* 10BE58 7F0D7328 97AB01F8 */  lhu   $t3, 0x1f8($sp)
-/* 10BE5C 7F0D732C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10BE5C 7F0D732C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10BE60 7F0D7330 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 10BE64 7F0D7334 54200006 */  bnezl $at, .L7F0D7350
 /* 10BE68 7F0D7338 29615800 */   slti  $at, $t3, 0x5800
@@ -5899,9 +5899,9 @@ spectrum_op_74:
 .L7F0D7350:
 /* 10BE80 7F0D7350 1420000C */  bnez  $at, .L7F0D7384
 /* 10BE84 7F0D7354 97AC01F8 */   lhu   $t4, 0x1f8($sp)
-/* 10BE88 7F0D7358 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10BE88 7F0D7358 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10BE8C 7F0D735C 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
-/* 10BE90 7F0D7360 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 10BE90 7F0D7360 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 10BE94 7F0D7364 240E0001 */  li    $t6, 1
 /* 10BE98 7F0D7368 032B4821 */  addu  $t1, $t9, $t3
 /* 10BE9C 7F0D736C A1360000 */  sb    $s6, ($t1)
@@ -5913,9 +5913,9 @@ spectrum_op_74:
 .L7F0D7384:
 /* 10BEB4 7F0D7384 29814000 */  slti  $at, $t4, 0x4000
 /* 10BEB8 7F0D7388 14202D1C */  bnez  $at, .L7F0E27FC
-/* 10BEBC 7F0D738C 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10BEBC 7F0D738C 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10BEC0 7F0D7390 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
-/* 10BEC4 7F0D7394 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10BEC4 7F0D7394 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10BEC8 7F0D7398 24190001 */  li    $t9, 1
 /* 10BECC 7F0D739C 030C5021 */  addu  $t2, $t8, $t4
 /* 10BED0 7F0D73A0 A1560000 */  sb    $s6, ($t2)
@@ -5952,7 +5952,7 @@ spectrum_op_75:
 /* 10BF40 7F0D7410 97B80294 */  lhu   $t8, 0x294($sp)
 /* 10BF44 7F0D7414 AFB80048 */  sw    $t8, 0x48($sp)
 .L7F0D7418:
-/* 10BF48 7F0D7418 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10BF48 7F0D7418 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10BF4C 7F0D741C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10BF50 7F0D7420 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10BF54 7F0D7424 8FA80048 */  lw    $t0, 0x48($sp)
@@ -5965,7 +5965,7 @@ spectrum_op_75:
 .L7F0D7440:
 /* 10BF70 7F0D7440 97AE01F6 */  lhu   $t6, 0x1f6($sp)
 /* 10BF74 7F0D7444 97AA01F6 */  lhu   $t2, 0x1f6($sp)
-/* 10BF78 7F0D7448 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10BF78 7F0D7448 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10BF7C 7F0D744C 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 10BF80 7F0D7450 54200006 */  bnezl $at, .L7F0D746C
 /* 10BF84 7F0D7454 29415800 */   slti  $at, $t2, 0x5800
@@ -5977,9 +5977,9 @@ spectrum_op_75:
 .L7F0D746C:
 /* 10BF9C 7F0D746C 1420000C */  bnez  $at, .L7F0D74A0
 /* 10BFA0 7F0D7470 97B901F6 */   lhu   $t9, 0x1f6($sp)
-/* 10BFA4 7F0D7474 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10BFA4 7F0D7474 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10BFA8 7F0D7478 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
-/* 10BFAC 7F0D747C 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 10BFAC 7F0D747C 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 10BFB0 7F0D7480 24080001 */  li    $t0, 1
 /* 10BFB4 7F0D7484 012A5821 */  addu  $t3, $t1, $t2
 /* 10BFB8 7F0D7488 A1770000 */  sb    $s7, ($t3)
@@ -5991,9 +5991,9 @@ spectrum_op_75:
 .L7F0D74A0:
 /* 10BFD0 7F0D74A0 2B214000 */  slti  $at, $t9, 0x4000
 /* 10BFD4 7F0D74A4 14202CD5 */  bnez  $at, .L7F0E27FC
-/* 10BFD8 7F0D74A8 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10BFD8 7F0D74A8 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10BFDC 7F0D74AC 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
-/* 10BFE0 7F0D74B0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10BFE0 7F0D74B0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10BFE4 7F0D74B4 24090001 */  li    $t1, 1
 /* 10BFE8 7F0D74B8 01D9C021 */  addu  $t8, $t6, $t9
 /* 10BFEC 7F0D74BC A3170000 */  sb    $s7, ($t8)
@@ -6048,7 +6048,7 @@ spectrum_op_77:
 /* 10C09C 7F0D756C 97A90294 */  lhu   $t1, 0x294($sp)
 /* 10C0A0 7F0D7570 AFA90048 */  sw    $t1, 0x48($sp)
 .L7F0D7574:
-/* 10C0A4 7F0D7574 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10C0A4 7F0D7574 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10C0A8 7F0D7578 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10C0AC 7F0D757C 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 10C0B0 7F0D7580 8FAD0048 */  lw    $t5, 0x48($sp)
@@ -6061,7 +6061,7 @@ spectrum_op_77:
 .L7F0D759C:
 /* 10C0CC 7F0D759C 97AF01F4 */  lhu   $t7, 0x1f4($sp)
 /* 10C0D0 7F0D75A0 97B901F4 */  lhu   $t9, 0x1f4($sp)
-/* 10C0D4 7F0D75A4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10C0D4 7F0D75A4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10C0D8 7F0D75A8 29E15B00 */  slti  $at, $t7, 0x5b00
 /* 10C0DC 7F0D75AC 54200006 */  bnezl $at, .L7F0D75C8
 /* 10C0E0 7F0D75B0 2B215800 */   slti  $at, $t9, 0x5800
@@ -6073,9 +6073,9 @@ spectrum_op_77:
 .L7F0D75C8:
 /* 10C0F8 7F0D75C8 1420000C */  bnez  $at, .L7F0D75FC
 /* 10C0FC 7F0D75CC 97A801F4 */   lhu   $t0, 0x1f4($sp)
-/* 10C100 7F0D75D0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10C100 7F0D75D0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10C104 7F0D75D4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
-/* 10C108 7F0D75D8 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 10C108 7F0D75D8 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 10C10C 7F0D75DC 240D0001 */  li    $t5, 1
 /* 10C110 7F0D75E0 01795021 */  addu  $t2, $t3, $t9
 /* 10C114 7F0D75E4 A1500000 */  sb    $s0, ($t2)
@@ -6087,9 +6087,9 @@ spectrum_op_77:
 .L7F0D75FC:
 /* 10C12C 7F0D75FC 29014000 */  slti  $at, $t0, 0x4000
 /* 10C130 7F0D7600 14202C7E */  bnez  $at, .L7F0E27FC
-/* 10C134 7F0D7604 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10C134 7F0D7604 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10C138 7F0D7608 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
-/* 10C13C 7F0D760C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 10C13C 7F0D760C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10C140 7F0D7610 240B0001 */  li    $t3, 1
 /* 10C144 7F0D7614 01E84821 */  addu  $t1, $t7, $t0
 /* 10C148 7F0D7618 A1300000 */  sb    $s0, ($t1)
@@ -6196,7 +6196,7 @@ spectrum_op_7E:
 /* 10C2A0 7F0D7770 97B90294 */  lhu   $t9, 0x294($sp)
 /* 10C2A4 7F0D7774 AFB90048 */  sw    $t9, 0x48($sp)
 .L7F0D7778:
-/* 10C2A8 7F0D7778 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10C2A8 7F0D7778 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10C2AC 7F0D777C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10C2B0 7F0D7780 97B80298 */  lhu   $t8, 0x298($sp)
 /* 10C2B4 7F0D7784 8FAB0048 */  lw    $t3, 0x48($sp)
@@ -6207,7 +6207,7 @@ spectrum_op_7E:
 /* 10C2C8 7F0D7798 01AB7821 */  addu  $t7, $t5, $t3
 /* 10C2CC 7F0D779C A7AF01F2 */  sh    $t7, 0x1f2($sp)
 .L7F0D77A0:
-/* 10C2D0 7F0D77A0 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10C2D0 7F0D77A0 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10C2D4 7F0D77A4 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10C2D8 7F0D77A8 97A901F2 */  lhu   $t1, 0x1f2($sp)
 /* 10C2DC 7F0D77AC 012AC821 */  addu  $t9, $t1, $t2
@@ -6478,7 +6478,7 @@ spectrum_op_86:
 /* 10C6B8 7F0D7B88 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 10C6BC 7F0D7B8C AFAC0048 */  sw    $t4, 0x48($sp)
 .L7F0D7B90:
-/* 10C6C0 7F0D7B90 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10C6C0 7F0D7B90 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10C6C4 7F0D7B94 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10C6C8 7F0D7B98 97B80298 */  lhu   $t8, 0x298($sp)
 /* 10C6CC 7F0D7B9C 8FAD0048 */  lw    $t5, 0x48($sp)
@@ -6489,7 +6489,7 @@ spectrum_op_86:
 /* 10C6E0 7F0D7BB0 01CD5021 */  addu  $t2, $t6, $t5
 /* 10C6E4 7F0D7BB4 A7AA01D8 */  sh    $t2, 0x1d8($sp)
 .L7F0D7BB8:
-/* 10C6E8 7F0D7BB8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10C6E8 7F0D7BB8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10C6EC 7F0D7BBC 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10C6F0 7F0D7BC0 97B901D8 */  lhu   $t9, 0x1d8($sp)
 /* 10C6F4 7F0D7BC4 2401000F */  li    $at, 15
@@ -6845,7 +6845,7 @@ spectrum_op_8E:
 /* 10CC24 7F0D80F4 97AA0294 */  lhu   $t2, 0x294($sp)
 /* 10CC28 7F0D80F8 AFAA0048 */  sw    $t2, 0x48($sp)
 .L7F0D80FC:
-/* 10CC2C 7F0D80FC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10CC2C 7F0D80FC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10CC30 7F0D8100 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10CC34 7F0D8104 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10CC38 7F0D8108 8FA80048 */  lw    $t0, 0x48($sp)
@@ -6856,7 +6856,7 @@ spectrum_op_8E:
 /* 10CC4C 7F0D811C 01C8C021 */  addu  $t8, $t6, $t0
 /* 10CC50 7F0D8120 A7B801B6 */  sh    $t8, 0x1b6($sp)
 .L7F0D8124:
-/* 10CC54 7F0D8124 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10CC54 7F0D8124 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10CC58 7F0D8128 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10CC5C 7F0D812C 97A901B6 */  lhu   $t1, 0x1b6($sp)
 /* 10CC60 7F0D8130 322E0001 */  andi  $t6, $s1, 1
@@ -7186,7 +7186,7 @@ spectrum_op_96:
 /* 10D128 7F0D85F8 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 10D12C 7F0D85FC AFAC0048 */  sw    $t4, 0x48($sp)
 .L7F0D8600:
-/* 10D130 7F0D8600 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10D130 7F0D8600 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10D134 7F0D8604 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10D138 7F0D8608 97A90298 */  lhu   $t1, 0x298($sp)
 /* 10D13C 7F0D860C 8FAB0048 */  lw    $t3, 0x48($sp)
@@ -7197,7 +7197,7 @@ spectrum_op_96:
 /* 10D150 7F0D8620 01CBC821 */  addu  $t9, $t6, $t3
 /* 10D154 7F0D8624 A7B90194 */  sh    $t9, 0x194($sp)
 .L7F0D8628:
-/* 10D158 7F0D8628 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10D158 7F0D8628 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10D15C 7F0D862C 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10D160 7F0D8630 97AA0194 */  lhu   $t2, 0x194($sp)
 /* 10D164 7F0D8634 014F6021 */  addu  $t4, $t2, $t7
@@ -7533,7 +7533,7 @@ spectrum_op_9E:
 /* 10D644 7F0D8B14 97A80294 */  lhu   $t0, 0x294($sp)
 /* 10D648 7F0D8B18 AFA80048 */  sw    $t0, 0x48($sp)
 .L7F0D8B1C:
-/* 10D64C 7F0D8B1C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10D64C 7F0D8B1C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10D650 7F0D8B20 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10D654 7F0D8B24 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10D658 7F0D8B28 8FB90048 */  lw    $t9, 0x48($sp)
@@ -7544,7 +7544,7 @@ spectrum_op_9E:
 /* 10D66C 7F0D8B3C 01B95821 */  addu  $t3, $t5, $t9
 /* 10D670 7F0D8B40 A7AB0172 */  sh    $t3, 0x172($sp)
 .L7F0D8B44:
-/* 10D674 7F0D8B44 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10D674 7F0D8B44 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10D678 7F0D8B48 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10D67C 7F0D8B4C 97AA0172 */  lhu   $t2, 0x172($sp)
 /* 10D680 7F0D8B50 322D0001 */  andi  $t5, $s1, 1
@@ -7616,7 +7616,7 @@ spectrum_op_9F:
 /* 10D784 7F0D8C54 AFA80048 */   sw    $t0, 0x48($sp)
 spectrum_op_A0:
 /* 10D788 7F0D8C58 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 10D78C 7F0D8C5C 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 10D78C 7F0D8C5C 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10D790 7F0D8C60 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 10D794 7F0D8C64 02128024 */  and   $s0, $s0, $s2
 /* 10D798 7F0D8C68 321900FF */  andi  $t9, $s0, 0xff
@@ -7637,7 +7637,7 @@ spectrum_op_A0:
 /* 10D7D4 7F0D8CA4 03208825 */   move  $s1, $t9
 spectrum_op_A1:
 /* 10D7D8 7F0D8CA8 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10D7DC 7F0D8CAC 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 10D7DC 7F0D8CAC 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10D7E0 7F0D8CB0 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 10D7E4 7F0D8CB4 02138024 */  and   $s0, $s0, $s3
 /* 10D7E8 7F0D8CB8 320C00FF */  andi  $t4, $s0, 0xff
@@ -7658,7 +7658,7 @@ spectrum_op_A1:
 /* 10D824 7F0D8CF4 01808825 */   move  $s1, $t4
 spectrum_op_A2:
 /* 10D828 7F0D8CF8 8FA8028C */  lw    $t0, 0x28c($sp)
-/* 10D82C 7F0D8CFC 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 10D82C 7F0D8CFC 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10D830 7F0D8D00 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 10D834 7F0D8D04 02148024 */  and   $s0, $s0, $s4
 /* 10D838 7F0D8D08 320F00FF */  andi  $t7, $s0, 0xff
@@ -7679,7 +7679,7 @@ spectrum_op_A2:
 /* 10D874 7F0D8D44 01E08825 */   move  $s1, $t7
 spectrum_op_A3:
 /* 10D878 7F0D8D48 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 10D87C 7F0D8D4C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 10D87C 7F0D8D4C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10D880 7F0D8D50 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 10D884 7F0D8D54 02158024 */  and   $s0, $s0, $s5
 /* 10D888 7F0D8D58 320D00FF */  andi  $t5, $s0, 0xff
@@ -7723,7 +7723,7 @@ spectrum_op_A4:
 /* 10D910 7F0D8DE0 AFAB0048 */  sw    $t3, 0x48($sp)
 .L7F0D8DE4:
 /* 10D914 7F0D8DE4 8FAD0048 */  lw    $t5, 0x48($sp)
-/* 10D918 7F0D8DE8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 10D918 7F0D8DE8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10D91C 7F0D8DEC 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 10D920 7F0D8DF0 020D8024 */  and   $s0, $s0, $t5
 /* 10D924 7F0D8DF4 320A00FF */  andi  $t2, $s0, 0xff
@@ -7765,7 +7765,7 @@ spectrum_op_A5:
 /* 10D9A4 7F0D8E74 AFA90048 */  sw    $t1, 0x48($sp)
 .L7F0D8E78:
 /* 10D9A8 7F0D8E78 8FAA0048 */  lw    $t2, 0x48($sp)
-/* 10D9AC 7F0D8E7C 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 10D9AC 7F0D8E7C 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10D9B0 7F0D8E80 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 10D9B4 7F0D8E84 020A8024 */  and   $s0, $s0, $t2
 /* 10D9B8 7F0D8E88 320C00FF */  andi  $t4, $s0, 0xff
@@ -7806,7 +7806,7 @@ spectrum_op_A6:
 /* 10DA38 7F0D8F08 97AC0294 */  lhu   $t4, 0x294($sp)
 /* 10DA3C 7F0D8F0C AFAC0048 */  sw    $t4, 0x48($sp)
 .L7F0D8F10:
-/* 10DA40 7F0D8F10 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10DA40 7F0D8F10 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10DA44 7F0D8F14 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10DA48 7F0D8F18 97A80298 */  lhu   $t0, 0x298($sp)
 /* 10DA4C 7F0D8F1C 8FB90048 */  lw    $t9, 0x48($sp)
@@ -7817,12 +7817,12 @@ spectrum_op_A6:
 /* 10DA60 7F0D8F30 01F96821 */  addu  $t5, $t7, $t9
 /* 10DA64 7F0D8F34 A7AD0168 */  sh    $t5, 0x168($sp)
 .L7F0D8F38:
-/* 10DA68 7F0D8F38 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10DA68 7F0D8F38 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10DA6C 7F0D8F3C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10DA70 7F0D8F40 97AB0168 */  lhu   $t3, 0x168($sp)
 /* 10DA74 7F0D8F44 014B6021 */  addu  $t4, $t2, $t3
 /* 10DA78 7F0D8F48 91980000 */  lbu   $t8, ($t4)
-/* 10DA7C 7F0D8F4C 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 10DA7C 7F0D8F4C 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DA80 7F0D8F50 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 10DA84 7F0D8F54 02188024 */  and   $s0, $s0, $t8
 /* 10DA88 7F0D8F58 320E00FF */  andi  $t6, $s0, 0xff
@@ -7841,7 +7841,7 @@ spectrum_op_A6:
 /* 10DABC 7F0D8F8C 01C08825 */   move  $s1, $t6
 spectrum_op_A7:
 /* 10DAC0 7F0D8F90 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 10DAC4 7F0D8F94 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) # $t6, 0x8009
+/* 10DAC4 7F0D8F94 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DAC8 7F0D8F98 8DCEE334 */  lw    $t6, %lo(ptr_pc_keyboard_table_alloc)($t6)
 /* 10DACC 7F0D8F9C 02108024 */  and   $s0, $s0, $s0
 /* 10DAD0 7F0D8FA0 321900FF */  andi  $t9, $s0, 0xff
@@ -7862,7 +7862,7 @@ spectrum_op_A7:
 /* 10DB0C 7F0D8FDC 03208825 */   move  $s1, $t9
 spectrum_op_A8:
 /* 10DB10 7F0D8FE0 8FA8028C */  lw    $t0, 0x28c($sp)
-/* 10DB14 7F0D8FE4 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10DB14 7F0D8FE4 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DB18 7F0D8FE8 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10DB1C 7F0D8FEC 02128026 */  xor   $s0, $s0, $s2
 /* 10DB20 7F0D8FF0 320900FF */  andi  $t1, $s0, 0xff
@@ -7882,7 +7882,7 @@ spectrum_op_A8:
 /* 10DB58 7F0D9028 01208025 */   move  $s0, $t1
 spectrum_op_A9:
 /* 10DB5C 7F0D902C 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 10DB60 7F0D9030 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 10DB60 7F0D9030 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DB64 7F0D9034 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 10DB68 7F0D9038 02138026 */  xor   $s0, $s0, $s3
 /* 10DB6C 7F0D903C 320E00FF */  andi  $t6, $s0, 0xff
@@ -7902,7 +7902,7 @@ spectrum_op_A9:
 /* 10DBA4 7F0D9074 01C08025 */   move  $s0, $t6
 spectrum_op_AA:
 /* 10DBA8 7F0D9078 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 10DBAC 7F0D907C 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 10DBAC 7F0D907C 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DBB0 7F0D9080 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 10DBB4 7F0D9084 02148026 */  xor   $s0, $s0, $s4
 /* 10DBB8 7F0D9088 320A00FF */  andi  $t2, $s0, 0xff
@@ -7922,7 +7922,7 @@ spectrum_op_AA:
 /* 10DBF0 7F0D90C0 01408025 */   move  $s0, $t2
 spectrum_op_AB:
 /* 10DBF4 7F0D90C4 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10DBF8 7F0D90C8 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 10DBF8 7F0D90C8 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DBFC 7F0D90CC 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 10DC00 7F0D90D0 02158026 */  xor   $s0, $s0, $s5
 /* 10DC04 7F0D90D4 320D00FF */  andi  $t5, $s0, 0xff
@@ -7965,7 +7965,7 @@ spectrum_op_AC:
 /* 10DC88 7F0D9158 AFAE0048 */  sw    $t6, 0x48($sp)
 .L7F0D915C:
 /* 10DC8C 7F0D915C 8FAF0048 */  lw    $t7, 0x48($sp)
-/* 10DC90 7F0D9160 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 10DC90 7F0D9160 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DC94 7F0D9164 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 10DC98 7F0D9168 020F8026 */  xor   $s0, $s0, $t7
 /* 10DC9C 7F0D916C 320D00FF */  andi  $t5, $s0, 0xff
@@ -8006,7 +8006,7 @@ spectrum_op_AD:
 /* 10DD18 7F0D91E8 AFA90048 */  sw    $t1, 0x48($sp)
 .L7F0D91EC:
 /* 10DD1C 7F0D91EC 8FAF0048 */  lw    $t7, 0x48($sp)
-/* 10DD20 7F0D91F0 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10DD20 7F0D91F0 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DD24 7F0D91F4 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10DD28 7F0D91F8 020F8026 */  xor   $s0, $s0, $t7
 /* 10DD2C 7F0D91FC 320D00FF */  andi  $t5, $s0, 0xff
@@ -8046,7 +8046,7 @@ spectrum_op_AE:
 /* 10DDA8 7F0D9278 97AF0294 */  lhu   $t7, 0x294($sp)
 /* 10DDAC 7F0D927C AFAF0048 */  sw    $t7, 0x48($sp)
 .L7F0D9280:
-/* 10DDB0 7F0D9280 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10DDB0 7F0D9280 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10DDB4 7F0D9284 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10DDB8 7F0D9288 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 10DDBC 7F0D928C 8FAC0048 */  lw    $t4, 0x48($sp)
@@ -8057,12 +8057,12 @@ spectrum_op_AE:
 /* 10DDD0 7F0D92A0 016C5021 */  addu  $t2, $t3, $t4
 /* 10DDD4 7F0D92A4 A7AA0166 */  sh    $t2, 0x166($sp)
 .L7F0D92A8:
-/* 10DDD8 7F0D92A8 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10DDD8 7F0D92A8 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10DDDC 7F0D92AC 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10DDE0 7F0D92B0 97B80166 */  lhu   $t8, 0x166($sp)
 /* 10DDE4 7F0D92B4 01387821 */  addu  $t7, $t1, $t8
 /* 10DDE8 7F0D92B8 91F90000 */  lbu   $t9, ($t7)
-/* 10DDEC 7F0D92BC 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 10DDEC 7F0D92BC 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DDF0 7F0D92C0 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 10DDF4 7F0D92C4 02198026 */  xor   $s0, $s0, $t9
 /* 10DDF8 7F0D92C8 320800FF */  andi  $t0, $s0, 0xff
@@ -8080,7 +8080,7 @@ spectrum_op_AE:
 /* 10DE28 7F0D92F8 01008025 */   move  $s0, $t0
 spectrum_op_AF:
 /* 10DE2C 7F0D92FC 8FA8028C */  lw    $t0, 0x28c($sp)
-/* 10DE30 7F0D9300 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) # $t6, 0x8009
+/* 10DE30 7F0D9300 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DE34 7F0D9304 8DCEE334 */  lw    $t6, %lo(ptr_pc_keyboard_table_alloc)($t6)
 /* 10DE38 7F0D9308 02108026 */  xor   $s0, $s0, $s0
 /* 10DE3C 7F0D930C 320A00FF */  andi  $t2, $s0, 0xff
@@ -8100,7 +8100,7 @@ spectrum_op_AF:
 /* 10DE74 7F0D9344 01408025 */   move  $s0, $t2
 spectrum_op_B0:
 /* 10DE78 7F0D9348 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10DE7C 7F0D934C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 10DE7C 7F0D934C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DE80 7F0D9350 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 10DE84 7F0D9354 02128025 */  or    $s0, $s0, $s2
 /* 10DE88 7F0D9358 320900FF */  andi  $t1, $s0, 0xff
@@ -8120,7 +8120,7 @@ spectrum_op_B0:
 /* 10DEC0 7F0D9390 01208025 */   move  $s0, $t1
 spectrum_op_B1:
 /* 10DEC4 7F0D9394 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 10DEC8 7F0D9398 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 10DEC8 7F0D9398 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DECC 7F0D939C 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 10DED0 7F0D93A0 02138025 */  or    $s0, $s0, $s3
 /* 10DED4 7F0D93A4 320E00FF */  andi  $t6, $s0, 0xff
@@ -8140,7 +8140,7 @@ spectrum_op_B1:
 /* 10DF0C 7F0D93DC 01C08025 */   move  $s0, $t6
 spectrum_op_B2:
 /* 10DF10 7F0D93E0 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 10DF14 7F0D93E4 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10DF14 7F0D93E4 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DF18 7F0D93E8 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10DF1C 7F0D93EC 02148025 */  or    $s0, $s0, $s4
 /* 10DF20 7F0D93F0 320F00FF */  andi  $t7, $s0, 0xff
@@ -8160,7 +8160,7 @@ spectrum_op_B2:
 /* 10DF58 7F0D9428 01E08025 */   move  $s0, $t7
 spectrum_op_B3:
 /* 10DF5C 7F0D942C 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 10DF60 7F0D9430 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 10DF60 7F0D9430 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DF64 7F0D9434 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 10DF68 7F0D9438 02158025 */  or    $s0, $s0, $s5
 /* 10DF6C 7F0D943C 320800FF */  andi  $t0, $s0, 0xff
@@ -8203,7 +8203,7 @@ spectrum_op_B4:
 /* 10DFF0 7F0D94C0 AFAE0048 */  sw    $t6, 0x48($sp)
 .L7F0D94C4:
 /* 10DFF4 7F0D94C4 8FB90048 */  lw    $t9, 0x48($sp)
-/* 10DFF8 7F0D94C8 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 10DFF8 7F0D94C8 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10DFFC 7F0D94CC 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 10E000 7F0D94D0 02198025 */  or    $s0, $s0, $t9
 /* 10E004 7F0D94D4 320800FF */  andi  $t0, $s0, 0xff
@@ -8244,7 +8244,7 @@ spectrum_op_B5:
 /* 10E080 7F0D9550 AFA90048 */  sw    $t1, 0x48($sp)
 .L7F0D9554:
 /* 10E084 7F0D9554 8FB90048 */  lw    $t9, 0x48($sp)
-/* 10E088 7F0D9558 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 10E088 7F0D9558 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10E08C 7F0D955C 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 10E090 7F0D9560 02198025 */  or    $s0, $s0, $t9
 /* 10E094 7F0D9564 320800FF */  andi  $t0, $s0, 0xff
@@ -8284,7 +8284,7 @@ spectrum_op_B6:
 /* 10E110 7F0D95E0 97B90294 */  lhu   $t9, 0x294($sp)
 /* 10E114 7F0D95E4 AFB90048 */  sw    $t9, 0x48($sp)
 .L7F0D95E8:
-/* 10E118 7F0D95E8 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10E118 7F0D95E8 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10E11C 7F0D95EC 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10E120 7F0D95F0 97A80298 */  lhu   $t0, 0x298($sp)
 /* 10E124 7F0D95F4 8FAD0048 */  lw    $t5, 0x48($sp)
@@ -8295,12 +8295,12 @@ spectrum_op_B6:
 /* 10E138 7F0D9608 018D7821 */  addu  $t7, $t4, $t5
 /* 10E13C 7F0D960C A7AF0164 */  sh    $t7, 0x164($sp)
 .L7F0D9610:
-/* 10E140 7F0D9610 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10E140 7F0D9610 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10E144 7F0D9614 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10E148 7F0D9618 97B80164 */  lhu   $t8, 0x164($sp)
 /* 10E14C 7F0D961C 0138C821 */  addu  $t9, $t1, $t8
 /* 10E150 7F0D9620 932B0000 */  lbu   $t3, ($t9)
-/* 10E154 7F0D9624 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 10E154 7F0D9624 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10E158 7F0D9628 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 10E15C 7F0D962C 020B8025 */  or    $s0, $s0, $t3
 /* 10E160 7F0D9630 320A00FF */  andi  $t2, $s0, 0xff
@@ -8318,7 +8318,7 @@ spectrum_op_B6:
 /* 10E190 7F0D9660 01408025 */   move  $s0, $t2
 spectrum_op_B7:
 /* 10E194 7F0D9664 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10E198 7F0D9668 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) # $t6, 0x8009
+/* 10E198 7F0D9668 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10E19C 7F0D966C 8DCEE334 */  lw    $t6, %lo(ptr_pc_keyboard_table_alloc)($t6)
 /* 10E1A0 7F0D9670 02108025 */  or    $s0, $s0, $s0
 /* 10E1A4 7F0D9674 320F00FF */  andi  $t7, $s0, 0xff
@@ -8596,7 +8596,7 @@ spectrum_op_BE:
 /* 10E5A0 7F0D9A70 97A90294 */  lhu   $t1, 0x294($sp)
 /* 10E5A4 7F0D9A74 AFA90048 */  sw    $t1, 0x48($sp)
 .L7F0D9A78:
-/* 10E5A8 7F0D9A78 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10E5A8 7F0D9A78 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10E5AC 7F0D9A7C 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10E5B0 7F0D9A80 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10E5B4 7F0D9A84 8FAE0048 */  lw    $t6, 0x48($sp)
@@ -8607,7 +8607,7 @@ spectrum_op_BE:
 /* 10E5C8 7F0D9A98 014E4021 */  addu  $t0, $t2, $t6
 /* 10E5CC 7F0D9A9C A7A8014A */  sh    $t0, 0x14a($sp)
 .L7F0D9AA0:
-/* 10E5D0 7F0D9AA0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10E5D0 7F0D9AA0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10E5D4 7F0D9AA4 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10E5D8 7F0D9AA8 97B8014A */  lhu   $t8, 0x14a($sp)
 /* 10E5DC 7F0D9AAC 030D4821 */  addu  $t1, $t8, $t5
@@ -8676,7 +8676,7 @@ spectrum_op_BF:
 spectrum_op_C0:
 /* 10E6D4 7F0D9BA4 8FAF028C */  lw    $t7, 0x28c($sp)
 /* 10E6D8 7F0D9BA8 322C0040 */  andi  $t4, $s1, 0x40
-/* 10E6DC 7F0D9BAC 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10E6DC 7F0D9BAC 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10E6E0 7F0D9BB0 25ED0005 */  addiu $t5, $t7, 5
 /* 10E6E4 7F0D9BB4 15802311 */  bnez  $t4, .L7F0E27FC
 /* 10E6E8 7F0D9BB8 AFAD028C */   sw    $t5, 0x28c($sp)
@@ -8696,7 +8696,7 @@ spectrum_op_C0:
 /* 10E720 7F0D9BF0 A7AA0292 */   sh    $t2, 0x292($sp)
 spectrum_op_C1:
 /* 10E724 7F0D9BF4 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 10E728 7F0D9BF8 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10E728 7F0D9BF8 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10E72C 7F0D9BFC 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10E730 7F0D9C00 97A80292 */  lhu   $t0, 0x292($sp)
 /* 10E734 7F0D9C04 272E000A */  addiu $t6, $t9, 0xa
@@ -8714,7 +8714,7 @@ spectrum_op_C2:
 /* 10E760 7F0D9C30 25AC000A */  addiu $t4, $t5, 0xa
 /* 10E764 7F0D9C34 1520000B */  bnez  $t1, .L7F0D9C64
 /* 10E768 7F0D9C38 AFAC028C */   sw    $t4, 0x28c($sp)
-/* 10E76C 7F0D9C3C 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10E76C 7F0D9C3C 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10E770 7F0D9C40 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10E774 7F0D9C44 032A7821 */  addu  $t7, $t9, $t2
 /* 10E778 7F0D9C48 91E80001 */  lbu   $t0, 1($t7)
@@ -8731,7 +8731,7 @@ spectrum_op_C2:
 /* 10E7A0 7F0D9C70 A7A90298 */   sh    $t1, 0x298($sp)
 spectrum_op_C3:
 /* 10E7A4 7F0D9C74 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 10E7A8 7F0D9C78 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10E7A8 7F0D9C78 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10E7AC 7F0D9C7C 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10E7B0 7F0D9C80 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 10E7B4 7F0D9C84 25D9000A */  addiu $t9, $t6, 0xa
@@ -8758,7 +8758,7 @@ spectrum_op_C4:
 /* 10E804 7F0D9CD4 29615B00 */  slti  $at, $t3, 0x5b00
 /* 10E808 7F0D9CD8 14200008 */  bnez  $at, .L7F0D9CFC
 /* 10E80C 7F0D9CDC A7AD0292 */   sh    $t5, 0x292($sp)
-/* 10E810 7F0D9CE0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10E810 7F0D9CE0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10E814 7F0D9CE4 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10E818 7F0D9CE8 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10E81C 7F0D9CEC 01CBC821 */  addu  $t9, $t6, $t3
@@ -8771,10 +8771,10 @@ spectrum_op_C4:
 /* 10E834 7F0D9D04 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 10E838 7F0D9D08 29015800 */  slti  $at, $t0, 0x5800
 /* 10E83C 7F0D9D0C 1420000C */  bnez  $at, .L7F0D9D40
-/* 10E840 7F0D9D10 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10E840 7F0D9D10 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10E844 7F0D9D14 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10E848 7F0D9D18 25EA0002 */  addiu $t2, $t7, 2
-/* 10E84C 7F0D9D1C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 10E84C 7F0D9D1C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 10E850 7F0D9D20 03086821 */  addu  $t5, $t8, $t0
 /* 10E854 7F0D9D24 A1AA0000 */  sb    $t2, ($t5)
 /* 10E858 7F0D9D28 97AB0292 */  lhu   $t3, 0x292($sp)
@@ -8787,14 +8787,14 @@ spectrum_op_C4:
 /* 10E870 7F0D9D40 2B214000 */  slti  $at, $t9, 0x4000
 /* 10E874 7F0D9D44 14200010 */  bnez  $at, .L7F0D9D88
 /* 10E878 7F0D9D48 97AF0298 */   lhu   $t7, 0x298($sp)
-/* 10E87C 7F0D9D4C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10E87C 7F0D9D4C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10E880 7F0D9D50 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10E884 7F0D9D54 25F80002 */  addiu $t8, $t7, 2
 /* 10E888 7F0D9D58 240D0001 */  li    $t5, 1
 /* 10E88C 7F0D9D5C 01195021 */  addu  $t2, $t0, $t9
 /* 10E890 7F0D9D60 A1580000 */  sb    $t8, ($t2)
 /* 10E894 7F0D9D64 97AE0292 */  lhu   $t6, 0x292($sp)
-/* 10E898 7F0D9D68 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 10E898 7F0D9D68 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 10E89C 7F0D9D6C 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 10E8A0 7F0D9D70 31CB1800 */  andi  $t3, $t6, 0x1800
 /* 10E8A4 7F0D9D74 000B60C3 */  sra   $t4, $t3, 3
@@ -8810,7 +8810,7 @@ spectrum_op_C4:
 /* 10E8C8 7F0D9D98 29415B00 */  slti  $at, $t2, 0x5b00
 /* 10E8CC 7F0D9D9C 14200008 */  bnez  $at, .L7F0D9DC0
 /* 10E8D0 7F0D9DA0 25ED0001 */   addiu $t5, $t7, 1
-/* 10E8D4 7F0D9DA4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10E8D4 7F0D9DA4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10E8D8 7F0D9DA8 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10E8DC 7F0D9DAC 256E0002 */  addiu $t6, $t3, 2
 /* 10E8E0 7F0D9DB0 000E6203 */  sra   $t4, $t6, 8
@@ -8822,13 +8822,13 @@ spectrum_op_C4:
 /* 10E8F4 7F0D9DC4 1420000F */  bnez  $at, .L7F0D9E04
 /* 10E8F8 7F0D9DC8 97B90292 */   lhu   $t9, 0x292($sp)
 /* 10E8FC 7F0D9DCC 97B90298 */  lhu   $t9, 0x298($sp)
-/* 10E900 7F0D9DD0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10E900 7F0D9DD0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10E904 7F0D9DD4 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10E908 7F0D9DD8 272A0002 */  addiu $t2, $t9, 2
 /* 10E90C 7F0D9DDC 000A5A03 */  sra   $t3, $t2, 8
 /* 10E910 7F0D9DE0 01CF4821 */  addu  $t1, $t6, $t7
 /* 10E914 7F0D9DE4 A12B0001 */  sb    $t3, 1($t1)
-/* 10E918 7F0D9DE8 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 10E918 7F0D9DE8 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10E91C 7F0D9DEC 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 10E920 7F0D9DF0 97A80292 */  lhu   $t0, 0x292($sp)
 /* 10E924 7F0D9DF4 24180001 */  li    $t8, 1
@@ -8840,14 +8840,14 @@ spectrum_op_C4:
 /* 10E938 7F0D9E08 29414000 */  slti  $at, $t2, 0x4000
 /* 10E93C 7F0D9E0C 14200012 */  bnez  $at, .L7F0D9E58
 /* 10E940 7F0D9E10 97AE0298 */   lhu   $t6, 0x298($sp)
-/* 10E944 7F0D9E14 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10E944 7F0D9E14 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10E948 7F0D9E18 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10E94C 7F0D9E1C 25CF0002 */  addiu $t7, $t6, 2
 /* 10E950 7F0D9E20 000F5A03 */  sra   $t3, $t7, 8
 /* 10E954 7F0D9E24 01396021 */  addu  $t4, $t1, $t9
 /* 10E958 7F0D9E28 A18B0001 */  sb    $t3, 1($t4)
 /* 10E95C 7F0D9E2C 97B80292 */  lhu   $t8, 0x292($sp)
-/* 10E960 7F0D9E30 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 10E960 7F0D9E30 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 10E964 7F0D9E34 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 10E968 7F0D9E38 270D0001 */  addiu $t5, $t8, 1
 /* 10E96C 7F0D9E3C 31AA1800 */  andi  $t2, $t5, 0x1800
@@ -8858,7 +8858,7 @@ spectrum_op_C4:
 /* 10E980 7F0D9E50 03295821 */  addu  $t3, $t9, $t1
 /* 10E984 7F0D9E54 A1680000 */  sb    $t0, ($t3)
 .L7F0D9E58:
-/* 10E988 7F0D9E58 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10E988 7F0D9E58 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10E98C 7F0D9E5C 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10E990 7F0D9E60 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 10E994 7F0D9E64 030C7021 */  addu  $t6, $t8, $t4
@@ -8877,7 +8877,7 @@ spectrum_op_C4:
 spectrum_op_C5:
 /* 10E9C4 7F0D9E94 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 10E9C8 7F0D9E98 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10E9CC 7F0D9E9C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10E9CC 7F0D9E9C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10E9D0 7F0D9EA0 258EFFFE */  addiu $t6, $t4, -2
 /* 10E9D4 7F0D9EA4 31CFFFFF */  andi  $t7, $t6, 0xffff
 /* 10E9D8 7F0D9EA8 29E15B00 */  slti  $at, $t7, 0x5b00
@@ -8892,12 +8892,12 @@ spectrum_op_C5:
 .L7F0D9ECC:
 /* 10E9FC 7F0D9ECC 97A90292 */  lhu   $t1, 0x292($sp)
 /* 10EA00 7F0D9ED0 97AD0292 */  lhu   $t5, 0x292($sp)
-/* 10EA04 7F0D9ED4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10EA04 7F0D9ED4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10EA08 7F0D9ED8 29215800 */  slti  $at, $t1, 0x5800
 /* 10EA0C 7F0D9EDC 5420000C */  bnezl $at, .L7F0D9F10
 /* 10EA10 7F0D9EE0 29A14000 */   slti  $at, $t5, 0x4000
 /* 10EA14 7F0D9EE4 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
-/* 10EA18 7F0D9EE8 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 10EA18 7F0D9EE8 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 10EA1C 7F0D9EEC 240A0001 */  li    $t2, 1
 /* 10EA20 7F0D9EF0 01095821 */  addu  $t3, $t0, $t1
 /* 10EA24 7F0D9EF4 A1730000 */  sb    $s3, ($t3)
@@ -8909,9 +8909,9 @@ spectrum_op_C5:
 /* 10EA3C 7F0D9F0C 29A14000 */  slti  $at, $t5, 0x4000
 .L7F0D9F10:
 /* 10EA40 7F0D9F10 1420000E */  bnez  $at, .L7F0D9F4C
-/* 10EA44 7F0D9F14 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10EA44 7F0D9F14 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10EA48 7F0D9F18 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
-/* 10EA4C 7F0D9F1C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 10EA4C 7F0D9F1C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 10EA50 7F0D9F20 24080001 */  li    $t0, 1
 /* 10EA54 7F0D9F24 01EDC821 */  addu  $t9, $t7, $t5
 /* 10EA58 7F0D9F28 A3330000 */  sb    $s3, ($t9)
@@ -8926,7 +8926,7 @@ spectrum_op_C5:
 .L7F0D9F4C:
 /* 10EA7C 7F0D9F4C 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 10EA80 7F0D9F50 97B80292 */  lhu   $t8, 0x292($sp)
-/* 10EA84 7F0D9F54 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10EA84 7F0D9F54 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10EA88 7F0D9F58 25B90001 */  addiu $t9, $t5, 1
 /* 10EA8C 7F0D9F5C 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 10EA90 7F0D9F60 14200005 */  bnez  $at, .L7F0D9F78
@@ -8939,9 +8939,9 @@ spectrum_op_C5:
 /* 10EAA8 7F0D9F78 29815800 */  slti  $at, $t4, 0x5800
 /* 10EAAC 7F0D9F7C 1420000C */  bnez  $at, .L7F0D9FB0
 /* 10EAB0 7F0D9F80 97AD0292 */   lhu   $t5, 0x292($sp)
-/* 10EAB4 7F0D9F84 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10EAB4 7F0D9F84 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10EAB8 7F0D9F88 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
-/* 10EABC 7F0D9F8C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 10EABC 7F0D9F8C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 10EAC0 7F0D9F90 24080001 */  li    $t0, 1
 /* 10EAC4 7F0D9F94 01D85021 */  addu  $t2, $t6, $t8
 /* 10EAC8 7F0D9F98 A1520001 */  sb    $s2, 1($t2)
@@ -8954,13 +8954,13 @@ spectrum_op_C5:
 /* 10EAE0 7F0D9FB0 25A90001 */  addiu $t1, $t5, 1
 /* 10EAE4 7F0D9FB4 29214000 */  slti  $at, $t1, 0x4000
 /* 10EAE8 7F0D9FB8 14202210 */  bnez  $at, .L7F0E27FC
-/* 10EAEC 7F0D9FBC 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10EAEC 7F0D9FBC 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10EAF0 7F0D9FC0 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 10EAF4 7F0D9FC4 24180001 */  li    $t8, 1
 /* 10EAF8 7F0D9FC8 018D7021 */  addu  $t6, $t4, $t5
 /* 10EAFC 7F0D9FCC A1D20001 */  sb    $s2, 1($t6)
 /* 10EB00 7F0D9FD0 97AA0292 */  lhu   $t2, 0x292($sp)
-/* 10EB04 7F0D9FD4 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 10EB04 7F0D9FD4 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10EB08 7F0D9FD8 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 10EB0C 7F0D9FDC 254F0001 */  addiu $t7, $t2, 1
 /* 10EB10 7F0D9FE0 31F91800 */  andi  $t9, $t7, 0x1800
@@ -8972,7 +8972,7 @@ spectrum_op_C5:
 /* 10EB28 7F0D9FF8 A1B80000 */   sb    $t8, ($t5)
 spectrum_op_C6:
 /* 10EB2C 7F0D9FFC 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 10EB30 7F0DA000 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 10EB30 7F0DA000 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 10EB34 7F0DA004 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 10EB38 7F0DA008 97B90298 */  lhu   $t9, 0x298($sp)
 /* 10EB3C 7F0DA00C 25CA0007 */  addiu $t2, $t6, 7
@@ -9013,7 +9013,7 @@ spectrum_op_C6:
 spectrum_op_C7:
 /* 10EBC8 7F0DA098 97AE0292 */  lhu   $t6, 0x292($sp)
 /* 10EBCC 7F0DA09C 8FA8028C */  lw    $t0, 0x28c($sp)
-/* 10EBD0 7F0DA0A0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10EBD0 7F0DA0A0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10EBD4 7F0DA0A4 25CCFFFE */  addiu $t4, $t6, -2
 /* 10EBD8 7F0DA0A8 318DFFFF */  andi  $t5, $t4, 0xffff
 /* 10EBDC 7F0DA0AC 29A15B00 */  slti  $at, $t5, 0x5b00
@@ -9029,13 +9029,13 @@ spectrum_op_C7:
 .L7F0DA0D4:
 /* 10EC04 7F0DA0D4 97AA0292 */  lhu   $t2, 0x292($sp)
 /* 10EC08 7F0DA0D8 97AB0292 */  lhu   $t3, 0x292($sp)
-/* 10EC0C 7F0DA0DC 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10EC0C 7F0DA0DC 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10EC10 7F0DA0E0 29415800 */  slti  $at, $t2, 0x5800
 /* 10EC14 7F0DA0E4 5420000D */  bnezl $at, .L7F0DA11C
 /* 10EC18 7F0DA0E8 29614000 */   slti  $at, $t3, 0x4000
 /* 10EC1C 7F0DA0EC 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10EC20 7F0DA0F0 97AF0298 */  lhu   $t7, 0x298($sp)
-/* 10EC24 7F0DA0F4 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 10EC24 7F0DA0F4 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10EC28 7F0DA0F8 010AC021 */  addu  $t8, $t0, $t2
 /* 10EC2C 7F0DA0FC A30F0000 */  sb    $t7, ($t8)
 /* 10EC30 7F0DA100 97B90292 */  lhu   $t9, 0x292($sp)
@@ -9047,14 +9047,14 @@ spectrum_op_C7:
 /* 10EC48 7F0DA118 29614000 */  slti  $at, $t3, 0x4000
 .L7F0DA11C:
 /* 10EC4C 7F0DA11C 1420000F */  bnez  $at, .L7F0DA15C
-/* 10EC50 7F0DA120 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10EC50 7F0DA120 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10EC54 7F0DA124 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10EC58 7F0DA128 97A90298 */  lhu   $t1, 0x298($sp)
 /* 10EC5C 7F0DA12C 240F0001 */  li    $t7, 1
 /* 10EC60 7F0DA130 010B5021 */  addu  $t2, $t0, $t3
 /* 10EC64 7F0DA134 A1490000 */  sb    $t1, ($t2)
 /* 10EC68 7F0DA138 97B80292 */  lhu   $t8, 0x292($sp)
-/* 10EC6C 7F0DA13C 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 10EC6C 7F0DA13C 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 10EC70 7F0DA140 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 10EC74 7F0DA144 330C1800 */  andi  $t4, $t8, 0x1800
 /* 10EC78 7F0DA148 000CC8C3 */  sra   $t9, $t4, 3
@@ -9070,7 +9070,7 @@ spectrum_op_C7:
 /* 10EC9C 7F0DA16C 29415B00 */  slti  $at, $t2, 0x5b00
 /* 10ECA0 7F0DA170 14200007 */  bnez  $at, .L7F0DA190
 /* 10ECA4 7F0DA174 250D0001 */   addiu $t5, $t0, 1
-/* 10ECA8 7F0DA178 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10ECA8 7F0DA178 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10ECAC 7F0DA17C 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10ECB0 7F0DA180 000CC203 */  sra   $t8, $t4, 8
 /* 10ECB4 7F0DA184 03297021 */  addu  $t6, $t9, $t1
@@ -9080,10 +9080,10 @@ spectrum_op_C7:
 /* 10ECC0 7F0DA190 29A15800 */  slti  $at, $t5, 0x5800
 /* 10ECC4 7F0DA194 1420000E */  bnez  $at, .L7F0DA1D0
 /* 10ECC8 7F0DA198 97AD0292 */   lhu   $t5, 0x292($sp)
-/* 10ECCC 7F0DA19C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 10ECCC 7F0DA19C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 10ECD0 7F0DA1A0 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 10ECD4 7F0DA1A4 97AF0298 */  lhu   $t7, 0x298($sp)
-/* 10ECD8 7F0DA1A8 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 10ECD8 7F0DA1A8 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 10ECDC 7F0DA1AC 01486021 */  addu  $t4, $t2, $t0
 /* 10ECE0 7F0DA1B0 000F5A03 */  sra   $t3, $t7, 8
 /* 10ECE4 7F0DA1B4 A18B0001 */  sb    $t3, 1($t4)
@@ -9098,14 +9098,14 @@ spectrum_op_C7:
 /* 10ED04 7F0DA1D4 29E14000 */  slti  $at, $t7, 0x4000
 /* 10ED08 7F0DA1D8 14200011 */  bnez  $at, .L7F0DA220
 /* 10ED0C 7F0DA1DC 97AA0298 */   lhu   $t2, 0x298($sp)
-/* 10ED10 7F0DA1E0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10ED10 7F0DA1E0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10ED14 7F0DA1E4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10ED18 7F0DA1E8 000A4203 */  sra   $t0, $t2, 8
 /* 10ED1C 7F0DA1EC 24090001 */  li    $t1, 1
 /* 10ED20 7F0DA1F0 016D6021 */  addu  $t4, $t3, $t5
 /* 10ED24 7F0DA1F4 A1880001 */  sb    $t0, 1($t4)
 /* 10ED28 7F0DA1F8 97B80292 */  lhu   $t8, 0x292($sp)
-/* 10ED2C 7F0DA1FC 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 10ED2C 7F0DA1FC 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 10ED30 7F0DA200 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 10ED34 7F0DA204 27190001 */  addiu $t9, $t8, 1
 /* 10ED38 7F0DA208 332E1800 */  andi  $t6, $t9, 0x1800
@@ -9120,7 +9120,7 @@ spectrum_op_C7:
 spectrum_op_C8:
 /* 10ED58 7F0DA228 8FAC028C */  lw    $t4, 0x28c($sp)
 /* 10ED5C 7F0DA22C 322E0040 */  andi  $t6, $s1, 0x40
-/* 10ED60 7F0DA230 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10ED60 7F0DA230 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10ED64 7F0DA234 25980005 */  addiu $t8, $t4, 5
 /* 10ED68 7F0DA238 11C02170 */  beqz  $t6, .L7F0E27FC
 /* 10ED6C 7F0DA23C AFB8028C */   sw    $t8, 0x28c($sp)
@@ -9140,7 +9140,7 @@ spectrum_op_C8:
 /* 10EDA4 7F0DA274 A7B90292 */   sh    $t9, 0x292($sp)
 spectrum_op_C9:
 /* 10EDA8 7F0DA278 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 10EDAC 7F0DA27C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10EDAC 7F0DA27C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10EDB0 7F0DA280 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10EDB4 7F0DA284 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 10EDB8 7F0DA288 25EB0004 */  addiu $t3, $t7, 4
@@ -9164,7 +9164,7 @@ spectrum_op_CA:
 /* 10EDFC 7F0DA2CC 2518000A */  addiu $t8, $t0, 0xa
 /* 10EE00 7F0DA2D0 1120000B */  beqz  $t1, .L7F0DA300
 /* 10EE04 7F0DA2D4 AFB8028C */   sw    $t8, 0x28c($sp)
-/* 10EE08 7F0DA2D8 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10EE08 7F0DA2D8 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10EE0C 7F0DA2DC 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10EE10 7F0DA2E0 032A5821 */  addu  $t3, $t9, $t2
 /* 10EE14 7F0DA2E4 916C0001 */  lbu   $t4, 1($t3)
@@ -9188,7 +9188,7 @@ spectrum_op_CB:
 /* 10EE54 7F0DA324 AFB9028C */   sw    $t9, 0x28c($sp)
 /* 10EE58 7F0DA328 24010001 */  li    $at, 1
 /* 10EE5C 7F0DA32C 15410004 */  bne   $t2, $at, .L7F0DA340
-/* 10EE60 7F0DA330 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10EE60 7F0DA330 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10EE64 7F0DA334 97AB0296 */  lhu   $t3, 0x296($sp)
 /* 10EE68 7F0DA338 10000003 */  b     .L7F0DA348
 /* 10EE6C 7F0DA33C AFAB0048 */   sw    $t3, 0x48($sp)
@@ -9256,7 +9256,7 @@ spectrum_op_CB_00:
 /* 10EF48 7F0DA418 001269C3 */  sra   $t5, $s2, 7
 /* 10EF4C 7F0DA41C 018D9025 */  or    $s2, $t4, $t5
 /* 10EF50 7F0DA420 324800FF */  andi  $t0, $s2, 0xff
-/* 10EF54 7F0DA424 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 10EF54 7F0DA424 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10EF58 7F0DA428 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 10EF5C 7F0DA42C 2D090001 */  sltiu $t1, $t0, 1
 /* 10EF60 7F0DA430 AFA90048 */  sw    $t1, 0x48($sp)
@@ -9277,7 +9277,7 @@ spectrum_op_CB_01:
 /* 10EF98 7F0DA468 001371C3 */  sra   $t6, $s3, 7
 /* 10EF9C 7F0DA46C 030E9825 */  or    $s3, $t8, $t6
 /* 10EFA0 7F0DA470 326A00FF */  andi  $t2, $s3, 0xff
-/* 10EFA4 7F0DA474 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 10EFA4 7F0DA474 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10EFA8 7F0DA478 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 10EFAC 7F0DA47C 2D4F0001 */  sltiu $t7, $t2, 1
 /* 10EFB0 7F0DA480 AFAF0048 */  sw    $t7, 0x48($sp)
@@ -9298,7 +9298,7 @@ spectrum_op_CB_02:
 /* 10EFE8 7F0DA4B8 001461C3 */  sra   $t4, $s4, 7
 /* 10EFEC 7F0DA4BC 016CA025 */  or    $s4, $t3, $t4
 /* 10EFF0 7F0DA4C0 328800FF */  andi  $t0, $s4, 0xff
-/* 10EFF4 7F0DA4C4 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 10EFF4 7F0DA4C4 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10EFF8 7F0DA4C8 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 10EFFC 7F0DA4CC 2D0D0001 */  sltiu $t5, $t0, 1
 /* 10F000 7F0DA4D0 AFAD0048 */  sw    $t5, 0x48($sp)
@@ -9319,7 +9319,7 @@ spectrum_op_CB_03:
 /* 10F038 7F0DA508 0015C1C3 */  sra   $t8, $s5, 7
 /* 10F03C 7F0DA50C 0338A825 */  or    $s5, $t9, $t8
 /* 10F040 7F0DA510 32AA00FF */  andi  $t2, $s5, 0xff
-/* 10F044 7F0DA514 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 10F044 7F0DA514 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F048 7F0DA518 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 10F04C 7F0DA51C 2D4E0001 */  sltiu $t6, $t2, 1
 /* 10F050 7F0DA520 AFAE0048 */  sw    $t6, 0x48($sp)
@@ -9340,7 +9340,7 @@ spectrum_op_CB_04:
 /* 10F088 7F0DA558 001659C3 */  sra   $t3, $s6, 7
 /* 10F08C 7F0DA55C 012BB025 */  or    $s6, $t1, $t3
 /* 10F090 7F0DA560 32C800FF */  andi  $t0, $s6, 0xff
-/* 10F094 7F0DA564 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 10F094 7F0DA564 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F098 7F0DA568 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 10F09C 7F0DA56C 2D0C0001 */  sltiu $t4, $t0, 1
 /* 10F0A0 7F0DA570 AFAC0048 */  sw    $t4, 0x48($sp)
@@ -9361,7 +9361,7 @@ spectrum_op_CB_05:
 /* 10F0D8 7F0DA5A8 0017C9C3 */  sra   $t9, $s7, 7
 /* 10F0DC 7F0DA5AC 01F9B825 */  or    $s7, $t7, $t9
 /* 10F0E0 7F0DA5B0 32EA00FF */  andi  $t2, $s7, 0xff
-/* 10F0E4 7F0DA5B4 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 10F0E4 7F0DA5B4 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F0E8 7F0DA5B8 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 10F0EC 7F0DA5BC 2D580001 */  sltiu $t8, $t2, 1
 /* 10F0F0 7F0DA5C0 AFB80048 */  sw    $t8, 0x48($sp)
@@ -9379,7 +9379,7 @@ spectrum_op_CB_05:
 /* 10F120 7F0DA5F0 03008825 */   move  $s1, $t8
 spectrum_op_CB_06:
 /* 10F124 7F0DA5F4 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 10F128 7F0DA5F8 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10F128 7F0DA5F8 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10F12C 7F0DA5FC 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10F130 7F0DA600 97A8013C */  lhu   $t0, 0x13c($sp)
 /* 10F134 7F0DA604 25A90007 */  addiu $t1, $t5, 7
@@ -9391,7 +9391,7 @@ spectrum_op_CB_06:
 /* 10F14C 7F0DA61C 032A6025 */  or    $t4, $t9, $t2
 /* 10F150 7F0DA620 319800FF */  andi  $t8, $t4, 0xff
 /* 10F154 7F0DA624 2F0D0001 */  sltiu $t5, $t8, 1
-/* 10F158 7F0DA628 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 10F158 7F0DA628 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F15C 7F0DA62C 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 10F160 7F0DA630 318900FF */  andi  $t1, $t4, 0xff
 /* 10F164 7F0DA634 A3AF0139 */  sb    $t7, 0x139($sp)
@@ -9410,7 +9410,7 @@ spectrum_op_CB_06:
 /* 10F198 7F0DA668 29A15B00 */  slti  $at, $t5, 0x5b00
 /* 10F19C 7F0DA66C 14200007 */  bnez  $at, .L7F0DA68C
 /* 10F1A0 7F0DA670 01C08825 */   move  $s1, $t6
-/* 10F1A4 7F0DA674 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10F1A4 7F0DA674 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10F1A8 7F0DA678 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10F1AC 7F0DA67C 01807825 */  move  $t7, $t4
 /* 10F1B0 7F0DA680 032D6021 */  addu  $t4, $t9, $t5
@@ -9419,13 +9419,13 @@ spectrum_op_CB_06:
 .L7F0DA68C:
 /* 10F1BC 7F0DA68C 97A9013C */  lhu   $t1, 0x13c($sp)
 /* 10F1C0 7F0DA690 97AF013C */  lhu   $t7, 0x13c($sp)
-/* 10F1C4 7F0DA694 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10F1C4 7F0DA694 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10F1C8 7F0DA698 29215800 */  slti  $at, $t1, 0x5800
 /* 10F1CC 7F0DA69C 5420000D */  bnezl $at, .L7F0DA6D4
 /* 10F1D0 7F0DA6A0 29E14000 */   slti  $at, $t7, 0x4000
 /* 10F1D4 7F0DA6A4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10F1D8 7F0DA6A8 93B80139 */  lbu   $t8, 0x139($sp)
-/* 10F1DC 7F0DA6AC 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 10F1DC 7F0DA6AC 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 10F1E0 7F0DA6B0 01694021 */  addu  $t0, $t3, $t1
 /* 10F1E4 7F0DA6B4 A1180000 */  sb    $t8, ($t0)
 /* 10F1E8 7F0DA6B8 97B9013C */  lhu   $t9, 0x13c($sp)
@@ -9437,14 +9437,14 @@ spectrum_op_CB_06:
 /* 10F200 7F0DA6D0 29E14000 */  slti  $at, $t7, 0x4000
 .L7F0DA6D4:
 /* 10F204 7F0DA6D4 142007B0 */  bnez  $at, .L7F0DC598
-/* 10F208 7F0DA6D8 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10F208 7F0DA6D8 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10F20C 7F0DA6DC 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10F210 7F0DA6E0 93AC0139 */  lbu   $t4, 0x139($sp)
 /* 10F214 7F0DA6E4 24180001 */  li    $t8, 1
 /* 10F218 7F0DA6E8 016F4821 */  addu  $t1, $t3, $t7
 /* 10F21C 7F0DA6EC A12C0000 */  sb    $t4, ($t1)
 /* 10F220 7F0DA6F0 97A8013C */  lhu   $t0, 0x13c($sp)
-/* 10F224 7F0DA6F4 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 10F224 7F0DA6F4 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 10F228 7F0DA6F8 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 10F22C 7F0DA6FC 310E1800 */  andi  $t6, $t0, 0x1800
 /* 10F230 7F0DA700 000EC8C3 */  sra   $t9, $t6, 3
@@ -9458,7 +9458,7 @@ spectrum_op_CB_07:
 /* 10F24C 7F0DA71C 001049C3 */  sra   $t1, $s0, 7
 /* 10F250 7F0DA720 01898025 */  or    $s0, $t4, $t1
 /* 10F254 7F0DA724 320E00FF */  andi  $t6, $s0, 0xff
-/* 10F258 7F0DA728 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 10F258 7F0DA728 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F25C 7F0DA72C 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 10F260 7F0DA730 2DC80001 */  sltiu $t0, $t6, 1
 /* 10F264 7F0DA734 AFA80048 */  sw    $t0, 0x48($sp)
@@ -9480,7 +9480,7 @@ spectrum_op_CB_08:
 /* 10F2A0 7F0DA770 00125043 */  sra   $t2, $s2, 1
 /* 10F2A4 7F0DA774 014B9025 */  or    $s2, $t2, $t3
 /* 10F2A8 7F0DA778 325800FF */  andi  $t8, $s2, 0xff
-/* 10F2AC 7F0DA77C 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10F2AC 7F0DA77C 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F2B0 7F0DA780 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10F2B4 7F0DA784 2F0C0001 */  sltiu $t4, $t8, 1
 /* 10F2B8 7F0DA788 AFAC0048 */  sw    $t4, 0x48($sp)
@@ -9502,7 +9502,7 @@ spectrum_op_CB_09:
 /* 10F2F4 7F0DA7C4 00134843 */  sra   $t1, $s3, 1
 /* 10F2F8 7F0DA7C8 012E9825 */  or    $s3, $t1, $t6
 /* 10F2FC 7F0DA7CC 326800FF */  andi  $t0, $s3, 0xff
-/* 10F300 7F0DA7D0 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 10F300 7F0DA7D0 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F304 7F0DA7D4 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 10F308 7F0DA7D8 2D0A0001 */  sltiu $t2, $t0, 1
 /* 10F30C 7F0DA7DC AFAA0048 */  sw    $t2, 0x48($sp)
@@ -9524,7 +9524,7 @@ spectrum_op_CB_0A:
 /* 10F348 7F0DA818 00145843 */  sra   $t3, $s4, 1
 /* 10F34C 7F0DA81C 0178A025 */  or    $s4, $t3, $t8
 /* 10F350 7F0DA820 328C00FF */  andi  $t4, $s4, 0xff
-/* 10F354 7F0DA824 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 10F354 7F0DA824 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F358 7F0DA828 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 10F35C 7F0DA82C 2D890001 */  sltiu $t1, $t4, 1
 /* 10F360 7F0DA830 AFA90048 */  sw    $t1, 0x48($sp)
@@ -9546,7 +9546,7 @@ spectrum_op_CB_0B:
 /* 10F39C 7F0DA86C 00157043 */  sra   $t6, $s5, 1
 /* 10F3A0 7F0DA870 01C8A825 */  or    $s5, $t6, $t0
 /* 10F3A4 7F0DA874 32AA00FF */  andi  $t2, $s5, 0xff
-/* 10F3A8 7F0DA878 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) # $t6, 0x8009
+/* 10F3A8 7F0DA878 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F3AC 7F0DA87C 8DCEE334 */  lw    $t6, %lo(ptr_pc_keyboard_table_alloc)($t6)
 /* 10F3B0 7F0DA880 2D4B0001 */  sltiu $t3, $t2, 1
 /* 10F3B4 7F0DA884 AFAB0048 */  sw    $t3, 0x48($sp)
@@ -9568,7 +9568,7 @@ spectrum_op_CB_0C:
 /* 10F3F0 7F0DA8C0 0016C043 */  sra   $t8, $s6, 1
 /* 10F3F4 7F0DA8C4 030CB025 */  or    $s6, $t8, $t4
 /* 10F3F8 7F0DA8C8 32C900FF */  andi  $t1, $s6, 0xff
-/* 10F3FC 7F0DA8CC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 10F3FC 7F0DA8CC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F400 7F0DA8D0 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 10F404 7F0DA8D4 2D2E0001 */  sltiu $t6, $t1, 1
 /* 10F408 7F0DA8D8 AFAE0048 */  sw    $t6, 0x48($sp)
@@ -9590,7 +9590,7 @@ spectrum_op_CB_0D:
 /* 10F444 7F0DA914 00174043 */  sra   $t0, $s7, 1
 /* 10F448 7F0DA918 010AB825 */  or    $s7, $t0, $t2
 /* 10F44C 7F0DA91C 32EB00FF */  andi  $t3, $s7, 0xff
-/* 10F450 7F0DA920 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 10F450 7F0DA920 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F454 7F0DA924 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 10F458 7F0DA928 2D780001 */  sltiu $t8, $t3, 1
 /* 10F45C 7F0DA92C AFB80048 */  sw    $t8, 0x48($sp)
@@ -9608,7 +9608,7 @@ spectrum_op_CB_0D:
 /* 10F48C 7F0DA95C 03008825 */   move  $s1, $t8
 spectrum_op_CB_0E:
 /* 10F490 7F0DA960 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 10F494 7F0DA964 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10F494 7F0DA964 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10F498 7F0DA968 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10F49C 7F0DA96C 97AD013C */  lhu   $t5, 0x13c($sp)
 /* 10F4A0 7F0DA970 272C0007 */  addiu $t4, $t9, 7
@@ -9621,7 +9621,7 @@ spectrum_op_CB_0E:
 /* 10F4BC 7F0DA98C 0018C9C0 */  sll   $t9, $t8, 7
 /* 10F4C0 7F0DA990 000A7843 */  sra   $t7, $t2, 1
 /* 10F4C4 7F0DA994 01F96025 */  or    $t4, $t7, $t9
-/* 10F4C8 7F0DA998 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 10F4C8 7F0DA998 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F4CC 7F0DA99C 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 10F4D0 7F0DA9A0 318D00FF */  andi  $t5, $t4, 0xff
 /* 10F4D4 7F0DA9A4 A3A80139 */  sb    $t0, 0x139($sp)
@@ -9641,7 +9641,7 @@ spectrum_op_CB_0E:
 /* 10F50C 7F0DA9DC 29215B00 */  slti  $at, $t1, 0x5b00
 /* 10F510 7F0DA9E0 14200007 */  bnez  $at, .L7F0DAA00
 /* 10F514 7F0DA9E4 01408825 */   move  $s1, $t2
-/* 10F518 7F0DA9E8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10F518 7F0DA9E8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10F51C 7F0DA9EC 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10F520 7F0DA9F0 01805825 */  move  $t3, $t4
 /* 10F524 7F0DA9F4 03096021 */  addu  $t4, $t8, $t1
@@ -9650,13 +9650,13 @@ spectrum_op_CB_0E:
 .L7F0DAA00:
 /* 10F530 7F0DAA00 97AD013C */  lhu   $t5, 0x13c($sp)
 /* 10F534 7F0DAA04 97AB013C */  lhu   $t3, 0x13c($sp)
-/* 10F538 7F0DAA08 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10F538 7F0DAA08 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10F53C 7F0DAA0C 29A15800 */  slti  $at, $t5, 0x5800
 /* 10F540 7F0DAA10 5420000D */  bnezl $at, .L7F0DAA48
 /* 10F544 7F0DAA14 29614000 */   slti  $at, $t3, 0x4000
 /* 10F548 7F0DAA18 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10F54C 7F0DAA1C 93B90139 */  lbu   $t9, 0x139($sp)
-/* 10F550 7F0DAA20 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 10F550 7F0DAA20 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 10F554 7F0DAA24 010D7021 */  addu  $t6, $t0, $t5
 /* 10F558 7F0DAA28 A1D90000 */  sb    $t9, ($t6)
 /* 10F55C 7F0DAA2C 97B8013C */  lhu   $t8, 0x13c($sp)
@@ -9668,14 +9668,14 @@ spectrum_op_CB_0E:
 /* 10F574 7F0DAA44 29614000 */  slti  $at, $t3, 0x4000
 .L7F0DAA48:
 /* 10F578 7F0DAA48 142006D3 */  bnez  $at, .L7F0DC598
-/* 10F57C 7F0DAA4C 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10F57C 7F0DAA4C 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10F580 7F0DAA50 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10F584 7F0DAA54 93AC0139 */  lbu   $t4, 0x139($sp)
 /* 10F588 7F0DAA58 24190001 */  li    $t9, 1
 /* 10F58C 7F0DAA5C 010B6821 */  addu  $t5, $t0, $t3
 /* 10F590 7F0DAA60 A1AC0000 */  sb    $t4, ($t5)
 /* 10F594 7F0DAA64 97AE013C */  lhu   $t6, 0x13c($sp)
-/* 10F598 7F0DAA68 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 10F598 7F0DAA68 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 10F59C 7F0DAA6C 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 10F5A0 7F0DAA70 31CA1800 */  andi  $t2, $t6, 0x1800
 /* 10F5A4 7F0DAA74 000AC0C3 */  sra   $t8, $t2, 3
@@ -9690,7 +9690,7 @@ spectrum_op_CB_0F:
 /* 10F5C4 7F0DAA94 00106843 */  sra   $t5, $s0, 1
 /* 10F5C8 7F0DAA98 01AE8025 */  or    $s0, $t5, $t6
 /* 10F5CC 7F0DAA9C 321800FF */  andi  $t8, $s0, 0xff
-/* 10F5D0 7F0DAAA0 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 10F5D0 7F0DAAA0 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F5D4 7F0DAAA4 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 10F5D8 7F0DAAA8 2F0F0001 */  sltiu $t7, $t8, 1
 /* 10F5DC 7F0DAAAC AFAF0048 */  sw    $t7, 0x48($sp)
@@ -9712,7 +9712,7 @@ spectrum_op_CB_10:
 /* 10F618 7F0DAAE8 32390001 */  andi  $t9, $s1, 1
 /* 10F61C 7F0DAAEC 01199025 */  or    $s2, $t0, $t9
 /* 10F620 7F0DAAF0 324900FF */  andi  $t1, $s2, 0xff
-/* 10F624 7F0DAAF4 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 10F624 7F0DAAF4 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F628 7F0DAAF8 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 10F62C 7F0DAAFC 2D2B0001 */  sltiu $t3, $t1, 1
 /* 10F630 7F0DAB00 AFAB0048 */  sw    $t3, 0x48($sp)
@@ -9734,7 +9734,7 @@ spectrum_op_CB_11:
 /* 10F66C 7F0DAB3C 322C0001 */  andi  $t4, $s1, 1
 /* 10F670 7F0DAB40 01CC9825 */  or    $s3, $t6, $t4
 /* 10F674 7F0DAB44 327800FF */  andi  $t8, $s3, 0xff
-/* 10F678 7F0DAB48 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) # $t6, 0x8009
+/* 10F678 7F0DAB48 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F67C 7F0DAB4C 8DCEE334 */  lw    $t6, %lo(ptr_pc_keyboard_table_alloc)($t6)
 /* 10F680 7F0DAB50 2F0F0001 */  sltiu $t7, $t8, 1
 /* 10F684 7F0DAB54 AFAF0048 */  sw    $t7, 0x48($sp)
@@ -9756,7 +9756,7 @@ spectrum_op_CB_12:
 /* 10F6C0 7F0DAB90 322A0001 */  andi  $t2, $s1, 1
 /* 10F6C4 7F0DAB94 032AA025 */  or    $s4, $t9, $t2
 /* 10F6C8 7F0DAB98 328900FF */  andi  $t1, $s4, 0xff
-/* 10F6CC 7F0DAB9C 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 10F6CC 7F0DAB9C 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F6D0 7F0DABA0 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 10F6D4 7F0DABA4 2D2B0001 */  sltiu $t3, $t1, 1
 /* 10F6D8 7F0DABA8 AFAB0048 */  sw    $t3, 0x48($sp)
@@ -9778,7 +9778,7 @@ spectrum_op_CB_13:
 /* 10F714 7F0DABE4 322D0001 */  andi  $t5, $s1, 1
 /* 10F718 7F0DABE8 018DA825 */  or    $s5, $t4, $t5
 /* 10F71C 7F0DABEC 32B800FF */  andi  $t8, $s5, 0xff
-/* 10F720 7F0DABF0 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 10F720 7F0DABF0 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F724 7F0DABF4 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 10F728 7F0DABF8 2F0F0001 */  sltiu $t7, $t8, 1
 /* 10F72C 7F0DABFC AFAF0048 */  sw    $t7, 0x48($sp)
@@ -9800,7 +9800,7 @@ spectrum_op_CB_14:
 /* 10F768 7F0DAC38 32280001 */  andi  $t0, $s1, 1
 /* 10F76C 7F0DAC3C 0148B025 */  or    $s6, $t2, $t0
 /* 10F770 7F0DAC40 32C900FF */  andi  $t1, $s6, 0xff
-/* 10F774 7F0DAC44 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10F774 7F0DAC44 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F778 7F0DAC48 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10F77C 7F0DAC4C 2D2B0001 */  sltiu $t3, $t1, 1
 /* 10F780 7F0DAC50 AFAB0048 */  sw    $t3, 0x48($sp)
@@ -9822,7 +9822,7 @@ spectrum_op_CB_15:
 /* 10F7BC 7F0DAC8C 322E0001 */  andi  $t6, $s1, 1
 /* 10F7C0 7F0DAC90 01AEB825 */  or    $s7, $t5, $t6
 /* 10F7C4 7F0DAC94 32F800FF */  andi  $t8, $s7, 0xff
-/* 10F7C8 7F0DAC98 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 10F7C8 7F0DAC98 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F7CC 7F0DAC9C 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 10F7D0 7F0DACA0 2F0F0001 */  sltiu $t7, $t8, 1
 /* 10F7D4 7F0DACA4 AFAF0048 */  sw    $t7, 0x48($sp)
@@ -9840,7 +9840,7 @@ spectrum_op_CB_15:
 /* 10F804 7F0DACD4 01E08825 */   move  $s1, $t7
 spectrum_op_CB_16:
 /* 10F808 7F0DACD8 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 10F80C 7F0DACDC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 10F80C 7F0DACDC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 10F810 7F0DACE0 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 10F814 7F0DACE4 97B9013C */  lhu   $t9, 0x13c($sp)
 /* 10F818 7F0DACE8 25480007 */  addiu $t0, $t2, 7
@@ -9851,7 +9851,7 @@ spectrum_op_CB_16:
 /* 10F82C 7F0DACFC 31AE00FF */  andi  $t6, $t5, 0xff
 /* 10F830 7F0DAD00 000E6040 */  sll   $t4, $t6, 1
 /* 10F834 7F0DAD04 018F5025 */  or    $t2, $t4, $t7
-/* 10F838 7F0DAD08 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 10F838 7F0DAD08 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F83C 7F0DAD0C 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 10F840 7F0DAD10 000E49C3 */  sra   $t1, $t6, 7
 /* 10F844 7F0DAD14 314800FF */  andi  $t0, $t2, 0xff
@@ -9872,7 +9872,7 @@ spectrum_op_CB_16:
 /* 10F880 7F0DAD50 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 10F884 7F0DAD54 14200007 */  bnez  $at, .L7F0DAD74
 /* 10F888 7F0DAD58 01A08825 */   move  $s1, $t5
-/* 10F88C 7F0DAD5C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10F88C 7F0DAD5C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10F890 7F0DAD60 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10F894 7F0DAD64 0140C025 */  move  $t8, $t2
 /* 10F898 7F0DAD68 01D95021 */  addu  $t2, $t6, $t9
@@ -9881,13 +9881,13 @@ spectrum_op_CB_16:
 .L7F0DAD74:
 /* 10F8A4 7F0DAD74 97A8013C */  lhu   $t0, 0x13c($sp)
 /* 10F8A8 7F0DAD78 97B8013C */  lhu   $t8, 0x13c($sp)
-/* 10F8AC 7F0DAD7C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10F8AC 7F0DAD7C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10F8B0 7F0DAD80 29015800 */  slti  $at, $t0, 0x5800
 /* 10F8B4 7F0DAD84 5420000D */  bnezl $at, .L7F0DADBC
 /* 10F8B8 7F0DAD88 2B014000 */   slti  $at, $t8, 0x4000
 /* 10F8BC 7F0DAD8C 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10F8C0 7F0DAD90 93AF0139 */  lbu   $t7, 0x139($sp)
-/* 10F8C4 7F0DAD94 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 10F8C4 7F0DAD94 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 10F8C8 7F0DAD98 01684821 */  addu  $t1, $t3, $t0
 /* 10F8CC 7F0DAD9C A12F0000 */  sb    $t7, ($t1)
 /* 10F8D0 7F0DADA0 97AE013C */  lhu   $t6, 0x13c($sp)
@@ -9899,14 +9899,14 @@ spectrum_op_CB_16:
 /* 10F8E8 7F0DADB8 2B014000 */  slti  $at, $t8, 0x4000
 .L7F0DADBC:
 /* 10F8EC 7F0DADBC 142005F6 */  bnez  $at, .L7F0DC598
-/* 10F8F0 7F0DADC0 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 10F8F0 7F0DADC0 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 10F8F4 7F0DADC4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 10F8F8 7F0DADC8 93AA0139 */  lbu   $t2, 0x139($sp)
 /* 10F8FC 7F0DADCC 240F0001 */  li    $t7, 1
 /* 10F900 7F0DADD0 01784021 */  addu  $t0, $t3, $t8
 /* 10F904 7F0DADD4 A10A0000 */  sb    $t2, ($t0)
 /* 10F908 7F0DADD8 97A9013C */  lhu   $t1, 0x13c($sp)
-/* 10F90C 7F0DADDC 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 10F90C 7F0DADDC 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 10F910 7F0DADE0 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 10F914 7F0DADE4 312D1800 */  andi  $t5, $t1, 0x1800
 /* 10F918 7F0DADE8 000D70C3 */  sra   $t6, $t5, 3
@@ -9921,7 +9921,7 @@ spectrum_op_CB_17:
 /* 10F938 7F0DAE08 322D0001 */  andi  $t5, $s1, 1
 /* 10F93C 7F0DAE0C 010D8025 */  or    $s0, $t0, $t5
 /* 10F940 7F0DAE10 320900FF */  andi  $t1, $s0, 0xff
-/* 10F944 7F0DAE14 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 10F944 7F0DAE14 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F948 7F0DAE18 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 10F94C 7F0DAE1C 2D2E0001 */  sltiu $t6, $t1, 1
 /* 10F950 7F0DAE20 AFAE0048 */  sw    $t6, 0x48($sp)
@@ -9943,7 +9943,7 @@ spectrum_op_CB_18:
 /* 10F98C 7F0DAE5C 001179C0 */  sll   $t7, $s1, 7
 /* 10F990 7F0DAE60 016F9025 */  or    $s2, $t3, $t7
 /* 10F994 7F0DAE64 325900FF */  andi  $t9, $s2, 0xff
-/* 10F998 7F0DAE68 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 10F998 7F0DAE68 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F99C 7F0DAE6C 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 10F9A0 7F0DAE70 2F380001 */  sltiu $t8, $t9, 1
 /* 10F9A4 7F0DAE74 AFB80048 */  sw    $t8, 0x48($sp)
@@ -9965,7 +9965,7 @@ spectrum_op_CB_19:
 /* 10F9E0 7F0DAEB0 001151C0 */  sll   $t2, $s1, 7
 /* 10F9E4 7F0DAEB4 01AA9825 */  or    $s3, $t5, $t2
 /* 10F9E8 7F0DAEB8 326900FF */  andi  $t1, $s3, 0xff
-/* 10F9EC 7F0DAEBC 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 10F9EC 7F0DAEBC 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10F9F0 7F0DAEC0 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 10F9F4 7F0DAEC4 2D2E0001 */  sltiu $t6, $t1, 1
 /* 10F9F8 7F0DAEC8 AFAE0048 */  sw    $t6, 0x48($sp)
@@ -9987,7 +9987,7 @@ spectrum_op_CB_1A:
 /* 10FA34 7F0DAF04 001161C0 */  sll   $t4, $s1, 7
 /* 10FA38 7F0DAF08 01ECA025 */  or    $s4, $t7, $t4
 /* 10FA3C 7F0DAF0C 329900FF */  andi  $t9, $s4, 0xff
-/* 10FA40 7F0DAF10 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 10FA40 7F0DAF10 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FA44 7F0DAF14 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 10FA48 7F0DAF18 2F380001 */  sltiu $t8, $t9, 1
 /* 10FA4C 7F0DAF1C AFB80048 */  sw    $t8, 0x48($sp)
@@ -10009,7 +10009,7 @@ spectrum_op_CB_1B:
 /* 10FA88 7F0DAF58 001141C0 */  sll   $t0, $s1, 7
 /* 10FA8C 7F0DAF5C 0148A825 */  or    $s5, $t2, $t0
 /* 10FA90 7F0DAF60 32A900FF */  andi  $t1, $s5, 0xff
-/* 10FA94 7F0DAF64 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10FA94 7F0DAF64 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FA98 7F0DAF68 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10FA9C 7F0DAF6C 2D2E0001 */  sltiu $t6, $t1, 1
 /* 10FAA0 7F0DAF70 AFAE0048 */  sw    $t6, 0x48($sp)
@@ -10031,7 +10031,7 @@ spectrum_op_CB_1C:
 /* 10FADC 7F0DAFAC 001159C0 */  sll   $t3, $s1, 7
 /* 10FAE0 7F0DAFB0 018BB025 */  or    $s6, $t4, $t3
 /* 10FAE4 7F0DAFB4 32D900FF */  andi  $t9, $s6, 0xff
-/* 10FAE8 7F0DAFB8 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 10FAE8 7F0DAFB8 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FAEC 7F0DAFBC 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 10FAF0 7F0DAFC0 2F380001 */  sltiu $t8, $t9, 1
 /* 10FAF4 7F0DAFC4 AFB80048 */  sw    $t8, 0x48($sp)
@@ -10053,7 +10053,7 @@ spectrum_op_CB_1D:
 /* 10FB30 7F0DB000 001169C0 */  sll   $t5, $s1, 7
 /* 10FB34 7F0DB004 010DB825 */  or    $s7, $t0, $t5
 /* 10FB38 7F0DB008 32E900FF */  andi  $t1, $s7, 0xff
-/* 10FB3C 7F0DB00C 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 10FB3C 7F0DB00C 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FB40 7F0DB010 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 10FB44 7F0DB014 2D2E0001 */  sltiu $t6, $t1, 1
 /* 10FB48 7F0DB018 AFAE0048 */  sw    $t6, 0x48($sp)
@@ -10071,7 +10071,7 @@ spectrum_op_CB_1D:
 /* 10FB78 7F0DB048 01C08825 */   move  $s1, $t6
 spectrum_op_CB_1E:
 /* 10FB7C 7F0DB04C 8FAC028C */  lw    $t4, 0x28c($sp)
-/* 10FB80 7F0DB050 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 10FB80 7F0DB050 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 10FB84 7F0DB054 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 10FB88 7F0DB058 97AF013C */  lhu   $t7, 0x13c($sp)
 /* 10FB8C 7F0DB05C 258B0007 */  addiu $t3, $t4, 7
@@ -10082,7 +10082,7 @@ spectrum_op_CB_1E:
 /* 10FBA0 7F0DB070 310D00FF */  andi  $t5, $t0, 0xff
 /* 10FBA4 7F0DB074 000D5043 */  sra   $t2, $t5, 1
 /* 10FBA8 7F0DB078 014E6025 */  or    $t4, $t2, $t6
-/* 10FBAC 7F0DB07C 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) # $t6, 0x8009
+/* 10FBAC 7F0DB07C 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FBB0 7F0DB080 8DCEE334 */  lw    $t6, %lo(ptr_pc_keyboard_table_alloc)($t6)
 /* 10FBB4 7F0DB084 31B90001 */  andi  $t9, $t5, 1
 /* 10FBB8 7F0DB088 318B00FF */  andi  $t3, $t4, 0xff
@@ -10103,7 +10103,7 @@ spectrum_op_CB_1E:
 /* 10FBF4 7F0DB0C4 29E15B00 */  slti  $at, $t7, 0x5b00
 /* 10FBF8 7F0DB0C8 14200007 */  bnez  $at, .L7F0DB0E8
 /* 10FBFC 7F0DB0CC 01008825 */   move  $s1, $t0
-/* 10FC00 7F0DB0D0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 10FC00 7F0DB0D0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 10FC04 7F0DB0D4 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 10FC08 7F0DB0D8 01804825 */  move  $t1, $t4
 /* 10FC0C 7F0DB0DC 01AF6021 */  addu  $t4, $t5, $t7
@@ -10112,13 +10112,13 @@ spectrum_op_CB_1E:
 .L7F0DB0E8:
 /* 10FC18 7F0DB0E8 97AB013C */  lhu   $t3, 0x13c($sp)
 /* 10FC1C 7F0DB0EC 97A9013C */  lhu   $t1, 0x13c($sp)
-/* 10FC20 7F0DB0F0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10FC20 7F0DB0F0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10FC24 7F0DB0F4 29615800 */  slti  $at, $t3, 0x5800
 /* 10FC28 7F0DB0F8 5420000D */  bnezl $at, .L7F0DB130
 /* 10FC2C 7F0DB0FC 29214000 */   slti  $at, $t1, 0x4000
 /* 10FC30 7F0DB100 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10FC34 7F0DB104 93AE0139 */  lbu   $t6, 0x139($sp)
-/* 10FC38 7F0DB108 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 10FC38 7F0DB108 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 10FC3C 7F0DB10C 030BC821 */  addu  $t9, $t8, $t3
 /* 10FC40 7F0DB110 A32E0000 */  sb    $t6, ($t9)
 /* 10FC44 7F0DB114 97AD013C */  lhu   $t5, 0x13c($sp)
@@ -10130,14 +10130,14 @@ spectrum_op_CB_1E:
 /* 10FC5C 7F0DB12C 29214000 */  slti  $at, $t1, 0x4000
 .L7F0DB130:
 /* 10FC60 7F0DB130 14200519 */  bnez  $at, .L7F0DC598
-/* 10FC64 7F0DB134 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 10FC64 7F0DB134 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 10FC68 7F0DB138 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 10FC6C 7F0DB13C 93AC0139 */  lbu   $t4, 0x139($sp)
 /* 10FC70 7F0DB140 240E0001 */  li    $t6, 1
 /* 10FC74 7F0DB144 03095821 */  addu  $t3, $t8, $t1
 /* 10FC78 7F0DB148 A16C0000 */  sb    $t4, ($t3)
 /* 10FC7C 7F0DB14C 97B9013C */  lhu   $t9, 0x13c($sp)
-/* 10FC80 7F0DB150 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 10FC80 7F0DB150 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 10FC84 7F0DB154 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 10FC88 7F0DB158 33281800 */  andi  $t0, $t9, 0x1800
 /* 10FC8C 7F0DB15C 000868C3 */  sra   $t5, $t0, 3
@@ -10152,7 +10152,7 @@ spectrum_op_CB_1F:
 /* 10FCAC 7F0DB17C 001141C0 */  sll   $t0, $s1, 7
 /* 10FCB0 7F0DB180 01688025 */  or    $s0, $t3, $t0
 /* 10FCB4 7F0DB184 321900FF */  andi  $t9, $s0, 0xff
-/* 10FCB8 7F0DB188 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 10FCB8 7F0DB188 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FCBC 7F0DB18C 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 10FCC0 7F0DB190 2F2D0001 */  sltiu $t5, $t9, 1
 /* 10FCC4 7F0DB194 AFAD0048 */  sw    $t5, 0x48($sp)
@@ -10169,7 +10169,7 @@ spectrum_op_CB_1F:
 /* 10FCF0 7F0DB1C0 100004F5 */  b     .L7F0DC598
 /* 10FCF4 7F0DB1C4 01A08825 */   move  $s1, $t5
 spectrum_op_CB_20:
-/* 10FCF8 7F0DB1C8 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10FCF8 7F0DB1C8 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FCFC 7F0DB1CC 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10FD00 7F0DB1D0 001249C3 */  sra   $t1, $s2, 7
 /* 10FD04 7F0DB1D4 0012C040 */  sll   $t8, $s2, 1
@@ -10188,7 +10188,7 @@ spectrum_op_CB_20:
 /* 10FD38 7F0DB208 100004E3 */  b     .L7F0DC598
 /* 10FD3C 7F0DB20C 01E08825 */   move  $s1, $t7
 spectrum_op_CB_21:
-/* 10FD40 7F0DB210 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 10FD40 7F0DB210 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FD44 7F0DB214 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 10FD48 7F0DB218 001361C3 */  sra   $t4, $s3, 7
 /* 10FD4C 7F0DB21C 00135840 */  sll   $t3, $s3, 1
@@ -10207,7 +10207,7 @@ spectrum_op_CB_21:
 /* 10FD80 7F0DB250 100004D1 */  b     .L7F0DC598
 /* 10FD84 7F0DB254 01008825 */   move  $s1, $t0
 spectrum_op_CB_22:
-/* 10FD88 7F0DB258 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 10FD88 7F0DB258 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FD8C 7F0DB25C 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 10FD90 7F0DB260 001469C3 */  sra   $t5, $s4, 7
 /* 10FD94 7F0DB264 00145040 */  sll   $t2, $s4, 1
@@ -10226,7 +10226,7 @@ spectrum_op_CB_22:
 /* 10FDC8 7F0DB298 100004BF */  b     .L7F0DC598
 /* 10FDCC 7F0DB29C 03008825 */   move  $s1, $t8
 spectrum_op_CB_23:
-/* 10FDD0 7F0DB2A0 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 10FDD0 7F0DB2A0 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FDD4 7F0DB2A4 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 10FDD8 7F0DB2A8 001579C3 */  sra   $t7, $s5, 7
 /* 10FDDC 7F0DB2AC 00154840 */  sll   $t1, $s5, 1
@@ -10245,7 +10245,7 @@ spectrum_op_CB_23:
 /* 10FE10 7F0DB2E0 100004AD */  b     .L7F0DC598
 /* 10FE14 7F0DB2E4 01608825 */   move  $s1, $t3
 spectrum_op_CB_24:
-/* 10FE18 7F0DB2E8 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 10FE18 7F0DB2E8 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FE1C 7F0DB2EC 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 10FE20 7F0DB2F0 001641C3 */  sra   $t0, $s6, 7
 /* 10FE24 7F0DB2F4 00166040 */  sll   $t4, $s6, 1
@@ -10264,7 +10264,7 @@ spectrum_op_CB_24:
 /* 10FE58 7F0DB328 1000049B */  b     .L7F0DC598
 /* 10FE5C 7F0DB32C 01408825 */   move  $s1, $t2
 spectrum_op_CB_25:
-/* 10FE60 7F0DB330 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 10FE60 7F0DB330 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FE64 7F0DB334 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 10FE68 7F0DB338 0017C1C3 */  sra   $t8, $s7, 7
 /* 10FE6C 7F0DB33C 00176840 */  sll   $t5, $s7, 1
@@ -10284,7 +10284,7 @@ spectrum_op_CB_25:
 /* 10FEA4 7F0DB374 01208825 */   move  $s1, $t1
 spectrum_op_CB_26:
 /* 10FEA8 7F0DB378 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 10FEAC 7F0DB37C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 10FEAC 7F0DB37C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 10FEB0 7F0DB380 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 10FEB4 7F0DB384 97AE013C */  lhu   $t6, 0x13c($sp)
 /* 10FEB8 7F0DB388 270F0007 */  addiu $t7, $t8, 7
@@ -10294,7 +10294,7 @@ spectrum_op_CB_26:
 /* 10FEC8 7F0DB398 310D00FF */  andi  $t5, $t0, 0xff
 /* 10FECC 7F0DB39C 000D79C3 */  sra   $t7, $t5, 7
 /* 10FED0 7F0DB3A0 000D5040 */  sll   $t2, $t5, 1
-/* 10FED4 7F0DB3A4 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 10FED4 7F0DB3A4 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FED8 7F0DB3A8 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 10FEDC 7F0DB3AC 314900FF */  andi  $t1, $t2, 0xff
 /* 10FEE0 7F0DB3B0 A3A80139 */  sb    $t0, 0x139($sp)
@@ -10314,7 +10314,7 @@ spectrum_op_CB_26:
 /* 10FF18 7F0DB3E8 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 10FF1C 7F0DB3EC 14200007 */  bnez  $at, .L7F0DB40C
 /* 10FF20 7F0DB3F0 01808825 */   move  $s1, $t4
-/* 10FF24 7F0DB3F4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 10FF24 7F0DB3F4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 10FF28 7F0DB3F8 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 10FF2C 7F0DB3FC 01405825 */  move  $t3, $t2
 /* 10FF30 7F0DB400 01185021 */  addu  $t2, $t0, $t8
@@ -10323,13 +10323,13 @@ spectrum_op_CB_26:
 .L7F0DB40C:
 /* 10FF3C 7F0DB40C 97A9013C */  lhu   $t1, 0x13c($sp)
 /* 10FF40 7F0DB410 97AB013C */  lhu   $t3, 0x13c($sp)
-/* 10FF44 7F0DB414 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10FF44 7F0DB414 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10FF48 7F0DB418 29215800 */  slti  $at, $t1, 0x5800
 /* 10FF4C 7F0DB41C 5420000D */  bnezl $at, .L7F0DB454
 /* 10FF50 7F0DB420 29614000 */   slti  $at, $t3, 0x4000
 /* 10FF54 7F0DB424 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10FF58 7F0DB428 93AD0139 */  lbu   $t5, 0x139($sp)
-/* 10FF5C 7F0DB42C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 10FF5C 7F0DB42C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 10FF60 7F0DB430 01C97821 */  addu  $t7, $t6, $t1
 /* 10FF64 7F0DB434 A1ED0000 */  sb    $t5, ($t7)
 /* 10FF68 7F0DB438 97A8013C */  lhu   $t0, 0x13c($sp)
@@ -10341,14 +10341,14 @@ spectrum_op_CB_26:
 /* 10FF80 7F0DB450 29614000 */  slti  $at, $t3, 0x4000
 .L7F0DB454:
 /* 10FF84 7F0DB454 14200450 */  bnez  $at, .L7F0DC598
-/* 10FF88 7F0DB458 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 10FF88 7F0DB458 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) 
 /* 10FF8C 7F0DB45C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 10FF90 7F0DB460 93AA0139 */  lbu   $t2, 0x139($sp)
 /* 10FF94 7F0DB464 240D0001 */  li    $t5, 1
 /* 10FF98 7F0DB468 01CB4821 */  addu  $t1, $t6, $t3
 /* 10FF9C 7F0DB46C A12A0000 */  sb    $t2, ($t1)
 /* 10FFA0 7F0DB470 97AF013C */  lhu   $t7, 0x13c($sp)
-/* 10FFA4 7F0DB474 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 10FFA4 7F0DB474 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 10FFA8 7F0DB478 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 10FFAC 7F0DB47C 31EC1800 */  andi  $t4, $t7, 0x1800
 /* 10FFB0 7F0DB480 000C40C3 */  sra   $t0, $t4, 3
@@ -10358,7 +10358,7 @@ spectrum_op_CB_26:
 /* 10FFC0 7F0DB490 10000441 */  b     .L7F0DC598
 /* 10FFC4 7F0DB494 A16D0000 */   sb    $t5, ($t3)
 spectrum_op_CB_27:
-/* 10FFC8 7F0DB498 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 10FFC8 7F0DB498 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 10FFCC 7F0DB49C 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 10FFD0 7F0DB4A0 001041C3 */  sra   $t0, $s0, 7
 /* 10FFD4 7F0DB4A4 00104840 */  sll   $t1, $s0, 1
@@ -10380,7 +10380,7 @@ spectrum_op_CB_28:
 /* 110010 7F0DB4E0 0012CE00 */  sll   $t9, $s2, 0x18
 /* 110014 7F0DB4E4 0019C603 */  sra   $t8, $t9, 0x18
 /* 110018 7F0DB4E8 00187043 */  sra   $t6, $t8, 1
-/* 11001C 7F0DB4EC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 11001C 7F0DB4EC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110020 7F0DB4F0 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 110024 7F0DB4F4 32490001 */  andi  $t1, $s2, 1
 /* 110028 7F0DB4F8 31D200FF */  andi  $s2, $t6, 0xff
@@ -10401,7 +10401,7 @@ spectrum_op_CB_29:
 /* 110060 7F0DB530 00136600 */  sll   $t4, $s3, 0x18
 /* 110064 7F0DB534 000C7E03 */  sra   $t7, $t4, 0x18
 /* 110068 7F0DB538 000F5843 */  sra   $t3, $t7, 1
-/* 11006C 7F0DB53C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 11006C 7F0DB53C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110070 7F0DB540 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 110074 7F0DB544 326E0001 */  andi  $t6, $s3, 1
 /* 110078 7F0DB548 317300FF */  andi  $s3, $t3, 0xff
@@ -10422,7 +10422,7 @@ spectrum_op_CB_2A:
 /* 1100B0 7F0DB580 00146E00 */  sll   $t5, $s4, 0x18
 /* 1100B4 7F0DB584 000D5603 */  sra   $t2, $t5, 0x18
 /* 1100B8 7F0DB588 000AC843 */  sra   $t9, $t2, 1
-/* 1100BC 7F0DB58C 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 1100BC 7F0DB58C 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1100C0 7F0DB590 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 1100C4 7F0DB594 328B0001 */  andi  $t3, $s4, 1
 /* 1100C8 7F0DB598 333400FF */  andi  $s4, $t9, 0xff
@@ -10443,7 +10443,7 @@ spectrum_op_CB_2B:
 /* 110100 7F0DB5D0 00154600 */  sll   $t0, $s5, 0x18
 /* 110104 7F0DB5D4 0008C603 */  sra   $t8, $t0, 0x18
 /* 110108 7F0DB5D8 00186043 */  sra   $t4, $t8, 1
-/* 11010C 7F0DB5DC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 11010C 7F0DB5DC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110110 7F0DB5E0 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 110114 7F0DB5E4 32B90001 */  andi  $t9, $s5, 1
 /* 110118 7F0DB5E8 319500FF */  andi  $s5, $t4, 0xff
@@ -10464,7 +10464,7 @@ spectrum_op_CB_2C:
 /* 110150 7F0DB620 00164E00 */  sll   $t1, $s6, 0x18
 /* 110154 7F0DB624 00097E03 */  sra   $t7, $t1, 0x18
 /* 110158 7F0DB628 000F6843 */  sra   $t5, $t7, 1
-/* 11015C 7F0DB62C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 11015C 7F0DB62C 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110160 7F0DB630 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 110164 7F0DB634 32CC0001 */  andi  $t4, $s6, 1
 /* 110168 7F0DB638 31B600FF */  andi  $s6, $t5, 0xff
@@ -10485,7 +10485,7 @@ spectrum_op_CB_2D:
 /* 1101A0 7F0DB670 00177600 */  sll   $t6, $s7, 0x18
 /* 1101A4 7F0DB674 000E5603 */  sra   $t2, $t6, 0x18
 /* 1101A8 7F0DB678 000A4043 */  sra   $t0, $t2, 1
-/* 1101AC 7F0DB67C 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 1101AC 7F0DB67C 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1101B0 7F0DB680 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 1101B4 7F0DB684 32ED0001 */  andi  $t5, $s7, 1
 /* 1101B8 7F0DB688 311700FF */  andi  $s7, $t0, 0xff
@@ -10504,7 +10504,7 @@ spectrum_op_CB_2D:
 /* 1101EC 7F0DB6BC 01E08825 */   move  $s1, $t7
 spectrum_op_CB_2E:
 /* 1101F0 7F0DB6C0 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 1101F4 7F0DB6C4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 1101F4 7F0DB6C4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 1101F8 7F0DB6C8 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1101FC 7F0DB6CC 97B8013C */  lhu   $t8, 0x13c($sp)
 /* 110200 7F0DB6D0 25AB0007 */  addiu $t3, $t5, 7
@@ -10516,7 +10516,7 @@ spectrum_op_CB_2E:
 /* 110218 7F0DB6E8 31180001 */  andi  $t8, $t0, 1
 /* 11021C 7F0DB6EC A3B80112 */  sb    $t8, 0x112($sp)
 /* 110220 7F0DB6F0 000E7843 */  sra   $t7, $t6, 1
-/* 110224 7F0DB6F4 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) # $t6, 0x8009
+/* 110224 7F0DB6F4 3C0E8009 */  lui   $t6, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110228 7F0DB6F8 8DCEE334 */  lw    $t6, %lo(ptr_pc_keyboard_table_alloc)($t6)
 /* 11022C 7F0DB6FC 31ED00FF */  andi  $t5, $t7, 0xff
 /* 110230 7F0DB700 2DAB0001 */  sltiu $t3, $t5, 1
@@ -10534,7 +10534,7 @@ spectrum_op_CB_2E:
 /* 110260 7F0DB730 29615B00 */  slti  $at, $t3, 0x5b00
 /* 110264 7F0DB734 14200007 */  bnez  $at, .L7F0DB754
 /* 110268 7F0DB738 01808825 */   move  $s1, $t4
-/* 11026C 7F0DB73C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 11026C 7F0DB73C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 110270 7F0DB740 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 110274 7F0DB744 01E05025 */  move  $t2, $t7
 /* 110278 7F0DB748 010B7821 */  addu  $t7, $t0, $t3
@@ -10543,13 +10543,13 @@ spectrum_op_CB_2E:
 .L7F0DB754:
 /* 110284 7F0DB754 97AD013C */  lhu   $t5, 0x13c($sp)
 /* 110288 7F0DB758 97AA013C */  lhu   $t2, 0x13c($sp)
-/* 11028C 7F0DB75C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 11028C 7F0DB75C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 110290 7F0DB760 29A15800 */  slti  $at, $t5, 0x5800
 /* 110294 7F0DB764 5420000D */  bnezl $at, .L7F0DB79C
 /* 110298 7F0DB768 29414000 */   slti  $at, $t2, 0x4000
 /* 11029C 7F0DB76C 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1102A0 7F0DB770 93AE0139 */  lbu   $t6, 0x139($sp)
-/* 1102A4 7F0DB774 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 1102A4 7F0DB774 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 1102A8 7F0DB778 012DC021 */  addu  $t8, $t1, $t5
 /* 1102AC 7F0DB77C A30E0000 */  sb    $t6, ($t8)
 /* 1102B0 7F0DB780 97A8013C */  lhu   $t0, 0x13c($sp)
@@ -10561,14 +10561,14 @@ spectrum_op_CB_2E:
 /* 1102C8 7F0DB798 29414000 */  slti  $at, $t2, 0x4000
 .L7F0DB79C:
 /* 1102CC 7F0DB79C 1420037E */  bnez  $at, .L7F0DC598
-/* 1102D0 7F0DB7A0 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 1102D0 7F0DB7A0 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) 
 /* 1102D4 7F0DB7A4 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1102D8 7F0DB7A8 93AF0139 */  lbu   $t7, 0x139($sp)
 /* 1102DC 7F0DB7AC 240E0001 */  li    $t6, 1
 /* 1102E0 7F0DB7B0 012A6821 */  addu  $t5, $t1, $t2
 /* 1102E4 7F0DB7B4 A1AF0000 */  sb    $t7, ($t5)
 /* 1102E8 7F0DB7B8 97B8013C */  lhu   $t8, 0x13c($sp)
-/* 1102EC 7F0DB7BC 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 1102EC 7F0DB7BC 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 1102F0 7F0DB7C0 8D29E32C */  lw    $t1, %lo(ptr_300alloc)($t1)
 /* 1102F4 7F0DB7C4 330C1800 */  andi  $t4, $t8, 0x1800
 /* 1102F8 7F0DB7C8 000C40C3 */  sra   $t0, $t4, 3
@@ -10581,7 +10581,7 @@ spectrum_op_CB_2F:
 /* 110310 7F0DB7E0 00106E00 */  sll   $t5, $s0, 0x18
 /* 110314 7F0DB7E4 000D6603 */  sra   $t4, $t5, 0x18
 /* 110318 7F0DB7E8 000CC043 */  sra   $t8, $t4, 1
-/* 11031C 7F0DB7EC 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 11031C 7F0DB7EC 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110320 7F0DB7F0 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 110324 7F0DB7F4 32090001 */  andi  $t1, $s0, 1
 /* 110328 7F0DB7F8 331000FF */  andi  $s0, $t8, 0xff
@@ -10601,7 +10601,7 @@ spectrum_op_CB_2F:
 spectrum_op_CB_30:
 /* 110360 7F0DB830 00125840 */  sll   $t3, $s2, 1
 /* 110364 7F0DB834 356A0001 */  ori   $t2, $t3, 1
-/* 110368 7F0DB838 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 110368 7F0DB838 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11036C 7F0DB83C 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 110370 7F0DB840 001261C3 */  sra   $t4, $s2, 7
 /* 110374 7F0DB844 315200FF */  andi  $s2, $t2, 0xff
@@ -10621,7 +10621,7 @@ spectrum_op_CB_30:
 spectrum_op_CB_31:
 /* 1103AC 7F0DB87C 0013C040 */  sll   $t8, $s3, 1
 /* 1103B0 7F0DB880 370D0001 */  ori   $t5, $t8, 1
-/* 1103B4 7F0DB884 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 1103B4 7F0DB884 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1103B8 7F0DB888 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 1103BC 7F0DB88C 001359C3 */  sra   $t3, $s3, 7
 /* 1103C0 7F0DB890 31B300FF */  andi  $s3, $t5, 0xff
@@ -10641,7 +10641,7 @@ spectrum_op_CB_31:
 spectrum_op_CB_32:
 /* 1103F8 7F0DB8C8 00145040 */  sll   $t2, $s4, 1
 /* 1103FC 7F0DB8CC 35490001 */  ori   $t1, $t2, 1
-/* 110400 7F0DB8D0 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 110400 7F0DB8D0 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110404 7F0DB8D4 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 110408 7F0DB8D8 0014C1C3 */  sra   $t8, $s4, 7
 /* 11040C 7F0DB8DC 313400FF */  andi  $s4, $t1, 0xff
@@ -10661,7 +10661,7 @@ spectrum_op_CB_32:
 spectrum_op_CB_33:
 /* 110444 7F0DB914 00156840 */  sll   $t5, $s5, 1
 /* 110448 7F0DB918 35AC0001 */  ori   $t4, $t5, 1
-/* 11044C 7F0DB91C 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 11044C 7F0DB91C 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110450 7F0DB920 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 110454 7F0DB924 001551C3 */  sra   $t2, $s5, 7
 /* 110458 7F0DB928 319500FF */  andi  $s5, $t4, 0xff
@@ -10681,7 +10681,7 @@ spectrum_op_CB_33:
 spectrum_op_CB_34:
 /* 110490 7F0DB960 00164840 */  sll   $t1, $s6, 1
 /* 110494 7F0DB964 352B0001 */  ori   $t3, $t1, 1
-/* 110498 7F0DB968 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 110498 7F0DB968 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11049C 7F0DB96C 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 1104A0 7F0DB970 001669C3 */  sra   $t5, $s6, 7
 /* 1104A4 7F0DB974 317600FF */  andi  $s6, $t3, 0xff
@@ -10701,7 +10701,7 @@ spectrum_op_CB_34:
 spectrum_op_CB_35:
 /* 1104DC 7F0DB9AC 00176040 */  sll   $t4, $s7, 1
 /* 1104E0 7F0DB9B0 35980001 */  ori   $t8, $t4, 1
-/* 1104E4 7F0DB9B4 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 1104E4 7F0DB9B4 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1104E8 7F0DB9B8 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 1104EC 7F0DB9BC 001749C3 */  sra   $t1, $s7, 7
 /* 1104F0 7F0DB9C0 331700FF */  andi  $s7, $t8, 0xff
@@ -10720,7 +10720,7 @@ spectrum_op_CB_35:
 /* 110524 7F0DB9F4 03208825 */   move  $s1, $t9
 spectrum_op_CB_36:
 /* 110528 7F0DB9F8 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 11052C 7F0DB9FC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 11052C 7F0DB9FC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 110530 7F0DBA00 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 110534 7F0DBA04 97AA013C */  lhu   $t2, 0x13c($sp)
 /* 110538 7F0DBA08 252B0007 */  addiu $t3, $t1, 7
@@ -10730,7 +10730,7 @@ spectrum_op_CB_36:
 /* 110548 7F0DBA18 319800FF */  andi  $t8, $t4, 0xff
 /* 11054C 7F0DBA1C 00186840 */  sll   $t5, $t8, 1
 /* 110550 7F0DBA20 35B90001 */  ori   $t9, $t5, 1
-/* 110554 7F0DBA24 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 110554 7F0DBA24 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110558 7F0DBA28 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 11055C 7F0DBA2C 332900FF */  andi  $t1, $t9, 0xff
 /* 110560 7F0DBA30 001851C3 */  sra   $t2, $t8, 7
@@ -10751,7 +10751,7 @@ spectrum_op_CB_36:
 /* 11059C 7F0DBA6C 29615B00 */  slti  $at, $t3, 0x5b00
 /* 1105A0 7F0DBA70 14200007 */  bnez  $at, .L7F0DBA90
 /* 1105A4 7F0DBA74 01E08825 */   move  $s1, $t7
-/* 1105A8 7F0DBA78 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1105A8 7F0DBA78 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1105AC 7F0DBA7C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1105B0 7F0DBA80 03206025 */  move  $t4, $t9
 /* 1105B4 7F0DBA84 010BC821 */  addu  $t9, $t0, $t3
@@ -10760,13 +10760,13 @@ spectrum_op_CB_36:
 .L7F0DBA90:
 /* 1105C0 7F0DBA90 97A9013C */  lhu   $t1, 0x13c($sp)
 /* 1105C4 7F0DBA94 97AC013C */  lhu   $t4, 0x13c($sp)
-/* 1105C8 7F0DBA98 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1105C8 7F0DBA98 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1105CC 7F0DBA9C 29215800 */  slti  $at, $t1, 0x5800
 /* 1105D0 7F0DBAA0 5420000D */  bnezl $at, .L7F0DBAD8
 /* 1105D4 7F0DBAA4 29814000 */   slti  $at, $t4, 0x4000
 /* 1105D8 7F0DBAA8 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1105DC 7F0DBAAC 93AD0139 */  lbu   $t5, 0x139($sp)
-/* 1105E0 7F0DBAB0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 1105E0 7F0DBAB0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 1105E4 7F0DBAB4 01C95021 */  addu  $t2, $t6, $t1
 /* 1105E8 7F0DBAB8 A14D0000 */  sb    $t5, ($t2)
 /* 1105EC 7F0DBABC 97A8013C */  lhu   $t0, 0x13c($sp)
@@ -10778,14 +10778,14 @@ spectrum_op_CB_36:
 /* 110604 7F0DBAD4 29814000 */  slti  $at, $t4, 0x4000
 .L7F0DBAD8:
 /* 110608 7F0DBAD8 142002AF */  bnez  $at, .L7F0DC598
-/* 11060C 7F0DBADC 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 11060C 7F0DBADC 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) 
 /* 110610 7F0DBAE0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 110614 7F0DBAE4 93B90139 */  lbu   $t9, 0x139($sp)
 /* 110618 7F0DBAE8 240D0001 */  li    $t5, 1
 /* 11061C 7F0DBAEC 01CC4821 */  addu  $t1, $t6, $t4
 /* 110620 7F0DBAF0 A1390000 */  sb    $t9, ($t1)
 /* 110624 7F0DBAF4 97AA013C */  lhu   $t2, 0x13c($sp)
-/* 110628 7F0DBAF8 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 110628 7F0DBAF8 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 11062C 7F0DBAFC 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 110630 7F0DBB00 314F1800 */  andi  $t7, $t2, 0x1800
 /* 110634 7F0DBB04 000F40C3 */  sra   $t0, $t7, 3
@@ -10797,7 +10797,7 @@ spectrum_op_CB_36:
 spectrum_op_CB_37:
 /* 11064C 7F0DBB1C 00104840 */  sll   $t1, $s0, 1
 /* 110650 7F0DBB20 352F0001 */  ori   $t7, $t1, 1
-/* 110654 7F0DBB24 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 110654 7F0DBB24 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110658 7F0DBB28 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 11065C 7F0DBB2C 0010C1C3 */  sra   $t8, $s0, 7
 /* 110660 7F0DBB30 31F000FF */  andi  $s0, $t7, 0xff
@@ -10815,7 +10815,7 @@ spectrum_op_CB_37:
 /* 110690 7F0DBB60 1000028D */  b     .L7F0DC598
 /* 110694 7F0DBB64 01008825 */   move  $s1, $t0
 spectrum_op_CB_38:
-/* 110698 7F0DBB68 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 110698 7F0DBB68 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11069C 7F0DBB6C 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 1106A0 7F0DBB70 324C0001 */  andi  $t4, $s2, 1
 /* 1106A4 7F0DBB74 00127042 */  srl   $t6, $s2, 1
@@ -10834,7 +10834,7 @@ spectrum_op_CB_38:
 /* 1106D8 7F0DBBA8 1000027B */  b     .L7F0DC598
 /* 1106DC 7F0DBBAC 01608825 */   move  $s1, $t3
 spectrum_op_CB_39:
-/* 1106E0 7F0DBBB0 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 1106E0 7F0DBBB0 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1106E4 7F0DBBB4 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 1106E8 7F0DBBB8 32790001 */  andi  $t9, $s3, 1
 /* 1106EC 7F0DBBBC 00134842 */  srl   $t1, $s3, 1
@@ -10853,7 +10853,7 @@ spectrum_op_CB_39:
 /* 110720 7F0DBBF0 10000269 */  b     .L7F0DC598
 /* 110724 7F0DBBF4 01E08825 */   move  $s1, $t7
 spectrum_op_CB_3A:
-/* 110728 7F0DBBF8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 110728 7F0DBBF8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11072C 7F0DBBFC 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 110730 7F0DBC00 32880001 */  andi  $t0, $s4, 1
 /* 110734 7F0DBC04 0014C042 */  srl   $t8, $s4, 1
@@ -10872,7 +10872,7 @@ spectrum_op_CB_3A:
 /* 110768 7F0DBC38 10000257 */  b     .L7F0DC598
 /* 11076C 7F0DBC3C 01C08825 */   move  $s1, $t6
 spectrum_op_CB_3B:
-/* 110770 7F0DBC40 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 110770 7F0DBC40 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110774 7F0DBC44 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 110778 7F0DBC48 32AB0001 */  andi  $t3, $s5, 1
 /* 11077C 7F0DBC4C 00156042 */  srl   $t4, $s5, 1
@@ -10891,7 +10891,7 @@ spectrum_op_CB_3B:
 /* 1107B0 7F0DBC80 10000245 */  b     .L7F0DC598
 /* 1107B4 7F0DBC84 01208825 */   move  $s1, $t1
 spectrum_op_CB_3C:
-/* 1107B8 7F0DBC88 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 1107B8 7F0DBC88 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1107BC 7F0DBC8C 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 1107C0 7F0DBC90 32CF0001 */  andi  $t7, $s6, 1
 /* 1107C4 7F0DBC94 0016C842 */  srl   $t9, $s6, 1
@@ -10910,7 +10910,7 @@ spectrum_op_CB_3C:
 /* 1107F8 7F0DBCC8 10000233 */  b     .L7F0DC598
 /* 1107FC 7F0DBCCC 03008825 */   move  $s1, $t8
 spectrum_op_CB_3D:
-/* 110800 7F0DBCD0 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 110800 7F0DBCD0 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110804 7F0DBCD4 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 110808 7F0DBCD8 32EE0001 */  andi  $t6, $s7, 1
 /* 11080C 7F0DBCDC 00174042 */  srl   $t0, $s7, 1
@@ -10930,7 +10930,7 @@ spectrum_op_CB_3D:
 /* 110844 7F0DBD14 01808825 */   move  $s1, $t4
 spectrum_op_CB_3E:
 /* 110848 7F0DBD18 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 11084C 7F0DBD1C 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 11084C 7F0DBD1C 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 110850 7F0DBD20 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 110854 7F0DBD24 97AD013C */  lhu   $t5, 0x13c($sp)
 /* 110858 7F0DBD28 25CB0007 */  addiu $t3, $t6, 7
@@ -10940,7 +10940,7 @@ spectrum_op_CB_3E:
 /* 110868 7F0DBD38 31E800FF */  andi  $t0, $t7, 0xff
 /* 11086C 7F0DBD3C 310B0001 */  andi  $t3, $t0, 1
 /* 110870 7F0DBD40 0008C042 */  srl   $t8, $t0, 1
-/* 110874 7F0DBD44 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 110874 7F0DBD44 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 110878 7F0DBD48 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 11087C 7F0DBD4C 330C00FF */  andi  $t4, $t8, 0xff
 /* 110880 7F0DBD50 A3AF0139 */  sb    $t7, 0x139($sp)
@@ -10960,7 +10960,7 @@ spectrum_op_CB_3E:
 /* 1108B8 7F0DBD88 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 1108BC 7F0DBD8C 14200007 */  bnez  $at, .L7F0DBDAC
 /* 1108C0 7F0DBD90 03208825 */   move  $s1, $t9
-/* 1108C4 7F0DBD94 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1108C4 7F0DBD94 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1108C8 7F0DBD98 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1108CC 7F0DBD9C 03004825 */  move  $t1, $t8
 /* 1108D0 7F0DBDA0 01EEC021 */  addu  $t8, $t7, $t6
@@ -10969,13 +10969,13 @@ spectrum_op_CB_3E:
 .L7F0DBDAC:
 /* 1108DC 7F0DBDAC 97AC013C */  lhu   $t4, 0x13c($sp)
 /* 1108E0 7F0DBDB0 97A9013C */  lhu   $t1, 0x13c($sp)
-/* 1108E4 7F0DBDB4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1108E4 7F0DBDB4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1108E8 7F0DBDB8 29815800 */  slti  $at, $t4, 0x5800
 /* 1108EC 7F0DBDBC 5420000D */  bnezl $at, .L7F0DBDF4
 /* 1108F0 7F0DBDC0 29214000 */   slti  $at, $t1, 0x4000
 /* 1108F4 7F0DBDC4 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1108F8 7F0DBDC8 93A80139 */  lbu   $t0, 0x139($sp)
-/* 1108FC 7F0DBDCC 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 1108FC 7F0DBDCC 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 110900 7F0DBDD0 01AC5821 */  addu  $t3, $t5, $t4
 /* 110904 7F0DBDD4 A1680000 */  sb    $t0, ($t3)
 /* 110908 7F0DBDD8 97AF013C */  lhu   $t7, 0x13c($sp)
@@ -10987,14 +10987,14 @@ spectrum_op_CB_3E:
 /* 110920 7F0DBDF0 29214000 */  slti  $at, $t1, 0x4000
 .L7F0DBDF4:
 /* 110924 7F0DBDF4 142001E8 */  bnez  $at, .L7F0DC598
-/* 110928 7F0DBDF8 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 110928 7F0DBDF8 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) 
 /* 11092C 7F0DBDFC 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 110930 7F0DBE00 93B80139 */  lbu   $t8, 0x139($sp)
 /* 110934 7F0DBE04 24080001 */  li    $t0, 1
 /* 110938 7F0DBE08 01A96021 */  addu  $t4, $t5, $t1
 /* 11093C 7F0DBE0C A1980000 */  sb    $t8, ($t4)
 /* 110940 7F0DBE10 97AB013C */  lhu   $t3, 0x13c($sp)
-/* 110944 7F0DBE14 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 110944 7F0DBE14 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 110948 7F0DBE18 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 11094C 7F0DBE1C 31791800 */  andi  $t9, $t3, 0x1800
 /* 110950 7F0DBE20 001978C3 */  sra   $t7, $t9, 3
@@ -11004,7 +11004,7 @@ spectrum_op_CB_3E:
 /* 110960 7F0DBE30 100001D9 */  b     .L7F0DC598
 /* 110964 7F0DBE34 A1280000 */   sb    $t0, ($t1)
 spectrum_op_CB_3F:
-/* 110968 7F0DBE38 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 110968 7F0DBE38 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11096C 7F0DBE3C 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 110970 7F0DBE40 320F0001 */  andi  $t7, $s0, 1
 /* 110974 7F0DBE44 00106042 */  srl   $t4, $s0, 1
@@ -11191,7 +11191,7 @@ spectrum_op_BIT_x_L:
 /* 110BF4 7F0DC0C4 03008825 */   move  $s1, $t8
 spectrum_op_BIT_x_HL:
 /* 110BF8 7F0DC0C8 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 110BFC 7F0DC0CC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 110BFC 7F0DC0CC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 110C00 7F0DC0D0 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 110C04 7F0DC0D4 97B9013C */  lhu   $t9, 0x13c($sp)
 /* 110C08 7F0DC0D8 256C0004 */  addiu $t4, $t3, 4
@@ -11222,7 +11222,7 @@ spectrum_op_BIT_x_HL:
 /* 110C64 7F0DC134 29015B00 */  slti  $at, $t0, 0x5b00
 /* 110C68 7F0DC138 14200007 */  bnez  $at, .L7F0DC158
 /* 110C6C 7F0DC13C 01C08825 */   move  $s1, $t6
-/* 110C70 7F0DC140 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 110C70 7F0DC140 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 110C74 7F0DC144 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 110C78 7F0DC148 93B80139 */  lbu   $t8, 0x139($sp)
 /* 110C7C 7F0DC14C 01686021 */  addu  $t4, $t3, $t0
@@ -11231,13 +11231,13 @@ spectrum_op_BIT_x_HL:
 .L7F0DC158:
 /* 110C88 7F0DC158 97B9013C */  lhu   $t9, 0x13c($sp)
 /* 110C8C 7F0DC15C 97B8013C */  lhu   $t8, 0x13c($sp)
-/* 110C90 7F0DC160 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 110C90 7F0DC160 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 110C94 7F0DC164 2B215800 */  slti  $at, $t9, 0x5800
 /* 110C98 7F0DC168 5420000D */  bnezl $at, .L7F0DC1A0
 /* 110C9C 7F0DC16C 2B014000 */   slti  $at, $t8, 0x4000
 /* 110CA0 7F0DC170 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 110CA4 7F0DC174 93A90139 */  lbu   $t1, 0x139($sp)
-/* 110CA8 7F0DC178 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 110CA8 7F0DC178 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 110CAC 7F0DC17C 01B95021 */  addu  $t2, $t5, $t9
 /* 110CB0 7F0DC180 A1490000 */  sb    $t1, ($t2)
 /* 110CB4 7F0DC184 97AB013C */  lhu   $t3, 0x13c($sp)
@@ -11249,14 +11249,14 @@ spectrum_op_BIT_x_HL:
 /* 110CCC 7F0DC19C 2B014000 */  slti  $at, $t8, 0x4000
 .L7F0DC1A0:
 /* 110CD0 7F0DC1A0 142000FD */  bnez  $at, .L7F0DC598
-/* 110CD4 7F0DC1A4 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 110CD4 7F0DC1A4 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) 
 /* 110CD8 7F0DC1A8 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 110CDC 7F0DC1AC 93AC0139 */  lbu   $t4, 0x139($sp)
 /* 110CE0 7F0DC1B0 24090001 */  li    $t1, 1
 /* 110CE4 7F0DC1B4 01B8C821 */  addu  $t9, $t5, $t8
 /* 110CE8 7F0DC1B8 A32C0000 */  sb    $t4, ($t9)
 /* 110CEC 7F0DC1BC 97AA013C */  lhu   $t2, 0x13c($sp)
-/* 110CF0 7F0DC1C0 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 110CF0 7F0DC1C0 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 110CF4 7F0DC1C4 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 110CF8 7F0DC1C8 314E1800 */  andi  $t6, $t2, 0x1800
 /* 110CFC 7F0DC1CC 000E58C3 */  sra   $t3, $t6, 3
@@ -11342,7 +11342,7 @@ spectrum_op_RES_x_L:
 /* 110E18 7F0DC2E8 0320B825 */   move  $s7, $t9
 spectrum_op_RES_x_HL:
 /* 110E1C 7F0DC2EC 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 110E20 7F0DC2F0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 110E20 7F0DC2F0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 110E24 7F0DC2F4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 110E28 7F0DC2F8 97AA013C */  lhu   $t2, 0x13c($sp)
 /* 110E2C 7F0DC2FC 25CC0004 */  addiu $t4, $t6, 4
@@ -11359,7 +11359,7 @@ spectrum_op_RES_x_HL:
 /* 110E58 7F0DC328 29815B00 */  slti  $at, $t4, 0x5b00
 /* 110E5C 7F0DC32C 14200006 */  bnez  $at, .L7F0DC348
 /* 110E60 7F0DC330 A3AE0139 */   sb    $t6, 0x139($sp)
-/* 110E64 7F0DC334 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 110E64 7F0DC334 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 110E68 7F0DC338 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 110E6C 7F0DC33C 016C7821 */  addu  $t7, $t3, $t4
 /* 110E70 7F0DC340 10000095 */  b     .L7F0DC598
@@ -11367,13 +11367,13 @@ spectrum_op_RES_x_HL:
 .L7F0DC348:
 /* 110E78 7F0DC348 97A9013C */  lhu   $t1, 0x13c($sp)
 /* 110E7C 7F0DC34C 97AA013C */  lhu   $t2, 0x13c($sp)
-/* 110E80 7F0DC350 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 110E80 7F0DC350 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 110E84 7F0DC354 29215800 */  slti  $at, $t1, 0x5800
 /* 110E88 7F0DC358 5420000D */  bnezl $at, .L7F0DC390
 /* 110E8C 7F0DC35C 29414000 */   slti  $at, $t2, 0x4000
 /* 110E90 7F0DC360 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 110E94 7F0DC364 93AD0139 */  lbu   $t5, 0x139($sp)
-/* 110E98 7F0DC368 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 110E98 7F0DC368 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 110E9C 7F0DC36C 03094021 */  addu  $t0, $t8, $t1
 /* 110EA0 7F0DC370 A10D0000 */  sb    $t5, ($t0)
 /* 110EA4 7F0DC374 97AB013C */  lhu   $t3, 0x13c($sp)
@@ -11385,14 +11385,14 @@ spectrum_op_RES_x_HL:
 /* 110EBC 7F0DC38C 29414000 */  slti  $at, $t2, 0x4000
 .L7F0DC390:
 /* 110EC0 7F0DC390 14200081 */  bnez  $at, .L7F0DC598
-/* 110EC4 7F0DC394 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 110EC4 7F0DC394 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 110EC8 7F0DC398 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 110ECC 7F0DC39C 93AF0139 */  lbu   $t7, 0x139($sp)
 /* 110ED0 7F0DC3A0 240D0001 */  li    $t5, 1
 /* 110ED4 7F0DC3A4 030A4821 */  addu  $t1, $t8, $t2
 /* 110ED8 7F0DC3A8 A12F0000 */  sb    $t7, ($t1)
 /* 110EDC 7F0DC3AC 97A8013C */  lhu   $t0, 0x13c($sp)
-/* 110EE0 7F0DC3B0 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 110EE0 7F0DC3B0 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 110EE4 7F0DC3B4 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 110EE8 7F0DC3B8 310E1800 */  andi  $t6, $t0, 0x1800
 /* 110EEC 7F0DC3BC 000E58C3 */  sra   $t3, $t6, 3
@@ -11460,7 +11460,7 @@ spectrum_op_SET_x_L:
 /* 110FC8 7F0DC498 0180B825 */   move  $s7, $t4
 spectrum_op_SET_x_HL:
 /* 110FCC 7F0DC49C 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 110FD0 7F0DC4A0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 110FD0 7F0DC4A0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 110FD4 7F0DC4A4 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 110FD8 7F0DC4A8 97AE013C */  lhu   $t6, 0x13c($sp)
 /* 110FDC 7F0DC4AC 252A0004 */  addiu $t2, $t1, 4
@@ -11476,7 +11476,7 @@ spectrum_op_SET_x_HL:
 /* 111004 7F0DC4D4 29215B00 */  slti  $at, $t1, 0x5b00
 /* 111008 7F0DC4D8 14200006 */  bnez  $at, .L7F0DC4F4
 /* 11100C 7F0DC4DC A3AC0139 */   sb    $t4, 0x139($sp)
-/* 111010 7F0DC4E0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 111010 7F0DC4E0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 111014 7F0DC4E4 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 111018 7F0DC4E8 01C97821 */  addu  $t7, $t6, $t1
 /* 11101C 7F0DC4EC 1000002A */  b     .L7F0DC598
@@ -11484,13 +11484,13 @@ spectrum_op_SET_x_HL:
 .L7F0DC4F4:
 /* 111024 7F0DC4F4 97AB013C */  lhu   $t3, 0x13c($sp)
 /* 111028 7F0DC4F8 97AA013C */  lhu   $t2, 0x13c($sp)
-/* 11102C 7F0DC4FC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 11102C 7F0DC4FC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 111030 7F0DC500 29615800 */  slti  $at, $t3, 0x5800
 /* 111034 7F0DC504 5420000D */  bnezl $at, .L7F0DC53C
 /* 111038 7F0DC508 29414000 */   slti  $at, $t2, 0x4000
 /* 11103C 7F0DC50C 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 111040 7F0DC510 93B80139 */  lbu   $t8, 0x139($sp)
-/* 111044 7F0DC514 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 111044 7F0DC514 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 111048 7F0DC518 032B4021 */  addu  $t0, $t9, $t3
 /* 11104C 7F0DC51C A1180000 */  sb    $t8, ($t0)
 /* 111050 7F0DC520 97AE013C */  lhu   $t6, 0x13c($sp)
@@ -11502,14 +11502,14 @@ spectrum_op_SET_x_HL:
 /* 111068 7F0DC538 29414000 */  slti  $at, $t2, 0x4000
 .L7F0DC53C:
 /* 11106C 7F0DC53C 14200016 */  bnez  $at, .L7F0DC598
-/* 111070 7F0DC540 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 111070 7F0DC540 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) 
 /* 111074 7F0DC544 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 111078 7F0DC548 93AF0139 */  lbu   $t7, 0x139($sp)
 /* 11107C 7F0DC54C 24180001 */  li    $t8, 1
 /* 111080 7F0DC550 032A5821 */  addu  $t3, $t9, $t2
 /* 111084 7F0DC554 A16F0000 */  sb    $t7, ($t3)
 /* 111088 7F0DC558 97A8013C */  lhu   $t0, 0x13c($sp)
-/* 11108C 7F0DC55C 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 11108C 7F0DC55C 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 111090 7F0DC560 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 111094 7F0DC564 310C1800 */  andi  $t4, $t0, 0x1800
 /* 111098 7F0DC568 000C70C3 */  sra   $t6, $t4, 3
@@ -11573,7 +11573,7 @@ spectrum_op_CC:
 /* 111154 7F0DC624 29015B00 */  slti  $at, $t0, 0x5b00
 /* 111158 7F0DC628 14200008 */  bnez  $at, .L7F0DC64C
 /* 11115C 7F0DC62C A7AC0292 */   sh    $t4, 0x292($sp)
-/* 111160 7F0DC630 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 111160 7F0DC630 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 111164 7F0DC634 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 111168 7F0DC638 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 11116C 7F0DC63C 03284821 */  addu  $t1, $t9, $t0
@@ -11586,10 +11586,10 @@ spectrum_op_CC:
 /* 111184 7F0DC654 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 111188 7F0DC658 2B015800 */  slti  $at, $t8, 0x5800
 /* 11118C 7F0DC65C 1420000C */  bnez  $at, .L7F0DC690
-/* 111190 7F0DC660 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 111190 7F0DC660 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 111194 7F0DC664 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 111198 7F0DC668 254B0002 */  addiu $t3, $t2, 2
-/* 11119C 7F0DC66C 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 11119C 7F0DC66C 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 1111A0 7F0DC670 01F86021 */  addu  $t4, $t7, $t8
 /* 1111A4 7F0DC674 A18B0000 */  sb    $t3, ($t4)
 /* 1111A8 7F0DC678 97A80292 */  lhu   $t0, 0x292($sp)
@@ -11602,14 +11602,14 @@ spectrum_op_CC:
 /* 1111C0 7F0DC690 29214000 */  slti  $at, $t1, 0x4000
 /* 1111C4 7F0DC694 14200010 */  bnez  $at, .L7F0DC6D8
 /* 1111C8 7F0DC698 97AA0298 */   lhu   $t2, 0x298($sp)
-/* 1111CC 7F0DC69C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1111CC 7F0DC69C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1111D0 7F0DC6A0 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 1111D4 7F0DC6A4 254F0002 */  addiu $t7, $t2, 2
 /* 1111D8 7F0DC6A8 240C0001 */  li    $t4, 1
 /* 1111DC 7F0DC6AC 03095821 */  addu  $t3, $t8, $t1
 /* 1111E0 7F0DC6B0 A16F0000 */  sb    $t7, ($t3)
 /* 1111E4 7F0DC6B4 97B90292 */  lhu   $t9, 0x292($sp)
-/* 1111E8 7F0DC6B8 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 1111E8 7F0DC6B8 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 1111EC 7F0DC6BC 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 1111F0 7F0DC6C0 33281800 */  andi  $t0, $t9, 0x1800
 /* 1111F4 7F0DC6C4 000870C3 */  sra   $t6, $t0, 3
@@ -11625,7 +11625,7 @@ spectrum_op_CC:
 /* 111218 7F0DC6E8 29615B00 */  slti  $at, $t3, 0x5b00
 /* 11121C 7F0DC6EC 14200008 */  bnez  $at, .L7F0DC710
 /* 111220 7F0DC6F0 254C0001 */   addiu $t4, $t2, 1
-/* 111224 7F0DC6F4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 111224 7F0DC6F4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 111228 7F0DC6F8 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 11122C 7F0DC6FC 25190002 */  addiu $t9, $t0, 2
 /* 111230 7F0DC700 00197203 */  sra   $t6, $t9, 8
@@ -11637,13 +11637,13 @@ spectrum_op_CC:
 /* 111244 7F0DC714 1420000F */  bnez  $at, .L7F0DC754
 /* 111248 7F0DC718 97A90292 */   lhu   $t1, 0x292($sp)
 /* 11124C 7F0DC71C 97A90298 */  lhu   $t1, 0x298($sp)
-/* 111250 7F0DC720 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 111250 7F0DC720 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 111254 7F0DC724 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 111258 7F0DC728 252B0002 */  addiu $t3, $t1, 2
 /* 11125C 7F0DC72C 000B4203 */  sra   $t0, $t3, 8
 /* 111260 7F0DC730 032A6821 */  addu  $t5, $t9, $t2
 /* 111264 7F0DC734 A1A80001 */  sb    $t0, 1($t5)
-/* 111268 7F0DC738 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 111268 7F0DC738 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 11126C 7F0DC73C 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 111270 7F0DC740 97B80292 */  lhu   $t8, 0x292($sp)
 /* 111274 7F0DC744 240F0001 */  li    $t7, 1
@@ -11655,14 +11655,14 @@ spectrum_op_CC:
 /* 111288 7F0DC758 29614000 */  slti  $at, $t3, 0x4000
 /* 11128C 7F0DC75C 14200012 */  bnez  $at, .L7F0DC7A8
 /* 111290 7F0DC760 97B90298 */   lhu   $t9, 0x298($sp)
-/* 111294 7F0DC764 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 111294 7F0DC764 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 111298 7F0DC768 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 11129C 7F0DC76C 272A0002 */  addiu $t2, $t9, 2
 /* 1112A0 7F0DC770 000A4203 */  sra   $t0, $t2, 8
 /* 1112A4 7F0DC774 01A97021 */  addu  $t6, $t5, $t1
 /* 1112A8 7F0DC778 A1C80001 */  sb    $t0, 1($t6)
 /* 1112AC 7F0DC77C 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 1112B0 7F0DC780 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 1112B0 7F0DC780 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 1112B4 7F0DC784 8D29E32C */  lw    $t1, %lo(ptr_300alloc)($t1)
 /* 1112B8 7F0DC788 25EC0001 */  addiu $t4, $t7, 1
 /* 1112BC 7F0DC78C 318B1800 */  andi  $t3, $t4, 0x1800
@@ -11673,7 +11673,7 @@ spectrum_op_CC:
 /* 1112D0 7F0DC7A0 012D4021 */  addu  $t0, $t1, $t5
 /* 1112D4 7F0DC7A4 A1180000 */  sb    $t8, ($t0)
 .L7F0DC7A8:
-/* 1112D8 7F0DC7A8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1112D8 7F0DC7A8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1112DC 7F0DC7AC 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1112E0 7F0DC7B0 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 1112E4 7F0DC7B4 01EEC821 */  addu  $t9, $t7, $t6
@@ -11702,7 +11702,7 @@ spectrum_op_CD:
 /* 111338 7F0DC808 AFB9028C */  sw    $t9, 0x28c($sp)
 /* 11133C 7F0DC80C 14200007 */  bnez  $at, .L7F0DC82C
 /* 111340 7F0DC810 A7AC0292 */   sh    $t4, 0x292($sp)
-/* 111344 7F0DC814 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 111344 7F0DC814 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 111348 7F0DC818 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 11134C 7F0DC81C 25B80002 */  addiu $t8, $t5, 2
 /* 111350 7F0DC820 01095821 */  addu  $t3, $t0, $t1
@@ -11714,10 +11714,10 @@ spectrum_op_CD:
 /* 111364 7F0DC834 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 111368 7F0DC838 29E15800 */  slti  $at, $t7, 0x5800
 /* 11136C 7F0DC83C 1420000C */  bnez  $at, .L7F0DC870
-/* 111370 7F0DC840 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 111370 7F0DC840 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) 
 /* 111374 7F0DC844 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 111378 7F0DC848 25D90002 */  addiu $t9, $t6, 2
-/* 11137C 7F0DC84C 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 11137C 7F0DC84C 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 111380 7F0DC850 014F6021 */  addu  $t4, $t2, $t7
 /* 111384 7F0DC854 A1990000 */  sb    $t9, ($t4)
 /* 111388 7F0DC858 97A90292 */  lhu   $t1, 0x292($sp)
@@ -11730,14 +11730,14 @@ spectrum_op_CD:
 /* 1113A0 7F0DC870 29614000 */  slti  $at, $t3, 0x4000
 /* 1113A4 7F0DC874 14200010 */  bnez  $at, .L7F0DC8B8
 /* 1113A8 7F0DC878 97AE0298 */   lhu   $t6, 0x298($sp)
-/* 1113AC 7F0DC87C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1113AC 7F0DC87C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1113B0 7F0DC880 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1113B4 7F0DC884 25CA0002 */  addiu $t2, $t6, 2
 /* 1113B8 7F0DC888 240C0001 */  li    $t4, 1
 /* 1113BC 7F0DC88C 01EBC821 */  addu  $t9, $t7, $t3
 /* 1113C0 7F0DC890 A32A0000 */  sb    $t2, ($t9)
 /* 1113C4 7F0DC894 97A80292 */  lhu   $t0, 0x292($sp)
-/* 1113C8 7F0DC898 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 1113C8 7F0DC898 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 1113CC 7F0DC89C 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 1113D0 7F0DC8A0 31091800 */  andi  $t1, $t0, 0x1800
 /* 1113D4 7F0DC8A4 000968C3 */  sra   $t5, $t1, 3
@@ -11753,7 +11753,7 @@ spectrum_op_CD:
 /* 1113F8 7F0DC8C8 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 1113FC 7F0DC8CC 14200008 */  bnez  $at, .L7F0DC8F0
 /* 111400 7F0DC8D0 25CC0001 */   addiu $t4, $t6, 1
-/* 111404 7F0DC8D4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 111404 7F0DC8D4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 111408 7F0DC8D8 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 11140C 7F0DC8DC 25280002 */  addiu $t0, $t1, 2
 /* 111410 7F0DC8E0 00086A03 */  sra   $t5, $t0, 8
@@ -11765,13 +11765,13 @@ spectrum_op_CD:
 /* 111424 7F0DC8F4 1420000F */  bnez  $at, .L7F0DC934
 /* 111428 7F0DC8F8 97AB0292 */   lhu   $t3, 0x292($sp)
 /* 11142C 7F0DC8FC 97AB0298 */  lhu   $t3, 0x298($sp)
-/* 111430 7F0DC900 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 111430 7F0DC900 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 111434 7F0DC904 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 111438 7F0DC908 25790002 */  addiu $t9, $t3, 2
 /* 11143C 7F0DC90C 00194A03 */  sra   $t1, $t9, 8
 /* 111440 7F0DC910 010EC021 */  addu  $t8, $t0, $t6
 /* 111444 7F0DC914 A3090001 */  sb    $t1, 1($t8)
-/* 111448 7F0DC918 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 111448 7F0DC918 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 11144C 7F0DC91C 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 111450 7F0DC920 97AF0292 */  lhu   $t7, 0x292($sp)
 /* 111454 7F0DC924 240A0001 */  li    $t2, 1
@@ -11783,14 +11783,14 @@ spectrum_op_CD:
 /* 111468 7F0DC938 2B214000 */  slti  $at, $t9, 0x4000
 /* 11146C 7F0DC93C 14200012 */  bnez  $at, .L7F0DC988
 /* 111470 7F0DC940 97A80298 */   lhu   $t0, 0x298($sp)
-/* 111474 7F0DC944 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 111474 7F0DC944 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 111478 7F0DC948 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 11147C 7F0DC94C 250E0002 */  addiu $t6, $t0, 2
 /* 111480 7F0DC950 000E4A03 */  sra   $t1, $t6, 8
 /* 111484 7F0DC954 030B6821 */  addu  $t5, $t8, $t3
 /* 111488 7F0DC958 A1A90001 */  sb    $t1, 1($t5)
 /* 11148C 7F0DC95C 97AA0292 */  lhu   $t2, 0x292($sp)
-/* 111490 7F0DC960 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 111490 7F0DC960 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 111494 7F0DC964 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 111498 7F0DC968 254C0001 */  addiu $t4, $t2, 1
 /* 11149C 7F0DC96C 31991800 */  andi  $t9, $t4, 0x1800
@@ -11801,7 +11801,7 @@ spectrum_op_CD:
 /* 1114B0 7F0DC980 01784821 */  addu  $t1, $t3, $t8
 /* 1114B4 7F0DC984 A12F0000 */  sb    $t7, ($t1)
 .L7F0DC988:
-/* 1114B8 7F0DC988 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 1114B8 7F0DC988 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 1114BC 7F0DC98C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 1114C0 7F0DC990 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 1114C4 7F0DC994 014D4021 */  addu  $t0, $t2, $t5
@@ -11814,7 +11814,7 @@ spectrum_op_CD:
 /* 1114E0 7F0DC9B0 A7B80298 */   sh    $t8, 0x298($sp)
 spectrum_op_CE:
 /* 1114E4 7F0DC9B4 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 1114E8 7F0DC9B8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 1114E8 7F0DC9B8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 1114EC 7F0DC9BC 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 1114F0 7F0DC9C0 97B90298 */  lhu   $t9, 0x298($sp)
 /* 1114F4 7F0DC9C4 25E90007 */  addiu $t1, $t7, 7
@@ -11860,7 +11860,7 @@ spectrum_op_CE:
 spectrum_op_CF:
 /* 111594 7F0DCA64 97B90292 */  lhu   $t9, 0x292($sp)
 /* 111598 7F0DCA68 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 11159C 7F0DCA6C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 11159C 7F0DCA6C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1115A0 7F0DCA70 272DFFFE */  addiu $t5, $t9, -2
 /* 1115A4 7F0DCA74 31A8FFFF */  andi  $t0, $t5, 0xffff
 /* 1115A8 7F0DCA78 29015B00 */  slti  $at, $t0, 0x5b00
@@ -11876,13 +11876,13 @@ spectrum_op_CF:
 .L7F0DCAA0:
 /* 1115D0 7F0DCAA0 97B80292 */  lhu   $t8, 0x292($sp)
 /* 1115D4 7F0DCAA4 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 1115D8 7F0DCAA8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 1115D8 7F0DCAA8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 1115DC 7F0DCAAC 2B015800 */  slti  $at, $t8, 0x5800
 /* 1115E0 7F0DCAB0 5420000D */  bnezl $at, .L7F0DCAE8
 /* 1115E4 7F0DCAB4 29814000 */   slti  $at, $t4, 0x4000
 /* 1115E8 7F0DCAB8 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 1115EC 7F0DCABC 97AF0298 */  lhu   $t7, 0x298($sp)
-/* 1115F0 7F0DCAC0 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 1115F0 7F0DCAC0 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 1115F4 7F0DCAC4 01587021 */  addu  $t6, $t2, $t8
 /* 1115F8 7F0DCAC8 A1CF0000 */  sb    $t7, ($t6)
 /* 1115FC 7F0DCACC 97AB0292 */  lhu   $t3, 0x292($sp)
@@ -11894,14 +11894,14 @@ spectrum_op_CF:
 /* 111614 7F0DCAE4 29814000 */  slti  $at, $t4, 0x4000
 .L7F0DCAE8:
 /* 111618 7F0DCAE8 1420000F */  bnez  $at, .L7F0DCB28
-/* 11161C 7F0DCAEC 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 11161C 7F0DCAEC 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) 
 /* 111620 7F0DCAF0 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 111624 7F0DCAF4 97A90298 */  lhu   $t1, 0x298($sp)
 /* 111628 7F0DCAF8 240F0001 */  li    $t7, 1
 /* 11162C 7F0DCAFC 014CC021 */  addu  $t8, $t2, $t4
 /* 111630 7F0DCB00 A3090000 */  sb    $t1, ($t8)
 /* 111634 7F0DCB04 97AE0292 */  lhu   $t6, 0x292($sp)
-/* 111638 7F0DCB08 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 111638 7F0DCB08 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 11163C 7F0DCB0C 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 111640 7F0DCB10 31CD1800 */  andi  $t5, $t6, 0x1800
 /* 111644 7F0DCB14 000D58C3 */  sra   $t3, $t5, 3
@@ -11917,7 +11917,7 @@ spectrum_op_CF:
 /* 111668 7F0DCB38 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 11166C 7F0DCB3C 14200007 */  bnez  $at, .L7F0DCB5C
 /* 111670 7F0DCB40 25480001 */   addiu $t0, $t2, 1
-/* 111674 7F0DCB44 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 111674 7F0DCB44 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 111678 7F0DCB48 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 11167C 7F0DCB4C 000D7203 */  sra   $t6, $t5, 8
 /* 111680 7F0DCB50 0169C821 */  addu  $t9, $t3, $t1
@@ -11927,10 +11927,10 @@ spectrum_op_CF:
 /* 11168C 7F0DCB5C 29015800 */  slti  $at, $t0, 0x5800
 /* 111690 7F0DCB60 1420000E */  bnez  $at, .L7F0DCB9C
 /* 111694 7F0DCB64 97A80292 */   lhu   $t0, 0x292($sp)
-/* 111698 7F0DCB68 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 111698 7F0DCB68 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 11169C 7F0DCB6C 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 1116A0 7F0DCB70 97AF0298 */  lhu   $t7, 0x298($sp)
-/* 1116A4 7F0DCB74 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 1116A4 7F0DCB74 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 1116A8 7F0DCB78 030A6821 */  addu  $t5, $t8, $t2
 /* 1116AC 7F0DCB7C 000F6203 */  sra   $t4, $t7, 8
 /* 1116B0 7F0DCB80 A1AC0001 */  sb    $t4, 1($t5)
@@ -11945,14 +11945,14 @@ spectrum_op_CF:
 /* 1116D0 7F0DCBA0 29E14000 */  slti  $at, $t7, 0x4000
 /* 1116D4 7F0DCBA4 14200011 */  bnez  $at, .L7F0DCBEC
 /* 1116D8 7F0DCBA8 97B80298 */   lhu   $t8, 0x298($sp)
-/* 1116DC 7F0DCBAC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 1116DC 7F0DCBAC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 1116E0 7F0DCBB0 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 1116E4 7F0DCBB4 00185203 */  sra   $t2, $t8, 8
 /* 1116E8 7F0DCBB8 24090001 */  li    $t1, 1
 /* 1116EC 7F0DCBBC 01886821 */  addu  $t5, $t4, $t0
 /* 1116F0 7F0DCBC0 A1AA0001 */  sb    $t2, 1($t5)
 /* 1116F4 7F0DCBC4 97AE0292 */  lhu   $t6, 0x292($sp)
-/* 1116F8 7F0DCBC8 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 1116F8 7F0DCBC8 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 1116FC 7F0DCBCC 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 111700 7F0DCBD0 25CB0001 */  addiu $t3, $t6, 1
 /* 111704 7F0DCBD4 31791800 */  andi  $t9, $t3, 0x1800
@@ -11968,7 +11968,7 @@ spectrum_op_CF:
 spectrum_op_D0:
 /* 111728 7F0DCBF8 8FAE028C */  lw    $t6, 0x28c($sp)
 /* 11172C 7F0DCBFC 322B0001 */  andi  $t3, $s1, 1
-/* 111730 7F0DCC00 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 111730 7F0DCC00 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 111734 7F0DCC04 25D90005 */  addiu $t9, $t6, 5
 /* 111738 7F0DCC08 156016FC */  bnez  $t3, .L7F0E27FC
 /* 11173C 7F0DCC0C AFB9028C */   sw    $t9, 0x28c($sp)
@@ -11988,7 +11988,7 @@ spectrum_op_D0:
 /* 111774 7F0DCC44 A7AF0292 */   sh    $t7, 0x292($sp)
 spectrum_op_D1:
 /* 111778 7F0DCC48 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 11177C 7F0DCC4C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 11177C 7F0DCC4C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 111780 7F0DCC50 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 111784 7F0DCC54 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 111788 7F0DCC58 2709000A */  addiu $t1, $t8, 0xa
@@ -12006,7 +12006,7 @@ spectrum_op_D2:
 /* 1117B4 7F0DCC84 272B000A */  addiu $t3, $t9, 0xa
 /* 1117B8 7F0DCC88 1500000B */  bnez  $t0, .L7F0DCCB8
 /* 1117BC 7F0DCC8C AFAB028C */   sw    $t3, 0x28c($sp)
-/* 1117C0 7F0DCC90 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1117C0 7F0DCC90 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1117C4 7F0DCC94 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 1117C8 7F0DCC98 030F7021 */  addu  $t6, $t8, $t7
 /* 1117CC 7F0DCC9C 91CC0001 */  lbu   $t4, 1($t6)
@@ -12023,7 +12023,7 @@ spectrum_op_D2:
 /* 1117F4 7F0DCCC4 A7A80298 */   sh    $t0, 0x298($sp)
 spectrum_op_D3:
 /* 1117F8 7F0DCCC8 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 1117FC 7F0DCCCC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1117FC 7F0DCCCC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 111800 7F0DCCD0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 111804 7F0DCCD4 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 111808 7F0DCCD8 2524000B */  addiu $a0, $t1, 0xb
@@ -12055,7 +12055,7 @@ spectrum_op_D4:
 /* 11186C 7F0DCD3C 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 111870 7F0DCD40 14200008 */  bnez  $at, .L7F0DCD64
 /* 111874 7F0DCD44 A7AA0292 */   sh    $t2, 0x292($sp)
-/* 111878 7F0DCD48 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 111878 7F0DCD48 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 11187C 7F0DCD4C 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 111880 7F0DCD50 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 111884 7F0DCD54 0139C021 */  addu  $t8, $t1, $t9
@@ -12068,10 +12068,10 @@ spectrum_op_D4:
 /* 11189C 7F0DCD6C 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 1118A0 7F0DCD70 29E15800 */  slti  $at, $t7, 0x5800
 /* 1118A4 7F0DCD74 1420000C */  bnez  $at, .L7F0DCDA8
-/* 1118A8 7F0DCD78 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1118A8 7F0DCD78 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1118AC 7F0DCD7C 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1118B0 7F0DCD80 25CC0002 */  addiu $t4, $t6, 2
-/* 1118B4 7F0DCD84 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 1118B4 7F0DCD84 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 1118B8 7F0DCD88 01AF5021 */  addu  $t2, $t5, $t7
 /* 1118BC 7F0DCD8C A14C0000 */  sb    $t4, ($t2)
 /* 1118C0 7F0DCD90 97B90292 */  lhu   $t9, 0x292($sp)
@@ -12084,14 +12084,14 @@ spectrum_op_D4:
 /* 1118D8 7F0DCDA8 2B014000 */  slti  $at, $t8, 0x4000
 /* 1118DC 7F0DCDAC 14200010 */  bnez  $at, .L7F0DCDF0
 /* 1118E0 7F0DCDB0 97AE0298 */   lhu   $t6, 0x298($sp)
-/* 1118E4 7F0DCDB4 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1118E4 7F0DCDB4 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1118E8 7F0DCDB8 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1118EC 7F0DCDBC 25CD0002 */  addiu $t5, $t6, 2
 /* 1118F0 7F0DCDC0 240A0001 */  li    $t2, 1
 /* 1118F4 7F0DCDC4 01F86021 */  addu  $t4, $t7, $t8
 /* 1118F8 7F0DCDC8 A18D0000 */  sb    $t5, ($t4)
 /* 1118FC 7F0DCDCC 97A90292 */  lhu   $t1, 0x292($sp)
-/* 111900 7F0DCDD0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 111900 7F0DCDD0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 111904 7F0DCDD4 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 111908 7F0DCDD8 31391800 */  andi  $t9, $t1, 0x1800
 /* 11190C 7F0DCDDC 001958C3 */  sra   $t3, $t9, 3
@@ -12107,7 +12107,7 @@ spectrum_op_D4:
 /* 111930 7F0DCE00 29815B00 */  slti  $at, $t4, 0x5b00
 /* 111934 7F0DCE04 14200008 */  bnez  $at, .L7F0DCE28
 /* 111938 7F0DCE08 25CA0001 */   addiu $t2, $t6, 1
-/* 11193C 7F0DCE0C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 11193C 7F0DCE0C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 111940 7F0DCE10 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 111944 7F0DCE14 27290002 */  addiu $t1, $t9, 2
 /* 111948 7F0DCE18 00095A03 */  sra   $t3, $t1, 8
@@ -12119,13 +12119,13 @@ spectrum_op_D4:
 /* 11195C 7F0DCE2C 1420000F */  bnez  $at, .L7F0DCE6C
 /* 111960 7F0DCE30 97B80292 */   lhu   $t8, 0x292($sp)
 /* 111964 7F0DCE34 97B80298 */  lhu   $t8, 0x298($sp)
-/* 111968 7F0DCE38 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 111968 7F0DCE38 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 11196C 7F0DCE3C 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 111970 7F0DCE40 270C0002 */  addiu $t4, $t8, 2
 /* 111974 7F0DCE44 000CCA03 */  sra   $t9, $t4, 8
 /* 111978 7F0DCE48 012E4021 */  addu  $t0, $t1, $t6
 /* 11197C 7F0DCE4C A1190001 */  sb    $t9, 1($t0)
-/* 111980 7F0DCE50 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 111980 7F0DCE50 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 111984 7F0DCE54 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 111988 7F0DCE58 97AF0292 */  lhu   $t7, 0x292($sp)
 /* 11198C 7F0DCE5C 240D0001 */  li    $t5, 1
@@ -12137,14 +12137,14 @@ spectrum_op_D4:
 /* 1119A0 7F0DCE70 29814000 */  slti  $at, $t4, 0x4000
 /* 1119A4 7F0DCE74 14200012 */  bnez  $at, .L7F0DCEC0
 /* 1119A8 7F0DCE78 97A90298 */   lhu   $t1, 0x298($sp)
-/* 1119AC 7F0DCE7C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1119AC 7F0DCE7C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1119B0 7F0DCE80 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1119B4 7F0DCE84 252E0002 */  addiu $t6, $t1, 2
 /* 1119B8 7F0DCE88 000ECA03 */  sra   $t9, $t6, 8
 /* 1119BC 7F0DCE8C 01185821 */  addu  $t3, $t0, $t8
 /* 1119C0 7F0DCE90 A1790001 */  sb    $t9, 1($t3)
 /* 1119C4 7F0DCE94 97AD0292 */  lhu   $t5, 0x292($sp)
-/* 1119C8 7F0DCE98 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 1119C8 7F0DCE98 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 1119CC 7F0DCE9C 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 1119D0 7F0DCEA0 25AA0001 */  addiu $t2, $t5, 1
 /* 1119D4 7F0DCEA4 314C1800 */  andi  $t4, $t2, 0x1800
@@ -12155,7 +12155,7 @@ spectrum_op_D4:
 /* 1119E8 7F0DCEB8 0308C821 */  addu  $t9, $t8, $t0
 /* 1119EC 7F0DCEBC A32F0000 */  sb    $t7, ($t9)
 .L7F0DCEC0:
-/* 1119F0 7F0DCEC0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1119F0 7F0DCEC0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1119F4 7F0DCEC4 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1119F8 7F0DCEC8 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 1119FC 7F0DCECC 01AB4821 */  addu  $t1, $t5, $t3
@@ -12174,7 +12174,7 @@ spectrum_op_D4:
 spectrum_op_D5:
 /* 111A2C 7F0DCEFC 97AB0292 */  lhu   $t3, 0x292($sp)
 /* 111A30 7F0DCF00 8FAC028C */  lw    $t4, 0x28c($sp)
-/* 111A34 7F0DCF04 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 111A34 7F0DCF04 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 111A38 7F0DCF08 2569FFFE */  addiu $t1, $t3, -2
 /* 111A3C 7F0DCF0C 312EFFFF */  andi  $t6, $t1, 0xffff
 /* 111A40 7F0DCF10 29C15B00 */  slti  $at, $t6, 0x5b00
@@ -12189,12 +12189,12 @@ spectrum_op_D5:
 .L7F0DCF34:
 /* 111A64 7F0DCF34 97A80292 */  lhu   $t0, 0x292($sp)
 /* 111A68 7F0DCF38 97AA0292 */  lhu   $t2, 0x292($sp)
-/* 111A6C 7F0DCF3C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 111A6C 7F0DCF3C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 111A70 7F0DCF40 29015800 */  slti  $at, $t0, 0x5800
 /* 111A74 7F0DCF44 5420000C */  bnezl $at, .L7F0DCF78
 /* 111A78 7F0DCF48 29414000 */   slti  $at, $t2, 0x4000
 /* 111A7C 7F0DCF4C 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
-/* 111A80 7F0DCF50 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 111A80 7F0DCF50 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 111A84 7F0DCF54 240C0001 */  li    $t4, 1
 /* 111A88 7F0DCF58 01E8C821 */  addu  $t9, $t7, $t0
 /* 111A8C 7F0DCF5C A3350000 */  sb    $s5, ($t9)
@@ -12206,9 +12206,9 @@ spectrum_op_D5:
 /* 111AA4 7F0DCF74 29414000 */  slti  $at, $t2, 0x4000
 .L7F0DCF78:
 /* 111AA8 7F0DCF78 1420000E */  bnez  $at, .L7F0DCFB4
-/* 111AAC 7F0DCF7C 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 111AAC 7F0DCF7C 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) 
 /* 111AB0 7F0DCF80 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
-/* 111AB4 7F0DCF84 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 111AB4 7F0DCF84 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 111AB8 7F0DCF88 240F0001 */  li    $t7, 1
 /* 111ABC 7F0DCF8C 01CAC021 */  addu  $t8, $t6, $t2
 /* 111AC0 7F0DCF90 A3150000 */  sb    $s5, ($t8)
@@ -12223,7 +12223,7 @@ spectrum_op_D5:
 .L7F0DCFB4:
 /* 111AE4 7F0DCFB4 97AA0292 */  lhu   $t2, 0x292($sp)
 /* 111AE8 7F0DCFB8 97AD0292 */  lhu   $t5, 0x292($sp)
-/* 111AEC 7F0DCFBC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 111AEC 7F0DCFBC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 111AF0 7F0DCFC0 25580001 */  addiu $t8, $t2, 1
 /* 111AF4 7F0DCFC4 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 111AF8 7F0DCFC8 14200005 */  bnez  $at, .L7F0DCFE0
@@ -12236,9 +12236,9 @@ spectrum_op_D5:
 /* 111B10 7F0DCFE0 29615800 */  slti  $at, $t3, 0x5800
 /* 111B14 7F0DCFE4 1420000C */  bnez  $at, .L7F0DD018
 /* 111B18 7F0DCFE8 97AA0292 */   lhu   $t2, 0x292($sp)
-/* 111B1C 7F0DCFEC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 111B1C 7F0DCFEC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 111B20 7F0DCFF0 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
-/* 111B24 7F0DCFF4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 111B24 7F0DCFF4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 111B28 7F0DCFF8 240F0001 */  li    $t7, 1
 /* 111B2C 7F0DCFFC 012D6021 */  addu  $t4, $t1, $t5
 /* 111B30 7F0DD000 A1940001 */  sb    $s4, 1($t4)
@@ -12251,13 +12251,13 @@ spectrum_op_D5:
 /* 111B48 7F0DD018 25480001 */  addiu $t0, $t2, 1
 /* 111B4C 7F0DD01C 29014000 */  slti  $at, $t0, 0x4000
 /* 111B50 7F0DD020 142015F6 */  bnez  $at, .L7F0E27FC
-/* 111B54 7F0DD024 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 111B54 7F0DD024 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 111B58 7F0DD028 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 111B5C 7F0DD02C 240D0001 */  li    $t5, 1
 /* 111B60 7F0DD030 016A4821 */  addu  $t1, $t3, $t2
 /* 111B64 7F0DD034 A1340001 */  sb    $s4, 1($t1)
 /* 111B68 7F0DD038 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 111B6C 7F0DD03C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 111B6C 7F0DD03C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 111B70 7F0DD040 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 111B74 7F0DD044 258E0001 */  addiu $t6, $t4, 1
 /* 111B78 7F0DD048 31D81800 */  andi  $t8, $t6, 0x1800
@@ -12269,7 +12269,7 @@ spectrum_op_D5:
 /* 111B90 7F0DD060 A14D0000 */   sb    $t5, ($t2)
 spectrum_op_D6:
 /* 111B94 7F0DD064 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 111B98 7F0DD068 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 111B98 7F0DD068 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 111B9C 7F0DD06C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 111BA0 7F0DD070 97B80298 */  lhu   $t8, 0x298($sp)
 /* 111BA4 7F0DD074 252C0007 */  addiu $t4, $t1, 7
@@ -12309,7 +12309,7 @@ spectrum_op_D6:
 spectrum_op_D7:
 /* 111C2C 7F0DD0FC 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 111C30 7F0DD100 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 111C34 7F0DD104 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 111C34 7F0DD104 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 111C38 7F0DD108 25B9FFFE */  addiu $t9, $t5, -2
 /* 111C3C 7F0DD10C 332AFFFF */  andi  $t2, $t9, 0xffff
 /* 111C40 7F0DD110 29415B00 */  slti  $at, $t2, 0x5b00
@@ -12325,13 +12325,13 @@ spectrum_op_D7:
 .L7F0DD138:
 /* 111C68 7F0DD138 97AE0292 */  lhu   $t6, 0x292($sp)
 /* 111C6C 7F0DD13C 97A80292 */  lhu   $t0, 0x292($sp)
-/* 111C70 7F0DD140 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 111C70 7F0DD140 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 111C74 7F0DD144 29C15800 */  slti  $at, $t6, 0x5800
 /* 111C78 7F0DD148 5420000D */  bnezl $at, .L7F0DD180
 /* 111C7C 7F0DD14C 29014000 */   slti  $at, $t0, 0x4000
 /* 111C80 7F0DD150 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 111C84 7F0DD154 97AB0298 */  lhu   $t3, 0x298($sp)
-/* 111C88 7F0DD158 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 111C88 7F0DD158 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 111C8C 7F0DD15C 012EC021 */  addu  $t8, $t1, $t6
 /* 111C90 7F0DD160 A30B0000 */  sb    $t3, ($t8)
 /* 111C94 7F0DD164 97AF0292 */  lhu   $t7, 0x292($sp)
@@ -12343,14 +12343,14 @@ spectrum_op_D7:
 /* 111CAC 7F0DD17C 29014000 */  slti  $at, $t0, 0x4000
 .L7F0DD180:
 /* 111CB0 7F0DD180 1420000F */  bnez  $at, .L7F0DD1C0
-/* 111CB4 7F0DD184 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 111CB4 7F0DD184 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) 
 /* 111CB8 7F0DD188 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 111CBC 7F0DD18C 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 111CC0 7F0DD190 240B0001 */  li    $t3, 1
 /* 111CC4 7F0DD194 01287021 */  addu  $t6, $t1, $t0
 /* 111CC8 7F0DD198 A1CC0000 */  sb    $t4, ($t6)
 /* 111CCC 7F0DD19C 97B80292 */  lhu   $t8, 0x292($sp)
-/* 111CD0 7F0DD1A0 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 111CD0 7F0DD1A0 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 111CD4 7F0DD1A4 8D29E32C */  lw    $t1, %lo(ptr_300alloc)($t1)
 /* 111CD8 7F0DD1A8 33191800 */  andi  $t9, $t8, 0x1800
 /* 111CDC 7F0DD1AC 001978C3 */  sra   $t7, $t9, 3
@@ -12366,7 +12366,7 @@ spectrum_op_D7:
 /* 111D00 7F0DD1D0 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 111D04 7F0DD1D4 14200007 */  bnez  $at, .L7F0DD1F4
 /* 111D08 7F0DD1D8 252A0001 */   addiu $t2, $t1, 1
-/* 111D0C 7F0DD1DC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 111D0C 7F0DD1DC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 111D10 7F0DD1E0 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 111D14 7F0DD1E4 0019C203 */  sra   $t8, $t9, 8
 /* 111D18 7F0DD1E8 01EC6821 */  addu  $t5, $t7, $t4
@@ -12376,10 +12376,10 @@ spectrum_op_D7:
 /* 111D24 7F0DD1F4 29415800 */  slti  $at, $t2, 0x5800
 /* 111D28 7F0DD1F8 1420000E */  bnez  $at, .L7F0DD234
 /* 111D2C 7F0DD1FC 97AA0292 */   lhu   $t2, 0x292($sp)
-/* 111D30 7F0DD200 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 111D30 7F0DD200 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 111D34 7F0DD204 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 111D38 7F0DD208 97AB0298 */  lhu   $t3, 0x298($sp)
-/* 111D3C 7F0DD20C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 111D3C 7F0DD20C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 111D40 7F0DD210 01C9C821 */  addu  $t9, $t6, $t1
 /* 111D44 7F0DD214 000B4203 */  sra   $t0, $t3, 8
 /* 111D48 7F0DD218 A3280001 */  sb    $t0, 1($t9)
@@ -12394,14 +12394,14 @@ spectrum_op_D7:
 /* 111D68 7F0DD238 29614000 */  slti  $at, $t3, 0x4000
 /* 111D6C 7F0DD23C 14200011 */  bnez  $at, .L7F0DD284
 /* 111D70 7F0DD240 97AE0298 */   lhu   $t6, 0x298($sp)
-/* 111D74 7F0DD244 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 111D74 7F0DD244 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 111D78 7F0DD248 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 111D7C 7F0DD24C 000E4A03 */  sra   $t1, $t6, 8
 /* 111D80 7F0DD250 240C0001 */  li    $t4, 1
 /* 111D84 7F0DD254 010AC821 */  addu  $t9, $t0, $t2
 /* 111D88 7F0DD258 A3290001 */  sb    $t1, 1($t9)
 /* 111D8C 7F0DD25C 97B80292 */  lhu   $t8, 0x292($sp)
-/* 111D90 7F0DD260 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 111D90 7F0DD260 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 111D94 7F0DD264 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 111D98 7F0DD268 270F0001 */  addiu $t7, $t8, 1
 /* 111D9C 7F0DD26C 31ED1800 */  andi  $t5, $t7, 0x1800
@@ -12417,7 +12417,7 @@ spectrum_op_D7:
 spectrum_op_D8:
 /* 111DC0 7F0DD290 8FB8028C */  lw    $t8, 0x28c($sp)
 /* 111DC4 7F0DD294 322F0001 */  andi  $t7, $s1, 1
-/* 111DC8 7F0DD298 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 111DC8 7F0DD298 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 111DCC 7F0DD29C 270D0005 */  addiu $t5, $t8, 5
 /* 111DD0 7F0DD2A0 11E01556 */  beqz  $t7, .L7F0E27FC
 /* 111DD4 7F0DD2A4 AFAD028C */   sw    $t5, 0x28c($sp)
@@ -12471,7 +12471,7 @@ spectrum_op_DA:
 /* 111E8C 7F0DD35C 254B000A */  addiu $t3, $t2, 0xa
 /* 111E90 7F0DD360 11C0000B */  beqz  $t6, .L7F0DD390
 /* 111E94 7F0DD364 AFAB028C */   sw    $t3, 0x28c($sp)
-/* 111E98 7F0DD368 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 111E98 7F0DD368 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 111E9C 7F0DD36C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 111EA0 7F0DD370 010C4821 */  addu  $t1, $t0, $t4
 /* 111EA4 7F0DD374 912D0001 */  lbu   $t5, 1($t1)
@@ -12488,7 +12488,7 @@ spectrum_op_DA:
 /* 111ECC 7F0DD39C A7AE0298 */   sh    $t6, 0x298($sp)
 spectrum_op_DB:
 /* 111ED0 7F0DD3A0 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 111ED4 7F0DD3A4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 111ED4 7F0DD3A4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 111ED8 7F0DD3A8 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 111EDC 7F0DD3AC 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 111EE0 7F0DD3B0 2724000B */  addiu $a0, $t9, 0xb
@@ -12522,7 +12522,7 @@ spectrum_op_DC:
 /* 111F4C 7F0DD41C 29615B00 */  slti  $at, $t3, 0x5b00
 /* 111F50 7F0DD420 14200008 */  bnez  $at, .L7F0DD444
 /* 111F54 7F0DD424 A7AA0292 */   sh    $t2, 0x292($sp)
-/* 111F58 7F0DD428 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 111F58 7F0DD428 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 111F5C 7F0DD42C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 111F60 7F0DD430 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 111F64 7F0DD434 010B6021 */  addu  $t4, $t0, $t3
@@ -12535,10 +12535,10 @@ spectrum_op_DC:
 /* 111F7C 7F0DD44C 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 111F80 7F0DD450 29215800 */  slti  $at, $t1, 0x5800
 /* 111F84 7F0DD454 1420000C */  bnez  $at, .L7F0DD488
-/* 111F88 7F0DD458 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 111F88 7F0DD458 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 111F8C 7F0DD45C 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 111F90 7F0DD460 25AF0002 */  addiu $t7, $t5, 2
-/* 111F94 7F0DD464 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 111F94 7F0DD464 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 111F98 7F0DD468 03095021 */  addu  $t2, $t8, $t1
 /* 111F9C 7F0DD46C A14F0000 */  sb    $t7, ($t2)
 /* 111FA0 7F0DD470 97AB0292 */  lhu   $t3, 0x292($sp)
@@ -12551,14 +12551,14 @@ spectrum_op_DC:
 /* 111FB8 7F0DD488 29814000 */  slti  $at, $t4, 0x4000
 /* 111FBC 7F0DD48C 14200010 */  bnez  $at, .L7F0DD4D0
 /* 111FC0 7F0DD490 97AD0298 */   lhu   $t5, 0x298($sp)
-/* 111FC4 7F0DD494 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 111FC4 7F0DD494 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 111FC8 7F0DD498 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 111FCC 7F0DD49C 25B80002 */  addiu $t8, $t5, 2
 /* 111FD0 7F0DD4A0 240A0001 */  li    $t2, 1
 /* 111FD4 7F0DD4A4 012C7821 */  addu  $t7, $t1, $t4
 /* 111FD8 7F0DD4A8 A1F80000 */  sb    $t8, ($t7)
 /* 111FDC 7F0DD4AC 97A80292 */  lhu   $t0, 0x292($sp)
-/* 111FE0 7F0DD4B0 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 111FE0 7F0DD4B0 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 111FE4 7F0DD4B4 8D29E32C */  lw    $t1, %lo(ptr_300alloc)($t1)
 /* 111FE8 7F0DD4B8 310B1800 */  andi  $t3, $t0, 0x1800
 /* 111FEC 7F0DD4BC 000B70C3 */  sra   $t6, $t3, 3
@@ -12574,7 +12574,7 @@ spectrum_op_DC:
 /* 112010 7F0DD4E0 29E15B00 */  slti  $at, $t7, 0x5b00
 /* 112014 7F0DD4E4 14200008 */  bnez  $at, .L7F0DD508
 /* 112018 7F0DD4E8 25AA0001 */   addiu $t2, $t5, 1
-/* 11201C 7F0DD4EC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 11201C 7F0DD4EC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 112020 7F0DD4F0 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 112024 7F0DD4F4 25680002 */  addiu $t0, $t3, 2
 /* 112028 7F0DD4F8 00087203 */  sra   $t6, $t0, 8
@@ -12586,13 +12586,13 @@ spectrum_op_DC:
 /* 11203C 7F0DD50C 1420000F */  bnez  $at, .L7F0DD54C
 /* 112040 7F0DD510 97AC0292 */   lhu   $t4, 0x292($sp)
 /* 112044 7F0DD514 97AC0298 */  lhu   $t4, 0x298($sp)
-/* 112048 7F0DD518 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 112048 7F0DD518 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 11204C 7F0DD51C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 112050 7F0DD520 258F0002 */  addiu $t7, $t4, 2
 /* 112054 7F0DD524 000F5A03 */  sra   $t3, $t7, 8
 /* 112058 7F0DD528 010DC821 */  addu  $t9, $t0, $t5
 /* 11205C 7F0DD52C A32B0001 */  sb    $t3, 1($t9)
-/* 112060 7F0DD530 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 112060 7F0DD530 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 112064 7F0DD534 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 112068 7F0DD538 97A90292 */  lhu   $t1, 0x292($sp)
 /* 11206C 7F0DD53C 24180001 */  li    $t8, 1
@@ -12604,14 +12604,14 @@ spectrum_op_DC:
 /* 112080 7F0DD550 29E14000 */  slti  $at, $t7, 0x4000
 /* 112084 7F0DD554 14200012 */  bnez  $at, .L7F0DD5A0
 /* 112088 7F0DD558 97A80298 */   lhu   $t0, 0x298($sp)
-/* 11208C 7F0DD55C 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 11208C 7F0DD55C 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 112090 7F0DD560 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 112094 7F0DD564 250D0002 */  addiu $t5, $t0, 2
 /* 112098 7F0DD568 000D5A03 */  sra   $t3, $t5, 8
 /* 11209C 7F0DD56C 032C7021 */  addu  $t6, $t9, $t4
 /* 1120A0 7F0DD570 A1CB0001 */  sb    $t3, 1($t6)
 /* 1120A4 7F0DD574 97B80292 */  lhu   $t8, 0x292($sp)
-/* 1120A8 7F0DD578 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 1120A8 7F0DD578 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 1120AC 7F0DD57C 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 1120B0 7F0DD580 270A0001 */  addiu $t2, $t8, 1
 /* 1120B4 7F0DD584 314F1800 */  andi  $t7, $t2, 0x1800
@@ -12622,7 +12622,7 @@ spectrum_op_DC:
 /* 1120C8 7F0DD598 01995821 */  addu  $t3, $t4, $t9
 /* 1120CC 7F0DD59C A1690000 */  sb    $t1, ($t3)
 .L7F0DD5A0:
-/* 1120D0 7F0DD5A0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1120D0 7F0DD5A0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1120D4 7F0DD5A4 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 1120D8 7F0DD5A8 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 1120DC 7F0DD5AC 030E4021 */  addu  $t0, $t8, $t6
@@ -12648,7 +12648,7 @@ spectrum_op_DD:
 /* 112124 7F0DD5F4 A3A00285 */   sb    $zero, 0x285($sp)
 spectrum_op_DE:
 /* 112128 7F0DD5F8 8FA8028C */  lw    $t0, 0x28c($sp)
-/* 11212C 7F0DD5FC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 11212C 7F0DD5FC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 112130 7F0DD600 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 112134 7F0DD604 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 112138 7F0DD608 250D0007 */  addiu $t5, $t0, 7
@@ -12691,7 +12691,7 @@ spectrum_op_DE:
 spectrum_op_DF:
 /* 1121CC 7F0DD69C 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 1121D0 7F0DD6A0 8FAC028C */  lw    $t4, 0x28c($sp)
-/* 1121D4 7F0DD6A4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1121D4 7F0DD6A4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1121D8 7F0DD6A8 25A9FFFE */  addiu $t1, $t5, -2
 /* 1121DC 7F0DD6AC 312BFFFF */  andi  $t3, $t1, 0xffff
 /* 1121E0 7F0DD6B0 29615B00 */  slti  $at, $t3, 0x5b00
@@ -12707,13 +12707,13 @@ spectrum_op_DF:
 .L7F0DD6D8:
 /* 112208 7F0DD6D8 97B80292 */  lhu   $t8, 0x292($sp)
 /* 11220C 7F0DD6DC 97AE0292 */  lhu   $t6, 0x292($sp)
-/* 112210 7F0DD6E0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 112210 7F0DD6E0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 112214 7F0DD6E4 2B015800 */  slti  $at, $t8, 0x5800
 /* 112218 7F0DD6E8 5420000D */  bnezl $at, .L7F0DD720
 /* 11221C 7F0DD6EC 29C14000 */   slti  $at, $t6, 0x4000
 /* 112220 7F0DD6F0 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 112224 7F0DD6F4 97AA0298 */  lhu   $t2, 0x298($sp)
-/* 112228 7F0DD6F8 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 112228 7F0DD6F8 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 11222C 7F0DD6FC 0198C821 */  addu  $t9, $t4, $t8
 /* 112230 7F0DD700 A32A0000 */  sb    $t2, ($t9)
 /* 112234 7F0DD704 97A80292 */  lhu   $t0, 0x292($sp)
@@ -12725,14 +12725,14 @@ spectrum_op_DF:
 /* 11224C 7F0DD71C 29C14000 */  slti  $at, $t6, 0x4000
 .L7F0DD720:
 /* 112250 7F0DD720 1420000F */  bnez  $at, .L7F0DD760
-/* 112254 7F0DD724 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 112254 7F0DD724 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) 
 /* 112258 7F0DD728 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 11225C 7F0DD72C 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 112260 7F0DD730 240A0001 */  li    $t2, 1
 /* 112264 7F0DD734 018EC021 */  addu  $t8, $t4, $t6
 /* 112268 7F0DD738 A30F0000 */  sb    $t7, ($t8)
 /* 11226C 7F0DD73C 97B90292 */  lhu   $t9, 0x292($sp)
-/* 112270 7F0DD740 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 112270 7F0DD740 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 112274 7F0DD744 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 112278 7F0DD748 33291800 */  andi  $t1, $t9, 0x1800
 /* 11227C 7F0DD74C 000940C3 */  sra   $t0, $t1, 3
@@ -12748,7 +12748,7 @@ spectrum_op_DF:
 /* 1122A0 7F0DD770 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 1122A4 7F0DD774 14200007 */  bnez  $at, .L7F0DD794
 /* 1122A8 7F0DD778 258B0001 */   addiu $t3, $t4, 1
-/* 1122AC 7F0DD77C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1122AC 7F0DD77C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1122B0 7F0DD780 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1122B4 7F0DD784 0009CA03 */  sra   $t9, $t1, 8
 /* 1122B8 7F0DD788 010F6821 */  addu  $t5, $t0, $t7
@@ -12758,10 +12758,10 @@ spectrum_op_DF:
 /* 1122C4 7F0DD794 29615800 */  slti  $at, $t3, 0x5800
 /* 1122C8 7F0DD798 1420000E */  bnez  $at, .L7F0DD7D4
 /* 1122CC 7F0DD79C 97AB0292 */   lhu   $t3, 0x292($sp)
-/* 1122D0 7F0DD7A0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1122D0 7F0DD7A0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1122D4 7F0DD7A4 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 1122D8 7F0DD7A8 97AA0298 */  lhu   $t2, 0x298($sp)
-/* 1122DC 7F0DD7AC 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 1122DC 7F0DD7AC 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 1122E0 7F0DD7B0 030C4821 */  addu  $t1, $t8, $t4
 /* 1122E4 7F0DD7B4 000A7203 */  sra   $t6, $t2, 8
 /* 1122E8 7F0DD7B8 A12E0001 */  sb    $t6, 1($t1)
@@ -12776,14 +12776,14 @@ spectrum_op_DF:
 /* 112308 7F0DD7D8 29414000 */  slti  $at, $t2, 0x4000
 /* 11230C 7F0DD7DC 14200011 */  bnez  $at, .L7F0DD824
 /* 112310 7F0DD7E0 97B80298 */   lhu   $t8, 0x298($sp)
-/* 112314 7F0DD7E4 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 112314 7F0DD7E4 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 112318 7F0DD7E8 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 11231C 7F0DD7EC 00186203 */  sra   $t4, $t8, 8
 /* 112320 7F0DD7F0 240F0001 */  li    $t7, 1
 /* 112324 7F0DD7F4 01CB4821 */  addu  $t1, $t6, $t3
 /* 112328 7F0DD7F8 A12C0001 */  sb    $t4, 1($t1)
 /* 11232C 7F0DD7FC 97B90292 */  lhu   $t9, 0x292($sp)
-/* 112330 7F0DD800 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 112330 7F0DD800 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 112334 7F0DD804 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 112338 7F0DD808 27280001 */  addiu $t0, $t9, 1
 /* 11233C 7F0DD80C 310D1800 */  andi  $t5, $t0, 0x1800
@@ -12799,7 +12799,7 @@ spectrum_op_DF:
 spectrum_op_E0:
 /* 112360 7F0DD830 8FB9028C */  lw    $t9, 0x28c($sp)
 /* 112364 7F0DD834 32280004 */  andi  $t0, $s1, 4
-/* 112368 7F0DD838 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 112368 7F0DD838 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 11236C 7F0DD83C 272D0005 */  addiu $t5, $t9, 5
 /* 112370 7F0DD840 150013EE */  bnez  $t0, .L7F0E27FC
 /* 112374 7F0DD844 AFAD028C */   sw    $t5, 0x28c($sp)
@@ -12824,7 +12824,7 @@ spectrum_op_E1:
 /* 1123BC 7F0DD88C 270F000A */  addiu $t7, $t8, 0xa
 /* 1123C0 7F0DD890 15C0000A */  bnez  $t6, .L7F0DD8BC
 /* 1123C4 7F0DD894 AFAF028C */   sw    $t7, 0x28c($sp)
-/* 1123C8 7F0DD898 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 1123C8 7F0DD898 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 1123CC 7F0DD89C 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 1123D0 7F0DD8A0 97A90292 */  lhu   $t1, 0x292($sp)
 /* 1123D4 7F0DD8A4 01396021 */  addu  $t4, $t1, $t9
@@ -12837,7 +12837,7 @@ spectrum_op_E1:
 /* 1123EC 7F0DD8BC 24010001 */  li    $at, 1
 /* 1123F0 7F0DD8C0 1501000E */  bne   $t0, $at, .L7F0DD8FC
 /* 1123F4 7F0DD8C4 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms)
-/* 1123F8 7F0DD8C8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 1123F8 7F0DD8C8 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 1123FC 7F0DD8CC 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 112400 7F0DD8D0 97AB0292 */  lhu   $t3, 0x292($sp)
 /* 112404 7F0DD8D4 014B7021 */  addu  $t6, $t2, $t3
@@ -12870,7 +12870,7 @@ spectrum_op_E2:
 /* 112468 7F0DD938 25AA000A */  addiu $t2, $t5, 0xa
 /* 11246C 7F0DD93C 1700000B */  bnez  $t8, .L7F0DD96C
 /* 112470 7F0DD940 AFAA028C */   sw    $t2, 0x28c($sp)
-/* 112474 7F0DD944 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 112474 7F0DD944 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 112478 7F0DD948 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 11247C 7F0DD94C 01F94821 */  addu  $t1, $t7, $t9
 /* 112480 7F0DD950 91280001 */  lbu   $t0, 1($t1)
@@ -12892,11 +12892,11 @@ spectrum_op_E3:
 /* 1124B8 7F0DD988 25CF0013 */  addiu $t7, $t6, 0x13
 /* 1124BC 7F0DD98C 17200063 */  bnez  $t9, .L7F0DDB1C
 /* 1124C0 7F0DD990 AFAF028C */   sw    $t7, 0x28c($sp)
-/* 1124C4 7F0DD994 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1124C4 7F0DD994 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1124C8 7F0DD998 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1124CC 7F0DD99C 97A90292 */  lhu   $t1, 0x292($sp)
 /* 1124D0 7F0DD9A0 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 1124D4 7F0DD9A4 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 1124D4 7F0DD9A4 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 1124D8 7F0DD9A8 01096821 */  addu  $t5, $t0, $t1
 /* 1124DC 7F0DD9AC 91AA0001 */  lbu   $t2, 1($t5)
 /* 1124E0 7F0DD9B0 01286021 */  addu  $t4, $t1, $t0
@@ -12913,12 +12913,12 @@ spectrum_op_E3:
 .L7F0DD9DC:
 /* 11250C 7F0DD9DC 97A80292 */  lhu   $t0, 0x292($sp)
 /* 112510 7F0DD9E0 97B90292 */  lhu   $t9, 0x292($sp)
-/* 112514 7F0DD9E4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 112514 7F0DD9E4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 112518 7F0DD9E8 29015800 */  slti  $at, $t0, 0x5800
 /* 11251C 7F0DD9EC 5420000C */  bnezl $at, .L7F0DDA20
 /* 112520 7F0DD9F0 2B214000 */   slti  $at, $t9, 0x4000
 /* 112524 7F0DD9F4 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
-/* 112528 7F0DD9F8 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 112528 7F0DD9F8 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 11252C 7F0DD9FC 240A0001 */  li    $t2, 1
 /* 112530 7F0DDA00 01286821 */  addu  $t5, $t1, $t0
 /* 112534 7F0DDA04 A1B70000 */  sb    $s7, ($t5)
@@ -12930,9 +12930,9 @@ spectrum_op_E3:
 /* 11254C 7F0DDA1C 2B214000 */  slti  $at, $t9, 0x4000
 .L7F0DDA20:
 /* 112550 7F0DDA20 1420000E */  bnez  $at, .L7F0DDA5C
-/* 112554 7F0DDA24 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 112554 7F0DDA24 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 112558 7F0DDA28 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
-/* 11255C 7F0DDA2C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 11255C 7F0DDA2C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 112560 7F0DDA30 24090001 */  li    $t1, 1
 /* 112564 7F0DDA34 01F96021 */  addu  $t4, $t7, $t9
 /* 112568 7F0DDA38 A1970000 */  sb    $s7, ($t4)
@@ -12947,7 +12947,7 @@ spectrum_op_E3:
 .L7F0DDA5C:
 /* 11258C 7F0DDA5C 97B90292 */  lhu   $t9, 0x292($sp)
 /* 112590 7F0DDA60 97AB0292 */  lhu   $t3, 0x292($sp)
-/* 112594 7F0DDA64 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 112594 7F0DDA64 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 112598 7F0DDA68 272C0001 */  addiu $t4, $t9, 1
 /* 11259C 7F0DDA6C 29815B00 */  slti  $at, $t4, 0x5b00
 /* 1125A0 7F0DDA70 14200005 */  bnez  $at, .L7F0DDA88
@@ -12960,9 +12960,9 @@ spectrum_op_E3:
 /* 1125B8 7F0DDA88 2B015800 */  slti  $at, $t8, 0x5800
 /* 1125BC 7F0DDA8C 1420000C */  bnez  $at, .L7F0DDAC0
 /* 1125C0 7F0DDA90 97B90292 */   lhu   $t9, 0x292($sp)
-/* 1125C4 7F0DDA94 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1125C4 7F0DDA94 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1125C8 7F0DDA98 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
-/* 1125CC 7F0DDA9C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 1125CC 7F0DDA9C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 1125D0 7F0DDAA0 24090001 */  li    $t1, 1
 /* 1125D4 7F0DDAA4 01CB5021 */  addu  $t2, $t6, $t3
 /* 1125D8 7F0DDAA8 A1560001 */  sb    $s6, 1($t2)
@@ -12975,13 +12975,13 @@ spectrum_op_E3:
 /* 1125F0 7F0DDAC0 27280001 */  addiu $t0, $t9, 1
 /* 1125F4 7F0DDAC4 29014000 */  slti  $at, $t0, 0x4000
 /* 1125F8 7F0DDAC8 1420000F */  bnez  $at, .L7F0DDB08
-/* 1125FC 7F0DDACC 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1125FC 7F0DDACC 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 112600 7F0DDAD0 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 112604 7F0DDAD4 240B0001 */  li    $t3, 1
 /* 112608 7F0DDAD8 03197021 */  addu  $t6, $t8, $t9
 /* 11260C 7F0DDADC A1D60001 */  sb    $s6, 1($t6)
 /* 112610 7F0DDAE0 97AA0292 */  lhu   $t2, 0x292($sp)
-/* 112614 7F0DDAE4 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 112614 7F0DDAE4 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 112618 7F0DDAE8 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 11261C 7F0DDAEC 254F0001 */  addiu $t7, $t2, 1
 /* 112620 7F0DDAF0 31EC1800 */  andi  $t4, $t7, 0x1800
@@ -13000,7 +13000,7 @@ spectrum_op_E3:
 /* 11264C 7F0DDB1C 24010001 */  li    $at, 1
 /* 112650 7F0DDB20 1581006A */  bne   $t4, $at, .L7F0DDCCC
 /* 112654 7F0DDB24 97B80292 */   lhu   $t8, 0x292($sp)
-/* 112658 7F0DDB28 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 112658 7F0DDB28 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 11265C 7F0DDB2C 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 112660 7F0DDB30 97AF0292 */  lhu   $t7, 0x292($sp)
 /* 112664 7F0DDB34 97AA0292 */  lhu   $t2, 0x292($sp)
@@ -13013,7 +13013,7 @@ spectrum_op_E3:
 /* 112680 7F0DDB50 03197025 */  or    $t6, $t8, $t9
 /* 112684 7F0DDB54 14200007 */  bnez  $at, .L7F0DDB74
 /* 112688 7F0DDB58 A7AE00E8 */   sh    $t6, 0xe8($sp)
-/* 11268C 7F0DDB5C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 11268C 7F0DDB5C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 112690 7F0DDB60 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 112694 7F0DDB64 97AC0296 */  lhu   $t4, 0x296($sp)
 /* 112698 7F0DDB68 01AA4821 */  addu  $t1, $t5, $t2
@@ -13022,13 +13022,13 @@ spectrum_op_E3:
 .L7F0DDB74:
 /* 1126A4 7F0DDB74 97AF0292 */  lhu   $t7, 0x292($sp)
 /* 1126A8 7F0DDB78 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 1126AC 7F0DDB7C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1126AC 7F0DDB7C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1126B0 7F0DDB80 29E15800 */  slti  $at, $t7, 0x5800
 /* 1126B4 7F0DDB84 5420000D */  bnezl $at, .L7F0DDBBC
 /* 1126B8 7F0DDB88 29814000 */   slti  $at, $t4, 0x4000
 /* 1126BC 7F0DDB8C 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1126C0 7F0DDB90 97A80296 */  lhu   $t0, 0x296($sp)
-/* 1126C4 7F0DDB94 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 1126C4 7F0DDB94 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 1126C8 7F0DDB98 016FC021 */  addu  $t8, $t3, $t7
 /* 1126CC 7F0DDB9C A3080000 */  sb    $t0, ($t8)
 /* 1126D0 7F0DDBA0 97AD0292 */  lhu   $t5, 0x292($sp)
@@ -13040,14 +13040,14 @@ spectrum_op_E3:
 /* 1126E8 7F0DDBB8 29814000 */  slti  $at, $t4, 0x4000
 .L7F0DDBBC:
 /* 1126EC 7F0DDBBC 1420000F */  bnez  $at, .L7F0DDBFC
-/* 1126F0 7F0DDBC0 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1126F0 7F0DDBC0 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1126F4 7F0DDBC4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1126F8 7F0DDBC8 97A90296 */  lhu   $t1, 0x296($sp)
 /* 1126FC 7F0DDBCC 24080001 */  li    $t0, 1
 /* 112700 7F0DDBD0 016C7821 */  addu  $t7, $t3, $t4
 /* 112704 7F0DDBD4 A1E90000 */  sb    $t1, ($t7)
 /* 112708 7F0DDBD8 97B80292 */  lhu   $t8, 0x292($sp)
-/* 11270C 7F0DDBDC 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 11270C 7F0DDBDC 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 112710 7F0DDBE0 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 112714 7F0DDBE4 330E1800 */  andi  $t6, $t8, 0x1800
 /* 112718 7F0DDBE8 000E68C3 */  sra   $t5, $t6, 3
@@ -13063,7 +13063,7 @@ spectrum_op_E3:
 /* 11273C 7F0DDC0C 29E15B00 */  slti  $at, $t7, 0x5b00
 /* 112740 7F0DDC10 14200007 */  bnez  $at, .L7F0DDC30
 /* 112744 7F0DDC14 256A0001 */   addiu $t2, $t3, 1
-/* 112748 7F0DDC18 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 112748 7F0DDC18 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 11274C 7F0DDC1C 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 112750 7F0DDC20 000EC203 */  sra   $t8, $t6, 8
 /* 112754 7F0DDC24 01A9C821 */  addu  $t9, $t5, $t1
@@ -13073,10 +13073,10 @@ spectrum_op_E3:
 /* 112760 7F0DDC30 29415800 */  slti  $at, $t2, 0x5800
 /* 112764 7F0DDC34 1420000E */  bnez  $at, .L7F0DDC70
 /* 112768 7F0DDC38 97AA0292 */   lhu   $t2, 0x292($sp)
-/* 11276C 7F0DDC3C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 11276C 7F0DDC3C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 112770 7F0DDC40 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 112774 7F0DDC44 97A80296 */  lhu   $t0, 0x296($sp)
-/* 112778 7F0DDC48 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 112778 7F0DDC48 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 11277C 7F0DDC4C 01EB7021 */  addu  $t6, $t7, $t3
 /* 112780 7F0DDC50 00086203 */  sra   $t4, $t0, 8
 /* 112784 7F0DDC54 A1CC0001 */  sb    $t4, 1($t6)
@@ -13091,14 +13091,14 @@ spectrum_op_E3:
 /* 1127A4 7F0DDC74 29014000 */  slti  $at, $t0, 0x4000
 /* 1127A8 7F0DDC78 14200011 */  bnez  $at, .L7F0DDCC0
 /* 1127AC 7F0DDC7C 97AF0296 */   lhu   $t7, 0x296($sp)
-/* 1127B0 7F0DDC80 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 1127B0 7F0DDC80 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 1127B4 7F0DDC84 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 1127B8 7F0DDC88 000F5A03 */  sra   $t3, $t7, 8
 /* 1127BC 7F0DDC8C 24090001 */  li    $t1, 1
 /* 1127C0 7F0DDC90 018A7021 */  addu  $t6, $t4, $t2
 /* 1127C4 7F0DDC94 A1CB0001 */  sb    $t3, 1($t6)
 /* 1127C8 7F0DDC98 97B80292 */  lhu   $t8, 0x292($sp)
-/* 1127CC 7F0DDC9C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 1127CC 7F0DDC9C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 1127D0 7F0DDCA0 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 1127D4 7F0DDCA4 270D0001 */  addiu $t5, $t8, 1
 /* 1127D8 7F0DDCA8 31B91800 */  andi  $t9, $t5, 0x1800
@@ -13112,7 +13112,7 @@ spectrum_op_E3:
 /* 1127F4 7F0DDCC4 100012CD */  b     .L7F0E27FC
 /* 1127F8 7F0DDCC8 A7AE0296 */   sh    $t6, 0x296($sp)
 .L7F0DDCCC:
-/* 1127FC 7F0DDCCC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 1127FC 7F0DDCCC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 112800 7F0DDCD0 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 112804 7F0DDCD4 97AB0292 */  lhu   $t3, 0x292($sp)
 /* 112808 7F0DDCD8 03387821 */  addu  $t7, $t9, $t8
@@ -13124,7 +13124,7 @@ spectrum_op_E3:
 /* 112820 7F0DDCF0 010C4825 */  or    $t1, $t0, $t4
 /* 112824 7F0DDCF4 14200007 */  bnez  $at, .L7F0DDD14
 /* 112828 7F0DDCF8 A7A900E6 */   sh    $t1, 0xe6($sp)
-/* 11282C 7F0DDCFC 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 11282C 7F0DDCFC 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 112830 7F0DDD00 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 112834 7F0DDD04 97AE0294 */  lhu   $t6, 0x294($sp)
 /* 112838 7F0DDD08 01ABC821 */  addu  $t9, $t5, $t3
@@ -13133,13 +13133,13 @@ spectrum_op_E3:
 .L7F0DDD14:
 /* 112844 7F0DDD14 97B80292 */  lhu   $t8, 0x292($sp)
 /* 112848 7F0DDD18 97AE0292 */  lhu   $t6, 0x292($sp)
-/* 11284C 7F0DDD1C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 11284C 7F0DDD1C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 112850 7F0DDD20 2B015800 */  slti  $at, $t8, 0x5800
 /* 112854 7F0DDD24 5420000D */  bnezl $at, .L7F0DDD5C
 /* 112858 7F0DDD28 29C14000 */   slti  $at, $t6, 0x4000
 /* 11285C 7F0DDD2C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 112860 7F0DDD30 97AF0294 */  lhu   $t7, 0x294($sp)
-/* 112864 7F0DDD34 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 112864 7F0DDD34 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 112868 7F0DDD38 01584021 */  addu  $t0, $t2, $t8
 /* 11286C 7F0DDD3C A10F0000 */  sb    $t7, ($t0)
 /* 112870 7F0DDD40 97AD0292 */  lhu   $t5, 0x292($sp)
@@ -13151,14 +13151,14 @@ spectrum_op_E3:
 /* 112888 7F0DDD58 29C14000 */  slti  $at, $t6, 0x4000
 .L7F0DDD5C:
 /* 11288C 7F0DDD5C 1420000F */  bnez  $at, .L7F0DDD9C
-/* 112890 7F0DDD60 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 112890 7F0DDD60 3C0A8009 */   lui   $t2, %hi(ptr_spectrum_roms) 
 /* 112894 7F0DDD64 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 112898 7F0DDD68 97B90294 */  lhu   $t9, 0x294($sp)
 /* 11289C 7F0DDD6C 240F0001 */  li    $t7, 1
 /* 1128A0 7F0DDD70 014EC021 */  addu  $t8, $t2, $t6
 /* 1128A4 7F0DDD74 A3190000 */  sb    $t9, ($t8)
 /* 1128A8 7F0DDD78 97A80292 */  lhu   $t0, 0x292($sp)
-/* 1128AC 7F0DDD7C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 1128AC 7F0DDD7C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 1128B0 7F0DDD80 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 1128B4 7F0DDD84 31091800 */  andi  $t1, $t0, 0x1800
 /* 1128B8 7F0DDD88 000968C3 */  sra   $t5, $t1, 3
@@ -13174,7 +13174,7 @@ spectrum_op_E3:
 /* 1128DC 7F0DDDAC 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 1128E0 7F0DDDB0 14200007 */  bnez  $at, .L7F0DDDD0
 /* 1128E4 7F0DDDB4 254B0001 */   addiu $t3, $t2, 1
-/* 1128E8 7F0DDDB8 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1128E8 7F0DDDB8 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1128EC 7F0DDDBC 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1128F0 7F0DDDC0 00094203 */  sra   $t0, $t1, 8
 /* 1128F4 7F0DDDC4 01B96021 */  addu  $t4, $t5, $t9
@@ -13184,10 +13184,10 @@ spectrum_op_E3:
 /* 112900 7F0DDDD0 29615800 */  slti  $at, $t3, 0x5800
 /* 112904 7F0DDDD4 1420000E */  bnez  $at, .L7F0DDE10
 /* 112908 7F0DDDD8 97AB0292 */   lhu   $t3, 0x292($sp)
-/* 11290C 7F0DDDDC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 11290C 7F0DDDDC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 112910 7F0DDDE0 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 112914 7F0DDDE4 97AF0294 */  lhu   $t7, 0x294($sp)
-/* 112918 7F0DDDE8 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 112918 7F0DDDE8 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 11291C 7F0DDDEC 030A4821 */  addu  $t1, $t8, $t2
 /* 112920 7F0DDDF0 000F7203 */  sra   $t6, $t7, 8
 /* 112924 7F0DDDF4 A12E0001 */  sb    $t6, 1($t1)
@@ -13202,14 +13202,14 @@ spectrum_op_E3:
 /* 112944 7F0DDE14 29E14000 */  slti  $at, $t7, 0x4000
 /* 112948 7F0DDE18 14200011 */  bnez  $at, .L7F0DDE60
 /* 11294C 7F0DDE1C 97B80294 */   lhu   $t8, 0x294($sp)
-/* 112950 7F0DDE20 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 112950 7F0DDE20 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 112954 7F0DDE24 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 112958 7F0DDE28 00185203 */  sra   $t2, $t8, 8
 /* 11295C 7F0DDE2C 24190001 */  li    $t9, 1
 /* 112960 7F0DDE30 01CB4821 */  addu  $t1, $t6, $t3
 /* 112964 7F0DDE34 A12A0001 */  sb    $t2, 1($t1)
 /* 112968 7F0DDE38 97A80292 */  lhu   $t0, 0x292($sp)
-/* 11296C 7F0DDE3C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 11296C 7F0DDE3C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 112970 7F0DDE40 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 112974 7F0DDE44 250D0001 */  addiu $t5, $t0, 1
 /* 112978 7F0DDE48 31AC1800 */  andi  $t4, $t5, 0x1800
@@ -13236,7 +13236,7 @@ spectrum_op_E4:
 /* 1129C4 7F0DDE94 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 1129C8 7F0DDE98 14200008 */  bnez  $at, .L7F0DDEBC
 /* 1129CC 7F0DDE9C A7AE0292 */   sh    $t6, 0x292($sp)
-/* 1129D0 7F0DDEA0 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1129D0 7F0DDEA0 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1129D4 7F0DDEA4 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1129D8 7F0DDEA8 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 1129DC 7F0DDEAC 01196021 */  addu  $t4, $t0, $t9
@@ -13249,10 +13249,10 @@ spectrum_op_E4:
 /* 1129F4 7F0DDEC4 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 1129F8 7F0DDEC8 29A15800 */  slti  $at, $t5, 0x5800
 /* 1129FC 7F0DDECC 1420000C */  bnez  $at, .L7F0DDF00
-/* 112A00 7F0DDED0 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 112A00 7F0DDED0 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 112A04 7F0DDED4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 112A08 7F0DDED8 25F80002 */  addiu $t8, $t7, 2
-/* 112A0C 7F0DDEDC 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 112A0C 7F0DDEDC 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 112A10 7F0DDEE0 016D7021 */  addu  $t6, $t3, $t5
 /* 112A14 7F0DDEE4 A1D80000 */  sb    $t8, ($t6)
 /* 112A18 7F0DDEE8 97B90292 */  lhu   $t9, 0x292($sp)
@@ -13265,14 +13265,14 @@ spectrum_op_E4:
 /* 112A30 7F0DDF00 29814000 */  slti  $at, $t4, 0x4000
 /* 112A34 7F0DDF04 14200010 */  bnez  $at, .L7F0DDF48
 /* 112A38 7F0DDF08 97AF0298 */   lhu   $t7, 0x298($sp)
-/* 112A3C 7F0DDF0C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 112A3C 7F0DDF0C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 112A40 7F0DDF10 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 112A44 7F0DDF14 25EB0002 */  addiu $t3, $t7, 2
 /* 112A48 7F0DDF18 240E0001 */  li    $t6, 1
 /* 112A4C 7F0DDF1C 01ACC021 */  addu  $t8, $t5, $t4
 /* 112A50 7F0DDF20 A30B0000 */  sb    $t3, ($t8)
 /* 112A54 7F0DDF24 97A80292 */  lhu   $t0, 0x292($sp)
-/* 112A58 7F0DDF28 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 112A58 7F0DDF28 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 112A5C 7F0DDF2C 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 112A60 7F0DDF30 31191800 */  andi  $t9, $t0, 0x1800
 /* 112A64 7F0DDF34 001950C3 */  sra   $t2, $t9, 3
@@ -13288,7 +13288,7 @@ spectrum_op_E4:
 /* 112A88 7F0DDF58 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 112A8C 7F0DDF5C 14200008 */  bnez  $at, .L7F0DDF80
 /* 112A90 7F0DDF60 25EE0001 */   addiu $t6, $t7, 1
-/* 112A94 7F0DDF64 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 112A94 7F0DDF64 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 112A98 7F0DDF68 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 112A9C 7F0DDF6C 27280002 */  addiu $t0, $t9, 2
 /* 112AA0 7F0DDF70 00085203 */  sra   $t2, $t0, 8
@@ -13300,13 +13300,13 @@ spectrum_op_E4:
 /* 112AB4 7F0DDF84 1420000F */  bnez  $at, .L7F0DDFC4
 /* 112AB8 7F0DDF88 97AC0292 */   lhu   $t4, 0x292($sp)
 /* 112ABC 7F0DDF8C 97AC0298 */  lhu   $t4, 0x298($sp)
-/* 112AC0 7F0DDF90 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 112AC0 7F0DDF90 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 112AC4 7F0DDF94 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 112AC8 7F0DDF98 25980002 */  addiu $t8, $t4, 2
 /* 112ACC 7F0DDF9C 0018CA03 */  sra   $t9, $t8, 8
 /* 112AD0 7F0DDFA0 010F4821 */  addu  $t1, $t0, $t7
 /* 112AD4 7F0DDFA4 A1390001 */  sb    $t9, 1($t1)
-/* 112AD8 7F0DDFA8 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 112AD8 7F0DDFA8 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 112ADC 7F0DDFAC 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 112AE0 7F0DDFB0 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 112AE4 7F0DDFB4 240B0001 */  li    $t3, 1
@@ -13318,14 +13318,14 @@ spectrum_op_E4:
 /* 112AF8 7F0DDFC8 2B014000 */  slti  $at, $t8, 0x4000
 /* 112AFC 7F0DDFCC 14200012 */  bnez  $at, .L7F0DE018
 /* 112B00 7F0DDFD0 97A80298 */   lhu   $t0, 0x298($sp)
-/* 112B04 7F0DDFD4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 112B04 7F0DDFD4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 112B08 7F0DDFD8 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 112B0C 7F0DDFDC 250F0002 */  addiu $t7, $t0, 2
 /* 112B10 7F0DDFE0 000FCA03 */  sra   $t9, $t7, 8
 /* 112B14 7F0DDFE4 012C5021 */  addu  $t2, $t1, $t4
 /* 112B18 7F0DDFE8 A1590001 */  sb    $t9, 1($t2)
 /* 112B1C 7F0DDFEC 97AB0292 */  lhu   $t3, 0x292($sp)
-/* 112B20 7F0DDFF0 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 112B20 7F0DDFF0 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 112B24 7F0DDFF4 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 112B28 7F0DDFF8 256E0001 */  addiu $t6, $t3, 1
 /* 112B2C 7F0DDFFC 31D81800 */  andi  $t8, $t6, 0x1800
@@ -13336,7 +13336,7 @@ spectrum_op_E4:
 /* 112B40 7F0DE010 0189C821 */  addu  $t9, $t4, $t1
 /* 112B44 7F0DE014 A32D0000 */  sb    $t5, ($t9)
 .L7F0DE018:
-/* 112B48 7F0DE018 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 112B48 7F0DE018 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 112B4C 7F0DE01C 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 112B50 7F0DE020 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 112B54 7F0DE024 016A4021 */  addu  $t0, $t3, $t2
@@ -13360,7 +13360,7 @@ spectrum_op_E5:
 /* 112B94 7F0DE064 15400058 */  bnez  $t2, .L7F0DE1C8
 /* 112B98 7F0DE068 AFAB028C */   sw    $t3, 0x28c($sp)
 /* 112B9C 7F0DE06C 97A80292 */  lhu   $t0, 0x292($sp)
-/* 112BA0 7F0DE070 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 112BA0 7F0DE070 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 112BA4 7F0DE074 250FFFFE */  addiu $t7, $t0, -2
 /* 112BA8 7F0DE078 31EEFFFF */  andi  $t6, $t7, 0xffff
 /* 112BAC 7F0DE07C 29C15B00 */  slti  $at, $t6, 0x5b00
@@ -13373,12 +13373,12 @@ spectrum_op_E5:
 .L7F0DE098:
 /* 112BC8 7F0DE098 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 112BCC 7F0DE09C 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 112BD0 7F0DE0A0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 112BD0 7F0DE0A0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 112BD4 7F0DE0A4 29A15800 */  slti  $at, $t5, 0x5800
 /* 112BD8 7F0DE0A8 5420000C */  bnezl $at, .L7F0DE0DC
 /* 112BDC 7F0DE0AC 29814000 */   slti  $at, $t4, 0x4000
 /* 112BE0 7F0DE0B0 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
-/* 112BE4 7F0DE0B4 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 112BE4 7F0DE0B4 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 112BE8 7F0DE0B8 240B0001 */  li    $t3, 1
 /* 112BEC 7F0DE0BC 032DC021 */  addu  $t8, $t9, $t5
 /* 112BF0 7F0DE0C0 A3170000 */  sb    $s7, ($t8)
@@ -13390,9 +13390,9 @@ spectrum_op_E5:
 /* 112C08 7F0DE0D8 29814000 */  slti  $at, $t4, 0x4000
 .L7F0DE0DC:
 /* 112C0C 7F0DE0DC 1420000E */  bnez  $at, .L7F0DE118
-/* 112C10 7F0DE0E0 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 112C10 7F0DE0E0 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) 
 /* 112C14 7F0DE0E4 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
-/* 112C18 7F0DE0E8 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 112C18 7F0DE0E8 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 112C1C 7F0DE0EC 24190001 */  li    $t9, 1
 /* 112C20 7F0DE0F0 01CC4821 */  addu  $t1, $t6, $t4
 /* 112C24 7F0DE0F4 A1370000 */  sb    $s7, ($t1)
@@ -13407,7 +13407,7 @@ spectrum_op_E5:
 .L7F0DE118:
 /* 112C48 7F0DE118 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 112C4C 7F0DE11C 97AA0292 */  lhu   $t2, 0x292($sp)
-/* 112C50 7F0DE120 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 112C50 7F0DE120 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 112C54 7F0DE124 25890001 */  addiu $t1, $t4, 1
 /* 112C58 7F0DE128 29215B00 */  slti  $at, $t1, 0x5b00
 /* 112C5C 7F0DE12C 14200005 */  bnez  $at, .L7F0DE144
@@ -13420,9 +13420,9 @@ spectrum_op_E5:
 /* 112C74 7F0DE144 29015800 */  slti  $at, $t0, 0x5800
 /* 112C78 7F0DE148 1420000C */  bnez  $at, .L7F0DE17C
 /* 112C7C 7F0DE14C 97AC0292 */   lhu   $t4, 0x292($sp)
-/* 112C80 7F0DE150 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 112C80 7F0DE150 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 112C84 7F0DE154 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
-/* 112C88 7F0DE158 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 112C88 7F0DE158 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 112C8C 7F0DE15C 24190001 */  li    $t9, 1
 /* 112C90 7F0DE160 01EA5821 */  addu  $t3, $t7, $t2
 /* 112C94 7F0DE164 A1760001 */  sb    $s6, 1($t3)
@@ -13435,13 +13435,13 @@ spectrum_op_E5:
 /* 112CAC 7F0DE17C 258D0001 */  addiu $t5, $t4, 1
 /* 112CB0 7F0DE180 29A14000 */  slti  $at, $t5, 0x4000
 /* 112CB4 7F0DE184 1420119D */  bnez  $at, .L7F0E27FC
-/* 112CB8 7F0DE188 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 112CB8 7F0DE188 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 112CBC 7F0DE18C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 112CC0 7F0DE190 240A0001 */  li    $t2, 1
 /* 112CC4 7F0DE194 010C7821 */  addu  $t7, $t0, $t4
 /* 112CC8 7F0DE198 A1F60001 */  sb    $s6, 1($t7)
 /* 112CCC 7F0DE19C 97AB0292 */  lhu   $t3, 0x292($sp)
-/* 112CD0 7F0DE1A0 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 112CD0 7F0DE1A0 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 112CD4 7F0DE1A4 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 112CD8 7F0DE1A8 256E0001 */  addiu $t6, $t3, 1
 /* 112CDC 7F0DE1AC 31C91800 */  andi  $t1, $t6, 0x1800
@@ -13456,7 +13456,7 @@ spectrum_op_E5:
 /* 112CFC 7F0DE1CC 15E10061 */  bne   $t7, $at, .L7F0DE354
 /* 112D00 7F0DE1D0 97A90292 */   lhu   $t1, 0x292($sp)
 /* 112D04 7F0DE1D4 97AB0292 */  lhu   $t3, 0x292($sp)
-/* 112D08 7F0DE1D8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 112D08 7F0DE1D8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 112D0C 7F0DE1DC 2569FFFE */  addiu $t1, $t3, -2
 /* 112D10 7F0DE1E0 312EFFFF */  andi  $t6, $t1, 0xffff
 /* 112D14 7F0DE1E4 29C15B00 */  slti  $at, $t6, 0x5b00
@@ -13470,13 +13470,13 @@ spectrum_op_E5:
 .L7F0DE204:
 /* 112D34 7F0DE204 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 112D38 7F0DE208 97B90292 */  lhu   $t9, 0x292($sp)
-/* 112D3C 7F0DE20C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 112D3C 7F0DE20C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 112D40 7F0DE210 29A15800 */  slti  $at, $t5, 0x5800
 /* 112D44 7F0DE214 5420000D */  bnezl $at, .L7F0DE24C
 /* 112D48 7F0DE218 2B214000 */   slti  $at, $t9, 0x4000
 /* 112D4C 7F0DE21C 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 112D50 7F0DE220 97AA0296 */  lhu   $t2, 0x296($sp)
-/* 112D54 7F0DE224 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 112D54 7F0DE224 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 112D58 7F0DE228 018D7821 */  addu  $t7, $t4, $t5
 /* 112D5C 7F0DE22C A1EA0000 */  sb    $t2, ($t7)
 /* 112D60 7F0DE230 97B80292 */  lhu   $t8, 0x292($sp)
@@ -13488,14 +13488,14 @@ spectrum_op_E5:
 /* 112D78 7F0DE248 2B214000 */  slti  $at, $t9, 0x4000
 .L7F0DE24C:
 /* 112D7C 7F0DE24C 1420000F */  bnez  $at, .L7F0DE28C
-/* 112D80 7F0DE250 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 112D80 7F0DE250 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) 
 /* 112D84 7F0DE254 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 112D88 7F0DE258 97A80296 */  lhu   $t0, 0x296($sp)
 /* 112D8C 7F0DE25C 240A0001 */  li    $t2, 1
 /* 112D90 7F0DE260 01996821 */  addu  $t5, $t4, $t9
 /* 112D94 7F0DE264 A1A80000 */  sb    $t0, ($t5)
 /* 112D98 7F0DE268 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 112D9C 7F0DE26C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 112D9C 7F0DE26C 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 112DA0 7F0DE270 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 112DA4 7F0DE274 31E91800 */  andi  $t1, $t7, 0x1800
 /* 112DA8 7F0DE278 0009C0C3 */  sra   $t8, $t1, 3
@@ -13511,7 +13511,7 @@ spectrum_op_E5:
 /* 112DCC 7F0DE29C 29A15B00 */  slti  $at, $t5, 0x5b00
 /* 112DD0 7F0DE2A0 14200007 */  bnez  $at, .L7F0DE2C0
 /* 112DD4 7F0DE2A4 258E0001 */   addiu $t6, $t4, 1
-/* 112DD8 7F0DE2A8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 112DD8 7F0DE2A8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 112DDC 7F0DE2AC 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 112DE0 7F0DE2B0 00097A03 */  sra   $t7, $t1, 8
 /* 112DE4 7F0DE2B4 03085821 */  addu  $t3, $t8, $t0
@@ -13521,10 +13521,10 @@ spectrum_op_E5:
 /* 112DF0 7F0DE2C0 29C15800 */  slti  $at, $t6, 0x5800
 /* 112DF4 7F0DE2C4 1420000E */  bnez  $at, .L7F0DE300
 /* 112DF8 7F0DE2C8 97AE0292 */   lhu   $t6, 0x292($sp)
-/* 112DFC 7F0DE2CC 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 112DFC 7F0DE2CC 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 112E00 7F0DE2D0 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 112E04 7F0DE2D4 97AA0296 */  lhu   $t2, 0x296($sp)
-/* 112E08 7F0DE2D8 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 112E08 7F0DE2D8 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 112E0C 7F0DE2DC 01AC4821 */  addu  $t1, $t5, $t4
 /* 112E10 7F0DE2E0 000ACA03 */  sra   $t9, $t2, 8
 /* 112E14 7F0DE2E4 A1390001 */  sb    $t9, 1($t1)
@@ -13539,14 +13539,14 @@ spectrum_op_E5:
 /* 112E34 7F0DE304 29414000 */  slti  $at, $t2, 0x4000
 /* 112E38 7F0DE308 1420113C */  bnez  $at, .L7F0E27FC
 /* 112E3C 7F0DE30C 97AD0296 */   lhu   $t5, 0x296($sp)
-/* 112E40 7F0DE310 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 112E40 7F0DE310 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 112E44 7F0DE314 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 112E48 7F0DE318 000D6203 */  sra   $t4, $t5, 8
 /* 112E4C 7F0DE31C 24080001 */  li    $t0, 1
 /* 112E50 7F0DE320 032E4821 */  addu  $t1, $t9, $t6
 /* 112E54 7F0DE324 A12C0001 */  sb    $t4, 1($t1)
 /* 112E58 7F0DE328 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 112E5C 7F0DE32C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 112E5C 7F0DE32C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 112E60 7F0DE330 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 112E64 7F0DE334 25F80001 */  addiu $t8, $t7, 1
 /* 112E68 7F0DE338 330B1800 */  andi  $t3, $t8, 0x1800
@@ -13562,7 +13562,7 @@ spectrum_op_E5:
 /* 112E8C 7F0DE35C 29615B00 */  slti  $at, $t3, 0x5b00
 /* 112E90 7F0DE360 14200007 */  bnez  $at, .L7F0DE380
 /* 112E94 7F0DE364 A7AF0292 */   sh    $t7, 0x292($sp)
-/* 112E98 7F0DE368 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 112E98 7F0DE368 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 112E9C 7F0DE36C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 112EA0 7F0DE370 97B80294 */  lhu   $t8, 0x294($sp)
 /* 112EA4 7F0DE374 014B6821 */  addu  $t5, $t2, $t3
@@ -13571,13 +13571,13 @@ spectrum_op_E5:
 .L7F0DE380:
 /* 112EB0 7F0DE380 97AE0292 */  lhu   $t6, 0x292($sp)
 /* 112EB4 7F0DE384 97B80292 */  lhu   $t8, 0x292($sp)
-/* 112EB8 7F0DE388 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 112EB8 7F0DE388 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 112EBC 7F0DE38C 29C15800 */  slti  $at, $t6, 0x5800
 /* 112EC0 7F0DE390 5420000D */  bnezl $at, .L7F0DE3C8
 /* 112EC4 7F0DE394 2B014000 */   slti  $at, $t8, 0x4000
 /* 112EC8 7F0DE398 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 112ECC 7F0DE39C 97B90294 */  lhu   $t9, 0x294($sp)
-/* 112ED0 7F0DE3A0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 112ED0 7F0DE3A0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 112ED4 7F0DE3A4 010E6021 */  addu  $t4, $t0, $t6
 /* 112ED8 7F0DE3A8 A1990000 */  sb    $t9, ($t4)
 /* 112EDC 7F0DE3AC 97AA0292 */  lhu   $t2, 0x292($sp)
@@ -13589,14 +13589,14 @@ spectrum_op_E5:
 /* 112EF4 7F0DE3C4 2B014000 */  slti  $at, $t8, 0x4000
 .L7F0DE3C8:
 /* 112EF8 7F0DE3C8 1420000F */  bnez  $at, .L7F0DE408
-/* 112EFC 7F0DE3CC 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 112EFC 7F0DE3CC 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 112F00 7F0DE3D0 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 112F04 7F0DE3D4 97AD0294 */  lhu   $t5, 0x294($sp)
 /* 112F08 7F0DE3D8 24190001 */  li    $t9, 1
 /* 112F0C 7F0DE3DC 01187021 */  addu  $t6, $t0, $t8
 /* 112F10 7F0DE3E0 A1CD0000 */  sb    $t5, ($t6)
 /* 112F14 7F0DE3E4 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 112F18 7F0DE3E8 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 112F18 7F0DE3E8 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 112F1C 7F0DE3EC 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 112F20 7F0DE3F0 318F1800 */  andi  $t7, $t4, 0x1800
 /* 112F24 7F0DE3F4 000F50C3 */  sra   $t2, $t7, 3
@@ -13612,7 +13612,7 @@ spectrum_op_E5:
 /* 112F48 7F0DE418 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 112F4C 7F0DE41C 14200007 */  bnez  $at, .L7F0DE43C
 /* 112F50 7F0DE420 250B0001 */   addiu $t3, $t0, 1
-/* 112F54 7F0DE424 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 112F54 7F0DE424 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 112F58 7F0DE428 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 112F5C 7F0DE42C 000F6203 */  sra   $t4, $t7, 8
 /* 112F60 7F0DE430 014D4821 */  addu  $t1, $t2, $t5
@@ -13622,10 +13622,10 @@ spectrum_op_E5:
 /* 112F6C 7F0DE43C 29615800 */  slti  $at, $t3, 0x5800
 /* 112F70 7F0DE440 1420000E */  bnez  $at, .L7F0DE47C
 /* 112F74 7F0DE444 97AB0292 */   lhu   $t3, 0x292($sp)
-/* 112F78 7F0DE448 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 112F78 7F0DE448 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 112F7C 7F0DE44C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 112F80 7F0DE450 97B90294 */  lhu   $t9, 0x294($sp)
-/* 112F84 7F0DE454 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 112F84 7F0DE454 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 112F88 7F0DE458 01C87821 */  addu  $t7, $t6, $t0
 /* 112F8C 7F0DE45C 0019C203 */  sra   $t8, $t9, 8
 /* 112F90 7F0DE460 A1F80001 */  sb    $t8, 1($t7)
@@ -13640,14 +13640,14 @@ spectrum_op_E5:
 /* 112FB0 7F0DE480 2B214000 */  slti  $at, $t9, 0x4000
 /* 112FB4 7F0DE484 142010DD */  bnez  $at, .L7F0E27FC
 /* 112FB8 7F0DE488 97AE0294 */   lhu   $t6, 0x294($sp)
-/* 112FBC 7F0DE48C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 112FBC 7F0DE48C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 112FC0 7F0DE490 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 112FC4 7F0DE494 000E4203 */  sra   $t0, $t6, 8
 /* 112FC8 7F0DE498 240D0001 */  li    $t5, 1
 /* 112FCC 7F0DE49C 030B7821 */  addu  $t7, $t8, $t3
 /* 112FD0 7F0DE4A0 A1E80001 */  sb    $t0, 1($t7)
 /* 112FD4 7F0DE4A4 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 112FD8 7F0DE4A8 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 112FD8 7F0DE4A8 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 112FDC 7F0DE4AC 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 112FE0 7F0DE4B0 258A0001 */  addiu $t2, $t4, 1
 /* 112FE4 7F0DE4B4 31491800 */  andi  $t1, $t2, 0x1800
@@ -13659,14 +13659,14 @@ spectrum_op_E5:
 /* 112FFC 7F0DE4CC A10D0000 */   sb    $t5, ($t0)
 spectrum_op_E6:
 /* 113000 7F0DE4D0 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 113004 7F0DE4D4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 113004 7F0DE4D4 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 113008 7F0DE4D8 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 11300C 7F0DE4DC 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 113010 7F0DE4E0 25EC0007 */  addiu $t4, $t7, 7
 /* 113014 7F0DE4E4 AFAC028C */  sw    $t4, 0x28c($sp)
 /* 113018 7F0DE4E8 012AC821 */  addu  $t9, $t1, $t2
 /* 11301C 7F0DE4EC 932E0000 */  lbu   $t6, ($t9)
-/* 113020 7F0DE4F0 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 113020 7F0DE4F0 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 113024 7F0DE4F4 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 113028 7F0DE4F8 020E8024 */  and   $s0, $s0, $t6
 /* 11302C 7F0DE4FC 320B00FF */  andi  $t3, $s0, 0xff
@@ -13689,7 +13689,7 @@ spectrum_op_E6:
 spectrum_op_E7:
 /* 113070 7F0DE540 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 113074 7F0DE544 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 113078 7F0DE548 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 113078 7F0DE548 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 11307C 7F0DE54C 258AFFFE */  addiu $t2, $t4, -2
 /* 113080 7F0DE550 3159FFFF */  andi  $t9, $t2, 0xffff
 /* 113084 7F0DE554 2B215B00 */  slti  $at, $t9, 0x5b00
@@ -13705,13 +13705,13 @@ spectrum_op_E7:
 .L7F0DE57C:
 /* 1130AC 7F0DE57C 97B80292 */  lhu   $t8, 0x292($sp)
 /* 1130B0 7F0DE580 97AE0292 */  lhu   $t6, 0x292($sp)
-/* 1130B4 7F0DE584 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1130B4 7F0DE584 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1130B8 7F0DE588 2B015800 */  slti  $at, $t8, 0x5800
 /* 1130BC 7F0DE58C 5420000D */  bnezl $at, .L7F0DE5C4
 /* 1130C0 7F0DE590 29C14000 */   slti  $at, $t6, 0x4000
 /* 1130C4 7F0DE594 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1130C8 7F0DE598 97A80298 */  lhu   $t0, 0x298($sp)
-/* 1130CC 7F0DE59C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 1130CC 7F0DE59C 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 1130D0 7F0DE5A0 01B87821 */  addu  $t7, $t5, $t8
 /* 1130D4 7F0DE5A4 A1E80000 */  sb    $t0, ($t7)
 /* 1130D8 7F0DE5A8 97A90292 */  lhu   $t1, 0x292($sp)
@@ -13723,14 +13723,14 @@ spectrum_op_E7:
 /* 1130F0 7F0DE5C0 29C14000 */  slti  $at, $t6, 0x4000
 .L7F0DE5C4:
 /* 1130F4 7F0DE5C4 1420000F */  bnez  $at, .L7F0DE604
-/* 1130F8 7F0DE5C8 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1130F8 7F0DE5C8 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1130FC 7F0DE5CC 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 113100 7F0DE5D0 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 113104 7F0DE5D4 24080001 */  li    $t0, 1
 /* 113108 7F0DE5D8 01AEC021 */  addu  $t8, $t5, $t6
 /* 11310C 7F0DE5DC A30B0000 */  sb    $t3, ($t8)
 /* 113110 7F0DE5E0 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 113114 7F0DE5E4 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 113114 7F0DE5E4 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 113118 7F0DE5E8 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 11311C 7F0DE5EC 31EA1800 */  andi  $t2, $t7, 0x1800
 /* 113120 7F0DE5F0 000A48C3 */  sra   $t1, $t2, 3
@@ -13746,7 +13746,7 @@ spectrum_op_E7:
 /* 113144 7F0DE614 2B015B00 */  slti  $at, $t8, 0x5b00
 /* 113148 7F0DE618 14200007 */  bnez  $at, .L7F0DE638
 /* 11314C 7F0DE61C 25B90001 */   addiu $t9, $t5, 1
-/* 113150 7F0DE620 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 113150 7F0DE620 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 113154 7F0DE624 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 113158 7F0DE628 000A7A03 */  sra   $t7, $t2, 8
 /* 11315C 7F0DE62C 012B6021 */  addu  $t4, $t1, $t3
@@ -13756,10 +13756,10 @@ spectrum_op_E7:
 /* 113168 7F0DE638 2B215800 */  slti  $at, $t9, 0x5800
 /* 11316C 7F0DE63C 1420000E */  bnez  $at, .L7F0DE678
 /* 113170 7F0DE640 97B90292 */   lhu   $t9, 0x292($sp)
-/* 113174 7F0DE644 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 113174 7F0DE644 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 113178 7F0DE648 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 11317C 7F0DE64C 97A80298 */  lhu   $t0, 0x298($sp)
-/* 113180 7F0DE650 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 113180 7F0DE650 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 113184 7F0DE654 030D5021 */  addu  $t2, $t8, $t5
 /* 113188 7F0DE658 00087203 */  sra   $t6, $t0, 8
 /* 11318C 7F0DE65C A14E0001 */  sb    $t6, 1($t2)
@@ -13774,14 +13774,14 @@ spectrum_op_E7:
 /* 1131AC 7F0DE67C 29014000 */  slti  $at, $t0, 0x4000
 /* 1131B0 7F0DE680 14200011 */  bnez  $at, .L7F0DE6C8
 /* 1131B4 7F0DE684 97B80298 */   lhu   $t8, 0x298($sp)
-/* 1131B8 7F0DE688 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1131B8 7F0DE688 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1131BC 7F0DE68C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1131C0 7F0DE690 00186A03 */  sra   $t5, $t8, 8
 /* 1131C4 7F0DE694 240B0001 */  li    $t3, 1
 /* 1131C8 7F0DE698 01D95021 */  addu  $t2, $t6, $t9
 /* 1131CC 7F0DE69C A14D0001 */  sb    $t5, 1($t2)
 /* 1131D0 7F0DE6A0 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 1131D4 7F0DE6A4 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 1131D4 7F0DE6A4 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 1131D8 7F0DE6A8 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 1131DC 7F0DE6AC 25E90001 */  addiu $t1, $t7, 1
 /* 1131E0 7F0DE6B0 312C1800 */  andi  $t4, $t1, 0x1800
@@ -13797,7 +13797,7 @@ spectrum_op_E7:
 spectrum_op_E8:
 /* 113204 7F0DE6D4 8FAF028C */  lw    $t7, 0x28c($sp)
 /* 113208 7F0DE6D8 32290004 */  andi  $t1, $s1, 4
-/* 11320C 7F0DE6DC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 11320C 7F0DE6DC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 113210 7F0DE6E0 25EC0005 */  addiu $t4, $t7, 5
 /* 113214 7F0DE6E4 11201045 */  beqz  $t1, .L7F0E27FC
 /* 113218 7F0DE6E8 AFAC028C */   sw    $t4, 0x28c($sp)
@@ -13846,7 +13846,7 @@ spectrum_op_EA:
 /* 1132B0 7F0DE780 2518000A */  addiu $t8, $t0, 0xa
 /* 1132B4 7F0DE784 1160000B */  beqz  $t3, .L7F0DE7B4
 /* 1132B8 7F0DE788 AFB8028C */   sw    $t8, 0x28c($sp)
-/* 1132BC 7F0DE78C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 1132BC 7F0DE78C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 1132C0 7F0DE790 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 1132C4 7F0DE794 014E6021 */  addu  $t4, $t2, $t6
 /* 1132C8 7F0DE798 91890001 */  lbu   $t1, 1($t4)
@@ -13886,7 +13886,7 @@ spectrum_op_EC:
 /* 113344 7F0DE814 29615B00 */  slti  $at, $t3, 0x5b00
 /* 113348 7F0DE818 14200008 */  bnez  $at, .L7F0DE83C
 /* 11334C 7F0DE81C A7B80292 */   sh    $t8, 0x292($sp)
-/* 113350 7F0DE820 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 113350 7F0DE820 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 113354 7F0DE824 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 113358 7F0DE828 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 11335C 7F0DE82C 01CB6021 */  addu  $t4, $t6, $t3
@@ -13899,10 +13899,10 @@ spectrum_op_EC:
 /* 113374 7F0DE844 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 113378 7F0DE848 29215800 */  slti  $at, $t1, 0x5800
 /* 11337C 7F0DE84C 1420000C */  bnez  $at, .L7F0DE880
-/* 113380 7F0DE850 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 113380 7F0DE850 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 113384 7F0DE854 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 113388 7F0DE858 25B90002 */  addiu $t9, $t5, 2
-/* 11338C 7F0DE85C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 11338C 7F0DE85C 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 113390 7F0DE860 0109C021 */  addu  $t8, $t0, $t1
 /* 113394 7F0DE864 A3190000 */  sb    $t9, ($t8)
 /* 113398 7F0DE868 97AB0292 */  lhu   $t3, 0x292($sp)
@@ -13915,14 +13915,14 @@ spectrum_op_EC:
 /* 1133B0 7F0DE880 29814000 */  slti  $at, $t4, 0x4000
 /* 1133B4 7F0DE884 14200010 */  bnez  $at, .L7F0DE8C8
 /* 1133B8 7F0DE888 97AD0298 */   lhu   $t5, 0x298($sp)
-/* 1133BC 7F0DE88C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 1133BC 7F0DE88C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 1133C0 7F0DE890 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1133C4 7F0DE894 25A80002 */  addiu $t0, $t5, 2
 /* 1133C8 7F0DE898 24180001 */  li    $t8, 1
 /* 1133CC 7F0DE89C 012CC821 */  addu  $t9, $t1, $t4
 /* 1133D0 7F0DE8A0 A3280000 */  sb    $t0, ($t9)
 /* 1133D4 7F0DE8A4 97AE0292 */  lhu   $t6, 0x292($sp)
-/* 1133D8 7F0DE8A8 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 1133D8 7F0DE8A8 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 1133DC 7F0DE8AC 8D29E32C */  lw    $t1, %lo(ptr_300alloc)($t1)
 /* 1133E0 7F0DE8B0 31CB1800 */  andi  $t3, $t6, 0x1800
 /* 1133E4 7F0DE8B4 000B78C3 */  sra   $t7, $t3, 3
@@ -13938,7 +13938,7 @@ spectrum_op_EC:
 /* 113408 7F0DE8D8 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 11340C 7F0DE8DC 14200008 */  bnez  $at, .L7F0DE900
 /* 113410 7F0DE8E0 25B80001 */   addiu $t8, $t5, 1
-/* 113414 7F0DE8E4 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 113414 7F0DE8E4 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 113418 7F0DE8E8 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 11341C 7F0DE8EC 256E0002 */  addiu $t6, $t3, 2
 /* 113420 7F0DE8F0 000E7A03 */  sra   $t7, $t6, 8
@@ -13950,13 +13950,13 @@ spectrum_op_EC:
 /* 113434 7F0DE904 1420000F */  bnez  $at, .L7F0DE944
 /* 113438 7F0DE908 97AC0292 */   lhu   $t4, 0x292($sp)
 /* 11343C 7F0DE90C 97AC0298 */  lhu   $t4, 0x298($sp)
-/* 113440 7F0DE910 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 113440 7F0DE910 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 113444 7F0DE914 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 113448 7F0DE918 25990002 */  addiu $t9, $t4, 2
 /* 11344C 7F0DE91C 00195A03 */  sra   $t3, $t9, 8
 /* 113450 7F0DE920 01CD5021 */  addu  $t2, $t6, $t5
 /* 113454 7F0DE924 A14B0001 */  sb    $t3, 1($t2)
-/* 113458 7F0DE928 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 113458 7F0DE928 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 11345C 7F0DE92C 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 113460 7F0DE930 97A90292 */  lhu   $t1, 0x292($sp)
 /* 113464 7F0DE934 24080001 */  li    $t0, 1
@@ -13968,14 +13968,14 @@ spectrum_op_EC:
 /* 113478 7F0DE948 2B214000 */  slti  $at, $t9, 0x4000
 /* 11347C 7F0DE94C 14200012 */  bnez  $at, .L7F0DE998
 /* 113480 7F0DE950 97AE0298 */   lhu   $t6, 0x298($sp)
-/* 113484 7F0DE954 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 113484 7F0DE954 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 113488 7F0DE958 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 11348C 7F0DE95C 25CD0002 */  addiu $t5, $t6, 2
 /* 113490 7F0DE960 000D5A03 */  sra   $t3, $t5, 8
 /* 113494 7F0DE964 014C7821 */  addu  $t7, $t2, $t4
 /* 113498 7F0DE968 A1EB0001 */  sb    $t3, 1($t7)
 /* 11349C 7F0DE96C 97A80292 */  lhu   $t0, 0x292($sp)
-/* 1134A0 7F0DE970 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 1134A0 7F0DE970 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 1134A4 7F0DE974 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 1134A8 7F0DE978 25180001 */  addiu $t8, $t0, 1
 /* 1134AC 7F0DE97C 33191800 */  andi  $t9, $t8, 0x1800
@@ -13986,7 +13986,7 @@ spectrum_op_EC:
 /* 1134C0 7F0DE990 018A5821 */  addu  $t3, $t4, $t2
 /* 1134C4 7F0DE994 A1690000 */  sb    $t1, ($t3)
 .L7F0DE998:
-/* 1134C8 7F0DE998 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1134C8 7F0DE998 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1134CC 7F0DE99C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1134D0 7F0DE9A0 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 1134D4 7F0DE9A4 010F7021 */  addu  $t6, $t0, $t7
@@ -14004,7 +14004,7 @@ spectrum_op_EC:
 /* 113500 7F0DE9D0 A7AB0298 */   sh    $t3, 0x298($sp)
 spectrum_op_ED:
 /* 113504 7F0DE9D4 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 113508 7F0DE9D8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 113508 7F0DE9D8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 11350C 7F0DE9DC 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 113510 7F0DE9E0 97AF0298 */  lhu   $t7, 0x298($sp)
 /* 113514 7F0DE9E4 27280004 */  addiu $t0, $t9, 4
@@ -14054,7 +14054,7 @@ spectrum_op_ED_40:
 /* 1135BC 7F0DEA8C A7A200E0 */  sh    $v0, 0xe0($sp)
 /* 1135C0 7F0DEA90 01EA4821 */  addu  $t1, $t7, $t2
 /* 1135C4 7F0DEA94 93B200E1 */  lbu   $s2, 0xe1($sp)
-/* 1135C8 7F0DEA98 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) # $t7, 0x8009
+/* 1135C8 7F0DEA98 3C0F8009 */  lui   $t7, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1135CC 7F0DEA9C 8DEFE334 */  lw    $t7, %lo(ptr_pc_keyboard_table_alloc)($t7)
 /* 1135D0 7F0DEAA0 2E4B0001 */  sltiu $t3, $s2, 1
 /* 1135D4 7F0DEAA4 AFAB0048 */  sw    $t3, 0x48($sp)
@@ -14139,7 +14139,7 @@ spectrum_op_ED_42:
 /* 113708 7F0DEBD8 AFA90048 */   sw    $t1, 0x48($sp)
 spectrum_op_ED_43:
 /* 11370C 7F0DEBDC 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 113710 7F0DEBE0 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 113710 7F0DEBE0 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 113714 7F0DEBE4 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 113718 7F0DEBE8 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 11371C 7F0DEBEC 25480010 */  addiu $t0, $t2, 0x10
@@ -14156,7 +14156,7 @@ spectrum_op_ED_43:
 /* 113748 7F0DEC18 A7B800D6 */  sh    $t8, 0xd6($sp)
 /* 11374C 7F0DEC1C 14200006 */  bnez  $at, .L7F0DEC38
 /* 113750 7F0DEC20 A7AA0298 */   sh    $t2, 0x298($sp)
-/* 113754 7F0DEC24 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 113754 7F0DEC24 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 113758 7F0DEC28 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 11375C 7F0DEC2C 01C84821 */  addu  $t1, $t6, $t0
 /* 113760 7F0DEC30 10000021 */  b     .L7F0DECB8
@@ -14164,12 +14164,12 @@ spectrum_op_ED_43:
 .L7F0DEC38:
 /* 113768 7F0DEC38 97AD00D6 */  lhu   $t5, 0xd6($sp)
 /* 11376C 7F0DEC3C 97AE00D6 */  lhu   $t6, 0xd6($sp)
-/* 113770 7F0DEC40 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 113770 7F0DEC40 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 113774 7F0DEC44 29A15800 */  slti  $at, $t5, 0x5800
 /* 113778 7F0DEC48 5420000C */  bnezl $at, .L7F0DEC7C
 /* 11377C 7F0DEC4C 29C14000 */   slti  $at, $t6, 0x4000
 /* 113780 7F0DEC50 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
-/* 113784 7F0DEC54 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 113784 7F0DEC54 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 113788 7F0DEC58 240F0001 */  li    $t7, 1
 /* 11378C 7F0DEC5C 032D5821 */  addu  $t3, $t9, $t5
 /* 113790 7F0DEC60 A1730000 */  sb    $s3, ($t3)
@@ -14181,9 +14181,9 @@ spectrum_op_ED_43:
 /* 1137A8 7F0DEC78 29C14000 */  slti  $at, $t6, 0x4000
 .L7F0DEC7C:
 /* 1137AC 7F0DEC7C 1420000E */  bnez  $at, .L7F0DECB8
-/* 1137B0 7F0DEC80 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1137B0 7F0DEC80 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1137B4 7F0DEC84 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
-/* 1137B8 7F0DEC88 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 1137B8 7F0DEC88 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 1137BC 7F0DEC8C 24190001 */  li    $t9, 1
 /* 1137C0 7F0DEC90 010E4821 */  addu  $t1, $t0, $t6
 /* 1137C4 7F0DEC94 A1330000 */  sb    $s3, ($t1)
@@ -14198,7 +14198,7 @@ spectrum_op_ED_43:
 .L7F0DECB8:
 /* 1137E8 7F0DECB8 97AE00D6 */  lhu   $t6, 0xd6($sp)
 /* 1137EC 7F0DECBC 97B800D6 */  lhu   $t8, 0xd6($sp)
-/* 1137F0 7F0DECC0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1137F0 7F0DECC0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1137F4 7F0DECC4 25C90001 */  addiu $t1, $t6, 1
 /* 1137F8 7F0DECC8 29215B00 */  slti  $at, $t1, 0x5b00
 /* 1137FC 7F0DECCC 14200005 */  bnez  $at, .L7F0DECE4
@@ -14211,9 +14211,9 @@ spectrum_op_ED_43:
 /* 113814 7F0DECE4 29815800 */  slti  $at, $t4, 0x5800
 /* 113818 7F0DECE8 1420000C */  bnez  $at, .L7F0DED1C
 /* 11381C 7F0DECEC 97AE00D6 */   lhu   $t6, 0xd6($sp)
-/* 113820 7F0DECF0 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 113820 7F0DECF0 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 113824 7F0DECF4 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
-/* 113828 7F0DECF8 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 113828 7F0DECF8 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 11382C 7F0DECFC 24190001 */  li    $t9, 1
 /* 113830 7F0DED00 01587821 */  addu  $t7, $t2, $t8
 /* 113834 7F0DED04 A1F20001 */  sb    $s2, 1($t7)
@@ -14226,13 +14226,13 @@ spectrum_op_ED_43:
 /* 11384C 7F0DED1C 25CD0001 */  addiu $t5, $t6, 1
 /* 113850 7F0DED20 29A14000 */  slti  $at, $t5, 0x4000
 /* 113854 7F0DED24 14200EB5 */  bnez  $at, .L7F0E27FC
-/* 113858 7F0DED28 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 113858 7F0DED28 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) 
 /* 11385C 7F0DED2C 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 113860 7F0DED30 24180001 */  li    $t8, 1
 /* 113864 7F0DED34 018E5021 */  addu  $t2, $t4, $t6
 /* 113868 7F0DED38 A1520001 */  sb    $s2, 1($t2)
 /* 11386C 7F0DED3C 97AF00D6 */  lhu   $t7, 0xd6($sp)
-/* 113870 7F0DED40 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 113870 7F0DED40 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 113874 7F0DED44 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 113878 7F0DED48 25E80001 */  addiu $t0, $t7, 1
 /* 11387C 7F0DED4C 31091800 */  andi  $t1, $t0, 0x1800
@@ -14270,7 +14270,7 @@ spectrum_op_ED_44:
 /* 1138F8 7F0DEDC8 03008825 */   move  $s1, $t8
 spectrum_op_ED_45:
 /* 1138FC 7F0DEDCC 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 113900 7F0DEDD0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 113900 7F0DEDD0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 113904 7F0DEDD4 93AA029C */  lbu   $t2, 0x29c($sp)
 /* 113908 7F0DEDD8 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 11390C 7F0DEDDC 97A80292 */  lhu   $t0, 0x292($sp)
@@ -14314,7 +14314,7 @@ spectrum_op_ED_48:
 /* 113998 7F0DEE68 A7A200D4 */  sh    $v0, 0xd4($sp)
 /* 11399C 7F0DEE6C 01A84821 */  addu  $t1, $t5, $t0
 /* 1139A0 7F0DEE70 93B300D5 */  lbu   $s3, 0xd5($sp)
-/* 1139A4 7F0DEE74 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 1139A4 7F0DEE74 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1139A8 7F0DEE78 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 1139AC 7F0DEE7C 2E6F0001 */  sltiu $t7, $s3, 1
 /* 1139B0 7F0DEE80 AFAF0048 */  sw    $t7, 0x48($sp)
@@ -14397,7 +14397,7 @@ spectrum_op_ED_4A:
 /* 113ADC 7F0DEFAC AFA80048 */   sw    $t0, 0x48($sp)
 spectrum_op_ED_4B:
 /* 113AE0 7F0DEFB0 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 113AE4 7F0DEFB4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 113AE4 7F0DEFB4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 113AE8 7F0DEFB8 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 113AEC 7F0DEFBC 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 113AF0 7F0DEFC0 252F0010 */  addiu $t7, $t1, 0x10
@@ -14444,7 +14444,7 @@ spectrum_op_ED_4C:
 /* 113B90 7F0DF060 01008825 */   move  $s1, $t0
 spectrum_op_ED_4D:
 /* 113B94 7F0DF064 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 113B98 7F0DF068 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 113B98 7F0DF068 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 113B9C 7F0DF06C 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 113BA0 7F0DF070 97B80292 */  lhu   $t8, 0x292($sp)
 /* 113BA4 7F0DF074 256F0004 */  addiu $t7, $t3, 4
@@ -14489,7 +14489,7 @@ spectrum_op_ED_50:
 /* 113C34 7F0DF104 A7A200C8 */  sh    $v0, 0xc8($sp)
 /* 113C38 7F0DF108 030D5021 */  addu  $t2, $t8, $t5
 /* 113C3C 7F0DF10C 93B400C9 */  lbu   $s4, 0xc9($sp)
-/* 113C40 7F0DF110 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 113C40 7F0DF110 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 113C44 7F0DF114 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 113C48 7F0DF118 2E8C0001 */  sltiu $t4, $s4, 1
 /* 113C4C 7F0DF11C AFAC0048 */  sw    $t4, 0x48($sp)
@@ -14574,7 +14574,7 @@ spectrum_op_ED_52:
 /* 113D80 7F0DF250 AFAA0048 */   sw    $t2, 0x48($sp)
 spectrum_op_ED_53:
 /* 113D84 7F0DF254 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 113D88 7F0DF258 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 113D88 7F0DF258 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 113D8C 7F0DF25C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 113D90 7F0DF260 97B90298 */  lhu   $t9, 0x298($sp)
 /* 113D94 7F0DF264 25A80010 */  addiu $t0, $t5, 0x10
@@ -14591,7 +14591,7 @@ spectrum_op_ED_53:
 /* 113DC0 7F0DF290 A7AF00BE */  sh    $t7, 0xbe($sp)
 /* 113DC4 7F0DF294 14200006 */  bnez  $at, .L7F0DF2B0
 /* 113DC8 7F0DF298 A7AD0298 */   sh    $t5, 0x298($sp)
-/* 113DCC 7F0DF29C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 113DCC 7F0DF29C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 113DD0 7F0DF2A0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 113DD4 7F0DF2A4 01C85021 */  addu  $t2, $t6, $t0
 /* 113DD8 7F0DF2A8 10000021 */  b     .L7F0DF330
@@ -14599,12 +14599,12 @@ spectrum_op_ED_53:
 .L7F0DF2B0:
 /* 113DE0 7F0DF2B0 97AB00BE */  lhu   $t3, 0xbe($sp)
 /* 113DE4 7F0DF2B4 97AE00BE */  lhu   $t6, 0xbe($sp)
-/* 113DE8 7F0DF2B8 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 113DE8 7F0DF2B8 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 113DEC 7F0DF2BC 29615800 */  slti  $at, $t3, 0x5800
 /* 113DF0 7F0DF2C0 5420000C */  bnezl $at, .L7F0DF2F4
 /* 113DF4 7F0DF2C4 29C14000 */   slti  $at, $t6, 0x4000
 /* 113DF8 7F0DF2C8 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
-/* 113DFC 7F0DF2CC 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 113DFC 7F0DF2CC 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 113E00 7F0DF2D0 24180001 */  li    $t8, 1
 /* 113E04 7F0DF2D4 012B6021 */  addu  $t4, $t1, $t3
 /* 113E08 7F0DF2D8 A1950000 */  sb    $s5, ($t4)
@@ -14616,9 +14616,9 @@ spectrum_op_ED_53:
 /* 113E20 7F0DF2F0 29C14000 */  slti  $at, $t6, 0x4000
 .L7F0DF2F4:
 /* 113E24 7F0DF2F4 1420000E */  bnez  $at, .L7F0DF330
-/* 113E28 7F0DF2F8 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 113E28 7F0DF2F8 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 113E2C 7F0DF2FC 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
-/* 113E30 7F0DF300 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 113E30 7F0DF300 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 113E34 7F0DF304 24090001 */  li    $t1, 1
 /* 113E38 7F0DF308 010E5021 */  addu  $t2, $t0, $t6
 /* 113E3C 7F0DF30C A1550000 */  sb    $s5, ($t2)
@@ -14633,7 +14633,7 @@ spectrum_op_ED_53:
 .L7F0DF330:
 /* 113E60 7F0DF330 97AE00BE */  lhu   $t6, 0xbe($sp)
 /* 113E64 7F0DF334 97AF00BE */  lhu   $t7, 0xbe($sp)
-/* 113E68 7F0DF338 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 113E68 7F0DF338 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 113E6C 7F0DF33C 25CA0001 */  addiu $t2, $t6, 1
 /* 113E70 7F0DF340 29415B00 */  slti  $at, $t2, 0x5b00
 /* 113E74 7F0DF344 14200005 */  bnez  $at, .L7F0DF35C
@@ -14646,9 +14646,9 @@ spectrum_op_ED_53:
 /* 113E8C 7F0DF35C 2B215800 */  slti  $at, $t9, 0x5800
 /* 113E90 7F0DF360 1420000C */  bnez  $at, .L7F0DF394
 /* 113E94 7F0DF364 97AE00BE */   lhu   $t6, 0xbe($sp)
-/* 113E98 7F0DF368 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 113E98 7F0DF368 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 113E9C 7F0DF36C 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
-/* 113EA0 7F0DF370 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 113EA0 7F0DF370 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 113EA4 7F0DF374 24090001 */  li    $t1, 1
 /* 113EA8 7F0DF378 01AFC021 */  addu  $t8, $t5, $t7
 /* 113EAC 7F0DF37C A3140001 */  sb    $s4, 1($t8)
@@ -14661,13 +14661,13 @@ spectrum_op_ED_53:
 /* 113EC4 7F0DF394 25CB0001 */  addiu $t3, $t6, 1
 /* 113EC8 7F0DF398 29614000 */  slti  $at, $t3, 0x4000
 /* 113ECC 7F0DF39C 14200D17 */  bnez  $at, .L7F0E27FC
-/* 113ED0 7F0DF3A0 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 113ED0 7F0DF3A0 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) 
 /* 113ED4 7F0DF3A4 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 113ED8 7F0DF3A8 240F0001 */  li    $t7, 1
 /* 113EDC 7F0DF3AC 032E6821 */  addu  $t5, $t9, $t6
 /* 113EE0 7F0DF3B0 A1B40001 */  sb    $s4, 1($t5)
 /* 113EE4 7F0DF3B4 97B800BE */  lhu   $t8, 0xbe($sp)
-/* 113EE8 7F0DF3B8 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 113EE8 7F0DF3B8 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 113EEC 7F0DF3BC 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 113EF0 7F0DF3C0 27080001 */  addiu $t0, $t8, 1
 /* 113EF4 7F0DF3C4 310A1800 */  andi  $t2, $t0, 0x1800
@@ -14705,7 +14705,7 @@ spectrum_op_ED_54:
 /* 113F70 7F0DF440 01E08825 */   move  $s1, $t7
 spectrum_op_ED_55:
 /* 113F74 7F0DF444 8FAE028C */  lw    $t6, 0x28c($sp)
-/* 113F78 7F0DF448 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 113F78 7F0DF448 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 113F7C 7F0DF44C 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 113F80 7F0DF450 97B80292 */  lhu   $t8, 0x292($sp)
 /* 113F84 7F0DF454 25CB0004 */  addiu $t3, $t6, 4
@@ -14760,7 +14760,7 @@ spectrum_op_ED_58:
 /* 11403C 7F0DF50C A7A200BC */  sh    $v0, 0xbc($sp)
 /* 114040 7F0DF510 01785021 */  addu  $t2, $t3, $t8
 /* 114044 7F0DF514 93B500BD */  lbu   $s5, 0xbd($sp)
-/* 114048 7F0DF518 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 114048 7F0DF518 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11404C 7F0DF51C 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 114050 7F0DF520 2EA80001 */  sltiu $t0, $s5, 1
 /* 114054 7F0DF524 AFA80048 */  sw    $t0, 0x48($sp)
@@ -14843,7 +14843,7 @@ spectrum_op_ED_5A:
 /* 114180 7F0DF650 AFB80048 */   sw    $t8, 0x48($sp)
 spectrum_op_ED_5B:
 /* 114184 7F0DF654 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 114188 7F0DF658 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 114188 7F0DF658 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 11418C 7F0DF65C 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 114190 7F0DF660 97AD0298 */  lhu   $t5, 0x298($sp)
 /* 114194 7F0DF664 25480010 */  addiu $t0, $t2, 0x10
@@ -14890,7 +14890,7 @@ spectrum_op_ED_5C:
 /* 114234 7F0DF704 03008825 */   move  $s1, $t8
 spectrum_op_ED_5D:
 /* 114238 7F0DF708 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 11423C 7F0DF70C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 11423C 7F0DF70C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 114240 7F0DF710 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 114244 7F0DF714 97AF0292 */  lhu   $t7, 0x292($sp)
 /* 114248 7F0DF718 27280004 */  addiu $t0, $t9, 4
@@ -14952,7 +14952,7 @@ spectrum_op_ED_60:
 /* 11431C 7F0DF7EC A7A200B0 */  sh    $v0, 0xb0($sp)
 /* 114320 7F0DF7F0 01584021 */  addu  $t0, $t2, $t8
 /* 114324 7F0DF7F4 93B600B1 */  lbu   $s6, 0xb1($sp)
-/* 114328 7F0DF7F8 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) # $t2, 0x8009
+/* 114328 7F0DF7F8 3C0A8009 */  lui   $t2, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11432C 7F0DF7FC 8D4AE334 */  lw    $t2, %lo(ptr_pc_keyboard_table_alloc)($t2)
 /* 114330 7F0DF800 2ECF0001 */  sltiu $t7, $s6, 1
 /* 114334 7F0DF804 AFAF0048 */  sw    $t7, 0x48($sp)
@@ -15037,7 +15037,7 @@ spectrum_op_ED_62:
 /* 114468 7F0DF938 AFA80048 */   sw    $t0, 0x48($sp)
 spectrum_op_ED_63:
 /* 11446C 7F0DF93C 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 114470 7F0DF940 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 114470 7F0DF940 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 114474 7F0DF944 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 114478 7F0DF948 97A90298 */  lhu   $t1, 0x298($sp)
 /* 11447C 7F0DF94C 270C0010 */  addiu $t4, $t8, 0x10
@@ -15054,7 +15054,7 @@ spectrum_op_ED_63:
 /* 1144A8 7F0DF978 A7AE00A6 */  sh    $t6, 0xa6($sp)
 /* 1144AC 7F0DF97C 14200006 */  bnez  $at, .L7F0DF998
 /* 1144B0 7F0DF980 A7B80298 */   sh    $t8, 0x298($sp)
-/* 1144B4 7F0DF984 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1144B4 7F0DF984 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1144B8 7F0DF988 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1144BC 7F0DF98C 016C4021 */  addu  $t0, $t3, $t4
 /* 1144C0 7F0DF990 10000021 */  b     .L7F0DFA18
@@ -15062,12 +15062,12 @@ spectrum_op_ED_63:
 .L7F0DF998:
 /* 1144C8 7F0DF998 97AD00A6 */  lhu   $t5, 0xa6($sp)
 /* 1144CC 7F0DF99C 97AB00A6 */  lhu   $t3, 0xa6($sp)
-/* 1144D0 7F0DF9A0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 1144D0 7F0DF9A0 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 1144D4 7F0DF9A4 29A15800 */  slti  $at, $t5, 0x5800
 /* 1144D8 7F0DF9A8 5420000C */  bnezl $at, .L7F0DF9DC
 /* 1144DC 7F0DF9AC 29614000 */   slti  $at, $t3, 0x4000
 /* 1144E0 7F0DF9B0 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
-/* 1144E4 7F0DF9B4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 1144E4 7F0DF9B4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 1144E8 7F0DF9B8 240A0001 */  li    $t2, 1
 /* 1144EC 7F0DF9BC 032D7821 */  addu  $t7, $t9, $t5
 /* 1144F0 7F0DF9C0 A1F70000 */  sb    $s7, ($t7)
@@ -15079,9 +15079,9 @@ spectrum_op_ED_63:
 /* 114508 7F0DF9D8 29614000 */  slti  $at, $t3, 0x4000
 .L7F0DF9DC:
 /* 11450C 7F0DF9DC 1420000E */  bnez  $at, .L7F0DFA18
-/* 114510 7F0DF9E0 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 114510 7F0DF9E0 3C0C8009 */   lui   $t4, %hi(ptr_spectrum_roms) 
 /* 114514 7F0DF9E4 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
-/* 114518 7F0DF9E8 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 114518 7F0DF9E8 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 11451C 7F0DF9EC 24190001 */  li    $t9, 1
 /* 114520 7F0DF9F0 018B4021 */  addu  $t0, $t4, $t3
 /* 114524 7F0DF9F4 A1170000 */  sb    $s7, ($t0)
@@ -15096,7 +15096,7 @@ spectrum_op_ED_63:
 .L7F0DFA18:
 /* 114548 7F0DFA18 97AB00A6 */  lhu   $t3, 0xa6($sp)
 /* 11454C 7F0DFA1C 97AE00A6 */  lhu   $t6, 0xa6($sp)
-/* 114550 7F0DFA20 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 114550 7F0DFA20 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 114554 7F0DFA24 25680001 */  addiu $t0, $t3, 1
 /* 114558 7F0DFA28 29015B00 */  slti  $at, $t0, 0x5b00
 /* 11455C 7F0DFA2C 14200005 */  bnez  $at, .L7F0DFA44
@@ -15109,9 +15109,9 @@ spectrum_op_ED_63:
 /* 114574 7F0DFA44 29215800 */  slti  $at, $t1, 0x5800
 /* 114578 7F0DFA48 1420000C */  bnez  $at, .L7F0DFA7C
 /* 11457C 7F0DFA4C 97AB00A6 */   lhu   $t3, 0xa6($sp)
-/* 114580 7F0DFA50 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 114580 7F0DFA50 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 114584 7F0DFA54 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
-/* 114588 7F0DFA58 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 114588 7F0DFA58 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 11458C 7F0DFA5C 24190001 */  li    $t9, 1
 /* 114590 7F0DFA60 030E5021 */  addu  $t2, $t8, $t6
 /* 114594 7F0DFA64 A1560001 */  sb    $s6, 1($t2)
@@ -15124,13 +15124,13 @@ spectrum_op_ED_63:
 /* 1145AC 7F0DFA7C 256D0001 */  addiu $t5, $t3, 1
 /* 1145B0 7F0DFA80 29A14000 */  slti  $at, $t5, 0x4000
 /* 1145B4 7F0DFA84 14200B5D */  bnez  $at, .L7F0E27FC
-/* 1145B8 7F0DFA88 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 1145B8 7F0DFA88 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) 
 /* 1145BC 7F0DFA8C 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1145C0 7F0DFA90 240E0001 */  li    $t6, 1
 /* 1145C4 7F0DFA94 012BC021 */  addu  $t8, $t1, $t3
 /* 1145C8 7F0DFA98 A3160001 */  sb    $s6, 1($t8)
 /* 1145CC 7F0DFA9C 97AA00A6 */  lhu   $t2, 0xa6($sp)
-/* 1145D0 7F0DFAA0 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 1145D0 7F0DFAA0 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 1145D4 7F0DFAA4 8D29E32C */  lw    $t1, %lo(ptr_300alloc)($t1)
 /* 1145D8 7F0DFAA8 254C0001 */  addiu $t4, $t2, 1
 /* 1145DC 7F0DFAAC 31881800 */  andi  $t0, $t4, 0x1800
@@ -15168,7 +15168,7 @@ spectrum_op_ED_64:
 /* 114658 7F0DFB28 01C08825 */   move  $s1, $t6
 spectrum_op_ED_65:
 /* 11465C 7F0DFB2C 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 114660 7F0DFB30 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 114660 7F0DFB30 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 114664 7F0DFB34 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 114668 7F0DFB38 97AA0292 */  lhu   $t2, 0x292($sp)
 /* 11466C 7F0DFB3C 256D0004 */  addiu $t5, $t3, 4
@@ -15193,7 +15193,7 @@ spectrum_op_ED_66:
 /* 1146B4 7F0DFB84 AFAF028C */   sw    $t7, 0x28c($sp)
 spectrum_op_ED_67:
 /* 1146B8 7F0DFB88 8FAC028C */  lw    $t4, 0x28c($sp)
-/* 1146BC 7F0DFB8C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1146BC 7F0DFB8C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1146C0 7F0DFB90 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1146C4 7F0DFB94 00167200 */  sll   $t6, $s6, 8
 /* 1146C8 7F0DFB98 01D7C825 */  or    $t9, $t6, $s7
@@ -15215,7 +15215,7 @@ spectrum_op_ED_67:
 /* 114708 7F0DFBD8 01C08025 */  move  $s0, $t6
 /* 11470C 7F0DFBDC 14200009 */  bnez  $at, .L7F0DFC04
 /* 114710 7F0DFBE0 A3AA00A5 */   sb    $t2, 0xa5($sp)
-/* 114714 7F0DFBE4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 114714 7F0DFBE4 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 114718 7F0DFBE8 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 11471C 7F0DFBEC 01E06825 */  move  $t5, $t7
 /* 114720 7F0DFBF0 0016C200 */  sll   $t8, $s6, 8
@@ -15229,13 +15229,13 @@ spectrum_op_ED_67:
 /* 11473C 7F0DFC0C 29815800 */  slti  $at, $t4, 0x5800
 /* 114740 7F0DFC10 14200010 */  bnez  $at, .L7F0DFC54
 /* 114744 7F0DFC14 00165A00 */   sll   $t3, $s6, 8
-/* 114748 7F0DFC18 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 114748 7F0DFC18 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 11474C 7F0DFC1C 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 114750 7F0DFC20 93AE00A4 */  lbu   $t6, 0xa4($sp)
 /* 114754 7F0DFC24 00165A00 */  sll   $t3, $s6, 8
 /* 114758 7F0DFC28 0177C025 */  or    $t8, $t3, $s7
 /* 11475C 7F0DFC2C 03384021 */  addu  $t0, $t9, $t8
-/* 114760 7F0DFC30 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 114760 7F0DFC30 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 114764 7F0DFC34 A10E0000 */  sb    $t6, ($t0)
 /* 114768 7F0DFC38 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 11476C 7F0DFC3C 00165200 */  sll   $t2, $s6, 8
@@ -15249,7 +15249,7 @@ spectrum_op_ED_67:
 /* 114788 7F0DFC58 2B214000 */  slti  $at, $t9, 0x4000
 /* 11478C 7F0DFC5C 14200013 */  bnez  $at, .L7F0DFCAC
 /* 114790 7F0DFC60 93B800A4 */   lbu   $t8, 0xa4($sp)
-/* 114794 7F0DFC64 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 114794 7F0DFC64 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 114798 7F0DFC68 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 11479C 7F0DFC6C 00164200 */  sll   $t0, $s6, 8
 /* 1147A0 7F0DFC70 01175025 */  or    $t2, $t0, $s7
@@ -15257,7 +15257,7 @@ spectrum_op_ED_67:
 /* 1147A8 7F0DFC78 A1B80000 */  sb    $t8, ($t5)
 /* 1147AC 7F0DFC7C 00167A00 */  sll   $t7, $s6, 8
 /* 1147B0 7F0DFC80 01F76025 */  or    $t4, $t7, $s7
-/* 1147B4 7F0DFC84 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 1147B4 7F0DFC84 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 1147B8 7F0DFC88 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 1147BC 7F0DFC8C 318B1800 */  andi  $t3, $t4, 0x1800
 /* 1147C0 7F0DFC90 01177025 */  or    $t6, $t0, $s7
@@ -15268,7 +15268,7 @@ spectrum_op_ED_67:
 /* 1147D4 7F0DFCA4 01B87821 */  addu  $t7, $t5, $t8
 /* 1147D8 7F0DFCA8 A1E90000 */  sb    $t1, ($t7)
 .L7F0DFCAC:
-/* 1147DC 7F0DFCAC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 1147DC 7F0DFCAC 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1147E0 7F0DFCB0 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 1147E4 7F0DFCB4 2E0C0001 */  sltiu $t4, $s0, 1
 /* 1147E8 7F0DFCB8 AFAC0048 */  sw    $t4, 0x48($sp)
@@ -15296,7 +15296,7 @@ spectrum_op_ED_68:
 /* 11483C 7F0DFD0C A7A200A2 */  sh    $v0, 0xa2($sp)
 /* 114840 7F0DFD10 032AC021 */  addu  $t8, $t9, $t2
 /* 114844 7F0DFD14 93B700A3 */  lbu   $s7, 0xa3($sp)
-/* 114848 7F0DFD18 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 114848 7F0DFD18 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 11484C 7F0DFD1C 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 114850 7F0DFD20 2EE90001 */  sltiu $t1, $s7, 1
 /* 114854 7F0DFD24 AFA90048 */  sw    $t1, 0x48($sp)
@@ -15379,7 +15379,7 @@ spectrum_op_ED_6A:
 /* 114980 7F0DFE50 AFAA0048 */   sw    $t2, 0x48($sp)
 spectrum_op_ED_6B:
 /* 114984 7F0DFE54 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 114988 7F0DFE58 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 114988 7F0DFE58 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 11498C 7F0DFE5C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 114990 7F0DFE60 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 114994 7F0DFE64 27090010 */  addiu $t1, $t8, 0x10
@@ -15426,7 +15426,7 @@ spectrum_op_ED_6C:
 /* 114A34 7F0DFF04 01408825 */   move  $s1, $t2
 spectrum_op_ED_6D:
 /* 114A38 7F0DFF08 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 114A3C 7F0DFF0C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 114A3C 7F0DFF0C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 114A40 7F0DFF10 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 114A44 7F0DFF14 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 114A48 7F0DFF18 25A90004 */  addiu $t1, $t5, 4
@@ -15452,7 +15452,7 @@ spectrum_op_ED_6E:
 /* 114A94 7F0DFF64 AFAE028C */   sw    $t6, 0x28c($sp)
 spectrum_op_ED_6F:
 /* 114A98 7F0DFF68 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 114A9C 7F0DFF6C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 114A9C 7F0DFF6C 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 114AA0 7F0DFF70 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 114AA4 7F0DFF74 00165A00 */  sll   $t3, $s6, 8
 /* 114AA8 7F0DFF78 01776825 */  or    $t5, $t3, $s7
@@ -15474,7 +15474,7 @@ spectrum_op_ED_6F:
 /* 114AE8 7F0DFFB8 01608025 */  move  $s0, $t3
 /* 114AEC 7F0DFFBC 14200009 */  bnez  $at, .L7F0DFFE4
 /* 114AF0 7F0DFFC0 A3AF0099 */   sb    $t7, 0x99($sp)
-/* 114AF4 7F0DFFC4 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 114AF4 7F0DFFC4 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 114AF8 7F0DFFC8 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 114AFC 7F0DFFCC 01006025 */  move  $t4, $t0
 /* 114B00 7F0DFFD0 0016CA00 */  sll   $t9, $s6, 8
@@ -15488,13 +15488,13 @@ spectrum_op_ED_6F:
 /* 114B1C 7F0DFFEC 2B015800 */  slti  $at, $t8, 0x5800
 /* 114B20 7F0DFFF0 14200010 */  bnez  $at, .L7F0E0034
 /* 114B24 7F0DFFF4 00164A00 */   sll   $t1, $s6, 8
-/* 114B28 7F0DFFF8 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 114B28 7F0DFFF8 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 114B2C 7F0DFFFC 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 114B30 7F0E0000 93AB0098 */  lbu   $t3, 0x98($sp)
 /* 114B34 7F0E0004 00164A00 */  sll   $t1, $s6, 8
 /* 114B38 7F0E0008 0137C825 */  or    $t9, $t1, $s7
 /* 114B3C 7F0E000C 01B97021 */  addu  $t6, $t5, $t9
-/* 114B40 7F0E0010 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 114B40 7F0E0010 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 114B44 7F0E0014 A1CB0000 */  sb    $t3, ($t6)
 /* 114B48 7F0E0018 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 114B4C 7F0E001C 00167A00 */  sll   $t7, $s6, 8
@@ -15508,7 +15508,7 @@ spectrum_op_ED_6F:
 /* 114B68 7F0E0038 29A14000 */  slti  $at, $t5, 0x4000
 /* 114B6C 7F0E003C 14200013 */  bnez  $at, .L7F0E008C
 /* 114B70 7F0E0040 93B90098 */   lbu   $t9, 0x98($sp)
-/* 114B74 7F0E0044 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 114B74 7F0E0044 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 114B78 7F0E0048 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 114B7C 7F0E004C 00167200 */  sll   $t6, $s6, 8
 /* 114B80 7F0E0050 01D77825 */  or    $t7, $t6, $s7
@@ -15516,7 +15516,7 @@ spectrum_op_ED_6F:
 /* 114B88 7F0E0058 A1990000 */  sb    $t9, ($t4)
 /* 114B8C 7F0E005C 00164200 */  sll   $t0, $s6, 8
 /* 114B90 7F0E0060 0117C025 */  or    $t8, $t0, $s7
-/* 114B94 7F0E0064 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 114B94 7F0E0064 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 114B98 7F0E0068 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 114B9C 7F0E006C 33091800 */  andi  $t1, $t8, 0x1800
 /* 114BA0 7F0E0070 01D75825 */  or    $t3, $t6, $s7
@@ -15527,7 +15527,7 @@ spectrum_op_ED_6F:
 /* 114BB4 7F0E0084 01994021 */  addu  $t0, $t4, $t9
 /* 114BB8 7F0E0088 A10A0000 */  sb    $t2, ($t0)
 .L7F0E008C:
-/* 114BBC 7F0E008C 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 114BBC 7F0E008C 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 114BC0 7F0E0090 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 114BC4 7F0E0094 2E180001 */  sltiu $t8, $s0, 1
 /* 114BC8 7F0E0098 AFB80048 */  sw    $t8, 0x48($sp)
@@ -15554,7 +15554,7 @@ spectrum_op_ED_70:
 /* 114C18 7F0E00E8 00187A03 */  sra   $t7, $t8, 8
 /* 114C1C 7F0E00EC 016FC821 */  addu  $t9, $t3, $t7
 /* 114C20 7F0E00F0 AFB9028C */  sw    $t9, 0x28c($sp)
-/* 114C24 7F0E00F4 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 114C24 7F0E00F4 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 114C28 7F0E00F8 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 114C2C 7F0E00FC 330A00FF */  andi  $t2, $t8, 0xff
 /* 114C30 7F0E0100 330900A8 */  andi  $t1, $t8, 0xa8
@@ -15636,7 +15636,7 @@ spectrum_op_ED_72:
 /* 114D58 7F0E0228 AFB90048 */   sw    $t9, 0x48($sp)
 spectrum_op_ED_73:
 /* 114D5C 7F0E022C 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 114D60 7F0E0230 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 114D60 7F0E0230 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 114D64 7F0E0234 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 114D68 7F0E0238 97A80298 */  lhu   $t0, 0x298($sp)
 /* 114D6C 7F0E023C 25EC0010 */  addiu $t4, $t7, 0x10
@@ -15653,7 +15653,7 @@ spectrum_op_ED_73:
 /* 114D98 7F0E0268 A7B8008A */  sh    $t8, 0x8a($sp)
 /* 114D9C 7F0E026C 14200007 */  bnez  $at, .L7F0E028C
 /* 114DA0 7F0E0270 A7AF0298 */   sh    $t7, 0x298($sp)
-/* 114DA4 7F0E0274 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 114DA4 7F0E0274 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 114DA8 7F0E0278 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 114DAC 7F0E027C 97B90292 */  lhu   $t9, 0x292($sp)
 /* 114DB0 7F0E0280 01CC6821 */  addu  $t5, $t6, $t4
@@ -15662,13 +15662,13 @@ spectrum_op_ED_73:
 .L7F0E028C:
 /* 114DBC 7F0E028C 97AA008A */  lhu   $t2, 0x8a($sp)
 /* 114DC0 7F0E0290 97B9008A */  lhu   $t9, 0x8a($sp)
-/* 114DC4 7F0E0294 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 114DC4 7F0E0294 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 114DC8 7F0E0298 29415800 */  slti  $at, $t2, 0x5800
 /* 114DCC 7F0E029C 5420000D */  bnezl $at, .L7F0E02D4
 /* 114DD0 7F0E02A0 2B214000 */   slti  $at, $t9, 0x4000
 /* 114DD4 7F0E02A4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 114DD8 7F0E02A8 97A90292 */  lhu   $t1, 0x292($sp)
-/* 114DDC 7F0E02AC 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 114DDC 7F0E02AC 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 114DE0 7F0E02B0 016AC021 */  addu  $t8, $t3, $t2
 /* 114DE4 7F0E02B4 A3090000 */  sb    $t1, ($t8)
 /* 114DE8 7F0E02B8 97AE008A */  lhu   $t6, 0x8a($sp)
@@ -15680,14 +15680,14 @@ spectrum_op_ED_73:
 /* 114E00 7F0E02D0 2B214000 */  slti  $at, $t9, 0x4000
 .L7F0E02D4:
 /* 114E04 7F0E02D4 1420000F */  bnez  $at, .L7F0E0314
-/* 114E08 7F0E02D8 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 114E08 7F0E02D8 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 114E0C 7F0E02DC 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 114E10 7F0E02E0 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 114E14 7F0E02E4 24090001 */  li    $t1, 1
 /* 114E18 7F0E02E8 01795021 */  addu  $t2, $t3, $t9
 /* 114E1C 7F0E02EC A14D0000 */  sb    $t5, ($t2)
 /* 114E20 7F0E02F0 97B8008A */  lhu   $t8, 0x8a($sp)
-/* 114E24 7F0E02F4 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 114E24 7F0E02F4 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 114E28 7F0E02F8 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 114E2C 7F0E02FC 330F1800 */  andi  $t7, $t8, 0x1800
 /* 114E30 7F0E0300 000F70C3 */  sra   $t6, $t7, 3
@@ -15703,7 +15703,7 @@ spectrum_op_ED_73:
 /* 114E54 7F0E0324 29415B00 */  slti  $at, $t2, 0x5b00
 /* 114E58 7F0E0328 14200007 */  bnez  $at, .L7F0E0348
 /* 114E5C 7F0E032C 256C0001 */   addiu $t4, $t3, 1
-/* 114E60 7F0E0330 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 114E60 7F0E0330 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 114E64 7F0E0334 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 114E68 7F0E0338 000FC203 */  sra   $t8, $t7, 8
 /* 114E6C 7F0E033C 01CD4021 */  addu  $t0, $t6, $t5
@@ -15713,10 +15713,10 @@ spectrum_op_ED_73:
 /* 114E78 7F0E0348 29815800 */  slti  $at, $t4, 0x5800
 /* 114E7C 7F0E034C 1420000E */  bnez  $at, .L7F0E0388
 /* 114E80 7F0E0350 97AC008A */   lhu   $t4, 0x8a($sp)
-/* 114E84 7F0E0354 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 114E84 7F0E0354 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 114E88 7F0E0358 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 114E8C 7F0E035C 97A90292 */  lhu   $t1, 0x292($sp)
-/* 114E90 7F0E0360 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 114E90 7F0E0360 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 114E94 7F0E0364 014B7821 */  addu  $t7, $t2, $t3
 /* 114E98 7F0E0368 0009CA03 */  sra   $t9, $t1, 8
 /* 114E9C 7F0E036C A1F90001 */  sb    $t9, 1($t7)
@@ -15731,14 +15731,14 @@ spectrum_op_ED_73:
 /* 114EBC 7F0E038C 29214000 */  slti  $at, $t1, 0x4000
 /* 114EC0 7F0E0390 1420091A */  bnez  $at, .L7F0E27FC
 /* 114EC4 7F0E0394 97AA0292 */   lhu   $t2, 0x292($sp)
-/* 114EC8 7F0E0398 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 114EC8 7F0E0398 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 114ECC 7F0E039C 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 114ED0 7F0E03A0 000A5A03 */  sra   $t3, $t2, 8
 /* 114ED4 7F0E03A4 240D0001 */  li    $t5, 1
 /* 114ED8 7F0E03A8 032C7821 */  addu  $t7, $t9, $t4
 /* 114EDC 7F0E03AC A1EB0001 */  sb    $t3, 1($t7)
 /* 114EE0 7F0E03B0 97B8008A */  lhu   $t8, 0x8a($sp)
-/* 114EE4 7F0E03B4 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 114EE4 7F0E03B4 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 114EE8 7F0E03B8 8D8CE32C */  lw    $t4, %lo(ptr_300alloc)($t4)
 /* 114EEC 7F0E03BC 270E0001 */  addiu $t6, $t8, 1
 /* 114EF0 7F0E03C0 31C81800 */  andi  $t0, $t6, 0x1800
@@ -15776,7 +15776,7 @@ spectrum_op_ED_74:
 /* 114F6C 7F0E043C 01A08825 */   move  $s1, $t5
 spectrum_op_ED_75:
 /* 114F70 7F0E0440 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 114F74 7F0E0444 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 114F74 7F0E0444 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 114F78 7F0E0448 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 114F7C 7F0E044C 97B80292 */  lhu   $t8, 0x292($sp)
 /* 114F80 7F0E0450 25790004 */  addiu $t9, $t3, 4
@@ -15813,7 +15813,7 @@ spectrum_op_ED_78:
 /* 114FF4 7F0E04C4 A7A20088 */  sh    $v0, 0x88($sp)
 /* 114FF8 7F0E04C8 0139C021 */  addu  $t8, $t1, $t9
 /* 114FFC 7F0E04CC 93B00089 */  lbu   $s0, 0x89($sp)
-/* 115000 7F0E04D0 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) # $t1, 0x8009
+/* 115000 7F0E04D0 3C098009 */  lui   $t1, %hi(ptr_pc_keyboard_table_alloc) 
 /* 115004 7F0E04D4 8D29E334 */  lw    $t1, %lo(ptr_pc_keyboard_table_alloc)($t1)
 /* 115008 7F0E04D8 2E0F0001 */  sltiu $t7, $s0, 1
 /* 11500C 7F0E04DC AFAF0048 */  sw    $t7, 0x48($sp)
@@ -15891,7 +15891,7 @@ spectrum_op_ED_7A:
 /* 115124 7F0E05F4 AFAD0048 */   sw    $t5, 0x48($sp)
 spectrum_op_ED_7B:
 /* 115128 7F0E05F8 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 11512C 7F0E05FC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 11512C 7F0E05FC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 115130 7F0E0600 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 115134 7F0E0604 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 115138 7F0E0608 25580010 */  addiu $t8, $t2, 0x10
@@ -15942,7 +15942,7 @@ spectrum_op_ED_7C:
 /* 1151E8 7F0E06B8 01008825 */   move  $s1, $t0
 spectrum_op_ED_7D:
 /* 1151EC 7F0E06BC 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 1151F0 7F0E06C0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1151F0 7F0E06C0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1151F4 7F0E06C4 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1151F8 7F0E06C8 97AA0292 */  lhu   $t2, 0x292($sp)
 /* 1151FC 7F0E06CC 252C0004 */  addiu $t4, $t1, 4
@@ -15968,7 +15968,7 @@ spectrum_op_ED_7E:
 /* 115248 7F0E0718 AFAE028C */   sw    $t6, 0x28c($sp)
 spectrum_op_ED_A0:
 /* 11524C 7F0E071C 8FB9028C */  lw    $t9, 0x28c($sp)
-/* 115250 7F0E0720 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 115250 7F0E0720 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 115254 7F0E0724 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 115258 7F0E0728 0016C200 */  sll   $t8, $s6, 8
 /* 11525C 7F0E072C 03174825 */  or    $t1, $t8, $s7
@@ -15981,7 +15981,7 @@ spectrum_op_ED_A0:
 /* 115278 7F0E0748 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 11527C 7F0E074C 14200008 */  bnez  $at, .L7F0E0770
 /* 115280 7F0E0750 A3AB007D */   sb    $t3, 0x7d($sp)
-/* 115284 7F0E0754 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 115284 7F0E0754 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 115288 7F0E0758 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 11528C 7F0E075C 00144200 */  sll   $t0, $s4, 8
 /* 115290 7F0E0760 0115C025 */  or    $t8, $t0, $s5
@@ -15994,13 +15994,13 @@ spectrum_op_ED_A0:
 /* 1152A8 7F0E0778 29415800 */  slti  $at, $t2, 0x5800
 /* 1152AC 7F0E077C 14200010 */  bnez  $at, .L7F0E07C0
 /* 1152B0 7F0E0780 00147200 */   sll   $t6, $s4, 8
-/* 1152B4 7F0E0784 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1152B4 7F0E0784 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1152B8 7F0E0788 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1152BC 7F0E078C 93AB007D */  lbu   $t3, 0x7d($sp)
 /* 1152C0 7F0E0790 00147200 */  sll   $t6, $s4, 8
 /* 1152C4 7F0E0794 01D54025 */  or    $t0, $t6, $s5
 /* 1152C8 7F0E0798 01A8C821 */  addu  $t9, $t5, $t0
-/* 1152CC 7F0E079C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 1152CC 7F0E079C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 1152D0 7F0E07A0 A32B0000 */  sb    $t3, ($t9)
 /* 1152D4 7F0E07A4 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 1152D8 7F0E07A8 00144A00 */  sll   $t1, $s4, 8
@@ -16014,7 +16014,7 @@ spectrum_op_ED_A0:
 /* 1152F4 7F0E07C4 29A14000 */  slti  $at, $t5, 0x4000
 /* 1152F8 7F0E07C8 14200013 */  bnez  $at, .L7F0E0818
 /* 1152FC 7F0E07CC 93A8007D */   lbu   $t0, 0x7d($sp)
-/* 115300 7F0E07D0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 115300 7F0E07D0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 115304 7F0E07D4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 115308 7F0E07D8 0014CA00 */  sll   $t9, $s4, 8
 /* 11530C 7F0E07DC 03354825 */  or    $t1, $t9, $s5
@@ -16022,7 +16022,7 @@ spectrum_op_ED_A0:
 /* 115314 7F0E07E4 A1E80000 */  sb    $t0, ($t7)
 /* 115318 7F0E07E8 0014C200 */  sll   $t8, $s4, 8
 /* 11531C 7F0E07EC 03155025 */  or    $t2, $t8, $s5
-/* 115320 7F0E07F0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 115320 7F0E07F0 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 115324 7F0E07F4 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 115328 7F0E07F8 314E1800 */  andi  $t6, $t2, 0x1800
 /* 11532C 7F0E07FC 03355825 */  or    $t3, $t9, $s5
@@ -16072,7 +16072,7 @@ spectrum_op_ED_A0:
 /* 1153CC 7F0E089C 01208825 */   move  $s1, $t1
 spectrum_op_ED_A1:
 /* 1153D0 7F0E08A0 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 1153D4 7F0E08A4 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 1153D4 7F0E08A4 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 1153D8 7F0E08A8 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 1153DC 7F0E08AC 00166200 */  sll   $t4, $s6, 8
 /* 1153E0 7F0E08B0 32380001 */  andi  $t8, $s1, 1
@@ -16149,7 +16149,7 @@ spectrum_op_ED_A2:
 /* 1154F0 7F0E09C0 29015B00 */  slti  $at, $t0, 0x5b00
 /* 1154F4 7F0E09C4 14200008 */  bnez  $at, .L7F0E09E8
 /* 1154F8 7F0E09C8 A7A20076 */   sh    $v0, 0x76($sp)
-/* 1154FC 7F0E09CC 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1154FC 7F0E09CC 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 115500 7F0E09D0 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 115504 7F0E09D4 00167A00 */  sll   $t7, $s6, 8
 /* 115508 7F0E09D8 01F74825 */  or    $t1, $t7, $s7
@@ -16162,13 +16162,13 @@ spectrum_op_ED_A2:
 /* 115520 7F0E09F0 29815800 */  slti  $at, $t4, 0x5800
 /* 115524 7F0E09F4 14200010 */  bnez  $at, .L7F0E0A38
 /* 115528 7F0E09F8 00164200 */   sll   $t0, $s6, 8
-/* 11552C 7F0E09FC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 11552C 7F0E09FC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 115530 7F0E0A00 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 115534 7F0E0A04 97AA0076 */  lhu   $t2, 0x76($sp)
 /* 115538 7F0E0A08 00164200 */  sll   $t0, $s6, 8
 /* 11553C 7F0E0A0C 01177825 */  or    $t7, $t0, $s7
 /* 115540 7F0E0A10 01CF6821 */  addu  $t5, $t6, $t7
-/* 115544 7F0E0A14 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 115544 7F0E0A14 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 115548 7F0E0A18 A1AA0000 */  sb    $t2, ($t5)
 /* 11554C 7F0E0A1C 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 115550 7F0E0A20 0016C200 */  sll   $t8, $s6, 8
@@ -16182,7 +16182,7 @@ spectrum_op_ED_A2:
 /* 11556C 7F0E0A3C 29C14000 */  slti  $at, $t6, 0x4000
 /* 115570 7F0E0A40 14200013 */  bnez  $at, .L7F0E0A90
 /* 115574 7F0E0A44 97AF0076 */   lhu   $t7, 0x76($sp)
-/* 115578 7F0E0A48 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 115578 7F0E0A48 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 11557C 7F0E0A4C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 115580 7F0E0A50 00166A00 */  sll   $t5, $s6, 8
 /* 115584 7F0E0A54 01B7C025 */  or    $t8, $t5, $s7
@@ -16190,7 +16190,7 @@ spectrum_op_ED_A2:
 /* 11558C 7F0E0A5C A32F0000 */  sb    $t7, ($t9)
 /* 115590 7F0E0A60 00164A00 */  sll   $t1, $s6, 8
 /* 115594 7F0E0A64 01376025 */  or    $t4, $t1, $s7
-/* 115598 7F0E0A68 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 115598 7F0E0A68 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 11559C 7F0E0A6C 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 1155A0 7F0E0A70 31881800 */  andi  $t0, $t4, 0x1800
 /* 1155A4 7F0E0A74 01B75025 */  or    $t2, $t5, $s7
@@ -16214,7 +16214,7 @@ spectrum_op_ED_A2:
 /* 1155E8 7F0E0AB8 32D800FF */  andi  $t8, $s6, 0xff
 /* 1155EC 7F0E0ABC 0300B025 */  move  $s6, $t8
 .L7F0E0AC0:
-/* 1155F0 7F0E0AC0 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) # $t5, 0x8009
+/* 1155F0 7F0E0AC0 3C0D8009 */  lui   $t5, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1155F4 7F0E0AC4 8DADE334 */  lw    $t5, %lo(ptr_pc_keyboard_table_alloc)($t5)
 /* 1155F8 7F0E0AC8 2652FFFF */  addiu $s2, $s2, -1
 /* 1155FC 7F0E0ACC 325900FF */  andi  $t9, $s2, 0xff
@@ -16234,7 +16234,7 @@ spectrum_op_ED_A2:
 /* 115634 7F0E0B04 01608825 */   move  $s1, $t3
 spectrum_op_ED_A3:
 /* 115638 7F0E0B08 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 11563C 7F0E0B0C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 11563C 7F0E0B0C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 115640 7F0E0B10 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 115644 7F0E0B14 00164200 */  sll   $t0, $s6, 8
 /* 115648 7F0E0B18 01176825 */  or    $t5, $t0, $s7
@@ -16273,7 +16273,7 @@ spectrum_op_ED_A3:
 /* 1156C8 7F0E0B98 01608825 */   move  $s1, $t3
 spectrum_op_ED_A8:
 /* 1156CC 7F0E0B9C 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 1156D0 7F0E0BA0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1156D0 7F0E0BA0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1156D4 7F0E0BA4 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1156D8 7F0E0BA8 00166A00 */  sll   $t5, $s6, 8
 /* 1156DC 7F0E0BAC 01B75025 */  or    $t2, $t5, $s7
@@ -16286,7 +16286,7 @@ spectrum_op_ED_A8:
 /* 1156F8 7F0E0BC8 29815B00 */  slti  $at, $t4, 0x5b00
 /* 1156FC 7F0E0BCC 14200008 */  bnez  $at, .L7F0E0BF0
 /* 115700 7F0E0BD0 A3B90074 */   sb    $t9, 0x74($sp)
-/* 115704 7F0E0BD4 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 115704 7F0E0BD4 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 115708 7F0E0BD8 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 11570C 7F0E0BDC 00144200 */  sll   $t0, $s4, 8
 /* 115710 7F0E0BE0 01156825 */  or    $t5, $t0, $s5
@@ -16299,13 +16299,13 @@ spectrum_op_ED_A8:
 /* 115728 7F0E0BF8 29215800 */  slti  $at, $t1, 0x5800
 /* 11572C 7F0E0BFC 14200010 */  bnez  $at, .L7F0E0C40
 /* 115730 7F0E0C00 00146200 */   sll   $t4, $s4, 8
-/* 115734 7F0E0C04 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 115734 7F0E0C04 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 115738 7F0E0C08 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 11573C 7F0E0C0C 93B90074 */  lbu   $t9, 0x74($sp)
 /* 115740 7F0E0C10 00146200 */  sll   $t4, $s4, 8
 /* 115744 7F0E0C14 01954025 */  or    $t0, $t4, $s5
 /* 115748 7F0E0C18 03087821 */  addu  $t7, $t8, $t0
-/* 11574C 7F0E0C1C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 11574C 7F0E0C1C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 115750 7F0E0C20 A1F90000 */  sb    $t9, ($t7)
 /* 115754 7F0E0C24 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 115758 7F0E0C28 00145200 */  sll   $t2, $s4, 8
@@ -16319,7 +16319,7 @@ spectrum_op_ED_A8:
 /* 115774 7F0E0C44 2B014000 */  slti  $at, $t8, 0x4000
 /* 115778 7F0E0C48 14200013 */  bnez  $at, .L7F0E0C98
 /* 11577C 7F0E0C4C 93A80074 */   lbu   $t0, 0x74($sp)
-/* 115780 7F0E0C50 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 115780 7F0E0C50 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 115784 7F0E0C54 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 115788 7F0E0C58 00147A00 */  sll   $t7, $s4, 8
 /* 11578C 7F0E0C5C 01F55025 */  or    $t2, $t7, $s5
@@ -16327,7 +16327,7 @@ spectrum_op_ED_A8:
 /* 115794 7F0E0C64 A1680000 */  sb    $t0, ($t3)
 /* 115798 7F0E0C68 00146A00 */  sll   $t5, $s4, 8
 /* 11579C 7F0E0C6C 01B54825 */  or    $t1, $t5, $s5
-/* 1157A0 7F0E0C70 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 1157A0 7F0E0C70 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 1157A4 7F0E0C74 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 1157A8 7F0E0C78 312C1800 */  andi  $t4, $t1, 0x1800
 /* 1157AC 7F0E0C7C 01F5C825 */  or    $t9, $t7, $s5
@@ -16381,7 +16381,7 @@ spectrum_op_ED_A8:
 /* 11585C 7F0E0D2C 01A08825 */   move  $s1, $t5
 spectrum_op_ED_A9:
 /* 115860 7F0E0D30 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 115864 7F0E0D34 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 115864 7F0E0D34 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 115868 7F0E0D38 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 11586C 7F0E0D3C 00167A00 */  sll   $t7, $s6, 8
 /* 115870 7F0E0D40 32390001 */  andi  $t9, $s1, 1
@@ -16460,7 +16460,7 @@ spectrum_op_ED_AA:
 /* 115988 7F0E0E58 29A15B00 */  slti  $at, $t5, 0x5b00
 /* 11598C 7F0E0E5C 14200008 */  bnez  $at, .L7F0E0E80
 /* 115990 7F0E0E60 A7A2006C */   sh    $v0, 0x6c($sp)
-/* 115994 7F0E0E64 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 115994 7F0E0E64 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 115998 7F0E0E68 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 11599C 7F0E0E6C 00164200 */  sll   $t0, $s6, 8
 /* 1159A0 7F0E0E70 01174825 */  or    $t1, $t0, $s7
@@ -16473,13 +16473,13 @@ spectrum_op_ED_AA:
 /* 1159B8 7F0E0E88 29415800 */  slti  $at, $t2, 0x5800
 /* 1159BC 7F0E0E8C 14200010 */  bnez  $at, .L7F0E0ED0
 /* 1159C0 7F0E0E90 00166A00 */   sll   $t5, $s6, 8
-/* 1159C4 7F0E0E94 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1159C4 7F0E0E94 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1159C8 7F0E0E98 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1159CC 7F0E0E9C 97AC006C */  lhu   $t4, 0x6c($sp)
 /* 1159D0 7F0E0EA0 00166A00 */  sll   $t5, $s6, 8
 /* 1159D4 7F0E0EA4 01B74025 */  or    $t0, $t5, $s7
 /* 1159D8 7F0E0EA8 0168C821 */  addu  $t9, $t3, $t0
-/* 1159DC 7F0E0EAC 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 1159DC 7F0E0EAC 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 1159E0 7F0E0EB0 A32C0000 */  sb    $t4, ($t9)
 /* 1159E4 7F0E0EB4 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 1159E8 7F0E0EB8 00167A00 */  sll   $t7, $s6, 8
@@ -16493,7 +16493,7 @@ spectrum_op_ED_AA:
 /* 115A04 7F0E0ED4 29614000 */  slti  $at, $t3, 0x4000
 /* 115A08 7F0E0ED8 14200013 */  bnez  $at, .L7F0E0F28
 /* 115A0C 7F0E0EDC 97A8006C */   lhu   $t0, 0x6c($sp)
-/* 115A10 7F0E0EE0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 115A10 7F0E0EE0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 115A14 7F0E0EE4 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 115A18 7F0E0EE8 0016CA00 */  sll   $t9, $s6, 8
 /* 115A1C 7F0E0EEC 03377825 */  or    $t7, $t9, $s7
@@ -16501,7 +16501,7 @@ spectrum_op_ED_AA:
 /* 115A24 7F0E0EF4 A1C80000 */  sb    $t0, ($t6)
 /* 115A28 7F0E0EF8 00164A00 */  sll   $t1, $s6, 8
 /* 115A2C 7F0E0EFC 01375025 */  or    $t2, $t1, $s7
-/* 115A30 7F0E0F00 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 115A30 7F0E0F00 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 115A34 7F0E0F04 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 115A38 7F0E0F08 314D1800 */  andi  $t5, $t2, 0x1800
 /* 115A3C 7F0E0F0C 03376025 */  or    $t4, $t9, $s7
@@ -16527,7 +16527,7 @@ spectrum_op_ED_AA:
 /* 115A88 7F0E0F58 32C800FF */  andi  $t0, $s6, 0xff
 /* 115A8C 7F0E0F5C 0100B025 */  move  $s6, $t0
 .L7F0E0F60:
-/* 115A90 7F0E0F60 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) # $t3, 0x8009
+/* 115A90 7F0E0F60 3C0B8009 */  lui   $t3, %hi(ptr_pc_keyboard_table_alloc) 
 /* 115A94 7F0E0F64 8D6BE334 */  lw    $t3, %lo(ptr_pc_keyboard_table_alloc)($t3)
 /* 115A98 7F0E0F68 2652FFFF */  addiu $s2, $s2, -1
 /* 115A9C 7F0E0F6C 325800FF */  andi  $t8, $s2, 0xff
@@ -16548,7 +16548,7 @@ spectrum_op_ED_AA:
 /* 115AD8 7F0E0FA8 01208825 */   move  $s1, $t1
 spectrum_op_ED_AB:
 /* 115ADC 7F0E0FAC 8FAA028C */  lw    $t2, 0x28c($sp)
-/* 115AE0 7F0E0FB0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 115AE0 7F0E0FB0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 115AE4 7F0E0FB4 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 115AE8 7F0E0FB8 00165A00 */  sll   $t3, $s6, 8
 /* 115AEC 7F0E0FBC 01777825 */  or    $t7, $t3, $s7
@@ -16589,7 +16589,7 @@ spectrum_op_ED_AB:
 /* 115B74 7F0E1044 01608825 */   move  $s1, $t3
 spectrum_op_ED_B0:
 /* 115B78 7F0E1048 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 115B7C 7F0E104C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 115B7C 7F0E104C 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 115B80 7F0E1050 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 115B84 7F0E1054 00164200 */  sll   $t0, $s6, 8
 /* 115B88 7F0E1058 0117C825 */  or    $t9, $t0, $s7
@@ -16602,7 +16602,7 @@ spectrum_op_ED_B0:
 /* 115BA4 7F0E1074 29415B00 */  slti  $at, $t2, 0x5b00
 /* 115BA8 7F0E1078 14200008 */  bnez  $at, .L7F0E109C
 /* 115BAC 7F0E107C A3A9006A */   sb    $t1, 0x6a($sp)
-/* 115BB0 7F0E1080 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 115BB0 7F0E1080 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 115BB4 7F0E1084 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 115BB8 7F0E1088 00147200 */  sll   $t6, $s4, 8
 /* 115BBC 7F0E108C 01D54025 */  or    $t0, $t6, $s5
@@ -16615,13 +16615,13 @@ spectrum_op_ED_B0:
 /* 115BD4 7F0E10A4 29A15800 */  slti  $at, $t5, 0x5800
 /* 115BD8 7F0E10A8 14200010 */  bnez  $at, .L7F0E10EC
 /* 115BDC 7F0E10AC 00145200 */   sll   $t2, $s4, 8
-/* 115BE0 7F0E10B0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 115BE0 7F0E10B0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 115BE4 7F0E10B4 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 115BE8 7F0E10B8 93A9006A */  lbu   $t1, 0x6a($sp)
 /* 115BEC 7F0E10BC 00145200 */  sll   $t2, $s4, 8
 /* 115BF0 7F0E10C0 01557025 */  or    $t6, $t2, $s5
 /* 115BF4 7F0E10C4 018E7821 */  addu  $t7, $t4, $t6
-/* 115BF8 7F0E10C8 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 115BF8 7F0E10C8 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 115BFC 7F0E10CC A1E90000 */  sb    $t1, ($t7)
 /* 115C00 7F0E10D0 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 115C04 7F0E10D4 0014CA00 */  sll   $t9, $s4, 8
@@ -16635,7 +16635,7 @@ spectrum_op_ED_B0:
 /* 115C20 7F0E10F0 29814000 */  slti  $at, $t4, 0x4000
 /* 115C24 7F0E10F4 14200013 */  bnez  $at, .L7F0E1144
 /* 115C28 7F0E10F8 93AE006A */   lbu   $t6, 0x6a($sp)
-/* 115C2C 7F0E10FC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 115C2C 7F0E10FC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 115C30 7F0E1100 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 115C34 7F0E1104 00147A00 */  sll   $t7, $s4, 8
 /* 115C38 7F0E1108 01F5C825 */  or    $t9, $t7, $s5
@@ -16643,7 +16643,7 @@ spectrum_op_ED_B0:
 /* 115C40 7F0E1110 A16E0000 */  sb    $t6, ($t3)
 /* 115C44 7F0E1114 00144200 */  sll   $t0, $s4, 8
 /* 115C48 7F0E1118 01156825 */  or    $t5, $t0, $s5
-/* 115C4C 7F0E111C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 115C4C 7F0E111C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 115C50 7F0E1120 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 115C54 7F0E1124 31AA1800 */  andi  $t2, $t5, 0x1800
 /* 115C58 7F0E1128 01F54825 */  or    $t1, $t7, $s5
@@ -16701,7 +16701,7 @@ spectrum_op_ED_B0:
 /* 115D18 7F0E11E8 A7A80298 */   sh    $t0, 0x298($sp)
 spectrum_op_ED_B1:
 /* 115D1C 7F0E11EC 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 115D20 7F0E11F0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 115D20 7F0E11F0 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 115D24 7F0E11F4 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 115D28 7F0E11F8 00166200 */  sll   $t4, $s6, 8
 /* 115D2C 7F0E11FC 322A0001 */  andi  $t2, $s1, 1
@@ -16787,7 +16787,7 @@ spectrum_op_ED_B2:
 /* 115E60 7F0E1330 29415B00 */  slti  $at, $t2, 0x5b00
 /* 115E64 7F0E1334 14200008 */  bnez  $at, .L7F0E1358
 /* 115E68 7F0E1338 A7A20062 */   sh    $v0, 0x62($sp)
-/* 115E6C 7F0E133C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 115E6C 7F0E133C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 115E70 7F0E1340 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 115E74 7F0E1344 0016CA00 */  sll   $t9, $s6, 8
 /* 115E78 7F0E1348 03374025 */  or    $t0, $t9, $s7
@@ -16800,13 +16800,13 @@ spectrum_op_ED_B2:
 /* 115E90 7F0E1360 2B015800 */  slti  $at, $t8, 0x5800
 /* 115E94 7F0E1364 14200010 */  bnez  $at, .L7F0E13A8
 /* 115E98 7F0E1368 00165200 */   sll   $t2, $s6, 8
-/* 115E9C 7F0E136C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 115E9C 7F0E136C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 115EA0 7F0E1370 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 115EA4 7F0E1374 97AF0062 */  lhu   $t7, 0x62($sp)
 /* 115EA8 7F0E1378 00165200 */  sll   $t2, $s6, 8
 /* 115EAC 7F0E137C 0157C825 */  or    $t9, $t2, $s7
 /* 115EB0 7F0E1380 01B96021 */  addu  $t4, $t5, $t9
-/* 115EB4 7F0E1384 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 115EB4 7F0E1384 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 115EB8 7F0E1388 A18F0000 */  sb    $t7, ($t4)
 /* 115EBC 7F0E138C 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 115EC0 7F0E1390 00164A00 */  sll   $t1, $s6, 8
@@ -16820,7 +16820,7 @@ spectrum_op_ED_B2:
 /* 115EDC 7F0E13AC 29A14000 */  slti  $at, $t5, 0x4000
 /* 115EE0 7F0E13B0 14200013 */  bnez  $at, .L7F0E1400
 /* 115EE4 7F0E13B4 97B90062 */   lhu   $t9, 0x62($sp)
-/* 115EE8 7F0E13B8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 115EE8 7F0E13B8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 115EEC 7F0E13BC 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 115EF0 7F0E13C0 00166200 */  sll   $t4, $s6, 8
 /* 115EF4 7F0E13C4 01974825 */  or    $t1, $t4, $s7
@@ -16828,7 +16828,7 @@ spectrum_op_ED_B2:
 /* 115EFC 7F0E13CC A1D90000 */  sb    $t9, ($t6)
 /* 115F00 7F0E13D0 00164200 */  sll   $t0, $s6, 8
 /* 115F04 7F0E13D4 0117C025 */  or    $t8, $t0, $s7
-/* 115F08 7F0E13D8 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 115F08 7F0E13D8 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 115F0C 7F0E13DC 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 115F10 7F0E13E0 330A1800 */  andi  $t2, $t8, 0x1800
 /* 115F14 7F0E13E4 01977825 */  or    $t7, $t4, $s7
@@ -16852,7 +16852,7 @@ spectrum_op_ED_B2:
 /* 115F58 7F0E1428 32C900FF */  andi  $t1, $s6, 0xff
 /* 115F5C 7F0E142C 0120B025 */  move  $s6, $t1
 .L7F0E1430:
-/* 115F60 7F0E1430 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) # $t4, 0x8009
+/* 115F60 7F0E1430 3C0C8009 */  lui   $t4, %hi(ptr_pc_keyboard_table_alloc) 
 /* 115F64 7F0E1434 8D8CE334 */  lw    $t4, %lo(ptr_pc_keyboard_table_alloc)($t4)
 /* 115F68 7F0E1438 2652FFFF */  addiu $s2, $s2, -1
 /* 115F6C 7F0E143C 324E00FF */  andi  $t6, $s2, 0xff
@@ -16879,7 +16879,7 @@ spectrum_op_ED_B2:
 /* 115FC0 7F0E1490 A7A80298 */   sh    $t0, 0x298($sp)
 spectrum_op_ED_B3:
 /* 115FC4 7F0E1494 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 115FC8 7F0E1498 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 115FC8 7F0E1498 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 115FCC 7F0E149C 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 115FD0 7F0E14A0 00164A00 */  sll   $t1, $s6, 8
 /* 115FD4 7F0E14A4 01377025 */  or    $t6, $t1, $s7
@@ -16925,7 +16925,7 @@ spectrum_op_ED_B3:
 /* 116070 7F0E1540 A7A90298 */   sh    $t1, 0x298($sp)
 spectrum_op_ED_B8:
 /* 116074 7F0E1544 8FAB028C */  lw    $t3, 0x28c($sp)
-/* 116078 7F0E1548 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 116078 7F0E1548 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 11607C 7F0E154C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 116080 7F0E1550 00164200 */  sll   $t0, $s6, 8
 /* 116084 7F0E1554 0117C825 */  or    $t9, $t0, $s7
@@ -16938,7 +16938,7 @@ spectrum_op_ED_B8:
 /* 1160A0 7F0E1570 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 1160A4 7F0E1574 14200008 */  bnez  $at, .L7F0E1598
 /* 1160A8 7F0E1578 A3AF0060 */   sb    $t7, 0x60($sp)
-/* 1160AC 7F0E157C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1160AC 7F0E157C 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1160B0 7F0E1580 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1160B4 7F0E1584 00146A00 */  sll   $t5, $s4, 8
 /* 1160B8 7F0E1588 01B54025 */  or    $t0, $t5, $s5
@@ -16951,13 +16951,13 @@ spectrum_op_ED_B8:
 /* 1160D0 7F0E15A0 29815800 */  slti  $at, $t4, 0x5800
 /* 1160D4 7F0E15A4 14200010 */  bnez  $at, .L7F0E15E8
 /* 1160D8 7F0E15A8 00147200 */   sll   $t6, $s4, 8
-/* 1160DC 7F0E15AC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 1160DC 7F0E15AC 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 1160E0 7F0E15B0 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1160E4 7F0E15B4 93AF0060 */  lbu   $t7, 0x60($sp)
 /* 1160E8 7F0E15B8 00147200 */  sll   $t6, $s4, 8
 /* 1160EC 7F0E15BC 01D56825 */  or    $t5, $t6, $s5
 /* 1160F0 7F0E15C0 012D5821 */  addu  $t3, $t1, $t5
-/* 1160F4 7F0E15C4 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 1160F4 7F0E15C4 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 1160F8 7F0E15C8 A16F0000 */  sb    $t7, ($t3)
 /* 1160FC 7F0E15CC 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 116100 7F0E15D0 0014CA00 */  sll   $t9, $s4, 8
@@ -16971,7 +16971,7 @@ spectrum_op_ED_B8:
 /* 11611C 7F0E15EC 29214000 */  slti  $at, $t1, 0x4000
 /* 116120 7F0E15F0 14200013 */  bnez  $at, .L7F0E1640
 /* 116124 7F0E15F4 93AD0060 */   lbu   $t5, 0x60($sp)
-/* 116128 7F0E15F8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 116128 7F0E15F8 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 11612C 7F0E15FC 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 116130 7F0E1600 00145A00 */  sll   $t3, $s4, 8
 /* 116134 7F0E1604 0175C825 */  or    $t9, $t3, $s5
@@ -16979,7 +16979,7 @@ spectrum_op_ED_B8:
 /* 11613C 7F0E160C A30D0000 */  sb    $t5, ($t8)
 /* 116140 7F0E1610 00144200 */  sll   $t0, $s4, 8
 /* 116144 7F0E1614 01156025 */  or    $t4, $t0, $s5
-/* 116148 7F0E1618 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 116148 7F0E1618 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 11614C 7F0E161C 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 116150 7F0E1620 318E1800 */  andi  $t6, $t4, 0x1800
 /* 116154 7F0E1624 01757825 */  or    $t7, $t3, $s5
@@ -17041,7 +17041,7 @@ spectrum_op_ED_B8:
 /* 116224 7F0E16F4 A7AF0298 */   sh    $t7, 0x298($sp)
 spectrum_op_ED_B9:
 /* 116228 7F0E16F8 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 11622C 7F0E16FC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 11622C 7F0E16FC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 116230 7F0E1700 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 116234 7F0E1704 00165200 */  sll   $t2, $s6, 8
 /* 116238 7F0E1708 32390001 */  andi  $t9, $s1, 1
@@ -17129,7 +17129,7 @@ spectrum_op_ED_BA:
 /* 116374 7F0E1844 29415B00 */  slti  $at, $t2, 0x5b00
 /* 116378 7F0E1848 14200008 */  bnez  $at, .L7F0E186C
 /* 11637C 7F0E184C A7A20058 */   sh    $v0, 0x58($sp)
-/* 116380 7F0E1850 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 116380 7F0E1850 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 116384 7F0E1854 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 116388 7F0E1858 00166A00 */  sll   $t5, $s6, 8
 /* 11638C 7F0E185C 01B76025 */  or    $t4, $t5, $s7
@@ -17142,13 +17142,13 @@ spectrum_op_ED_BA:
 /* 1163A4 7F0E1874 2B215800 */  slti  $at, $t9, 0x5800
 /* 1163A8 7F0E1878 14200010 */  bnez  $at, .L7F0E18BC
 /* 1163AC 7F0E187C 00165200 */   sll   $t2, $s6, 8
-/* 1163B0 7F0E1880 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1163B0 7F0E1880 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1163B4 7F0E1884 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 1163B8 7F0E1888 97AE0058 */  lhu   $t6, 0x58($sp)
 /* 1163BC 7F0E188C 00165200 */  sll   $t2, $s6, 8
 /* 1163C0 7F0E1890 01576825 */  or    $t5, $t2, $s7
 /* 1163C4 7F0E1894 030D7821 */  addu  $t7, $t8, $t5
-/* 1163C8 7F0E1898 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 1163C8 7F0E1898 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 1163CC 7F0E189C A1EE0000 */  sb    $t6, ($t7)
 /* 1163D0 7F0E18A0 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 1163D4 7F0E18A4 00164A00 */  sll   $t1, $s6, 8
@@ -17162,7 +17162,7 @@ spectrum_op_ED_BA:
 /* 1163F0 7F0E18C0 2B014000 */  slti  $at, $t8, 0x4000
 /* 1163F4 7F0E18C4 14200013 */  bnez  $at, .L7F0E1914
 /* 1163F8 7F0E18C8 97AD0058 */   lhu   $t5, 0x58($sp)
-/* 1163FC 7F0E18CC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1163FC 7F0E18CC 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 116400 7F0E18D0 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 116404 7F0E18D4 00167A00 */  sll   $t7, $s6, 8
 /* 116408 7F0E18D8 01F74825 */  or    $t1, $t7, $s7
@@ -17170,7 +17170,7 @@ spectrum_op_ED_BA:
 /* 116410 7F0E18E0 A10D0000 */  sb    $t5, ($t0)
 /* 116414 7F0E18E4 00166200 */  sll   $t4, $s6, 8
 /* 116418 7F0E18E8 0197C825 */  or    $t9, $t4, $s7
-/* 11641C 7F0E18EC 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 11641C 7F0E18EC 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 116420 7F0E18F0 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 116424 7F0E18F4 332A1800 */  andi  $t2, $t9, 0x1800
 /* 116428 7F0E18F8 01F77025 */  or    $t6, $t7, $s7
@@ -17196,7 +17196,7 @@ spectrum_op_ED_BA:
 /* 116474 7F0E1944 32CD00FF */  andi  $t5, $s6, 0xff
 /* 116478 7F0E1948 01A0B025 */  move  $s6, $t5
 .L7F0E194C:
-/* 11647C 7F0E194C 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) # $t8, 0x8009
+/* 11647C 7F0E194C 3C188009 */  lui   $t8, %hi(ptr_pc_keyboard_table_alloc) 
 /* 116480 7F0E1950 8F18E334 */  lw    $t8, %lo(ptr_pc_keyboard_table_alloc)($t8)
 /* 116484 7F0E1954 2652FFFF */  addiu $s2, $s2, -1
 /* 116488 7F0E1958 324B00FF */  andi  $t3, $s2, 0xff
@@ -17224,7 +17224,7 @@ spectrum_op_ED_BA:
 /* 1164E0 7F0E19B0 A7AF0298 */   sh    $t7, 0x298($sp)
 spectrum_op_ED_BB:
 /* 1164E4 7F0E19B4 8FA8028C */  lw    $t0, 0x28c($sp)
-/* 1164E8 7F0E19B8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1164E8 7F0E19B8 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1164EC 7F0E19BC 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1164F0 7F0E19C0 00165A00 */  sll   $t3, $s6, 8
 /* 1164F4 7F0E19C4 01775025 */  or    $t2, $t3, $s7
@@ -17277,14 +17277,14 @@ spectrum_op_ED_BB:
 /* 1165A8 7F0E1A78 AFAF028C */   sw    $t7, 0x28c($sp)
 spectrum_op_EE:
 /* 1165AC 7F0E1A7C 8FA9028C */  lw    $t1, 0x28c($sp)
-/* 1165B0 7F0E1A80 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 1165B0 7F0E1A80 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 1165B4 7F0E1A84 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 1165B8 7F0E1A88 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 1165BC 7F0E1A8C 25380007 */  addiu $t8, $t1, 7
 /* 1165C0 7F0E1A90 AFB8028C */  sw    $t8, 0x28c($sp)
 /* 1165C4 7F0E1A94 010B5021 */  addu  $t2, $t0, $t3
 /* 1165C8 7F0E1A98 914E0000 */  lbu   $t6, ($t2)
-/* 1165CC 7F0E1A9C 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) # $t0, 0x8009
+/* 1165CC 7F0E1A9C 3C088009 */  lui   $t0, %hi(ptr_pc_keyboard_table_alloc) 
 /* 1165D0 7F0E1AA0 8D08E334 */  lw    $t0, %lo(ptr_pc_keyboard_table_alloc)($t0)
 /* 1165D4 7F0E1AA4 020E8026 */  xor   $s0, $s0, $t6
 /* 1165D8 7F0E1AA8 320C00FF */  andi  $t4, $s0, 0xff
@@ -17306,7 +17306,7 @@ spectrum_op_EE:
 spectrum_op_EF:
 /* 116618 7F0E1AE8 97A90292 */  lhu   $t1, 0x292($sp)
 /* 11661C 7F0E1AEC 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 116620 7F0E1AF0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 116620 7F0E1AF0 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 116624 7F0E1AF4 2528FFFE */  addiu $t0, $t1, -2
 /* 116628 7F0E1AF8 310BFFFF */  andi  $t3, $t0, 0xffff
 /* 11662C 7F0E1AFC 29615B00 */  slti  $at, $t3, 0x5b00
@@ -17322,13 +17322,13 @@ spectrum_op_EF:
 .L7F0E1B24:
 /* 116654 7F0E1B24 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 116658 7F0E1B28 97AA0292 */  lhu   $t2, 0x292($sp)
-/* 11665C 7F0E1B2C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 11665C 7F0E1B2C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 116660 7F0E1B30 29815800 */  slti  $at, $t4, 0x5800
 /* 116664 7F0E1B34 5420000D */  bnezl $at, .L7F0E1B6C
 /* 116668 7F0E1B38 29414000 */   slti  $at, $t2, 0x4000
 /* 11666C 7F0E1B3C 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 116670 7F0E1B40 97AD0298 */  lhu   $t5, 0x298($sp)
-/* 116674 7F0E1B44 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 116674 7F0E1B44 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 116678 7F0E1B48 01ECC821 */  addu  $t9, $t7, $t4
 /* 11667C 7F0E1B4C A32D0000 */  sb    $t5, ($t9)
 /* 116680 7F0E1B50 97B80292 */  lhu   $t8, 0x292($sp)
@@ -17340,14 +17340,14 @@ spectrum_op_EF:
 /* 116698 7F0E1B68 29414000 */  slti  $at, $t2, 0x4000
 .L7F0E1B6C:
 /* 11669C 7F0E1B6C 1420000F */  bnez  $at, .L7F0E1BAC
-/* 1166A0 7F0E1B70 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1166A0 7F0E1B70 3C0F8009 */   lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1166A4 7F0E1B74 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1166A8 7F0E1B78 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 1166AC 7F0E1B7C 240D0001 */  li    $t5, 1
 /* 1166B0 7F0E1B80 01EA6021 */  addu  $t4, $t7, $t2
 /* 1166B4 7F0E1B84 A18E0000 */  sb    $t6, ($t4)
 /* 1166B8 7F0E1B88 97B90292 */  lhu   $t9, 0x292($sp)
-/* 1166BC 7F0E1B8C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 1166BC 7F0E1B8C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 1166C0 7F0E1B90 8DEFE32C */  lw    $t7, %lo(ptr_300alloc)($t7)
 /* 1166C4 7F0E1B94 33281800 */  andi  $t0, $t9, 0x1800
 /* 1166C8 7F0E1B98 0008C0C3 */  sra   $t8, $t0, 3
@@ -17363,7 +17363,7 @@ spectrum_op_EF:
 /* 1166EC 7F0E1BBC 29815B00 */  slti  $at, $t4, 0x5b00
 /* 1166F0 7F0E1BC0 14200007 */  bnez  $at, .L7F0E1BE0
 /* 1166F4 7F0E1BC4 25EB0001 */   addiu $t3, $t7, 1
-/* 1166F8 7F0E1BC8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1166F8 7F0E1BC8 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1166FC 7F0E1BCC 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 116700 7F0E1BD0 0008CA03 */  sra   $t9, $t0, 8
 /* 116704 7F0E1BD4 030E4821 */  addu  $t1, $t8, $t6
@@ -17373,10 +17373,10 @@ spectrum_op_EF:
 /* 116710 7F0E1BE0 29615800 */  slti  $at, $t3, 0x5800
 /* 116714 7F0E1BE4 1420000E */  bnez  $at, .L7F0E1C20
 /* 116718 7F0E1BE8 97AB0292 */   lhu   $t3, 0x292($sp)
-/* 11671C 7F0E1BEC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 11671C 7F0E1BEC 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 116720 7F0E1BF0 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 116724 7F0E1BF4 97AD0298 */  lhu   $t5, 0x298($sp)
-/* 116728 7F0E1BF8 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 116728 7F0E1BF8 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 11672C 7F0E1BFC 018F4021 */  addu  $t0, $t4, $t7
 /* 116730 7F0E1C00 000D5203 */  sra   $t2, $t5, 8
 /* 116734 7F0E1C04 A10A0001 */  sb    $t2, 1($t0)
@@ -17391,14 +17391,14 @@ spectrum_op_EF:
 /* 116754 7F0E1C24 29A14000 */  slti  $at, $t5, 0x4000
 /* 116758 7F0E1C28 14200011 */  bnez  $at, .L7F0E1C70
 /* 11675C 7F0E1C2C 97AC0298 */   lhu   $t4, 0x298($sp)
-/* 116760 7F0E1C30 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 116760 7F0E1C30 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 116764 7F0E1C34 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 116768 7F0E1C38 000C7A03 */  sra   $t7, $t4, 8
 /* 11676C 7F0E1C3C 240E0001 */  li    $t6, 1
 /* 116770 7F0E1C40 014B4021 */  addu  $t0, $t2, $t3
 /* 116774 7F0E1C44 A10F0001 */  sb    $t7, 1($t0)
 /* 116778 7F0E1C48 97B90292 */  lhu   $t9, 0x292($sp)
-/* 11677C 7F0E1C4C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 11677C 7F0E1C4C 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 116780 7F0E1C50 8D6BE32C */  lw    $t3, %lo(ptr_300alloc)($t3)
 /* 116784 7F0E1C54 27380001 */  addiu $t8, $t9, 1
 /* 116788 7F0E1C58 33091800 */  andi  $t1, $t8, 0x1800
@@ -17414,7 +17414,7 @@ spectrum_op_EF:
 spectrum_op_F0:
 /* 1167AC 7F0E1C7C 8FB9028C */  lw    $t9, 0x28c($sp)
 /* 1167B0 7F0E1C80 32380080 */  andi  $t8, $s1, 0x80
-/* 1167B4 7F0E1C84 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 1167B4 7F0E1C84 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 1167B8 7F0E1C88 27290005 */  addiu $t1, $t9, 5
 /* 1167BC 7F0E1C8C 170002DB */  bnez  $t8, .L7F0E27FC
 /* 1167C0 7F0E1C90 AFA9028C */   sw    $t1, 0x28c($sp)
@@ -17434,7 +17434,7 @@ spectrum_op_F0:
 /* 1167F8 7F0E1CC8 A7AD0292 */   sh    $t5, 0x292($sp)
 spectrum_op_F1:
 /* 1167FC 7F0E1CCC 8FAC028C */  lw    $t4, 0x28c($sp)
-/* 116800 7F0E1CD0 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 116800 7F0E1CD0 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 116804 7F0E1CD4 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 116808 7F0E1CD8 97AA0292 */  lhu   $t2, 0x292($sp)
 /* 11680C 7F0E1CDC 258E000A */  addiu $t6, $t4, 0xa
@@ -17452,7 +17452,7 @@ spectrum_op_F2:
 /* 116838 7F0E1D08 2538000A */  addiu $t8, $t1, 0xa
 /* 11683C 7F0E1D0C 1560000B */  bnez  $t3, .L7F0E1D3C
 /* 116840 7F0E1D10 AFB8028C */   sw    $t8, 0x28c($sp)
-/* 116844 7F0E1D14 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 116844 7F0E1D14 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 116848 7F0E1D18 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 11684C 7F0E1D1C 018DC821 */  addu  $t9, $t4, $t5
 /* 116850 7F0E1D20 932A0001 */  lbu   $t2, 1($t9)
@@ -17489,7 +17489,7 @@ spectrum_op_F4:
 /* 1168C0 7F0E1D90 29615B00 */  slti  $at, $t3, 0x5b00
 /* 1168C4 7F0E1D94 14200008 */  bnez  $at, .L7F0E1DB8
 /* 1168C8 7F0E1D98 A7B80292 */   sh    $t8, 0x292($sp)
-/* 1168CC 7F0E1D9C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1168CC 7F0E1D9C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1168D0 7F0E1DA0 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1168D4 7F0E1DA4 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 1168D8 7F0E1DA8 01ABC821 */  addu  $t9, $t5, $t3
@@ -17502,10 +17502,10 @@ spectrum_op_F4:
 /* 1168F0 7F0E1DC0 97A80298 */  lhu   $t0, 0x298($sp)
 /* 1168F4 7F0E1DC4 29415800 */  slti  $at, $t2, 0x5800
 /* 1168F8 7F0E1DC8 1420000C */  bnez  $at, .L7F0E1DFC
-/* 1168FC 7F0E1DCC 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 1168FC 7F0E1DCC 3C098009 */   lui   $t1, %hi(ptr_spectrum_roms) 
 /* 116900 7F0E1DD0 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 116904 7F0E1DD4 250F0002 */  addiu $t7, $t0, 2
-/* 116908 7F0E1DD8 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 116908 7F0E1DD8 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 11690C 7F0E1DDC 012AC021 */  addu  $t8, $t1, $t2
 /* 116910 7F0E1DE0 A30F0000 */  sb    $t7, ($t8)
 /* 116914 7F0E1DE4 97AB0292 */  lhu   $t3, 0x292($sp)
@@ -17518,14 +17518,14 @@ spectrum_op_F4:
 /* 11692C 7F0E1DFC 2B214000 */  slti  $at, $t9, 0x4000
 /* 116930 7F0E1E00 14200010 */  bnez  $at, .L7F0E1E44
 /* 116934 7F0E1E04 97A80298 */   lhu   $t0, 0x298($sp)
-/* 116938 7F0E1E08 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 116938 7F0E1E08 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 11693C 7F0E1E0C 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 116940 7F0E1E10 25090002 */  addiu $t1, $t0, 2
 /* 116944 7F0E1E14 24180001 */  li    $t8, 1
 /* 116948 7F0E1E18 01597821 */  addu  $t7, $t2, $t9
 /* 11694C 7F0E1E1C A1E90000 */  sb    $t1, ($t7)
 /* 116950 7F0E1E20 97AD0292 */  lhu   $t5, 0x292($sp)
-/* 116954 7F0E1E24 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 116954 7F0E1E24 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 116958 7F0E1E28 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 11695C 7F0E1E2C 31AB1800 */  andi  $t3, $t5, 0x1800
 /* 116960 7F0E1E30 000B70C3 */  sra   $t6, $t3, 3
@@ -17541,7 +17541,7 @@ spectrum_op_F4:
 /* 116984 7F0E1E54 29E15B00 */  slti  $at, $t7, 0x5b00
 /* 116988 7F0E1E58 14200008 */  bnez  $at, .L7F0E1E7C
 /* 11698C 7F0E1E5C 25180001 */   addiu $t8, $t0, 1
-/* 116990 7F0E1E60 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 116990 7F0E1E60 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 116994 7F0E1E64 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 116998 7F0E1E68 256D0002 */  addiu $t5, $t3, 2
 /* 11699C 7F0E1E6C 000D7203 */  sra   $t6, $t5, 8
@@ -17553,13 +17553,13 @@ spectrum_op_F4:
 /* 1169B0 7F0E1E80 1420000F */  bnez  $at, .L7F0E1EC0
 /* 1169B4 7F0E1E84 97B90292 */   lhu   $t9, 0x292($sp)
 /* 1169B8 7F0E1E88 97B90298 */  lhu   $t9, 0x298($sp)
-/* 1169BC 7F0E1E8C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1169BC 7F0E1E8C 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1169C0 7F0E1E90 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1169C4 7F0E1E94 272F0002 */  addiu $t7, $t9, 2
 /* 1169C8 7F0E1E98 000F5A03 */  sra   $t3, $t7, 8
 /* 1169CC 7F0E1E9C 01A86021 */  addu  $t4, $t5, $t0
 /* 1169D0 7F0E1EA0 A18B0001 */  sb    $t3, 1($t4)
-/* 1169D4 7F0E1EA4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 1169D4 7F0E1EA4 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 1169D8 7F0E1EA8 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 1169DC 7F0E1EAC 97AA0292 */  lhu   $t2, 0x292($sp)
 /* 1169E0 7F0E1EB0 24090001 */  li    $t1, 1
@@ -17571,14 +17571,14 @@ spectrum_op_F4:
 /* 1169F4 7F0E1EC4 29E14000 */  slti  $at, $t7, 0x4000
 /* 1169F8 7F0E1EC8 14200012 */  bnez  $at, .L7F0E1F14
 /* 1169FC 7F0E1ECC 97AD0298 */   lhu   $t5, 0x298($sp)
-/* 116A00 7F0E1ED0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 116A00 7F0E1ED0 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 116A04 7F0E1ED4 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 116A08 7F0E1ED8 25A80002 */  addiu $t0, $t5, 2
 /* 116A0C 7F0E1EDC 00085A03 */  sra   $t3, $t0, 8
 /* 116A10 7F0E1EE0 01997021 */  addu  $t6, $t4, $t9
 /* 116A14 7F0E1EE4 A1CB0001 */  sb    $t3, 1($t6)
 /* 116A18 7F0E1EE8 97A90292 */  lhu   $t1, 0x292($sp)
-/* 116A1C 7F0E1EEC 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 116A1C 7F0E1EEC 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 116A20 7F0E1EF0 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 116A24 7F0E1EF4 25380001 */  addiu $t8, $t1, 1
 /* 116A28 7F0E1EF8 330F1800 */  andi  $t7, $t8, 0x1800
@@ -17589,7 +17589,7 @@ spectrum_op_F4:
 /* 116A3C 7F0E1F0C 032C5821 */  addu  $t3, $t9, $t4
 /* 116A40 7F0E1F10 A16A0000 */  sb    $t2, ($t3)
 .L7F0E1F14:
-/* 116A44 7F0E1F14 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 116A44 7F0E1F14 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 116A48 7F0E1F18 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 116A4C 7F0E1F1C 97AE0298 */  lhu   $t6, 0x298($sp)
 /* 116A50 7F0E1F20 012E6821 */  addu  $t5, $t1, $t6
@@ -17608,7 +17608,7 @@ spectrum_op_F4:
 spectrum_op_F5:
 /* 116A80 7F0E1F50 97AE0292 */  lhu   $t6, 0x292($sp)
 /* 116A84 7F0E1F54 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 116A88 7F0E1F58 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 116A88 7F0E1F58 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 116A8C 7F0E1F5C 25CDFFFE */  addiu $t5, $t6, -2
 /* 116A90 7F0E1F60 31A8FFFF */  andi  $t0, $t5, 0xffff
 /* 116A94 7F0E1F64 29015B00 */  slti  $at, $t0, 0x5b00
@@ -17623,12 +17623,12 @@ spectrum_op_F5:
 .L7F0E1F88:
 /* 116AB8 7F0E1F88 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 116ABC 7F0E1F8C 97B80292 */  lhu   $t8, 0x292($sp)
-/* 116AC0 7F0E1F90 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 116AC0 7F0E1F90 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 116AC4 7F0E1F94 29815800 */  slti  $at, $t4, 0x5800
 /* 116AC8 7F0E1F98 5420000C */  bnezl $at, .L7F0E1FCC
 /* 116ACC 7F0E1F9C 2B014000 */   slti  $at, $t8, 0x4000
 /* 116AD0 7F0E1FA0 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
-/* 116AD4 7F0E1FA4 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 116AD4 7F0E1FA4 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 116AD8 7F0E1FA8 240F0001 */  li    $t7, 1
 /* 116ADC 7F0E1FAC 014C5821 */  addu  $t3, $t2, $t4
 /* 116AE0 7F0E1FB0 A1710000 */  sb    $s1, ($t3)
@@ -17640,9 +17640,9 @@ spectrum_op_F5:
 /* 116AF8 7F0E1FC8 2B014000 */  slti  $at, $t8, 0x4000
 .L7F0E1FCC:
 /* 116AFC 7F0E1FCC 1420000E */  bnez  $at, .L7F0E2008
-/* 116B00 7F0E1FD0 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 116B00 7F0E1FD0 3C088009 */   lui   $t0, %hi(ptr_spectrum_roms) 
 /* 116B04 7F0E1FD4 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
-/* 116B08 7F0E1FD8 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 116B08 7F0E1FD8 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 116B0C 7F0E1FDC 240A0001 */  li    $t2, 1
 /* 116B10 7F0E1FE0 0118C821 */  addu  $t9, $t0, $t8
 /* 116B14 7F0E1FE4 A3310000 */  sb    $s1, ($t9)
@@ -17657,7 +17657,7 @@ spectrum_op_F5:
 .L7F0E2008:
 /* 116B38 7F0E2008 97B80292 */  lhu   $t8, 0x292($sp)
 /* 116B3C 7F0E200C 97A90292 */  lhu   $t1, 0x292($sp)
-/* 116B40 7F0E2010 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 116B40 7F0E2010 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 116B44 7F0E2014 27190001 */  addiu $t9, $t8, 1
 /* 116B48 7F0E2018 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 116B4C 7F0E201C 14200005 */  bnez  $at, .L7F0E2034
@@ -17670,9 +17670,9 @@ spectrum_op_F5:
 /* 116B64 7F0E2034 29C15800 */  slti  $at, $t6, 0x5800
 /* 116B68 7F0E2038 1420000C */  bnez  $at, .L7F0E206C
 /* 116B6C 7F0E203C 97B80292 */   lhu   $t8, 0x292($sp)
-/* 116B70 7F0E2040 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 116B70 7F0E2040 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 116B74 7F0E2044 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
-/* 116B78 7F0E2048 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 116B78 7F0E2048 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 116B7C 7F0E204C 240A0001 */  li    $t2, 1
 /* 116B80 7F0E2050 01A97821 */  addu  $t7, $t5, $t1
 /* 116B84 7F0E2054 A1F00001 */  sb    $s0, 1($t7)
@@ -17685,13 +17685,13 @@ spectrum_op_F5:
 /* 116B9C 7F0E206C 270C0001 */  addiu $t4, $t8, 1
 /* 116BA0 7F0E2070 29814000 */  slti  $at, $t4, 0x4000
 /* 116BA4 7F0E2074 142001E1 */  bnez  $at, .L7F0E27FC
-/* 116BA8 7F0E2078 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 116BA8 7F0E2078 3C0E8009 */   lui   $t6, %hi(ptr_spectrum_roms) 
 /* 116BAC 7F0E207C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 116BB0 7F0E2080 24090001 */  li    $t1, 1
 /* 116BB4 7F0E2084 01D86821 */  addu  $t5, $t6, $t8
 /* 116BB8 7F0E2088 A1B00001 */  sb    $s0, 1($t5)
 /* 116BBC 7F0E208C 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 116BC0 7F0E2090 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) # $t6, 0x8009
+/* 116BC0 7F0E2090 3C0E8009 */  lui   $t6, %hi(ptr_300alloc) 
 /* 116BC4 7F0E2094 8DCEE32C */  lw    $t6, %lo(ptr_300alloc)($t6)
 /* 116BC8 7F0E2098 25E80001 */  addiu $t0, $t7, 1
 /* 116BCC 7F0E209C 31191800 */  andi  $t9, $t0, 0x1800
@@ -17703,14 +17703,14 @@ spectrum_op_F5:
 /* 116BE4 7F0E20B4 A3090000 */   sb    $t1, ($t8)
 spectrum_op_F6:
 /* 116BE8 7F0E20B8 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 116BEC 7F0E20BC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 116BEC 7F0E20BC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 116BF0 7F0E20C0 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 116BF4 7F0E20C4 97A80298 */  lhu   $t0, 0x298($sp)
 /* 116BF8 7F0E20C8 25AF0007 */  addiu $t7, $t5, 7
 /* 116BFC 7F0E20CC AFAF028C */  sw    $t7, 0x28c($sp)
 /* 116C00 7F0E20D0 03285021 */  addu  $t2, $t9, $t0
 /* 116C04 7F0E20D4 914B0000 */  lbu   $t3, ($t2)
-/* 116C08 7F0E20D8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) # $t9, 0x8009
+/* 116C08 7F0E20D8 3C198009 */  lui   $t9, %hi(ptr_pc_keyboard_table_alloc) 
 /* 116C0C 7F0E20DC 8F39E334 */  lw    $t9, %lo(ptr_pc_keyboard_table_alloc)($t9)
 /* 116C10 7F0E20E0 020B8025 */  or    $s0, $s0, $t3
 /* 116C14 7F0E20E4 320E00FF */  andi  $t6, $s0, 0xff
@@ -17732,7 +17732,7 @@ spectrum_op_F6:
 spectrum_op_F7:
 /* 116C54 7F0E2124 97AD0292 */  lhu   $t5, 0x292($sp)
 /* 116C58 7F0E2128 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 116C5C 7F0E212C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 116C5C 7F0E212C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 116C60 7F0E2130 25B9FFFE */  addiu $t9, $t5, -2
 /* 116C64 7F0E2134 3328FFFF */  andi  $t0, $t9, 0xffff
 /* 116C68 7F0E2138 29015B00 */  slti  $at, $t0, 0x5b00
@@ -17748,13 +17748,13 @@ spectrum_op_F7:
 .L7F0E2160:
 /* 116C90 7F0E2160 97AE0292 */  lhu   $t6, 0x292($sp)
 /* 116C94 7F0E2164 97AA0292 */  lhu   $t2, 0x292($sp)
-/* 116C98 7F0E2168 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 116C98 7F0E2168 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 116C9C 7F0E216C 29C15800 */  slti  $at, $t6, 0x5800
 /* 116CA0 7F0E2170 5420000D */  bnezl $at, .L7F0E21A8
 /* 116CA4 7F0E2174 29414000 */   slti  $at, $t2, 0x4000
 /* 116CA8 7F0E2178 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 116CAC 7F0E217C 97AC0298 */  lhu   $t4, 0x298($sp)
-/* 116CB0 7F0E2180 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 116CB0 7F0E2180 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 116CB4 7F0E2184 030E4821 */  addu  $t1, $t8, $t6
 /* 116CB8 7F0E2188 A12C0000 */  sb    $t4, ($t1)
 /* 116CBC 7F0E218C 97AF0292 */  lhu   $t7, 0x292($sp)
@@ -17766,14 +17766,14 @@ spectrum_op_F7:
 /* 116CD4 7F0E21A4 29414000 */  slti  $at, $t2, 0x4000
 .L7F0E21A8:
 /* 116CD8 7F0E21A8 1420000F */  bnez  $at, .L7F0E21E8
-/* 116CDC 7F0E21AC 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 116CDC 7F0E21AC 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 116CE0 7F0E21B0 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 116CE4 7F0E21B4 97AB0298 */  lhu   $t3, 0x298($sp)
 /* 116CE8 7F0E21B8 240C0001 */  li    $t4, 1
 /* 116CEC 7F0E21BC 030A7021 */  addu  $t6, $t8, $t2
 /* 116CF0 7F0E21C0 A1CB0000 */  sb    $t3, ($t6)
 /* 116CF4 7F0E21C4 97A90292 */  lhu   $t1, 0x292($sp)
-/* 116CF8 7F0E21C8 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 116CF8 7F0E21C8 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 116CFC 7F0E21CC 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 116D00 7F0E21D0 31391800 */  andi  $t9, $t1, 0x1800
 /* 116D04 7F0E21D4 001978C3 */  sra   $t7, $t9, 3
@@ -17789,7 +17789,7 @@ spectrum_op_F7:
 /* 116D28 7F0E21F8 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 116D2C 7F0E21FC 14200007 */  bnez  $at, .L7F0E221C
 /* 116D30 7F0E2200 27080001 */   addiu $t0, $t8, 1
-/* 116D34 7F0E2204 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 116D34 7F0E2204 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 116D38 7F0E2208 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 116D3C 7F0E220C 00194A03 */  sra   $t1, $t9, 8
 /* 116D40 7F0E2210 01EB6821 */  addu  $t5, $t7, $t3
@@ -17799,10 +17799,10 @@ spectrum_op_F7:
 /* 116D4C 7F0E221C 29015800 */  slti  $at, $t0, 0x5800
 /* 116D50 7F0E2220 1420000E */  bnez  $at, .L7F0E225C
 /* 116D54 7F0E2224 97A80292 */   lhu   $t0, 0x292($sp)
-/* 116D58 7F0E2228 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 116D58 7F0E2228 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 116D5C 7F0E222C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 116D60 7F0E2230 97AC0298 */  lhu   $t4, 0x298($sp)
-/* 116D64 7F0E2234 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 116D64 7F0E2234 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 116D68 7F0E2238 01D8C821 */  addu  $t9, $t6, $t8
 /* 116D6C 7F0E223C 000C5203 */  sra   $t2, $t4, 8
 /* 116D70 7F0E2240 A32A0001 */  sb    $t2, 1($t9)
@@ -17817,14 +17817,14 @@ spectrum_op_F7:
 /* 116D90 7F0E2260 29814000 */  slti  $at, $t4, 0x4000
 /* 116D94 7F0E2264 14200011 */  bnez  $at, .L7F0E22AC
 /* 116D98 7F0E2268 97AE0298 */   lhu   $t6, 0x298($sp)
-/* 116D9C 7F0E226C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 116D9C 7F0E226C 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 116DA0 7F0E2270 8D4AE328 */  lw    $t2, %lo(ptr_spectrum_roms)($t2)
 /* 116DA4 7F0E2274 000EC203 */  sra   $t8, $t6, 8
 /* 116DA8 7F0E2278 240B0001 */  li    $t3, 1
 /* 116DAC 7F0E227C 0148C821 */  addu  $t9, $t2, $t0
 /* 116DB0 7F0E2280 A3380001 */  sb    $t8, 1($t9)
 /* 116DB4 7F0E2284 97A90292 */  lhu   $t1, 0x292($sp)
-/* 116DB8 7F0E2288 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 116DB8 7F0E2288 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 116DBC 7F0E228C 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 116DC0 7F0E2290 252F0001 */  addiu $t7, $t1, 1
 /* 116DC4 7F0E2294 31ED1800 */  andi  $t5, $t7, 0x1800
@@ -17840,7 +17840,7 @@ spectrum_op_F7:
 spectrum_op_F8:
 /* 116DE8 7F0E22B8 8FA9028C */  lw    $t1, 0x28c($sp)
 /* 116DEC 7F0E22BC 322F0080 */  andi  $t7, $s1, 0x80
-/* 116DF0 7F0E22C0 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) # $t2, 0x8009
+/* 116DF0 7F0E22C0 3C0A8009 */  lui   $t2, %hi(ptr_spectrum_roms) 
 /* 116DF4 7F0E22C4 252D0005 */  addiu $t5, $t1, 5
 /* 116DF8 7F0E22C8 11E0014C */  beqz  $t7, .L7F0E27FC
 /* 116DFC 7F0E22CC AFAD028C */   sw    $t5, 0x28c($sp)
@@ -17889,7 +17889,7 @@ spectrum_op_FA:
 /* 116E94 7F0E2364 258E000A */  addiu $t6, $t4, 0xa
 /* 116E98 7F0E2368 1160000B */  beqz  $t3, .L7F0E2398
 /* 116E9C 7F0E236C AFAE028C */   sw    $t6, 0x28c($sp)
-/* 116EA0 7F0E2370 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 116EA0 7F0E2370 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 116EA4 7F0E2374 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 116EA8 7F0E2378 032A6821 */  addu  $t5, $t9, $t2
 /* 116EAC 7F0E237C 91AF0001 */  lbu   $t7, 1($t5)
@@ -17928,7 +17928,7 @@ spectrum_op_FC:
 /* 116F24 7F0E23F4 2B215B00 */  slti  $at, $t9, 0x5b00
 /* 116F28 7F0E23F8 14200008 */  bnez  $at, .L7F0E241C
 /* 116F2C 7F0E23FC A7A90292 */   sh    $t1, 0x292($sp)
-/* 116F30 7F0E2400 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 116F30 7F0E2400 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 116F34 7F0E2404 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 116F38 7F0E2408 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 116F3C 7F0E240C 01F9C021 */  addu  $t8, $t7, $t9
@@ -17941,10 +17941,10 @@ spectrum_op_FC:
 /* 116F54 7F0E2424 97AC0298 */  lhu   $t4, 0x298($sp)
 /* 116F58 7F0E2428 29015800 */  slti  $at, $t0, 0x5800
 /* 116F5C 7F0E242C 1420000C */  bnez  $at, .L7F0E2460
-/* 116F60 7F0E2430 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 116F60 7F0E2430 3C0B8009 */   lui   $t3, %hi(ptr_spectrum_roms) 
 /* 116F64 7F0E2434 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 116F68 7F0E2438 258E0002 */  addiu $t6, $t4, 2
-/* 116F6C 7F0E243C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) # $t7, 0x8009
+/* 116F6C 7F0E243C 3C0F8009 */  lui   $t7, %hi(ptr_300alloc) 
 /* 116F70 7F0E2440 01684821 */  addu  $t1, $t3, $t0
 /* 116F74 7F0E2444 A12E0000 */  sb    $t6, ($t1)
 /* 116F78 7F0E2448 97B90292 */  lhu   $t9, 0x292($sp)
@@ -17957,14 +17957,14 @@ spectrum_op_FC:
 /* 116F90 7F0E2460 2B014000 */  slti  $at, $t8, 0x4000
 /* 116F94 7F0E2464 14200010 */  bnez  $at, .L7F0E24A8
 /* 116F98 7F0E2468 97AC0298 */   lhu   $t4, 0x298($sp)
-/* 116F9C 7F0E246C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 116F9C 7F0E246C 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 116FA0 7F0E2470 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 116FA4 7F0E2474 258B0002 */  addiu $t3, $t4, 2
 /* 116FA8 7F0E2478 24090001 */  li    $t1, 1
 /* 116FAC 7F0E247C 01187021 */  addu  $t6, $t0, $t8
 /* 116FB0 7F0E2480 A1CB0000 */  sb    $t3, ($t6)
 /* 116FB4 7F0E2484 97AF0292 */  lhu   $t7, 0x292($sp)
-/* 116FB8 7F0E2488 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 116FB8 7F0E2488 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 116FBC 7F0E248C 8D08E32C */  lw    $t0, %lo(ptr_300alloc)($t0)
 /* 116FC0 7F0E2490 31F91800 */  andi  $t9, $t7, 0x1800
 /* 116FC4 7F0E2494 001950C3 */  sra   $t2, $t9, 3
@@ -17980,7 +17980,7 @@ spectrum_op_FC:
 /* 116FE8 7F0E24B8 29C15B00 */  slti  $at, $t6, 0x5b00
 /* 116FEC 7F0E24BC 14200008 */  bnez  $at, .L7F0E24E0
 /* 116FF0 7F0E24C0 25890001 */   addiu $t1, $t4, 1
-/* 116FF4 7F0E24C4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 116FF4 7F0E24C4 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 116FF8 7F0E24C8 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 116FFC 7F0E24CC 272F0002 */  addiu $t7, $t9, 2
 /* 117000 7F0E24D0 000F5203 */  sra   $t2, $t7, 8
@@ -17992,13 +17992,13 @@ spectrum_op_FC:
 /* 117014 7F0E24E4 1420000F */  bnez  $at, .L7F0E2524
 /* 117018 7F0E24E8 97B80292 */   lhu   $t8, 0x292($sp)
 /* 11701C 7F0E24EC 97B80298 */  lhu   $t8, 0x298($sp)
-/* 117020 7F0E24F0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 117020 7F0E24F0 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 117024 7F0E24F4 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 117028 7F0E24F8 270E0002 */  addiu $t6, $t8, 2
 /* 11702C 7F0E24FC 000ECA03 */  sra   $t9, $t6, 8
 /* 117030 7F0E2500 01EC6821 */  addu  $t5, $t7, $t4
 /* 117034 7F0E2504 A1B90001 */  sb    $t9, 1($t5)
-/* 117038 7F0E2508 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 117038 7F0E2508 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 11703C 7F0E250C 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 117040 7F0E2510 97A80292 */  lhu   $t0, 0x292($sp)
 /* 117044 7F0E2514 240B0001 */  li    $t3, 1
@@ -18010,14 +18010,14 @@ spectrum_op_FC:
 /* 117058 7F0E2528 29C14000 */  slti  $at, $t6, 0x4000
 /* 11705C 7F0E252C 14200012 */  bnez  $at, .L7F0E2578
 /* 117060 7F0E2530 97AF0298 */   lhu   $t7, 0x298($sp)
-/* 117064 7F0E2534 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 117064 7F0E2534 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 117068 7F0E2538 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 11706C 7F0E253C 25EC0002 */  addiu $t4, $t7, 2
 /* 117070 7F0E2540 000CCA03 */  sra   $t9, $t4, 8
 /* 117074 7F0E2544 01B85021 */  addu  $t2, $t5, $t8
 /* 117078 7F0E2548 A1590001 */  sb    $t9, 1($t2)
 /* 11707C 7F0E254C 97AB0292 */  lhu   $t3, 0x292($sp)
-/* 117080 7F0E2550 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 117080 7F0E2550 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 117084 7F0E2554 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 117088 7F0E2558 25690001 */  addiu $t1, $t3, 1
 /* 11708C 7F0E255C 312E1800 */  andi  $t6, $t1, 0x1800
@@ -18028,7 +18028,7 @@ spectrum_op_FC:
 /* 1170A0 7F0E2570 030DC821 */  addu  $t9, $t8, $t5
 /* 1170A4 7F0E2574 A3280000 */  sb    $t0, ($t9)
 .L7F0E2578:
-/* 1170A8 7F0E2578 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1170A8 7F0E2578 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1170AC 7F0E257C 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1170B0 7F0E2580 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 1170B4 7F0E2584 016A7821 */  addu  $t7, $t3, $t2
@@ -18054,7 +18054,7 @@ spectrum_op_FD:
 /* 1170FC 7F0E25CC A3A00285 */   sb    $zero, 0x285($sp)
 spectrum_op_FE:
 /* 117100 7F0E25D0 8FAF028C */  lw    $t7, 0x28c($sp)
-/* 117104 7F0E25D4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 117104 7F0E25D4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 117108 7F0E25D8 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 11710C 7F0E25DC 97A90298 */  lhu   $t1, 0x298($sp)
 /* 117110 7F0E25E0 25EC0007 */  addiu $t4, $t7, 7
@@ -18095,7 +18095,7 @@ spectrum_op_FE:
 spectrum_op_FF:
 /* 11719C 7F0E266C 97A90292 */  lhu   $t1, 0x292($sp)
 /* 1171A0 7F0E2670 8FAD028C */  lw    $t5, 0x28c($sp)
-/* 1171A4 7F0E2674 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1171A4 7F0E2674 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1171A8 7F0E2678 2528FFFE */  addiu $t0, $t1, -2
 /* 1171AC 7F0E267C 310AFFFF */  andi  $t2, $t0, 0xffff
 /* 1171B0 7F0E2680 29415B00 */  slti  $at, $t2, 0x5b00
@@ -18111,13 +18111,13 @@ spectrum_op_FF:
 .L7F0E26A8:
 /* 1171D8 7F0E26A8 97AB0292 */  lhu   $t3, 0x292($sp)
 /* 1171DC 7F0E26AC 97B80292 */  lhu   $t8, 0x292($sp)
-/* 1171E0 7F0E26B0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 1171E0 7F0E26B0 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 1171E4 7F0E26B4 29615800 */  slti  $at, $t3, 0x5800
 /* 1171E8 7F0E26B8 5420000D */  bnezl $at, .L7F0E26F0
 /* 1171EC 7F0E26BC 2B014000 */   slti  $at, $t8, 0x4000
 /* 1171F0 7F0E26C0 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 1171F4 7F0E26C4 97AF0298 */  lhu   $t7, 0x298($sp)
-/* 1171F8 7F0E26C8 3C088009 */  lui   $t0, %hi(ptr_300alloc) # $t0, 0x8009
+/* 1171F8 7F0E26C8 3C088009 */  lui   $t0, %hi(ptr_300alloc) 
 /* 1171FC 7F0E26CC 01AB6021 */  addu  $t4, $t5, $t3
 /* 117200 7F0E26D0 A18F0000 */  sb    $t7, ($t4)
 /* 117204 7F0E26D4 97AE0292 */  lhu   $t6, 0x292($sp)
@@ -18129,14 +18129,14 @@ spectrum_op_FF:
 /* 11721C 7F0E26EC 2B014000 */  slti  $at, $t8, 0x4000
 .L7F0E26F0:
 /* 117220 7F0E26F0 1420000F */  bnez  $at, .L7F0E2730
-/* 117224 7F0E26F4 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 117224 7F0E26F4 3C0D8009 */   lui   $t5, %hi(ptr_spectrum_roms) 
 /* 117228 7F0E26F8 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 11722C 7F0E26FC 97B90298 */  lhu   $t9, 0x298($sp)
 /* 117230 7F0E2700 240F0001 */  li    $t7, 1
 /* 117234 7F0E2704 01B85821 */  addu  $t3, $t5, $t8
 /* 117238 7F0E2708 A1790000 */  sb    $t9, ($t3)
 /* 11723C 7F0E270C 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 117240 7F0E2710 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 117240 7F0E2710 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 117244 7F0E2714 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 117248 7F0E2718 31881800 */  andi  $t0, $t4, 0x1800
 /* 11724C 7F0E271C 000870C3 */  sra   $t6, $t0, 3
@@ -18152,7 +18152,7 @@ spectrum_op_FF:
 /* 117270 7F0E2740 29615B00 */  slti  $at, $t3, 0x5b00
 /* 117274 7F0E2744 14200007 */  bnez  $at, .L7F0E2764
 /* 117278 7F0E2748 25AA0001 */   addiu $t2, $t5, 1
-/* 11727C 7F0E274C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 11727C 7F0E274C 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 117280 7F0E2750 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 117284 7F0E2754 00086203 */  sra   $t4, $t0, 8
 /* 117288 7F0E2758 01D94821 */  addu  $t1, $t6, $t9
@@ -18162,10 +18162,10 @@ spectrum_op_FF:
 /* 117294 7F0E2764 29415800 */  slti  $at, $t2, 0x5800
 /* 117298 7F0E2768 1420000E */  bnez  $at, .L7F0E27A4
 /* 11729C 7F0E276C 97AA0292 */   lhu   $t2, 0x292($sp)
-/* 1172A0 7F0E2770 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) # $t3, 0x8009
+/* 1172A0 7F0E2770 3C0B8009 */  lui   $t3, %hi(ptr_spectrum_roms) 
 /* 1172A4 7F0E2774 8D6BE328 */  lw    $t3, %lo(ptr_spectrum_roms)($t3)
 /* 1172A8 7F0E2778 97AF0298 */  lhu   $t7, 0x298($sp)
-/* 1172AC 7F0E277C 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 1172AC 7F0E277C 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 1172B0 7F0E2780 016D4021 */  addu  $t0, $t3, $t5
 /* 1172B4 7F0E2784 000FC203 */  sra   $t8, $t7, 8
 /* 1172B8 7F0E2788 A1180001 */  sb    $t8, 1($t0)
@@ -18180,14 +18180,14 @@ spectrum_op_FF:
 /* 1172D8 7F0E27A8 29E14000 */  slti  $at, $t7, 0x4000
 /* 1172DC 7F0E27AC 14200011 */  bnez  $at, .L7F0E27F4
 /* 1172E0 7F0E27B0 97AB0298 */   lhu   $t3, 0x298($sp)
-/* 1172E4 7F0E27B4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 1172E4 7F0E27B4 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 1172E8 7F0E27B8 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 1172EC 7F0E27BC 000B6A03 */  sra   $t5, $t3, 8
 /* 1172F0 7F0E27C0 24190001 */  li    $t9, 1
 /* 1172F4 7F0E27C4 030A4021 */  addu  $t0, $t8, $t2
 /* 1172F8 7F0E27C8 A10D0001 */  sb    $t5, 1($t0)
 /* 1172FC 7F0E27CC 97AC0292 */  lhu   $t4, 0x292($sp)
-/* 117300 7F0E27D0 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 117300 7F0E27D0 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 117304 7F0E27D4 8D4AE32C */  lw    $t2, %lo(ptr_300alloc)($t2)
 /* 117308 7F0E27D8 258E0001 */  addiu $t6, $t4, 1
 /* 11730C 7F0E27DC 31C91800 */  andi  $t1, $t6, 0x1800
@@ -18222,7 +18222,7 @@ spectrum_op_FF:
 /* 117374 7F0E2844 AFB8028C */  sw    $t8, 0x28c($sp)
 /* 117378 7F0E2848 132000EF */  beqz  $t9, .L7F0E2C08
 /* 11737C 7F0E284C 97AD0298 */   lhu   $t5, 0x298($sp)
-/* 117380 7F0E2850 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) # $t0, 0x8009
+/* 117380 7F0E2850 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 117384 7F0E2854 8D08E328 */  lw    $t0, %lo(ptr_spectrum_roms)($t0)
 /* 117388 7F0E2858 24010076 */  li    $at, 118
 /* 11738C 7F0E285C 25AE0001 */  addiu $t6, $t5, 1
@@ -18252,7 +18252,7 @@ spectrum_op_FF:
 .L7F0E28B8:
 /* 1173E8 7F0E28B8 97A80292 */  lhu   $t0, 0x292($sp)
 /* 1173EC 7F0E28BC 8FB8028C */  lw    $t8, 0x28c($sp)
-/* 1173F0 7F0E28C0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1173F0 7F0E28C0 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1173F4 7F0E28C4 250CFFFE */  addiu $t4, $t0, -2
 /* 1173F8 7F0E28C8 3189FFFF */  andi  $t1, $t4, 0xffff
 /* 1173FC 7F0E28CC 29215B00 */  slti  $at, $t1, 0x5b00
@@ -18268,13 +18268,13 @@ spectrum_op_FF:
 .L7F0E28F4:
 /* 117424 7F0E28F4 97AF0292 */  lhu   $t7, 0x292($sp)
 /* 117428 7F0E28F8 97AD0292 */  lhu   $t5, 0x292($sp)
-/* 11742C 7F0E28FC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 11742C 7F0E28FC 3C188009 */  lui   $t8, %hi(ptr_spectrum_roms) 
 /* 117430 7F0E2900 29E15800 */  slti  $at, $t7, 0x5800
 /* 117434 7F0E2904 5420000D */  bnezl $at, .L7F0E293C
 /* 117438 7F0E2908 29A14000 */   slti  $at, $t5, 0x4000
 /* 11743C 7F0E290C 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 117440 7F0E2910 97AB0298 */  lhu   $t3, 0x298($sp)
-/* 117444 7F0E2914 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) # $t4, 0x8009
+/* 117444 7F0E2914 3C0C8009 */  lui   $t4, %hi(ptr_300alloc) 
 /* 117448 7F0E2918 030FC821 */  addu  $t9, $t8, $t7
 /* 11744C 7F0E291C A32B0000 */  sb    $t3, ($t9)
 /* 117450 7F0E2920 97AE0292 */  lhu   $t6, 0x292($sp)
@@ -18286,14 +18286,14 @@ spectrum_op_FF:
 /* 117468 7F0E2938 29A14000 */  slti  $at, $t5, 0x4000
 .L7F0E293C:
 /* 11746C 7F0E293C 1420000F */  bnez  $at, .L7F0E297C
-/* 117470 7F0E2940 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) # $t8, 0x8009
+/* 117470 7F0E2940 3C188009 */   lui   $t8, %hi(ptr_spectrum_roms) 
 /* 117474 7F0E2944 8F18E328 */  lw    $t8, %lo(ptr_spectrum_roms)($t8)
 /* 117478 7F0E2948 97AA0298 */  lhu   $t2, 0x298($sp)
 /* 11747C 7F0E294C 240B0001 */  li    $t3, 1
 /* 117480 7F0E2950 030D7821 */  addu  $t7, $t8, $t5
 /* 117484 7F0E2954 A1EA0000 */  sb    $t2, ($t7)
 /* 117488 7F0E2958 97B90292 */  lhu   $t9, 0x292($sp)
-/* 11748C 7F0E295C 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 11748C 7F0E295C 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 117490 7F0E2960 8F18E32C */  lw    $t8, %lo(ptr_300alloc)($t8)
 /* 117494 7F0E2964 332C1800 */  andi  $t4, $t9, 0x1800
 /* 117498 7F0E2968 000C70C3 */  sra   $t6, $t4, 3
@@ -18309,7 +18309,7 @@ spectrum_op_FF:
 /* 1174BC 7F0E298C 29E15B00 */  slti  $at, $t7, 0x5b00
 /* 1174C0 7F0E2990 14200007 */  bnez  $at, .L7F0E29B0
 /* 1174C4 7F0E2994 27090001 */   addiu $t1, $t8, 1
-/* 1174C8 7F0E2998 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) # $t6, 0x8009
+/* 1174C8 7F0E2998 3C0E8009 */  lui   $t6, %hi(ptr_spectrum_roms) 
 /* 1174CC 7F0E299C 8DCEE328 */  lw    $t6, %lo(ptr_spectrum_roms)($t6)
 /* 1174D0 7F0E29A0 000CCA03 */  sra   $t9, $t4, 8
 /* 1174D4 7F0E29A4 01CA4021 */  addu  $t0, $t6, $t2
@@ -18319,10 +18319,10 @@ spectrum_op_FF:
 /* 1174E0 7F0E29B0 29215800 */  slti  $at, $t1, 0x5800
 /* 1174E4 7F0E29B4 1420000E */  bnez  $at, .L7F0E29F0
 /* 1174E8 7F0E29B8 97A90292 */   lhu   $t1, 0x292($sp)
-/* 1174EC 7F0E29BC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1174EC 7F0E29BC 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1174F0 7F0E29C0 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1174F4 7F0E29C4 97AB0298 */  lhu   $t3, 0x298($sp)
-/* 1174F8 7F0E29C8 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) # $t2, 0x8009
+/* 1174F8 7F0E29C8 3C0A8009 */  lui   $t2, %hi(ptr_300alloc) 
 /* 1174FC 7F0E29CC 01F86021 */  addu  $t4, $t7, $t8
 /* 117500 7F0E29D0 000B6A03 */  sra   $t5, $t3, 8
 /* 117504 7F0E29D4 A18D0001 */  sb    $t5, 1($t4)
@@ -18337,14 +18337,14 @@ spectrum_op_FF:
 /* 117524 7F0E29F4 29614000 */  slti  $at, $t3, 0x4000
 /* 117528 7F0E29F8 14200011 */  bnez  $at, .L7F0E2A40
 /* 11752C 7F0E29FC 97AF0298 */   lhu   $t7, 0x298($sp)
-/* 117530 7F0E2A00 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) # $t5, 0x8009
+/* 117530 7F0E2A00 3C0D8009 */  lui   $t5, %hi(ptr_spectrum_roms) 
 /* 117534 7F0E2A04 8DADE328 */  lw    $t5, %lo(ptr_spectrum_roms)($t5)
 /* 117538 7F0E2A08 000FC203 */  sra   $t8, $t7, 8
 /* 11753C 7F0E2A0C 240A0001 */  li    $t2, 1
 /* 117540 7F0E2A10 01A96021 */  addu  $t4, $t5, $t1
 /* 117544 7F0E2A14 A1980001 */  sb    $t8, 1($t4)
 /* 117548 7F0E2A18 97B90292 */  lhu   $t9, 0x292($sp)
-/* 11754C 7F0E2A1C 3C098009 */  lui   $t1, %hi(ptr_300alloc) # $t1, 0x8009
+/* 11754C 7F0E2A1C 3C098009 */  lui   $t1, %hi(ptr_300alloc) 
 /* 117550 7F0E2A20 8D29E32C */  lw    $t1, %lo(ptr_300alloc)($t1)
 /* 117554 7F0E2A24 272E0001 */  addiu $t6, $t9, 1
 /* 117558 7F0E2A28 31C81800 */  andi  $t0, $t6, 0x1800
@@ -18359,7 +18359,7 @@ spectrum_op_FF:
 /* 117578 7F0E2A48 A7AC0298 */   sh    $t4, 0x298($sp)
 .L7F0E2A4C:
 /* 11757C 7F0E2A4C 93AE029E */  lbu   $t6, 0x29e($sp)
-/* 117580 7F0E2A50 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 117580 7F0E2A50 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 117584 7F0E2A54 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 117588 7F0E2A58 000E5A00 */  sll   $t3, $t6, 8
 /* 11758C 7F0E2A5C 2728000E */  addiu $t0, $t9, 0xe
@@ -18378,7 +18378,7 @@ spectrum_op_FF:
 /* 1175C0 7F0E2A90 AFA8004C */  sw    $t0, 0x4c($sp)
 /* 1175C4 7F0E2A94 14200007 */  bnez  $at, .L7F0E2AB4
 /* 1175C8 7F0E2A98 A7AB0292 */   sh    $t3, 0x292($sp)
-/* 1175CC 7F0E2A9C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 1175CC 7F0E2A9C 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 1175D0 7F0E2AA0 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 1175D4 7F0E2AA4 97A90298 */  lhu   $t1, 0x298($sp)
 /* 1175D8 7F0E2AA8 01EDC021 */  addu  $t8, $t7, $t5
@@ -18387,13 +18387,13 @@ spectrum_op_FF:
 .L7F0E2AB4:
 /* 1175E4 7F0E2AB4 97AC0292 */  lhu   $t4, 0x292($sp)
 /* 1175E8 7F0E2AB8 97A90292 */  lhu   $t1, 0x292($sp)
-/* 1175EC 7F0E2ABC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 1175EC 7F0E2ABC 3C198009 */  lui   $t9, %hi(ptr_spectrum_roms) 
 /* 1175F0 7F0E2AC0 29815800 */  slti  $at, $t4, 0x5800
 /* 1175F4 7F0E2AC4 5420000D */  bnezl $at, .L7F0E2AFC
 /* 1175F8 7F0E2AC8 29214000 */   slti  $at, $t1, 0x4000
 /* 1175FC 7F0E2ACC 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 117600 7F0E2AD0 97AA0298 */  lhu   $t2, 0x298($sp)
-/* 117604 7F0E2AD4 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) # $t3, 0x8009
+/* 117604 7F0E2AD4 3C0B8009 */  lui   $t3, %hi(ptr_300alloc) 
 /* 117608 7F0E2AD8 032C4021 */  addu  $t0, $t9, $t4
 /* 11760C 7F0E2ADC A10A0000 */  sb    $t2, ($t0)
 /* 117610 7F0E2AE0 97AF0292 */  lhu   $t7, 0x292($sp)
@@ -18405,14 +18405,14 @@ spectrum_op_FF:
 /* 117628 7F0E2AF8 29214000 */  slti  $at, $t1, 0x4000
 .L7F0E2AFC:
 /* 11762C 7F0E2AFC 1420000F */  bnez  $at, .L7F0E2B3C
-/* 117630 7F0E2B00 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) # $t9, 0x8009
+/* 117630 7F0E2B00 3C198009 */   lui   $t9, %hi(ptr_spectrum_roms) 
 /* 117634 7F0E2B04 8F39E328 */  lw    $t9, %lo(ptr_spectrum_roms)($t9)
 /* 117638 7F0E2B08 97B80298 */  lhu   $t8, 0x298($sp)
 /* 11763C 7F0E2B0C 240A0001 */  li    $t2, 1
 /* 117640 7F0E2B10 03296021 */  addu  $t4, $t9, $t1
 /* 117644 7F0E2B14 A1980000 */  sb    $t8, ($t4)
 /* 117648 7F0E2B18 97A80292 */  lhu   $t0, 0x292($sp)
-/* 11764C 7F0E2B1C 3C198009 */  lui   $t9, %hi(ptr_300alloc) # $t9, 0x8009
+/* 11764C 7F0E2B1C 3C198009 */  lui   $t9, %hi(ptr_300alloc) 
 /* 117650 7F0E2B20 8F39E32C */  lw    $t9, %lo(ptr_300alloc)($t9)
 /* 117654 7F0E2B24 310B1800 */  andi  $t3, $t0, 0x1800
 /* 117658 7F0E2B28 000B78C3 */  sra   $t7, $t3, 3
@@ -18428,7 +18428,7 @@ spectrum_op_FF:
 /* 11767C 7F0E2B4C 29815B00 */  slti  $at, $t4, 0x5b00
 /* 117680 7F0E2B50 14200007 */  bnez  $at, .L7F0E2B70
 /* 117684 7F0E2B54 272D0001 */   addiu $t5, $t9, 1
-/* 117688 7F0E2B58 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) # $t7, 0x8009
+/* 117688 7F0E2B58 3C0F8009 */  lui   $t7, %hi(ptr_spectrum_roms) 
 /* 11768C 7F0E2B5C 8DEFE328 */  lw    $t7, %lo(ptr_spectrum_roms)($t7)
 /* 117690 7F0E2B60 000B4203 */  sra   $t0, $t3, 8
 /* 117694 7F0E2B64 01F87021 */  addu  $t6, $t7, $t8
@@ -18438,10 +18438,10 @@ spectrum_op_FF:
 /* 1176A0 7F0E2B70 29A15800 */  slti  $at, $t5, 0x5800
 /* 1176A4 7F0E2B74 1420000E */  bnez  $at, .L7F0E2BB0
 /* 1176A8 7F0E2B78 97AD0292 */   lhu   $t5, 0x292($sp)
-/* 1176AC 7F0E2B7C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) # $t4, 0x8009
+/* 1176AC 7F0E2B7C 3C0C8009 */  lui   $t4, %hi(ptr_spectrum_roms) 
 /* 1176B0 7F0E2B80 8D8CE328 */  lw    $t4, %lo(ptr_spectrum_roms)($t4)
 /* 1176B4 7F0E2B84 97AA0298 */  lhu   $t2, 0x298($sp)
-/* 1176B8 7F0E2B88 3C188009 */  lui   $t8, %hi(ptr_300alloc) # $t8, 0x8009
+/* 1176B8 7F0E2B88 3C188009 */  lui   $t8, %hi(ptr_300alloc) 
 /* 1176BC 7F0E2B8C 01995821 */  addu  $t3, $t4, $t9
 /* 1176C0 7F0E2B90 000A4A03 */  sra   $t1, $t2, 8
 /* 1176C4 7F0E2B94 A1690001 */  sb    $t1, 1($t3)
@@ -18456,14 +18456,14 @@ spectrum_op_FF:
 /* 1176E4 7F0E2BB4 29414000 */  slti  $at, $t2, 0x4000
 /* 1176E8 7F0E2BB8 14200011 */  bnez  $at, .L7F0E2C00
 /* 1176EC 7F0E2BBC 97AC0298 */   lhu   $t4, 0x298($sp)
-/* 1176F0 7F0E2BC0 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) # $t1, 0x8009
+/* 1176F0 7F0E2BC0 3C098009 */  lui   $t1, %hi(ptr_spectrum_roms) 
 /* 1176F4 7F0E2BC4 8D29E328 */  lw    $t1, %lo(ptr_spectrum_roms)($t1)
 /* 1176F8 7F0E2BC8 000CCA03 */  sra   $t9, $t4, 8
 /* 1176FC 7F0E2BCC 24180001 */  li    $t8, 1
 /* 117700 7F0E2BD0 012D5821 */  addu  $t3, $t1, $t5
 /* 117704 7F0E2BD4 A1790001 */  sb    $t9, 1($t3)
 /* 117708 7F0E2BD8 97A80292 */  lhu   $t0, 0x292($sp)
-/* 11770C 7F0E2BDC 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) # $t5, 0x8009
+/* 11770C 7F0E2BDC 3C0D8009 */  lui   $t5, %hi(ptr_300alloc) 
 /* 117710 7F0E2BE0 8DADE32C */  lw    $t5, %lo(ptr_300alloc)($t5)
 /* 117714 7F0E2BE4 250F0001 */  addiu $t7, $t0, 1
 /* 117718 7F0E2BE8 31EE1800 */  andi  $t6, $t7, 0x1800
@@ -18476,71 +18476,71 @@ spectrum_op_FF:
 /* 117730 7F0E2C00 8FAB004C */  lw    $t3, 0x4c($sp)
 /* 117734 7F0E2C04 A7AB0298 */  sh    $t3, 0x298($sp)
 .L7F0E2C08:
-/* 117738 7F0E2C08 3C018009 */  lui   $at, %hi(spectrum_header16_15) # $at, 0x8009
+/* 117738 7F0E2C08 3C018009 */  lui   $at, %hi(spectrum_header16_15)
 /* 11773C 7F0E2C0C A030E338 */  sb    $s0, %lo(spectrum_header16_15)($at)
-/* 117740 7F0E2C10 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E339) # $at, 0x8009
+/* 117740 7F0E2C10 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E339)
 /* 117744 7F0E2C14 A031E339 */  sb    $s1, %lo(byte_CODE_bss_8008E339)($at)
-/* 117748 7F0E2C18 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33A) # $at, 0x8009
+/* 117748 7F0E2C18 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33A)
 /* 11774C 7F0E2C1C A032E33A */  sb    $s2, %lo(byte_CODE_bss_8008E33A)($at)
-/* 117750 7F0E2C20 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33B) # $at, 0x8009
+/* 117750 7F0E2C20 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33B)
 /* 117754 7F0E2C24 A033E33B */  sb    $s3, %lo(byte_CODE_bss_8008E33B)($at)
-/* 117758 7F0E2C28 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E33C) # $at, 0x8009
+/* 117758 7F0E2C28 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E33C)
 /* 11775C 7F0E2C2C A034E33C */  sb    $s4, %lo(off_CODE_bss_8008E33C)($at)
-/* 117760 7F0E2C30 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33D) # $at, 0x8009
+/* 117760 7F0E2C30 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33D)
 /* 117764 7F0E2C34 A035E33D */  sb    $s5, %lo(byte_CODE_bss_8008E33D)($at)
-/* 117768 7F0E2C38 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33E) # $at, 0x8009
+/* 117768 7F0E2C38 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33E)
 /* 11776C 7F0E2C3C A036E33E */  sb    $s6, %lo(byte_CODE_bss_8008E33E)($at)
 /* 117770 7F0E2C40 93A802A6 */  lbu   $t0, 0x2a6($sp)
-/* 117774 7F0E2C44 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33F) # $at, 0x8009
+/* 117774 7F0E2C44 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E33F)
 /* 117778 7F0E2C48 A037E33F */  sb    $s7, %lo(byte_CODE_bss_8008E33F)($at)
 /* 11777C 7F0E2C4C 93AE02A5 */  lbu   $t6, 0x2a5($sp)
-/* 117780 7F0E2C50 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E340) # $at, 0x8009
+/* 117780 7F0E2C50 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E340)
 /* 117784 7F0E2C54 A028E340 */  sb    $t0, %lo(off_CODE_bss_8008E340)($at)
 /* 117788 7F0E2C58 93AF02A4 */  lbu   $t7, 0x2a4($sp)
-/* 11778C 7F0E2C5C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E341) # $at, 0x8009
+/* 11778C 7F0E2C5C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E341)
 /* 117790 7F0E2C60 A02EE341 */  sb    $t6, %lo(byte_CODE_bss_8008E341)($at)
 /* 117794 7F0E2C64 93AA02A3 */  lbu   $t2, 0x2a3($sp)
-/* 117798 7F0E2C68 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E342) # $at, 0x8009
+/* 117798 7F0E2C68 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E342)
 /* 11779C 7F0E2C6C A02FE342 */  sb    $t7, %lo(byte_CODE_bss_8008E342)($at)
 /* 1177A0 7F0E2C70 93AC02A2 */  lbu   $t4, 0x2a2($sp)
-/* 1177A4 7F0E2C74 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E343) # $at, 0x8009
+/* 1177A4 7F0E2C74 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E343)
 /* 1177A8 7F0E2C78 A02AE343 */  sb    $t2, %lo(byte_CODE_bss_8008E343)($at)
 /* 1177AC 7F0E2C7C 93AD02A1 */  lbu   $t5, 0x2a1($sp)
-/* 1177B0 7F0E2C80 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E344) # $at, 0x8009
+/* 1177B0 7F0E2C80 3C018009 */  lui   $at, %hi(off_CODE_bss_8008E344)
 /* 1177B4 7F0E2C84 A02CE344 */  sb    $t4, %lo(off_CODE_bss_8008E344)($at)
 /* 1177B8 7F0E2C88 93A902A0 */  lbu   $t1, 0x2a0($sp)
-/* 1177BC 7F0E2C8C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E345) # $at, 0x8009
+/* 1177BC 7F0E2C8C 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E345)
 /* 1177C0 7F0E2C90 A02DE345 */  sb    $t5, %lo(byte_CODE_bss_8008E345)($at)
 /* 1177C4 7F0E2C94 93B8029F */  lbu   $t8, 0x29f($sp)
-/* 1177C8 7F0E2C98 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E346) # $at, 0x8009
+/* 1177C8 7F0E2C98 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E346)
 /* 1177CC 7F0E2C9C A029E346 */  sb    $t1, %lo(byte_CODE_bss_8008E346)($at)
 /* 1177D0 7F0E2CA0 93B9029D */  lbu   $t9, 0x29d($sp)
-/* 1177D4 7F0E2CA4 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E347) # $at, 0x8009
+/* 1177D4 7F0E2CA4 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E347)
 /* 1177D8 7F0E2CA8 A038E347 */  sb    $t8, %lo(byte_CODE_bss_8008E347)($at)
 /* 1177DC 7F0E2CAC 93AB029C */  lbu   $t3, 0x29c($sp)
-/* 1177E0 7F0E2CB0 3C018009 */  lui   $at, %hi(spec_IFF2_lower) # $at, 0x8009
+/* 1177E0 7F0E2CB0 3C018009 */  lui   $at, %hi(spec_IFF2_lower)
 /* 1177E4 7F0E2CB4 A039E34A */  sb    $t9, %lo(spec_IFF2_lower)($at)
 /* 1177E8 7F0E2CB8 93A8029E */  lbu   $t0, 0x29e($sp)
-/* 1177EC 7F0E2CBC 3C018009 */  lui   $at, %hi(spec_IFF2_upper) # $at, 0x8009
+/* 1177EC 7F0E2CBC 3C018009 */  lui   $at, %hi(spec_IFF2_upper)
 /* 1177F0 7F0E2CC0 A02BE34B */  sb    $t3, %lo(spec_IFF2_upper)($at)
 /* 1177F4 7F0E2CC4 93AE02A7 */  lbu   $t6, 0x2a7($sp)
-/* 1177F8 7F0E2CC8 3C018009 */  lui   $at, %hi(spec_I) # $at, 0x8009
+/* 1177F8 7F0E2CC8 3C018009 */  lui   $at, %hi(spec_I)
 /* 1177FC 7F0E2CCC A028E348 */  sb    $t0, %lo(spec_I)($at)
 /* 117800 7F0E2CD0 93AA029B */  lbu   $t2, 0x29b($sp)
-/* 117804 7F0E2CD4 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E349) # $at, 0x8009
+/* 117804 7F0E2CD4 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E349)
 /* 117808 7F0E2CD8 A02EE349 */  sb    $t6, %lo(byte_CODE_bss_8008E349)($at)
 /* 11780C 7F0E2CDC 97AC0296 */  lhu   $t4, 0x296($sp)
-/* 117810 7F0E2CE0 3C018009 */  lui   $at, %hi(spec_IM) # $at, 0x8009
+/* 117810 7F0E2CE0 3C018009 */  lui   $at, %hi(spec_IM)
 /* 117814 7F0E2CE4 A02AE34C */  sb    $t2, %lo(spec_IM)($at)
 /* 117818 7F0E2CE8 97AD0294 */  lhu   $t5, 0x294($sp)
-/* 11781C 7F0E2CEC 3C018009 */  lui   $at, %hi(spec_IX) # $at, 0x8009
+/* 11781C 7F0E2CEC 3C018009 */  lui   $at, %hi(spec_IX)
 /* 117820 7F0E2CF0 A42CE34E */  sh    $t4, %lo(spec_IX)($at)
 /* 117824 7F0E2CF4 97A90292 */  lhu   $t1, 0x292($sp)
-/* 117828 7F0E2CF8 3C018009 */  lui   $at, %hi(spec_IY) # $at, 0x8009
+/* 117828 7F0E2CF8 3C018009 */  lui   $at, %hi(spec_IY)
 /* 11782C 7F0E2CFC 8FAF0288 */  lw    $t7, 0x288($sp)
 /* 117830 7F0E2D00 A42DE350 */  sh    $t5, %lo(spec_IY)($at)
 /* 117834 7F0E2D04 8FBF0034 */  lw    $ra, 0x34($sp)
-/* 117838 7F0E2D08 3C018009 */  lui   $at, %hi(spec_SP) # $at, 0x8009
+/* 117838 7F0E2D08 3C018009 */  lui   $at, %hi(spec_SP)
 /* 11783C 7F0E2D0C 97B80298 */  lhu   $t8, 0x298($sp)
 /* 117840 7F0E2D10 A429E352 */  sh    $t1, %lo(spec_SP)($at)
 /* 117844 7F0E2D14 3C018009 */  lui   $at, %hi(spec_PC)

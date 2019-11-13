@@ -25,9 +25,9 @@ u32 return_tlb_random_value(void)
 GLOBAL_ASM(
 .text
 glabel return_tlb_random_value
-/* 002710 70001B10 3C048002 */  lui   $a0, %hi(tlb_random_seed) # $a0, 0x8002
+/* 002710 70001B10 3C048002 */  lui   $a0, %hi(tlb_random_seed)
 /* 002714 70001B14 DC8430E0 */  ld    $a0, %lo(tlb_random_seed)($a0)
-/* 002718 70001B18 3C018002 */  lui   $at, %hi(tlb_random_seed) # $at, 0x8002
+/* 002718 70001B18 3C018002 */  lui   $at, %hi(tlb_random_seed)
 /* 00271C 70001B1C 000437FC */  dsll32 $a2, $a0, 0x1f
 /* 002720 70001B20 00042FF8 */  dsll  $a1, $a0, 0x1f
 /* 002724 70001B24 000637FA */  dsrl  $a2, $a2, 0x1f

@@ -1319,10 +1319,10 @@ void sub_GAME_7F058C64(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F058C64
-/* 08D794 7F058C64 3C028003 */  lui   $v0, %hi(D_80032310) # $v0, 0x8003
+/* 08D794 7F058C64 3C028003 */  lui   $v0, %hi(D_80032310)
 /* 08D798 7F058C68 24422310 */  addiu $v0, %lo(D_80032310) # addiu $v0, $v0, 0x2310
 /* 08D79C 7F058C6C C4440000 */  lwc1  $f4, ($v0)
-/* 08D7A0 7F058C70 3C018007 */  lui   $at, %hi(flt_CODE_bss_80075DA0) # $at, 0x8007
+/* 08D7A0 7F058C70 3C018007 */  lui   $at, %hi(flt_CODE_bss_80075DA0)
 /* 08D7A4 7F058C74 E4245DA0 */  swc1  $f4, %lo(flt_CODE_bss_80075DA0)($at)
 /* 08D7A8 7F058C78 3C014780 */  li    $at, 0x47800000 # 65536.000000
 /* 08D7AC 7F058C7C 44813000 */  mtc1  $at, $f6
@@ -1355,7 +1355,7 @@ glabel sub_GAME_7F058C9C
 /* 08D7D0 7F058CA0 AFB1000C */  sw    $s1, 0xc($sp)
 /* 08D7D4 7F058CA4 AFB30014 */  sw    $s3, 0x14($sp)
 /* 08D7D8 7F058CA8 AFB20010 */  sw    $s2, 0x10($sp)
-/* 08D7DC 7F058CAC 3C118003 */  lui   $s1, %hi(D_80032310) # $s1, 0x8003
+/* 08D7DC 7F058CAC 3C118003 */  lui   $s1, %hi(D_80032310)
 /* 08D7E0 7F058CB0 AFB00008 */  sw    $s0, 8($sp)
 /* 08D7E4 7F058CB4 26312310 */  addiu $s1, %lo(D_80032310) # addiu $s1, $s1, 0x2310
 /* 08D7E8 7F058CB8 3C12FFFF */  lui   $s2, 0xffff
@@ -1490,7 +1490,7 @@ glabel sub_GAME_7F058E78
 /* 08D9AC 7F058E7C AFB20010 */  sw    $s2, 0x10($sp)
 /* 08D9B0 7F058E80 AFB30014 */  sw    $s3, 0x14($sp)
 /* 08D9B4 7F058E84 AFB1000C */  sw    $s1, 0xc($sp)
-/* 08D9B8 7F058E88 3C128003 */  lui   $s2, %hi(D_80032310) # $s2, 0x8003
+/* 08D9B8 7F058E88 3C128003 */  lui   $s2, %hi(D_80032310)
 /* 08D9BC 7F058E8C AFB00008 */  sw    $s0, 8($sp)
 /* 08D9C0 7F058E90 26522310 */  addiu $s2, %lo(D_80032310) # addiu $s2, $s2, 0x2310
 /* 08D9C4 7F058E94 3C11FFFF */  lui   $s1, 0xffff
@@ -2609,7 +2609,7 @@ glabel D_800536F0
 .word 0x42652ee0 /*57.295776*/
 .text
 glabel sub_GAME_7F059CE8
-/* 08E818 7F059CE8 3C018005 */  lui   $at, %hi(D_800536F0) # $at, 0x8005
+/* 08E818 7F059CE8 3C018005 */  lui   $at, %hi(D_800536F0)
 /* 08E81C 7F059CEC 44856000 */  mtc1  $a1, $f12
 /* 08E820 7F059CF0 C42436F0 */  lwc1  $f4, %lo(D_800536F0)($at)
 /* 08E824 7F059CF4 44867000 */  mtc1  $a2, $f14

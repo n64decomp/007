@@ -21,11 +21,11 @@ glabel osViSetEvent
 /* 00E8D0 7000DCD0 AFA60030 */  sw    $a2, 0x30($sp)
 /* 00E8D4 7000DCD4 0C00617C */  jal   __osDisableInt
 /* 00E8D8 7000DCD8 AFB00018 */   sw    $s0, 0x18($sp)
-/* 00E8DC 7000DCDC 3C0F8003 */  lui   $t7, %hi(__osViNext) # $t7, 0x8003
+/* 00E8DC 7000DCDC 3C0F8003 */  lui   $t7, %hi(__osViNext) 
 /* 00E8E0 7000DCE0 8DEF8044 */  lw    $t7, %lo(__osViNext)($t7)
 /* 00E8E4 7000DCE4 8FAE0028 */  lw    $t6, 0x28($sp)
-/* 00E8E8 7000DCE8 3C198003 */  lui   $t9, %hi(__osViNext) # $t9, 0x8003
-/* 00E8EC 7000DCEC 3C098003 */  lui   $t1, %hi(__osViNext) # $t1, 0x8003
+/* 00E8E8 7000DCE8 3C198003 */  lui   $t9, %hi(__osViNext) 
+/* 00E8EC 7000DCEC 3C098003 */  lui   $t1, %hi(__osViNext) 
 /* 00E8F0 7000DCF0 ADEE0010 */  sw    $t6, 0x10($t7)
 /* 00E8F4 7000DCF4 8F398044 */  lw    $t9, %lo(__osViNext)($t9)
 /* 00E8F8 7000DCF8 8FB8002C */  lw    $t8, 0x2c($sp)

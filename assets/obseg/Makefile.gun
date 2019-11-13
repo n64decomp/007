@@ -9,12 +9,10 @@ $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.elf
 	$(OBJCOPY) $< $@ -O binary
 
 $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.o
-	$(LD) -T assets/obseg/gun/Gname.ld -o $@
-	rm build/assets/obseg/gun/Gname.o
+	$(LD) -T assets/obseg/gun/Gname.ld -o $@ $<
 
 $(BUILD_DIR)/$(OBSEG_DIR)/gun/%.o: $(OBSEG_DIR)/gun/%.c
 	$(CC) -c $(CFLAGS) -o $@ -O2 $<
-	mv $@ build/assets/obseg/gun/Gname.o
 
 GUN_RZ_FILES = \
     $(BUILD_DIR)/$(OBSEG_DIR)/gun/Gak47Z.rz \

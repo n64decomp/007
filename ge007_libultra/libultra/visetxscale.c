@@ -12,11 +12,11 @@ glabel osViSetXScale
 /* 00ECDC 7000E0DC AFB10018 */  sw    $s1, 0x18($sp)
 /* 00ECE0 7000E0E0 0C00617C */  jal   __osDisableInt
 /* 00ECE4 7000E0E4 AFB00014 */   sw    $s0, 0x14($sp)
-/* 00ECE8 7000E0E8 3C0E8003 */  lui   $t6, %hi(__osViNext) # $t6, 0x8003
+/* 00ECE8 7000E0E8 3C0E8003 */  lui   $t6, %hi(__osViNext) 
 /* 00ECEC 7000E0EC 8DCE8044 */  lw    $t6, %lo(__osViNext)($t6)
 /* 00ECF0 7000E0F0 C7A40028 */  lwc1  $f4, 0x28($sp)
-/* 00ECF4 7000E0F4 3C0F8003 */  lui   $t7, %hi(__osViNext) # $t7, 0x8003
-/* 00ECF8 7000E0F8 3C088003 */  lui   $t0, %hi(__osViNext) # $t0, 0x8003
+/* 00ECF4 7000E0F4 3C0F8003 */  lui   $t7, %hi(__osViNext) 
+/* 00ECF8 7000E0F8 3C088003 */  lui   $t0, %hi(__osViNext) 
 /* 00ECFC 7000E0FC E5C40018 */  swc1  $f4, 0x18($t6)
 /* 00ED00 7000E100 8DEF8044 */  lw    $t7, %lo(__osViNext)($t7)
 /* 00ED04 7000E104 00408825 */  move  $s1, $v0

@@ -1,5 +1,5 @@
-#ifndef _EEPROM_H_
-#define _EEPROM_H_
+#ifndef _GAMEFILE_H_
+#define _GAMEFILE_H_
 #include "ultra64.h"
 //i am not "correct", i need proper fields for times again
 struct save_data
@@ -10,8 +10,7 @@ struct save_data
   char flag_007;
   char music_vol;
   char sfx_vol;
-  char controller_config;
-  char options;
+  short options;
   char unlocked_cheats_1;
   char unlocked_cheats_2;
   char unlocked_cheats_3;

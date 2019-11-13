@@ -483,7 +483,7 @@ glabel jpt_80054490
 .text
 glabel sub_GAME_7F06B120
 /* 09FC50 7F06B120 8CAE0008 */  lw    $t6, 8($a1)
-/* 09FC54 7F06B124 3C078003 */  lui   $a3, %hi(D_80036060) # $a3, 0x8003
+/* 09FC54 7F06B124 3C078003 */  lui   $a3, %hi(D_80036060)
 /* 09FC58 7F06B128 24E76060 */  addiu $a3, %lo(D_80036060) # addiu $a3, $a3, 0x6060
 /* 09FC5C 7F06B12C 8DC20000 */  lw    $v0, ($t6)
 /* 09FC60 7F06B130 00803025 */  move  $a2, $a0
@@ -586,7 +586,7 @@ GLOBAL_ASM(
 .text
 glabel sub_GAME_7F06B248
 /* 09FD78 7F06B248 10800012 */  beqz  $a0, .L7F06B294
-/* 09FD7C 7F06B24C 3C068003 */   lui   $a2, %hi(D_80036060) # $a2, 0x8003
+/* 09FD7C 7F06B24C 3C068003 */   lui   $a2, %hi(D_80036060)
 /* 09FD80 7F06B250 24C66060 */  addiu $a2, %lo(D_80036060) # addiu $a2, $a2, 0x6060
 /* 09FD84 7F06B254 8CC20000 */  lw    $v0, ($a2)
 /* 09FD88 7F06B258 5040000E */  beql  $v0, $zero, .L7F06B294
@@ -1369,7 +1369,7 @@ glabel drawjointlist
 /* 0A075C 7F06BC2C 0080A025 */  move  $s4, $a0
 /* 0A0760 7F06BC30 00A09825 */  move  $s3, $a1
 /* 0A0764 7F06BC34 15C00005 */  bnez  $t6, .L7F06BC4C
-/* 0A0768 7F06BC38 3C048005 */   lui   $a0, %hi(aDrawjointlistNoGfxlist) # $a0, 0x8005
+/* 0A0768 7F06BC38 3C048005 */   lui   $a0, %hi(aDrawjointlistNoGfxlist)
 /* 0A076C 7F06BC3C 0C0033D1 */  jal   osSyncPrintf
 /* 0A0770 7F06BC40 24844420 */   addiu $a0, %lo(aDrawjointlistNoGfxlist) # addiu $a0, $a0, 0x4420
 /* 0A0774 7F06BC44 0FC1B11B */  jal   return_null
@@ -1380,7 +1380,7 @@ glabel drawjointlist
 /* 0A0784 7F06BC54 8E660000 */  lw    $a2, ($s3)
 .L7F06BC58:
 /* 0A0788 7F06BC58 8E710004 */  lw    $s1, 4($s3)
-/* 0A078C 7F06BC5C 3C048005 */  lui   $a0, %hi(aDrawjointlistNoObject0xX) # $a0, 0x8005
+/* 0A078C 7F06BC5C 3C048005 */  lui   $a0, %hi(aDrawjointlistNoObject0xX)
 /* 0A0790 7F06BC60 8CC50008 */  lw    $a1, 8($a2)
 /* 0A0794 7F06BC64 2484443C */  addiu $a0, %lo(aDrawjointlistNoObject0xX) # addiu $a0, $a0, 0x443c
 /* 0A0798 7F06BC68 02208025 */  move  $s0, $s1
@@ -1394,7 +1394,7 @@ glabel drawjointlist
 /* 0A07B8 7F06BC88 8DE50008 */  lw    $a1, 8($t7)
 /* 0A07BC 7F06BC8C 8CB8001C */  lw    $t8, 0x1c($a1)
 .L7F06BC90:
-/* 0A07C0 7F06BC90 3C048005 */  lui   $a0, %hi(aDrawjointlistObjectNotInitialised0) # $a0, 0x8005
+/* 0A07C0 7F06BC90 3C048005 */  lui   $a0, %hi(aDrawjointlistObjectNotInitialised0)
 /* 0A07C4 7F06BC94 57000006 */  bnezl $t8, .L7F06BCB0
 /* 0A07C8 7F06BC98 8E990018 */   lw    $t9, 0x18($s4)
 /* 0A07CC 7F06BC9C 0C0033D1 */  jal   osSyncPrintf
@@ -1788,7 +1788,7 @@ GLOBAL_ASM(
 .text
 glabel get_obj_instance_controller_for_header
 /* 0A0BC4 7F06C094 27BDFFB8 */  addiu $sp, $sp, -0x48
-/* 0A0BC8 7F06C098 3C0F8003 */  lui   $t7, %hi(D_80036078) # $t7, 0x8003
+/* 0A0BC8 7F06C098 3C0F8003 */  lui   $t7, %hi(D_80036078) 
 /* 0A0BCC 7F06C09C 8DEF6078 */  lw    $t7, %lo(D_80036078)($t7)
 /* 0A0BD0 7F06C0A0 AFB60030 */  sw    $s6, 0x30($sp)
 /* 0A0BD4 7F06C0A4 AFB5002C */  sw    $s5, 0x2c($sp)
@@ -1804,11 +1804,11 @@ glabel get_obj_instance_controller_for_header
 /* 0A0BFC 7F06C0CC AFA00040 */  sw    $zero, 0x40($sp)
 /* 0A0C00 7F06C0D0 11E00025 */  beqz  $t7, .L7F06C168
 /* 0A0C04 7F06C0D4 A7AE003E */   sh    $t6, 0x3e($sp)
-/* 0A0C08 7F06C0D8 3C148003 */  lui   $s4, %hi(D_80036074) # $s4, 0x8003
+/* 0A0C08 7F06C0D8 3C148003 */  lui   $s4, %hi(D_80036074)
 /* 0A0C0C 7F06C0DC 26946074 */  addiu $s4, %lo(D_80036074) # addiu $s4, $s4, 0x6074
 /* 0A0C10 7F06C0E0 8E840000 */  lw    $a0, ($s4)
 /* 0A0C14 7F06C0E4 00001025 */  move  $v0, $zero
-/* 0A0C18 7F06C0E8 3C068008 */  lui   $a2, %hi(ptr_allocation_1) # $a2, 0x8008
+/* 0A0C18 7F06C0E8 3C068008 */  lui   $a2, %hi(ptr_allocation_1)
 /* 0A0C1C 7F06C0EC 2484FFE2 */  addiu $a0, $a0, -0x1e
 /* 0A0C20 7F06C0F0 1880000C */  blez  $a0, .L7F06C124
 /* 0A0C24 7F06C0F4 24050004 */   li    $a1, 4
@@ -1845,13 +1845,13 @@ glabel get_obj_instance_controller_for_header
 /* 0A0C90 7F06C160 10000022 */  b     .L7F06C1EC
 /* 0A0C94 7F06C164 A7AA003E */   sh    $t2, 0x3e($sp)
 .L7F06C168:
-/* 0A0C98 7F06C168 3C148003 */  lui   $s4, %hi(D_80036074) # $s4, 0x8003
+/* 0A0C98 7F06C168 3C148003 */  lui   $s4, %hi(D_80036074)
 /* 0A0C9C 7F06C16C 26946074 */  addiu $s4, %lo(D_80036074) # addiu $s4, $s4, 0x6074
 /* 0A0CA0 7F06C170 8E8B0000 */  lw    $t3, ($s4)
 /* 0A0CA4 7F06C174 00008025 */  move  $s0, $zero
 /* 0A0CA8 7F06C178 00008825 */  move  $s1, $zero
 /* 0A0CAC 7F06C17C 1960001B */  blez  $t3, .L7F06C1EC
-/* 0A0CB0 7F06C180 3C138008 */   lui   $s3, %hi(ptr_allocation_1) # $s3, 0x8008
+/* 0A0CB0 7F06C180 3C138008 */   lui   $s3, %hi(ptr_allocation_1)
 /* 0A0CB4 7F06C184 26739934 */  addiu $s3, %lo(ptr_allocation_1) # addiu $s3, $s3, -0x66cc
 /* 0A0CB8 7F06C188 8E660000 */  lw    $a2, ($s3)
 .L7F06C18C:
@@ -1932,7 +1932,7 @@ void get_aircraft_obj_instance_controller(void) {
 GLOBAL_ASM(
 .text
 glabel get_aircraft_obj_instance_controller
-/* 0A0D6C 7F06C23C 3C0E8003 */  lui   $t6, %hi(D_80036078) # $t6, 0x8003
+/* 0A0D6C 7F06C23C 3C0E8003 */  lui   $t6, %hi(D_80036078) 
 /* 0A0D70 7F06C240 8DCE6078 */  lw    $t6, %lo(D_80036078)($t6)
 /* 0A0D74 7F06C244 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 0A0D78 7F06C248 AFB00018 */  sw    $s0, 0x18($sp)
@@ -1942,10 +1942,10 @@ glabel get_aircraft_obj_instance_controller
 /* 0A0D88 7F06C258 AFA00028 */  sw    $zero, 0x28($sp)
 /* 0A0D8C 7F06C25C 11C00028 */  beqz  $t6, .L7F06C300
 /* 0A0D90 7F06C260 2408FFFF */   li    $t0, -1
-/* 0A0D94 7F06C264 3C058003 */  lui   $a1, %hi(D_80036070) # $a1, 0x8003
+/* 0A0D94 7F06C264 3C058003 */  lui   $a1, %hi(D_80036070)
 /* 0A0D98 7F06C268 8CA56070 */  lw    $a1, %lo(D_80036070)($a1)
 /* 0A0D9C 7F06C26C 00001025 */  move  $v0, $zero
-/* 0A0DA0 7F06C270 3C078008 */  lui   $a3, %hi(ptr_allocation_0) # $a3, 0x8008
+/* 0A0DA0 7F06C270 3C078008 */  lui   $a3, %hi(ptr_allocation_0)
 /* 0A0DA4 7F06C274 24A5FFF6 */  addiu $a1, $a1, -0xa
 /* 0A0DA8 7F06C278 18A0000D */  blez  $a1, .L7F06C2B0
 /* 0A0DAC 7F06C27C 00000000 */   nop   
@@ -1986,13 +1986,13 @@ glabel get_aircraft_obj_instance_controller
 /* 0A0E28 7F06C2F8 10000021 */  b     .L7F06C380
 /* 0A0E2C 7F06C2FC 85480014 */   lh    $t0, 0x14($t2)
 .L7F06C300:
-/* 0A0E30 7F06C300 3C058003 */  lui   $a1, %hi(D_80036070) # $a1, 0x8003
+/* 0A0E30 7F06C300 3C058003 */  lui   $a1, %hi(D_80036070)
 /* 0A0E34 7F06C304 8CA56070 */  lw    $a1, %lo(D_80036070)($a1)
 /* 0A0E38 7F06C308 8FAB0030 */  lw    $t3, 0x30($sp)
 /* 0A0E3C 7F06C30C 00001825 */  move  $v1, $zero
 /* 0A0E40 7F06C310 18A0001B */  blez  $a1, .L7F06C380
 /* 0A0E44 7F06C314 85660014 */   lh    $a2, 0x14($t3)
-/* 0A0E48 7F06C318 3C078008 */  lui   $a3, %hi(ptr_allocation_0) # $a3, 0x8008
+/* 0A0E48 7F06C318 3C078008 */  lui   $a3, %hi(ptr_allocation_0)
 /* 0A0E4C 7F06C31C 8CE79930 */  lw    $a3, %lo(ptr_allocation_0)($a3)
 /* 0A0E50 7F06C320 00002025 */  move  $a0, $zero
 /* 0A0E54 7F06C324 00E01025 */  move  $v0, $a3

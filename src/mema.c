@@ -242,7 +242,7 @@ GLOBAL_ASM(
 glabel memp_related_7
 /* 00A718 70009B18 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 00A71C 70009B1C AFB00018 */  sw    $s0, 0x18($sp)
-/* 00A720 70009B20 3C108006 */  lui   $s0, %hi(ptr_table_allocated_mem_blocks) # $s0, 0x8006
+/* 00A720 70009B20 3C108006 */  lui   $s0, %hi(ptr_table_allocated_mem_blocks)
 /* 00A724 70009B24 26103C28 */  addiu $s0, %lo(ptr_table_allocated_mem_blocks) # addiu $s0, $s0, 0x3c28
 /* 00A728 70009B28 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 00A72C 70009B2C 0C002694 */  jal   sort_merge_entries_in_alloc_table
@@ -468,9 +468,9 @@ void *mem_related_model_room_buffers(s32 arg0, s32 arg1, s32 arg6, ?32 arg7) {
 GLOBAL_ASM(
 .text
 glabel mem_related_model_room_buffers
-/* 00A874 70009C74 3C0F8006 */  lui   $t7, %hi(ptr_model_room_buf_secondary) # $t7, 0x8006
+/* 00A874 70009C74 3C0F8006 */  lui   $t7, %hi(ptr_model_room_buf_secondary) 
 /* 00A878 70009C78 8DEF3C20 */  lw    $t7, %lo(ptr_model_room_buf_secondary)($t7)
-/* 00A87C 70009C7C 3C098006 */  lui   $t1, %hi(size_modelroom_buf) # $t1, 0x8006
+/* 00A87C 70009C7C 3C098006 */  lui   $t1, %hi(size_modelroom_buf) 
 /* 00A880 70009C80 8D293C24 */  lw    $t1, %lo(size_modelroom_buf)($t1)
 /* 00A884 70009C84 008FC023 */  subu  $t8, $a0, $t7
 /* 00A888 70009C88 0018C9C0 */  sll   $t9, $t8, 7
@@ -478,7 +478,7 @@ glabel mem_related_model_room_buffers
 /* 00A890 70009C90 0019C880 */  sll   $t9, $t9, 2
 /* 00A894 70009C94 0329001A */  div   $zero, $t9, $t1
 /* 00A898 70009C98 00003012 */  mflo  $a2
-/* 00A89C 70009C9C 3C0B8006 */  lui   $t3, %hi(ptr_table_allocated_mem_blocks) # $t3, 0x8006
+/* 00A89C 70009C9C 3C0B8006 */  lui   $t3, %hi(ptr_table_allocated_mem_blocks) 
 /* 00A8A0 70009CA0 256B3C28 */  addiu $t3, %lo(ptr_table_allocated_mem_blocks) # addiu $t3, $t3, 0x3c28
 /* 00A8A4 70009CA4 000650C0 */  sll   $t2, $a2, 3
 /* 00A8A8 70009CA8 014B1021 */  addu  $v0, $t2, $t3
@@ -522,7 +522,7 @@ glabel mem_related_model_room_buffers
 /* 00A92C 70009D2C 8C6EFFFC */   lw    $t6, -4($v1)
 .L70009D30:
 /* 00A930 70009D30 8C6F0000 */  lw    $t7, ($v1)
-/* 00A934 70009D34 3C048006 */  lui   $a0, %hi(ptr_table_allocated_mem_blocks) # $a0, 0x8006
+/* 00A934 70009D34 3C048006 */  lui   $a0, %hi(ptr_table_allocated_mem_blocks)
 /* 00A938 70009D38 55E00005 */  bnezl $t7, .L70009D50
 /* 00A93C 70009D3C 8FB80018 */   lw    $t8, 0x18($sp)
 /* 00A940 70009D40 0C0026D8 */  jal   mem_related
@@ -585,14 +585,14 @@ void *reset_memtable_base_allocation(s32 arg0, s32 arg1) {
 GLOBAL_ASM(
 .text
 glabel reset_memtable_base_allocation
-/* 00A998 70009D98 3C038006 */  lui   $v1, %hi(ptr_table_allocated_mem_blocks) # $v1, 0x8006
+/* 00A998 70009D98 3C038006 */  lui   $v1, %hi(ptr_table_allocated_mem_blocks)
 /* 00A99C 70009D9C 24633C28 */  addiu $v1, %lo(ptr_table_allocated_mem_blocks) # addiu $v1, $v1, 0x3c28
 /* 00A9A0 70009DA0 2406FFFF */  li    $a2, -1
 /* 00A9A4 70009DA4 AC660FF0 */  sw    $a2, 0xff0($v1)
 /* 00A9A8 70009DA8 AC660FF8 */  sw    $a2, 0xff8($v1)
 /* 00A9AC 70009DAC 240EFFFF */  li    $t6, -1
-/* 00A9B0 70009DB0 3C068006 */  lui   $a2, %hi(dword_CODE_bss_80064C10) # $a2, 0x8006
-/* 00A9B4 70009DB4 3C028006 */  lui   $v0, %hi(ptr_first_entry_in_alloc_table) # $v0, 0x8006
+/* 00A9B0 70009DB0 3C068006 */  lui   $a2, %hi(dword_CODE_bss_80064C10)
+/* 00A9B4 70009DB4 3C028006 */  lui   $v0, %hi(ptr_first_entry_in_alloc_table)
 /* 00A9B8 70009DB8 AC600000 */  sw    $zero, ($v1)
 /* 00A9BC 70009DBC AC600004 */  sw    $zero, 4($v1)
 /* 00A9C0 70009DC0 AC600008 */  sw    $zero, 8($v1)
@@ -607,8 +607,8 @@ glabel reset_memtable_base_allocation
 /* 00A9E0 70009DE0 AC40FFF8 */  sw    $zero, -8($v0)
 /* 00A9E4 70009DE4 1020FFFC */  beqz  $at, .L70009DD8
 /* 00A9E8 70009DE8 AC40FFFC */   sw    $zero, -4($v0)
-/* 00A9EC 70009DEC 3C028006 */  lui   $v0, %hi(ptr_model_room_buf_secondary) # $v0, 0x8006
-/* 00A9F0 70009DF0 3C068006 */  lui   $a2, %hi(size_modelroom_buf) # $a2, 0x8006
+/* 00A9EC 70009DEC 3C028006 */  lui   $v0, %hi(ptr_model_room_buf_secondary)
+/* 00A9F0 70009DF0 3C068006 */  lui   $a2, %hi(size_modelroom_buf)
 /* 00A9F4 70009DF4 24C63C24 */  addiu $a2, %lo(size_modelroom_buf) # addiu $a2, $a2, 0x3c24
 /* 00A9F8 70009DF8 24423C20 */  addiu $v0, %lo(ptr_model_room_buf_secondary) # addiu $v0, $v0, 0x3c20
 /* 00A9FC 70009DFC AC440000 */  sw    $a0, ($v0)
@@ -729,7 +729,7 @@ glabel mem_related_something_find_first
 /* 00AA40 70009E40 00809025 */  move  $s2, $a0
 /* 00AA44 70009E44 AFB50028 */  sw    $s5, 0x28($sp)
 /* 00AA48 70009E48 AFB00014 */  sw    $s0, 0x14($sp)
-/* 00AA4C 70009E4C 3C118006 */  lui   $s1, %hi(ptr_first_entry_in_alloc_table) # $s1, 0x8006
+/* 00AA4C 70009E4C 3C118006 */  lui   $s1, %hi(ptr_first_entry_in_alloc_table)
 /* 00AA50 70009E50 AFBF002C */  sw    $ra, 0x2c($sp)
 /* 00AA54 70009E54 AFB40024 */  sw    $s4, 0x24($sp)
 /* 00AA58 70009E58 AFB30020 */  sw    $s3, 0x20($sp)
@@ -769,7 +769,7 @@ glabel mem_related_something_find_first
 /* 00AAD4 70009ED4 24140008 */  li    $s4, 8
 /* 00AAD8 70009ED8 0312082B */  sltu  $at, $t8, $s2
 /* 00AADC 70009EDC 10200006 */  beqz  $at, .L70009EF8
-/* 00AAE0 70009EE0 3C138006 */   lui   $s3, %hi(ptr_table_allocated_mem_blocks) # $s3, 0x8006
+/* 00AAE0 70009EE0 3C138006 */   lui   $s3, %hi(ptr_table_allocated_mem_blocks)
 /* 00AAE4 70009EE4 8E39000C */  lw    $t9, 0xc($s1)
 .L70009EE8:
 /* 00AAE8 70009EE8 26310008 */  addiu $s1, $s1, 8
@@ -781,7 +781,7 @@ glabel mem_related_something_find_first
 /* 00AAFC 70009EFC 26733C28 */  addiu $s3, %lo(ptr_table_allocated_mem_blocks) # addiu $s3, $s3, 0x3c28
 /* 00AB00 70009F00 56A80017 */  bnel  $s5, $t0, .L70009F60
 /* 00AB04 70009F04 02202825 */   move  $a1, $s1
-/* 00AB08 70009F08 3C118006 */  lui   $s1, %hi(ptr_first_entry_in_alloc_table) # $s1, 0x8006
+/* 00AB08 70009F08 3C118006 */  lui   $s1, %hi(ptr_first_entry_in_alloc_table)
 /* 00AB0C 70009F0C 26313C38 */  addiu $s1, %lo(ptr_first_entry_in_alloc_table) # addiu $s1, $s1, 0x3c38
 .L70009F10:
 /* 00AB10 70009F10 0C002694 */  jal   sort_merge_entries_in_alloc_table
@@ -879,9 +879,9 @@ block_4:
 GLOBAL_ASM(
 .text
 glabel mem_related_something_find_first_0
-/* 00ABA8 70009FA8 3C198006 */  lui   $t9, %hi(ptr_first_entry_in_alloc_table) # $t9, 0x8006
+/* 00ABA8 70009FA8 3C198006 */  lui   $t9, %hi(ptr_first_entry_in_alloc_table) 
 /* 00ABAC 70009FAC 8F393C38 */  lw    $t9, %lo(ptr_first_entry_in_alloc_table)($t9)
-/* 00ABB0 70009FB0 3C188006 */  lui   $t8, %hi(ptr_first_entry_in_alloc_table) # $t8, 0x8006
+/* 00ABB0 70009FB0 3C188006 */  lui   $t8, %hi(ptr_first_entry_in_alloc_table) 
 /* 00ABB4 70009FB4 240AFFFF */  li    $t2, -1
 /* 00ABB8 70009FB8 27183C38 */  addiu $t8, %lo(ptr_first_entry_in_alloc_table) # addiu $t8, $t8, 0x3c38
 /* 00ABBC 70009FBC 00A03825 */  move  $a3, $a1
@@ -949,8 +949,8 @@ loop_1:
 GLOBAL_ASM(
 .text
 glabel mem_related_allocated_table_related
-/* 00AC40 7000A040 3C038006 */  lui   $v1, %hi(ptr_table_allocated_mem_blocks) # $v1, 0x8006
-/* 00AC44 7000A044 3C028006 */  lui   $v0, %hi(dword_CODE_bss_80064C08) # $v0, 0x8006
+/* 00AC40 7000A040 3C038006 */  lui   $v1, %hi(ptr_table_allocated_mem_blocks)
+/* 00AC44 7000A044 3C028006 */  lui   $v0, %hi(dword_CODE_bss_80064C08)
 /* 00AC48 7000A048 24424C08 */  addiu $v0, %lo(dword_CODE_bss_80064C08) # addiu $v0, $v0, 0x4c08
 /* 00AC4C 7000A04C 24633C28 */  addiu $v1, %lo(ptr_table_allocated_mem_blocks) # addiu $v1, $v1, 0x3c28
 /* 00AC50 7000A050 24630020 */  addiu $v1, $v1, 0x20
@@ -1011,10 +1011,10 @@ loop_1:
 GLOBAL_ASM(
 .text
 glabel mem_related_something_first_related
-/* 00AC64 7000A064 3C0E8006 */  lui   $t6, %hi(ptr_first_entry_in_alloc_table) # $t6, 0x8006
+/* 00AC64 7000A064 3C0E8006 */  lui   $t6, %hi(ptr_first_entry_in_alloc_table) 
 /* 00AC68 7000A068 8DCE3C38 */  lw    $t6, %lo(ptr_first_entry_in_alloc_table)($t6)
 /* 00AC6C 7000A06C 2406FFFF */  li    $a2, -1
-/* 00AC70 7000A070 3C048006 */  lui   $a0, %hi(ptr_first_entry_in_alloc_table) # $a0, 0x8006
+/* 00AC70 7000A070 3C048006 */  lui   $a0, %hi(ptr_first_entry_in_alloc_table)
 /* 00AC74 7000A074 00001025 */  move  $v0, $zero
 /* 00AC78 7000A078 00001825 */  move  $v1, $zero
 /* 00AC7C 7000A07C 10CE000A */  beq   $a2, $t6, .L7000A0A8
@@ -1071,13 +1071,13 @@ GLOBAL_ASM(
 .text
 glabel generate_list_alloc_mem
 /* 00AD00 7000A100 27BDEF98 */  addiu $sp, $sp, -0x1068
-/* 00AD04 7000A104 3C048006 */  lui   $a0, %hi(ptr_first_entry_in_alloc_table) # $a0, 0x8006
+/* 00AD04 7000A104 3C048006 */  lui   $a0, %hi(ptr_first_entry_in_alloc_table)
 /* 00AD08 7000A108 8C843C38 */  lw    $a0, %lo(ptr_first_entry_in_alloc_table)($a0)
 /* 00AD0C 7000A10C AFB5002C */  sw    $s5, 0x2c($sp)
 /* 00AD10 7000A110 AFB00018 */  sw    $s0, 0x18($sp)
 /* 00AD14 7000A114 2415FFFF */  li    $s5, -1
 /* 00AD18 7000A118 AFB20020 */  sw    $s2, 0x20($sp)
-/* 00AD1C 7000A11C 3C108006 */  lui   $s0, %hi(ptr_first_entry_in_alloc_table) # $s0, 0x8006
+/* 00AD1C 7000A11C 3C108006 */  lui   $s0, %hi(ptr_first_entry_in_alloc_table)
 /* 00AD20 7000A120 AFBF003C */  sw    $ra, 0x3c($sp)
 /* 00AD24 7000A124 AFBE0038 */  sw    $fp, 0x38($sp)
 /* 00AD28 7000A128 AFB70034 */  sw    $s7, 0x34($sp)
@@ -1096,11 +1096,11 @@ glabel generate_list_alloc_mem
 /* 00AD58 7000A158 26100008 */  addiu $s0, $s0, 8
 /* 00AD5C 7000A15C 16AFFFFC */  bne   $s5, $t7, .L7000A150
 /* 00AD60 7000A160 004E1021 */   addu  $v0, $v0, $t6
-/* 00AD64 7000A164 3C108006 */  lui   $s0, %hi(ptr_first_entry_in_alloc_table) # $s0, 0x8006
+/* 00AD64 7000A164 3C108006 */  lui   $s0, %hi(ptr_first_entry_in_alloc_table)
 /* 00AD68 7000A168 26103C38 */  addiu $s0, %lo(ptr_first_entry_in_alloc_table) # addiu $s0, $s0, 0x3c38
 .L7000A16C:
-/* 00AD6C 7000A16C 3C1E8003 */  lui   $fp, %hi(a___) # $fp, 0x8003
-/* 00AD70 7000A170 3C168003 */  lui   $s6, %hi(aD_3) # $s6, 0x8003
+/* 00AD6C 7000A16C 3C1E8003 */  lui   $fp, %hi(a___) 
+/* 00AD70 7000A170 3C168003 */  lui   $s6, %hi(aD_3)
 /* 00AD74 7000A174 27B10054 */  addiu $s1, $sp, 0x54
 /* 00AD78 7000A178 26D691E0 */  addiu $s6, %lo(aD_3) # addiu $s6, $s6, -0x6e20
 /* 00AD7C 7000A17C 27DE91E4 */  addiu $fp, %lo(a___) # addiu $fp, $fp, -0x6e1c
@@ -1127,7 +1127,7 @@ glabel generate_list_alloc_mem
 /* 00ADC0 7000A1C0 8E020004 */   lw    $v0, 4($s0)
 .L7000A1C4:
 /* 00ADC4 7000A1C4 12800022 */  beqz  $s4, .L7000A250
-/* 00ADC8 7000A1C8 3C108006 */   lui   $s0, %hi(ptr_first_entry_in_alloc_table) # $s0, 0x8006
+/* 00ADC8 7000A1C8 3C108006 */   lui   $s0, %hi(ptr_first_entry_in_alloc_table)
 /* 00ADCC 7000A1CC 26103C38 */  addiu $s0, %lo(ptr_first_entry_in_alloc_table) # addiu $s0, $s0, 0x3c38
 /* 00ADD0 7000A1D0 12A4001C */  beq   $s5, $a0, .L7000A244
 /* 00ADD4 7000A1D4 0000A025 */   move  $s4, $zero
@@ -1158,8 +1158,8 @@ glabel generate_list_alloc_mem
 /* 00AE28 7000A228 26100008 */  addiu $s0, $s0, 8
 /* 00AE2C 7000A22C 56A8FFEB */  bnel  $s5, $t0, .L7000A1DC
 /* 00AE30 7000A230 8E020004 */   lw    $v0, 4($s0)
-/* 00AE34 7000A234 3C108006 */  lui   $s0, %hi(ptr_first_entry_in_alloc_table) # $s0, 0x8006
-/* 00AE38 7000A238 3C048006 */  lui   $a0, %hi(ptr_first_entry_in_alloc_table) # $a0, 0x8006
+/* 00AE34 7000A234 3C108006 */  lui   $s0, %hi(ptr_first_entry_in_alloc_table)
+/* 00AE38 7000A238 3C048006 */  lui   $a0, %hi(ptr_first_entry_in_alloc_table)
 /* 00AE3C 7000A23C 8C843C38 */  lw    $a0, %lo(ptr_first_entry_in_alloc_table)($a0)
 /* 00AE40 7000A240 26103C38 */  addiu $s0, %lo(ptr_first_entry_in_alloc_table) # addiu $s0, $s0, 0x3c38
 .L7000A244:
@@ -1170,7 +1170,7 @@ glabel generate_list_alloc_mem
 /* 00AE50 7000A250 2A4100C9 */  slti  $at, $s2, 0xc9
 /* 00AE54 7000A254 14200005 */  bnez  $at, .L7000A26C
 /* 00AE58 7000A258 02202025 */   move  $a0, $s1
-/* 00AE5C 7000A25C 3C058003 */  lui   $a1, %hi(aD_5) # $a1, 0x8003
+/* 00AE5C 7000A25C 3C058003 */  lui   $a1, %hi(aD_5)
 /* 00AE60 7000A260 24A591E8 */  addiu $a1, %lo(aD_5) # addiu $a1, $a1, -0x6e18
 /* 00AE64 7000A264 0C002B25 */  jal   sprintf
 /* 00AE68 7000A268 02403025 */   move  $a2, $s2
@@ -1218,7 +1218,7 @@ glabel generate_lists_before_after_mem_merge
 /* 00AEA8 7000A2A8 AFB1001C */  sw    $s1, 0x1c($sp)
 /* 00AEAC 7000A2AC 0C002840 */  jal   generate_list_alloc_mem
 /* 00AEB0 7000A2B0 AFB00018 */   sw    $s0, 0x18($sp)
-/* 00AEB4 7000A2B4 3C118006 */  lui   $s1, %hi(ptr_table_allocated_mem_blocks) # $s1, 0x8006
+/* 00AEB4 7000A2B4 3C118006 */  lui   $s1, %hi(ptr_table_allocated_mem_blocks)
 /* 00AEB8 7000A2B8 26313C28 */  addiu $s1, %lo(ptr_table_allocated_mem_blocks) # addiu $s1, $s1, 0x3c28
 /* 00AEBC 7000A2BC 00008025 */  move  $s0, $zero
 /* 00AEC0 7000A2C0 241201FC */  li    $s2, 508
@@ -1268,10 +1268,10 @@ GLOBAL_ASM(
 .text
 glabel mem_related_something_first_related_0
 /* 00AEF8 7000A2F8 27BDFFD8 */  addiu $sp, $sp, -0x28
-/* 00AEFC 7000A2FC 3C0F8006 */  lui   $t7, %hi(ptr_first_entry_in_alloc_table) # $t7, 0x8006
+/* 00AEFC 7000A2FC 3C0F8006 */  lui   $t7, %hi(ptr_first_entry_in_alloc_table) 
 /* 00AF00 7000A300 8DEF3C38 */  lw    $t7, %lo(ptr_first_entry_in_alloc_table)($t7)
 /* 00AF04 7000A304 AFB30020 */  sw    $s3, 0x20($sp)
-/* 00AF08 7000A308 3C0E8006 */  lui   $t6, %hi(ptr_first_entry_in_alloc_table) # $t6, 0x8006
+/* 00AF08 7000A308 3C0E8006 */  lui   $t6, %hi(ptr_first_entry_in_alloc_table) 
 /* 00AF0C 7000A30C 2413FFFF */  li    $s3, -1
 /* 00AF10 7000A310 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 00AF14 7000A314 AFB00014 */  sw    $s0, 0x14($sp)
@@ -1345,10 +1345,10 @@ glabel mem_related_0
 /* 00AF74 7000A374 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 00AF78 7000A378 0C0026C6 */  jal   memp_related_7
 /* 00AF7C 7000A37C AFA00018 */   sw    $zero, 0x18($sp)
-/* 00AF80 7000A380 3C0E8006 */  lui   $t6, %hi(ptr_first_entry_in_alloc_table) # $t6, 0x8006
+/* 00AF80 7000A380 3C0E8006 */  lui   $t6, %hi(ptr_first_entry_in_alloc_table) 
 /* 00AF84 7000A384 8DCE3C38 */  lw    $t6, %lo(ptr_first_entry_in_alloc_table)($t6)
 /* 00AF88 7000A388 2405FFFF */  li    $a1, -1
-/* 00AF8C 7000A38C 3C028006 */  lui   $v0, %hi(ptr_first_entry_in_alloc_table) # $v0, 0x8006
+/* 00AF8C 7000A38C 3C028006 */  lui   $v0, %hi(ptr_first_entry_in_alloc_table)
 /* 00AF90 7000A390 8FA40018 */  lw    $a0, 0x18($sp)
 /* 00AF94 7000A394 10AE000A */  beq   $a1, $t6, .L7000A3C0
 /* 00AF98 7000A398 24423C38 */   addiu $v0, %lo(ptr_first_entry_in_alloc_table) # addiu $v0, $v0, 0x3c38

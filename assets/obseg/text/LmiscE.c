@@ -69,4 +69,7 @@ struct stringentry LmiscE[] = {
  "Fast Animation",
  "Slow Animation",
  "No Radar [Multi]"
+ #ifdef VERSION_JP
+ ,"One minute left"
+ #endif
 };

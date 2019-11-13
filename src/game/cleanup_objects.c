@@ -1,57 +1,5 @@
 #include "ultra64.h"
 
-//.section .rodata
-const u32 jpt_8004F210[] = {
-    0x7F007550,
-    0x7F00755C,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F00755C,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F007550,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F007550,
-    0x7F007550,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F007550,
-    0x7F00755C,
-    0x7F00755C,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F007550,
-    0x7F00755C,
-    0x7F007550,
-    0x7F00755C,
-    0x7F007550
-};
-//.align 4
-
 
 #ifdef NONMATCHING
 void cleanupObjects(s32 stage) {
@@ -59,13 +7,60 @@ void cleanupObjects(s32 stage) {
 }
 #else
 GLOBAL_ASM(
-.late_rodata
-
+.rdata
+glabel jpt_8004F210
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F00755C
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F007550
+    .word .L7F00755C
+    .word .L7F007550
 .text
 glabel cleanupObjects
 /* 03C030 7F007500 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 03C034 7F007504 AFB00018 */  sw    $s0, 0x18($sp)
-/* 03C038 7F007508 3C108007 */  lui   $s0, %hi(ptr_setup_objects) # $s0, 0x8007
+/* 03C038 7F007508 3C108007 */  lui   $s0, %hi(ptr_setup_objects)
 /* 03C03C 7F00750C 8E105D0C */  lw    $s0, %lo(ptr_setup_objects)($s0)
 /* 03C040 7F007510 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 03C044 7F007514 AFA40020 */  sw    $a0, 0x20($sp)

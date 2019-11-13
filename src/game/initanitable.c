@@ -46,7 +46,7 @@ GLOBAL_ASM(
 .text
 glabel expand_ani_table_entries
 /* 035530 7F000A00 8C830000 */  lw    $v1, ($a0)
-/* 035534 7F000A04 3C068007 */  lui   $a2, %hi(ptr_animation_table) # $a2, 0x8007
+/* 035534 7F000A04 3C068007 */  lui   $a2, %hi(ptr_animation_table)
 /* 035538 7F000A08 00801025 */  move  $v0, $a0
 /* 03553C 7F000A0C 10600017 */  beqz  $v1, .L7F000A6C
 /* 035540 7F000A10 24C69538 */   addiu $a2, %lo(ptr_animation_table) # addiu $a2, $a2, -0x6ac8
@@ -119,15 +119,15 @@ GLOBAL_ASM(
 glabel alloc_load_expand_ani_table
 /* 0355DC 7F000AAC 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 0355E0 7F000AB0 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0355E4 7F000AB4 3C048007 */  lui   $a0, %hi(animMsgQ) # $a0, 0x8007
-/* 0355E8 7F000AB8 3C058007 */  lui   $a1, %hi(animMesg) # $a1, 0x8007
+/* 0355E4 7F000AB4 3C048007 */  lui   $a0, %hi(animMsgQ)
+/* 0355E8 7F000AB8 3C058007 */  lui   $a1, %hi(animMesg)
 /* 0355EC 7F000ABC 24A59518 */  addiu $a1, %lo(animMesg) # addiu $a1, $a1, -0x6ae8
 /* 0355F0 7F000AC0 24849440 */  addiu $a0, %lo(animMsgQ) # addiu $a0, $a0, -0x6bc0
 /* 0355F4 7F000AC4 0C0035B4 */  jal   osCreateMesgQueue
 /* 0355F8 7F000AC8 24060008 */   li    $a2, 8
-/* 0355FC 7F000ACC 3C048003 */  lui   $a0, %hi(D_80029D60) # $a0, 0x8003
-/* 035600 7F000AD0 3C058007 */  lui   $a1, %hi(animMsgQ) # $a1, 0x8007
-/* 035604 7F000AD4 3C068007 */  lui   $a2, %hi(dword_CODE_bss_80069458) # $a2, 0x8007
+/* 0355FC 7F000ACC 3C048003 */  lui   $a0, %hi(D_80029D60)
+/* 035600 7F000AD0 3C058007 */  lui   $a1, %hi(animMsgQ)
+/* 035604 7F000AD4 3C068007 */  lui   $a2, %hi(dword_CODE_bss_80069458)
 /* 035608 7F000AD8 24C69458 */  addiu $a2, %lo(dword_CODE_bss_80069458) # addiu $a2, $a2, -0x6ba8
 /* 03560C 7F000ADC 24A59440 */  addiu $a1, %lo(animMsgQ) # addiu $a1, $a1, -0x6bc0
 /* 035610 7F000AE0 0FC00278 */  jal   sub_GAME_7F0009E0
@@ -141,7 +141,7 @@ glabel alloc_load_expand_ani_table
 /* 035630 7F000B00 AFA60018 */  sw    $a2, 0x18($sp)
 /* 035634 7F000B04 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 035638 7F000B08 24050006 */   li    $a1, 6
-/* 03563C 7F000B0C 3C038007 */  lui   $v1, %hi(ptr_animation_table) # $v1, 0x8007
+/* 03563C 7F000B0C 3C038007 */  lui   $v1, %hi(ptr_animation_table)
 /* 035640 7F000B10 24639538 */  addiu $v1, %lo(ptr_animation_table) # addiu $v1, $v1, -0x6ac8
 /* 035644 7F000B14 3C050029 */  lui   $a1, %hi(_animation_dataSegmentRomStart) # $a1, 0x29
 /* 035648 7F000B18 AC620000 */  sw    $v0, ($v1)
@@ -149,10 +149,10 @@ glabel alloc_load_expand_ani_table
 /* 035650 7F000B20 24A5E980 */  addiu $a1, %lo(_animation_dataSegmentRomStart) # addiu $a1, $a1, -0x1680
 /* 035654 7F000B24 0C001707 */  jal   romCopy
 /* 035658 7F000B28 00402025 */   move  $a0, $v0
-/* 03565C 7F000B2C 3C048003 */  lui   $a0, %hi(animation_table_ptrs1) # $a0, 0x8003
+/* 03565C 7F000B2C 3C048003 */  lui   $a0, %hi(animation_table_ptrs1)
 /* 035660 7F000B30 0FC00280 */  jal   expand_ani_table_entries
 /* 035664 7F000B34 24849D6C */   addiu $a0, %lo(animation_table_ptrs1) # addiu $a0, $a0, -0x6294
-/* 035668 7F000B38 3C048003 */  lui   $a0, %hi(animation_table_ptrs2) # $a0, 0x8003
+/* 035668 7F000B38 3C048003 */  lui   $a0, %hi(animation_table_ptrs2)
 /* 03566C 7F000B3C 0FC00280 */  jal   expand_ani_table_entries
 /* 035670 7F000B40 2484A04C */   addiu $a0, %lo(animation_table_ptrs2) # addiu $a0, $a0, -0x5fb4
 /* 035674 7F000B44 8FBF0014 */  lw    $ra, 0x14($sp)

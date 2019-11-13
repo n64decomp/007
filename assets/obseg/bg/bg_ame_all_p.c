@@ -101,7 +101,9 @@ struct room_data_table_entry room_data_table[] = {
     {0}
 };
 
-u32 global_visibility_commands[] ={0x10000, 0};
+u32 global_visibility_commands[] ={
+	0x00010000, 0x00000000
+	};
 
 struct portal_data_table_entry portal_data_table[] = {
     {&portal_0, 1, 0x26, 0},

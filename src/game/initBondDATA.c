@@ -35,7 +35,7 @@ glabel fl_neg_pi
 .text
 glabel init_player_BONDdata_stats
 /* 039C00 7F0050D0 27BDFC30 */  addiu $sp, $sp, -0x3d0
-/* 039C04 7F0050D4 3C0F8003 */  lui   $t7, %hi(BONDdata_item_control_blocks_initdata) # $t7, 0x8003
+/* 039C04 7F0050D4 3C0F8003 */  lui   $t7, %hi(BONDdata_item_control_blocks_initdata) 
 /* 039C08 7F0050D8 25EFA3D0 */  addiu $t7, %lo(BONDdata_item_control_blocks_initdata) # addiu $t7, $t7, -0x5c30
 /* 039C0C 7F0050DC AFBF001C */  sw    $ra, 0x1c($sp)
 /* 039C10 7F0050E0 AFB00018 */  sw    $s0, 0x18($sp)
@@ -51,18 +51,18 @@ glabel init_player_BONDdata_stats
 /* 039C34 7F005104 8DE1FFFC */  lw    $at, -4($t7)
 /* 039C38 7F005108 15E8FFF8 */  bne   $t7, $t0, .L7F0050EC
 /* 039C3C 7F00510C ADC1FFFC */   sw    $at, -4($t6)
-/* 039C40 7F005110 3C048003 */  lui   $a0, %hi(size_right_item_buffer) # $a0, 0x8003
+/* 039C40 7F005110 3C048003 */  lui   $a0, %hi(size_right_item_buffer)
 /* 039C44 7F005114 8C84245C */  lw    $a0, %lo(size_right_item_buffer)($a0)
 /* 039C48 7F005118 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 039C4C 7F00511C 24050004 */   li    $a1, 4
-/* 039C50 7F005120 3C108008 */  lui   $s0, %hi(ptr_BONDdata) # $s0, 0x8008
-/* 039C54 7F005124 2610A0B0 */  addiu $s0, %lo(ptr_BONDdata) # addiu $s0, $s0, -0x5f50
+/* 039C50 7F005120 3C108008 */  lui   $s0, %hi(pPlayer)
+/* 039C54 7F005124 2610A0B0 */  addiu $s0, %lo(pPlayer) # addiu $s0, $s0, -0x5f50
 /* 039C58 7F005128 8E090000 */  lw    $t1, ($s0)
 /* 039C5C 7F00512C 0FC26919 */  jal   get_num_players
 /* 039C60 7F005130 AD220808 */   sw    $v0, 0x808($t1)
 /* 039C64 7F005134 24010001 */  li    $at, 1
 /* 039C68 7F005138 14410006 */  bne   $v0, $at, .L7F005154
-/* 039C6C 7F00513C 3C048003 */   lui   $a0, %hi(size_left_item_buffer) # $a0, 0x8003
+/* 039C6C 7F00513C 3C048003 */   lui   $a0, %hi(size_left_item_buffer)
 /* 039C70 7F005140 8C842460 */  lw    $a0, %lo(size_left_item_buffer)($a0)
 /* 039C74 7F005144 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 039C78 7F005148 24050004 */   li    $a1, 4
@@ -89,7 +89,7 @@ glabel init_player_BONDdata_stats
 /* 039CC8 7F005198 AD052A48 */  sw    $a1, 0x2a48($t0)
 /* 039CCC 7F00519C 8E0F0000 */  lw    $t7, ($s0)
 /* 039CD0 7F0051A0 00604025 */  move  $t0, $v1
-/* 039CD4 7F0051A4 3C038008 */  lui   $v1, %hi(cur_player_stat_ptr) # $v1, 0x8008
+/* 039CD4 7F0051A4 3C038008 */  lui   $v1, %hi(cur_player_stat_ptr)
 /* 039CD8 7F0051A8 ADE02A50 */  sw    $zero, 0x2a50($t7)
 /* 039CDC 7F0051AC 8E0E0000 */  lw    $t6, ($s0)
 /* 039CE0 7F0051B0 2463A0B4 */  addiu $v1, %lo(cur_player_stat_ptr) # addiu $v1, $v1, -0x5f4c
@@ -132,7 +132,7 @@ glabel init_player_BONDdata_stats
 /* 039D68 7F005238 44811000 */  mtc1  $at, $f2
 /* 039D6C 7F00523C AD600004 */  sw    $zero, 4($t3)
 /* 039D70 7F005240 8C6C0000 */  lw    $t4, ($v1)
-/* 039D74 7F005244 3C018005 */  lui   $at, %hi(D_8004F0E0) # $at, 0x8005
+/* 039D74 7F005244 3C018005 */  lui   $at, %hi(D_8004F0E0)
 /* 039D78 7F005248 44800000 */  mtc1  $zero, $f0
 /* 039D7C 7F00524C AD800008 */  sw    $zero, 8($t4)
 /* 039D80 7F005250 8C690000 */  lw    $t1, ($v1)
@@ -153,7 +153,7 @@ glabel init_player_BONDdata_stats
 /* 039DBC 7F00528C 240200FF */  li    $v0, 255
 /* 039DC0 7F005290 AD60006C */  sw    $zero, 0x6c($t3)
 /* 039DC4 7F005294 8C6C0000 */  lw    $t4, ($v1)
-/* 039DC8 7F005298 3C018005 */  lui   $at, %hi(fl_neg_pi) # $at, 0x8005
+/* 039DC8 7F005298 3C018005 */  lui   $at, %hi(fl_neg_pi)
 /* 039DCC 7F00529C AD80001C */  sw    $zero, 0x1c($t4)
 /* 039DD0 7F0052A0 8C690000 */  lw    $t1, ($v1)
 /* 039DD4 7F0052A4 AD200020 */  sw    $zero, 0x20($t1)
@@ -244,13 +244,13 @@ glabel init_player_BONDdata_stats
 /* 039F28 7F0053F8 24040001 */   li    $a0, 1
 /* 039F2C 7F0053FC 8E0B0000 */  lw    $t3, ($s0)
 /* 039F30 7F005400 240C0002 */  li    $t4, 2
-/* 039F34 7F005404 3C018003 */  lui   $at, %hi(GsniperrifleZ_stats+52) # $at, 0x8003
+/* 039F34 7F005404 3C018003 */  lui   $at, %hi(GsniperrifleZ_stats+52)
 /* 039F38 7F005408 AD601064 */  sw    $zero, 0x1064($t3)
 /* 039F3C 7F00540C 8E090000 */  lw    $t1, ($s0)
 /* 039F40 7F005410 AD2C1128 */  sw    $t4, 0x1128($t1)
 /* 039F44 7F005414 8E190000 */  lw    $t9, ($s0)
 /* 039F48 7F005418 C4262C38 */  lwc1  $f6, %lo(GsniperrifleZ_stats+52)($at)
-/* 039F4C 7F00541C 3C018003 */  lui   $at, %hi(GcameraZ_stats+52) # $at, 0x8003
+/* 039F4C 7F00541C 3C018003 */  lui   $at, %hi(GcameraZ_stats+52)
 /* 039F50 7F005420 E7261084 */  swc1  $f6, 0x1084($t9)
 /* 039F54 7F005424 8E180000 */  lw    $t8, ($s0)
 /* 039F58 7F005428 C42836B8 */  lwc1  $f8, %lo(GcameraZ_stats+52)($at)

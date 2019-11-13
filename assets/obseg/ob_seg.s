@@ -1,9 +1,18 @@
 .section .ob_seg, "a"
 
+
 .macro obseg_file_rz path name
   .global \name
   \name:
-    .incbin "build\/assets\/obseg\/\path\/\name\.rz"
+  .ifdef VERSION_US
+    .incbin "build\/u\/assets\/obseg\/\path\/\name\.rz"
+  .endif
+  .ifdef VERSION_JP
+    .incbin "build\/j\/assets\/obseg\/\path\/\name\.rz"
+  .endif
+  .ifdef VERSION_EU
+    .incbin "build\/e\/assets\/obseg\/\path\/\name\.rz"
+  .endif
     .balign 16
   end_\name:
 .endm
@@ -11,181 +20,73 @@
 .macro obseg_file_Z path name
   .global \name
   \name:
-    .incbin "build\/assets\/obseg\/\path\/\name\.rz"
+  .ifdef VERSION_US
+    .incbin "build\/u\/assets\/obseg\/\path\/\name\.rz"
+  .endif
+  .ifdef VERSION_JP
+    .incbin "build\/j\/assets\/obseg\/\path\/\name\.rz"
+  .endif
+  .ifdef VERSION_EU
+    .incbin "build\/e\/assets\/obseg\/\path\/\name\.rz"
+  .endif
     .balign 16
   end_\name:
 .endm
 
-.global bg_sev_all_p_seg
-bg_sev_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_sev_all_p.seg"
-.balign 16
-bg_sev_all_p.seg_end:
+.macro bg_file_seg name sname
+  .global \name
+  \name:
 
-.global bg_silo_all_p_seg
-bg_silo_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_silo_all_p.seg"
-bg_silo_all_p.seg_end:
+  .ifdef VERSION_US
+    .incbin "build/u/assets/obseg/bg/\sname\.seg"
+  .endif
+  
+  .ifdef VERSION_JP
+    .incbin "build/j/assets/obseg/bg/\sname\.seg"
+  .endif
 
-.global bg_stat_all_p_seg
-bg_stat_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_stat_all_p.seg"
-bg_stat_all_p.seg_end:
+  .ifdef VERSION_EU
+    .incbin "build/e/assets/obseg/bg/\sname\.seg"
+  .endif
+  end_\name:
+.endm
 
-.global bg_arec_all_p_seg
-bg_arec_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_arec_all_p.seg"
-bg_arec_all_p.seg_end:
 
-.global bg_arch_all_p_seg
-bg_arch_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_arch_all_p.seg"
-bg_arch_all_p.seg_end:
 
-.global bg_tra_all_p_seg
-bg_tra_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_tra_all_p.seg"
-bg_tra_all_p.seg_end:
-
-.global bg_dest_all_p_seg
-bg_dest_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_dest_all_p.seg"
-bg_dest_all_p.seg_end:
-
-.global bg_sevb_all_p_seg
-bg_sevb_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_sevb_all_p.seg"
-bg_sevb_all_p.seg_end:
-
-.global bg_azt_all_p_seg
-bg_azt_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_azt_all_p.seg"
-bg_azt_all_p.seg_end:
-
-.global bg_pete_all_p_seg
-bg_pete_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_pete_all_p.seg"
-bg_pete_all_p.seg_end:
-
-.global bg_depo_all_p_seg
-bg_depo_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_depo_all_p.seg"
-bg_depo_all_p.seg_end:
-
-.global bg_ref_all_p_seg
-bg_ref_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_ref_all_p.seg"
-bg_ref_all_p.seg_end:
-
-.global bg_cryp_all_p_seg
-bg_cryp_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_cryp_all_p.seg"
-bg_cryp_all_p.seg_end:
-
-.global bg_dam_all_p_seg
-bg_dam_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_dam_all_p.seg"
-bg_dam_all_p.seg_end:
-
-.global bg_ark_all_p_seg
-bg_ark_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_ark_all_p.seg"
-bg_ark_all_p.seg_end:
-
-.global bg_run_all_p_seg
-bg_run_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_run_all_p.seg"
-bg_run_all_p.seg_end:
-
-.global bg_sevx_all_p_seg
-bg_sevx_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_sevx_all_p.seg"
-bg_sevx_all_p.seg_end:
-
-.global bg_jun_all_p_seg
-bg_jun_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_jun_all_p.seg"
-bg_jun_all_p.seg_end:
-
-.global bg_dish_all_p_seg
-bg_dish_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_dish_all_p.seg"
-bg_dish_all_p.seg_end:
-
-.global bg_cave_all_p_seg
-bg_cave_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_cave_all_p.seg"
-bg_cave_all_p.seg_end:
-
-.global bg_cat_all_p_seg
-bg_cat_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_cat_all_p.seg"
-bg_cat_all_p.seg_end:
-
-.global bg_crad_all_p_seg
-bg_crad_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_crad_all_p.seg"
-bg_crad_all_p.seg_end:
-
-.global bg_imp_all_p_seg
-bg_imp_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_imp_all_p.seg"
-bg_imp_all_p.seg_end:
-
-.global bg_ash_all_p_seg
-bg_ash_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_ash_all_p.seg"
-bg_ash_all_p.seg_end:
-
-.global bg_sho_all_p_seg
-bg_sho_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_sho_all_p.seg"
-bg_sho_all_p.seg_end:
-
-.global bg_ame_all_p_seg
-bg_ame_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_ame_all_p.seg"
-bg_ame_all_p.seg_end:
-
-.global bg_oat_all_p_seg
-bg_oat_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_oat_all_p.seg"
-bg_oat_all_p.seg_end:
-
-.global bg_rit_all_p_seg
-bg_rit_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_rit_all_p.seg"
-bg_rit_all_p.seg_end:
-
-.global bg_len_all_p_seg
-bg_len_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_len_all_p.seg"
-bg_len_all_p.seg_end:
-
-.global bg_lee_all_p_seg
-bg_lee_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_lee_all_p.seg"
-bg_lee_all_p.seg_end:
-
-.global bg_ear_all_p_seg
-bg_ear_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_ear_all_p.seg"
-bg_ear_all_p.seg_end:
-
-.global bg_lip_all_p_seg
-bg_lip_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_lip_all_p.seg"
-bg_lip_all_p.seg_end:
-
-.global bg_pam_all_p_seg
-bg_pam_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_pam_all_p.seg"
-bg_pam_all_p.seg_end:
-
-.global bg_wax_all_p_seg
-bg_wax_all_p_seg:
-.incbin "build/assets/obseg/bg/bg_wax_all_p.seg"
-bg_wax_all_p.seg_end:
+bg_file_seg bg_sev_all_p_seg, bg_sev_all_p
+bg_file_seg bg_silo_all_p_seg, bg_silo_all_p
+bg_file_seg bg_stat_all_p_seg, bg_stat_all_p
+bg_file_seg bg_arec_all_p_seg, bg_arec_all_p
+bg_file_seg bg_arch_all_p_seg, bg_arch_all_p
+bg_file_seg bg_tra_all_p_seg, bg_tra_all_p
+bg_file_seg bg_dest_all_p_seg, bg_dest_all_p
+bg_file_seg bg_sevb_all_p_seg, bg_sevb_all_p
+bg_file_seg bg_azt_all_p_seg, bg_azt_all_p
+bg_file_seg bg_pete_all_p_seg, bg_pete_all_p
+bg_file_seg bg_depo_all_p_seg, bg_depo_all_p
+bg_file_seg bg_ref_all_p_seg, bg_ref_all_p
+bg_file_seg bg_cryp_all_p_seg, bg_cryp_all_p
+bg_file_seg bg_dam_all_p_seg, bg_dam_all_p
+bg_file_seg bg_ark_all_p_seg, bg_ark_all_p
+bg_file_seg bg_run_all_p_seg, bg_run_all_p
+bg_file_seg bg_sevx_all_p_seg, bg_sevx_all_p
+bg_file_seg bg_jun_all_p_seg, bg_jun_all_p
+bg_file_seg bg_dish_all_p_seg, bg_dish_all_p
+bg_file_seg bg_cave_all_p_seg, bg_cave_all_p
+bg_file_seg bg_cat_all_p_seg, bg_cat_all_p
+bg_file_seg bg_crad_all_p_seg, bg_crad_all_p
+bg_file_seg bg_imp_all_p_seg, bg_imp_all_p
+bg_file_seg bg_ash_all_p_seg, bg_ash_all_p
+bg_file_seg bg_sho_all_p_seg, bg_sho_all_p
+bg_file_seg bg_ame_all_p_seg, bg_ame_all_p
+bg_file_seg bg_oat_all_p_seg, bg_oat_all_p
+bg_file_seg bg_rit_all_p_seg, bg_rit_all_p
+bg_file_seg bg_len_all_p_seg, bg_len_all_p
+bg_file_seg bg_lee_all_p_seg, bg_lee_all_p
+bg_file_seg bg_ear_all_p_seg, bg_ear_all_p
+bg_file_seg bg_lip_all_p_seg, bg_lip_all_p
+bg_file_seg bg_pam_all_p_seg, bg_pam_all_p
+bg_file_seg bg_wax_all_p_seg, bg_wax_all_p
 
 obseg_file_rz chr, CarmourguardZ
 obseg_file_rz chr, CbaronsamediZ

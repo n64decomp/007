@@ -6,7 +6,7 @@ SECTIONS
    _UgunDataStart = ADDR(.data);
    _UgunDataRomStart = 0x0000;
    .data 0x00000000 : AT(0x0000) {
-      build/assets/obseg/gun/Gname.o (.data);
+      * (.data);
    }
    _UgunDataEnd = ADDR(.data) + SIZEOF(.data);
    _UgunDataRomEnd = 0x0000 + SIZEOF(.data);

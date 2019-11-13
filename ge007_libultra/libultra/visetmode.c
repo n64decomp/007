@@ -19,14 +19,14 @@ glabel osViSetMode
 /* 00EC68 7000E068 AFA40028 */  sw    $a0, 0x28($sp)
 /* 00EC6C 7000E06C 0C00617C */  jal   __osDisableInt
 /* 00EC70 7000E070 AFB00018 */   sw    $s0, 0x18($sp)
-/* 00EC74 7000E074 3C0F8003 */  lui   $t7, %hi(__osViNext) # $t7, 0x8003
+/* 00EC74 7000E074 3C0F8003 */  lui   $t7, %hi(__osViNext) 
 /* 00EC78 7000E078 8DEF8044 */  lw    $t7, %lo(__osViNext)($t7)
 /* 00EC7C 7000E07C 8FAE0028 */  lw    $t6, 0x28($sp)
-/* 00EC80 7000E080 3C198003 */  lui   $t9, %hi(__osViNext) # $t9, 0x8003
+/* 00EC80 7000E080 3C198003 */  lui   $t9, %hi(__osViNext) 
 /* 00EC84 7000E084 24180001 */  li    $t8, 1
 /* 00EC88 7000E088 ADEE0008 */  sw    $t6, 8($t7)
 /* 00EC8C 7000E08C 8F398044 */  lw    $t9, %lo(__osViNext)($t9)
-/* 00EC90 7000E090 3C088003 */  lui   $t0, %hi(__osViNext) # $t0, 0x8003
+/* 00EC90 7000E090 3C088003 */  lui   $t0, %hi(__osViNext) 
 /* 00EC94 7000E094 00408025 */  move  $s0, $v0
 /* 00EC98 7000E098 A7380000 */  sh    $t8, ($t9)
 /* 00EC9C 7000E09C 8D088044 */  lw    $t0, %lo(__osViNext)($t0)

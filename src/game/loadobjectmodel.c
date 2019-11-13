@@ -349,7 +349,7 @@ glabel sub_GAME_7F056A88
 /* 08B5B8 7F056A88 27BDFFD8 */  addiu $sp, $sp, -0x28
 /* 08B5BC 7F056A8C AFB10018 */  sw    $s1, 0x18($sp)
 /* 08B5C0 7F056A90 AFB30020 */  sw    $s3, 0x20($sp)
-/* 08B5C4 7F056A94 3C118007 */  lui   $s1, %hi(ptr_setup_objects) # $s1, 0x8007
+/* 08B5C4 7F056A94 3C118007 */  lui   $s1, %hi(ptr_setup_objects)
 /* 08B5C8 7F056A98 00809825 */  move  $s3, $a0
 /* 08B5CC 7F056A9C AFBF0024 */  sw    $ra, 0x24($sp)
 /* 08B5D0 7F056AA0 AFB2001C */  sw    $s2, 0x1c($sp)
@@ -404,7 +404,7 @@ GLOBAL_ASM(
 glabel sub_GAME_7F056B1C
 /* 08B64C 7F056B1C 27BDFFD8 */  addiu $sp, $sp, -0x28
 /* 08B650 7F056B20 AFB00014 */  sw    $s0, 0x14($sp)
-/* 08B654 7F056B24 3C108007 */  lui   $s0, %hi(ptr_setup_objects) # $s0, 0x8007
+/* 08B654 7F056B24 3C108007 */  lui   $s0, %hi(ptr_setup_objects)
 /* 08B658 7F056B28 8E105D0C */  lw    $s0, %lo(ptr_setup_objects)($s0)
 /* 08B65C 7F056B2C AFB30020 */  sw    $s3, 0x20($sp)
 /* 08B660 7F056B30 00809825 */  move  $s3, $a0
@@ -458,7 +458,7 @@ GLOBAL_ASM(
 glabel sub_GAME_7F056BA8
 /* 08B6D8 7F056BA8 27BDFFD8 */  addiu $sp, $sp, -0x28
 /* 08B6DC 7F056BAC AFB00014 */  sw    $s0, 0x14($sp)
-/* 08B6E0 7F056BB0 3C108007 */  lui   $s0, %hi(ptr_setup_objects) # $s0, 0x8007
+/* 08B6E0 7F056BB0 3C108007 */  lui   $s0, %hi(ptr_setup_objects)
 /* 08B6E4 7F056BB4 8E105D0C */  lw    $s0, %lo(ptr_setup_objects)($s0)
 /* 08B6E8 7F056BB8 AFB30020 */  sw    $s3, 0x20($sp)
 /* 08B6EC 7F056BBC 00809825 */  move  $s3, $a0
@@ -513,7 +513,7 @@ GLOBAL_ASM(
 glabel load_model
 /* 08B768 7F056C38 00047080 */  sll   $t6, $a0, 2
 /* 08B76C 7F056C3C 01C47023 */  subu  $t6, $t6, $a0
-/* 08B770 7F056C40 3C0F8004 */  lui   $t7, %hi(PitemZ_entries) # $t7, 0x8004
+/* 08B770 7F056C40 3C0F8004 */  lui   $t7, %hi(PitemZ_entries) 
 /* 08B774 7F056C44 25EFA228 */  addiu $t7, %lo(PitemZ_entries) # addiu $t7, $t7, -0x5dd8
 /* 08B778 7F056C48 000E7080 */  sll   $t6, $t6, 2
 /* 08B77C 7F056C4C 01CF1021 */  addu  $v0, $t6, $t7
@@ -847,7 +847,7 @@ GLOBAL_ASM(
 glabel sub_GAME_7F056F08
 /* 08BA38 7F056F08 27BDFFC0 */  addiu $sp, $sp, -0x40
 /* 08BA3C 7F056F0C AFB00018 */  sw    $s0, 0x18($sp)
-/* 08BA40 7F056F10 3C108007 */  lui   $s0, %hi(ptr_setup_objects) # $s0, 0x8007
+/* 08BA40 7F056F10 3C108007 */  lui   $s0, %hi(ptr_setup_objects)
 /* 08BA44 7F056F14 8E105D0C */  lw    $s0, %lo(ptr_setup_objects)($s0)
 /* 08BA48 7F056F18 AFBE0038 */  sw    $fp, 0x38($sp)
 /* 08BA4C 7F056F1C AFB70034 */  sw    $s7, 0x34($sp)

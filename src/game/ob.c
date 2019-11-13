@@ -870,10 +870,10 @@ glabel resource_load_from_indy
 /* 0F16E4 7F0BCBB4 0FC33FE7 */  jal   load_resource_on_indy
 /* 0F16E8 7F0BCBB8 00E02825 */   move  $a1, $a3
 /* 0F16EC 7F0BCBBC 8FA72124 */  lw    $a3, 0x2124($sp)
-/* 0F16F0 7F0BCBC0 3C0C8006 */  lui   $t4, %hi(rz_header_1) # $t4, 0x8006
+/* 0F16F0 7F0BCBC0 3C0C8006 */  lui   $t4, %hi(rz_header_1) 
 /* 0F16F4 7F0BCBC4 918CB66C */  lbu   $t4, %lo(rz_header_1)($t4)
 /* 0F16F8 7F0BCBC8 90EB0000 */  lbu   $t3, ($a3)
-/* 0F16FC 7F0BCBCC 3C0E8006 */  lui   $t6, %hi(rz_header_2 + 0x1) # $t6, 0x8006
+/* 0F16FC 7F0BCBCC 3C0E8006 */  lui   $t6, %hi(rz_header_2 + 0x1) 
 /* 0F1700 7F0BCBD0 02002825 */  move  $a1, $s0
 /* 0F1704 7F0BCBD4 156C000B */  bne   $t3, $t4, .L7F0BCC04
 /* 0F1708 7F0BCBD8 00E02025 */   move  $a0, $a3
@@ -950,22 +950,22 @@ glabel aOb_c_debug
 glabel ob_c_debug_setup
 /* 0F1758 7F0BCC28 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0F175C 7F0BCC2C AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0F1760 7F0BCC30 3C048004 */  lui   $a0, %hi(D_80046050) # $a0, 0x8004
-/* 0F1764 7F0BCC34 3C058006 */  lui   $a1, %hi(aOb_c_debug) # $a1, 0x8006
+/* 0F1760 7F0BCC30 3C048004 */  lui   $a0, %hi(D_80046050)
+/* 0F1764 7F0BCC34 3C058006 */  lui   $a1, %hi(aOb_c_debug)
 /* 0F1768 7F0BCC38 24A5B674 */  addiu $a1, %lo(aOb_c_debug) # addiu $a1, $a1, -0x498c
 /* 0F176C 7F0BCC3C 0C001398 */  jal   get_ptr_debug_notice_list_entry
 /* 0F1770 7F0BCC40 24846050 */   addiu $a0, %lo(D_80046050) # addiu $a0, $a0, 0x6050
-/* 0F1774 7F0BCC44 3C038005 */  lui   $v1, %hi(file_entry_max) # $v1, 0x8005
+/* 0F1774 7F0BCC44 3C038005 */  lui   $v1, %hi(file_entry_max)
 /* 0F1778 7F0BCC48 8C6382D4 */  lw    $v1, %lo(file_entry_max)($v1)
-/* 0F177C 7F0BCC4C 3C048004 */  lui   $a0, %hi(file_resource_table + 0xC) # $a0, 0x8004
+/* 0F177C 7F0BCC4C 3C048004 */  lui   $a0, %hi(file_resource_table + 0xC)
 /* 0F1780 7F0BCC50 24846060 */  addiu $a0, %lo(file_resource_table + 0xC) # addiu $a0, $a0, 0x6060
 /* 0F1784 7F0BCC54 2463FFFF */  addiu $v1, $v1, -1
 /* 0F1788 7F0BCC58 28610002 */  slti  $at, $v1, 2
 /* 0F178C 7F0BCC5C 14200013 */  bnez  $at, .L7F0BCCAC
-/* 0F1790 7F0BCC60 3C028009 */   lui   $v0, %hi(ptr_res_data_next) # $v0, 0x8009
+/* 0F1790 7F0BCC60 3C028009 */   lui   $v0, %hi(ptr_res_data_next)
 /* 0F1794 7F0BCC64 00037080 */  sll   $t6, $v1, 2
 /* 0F1798 7F0BCC68 01C37021 */  addu  $t6, $t6, $v1
-/* 0F179C 7F0BCC6C 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) # $t7, 0x8009
+/* 0F179C 7F0BCC6C 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) 
 /* 0F17A0 7F0BCC70 25EF88B0 */  addiu $t7, %lo(ptr_resource_data) # addiu $t7, $t7, -0x7750
 /* 0F17A4 7F0BCC74 000E7080 */  sll   $t6, $t6, 2
 /* 0F17A8 7F0BCC78 01CF2821 */  addu  $a1, $t6, $t7
@@ -1113,7 +1113,7 @@ glabel load_bg_bytes_at_offset_to_membank
 /* 0F18D8 7F0BCDA8 8C6388B0 */  lw    $v1, %lo(ptr_resource_data)($v1)
 /* 0F18DC 7F0BCDAC 00027080 */  sll   $t6, $v0, 2
 /* 0F18E0 7F0BCDB0 01C27023 */  subu  $t6, $t6, $v0
-/* 0F18E4 7F0BCDB4 3C0F8004 */  lui   $t7, %hi(file_resource_table) # $t7, 0x8004
+/* 0F18E4 7F0BCDB4 3C0F8004 */  lui   $t7, %hi(file_resource_table) 
 /* 0F18E8 7F0BCDB8 25EF6054 */  addiu $t7, %lo(file_resource_table) # addiu $t7, $t7, 0x6054
 /* 0F18EC 7F0BCDBC 000E7080 */  sll   $t6, $t6, 2
 /* 0F18F0 7F0BCDC0 8FA60024 */  lw    $a2, 0x24($sp)
@@ -1169,7 +1169,7 @@ glabel load_rom_resource_index_to_membank
 /* 0F1970 7F0BCE40 8FAD0030 */   lw    $t5, 0x30($sp)
 .L7F0BCE44:
 /* 0F1974 7F0BCE44 8FAF0030 */  lw    $t7, 0x30($sp)
-/* 0F1978 7F0BCE48 3C198009 */  lui   $t9, %hi(ptr_resource_data) # $t9, 0x8009
+/* 0F1978 7F0BCE48 3C198009 */  lui   $t9, %hi(ptr_resource_data) 
 /* 0F197C 7F0BCE4C 273988B0 */  addiu $t9, %lo(ptr_resource_data) # addiu $t9, $t9, -0x7750
 /* 0F1980 7F0BCE50 000FC080 */  sll   $t8, $t7, 2
 /* 0F1984 7F0BCE54 030FC021 */  addu  $t8, $t8, $t7
@@ -1187,7 +1187,7 @@ glabel load_rom_resource_index_to_membank
 /* 0F19B0 7F0BCE80 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 0F19B4 7F0BCE84 93A5003F */   lbu   $a1, 0x3f($sp)
 /* 0F19B8 7F0BCE88 8E300004 */  lw    $s0, 4($s1)
-/* 0F19BC 7F0BCE8C 3C0A8004 */  lui   $t2, %hi(file_resource_table) # $t2, 0x8004
+/* 0F19BC 7F0BCE8C 3C0A8004 */  lui   $t2, %hi(file_resource_table) 
 /* 0F19C0 7F0BCE90 254A6054 */  addiu $t2, %lo(file_resource_table) # addiu $t2, $t2, 0x6054
 /* 0F19C4 7F0BCE94 AE30000C */  sw    $s0, 0xc($s1)
 /* 0F19C8 7F0BCE98 8FA80030 */  lw    $t0, 0x30($sp)
@@ -1224,7 +1224,7 @@ glabel load_rom_resource_index_to_membank
 .L7F0BCF0C:
 /* 0F1A3C 7F0BCF0C 000D7080 */  sll   $t6, $t5, 2
 /* 0F1A40 7F0BCF10 01CD7021 */  addu  $t6, $t6, $t5
-/* 0F1A44 7F0BCF14 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) # $t7, 0x8009
+/* 0F1A44 7F0BCF14 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) 
 /* 0F1A48 7F0BCF18 25EF88B0 */  addiu $t7, %lo(ptr_resource_data) # addiu $t7, $t7, -0x7750
 /* 0F1A4C 7F0BCF1C 000E7080 */  sll   $t6, $t6, 2
 /* 0F1A50 7F0BCF20 01CF8821 */  addu  $s1, $t6, $t7
@@ -1245,7 +1245,7 @@ glabel load_rom_resource_index_to_membank
 /* 0F1A80 7F0BCF50 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 0F1A84 7F0BCF54 93A5003F */   lbu   $a1, 0x3f($sp)
 /* 0F1A88 7F0BCF58 8E390004 */  lw    $t9, 4($s1)
-/* 0F1A8C 7F0BCF5C 3C0A8004 */  lui   $t2, %hi(file_resource_table) # $t2, 0x8004
+/* 0F1A8C 7F0BCF5C 3C0A8004 */  lui   $t2, %hi(file_resource_table) 
 /* 0F1A90 7F0BCF60 254A6054 */  addiu $t2, %lo(file_resource_table) # addiu $t2, $t2, 0x6054
 /* 0F1A94 7F0BCF64 AE39000C */  sw    $t9, 0xc($s1)
 /* 0F1A98 7F0BCF68 8FA80030 */  lw    $t0, 0x30($sp)
@@ -1353,7 +1353,7 @@ glabel load_resource_index_to_buffer
 /* 0F1B10 7F0BCFE0 00047080 */  sll   $t6, $a0, 2
 /* 0F1B14 7F0BCFE4 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 0F1B18 7F0BCFE8 01C47021 */  addu  $t6, $t6, $a0
-/* 0F1B1C 7F0BCFEC 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) # $t7, 0x8009
+/* 0F1B1C 7F0BCFEC 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) 
 /* 0F1B20 7F0BCFF0 AFB00018 */  sw    $s0, 0x18($sp)
 /* 0F1B24 7F0BCFF4 25EF88B0 */  addiu $t7, %lo(ptr_resource_data) # addiu $t7, $t7, -0x7750
 /* 0F1B28 7F0BCFF8 000E7080 */  sll   $t6, $t6, 2
@@ -1381,7 +1381,7 @@ glabel load_resource_index_to_buffer
 .L7F0BD048:
 /* 0F1B78 7F0BD048 00044080 */  sll   $t0, $a0, 2
 /* 0F1B7C 7F0BD04C 01044023 */  subu  $t0, $t0, $a0
-/* 0F1B80 7F0BD050 3C098004 */  lui   $t1, %hi(file_resource_table) # $t1, 0x8004
+/* 0F1B80 7F0BD050 3C098004 */  lui   $t1, %hi(file_resource_table) 
 /* 0F1B84 7F0BD054 25296054 */  addiu $t1, %lo(file_resource_table) # addiu $t1, $t1, 0x6054
 /* 0F1B88 7F0BD058 00084080 */  sll   $t0, $t0, 2
 /* 0F1B8C 7F0BD05C 01093021 */  addu  $a2, $t0, $t1
@@ -1406,7 +1406,7 @@ glabel load_resource_index_to_buffer
 /* 0F1BD4 7F0BD0A4 8FBF001C */   lw    $ra, 0x1c($sp)
 .L7F0BD0A8:
 /* 0F1BD8 7F0BD0A8 01A46823 */  subu  $t5, $t5, $a0
-/* 0F1BDC 7F0BD0AC 3C0E8004 */  lui   $t6, %hi(file_resource_table) # $t6, 0x8004
+/* 0F1BDC 7F0BD0AC 3C0E8004 */  lui   $t6, %hi(file_resource_table) 
 /* 0F1BE0 7F0BD0B0 25CE6054 */  addiu $t6, %lo(file_resource_table) # addiu $t6, $t6, 0x6054
 /* 0F1BE4 7F0BD0B4 000D6880 */  sll   $t5, $t5, 2
 /* 0F1BE8 7F0BD0B8 01AE3021 */  addu  $a2, $t5, $t6
@@ -1504,7 +1504,7 @@ GLOBAL_ASM(
 glabel sub_GAME_7F0BD138
 /* 0F1C68 7F0BD138 00047080 */  sll   $t6, $a0, 2
 /* 0F1C6C 7F0BD13C 01C47021 */  addu  $t6, $t6, $a0
-/* 0F1C70 7F0BD140 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) # $t7, 0x8009
+/* 0F1C70 7F0BD140 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) 
 /* 0F1C74 7F0BD144 25EF88B0 */  addiu $t7, %lo(ptr_resource_data) # addiu $t7, $t7, -0x7750
 /* 0F1C78 7F0BD148 000E7080 */  sll   $t6, $t6, 2
 /* 0F1C7C 7F0BD14C 27BDFFE8 */  addiu $sp, $sp, -0x18
@@ -1602,7 +1602,7 @@ s32 something_mem_bank_a0(s32 arg0) {
 GLOBAL_ASM(
 .text
 glabel something_mem_bank_a0
-/* 0F1CEC 7F0BD1BC 3C038005 */  lui   $v1, %hi(file_entry_max) # $v1, 0x8005
+/* 0F1CEC 7F0BD1BC 3C038005 */  lui   $v1, %hi(file_entry_max)
 /* 0F1CF0 7F0BD1C0 8C6382D4 */  lw    $v1, %lo(file_entry_max)($v1)
 /* 0F1CF4 7F0BD1C4 308E00FF */  andi  $t6, $a0, 0xff
 /* 0F1CF8 7F0BD1C8 AFA40000 */  sw    $a0, ($sp)
@@ -1611,10 +1611,10 @@ glabel something_mem_bank_a0
 /* 0F1D04 7F0BD1D4 01C01025 */   move  $v0, $t6
 /* 0F1D08 7F0BD1D8 00037880 */  sll   $t7, $v1, 2
 /* 0F1D0C 7F0BD1DC 01E37821 */  addu  $t7, $t7, $v1
-/* 0F1D10 7F0BD1E0 3C188009 */  lui   $t8, %hi(ptr_resource_data) # $t8, 0x8009
+/* 0F1D10 7F0BD1E0 3C188009 */  lui   $t8, %hi(ptr_resource_data) 
 /* 0F1D14 7F0BD1E4 271888B0 */  addiu $t8, %lo(ptr_resource_data) # addiu $t8, $t8, -0x7750
 /* 0F1D18 7F0BD1E8 000F7880 */  sll   $t7, $t7, 2
-/* 0F1D1C 7F0BD1EC 3C058009 */  lui   $a1, %hi(ptr_res_data_next) # $a1, 0x8009
+/* 0F1D1C 7F0BD1EC 3C058009 */  lui   $a1, %hi(ptr_res_data_next)
 /* 0F1D20 7F0BD1F0 24A588C4 */  addiu $a1, %lo(ptr_res_data_next) # addiu $a1, $a1, -0x773c
 /* 0F1D24 7F0BD1F4 01F83021 */  addu  $a2, $t7, $t8
 /* 0F1D28 7F0BD1F8 24030004 */  li    $v1, 4
@@ -1661,7 +1661,7 @@ GLOBAL_ASM(
 glabel get_index_num_of_named_resource
 /* 0F1D84 7F0BD254 27BDFFC0 */  addiu $sp, $sp, -0x40
 /* 0F1D88 7F0BD258 AFB2001C */  sw    $s2, 0x1c($sp)
-/* 0F1D8C 7F0BD25C 3C128005 */  lui   $s2, %hi(file_entry_max) # $s2, 0x8005
+/* 0F1D8C 7F0BD25C 3C128005 */  lui   $s2, %hi(file_entry_max)
 /* 0F1D90 7F0BD260 265282D4 */  addiu $s2, %lo(file_entry_max) # addiu $s2, $s2, -0x7d2c
 /* 0F1D94 7F0BD264 8E420000 */  lw    $v0, ($s2)
 /* 0F1D98 7F0BD268 AFB30020 */  sw    $s3, 0x20($sp)
@@ -1672,7 +1672,7 @@ glabel get_index_num_of_named_resource
 /* 0F1DAC 7F0BD27C AFB00014 */  sw    $s0, 0x14($sp)
 /* 0F1DB0 7F0BD280 14200012 */  bnez  $at, .L7F0BD2CC
 /* 0F1DB4 7F0BD284 24110001 */   li    $s1, 1
-/* 0F1DB8 7F0BD288 3C108004 */  lui   $s0, %hi(file_resource_table + 0xC) # $s0, 0x8004
+/* 0F1DB8 7F0BD288 3C108004 */  lui   $s0, %hi(file_resource_table + 0xC)
 /* 0F1DBC 7F0BD28C 26106060 */  addiu $s0, %lo(file_resource_table + 0xC) # addiu $s0, $s0, 0x6060
 /* 0F1DC0 7F0BD290 8E050004 */  lw    $a1, 4($s0)
 .L7F0BD294:
@@ -1709,13 +1709,13 @@ glabel get_index_num_of_named_resource
 /* 0F1E30 7F0BD300 00001025 */   move  $v0, $zero
 .L7F0BD304:
 /* 0F1E34 7F0BD304 01F17823 */  subu  $t7, $t7, $s1
-/* 0F1E38 7F0BD308 3C188004 */  lui   $t8, %hi(file_resource_table) # $t8, 0x8004
+/* 0F1E38 7F0BD308 3C188004 */  lui   $t8, %hi(file_resource_table) 
 /* 0F1E3C 7F0BD30C 27186054 */  addiu $t8, %lo(file_resource_table) # addiu $t8, $t8, 0x6054
 /* 0F1E40 7F0BD310 000F7880 */  sll   $t7, $t7, 2
 /* 0F1E44 7F0BD314 0011C880 */  sll   $t9, $s1, 2
 /* 0F1E48 7F0BD318 01F88021 */  addu  $s0, $t7, $t8
 /* 0F1E4C 7F0BD31C 0331C821 */  addu  $t9, $t9, $s1
-/* 0F1E50 7F0BD320 3C088009 */  lui   $t0, %hi(ptr_resource_data) # $t0, 0x8009
+/* 0F1E50 7F0BD320 3C088009 */  lui   $t0, %hi(ptr_resource_data) 
 /* 0F1E54 7F0BD324 250888B0 */  addiu $t0, %lo(ptr_resource_data) # addiu $t0, $t0, -0x7750
 /* 0F1E58 7F0BD328 0019C880 */  sll   $t9, $t9, 2
 /* 0F1E5C 7F0BD32C AE110000 */  sw    $s1, ($s0)
@@ -1786,7 +1786,7 @@ GLOBAL_ASM(
 glabel sub_GAME_7F0BD38C
 /* 0F1EBC 7F0BD38C 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 0F1EC0 7F0BD390 AFB10018 */  sw    $s1, 0x18($sp)
-/* 0F1EC4 7F0BD394 3C118005 */  lui   $s1, %hi(file_entry_max) # $s1, 0x8005
+/* 0F1EC4 7F0BD394 3C118005 */  lui   $s1, %hi(file_entry_max)
 /* 0F1EC8 7F0BD398 263182D4 */  addiu $s1, %lo(file_entry_max) # addiu $s1, $s1, -0x7d2c
 /* 0F1ECC 7F0BD39C 8E2E0000 */  lw    $t6, ($s1)
 /* 0F1ED0 7F0BD3A0 AFB00014 */  sw    $s0, 0x14($sp)
@@ -1823,7 +1823,7 @@ void sub_GAME_7F0BD3E4(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F0BD3E4
-/* 0F1F14 7F0BD3E4 3C038005 */  lui   $v1, %hi(file_entry_max) # $v1, 0x8005
+/* 0F1F14 7F0BD3E4 3C038005 */  lui   $v1, %hi(file_entry_max)
 /* 0F1F18 7F0BD3E8 8C6382D4 */  lw    $v1, %lo(file_entry_max)($v1)
 /* 0F1F1C 7F0BD3EC 24020001 */  li    $v0, 1
 /* 0F1F20 7F0BD3F0 28610002 */  slti  $at, $v1, 2
@@ -1870,15 +1870,15 @@ loop_2:
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F0BD410
-/* 0F1F40 7F0BD410 3C038005 */  lui   $v1, %hi(file_entry_max) # $v1, 0x8005
+/* 0F1F40 7F0BD410 3C038005 */  lui   $v1, %hi(file_entry_max)
 /* 0F1F44 7F0BD414 8C6382D4 */  lw    $v1, %lo(file_entry_max)($v1)
-/* 0F1F48 7F0BD418 3C028009 */  lui   $v0, %hi(ptr_res_data_next) # $v0, 0x8009
+/* 0F1F48 7F0BD418 3C028009 */  lui   $v0, %hi(ptr_res_data_next)
 /* 0F1F4C 7F0BD41C 244288C4 */  addiu $v0, %lo(ptr_res_data_next) # addiu $v0, $v0, -0x773c
 /* 0F1F50 7F0BD420 28610002 */  slti  $at, $v1, 2
 /* 0F1F54 7F0BD424 1420000A */  bnez  $at, .L7F0BD450
 /* 0F1F58 7F0BD428 00037080 */   sll   $t6, $v1, 2
 /* 0F1F5C 7F0BD42C 01C37021 */  addu  $t6, $t6, $v1
-/* 0F1F60 7F0BD430 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) # $t7, 0x8009
+/* 0F1F60 7F0BD430 3C0F8009 */  lui   $t7, %hi(ptr_resource_data) 
 /* 0F1F64 7F0BD434 25EF88B0 */  addiu $t7, %lo(ptr_resource_data) # addiu $t7, $t7, -0x7750
 /* 0F1F68 7F0BD438 000E7080 */  sll   $t6, $t6, 2
 /* 0F1F6C 7F0BD43C 01CF2021 */  addu  $a0, $t6, $t7

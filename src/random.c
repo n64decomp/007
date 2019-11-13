@@ -17,9 +17,9 @@ u32 get_random_value(void) {
 GLOBAL_ASM(
 .text
 glabel get_random_value
-/* 00B050 7000A450 3C048002 */  lui   $a0, %hi(randseed) # $a0, 0x8002
+/* 00B050 7000A450 3C048002 */  lui   $a0, %hi(randseed)
 /* 00B054 7000A454 DC844460 */  ld    $a0, %lo(randseed)($a0)
-/* 00B058 7000A458 3C018002 */  lui   $at, %hi(randseed) # $at, 0x8002
+/* 00B058 7000A458 3C018002 */  lui   $at, %hi(randseed)
 /* 00B05C 7000A45C 000437FC */  dsll32 $a2, $a0, 0x1f
 /* 00B060 7000A460 00042FF8 */  dsll  $a1, $a0, 0x1f
 /* 00B064 7000A464 000637FA */  dsrl  $a2, $a2, 0x1f
@@ -50,7 +50,7 @@ GLOBAL_ASM(
 .text
 glabel increment_random_num
 /* 00B098 7000A498 64840001 */  daddiu $a0, $a0, 1
-/* 00B09C 7000A49C 3C018002 */  lui   $at, %hi(randseed) # $at, 0x8002
+/* 00B09C 7000A49C 3C018002 */  lui   $at, %hi(randseed)
 /* 00B0A0 7000A4A0 FC244460 */  sd    $a0, %lo(randseed)($at)
 /* 00B0A4 7000A4A4 03E00008 */  jr    $ra
 /* 00B0A8 7000A4A8 24040000 */   li    $a0, 0

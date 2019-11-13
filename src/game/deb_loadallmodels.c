@@ -44,15 +44,15 @@ GLOBAL_ASM(
 glabel init_obj_register_difficulty_vals
 /* 035B50 7F001020 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 035B54 7F001024 44810000 */  mtc1  $at, $f0
-/* 035B58 7F001028 3C018003 */  lui   $at, %hi(objectiveregisters1) # $at, 0x8003
+/* 035B58 7F001028 3C018003 */  lui   $at, %hi(objectiveregisters1)
 /* 035B5C 7F00102C AC200978 */  sw    $zero, %lo(objectiveregisters1)($at)
-/* 035B60 7F001030 3C018003 */  lui   $at, %hi(ai_accuracy_modifier) # $at, 0x8003
+/* 035B60 7F001030 3C018003 */  lui   $at, %hi(ai_accuracy_modifier)
 /* 035B64 7F001034 E420CE40 */  swc1  $f0, %lo(ai_accuracy_modifier)($at)
-/* 035B68 7F001038 3C018003 */  lui   $at, %hi(ai_damage_modifier) # $at, 0x8003
+/* 035B68 7F001038 3C018003 */  lui   $at, %hi(ai_damage_modifier)
 /* 035B6C 7F00103C E420CE44 */  swc1  $f0, %lo(ai_damage_modifier)($at)
-/* 035B70 7F001040 3C018003 */  lui   $at, %hi(ai_health_modifier) # $at, 0x8003
+/* 035B70 7F001040 3C018003 */  lui   $at, %hi(ai_health_modifier)
 /* 035B74 7F001044 E420CE48 */  swc1  $f0, %lo(ai_health_modifier)($at)
-/* 035B78 7F001048 3C018003 */  lui   $at, %hi(ai_reaction_speed) # $at, 0x8003
+/* 035B78 7F001048 3C018003 */  lui   $at, %hi(ai_reaction_speed)
 /* 035B7C 7F00104C E420CE4C */  swc1  $f0, %lo(ai_reaction_speed)($at)
 /* 035B80 7F001050 3C018003 */  lui   $at, %hi(setting_007_5)
 /* 035B84 7F001054 03E00008 */  jr    $ra
@@ -69,11 +69,11 @@ void alloc_false_GUARDdata_to_exec_global_action(void) {
 GLOBAL_ASM(
 .text
 glabel alloc_false_GUARDdata_to_exec_global_action
-/* 035B8C 7F00105C 3C0D8007 */  lui   $t5, %hi(ptr_setup_path_tbl) # $t5, 0x8007
+/* 035B8C 7F00105C 3C0D8007 */  lui   $t5, %hi(ptr_setup_path_tbl) 
 /* 035B90 7F001060 25AD5D00 */  addiu $t5, %lo(ptr_setup_path_tbl) # addiu $t5, $t5, 0x5d00
 /* 035B94 7F001064 8DA50014 */  lw    $a1, 0x14($t5)
-/* 035B98 7F001068 3C028003 */  lui   $v0, %hi(objectiveregisters3) # $v0, 0x8003
-/* 035B9C 7F00106C 3C068003 */  lui   $a2, %hi(objectiveregisters2) # $a2, 0x8003
+/* 035B98 7F001068 3C028003 */  lui   $v0, %hi(objectiveregisters3)
+/* 035B9C 7F00106C 3C068003 */  lui   $a2, %hi(objectiveregisters2)
 /* 035BA0 7F001070 24C6097C */  addiu $a2, %lo(objectiveregisters2) # addiu $a2, $a2, 0x97c
 /* 035BA4 7F001074 24420980 */  addiu $v0, %lo(objectiveregisters3) # addiu $v0, $v0, 0x980
 /* 035BA8 7F001078 27BDFDF8 */  addiu $sp, $sp, -0x208
@@ -113,10 +113,10 @@ glabel alloc_false_GUARDdata_to_exec_global_action
 /* 035C24 7F0010F4 39E4000F */  xori  $a0, $t7, 0xf
 /* 035C28 7F0010F8 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 035C2C 7F0010FC AFA70200 */   sw    $a3, 0x200($sp)
-/* 035C30 7F001100 3C0D8007 */  lui   $t5, %hi(ptr_setup_path_tbl) # $t5, 0x8007
+/* 035C30 7F001100 3C0D8007 */  lui   $t5, %hi(ptr_setup_path_tbl) 
 /* 035C34 7F001104 25AD5D00 */  addiu $t5, %lo(ptr_setup_path_tbl) # addiu $t5, $t5, 0x5d00
 /* 035C38 7F001108 8DA50014 */  lw    $a1, 0x14($t5)
-/* 035C3C 7F00110C 3C068003 */  lui   $a2, %hi(objectiveregisters2) # $a2, 0x8003
+/* 035C3C 7F00110C 3C068003 */  lui   $a2, %hi(objectiveregisters2)
 /* 035C40 7F001110 24C6097C */  addiu $a2, %lo(objectiveregisters2) # addiu $a2, $a2, 0x97c
 /* 035C44 7F001114 ACC20000 */  sw    $v0, ($a2)
 /* 035C48 7F001118 8CB90000 */  lw    $t9, ($a1)
@@ -124,7 +124,7 @@ glabel alloc_false_GUARDdata_to_exec_global_action
 /* 035C50 7F001120 00002025 */  move  $a0, $zero
 /* 035C54 7F001124 13200048 */  beqz  $t9, .L7F001248
 /* 035C58 7F001128 00A01825 */   move  $v1, $a1
-/* 035C5C 7F00112C 3C088003 */  lui   $t0, %hi(global_action_block_temp_buffer) # $t0, 0x8003
+/* 035C5C 7F00112C 3C088003 */  lui   $t0, %hi(global_action_block_temp_buffer) 
 /* 035C60 7F001130 2508A060 */  addiu $t0, %lo(global_action_block_temp_buffer) # addiu $t0, $t0, -0x5fa0
 /* 035C64 7F001134 240C001A */  li    $t4, 26
 /* 035C68 7F001138 240BFFFF */  li    $t3, -1
@@ -216,7 +216,7 @@ GLOBAL_ASM(
 .text
 glabel debug_object_load_all_models
 /* 035D88 7F001258 27BDFFC8 */  addiu $sp, $sp, -0x38
-/* 035D8C 7F00125C 3C0E8007 */  lui   $t6, %hi(ptr_setup_actions) # $t6, 0x8007
+/* 035D8C 7F00125C 3C0E8007 */  lui   $t6, %hi(ptr_setup_actions) 
 /* 035D90 7F001260 8DCE5D14 */  lw    $t6, %lo(ptr_setup_actions)($t6)
 /* 035D94 7F001264 AFBF0034 */  sw    $ra, 0x34($sp)
 /* 035D98 7F001268 AFB70030 */  sw    $s7, 0x30($sp)
@@ -239,7 +239,7 @@ glabel debug_object_load_all_models
 .L7F0012AC:
 /* 035DDC 7F0012AC 92030000 */  lbu   $v1, ($s0)
 .L7F0012B0:
-/* 035DE0 7F0012B0 3C0F8007 */  lui   $t7, %hi(ptr_setup_actions) # $t7, 0x8007
+/* 035DE0 7F0012B0 3C0F8007 */  lui   $t7, %hi(ptr_setup_actions) 
 /* 035DE4 7F0012B4 16230004 */  bne   $s1, $v1, .L7F0012C8
 /* 035DE8 7F0012B8 00000000 */   nop   
 /* 035DEC 7F0012BC 8DEF5D14 */  lw    $t7, %lo(ptr_setup_actions)($t7)
@@ -348,7 +348,7 @@ GLOBAL_ASM(
 .text
 glabel debug_weapon_load_table
 /* 035F3C 7F00140C 27BDFFB0 */  addiu $sp, $sp, -0x50
-/* 035F40 7F001410 3C0F8003 */  lui   $t7, %hi(weapon_models_for_weapon_load) # $t7, 0x8003
+/* 035F40 7F001410 3C0F8003 */  lui   $t7, %hi(weapon_models_for_weapon_load) 
 /* 035F44 7F001414 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 035F48 7F001418 AFB00018 */  sw    $s0, 0x18($sp)
 /* 035F4C 7F00141C 25EFA23C */  addiu $t7, %lo(weapon_models_for_weapon_load) # addiu $t7, $t7, -0x5dc4

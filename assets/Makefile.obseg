@@ -1,4 +1,4 @@
-BUILD_DIR := build
+BUILD_DIR := build/$(COUNTRYCODE)
 
 OBSEGMENT := obsegment.o
 OBSEG_DIR := assets/obseg

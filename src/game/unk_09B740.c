@@ -15,9 +15,9 @@ void sub_GAME_7F09B740(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F09B740
-/* 0D0270 7F09B740 3C048004 */  lui   $a0, %hi(random_val) # $a0, 0x8004
+/* 0D0270 7F09B740 3C048004 */  lui   $a0, %hi(random_val)
 /* 0D0274 7F09B744 DC840160 */  ld    $a0, %lo(random_val)($a0)
-/* 0D0278 7F09B748 3C018004 */  lui   $at, %hi(random_val) # $at, 0x8004
+/* 0D0278 7F09B748 3C018004 */  lui   $at, %hi(random_val)
 /* 0D027C 7F09B74C 000437FC */  dsll32 $a2, $a0, 0x1f
 /* 0D0280 7F09B750 00042FF8 */  dsll  $a1, $a0, 0x1f
 /* 0D0284 7F09B754 000637FA */  dsrl  $a2, $a2, 0x1f
@@ -49,7 +49,7 @@ GLOBAL_ASM(
 .text
 glabel sub_GAME_7F09B788
 /* 0D02B8 7F09B788 64840001 */  daddiu $a0, $a0, 1
-/* 0D02BC 7F09B78C 3C018004 */  lui   $at, %hi(random_val) # $at, 0x8004
+/* 0D02BC 7F09B78C 3C018004 */  lui   $at, %hi(random_val)
 /* 0D02C0 7F09B790 FC240160 */  sd    $a0, %lo(random_val)($at)
 /* 0D02C4 7F09B794 03E00008 */  jr    $ra
 /* 0D02C8 7F09B798 24040000 */   li    $a0, 0

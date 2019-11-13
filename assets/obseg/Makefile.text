@@ -1,4 +1,7 @@
 #text
+$(BUILD_DIR)/$(OBSEG_DIR)/text/%.rz: $(OBSEG_DIR)/text/$(COUNTRYCODE)/%.bin
+	$(RZ_COMP) $< $@
+
 $(BUILD_DIR)/$(OBSEG_DIR)/text/%.rz: $(OBSEG_DIR)/text/%.bin
 	$(RZ_COMP) $< $@
 
@@ -9,12 +12,12 @@ $(BUILD_DIR)/$(OBSEG_DIR)/text/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/text/%.elf
 	$(OBJCOPY) $< $@ -O binary
 
 $(BUILD_DIR)/$(OBSEG_DIR)/text/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/text/%.o
-	$(LD) -T assets/obseg/text/LnameX.ld -o $@
-	rm build/assets/obseg/text/LnameX.o
+	$(LD) -T assets/obseg/text/LnameX.ld -o $@ $<
+	
 
 $(BUILD_DIR)/$(OBSEG_DIR)/text/%.o: $(OBSEG_DIR)/text/%.c
 	$(CC) -c $(CFLAGS) -o $@ -O2 $<
-	mv $@ build/assets/obseg/text/LnameX.o
+	
 
 TEXT_RZ_FILES := \
     $(BUILD_DIR)/$(OBSEG_DIR)/text/LameJ.rz \

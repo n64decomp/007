@@ -1,5 +1,5 @@
 #include "ultra64.h"
-#include "game/actor.h"
+#include "game/chr.h"
 
 void init_guards(void) {
     animation_rate = 1.0f;
@@ -32,7 +32,7 @@ glabel alloc_init_GUARDdata_entries
 /* 0359F8 7F000EC8 01EE7823 */  subu  $t7, $t7, $t6
 /* 0359FC 7F000ECC 000F7880 */  sll   $t7, $t7, 2
 /* 035A00 7F000ED0 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 035A04 7F000ED4 3C068003 */  lui   $a2, %hi(num_guards) # $a2, 0x8003
+/* 035A04 7F000ED4 3C068003 */  lui   $a2, %hi(num_guards)
 /* 035A08 7F000ED8 25E4000F */  addiu $a0, $t7, 0xf
 /* 035A0C 7F000EDC 24C6CC68 */  addiu $a2, %lo(num_guards) # addiu $a2, $a2, -0x3398
 /* 035A10 7F000EE0 AFBF0014 */  sw    $ra, 0x14($sp)
@@ -41,10 +41,10 @@ glabel alloc_init_GUARDdata_entries
 /* 035A1C 7F000EEC 3B04000F */  xori  $a0, $t8, 0xf
 /* 035A20 7F000EF0 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 035A24 7F000EF4 24050004 */   li    $a1, 4
-/* 035A28 7F000EF8 3C068003 */  lui   $a2, %hi(num_guards) # $a2, 0x8003
+/* 035A28 7F000EF8 3C068003 */  lui   $a2, %hi(num_guards)
 /* 035A2C 7F000EFC 24C6CC68 */  addiu $a2, %lo(num_guards) # addiu $a2, $a2, -0x3398
 /* 035A30 7F000F00 8CC80000 */  lw    $t0, ($a2)
-/* 035A34 7F000F04 3C048003 */  lui   $a0, %hi(ptr_guard_data) # $a0, 0x8003
+/* 035A34 7F000F04 3C048003 */  lui   $a0, %hi(ptr_guard_data)
 /* 035A38 7F000F08 2484CC64 */  addiu $a0, %lo(ptr_guard_data) # addiu $a0, $a0, -0x339c
 /* 035A3C 7F000F0C AC820000 */  sw    $v0, ($a0)
 /* 035A40 7F000F10 1900000B */  blez  $t0, .L7F000F40
@@ -77,7 +77,7 @@ void set_new_rand_head_bodies(void) {
 GLOBAL_ASM(
 .text
 glabel set_new_rand_head_bodies
-/* 035A80 7F000F50 3C0E8004 */  lui   $t6, %hi(c_item_entries) # $t6, 0x8004
+/* 035A80 7F000F50 3C0E8004 */  lui   $t6, %hi(c_item_entries) 
 /* 035A84 7F000F54 8DCEDE10 */  lw    $t6, %lo(c_item_entries)($t6)
 /* 035A88 7F000F58 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 035A8C 7F000F5C AFBF0014 */  sw    $ra, 0x14($sp)
@@ -95,9 +95,9 @@ glabel set_new_rand_head_bodies
 .L7F000F88:
 /* 035AB8 7F000F88 0C002914 */  jal   get_random_value
 /* 035ABC 7F000F8C 00000000 */   nop   
-/* 035AC0 7F000F90 3C188003 */  lui   $t8, %hi(num_male_heads) # $t8, 0x8003
+/* 035AC0 7F000F90 3C188003 */  lui   $t8, %hi(num_male_heads) 
 /* 035AC4 7F000F94 8F18CD04 */  lw    $t8, %lo(num_male_heads)($t8)
-/* 035AC8 7F000F98 3C018003 */  lui   $at, %hi(current_random_male_head) # $at, 0x8003
+/* 035AC8 7F000F98 3C018003 */  lui   $at, %hi(current_random_male_head)
 /* 035ACC 7F000F9C 0058001B */  divu  $zero, $v0, $t8
 /* 035AD0 7F000FA0 0000C810 */  mfhi  $t9
 /* 035AD4 7F000FA4 AC39CE38 */  sw    $t9, %lo(current_random_male_head)($at)
@@ -107,9 +107,9 @@ glabel set_new_rand_head_bodies
 .L7F000FB4:
 /* 035AE4 7F000FB4 0C002914 */  jal   get_random_value
 /* 035AE8 7F000FB8 00000000 */   nop   
-/* 035AEC 7F000FBC 3C088003 */  lui   $t0, %hi(num_female_heads) # $t0, 0x8003
+/* 035AEC 7F000FBC 3C088003 */  lui   $t0, %hi(num_female_heads) 
 /* 035AF0 7F000FC0 8D08CD08 */  lw    $t0, %lo(num_female_heads)($t0)
-/* 035AF4 7F000FC4 3C018003 */  lui   $at, %hi(current_random_female_head) # $at, 0x8003
+/* 035AF4 7F000FC4 3C018003 */  lui   $at, %hi(current_random_female_head)
 /* 035AF8 7F000FC8 0048001B */  divu  $zero, $v0, $t0
 /* 035AFC 7F000FCC 00004810 */  mfhi  $t1
 /* 035B00 7F000FD0 AC29CE3C */  sw    $t1, %lo(current_random_female_head)($at)
@@ -119,10 +119,10 @@ glabel set_new_rand_head_bodies
 .L7F000FE0:
 /* 035B10 7F000FE0 0C002914 */  jal   get_random_value
 /* 035B14 7F000FE4 00000000 */   nop   
-/* 035B18 7F000FE8 3C0A8003 */  lui   $t2, %hi(num_bodies) # $t2, 0x8003
+/* 035B18 7F000FE8 3C0A8003 */  lui   $t2, %hi(num_bodies) 
 /* 035B1C 7F000FEC 8D4ACD00 */  lw    $t2, %lo(num_bodies)($t2)
 /* 035B20 7F000FF0 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 035B24 7F000FF4 3C018003 */  lui   $at, %hi(current_random_body) # $at, 0x8003
+/* 035B24 7F000FF4 3C018003 */  lui   $at, %hi(current_random_body)
 /* 035B28 7F000FF8 004A001B */  divu  $zero, $v0, $t2
 /* 035B2C 7F000FFC 00005810 */  mfhi  $t3
 /* 035B30 7F001000 AC2BCE34 */  sw    $t3, %lo(current_random_body)($at)

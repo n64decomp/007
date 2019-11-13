@@ -1,5 +1,8 @@
 
 #setup
+$(BUILD_DIR)/$(OBSEG_DIR)/setup/%.rz: $(OBSEG_DIR)/setup/$(COUNTRYCODE)/%.bin
+	$(RZ_COMP) $< $@
+
 $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.rz: $(OBSEG_DIR)/setup/%.bin
 	$(RZ_COMP) $< $@
 
@@ -10,12 +13,10 @@ $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.elf
 	$(OBJCOPY) $< $@ -O binary
 
 $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.o
-	$(LD) -T assets/obseg/setup/Usetup.ld -o $@
-	rm build/assets/obseg/setup/Usetup.o
+	$(LD) -T assets/obseg/setup/Usetup.ld -o $@ $<
 
 $(BUILD_DIR)/$(OBSEG_DIR)/setup/%.o: $(OBSEG_DIR)/setup/%.c
 	$(CC) -c $(CFLAGS) -o $@ -O2 $<
-	mv $@ build/assets/obseg/setup/Usetup.o
 
 SETUP_RZ_FILES = \
     $(BUILD_DIR)/$(OBSEG_DIR)/setup/Ump_setupameZ.rz \

@@ -88,9 +88,9 @@ loop_4:
 GLOBAL_ASM(
 .text
 glabel check_string_something
-/* 00B0F0 7000A4F0 3C058002 */  lui   $a1, %hi(strstr_ptrcurrent_string) # $a1, 0x8002
-/* 00B0F4 7000A4F4 3C068002 */  lui   $a2, %hi(strstr_numstings) # $a2, 0x8002
-/* 00B0F8 7000A4F8 3C0E8003 */  lui   $t6, %hi(str_empty) # $t6, 0x8003
+/* 00B0F0 7000A4F0 3C058002 */  lui   $a1, %hi(strstr_ptrcurrent_string)
+/* 00B0F4 7000A4F4 3C068002 */  lui   $a2, %hi(strstr_numstings)
+/* 00B0F8 7000A4F8 3C0E8003 */  lui   $t6, %hi(str_empty) 
 /* 00B0FC 7000A4FC 24C64470 */  addiu $a2, %lo(strstr_numstings) # addiu $a2, $a2, 0x4470
 /* 00B100 7000A500 24A54474 */  addiu $a1, %lo(strstr_ptrcurrent_string) # addiu $a1, $a1, 0x4474
 /* 00B104 7000A504 25CE91F0 */  addiu $t6, %lo(str_empty) # addiu $t6, $t6, -0x6e10
@@ -197,12 +197,12 @@ glabel check_boot_switches
 /* 00B1DC 7000A5DC 0C0033AA */  jal   rmon_debug_is_final_build
 /* 00B1E0 7000A5E0 3631B000 */   ori $s1, $s1, 0xb000
 /* 00B1E4 7000A5E4 10400004 */  beqz  $v0, .L7000A5F8
-/* 00B1E8 7000A5E8 3C108006 */   lui   $s0, %hi(boot_token_from_indy) # $s0, 0x8006
-/* 00B1EC 7000A5EC 3C018006 */  lui   $at, %hi(boot_token_from_indy) # $at, 0x8006
+/* 00B1E8 7000A5E8 3C108006 */   lui   $s0, %hi(boot_token_from_indy)
+/* 00B1EC 7000A5EC 3C018006 */  lui   $at, %hi(boot_token_from_indy)
 /* 00B1F0 7000A5F0 1000000A */  b     .L7000A61C
 /* 00B1F4 7000A5F4 AC204C30 */   sw    $zero, %lo(boot_token_from_indy)($at)
 .L7000A5F8:
-/* 00B1F8 7000A5F8 3C128006 */  lui   $s2, %hi(piCmdBuf) # $s2, 0x8006
+/* 00B1F8 7000A5F8 3C128006 */  lui   $s2, %hi(piCmdBuf)
 /* 00B1FC 7000A5FC 26524EB0 */  addiu $s2, %lo(piCmdBuf) # addiu $s2, $s2, 0x4eb0
 /* 00B200 7000A600 26104C30 */  addiu $s0, %lo(boot_token_from_indy) # addiu $s0, $s0, 0x4c30
 .L7000A604:
@@ -213,10 +213,10 @@ glabel check_boot_switches
 /* 00B214 7000A614 1612FFFB */  bne   $s0, $s2, .L7000A604
 /* 00B218 7000A618 26310004 */   addiu $s1, $s1, 4
 .L7000A61C:
-/* 00B21C 7000A61C 3C048006 */  lui   $a0, %hi(boot_token_from_indy) # $a0, 0x8006
+/* 00B21C 7000A61C 3C048006 */  lui   $a0, %hi(boot_token_from_indy)
 /* 00B220 7000A620 0C00293C */  jal   check_string_something
 /* 00B224 7000A624 24844C30 */   addiu $a0, %lo(boot_token_from_indy) # addiu $a0, $a0, 0x4c30
-/* 00B228 7000A628 3C058003 */  lui   $a1, %hi(aD_6) # $a1, 0x8003
+/* 00B228 7000A628 3C058003 */  lui   $a1, %hi(aD_6)
 /* 00B22C 7000A62C 24A591F4 */  addiu $a1, %lo(aD_6) # addiu $a1, $a1, -0x6e0c
 /* 00B230 7000A630 0C0029A8 */  jal   check_token
 /* 00B234 7000A634 24040001 */   li    $a0, 1
@@ -225,21 +225,21 @@ glabel check_boot_switches
 /* 00B240 7000A640 240E0001 */  li    $t6, 1
 /* 00B244 7000A644 AFAE0028 */  sw    $t6, 0x28($sp)
 .L7000A648:
-/* 00B248 7000A648 3C058003 */  lui   $a1, %hi(aS_2) # $a1, 0x8003
+/* 00B248 7000A648 3C058003 */  lui   $a1, %hi(aS_2)
 /* 00B24C 7000A64C 0C0029A8 */  jal   check_token
 /* 00B250 7000A650 24A591F8 */   addiu $a1, %lo(aS_2) # addiu $a1, $a1, -0x6e08
 /* 00B254 7000A654 10400004 */  beqz  $v0, .L7000A668
 /* 00B258 7000A658 24040001 */   li    $a0, 1
 /* 00B25C 7000A65C 240F0001 */  li    $t7, 1
-/* 00B260 7000A660 3C018002 */  lui   $at, %hi(bootswitch_sound) # $at, 0x8002
+/* 00B260 7000A660 3C018002 */  lui   $at, %hi(bootswitch_sound)
 /* 00B264 7000A664 A02F43F8 */  sb    $t7, %lo(bootswitch_sound)($at)
 .L7000A668:
-/* 00B268 7000A668 3C058003 */  lui   $a1, %hi(aJ) # $a1, 0x8003
+/* 00B268 7000A668 3C058003 */  lui   $a1, %hi(aJ)
 /* 00B26C 7000A66C 0C0029A8 */  jal   check_token
 /* 00B270 7000A670 24A591FC */   addiu $a1, %lo(aJ) # addiu $a1, $a1, -0x6e04
 /* 00B274 7000A674 10400003 */  beqz  $v0, .L7000A684
 /* 00B278 7000A678 24180001 */   li    $t8, 1
-/* 00B27C 7000A67C 3C018005 */  lui   $at, %hi(j_text_trigger) # $at, 0x8005
+/* 00B27C 7000A67C 3C018005 */  lui   $at, %hi(j_text_trigger)
 /* 00B280 7000A680 AC3884D0 */  sw    $t8, %lo(j_text_trigger)($at)
 .L7000A684:
 /* 00B284 7000A684 8FBF0024 */  lw    $ra, 0x24($sp)
@@ -307,14 +307,14 @@ glabel check_token
 /* 00B2C4 7000A6C4 AFB00014 */  sw    $s0, 0x14($sp)
 /* 00B2C8 7000A6C8 0C004E1F */  jal   strlen
 /* 00B2CC 7000A6CC 00A02025 */   move  $a0, $a1
-/* 00B2D0 7000A6D0 3C158002 */  lui   $s5, %hi(strstr_numstings) # $s5, 0x8002
+/* 00B2D0 7000A6D0 3C158002 */  lui   $s5, %hi(strstr_numstings)
 /* 00B2D4 7000A6D4 26B54470 */  addiu $s5, %lo(strstr_numstings) # addiu $s5, $s5, 0x4470
 /* 00B2D8 7000A6D8 8EAE0000 */  lw    $t6, ($s5)
 /* 00B2DC 7000A6DC 00409825 */  move  $s3, $v0
 /* 00B2E0 7000A6E0 24110001 */  li    $s1, 1
 /* 00B2E4 7000A6E4 29C10002 */  slti  $at, $t6, 2
 /* 00B2E8 7000A6E8 14200014 */  bnez  $at, .L7000A73C
-/* 00B2EC 7000A6EC 3C108002 */   lui   $s0, %hi(D_80024478) # $s0, 0x8002
+/* 00B2EC 7000A6EC 3C108002 */   lui   $s0, %hi(D_80024478)
 /* 00B2F0 7000A6F0 26104478 */  addiu $s0, %lo(D_80024478) # addiu $s0, $s0, 0x4478
 /* 00B2F4 7000A6F4 02802025 */  move  $a0, $s4
 .L7000A6F8:

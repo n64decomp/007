@@ -81,14 +81,14 @@ GLOBAL_ASM(
 glabel cleanupExplosions
 /* 03C330 7F007800 27BDFFD8 */  addiu $sp, $sp, -0x28
 /* 03C334 7F007804 AFBF0024 */  sw    $ra, 0x24($sp)
-/* 03C338 7F007808 3C018004 */  lui   $at, %hi(D_80040170) # $at, 0x8004
+/* 03C338 7F007808 3C018004 */  lui   $at, %hi(D_80040170)
 /* 03C33C 7F00780C 44806000 */  mtc1  $zero, $f12
 /* 03C340 7F007810 AFB20020 */  sw    $s2, 0x20($sp)
 /* 03C344 7F007814 AFB1001C */  sw    $s1, 0x1c($sp)
 /* 03C348 7F007818 AFB00018 */  sw    $s0, 0x18($sp)
 /* 03C34C 7F00781C 0C000EC1 */  jal   video_related_9
 /* 03C350 7F007820 AC200170 */   sw    $zero, %lo(D_80040170)($at)
-/* 03C354 7F007824 3C118008 */  lui   $s1, %hi(ptr_explosion_buf) # $s1, 0x8008
+/* 03C354 7F007824 3C118008 */  lui   $s1, %hi(ptr_explosion_buf)
 /* 03C358 7F007828 2631A144 */  addiu $s1, %lo(ptr_explosion_buf) # addiu $s1, $s1, -0x5ebc
 /* 03C35C 7F00782C 8E2E0000 */  lw    $t6, ($s1)
 /* 03C360 7F007830 00008025 */  move  $s0, $zero
@@ -119,7 +119,7 @@ glabel cleanupExplosions
 /* 03C3BC 7F00788C 5612FFED */  bnel  $s0, $s2, .L7F007844
 /* 03C3C0 7F007890 8E2F0000 */   lw    $t7, ($s1)
 .L7F007894:
-/* 03C3C4 7F007894 3C118008 */  lui   $s1, %hi(ptr_smoke_buf) # $s1, 0x8008
+/* 03C3C4 7F007894 3C118008 */  lui   $s1, %hi(ptr_smoke_buf)
 /* 03C3C8 7F007898 2631A140 */  addiu $s1, %lo(ptr_smoke_buf) # addiu $s1, $s1, -0x5ec0
 /* 03C3CC 7F00789C 8E2D0000 */  lw    $t5, ($s1)
 /* 03C3D0 7F0078A0 00008025 */  move  $s0, $zero

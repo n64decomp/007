@@ -9,12 +9,12 @@ $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.elf
 	$(OBJCOPY) $< $@ -O binary
 
 $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.o
-	$(LD) -T assets/obseg/brief/Ubrief.ld -o $@
-	rm build/assets/obseg/brief/Ubrief.o
+	$(LD) -T assets/obseg/brief/Ubrief.ld -o $@ $<
+	
 
 $(BUILD_DIR)/$(OBSEG_DIR)/brief/%.o: $(OBSEG_DIR)/brief/%.c
 	$(CC) -c $(CFLAGS) -o $@ -O2 $<
-	mv $@ build/assets/obseg/brief/Ubrief.o
+	
 
 BRIEF_RZ_FILES = \
     $(BUILD_DIR)/$(OBSEG_DIR)/brief/UbriefarchZ.rz \

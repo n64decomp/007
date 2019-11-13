@@ -574,6 +574,10 @@ struct bg_data_header {
     void * pGlobalVisCmds;
 };
 
+typedef enum PROPTYPE {
+    New_Name=0
+} PROPTYPE;
+
 typedef struct structunknown structunknown, *Pstructunknown;
 
 struct structunknown {
@@ -1299,6 +1303,1005 @@ typedef __gnuc_va_list va_list;
 #define SP_DRAM_STACK_SIZE8 1024
 
 #define SP_UCODE_DATA_SIZE 2048
+
+typedef enum ITEM_IDS {
+    ITEM_56=86,
+    ITEM_57=87,
+    ITEM_AK47=8,
+    ITEM_AUDIOTAPE=71,
+    ITEM_AUTOSHOT=16,
+    ITEM_BLACKBOX=62,
+    ITEM_BLUEPRINTS=69,
+    ITEM_BOMBCASE=33,
+    ITEM_BOMBDEFUSER=39,
+    ITEM_BRIEFCASE=43,
+    ITEM_BUG=47,
+    ITEM_BUGDETECTOR=49,
+    ITEM_BUNGEE=37,
+    ITEM_CAMERA=40,
+    ITEM_CIRCUITBOARD=63,
+    ITEM_CLIPBOARD=64,
+    ITEM_CREDITCARD=53,
+    ITEM_DARKGLASSES=52,
+    ITEM_DATATHIEF=55,
+    ITEM_DATTAPE=73,
+    ITEM_DOORDECODER=38,
+    ITEM_DOOREXPLODER=42,
+    ITEM_DOSSIERRED=66,
+    ITEM_EXPLOSIVEFLOPPY=50,
+    ITEM_FIST=1,
+    ITEM_FLAREPISTOL=35,
+    ITEM_FNP90=14,
+    ITEM_GASKEYRING=54,
+    ITEM_GOLDBAR=79,
+    ITEM_GOLDENEYEKEY=61,
+    ITEM_GOLDENGUN=19,
+    ITEM_GOLDWPPK=21,
+    ITEM_GRENADE=26,
+    ITEM_GRENADELAUNCH=24,
+    ITEM_HEROIN=80,
+    ITEM_JOYPAD=85,
+    ITEM_KEYANALYSERCASE=46,
+    ITEM_KEYBOLT=83,
+    ITEM_KEYCARD=81,
+    ITEM_KEYYALE=82,
+    ITEM_KNIFE=2,
+    ITEM_LASER=22,
+    ITEM_LECTRE=77,
+    ITEM_LOCKEXPLODER=41,
+    ITEM_M16=13,
+    ITEM_MAP=70,
+    ITEM_MICROCAMERA=48,
+    ITEM_MICROCODE=76,
+    ITEM_MICROFILM=75,
+    ITEM_MONEY=78,
+    ITEM_MP5K=10,
+    ITEM_MP5KSIL=11,
+    ITEM_PITONGUN=36,
+    ITEM_PLANS=67,
+    ITEM_PLASTIQUE=34,
+    ITEM_POLARIZEDGLASSES=51,
+    ITEM_PROXIMITYMINE=28,
+    ITEM_REMOTEMINE=29,
+    ITEM_ROCKETLAUNCH=25,
+    ITEM_RUGER=18,
+    ITEM_SAFECRACKERCASE=45,
+    ITEM_SHOTGUN=15,
+    ITEM_SILVERWPPK=20,
+    ITEM_SKORPION=7,
+    ITEM_SNIPERRIFLE=17,
+    ITEM_SPECTRE=12,
+    ITEM_SPOOLTAPE=74,
+    ITEM_SPYFILE=68,
+    ITEM_STAFFLIST=65,
+    ITEM_SUIT_LF_HAND=84,
+    ITEM_TANKSHELLS=32,
+    ITEM_TASER=31,
+    ITEM_THROWKNIFE=3,
+    ITEM_TIMEDMINE=27,
+    ITEM_TOKEN=88,
+    ITEM_TRIGGER=30,
+    ITEM_TT33=6,
+    ITEM_UNARMED=0,
+    ITEM_UZI=9,
+    ITEM_VIDEOTAPE=72,
+    ITEM_WATCHCOMMUNICATOR=57,
+    ITEM_WATCHGEIGERCOUNTER=58,
+    ITEM_WATCHIDENTIFIER=56,
+    ITEM_WATCHLASER=23,
+    ITEM_WATCHMAGNETATTRACT=60,
+    ITEM_WATCHMAGNETREPEL=59,
+    ITEM_WEAPONCASE=44,
+    ITEM_WPPK=4,
+    ITEM_WPPKSIL=5
+} ITEM_IDS;
+
+typedef enum AIRCRAFT_ANIMATIONS {
+    ANIM_helicopter_cradle=0,
+    ANIM_helicopter_takeoff=2,
+    ANIM_plane_runway=1
+} AIRCRAFT_ANIMATIONS;
+
+typedef enum LEVEL_SOLO_SEQUENCE {
+    SP_LEVEL_ARCHIVES=11,
+    SP_LEVEL_AZTEC=19,
+    SP_LEVEL_BUNKER1=5,
+    SP_LEVEL_BUNKER2=9,
+    SP_LEVEL_CAVERNS=17,
+    SP_LEVEL_CONTROL=16,
+    SP_LEVEL_CRADLE=18,
+    SP_LEVEL_DAM=1,
+    SP_LEVEL_DEPOT=13,
+    SP_LEVEL_EGYPT=20,
+    SP_LEVEL_FACILITY=2,
+    SP_LEVEL_FRIGATE=7,
+    SP_LEVEL_JUNGLE=15,
+    SP_LEVEL_RUNWAY=3,
+    SP_LEVEL_SILO=6,
+    SP_LEVEL_STATUE=10,
+    SP_LEVEL_STREETS=12,
+    SP_LEVEL_SURFACE1=4,
+    SP_LEVEL_SURFACE2=8,
+    SP_LEVEL_TRAIN=14
+} LEVEL_SOLO_SEQUENCE;
+
+typedef enum WATCH_BRIEFING_PAGE {
+    BRIEFING_M=2,
+    BRIEFING_MONEYPENNY=4,
+    BRIEFING_OVERVIEW=1,
+    BRIEFING_Q=3,
+    BRIEFING_TITLE=0
+} WATCH_BRIEFING_PAGE;
+
+typedef enum MP_STAGE_SELECTED {
+    MP_STAGE_ARCHIVES=9,
+    MP_STAGE_BASEMENT=5,
+    MP_STAGE_BUNKER=8,
+    MP_STAGE_CAVERNS=10,
+    MP_STAGE_CAVES=3,
+    MP_STAGE_COMPLEX=2,
+    MP_STAGE_EGYPT=11,
+    MP_STAGE_FACILITY=7,
+    MP_STAGE_LIBRARY=4,
+    MP_STAGE_RANDOM=0,
+    MP_STAGE_STACK=6,
+    MP_STAGE_TEMPLE=1
+} MP_STAGE_SELECTED;
+
+typedef enum CONTROLLER_CONFIG {
+    CONTROLLER_CONFIG_CINEMA=8,
+    CONTROLLER_CONFIG_DOMINO=6,
+    CONTROLLER_CONFIG_GALORE=5,
+    CONTROLLER_CONFIG_GOODHEAD=7,
+    CONTROLLER_CONFIG_GOODNIGHT=3,
+    CONTROLLER_CONFIG_HONEY=0,
+    CONTROLLER_CONFIG_KISSY=2,
+    CONTROLLER_CONFIG_PLENTY=4,
+    CONTROLLER_CONFIG_SOLITARE=1
+} CONTROLLER_CONFIG;
+
+typedef struct rgba_val rgba_val, *Prgba_val;
+
+struct rgba_val {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+};
+
+typedef enum MISSION_BRIEFING {
+    BRIEF_M=1,
+    BRIEF_MONEYPENNY=3,
+    BRIEF_OVERVIEW=0,
+    BRIEF_Q=2
+} MISSION_BRIEFING;
+
+typedef enum PROPS {
+    PROP_ICBM=93,
+    PROP_ICBM_nose=92,
+    PROP_ak47mag=121,
+    PROP_alarm1=0,
+    PROP_alarm2=1,
+    PROP_ammo_crate1=3,
+    PROP_ammo_crate2=4,
+    PROP_ammo_crate3=5,
+    PROP_ammo_crate4=6,
+    PROP_ammo_crate5=7,
+    PROP_apc=289,
+    PROP_archsecdoor1=297,
+    PROP_archsecdoor2=298,
+    PROP_artic=281,
+    PROP_artictrailer=286,
+    PROP_barricade=334,
+    PROP_bin1=8,
+    PROP_blotter1=9,
+    PROP_bodyarmour=115,
+    PROP_bodyarmourvest=116,
+    PROP_bollard=339,
+    PROP_bomb=255,
+    PROP_book1=10,
+    PROP_bookshelf1=11,
+    PROP_borg_crate=87,
+    PROP_boxcartridges=129,
+    PROP_boxes2x4=90,
+    PROP_boxes3x4=89,
+    PROP_boxes4x4=88,
+    PROP_brakeunit=120,
+    PROP_bridge_console1a=12,
+    PROP_bridge_console1b=13,
+    PROP_bridge_console2a=14,
+    PROP_bridge_console2b=15,
+    PROP_bridge_console3a=16,
+    PROP_bridge_console3b=17,
+    PROP_carbmw=301,
+    PROP_card_box1=18,
+    PROP_card_box2=19,
+    PROP_card_box3=20,
+    PROP_card_box4_lg=21,
+    PROP_card_box5_lg=22,
+    PROP_card_box6_lg=23,
+    PROP_carescort=302,
+    PROP_cargolf=303,
+    PROP_carweird=304,
+    PROP_carzil=305,
+    PROP_cctv=24,
+    PROP_chraudiotape=262,
+    PROP_chrautoshot=207,
+    PROP_chrblackbox=274,
+    PROP_chrblueprints=258,
+    PROP_chrbombcase=226,
+    PROP_chrbombdefuser=235,
+    PROP_chrbriefcase=198,
+    PROP_chrbug=245,
+    PROP_chrbugdetector=236,
+    PROP_chrbungee=233,
+    PROP_chrcamera=238,
+    PROP_chrcircuitboard=259,
+    PROP_chrclipboard=269,
+    PROP_chrcreditcard=250,
+    PROP_chrdarkglasses=251,
+    PROP_chrdatathief=253,
+    PROP_chrdattape=272,
+    PROP_chrdoordecoder=234,
+    PROP_chrdoorexploder=240,
+    PROP_chrdossierred=270,
+    PROP_chrdynamite=232,
+    PROP_chrexplosivepen=225,
+    PROP_chrextinguisher=128,
+    PROP_chrfingergun=229,
+    PROP_chrflarepistol=227,
+    PROP_chrfnp90=197,
+    PROP_chrgaskeyring=252,
+    PROP_chrgoldbar=267,
+    PROP_chrgolden=208,
+    PROP_chrgoldeneyekey=248,
+    PROP_chrgoldwppk=231,
+    PROP_chrgrenade=196,
+    PROP_chrgrenadelaunch=185,
+    PROP_chrgrenaderound=203,
+    PROP_chrheroin=268,
+    PROP_chrkalash=184,
+    PROP_chrkeyanalysercase=241,
+    PROP_chrkeybolt=244,
+    PROP_chrkeyyale=243,
+    PROP_chrknife=186,
+    PROP_chrlaser=187,
+    PROP_chrlectre=265,
+    PROP_chrlockexploder=239,
+    PROP_chrm16=188,
+    PROP_chrmap=260,
+    PROP_chrmicrocamera=246,
+    PROP_chrmicrocode=264,
+    PROP_chrmicrofilm=263,
+    PROP_chrmoney=266,
+    PROP_chrmp5k=189,
+    PROP_chrmp5ksil=206,
+    PROP_chrpitongun=228,
+    PROP_chrplans=256,
+    PROP_chrplastique=273,
+    PROP_chrpolarizedglasses=249,
+    PROP_chrproximitymine=200,
+    PROP_chrremotemine=199,
+    PROP_chrrocket=202,
+    PROP_chrrocketlaunch=211,
+    PROP_chrruger=190,
+    PROP_chrsafecrackercase=237,
+    PROP_chrshotgun=192,
+    PROP_chrsilverwppk=230,
+    PROP_chrskorpion=193,
+    PROP_chrsniperrifle=210,
+    PROP_chrspectre=194,
+    PROP_chrspooltape=261,
+    PROP_chrspyfile=257,
+    PROP_chrstafflist=271,
+    PROP_chrtesttube=338,
+    PROP_chrthrowknife=209,
+    PROP_chrtimedmine=201,
+    PROP_chrtt33=205,
+    PROP_chruzi=195,
+    PROP_chrvideotape=275,
+    PROP_chrweaponcase=242,
+    PROP_chrwppk=191,
+    PROP_chrwppksil=204,
+    PROP_chrwristdart=224,
+    PROP_console1=25,
+    PROP_console2=26,
+    PROP_console3=27,
+    PROP_console_sev2a=32,
+    PROP_console_sev2b=33,
+    PROP_console_sev2c=34,
+    PROP_console_sev2d=35,
+    PROP_console_sev_GEa=36,
+    PROP_console_sev_GEb=37,
+    PROP_console_seva=28,
+    PROP_console_sevb=29,
+    PROP_console_sevc=30,
+    PROP_console_sevd=31,
+    PROP_cryptdoor1a=170,
+    PROP_cryptdoor1b=171,
+    PROP_cryptdoor2a=172,
+    PROP_cryptdoor2b=173,
+    PROP_cryptdoor3=174,
+    PROP_cryptdoor4=175,
+    PROP_damchaindoor=180,
+    PROP_damgatedoor=178,
+    PROP_damtundoor=179,
+    PROP_depot_door_steel=309,
+    PROP_depot_gate_entry=308,
+    PROP_desk1=38,
+    PROP_desk2=39,
+    PROP_desk_arecibo1=95,
+    PROP_desk_lamp2=40,
+    PROP_dest_engine=99,
+    PROP_dest_exocet=100,
+    PROP_dest_gun=101,
+    PROP_dest_harpoon=102,
+    PROP_dest_seawolf=103,
+    PROP_disc_reader=41,
+    PROP_disk_drive1=42,
+    PROP_door_azt_chair=331,
+    PROP_door_azt_desk=329,
+    PROP_door_azt_desk_top=330,
+    PROP_door_aztec=327,
+    PROP_door_dest1=152,
+    PROP_door_dest2=153,
+    PROP_door_eyelid=164,
+    PROP_door_iris=165,
+    PROP_door_mf=332,
+    PROP_door_roller1=146,
+    PROP_door_roller2=147,
+    PROP_door_roller3=148,
+    PROP_door_roller4=149,
+    PROP_door_rollertrain=325,
+    PROP_door_st_arec1=150,
+    PROP_door_st_arec2=151,
+    PROP_door_win=326,
+    PROP_doorconsole=337,
+    PROP_doorpanel=336,
+    PROP_doorprison1=182,
+    PROP_doorstatgate=183,
+    PROP_explosionbit=2,
+    PROP_filing_cabinet1=43,
+    PROP_flag=333,
+    PROP_floppy=247,
+    PROP_fnp90mag=130,
+    PROP_gas_plant_met1_do1=158,
+    PROP_gas_plant_sw2_do1=155,
+    PROP_gas_plant_sw3_do1=156,
+    PROP_gas_plant_sw4_do1=157,
+    PROP_gas_plant_sw_do1=154,
+    PROP_gas_plant_wc_cub1=159,
+    PROP_gasbarrel=113,
+    PROP_gasbarrels=114,
+    PROP_gasplant_clear_door=160,
+    PROP_gastank=117,
+    PROP_glassware1=118,
+    PROP_glassware2=310,
+    PROP_glassware3=311,
+    PROP_glassware4=312,
+    PROP_goldeneyelogo=277,
+    PROP_goldenshells=131,
+    PROP_groundgun=299,
+    PROP_gun_runway1=292,
+    PROP_hatberet=220,
+    PROP_hatberetblue=221,
+    PROP_hatberetred=222,
+    PROP_hatchbolt=119,
+    PROP_hatchdoor=177,
+    PROP_hatchsevx=295,
+    PROP_hatfurry=212,
+    PROP_hatfurryblack=214,
+    PROP_hatfurrybrown=213,
+    PROP_hathelmet=217,
+    PROP_hathelmetgrey=218,
+    PROP_hatmoon=219,
+    PROP_hatpeaked=223,
+    PROP_hattbird=215,
+    PROP_hattbirdbrown=216,
+    PROP_helicopter=282,
+    PROP_hind=285,
+    PROP_jeep=280,
+    PROP_jerry_can1=44,
+    PROP_jungle3_tree=108,
+    PROP_jungle5_tree=318,
+    PROP_key_holder=294,
+    PROP_keyboard1=45,
+    PROP_kit_units1=46,
+    PROP_labbench=112,
+    PROP_landmine=313,
+    PROP_legalpage=319,
+    PROP_letter_tray1=47,
+    PROP_locker3=96,
+    PROP_locker4=97,
+    PROP_m16mag=122,
+    PROP_magnumshells=132,
+    PROP_mainframe1=48,
+    PROP_mainframe2=49,
+    PROP_metal_chair1=50,
+    PROP_metal_crate1=51,
+    PROP_metal_crate2=52,
+    PROP_metal_crate3=53,
+    PROP_metal_crate4=54,
+    PROP_milcopter=284,
+    PROP_miltruck=279,
+    PROP_missile_rack=55,
+    PROP_missile_rack2=56,
+    PROP_modembox=335,
+    PROP_motorbike=287,
+    PROP_mp5kmag=123,
+    PROP_nintendologo=276,
+    PROP_oil_drum1=57,
+    PROP_oil_drum2=58,
+    PROP_oil_drum3=59,
+    PROP_oil_drum5=60,
+    PROP_oil_drum6=61,
+    PROP_oil_drum7=62,
+    PROP_padlock=63,
+    PROP_palm=109,
+    PROP_palmtree=110,
+    PROP_phone1=64,
+    PROP_plane=291,
+    PROP_plant1=314,
+    PROP_plant11=315,
+    PROP_plant2=316,
+    PROP_plant2b=111,
+    PROP_plant3=317,
+    PROP_radio_unit1=65,
+    PROP_radio_unit2=66,
+    PROP_radio_unit3=67,
+    PROP_radio_unit4=68,
+    PROP_roofgun=98,
+    PROP_safe=254,
+    PROP_safedoor=293,
+    PROP_sat1_reflect=69,
+    PROP_satbox=71,
+    PROP_satdish=70,
+    PROP_sec_panel=91,
+    PROP_sev_door=135,
+    PROP_sev_door3=136,
+    PROP_sev_door3_wind=137,
+    PROP_sev_door4_wind=138,
+    PROP_sev_door_v1=140,
+    PROP_sev_trislide=139,
+    PROP_sevdish=296,
+    PROP_sevdoormetslide=169,
+    PROP_sevdoornowind=168,
+    PROP_sevdoorwind=167,
+    PROP_sevdoorwood=166,
+    PROP_shuttle=328,
+    PROP_shuttle_door_l=306,
+    PROP_shuttle_door_r=307,
+    PROP_silencer=127,
+    PROP_silo_lift_door=144,
+    PROP_silotopdoor=181,
+    PROP_skorpionmag=124,
+    PROP_spectremag=125,
+    PROP_speedboat=290,
+    PROP_st_pete_room_1i=320,
+    PROP_st_pete_room_2i=321,
+    PROP_st_pete_room_3t=322,
+    PROP_st_pete_room_5c=323,
+    PROP_st_pete_room_6c=324,
+    PROP_steel_door1=141,
+    PROP_steel_door2=142,
+    PROP_steel_door2b=145,
+    PROP_steel_door3=143,
+    PROP_stool1=72,
+    PROP_swipe_card2=86,
+    PROP_swivel_chair1=73,
+    PROP_tank=288,
+    PROP_tiger=283,
+    PROP_torpedo_rack=74,
+    PROP_train_door=161,
+    PROP_train_door2=162,
+    PROP_train_door3=163,
+    PROP_trainextdoor=300,
+    PROP_tt33mag=134,
+    PROP_tuning_console1=94,
+    PROP_tv1=75,
+    PROP_tv4screen=78,
+    PROP_tv_holder=76,
+    PROP_tvscreen=77,
+    PROP_uzimag=126,
+    PROP_vertdoor=176,
+    PROP_walletbond=278,
+    PROP_window=104,
+    PROP_window_cor11=107,
+    PROP_window_lib_lg1=105,
+    PROP_window_lib_sm1=106,
+    PROP_wood_lg_crate1=79,
+    PROP_wood_lg_crate2=80,
+    PROP_wood_md_crate3=81,
+    PROP_wood_sm_crate4=82,
+    PROP_wood_sm_crate5=83,
+    PROP_wood_sm_crate6=84,
+    PROP_wooden_table1=85,
+    PROP_wppkmag=133
+} PROPS;
+
+typedef enum ANIMATIONS {
+    ANIM_adjusting_crotch=158,
+    ANIM_aim_and_blow_one_handed_weapon=149,
+    ANIM_aim_one_handed_weapon_left=150,
+    ANIM_aim_one_handed_weapon_left_right=99,
+    ANIM_aim_one_handed_weapon_right=151,
+    ANIM_aim_running_left_one_handed_weapon=87,
+    ANIM_aim_running_one_handed_weapon=85,
+    ANIM_aim_running_right_one_handed_weapon=86,
+    ANIM_aim_sprinting_one_handed_weapon=88,
+    ANIM_aim_walking_left_one_handed_weapon=83,
+    ANIM_aim_walking_one_handed_weapon=82,
+    ANIM_aim_walking_right_one_handed_weapon=84,
+    ANIM_bond_eye_fire=44,
+    ANIM_bond_eye_fire_alt=176,
+    ANIM_bond_eye_walk=43,
+    ANIM_bond_watch=45,
+    ANIM_cock_one_handed_weapon_and_turn_around=100,
+    ANIM_cock_one_handed_weapon_turn_around_and_stand_up=102,
+    ANIM_conversation=152,
+    ANIM_conversation_cleaned=160,
+    ANIM_conversation_listener=161,
+    ANIM_coughing_kneel1=166,
+    ANIM_coughing_kneel2=167,
+    ANIM_coughing_standing=165,
+    ANIM_cradle_fall=180,
+    ANIM_cradle_jump=179,
+    ANIM_credits_bond_kissing=181,
+    ANIM_credits_natalya_kissing=182,
+    ANIM_dam_jump=177,
+    ANIM_dancing=170,
+    ANIM_dancing_one_handed_weapon=171,
+    ANIM_death_backward_fall_face_up1=28,
+    ANIM_death_backward_fall_face_up2=37,
+    ANIM_death_backward_spin_face_down_left=31,
+    ANIM_death_backward_spin_face_down_right=29,
+    ANIM_death_backward_spin_face_up_left=32,
+    ANIM_death_backward_spin_face_up_right=30,
+    ANIM_death_explosion_back1=133,
+    ANIM_death_explosion_back2=136,
+    ANIM_death_explosion_back_left=132,
+    ANIM_death_explosion_forward=130,
+    ANIM_death_explosion_forward_face_down=138,
+    ANIM_death_explosion_forward_right1=135,
+    ANIM_death_explosion_forward_right2=140,
+    ANIM_death_explosion_forward_right2_alt=141,
+    ANIM_death_explosion_forward_right3=142,
+    ANIM_death_explosion_forward_roll=137,
+    ANIM_death_explosion_left1=131,
+    ANIM_death_explosion_left2=139,
+    ANIM_death_explosion_right=134,
+    ANIM_death_fetal_position_left=36,
+    ANIM_death_fetal_position_right=35,
+    ANIM_death_forward_face_down=26,
+    ANIM_death_forward_face_down_hard=33,
+    ANIM_death_forward_face_down_soft=34,
+    ANIM_death_forward_spin_face_up=27,
+    ANIM_death_genitalia=22,
+    ANIM_death_head=56,
+    ANIM_death_left_leg=57,
+    ANIM_death_neck=24,
+    ANIM_death_stagger_back_to_wall=25,
+    ANIM_draw_one_handed_weapon_and_look_around=97,
+    ANIM_draw_one_handed_weapon_and_stand_up=98,
+    ANIM_draw_one_handed_weapon_and_turn_around=103,
+    ANIM_drop_weapon_and_show_fight_stance=153,
+    ANIM_extending_left_hand=61,
+    ANIM_fire_hip=3,
+    ANIM_fire_hip_forward_one_handed_weapon=70,
+    ANIM_fire_hip_one_handed_weapon_fast=68,
+    ANIM_fire_hip_one_handed_weapon_slow=69,
+    ANIM_fire_jump_to_side_left=52,
+    ANIM_fire_jump_to_side_right=53,
+    ANIM_fire_kneel_aiming_down_sights=128,
+    ANIM_fire_kneel_dual_wield=116,
+    ANIM_fire_kneel_dual_wield_hands_crossed=119,
+    ANIM_fire_kneel_dual_wield_hands_crossed_left=120,
+    ANIM_fire_kneel_dual_wield_hands_crossed_right=121,
+    ANIM_fire_kneel_dual_wield_left=117,
+    ANIM_fire_kneel_dual_wield_right=118,
+    ANIM_fire_kneel_forward_one_handed_weapon_fast=76,
+    ANIM_fire_kneel_forward_one_handed_weapon_slow=75,
+    ANIM_fire_kneel_left=9,
+    ANIM_fire_kneel_left_leg=8,
+    ANIM_fire_kneel_left_one_handed_weapon=81,
+    ANIM_fire_kneel_left_one_handed_weapon_fast=80,
+    ANIM_fire_kneel_left_one_handed_weapon_slow=79,
+    ANIM_fire_kneel_right=10,
+    ANIM_fire_kneel_right_leg=7,
+    ANIM_fire_kneel_right_one_handed_weapon_fast=78,
+    ANIM_fire_kneel_right_one_handed_weapon_slow=77,
+    ANIM_fire_roll_left=11,
+    ANIM_fire_roll_left_fast=13,
+    ANIM_fire_roll_right1=12,
+    ANIM_fire_roll_right2=39,
+    ANIM_fire_running=49,
+    ANIM_fire_running_dual_wield=110,
+    ANIM_fire_running_dual_wield_hands_crossed=111,
+    ANIM_fire_shoulder_left=4,
+    ANIM_fire_sprinting_dual_wield=112,
+    ANIM_fire_sprinting_dual_wield_hands_crossed=113,
+    ANIM_fire_standing=1,
+    ANIM_fire_standing_aiming_down_sights=127,
+    ANIM_fire_standing_draw_one_handed_weapon_fast=66,
+    ANIM_fire_standing_draw_one_handed_weapon_slow=67,
+    ANIM_fire_standing_dual_wield=122,
+    ANIM_fire_standing_dual_wield_hands_crossed_left=125,
+    ANIM_fire_standing_dual_wield_hands_crossed_right=126,
+    ANIM_fire_standing_dual_wield_left=123,
+    ANIM_fire_standing_dual_wield_right=124,
+    ANIM_fire_standing_fast=2,
+    ANIM_fire_standing_left_one_handed_weapon_fast=74,
+    ANIM_fire_standing_left_one_handed_weapon_slow=73,
+    ANIM_fire_standing_one_handed_weapon=65,
+    ANIM_fire_standing_right_one_handed_weapon=71,
+    ANIM_fire_step_right_one_handed_weapon=72,
+    ANIM_fire_throw_grenade=62,
+    ANIM_fire_turn_right1=5,
+    ANIM_fire_turn_right2=6,
+    ANIM_fire_walking=48,
+    ANIM_fire_walking_dual_wield=108,
+    ANIM_fire_walking_dual_wield_hands_crossed=109,
+    ANIM_hit_butt_long=54,
+    ANIM_hit_butt_short=55,
+    ANIM_hit_left_arm=16,
+    ANIM_hit_left_hand=18,
+    ANIM_hit_left_leg=20,
+    ANIM_hit_left_shoulder=14,
+    ANIM_hit_neck=23,
+    ANIM_hit_right_arm=17,
+    ANIM_hit_right_hand=19,
+    ANIM_hit_right_leg=21,
+    ANIM_hit_right_shoulder=15,
+    ANIM_hit_taser=129,
+    ANIM_holster_one_handed_weapon_and_adjust_suit=105,
+    ANIM_holster_one_handed_weapon_and_cross_arms=101,
+    ANIM_idle=0,
+    ANIM_idle_unarmed=106,
+    ANIM_jogging_one_handed_weapon=89,
+    ANIM_jump_backwards=60,
+    ANIM_keyboard_left_hand=174,
+    ANIM_keyboard_right_hand1=172,
+    ANIM_keyboard_right_hand2=173,
+    ANIM_keyboard_right_hand_tapping=175,
+    ANIM_laughing_in_disbelief=163,
+    ANIM_look_around=64,
+    ANIM_null143=143,
+    ANIM_null144=144,
+    ANIM_null145=145,
+    ANIM_null146=146,
+    ANIM_null169=169,
+    ANIM_null50=50,
+    ANIM_null51=51,
+    ANIM_null91=91,
+    ANIM_null92=92,
+    ANIM_null93=93,
+    ANIM_null94=94,
+    ANIM_null95=95,
+    ANIM_null96=96,
+    ANIM_running=42,
+    ANIM_running_female=115,
+    ANIM_running_hands_up=147,
+    ANIM_scratching_butt=157,
+    ANIM_scratching_leg=156,
+    ANIM_side_step_left=38,
+    ANIM_slide_left=59,
+    ANIM_slide_right=58,
+    ANIM_sneeze=159,
+    ANIM_spotting_bond=63,
+    ANIM_sprinting=41,
+    ANIM_sprinting_hands_up=148,
+    ANIM_sprinting_one_handed_weapon=90,
+    ANIM_standing_up=168,
+    ANIM_startled_and_looking_around=162,
+    ANIM_step_foward_and_hold_one_handed_weapon=104,
+    ANIM_surface_vent_jump=178,
+    ANIM_surrendering_armed=46,
+    ANIM_surrendering_armed_drop_weapon=47,
+    ANIM_surrendering_unarmed=164,
+    ANIM_swatting_flies=155,
+    ANIM_walking=40,
+    ANIM_walking_female=114,
+    ANIM_walking_unarmed=107,
+    ANIM_yawning=154
+} ANIMATIONS;
+
+
+// WARNING! conflicting data type names: /bondgame.h/COLORMODE - /COLORMODE
+
+typedef enum CUFF_TYPES {
+    CUFF_BLUE=0,
+    CUFF_BOILER=3,
+    CUFF_JUNGLE=2,
+    CUFF_SNOW=4,
+    CUFF_TUX=1,
+    CUFF_TUX6=6,
+    CUFF_TUX7=7,
+    CUFF_TUX8=8,
+    CUFF_WHITE=5
+} CUFF_TYPES;
+
+typedef enum PROJECTILES {
+    PROJECTILES_MAX=46,
+    PROJECTILES_TYPE_BOMBCASE=55,
+    PROJECTILES_TYPE_BUG=56,
+    PROJECTILES_TYPE_GE_KEY=58,
+    PROJECTILES_TYPE_GLAUNCH_ROUND=54,
+    PROJECTILES_TYPE_GRENADE=48,
+    PROJECTILES_TYPE_KNIFE=47,
+    PROJECTILES_TYPE_MICROCAMERA=57,
+    PROJECTILES_TYPE_PLASTIQUE=59,
+    PROJECTILES_TYPE_PROX_MINE=50,
+    PROJECTILES_TYPE_REMOTE_MINE=49,
+    PROJECTILES_TYPE_ROCKET_ROUND=52,
+    PROJECTILES_TYPE_ROCKET_ROUND2=53,
+    PROJECTILES_TYPE_TIMED_MINE=51
+} PROJECTILES;
+
+typedef enum GENDER {
+    FEMALE=0,
+    MALE=1
+} GENDER;
+
+typedef enum BODIES {
+    BODY_Arctic_Commando=38,
+    BODY_Baron_Samedi=12,
+    BODY_Boris=6,
+    BODY_Civilian_1_Female=29,
+    BODY_Civilian_2=33,
+    BODY_Civilian_3=34,
+    BODY_Civilian_4=32,
+    BODY_Female_Mandy=72,
+    BODY_Female_Marion_Rosika=71,
+    BODY_Female_Sally=70,
+    BODY_Female_Vivien=73,
+    BODY_Formal_Wear=23,
+    BODY_Helicopter_Pilot=36,
+    BODY_Janus_Marine=17,
+    BODY_Janus_Special_Forces=4,
+    BODY_Jaws=13,
+    BODY_Jungle_Commando=0,
+    BODY_Jungle_Fatigues=24,
+    BODY_Left_Suit_Hand_Floating_Arm=41,
+    BODY_Male_Alan=43,
+    BODY_Male_B=50,
+    BODY_Male_Biker=61,
+    BODY_Male_Chris=54,
+    BODY_Male_Dave_Dr_Doak=51,
+    BODY_Male_Des=53,
+    BODY_Male_Duncan=47,
+    BODY_Male_Dwayne=49,
+    BODY_Male_Graeme=62,
+    BODY_Male_Grant=52,
+    BODY_Male_Jim=57,
+    BODY_Male_Joe=68,
+    BODY_Male_Joe_Altered=66,
+    BODY_Male_Joel=64,
+    BODY_Male_Karl=42,
+    BODY_Male_Ken=67,
+    BODY_Male_Lee=55,
+    BODY_Male_Mark=46,
+    BODY_Male_Martin=45,
+    BODY_Male_Mishkin=69,
+    BODY_Male_Neil=56,
+    BODY_Male_Pete=44,
+    BODY_Male_Pierce_Bond_1=74,
+    BODY_Male_Pierce_Bond_2=75,
+    BODY_Male_Pierce_Bond_3=76,
+    BODY_Male_Pierce_Bond_Parka=77,
+    BODY_Male_Pierce_Bond_Tuxedo=78,
+    BODY_Male_Robin=58,
+    BODY_Male_Scott=65,
+    BODY_Male_Shaun=48,
+    BODY_Male_Steve_Ellis=63,
+    BODY_Male_Steve_H=59,
+    BODY_Male_Terrorist=60,
+    BODY_Mayday=14,
+    BODY_Moonraker_Elite_1_Male=39,
+    BODY_Moonraker_Elite_2_Female=40,
+    BODY_Natalya_Jungle_Fatigues=79,
+    BODY_Natalya_Skirt=16,
+    BODY_Naval_Officer=20,
+    BODY_Oddjob=15,
+    BODY_Ourumov=7,
+    BODY_Parka=25,
+    BODY_Rosika=27,
+    BODY_Russian_Commandant=18,
+    BODY_Russian_Infantry=3,
+    BODY_Russian_Soldier=2,
+    BODY_Scientist_1_Male=35,
+    BODY_Scientist_2_Female=28,
+    BODY_Siberian_Guard_1_Mishkin=19,
+    BODY_Siberian_Guard_2=37,
+    BODY_Siberian_Special_Forces=21,
+    BODY_Special_Operations_Uniform=22,
+    BODY_St_Petersburg_Guard=1,
+    BODY_Trevelyan_006=9,
+    BODY_Trevelyan_Janus=8,
+    BODY_Tuxedo=5,
+    BODY_Unused_Female=26,
+    BODY_Unused_Male_1=30,
+    BODY_Unused_Male_2=31,
+    BODY_Valentin_=10,
+    BODY_Xenia=11
+} BODIES;
+
+typedef enum TEXTBANK_LEVEL_INDEX {
+    LAME=1,
+    LARCH=2,
+    LAREC=8,
+    LARK=3,
+    LASH=4,
+    LAZT=5,
+    LCAT=6,
+    LCAVE=7,
+    LCRAD=9,
+    LCRYP=10,
+    LDAM=11,
+    LDEPO=12,
+    LDEST=13,
+    LDISH=14,
+    LEAR=15,
+    LELD=16,
+    LGUN=38,
+    LIMP=17,
+    LJUN=18,
+    LLEE=19,
+    LLEN=20,
+    LLIP=21,
+    LLUE=22,
+    LMISC=44,
+    LMPMENU=40,
+    LMPWEAPONS=42,
+    LNULL=0,
+    LOAT=23,
+    LOPTIONS=43,
+    LPAM=24,
+    LPETE=25,
+    LPROPOBJ=41,
+    LREF=26,
+    LRIT=27,
+    LRUN=28,
+    LSEV=30,
+    LSEVB=29,
+    LSEVX=31,
+    LSEVXB=32,
+    LSHO=33,
+    LSILO=34,
+    LSTAT=35,
+    LTITLE=39,
+    LTRA=36,
+    LWAX=37
+} TEXTBANK_LEVEL_INDEX;
+
+typedef enum DOORSTATE {
+    CLOSED=2,
+    OPEN=1
+} DOORSTATE;
+
+typedef enum HEADS {
+    HEAD_Female_Mandy=72,
+    HEAD_Female_Marion_Rosika=71,
+    HEAD_Female_Sally=70,
+    HEAD_Female_Vivien=73,
+    HEAD_Male_Alan=43,
+    HEAD_Male_B=50,
+    HEAD_Male_Biker=61,
+    HEAD_Male_Chris=54,
+    HEAD_Male_Dave_Dr_Doak=51,
+    HEAD_Male_Des=53,
+    HEAD_Male_Duncan=47,
+    HEAD_Male_Dwayne=49,
+    HEAD_Male_Graeme=62,
+    HEAD_Male_Grant=52,
+    HEAD_Male_Jim=57,
+    HEAD_Male_Joe=68,
+    HEAD_Male_Joe_Altered=66,
+    HEAD_Male_Joel=64,
+    HEAD_Male_Karl=42,
+    HEAD_Male_Ken=67,
+    HEAD_Male_Lee=55,
+    HEAD_Male_Mark=46,
+    HEAD_Male_Martin=45,
+    HEAD_Male_Mishkin=69,
+    HEAD_Male_Neil=56,
+    HEAD_Male_Pete=44,
+    HEAD_Male_Pierce_Bond_1=74,
+    HEAD_Male_Pierce_Bond_2=75,
+    HEAD_Male_Pierce_Bond_3=76,
+    HEAD_Male_Pierce_Bond_Parka=77,
+    HEAD_Male_Pierce_Bond_Tuxedo_DEFAULT=78,
+    HEAD_Male_Robin=58,
+    HEAD_Male_Scott=65,
+    HEAD_Male_Shaun=48,
+    HEAD_Male_Steve_Ellis=63,
+    HEAD_Male_Steve_H=59,
+    HEAD_Male_Terrorist=60,
+    HEAD_Natalya_Jungle_Fatigues=79
+} HEADS;
+
+typedef enum mission_setup_type {
+    MISSION_HEADER=1,
+    MISSION_PART=0
+} mission_setup_type;
+
+typedef enum LEVEL_INDEX {
+    LEVEL_INDEX_AME=28,
+    LEVEL_INDEX_ARCH=4,
+    LEVEL_INDEX_ARK=14,
+    LEVEL_INDEX_ASH=26,
+    LEVEL_INDEX_AZT=8,
+    LEVEL_INDEX_CAT=20,
+    LEVEL_INDEX_CAVE=19,
+    LEVEL_INDEX_CONTROL=3,
+    LEVEL_INDEX_CRAD=21,
+    LEVEL_INDEX_CRYP=12,
+    LEVEL_INDEX_DAM=13,
+    LEVEL_INDEX_DEPO=10,
+    LEVEL_INDEX_DEST=6,
+    LEVEL_INDEX_DISH=18,
+    LEVEL_INDEX_EAR=31,
+    LEVEL_INDEX_ELD=24,
+    LEVEL_INDEX_IMP=25,
+    LEVEL_INDEX_JUN=17,
+    LEVEL_INDEX_LEE=32,
+    LEVEL_INDEX_LEN=34,
+    LEVEL_INDEX_LIP=33,
+    LEVEL_INDEX_LUE=27,
+    LEVEL_INDEX_OAT=30,
+    LEVEL_INDEX_PAM=36,
+    LEVEL_INDEX_PETE=9,
+    LEVEL_INDEX_REF=11,
+    LEVEL_INDEX_RIT=29,
+    LEVEL_INDEX_RUN=15,
+    LEVEL_INDEX_SEVB=7,
+    LEVEL_INDEX_SEVBUNKER=0,
+    LEVEL_INDEX_SEVX=16,
+    LEVEL_INDEX_SEVXB=23,
+    LEVEL_INDEX_SHO=22,
+    LEVEL_INDEX_SILO=1,
+    LEVEL_INDEX_STATUE=2,
+    LEVEL_INDEX_TRA=5,
+    LEVEL_INDEX_WAX=35,
+    LEVEL_INDEX_X=37
+} LEVEL_INDEX;
+
+typedef enum SCREEN_SIZE {
+    SCREEN_SIZE_320x240=0,
+    SCREEN_SIZE_440x330=1
+} SCREEN_SIZE;
+
+typedef u16 PAD;
+
+typedef enum MENU {
+    MENU_007_OPTIONS=9,
+    MENU_BRIEFING=10,
+    MENU_CHEAT=21,
+    MENU_DIFFICULTY=8,
+    MENU_DISPLAY_CAST=24,
+    MENU_EYE_INTRO=3,
+    MENU_FILE_SELECT=5,
+    MENU_GOLDENEYE_LOGO=4,
+    MENU_LEGAL_SCREEN=0,
+    MENU_MISSION_COMPLETE=13,
+    MENU_MISSION_FAILED=12,
+    MENU_MISSION_SELECT=7,
+    MENU_MODE_SELECT=6,
+    MENU_MP_CHAR_SELECT=15,
+    MENU_MP_CONTROL_STYLE=17,
+    MENU_MP_HANDICAP=16,
+    MENU_MP_OPTIONS=14,
+    MENU_MP_SCENARIO_SELECT=19,
+    MENU_MP_STAGE_SELECT=18,
+    MENU_MP_TEAMS=20,
+    MENU_NINTENDO_LOGO=1,
+    MENU_NO_CONTROLLERS=22,
+    MENU_RAREWARE_LOGO=2,
+    MENU_RUN_STAGE=11,
+    MENU_SPECTRUM_EMU=25,
+    MENU_SWITCH_SCREENS=23
+} MENU;
+
+#define OBJECTIVES_MAX 10
 
 typedef struct IMAGE IMAGE, *PIMAGE;
 
@@ -7227,11 +8230,6 @@ struct $9574A80C820E0B95666ECD0A99E160BE {
     u8 * offset;
 };
 
-typedef enum SCREEN_SIZE {
-    SCREEN_SIZE_320x240=0,
-    SCREEN_SIZE_440x330=1
-} SCREEN_SIZE;
-
 typedef struct mp_stage_playercount mp_stage_playercount, *Pmp_stage_playercount;
 
 struct mp_stage_playercount {
@@ -7273,37 +8271,11 @@ typedef struct $62F109188EB304B8EC258AA93B51CC96 $62F109188EB304B8EC258AA93B51CC
 struct $62F109188EB304B8EC258AA93B51CC96 {
 };
 
-typedef struct rgba_val rgba_val, *Prgba_val;
 
-struct rgba_val {
-    char R;
-    char G;
-    char B;
-    char A;
-};
+// WARNING! conflicting data type names: /GE Current Master.h/rgba_val - /bondgame.h/rgba_val
 
-typedef enum LEVEL_SOLO_SEQUENCE {
-    LEVEL_ARCHIVES=16,
-    LEVEL_AZTEC=26,
-    LEVEL_BUNKER1=6,
-    LEVEL_BUNKER2=13,
-    LEVEL_CAVERNS=23,
-    LEVEL_CONTROL=22,
-    LEVEL_CRADLE=24,
-    LEVEL_DAM=1,
-    LEVEL_DEPOT=18,
-    LEVEL_EGYPT=28,
-    LEVEL_FACILITY=2,
-    LEVEL_FRIGATE=10,
-    LEVEL_JUNGLE=21,
-    LEVEL_RUNWAY=3,
-    LEVEL_SILO=8,
-    LEVEL_STATUE=15,
-    LEVEL_STREETS=17,
-    LEVEL_SURFACE1=5,
-    LEVEL_SURFACE2=12,
-    LEVEL_TRAIN=19
-} LEVEL_SOLO_SEQUENCE;
+
+// WARNING! conflicting data type names: /GE Current Master.h/LEVEL_SOLO_SEQUENCE - /bondgame.h/LEVEL_SOLO_SEQUENCE
 
 typedef struct mcm_layout mcm_layout, *Pmcm_layout;
 
@@ -7315,22 +8287,21 @@ struct mcm_layout {
 typedef struct GUARDdata GUARDdata, *PGUARDdata;
 
 struct GUARDdata {
-    char guardID_1;
-    char guardID_2;
-    char field_2;
-    char field_3;
-    char rounds_fired_left_gun;
-    char rounds_fired_right_gun;
-    char head;
-    enum guard_action_type current_action;
-    char set_0_when_fading;
-    char set_0_init_players;
-    char shots_near;
-    char shots_hit;
-    char alpha;
+    u16 chrnum;
+    char accuracyrating;
+    char speedrating;
+    char firecount.left;
+    char firecount.right;
+    char headnum;
+    enum guard_action_type actiontype;
+    char sleep;
+    char invalidmove;
+    char numclosearghs;
+    char numarghs;
+    char fadealpha;
     char field_D;
     char field_E;
-    char body;
+    char bodynum;
     char beligerancy;
     char field_11;
     short special_bitflags;
@@ -7338,8 +8309,8 @@ struct GUARDdata {
     int POSdata_pointer;
     int MODELdata_pointer;
     int pertains_to_action61;
-    f32 collision_radius;
-    int field_28;
+    f32 chrwidth;
+    int chrheight;
     int bond_position;
     int field_30;
     short field_34;
@@ -7383,9 +8354,7 @@ struct GUARDdata {
     float field_B0;
     float field_B4;
     float field_B8;
-    float xpos;
-    float ypos;
-    float zpos;
+    struct xyzpoint prevpos;
     int field_C8;
     int field_CC;
     float reaction_time;
@@ -7393,9 +8362,9 @@ struct GUARDdata {
     float field_D8;
     float field_DC;
     float field_E0;
-    int field_E4;
-    int timer;
-    float hearing_ability;
+    int lastshooter;
+    int timeshooter;
+    float hearingscale;
     int field_F0;
     char field_F4;
     char field_F5;
@@ -7405,8 +8374,8 @@ struct GUARDdata {
     char field_F9;
     char field_FA;
     char field_FB;
-    int damage_received;
-    f32 health;
+    int damage;
+    f32 maxdamage;
     int action_block_pointer;
     short action_block_offset;
     short action_block_return;
@@ -7493,6 +8462,33 @@ struct $4BEAA6302150DFF77A6D6B5C2F812979 {
     float a2;
 };
 
+typedef struct playerperm playerperm, *Pplayerperm;
+
+struct playerperm {
+    int shotcount[7];
+    int killcount;
+    int ggkillcount;
+    int kills[4];
+    int drawplayercount;
+    float distance;
+    int backshotcount;
+    float armourcount;
+    int fastest2kills;
+    int slowest2kills;
+    int longestlife;
+    s32 shortestlife;
+    int most_killed_one_life;
+    int most_killed_one_time;
+    float handicap;
+    int flag_counter;
+    float player_perspective_height;
+    char order_out_in_yolt;
+    char have_token_or_goldengun;
+    char autoaim;
+    char sight;
+    int killed_civilians;
+};
+
 typedef struct $B24B31290AB3F51AC02030577BB60BEE $B24B31290AB3F51AC02030577BB60BEE, *P$B24B31290AB3F51AC02030577BB60BEE;
 
 struct $B24B31290AB3F51AC02030577BB60BEE {
@@ -7539,9 +8535,297 @@ struct enviroment_struct {
     float anonymous_21;
 };
 
-typedef struct BONDdata BONDdata, *PBONDdata;
+typedef struct $2903A050EBC6442F98207E1AE6ED2D96 $2903A050EBC6442F98207E1AE6ED2D96, *P$2903A050EBC6442F98207E1AE6ED2D96;
 
-struct BONDdata {
+typedef struct $2903A050EBC6442F98207E1AE6ED2D96 ALSndPlayer;
+
+typedef struct ALEventQueue ALEventQueue, *PALEventQueue;
+
+typedef struct ALEvent ALEvent, *PALEvent;
+
+typedef union _union_144 _union_144, *P_union_144;
+
+typedef struct ALMIDIEvent ALMIDIEvent, *PALMIDIEvent;
+
+typedef struct ALTempoEvent ALTempoEvent, *PALTempoEvent;
+
+typedef struct ALEndEvent ALEndEvent, *PALEndEvent;
+
+typedef struct ALNoteEvent ALNoteEvent, *PALNoteEvent;
+
+typedef struct ALVolumeEvent ALVolumeEvent, *PALVolumeEvent;
+
+typedef struct ALSeqpLoopEvent ALSeqpLoopEvent, *PALSeqpLoopEvent;
+
+typedef struct ALSeqpVolEvent ALSeqpVolEvent, *PALSeqpVolEvent;
+
+typedef struct ALSeqpPriorityEvent ALSeqpPriorityEvent, *PALSeqpPriorityEvent;
+
+typedef struct ALSeqpSeqEvent ALSeqpSeqEvent, *PALSeqpSeqEvent;
+
+typedef struct ALSeqpBankEvent ALSeqpBankEvent, *PALSeqpBankEvent;
+
+typedef struct ALOscEvent ALOscEvent, *PALOscEvent;
+
+typedef struct ALSeqMarker ALSeqMarker, *PALSeqMarker;
+
+typedef struct ALBank_s ALBank_s, *PALBank_s;
+
+typedef struct ALBank_s ALBank;
+
+typedef struct ALVoiceState_s ALVoiceState_s, *PALVoiceState_s;
+
+typedef struct ALInstrument ALInstrument, *PALInstrument;
+
+typedef struct ALVoice_s ALVoice;
+
+typedef struct ALSound_s ALSound_s, *PALSound_s;
+
+typedef struct ALSound_s ALSound;
+
+typedef struct ALEnvelope ALEnvelope, *PALEnvelope;
+
+
+// WARNING! conflicting data type names: /libaudio.h/ALKeyMap - /GE Current Master.h/ALKeyMap
+
+struct ALEndEvent {
+    s32 ticks;
+    u8 status;
+    u8 type;
+    u8 len;
+};
+
+struct ALSeqpBankEvent {
+    ALBank * bank;
+};
+
+struct ALMIDIEvent {
+    s32 ticks;
+    u8 status;
+    u8 byte1;
+    u8 byte2;
+    u32 duration;
+};
+
+struct ALVolumeEvent {
+    struct ALVoice_s * voice;
+    ALMicroTime delta;
+    u8 vol;
+};
+
+struct ALSeqpPriorityEvent {
+    u8 chan;
+    u8 priority;
+};
+
+struct ALOscEvent {
+    struct ALVoiceState_s * vs;
+    void * oscState;
+    u8 chan;
+};
+
+struct ALSeqpLoopEvent {
+    struct ALSeqMarker * start;
+    struct ALSeqMarker * end;
+    s32 count;
+};
+
+struct ALTempoEvent {
+    s32 ticks;
+    u8 status;
+    u8 type;
+    u8 len;
+    u8 byte1;
+    u8 byte2;
+    u8 byte3;
+};
+
+struct ALSeqpVolEvent {
+    s16 vol;
+};
+
+struct ALNoteEvent {
+    struct ALVoice_s * voice;
+};
+
+struct ALSeqpSeqEvent {
+    void * seq;
+};
+
+union _union_144 {
+    struct ALMIDIEvent midi;
+    struct ALTempoEvent tempo;
+    struct ALEndEvent end;
+    struct ALNoteEvent note;
+    struct ALVolumeEvent vol;
+    struct ALSeqpLoopEvent loop;
+    struct ALSeqpVolEvent spvol;
+    struct ALSeqpPriorityEvent sppriority;
+    struct ALSeqpSeqEvent spseq;
+    struct ALSeqpBankEvent spbank;
+    struct ALOscEvent osc;
+};
+
+struct ALEvent {
+    s16 type;
+    union _union_144 msg;
+};
+
+struct ALBank_s {
+    s16 instCount;
+    u8 flags;
+    u8 pad;
+    s32 sampleRate;
+    struct ALInstrument * percussion;
+    struct ALInstrument * instArray[1];
+};
+
+struct ALInstrument {
+    u8 volume;
+    ALPan pan;
+    u8 priority;
+    u8 flags;
+    u8 tremType;
+    u8 tremRate;
+    u8 tremDepth;
+    u8 tremDelay;
+    u8 vibType;
+    u8 vibRate;
+    u8 vibDepth;
+    u8 vibDelay;
+    s16 bendRange;
+    s16 soundCount;
+    ALSound * soundArray[1];
+};
+
+struct ALEventQueue {
+    ALLink freeList;
+    ALLink allocList;
+    s32 eventCount;
+};
+
+struct ALEnvelope {
+    ALMicroTime attackTime;
+    ALMicroTime decayTime;
+    ALMicroTime releaseTime;
+    u8 attackVolume;
+    u8 decayVolume;
+};
+
+struct $2903A050EBC6442F98207E1AE6ED2D96 {
+    ALPlayer node;
+    struct ALEventQueue evtq;
+    struct ALEvent nextEvent;
+    struct ALSynth * drvr;
+    void * sndState;
+};
+
+struct ALVoiceState_s {
+    struct ALVoiceState_s * next;
+    ALVoice voice;
+    ALSound * sound;
+    ALMicroTime envEndTime;
+    f32 pitch;
+    f32 vibrato;
+    u8 envGain;
+    u8 channel;
+    u8 key;
+    u8 velocity;
+    u8 envPhase;
+    u8 phase;
+    u8 tremelo;
+    u8 flags;
+};
+
+struct ALSound_s {
+    struct ALEnvelope * envelope;
+    struct ALKeyMap * keyMap;
+    ALWaveTable * wavetable;
+    ALPan samplePan;
+    u8 sampleVolume;
+    u8 flags;
+};
+
+struct ALSeqMarker {
+    u8 * curPtr;
+    s32 lastTicks;
+    s32 curTicks;
+    s16 lastStatus;
+};
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/PROJECTILES - /bondgame.h/PROJECTILES
+
+typedef struct solo_target_times solo_target_times, *Psolo_target_times;
+
+struct solo_target_times {
+    short agent_time;
+    short secret_agent_time;
+    short OO_agent_time;
+};
+
+typedef struct ejected_cart ejected_cart, *Pejected_cart;
+
+struct ejected_cart {
+    struct Gitemheader * header;
+    u8 * text;
+};
+
+typedef struct mission_folder_setup mission_folder_setup, *Pmission_folder_setup;
+
+struct mission_folder_setup {
+    void * string_ptr;
+    short folder_text_preset;
+    short icon_text_preset;
+    int stage_id;
+    int unknown;
+    int type;
+    int mission_num;
+    void * briefing_name_ptr;
+};
+
+typedef struct MP_selectable_chars MP_selectable_chars, *PMP_selectable_chars;
+
+struct MP_selectable_chars {
+    short text_preset;
+    char gender;
+    char select_photo;
+    short body;
+    short head;
+    float pov;
+};
+
+typedef struct $DD54060F307CC511C1231C522D614BD1 $DD54060F307CC511C1231C522D614BD1, *P$DD54060F307CC511C1231C522D614BD1;
+
+struct $DD54060F307CC511C1231C522D614BD1 {
+    uchar * base;
+    int fmt;
+    int siz;
+    int xsize;
+    int ysize;
+    int lsize;
+    int addr;
+    int w;
+    int h;
+    int s;
+    int t;
+};
+
+typedef struct explosion_death_animation explosion_death_animation, *Pexplosion_death_animation;
+
+struct explosion_death_animation {
+    int anonymous_0;
+    int anonymous_1;
+    float anonymous_2;
+    float anonymous_3;
+    float anonymous_4;
+    float anonymous_5;
+    float anonymous_6;
+};
+
+typedef struct Player Player, *PPlayer;
+
+struct Player {
     int unknown;
     f32 xpos;
     f32 ypos;
@@ -7596,56 +8880,56 @@ struct BONDdata {
     int field_CC;
     int field_D0;
     int ptr_char_objectinstance;
-    int player_button_control;
-    f32 current_health;
-    f32 current_armor;
-    f32 previous_health;
-    f32 previous_armor;
-    f32 mp_watch_health_total;
-    f32 mp_watch_armor_total;
-    int invincibility_timer;
-    int health_bar_timer;
-    int field_FC;
+    int bonddead;
+    f32 bondhealth;
+    f32 bondarmour;
+    f32 oldhealth;
+    f32 oldarmour;
+    f32 apparenthealth;
+    f32 apparentarmour;
+    int damageshowtime;
+    int healthshowtime;
+    int healthshowmode;
     int field_100;
     int field_104;
     int field_108;
     int field_10C;
-    int field_110;
-    int field_114;
-    int look_ahead_setting;
-    int field_11C;
-    int field_120;
-    int is_aiming_flag;
-    int auto_aim_flag;
-    float y_aim_related_float;
-    int field_130;
-    int field_134;
-    int solo_auto_aim_x_setting;
-    float x_aim_related_float;
-    int field_140;
-    int field_144;
-    float azimuth_angle;
-    float azimuth_turning_direction;
-    f32 azimuth_cosine;
-    f32 azimuth_sine;
-    float inclination_angle1;
-    f32 inclination_angle2;
-    float inclination_turning_direction;
-    f32 inclination_cosine;
-    f32 inclination_sine;
-    float strafe_speed_multiplier;
-    float strafe_movement_direction;
-    float forward_speed_multiplier;
-    f32 forward_speed_multiplier_2;
-    int forward_speed_frame_counter;
+    int movecentrerelease;
+    int lookaheadcentreenabled;
+    int automovecentreenabled;
+    int fastmovecentreenabled;
+    int automovecentre;
+    int insightaimmode;
+    int autoyaimenabled;
+    float autoaimy;
+    int autoyaimtime;
+    int autoyaimtime60;
+    int autoxaimenabled;
+    float autoaimx;
+    int autoxaimtime;
+    int autoxaimtime60;
+    float vv_theta;
+    float speedtheta;
+    f32 vv_costheta;
+    f32 vv_sintheta;
+    float vv_verta;
+    f32 vv_verta360;
+    float speedverta;
+    f32 vv_cosverta;
+    f32 vv_sinverta;
+    float speedsideways;
+    float speedstrafe;
+    float speedforwards;
+    f32 speedboost;
+    int speedmaxtime60;
     f32 boost_factor_x;
     f32 boost_factor_y;
     f32 boost_factor_z;
     f32 viewport_alpha;
-    f32 rate_of_change;
-    f32 time_for_change;
-    f32 final_alpha_level;
-    f32 field_19C;
+    f32 bondfadetime60;
+    f32 bondfadetimemax;
+    f32 bondfadefracold;
+    f32 bondfadefracnew;
     int field_1A0;
     int field_1A4;
     int field_1A8;
@@ -8060,16 +9344,13 @@ struct BONDdata {
     int field_7E4;
     int field_7E8;
     int field_7EC;
-    short playerscreenwidth;
-    short playerscreenheight;
-    short playerscreenulx;
-    short playerscreenuly;
-    int right_invisible;
-    int left_invisible;
-    int item_right;
-    int item_left;
-    void * ptr_right_weapon_buffer;
-    void * ptr_left_weapon_buffer;
+    short viewx;
+    short viewy;
+    short viewleft;
+    short viewtop;
+    int hand_invisible[2];
+    int hand_item[2];
+    void * ptr_hand_weapon_buffer[2];
     int copy_of_body_obj_header[8];
     int copy_of_right_weapon_obj_header[8];
     int field_850;
@@ -8591,7 +9872,7 @@ struct BONDdata {
     int field_1054;
     int field_1058;
     int field_105C;
-    int GEkey_analyzed;
+    int copiedgoldeneye;
     int somekinda_flags;
     int field_1068;
     float field_106C;
@@ -8603,19 +9884,19 @@ struct BONDdata {
     float sniper_zoom;
     float camera_zoom;
     int field_108C;
-    float maybe_screen_width;
-    float maybe_screen_height;
-    float ulx;
-    float uly;
-    float field_10A0;
-    float field_10A4;
-    float field_10A8;
-    float maybe_half_screen_width;
-    float maybe_half_screen_height;
-    f32 field_10B4;
-    f32 field_10B8;
-    f32 field_10BC;
-    f32 field_10C0;
+    float c_screenwidth;
+    float c_screenheight;
+    float c_screenleft;
+    float c_screentop;
+    float c_perspnear;
+    float c_perspfovy;
+    float c_perspaspect;
+    float c_halfwidth;
+    float c_halfheight;
+    f32 c_scalex;
+    f32 c_scaley;
+    f32 c_recipscalex;
+    f32 c_recipscaley;
     int field_10C4;
     int field_10C8;
     int field_10CC;
@@ -8627,41 +9908,37 @@ struct BONDdata {
     int field_10E4;
     int field_10E8;
     int field_10EC;
-    f32 field_10F0;
-    f32 field_10F4;
-    f32 field_10F8;
-    int field_10FC;
-    int x;
-    int y;
-    int z;
-    int field_110C;
-    int field_1110;
-    int field_1114;
-    float field_1118;
-    float field_111C;
-    float field_1120;
-    float field_1124;
+    f32 c_scalelod60;
+    f32 c_scalelod;
+    f32 c_lodscalez;
+    int c_lodscalezu32;
+    struct xyzpoint c_cameratopnorm;
+    struct xyzpoint c_cameraleftnorm;
+    float screenxminf;
+    float screenyminf;
+    float screenxmaxf;
+    float screenymaxf;
     int somekinda_bitflags;
     int field_112C;
-    int ammo_totals[30];
-    int ptr_red_screen_animation_block;
+    int ammoheldarr[30];
+    int bloodcnt;
     int field_11AC;
     int field_11B0;
     int field_11B4;
     int field_11B8;
-    float watch_menu_screen_swap_current_timer;
-    f32 watch_endtime;
-    float watch_menu_current_size;
-    float watch_menu_initial_size;
-    f32 watch_menu_final_size;
-    f32 watch_menu_current_size_unused_maybe;
-    f32 field_11D4;
-    int stationary_intro_cam_flags;
-    int set_neg1_by_stationary_intro_cam;
+    f32 zoomintime;
+    f32 zoomintimemax;
+    f32 zoominfovy;
+    f32 zoominfovyold;
+    f32 zoominfovynew;
+    f32 fovy;
+    f32 aspect;
+    int hudmessoff;
+    int bondmesscnt;
     int ptr_inventory_first_in_cycle;
     int p_itemcur;
-    int items_max;
-    int flag_for_allguns;
+    int equipmaxitems;
+    int equipallguns;
     int field_11F0;
     int field_11F4;
     int index_time_spent_using_item;
@@ -8713,9 +9990,9 @@ struct BONDdata {
     int field_12B0;
     char something_with_cheat_text;
     char can_display_cheat_text;
-    char invincible_flag;
+    char bondinvincible;
     char field_12B7;
-    int related_to_armor_display;
+    int healthdamagetype;
     int field_12BC;
     int field_12C0;
     int field_12C4;
@@ -10190,12 +11467,12 @@ struct BONDdata {
     int field_29B8;
     f32 field_29BC;
     f32 field_29C0;
-    int in_mp_pause_menu;
-    int page_in_mp_pause_menu;
-    int selection_on_mp_pause_menu_page_6;
-    int press_stick_register;
-    int field_29D4;
-    int num_deaths;
+    int mpmenuon;
+    int mpmenumode;
+    int mpquitconfirm;
+    int mpjoywascentre;
+    int damagetype;
+    int deathcount;
     int num_suicides;
     int field_29E0;
     int field_29E4;
@@ -10205,7 +11482,7 @@ struct BONDdata {
     int field_29F4;
     int field_29F8;
     int field_29FC;
-    int how_long_to_show_health;
+    int healthdisplaytime;
     int field_2A04;
     f32 field_2A08;
     f32 field_2A0C;
@@ -10222,11 +11499,9 @@ struct BONDdata {
     int field_2A38;
     f32 actual_health;
     f32 actual_armor;
-    int field_2A44;
-    int field_2A48;
+    int field_2A44[2];
     f32 field_2A4C;
-    int lock_right_hand_model;
-    int lock_left_hand_model;
+    int lock_hand_model[2];
     int cur_player_control_type_0;
     int cur_player_control_type_1;
     float cur_player_control_type_2;
@@ -10237,468 +11512,6 @@ struct BONDdata {
     int field_2A74;
     int field_2A78;
     int field_2A7C;
-};
-
-typedef struct player_data player_data, *Pplayer_data;
-
-struct player_data {
-    int shots_fired;
-    int head_hits;
-    int body_hits;
-    int leg_hits;
-    int other_hit_weapon;
-    int other_hit_hat;
-    int other_hit_objects;
-    int kill_count;
-    int killed_gg_owner_count;
-    int killed_p1;
-    int killed_p2;
-    int killed_p3;
-    int killed_p4;
-    int time_other_players_on_screen;
-    float distance_traveled;
-    int damage_to_backside;
-    float body_armor_pickups;
-    int min_time_between_kills;
-    int max_time_between_kills;
-    int longest_inning;
-    s32 shortest_inning;
-    int most_killed_one_life;
-    int most_killed_one_time;
-    float handicap;
-    int flag_counter;
-    float player_perspective_height;
-    char order_out_in_yolt;
-    char have_token_or_goldengun;
-    char autoaim;
-    char sight;
-    int killed_civilians;
-};
-
-typedef enum BODIES {
-    BODY_Arctic_Commando=38,
-    BODY_Baron_Samedi=12,
-    BODY_Boris=6,
-    BODY_Civilian_1_Female=29,
-    BODY_Civilian_2=33,
-    BODY_Civilian_3=34,
-    BODY_Civilian_4=32,
-    BODY_Female_Mandy=72,
-    BODY_Female_Marion_Rosika=71,
-    BODY_Female_Sally=70,
-    BODY_Female_Vivien=73,
-    BODY_Formal_Wear=23,
-    BODY_Helicopter_Pilot=36,
-    BODY_Janus_Marine=17,
-    BODY_Janus_Special_Forces=4,
-    BODY_Jaws=13,
-    BODY_Jungle_Commando=0,
-    BODY_Jungle_Fatigues=24,
-    BODY_Left_Suit_Hand_Floating_Arm=41,
-    BODY_Male_Alan=43,
-    BODY_Male_B=50,
-    BODY_Male_Biker=61,
-    BODY_Male_Chris=54,
-    BODY_Male_Dave_Dr_Doak=51,
-    BODY_Male_Des=53,
-    BODY_Male_Duncan=47,
-    BODY_Male_Dwayne=49,
-    BODY_Male_Graeme=62,
-    BODY_Male_Grant=52,
-    BODY_Male_Jim=57,
-    BODY_Male_Joe=68,
-    BODY_Male_Joe_Altered=66,
-    BODY_Male_Joel=64,
-    BODY_Male_Karl=42,
-    BODY_Male_Ken=67,
-    BODY_Male_Lee=55,
-    BODY_Male_Mark=46,
-    BODY_Male_Martin=45,
-    BODY_Male_Mishkin=69,
-    BODY_Male_Neil=56,
-    BODY_Male_Pete=44,
-    BODY_Male_Pierce_Bond_1=74,
-    BODY_Male_Pierce_Bond_2=75,
-    BODY_Male_Pierce_Bond_3=76,
-    BODY_Male_Pierce_Bond_Parka=77,
-    BODY_Male_Pierce_Bond_Tuxedo=78,
-    BODY_Male_Robin=58,
-    BODY_Male_Scott=65,
-    BODY_Male_Shaun=48,
-    BODY_Male_Steve_Ellis=63,
-    BODY_Male_Steve_H=59,
-    BODY_Male_Terrorist=60,
-    BODY_Mayday=14,
-    BODY_Moonraker_Elite_1_Male=39,
-    BODY_Moonraker_Elite_2_Female=40,
-    BODY_Natalya_Jungle_Fatigues=79,
-    BODY_Natalya_Skirt=16,
-    BODY_Naval_Officer=20,
-    BODY_Oddjob=15,
-    BODY_Ourumov=7,
-    BODY_Parka=25,
-    BODY_Rosika=27,
-    BODY_Russian_Commandant=18,
-    BODY_Russian_Infantry=3,
-    BODY_Russian_Soldier=2,
-    BODY_Scientist_1_Male=35,
-    BODY_Scientist_2_Female=28,
-    BODY_Siberian_Guard_1_Mishkin=19,
-    BODY_Siberian_Guard_2=37,
-    BODY_Siberian_Special_Forces=21,
-    BODY_Special_Operations_Uniform=22,
-    BODY_St_Petersburg_Guard=1,
-    BODY_Trevelyan_006=9,
-    BODY_Trevelyan_Janus=8,
-    BODY_Tuxedo=5,
-    BODY_Unused_Female=26,
-    BODY_Unused_Male_1=30,
-    BODY_Unused_Male_2=31,
-    BODY_Valentin_=10,
-    BODY_Xenia=11
-} BODIES;
-
-typedef struct $2903A050EBC6442F98207E1AE6ED2D96 $2903A050EBC6442F98207E1AE6ED2D96, *P$2903A050EBC6442F98207E1AE6ED2D96;
-
-typedef struct $2903A050EBC6442F98207E1AE6ED2D96 ALSndPlayer;
-
-typedef struct ALEventQueue ALEventQueue, *PALEventQueue;
-
-typedef struct ALEvent ALEvent, *PALEvent;
-
-typedef union _union_144 _union_144, *P_union_144;
-
-typedef struct ALMIDIEvent ALMIDIEvent, *PALMIDIEvent;
-
-typedef struct ALTempoEvent ALTempoEvent, *PALTempoEvent;
-
-typedef struct ALEndEvent ALEndEvent, *PALEndEvent;
-
-typedef struct ALNoteEvent ALNoteEvent, *PALNoteEvent;
-
-typedef struct ALVolumeEvent ALVolumeEvent, *PALVolumeEvent;
-
-typedef struct ALSeqpLoopEvent ALSeqpLoopEvent, *PALSeqpLoopEvent;
-
-typedef struct ALSeqpVolEvent ALSeqpVolEvent, *PALSeqpVolEvent;
-
-typedef struct ALSeqpPriorityEvent ALSeqpPriorityEvent, *PALSeqpPriorityEvent;
-
-typedef struct ALSeqpSeqEvent ALSeqpSeqEvent, *PALSeqpSeqEvent;
-
-typedef struct ALSeqpBankEvent ALSeqpBankEvent, *PALSeqpBankEvent;
-
-typedef struct ALOscEvent ALOscEvent, *PALOscEvent;
-
-typedef struct ALSeqMarker ALSeqMarker, *PALSeqMarker;
-
-typedef struct ALBank_s ALBank_s, *PALBank_s;
-
-typedef struct ALBank_s ALBank;
-
-typedef struct ALVoiceState_s ALVoiceState_s, *PALVoiceState_s;
-
-typedef struct ALInstrument ALInstrument, *PALInstrument;
-
-typedef struct ALVoice_s ALVoice;
-
-typedef struct ALSound_s ALSound_s, *PALSound_s;
-
-typedef struct ALSound_s ALSound;
-
-typedef struct ALEnvelope ALEnvelope, *PALEnvelope;
-
-
-// WARNING! conflicting data type names: /libaudio.h/ALKeyMap - /GE Current Master.h/ALKeyMap
-
-struct ALEndEvent {
-    s32 ticks;
-    u8 status;
-    u8 type;
-    u8 len;
-};
-
-struct ALSeqpBankEvent {
-    ALBank * bank;
-};
-
-struct ALMIDIEvent {
-    s32 ticks;
-    u8 status;
-    u8 byte1;
-    u8 byte2;
-    u32 duration;
-};
-
-struct ALVolumeEvent {
-    struct ALVoice_s * voice;
-    ALMicroTime delta;
-    u8 vol;
-};
-
-struct ALSeqpPriorityEvent {
-    u8 chan;
-    u8 priority;
-};
-
-struct ALOscEvent {
-    struct ALVoiceState_s * vs;
-    void * oscState;
-    u8 chan;
-};
-
-struct ALSeqpLoopEvent {
-    struct ALSeqMarker * start;
-    struct ALSeqMarker * end;
-    s32 count;
-};
-
-struct ALTempoEvent {
-    s32 ticks;
-    u8 status;
-    u8 type;
-    u8 len;
-    u8 byte1;
-    u8 byte2;
-    u8 byte3;
-};
-
-struct ALSeqpVolEvent {
-    s16 vol;
-};
-
-struct ALNoteEvent {
-    struct ALVoice_s * voice;
-};
-
-struct ALSeqpSeqEvent {
-    void * seq;
-};
-
-union _union_144 {
-    struct ALMIDIEvent midi;
-    struct ALTempoEvent tempo;
-    struct ALEndEvent end;
-    struct ALNoteEvent note;
-    struct ALVolumeEvent vol;
-    struct ALSeqpLoopEvent loop;
-    struct ALSeqpVolEvent spvol;
-    struct ALSeqpPriorityEvent sppriority;
-    struct ALSeqpSeqEvent spseq;
-    struct ALSeqpBankEvent spbank;
-    struct ALOscEvent osc;
-};
-
-struct ALEvent {
-    s16 type;
-    union _union_144 msg;
-};
-
-struct ALBank_s {
-    s16 instCount;
-    u8 flags;
-    u8 pad;
-    s32 sampleRate;
-    struct ALInstrument * percussion;
-    struct ALInstrument * instArray[1];
-};
-
-struct ALInstrument {
-    u8 volume;
-    ALPan pan;
-    u8 priority;
-    u8 flags;
-    u8 tremType;
-    u8 tremRate;
-    u8 tremDepth;
-    u8 tremDelay;
-    u8 vibType;
-    u8 vibRate;
-    u8 vibDepth;
-    u8 vibDelay;
-    s16 bendRange;
-    s16 soundCount;
-    ALSound * soundArray[1];
-};
-
-struct ALEventQueue {
-    ALLink freeList;
-    ALLink allocList;
-    s32 eventCount;
-};
-
-struct ALEnvelope {
-    ALMicroTime attackTime;
-    ALMicroTime decayTime;
-    ALMicroTime releaseTime;
-    u8 attackVolume;
-    u8 decayVolume;
-};
-
-struct $2903A050EBC6442F98207E1AE6ED2D96 {
-    ALPlayer node;
-    struct ALEventQueue evtq;
-    struct ALEvent nextEvent;
-    struct ALSynth * drvr;
-    void * sndState;
-};
-
-struct ALVoiceState_s {
-    struct ALVoiceState_s * next;
-    ALVoice voice;
-    ALSound * sound;
-    ALMicroTime envEndTime;
-    f32 pitch;
-    f32 vibrato;
-    u8 envGain;
-    u8 channel;
-    u8 key;
-    u8 velocity;
-    u8 envPhase;
-    u8 phase;
-    u8 tremelo;
-    u8 flags;
-};
-
-struct ALSound_s {
-    struct ALEnvelope * envelope;
-    struct ALKeyMap * keyMap;
-    ALWaveTable * wavetable;
-    ALPan samplePan;
-    u8 sampleVolume;
-    u8 flags;
-};
-
-struct ALSeqMarker {
-    u8 * curPtr;
-    s32 lastTicks;
-    s32 curTicks;
-    s16 lastStatus;
-};
-
-typedef enum PROJECTILES {
-    PROJECTILES_MAX=46,
-    PROJECTILES_TYPE_BOMBCASE=226,
-    PROJECTILES_TYPE_BUG=245,
-    PROJECTILES_TYPE_GE_KEY=248,
-    PROJECTILES_TYPE_GLAUNCH_ROUND=203,
-    PROJECTILES_TYPE_GRENADE=196,
-    PROJECTILES_TYPE_KNIFE=186,
-    PROJECTILES_TYPE_MICROCAMERA=246,
-    PROJECTILES_TYPE_PLASTIQUE=273,
-    PROJECTILES_TYPE_PROX_MINE=200,
-    PROJECTILES_TYPE_REMOTE_MINE=199,
-    PROJECTILES_TYPE_ROCKET_ROUND=202,
-    PROJECTILES_TYPE_ROCKET_ROUND2=202,
-    PROJECTILES_TYPE_TIMED_MINE=201
-} PROJECTILES;
-
-typedef struct solo_target_times solo_target_times, *Psolo_target_times;
-
-struct solo_target_times {
-    short agent_time;
-    short secret_agent_time;
-    short OO_agent_time;
-};
-
-typedef enum LEVEL_INDEX {
-    LEVEL_INDEX_AME=28,
-    LEVEL_INDEX_ARCH=4,
-    LEVEL_INDEX_ARK=14,
-    LEVEL_INDEX_ASH=26,
-    LEVEL_INDEX_AZT=8,
-    LEVEL_INDEX_CAT=20,
-    LEVEL_INDEX_CAVE=19,
-    LEVEL_INDEX_CONTROL=3,
-    LEVEL_INDEX_CRAD=21,
-    LEVEL_INDEX_CRYP=12,
-    LEVEL_INDEX_DAM=13,
-    LEVEL_INDEX_DEPO=10,
-    LEVEL_INDEX_DEST=6,
-    LEVEL_INDEX_DISH=18,
-    LEVEL_INDEX_EAR=31,
-    LEVEL_INDEX_ELD=24,
-    LEVEL_INDEX_IMP=25,
-    LEVEL_INDEX_JUN=17,
-    LEVEL_INDEX_LEE=32,
-    LEVEL_INDEX_LEN=34,
-    LEVEL_INDEX_LIP=33,
-    LEVEL_INDEX_LUE=27,
-    LEVEL_INDEX_OAT=30,
-    LEVEL_INDEX_PAM=36,
-    LEVEL_INDEX_PETE=9,
-    LEVEL_INDEX_REF=11,
-    LEVEL_INDEX_RIT=29,
-    LEVEL_INDEX_RUN=15,
-    LEVEL_INDEX_SEVB=7,
-    LEVEL_INDEX_SEVBUNKER=0,
-    LEVEL_INDEX_SEVX=16,
-    LEVEL_INDEX_SEVXB=23,
-    LEVEL_INDEX_SHO=22,
-    LEVEL_INDEX_SILO=1,
-    LEVEL_INDEX_STATUE=2,
-    LEVEL_INDEX_TRA=5,
-    LEVEL_INDEX_WAX=35,
-    LEVEL_INDEX_X=37
-} LEVEL_INDEX;
-
-typedef struct ejected_cart ejected_cart, *Pejected_cart;
-
-struct ejected_cart {
-    struct Gitemheader * header;
-    void * text;
-};
-
-typedef struct mission_folder_setup mission_folder_setup, *Pmission_folder_setup;
-
-struct mission_folder_setup {
-    void * string_ptr;
-    short folder_text_preset;
-    short icon_text_preset;
-    int stage_id;
-    int unknown;
-    int type;
-    int mission_num;
-    void * briefing_name_ptr;
-};
-
-typedef struct MP_selectable_chars MP_selectable_chars, *PMP_selectable_chars;
-
-struct MP_selectable_chars {
-    short text_preset;
-    char gender;
-    char select_photo;
-    short body;
-    short head;
-    float pov;
-};
-
-typedef struct $DD54060F307CC511C1231C522D614BD1 $DD54060F307CC511C1231C522D614BD1, *P$DD54060F307CC511C1231C522D614BD1;
-
-struct $DD54060F307CC511C1231C522D614BD1 {
-    uchar * base;
-    int fmt;
-    int siz;
-    int xsize;
-    int ysize;
-    int lsize;
-    int addr;
-    int w;
-    int h;
-    int s;
-    int t;
-};
-
-typedef struct explosion_death_animation explosion_death_animation, *Pexplosion_death_animation;
-
-struct explosion_death_animation {
-    int anonymous_0;
-    int anonymous_1;
-    float anonymous_2;
-    float anonymous_3;
-    float anonymous_4;
-    float anonymous_5;
-    float anonymous_6;
 };
 
 
@@ -10803,35 +11616,6 @@ struct weapon_stats {
 
 // WARNING! conflicting data type names: /GE Current Master.h/RamRomBuffer - /ramrom.h/RamRomBuffer
 
-typedef enum MENU {
-    MENU_007_OPTIONS=9,
-    MENU_BRIEFING=10,
-    MENU_CHEAT=21,
-    MENU_DIFFICULTY=8,
-    MENU_DISPLAY_CAST=24,
-    MENU_EYE_INTRO=3,
-    MENU_FILE_SELECT=5,
-    MENU_GOLDENEYE_LOGO=4,
-    MENU_LEGAL_SCREEN=0,
-    MENU_MISSION_COMPLETE=13,
-    MENU_MISSION_FAILED=12,
-    MENU_MISSION_SELECT=7,
-    MENU_MODE_SELECT=6,
-    MENU_MP_CHAR_SELECT=15,
-    MENU_MP_CONTROL_STYLE=17,
-    MENU_MP_HANDICAP=16,
-    MENU_MP_OPTIONS=14,
-    MENU_MP_SCENARIO_SELECT=19,
-    MENU_MP_STAGE_SELECT=18,
-    MENU_MP_TEAMS=20,
-    MENU_NINTENDO_LOGO=1,
-    MENU_NO_CONTROLLERS=22,
-    MENU_RAREWARE_LOGO=2,
-    MENU_RUN_STAGE=11,
-    MENU_SPECTRUM_EMU=25,
-    MENU_SWITCH_SCREENS=23
-} MENU;
-
 typedef struct resource_lookup_data resource_lookup_data, *Presource_lookup_data;
 
 struct resource_lookup_data {
@@ -10859,29 +11643,6 @@ struct MP_controller_configuration_menu {
     char field_2;
     char field_3;
 };
-
-typedef enum WATCH_BRIEFING_PAGE {
-    BRIEFING_M=2,
-    BRIEFING_MONEYPENNY=4,
-    BRIEFING_OVERVIEW=1,
-    BRIEFING_Q=3,
-    BRIEFING_TITLE=0
-} WATCH_BRIEFING_PAGE;
-
-typedef enum MP_STAGE_SELECTED {
-    MP_STAGE_ARCHIVES=9,
-    MP_STAGE_BASEMENT=5,
-    MP_STAGE_BUNKER=8,
-    MP_STAGE_CAVERNS=10,
-    MP_STAGE_CAVES=3,
-    MP_STAGE_COMPLEX=2,
-    MP_STAGE_EGYPT=11,
-    MP_STAGE_FACILITY=7,
-    MP_STAGE_LIBRARY=4,
-    MP_STAGE_RANDOM=0,
-    MP_STAGE_STACK=6,
-    MP_STAGE_TEMPLE=1
-} MP_STAGE_SELECTED;
 
 typedef struct intro_char intro_char, *Pintro_char;
 
@@ -11006,23 +11767,6 @@ struct mp_stage_setup {
     int min_player;
     int max_player;
 };
-
-typedef enum CUFF_TYPES {
-    CUFF_BLUE=0,
-    CUFF_BOILER=3,
-    CUFF_JUNGLE=2,
-    CUFF_SNOW=4,
-    CUFF_TUX=1,
-    CUFF_TUX6=6,
-    CUFF_TUX7=7,
-    CUFF_TUX8=8,
-    CUFF_WHITE=5
-} CUFF_TYPES;
-
-typedef enum DOORSTATE {
-    CLOSED=2,
-    OPEN=1
-} DOORSTATE;
 
 typedef struct $3DC209F5817990864D0852F5D77FEFB7 $3DC209F5817990864D0852F5D77FEFB7, *P$3DC209F5817990864D0852F5D77FEFB7;
 
@@ -11165,19 +11909,13 @@ struct explosion_animation {
 typedef struct object_standard object_standard, *Pobject_standard;
 
 struct object_standard {
-    short scale;
-    char runtime_state;
+    short extrascale;
+    char hidden2;
     char type;
-    short objectID;
-    short presetID;
-    char FLAGS1;
-    char FLAGS2;
-    char FLAGS3;
-    char FLAGS4;
-    char FLAGS5;
-    char FLAGS6;
-    char FLAGS7;
-    char FLAGS8;
+    short obj;
+    short pad;
+    u32 flags;
+    u32 flags2;
     int runtime_ptr_obj_posdata;
     int runtime_ptr_obj_instance_controller;
     int runtime_MATRIX0;
@@ -11203,8 +11941,8 @@ struct object_standard {
     int ptr_allocated_collisiondata_block;
     int field_6C;
     float field_70;
-    short health;
-    short field_76;
+    short damage;
+    short maxdamage;
     char field_78;
     char field_79;
     char field_7A;
@@ -11322,7 +12060,33 @@ typedef struct OSScTask_s OSScTask_s, *POSScTask_s;
 
 typedef struct OSScTask_s OSScTask;
 
+typedef union OSTask OSTask, *POSTask;
+
 typedef struct OSTask_t OSTask_t, *POSTask_t;
+
+struct OSTask_t {
+    u32 type;
+    u32 flags;
+    u64 * ucode_boot;
+    u32 ucode_boot_size;
+    u64 * ucode;
+    u32 ucode_size;
+    u64 * ucode_data;
+    u32 ucode_data_size;
+    u64 * dram_stack;
+    u32 dram_stack_size;
+    u64 * output_buff;
+    u64 * output_buff_size;
+    u64 * data_ptr;
+    u32 data_size;
+    u64 * yield_data_ptr;
+    u32 yield_data_size;
+};
+
+union OSTask {
+    struct OSTask_t t;
+    longlong force_structure_alignment;
+};
 
 struct OSScMsg {
     short type;
@@ -11346,25 +12110,6 @@ struct $4DC9E63407FE56118E8436A326234A26 {
     OSScTask * curRDPTask;
 };
 
-struct OSTask_t {
-    enum SCHEDTASKS type;
-    u32 flags;
-    u64 * ucode_boot;
-    u32 ucode_boot_size;
-    u64 * ucode;
-    u32 ucode_size;
-    u64 * ucode_data;
-    u32 ucode_data_size;
-    u64 * dram_stack;
-    u32 dram_stack_size;
-    u64 * output_buff;
-    u64 * output_buff_size;
-    u64 * data_ptr;
-    u32 data_size;
-    u64 * yield_data_ptr;
-    u32 yield_data_size;
-};
-
 struct SCClient_s {
     struct SCClient_s * next;
     OSMesgQueue * msgQ;
@@ -11375,7 +12120,7 @@ struct OSScTask_s {
     u32 state;
     u32 flags;
     void * framebuffer;
-    struct OSTask_t list;
+    union OSTask list;
     OSMesgQueue * msgQ;
     OSMesg msg;
 };
@@ -11806,47 +12551,6 @@ struct $1E48F79B8290AAF3593C164F3AF34576 {
     struct ALHeap * heap;
 };
 
-typedef enum HEADS {
-    HEAD_Female_Mandy=72,
-    HEAD_Female_Marion_Rosika=71,
-    HEAD_Female_Sally=70,
-    HEAD_Female_Vivien=73,
-    HEAD_Male_Alan=43,
-    HEAD_Male_B=50,
-    HEAD_Male_Biker=61,
-    HEAD_Male_Chris=54,
-    HEAD_Male_Dave_Dr_Doak=51,
-    HEAD_Male_Des=53,
-    HEAD_Male_Duncan=47,
-    HEAD_Male_Dwayne=49,
-    HEAD_Male_Graeme=62,
-    HEAD_Male_Grant=52,
-    HEAD_Male_Jim=57,
-    HEAD_Male_Joe=68,
-    HEAD_Male_Joe_Altered=66,
-    HEAD_Male_Joel=64,
-    HEAD_Male_Karl=42,
-    HEAD_Male_Ken=67,
-    HEAD_Male_Lee=55,
-    HEAD_Male_Mark=46,
-    HEAD_Male_Martin=45,
-    HEAD_Male_Mishkin=69,
-    HEAD_Male_Neil=56,
-    HEAD_Male_Pete=44,
-    HEAD_Male_Pierce_Bond_1=74,
-    HEAD_Male_Pierce_Bond_2=75,
-    HEAD_Male_Pierce_Bond_3=76,
-    HEAD_Male_Pierce_Bond_Parka=77,
-    HEAD_Male_Pierce_Bond_Tuxedo_DEFAULT=78,
-    HEAD_Male_Robin=58,
-    HEAD_Male_Scott=65,
-    HEAD_Male_Shaun=48,
-    HEAD_Male_Steve_Ellis=63,
-    HEAD_Male_Steve_H=59,
-    HEAD_Male_Terrorist=60,
-    HEAD_Natalya_Jungle_Fatigues=79
-} HEADS;
-
 
 // WARNING! conflicting data type names: /GE Current Master.h/ALRawLoop - /libaudio.h/ALRawLoop
 
@@ -12043,18 +12747,6 @@ struct $0120AC1DF4EE79E1F66D1E961D6B23AA {
     u8 decayVolume;
 };
 
-typedef enum CONTROLLER_CONFIG {
-    CONTROLLER_CONFIG_CINEMA=8,
-    CONTROLLER_CONFIG_DOMINO=6,
-    CONTROLLER_CONFIG_GALORE=5,
-    CONTROLLER_CONFIG_GOODHEAD=7,
-    CONTROLLER_CONFIG_GOODNIGHT=3,
-    CONTROLLER_CONFIG_HONEY=0,
-    CONTROLLER_CONFIG_KISSY=2,
-    CONTROLLER_CONFIG_PLENTY=4,
-    CONTROLLER_CONFIG_SOLITARE=1
-} CONTROLLER_CONFIG;
-
 typedef struct $698E1586F824213C2C7D30F8DE84E678 ALSynConfig;
 
 typedef struct $EF3ACF09A692D55A7037B16E3DC74014 OSLogItem;
@@ -12118,98 +12810,6 @@ struct displaymode {
 typedef enum LOGIC {
 } LOGIC;
 
-typedef enum ITEM_IDS {
-    ITEM_56=86,
-    ITEM_57=87,
-    ITEM_AK47=8,
-    ITEM_AUDIOTAPE=71,
-    ITEM_AUTOSHOT=16,
-    ITEM_BLACKBOX=62,
-    ITEM_BLUEPRINTS=69,
-    ITEM_BOMBCASE=33,
-    ITEM_BOMBDEFUSER=39,
-    ITEM_BRIEFCASE=43,
-    ITEM_BUG=47,
-    ITEM_BUGDETECTOR=49,
-    ITEM_BUNGEE=37,
-    ITEM_CAMERA=40,
-    ITEM_CIRCUITBOARD=63,
-    ITEM_CLIPBOARD=64,
-    ITEM_CREDITCARD=53,
-    ITEM_DARKGLASSES=52,
-    ITEM_DATATHIEF=55,
-    ITEM_DATTAPE=73,
-    ITEM_DOORDECODER=38,
-    ITEM_DOOREXPLODER=42,
-    ITEM_DOSSIERRED=66,
-    ITEM_EXPLOSIVEFLOPPY=50,
-    ITEM_FIST=1,
-    ITEM_FLAREPISTOL=35,
-    ITEM_FNP90=14,
-    ITEM_GASKEYRING=54,
-    ITEM_GOLDBAR=79,
-    ITEM_GOLDENEYEKEY=61,
-    ITEM_GOLDENGUN=19,
-    ITEM_GOLDWPPK=21,
-    ITEM_GRENADE=26,
-    ITEM_GRENADELAUNCH=24,
-    ITEM_HEROIN=80,
-    ITEM_JOYPAD=85,
-    ITEM_KEYANALYSERCASE=46,
-    ITEM_KEYBOLT=83,
-    ITEM_KEYCARD=81,
-    ITEM_KEYYALE=82,
-    ITEM_KNIFE=2,
-    ITEM_LASER=22,
-    ITEM_LECTRE=77,
-    ITEM_LOCKEXPLODER=41,
-    ITEM_M16=13,
-    ITEM_MAP=70,
-    ITEM_MICROCAMERA=48,
-    ITEM_MICROCODE=76,
-    ITEM_MICROFILM=75,
-    ITEM_MONEY=78,
-    ITEM_MP5K=10,
-    ITEM_MP5KSIL=11,
-    ITEM_PITONGUN=36,
-    ITEM_PLANS=67,
-    ITEM_PLASTIQUE=34,
-    ITEM_POLARIZEDGLASSES=51,
-    ITEM_PROXIMITYMINE=28,
-    ITEM_REMOTEMINE=29,
-    ITEM_ROCKETLAUNCH=25,
-    ITEM_RUGER=18,
-    ITEM_SAFECRACKERCASE=45,
-    ITEM_SHOTGUN=15,
-    ITEM_SILVERWPPK=20,
-    ITEM_SKORPION=7,
-    ITEM_SNIPERRIFLE=17,
-    ITEM_SPECTRE=12,
-    ITEM_SPOOLTAPE=74,
-    ITEM_SPYFILE=68,
-    ITEM_STAFFLIST=65,
-    ITEM_SUIT_LF_HAND=84,
-    ITEM_TANKSHELLS=32,
-    ITEM_TASER=31,
-    ITEM_THROWKNIFE=3,
-    ITEM_TIMEDMINE=27,
-    ITEM_TOKEN=88,
-    ITEM_TRIGGER=30,
-    ITEM_TT33=6,
-    ITEM_UNARMED=0,
-    ITEM_UZI=9,
-    ITEM_VIDEOTAPE=72,
-    ITEM_WATCHCOMMUNICATOR=57,
-    ITEM_WATCHGEIGERCOUNTER=58,
-    ITEM_WATCHIDENTIFIER=56,
-    ITEM_WATCHLASER=23,
-    ITEM_WATCHMAGNETATTRACT=60,
-    ITEM_WATCHMAGNETREPEL=59,
-    ITEM_WEAPONCASE=44,
-    ITEM_WPPK=4,
-    ITEM_WPPKSIL=5
-} ITEM_IDS;
-
 
 // WARNING! conflicting data type names: /GE Current Master.h/ALHeap - /libaudio.h/ALHeap
 
@@ -12268,11 +12868,6 @@ struct gitem_data_struct {
     float equip_watch_y;
     float equip_watch_z;
 };
-
-typedef enum GENDER {
-    FEMALE=0,
-    MALE=1
-} GENDER;
 
 typedef struct save_data save_data, *Psave_data;
 
@@ -12369,11 +12964,6 @@ struct save_data {
     char unused3;
 };
 
-typedef enum mission_setup_type {
-    MISSION_HEADER=1,
-    MISSION_PART=0
-} mission_setup_type;
-
 
 // WARNING! conflicting data type names: /GE Current Master.h/guDLPrintCB - /gu.h/guDLPrintCB
 
@@ -12394,6 +12984,13 @@ struct point_table {
 
 
 // WARNING! conflicting data type names: /sched.h/OSSched - /GE Current Master.h/OSSched
+
+typedef enum enum {
+    PRE_NMI_MSG=669,
+    RDP_DONE_MSG=668,
+    RSP_DONE_MSG=667,
+    VIDEO_MSG=666
+} enum;
 
 #define OS_SC_RETRACE_MSG 1
 
@@ -12439,13 +13036,6 @@ struct point_table {
 #define OS_LOG_MAX_ARGS 16
 
 #define OS_LOG_VERSION 1
-
-typedef union OSTask OSTask, *POSTask;
-
-union OSTask {
-    struct OSTask_t t;
-    longlong force_structure_alignment;
-};
 
 typedef u32 OSYieldResult;
 
@@ -14429,11 +15019,11 @@ typedef enum AL_MIDImeta {
 
 
 
-s32 * get_cdata_vaddr(void);
-s32 * get_cdata_rom_start(void);
-s32 * get_cdata_rom_end(void);
-s32 * get_RareZipASMRomstart(void);
-s32 get_RareZipASMRomend(void);
+u32 * get_cdata_vaddr(void);
+u32 * get_cdata_rom_start(void);
+u32 * get_cdata_rom_end(void);
+u32 * get_RareZipASMRomstart(void);
+u32 get_RareZipASMRomend(void);
 void jump_decompressfile(int source,int target,int buffer);
 int init(EVP_PKEY_CTX *ctx);
 void * set_stack_entry(void *stack,s32 size);
@@ -14451,16 +15041,15 @@ void permit_stderr(BOOL flag);
 void setUserCompareValue(u32 value);
 void CheckDisplayErrorBuffer(void *frameBufPtr);
 void CheckDisplayErrorBufferEvery16Frames(u32 framecount);
-void osCreateLog(void);
-void osCreateScheduler(OSSched *sc,void *stack,u8 mode,u8 numFields);
-void osScAddClient(OSSched *sc,OSScClient *c,OSMesgQueue *msgQ);
-void osScRemoveClient(OSSched *sc,OSScClient *c);
-OSMesgQueue * osScGetCmdQ(OSSched *sc);
+void osCreateLog(OSLog *log,u32 *base,s32 len);
+void osCreateScheduler(OSSched *s,void *stack,OSPri priority,u8 mode,u8 numFields);
+void osScAddClient(OSSched *s,OSScClient *c,OSMesgQueue *msgQ);
+void osScRemoveClient(OSSched *s,OSScClient *c);
+OSMesgQueue * osScGetCmdQ(OSSched *s);
 void __scMain(OSSched *sc);
-void proc_70000E90(undefined param_1,undefined param_2,undefined param_3,undefined param_4,undefined param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,undefined4 param_9,undefined4 param_10,undefined4 param_11,undefined4 param_12);
 void __scHandleRetrace(OSSched *sc);
 void __scHandleRSP(OSSched *sc);
-undefined * get_counters(void);
+void * get_counters(void);
 void __scHandleRDP(OSSched *sc);
 OSScTask * *__scTaskReady(OSScTask *__return_storage_ptr__,OSScTask *t);
 s32 __scTaskComplete(OSSched *sc,OSScTask *t);
@@ -14479,7 +15068,7 @@ undefined * getptr_TLBallocatedblock(void);
 u32 return_tlb_random_value(void);
 void resolve_TLBaddress_for_InvalidHit(void);
 void set_hardwire_TLB_to_2(void);
-void amCreateAudioMgr(ALSynConfig *c,OSPri pri,amConfig *amc);
+void amCreateAudioMgr(ALSynConfig *c,OSPri priority,amConfig *amc);
 void startaudithread(void);
 void _amMain(void);
 u32 __amHandleFrameMsg(AudioInfo *info,AudioInfo *lastInfo);
@@ -14532,18 +15121,18 @@ void video_related_1F(f32 param_1);
 void video_related_21(f32 param_1);
 undefined4 video_related_23(void);
 void video_related_24(float param_1,float param_2,float param_3);
-void set_page_height(f32 param_1,f32 param_2);
+void set_page_height(f32 aspect,f32 param_2,f32 param_3);
 void video_related_27(undefined4 *param_1);
 undefined4 * set_setfillcolor(undefined4 *DL,uint red,uint green,int blue);
-void indy_grab_jpg_16bit(void);
-void indy_grab_jpg_32bit(void);
-void indy_grab_rgb_16bit(void);
-undefined4 indy_grab_rgb_32bit(void);
+u32 indy_grab_jpg_16bit(void);
+u32 indy_grab_jpg_32bit(void);
+u32 indy_grab_rgb_16bit(void);
+u32 indy_grab_rgb_32bit(void);
 int * return_match_in_debug_notice_list(char *name,char *data);
 void get_entry_of_size_in_debug_notice_list(int size);
 void add_new_entry_to_debug_notice_list(dword name,dword data);
 void add_debug_notice_deb_c_debug(void);
-void get_ptr_debug_notice_list_entry(undefined4 data,char *name);
+void get_ptr_debug_notice_list_entry(void *data,char *name);
 void scan_debug_notice_list_till_NULL(void);
 void proc_70004EBC(void);
 void debug_removed(undefined4 param_1,undefined4 param_2,undefined4 param_3);
@@ -14576,7 +15165,7 @@ s32 return_last_RA_saved_to_stack(undefined4 param_1);
 void romCreateMesgQueue(void);
 void doRomCopy(void *target,void *source,u32 size);
 void romReceiveMesg(void);
-void romCopy(void *rdramtarget,void *hw_address,u32 size);
+void romCopy(char *src,char *dest,int len);
 s32 romCopyAligned(void *target,void *source,s32 length);
 void doRomWrite(void *source,void *target,u32 size);
 void romWrite(void *source,void *target,u32 size);
@@ -14595,21 +15184,21 @@ void audio_related(void *datatable,int numsamples);
 void setupaudio(void);
 void musicTrack1Play(MUSIC_TRACKS track);
 void musicTrack1Stop(void);
-u16 get_music1len(void);
+ulonglong get_music1len(void);
 void musicTrack1Vol(s16 param_1);
 void music_related_0(void);
 void music_related_1(f32 rate);
 void music_related_3(float rate,s32 param_2,short length);
 void music_related_2nd_block(int param_1);
 void music_related_2nd_block_0(void);
-u16 get_music2len(void);
-void music_related_2nd_block_1(ulonglong param_1);
+ulonglong get_music2len(void);
+void musicTrack2Vol(ulonglong param_1);
 void music_related_5(void);
 void music_related_6(float param_1);
 void music_related_8(float param_1,undefined8 param_2,short param_3);
-void music_related_3rd_block(int tracknum);
+void music_related_3rd_block(int param_1);
 void music_related_3rd_block_0(void);
-u16 get_music3len(void);
+ulonglong get_music3len(void);
 void music_related_3rd_block_1(ulonglong param_1);
 void music_related_10(void);
 void music_related_11(float param_1);
@@ -14641,15 +15230,15 @@ void music_related_42(ulonglong param_1,ulonglong param_2);
 void something_with_memp_c_debug(void);
 void check_memflag_tokens(int param_1,int param_2);
 void memp_related_0(int *param_1);
-void * allocate_bytes_in_bank(int bytes,u32 bank);
+uint allocate_bytes_in_bank(int param_1,uint param_2);
 undefined8 memp_related_1(void *ptrdata,int size,uint bank);
 void nulled_list_all8_mem_alloc_banks_sizes(void);
 int memp_related_3(uint bank);
 uint memp_related_4(uint param_1,u32 param_2);
 void resetMemBank(u32 bank);
 void set_bank_nextentry_to_NULL(u32 bank);
-void swap_entries(memorybank *a,memorybank *b);
-void merge_alloc_entries(memorybank *param_1,memorybank *param_2);
+void swap_entries(undefined4 *param_1,undefined4 *param_2);
+void merge_alloc_entries(int param_1,undefined4 *param_2);
 undefined8 sort_merge_entries_in_alloc_table(int param_1);
 void memp_related_7(void);
 uint * mem_related(int param_1);
@@ -14668,12 +15257,12 @@ void mem_related_something_first_related_0(undefined *param_1);
 uint mem_related_0(void);
 undefined8 mem_related_1(int param_1,ulonglong param_2,ulonglong param_3);
 u32 get_random_value(void);
-void increment_random_num(u64 param_1);
+void increment_random_num(longlong param_1);
 u32 lotsa_shifting_random_related(ulonglong *param_1);
 byte * check_string_something(byte *param_1);
 char * strtok(char *__s,char *__delim);
 uint check_boot_switches(void);
-byte * check_token(int instance,char *token);
+byte * check_token(int param_1,byte *param_2);
 char * textpointer_load_parse_something(char *param_1,char *param_2);
 char * something_with_strings(char *param_1,char *param_2,int param_3);
 char * string_load_parse_something(char *param_1,char *param_2);
@@ -14686,7 +15275,7 @@ ulonglong strtol_related_0(byte param_1);
 ulonglong strtol_related_1(byte param_1);
 ulonglong strtol_related_2(char param_1);
 long strtol(char *__nptr,char **__endptr,int __base);
-u8 * proutSprintf(void *dest,void *src,size_t size);
+int proutSprintf(void *s,char *buf,size_t n);
 int sprintf(char *__s,char *__format,...);
 void start_pi_manager(void);
 void removed_7000ad30(void);
@@ -14698,20 +15287,20 @@ void removed_7000ada8(void);
 void debug_text_related_2(void);
 void display_text_to_coord(int x,int y,char char);
 void debugMenuSetTextPOStoOffset(void);
-void debug_text_related_1(void);
+void blank_debug_buffer_chars(void);
 void removed_7000af84(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
 int something_debug_info_related(int param_1);
-void set_final_debug_text_positions(int xadjust,int yadjust);
+void set_final_debug_text_positions(s32 xadjust,s32 yadjust);
 void set_debug_text_color(s32 red,s32 blue,s32 green,s32 alpha);
 void set_color_speedgraph(int red,int green,int blue,int alpha);
-void write_char_to_screen(byte char);
-void debug_text_related_0(int x,int y,byte char);
-void write_string_stdout(byte *string);
+void write_char_to_screen(byte character);
+void debug_printcharatpos(int x,int y,byte letter);
+void write_string_stdout(u8 *string);
 void debug_text_related(int x,int y,byte *character);
 uint * read_screen_display_block_and_write_chars(uint *param_1);
 void something_with_joy_c_debug(void);
 void test_controller_presence(void);
-s32 osPfsChecker(OSPfs *pfs);
+s32 osPfsChecker(OSPfs *param_1);
 void controller_7000B734(uint param_1);
 void controller_check_for_rumble_maybe(void);
 undefined get_attached_controller_count(void);
@@ -14726,8 +15315,8 @@ undefined get_cur_controller_horz_stick_pos(char param_1);
 undefined controller_7000C174(char param_1);
 undefined get_cur_controller_vert_stick_pos(char param_1);
 undefined controller_7000C284(char param_1);
-ulonglong get_controller_buttons_held(char param_1,controller_buttons buttons);
-ulonglong get_controller_buttons_pressed(char controller,controller_buttons buttonmask);
+ulonglong get_controller_buttons_held(char param_1,ulonglong param_2);
+ulonglong get_controller_buttons_pressed(char param_1,ulonglong param_2);
 void proc_7000C430(char *param_1,uint param_2);
 void proc_7000C470(void);
 int get_controller_3dstick_L_R(char param_1,int param_2,int param_3);
@@ -14775,9 +15364,9 @@ void osStopThread(OSThread *t);
 void osSetThreadPri(OSThread *t,OSPri p);
 u32 osGetCount(void);
 void osCreateViManager(OSPri pri);
-void viMgrMain(void *arg);
+void viMgrMain(int param_1);
 void osCreateViManager_sub(undefined param_1,undefined param_2,undefined param_3,undefined param_4,undefined param_5,undefined param_6,undefined4 param_7,undefined4 param_8);
-void osSetEventMesg(enumOSEvent e,OSMesgQueue *mq,enumOSEventMsg m);
+void osSetEventMesg(void);
 void osViSetEvent(OSMesgQueue *mq,OSMesg m,u32 retraceCount);
 OSIntMask osSetIntMask(OSIntMask param_1);
 s32 osRecvMesg(OSMesgQueue *mq,OSMesg *msg,s32 flags);
@@ -14785,15 +15374,15 @@ s32 osSendMesg(OSMesgQueue *mq,OSMesg msg,s32 flags);
 void osViSetMode(OSViMode *modep);
 void osViSetXScale(f32 value);
 void osViSetYScale(f32 value);
-void osViRepeatLine(u8 active);
-void osViBlack(u8 active);
+void osViRepeatLine(char param_1);
+void osViBlack(u32 active);
 OSYieldResult osSpTaskYielded(OSTask *tp);
 void osDpGetCounters(u32 *array);
 void * osViGetCurrentFramebuffer(void);
 void * osViGetNextFramebuffer(void);
 void osViSwapBuffer(void *frameBufPtr);
 void osDpSetStatus(u32 data);
-OSTask * _VirtualToPhysicalTask(OSTask *intp);
+undefined * _VirtualToPhysicalTask(void *param_1);
 void osSpTaskLoad(OSTask *intp);
 void osSpTaskStartGo(OSTask *tp);
 s32 osDpSetNextBuffer(void *bufPtr,u64 size);
@@ -14807,16 +15396,16 @@ void alClose(ALGlobals *glob);
 void alInit(ALGlobals *g,ALSynConfig *c);
 void *alHeapDBAlloc(u8 *file,s32 line,ALHeap *hp,s32 num,s32 size);
 OSTime osGetTime(void);
-longlong __ull_rshift(ulonglong left,longlong right);
-ulonglong __ull_rem(ulonglong left,ulonglong right);
-ulonglong __ull_div(ulonglong left,ulonglong right);
-longlong __ll_lshift(longlong left,longlong right);
-longlong __ll_rem(longlong left,longlong right);
-longlong __ll_div(longlong left,longlong right);
-longlong __ll_mul(longlong a,longlong b);
-void __ull_divremi(ulonglong *param_1,ulonglong *param_2,longlong dividend,ushort divisor);
-longlong __ll_mod(longlong left,longlong right);
-longlong __ll_lshift(longlong left,longlong right);
+longlong __ull_rshift(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
+longlong __ull_rem(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
+ulonglong __ull_div(undefined4 left_u,undefined4 left_l,undefined4 right_u,undefined4 right_l);
+longlong __ll_lshift(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
+longlong __ll_rem(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
+longlong __ll_div(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
+longlong __ll_mul(undefined4 left_u,undefined4 left_l,undefined4 right_u,undefined4 right_l);
+void __ull_divremi(ulonglong *param_1,ulonglong *param_2,undefined4 param_3,undefined4 param_4,short param_5);
+undefined4 __ll_mod(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
+longlong __ll_lshift(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
 s32 osAiSetNextBuffer(void *bufPtr,u32 size);
 undefined4 osAiGetLength(void);
 void dummy7000EFBC(void);
@@ -14859,7 +15448,7 @@ void _bnkfPatchInst(ALInstrument *inst,s32 offset,s32 table);
 void removed_70010E6C(void);
 void alBnkfNew(ALBankFile *file,char *table);
 void alSeqFileNew(ALSeqFile *file,u8 *base);
-void __CSPPostNextSeqEvent(ALCSPlayer *seqp);
+void __CSPPostNextSeqEvent(int param_1);
 void __setUsptFromTempo(ALCSPlayer *seqp,f32 tempo);
 void proc_70011064(void);
 void __CSPRepostEvent(ALEventQueue *evtq,ALEventListItem *item);
@@ -14867,8 +15456,8 @@ void __CSPHandleMIDIMsg(ALCSPlayer *seqp,ALEvent *event);
 void proc_70011A64(void);
 ALMicroTime __CSPVoiceHandler(void *node);
 void alCSPNew(ALCSPlayer *seqp,ALSeqpConfig *c);
-void __CSPPostNextSeqEvent(ALCSPlayer *seqp);
-s32 ultra_proc_70012230(ALCSPlayer *param_1);
+void __CSPPostNextSeqEvent(int param_1);
+s32 alCSPGetState(ALCSPlayer *seqp);
 void alCSeqGetLoc(ALCSeq *seq,ALCSeqMarker *marker);
 void alCSeqSetLoc(ALCSeq *seq,ALCSeqMarker *m);
 u8 __getTrackByte(ALCSeq *seq,u32 track);
@@ -14880,7 +15469,7 @@ void alCSeqNewMarker(ALCSeq *seq,ALCSeqMarker *m,u32 ticks);
 s32 alCSeqGetTicks(ALCSeq *seq);
 u32 alCSeqSecToTicks(ALCSeq *seq,f32 sec,u32 tempo);
 f32 alCSeqTicksToSec(ALCSeq *seq,s32 ticks,u32 tempo);
-char __alCSeqNextDelta(ALCSeq *seq,s32 *pDeltaTicks);
+undefined8 __alCSeqNextDelta(int param_1,uint *param_2);
 void alCSPSetSeq(ALCSPlayer *seqp,ALCSeq *seq);
 void alCSPPlay(ALCSPlayer *seqp);
 void alSeqpStop(ALSeqPlayer *seqp);
@@ -14891,7 +15480,7 @@ void alEvtqPostEvent(ALEventQueue *evtq,ALEvent *evt,ALMicroTime delta);
 ALMicroTime alEvtqNextEvent(ALEventQueue *evtq,ALEvent *evt);
 void alEvtqNew(ALEventQueue *evtq,ALEventListItem *items,s32 itemCount);
 void alSynAddPlayer(ALSynth *drvr,ALPlayer *client);
-s32 _allocatePVoice(ALSynth *drvr,PVoice **pvoice,s16 priority);
+s32 _allocatePVoice(int param_1,int **param_2,short param_3);
 s32 alSynAllocVoice(ALSynth *drvr,ALVoice *voice,ALVoiceConfig *vc);
 void alSynSetVol(ALSynth *synth,ALVoice *v,s16 volume,ALMicroTime t);
 void alSynStartVoice(ALSynth *synth,ALVoice *voice,ALWaveTable *table);
@@ -14906,7 +15495,7 @@ void * memcpy(void *__dest,void *__src,size_t __n);
 size_t strlen(char *__s);
 char * strchr(char *__s,int __c);
 void _Putfld(undefined8 param_1,ulonglong param_2,uint **param_3,int param_4);
-int _Printf(void *pfn,void *arg,char *fmt,va_list ap);
+byte * _Printf(undefined *param_1,longlong param_2,byte *param_3,uint *param_4);
 void osCreatePiManager(OSPri pri,OSMesgQueue *cmdQ,OSMesg *cmdBuf,s32 cmdMsgCnt);
 s32 osPfsInit(OSMesgQueue *queue,OSPfs *pfs,int channel);
 s32 __osPfsGetStatus(OSMesgQueue *queue,int channel);
@@ -14956,20 +15545,20 @@ void guLookAtF(float mf [4] [4],float xEye,float yEye,float zEye,float xAt,float
 void guLookAt(Mtx *m,float xEye,float yEye,float zEye,float xAt,float yAt,float zAt,float xUp,float yUp,float zUp);
 void guRotateF(float mf [4] [4],float a,float x,float y,float z);
 void guRotate(Mtx *m,float a,float x,float y,float z);
-longlong __d_to_ll(double d);
-longlong __f_to_ll(float f);
-longlong __d_to_ull(double d);
-longlong __f_to_ull(float f);
-double __ll_to_d(longlong l);
-float __ll_to_f(longlong l);
-double __ull_to_d(ulonglong l);
-float __ull_to_f(ulonglong l);
+longlong __d_to_ll(double param_1);
+longlong __f_to_ll(float param_1);
+longlong __d_to_ull(double param_1);
+longlong __f_to_ull(float param_1);
+double __ll_to_d(undefined4 param_1,undefined4 param_2);
+float __ll_to_f(undefined4 param_1,undefined4 param_2);
+double __ull_to_d(undefined4 param_1,undefined4 param_2);
+float __ull_to_f(undefined4 param_1,undefined4 param_2);
 void __osSetSR(u32 param_1);
 u32 __osGetSR(void);
 s32 __osSiRawReadIo(u32 devAddr,u32 *data);
-s32 __osSpRawWriteIo(u32 devAddr,u32 data);
+s32 __osSpRawWriteIo(u32 param_1,u32 param_2);
 s32 osPiRawReadIo(u32 devAddr,u32 *data);
-void bzero(void *dst,int len);
+void bzero(void *__s,size_t __n);
 void __osSetHWIntrRoutine(OSHWIntr interrupt,s32 *handler);
 s32 __osLeoInterrupt(void);
 void __osLeoAbnormalResume(void);
@@ -14982,7 +15571,7 @@ void __osSetTimerIntr(OSTime tim);
 OSTime __osInsertTimer(OSTimer *t);
 OSPri osGetThreadPri(OSThread *t);
 void __osViInit(void);
-__OSViContext * __osViGetCurrentContext(void);
+undefined * __osViGetCurrentContext(void);
 void __osViSwapContext(void);
 u32 __osSpGetStatus(void);
 void __osSpSetStatus(u32 data);
@@ -14999,7 +15588,7 @@ void alAuxBusNew(ALAuxBus *m,void *sources,int maxSources);
 void alResampleNew(ALResampler *r,ALHeap *hp);
 void alLoadNew(ALLoadFilter *f,ALDMANew dmaNew,ALHeap *hp);
 void alEnvmixerNew(ALEnvMixer *e,ALHeap *hp);
-void init_lpfilter(ALLowPass *lp);
+void init_lpfilter(undefined8 param_1,short *param_2);
 void alFxNew(ALFx *r,ALSynConfig *c,ALHeap *hp);
 ALFxRef *alSynAllocFX(ALSynth *s,s16 bus,ALSynConfig *c,ALHeap *hp);
 s32 alMainBusParam(void *filter,s32 paramID,void *param);
@@ -15016,9 +15605,9 @@ s32 alEnvmixerParam(void *filter,s32 paramID,void *param);
 int proc_7001AAF4(float param_1,float param_2,longlong param_3,undefined2 *param_4);
 Acmd * _pullSubFrame(void *filter,s16 *inp,s16 *outp,s32 outCount,s32 sampleOffset,Acmd *p);
 void proc_7001AE54(void);
-longlong *alEnvmixerPull(void *filter,s16 *outp,s32 outCount,s32 sampleOffset,Acmd *p);
+Acmd * *alEnvmixerPull(void *f,s16 *outp,s32 out,s32 sampleOffset,Acmd *p);
 s32 alAuxBusParam(void *filter,s32 paramID,void *param);
-longlong *alAuxBusPull(void *filter,s16 *outp,s32 outCount,s32 sampleOffset,Acmd *p);
+Acmd * *alAuxBusPull(void *f,s16 *outp,s32 outCount,s32 sampleOffset,Acmd *p);
 s32 alSaveParam(void *filter,s32 paramID,void *param);
 longlong *alSavePull(void *filter,s16 *outp,s32 outCount,s32 sampleOffset,Acmd *p);
 s32 osJamMesg(OSMesgQueue *mq,OSMesg msg,s32 flags);
@@ -15026,26 +15615,26 @@ OSMesgQueue * osPiGetCmdQueue(void);
 ulonglong proc_7001B830(void);
 ulonglong proc_7001B9A0(void);
 void osDestroyThread(OSThread *t);
-void __setInstChanState(ALSeqPlayer *seqp,ALInstrument *inst,s32 chan);
-void __resetPerfChanState(ALSeqPlayer *seqp,s32 chan);
-void __initFromBank(ALSeqPlayer *seqp,ALBank *b);
+void __setInstChanState(int param_1,undefined *param_2,int param_3);
+void __resetPerfChanState(int param_1,int param_2);
+void __initFromBank(int param_1,int param_2);
 void proc_7001BDE8(void);
-ALMicroTime __vsDelta(ALVoiceState *vs,ALMicroTime t);
-s16 __vsVol(ALVoiceState *vs,ALSeqPlayer *seqp);
-void __seqpReleaseVoice(ALSeqPlayer *seqp,ALVoice *voice,ALMicroTime deltaTime);
-char __voiceNeedsNoteKill(ALSeqPlayer *seqp,ALVoice *voice,ALMicroTime killTime);
-void __unmapVoice(ALSeqPlayer *seqp,ALVoice *voice);
-void __postNextSeqEvent(ALSeqPlayer *seqp);
+int __vsDelta(int param_1,int param_2);
+undefined2 __vsVol(int param_1,int param_2);
+void __seqpReleaseVoice(int param_1,int *param_2,int *param_3);
+undefined8 __voiceNeedsNoteKill(int param_1,int *param_2,int param_3);
+void __unmapVoice(int param_1,int param_2);
+void __postNextSeqEvent(int param_1);
 void proc_7001C1BC(int param_1,int param_2);
-ALPan __vsPan(ALVoiceState *vs,ALSeqPlayer *seqp);
-ALVoiceState **__lookupVoice(ALVoiceState *__return_storage_ptr__,ALSeqPlayer *seqp,u8 key,u8 channel);
-ALVoiceState **__mapVoice(ALVoiceState *__return_storage_ptr__,ALSeqPlayer *seqp,u8 key,u8 vel,u8 channel);
-ALSound * __lookupSoundQuick(ALSeqPlayer *seqp,u8 key,u8 vel,u8 chan);
+uint __vsPan(int param_1,int param_2);
+undefined4 * *__lookupVoice(int param_1,char param_2,char param_3);
+undefined4 * *__mapVoice(int param_1,undefined param_2,undefined param_3,undefined param_4);
+int __lookupSoundQuick(int param_1,byte param_2,byte param_3,uint param_4);
 void __handleMIDIMsg(ALSeqPlayer *seqp,ALEvent *event);
 void proc_7001CC74(void);
 ALMicroTime __seqpVoiceHandler(void *node);
-void __seqpStopOsc(ALSeqPlayer *seqp,ALVoiceState *vs);
-void __initChanState(ALSeqPlayer *seqp);
+void __seqpStopOsc(int param_1,int *param_2);
+void __initChanState(int param_1);
 void alSeqpNew(ALSeqPlayer *seqp,ALSeqpConfig *c);
 void alSynStartVoiceParams(ALSynth *s,ALVoice *v,ALWaveTable *w,f32 pitch,s16 vol,ALPan pan,u8 fxmix,ALMicroTime t);
 void alCopy(void *src,void *dest,s32 len);
@@ -15061,8 +15650,8 @@ void __osDevMgrMain(void *arg);
 void proc_7001E9B0(undefined param_1,undefined param_2,undefined param_3,undefined param_4,undefined param_5,undefined param_6,undefined param_7,undefined4 param_8);
 u16 __osSumcalc(u8 *ptr,int length);
 s32 __osIdCheckSum(u16 *ptr,u16 *csum,u16 *icsum);
-s32 __osRepairPackId(OSPfs *pfs,__OSPackId *badid,__OSPackId *newid);
-s32 __osCheckPackId(OSPfs *pfs,__OSPackId *temp);
+int __osRepairPackId(int param_1,int param_2,undefined4 *param_3);
+int __osCheckPackId(int param_1,byte *param_2);
 s32 __osGetId(OSPfs *pfs);
 s32 __osCheckId(OSPfs *pfs);
 s32 __osPfsRWInode(OSPfs *pfs,__OSInode *inode,u8 flag,u8 bank);
@@ -15073,11 +15662,11 @@ float sqrtf(float __x);
 OSPiHandle * osLeoDiskInit(void);
 void __osSetCompare(u32 param_1);
 void alFilterNew(ALFilter *f,ALCmdHandler h,ALSetParam s,int type);
-f32 _doModFunc(ALDelay *d,s32 count);
-longlong *_filterBuffer(ALLowPass *lp,s32 buff,s32 count,Acmd *p);
-longlong *_saveBuffer(ALFx *r,s16 *curr_ptr,s32 buff,s32 count,Acmd *p);
-longlong *_loadBuffer(ALFx *r,s16 *curr_ptr,s32 buff,s32 count,Acmd *p);
-longlong *_loadOutputBuffer(ALFx *r,ALDelay *d,s32 buff,s32 incount,Acmd *p);
+ulonglong _doModFunc(void);
+uint * *_filterBuffer(int param_1,uint param_2,uint param_3,uint *param_4);
+undefined4 * *_saveBuffer(int param_1,uint param_2,int param_3,int param_4,undefined4 *param_5);
+uint * *_loadBuffer(int param_1,uint param_2,uint param_3,int param_4,uint *param_5);
+uint * *_loadOutputBuffer(int param_1,int *param_2,uint param_3,undefined8 param_4,uint *param_5);
 s32 alFxParamHdl(void *filter,s32 paramID,void *param);
 s32 alFxParam(void *filter,s32 paramID,void *param);
 longlong *alFxPull(void *filter,s16 *outp,s32 outCount,s32 sampleOffset,Acmd *p);
@@ -15092,7 +15681,7 @@ void alSeqNextEvent(ALSeq *seq,ALEvent *event);
 void alSeqNewMarker(ALSeq *seq,ALSeqMarker *m,u32 ticks);
 u32 alSeqSecToTicks(ALSeq *seq,f32 sec,u32 tempo);
 f32 alSeqTicksToSec(ALSeq *seq,s32 ticks,u32 tempo);
-char __alSeqNextDelta(ALSeq *seq,s32 *pDeltaTicks);
+ulonglong __alSeqNextDelta(int *param_1,undefined4 *param_2);
 s32 read32(ALSeq *seq);
 s16 read16(ALSeq *seq);
 void alSeqNew(ALSeq *seq,u8 *ptr,s32 len);
@@ -15101,12 +15690,12 @@ lldiv_t * lldiv(lldiv_t *__return_storage_ptr__,longlong __numer,longlong __deno
 ldiv_t ldiv(long __numer,long __denom);
 void __osResetGlobalIntMask(OSHWIntr interrupt);
 s32 osEPiRawWriteIo(OSPiHandle *pihandle,u32 devAddr,u32 data);
-int huft_build(uint *b,uint n,uint s,ush *d,ush *e,huft **t,int *m);
-int inflate_codes(huft *tl,huft *td,int bl,int bd);
+int huft_build(char b,char n,char s,char d,undefined e,undefined t,undefined m);
+int inflate_codes(char tl,char td,char bl,char bd);
 int inflate_stored(void);
 int inflate_fixed(void);
 int inflate_dynamic(void);
-int inflate_block(int *e);
+int inflate_block(char e);
 int inflate(void);
 void decompress.entry(int source,int target,int buffer);
 void initGameData(void);
@@ -15114,7 +15703,7 @@ void init_weapon_animation_groups_maybe(void);
 void reset_counter_rand_body_head(void);
 uint proc_7F0001F0(int param_1,int param_2,int param_3);
 int proc_7F000290(int param_1,int param_2,int param_3);
-int proc_7F00032C(struct_1 *param_1);
+int proc_7F00032C(int *param_1);
 void proc_7F00046C(int **param_1);
 int proc_7F0004D0(int *param_1);
 void somethingwith_weapon_animation_groups(void);
@@ -15122,7 +15711,7 @@ void proc_7F000980(void);
 void proc_7F0009A0(void);
 void removed_7f0009d0(void);
 void proc_7F0009E0(undefined4 param_1,undefined4 param_2,undefined4 param_3);
-void expand_ani_table_entries(void *param_1);
+void expand_ani_table_entries(int **param_1);
 void alloc_load_expand_ani_table(void);
 void setup_ptr_playergait(void);
 void set_gu_scale(void);
@@ -15146,7 +15735,7 @@ void proc_7F001928(int param_1);
 void proc_7F001940(int param_1);
 void write_monitor_ani_control_blocks(void);
 void initialize_80071E00_to_80071E78(void);
-int load_proptype(u8 param_1);
+int load_proptype(PROPTYPE param_1);
 void proc_7F001BD4(float *param_1,float *param_2);
 void prepare_load_objects(undefined8 param_1,ushort *param_2);
 void expand_08_obj_set_guard_MP_weapons(int param_1,ushort *param_2);
@@ -15159,7 +15748,7 @@ void expand_type_0A_object(int param_1,ushort *param_2,int param_3);
 void expand_type_0B_object(int param_1,ushort *param_2);
 void proc_7F00324C(void);
 void expand_type_01_object(void);
-void stage_loading_setup_objparse_cleanupafter(longlong param_1);
+void proplvreset2(longlong param_1);
 void something_with_stage_objectives(void);
 void set_parent_cur_tag_entry(int param_1);
 void setup_briefing_text_entry_parent(int param_1);
@@ -15200,14 +15789,14 @@ void unload_something_7f007920(void);
 void unload_removed_7f007970(void);
 void unload_music_related_7F007980(void);
 undefined4 * something_with_gunbarrel_and_rareware_logo_matrix_manip(undefined4 *displaylist);
-Gfx * insert_sight_backdrop_eye_intro(Gfx *glistp);
+undefined4 * insert_sight_backdrop_eye_intro(undefined4 *param_1);
 undefined4 * proc_7F007CC8(undefined4 *param_1,int param_2,int *param_3,int *param_4);
-Gfx * insert_sniper_sight_eye_intro(Gfx *glistp);
+undefined4 * insert_sniper_sight_eye_intro(undefined4 *param_1);
 undefined4 * proc_7F007E70(undefined4 *param_1,uint param_2);
 undefined4 proc_7F007F30(void);
-void insert_bond_eye_intro(undefined4 *displaylist);
+void insert_bond_eye_intro(undefined4 *param_1);
 undefined4 *load_display_rare_logo(undefined4 *param_1,undefined8 param_2,undefined8 param_3,int param_4,uint param_5);
-void proc_7F008B58(ulonglong param_1,u32 param_2);
+void proc_7F008B58(ulonglong param_1);
 undefined4 * retrieve_display_rareware_logo(undefined4 *param_1);
 ulonglong proc_7F008DD0(void);
 void proc_7F008DE4(ushort **param_1,int *param_2);
@@ -15221,37 +15810,37 @@ int getplayerfavoredweapon(int param_1,int param_2);
 int menu_control_stick_tracking(void);
 undefined4 load_draw_selected_icon_folder_select(undefined4 param_1);
 uint * add_tab1_start(undefined4 *param_1);
-BOOL isontab1(void);
+undefined8 isontab1(void);
 uint * add_tab3_previous(undefined4 *param_1);
-BOOL isontab3(void);
+undefined8 isontab3(void);
 void set_cursor_pos_tab2(void);
 uint * add_tab2_next(undefined4 *param_1);
-BOOL isontab2(void);
+undefined8 isontab2(void);
 void init_menu00_legalscreen(void);
 void update_menu00_legalscreen(void);
 void interface_menu00_legalscreen(undefined8 param_1,undefined8 param_2);
 uint * display_aligned_white_text_to_screen(undefined4 *param_1,int param_2,int param_3,int param_4,int param_5,byte *param_6,int param_7,int param_8);
-void constructor_menu00_legalscreen(undefined4 *param_1);
+u32 * constructor_menu00_legalscreen(undefined4 *param_1);
 void reset_menutimer(void);
 void dummy7F00AAF8(void);
 void interface_menu17_switchscreens(undefined8 param_1,undefined8 param_2);
-undefined4 * constructor_menu17_switchscreens(undefined4 *param_1);
+u32 * constructor_menu17_switchscreens(undefined4 *param_1);
 void init_menu01_nintendo(void);
 void update_menu01_nintendo(void);
 void interface_menu01_nintendo(undefined8 param_1,undefined8 param_2);
-undefined4 * constructor_menu01_nintendo(undefined4 *param_1);
+u32 * constructor_menu01_nintendo(undefined4 *param_1);
 int ** init_menu02_rareware(void);
 void update_menu02_rareware(void);
 void interface_menu02_rareware(void);
-undefined4 * constructor_menu02_rareware(undefined4 *param_1);
+u32 * constructor_menu02_rareware(undefined4 *param_1);
 void init_menu03_eyeintro(void);
 void update_menu_03_eyeintro(void);
 void interface_menu03_eyeintro(void);
-void constructor_menu03_eyeintro(longlong param_1);
+u32 * constructor_menu03_eyeintro(undefined4 *param_1);
 void init_menu04_goldeneyelogo(void);
 void update_menu04_goldeneyelogo(void);
 void interface_menu04_goldeneyelogo(undefined8 param_1,undefined8 param_2);
-undefined4 * constructor_menu04_goldeneyelogo(undefined4 *param_1);
+u32 * constructor_menu04_goldeneyelogo(undefined4 *param_1);
 void disable_all_switches(int param_1);
 void set_item_visibility_in_objinstance(int objinstance,int item,undefined4 mode);
 void select_load_bond_picture(int objinstance,u32 bondID);
@@ -15263,31 +15852,31 @@ int get_chapter_briefing_entry(int briefing);
 void toggle_deletion_menu_for_folder(int param_1);
 void interface_menu05_filesel(void);
 int get_ptr_difficulty_name(DIFFICULTY difficulty);
-uint * constructor_menu05_filesel(undefined4 *param_1);
+u32 * constructor_menu05_filesel(undefined4 *param_1);
 void init_menu06_modesel(void);
 void update_menu06_modesel(void);
 void interface_menu06_modesel(void);
 undefined4 proc_7F00D5E8(undefined4 param_1);
 void set_menu_cursor_pos_to_setting(int setting);
-undefined4 constructor_menu06_modesel(undefined4 *param_1);
-int pull_and_display_text_for_folder_a0(undefined *folder);
+u32 * constructor_menu06_modesel(undefined4 *param_1);
+int pull_and_display_text_for_folder_a0(undefined *param_1);
 BOOL check_if_stage_completed_on_difficulty(int stage,DIFFICULTY difficulty);
 longlong get_highest_unlocked_difficulty_for_level(longlong stage);
 void init_menu07_missionsel(void);
 void update_menu07_missionsel(void);
 void interface_menu07_missionsel(undefined8 param_1,undefined8 param_2);
 void set_cursor_to_stage_solo(longlong param_1);
-undefined4 constructor_menu07_missionsel(undefined4 *param_1);
+u32 * constructor_menu07_missionsel(undefined4 *param_1);
 void init_menu08_difficulty(void);
 void update_menu08_difficulty(void);
 void interface_menu08_difficulty(void);
 uint * print_current_solo_briefing_stage_name(uint *param_1,byte *param_2);
 void set_cursor_pos_difficulty(int difficulty);
-undefined4 constructor_menu08_difficulty(undefined4 *param_1);
+u32 * constructor_menu08_difficulty(undefined4 *param_1);
 void init_menu09_007options(void);
 void update_menu09_007options(void);
 void interface_menu09_007options(undefined8 param_1,undefined8 param_2);
-undefined4 constructor_menu09_007options(undefined4 *param_1);
+u32 * constructor_menu09_007options(undefined4 *param_1);
 u32 get_player_control_style(int playernum);
 BOOL check_if_mp_stage_unlocked(int stage);
 void select_game_length(void);
@@ -15307,75 +15896,75 @@ void init_mp_options_for_scenario(longlong numplayers);
 void init_menu0E_mpoptions(void);
 void update_menu0E_mpoptions(void);
 void interface_menu0E_mpoptions(undefined8 param_1,undefined8 param_2);
-undefined4 constructor_menu0E_mpoptions(undefined4 *param_1);
+u32 * constructor_menu0E_mpoptions(undefined4 *param_1);
 BOOL hasPlayerSelectedMPChar(int playerchar);
 void init_menu0f_mpcharsel(void);
 void update_menu0F_mpcharsel(void);
 void interface_menu0F_mpcharsel(void);
 int proc_7F0122A8(int param_1,int param_2,int param_3);
 undefined4 * proc_7F01231C(void);
-undefined4 * constructor_menu0F_mpcharsel(undefined4 *param_1);
+u32 * constructor_menu0F_mpcharsel(undefined4 *param_1);
 void init_menu10_mphandicap(void);
 void update_menu10_mphandicap(void);
 void interface_menu10_mphandicap(void);
-undefined4 * constructor_menu10_mphandicap(undefined4 *param_1);
+u32 * constructor_menu10_mphandicap(undefined4 *param_1);
 void init_menu11_mpcontrol(void);
 void update_menu11_mpcontrols(void);
 void interface_menu11_mpcontrols(void);
-undefined4 * constructor_menu11_mpcontrol(undefined4 *param_1);
+u32 * constructor_menu11_mpcontrol(undefined4 *param_1);
 void init_menu12_mpstage(void);
 void update_menu12_mpstage(void);
 void interface_menu12_mpstage(undefined8 param_1,undefined8 param_2);
-undefined4 constructor_menu12_mpstage(undefined4 *param_1);
+u32 * constructor_menu12_mpstage(undefined4 *param_1);
 MPSCENARIOS get_scenario(void);
 void init_menu13_mpscenariosel(void);
 void update_menu13_mpscenario(void);
 void interface_menu13_mpscenario(undefined8 param_1,undefined8 param_2);
-undefined4 constructor_menu13_mpscenario(undefined4 *param_1);
+u32 * constructor_menu13_mpscenario(undefined4 *param_1);
 ulonglong get_players_team_or_scenario_item_flag(int player);
 void set_players_team_or_scenario_item_flag(int player,char flag);
 void init_menu14_mpteamsel(void);
 void update_menu14_mpteams(void);
 ulonglong interface_menu14_mpteams(undefined8 param_1,undefined8 param_2);
-undefined4 * constructor_menu14_mpteams(undefined4 *param_1);
+u32 * constructor_menu14_mpteams(undefined4 *param_1);
 void set_briefing_page(WATCH_BRIEFING_PAGE page);
 void load_briefing_text_for_stage(void);
 void init_menu0A_briefing(void);
 void update_menu0A_briefing(void);
 void interface_menu0A_briefing(undefined8 param_1,undefined8 param_2);
 uint * print_objectives_and_status_to_menu(uint *param_1,int param_2,byte *param_3,int param_4);
-undefined4 constructor_menu0A_briefing(undefined4 *param_1);
+u32 * constructor_menu0A_briefing(undefined4 *param_1);
 void init_menu0B_runstage(void);
 void init_menu0C_missionfailed(void);
 void update_menu0C_missionfailed(void);
 void interface_menu0C_missionfailed(undefined8 param_1,undefined8 param_2);
 undefined8 proc_7F01631C(void);
-undefined4 constructor_menu0C_missionfailed(undefined4 *param_1);
+u32 * constructor_menu0C_missionfailed(undefined4 *param_1);
 void init_menu0D_missioncomplete(void);
 void update_menu0D_missioncomplete(void);
 void interface_menu0D_missioncomplete(undefined8 param_1,undefined8 param_2);
-undefined4 constructor_menu0D_missioncomplete(void);
+u32 * constructor_menu0D_missioncomplete(undefined4 *param_1);
 void init_menu15_cheat(void);
 void update_menu15_cheat(void);
 void interface_menu15_cheat(undefined8 param_1,undefined8 param_2);
-undefined4 constructor_menu15_cheat(undefined4 *param_1);
+u32 * constructor_menu15_cheat(undefined4 *param_1);
 void init_menu16_nocontroller(void);
 void update_menu16_nocontrollers(void);
 void interface_menu16_nocontrollers(void);
-uint * constructor_menu16_nocontrollers(undefined4 *param_1);
-void do_extended_cast_display(BOOL flag);
+u32 * constructor_menu16_nocontrollers(undefined4 *param_1);
+void do_extended_cast_display(longlong param_1);
 void init_menu18_displaycast(void);
 void update_menu18_displaycast(void);
 void interface_menu18_displaycast(undefined8 param_1,undefined8 param_2);
-uint * constructor_menu18_displaycast(undefined4 *_DL);
+u32 * constructor_menu18_displaycast(undefined4 *param_1);
 void init_menu19_spectrum(void);
 void update_menu19_spectrum(void);
 void interface_menu19_spectrum(undefined8 param_1,undefined8 param_2);
-undefined4 * constructor_menu19_spectrum(undefined4 *param_1);
-void set_menu_to_mode(MENU menu,u32 mode);
+u32 * constructor_menu19_spectrum(undefined4 *param_1);
+void set_menu_to_mode(longlong param_1,longlong param_2);
 MENU get_currentmenu(void);
 void menu_init(undefined8 param_1,undefined8 param_2);
-longlong menu_jump_constructor_handler(void);
+u32 * menu_jump_constructor_handler(u32 *param_1);
 void proc_7F01B0E0(ushort *param_1,byte *param_2);
 void proc_7F01B134(ushort *param_1,ushort *param_2);
 void proc_7F01B1C8(ushort *param_1,byte *param_2);
@@ -15384,11 +15973,11 @@ undefined4 * proc_7F01B6E0(undefined4 *param_1,int param_2,int param_3);
 void proc_7F01BAE0(short *param_1,int param_2);
 uint * proc_7F01BFF8(uint *param_1,uint param_2,int param_3);
 undefined4 * insert_imageDL(undefined4 *param_1);
-undefined4 * proc_7F01C1A4(Gfx *glistp);
-ulonglong die_blood_image_routine(int param_1);
+undefined4 * proc_7F01C1A4(undefined4 *param_1);
+ulonglong die_blood_image_routine(void);
 undefined4 * proc_7F01C400(undefined4 *param_1);
 undefined4 * proc_7F01C670(undefined4 *param_1);
-void proc_7F01CA18(Gfx *glistp);
+undefined4 * proc_7F01CA18(undefined4 *param_1);
 byte * decrypt_bleeding_animation_data(char *param_1,byte param_2,uint param_3,byte *param_4,char *param_5);
 void proc_7F01CC94(byte *param_1,short param_2,byte *param_3);
 void proc_7F01CCEC(int param_1,uint param_2,uint param_3,int param_4,byte param_5);
@@ -15407,15 +15996,15 @@ void copyCurrentEEPROMtoStack(void);
 u8 getSelectedFolderBond(void);
 void set_selected_folder_num(u32 foldernum);
 void set_selected_difficulty(DIFFICULTY difficulty);
-void set_solo_and_ptr_briefing(LEVELID stage);
-void proc_7F01D61C(save_file *savefile);
-void proc_7F01D644(save_file *eeprom);
+void set_solo_and_ptr_briefing(undefined *param_1);
+void proc_7F01D61C(undefined4 *param_1);
+void proc_7F01D644(undefined4 *param_1);
 void store_favorite_weapon_current_player(u32 right,u32 left);
 undefined4 proc_7F01D6C0(void);
 void proc_7F01D6E0(void);
 int proc_7F01D758(uint *param_1);
-void proc_7F01D7A0(save_file *param_1);
-void proc_7F01D840(save_file *param_1);
+void proc_7F01D7A0(uint *param_1);
+void proc_7F01D840(uint *param_1);
 u32 getEEPROMFoldernum(save_file *eeprom);
 void setEEPROMtoFoldernum(save_file *eeprom,byte folder);
 int set_eeprom_flag_0x18(save_file *folder);
@@ -15425,20 +16014,20 @@ void set_selected_bond(save_file *folder,int bond);
 ulonglong check_if_eeprom_flag_set_0x80(save_file *folder);
 void toggle_eeprom_flag_set_0x80(save_file *folder,longlong mode);
 ulonglong get_eeprom_stage_complete_time_for_difficulty(save_file *eepromfile,STAGENUM stage,DIFFICULTY difficulty);
-void proc_7F01DAE4(save_file *eepromfile,STAGENUM solostagenum,DIFFICULTY difficulty,longlong time);
+void proc_7F01DAE4(int param_1,longlong param_2,longlong param_3,longlong param_4);
 BOOL doesSaveHaveStageCompletedOnDifficulty(save_file *folder,STAGENUM stage,DIFFICULTY difficulty);
-void proc_7F01DCB0(save_file *save_file,STAGENUM solostagenum,DIFFICULTY difficulty,int maxtime);
+void proc_7F01DCB0(int param_1,longlong param_2,longlong param_3,int param_4);
 ulonglong check_if_cheat_unlocked(save_file *folder,longlong cheat);
 void proc_7F01DD74(int param_1,longlong param_2);
 save_file * getEEPROMforFoldernum(u32 foldernum);
 int proc_7F01DE50(void);
-void proc_7F01DEB4(int foldernum);
+void proc_7F01DEB4(int param_1);
 void proc_7F01DF90(void);
 BOOL check_if_valid_folder_num(int folder);
 BOOL doesFolderHaveStageUnlockedAtDifficulty(int foldernum,STAGENUM stageid,DIFFICULTY difficulty);
-void proc_7F01E504(save_file *param_1,undefined4 *param_2);
+void proc_7F01E504(uint *param_1,undefined4 *param_2);
 void unlock_stage_in_folder_on_difficulty(int folder,longlong stagenum,longlong selecteddifficulty,int maxtime);
-void proc_7F01E760(int folder,longlong param_2);
+void proc_7F01E760(ulonglong param_1,longlong param_2);
 void get_highest_stage_difficulty_completed_in_folder(int foldernum,STAGENUM *stagenum,DIFFICULTY *difficulty);
 u32 check_egypt_completed_in_folder(int folder);
 u32 check_egypt_completed_any_folder(void);
@@ -15450,10 +16039,10 @@ BOOL check_aztec_completed_any_folder_secret_00(void);
 BOOL check_egypt_completed_any_folder_00(void);
 u32 removed_would_have_returned_bond_for_folder_num(u32 folder);
 void set_selected_bond_to_folder(u32 folder,u32 bond);
-void proc_7F01EBF4(undefined4 param_1);
-void proc_7F01EBFC(undefined4 param_1);
+void proc_7F01EBF4(void);
+void proc_7F01EBFC(void);
 void delete_eeprom_folder(int foldernum);
-void proc_7F01ED10(int folder);
+void proc_7F01ED10(ulonglong param_1);
 void proc_7F01EDA0(ulonglong param_1);
 void update_eeprom_to_current_solo_watch_settings(save_file *eepromsave);
 void get_screen_ratio_settings_for_mpgame_from_folder(int folder);
@@ -15468,26 +16057,26 @@ void set_show_patrols_flag(BOOL flag);
 undefined4 get_show_patrols_flag(void);
 undefined4 proc_7F01F574(void);
 void set_or_unset_GUARDdata_flag(GUARDdata *guard,int param_2);
-int proc_7F01F614(GUARDdata *guard,int param_2,float *param_3,float *param_4,int param_5);
-undefined8 proc_7F01FC10(GUARDdata *guard,float *param_2,float *param_3,float *param_4);
+int proc_7F01F614(int param_1,int param_2,float *param_3,float *param_4,int param_5);
+undefined8 proc_7F01FC10(int param_1,float *param_2,float *param_3,float *param_4);
 int get_next_available_guardID(void);
-void proc_7F020018(GUARDdata *guard,u32 param_2);
+void proc_7F020018(void);
 f32 get_guard_health(GUARDdata *param_1);
-void guard_calc_final_damage_recieved(GUARDdata *guard,u32 param_2);
-float proc_7F020090(GUARDdata *guard);
+void guard_calc_final_damage_recieved(GUARDdata *guard,u32 damage);
+float proc_7F020090(GUARDdata *param_1);
 u32 init_GUARDdata_with_set_values(u32 param_1,u32 param_2,u32 param_3,u32 param_4);
 int replace_GUARDdata_with_actual_values(u32 param_1,u32 param_2,u32 param_3,undefined4 param_4,undefined4 param_5);
 void disable_sounds_attached_to_player_then_something(int param_1);
 void animation_speed_related(f32 rate);
 f32 get_animation_rate(void);
 void proc_7F0205F0(int param_1);
-void proc_7F0206D4(GUARDdata *guard);
-float proc_7F020794(GUARDdata *param_1);
-void proc_7F02083C(int savefilefolder,float *param_2);
-void proc_7F020D94(GUARDdata *param_1);
+void proc_7F0206D4(int param_1);
+float proc_7F020794(int param_1);
+void proc_7F02083C(int param_1,float *param_2);
+void proc_7F020D94(int param_1);
 void proc_7F020E40(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 ulonglong proc_7F020EF0(char *param_1,uint param_2,undefined4 param_3,undefined4 param_4);
-void proc_7F021B20(GUARDdata *param_1);
+void proc_7F021B20(int param_1);
 void proc_7F021BB4(undefined *param_1);
 void proc_7F021BD8(undefined *param_1);
 longlong proc_7F021BFC(char *param_1,uint *param_2,uint param_3);
@@ -15505,7 +16094,7 @@ void proc_7F022EEC(void);
 GUARDdata * check_if_guardnum_loaded_get_ptr_GUARDdata(short guardnum);
 int something_with_weaponpos_of_guarddata_hand(GUARDdata *guard,int hand);
 int is_weapon_in_guarddata_hand(GUARDdata *guard,int hand);
-void proc_7F02308C(GUARDdata *param_1,int *param_2,undefined4 *param_3,float *param_4,float *param_5);
+void proc_7F02308C(int param_1,int *param_2,undefined4 *param_3,float *param_4,float *param_5);
 void proc_7F023160(int param_1,undefined4 *param_2,float *param_3,undefined4 *param_4);
 undefined4 proc_7F023188(int param_1);
 undefined8 proc_7F023194(int param_1,float *param_2,float *param_3,float *param_4);
@@ -15518,9 +16107,9 @@ undefined4 select_psuedorandom_heads(int param_1);
 u32 get_random_head(int bodyID);
 void expand_09_characters(void);
 ulonglong check_if_item_held_like_pistol(int param_1);
-void proc_7F023948(GUARDdata *guard,float param_2);
-void proc_7F023A94(GUARDdata *guard,float param_2);
-f32 proc_7F023B5C(void);
+void proc_7F023948(int param_1,float param_2);
+void proc_7F023A94(int param_1,float param_2);
+undefined4 proc_7F023B5C(void);
 int proc_7F023BC0(void);
 undefined4 proc_7F023C54(void);
 void proc_7F023CB8(void);
@@ -15659,12 +16248,12 @@ undefined8 proc_7F02FC34(float *param_1,float *param_2,float *param_3,float para
 undefined8 proc_7F02FD50(float *param_1,float *param_2,float *param_3,float param_4);
 void proc_7F02FE78(void);
 undefined4 proc_7F030128(int param_1,undefined4 *param_2,int param_3,undefined4 *param_4,int param_5,undefined4 param_6);
-undefined4 proc_7F0301FC(int param_1,float *param_2,undefined4 param_3,float *param_4,float param_5,undefined4 param_6);
+undefined4 proc_7F0301FC(int param_1,float *param_2,u32 param_3,float *param_4,float param_5,float param_6);
 undefined4 proc_7F0304AC(int param_1,undefined4 *param_2,int param_3,undefined4 *param_4,undefined4 *param_5,int param_6,undefined4 param_7);
-void proc_7F0305E0(int param_1,float *param_2,undefined4 param_3,float *param_4,float *param_5,float param_6,undefined4 param_7);
+void proc_7F0305E0(int param_1,float *param_2,u32 param_3,float *param_4,float *param_5,float param_6,undefined4 param_7);
 void proc_7F03074C(float *param_1,float *param_2,float *param_3);
-undefined4 proc_7F03081C(int param_1,float *param_2,undefined4 param_3,float *param_4,float *param_5,float *param_6,float param_7,float param_8,undefined4 param_9);
-undefined4 proc_7F030D70(int param_1,float *param_2,undefined4 param_3,float *param_4,float *param_5,float *param_6,float param_7,float param_8,undefined4 param_9);
+undefined4 proc_7F03081C(int param_1,float *param_2,u32 param_3,float *param_4,float *param_5,float *param_6,float param_7,float param_8,undefined4 param_9);
+undefined4 proc_7F030D70(int param_1,float *param_2,u32 param_3,float *param_4,float *param_5,float *param_6,float param_7,float param_8,undefined4 param_9);
 ulonglong proc_7F03130C(int param_1,float *param_2,longlong param_3,float *param_4,float param_5,int param_6,undefined4 *param_7,int param_8,float param_9,int param_10,int param_11);
 void proc_7F0315A4(int param_1,float *param_2,undefined8 param_3,char *param_4);
 void proc_7F032088(void);
@@ -15837,7 +16426,7 @@ void proc_7F0402B4(int param_1,byte *param_2);
 void proc_7F040310(byte *param_1,byte *param_2);
 void proc_7F040384(int *param_1,longlong param_2,float *param_3);
 void proc_7F040484(int param_1);
-undefined * init_standard_object(int object,ushort **objheader,undefined *objpos,uint objcontroller);
+undefined * init_standard_object(int param_1,ushort **param_2,undefined *param_3,uint param_4);
 undefined * proc_7F0406F8(int param_1,ushort **param_2);
 undefined * proc_7F04071C(int param_1);
 void proc_7F040754(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4 param_4);
@@ -15925,7 +16514,7 @@ uint ammo_collected_from_weapon(int objdata);
 char * generate_language_specific_text_for_weapon(char *finalstring,int itemtype);
 void display_text_for_weapon_in_lower_left_corner(int weaponid);
 undefined8 collect_or_interact_object(char *param_1,int param_2);
-undefined8 object_collectability_routine(void);
+undefined8 object_collectability_routine(object_standard *param_1);
 undefined8 proc_7F050D30(int param_1,undefined4 *param_2,float *param_3,float *param_4);
 void proc_7F050DE8(int param_1);
 undefined *proc_7F050F50(ushort *param_1,int param_2,ushort **param_3,undefined *param_4,uint param_5);
@@ -16046,7 +16635,7 @@ void proc_7F057DF8(float *param_1,float *param_2,int param_3);
 void proc_7F057E58(float *param_1,float *param_2,float *param_3,float *param_4,int param_5);
 float cosf(float __x);
 float sinf(float __x);
-void proc_7F057FD0(f32 *param_1);
+void proc_7F057FD0(undefined4 *param_1);
 void proc_7F058020(undefined4 *param_1,undefined4 *param_2);
 void proc_7F058068(float *param_1,float *param_2);
 void proc_7F058098(float *param_1,float *param_2);
@@ -16135,9 +16724,9 @@ float truncf(float __x);
 int proc_7F05C3D8(float param_1);
 float proc_7F05C440(float param_1);
 int proc_7F05C4B8(float param_1);
-void proc_7F05C520(undefined4 param_1);
-undefined4 proc_7F05C52C(void);
-void proc_7F05C538(void);
+void set_cartridges_eject(u32 param_1);
+undefined4 get_cartridges_eject(void);
+void nullsub_73(void);
 void proc_7F05C540(float *param_1);
 void proc_7F05C594(float *param_1);
 void proc_7F05C614(void);
@@ -16187,8 +16776,8 @@ undefined proc_7F05DFCC(int param_1);
 ulonglong proc_7F05DFF0(int param_1);
 ulonglong proc_7F05E014(int param_1);
 ulonglong proc_7F05E038(int param_1);
-undefined8 check_if_have_ammo_for_item(int item);
-ulonglong check_special_attributes(int item,uint mask);
+BOOL check_if_have_ammo_for_item(int item);
+uint check_special_attributes(int item,uint mask);
 void proc_7F05E0E4(void);
 void proc_7F05E5F0(float param_1);
 ITEM_IDS get_value_if_watch_is_on_hand_or_not(int hand);
@@ -16245,7 +16834,7 @@ f32 get_45_degree_angle_0(void);
 f32 get_horizontal_offset_on_solo_watch_menu_for_item(int item);
 f32 get_vertical_offset_on_solo_watch_menu_for_item(int item);
 f32 get_depth_offset_solo_watch_menu_inventory_page_for_item(int item);
-f32 proc_7F067174(int param_1);
+undefined4 proc_7F067174(int param_1);
 void proc_7F0671A4(void);
 ulonglong proc_7F0673B4(int param_1);
 void proc_7F067420(int param_1);
@@ -16322,28 +16911,28 @@ void proc_7F06C474(int param_1,float *param_2,undefined4 param_3,undefined4 para
 void proc_7F06C550(int param_1,float *param_2,undefined4 param_3,undefined4 param_4);
 undefined2 proc_7F06C570(ushort *param_1,longlong param_2);
 int proc_7F06C660(int param_1,ushort *param_2,longlong param_3);
-int getsubmatrix(int objinst,uint param_2,undefined4 param_3,undefined4 param_4);
+int getsubmatrix(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F06C710(int param_1,undefined4 *param_2,undefined4 param_3,undefined4 param_4);
 float proc_7F06C768(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 int extract_id_from_object_structure_microcode(int objinst,ushort *partdesc);
-void getpartoffset(longlong objinst,ushort *partdesc,undefined4 *param_3,undefined4 param_4);
-void setpartoffset(longlong objinst,ushort *partdesc,float *param_3,undefined4 param_4);
-void getsuboffset(int objinst,undefined4 *param_2,undefined4 param_3,undefined4 param_4);
-void setsuboffset(int objinst,float *param_2,undefined4 param_3,undefined4 param_4);
-ushort ** getsubroty(int objinst,uint param_2,undefined4 param_3,undefined4 param_4);
-void setsubroty(int objinst,float param_2,float param_3,undefined4 param_4);
+void getpartoffset(longlong param_1,ushort *param_2,undefined4 *param_3,undefined4 param_4);
+void setpartoffset(longlong param_1,ushort *param_2,float *param_3,undefined4 param_4);
+void getsuboffset(int param_1,undefined4 *param_2,undefined4 param_3,undefined4 param_4);
+void setsuboffset(int param_1,float *param_2,undefined4 param_3,undefined4 param_4);
+ushort ** getsubroty(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
+void setsubroty(int param_1,float param_2,float param_3,undefined4 param_4);
 void set_obj_instance_controller_scale(int instancecontroller,f32 scale);
 void proc_7F06CE84(int param_1,undefined4 param_2);
-float getjointsize(int objinst,ushort *param_2,undefined8 param_3,undefined4 param_4);
-float getinstsize(int objinst,uint param_2,undefined4 param_3,undefined4 param_4);
+float getjointsize(int param_1,ushort *param_2,undefined8 param_3,undefined4 param_4);
+float getinstsize(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F06D07C(float *param_1,float *param_2,float param_3);
 float proc_7F06D0CC(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5);
 void proc_7F06D160(undefined8 param_1,undefined8 param_2,float param_3);
 uint proc_7F06D1CC(int param_1,int param_2,int param_3);
-uint proc_7F06D2E4(int param_1,longlong param_2,model_data *pmodelData,int param_4,int param_5,short *param_6);
+uint proc_7F06D2E4(int param_1,longlong param_2,int param_3,int param_4,int param_5,short *param_6);
 float proc_7F06D3F4(int param_1,longlong param_2,int param_3,int param_4,int param_5,float *param_6);
 void proc_7F06D490(int param_1,ushort *param_2);
-void subcalcpos(int objanim,uint param_2,undefined4 param_3,undefined4 param_4);
+void subcalcpos(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 void process_01_group_heading(float **param_1,int param_2,ushort *param_3);
 void proc_7F06D8B0(void);
 void proc_7F06DB5C(float **param_1,int param_2,ushort *param_3,float *param_4);
@@ -16365,8 +16954,8 @@ void process_07_unknown(int param_1,ushort *param_2);
 void proc_7F06EEA4(undefined8 param_1,int param_2);
 void proc_7F06EFC4(int param_1);
 void proc_7F06F0D0(float **param_1,int param_2);
-void instcalcmatrices(float **basemtx,uint objinst,undefined4 param_3,undefined4 param_4);
-void subcalcmatrices(float **basemtx,uint objanim,undefined4 param_3,undefined4 param_4);
+void instcalcmatrices(float **param_1,uint param_2,undefined4 param_3,undefined4 param_4);
+void subcalcmatrices(float **param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 undefined4 proc_7F06F5AC(int param_1);
 undefined proc_7F06F5B4(int param_1);
 undefined4 proc_7F06F5BC(int param_1);
@@ -16386,7 +16975,7 @@ void proc_7F06FE3C(int param_1,undefined4 param_2);
 void proc_7F06FE44(int param_1,undefined4 param_2);
 void proc_7F06FE4C(int param_1,undefined4 param_2,float param_3);
 void proc_7F06FE90(int param_1,float param_2,float param_3);
-void proc_7F06FF18(int param_1,f32 param_2,f32 param_3);
+void proc_7F06FF18(int param_1,undefined4 param_2,float param_3);
 void proc_7F06FF5C(int param_1,undefined4 param_2);
 void proc_7F06FF64(int param_1,float param_2);
 void proc_7F070090(int param_1,float param_2,float param_3);
@@ -16406,13 +16995,13 @@ void dorottex(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F073038(int param_1,uint *param_2,int param_3);
 void proc_7F07306C(void);
 void dotube(int param_1,int param_2,ushort *param_3);
-void proc_7F0737EC(u32 param_1,u32 param_2,u32 param_3);
-void proc_7F0737FC(u32 param_1,u32 param_2,u32 param_3);
+void proc_7F0737EC(void);
+void proc_7F0737FC(void);
 void dogfnegx(int param_1,int param_2,ushort *param_3);
 void proc_7F073FC8(undefined4 param_1);
 void doshadow(int param_1,int param_2,ushort *param_3);
-void proc_7F074514(int param_1,int param_2,int param_3);
-void proc_7F074524(int param_1,int param_2,int param_3);
+void proc_7F074514(void);
+void proc_7F074524(void);
 void proc_7F074534(int param_1,int param_2,ushort *param_3);
 void subdraw(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F074790(float **param_1,uint param_2,undefined4 param_3,undefined4 param_4);
@@ -16424,36 +17013,36 @@ undefined4 proc_7F07549C(int param_1,float *param_2,float *param_3,ushort **para
 uint proc_7F0754BC(int *param_1,int param_2);
 void proc_7F0755B0(void);
 void convert_obj_microcode_offset_to_rdram_addr(ushort *param_1,int param_2,int param_3);
-void proc_7F075A90(object_header *param_1,int param_2,int param_3);
+void proc_7F075A90(ushort **param_1,int param_2,int param_3);
 void proc_7F075B08(void);
 uint set_microcode_entry_numbers(ushort *param_1);
 void set_objuse_flag_compute_grp_nums_set_obj_loaded(object_header *objheader);
 void unknown_object_microcode_handler(int param_1,ushort *param_2);
 void proc_7F075F68(int param_1,ushort **param_2,undefined4 param_3);
-void proc_7F075FAC(int param_1,player_gait_header *param_2,undefined4 param_3);
+void proc_7F075FAC(int param_1,ushort **param_2,undefined4 param_3);
 void proc_7F076030(int param_1,int param_2,ushort *param_3,ushort **param_4);
 void proc_7F0760C4(ushort **param_1,ushort **param_2,int *param_3);
 void proc_7F07623C(undefined8 param_1,ushort *param_2,int param_3,int param_4);
-void proc_7F0762E0(object_header *objectheader,byte *namestring,int param_3,uint *param_4);
-void load_object_fill_header(object_header *objheader,int *recallstring,int targetloc,int sizeleft,int param_5);
-void load_object_into_memory(object_header *header,int *recallstring);
+void proc_7F0762E0(undefined8 param_1,byte *param_2,int param_3,uint *param_4);
+void load_object_fill_header(object_header *objheader,u8 *recallstring,int targetloc,int sizeleft,int param_5);
+void load_object_into_memory(object_header *header,u8 *recallstring);
 void load_object_into_memory_unused_maybe(object_header *header,int *recallstring,int targetloc,int sizeleft);
-undefined8 is_less_than_certain_power_of_2(int number);
+s32 is_less_than_certain_power_of_2(int number);
 int ceil8000(int width);
 int ceil4000(int width);
 int ceil2000(int width);
 int ceil1000(int width);
-int proc_7F0767D8(int width,int height,int param_3);
+int proc_7F0767D8(int param_1,int param_2,int param_3);
 int proc_7F076848(int param_1,int param_2,int param_3);
 int proc_7F0768B8(int param_1,int param_2,int param_3);
 int proc_7F076928(int param_1,int param_2,int param_3);
 void generate_microcode_for_othermode_setting(undefined4 *DL,int param_2,longlong param_3,longlong bowtie);
 void likely_generate_DL_for_image_declaration(uint **DLtarget,uint *imgcall,int param_3,longlong param_4,uint param_5);
-void proc_7F077BB8(u32 param_1,u32 param_2,u32 param_3,u32 param_4);
+void proc_7F077BB8(s32 param_1,s32 param_2,s32 param_3);
 void proc_7F077BD0(void);
 void set_BONDdata_screensize(float width,float height);
 void set_ulx_uly(f32 ulx,f32 uly);
-void proc_7F077C30(f32 param_1,f32 param_2,f32 param_3,f32 param_4,f32 param_5);
+void sub_GAME_7F077C30(f32 arg0,f32 arg1,f32 arg2);
 void proc_7F077C5C(void);
 void proc_7F077EEC(float *param_1,float *param_2,float param_3);
 void proc_7F077FB4(float *param_1,float param_2,float *param_3);
@@ -16482,19 +17071,19 @@ int proc_7F078444(void);
 int proc_7F078454(void);
 void proc_7F078464(int param_1);
 int proc_7F078474(void);
-f32 proc_7F078484(void);
-int proc_7F078494(void);
-f32 get_screen_width(void);
-f32 get_screen_height(void);
-f32 get_ulx(void);
-f32 get_uly(void);
-f32 proc_7F0784E4(void);
-f32 proc_7F0784F4(void);
-void proc_7F078504(xyzpoint *param_1);
-void proc_7F078534(xyzpoint *param_1);
+f32 getPlayer_c_lodscalez(void);
+int getPlayer_c_lodscalezu32(void);
+f32 getPlayer_c_screenwidth(void);
+f32 getPlayer_c_screenheight(void);
+f32 getPlayer_c_screenleft(void);
+f32 getPlayer_c_screentop(void);
+f32 getPlayer_c_perspfovy(void);
+f32 getPlayer_c_perspaspect(void);
+void proc_7F078504(undefined4 *param_1);
+void proc_7F078534(undefined4 *param_1);
 void proc_7F078568(undefined4 *param_1);
 void proc_7F078598(float *param_1);
-f32 proc_7F0785CC(void);
+f32 getPlayer_c_perspnear(void);
 void proc_7F0785DC(void);
 void proc_7F078950(undefined4 *param_1,undefined4 *param_2);
 void proc_7F078980(undefined4 *param_1,undefined4 *param_2);
@@ -16511,11 +17100,11 @@ void change_crouch_position(int position);
 int proc_7F0799F0(void);
 int proc_7F079A1C(int param_1);
 void proc_7F079A50(int param_1);
-void proc_7F079A60(float *xyz_1,float *xyz_2,float *xyz_3,int param_4,float *param_5);
+void proc_7F079A60(float *param_1,float *param_2,float *param_3,int param_4,float *param_5);
 void solo_char_load(void);
 void maybe_solo_intro_camera_handler(void);
 CAMERAMODE get_camera_mode(void);
-longlong proc_7F07A534(undefined4 param_1,float *param_2,char *param_3,float *param_4,undefined4 param_5,float param_6);
+longlong proc_7F07A534(undefined4 param_1,float *param_2,char *param_3,float *param_4,u32 param_5,float param_6);
 void set_camera_mode(int param_1);
 void proc_7F07B1A4(void);
 void proc_7F07B2A0(int param_1,float param_2,float *param_3,float *param_4);
@@ -16535,23 +17124,23 @@ void proc_7F07C6C8(int param_1,float param_2);
 void change_player_pos_to_target(int *target_posblock,int *src_pos,int *tile);
 void proc_7F07C7B4(void);
 void proc_7F07C888(float *param_1,float *param_2,float param_3);
-longlong proc_7F07CA2C(undefined8 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,undefined4 param_6,undefined4 *param_7,undefined4 *param_8);
-undefined4 proc_7F07CAC8(f32 *posx,undefined4 param_2,float param_3,undefined4 *param_4,undefined4 *param_5);
+longlong proc_7F07CA2C(undefined8 param_1,f32 param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,undefined4 param_6,undefined4 *param_7,undefined4 *param_8);
+undefined4 proc_7F07CAC8(float *param_1,undefined4 param_2,float param_3,undefined4 *param_4,undefined4 *param_5);
 void proc_7F07CDA8(float *param_1,undefined4 param_2,float param_3);
 undefined8 related_printmanpos(float *param_1,float param_2,undefined4 *param_3);
 BOOL get_intank_flag(void);
 undefined4 get_ptr_for_players_tank(void);
 void proc_7F07CEB0(float *param_1);
-f32 proc_7F07CF80(void);
+undefined4 proc_7F07CF80(void);
 undefined4 proc_7F07CF8C(void);
 ulonglong proc_7F07D234(undefined4 *param_1,float *param_2,float *param_3);
 undefined8 proc_7F07D2B4(float *param_1,float *param_2,float *param_3,float *param_4,float *param_5);
 undefined8 proc_7F07D4C0(float *param_1,float *param_2,float *param_3);
 undefined8 proc_7F07D61C(float *param_1,float *param_2,float *param_3);
-f32 proc_7F07D954(u32 param_1);
+undefined4 proc_7F07D954(undefined4 param_1);
 void proc_7F07D960(float *param_1,int param_2);
-void proc_7F07DE64(BONDdata *param_1);
-void proc_7F07DE9C(BONDdata *param_1);
+void proc_7F07DE64(int param_1);
+void proc_7F07DE9C(int param_1);
 void proc_7F07DEFC(void);
 float proc_7F07DF28(longlong param_1);
 void proc_7F07E010(undefined4 param_1);
@@ -16560,7 +17149,7 @@ ulonglong proc_7F07E068(void);
 void proc_7F07E090(void);
 float proc_7F07E388(void);
 void trigger_watch_zoom(f32 final,f32 time);
-BONDdata * proc_7F07E438(void);
+Player * proc_7F07E438(void);
 void proc_7F07E46C(void);
 void proc_7F07E504(void);
 void zoom_to_watch_on_open(void);
@@ -16622,9 +17211,9 @@ undefined4 * proc_7F088CD8(undefined4 *param_1);
 undefined4 * maybe_mp_interface(void);
 undefined8 write_stan_tiles_in_yellow(undefined8 param_1);
 void proc_7F089718(float param_1);
-void proc_7F08976C(f32 param_1);
-f32 proc_7F089778(int param_1);
-float proc_7F089780(BONDdata *param_1);
+void proc_7F08976C(undefined4 param_1);
+undefined4 proc_7F089778(int param_1);
+float proc_7F089780(int param_1);
 int get_curplayer_positiondata(void);
 void kill_current_player(void);
 int proc_7F0898E8(void);
@@ -16685,7 +17274,7 @@ int get_ptr_next_available_weapon(void);
 void set_BONDdata_allguns_flag(int param_1);
 int get_BONDdata_allguns_flag(void);
 int * get_ptr_inventory_item(int item);
-BOOL is_weapon_in_inv(weaponid id);
+ulonglong is_weapon_in_inv(int param_1);
 int * get_ptr_inventory_for_item_in_hand(int item,int hand);
 ulonglong is_item_for_hand_in_inventory(int item,int hand);
 ulonglong check_if_item_available(ITEM_IDS weaponid);
@@ -16701,7 +17290,7 @@ void proc_7F08CB10(int *param_1,int *param_2,longlong param_3);
 undefined8 proc_7F08CE70(uint param_1);
 undefined8 proc_7F08CF0C(void);
 ulonglong proc_7F08CF80(void);
-void proc_7F08CFC0(void);
+void checkforgoldengun(void);
 undefined8 proc_7F08CFE0(int param_1);
 int proc_7F08D038(void);
 int * proc_7F08D108(int param_1);
@@ -16778,7 +17367,7 @@ void handle_debug_bondview(void);
 void handle_debug_case_2(void);
 void null_68(void);
 void nullsub_35(void);
-uint debug_menu_processor(undefined8 stick_h,undefined8 stick_v,controller_buttons bHeld,controller_buttons bPressed);
+uint debug_menu_processor(undefined8 param_1,undefined8 param_2,uint param_3,uint param_4);
 u32 get_debug_render_raster(void);
 u32 get_debug_freeze_processing(void);
 u32 get_debug_limit_controller_input(void);
@@ -16797,8 +17386,8 @@ BOOL get_debug_joy2hitsedit_flag(void);
 BOOL get_debug_joy2detailedit_flag(void);
 BOOL get_debug_explosioninfo_flag(void);
 BOOL get_debug_prroomloads_flag(void);
-BOOL get_linemode_flag(void);
-void set_linemode_flag(BOOL param_1);
+BOOL get_debug_VisCVG_flag(void);
+void set_debug_VisCVG_flag(BOOL param_1);
 BOOL get_debug_007_unlock_flag(void);
 BOOL get_debug_enable_agent_levels_flag(void);
 BOOL get_debug_enable_all_levels_flag(void);
@@ -16812,7 +17401,7 @@ BOOL get_debug_profile_flag(void);
 BOOL get_debug_taskgrab_val(void);
 void proc_7F091080(char param_1,char param_2,ushort param_3);
 undefined4 proc_7F091580(undefined4 param_1);
-void proc_7F0915BC(f32 param_1);
+void proc_7F0915BC(float param_1);
 void handle_debug_intropos(void);
 void handle_debug_worldpos(void);
 void stanStoreBondCoord(void);
@@ -16833,7 +17422,7 @@ void proc_7F092E50(void);
 undefined4 * proc_7F09343C(undefined4 *param_1,longlong param_2);
 undefined4 * proc_7F09365C(undefined4 *param_1,longlong param_2);
 void proc_7F093880(void);
-undefined8 proc_7F0938FC(xyzpoint *param_1,xyzpoint *param_2,float *param_3);
+undefined8 proc_7F0938FC(float *param_1,float *param_2,float *param_3);
 undefined8 proc_7F093A78(float *param_1,float *param_2,float *param_3);
 void proc_7F093BFC(float *param_1,float *param_2,float *param_3);
 float proc_7F093C48(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5);
@@ -16841,7 +17430,7 @@ float proc_7F093C88(float param_1);
 void proc_7F093CB0(int param_1,float param_2);
 void proc_7F093FA4(int param_1,float param_2);
 uint proc_7F094298(float param_1);
-void proc_7F09442C(undefined4 stagenum);
+void proc_7F09442C(undefined4 param_1);
 void proc_7F094438(void);
 uint * proc_7F094488(void);
 void proc_7F097388(float *param_1,float *param_2,uint param_3,float param_4,float param_5,float *param_6);
@@ -16859,13 +17448,13 @@ longlong proc_7F09B15C(int param_1);
 void set_cur_player_screen_size(short width,short height);
 void set_cur_player_viewport_size(short ulx,short uly);
 void set_watch_menu_current_size_unused_maybe(f32 size);
-void proc_7F09B224(f32 param_1);
+void proc_7F09B224(undefined4 param_1);
 f32 get_watch_menu_current_size_unused_maybe(void);
 undefined8 proc_7F09B244(ulonglong param_1);
 void proc_7F09B368(int param_1);
 longlong proc_7F09B398(uint param_1);
 void proc_7F09B41C(void);
-int proc_7F09B4D8(int playercount);
+int proc_7F09B4D8(int param_1);
 int proc_7F09B528(int param_1);
 void proc_7F09B600(byte *param_1,byte *param_2,uint *param_3);
 undefined4 proc_7F09B740(void);
@@ -16896,7 +17485,7 @@ void proc_7F09FD3C(void);
 undefined4 * proc_7F0A0034(undefined4 *param_1);
 void proc_7F0A027C(float *param_1,float param_2,short param_3);
 undefined4 * proc_7F0A0AB4(undefined4 *param_1);
-float proc_7F0A0C74(float param_1);
+int proc_7F0A0C74(float param_1);
 void proc_7F0A0CCC(int param_1,char param_2);
 void proc_7F0A0D90(int param_1);
 void proc_7F0A0E98(int param_1);
@@ -16958,7 +17547,7 @@ ulonglong is_holding_greater_than_2E_left_on_stick(void);
 ulonglong is_holding_greater_than_2E_right_on_stick(void);
 undefined4 get.controlstick_lr_enabled(void);
 void set.controlstick_lr_disabled(void);
-ulonglong proc_7F0A4FB0(void);
+bool proc_7F0A4FB0(void);
 ulonglong proc_7F0A4FEC(void);
 ulonglong proc_7F0A5028(void);
 ulonglong proc_7F0A504C(void);
@@ -16998,31 +17587,31 @@ float proc_7F0A6A2C(float param_1);
 void proc_7F0A6A80(void);
 undefined4 * proc_7F0A6EE8(undefined4 *param_1);
 void proc_7F0A70AC(int param_1,int param_2);
-undefined4 * proc_7F0A714C(void);
+undefined4 * proc_7F0A714C(u32 param_1,u32 param_2,u32 param_3);
 void proc_7F0A77A8(undefined8 param_1,undefined8 param_2);
 uint * proc_7F0A77C8(undefined4 *param_1);
 uint * proc_7F0A7C18(undefined4 *param_1);
 undefined8 proc_7F0A7DBC(undefined8 param_1);
 uint * proc_7F0A7DC4(undefined4 *param_1);
 uint * debug_gun_watch_move_related(void);
-undefined8 proc_7F0A830C(undefined8 param_1,undefined8 param_2);
+longlong proc_7F0A830C(undefined8 param_1,undefined8 param_2);
 int ** proc_7F0A8378(void);
 uint * debug_gun_watch_move_related2(undefined8 param_1,undefined8 param_2);
-uint * proc_7F0A8B10(undefined8 param_1,undefined4 param_2);
+uint * proc_7F0A8B10(undefined8 param_1,u32 param_2);
 void proc_7F0A8D40(undefined2 *param_1,float param_2,int param_3);
 void proc_7F0A8ED0(ushort *param_1);
 undefined4 * proc_7F0A8FEC(void);
 void proc_7F0A9180(void);
 void proc_7F0A91A0(ulonglong param_1);
 undefined4 * proc_7F0A91C8(void);
-s16 proc_7F0A9358(void);
+u16 proc_7F0A9358(void);
 void proc_7F0A9364(ushort param_1);
 uint * proc_7F0A9398(undefined4 *param_1,uint param_2,uint param_3,byte *param_4,uint param_5,int param_6,uint param_7,int param_8,int param_9,uint param_10,int param_11);
 float proc_7F0A95C4(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5);
-BOOL proc_7F0A9610(void);
+undefined8 proc_7F0A9610(void);
 void proc_7F0A9684(char param_1,int *param_2,float *param_3,float *param_4);
 uint * proc_7F0A97D0(undefined4 *param_1);
-uint * proc_7F0A9AB8(undefined4 *displaylist);
+uint * proc_7F0A9AB8(undefined4 *param_1);
 uint * proc_7F0AA7C8(undefined4 *param_1);
 uint * proc_7F0AADC0(void);
 void proc_7F0AB48C(void);
@@ -17047,16 +17636,16 @@ void proc_7F0ACBA0(undefined4 param_1);
 void load_font_table_controllers(void);
 undefined4 * microcode_constructor(undefined4 *DL);
 undefined4 * combiner_bayer_lod_perspective(undefined4 *DL);
-undefined4 * draw_blackbox_to_screen(undefined4 *DL,uint *ulx,uint *uly,uint *lrx,uint *lry);
-undefined4 *microcode_constructor_related_to_menus(undefined4 *DL,undefined8 param_2,undefined8 param_3,undefined8 param_4,uint param_5,uint param_6);
+undefined4 *draw_blackbox_to_screen(undefined4 *param_1,uint *param_2,uint *param_3,uint *param_4,uint *param_5);
+undefined4 *microcode_constructor_related_to_menus(undefined4 *param_1,undefined8 param_2,undefined8 param_3,undefined8 param_4,uint param_5,uint param_6);
 uint * proc_7F0AD0F8(uint *param_1,int *param_2,int *param_3,uint *param_4,int param_5,int param_6,int param_7,int param_8,int param_9,int param_10,int param_11);
-uint * en_text_write_stuff(undefined4 *DL,int *param_2,int *param_3,byte *param_4,int param_5,int param_6,uint param_7,int param_8,int param_9,int param_10,int param_11);
-uint * proc_7F0ADDAC(uint *DL,uint *param_2,int *param_3,uint *param_4,int param_5,int param_6,int param_7,uint param_8,uint param_9,uint param_10,int param_11,int param_12,int param_13);
-uint * proc_7F0AE45C(uint *DL,uint param_2,int param_3,int param_4,int param_5,uint param_6,int param_7,int param_8);
+uint * en_text_write_stuff(undefined4 *param_1,int *param_2,int *param_3,byte *param_4,int param_5,int param_6,uint param_7,int param_8,int param_9,int param_10,int param_11);
+uint * proc_7F0ADDAC(uint *param_1,uint *param_2,int *param_3,uint *param_4,int param_5,int param_6,int param_7,uint param_8,uint param_9,uint param_10,int param_11,int param_12,int param_13);
+uint * proc_7F0AE45C(uint *param_1,uint param_2,int param_3,int param_4,int param_5,uint param_6,int param_7,int param_8);
 uint * jp_text_stuff(uint *param_1,uint *param_2,uint *param_3,byte *param_4,int param_5,int param_6,uint param_7,uint param_8,int param_9,int param_10,int param_11,int param_12);
 void proc_7F0AE98C(int *param_1,int *param_2,byte *param_3,int param_4,int *param_5,int param_6);
 void proc_7F0AEB64(int param_1,byte *param_2,byte *param_3,int param_4,int *param_5);
-void proc_7F0AEF0C(void);
+void proc_7F0AEF0C(u32 param_1,u32 param_2,u32 param_3,u32 param_4);
 u32 sub_GAME_7F0AEF20(u32 param_1,u32 param_2);
 f32 proc_7F0AEF30(f32 param_1);
 char * proc_7F0AEF3C(ushort *param_1);
@@ -17083,7 +17672,7 @@ float proc_7F0B00C4(int param_1,int param_2,float param_3,float param_4);
 float proc_7F0B0140(int param_1,int param_2,float param_3,float param_4);
 ulonglong proc_7F0B0198(int param_1,int param_2,float param_3,float param_4);
 undefined8 proc_7F0B02D8(void);
-undefined8 proc_7F0B036C(void);
+u32 proc_7F0B036C(u32 param_1,f32 param_2,f32 param_3);
 float proc_7F0B0400(int param_1,longlong param_2,float param_3,float param_4);
 undefined8 proc_7F0B0518(int param_1,float param_2,float param_3);
 undefined8 proc_7F0B05C0(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5,float param_6);
@@ -17095,7 +17684,7 @@ void proc_7F0B0C24(int *param_1,float param_2,float param_3,float param_4,float 
 void proc_7F0B0C98(int param_1,undefined8 param_2,uint **param_3);
 void proc_7F0B0CEC(int param_1,undefined8 param_2,uint **param_3);
 int proc_7F0B0D0C(int param_1,float param_2,float param_3,int *param_4,float param_5,float param_6,uint *param_7,int param_8);
-undefined4 proc_7F0B0E24(void);
+undefined4 proc_7F0B0E24(u32 *param_1,f32 param_2,f32 param_3,f32 param_4);
 char * proc_7F0B1410(int param_1,float param_2,float param_3,float param_4,float param_5,uint param_6);
 float proc_7F0B16C4(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5,float param_6,float param_7,float param_8);
 void proc_7F0B1794(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5,float param_6);
@@ -17121,7 +17710,7 @@ undefined8 proc_7F0B260C(int param_1,int param_2,undefined param_3,undefined par
 void proc_7F0B26B8(int *param_1,float param_2,float param_3,float param_4,float param_5);
 int proc_7F0B2718(int param_1,undefined *param_2);
 undefined8 proc_7F0B28B0(float *param_1,float *param_2);
-void proc_7F0B2950(f32 param_1);
+void proc_7F0B2950(float param_1);
 ulonglong proc_7F0B2970(void);
 void copy_tile_RGB_as_24bit(int *tile,int posx,int posz,tile_rgb *target);
 void proc_7F0B2C74(int param_1,float *param_2);
@@ -17131,16 +17720,16 @@ undefined8 proc_7F0B2D48(undefined8 param_1);
 void proc_7F0B2D50(byte *param_1,ushort *param_2,byte *param_3);
 int * stanMatchTileName(byte *param_1);
 void proc_7F0B2F00(int **param_1);
-void load_stan(int ptr_clipfile,int param_2,int param_3);
+void load_stan(int param_1,int param_2,int param_3);
 ulonglong proc_7F0B2FD8(int param_1);
-undefined4 proc_7F0B2FE0(int param_1);
+uint proc_7F0B2FE0(int param_1);
 void proc_7F0B3004(int param_1);
 undefined8 proc_7F0B3024(undefined8 param_1);
 undefined8 proc_7F0B3034(undefined8 param_1);
 undefined8 stan_problems_removed(undefined8 param_1);
 undefined4 proc_7F0B3044(int param_1);
 undefined8 stan_region_removed(undefined8 param_1);
-void proc_7F0B3138(undefined8 param_1,undefined8 param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,undefined4 param_9);
+void proc_7F0B3138(undefined8 param_1,undefined8 param_2,f32 param_3,f32 param_4,undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,undefined4 param_9);
 void proc_7F0B31A4(undefined8 param_1,undefined8 param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8);
 float proc_7F0B3200(float *param_1,float *param_2,float *param_3,float *param_4);
 float proc_7F0B32D8(float *param_1,float *param_2,float *param_3);
@@ -17159,7 +17748,7 @@ int proc_7F0B4084(int param_1);
 int proc_7F0B40D4(int param_1);
 void proc_7F0B4124(int param_1);
 void proc_7F0B47E0(void);
-void proc_7F0B4810(f32 param_1);
+void proc_7F0B4810(float param_1);
 f32 proc_7F0B4830(void);
 f32 proc_7F0B483C(void);
 float proc_7F0B4848(void);
@@ -17168,7 +17757,7 @@ void proc_7F0B4884(void);
 void proc_7F0B4A50(char *param_1,char param_2);
 void proc_7F0B4AB4(float *param_1,float *param_2,byte *param_3,int param_4,uint *param_5,int *param_6,int param_7);
 undefined4 * proc_7F0B4E40(undefined4 *param_1);
-undefined4 proc_7F0B4F9C(int param_1);
+f32 proc_7F0B4F9C(int param_1);
 uint * proc_7F0B4FB4(uint *param_1);
 uint * proc_7F0B4FF4(uint *param_1,float param_2,float param_3,float param_4,float param_5);
 uint * proc_7F0B5058(uint *param_1,longlong param_2,longlong param_3,int param_4,int param_5);
@@ -17183,26 +17772,26 @@ uint * proc_7F0B5B60(uint *param_1,undefined8 param_2,undefined8 param_3,int par
 undefined8 vis_is_inline_of_sight(float *param_1,float *param_2);
 void proc_7F0B5CC0(float *param_1,float *param_2);
 void proc_7F0B5D58(undefined4 *param_1,undefined4 *param_2);
-char * proc_7F0B5D7C(undefined8 param_1);
-char * proc_7F0B5DE0(undefined8 param_1);
-u32 proc_7F0B5E44(void);
+char * print_port(undefined8 param_1);
+char * printroom(undefined8 param_1);
+u32 get_max_num_rooms(void);
 ulonglong proc_7F0B5E50(int param_1);
 ulonglong proc_7F0B5E6C(int param_1);
 int proc_7F0B5E88(int param_1);
 void generate_room_load_string(void);
-undefined4 decompressdata_with_8448buffer(int source,void *target);
+undefined4 decompressdata_with_8448buffer(int source,int target);
 undefined4 proc_7F0B5FAC(int param_1,int param_2,int param_3);
 uint * proc_7F0B609C(int param_1,uint *param_2,int param_3);
-uint * proc_7F0B61DC(int param_1,uint *source,int param_3);
+uint * proc_7F0B61DC(int param_1,uint *param_2,int param_3);
 ulonglong proc_7F0B6314(int param_1);
 void proc_7F0B6368(int param_1);
-void proc_7F0B65C4(int room);
+void proc_7F0B65C4(int param_1);
 void unload_rooms(void);
 void proc_7F0B66E8(void);
 undefined4 * proc_7F0B677C(undefined4 *param_1,int param_2);
 undefined4 * proc_7F0B6898(undefined4 *param_1,int param_2);
 void proc_7F0B6994(int param_1);
-BOOL proc_7F0B6CEC(float *param_1,float *param_2,int *param_3,int *param_4);
+undefined8 proc_7F0B6CEC(float *param_1,float *param_2,int *param_3,int *param_4);
 undefined4 proc_7F0B7010(float *param_1,float *param_2,float *param_3,short *param_4,int param_5,float *param_6);
 int proc_7F0B7A78(float *param_1,float *param_2,int param_3,float *param_4);
 void proc_7F0B7D94(void);
@@ -17249,16 +17838,16 @@ undefined8 proc_7F0BA26C(int param_1,float *param_2,float *param_3,int param_4);
 void proc_7F0BA2D4(float *param_1,float *param_2,int *param_3,int *param_4,int param_5);
 void proc_7F0BA5C0(int *param_1,int *param_2);
 void proc_7F0BA640(int *param_1,int *param_2,int param_3);
-void proc_7F0BA720(int param_1,int param_2);
+void proc_7F0BA720(void);
 undefined4 * get_ptr_currentdata(void);
 f32 get_near_fog_value(void);
 float square_near_fog_value(void);
-void copy_table1_env_to_current(f32 param_1,f32 param_2);
+void copy_table1_env_to_current(void);
 void copy_table2_env_to_current(int param_1);
-void proc_7F0BAA5C(int param_1);
-void load_enviroment(int stagenum,int multi);
+void proc_7F0BAA5C(void);
+void load_enviroment(int param_1,int param_2);
 void switch_to_solosky2(float param_1);
-undefined4 * proc_7F0BB070(undefined4 *DL,longlong param_2);
+undefined4 * proc_7F0BB070(undefined4 *param_1,longlong param_2);
 undefined4 * proc_7F0BB298(undefined4 *param_1);
 undefined8 proc_7F0BB2C8(float *param_1,float param_2);
 undefined4 return_nearfog_values(void);
@@ -17290,23 +17879,23 @@ longlong proc_7F0BC85C(int param_1);
 undefined4 * proc_7F0BC9C4(undefined4 *param_1,int param_2);
 int proc_7F0BCA14(int param_1);
 void proc_7F0BCA34(int param_1,float *param_2);
-void load_resource(ulonglong rdramaddr,longlong buf_size,int ptr_res_table_entry,int *ptr_res_entry);
-void load_resource_from_indy(undefined *ptr_alloc_data,int buf_size,int ptr_resource_entry,int ptr_resource_data);
+void load_resource(ulonglong param_1,longlong param_2,int param_3,int *param_4);
+void load_resource_from_indy(undefined *param_1,int param_2,int param_3,int param_4);
 void ob_c_debug_setup(void);
-void _load_rom_index_to_membank(int index,longlong mode,int update,byte bank);
-undefined *_load_resource_index_to_membank(int index,longlong bank,undefined *ptr_target,int buffer);
-void _load_resource_named_to_membank(byte *name,int mode,int update,byte bank);
-undefined * _load_resource_named_to_buffer(byte *name,int mode,undefined *target,int bufsize);
-void load_bg_bytes_at_offset_to_membank(byte *name,int target,int offset,int size);
-ulonglong load_rom_resource_index_to_membank(int name,longlong mode,int update,byte bank);
-undefined * load_resource_index_to_buffer(int index,longlong mode,undefined *target,int buf_size);
-undefined4 get_temp_remaining_buffer_for_index(int index);
-undefined4 get_remaining_buffer_for_index(int index);
+void _load_rom_index_to_membank(int param_1,longlong param_2,int param_3,byte param_4);
+undefined *_load_resource_index_to_membank(int param_1,longlong param_2,undefined *param_3,int param_4);
+void _load_resource_named_to_membank(byte *param_1,int param_2,int param_3,byte param_4);
+undefined * _load_resource_named_to_buffer(byte *param_1,int param_2,undefined *param_3,int param_4);
+void load_bg_bytes_at_offset_to_membank(byte *param_1,int param_2,int param_3,int param_4);
+ulonglong load_rom_resource_index_to_membank(int param_1,longlong param_2,int param_3,byte param_4);
+undefined *load_resource_index_to_buffer(int param_1,longlong param_2,undefined *param_3,int param_4);
+undefined4 get_temp_remaining_buffer_for_index(int param_1);
+undefined4 get_remaining_buffer_for_index(int param_1);
 void proc_7F0BD138(int param_1,int param_2,int param_3,longlong param_4);
-undefined4 proc_7F0BD188(byte *name);
-void something_mem_bank_a0(u8 bank);
+undefined4 get_temp_buffer_remaining_value(byte *name);
+void something_mem_bank_a0(byte param_1);
 void proc_7F0BD234(void);
-int get_index_num_of_named_resource(char *name);
+int get_index_num_of_named_resource(byte *param_1);
 void removed_handle_filetable_entry(int param_1);
 void removed_loop_handle_filetable_entries(void);
 void removed_loop_filetableentries(void);
@@ -17328,10 +17917,10 @@ char * draw_membars(void);
 undefined4 proc_7F0BD8F0(void);
 void proc_7F0BD8FC(undefined4 param_1);
 void something_with_lvl_c_debug(void);
-void proc_7F0BD984(void);
-void proc_7F0BD9C4(int param_1);
-void proc_7F0BD9EC(void);
-void proc_7F0BDA38(void);
+void playrandommusictrack1(void);
+void playmusictrack1(MUSIC_TRACKS track);
+void music_append_play_solo_death_short(void);
+void music_append_play_endtheme(void);
 void proc_7F0BDA84(void);
 void stage_load(LEVELID stagenum);
 undefined4 proc_7F0BDF04(void);
@@ -17344,7 +17933,7 @@ void unload_stage_text_data(void);
 void set_controls_locked_flag(undefined4 flag);
 undefined4 get_controls_locked_flag(void);
 DIFFICULTY get_current_difficulty(void);
-void set_difficulty(undefined4 difficulty);
+void set_difficulty(undefined4 param_1);
 void set_mp_time(undefined4 time);
 void set_mp_point(undefined4 point);
 f32 get_cur_mp_sec(void);
@@ -17363,7 +17952,7 @@ int ramrom_replay_handler(int param_1,int param_2);
 void iterate_ramrom_entries_handle_camera_out(void);
 void copy_current_ingame_registers_before_ramrom_playback(ramromfilestructure *param_1);
 void copy_recorded_ramrom_registers_to_proper_place_ingame(ramromfilestructure *demo);
-void test_if_replaying_or_recording_demos_this_stage_load(LEVELID stage,DIFFICULTY difficulty);
+void test_if_replaying_or_recording_demos_this_stage_load(LEVELID param_1,DIFFICULTY param_2);
 void record_next_movie_to_slot(undefined4 slotnum);
 void stop_recording_ramrom(void);
 void replay_recorded_ramrom_at_address(uint param_1);
@@ -17391,7 +17980,6 @@ void reset_all_music_slots(void);
 void set_musicslot_time(int slot,int min,int sec);
 void reset_music_in_slot(u32 param_1);
 undefined8 get_textbank_number_for_stagenum(LEVELID param_1);
-undefined8 proc_7F0C16E4(void);
 void init_LnameX(void);
 void something_with_LnameJ(void);
 int something_with_LnameX(uint param_1);
@@ -17451,8 +18039,8 @@ void proc_7F0CBAF4(int *param_1,int param_2,int param_3);
 uint * proc_7F0CBB0C(uint param_1,undefined4 *param_2);
 int proc_7F0CBB64(int param_1);
 void proc_7F0CBB74(char *param_1,uint *param_2);
-void load_image_to_buffer(uint *image,uint *buffer);
-void proc_7F0CBE50(object_header *param_1,uint *param_2);
+void load_image_to_buffer(uint *param_1,uint *param_2);
+void proc_7F0CBE50(int param_1,uint *param_2);
 void proc_7F0CBEE8(uint param_1,uint *param_2);
 void proc_7F0CBF10(undefined4 param_1);
 uint proc_7F0CBF2C(uint param_1);
@@ -17485,14 +18073,14 @@ uint * proc_7F0CE064(uint *param_1,uint *param_2,int param_3,int param_4,int par
 uint * proc_7F0CE0AC(uint *param_1,uint *param_2,int param_3,int param_4,int param_5);
 uint * process_microcode_sort_display_modes_expand_image_calls(uint *param_1,int param_2,uint *param_3,uint *param_4);
 void proc_7F0CE794(int param_1,int param_2,int param_3);
-undefined4 decompressdata(void *ptr_src,void *ptr_target,void *ptr_buffer);
+undefined4 decompressdata(int source,int target,int buffer);
 int proc_7F0CE894(void);
 ulonglong proc_7F0CE8B0(int *param_1,uint param_2,uint param_3,int param_4,int param_5,uint *param_6,uint *param_7);
 undefined8 proc_7F0CEEF0(int param_1,int param_2,ulonglong param_3,uint param_4);
 undefined8 zlib_decompressor_type0(void);
 undefined8 zlib_decompressor_type1(void);
 undefined8 zlib_decompressor_type2(void);
-undefined8 select_zlib_decompression_routine(uint *param_1);
+undefined8 _inflate_block(uint *param_1);
 longlong loop_to_decompress_entire_file(void);
 void something_with_rsp_c_debug(void);
 void allocate_init_rsp_buffers(void);
@@ -17500,14 +18088,14 @@ void load_rsp_microcode(int param_1,int param_2,undefined8 param_3,undefined4 pa
 void init_indy_if_not_ready(void);
 void dummy7F0CFF64(void);
 void init_indy_if_ready(void);
-void indy_load_resource(char *string,undefined *target);
-void indy_send_capture_data(char *string,undefined *data,uint size);
-void indy_load_ramrom_file(char *string,undefined4 target,undefined4 size);
-void check_file_exported(char *string,undefined4 address,undefined4 size);
-undefined4 check_file_found_on_indy(char *string,undefined4 *filesize);
-undefined4 send_command_string(char *param_1);
+void indy_load_resource(char *param_1,undefined *param_2);
+void indy_send_capture_data(char *param_1,undefined *param_2,uint param_3);
+void indy_load_ramrom_file(char *param_1,undefined4 param_2,undefined4 param_3);
+void check_file_exported(char *param_1,undefined4 param_2,undefined4 param_3);
+undefined4 check_file_found_on_indy(char *param_1,undefined4 *param_2);
+u32 send_command_string(char *param_1);
 void proc_7F0D0124(void);
-undefined4 send_indy_close_port_cmd(void);
+u32 send_indy_close_port_cmd(void);
 void proc_7F0D0180(void);
 void proc_7F0D01D0(void);
 undefined8 proc_7F0D0220(undefined *param_1,uint param_2);
@@ -17579,10 +18167,10 @@ uint * proc_7F0D1E98(undefined4 *param_1,undefined8 param_2,undefined8 param_3,i
 void proc_7F0D2320(void);
 void remove_viewport_buffer(void);
 void allocate_viewport_buffer(void);
-void proc_7F0D2448(undefined4 img,undefined4 iwidth,undefined4 iheight);
+void proc_7F0D2448(undefined4 param_1,undefined4 param_2,undefined4 param_3);
 undefined4 * proc_7F0D2464(undefined4 *param_1);
 undefined4 * proc_7F0D2518(undefined4 *param_1);
-short getmusictrack_or_randomtrack(u32 stagenum);
+MUSIC_TRACKS getmusictrack_or_randomtrack(u32 stagenum);
 short proc_7F0D2848(short param_1);
 short proc_7F0D2890(short param_1);
 void proc_7F0D28E0(int param_1,int param_2,undefined8 param_3,byte *param_4);

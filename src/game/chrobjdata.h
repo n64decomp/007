@@ -1,5 +1,5 @@
-#ifndef _CHEAT_BUTTONS_OBJECTRELATED_H_
-#define _CHEAT_BUTTONS_OBJECTRELATED_H_
+#ifndef _CHROBJDATA_H_
+#define _CHROBJDATA_H_
 #include "ultra64.h"
 
 struct prop_pos_data {
@@ -117,18 +117,18 @@ struct player_gait_position_entry {
 };
 
 struct struct_13 {
-    void * anonymous_0;
-    int anonymous_1;
+    void * ailist;
+    int ailistid;
 };
 
-struct struct_15 {
-    char anonymous_0;
-    char field_1;
-    char field_2;
-    char field_3;
-    void * anonymous_1;
-    int anonymous_2;
-    int anonymous_3;
+struct headHat
+{
+    float xoffset;
+    float yoffset;
+    float zoffset;
+    float xsize;
+    float ysize;
+    float zsize;
 };
 
 extern struct item_related prop_cctv_related;

@@ -18,7 +18,7 @@ glabel osViGetCurrentFramebuffer
 /* 00F014 7000E414 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 00F018 7000E418 0C00617C */  jal   __osDisableInt
 /* 00F01C 7000E41C AFB00018 */   sw    $s0, 0x18($sp)
-/* 00F020 7000E420 3C0E8003 */  lui   $t6, %hi(__osViCurr) # $t6, 0x8003
+/* 00F020 7000E420 3C0E8003 */  lui   $t6, %hi(__osViCurr) 
 /* 00F024 7000E424 8DCE8040 */  lw    $t6, %lo(__osViCurr)($t6)
 /* 00F028 7000E428 00408025 */  move  $s0, $v0
 /* 00F02C 7000E42C 02002025 */  move  $a0, $s0

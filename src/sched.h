@@ -73,7 +73,8 @@ void setUserCompareValue(u32 value);
 extern void CheckDisplayErrorBuffer(u32 *buffer);
 extern void CheckDisplayErrorBufferEvery16Frames(u32 framecount);
 void osCreateLog(void);
-
+void __scMain(void *arg);
+void __scYield(OSSched *sc) ;
 
 void            osCreateScheduler(OSSched *s, void *stack, u8 mode, u8 numFields);
 void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ);

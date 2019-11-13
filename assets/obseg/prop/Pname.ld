@@ -6,7 +6,7 @@ SECTIONS
    _UpropDataStart = ADDR(.data);
    _UpropDataRomStart = 0x0000;
    .data 0x00000000 : AT(0x0000) {
-      build/assets/obseg/prop/Pname.o (.data);
+      * (.data);
    }
    _UpropDataEnd = ADDR(.data) + SIZEOF(.data);
    _UpropDataRomEnd = 0x0000 + SIZEOF(.data);

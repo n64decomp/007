@@ -19,7 +19,7 @@ glabel sub_GAME_7F007180
 /* 03BCC8 7F007198 240E00C8 */  li    $t6, 200
 /* 03BCCC 7F00719C 01C2001A */  div   $zero, $t6, $v0
 /* 03BCD0 7F0071A0 8FA30018 */  lw    $v1, 0x18($sp)
-/* 03BCD4 7F0071A4 3C068008 */  lui   $a2, %hi(dword_CODE_bss_8007A160) # $a2, 0x8008
+/* 03BCD4 7F0071A4 3C068008 */  lui   $a2, %hi(dword_CODE_bss_8007A160)
 /* 03BCD8 7F0071A8 24C6A160 */  addiu $a2, %lo(dword_CODE_bss_8007A160) # addiu $a2, $a2, -0x5ea0
 /* 03BCDC 7F0071AC 14400002 */  bnez  $v0, .L7F0071B8
 /* 03BCE0 7F0071B0 00000000 */   nop   
@@ -56,10 +56,10 @@ glabel sub_GAME_7F007180
 /* 03BD4C 7F00721C 00814824 */  and   $t1, $a0, $at
 /* 03BD50 7F007220 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03BD54 7F007224 01202025 */   move  $a0, $t1
-/* 03BD58 7F007228 3C068008 */  lui   $a2, %hi(dword_CODE_bss_8007A160) # $a2, 0x8008
+/* 03BD58 7F007228 3C068008 */  lui   $a2, %hi(dword_CODE_bss_8007A160)
 /* 03BD5C 7F00722C 24C6A160 */  addiu $a2, %lo(dword_CODE_bss_8007A160) # addiu $a2, $a2, -0x5ea0
 /* 03BD60 7F007230 8CCA0000 */  lw    $t2, ($a2)
-/* 03BD64 7F007234 3C048008 */  lui   $a0, %hi(dword_CODE_bss_8007A164) # $a0, 0x8008
+/* 03BD64 7F007234 3C048008 */  lui   $a0, %hi(dword_CODE_bss_8007A164)
 /* 03BD68 7F007238 2484A164 */  addiu $a0, %lo(dword_CODE_bss_8007A164) # addiu $a0, $a0, -0x5e9c
 /* 03BD6C 7F00723C AC820000 */  sw    $v0, ($a0)
 /* 03BD70 7F007240 1940000B */  blez  $t2, .L7F007270
@@ -77,7 +77,7 @@ glabel sub_GAME_7F007180
 /* 03BD9C 7F00726C 8C8B0000 */   lw    $t3, ($a0)
 .L7F007270:
 /* 03BDA0 7F007270 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 03BDA4 7F007274 3C018004 */  lui   $at, %hi(D_80040940) # $at, 0x8004
+/* 03BDA4 7F007274 3C018004 */  lui   $at, %hi(D_80040940)
 /* 03BDA8 7F007278 AC200940 */  sw    $zero, %lo(D_80040940)($at)
 /* 03BDAC 7F00727C 03E00008 */  jr    $ra
 /* 03BDB0 7F007280 27BD0020 */   addiu $sp, $sp, 0x20

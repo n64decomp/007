@@ -6,7 +6,7 @@ SECTIONS
    _UsetupDataStart = ADDR(.data);
    _UsetupDataRomStart = 0x0000;
    .data 0x00000000 : AT(0x0000) {
-      build/assets/obseg/setup/Usetup.o (.data);
+      * (.data);
    }
    _UsetupDataEnd = ADDR(.data) + SIZEOF(.data);
    _UsetupDataRomEnd = 0x0000 + SIZEOF(.data);

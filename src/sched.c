@@ -21,7 +21,15 @@ u32 userCompareValue = 45000000;
 u32 currentcount = 0;
 u32 setby_DPCfill_0 = 0;
 u32 setby_DPCfill_1 = 0;
-f32 something_with_osVI[7] = {0.0,1.0,1.0,1.0,1.0,0.0,0.0};
+//800230b0
+f32 something_with_osVI_0 = 0.0;
+f32 something_with_osVI_4 = 1.0;
+f32 something_with_osVI_8 = 1.0;
+f32 something_with_osVI_C = 1.0;
+f32 something_with_osVI_10 = 1.0;
+f32 something_with_osVI_14 = 0.0;
+f32 something_with_osVI_18 = 0.0;
+
 u32 D_800230CC = 1;
 
 
@@ -220,8 +228,8 @@ glabel osCreateScheduler
 /* 001728 70000B28 0C00363C */  jal   osCreateViManager
 /* 00172C 70000B2C 240400FE */   li    $a0, 254
 /* 001730 70000B30 93B90033 */  lbu   $t9, 0x33($sp)
-/* 001734 70000B34 3C098002 */  lui   $t1, %hi(osViModeTable) # $t1, 0x8002
-/* 001738 70000B38 3C038006 */  lui   $v1, %hi(viMode) # $v1, 0x8006
+/* 001734 70000B34 3C098002 */  lui   $t1, %hi(osViModeTable) 
+/* 001738 70000B38 3C038006 */  lui   $v1, %hi(viMode)
 /* 00173C 70000B3C 00194080 */  sll   $t0, $t9, 2
 /* 001740 70000B40 01194021 */  addu  $t0, $t0, $t9
 /* 001744 70000B44 00084100 */  sll   $t0, $t0, 4
@@ -230,15 +238,15 @@ glabel osCreateScheduler
 /* 001750 70000B50 01095021 */  addu  $t2, $t0, $t1
 /* 001754 70000B54 AC6A0000 */  sw    $t2, ($v1)
 /* 001758 70000B58 8D4B001C */  lw    $t3, 0x1c($t2)
-/* 00175C 70000B5C 3C018006 */  lui   $at, %hi(viMode+0x4) # $at, 0x8006
+/* 00175C 70000B5C 3C018006 */  lui   $at, %hi(viMode+0x4)
 /* 001760 70000B60 24040004 */  li    $a0, 4
 /* 001764 70000B64 AC2B0880 */  sw    $t3, %lo(viMode+0x4)($at)
 /* 001768 70000B68 8D4C0030 */  lw    $t4, 0x30($t2)
-/* 00176C 70000B6C 3C018006 */  lui   $at, %hi(viMode+0x8) # $at, 0x8006
+/* 00176C 70000B6C 3C018006 */  lui   $at, %hi(viMode+0x8)
 /* 001770 70000B70 02202825 */  move  $a1, $s1
 /* 001774 70000B74 AC2C0884 */  sw    $t4, %lo(viMode+0x8)($at)
 /* 001778 70000B78 8D4D0044 */  lw    $t5, 0x44($t2)
-/* 00177C 70000B7C 3C018006 */  lui   $at, %hi(viMode+0xC) # $at, 0x8006
+/* 00177C 70000B7C 3C018006 */  lui   $at, %hi(viMode+0xC)
 /* 001780 70000B80 2406029B */  li    $a2, 667
 /* 001784 70000B84 0C003714 */  jal   osSetEventMesg
 /* 001788 70000B88 AC2D0888 */   sw    $t5, %lo(viMode+0xC)($at)
@@ -323,96 +331,31 @@ glabel osScAddClient
 /**
  * 1870	70000C70
  */
-#ifdef NONMATCHING
-void osScRemoveClient(void *arg0, void *arg1)
+void osScRemoveClient(OSSched *sc, OSScClient *c)
 {
-    void *sp1C;
-    void *sp18;
-    void *temp_a2;
-    void *temp_v1;
-    void *phi_v1;
-    void *phi_a2;
-    void *phi_a2_2;
+    OSScClient *client = sc->clientList; 
+    OSScClient *prev   = 0;
+    OSIntMask  mask;
 
-    sp18 = NULL;
-    sp1C = (void *) arg0->unkB4;
-    phi_v1 = arg0->unkB4;
-    phi_a2 = sp18;
-    phi_a2_2 = sp18;
-    if (arg0->unkB4 != 0)
+    mask = osSetIntMask(1);
+    
+    while (client != 0) 
     {
-block_1:
-        if (phi_v1 == arg1)
+        if (client == c) 
         {
-            if (phi_a2 != 0)
-            {
-                *phi_a2 = (void *) *arg1;
-                phi_a2_2 = phi_a2;
-            }
-            else
-            {
-                arg0->unkB4 = (void *) *arg1;
-                phi_a2_2 = phi_a2;
-            }
+	        if(prev)
+		        prev->next = c->next;
+	        else
+		        sc->clientList = c->next;
+                break;
         }
-        else
-        {
-            temp_a2 = phi_v1;
-            temp_v1 = *phi_v1;
-            phi_v1 = temp_v1;
-            phi_a2 = temp_a2;
-            phi_a2_2 = temp_a2;
-            if (temp_v1 != 0)
-            {
-                goto block_1;
-            }
-        }
+        prev   = client;
+        client = client->next;
     }
-    osSetIntMask(osSetIntMask(1), arg1, phi_a2_2);
+
+    osSetIntMask(mask);
 }
-#else
-GLOBAL_ASM(
-glabel osScRemoveClient
-/* 001870 70000C70 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 001874 70000C74 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 001878 70000C78 AFA40020 */  sw    $a0, 0x20($sp)
-/* 00187C 70000C7C 8C8300B4 */  lw    $v1, 0xb4($a0)
-/* 001880 70000C80 AFA00018 */  sw    $zero, 0x18($sp)
-/* 001884 70000C84 AFA50024 */  sw    $a1, 0x24($sp)
-/* 001888 70000C88 24040001 */  li    $a0, 1
-/* 00188C 70000C8C 0C00374C */  jal   osSetIntMask
-/* 001890 70000C90 AFA3001C */   sw    $v1, 0x1c($sp)
-/* 001894 70000C94 8FA3001C */  lw    $v1, 0x1c($sp)
-/* 001898 70000C98 8FA50024 */  lw    $a1, 0x24($sp)
-/* 00189C 70000C9C 8FA60018 */  lw    $a2, 0x18($sp)
-/* 0018A0 70000CA0 1060000F */  beqz  $v1, .L70000CE0
-/* 0018A4 70000CA4 00402025 */   move  $a0, $v0
-.L70000CA8:
-/* 0018A8 70000CA8 5465000A */  bnel  $v1, $a1, .L70000CD4
-/* 0018AC 70000CAC 00603025 */   move  $a2, $v1
-/* 0018B0 70000CB0 10C00004 */  beqz  $a2, .L70000CC4
-/* 0018B4 70000CB4 8FB90020 */   lw    $t9, 0x20($sp)
-/* 0018B8 70000CB8 8CAF0000 */  lw    $t7, ($a1)
-/* 0018BC 70000CBC 10000008 */  b     .L70000CE0
-/* 0018C0 70000CC0 ACCF0000 */   sw    $t7, ($a2)
-.L70000CC4:
-/* 0018C4 70000CC4 8CB80000 */  lw    $t8, ($a1)
-/* 0018C8 70000CC8 10000005 */  b     .L70000CE0
-/* 0018CC 70000CCC AF3800B4 */   sw    $t8, 0xb4($t9)
-/* 0018D0 70000CD0 00603025 */  move  $a2, $v1
-.L70000CD4:
-/* 0018D4 70000CD4 8C630000 */  lw    $v1, ($v1)
-/* 0018D8 70000CD8 1460FFF3 */  bnez  $v1, .L70000CA8
-/* 0018DC 70000CDC 00000000 */   nop   
-.L70000CE0:
-/* 0018E0 70000CE0 0C00374C */  jal   osSetIntMask
-/* 0018E4 70000CE4 00000000 */   nop   
-/* 0018E8 70000CE8 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0018EC 70000CEC 27BD0020 */  addiu $sp, $sp, 0x20
-/* 0018F0 70000CF0 03E00008 */  jr    $ra
-/* 0018F4 70000CF4 00000000 */   nop   
-)
-#endif
+
 
 /**
  * 18F8	70000CF8
@@ -427,91 +370,58 @@ OSMesgQueue *osScGetCmdQ(OSSched *sc)
  * 1900	70000D00
  */
 #ifdef NONMATCHING
-void __scMain(OSSched *sc)
+void __scMain(void *arg)
 {
-    s32 sp4C;
-    s32 temp_s3;
-    void *temp_s0;
-    void *phi_s0;
-    s32 phi_s0_2;
-    s32 phi_s0_3;
+    OSMesg msg;
+    OSSched *sc = (OSSched *)arg;
+    OSScClient *client;
+    static int count = 0;
+    
+    while (1) {
+        
+        osRecvMesg(&sc->interruptQ, (OSMesg *)&msg, OS_MESG_BLOCK);
 
-    sp4C = 0;
-    temp_s3 = arg0 + 0x40;
-    phi_s0_3 = 0;
-loop_1:
-    osRecvMesg(temp_s3, &sp4C, 1);
-    if (sp4C != 0x29a)
-    {
-        if (sp4C != 0x29b)
-        {
-            if (sp4C != 0x29c)
-            {
-                if (sp4C != 0x29d)
-                {
-                    phi_s0_2 = phi_s0_3;
+        switch ((int) msg) {
+            case (0x29a):
+                __scHandleRetrace(sc);
+                break;
+
+            case (0x29b):
+                __scHandleRSP(sc);
+                break;
+
+            case (0x29c):
+                __scHandleRDP(sc);
+                break;
+
+            case (0x29d):
+                reset_cont_rumble_detect();
+                for (client = sc->clientList;client != 0;client = client->next) {
+                      osSendMesg(client->msgQ, (OSMesg) &sc->prenmiMsg, OS_MESG_NOBLOCK);
                 }
-                else
-                {
-                    reset_cont_rumble_detect();
-                    phi_s0 = arg0->unkB4;
-                    if (arg0->unkB4 != 0)
-                    {
-loop_10:
-                        osSendMesg(phi_s0->unk4, arg0 + 0x20, 0);
-                        temp_s0 = phi_s0->unk0;
-                        phi_s0 = temp_s0;
-                        if (temp_s0 != 0)
-                        {
-                            goto loop_10;
-                        }
-                    }
-                    phi_s0_2 = 1;
-                }
-            }
-            else
-            {
-                __scHandleRDP(arg0);
-                phi_s0_2 = phi_s0_3;
-            }
+                break;
         }
-        else
-        {
-            __scHandleRSP(arg0);
-            phi_s0_2 = phi_s0_3;
-        }
-    }
-    else
-    {
-        __scHandleRetrace(arg0);
-        phi_s0_2 = phi_s0_3;
-    }
-    phi_s0_3 = phi_s0_2;
-    if (phi_s0_2 == 0)
-    {
-        goto loop_1;
     }
     if (osTvType == 2)
     {
-        osViSetMode(&osViModeTable_osViModeMpalLan1);
+        osViSetMode(0x80027320);
     }
     else
     {
-        osViSetMode(0x80020000 + 0x6a60);
+        osViSetMode(0x80026a60);
     }
-    osViSetXScale(0x3f800000);
-    osViSetYScale(0x3f800000);
+    osViSetXScale(1.00000000);
+    osViSetYScale(1.00000000);
     osViRepeatLine(0);
     osViBlack(1);
-loop_17:
-loop_18:
-    osRecvMesg(temp_s3, &sp4C, 1);
-    if (sp4C != 0x29a)
-    {
-        goto loop_17;
+
+    while (1) {
+        while ((u32)msg != 0x29a) {
+            osRecvMesg(&sc->interruptQ,&msg,1);
+        }
+        controllerSchedulerRelated();
     }
-    controller_7000BD88();
-    goto loop_18;
+
 }
 #else
 GLOBAL_ASM(
@@ -581,13 +491,13 @@ glabel __scMain
 .L70000DE0:
 /* 0019E0 70000DE0 5200FFD6 */  beql  $s0, $zero, .L70000D3C
 /* 0019E4 70000DE4 02602025 */   move  $a0, $s3
-/* 0019E8 70000DE8 3C0F8000 */  lui   $t7, %hi(osTvType) # $t7, 0x8000
+/* 0019E8 70000DE8 3C0F8000 */  lui   $t7, %hi(osTvType) 
 /* 0019EC 70000DEC 8DEF0300 */  lw    $t7, %lo(osTvType)($t7)
 /* 0019F0 70000DF0 24010002 */  li    $at, 2
 /* 0019F4 70000DF4 3C048002 */  lui   $a0, %hi(osViModeTable_osViModeNtscLan1)
 /* 0019F8 70000DF8 15E10006 */  bne   $t7, $at, .L70000E14
 /* 0019FC 70000DFC 00000000 */   nop   
-/* 001A00 70000E00 3C048002 */  lui   $a0, %hi(osViModeTable_osViModeMpalLan1) # $a0, 0x8002
+/* 001A00 70000E00 3C048002 */  lui   $a0, %hi(osViModeTable_osViModeMpalLan1)
 /* 001A04 70000E04 0C003818 */  jal   osViSetMode
 /* 001A08 70000E08 24847320 */   addiu $a0, %lo(osViModeTable_osViModeMpalLan1) # addiu $a0, $a0, 0x7320
 /* 001A0C 70000E0C 10000004 */  b     .L70000E20
@@ -616,7 +526,7 @@ glabel __scMain
 /* 001A5C 70000E5C 8FB8004C */  lw    $t8, 0x4c($sp)
 /* 001A60 70000E60 5715FFFB */  bnel  $t8, $s5, .L70000E50
 /* 001A64 70000E64 02602025 */   move  $a0, $s3
-/* 001A68 70000E68 0C002F62 */  jal   controller_7000BD88
+/* 001A68 70000E68 0C002F62 */  jal   controllerSchedulerRelated
 /* 001A6C 70000E6C 00000000 */   nop   
 /* 001A70 70000E70 1000FFF7 */  b     .L70000E50
 /* 001A74 70000E74 02602025 */   move  $a0, $s3
@@ -642,66 +552,36 @@ glabel __scMain
  * 1AB4	70000EB4
  */
 #ifdef NONMATCHING
-void __scHandleRetrace(void *arg0)
+void __scHandleRetrace(OSSched *sc)
 {
-    ?32 sp3C;
-    ?32 sp30;
-    ?32 sp2C;
-    s32 temp_s2;
-    s32 temp_s0;
-    void *temp_s0_2;
-    void *phi_s0;
+    OSScTask    *rspTask;
+    OSScClient  *client;
+    s32         i;
+    s32         state;
+    OSScTask    *sp = 0;
+    OSScTask    *dp = 0;
 
-    sp3C = 0;
-    sp30 = 0;
-    sp2C = 0;
     video_related_1();
-    arg0->unkD0 = (s32) (arg0->unkD0 + 1);
+    sc->frameCount++;
     video_related_7();
-    controller_7000BD88();
+    controllerSchedulerRelated();
     music_related_15();
-    temp_s2 = (arg0 + 0x78);
-    if (osRecvMesg(temp_s2, &sp3C, 0) != -1)
-    {
-block_1:
-        __scAppendList(arg0, sp3C);
-        if (osRecvMesg(temp_s2, &sp3C, 0) != -1)
-        {
-            goto block_1;
-        }
+    while (osRecvMesg(&sc->cmdQ, (OSMesg *)&rspTask, OS_MESG_NOBLOCK) != -1) {
+        __scAppendList(sc, rspTask);
     }
-    if ((arg0->unkD4 != 0) && (arg0->unkC8 != 0))
-    {
-        __scYield(arg0, &sp30);
+    if (sc->doAudio && sc->curRSPTask) {
+        __scYield(sc);
+    } else {
+        state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
+        if ( __scSchedule (sc, &sp, &dp, state) != state)
+            __scExec(sc, sp, dp);
     }
-    else
-    {
-        temp_s0 = ((((u32) arg0->unkC8 < 1U) * 2) | ((u32) arg0->unkCC < 1U));
-        if (__scSchedule(arg0, &sp30, &sp2C, temp_s0) != temp_s0)
-        {
-            __scExec(arg0, sp30, sp2C);
-        }
-    }
-    phi_s0 = arg0->unkB4;
-    if (arg0->unkB4 != 0)
-    {
-block_9:
-        if ((phi_s0->unk8 == 0) || ((arg0->unkD0 & 1) == 0))
-        {
-            osSendMesg(phi_s0->unk4, arg0, 0);
-        }
-        else
-        {
 
-        }
-        temp_s0_2 = *phi_s0;
-        phi_s0 = temp_s0_2;
-        if (temp_s0_2 != 0)
-        {
-            goto block_9;
-        }
+    for (client = sc->clientList; client != 0; client = client->next) {
+        osSendMesg(client->msgQ, (OSMesg) &sc->retraceMsg, OS_MESG_NOBLOCK);
     }
-    CheckDisplayErrorBufferEvery16Frames(arg0->unkD0);
+
+    CheckDisplayErrorBufferEvery16Frames(sc->frameCount);
 }
 #else
 GLOBAL_ASM(
@@ -721,7 +601,7 @@ glabel __scHandleRetrace
 /* 001AE4 70000EE4 25CF0001 */  addiu $t7, $t6, 1
 /* 001AE8 70000EE8 0C000C68 */  jal   video_related_7
 /* 001AEC 70000EEC AE2F00D0 */   sw    $t7, 0xd0($s1)
-/* 001AF0 70000EF0 0C002F62 */  jal   controller_7000BD88
+/* 001AF0 70000EF0 0C002F62 */  jal   controllerSchedulerRelated
 /* 001AF4 70000EF4 00000000 */   nop   
 /* 001AF8 70000EF8 0C001E45 */  jal   music_related_15
 /* 001AFC 70000EFC 00000000 */   nop   
@@ -810,14 +690,13 @@ glabel __scHandleRetrace
  * 1C14	70001014
  */
 #ifdef NONMATCHING
-void __scHandleRSP(void *arg0)
+void __scHandleRSP(OSSched *sc)
 {
-    ?32 sp28;
-    ?32 sp24;
+    OSScTask *t, *sp = 0, *dp = 0;
+    s32 state;
 
-    sp28 = 0;
-    sp24 = 0;
-    arg0->unkC8 = 0U;
+    t = sc->curRSPTask;
+    sc->curRSPTask = 0;
     video_related_3(0x10001, arg0->unkC8);
     if (((sp2C->unk4 & 0x10) != 0) && (osSpTaskYielded((sp2C + 0x10), sp2C) != 0))
     {
@@ -969,7 +848,7 @@ glabel __scHandleRDP
 /* 001D4C 7000114C 8FBF001C */   lw    $ra, 0x1c($sp)
 /* 001D50 70001150 0C000A15 */  jal   video_related_3
 /* 001D54 70001154 34840002 */   ori   $a0, (0x00010002 & 0xFFFF) # ori $a0, $a0, 2
-/* 001D58 70001158 3C048006 */  lui   $a0, %hi(target_for_counters_maybe) # $a0, 0x8006
+/* 001D58 70001158 3C048006 */  lui   $a0, %hi(target_for_counters_maybe)
 /* 001D5C 7000115C 0C0038F0 */  jal   osDpGetCounters
 /* 001D60 70001160 2484DB30 */   addiu $a0, %lo(target_for_counters_maybe) # addiu $a0, $a0, -0x24d0
 /* 001D64 70001164 8E0500CC */  lw    $a1, 0xcc($s0)
@@ -1009,51 +888,23 @@ glabel __scHandleRDP
 
 /**
  * 1DE0	700011E0
+ * 
  */
-#ifdef NONMATCHING
-s32 __scTaskReady(s32 arg0)
+OSScTask *__scTaskReady(OSScTask *t) 
 {
-    s32 sp1C;
+    void *a;
+    void *b;    
 
-    if (arg0 != 0)
-    {
-        sp1C = osViGetCurrentFramebuffer();
-        if (osViGetNextFramebuffer() == sp1C)
-        {
-            return arg0;
+    if (t) {    
+        if ((a=osViGetCurrentFramebuffer()) != (b=osViGetNextFramebuffer())) {
+            return 0;
         }
-        return 0;
+
+        return t;
     }
+
     return 0;
 }
-#else
-GLOBAL_ASM(
-glabel __scTaskReady
-/* 001DE0 700011E0 27BDFFD8 */  addiu $sp, $sp, -0x28
-/* 001DE4 700011E4 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 001DE8 700011E8 1080000C */  beqz  $a0, .L7000121C
-/* 001DEC 700011EC AFA40028 */   sw    $a0, 0x28($sp)
-/* 001DF0 700011F0 0C003904 */  jal   osViGetCurrentFramebuffer
-/* 001DF4 700011F4 00000000 */   nop   
-/* 001DF8 700011F8 0C003914 */  jal   osViGetNextFramebuffer
-/* 001DFC 700011FC AFA2001C */   sw    $v0, 0x1c($sp)
-/* 001E00 70001200 8FAF001C */  lw    $t7, 0x1c($sp)
-/* 001E04 70001204 104F0003 */  beq   $v0, $t7, .L70001214
-/* 001E08 70001208 00000000 */   nop   
-/* 001E0C 7000120C 10000004 */  b     .L70001220
-/* 001E10 70001210 00001025 */   move  $v0, $zero
-.L70001214:
-/* 001E14 70001214 10000002 */  b     .L70001220
-/* 001E18 70001218 8FA20028 */   lw    $v0, 0x28($sp)
-.L7000121C:
-/* 001E1C 7000121C 00001025 */  move  $v0, $zero
-.L70001220:
-/* 001E20 70001220 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 001E24 70001224 27BD0028 */  addiu $sp, $sp, 0x28
-/* 001E28 70001228 03E00008 */  jr    $ra
-/* 001E2C 7000122C 00000000 */   nop   
-)
-#endif
 
 /**
  * 1E30	70001230
@@ -1160,40 +1011,40 @@ glabel __scTaskComplete
 /* 001E7C 7000127C 1320004F */  beqz  $t9, .L700013BC
 /* 001E80 70001280 30480020 */   andi  $t0, $v0, 0x20
 /* 001E84 70001284 1100004D */  beqz  $t0, .L700013BC
-/* 001E88 70001288 3C098002 */   lui   $t1, %hi(D_800230CC) # $t1, 0x8002
+/* 001E88 70001288 3C098002 */   lui   $t1, %hi(D_800230CC) 
 /* 001E8C 7000128C 8D2930CC */  lw    $t1, %lo(D_800230CC)($t1)
 /* 001E90 70001290 11200005 */  beqz  $t1, .L700012A8
 /* 001E94 70001294 00000000 */   nop   
 /* 001E98 70001298 0C0038B4 */  jal   osViBlack
 /* 001E9C 7000129C 00002025 */   move  $a0, $zero
-/* 001EA0 700012A0 3C018002 */  lui   $at, %hi(D_800230CC) # $at, 0x8002
+/* 001EA0 700012A0 3C018002 */  lui   $at, %hi(D_800230CC)
 /* 001EA4 700012A4 AC2030CC */  sw    $zero, %lo(D_800230CC)($at)
 .L700012A8:
-/* 001EA8 700012A8 3C038002 */  lui   $v1, %hi(something_with_osVI) # $v1, 0x8002
-/* 001EAC 700012AC 8C6330B0 */  lw    $v1, %lo(something_with_osVI)($v1)
-/* 001EB0 700012B0 3C0B8002 */  lui   $t3, 0x8002
+/* 001EA8 700012A8 3C038002 */  lui   $v1, %hi(something_with_osVI_0)
+/* 001EAC 700012AC 8C6330B0 */  lw    $v1, %lo(something_with_osVI_0)($v1)
+/* 001EB0 700012B0 3C0B8002 */  lui   $t3, %hi(something_with_osVI_14)
 /* 001EB4 700012B4 3C040008 */  lui   $a0, (0x00080401 >> 16) # lui $a0, 8
 /* 001EB8 700012B8 00035080 */  sll   $t2, $v1, 2
 /* 001EBC 700012BC 016A5821 */  addu  $t3, $t3, $t2
-/* 001EC0 700012C0 8D6B30C4 */  lw    $t3, 0x30c4($t3)
+/* 001EC0 700012C0 8D6B30C4 */  lw    $t3, %lo(something_with_osVI_14)($t3)
 /* 001EC4 700012C4 01401825 */  move  $v1, $t2
 /* 001EC8 700012C8 11600023 */  beqz  $t3, .L70001358
 /* 001ECC 700012CC 00000000 */   nop   
 /* 001ED0 700012D0 0C00374C */  jal   osSetIntMask
 /* 001ED4 700012D4 34840401 */   ori   $a0, (0x00080401 & 0xFFFF) # ori $a0, $a0, 0x401
-/* 001ED8 700012D8 3C038002 */  lui   $v1, %hi(something_with_osVI) # $v1, 0x8002
-/* 001EDC 700012DC 8C6330B0 */  lw    $v1, %lo(something_with_osVI)($v1)
-/* 001EE0 700012E0 3C0F8006 */  lui   $t7, %hi(dword_CODE_bss_8005DB40) # $t7, 0x8006
+/* 001ED8 700012D8 3C038002 */  lui   $v1, %hi(something_with_osVI_0)
+/* 001EDC 700012DC 8C6330B0 */  lw    $v1, %lo(something_with_osVI_0)($v1)
+/* 001EE0 700012E0 3C0F8006 */  lui   $t7, %hi(dword_CODE_bss_8005DB40) 
 /* 001EE4 700012E4 25EFDB40 */  addiu $t7, %lo(dword_CODE_bss_8005DB40) # addiu $t7, $t7, -0x24c0
 /* 001EE8 700012E8 00037080 */  sll   $t6, $v1, 2
 /* 001EEC 700012EC 01C37021 */  addu  $t6, $t6, $v1
 /* 001EF0 700012F0 000E7100 */  sll   $t6, $t6, 4
-/* 001EF4 700012F4 3C0D8006 */  lui   $t5, 0x8006
+/* 001EF4 700012F4 3C0D8006 */  lui   $t5, %hi(sc+416)
 /* 001EF8 700012F8 00036080 */  sll   $t4, $v1, 2
 /* 001EFC 700012FC 01AC6821 */  addu  $t5, $t5, $t4
 /* 001F00 70001300 01CFC021 */  addu  $t8, $t6, $t7
 /* 001F04 70001304 27090048 */  addiu $t1, $t8, 0x48
-/* 001F08 70001308 8DADDBE0 */  lw    $t5, -0x2420($t5)
+/* 001F08 70001308 8DADDBE0 */  lw    $t5, %lo(sc+416)($t5)
 .L7000130C:
 /* 001F0C 7000130C 8F010000 */  lw    $at, ($t8)
 /* 001F10 70001310 2718000C */  addiu $t8, $t8, 0xc
@@ -1210,25 +1061,25 @@ glabel __scTaskComplete
 /* 001F3C 7000133C 8F090004 */  lw    $t1, 4($t8)
 /* 001F40 70001340 0C00374C */  jal   osSetIntMask
 /* 001F44 70001344 ADA90004 */   sw    $t1, 4($t5)
-/* 001F48 70001348 3C038002 */  lui   $v1, %hi(something_with_osVI) # $v1, 0x8002
-/* 001F4C 7000134C 8C6330B0 */  lw    $v1, %lo(something_with_osVI)($v1)
+/* 001F48 70001348 3C038002 */  lui   $v1, %hi(something_with_osVI_0)
+/* 001F4C 7000134C 8C6330B0 */  lw    $v1, %lo(something_with_osVI_0)($v1)
 /* 001F50 70001350 00035080 */  sll   $t2, $v1, 2
 /* 001F54 70001354 01401825 */  move  $v1, $t2
 .L70001358:
-/* 001F58 70001358 3C018002 */  lui   $at, 0x8002
+/* 001F58 70001358 3C018002 */  lui   $at, %hi(something_with_osVI_4)
 /* 001F5C 7000135C 00230821 */  addu  $at, $at, $v1
 /* 001F60 70001360 0C003834 */  jal   osViSetXScale
-/* 001F64 70001364 C42C30B4 */   lwc1  $f12, 0x30b4($at)
-/* 001F68 70001368 3C0B8002 */  lui   $t3, %hi(something_with_osVI) # $t3, 0x8002
-/* 001F6C 7000136C 8D6B30B0 */  lw    $t3, %lo(something_with_osVI)($t3)
-/* 001F70 70001370 3C018002 */  lui   $at, 0x8002
+/* 001F64 70001364 C42C30B4 */   lwc1  $f12, %lo(something_with_osVI_4)($at)
+/* 001F68 70001368 3C0B8002 */  lui   $t3, %hi(something_with_osVI_0) 
+/* 001F6C 7000136C 8D6B30B0 */  lw    $t3, %lo(something_with_osVI_0)($t3)
+/* 001F70 70001370 3C018002 */  lui   $at, %hi(something_with_osVI_C)
 /* 001F74 70001374 000B6080 */  sll   $t4, $t3, 2
 /* 001F78 70001378 002C0821 */  addu  $at, $at, $t4
 /* 001F7C 7000137C 0C003880 */  jal   osViSetYScale
-/* 001F80 70001380 C42C30BC */   lwc1  $f12, 0x30bc($at)
-/* 001F84 70001384 3C0E8002 */  lui   $t6, %hi(something_with_osVI) # $t6, 0x8002
-/* 001F88 70001388 8DCE30B0 */  lw    $t6, %lo(something_with_osVI)($t6)
-/* 001F8C 7000138C 3C018002 */  lui   $at, %hi(something_with_osVI) # $at, 0x8002
+/* 001F80 70001380 C42C30BC */   lwc1  $f12, %lo(something_with_osVI_C)($at)
+/* 001F84 70001384 3C0E8002 */  lui   $t6, %hi(something_with_osVI_0) 
+/* 001F88 70001388 8DCE30B0 */  lw    $t6, %lo(something_with_osVI_0)($t6)
+/* 001F8C 7000138C 3C018002 */  lui   $at, %hi(something_with_osVI_0)
 /* 001F90 70001390 25CF0001 */  addiu $t7, $t6, 1
 /* 001F94 70001394 05E10004 */  bgez  $t7, .L700013A8
 /* 001F98 70001398 31E80001 */   andi  $t0, $t7, 1
@@ -1236,7 +1087,7 @@ glabel __scTaskComplete
 /* 001FA0 700013A0 00000000 */   nop   
 /* 001FA4 700013A4 2508FFFE */  addiu $t0, $t0, -2
 .L700013A8:
-/* 001FA8 700013A8 AC2830B0 */  sw    $t0, %lo(something_with_osVI)($at)
+/* 001FA8 700013A8 AC2830B0 */  sw    $t0, %lo(something_with_osVI_0)($at)
 /* 001FAC 700013AC 0C000268 */  jal   CheckDisplayErrorBuffer
 /* 001FB0 700013B0 8E04000C */   lw    $a0, 0xc($s0)
 /* 001FB4 700013B4 0C003924 */  jal   osViSwapBuffer
@@ -1256,73 +1107,32 @@ glabel __scTaskComplete
 /**
  * 1FD8	700013D8
  */
-#ifdef NONMATCHING
-s32 __scAppendList(void *arg0, void *arg1)
+
+void __scAppendList(OSSched *sc, OSScTask *t) 
 {
-    if (arg1->unk10 == 2)
-    {
-        if (arg0->unkC0 != 0)
-        {
-            *arg0->unkC0 = arg1;
-        }
+    long type = t->list.t.type;
+    
+    if (type == M_AUDTASK) {
+        if (sc->audioListTail)
+            sc->audioListTail->next = t;
         else
-        {
-            arg0->unkB8 = arg1;
-        }
-        arg0->unkC0 = arg1;
-        arg0->unkD4 = 1;
-    }
-    else
-    {
-        if (arg0->unkC4 != 0)
-        {
-            *arg0->unkC4 = arg1;
-        }
+            sc->audioListHead = t;
+            
+        sc->audioListTail = t;
+        sc->doAudio = 1;
+    } else {
+        if (sc->gfxListTail)
+            sc->gfxListTail->next = t;
         else
-        {
-            arg0->unkBC = arg1;
-        }
-        arg0->unkC4 = arg1;
+            sc->gfxListHead = t;
+        
+	sc->gfxListTail = t;
     }
-    *arg1 = 0;
-    arg1->unk4 = (s32) (arg1->unk8 & 3);
-    return arg1->unk10;
+    
+    t->next = NULL;
+    t->state = t->flags & OS_SC_RCP_MASK;    
 }
-#else
-GLOBAL_ASM(
-glabel __scAppendList
-/* 001FD8 700013D8 8CA20010 */  lw    $v0, 0x10($a1)
-/* 001FDC 700013DC 24010002 */  li    $at, 2
-/* 001FE0 700013E0 240E0001 */  li    $t6, 1
-/* 001FE4 700013E4 5441000B */  bnel  $v0, $at, .L70001414
-/* 001FE8 700013E8 8C8200C4 */   lw    $v0, 0xc4($a0)
-/* 001FEC 700013EC 8C8200C0 */  lw    $v0, 0xc0($a0)
-/* 001FF0 700013F0 50400004 */  beql  $v0, $zero, .L70001404
-/* 001FF4 700013F4 AC8500B8 */   sw    $a1, 0xb8($a0)
-/* 001FF8 700013F8 10000002 */  b     .L70001404
-/* 001FFC 700013FC AC450000 */   sw    $a1, ($v0)
-/* 002000 70001400 AC8500B8 */  sw    $a1, 0xb8($a0)
-.L70001404:
-/* 002004 70001404 AC8500C0 */  sw    $a1, 0xc0($a0)
-/* 002008 70001408 10000008 */  b     .L7000142C
-/* 00200C 7000140C AC8E00D4 */   sw    $t6, 0xd4($a0)
-/* 002010 70001410 8C8200C4 */  lw    $v0, 0xc4($a0)
-.L70001414:
-/* 002014 70001414 50400004 */  beql  $v0, $zero, .L70001428
-/* 002018 70001418 AC8500BC */   sw    $a1, 0xbc($a0)
-/* 00201C 7000141C 10000002 */  b     .L70001428
-/* 002020 70001420 AC450000 */   sw    $a1, ($v0)
-/* 002024 70001424 AC8500BC */  sw    $a1, 0xbc($a0)
-.L70001428:
-/* 002028 70001428 AC8500C4 */  sw    $a1, 0xc4($a0)
-.L7000142C:
-/* 00202C 7000142C 8CAF0008 */  lw    $t7, 8($a1)
-/* 002030 70001430 ACA00000 */  sw    $zero, ($a1)
-/* 002034 70001434 31F80003 */  andi  $t8, $t7, 3
-/* 002038 70001438 03E00008 */  jr    $ra
-/* 00203C 7000143C ACB80004 */   sw    $t8, 4($a1)
-)
-#endif
+
 
 /**
  * 2040	70001440
@@ -1447,10 +1257,10 @@ glabel __scExec
 /* 002128 70001528 0C0039EC */  jal   osDpSetNextBuffer
 /* 00212C 7000152C 8D270004 */   lw    $a3, 4($t1)
 /* 002130 70001530 240A0001 */  li    $t2, 1
-/* 002134 70001534 3C018002 */  lui   $at, %hi(setby_DPCfill_0) # $at, 0x8002
+/* 002134 70001534 3C018002 */  lui   $at, %hi(setby_DPCfill_0)
 /* 002138 70001538 8FAB0028 */  lw    $t3, 0x28($sp)
 /* 00213C 7000153C AC2A30A8 */  sw    $t2, %lo(setby_DPCfill_0)($at)
-/* 002140 70001540 3C018002 */  lui   $at, %hi(setby_DPCfill_1) # $at, 0x8002
+/* 002140 70001540 3C018002 */  lui   $at, %hi(setby_DPCfill_1)
 /* 002144 70001544 AC2030AC */  sw    $zero, %lo(setby_DPCfill_1)($at)
 /* 002148 70001548 AD7100CC */  sw    $s1, 0xcc($t3)
 /* 00214C 7000154C 8FBF001C */  lw    $ra, 0x1c($sp)
@@ -1465,40 +1275,17 @@ glabel __scExec
 /**
  * 2160	70001560
  */
-#ifdef NONMATCHING
-void *__scYield(void *arg0)
-{
-    void *phi_return;
 
-    phi_return = arg0->unkC8;
-    if (arg0->unkC8->unk10 == 1)
-    {
-        arg0->unkC8->unk4 = (s32) (arg0->unkC8->unk4 | 0x10);
-        phi_return = osSpTaskYield();
-    }
-    return phi_return;
+void __scYield(OSSched *sc) 
+{
+    if (sc->curRSPTask->list.t.type == M_GFXTASK) {
+        sc->curRSPTask->state |= 0x0010;
+        osSpTaskYield();
+    } else {
+      
+    }    
 }
-#else
-GLOBAL_ASM(
-glabel __scYield
-/* 002160 70001560 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 002164 70001564 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 002168 70001568 8C8200C8 */  lw    $v0, 0xc8($a0)
-/* 00216C 7000156C 24010001 */  li    $at, 1
-/* 002170 70001570 8C4E0010 */  lw    $t6, 0x10($v0)
-/* 002174 70001574 55C10006 */  bnel  $t6, $at, .L70001590
-/* 002178 70001578 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 00217C 7000157C 8C4F0004 */  lw    $t7, 4($v0)
-/* 002180 70001580 35F80010 */  ori   $t8, $t7, 0x10
-/* 002184 70001584 0C003A18 */  jal   osSpTaskYield
-/* 002188 70001588 AC580004 */   sw    $t8, 4($v0)
-/* 00218C 7000158C 8FBF0014 */  lw    $ra, 0x14($sp)
-.L70001590:
-/* 002190 70001590 27BD0018 */  addiu $sp, $sp, 0x18
-/* 002194 70001594 03E00008 */  jr    $ra
-/* 002198 70001598 00000000 */   nop   
-)
-#endif
+
 
 /**
  * 219C	7000159C
@@ -1581,7 +1368,7 @@ glabel __scSchedule
 /* 00225C 7000165C 2DE10007 */  sltiu $at, $t7, 7
 /* 002260 70001660 1020003D */  beqz  $at, .L70001758
 /* 002264 70001664 000F7880 */   sll   $t7, $t7, 2
-/* 002268 70001668 3C018003 */  lui   $at, %hi(jpt_80028400) # $at, 0x8003
+/* 002268 70001668 3C018003 */  lui   $at, %hi(jpt_80028400)
 /* 00226C 7000166C 002F0821 */  addu  $at, $at, $t7
 /* 002270 70001670 8C2F8400 */  lw    $t7, %lo(jpt_80028400)($at) # lw    $t7, -0x7c00($at)
 /* 002274 70001674 01E00008 */  jr    $t7

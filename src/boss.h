@@ -4,5 +4,6 @@
 #include "bondgame.h"
 
 void set_loaded_stage(LEVELID stage);
+void something_with_boss_c_debug(void);
 
 #endif

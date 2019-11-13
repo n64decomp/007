@@ -103970,7 +103970,7 @@ undefined4 get_debug_explosioninfo_flag(void)
 
 
 
-undefined4 get_linemode_flag(void)
+undefined4 get_debug_VisCVG_flag(void)
 
 {
   return DAT_80036fa8;
@@ -122637,7 +122637,7 @@ longlong FUN_7f0b483c(longlong param_1)
             puVar3 = FUN_7f0b5ba4(puVar6 + 2,(float)puVar2[2],(float)puVar2[3],(float)puVar2[4],
                                   (float)puVar2[5]);
             puVar6 = FUN_7f0bbc20((undefined4 *)(uVar4 & 0xffffff00 | (uint)puVar3 >> 0x18),0);
-            iVar5 = get_linemode_flag();
+            iVar5 = get_debug_VisCVG_flag();
             if ((iVar5 != 0) && (iVar5 = FUN_7f0be4a0(), iVar5 != 0)) {
               puVar6 = FUN_7f0b732c(puVar6,*puVar2);
             }
@@ -122692,7 +122692,7 @@ longlong FUN_7f0b483c(longlong param_1)
             puVar3 = FUN_7f0b5ba4(puVar6 + 2,(float)puVar2[2],(float)puVar2[3],(float)puVar2[4],
                                   (float)puVar2[5]);
             puVar6 = FUN_7f0bbc20((undefined4 *)(uVar4 & 0xffffff00 | (uint)puVar3 >> 0x18),1);
-            iVar5 = get_linemode_flag();
+            iVar5 = get_debug_VisCVG_flag();
             if ((iVar5 != 0) && (iVar5 = FUN_7f0be4a0(), iVar5 != 0)) {
               puVar6 = FUN_7f0b7448(puVar6,*puVar2);
             }

@@ -288,5 +288,24 @@ struct stringentry LtitleE[] = {
  "2.4 Goodhead\n",
  "Select Control Style\n",
  "Control Style\n",
+ #ifdef VERSION_US
  NULL
+ #endif
+ #ifdef VERSION_JP
+ "Russian Soldier\n",
+ "Russian Infantry\n",
+ "Scientist\n",
+ "Russian Commandant\n",
+ "Janus Marine\n",
+ "Naval Officer\n",
+ "Helicopter Pilot\n",
+ "St. Petersburg Guard\n",
+ "Civilian\n",
+ "Siberian Guard\n",
+ "Arctic Commando\n",
+ "Siberian Special Forces\n",
+ "Jungle Commando\n",
+ "Janus Special Forces\n",
+ "Moonraker Elite\n"
+ #endif
 };

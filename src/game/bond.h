@@ -1,9 +1,15 @@
 #ifndef _BOND_H_
 #define _BOND_H_
 #include "ultra64.h"
-#include "game/actor.h"
+#include "game/chr.h"
+struct xyzpoint
+{
+    f32 x;
+    f32 y;
+    f32 z;
+};
 
-struct BONDdata
+struct Player
 {
   s32 unknown;
   s32 xpos;
@@ -44,7 +50,7 @@ struct BONDdata
   s32 field_90;
   s32 field_94;
   s32 field_98;
-  s32 crouching_flag;
+  s32 crouchposition;
   s32 ducking_height_offset;
   s32 field_A4;
   s32 position_data_pointer;
@@ -59,56 +65,56 @@ struct BONDdata
   s32 field_CC;
   s32 field_D0;
   s32 ptr_char_objectinstance;
-  s32 death_flag;
-  s32 current_health;
-  f32 current_armor;
-  s32 previous_health;
-  s32 previous_armor;
-  s32 hud_health;
-  s32 hud_armor;
-  s32 invincibility_timer;
-  s32 health_bar_timer;
-  s32 field_FC;
+  s32 bonddead;
+  s32 bondhealth;
+  f32 bondarmour;
+  s32 oldhealth;
+  s32 oldarmour;
+  s32 apparenthealth;
+  s32 apparentarmour;
+  s32 damageshowtime;
+  s32 healthshowtime;
+  s32 healthshowmode;
   s32 field_100;
   s32 field_104;
   s32 field_108;
   s32 field_10C;
-  s32 field_110;
-  s32 field_114;
-  s32 look_ahead_setting;
-  s32 field_11C;
-  s32 field_120;
-  s32 is_aiming_flag;
-  s32 auto_aim_flag;
-  f32 y_aim_related_float;
-  s32 field_130;
-  s32 field_134;
-  s32 solo_auto_aim_x_setting;
-  f32 x_aim_related_float;
-  s32 field_140;
-  s32 field_144;
-  f32 azimuth_angle;
-  f32 azimuth_turning_direction;
-  s32 azimuth_cosine;
-  s32 azimuth_sine;
-  f32 inclination_angle1;
-  s32 inclination_angle2;
-  f32 inclination_turning_direction;
-  s32 inclination_cosine;
-  s32 inclination_sine;
-  f32 strafe_speed_multiplier;
-  f32 strafe_movement_direction;
-  f32 forward_speed_multiplier;
-  s32 forward_speed_multiplier_2;
-  s32 forward_speed_frame_counter;
+  s32 movecentrerelease;
+  s32 lookaheadcentreenabled;
+  s32 automovecentreenabled;
+  s32 fastmovecentreenabled;
+  s32 automovecentre;
+  s32 insightaimmode;
+  s32 autoyaimenabled;
+  f32 autoaimy;
+  s32 autoyaimtime;
+  s32 autoyaimtime60;
+  s32 autoxaimenabled;
+  f32 autoaimx;
+  s32 autoxaimtime;
+  s32 autoxaimtime60;
+  f32 vv_theta;
+  f32 speedtheta;
+  s32 vv_costheta;
+  s32 vv_sintheta;
+  f32 vv_verta;
+  s32 vv_verta360;
+  f32 speedverta;
+  s32 vv_cosverta;
+  s32 vv_sinverta;
+  f32 speedsideways;
+  f32 speedstrafe;
+  f32 speedforwards;
+  s32 speedboost;
+  s32 speedmaxtime60;
   s32 boost_factor_x;
   s32 boost_factor_y;
   s32 boost_factor_z;
   s32 viewport_alpha;
-  s32 rate_of_change;
-  s32 time_for_change;
-  s32 final_alpha_level;
-  s32 field_19C;
+  s32 bondfadetime60;
+  s32 bondfadetimemax;
+  s32 bondfadefracold;
+  s32 bondfadefracnew;
   s32 field_1A0;
   s32 field_1A4;
   s32 field_1A8;
@@ -514,10 +520,10 @@ struct BONDdata
   s32 field_7E4;
   s32 field_7E8;
   s32 field_7EC;
-  s16 playerscreenwidth;
-  s16 playerscreenheight;
-  s16 playerscreenulx;
-  s16 playerscreenuly;
+  s16 viewx;
+  s16 viewy;
+  s16 viewleft;
+  s16 viewtop;
   s32 right_invisible;
   s32 left_invisible;
   s32 item_right;
@@ -1045,7 +1051,7 @@ struct BONDdata
   s32 field_1054;
   s32 field_1058;
   s32 field_105C;
-  s32 GEkey_analyzed;
+  s32 copiedgoldeneye;
   s32 somekinda_flags;
   s32 field_1068;
   f32 field_106C;
@@ -1057,19 +1063,19 @@ struct BONDdata
   f32 sniper_zoom;
   f32 camera_zoom;
   s32 field_108C;
-  f32 maybe_screen_width;
-  f32 maybe_screen_height;
-  f32 ulx;
-  f32 uly;
-  f32 field_10A0;
-  f32 field_10A4;
-  f32 field_10A8;
-  f32 maybe_half_screen_width;
-  f32 maybe_half_screen_height;
-  s32 field_10B4;
-  s32 field_10B8;
-  s32 field_10BC;
-  s32 field_10C0;
+  f32 c_screenwidth;
+  f32 c_screenheight;
+  f32 c_screenleft;
+  f32 c_screentop;
+  f32 c_perspnear;
+  f32 c_perspfovy;
+  f32 c_perspaspect;
+  f32 c_halfwidth;
+  f32 c_halfheight;
+  f32 c_scalex;
+  f32 c_scaley;
+  f32 c_recipscalex;
+  f32 c_recipscaley;
   s32 field_10C4;
   s32 field_10C8;
   s32 field_10CC;
@@ -1081,23 +1087,20 @@ struct BONDdata
   s32 field_10E4;
   s32 field_10E8;
   s32 field_10EC;
-  s32 field_10F0;
-  s32 field_10F4;
-  s32 field_10F8;
-  s32 field_10FC;
-  s32 field_1100;
-  s32 field_1104;
-  s32 field_1108;
-  s32 field_110C;
-  s32 field_1110;
-  s32 field_1114;
-  f32 field_1118;
-  f32 field_111C;
-  f32 field_1120;
-  f32 field_1124;
+  f32 c_scalelod60;
+  f32 c_scalelod;
+  f32 c_lodscalez;
+  u32 c_lodscalezu32;
+  struct xyzpoint c_cameratopnorm;
+  struct xyzpoint c_cameraleftnorm;
+
+  f32 screenxminf;
+  f32 screenyminf;
+  f32 screenxmaxf;
+  f32 screenymaxf;
   s32 somekinda_bitflags;
   s32 field_112C;
-  s32 ammo_unknown;
+  s32 ammoheldarr;
   s32 ammo_total_pistol;
   s32 ammo_total_pistol_beta;
   s32 ammo_total_rifle;
@@ -1127,24 +1130,24 @@ struct BONDdata
   s32 ammo_total_unknown2;
   s32 ammo_total_tank;
   s32 ammo_total_mp_token;
-  s32 ptr_red_screen_animation_block;
+  s32 bloodcnt;
   s32 field_11AC;
   s32 field_11B0;
   s32 field_11B4;
   s32 field_11B8;
-  f32 watch_menu_screen_swap_current_timer;
-  f32 watch_endtime;
-  f32 currentfov;
-  f32 previousfov;
-  f32 targetfov;
-  f32 watch_menu_current_size_unused_maybe;
-  f32 field_11D4;
-  s32 stationary_intro_cam_flags;
-  s32 set_neg1_by_stationary_intro_cam;
+  f32 zoomintime;
+  f32 zoomintimemax;
+  f32 zoominfovy;
+  f32 zoominfovyold;
+  f32 zoominfovynew;
+  f32 fovy;
+  f32 aspect;
+  s32 hudmessoff;
+  s32 bondmesscnt;
   s32 ptr_inventory_first_in_cycle;
   s32 p_itemcur;
-  s32 items_max;
-  s32 flag_for_allguns;
+  s32 equipmaxitems;
+  s32 equipallguns;
   s32 field_11F0;
   s32 field_11F4;
   s32 index_time_spent_using_item;
@@ -1196,9 +1199,9 @@ struct BONDdata
   s32 field_12B0;
   u8 something_with_cheat_text;
   u8 can_display_cheat_text;
-  u8 invincible_flag;
+  u8 bondinvincible;
   u8 field_12B7;
-  s32 related_to_armor_display;
+  s32 healthdamagetype;
   s32 field_12BC;
   s32 field_12C0;
   s32 field_12C4;
@@ -2673,12 +2676,12 @@ struct BONDdata
   s32 field_29B8;
   s32 field_29BC;
   s32 field_29C0;
-  s32 in_mp_pause_menu;
-  s32 page_in_mp_pause_menu;
-  s32 selection_on_mp_pause_menu_page_6;
-  s32 press_stick_register;
-  s32 field_29D4;
-  s32 num_deaths;
+  s32 mpmenuon;
+  s32 mpmenumode;
+  s32 mpquitconfirm;
+  s32 mpjoywascentre;
+  s32 damagetype;
+  s32 deathcount;
   s32 num_suicides;
   s32 field_29E0;
   s32 field_29E4;
@@ -2688,7 +2691,7 @@ struct BONDdata
   s32 field_29F4;
   s32 field_29F8;
   s32 field_29FC;
-  s32 show_health_armor_timer;
+  s32 healthdisplaytime;
   s32 field_2A04;
   s32 field_2A08;
   s32 field_2A0C;
@@ -2760,7 +2763,7 @@ extern s32 in_tank_flag;
 //D:8003644C
 extern s32 D_8003644C;
 //D:80036450
-extern s32 D_80036450;
+extern s32 ptr_playerstank;
 //D:80036454
 extern s32 D_80036454;
 //D:80036458
@@ -2796,7 +2799,7 @@ extern s32 D_80036490;
 //D:80036494
 extern s32 cameramode;
 //D:80036498
-extern s32 D_80036498;
+extern s32 enable_move_after_cinema;
 //D:8003649C
 extern s32 D_8003649C;
 //D:800364A0
@@ -2816,7 +2819,7 @@ extern s32 D_800364B8;
 //D:800364BC
 extern s32 D_800364BC;
 //D:800364C0
-extern s32 D_800364C0;
+extern s32 ptr_random06cam_entry;
 //D:800364C4
 extern s32 invisible_to_guards_flag;
 //D:800364C8
@@ -2990,19 +2993,19 @@ extern s32 D_80036890;
 //D:80036894
 extern s32 D_80036894;
 //D:80036898
-extern s32 D_80036898;
+extern s32 status_bar_text_buffer_index;
 //D:8003689C
-extern s32 D_8003689C;
+extern s32 display_statusbar;
 //D:800368A0
-extern s32 D_800368A0;
+extern s32 copy_1stfonttable;
 //D:800368A4
-extern s32 D_800368A4;
+extern s32 copy_2ndfonttable;
 //D:800368A8
-extern s32 D_800368A8;
+extern s32 upper_text_buffer_index;
 //D:800368AC
-extern s32 D_800368AC;
+extern s32 display_upper_text_window;
 //D:800368B0
-extern s32 D_800368B0;
+extern s32 upper_text_window_timer;
 extern s32 D_800368B4;
 //D:800368B8
 extern u16 D_800368B8[];

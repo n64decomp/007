@@ -42,6 +42,6 @@ extern struct player_data player2_player_data;
 extern struct player_data player3_player_data;
 extern struct player_data player4_player_data;
 
-extern struct BONDdata *ptr_BONDdata;
+extern struct Player *pPlayer;
 extern struct player_data *cur_player_stat_ptr;
 #endif

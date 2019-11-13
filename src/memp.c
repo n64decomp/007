@@ -38,24 +38,14 @@ s32 D_80024444 = 0;
 s32 D_80024448 = 0;
 s32 D_8002444C = 0;
 
-const char aMemp_c_debug[] = "memp_c_debug";
-const char aMf[] = "-mf";
-const char aMf_0[] = "-mf";
-const char aMl[] = "-ml";
-const char aMl_0[] = "-ml";
-const char aMe[] = "-me";
-const char aMe_0[] = "-me";
-
-
-
 
 /**
  * 9F80	70009380
  *     V0=p->debug.notice.list entry for memp_c_debug
  */
-void something_with_memp_c_debug(void) {
-
-    get_ptr_debug_notice_list_entry(&ptr_memp_c_debug_debug_notice_list, &aMemp_c_debug); //should be "memp_c_debug"
+void something_with_memp_c_debug(void)
+{
+    get_ptr_debug_notice_list_entry(&ptr_memp_c_debug_debug_notice_list, "memp_c_debug"); //should be "memp_c_debug"
 }
 
 
@@ -126,13 +116,27 @@ void check_memflag_tokens(s32 arg0, s32 arg1, s32 arg11) {
 }
 #else
 GLOBAL_ASM(
+.rdata
+glabel aMf
+.word 0x2d6d6600 /*"-mf"*/
+glabel aMf_0
+.word 0x2d6d6600 /*"-mf"*/
+glabel aMl
+.word 0x2d6d6c00 /*"-ml"*/
+glabel aMl_0
+.word 0x2d6d6c00 /*"-ml"*/
+glabel aMe
+.word 0x2d6d6500 /*"-me"*/
+glabel aMe_0
+.word 0x2d6d6500 /*"-me"*/
+
 .text
 glabel check_memflag_tokens
-/* 009FAC 700093AC 3C028006 */  lui   $v0, %hi(memory_bank_ptrs) # $v0, 0x8006
+/* 009FAC 700093AC 3C028006 */  lui   $v0, %hi(memory_bank_ptrs)
 /* 009FB0 700093B0 24423BB0 */  addiu $v0, %lo(memory_bank_ptrs) # addiu $v0, $v0, 0x3bb0
 /* 009FB4 700093B4 27BDFFC0 */  addiu $sp, $sp, -0x40
 /* 009FB8 700093B8 00857821 */  addu  $t7, $a0, $a1
-/* 009FBC 700093BC 3C198002 */  lui   $t9, %hi(D_80024414) # $t9, 0x8002
+/* 009FBC 700093BC 3C198002 */  lui   $t9, %hi(D_80024414) 
 /* 009FC0 700093C0 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 009FC4 700093C4 AFA50044 */  sw    $a1, 0x44($sp)
 /* 009FC8 700093C8 AC440000 */  sw    $a0, ($v0)
@@ -145,7 +149,7 @@ glabel check_memflag_tokens
 /* 009FE4 700093E4 AF090004 */  sw    $t1, 4($t8)
 /* 009FE8 700093E8 8F29000C */  lw    $t1, 0xc($t9)
 /* 009FEC 700093EC 8F210008 */  lw    $at, 8($t9)
-/* 009FF0 700093F0 3C058003 */  lui   $a1, %hi(aMf) # $a1, 0x8003
+/* 009FF0 700093F0 3C058003 */  lui   $a1, %hi(aMf)
 /* 009FF4 700093F4 AF09000C */  sw    $t1, 0xc($t8)
 /* 009FF8 700093F8 AF010008 */  sw    $at, 8($t8)
 /* 009FFC 700093FC 8F210010 */  lw    $at, 0x10($t9)
@@ -161,7 +165,7 @@ glabel check_memflag_tokens
 /* 00A024 70009424 AF010018 */   sw    $at, 0x18($t8)
 /* 00A028 70009428 10400009 */  beqz  $v0, .L70009450
 /* 00A02C 7000942C 24040001 */   li    $a0, 1
-/* 00A030 70009430 3C058003 */  lui   $a1, %hi(aMf_0) # $a1, 0x8003
+/* 00A030 70009430 3C058003 */  lui   $a1, %hi(aMf_0)
 /* 00A034 70009434 0C0029A8 */  jal   check_token
 /* 00A038 70009438 24A591B4 */   addiu $a1, %lo(aMf_0) # addiu $a1, $a1, -0x6e4c
 /* 00A03C 7000943C 00402025 */  move  $a0, $v0
@@ -170,13 +174,13 @@ glabel check_memflag_tokens
 /* 00A048 70009448 00003025 */   move  $a2, $zero
 /* 00A04C 7000944C AFA20024 */  sw    $v0, 0x24($sp)
 .L70009450:
-/* 00A050 70009450 3C058003 */  lui   $a1, %hi(aMl) # $a1, 0x8003
+/* 00A050 70009450 3C058003 */  lui   $a1, %hi(aMl)
 /* 00A054 70009454 24A591B8 */  addiu $a1, %lo(aMl) # addiu $a1, $a1, -0x6e48
 /* 00A058 70009458 0C0029A8 */  jal   check_token
 /* 00A05C 7000945C 24040001 */   li    $a0, 1
 /* 00A060 70009460 10400009 */  beqz  $v0, .L70009488
 /* 00A064 70009464 24040001 */   li    $a0, 1
-/* 00A068 70009468 3C058003 */  lui   $a1, %hi(aMl_0) # $a1, 0x8003
+/* 00A068 70009468 3C058003 */  lui   $a1, %hi(aMl_0)
 /* 00A06C 7000946C 0C0029A8 */  jal   check_token
 /* 00A070 70009470 24A591BC */   addiu $a1, %lo(aMl_0) # addiu $a1, $a1, -0x6e44
 /* 00A074 70009474 00402025 */  move  $a0, $v0
@@ -185,13 +189,13 @@ glabel check_memflag_tokens
 /* 00A080 70009480 00003025 */   move  $a2, $zero
 /* 00A084 70009484 AFA2002C */  sw    $v0, 0x2c($sp)
 .L70009488:
-/* 00A088 70009488 3C058003 */  lui   $a1, %hi(aMe) # $a1, 0x8003
+/* 00A088 70009488 3C058003 */  lui   $a1, %hi(aMe)
 /* 00A08C 7000948C 24A591C0 */  addiu $a1, %lo(aMe) # addiu $a1, $a1, -0x6e40
 /* 00A090 70009490 0C0029A8 */  jal   check_token
 /* 00A094 70009494 24040001 */   li    $a0, 1
 /* 00A098 70009498 10400009 */  beqz  $v0, .L700094C0
 /* 00A09C 7000949C 24040001 */   li    $a0, 1
-/* 00A0A0 700094A0 3C058003 */  lui   $a1, %hi(aMe_0) # $a1, 0x8003
+/* 00A0A0 700094A0 3C058003 */  lui   $a1, %hi(aMe_0)
 /* 00A0A4 700094A4 0C0029A8 */  jal   check_token
 /* 00A0A8 700094A8 24A591C4 */   addiu $a1, %lo(aMe_0) # addiu $a1, $a1, -0x6e3c
 /* 00A0AC 700094AC 00402025 */  move  $a0, $v0
@@ -201,7 +205,7 @@ glabel check_memflag_tokens
 /* 00A0BC 700094BC AFA20034 */  sw    $v0, 0x34($sp)
 .L700094C0:
 /* 00A0C0 700094C0 8FA30034 */  lw    $v1, 0x34($sp)
-/* 00A0C4 700094C4 3C0A8005 */  lui   $t2, %hi(j_text_trigger) # $t2, 0x8005
+/* 00A0C4 700094C4 3C0A8005 */  lui   $t2, %hi(j_text_trigger) 
 /* 00A0C8 700094C8 1460000C */  bnez  $v1, .L700094FC
 /* 00A0CC 700094CC 00000000 */   nop   
 /* 00A0D0 700094D0 8D4A84D0 */  lw    $t2, %lo(j_text_trigger)($t2)
@@ -333,7 +337,7 @@ GLOBAL_ASM(
 .text
 glabel memp_related_0
 /* 00A114 70009514 27BDFF80 */  addiu $sp, $sp, -0x80
-/* 00A118 70009518 3C0E8002 */  lui   $t6, %hi(D_80024434) # $t6, 0x8002
+/* 00A118 70009518 3C0E8002 */  lui   $t6, %hi(D_80024434) 
 /* 00A11C 7000951C AFBF0024 */  sw    $ra, 0x24($sp)
 /* 00A120 70009520 AFB30020 */  sw    $s3, 0x20($sp)
 /* 00A124 70009524 AFB2001C */  sw    $s2, 0x1c($sp)
@@ -342,7 +346,7 @@ glabel memp_related_0
 /* 00A130 70009530 25CE4434 */  addiu $t6, %lo(D_80024434) # addiu $t6, $t6, 0x4434
 /* 00A134 70009534 8DC10000 */  lw    $at, ($t6)
 /* 00A138 70009538 27B20060 */  addiu $s2, $sp, 0x60
-/* 00A13C 7000953C 3C138006 */  lui   $s3, %hi(memory_bank_ptrs) # $s3, 0x8006
+/* 00A13C 7000953C 3C138006 */  lui   $s3, %hi(memory_bank_ptrs)
 /* 00A140 70009540 AE410000 */  sw    $at, ($s2)
 /* 00A144 70009544 8DD90004 */  lw    $t9, 4($t6)
 /* 00A148 70009548 00801025 */  move  $v0, $a0
@@ -419,18 +423,18 @@ glabel memp_related_0
 /* 00A254 70009654 8E660000 */  lw    $a2, ($s3)
 /* 00A258 70009658 8FB80060 */  lw    $t8, 0x60($sp)
 /* 00A25C 7000965C 8FAF0064 */  lw    $t7, 0x64($sp)
-/* 00A260 70009660 3C018006 */  lui   $at, %hi(D_80063BC4) # $at, 0x8006
+/* 00A260 70009660 3C018006 */  lui   $at, %hi(D_80063BC4)
 /* 00A264 70009664 03067021 */  addu  $t6, $t8, $a2
 /* 00A268 70009668 AC2E3BC0 */  sw    $t6, %lo(D_80063BC0)($at)
 /* 00A26C 7000966C AC203BC4 */  sw    $zero, %lo(D_80063BC4)($at)
-/* 00A270 70009670 3C018006 */  lui   $at, %hi(D_80063BC8) # $at, 0x8006
+/* 00A270 70009670 3C018006 */  lui   $at, %hi(D_80063BC8)
 /* 00A274 70009674 01E61021 */  addu  $v0, $t7, $a2
 /* 00A278 70009678 AC223BC8 */  sw    $v0, %lo(D_80063BC8)($at)
 /* 00A27C 7000967C 8FA80068 */  lw    $t0, 0x68($sp)
-/* 00A280 70009680 3C018006 */  lui   $at, %hi(D_80063BD4) # $at, 0x8006
+/* 00A280 70009680 3C018006 */  lui   $at, %hi(D_80063BD4)
 /* 00A284 70009684 AC223BD0 */  sw    $v0, %lo(D_80063BD0)($at)
 /* 00A288 70009688 AC203BD4 */  sw    $zero, %lo(D_80063BD4)($at)
-/* 00A28C 7000968C 3C018006 */  lui   $at, %hi(D_80063BD8) # $at, 0x8006
+/* 00A28C 7000968C 3C018006 */  lui   $at, %hi(D_80063BD8)
 /* 00A290 70009690 01064821 */  addu  $t1, $t0, $a2
 /* 00A294 70009694 AC293BD8 */  sw    $t1, %lo(D_80063BD8)($at)
 /* 00A298 70009698 24070002 */  li    $a3, 2
@@ -488,8 +492,8 @@ glabel allocate_bytes_in_bank
 /* 00A320 70009720 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 00A324 70009724 AFA5001C */  sw    $a1, 0x1c($sp)
 /* 00A328 70009728 30A700FF */  andi  $a3, $a1, 0xff
-/* 00A32C 7000972C 3C058006 */  lui   $a1, %hi(memory_bank_ptrs) # $a1, 0x8006
-/* 00A330 70009730 3C0A8002 */  lui   $t2, %hi(tied_to_mem_management) # $t2, 0x8002
+/* 00A32C 7000972C 3C058006 */  lui   $a1, %hi(memory_bank_ptrs)
+/* 00A330 70009730 3C0A8002 */  lui   $t2, %hi(tied_to_mem_management) 
 /* 00A334 70009734 254A4404 */  addiu $t2, %lo(tied_to_mem_management) # addiu $t2, $t2, 0x4404
 /* 00A338 70009738 24A53BB0 */  addiu $a1, %lo(memory_bank_ptrs) # addiu $a1, $a1, 0x3bb0
 /* 00A33C 7000973C AFBF0014 */  sw    $ra, 0x14($sp)
@@ -501,7 +505,7 @@ glabel allocate_bytes_in_bank
 /* 00A350 70009750 14400006 */  bnez  $v0, .L7000976C
 /* 00A354 70009754 00404025 */   move  $t0, $v0
 /* 00A358 70009758 24190001 */  li    $t9, 1
-/* 00A35C 7000975C 3C018002 */  lui   $at, %hi(tied_to_mem_management) # $at, 0x8002
+/* 00A35C 7000975C 3C018002 */  lui   $at, %hi(tied_to_mem_management)
 /* 00A360 70009760 AC394404 */  sw    $t9, %lo(tied_to_mem_management)($at)
 .L70009764:
 /* 00A364 70009764 1000FFFF */  b     .L70009764
@@ -568,7 +572,7 @@ void memp_related_1(void) {
 GLOBAL_ASM(
 .text
 glabel memp_related_1
-/* 00A404 70009804 3C0F8002 */  lui   $t7, %hi(tied_to_mem_management) # $t7, 0x8002
+/* 00A404 70009804 3C0F8002 */  lui   $t7, %hi(tied_to_mem_management) 
 /* 00A408 70009808 8DEF4404 */  lw    $t7, %lo(tied_to_mem_management)($t7)
 /* 00A40C 7000980C 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 00A410 70009810 AFA60020 */  sw    $a2, 0x20($sp)
@@ -578,13 +582,13 @@ glabel memp_related_1
 /* 00A420 70009820 AFA5001C */  sw    $a1, 0x1c($sp)
 /* 00A424 70009824 11E00006 */  beqz  $t7, .L70009840
 /* 00A428 70009828 00803825 */   move  $a3, $a0
-/* 00A42C 7000982C 3C188006 */  lui   $t8, %hi(dword_CODE_bss_80063C1C) # $t8, 0x8006
+/* 00A42C 7000982C 3C188006 */  lui   $t8, %hi(dword_CODE_bss_80063C1C) 
 /* 00A430 70009830 8F183C1C */  lw    $t8, %lo(dword_CODE_bss_80063C1C)($t8)
 /* 00A434 70009834 14980002 */  bne   $a0, $t8, .L70009840
 /* 00A438 70009838 00000000 */   nop   
 /* 00A43C 7000983C 24060006 */  li    $a2, 6
 .L70009840:
-/* 00A440 70009840 3C0A8006 */  lui   $t2, %hi(memory_bank_ptrs) # $t2, 0x8006
+/* 00A440 70009840 3C0A8006 */  lui   $t2, %hi(memory_bank_ptrs) 
 /* 00A444 70009844 254A3BB0 */  addiu $t2, %lo(memory_bank_ptrs) # addiu $t2, $t2, 0x3bb0
 /* 00A448 70009848 0006C900 */  sll   $t9, $a2, 4
 /* 00A44C 7000984C 032A2821 */  addu  $a1, $t9, $t2
@@ -705,7 +709,7 @@ s32 memp_related_3(s32 arg0) {
 GLOBAL_ASM(
 .text
 glabel memp_related_3
-/* 00A510 70009910 3C0F8002 */  lui   $t7, %hi(tied_to_mem_management) # $t7, 0x8002
+/* 00A510 70009910 3C0F8002 */  lui   $t7, %hi(tied_to_mem_management) 
 /* 00A514 70009914 8DEF4404 */  lw    $t7, %lo(tied_to_mem_management)($t7)
 /* 00A518 70009918 AFA40000 */  sw    $a0, ($sp)
 /* 00A51C 7000991C 308E00FF */  andi  $t6, $a0, 0xff
@@ -715,7 +719,7 @@ glabel memp_related_3
 .L7000992C:
 /* 00A52C 7000992C 24010004 */  li    $at, 4
 /* 00A530 70009930 14810007 */  bne   $a0, $at, .L70009950
-/* 00A534 70009934 3C058006 */   lui   $a1, %hi(memory_bank_ptrs) # $a1, 0x8006
+/* 00A534 70009934 3C058006 */   lui   $a1, %hi(memory_bank_ptrs)
 /* 00A538 70009938 24A53BB0 */  addiu $a1, %lo(memory_bank_ptrs) # addiu $a1, $a1, 0x3bb0
 /* 00A53C 7000993C 8CB80040 */  lw    $t8, 0x40($a1)
 /* 00A540 70009940 8CB90048 */  lw    $t9, 0x48($a1)
@@ -723,7 +727,7 @@ glabel memp_related_3
 /* 00A548 70009948 00000000 */   nop   
 /* 00A54C 7000994C 24040006 */  li    $a0, 6
 .L70009950:
-/* 00A550 70009950 3C058006 */  lui   $a1, %hi(memory_bank_ptrs) # $a1, 0x8006
+/* 00A550 70009950 3C058006 */  lui   $a1, %hi(memory_bank_ptrs)
 /* 00A554 70009954 24A53BB0 */  addiu $a1, %lo(memory_bank_ptrs) # addiu $a1, $a1, 0x3bb0
 /* 00A558 70009958 00044100 */  sll   $t0, $a0, 4
 /* 00A55C 7000995C 00A81821 */  addu  $v1, $a1, $t0
@@ -793,7 +797,7 @@ GLOBAL_ASM(
 .text
 glabel reset_mem_bank_a0
 /* 00A59C 7000999C 308E00FF */  andi  $t6, $a0, 0xff
-/* 00A5A0 700099A0 3C188006 */  lui   $t8, %hi(memory_bank_ptrs) # $t8, 0x8006
+/* 00A5A0 700099A0 3C188006 */  lui   $t8, %hi(memory_bank_ptrs) 
 /* 00A5A4 700099A4 27183BB0 */  addiu $t8, %lo(memory_bank_ptrs) # addiu $t8, $t8, 0x3bb0
 /* 00A5A8 700099A8 000E7900 */  sll   $t7, $t6, 4
 /* 00A5AC 700099AC 01F81021 */  addu  $v0, $t7, $t8
@@ -837,7 +841,7 @@ glabel memp_related_6
 /* 00A5CC 700099CC 0C00263C */  jal   nulled_list_all8_mem_alloc_banks_sizes
 /* 00A5D0 700099D0 AFA40018 */   sw    $a0, 0x18($sp)
 /* 00A5D4 700099D4 93AE001B */  lbu   $t6, 0x1b($sp)
-/* 00A5D8 700099D8 3C188006 */  lui   $t8, %hi(memory_bank_ptrs) # $t8, 0x8006
+/* 00A5D8 700099D8 3C188006 */  lui   $t8, %hi(memory_bank_ptrs) 
 /* 00A5DC 700099DC 27183BB0 */  addiu $t8, %lo(memory_bank_ptrs) # addiu $t8, $t8, 0x3bb0
 /* 00A5E0 700099E0 000E7900 */  sll   $t7, $t6, 4
 /* 00A5E4 700099E4 01F81021 */  addu  $v0, $t7, $t8

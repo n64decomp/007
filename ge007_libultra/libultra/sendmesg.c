@@ -64,7 +64,7 @@ glabel osSendMesg
 /* 00EB54 7000DF54 24010001 */  li    $at, 1
 /* 00EB58 7000DF58 1721000A */  bne   $t9, $at, .L7000DF84
 /* 00EB5C 7000DF5C 00000000 */   nop   
-/* 00EB60 7000DF60 3C098002 */  lui   $t1, %hi(__osRunningThread) # $t1, 0x8002
+/* 00EB60 7000DF60 3C098002 */  lui   $t1, %hi(__osRunningThread) 
 /* 00EB64 7000DF64 8D297730 */  lw    $t1, %lo(__osRunningThread)($t1)
 /* 00EB68 7000DF68 24080008 */  li    $t0, 8
 /* 00EB6C 7000DF6C A5280010 */  sh    $t0, 0x10($t1)

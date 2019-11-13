@@ -17,6 +17,7 @@ assets/animationtable_data.bin
 assets/animationtable_entries.bin
 assets/ge007.u.117880.jfont_dl.bin
 assets/ge007.u.117940.jfont_chardata.bin
+assets/ge007.j.118660.jfont_chardata.bin
 assets/ge007.u.123040.efont_chardata.bin
 assets/ge007.u.29D160.Globalimagetable.bin
 assets/ge007.u.2A4D50.usedby7F008DE4.bin
@@ -30,8 +31,19 @@ assets/obseg/chr/*.bin
 assets/obseg/gun/*.bin
 assets/obseg/prop/*.bin
 assets/obseg/setup/*.bin
+assets/obseg/setup/u/*.bin
+assets/obseg/setup/j/*.bin
 assets/obseg/stan/*.bin
 assets/obseg/text/*.bin
+assets/obseg/text/u/*.bin
+assets/obseg/text/j/*.bin
 assets/obseg/ob__ob_end.seg
 assets/ramrom/*.bin
 
+ge007.j.bin
+ge007.j.elf
+data_seg
+021990.bin
+.vscode/launch.json
+
+0219D0.bin

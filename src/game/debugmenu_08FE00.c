@@ -53,11 +53,11 @@ void init_debug_menu_values(void) {
 GLOBAL_ASM(
 .text
 glabel init_debug_menu_values
-/* 0C4944 7F08FE14 3C018003 */  lui   $at, %hi(ptr_textptrs) # $at, 0x8003
+/* 0C4944 7F08FE14 3C018003 */  lui   $at, %hi(ptr_textptrs)
 /* 0C4948 7F08FE18 AC246B78 */  sw    $a0, %lo(ptr_textptrs)($at)
-/* 0C494C 7F08FE1C 3C018003 */  lui   $at, %hi(ptr_positions) # $at, 0x8003
+/* 0C494C 7F08FE1C 3C018003 */  lui   $at, %hi(ptr_positions)
 /* 0C4950 7F08FE20 AC256B7C */  sw    $a1, %lo(ptr_positions)($at)
-/* 0C4954 7F08FE24 3C018003 */  lui   $at, %hi(ptr_groupings) # $at, 0x8003
+/* 0C4954 7F08FE24 3C018003 */  lui   $at, %hi(ptr_groupings)
 /* 0C4958 7F08FE28 AC266B84 */  sw    $a2, %lo(ptr_groupings)($at)
 /* 0C495C 7F08FE2C 8CCE0000 */  lw    $t6, ($a2)
 /* 0C4960 7F08FE30 00001025 */  move  $v0, $zero
@@ -74,7 +74,7 @@ glabel init_debug_menu_values
 .L7F08FE58:
 /* 0C4988 7F08FE58 00D8C821 */  addu  $t9, $a2, $t8
 /* 0C498C 7F08FE5C 8F28FFFC */  lw    $t0, -4($t9)
-/* 0C4990 7F08FE60 3C018003 */  lui   $at, %hi(ptr_last_debuggrp_cutoff) # $at, 0x8003
+/* 0C4990 7F08FE60 3C018003 */  lui   $at, %hi(ptr_last_debuggrp_cutoff)
 /* 0C4994 7F08FE64 AC286B74 */  sw    $t0, %lo(ptr_last_debuggrp_cutoff)($at)
 /* 0C4998 7F08FE68 3C018003 */  lui   $at, %hi(number_groups)
 /* 0C499C 7F08FE6C 03E00008 */  jr    $ra
@@ -95,9 +95,9 @@ GLOBAL_ASM(
 .text
 glabel print_debug_mcm_to_stdout
 /* 0C49A4 7F08FE74 27BDFFC0 */  addiu $sp, $sp, -0x40
-/* 0C49A8 7F08FE78 3C028003 */  lui   $v0, %hi(num_mcm_something) # $v0, 0x8003
+/* 0C49A8 7F08FE78 3C028003 */  lui   $v0, %hi(num_mcm_something)
 /* 0C49AC 7F08FE7C 8C426B88 */  lw    $v0, %lo(num_mcm_something)($v0)
-/* 0C49B0 7F08FE80 3C0E8003 */  lui   $t6, %hi(ptr_last_debuggrp_cutoff) # $t6, 0x8003
+/* 0C49B0 7F08FE80 3C0E8003 */  lui   $t6, %hi(ptr_last_debuggrp_cutoff) 
 /* 0C49B4 7F08FE84 8DCE6B74 */  lw    $t6, %lo(ptr_last_debuggrp_cutoff)($t6)
 /* 0C49B8 7F08FE88 AFBE0038 */  sw    $fp, 0x38($sp)
 /* 0C49BC 7F08FE8C AFB70034 */  sw    $s7, 0x34($sp)
@@ -118,9 +118,9 @@ glabel print_debug_mcm_to_stdout
 /* 0C49F8 7F08FEC8 93DE6B90 */  lbu   $fp, %lo(mcm_yoffset_multiplier)($fp)
 /* 0C49FC 7F08FECC 19C00042 */  blez  $t6, .L7F08FFD8
 /* 0C4A00 7F08FED0 00008025 */   move  $s0, $zero
-/* 0C4A04 7F08FED4 3C168003 */  lui   $s6, %hi(ptr_textptrs) # $s6, 0x8003
-/* 0C4A08 7F08FED8 3C148003 */  lui   $s4, %hi(ptr_positions) # $s4, 0x8003
-/* 0C4A0C 7F08FEDC 3C138003 */  lui   $s3, %hi(highlighted_debug_option) # $s3, 0x8003
+/* 0C4A04 7F08FED4 3C168003 */  lui   $s6, %hi(ptr_textptrs)
+/* 0C4A08 7F08FED8 3C148003 */  lui   $s4, %hi(ptr_positions)
+/* 0C4A0C 7F08FEDC 3C138003 */  lui   $s3, %hi(highlighted_debug_option)
 /* 0C4A10 7F08FEE0 26736B70 */  addiu $s3, %lo(highlighted_debug_option) # addiu $s3, $s3, 0x6b70
 /* 0C4A14 7F08FEE4 26946B7C */  addiu $s4, %lo(ptr_positions) # addiu $s4, $s4, 0x6b7c
 /* 0C4A18 7F08FEE8 26D66B78 */  addiu $s6, %lo(ptr_textptrs) # addiu $s6, $s6, 0x6b78
@@ -182,7 +182,7 @@ glabel print_debug_mcm_to_stdout
 /* 0C4AE0 7F08FFB0 01926821 */  addu  $t5, $t4, $s2
 /* 0C4AE4 7F08FFB4 0C002C7A */  jal   write_string_stdout
 /* 0C4AE8 7F08FFB8 8DA40000 */   lw    $a0, ($t5)
-/* 0C4AEC 7F08FFBC 3C0E8003 */  lui   $t6, %hi(ptr_last_debuggrp_cutoff) # $t6, 0x8003
+/* 0C4AEC 7F08FFBC 3C0E8003 */  lui   $t6, %hi(ptr_last_debuggrp_cutoff) 
 /* 0C4AF0 7F08FFC0 8DCE6B74 */  lw    $t6, %lo(ptr_last_debuggrp_cutoff)($t6)
 /* 0C4AF4 7F08FFC4 26100001 */  addiu $s0, $s0, 1
 /* 0C4AF8 7F08FFC8 26310008 */  addiu $s1, $s1, 8
@@ -220,9 +220,9 @@ GLOBAL_ASM(
 glabel sub_GAME_7F09000C
 /* 0C4B3C 7F09000C 27BDFFC0 */  addiu $sp, $sp, -0x40
 /* 0C4B40 7F090010 AFB5002C */  sw    $s5, 0x2c($sp)
-/* 0C4B44 7F090014 3C028003 */  lui   $v0, %hi(num_mcm_something) # $v0, 0x8003
+/* 0C4B44 7F090014 3C028003 */  lui   $v0, %hi(num_mcm_something)
 /* 0C4B48 7F090018 8C426B88 */  lw    $v0, %lo(num_mcm_something)($v0)
-/* 0C4B4C 7F09001C 3C158003 */  lui   $s5, %hi(ptr_last_debuggrp_cutoff) # $s5, 0x8003
+/* 0C4B4C 7F09001C 3C158003 */  lui   $s5, %hi(ptr_last_debuggrp_cutoff)
 /* 0C4B50 7F090020 26B56B74 */  addiu $s5, %lo(ptr_last_debuggrp_cutoff) # addiu $s5, $s5, 0x6b74
 /* 0C4B54 7F090024 8EAE0000 */  lw    $t6, ($s5)
 /* 0C4B58 7F090028 AFB40028 */  sw    $s4, 0x28($sp)
@@ -245,8 +245,8 @@ glabel sub_GAME_7F09000C
 /* 0C4B9C 7F09006C 92946B90 */  lbu   $s4, %lo(mcm_yoffset_multiplier)($s4)
 /* 0C4BA0 7F090070 19C00043 */  blez  $t6, .L7F090180
 /* 0C4BA4 7F090074 00008025 */   move  $s0, $zero
-/* 0C4BA8 7F090078 3C178003 */  lui   $s7, %hi(ptr_positions) # $s7, 0x8003
-/* 0C4BAC 7F09007C 3C168003 */  lui   $s6, %hi(highlighted_debug_option) # $s6, 0x8003
+/* 0C4BA8 7F090078 3C178003 */  lui   $s7, %hi(ptr_positions) 
+/* 0C4BAC 7F09007C 3C168003 */  lui   $s6, %hi(highlighted_debug_option)
 /* 0C4BB0 7F090080 26D66B70 */  addiu $s6, %lo(highlighted_debug_option) # addiu $s6, $s6, 0x6b70
 /* 0C4BB4 7F090084 26F76B7C */  addiu $s7, %lo(ptr_positions) # addiu $s7, $s7, 0x6b7c
 /* 0C4BB8 7F090088 00008825 */  move  $s1, $zero
@@ -303,12 +303,12 @@ glabel sub_GAME_7F09000C
 .L7F090140:
 /* 0C4C70 7F090140 0C002C10 */  jal   set_final_debug_text_positions
 /* 0C4C74 7F090144 00000000 */   nop   
-/* 0C4C78 7F090148 3C0C8003 */  lui   $t4, %hi(ptr_textptrs) # $t4, 0x8003
+/* 0C4C78 7F090148 3C0C8003 */  lui   $t4, %hi(ptr_textptrs) 
 /* 0C4C7C 7F09014C 8D8C6B78 */  lw    $t4, %lo(ptr_textptrs)($t4)
 /* 0C4C80 7F090150 01926821 */  addu  $t5, $t4, $s2
 /* 0C4C84 7F090154 0C002C7A */  jal   write_string_stdout
 /* 0C4C88 7F090158 8DA40000 */   lw    $a0, ($t5)
-/* 0C4C8C 7F09015C 3C048005 */  lui   $a0, %hi(aMenu_cErrorTriedToCallFont_makegt) # $a0, 0x8005
+/* 0C4C8C 7F09015C 3C048005 */  lui   $a0, %hi(aMenu_cErrorTriedToCallFont_makegt)
 /* 0C4C90 7F090160 0C0033D1 */  jal   osSyncPrintf
 /* 0C4C94 7F090164 24845340 */   addiu $a0, %lo(aMenu_cErrorTriedToCallFont_makegt) # addiu $a0, $a0, 0x5340
 /* 0C4C98 7F090168 8EAE0000 */  lw    $t6, ($s5)
@@ -357,10 +357,10 @@ void sub_GAME_7F0901C8(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F0901C8
-/* 0C4CF8 7F0901C8 3C068003 */  lui   $a2, %hi(highlighted_debug_option) # $a2, 0x8003
+/* 0C4CF8 7F0901C8 3C068003 */  lui   $a2, %hi(highlighted_debug_option)
 /* 0C4CFC 7F0901CC 24C66B70 */  addiu $a2, %lo(highlighted_debug_option) # addiu $a2, $a2, 0x6b70
 /* 0C4D00 7F0901D0 8CCE0000 */  lw    $t6, ($a2)
-/* 0C4D04 7F0901D4 3C188003 */  lui   $t8, %hi(ptr_groupings) # $t8, 0x8003
+/* 0C4D04 7F0901D4 3C188003 */  lui   $t8, %hi(ptr_groupings) 
 /* 0C4D08 7F0901D8 3C048003 */  lui   $a0, %hi(number_groups)
 /* 0C4D0C 7F0901DC 25C2FFFF */  addiu $v0, $t6, -1
 /* 0C4D10 7F0901E0 04410006 */  bgez  $v0, .L7F0901FC
@@ -374,7 +374,7 @@ glabel sub_GAME_7F0901C8
 .L7F0901FC:
 /* 0C4D2C 7F0901FC 8C846B80 */  lw    $a0, %lo(number_groups)($a0)
 /* 0C4D30 7F090200 00001825 */  move  $v1, $zero
-/* 0C4D34 7F090204 3C058003 */  lui   $a1, %hi(ptr_groupings) # $a1, 0x8003
+/* 0C4D34 7F090204 3C058003 */  lui   $a1, %hi(ptr_groupings)
 /* 0C4D38 7F090208 1880000D */  blez  $a0, .L7F090240
 /* 0C4D3C 7F09020C 00000000 */   nop   
 /* 0C4D40 7F090210 8CA56B84 */  lw    $a1, %lo(ptr_groupings)($a1)
@@ -410,10 +410,10 @@ void sub_GAME_7F090248(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F090248
-/* 0C4D78 7F090248 3C078003 */  lui   $a3, %hi(highlighted_debug_option) # $a3, 0x8003
+/* 0C4D78 7F090248 3C078003 */  lui   $a3, %hi(highlighted_debug_option)
 /* 0C4D7C 7F09024C 24E76B70 */  addiu $a3, %lo(highlighted_debug_option) # addiu $a3, $a3, 0x6b70
 /* 0C4D80 7F090250 8CEE0000 */  lw    $t6, ($a3)
-/* 0C4D84 7F090254 3C038003 */  lui   $v1, %hi(ptr_groupings) # $v1, 0x8003
+/* 0C4D84 7F090254 3C038003 */  lui   $v1, %hi(ptr_groupings)
 /* 0C4D88 7F090258 3C058003 */  lui   $a1, %hi(number_groups)
 /* 0C4D8C 7F09025C 25C20001 */  addiu $v0, $t6, 1
 /* 0C4D90 7F090260 ACE20000 */  sw    $v0, ($a3)
@@ -461,9 +461,9 @@ void sub_GAME_7F0902C0(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F0902C0
-/* 0C4DF0 7F0902C0 3C038003 */  lui   $v1, %hi(ptr_groupings) # $v1, 0x8003
+/* 0C4DF0 7F0902C0 3C038003 */  lui   $v1, %hi(ptr_groupings)
 /* 0C4DF4 7F0902C4 8C636B84 */  lw    $v1, %lo(ptr_groupings)($v1)
-/* 0C4DF8 7F0902C8 3C088003 */  lui   $t0, %hi(highlighted_debug_option) # $t0, 0x8003
+/* 0C4DF8 7F0902C8 3C088003 */  lui   $t0, %hi(highlighted_debug_option) 
 /* 0C4DFC 7F0902CC 25086B70 */  addiu $t0, %lo(highlighted_debug_option) # addiu $t0, $t0, 0x6b70
 /* 0C4E00 7F0902D0 8D020000 */  lw    $v0, ($t0)
 /* 0C4E04 7F0902D4 8C640000 */  lw    $a0, ($v1)
@@ -539,13 +539,13 @@ void sub_GAME_7F09039C(void) {
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F09039C
-/* 0C4ECC 7F09039C 3C038003 */  lui   $v1, %hi(ptr_groupings) # $v1, 0x8003
+/* 0C4ECC 7F09039C 3C038003 */  lui   $v1, %hi(ptr_groupings)
 /* 0C4ED0 7F0903A0 8C636B84 */  lw    $v1, %lo(ptr_groupings)($v1)
-/* 0C4ED4 7F0903A4 3C078003 */  lui   $a3, %hi(highlighted_debug_option) # $a3, 0x8003
+/* 0C4ED4 7F0903A4 3C078003 */  lui   $a3, %hi(highlighted_debug_option)
 /* 0C4ED8 7F0903A8 24E76B70 */  addiu $a3, %lo(highlighted_debug_option) # addiu $a3, $a3, 0x6b70
 /* 0C4EDC 7F0903AC 8CE20000 */  lw    $v0, ($a3)
 /* 0C4EE0 7F0903B0 8C640000 */  lw    $a0, ($v1)
-/* 0C4EE4 7F0903B4 3C058003 */  lui   $a1, %hi(number_groups) # $a1, 0x8003
+/* 0C4EE4 7F0903B4 3C058003 */  lui   $a1, %hi(number_groups)
 /* 0C4EE8 7F0903B8 0044082A */  slt   $at, $v0, $a0
 /* 0C4EEC 7F0903BC 50200016 */  beql  $at, $zero, .L7F090418
 /* 0C4EF0 7F0903C0 0044082A */   slt   $at, $v0, $a0

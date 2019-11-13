@@ -10,26 +10,26 @@ void alloc_explosion_smoke_casing_scorch_impact_buffers(void) {
 GLOBAL_ASM(
 .text
 glabel alloc_explosion_smoke_casing_scorch_impact_buffers
-/* 03B8C0 7F006D90 3C018004 */  lui   $at, %hi(D_80040170) # $at, 0x8004
+/* 03B8C0 7F006D90 3C018004 */  lui   $at, %hi(D_80040170)
 /* 03B8C4 7F006D94 AC200170 */  sw    $zero, %lo(D_80040170)($at)
-/* 03B8C8 7F006D98 3C018004 */  lui   $at, %hi(D_80040174) # $at, 0x8004
+/* 03B8C8 7F006D98 3C018004 */  lui   $at, %hi(D_80040174)
 /* 03B8CC 7F006D9C AC200174 */  sw    $zero, %lo(D_80040174)($at)
-/* 03B8D0 7F006DA0 3C018004 */  lui   $at, %hi(D_8004017C+0x684) # $at, 0x8004
+/* 03B8D0 7F006DA0 3C018004 */  lui   $at, %hi(D_8004017C+0x684)
 /* 03B8D4 7F006DA4 AC200800 */  sw    $zero, %lo(D_8004017C+0x684)($at)
-/* 03B8D8 7F006DA8 3C018004 */  lui   $at, %hi(D_8004017C+0x688) # $at, 0x8004
+/* 03B8D8 7F006DA8 3C018004 */  lui   $at, %hi(D_8004017C+0x688)
 /* 03B8DC 7F006DAC AC200804 */  sw    $zero, %lo(D_8004017C+0x688)($at)
-/* 03B8E0 7F006DB0 3C018004 */  lui   $at, %hi(D_8004017C+0x68C) # $at, 0x8004
+/* 03B8E0 7F006DB0 3C018004 */  lui   $at, %hi(D_8004017C+0x68C)
 /* 03B8E4 7F006DB4 AC200808 */  sw    $zero, %lo(D_8004017C+0x68C)($at)
 /* 03B8E8 7F006DB8 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 03B8EC 7F006DBC 44812000 */  mtc1  $at, $f4
 /* 03B8F0 7F006DC0 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 03B8F4 7F006DC4 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 03B8F8 7F006DC8 3C018004 */  lui   $at, %hi(D_80040178) # $at, 0x8004
+/* 03B8F8 7F006DC8 3C018004 */  lui   $at, %hi(D_80040178)
 /* 03B8FC 7F006DCC 24041740 */  li    $a0, 5952
 /* 03B900 7F006DD0 24050004 */  li    $a1, 4
 /* 03B904 7F006DD4 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03B908 7F006DD8 E4240178 */   swc1  $f4, %lo(D_80040178)($at)
-/* 03B90C 7F006DDC 3C038008 */  lui   $v1, %hi(ptr_explosion_buf) # $v1, 0x8008
+/* 03B90C 7F006DDC 3C038008 */  lui   $v1, %hi(ptr_explosion_buf)
 /* 03B910 7F006DE0 2463A144 */  addiu $v1, %lo(ptr_explosion_buf) # addiu $v1, $v1, -0x5ebc
 /* 03B914 7F006DE4 AC620000 */  sw    $v0, ($v1)
 /* 03B918 7F006DE8 00002025 */  move  $a0, $zero
@@ -78,7 +78,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03B9BC 7F006E8C 24041FE0 */  li    $a0, 8160
 /* 03B9C0 7F006E90 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03B9C4 7F006E94 24050004 */   li    $a1, 4
-/* 03B9C8 7F006E98 3C038008 */  lui   $v1, %hi(ptr_smoke_buf) # $v1, 0x8008
+/* 03B9C8 7F006E98 3C038008 */  lui   $v1, %hi(ptr_smoke_buf)
 /* 03B9CC 7F006E9C 2463A140 */  addiu $v1, %lo(ptr_smoke_buf) # addiu $v1, $v1, -0x5ec0
 /* 03B9D0 7F006EA0 44800000 */  mtc1  $zero, $f0
 /* 03B9D4 7F006EA4 AC620000 */  sw    $v0, ($v1)
@@ -168,7 +168,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BB1C 7F006FEC 240406E0 */   li    $a0, 1760
 /* 03BB20 7F006FF0 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03BB24 7F006FF4 24050004 */   li    $a1, 4
-/* 03BB28 7F006FF8 3C058008 */  lui   $a1, %hi(ptr_scorch_buf) # $a1, 0x8008
+/* 03BB28 7F006FF8 3C058008 */  lui   $a1, %hi(ptr_scorch_buf)
 /* 03BB2C 7F006FFC 24A5A150 */  addiu $a1, %lo(ptr_scorch_buf) # addiu $a1, $a1, -0x5eb0
 /* 03BB30 7F007000 ACA20000 */  sw    $v0, ($a1)
 /* 03BB34 7F007004 240206E0 */  li    $v0, 1760
@@ -193,7 +193,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BB78 7F007048 24041F40 */  li    $a0, 8000
 /* 03BB7C 7F00704C 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03BB80 7F007050 24050004 */   li    $a1, 4
-/* 03BB84 7F007054 3C058008 */  lui   $a1, %hi(ptr_bullet_impact_buf) # $a1, 0x8008
+/* 03BB84 7F007054 3C058008 */  lui   $a1, %hi(ptr_bullet_impact_buf)
 /* 03BB88 7F007058 24A5A154 */  addiu $a1, %lo(ptr_bullet_impact_buf) # addiu $a1, $a1, -0x5eac
 /* 03BB8C 7F00705C ACA20000 */  sw    $v0, ($a1)
 /* 03BB90 7F007060 2406FFFF */  li    $a2, -1
@@ -209,7 +209,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BBB4 7F007084 00000000 */   nop   
 /* 03BBB8 7F007088 241800C8 */  li    $t8, 200
 /* 03BBBC 7F00708C 0302001A */  div   $zero, $t8, $v0
-/* 03BBC0 7F007090 3C068008 */  lui   $a2, %hi(max_casings) # $a2, 0x8008
+/* 03BBC0 7F007090 3C068008 */  lui   $a2, %hi(max_casings)
 /* 03BBC4 7F007094 24C6A148 */  addiu $a2, %lo(max_casings) # addiu $a2, $a2, -0x5eb8
 /* 03BBC8 7F007098 14400002 */  bnez  $v0, .L7F0070A4
 /* 03BBCC 7F00709C 00000000 */   nop   
@@ -226,13 +226,13 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BBF0 7F0070C0 ACD90000 */  sw    $t9, ($a2)
 /* 03BBF4 7F0070C4 0FC2F7C1 */  jal   sub_GAME_7F0BDF04
 /* 03BBF8 7F0070C8 00000000 */   nop   
-/* 03BBFC 7F0070CC 3C068008 */  lui   $a2, %hi(max_casings) # $a2, 0x8008
+/* 03BBFC 7F0070CC 3C068008 */  lui   $a2, %hi(max_casings)
 /* 03BC00 7F0070D0 2401001D */  li    $at, 29
 /* 03BC04 7F0070D4 10410007 */  beq   $v0, $at, .L7F0070F4
 /* 03BC08 7F0070D8 24C6A148 */   addiu $a2, %lo(max_casings) # addiu $a2, $a2, -0x5eb8
 /* 03BC0C 7F0070DC 0FC2F7C1 */  jal   sub_GAME_7F0BDF04
 /* 03BC10 7F0070E0 00000000 */   nop   
-/* 03BC14 7F0070E4 3C068008 */  lui   $a2, %hi(max_casings) # $a2, 0x8008
+/* 03BC14 7F0070E4 3C068008 */  lui   $a2, %hi(max_casings)
 /* 03BC18 7F0070E8 2401001E */  li    $at, 30
 /* 03BC1C 7F0070EC 14410004 */  bne   $v0, $at, .L7F007100
 /* 03BC20 7F0070F0 24C6A148 */   addiu $a2, %lo(max_casings) # addiu $a2, $a2, -0x5eb8
@@ -251,10 +251,10 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BC4C 7F00711C 00815824 */  and   $t3, $a0, $at
 /* 03BC50 7F007120 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03BC54 7F007124 01602025 */   move  $a0, $t3
-/* 03BC58 7F007128 3C068008 */  lui   $a2, %hi(max_casings) # $a2, 0x8008
+/* 03BC58 7F007128 3C068008 */  lui   $a2, %hi(max_casings)
 /* 03BC5C 7F00712C 24C6A148 */  addiu $a2, %lo(max_casings) # addiu $a2, $a2, -0x5eb8
 /* 03BC60 7F007130 8CCC0000 */  lw    $t4, ($a2)
-/* 03BC64 7F007134 3C038008 */  lui   $v1, %hi(ptr_ejected_casing_buf) # $v1, 0x8008
+/* 03BC64 7F007134 3C038008 */  lui   $v1, %hi(ptr_ejected_casing_buf)
 /* 03BC68 7F007138 2463A14C */  addiu $v1, %lo(ptr_ejected_casing_buf) # addiu $v1, $v1, -0x5eb4
 /* 03BC6C 7F00713C AC620000 */  sw    $v0, ($v1)
 /* 03BC70 7F007140 1980000B */  blez  $t4, .L7F007170

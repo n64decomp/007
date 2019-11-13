@@ -75,7 +75,7 @@ glabel cleanupplayersoundrelated
 /* 03C4D0 7F0079A0 0000A025 */   move  $s4, $zero
 /* 03C4D4 7F0079A4 1840001B */  blez  $v0, .L7F007A14
 /* 03C4D8 7F0079A8 00147080 */   sll   $t6, $s4, 2
-/* 03C4DC 7F0079AC 3C0F8008 */  lui   $t7, %hi(ptr_BONDdata_p1) # $t7, 0x8008
+/* 03C4DC 7F0079AC 3C0F8008 */  lui   $t7, %hi(ptr_BONDdata_p1) 
 /* 03C4E0 7F0079B0 25EF9EE0 */  addiu $t7, %lo(ptr_BONDdata_p1) # addiu $t7, $t7, -0x6120
 /* 03C4E4 7F0079B4 01CF9021 */  addu  $s2, $t6, $t7
 /* 03C4E8 7F0079B8 24130750 */  li    $s3, 1872

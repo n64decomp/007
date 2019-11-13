@@ -11,21 +11,17 @@ VERSION := US
 COMPARE := 1
 
 
-include assets/Makefile.obseg
-include assets/Makefile.music
+
 TOOLCHAIN := mips-linux-gnu-
 QEMU_IRIX := tools/irix/qemu-irix
 IRIX_ROOT := tools/irix/root
-
-BUILD_DIR := build
-BUILD_SUB_DIRS := \
-	src src/game src/rarezip libultra assets assets/obseg \
-	assets/obseg/brief assets/obseg/chr assets/obseg/gun assets/obseg/prop \
-	assets/obseg/text assets/obseg/bg assets/obseg/setup assets/obseg/stan \
-	assets/music assets/ramrom assets/images assets/images/split assets/font
-# create build directories
-$(shell mkdir -p $(BUILD_DIR))
-$(foreach subdir,$(BUILD_SUB_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(subdir)))
+# other tools
+TOOLS_DIR := tools
+DATASEG_COMP := $(TOOLS_DIR)/data_compress.sh
+RZ_COMP := $(TOOLS_DIR)/1172compress.sh
+N64CKSUM := $(TOOLS_DIR)/n64cksum
+MAKEBG := $(TOOLS_DIR)/makebg.sh
+SHA1SUM = sha1sum
 
 ifeq ($(FINAL), YES)
  OPTIMIZATION := -O2
@@ -37,18 +33,40 @@ else
  CFLAGWARNING :=-fullwarn -wlint
 endif
 
+ifeq ($(VERSION), US)
+COUNTRYCODE := u
+LCDEFS := -DVERSION_US
+ASMDEFS := --defsym VERSION_US=1
+endif
+
 ifeq ($(VERSION), EU)
 COUNTRYCODE := e
 LCDEFS := -DVERSION_EU
-else 
+ASMDEFS := --defsym VERSION_EU=1
+endif
+
 ifeq ($(VERSION), JP)
 COUNTRYCODE := j
 LCDEFS := -DVERSION_JP
-else
-COUNTRYCODE := u
-LCDEFS := -DVERSION_US
+ASMDEFS := --defsym VERSION_JP=1
 endif
-endif
+
+BUILD_DIR := build/$(COUNTRYCODE)
+include assets/Makefile.obseg
+include assets/Makefile.music
+BUILD_SUB_DIRS := \
+	src src/game src/rarezip libultra assets assets/obseg \
+	assets/obseg/brief assets/obseg/chr assets/obseg/gun assets/obseg/prop \
+	assets/obseg/text assets/obseg/bg assets/obseg/setup assets/obseg/stan \
+	assets/music assets/ramrom assets/images assets/images/split assets/font
+# create build directories
+$(shell mkdir -p $(BUILD_DIR))
+$(foreach subdir,$(BUILD_SUB_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(subdir)))
+
+
+
+
+
 
 
 APPELF := ge007.$(COUNTRYCODE).elf
@@ -63,25 +81,25 @@ CODEOBJECTS := $(foreach file,$(CODEFILES),$(BUILD_DIR)/$(file:.c=.o))
 
 LIBULTRA := lib/libultra_rom.a
 ULTRAFILES := libultra/libultra.s
-ULTRAOBJECTS := build/libultra/libultra.o
+ULTRAOBJECTS := $(BUILD_DIR)/libultra/libultra.o
 
 GAMEFILES := $(foreach dir,src/game,$(wildcard $(dir)/*.c))
 GAMEOBJECTS := $(foreach file,$(GAMEFILES),$(BUILD_DIR)/$(file:.c=.o))
 
 ROMFILES := assets/romfiles.s
-ROMOBJECTS := build/assets/romfiles.o
+ROMOBJECTS := $(BUILD_DIR)/assets/romfiles.o
 
 RAMROM_FILES := assets/ramrom/ramrom.s
-RAMROM_OBJECTS := build/assets/ramrom/ramrom.o
+RAMROM_OBJECTS := $(BUILD_DIR)/assets/ramrom/ramrom.o
 
 FONT_FILES := assets/font/font.s
-FONT_OBJECTS := build/assets/font/font.o
+FONT_OBJECTS := $(BUILD_DIR)/assets/font/font.o
 
 MUSIC_FILES := assets/music/music.s
-MUSIC_OBJECTS := build/assets/music/music.o
+MUSIC_OBJECTS := $(BUILD_DIR)/assets/music/music.o
 
 OBSEG_FILES := assets/obseg/ob_seg.s
-OBSEG_OBJECTS := build/assets/obseg/ob_seg.o
+OBSEG_OBJECTS := $(BUILD_DIR)/assets/obseg/ob_seg.o
 OBSEG_RZ := $(BG_SEG_FILES) $(CHR_RZ_FILES) $(GUN_RZ_FILES) $(PROP_RZ_FILES) $(STAN_RZ_FILES) $(BRIEF_RZ_FILES) $(SETUP_RZ_FILES) $(TEXT_RZ_FILES)
 
 IMAGE_BINS := $(foreach dir,assets/images/split,$(wildcard $(dir)/*.bin))
@@ -92,25 +110,19 @@ RZOBJECTS := $(foreach file,$(RZFILES),$(BUILD_DIR)/src/$(file:.c=.o))
 
 OBJECTS := $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(OBSEGMENT) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONT_OBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS)
 
-# other tools
-TOOLS_DIR := tools
-DATASEG_COMP := $(TOOLS_DIR)/data_compress.sh
-RZ_COMP := $(TOOLS_DIR)/1172compress.sh
-N64CKSUM := $(TOOLS_DIR)/n64cksum
-MAKEBG := $(TOOLS_DIR)/makebg.sh
-SHA1SUM = sha1sum
+
 
 INCLUDE := -I . -I include -I include/libultra -I src -I src/game -I src/rarezip
 
 CC := $(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/bin/cc
-CFLAGS := -Wo,-loopunroll,0 -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm $(CFLAGWARNING) -woff 819,820,852,821 -signed $(INCLUDE) -mips2
+CFLAGS := -Wo,-loopunroll,0 -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm $(CFLAGWARNING) -woff 819,820,852,821,838 -signed $(INCLUDE) -mips2 $(LCDEFS)
 
 LD := $(TOOLCHAIN)ld
 LD_SCRIPT := ge007.$(COUNTRYCODE).ld
-LDFLAGS := -T undefined_syms.txt -T $(LD_SCRIPT) -Map $(BUILD_DIR)/ge007.$(COUNTRYCODE).map
+LDFLAGS := -T undefined_syms.txt -T $(LD_SCRIPT) -Map build/ge007.$(COUNTRYCODE).map
 
 AS := $(TOOLCHAIN)as
-ASFLAGS := -march=vr4300 -mabi=32 $(INCLUDE)
+ASFLAGS := -march=vr4300 -mabi=32 $(INCLUDE) $(ASMDEFS)
 ASM_PREPROC := python3 tools/asmpreproc/asm-processor.py
 
 OBJCOPY := $(TOOLCHAIN)objcopy
@@ -134,46 +146,46 @@ clean:
 	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) \
 	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONT_OBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES)
 
-build/%.o: src/%.s
+$(BUILD_DIR)/%.o: src/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-build/src/%.o: src/%.s
+$(BUILD_DIR)/src/%.o: src/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-build/assets/%.o: assets/%.s
+$(BUILD_DIR)/assets/%.o: assets/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-build/assets/ramrom/%.o: assets/ramrom/%.s
+$(BUILD_DIR)/assets/ramrom/%.o: assets/ramrom/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-build/assets/font/%.o: assets/font/%.s
+$(BUILD_DIR)/assets/font/%.o: assets/font/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-build/assets/obseg/%.o: assets/obseg/%.s
+$(BUILD_DIR)/assets/obseg/%.o: assets/obseg/%.s $(OBSEG_RZ)
 	$(AS) $(ASFLAGS) -o $@ $<
 
 $(BUILD_DIR)/assets/images/split/%.o: assets/images/split/%.bin
 	$(LD) -r -b binary $< -o $@
 
-build/%.o: src/%.c
+$(BUILD_DIR)/%.o: src/%.c
 	$(ASM_PREPROC) $(OPTIMIZATION) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION)
 	$(ASM_PREPROC) $(OPTIMIZATION) $< --post-process $@ --assembler "$(AS) $(ASFLAGS)" --asm-prelude tools/asmpreproc/prelude.s
 
-build/src/%.o: src/%.c
+$(BUILD_DIR)/src/%.o: src/%.c
 	$(ASM_PREPROC) $(OPTIMIZATION) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION)
 	$(ASM_PREPROC) $(OPTIMIZATION) $< --post-process $@ --assembler "$(AS) $(ASFLAGS)" --asm-prelude tools/asmpreproc/prelude.s
 
-build/$(OBSEGMENT): $(OBSEG_RZ) $(IMAGE_OBJS)
+$(BUILD_DIR)/$(OBSEGMENT): $(OBSEG_RZ) $(IMAGE_OBJS)
 	
 
-$(APPELF): $(ULTRAOBJECTS) $(HEADEROBJECTS) build/$(OBSEGMENT) $(MUSIC_RZ_FILES) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONT_OBJECTS) $(MUSIC_OBJECTS) $(OBSEG_OBJECTS)
+$(APPELF): $(ULTRAOBJECTS) $(HEADEROBJECTS) $(OBSEG_RZ) $(BUILD_DIR)/$(OBSEGMENT) $(MUSIC_RZ_FILES) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONT_OBJECTS) $(MUSIC_OBJECTS) $(OBSEG_OBJECTS)
 	$(LD) $(LDFLAGS) -o $@ 
 
 $(APPBIN): $(APPELF)
 	$(OBJCOPY) $< $@ -O binary --gap-fill=0xff
 	
 $(APPROM):	$(APPBIN)
-	$(DATASEG_COMP) $<
+	$(DATASEG_COMP) $< $(COUNTRYCODE)
 	$(N64CKSUM) $< $@
 	rm header.tmp
 

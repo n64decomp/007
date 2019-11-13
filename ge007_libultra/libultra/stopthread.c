@@ -36,7 +36,7 @@ glabel osStopThread
 /* 00E39C 7000D79C 10000010 */  b     .L7000D7E0
 /* 00E3A0 7000D7A0 00000000 */   nop   
 .L7000D7A4:
-/* 00E3A4 7000D7A4 3C198002 */  lui   $t9, %hi(__osRunningThread) # $t9, 0x8002
+/* 00E3A4 7000D7A4 3C198002 */  lui   $t9, %hi(__osRunningThread) 
 /* 00E3A8 7000D7A8 8F397730 */  lw    $t9, %lo(__osRunningThread)($t9)
 /* 00E3AC 7000D7AC 24180001 */  li    $t8, 1
 /* 00E3B0 7000D7B0 00002025 */  move  $a0, $zero

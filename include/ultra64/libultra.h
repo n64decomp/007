@@ -13,5 +13,5 @@ extern u32 osTvType;
 extern u32 osRomBase;
 extern u32 osResetType;
 extern u8 osAppNmiBuffer[64];
-
+extern u64 osClockRate;
 #endif /* _LIBULTRA_H */

@@ -25,10 +25,10 @@ glabel send_rumble_off_to_PIF
 /* 00D58C 7000C98C AFA40050 */   sw    $a0, 0x50($sp)
 /* 00D590 7000C990 8FAF0050 */  lw    $t7, 0x50($sp)
 /* 00D594 7000C994 240E0003 */  li    $t6, 3
-/* 00D598 7000C998 3C018006 */  lui   $at, %hi(__osContLastCmd) # $at, 0x8006
+/* 00D598 7000C998 3C018006 */  lui   $at, %hi(__osContLastCmd)
 /* 00D59C 7000C99C A02E7CE0 */  sb    $t6, %lo(__osContLastCmd)($at)
 /* 00D5A0 7000C9A0 8DF80008 */  lw    $t8, 8($t7)
-/* 00D5A4 7000C9A4 3C088006 */  lui   $t0, %hi(rumble_off_player1_packet_buffer) # $t0, 0x8006
+/* 00D5A4 7000C9A4 3C088006 */  lui   $t0, %hi(rumble_off_player1_packet_buffer) 
 /* 00D5A8 7000C9A8 250855A0 */  addiu $t0, %lo(rumble_off_player1_packet_buffer) # addiu $t0, $t0, 0x55a0
 /* 00D5AC 7000C9AC 0018C980 */  sll   $t9, $t8, 6
 /* 00D5B0 7000C9B0 03282821 */  addu  $a1, $t9, $t0
@@ -39,7 +39,7 @@ glabel send_rumble_off_to_PIF
 /* 00D5C4 7000C9C4 24060001 */  li    $a2, 1
 /* 00D5C8 7000C9C8 0C003774 */  jal   osRecvMesg
 /* 00D5CC 7000C9CC 8D240004 */   lw    $a0, 4($t1)
-/* 00D5D0 7000C9D0 3C058006 */  lui   $a1, %hi(__osPfsPifRam) # $a1, 0x8006
+/* 00D5D0 7000C9D0 3C058006 */  lui   $a1, %hi(__osPfsPifRam)
 /* 00D5D4 7000C9D4 24A57D70 */  addiu $a1, %lo(__osPfsPifRam) # addiu $a1, $a1, 0x7d70
 /* 00D5D8 7000C9D8 0C0057B4 */  jal   __osSiRawStartDma
 /* 00D5DC 7000C9DC 00002025 */   move  $a0, $zero
@@ -49,7 +49,7 @@ glabel send_rumble_off_to_PIF
 /* 00D5EC 7000C9EC 0C003774 */  jal   osRecvMesg
 /* 00D5F0 7000C9F0 8D440004 */   lw    $a0, 4($t2)
 /* 00D5F4 7000C9F4 8FAB0050 */  lw    $t3, 0x50($sp)
-/* 00D5F8 7000C9F8 3C038006 */  lui   $v1, %hi(__osPfsPifRam) # $v1, 0x8006
+/* 00D5F8 7000C9F8 3C038006 */  lui   $v1, %hi(__osPfsPifRam)
 /* 00D5FC 7000C9FC 24637D70 */  addiu $v1, %lo(__osPfsPifRam) # addiu $v1, $v1, 0x7d70
 /* 00D600 7000CA00 8D640008 */  lw    $a0, 8($t3)
 /* 00D604 7000CA04 27AC001C */  addiu $t4, $sp, 0x1c
@@ -118,10 +118,10 @@ glabel controller_7000CAAC
 /* 00D6B8 7000CAB8 AFA40050 */   sw    $a0, 0x50($sp)
 /* 00D6BC 7000CABC 8FAF0050 */  lw    $t7, 0x50($sp)
 /* 00D6C0 7000CAC0 240E0003 */  li    $t6, 3
-/* 00D6C4 7000CAC4 3C018006 */  lui   $at, %hi(__osContLastCmd) # $at, 0x8006
+/* 00D6C4 7000CAC4 3C018006 */  lui   $at, %hi(__osContLastCmd)
 /* 00D6C8 7000CAC8 A02E7CE0 */  sb    $t6, %lo(__osContLastCmd)($at)
 /* 00D6CC 7000CACC 8DF80008 */  lw    $t8, 8($t7)
-/* 00D6D0 7000CAD0 3C088006 */  lui   $t0, %hi(rumble_on_player_packet_buffers) # $t0, 0x8006
+/* 00D6D0 7000CAD0 3C088006 */  lui   $t0, %hi(rumble_on_player_packet_buffers) 
 /* 00D6D4 7000CAD4 250856A0 */  addiu $t0, %lo(rumble_on_player_packet_buffers) # addiu $t0, $t0, 0x56a0
 /* 00D6D8 7000CAD8 0018C980 */  sll   $t9, $t8, 6
 /* 00D6DC 7000CADC 03282821 */  addu  $a1, $t9, $t0
@@ -132,7 +132,7 @@ glabel controller_7000CAAC
 /* 00D6F0 7000CAF0 24060001 */  li    $a2, 1
 /* 00D6F4 7000CAF4 0C003774 */  jal   osRecvMesg
 /* 00D6F8 7000CAF8 8D240004 */   lw    $a0, 4($t1)
-/* 00D6FC 7000CAFC 3C058006 */  lui   $a1, %hi(__osPfsPifRam) # $a1, 0x8006
+/* 00D6FC 7000CAFC 3C058006 */  lui   $a1, %hi(__osPfsPifRam)
 /* 00D700 7000CB00 24A57D70 */  addiu $a1, %lo(__osPfsPifRam) # addiu $a1, $a1, 0x7d70
 /* 00D704 7000CB04 0C0057B4 */  jal   __osSiRawStartDma
 /* 00D708 7000CB08 00002025 */   move  $a0, $zero
@@ -142,7 +142,7 @@ glabel controller_7000CAAC
 /* 00D718 7000CB18 0C003774 */  jal   osRecvMesg
 /* 00D71C 7000CB1C 8D440004 */   lw    $a0, 4($t2)
 /* 00D720 7000CB20 8FAB0050 */  lw    $t3, 0x50($sp)
-/* 00D724 7000CB24 3C038006 */  lui   $v1, %hi(__osPfsPifRam) # $v1, 0x8006
+/* 00D724 7000CB24 3C038006 */  lui   $v1, %hi(__osPfsPifRam)
 /* 00D728 7000CB28 24637D70 */  addiu $v1, %lo(__osPfsPifRam) # addiu $v1, $v1, 0x7d70
 /* 00D72C 7000CB2C 8D640008 */  lw    $a0, 8($t3)
 /* 00D730 7000CB30 27AC001C */  addiu $t4, $sp, 0x1c
@@ -433,12 +433,12 @@ glabel controller_7000CD38
 .L7000CDE4:
 /* 00D9E4 7000CDE4 24010080 */  li    $at, 128
 /* 00D9E8 7000CDE8 11C10003 */  beq   $t6, $at, .L7000CDF8
-/* 00D9EC 7000CDEC 3C048006 */   lui   $a0, %hi(rumble_off_buffer) # $a0, 0x8006
+/* 00D9EC 7000CDEC 3C048006 */   lui   $a0, %hi(rumble_off_buffer)
 /* 00D9F0 7000CDF0 10000026 */  b     .L7000CE8C
 /* 00D9F4 7000CDF4 2402000B */   li    $v0, 11
 .L7000CDF8:
-/* 00D9F8 7000CDF8 3C038006 */  lui   $v1, %hi(rumble_on_buffer) # $v1, 0x8006
-/* 00D9FC 7000CDFC 3C058006 */  lui   $a1, %hi(rumble_off_buffer) # $a1, 0x8006
+/* 00D9F8 7000CDF8 3C038006 */  lui   $v1, %hi(rumble_on_buffer)
+/* 00D9FC 7000CDFC 3C058006 */  lui   $a1, %hi(rumble_off_buffer)
 /* 00DA00 7000CE00 24A557C0 */  addiu $a1, %lo(rumble_off_buffer) # addiu $a1, $a1, 0x57c0
 /* 00DA04 7000CE04 246357A0 */  addiu $v1, %lo(rumble_on_buffer) # addiu $v1, $v1, 0x57a0
 /* 00DA08 7000CE08 248457C0 */  addiu $a0, %lo(rumble_off_buffer) # addiu $a0, $a0, 0x57c0
@@ -455,9 +455,9 @@ glabel controller_7000CD38
 /* 00DA30 7000CE30 A082FFFC */  sb    $v0, -4($a0)
 /* 00DA34 7000CE34 1465FFF6 */  bne   $v1, $a1, .L7000CE10
 /* 00DA38 7000CE38 A060FFFC */   sb    $zero, -4($v1)
-/* 00DA3C 7000CE3C 3C0F8006 */  lui   $t7, %hi(rumble_on_player_packet_buffers) # $t7, 0x8006
+/* 00DA3C 7000CE3C 3C0F8006 */  lui   $t7, %hi(rumble_on_player_packet_buffers) 
 /* 00DA40 7000CE40 25EF56A0 */  addiu $t7, %lo(rumble_on_player_packet_buffers) # addiu $t7, $t7, 0x56a0
-/* 00DA44 7000CE44 3C068006 */  lui   $a2, %hi(rumble_off_buffer) # $a2, 0x8006
+/* 00DA44 7000CE44 3C068006 */  lui   $a2, %hi(rumble_off_buffer)
 /* 00DA48 7000CE48 00101180 */  sll   $v0, $s0, 6
 /* 00DA4C 7000CE4C 004F3821 */  addu  $a3, $v0, $t7
 /* 00DA50 7000CE50 AFA2002C */  sw    $v0, 0x2c($sp)
@@ -466,9 +466,9 @@ glabel controller_7000CD38
 /* 00DA5C 7000CE5C 0C0032F7 */  jal   controller_7000CBDC
 /* 00DA60 7000CE60 24050600 */   li    $a1, 1536
 /* 00DA64 7000CE64 8FA2002C */  lw    $v0, 0x2c($sp)
-/* 00DA68 7000CE68 3C188006 */  lui   $t8, %hi(rumble_off_player1_packet_buffer) # $t8, 0x8006
+/* 00DA68 7000CE68 3C188006 */  lui   $t8, %hi(rumble_off_player1_packet_buffer) 
 /* 00DA6C 7000CE6C 271855A0 */  addiu $t8, %lo(rumble_off_player1_packet_buffer) # addiu $t8, $t8, 0x55a0
-/* 00DA70 7000CE70 3C068006 */  lui   $a2, %hi(rumble_on_buffer) # $a2, 0x8006
+/* 00DA70 7000CE70 3C068006 */  lui   $a2, %hi(rumble_on_buffer)
 /* 00DA74 7000CE74 24C657A0 */  addiu $a2, %lo(rumble_on_buffer) # addiu $a2, $a2, 0x57a0
 /* 00DA78 7000CE78 02002025 */  move  $a0, $s0
 /* 00DA7C 7000CE7C 24050600 */  li    $a1, 1536

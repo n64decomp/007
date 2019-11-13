@@ -40,8 +40,8 @@ glabel cleanupObjectSounds
 /* 03BF90 7F007460 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 03BF94 7F007464 AFB10018 */  sw    $s1, 0x18($sp)
 /* 03BF98 7F007468 AFB00014 */  sw    $s0, 0x14($sp)
-/* 03BF9C 7F00746C 3C108007 */  lui   $s0, %hi(sfx_related) # $s0, 0x8007
-/* 03BFA0 7F007470 3C118007 */  lui   $s1, %hi(ptr_list_object_lookup_indices) # $s1, 0x8007
+/* 03BF9C 7F00746C 3C108007 */  lui   $s0, %hi(sfx_related)
+/* 03BFA0 7F007470 3C118007 */  lui   $s1, %hi(ptr_list_object_lookup_indices)
 /* 03BFA4 7F007474 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 03BFA8 7F007478 26319C30 */  addiu $s1, %lo(ptr_list_object_lookup_indices) # addiu $s1, $s1, -0x63d0
 /* 03BFAC 7F00747C 26109B70 */  addiu $s0, %lo(sfx_related) # addiu $s0, $s0, -0x6490

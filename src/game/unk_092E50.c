@@ -85,7 +85,7 @@ glabel D_80057518
 .word 0x3d23d70a /*0.039999999*/
 .text
 glabel sub_GAME_7F092E50
-/* 0C7980 7F092E50 3C0E8005 */  lui   $t6, %hi(clock_timer) # $t6, 0x8005
+/* 0C7980 7F092E50 3C0E8005 */  lui   $t6, %hi(clock_timer) 
 /* 0C7984 7F092E54 8DCE8374 */  lw    $t6, %lo(clock_timer)($t6)
 /* 0C7988 7F092E58 3C014380 */  li    $at, 0x43800000 # 256.000000
 /* 0C798C 7F092E5C 44810000 */  mtc1  $at, $f0
@@ -93,14 +93,14 @@ glabel sub_GAME_7F092E50
 /* 0C7994 7F092E64 3C013E80 */  li    $at, 0x3E800000 # 0.250000
 /* 0C7998 7F092E68 44814000 */  mtc1  $at, $f8
 /* 0C799C 7F092E6C 46802420 */  cvt.s.w $f16, $f4
-/* 0C79A0 7F092E70 3C088008 */  lui   $t0, %hi(flt_CODE_bss_80079E80) # $t0, 0x8008
+/* 0C79A0 7F092E70 3C088008 */  lui   $t0, %hi(flt_CODE_bss_80079E80) 
 /* 0C79A4 7F092E74 25089E80 */  addiu $t0, %lo(flt_CODE_bss_80079E80) # addiu $t0, $t0, -0x6180
 /* 0C79A8 7F092E78 C5060000 */  lwc1  $f6, ($t0)
 /* 0C79AC 7F092E7C 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0C79B0 7F092E80 44809000 */  mtc1  $zero, $f18
 /* 0C79B4 7F092E84 46088282 */  mul.s $f10, $f16, $f8
 /* 0C79B8 7F092E88 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0C79BC 7F092E8C 3C018005 */  lui   $at, %hi(D_80057510) # $at, 0x8005
+/* 0C79BC 7F092E8C 3C018005 */  lui   $at, %hi(D_80057510)
 /* 0C79C0 7F092E90 24180001 */  li    $t8, 1
 /* 0C79C4 7F092E94 460A3100 */  add.s $f4, $f6, $f10
 /* 0C79C8 7F092E98 E5040000 */  swc1  $f4, ($t0)
@@ -122,11 +122,11 @@ glabel sub_GAME_7F092E50
 /* 0C7A04 7F092ED4 C50E0000 */  lwc1  $f14, ($t0)
 .L7F092ED8:
 /* 0C7A08 7F092ED8 C4247510 */  lwc1  $f4, %lo(D_80057510)($at)
-/* 0C7A0C 7F092EDC 3C078008 */  lui   $a3, %hi(flt_CODE_bss_80079E84) # $a3, 0x8008
+/* 0C7A0C 7F092EDC 3C078008 */  lui   $a3, %hi(flt_CODE_bss_80079E84)
 /* 0C7A10 7F092EE0 24E79E84 */  addiu $a3, %lo(flt_CODE_bss_80079E84) # addiu $a3, $a3, -0x617c
 /* 0C7A14 7F092EE4 46048202 */  mul.s $f8, $f16, $f4
 /* 0C7A18 7F092EE8 C4EA0000 */  lwc1  $f10, ($a3)
-/* 0C7A1C 7F092EEC 3C018005 */  lui   $at, %hi(D_80057514) # $at, 0x8005
+/* 0C7A1C 7F092EEC 3C018005 */  lui   $at, %hi(D_80057514)
 /* 0C7A20 7F092EF0 46085180 */  add.s $f6, $f10, $f8
 /* 0C7A24 7F092EF4 E4E60000 */  swc1  $f6, ($a3)
 /* 0C7A28 7F092EF8 C4E20000 */  lwc1  $f2, ($a3)
@@ -147,9 +147,9 @@ glabel sub_GAME_7F092E50
 /* 0C7A60 7F092F30 C4E20000 */  lwc1  $f2, ($a3)
 .L7F092F34:
 /* 0C7A64 7F092F34 C4207514 */  lwc1  $f0, %lo(D_80057514)($at)
-/* 0C7A68 7F092F38 3C018005 */  lui   $at, %hi(D_80057518) # $at, 0x8005
+/* 0C7A68 7F092F38 3C018005 */  lui   $at, %hi(D_80057518)
 /* 0C7A6C 7F092F3C C4267518 */  lwc1  $f6, %lo(D_80057518)($at)
-/* 0C7A70 7F092F40 3C068008 */  lui   $a2, %hi(flt_CODE_bss_80079E88) # $a2, 0x8008
+/* 0C7A70 7F092F40 3C068008 */  lui   $a2, %hi(flt_CODE_bss_80079E88)
 /* 0C7A74 7F092F44 24C69E88 */  addiu $a2, %lo(flt_CODE_bss_80079E88) # addiu $a2, $a2, -0x6178
 /* 0C7A78 7F092F48 46068102 */  mul.s $f4, $f16, $f6
 /* 0C7A7C 7F092F4C C4C80000 */  lwc1  $f8, ($a2)
@@ -174,7 +174,7 @@ glabel sub_GAME_7F092E50
 /* 0C7AC4 7F092F94 444FF800 */  cfc1  $t7, $31
 .L7F092F98:
 /* 0C7AC8 7F092F98 44D8F800 */  ctc1  $t8, $31
-/* 0C7ACC 7F092F9C 3C028004 */  lui   $v0, %hi(MipMap2C_Something_Setup) # $v0, 0x8004
+/* 0C7ACC 7F092F9C 3C028004 */  lui   $v0, %hi(MipMap2C_Something_Setup)
 /* 0C7AD0 7F092FA0 2442FCC0 */  addiu $v0, %lo(MipMap2C_Something_Setup) # addiu $v0, $v0, -0x340
 /* 0C7AD4 7F092FA4 46007124 */  cvt.w.s $f4, $f14
 /* 0C7AD8 7F092FA8 8C430010 */  lw    $v1, 0x10($v0)
@@ -281,11 +281,11 @@ glabel sub_GAME_7F092E50
 /* 0C7C54 7F093124 44813000 */  mtc1  $at, $f6
 /* 0C7C58 7F093128 46040282 */  mul.s $f10, $f0, $f4
 /* 0C7C5C 7F09312C 240E0001 */  li    $t6, 1
-/* 0C7C60 7F093130 3C028004 */  lui   $v0, %hi(MipMap2C_Something_Setup) # $v0, 0x8004
-/* 0C7C64 7F093134 3C038004 */  lui   $v1, %hi(MipMap2C_Something2_Setup) # $v1, 0x8004
-/* 0C7C68 7F093138 3C068008 */  lui   $a2, %hi(flt_CODE_bss_80079E88) # $a2, 0x8008
-/* 0C7C6C 7F09313C 3C078008 */  lui   $a3, %hi(flt_CODE_bss_80079E84) # $a3, 0x8008
-/* 0C7C70 7F093140 3C088008 */  lui   $t0, %hi(flt_CODE_bss_80079E80) # $t0, 0x8008
+/* 0C7C60 7F093130 3C028004 */  lui   $v0, %hi(MipMap2C_Something_Setup)
+/* 0C7C64 7F093134 3C038004 */  lui   $v1, %hi(MipMap2C_Something2_Setup)
+/* 0C7C68 7F093138 3C068008 */  lui   $a2, %hi(flt_CODE_bss_80079E88)
+/* 0C7C6C 7F09313C 3C078008 */  lui   $a3, %hi(flt_CODE_bss_80079E84)
+/* 0C7C70 7F093140 3C088008 */  lui   $t0, %hi(flt_CODE_bss_80079E80) 
 /* 0C7C74 7F093144 46065200 */  add.s $f8, $f10, $f6
 /* 0C7C78 7F093148 25089E80 */  addiu $t0, %lo(flt_CODE_bss_80079E80) # addiu $t0, $t0, -0x6180
 /* 0C7C7C 7F09314C 24E79E84 */  addiu $a3, %lo(flt_CODE_bss_80079E84) # addiu $a3, $a3, -0x617c
@@ -440,8 +440,8 @@ glabel sub_GAME_7F092E50
 /* 0C7EAC 7F09337C 44814000 */  mtc1  $at, $f8
 /* 0C7EB0 7F093380 460A0182 */  mul.s $f6, $f0, $f10
 /* 0C7EB4 7F093384 24090001 */  li    $t1, 1
-/* 0C7EB8 7F093388 3C028004 */  lui   $v0, %hi(MipMap2C_Something_Setup) # $v0, 0x8004
-/* 0C7EBC 7F09338C 3C038004 */  lui   $v1, %hi(MipMap2C_Something2_Setup) # $v1, 0x8004
+/* 0C7EB8 7F093388 3C028004 */  lui   $v0, %hi(MipMap2C_Something_Setup)
+/* 0C7EBC 7F09338C 3C038004 */  lui   $v1, %hi(MipMap2C_Something2_Setup)
 /* 0C7EC0 7F093390 2463FD28 */  addiu $v1, %lo(MipMap2C_Something2_Setup) # addiu $v1, $v1, -0x2d8
 /* 0C7EC4 7F093394 2442FCC0 */  addiu $v0, %lo(MipMap2C_Something_Setup) # addiu $v0, $v0, -0x340
 /* 0C7EC8 7F093398 3C014F00 */  li    $at, 0x4F000000 # 2147483648.000000
@@ -507,7 +507,7 @@ glabel sub_GAME_7F09343C
 /* 0C7F70 7F093440 10A00009 */  beqz  $a1, .L7F093468
 /* 0C7F74 7F093444 AFBF0014 */   sw    $ra, 0x14($sp)
 /* 0C7F78 7F093448 00801025 */  move  $v0, $a0
-/* 0C7F7C 7F09344C 3C0F8004 */  lui   $t7, %hi(MipMap2C_Something_Setup) # $t7, 0x8004
+/* 0C7F7C 7F09344C 3C0F8004 */  lui   $t7, %hi(MipMap2C_Something_Setup) 
 /* 0C7F80 7F093450 25EFFCC0 */  addiu $t7, %lo(MipMap2C_Something_Setup) # addiu $t7, $t7, -0x340
 /* 0C7F84 7F093454 3C0E0600 */  lui   $t6, 0x600
 /* 0C7F88 7F093458 AC4E0000 */  sw    $t6, ($v0)
@@ -539,7 +539,7 @@ glabel sub_GAME_7F09343C
 /* 0C7FEC 7F0934BC ACCB0000 */  sw    $t3, ($a2)
 /* 0C7FF0 7F0934C0 24C70008 */  addiu $a3, $a2, 8
 /* 0C7FF4 7F0934C4 24E40008 */  addiu $a0, $a3, 8
-/* 0C7FF8 7F0934C8 3C018008 */  lui   $at, %hi(flt_CODE_bss_80079E88) # $at, 0x8008
+/* 0C7FF8 7F0934C8 3C018008 */  lui   $at, %hi(flt_CODE_bss_80079E88)
 /* 0C7FFC 7F0934CC C42C9E88 */  lwc1  $f12, %lo(flt_CODE_bss_80079E88)($at)
 /* 0C8000 7F0934D0 AFA40030 */  sw    $a0, 0x30($sp)
 /* 0C8004 7F0934D4 0FC15FAB */  jal   sinf
@@ -663,7 +663,7 @@ glabel sub_GAME_7F09365C
 /* 0C8190 7F093660 10A00009 */  beqz  $a1, .L7F093688
 /* 0C8194 7F093664 AFBF0014 */   sw    $ra, 0x14($sp)
 /* 0C8198 7F093668 00801025 */  move  $v0, $a0
-/* 0C819C 7F09366C 3C0F8004 */  lui   $t7, %hi(MipMap2C_Something2_Setup) # $t7, 0x8004
+/* 0C819C 7F09366C 3C0F8004 */  lui   $t7, %hi(MipMap2C_Something2_Setup) 
 /* 0C81A0 7F093670 25EFFD28 */  addiu $t7, %lo(MipMap2C_Something2_Setup) # addiu $t7, $t7, -0x2d8
 /* 0C81A4 7F093674 3C0E0600 */  lui   $t6, 0x600
 /* 0C81A8 7F093678 AC4E0000 */  sw    $t6, ($v0)
@@ -695,7 +695,7 @@ glabel sub_GAME_7F09365C
 /* 0C820C 7F0936DC ACCB0000 */  sw    $t3, ($a2)
 /* 0C8210 7F0936E0 24C70008 */  addiu $a3, $a2, 8
 /* 0C8214 7F0936E4 24E40008 */  addiu $a0, $a3, 8
-/* 0C8218 7F0936E8 3C018008 */  lui   $at, %hi(flt_CODE_bss_80079E88) # $at, 0x8008
+/* 0C8218 7F0936E8 3C018008 */  lui   $at, %hi(flt_CODE_bss_80079E88)
 /* 0C821C 7F0936EC C42C9E88 */  lwc1  $f12, %lo(flt_CODE_bss_80079E88)($at)
 /* 0C8220 7F0936F0 AFA40030 */  sw    $a0, 0x30($sp)
 /* 0C8224 7F0936F4 0FC15FAB */  jal   sinf

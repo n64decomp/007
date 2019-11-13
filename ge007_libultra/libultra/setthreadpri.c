@@ -50,7 +50,7 @@ glabel osSetThreadPri
 /* 00E41C 7000D81C 00408025 */  move  $s0, $v0
 /* 00E420 7000D820 15C00004 */  bnez  $t6, .L7000D834
 /* 00E424 7000D824 00000000 */   nop   
-/* 00E428 7000D828 3C0F8002 */  lui   $t7, %hi(__osRunningThread) # $t7, 0x8002
+/* 00E428 7000D828 3C0F8002 */  lui   $t7, %hi(__osRunningThread) 
 /* 00E42C 7000D82C 8DEF7730 */  lw    $t7, %lo(__osRunningThread)($t7)
 /* 00E430 7000D830 AFAF0028 */  sw    $t7, 0x28($sp)
 .L7000D834:
@@ -60,7 +60,7 @@ glabel osSetThreadPri
 /* 00E440 7000D840 13280020 */  beq   $t9, $t0, .L7000D8C4
 /* 00E444 7000D844 00000000 */   nop   
 /* 00E448 7000D848 AF080004 */  sw    $t0, 4($t8)
-/* 00E44C 7000D84C 3C0A8002 */  lui   $t2, %hi(__osRunningThread) # $t2, 0x8002
+/* 00E44C 7000D84C 3C0A8002 */  lui   $t2, %hi(__osRunningThread) 
 /* 00E450 7000D850 8D4A7730 */  lw    $t2, %lo(__osRunningThread)($t2)
 /* 00E454 7000D854 8FA90028 */  lw    $t1, 0x28($sp)
 /* 00E458 7000D858 112A000C */  beq   $t1, $t2, .L7000D88C
@@ -77,8 +77,8 @@ glabel osSetThreadPri
 /* 00E484 7000D884 0C00422B */  jal   __osEnqueueThread
 /* 00E488 7000D888 01802825 */   move  $a1, $t4
 .L7000D88C:
-/* 00E48C 7000D88C 3C0D8002 */  lui   $t5, %hi(__osRunningThread) # $t5, 0x8002
-/* 00E490 7000D890 3C0F8002 */  lui   $t7, %hi(__osRunQueue) # $t7, 0x8002
+/* 00E48C 7000D88C 3C0D8002 */  lui   $t5, %hi(__osRunningThread) 
+/* 00E490 7000D890 3C0F8002 */  lui   $t7, %hi(__osRunQueue) 
 /* 00E494 7000D894 8DEF7728 */  lw    $t7, %lo(__osRunQueue)($t7)
 /* 00E498 7000D898 8DAD7730 */  lw    $t5, %lo(__osRunningThread)($t5)
 /* 00E49C 7000D89C 8DF90004 */  lw    $t9, 4($t7)

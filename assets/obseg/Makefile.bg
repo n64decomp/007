@@ -9,12 +9,11 @@ $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.elf
 	$(OBJCOPY) $< $@ -O binary
 
 $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.o
-	$(LD) -T assets/obseg/bg/bg_all_p.ld -o $@
-	rm build/assets/obseg/bg/bg_all_p.o
+	$(LD) -T assets/obseg/bg/bg_all_p.ld -o $@ $<
 
 $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.o: $(OBSEG_DIR)/bg/%.c
 	$(CC) -c $(CFLAGS) -o $@ -O2 $<
-	mv $@ build/assets/obseg/bg/bg_all_p.o
+
 
 
 BG_SEG_FILES = \

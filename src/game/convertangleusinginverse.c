@@ -75,7 +75,7 @@ glabel convert_angle_using_inverse
 /* 08F578 7F05AA48 4502000A */  bc1fl .L7F05AA74
 /* 08F57C 7F05AA4C 46107032 */   c.eq.s $f14, $f16
 /* 08F580 7F05AA50 460E803E */  c.le.s $f16, $f14
-/* 08F584 7F05AA54 3C018005 */  lui   $at, %hi(D_80053700) # $at, 0x8005
+/* 08F584 7F05AA54 3C018005 */  lui   $at, %hi(D_80053700)
 /* 08F588 7F05AA58 45000003 */  bc1f  .L7F05AA68
 /* 08F58C 7F05AA5C 00000000 */   nop   
 /* 08F590 7F05AA60 1000003B */  b     .L7F05AB50
@@ -92,7 +92,7 @@ glabel convert_angle_using_inverse
 /* 08F5B4 7F05AA84 3C018005 */  lui   $at, %hi(D_80053708)
 /* 08F5B8 7F05AA88 45000004 */  bc1f  .L7F05AA9C
 /* 08F5BC 7F05AA8C 00000000 */   nop   
-/* 08F5C0 7F05AA90 3C018005 */  lui   $at, %hi(D_80053704) # $at, 0x8005
+/* 08F5C0 7F05AA90 3C018005 */  lui   $at, %hi(D_80053704)
 /* 08F5C4 7F05AA94 1000002E */  b     .L7F05AB50
 /* 08F5C8 7F05AA98 C4223704 */   lwc1  $f2, %lo(D_80053704)($at)
 .L7F05AA9C:
@@ -114,7 +114,7 @@ glabel convert_angle_using_inverse
 /* 08F604 7F05AAD4 46007303 */   div.s $f12, $f14, $f0
 /* 08F608 7F05AAD8 44808000 */  mtc1  $zero, $f16
 /* 08F60C 7F05AADC 46000086 */  mov.s $f2, $f0
-/* 08F610 7F05AAE0 3C018005 */  lui   $at, %hi(D_8005370C) # $at, 0x8005
+/* 08F610 7F05AAE0 3C018005 */  lui   $at, %hi(D_8005370C)
 /* 08F614 7F05AAE4 4610A03C */  c.lt.s $f20, $f16
 /* 08F618 7F05AAE8 00000000 */  nop   
 /* 08F61C 7F05AAEC 45020019 */  bc1fl .L7F05AB54
@@ -128,10 +128,10 @@ glabel convert_angle_using_inverse
 /* 08F638 7F05AB08 E7AE0024 */   swc1  $f14, 0x24($sp)
 /* 08F63C 7F05AB0C C7AE0024 */  lwc1  $f14, 0x24($sp)
 /* 08F640 7F05AB10 44808000 */  mtc1  $zero, $f16
-/* 08F644 7F05AB14 3C018005 */  lui   $at, %hi(D_80053710) # $at, 0x8005
+/* 08F644 7F05AB14 3C018005 */  lui   $at, %hi(D_80053710)
 /* 08F648 7F05AB18 C42A3710 */  lwc1  $f10, %lo(D_80053710)($at)
 /* 08F64C 7F05AB1C 4610703C */  c.lt.s $f14, $f16
-/* 08F650 7F05AB20 3C018005 */  lui   $at, %hi(D_80053714) # $at, 0x8005
+/* 08F650 7F05AB20 3C018005 */  lui   $at, %hi(D_80053714)
 /* 08F654 7F05AB24 46005301 */  sub.s $f12, $f10, $f0
 /* 08F658 7F05AB28 45000003 */  bc1f  .L7F05AB38
 /* 08F65C 7F05AB2C 46006086 */   mov.s $f2, $f12
@@ -139,7 +139,7 @@ glabel convert_angle_using_inverse
 /* 08F664 7F05AB34 460C9081 */  sub.s $f2, $f18, $f12
 .L7F05AB38:
 /* 08F668 7F05AB38 4610103C */  c.lt.s $f2, $f16
-/* 08F66C 7F05AB3C 3C018005 */  lui   $at, %hi(D_80053718) # $at, 0x8005
+/* 08F66C 7F05AB3C 3C018005 */  lui   $at, %hi(D_80053718)
 /* 08F670 7F05AB40 45020004 */  bc1fl .L7F05AB54
 /* 08F674 7F05AB44 8FBF001C */   lw    $ra, 0x1c($sp)
 /* 08F678 7F05AB48 C4243718 */  lwc1  $f4, %lo(D_80053718)($at)

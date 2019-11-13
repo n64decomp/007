@@ -223,7 +223,7 @@ glabel __osRdbSend
 /* 0062D4 700056D4 00C01025 */   move  $v0, $a2
 /* 0062D8 700056D8 24010009 */  li    $at, 9
 /* 0062DC 700056DC 14C1000A */  bne   $a2, $at, .L70005708
-/* 0062E0 700056E0 3C108002 */   lui   $s0, %hi(stderr_buffer + 0x8E0) # $s0, 0x8002
+/* 0062E0 700056E0 3C108002 */   lui   $s0, %hi(stderr_buffer + 0x8E0)
 /* 0062E4 700056E4 26103FF8 */  addiu $s0, %lo(stderr_buffer + 0x8E0) # addiu $s0, $s0, 0x3ff8
 .L700056E8:
 /* 0062E8 700056E8 0C0015AF */  jal   __osRdbSend
@@ -237,19 +237,19 @@ glabel __osRdbSend
 .L70005708:
 /* 006308 70005708 2401000A */  li    $at, 10
 /* 00630C 7000570C 14410008 */  bne   $v0, $at, .L70005730
-/* 006310 70005710 3C038002 */   lui   $v1, %hi(stderr_buffer + 0x8E4) # $v1, 0x8002
+/* 006310 70005710 3C038002 */   lui   $v1, %hi(stderr_buffer + 0x8E4)
 /* 006314 70005714 24633FFC */  addiu $v1, %lo(stderr_buffer + 0x8E4) # addiu $v1, $v1, 0x3ffc
 /* 006318 70005718 8C780000 */  lw    $t8, ($v1)
-/* 00631C 7000571C 3C108002 */  lui   $s0, %hi(stderr_buffer + 0x8E0) # $s0, 0x8002
+/* 00631C 7000571C 3C108002 */  lui   $s0, %hi(stderr_buffer + 0x8E0)
 /* 006320 70005720 26103FF8 */  addiu $s0, %lo(stderr_buffer + 0x8E0) # addiu $s0, $s0, 0x3ff8
 /* 006324 70005724 27190001 */  addiu $t9, $t8, 1
 /* 006328 70005728 AC790000 */  sw    $t9, ($v1)
 /* 00632C 7000572C AE000000 */  sw    $zero, ($s0)
 .L70005730:
-/* 006330 70005730 3C038002 */  lui   $v1, %hi(stderr_buffer + 0x8E4) # $v1, 0x8002
+/* 006330 70005730 3C038002 */  lui   $v1, %hi(stderr_buffer + 0x8E4)
 /* 006334 70005734 24633FFC */  addiu $v1, %lo(stderr_buffer + 0x8E4) # addiu $v1, $v1, 0x3ffc
 /* 006338 70005738 8C650000 */  lw    $a1, ($v1)
-/* 00633C 7000573C 3C108002 */  lui   $s0, %hi(stderr_buffer + 0x8E0) # $s0, 0x8002
+/* 00633C 7000573C 3C108002 */  lui   $s0, %hi(stderr_buffer + 0x8E0)
 /* 006340 70005740 26103FF8 */  addiu $s0, %lo(stderr_buffer + 0x8E0) # addiu $s0, $s0, 0x3ff8
 /* 006344 70005744 28A1001F */  slti  $at, $a1, 0x1f
 /* 006348 70005748 1420000A */  bnez  $at, .L70005774
@@ -257,7 +257,7 @@ glabel __osRdbSend
 /* 006350 70005750 AFA20024 */  sw    $v0, 0x24($sp)
 /* 006354 70005754 0C0015F3 */  jal   scroll_stderr_oneline
 /* 006358 70005758 A3A6002B */   sb    $a2, 0x2b($sp)
-/* 00635C 7000575C 3C038002 */  lui   $v1, %hi(stderr_buffer + 0x8E4) # $v1, 0x8002
+/* 00635C 7000575C 3C038002 */  lui   $v1, %hi(stderr_buffer + 0x8E4)
 /* 006360 70005760 24633FFC */  addiu $v1, %lo(stderr_buffer + 0x8E4) # addiu $v1, $v1, 0x3ffc
 /* 006364 70005764 2408001E */  li    $t0, 30
 /* 006368 70005768 8FA20024 */  lw    $v0, 0x24($sp)
@@ -271,7 +271,7 @@ glabel __osRdbSend
 /* 006384 70005784 0C00158C */  jal   write_char_to_pos_stderr
 /* 006388 70005788 8C650000 */   lw    $a1, ($v1)
 /* 00638C 7000578C 8E090000 */  lw    $t1, ($s0)
-/* 006390 70005790 3C038002 */  lui   $v1, %hi(stderr_buffer + 0x8E4) # $v1, 0x8002
+/* 006390 70005790 3C038002 */  lui   $v1, %hi(stderr_buffer + 0x8E4)
 /* 006394 70005794 24633FFC */  addiu $v1, %lo(stderr_buffer + 0x8E4) # addiu $v1, $v1, 0x3ffc
 /* 006398 70005798 252A0001 */  addiu $t2, $t1, 1
 /* 00639C 7000579C 29410047 */  slti  $at, $t2, 0x47
@@ -344,7 +344,7 @@ glabel scroll_stderr_oneline
 /* 0063CC 700057CC 0004102A */  slt   $v0, $zero, $a0
 /* 0063D0 700057D0 10400020 */  beqz  $v0, .L70005854
 /* 0063D4 700057D4 2484FFFF */   addiu $a0, $a0, -1
-/* 0063D8 700057D8 3C088002 */  lui   $t0, %hi(stderr_buffer + 0x899) # $t0, 0x8002
+/* 0063D8 700057D8 3C088002 */  lui   $t0, %hi(stderr_buffer + 0x899) 
 /* 0063DC 700057DC 25083FB1 */  addiu $t0, %lo(stderr_buffer + 0x899) # addiu $t0, $t0, 0x3fb1
 /* 0063E0 700057E0 24070047 */  li    $a3, 71
 .L700057E4:
@@ -494,7 +494,7 @@ glabel print_to_vidbuff1
 /* 006490 70005890 10200038 */  beqz  $at, .L70005974
 /* 006494 70005894 8FAE0018 */   lw    $t6, 0x18($sp)
 /* 006498 70005898 8FAB001C */  lw    $t3, 0x1c($sp)
-/* 00649C 7000589C 3C188002 */  lui   $t8, %hi(ptr_videobuffer1) # $t8, 0x8002
+/* 00649C 7000589C 3C188002 */  lui   $t8, %hi(ptr_videobuffer1) 
 /* 0064A0 700058A0 8F18417C */  lw    $t8, %lo(ptr_videobuffer1)($t8)
 /* 0064A4 700058A4 01620019 */  multu $t3, $v0
 /* 0064A8 700058A8 000E7840 */  sll   $t7, $t6, 1
@@ -587,7 +587,7 @@ GLOBAL_ASM(
 glabel set_ptr_video_buffers
 /* 006584 70005984 3C02A000 */  lui   $v0, 0xa000
 /* 006588 70005988 00827025 */  or    $t6, $a0, $v0
-/* 00658C 7000598C 3C018002 */  lui   $at, %hi(ptr_videobuffer1) # $at, 0x8002
+/* 00658C 7000598C 3C018002 */  lui   $at, %hi(ptr_videobuffer1)
 /* 006590 70005990 AC2E417C */  sw    $t6, %lo(ptr_videobuffer1)($at)
 /* 006594 70005994 3C018002 */  lui   $at, %hi(ptr_videobuffer2)
 /* 006598 70005998 00A27825 */  or    $t7, $a1, $v0
@@ -639,7 +639,7 @@ glabel write_stderr_to_buffer
 /* 006600 70005A00 AFB1001C */   sw    $s1, 0x1c($sp)
 /* 006604 70005A04 3C01A000 */  lui   $at, 0xa000
 /* 006608 70005A08 02017025 */  or    $t6, $s0, $at
-/* 00660C 70005A0C 3C018002 */  lui   $at, %hi(ptr_videobuffer1) # $at, 0x8002
+/* 00660C 70005A0C 3C018002 */  lui   $at, %hi(ptr_videobuffer1)
 /* 006610 70005A10 0C001107 */  jal   get_video2_settings_txtClipW
 /* 006614 70005A14 AC2E417C */   sw    $t6, %lo(ptr_videobuffer1)($at)
 /* 006618 70005A18 2450FFF3 */  addiu $s0, $v0, -0xd
@@ -667,7 +667,7 @@ glabel write_stderr_to_buffer
 /* 006668 70005A68 0335C821 */  addu  $t9, $t9, $s5
 /* 00666C 70005A6C 0019C8C0 */  sll   $t9, $t9, 3
 /* 006670 70005A70 001590C0 */  sll   $s2, $s5, 3
-/* 006674 70005A74 3C098002 */  lui   $t1, %hi(stderr_buffer) # $t1, 0x8002
+/* 006674 70005A74 3C098002 */  lui   $t1, %hi(stderr_buffer) 
 /* 006678 70005A78 25293718 */  addiu $t1, %lo(stderr_buffer) # addiu $t1, $t1, 0x3718
 /* 00667C 70005A7C 02559023 */  subu  $s2, $s2, $s5
 /* 006680 70005A80 0335C823 */  subu  $t9, $t9, $s5

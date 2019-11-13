@@ -22,7 +22,7 @@ GLOBAL_ASM(
 glabel osSetIntMask
 /* 00E930 7000DD30 400C6000 */  mfc0  $t4, $12
 /* 00E934 7000DD34 3182FF01 */  andi  $v0, $t4, 0xff01
-/* 00E938 7000DD38 3C088002 */  lui   $t0, %hi(__OSGlobalIntMask) # $t0, 0x8002
+/* 00E938 7000DD38 3C088002 */  lui   $t0, %hi(__OSGlobalIntMask) 
 /* 00E93C 7000DD3C 2508698C */  addiu $t0, %lo(__OSGlobalIntMask) # addiu $t0, $t0, 0x698c
 /* 00E940 7000DD40 8D0B0000 */  lw    $t3, ($t0)
 /* 00E944 7000DD44 2401FFFF */  li    $at, -1

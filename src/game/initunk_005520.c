@@ -28,7 +28,7 @@ GLOBAL_ASM(
 glabel sub_GAME_7F005540
 /* 03A070 7F005540 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 03A074 7F005544 AFB40024 */  sw    $s4, 0x24($sp)
-/* 03A078 7F005548 3C148003 */  lui   $s4, %hi(D_80036074) # $s4, 0x8003
+/* 03A078 7F005548 3C148003 */  lui   $s4, %hi(D_80036074)
 /* 03A07C 7F00554C AFB50028 */  sw    $s5, 0x28($sp)
 /* 03A080 7F005550 0080A825 */  move  $s5, $a0
 /* 03A084 7F005554 26946074 */  addiu $s4, %lo(D_80036074) # addiu $s4, $s4, 0x6074
@@ -43,7 +43,7 @@ glabel sub_GAME_7F005540
 /* 03A0A8 7F005578 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03A0AC 7F00557C 24050004 */   li    $a1, 4
 /* 03A0B0 7F005580 8E980000 */  lw    $t8, ($s4)
-/* 03A0B4 7F005584 3C128008 */  lui   $s2, %hi(ptr_allocation_1) # $s2, 0x8008
+/* 03A0B4 7F005584 3C128008 */  lui   $s2, %hi(ptr_allocation_1)
 /* 03A0B8 7F005588 26529934 */  addiu $s2, %lo(ptr_allocation_1) # addiu $s2, $s2, -0x66cc
 /* 03A0BC 7F00558C AE420000 */  sw    $v0, ($s2)
 /* 03A0C0 7F005590 1B00001B */  blez  $t8, .L7F005600
@@ -102,7 +102,7 @@ glabel sub_GAME_7F005624
 /* 03A154 7F005624 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 03A158 7F005628 AFB40024 */  sw    $s4, 0x24($sp)
 /* 03A15C 7F00562C 248E000A */  addiu $t6, $a0, 0xa
-/* 03A160 7F005630 3C148003 */  lui   $s4, %hi(D_80036070) # $s4, 0x8003
+/* 03A160 7F005630 3C148003 */  lui   $s4, %hi(D_80036070)
 /* 03A164 7F005634 AFB50028 */  sw    $s5, 0x28($sp)
 /* 03A168 7F005638 000E7880 */  sll   $t7, $t6, 2
 /* 03A16C 7F00563C 0080A825 */  move  $s5, $a0
@@ -118,7 +118,7 @@ glabel sub_GAME_7F005624
 /* 03A194 7F005664 0C0025C8 */  jal   allocate_bytes_in_bank
 /* 03A198 7F005668 24050004 */   li    $a1, 4
 /* 03A19C 7F00566C 8E980000 */  lw    $t8, ($s4)
-/* 03A1A0 7F005670 3C128008 */  lui   $s2, %hi(ptr_allocation_0) # $s2, 0x8008
+/* 03A1A0 7F005670 3C128008 */  lui   $s2, %hi(ptr_allocation_0)
 /* 03A1A4 7F005674 26529930 */  addiu $s2, %lo(ptr_allocation_0) # addiu $s2, $s2, -0x66d0
 /* 03A1A8 7F005678 AE420000 */  sw    $v0, ($s2)
 /* 03A1AC 7F00567C 1B00001B */  blez  $t8, .L7F0056EC

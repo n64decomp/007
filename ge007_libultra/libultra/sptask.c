@@ -61,7 +61,7 @@ GLOBAL_ASM(
 .text
 glabel _VirtualToPhysicalTask
 /* 00F0F0 7000E4F0 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 00F0F4 7000E4F4 3C0E8006 */  lui   $t6, %hi(tmp_task) # $t6, 0x8006
+/* 00F0F4 7000E4F4 3C0E8006 */  lui   $t6, %hi(tmp_task) 
 /* 00F0F8 7000E4F8 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 00F0FC 7000E4FC AFA40020 */  sw    $a0, 0x20($sp)
 /* 00F100 7000E500 25CE6A90 */  addiu $t6, %lo(tmp_task) # addiu $t6, $t6, 0x6a90

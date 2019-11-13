@@ -11,14 +11,14 @@ void cleanupObjectives(s32 stage) {
 GLOBAL_ASM(
 .text
 glabel cleanupObjectives
-/* 03C0C0 7F007590 3C028007 */  lui   $v0, %hi(objective_ptrs) # $v0, 0x8007
+/* 03C0C0 7F007590 3C028007 */  lui   $v0, %hi(objective_ptrs)
 /* 03C0C4 7F007594 8C425D30 */  lw    $v0, %lo(objective_ptrs)($v0)
-/* 03C0C8 7F007598 3C048007 */  lui   $a0, %hi(objective_ptrs+8) # $a0, 0x8007
+/* 03C0C8 7F007598 3C048007 */  lui   $a0, %hi(objective_ptrs+8)
 /* 03C0CC 7F00759C 24845D38 */  addiu $a0, %lo(objective_ptrs+8) # addiu $a0, $a0, 0x5d38
 /* 03C0D0 7F0075A0 1040000C */  beqz  $v0, .L7F0075D4
 /* 03C0D4 7F0075A4 24030008 */   li    $v1, 8
 /* 03C0D8 7F0075A8 904E000E */  lbu   $t6, 0xe($v0)
-/* 03C0DC 7F0075AC 3C188007 */  lui   $t8, %hi(dword_CODE_bss_80075D58) # $t8, 0x8007
+/* 03C0DC 7F0075AC 3C188007 */  lui   $t8, %hi(dword_CODE_bss_80075D58) 
 /* 03C0E0 7F0075B0 31CF0001 */  andi  $t7, $t6, 1
 /* 03C0E4 7F0075B4 11E00007 */  beqz  $t7, .L7F0075D4
 /* 03C0E8 7F0075B8 00000000 */   nop   
@@ -26,28 +26,28 @@ glabel cleanupObjectives
 /* 03C0F0 7F0075C0 24050002 */  li    $a1, 2
 /* 03C0F4 7F0075C4 24190001 */  li    $t9, 1
 /* 03C0F8 7F0075C8 10B80002 */  beq   $a1, $t8, .L7F0075D4
-/* 03C0FC 7F0075CC 3C018007 */   lui   $at, %hi(dword_CODE_bss_80075D58) # $at, 0x8007
+/* 03C0FC 7F0075CC 3C018007 */   lui   $at, %hi(dword_CODE_bss_80075D58)
 /* 03C100 7F0075D0 AC395D58 */  sw    $t9, %lo(dword_CODE_bss_80075D58)($at)
 .L7F0075D4:
-/* 03C104 7F0075D4 3C028007 */  lui   $v0, %hi(objective_ptrs+4) # $v0, 0x8007
+/* 03C104 7F0075D4 3C028007 */  lui   $v0, %hi(objective_ptrs+4)
 /* 03C108 7F0075D8 8C425D34 */  lw    $v0, %lo(objective_ptrs+4)($v0)
-/* 03C10C 7F0075DC 3C088007 */  lui   $t0, %hi(dword_CODE_bss_80075D58) # $t0, 0x8007
+/* 03C10C 7F0075DC 3C088007 */  lui   $t0, %hi(dword_CODE_bss_80075D58) 
 /* 03C110 7F0075E0 25085D58 */  addiu $t0, %lo(dword_CODE_bss_80075D58) # addiu $t0, $t0, 0x5d58
 /* 03C114 7F0075E4 1040000C */  beqz  $v0, .L7F007618
 /* 03C118 7F0075E8 24050002 */   li    $a1, 2
 /* 03C11C 7F0075EC 9049000E */  lbu   $t1, 0xe($v0)
-/* 03C120 7F0075F0 3C0B8007 */  lui   $t3, %hi(dword_CODE_bss_80075D5C) # $t3, 0x8007
+/* 03C120 7F0075F0 3C0B8007 */  lui   $t3, %hi(dword_CODE_bss_80075D5C) 
 /* 03C124 7F0075F4 312A0001 */  andi  $t2, $t1, 1
 /* 03C128 7F0075F8 11400007 */  beqz  $t2, .L7F007618
 /* 03C12C 7F0075FC 00000000 */   nop   
 /* 03C130 7F007600 8D6B5D5C */  lw    $t3, %lo(dword_CODE_bss_80075D5C)($t3)
 /* 03C134 7F007604 240C0001 */  li    $t4, 1
-/* 03C138 7F007608 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D5C) # $at, 0x8007
+/* 03C138 7F007608 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D5C)
 /* 03C13C 7F00760C 10AB0002 */  beq   $a1, $t3, .L7F007618
 /* 03C140 7F007610 00000000 */   nop   
 /* 03C144 7F007614 AC2C5D5C */  sw    $t4, %lo(dword_CODE_bss_80075D5C)($at)
 .L7F007618:
-/* 03C148 7F007618 3C068007 */  lui   $a2, %hi(dword_CODE_bss_80075D58) # $a2, 0x8007
+/* 03C148 7F007618 3C068007 */  lui   $a2, %hi(dword_CODE_bss_80075D58)
 /* 03C14C 7F00761C 24C65D58 */  addiu $a2, %lo(dword_CODE_bss_80075D58) # addiu $a2, $a2, 0x5d58
 /* 03C150 7F007620 24070001 */  li    $a3, 1
 .L7F007624:

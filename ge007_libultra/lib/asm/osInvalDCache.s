@@ -47,7 +47,7 @@ glabel osInvalDCache
   nop   
 
 .L80323508:
-  lui   $t0, %hi(D_80000010) # $t0, 0x8000
+  lui   $t0, %hi(D_80000010) 
   addu  $t1, $t0, $t3
   addiu $t1, $t1, -0x10
 .L80323514:

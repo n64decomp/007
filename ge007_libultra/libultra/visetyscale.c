@@ -19,10 +19,10 @@ glabel osViSetYScale
 /* 00EE08 7000E208 E7AC0028 */  swc1  $f12, 0x28($sp)
 /* 00EE0C 7000E20C 0C00617C */  jal   __osDisableInt
 /* 00EE10 7000E210 AFB00018 */   sw    $s0, 0x18($sp)
-/* 00EE14 7000E214 3C0E8003 */  lui   $t6, %hi(__osViNext) # $t6, 0x8003
+/* 00EE14 7000E214 3C0E8003 */  lui   $t6, %hi(__osViNext) 
 /* 00EE18 7000E218 8DCE8044 */  lw    $t6, %lo(__osViNext)($t6)
 /* 00EE1C 7000E21C C7A40028 */  lwc1  $f4, 0x28($sp)
-/* 00EE20 7000E220 3C0F8003 */  lui   $t7, %hi(__osViNext) # $t7, 0x8003
+/* 00EE20 7000E220 3C0F8003 */  lui   $t7, %hi(__osViNext) 
 /* 00EE24 7000E224 00408025 */  move  $s0, $v0
 /* 00EE28 7000E228 E5C40024 */  swc1  $f4, 0x24($t6)
 /* 00EE2C 7000E22C 8DEF8044 */  lw    $t7, %lo(__osViNext)($t7)

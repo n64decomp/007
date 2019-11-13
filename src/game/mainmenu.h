@@ -495,6 +495,11 @@ extern s32 tab_3_selected;
 extern s32 tab_1_highlight;
 extern s32 tab_2_highlight;
 extern s32 tab_3_highlight;
+
+extern f32 tab2_first_x_coord;
+extern f32 tab1_max_x_coord;
+extern f32 tab2_bottom_y_coord;
+
 extern s32 selected_folder_num;
 extern s32 selected_folder_num_copy;
 extern s32 gamemode;

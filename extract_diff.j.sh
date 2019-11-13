@@ -5,7 +5,7 @@ if [ -z "$1" ]; then
 fi
 
 true="1"
-mkdir assets assets/font assets/images assets/images/split assets/music assets/ramrom assets/obseg assets/obseg/bg assets/obseg/brief assets/obseg/chr assets/obseg/gun assets/obseg/prop assets/obseg/setup assets/obseg/stan assets/obseg/text
+mkdir assets assets/font assets/images assets/images/split assets/music assets/ramrom assets/obseg assets/obseg/bg assets/obseg/brief assets/obseg/chr assets/obseg/gun assets/obseg/prop assets/obseg/setup assets/obseg/setup/j assets/obseg/stan assets/obseg/text assets/obseg/text/j
 
 if [ "$DOALL" == "1" ] || [ $1 == 'files' ]; then
     echo "Processing Files"
@@ -14,7 +14,7 @@ if [ "$DOALL" == "1" ] || [ $1 == 'files' ]; then
         if [ "$extract" == "$true" ]; then
             if [ "$compressed" == "$true" ]; then
                 echo "Extracting compressed $name, $size bytes..."
-                dd bs=1 skip=$offset count=$size if=baserom.u.z64 of=$name status=none
+                dd bs=1 skip=$offset count=$size if=baserom.j.z64 of=$name status=none
     	         # Add the gZip Header to a new file using the name given in command
     	        echo -n -e \\x1F\\x8B\\x08\\x00\\x00\\x00\\x00\\x00\\x02\\x03 > $name.temp
     	         # Add the contents of the compressed file minus the 1172 to the new file
@@ -28,29 +28,16 @@ if [ "$DOALL" == "1" ] || [ $1 == 'files' ]; then
     	        echo "Successfully Decompressed $name"
             else
                 echo "Extracting uncompressed $name, $size bytes..."
-                dd bs=1 skip=$offset count=$size if=baserom.u.z64 of=$name status=none
+                dd bs=1 skip=$offset count=$size if=baserom.j.z64 of=$name status=none
                 echo "Successfully Extracted $name"
             fi
         else
             echo "skip $name"
         fi
-    done < filelist.u.csv
-    #filelist.u.csv should follow pattern of:
+    done < filediff.j.csv
+    #filediff.j.csv should follow pattern of:
     #offset,size,name,compressed,extract
     #formatting matters, no comments, no extra lines, unix line endings only
     #and always end with a newline
 fi
 
-if [ "$DOALL" == "1" ] || [ $1 == 'images' ]; then
-    echo "Processing Imagess"
-    while IFS=, read -r offset size name
-    do
-        echo "Extracting $name, $size bytes..."
-        dd bs=1 skip=$offset count=$size if=baserom.u.z64 of=$name status=none
-        echo "Successfully Extracted $name"
-    done < imagelist.u.csv
-    #imageslist.u.csv should follow pattern of:
-    #offset,size,name
-    #formatting matters, no comments, no extra lines, unix line endings only
-    #and always end with a newline
-fi

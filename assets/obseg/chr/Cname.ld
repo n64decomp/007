@@ -6,7 +6,7 @@ SECTIONS
    _UchrDataStart = ADDR(.data);
    _UchrDataRomStart = 0x0000;
    .data 0x00000000 : AT(0x0000) {
-      build/assets/obseg/chr/Cname.o (.data);
+      * (.data);
    }
    _UchrDataEnd = ADDR(.data) + SIZEOF(.data);
    _UchrDataRomEnd = 0x0000 + SIZEOF(.data);

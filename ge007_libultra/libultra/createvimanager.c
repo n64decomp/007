@@ -70,7 +70,7 @@ void osCreateViManager(s32 arg0, s32 argC) {
 GLOBAL_ASM(
 .text
 glabel osCreateViManager
-/* 00E4F0 7000D8F0 3C0E8002 */  lui   $t6, %hi(__osViDevMgr) # $t6, 0x8002
+/* 00E4F0 7000D8F0 3C0E8002 */  lui   $t6, %hi(__osViDevMgr) 
 /* 00E4F4 7000D8F4 8DCE69A0 */  lw    $t6, %lo(__osViDevMgr)($t6)
 /* 00E4F8 7000D8F8 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 00E4FC 7000D8FC AFBF001C */  sw    $ra, 0x1c($sp)
@@ -124,8 +124,8 @@ glabel osCreateViManager
 /* 00E5B8 7000D9B8 0C00617C */  jal   __osDisableInt
 /* 00E5BC 7000D9BC 00000000 */   nop   
 /* 00E5C0 7000D9C0 3C018002 */  lui   $at, %hi(__osViDevMgr) # $at, 0x8002
-/* 00E5C4 7000D9C4 3C0C8006 */  lui   $t4, %hi(viEventQueue) # $t4, 0x8006
-/* 00E5C8 7000D9C8 3C0B8006 */  lui   $t3, %hi(viThread) # $t3, 0x8006
+/* 00E5C4 7000D9C4 3C0C8006 */  lui   $t4, %hi(viEventQueue) 
+/* 00E5C8 7000D9C8 3C0B8006 */  lui   $t3, %hi(viThread) 
 /* 00E5CC 7000D9CC 258C69A0 */  addiu $t4, %lo(viEventQueue) # addiu $t4, $t4, 0x69a0
 /* 00E5D0 7000D9D0 240A0001 */  li    $t2, 1
 /* 00E5D4 7000D9D4 256B57F0 */  addiu $t3, %lo(viThread) # addiu $t3, $t3, 0x57f0
@@ -133,7 +133,7 @@ glabel osCreateViManager
 /* 00E5DC 7000D9DC AC2B69A4 */  sw    $t3, 4($at)
 /* 00E5E0 7000D9E0 AC2C69A8 */  sw    $t4, 8($at)
 /* 00E5E4 7000D9E4 AC2C69AC */  sw    $t4, 0xC($at)
-/* 00E5E8 7000D9E8 3C0D8006 */  lui   $t5, %hi(viThreadStack) # $t5, 0x8006
+/* 00E5E8 7000D9E8 3C0D8006 */  lui   $t5, %hi(viThreadStack) 
 /* 00E5EC 7000D9EC 8FAF0030 */  lw    $t7, 0x30($sp)
 /* 00E5F0 7000D9F0 3C018002 */  lui   $at, %hi(__osViDevMgr) # $at, 0x8002
 /* 00E5F4 7000D9F4 25AD59A0 */  addiu $t5, %lo(viThreadStack) # addiu $t5, $t5, 0x59a0
@@ -218,7 +218,7 @@ glabel viMgrMain
 .L7000DAF8:
 /* 00E6F8 7000DAF8 0C0062DC */  jal   __osViSwapContext
 /* 00E6FC 7000DAFC 00000000 */   nop   
-/* 00E700 7000DB00 3C0A8006 */  lui   $t2, %hi(retrace) # $t2, 0x8006
+/* 00E700 7000DB00 3C0A8006 */  lui   $t2, %hi(retrace) 
 /* 00E704 7000DB04 954A6A00 */  lhu   $t2, %lo(retrace)($t2)
 /* 00E708 7000DB08 3C018006 */  lui   $at, %hi(retrace) # $at, 0x8006
 /* 00E70C 7000DB0C 254BFFFF */  addiu $t3, $t2, -1
@@ -242,7 +242,7 @@ glabel viMgrMain
 /* 00E750 7000DB50 95F80002 */  lhu   $t8, 2($t7)
 /* 00E754 7000DB54 A4386A00 */  sh    $t8, %lo(retrace)($at)
 .L7000DB58:
-/* 00E758 7000DB58 3C198007 */  lui   $t9, %hi(__osViIntrCount) # $t9, 0x8007
+/* 00E758 7000DB58 3C198007 */  lui   $t9, %hi(__osViIntrCount) 
 /* 00E75C 7000DB5C 8F398E1C */  lw    $t9, %lo(__osViIntrCount)($t9)
 /* 00E760 7000DB60 8FA90028 */  lw    $t1, 0x28($sp)
 /* 00E764 7000DB64 3C018007 */  lui   $at, %hi(__osViIntrCount) # $at, 0x8007
@@ -261,20 +261,20 @@ glabel viMgrMain
 /* 00E798 7000DB98 AC2D8E14 */  sw    $t5, %lo(__osCurrentTime+4)($at)
 /* 00E79C 7000DB9C AFA00028 */  sw    $zero, 0x28($sp)
 .L7000DBA0:
-/* 00E7A0 7000DBA0 3C0B8007 */  lui   $t3, %hi(__osBaseCounter) # $t3, 0x8007
+/* 00E7A0 7000DBA0 3C0B8007 */  lui   $t3, %hi(__osBaseCounter) 
 /* 00E7A4 7000DBA4 8D6B8E18 */  lw    $t3, %lo(__osBaseCounter)($t3)
 /* 00E7A8 7000DBA8 0C003638 */  jal   osGetCount
 /* 00E7AC 7000DBAC AFAB0024 */   sw    $t3, 0x24($sp)
 /* 00E7B0 7000DBB0 3C018007 */  lui   $at, %hi(__osBaseCounter) # $at, 0x8007
 /* 00E7B4 7000DBB4 AC228E18 */  sw    $v0, %lo(__osBaseCounter)($at)
-/* 00E7B8 7000DBB8 3C0E8007 */  lui   $t6, %hi(__osBaseCounter) # $t6, 0x8007
+/* 00E7B8 7000DBB8 3C0E8007 */  lui   $t6, %hi(__osBaseCounter) 
 /* 00E7BC 7000DBBC 8DCE8E18 */  lw    $t6, %lo(__osBaseCounter)($t6)
 /* 00E7C0 7000DBC0 8FAF0024 */  lw    $t7, 0x24($sp)
-/* 00E7C4 7000DBC4 3C0B8007 */  lui   $t3, %hi(__osCurrentTime+4) # $t3, 0x8007
+/* 00E7C4 7000DBC4 3C0B8007 */  lui   $t3, %hi(__osCurrentTime+4) 
 /* 00E7C8 7000DBC8 8D6B8E14 */  lw    $t3, %lo(__osCurrentTime+4)($t3)
 /* 00E7CC 7000DBCC 01CFC023 */  subu  $t8, $t6, $t7
 /* 00E7D0 7000DBD0 03004825 */  move  $t1, $t8
-/* 00E7D4 7000DBD4 3C0A8007 */  lui   $t2, %hi(__osCurrentTime) # $t2, 0x8007
+/* 00E7D4 7000DBD4 3C0A8007 */  lui   $t2, %hi(__osCurrentTime) 
 /* 00E7D8 7000DBD8 012B6821 */  addu  $t5, $t1, $t3
 /* 00E7DC 7000DBDC 8D4A8E10 */  lw    $t2, %lo(__osCurrentTime)($t2)
 /* 00E7E0 7000DBE0 24080000 */  li    $t0, 0

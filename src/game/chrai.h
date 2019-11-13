@@ -1,5 +1,5 @@
-#ifndef _ACTIONBLOCK_H_
-#define _ACTIONBLOCK_H_
+#ifndef _CHRAI_H_
+#define _CHRAI_H_
 #include "ultra64.h"
 
 struct sfx_register_struct {
@@ -99,6 +99,7 @@ extern struct struct_16 D_80031BEC;
 extern u32 D_80031C08[];
 extern u32 D_80031C80[];
 extern u32 D_80031D30[];
+extern struct struct_20 D_80031D58;
 extern u32 monitor_animation_microcode[];
 extern u32 dword_D_80031F00[];
 extern u32 dword_D_80031F44[];
