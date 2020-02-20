@@ -5,6 +5,7 @@
 #include "game/unk_093880.h"
 #include "music.h"
 #include "game/textrelated.h"
+#include "game/lvl.h"
 
 // bss
 //CODE.bss:800695A0
@@ -1848,9 +1849,9 @@ glabel D_800519F4
 .word 0xBFB2B8C3 /* -1.3962635;*/
 glabel D_800519F8
 .word 0x3C962FC9 /* 0.018333333;*/
-glabel D_800519FC
+glabel menu01_aspect
 .word 0x3FAAAAAB /* 1.3333334;*/
-glabel D_80051A00
+glabel menu01_pageheight
 .word 0x461C4000 /* 10000.0;*/
 glabel D_80051A04
 .word 0x3C8EFA35 /* 0.017453292;*/
@@ -2189,9 +2190,9 @@ glabel D_800519F4
 .word 0xBFB2B8C3 /* -1.3962635;*/
 glabel D_800519F8
 .word 0x3C962FC9 /* 0.018333333;*/
-glabel D_800519FC
+glabel menu01_aspect
 .word 0x3FAAAAAB /* 1.3333334;*/
-glabel D_80051A00
+glabel menu01_pageheight
 .word 0x461C4000 /* 10000.0;*/
 glabel D_80051A04
 .word 0x3C8EFA35 /* 0.017453292;*/
@@ -2656,7 +2657,7 @@ s32 add_tab1_start(s32 arg0) {
 
     // Node 0
     dword_CODE_bss_80069770 = get_textptr_for_textID(TEXT(LTITLE, 0x04));
-    sub_GAME_7F0ACB78(1);
+    setTextSpacingInverted(1);
     sp48 = 0;
     sp4C = 0;
     sub_GAME_7F0AE98C(&sp4C, &sp48, dword_CODE_bss_80069770, ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0);
@@ -2673,7 +2674,7 @@ s32 add_tab1_start(s32 arg0) {
         microcode_constructor_related_to_menus(arg0, ((temp_a3 - sp4C) + 1), 0x33, temp_a3, 0x75, 0x32);
     }
     // Node 4
-    sub_GAME_7F0ACB88(1, temp_a3);
+    setTextOrientation(1, temp_a3);
     if (sp48 < 0)
     {
         // Node 5
@@ -2682,8 +2683,8 @@ s32 add_tab1_start(s32 arg0) {
     sp54 = (s32) (0x54 - (sp48 >> 1));
     sp44 = get_video2_settings_txtClipH();
     en_text_write_stuff(arg0, &sp54, &sp50, dword_CODE_bss_80069770, (?32) ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0xff, sp44, get_video2_settings_txtClipW(), 0, 0);
-    sub_GAME_7F0ACB88(0);
-    sub_GAME_7F0ACB78(0);
+    setTextOrientation(0);
+    setTextSpacingInverted(0);
     return;
     // (possible return value: en_text_write_stuff(arg0, &sp54, &sp50, dword_CODE_bss_80069770, (?32) ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0xff, sp44, get_video2_settings_txtClipW(), 0, 0))
 }
@@ -2699,7 +2700,7 @@ glabel add_tab1_start
 /* 03EBC4 7F00A094 34049C04 */   li    $a0, 39940
 /* 03EBC8 7F00A098 3C018007 */  lui   $at, %hi(dword_CODE_bss_80069770)
 /* 03EBCC 7F00A09C AC229770 */  sw    $v0, %lo(dword_CODE_bss_80069770)($at)
-/* 03EBD0 7F00A0A0 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 03EBD0 7F00A0A0 0FC2B2DE */  jal   setTextSpacingInverted
 /* 03EBD4 7F00A0A4 24040001 */   li    $a0, 1
 /* 03EBD8 7F00A0A8 3C0E8004 */  lui   $t6, %hi(ptrFirstFontTableSmall) 
 /* 03EBDC 7F00A0AC 8DCE0EAC */  lw    $t6, %lo(ptrFirstFontTableSmall)($t6)
@@ -2740,7 +2741,7 @@ glabel add_tab1_start
 /* 03EC64 7F00A134 AFA70050 */   sw    $a3, 0x50($sp)
 /* 03EC68 7F00A138 00408025 */  move  $s0, $v0
 .L7F00A13C:
-/* 03EC6C 7F00A13C 0FC2B2E2 */  jal   sub_GAME_7F0ACB88
+/* 03EC6C 7F00A13C 0FC2B2E2 */  jal   setTextOrientation
 /* 03EC70 7F00A140 24040001 */   li    $a0, 1
 /* 03EC74 7F00A144 8FAC0048 */  lw    $t4, 0x48($sp)
 /* 03EC78 7F00A148 240E0054 */  li    $t6, 84
@@ -2774,9 +2775,9 @@ glabel add_tab1_start
 /* 03ECE4 7F00A1B4 0FC2B6AF */  jal   en_text_write_stuff
 /* 03ECE8 7F00A1B8 AFB8001C */   sw    $t8, 0x1c($sp)
 /* 03ECEC 7F00A1BC 00408025 */  move  $s0, $v0
-/* 03ECF0 7F00A1C0 0FC2B2E2 */  jal   sub_GAME_7F0ACB88
+/* 03ECF0 7F00A1C0 0FC2B2E2 */  jal   setTextOrientation
 /* 03ECF4 7F00A1C4 00002025 */   move  $a0, $zero
-/* 03ECF8 7F00A1C8 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 03ECF8 7F00A1C8 0FC2B2DE */  jal   setTextSpacingInverted
 /* 03ECFC 7F00A1CC 00002025 */   move  $a0, $zero
 /* 03ED00 7F00A1D0 8FBF003C */  lw    $ra, 0x3c($sp)
 /* 03ED04 7F00A1D4 02001025 */  move  $v0, $s0
@@ -2841,7 +2842,7 @@ s32 add_tab3_previous(s32 arg0) {
 
     // Node 0
     dword_CODE_bss_80069778 = get_textptr_for_textID(TEXT(LTITLE, 0x06));
-    sub_GAME_7F0ACB78(1);
+    setTextSpacingInverted(1);
     sp48 = 0;
     sp4C = 0;
     sub_GAME_7F0AE98C(&sp4C, &sp48, dword_CODE_bss_80069778, ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0);
@@ -2858,7 +2859,7 @@ s32 add_tab3_previous(s32 arg0) {
         microcode_constructor_related_to_menus(arg0, ((temp_a3 - sp4C) + 1), 0xec, temp_a3, 0x12e, 0x32);
     }
     // Node 4
-    sub_GAME_7F0ACB88(1, temp_a3);
+    setTextOrientation(1, temp_a3);
     if (sp48 < 0)
     {
         // Node 5
@@ -2867,8 +2868,8 @@ s32 add_tab3_previous(s32 arg0) {
     sp54 = (s32) (0x10d - (sp48 >> 1));
     sp44 = get_video2_settings_txtClipH();
     en_text_write_stuff(arg0, &sp54, &sp50, dword_CODE_bss_80069778, (?32) ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0xff, sp44, get_video2_settings_txtClipW(), 0, 0);
-    sub_GAME_7F0ACB88(0);
-    sub_GAME_7F0ACB78(0);
+    setTextOrientation(0);
+    setTextSpacingInverted(0);
     return;
     // (possible return value: en_text_write_stuff(arg0, &sp54, &sp50, dword_CODE_bss_80069778, (?32) ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0xff, sp44, get_video2_settings_txtClipW(), 0, 0))
 }
@@ -2884,7 +2885,7 @@ glabel add_tab3_previous
 /* 03ED7C 7F00A24C 34049C06 */   li    $a0, 39942
 /* 03ED80 7F00A250 3C018007 */  lui   $at, %hi(dword_CODE_bss_80069778)
 /* 03ED84 7F00A254 AC229778 */  sw    $v0, %lo(dword_CODE_bss_80069778)($at)
-/* 03ED88 7F00A258 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 03ED88 7F00A258 0FC2B2DE */  jal   setTextSpacingInverted
 /* 03ED8C 7F00A25C 24040001 */   li    $a0, 1
 /* 03ED90 7F00A260 3C0E8004 */  lui   $t6, %hi(ptrFirstFontTableSmall) 
 /* 03ED94 7F00A264 8DCE0EAC */  lw    $t6, %lo(ptrFirstFontTableSmall)($t6)
@@ -2925,7 +2926,7 @@ glabel add_tab3_previous
 /* 03EE1C 7F00A2EC AFA70050 */   sw    $a3, 0x50($sp)
 /* 03EE20 7F00A2F0 00408025 */  move  $s0, $v0
 .L7F00A2F4:
-/* 03EE24 7F00A2F4 0FC2B2E2 */  jal   sub_GAME_7F0ACB88
+/* 03EE24 7F00A2F4 0FC2B2E2 */  jal   setTextOrientation
 /* 03EE28 7F00A2F8 24040001 */   li    $a0, 1
 /* 03EE2C 7F00A2FC 8FAC0048 */  lw    $t4, 0x48($sp)
 /* 03EE30 7F00A300 240E010D */  li    $t6, 269
@@ -2959,9 +2960,9 @@ glabel add_tab3_previous
 /* 03EE9C 7F00A36C 0FC2B6AF */  jal   en_text_write_stuff
 /* 03EEA0 7F00A370 AFB8001C */   sw    $t8, 0x1c($sp)
 /* 03EEA4 7F00A374 00408025 */  move  $s0, $v0
-/* 03EEA8 7F00A378 0FC2B2E2 */  jal   sub_GAME_7F0ACB88
+/* 03EEA8 7F00A378 0FC2B2E2 */  jal   setTextOrientation
 /* 03EEAC 7F00A37C 00002025 */   move  $a0, $zero
-/* 03EEB0 7F00A380 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 03EEB0 7F00A380 0FC2B2DE */  jal   setTextSpacingInverted
 /* 03EEB4 7F00A384 00002025 */   move  $a0, $zero
 /* 03EEB8 7F00A388 8FBF003C */  lw    $ra, 0x3c($sp)
 /* 03EEBC 7F00A38C 02001025 */  move  $v0, $s0
@@ -3003,7 +3004,7 @@ s32 add_tab2_next(s32 arg0) {
 
     // Node 0
     dword_CODE_bss_80069774 = get_textptr_for_textID(TEXT(LTITLE, 0x05));
-    sub_GAME_7F0ACB78(1);
+    setTextSpacingInverted(1);
     sp48 = 0;
     sp4C = 0;
     sub_GAME_7F0AE98C(&sp4C, &sp48, dword_CODE_bss_80069774, ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0);
@@ -3020,7 +3021,7 @@ s32 add_tab2_next(s32 arg0) {
         microcode_constructor_related_to_menus(arg0, ((temp_a3 - sp4C) + 1), 0x90, temp_a3, 0xd2, 0x32);
     }
     // Node 4
-    sub_GAME_7F0ACB88(1, temp_a3);
+    setTextOrientation(1, temp_a3);
     if (sp48 < 0)
     {
         // Node 5
@@ -3029,8 +3030,8 @@ s32 add_tab2_next(s32 arg0) {
     sp54 = (s32) (0xb1 - (sp48 >> 1));
     sp44 = get_video2_settings_txtClipH();
     en_text_write_stuff(arg0, &sp54, &sp50, dword_CODE_bss_80069774, (?32) ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0xff, sp44, get_video2_settings_txtClipW(), 0, 0);
-    sub_GAME_7F0ACB88(0);
-    sub_GAME_7F0ACB78(0);
+    setTextOrientation(0);
+    setTextSpacingInverted(0);
     return;
     // (possible return value: en_text_write_stuff(arg0, &sp54, &sp50, dword_CODE_bss_80069774, (?32) ptrSecondFontTableSmall, (?32) ptrFirstFontTableSmall, 0xff, sp44, get_video2_settings_txtClipW(), 0, 0))
 }
@@ -3046,7 +3047,7 @@ glabel add_tab2_next
 /* 03EF58 7F00A428 34049C05 */   li    $a0, 39941
 /* 03EF5C 7F00A42C 3C018007 */  lui   $at, %hi(dword_CODE_bss_80069774)
 /* 03EF60 7F00A430 AC229774 */  sw    $v0, %lo(dword_CODE_bss_80069774)($at)
-/* 03EF64 7F00A434 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 03EF64 7F00A434 0FC2B2DE */  jal   setTextSpacingInverted
 /* 03EF68 7F00A438 24040001 */   li    $a0, 1
 /* 03EF6C 7F00A43C 3C0E8004 */  lui   $t6, %hi(ptrFirstFontTableSmall) 
 /* 03EF70 7F00A440 8DCE0EAC */  lw    $t6, %lo(ptrFirstFontTableSmall)($t6)
@@ -3087,7 +3088,7 @@ glabel add_tab2_next
 /* 03EFF8 7F00A4C8 AFA70050 */   sw    $a3, 0x50($sp)
 /* 03EFFC 7F00A4CC 00408025 */  move  $s0, $v0
 .L7F00A4D0:
-/* 03F000 7F00A4D0 0FC2B2E2 */  jal   sub_GAME_7F0ACB88
+/* 03F000 7F00A4D0 0FC2B2E2 */  jal   setTextOrientation
 /* 03F004 7F00A4D4 24040001 */   li    $a0, 1
 /* 03F008 7F00A4D8 8FAC0048 */  lw    $t4, 0x48($sp)
 /* 03F00C 7F00A4DC 240E00B1 */  li    $t6, 177
@@ -3121,9 +3122,9 @@ glabel add_tab2_next
 /* 03F078 7F00A548 0FC2B6AF */  jal   en_text_write_stuff
 /* 03F07C 7F00A54C AFB8001C */   sw    $t8, 0x1c($sp)
 /* 03F080 7F00A550 00408025 */  move  $s0, $v0
-/* 03F084 7F00A554 0FC2B2E2 */  jal   sub_GAME_7F0ACB88
+/* 03F084 7F00A554 0FC2B2E2 */  jal   setTextOrientation
 /* 03F088 7F00A558 00002025 */   move  $a0, $zero
-/* 03F08C 7F00A55C 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 03F08C 7F00A55C 0FC2B2DE */  jal   setTextSpacingInverted
 /* 03F090 7F00A560 00002025 */   move  $a0, $zero
 /* 03F094 7F00A564 8FBF003C */  lw    $ra, 0x3c($sp)
 /* 03F098 7F00A568 02001025 */  move  $v0, $s0
@@ -3251,7 +3252,7 @@ void interface_menu00_legalscreen(undefined8 param_1,undefined8 param_2) {
   undefined8 extraout_a2_00;
   undefined8 extraout_a3;
   
-  video_related_1F(param_1._4_4_,param_2,in_a2);
+  setvideo_far(param_1._4_4_,param_2,in_a2);
   video_related_21(extraout_a0_lo,extraout_a1,extraout_a2);
   set_page_height(extraout_a0_lo_00,extraout_a1_lo,extraout_a2_00,extraout_a3);
   set_video2_settings_offset_24(0);
@@ -3284,7 +3285,7 @@ glabel interface_menu00_legalscreen
 /* 03F210 7F00A6E0 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 03F214 7F00A6E4 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 03F218 7F00A6E8 44816000 */  mtc1  $at, $f12
-/* 03F21C 7F00A6EC 0C001151 */  jal   video_related_1F
+/* 03F21C 7F00A6EC 0C001151 */  jal   setvideo_far
 /* 03F220 7F00A6F0 00000000 */   nop   
 /* 03F224 7F00A6F4 3C018005 */  lui   $at, %hi(D_800519E4)
 /* 03F228 7F00A6F8 0C001164 */  jal   video_related_21
@@ -3699,7 +3700,7 @@ void *interface_menu17_switchscreens(void)
 {
     s32 temp_t7;
 
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_800519EC);
     set_page_height(0x42c80000, D_800519F0);
     set_video2_settings_offset_24(0);
@@ -3726,7 +3727,7 @@ glabel interface_menu17_switchscreens
 /* 03F634 7F00AB04 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 03F638 7F00AB08 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 03F63C 7F00AB0C 44816000 */  mtc1  $at, $f12
-/* 03F640 7F00AB10 0C001151 */  jal   video_related_1F
+/* 03F640 7F00AB10 0C001151 */  jal   setvideo_far
 /* 03F644 7F00AB14 00000000 */   nop   
 /* 03F648 7F00AB18 3C018005 */  lui   $at, %hi(D_800519EC)
 /* 03F64C 7F00AB1C 0C001164 */  jal   video_related_21
@@ -3772,9 +3773,9 @@ glabel interface_menu17_switchscreens
 
 
 
-void constructor_menu17_switchscreens(void)
+void constructor_menu17_switchscreens(Gfx * DL)
 {
-    insert_imageDL();
+    insert_imageDL(DL);
 }
 
 
@@ -3786,23 +3787,21 @@ void constructor_menu17_switchscreens(void)
 #ifdef NONMATCHING
 void init_menu01_nintendo(void)
 {
-    ? sp24;
-    s32 temp_ret;
-
+    struct xyzpoint local_c;
+    
     menu_timer = 0;
-    sp24.unk0 = (?32) D_8002AAFC.unk0;
-    sp24.unk4 = (?32) D_8002AAFC.unk4;
-    sp24.unk8 = (?32) D_8002AAFC.unk8;
-    load_object_fill_header(PitemZ_entries.unkCF0, PitemZ_entries.unkCF4, ptr_logo_and_walletbond_DL, 0x3c000, 0);
-    set_objuse_flag_compute_grp_nums_set_obj_loaded(PnintendologoZ_header);
-    temp_ret = get_obj_instance_controller_for_header(PnintendologoZ_header);
-    something_legalscreen_constructor = temp_ret;
-    set_obj_instance_controller_scale(temp_ret, 0x3f800000);
-    setsuboffset(something_legalscreen_constructor, &sp24);
-    musicTrack1Play(0x2c);
-    maybe_is_in_menu = 1;
-    flt_CODE_bss_80069614 = (f32) D_800519F4;
-    (void *)0x80070000->unk-69E8 = (f32) D_800519F8;
+    local_c.x = xyzpoint_8002aafc.x;
+    local_c.y = xyzpoint_8002aafc.y;
+    local_c.z = xyzpoint_8002aafc.z;
+    load_object_fill_header(PitemZ_entries[276].header, PitemZ_entries[276].filename, ptr_logo_and_walletbond_DL,0x3c000,0);
+    set_objuse_flag_compute_grp_nums_set_obj_loaded(PitemZ_entries[276].header);
+    something_screen_constructor = get_obj_instance_controller_for_header(PitemZ_entries[276].header);
+    set_obj_instance_controller_scale(something_screen_constructor, 1.0f);
+    setsuboffset(something_screen_constructor, &local_c);
+    musicTrack1Play(M_INTROSWOOSH);
+    maybe_is_in_menu = TRUE;
+    flt_CODE_bss_80069614 = D_800519F4;
+    flt_CODE_bss_80069618 = D_800519F8;
 }
 #else
 GLOBAL_ASM(
@@ -3878,32 +3877,37 @@ void update_menu01_nintendo(void)
 
 
 
-
 #ifdef NONMATCHING
+extern f32 menu01_aspect;
+extern f32 menu01_pageheight;
+
 void interface_menu01_nintendo(void)
 {
-    s32 temp_t8;
+    setvideo_far(60.0f);
+    video_related_21(menu01_aspect);
+    set_page_height(100.0f, menu01_pageheight);
+    set_video2_settings_offset_24(0.0f);
 
-    video_related_1F(0x42700000);
-    video_related_21(D_800519FC);
-    set_page_height(0x42c80000, D_80051A00);
-    set_video2_settings_offset_24(0);
-    temp_t8 = menu_timer + clock_timer;
-    menu_timer = temp_t8;
-    if (temp_t8 >= 0x1f5)
+    menu_timer = menu_timer + clock_timer;
+    if (menu_timer < 501)
     {
-        set_menu_to_mode(2, 1);
-        return;
-    }
-    if (get_controller_buttons_pressed(0, 0xffff) != 0)
-    {
-        if (is_first_time_on_main_menu == 0)
+        if (get_controller_buttons_pressed(0, 0xffff) != 0)
         {
-            set_menu_to_mode(5, 1);
-            return;
+            if (is_first_time_on_main_menu == 0)
+            {
+                set_menu_to_mode(MENU_FILE_SELECT, 1);
+            } 
+            else
+            {    
+                prev_keypresses = 1;
+                set_menu_to_mode(MENU_RAREWARE_LOGO, 1);
+            }
         }
-        prev_keypresses = 1;
-        set_menu_to_mode(2, 1);
+    }
+    else
+    {
+        set_menu_to_mode(MENU_RAREWARE_LOGO, 1);
+        return;
     }
 }
 #else
@@ -3914,16 +3918,16 @@ glabel interface_menu01_nintendo
 /* 03F7FC 7F00ACCC 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 03F800 7F00ACD0 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 03F804 7F00ACD4 44816000 */  mtc1  $at, $f12
-/* 03F808 7F00ACD8 0C001151 */  jal   video_related_1F
+/* 03F808 7F00ACD8 0C001151 */  jal   setvideo_far
 /* 03F80C 7F00ACDC 00000000 */   nop   
-/* 03F810 7F00ACE0 3C018005 */  lui   $at, %hi(D_800519FC)
+/* 03F810 7F00ACE0 3C018005 */  lui   $at, %hi(menu01_aspect)
 /* 03F814 7F00ACE4 0C001164 */  jal   video_related_21
-/* 03F818 7F00ACE8 C42C19FC */   lwc1  $f12, %lo(D_800519FC)($at)
+/* 03F818 7F00ACE8 C42C19FC */   lwc1  $f12, %lo(menu01_aspect)($at)
 /* 03F81C 7F00ACEC 3C0142C8 */  li    $at, 0x42C80000 # 100.000000
 /* 03F820 7F00ACF0 44816000 */  mtc1  $at, $f12
-/* 03F824 7F00ACF4 3C018005 */  lui   $at, %hi(D_80051A00)
+/* 03F824 7F00ACF4 3C018005 */  lui   $at, %hi(menu01_pageheight)
 /* 03F828 7F00ACF8 0C001194 */  jal   set_page_height
-/* 03F82C 7F00ACFC C42E1A00 */   lwc1  $f14, %lo(D_80051A00)($at)
+/* 03F82C 7F00ACFC C42E1A00 */   lwc1  $f14, %lo(menu01_pageheight)($at)
 /* 03F830 7F00AD00 0C00114D */  jal   set_video2_settings_offset_24
 /* 03F834 7F00AD04 00002025 */   move  $a0, $zero
 /* 03F838 7F00AD08 3C028003 */  lui   $v0, %hi(menu_timer)
@@ -4299,8 +4303,8 @@ void interface_menu02_rareware(void)
     }
 }
 
-void constructor_menu02_rareware(void) {
-    retrieve_display_rareware_logo();
+void constructor_menu02_rareware(Gfx * DL) {
+    retrieve_display_rareware_logo(DL);
 }
 
 
@@ -4331,8 +4335,8 @@ void interface_menu03_eye(void) {
     }
 }
 
-void constructor_menu03_eye(void) {
-    sub_GAME_7F009254();
+void constructor_menu03_eye(Gfx * DL) {
+    sub_GAME_7F009254(DL);
 }
 
 
@@ -4422,56 +4426,45 @@ void update_menu04_goldeneye(void) {
 #ifdef NONMATCHING
 void interface_menu04_goldeneyelogo(void)
 {
-    s32 temp_t8;
-
-    video_related_1F(0x42700000);
-    video_related_21(D_80051A10);
-    set_page_height(0x42c80000, D_80051A14);
+    u32 uVar1;
+    
+    setvideo_far(60.00000000);
+    video_related_21(menu04_aspect);
+    set_page_height(100.00000000,(f32)menu04_pageheight);
     set_video2_settings_offset_24(0);
-    temp_t8 = menu_timer + clock_timer;
-    menu_timer = temp_t8;
-    if (((is_first_time_on_main_menu != 0) && (temp_t8 < 0xb5)) && (D_8002A938 != 0))
-    {
-        if ((temp_t8 >= 0x5b) && (menu_timer >= 0xb5))
-        {
-block_5:
-            if (prev_keypresses == 0)
+    menu_timer += clock_timer;
+    if (((is_first_time_on_main_menu == FALSE) || (0xb4 < menu_timer)) ||
+       ((ge_logo_bool != FALSE && (0x5a < menu_timer)))) {
+        if (menu_timer < 0xb5) {
+            uVar1 = get_controller_buttons_pressed
+                              ('\0',R_CBUTTONS|L_CBUTTONS|D_CBUTTONS|U_CBUTTONS|R_TRIG|L_TRIG|
+                                    DUMMY_2|DUMMY_1|R_JPAD|L_JPAD|D_JPAD|U_JPAD|START_BUTTON|Z_TRIG|
+                                    B_BUTTON|A_BUTTON);
+            if ((uVar1 != 0) || ((is_first_time_on_main_menu != FALSE && (ge_logo_bool != FALSE))))
             {
+                set_menu_to_mode(MENU_FILE_SELECT,1);
+            }
+        }
+        else {
+            if (prev_keypresses == 0) {
                 do_extended_cast_display(0);
-                set_menu_to_mode(0x18, 1);
-                return;
+                set_menu_to_mode(MENU_DISPLAY_CAST,1);
             }
-            set_menu_to_mode(5, 1);
-            return;
-        }
-        else
-        {
-            if (get_controller_buttons_pressed(0, 0xffff) != 0)
-            {
-                D_8002A938 = 1;
+            else {
+                set_menu_to_mode(MENU_FILE_SELECT,1);
             }
         }
     }
-    else
-    {
-        if (menu_timer >= 0xb5)
-        {
-            goto block_5;
-        }
-        if (get_controller_buttons_pressed(0, 0xffff) != 0)
-        {
-block_11:
-            set_menu_to_mode(5, 1);
-            return;
-        }
-        if (is_first_time_on_main_menu != 0)
-        {
-            if (D_8002A938 != 0)
-            {
-                goto block_11;
-            }
+    else {
+        uVar1 = get_controller_buttons_pressed
+                          ('\0',R_CBUTTONS|L_CBUTTONS|D_CBUTTONS|U_CBUTTONS|R_TRIG|L_TRIG|DUMMY_2|
+                                DUMMY_1|R_JPAD|L_JPAD|D_JPAD|U_JPAD|START_BUTTON|Z_TRIG|B_BUTTON|
+                                A_BUTTON);
+        if (uVar1 != 0) {
+            ge_logo_bool = TRUE;
         }
     }
+    return;
 }
 #else
 GLOBAL_ASM(
@@ -4481,7 +4474,7 @@ glabel interface_menu04_goldeneyelogo
 /* 03FE64 7F00B334 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 03FE68 7F00B338 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 03FE6C 7F00B33C 44816000 */  mtc1  $at, $f12
-/* 03FE70 7F00B340 0C001151 */  jal   video_related_1F
+/* 03FE70 7F00B340 0C001151 */  jal   setvideo_far
 /* 03FE74 7F00B344 00000000 */   nop   
 /* 03FE78 7F00B348 3C018005 */  lui   $at, %hi(D_80051A10)
 /* 03FE7C 7F00B34C 0C001164 */  jal   video_related_21
@@ -5412,7 +5405,7 @@ s32 interface_menu05_fileselect(void)
     {
         menu_timer = (s32) (menu_timer + clock_timer);
     }
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051A1C);
     set_page_height(0x42c80000, D_80051A20);
     set_video2_settings_offset_24(0);
@@ -5674,7 +5667,7 @@ glabel interface_menu05_fileselect
 .L7F00BC70:
 /* 0407A0 7F00BC70 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 0407A4 7F00BC74 44816000 */  mtc1  $at, $f12
-/* 0407A8 7F00BC78 0C001151 */  jal   video_related_1F
+/* 0407A8 7F00BC78 0C001151 */  jal   setvideo_far
 /* 0407AC 7F00BC7C 00000000 */   nop   
 /* 0407B0 7F00BC80 3C018005 */  lui   $at, %hi(D_80051A1C)
 /* 0407B4 7F00BC84 0C001164 */  jal   video_related_21
@@ -6377,7 +6370,7 @@ loop_4:
         goto loop_1;
     }
     arg0 = microcode_constructor(arg0);
-    sub_GAME_7F0ACB78(0);
+    setTextSpacingInverted(0);
     sp74 = &dword_CODE_bss_80069620;
     sp1B4 = 0;
 loop_7:
@@ -6445,7 +6438,7 @@ loop_7:
                 if (temp_ret_3 != 0)
                 {
                     textpointer_load_parse_something(&spD0, temp_ret_3);
-                    string_load_parse_something(&spD0, &asc_D_8004F488);
+                    string_append_from_obseg_textbank(&spD0, &asc_D_8004F488);
                     spF4 = 0;
                     spF8 = 0;
                     sub_GAME_7F0AE98C(&spF8, &spF4, &spD0, ptrSecondFontTableLarge, (?32) ptrFirstFontTableLarge, 0);
@@ -6488,11 +6481,11 @@ loop_24:
                     }
                     if (phi_s2_2 >= 0)
                     {
-                        string_load_parse_something(&spBC, *((((phi_s2_2 * 8) - phi_s2_2) * 4) + &mission_folder_setup_entries));
-                        string_load_parse_something(&spBC, &a_);
+                        string_append_from_obseg_textbank(&spBC, *((((phi_s2_2 * 8) - phi_s2_2) * 4) + &mission_folder_setup_entries));
+                        string_append_from_obseg_textbank(&spBC, &a_);
                     }
-                    string_load_parse_something(&spBC, *((((phi_s1_3 * 8) - phi_s1_3) * 4) + &mission_folder_setup_entries));
-                    string_load_parse_something(&spBC, &asc_D_8004F490);
+                    string_append_from_obseg_textbank(&spBC, *((((phi_s1_3 * 8) - phi_s1_3) * 4) + &mission_folder_setup_entries));
+                    string_append_from_obseg_textbank(&spBC, &asc_D_8004F490);
                     spF4 = 0;
                     spF8 = 0;
                     sub_GAME_7F0AE98C(&spF8, &spF4, &spBC, ptrSecondFontTableLarge, (?32) ptrFirstFontTableLarge, 0);
@@ -6515,7 +6508,7 @@ loop_24:
     {
         goto loop_7;
     }
-    sub_GAME_7F0ACB78(0);
+    setTextSpacingInverted(0);
     temp_ret_4 = get_textptr_for_textID(TEXT(LTITLE, 0x1b));
     spF4 = 0;
     spF8 = 0;
@@ -6742,7 +6735,7 @@ glabel constructor_menu05_fileselect
 /* 041160 7F00C630 0FC2B366 */  jal   microcode_constructor
 /* 041164 7F00C634 8FA401B8 */   lw    $a0, 0x1b8($sp)
 /* 041168 7F00C638 AFA201B8 */  sw    $v0, 0x1b8($sp)
-/* 04116C 7F00C63C 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 04116C 7F00C63C 0FC2B2DE */  jal   setTextSpacingInverted
 /* 041170 7F00C640 00002025 */   move  $a0, $zero
 /* 041174 7F00C644 3C0B8007 */  lui   $t3, %hi(dword_CODE_bss_80069620) 
 /* 041178 7F00C648 256B9620 */  addiu $t3, %lo(dword_CODE_bss_80069620) # addiu $t3, $t3, -0x69e0
@@ -7029,7 +7022,7 @@ glabel constructor_menu05_fileselect
 /* 0415C4 7F00CA94 00402825 */   move  $a1, $v0
 /* 0415C8 7F00CA98 3C058005 */  lui   $a1, %hi(asc_D_8004F488)
 /* 0415CC 7F00CA9C 24A5F488 */  addiu $a1, %lo(asc_D_8004F488) # addiu $a1, $a1, -0xb78
-/* 0415D0 7F00CAA0 0C0029FF */  jal   string_load_parse_something
+/* 0415D0 7F00CAA0 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 0415D4 7F00CAA4 27A400D0 */   addiu $a0, $sp, 0xd0
 /* 0415D8 7F00CAA8 8E980000 */  lw    $t8, ($s4)
 /* 0415DC 7F00CAAC AFA000F4 */  sw    $zero, 0xf4($sp)
@@ -7125,19 +7118,19 @@ glabel constructor_menu05_fileselect
 /* 041730 7F00CC00 000A5080 */  sll   $t2, $t2, 2
 /* 041734 7F00CC04 014E4821 */  addu  $t1, $t2, $t6
 /* 041738 7F00CC08 8D250000 */  lw    $a1, ($t1)
-/* 04173C 7F00CC0C 0C0029FF */  jal   string_load_parse_something
+/* 04173C 7F00CC0C 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 041740 7F00CC10 02A02025 */   move  $a0, $s5
 /* 041744 7F00CC14 3C058005 */  lui   $a1, %hi(a_)
 /* 041748 7F00CC18 24A5F48C */  addiu $a1, %lo(a_) # addiu $a1, $a1, -0xb74
-/* 04174C 7F00CC1C 0C0029FF */  jal   string_load_parse_something
+/* 04174C 7F00CC1C 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 041750 7F00CC20 02A02025 */   move  $a0, $s5
 .L7F00CC24:
 /* 041754 7F00CC24 02A02025 */  move  $a0, $s5
-/* 041758 7F00CC28 0C0029FF */  jal   string_load_parse_something
+/* 041758 7F00CC28 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 04175C 7F00CC2C 8E050000 */   lw    $a1, ($s0)
 /* 041760 7F00CC30 3C058005 */  lui   $a1, %hi(asc_D_8004F490)
 /* 041764 7F00CC34 24A5F490 */  addiu $a1, %lo(asc_D_8004F490) # addiu $a1, $a1, -0xb70
-/* 041768 7F00CC38 0C0029FF */  jal   string_load_parse_something
+/* 041768 7F00CC38 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 04176C 7F00CC3C 02A02025 */   move  $a0, $s5
 /* 041770 7F00CC40 8E880000 */  lw    $t0, ($s4)
 /* 041774 7F00CC44 AFA000F4 */  sw    $zero, 0xf4($sp)
@@ -7199,7 +7192,7 @@ glabel constructor_menu05_fileselect
 /* 041848 7F00CD18 AFAD0074 */  sw    $t5, 0x74($sp)
 /* 04184C 7F00CD1C 1501FE56 */  bne   $t0, $at, .L7F00C678
 /* 041850 7F00CD20 AFA801B4 */   sw    $t0, 0x1b4($sp)
-/* 041854 7F00CD24 0FC2B2DE */  jal   sub_GAME_7F0ACB78
+/* 041854 7F00CD24 0FC2B2DE */  jal   setTextSpacingInverted
 /* 041858 7F00CD28 00002025 */   move  $a0, $zero
 /* 04185C 7F00CD2C 0FC30776 */  jal   get_textptr_for_textID
 /* 041860 7F00CD30 34049C1B */   li    $a0, 39963
@@ -7594,7 +7587,7 @@ loop_1:
     {
         goto loop_1;
     }
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051A38);
     set_page_height(0x42c80000, D_80051A3C);
     set_video2_settings_offset_24(0);
@@ -7737,7 +7730,7 @@ glabel interface_menu06_modesel
 /* 041E24 7F00D2F4 24630001 */   addiu $v1, $v1, 1
 /* 041E28 7F00D2F8 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 041E2C 7F00D2FC 44816000 */  mtc1  $at, $f12
-/* 041E30 7F00D300 0C001151 */  jal   video_related_1F
+/* 041E30 7F00D300 0C001151 */  jal   setvideo_far
 /* 041E34 7F00D304 00000000 */   nop   
 /* 041E38 7F00D308 3C018005 */  lui   $at, %hi(D_80051A38)
 /* 041E3C 7F00D30C 0C001164 */  jal   video_related_21
@@ -8661,7 +8654,7 @@ u32 check_if_stage_completed_on_difficulty(int stage, DIFFICULTY difficulty) {
     completed = FALSE;
   }
   else {
-    completed = doesFolderHaveStageUnlockedAtDifficulty(selected_folder_num,mission_folder_setup_entries[stage].mission_num,difficulty);
+    completed = isStageUnlockedAtDifficulty(selected_folder_num,mission_folder_setup_entries[stage].mission_num,difficulty);
   }
   return completed;
 }
@@ -8681,7 +8674,7 @@ glabel check_if_stage_completed_on_difficulty
 /* 042860 7F00DD30 00A03025 */   move  $a2, $a1
 /* 042864 7F00DD34 3C048003 */  lui   $a0, %hi(selected_folder_num)
 /* 042868 7F00DD38 8C84A8E8 */  lw    $a0, %lo(selected_folder_num)($a0)
-/* 04286C 7F00DD3C 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 04286C 7F00DD3C 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 042870 7F00DD40 00E02825 */   move  $a1, $a3
 /* 042874 7F00DD44 10000003 */  b     .L7F00DD54
 /* 042878 7F00DD48 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -8723,7 +8716,7 @@ s32 get_highest_unlocked_difficulty_for_level(s32 arg0)
         {
             phi_s0 = phi_s1;
 loop_6:
-            temp_ret_2 = doesFolderHaveStageUnlockedAtDifficulty(selected_folder_num, arg0, phi_s0);
+            temp_ret_2 = isStageUnlockedAtDifficulty(selected_folder_num, arg0, phi_s0);
             if (append_cheat_sp == 0)
             {
                 if (temp_ret_2 != 0)
@@ -8789,7 +8782,7 @@ glabel get_highest_unlocked_difficulty_for_level
 /* 042914 7F00DDE4 8E840000 */  lw    $a0, ($s4)
 .L7F00DDE8:
 /* 042918 7F00DDE8 02602825 */  move  $a1, $s3
-/* 04291C 7F00DDEC 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 04291C 7F00DDEC 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 042920 7F00DDF0 02003025 */   move  $a2, $s0
 /* 042924 7F00DDF4 8E380000 */  lw    $t8, ($s1)
 /* 042928 7F00DDF8 17000005 */  bnez  $t8, .L7F00DE10
@@ -8882,7 +8875,7 @@ void interface_menu07_missionsel(void)
     s32 phi_a0;
     s32 phi_s5;
 
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051A44);
     set_page_height(0x42c80000, D_80051A48);
     set_video2_settings_offset_24(0);
@@ -9116,7 +9109,7 @@ glabel interface_menu07_missionsel
 /* 042A00 7F00DED0 AFB30020 */  sw    $s3, 0x20($sp)
 /* 042A04 7F00DED4 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 042A08 7F00DED8 AFB10018 */  sw    $s1, 0x18($sp)
-/* 042A0C 7F00DEDC 0C001151 */  jal   video_related_1F
+/* 042A0C 7F00DEDC 0C001151 */  jal   setvideo_far
 /* 042A10 7F00DEE0 AFB00014 */   sw    $s0, 0x14($sp)
 /* 042A14 7F00DEE4 3C018005 */  lui   $at, %hi(D_80051A44)
 /* 042A18 7F00DEE8 0C001164 */  jal   video_related_21
@@ -9481,7 +9474,7 @@ glabel interface_menu07_missionsel
 /* 042A60 7F00DEF0 AFB30020 */  sw    $s3, 0x20($sp)
 /* 042A64 7F00DEF4 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 042A68 7F00DEF8 AFB10018 */  sw    $s1, 0x18($sp)
-/* 042A6C 7F00DEFC 0C001151 */  jal   video_related_1F
+/* 042A6C 7F00DEFC 0C001151 */  jal   setvideo_far
 /* 042A70 7F00DF00 AFB00014 */   sw    $s0, 0x14($sp)
 /* 042A74 7F00DF04 3C018005 */  lui   $at, %hi(D_80051A44) # $at, 0x8005
 /* 042A78 7F00DF08 0C001164 */  jal   video_related_21
@@ -9970,7 +9963,7 @@ loop_10:
                 }
             }
         }
-        string_load_parse_something(&sp90, &asc_D_8004F4A0);
+        string_append_from_obseg_textbank(&sp90, &asc_D_8004F4A0);
         spC4 = 0;
         temp_a0 = &spC8;
         spC8 = 0;
@@ -10103,7 +10096,7 @@ glabel constructor_menu07_missionsel
 .L7F00E5C4:
 /* 0430F4 7F00E5C4 3C058005 */  lui   $a1, %hi(asc_D_8004F4A0)
 /* 0430F8 7F00E5C8 24A5F4A0 */  addiu $a1, %lo(asc_D_8004F4A0) # addiu $a1, $a1, -0xb60
-/* 0430FC 7F00E5CC 0C0029FF */  jal   string_load_parse_something
+/* 0430FC 7F00E5CC 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 043100 7F00E5D0 02402025 */   move  $a0, $s2
 /* 043104 7F00E5D4 3C198004 */  lui   $t9, %hi(ptrFirstFontTableSmall) 
 /* 043108 7F00E5D8 8F390EAC */  lw    $t9, %lo(ptrFirstFontTableSmall)($t9)
@@ -10240,7 +10233,7 @@ void interface_menu08_difficulty(void)
     s32 sp1C;
 
     sp1C = get_highest_unlocked_difficulty_for_level((0x80030000 + (briefingpage * 0x1c))->unk-5408);
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051A4C);
     set_page_height(0x42c80000, D_80051A50);
     set_video2_settings_offset_24(0);
@@ -10341,7 +10334,7 @@ glabel interface_menu08_difficulty
 /* 043318 7F00E7E8 8C84ABF8 */   lw    $a0, %lo(mission_folder_setup_entries+0x14)($a0)
 /* 04331C 7F00E7EC 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 043320 7F00E7F0 44816000 */  mtc1  $at, $f12
-/* 043324 7F00E7F4 0C001151 */  jal   video_related_1F
+/* 043324 7F00E7F4 0C001151 */  jal   setvideo_far
 /* 043328 7F00E7F8 AFA2001C */   sw    $v0, 0x1c($sp)
 /* 04332C 7F00E7FC 3C018005 */  lui   $at, %hi(D_80051A4C)
 /* 043330 7F00E800 0C001164 */  jal   video_related_21
@@ -10549,7 +10542,7 @@ void print_current_solo_briefing_stage_name(s32 arg0, s32 arg1)
     if (selected_difficulty >= 0)
     {
         textpointer_load_parse_something(arg1, get_ptr_difficulty_name(selected_difficulty, selected_difficulty));
-        string_load_parse_something(arg1, get_textptr_for_textID(TEXT(LTITLE, 0x20)));
+        string_append_from_obseg_textbank(arg1, get_textptr_for_textID(TEXT(LTITLE, 0x20)));
         sp54 = 0x37;
         sp50 = 0x57;
         sp44 = get_video2_settings_txtClipW();
@@ -10562,20 +10555,20 @@ void print_current_solo_briefing_stage_name(s32 arg0, s32 arg1)
         textpointer_load_parse_something(arg1, get_textptr_for_textID(TEXT(LTITLE, 0x21)));
         temp_v1 = (sp4C * 0x1c) + &mission_folder_setup_entries;
         sp40 = temp_v1;
-        string_load_parse_something(arg1, *temp_v1);
-        string_load_parse_something(arg1, &asc_D_8004F4A4);
-        string_load_parse_something(arg1, get_textptr_for_textID(sp40->unk4));
-        string_load_parse_something(arg1, &asc_D_8004F4A8);
+        string_append_from_obseg_textbank(arg1, *temp_v1);
+        string_append_from_obseg_textbank(arg1, &asc_D_8004F4A4);
+        string_append_from_obseg_textbank(arg1, get_textptr_for_textID(sp40->unk4));
+        string_append_from_obseg_textbank(arg1, &asc_D_8004F4A8);
         sp54 = 0x37;
         sp50 = 0x67;
         sp44 = get_video2_settings_txtClipW();
         arg0 = write_text_at_abs_coord(arg0, &sp54, &sp50, arg1, (?32) ptrSecondFontTableLarge, (?32) ptrFirstFontTableLarge, 0xff, sp44, get_video2_settings_txtClipH(), 0, 0);
     }
     textpointer_load_parse_something(arg1, get_textptr_for_textID(TEXT(LTITLE, 0x22)));
-    string_load_parse_something(arg1, *(&mission_folder_setup_entries + (briefingpage * 0x1c)));
-    string_load_parse_something(arg1, &asc_D_8004F4AC);
-    string_load_parse_something(arg1, get_textptr_for_textID(*(&mission_folder_setup_entries + (briefingpage * 0x1c))));
-    string_load_parse_something(arg1, &asc_D_8004F4B0);
+    string_append_from_obseg_textbank(arg1, *(&mission_folder_setup_entries + (briefingpage * 0x1c)));
+    string_append_from_obseg_textbank(arg1, &asc_D_8004F4AC);
+    string_append_from_obseg_textbank(arg1, get_textptr_for_textID(*(&mission_folder_setup_entries + (briefingpage * 0x1c))));
+    string_append_from_obseg_textbank(arg1, &asc_D_8004F4B0);
     sp54 = 0x37;
     sp50 = 0x77;
     sp44 = get_video2_settings_txtClipW();
@@ -10601,7 +10594,7 @@ glabel print_current_solo_briefing_stage_name
 /* 043620 7F00EAF0 0FC30776 */  jal   get_textptr_for_textID
 /* 043624 7F00EAF4 34049C20 */   li    $a0, 39968
 /* 043628 7F00EAF8 02002025 */  move  $a0, $s0
-/* 04362C 7F00EAFC 0C0029FF */  jal   string_load_parse_something
+/* 04362C 7F00EAFC 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 043630 7F00EB00 00402825 */   move  $a1, $v0
 /* 043634 7F00EB04 240E0037 */  li    $t6, 55
 /* 043638 7F00EB08 240F0057 */  li    $t7, 87
@@ -10649,21 +10642,21 @@ glabel print_current_solo_briefing_stage_name
 /* 0436DC 7F00EBAC 016C1821 */  addu  $v1, $t3, $t4
 /* 0436E0 7F00EBB0 8C650000 */  lw    $a1, ($v1)
 /* 0436E4 7F00EBB4 AFA30040 */  sw    $v1, 0x40($sp)
-/* 0436E8 7F00EBB8 0C0029FF */  jal   string_load_parse_something
+/* 0436E8 7F00EBB8 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 0436EC 7F00EBBC 02002025 */   move  $a0, $s0
 /* 0436F0 7F00EBC0 3C058005 */  lui   $a1, %hi(asc_D_8004F4A4)
 /* 0436F4 7F00EBC4 24A5F4A4 */  addiu $a1, %lo(asc_D_8004F4A4) # addiu $a1, $a1, -0xb5c
-/* 0436F8 7F00EBC8 0C0029FF */  jal   string_load_parse_something
+/* 0436F8 7F00EBC8 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 0436FC 7F00EBCC 02002025 */   move  $a0, $s0
 /* 043700 7F00EBD0 8FAD0040 */  lw    $t5, 0x40($sp)
 /* 043704 7F00EBD4 0FC30776 */  jal   get_textptr_for_textID
 /* 043708 7F00EBD8 95A40004 */   lhu   $a0, 4($t5)
 /* 04370C 7F00EBDC 02002025 */  move  $a0, $s0
-/* 043710 7F00EBE0 0C0029FF */  jal   string_load_parse_something
+/* 043710 7F00EBE0 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 043714 7F00EBE4 00402825 */   move  $a1, $v0
 /* 043718 7F00EBE8 3C058005 */  lui   $a1, %hi(asc_D_8004F4A8)
 /* 04371C 7F00EBEC 24A5F4A8 */  addiu $a1, %lo(asc_D_8004F4A8) # addiu $a1, $a1, -0xb58
-/* 043720 7F00EBF0 0C0029FF */  jal   string_load_parse_something
+/* 043720 7F00EBF0 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 043724 7F00EBF4 02002025 */   move  $a0, $s0
 /* 043728 7F00EBF8 240E0037 */  li    $t6, 55
 /* 04372C 7F00EBFC 240F0067 */  li    $t7, 103
@@ -10705,11 +10698,11 @@ glabel print_current_solo_briefing_stage_name
 /* 0437B8 7F00EC88 016A5823 */  subu  $t3, $t3, $t2
 /* 0437BC 7F00EC8C 000B5880 */  sll   $t3, $t3, 2
 /* 0437C0 7F00EC90 00AB2821 */  addu  $a1, $a1, $t3
-/* 0437C4 7F00EC94 0C0029FF */  jal   string_load_parse_something
+/* 0437C4 7F00EC94 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 0437C8 7F00EC98 8CA5ABE4 */   lw    $a1, %lo(mission_folder_setup_entries)($a1)
 /* 0437CC 7F00EC9C 3C058005 */  lui   $a1, %hi(asc_D_8004F4AC)
 /* 0437D0 7F00ECA0 24A5F4AC */  addiu $a1, %lo(asc_D_8004F4AC) # addiu $a1, $a1, -0xb54
-/* 0437D4 7F00ECA4 0C0029FF */  jal   string_load_parse_something
+/* 0437D4 7F00ECA4 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 0437D8 7F00ECA8 02002025 */   move  $a0, $s0
 /* 0437DC 7F00ECAC 3C0C8003 */  lui   $t4, %hi(briefingpage) 
 /* 0437E0 7F00ECB0 8D8CA8F8 */  lw    $t4, %lo(briefingpage)($t4)
@@ -10721,11 +10714,11 @@ glabel print_current_solo_briefing_stage_name
 /* 0437F8 7F00ECC8 0FC30776 */  jal   get_textptr_for_textID
 /* 0437FC 7F00ECCC 9484ABE8 */   lhu   $a0, %lo(mission_folder_setup_entries+0x4)($a0)
 /* 043800 7F00ECD0 02002025 */  move  $a0, $s0
-/* 043804 7F00ECD4 0C0029FF */  jal   string_load_parse_something
+/* 043804 7F00ECD4 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 043808 7F00ECD8 00402825 */   move  $a1, $v0
 /* 04380C 7F00ECDC 3C058005 */  lui   $a1, %hi(asc_D_8004F4B0)
 /* 043810 7F00ECE0 24A5F4B0 */  addiu $a1, %lo(asc_D_8004F4B0) # addiu $a1, $a1, -0xb50
-/* 043814 7F00ECE4 0C0029FF */  jal   string_load_parse_something
+/* 043814 7F00ECE4 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 043818 7F00ECE8 02002025 */   move  $a0, $s0
 /* 04381C 7F00ECEC 240E0037 */  li    $t6, 55
 /* 043820 7F00ECF0 240F0077 */  li    $t7, 119
@@ -11438,7 +11431,7 @@ void interface_menu09_007options(void)
     f32 phi_f0;
     f32 phi_f0_2;
 
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051A58);
     set_page_height(0x42c80000, D_80051A5C);
     set_video2_settings_offset_24(0);
@@ -11610,7 +11603,7 @@ glabel interface_menu09_007options
 /* 043EA8 7F00F378 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 043EAC 7F00F37C AFBF0014 */  sw    $ra, 0x14($sp)
 /* 043EB0 7F00F380 44816000 */  mtc1  $at, $f12
-/* 043EB4 7F00F384 0C001151 */  jal   video_related_1F
+/* 043EB4 7F00F384 0C001151 */  jal   setvideo_far
 /* 043EB8 7F00F388 00000000 */   nop   
 /* 043EBC 7F00F38C 3C018005 */  lui   $at, %hi(D_80051A58)
 /* 043EC0 7F00F390 0C001164 */  jal   video_related_21
@@ -12648,82 +12641,29 @@ glabel get_player_control_style
 
 
 
-#ifdef NONMATCHING
-? check_if_mp_stage_unlocked(s32 arg0)
-{
-    void *sp18;
-    void *temp_v1;
 
-    temp_v1 = (arg0 * 0x18) + &multi_stage_setups;
-    if (temp_v1->unk10 == 0)
+s32 check_if_mp_stage_unlocked(s32 stage)
+{
+    s32 players;
+    if (!multi_stage_setups[stage].min_player)
     {
         return 0;
     }
-    sp18 = temp_v1;
-    if (temp_v1->unk14 < get_selected_num_players())
+    players=get_selected_num_players();
+    if (multi_stage_setups[stage].max_player < players)
     {
         return 0;
     }
-    if (temp_v1->unkC == -1)
+    if (multi_stage_setups[stage].unlock_after == -1)
     {
         return 1;
     }
-    if (doesFolderHaveStageUnlockedAtDifficulty(selected_folder_num, temp_v1->unkC, 0) != 0)
+    if (isStageUnlockedAtDifficulty(selected_folder_num, multi_stage_setups[stage].unlock_after, DIFFICULTY_AGENT))
     {
         return 1;
     }
     return 0;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel check_if_mp_stage_unlocked
-/* 044C00 7F0100D0 00047080 */  sll   $t6, $a0, 2
-/* 044C04 7F0100D4 01C47023 */  subu  $t6, $t6, $a0
-/* 044C08 7F0100D8 3C0F8003 */  lui   $t7, %hi(multi_stage_setups) 
-/* 044C0C 7F0100DC 25EFB074 */  addiu $t7, %lo(multi_stage_setups) # addiu $t7, $t7, -0x4f8c
-/* 044C10 7F0100E0 000E70C0 */  sll   $t6, $t6, 3
-/* 044C14 7F0100E4 01CF1821 */  addu  $v1, $t6, $t7
-/* 044C18 7F0100E8 8C780010 */  lw    $t8, 0x10($v1)
-/* 044C1C 7F0100EC 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 044C20 7F0100F0 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 044C24 7F0100F4 17000003 */  bnez  $t8, .L7F010104
-/* 044C28 7F0100F8 00000000 */   nop   
-/* 044C2C 7F0100FC 10000018 */  b     .L7F010160
-/* 044C30 7F010100 00001025 */   move  $v0, $zero
-.L7F010104:
-/* 044C34 7F010104 0FC040A4 */  jal   get_selected_num_players
-/* 044C38 7F010108 AFA30018 */   sw    $v1, 0x18($sp)
-/* 044C3C 7F01010C 8FA30018 */  lw    $v1, 0x18($sp)
-/* 044C40 7F010110 8C790014 */  lw    $t9, 0x14($v1)
-/* 044C44 7F010114 0322082A */  slt   $at, $t9, $v0
-/* 044C48 7F010118 50200004 */  beql  $at, $zero, .L7F01012C
-/* 044C4C 7F01011C 8C65000C */   lw    $a1, 0xc($v1)
-/* 044C50 7F010120 1000000F */  b     .L7F010160
-/* 044C54 7F010124 00001025 */   move  $v0, $zero
-/* 044C58 7F010128 8C65000C */  lw    $a1, 0xc($v1)
-.L7F01012C:
-/* 044C5C 7F01012C 2401FFFF */  li    $at, -1
-/* 044C60 7F010130 3C048003 */  lui   $a0, %hi(selected_folder_num)
-/* 044C64 7F010134 14A10003 */  bne   $a1, $at, .L7F010144
-/* 044C68 7F010138 00003025 */   move  $a2, $zero
-/* 044C6C 7F01013C 10000008 */  b     .L7F010160
-/* 044C70 7F010140 24020001 */   li    $v0, 1
-.L7F010144:
-/* 044C74 7F010144 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
-/* 044C78 7F010148 8C84A8E8 */   lw    $a0, %lo(selected_folder_num)($a0)
-/* 044C7C 7F01014C 50400004 */  beql  $v0, $zero, .L7F010160
-/* 044C80 7F010150 00001025 */   move  $v0, $zero
-/* 044C84 7F010154 10000002 */  b     .L7F010160
-/* 044C88 7F010158 24020001 */   li    $v0, 1
-/* 044C8C 7F01015C 00001025 */  move  $v0, $zero
-.L7F010160:
-/* 044C90 7F010160 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 044C94 7F010164 27BD0020 */  addiu $sp, $sp, 0x20
-/* 044C98 7F010168 03E00008 */  jr    $ra
-/* 044C9C 7F01016C 00000000 */   nop   
-)
-#endif
 
 
 
@@ -12799,12 +12739,12 @@ void copy_aim_settings_to_playerdata(void)
 {
   player1_player_data.autoaim = mp_sight_adjust_table[aim_sight_adjustment].autoaim;
   player1_player_data.sight = mp_sight_adjust_table[aim_sight_adjustment].sight;
-  player2_player_data.autoaim = player1_player_data.autoaim;
-  player2_player_data.sight = player1_player_data.sight;
-  player3_player_data.autoaim = player1_player_data.autoaim;
-  player3_player_data.sight = player1_player_data.sight;
-  player4_player_data.autoaim = player1_player_data.autoaim;
-  player4_player_data.sight = player1_player_data.sight;
+  player2_player_data.autoaim = mp_sight_adjust_table[aim_sight_adjustment].autoaim;
+  player2_player_data.sight = mp_sight_adjust_table[aim_sight_adjustment].sight;
+  player3_player_data.autoaim = mp_sight_adjust_table[aim_sight_adjustment].autoaim;
+  player3_player_data.sight = mp_sight_adjust_table[aim_sight_adjustment].sight;
+  player4_player_data.autoaim = mp_sight_adjust_table[aim_sight_adjustment].autoaim;
+  player4_player_data.sight = mp_sight_adjust_table[aim_sight_adjustment].sight;
 }
 #else
 GLOBAL_ASM(
@@ -12897,400 +12837,128 @@ void unlock_all_mp_chars(void) {
 }
 
 
-
-
-
-
-u32 get_selected_num_players(void)
+s32 get_selected_num_players(void)
 {
-  if (gamemode == GAMEMODE_MULTI) {
-    return selected_num_players;
-  }
-  return 1;
+    if (gamemode == GAMEMODE_MULTI)
+    {
+        return selected_num_players;
+    }
+    return 1;
 }
 
-
-
-
-
-#ifdef NONMATCHING
-HEADS get_player_mp_char_head(int player)
+u16 get_player_mp_char_head(s32 player)
 {
-  if ((int)(&player_1_char)[player] < 0) {
-    return (HEADS)(uint)(ushort)mp_chr_setup[player].head;
-  }
-  return (HEADS)(uint)(ushort)mp_chr_setup[(&player_1_char)[player]].head;
+    if ((&player_1_char)[player] < 0)
+    {
+        return mp_chr_setup[player].head;
+    }
+    return mp_chr_setup[(&player_1_char)[player]].head;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel get_player_mp_char_head
-/* 044DEC 7F0102BC 00047080 */  sll   $t6, $a0, 2
-/* 044DF0 7F0102C0 3C038003 */  lui   $v1, %hi(player_1_char)
-/* 044DF4 7F0102C4 006E1821 */  addu  $v1, $v1, $t6
-/* 044DF8 7F0102C8 8C63B524 */  lw    $v1, %lo(player_1_char)($v1)
-/* 044DFC 7F0102CC 00047880 */  sll   $t7, $a0, 2
-/* 044E00 7F0102D0 3C028003 */  lui   $v0, %hi(mp_chr_setup+6)
-/* 044E04 7F0102D4 04610007 */  bgez  $v1, .L7F0102F4
-/* 044E08 7F0102D8 0003C080 */   sll   $t8, $v1, 2
-/* 044E0C 7F0102DC 01E47823 */  subu  $t7, $t7, $a0
-/* 044E10 7F0102E0 000F7880 */  sll   $t7, $t7, 2
-/* 044E14 7F0102E4 3C028003 */  lui   $v0, %hi(mp_chr_setup+6)
-/* 044E18 7F0102E8 004F1021 */  addu  $v0, $v0, $t7
-/* 044E1C 7F0102EC 03E00008 */  jr    $ra
-/* 044E20 7F0102F0 9442B19E */   lhu   $v0, %lo(mp_chr_setup+6)($v0)
-.L7F0102F4:
-/* 044E24 7F0102F4 0303C023 */  subu  $t8, $t8, $v1
-/* 044E28 7F0102F8 0018C080 */  sll   $t8, $t8, 2
-/* 044E2C 7F0102FC 00581021 */  addu  $v0, $v0, $t8
-/* 044E30 7F010300 9442B19E */  lhu   $v0, %lo(mp_chr_setup+6)($v0)
-/* 044E34 7F010304 03E00008 */  jr    $ra
-/* 044E38 7F010308 00000000 */   nop   
-)
-#endif
 
-
-
-
-
-#ifdef NONMATCHING
-ulonglong get_player_mp_char_gender(int player)
+u8 get_player_mp_char_gender(int player)
 {
-  if ((int)(&player_1_char)[player] < 0) {
-    return (ulonglong)(byte)mp_chr_setup[player].gender;
-  }
-  return (ulonglong)(byte)mp_chr_setup[(&player_1_char)[player]].gender;
+    if ((&player_1_char)[player] < 0)
+    {
+        return mp_chr_setup[player].gender;
+    }
+    return mp_chr_setup[(&player_1_char)[player]].gender;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel get_player_mp_char_gender
-/* 044E3C 7F01030C 00047080 */  sll   $t6, $a0, 2
-/* 044E40 7F010310 3C038003 */  lui   $v1, %hi(player_1_char)
-/* 044E44 7F010314 006E1821 */  addu  $v1, $v1, $t6
-/* 044E48 7F010318 8C63B524 */  lw    $v1, %lo(player_1_char)($v1)
-/* 044E4C 7F01031C 00047880 */  sll   $t7, $a0, 2
-/* 044E50 7F010320 3C028003 */  lui   $v0, %hi(mp_chr_setup+2)
-/* 044E54 7F010324 04610007 */  bgez  $v1, .L7F010344
-/* 044E58 7F010328 0003C080 */   sll   $t8, $v1, 2
-/* 044E5C 7F01032C 01E47823 */  subu  $t7, $t7, $a0
-/* 044E60 7F010330 000F7880 */  sll   $t7, $t7, 2
-/* 044E64 7F010334 3C028003 */  lui   $v0, %hi(mp_chr_setup+2)
-/* 044E68 7F010338 004F1021 */  addu  $v0, $v0, $t7
-/* 044E6C 7F01033C 03E00008 */  jr    $ra
-/* 044E70 7F010340 9042B19A */   lbu   $v0, %lo(mp_chr_setup+2)($v0)
-.L7F010344:
-/* 044E74 7F010344 0303C023 */  subu  $t8, $t8, $v1
-/* 044E78 7F010348 0018C080 */  sll   $t8, $t8, 2
-/* 044E7C 7F01034C 00581021 */  addu  $v0, $v0, $t8
-/* 044E80 7F010350 9042B19A */  lbu   $v0, %lo(mp_chr_setup+2)($v0)
-/* 044E84 7F010354 03E00008 */  jr    $ra
-/* 044E88 7F010358 00000000 */   nop   
-)
-#endif
 
-
-
-
-
-#ifdef NONMATCHING
-BODIES get_player_mp_char_body(int player)
+u16 get_player_mp_char_body(int player)
 {
-  if ((int)(&player_1_char)[player] < 0) {
-    return (BODIES)(uint)(ushort)mp_chr_setup[player].body;
-  }
-  return (BODIES)(uint)(ushort)mp_chr_setup[(&player_1_char)[player]].body;
+    if ((&player_1_char)[player] < 0)
+    {
+        return mp_chr_setup[player].body;
+    }
+    return mp_chr_setup[(&player_1_char)[player]].body;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel get_player_mp_char_body
-/* 044E8C 7F01035C 00047080 */  sll   $t6, $a0, 2
-/* 044E90 7F010360 3C038003 */  lui   $v1, %hi(player_1_char)
-/* 044E94 7F010364 006E1821 */  addu  $v1, $v1, $t6
-/* 044E98 7F010368 8C63B524 */  lw    $v1, %lo(player_1_char)($v1)
-/* 044E9C 7F01036C 00047880 */  sll   $t7, $a0, 2
-/* 044EA0 7F010370 3C028003 */  lui   $v0, %hi(mp_chr_setup+4)
-/* 044EA4 7F010374 04610007 */  bgez  $v1, .L7F010394
-/* 044EA8 7F010378 0003C080 */   sll   $t8, $v1, 2
-/* 044EAC 7F01037C 01E47823 */  subu  $t7, $t7, $a0
-/* 044EB0 7F010380 000F7880 */  sll   $t7, $t7, 2
-/* 044EB4 7F010384 3C028003 */  lui   $v0, %hi(mp_chr_setup+4)
-/* 044EB8 7F010388 004F1021 */  addu  $v0, $v0, $t7
-/* 044EBC 7F01038C 03E00008 */  jr    $ra
-/* 044EC0 7F010390 9442B19C */   lhu   $v0, %lo(mp_chr_setup+4)($v0)
-.L7F010394:
-/* 044EC4 7F010394 0303C023 */  subu  $t8, $t8, $v1
-/* 044EC8 7F010398 0018C080 */  sll   $t8, $t8, 2
-/* 044ECC 7F01039C 00581021 */  addu  $v0, $v0, $t8
-/* 044ED0 7F0103A0 9442B19C */  lhu   $v0, %lo(mp_chr_setup+4)($v0)
-/* 044ED4 7F0103A4 03E00008 */  jr    $ra
-/* 044ED8 7F0103A8 00000000 */   nop   
-)
-#endif
-
-
-
-
 
 f32 get_player_mp_handicap(int player)
 {
-  return (f32)MP_handicap_table[(&handicap_player1)[player]].damage_modifier;
+    return MP_handicap_table[(&handicap_player1)[player]].damage_modifier;
 }
 
-
-
-
-
-
-#ifdef NONMATCHING
 f32 get_player_mp_char_height(int player)
 {
-  if ((int)(&player_1_char)[player] < 0) {
-    return (f32)mp_chr_setup[player].pov;
-  }
-  return (f32)mp_chr_setup[(&player_1_char)[player]].pov;
+    if ((&player_1_char)[player] < 0) {
+        return mp_chr_setup[player].pov;
+    }
+    return mp_chr_setup[(&player_1_char)[player]].pov;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel get_player_mp_char_height
-/* 044F00 7F0103D0 00047080 */  sll   $t6, $a0, 2
-/* 044F04 7F0103D4 3C028003 */  lui   $v0, %hi(player_1_char)
-/* 044F08 7F0103D8 004E1021 */  addu  $v0, $v0, $t6
-/* 044F0C 7F0103DC 8C42B524 */  lw    $v0, %lo(player_1_char)($v0)
-/* 044F10 7F0103E0 00047880 */  sll   $t7, $a0, 2
-/* 044F14 7F0103E4 3C018003 */  lui   $at, %hi(mp_chr_setup+8)
-/* 044F18 7F0103E8 04410007 */  bgez  $v0, .L7F010408
-/* 044F1C 7F0103EC 0002C080 */   sll   $t8, $v0, 2
-/* 044F20 7F0103F0 01E47823 */  subu  $t7, $t7, $a0
-/* 044F24 7F0103F4 000F7880 */  sll   $t7, $t7, 2
-/* 044F28 7F0103F8 3C018003 */  lui   $at, %hi(mp_chr_setup+8)
-/* 044F2C 7F0103FC 002F0821 */  addu  $at, $at, $t7
-/* 044F30 7F010400 03E00008 */  jr    $ra
-/* 044F34 7F010404 C420B1A0 */   lwc1  $f0, %lo(mp_chr_setup+8)($at)
-.L7F010408:
-/* 044F38 7F010408 0302C023 */  subu  $t8, $t8, $v0
-/* 044F3C 7F01040C 0018C080 */  sll   $t8, $t8, 2
-/* 044F40 7F010410 00380821 */  addu  $at, $at, $t8
-/* 044F44 7F010414 C420B1A0 */  lwc1  $f0, %lo(mp_chr_setup+8)($at)
-/* 044F48 7F010418 03E00008 */  jr    $ra
-/* 044F4C 7F01041C 00000000 */   nop   
-)
-#endif
-
-
-
-
-
 
 int get_mp_timelimit(void) {
   return multi_game_lengths[game_length].time;
 }
 
-
-
 int get_mp_pointlimit(void) {
   return multi_game_lengths[game_length].points;
 }
 
-
-
-
-#ifdef NONMATCHING
-void reset_mp_options_for_scenario(MPSCENARIOS scenario)
-
+void reset_mp_options_for_scenario(MPSCENARIOS scenarioid)
 {
-  unlock_stage_select = 1;
-  unlock_game_length = 1;
-  unlock_chars = 1;
-  unlock_weapon_select = 1;
-  unlock_handicap = 1;
-  unlock_control_style = 1;
-  unlock_aim_sight = 1;
-  
-  scenario = scenario;
-  switch(scenario) {
-  case SCENARIO_NORMAL:
-  case SCENARIO_2v2:
-  case SCENARIO_3v1:
-  case SCENARIO_2v1:
-    if (6 < game_length) {
-      game_length = 2;
+    scenario = scenarioid;
+
+    unlock_stage_select = 1;
+    unlock_game_length = 1;
+    unlock_chars = 1;
+    unlock_weapon_select = 1;
+    unlock_handicap = 1;
+    unlock_control_style = 1;
+    unlock_aim_sight = 1;
+
+    
+    switch(scenario)
+    {
+    case SCENARIO_NORMAL:
+    case SCENARIO_2v2:
+    case SCENARIO_3v1:
+    case SCENARIO_2v1:
+        if (6 < game_length)
+        {
+            game_length = 2;
+        }
+        if (0xd < get_mp_weapon_set())
+        {
+            set_mp_weapon_set(0xd);
+        }
+        break;
+    case SCENARIO_YOLT:
+        game_length = 7;
+
+        if (0xd < get_mp_weapon_set())
+        {
+            set_mp_weapon_set(0xd);
+        }
+        unlock_game_length = 0;
+        break;
+    case SCENARIO_TLD:
+        if (3 < game_length)
+        {
+            game_length = 2;
+        }
+        if (0xd < get_mp_weapon_set())
+        {
+            set_mp_weapon_set(0xd);
+        }
+        break;
+    case SCENARIO_MWTGG:
+        if (6 < game_length)
+        {
+            game_length = 2;
+        }
+        set_mp_weapon_set(0xd);
+        unlock_weapon_select = 0;
+        break;
+    case SCENARIO_LTK:
+        if (6 < game_length)
+        {
+            game_length = 2;
+        }
+        set_mp_weapon_set(1);
+        unlock_handicap = 0;
     }
-    scenario = scenario;
-    if (0xd < get_mp_weapon_set()) {
-      set_mp_weapon_set(0xd);
-    }
-    break;
-  case SCENARIO_YOLT:
-    game_length = 7;
-    scenario = scenario;
-    if (0xd < get_mp_weapon_set()) {
-      set_mp_weapon_set(0xd);
-    }
-    unlock_game_length = 0;
-    break;
-  case SCENARIO_TLD:
-    if (3 < game_length) {
-      game_length = 2;
-    }
-    scenario = scenario;
-    if (0xd < get_mp_weapon_set()) {
-      set_mp_weapon_set(0xd);
-    }
-    break;
-  case SCENARIO_MWTGG:
-    if (6 < game_length) {
-      game_length = 2;
-    }
-    scenario = scenario;
-    set_mp_weapon_set(0xd);
-    unlock_weapon_select = 0;
-    break;
-  case SCENARIO_LTK:
-    if (6 < game_length) {
-      game_length = 2;
-    }
-    scenario = scenario;
-    set_mp_weapon_set(1);
-    unlock_handicap = 0;
-  }
-  return;
+    return;
 }
-#else
-GLOBAL_ASM(
-.late_rodata
-glabel jpt_scenario_specific_settings_mp
- .word .L7F0104DC
- .word .L7F01051C
- .word .L7F010550
- .word .L7F010594
- .word .L7F0105C8
- .word .L7F0104DC
- .word .L7F0104DC
- .word .L7F0104DC
-.text
-glabel reset_mp_options_for_scenario
-/* 044F98 7F010468 3C038003 */  lui   $v1, %hi(scenario)
-/* 044F9C 7F01046C 2463B540 */  addiu $v1, %lo(scenario) # addiu $v1, $v1, -0x4ac0
-/* 044FA0 7F010470 24020001 */  li    $v0, 1
-/* 044FA4 7F010474 AC640000 */  sw    $a0, ($v1)
-/* 044FA8 7F010478 3C018003 */  lui   $at, %hi(unlock_stage_select)
-/* 044FAC 7F01047C AC22B544 */  sw    $v0, %lo(unlock_stage_select)($at)
-/* 044FB0 7F010480 3C018003 */  lui   $at, %hi(unlock_game_length)
-/* 044FB4 7F010484 AC22B548 */  sw    $v0, %lo(unlock_game_length)($at)
-/* 044FB8 7F010488 3C018003 */  lui   $at, %hi(unlock_chars)
-/* 044FBC 7F01048C AC22B54C */  sw    $v0, %lo(unlock_chars)($at)
-/* 044FC0 7F010490 3C018003 */  lui   $at, %hi(unlock_weapon_select)
-/* 044FC4 7F010494 AC22B550 */  sw    $v0, %lo(unlock_weapon_select)($at)
-/* 044FC8 7F010498 3C018003 */  lui   $at, %hi(unlock_handicap)
-/* 044FCC 7F01049C AC22B554 */  sw    $v0, %lo(unlock_handicap)($at)
-/* 044FD0 7F0104A0 3C018003 */  lui   $at, %hi(unlock_control_style)
-/* 044FD4 7F0104A4 AC22B558 */  sw    $v0, %lo(unlock_control_style)($at)
-/* 044FD8 7F0104A8 3C018003 */  lui   $at, %hi(unlock_aim_sight)
-/* 044FDC 7F0104AC AC22B55C */  sw    $v0, %lo(unlock_aim_sight)($at)
-/* 044FE0 7F0104B0 8C6E0000 */  lw    $t6, ($v1)
-/* 044FE4 7F0104B4 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 044FE8 7F0104B8 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 044FEC 7F0104BC 2DC10008 */  sltiu $at, $t6, 8
-/* 044FF0 7F0104C0 1020004D */  beqz  $at, .L7F0105F8
-/* 044FF4 7F0104C4 000E7080 */   sll   $t6, $t6, 2
-/* 044FF8 7F0104C8 3C018005 */  lui   $at, %hi(jpt_scenario_specific_settings_mp)
-/* 044FFC 7F0104CC 002E0821 */  addu  $at, $at, $t6
-/* 045000 7F0104D0 8C2E1A60 */  lw    $t6, %lo(jpt_scenario_specific_settings_mp)($at)
-/* 045004 7F0104D4 01C00008 */  jr    $t6
-/* 045008 7F0104D8 00000000 */   nop   
-.L7F0104DC:
-/* 04500C 7F0104DC 3C028003 */  lui   $v0, %hi(game_length)
-/* 045010 7F0104E0 2442B538 */  addiu $v0, %lo(game_length) # addiu $v0, $v0, -0x4ac8
-/* 045014 7F0104E4 8C4F0000 */  lw    $t7, ($v0)
-/* 045018 7F0104E8 29E10007 */  slti  $at, $t7, 7
-/* 04501C 7F0104EC 14200002 */  bnez  $at, .L7F0104F8
-/* 045020 7F0104F0 24180002 */   li    $t8, 2
-/* 045024 7F0104F4 AC580000 */  sw    $t8, ($v0)
-.L7F0104F8:
-/* 045028 7F0104F8 0FC3198F */  jal   get_mp_weapon_set
-/* 04502C 7F0104FC 00000000 */   nop   
-/* 045030 7F010500 2841000E */  slti  $at, $v0, 0xe
-/* 045034 7F010504 5420003D */  bnezl $at, .L7F0105FC
-/* 045038 7F010508 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 04503C 7F01050C 0FC3198C */  jal   set_mp_weapon_set
-/* 045040 7F010510 2404000D */   li    $a0, 13
-/* 045044 7F010514 10000039 */  b     .L7F0105FC
-/* 045048 7F010518 8FBF0014 */   lw    $ra, 0x14($sp)
-.L7F01051C:
-/* 04504C 7F01051C 3C028003 */  lui   $v0, %hi(game_length)
-/* 045050 7F010520 2442B538 */  addiu $v0, %lo(game_length) # addiu $v0, $v0, -0x4ac8
-/* 045054 7F010524 24190007 */  li    $t9, 7
-/* 045058 7F010528 0FC3198F */  jal   get_mp_weapon_set
-/* 04505C 7F01052C AC590000 */   sw    $t9, ($v0)
-/* 045060 7F010530 2841000E */  slti  $at, $v0, 0xe
-/* 045064 7F010534 14200003 */  bnez  $at, .L7F010544
-/* 045068 7F010538 00000000 */   nop   
-/* 04506C 7F01053C 0FC3198C */  jal   set_mp_weapon_set
-/* 045070 7F010540 2404000D */   li    $a0, 13
-.L7F010544:
-/* 045074 7F010544 3C018003 */  lui   $at, %hi(unlock_game_length)
-/* 045078 7F010548 1000002B */  b     .L7F0105F8
-/* 04507C 7F01054C AC20B548 */   sw    $zero, %lo(unlock_game_length)($at)
-.L7F010550:
-/* 045080 7F010550 3C028003 */  lui   $v0, %hi(game_length)
-/* 045084 7F010554 2442B538 */  addiu $v0, %lo(game_length) # addiu $v0, $v0, -0x4ac8
-/* 045088 7F010558 8C480000 */  lw    $t0, ($v0)
-/* 04508C 7F01055C 24090002 */  li    $t1, 2
-/* 045090 7F010560 29010004 */  slti  $at, $t0, 4
-/* 045094 7F010564 14200002 */  bnez  $at, .L7F010570
-/* 045098 7F010568 00000000 */   nop   
-/* 04509C 7F01056C AC490000 */  sw    $t1, ($v0)
-.L7F010570:
-/* 0450A0 7F010570 0FC3198F */  jal   get_mp_weapon_set
-/* 0450A4 7F010574 00000000 */   nop   
-/* 0450A8 7F010578 2841000E */  slti  $at, $v0, 0xe
-/* 0450AC 7F01057C 5420001F */  bnezl $at, .L7F0105FC
-/* 0450B0 7F010580 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0450B4 7F010584 0FC3198C */  jal   set_mp_weapon_set
-/* 0450B8 7F010588 2404000D */   li    $a0, 13
-/* 0450BC 7F01058C 1000001B */  b     .L7F0105FC
-/* 0450C0 7F010590 8FBF0014 */   lw    $ra, 0x14($sp)
-.L7F010594:
-/* 0450C4 7F010594 3C028003 */  lui   $v0, %hi(game_length)
-/* 0450C8 7F010598 2442B538 */  addiu $v0, %lo(game_length) # addiu $v0, $v0, -0x4ac8
-/* 0450CC 7F01059C 8C4A0000 */  lw    $t2, ($v0)
-/* 0450D0 7F0105A0 240B0002 */  li    $t3, 2
-/* 0450D4 7F0105A4 29410007 */  slti  $at, $t2, 7
-/* 0450D8 7F0105A8 14200002 */  bnez  $at, .L7F0105B4
-/* 0450DC 7F0105AC 00000000 */   nop   
-/* 0450E0 7F0105B0 AC4B0000 */  sw    $t3, ($v0)
-.L7F0105B4:
-/* 0450E4 7F0105B4 0FC3198C */  jal   set_mp_weapon_set
-/* 0450E8 7F0105B8 2404000D */   li    $a0, 13
-/* 0450EC 7F0105BC 3C018003 */  lui   $at, %hi(unlock_weapon_select)
-/* 0450F0 7F0105C0 1000000D */  b     .L7F0105F8
-/* 0450F4 7F0105C4 AC20B550 */   sw    $zero, %lo(unlock_weapon_select)($at)
-.L7F0105C8:
-/* 0450F8 7F0105C8 3C028003 */  lui   $v0, %hi(game_length)
-/* 0450FC 7F0105CC 2442B538 */  addiu $v0, %lo(game_length) # addiu $v0, $v0, -0x4ac8
-/* 045100 7F0105D0 8C4C0000 */  lw    $t4, ($v0)
-/* 045104 7F0105D4 240D0002 */  li    $t5, 2
-/* 045108 7F0105D8 29810007 */  slti  $at, $t4, 7
-/* 04510C 7F0105DC 14200002 */  bnez  $at, .L7F0105E8
-/* 045110 7F0105E0 00000000 */   nop   
-/* 045114 7F0105E4 AC4D0000 */  sw    $t5, ($v0)
-.L7F0105E8:
-/* 045118 7F0105E8 0FC3198C */  jal   set_mp_weapon_set
-/* 04511C 7F0105EC 24040001 */   li    $a0, 1
-/* 045120 7F0105F0 3C018003 */  lui   $at, %hi(unlock_handicap)
-/* 045124 7F0105F4 AC20B554 */  sw    $zero, %lo(unlock_handicap)($at)
-def_7F0104D4:
-.L7F0105F8:
-/* 045128 7F0105F8 8FBF0014 */  lw    $ra, 0x14($sp)
-.L7F0105FC:
-/* 04512C 7F0105FC 27BD0018 */  addiu $sp, $sp, 0x18
-/* 045130 7F010600 03E00008 */  jr    $ra
-/* 045134 7F010604 00000000 */   nop   
-)
-#endif
 
 
 
@@ -13441,7 +13109,8 @@ void init_menu0E_mpoptions(void)
     tab_2_highlight = FALSE;
     tab_1_highlight = FALSE;
 
-    if (maybe_is_in_menu != FALSE) {
+    if (maybe_is_in_menu != FALSE)
+    {
         sfx_c_700091E8(0x7fff);
         musicTrack1Vol(0x7fff);
         music1_playing = FALSE;
@@ -13449,12 +13118,14 @@ void init_menu0E_mpoptions(void)
         maybe_is_in_menu = FALSE;
     }
 
-    if (selected_num_players == 0) {
+    if (selected_num_players == 0)
+    {
         numplayers = get_attached_controller_count();
         init_mp_options_for_scenario(numplayers);
     }
 
-    if (check_if_mp_stage_unlocked(MP_stage_selected) == FALSE) {
+    if (check_if_mp_stage_unlocked(MP_stage_selected) == FALSE)
+    {
         MP_stage_selected = MP_STAGE_TEMPLE;
     }
     
@@ -13470,8 +13141,8 @@ void init_menu0E_mpoptions(void)
     load_walletbond();
 }
 
-
-void update_menu0E_mpoptions(void) {
+void update_menu0E_mpoptions(void)
+{
     return;
 }
 
@@ -13485,44 +13156,45 @@ void update_menu0E_mpoptions(void) {
 #ifdef NONMATCHING
 void interface_menu0E_mpoptions(void)
 {
-    s32 sp3C;
-    s32 sp38;
-    s32 sp34;
-    s32 sp30;
-    s32 sp2C;
-    s32 sp28;
-    s32 sp24;
-    s32 sp20;
-    s32 sp1C;
-    s32 temp_f6;
+    s32 players_selected;
+    s32 scenario_selected;
+    s32 gameselect_selected;
+    s32 gamelength_selected;
+    s32 character_selected;
+    s32 weaponselect_selected;
+    s32 health_selected;
+    s32 controlstyle_selected;
+    s32 aimadjustment_selected;
+
+    s32 cursor_v;
     s32 temp_v1;
     u32 temp_hi;
     void *temp_v0;
     s32 phi_a0;
 
-    sp3C = 0;
-    sp38 = 0;
-    sp34 = 0;
-    sp30 = 0;
-    sp2C = 0;
-    sp28 = 0;
-    sp24 = 0;
-    sp20 = 0;
-    sp1C = 0;
-    video_related_1F(0x42700000);
-    video_related_21(D_80051A80);
-    set_page_height(0x42c80000, D_80051A84);
+    players_selected = 0;
+    scenario_selected = 0;
+    gameselect_selected = 0;
+    gamelength_selected = 0;
+    character_selected = 0;
+    weaponselect_selected = 0;
+    health_selected = 0;
+    controlstyle_selected = 0;
+    aimadjustment_selected = 0;
+    setvideo_far(60.0f);
+    video_related_21(menu0E_aspect);
+    set_page_height(100.0f, menu0E_pageheight);
     set_video2_settings_offset_24(0);
     if (get_attached_controller_count() < 2)
     {
-        set_menu_to_mode(6, 0);
+        set_menu_to_mode(MENU_MODE_SELECT, 0);
         set_menu_cursor_pos_to_setting(gamemode);
     }
     if (get_attached_controller_count() < selected_num_players)
     {
         init_mp_options_for_scenario(get_attached_controller_count());
     }
-    if (get_controller_buttons_held(0, 0xa000) == 0)
+    if (get_controller_buttons_held(0, Z_TRIG|A_BUTTON) == 0)
     {
         tab_3_highlight = 0;
         tab_2_highlight = 0;
@@ -13536,87 +13208,70 @@ void interface_menu0E_mpoptions(void)
         highlight_health = 0;
         highlight_controlstyle = 0;
         highlight_aimadjustment = 0;
-        if (isontab3() != 0)
+        if (isontab3())
         {
             tab_3_highlight = 1;
         }
+        
+        if (isontab1())
+        {
+            cursor_v_pos = 1;
+        }
+        
+        cursor_v = (s32)cursor_v_pos;
+        if ((cursor_v >= 0x119) && (unlock_aim_sight != 0))
+        {
+            highlight_aimadjustment = 1;
+        }
+        
+        if ((cursor_v >= 0x105) && (unlock_control_style != 0))
+        {
+            highlight_controlstyle = 1;
+        }
+        
+        if ((cursor_v >= 0xf1) && (unlock_handicap != 0))
+        {
+            highlight_health = 1;
+        }
+        
+        if ((cursor_v >= 0xdd) && (unlock_chars != 0))
+        {
+            highlight_character = 1;
+        }
+        
+        if ((cursor_v >= 0xc9) && (unlock_weapon_select != 0))
+        {
+            highlight_weaponselect = 1;
+        }
+        
+        if ((cursor_v >= 0xb5) && (unlock_game_length != 0))
+        {
+            highlight_gamelength = 1;
+        }
+        
+        if ((cursor_v >= 0xa1) && (unlock_stage_select != 0))
+        {
+            highlight_gameselect = 1;
+        }
+        
+        if (cursor_v >= 0x8d)
+        {
+            highlight_scenario = 1;
+        }
         else
         {
-            if (isontab1() != 0)
-            {
-                cursor_v_pos = 1;
-            }
-            else
-            {
-                temp_f6 = (s32) *(void *)0x80030000;
-                if ((temp_f6 >= 0x119) && (unlock_aim_sight != 0))
-                {
-                    highlight_aimadjustment = 1;
-                }
-                else
-                {
-                    if ((temp_f6 >= 0x105) && (unlock_control_style != 0))
-                    {
-                        highlight_controlstyle = 1;
-                    }
-                    else
-                    {
-                        if ((temp_f6 >= 0xf1) && (unlock_handicap != 0))
-                        {
-                            highlight_health = 1;
-                        }
-                        else
-                        {
-                            if ((temp_f6 >= 0xdd) && (unlock_chars != 0))
-                            {
-                                highlight_character = 1;
-                            }
-                            else
-                            {
-                                if ((temp_f6 >= 0xc9) && (unlock_weapon_select != 0))
-                                {
-                                    highlight_weaponselect = 1;
-                                }
-                                else
-                                {
-                                    if ((temp_f6 >= 0xb5) && (unlock_game_length != 0))
-                                    {
-                                        highlight_gamelength = 1;
-                                    }
-                                    else
-                                    {
-                                        if ((temp_f6 >= 0xa1) && (unlock_stage_select != 0))
-                                        {
-                                            highlight_gameselect = 1;
-                                        }
-                                        else
-                                        {
-                                            if (temp_f6 >= 0x8d)
-                                            {
-                                                highlight_scenario = 1;
-                                            }
-                                            else
-                                            {
-                                                highlight_players = 1;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            highlight_players = 1;
         }
     }
-    if (get_controller_buttons_pressed(0, 0x1000) != 0)
+
+    if (get_controller_buttons_pressed(0, START_BUTTON) != 0)
     {
         tab_1_selected = 1;
         play_sfx_a1(ptr_sfx_buf, 0xc7, 0);
     }
     else
     {
-        if (get_controller_buttons_pressed(0, 0xa000) != 0)
+        if (get_controller_buttons_pressed(0, Z_TRIG|A_BUTTON) != 0)
         {
             if (tab_3_highlight != 0)
             {
@@ -13626,74 +13281,47 @@ void interface_menu0E_mpoptions(void)
             {
                 tab_1_selected = 1;
             }
-            else
+            if (highlight_players != 0)
             {
-                if (highlight_players != 0)
-                {
-                    sp3C = 1;
-                }
-                else
-                {
-                    if (highlight_scenario != 0)
-                    {
-                        sp38 = 1;
-                    }
-                    else
-                    {
-                        if (highlight_gameselect != 0)
-                        {
-                            sp34 = 1;
-                        }
-                        else
-                        {
-                            if (highlight_gamelength != 0)
-                            {
-                                sp30 = 1;
-                            }
-                            else
-                            {
-                                if (highlight_character != 0)
-                                {
-                                    sp2C = 1;
-                                }
-                                else
-                                {
-                                    if (highlight_weaponselect != 0)
-                                    {
-                                        sp28 = 1;
-                                    }
-                                    else
-                                    {
-                                        if (highlight_health != 0)
-                                        {
-                                            sp24 = 1;
-                                        }
-                                        else
-                                        {
-                                            if (highlight_controlstyle != 0)
-                                            {
-                                                sp20 = 1;
-                                            }
-                                            else
-                                            {
-                                                if (highlight_aimadjustment != 0)
-                                                {
-                                                    sp1C = 1;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                players_selected = 1;
+            }
+            if (highlight_scenario != 0)
+            {
+                scenario_selected = 1;
+            }
+            if (highlight_gameselect != 0)
+            {
+                gameselect_selected = 1;
+            }
+            if (highlight_gamelength != 0)
+            {
+                gamelength_selected = 1;
+            }
+            if (highlight_character != 0)
+            {
+                character_selected = 1;
+            }
+            if (highlight_weaponselect != 0)
+            {
+                weaponselect_selected = 1;
+            }
+            if (highlight_health != 0)
+            {
+                health_selected = 1;
+            }
+            if (highlight_controlstyle != 0)
+            {
+                controlstyle_selected = 1;
+            }
+            if (highlight_aimadjustment != 0)
+            {
+                aimadjustment_selected = 1;
             }
             play_sfx_a1(ptr_sfx_buf, 0xc7, 0);
         }
         else
         {
-            if (get_controller_buttons_pressed(0, 0x4000) != 0)
+            if (get_controller_buttons_pressed(0, B_BUTTON) != 0)
             {
                 tab_3_selected = 1;
                 play_sfx_a1(ptr_sfx_buf, 0xc7, 0);
@@ -13708,117 +13336,83 @@ void interface_menu0E_mpoptions(void)
     menu_control_stick_tracking();
     if (tab_3_selected != 0)
     {
-        set_menu_to_mode(6, 0);
+        set_menu_to_mode(MENU_MODE_SELECT, 0);
         set_menu_cursor_pos_to_setting(gamemode);
         return;
     }
     if (tab_1_selected != 0)
     {
-        temp_v0 = 0x80030000 + (MP_stage_selected * 0x18);
-        if (temp_v0->unk-4F84 < 0)
-        {
-loop_65:
-            temp_hi = get_random_value() % 0xbU;
-            selected_stage = (?32) (0x80030000 + (temp_hi * 0x18))->unk-4F6C;
-            if (check_if_mp_stage_unlocked(temp_hi + 1) == 0)
-            {
-                goto loop_65;
-            }
+        curstageid = multi_stage_setups[MP_stage_selected].stage_id;
+        if (multi_stage_setups[MP_stage_selected].stage_id < 0) {
+            do {
+                numplayers = get_random_value();
+                selected_stage = multi_stage_setups[numplayers % 0xb + 1].stage_id;
+                curstageid = selected_stage;
+            } while (check_if_mp_stage_unlocked(numplayers % 0xb + 1) == FALSE);
         }
-        else
-        {
-            *(void *)0x80030000 = (bitwise f32) temp_v0->unk-4F84;
-        }
-        briefingpage = (?32) -1;
-        set_menu_to_mode(0xb, 1);
-        return;
+        selected_stage = curstageid;
+        briefingpage = 0xffffffff;
+        set_menu_to_mode(MENU_RUN_STAGE,1);
     }
-    if (sp3C != 0)
+    if (players_selected != 0)
     {
         temp_v1 = selected_num_players + 1;
         phi_a0 = temp_v1;
-        if (get_attached_controller_count(6) < temp_v1)
+        if (get_attached_controller_count() < temp_v1)
         {
             phi_a0 = 2;
         }
         init_mp_options_for_scenario(phi_a0);
         return;
     }
-    if (sp38 != 0)
+    if (scenario_selected != 0)
     {
-        set_menu_to_mode(0x13, 0);
+        set_menu_to_mode(MENU_MP_SCENARIO_SELECT, 0);
         return;
     }
-    if (sp34 != 0)
+    if (gameselect_selected != 0)
     {
-        set_menu_to_mode(0x12, 0);
+        set_menu_to_mode(MENU_MP_STAGE_SELECT, 0);
         return;
     }
-    if (sp30 != 0)
+    if (gamelength_selected != 0)
     {
-        select_game_length(6);
+        select_game_length();
         return;
     }
-    if (sp2C != 0)
+    if (character_selected != 0)
     {
-        set_menu_to_mode(0xf, 0);
+        set_menu_to_mode(MENU_MP_CHAR_SELECT, 0);
         return;
     }
-    if (sp28 != 0)
+    if (weaponselect_selected != 0)
     {
-        advance_mp_weapon_set_by_one_save_value(6);
+        advance_mp_weapon_set_by_one_save_value();
         return;
     }
-    if (sp24 != 0)
+    if (health_selected != 0)
     {
-        set_menu_to_mode(0x10, 0);
+        set_menu_to_mode(MENU_MP_HANDICAP, 0);
         return;
     }
-    if (sp20 != 0)
+    if (controlstyle_selected != 0)
     {
-        set_menu_to_mode(0x11, 0);
+        set_menu_to_mode(MENU_MP_CONTROL_STYLE, 0);
         return;
     }
-    if (sp1C != 0)
+    if (aimadjustment_selected != 0)
     {
-        advance_aim_settings_selection(6);
+        advance_aim_settings_selection();
     }
 }
 #else
 GLOBAL_ASM(
 .late_rodata
-glabel D_80051A80
+glabel menu0E_aspect
 .word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051A84
+glabel menu0E_pageheight
 .word 0x461C4000 /*10000.0;*/
-glabel D_80051A88
-.word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051A8C
-.word 0x461C4000 /*10000.0;*/
-glabel D_80051A90
-.word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051A94
-.word 0x461C4000 /*10000.0;*/
-glabel D_80051A98
-.word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051A9C
-.word 0x461C4000 /*10000.0;*/
-glabel D_80051AA0
-.word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051AA4
-.word 0x461C4000 /*10000.0;*/
-glabel D_80051AA8
-.word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051AAC
-.word 0x461C4000 /*10000.0;*/
-glabel D_80051AB0
-.word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051AB4
-.word 0x461C4000 /*10000.0;*/
-glabel D_80051AB8
-.word 0x3FAAAAAB /*1.3333334;*/
-glabel D_80051ABC
-.word 0x461C4000 /*10000.0;*/
+
 .text
 glabel interface_menu0E_mpoptions
 /* 045378 7F010848 27BDFFC0 */  addiu $sp, $sp, -0x40
@@ -13833,16 +13427,16 @@ glabel interface_menu0E_mpoptions
 /* 04539C 7F01086C AFA00028 */  sw    $zero, 0x28($sp)
 /* 0453A0 7F010870 AFA00024 */  sw    $zero, 0x24($sp)
 /* 0453A4 7F010874 AFA00020 */  sw    $zero, 0x20($sp)
-/* 0453A8 7F010878 0C001151 */  jal   video_related_1F
+/* 0453A8 7F010878 0C001151 */  jal   setvideo_far
 /* 0453AC 7F01087C AFA0001C */   sw    $zero, 0x1c($sp)
-/* 0453B0 7F010880 3C018005 */  lui   $at, %hi(D_80051A80)
+/* 0453B0 7F010880 3C018005 */  lui   $at, %hi(menu0E_aspect)
 /* 0453B4 7F010884 0C001164 */  jal   video_related_21
-/* 0453B8 7F010888 C42C1A80 */   lwc1  $f12, %lo(D_80051A80)($at)
+/* 0453B8 7F010888 C42C1A80 */   lwc1  $f12, %lo(menu0E_aspect)($at)
 /* 0453BC 7F01088C 3C0142C8 */  li    $at, 0x42C80000 # 100.000000
 /* 0453C0 7F010890 44816000 */  mtc1  $at, $f12
-/* 0453C4 7F010894 3C018005 */  lui   $at, %hi(D_80051A84)
+/* 0453C4 7F010894 3C018005 */  lui   $at, %hi(menu0E_pageheight)
 /* 0453C8 7F010898 0C001194 */  jal   set_page_height
-/* 0453CC 7F01089C C42E1A84 */   lwc1  $f14, %lo(D_80051A84)($at)
+/* 0453CC 7F01089C C42E1A84 */   lwc1  $f14, %lo(menu0E_pageheight)($at)
 /* 0453D0 7F0108A0 0C00114D */  jal   set_video2_settings_offset_24
 /* 0453D4 7F0108A4 00002025 */   move  $a0, $zero
 /* 0453D8 7F0108A8 0C002E7E */  jal   get_attached_controller_count
@@ -15567,27 +15161,27 @@ loop_1:
     phi_v0 = temp_v0;
     if ((u32) *temp_v0 < 0xbb8U)
     {
-        sub_GAME_7F0CBEE8(*temp_v0, 0, *temp_v0);
+        calls_load_image_to_buffer(*temp_v0, 0, *temp_v0);
         phi_v0 = mpcharselimages + temp_lo;
     }
     temp_v1 = phi_v0->unkC;
     phi_v0_2 = phi_v0;
     if (temp_v1 < 0xbb8U)
     {
-        sub_GAME_7F0CBEE8(temp_v1, 0);
+        calls_load_image_to_buffer(temp_v1, 0);
         phi_v0_2 = mpcharselimages + temp_lo;
     }
     temp_v1_2 = phi_v0_2->unk18;
     phi_v0_3 = phi_v0_2;
     if (temp_v1_2 < 0xbb8U)
     {
-        sub_GAME_7F0CBEE8(temp_v1_2, 0);
+        calls_load_image_to_buffer(temp_v1_2, 0);
         phi_v0_3 = mpcharselimages + temp_lo;
     }
     temp_v1_3 = phi_v0_3->unk24;
     if (temp_v1_3 < 0xbb8U)
     {
-        sub_GAME_7F0CBEE8(temp_v1_3, 0);
+        calls_load_image_to_buffer(temp_v1_3, 0);
     }
     temp_s1 = phi_s1 + 0xc;
     phi_s1 = temp_s1;
@@ -15597,7 +15191,7 @@ loop_1:
     }
     if (num_chars_selectable_mp != 0x40)
     {
-        if (doesFolderHaveStageUnlockedAtDifficulty(selected_folder_num, 0x11, 0) == 3)
+        if (isStageUnlockedAtDifficulty(selected_folder_num, 0x11, 0) == 3)
         {
             num_chars_selectable_mp = 0x21;
         }
@@ -15698,7 +15292,7 @@ glabel init_menu0f_mpcharsel
 /* 0467F0 7F011CC0 2CC10BB8 */  sltiu $at, $a2, 0xbb8
 /* 0467F4 7F011CC4 10200005 */  beqz  $at, .L7F011CDC
 /* 0467F8 7F011CC8 00C02025 */   move  $a0, $a2
-/* 0467FC 7F011CCC 0FC32FBA */  jal   sub_GAME_7F0CBEE8
+/* 0467FC 7F011CCC 0FC32FBA */  jal   calls_load_image_to_buffer
 /* 046800 7F011CD0 00002825 */   move  $a1, $zero
 /* 046804 7F011CD4 8E580000 */  lw    $t8, ($s2)
 /* 046808 7F011CD8 03101021 */  addu  $v0, $t8, $s0
@@ -15707,7 +15301,7 @@ glabel init_menu0f_mpcharsel
 /* 046810 7F011CE0 2C610BB8 */  sltiu $at, $v1, 0xbb8
 /* 046814 7F011CE4 10200005 */  beqz  $at, .L7F011CFC
 /* 046818 7F011CE8 00602025 */   move  $a0, $v1
-/* 04681C 7F011CEC 0FC32FBA */  jal   sub_GAME_7F0CBEE8
+/* 04681C 7F011CEC 0FC32FBA */  jal   calls_load_image_to_buffer
 /* 046820 7F011CF0 00002825 */   move  $a1, $zero
 /* 046824 7F011CF4 8E590000 */  lw    $t9, ($s2)
 /* 046828 7F011CF8 03301021 */  addu  $v0, $t9, $s0
@@ -15716,7 +15310,7 @@ glabel init_menu0f_mpcharsel
 /* 046830 7F011D00 2C610BB8 */  sltiu $at, $v1, 0xbb8
 /* 046834 7F011D04 10200005 */  beqz  $at, .L7F011D1C
 /* 046838 7F011D08 00602025 */   move  $a0, $v1
-/* 04683C 7F011D0C 0FC32FBA */  jal   sub_GAME_7F0CBEE8
+/* 04683C 7F011D0C 0FC32FBA */  jal   calls_load_image_to_buffer
 /* 046840 7F011D10 00002825 */   move  $a1, $zero
 /* 046844 7F011D14 8E480000 */  lw    $t0, ($s2)
 /* 046848 7F011D18 01101021 */  addu  $v0, $t0, $s0
@@ -15725,7 +15319,7 @@ glabel init_menu0f_mpcharsel
 /* 046850 7F011D20 2C610BB8 */  sltiu $at, $v1, 0xbb8
 /* 046854 7F011D24 10200003 */  beqz  $at, .L7F011D34
 /* 046858 7F011D28 00602025 */   move  $a0, $v1
-/* 04685C 7F011D2C 0FC32FBA */  jal   sub_GAME_7F0CBEE8
+/* 04685C 7F011D2C 0FC32FBA */  jal   calls_load_image_to_buffer
 /* 046860 7F011D30 00002825 */   move  $a1, $zero
 .L7F011D34:
 /* 046864 7F011D34 2631000C */  addiu $s1, $s1, 0xc
@@ -15740,7 +15334,7 @@ glabel init_menu0f_mpcharsel
 /* 046888 7F011D58 11210023 */  beq   $t1, $at, .L7F011DE8
 /* 04688C 7F011D5C 24050011 */   li    $a1, 17
 /* 046890 7F011D60 8C84A8E8 */  lw    $a0, %lo(selected_folder_num)($a0)
-/* 046894 7F011D64 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 046894 7F011D64 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 046898 7F011D68 00003025 */   move  $a2, $zero
 /* 04689C 7F011D6C 24010003 */  li    $at, 3
 /* 0468A0 7F011D70 14410004 */  bne   $v0, $at, .L7F011D84
@@ -15871,7 +15465,7 @@ void interface_menu0F_mpcharsel(void)
   
   iVar4 = get_selected_num_players();
   iStack12 = 0;
-  video_related_1F(60.00000000);
+  setvideo_far(60.00000000);
   video_related_21((f32)flt_80051A88);
   set_page_height(100.00000000,(f32)flt_80051A8C);
   set_video2_settings_offset_24(0);
@@ -15994,6 +15588,12 @@ LAB_7f012164:
 }
 #else
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051A88
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051A8C
+.word 0x461C4000 /*10000.0;*/
+
 .text
 glabel interface_menu0F_mpcharsel
 /* 046A04 7F011ED4 27BDFFB0 */  addiu $sp, $sp, -0x50
@@ -16011,7 +15611,7 @@ glabel interface_menu0F_mpcharsel
 /* 046A34 7F011F04 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 046A38 7F011F08 44816000 */  mtc1  $at, $f12
 /* 046A3C 7F011F0C AFA2004C */  sw    $v0, 0x4c($sp)
-/* 046A40 7F011F10 0C001151 */  jal   video_related_1F
+/* 046A40 7F011F10 0C001151 */  jal   setvideo_far
 /* 046A44 7F011F14 AFA00044 */   sw    $zero, 0x44($sp)
 /* 046A48 7F011F18 3C018005 */  lui   $at, %hi(D_80051A88)
 /* 046A4C 7F011F1C 0C001164 */  jal   video_related_21
@@ -17515,7 +17115,7 @@ void interface_menu10_mphandicap(void)
     s32 phi_fp_2;
 
     sp44 = get_selected_num_players();
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051A90);
     set_page_height(0x42c80000, D_80051A94);
     set_video2_settings_offset_24(0);
@@ -17617,6 +17217,12 @@ block_15:
 }
 #else
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051A90
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051A94
+.word 0x461C4000 /*10000.0;*/
+
 .text
 glabel interface_menu10_mphandicap
 /* 0479F4 7F012EC4 27BDFFB8 */  addiu $sp, $sp, -0x48
@@ -17634,7 +17240,7 @@ glabel interface_menu10_mphandicap
 /* 047A24 7F012EF4 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 047A28 7F012EF8 44816000 */  mtc1  $at, $f12
 /* 047A2C 7F012EFC AFA20044 */  sw    $v0, 0x44($sp)
-/* 047A30 7F012F00 0C001151 */  jal   video_related_1F
+/* 047A30 7F012F00 0C001151 */  jal   setvideo_far
 /* 047A34 7F012F04 0000F025 */   move  $fp, $zero
 /* 047A38 7F012F08 3C018005 */  lui   $at, %hi(D_80051A90)
 /* 047A3C 7F012F0C 0C001164 */  jal   video_related_21
@@ -18248,7 +17854,7 @@ void interface_menu11_mpcontrols(void)
 
     temp_s6 = get_selected_num_players();
     sp44 = 0;
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051A98);
     set_page_height(0x42c80000, D_80051A9C);
     set_video2_settings_offset_24(0);
@@ -18403,6 +18009,12 @@ block_31:
 
 #ifdef VERSION_US
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051A98
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051A9C
+.word 0x461C4000 /*10000.0;*/
+
 .text
 glabel interface_menu11_mpcontrols
 /* 048138 7F013608 27BDFFB0 */  addiu $sp, $sp, -0x50
@@ -18420,7 +18032,7 @@ glabel interface_menu11_mpcontrols
 /* 048168 7F013638 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 04816C 7F01363C 44816000 */  mtc1  $at, $f12
 /* 048170 7F013640 0040B025 */  move  $s6, $v0
-/* 048174 7F013644 0C001151 */  jal   video_related_1F
+/* 048174 7F013644 0C001151 */  jal   setvideo_far
 /* 048178 7F013648 AFA00044 */   sw    $zero, 0x44($sp)
 /* 04817C 7F01364C 3C018005 */  lui   $at, %hi(D_80051A98)
 /* 048180 7F013650 0C001164 */  jal   video_related_21
@@ -18652,6 +18264,11 @@ glabel interface_menu11_mpcontrols
 
 #ifdef VERSION_JP
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051A98
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051A9C
+.word 0x461C4000 /*10000.0;*/
 .text
 glabel interface_menu11_mpcontrols
 /* 0481B8 7F013648 27BDFFA0 */  addiu $sp, $sp, -0x60
@@ -18669,7 +18286,7 @@ glabel interface_menu11_mpcontrols
 /* 0481E8 7F013678 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 0481EC 7F01367C 44816000 */  mtc1  $at, $f12
 /* 0481F0 7F013680 0040B825 */  move  $s7, $v0
-/* 0481F4 7F013684 0C001151 */  jal   video_related_1F
+/* 0481F4 7F013684 0C001151 */  jal   setvideo_far
 /* 0481F8 7F013688 AFA00054 */   sw    $zero, 0x54($sp)
 /* 0481FC 7F01368C 3C018005 */  lui   $at, %hi(D_80051A98) # $at, 0x8005
 /* 048200 7F013690 0C001164 */  jal   video_related_21
@@ -19359,7 +18976,7 @@ void interface_menu12_mpstage(void)
     s32 phi_v1;
     s32 phi_v0;
 
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051AA0);
     set_page_height(0x42c80000, D_80051AA4);
     set_video2_settings_offset_24(0);
@@ -19462,13 +19079,19 @@ loop_14:
 }
 #else
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051AA0
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051AA4
+.word 0x461C4000 /*10000.0;*/
+
 .text
 glabel interface_menu12_mpstage
 /* 048904 7F013DD4 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 048908 7F013DD8 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 04890C 7F013DDC AFBF001C */  sw    $ra, 0x1c($sp)
 /* 048910 7F013DE0 44816000 */  mtc1  $at, $f12
-/* 048914 7F013DE4 0C001151 */  jal   video_related_1F
+/* 048914 7F013DE4 0C001151 */  jal   setvideo_far
 /* 048918 7F013DE8 AFB00018 */   sw    $s0, 0x18($sp)
 /* 04891C 7F013DEC 3C018005 */  lui   $at, %hi(D_80051AA0)
 /* 048920 7F013DF0 0C001164 */  jal   video_related_21
@@ -20370,7 +19993,7 @@ void interface_menu13_mpscenario(void)
     s32 phi_s1;
 
     sp2C = 0;
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051AA8);
     set_page_height(0x42c80000, D_80051AAC);
     set_video2_settings_offset_24(0);
@@ -20454,6 +20077,12 @@ loop_4:
 }
 #else
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051AA8
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051AAC
+.word 0x461C4000 /*10000.0;*/
+
 .text
 glabel interface_menu13_mpscenario
 /* 0492E8 7F0147B8 27BDFFD0 */  addiu $sp, $sp, -0x30
@@ -20463,7 +20092,7 @@ glabel interface_menu13_mpscenario
 /* 0492F8 7F0147C8 AFB20020 */  sw    $s2, 0x20($sp)
 /* 0492FC 7F0147CC AFB1001C */  sw    $s1, 0x1c($sp)
 /* 049300 7F0147D0 AFB00018 */  sw    $s0, 0x18($sp)
-/* 049304 7F0147D4 0C001151 */  jal   video_related_1F
+/* 049304 7F0147D4 0C001151 */  jal   setvideo_far
 /* 049308 7F0147D8 AFA0002C */   sw    $zero, 0x2c($sp)
 /* 04930C 7F0147DC 3C018005 */  lui   $at, %hi(D_80051AA8)
 /* 049310 7F0147E0 0C001164 */  jal   video_related_21
@@ -20943,7 +20572,7 @@ void interface_menu14_mpteams(void)
     ? phi_a1_2;
     s32 phi_s0_2;
 
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051AB0);
     set_page_height(0x42c80000, D_80051AB4);
     set_video2_settings_offset_24(0);
@@ -21079,6 +20708,12 @@ loop_29:
 }
 #else
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051AB0
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051AB4
+.word 0x461C4000 /*10000.0;*/
+
 .text
 glabel interface_menu14_mpteams
 /* 049878 7F014D48 27BDFFE0 */  addiu $sp, $sp, -0x20
@@ -21086,7 +20721,7 @@ glabel interface_menu14_mpteams
 /* 049880 7F014D50 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 049884 7F014D54 44816000 */  mtc1  $at, $f12
 /* 049888 7F014D58 AFB10018 */  sw    $s1, 0x18($sp)
-/* 04988C 7F014D5C 0C001151 */  jal   video_related_1F
+/* 04988C 7F014D5C 0C001151 */  jal   setvideo_far
 /* 049890 7F014D60 AFB00014 */   sw    $s0, 0x14($sp)
 /* 049894 7F014D64 3C018005 */  lui   $at, %hi(D_80051AB0)
 /* 049898 7F014D68 0C001164 */  jal   video_related_21
@@ -21902,7 +21537,7 @@ void update_menu0A_briefing(void)
 #ifdef NONMATCHING
 void interface_menu0A_briefing(void)
 {
-    video_related_1F(0x42700000);
+    setvideo_far(0x42700000);
     video_related_21(D_80051AB8);
     set_page_height(0x42c80000, D_80051ABC);
     set_video2_settings_offset_24(0);
@@ -22011,13 +21646,18 @@ void interface_menu0A_briefing(void)
 }
 #else
 GLOBAL_ASM(
+.late_rodata
+glabel D_80051AB8
+.word 0x3FAAAAAB /*1.3333334;*/
+glabel D_80051ABC
+.word 0x461C4000 /*10000.0;*/
 .text
 glabel interface_menu0A_briefing
 /* 04A1CC 7F01569C 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 04A1D0 7F0156A0 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 04A1D4 7F0156A4 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 04A1D8 7F0156A8 44816000 */  mtc1  $at, $f12
-/* 04A1DC 7F0156AC 0C001151 */  jal   video_related_1F
+/* 04A1DC 7F0156AC 0C001151 */  jal   setvideo_far
 /* 04A1E0 7F0156B0 00000000 */   nop   
 /* 04A1E4 7F0156B4 3C018005 */  lui   $at, %hi(D_80051AB8)
 /* 04A1E8 7F0156B8 0C001164 */  jal   video_related_21
@@ -22455,7 +22095,7 @@ glabel print_objectives_and_status_to_menu
 /* 04A6C8 7F015B98 01776021 */  addu  $t4, $t3, $s7
 /* 04A6CC 7F015B9C 11A0000E */  beqz  $t5, .L7F015BD8
 /* 04A6D0 7F015BA0 AFAC0088 */   sw    $t4, 0x88($sp)
-/* 04A6D4 7F015BA4 0FC2B2E5 */  jal   sub_GAME_7F0ACB94
+/* 04A6D4 7F015BA4 0FC2B2E5 */  jal   setTextWordWrap
 /* 04A6D8 7F015BA8 24040002 */   li    $a0, 2
 /* 04A6DC 7F015BAC 8EAE0000 */  lw    $t6, ($s5)
 /* 04A6E0 7F015BB0 240400DC */  li    $a0, 220
@@ -22464,7 +22104,7 @@ glabel print_objectives_and_status_to_menu
 /* 04A6EC 7F015BBC 8E870000 */  lw    $a3, ($s4)
 /* 04A6F0 7F015BC0 0FC2BAD9 */  jal   sub_GAME_7F0AEB64
 /* 04A6F4 7F015BC4 AFAE0010 */   sw    $t6, 0x10($sp)
-/* 04A6F8 7F015BC8 0FC2B2E5 */  jal   sub_GAME_7F0ACB94
+/* 04A6F8 7F015BC8 0FC2B2E5 */  jal   setTextWordWrap
 /* 04A6FC 7F015BCC 00002025 */   move  $a0, $zero
 /* 04A700 7F015BD0 10000005 */  b     .L7F015BE8
 /* 04A704 7F015BD4 00000000 */   nop   
@@ -22847,7 +22487,7 @@ def_7F015E0C:
 /* 04AACC 7F015F9C 27A6004C */  addiu $a2, $sp, 0x4c
 /* 04AAD0 7F015FA0 0FC2BAD9 */  jal   sub_GAME_7F0AEB64
 /* 04AAD4 7F015FA4 AFAC0010 */   sw    $t4, 0x10($sp)
-/* 04AAD8 7F015FA8 0FC2B2E8 */  jal   sub_GAME_7F0ACBA0
+/* 04AAD8 7F015FA8 0FC2B2E8 */  jal   setTextOverlapCorrection
 /* 04AADC 7F015FAC 24040008 */   li    $a0, 8
 /* 04AAE0 7F015FB0 0C001107 */  jal   get_video2_settings_txtClipW
 /* 04AAE4 7F015FB4 00000000 */   nop   
@@ -22872,7 +22512,7 @@ def_7F015E0C:
 /* 04AB30 7F016000 0FC025D8 */  jal   write_text_at_abs_coord
 /* 04AB34 7F016004 AFA8001C */   sw    $t0, 0x1c($sp)
 /* 04AB38 7F016008 00408025 */  move  $s0, $v0
-/* 04AB3C 7F01600C 0FC2B2E8 */  jal   sub_GAME_7F0ACBA0
+/* 04AB3C 7F01600C 0FC2B2E8 */  jal   setTextOverlapCorrection
 /* 04AB40 7F016010 2404FFFF */   li    $a0, -1
 .L7F016014:
 /* 04AB44 7F016014 0FC02820 */  jal   add_tab1_start
@@ -22939,7 +22579,7 @@ void interface_menu0C_missionfailed(void)
     const f32 menu0C_aspect = 1.3333334;
     const f32 menu0C_pageheight = 10000.0;
 
-    video_related_1F(60.00000000);
+    setvideo_far(60.00000000);
     video_related_21(menu0C_aspect);
     set_page_height(100.00000000, menu0C_pageheight);
     set_video2_settings_offset_24(0);
@@ -23014,7 +22654,7 @@ glabel interface_menu0C_missionfailed
 /* 04AC44 7F016114 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 04AC48 7F016118 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 04AC4C 7F01611C 44816000 */  mtc1  $at, $f12
-/* 04AC50 7F016120 0C001151 */  jal   video_related_1F
+/* 04AC50 7F016120 0C001151 */  jal   setvideo_far
 /* 04AC54 7F016124 00000000 */   nop   
 /* 04AC58 7F016128 3C018005 */  lui   $at, %hi(menu0C_aspect)
 /* 04AC5C 7F01612C 0C001164 */  jal   video_related_21
@@ -23534,7 +23174,7 @@ void interface_menu0D_missioncomplete(undefined8 param_1,undefined8 param_2)
   short sVar6;
   int iVar7;
   
-  video_related_1F(60.00000000);
+  setvideo_far(60.00000000);
   video_related_21((f32)menu0D_aspect);
   set_page_height(100.00000000,(f32)menu0D_pageheight);
   set_video2_settings_offset_24(0);
@@ -23638,7 +23278,7 @@ glabel interface_menu0D_missioncomplete
 /* 04B20C 7F0166DC 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 04B210 7F0166E0 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 04B214 7F0166E4 44816000 */  mtc1  $at, $f12
-/* 04B218 7F0166E8 0C001151 */  jal   video_related_1F
+/* 04B218 7F0166E8 0C001151 */  jal   setvideo_far
 /* 04B21C 7F0166EC 00000000 */   nop   
 /* 04B220 7F0166F0 3C018005 */  lui   $at, %hi(menu0D_aspect)
 /* 04B224 7F0166F4 0C001164 */  jal   video_related_21
@@ -25012,7 +24652,7 @@ void interface_menu0D_missioncomplete(undefined8 param_1,undefined8 param_2)
   short sVar6;
   int iVar7;
   
-  video_related_1F(60.00000000);
+  setvideo_far(60.00000000);
   video_related_21((f32)menu0D_aspect);
   set_page_height(100.00000000,(f32)menu0D_pageheight);
   set_video2_settings_offset_24(0);
@@ -25206,7 +24846,7 @@ glabel update_menu15_cheat
 /* 04C75C 7F017C2C 02002025 */  move  $a0, $s0
 /* 04C760 7F017C30 51C00007 */  beql  $t6, $zero, .L7F017C50
 /* 04C764 7F017C34 26100001 */   addiu $s0, $s0, 1
-/* 04C768 7F017C38 0FC2469E */  jal   sub_GAME_7F091A78
+/* 04C768 7F017C38 0FC2469E */  jal   cheatCheckIfMPCheat
 /* 04C76C 7F017C3C 24130001 */   li    $s3, 1
 /* 04C770 7F017C40 50400003 */  beql  $v0, $zero, .L7F017C50
 /* 04C774 7F017C44 26100001 */   addiu $s0, $s0, 1
@@ -25236,19 +24876,17 @@ glabel update_menu15_cheat
 void interface_menu15_cheat(undefined8 param_1,undefined8 param_2)
 {
   int iVar1;
-  ulonglong uVar2;
   BOOL BVar3;
   int iVar4;
   int iVar5;
   
-  video_related_1F(60.00000000);
-  video_related_21((f32)menu15_aspect);
-  set_page_height(100.00000000,(f32)menu15_pageheight);
+  setvideo_far(60.00000000);
+  video_related_21(menu15_aspect);
+  set_page_height(100.00000000, menu15_pageheight);
   set_video2_settings_offset_24(0);
   MP_menu_selected_option = 0;
-  uVar2 = get_controller_buttons_held(0,Z_TRIG|A_BUTTON);
   iVar1 = dword_8002B5E0;
-  if (uVar2 == 0) {
+  if (get_controller_buttons_held(0,Z_TRIG|A_BUTTON) == 0) {
     tab_3_highlight = FALSE;
     tab_2_highlight = FALSE;
     tab_1_highlight = FALSE;
@@ -25340,7 +24978,7 @@ glabel interface_menu15_cheat
 /* 04C7BC 7F017C8C 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 04C7C0 7F017C90 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 04C7C4 7F017C94 44816000 */  mtc1  $at, $f12
-/* 04C7C8 7F017C98 0C001151 */  jal   video_related_1F
+/* 04C7C8 7F017C98 0C001151 */  jal   setvideo_far
 /* 04C7CC 7F017C9C 00000000 */   nop   
 /* 04C7D0 7F017CA0 3C018005 */  lui   $at, %hi(menu15_aspect)
 /* 04C7D4 7F017CA4 0C001164 */  jal   video_related_21
@@ -25590,7 +25228,7 @@ glabel constructor_menu15_cheat
 /* 04CB30 7F018000 26B50035 */  addiu $s5, $s5, 0x35
 /* 04CB34 7F018004 01CF9821 */  addu  $s3, $t6, $t7
 .L7F018008:
-/* 04CB38 7F018008 0FC249DD */  jal   sub_GAME_7F092774
+/* 04CB38 7F018008 0FC249DD */  jal   cheatGetMenuTextPointer
 /* 04CB3C 7F01800C 8E640000 */   lw    $a0, ($s3)
 /* 04CB40 7F018010 8EF80000 */  lw    $t8, ($s7)
 /* 04CB44 7F018014 00409025 */  move  $s2, $v0
@@ -25731,7 +25369,7 @@ glabel constructor_menu15_cheat
 /* 04CD48 7F018218 267397F0 */  addiu $s3, %lo(dword_CODE_bss_800697F0) # addiu $s3, $s3, -0x6810
 /* 04CD4C 7F01821C 24150035 */  li    $s5, 53
 .L7F018220:
-/* 04CD50 7F018220 0FC249DD */  jal   sub_GAME_7F092774
+/* 04CD50 7F018220 0FC249DD */  jal   cheatGetMenuTextPointer
 /* 04CD54 7F018224 8E640030 */   lw    $a0, 0x30($s3)
 /* 04CD58 7F018228 8EEE0000 */  lw    $t6, ($s7)
 /* 04CD5C 7F01822C 00409025 */  move  $s2, $v0
@@ -26790,7 +26428,7 @@ set_body_mp_choice_maybe:
 /* 04D49C 7F01896C 0FC1D929 */  jal   load_object_fill_header
 /* 04D4A0 7F018970 AFA40080 */   sw    $a0, 0x80($sp)
 /* 04D4A4 7F018974 8FA20024 */  lw    $v0, 0x24($sp)
-/* 04D4A8 7F018978 0FC2F462 */  jal   sub_GAME_7F0BD188
+/* 04D4A8 7F018978 0FC2F462 */  jal   get_pc_buffer_remaining_value
 /* 04D4AC 7F01897C 8C440004 */   lw    $a0, 4($v0)
 /* 04D4B0 7F018980 2443003F */  addiu $v1, $v0, 0x3f
 /* 04D4B4 7F018984 8FB900B0 */  lw    $t9, 0xb0($sp)
@@ -26819,7 +26457,7 @@ set_body_mp_choice_maybe:
 /* 04D510 7F0189E0 0FC1D929 */  jal   load_object_fill_header
 /* 04D514 7F0189E4 AFA4007C */   sw    $a0, 0x7c($sp)
 /* 04D518 7F0189E8 8FA20024 */  lw    $v0, 0x24($sp)
-/* 04D51C 7F0189EC 0FC2F462 */  jal   sub_GAME_7F0BD188
+/* 04D51C 7F0189EC 0FC2F462 */  jal   get_pc_buffer_remaining_value
 /* 04D520 7F0189F0 8C440004 */   lw    $a0, 4($v0)
 /* 04D524 7F0189F4 2443003F */  addiu $v1, $v0, 0x3f
 /* 04D528 7F0189F8 8FB900B0 */  lw    $t9, 0xb0($sp)
@@ -26943,7 +26581,7 @@ set_body_mp_choice_maybe:
 /* 04D6D8 7F018BA8 0FC1D929 */  jal   load_object_fill_header
 /* 04D6DC 7F018BAC AFA40078 */   sw    $a0, 0x78($sp)
 /* 04D6E0 7F018BB0 8FA20024 */  lw    $v0, 0x24($sp)
-/* 04D6E4 7F018BB4 0FC2F462 */  jal   sub_GAME_7F0BD188
+/* 04D6E4 7F018BB4 0FC2F462 */  jal   get_pc_buffer_remaining_value
 /* 04D6E8 7F018BB8 8C440004 */   lw    $a0, 4($v0)
 /* 04D6EC 7F018BBC 0FC1D73D */  jal   set_objuse_flag_compute_grp_nums_set_obj_loaded
 /* 04D6F0 7F018BC0 8FA40078 */   lw    $a0, 0x78($sp)
@@ -27197,7 +26835,7 @@ void interface_menu18_displaycast(undefined8 param_1,undefined8 param_2)
   ulonglong uVar1;
   int iVar4;
   
-  video_related_1F(46.00000000);
+  setvideo_far(46.00000000);
   set_page_height(10.00000000,2000.00000000);
   set_video2_settings_offset_24(1);
   video_related_21((f32)flt_80051B08);
@@ -27307,7 +26945,7 @@ glabel interface_menu18_displaycast
 /* 04DAA0 7F018F70 AFB30020 */  sw    $s3, 0x20($sp)
 /* 04DAA4 7F018F74 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 04DAA8 7F018F78 AFB10018 */  sw    $s1, 0x18($sp)
-/* 04DAAC 7F018F7C 0C001151 */  jal   video_related_1F
+/* 04DAAC 7F018F7C 0C001151 */  jal   setvideo_far
 /* 04DAB0 7F018F80 AFB00014 */   sw    $s0, 0x14($sp)
 /* 04DAB4 7F018F84 3C014120 */  li    $at, 0x41200000 # 10.000000
 /* 04DAB8 7F018F88 44816000 */  mtc1  $at, $f12
@@ -27882,7 +27520,7 @@ glabel constructor_menu18_displaycast
 /* 04E2FC 7F0197CC 03002025 */   move  $a0, $t8
 /* 04E300 7F0197D0 27B201E8 */  addiu $s2, $sp, 0x1e8
 /* 04E304 7F0197D4 AFA201B8 */  sw    $v0, 0x1b8($sp)
-/* 04E308 7F0197D8 0FC15FF4 */  jal   init_0x40_bytes_data_at_address_last_word_1_0
+/* 04E308 7F0197D8 0FC15FF4 */  jal   reset_array_of_0x10_floats
 /* 04E30C 7F0197DC 02402025 */   move  $a0, $s2
 /* 04E310 7F0197E0 AFB201A8 */  sw    $s2, 0x1a8($sp)
 /* 04E314 7F0197E4 27A401A8 */  addiu $a0, $sp, 0x1a8
@@ -28823,7 +28461,7 @@ void update_menu19_spectrum(void) {
 
 #ifdef NONMATCHING
 void interface_menu19_spectrum(void) {
-    video_related_1F(60.0f);
+    setvideo_far(60.0f);
     video_related_21(D_80051B3C);
     set_page_height(100.0f, D_80051B40);
     set_video2_settings_offset_24(0);
@@ -28837,7 +28475,7 @@ glabel interface_menu19_spectrum
 /* 04EFBC 7F01A48C 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 04EFC0 7F01A490 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 04EFC4 7F01A494 44816000 */  mtc1  $at, $f12
-/* 04EFC8 7F01A498 0C001151 */  jal   video_related_1F
+/* 04EFC8 7F01A498 0C001151 */  jal   setvideo_far
 /* 04EFCC 7F01A49C 00000000 */   nop   
 /* 04EFD0 7F01A4A0 3C018005 */  lui   $at, %hi(D_80051B3C)
 /* 04EFD4 7F01A4A4 0C001164 */  jal   video_related_21
@@ -29019,417 +28657,307 @@ MENU get_currentmenu(void)
 
 #ifdef NONMATCHING
 void menu_init(undefined8 param_1,undefined8 param_2)
-
 {
-  MENU MVar1;
-  undefined1 *puVar2;
-  int iVar3;
-  undefined8 extraout_a1;
-  undefined8 extraout_a1_00;
-  undefined8 extraout_a1_01;
-  undefined8 extraout_a1_02;
-  undefined8 extraout_a1_03;
-  undefined8 extraout_a1_04;
-  undefined8 extraout_a1_05;
-  undefined8 extraout_a1_06;
-  undefined8 extraout_a1_07;
-  undefined8 extraout_a1_08;
-  undefined8 extraout_a1_09;
-  undefined8 extraout_a1_10;
-  undefined8 extraout_a1_11;
-  undefined8 extraout_a1_12;
-  undefined8 extraout_a1_13;
-  undefined8 extraout_a1_14;
-  undefined8 extraout_a1_15;
-  undefined8 extraout_a1_16;
-  undefined8 extraout_a1_17;
-  undefined8 extraout_a1_18;
-  undefined8 extraout_a1_19;
-  undefined8 extraout_a1_20;
-  undefined8 extraout_a1_21;
-  undefined8 extraout_a1_22;
-  undefined8 extraout_a1_23;
-  undefined8 extraout_a1_24;
-  undefined8 extraout_a1_25;
-  undefined8 extraout_a1_26;
-  undefined8 extraout_a1_27;
-  undefined8 extraout_a1_28;
-  undefined8 extraout_a1_29;
-  undefined8 extraout_a1_30;
-  undefined8 extraout_a1_31;
-  undefined8 extraout_a1_32;
-  undefined8 extraout_a1_33;
-  undefined8 extraout_a1_34;
-  undefined8 extraout_a1_35;
-  undefined8 extraout_a1_36;
-  undefined8 extraout_a1_37;
-  undefined8 extraout_a1_38;
-  undefined8 extraout_a1_39;
-  undefined8 extraout_a1_40;
-  undefined8 extraout_a1_41;
-  undefined8 extraout_a1_42;
-  undefined8 extraout_a1_43;
-  undefined8 extraout_a1_44;
-  undefined8 extraout_a1_45;
-  undefined8 extraout_a1_46;
-  undefined8 extraout_a1_47;
-  undefined8 extraout_a1_48;
-  undefined8 extraout_a1_49;
-  undefined8 extraout_a1_50;
-  undefined8 uVar4;
-  
-  if (current_menu == MENU_SWITCH_SCREENS) {
-    if (spectrum_related_flag == FALSE) {
-      if ((is_emulating_spectrum != FALSE) &&
-         (puVar2 = (undefined1 *)get_video_settings2_frameb(), puVar2 == cfb_16_a)) {
-        screen_size = SCREEN_SIZE_320x240;
-        is_emulating_spectrum = FALSE;
-      }
-    }
-    else {
-      puVar2 = (undefined1 *)get_video_settings2_frameb();
-      if (puVar2 == cfb_16_b) {
-        screen_size = SCREEN_SIZE_440x330;
-        spectrum_related_flag = FALSE;
-      }
-    }
-  }
-  if (screen_size == SCREEN_SIZE_320x240) {
-    video_related_21((f32)flt_80051B48);
-    set_video2_text_clip_size(0x140,0xf0);
-    set_video2_settings_offset_18_1A(0x140,0xf0);
-    set_cur_player_screen_size(0x140,0xf0);
-    set_video2_width_height(0x140,0xf0);
-    set_cur_player_viewport_size(0,0);
-    set_video2_ulx_uly(0,0);
-    uVar4 = extraout_a1_00;
-  }
-  else {
-    puVar2 = (undefined1 *)get_video_settings2_frameb();
-    if (puVar2 == cfb_16_b) {
-      set_video_settings2_frameb((int)ptr_menu_videobuffer);
-    }
-    video_related_21((f32)flt_80051B44);
-    set_video2_text_clip_size(0x1b8,0x14a);
-    set_video2_settings_offset_18_1A(0x1b8,0x14a);
-    set_cur_player_screen_size(0x1b8,0x14a);
-    set_video2_width_height(0x1b8,0x14a);
-    set_cur_player_viewport_size(0,0);
-    set_video2_ulx_uly(0,0);
-    uVar4 = extraout_a1;
-  }
-  if (((-1 < (int)menu_update) || (-1 < (int)maybe_prev_menu)) &&
-     (current_menu != MENU_SWITCH_SCREENS)) {
-    if (true) {
-      switch(current_menu) {
-      case MENU_LEGAL_SCREEN:
-        update_menu00_legalscreen();
-        uVar4 = extraout_a1_01;
-        break;
-      case MENU_NINTENDO_LOGO:
-        update_menu01_nintendo();
-        uVar4 = extraout_a1_02;
-        break;
-      case MENU_RAREWARE_LOGO:
-        update_menu02_rareware();
-        uVar4 = extraout_a1_03;
-        break;
-      case MENU_EYE_INTRO:
-        update_menu_03_eyeintro();
-        uVar4 = extraout_a1_04;
-        break;
-      case MENU_GOLDENEYE_LOGO:
-        update_menu04_goldeneyelogo();
-        uVar4 = extraout_a1_05;
-        break;
-      case MENU_FILE_SELECT:
-        update_menu05_filesel();
-        uVar4 = extraout_a1_06;
-        break;
-      case MENU_MODE_SELECT:
-        update_menu06_modesel();
-        uVar4 = extraout_a1_07;
-        break;
-      case MENU_MISSION_SELECT:
-        update_menu07_missionsel();
-        uVar4 = extraout_a1_08;
-        break;
-      case MENU_DIFFICULTY:
-        update_menu08_difficulty();
-        uVar4 = extraout_a1_09;
-        break;
-      case MENU_007_OPTIONS:
-        update_menu09_007options();
-        uVar4 = extraout_a1_10;
-        break;
-      case MENU_BRIEFING:
-        update_menu0A_briefing();
-        uVar4 = extraout_a1_11;
-        break;
-      case MENU_MISSION_FAILED:
-        update_menu0C_missionfailed();
-        uVar4 = extraout_a1_12;
-        break;
-      case MENU_MISSION_COMPLETE:
-        update_menu0D_missioncomplete();
-        uVar4 = extraout_a1_13;
-        break;
-      case MENU_MP_OPTIONS:
-        update_menu0E_mpoptions();
-        uVar4 = extraout_a1_14;
-        break;
-      case MENU_MP_CHAR_SELECT:
-        update_menu0F_mpcharsel();
-        uVar4 = extraout_a1_16;
-        break;
-      case MENU_MP_HANDICAP:
-        update_menu10_mphandicap();
-        uVar4 = extraout_a1_18;
-        break;
-      case MENU_MP_CONTROL_STYLE:
-        update_menu11_mpcontrols();
-        uVar4 = extraout_a1_19;
-        break;
-      case MENU_MP_STAGE_SELECT:
-        update_menu12_mpstage();
-        uVar4 = extraout_a1_20;
-        break;
-      case MENU_MP_SCENARIO_SELECT:
-        update_menu13_mpscenario();
-        uVar4 = extraout_a1_15;
-        break;
-      case MENU_MP_TEAMS:
-        update_menu14_mpteams();
-        uVar4 = extraout_a1_17;
-        break;
-      case MENU_CHEAT:
-        update_menu15_cheat();
-        uVar4 = extraout_a1_21;
-        break;
-      case MENU_NO_CONTROLLERS:
-        update_menu16_nocontrollers();
-        uVar4 = extraout_a1_22;
-        break;
-      case MENU_DISPLAY_CAST:
-        update_menu18_displaycast();
-        uVar4 = extraout_a1_23;
-        break;
-      case MENU_SPECTRUM_EMU:
-        update_menu19_spectrum();
-        uVar4 = extraout_a1_24;
-      }
-    }
-    if (-1 < (int)menu_update) {
-      current_menu = MENU_SWITCH_SCREENS;
-      reset_menutimer();
-      uVar4 = extraout_a1_25;
-    }
-  }
-  MVar1 = maybe_prev_menu;
-  if (true) {
-    current_menu = maybe_prev_menu;
-    maybe_prev_menu = ~MENU_LEGAL_SCREEN;
-    if (true) {
-      switch(MVar1) {
-      case MENU_LEGAL_SCREEN:
-        init_menu00_legalscreen();
-        uVar4 = extraout_a1_26;
-        break;
-      case MENU_NINTENDO_LOGO:
-        init_menu01_nintendo();
-        uVar4 = extraout_a1_27;
-        break;
-      case MENU_RAREWARE_LOGO:
-        init_menu02_rareware();
-        uVar4 = extraout_a1_28;
-        break;
-      case MENU_EYE_INTRO:
-        init_menu03_eyeintro();
-        uVar4 = extraout_a1_29;
-        break;
-      case MENU_GOLDENEYE_LOGO:
-        init_menu04_goldeneyelogo();
-        uVar4 = extraout_a1_30;
-        break;
-      case MENU_FILE_SELECT:
-        init_menu05_filesel();
-        uVar4 = extraout_a1_31;
-        break;
-      case MENU_MODE_SELECT:
-        init_menu06_modesel();
-        uVar4 = extraout_a1_32;
-        break;
-      case MENU_MISSION_SELECT:
-        init_menu07_missionsel();
-        uVar4 = extraout_a1_33;
-        break;
-      case MENU_DIFFICULTY:
-        init_menu08_difficulty();
-        uVar4 = extraout_a1_34;
-        break;
-      case MENU_007_OPTIONS:
-        init_menu09_007options();
-        uVar4 = extraout_a1_35;
-        break;
-      case MENU_BRIEFING:
-        init_menu0A_briefing();
-        uVar4 = extraout_a1_36;
-        break;
-      case MENU_RUN_STAGE:
-        init_menu0B_runstage();
-        uVar4 = extraout_a1_37;
-        break;
-      case MENU_MISSION_FAILED:
-        init_menu0C_missionfailed();
-        uVar4 = extraout_a1_38;
-        break;
-      case MENU_MISSION_COMPLETE:
-        init_menu0D_missioncomplete();
-        uVar4 = extraout_a1_39;
-        break;
-      case MENU_MP_OPTIONS:
-        init_menu0E_mpoptions();
-        uVar4 = extraout_a1_40;
-        break;
-      case MENU_MP_CHAR_SELECT:
-        init_menu0f_mpcharsel();
-        uVar4 = extraout_a1_42;
-        break;
-      case MENU_MP_HANDICAP:
-        init_menu10_mphandicap();
-        uVar4 = extraout_a1_44;
-        break;
-      case MENU_MP_CONTROL_STYLE:
-        init_menu11_mpcontrol();
-        uVar4 = extraout_a1_45;
-        break;
-      case MENU_MP_STAGE_SELECT:
-        init_menu12_mpstage();
-        uVar4 = extraout_a1_46;
-        break;
-      case MENU_MP_SCENARIO_SELECT:
-        init_menu13_mpscenariosel();
-        uVar4 = extraout_a1_41;
-        break;
-      case MENU_MP_TEAMS:
-        init_menu14_mpteamsel();
-        uVar4 = extraout_a1_43;
-        break;
-      case MENU_CHEAT:
-        init_menu15_cheat();
-        uVar4 = extraout_a1_47;
-        break;
-      case MENU_NO_CONTROLLERS:
-        init_menu16_nocontroller();
-        uVar4 = extraout_a1_48;
-        break;
-      case MENU_DISPLAY_CAST:
-        init_menu18_displaycast();
-        uVar4 = extraout_a1_49;
-        break;
-      case MENU_SPECTRUM_EMU:
-        init_menu19_spectrum();
-        uVar4 = extraout_a1_50;
-      }
-    }
-  }
-  switch(current_menu) {
-  case MENU_LEGAL_SCREEN:
-    interface_menu00_legalscreen(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_NINTENDO_LOGO:
-    interface_menu01_nintendo(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_RAREWARE_LOGO:
-    interface_menu02_rareware();
-    break;
-  case MENU_EYE_INTRO:
-    interface_menu03_eyeintro();
-    break;
-  case MENU_GOLDENEYE_LOGO:
-    interface_menu04_goldeneyelogo(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_FILE_SELECT:
-    interface_menu05_filesel();
-    break;
-  case MENU_MODE_SELECT:
-    interface_menu06_modesel();
-    break;
-  case MENU_MISSION_SELECT:
-    interface_menu07_missionsel(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_DIFFICULTY:
-    interface_menu08_difficulty();
-    break;
-  case MENU_007_OPTIONS:
-    interface_menu09_007options(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_BRIEFING:
-    interface_menu0A_briefing(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_RUN_STAGE:
-    iVar3 = interface_menu0B_runstage();
-    if (iVar3 == 0) {
-      if (gamemode == GAMEMODE_MULTI) {
-        set_menu_to_mode(MENU_MP_OPTIONS,1);
-      }
-      else {
-        if (selected_stage == LEVELID_CUBA) {
-          do_extended_cast_display(TRUE);
-          set_menu_to_mode(MENU_DISPLAY_CAST,1);
+    MENU MVar1;
+    
+    if (current_menu == MENU_SWITCH_SCREENS) {
+        if (spectrum_related_flag == FALSE) {
+            if ((is_emulating_spectrum != FALSE) &&
+               (get_video_settings2_frameb() == cfb_16_a)) {
+                screen_size = SCREEN_SIZE_320x240;
+                is_emulating_spectrum = FALSE;
+            }
         }
         else {
-          set_menu_to_mode(MENU_MISSION_FAILED,1);
+            if (get_video_settings2_frameb() == cfb_16_b) {
+                screen_size = SCREEN_SIZE_440x330;
+                spectrum_related_flag = FALSE;
+            }
         }
-      }
+    }
+
+    if (screen_size == SCREEN_SIZE_320x240) {
+        video_related_21((f32)flt_80051B48);
+        set_video2_text_clip_size(320,240);
+        set_video2_settings_offset_18_1A(320,240);
+        set_cur_player_screen_size(320,240);
+        set_video2_width_height(320,240);
+        set_cur_player_viewport_size(0,0);
+        set_video2_ulx_uly(0,0);
     }
     else {
-      set_menu_to_mode(MENU_LEGAL_SCREEN,1);
+        if (get_video_settings2_frameb() == cfb_16_b) {
+            set_video_settings2_frameb(ptr_menu_videobuffer);
+        }
+        video_related_21((f32)flt_80051B44);
+        set_video2_text_clip_size(440,330);
+        set_video2_settings_offset_18_1A(440,330);
+        set_cur_player_screen_size(440,330);
+        set_video2_width_height(440,330);
+        set_cur_player_viewport_size(0,0);
+        set_video2_ulx_uly(0,0);
     }
-    break;
-  case MENU_MISSION_FAILED:
-    interface_menu0C_missionfailed(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_MISSION_COMPLETE:
-    interface_menu0D_missioncomplete(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_MP_OPTIONS:
-    interface_menu0E_mpoptions(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_MP_CHAR_SELECT:
-    interface_menu0F_mpcharsel();
-    break;
-  case MENU_MP_HANDICAP:
-    interface_menu10_mphandicap();
-    break;
-  case MENU_MP_CONTROL_STYLE:
-    interface_menu11_mpcontrols();
-    break;
-  case MENU_MP_STAGE_SELECT:
-    interface_menu12_mpstage(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_MP_SCENARIO_SELECT:
-    interface_menu13_mpscenario(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_MP_TEAMS:
-    interface_menu14_mpteams(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_CHEAT:
-    interface_menu15_cheat(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_NO_CONTROLLERS:
-    interface_menu16_nocontrollers();
-    break;
-  case MENU_SWITCH_SCREENS:
-    interface_menu17_switchscreens(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_DISPLAY_CAST:
-    interface_menu18_displaycast(ZEXT48(&current_menu),uVar4);
-    break;
-  case MENU_SPECTRUM_EMU:
-    interface_menu19_spectrum(ZEXT48(&current_menu),uVar4);
-  }
-  return;
+    if (((-1 < menu_update) || (-1 < maybe_prev_menu)) &&
+       (current_menu != MENU_SWITCH_SCREENS)) {
+        if (true) {
+            switch(current_menu) {
+            case MENU_LEGAL_SCREEN:
+                update_menu00_legalscreen();
+                break;
+            case MENU_NINTENDO_LOGO:
+                update_menu01_nintendo();
+                break;
+            case MENU_RAREWARE_LOGO:
+                update_menu02_rareware();
+                break;
+            case MENU_EYE_INTRO:
+                update_menu_03_eyeintro();
+                break;
+            case MENU_GOLDENEYE_LOGO:
+                update_menu04_goldeneyelogo();
+                break;
+            case MENU_FILE_SELECT:
+                update_menu05_filesel();
+                break;
+            case MENU_MODE_SELECT:
+                update_menu06_modesel();
+                break;
+            case MENU_MISSION_SELECT:
+                update_menu07_missionsel();
+                break;
+            case MENU_DIFFICULTY:
+                update_menu08_difficulty();
+                break;
+            case MENU_007_OPTIONS:
+                update_menu09_007options();
+                break;
+            case MENU_BRIEFING:
+                update_menu0A_briefing();
+                break;
+            case MENU_MISSION_FAILED:
+                update_menu0C_missionfailed();
+                break;
+            case MENU_MISSION_COMPLETE:
+                update_menu0D_missioncomplete();
+                break;
+            case MENU_MP_OPTIONS:
+                update_menu0E_mpoptions();
+                break;
+            case MENU_MP_CHAR_SELECT:
+                update_menu0F_mpcharsel();
+                break;
+            case MENU_MP_HANDICAP:
+                update_menu10_mphandicap();
+                break;
+            case MENU_MP_CONTROL_STYLE:
+                update_menu11_mpcontrols();
+                break;
+            case MENU_MP_STAGE_SELECT:
+                update_menu12_mpstage();
+                break;
+            case MENU_MP_SCENARIO_SELECT:
+                update_menu13_mpscenario();
+                break;
+            case MENU_MP_TEAMS:
+                update_menu14_mpteams();
+                break;
+            case MENU_CHEAT:
+                update_menu15_cheat();
+                break;
+            case MENU_NO_CONTROLLERS:
+                update_menu16_nocontrollers();
+                break;
+            case MENU_DISPLAY_CAST:
+                update_menu18_displaycast();
+                break;
+            case MENU_SPECTRUM_EMU:
+                update_menu19_spectrum();
+            }
+        }
+        if (-1 < menu_update) {
+            current_menu = MENU_SWITCH_SCREENS;
+            reset_menutimer();
+        }
+    }
+    MVar1 = maybe_prev_menu;
+    if (true) {
+        current_menu = maybe_prev_menu;
+        maybe_prev_menu = ~MENU_LEGAL_SCREEN;
+        if (true) {
+            switch(MVar1) {
+            case MENU_LEGAL_SCREEN:
+                init_menu00_legalscreen();
+                break;
+            case MENU_NINTENDO_LOGO:
+                init_menu01_nintendo();
+                break;
+            case MENU_RAREWARE_LOGO:
+                init_menu02_rareware();
+                break;
+            case MENU_EYE_INTRO:
+                init_menu03_eyeintro();
+                break;
+            case MENU_GOLDENEYE_LOGO:
+                init_menu04_goldeneyelogo();
+                break;
+            case MENU_FILE_SELECT:
+                init_menu05_filesel();
+                break;
+            case MENU_MODE_SELECT:
+                init_menu06_modesel();
+                break;
+            case MENU_MISSION_SELECT:
+                init_menu07_missionsel();
+                break;
+            case MENU_DIFFICULTY:
+                init_menu08_difficulty();
+                break;
+            case MENU_007_OPTIONS:
+                init_menu09_007options();
+                break;
+            case MENU_BRIEFING:
+                init_menu0A_briefing();
+                break;
+            case MENU_RUN_STAGE:
+                init_menu0B_runstage();
+                break;
+            case MENU_MISSION_FAILED:
+                init_menu0C_missionfailed();
+                break;
+            case MENU_MISSION_COMPLETE:
+                init_menu0D_missioncomplete();
+                break;
+            case MENU_MP_OPTIONS:
+                init_menu0E_mpoptions();
+                break;
+            case MENU_MP_CHAR_SELECT:
+                init_menu0f_mpcharsel();
+                break;
+            case MENU_MP_HANDICAP:
+                init_menu10_mphandicap();
+                break;
+            case MENU_MP_CONTROL_STYLE:
+                init_menu11_mpcontrol();
+                break;
+            case MENU_MP_STAGE_SELECT:
+                init_menu12_mpstage();
+                break;
+            case MENU_MP_SCENARIO_SELECT:
+                init_menu13_mpscenariosel();
+                break;
+            case MENU_MP_TEAMS:
+                init_menu14_mpteamsel();
+                break;
+            case MENU_CHEAT:
+                init_menu15_cheat();
+                break;
+            case MENU_NO_CONTROLLERS:
+                init_menu16_nocontroller();
+                break;
+            case MENU_DISPLAY_CAST:
+                init_menu18_displaycast();
+                break;
+            case MENU_SPECTRUM_EMU:
+                init_menu19_spectrum();
+            }
+        }
+    }
+    switch(current_menu) {
+    case MENU_LEGAL_SCREEN:
+        interface_menu00_legalscreen();
+        break;
+    case MENU_NINTENDO_LOGO:
+        interface_menu01_nintendo();
+        break;
+    case MENU_RAREWARE_LOGO:
+        interface_menu02_rareware();
+        break;
+    case MENU_EYE_INTRO:
+        interface_menu03_eyeintro();
+        break;
+    case MENU_GOLDENEYE_LOGO:
+        interface_menu04_goldeneyelogo();
+        break;
+    case MENU_FILE_SELECT:
+        interface_menu05_filesel();
+        break;
+    case MENU_MODE_SELECT:
+        interface_menu06_modesel();
+        break;
+    case MENU_MISSION_SELECT:
+        interface_menu07_missionsel();
+        break;
+    case MENU_DIFFICULTY:
+        interface_menu08_difficulty();
+        break;
+    case MENU_007_OPTIONS:
+        interface_menu09_007options();
+        break;
+    case MENU_BRIEFING:
+        interface_menu0A_briefing();
+        break;
+    case MENU_RUN_STAGE:
+        if (interface_menu0B_runstage() == 0) {
+            if (gamemode == GAMEMODE_MULTI) {
+                set_menu_to_mode(MENU_MP_OPTIONS,1);
+            }
+            else {
+                if (selected_stage == LEVELID_CUBA) {
+                    do_extended_cast_display(1);
+                    set_menu_to_mode(MENU_DISPLAY_CAST,1);
+                }
+                else {
+                    set_menu_to_mode(MENU_MISSION_FAILED,1);
+                }
+            }
+        }
+        else {
+            set_menu_to_mode(MENU_LEGAL_SCREEN,1);
+        }
+        break;
+    case MENU_MISSION_FAILED:
+        interface_menu0C_missionfailed();
+        break;
+    case MENU_MISSION_COMPLETE:
+        interface_menu0D_missioncomplete();
+        break;
+    case MENU_MP_OPTIONS:
+        interface_menu0E_mpoptions();
+        break;
+    case MENU_MP_CHAR_SELECT:
+        interface_menu0F_mpcharsel();
+        break;
+    case MENU_MP_HANDICAP:
+        interface_menu10_mphandicap();
+        break;
+    case MENU_MP_CONTROL_STYLE:
+        interface_menu11_mpcontrols();
+        break;
+    case MENU_MP_STAGE_SELECT:
+        interface_menu12_mpstage();
+        break;
+    case MENU_MP_SCENARIO_SELECT:
+        interface_menu13_mpscenario();
+        break;
+    case MENU_MP_TEAMS:
+        interface_menu14_mpteams();
+        break;
+    case MENU_CHEAT:
+        interface_menu15_cheat();
+        break;
+    case MENU_NO_CONTROLLERS:
+        interface_menu16_nocontrollers();
+        break;
+    case MENU_SWITCH_SCREENS:
+        interface_menu17_switchscreens();
+        break;
+    case MENU_DISPLAY_CAST:
+        interface_menu18_displaycast();
+        break;
+    case MENU_SPECTRUM_EMU:
+        interface_menu19_spectrum();
+    }
+    return;
 }
 #else
 GLOBAL_ASM(
@@ -29566,7 +29094,7 @@ glabel menu_init
 /* 04F1F4 7F01A6C4 256BA800 */  addiu $t3, %lo(cfb_16_b) # addiu $t3, $t3, -0x5800
 /* 04F1F8 7F01A6C8 144B0003 */  bne   $v0, $t3, .L7F01A6D8
 /* 04F1FC 7F01A6CC 3C048003 */   lui   $a0, %hi(ptr_menu_videobuffer)
-/* 04F200 7F01A6D0 0C000F0F */  jal   set_video2buf_offset28
+/* 04F200 7F01A6D0 0C000F0F */  jal   set_video2buf_frameb
 /* 04F204 7F01A6D4 8C84A954 */   lw    $a0, %lo(ptr_menu_videobuffer)($a0)
 .L7F01A6D8:
 /* 04F208 7F01A6D8 3C018005 */  lui   $at, %hi(D_80051B48)
@@ -30186,118 +29714,85 @@ menu0B_runstage_interface:
 
 
 #ifdef NONMATCHING
-longlong menu_jump_constructor_handler(void)
+void menu_jump_constructor_handler(Gfx *DL)
 {
-  longlong in_v0;
-  int iVar1;
-  uint *puVar2;
-  undefined4 *_DL;
-  longlong in_a0;
-  
-  if (true) {
-    _DL = (undefined4 *)in_a0;
     switch(current_menu) {
-    case MENU_LEGAL_SCREEN:
-      constructor_menu00_legalscreen(_DL);
-      in_a0 = in_v0;
-      break;
-    case MENU_NINTENDO_LOGO:
-      _DL = constructor_menu01_nintendo(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_RAREWARE_LOGO:
-      _DL = constructor_menu02_rareware(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_EYE_INTRO:
-      constructor_menu03_eyeintro(in_a0);
-      in_a0 = in_v0;
-      break;
-    case MENU_GOLDENEYE_LOGO:
-      _DL = constructor_menu04_goldeneyelogo(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_FILE_SELECT:
-      puVar2 = constructor_menu05_filesel(_DL);
-      in_a0 = (longlong)(int)puVar2;
-      break;
-    case MENU_MODE_SELECT:
-      iVar1 = constructor_menu06_modesel(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_MISSION_SELECT:
-      iVar1 = constructor_menu07_missionsel(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_DIFFICULTY:
-      iVar1 = constructor_menu08_difficulty(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_007_OPTIONS:
-      iVar1 = constructor_menu09_007options(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_BRIEFING:
-      iVar1 = constructor_menu0A_briefing(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_MISSION_FAILED:
-      iVar1 = constructor_menu0C_missionfailed(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_MISSION_COMPLETE:
-      in_a0 = constructor_menu0D_missioncomplete();
-      break;
-    case MENU_MP_OPTIONS:
-      iVar1 = constructor_menu0E_mpoptions(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_MP_CHAR_SELECT:
-      _DL = constructor_menu0F_mpcharsel(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_MP_HANDICAP:
-      _DL = constructor_menu10_mphandicap(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_MP_CONTROL_STYLE:
-      _DL = constructor_menu11_mpcontrol(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_MP_STAGE_SELECT:
-      iVar1 = constructor_menu12_mpstage(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_MP_SCENARIO_SELECT:
-      iVar1 = constructor_menu13_mpscenario(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_MP_TEAMS:
-      _DL = constructor_menu14_mpteams(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_CHEAT:
-      iVar1 = constructor_menu15_cheat(_DL);
-      in_a0 = (longlong)iVar1;
-      break;
-    case MENU_NO_CONTROLLERS:
-      puVar2 = constructor_menu16_nocontrollers(_DL);
-      in_a0 = (longlong)(int)puVar2;
-      break;
-    case MENU_SWITCH_SCREENS:
-      _DL = constructor_menu17_switchscreens(_DL);
-      in_a0 = (longlong)(int)_DL;
-      break;
-    case MENU_DISPLAY_CAST:
-      puVar2 = constructor_menu18_displaycast(_DL);
-      in_a0 = (longlong)(int)puVar2;
-      break;
-    case MENU_SPECTRUM_EMU:
-      _DL = constructor_menu19_spectrum(_DL);
-      in_a0 = (longlong)(int)_DL;
+        case MENU_LEGAL_SCREEN:
+            constructor_menu00_legalscreen(DL);
+            break;
+        case MENU_NINTENDO_LOGO:
+            constructor_menu01_nintendo(DL);
+            break;
+        case MENU_RAREWARE_LOGO:
+            constructor_menu02_rareware(DL);
+            break;
+        case MENU_EYE_INTRO:
+            constructor_menu03_eye(DL);
+            break;
+        case MENU_GOLDENEYE_LOGO:
+            constructor_menu04_goldeneyelogo(DL);
+            break;
+        case MENU_FILE_SELECT:
+            constructor_menu05_fileselect(DL);
+            break;
+        case MENU_MODE_SELECT:
+            constructor_menu06_modesel(DL);
+            break;
+        case MENU_MISSION_SELECT:
+            constructor_menu07_missionsel(DL);
+            break;
+        case MENU_DIFFICULTY:
+            constructor_menu08_difficulty(DL);
+            break;
+        case MENU_007_OPTIONS:
+            constructor_menu09_007options(DL);
+            break;
+        case MENU_BRIEFING:
+            constructor_menu0A_briefing(DL);
+            break;
+        case MENU_MISSION_FAILED:
+            constructor_menu0C_missionfailed(DL);
+            break;
+        case MENU_MISSION_COMPLETE:
+            constructor_menu0D_missioncomplete(DL);
+            break;
+        case MENU_MP_OPTIONS:
+            constructor_menu0E_mpoptions(DL);
+            break;
+        case MENU_MP_CHAR_SELECT:
+            constructor_menu0F_mpcharsel(DL);
+            break;
+        case MENU_MP_HANDICAP:
+            constructor_menu10_mphandicap(DL);
+            break;
+        case MENU_MP_CONTROL_STYLE:
+            constructor_menu11_mpcontrol(DL);
+            break;
+        case MENU_MP_STAGE_SELECT:
+            constructor_menu12_mpstage(DL);
+            break;
+        case MENU_MP_SCENARIO_SELECT:
+            constructor_menu13_mpscenario(DL);
+            break;
+        case MENU_MP_TEAMS:
+            constructor_menu14_mpteams(DL);
+            break;
+        case MENU_CHEAT:
+            constructor_menu15_cheat(DL);
+            break;
+        case MENU_NO_CONTROLLERS:
+            constructor_menu16_nocontrollers(DL);
+            break;
+        case MENU_SWITCH_SCREENS:
+            constructor_menu17_switchscreens(DL);
+            break;
+        case MENU_DISPLAY_CAST:
+            constructor_menu18_displaycast(DL);
+            break;
+        case MENU_SPECTRUM_EMU:
+            constructor_menu19_spectrum(DL);
     }
-  }
-  return in_a0;
+    return;
 }
 #else
 GLOBAL_ASM(

@@ -19,35 +19,12 @@ s32 D_800484B4 = 1;
 
 
 
-#ifdef NONMATCHING
-void store_osgetcount(void) {
-    u32 temp_ret;
 
-    temp_ret = osGetCount();
-    copy_of_osgetcount_value_1 = temp_ret;
-    copy_of_osgetcount_value_0 = temp_ret;
+void store_osgetcount(void)
+{
+    copy_of_osgetcount_value_1 = osGetCount();
+    copy_of_osgetcount_value_0 = copy_of_osgetcount_value_1;
 }
-
-#else
-GLOBAL_ASM(
-.text
-glabel store_osgetcount
-/* 0F55A0 7F0C0A70 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0F55A4 7F0C0A74 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0F55A8 7F0C0A78 0C003638 */  jal   osGetCount
-/* 0F55AC 7F0C0A7C 00000000 */   nop   
-/* 0F55B0 7F0C0A80 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0F55B4 7F0C0A84 3C038005 */  lui   $v1, %hi(copy_of_osgetcount_value_1)
-/* 0F55B8 7F0C0A88 246384B0 */  addiu $v1, %lo(copy_of_osgetcount_value_1) # addiu $v1, $v1, -0x7b50
-/* 0F55BC 7F0C0A8C AC620000 */  sw    $v0, ($v1)
-/* 0F55C0 7F0C0A90 3C018005 */  lui   $at, %hi(copy_of_osgetcount_value_0)
-/* 0F55C4 7F0C0A94 AC2284AC */  sw    $v0, %lo(copy_of_osgetcount_value_0)($at)
-/* 0F55C8 7F0C0A98 03E00008 */  jr    $ra
-/* 0F55CC 7F0C0A9C 27BD0018 */   addiu $sp, $sp, 0x18
-)
-#endif
-
-
 
 
 

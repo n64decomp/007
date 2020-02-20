@@ -35,8 +35,8 @@ u32 D_800230CC = 1;
 
 OSSched sc;
 //temporary until i get proper sized structs
-//OSScClient gfxClient;
-char gfxClient[0x18];
+OSScClient gfxClient[3];
+//char gfxClient[0x18];
 
 char target_for_counters_maybe[0x10];
 char dword_CODE_bss_8005DB40[0xB0];
@@ -46,7 +46,8 @@ char dword_CODE_bss_8005DB40[0xB0];
  * 1570	70000970
  * A0-> stderr.activated	[80023098]; fry AT
  */
-void activate_stderr(u32 flag) {
+void activate_stderr(u32 flag)
+{
 	stderr_active = flag;
 }
 
@@ -54,7 +55,8 @@ void activate_stderr(u32 flag) {
  * 157C	7000097C
  * A0-> stderr.enable		[80023094]; fry AT
  */
-void enable_stderr(u32 flag) {
+void enable_stderr(u32 flag)
+{
 	stderr_enabled = flag;
 }
 
@@ -62,7 +64,8 @@ void enable_stderr(u32 flag) {
  * 1588	70000988
  * A0-> stderr.permitted	[8002309C]; fry AT
  */
-void permit_stderr(u32 flag) {
+void permit_stderr(u32 flag)
+{
 	stderr_permitted = flag;
 }
 
@@ -70,7 +73,8 @@ void permit_stderr(u32 flag) {
  * 1594	70000994
  * A0-> user.Compare		[800230A0]; fry AT
  */
-void setUserCompareValue(u32 value) {
+void setUserCompareValue(u32 value)
+{
 	userCompareValue = value;
 }
 
@@ -78,8 +82,10 @@ void setUserCompareValue(u32 value) {
  * 15A0	700009A0
  * test to display stderr and update Count
  */
-void CheckDisplayErrorBuffer(u32 *buffer) {
-	if ((stderr_permitted && stderr_active) || stderr_enabled ){
+void CheckDisplayErrorBuffer(u32 *buffer)
+{
+	if ((stderr_permitted && stderr_active) || stderr_enabled )
+    {
 		write_stderr_to_buffer(buffer);
 		currentcount = osGetCount();
 	}
@@ -89,62 +95,21 @@ void CheckDisplayErrorBuffer(u32 *buffer) {
  * 15F8	700009F8
  * test to display stderr every 16th frame
  */
-#ifdef NONMATCHING
-void CheckDisplayErrorBufferEvery16Frames(u32 framecount) {
-	if (framecount & 0xf) {
-		if ((stderr_permitted && stderr_active) || stderr_enabled){
-			if (userCompareValue < (osGetCount() - currentcount)){
+
+void CheckDisplayErrorBufferEvery16Frames(u32 framecount)
+{
+	if (!(framecount & 0xf))
+    {
+		if ((stderr_permitted && stderr_active) || stderr_enabled)
+        {
+			if (userCompareValue < (osGetCount() - currentcount))
+            {
 				write_stderr_to_buffer(cfb_16_a);
 				write_stderr_to_buffer(cfb_16_b);
 			}
 		}
 	}
 }
-#else
-GLOBAL_ASM(
-glabel CheckDisplayErrorBufferEvery16Frames
-/* 0015F8 700009F8 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0015FC 700009FC 308E000F */  andi  $t6, $a0, 0xf
-/* 001600 70000A00 15C0001D */  bnez  $t6, .Ltesttodisplaystderrorevery16thframe_80
-/* 001604 70000A04 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 001608 70000A08 3C0F8002 */  lui   $t7, %hi(stderr_permitted)
-/* 00160C 70000A0C 8DEF309C */  lw    $t7, %lo(stderr_permitted)($t7)
-/* 001610 70000A10 3C188002 */  lui   $t8, %hi(stderr_active)
-/* 001614 70000A14 3C198002 */  lui   $t9, %hi(stderr_enabled)
-/* 001618 70000A18 11E00004 */  beqz  $t7, .Ltesttodisplaystderrorevery16thframe_34
-/* 00161C 70000A1C 00000000 */  nop   
-/* 001620 70000A20 8F183098 */  lw    $t8, %lo(stderr_active)($t8)
-/* 001624 70000A24 17000004 */  bnez  $t8, .Ltesttodisplaystderrorevery16thframe_40
-/* 001628 70000A28 00000000 */  nop   
-.Ltesttodisplaystderrorevery16thframe_34:
-/* 00162C 70000A2C 8F393094 */  lw    $t9, %lo(stderr_enabled)($t9)
-/* 001630 70000A30 53200012 */  beql  $t9, $zero, .Ltesttodisplaystderrorevery16thframe_84
-/* 001634 70000A34 8FBF0014 */  lw    $ra, 0x14($sp)
-.Ltesttodisplaystderrorevery16thframe_40:
-/* 001638 70000A38 0C003638 */  jal   osGetCount
-/* 00163C 70000A3C 00000000 */  nop   
-/* 001640 70000A40 3C098002 */  lui   $t1, %hi(currentcount)
-/* 001644 70000A44 8D2930A4 */  lw    $t1, %lo(currentcount)($t1)
-/* 001648 70000A48 3C088002 */  lui   $t0, %hi(userCompareValue)
-/* 00164C 70000A4C 8D0830A0 */  lw    $t0, %lo(userCompareValue)($t0)
-/* 001650 70000A50 00495023 */  subu  $t2, $v0, $t1
-/* 001654 70000A54 3C04803B */  lui   $a0, %hi(cfb_16_a)
-/* 001658 70000A58 010A082B */  sltu  $at, $t0, $t2
-/* 00165C 70000A5C 50200007 */  beql  $at, $zero, .Ltesttodisplaystderrorevery16thframe_84
-/* 001660 70000A60 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 001664 70000A64 0C001674 */  jal   write_stderr_to_buffer
-/* 001668 70000A68 24845000 */  addiu $a0, $a0, %lo(cfb_16_a)
-/* 00166C 70000A6C 3C04803E */  lui   $a0, %hi(cfb_16_b)
-/* 001670 70000A70 0C001674 */  jal   write_stderr_to_buffer
-/* 001674 70000A74 2484A800 */  addiu $a0, $a0, %lo(cfb_16_b)
-.Ltesttodisplaystderrorevery16thframe_80:
-/* 001678 70000A78 8FBF0014 */  lw    $ra, 0x14($sp)
-.Ltesttodisplaystderrorevery16thframe_84:
-/* 00167C 70000A7C 27BD0018 */  addiu $sp, $sp, 0x18
-/* 001680 70000A80 03E00008 */  jr    $ra
-/* 001684 70000A84 00000000 */  nop   
-)
-#endif
 
 /**
  * Not 100% on name, came from osInitialize's call to function
@@ -162,8 +127,6 @@ void osCreateLog(void){
 #ifdef NONMATCHING
 void osCreateScheduler (OSSched * sc, void * stack, u8 mode, u8 numFields)
 {
-    void *temp_t2;
-
     sc->curRSPTask = 0;
     sc->curRDPTask = 0;
     sc->clientList = 0;
@@ -172,17 +135,18 @@ void osCreateScheduler (OSSched * sc, void * stack, u8 mode, u8 numFields)
     sc->gfxListHead = 0;
     sc->audioListTail = 0;
     sc->gfxListTail = 0;
-    sc->retraceMsg.type = (u16)1;
-    sc->prenmiMsg.type = (u16)5;
+    sc->retraceMsg.type = 1;
+    sc->prenmiMsg.type = 5;
     sc->thread = stack;
     osCreateMesgQueue(&sc->interruptQ, sc->intBuf, 8);
     osCreateMesgQueue(&sc->cmdQ, sc->cmdMsgBuf, 8);
     osCreateViManager(0xfe);
-    temp_t2 = ((mode * 0x50) + &osViModeTable);
-    viMode = temp_t2;
-    viMode+0x4 = (?32) temp_t2->unk1C;
-    viMode+0x8 = (?32) temp_t2->unk30;
-    viMode+0xC = (?32) temp_t2->unk44;
+
+    viMode = osViModeTable[mode];
+    viMode.comRegs.ctrl = osViModeTable[mode].comRegs.hStart;
+    viMode.comRegs.width = osViModeTable[mode].fldRegs[0].vStart;
+    viMode.comRegs.burst = osViModeTable[mode].fldRegs[1].vStart;
+
     osSetEventMesg(4, &sc->interruptQ, 0x29b);
     osSetEventMesg(9, &sc->interruptQ, 0x29c);
     osSetEventMesg(0xe, &sc->interruptQ, 0x29d);
@@ -290,43 +254,20 @@ glabel osCreateScheduler
 /**
  * 1814	70000C14
  */
-#ifdef NONMATCHING
-void osScAddClient(void *arg0, void *arg1, ?32 arg2, ?32 arg3)
+void osScAddClient(OSSched *sc, OSScClient *c, OSMesgQueue *msgQ, OSScClient *next)
 {
-    arg1->unk4 = arg2;
-    arg1->unk8 = arg3;
-    *arg1 = (void *) arg0->unkB4;
-    arg0->unkB4 = arg1;
-    osSetIntMask(osSetIntMask(1), arg1);
+    OSIntMask mask;
+
+    mask = osSetIntMask(1);
+
+    c->msgQ = msgQ;
+    c[1].next = next;
+    c->next = sc->clientList;
+    sc->clientList = c;
+
+    osSetIntMask(mask);
 }
-#else
-GLOBAL_ASM(
-glabel osScAddClient
-/* 001814 70000C14 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 001818 70000C18 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 00181C 70000C1C AFA40018 */  sw    $a0, 0x18($sp)
-/* 001820 70000C20 AFA60020 */  sw    $a2, 0x20($sp)
-/* 001824 70000C24 AFA70024 */  sw    $a3, 0x24($sp)
-/* 001828 70000C28 24040001 */  li    $a0, 1
-/* 00182C 70000C2C 0C00374C */  jal   osSetIntMask
-/* 001830 70000C30 AFA5001C */   sw    $a1, 0x1c($sp)
-/* 001834 70000C34 8FA5001C */  lw    $a1, 0x1c($sp)
-/* 001838 70000C38 8FAE0020 */  lw    $t6, 0x20($sp)
-/* 00183C 70000C3C 8FA30018 */  lw    $v1, 0x18($sp)
-/* 001840 70000C40 00402025 */  move  $a0, $v0
-/* 001844 70000C44 ACAE0004 */  sw    $t6, 4($a1)
-/* 001848 70000C48 8FAF0024 */  lw    $t7, 0x24($sp)
-/* 00184C 70000C4C ACAF0008 */  sw    $t7, 8($a1)
-/* 001850 70000C50 8C7800B4 */  lw    $t8, 0xb4($v1)
-/* 001854 70000C54 ACB80000 */  sw    $t8, ($a1)
-/* 001858 70000C58 0C00374C */  jal   osSetIntMask
-/* 00185C 70000C5C AC6500B4 */   sw    $a1, 0xb4($v1)
-/* 001860 70000C60 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 001864 70000C64 27BD0018 */  addiu $sp, $sp, 0x18
-/* 001868 70000C68 03E00008 */  jr    $ra
-/* 00186C 70000C6C 00000000 */   nop   
-)
-#endif
+
 
 /**
  * 1870	70000C70

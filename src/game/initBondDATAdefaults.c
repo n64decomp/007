@@ -288,7 +288,7 @@ glabel sets_a_bunch_of_BONDdata_values_to_default
 /* 03B1B8 7F006688 0FC1B5AC */  jal   subcalcpos
 /* 03B1BC 7F00668C 24840598 */   addiu $a0, $a0, 0x598
 /* 03B1C0 7F006690 27B30050 */  addiu $s3, $sp, 0x50
-/* 03B1C4 7F006694 0FC15FF4 */  jal   init_0x40_bytes_data_at_address_last_word_1_0
+/* 03B1C4 7F006694 0FC15FF4 */  jal   reset_array_of_0x10_floats
 /* 03B1C8 7F006698 02602025 */   move  $a0, $s3
 /* 03B1CC 7F00669C 8E300000 */  lw    $s0, ($s1)
 /* 03B1D0 7F0066A0 AFB30090 */  sw    $s3, 0x90($sp)
@@ -581,7 +581,7 @@ glabel sets_a_bunch_of_BONDdata_values_to_default
 /* 03B214 7F0066A4 0FC1B728 */  jal   subcalcpos
 /* 03B218 7F0066A8 24840598 */   addiu $a0, $a0, 0x598
 /* 03B21C 7F0066AC 27B30050 */  addiu $s3, $sp, 0x50
-/* 03B220 7F0066B0 0FC1613C */  jal   init_0x40_bytes_data_at_address_last_word_1_0
+/* 03B220 7F0066B0 0FC1613C */  jal   reset_array_of_0x10_floats
 /* 03B224 7F0066B4 02602025 */   move  $a0, $s3
 /* 03B228 7F0066B8 8E300000 */  lw    $s0, ($s1)
 /* 03B22C 7F0066BC AFB30090 */  sw    $s3, 0x90($sp)

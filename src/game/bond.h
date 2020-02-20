@@ -1,7 +1,9 @@
 #ifndef _BOND_H_
 #define _BOND_H_
+
 #include "ultra64.h"
 #include "game/chr.h"
+
 struct xyzpoint
 {
     f32 x;
@@ -9,7 +11,7 @@ struct xyzpoint
     f32 z;
 };
 
-struct Player
+typedef struct Player
 {
   s32 unknown;
   s32 xpos;
@@ -526,8 +528,7 @@ struct Player
   s16 viewtop;
   s32 right_invisible;
   s32 left_invisible;
-  s32 item_right;
-  s32 item_left;
+  s32 handitem[2];
   s32 ptr_right_weapon_buffer;
   s32 ptr_left_weapon_buffer;
   s32 copy_of_body_obj_header[8];
@@ -2684,7 +2685,7 @@ struct Player
   s32 deathcount;
   s32 num_suicides;
   s32 field_29E0;
-  s32 field_29E4;
+  s32 last_kill_time;
   s32 field_29E8;
   s32 field_29EC;
   s32 field_29F0;
@@ -2705,7 +2706,7 @@ struct Player
   s32 field_2A2C;
   s32 field_2A30;
   s32 field_2A34;
-  s32 field_2A38;
+  s32 cur_item_weapon_getname;
   s32 actual_health;
   s32 actual_armor;
   s32 field_2A44;
@@ -2717,13 +2718,13 @@ struct Player
   s32 cur_player_control_type_1;
   f32 cur_player_control_type_2;
   s32 neg_vspacing_for_control_type_entry;
-  s32 has_set_control_type_data;
+  u32 has_set_control_type_data;
   s32 field_2A6C;
   s32 field_2A70;
   s32 field_2A74;
   s32 field_2A78;
   s32 field_2A7C;
-};
+} Player;
 
 struct firing_anim_struct {
     struct weapon_firing_animation_table * pointer;

@@ -39,7 +39,7 @@ glabel alloc_init_GUARDdata_entries
 /* 035A14 7F000EE4 3498000F */  ori   $t8, $a0, 0xf
 /* 035A18 7F000EE8 ACCE0000 */  sw    $t6, ($a2)
 /* 035A1C 7F000EEC 3B04000F */  xori  $a0, $t8, 0xf
-/* 035A20 7F000EF0 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 035A20 7F000EF0 0C0025C8 */  jal   mempAllocBytesInBank
 /* 035A24 7F000EF4 24050004 */   li    $a1, 4
 /* 035A28 7F000EF8 3C068003 */  lui   $a2, %hi(num_guards)
 /* 035A2C 7F000EFC 24C6CC68 */  addiu $a2, %lo(num_guards) # addiu $a2, $a2, -0x3398

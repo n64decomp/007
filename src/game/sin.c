@@ -1,7 +1,8 @@
 #include "ultra64.h"
 
 
-
+//these are actaully clever shared asm
+//!FIXME move to asm file
 
 
 

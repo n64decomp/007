@@ -48,13 +48,13 @@ s16 random_tracks[] = {
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0D2720(void) {
+void getmusictrack_or_randomtrack(void) {
 
 }
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F0D2720
+glabel getmusictrack_or_randomtrack
 /* 107250 7F0D2720 3C0E8005 */  lui   $t6, %hi(music_setup_entries) 
 /* 107254 7F0D2724 85CEEB10 */  lh    $t6, %lo(music_setup_entries)($t6)
 /* 107258 7F0D2728 27BDFFD8 */  addiu $sp, $sp, -0x28

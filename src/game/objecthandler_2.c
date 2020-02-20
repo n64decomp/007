@@ -13235,10 +13235,10 @@ glabel sub_GAME_7F0762E0
 /* 0AAE50 7F076320 0FC2F495 */  jal   get_index_num_of_named_resource
 /* 0AAE54 7F076324 AFAE0054 */   sw    $t6, 0x54($sp)
 /* 0AAE58 7F076328 AFA20050 */  sw    $v0, 0x50($sp)
-/* 0AAE5C 7F07632C 0FC2F447 */  jal   get_remaining_buffer_for_index
+/* 0AAE5C 7F07632C 0FC2F447 */  jal   get_rom_remaining_buffer_for_index
 /* 0AAE60 7F076330 00402025 */   move  $a0, $v0
 /* 0AAE64 7F076334 00408025 */  move  $s0, $v0
-/* 0AAE68 7F076338 0FC2F440 */  jal   get_temp_remaining_buffer_for_index
+/* 0AAE68 7F076338 0FC2F440 */  jal   get_pc_remaining_buffer_for_index
 /* 0AAE6C 7F07633C 8FA40050 */   lw    $a0, 0x50($sp)
 /* 0AAE70 7F076340 0040F025 */  move  $fp, $v0
 /* 0AAE74 7F076344 AFA00074 */  sw    $zero, 0x74($sp)

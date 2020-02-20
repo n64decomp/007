@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "MIPS3-DEBUG",
+            "configurationType": "Debug",
+            "generator": "Unix Makefiles",
+            "includePath": [
+                "${env.INCLUDE}",
+                "${workspaceRoot}\\**",
+                ""
+            ],
+            "wslPath": "${defaultWSLPath}",
+            "defines": [
+                "TRI4_Ext",
+                "DEBUG"
+            ]
+            //"compilerPath": "/usr/",
+                   }
+
+    ]
+}

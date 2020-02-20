@@ -1713,7 +1713,7 @@ glabel sub_GAME_7F008E80
 /* 03DB40 7F009010 8E040064 */  lw    $a0, 0x64($s0)
 /* 03DB44 7F009014 0FC1D929 */  jal   load_object_fill_header
 /* 03DB48 7F009018 8E050068 */   lw    $a1, 0x68($s0)
-/* 03DB4C 7F00901C 0FC2F462 */  jal   sub_GAME_7F0BD188
+/* 03DB4C 7F00901C 0FC2F462 */  jal   get_pc_buffer_remaining_value
 /* 03DB50 7F009020 8E040068 */   lw    $a0, 0x68($s0)
 /* 03DB54 7F009024 2443003F */  addiu $v1, $v0, 0x3f
 /* 03DB58 7F009028 8FA60060 */  lw    $a2, 0x60($sp)
@@ -1729,7 +1729,7 @@ glabel sub_GAME_7F008E80
 /* 03DB80 7F009050 8E040618 */  lw    $a0, 0x618($s0)
 /* 03DB84 7F009054 0FC1D929 */  jal   load_object_fill_header
 /* 03DB88 7F009058 8E05061C */   lw    $a1, 0x61c($s0)
-/* 03DB8C 7F00905C 0FC2F462 */  jal   sub_GAME_7F0BD188
+/* 03DB8C 7F00905C 0FC2F462 */  jal   get_pc_buffer_remaining_value
 /* 03DB90 7F009060 8E04061C */   lw    $a0, 0x61c($s0)
 /* 03DB94 7F009064 2443003F */  addiu $v1, $v0, 0x3f
 /* 03DB98 7F009068 8FAC0064 */  lw    $t4, 0x64($sp)
@@ -1801,7 +1801,7 @@ glabel sub_GAME_7F008E80
 /* 03DC98 7F009168 8FA60060 */  lw    $a2, 0x60($sp)
 /* 03DC9C 7F00916C 0FC1D929 */  jal   load_object_fill_header
 /* 03DCA0 7F009170 8FA70064 */   lw    $a3, 0x64($sp)
-/* 03DCA4 7F009174 0FC2F462 */  jal   sub_GAME_7F0BD188
+/* 03DCA4 7F009174 0FC2F462 */  jal   get_pc_buffer_remaining_value
 /* 03DCA8 7F009178 8E0408F8 */   lw    $a0, 0x8f8($s0)
 /* 03DCAC 7F00917C 2443003F */  addiu $v1, $v0, 0x3f
 /* 03DCB0 7F009180 8FAD0064 */  lw    $t5, 0x64($sp)

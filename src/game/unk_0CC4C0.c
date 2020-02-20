@@ -2764,7 +2764,7 @@ glabel process_microcode_sort_display_modes_expand_image_calls
 .L7F0CE258:
 /* 102D88 7F0CE258 0000A025 */  move  $s4, $zero
 .L7F0CE25C:
-/* 102D8C 7F0CE25C 0FC32FBA */  jal   sub_GAME_7F0CBEE8
+/* 102D8C 7F0CE25C 0FC32FBA */  jal   calls_load_image_to_buffer
 /* 102D90 7F0CE260 02602025 */   move  $a0, $s3
 /* 102D94 7F0CE264 02602025 */  move  $a0, $s3
 /* 102D98 7F0CE268 0FC32EC3 */  jal   sub_GAME_7F0CBB0C
@@ -2887,7 +2887,7 @@ glabel process_microcode_sort_display_modes_expand_image_calls
 /* 102F5C 7F0CE42C 02C02825 */  move  $a1, $s6
 /* 102F60 7F0CE430 00047B02 */  srl   $t7, $a0, 0xc
 /* 102F64 7F0CE434 31E40FFF */  andi  $a0, $t7, 0xfff
-/* 102F68 7F0CE438 0FC32FBA */  jal   sub_GAME_7F0CBEE8
+/* 102F68 7F0CE438 0FC32FBA */  jal   calls_load_image_to_buffer
 /* 102F6C 7F0CE43C AFA40080 */   sw    $a0, 0x80($sp)
 /* 102F70 7F0CE440 8FA40080 */  lw    $a0, 0x80($sp)
 /* 102F74 7F0CE444 0FC32EC3 */  jal   sub_GAME_7F0CBB0C

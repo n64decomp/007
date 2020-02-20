@@ -63,23 +63,23 @@ typedef struct {
 } OSSched;
 
 extern OSSched sc;
-//extern OSScClient gfxClient;
-extern char gfxClient[0x18];
+extern OSScClient gfxClient[3];
+//extern char gfxClient[0x18];
 
 void activate_stderr(u32 flag);
 void enable_stderr(u32 flag);
 void permit_stderr(u32 flag);
 void setUserCompareValue(u32 value);
-extern void CheckDisplayErrorBuffer(u32 *buffer);
-extern void CheckDisplayErrorBufferEvery16Frames(u32 framecount);
+void CheckDisplayErrorBuffer(u32 *buffer);
+void CheckDisplayErrorBufferEvery16Frames(u32 framecount);
 void osCreateLog(void);
 void __scMain(void *arg);
 void __scYield(OSSched *sc) ;
-
-void            osCreateScheduler(OSSched *s, void *stack, u8 mode, u8 numFields);
-void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ);
-void            osScRemoveClient(OSSched *s, OSScClient *c);
-OSMesgQueue     *osScGetCmdQ(OSSched *s);
+void __scAppendList(OSSched *sc, OSScTask *t);
+void osCreateScheduler(OSSched *s, void *stack, u8 mode, u8 numFields);
+void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, OSScClient *next);
+void osScRemoveClient(OSSched *s, OSScClient *c);
+OSMesgQueue *osScGetCmdQ(OSSched *s);
 
 #endif
 

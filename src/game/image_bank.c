@@ -13,71 +13,71 @@ s32 dword_CODE_bss_8008D0AC;
 //8008D0B0;
 s32 globalbank_rdram_offset;
 //8008D0B4;
-s32 *ptr_explosionDL;
+s32 *pGlobalimagetable;
 //8008D0B8;
-s32 *genericimage;
+struct sImageTableEntry *genericimage;
 //8008D0BC
-s32 *impactimages;
+struct sImageTableEntry *impactimages;
 //8008D0C0
-s32 *explosion_smokeimages;
+struct sImageTableEntry *explosion_smokeimages;
 //8008D0C4
-s32 *scattered_explosions;
+struct sImageTableEntry *scattered_explosions;
 //8008D0C8
-s32 flareimage1;
+struct sImageTableEntry *flareimage1;
 //8008D0CC
-s32 flareimage2;
+struct sImageTableEntry *flareimage2;
 //8008D0D0
-s32 flareimage3;
+struct sImageTableEntry *flareimage3;
 //8008D0D4
-s32 flareimage4;
+struct sImageTableEntry *flareimage4;
 //8008D0D8
-s32 flareimage5;
+struct sImageTableEntry *flareimage5;
 //8008D0DC
-s32 ammo9mmimage;
+struct sImageTableEntry *ammo9mmimage;
 //8008D0E0
-s32 rifleammoimage;
+struct sImageTableEntry *rifleammoimage;
 //8008D0E4
-s32 shotgunammoimage;
+struct sImageTableEntry *shotgunammoimage;
 //8008D0E8
-s32 knifeammoimage;
+struct sImageTableEntry *knifeammoimage;
 //8008D0EC
-s32 glaunchammoimage;
+struct sImageTableEntry *glaunchammoimage;
 //8008D0F0
-s32 rocketammoimage;
+struct sImageTableEntry *rocketammoimage;
 //8008D0F4
-s32 genericmineammoimage;
+struct sImageTableEntry *genericmineammoimage;
 //8008D0F8
-s32 grenadeammoimage;
+struct sImageTableEntry *grenadeammoimage;
 //8008D0FC
-s32 magnumammoimage;
+struct sImageTableEntry *magnumammoimage;
 //8008D100
-s32 goldengunammoimage;
+struct sImageTableEntry *goldengunammoimage;
 //8008D104
-s32 remotemineammoimage;
+struct sImageTableEntry *remotemineammoimage;
 //8008D108
-s32 timedmineammoimage;
+struct sImageTableEntry *timedmineammoimage;
 //8008D10C
-s32 proxmineammoimage;
+struct sImageTableEntry *proxmineammoimage;
 //8008D110
-s32 tankammoimage;
+struct sImageTableEntry *tankammoimage;
 //8008D114;
-s32 *crosshairimage;
+struct sImageTableEntry *crosshairimage;
 //8008D118
-s32 betacrosshairimage;
+struct sImageTableEntry *betacrosshairimage;
 //8008D11C
-s32 glassoverlayimage;
+struct sImageTableEntry *glassoverlayimage;
 //8008D120
-s32 monitorimages;
+struct sImageTableEntry *monitorimages;
 //8008D124
-s32 skywaterimages;
+struct sImageTableEntry *skywaterimages;
 //8008D128
-s32 mainfolderimages;
+struct sImageTableEntry *mainfolderimages;
 //8008D12C
-s32 mpradarimages;
+struct sImageTableEntry *mpradarimages;
 //8008D130
-s32 mpcharselimages;
+struct sImageTableEntry *mpcharselimages;
 //8008D134
-s32 mpstageselimages;
+struct sImageTableEntry *mpstageselimages;
 
 
 extern u8* _GlobalimagetableSegmentRomStart;
@@ -161,9 +161,9 @@ void load_prepare_global_image_bank(void) {
     s32 i;
 
     size = (0x2001400 - 0x2000000);
-    ptr_explosionDL = ((allocate_bytes_in_bank((size + 0x1000), 4) + 0xfff) & -0x1000);
-    romCopy(ptr_explosionDL, _GlobalimagetableSegmentRomStart, size);
-    globalbank_rdram_offset = (ptr_explosionDL + 0xfe000000);
+    pGlobalimagetable = ((mempAllocBytesInBank((size + 0x1000), 4) + 0xfff) & -0x1000);
+    romCopy(pGlobalimagetable, _GlobalimagetableSegmentRomStart, size);
+    globalbank_rdram_offset = (pGlobalimagetable + 0xfe000000);
     genericimage = (s32) (globalbank_rdram_offset + 0x2000ac8);
     impactimages = (s32) (globalbank_rdram_offset + 0x2000ad4);
     explosion_smokeimages = (s32) (globalbank_rdram_offset + 0x2000bc4);
@@ -240,10 +240,10 @@ glabel load_prepare_global_image_bank
 /* 100B04 7F0CBFD4 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 100B08 7F0CBFD8 AFB10018 */  sw    $s1, 0x18($sp)
 /* 100B0C 7F0CBFDC 26041000 */  addiu $a0, $s0, 0x1000
-/* 100B10 7F0CBFE0 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 100B10 7F0CBFE0 0C0025C8 */  jal   mempAllocBytesInBank
 /* 100B14 7F0CBFE4 24050004 */   li    $a1, 4
-/* 100B18 7F0CBFE8 3C118009 */  lui   $s1, %hi(ptr_explosionDL)
-/* 100B1C 7F0CBFEC 2631D0B4 */  addiu $s1, %lo(ptr_explosionDL) # addiu $s1, $s1, -0x2f4c
+/* 100B18 7F0CBFE8 3C118009 */  lui   $s1, %hi(pGlobalimagetable)
+/* 100B1C 7F0CBFEC 2631D0B4 */  addiu $s1, %lo(pGlobalimagetable) # addiu $s1, $s1, -0x2f4c
 /* 100B20 7F0CBFF0 24590FFF */  addiu $t9, $v0, 0xfff
 /* 100B24 7F0CBFF4 2401F000 */  li    $at, -4096
 /* 100B28 7F0CBFF8 AE220000 */  sw    $v0, ($s1)

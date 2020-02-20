@@ -157,12 +157,12 @@ void init_mainthread_data(void)
         current_m_malloc_value = (s32) (strtol(check_token(1, "-m"), 0, 0) << 0xa);
     }
     temp_s0 = (osVirtualToPhysical(&room_model_buffer) | 0x80000000);
-    check_memflag_tokens(temp_s0, (return_ptr_TLBallocatedblock() - temp_s0));
-    reset_mem_bank_a0(6);
+    mempCheckMemflagTokens(temp_s0, (return_ptr_TLBallocatedblock() - temp_s0));
+    mempResetBank(6);
     init_LnameX();
     something_with_lvl_c_debug();
     something_with_boss_c_debug();
-    null_init_main();
+    null_init_main_7f0acb70();
     null_init_main_0();
     default_player_perspective_and_height();
     store_osgetcount();
@@ -287,9 +287,9 @@ void mainloop(void)
 
     sp1DC = 0;
     reset_mem_bank_5();
-    if (check_token(1, &aLevel__0) != 0)
+    if (check_token(1, "-level_") != 0)
     {
-        temp_ret = check_token(1, &aLevel__1);
+        temp_ret = check_token(1, "-level_");
         current_stage_num = (s32) ((temp_ret->unk1 + (temp_ret->unk0 * 0xa)) + -0x210);
     }
     if (current_stage_num != 0x5a)
@@ -298,10 +298,10 @@ void mainloop(void)
         set_selected_folder_num(0);
         set_selected_difficulty(0);
         set_solo_and_ptr_briefing(current_stage_num);
-        if (check_token(1, &aHard) != 0)
+        if (check_token(1, "-hard") != 0)
         {
-            set_selected_difficulty(*check_token(1, &aHard_1) + -0x30);
-            set_difficulty(*check_token(1, &aHard_2) + -0x30);
+            set_selected_difficulty(*check_token(1, "-hard") + -0x30);
+            set_difficulty(*check_token(1, "-hard") + -0x30);
         }
     }
     increment_random_num(osGetCount());
@@ -384,13 +384,13 @@ loop_18:
         }
         strtok((&memallocstringtable + (phi_s0_3 * 8))->unk4, &memallocstringtable);
     }
-    reset_mem_bank_a0(4);
+    mempResetBank(4);
     something_mem_bank_a0(4);
     if (check_token(1, &aMa) != 0)
     {
         current_ma_malloc_value = (s32) (strtol(check_token(1, &aMa_0), 0, 0) << 0xa);
     }
-    reset_memtable_base_allocation(allocate_bytes_in_bank(current_ma_malloc_value, 4), current_ma_malloc_value);
+    mempInitMallocTable(mempAllocBytesInBank(current_ma_malloc_value, 4), current_ma_malloc_value);
     reset_play_data_ptrs();
     phi_s1 = 0;
     if (current_stage_num != 0x5a)
@@ -566,8 +566,8 @@ loop_44:
                         temp_s3_3 = temp_s3_3 + 8;
                         if (show_mem_use_flag != 0)
                         {
-                            nulled_list_all8_mem_alloc_banks_sizes();
-                            generate_lists_before_after_mem_merge();
+                            nulled_mempLoopAllMemBanks();
+                            memaGenerateListsBeforeAfterMerge();
                             removed_debug_routine(temp_s3_3);
                             nullsub_41(0);
                             show_mem_use_flag = 0;
@@ -619,7 +619,7 @@ loop_58:
     }
     unload_stage_text_data();
     stop_demo_playback();
-    memp_related_6(4);
+    mempNullNextEntryInBank(4);
     something_mem_bank_a0(4);
     current_stage_num = (?32) loadedstage;
     loadedstage = -1;
@@ -826,7 +826,7 @@ glabel mainloop
 /* 006EE4 700062E4 0C002963 */  jal   strtok
 /* 006EE8 700062E8 8DC40004 */   lw    $a0, 4($t6)
 .L700062EC:
-/* 006EEC 700062EC 0C002667 */  jal   reset_mem_bank_a0
+/* 006EEC 700062EC 0C002667 */  jal   mempResetBank
 /* 006EF0 700062F0 24040004 */   li    $a0, 4
 /* 006EF4 700062F4 0FC2F46F */  jal   something_mem_bank_a0
 /* 006EF8 700062F8 24040004 */   li    $a0, 4
@@ -849,11 +849,11 @@ glabel mainloop
 .L7000633C:
 /* 006F3C 7000633C 3C048002 */  lui   $a0, %hi(current_ma_malloc_value)
 /* 006F40 70006340 8C8441B0 */  lw    $a0, %lo(current_ma_malloc_value)($a0)
-/* 006F44 70006344 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 006F44 70006344 0C0025C8 */  jal   mempAllocBytesInBank
 /* 006F48 70006348 24050004 */   li    $a1, 4
 /* 006F4C 7000634C 3C058002 */  lui   $a1, %hi(current_ma_malloc_value)
 /* 006F50 70006350 8CA541B0 */  lw    $a1, %lo(current_ma_malloc_value)($a1)
-/* 006F54 70006354 0C002766 */  jal   reset_memtable_base_allocation
+/* 006F54 70006354 0C002766 */  jal   mempInitMallocTable
 /* 006F58 70006358 00402025 */   move  $a0, $v0
 /* 006F5C 7000635C 0FC268CB */  jal   reset_play_data_ptrs
 /* 006F60 70006360 00000000 */   nop   
@@ -1134,9 +1134,9 @@ glabel mainloop
 /* 007374 70006774 26730008 */  addiu $s3, $s3, 8
 /* 007378 70006778 1100000B */  beqz  $t0, .L700067A8
 /* 00737C 7000677C 00000000 */   nop   
-/* 007380 70006780 0C00263C */  jal   nulled_list_all8_mem_alloc_banks_sizes
+/* 007380 70006780 0C00263C */  jal   nulled_mempLoopAllMemBanks
 /* 007384 70006784 00000000 */   nop   
-/* 007388 70006788 0C0028A7 */  jal   generate_lists_before_after_mem_merge
+/* 007388 70006788 0C0028A7 */  jal   memaGenerateListsBeforeAfterMerge
 /* 00738C 7000678C 00000000 */   nop   
 /* 007390 70006790 0FC2F5DD */  jal   removed_debug_routine
 /* 007394 70006794 02602025 */   move  $a0, $s3
@@ -1224,7 +1224,7 @@ glabel mainloop
 /* 0074B8 700068B8 00000000 */   nop   
 /* 0074BC 700068BC 0FC3023F */  jal   stop_demo_playback
 /* 0074C0 700068C0 00000000 */   nop   
-/* 0074C4 700068C4 0C002671 */  jal   memp_related_6
+/* 0074C4 700068C4 0C002671 */  jal   mempNullNextEntryInBank
 /* 0074C8 700068C8 24040004 */   li    $a0, 4
 /* 0074CC 700068CC 0FC2F46F */  jal   something_mem_bank_a0
 /* 0074D0 700068D0 24040004 */   li    $a0, 4

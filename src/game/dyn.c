@@ -50,25 +50,20 @@ void set_vtx_gfx_mem_alloc(void) {
     s32 sp18;
     ? temp_ret;
 
-    // Node 0
     if (check_token(1, "-mgfx") != 0)
     {
-        // Node 1
-        sp18 = get_num_players();
-        (0x80050000 + (sp18 * 4))->unk-7D20 = (s32) (strtol(check_token(1, "-mgfx"), 0, 0) << 0xa);
+        dyn_c_debug_notice_list_entry[get_num_players()] = strtol(check_token(1, "-mgfx"), 0, 0) << 0xa;
     }
-    // Node 2
+
     if (check_token(1, "-mvtx") != 0)
     {
-        // Node 3
-        sp18 = get_num_players();
-        (0x80050000 + (sp18 * 4))->unk-7D10 = (s32) (strtol(check_token(1, "-mvtx"), 0, 0) << 0xa);
+        D_800482F0[get_num_players()] = strtol(check_token(1, "-mvtx"), 0, 0) << 0xa;
     }
-    // Node 4
-    ptr_mgfx0_alloc_start = allocate_bytes_in_bank(((0x80050000 + (get_num_players() * 4))->unk-7D20 * 2), 4);
+
+    mempAllocBytesInBank(dyn_c_debug_notice_list_entry[sVar1] << 1, 4);
     ptr_mgfx0_alloc_start.unk4 = (s32) ((0x80050000 + (get_num_players() * 4))->unk-7D20 + ptr_mgfx0_alloc_start);
     ptr_mgfx0_alloc_start.unk8 = (s32) ((0x80050000 + (get_num_players() * 4))->unk-7D20 + ptr_mgfx0_alloc_start.unk4);
-    ptr_mvtx0_alloc_start = allocate_bytes_in_bank(((0x80050000 + (get_num_players() * 4))->unk-7D10 * 2), 4);
+    ptr_mvtx0_alloc_start = mempAllocBytesInBank(((0x80050000 + (get_num_players() * 4))->unk-7D10 * 2), 4);
     ptr_mvtx0_alloc_start.unk4 = (s32) ((0x80050000 + (get_num_players() * 4))->unk-7D10 + ptr_mvtx0_alloc_start);
     temp_ret = get_num_players();
     ptr_mvtx0_alloc_start.unk8 = (s32) ((0x80050000 + (temp_ret * 4))->unk-7D10 + ptr_mvtx0_alloc_start.unk4);
@@ -160,7 +155,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F2090 7F0BD560 8C8482E0 */  lw    $a0, %lo(D_800482E0)($a0)
 /* 0F2094 7F0BD564 24050004 */  li    $a1, 4
 /* 0F2098 7F0BD568 00045840 */  sll   $t3, $a0, 1
-/* 0F209C 7F0BD56C 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0F209C 7F0BD56C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0F20A0 7F0BD570 01602025 */   move  $a0, $t3
 /* 0F20A4 7F0BD574 3C018009 */  lui   $at, %hi(ptr_mgfx0_alloc_start)
 /* 0F20A8 7F0BD578 0FC26919 */  jal   get_num_players
@@ -191,7 +186,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F210C 7F0BD5DC 8C8482F0 */  lw    $a0, %lo(D_800482F0)($a0)
 /* 0F2110 7F0BD5E0 24050004 */  li    $a1, 4
 /* 0F2114 7F0BD5E4 00045840 */  sll   $t3, $a0, 1
-/* 0F2118 7F0BD5E8 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0F2118 7F0BD5E8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0F211C 7F0BD5EC 01602025 */   move  $a0, $t3
 /* 0F2120 7F0BD5F0 3C038009 */  lui   $v1, %hi(ptr_mvtx0_alloc_start)
 /* 0F2124 7F0BD5F4 2463C240 */  addiu $v1, %lo(ptr_mvtx0_alloc_start) # addiu $v1, $v1, -0x3dc0

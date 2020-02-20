@@ -992,7 +992,7 @@ glabel expand_08_obj_set_guard_MP_weapons
 /* 0372B4 7F002784 2404001C */  li    $a0, 28
 /* 0372B8 7F002788 53200084 */  beql  $t9, $zero, .L7F00299C
 /* 0372BC 7F00278C 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0372C0 7F002790 0FC249EF */  jal   sub_GAME_7F0927BC
+/* 0372C0 7F002790 0FC249EF */  jal   cheatCheckIfOn
 /* 0372C4 7F002794 AFA7002C */   sw    $a3, 0x2c($sp)
 /* 0372C8 7F002798 10400011 */  beqz  $v0, .L7F0027E0
 /* 0372CC 7F00279C 8FA7002C */   lw    $a3, 0x2c($sp)
@@ -1450,7 +1450,7 @@ glabel expand_type_0D_object_autoturret
 /* 03784C 7F002D1C 460C4282 */  mul.s $f10, $f8, $f12
 /* 037850 7F002D20 46025403 */  div.s $f16, $f10, $f2
 /* 037854 7F002D24 E6040088 */  swc1  $f4, 0x88($s0)
-/* 037858 7F002D28 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 037858 7F002D28 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03785C 7F002D2C E610008C */   swc1  $f16, 0x8c($s0)
 /* 037860 7F002D30 2403FFFF */  li    $v1, -1
 /* 037864 7F002D34 AE0200CC */  sw    $v0, 0xcc($s0)
@@ -2693,12 +2693,12 @@ glabel proplvreset2
 /* 038864 7F003D34 14200004 */  bnez  $at, .L7F003D48
 /* 038868 7F003D38 3C058005 */   lui   $a1, %hi(aMp_)
 /* 03886C 7F003D3C 24A5EEB0 */  addiu $a1, %lo(aMp_) # addiu $a1, $a1, -0x1150
-/* 038870 7F003D40 0C0029FF */  jal   string_load_parse_something
+/* 038870 7F003D40 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 038874 7F003D44 02202025 */   move  $a0, $s1
 .L7F003D48:
 /* 038878 7F003D48 8E050000 */  lw    $a1, ($s0)
 /* 03887C 7F003D4C 02202025 */  move  $a0, $s1
-/* 038880 7F003D50 0C0029FF */  jal   string_load_parse_something
+/* 038880 7F003D50 0C0029FF */  jal   string_append_from_obseg_textbank
 /* 038884 7F003D54 24A50001 */   addiu $a1, $a1, 1
 /* 038888 7F003D58 02202025 */  move  $a0, $s1
 /* 03888C 7F003D5C 24050001 */  li    $a1, 1
@@ -4086,12 +4086,12 @@ glabel jpt_8004F02C
 /* 0388A4 7F003D34 14200004 */  bnez  $at, .L7F003D48
 /* 0388A8 7F003D38 3C058005 */   lui   $a1, %hi(aMp_) # $a1, 0x8005
 /* 0388AC 7F003D3C 24A5EEE0 */  addiu $a1, %lo(aMp_) # addiu $a1, $a1, -0x1120
-/* 0388B0 7F003D40 0C002A03 */  jal   string_load_parse_something
+/* 0388B0 7F003D40 0C002A03 */  jal   string_append_from_obseg_textbank
 /* 0388B4 7F003D44 02202025 */   move  $a0, $s1
 .L7F003D48:
 /* 0388B8 7F003D48 8E050000 */  lw    $a1, ($s0)
 /* 0388BC 7F003D4C 02202025 */  move  $a0, $s1
-/* 0388C0 7F003D50 0C002A03 */  jal   string_load_parse_something
+/* 0388C0 7F003D50 0C002A03 */  jal   string_append_from_obseg_textbank
 /* 0388C4 7F003D54 24A50001 */   addiu $a1, $a1, 1
 /* 0388C8 7F003D58 02202025 */  move  $a0, $s1
 /* 0388CC 7F003D5C 24050001 */  li    $a1, 1

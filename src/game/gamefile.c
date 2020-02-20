@@ -421,33 +421,13 @@ glabel set_selected_difficulty
 
 
 
-#ifdef NONMATCHING
+
 void set_solo_and_ptr_briefing(LEVELID stage)
 {
   gamemode = GAMEMODE_SOLO;
   selected_stage = stage;
-  briefingpage = pull_and_display_text_for_folder_a0((undefined *)stage);
+  briefingpage = pull_and_display_text_for_folder_a0(stage);
 }
-#else
-GLOBAL_ASM(
-.text
-glabel set_solo_and_ptr_briefing
-/* 05211C 7F01D5EC 3C018003 */  lui   $at, %hi(gamemode)
-/* 052120 7F01D5F0 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 052124 7F01D5F4 AC20A8F0 */  sw    $zero, %lo(gamemode)($at)
-/* 052128 7F01D5F8 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 05212C 7F01D5FC 3C018003 */  lui   $at, %hi(selected_stage)
-/* 052130 7F01D600 0FC03730 */  jal   pull_and_display_text_for_folder_a0
-/* 052134 7F01D604 AC24A8F4 */   sw    $a0, %lo(selected_stage)($at)
-/* 052138 7F01D608 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 05213C 7F01D60C 3C018003 */  lui   $at, %hi(briefingpage)
-/* 052140 7F01D610 AC22A8F8 */  sw    $v0, %lo(briefingpage)($at)
-/* 052144 7F01D614 03E00008 */  jr    $ra
-/* 052148 7F01D618 27BD0018 */   addiu $sp, $sp, 0x18
-)
-#endif
-
-
 
 void sub_GAME_7F01D61C(struct save_file *savefile)
 {
@@ -457,8 +437,7 @@ void sub_GAME_7F01D61C(struct save_file *savefile)
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F01D644(save_file *eeprom)
-
+void sub_GAME_7F01D644(struct save_file *eeprom)
 {
   selected_folder_num_copy = selected_folder_num;
   selected_folder_num = 100;

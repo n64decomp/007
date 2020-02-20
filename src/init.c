@@ -52,7 +52,7 @@ void init(void)
 
     jump_decompressfile((_rarezipSegmentVaddrStart - cdata_rom_size), cdata_vaddr_start, 0x80300000);
 
-    if (0xfff00050 == 0)
+    if ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) >= 0xfffb1)
     {
         osPiRawStartDma(0, 0x101000, 0x70100400, ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) + 0xfff00050));
         while ((osPiGetStatus() & 1) != 0) {}
@@ -279,69 +279,21 @@ void start_rmon_thread(void)
 /**
  * 13EC	700007EC
  */
-#ifdef NONMATCHING
-void init_scheduler(void) {
+void init_scheduler(void)
+{
     osCreateMesgQueue(&gfxFrameMsgQ, &gfxFrameMsgBuf, 32);
-    if (osTvType = OS_TV_MPAL) {
+    if (osTvType == 2) //OS_TV_MPAL
+    { 
         osCreateScheduler(&sc, &shedThread, OS_VI_MPAL_LAN1, NUM_FIELDS);
-    } else {
-		osCreateScheduler(&sc, &shedThread, OS_VI_NTSC_LAN1, NUM_FIELDS);
+    }
+    else 
+    {
+        osCreateScheduler(&sc, &shedThread, OS_VI_NTSC_LAN1, NUM_FIELDS);
 	}
-    osScAddClient(&sc, &gfxClient, &gfxFrameMsgQ);
+
+    osScAddClient(&sc, &gfxClient, &gfxFrameMsgQ, 0);
     sched_cmdQ = osScGetCmdQ(&sc);
 }
-#else
-GLOBAL_ASM(
-.section .text
-glabel init_scheduler
-/* 0013EC 700007EC 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0013F0 700007F0 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0013F4 700007F4 3C048006 */  lui   $a0, %hi(gfxFrameMsgQ)
-/* 0013F8 700007F8 3C058006 */  lui   $a1, %hi(gfxFrameMsgBuf)
-/* 0013FC 700007FC 24A5D9B8 */  addiu $a1, $a1, %lo(gfxFrameMsgBuf)
-/* 001400 70000800 2484D9A0 */  addiu $a0, $a0, %lo(gfxFrameMsgQ)
-/* 001404 70000804 0C0035B4 */  jal   osCreateMesgQueue
-/* 001408 70000808 24060020 */  addiu $a2, $zero, 0x20
-/* 00140C 7000080C 3C0E8000 */  lui   $t6, %hi(osTvType)
-/* 001410 70000810 8DCE0300 */  lw    $t6, %lo(osTvType)($t6)
-/* 001414 70000814 24010002 */  addiu $at, $zero, 2
-/* 001418 70000818 3C048006 */  lui   $a0, %hi(sc)
-/* 00141C 7000081C 15C1000A */  bne   $t6, $at, .Linit_scheduler_5C
-/* 001420 70000820 2484DA40 */  addiu $a0, $a0, %lo(sc)
-/* 001424 70000824 3C048006 */  lui   $a0, %hi(sc)
-/* 001428 70000828 3C058006 */  lui   $a1, %hi(shedThread)
-/* 00142C 7000082C 24A5D7F0 */  addiu $a1, $a1, %lo(shedThread)
-/* 001430 70000830 2484DA40 */  addiu $a0, $a0, %lo(sc)
-/* 001434 70000834 2406001E */  addiu $a2, $zero, 0x1e
-/* 001438 70000838 0C0002AB */  jal   osCreateScheduler
-/* 00143C 7000083C 24070001 */  addiu $a3, $zero, 1
-/* 001440 70000840 10000006 */  b     .Linit_scheduler_70
-/* 001444 70000844 00000000 */  nop   
-.Linit_scheduler_5C:
-/* 001448 70000848 3C058006 */  lui   $a1, %hi(shedThread)
-/* 00144C 7000084C 24A5D7F0 */  addiu $a1, $a1, %lo(shedThread)
-/* 001450 70000850 24060002 */  addiu $a2, $zero, 2
-/* 001454 70000854 0C0002AB */  jal   osCreateScheduler
-/* 001458 70000858 24070001 */  addiu $a3, $zero, 1
-.Linit_scheduler_70:
-/* 00145C 7000085C 3C048006 */  lui   $a0, %hi(sc)
-/* 001460 70000860 3C058006 */  lui   $a1, %hi(gfxClient)
-/* 001464 70000864 3C068006 */  lui   $a2, %hi(gfxFrameMsgQ)
-/* 001468 70000868 24C6D9A0 */  addiu $a2, $a2, %lo(gfxFrameMsgQ)
-/* 00146C 7000086C 24A5DB18 */  addiu $a1, $a1, %lo(gfxClient)
-/* 001470 70000870 2484DA40 */  addiu $a0, $a0, %lo(sc)
-/* 001474 70000874 0C000305 */  jal   osScAddClient
-/* 001478 70000878 00003825 */  or    $a3, $zero, $zero
-/* 00147C 7000087C 3C048006 */  lui   $a0, %hi(sc)
-/* 001480 70000880 0C00033E */  jal   osScGetCmdQ
-/* 001484 70000884 2484DA40 */  addiu $a0, $a0, %lo(sc)
-/* 001488 70000888 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 00148C 7000088C 3C018006 */  lui   $at, %hi(sched_cmdQ)
-/* 001490 70000890 AC22DA38 */  sw    $v0, %lo(sched_cmdQ)($at) # $v0, -0x25c8($at)
-/* 001494 70000894 03E00008 */  jr    $ra
-/* 001498 70000898 27BD0018 */  addiu $sp, $sp, 0x18
-)
-#endif
 
 /**
  * 149C	7000089C	start main game setup and loop
@@ -349,7 +301,8 @@ glabel init_scheduler
  *	called by 70000510, using 7000D430: A0=8005D640, A1=3, A2=7000089C, A3=0, SP+10=[803B3948], SP+14=0xA
  *	never returns; 7000601C is an infinite loop
  */
-void thread3_main(void *args) {
+void thread3_main(void *args)
+{
 	start_idle_thread();
 	start_nulled_entry();
 	start_pi_manager();

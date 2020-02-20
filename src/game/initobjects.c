@@ -119,7 +119,7 @@ glabel alloc_lookup_buffers
 /* 036100 7F0015D0 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 036104 7F0015D4 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 036108 7F0015D8 24040400 */  li    $a0, 1024
-/* 03610C 7F0015DC 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03610C 7F0015DC 0C0025C8 */  jal   mempAllocBytesInBank
 /* 036110 7F0015E0 24050004 */   li    $a1, 4
 /* 036114 7F0015E4 3C068004 */  lui   $a2, %hi(MaxNumRooms)
 /* 036118 7F0015E8 3C018007 */  lui   $at, %hi(ptr_list_object_lookup_indices)
@@ -130,13 +130,13 @@ glabel alloc_lookup_buffers
 /* 03612C 7F0015FC 00047080 */  sll   $t6, $a0, 2
 /* 036130 7F001600 25C4000F */  addiu $a0, $t6, 0xf
 /* 036134 7F001604 348F000F */  ori   $t7, $a0, 0xf
-/* 036138 7F001608 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 036138 7F001608 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03613C 7F00160C 39E4000F */   xori  $a0, $t7, 0xf
 /* 036140 7F001610 3C078007 */  lui   $a3, %hi(ptr_room_lookup_buffer_maybe)
 /* 036144 7F001614 24E71618 */  addiu $a3, %lo(ptr_room_lookup_buffer_maybe) # addiu $a3, $a3, 0x1618
 /* 036148 7F001618 ACE20000 */  sw    $v0, ($a3)
 /* 03614C 7F00161C 24042000 */  li    $a0, 8192
-/* 036150 7F001620 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 036150 7F001620 0C0025C8 */  jal   mempAllocBytesInBank
 /* 036154 7F001624 24050004 */   li    $a1, 4
 /* 036158 7F001628 3C048007 */  lui   $a0, %hi(dword_CODE_bss_8007161C)
 /* 03615C 7F00162C 2484161C */  addiu $a0, %lo(dword_CODE_bss_8007161C) # addiu $a0, $a0, 0x161c
@@ -233,7 +233,7 @@ glabel reinit_between_menus
 /* 036284 7F001754 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 036288 7F001758 0FC00656 */  jal   write_monitor_ani_control_blocks
 /* 03628C 7F00175C 00000000 */   nop   
-/* 036290 7F001760 0FC006C2 */  jal   initialize_80071E00_to_80071E78
+/* 036290 7F001760 0FC006C2 */  jal   initialize_temp_mine_table
 /* 036294 7F001764 00000000 */   nop   
 /* 036298 7F001768 3C018003 */  lui   $at, %hi(alarm_timer)
 /* 03629C 7F00176C AC200AC0 */  sw    $zero, %lo(alarm_timer)($at)
@@ -253,8 +253,8 @@ glabel reinit_between_menus
 /* 0362D4 7F0017A4 AC200ADC */  sw    $zero, %lo(D_80030ADC)($at)
 /* 0362D8 7F0017A8 3C018003 */  lui   $at, %hi(D_80030AE0)
 /* 0362DC 7F0017AC E4200AE0 */  swc1  $f0, %lo(D_80030AE0)($at)
-/* 0362E0 7F0017B0 3C018003 */  lui   $at, %hi(D_80030AE4)
-/* 0362E4 7F0017B4 AC200AE4 */  sw    $zero, %lo(D_80030AE4)($at)
+/* 0362E0 7F0017B0 3C018003 */  lui   $at, %hi(ptr_gas_sound)
+/* 0362E4 7F0017B4 AC200AE4 */  sw    $zero, %lo(ptr_gas_sound)($at)
 /* 0362E8 7F0017B8 24050001 */  li    $a1, 1
 /* 0362EC 7F0017BC 3C018003 */  lui   $at, %hi(clock_drawn_flag)
 /* 0362F0 7F0017C0 AC250AE8 */  sw    $a1, %lo(clock_drawn_flag)($at)
@@ -526,21 +526,21 @@ glabel write_monitor_ani_control_blocks
 #endif
 
 #ifdef NONMATCHING
-void initialize_80071E00_to_80071E78(void) {
+void initialize_temp_mine_table(void) {
 
 }
 #else
 GLOBAL_ASM(
 .text
-glabel initialize_80071E00_to_80071E78
-/* 036638 7F001B08 3C018007 */  lui   $at, %hi(dword_CODE_bss_80071E00)
-/* 03663C 7F001B0C AC201E00 */  sw    $zero, %lo(dword_CODE_bss_80071E00)($at)
-/* 036640 7F001B10 3C018007 */  lui   $at, %hi(dword_CODE_bss_80071E04)
-/* 036644 7F001B14 3C038007 */  lui   $v1, %hi(dword_CODE_bss_80071E08)
+glabel initialize_temp_mine_table
+/* 036638 7F001B08 3C018007 */  lui   $at, %hi(temp_mine_table)
+/* 03663C 7F001B0C AC201E00 */  sw    $zero, %lo(temp_mine_table)($at)
+/* 036640 7F001B10 3C018007 */  lui   $at, %hi(temp_mine_table+0x4)
+/* 036644 7F001B14 3C038007 */  lui   $v1, %hi(temp_mine_table+0x8)
 /* 036648 7F001B18 3C028007 */  lui   $v0, %hi(gas_damage_flag)
 /* 03664C 7F001B1C 24421E78 */  addiu $v0, %lo(gas_damage_flag) # addiu $v0, $v0, 0x1e78
-/* 036650 7F001B20 24631E08 */  addiu $v1, %lo(dword_CODE_bss_80071E08) # addiu $v1, $v1, 0x1e08
-/* 036654 7F001B24 AC201E04 */  sw    $zero, %lo(dword_CODE_bss_80071E04)($at)
+/* 036650 7F001B20 24631E08 */  addiu $v1, %lo(temp_mine_table+0x8) # addiu $v1, $v1, 0x1e08
+/* 036654 7F001B24 AC201E04 */  sw    $zero, %lo(temp_mine_table+0x4)($at)
 .L7F001B28:
 /* 036658 7F001B28 24630010 */  addiu $v1, $v1, 0x10
 /* 03665C 7F001B2C AC60FFF4 */  sw    $zero, -0xc($v1)

@@ -124,7 +124,7 @@ glabel something_with_strings
 
 
 #ifdef NONMATCHING
-void *string_load_parse_something(void *arg0, void *arg1) {
+void *string_append_from_obseg_textbank(void *arg0, void *arg1) {
     void *temp_v0;
     void *temp_a1;
 
@@ -158,7 +158,7 @@ void *string_load_parse_something(void *arg0, void *arg1) {
 #else
 GLOBAL_ASM(
 .text
-glabel string_load_parse_something
+glabel string_append_from_obseg_textbank
 /* 00B3FC 7000A7FC 908E0000 */  lbu   $t6, ($a0)
 /* 00B400 7000A800 00801025 */  move  $v0, $a0
 /* 00B404 7000A804 51C00006 */  beql  $t6, $zero, .L7000A820

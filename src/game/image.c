@@ -9534,13 +9534,14 @@ glabel sub_GAME_7F0CBE50
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0CBEE8(void) {
-
+void calls_load_image_to_buffer(uint *image,uint *buffer)
+{
+    load_image_to_buffer(&image,buffer);
 }
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F0CBEE8
+glabel calls_load_image_to_buffer
 /* 100A18 7F0CBEE8 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 100A1C 7F0CBEEC AFBF0014 */  sw    $ra, 0x14($sp)
 /* 100A20 7F0CBEF0 AFA4001C */  sw    $a0, 0x1c($sp)

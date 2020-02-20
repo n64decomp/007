@@ -48,7 +48,7 @@ glabel sub_GAME_7F0061F0
 void alloc_additional_item_slots(s32 arg0) {
     // Node 0
     pPlayer->unk11E8 = (s32) (arg0 + 0x1e);
-    pPlayer->unk11E4 = allocate_bytes_in_bank(((((pPlayer->unk11E8 * 0x14) + 0xf) | 0xf) ^ 0xf), 4);
+    pPlayer->unk11E4 = mempAllocBytesInBank(((((pPlayer->unk11E8 * 0x14) + 0xf) | 0xf) ^ 0xf), 4);
     reinit_BONDdata_inventory();
 }
 
@@ -71,7 +71,7 @@ glabel alloc_additional_item_slots
 /* 03ADBC 7F00628C 0019C880 */  sll   $t9, $t9, 2
 /* 03ADC0 7F006290 2724000F */  addiu $a0, $t9, 0xf
 /* 03ADC4 7F006294 3488000F */  ori   $t0, $a0, 0xf
-/* 03ADC8 7F006298 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03ADC8 7F006298 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03ADCC 7F00629C 3904000F */   xori  $a0, $t0, 0xf
 /* 03ADD0 7F0062A0 3C0A8008 */  lui   $t2, %hi(pPlayer) 
 /* 03ADD4 7F0062A4 8D4AA0B0 */  lw    $t2, %lo(pPlayer)($t2)

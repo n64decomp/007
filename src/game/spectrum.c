@@ -647,7 +647,7 @@ glabel init_spectrum_game
 /* 107AF8 7F0D2FC8 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 107AFC 7F0D2FCC AFA40018 */  sw    $a0, 0x18($sp)
 /* 107B00 7F0D2FD0 24040100 */  li    $a0, 256
-/* 107B04 7F0D2FD4 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 107B04 7F0D2FD4 0C0025C8 */  jal   mempAllocBytesInBank
 /* 107B08 7F0D2FD8 24050004 */   li    $a1, 4
 /* 107B0C 7F0D2FDC 3C068009 */  lui   $a2, %hi(ptr_pc_keyboard_table_alloc)
 /* 107B10 7F0D2FE0 24C6E334 */  addiu $a2, %lo(ptr_pc_keyboard_table_alloc) # addiu $a2, $a2, -0x1ccc
@@ -684,12 +684,12 @@ glabel init_spectrum_game
 /* 107B78 7F0D3048 5420FFEB */  bnezl $at, .L7F0D2FF8
 /* 107B7C 7F0D304C 00001825 */   move  $v1, $zero
 /* 107B80 7F0D3050 24046000 */  li    $a0, 24576
-/* 107B84 7F0D3054 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 107B84 7F0D3054 0C0025C8 */  jal   mempAllocBytesInBank
 /* 107B88 7F0D3058 24050004 */   li    $a1, 4
 /* 107B8C 7F0D305C 3C018009 */  lui   $at, %hi(ptr_6000alloc)
 /* 107B90 7F0D3060 AC22E330 */  sw    $v0, %lo(ptr_6000alloc)($at)
 /* 107B94 7F0D3064 24040300 */  li    $a0, 768
-/* 107B98 7F0D3068 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 107B98 7F0D3068 0C0025C8 */  jal   mempAllocBytesInBank
 /* 107B9C 7F0D306C 24050004 */   li    $a1, 4
 /* 107BA0 7F0D3070 3C038009 */  lui   $v1, %hi(ptr_300alloc)
 /* 107BA4 7F0D3074 2463E32C */  addiu $v1, %lo(ptr_300alloc) # addiu $v1, $v1, -0x1cd4
@@ -704,7 +704,7 @@ glabel init_spectrum_game
 /* 107BC4 7F0D3094 1420FFFB */  bnez  $at, .L7F0D3084
 /* 107BC8 7F0D3098 A1A20000 */   sb    $v0, ($t5)
 /* 107BCC 7F0D309C 3C040001 */  lui   $a0, 1
-/* 107BD0 7F0D30A0 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 107BD0 7F0D30A0 0C0025C8 */  jal   mempAllocBytesInBank
 /* 107BD4 7F0D30A4 24050004 */   li    $a1, 4
 /* 107BD8 7F0D30A8 3C088009 */  lui   $t0, %hi(ptr_spectrum_roms) 
 /* 107BDC 7F0D30AC 2508E328 */  addiu $t0, %lo(ptr_spectrum_roms) # addiu $t0, $t0, -0x1cd8

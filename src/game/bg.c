@@ -1722,13 +1722,14 @@ glabel sub_GAME_7F0B40D4
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0B4124(void) {
+void load_bg_file(STAGENUM stagenum)
+{
 
 }
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F0B4124
+glabel load_bg_file
 /* 0E8C54 7F0B4124 27BDFF48 */  addiu $sp, $sp, -0xb8
 /* 0E8C58 7F0B4128 AFB20020 */  sw    $s2, 0x20($sp)
 /* 0E8C5C 7F0B412C 3C128004 */  lui   $s2, %hi(D_80041400)
@@ -1801,7 +1802,7 @@ glabel sub_GAME_7F0B4124
 /* 0E8D5C 7F0B422C 360F000F */  ori   $t7, $s0, 0xf
 /* 0E8D60 7F0B4230 25F00001 */  addiu $s0, $t7, 1
 /* 0E8D64 7F0B4234 02002025 */  move  $a0, $s0
-/* 0E8D68 7F0B4238 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0E8D68 7F0B4238 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0E8D6C 7F0B423C 24050004 */   li    $a1, 4
 /* 0E8D70 7F0B4240 8E580000 */  lw    $t8, ($s2)
 /* 0E8D74 7F0B4244 AEE20000 */  sw    $v0, ($s7)

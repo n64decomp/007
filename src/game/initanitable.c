@@ -107,7 +107,7 @@ void alloc_load_expand_ani_table(void) {
     osCreateMesgQueue(&animMsgQ, &animMesg, 8);
     sub_GAME_7F0009E0(&D_80029D60, &animMsgQ, &dword_CODE_bss_80069458);
     temp_a2 = (&0x0000E7E0 - 0);
-    temp_ret = allocate_bytes_in_bank(temp_a2, 6, temp_a2);
+    temp_ret = mempAllocBytesInBank(temp_a2, 6, temp_a2);
     ptr_animation_table = temp_ret;
     romCopy(temp_ret, &_animation_dataSegmentRomStart, sp18);
     expand_ani_table_entries(&animation_table_ptrs1);
@@ -139,7 +139,7 @@ glabel alloc_load_expand_ani_table
 /* 035628 7F000AF8 01CF3023 */  subu  $a2, $t6, $t7
 /* 03562C 7F000AFC 00C02025 */  move  $a0, $a2
 /* 035630 7F000B00 AFA60018 */  sw    $a2, 0x18($sp)
-/* 035634 7F000B04 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 035634 7F000B04 0C0025C8 */  jal   mempAllocBytesInBank
 /* 035638 7F000B08 24050006 */   li    $a1, 6
 /* 03563C 7F000B0C 3C038007 */  lui   $v1, %hi(ptr_animation_table)
 /* 035640 7F000B10 24639538 */  addiu $v1, %lo(ptr_animation_table) # addiu $v1, $v1, -0x6ac8

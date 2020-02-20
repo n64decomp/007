@@ -1,8 +1,27 @@
 #include "ultra64.h"
 
-#ifdef NONMATCHING
-void sub_GAME_7F057AC0(void) {
+//D:80032300
+u32 D_80032300 = 0;
+//D:80032304
+u32 D_80032304 = 0;
+//D:80032308
+u32 D_80032308 = 0;
 
+#ifdef NONMATCHING
+void sub_GAME_7F057AC0(float *param_1)
+{
+    float firstrandfinal;
+    float secondrandfinal;
+    float thirdrandfinal;
+    
+    firstrandfinal = D_80032300;
+    secondrandfinal = D_80032304;
+    thirdrandfinal = D_80032308;
+    firstrandfinal = get_random_value() * 0.00000000 * 6.28318548 * 0.03125000 - 0.09817477;
+    secondrandfinal = get_random_value() * 0.00000000 * 6.28318548 * 0.03125000 - 0.09817477;
+    thirdrandfinal = get_random_value() * 0.00000000 * 6.28318548 * 0.03125000 - 0.09817477;
+    sub_GAME_7F058714(&firstrandfinal,param_1);
+    return;
 }
 #else
 GLOBAL_ASM(
@@ -300,8 +319,14 @@ glabel sub_GAME_7F057D88
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F057DF8(void) {
-
+void sub_GAME_7F057DF8(float *param_1,float *param_2,int param_3)
+{
+    int i;
+    
+    for (i = 0; 0 < param_3; i++)
+    {
+        sub_GAME_7F058098(param_2,param_1);
+    }
 }
 #else
 GLOBAL_ASM(

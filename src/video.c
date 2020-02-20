@@ -67,35 +67,28 @@ u16 word_CODE_bss_80060824;
 char dword_CODE_bss_80060828[0x50];
 u8 off_CODE_bss_80060878;
 u8 off_CODE_bss_80060879;
-//osViMode viMode;
+//struct osViMode viMode;
 s32 viMode;
 s32 dword_CODE_bss_80060880;
 s32 dword_CODE_bss_80060884;
 s32 dword_CODE_bss_80060888;
 s32 dword_CODE_bss_8006088C;
-
+char dword_CODE_bss_80060890[0x400];//CC[0x3C4];
+                                    //90[0x400];
 /**
  * 3C60	70003060
  */
 #ifdef NONMATCHING
-s32 init_video_settings(void)
+void init_video_settings(void)
 {
-    s32 temp_v0;
-    void *temp_t6;
-    void *temp_t8;
-
-    temp_v0 = 0 & 0xff;
-    temp_t8 = &video1_settings + (temp_v0 * 0x2c);
-    off_CODE_bss_80060878 = (u8)0;
-    off_CODE_bss_80060879 = (u8)1;
-    ptr_video_settings1 = temp_t8;
-    temp_t8->unk28 = (s32) (&cfb_16_a + (temp_v0 * 0x25800));
-    temp_t6 = &video1_settings + (off_CODE_bss_80060879 * 0x2c);
-    ptr_video_settings2 = temp_t6;
-    temp_t6->unk28 = (s32) (&cfb_16_a + (off_CODE_bss_80060879 * 0x25800));
+    video1_settings.frameb = cfb_16_a;
     D_8002329C = 0;
     D_800232A0 = 0;
-    return temp_v0;
+    ptr_video_settings1 = &video1_settings;
+    ptr_video_settings2 = &video2_settings;
+    off_CODE_bss_80060878 = 0;
+    off_CODE_bss_80060879 = 1;
+    video2_settings.frameb = cfb_16_b;
 }
 #else
 GLOBAL_ASM(
@@ -159,33 +152,22 @@ glabel init_video_settings
  * 3D24	70003124	initialize both video buffers
  */
 #ifdef NONMATCHING
-void *init_both_video_buffers(void)
+void init_both_video_buffers(void)
 {
-    s32 temp_a0;
-    void *temp_v0;
-    void *temp_v1;
-    s32 phi_a0;
-
+    s32 i;
+    
     remove_viewport_buffer();
-    phi_a0 = 0;
-loop_1:
-    temp_v0 = &cfb_16_a + phi_a0;
-    temp_v0->unk0 = (u8)0;
-    temp_v1 = &cfb_16_b + phi_a0;
-    temp_v1->unk0 = (u8)0;
-    temp_v0->unk1 = (u8)0;
-    temp_v1->unk1 = (u8)0;
-    temp_v0->unk2 = (u8)0;
-    temp_v1->unk2 = (u8)0;
-    temp_v0->unk3 = (u8)0;
-    temp_a0 = phi_a0 + 4;
-    temp_v1->unk3 = (u8)0;
-    phi_a0 = temp_a0;
-    if (temp_a0 != 0x25800)
+    for (i = 0; i != 0x25800; i += 4)
     {
-        goto loop_1;
-    }
-    return temp_v0;
+        cfb_16_a[i] = 0;
+        cfb_16_b[i] = 0;
+        cfb_16_a[i + 1] = 0;
+        cfb_16_b[i + 1] = 0;
+        cfb_16_a[i + 2] = 0;
+        cfb_16_b[i + 2] = 0;
+        cfb_16_a[i + 3] = 0;
+        cfb_16_b[i + 3] = 0;
+    };
 }
 #else
 GLOBAL_ASM(
@@ -1310,24 +1292,21 @@ glabel video_related_8
  *     accepts: F12=
  */
 #ifdef NONMATCHING
-f32 video_related_9(f32 arg0)
+void video_related_9(float param_1)
 {
-    f32 phi_f12;
-    f32 phi_f12_2;
-
-    phi_f12 = arg0;
-    if (14.0f < arg0)
-    {
-        phi_f12 = 14.0f;
+    float fVar1;
+    
+    fVar1 = 14.00000000;
+    if (param_1 <= 14.00000000) {
+        fVar1 = param_1;
     }
-    phi_f12_2 = phi_f12;
-    if (phi_f12 < 0.0f)
-    {
-        phi_f12_2 = 0.0f;
+    if (fVar1 < 0.00000000) {
+        D_800232B4 = 0;
     }
-    D_800232B4 = (s32) phi_f12_2;
-    D_800232B8 = 0xa;
-    return 0.0f;
+    else {
+        D_800232B4 = (int)fVar1;
+    }
+    D_800232B8 = 10;
 }
 #else
 GLOBAL_ASM(
@@ -1380,18 +1359,17 @@ void receive_vi_c_msgs(int msgcount){
  * 47B0	70003BB0
  */
 #ifdef NONMATCHING
-void setVideoWidthHeightToMode(int videomode)
+void setVideoWidthHeightToMode(s32 videomode)
 {
-  u16 uVar1;
-  
-  *(char *)&ptr_video_settings2->anonymous_0 = (char)videomode;
-  uVar1 = widths_80028480[videomode];
-  ptr_video_settings2->anonymous_7 = uVar1;
-  ptr_video_settings2->txtClipW = uVar1;
-  uVar1 = heights_80028488[videomode];
-  ptr_video_settings2->anonymous_8 = uVar1;
-  ptr_video_settings2->txtClipH = uVar1;
-  return;
+    u16 uVar1;
+    
+    ptr_video_settings2->mode = videomode;
+
+    ptr_video_settings2->somethingW = widths_80028480[videomode];
+    ptr_video_settings2->txtClipW = widths_80028480[videomode];
+
+    ptr_video_settings2->somethingH = heights_80028488[videomode];
+    ptr_video_settings2->txtClipH = heights_80028488[videomode];
 }
 #else
 GLOBAL_ASM(
@@ -1441,7 +1419,7 @@ void set_coloroutputmode_32bit(void)
 /**
  * 481C	70003C1C	V0= p->video2's buffer [p@800232A8+28]; fry T6
  */
-int get_video_settings2_frameb(void)
+u8 * get_video_settings2_frameb(void)
 {
     return ptr_video_settings2->frameb;
 }
@@ -1449,35 +1427,18 @@ int get_video_settings2_frameb(void)
 /**
  * 482C	70003C2C	V0= p->video1's buffer [p@800232A4+28]; fry T6
  */
-int  get_video_settings1_frameb(void)
+u8 * get_video_settings1_frameb(void)
 {
     return ptr_video_settings1->frameb;
 }
 
-
-
-
 /**
  * 483C	70003C3C	A0->video2's buffer [p@800232A8+28]; fry T6
  */
-#ifdef NONMATCHING
-void set_video2buf_offset28(s32 arg0)
+void set_video2buf_frameb(u8 *arg0)
 {
     ptr_video_settings2->frameb = arg0;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel set_video2buf_offset28
-/* 00483C 70003C3C 3C0E8002 */  lui   $t6, %hi(ptr_video_settings2) 
-/* 004840 70003C40 8DCE32A8 */  lw    $t6, %lo(ptr_video_settings2)($t6)
-/* 004844 70003C44 03E00008 */  jr    $ra
-/* 004848 70003C48 ADC40028 */   sw    $a0, 0x28($t6)
-)
-#endif
-
-
-
 
 /**
  * 484C	70003C4C	V0= halfword [80060824]
@@ -2247,8 +2208,8 @@ s32 get_D_8002329C(void)
  */
 void set_video2_settings_offset_18_1A(s16 arg0, s16 arg1)
 {
-    ptr_video_settings2->anonymous_7 = arg0;
-    ptr_video_settings2->anonymous_8 = arg1;
+    ptr_video_settings2->somethingW = arg0;
+    ptr_video_settings2->somethingH = arg1;
 }
 
 /**
@@ -2257,7 +2218,7 @@ void set_video2_settings_offset_18_1A(s16 arg0, s16 arg1)
  */
 s16 get_video2_settings_offset_18(void)
 {
-    return ptr_video_settings2->anonymous_7;
+    return ptr_video_settings2->somethingW;
 }
 
 /**
@@ -2266,7 +2227,7 @@ s16 get_video2_settings_offset_18(void)
  */
 s16 get_video2_settings_offset_1A(void)
 {
-    return ptr_video_settings2->anonymous_8;
+    return ptr_video_settings2->somethingH;
 }
 
 /**
@@ -2427,7 +2388,7 @@ void set_video2_settings_offset_24(int param_1) {
  * 5144	70004544
  */
 #ifdef NONMATCHING
-void video_related_1F(f32 arg0)
+void setvideo_far(f32 arg0)
 {
     ptr_video_settings2->far = arg0;
     sub_GAME_7F077C30(ptr_video_settings2->aspect, ptr_video_settings2->far, ptr_video_settings2->scale);
@@ -2436,7 +2397,7 @@ void video_related_1F(f32 arg0)
 #else
 GLOBAL_ASM(
 .text
-glabel video_related_1F
+glabel setvideo_far
 /* 005144 70004544 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 005148 70004548 3C038002 */  lui   $v1, %hi(ptr_video_settings2)
 /* 00514C 7000454C 246332A8 */  addiu $v1, %lo(ptr_video_settings2) # addiu $v1, $v1, 0x32a8

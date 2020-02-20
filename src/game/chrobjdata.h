@@ -131,6 +131,8 @@ struct headHat
     float zsize;
 };
 
+extern struct p_itementry PitemZ_entries[];
+
 extern struct item_related prop_cctv_related;
 extern struct item_related prop_console_one_screen_related;
 extern struct item_related prop_console_four_screen_related;

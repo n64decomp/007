@@ -214,7 +214,7 @@ glabel load_camera_intro_type_values
 /* 03A388 7F005858 1441000B */  bne   $v0, $at, .L7F005888
 /* 03A38C 7F00585C 3C040004 */   lui   $a0, (0x00046EA0 >> 16) # lui $a0, 4
 /* 03A390 7F005860 34846EA0 */  ori   $a0, (0x00046EA0 & 0xFFFF) # ori $a0, $a0, 0x6ea0
-/* 03A394 7F005864 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03A394 7F005864 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03A398 7F005868 24050004 */   li    $a1, 4
 /* 03A39C 7F00586C 244A003F */  addiu $t2, $v0, 0x3f
 /* 03A3A0 7F005870 2401FFC0 */  li    $at, -64
@@ -986,7 +986,7 @@ glabel load_camera_intro_type_values
 /* 03A3EC 7F00587C 1441000B */  bne   $v0, $at, .L7F0058AC
 /* 03A3F0 7F005880 3C040004 */   lui   $a0, (0x00046EA0 >> 16) # lui $a0, 4
 /* 03A3F4 7F005884 34846EA0 */  ori   $a0, (0x00046EA0 & 0xFFFF) # ori $a0, $a0, 0x6ea0
-/* 03A3F8 7F005888 0C0025CC */  jal   allocate_bytes_in_bank
+/* 03A3F8 7F005888 0C0025CC */  jal   mempAllocBytesInBank
 /* 03A3FC 7F00588C 24050004 */   li    $a1, 4
 /* 03A400 7F005890 244A003F */  addiu $t2, $v0, 0x3f
 /* 03A404 7F005894 2401FFC0 */  li    $at, -64

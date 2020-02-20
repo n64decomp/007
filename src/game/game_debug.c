@@ -14,12 +14,12 @@ void something_game_c_debug_related(void) {
 
 void reset_mem_bank_5(void) {
     sub_GAME_7F0BD234();
-    reset_mem_bank_a0(5);
+    mempResetBank(5);
     something_mem_bank_a0(5);
 }
 
 void sub_GAME_7F0D1A7C(void) {
-    memp_related_6(5);
+    mempNullNextEntryInBank(5);
     something_mem_bank_a0(5);
 }
 

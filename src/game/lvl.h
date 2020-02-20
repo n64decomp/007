@@ -8,7 +8,9 @@ struct ramrom_struct {
 };
 
 extern s32 D_800483C4;
-
+extern s32 clock_timer;
+extern s32 global_timer;
+extern f32 global_timer_delta;
 extern u32 *ptr_jfont_DL;
 extern s32 dword_CODE_bss_8008C264;
 extern s32 dword_CODE_bss_8008C268;

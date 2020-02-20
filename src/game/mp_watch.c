@@ -342,11 +342,13 @@ glabel check_if_player_is_pressing_anything_left
 
 
 
-void play_watch_sfx_beep(void) {
+void play_watch_sfx_beep(void)
+{
     play_sfx_a1(ptr_sfx_buf, 0x9f, 0);
 }
 
-void unpause_game(void) {
+void unpause_game(void)
+{
     stop_play_flag = 0;
     is_gameover_flag = 0;
     is_paused = 0;
@@ -1561,8 +1563,8 @@ glabel sub_GAME_7F0C2E80
 /* 0F7B08 7F0C2FD8 2C490001 */  sltiu $t1, $v0, 1
 /* 0F7B0C 7F0C2FDC AC890000 */  sw    $t1, ($a0)
 .L7F0C2FE0:
-/* 0F7B10 7F0C2FE0 3C028008 */  lui   $v0, %hi(cur_player_stat_ptr)
-/* 0F7B14 7F0C2FE4 8C42A0B4 */  lw    $v0, %lo(cur_player_stat_ptr)($v0)
+/* 0F7B10 7F0C2FE0 3C028008 */  lui   $v0, %hi(pPlayersPerm)
+/* 0F7B14 7F0C2FE4 8C42A0B4 */  lw    $v0, %lo(pPlayersPerm)($v0)
 /* 0F7B18 7F0C2FE8 8CEA0000 */  lw    $t2, ($a3)
 /* 0F7B1C 7F0C2FEC 8C4B0054 */  lw    $t3, 0x54($v0)
 /* 0F7B20 7F0C2FF0 8D4329F8 */  lw    $v1, 0x29f8($t2)
@@ -1576,8 +1578,8 @@ glabel sub_GAME_7F0C2E80
 /* 0F7B3C 7F0C300C 3C078008 */  lui   $a3, %hi(pPlayer)
 /* 0F7B40 7F0C3010 24E7A0B0 */  addiu $a3, %lo(pPlayer) # addiu $a3, $a3, -0x5f50
 /* 0F7B44 7F0C3014 8CE30000 */  lw    $v1, ($a3)
-/* 0F7B48 7F0C3018 3C0C8008 */  lui   $t4, %hi(cur_player_stat_ptr) 
-/* 0F7B4C 7F0C301C 8D8CA0B4 */  lw    $t4, %lo(cur_player_stat_ptr)($t4)
+/* 0F7B48 7F0C3018 3C0C8008 */  lui   $t4, %hi(pPlayersPerm) 
+/* 0F7B4C 7F0C301C 8D8CA0B4 */  lw    $t4, %lo(pPlayersPerm)($t4)
 /* 0F7B50 7F0C3020 8C6E29F4 */  lw    $t6, 0x29f4($v1)
 /* 0F7B54 7F0C3024 8FA80030 */  lw    $t0, 0x30($sp)
 /* 0F7B58 7F0C3028 8D8D004C */  lw    $t5, 0x4c($t4)
@@ -1590,8 +1592,8 @@ glabel sub_GAME_7F0C2E80
 /* 0F7B74 7F0C3044 3C078008 */  lui   $a3, %hi(pPlayer)
 /* 0F7B78 7F0C3048 24E7A0B0 */  addiu $a3, %lo(pPlayer) # addiu $a3, $a3, -0x5f50
 /* 0F7B7C 7F0C304C 8CF80000 */  lw    $t8, ($a3)
-/* 0F7B80 7F0C3050 3C0A8008 */  lui   $t2, %hi(cur_player_stat_ptr) 
-/* 0F7B84 7F0C3054 8D4AA0B4 */  lw    $t2, %lo(cur_player_stat_ptr)($t2)
+/* 0F7B80 7F0C3050 3C0A8008 */  lui   $t2, %hi(pPlayersPerm) 
+/* 0F7B84 7F0C3054 8D4AA0B4 */  lw    $t2, %lo(pPlayersPerm)($t2)
 /* 0F7B88 7F0C3058 8F1929F4 */  lw    $t9, 0x29f4($t8)
 /* 0F7B8C 7F0C305C 8FA80030 */  lw    $t0, 0x30($sp)
 /* 0F7B90 7F0C3060 00594823 */  subu  $t1, $v0, $t9
@@ -7219,14 +7221,13 @@ def_7F0C40C0:
 
 
 #ifdef NONMATCHING
-s32 sub_GAME_7F0C6048(void) {
-    // Node 0
+s32 sub_GAME_7F0C6048(void)
+{
     if (is_gameover_flag != 0)
     {
-        // Node 1
         return 0;
     }
-    return (pPlayer->unk29C4 | (0 < pPlayer->unk2A00));
+    return (pPlayer->mpmenuon | (0 < pPlayer->healthdisplaytime));
 }
 
 #else

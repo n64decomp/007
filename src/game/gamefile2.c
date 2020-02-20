@@ -1136,13 +1136,13 @@ glabel check_if_valid_folder_num
 
 
 #ifdef NONMATCHING
-void doesFolderHaveStageUnlockedAtDifficulty(void) {
+s32 isStageUnlockedAtDifficulty(int foldernum,STAGENUM stageid,DIFFICULTY difficulty) {
 
 }
 #else
 GLOBAL_ASM(
 .text
-glabel doesFolderHaveStageUnlockedAtDifficulty
+glabel isStageUnlockedAtDifficulty
 /* 052DF0 7F01E2C0 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 052DF4 7F01E2C4 AFBF002C */  sw    $ra, 0x2c($sp)
 /* 052DF8 7F01E2C8 AFB50028 */  sw    $s5, 0x28($sp)
@@ -1680,7 +1680,7 @@ glabel check_egypt_completed_in_folder
 /* 053474 7F01E944 02402025 */  move  $a0, $s2
 .L7F01E948:
 /* 053478 7F01E948 02202825 */  move  $a1, $s1
-/* 05347C 7F01E94C 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 05347C 7F01E94C 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 053480 7F01E950 02003025 */   move  $a2, $s0
 /* 053484 7F01E954 10400003 */  beqz  $v0, .L7F01E964
 /* 053488 7F01E958 26100001 */   addiu $s0, $s0, 1
@@ -1739,21 +1739,21 @@ glabel check_cradle_completed_in_folder
 /* 053528 7F01E9F8 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 05352C 7F01E9FC AFA40018 */  sw    $a0, 0x18($sp)
 /* 053530 7F01EA00 24050011 */  li    $a1, 17
-/* 053534 7F01EA04 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 053534 7F01EA04 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 053538 7F01EA08 00003025 */   move  $a2, $zero
 /* 05353C 7F01EA0C 384E0003 */  xori  $t6, $v0, 3
 /* 053540 7F01EA10 2DC20001 */  sltiu $v0, $t6, 1
 /* 053544 7F01EA14 1440000D */  bnez  $v0, .L7F01EA4C
 /* 053548 7F01EA18 8FA40018 */   lw    $a0, 0x18($sp)
 /* 05354C 7F01EA1C 24050011 */  li    $a1, 17
-/* 053550 7F01EA20 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 053550 7F01EA20 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 053554 7F01EA24 24060001 */   li    $a2, 1
 /* 053558 7F01EA28 384F0003 */  xori  $t7, $v0, 3
 /* 05355C 7F01EA2C 2DE20001 */  sltiu $v0, $t7, 1
 /* 053560 7F01EA30 14400006 */  bnez  $v0, .L7F01EA4C
 /* 053564 7F01EA34 8FA40018 */   lw    $a0, 0x18($sp)
 /* 053568 7F01EA38 24050011 */  li    $a1, 17
-/* 05356C 7F01EA3C 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 05356C 7F01EA3C 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 053570 7F01EA40 24060002 */   li    $a2, 2
 /* 053574 7F01EA44 38580003 */  xori  $t8, $v0, 3
 /* 053578 7F01EA48 2F020001 */  sltiu $v0, $t8, 1
@@ -1779,14 +1779,14 @@ glabel check_aztec_completed_in_folder_secret_00
 /* 053590 7F01EA60 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 053594 7F01EA64 AFA40018 */  sw    $a0, 0x18($sp)
 /* 053598 7F01EA68 24050012 */  li    $a1, 18
-/* 05359C 7F01EA6C 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 05359C 7F01EA6C 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 0535A0 7F01EA70 24060001 */   li    $a2, 1
 /* 0535A4 7F01EA74 384E0003 */  xori  $t6, $v0, 3
 /* 0535A8 7F01EA78 2DC20001 */  sltiu $v0, $t6, 1
 /* 0535AC 7F01EA7C 14400006 */  bnez  $v0, .L7F01EA98
 /* 0535B0 7F01EA80 8FA40018 */   lw    $a0, 0x18($sp)
 /* 0535B4 7F01EA84 24050012 */  li    $a1, 18
-/* 0535B8 7F01EA88 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 0535B8 7F01EA88 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 0535BC 7F01EA8C 24060002 */   li    $a2, 2
 /* 0535C0 7F01EA90 384F0003 */  xori  $t7, $v0, 3
 /* 0535C4 7F01EA94 2DE20001 */  sltiu $v0, $t7, 1
@@ -1811,7 +1811,7 @@ glabel check_egypt_completed_in_folder_00
 /* 0535D8 7F01EAA8 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0535DC 7F01EAAC AFBF0014 */  sw    $ra, 0x14($sp)
 /* 0535E0 7F01EAB0 24050013 */  li    $a1, 19
-/* 0535E4 7F01EAB4 0FC078B0 */  jal   doesFolderHaveStageUnlockedAtDifficulty
+/* 0535E4 7F01EAB4 0FC078B0 */  jal   isStageUnlockedAtDifficulty
 /* 0535E8 7F01EAB8 24060002 */   li    $a2, 2
 /* 0535EC 7F01EABC 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0535F0 7F01EAC0 384E0003 */  xori  $t6, $v0, 3
@@ -2178,7 +2178,7 @@ glabel update_eeprom_to_current_solo_watch_settings
 /* 053A54 7F01EF24 00008025 */   move  $s0, $zero
 /* 053A58 7F01EF28 8FAF0020 */  lw    $t7, 0x20($sp)
 /* 053A5C 7F01EF2C 000271C3 */  sra   $t6, $v0, 7
-/* 053A60 7F01EF30 0FC2A460 */  jal   sub_GAME_7F0A9180
+/* 053A60 7F01EF30 0FC2A460 */  jal   call_sfx_c_700091C8
 /* 053A64 7F01EF34 A1EE000A */   sb    $t6, 0xa($t7)
 /* 053A68 7F01EF38 8FB90020 */  lw    $t9, 0x20($sp)
 /* 053A6C 7F01EF3C 0002C1C3 */  sra   $t8, $v0, 7

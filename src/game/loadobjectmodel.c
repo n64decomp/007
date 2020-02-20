@@ -1,4 +1,7 @@
 #include "ultra64.h"
+#include "bondtypes.h"
+#include "game/chrai.h"
+#include "game/chrobjdata.h"
 
 #ifdef NONMATCHING
 void sub_GAME_7F056850(void) {
@@ -6,25 +9,6 @@ void sub_GAME_7F056850(void) {
 }
 #else
 GLOBAL_ASM(
-.late_rodata
-/*D:80053490*/
-glabel jpt_object_setup_size
-.word object_size_type_01
-.word object_size_type_02
-.word object_size_type_03
-.word object_size_type_04
-.word object_size_type_05
-.word object_size_type_06
-.word object_size_type_07
-.word object_size_type_08
-.word object_size_type_09
-.word object_size_type_0A
-.word object_size_type_0B
-.word object_size_type_0C
-.word object_size_type_0D
-/*.word object_size_type_0E*/
-/*.word object_size_type_default*/
-/*.word object_size_type_default*/
 .text
 glabel sub_GAME_7F056850
 /* 08B380 7F056850 27BDFFD0 */  addiu $sp, $sp, -0x30
@@ -75,261 +59,103 @@ glabel sub_GAME_7F056850
 
 
 
+//
 
-
-#ifdef NONMATCHING
-s16 get_size_of_setup_object_type(void) {
-
+u32 get_size_of_setup_object_type(u8 * object)
+{
+    switch(object[3]) {
+    case 9:
+        return 7;
+    case 1:
+        return 0x40;
+    case 2:
+        return 2;
+    case 3:
+        return 0x20;
+    case 0x2a:
+        return 0x20;
+    case 0x2f:
+        return 0x25;
+    case 0x2b:
+        return 0x20;
+    case 0x24:
+        return 0x20;
+    case 4:
+        return 0x21;
+    case 5:
+        return 0x20;
+    case 6:
+        return 0x3b;
+    case 7:
+        return 0x21;
+    case 8:
+        return 0x22;
+    case 10:
+        return 0x40;
+    case 0xb:
+        return 0x95;
+    case 0xc:
+        return 0x20;
+    case 0xd:
+        return 0x36;
+    case 0xe:
+        return 3;
+    case 0x11:
+        return 0x20;
+    case 0x12:
+        return 3;
+    case 0x13:
+        return 4;
+    case 0x2c:
+        return 5;
+    case 0x14:
+        return 0x2d;
+    case 0x15:
+        return 0x22;
+    case 0x16:
+        return 4;
+    case 0x25:
+        return 10;
+    case 0x17:
+        return 4;
+    case 0x18:
+        return 1;
+    case 0x19:
+        return 2;
+    case 0x1a:
+        return 2;
+    case 0x1b:
+        return 2;
+    case 0x1c:
+        return 2;
+    case 0x1d:
+        return 2;
+    case 0x1e:
+        return 4;
+    case 0x1f:
+        return 1;
+    case 0x20:
+        return 4;
+    case 0x21:
+        return 5;
+    case 0x22:
+        return 1;
+    case 0x23:
+        return 4;
+    case 0x26:
+        return 4;
+    case 0x27:
+        return 0x2c;
+    case 0x28:
+        return 0x2d;
+    case 0x2d:
+        return 0x38;
+    case 0x2e:
+        return 7;
+    default:
+        return 1;
+    }
 }
-#else
-GLOBAL_ASM(
-.late_rodata
-/*D:80053490*/
-/*glabel jpt_object_setup_size*/
-/*.word object_size_type_01*/
-/*.word object_size_type_02*/
-/*.word object_size_type_03*/
-/*.word object_size_type_04*/
-/*.word object_size_type_05*/
-/*.word object_size_type_06*/
-/*.word object_size_type_07*/
-/*.word object_size_type_08*/
-/*.word object_size_type_09*/
-/*.word object_size_type_0A*/
-/*.word object_size_type_0B*/
-/*.word object_size_type_0C*/
-/*.word object_size_type_0D*/
-.word object_size_type_0E
-.word object_size_type_default
-.word object_size_type_default
-.word object_size_type_11
-.word object_size_type_12
-.word object_size_type_13
-.word object_size_type_14
-.word object_size_type_15
-.word object_size_type_16
-.word object_size_type_17
-.word object_size_type_18
-.word object_size_type_19
-.word object_size_type_1A
-.word object_size_type_1B
-.word object_size_type_1C
-.word object_size_type_1D
-.word object_size_type_1E
-.word object_size_type_1F
-.word object_size_type_20
-.word object_size_type_21
-.word object_size_type_22
-.word object_size_type_23
-.word object_size_type_24
-.word object_size_type_25
-.word object_size_type_26
-.word object_size_type_27
-.word object_size_type_28
-.word object_size_type_default
-.word object_size_type_2A
-.word object_size_type_2B
-.word object_size_type_2C
-.word object_size_type_2D
-.word object_size_type_2E
-/*.word object_size_type_2F*/
-
-.text
-glabel get_size_of_setup_object_type
-/* 08B424 7F0568F4 908E0003 */  lbu   $t6, 3($a0)
-/* 08B428 7F0568F8 25CFFFFF */  addiu $t7, $t6, -1
-/* 08B42C 7F0568FC 2DE1002F */  sltiu $at, $t7, 0x2f
-/* 08B430 7F056900 1020005E */  beqz  $at, .L7F056A7C
-/* 08B434 7F056904 000F7880 */   sll   $t7, $t7, 2
-/* 08B438 7F056908 3C018005 */  lui   $at, %hi(jpt_object_setup_size)
-/* 08B43C 7F05690C 002F0821 */  addu  $at, $at, $t7
-/* 08B440 7F056910 8C2F3490 */  lw    $t7, %lo(jpt_object_setup_size)($at)
-/* 08B444 7F056914 01E00008 */  jr    $t7
-/* 08B448 7F056918 00000000 */   nop   
-object_size_type_09:
-/* 08B44C 7F05691C 03E00008 */  jr    $ra
-/* 08B450 7F056920 24020007 */   li    $v0, 7
-
-object_size_type_01:
-/* 08B454 7F056924 03E00008 */  jr    $ra
-/* 08B458 7F056928 24020040 */   li    $v0, 64
-
-object_size_type_02:
-/* 08B45C 7F05692C 03E00008 */  jr    $ra
-/* 08B460 7F056930 24020002 */   li    $v0, 2
-
-object_size_type_03:
-/* 08B464 7F056934 03E00008 */  jr    $ra
-/* 08B468 7F056938 24020020 */   li    $v0, 32
-
-object_size_type_2A:
-/* 08B46C 7F05693C 03E00008 */  jr    $ra
-/* 08B470 7F056940 24020020 */   li    $v0, 32
-
-object_size_type_2F:
-/* 08B474 7F056944 03E00008 */  jr    $ra
-/* 08B478 7F056948 24020025 */   li    $v0, 37
-
-object_size_type_2B:
-/* 08B47C 7F05694C 03E00008 */  jr    $ra
-/* 08B480 7F056950 24020020 */   li    $v0, 32
-
-object_size_type_24:
-/* 08B484 7F056954 03E00008 */  jr    $ra
-/* 08B488 7F056958 24020020 */   li    $v0, 32
-
-object_size_type_04:
-/* 08B48C 7F05695C 03E00008 */  jr    $ra
-/* 08B490 7F056960 24020021 */   li    $v0, 33
-
-object_size_type_05:
-/* 08B494 7F056964 03E00008 */  jr    $ra
-/* 08B498 7F056968 24020020 */   li    $v0, 32
-
-object_size_type_06:
-/* 08B49C 7F05696C 03E00008 */  jr    $ra
-/* 08B4A0 7F056970 2402003B */   li    $v0, 59
-
-object_size_type_07:
-/* 08B4A4 7F056974 03E00008 */  jr    $ra
-/* 08B4A8 7F056978 24020021 */   li    $v0, 33
-
-object_size_type_08:
-/* 08B4AC 7F05697C 03E00008 */  jr    $ra
-/* 08B4B0 7F056980 24020022 */   li    $v0, 34
-
-object_size_type_0A:
-/* 08B4B4 7F056984 03E00008 */  jr    $ra
-/* 08B4B8 7F056988 24020040 */   li    $v0, 64
-
-object_size_type_0B:
-/* 08B4BC 7F05698C 03E00008 */  jr    $ra
-/* 08B4C0 7F056990 24020095 */   li    $v0, 149
-
-object_size_type_0C:
-/* 08B4C4 7F056994 03E00008 */  jr    $ra
-/* 08B4C8 7F056998 24020020 */   li    $v0, 32
-
-object_size_type_0D:
-/* 08B4CC 7F05699C 03E00008 */  jr    $ra
-/* 08B4D0 7F0569A0 24020036 */   li    $v0, 54
-
-object_size_type_0E:
-/* 08B4D4 7F0569A4 03E00008 */  jr    $ra
-/* 08B4D8 7F0569A8 24020003 */   li    $v0, 3
-
-object_size_type_11:
-/* 08B4DC 7F0569AC 03E00008 */  jr    $ra
-/* 08B4E0 7F0569B0 24020020 */   li    $v0, 32
-
-object_size_type_12:
-/* 08B4E4 7F0569B4 03E00008 */  jr    $ra
-/* 08B4E8 7F0569B8 24020003 */   li    $v0, 3
-
-object_size_type_13:
-/* 08B4EC 7F0569BC 03E00008 */  jr    $ra
-/* 08B4F0 7F0569C0 24020004 */   li    $v0, 4
-
-object_size_type_2C:
-/* 08B4F4 7F0569C4 03E00008 */  jr    $ra
-/* 08B4F8 7F0569C8 24020005 */   li    $v0, 5
-
-object_size_type_14:
-/* 08B4FC 7F0569CC 03E00008 */  jr    $ra
-/* 08B500 7F0569D0 2402002D */   li    $v0, 45
-
-object_size_type_15:
-/* 08B504 7F0569D4 03E00008 */  jr    $ra
-/* 08B508 7F0569D8 24020022 */   li    $v0, 34
-
-object_size_type_16:
-/* 08B50C 7F0569DC 03E00008 */  jr    $ra
-/* 08B510 7F0569E0 24020004 */   li    $v0, 4
-
-object_size_type_25:
-/* 08B514 7F0569E4 03E00008 */  jr    $ra
-/* 08B518 7F0569E8 2402000A */   li    $v0, 10
-
-object_size_type_17:
-/* 08B51C 7F0569EC 03E00008 */  jr    $ra
-/* 08B520 7F0569F0 24020004 */   li    $v0, 4
-
-object_size_type_18:
-/* 08B524 7F0569F4 03E00008 */  jr    $ra
-/* 08B528 7F0569F8 24020001 */   li    $v0, 1
-
-object_size_type_19:
-/* 08B52C 7F0569FC 03E00008 */  jr    $ra
-/* 08B530 7F056A00 24020002 */   li    $v0, 2
-
-object_size_type_1A:
-/* 08B534 7F056A04 03E00008 */  jr    $ra
-/* 08B538 7F056A08 24020002 */   li    $v0, 2
-
-object_size_type_1B:
-/* 08B53C 7F056A0C 03E00008 */  jr    $ra
-/* 08B540 7F056A10 24020002 */   li    $v0, 2
-
-object_size_type_1C:
-/* 08B544 7F056A14 03E00008 */  jr    $ra
-/* 08B548 7F056A18 24020002 */   li    $v0, 2
-
-object_size_type_1D:
-/* 08B54C 7F056A1C 03E00008 */  jr    $ra
-/* 08B550 7F056A20 24020002 */   li    $v0, 2
-
-object_size_type_1E:
-/* 08B554 7F056A24 03E00008 */  jr    $ra
-/* 08B558 7F056A28 24020004 */   li    $v0, 4
-
-object_size_type_1F:
-/* 08B55C 7F056A2C 03E00008 */  jr    $ra
-/* 08B560 7F056A30 24020001 */   li    $v0, 1
-
-object_size_type_20:
-/* 08B564 7F056A34 03E00008 */  jr    $ra
-/* 08B568 7F056A38 24020004 */   li    $v0, 4
-
-object_size_type_21:
-/* 08B56C 7F056A3C 03E00008 */  jr    $ra
-/* 08B570 7F056A40 24020005 */   li    $v0, 5
-
-object_size_type_22:
-/* 08B574 7F056A44 03E00008 */  jr    $ra
-/* 08B578 7F056A48 24020001 */   li    $v0, 1
-
-object_size_type_23:
-/* 08B57C 7F056A4C 03E00008 */  jr    $ra
-/* 08B580 7F056A50 24020004 */   li    $v0, 4
-
-object_size_type_26:
-/* 08B584 7F056A54 03E00008 */  jr    $ra
-/* 08B588 7F056A58 24020004 */   li    $v0, 4
-
-object_size_type_27:
-/* 08B58C 7F056A5C 03E00008 */  jr    $ra
-/* 08B590 7F056A60 2402002C */   li    $v0, 44
-
-object_size_type_28:
-/* 08B594 7F056A64 03E00008 */  jr    $ra
-/* 08B598 7F056A68 2402002D */   li    $v0, 45
-
-object_size_type_2D:
-/* 08B59C 7F056A6C 03E00008 */  jr    $ra
-/* 08B5A0 7F056A70 24020038 */   li    $v0, 56
-
-object_size_type_2E:
-/* 08B5A4 7F056A74 03E00008 */  jr    $ra
-/* 08B5A8 7F056A78 24020007 */   li    $v0, 7
-
-object_size_type_default:
-.L7F056A7C:
-/* 08B5AC 7F056A7C 24020001 */  li    $v0, 1
-/* 08B5B0 7F056A80 03E00008 */  jr    $ra
-/* 08B5B4 7F056A84 00000000 */   nop   
-)
-#endif
-
 
 
 
@@ -340,10 +166,6 @@ void sub_GAME_7F056A88(void) {
 }
 #else
 GLOBAL_ASM(
-.late_rodata
-/*hack for above*/
-.word object_size_type_2F
-
 .text
 glabel sub_GAME_7F056A88
 /* 08B5B8 7F056A88 27BDFFD8 */  addiu $sp, $sp, -0x28
@@ -395,13 +217,29 @@ glabel sub_GAME_7F056A88
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F056B1C(void) {
-
+s32 check_if_object_type_has_been_loaded(struct object_standard * arg0)
+{
+    struct object_standard *object;
+    s32 i;
+    
+    if (ptr_setup_objects != 0)
+    {
+        for (object = ptr_setup_objects, i = 0; 0x30 != object->type; i++)
+        {
+            if (object == arg0)
+            {
+                return i;
+            }
+            object = (get_size_of_setup_object_type((u8 *)object) * 4) + object;
+        }
+    }
+    return -1;
 }
+
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F056B1C
+glabel check_if_object_type_has_been_loaded
 /* 08B64C 7F056B1C 27BDFFD8 */  addiu $sp, $sp, -0x28
 /* 08B650 7F056B20 AFB00014 */  sw    $s0, 0x14($sp)
 /* 08B654 7F056B24 3C108007 */  lui   $s0, %hi(ptr_setup_objects)
@@ -504,8 +342,16 @@ glabel sub_GAME_7F056BA8
 
 
 #ifdef NONMATCHING
-void load_model(void) {
-
+u32 load_model(u32 modelid)
+{
+    struct p_itementry fileentry = PitemZ_entries[modelid];
+    if (fileentry.header == 0)
+    {
+        load_object_into_memory(PitemZ_entries[modelid].header, PitemZ_entries[modelid].filename);
+        set_objuse_flag_compute_grp_nums_set_obj_loaded(PitemZ_entries[modelid].header);
+        return 1;
+    }
+    return 0;
 }
 #else
 GLOBAL_ASM(

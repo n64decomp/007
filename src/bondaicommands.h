@@ -66,7 +66,7 @@
 //=============================================================================
 // commands with a vehicle/aircraft prefix can only be executed by vehicle/aircraft
 // objects. these types of objects do not use a chr struct. most non-vehicle
-// commands will crash if they try to access caller's chr struct 
+// commands will crash if they try to access caller's chr struct
 //=============================================================================
 // ai commands with label argument
 //=============================================================================
@@ -192,9 +192,9 @@
 
 // command D7 - hud flags
 #define HUD_HIDE_ALL                    0x00 // hide all
-#define HUD_SHOW_TEXT_TOP               0x01 // hide all but top text
-#define HUD_SHOW_TEXT_BOTTOM            0x02 // hide all but bottom text
-#define HUD_SHOW_HUD_COUNTDOWN          0x04 // hide all but hud countdown
+#define HUD_SHOW_TEXT_TOP               0x01 // don't hide top text
+#define HUD_SHOW_TEXT_BOTTOM            0x02 // don't hide bottom text
+#define HUD_SHOW_HUD_COUNTDOWN          0x04 // don't hide hud countdown
 
 // command 94/95/96/97/98/99 chr->BITFIELD - used for ai list GLIST_FIRE_RAND_ANIM_SUBROUTINE
 #define BITFIELD_DONT_POINT_AT_BOND     0x01 // if set, don't point at bond
@@ -259,7 +259,13 @@
 #define if_local_timer_seconds_greater_than(seconds, label) \
         if_local_timer_greater_than((SECS_TO_TIMER60(seconds)), label)
 
-#define camera_wait_for_loading \
+#define camera_transition_from_bond \
+        bond_hide_weapons \
+        ai_sleep \
+        ai_sleep \
+        ai_sleep
+
+#define camera_transition_to_bond \
         ai_sleep \
         ai_sleep \
         ai_sleep
@@ -326,7 +332,7 @@
 // info: used for ai list parser to check when list ends
 //=============================================================================
 // note: not recommended to execute this command - to finish a list create an
-// infinite loop (goto_loop_infinite) or jump to glist end routine when list has
+// infinite loop (goto_loop_infinite) or jump to GLIST_END_ROUTINE when list has
 // finished tasks
 //===========================================================================*/
 #define ai_list_end_ID 0x04
@@ -565,7 +571,7 @@
 // command id: 16
 // info: update guard's aim/fire target, goto label if successful
 //=============================================================================
-// note: this command only works if guard is currently aiming at a target
+// note: this command only works if guard is currently aiming at a target.
 //       bitfield argument is used to set the target type (pad/bond/chr).
 //       use TARGET_# flags for bitfield argument
 //===========================================================================*/
@@ -582,7 +588,7 @@
 // command id: 17
 // info: make guard continuously face target, goto label if successful
 //=============================================================================
-// note: if guard was shot while facing target, guard will snap out of facing state
+// note: if guard was shot while facing target, guard will snap out of facing state.
 // bitfield argument is used to set the target type (pad/bond/chr).
 // use TARGET_# flags for bitfield argument. command can't use TARGET_AIM_ONLY flag
 //===========================================================================*/
@@ -705,7 +711,8 @@
 // command id: 20
 // info: makes guard walk a predefined path within setup
 //=============================================================================
-// note: usually paired with goto glist 0005/0007
+// note: usually paired with goto GLIST_DETECT_BOND_DEAF_NO_CLONE_NO_IDLE_ANIM
+//       or GLIST_DETECT_BOND_NO_CLONE_NO_IDLE_ANIM
 //===========================================================================*/
 #define guard_start_patrol_ID 0x20
 #define guard_start_patrol_LENGTH 0x02
@@ -1605,17 +1612,17 @@
         object_tag,
 
 /*=============================================================================
-// name: object_detach_from_chr
+// name: object_drop_from_chr
 // command id: 60
-// info: detach tagged object from chr and drop to ground
+// info: drop tagged object held/attached to chr
 //=============================================================================
-// note: item must be attached to a chr. embedded objects will not drop, only
-//       works with attached objects. props can be damaged on drop
+// note: item must be held/attached to a chr. embedded objects will not drop,
+//       only works with attached objects. props can be damaged on drop
 //===========================================================================*/
-#define object_detach_from_chr_ID 0x60
-#define object_detach_from_chr_LENGTH 0x02
-#define object_detach_from_chr(object_tag) \
-        object_detach_from_chr_ID, \
+#define object_drop_from_chr_ID 0x60
+#define object_drop_from_chr_LENGTH 0x02
+#define object_drop_from_chr(object_tag) \
+        object_drop_from_chr_ID, \
         object_tag,
 
 /*=============================================================================
@@ -2312,7 +2319,7 @@
 // name: guard_set_health_total
 // command id: 8F
 // info: set guard's total health - the higher the value, the more shots needed
-//       to kill guard. 
+//       to kill guard.
 //=============================================================================
 // note: sets to chr->maxdamage. default health is 4.0f (0x0028/40 dec for argument).
 // argument is converted to float and divided by 10 before setting to maxdamage.
@@ -2353,8 +2360,8 @@
 //=============================================================================
 // note: sets to chr->speedrating. default speed is 0 - argument is signed.
 // negative values will make guard animate slower - this affects firing animations.
-// command does not use 007 reaction speed modifier. do not use values above 0x60
-// or it may crash
+// command does not use 007 reaction speed modifier. do not use values above/below
+// 100 or it may crash
 //===========================================================================*/
 #define guard_set_speed_rating_ID 0x91
 #define guard_set_speed_rating_LENGTH 0x02
@@ -2490,9 +2497,11 @@
 // command id: 9A
 // info: set bits in objective bitfield on
 //=============================================================================
-// note: can be used to store a mission unique objective flag, which can be set
+// note: can be used to store a mission unique objective flag, which can be linked
 // to mission objectives. it can also be used to store miscellaneous flags used
-// by other ai lists
+// by other ai lists. if a mission objective is changed while in third person,
+// it will not be updated on the briefing page - all mission objectives status
+// are locked while in third person
 //===========================================================================*/
 #define objective_bitfield_set_on_ID 0x9A
 #define objective_bitfield_set_on_LENGTH 0x05
@@ -2505,9 +2514,11 @@
 // command id: 9B
 // info: set bits in objective bitfield off
 //=============================================================================
-// note: can be used to store a mission unique objective flag, which can be set
+// note: can be used to store a mission unique objective flag, which can be linked
 // to mission objectives. it can also be used to store miscellaneous flags used
-// by other ai lists
+// by other ai lists. if a mission objective is changed while in third person,
+// it will not be updated on the briefing page - all mission objectives status
+// are locked while in third person
 //===========================================================================*/
 #define objective_bitfield_set_off_ID 0x9B
 #define objective_bitfield_set_off_LENGTH 0x05
@@ -3290,7 +3301,7 @@
 // command id: D2
 // info: exits the level
 //=============================================================================
-// note: recommend not to use this command, instead goto glist exit level for
+// note: recommend not to use this command, instead goto GLIST_EXIT_LEVEL for
 // exit cutscene list. retail game has a glitch with hires mode that needs to
 // execute this command in a loop, check cuba's 1000 list
 //===========================================================================*/
@@ -3307,8 +3318,8 @@
 // note: unused command, never used in retail game. tagged items within inventory
 // will become invalid after command - only weapons are safe. command must have
 // 3 ai_sleep commands before executing this command or else engine will crash
-// on console (use macro camera_wait_for_loading). if camera mode is already in
-// third person then you don't need to do the above
+// on console (use camera_transition_to_bond). mission time is resumed on return
+// to first person view
 //===========================================================================*/
 #define camera_return_to_bond_ID 0xD3
 #define camera_return_to_bond_LENGTH 0x01
@@ -3320,9 +3331,10 @@
 // command id: D4
 // info: change view to pad and look at bond
 //=============================================================================
-// note: command must have 3 ai_sleep commands before executing this command or
-// else engine will crash on console (use macro camera_wait_for_loading).
+// note: command must have a bond_hide_weapons command and 3 ai_sleep commands
+// before executing this command or else engine will crash (use camera_transition_from_bond).
 // if camera mode is already in third person then you don't need to do the above.
+// mission time is paused while in third person
 //===========================================================================*/
 #define camera_look_at_bond_from_pad_ID 0xD4
 #define camera_look_at_bond_from_pad_LENGTH 0x03
@@ -3335,11 +3347,12 @@
 // command id: D5
 // info: change view to tagged camera's position and rotation
 //=============================================================================
-// note: command must have 3 ai_sleep commands before executing this command or
-// else engine will crash on console (use macro camera_wait_for_loading).
+// note: command must have a bond_hide_weapons command and 3 ai_sleep commands
+// before executing this command or else engine will crash (use camera_transition_from_bond).
 // if camera mode is already in third person then you don't need to do the above.
 // only look at bond if flag is set. unused flag may have separated look at bond
-// as x/y flags instead of a single flag - for retail unused flag does nothing
+// as x/y flags instead of a single flag - for retail unused flag does nothing.
+// mission time is paused while in third person
 //===========================================================================*/
 #define camera_switch_ID 0xD5
 #define camera_switch_LENGTH 0x06
@@ -3366,34 +3379,35 @@
         label,
 
 /*=============================================================================
-// name: hud_hide_and_lock_controls
+// name: hud_hide_and_lock_controls_and_pause_mission_time
 // command id: D7
-// info: hide hud elements and lock player controls
+// info: hide hud elements, lock player control and stop mission time.
+//       command is commonly used for exit mission lists
 //=============================================================================
 // note: argument flag will not hide element on command execution. this is
-// needed for dialog or countdown while in cinema mode. flags can be combined
+// needed for dialog/hud countdown while in cinema mode. flags can be combined
 // together to show multiple elements. sequential executions of D7 can be used
 // to hide more elements, but once an element has been hidden it cannot be shown
 // again until command D8 is executed. bond can take damage while in locked state.
 // use HUD_# flags for bitfield argument
 //===========================================================================*/
-#define hud_hide_and_lock_controls_ID 0xD7
-#define hud_hide_and_lock_controls_LENGTH 0x02
-#define hud_hide_and_lock_controls(bitfield) \
-        hud_hide_and_lock_controls_ID, \
+#define hud_hide_and_lock_controls_and_pause_mission_time_ID 0xD7
+#define hud_hide_and_lock_controls_and_pause_mission_time_LENGTH 0x02
+#define hud_hide_and_lock_controls_and_pause_mission_time(bitfield) \
+        hud_hide_and_lock_controls_and_pause_mission_time_ID, \
         bitfield,
 
 /*=============================================================================
-// name: hud_show_all
+// name: hud_show_all_and_unlock_controls_and_resume_mission_time
 // command id: D8
-// info: show all hud elements that have been disabled by D7
+// info: show all hud elements, unlock player control and resume mission time
 //=============================================================================
 // note: should only be executed after D7 command
 //===========================================================================*/
-#define hud_show_all_ID 0xD8
-#define hud_show_all_LENGTH 0x01
-#define hud_show_all \
-        hud_show_all_ID,
+#define hud_show_all_and_unlock_controls_and_resume_mission_time_ID 0xD8
+#define hud_show_all_and_unlock_controls_and_resume_mission_time_LENGTH 0x01
+#define hud_show_all_and_unlock_controls_and_resume_mission_time \
+        hud_show_all_and_unlock_controls_and_resume_mission_time_ID,
 
 /*=============================================================================
 // name: chr_try_teleporting_to_pad
@@ -3618,14 +3632,17 @@
         gas_leak_and_switch_fog_ID,
 
 /*=============================================================================
-// name: mission_time_stop_and_exit_level_on_button_input
+// name: trigger_fade_and_exit_level_on_button_press
 // command id: EA
-// info: stop the mission time and exit level if player 1 pressed any buttons
+// info: if player pressed any button, fade to black and exit level
+//=============================================================================
+// note: this command activates a state where game will fade to black when button
+// input is detected from controller 1. command does not pause mission time
 //===========================================================================*/
-#define mission_time_stop_and_exit_level_on_button_input_ID 0xEA
-#define mission_time_stop_and_exit_level_on_button_input_LENGTH 0x01
-#define mission_time_stop_and_exit_level_on_button_input \
-        mission_time_stop_and_exit_level_on_button_input_ID,
+#define trigger_fade_and_exit_level_on_button_press_ID 0xEA
+#define trigger_fade_and_exit_level_on_button_press_LENGTH 0x01
+#define trigger_fade_and_exit_level_on_button_press \
+        trigger_fade_and_exit_level_on_button_press_ID,
 
 /*=============================================================================
 // name: if_bond_is_dead
@@ -3666,9 +3683,9 @@
 // command id: EE
 // info: change view to orbit a pad with set speed
 //=============================================================================
-// note: command must have 3 ai_sleep commands before executing this command or
-// else engine will crash on console (use macro camera_wait_for_loading). if camera
-// mode is already in third person then you don't need to do the above.
+// note: command must have a bond_hide_weapons command and 3 ai_sleep commands
+// before executing this command or else engine will crash (use camera_transition_from_bond).
+// if camera mode is already in third person then you don't need to do the above.
 // arguments:
 // lat_distance: camera distance from pad, 100 units per meter. argument is unsigned
 // vert_distance: camera distance from pad, 100 units per meter. argument is signed
@@ -3679,6 +3696,7 @@
 // y_pos_offset: offset the relative y position for pad (boom/jib), argument is signed
 // initial_rotation: uses compass direction like target commands (14-17)
 //                   but inverted - hex N: 0000 E: C000 S: 8000: W: 4000
+// mission time is paused while in third person
 //===========================================================================*/
 #define camera_orbit_pad_ID 0xEE
 #define camera_orbit_pad_LENGTH 0x0D

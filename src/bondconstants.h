@@ -18,7 +18,7 @@
 #define CHR_OBJECTIVE -2 /* objective ai list chr ID */
 #define CHR_FREE -1 /* chr IDs when free'd (killed or removed from level) */
 #define CHR_SPAWN_NUM_START 5000 /* default chr num for spawned guards with ai command BD/BE */
-#define CHR_CLONED_NUM_START 9000 /* default chr num for cloed guards with ai command C1 */
+#define CHR_CLONED_NUM_START 10000 /* default chr num for cloed guards with ai command C1 */
 
 #define PAD_PRESET 9000 /* stored as chr->padpreset1 */
 
@@ -1023,6 +1023,26 @@ typedef enum CAMERAMODE {
     UNK10_CAM
 } CAMERAMODE;
 
+typedef enum IMAGE_FORMAT {
+    F_RGBA,
+    F_YUV,
+    F_CI,
+    F_IA,
+    F_I
+ } IMAGE_FORMAT;
+
+ typedef enum IMAGE_BITDEPTH {
+    D_4BIT,
+    D_8BIT,
+    D_16BIT,
+    D_32BIT
+} IMAGE_BITDEPTH;
+
+typedef enum CM_FLAGS {
+    CLAMP = 1,
+    MIRROR =2
+} CM_FLAGS;
+
 /* motion capture actor: duncan botwood */
 /* motion capture assistance: b jones */
 /* recorded using 'flock of birds' system by ascension technology corporation, in a freezing metal barn in the depths of winter */
@@ -1117,7 +1137,7 @@ typedef enum ANIMATIONS {
     ANIM_aim_running_right_one_handed_weapon = 86,
     ANIM_aim_running_left_one_handed_weapon = 87,
     ANIM_aim_sprinting_one_handed_weapon = 88,
-    ANIM_jogging_one_handed_weapon = 89,
+    ANIM_running_one_handed_weapon = 89,
     ANIM_sprinting_one_handed_weapon = 90,
     ANIM_null91 = 91, /* invalid slot */
     ANIM_null92 = 92, /* invalid slot */
@@ -1132,7 +1152,7 @@ typedef enum ANIMATIONS {
     ANIM_holster_one_handed_weapon_and_cross_arms = 101,
     ANIM_cock_one_handed_weapon_turn_around_and_stand_up = 102,
     ANIM_draw_one_handed_weapon_and_turn_around = 103,
-    ANIM_step_foward_and_hold_one_handed_weapon = 104,
+    ANIM_step_forward_and_hold_one_handed_weapon = 104,
     ANIM_holster_one_handed_weapon_and_adjust_suit = 105,
     ANIM_idle_unarmed = 106,
     ANIM_walking_unarmed = 107,
@@ -1253,9 +1273,9 @@ typedef enum ACT_TYPE {
 } ACT_TYPE;
 
 // character flags
-#define CHRFLAG_00000001                     0x00000001 // unknown
-#define CHRFLAG_SUNGLASSES                   0x00000002 // sunglasses
-#define CHRFLAG_00000004                     0x00000004 // unknown
+#define CHRFLAG_INIT                         0x00000001 // initialize chr
+#define CHRFLAG_CLONE                        0x00000002 // clone on heard gunfire (used by GLIST_DETECT_BOND_SPAWN_CLONE_ON_HEARD_GUNFIRE)
+#define CHRFLAG_NEAR_MISS                    0x00000004 // chr was just nearly shot (sometimes set on direct hit)
 #define CHRFLAG_HAS_BEEN_ON_SCREEN           0x00000008 // chr has been on screen before
 #define CHRFLAG_INVINCIBLE                   0x00000010 // invincible
 #define CHRFLAG_00000020                     0x00000020 // unknown
@@ -1276,7 +1296,7 @@ typedef enum ACT_TYPE {
 #define CHRFLAG_COUNT_DEATH_AS_CIVILIAN      0x00100000 // count death as civilian killed
 #define CHRFLAG_WAS_HIT                      0x00200000 // chr has been hit (even if invincible)
 #define CHRFLAG_00400000                     0x00400000 // unknown
-#define CHRFLAG_00800000                     0x00800000 // unknown
+#define CHRFLAG_CULL_USING_HITBOX            0x00800000 // cull chr using hitbox instead of tile/clipping (useful with lock y pos flag)
 #define CHRFLAG_01000000                     0x01000000 // unknown
 #define CHRFLAG_02000000                     0x02000000 // unknown
 #define CHRFLAG_04000000                     0x04000000 // unknown

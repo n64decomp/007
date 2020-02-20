@@ -58,7 +58,7 @@ glabel display_red_blue_on_radar
 /* 0FAC50 7F0C6120 10000119 */  b     .L7F0C6588
 /* 0FAC54 7F0C6124 8FA20088 */   lw    $v0, 0x88($sp)
 .L7F0C6128:
-/* 0FAC58 7F0C6128 0FC249EF */  jal   sub_GAME_7F0927BC
+/* 0FAC58 7F0C6128 0FC249EF */  jal   cheatCheckIfOn
 /* 0FAC5C 7F0C612C 24040017 */   li    $a0, 23
 /* 0FAC60 7F0C6130 10400003 */  beqz  $v0, .L7F0C6140
 /* 0FAC64 7F0C6134 00000000 */   nop   

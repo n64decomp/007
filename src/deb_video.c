@@ -83,7 +83,7 @@ glabel thread5_translate_7F_address
 /* 005BCC 70004FCC 24060001 */   li    $a2, 1
 /* 005BD0 70004FD0 0C00374C */  jal   osSetIntMask
 /* 005BD4 70004FD4 24040001 */   li    $a0, 1
-/* 005BD8 70004FD8 0C004060 */  jal   ultra_70010180
+/* 005BD8 70004FD8 0C004060 */  jal   __osGetCurrFaultedThread
 /* 005BDC 70004FDC 00408025 */   move  $s0, $v0
 /* 005BE0 70004FE0 3C018006 */  lui   $at, %hi(ptr_tlbthread_maybe)
 /* 005BE4 70004FE4 1040FFF6 */  beqz  $v0, .L70004FC0

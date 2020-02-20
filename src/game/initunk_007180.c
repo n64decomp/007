@@ -54,7 +54,7 @@ glabel sub_GAME_7F007180
 /* 03BD44 7F007214 000840C0 */  sll   $t0, $t0, 3
 /* 03BD48 7F007218 2504000F */  addiu $a0, $t0, 0xf
 /* 03BD4C 7F00721C 00814824 */  and   $t1, $a0, $at
-/* 03BD50 7F007220 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03BD50 7F007220 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03BD54 7F007224 01202025 */   move  $a0, $t1
 /* 03BD58 7F007228 3C068008 */  lui   $a2, %hi(dword_CODE_bss_8007A160)
 /* 03BD5C 7F00722C 24C6A160 */  addiu $a2, %lo(dword_CODE_bss_8007A160) # addiu $a2, $a2, -0x5ea0

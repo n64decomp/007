@@ -20,13 +20,13 @@ f32 D_80032314 = 65536.0;
 
 
 #ifdef NONMATCHING
-void init_0x40_bytes_data_at_address_last_word_1_0(void) {
+void reset_array_of_0x10_floats(void) {
 
 }
 #else
 GLOBAL_ASM(
 .text
-glabel init_0x40_bytes_data_at_address_last_word_1_0
+glabel reset_array_of_0x10_floats
 /* 08CB00 7F057FD0 44801000 */  mtc1  $zero, $f2
 /* 08CB04 7F057FD4 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 08CB08 7F057FD8 44810000 */  mtc1  $at, $f0
@@ -966,7 +966,7 @@ glabel init_something_copy_posdata_to_it
 /* 08D498 7F058968 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 08D49C 7F05896C AFA40018 */  sw    $a0, 0x18($sp)
 /* 08D4A0 7F058970 AFA5001C */  sw    $a1, 0x1c($sp)
-/* 08D4A4 7F058974 0FC15FF4 */  jal   init_0x40_bytes_data_at_address_last_word_1_0
+/* 08D4A4 7F058974 0FC15FF4 */  jal   reset_array_of_0x10_floats
 /* 08D4A8 7F058978 00A02025 */   move  $a0, $a1
 /* 08D4AC 7F05897C 8FA40018 */  lw    $a0, 0x18($sp)
 /* 08D4B0 7F058980 0FC16266 */  jal   copies_first_3_floats_from_a0_to_a1_plus_0x30
@@ -2583,7 +2583,7 @@ glabel sub_GAME_7F059B58
 /* 08E7F4 7F059CC4 10000003 */  b     .L7F059CD4
 /* 08E7F8 7F059CC8 E606003C */   swc1  $f6, 0x3c($s0)
 .L7F059CCC:
-/* 08E7FC 7F059CCC 0FC15FF4 */  jal   init_0x40_bytes_data_at_address_last_word_1_0
+/* 08E7FC 7F059CCC 0FC15FF4 */  jal   reset_array_of_0x10_floats
 /* 08E800 7F059CD0 02002025 */   move  $a0, $s0
 .L7F059CD4:
 /* 08E804 7F059CD4 8FBF0024 */  lw    $ra, 0x24($sp)

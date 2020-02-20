@@ -3862,7 +3862,7 @@ glabel guMtxL2F
 /* 010D78 70010178 27BD0010 */   addiu $sp, $sp, 0x10
 
 /* 010D7C 7001017C 00000000 */  nop   
-glabel ultra_70010180
+glabel __osGetCurrFaultedThread
 /* 010D80 70010180 3C028002 */  lui   $v0, 0x8002
 /* 010D84 70010184 03E00008 */  jr    $ra
 /* 010D88 70010188 8C427734 */   lw    $v0, 0x7734($v0)

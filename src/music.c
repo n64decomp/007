@@ -169,7 +169,7 @@ void setupaudio(void) {
     if (bootswitch_sound == 0)
     {
         // Node 1
-        temp_ret = allocate_bytes_in_bank(0x2e000, 6);
+        temp_ret = mempAllocBytesInBank(0x2e000, 6);
         phi_v1 = temp_ret;
 loop_2:
         // Node 2
@@ -292,7 +292,7 @@ glabel setupaudio
 /* 007644 70006A44 AFB00020 */   sw    $s0, 0x20($sp)
 /* 007648 70006A48 3C040002 */  lui   $a0, (0x0002E000 >> 16) # lui $a0, 2
 /* 00764C 70006A4C 3484E000 */  ori   $a0, (0x0002E000 & 0xFFFF) # ori $a0, $a0, 0xe000
-/* 007650 70006A50 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 007650 70006A50 0C0025C8 */  jal   mempAllocBytesInBank
 /* 007654 70006A54 24050006 */   li    $a1, 6
 /* 007658 70006A58 3C010002 */  lui   $at, (0x0002E000 >> 16) # lui $at, 2
 /* 00765C 70006A5C 3421E000 */  ori   $at, (0x0002E000 & 0xFFFF) # ori $at, $at, 0xe000

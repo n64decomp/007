@@ -54,13 +54,13 @@ glabel init_menus_or_reset
 /* 0358F4 7F000DC4 34848000 */   ori   $a0, (0x00078000 & 0xFFFF) # ori $a0, $a0, 0x8000
 /* 0358F8 7F000DC8 AC590000 */  sw    $t9, ($v0)
 .L7F000DCC:
-/* 0358FC 7F000DCC 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0358FC 7F000DCC 0C0025C8 */  jal   mempAllocBytesInBank
 /* 035900 7F000DD0 24050004 */   li    $a1, 4
 /* 035904 7F000DD4 3C018003 */  lui   $at, %hi(ptr_logo_and_walletbond_DL)
 /* 035908 7F000DD8 3C040004 */  lui   $a0, (0x0004B040 >> 16) # lui $a0, 4
 /* 03590C 7F000DDC AC22A950 */  sw    $v0, %lo(ptr_logo_and_walletbond_DL)($at)
 /* 035910 7F000DE0 3484B040 */  ori   $a0, (0x0004B040 & 0xFFFF) # ori $a0, $a0, 0xb040
-/* 035914 7F000DE4 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 035914 7F000DE4 0C0025C8 */  jal   mempAllocBytesInBank
 /* 035918 7F000DE8 24050004 */   li    $a1, 4
 /* 03591C 7F000DEC 3C038003 */  lui   $v1, %hi(ptr_menu_videobuffer)
 /* 035920 7F000DF0 2449003F */  addiu $t1, $v0, 0x3f

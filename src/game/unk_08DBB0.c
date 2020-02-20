@@ -767,7 +767,7 @@ glabel sub_GAME_7F08E240
 /* 0C2F7C 7F08E44C 8E040000 */  lw    $a0, ($s0)
 /* 0C2F80 7F08E450 0FC1B5AC */  jal   subcalcpos
 /* 0C2F84 7F08E454 24840598 */   addiu $a0, $a0, 0x598
-/* 0C2F88 7F08E458 0FC15FF4 */  jal   init_0x40_bytes_data_at_address_last_word_1_0
+/* 0C2F88 7F08E458 0FC15FF4 */  jal   reset_array_of_0x10_floats
 /* 0C2F8C 7F08E45C 27A40040 */   addiu $a0, $sp, 0x40
 /* 0C2F90 7F08E460 8E020000 */  lw    $v0, ($s0)
 /* 0C2F94 7F08E464 27AC0040 */  addiu $t4, $sp, 0x40
@@ -941,7 +941,7 @@ glabel sub_GAME_7F08E240
 /* 0C3224 7F08E6F4 AC4004F0 */  sw    $zero, 0x4f0($v0)
 /* 0C3228 7F08E6F8 0FC23859 */  jal   sub_GAME_7F08E164
 /* 0C322C 7F08E6FC C42C532C */   lwc1  $f12, %lo(D_8005532C)($at)
-/* 0C3230 7F08E700 0FC227B5 */  jal   get_BONDdata_field19C
+/* 0C3230 7F08E700 0FC227B5 */  jal   get_BONDdata_bondfadefracnew
 /* 0C3234 7F08E704 00000000 */   nop   
 /* 0C3238 7F08E708 3C018005 */  lui   $at, %hi(D_80055330)
 /* 0C323C 7F08E70C C4285330 */  lwc1  $f8, %lo(D_80055330)($at)
@@ -988,7 +988,7 @@ glabel sub_GAME_7F08E240
 /* 0C32DC 7F08E7AC 24840564 */  addiu $a0, $a0, 0x564
 /* 0C32E0 7F08E7B0 0FC16B80 */  jal   sub_GAME_7F05AE00
 /* 0C32E4 7F08E7B4 24A50570 */   addiu $a1, $a1, 0x570
-/* 0C32E8 7F08E7B8 0FC227B5 */  jal   get_BONDdata_field19C
+/* 0C32E8 7F08E7B8 0FC227B5 */  jal   get_BONDdata_bondfadefracnew
 /* 0C32EC 7F08E7BC 00000000 */   nop   
 /* 0C32F0 7F08E7C0 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0C32F4 7F08E7C4 44813000 */  mtc1  $at, $f6
@@ -998,7 +998,7 @@ glabel sub_GAME_7F08E240
 /* 0C3304 7F08E7D4 46004402 */  mul.s $f16, $f8, $f0
 /* 0C3308 7F08E7D8 46103480 */  add.s $f18, $f6, $f16
 /* 0C330C 7F08E7DC 46122282 */  mul.s $f10, $f4, $f18
-/* 0C3310 7F08E7E0 0FC227B5 */  jal   get_BONDdata_field19C
+/* 0C3310 7F08E7E0 0FC227B5 */  jal   get_BONDdata_bondfadefracnew
 /* 0C3314 7F08E7E4 E7AA00D0 */   swc1  $f10, 0xd0($sp)
 /* 0C3318 7F08E7E8 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0C331C 7F08E7EC 44814000 */  mtc1  $at, $f8
@@ -1022,7 +1022,7 @@ glabel sub_GAME_7F08E240
 /* 0C3364 7F08E834 2484057C */  addiu $a0, $a0, 0x57c
 /* 0C3368 7F08E838 0FC16B80 */  jal   sub_GAME_7F05AE00
 /* 0C336C 7F08E83C 24A50588 */   addiu $a1, $a1, 0x588
-/* 0C3370 7F08E840 0FC227B5 */  jal   get_BONDdata_field19C
+/* 0C3370 7F08E840 0FC227B5 */  jal   get_BONDdata_bondfadefracnew
 /* 0C3374 7F08E844 00000000 */   nop   
 /* 0C3378 7F08E848 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0C337C 7F08E84C 44813000 */  mtc1  $at, $f6
@@ -1032,7 +1032,7 @@ glabel sub_GAME_7F08E240
 /* 0C338C 7F08E85C 46004402 */  mul.s $f16, $f8, $f0
 /* 0C3390 7F08E860 46103480 */  add.s $f18, $f6, $f16
 /* 0C3394 7F08E864 46122282 */  mul.s $f10, $f4, $f18
-/* 0C3398 7F08E868 0FC227B5 */  jal   get_BONDdata_field19C
+/* 0C3398 7F08E868 0FC227B5 */  jal   get_BONDdata_bondfadefracnew
 /* 0C339C 7F08E86C E7AA00C4 */   swc1  $f10, 0xc4($sp)
 /* 0C33A0 7F08E870 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0C33A4 7F08E874 44814000 */  mtc1  $at, $f8
@@ -1274,7 +1274,7 @@ glabel sub_GAME_7F08EAF8
 /* 0C3638 7F08EB08 8DCF04E8 */  lw    $t7, 0x4e8($t6)
 /* 0C363C 7F08EB0C 05E2002B */  bltzl $t7, .L7F08EBBC
 /* 0C3640 7F08EB10 44800000 */   mtc1  $zero, $f0
-/* 0C3644 7F08EB14 0FC227B5 */  jal   get_BONDdata_field19C
+/* 0C3644 7F08EB14 0FC227B5 */  jal   get_BONDdata_bondfadefracnew
 /* 0C3648 7F08EB18 00000000 */   nop   
 /* 0C364C 7F08EB1C 3C018005 */  lui   $at, %hi(D_80055338)
 /* 0C3650 7F08EB20 C4245338 */  lwc1  $f4, %lo(D_80055338)($at)

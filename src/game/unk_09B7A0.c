@@ -164,7 +164,7 @@ glabel sub_GAME_7F09B820
 /* 0D042C 7F09B8FC 24050004 */  li    $a1, 4
 /* 0D0430 7F09B900 00045880 */  sll   $t3, $a0, 2
 /* 0D0434 7F09B904 01645821 */  addu  $t3, $t3, $a0
-/* 0D0438 7F09B908 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0D0438 7F09B908 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0D043C 7F09B90C 000B2080 */   sll   $a0, $t3, 2
 /* 0D0440 7F09B910 3C068008 */  lui   $a2, %hi(dword_CODE_bss_8007A0E8)
 /* 0D0444 7F09B914 24C6A0E8 */  addiu $a2, %lo(dword_CODE_bss_8007A0E8) # addiu $a2, $a2, -0x5f18
@@ -173,7 +173,7 @@ glabel sub_GAME_7F09B820
 /* 0D0450 7F09B920 8C84A0D0 */  lw    $a0, %lo(dword_CODE_bss_8007A0D0)($a0)
 /* 0D0454 7F09B924 24050004 */  li    $a1, 4
 /* 0D0458 7F09B928 00046100 */  sll   $t4, $a0, 4
-/* 0D045C 7F09B92C 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0D045C 7F09B92C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0D0460 7F09B930 01802025 */   move  $a0, $t4
 /* 0D0464 7F09B934 3C098008 */  lui   $t1, %hi(dword_CODE_bss_8007A0DC) 
 /* 0D0468 7F09B938 3C018008 */  lui   $at, %hi(dword_CODE_bss_8007A0E0)
@@ -183,7 +183,7 @@ glabel sub_GAME_7F09B820
 /* 0D0478 7F09B948 24050004 */  li    $a1, 4
 /* 0D047C 7F09B94C 00046880 */  sll   $t5, $a0, 2
 /* 0D0480 7F09B950 01A46821 */  addu  $t5, $t5, $a0
-/* 0D0484 7F09B954 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0D0484 7F09B954 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0D0488 7F09B958 000D2080 */   sll   $a0, $t5, 2
 /* 0D048C 7F09B95C 3C078008 */  lui   $a3, %hi(dword_CODE_bss_8007A0EC)
 /* 0D0490 7F09B960 24E7A0EC */  addiu $a3, %lo(dword_CODE_bss_8007A0EC) # addiu $a3, $a3, -0x5f14
@@ -192,7 +192,7 @@ glabel sub_GAME_7F09B820
 /* 0D049C 7F09B96C 8C84A0D8 */  lw    $a0, %lo(dword_CODE_bss_8007A0D8)($a0)
 /* 0D04A0 7F09B970 24050004 */  li    $a1, 4
 /* 0D04A4 7F09B974 00047100 */  sll   $t6, $a0, 4
-/* 0D04A8 7F09B978 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0D04A8 7F09B978 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0D04AC 7F09B97C 01C02025 */   move  $a0, $t6
 /* 0D04B0 7F09B980 3C0A8008 */  lui   $t2, %hi(dword_CODE_bss_8007A0D0) 
 /* 0D04B4 7F09B984 254AA0D0 */  addiu $t2, %lo(dword_CODE_bss_8007A0D0) # addiu $t2, $t2, -0x5f30

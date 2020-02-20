@@ -1,5 +1,5 @@
 #include "ultra64.h"
-
+#include "game/unk_092E50.h"
 // bss
 //CODE.bss:80079E80
 f32 flt_CODE_bss_80079E80;
@@ -31,7 +31,9 @@ u64 MipMap2C_Something2_Setup[] = {
 //End Dl means this gfx list cannot go any further. perhaps below is a vtx array?
 
 u32 D_8003FD90 = 0;
-u32 D_8003FD94[] = {0, 0, 0, 0, 0xFFFFFFFF};
+f32 D_8003FD94[] = {0, 0, 0};
+u32 D_8003FDA0 = 0;
+u32 D_8003FDA4 = 0xFFFFFFFF;
 //D:D_8003FDA8
 u64 D_8003FDA8[] = {
               0x100,                 0,                 0,                 0,

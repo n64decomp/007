@@ -2,7 +2,7 @@
 #define _MP_WEAPON_H_
 #include "ultra64.h"
 
-struct struct_2
+struct s_mp_weapon_set
 {
   s32 anonymous_0;
   s32 anonymous_1;
@@ -18,7 +18,7 @@ struct struct_8
   char field_1;
   char field_2;
   char field_3;
-  struct struct_2 * anonymous_1;
+  struct s_mp_weapon_set * anonymous_1;
 };
 
 

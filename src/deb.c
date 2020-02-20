@@ -11,7 +11,7 @@
  */
 
 /* bss */
-char dword_CODE_bss_80060890[0x400];
+extern char dword_CODE_bss_80060890[0x400];
 
 
 
@@ -104,7 +104,7 @@ u32 get_entry_of_size_in_debug_notice_list(s32 arg0)
         return debug_notice_list_data;
     }
     debug_notice_list_data = (u32) (temp_v0 - arg0);
-    return allocate_bytes_in_bank(6);
+    return mempAllocBytesInBank(6);
 }
 #else
 GLOBAL_ASM(
@@ -123,7 +123,7 @@ glabel get_entry_of_size_in_debug_notice_list
 /* 0059A8 70004DA8 00441023 */  subu  $v0, $v0, $a0
 /* 0059AC 70004DAC 3C018002 */  lui   $at, %hi(debug_notice_list_data)
 /* 0059B0 70004DB0 AC2232F8 */  sw    $v0, %lo(debug_notice_list_data)($at)
-/* 0059B4 70004DB4 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0059B4 70004DB4 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0059B8 70004DB8 24050006 */   li    $a1, 6
 /* 0059BC 70004DBC 10000005 */  b     .L70004DD4
 /* 0059C0 70004DC0 8FBF0014 */   lw    $ra, 0x14($sp)

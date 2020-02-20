@@ -38,7 +38,7 @@ glabel set_mt_tex_alloc
 .L7F007370:
 /* 03BEA0 7F007370 3C048005 */  lui   $a0, %hi(bytes)
 /* 03BEA4 7F007374 8C849170 */  lw    $a0, %lo(bytes)($a0)
-/* 03BEA8 7F007378 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03BEA8 7F007378 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03BEAC 7F00737C 24050004 */   li    $a1, 4
 /* 03BEB0 7F007380 3C048009 */  lui   $a0, %hi(ptr_texture_alloc_start)
 /* 03BEB4 7F007384 3C068005 */  lui   $a2, %hi(bytes)

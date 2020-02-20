@@ -61,7 +61,7 @@ glabel allocate_viewport_buffer
 /* 106F3C 7F0D240C 014B0019 */  multu $t2, $t3
 /* 106F40 7F0D2410 00002012 */  mflo  $a0
 /* 106F44 7F0D2414 00046040 */  sll   $t4, $a0, 1
-/* 106F48 7F0D2418 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 106F48 7F0D2418 0C0025C8 */  jal   mempAllocBytesInBank
 /* 106F4C 7F0D241C 25840040 */   addiu $a0, $t4, 0x40
 /* 106F50 7F0D2420 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 106F54 7F0D2424 3C038005 */  lui   $v1, %hi(viewport_img)

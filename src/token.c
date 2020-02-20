@@ -1,8 +1,11 @@
 #include "ultra64.h"
+#include "pi.h"
+#include "snd.h"
+#include "game/lvl_text.h"
 
 
+//OSMesg boot_token_from_indy[160];
 char boot_token_from_indy[0x280];
-
 s32 strstr_numstings = 1;
 s32 strstr_ptrcurrent_string = 0;
 u32 D_80024478[34] = {0};
@@ -154,27 +157,21 @@ s32 check_boot_switches(void)
     is_debug = 0;
     if (rmon_debug_is_final_build() != 0)
     {
-        boot_token_from_indy = 0;
+        boot_token_from_indy[0] = 0;
     }
     else
     {
-        devAddr = 0xffb000;
-        data = &boot_token_from_indy;
-        while (data != &piCmdBuf)
+        for (devAddr = 0xffb000, data = &boot_token_from_indy; data != &piCmdBuf; data += 4, devAddr += 4)
         {
             osPiReadIo(devAddr, data);
-            data = data + 4;
-            devAddr = devAddr + 4;
         }
     }
     check_string_something(&boot_token_from_indy);
 
-    if (check_token(1, "-d") != 0) {
-        is_debug = 1;
-    }
+    is_debug = (check_token(1, "-d") != 0);
 
     if (check_token(1, "-s") != 0) {
-        bootswitch_sound = (u8)1;
+        bootswitch_sound = 1;
     }
 
     if (check_token(1, "-j") != 0) {

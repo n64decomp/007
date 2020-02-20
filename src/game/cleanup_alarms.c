@@ -5,7 +5,7 @@
 
 void cleanupAlarms(void) {
     stop_alarm();
-    sub_GAME_7F055EF8();
+    check_deactivate_gas_sound();
 }
 
 

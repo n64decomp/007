@@ -73,7 +73,7 @@ s32 controller_1_rumble_pulse = 0;
 s32 controller_2_rumble_pulse = 0;
 s32 controller_3_rumble_pulse = 0;
 s32 controller_4_rumble_pulse = 0;
-s32 D_80026918 = 0;
+s32 enableControllers = 0;
 s32 D_8002691C = 0;
 s32 D_80026920 = 0;
 s32 disable_all_rumble = 0;
@@ -117,7 +117,7 @@ void *something_with_joy_c_debug(void) {
     osCreateMesgQueue(&cont4MesgMQ, &cont4Mesg, 1);
     osCreateMesgQueue(&contdemoMesgMQ, &contdemoMesg, 0xa);
     osSetEventMesg(5, &contdemoMesgMQ, 0);
-    D_80026918 = 1;
+    enableControllers = 1;
     disable_all_rumble = 0;
     temp_v0 = (0x80060000 + 0x4f30);
     ptr_to_tlb_ramrom_record = 0;
@@ -197,8 +197,8 @@ glabel something_with_joy_c_debug
 /* 00C200 7000B600 0C003714 */  jal   osSetEventMesg
 /* 00C204 7000B604 00003025 */   move  $a2, $zero
 /* 00C208 7000B608 240E0001 */  li    $t6, 1
-/* 00C20C 7000B60C 3C018002 */  lui   $at, %hi(D_80026918)
-/* 00C210 7000B610 AC2E6918 */  sw    $t6, %lo(D_80026918)($at)
+/* 00C20C 7000B60C 3C018002 */  lui   $at, %hi(enableControllers)
+/* 00C210 7000B610 AC2E6918 */  sw    $t6, %lo(enableControllers)($at)
 /* 00C214 7000B614 3C018002 */  lui   $at, %hi(disable_all_rumble)
 /* 00C218 7000B618 AC206924 */  sw    $zero, %lo(disable_all_rumble)($at)
 /* 00C21C 7000B61C 3C0F8006 */  lui   $t7, %hi(controller_input_index)
@@ -243,81 +243,26 @@ glabel something_with_joy_c_debug
 
 
 
-#ifdef NONMATCHING
-void test_controller_presence(void) {
-    ? sp1C;
 
-    // Node 0
-    if (D_80026918 != 0)
+void test_controller_presence(void)
+{
+    OSMesg  sp1C;
+
+    if (enableControllers != 0)
     {
-        // Node 1
         osSendMesg(&cont1MesgMQ, &sp1C, 0);
         osRecvMesg(&cont2MesgMQ, &sp1C, 1);
         controller_check_for_rumble_maybe();
         osSendMesg(&cont3MesgMQ, &sp1C, 0);
         osRecvMesg(&cont4MesgMQ, &sp1C, 1);
-        return;
-        // (possible return value: osRecvMesg(&cont4MesgMQ, &sp1C, 1))
     }
-    // (function likely void)
 }
-#else
-GLOBAL_ASM(
-.text
-glabel test_controller_presence
-/* 00C2AC 7000B6AC 3C0E8002 */  lui   $t6, %hi(D_80026918) 
-/* 00C2B0 7000B6B0 8DCE6918 */  lw    $t6, %lo(D_80026918)($t6)
-/* 00C2B4 7000B6B4 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 00C2B8 7000B6B8 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 00C2BC 7000B6BC 11C00016 */  beqz  $t6, .L7000B718
-/* 00C2C0 7000B6C0 3C048006 */   lui   $a0, %hi(cont1MesgMQ)
-/* 00C2C4 7000B6C4 24845370 */  addiu $a0, %lo(cont1MesgMQ) # addiu $a0, $a0, 0x5370
-/* 00C2C8 7000B6C8 27A5001C */  addiu $a1, $sp, 0x1c
-/* 00C2CC 7000B6CC 0C0037C4 */  jal   osSendMesg
-/* 00C2D0 7000B6D0 00003025 */   move  $a2, $zero
-/* 00C2D4 7000B6D4 3C048006 */  lui   $a0, %hi(cont2MesgMQ)
-/* 00C2D8 7000B6D8 24845390 */  addiu $a0, %lo(cont2MesgMQ) # addiu $a0, $a0, 0x5390
-/* 00C2DC 7000B6DC 27A5001C */  addiu $a1, $sp, 0x1c
-/* 00C2E0 7000B6E0 0C003774 */  jal   osRecvMesg
-/* 00C2E4 7000B6E4 24060001 */   li    $a2, 1
-/* 00C2E8 7000B6E8 0C002E04 */  jal   controller_check_for_rumble_maybe
-/* 00C2EC 7000B6EC 00000000 */   nop   
-/* 00C2F0 7000B6F0 3C048006 */  lui   $a0, %hi(cont3MesgMQ)
-/* 00C2F4 7000B6F4 248453B0 */  addiu $a0, %lo(cont3MesgMQ) # addiu $a0, $a0, 0x53b0
-/* 00C2F8 7000B6F8 27A5001C */  addiu $a1, $sp, 0x1c
-/* 00C2FC 7000B6FC 0C0037C4 */  jal   osSendMesg
-/* 00C300 7000B700 00003025 */   move  $a2, $zero
-/* 00C304 7000B704 3C048006 */  lui   $a0, %hi(cont4MesgMQ)
-/* 00C308 7000B708 248453D0 */  addiu $a0, %lo(cont4MesgMQ) # addiu $a0, $a0, 0x53d0
-/* 00C30C 7000B70C 27A5001C */  addiu $a1, $sp, 0x1c
-/* 00C310 7000B710 0C003774 */  jal   osRecvMesg
-/* 00C314 7000B714 24060001 */   li    $a2, 1
-.L7000B718:
-/* 00C318 7000B718 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 00C31C 7000B71C 27BD0020 */  addiu $sp, $sp, 0x20
-/* 00C320 7000B720 03E00008 */  jr    $ra
-/* 00C324 7000B724 00000000 */   nop   
-)
-#endif
 
-
-
-
-
-#ifdef NONMATCHING
-s32 osPfsChecker(s32 *arg0) {
-    return;
-    // (possible return value: 3)
+s32 osPfsChecker(u32 *param_1) //OSPfs *param_1
+{
+    return 3;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel osPfsChecker
-/* 00C328 7000B728 AFA40000 */  sw    $a0, ($sp)
-/* 00C32C 7000B72C 03E00008 */  jr    $ra
-/* 00C330 7000B730 24020003 */   li    $v0, 3
-)
-#endif
+
 
 
 

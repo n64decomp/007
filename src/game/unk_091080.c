@@ -393,7 +393,7 @@ glabel sub_GAME_7F091080
 /* 0C6044 7F091514 A4387054 */  sh    $t8, %lo(D_80037054)($at)
 /* 0C6048 7F091518 3C014270 */  li    $at, 0x42700000 # 60.000000
 /* 0C604C 7F09151C 44816000 */  mtc1  $at, $f12
-/* 0C6050 7F091520 0FC26C85 */  jal   sub_GAME_7F09B214
+/* 0C6050 7F091520 0FC26C85 */  jal   set_cur_player_fovy
 /* 0C6054 7F091524 00000000 */   nop   
 /* 0C6058 7F091528 3C028008 */  lui   $v0, %hi(dword_CODE_bss_80079E20)
 /* 0C605C 7F09152C 24429E20 */  addiu $v0, %lo(dword_CODE_bss_80079E20) # addiu $v0, $v0, -0x61e0

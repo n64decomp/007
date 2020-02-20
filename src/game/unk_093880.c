@@ -1,6 +1,8 @@
 #include "ultra64.h"
 #include "game/unk_093880.h"
+#include "game/unk_092E50.h"
 #include "game/bond.h"
+#include "game/lvl.h"
 
 // bss
 s32 copyof_stagenum;
@@ -17,7 +19,7 @@ struct player_data player3_player_data;
 struct player_data player4_player_data;
 
 struct Player *pPlayer;
-struct player_data *cur_player_stat_ptr;
+struct player_data *pPlayersPerm;
 s32 player_num;
 s32 random_byte;
 s32 dword_CODE_bss_8007A0C0;
@@ -528,7 +530,7 @@ glabel sub_GAME_7F093C48
 
 
 
-f32 sub_GAME_7F093C88(f32 arg0) {
+f32 addpoint5tofloat(f32 arg0) {
     return (f32) (s32) (arg0 + 0.5f);
 }
 
@@ -1102,53 +1104,18 @@ glabel sub_GAME_7F094298
 
 
 
-void sub_GAME_7F09442C(s32 stagenum) {
+void store_stagenum_to_copyof_stagenum(s32 stagenum) {
   copyof_stagenum = stagenum;
 }
 
-
-
-
-
-#ifdef NONMATCHING
-f32 sub_GAME_7F094438(void) {
-    // Node 0
-    D_8003FD94 = (f32) (D_8003FD94 + (f32) clock_timer);
-    if (D_8003FD94 > 4096.0f)
+void sub_GAME_7F094438(void)
+{
+    D_8003FD94[0] = (clock_timer + D_8003FD94[0]);
+    if ( D_8003FD94[0] > 4096.0f)
     {
-        // Node 1
-        D_8003FD94 = (f32) (D_8003FD94 - 4096.0f);
+        D_8003FD94[0] -= 4096.0f;
     }
-    // Node 2
-    return D_8003FD94;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F094438
-/* 0C8F68 7F094438 3C0E8005 */  lui   $t6, %hi(clock_timer) 
-/* 0C8F6C 7F09443C 8DCE8374 */  lw    $t6, %lo(clock_timer)($t6)
-/* 0C8F70 7F094440 3C028004 */  lui   $v0, %hi(D_8003FD94)
-/* 0C8F74 7F094444 2442FD94 */  addiu $v0, %lo(D_8003FD94) # addiu $v0, $v0, -0x26c
-/* 0C8F78 7F094448 448E3000 */  mtc1  $t6, $f6
-/* 0C8F7C 7F09444C C4440000 */  lwc1  $f4, ($v0)
-/* 0C8F80 7F094450 3C014580 */  li    $at, 0x45800000 # 4096.000000
-/* 0C8F84 7F094454 46803220 */  cvt.s.w $f8, $f6
-/* 0C8F88 7F094458 44811000 */  mtc1  $at, $f2
-/* 0C8F8C 7F09445C 46082280 */  add.s $f10, $f4, $f8
-/* 0C8F90 7F094460 E44A0000 */  swc1  $f10, ($v0)
-/* 0C8F94 7F094464 C4400000 */  lwc1  $f0, ($v0)
-/* 0C8F98 7F094468 4600103C */  c.lt.s $f2, $f0
-/* 0C8F9C 7F09446C 00000000 */  nop   
-/* 0C8FA0 7F094470 45000003 */  bc1f  .L7F094480
-/* 0C8FA4 7F094474 00000000 */   nop   
-/* 0C8FA8 7F094478 46020401 */  sub.s $f16, $f0, $f2
-/* 0C8FAC 7F09447C E4500000 */  swc1  $f16, ($v0)
-.L7F094480:
-/* 0C8FB0 7F094480 03E00008 */  jr    $ra
-/* 0C8FB4 7F094484 00000000 */   nop   
-)
-#endif
 
 
 
@@ -4925,7 +4892,7 @@ glabel sub_GAME_7F097818
 /* 0CC744 7F097C14 00000000 */  nop   
 /* 0CC748 7F097C18 46044302 */  mul.s $f12, $f8, $f4
 /* 0CC74C 7F097C1C 460A1181 */  sub.s $f6, $f2, $f10
-/* 0CC750 7F097C20 0FC24F22 */  jal   sub_GAME_7F093C88
+/* 0CC750 7F097C20 0FC24F22 */  jal   addpoint5tofloat
 /* 0CC754 7F097C24 E7A6037C */   swc1  $f6, 0x37c($sp)
 /* 0CC758 7F097C28 3C013900 */  li    $at, 0x39000000 # 0.000122
 /* 0CC75C 7F097C2C 44815000 */  mtc1  $at, $f10
@@ -4939,7 +4906,7 @@ glabel sub_GAME_7F097818
 /* 0CC77C 7F097C4C 44815000 */  mtc1  $at, $f10
 /* 0CC780 7F097C50 00000000 */  nop   
 /* 0CC784 7F097C54 460A4302 */  mul.s $f12, $f8, $f10
-/* 0CC788 7F097C58 0FC24F22 */  jal   sub_GAME_7F093C88
+/* 0CC788 7F097C58 0FC24F22 */  jal   addpoint5tofloat
 /* 0CC78C 7F097C5C E7A60408 */   swc1  $f6, 0x408($sp)
 /* 0CC790 7F097C60 3C013900 */  li    $at, 0x39000000 # 0.000122
 /* 0CC794 7F097C64 44812000 */  mtc1  $at, $f4
@@ -7536,8 +7503,16 @@ glabel sub_GAME_7F098A2C
 
 
 #ifdef NONMATCHING
-void default_player_perspective_and_height(void) {
-
+void default_player_perspective_and_height(void)
+{
+    player1_playerdata[0].handicap = 1.00000000;
+    player1_playerdata[0].player_perspective_height = 1.00000000;
+    player1_playerdata[1].handicap = 1.00000000;
+    player1_playerdata[1].player_perspective_height = 1.00000000;
+    player1_playerdata[2].handicap = 1.00000000;
+    player1_playerdata[2].player_perspective_height = 1.00000000;
+    player1_playerdata[3].handicap = 1.00000000;
+    player1_playerdata[3].player_perspective_height = 1.00000000;
 }
 #else
 GLOBAL_ASM(
@@ -7570,8 +7545,20 @@ glabel default_player_perspective_and_height
 
 
 #ifdef NONMATCHING
-void reset_play_data_ptrs(void) {
-
+void reset_play_data_ptrs(void)
+{
+    ptr_BONDdata_p1[0] = NULL;
+    ptr_BONDdata_p1[1] = NULL;
+    ptr_BONDdata_p1[2] = NULL;
+    ptr_BONDdata_p1[3] = NULL;
+    pPlayer = NULL;
+    pPlayersPerm = NULL;
+    player_num = 0;
+    random_byte = 0;
+    DAT_8007a0c0 = 0;
+    DAT_8007a0c4 = 1;
+    DAT_8007a0c8 = 2;
+    DAT_8007a0cc = 3;
 }
 #else
 GLOBAL_ASM(
@@ -7585,8 +7572,8 @@ glabel reset_play_data_ptrs
 /* 0CEE70 7F09A340 AC40000C */  sw    $zero, 0xc($v0)
 /* 0CEE74 7F09A344 3C018008 */  lui   $at, %hi(pPlayer)
 /* 0CEE78 7F09A348 AC20A0B0 */  sw    $zero, %lo(pPlayer)($at)
-/* 0CEE7C 7F09A34C 3C018008 */  lui   $at, %hi(cur_player_stat_ptr)
-/* 0CEE80 7F09A350 AC20A0B4 */  sw    $zero, %lo(cur_player_stat_ptr)($at)
+/* 0CEE7C 7F09A34C 3C018008 */  lui   $at, %hi(pPlayersPerm)
+/* 0CEE80 7F09A350 AC20A0B4 */  sw    $zero, %lo(pPlayersPerm)($at)
 /* 0CEE84 7F09A354 3C018008 */  lui   $at, %hi(player_num)
 /* 0CEE88 7F09A358 AC20A0B8 */  sw    $zero, %lo(player_num)($at)
 /* 0CEE8C 7F09A35C 3C038008 */  lui   $v1, %hi(dword_CODE_bss_8007A0C0)
@@ -7607,10 +7594,31 @@ glabel reset_play_data_ptrs
 
 
 
-
 #ifdef NONMATCHING
-void init_player_data_ptrs_construct_viewports(void) {
+void init_player_data_ptrs_construct_viewports(int playercount)
+{
+    int player;
+    
+    ptr_BONDdata_p1[0] = NULL;
+    ptr_BONDdata_p1[1] = NULL;
+    ptr_BONDdata_p1[2] = NULL;
+    ptr_BONDdata_p1[3] = NULL;
 
+    random_byte = get_random_value() & 0xff;
+    if (playercount < 1) {
+        initBONDdataforPlayer(0);
+        set_cur_player(0);
+        set_cur_player_screen_size( get_video2_settings_width(), get_video2_settings_height() );
+        set_cur_player_viewport_size( get_video2_settings_ulx(), get_video2_settings_uly() );
+    }
+    else {
+        for (player = 0; player != playercount; player++)
+        {
+            initBONDdataforPlayer(player);
+        }
+        set_cur_player(0);
+    }
+    return;
 }
 #else
 GLOBAL_ASM(
@@ -7682,8 +7690,21 @@ glabel init_player_data_ptrs_construct_viewports
 
 
 #ifdef NONMATCHING
-void get_num_players(void) {
-
+u32 get_num_players(void)
+{
+    u32 uVar1;
+    
+    uVar1 = (u32)(ptr_BONDdata_p1[0] != NULL);
+    if (ptr_BONDdata_p1[1] != NULL) {
+        uVar1 = (uint)(ptr_BONDdata_p1[0] != NULL) + 1;
+    }
+    if (ptr_BONDdata_p1[2] != NULL) {
+        uVar1 = uVar1 + 1;
+    }
+    if (ptr_BONDdata_p1[3] != NULL) {
+        uVar1 = uVar1 + 1;
+    }
+    return uVar1;
 }
 #else
 GLOBAL_ASM(
@@ -7723,8 +7744,393 @@ glabel get_num_players
 
 
 #ifdef NONMATCHING
-void initBONDdataforPlayer(void) {
-
+void initBONDdataforPlayer(PLAYER_ID player)
+{
+    int iVar1;
+    int iVar2;
+    Player **ppPVar3;
+    int *dest;
+    int *src;
+    int *src_next;
+    Player *pPVar4;
+    int array234undefined4 [234];
+    int iStack4;
+    f32 temp_3f36e15f8e;
+    
+    src = init_BONDdata_related_8003fda0;
+    dest = array234undefined4;
+    do {
+        src_next = src + 3;
+        *dest = *src;
+        dest[1] = src[1];
+        dest[2] = src[2];
+        src = src_next;
+        dest = dest + 3;
+    } while (src_next != (int *)0x80040148);
+    pPVar4 = (Player *)mempAllocBytesInBank(0x2a80,4);
+    ppPVar3 = ptr_BONDdata_p1 + player;
+    *ppPVar3 = pPVar4;
+    pPVar4->unknown = 0;
+    (*ppPVar3)->xpos = 0.00000000;
+    (*ppPVar3)->ypos = 0.00000000;
+    (*ppPVar3)->zpos = 0.00000000;
+    (*ppPVar3)->xpos2 = 0.00000000;
+    (*ppPVar3)->ypos2 = 0.00000000;
+    (*ppPVar3)->zpos2 = 1.00000000;
+    (*ppPVar3)->xoffset = 0.00000000;
+    (*ppPVar3)->yoffset = 1.00000000;
+    (*ppPVar3)->zoffset = 0.00000000;
+    (*ppPVar3)->xpos3 = 0.00000000;
+    (*ppPVar3)->ypos3 = 0.00000000;
+    (*ppPVar3)->zpos3 = 0.00000000;
+    (*ppPVar3)->room_pointer = 0;
+    (*ppPVar3)->current_model_xpos = 0.00000000;
+    (*ppPVar3)->current_model_ypos = 0.00000000;
+    (*ppPVar3)->current_model_zpos = 0.00000000;
+    (*ppPVar3)->previous_model_xpos = 0.00000000;
+    (*ppPVar3)->previous_model_ypos = 0.00000000;
+    (*ppPVar3)->previous_model_zpos = 0.00000000;
+    (*ppPVar3)->current_room_xpos = 0.00000000;
+    (*ppPVar3)->current_room_ypos = 0.00000000;
+    (*ppPVar3)->current_room_zpos = 0.00000000;
+    (*ppPVar3)->field_6C = 0.00000000;
+    (*ppPVar3)->field_70 = 0.00000000;
+    (*ppPVar3)->clipping_height = 0.00000000;
+    (*ppPVar3)->field_78 = 0.00000000;
+    (*ppPVar3)->field_7C = 0.00000000;
+    (*ppPVar3)->field_80 = 0.00000000;
+    (*ppPVar3)->field_84 = 0.00000000;
+    (*ppPVar3)->field_88 = 0.00000000;
+    (*ppPVar3)->field_8C = 0;
+    (*ppPVar3)->field_90 = 0.00000000;
+    (*ppPVar3)->field_94 = 0;
+    (*ppPVar3)->field_98 = 0.00000000;
+    (*ppPVar3)->field_1274 = 0.00000000;
+    (*ppPVar3)->field_1278 = 0.00000000;
+    (*ppPVar3)->field_127C = 0.00000000;
+    (*ppPVar3)->crouchposition = 2;
+    (*ppPVar3)->field_29FC = 2;
+    (*ppPVar3)->ducking_height_offset = 0.00000000;
+    (*ppPVar3)->field_A4 = 0.00000000;
+    (*ppPVar3)->position_data_pointer = 0;
+    (*ppPVar3)->field_AC = 1;
+    (*ppPVar3)->field_D0 = 0;
+    (*ppPVar3)->ptr_char_objectinstance = 0;
+    (*ppPVar3)->bonddead = 0;
+    (*ppPVar3)->bondhealth = 1.00000000;
+    (*ppPVar3)->bondarmour = 0.00000000;
+    (*ppPVar3)->oldhealth = 1.00000000;
+    (*ppPVar3)->oldarmour = 0.00000000;
+    (*ppPVar3)->apparenthealth = 1.00000000;
+    (*ppPVar3)->apparentarmour = 0.00000000;
+    (*ppPVar3)->damageshowtime = -1;
+    (*ppPVar3)->healthshowtime = -1;
+    (*ppPVar3)->field_104 = 0;
+    (*ppPVar3)->field_108 = 0;
+    (*ppPVar3)->field_10C = 0;
+    (*ppPVar3)->movecentrerelease = 0;
+    (*ppPVar3)->lookaheadcentreenabled = 1;
+    (*ppPVar3)->automovecentreenabled = 1;
+    (*ppPVar3)->fastmovecentreenabled = 0;
+    (*ppPVar3)->automovecentre = 1;
+    (*ppPVar3)->insightaimmode = 0;
+    (*ppPVar3)->autoyaimenabled = 1;
+    (*ppPVar3)->autoaimy = 0.00000000;
+    (*ppPVar3)->autoyaimtime = 0;
+    (*ppPVar3)->autoyaimtime60 = -1;
+    (*ppPVar3)->autoxaimenabled = 1;
+    (*ppPVar3)->autoaimx = 0.00000000;
+    (*ppPVar3)->autoxaimtime = 0;
+    (*ppPVar3)->autoxaimtime60 = -1;
+    (*ppPVar3)->vv_theta = 0.00000000;
+    (*ppPVar3)->speedtheta = 0.00000000;
+    (*ppPVar3)->vv_costheta = 1.00000000;
+    (*ppPVar3)->vv_sintheta = 0.00000000;
+    (*ppPVar3)->vv_verta = -4.00000000;
+    (*ppPVar3)->vv_verta360 = -229.18310547;
+    (*ppPVar3)->speedverta = 0.00000000;
+    (*ppPVar3)->vv_cosverta = 1.00000000;
+    (*ppPVar3)->vv_sinverta = 0.00000000;
+    (*ppPVar3)->speedsideways = 0.00000000;
+    (*ppPVar3)->speedstrafe = 0.00000000;
+    (*ppPVar3)->speedforwards = 0.00000000;
+    (*ppPVar3)->field_2A4C = 0.00000000;
+    (*ppPVar3)->speedboost = 1.00000000;
+    (*ppPVar3)->boost_factor_x = 0.00000000;
+    (*ppPVar3)->boost_factor_y = 0.00000000;
+    (*ppPVar3)->boost_factor_z = 0.00000000;
+    (*ppPVar3)->viewport_alpha = -1.00000000;
+    (*ppPVar3)->bondfadetime60 = -1.00000000;
+    (*ppPVar3)->bondfadetimemax = 0.00000000;
+    (*ppPVar3)->bondfadefracold = 0.00000000;
+    (*ppPVar3)->bondfadefracnew = 0.00000000;
+    (*ppPVar3)->field_1A0 = 0;
+    (*ppPVar3)->field_1C0 = 0;
+    (*ppPVar3)->field_1C4 = 0;
+    (*ppPVar3)->pause_animation_state = 0;
+    (*ppPVar3)->paused_flag = 1;
+    (*ppPVar3)->open_close_solo_watch_menu = 0;
+    (*ppPVar3)->field_1D4 = 0.00000000;
+    (*ppPVar3)->field_1D8 = 0.00000000;
+    (*ppPVar3)->pause_watch_position = -25.00000000;
+    (*ppPVar3)->field_1E0 = 0.00000000;
+    (*ppPVar3)->field_1E4 = 1.00000000;
+    (*ppPVar3)->field_1E8 = 0.00000000;
+    (*ppPVar3)->field_1EC = 0.00000000;
+    (*ppPVar3)->field_1F0 = 0.00000000;
+    (*ppPVar3)->field_1F4 = 1.00000000;
+    (*ppPVar3)->pausing_flag = 0;
+    (*ppPVar3)->pause_starting_angle = 0.00000000;
+    (*ppPVar3)->field_208 = 0.00000000;
+    (*ppPVar3)->pause_target_angle = 0.00000000;
+    (*ppPVar3)->field_210 = 0.00000000;
+    (*ppPVar3)->field_214 = 0.00000000;
+    (*ppPVar3)->field_218 = 0;
+    (*ppPVar3)->field_21C = 1;
+    (*ppPVar3)->step_in_view_watch_animation = 0;
+    (*ppPVar3)->pause_animation_counter = 0.00000000;
+    (*ppPVar3)->field_3B4 = 0;
+    (*ppPVar3)->field_3B6 = 0;
+    (*ppPVar3)->field_3B8 = 0.00000000;
+    (*ppPVar3)->field_3BC = 0.00000000;
+    *(float *)&(*ppPVar3)->field_3C0 = 9.99999809;
+    (*ppPVar3)->field_3C4 = 0.00000000;
+    (*ppPVar3)->field_3C8 = 0.00000000;
+    (*ppPVar3)->field_3CC = 1.00000000;
+    (*ppPVar3)->tint_red = 0xff;
+    (*ppPVar3)->tint_green = 0xff;
+    (*ppPVar3)->tint_blue = 0xff;
+    (*ppPVar3)->tint_alpha = 0.00000000;
+    (*ppPVar3)->field_3E0 = -1.00000000;
+    (*ppPVar3)->timer_for_fade = -1.00000000;
+    (*ppPVar3)->field_3E8 = 0xff;
+    (*ppPVar3)->field_3EC = 0xff;
+    (*ppPVar3)->field_3F0 = 0xff;
+    (*ppPVar3)->field_3F4 = 0xff;
+    (*ppPVar3)->field_3F8 = 0xff;
+    (*ppPVar3)->field_3FC = 0xff;
+    (*ppPVar3)->field_400 = 0.00000000;
+    (*ppPVar3)->field_404 = 0.00000000;
+    (*ppPVar3)->cuff_value = CUFF_BLUE;
+    (*ppPVar3)->field_420 = 1;
+    (*ppPVar3)->field_424 = 0;
+    (*ppPVar3)->field_428 = 0;
+    (*ppPVar3)->field_42C = 2;
+    (*ppPVar3)->controlstyle = 0;
+    (*ppPVar3)->field_4DC = 1;
+    (*ppPVar3)->field_4E0 = 1;
+    (*ppPVar3)->field_4E4 = 1;
+    (*ppPVar3)->field_4E8 = 0;
+    (*ppPVar3)->field_4EC = 0.93000001;
+    (*ppPVar3)->field_4F0 = 0;
+    (*ppPVar3)->field_4F4 = 1.00000000;
+    (*ppPVar3)->field_4F8 = 1.00000000;
+    (*ppPVar3)->scaled_velocity = 0.00000000;
+    (*ppPVar3)->field_500 = 0.00000000;
+    (*ppPVar3)->field_504 = 0.00000000;
+    (*ppPVar3)->field_508 = 0.00000000;
+    (*ppPVar3)->field_50C = 0.00000000;
+    (*ppPVar3)->field_510 = 1.00000000;
+    (*ppPVar3)->field_514 = 0.00000000;
+    (*ppPVar3)->field_518 = 1.00000000;
+    (*ppPVar3)->field_51C = 0.00000000;
+    (*ppPVar3)->velocity = 0.00000000;
+    (*ppPVar3)->field_524 = 0.00000000;
+    (*ppPVar3)->field_528 = 0.00000000;
+    (*ppPVar3)->field_52C = 0.00000000;
+    (*ppPVar3)->field_530 = 0.00000000;
+    *(f32 *)&(*ppPVar3)->field_534 = 14.28571606;
+    (*ppPVar3)->field_538 = 0;
+    (*ppPVar3)->field_53C = 14.28571606;
+    (*ppPVar3)->field_540 = 0.00000000;
+    (*ppPVar3)->field_544 = 0.00000000;
+    (*ppPVar3)->field_548 = 0.00000000;
+    (*ppPVar3)->field_54C = 0.00000000;
+    (*ppPVar3)->stationary_ground_offset = 0.00000000;
+    (*ppPVar3)->field_554 = 0.00000000;
+    (*ppPVar3)->field_558 = 0.00000000;
+    (*ppPVar3)->field_55C = 0.00000000;
+    (*ppPVar3)->field_560 = 0.00000000;
+    (*ppPVar3)->field_564 = 0.00000000;
+    (*ppPVar3)->field_568 = 0.00000000;
+    (*ppPVar3)->field_56C = 1.00000000;
+    (*ppPVar3)->field_570 = 0.00000000;
+    (*ppPVar3)->field_574 = 0.00000000;
+    (*ppPVar3)->field_578 = 1.00000000;
+    (*ppPVar3)->field_57C = 0.00000000;
+    (*ppPVar3)->field_580 = 1.00000000;
+    (*ppPVar3)->field_584 = 0.00000000;
+    (*ppPVar3)->field_588 = 0.00000000;
+    (*ppPVar3)->field_58C = 1.00000000;
+    (*ppPVar3)->field_590 = 0.00000000;
+    (*ppPVar3)->field_594 = 0;
+    iVar1 = 0;
+    do {
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7D0 + iVar1) = 0x280;
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7D2 + iVar1) = 0x1e0;
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7D4 + iVar1) = 0x1ff;
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7D6 + iVar1) = 0;
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7D8 + iVar1) = 0x280;
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7DA + iVar1) = 0x1e0;
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7DC + iVar1) = 0x1ff;
+        iVar2 = iVar1 + 0x10;
+        *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7DE + iVar1) = 0;
+        iVar1 = iVar2;
+    } while (iVar2 != 0x20);
+    (*ppPVar3)->viewx = 100;
+    (*ppPVar3)->viewy = 100;
+    (*ppPVar3)->viewleft = 0;
+    (*ppPVar3)->viewtop = 0;
+    (*ppPVar3)->hand_invisible[0] = 0;
+    (*ppPVar3)->hand_invisible[1] = 0;
+    (*ppPVar3)->hand_item[0] = ITEM_UNARMED;
+    (*ppPVar3)->hand_item[1] = ITEM_UNARMED;
+    (*ppPVar3)->field_2A44[0] = -1;
+    (*ppPVar3)->field_2A44[1] = -1;
+    (*ppPVar3)->lock_hand_model[0] = 0;
+    (*ppPVar3)->lock_hand_model[1] = 0;
+    (*ppPVar3)->ptr_hand_weapon_buffer[0] = NULL;
+    (*ppPVar3)->ptr_hand_weapon_buffer[1] = NULL;
+    pPVar4 = *ppPVar3;
+    src = array234undefined4;
+    do {
+        dest = src + 3;
+        pPVar4->right_weapon = *src;
+        pPVar4->right_weapon_attack = src[1];
+        pPVar4->previous_right_weapon = src[2];
+        pPVar4 = (Player *)&pPVar4->zpos;
+        src = dest;
+    } while (dest != &iStack4);
+    src = array234undefined4;
+    pPVar4 = *ppPVar3;
+    do {
+        dest = src + 3;
+        pPVar4->left_weapon = *src;
+        pPVar4->left_weapon_attack = src[1];
+        pPVar4->left_weapon_previous = src[2];
+        src = dest;
+        pPVar4 = (Player *)&pPVar4->zpos;
+    } while (dest != &iStack4);
+    (*ppPVar3)->field_FC0 = 1.00000000;
+    (*ppPVar3)->field_FC4 = 1.00000000;
+    (*ppPVar3)->field_FC8 = 0;
+    (*ppPVar3)->field_FCC = 0;
+    (*ppPVar3)->field_FD0 = 0;
+    (*ppPVar3)->field_FD4 = 0;
+    (*ppPVar3)->field_FD8 = 0;
+    (*ppPVar3)->field_FDC = -1;
+    (*ppPVar3)->field_FDD = -1;
+    (*ppPVar3)->field_FDE = -1;
+    (*ppPVar3)->field_FDF = '\0';
+    (*ppPVar3)->field_FE0 = 1;
+    (*ppPVar3)->field_FE4 = 0;
+    (*ppPVar3)->field_FE8 = 0.00000000;
+    (*ppPVar3)->field_FEC = 0.00000000;
+    (*ppPVar3)->field_FF0 = 0.00000000;
+    (*ppPVar3)->field_FF4 = 0.00000000;
+    (*ppPVar3)->field_FF8 = 0.89999998;
+    (*ppPVar3)->field_FFC = 0.00000000;
+    (*ppPVar3)->field_1000 = 0.00000000;
+    (*ppPVar3)->field_1004 = 0.00000000;
+    (*ppPVar3)->field_1008 = 0.00000000;
+    (*ppPVar3)->field_100C = 0.89999998;
+    (*ppPVar3)->field_1010 = 0.00000000;
+    (*ppPVar3)->holds_neg_pi = -3.14159274;
+    (*ppPVar3)->field_1018 = 0.00000000;
+    (*ppPVar3)->field_105C = 0;
+    (*ppPVar3)->copiedgoldeneye = 0;
+    (*ppPVar3)->somekinda_flags = 0;
+    (*ppPVar3)->field_106C = 0.00000000;
+    (*ppPVar3)->field_1070 = 0.00000000;
+    (*ppPVar3)->field_1074 = 0.00000000;
+    (*ppPVar3)->field_1078 = 0;
+    (*ppPVar3)->field_107C = 0.00000000;
+    (*ppPVar3)->field_1080 = 0.00000000;
+    (*ppPVar3)->sniper_zoom = 60.00000000;
+    (*ppPVar3)->camera_zoom = 60.00000000;
+    (*ppPVar3)->field_108C = -1;
+    (*ppPVar3)->c_screenwidth = 320.00000000;
+    (*ppPVar3)->c_screenheight = 240.00000000;
+    (*ppPVar3)->c_screenleft = 0.00000000;
+    (*ppPVar3)->c_screentop = 0.00000000;
+    (*ppPVar3)->c_perspnear = 10.00000000;
+    (*ppPVar3)->c_perspfovy = 46.00000000;
+    (*ppPVar3)->c_perspaspect = 1.00000000;
+    (*ppPVar3)->c_halfwidth = 160.00000000;
+    (*ppPVar3)->c_halfheight = 120.00000000;
+    (*ppPVar3)->c_scalex = 1.00000000;
+    (*ppPVar3)->c_scaley = 1.00000000;
+    (*ppPVar3)->c_recipscalex = 1.00000000;
+    (*ppPVar3)->c_recipscaley = 1.00000000;
+    (*ppPVar3)->field_10C4 = 0;
+    (*ppPVar3)->field_10C8 = 0;
+    (*ppPVar3)->field_10CC = 0;
+    (*ppPVar3)->field_10D0 = 0;
+    (*ppPVar3)->field_10D4 = 0;
+    (*ppPVar3)->field_10D8 = 0;
+    (*ppPVar3)->field_10DC = 0;
+    (*ppPVar3)->field_10E0 = 0;
+    (*ppPVar3)->field_10E4 = 0;
+    (*ppPVar3)->field_10E8 = 0;
+    (*ppPVar3)->field_10EC = 0;
+    (*ppPVar3)->c_scalelod60 = 1.00000000;
+    (*ppPVar3)->c_scalelod = 1.00000000;
+    (*ppPVar3)->c_lodscalez = 1.00000000;
+    (*ppPVar3)->c_lodscalezu32 = 0x10000;
+    (*ppPVar3)->screenxminf = 0.00000000;
+    (*ppPVar3)->screenyminf = 0.00000000;
+    (*ppPVar3)->screenxmaxf = 320.00000000;
+    (*ppPVar3)->screenymaxf = 240.00000000;
+    (*ppPVar3)->somekinda_bitflags = 0;
+    (*ppPVar3)->field_11B0 = 0;
+    (*ppPVar3)->field_11B4 = 0;
+    (*ppPVar3)->field_11B8 = 0;
+    (*ppPVar3)->zoomintime = 0.00000000;
+    (*ppPVar3)->zoomintimemax = 0.00000000;
+    (*ppPVar3)->zoominfovy = 60.00000000;
+    (*ppPVar3)->zoominfovyold = 60.00000000;
+    (*ppPVar3)->zoominfovynew = 60.00000000;
+    (*ppPVar3)->fovy = 60.00000000;
+    (*ppPVar3)->aspect = 1.33333337;
+    (*ppPVar3)->hudmessoff = 0;
+    (*ppPVar3)->bondmesscnt = -1;
+    (*ppPVar3)->ptr_inventory_first_in_cycle = 0;
+    (*ppPVar3)->p_itemcur = 0;
+    (*ppPVar3)->equipmaxitems = 0;
+    (*ppPVar3)->equipallguns = 0;
+    (*ppPVar3)->field_11F0 = 0;
+    (*ppPVar3)->field_11F4 = 0;
+    (*ppPVar3)->field_1280 = 0;
+    (*ppPVar3)->players_cur_animation = 0;
+    (*ppPVar3)->field_1288 = 0.00000000;
+    (*ppPVar3)->bondinvincible = '\0';
+    (*ppPVar3)->field_29B8 = 7;
+    (*ppPVar3)->field_29BC = 1.00000000;
+    (*ppPVar3)->field_29C0 = 0.00000000;
+    (*ppPVar3)->mpmenuon = 0;
+    (*ppPVar3)->damagetype = 7;
+    (*ppPVar3)->deathcount = 0;
+    (*ppPVar3)->field_29E0 = random_byte;
+    random_byte = random_byte + 1;
+    (*ppPVar3)->field_29E4 = -1;
+    (*ppPVar3)->field_29E8 = -1;
+    (*ppPVar3)->field_29EC = -1;
+    (*ppPVar3)->field_29F0 = -1;
+    (*ppPVar3)->healthdisplaytime = 0;
+    (*ppPVar3)->field_2A30 = 0;
+    (*ppPVar3)->field_2A34 = 0;
+    (*ppPVar3)->cur_item_weapon_getname = 1;
+    (*ppPVar3)->actual_health = 1.00000000;
+    (*ppPVar3)->actual_armor = 1.00000000;
+    (*ppPVar3)->cur_player_control_type_0 = 0;
+    (*ppPVar3)->cur_player_control_type_1 = 0;
+    (*ppPVar3)->cur_player_control_type_2 = 0.00000000;
+    (*ppPVar3)->neg_vspacing_for_control_type_entry = 0;
+    (*ppPVar3)->has_set_control_type_data = 1;
+    (*ppPVar3)->field_2A6C = 0;
+    (*ppPVar3)->field_2A70 = 0;
+    visible_to_guards_flag = TRUE;
+    obj_collision_flag = TRUE;
 }
 #else
 #ifdef VERSION_US
@@ -7764,7 +8170,7 @@ glabel initBONDdataforPlayer
 /* 0CF024 7F09A4F4 15EBFFF8 */  bne   $t7, $t3, .L7F09A4D8
 /* 0CF028 7F09A4F8 ADC1FFFC */   sw    $at, -4($t6)
 /* 0CF02C 7F09A4FC 24042A80 */  li    $a0, 10880
-/* 0CF030 7F09A500 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0CF030 7F09A500 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0CF034 7F09A504 24050004 */   li    $a1, 4
 /* 0CF038 7F09A508 8FAC03D0 */  lw    $t4, 0x3d0($sp)
 /* 0CF03C 7F09A50C 3C198008 */  lui   $t9, %hi(ptr_BONDdata_p1) 
@@ -8578,7 +8984,7 @@ glabel initBONDdataforPlayer
 /* 0CFC04 7F09B094 15EBFFF8 */  bne   $t7, $t3, .L7F09B078
 /* 0CFC08 7F09B098 ADC1FFFC */   sw    $at, -4($t6)
 /* 0CFC0C 7F09B09C 24042A80 */  li    $a0, 10880
-/* 0CFC10 7F09B0A0 0C0025CC */  jal   allocate_bytes_in_bank
+/* 0CFC10 7F09B0A0 0C0025CC */  jal   mempAllocBytesInBank
 /* 0CFC14 7F09B0A4 24050004 */   li    $a1, 4
 /* 0CFC18 7F09B0A8 8FAC03D0 */  lw    $t4, 0x3d0($sp)
 /* 0CFC1C 7F09B0AC 3C198008 */  lui   $t9, %hi(ptr_BONDdata_p1) # $t9, 0x8008
@@ -9360,11 +9766,11 @@ glabel initBONDdataforPlayer
 
 
 #ifdef NONMATCHING
-void set_cur_player(s32 arg0) {
-    // Node 0
-    player_num = arg0;
-    pPlayer = (u32) *(&ptr_BONDdata_p1 + (arg0 * 4));
-    cur_player_stat_ptr = (s32) ((arg0 * 0x70) + &player1_player_data);
+void set_cur_player(PLAYER_ID playernum)
+{
+    pPlayer = ptr_BONDdata_p1[playernum];
+    pPlayersPerm = player1_playerdata[playernum];
+    player_num = playernum;
     return;
 }
 #else
@@ -9384,10 +9790,10 @@ glabel set_cur_player
 /* 0CFC64 7F09B134 27399EF0 */  addiu $t9, %lo(player1_player_data) # addiu $t9, $t9, -0x6110
 /* 0CFC68 7F09B138 0018C100 */  sll   $t8, $t8, 4
 /* 0CFC6C 7F09B13C AC2FA0B0 */  sw    $t7, %lo(pPlayer)($at)
-/* 0CFC70 7F09B140 3C018008 */  lui   $at, %hi(cur_player_stat_ptr)
+/* 0CFC70 7F09B140 3C018008 */  lui   $at, %hi(pPlayersPerm)
 /* 0CFC74 7F09B144 03194021 */  addu  $t0, $t8, $t9
 /* 0CFC78 7F09B148 03E00008 */  jr    $ra
-/* 0CFC7C 7F09B14C AC28A0B4 */   sw    $t0, %lo(cur_player_stat_ptr)($at)
+/* 0CFC7C 7F09B14C AC28A0B4 */   sw    $t0, %lo(pPlayersPerm)($at)
 )
 #endif
 
@@ -9404,8 +9810,28 @@ s32 get_cur_playernum(void) {
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F09B15C(void) {
-
+void proc_7F09B15C(int position_data_pointer)
+{
+    Player *pPVar1;
+    s32 numplayers;
+    Player **ppPVar2;
+    int i;
+    
+    i = 0;
+    numplayers = get_num_players();
+    if (0 < numplayers) {
+        ppPVar2 = ptr_BONDdata_p1;
+        pPVar1 = ptr_BONDdata_p1[0];
+        while (ppPVar2 = ppPVar2 + 1, position_data_pointer != pPVar1->position_data_pointer) {
+            i = i + 1;
+            numplayers = get_num_players();
+            if (numplayers <= i) {
+                return;
+            }
+            pPVar1 = *ppPVar2;
+        }
+    }
+    return;
 }
 #else
 GLOBAL_ASM(
@@ -9464,15 +9890,15 @@ void set_cur_player_viewport_size(u32 ulx, u32 uly) {
   pPlayer->viewtop = uly;
 }
 
-void sub_GAME_7F09B214(f32 arg0) {
-    pPlayer->fovy = arg0;
+void set_cur_player_fovy(f32 fovy) {
+    pPlayer->fovy = fovy;
 }
 
-void sub_GAME_7F09B224(f32 arg0) {
-    pPlayer->aspect = arg0;
+void set_cur_player_aspect(f32 aspect) {
+    pPlayer->aspect = aspect;
 }
 
-f32 sub_GAME_7F09B234(void) {
+f32 get_cur_player_fovy(void) {
     return pPlayer->fovy;
 }
 
@@ -9941,61 +10367,29 @@ glabel sub_GAME_7F09B4D8
 
 
 #ifdef NONMATCHING
-s32 sub_GAME_7F09B528(s32 arg0) {
-    s32 phi_a0;
-    s32 phi_a0_2;
-    s32 phi_a0_3;
-
-    // Node 0
-    phi_a0 = arg0;
-    if (*(&ptr_BONDdata_p1 + (dword_CODE_bss_8007A0C0 * 4)) != 0)
-    {
-        // Node 1
-        if (arg0 == 0)
-        {
-            // Node 2
+int proc_7F09B528(int param_1)
+{
+    if (ptr_BONDdata_p1[dword_CODE_bss_8007A0C0] != NULL) {
+        if (param_1 == 0) {
             return dword_CODE_bss_8007A0C0;
         }
-        // Node 3
-        phi_a0 = (arg0 + -1);
+        param_1--;
     }
-    // Node 4
-    phi_a0_2 = phi_a0;
-    if (*(&ptr_BONDdata_p1 + (dword_CODE_bss_8007A0C4 * 4)) != 0)
-    {
-        // Node 5
-        if (phi_a0 == 0)
-        {
-            // Node 6
+    if (ptr_BONDdata_p1[dword_CODE_bss_8007A0C4] != NULL) {
+        if (param_1 == 0) {
             return dword_CODE_bss_8007A0C4;
         }
-        // Node 7
-        phi_a0_2 = (phi_a0 + -1);
+        param_1--;
     }
-    // Node 8
-    phi_a0_3 = phi_a0_2;
-    if (*(&ptr_BONDdata_p1 + (dword_CODE_bss_8007A0C8 * 4)) != 0)
-    {
-        // Node 9
-        if (phi_a0_2 == 0)
-        {
-            // Node 10
+    if (ptr_BONDdata_p1[dword_CODE_bss_8007A0C8] != NULL) {
+        if (param_1 == 0) {
             return dword_CODE_bss_8007A0C8;
         }
-        // Node 11
-        phi_a0_3 = (phi_a0_2 + -1);
+        param_1--;
     }
-    // Node 12
-    if (*(&ptr_BONDdata_p1 + (dword_CODE_bss_8007A0CC * 4)) != 0)
-    {
-        // Node 13
-        if (phi_a0_3 == 0)
-        {
-            // Node 14
-            return dword_CODE_bss_8007A0CC;
-        }
+    if ((ptr_BONDdata_p1[dword_CODE_bss_8007A0CC] != NULL) && (param_1 == 0)) {
+        return dword_CODE_bss_8007A0CC;
     }
-    // Node 15
     return 0;
 }
 #else

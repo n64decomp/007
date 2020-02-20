@@ -49,24 +49,24 @@ s32 D_80040F28 = 0;
 
 
 
-void null_init_main(void) {
+void null_init_main_7f0acb70(void) {
 
 }
 
-void sub_GAME_7F0ACB78(s32 arg0) {
-    text_spacing = (s32) -arg0;
+void setTextSpacingInverted(s32 spacing) {
+    text_spacing = -spacing;
 }
 
-void sub_GAME_7F0ACB88(s32 arg0) {
-    text_orientation = arg0;
+void setTextOrientation(s32 orientation) {
+    text_orientation = orientation;
 }
 
-void sub_GAME_7F0ACB94(s32 arg0) {
-    text_wordwrap = arg0;
+void setTextWordWrap(s32 flag) {
+    text_wordwrap = flag;
 }
 
-void sub_GAME_7F0ACBA0(s32 arg0) {
-    overlap_correction = arg0;
+void setTextOverlapCorrection(s32 flag) {
+    overlap_correction = flag;
 }
 
 
@@ -75,22 +75,23 @@ void sub_GAME_7F0ACBA0(s32 arg0) {
 
 
 #ifdef NONMATCHING
-void *load_font_tables(void) {
-    s32 temp_a2;
-    ? temp_ret;
+void load_font_tables(void)
+{
+    s32 sp1C;
+    s32 MACROSIZE;
+    s32 MACROSIZE;
+    s32 temp_ret;
+    s32 temp_ret_2;
+    s32 i_next;
+    s32 temp_v1_2;
     void *temp_v0;
-    s32 temp_v1;
-    s32 temp_a2_2;
-    ? temp_ret_2;
     void *temp_v0_2;
     void *temp_v0_3;
     void *temp_v0_4;
     void *temp_v0_5;
-    s32 temp_v1_2;
-    s32 phi_v1;
+    s32 i;
     s32 phi_v1_2;
 
-    // Node 0
     text_spacing = 0;
     text_orientation = 0;
     text_wordwrap = 0;
@@ -99,50 +100,43 @@ void *load_font_tables(void) {
     text_x = 0;
     text_y = 0;
     text_s = 0;
-    temp_a2 = (&0x000024B0 - 0);
+    MACROSIZE = 0x24b0 - 0;
     text_t = 0;
-    temp_ret = allocate_bytes_in_bank(temp_a2, 4, temp_a2);
-    ptrFirstFontTableSmall = temp_ret;
-    ptrSecondFontTableSmall = (s32) (temp_ret + 0x2a4);
-    romCopy(temp_ret, &_fonttablectlsmall1SegmentRomStart, sp1C, &ptrFirstFontTableSmall);
-    phi_v1 = 0;
+    ptrFirstFontTableSmall = mempAllocBytesInBank(MACROSIZE, 4);
+    ptrSecondFontTableSmall = (s32) (ptrFirstFontTableSmall + 0x2a4);
+    romCopy(&ptrFirstFontTableSmall, &_fonttablectlsmall1SegmentRomStart, MACROSIZE);
+    i = 0;
 loop_1:
-    // Node 1
-    temp_v0 = (ptrSecondFontTableSmall + phi_v1);
-    temp_v1 = (phi_v1 + 0x18);
+    temp_v0 = ptrSecondFontTableSmall + i;
+    i_next = i + 0x18;
     temp_v0->unk14 = (s32) (temp_v0->unk14 + ptrFirstFontTableSmall);
-    phi_v1 = temp_v1;
-    if (temp_v1 < 0x8d0)
+    i = i_next;
+    if (i_next < 0x8d0)
     {
         goto loop_1;
     }
-    // Node 2
-    temp_a2_2 = (&0x00003540 - 0);
-    temp_ret_2 = allocate_bytes_in_bank(temp_a2_2, 4, temp_a2_2, &ptrFirstFontTableSmall);
-    ptrFirstFontTableLarge = temp_ret_2;
-    ptrSecondFontTableLarge = (void *) (temp_ret_2 + 0x2a4);
-    romCopy(temp_ret_2, &_fonttablectllarge1SegmentRomStart, sp1C, &ptrFirstFontTableLarge);
+    MACROSIZE = 0x3540 - 0;
+    ptrFirstFontTableLarge = mempAllocBytesInBank(MACROSIZE, 4);
+    ptrSecondFontTableLarge = (s32) (ptrFirstFontTableLarge + 0x2a4);
+    romCopy(&ptrFirstFontTableLarge, &_fonttablectllarge1SegmentRomStart, MACROSIZE);
     ptrSecondFontTableLarge->unk14 = (s32) (ptrSecondFontTableLarge->unk14 + ptrFirstFontTableLarge);
     ptrSecondFontTableLarge->unk2C = (s32) (ptrSecondFontTableLarge->unk2C + ptrFirstFontTableLarge);
     phi_v1_2 = 0x30;
 loop_3:
-    // Node 3
-    temp_v0_2 = (ptrSecondFontTableLarge + phi_v1_2);
+    temp_v0_2 = ptrSecondFontTableLarge + phi_v1_2;
     temp_v0_2->unk14 = (s32) (temp_v0_2->unk14 + ptrFirstFontTableLarge);
-    temp_v0_3 = (ptrSecondFontTableLarge + phi_v1_2);
+    temp_v0_3 = ptrSecondFontTableLarge + phi_v1_2;
     temp_v0_3->unk2C = (s32) (temp_v0_3->unk2C + ptrFirstFontTableLarge);
-    temp_v0_4 = (ptrSecondFontTableLarge + phi_v1_2);
+    temp_v0_4 = ptrSecondFontTableLarge + phi_v1_2;
     temp_v0_4->unk44 = (s32) (temp_v0_4->unk44 + ptrFirstFontTableLarge);
-    temp_v0_5 = (ptrSecondFontTableLarge + phi_v1_2);
-    temp_v1_2 = (phi_v1_2 + 0x60);
+    temp_v0_5 = ptrSecondFontTableLarge + phi_v1_2;
+    temp_v1_2 = phi_v1_2 + 0x60;
     temp_v0_5->unk5C = (s32) (temp_v0_5->unk5C + ptrFirstFontTableLarge);
     phi_v1_2 = temp_v1_2;
     if (temp_v1_2 != 0x8d0)
     {
         goto loop_3;
     }
-    // Node 4
-    return temp_v0_5;
 }
 #else
 GLOBAL_ASM(
@@ -176,7 +170,7 @@ glabel load_font_tables
 /* 0E1740 7F0ACC10 AC200EA4 */  sw    $zero, %lo(text_t)($at)
 /* 0E1744 7F0ACC14 00C02025 */  move  $a0, $a2
 /* 0E1748 7F0ACC18 AFA6001C */  sw    $a2, 0x1c($sp)
-/* 0E174C 7F0ACC1C 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0E174C 7F0ACC1C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0E1750 7F0ACC20 24050004 */   li    $a1, 4
 /* 0E1754 7F0ACC24 3C078004 */  lui   $a3, %hi(ptrFirstFontTableSmall)
 /* 0E1758 7F0ACC28 3C088004 */  lui   $t0, %hi(ptrSecondFontTableSmall) 
@@ -212,7 +206,7 @@ glabel load_font_tables
 /* 0E17CC 7F0ACC9C 01AE3023 */  subu  $a2, $t5, $t6
 /* 0E17D0 7F0ACCA0 00C02025 */  move  $a0, $a2
 /* 0E17D4 7F0ACCA4 AFA6001C */  sw    $a2, 0x1c($sp)
-/* 0E17D8 7F0ACCA8 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0E17D8 7F0ACCA8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0E17DC 7F0ACCAC 24050004 */   li    $a1, 4
 /* 0E17E0 7F0ACCB0 3C078004 */  lui   $a3, %hi(ptrFirstFontTableLarge)
 /* 0E17E4 7F0ACCB4 3C088004 */  lui   $t0, %hi(ptrSecondFontTableLarge) 
@@ -281,8 +275,37 @@ glabel load_font_tables
 
 
 #ifdef NONMATCHING
-void microcode_constructor(void) {
+void microcode_constructor(u32 *DL)
 
+{
+    DL[0] = 0xe7000000; //rdp_pipesync
+    DL[1] = 0;
+    DL[2] = 0xba001402; //rsp_uc05_setothermode_h
+    DL[3] = 0;
+    DL[5] = 0xc0;
+    DL[4] = 0xba000602; //rsp_uc05_setothermode_h
+    DL[6] = 0xb900031d; //rsp_uc05_setothermode_l
+    DL[7] = 0x5041c8;
+    DL[8] = 0xfcff97ff; //rdp_setcombine
+    DL[9] = 0xff2dfeff; //rdp_setcolourimage
+    DL[10] = 0xba001301; //rsp_uc05_setothermode_h
+    DL[0xb] = 0;
+    DL[0xc] = 0xb9000002; //rsp_uc05_setothermode_l
+    DL[0xd] = 0;
+    DL[0xe] = 0xba001001; //rsp_uc05_setothermode_h
+    DL[0xf] = 0;
+    DL[0x11] = 0xc00;
+    DL[0x10] = 0xba000903; //rsp_uc05_setothermode_h
+    DL[0x12] = 0xba000e02; //rsp_uc05_setothermode_h
+    DL[0x13] = 0;
+    if (text_bilevel_filter != 0) {
+        DL[0x15] = 0x3000;
+        DL[0x14] = 0xba000c02; //rsp_uc05_setothermode_h
+        return;
+    }
+    DL[0x15] = 0x2000;
+    DL[0x14] = 0xba000c02; //rsp_uc05_setothermode_h
+    return;
 }
 #else
 GLOBAL_ASM(

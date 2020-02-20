@@ -1828,7 +1828,7 @@ glabel get_obj_instance_controller_for_header
 .L7F06C124:
 /* 0A0C54 7F06C124 56C00005 */  bnezl $s6, .L7F06C13C
 /* 0A0C58 7F06C128 86A20014 */   lh    $v0, 0x14($s5)
-/* 0A0C5C 7F06C12C 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0A0C5C 7F06C12C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0A0C60 7F06C130 24040020 */   li    $a0, 32
 /* 0A0C64 7F06C134 0040B025 */  move  $s6, $v0
 /* 0A0C68 7F06C138 86A20014 */  lh    $v0, 0x14($s5)
@@ -1838,7 +1838,7 @@ glabel get_obj_instance_controller_for_header
 /* 0A0C74 7F06C144 00022080 */   sll   $a0, $v0, 2
 /* 0A0C78 7F06C148 2484000F */  addiu $a0, $a0, 0xf
 /* 0A0C7C 7F06C14C 3488000F */  ori   $t0, $a0, 0xf
-/* 0A0C80 7F06C150 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0A0C80 7F06C150 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0A0C84 7F06C154 3904000F */   xori  $a0, $t0, 0xf
 /* 0A0C88 7F06C158 AFA20040 */  sw    $v0, 0x40($sp)
 /* 0A0C8C 7F06C15C 86AA0014 */  lh    $t2, 0x14($s5)
@@ -1967,7 +1967,7 @@ glabel get_aircraft_obj_instance_controller
 /* 0A0DE0 7F06C2B0 16000006 */  bnez  $s0, .L7F06C2CC
 /* 0A0DE4 7F06C2B4 240400C0 */   li    $a0, 192
 /* 0A0DE8 7F06C2B8 24050004 */  li    $a1, 4
-/* 0A0DEC 7F06C2BC 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0A0DEC 7F06C2BC 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0A0DF0 7F06C2C0 A7A80026 */   sh    $t0, 0x26($sp)
 /* 0A0DF4 7F06C2C4 87A80026 */  lh    $t0, 0x26($sp)
 /* 0A0DF8 7F06C2C8 00408025 */  move  $s0, $v0
@@ -1979,7 +1979,7 @@ glabel get_aircraft_obj_instance_controller
 /* 0A0E0C 7F06C2DC 00062080 */   sll   $a0, $a2, 2
 /* 0A0E10 7F06C2E0 2484000F */  addiu $a0, $a0, 0xf
 /* 0A0E14 7F06C2E4 3499000F */  ori   $t9, $a0, 0xf
-/* 0A0E18 7F06C2E8 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 0A0E18 7F06C2E8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0A0E1C 7F06C2EC 3B24000F */   xori  $a0, $t9, 0xf
 /* 0A0E20 7F06C2F0 8FAA0030 */  lw    $t2, 0x30($sp)
 /* 0A0E24 7F06C2F4 AFA20028 */  sw    $v0, 0x28($sp)

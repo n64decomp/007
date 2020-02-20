@@ -385,7 +385,7 @@ glabel sub_GAME_7F0BC85C
 /* 0F143C 7F0BC90C 8D4B108C */  lw    $t3, 0x108c($t2)
 /* 0F1440 7F0BC910 002C0821 */  addu  $at, $at, $t4
 /* 0F1444 7F0BC914 27A4002C */  addiu $a0, $sp, 0x2c
-/* 0F1448 7F0BC918 0FC15FF4 */  jal   init_0x40_bytes_data_at_address_last_word_1_0
+/* 0F1448 7F0BC918 0FC15FF4 */  jal   reset_array_of_0x10_floats
 /* 0F144C 7F0BC91C AC2B3900 */   sw    $t3, %lo(dword_CODE_bss_80083900)($at)
 /* 0F1450 7F0BC920 8FAE0070 */  lw    $t6, 0x70($sp)
 /* 0F1454 7F0BC924 3C018004 */  lui   $at, %hi(room_data_float2)

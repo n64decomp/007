@@ -6,4 +6,6 @@ struct stringentry {
     char *string[];
 };
 
+extern s32 j_text_trigger;
+
 #endif

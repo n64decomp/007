@@ -40,7 +40,7 @@ glabel sub_GAME_7F005540
 /* 03A09C 7F00556C AFB00014 */  sw    $s0, 0x14($sp)
 /* 03A0A0 7F005570 AE8E0000 */  sw    $t6, ($s4)
 /* 03A0A4 7F005574 000E2140 */  sll   $a0, $t6, 5
-/* 03A0A8 7F005578 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03A0A8 7F005578 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03A0AC 7F00557C 24050004 */   li    $a1, 4
 /* 03A0B0 7F005580 8E980000 */  lw    $t8, ($s4)
 /* 03A0B4 7F005584 3C128008 */  lui   $s2, %hi(ptr_allocation_1)
@@ -62,7 +62,7 @@ glabel sub_GAME_7F005540
 /* 03A0F0 7F0055C0 10000009 */  b     .L7F0055E8
 /* 03A0F4 7F0055C4 AD400010 */   sw    $zero, 0x10($t2)
 .L7F0055C8:
-/* 03A0F8 7F0055C8 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03A0F8 7F0055C8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03A0FC 7F0055CC 24050004 */   li    $a1, 4
 /* 03A100 7F0055D0 8E4B0000 */  lw    $t3, ($s2)
 /* 03A104 7F0055D4 01706021 */  addu  $t4, $t3, $s0
@@ -115,7 +115,7 @@ glabel sub_GAME_7F005624
 /* 03A188 7F005658 AFB00014 */  sw    $s0, 0x14($sp)
 /* 03A18C 7F00565C AE8E0000 */  sw    $t6, ($s4)
 /* 03A190 7F005660 000F2180 */  sll   $a0, $t7, 6
-/* 03A194 7F005664 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03A194 7F005664 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03A198 7F005668 24050004 */   li    $a1, 4
 /* 03A19C 7F00566C 8E980000 */  lw    $t8, ($s4)
 /* 03A1A0 7F005670 3C128008 */  lui   $s2, %hi(ptr_allocation_0)
@@ -137,7 +137,7 @@ glabel sub_GAME_7F005624
 /* 03A1DC 7F0056AC 10000009 */  b     .L7F0056D4
 /* 03A1E0 7F0056B0 AD400010 */   sw    $zero, 0x10($t2)
 .L7F0056B4:
-/* 03A1E4 7F0056B4 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03A1E4 7F0056B4 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03A1E8 7F0056B8 24050004 */   li    $a1, 4
 /* 03A1EC 7F0056BC 8E4B0000 */  lw    $t3, ($s2)
 /* 03A1F0 7F0056C0 01706021 */  addu  $t4, $t3, $s0

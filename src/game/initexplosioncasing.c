@@ -27,7 +27,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03B8F8 7F006DC8 3C018004 */  lui   $at, %hi(D_80040178)
 /* 03B8FC 7F006DCC 24041740 */  li    $a0, 5952
 /* 03B900 7F006DD0 24050004 */  li    $a1, 4
-/* 03B904 7F006DD4 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03B904 7F006DD4 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03B908 7F006DD8 E4240178 */   swc1  $f4, %lo(D_80040178)($at)
 /* 03B90C 7F006DDC 3C038008 */  lui   $v1, %hi(ptr_explosion_buf)
 /* 03B910 7F006DE0 2463A144 */  addiu $v1, %lo(ptr_explosion_buf) # addiu $v1, $v1, -0x5ebc
@@ -76,7 +76,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03B9B4 7F006E84 1420FFDB */  bnez  $at, .L7F006DF4
 /* 03B9B8 7F006E88 24C603E0 */   addiu $a2, $a2, 0x3e0
 /* 03B9BC 7F006E8C 24041FE0 */  li    $a0, 8160
-/* 03B9C0 7F006E90 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03B9C0 7F006E90 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03B9C4 7F006E94 24050004 */   li    $a1, 4
 /* 03B9C8 7F006E98 3C038008 */  lui   $v1, %hi(ptr_smoke_buf)
 /* 03B9CC 7F006E9C 2463A140 */  addiu $v1, %lo(ptr_smoke_buf) # addiu $v1, $v1, -0x5ec0
@@ -166,7 +166,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BB14 7F006FE4 24010001 */  li    $at, 1
 /* 03BB18 7F006FE8 14410017 */  bne   $v0, $at, .L7F007048
 /* 03BB1C 7F006FEC 240406E0 */   li    $a0, 1760
-/* 03BB20 7F006FF0 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03BB20 7F006FF0 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03BB24 7F006FF4 24050004 */   li    $a1, 4
 /* 03BB28 7F006FF8 3C058008 */  lui   $a1, %hi(ptr_scorch_buf)
 /* 03BB2C 7F006FFC 24A5A150 */  addiu $a1, %lo(ptr_scorch_buf) # addiu $a1, $a1, -0x5eb0
@@ -191,7 +191,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BB74 7F007044 A5A60108 */   sh    $a2, 0x108($t5)
 .L7F007048:
 /* 03BB78 7F007048 24041F40 */  li    $a0, 8000
-/* 03BB7C 7F00704C 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03BB7C 7F00704C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03BB80 7F007050 24050004 */   li    $a1, 4
 /* 03BB84 7F007054 3C058008 */  lui   $a1, %hi(ptr_bullet_impact_buf)
 /* 03BB88 7F007058 24A5A154 */  addiu $a1, %lo(ptr_bullet_impact_buf) # addiu $a1, $a1, -0x5eac
@@ -249,7 +249,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BC44 7F007114 000A50C0 */  sll   $t2, $t2, 3
 /* 03BC48 7F007118 2544000F */  addiu $a0, $t2, 0xf
 /* 03BC4C 7F00711C 00815824 */  and   $t3, $a0, $at
-/* 03BC50 7F007120 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 03BC50 7F007120 0C0025C8 */  jal   mempAllocBytesInBank
 /* 03BC54 7F007124 01602025 */   move  $a0, $t3
 /* 03BC58 7F007128 3C068008 */  lui   $a2, %hi(max_casings)
 /* 03BC5C 7F00712C 24C6A148 */  addiu $a2, %lo(max_casings) # addiu $a2, $a2, -0x5eb8

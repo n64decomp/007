@@ -1,7 +1,7 @@
 #ifndef _BONDTYPES_H_
 #define _BONDTYPES_H_
 #include "ultra64.h"
-
+#include "bondconstants.h"
 struct rgba_val{
     u8 r;
     u8 g;
@@ -191,5 +191,132 @@ struct CHRdata {
     int field_1D4;
     int * handle_positiondata_hat;
 };
+
+struct object_standard {
+    u16 extrascale:2; 
+    u8 hidden2:1;
+    u8 type:1;
+    u16 obj;
+    u16 pad;
+    u32 flags;
+    u32 flags2;
+    void * runtime_ptr_obj_posdata;
+    void * runtime_ptr_obj_instance_controller;
+    void * runtime_MATRIX0;
+    void * runtime_MATRIX1;
+    void * runtime_MATRIX2;
+    void * runtime_MATRIX3;
+    void * runtime_MATRIX4;
+    void * runtime_MATRIX5;
+    void * runtime_MATRIX6;
+    void * runtime_MATRIX7;
+    void * runtime_MATRIX8;
+    void * runtime_MATRIX9;
+    void * runtime_MATRIXA;
+    void * runtime_MATRIXB;
+    void * runtime_MATRIXC;
+    void * runtime_MATRIXD;
+    void * runtime_MATRIXE;
+    void * runtime_MATRIXF;
+    f32 runtime_x_pos;
+    f32 runtime_y_pos;
+    f32 runtime_z_pos;
+    int runtime_bitflags;
+    int ptr_allocated_collisiondata_block;
+    int field_6C;
+    float field_70;
+    short damage;
+    short maxdamage;
+    char field_78;
+    char field_79;
+    char field_7A;
+    char field_7B;
+    char field_7C;
+    char field_7D;
+    char field_7E;
+    char field_7F;
+};
+
+struct watchMenuObjectiveText {
+    u32 id;
+    enum WATCH_BRIEFING_PAGE menu;
+    u16 reserved;
+    u16 text;
+    struct watchMenuObjectiveText * nextentry;
+};
+//!FIXME all but text field cannot be trusted
+struct objective_entry {
+    u32 id;
+    enum WATCH_BRIEFING_PAGE menu;
+    u16 reserved;
+    u16 text;
+    struct watchMenuObjectiveText * nextentry;
+};
+
+typedef struct sImageTableEntry {
+    u32 index;
+    u8 width;
+    u8 height;
+    u8 level;
+    u8 format;
+    u8 depth;
+    u8 flagsS;
+    u8 flagsT;
+    u8 pad;
+} sImageTableEntry;
+
+typedef struct sGlobalImageTable {
+    u32 globalDL_0x000[30];
+    u32 globalDL_0x078[42];
+    u32 globalDL_0x120[42];
+    u32 globalDL_0x1c8[42];
+    u32 globalDL_0x270[42];
+    u32 globalDL_0x318[42];
+    u32 globalDL_0x3c0[42];
+    u32 globalDL_0x468[42];
+    u32 globalDL_0x510[42];
+    u32 globalDL_0x5b8[42];
+    u32 globalDL_0x660[42];
+    u32 globalDL_0x708[42];
+    u32 globalDL_0x7b0[42];
+    u32 globalDL_0x858[42];
+    u32 globalDL_0x900[42];
+    u32 globalDL_0x9a8[42];
+    u32 globalDL_0xa50[30];
+    struct sImageTableEntry s_genericimage[1];
+    struct sImageTableEntry s_impactimages[20];
+    struct sImageTableEntry s_explosion_smokeimages[6];
+    struct sImageTableEntry s_scattered_explosions[5];
+    struct sImageTableEntry s_flareimage1[1];
+    struct sImageTableEntry s_flareimage2[1];
+    struct sImageTableEntry s_flareimage3[1];
+    struct sImageTableEntry s_flareimage4[1];
+    struct sImageTableEntry s_flareimage5[1];
+    struct sImageTableEntry s_ammo9mmimage[1];
+    struct sImageTableEntry s_rifleammoimage[1];
+    struct sImageTableEntry s_shotgunammoimage[1];
+    struct sImageTableEntry s_knifeammoimage[1];
+    struct sImageTableEntry s_glammoimage[1];
+    struct sImageTableEntry s_rocketammoimage[1];
+    struct sImageTableEntry s_genericmineammoimage[1];
+    struct sImageTableEntry s_grenadeammoimage[1];
+    struct sImageTableEntry s_magnumammoimage[1];
+    struct sImageTableEntry s_goldengunammoimage[1];
+    struct sImageTableEntry s_remotemineammoimage[1];
+    struct sImageTableEntry s_timedmineammoimage[1];
+    struct sImageTableEntry s_proxmineammoimage[1];
+    struct sImageTableEntry s_tankammoimage[1];
+    struct sImageTableEntry s_crosshairimage[1];
+    struct sImageTableEntry s_betacrosshairimage[1];
+    struct sImageTableEntry s_glassoverlayimage[2];
+    struct sImageTableEntry s_monitorimages[50];
+    struct sImageTableEntry s_skywaterimages[3];
+    struct sImageTableEntry s_mainfolderimages[6];
+    struct sImageTableEntry s_mpradarimages[1];
+    struct sImageTableEntry s_mpcharselimages[64];
+    struct sImageTableEntry s_mpstageselimages[17];
+} sGlobalImageTable;
+
+
 
 #endif

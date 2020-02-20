@@ -38,15 +38,12 @@ void something_with_rsp_c_debug(void) {
 
 
 #ifdef NONMATCHING
-void allocate_init_rsp_buffers(void) {
-    ? temp_ret;
+void allocate_init_rsp_buffers(void)
 
-    // Node 0
-    temp_ret = allocate_bytes_in_bank(0xa000, 6);
-    D_8004E9E8 = temp_ret;
-    D_8004E9E4 = (s32) (temp_ret + 0xa000);
+{
+    ptr_rsp_buffer_start = mempAllocBytesInBank(0xa000,'\x06');
+    ptr_rspbuffer_end = ptr_rsp_buffer_start + 0xa000;
     return;
-    // (possible return value: temp_ret)
 }
 
 #else
@@ -56,7 +53,7 @@ glabel allocate_init_rsp_buffers
 /* 10490C 7F0CFDDC 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 104910 7F0CFDE0 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 104914 7F0CFDE4 3404A000 */  li    $a0, 40960
-/* 104918 7F0CFDE8 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 104918 7F0CFDE8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 10491C 7F0CFDEC 24050006 */   li    $a1, 6
 /* 104920 7F0CFDF0 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 104924 7F0CFDF4 3C038005 */  lui   $v1, %hi(D_8004E9E8)

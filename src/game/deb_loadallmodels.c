@@ -111,7 +111,7 @@ glabel alloc_false_GUARDdata_to_exec_global_action
 /* 035C1C 7F0010EC 2484000F */  addiu $a0, $a0, 0xf
 /* 035C20 7F0010F0 348F000F */  ori   $t7, $a0, 0xf
 /* 035C24 7F0010F4 39E4000F */  xori  $a0, $t7, 0xf
-/* 035C28 7F0010F8 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 035C28 7F0010F8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 035C2C 7F0010FC AFA70200 */   sw    $a3, 0x200($sp)
 /* 035C30 7F001100 3C0D8007 */  lui   $t5, %hi(ptr_setup_path_tbl) 
 /* 035C34 7F001104 25AD5D00 */  addiu $t5, %lo(ptr_setup_path_tbl) # addiu $t5, $t5, 0x5d00

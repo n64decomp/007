@@ -110,58 +110,9 @@ struct save_file {
     u8 field_0x5d[3];
 };
 
-typedef struct player_gait_position_entry player_gait_position_entry, *Pplayer_gait_position_entry;
+typedef struct hit_header hit_header, *Phit_header;
 
 typedef ushort u16;
-
-typedef struct player_gait_header player_gait_header, *Pplayer_gait_header;
-
-typedef struct player_gait_object_entry player_gait_object_entry, *Pplayer_gait_object_entry;
-
-typedef struct player_gait_pos_header player_gait_pos_header, *Pplayer_gait_pos_header;
-
-struct player_gait_object_entry {
-    u32 field_0x0;
-    struct player_gait_header * ptr_header;
-    u32 field_0x8;
-    u32 field_0xc;
-};
-
-struct player_gait_position_entry {
-    float flt_1;
-    float flt_2;
-    float flt_3;
-    u16 field_0xc;
-    u16 field_0xe;
-    u16 field_0x10;
-    u16 field_0x12;
-    struct player_gait_header * ptr_header;
-    u32 field_0x18;
-};
-
-struct player_gait_pos_header {
-    u8 field_0x0;
-    u8 type;
-    u16 field_0x2;
-    struct player_gait_position_entry * entry;
-    struct player_gait_header * previous;
-    void * field_0xc;
-    void * field_0x10;
-    struct player_gait_header * next;
-};
-
-struct player_gait_header {
-    u8 field_0x0;
-    u8 type;
-    u16 field_0x2;
-    struct player_gait_object_entry * entry;
-    struct player_gait_header * previous;
-    void * field_0xc;
-    void * field_0x10;
-    struct player_gait_pos_header * next;
-};
-
-typedef struct hit_header hit_header, *Phit_header;
 
 struct hit_header {
     u16 * pImageIDArray;
@@ -216,13 +167,24 @@ typedef enum Elf32_GPRMask_MIPS {
     gpr_zero=1
 } Elf32_GPRMask_MIPS;
 
-typedef enum weaponid {
-    CHOP=1,
-    GOLDGUN=19,
-    HKNIFE=2,
-    TKNIFE=3,
-    UNARMED=0
-} weaponid;
+typedef enum HAND {
+    HAND_LEFT=1,
+    HAND_RIGHT=0
+} HAND;
+
+typedef struct sImageTableEntry sImageTableEntry, *PsImageTableEntry;
+
+struct sImageTableEntry {
+    u32 index;
+    u8 width;
+    u8 height;
+    u8 level;
+    u8 format;
+    u8 depth;
+    u8 flagsS;
+    u8 flagsT;
+    u8 pad;
+};
 
 typedef struct prop_pos_data prop_pos_data, *Pprop_pos_data;
 
@@ -232,1077 +194,50 @@ struct prop_pos_data {
     u16 z;
 };
 
-typedef struct bg_room_data bg_room_data, *Pbg_room_data;
-
-typedef float f32;
-
-struct bg_room_data {
-    f32 xpos;
-    f32 ypos;
-    f32 zpos;
-    void * pPointTableBin;
-    void * pPriMappingBin;
-    void * pSecMappingBin;
-};
-
-typedef struct bg_portal_entry bg_portal_entry, *Pbg_portal_entry;
-
-typedef struct xyzpoint xyzpoint, *Pxyzpoint;
-
-struct xyzpoint {
-    float x;
-    float y;
-    float z;
-};
-
-struct bg_portal_entry {
-    u8 numPoints;
-    u8 padding[3];
-    struct xyzpoint point;
-};
-
-typedef ulong ulg;
-
-typedef enum SCHEDTASKS {
-    M_AUDTASK=2,
-    M_GFXTASK=1,
-    M_VIDTASK=3
-} SCHEDTASKS;
-
-typedef struct memorybank memorybank, *Pmemorybank;
-
-struct memorybank {
-    void * bankstart;
-    void * nextentry;
-    void * bankend;
-    void * data2;
-};
-
-typedef struct bg_portal_data_entry bg_portal_data_entry, *Pbg_portal_data_entry;
-
-struct bg_portal_data_entry {
-    struct bg_portal_entry * offset_portal;
-    u8 connectedRoom1;
-    u8 connectedRoom2;
-    u16 controlbytes;
-};
-
-typedef enum MUSIC_TRACKS {
-    M_ARCHIVES=11,
-    M_ARCHIVESX=37,
-    M_AZTEC=25,
-    M_AZTECX=46,
-    M_BUNKER1=15,
-    M_BUNKER1X=41,
-    M_BUNKER2=16,
-    M_BUNKER2X=42,
-    M_CITADEL=6,
-    M_CONTROL=8,
-    M_CONTROLX=33,
-    M_CRADLE=19,
-    M_CRADLEX=48,
-    M_CUBA=49,
-    M_DAM=9,
-    M_DAMX=35,
-    M_DEATHSOLO=27,
-    M_DEPOT=4,
-    M_DEPOTX=32,
-    M_EGYPTIAN=22,
-    M_EGYPTIANX=39,
-    M_EGYPTX=47,
-    M_ELEVATOR_CONTROL=18,
-    M_ELEVATOR_WC=21,
-    M_END_SOMETHING=62,
-    M_FACILITY=7,
-    M_FACILITYX=31,
-    M_FOLDERS=23,
-    M_FRIGATE=10,
-    M_FRIGATEX=36,
-    M_GUITARGLISS=54,
-    M_INTRO=2,
-    M_INTROSWOOSH=44,
-    M_JUNGLE=55,
-    M_JUNGLEX=43,
-    M_MPDEATH=58,
-    M_MPTHEME=5,
-    M_MPTHEME2=13,
-    M_MPTHEME3=52,
-    M_NONE=0,
-    M_RUNWAY=50,
-    M_RUNWAYPLANE=51,
-    M_RUNWAYX=56,
-    M_SHORT_SOLO_DEATH=1,
-    M_SILO=12,
-    M_SILOX=38,
-    M_STATUE=17,
-    M_STATUEPART=61,
-    M_STATUEX=45,
-    M_STREETS=14,
-    M_STREETSX=40,
-    M_SURFACE1=57,
-    M_SURFACE2=28,
-    M_SURFACE2END=60,
-    M_SURFACE2X=59,
-    M_TRAIN=3,
-    M_TRAINX=29,
-    M_UNK=20,
-    M_UNK2=30,
-    M_WATCH=24,
-    M_WATERCAVERNS=26,
-    M_WATERCAVERNSX=34,
-    M_WIND=53
-} MUSIC_TRACKS;
-
-typedef struct LnameX_table_entry LnameX_table_entry, *PLnameX_table_entry;
-
-struct LnameX_table_entry {
-    string * extext;
-    string * jtext;
-};
-
-typedef struct firing_anim_struct firing_anim_struct, *Pfiring_anim_struct;
-
-struct firing_anim_struct {
-    pointer pointer;
-    dword anim;
-    f32 x;
-    f32 y;
-    f32 z;
-};
-
-typedef struct fog_element fog_element, *Pfog_element;
-
-struct fog_element {
-    u32 stageID;
-    f32 blendmultiplier;
-    f32 farfog;
-    f32 nearfog;
-    f32 maxvisrange;
-    f32 maxobfuscationrange;
-    f32 minvisrange;
-    u32 intensity;
-    u32 dif_in_light;
-    u32 far_ambiantlight;
-    u8 red;
-    u8 green;
-    u8 blue;
-    u8 clouds;
-    f32 cloudrepeat;
-    u16 skyimageid;
-    u16 reserved;
-    f32 cloudred;
-    f32 cloudgreen;
-    f32 cloudblue;
-    u8 iswater;
-    u8 padding[3];
-    f32 waterrepeat;
-    u16 waterimageid;
-    u16 reserved2;
-    f32 waterred;
-    f32 watergreen;
-    f32 waterblue;
-    f32 waterconcavity;
-};
-
-typedef struct fog_element2 fog_element2, *Pfog_element2;
-
-struct fog_element2 {
-    u32 stageID;
-    u8 red;
-    u8 green;
-    u8 blue;
-    u8 clouds;
-    f32 cloudrepeat;
-    u16 skyimageid;
-    u16 reserved;
-    f32 cloudred;
-    f32 cloudgreen;
-    f32 cloudblue;
-    u8 iswater;
-    u8 padding[3];
-    f32 waterrepeat;
-    u16 waterimageid;
-    u16 reserved2;
-    f32 waterred;
-    f32 watergreen;
-    f32 waterblue;
-    f32 waterconcavity;
-};
-
-typedef ushort ush;
-
-typedef enum STAGENUM {
-    SP_STAGE_ARCHIVES=10,
-    SP_STAGE_AZTEK=18,
-    SP_STAGE_BUNKER1=4,
-    SP_STAGE_BUNKER2=8,
-    SP_STAGE_CAVERNS=16,
-    SP_STAGE_CONTROL=15,
-    SP_STAGE_CRADLE=17,
-    SP_STAGE_DAM=0,
-    SP_STAGE_DEPOT=12,
-    SP_STAGE_EGYPT=19,
-    SP_STAGE_FACILITY=1,
-    SP_STAGE_FRIGATE=6,
-    SP_STAGE_JUNGLE=14,
-    SP_STAGE_MAX=20,
-    SP_STAGE_RUNWAY=2,
-    SP_STAGE_SILO=5,
-    SP_STAGE_STATUE=9,
-    SP_STAGE_STREETS=11,
-    SP_STAGE_SURFACE1=3,
-    SP_STAGE_SURFACE2=7,
-    SP_STAGE_TRAIN=13
-} STAGENUM;
-
-typedef struct sfxdata sfxdata, *Psfxdata;
+typedef struct s_mem_alloc_entry s_mem_alloc_entry, *Ps_mem_alloc_entry;
 
 typedef long s32;
 
-struct sfxdata {
-    s32 target_volume;
-    s32 audio_range_time;
-    s32 initial_volume;
-    void * preset_emitter;
-    void * object_emitter;
+struct s_mem_alloc_entry {
+    s32 addr;
+    s32 size;
 };
 
-typedef struct ramromfilestructure ramromfilestructure, *Pramromfilestructure;
+typedef struct bondstruct_unk_80036634 bondstruct_unk_80036634, *Pbondstruct_unk_80036634;
 
-typedef double f64;
+typedef float f32;
 
-typedef enum LEVELID {
-    LEVELID_ARCHIVES=24,
-    LEVELID_AZTEC=28,
-    LEVELID_BASEMENT=45,
-    LEVELID_BUNKER1=9,
-    LEVELID_BUNKER2=27,
-    LEVELID_CAVERNS=39,
-    LEVELID_CAVES=50,
-    LEVELID_CITADEL=40,
-    LEVELID_COMPLEX=31,
-    LEVELID_CONTROL=23,
-    LEVELID_CRADLE=41,
-    LEVELID_CUBA=54,
-    LEVELID_DAM=33,
-    LEVELID_DEPOT=30,
-    LEVELID_EAR=51,
-    LEVELID_EGYPT=32,
-    LEVELID_ELD=44,
-    LEVELID_FACILITY=34,
-    LEVELID_FRIGATE=26,
-    LEVELID_JUNGLE=37,
-    LEVELID_LEE=52,
-    LEVELID_LIBRARY=48,
-    LEVELID_LIP=53,
-    LEVELID_LUE=47,
-    LEVELID_MAX=57,
-    LEVELID_NONE=-1,
-    LEVELID_PAM=56,
-    LEVELID_RIT=49,
-    LEVELID_RUNWAY=35,
-    LEVELID_SHO=42,
-    LEVELID_SILO=20,
-    LEVELID_STACK=46,
-    LEVELID_STATUE=22,
-    LEVELID_STREETS=29,
-    LEVELID_SURFACE=36,
-    LEVELID_SURFACE2=43,
-    LEVELID_TEMPLE=38,
-    LEVELID_TITLE=90,
-    LEVELID_TRAIN=25,
-    LEVELID_WAX=55
-} LEVELID;
-
-typedef enum DIFFICULTY {
-    DIFFICULTY_00=2,
-    DIFFICULTY_007=3,
-    DIFFICULTY_AGENT=0,
-    DIFFICULTY_MULTI=-1,
-    DIFFICULTY_SECRET=1
-} DIFFICULTY;
-
-typedef enum GAMEMODE {
-    GAMEMODE_CHEATS=2,
-    GAMEMODE_INTRO=-1,
-    GAMEMODE_MULTI=1,
-    GAMEMODE_SOLO=0
-} GAMEMODE;
-
-struct ramromfilestructure {
-    f64 randomseed;
-    f64 randomizer;
-    enum LEVELID stagenum;
-    enum DIFFICULTY difficulty;
-    u32 size_cmds;
-    struct save_file savefile;
-    f32 totaltime_ms;
-    u32 filesize;
-    enum GAMEMODE mode;
-    u32 slotnum;
-    u32 numplayers;
-    u32 scenario;
-    u32 mpstage_sel;
-    u32 gamelength;
-    u32 mp_weapon_set;
-    u32 p1_mp_char;
-    u32 p2_mp_char;
-    u32 p3_mp_char;
-    u32 p4_mp_char;
-    u32 p1_handi;
-    u32 p2_handi;
-    u32 p3_handi;
-    u32 p4_handi;
-    u32 p1_contstyle;
-    u32 p2_contstyle;
-    u32 p3_contstyle;
-    u32 p4_contstyle;
-    u32 aim_option;
-    u32 p1_flags;
-    u32 p2_flags;
-    u32 p3_flags;
-    u32 p4_flags;
-    u32 controlerstatepackets;
+struct bondstruct_unk_80036634 {
+    u32 u32_0x0;
+    u32 u32_0x4;
+    u32 u32_0x8;
+    f32 f32_0xC;
+    u32 u32_0x10;
+    u32 u32_0x14;
+    u32 u32_0x18;
+    f32 f32_0x1c;
+    u32 u32_0x20;
+    u32 u32_0x24;
+    u32 u32_0x28;
 };
 
-typedef struct bg_data_header bg_data_header, *Pbg_data_header;
-
-struct bg_data_header {
-    u32 RESERVED;
-    struct bg_room_data * pRoomDataTable;
-    struct bg_portal_data_entry * pPortalDataTable;
-    void * pGlobalVisCmds;
-};
-
-typedef enum PROPTYPE {
-    New_Name=0
-} PROPTYPE;
-
-typedef struct structunknown structunknown, *Pstructunknown;
-
-struct structunknown {
-    float field_0x0;
-    float field_0x4;
-    float field_0x8;
-};
-
-typedef struct sfx_register_struct sfx_register_struct, *Psfx_register_struct;
-
-struct sfx_register_struct {
-    undefined4 field_0x0;
-    undefined4 field_0x4;
-    undefined4 field_0x8;
-    undefined4 field_0xc;
-    undefined4 field_0x10;
-    undefined4 field_0x14;
-};
-
-typedef enum AMMOTYPES {
-    AMMO_9MM=1,
-    AMMO_9MM_2=2,
-    AMMO_BOMBCASE=16,
-    AMMO_BUG=20,
-    AMMO_CAMERA=27,
-    AMMO_DARTS=14,
-    AMMO_DYNAMITE=19,
-    AMMO_EXPLOSIVEPEN=15,
-    AMMO_FLARE=17,
-    AMMO_GEKEY=22,
-    AMMO_GGUN=13,
-    AMMO_GRENADE=5,
-    AMMO_GRENADEROUND=11,
-    AMMO_KNIFE=10,
-    AMMO_MAGNUM=12,
-    AMMO_MICRO_CAMERA=21,
-    AMMO_PITON=18,
-    AMMO_PLASTIQUE=23,
-    AMMO_PROXMINE=8,
-    AMMO_REMOTEMINE=7,
-    AMMO_RIFLE=3,
-    AMMO_ROCKETS=6,
-    AMMO_SHOTGUN=4,
-    AMMO_TANK=28,
-    AMMO_TIMEDMINE=9,
-    AMMO_TOKEN=29,
-    AMMO_UNK=26,
-    AMMO_WATCH_LASER=24,
-    AMMO_WATCH_MAGNET=25
-} AMMOTYPES;
-
-typedef struct LnameX_name_entry LnameX_name_entry, *PLnameX_name_entry;
-
-struct LnameX_name_entry {
-    char * en_file;
-    char * jp_file;
-};
-
-typedef enum CAMERAMODE {
-    FADESWIRL_CAM=2,
-    FP_CAM=4,
-    FP_NOINPUT_CAM=8,
-    INTRO_CAM=1,
-    MP_CAM=9,
-    POSEND_CAM=7,
-    SWIRL_CAM=3,
-    UNK10_CAM=10,
-    UNK5_CAM=5,
-    UNK6_CAM=6
-} CAMERAMODE;
-
-typedef enum COLORMODE {
-    16BIT=1,
-    32BIT=0
-} COLORMODE;
-
-typedef uchar uch;
-
-typedef struct playerfavoriteweapon playerfavoriteweapon, *Pplayerfavoriteweapon;
-
-struct playerfavoriteweapon {
-    u32 right;
-    u32 left;
-};
-
-typedef enum enumOSEventMsg {
-    PRE_NMI_MSG=669,
-    RDP_DONE_MSG=668,
-    RSP_DONE_MSG=667,
-    VIDEO_MSG=666
-} enumOSEventMsg;
-
-#define OS_TASK_SIZE 64
-
-#define OS_TASK_OFF_UBOOT_SZ 12
-
-#define OS_TASK_OFF_YIELD_SZ 60
-
-#define OS_TASK_OFF_OUTBUFF 40
-
-#define OS_TASK_OFF_DATA_SZ 52
-
-#define OS_TASK_OFF_YIELD 56
-
-#define OS_TASK_OFF_UCODE 16
-
-#define OS_TASK_OFF_OUTBUFF_SZ 44
-
-#define OS_TASK_OFF_UDATA 24
-
-#define OS_TASK_OFF_DATA 48
-
-#define OS_TASK_OFF_STACK_SZ 36
-
-#define OS_TASK_OFF_UDATA_SZ 28
-
-#define OS_TASK_OFF_UCODE_SZ 20
-
-#define OS_TASK_OFF_FLAGS 4
-
-#define OS_TASK_OFF_TYPE 0
-
-#define OS_TASK_OFF_STACK 32
-
-#define OS_TASK_OFF_UBOOT 8
-
-#define __WORDSIZE 32
-
-typedef uint _Sizet;
-
-#define _D0 0
-
-#define _NULL 0
-
-#define _DOFF 4
-
-#define _DBIAS 1023
-
-#define _LONG_DOUBLE 0
-
-#define _DLONG 0
-
-#define _LBIAS 1023
-
-typedef struct rdbPacket rdbPacket, *PrdbPacket;
-
-typedef union anon__struct_183_bitfield_1 anon__struct_183_bitfield_1, *Panon__struct_183_bitfield_1;
-
-union anon__struct_183_bitfield_1 {
-    uint type:6; // : bits 0-5
-    uint length:2; // : bits 6-7
-};
-
-struct rdbPacket {
-    union anon__struct_183_bitfield_1 field_0x0;
-    char buf[3];
-};
-
-#define RDB_TYPE_HtoG_KDEBUG 20
-
-#define RDB_TYPE_GtoH_RAMROM 9
-
-#define RDB_TYPE_GtoH_PRINT 1
-
-#define RDB_BASE_REG 3221225472
-
-#define RDB_TYPE_INVALID 0
-
-#define RDB_WRITE_INTR_REG 3221225480
-
-#define DEBUG_COMMAND_MEMORY 1
-
-#define RDB_LOG_MAX_BLOCK_SIZE 32768
-
-#define RDB_TYPE_HtoG_DATA 16
-
-#define PROF_BLOCK_SIZE 2048
-
-#define RDB_TYPE_GtoH_FAULT 2
-
-#define DEBUG_STATE_RECEIVE 1
-
-#define GIO_RDB_BASE_REG 3209166848
-
-#define RDB_TYPE_GtoH_DEBUG_READY 11
-
-#define RDB_DATA_MAX_BLOCK_SIZE 32768
-
-#define RDB_TYPE_GtoH_KDEBUG 12
-
-#define RDB_TYPE_GtoH_READY_FOR_DATA 5
-
-#define RDB_TYPE_GtoH_DEBUG_DONE 10
-
-#define RDB_TYPE_GtoH_DATA_CT 6
-
-#define RDB_TYPE_HtoG_LOG_DONE 13
-
-#define GIO_RDB_READ_INTR_REG 3209166860
-
-#define RDB_BASE_VIRTUAL_ADDR 2147483648
-
-#define DEBUG_STATE_INVALID 255
-
-#define RDB_TYPE_GtoH_LOG_CT 3
-
-#define RDB_PROF_FLUSH_SIG 2
-
-#define DEBUG_STATE_NULL 0
-
-#define RDB_READ_INTR_REG 3221225484
-
-#define GIO_RDB_READ_INTR_BIT 1073741824
-
-#define RDB_TYPE_HtoG_DEBUG 14
-
-#define RDB_TYPE_GtoH_PROF_DATA 22
-
-#define RDB_TYPE_GtoH_DATA 7
-
-#define RDB_TYPE_GtoH_LOG 4
-
-#define RDB_TYPE_HtoG_REQ_RAMROM 18
-
-#define RDB_TYPE_HtoG_FREE_RAMROM 19
-
-#define RDB_TYPE_HtoG_DEBUG_CT 15
-
-#define DEBUG_COMMAND_NULL 0
-
-#define RDB_PROF_ACK_SIG 1
-
-#define GIO_RDB_DEBUG_MINOR 2
-
-#define DEBUG_COMMAND_REGISTER 2
-
-#define GIO_RDB_PRINT_MINOR 1
-
-#define RDB_TYPE_HtoG_PROF_SIGNAL 21
-
-#define DEBUG_COMMAND_INVALID 255
-
-#define RDB_TYPE_HtoG_DATA_DONE 17
-
-#define GIO_RDB_WRITE_INTR_BIT 2147483648
-
-#define RDB_TYPE_GtoH_DEBUG 8
-
-#define GIO_RDB_WRITE_INTR_REG 3209166856
-
-typedef struct bitmap bitmap, *Pbitmap;
-
-typedef struct bitmap Bitmap;
-
-typedef short s16;
-
-struct bitmap {
-    s16 width;
-    s16 width_img;
-    s16 s;
-    s16 t;
-    void * buf;
-    s16 actualHeight;
-    s16 LUToffset;
-};
-
-typedef struct sprite sprite, *Psprite;
-
-typedef struct sprite Sprite;
-
-typedef union Gfx Gfx, *PGfx;
-
-typedef struct Gwords Gwords, *PGwords;
-
-typedef struct Gdma Gdma, *PGdma;
-
-typedef struct Gtri Gtri, *PGtri;
-
-typedef struct Gline3D Gline3D, *PGline3D;
-
-typedef struct Gpopmtx Gpopmtx, *PGpopmtx;
-
-typedef struct Gsegment Gsegment, *PGsegment;
-
-typedef struct GsetothermodeH GsetothermodeH, *PGsetothermodeH;
-
-typedef struct GsetothermodeL GsetothermodeL, *PGsetothermodeL;
-
-typedef struct Gtexture Gtexture, *PGtexture;
-
-typedef struct Gperspnorm Gperspnorm, *PGperspnorm;
-
-typedef struct Gsetimg Gsetimg, *PGsetimg;
-
-typedef struct Gsetcombine Gsetcombine, *PGsetcombine;
-
-typedef struct Gsetcolor Gsetcolor, *PGsetcolor;
-
-typedef struct Gfillrect Gfillrect, *PGfillrect;
-
-typedef struct Gsettile Gsettile, *PGsettile;
-
-typedef struct Gloadtile Gloadtile, *PGloadtile;
-
-typedef struct Gloadtile Gsettilesize;
-
-typedef struct Gloadtile Gloadtlut;
-
-typedef union anon__struct_57_bitfield_1 anon__struct_57_bitfield_1, *Panon__struct_57_bitfield_1;
-
-typedef union anon__struct_57_bitfield_2 anon__struct_57_bitfield_2, *Panon__struct_57_bitfield_2;
-
-typedef union anon__struct_58_bitfield_1 anon__struct_58_bitfield_1, *Panon__struct_58_bitfield_1;
-
-typedef struct Tri Tri, *PTri;
-
-typedef union anon__struct_64_bitfield_1 anon__struct_64_bitfield_1, *Panon__struct_64_bitfield_1;
-
-typedef union anon__struct_59_bitfield_1 anon__struct_59_bitfield_1, *Panon__struct_59_bitfield_1;
-
-typedef union anon__struct_59_bitfield_2 anon__struct_59_bitfield_2, *Panon__struct_59_bitfield_2;
-
-typedef union anon__struct_59_bitfield_3 anon__struct_59_bitfield_3, *Panon__struct_59_bitfield_3;
-
-typedef union anon__struct_60_bitfield_1 anon__struct_60_bitfield_1, *Panon__struct_60_bitfield_1;
-
-typedef union anon__struct_60_bitfield_2 anon__struct_60_bitfield_2, *Panon__struct_60_bitfield_2;
-
-typedef union anon__struct_62_bitfield_1 anon__struct_62_bitfield_1, *Panon__struct_62_bitfield_1;
-
-typedef union anon__struct_62_bitfield_2 anon__struct_62_bitfield_2, *Panon__struct_62_bitfield_2;
-
-typedef union anon__struct_61_bitfield_1 anon__struct_61_bitfield_1, *Panon__struct_61_bitfield_1;
-
-typedef union anon__struct_61_bitfield_2 anon__struct_61_bitfield_2, *Panon__struct_61_bitfield_2;
-
-typedef union anon__struct_65_bitfield_1 anon__struct_65_bitfield_1, *Panon__struct_65_bitfield_1;
-
-typedef union anon__struct_66_bitfield_1 anon__struct_66_bitfield_1, *Panon__struct_66_bitfield_1;
-
-typedef union anon__struct_66_bitfield_2 anon__struct_66_bitfield_2, *Panon__struct_66_bitfield_2;
-
-typedef union anon__struct_67_bitfield_1 anon__struct_67_bitfield_1, *Panon__struct_67_bitfield_1;
-
-typedef union anon__struct_67_bitfield_2 anon__struct_67_bitfield_2, *Panon__struct_67_bitfield_2;
-
-typedef union anon__struct_67_bitfield_3 anon__struct_67_bitfield_3, *Panon__struct_67_bitfield_3;
-
-typedef union anon__struct_68_bitfield_1 anon__struct_68_bitfield_1, *Panon__struct_68_bitfield_1;
-
-typedef union anon__struct_69_bitfield_1 anon__struct_69_bitfield_1, *Panon__struct_69_bitfield_1;
-
-typedef union anon__struct_69_bitfield_2 anon__struct_69_bitfield_2, *Panon__struct_69_bitfield_2;
-
-typedef union anon__struct_69_bitfield_3 anon__struct_69_bitfield_3, *Panon__struct_69_bitfield_3;
-
-typedef union anon__struct_70_bitfield_1 anon__struct_70_bitfield_1, *Panon__struct_70_bitfield_1;
-
-typedef union anon__struct_70_bitfield_2 anon__struct_70_bitfield_2, *Panon__struct_70_bitfield_2;
-
-typedef union anon__struct_70_bitfield_3 anon__struct_70_bitfield_3, *Panon__struct_70_bitfield_3;
-
-typedef union anon__struct_71_bitfield_1 anon__struct_71_bitfield_1, *Panon__struct_71_bitfield_1;
-
-typedef union anon__struct_71_bitfield_2 anon__struct_71_bitfield_2, *Panon__struct_71_bitfield_2;
-
-typedef union anon__struct_71_bitfield_3 anon__struct_71_bitfield_3, *Panon__struct_71_bitfield_3;
-
-typedef union anon__struct_71_bitfield_4 anon__struct_71_bitfield_4, *Panon__struct_71_bitfield_4;
-
-union anon__struct_68_bitfield_1 {
-    int cmd:8; // : bits 0-7
-};
-
-union anon__struct_58_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int pad:24; // : bits 8-31
-};
-
-struct Gtexture {
-    uchar cmd;
-    uchar lodscale;
-    uchar tile;
-    uchar on;
-    ushort s;
-    ushort t;
-};
-
-union anon__struct_65_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int pad1:24; // : bits 8-31
-};
-
-union anon__struct_61_bitfield_2 {
-    uint data:32; // : bits 0-31
-};
-
-union anon__struct_61_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int pad0:8; // : bits 8-15
-    int sft:8; // : bits 16-23
-    int len:8; // : bits 24-31
-};
-
-struct GsetothermodeL {
-    union anon__struct_61_bitfield_1 field_0x0;
-    union anon__struct_61_bitfield_2 field_0x4;
-};
-
-struct Tri {
-    uchar flag;
-    uchar v[3];
-};
-
-union anon__struct_62_bitfield_2 {
-    uint data:32; // : bits 0-31
-};
-
-union anon__struct_62_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int pad0:8; // : bits 8-15
-    int sft:8; // : bits 16-23
-    int len:8; // : bits 24-31
-};
-
-struct GsetothermodeH {
-    union anon__struct_62_bitfield_1 field_0x0;
-    union anon__struct_62_bitfield_2 field_0x4;
-};
-
-union anon__struct_59_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int pad1:24; // : bits 8-31
-};
-
-union anon__struct_59_bitfield_3 {
-    uchar param:8; // : bits 0-7
-};
-
-union anon__struct_59_bitfield_2 {
-    int pad2:24; // : bits 0-23
-};
-
-struct Gpopmtx {
-    union anon__struct_59_bitfield_1 field_0x0;
-    union anon__struct_59_bitfield_2 field_0x4;
-    union anon__struct_59_bitfield_3 field_0x8;
-};
-
-union anon__struct_60_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int pad0:8; // : bits 8-15
-    int mw_index:8; // : bits 16-23
-    int number:8; // : bits 24-31
-};
-
-union anon__struct_60_bitfield_2 {
-    int pad1:8; // : bits 0-7
-    int base:24; // : bits 8-31
-};
-
-struct Gsegment {
-    union anon__struct_60_bitfield_1 field_0x0;
-    union anon__struct_60_bitfield_2 field_0x4;
-};
-
-struct Gsetcolor {
-    union anon__struct_68_bitfield_1 field_0x0;
-    uchar pad;
-    uchar prim_min_level;
-    uchar prim_level;
-    ulong color;
-};
-
-struct Gtri {
-    union anon__struct_58_bitfield_1 field_0x0;
-    struct Tri tri;
-};
-
-union anon__struct_67_bitfield_2 {
-    uint muxs0:24; // : bits 0-23
-};
-
-struct Gwords {
-    uint w0;
-    uint w1;
-};
-
-union anon__struct_67_bitfield_3 {
-    uint muxs1:32; // : bits 0-31
-};
-
-union anon__struct_67_bitfield_1 {
-    int cmd:8; // : bits 0-7
-};
-
-struct Gsetcombine {
-    union anon__struct_67_bitfield_1 field_0x0;
-    union anon__struct_67_bitfield_2 field_0x4;
-    union anon__struct_67_bitfield_3 field_0x8;
-};
-
-union anon__struct_69_bitfield_2 {
-    uint pad:8; // : bits 0-7
-};
-
-union anon__struct_69_bitfield_3 {
-    int x1:10; // : bits 0-9
-    int x1frac:2; // : bits 10-11
-    int y1:10; // : bits 12-21
-    int y1frac:2; // : bits 22-23
-};
-
-union anon__struct_69_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int x0:10; // : bits 8-17
-    int x0frac:2; // : bits 18-19
-    int y0:10; // : bits 20-29
-    int y0frac:2; // : bits 30-31
-};
-
-union anon__struct_70_bitfield_1 {
-    int cmd:8; // : bits 0-7
-};
-
-union anon__struct_70_bitfield_2 {
-    uint fmt:3; // : bits 0-2
-    uint siz:2; // : bits 3-4
-    uint pad0:1; // : bits 5
-    uint line:9; // : bits 6-14
-    uint tmem:9; // : bits 15-23
-    uint pad1:5; // : bits 24-28
-    uint tile:3; // : bits 29-31
-};
-
-union anon__struct_70_bitfield_3 {
-    uint palette:4; // : bits 0-3
-    uint ct:1; // : bits 4
-    uint mt:1; // : bits 5
-    uint maskt:4; // : bits 6-9
-    uint shiftt:4; // : bits 10-13
-    uint cs:1; // : bits 14
-    uint ms:1; // : bits 15
-    uint masks:4; // : bits 16-19
-    uint shifts:4; // : bits 20-23
-};
-
-struct Gsettile {
-    union anon__struct_70_bitfield_1 field_0x0;
-    union anon__struct_70_bitfield_2 field_0x4;
-    union anon__struct_70_bitfield_3 field_0x8;
-};
-
-struct Gfillrect {
-    union anon__struct_69_bitfield_1 field_0x0;
-    union anon__struct_69_bitfield_2 field_0x4;
-    union anon__struct_69_bitfield_3 field_0x8;
-};
-
-union anon__struct_71_bitfield_1 {
-    int cmd:8; // : bits 0-7
-};
-
-union anon__struct_71_bitfield_2 {
-    uint sl:12; // : bits 0-11
-    uint tl:12; // : bits 12-23
-};
-
-struct Gperspnorm {
-    union anon__struct_65_bitfield_1 field_0x0;
-    short pad2;
-    short scale;
-};
-
-union anon__struct_64_bitfield_1 {
-    int cmd:8; // : bits 0-7
-    int pad:24; // : bits 8-31
-};
-
-struct Gline3D {
-    union anon__struct_64_bitfield_1 field_0x0;
-    struct Tri line;
-};
-
-union anon__struct_71_bitfield_3 {
-    int pad:5; // : bits 0-4
-};
-
-union anon__struct_71_bitfield_4 {
-    uint tile:3; // : bits 0-2
-    uint sh:12; // : bits 3-14
-    uint th:12; // : bits 15-26
-};
-
-struct Gloadtile {
-    union anon__struct_71_bitfield_1 field_0x0;
-    union anon__struct_71_bitfield_2 field_0x4;
-    union anon__struct_71_bitfield_3 field_0x8;
-    union anon__struct_71_bitfield_4 field_0xc;
-};
-
-struct sprite {
-    s16 x;
-    s16 y;
-    s16 width;
-    s16 height;
-    f32 scalex;
-    f32 scaley;
-    s16 expx;
-    s16 expy;
-    u16 attr;
-    s16 zdepth;
-    u8 red;
-    u8 green;
-    u8 blue;
-    u8 alpha;
-    s16 startTLUT;
-    s16 nTLUT;
-    int * LUT;
-    s16 istart;
-    s16 istep;
-    s16 nbitmaps;
-    s16 ndisplist;
-    s16 bmheight;
-    s16 bmHreal;
-    u8 bmfmt;
-    u8 bmsiz;
-    Bitmap * bitmap;
-    union Gfx * rsp_dl;
-    union Gfx * rsp_dl_next;
-    s16 frac_s;
-    s16 frac_t;
-};
-
-union anon__struct_66_bitfield_2 {
-    uint fmt:3; // : bits 0-2
-    uint siz:2; // : bits 3-4
-    uint pad:7; // : bits 5-11
-    uint wd:12; // : bits 12-23
-};
-
-union anon__struct_66_bitfield_1 {
-    int cmd:8; // : bits 0-7
-};
-
-struct Gsetimg {
-    union anon__struct_66_bitfield_1 field_0x0;
-    union anon__struct_66_bitfield_2 field_0x4;
-    uint dram;
-};
-
-union anon__struct_57_bitfield_1 {
-    int cmd:8; // : bits 0-7
-};
-
-union anon__struct_57_bitfield_2 {
-    uint par:8; // : bits 0-7
-    uint len:16; // : bits 8-23
-};
-
-struct Gdma {
-    union anon__struct_57_bitfield_1 field_0x0;
-    union anon__struct_57_bitfield_2 field_0x4;
-    uint addr;
-};
-
-union Gfx {
-    struct Gwords words;
-    struct Gdma dma;
-    struct Gtri tri;
-    struct Gline3D line;
-    struct Gpopmtx popmtx;
-    struct Gsegment segment;
-    struct GsetothermodeH setothermodeH;
-    struct GsetothermodeL setothermodeL;
-    struct Gtexture texture;
-    struct Gperspnorm perspnorm;
-    struct Gsetimg setimg;
-    struct Gsetcombine setcombine;
-    struct Gsetcolor setcolor;
-    struct Gfillrect fillrect;
-    struct Gsettile settile;
-    struct Gloadtile loadtile;
-    Gsettilesize settilesize;
-    Gloadtlut loadtlut;
-    longlong force_structure_alignment;
-};
-
-#define DL_SPRITE_OVERHEAD 24
-
-#define SP_FASTCOPY 32
-
-#define SP_OVERLAP 64
-
-#define SP_CUTOUT 2
-
-#define SP_FRACPOS 256
-
-#define SP_TEXSHIFT 128
-
-#define SP_EXTERN 1024
-
-#define SP_TEXSHUF 512
-
-#define DL_BM_OVERHEAD 12
-
-#define SP_SCALE 16
-
-#define SP_TRANSPARENT 1
-
-#define SP_Z 8
-
-#define SP_HIDDEN 4
-
-typedef void * __gnuc_va_list;
-
-typedef __gnuc_va_list va_list;
-
-#define SP_DRAM_STACK_SIZE64 128
-
-#define SP_UCODE_SIZE 4096
-
-#define SP_DRAM_STACK_SIZE8 1024
-
-#define SP_UCODE_DATA_SIZE 2048
+typedef struct s_pBONDData s_pBONDData, *Ps_pBONDData;
+
+typedef struct Player Player, *PPlayer;
+
+typedef enum CUFF_TYPES {
+    CUFF_BLUE=0,
+    CUFF_BOILER=3,
+    CUFF_JUNGLE=2,
+    CUFF_SNOW=4,
+    CUFF_TUX=1,
+    CUFF_TUX6=6,
+    CUFF_TUX7=7,
+    CUFF_TUX8=8,
+    CUFF_WHITE=5
+} CUFF_TYPES;
+
+typedef struct Player_SubStruct_7D0 Player_SubStruct_7D0, *PPlayer_SubStruct_7D0;
 
 typedef enum ITEM_IDS {
     ITEM_56=86,
@@ -1328,6 +263,7 @@ typedef enum ITEM_IDS {
     ITEM_DOORDECODER=38,
     ITEM_DOOREXPLODER=42,
     ITEM_DOSSIERRED=66,
+    ITEM_END=89,
     ITEM_EXPLOSIVEFLOPPY=50,
     ITEM_FIST=1,
     ITEM_FLAREPISTOL=35,
@@ -1396,7434 +332,31 @@ typedef enum ITEM_IDS {
     ITEM_WPPKSIL=5
 } ITEM_IDS;
 
-typedef enum AIRCRAFT_ANIMATIONS {
-    ANIM_helicopter_cradle=0,
-    ANIM_helicopter_takeoff=2,
-    ANIM_plane_runway=1
-} AIRCRAFT_ANIMATIONS;
-
-typedef enum LEVEL_SOLO_SEQUENCE {
-    SP_LEVEL_ARCHIVES=11,
-    SP_LEVEL_AZTEC=19,
-    SP_LEVEL_BUNKER1=5,
-    SP_LEVEL_BUNKER2=9,
-    SP_LEVEL_CAVERNS=17,
-    SP_LEVEL_CONTROL=16,
-    SP_LEVEL_CRADLE=18,
-    SP_LEVEL_DAM=1,
-    SP_LEVEL_DEPOT=13,
-    SP_LEVEL_EGYPT=20,
-    SP_LEVEL_FACILITY=2,
-    SP_LEVEL_FRIGATE=7,
-    SP_LEVEL_JUNGLE=15,
-    SP_LEVEL_RUNWAY=3,
-    SP_LEVEL_SILO=6,
-    SP_LEVEL_STATUE=10,
-    SP_LEVEL_STREETS=12,
-    SP_LEVEL_SURFACE1=4,
-    SP_LEVEL_SURFACE2=8,
-    SP_LEVEL_TRAIN=14
-} LEVEL_SOLO_SEQUENCE;
-
-typedef enum WATCH_BRIEFING_PAGE {
-    BRIEFING_M=2,
-    BRIEFING_MONEYPENNY=4,
-    BRIEFING_OVERVIEW=1,
-    BRIEFING_Q=3,
-    BRIEFING_TITLE=0
-} WATCH_BRIEFING_PAGE;
-
-typedef enum MP_STAGE_SELECTED {
-    MP_STAGE_ARCHIVES=9,
-    MP_STAGE_BASEMENT=5,
-    MP_STAGE_BUNKER=8,
-    MP_STAGE_CAVERNS=10,
-    MP_STAGE_CAVES=3,
-    MP_STAGE_COMPLEX=2,
-    MP_STAGE_EGYPT=11,
-    MP_STAGE_FACILITY=7,
-    MP_STAGE_LIBRARY=4,
-    MP_STAGE_RANDOM=0,
-    MP_STAGE_STACK=6,
-    MP_STAGE_TEMPLE=1
-} MP_STAGE_SELECTED;
-
-typedef enum CONTROLLER_CONFIG {
-    CONTROLLER_CONFIG_CINEMA=8,
-    CONTROLLER_CONFIG_DOMINO=6,
-    CONTROLLER_CONFIG_GALORE=5,
-    CONTROLLER_CONFIG_GOODHEAD=7,
-    CONTROLLER_CONFIG_GOODNIGHT=3,
-    CONTROLLER_CONFIG_HONEY=0,
-    CONTROLLER_CONFIG_KISSY=2,
-    CONTROLLER_CONFIG_PLENTY=4,
-    CONTROLLER_CONFIG_SOLITARE=1
-} CONTROLLER_CONFIG;
-
-typedef struct rgba_val rgba_val, *Prgba_val;
-
-struct rgba_val {
-    u8 r;
-    u8 g;
-    u8 b;
-    u8 a;
-};
-
-typedef enum MISSION_BRIEFING {
-    BRIEF_M=1,
-    BRIEF_MONEYPENNY=3,
-    BRIEF_OVERVIEW=0,
-    BRIEF_Q=2
-} MISSION_BRIEFING;
-
-typedef enum PROPS {
-    PROP_ICBM=93,
-    PROP_ICBM_nose=92,
-    PROP_ak47mag=121,
-    PROP_alarm1=0,
-    PROP_alarm2=1,
-    PROP_ammo_crate1=3,
-    PROP_ammo_crate2=4,
-    PROP_ammo_crate3=5,
-    PROP_ammo_crate4=6,
-    PROP_ammo_crate5=7,
-    PROP_apc=289,
-    PROP_archsecdoor1=297,
-    PROP_archsecdoor2=298,
-    PROP_artic=281,
-    PROP_artictrailer=286,
-    PROP_barricade=334,
-    PROP_bin1=8,
-    PROP_blotter1=9,
-    PROP_bodyarmour=115,
-    PROP_bodyarmourvest=116,
-    PROP_bollard=339,
-    PROP_bomb=255,
-    PROP_book1=10,
-    PROP_bookshelf1=11,
-    PROP_borg_crate=87,
-    PROP_boxcartridges=129,
-    PROP_boxes2x4=90,
-    PROP_boxes3x4=89,
-    PROP_boxes4x4=88,
-    PROP_brakeunit=120,
-    PROP_bridge_console1a=12,
-    PROP_bridge_console1b=13,
-    PROP_bridge_console2a=14,
-    PROP_bridge_console2b=15,
-    PROP_bridge_console3a=16,
-    PROP_bridge_console3b=17,
-    PROP_carbmw=301,
-    PROP_card_box1=18,
-    PROP_card_box2=19,
-    PROP_card_box3=20,
-    PROP_card_box4_lg=21,
-    PROP_card_box5_lg=22,
-    PROP_card_box6_lg=23,
-    PROP_carescort=302,
-    PROP_cargolf=303,
-    PROP_carweird=304,
-    PROP_carzil=305,
-    PROP_cctv=24,
-    PROP_chraudiotape=262,
-    PROP_chrautoshot=207,
-    PROP_chrblackbox=274,
-    PROP_chrblueprints=258,
-    PROP_chrbombcase=226,
-    PROP_chrbombdefuser=235,
-    PROP_chrbriefcase=198,
-    PROP_chrbug=245,
-    PROP_chrbugdetector=236,
-    PROP_chrbungee=233,
-    PROP_chrcamera=238,
-    PROP_chrcircuitboard=259,
-    PROP_chrclipboard=269,
-    PROP_chrcreditcard=250,
-    PROP_chrdarkglasses=251,
-    PROP_chrdatathief=253,
-    PROP_chrdattape=272,
-    PROP_chrdoordecoder=234,
-    PROP_chrdoorexploder=240,
-    PROP_chrdossierred=270,
-    PROP_chrdynamite=232,
-    PROP_chrexplosivepen=225,
-    PROP_chrextinguisher=128,
-    PROP_chrfingergun=229,
-    PROP_chrflarepistol=227,
-    PROP_chrfnp90=197,
-    PROP_chrgaskeyring=252,
-    PROP_chrgoldbar=267,
-    PROP_chrgolden=208,
-    PROP_chrgoldeneyekey=248,
-    PROP_chrgoldwppk=231,
-    PROP_chrgrenade=196,
-    PROP_chrgrenadelaunch=185,
-    PROP_chrgrenaderound=203,
-    PROP_chrheroin=268,
-    PROP_chrkalash=184,
-    PROP_chrkeyanalysercase=241,
-    PROP_chrkeybolt=244,
-    PROP_chrkeyyale=243,
-    PROP_chrknife=186,
-    PROP_chrlaser=187,
-    PROP_chrlectre=265,
-    PROP_chrlockexploder=239,
-    PROP_chrm16=188,
-    PROP_chrmap=260,
-    PROP_chrmicrocamera=246,
-    PROP_chrmicrocode=264,
-    PROP_chrmicrofilm=263,
-    PROP_chrmoney=266,
-    PROP_chrmp5k=189,
-    PROP_chrmp5ksil=206,
-    PROP_chrpitongun=228,
-    PROP_chrplans=256,
-    PROP_chrplastique=273,
-    PROP_chrpolarizedglasses=249,
-    PROP_chrproximitymine=200,
-    PROP_chrremotemine=199,
-    PROP_chrrocket=202,
-    PROP_chrrocketlaunch=211,
-    PROP_chrruger=190,
-    PROP_chrsafecrackercase=237,
-    PROP_chrshotgun=192,
-    PROP_chrsilverwppk=230,
-    PROP_chrskorpion=193,
-    PROP_chrsniperrifle=210,
-    PROP_chrspectre=194,
-    PROP_chrspooltape=261,
-    PROP_chrspyfile=257,
-    PROP_chrstafflist=271,
-    PROP_chrtesttube=338,
-    PROP_chrthrowknife=209,
-    PROP_chrtimedmine=201,
-    PROP_chrtt33=205,
-    PROP_chruzi=195,
-    PROP_chrvideotape=275,
-    PROP_chrweaponcase=242,
-    PROP_chrwppk=191,
-    PROP_chrwppksil=204,
-    PROP_chrwristdart=224,
-    PROP_console1=25,
-    PROP_console2=26,
-    PROP_console3=27,
-    PROP_console_sev2a=32,
-    PROP_console_sev2b=33,
-    PROP_console_sev2c=34,
-    PROP_console_sev2d=35,
-    PROP_console_sev_GEa=36,
-    PROP_console_sev_GEb=37,
-    PROP_console_seva=28,
-    PROP_console_sevb=29,
-    PROP_console_sevc=30,
-    PROP_console_sevd=31,
-    PROP_cryptdoor1a=170,
-    PROP_cryptdoor1b=171,
-    PROP_cryptdoor2a=172,
-    PROP_cryptdoor2b=173,
-    PROP_cryptdoor3=174,
-    PROP_cryptdoor4=175,
-    PROP_damchaindoor=180,
-    PROP_damgatedoor=178,
-    PROP_damtundoor=179,
-    PROP_depot_door_steel=309,
-    PROP_depot_gate_entry=308,
-    PROP_desk1=38,
-    PROP_desk2=39,
-    PROP_desk_arecibo1=95,
-    PROP_desk_lamp2=40,
-    PROP_dest_engine=99,
-    PROP_dest_exocet=100,
-    PROP_dest_gun=101,
-    PROP_dest_harpoon=102,
-    PROP_dest_seawolf=103,
-    PROP_disc_reader=41,
-    PROP_disk_drive1=42,
-    PROP_door_azt_chair=331,
-    PROP_door_azt_desk=329,
-    PROP_door_azt_desk_top=330,
-    PROP_door_aztec=327,
-    PROP_door_dest1=152,
-    PROP_door_dest2=153,
-    PROP_door_eyelid=164,
-    PROP_door_iris=165,
-    PROP_door_mf=332,
-    PROP_door_roller1=146,
-    PROP_door_roller2=147,
-    PROP_door_roller3=148,
-    PROP_door_roller4=149,
-    PROP_door_rollertrain=325,
-    PROP_door_st_arec1=150,
-    PROP_door_st_arec2=151,
-    PROP_door_win=326,
-    PROP_doorconsole=337,
-    PROP_doorpanel=336,
-    PROP_doorprison1=182,
-    PROP_doorstatgate=183,
-    PROP_explosionbit=2,
-    PROP_filing_cabinet1=43,
-    PROP_flag=333,
-    PROP_floppy=247,
-    PROP_fnp90mag=130,
-    PROP_gas_plant_met1_do1=158,
-    PROP_gas_plant_sw2_do1=155,
-    PROP_gas_plant_sw3_do1=156,
-    PROP_gas_plant_sw4_do1=157,
-    PROP_gas_plant_sw_do1=154,
-    PROP_gas_plant_wc_cub1=159,
-    PROP_gasbarrel=113,
-    PROP_gasbarrels=114,
-    PROP_gasplant_clear_door=160,
-    PROP_gastank=117,
-    PROP_glassware1=118,
-    PROP_glassware2=310,
-    PROP_glassware3=311,
-    PROP_glassware4=312,
-    PROP_goldeneyelogo=277,
-    PROP_goldenshells=131,
-    PROP_groundgun=299,
-    PROP_gun_runway1=292,
-    PROP_hatberet=220,
-    PROP_hatberetblue=221,
-    PROP_hatberetred=222,
-    PROP_hatchbolt=119,
-    PROP_hatchdoor=177,
-    PROP_hatchsevx=295,
-    PROP_hatfurry=212,
-    PROP_hatfurryblack=214,
-    PROP_hatfurrybrown=213,
-    PROP_hathelmet=217,
-    PROP_hathelmetgrey=218,
-    PROP_hatmoon=219,
-    PROP_hatpeaked=223,
-    PROP_hattbird=215,
-    PROP_hattbirdbrown=216,
-    PROP_helicopter=282,
-    PROP_hind=285,
-    PROP_jeep=280,
-    PROP_jerry_can1=44,
-    PROP_jungle3_tree=108,
-    PROP_jungle5_tree=318,
-    PROP_key_holder=294,
-    PROP_keyboard1=45,
-    PROP_kit_units1=46,
-    PROP_labbench=112,
-    PROP_landmine=313,
-    PROP_legalpage=319,
-    PROP_letter_tray1=47,
-    PROP_locker3=96,
-    PROP_locker4=97,
-    PROP_m16mag=122,
-    PROP_magnumshells=132,
-    PROP_mainframe1=48,
-    PROP_mainframe2=49,
-    PROP_metal_chair1=50,
-    PROP_metal_crate1=51,
-    PROP_metal_crate2=52,
-    PROP_metal_crate3=53,
-    PROP_metal_crate4=54,
-    PROP_milcopter=284,
-    PROP_miltruck=279,
-    PROP_missile_rack=55,
-    PROP_missile_rack2=56,
-    PROP_modembox=335,
-    PROP_motorbike=287,
-    PROP_mp5kmag=123,
-    PROP_nintendologo=276,
-    PROP_oil_drum1=57,
-    PROP_oil_drum2=58,
-    PROP_oil_drum3=59,
-    PROP_oil_drum5=60,
-    PROP_oil_drum6=61,
-    PROP_oil_drum7=62,
-    PROP_padlock=63,
-    PROP_palm=109,
-    PROP_palmtree=110,
-    PROP_phone1=64,
-    PROP_plane=291,
-    PROP_plant1=314,
-    PROP_plant11=315,
-    PROP_plant2=316,
-    PROP_plant2b=111,
-    PROP_plant3=317,
-    PROP_radio_unit1=65,
-    PROP_radio_unit2=66,
-    PROP_radio_unit3=67,
-    PROP_radio_unit4=68,
-    PROP_roofgun=98,
-    PROP_safe=254,
-    PROP_safedoor=293,
-    PROP_sat1_reflect=69,
-    PROP_satbox=71,
-    PROP_satdish=70,
-    PROP_sec_panel=91,
-    PROP_sev_door=135,
-    PROP_sev_door3=136,
-    PROP_sev_door3_wind=137,
-    PROP_sev_door4_wind=138,
-    PROP_sev_door_v1=140,
-    PROP_sev_trislide=139,
-    PROP_sevdish=296,
-    PROP_sevdoormetslide=169,
-    PROP_sevdoornowind=168,
-    PROP_sevdoorwind=167,
-    PROP_sevdoorwood=166,
-    PROP_shuttle=328,
-    PROP_shuttle_door_l=306,
-    PROP_shuttle_door_r=307,
-    PROP_silencer=127,
-    PROP_silo_lift_door=144,
-    PROP_silotopdoor=181,
-    PROP_skorpionmag=124,
-    PROP_spectremag=125,
-    PROP_speedboat=290,
-    PROP_st_pete_room_1i=320,
-    PROP_st_pete_room_2i=321,
-    PROP_st_pete_room_3t=322,
-    PROP_st_pete_room_5c=323,
-    PROP_st_pete_room_6c=324,
-    PROP_steel_door1=141,
-    PROP_steel_door2=142,
-    PROP_steel_door2b=145,
-    PROP_steel_door3=143,
-    PROP_stool1=72,
-    PROP_swipe_card2=86,
-    PROP_swivel_chair1=73,
-    PROP_tank=288,
-    PROP_tiger=283,
-    PROP_torpedo_rack=74,
-    PROP_train_door=161,
-    PROP_train_door2=162,
-    PROP_train_door3=163,
-    PROP_trainextdoor=300,
-    PROP_tt33mag=134,
-    PROP_tuning_console1=94,
-    PROP_tv1=75,
-    PROP_tv4screen=78,
-    PROP_tv_holder=76,
-    PROP_tvscreen=77,
-    PROP_uzimag=126,
-    PROP_vertdoor=176,
-    PROP_walletbond=278,
-    PROP_window=104,
-    PROP_window_cor11=107,
-    PROP_window_lib_lg1=105,
-    PROP_window_lib_sm1=106,
-    PROP_wood_lg_crate1=79,
-    PROP_wood_lg_crate2=80,
-    PROP_wood_md_crate3=81,
-    PROP_wood_sm_crate4=82,
-    PROP_wood_sm_crate5=83,
-    PROP_wood_sm_crate6=84,
-    PROP_wooden_table1=85,
-    PROP_wppkmag=133
-} PROPS;
-
-typedef enum ANIMATIONS {
-    ANIM_adjusting_crotch=158,
-    ANIM_aim_and_blow_one_handed_weapon=149,
-    ANIM_aim_one_handed_weapon_left=150,
-    ANIM_aim_one_handed_weapon_left_right=99,
-    ANIM_aim_one_handed_weapon_right=151,
-    ANIM_aim_running_left_one_handed_weapon=87,
-    ANIM_aim_running_one_handed_weapon=85,
-    ANIM_aim_running_right_one_handed_weapon=86,
-    ANIM_aim_sprinting_one_handed_weapon=88,
-    ANIM_aim_walking_left_one_handed_weapon=83,
-    ANIM_aim_walking_one_handed_weapon=82,
-    ANIM_aim_walking_right_one_handed_weapon=84,
-    ANIM_bond_eye_fire=44,
-    ANIM_bond_eye_fire_alt=176,
-    ANIM_bond_eye_walk=43,
-    ANIM_bond_watch=45,
-    ANIM_cock_one_handed_weapon_and_turn_around=100,
-    ANIM_cock_one_handed_weapon_turn_around_and_stand_up=102,
-    ANIM_conversation=152,
-    ANIM_conversation_cleaned=160,
-    ANIM_conversation_listener=161,
-    ANIM_coughing_kneel1=166,
-    ANIM_coughing_kneel2=167,
-    ANIM_coughing_standing=165,
-    ANIM_cradle_fall=180,
-    ANIM_cradle_jump=179,
-    ANIM_credits_bond_kissing=181,
-    ANIM_credits_natalya_kissing=182,
-    ANIM_dam_jump=177,
-    ANIM_dancing=170,
-    ANIM_dancing_one_handed_weapon=171,
-    ANIM_death_backward_fall_face_up1=28,
-    ANIM_death_backward_fall_face_up2=37,
-    ANIM_death_backward_spin_face_down_left=31,
-    ANIM_death_backward_spin_face_down_right=29,
-    ANIM_death_backward_spin_face_up_left=32,
-    ANIM_death_backward_spin_face_up_right=30,
-    ANIM_death_explosion_back1=133,
-    ANIM_death_explosion_back2=136,
-    ANIM_death_explosion_back_left=132,
-    ANIM_death_explosion_forward=130,
-    ANIM_death_explosion_forward_face_down=138,
-    ANIM_death_explosion_forward_right1=135,
-    ANIM_death_explosion_forward_right2=140,
-    ANIM_death_explosion_forward_right2_alt=141,
-    ANIM_death_explosion_forward_right3=142,
-    ANIM_death_explosion_forward_roll=137,
-    ANIM_death_explosion_left1=131,
-    ANIM_death_explosion_left2=139,
-    ANIM_death_explosion_right=134,
-    ANIM_death_fetal_position_left=36,
-    ANIM_death_fetal_position_right=35,
-    ANIM_death_forward_face_down=26,
-    ANIM_death_forward_face_down_hard=33,
-    ANIM_death_forward_face_down_soft=34,
-    ANIM_death_forward_spin_face_up=27,
-    ANIM_death_genitalia=22,
-    ANIM_death_head=56,
-    ANIM_death_left_leg=57,
-    ANIM_death_neck=24,
-    ANIM_death_stagger_back_to_wall=25,
-    ANIM_draw_one_handed_weapon_and_look_around=97,
-    ANIM_draw_one_handed_weapon_and_stand_up=98,
-    ANIM_draw_one_handed_weapon_and_turn_around=103,
-    ANIM_drop_weapon_and_show_fight_stance=153,
-    ANIM_extending_left_hand=61,
-    ANIM_fire_hip=3,
-    ANIM_fire_hip_forward_one_handed_weapon=70,
-    ANIM_fire_hip_one_handed_weapon_fast=68,
-    ANIM_fire_hip_one_handed_weapon_slow=69,
-    ANIM_fire_jump_to_side_left=52,
-    ANIM_fire_jump_to_side_right=53,
-    ANIM_fire_kneel_aiming_down_sights=128,
-    ANIM_fire_kneel_dual_wield=116,
-    ANIM_fire_kneel_dual_wield_hands_crossed=119,
-    ANIM_fire_kneel_dual_wield_hands_crossed_left=120,
-    ANIM_fire_kneel_dual_wield_hands_crossed_right=121,
-    ANIM_fire_kneel_dual_wield_left=117,
-    ANIM_fire_kneel_dual_wield_right=118,
-    ANIM_fire_kneel_forward_one_handed_weapon_fast=76,
-    ANIM_fire_kneel_forward_one_handed_weapon_slow=75,
-    ANIM_fire_kneel_left=9,
-    ANIM_fire_kneel_left_leg=8,
-    ANIM_fire_kneel_left_one_handed_weapon=81,
-    ANIM_fire_kneel_left_one_handed_weapon_fast=80,
-    ANIM_fire_kneel_left_one_handed_weapon_slow=79,
-    ANIM_fire_kneel_right=10,
-    ANIM_fire_kneel_right_leg=7,
-    ANIM_fire_kneel_right_one_handed_weapon_fast=78,
-    ANIM_fire_kneel_right_one_handed_weapon_slow=77,
-    ANIM_fire_roll_left=11,
-    ANIM_fire_roll_left_fast=13,
-    ANIM_fire_roll_right1=12,
-    ANIM_fire_roll_right2=39,
-    ANIM_fire_running=49,
-    ANIM_fire_running_dual_wield=110,
-    ANIM_fire_running_dual_wield_hands_crossed=111,
-    ANIM_fire_shoulder_left=4,
-    ANIM_fire_sprinting_dual_wield=112,
-    ANIM_fire_sprinting_dual_wield_hands_crossed=113,
-    ANIM_fire_standing=1,
-    ANIM_fire_standing_aiming_down_sights=127,
-    ANIM_fire_standing_draw_one_handed_weapon_fast=66,
-    ANIM_fire_standing_draw_one_handed_weapon_slow=67,
-    ANIM_fire_standing_dual_wield=122,
-    ANIM_fire_standing_dual_wield_hands_crossed_left=125,
-    ANIM_fire_standing_dual_wield_hands_crossed_right=126,
-    ANIM_fire_standing_dual_wield_left=123,
-    ANIM_fire_standing_dual_wield_right=124,
-    ANIM_fire_standing_fast=2,
-    ANIM_fire_standing_left_one_handed_weapon_fast=74,
-    ANIM_fire_standing_left_one_handed_weapon_slow=73,
-    ANIM_fire_standing_one_handed_weapon=65,
-    ANIM_fire_standing_right_one_handed_weapon=71,
-    ANIM_fire_step_right_one_handed_weapon=72,
-    ANIM_fire_throw_grenade=62,
-    ANIM_fire_turn_right1=5,
-    ANIM_fire_turn_right2=6,
-    ANIM_fire_walking=48,
-    ANIM_fire_walking_dual_wield=108,
-    ANIM_fire_walking_dual_wield_hands_crossed=109,
-    ANIM_hit_butt_long=54,
-    ANIM_hit_butt_short=55,
-    ANIM_hit_left_arm=16,
-    ANIM_hit_left_hand=18,
-    ANIM_hit_left_leg=20,
-    ANIM_hit_left_shoulder=14,
-    ANIM_hit_neck=23,
-    ANIM_hit_right_arm=17,
-    ANIM_hit_right_hand=19,
-    ANIM_hit_right_leg=21,
-    ANIM_hit_right_shoulder=15,
-    ANIM_hit_taser=129,
-    ANIM_holster_one_handed_weapon_and_adjust_suit=105,
-    ANIM_holster_one_handed_weapon_and_cross_arms=101,
-    ANIM_idle=0,
-    ANIM_idle_unarmed=106,
-    ANIM_jogging_one_handed_weapon=89,
-    ANIM_jump_backwards=60,
-    ANIM_keyboard_left_hand=174,
-    ANIM_keyboard_right_hand1=172,
-    ANIM_keyboard_right_hand2=173,
-    ANIM_keyboard_right_hand_tapping=175,
-    ANIM_laughing_in_disbelief=163,
-    ANIM_look_around=64,
-    ANIM_null143=143,
-    ANIM_null144=144,
-    ANIM_null145=145,
-    ANIM_null146=146,
-    ANIM_null169=169,
-    ANIM_null50=50,
-    ANIM_null51=51,
-    ANIM_null91=91,
-    ANIM_null92=92,
-    ANIM_null93=93,
-    ANIM_null94=94,
-    ANIM_null95=95,
-    ANIM_null96=96,
-    ANIM_running=42,
-    ANIM_running_female=115,
-    ANIM_running_hands_up=147,
-    ANIM_scratching_butt=157,
-    ANIM_scratching_leg=156,
-    ANIM_side_step_left=38,
-    ANIM_slide_left=59,
-    ANIM_slide_right=58,
-    ANIM_sneeze=159,
-    ANIM_spotting_bond=63,
-    ANIM_sprinting=41,
-    ANIM_sprinting_hands_up=148,
-    ANIM_sprinting_one_handed_weapon=90,
-    ANIM_standing_up=168,
-    ANIM_startled_and_looking_around=162,
-    ANIM_step_foward_and_hold_one_handed_weapon=104,
-    ANIM_surface_vent_jump=178,
-    ANIM_surrendering_armed=46,
-    ANIM_surrendering_armed_drop_weapon=47,
-    ANIM_surrendering_unarmed=164,
-    ANIM_swatting_flies=155,
-    ANIM_walking=40,
-    ANIM_walking_female=114,
-    ANIM_walking_unarmed=107,
-    ANIM_yawning=154
-} ANIMATIONS;
-
-
-// WARNING! conflicting data type names: /bondgame.h/COLORMODE - /COLORMODE
-
-typedef enum CUFF_TYPES {
-    CUFF_BLUE=0,
-    CUFF_BOILER=3,
-    CUFF_JUNGLE=2,
-    CUFF_SNOW=4,
-    CUFF_TUX=1,
-    CUFF_TUX6=6,
-    CUFF_TUX7=7,
-    CUFF_TUX8=8,
-    CUFF_WHITE=5
-} CUFF_TYPES;
-
-typedef enum PROJECTILES {
-    PROJECTILES_MAX=46,
-    PROJECTILES_TYPE_BOMBCASE=55,
-    PROJECTILES_TYPE_BUG=56,
-    PROJECTILES_TYPE_GE_KEY=58,
-    PROJECTILES_TYPE_GLAUNCH_ROUND=54,
-    PROJECTILES_TYPE_GRENADE=48,
-    PROJECTILES_TYPE_KNIFE=47,
-    PROJECTILES_TYPE_MICROCAMERA=57,
-    PROJECTILES_TYPE_PLASTIQUE=59,
-    PROJECTILES_TYPE_PROX_MINE=50,
-    PROJECTILES_TYPE_REMOTE_MINE=49,
-    PROJECTILES_TYPE_ROCKET_ROUND=52,
-    PROJECTILES_TYPE_ROCKET_ROUND2=53,
-    PROJECTILES_TYPE_TIMED_MINE=51
-} PROJECTILES;
-
-typedef enum GENDER {
-    FEMALE=0,
-    MALE=1
-} GENDER;
-
-typedef enum BODIES {
-    BODY_Arctic_Commando=38,
-    BODY_Baron_Samedi=12,
-    BODY_Boris=6,
-    BODY_Civilian_1_Female=29,
-    BODY_Civilian_2=33,
-    BODY_Civilian_3=34,
-    BODY_Civilian_4=32,
-    BODY_Female_Mandy=72,
-    BODY_Female_Marion_Rosika=71,
-    BODY_Female_Sally=70,
-    BODY_Female_Vivien=73,
-    BODY_Formal_Wear=23,
-    BODY_Helicopter_Pilot=36,
-    BODY_Janus_Marine=17,
-    BODY_Janus_Special_Forces=4,
-    BODY_Jaws=13,
-    BODY_Jungle_Commando=0,
-    BODY_Jungle_Fatigues=24,
-    BODY_Left_Suit_Hand_Floating_Arm=41,
-    BODY_Male_Alan=43,
-    BODY_Male_B=50,
-    BODY_Male_Biker=61,
-    BODY_Male_Chris=54,
-    BODY_Male_Dave_Dr_Doak=51,
-    BODY_Male_Des=53,
-    BODY_Male_Duncan=47,
-    BODY_Male_Dwayne=49,
-    BODY_Male_Graeme=62,
-    BODY_Male_Grant=52,
-    BODY_Male_Jim=57,
-    BODY_Male_Joe=68,
-    BODY_Male_Joe_Altered=66,
-    BODY_Male_Joel=64,
-    BODY_Male_Karl=42,
-    BODY_Male_Ken=67,
-    BODY_Male_Lee=55,
-    BODY_Male_Mark=46,
-    BODY_Male_Martin=45,
-    BODY_Male_Mishkin=69,
-    BODY_Male_Neil=56,
-    BODY_Male_Pete=44,
-    BODY_Male_Pierce_Bond_1=74,
-    BODY_Male_Pierce_Bond_2=75,
-    BODY_Male_Pierce_Bond_3=76,
-    BODY_Male_Pierce_Bond_Parka=77,
-    BODY_Male_Pierce_Bond_Tuxedo=78,
-    BODY_Male_Robin=58,
-    BODY_Male_Scott=65,
-    BODY_Male_Shaun=48,
-    BODY_Male_Steve_Ellis=63,
-    BODY_Male_Steve_H=59,
-    BODY_Male_Terrorist=60,
-    BODY_Mayday=14,
-    BODY_Moonraker_Elite_1_Male=39,
-    BODY_Moonraker_Elite_2_Female=40,
-    BODY_Natalya_Jungle_Fatigues=79,
-    BODY_Natalya_Skirt=16,
-    BODY_Naval_Officer=20,
-    BODY_Oddjob=15,
-    BODY_Ourumov=7,
-    BODY_Parka=25,
-    BODY_Rosika=27,
-    BODY_Russian_Commandant=18,
-    BODY_Russian_Infantry=3,
-    BODY_Russian_Soldier=2,
-    BODY_Scientist_1_Male=35,
-    BODY_Scientist_2_Female=28,
-    BODY_Siberian_Guard_1_Mishkin=19,
-    BODY_Siberian_Guard_2=37,
-    BODY_Siberian_Special_Forces=21,
-    BODY_Special_Operations_Uniform=22,
-    BODY_St_Petersburg_Guard=1,
-    BODY_Trevelyan_006=9,
-    BODY_Trevelyan_Janus=8,
-    BODY_Tuxedo=5,
-    BODY_Unused_Female=26,
-    BODY_Unused_Male_1=30,
-    BODY_Unused_Male_2=31,
-    BODY_Valentin_=10,
-    BODY_Xenia=11
-} BODIES;
-
-typedef enum TEXTBANK_LEVEL_INDEX {
-    LAME=1,
-    LARCH=2,
-    LAREC=8,
-    LARK=3,
-    LASH=4,
-    LAZT=5,
-    LCAT=6,
-    LCAVE=7,
-    LCRAD=9,
-    LCRYP=10,
-    LDAM=11,
-    LDEPO=12,
-    LDEST=13,
-    LDISH=14,
-    LEAR=15,
-    LELD=16,
-    LGUN=38,
-    LIMP=17,
-    LJUN=18,
-    LLEE=19,
-    LLEN=20,
-    LLIP=21,
-    LLUE=22,
-    LMISC=44,
-    LMPMENU=40,
-    LMPWEAPONS=42,
-    LNULL=0,
-    LOAT=23,
-    LOPTIONS=43,
-    LPAM=24,
-    LPETE=25,
-    LPROPOBJ=41,
-    LREF=26,
-    LRIT=27,
-    LRUN=28,
-    LSEV=30,
-    LSEVB=29,
-    LSEVX=31,
-    LSEVXB=32,
-    LSHO=33,
-    LSILO=34,
-    LSTAT=35,
-    LTITLE=39,
-    LTRA=36,
-    LWAX=37
-} TEXTBANK_LEVEL_INDEX;
-
-typedef enum DOORSTATE {
-    CLOSED=2,
-    OPEN=1
-} DOORSTATE;
-
-typedef enum HEADS {
-    HEAD_Female_Mandy=72,
-    HEAD_Female_Marion_Rosika=71,
-    HEAD_Female_Sally=70,
-    HEAD_Female_Vivien=73,
-    HEAD_Male_Alan=43,
-    HEAD_Male_B=50,
-    HEAD_Male_Biker=61,
-    HEAD_Male_Chris=54,
-    HEAD_Male_Dave_Dr_Doak=51,
-    HEAD_Male_Des=53,
-    HEAD_Male_Duncan=47,
-    HEAD_Male_Dwayne=49,
-    HEAD_Male_Graeme=62,
-    HEAD_Male_Grant=52,
-    HEAD_Male_Jim=57,
-    HEAD_Male_Joe=68,
-    HEAD_Male_Joe_Altered=66,
-    HEAD_Male_Joel=64,
-    HEAD_Male_Karl=42,
-    HEAD_Male_Ken=67,
-    HEAD_Male_Lee=55,
-    HEAD_Male_Mark=46,
-    HEAD_Male_Martin=45,
-    HEAD_Male_Mishkin=69,
-    HEAD_Male_Neil=56,
-    HEAD_Male_Pete=44,
-    HEAD_Male_Pierce_Bond_1=74,
-    HEAD_Male_Pierce_Bond_2=75,
-    HEAD_Male_Pierce_Bond_3=76,
-    HEAD_Male_Pierce_Bond_Parka=77,
-    HEAD_Male_Pierce_Bond_Tuxedo_DEFAULT=78,
-    HEAD_Male_Robin=58,
-    HEAD_Male_Scott=65,
-    HEAD_Male_Shaun=48,
-    HEAD_Male_Steve_Ellis=63,
-    HEAD_Male_Steve_H=59,
-    HEAD_Male_Terrorist=60,
-    HEAD_Natalya_Jungle_Fatigues=79
-} HEADS;
-
-typedef enum mission_setup_type {
-    MISSION_HEADER=1,
-    MISSION_PART=0
-} mission_setup_type;
-
-typedef enum LEVEL_INDEX {
-    LEVEL_INDEX_AME=28,
-    LEVEL_INDEX_ARCH=4,
-    LEVEL_INDEX_ARK=14,
-    LEVEL_INDEX_ASH=26,
-    LEVEL_INDEX_AZT=8,
-    LEVEL_INDEX_CAT=20,
-    LEVEL_INDEX_CAVE=19,
-    LEVEL_INDEX_CONTROL=3,
-    LEVEL_INDEX_CRAD=21,
-    LEVEL_INDEX_CRYP=12,
-    LEVEL_INDEX_DAM=13,
-    LEVEL_INDEX_DEPO=10,
-    LEVEL_INDEX_DEST=6,
-    LEVEL_INDEX_DISH=18,
-    LEVEL_INDEX_EAR=31,
-    LEVEL_INDEX_ELD=24,
-    LEVEL_INDEX_IMP=25,
-    LEVEL_INDEX_JUN=17,
-    LEVEL_INDEX_LEE=32,
-    LEVEL_INDEX_LEN=34,
-    LEVEL_INDEX_LIP=33,
-    LEVEL_INDEX_LUE=27,
-    LEVEL_INDEX_OAT=30,
-    LEVEL_INDEX_PAM=36,
-    LEVEL_INDEX_PETE=9,
-    LEVEL_INDEX_REF=11,
-    LEVEL_INDEX_RIT=29,
-    LEVEL_INDEX_RUN=15,
-    LEVEL_INDEX_SEVB=7,
-    LEVEL_INDEX_SEVBUNKER=0,
-    LEVEL_INDEX_SEVX=16,
-    LEVEL_INDEX_SEVXB=23,
-    LEVEL_INDEX_SHO=22,
-    LEVEL_INDEX_SILO=1,
-    LEVEL_INDEX_STATUE=2,
-    LEVEL_INDEX_TRA=5,
-    LEVEL_INDEX_WAX=35,
-    LEVEL_INDEX_X=37
-} LEVEL_INDEX;
-
-typedef enum SCREEN_SIZE {
-    SCREEN_SIZE_320x240=0,
-    SCREEN_SIZE_440x330=1
-} SCREEN_SIZE;
-
-typedef u16 PAD;
-
-typedef enum MENU {
-    MENU_007_OPTIONS=9,
-    MENU_BRIEFING=10,
-    MENU_CHEAT=21,
-    MENU_DIFFICULTY=8,
-    MENU_DISPLAY_CAST=24,
-    MENU_EYE_INTRO=3,
-    MENU_FILE_SELECT=5,
-    MENU_GOLDENEYE_LOGO=4,
-    MENU_LEGAL_SCREEN=0,
-    MENU_MISSION_COMPLETE=13,
-    MENU_MISSION_FAILED=12,
-    MENU_MISSION_SELECT=7,
-    MENU_MODE_SELECT=6,
-    MENU_MP_CHAR_SELECT=15,
-    MENU_MP_CONTROL_STYLE=17,
-    MENU_MP_HANDICAP=16,
-    MENU_MP_OPTIONS=14,
-    MENU_MP_SCENARIO_SELECT=19,
-    MENU_MP_STAGE_SELECT=18,
-    MENU_MP_TEAMS=20,
-    MENU_NINTENDO_LOGO=1,
-    MENU_NO_CONTROLLERS=22,
-    MENU_RAREWARE_LOGO=2,
-    MENU_RUN_STAGE=11,
-    MENU_SPECTRUM_EMU=25,
-    MENU_SWITCH_SCREENS=23
-} MENU;
-
-#define OBJECTIVES_MAX 10
-
-typedef struct IMAGE IMAGE, *PIMAGE;
-
-struct IMAGE {
-    ushort imagic;
-    ushort type;
-    ushort dim;
-    ushort xsize;
-    ushort ysize;
-    ushort zsize;
-    ulong min;
-    ulong max;
-    ulong wastebytes;
-    char name[80];
-    ulong colormap;
-    long file;
-    ushort flags;
-    short dorev;
-    short x;
-    short y;
-    short z;
-    short cnt;
-    ushort * ptr;
-    ushort * base;
-    ushort * tmpbuf;
-    ulong offset;
-    ulong rleend;
-    ulong * rowstart;
-    long * rowsize;
-};
-
-#define CM_COLORMAP 3
-
-#define TYPEMASK 65280
-
-#define ITYPE_VERBATIM 0
-
-#define ITYPE_RLE 256
-
-#define CM_DITHERED 1
-
-#define IMAGIC 474
-
-#define RLE_NOP 0
-
-#define CM_SCREEN 2
-
-#define BPPMASK 255
-
-#define CM_NORMAL 0
-
-typedef struct _Region_s _Region_s, *P_Region_s;
-
-struct _Region_s {
-    u8 * r_startBufferAddress;
-    u8 * r_endAddress;
-    s32 r_bufferSize;
-    s32 r_bufferCount;
-    u16 r_freeList;
-    u16 r_alignSize;
-};
-
-typedef struct _Region_s OSRegion;
-
-#define OS_RG_ALIGN_DEFAULT 8
-
-#define MAX_BUFCOUNT 32768
-
-#define OS_RG_ALIGN_16B 16
-
-#define OS_RG_ALIGN_4B 4
-
-#define OS_RG_ALIGN_2B 2
-
-#define OS_RG_ALIGN_8B 8
-
-#define BUF_FREE_WO_NEXT 32768
-
-#define GT_STATE_OFF_VTXCOUNT 8
-
-#define GT_STATE_OFF_TRANSFORM 24
-
-#define GT_STATE_OFF_RENDSTATE 0
-
-#define GT_STATE_OFF_TRICOUNT 10
-
-#define GT_STATE_OFF_VTXV0 9
-
-#define GT_STATE_SIZE 88
-
-#define GT_STATE_OFF_TEXSTATE 4
-
-#define GT_STATE_OFF_OTHERMODE 16
-
-#define GT_STATE_OFF_RDPCMDS 12
-
-#define M_GFXTASK 1
-
-#define G_OFF 0
-
-#define G_ON 1
-
-#define M_VIDTASK 3
-
-#define NUM_SEGMENTS 16
-
-#define M_AUDTASK 2
-
-typedef void (* OSErrorHandler)(s16, s16, ...);
-
-#define ERR_OSPISTARTDMA_PIMGR 28
-
-#define ERR_OSCREATETHREAD_PRI 2
-
-#define ERR_OSVISETXSCALE_VALUE 39
-
-#define ERR_ALMODDELAYOVERFLOW 133
-
-#define ERR_OSVIGETNEXTFRAMEBUFFER 38
-
-#define ERR_OSSETTLBASID 13
-
-#define ERR_OSVIGETCURRENTFRAMEBUFFER 37
-
-#define ERR_ALEVENTNOFREE 124
-
-#define ERR_OSPISTARTDMA_DIR 30
-
-#define ERR_OSSETTHREADPRI 4
-
-#define ERR_OSSETTIME 75
-
-#define ERR_OSREADHOST_ADDR 70
-
-#define ERR_OSPROFILESTART_TIME 66
-
-#define ERR_OSVISETMODE 45
-
-#define ERR_ALSYN_NO_UPDATE 106
-
-#define ERR_ALSEQSYSEX 119
-
-#define ERR_OSFREE_REGION 53
-
-#define ERR_OSGETREGIONBUFCOUNT 55
-
-#define ERR_OSPISTARTDMA_PRI 29
-
-#define ERR_OSMAPTLB_INDEX 10
-
-#define ERR_OSCREATEVIMANAGER 49
-
-#define ERR_ALSEQMETA 120
-
-#define ERR_ALBNKFNEW 113
-
-#define ERR_ALCSEQZEROSTATUS 128
-
-#define ERR_OSPISTARTDMA_DEVADDR 31
-
-#define ERR_OSSETEVENTMESG 9
-
-#define ERR_ALHEAPNOFREE 125
-
-#define ERR_OSAISETNEXTBUFFER_ADDR 15
-
-#define ERR_OSSTARTTHREAD 3
-
-#define ERR_OSREADHOST_SIZE 71
-
-#define ERR_ALSEQPUNMAP 123
-
-#define ERR_OSUNMAPTLB 12
-
-#define ERR_OSAISETNEXTBUFFER_SIZE 16
-
-#define ERR_ALSNDPSETSOUND 110
-
-#define ERR_OSVISWAPBUFFER_VIMGR 48
-
-#define ERR_ALSEQNOTMIDI0 115
-
-#define ERR_OSPROFILEINIT_STR 61
-
-#define ERR_OSPROFILESTART_FLAG 67
-
-#define ERR_OSMAPTLB_ASID 11
-
-#define ERR_OSCREATETHREAD_SP 1
-
-#define ERR_OSGETREGIONBUFSIZE 56
-
-#define ERR_OSVISETEVENT 46
-
-#define ERR_OSVISETSPECIAL_VALUE 43
-
-#define ERR_OSVISETYSCALE_VALUE 41
-
-#define ERR_OSPIRAWSTARTDMA_DIR 21
-
-#define ERR_OSPIRAWWRITEIO 20
-
-#define ERR_OSPROFILESTOP_FLAG 68
-
-#define ERR_ALCSEQZEROVEL 129
-
-#define ERR_OSMALLOC 52
-
-#define ERR_OSSPTASKLOAD_OUTSIZE 59
-
-#define ERR_ALSEQNOTMIDI 114
-
-#define ERR_OSVIGETCURRENTMODE 36
-
-#define ERR_OSPIRAWSTARTDMA_ADDR 23
-
-#define ERR_OSCREATEREGION_SIZE 51
-
-#define ERR_OSPIRAWSTARTDMA_SIZE 24
-
-#define ERR_OSVISETXSCALE_VIMGR 40
-
-#define ERR_ALCSPVNOTFREE 130
-
-#define ERR_OSJAMMESG 7
-
-#define ERR_OSPISTARTDMA_RANGE 34
-
-#define ERR_ALSEQPINVALIDPROG 121
-
-#define ERR_OSPIWRITEIO 27
-
-#define ERR_OSPROFILEINIT_ORD 64
-
-#define ERR_OSPROFILEINIT_SIZ 65
-
-#define ERR_OSPIREADIO 26
-
-#define ERR_OSSPTASKLOAD_YIELD 60
-
-#define ERR_OSSTOPTIMER 77
-
-#define ERR_OSSENDMESG 6
-
-#define ERR_OSPISTARTDMA_ADDR 32
-
-#define ERR_OSVISETSPECIAL_VIMGR 44
-
-#define ERR_ALSEQTRACKHDR 118
-
-#define ERR_OSSPTASKLOAD_DRAM 57
-
-#define ERR_OSPROFILESTOP_TIMER 69
-
-#define ERR_OSAISETFREQUENCY 14
-
-#define ERR_ALSEQP_MAP_VOICE 102
-
-#define ERR_OSFREE_ADDR 54
-
-#define ERR_OSDPSETNEXTBUFFER_ADDR 17
-
-#define ERR_OSDPSETNEXTBUFFER_SIZE 18
-
-#define ERR_ALSNDPDELETE 108
-
-#define ERR_OSSPTASKLOAD_OUT 58
-
-#define ERR_OSPIRAWSTARTDMA_DEVADDR 22
-
-#define ERR_OSCREATEMESGQUEUE 5
-
-#define ERR_ALSNDPSETPRIORITY 111
-
-#define ERR_ALHEAPFIRSTBLOCK 127
-
-#define OS_ERROR_MAGIC 1801548921
-
-#define ERR_OSPIRAWSTARTDMA_RANGE 25
-
-#define ERR_ALSNDPSETPAR 112
-
-#define ERR_OSSETTIMER 76
-
-#define ERR_OSGETTIME 74
-
-#define ERR_ALSEQP_NO_SOUND 100
-
-#define ERR_ALSNDPDEALLOCATE 107
-
-#define ERR_ALSEQNUMTRACKS 116
-
-#define ERR_OSCREATEREGION_ALIGN 50
-
-#define ERR_ALSEQP_POLY_VOICE 104
-
-#define ERR_OSVISWAPBUFFER_ADDR 47
-
-#define ERR_ALSNDP_NO_VOICE 105
-
-#define ERR_ALHEAPCORRUPT 126
-
-#define ERR_ALSEQTIME 117
-
-#define ERR_ALSNDPPLAY 109
-
-#define ERR_OSPIRAWREADIO 19
-
-#define ERR_OSAISETNEXTBUFFER_ENDADDR 132
-
-#define ERR_OSPROFILEINIT_ALN 63
-
-#define ERR_OSWRITEHOST_ADDR 72
-
-#define ERR_OSWRITEHOST_SIZE 73
-
-#define ERR_ALSEQPUNKNOWNMIDI 122
-
-#define ERR_OSCREATEPIMANAGER 35
-
-#define ERR_ALSEQP_NO_VOICE 101
-
-#define ERR_ALSEQOVERRUN 131
-
-#define ERR_OSPISTARTDMA_SIZE 33
-
-#define ERR_OSPROFILEINIT_CNT 62
-
-#define ERR_ALSEQP_OFF_VOICE 103
-
-#define ERR_OSRECVMESG 8
-
-#define ERR_OSVISETYSCALE_VIMGR 42
-
-typedef struct __OSEventState __OSEventState, *P__OSEventState;
-
-typedef struct OSMesgQueue_s OSMesgQueue_s, *POSMesgQueue_s;
-
-typedef struct OSMesgQueue_s OSMesgQueue;
-
-typedef void * OSMesg;
-
-typedef struct OSThread_s OSThread_s, *POSThread_s;
-
-typedef struct OSThread_s OSThread;
-
-typedef s32 OSPri;
-
-typedef s32 OSId;
-
-typedef struct __OSThreadContext __OSThreadContext, *P__OSThreadContext;
-
-typedef ulonglong u64;
-
-typedef union __OSfp __OSfp, *P__OSfp;
-
-typedef struct _struct_2 _struct_2, *P_struct_2;
-
-struct _struct_2 {
-    f32 f_odd;
-    f32 f_even;
-};
-
-union __OSfp {
-    struct _struct_2 f;
-    f64 d;
-};
-
-struct __OSThreadContext {
-    u64 at;
-    u64 v0;
-    u64 v1;
-    u64 a0;
-    u64 a1;
-    u64 a2;
-    u64 a3;
-    u64 t0;
-    u64 t1;
-    u64 t2;
-    u64 t3;
-    u64 t4;
-    u64 t5;
-    u64 t6;
-    u64 t7;
-    u64 s0;
-    u64 s1;
-    u64 s2;
-    u64 s3;
-    u64 s4;
-    u64 s5;
-    u64 s6;
-    u64 s7;
-    u64 t8;
-    u64 t9;
-    u64 gp;
-    u64 sp;
-    u64 s8;
-    u64 ra;
-    u64 lo;
-    u64 hi;
-    u32 sr;
-    u32 pc;
-    u32 cause;
-    u32 badvaddr;
-    u32 rcp;
-    u32 fpcsr;
-    union __OSfp fp0;
-    union __OSfp fp2;
-    union __OSfp fp4;
-    union __OSfp fp6;
-    union __OSfp fp8;
-    union __OSfp fp10;
-    union __OSfp fp12;
-    union __OSfp fp14;
-    union __OSfp fp16;
-    union __OSfp fp18;
-    union __OSfp fp20;
-    union __OSfp fp22;
-    union __OSfp fp24;
-    union __OSfp fp26;
-    union __OSfp fp28;
-    union __OSfp fp30;
-};
-
-struct OSThread_s {
-    struct OSThread_s * next;
-    OSPri priority;
-    struct OSThread_s * * queue;
-    struct OSThread_s * tlnext;
-    u16 state;
-    u16 flags;
-    OSId id;
-    int fp;
-    struct __OSThreadContext context;
-};
-
-struct __OSEventState {
-    OSMesgQueue * messageQueue;
-    OSMesg message;
-};
-
-struct OSMesgQueue_s {
-    OSThread * mtqueue;
-    OSThread * fullqueue;
-    s32 validCount;
-    s32 first;
-    s32 msgCount;
-    OSMesg * msg;
-};
-
-typedef struct __OSThreadTail __OSThreadTail, *P__OSThreadTail;
-
-struct __OSThreadTail {
-    OSThread * next;
-    OSPri priority;
-};
-
-typedef struct guDLPrintCB guDLPrintCB, *PguDLPrintCB;
-
-struct guDLPrintCB {
-    int dataSize;
-    int dlType;
-    int flags;
-    u32 paddr;
-};
-
-typedef struct PositionalLight PositionalLight, *PPositionalLight;
-
-struct PositionalLight {
-    float col[3];
-    float pos[3];
-    float a1;
-    float a2;
-};
-
-typedef struct Image Image, *PImage;
-
-struct Image {
-    uchar * base;
-    int fmt;
-    int siz;
-    int xsize;
-    int ysize;
-    int lsize;
-    int addr;
-    int w;
-    int h;
-    int s;
-    int t;
-};
-
-#define GU_PARSE_GBI_TYPE 1
-
-#define GU_PARSE_MEM_BLOCK 4
-
-#define GU_PARSEGBI_NONEST 2
-
-#define GU_BLINKRDP_HILITE 1
-
-#define GU_PARSEGBI_ROWMAJOR 1
-
-#define GU_PARSEGBI_ALLMTX 16
-
-#define GU_PARSERDP_VERBOSE 1
-
-#define GU_PARSE_RDP_TYPE 2
-
-#define GU_BLINKRDP_EXTRACT 2
-
-#define GU_PARSE_READY 3
-
-#define GU_PARSERDP_PRHISTO 4
-
-#define FILTER_CLAMP 1
-
-#define GU_PARSEGBI_DUMPONLY 32
-
-#define GU_PARSEGBI_SHOWDMA 8
-
-#define GU_PARSERDP_DUMPONLY 32
-
-#define GU_PARSEGBI_FLTMTX 4
-
-#define GU_PARSE_ABI_TYPE 5
-
-#define GU_PARSERDP_PRAREA 2
-
-#define FILTER_WRAP 0
-
-#define GU_PARSE_STRING_TYPE 6
-
-typedef struct huft huft, *Phuft;
-
-typedef union _union_2 _union_2, *P_union_2;
-
-union _union_2 {
-    ush n;
-    struct huft * t;
-};
-
-struct huft {
-    uch e;
-    uch b;
-    union _union_2 v;
-};
-
-#define BMAX 16
-
-#define N_MAX 288
-
-typedef struct OSPifRam OSPifRam, *POSPifRam;
-
-struct OSPifRam {
-    u32 ramarray[15];
-    u32 pifstatus;
-};
-
-typedef union __OSInodeUnit __OSInodeUnit, *P__OSInodeUnit;
-
-typedef struct _struct_195 _struct_195, *P_struct_195;
-
-struct _struct_195 {
-    u8 bank;
-    u8 page;
-};
-
-union __OSInodeUnit {
-    struct _struct_195 inode_t;
-    u16 ipage;
-};
-
-typedef struct __OSContEepromFormat __OSContEepromFormat, *P__OSContEepromFormat;
-
-struct __OSContEepromFormat {
-    u8 txsize;
-    u8 rxsize;
-    u8 cmd;
-    u8 address;
-    u8 data[8];
-};
-
-typedef struct __OSContReadFormat __OSContReadFormat, *P__OSContReadFormat;
-
-typedef char s8;
-
-struct __OSContReadFormat {
-    u8 dummy;
-    u8 txsize;
-    u8 rxsize;
-    u8 cmd;
-    u16 button;
-    s8 stick_x;
-    s8 stick_y;
-};
-
-typedef struct __OSContRamReadFormat __OSContRamReadFormat, *P__OSContRamReadFormat;
-
-struct __OSContRamReadFormat {
-    u8 dummy;
-    u8 txsize;
-    u8 rxsize;
-    u8 cmd;
-    u16 address;
-    u8 data[32];
-    u8 datacrc;
-};
-
-typedef struct __OSInode __OSInode, *P__OSInode;
-
-struct __OSInode {
-    union __OSInodeUnit inode_page[128];
-};
-
-typedef struct __OSContRequesFormat __OSContRequesFormat, *P__OSContRequesFormat;
-
-struct __OSContRequesFormat {
-    u8 dummy;
-    u8 txsize;
-    u8 rxsize;
-    u8 cmd;
-    u8 typeh;
-    u8 typel;
-    u8 status;
-    u8 dummy1;
-};
-
-typedef struct __OSDir __OSDir, *P__OSDir;
-
-struct __OSDir {
-    u32 game_code;
-    u16 company_code;
-    union __OSInodeUnit start_page;
-    u8 status;
-    s8 reserved;
-    u16 data_sum;
-    char ext_name[4];
-    char game_name[16];
-};
-
-typedef struct __OSPackId __OSPackId, *P__OSPackId;
-
-struct __OSPackId {
-    u32 repaired;
-    u32 random;
-    u64 serial_mid;
-    u64 serial_low;
-    u16 deviceid;
-    u8 banks;
-    u8 version;
-    u16 checksum;
-    u16 inverted_checksum;
-};
-
-typedef struct __OSInodeCache __OSInodeCache, *P__OSInodeCache;
-
-struct __OSInodeCache {
-    struct __OSInode inode;
-    u8 bank;
-    u8 map[256];
-};
-
-#define CONT_EEPROM_READ 4
-
-#define CONT_SETCH 254
-
-#define PFS_64K_RAM 2
-
-#define PFS_INODE_DIST_MAP 256
-
-#define PFS_FORCE 1
-
-#define CONT_FORMAT 1
-
-#define PFS_ID_1AREA 3
-
-#define PFS_EOF 1
-
-#define PFS_SECTOR_PER_BANK 32
-
-#define EEPROM_WAIT 12000
-
-#define PFS_INODE_SIZE_PER_PAGE 128
-
-#define PFS_ID_2AREA 4
-
-#define FORMAT_END 254
-
-#define PFS_ID_3AREA 6
-
-#define CONT_RESET 255
-
-#define PFS_DELETE 1
-
-#define PFS_PAGE_SIZE 256
-
-#define PFS_SIZE_LOC 24
-
-#define PFS_32K_RAM 1
-
-#define CONT_READ 1
-
-#define PFS_LABEL_AREA 7
-
-#define CONT_RAM_READ 2
-
-#define PIFRAMSIZE 16
-
-#define PFS_PAGE_NOT_EXIST 2
-
-#define CONT_EEPROM_WRITE 5
-
-#define PFS_PAGE_NOT_USED 3
-
-#define PFS_BANK_LAPPED_BY 8
-
-#define CONT_RAM_WRITE 3
-
-#define PFS_ID_PAGE 0
-
-#define PFS_SECTOR_SIZE 4
-
-#define CHANNEL_RESET 253
-
-#define CONT_REQUEST 0
-
-#define DEF_DIR_PAGES 2
-
-#define PFS_ID_0AREA 1
-
-#define PFS_WRITTEN 2
-
-#define CON_ERR_MASK 192
-
-#define RMON_STACKSIZE 4096
-
-#define RMON_DBG_BUF_SIZE 2048
-
-typedef struct Elf32_RegInfo_MIPS Elf32_RegInfo_MIPS, *PElf32_RegInfo_MIPS;
-
-struct Elf32_RegInfo_MIPS {
-    enum Elf32_GPRMask_MIPS ri_gprmask;
-    dword field_0x4[4];
-    dword ri_gp_value;
-};
-
-typedef struct Elf32_Sym Elf32_Sym, *PElf32_Sym;
-
-struct Elf32_Sym {
-    dword st_name;
-    dword st_value;
-    dword st_size;
-    byte st_info;
-    byte st_other;
-    word st_shndx;
-};
-
-typedef struct Elf32_Shdr Elf32_Shdr, *PElf32_Shdr;
-
-typedef enum Elf_SectionHeaderType_MIPS {
-    =1879048203,
-    SHT_CHECKSUM=1879048184,
-    SHT_DYNAMIC=6,
-    SHT_DYNSYM=11,
-    SHT_FINI_ARRAY=15,
-    SHT_GNU_ATTRIBUTES=1879048181,
-    SHT_GNU_HASH=1879048182,
-    SHT_GNU_LIBLIST=1879048183,
-    SHT_GNU_verdef=1879048189,
-    SHT_GNU_verneed=1879048190,
-    SHT_GNU_versym=1879048191,
-    SHT_GROUP=17,
-    SHT_HASH=5,
-    SHT_INIT_ARRAY=14,
-    SHT_MIPS_ABIFLAGS=1879048234,
-    SHT_MIPS_AUXSYM=1879048214,
-    SHT_MIPS_CONFLICT=1879048194,
-    SHT_MIPS_CONTENT=1879048204,
-    SHT_MIPS_DEBUG=1879048197,
-    SHT_MIPS_DELTACLASS=1879048221,
-    SHT_MIPS_DELTADECL=1879048223,
-    SHT_MIPS_DELTAINST=1879048220,
-    SHT_MIPS_DELTASYM=1879048219,
-    SHT_MIPS_DENSE=1879048211,
-    SHT_MIPS_DWARF=1879048222,
-    SHT_MIPS_EH_REGION=1879048231,
-    SHT_MIPS_EVENTS=1879048225,
-    SHT_MIPS_EXTSYM=1879048210,
-    SHT_MIPS_FDESC=1879048209,
-    SHT_MIPS_GPTAB=1879048195,
-    SHT_MIPS_LIBLIST=1879048192,
-    SHT_MIPS_LINE=1879048217,
-    SHT_MIPS_LOCSTR=1879048216,
-    SHT_MIPS_LOCSYM=1879048213,
-    SHT_MIPS_MSYM=1879048193,
-    SHT_MIPS_OPTIONS=1879048205,
-    SHT_MIPS_OPTSYM=1879048215,
-    SHT_MIPS_PACKAGE=1879048199,
-    SHT_MIPS_PACKSYM=1879048200,
-    SHT_MIPS_PDESC=1879048212,
-    SHT_MIPS_PDR_EXCEPTION=1879048233,
-    SHT_MIPS_PIXIE=1879048227,
-    SHT_MIPS_REGINFO=1879048198,
-    SHT_MIPS_RELD=1879048201,
-    SHT_MIPS_RFDESC=1879048218,
-    SHT_MIPS_SHDR=1879048208,
-    SHT_MIPS_SYMBOL_LIB=1879048224,
-    SHT_MIPS_TRANSLATE=1879048226,
-    SHT_MIPS_UCODE=1879048196,
-    SHT_MIPS_WHIRL=1879048230,
-    SHT_MIPS_XLATE=1879048228,
-    SHT_MIPS_XLATE_DEBUG=1879048229,
-    SHT_MIPS_XLATE_OLD=1879048232,
-    SHT_NOBITS=8,
-    SHT_NOTE=7,
-    SHT_NULL=0,
-    SHT_PREINIT_ARRAY=16,
-    SHT_PROGBITS=1,
-    SHT_REL=9,
-    SHT_RELA=4,
-    SHT_SHLIB=10,
-    SHT_STRTAB=3,
-    SHT_SUNW_COMDAT=1879048187,
-    SHT_SUNW_move=1879048186,
-    SHT_SUNW_syminfo=1879048188,
-    SHT_SYMTAB=2,
-    SHT_SYMTAB_SHNDX=18
-} Elf_SectionHeaderType_MIPS;
-
-struct Elf32_Shdr {
-    dword sh_name;
-    enum Elf_SectionHeaderType_MIPS sh_type;
-    dword sh_flags;
-    dword sh_addr;
-    dword sh_offset;
-    dword sh_size;
-    dword sh_link;
-    dword sh_info;
-    dword sh_addralign;
-    dword sh_entsize;
-};
-
-typedef struct Elf32_Phdr Elf32_Phdr, *PElf32_Phdr;
-
-typedef enum Elf_ProgramHeaderType_MIPS {
-    PT_DYNAMIC=2,
-    PT_GNU_EH_FRAME=1685382480,
-    PT_GNU_RELRO=1685382482,
-    PT_GNU_STACK=1685382481,
-    PT_INTERP=3,
-    PT_LOAD=1,
-    PT_MIPS_ABIFLAGS=1879048195,
-    PT_MIPS_OPTIONS=1879048194,
-    PT_MIPS_REGINFO=1879048192,
-    PT_MIPS_RTPROC=1879048193,
-    PT_NOTE=4,
-    PT_NULL=0,
-    PT_PHDR=6,
-    PT_SHLIB=5,
-    PT_TLS=7
-} Elf_ProgramHeaderType_MIPS;
-
-struct Elf32_Phdr {
-    enum Elf_ProgramHeaderType_MIPS p_type;
-    dword p_offset;
-    dword p_vaddr;
-    dword p_paddr;
-    dword p_filesz;
-    dword p_memsz;
-    dword p_flags;
-    dword p_align;
-};
-
-typedef struct Elf32_Ehdr Elf32_Ehdr, *PElf32_Ehdr;
-
-struct Elf32_Ehdr {
-    byte e_ident_magic_num;
-    char e_ident_magic_str[3];
-    byte e_ident_class;
-    byte e_ident_data;
-    byte e_ident_version;
-    byte e_ident_pad[9];
-    word e_type;
-    word e_machine;
-    dword e_version;
-    dword e_entry;
-    dword e_phoff;
-    dword e_shoff;
-    dword e_flags;
-    word e_ehsize;
-    word e_phentsize;
-    word e_phnum;
-    word e_shentsize;
-    word e_shnum;
-    word e_shstrndx;
-};
-
-#define SAFE_EXP 1023
-
-#define _DMASK 32752
-
-#define _D3 3
-
-#define _D2 2
-
-#define _D1 1
-
-#define _DNAN 65528
-
-#define _DFRAC 15
-
-#define _DMAX 2047
-
-#define NAN 2
-
-#define _DSIGN 32768
-
-#define INF 1
-
-#define FINITE -1
-
-#define HUGE_EXP 1842
-
-typedef char * voidp;
-
-typedef int file_t;
-
-#define RESERVED 192
-
-#define seekable 0
-
-#define PACKED 2
-
-#define DIST_BUFSIZE 32768
-
-#define DEFLATED 8
-
-#define WARNING 2
-
-#define ORIG_NAME 8
-
-#define translate_eol 0
-
-#define MAX_MATCH 258
-
-#define CONTINUATION 2
-
-#define MIN_MATCH 3
-
-#define STORED 0
-
-#define COMMENT 16
-
-#define WSIZE 32768
-
-#define MIN_LOOKAHEAD 262
-
-#define EXTRA_FIELD 4
-
-#define ASCII 1
-
-#define INBUFSIZ 32768
-
-#define OUTBUF_EXTRA 2048
-
-#define OK 0
-
-#define MAX_DIST 32506
-
-#define ASCII_FLAG 1
-
-#define MAX_METHODS 9
-
-#define ENCRYPTED 32
-
-#define LZHED 3
-
-#define NO_FILE -1
-
-#define OUTBUFSIZ 16384
-
-#define COMPRESSED 1
-
-#define INBUF_EXTRA 64
-
-#define ERROR 1
-
-#define UNKNOWN 65535
-
-#define BINARY 0
-
-typedef struct RamRomBuffer RamRomBuffer, *PRamRomBuffer;
-
-struct RamRomBuffer {
-    long type;
-    long length;
-    long magic;
-    char userdata[24573];
-};
-
-#define RAMROM_BUF_SIZE 4096
-
-#define RAMROM_FONTDATA_SIZE 1152
-
-#define GAME_APP_DATA_READY 10
-
-#define HOST_FAULT_ACK 15
-
-#define RAMROM_MSG_ADDR 16752640
-
-#define HOST_LOG_ACK 8
-
-#define RAMROM_RMON_WRITE_ADDR 16764928
-
-#define HOST_PIACCESS_REQ 1
-
-#define RAMROM_FONTDATA_OFFSET 2928
-
-#define RAMROM_PIF2BOOTSTRAP_OFFSET 4096
-
-#define RAMROM_CLOCKRATE_MASK 4294967280
-
-#define GAME_PRINTF_SEND 5
-
-#define HOST_PROF_ACK 13
-
-#define GAME_EXIT 16
-
-#define HOST_PROF_REQ 11
-
-#define RAMROM_BOOTADDR_OFFSET 8
-
-#define HOST_DBG_DATA_ACK 4
-
-#define GAME_LOG_SEND 7
-
-#define HOST_DBG_CMD_READY 2
-
-#define RAMROM_SIZE 16777216
-
-#define RAMROM_APP_WRITE_ADDR 16756736
-
-#define RAMROM_BOOTSTRAP_OFFSET 64
-
-#define HOST_PRINTF_ACK 6
-
-#define RAMROM_CLOCKRATE_OFFSET 4
-
-#define RAMROM_MSG_SIZE 24576
-
-#define RAMROM_RMON_READ_ADDR 16760832
-
-#define GAME_FAULT_SEND 14
-
-#define RAMROM_PRINTF_ADDR 16769024
-
-#define GAME_PROF_SEND 12
-
-#define HOST_APP_CMD_READY 9
-
-#define RAMROM_LOG_ADDR 16773120
-
-#define HOST_DATA_ACK 17
-
-#define RAMROM_GAME_OFFSET 4096
-
-#define GAME_DBG_DATA_SEND 3
-
-#define RAMROM_APP_READ_ADDR 16752640
-
-#define RAMROM_RELEASE_OFFSET 12
-
-
-// WARNING! conflicting data type names: /_CAPTURED_FROM_ge007.u.old.elf/__OSPackId - /CONTROLLER.H/__OSPackId
-
-typedef struct struct struct, *Pstruct;
-
-typedef struct OSViMode OSViMode, *POSViMode;
-
-typedef struct OSViCommonRegs OSViCommonRegs, *POSViCommonRegs;
-
-typedef struct OSViFieldRegs OSViFieldRegs, *POSViFieldRegs;
-
-struct struct {
-    u16 field_0x0;
-    u16 field_0x2;
-    void * field_0x4;
-    struct OSViMode * field_0x8;
-    u32 field_0xc;
-    OSMesgQueue * field_0x10;
-    OSMesg field_0x14;
-};
-
-struct OSViFieldRegs {
-    u32 origin;
-    u32 yScale;
-    u32 vStart;
-    u32 vBurst;
-    u32 vIntr;
-};
-
-struct OSViCommonRegs {
-    u32 ctrl;
-    u32 width;
-    u32 burst;
-    u32 vSync;
-    u32 hSync;
-    u32 leap;
-    u32 hStart;
-    u32 xScale;
-    u32 vCurrent;
-};
-
-struct OSViMode {
-    u8 type;
-    struct OSViCommonRegs comRegs;
-    struct OSViFieldRegs fldRegs[2];
-};
-
-typedef struct PVoice PVoice, *PPVoice;
-
-typedef struct ALLink_s ALLink_s, *PALLink_s;
-
-typedef struct ALLink_s ALLink;
-
-typedef struct ALVoice_s ALVoice_s, *PALVoice_s;
-
-typedef struct ALFilter_s ALFilter_s, *PALFilter_s;
-
-typedef struct ALADPCMFilter ALADPCMFilter, *PALADPCMFilter;
-
-typedef struct ALResampler ALResampler, *PALResampler;
-
-typedef struct ALEnvMixer_s ALEnvMixer_s, *PALEnvMixer_s;
-
-typedef struct PVoice_s PVoice_s, *PPVoice_s;
-
-typedef struct ALWaveTable_s ALWaveTable_s, *PALWaveTable_s;
-
-typedef struct ALWaveTable_s ALWaveTable;
-
-typedef short ADPCM_STATE[16];
-
-typedef struct $039A3EC5794421300707C77A911A1BDF $039A3EC5794421300707C77A911A1BDF, *P$039A3EC5794421300707C77A911A1BDF;
-
-typedef struct $039A3EC5794421300707C77A911A1BDF ALADPCMloop;
-
-typedef s32 (* ALDMAproc)(s32, s32, void *);
-
-
-// WARNING! conflicting data type names: /_CAPTURED_FROM_ge007.u.old.elf/ALFilter_s - /libaudio.h/ALFilter_s
-
-typedef short RESAMPLE_STATE[16];
-
-typedef struct ALParam_s ALParam_s, *PALParam_s;
-
-typedef short ENVMIX_STATE[40];
-
-typedef union _union_109 _union_109, *P_union_109;
-
-typedef struct ALADPCMWaveInfo ALADPCMWaveInfo, *PALADPCMWaveInfo;
-
-typedef struct ALRAWWaveInfo ALRAWWaveInfo, *PALRAWWaveInfo;
-
-
-// WARNING! conflicting data type names: /libaudio.h/ALADPCMloop - /GE Current Master.h/ALADPCMloop
-
-typedef struct ALADPCMBook ALADPCMBook, *PALADPCMBook;
-
-typedef struct ALRawLoop ALRawLoop, *PALRawLoop;
-
-struct ALLink_s {
-    struct ALLink_s * next;
-    struct ALLink_s * prev;
-};
-
-struct ALVoice_s {
-    ALLink node;
-    struct PVoice_s * pvoice;
-    ALWaveTable * table;
-    void * clientPrivate;
-    s16 state;
-    s16 priority;
-    s16 fxBus;
-    s16 unityPitch;
-};
-
-struct ALFilter_s {
-};
-
-struct $039A3EC5794421300707C77A911A1BDF {
-};
-
-struct ALADPCMFilter {
-    struct ALFilter_s filter;
-    ADPCM_STATE state[AL_MAX_ADPCM_STATES];
-    ALADPCMloop loop;
-    struct ALWaveTable_s * table;
-    int bookSize;
-    ALDMAproc dma;
-    int current;
-    int sample;
-    int lastsam;
-    int first;
-    int memin;
-    int dramstart;
-};
-
-struct ALRAWWaveInfo {
-    struct ALRawLoop * loop;
-};
-
-struct PVoice_s {
-};
-
-struct ALEnvMixer_s {
-    struct ALFilter_s filter;
-    ENVMIX_STATE state;
-    short pan;
-    short volume;
-    short cvolL;
-    short cvolR;
-    short dryamt;
-    short wetamt;
-    ushort lratl;
-    short lratm;
-    short ltgt;
-    ushort rratl;
-    short rratm;
-    short rtgt;
-    int delta;
-    int segEnd;
-    int first;
-    struct ALParam_s * ctrlList;
-    struct ALParam_s * ctrlTail;
-    struct ALFilter_s * * sources;
-    int motion;
-};
-
-struct ALParam_s {
-};
-
-struct ALResampler {
-    struct ALFilter_s filter;
-    RESAMPLE_STATE state;
-    float ratio;
-    int upitch;
-    float delta;
-    int first;
-    struct ALParam_s * ctrlList;
-    struct ALParam_s * ctrlTail;
-};
-
-struct PVoice {
-    ALLink node;
-    struct ALVoice_s * vvoice;
-    void * rspCode;
-    struct ALFilter_s * sourceKnob;
-    struct ALFilter_s * channelKnob;
-    struct ALADPCMFilter decoder;
-    struct ALResampler resampler;
-    struct ALEnvMixer_s envmixer;
-};
-
-struct ALADPCMBook {
-    s32 order;
-    s32 npredictors;
-    s16 book[1];
-};
-
-struct ALADPCMWaveInfo {
-    struct ALADPCMloop * loop;
-    struct ALADPCMBook * book;
-};
-
-union _union_109 {
-    struct ALADPCMWaveInfo adpcmWave;
-    struct ALRAWWaveInfo rawWave;
-};
-
-struct ALWaveTable_s {
-    u8 * base;
-    s32 len;
-    u8 type;
-    u8 flags;
-    union _union_109 waveInfo;
-};
-
-struct ALRawLoop {
-    u32 start;
-    u32 end;
-    u32 count;
-};
-
-typedef int * ALSetParam;
-
-typedef struct __OSViContext __OSViContext, *P__OSViContext;
-
-typedef struct __OSViScale __OSViScale, *P__OSViScale;
-
-struct __OSViScale {
-    f32 factor;
-    u16 offset;
-    undefined field_0x6;
-    undefined field_0x7;
-    undefined field_0x8;
-    undefined field_0x9;
-};
-
-struct __OSViContext {
-    u16 state;
-    u16 retraceCount;
-    void * framep;
-    struct OSViMode * modep;
-    u32 control;
-    OSMesgQueue * msgq;
-    OSMesg msg;
-    struct __OSViScale x;
-    struct __OSViScale y;
-};
-
-typedef struct debug_handler_entry debug_handler_entry, *Pdebug_handler_entry;
-
-struct debug_handler_entry {
-    void * stackpointer;
-    string * name;
-};
-
-typedef enum BOOL {
-    FALSE=0,
-    TRUE=1
-} BOOL;
-
-typedef enum guard_action_type {
-    None=0,
-    dying=4,
-    fade_away=5,
-    freeze=2,
-    freeze_anim=17,
-    gettingshot=6,
-    limping=7,
-    look_around=18,
-    moving=15,
-    run_roll_fire=10,
-    sidehop=12,
-    siderun=13,
-    sidestep=11,
-    standing=1,
-    standstill_fire=8,
-    surrendering=16,
-    swattingflies=3,
-    throw_grenade=20,
-    trigger_alarm=19,
-    walk_fire=9,
-    walk_path=14
-} guard_action_type;
-
-typedef union Acmd Acmd, *PAcmd;
-
-typedef union Acmd ALCmdHandler;
-
-typedef struct Awords Awords, *PAwords;
-
-typedef struct Aadpcm Aadpcm, *PAadpcm;
-
-typedef struct Apolef Apolef, *PApolef;
-
-typedef struct Aclearbuff Aclearbuff, *PAclearbuff;
-
-typedef struct Aenvelope Aenvelope, *PAenvelope;
-
-typedef struct Ainterleave Ainterleave, *PAinterleave;
-
-typedef struct Aloadbuff Aloadbuff, *PAloadbuff;
-
-typedef struct Aenvmixer Aenvmixer, *PAenvmixer;
-
-typedef struct Aresample Aresample, *PAresample;
-
-typedef struct Areverb Areverb, *PAreverb;
-
-typedef struct Asavebuff Asavebuff, *PAsavebuff;
-
-typedef struct Asegment Asegment, *PAsegment;
-
-typedef struct Asetbuff Asetbuff, *PAsetbuff;
-
-typedef struct Asetvol Asetvol, *PAsetvol;
-
-typedef struct Admemmove Admemmove, *PAdmemmove;
-
-typedef struct Aloadadpcm Aloadadpcm, *PAloadadpcm;
-
-typedef struct Amixer Amixer, *PAmixer;
-
-typedef struct Asetloop Asetloop, *PAsetloop;
-
-typedef union anon__struct_76_bitfield_1 anon__struct_76_bitfield_1, *Panon__struct_76_bitfield_1;
-
-typedef union anon__struct_77_bitfield_1 anon__struct_77_bitfield_1, *Panon__struct_77_bitfield_1;
-
-typedef union anon__struct_79_bitfield_1 anon__struct_79_bitfield_1, *Panon__struct_79_bitfield_1;
-
-typedef union anon__struct_79_bitfield_2 anon__struct_79_bitfield_2, *Panon__struct_79_bitfield_2;
-
-typedef union anon__struct_78_bitfield_1 anon__struct_78_bitfield_1, *Panon__struct_78_bitfield_1;
-
-typedef union anon__struct_80_bitfield_1 anon__struct_80_bitfield_1, *Panon__struct_80_bitfield_1;
-
-typedef union anon__struct_80_bitfield_2 anon__struct_80_bitfield_2, *Panon__struct_80_bitfield_2;
-
-typedef union anon__struct_81_bitfield_1 anon__struct_81_bitfield_1, *Panon__struct_81_bitfield_1;
-
-typedef union anon__struct_82_bitfield_1 anon__struct_82_bitfield_1, *Panon__struct_82_bitfield_1;
-
-typedef union anon__struct_85_bitfield_1 anon__struct_85_bitfield_1, *Panon__struct_85_bitfield_1;
-
-typedef union anon__struct_86_bitfield_1 anon__struct_86_bitfield_1, *Panon__struct_86_bitfield_1;
-
-typedef union anon__struct_87_bitfield_1 anon__struct_87_bitfield_1, *Panon__struct_87_bitfield_1;
-
-typedef union anon__struct_88_bitfield_1 anon__struct_88_bitfield_1, *Panon__struct_88_bitfield_1;
-
-typedef union anon__struct_88_bitfield_2 anon__struct_88_bitfield_2, *Panon__struct_88_bitfield_2;
-
-typedef union anon__struct_89_bitfield_1 anon__struct_89_bitfield_1, *Panon__struct_89_bitfield_1;
-
-typedef union anon__struct_89_bitfield_2 anon__struct_89_bitfield_2, *Panon__struct_89_bitfield_2;
-
-typedef union anon__struct_90_bitfield_1 anon__struct_90_bitfield_1, *Panon__struct_90_bitfield_1;
-
-typedef union anon__struct_90_bitfield_2 anon__struct_90_bitfield_2, *Panon__struct_90_bitfield_2;
-
-typedef union anon__struct_91_bitfield_1 anon__struct_91_bitfield_1, *Panon__struct_91_bitfield_1;
-
-typedef union anon__struct_91_bitfield_2 anon__struct_91_bitfield_2, *Panon__struct_91_bitfield_2;
-
-typedef union anon__struct_92_bitfield_1 anon__struct_92_bitfield_1, *Panon__struct_92_bitfield_1;
-
-typedef union anon__struct_83_bitfield_1 anon__struct_83_bitfield_1, *Panon__struct_83_bitfield_1;
-
-typedef union anon__struct_83_bitfield_2 anon__struct_83_bitfield_2, *Panon__struct_83_bitfield_2;
-
-typedef union anon__struct_93_bitfield_1 anon__struct_93_bitfield_1, *Panon__struct_93_bitfield_1;
-
-union anon__struct_78_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint pad1:16; // : bits 16-31
-};
-
-union anon__struct_88_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:24; // : bits 8-31
-};
-
-union anon__struct_88_bitfield_2 {
-    uint pad2:2; // : bits 0-1
-    uint number:4; // : bits 2-5
-    uint base:24; // : bits 6-29
-};
-
-struct Asegment {
-    union anon__struct_88_bitfield_1 field_0x0;
-    union anon__struct_88_bitfield_2 field_0x4;
-};
-
-union anon__struct_85_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint pitch:16; // : bits 16-31
-};
-
-union anon__struct_86_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint pad1:16; // : bits 16-31
-};
-
-struct Areverb {
-    union anon__struct_86_bitfield_1 field_0x0;
-    uint addr;
-};
-
-union anon__struct_81_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:24; // : bits 8-31
-};
-
-struct Aloadbuff {
-    union anon__struct_81_bitfield_1 field_0x0;
-    uint addr;
-};
-
-union anon__struct_79_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:8; // : bits 8-15
-    uint dmem:16; // : bits 16-31
-};
-
-union anon__struct_79_bitfield_2 {
-    uint pad2:16; // : bits 0-15
-    uint count:16; // : bits 16-31
-};
-
-struct Aclearbuff {
-    union anon__struct_79_bitfield_1 field_0x0;
-    union anon__struct_79_bitfield_2 field_0x4;
-};
-
-union anon__struct_92_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:8; // : bits 8-15
-    uint count:16; // : bits 16-31
-};
-
-struct Aresample {
-    union anon__struct_85_bitfield_1 field_0x0;
-    uint addr;
-};
-
-struct Aloadadpcm {
-    union anon__struct_92_bitfield_1 field_0x0;
-    uint addr;
-};
-
-union anon__struct_82_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint pad1:16; // : bits 16-31
-};
-
-union anon__struct_93_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:8; // : bits 8-15
-    uint pad2:16; // : bits 16-31
-};
-
-struct Asetloop {
-    union anon__struct_93_bitfield_1 field_0x0;
-    uint addr;
-};
-
-struct Awords {
-    uint w0;
-    uint w1;
-};
-
-union anon__struct_89_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint dmemin:16; // : bits 16-31
-};
-
-union anon__struct_77_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint gain:16; // : bits 16-31
-};
-
-union anon__struct_87_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:24; // : bits 8-31
-};
-
-union anon__struct_90_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint vol:16; // : bits 16-31
-};
-
-union anon__struct_90_bitfield_2 {
-    uint voltgt:16; // : bits 0-15
-    uint volrate:16; // : bits 16-31
-};
-
-union anon__struct_80_bitfield_2 {
-    uint inL:16; // : bits 0-15
-    uint inR:16; // : bits 16-31
-};
-
-union anon__struct_80_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:8; // : bits 8-15
-    uint pad2:16; // : bits 16-31
-};
-
-union anon__struct_91_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint pad1:8; // : bits 8-15
-    uint dmemin:16; // : bits 16-31
-};
-
-struct Ainterleave {
-    union anon__struct_80_bitfield_1 field_0x0;
-    union anon__struct_80_bitfield_2 field_0x4;
-};
-
-union anon__struct_91_bitfield_2 {
-    uint dmemout:16; // : bits 0-15
-    uint count:16; // : bits 16-31
-};
-
-struct Apolef {
-    union anon__struct_77_bitfield_1 field_0x0;
-    uint addr;
-};
-
-union anon__struct_83_bitfield_2 {
-    uint dmemi:16; // : bits 0-15
-    uint dmemo:16; // : bits 16-31
-};
-
-union anon__struct_83_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint gain:16; // : bits 16-31
-};
-
-struct Amixer {
-    union anon__struct_83_bitfield_1 field_0x0;
-    union anon__struct_83_bitfield_2 field_0x4;
-};
-
-struct Admemmove {
-    union anon__struct_91_bitfield_1 field_0x0;
-    union anon__struct_91_bitfield_2 field_0x4;
-};
-
-struct Aenvelope {
-    union anon__struct_78_bitfield_1 field_0x0;
-    uint addr;
-};
-
-struct Aenvmixer {
-    union anon__struct_82_bitfield_1 field_0x0;
-    uint addr;
-};
-
-union anon__struct_76_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint flags:8; // : bits 8-15
-    uint gain:16; // : bits 16-31
-};
-
-struct Aadpcm {
-    union anon__struct_76_bitfield_1 field_0x0;
-    uint addr;
-};
-
-struct Asavebuff {
-    union anon__struct_87_bitfield_1 field_0x0;
-    uint addr;
-};
-
-struct Asetvol {
-    union anon__struct_90_bitfield_1 field_0x0;
-    union anon__struct_90_bitfield_2 field_0x4;
-};
-
-union anon__struct_89_bitfield_2 {
-    uint dmemout:16; // : bits 0-15
-    uint count:16; // : bits 16-31
-};
-
-struct Asetbuff {
-    union anon__struct_89_bitfield_1 field_0x0;
-    union anon__struct_89_bitfield_2 field_0x4;
-};
-
-union Acmd {
-    struct Awords words;
-    struct Aadpcm adpcm;
-    struct Apolef polef;
-    struct Aclearbuff clearbuff;
-    struct Aenvelope envelope;
-    struct Ainterleave interleave;
-    struct Aloadbuff loadbuff;
-    struct Aenvmixer envmixer;
-    struct Aresample resample;
-    struct Areverb reverb;
-    struct Asavebuff savebuff;
-    struct Asegment segment;
-    struct Asetbuff setbuff;
-    struct Asetvol setvol;
-    struct Admemmove dmemmove;
-    struct Aloadadpcm loadadpcm;
-    struct Amixer mixer;
-    struct Asetloop setloop;
-    longlong force_union_align;
-};
-
-typedef enum enum_179 {
-    GT_ALPHACOMPARE=1,
-    GT_ALPHADITHER=4,
-    GT_CLEAR=0,
-    GT_COMBKEY=6,
-    GT_CYCLETYPE=13,
-    GT_PIPELINE=14,
-    GT_RENDERMODE=3,
-    GT_RGBDITHER=5,
-    GT_TEXTCONV=7,
-    GT_TEXTDETAIL=11,
-    GT_TEXTFILT=8,
-    GT_TEXTLOD=10,
-    GT_TEXTLUT=9,
-    GT_TEXTPERSP=12,
-    GT_ZSRCSEL=2
-} enum_179;
-
-typedef union gtVtxOut gtVtxOut, *PgtVtxOut;
-
-typedef struct gtVtxOut_t gtVtxOut_t, *PgtVtxOut_t;
-
-struct gtVtxOut_t {
-    short xscrn;
-    short yscrn;
-    int zscrn;
-    short s;
-    short t;
-    u8 r;
-    u8 g;
-    u8 b;
-    u8 a;
-};
-
-union gtVtxOut {
-    struct gtVtxOut_t v;
-    longlong force_structure_alignment;
-};
-
-typedef enum enum_179 gtStateOthermode_t;
-
-typedef union gtGlobState gtGlobState, *PgtGlobState;
-
-typedef struct gtGlobState_t gtGlobState_t, *PgtGlobState_t;
-
-typedef union Vp Vp, *PVp;
-
-typedef struct Vp_t Vp_t, *PVp_t;
-
-struct Vp_t {
-    short vscale[4];
-    short vtrans[4];
-};
-
-union Vp {
-    struct Vp_t vp;
-    longlong force_structure_alignment;
-};
-
-struct gtGlobState_t {
-    u16 perspNorm;
-    u16 pad0;
-    u32 flag;
-    union Gfx rdpOthermode;
-    u32 segBases[16];
-    union Vp viewport;
-    union Gfx * rdpCmds;
-};
-
-union gtGlobState {
-    struct gtGlobState_t sp;
-    longlong force_structure_alignment;
-};
-
-typedef union gtState gtState, *PgtState;
-
-typedef struct gtState_t gtState_t, *PgtState_t;
-
-typedef union Mtx Mtx, *PMtx;
-
-typedef long Mtx_t[4][4];
-
-union Mtx {
-    Mtx_t m;
-    longlong force_structure_alignment;
-};
-
-struct gtState_t {
-    u32 renderState;
-    u32 textureState;
-    u8 vtxCount;
-    u8 vtxV0;
-    u8 triCount;
-    u8 flag;
-    union Gfx * rdpCmds;
-    union Gfx rdpOthermode;
-    union Mtx transform;
-};
-
-union gtState {
-    struct gtState_t sp;
-    longlong force_structure_alignment;
-};
-
-typedef struct gtTriN gtTriN, *PgtTriN;
-
-struct gtTriN {
-    u8 v0;
-    u8 v1;
-    u8 v2;
-    u8 flag;
-};
-
-typedef struct gtStateL_t gtStateL_t, *PgtStateL_t;
-
-struct gtStateL_t {
-    u32 renderState;
-    u32 textureState;
-    u8 vtxCount;
-    u8 vtxV0;
-    u8 triCount;
-    u8 flag;
-    union Gfx * rdpCmds;
-    union Gfx rdpOthermode;
-};
-
-typedef struct gtGfx_t gtGfx_t, *PgtGfx_t;
-
-typedef union Vtx Vtx, *PVtx;
-
-typedef struct Vtx_t Vtx_t, *PVtx_t;
-
-typedef struct Vtx_tn Vtx_tn, *PVtx_tn;
-
-struct Vtx_tn {
-    short ob[3];
-    ushort flag;
-    short tc[2];
-    char n[3];
-    uchar a;
-};
-
-struct Vtx_t {
-    short ob[3];
-    ushort flag;
-    short tc[2];
-    uchar cn[4];
-};
-
-union Vtx {
-    struct Vtx_t v;
-    struct Vtx_tn n;
-    longlong force_structure_alignment;
-};
-
-struct gtGfx_t {
-    union gtGlobState * gstatep;
-    union gtState * statep;
-    union Vtx * vtxp;
-    struct gtTriN * trip;
-};
-
-typedef union gtGfx gtGfx, *PgtGfx;
-
-union gtGfx {
-    struct gtGfx_t obj;
-    longlong force_structure_alignment;
-};
-
-typedef union gtStateL gtStateL, *PgtStateL;
-
-union gtStateL {
-    struct gtStateL_t sp;
-    longlong force_structure_alignment;
-};
-
-#define GT_CULL_BACK 8192
-
-#define GT_ZBUFFER 1
-
-#define GT_DUMPTURBO_HANGAFTER 64
-
-#define GT_FLAG_NO_XFM 2
-
-#define GT_FLAG_NOMTX 1
-
-#define GT_TEXTURE 2
-
-#define GT_DUMPTURBO_NOTEXTURES 128
-
-#define GT_FLAG_XFM_ONLY 4
-
-#define GT_SHADING_SMOOTH 512
-
-typedef struct astruct astruct, *Pastruct;
-
-struct astruct {
-    undefined field_0x0;
-    undefined field_0x1;
-    undefined field_0x2;
-    undefined field_0x3;
-    undefined1 txtClipW; // Created by retype action
-    undefined field_0x5;
-    undefined1 txtClipH; // Created by retype action
-    undefined field_0x7;
-    undefined field_0x8;
-    undefined field_0x9;
-    undefined field_0xa;
-    undefined field_0xb;
-    undefined field_0xc;
-    undefined field_0xd;
-    undefined field_0xe;
-    undefined field_0xf;
-    undefined1 aspect; // Created by retype action
-    undefined field_0x11;
-    undefined field_0x12;
-    undefined field_0x13;
-    undefined field_0x14;
-    undefined field_0x15;
-    undefined field_0x16;
-    undefined field_0x17;
-    undefined field_0x18;
-    undefined field_0x19;
-    undefined field_0x1a;
-    undefined field_0x1b;
-    undefined1 width; // Created by retype action
-    undefined field_0x1d;
-    undefined1 height; // Created by retype action
-    undefined field_0x1f;
-    undefined1 ulx; // Created by retype action
-    undefined field_0x21;
-    undefined1 uly; // Created by retype action
-    undefined field_0x23;
-    int field_0x24;
-};
-
-typedef struct astruct_1 astruct_1, *Pastruct_1;
-
-struct astruct_1 {
-    undefined field_0x0;
-    undefined field_0x1;
-    undefined field_0x2;
-    undefined field_0x3;
-    undefined field_0x4;
-    undefined field_0x5;
-    undefined field_0x6;
-    undefined field_0x7;
-    undefined field_0x8;
-    undefined field_0x9;
-    undefined field_0xa;
-    undefined field_0xb;
-    undefined field_0xc;
-    undefined field_0xd;
-    undefined field_0xe;
-    undefined field_0xf;
-    undefined field_0x10;
-    undefined field_0x11;
-    undefined field_0x12;
-    undefined field_0x13;
-    undefined field_0x14;
-    undefined field_0x15;
-    undefined field_0x16;
-    undefined field_0x17;
-    undefined field_0x18;
-    undefined field_0x19;
-    undefined field_0x1a;
-    undefined field_0x1b;
-    undefined field_0x1c;
-    undefined field_0x1d;
-    undefined field_0x1e;
-    undefined field_0x1f;
-    undefined field_0x20;
-    undefined field_0x21;
-    undefined field_0x22;
-    undefined field_0x23;
-    undefined field_0x24;
-    undefined field_0x25;
-    undefined field_0x26;
-    undefined field_0x27;
-    undefined field_0x28;
-    undefined field_0x29;
-    undefined field_0x2a;
-    undefined field_0x2b;
-    undefined field_0x2c;
-    undefined field_0x2d;
-    undefined field_0x2e;
-    undefined field_0x2f;
-    undefined field_0x30;
-    undefined field_0x31;
-    undefined field_0x32;
-    undefined field_0x33;
-    undefined field_0x34;
-    undefined field_0x35;
-    undefined field_0x36;
-    undefined field_0x37;
-    undefined field_0x38;
-    undefined field_0x39;
-    undefined field_0x3a;
-    undefined field_0x3b;
-    undefined field_0x3c;
-    undefined field_0x3d;
-    undefined field_0x3e;
-    undefined field_0x3f;
-    undefined field_0x40;
-    undefined field_0x41;
-    undefined field_0x42;
-    undefined field_0x43;
-    undefined field_0x44;
-    undefined field_0x45;
-    undefined field_0x46;
-    undefined field_0x47;
-    undefined field_0x48;
-    undefined field_0x49;
-    undefined field_0x4a;
-    undefined field_0x4b;
-    undefined field_0x4c;
-    undefined field_0x4d;
-    undefined field_0x4e;
-    undefined field_0x4f;
-    undefined field_0x50;
-    undefined field_0x51;
-    undefined field_0x52;
-    undefined field_0x53;
-    undefined field_0x54;
-    undefined field_0x55;
-    undefined field_0x56;
-    undefined field_0x57;
-    undefined field_0x58;
-    undefined field_0x59;
-    undefined field_0x5a;
-    undefined field_0x5b;
-    undefined field_0x5c;
-    undefined field_0x5d;
-    undefined field_0x5e;
-    undefined field_0x5f;
-    undefined field_0x60;
-    undefined field_0x61;
-    undefined field_0x62;
-    undefined field_0x63;
-    undefined field_0x64;
-    undefined field_0x65;
-    undefined field_0x66;
-    undefined field_0x67;
-    undefined field_0x68;
-    undefined field_0x69;
-    undefined field_0x6a;
-    undefined field_0x6b;
-    undefined field_0x6c;
-    undefined field_0x6d;
-    undefined field_0x6e;
-    undefined field_0x6f;
-    undefined field_0x70;
-    undefined field_0x71;
-    undefined field_0x72;
-    undefined field_0x73;
-    undefined field_0x74;
-    undefined field_0x75;
-    undefined field_0x76;
-    undefined field_0x77;
-    undefined field_0x78;
-    undefined field_0x79;
-    undefined field_0x7a;
-    undefined field_0x7b;
-    undefined field_0x7c;
-    undefined field_0x7d;
-    undefined field_0x7e;
-    undefined field_0x7f;
-    undefined field_0x80;
-    undefined field_0x81;
-    undefined field_0x82;
-    undefined field_0x83;
-    undefined field_0x84;
-    undefined field_0x85;
-    undefined field_0x86;
-    undefined field_0x87;
-    undefined field_0x88;
-    undefined field_0x89;
-    undefined field_0x8a;
-    undefined field_0x8b;
-    undefined field_0x8c;
-    undefined field_0x8d;
-    undefined field_0x8e;
-    undefined field_0x8f;
-    undefined field_0x90;
-    undefined field_0x91;
-    undefined field_0x92;
-    undefined field_0x93;
-    undefined field_0x94;
-    undefined field_0x95;
-    undefined field_0x96;
-    undefined field_0x97;
-    undefined field_0x98;
-    undefined field_0x99;
-    undefined field_0x9a;
-    undefined field_0x9b;
-    undefined field_0x9c;
-    undefined field_0x9d;
-    undefined field_0x9e;
-    undefined field_0x9f;
-    undefined field_0xa0;
-    undefined field_0xa1;
-    undefined field_0xa2;
-    undefined field_0xa3;
-    undefined field_0xa4;
-    undefined field_0xa5;
-    undefined field_0xa6;
-    undefined field_0xa7;
-    undefined field_0xa8;
-    undefined field_0xa9;
-    undefined field_0xaa;
-    undefined field_0xab;
-    undefined field_0xac;
-    undefined field_0xad;
-    undefined field_0xae;
-    undefined field_0xaf;
-    undefined field_0xb0;
-    undefined field_0xb1;
-    undefined field_0xb2;
-    undefined field_0xb3;
-    undefined field_0xb4;
-    undefined field_0xb5;
-    undefined field_0xb6;
-    undefined field_0xb7;
-    undefined field_0xb8;
-    undefined field_0xb9;
-    undefined field_0xba;
-    undefined field_0xbb;
-    undefined field_0xbc;
-    undefined field_0xbd;
-    undefined field_0xbe;
-    undefined field_0xbf;
-    undefined field_0xc0;
-    undefined field_0xc1;
-    undefined field_0xc2;
-    undefined field_0xc3;
-    undefined field_0xc4;
-    undefined field_0xc5;
-    undefined field_0xc6;
-    undefined field_0xc7;
-    undefined field_0xc8;
-    undefined field_0xc9;
-    undefined field_0xca;
-    undefined field_0xcb;
-    undefined field_0xcc;
-    undefined field_0xcd;
-    undefined field_0xce;
-    undefined field_0xcf;
-    undefined field_0xd0;
-    undefined field_0xd1;
-    undefined field_0xd2;
-    undefined field_0xd3;
-    undefined field_0xd4;
-    undefined field_0xd5;
-    undefined field_0xd6;
-    undefined field_0xd7;
-    undefined field_0xd8;
-    undefined field_0xd9;
-    undefined field_0xda;
-    undefined field_0xdb;
-    undefined field_0xdc;
-    undefined field_0xdd;
-    undefined field_0xde;
-    undefined field_0xdf;
-    undefined field_0xe0;
-    undefined field_0xe1;
-    undefined field_0xe2;
-    undefined field_0xe3;
-    undefined field_0xe4;
-    undefined field_0xe5;
-    undefined field_0xe6;
-    undefined field_0xe7;
-    undefined field_0xe8;
-    undefined field_0xe9;
-    undefined field_0xea;
-    undefined field_0xeb;
-    undefined field_0xec;
-    undefined field_0xed;
-    undefined field_0xee;
-    undefined field_0xef;
-    undefined field_0xf0;
-    undefined field_0xf1;
-    undefined field_0xf2;
-    undefined field_0xf3;
-    undefined field_0xf4;
-    undefined field_0xf5;
-    undefined field_0xf6;
-    undefined field_0xf7;
-    undefined field_0xf8;
-    undefined field_0xf9;
-    undefined field_0xfa;
-    undefined field_0xfb;
-    undefined field_0xfc;
-    undefined field_0xfd;
-    undefined field_0xfe;
-    undefined field_0xff;
-    undefined field_0x100;
-    undefined field_0x101;
-    undefined field_0x102;
-    undefined field_0x103;
-    undefined field_0x104;
-    undefined field_0x105;
-    undefined field_0x106;
-    undefined field_0x107;
-    undefined field_0x108;
-    undefined field_0x109;
-    undefined field_0x10a;
-    undefined field_0x10b;
-    undefined field_0x10c;
-    undefined field_0x10d;
-    undefined field_0x10e;
-    undefined field_0x10f;
-    undefined field_0x110;
-    undefined field_0x111;
-    undefined field_0x112;
-    undefined field_0x113;
-    undefined field_0x114;
-    undefined field_0x115;
-    undefined field_0x116;
-    undefined field_0x117;
-    undefined field_0x118;
-    undefined field_0x119;
-    undefined field_0x11a;
-    undefined field_0x11b;
-    undefined field_0x11c;
-    undefined field_0x11d;
-    undefined field_0x11e;
-    undefined field_0x11f;
-    undefined field_0x120;
-    undefined field_0x121;
-    undefined field_0x122;
-    undefined field_0x123;
-    undefined field_0x124;
-    undefined field_0x125;
-    undefined field_0x126;
-    undefined field_0x127;
-    undefined field_0x128;
-    undefined field_0x129;
-    undefined field_0x12a;
-    undefined field_0x12b;
-    undefined field_0x12c;
-    undefined field_0x12d;
-    undefined field_0x12e;
-    undefined field_0x12f;
-    undefined field_0x130;
-    undefined field_0x131;
-    undefined field_0x132;
-    undefined field_0x133;
-    undefined field_0x134;
-    undefined field_0x135;
-    undefined field_0x136;
-    undefined field_0x137;
-    undefined field_0x138;
-    undefined field_0x139;
-    undefined field_0x13a;
-    undefined field_0x13b;
-    undefined field_0x13c;
-    undefined field_0x13d;
-    undefined field_0x13e;
-    undefined field_0x13f;
-    undefined field_0x140;
-    undefined field_0x141;
-    undefined field_0x142;
-    undefined field_0x143;
-    undefined field_0x144;
-    undefined field_0x145;
-    undefined field_0x146;
-    undefined field_0x147;
-    undefined field_0x148;
-    undefined field_0x149;
-    undefined field_0x14a;
-    undefined field_0x14b;
-    undefined field_0x14c;
-    undefined field_0x14d;
-    undefined field_0x14e;
-    undefined field_0x14f;
-    undefined field_0x150;
-    undefined field_0x151;
-    undefined field_0x152;
-    undefined field_0x153;
-    undefined field_0x154;
-    undefined field_0x155;
-    undefined field_0x156;
-    undefined field_0x157;
-    undefined field_0x158;
-    undefined field_0x159;
-    undefined field_0x15a;
-    undefined field_0x15b;
-    undefined field_0x15c;
-    undefined field_0x15d;
-    undefined field_0x15e;
-    undefined field_0x15f;
-    undefined field_0x160;
-    undefined field_0x161;
-    undefined field_0x162;
-    undefined field_0x163;
-    undefined field_0x164;
-    undefined field_0x165;
-    undefined field_0x166;
-    undefined field_0x167;
-    undefined field_0x168;
-    undefined field_0x169;
-    undefined field_0x16a;
-    undefined field_0x16b;
-    undefined field_0x16c;
-    undefined field_0x16d;
-    undefined field_0x16e;
-    undefined field_0x16f;
-    undefined field_0x170;
-    undefined field_0x171;
-    undefined field_0x172;
-    undefined field_0x173;
-    undefined field_0x174;
-    undefined field_0x175;
-    undefined field_0x176;
-    undefined field_0x177;
-    undefined field_0x178;
-    undefined field_0x179;
-    undefined field_0x17a;
-    undefined field_0x17b;
-    undefined field_0x17c;
-    undefined field_0x17d;
-    undefined field_0x17e;
-    undefined field_0x17f;
-    undefined field_0x180;
-    undefined field_0x181;
-    undefined field_0x182;
-    undefined field_0x183;
-    undefined field_0x184;
-    undefined field_0x185;
-    undefined field_0x186;
-    undefined field_0x187;
-    undefined field_0x188;
-    undefined field_0x189;
-    undefined field_0x18a;
-    undefined field_0x18b;
-    undefined field_0x18c;
-    undefined field_0x18d;
-    undefined field_0x18e;
-    undefined field_0x18f;
-    undefined field_0x190;
-    undefined field_0x191;
-    undefined field_0x192;
-    undefined field_0x193;
-    undefined field_0x194;
-    undefined field_0x195;
-    undefined field_0x196;
-    undefined field_0x197;
-    undefined field_0x198;
-    undefined field_0x199;
-    undefined field_0x19a;
-    undefined field_0x19b;
-    undefined field_0x19c;
-    undefined field_0x19d;
-    undefined field_0x19e;
-    undefined field_0x19f;
-    undefined field_0x1a0;
-    undefined field_0x1a1;
-    undefined field_0x1a2;
-    undefined field_0x1a3;
-    undefined field_0x1a4;
-    undefined field_0x1a5;
-    undefined field_0x1a6;
-    undefined field_0x1a7;
-    undefined field_0x1a8;
-    undefined field_0x1a9;
-    undefined field_0x1aa;
-    undefined field_0x1ab;
-    undefined field_0x1ac;
-    undefined field_0x1ad;
-    undefined field_0x1ae;
-    undefined field_0x1af;
-    undefined field_0x1b0;
-    undefined field_0x1b1;
-    undefined field_0x1b2;
-    undefined field_0x1b3;
-    undefined field_0x1b4;
-    undefined field_0x1b5;
-    undefined field_0x1b6;
-    undefined field_0x1b7;
-    undefined field_0x1b8;
-    undefined field_0x1b9;
-    undefined field_0x1ba;
-    undefined field_0x1bb;
-    undefined field_0x1bc;
-    undefined field_0x1bd;
-    undefined field_0x1be;
-    undefined field_0x1bf;
-    undefined field_0x1c0;
-    undefined field_0x1c1;
-    undefined field_0x1c2;
-    undefined field_0x1c3;
-    undefined field_0x1c4;
-    undefined field_0x1c5;
-    undefined field_0x1c6;
-    undefined field_0x1c7;
-    undefined field_0x1c8;
-    undefined field_0x1c9;
-    undefined field_0x1ca;
-    undefined field_0x1cb;
-    undefined field_0x1cc;
-    undefined field_0x1cd;
-    undefined field_0x1ce;
-    undefined field_0x1cf;
-    undefined field_0x1d0;
-    undefined field_0x1d1;
-    undefined field_0x1d2;
-    undefined field_0x1d3;
-    undefined field_0x1d4;
-    undefined field_0x1d5;
-    undefined field_0x1d6;
-    undefined field_0x1d7;
-    undefined field_0x1d8;
-    undefined field_0x1d9;
-    undefined field_0x1da;
-    undefined field_0x1db;
-    undefined field_0x1dc;
-    undefined field_0x1dd;
-    undefined field_0x1de;
-    undefined field_0x1df;
-    undefined field_0x1e0;
-    undefined field_0x1e1;
-    undefined field_0x1e2;
-    undefined field_0x1e3;
-    undefined field_0x1e4;
-    undefined field_0x1e5;
-    undefined field_0x1e6;
-    undefined field_0x1e7;
-    undefined field_0x1e8;
-    undefined field_0x1e9;
-    undefined field_0x1ea;
-    undefined field_0x1eb;
-    undefined field_0x1ec;
-    undefined field_0x1ed;
-    undefined field_0x1ee;
-    undefined field_0x1ef;
-    undefined field_0x1f0;
-    undefined field_0x1f1;
-    undefined field_0x1f2;
-    undefined field_0x1f3;
-    undefined field_0x1f4;
-    undefined field_0x1f5;
-    undefined field_0x1f6;
-    undefined field_0x1f7;
-    undefined field_0x1f8;
-    undefined field_0x1f9;
-    undefined field_0x1fa;
-    undefined field_0x1fb;
-    undefined field_0x1fc;
-    undefined field_0x1fd;
-    undefined field_0x1fe;
-    undefined field_0x1ff;
-    undefined field_0x200;
-    undefined field_0x201;
-    undefined field_0x202;
-    undefined field_0x203;
-    undefined field_0x204;
-    undefined field_0x205;
-    undefined field_0x206;
-    undefined field_0x207;
-    undefined field_0x208;
-    undefined field_0x209;
-    undefined field_0x20a;
-    undefined field_0x20b;
-    undefined field_0x20c;
-    undefined field_0x20d;
-    undefined field_0x20e;
-    undefined field_0x20f;
-    undefined field_0x210;
-    undefined field_0x211;
-    undefined field_0x212;
-    undefined field_0x213;
-    undefined field_0x214;
-    undefined field_0x215;
-    undefined field_0x216;
-    undefined field_0x217;
-    undefined field_0x218;
-    undefined field_0x219;
-    undefined field_0x21a;
-    undefined field_0x21b;
-    undefined field_0x21c;
-    undefined field_0x21d;
-    undefined field_0x21e;
-    undefined field_0x21f;
-    undefined field_0x220;
-    undefined field_0x221;
-    undefined field_0x222;
-    undefined field_0x223;
-    undefined field_0x224;
-    undefined field_0x225;
-    undefined field_0x226;
-    undefined field_0x227;
-    undefined field_0x228;
-    undefined field_0x229;
-    undefined field_0x22a;
-    undefined field_0x22b;
-    undefined field_0x22c;
-    undefined field_0x22d;
-    undefined field_0x22e;
-    undefined field_0x22f;
-    undefined field_0x230;
-    undefined field_0x231;
-    undefined field_0x232;
-    undefined field_0x233;
-    undefined field_0x234;
-    undefined field_0x235;
-    undefined field_0x236;
-    undefined field_0x237;
-    undefined field_0x238;
-    undefined field_0x239;
-    undefined field_0x23a;
-    undefined field_0x23b;
-    undefined field_0x23c;
-    undefined field_0x23d;
-    undefined field_0x23e;
-    undefined field_0x23f;
-    undefined field_0x240;
-    undefined field_0x241;
-    undefined field_0x242;
-    undefined field_0x243;
-    undefined field_0x244;
-    undefined field_0x245;
-    undefined field_0x246;
-    undefined field_0x247;
-    undefined field_0x248;
-    undefined field_0x249;
-    undefined field_0x24a;
-    undefined field_0x24b;
-    undefined field_0x24c;
-    undefined field_0x24d;
-    undefined field_0x24e;
-    undefined field_0x24f;
-    undefined field_0x250;
-    undefined field_0x251;
-    undefined field_0x252;
-    undefined field_0x253;
-    undefined field_0x254;
-    undefined field_0x255;
-    undefined field_0x256;
-    undefined field_0x257;
-    undefined field_0x258;
-    undefined field_0x259;
-    undefined field_0x25a;
-    undefined field_0x25b;
-    undefined field_0x25c;
-    undefined field_0x25d;
-    undefined field_0x25e;
-    undefined field_0x25f;
-    undefined field_0x260;
-    undefined field_0x261;
-    undefined field_0x262;
-    undefined field_0x263;
-    undefined field_0x264;
-    undefined field_0x265;
-    undefined field_0x266;
-    undefined field_0x267;
-    undefined field_0x268;
-    undefined field_0x269;
-    undefined field_0x26a;
-    undefined field_0x26b;
-    undefined field_0x26c;
-    undefined field_0x26d;
-    undefined field_0x26e;
-    undefined field_0x26f;
-    undefined field_0x270;
-    undefined field_0x271;
-    undefined field_0x272;
-    undefined field_0x273;
-    undefined field_0x274;
-    undefined field_0x275;
-    undefined field_0x276;
-    undefined field_0x277;
-    undefined field_0x278;
-    undefined field_0x279;
-    undefined field_0x27a;
-    undefined field_0x27b;
-    undefined field_0x27c;
-    undefined field_0x27d;
-    undefined field_0x27e;
-    undefined field_0x27f;
-    undefined field_0x280;
-    undefined field_0x281;
-    undefined field_0x282;
-    undefined field_0x283;
-    undefined field_0x284;
-    undefined field_0x285;
-    undefined field_0x286;
-    undefined field_0x287;
-    undefined field_0x288;
-    undefined field_0x289;
-    undefined field_0x28a;
-    undefined field_0x28b;
-    undefined field_0x28c;
-    undefined field_0x28d;
-    undefined field_0x28e;
-    undefined field_0x28f;
-    undefined field_0x290;
-    undefined field_0x291;
-    undefined field_0x292;
-    undefined field_0x293;
-    undefined field_0x294;
-    undefined field_0x295;
-    undefined field_0x296;
-    undefined field_0x297;
-    undefined field_0x298;
-    undefined field_0x299;
-    undefined field_0x29a;
-    undefined field_0x29b;
-    undefined field_0x29c;
-    undefined field_0x29d;
-    undefined field_0x29e;
-    undefined field_0x29f;
-    undefined field_0x2a0;
-    undefined field_0x2a1;
-    undefined field_0x2a2;
-    undefined field_0x2a3;
-    undefined field_0x2a4;
-    undefined field_0x2a5;
-    undefined field_0x2a6;
-    undefined field_0x2a7;
-    undefined field_0x2a8;
-    undefined field_0x2a9;
-    undefined field_0x2aa;
-    undefined field_0x2ab;
-    undefined field_0x2ac;
-    undefined field_0x2ad;
-    undefined field_0x2ae;
-    undefined field_0x2af;
-    undefined field_0x2b0;
-    undefined field_0x2b1;
-    undefined field_0x2b2;
-    undefined field_0x2b3;
-    undefined field_0x2b4;
-    undefined field_0x2b5;
-    undefined field_0x2b6;
-    undefined field_0x2b7;
-    undefined field_0x2b8;
-    undefined field_0x2b9;
-    undefined field_0x2ba;
-    undefined field_0x2bb;
-    undefined field_0x2bc;
-    undefined field_0x2bd;
-    undefined field_0x2be;
-    undefined field_0x2bf;
-    undefined field_0x2c0;
-    undefined field_0x2c1;
-    undefined field_0x2c2;
-    undefined field_0x2c3;
-    undefined field_0x2c4;
-    undefined field_0x2c5;
-    undefined field_0x2c6;
-    undefined field_0x2c7;
-    undefined field_0x2c8;
-    undefined field_0x2c9;
-    undefined field_0x2ca;
-    undefined field_0x2cb;
-    undefined field_0x2cc;
-    undefined field_0x2cd;
-    undefined field_0x2ce;
-    undefined field_0x2cf;
-    undefined field_0x2d0;
-    undefined field_0x2d1;
-    undefined field_0x2d2;
-    undefined field_0x2d3;
-    undefined field_0x2d4;
-    undefined field_0x2d5;
-    undefined field_0x2d6;
-    undefined field_0x2d7;
-    undefined field_0x2d8;
-    undefined field_0x2d9;
-    undefined field_0x2da;
-    undefined field_0x2db;
-    undefined field_0x2dc;
-    undefined field_0x2dd;
-    undefined field_0x2de;
-    undefined field_0x2df;
-    undefined field_0x2e0;
-    undefined field_0x2e1;
-    undefined field_0x2e2;
-    undefined field_0x2e3;
-    undefined field_0x2e4;
-    undefined field_0x2e5;
-    undefined field_0x2e6;
-    undefined field_0x2e7;
-    undefined field_0x2e8;
-    undefined field_0x2e9;
-    undefined field_0x2ea;
-    undefined field_0x2eb;
-    undefined field_0x2ec;
-    undefined field_0x2ed;
-    undefined field_0x2ee;
-    undefined field_0x2ef;
-    undefined field_0x2f0;
-    undefined field_0x2f1;
-    undefined field_0x2f2;
-    undefined field_0x2f3;
-    undefined field_0x2f4;
-    undefined field_0x2f5;
-    undefined field_0x2f6;
-    undefined field_0x2f7;
-    undefined field_0x2f8;
-    undefined field_0x2f9;
-    undefined field_0x2fa;
-    undefined field_0x2fb;
-    undefined field_0x2fc;
-    undefined field_0x2fd;
-    undefined field_0x2fe;
-    undefined field_0x2ff;
-    undefined field_0x300;
-    undefined field_0x301;
-    undefined field_0x302;
-    undefined field_0x303;
-    undefined field_0x304;
-    undefined field_0x305;
-    undefined field_0x306;
-    undefined field_0x307;
-    undefined field_0x308;
-    undefined field_0x309;
-    undefined field_0x30a;
-    undefined field_0x30b;
-    undefined field_0x30c;
-    undefined field_0x30d;
-    undefined field_0x30e;
-    undefined field_0x30f;
-    undefined field_0x310;
-    undefined field_0x311;
-    undefined field_0x312;
-    undefined field_0x313;
-    undefined field_0x314;
-    undefined field_0x315;
-    undefined field_0x316;
-    undefined field_0x317;
-    undefined field_0x318;
-    undefined field_0x319;
-    undefined field_0x31a;
-    undefined field_0x31b;
-    undefined field_0x31c;
-    undefined field_0x31d;
-    undefined field_0x31e;
-    undefined field_0x31f;
-    undefined field_0x320;
-    undefined field_0x321;
-    undefined field_0x322;
-    undefined field_0x323;
-    undefined field_0x324;
-    undefined field_0x325;
-    undefined field_0x326;
-    undefined field_0x327;
-    undefined field_0x328;
-    undefined field_0x329;
-    undefined field_0x32a;
-    undefined field_0x32b;
-    undefined field_0x32c;
-    undefined field_0x32d;
-    undefined field_0x32e;
-    undefined field_0x32f;
-    undefined field_0x330;
-    undefined field_0x331;
-    undefined field_0x332;
-    undefined field_0x333;
-    undefined field_0x334;
-    undefined field_0x335;
-    undefined field_0x336;
-    undefined field_0x337;
-    undefined field_0x338;
-    undefined field_0x339;
-    undefined field_0x33a;
-    undefined field_0x33b;
-    undefined field_0x33c;
-    undefined field_0x33d;
-    undefined field_0x33e;
-    undefined field_0x33f;
-    undefined field_0x340;
-    undefined field_0x341;
-    undefined field_0x342;
-    undefined field_0x343;
-    undefined field_0x344;
-    undefined field_0x345;
-    undefined field_0x346;
-    undefined field_0x347;
-    undefined field_0x348;
-    undefined field_0x349;
-    undefined field_0x34a;
-    undefined field_0x34b;
-    undefined field_0x34c;
-    undefined field_0x34d;
-    undefined field_0x34e;
-    undefined field_0x34f;
-    undefined field_0x350;
-    undefined field_0x351;
-    undefined field_0x352;
-    undefined field_0x353;
-    undefined field_0x354;
-    undefined field_0x355;
-    undefined field_0x356;
-    undefined field_0x357;
-    undefined field_0x358;
-    undefined field_0x359;
-    undefined field_0x35a;
-    undefined field_0x35b;
-    undefined field_0x35c;
-    undefined field_0x35d;
-    undefined field_0x35e;
-    undefined field_0x35f;
-    undefined field_0x360;
-    undefined field_0x361;
-    undefined field_0x362;
-    undefined field_0x363;
-    undefined field_0x364;
-    undefined field_0x365;
-    undefined field_0x366;
-    undefined field_0x367;
-    undefined field_0x368;
-    undefined field_0x369;
-    undefined field_0x36a;
-    undefined field_0x36b;
-    undefined field_0x36c;
-    undefined field_0x36d;
-    undefined field_0x36e;
-    undefined field_0x36f;
-    undefined field_0x370;
-    undefined field_0x371;
-    undefined field_0x372;
-    undefined field_0x373;
-    undefined field_0x374;
-    undefined field_0x375;
-    undefined field_0x376;
-    undefined field_0x377;
-    undefined field_0x378;
-    undefined field_0x379;
-    undefined field_0x37a;
-    undefined field_0x37b;
-    undefined field_0x37c;
-    undefined field_0x37d;
-    undefined field_0x37e;
-    undefined field_0x37f;
-    undefined field_0x380;
-    undefined field_0x381;
-    undefined field_0x382;
-    undefined field_0x383;
-    undefined field_0x384;
-    undefined field_0x385;
-    undefined field_0x386;
-    undefined field_0x387;
-    undefined field_0x388;
-    undefined field_0x389;
-    undefined field_0x38a;
-    undefined field_0x38b;
-    undefined field_0x38c;
-    undefined field_0x38d;
-    undefined field_0x38e;
-    undefined field_0x38f;
-    undefined field_0x390;
-    undefined field_0x391;
-    undefined field_0x392;
-    undefined field_0x393;
-    undefined field_0x394;
-    undefined field_0x395;
-    undefined field_0x396;
-    undefined field_0x397;
-    undefined field_0x398;
-    undefined field_0x399;
-    undefined field_0x39a;
-    undefined field_0x39b;
-    undefined field_0x39c;
-    undefined field_0x39d;
-    undefined field_0x39e;
-    undefined field_0x39f;
-    undefined field_0x3a0;
-    undefined field_0x3a1;
-    undefined field_0x3a2;
-    undefined field_0x3a3;
-    undefined field_0x3a4;
-    undefined field_0x3a5;
-    undefined field_0x3a6;
-    undefined field_0x3a7;
-    undefined field_0x3a8;
-    undefined field_0x3a9;
-    undefined field_0x3aa;
-    undefined field_0x3ab;
-    undefined field_0x3ac;
-    undefined field_0x3ad;
-    undefined field_0x3ae;
-    undefined field_0x3af;
-    undefined field_0x3b0;
-    undefined field_0x3b1;
-    undefined field_0x3b2;
-    undefined field_0x3b3;
-    undefined field_0x3b4;
-    undefined field_0x3b5;
-    undefined field_0x3b6;
-    undefined field_0x3b7;
-    undefined field_0x3b8;
-    undefined field_0x3b9;
-    undefined field_0x3ba;
-    undefined field_0x3bb;
-    undefined field_0x3bc;
-    undefined field_0x3bd;
-    undefined field_0x3be;
-    undefined field_0x3bf;
-    undefined field_0x3c0;
-    undefined field_0x3c1;
-    undefined field_0x3c2;
-    undefined field_0x3c3;
-    undefined field_0x3c4;
-    undefined field_0x3c5;
-    undefined field_0x3c6;
-    undefined field_0x3c7;
-    undefined field_0x3c8;
-    undefined field_0x3c9;
-    undefined field_0x3ca;
-    undefined field_0x3cb;
-    undefined field_0x3cc;
-    undefined field_0x3cd;
-    undefined field_0x3ce;
-    undefined field_0x3cf;
-    undefined field_0x3d0;
-    undefined field_0x3d1;
-    undefined field_0x3d2;
-    undefined field_0x3d3;
-    undefined field_0x3d4;
-    undefined field_0x3d5;
-    undefined field_0x3d6;
-    undefined field_0x3d7;
-    undefined field_0x3d8;
-    undefined field_0x3d9;
-    undefined field_0x3da;
-    undefined field_0x3db;
-    undefined field_0x3dc;
-    undefined field_0x3dd;
-    undefined field_0x3de;
-    undefined field_0x3df;
-    undefined field_0x3e0;
-    undefined field_0x3e1;
-    undefined field_0x3e2;
-    undefined field_0x3e3;
-    undefined field_0x3e4;
-    undefined field_0x3e5;
-    undefined field_0x3e6;
-    undefined field_0x3e7;
-    undefined field_0x3e8;
-    undefined field_0x3e9;
-    undefined field_0x3ea;
-    undefined field_0x3eb;
-    undefined field_0x3ec;
-    undefined field_0x3ed;
-    undefined field_0x3ee;
-    undefined field_0x3ef;
-    undefined field_0x3f0;
-    undefined field_0x3f1;
-    undefined field_0x3f2;
-    undefined field_0x3f3;
-    undefined field_0x3f4;
-    undefined field_0x3f5;
-    undefined field_0x3f6;
-    undefined field_0x3f7;
-    undefined field_0x3f8;
-    undefined field_0x3f9;
-    undefined field_0x3fa;
-    undefined field_0x3fb;
-    undefined field_0x3fc;
-    undefined field_0x3fd;
-    undefined field_0x3fe;
-    undefined field_0x3ff;
-    undefined field_0x400;
-    undefined field_0x401;
-    undefined field_0x402;
-    undefined field_0x403;
-    undefined field_0x404;
-    undefined field_0x405;
-    undefined field_0x406;
-    undefined field_0x407;
-    undefined field_0x408;
-    undefined field_0x409;
-    undefined field_0x40a;
-    undefined field_0x40b;
-    undefined field_0x40c;
-    undefined field_0x40d;
-    undefined field_0x40e;
-    undefined field_0x40f;
-    undefined field_0x410;
-    undefined field_0x411;
-    undefined field_0x412;
-    undefined field_0x413;
-    undefined field_0x414;
-    undefined field_0x415;
-    undefined field_0x416;
-    undefined field_0x417;
-    undefined field_0x418;
-    undefined field_0x419;
-    undefined field_0x41a;
-    undefined field_0x41b;
-    undefined field_0x41c;
-    undefined field_0x41d;
-    undefined field_0x41e;
-    undefined field_0x41f;
-    undefined field_0x420;
-    undefined field_0x421;
-    undefined field_0x422;
-    undefined field_0x423;
-    undefined field_0x424;
-    undefined field_0x425;
-    undefined field_0x426;
-    undefined field_0x427;
-    undefined field_0x428;
-    undefined field_0x429;
-    undefined field_0x42a;
-    undefined field_0x42b;
-    undefined field_0x42c;
-    undefined field_0x42d;
-    undefined field_0x42e;
-    undefined field_0x42f;
-    undefined field_0x430;
-    undefined field_0x431;
-    undefined field_0x432;
-    undefined field_0x433;
-    undefined field_0x434;
-    undefined field_0x435;
-    undefined field_0x436;
-    undefined field_0x437;
-    undefined field_0x438;
-    undefined field_0x439;
-    undefined field_0x43a;
-    undefined field_0x43b;
-    undefined field_0x43c;
-    undefined field_0x43d;
-    undefined field_0x43e;
-    undefined field_0x43f;
-    undefined field_0x440;
-    undefined field_0x441;
-    undefined field_0x442;
-    undefined field_0x443;
-    undefined field_0x444;
-    undefined field_0x445;
-    undefined field_0x446;
-    undefined field_0x447;
-    undefined field_0x448;
-    undefined field_0x449;
-    undefined field_0x44a;
-    undefined field_0x44b;
-    undefined field_0x44c;
-    undefined field_0x44d;
-    undefined field_0x44e;
-    undefined field_0x44f;
-    undefined field_0x450;
-    undefined field_0x451;
-    undefined field_0x452;
-    undefined field_0x453;
-    undefined field_0x454;
-    undefined field_0x455;
-    undefined field_0x456;
-    undefined field_0x457;
-    undefined field_0x458;
-    undefined field_0x459;
-    undefined field_0x45a;
-    undefined field_0x45b;
-    undefined field_0x45c;
-    undefined field_0x45d;
-    undefined field_0x45e;
-    undefined field_0x45f;
-    undefined field_0x460;
-    undefined field_0x461;
-    undefined field_0x462;
-    undefined field_0x463;
-    undefined field_0x464;
-    undefined field_0x465;
-    undefined field_0x466;
-    undefined field_0x467;
-    undefined field_0x468;
-    undefined field_0x469;
-    undefined field_0x46a;
-    undefined field_0x46b;
-    undefined field_0x46c;
-    undefined field_0x46d;
-    undefined field_0x46e;
-    undefined field_0x46f;
-    undefined field_0x470;
-    undefined field_0x471;
-    undefined field_0x472;
-    undefined field_0x473;
-    undefined field_0x474;
-    undefined field_0x475;
-    undefined field_0x476;
-    undefined field_0x477;
-    undefined field_0x478;
-    undefined field_0x479;
-    undefined field_0x47a;
-    undefined field_0x47b;
-    undefined field_0x47c;
-    undefined field_0x47d;
-    undefined field_0x47e;
-    undefined field_0x47f;
-    undefined field_0x480;
-    undefined field_0x481;
-    undefined field_0x482;
-    undefined field_0x483;
-    undefined field_0x484;
-    undefined field_0x485;
-    undefined field_0x486;
-    undefined field_0x487;
-    undefined field_0x488;
-    undefined field_0x489;
-    undefined field_0x48a;
-    undefined field_0x48b;
-    undefined field_0x48c;
-    undefined field_0x48d;
-    undefined field_0x48e;
-    undefined field_0x48f;
-    undefined field_0x490;
-    undefined field_0x491;
-    undefined field_0x492;
-    undefined field_0x493;
-    undefined field_0x494;
-    undefined field_0x495;
-    undefined field_0x496;
-    undefined field_0x497;
-    undefined field_0x498;
-    undefined field_0x499;
-    undefined field_0x49a;
-    undefined field_0x49b;
-    undefined field_0x49c;
-    undefined field_0x49d;
-    undefined field_0x49e;
-    undefined field_0x49f;
-    undefined field_0x4a0;
-    undefined field_0x4a1;
-    undefined field_0x4a2;
-    undefined field_0x4a3;
-    undefined field_0x4a4;
-    undefined field_0x4a5;
-    undefined field_0x4a6;
-    undefined field_0x4a7;
-    undefined field_0x4a8;
-    undefined field_0x4a9;
-    undefined field_0x4aa;
-    undefined field_0x4ab;
-    undefined field_0x4ac;
-    undefined field_0x4ad;
-    undefined field_0x4ae;
-    undefined field_0x4af;
-    undefined field_0x4b0;
-    undefined field_0x4b1;
-    undefined field_0x4b2;
-    undefined field_0x4b3;
-    undefined field_0x4b4;
-    undefined field_0x4b5;
-    undefined field_0x4b6;
-    undefined field_0x4b7;
-    undefined field_0x4b8;
-    undefined field_0x4b9;
-    undefined field_0x4ba;
-    undefined field_0x4bb;
-    undefined field_0x4bc;
-    undefined field_0x4bd;
-    undefined field_0x4be;
-    undefined field_0x4bf;
-    undefined field_0x4c0;
-    undefined field_0x4c1;
-    undefined field_0x4c2;
-    undefined field_0x4c3;
-    undefined field_0x4c4;
-    undefined field_0x4c5;
-    undefined field_0x4c6;
-    undefined field_0x4c7;
-    undefined field_0x4c8;
-    undefined field_0x4c9;
-    undefined field_0x4ca;
-    undefined field_0x4cb;
-    undefined field_0x4cc;
-    undefined field_0x4cd;
-    undefined field_0x4ce;
-    undefined field_0x4cf;
-    undefined field_0x4d0;
-    undefined field_0x4d1;
-    undefined field_0x4d2;
-    undefined field_0x4d3;
-    undefined field_0x4d4;
-    undefined field_0x4d5;
-    undefined field_0x4d6;
-    undefined field_0x4d7;
-    undefined field_0x4d8;
-    undefined field_0x4d9;
-    undefined field_0x4da;
-    undefined field_0x4db;
-    undefined field_0x4dc;
-    undefined field_0x4dd;
-    undefined field_0x4de;
-    undefined field_0x4df;
-    undefined field_0x4e0;
-    undefined field_0x4e1;
-    undefined field_0x4e2;
-    undefined field_0x4e3;
-    undefined field_0x4e4;
-    undefined field_0x4e5;
-    undefined field_0x4e6;
-    undefined field_0x4e7;
-    undefined field_0x4e8;
-    undefined field_0x4e9;
-    undefined field_0x4ea;
-    undefined field_0x4eb;
-    undefined field_0x4ec;
-    undefined field_0x4ed;
-    undefined field_0x4ee;
-    undefined field_0x4ef;
-    undefined field_0x4f0;
-    undefined field_0x4f1;
-    undefined field_0x4f2;
-    undefined field_0x4f3;
-    undefined field_0x4f4;
-    undefined field_0x4f5;
-    undefined field_0x4f6;
-    undefined field_0x4f7;
-    undefined field_0x4f8;
-    undefined field_0x4f9;
-    undefined field_0x4fa;
-    undefined field_0x4fb;
-    undefined field_0x4fc;
-    undefined field_0x4fd;
-    undefined field_0x4fe;
-    undefined field_0x4ff;
-    undefined field_0x500;
-    undefined field_0x501;
-    undefined field_0x502;
-    undefined field_0x503;
-    undefined field_0x504;
-    undefined field_0x505;
-    undefined field_0x506;
-    undefined field_0x507;
-    undefined field_0x508;
-    undefined field_0x509;
-    undefined field_0x50a;
-    undefined field_0x50b;
-    undefined field_0x50c;
-    undefined field_0x50d;
-    undefined field_0x50e;
-    undefined field_0x50f;
-    undefined field_0x510;
-    undefined field_0x511;
-    undefined field_0x512;
-    undefined field_0x513;
-    undefined field_0x514;
-    undefined field_0x515;
-    undefined field_0x516;
-    undefined field_0x517;
-    undefined field_0x518;
-    undefined field_0x519;
-    undefined field_0x51a;
-    undefined field_0x51b;
-    undefined field_0x51c;
-    undefined field_0x51d;
-    undefined field_0x51e;
-    undefined field_0x51f;
-    undefined field_0x520;
-    undefined field_0x521;
-    undefined field_0x522;
-    undefined field_0x523;
-    undefined field_0x524;
-    undefined field_0x525;
-    undefined field_0x526;
-    undefined field_0x527;
-    undefined field_0x528;
-    undefined field_0x529;
-    undefined field_0x52a;
-    undefined field_0x52b;
-    undefined field_0x52c;
-    undefined field_0x52d;
-    undefined field_0x52e;
-    undefined field_0x52f;
-    undefined field_0x530;
-    undefined field_0x531;
-    undefined field_0x532;
-    undefined field_0x533;
-    undefined field_0x534;
-    undefined field_0x535;
-    undefined field_0x536;
-    undefined field_0x537;
-    undefined field_0x538;
-    undefined field_0x539;
-    undefined field_0x53a;
-    undefined field_0x53b;
-    undefined field_0x53c;
-    undefined field_0x53d;
-    undefined field_0x53e;
-    undefined field_0x53f;
-    undefined field_0x540;
-    undefined field_0x541;
-    undefined field_0x542;
-    undefined field_0x543;
-    undefined field_0x544;
-    undefined field_0x545;
-    undefined field_0x546;
-    undefined field_0x547;
-    undefined field_0x548;
-    undefined field_0x549;
-    undefined field_0x54a;
-    undefined field_0x54b;
-    undefined field_0x54c;
-    undefined field_0x54d;
-    undefined field_0x54e;
-    undefined field_0x54f;
-    undefined field_0x550;
-    undefined field_0x551;
-    undefined field_0x552;
-    undefined field_0x553;
-    undefined field_0x554;
-    undefined field_0x555;
-    undefined field_0x556;
-    undefined field_0x557;
-    undefined field_0x558;
-    undefined field_0x559;
-    undefined field_0x55a;
-    undefined field_0x55b;
-    undefined field_0x55c;
-    undefined field_0x55d;
-    undefined field_0x55e;
-    undefined field_0x55f;
-    undefined field_0x560;
-    undefined field_0x561;
-    undefined field_0x562;
-    undefined field_0x563;
-    undefined field_0x564;
-    undefined field_0x565;
-    undefined field_0x566;
-    undefined field_0x567;
-    undefined field_0x568;
-    undefined field_0x569;
-    undefined field_0x56a;
-    undefined field_0x56b;
-    undefined field_0x56c;
-    undefined field_0x56d;
-    undefined field_0x56e;
-    undefined field_0x56f;
-    undefined field_0x570;
-    undefined field_0x571;
-    undefined field_0x572;
-    undefined field_0x573;
-    undefined field_0x574;
-    undefined field_0x575;
-    undefined field_0x576;
-    undefined field_0x577;
-    undefined field_0x578;
-    undefined field_0x579;
-    undefined field_0x57a;
-    undefined field_0x57b;
-    undefined field_0x57c;
-    undefined field_0x57d;
-    undefined field_0x57e;
-    undefined field_0x57f;
-    undefined field_0x580;
-    undefined field_0x581;
-    undefined field_0x582;
-    undefined field_0x583;
-    undefined field_0x584;
-    undefined field_0x585;
-    undefined field_0x586;
-    undefined field_0x587;
-    undefined field_0x588;
-    undefined field_0x589;
-    undefined field_0x58a;
-    undefined field_0x58b;
-    undefined field_0x58c;
-    undefined field_0x58d;
-    undefined field_0x58e;
-    undefined field_0x58f;
-    undefined field_0x590;
-    undefined field_0x591;
-    undefined field_0x592;
-    undefined field_0x593;
-    undefined field_0x594;
-    undefined field_0x595;
-    undefined field_0x596;
-    undefined field_0x597;
-    undefined field_0x598;
-    undefined field_0x599;
-    undefined field_0x59a;
-    undefined field_0x59b;
-    undefined field_0x59c;
-    undefined field_0x59d;
-    undefined field_0x59e;
-    undefined field_0x59f;
-    undefined field_0x5a0;
-    undefined field_0x5a1;
-    undefined field_0x5a2;
-    undefined field_0x5a3;
-    undefined field_0x5a4;
-    undefined field_0x5a5;
-    undefined field_0x5a6;
-    undefined field_0x5a7;
-    undefined field_0x5a8;
-    undefined field_0x5a9;
-    undefined field_0x5aa;
-    undefined field_0x5ab;
-    undefined field_0x5ac;
-    undefined field_0x5ad;
-    undefined field_0x5ae;
-    undefined field_0x5af;
-    undefined field_0x5b0;
-    undefined field_0x5b1;
-    undefined field_0x5b2;
-    undefined field_0x5b3;
-    undefined field_0x5b4;
-    undefined field_0x5b5;
-    undefined field_0x5b6;
-    undefined field_0x5b7;
-    undefined field_0x5b8;
-    undefined field_0x5b9;
-    undefined field_0x5ba;
-    undefined field_0x5bb;
-    undefined field_0x5bc;
-    undefined field_0x5bd;
-    undefined field_0x5be;
-    undefined field_0x5bf;
-    undefined field_0x5c0;
-    undefined field_0x5c1;
-    undefined field_0x5c2;
-    undefined field_0x5c3;
-    undefined field_0x5c4;
-    undefined field_0x5c5;
-    undefined field_0x5c6;
-    undefined field_0x5c7;
-    undefined field_0x5c8;
-    undefined field_0x5c9;
-    undefined field_0x5ca;
-    undefined field_0x5cb;
-    undefined field_0x5cc;
-    undefined field_0x5cd;
-    undefined field_0x5ce;
-    undefined field_0x5cf;
-    undefined field_0x5d0;
-    undefined field_0x5d1;
-    undefined field_0x5d2;
-    undefined field_0x5d3;
-    undefined field_0x5d4;
-    undefined field_0x5d5;
-    undefined field_0x5d6;
-    undefined field_0x5d7;
-    undefined field_0x5d8;
-    undefined field_0x5d9;
-    undefined field_0x5da;
-    undefined field_0x5db;
-    undefined field_0x5dc;
-    undefined field_0x5dd;
-    undefined field_0x5de;
-    undefined field_0x5df;
-    undefined field_0x5e0;
-    undefined field_0x5e1;
-    undefined field_0x5e2;
-    undefined field_0x5e3;
-    undefined field_0x5e4;
-    undefined field_0x5e5;
-    undefined field_0x5e6;
-    undefined field_0x5e7;
-    undefined field_0x5e8;
-    undefined field_0x5e9;
-    undefined field_0x5ea;
-    undefined field_0x5eb;
-    undefined field_0x5ec;
-    undefined field_0x5ed;
-    undefined field_0x5ee;
-    undefined field_0x5ef;
-    undefined field_0x5f0;
-    undefined field_0x5f1;
-    undefined field_0x5f2;
-    undefined field_0x5f3;
-    undefined field_0x5f4;
-    undefined field_0x5f5;
-    undefined field_0x5f6;
-    undefined field_0x5f7;
-    undefined field_0x5f8;
-    undefined field_0x5f9;
-    undefined field_0x5fa;
-    undefined field_0x5fb;
-    undefined field_0x5fc;
-    undefined field_0x5fd;
-    undefined field_0x5fe;
-    undefined field_0x5ff;
-    undefined field_0x600;
-    undefined field_0x601;
-    undefined field_0x602;
-    undefined field_0x603;
-    undefined field_0x604;
-    undefined field_0x605;
-    undefined field_0x606;
-    undefined field_0x607;
-    undefined field_0x608;
-    undefined field_0x609;
-    undefined field_0x60a;
-    undefined field_0x60b;
-    undefined field_0x60c;
-    undefined field_0x60d;
-    undefined field_0x60e;
-    undefined field_0x60f;
-    undefined field_0x610;
-    undefined field_0x611;
-    undefined field_0x612;
-    undefined field_0x613;
-    undefined field_0x614;
-    undefined field_0x615;
-    undefined field_0x616;
-    undefined field_0x617;
-    undefined field_0x618;
-    undefined field_0x619;
-    undefined field_0x61a;
-    undefined field_0x61b;
-    undefined field_0x61c;
-    undefined field_0x61d;
-    undefined field_0x61e;
-    undefined field_0x61f;
-    undefined field_0x620;
-    undefined field_0x621;
-    undefined field_0x622;
-    undefined field_0x623;
-    undefined field_0x624;
-    undefined field_0x625;
-    undefined field_0x626;
-    undefined field_0x627;
-    undefined field_0x628;
-    undefined field_0x629;
-    undefined field_0x62a;
-    undefined field_0x62b;
-    undefined field_0x62c;
-    undefined field_0x62d;
-    undefined field_0x62e;
-    undefined field_0x62f;
-    undefined field_0x630;
-    undefined field_0x631;
-    undefined field_0x632;
-    undefined field_0x633;
-    undefined field_0x634;
-    undefined field_0x635;
-    undefined field_0x636;
-    undefined field_0x637;
-    undefined field_0x638;
-    undefined field_0x639;
-    undefined field_0x63a;
-    undefined field_0x63b;
-    undefined field_0x63c;
-    undefined field_0x63d;
-    undefined field_0x63e;
-    undefined field_0x63f;
-    undefined field_0x640;
-    undefined field_0x641;
-    undefined field_0x642;
-    undefined field_0x643;
-    undefined field_0x644;
-    undefined field_0x645;
-    undefined field_0x646;
-    undefined field_0x647;
-    undefined field_0x648;
-    undefined field_0x649;
-    undefined field_0x64a;
-    undefined field_0x64b;
-    undefined field_0x64c;
-    undefined field_0x64d;
-    undefined field_0x64e;
-    undefined field_0x64f;
-    undefined field_0x650;
-    undefined field_0x651;
-    undefined field_0x652;
-    undefined field_0x653;
-    undefined field_0x654;
-    undefined field_0x655;
-    undefined field_0x656;
-    undefined field_0x657;
-    undefined field_0x658;
-    undefined field_0x659;
-    undefined field_0x65a;
-    undefined field_0x65b;
-    undefined field_0x65c;
-    undefined field_0x65d;
-    undefined field_0x65e;
-    undefined field_0x65f;
-    undefined field_0x660;
-    undefined field_0x661;
-    undefined field_0x662;
-    undefined field_0x663;
-    undefined field_0x664;
-    undefined field_0x665;
-    undefined field_0x666;
-    undefined field_0x667;
-    undefined field_0x668;
-    undefined field_0x669;
-    undefined field_0x66a;
-    undefined field_0x66b;
-    undefined field_0x66c;
-    undefined field_0x66d;
-    undefined field_0x66e;
-    undefined field_0x66f;
-    undefined field_0x670;
-    undefined field_0x671;
-    undefined field_0x672;
-    undefined field_0x673;
-    undefined field_0x674;
-    undefined field_0x675;
-    undefined field_0x676;
-    undefined field_0x677;
-    undefined field_0x678;
-    undefined field_0x679;
-    undefined field_0x67a;
-    undefined field_0x67b;
-    undefined field_0x67c;
-    undefined field_0x67d;
-    undefined field_0x67e;
-    undefined field_0x67f;
-    undefined field_0x680;
-    undefined field_0x681;
-    undefined field_0x682;
-    undefined field_0x683;
-    undefined field_0x684;
-    undefined field_0x685;
-    undefined field_0x686;
-    undefined field_0x687;
-    undefined field_0x688;
-    undefined field_0x689;
-    undefined field_0x68a;
-    undefined field_0x68b;
-    undefined field_0x68c;
-    undefined field_0x68d;
-    undefined field_0x68e;
-    undefined field_0x68f;
-    undefined field_0x690;
-    undefined field_0x691;
-    undefined field_0x692;
-    undefined field_0x693;
-    undefined field_0x694;
-    undefined field_0x695;
-    undefined field_0x696;
-    undefined field_0x697;
-    undefined field_0x698;
-    undefined field_0x699;
-    undefined field_0x69a;
-    undefined field_0x69b;
-    undefined field_0x69c;
-    undefined field_0x69d;
-    undefined field_0x69e;
-    undefined field_0x69f;
-    undefined field_0x6a0;
-    undefined field_0x6a1;
-    undefined field_0x6a2;
-    undefined field_0x6a3;
-    undefined field_0x6a4;
-    undefined field_0x6a5;
-    undefined field_0x6a6;
-    undefined field_0x6a7;
-    undefined field_0x6a8;
-    undefined field_0x6a9;
-    undefined field_0x6aa;
-    undefined field_0x6ab;
-    undefined field_0x6ac;
-    undefined field_0x6ad;
-    undefined field_0x6ae;
-    undefined field_0x6af;
-    undefined field_0x6b0;
-    undefined field_0x6b1;
-    undefined field_0x6b2;
-    undefined field_0x6b3;
-    undefined field_0x6b4;
-    undefined field_0x6b5;
-    undefined field_0x6b6;
-    undefined field_0x6b7;
-    undefined field_0x6b8;
-    undefined field_0x6b9;
-    undefined field_0x6ba;
-    undefined field_0x6bb;
-    undefined field_0x6bc;
-    undefined field_0x6bd;
-    undefined field_0x6be;
-    undefined field_0x6bf;
-    undefined field_0x6c0;
-    undefined field_0x6c1;
-    undefined field_0x6c2;
-    undefined field_0x6c3;
-    undefined field_0x6c4;
-    undefined field_0x6c5;
-    undefined field_0x6c6;
-    undefined field_0x6c7;
-    undefined field_0x6c8;
-    undefined field_0x6c9;
-    undefined field_0x6ca;
-    undefined field_0x6cb;
-    undefined field_0x6cc;
-    undefined field_0x6cd;
-    undefined field_0x6ce;
-    undefined field_0x6cf;
-    undefined field_0x6d0;
-    undefined field_0x6d1;
-    undefined field_0x6d2;
-    undefined field_0x6d3;
-    undefined field_0x6d4;
-    undefined field_0x6d5;
-    undefined field_0x6d6;
-    undefined field_0x6d7;
-    undefined field_0x6d8;
-    undefined field_0x6d9;
-    undefined field_0x6da;
-    undefined field_0x6db;
-    undefined field_0x6dc;
-    undefined field_0x6dd;
-    undefined field_0x6de;
-    undefined field_0x6df;
-    undefined field_0x6e0;
-    undefined field_0x6e1;
-    undefined field_0x6e2;
-    undefined field_0x6e3;
-    undefined field_0x6e4;
-    undefined field_0x6e5;
-    undefined field_0x6e6;
-    undefined field_0x6e7;
-    undefined field_0x6e8;
-    undefined field_0x6e9;
-    undefined field_0x6ea;
-    undefined field_0x6eb;
-    undefined field_0x6ec;
-    undefined field_0x6ed;
-    undefined field_0x6ee;
-    undefined field_0x6ef;
-    undefined field_0x6f0;
-    undefined field_0x6f1;
-    undefined field_0x6f2;
-    undefined field_0x6f3;
-    undefined field_0x6f4;
-    undefined field_0x6f5;
-    undefined field_0x6f6;
-    undefined field_0x6f7;
-    undefined field_0x6f8;
-    undefined field_0x6f9;
-    undefined field_0x6fa;
-    undefined field_0x6fb;
-    undefined field_0x6fc;
-    undefined field_0x6fd;
-    undefined field_0x6fe;
-    undefined field_0x6ff;
-    undefined field_0x700;
-    undefined field_0x701;
-    undefined field_0x702;
-    undefined field_0x703;
-    undefined field_0x704;
-    undefined field_0x705;
-    undefined field_0x706;
-    undefined field_0x707;
-    undefined field_0x708;
-    undefined field_0x709;
-    undefined field_0x70a;
-    undefined field_0x70b;
-    undefined field_0x70c;
-    undefined field_0x70d;
-    undefined field_0x70e;
-    undefined field_0x70f;
-    undefined field_0x710;
-    undefined field_0x711;
-    undefined field_0x712;
-    undefined field_0x713;
-    undefined field_0x714;
-    undefined field_0x715;
-    undefined field_0x716;
-    undefined field_0x717;
-    undefined field_0x718;
-    undefined field_0x719;
-    undefined field_0x71a;
-    undefined field_0x71b;
-    undefined field_0x71c;
-    undefined field_0x71d;
-    undefined field_0x71e;
-    undefined field_0x71f;
-    undefined field_0x720;
-    undefined field_0x721;
-    undefined field_0x722;
-    undefined field_0x723;
-    undefined field_0x724;
-    undefined field_0x725;
-    undefined field_0x726;
-    undefined field_0x727;
-    undefined field_0x728;
-    undefined field_0x729;
-    undefined field_0x72a;
-    undefined field_0x72b;
-    undefined field_0x72c;
-    undefined field_0x72d;
-    undefined field_0x72e;
-    undefined field_0x72f;
-    undefined field_0x730;
-    undefined field_0x731;
-    undefined field_0x732;
-    undefined field_0x733;
-    undefined field_0x734;
-    undefined field_0x735;
-    undefined field_0x736;
-    undefined field_0x737;
-    undefined field_0x738;
-    undefined field_0x739;
-    undefined field_0x73a;
-    undefined field_0x73b;
-    undefined field_0x73c;
-    undefined field_0x73d;
-    undefined field_0x73e;
-    undefined field_0x73f;
-    undefined field_0x740;
-    undefined field_0x741;
-    undefined field_0x742;
-    undefined field_0x743;
-    undefined field_0x744;
-    undefined field_0x745;
-    undefined field_0x746;
-    undefined field_0x747;
-    undefined field_0x748;
-    undefined field_0x749;
-    undefined field_0x74a;
-    undefined field_0x74b;
-    undefined field_0x74c;
-    undefined field_0x74d;
-    undefined field_0x74e;
-    undefined field_0x74f;
-    undefined field_0x750;
-    undefined field_0x751;
-    undefined field_0x752;
-    undefined field_0x753;
-    undefined field_0x754;
-    undefined field_0x755;
-    undefined field_0x756;
-    undefined field_0x757;
-    undefined field_0x758;
-    undefined field_0x759;
-    undefined field_0x75a;
-    undefined field_0x75b;
-    undefined field_0x75c;
-    undefined field_0x75d;
-    undefined field_0x75e;
-    undefined field_0x75f;
-    undefined field_0x760;
-    undefined field_0x761;
-    undefined field_0x762;
-    undefined field_0x763;
-    undefined field_0x764;
-    undefined field_0x765;
-    undefined field_0x766;
-    undefined field_0x767;
-    undefined field_0x768;
-    undefined field_0x769;
-    undefined field_0x76a;
-    undefined field_0x76b;
-    undefined field_0x76c;
-    undefined field_0x76d;
-    undefined field_0x76e;
-    undefined field_0x76f;
-    undefined field_0x770;
-    undefined field_0x771;
-    undefined field_0x772;
-    undefined field_0x773;
-    undefined field_0x774;
-    undefined field_0x775;
-    undefined field_0x776;
-    undefined field_0x777;
-    undefined field_0x778;
-    undefined field_0x779;
-    undefined field_0x77a;
-    undefined field_0x77b;
-    undefined field_0x77c;
-    undefined field_0x77d;
-    undefined field_0x77e;
-    undefined field_0x77f;
-    undefined field_0x780;
-    undefined field_0x781;
-    undefined field_0x782;
-    undefined field_0x783;
-    undefined field_0x784;
-    undefined field_0x785;
-    undefined field_0x786;
-    undefined field_0x787;
-    undefined field_0x788;
-    undefined field_0x789;
-    undefined field_0x78a;
-    undefined field_0x78b;
-    undefined field_0x78c;
-    undefined field_0x78d;
-    undefined field_0x78e;
-    undefined field_0x78f;
-    undefined field_0x790;
-    undefined field_0x791;
-    undefined field_0x792;
-    undefined field_0x793;
-    undefined field_0x794;
-    undefined field_0x795;
-    undefined field_0x796;
-    undefined field_0x797;
-    undefined field_0x798;
-    undefined field_0x799;
-    undefined field_0x79a;
-    undefined field_0x79b;
-    undefined field_0x79c;
-    undefined field_0x79d;
-    undefined field_0x79e;
-    undefined field_0x79f;
-    undefined field_0x7a0;
-    undefined field_0x7a1;
-    undefined field_0x7a2;
-    undefined field_0x7a3;
-    undefined field_0x7a4;
-    undefined field_0x7a5;
-    undefined field_0x7a6;
-    undefined field_0x7a7;
-    undefined field_0x7a8;
-    undefined field_0x7a9;
-    undefined field_0x7aa;
-    undefined field_0x7ab;
-    undefined field_0x7ac;
-    undefined field_0x7ad;
-    undefined field_0x7ae;
-    undefined field_0x7af;
-    undefined field_0x7b0;
-    undefined field_0x7b1;
-    undefined field_0x7b2;
-    undefined field_0x7b3;
-    undefined field_0x7b4;
-    undefined field_0x7b5;
-    undefined field_0x7b6;
-    undefined field_0x7b7;
-    undefined field_0x7b8;
-    undefined field_0x7b9;
-    undefined field_0x7ba;
-    undefined field_0x7bb;
-    undefined field_0x7bc;
-    undefined field_0x7bd;
-    undefined field_0x7be;
-    undefined field_0x7bf;
-    undefined field_0x7c0;
-    undefined field_0x7c1;
-    undefined field_0x7c2;
-    undefined field_0x7c3;
-    undefined field_0x7c4;
-    undefined field_0x7c5;
-    undefined field_0x7c6;
-    undefined field_0x7c7;
-    undefined field_0x7c8;
-    undefined field_0x7c9;
-    undefined field_0x7ca;
-    undefined field_0x7cb;
-    undefined field_0x7cc;
-    undefined field_0x7cd;
-    undefined field_0x7ce;
-    undefined field_0x7cf;
-    undefined field_0x7d0;
-    undefined field_0x7d1;
-    undefined field_0x7d2;
-    undefined field_0x7d3;
-    undefined field_0x7d4;
-    undefined field_0x7d5;
-    undefined field_0x7d6;
-    undefined field_0x7d7;
-    undefined field_0x7d8;
-    undefined field_0x7d9;
-    undefined field_0x7da;
-    undefined field_0x7db;
-    undefined field_0x7dc;
-    undefined field_0x7dd;
-    undefined field_0x7de;
-    undefined field_0x7df;
-    undefined field_0x7e0;
-    undefined field_0x7e1;
-    undefined field_0x7e2;
-    undefined field_0x7e3;
-    undefined field_0x7e4;
-    undefined field_0x7e5;
-    undefined field_0x7e6;
-    undefined field_0x7e7;
-    undefined field_0x7e8;
-    undefined field_0x7e9;
-    undefined field_0x7ea;
-    undefined field_0x7eb;
-    undefined field_0x7ec;
-    undefined field_0x7ed;
-    undefined field_0x7ee;
-    undefined field_0x7ef;
-    undefined2 vidwidth;
-    undefined2 vidheight;
-    short vidulx;
-    word viduly;
-};
-
-
-// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALResampler - /_CAPTURED_FROM_ge007.u.old.elf/ALResampler
-
-
-// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALEnvMixer_s - /_CAPTURED_FROM_ge007.u.old.elf/ALEnvMixer_s
-
-typedef struct ALEnvMixer_s ALEnvMixer;
-
-typedef struct ALSave_s ALSave_s, *PALSave_s;
-
-typedef struct ALSave_s ALSave;
-
-typedef struct ALFilter_s ALFilter;
-
-struct ALSave_s {
-    ALFilter filter;
-    s32 dramout;
-    s32 first;
-};
-
-typedef struct ALFreeParam ALFreeParam, *PALFreeParam;
-
-struct ALFreeParam {
-    struct ALParam_s * next;
-    s32 delta;
-    s16 type;
-    struct PVoice_s * pvoice;
-};
-
-typedef struct ALParam_s ALParam;
-
-typedef struct ALDelay ALDelay, *PALDelay;
-
-typedef struct ALLowPass ALLowPass, *PALLowPass;
-
-typedef union _union_213 _union_213, *P_union_213;
-
-typedef short POLEF_STATE[4];
-
-typedef longlong s64;
-
-struct ALDelay {
-    u32 input;
-    u32 output;
-    s16 ffcoef;
-    s16 fbcoef;
-    s16 gain;
-    f32 rsinc;
-    f32 rsval;
-    s32 rsdelta;
-    f32 rsgain;
-    struct ALLowPass * lp;
-    ALResampler * rs;
-};
-
-union _union_213 {
-    s16 fccoef[16];
-    s64 force_aligned;
-};
-
-struct ALLowPass {
-    s16 fc;
-    s16 fgain;
-    union _union_213 fcvec;
-    POLEF_STATE * fstate;
-    s32 first;
-};
-
-typedef struct ALAuxBus_s ALAuxBus_s, *PALAuxBus_s;
-
-typedef struct ALAuxBus_s ALAuxBus;
-
-struct ALAuxBus_s {
-};
-
-typedef struct ALFx ALFx, *PALFx;
-
-typedef s32 (* ALSetFXParam)(void *, s32, void *);
-
-struct ALFx {
-    struct ALFilter_s filter;
-    s16 * base;
-    s16 * input;
-    u32 length;
-    struct ALDelay * delay;
-    u8 section_count;
-    ALSetFXParam paramHdl;
-};
-
-typedef struct ALLoadFilter ALLoadFilter, *PALLoadFilter;
-
-struct ALLoadFilter {
-    ALFilter filter;
-    ADPCM_STATE * state;
-    ADPCM_STATE * lstate;
-    struct ALRawLoop loop;
-    struct ALWaveTable_s * table;
-    s32 bookSize;
-    ALDMAproc dma;
-    void * dmaState;
-    s32 sample;
-    s32 lastsam;
-    s32 first;
-    s32 memin;
-};
-
-typedef struct ALMainBus_s ALMainBus_s, *PALMainBus_s;
-
-typedef struct ALMainBus_s ALMainBus;
-
-struct ALMainBus_s {
-};
-
-typedef struct HeapInfo HeapInfo, *PHeapInfo;
-
-struct HeapInfo {
-    s32 magic;
-    s32 size;
-    u8 * file;
-    s32 line;
-    s32 count;
-    s32 pad0;
-    s32 pad1;
-    s32 pad2;
-};
-
-
-// WARNING! conflicting data type names: /SYNTHINTERNALS.H/PVoice - /_CAPTURED_FROM_ge007.u.old.elf/PVoice
-
-
-// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALSetParam - /_CAPTURED_FROM_ge007.u.old.elf/ALSetParam
-
-typedef union _union_196 _union_196, *P_union_196;
-
-union _union_196 {
-    f32 f;
-    s32 i;
-};
-
-typedef union _union_195 _union_195, *P_union_195;
-
-union _union_195 {
-    f32 f;
-    s32 i;
-};
-
-typedef union _union_194 _union_194, *P_union_194;
-
-union _union_194 {
-    f32 f;
-    s32 i;
-};
-
-typedef enum enum_191 {
-    AL_ADPCM=0,
-    AL_AUXBUS=6,
-    AL_BUFFER=2,
-    AL_ENVMIX=4,
-    AL_FX=5,
-    AL_MAINBUS=7,
-    AL_RESAMPLE=1,
-    AL_SAVE=3
-} enum_191;
-
-typedef enum enum_190 {
-    AL_FILTER_ADD_SOURCE=2,
-    AL_FILTER_ADD_UPDATE=3,
-    AL_FILTER_FREE_VOICE=0,
-    AL_FILTER_RESET=4,
-    AL_FILTER_SET_DRAM=6,
-    AL_FILTER_SET_FXAMT=16,
-    AL_FILTER_SET_PAN=12,
-    AL_FILTER_SET_PITCH=7,
-    AL_FILTER_SET_SOURCE=1,
-    AL_FILTER_SET_STATE=10,
-    AL_FILTER_SET_UNITY_PITCH=8,
-    AL_FILTER_SET_VOLUME=11,
-    AL_FILTER_SET_WAVETABLE=5,
-    AL_FILTER_START=9,
-    AL_FILTER_START_VOICE=14,
-    AL_FILTER_START_VOICE_ALT=13,
-    AL_FILTER_STOP_VOICE=15
-} enum_190;
-
-typedef struct ALStartParamAlt ALStartParamAlt, *PALStartParamAlt;
-
-typedef u8 ALPan;
-
-struct ALStartParamAlt {
-    struct ALParam_s * next;
-    s32 delta;
-    s16 type;
-    s16 unity;
-    f32 pitch;
-    s16 volume;
-    ALPan pan;
-    u8 fxMix;
-    s32 samples;
-    struct ALWaveTable_s * wave;
-};
-
-typedef struct ALStartParam ALStartParam, *PALStartParam;
-
-struct ALStartParam {
-    struct ALParam_s * next;
-    s32 delta;
-    s16 type;
-    s16 unity;
-    struct ALWaveTable_s * wave;
-};
-
-typedef struct ALResampler_s ALResampler_s, *PALResampler_s;
-
-struct ALResampler_s {
-    ALFilter filter;
-    RESAMPLE_STATE * state;
-    f32 ratio;
-    s32 upitch;
-    f32 delta;
-    s32 first;
-    ALParam * ctrlList;
-    ALParam * ctrlTail;
-    s32 motion;
-};
-
-
-// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALCmdHandler - /_CAPTURED_FROM_ge007.u.old.elf/ALCmdHandler
-
-typedef union _union_197 _union_197, *P_union_197;
-
-union _union_197 {
-    f32 f;
-    s32 i;
-};
-
-#define AL_AUX_R_OUT 2048
-
-#define AL_MAIN_R_OUT 1408
-
-#define AL_AUX_L_OUT 1728
-
-#define AL_MAX_AUX_BUS_SOURCES 8
-
-#define AL_MAX_MAIN_BUS_SOURCES 1
-
-#define AL_MAX_ADPCM_STATES 3
-
-#define AL_DECODER_IN 0
-
-#define AL_RESAMPLER_OUT 0
-
-#define AL_MAX_AUX_BUS_FX 1
-
-#define AL_DECODER_OUT 320
-
-#define AL_CACHE_ALIGN 15
-
-#define AL_MAX_RSP_SAMPLES 160
-
-#define AL_MAIN_L_OUT 1088
-
-#define AL_TEMP_0 0
-
-#define AL_TEMP_2 640
-
-#define AL_TEMP_1 320
-
-#define C0_CONTEXT 4
-
-#define ICACHE_LINEMASK 31
-
-#define EXC_DBE 28
-
-#define C0_CAUSE 13
-
-#define CONFIG_EC_1_1 6
-
-#define SR_IBIT8 32768
-
-#define SR_IBIT3 1024
-
-#define SR_IBIT2 512
-
-#define SR_IBIT1 256
-
-#define TLBINX_INXSHIFT 0
-
-#define EXC_BREAK 36
-
-#define SR_IBIT7 16384
-
-#define SR_IBIT6 8192
-
-#define SR_IBIT5 4096
-
-#define SR_IBIT4 2048
-
-#define CONFIG_BE 32768
-
-#define TLBLO_CACHSHIFT 3
-
-#define CACHERR_PIDX_MASK 7
-
-#define C0_EPC 14
-
-#define EXC_INT 0
-
-#define TLBLO_EXLWR 40
-
-#define C0_SR 12
-
-#define TLBHI_NPID 255
-
-#define TLBHI_PIDSHIFT 0
-
-#define E_VEC 2147484032
-
-#define CACHERR_SIDX_MASK 4194296
-
-#define TLBLO_NONCOHRNT 24
-
-#define SADDRMASK 4294959104
-
-#define CAUSE_CEMASK 805306368
-
-#define C0_REVMASK 255
-
-#define TLBCTXT_VPNMASK 8388592
-
-#define K2BASE 3221225472
-
-#define EXC_RADE 16
-
-#define CAUSE_EXCMASK 124
-
-#define SINVALID 0
-
-#define CONFIG_IC_SHFT 9
-
-#define C0_MAJREVSHIFT 4
-
-#define CONFIG_EC_3_2 7
-
-#define CONFIG_EC_3_1 1
-
-#define TLBCTXT_BASEMASK 4286578688
-
-#define C0_BADVADDR 8
-
-#define TLBLO_PFNMASK 1073741760
-
-#define PADDRMASK 4294967040
-
-#define C0_PAGEMASK 5
-
-#define TLBCTXT_VPNSHIFT 4
-
-#define EXC_WMISS 12
-
-#define PSTATEMASK 192
-
-#define SR_ERL 4
-
-#define C_FILL 20
-
-#define CAUSE_IPSHIFT 8
-
-#define CONFIG_EC_2_1 0
-
-#define SIZE_EXCVEC 128
-
-#define C0_MINREVMASK 15
-
-#define WATCHLO_ADDRMASK 4294967288
-
-#define DCACHE_LINESIZE 16
-
-#define PCLEANEXCL 128
-
-#define CONFIG_IC 3584
-
-#define CONFIG_IB 32
-
-#define C0_ENTRYLO0 2
-
-#define C0_ENTRYLO1 3
-
-#define CONFIG_K0 7
-
-#define CACH_SI 2
-
-#define CAUSE_SW1 256
-
-#define FPCSR_C 8388608
-
-#define CAUSE_SW2 512
-
-#define CACH_SD 3
-
-#define SR_IMASK0 65280
-
-#define C0_TAGHI 29
-
-#define SR_IMASK7 32768
-
-#define C0_PRID 15
-
-#define SR_IMASK8 0
-
-#define SR_IMASK5 57344
-
-#define SR_IMASK6 49152
-
-#define SR_IMASK3 63488
-
-#define SR_IMASK4 61440
-
-#define SR_IMASK1 65024
-
-#define SR_IMASK2 64512
-
-#define CAUSE_CESHIFT 28
-
-#define CAUSE_EXCSHIFT 2
-
-#define C0_IMPMASK 65280
-
-#define TLBLO_CACHMASK 56
-
-#define PINVALID 0
-
-#define EXC_FPE 60
-
-#define SR_KSU_MASK 24
-
-#define SR_KSU_USR 16
-
-#define EXC_WATCH 92
-
-#define SR_TS 2097152
-
-#define CONFIG_DC 448
-
-#define CONFIG_DB 16
-
-#define C0_MAJREVMASK 240
-
-#define WATCHLO_WTRAP 1
-
-#define TLBLO_UNCACHED 16
-
-#define CONFIG_CU 8
-
-#define SR_EXL 2
-
-#define CONFIG_CM 2147483648
-
-#define SR_SX 64
-
-#define SR_CU1 536870912
-
-#define SR_UX 32
-
-#define SR_CU0 268435456
-
-#define SR_CU3 2147483648
-
-#define SR_CU2 1073741824
-
-#define CONFIG_EC 1879048192
-
-#define CONFIG_EB 8192
-
-#define NTLBENTRIES 31
-
-#define TLBPGMASK_64K 122880
-
-#define C0_READI 1
-
-#define SR_RP 134217728
-
-#define CACHERR_ET 268435456
-
-#define SR_RE 33554432
-
-#define CACHERR_ES 134217728
-
-#define CACHERR_ER 2147483648
-
-#define CONFIG_EW 786432
-
-#define CACHERR_EI 16777216
-
-#define CONFIG_EP 251658240
-
-#define CACHERR_EE 67108864
-
-#define CONFIG_EM 16384
-
-#define CACHERR_ED 536870912
-
-#define CACHERR_EC 1073741824
-
-#define CACHERR_EB 33554432
-
-#define SR_CUMASK 4026531840
-
-#define ICACHE_SIZE 16384
-
-#define SR_SR 1048576
-
-#define C0_RFE 16
-
-#define WATCHLO_VALIDMASK 4294967291
-
-#define FPCSR_EV 2048
-
-#define C0_WRITER 6
-
-#define CONFIG_BE_SHFT 15
-
-#define FPCSR_EU 256
-
-#define FPCSR_EO 512
-
-#define C0_WATCHHI 19
-
-#define FPCSR_EI 128
-
-#define C_CDX 12
-
-#define C0_LLADDR 17
-
-#define C0_ECC 26
-
-#define SR_IE 1
-
-#define EXC_CPU 44
-
-#define SR_IMASK 65280
-
-#define DCACHE_LINEMASK 15
-
-#define TLBPGMASK_16K 24576
-
-#define C_IWBINV 0
-
-#define EXC_II 40
-
-#define C0_WRITEI 2
-
-#define FPCSR_CZ 32768
-
-#define FPCSR_CU 8192
-
-#define FPCSR_CV 65536
-
-#define FPCSR_CO 16384
-
-#define FPCSR_CI 4096
-
-#define K1SIZE 536870912
-
-#define FPCSR_RM_MASK 3
-
-#define TLBRAND_RANDMASK 63
-
-#define FPCSR_CE 131072
-
-#define CONFIG_SW 1048576
-
-#define CONFIG_SS 2097152
-
-#define C_IST 8
-
-#define K0BASE 2147483648
-
-#define KUSIZE 2147483648
-
-#define CONFIG_SM 65536
-
-#define CONFIG_SC 131072
-
-#define CONFIG_SB 12582912
-
-#define SR_FR 67108864
-
-#define EXC_VCEI 56
-
-#define TLBHI_VPN2SHIFT 13
-
-#define TLBCTXT_BASEBITS 9
-
-#define C_ILT 4
-
-#define SCLEANEXCL 4096
-
-#define TLBRAND_RANDSHIFT 0
-
-#define C0_WATCHLO 18
-
-#define SR_KX 128
-
-#define PPARITY_MASK 1
-
-#define XUT_VEC 2147483776
-
-#define C0_INX 0
-
-#define CONFIG_NONCOHRNT 3
-
-#define PDIRTYEXCL 192
-
-#define SADDR_SHIFT 4
-
-#define SDIRTYEXCL 5120
-
-#define TLBHI_PIDMASK 255
-
-#define SSTATEMASK 7168
-
-#define KUBASE 0
-
-#define EXC_WADE 20
-
-#define CONFIG_UNCACHED 2
-
-#define TLBLO_D 4
-
-#define SR_KSU_SUP 8
-
-#define SVINDEXMASK 896
-
-#define SR_KSU_KER 0
-
-#define C0_TAGLO 28
-
-#define UT_VEC 2147483648
-
-#define FPCSR_RM_RZ 1
-
-#define TLBLO_G 1
-
-#define C0_IMPSHIFT 8
-
-#define FPCSR_FZ 32
-
-#define FPCSR_FS 16777216
-
-#define EXC_IBE 24
-
-#define FPCSR_RM_RP 2
-
-#define K1BASE 2684354560
-
-#define FPCSR_FU 8
-
-#define FPCSR_RM_RM 3
-
-#define FPCSR_FV 64
-
-#define FPCSR_RM_RN 0
-
-#define FPCSR_FO 16
-
-#define TLBLO_V 2
-
-#define CACH_PD 1
-
-#define EXC_RMISS 8
-
-#define CAUSE_BD 2147483648
-
-#define FPCSR_FI 4
-
-#define CACH_PI 0
-
-#define FPCSR_EZ 1024
-
-#define C0_WIRED 6
-
-#define C0_ENTRYHI 10
-
-#define ICACHE_LINESIZE 32
-
-#define C_HWB 24
-
-#define SR_BEV 4194304
-
-#define SECC_MASK 127
-
-#define EXC_SYSCALL 32
-
-#define CAUSE_IPMASK 65280
-
-#define C0_CONFIG 16
-
-#define SR_ITS 16777216
-
-#define K0SIZE 536870912
-
-#define CONFIG_COHRNT_EXLWR 5
-
-#define SR_IMASKSHIFT 8
-
-#define TLBHI_VPN2MASK 4294959104
-
-#define C0_COMPARE 11
-
-#define DCACHE_SIZE 8192
-
-#define ECC_VEC 2147483904
-
-#define C_HWBINV 20
-
-#define CONFIG_SB_SHFT 22
-
-#define TLBLO_PFNSHIFT 6
-
-#define EXC_TRAP 52
-
-#define TLBCTXT_BASESHIFT 23
-
-#define CONFIG_DC_SHFT 6
-
-#define EXC_OV 48
-
-#define WATCHLO_RTRAP 2
-
-#define C0_COUNT 9
-
-#define SR_DE 65536
-
-#define EXC_VCED 124
-
-#define C_IINV 0
-
-#define TLBINX_PROBE 2147483648
-
-#define C0_PROBE 8
-
-#define WATCHHI_VALIDMASK 15
-
-#define EXC_MOD 4
-
-#define SR_CH 262144
-
-#define TLBWIRED_WIREDMASK 63
-
-#define C_HSV 28
-
-#define C0_CACHE_ERR 27
-
-#define TLBPGMASK_4K 0
-
-#define C0_RAND 1
-
-#define C0_ERROR_EPC 30
-
-#define PADDR_SHIFT 4
-
-#define R_VEC 3217031168
-
-#define K2SIZE 536870912
-
-#define SR_CE 131072
-
-#define CACHERR_PIDX_SHIFT 12
-
-#define TLBINX_INXMASK 63
-
-#define CAUSE_IP3 1024
-
-#define CAUSE_IP4 2048
-
-#define C_HINV 16
-
-#define CAUSE_IP7 16384
-
-#define CAUSE_IP8 32768
-
-#define CAUSE_IP5 4096
-
-#define CAUSE_IP6 8192
-
-typedef struct Light_t Light_t, *PLight_t;
-
-struct Light_t {
-    uchar col[3];
-    char pad1;
-    uchar colc[3];
-    char pad2;
-    char dir[3];
-    char pad3;
-};
-
-typedef struct TexRect TexRect, *PTexRect;
-
-struct TexRect {
-    ulong w0;
-    ulong w1;
-    ulong w2;
-    ulong w3;
-};
-
-typedef struct Gloadtile Gloadblock;
-
-typedef union Ambient Ambient, *PAmbient;
-
-typedef struct Ambient_t Ambient_t, *PAmbient_t;
-
-struct Ambient_t {
-    uchar col[3];
-    char pad1;
-    uchar colc[3];
-    char pad2;
-};
-
-union Ambient {
-    struct Ambient_t l;
-    longlong force_structure_alignment[1];
-};
-
-typedef struct Gtexrect Gtexrect, *PGtexrect;
-
-typedef union anon__struct_72_bitfield_1 anon__struct_72_bitfield_1, *Panon__struct_72_bitfield_1;
-
-typedef union anon__struct_72_bitfield_2 anon__struct_72_bitfield_2, *Panon__struct_72_bitfield_2;
-
-typedef union anon__struct_72_bitfield_3 anon__struct_72_bitfield_3, *Panon__struct_72_bitfield_3;
-
-typedef union anon__struct_72_bitfield_4 anon__struct_72_bitfield_4, *Panon__struct_72_bitfield_4;
-
-union anon__struct_72_bitfield_1 {
-    uint cmd:8; // : bits 0-7
-    uint xl:12; // : bits 8-19
-    uint yl:12; // : bits 20-31
-};
-
-union anon__struct_72_bitfield_3 {
-    uint s:16; // : bits 0-15
-    uint t:16; // : bits 16-31
-};
-
-union anon__struct_72_bitfield_2 {
-    uint pad1:5; // : bits 0-4
-    uint tile:3; // : bits 5-7
-    uint xh:12; // : bits 8-19
-    uint yh:12; // : bits 20-31
-};
-
-union anon__struct_72_bitfield_4 {
-    uint dsdx:16; // : bits 0-15
-    uint dtdy:16; // : bits 16-31
-};
-
-struct Gtexrect {
-    union anon__struct_72_bitfield_1 field_0x0;
-    union anon__struct_72_bitfield_2 field_0x4;
-    union anon__struct_72_bitfield_3 field_0x8;
-    union anon__struct_72_bitfield_4 field_0xc;
-};
-
-typedef union Light Light, *PLight;
-
-union Light {
-    struct Light_t l;
-    longlong force_structure_alignment[2];
-};
-
-typedef union uSprite uSprite, *PuSprite;
-
-typedef struct uSprite_t uSprite_t, *PuSprite_t;
-
-struct uSprite_t {
-    void * SourceImagePointer;
-    void * TlutPointer;
-    short Stride;
-    short SubImageWidth;
-    short SubImageHeight;
-    char SourceImageType;
-    char SourceImageBitSize;
-    short ScaleX;
-    short ScaleY;
-    char FlipTextureX;
-    char FlipTextureY;
-    short SourceImageOffsetS;
-    short SourceImageOffsetT;
-    short PScreenX;
-    short PScreenY;
-    char dummy[2];
-};
-
-union uSprite {
-    struct uSprite_t s;
-    longlong force_structure_allignment[4];
-};
-
-typedef struct Lightsn Lightsn, *PLightsn;
-
-struct Lightsn {
-    union Ambient a;
-    union Light l[7];
-};
-
-typedef struct LookAt LookAt, *PLookAt;
-
-struct LookAt {
-    union Light l[2];
-};
-
-typedef struct Lights0 Lights0, *PLights0;
-
-struct Lights0 {
-    union Ambient a;
-    union Light l[1];
-};
-
-typedef struct Lights3 Lights3, *PLights3;
-
-struct Lights3 {
-    union Ambient a;
-    union Light l[3];
-};
-
-typedef struct Lights4 Lights4, *PLights4;
-
-struct Lights4 {
-    union Ambient a;
-    union Light l[4];
-};
-
-typedef struct Lights1 Lights1, *PLights1;
-
-struct Lights1 {
-    union Ambient a;
-    union Light l[1];
-};
-
-typedef struct Lights2 Lights2, *PLights2;
-
-struct Lights2 {
-    union Ambient a;
-    union Light l[2];
-};
-
-typedef struct Lights7 Lights7, *PLights7;
-
-struct Lights7 {
-    union Ambient a;
-    union Light l[7];
-};
-
-typedef struct Lights5 Lights5, *PLights5;
-
-struct Lights5 {
-    union Ambient a;
-    union Light l[5];
-};
-
-typedef struct Lights6 Lights6, *PLights6;
-
-struct Lights6 {
-    union Ambient a;
-    union Light l[6];
-};
-
-typedef struct Hilite_t Hilite_t, *PHilite_t;
-
-struct Hilite_t {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-};
-
-typedef union Hilite Hilite, *PHilite;
-
-union Hilite {
-    struct Hilite_t h;
-    long force_structure_alignment[4];
-};
-
-#define G_LOADBLOCK 243
-
-#define G_DMACMDSIZ 128
-
-#define G_MWO_NUMLIGHT 0
-
-#define G_TX_LOADTILE 7
-
-#define G_CYC_FILL 3145728
-
-#define G_IM_FMT_IA 3
-
-#define G_TEXTURE_SCALE_FRAC 16
-
-#define G_BL_CLR_MEM 1
-
-#define G_MOVEMEM 3
-
-#define G_CCMUX_K4 7
-
-#define G_MWO_aLIGHT_5 128
-
-#define G_CCMUX_K5 15
-
-#define G_MWO_aLIGHT_4 96
-
-#define G_MWO_aLIGHT_7 192
-
-#define G_MWO_aLIGHT_6 160
-
-#define G_MWO_aLIGHT_8 224
-
-#define G_TRI_SHADE_ZBUFF 205
-
-#define G_ACMUX_0 7
-
-#define G_MDSFT_TEXTCONV 9
-
-#define G_AD_NOTPATTERN 16
-
-#define G_RM_NOOP2 0
-
-#define G_ACMUX_1 6
-
-#define G_IM_SIZ_4b 0
-
-#define G_MDSFT_CYCLETYPE 20
-
-#define G_SETSCISSOR 237
-
-#define G_PM_1PRIMITIVE 8388608
-
-#define ZMODE_XLU 2048
-
-#define G_MWO_CLIP_RNY 12
-
-#define ZMODE_DEC 3072
-
-#define G_MWO_CLIP_RNX 4
-
-#define G_MWO_MATRIX_YX_YY_I 8
-
-#define G_MWO_aLIGHT_1 0
-
-#define G_MTX_MODELVIEW 0
-
-#define G_MWO_aLIGHT_3 64
-
-#define G_MWO_aLIGHT_2 32
-
-#define G_TP_PERSP 524288
-
-#define G_TX_CLAMP 2
-
-#define G_TT_IA16 49152
-
-#define G_POPMTX -67
-
-#define G_TX_NOMIRROR 0
-
-#define G_CD_DISABLE 192
-
-#define G_MWO_MATRIX_YX_YY_F 40
-
-#define G_RDPTILESYNC 232
-
-#define G_PM_NPRIMITIVE 0
-
-#define G_CYC_2CYCLE 1048576
-
-#define G_MDSFT_COMBKEY 8
-
-#define G_IM_SIZ_16b_SHIFT 0
-
-#define G_CULLDL -66
-
-#define FR_POS_FRUSTRATIO_2 65534
-
-#define FR_POS_FRUSTRATIO_3 65533
-
-#define G_RDPPIPESYNC 231
-
-#define FR_POS_FRUSTRATIO_1 65535
-
-#define G_MDSFT_BLENDER 16
-
-#define G_MWO_CLIP_RPY 28
-
-#define G_MWO_CLIP_RPX 20
-
-#define G_ACMUX_PRIMITIVE 3
-
-#define G_CCMUX_CENTER 6
-
-#define G_SETKEYR 235
-
-#define G_CCMUX_COMBINED_ALPHA 7
-
-#define G_IM_SIZ_8b_SHIFT 1
-
-#define G_MWO_MATRIX_WZ_WW_F 60
-
-#define G_MDSFT_TEXTLOD 16
-
-#define G_CK_KEY 256
-
-#define G_MWO_MATRIX_WZ_WW_I 28
-
-#define FR_POS_FRUSTRATIO_6 65530
-
-#define FR_POS_FRUSTRATIO_4 65532
-
-#define FR_POS_FRUSTRATIO_5 65531
-
-#define G_CD_MAGICSQ 0
-
-#define G_IM_SIZ_32b_INCR 0
-
-#define G_CCMUX_PRIM_LOD_FRAC 14
-
-#define G_IMMFIRST -65
-
-#define G_MDSFT_COLORDITHER 22
-
-#define G_TEXRECT 228
-
-#define G_BL_A_SHADE 2
-
-#define G_IM_FMT_YUV 1
-
-#define G_CK_NONE 0
-
-#define G_MTX 1
-
-#define G_IM_SIZ_8b 1
-
-#define G_TC_CONV 0
-
-#define G_MV_TXTATT 150
-
-#define G_ACMUX_SHADE 4
-
-#define G_MWO_MATRIX_XZ_XW_F 36
-
-#define CVG_DST_SAVE 768
-
-#define G_DL_PUSH 0
-
-#define G_MWO_MATRIX_XZ_XW_I 4
-
-#define G_TEXTURE_GEN 262144
-
-#define G_RDPCMDSIZ 64
-
-#define G_SETCONVERT 236
-
-#define G_CCMUX_NOISE 7
-
-#define G_CCMUX_ENV_ALPHA 12
-
-#define G_AC_THRESHOLD 1
-
-#define G_IM_FMT_I 4
-
-#define BOWTIE_VAL 0
-
-#define G_MTX_PROJECTION 1
-
-#define FORCE_BL 16384
-
-#define G_MWO_POINT_RGBA 16
-
-#define G_IM_SIZ_32b_LINE_BYTES 2
-
-#define G_IM_SIZ_8b_LINE_BYTES 1
-
-#define G_IM_SIZ_4b_LINE_BYTES 0
-
-#define CVG_X_ALPHA 4096
-
-#define G_TD_SHARPEN 131072
-
-#define G_LIGHTING 131072
-
-#define CVG_DST_WRAP 256
-
-#define G_SHADE 4
-
-#define G_MTX_PUSH 4
-
-#define G_MAXZ 1023
-
-#define G_RDP_TRI_FILL_MASK 8
-
-#define G_SETGEOMETRYMODE -73
-
-#define G_TRI_FILL_ZBUFF 201
-
-#define G_IM_FMT_CI 2
-
-#define G_IM_SIZ_8b_INCR 1
-
-#define G_MWO_bLIGHT_3 68
-
-#define G_MWO_bLIGHT_4 100
-
-#define G_MWO_bLIGHT_1 4
-
-#define G_TX_NOMASK 0
-
-#define G_MWO_bLIGHT_2 36
-
-#define G_MDSFT_TEXTLUT 14
-
-#define G_IM_SIZ_8b_BYTES 1
-
-#define G_SETCIMG 255
-
-#define G_VTX 4
-
-#define G_MWO_bLIGHT_7 196
-
-#define G_MWO_bLIGHT_8 228
-
-#define G_MWO_bLIGHT_5 132
-
-#define G_MWO_bLIGHT_6 164
-
-#define G_MDSFT_PIPELINE 23
-
-#define G_RDPHALF_2 -77
-
-#define G_CULL_BOTH 12288
-
-#define G_CCMUX_0 31
-
-#define G_TX_LDBLK_MAX_TXL 2047
-
-#define G_CCMUX_1 6
-
-#define G_RDPHALF_1 -76
-
-#define G_SHADING_SMOOTH 512
-
-#define G_CCMUX_SHADE 4
-
-#define G_SPRITE2D 9
-
-#define G_CCMUX_ENVIRONMENT 5
-
-#define G_CULL_FRONT 4096
-
-#define G_LOADTILE 244
-
-#define G_FOG 65536
-
-#define G_SETPRIMDEPTH 238
-
-#define G_MV_LOOKATX 132
-
-#define G_MV_LOOKATY 130
-
-#define G_SC_NON_INTERLACE 0
-
-#define G_MDSFT_BLENDMASK 0
-
-#define G_MW_FOG 8
-
-#define G_CD_ENABLE 128
-
-#define G_TEXTURE_ENABLE 2
-
-#define G_MDSFT_RENDERMODE 3
-
-#define G_MWO_MATRIX_ZZ_ZW_I 20
-
-#define G_MWO_MATRIX_ZZ_ZW_F 52
-
-#define G_BL_1MA 0
-
-#define G_SPNOOP 0
-
-#define G_TF_BILERP 8192
-
-#define G_SETZIMG 254
-
-#define G_MV_VIEWPORT 128
-
-#define G_NOOP 192
-
-#define Z_UPD 32
-
-#define G_ENDDL -72
-
-#define G_ROTATE_FRAC 16
-
-#define G_SETTILESIZE 242
-
-#define G_RM_NOOP 0
-
-#define G_RESERVED2 7
-
-#define G_TD_DETAIL 262144
-
-#define G_RESERVED3 8
-
-#define G_RESERVED0 2
-
-#define G_RESERVED1 5
-
-#define G_CLEARGEOMETRYMODE -74
-
-#define G_BL_A_FOG 1
-
-#define G_BL_CLR_FOG 3
-
-#define G_MW_SEGMENT 6
-
-#define Z_CMP 16
-
-#define AA_EN 8
-
-#define G_LOADTLUT 240
-
-#define NUMLIGHTS_5 5
-
-#define NUMLIGHTS_4 4
-
-#define NUMLIGHTS_7 7
-
-#define NUMLIGHTS_6 6
-
-#define G_MWO_MATRIX_YZ_YW_F 44
-
-#define NUMLIGHTS_1 1
-
-#define NUMLIGHTS_0 1
-
-#define NUMLIGHTS_3 3
-
-#define G_MWO_MATRIX_YZ_YW_I 12
-
-#define NUMLIGHTS_2 2
-
-#define G_SETFILLCOLOR 247
-
-#define G_DL 6
-
-#define G_BL_CLR_BL 2
-
-#define G_CYC_COPY 2097152
-
-#define G_MWO_SEGMENT_A 10
-
-#define CLR_ON_CVG 128
-
-#define G_RDP_ADDR_FIXUP 3
-
-#define G_SETFOGCOLOR 248
-
-#define G_MWO_SEGMENT_8 8
-
-#define G_MWO_SEGMENT_9 9
-
-#define G_MWO_SEGMENT_6 6
-
-#define G_MWO_SEGMENT_7 7
-
-#define G_MWO_SEGMENT_4 4
-
-#define G_MWO_SEGMENT_5 5
-
-#define G_MWO_SEGMENT_2 2
-
-#define G_MWO_SEGMENT_3 3
-
-#define G_MWO_SEGMENT_0 0
-
-#define G_IMMCMDSIZ 64
-
-#define G_MWO_SEGMENT_1 1
-
-#define G_ACMUX_LOD_FRACTION 0
-
-#define G_IM_SIZ_16b_TILE_BYTES 2
-
-#define G_ACMUX_COMBINED 0
-
-#define G_TL_TILE 0
-
-#define G_MDSFT_TEXTPERSP 19
-
-#define G_ACMUX_ENVIRONMENT 5
-
-#define G_IM_SIZ_8b_TILE_BYTES 1
-
-#define G_MWO_MATRIX_WX_WY_I 24
-
-#define G_ACMUX_TEXEL1 2
-
-#define G_SC_EVEN_INTERLACE 2
-
-#define G_MDSFT_TEXTFILT 12
-
-#define G_IM_SIZ_16b 2
-
-#define LIGHT_6 6
-
-#define LIGHT_5 5
-
-#define G_TL_LOD 65536
-
-#define LIGHT_8 8
-
-#define LIGHT_7 7
-
-#define LIGHT_2 2
-
-#define LIGHT_1 1
-
-#define G_IM_SIZ_4b_TILE_BYTES 0
-
-#define LIGHT_4 4
-
-#define G_MWO_SEGMENT_F 15
-
-#define G_ACMUX_TEXEL0 1
-
-#define G_MW_CLIP 4
-
-#define LIGHT_3 3
-
-#define G_MWO_SEGMENT_D 13
-
-#define G_SCALE_FRAC 8
-
-#define G_MWO_SEGMENT_E 14
-
-#define G_MWO_SEGMENT_B 11
-
-#define G_IM_SIZ_32b_TILE_BYTES 2
-
-#define G_TT_NONE 0
-
-#define G_MWO_SEGMENT_C 12
-
-#define G_AD_PATTERN 0
-
-#define G_TX_RENDERTILE 0
-
-#define G_IM_SIZ_8b_LOAD_BLOCK 2
-
-#define G_SC_ODD_INTERLACE 3
-
-#define G_IM_SIZ_4b_LOAD_BLOCK 2
-
-#define G_CD_NOISE 128
-
-#define G_TRI_FILL 200
-
-#define G_FILLRECT 246
-
-#define G_SETPRIMCOLOR 250
-
-#define G_TEXRECTFLIP 229
-
-#define G_MWO_MATRIX_WX_WY_F 56
-
-#define G_MDSFT_ZSRCSEL 2
-
-#define G_RDPSETOTHERMODE 239
-
-#define G_IM_SIZ_16b_LINE_BYTES 2
-
-#define G_TRI_SHADE_TXTR_ZBUFF 207
-
-#define G_TF_POINT 0
-
-#define G_CCMUX_SCALE 6
-
-#define G_MWO_MATRIX_ZX_ZY_I 16
-
-#define TEX_EDGE 0
-
-#define G_MOVEWORD -68
-
-#define G_RM_PASS 201850880
-
-#define G_MAXFBZ 16383
-
-#define CVG_DST_CLAMP 0
-
-#define G_RDPFULLSYNC 233
-
-#define G_DL_NOPUSH 1
-
-#define G_CCMUX_COMBINED 0
-
-#define G_TX_WRAP 0
-
-#define G_MWO_POINT_ST 20
-
-#define G_TRI_TXTR_ZBUFF 203
-
-#define G_TRI1 -65
-
-#define ZMODE_INTER 1024
-
-#define G_MDSFT_ALPHACOMPARE 0
-
-#define G_IM_SIZ_32b_SHIFT 0
-
-#define G_AC_DITHER 3
-
-#define G_TC_FILTCONV 2560
-
-#define G_MTX_LOAD 2
-
-#define G_CCMUX_PRIMITIVE 3
-
-#define G_MW_LIGHTCOL 10
-
-#define G_MW_POINTS 12
-
-#define G_TC_FILT 3072
-
-#define G_IM_SIZ_4b_INCR 3
-
-#define G_MDSFT_ALPHADITHER 4
-
-#define G_CCMUX_SHADE_ALPHA 11
-
-#define ZMODE_OPA 0
-
-#define G_BL_A_MEM 1
-
-#define G_MWO_MATRIX_ZX_ZY_F 48
-
-#define G_TP_NONE 0
-
-#define G_SETOTHERMODE_H -70
-
-#define FR_NEG_FRUSTRATIO_6 6
-
-#define G_RDP_TRI_TXTR_MASK 2
-
-#define FR_NEG_FRUSTRATIO_5 5
-
-#define G_SETOTHERMODE_L -71
-
-#define FR_NEG_FRUSTRATIO_4 4
-
-#define FR_NEG_FRUSTRATIO_3 3
-
-#define FR_NEG_FRUSTRATIO_2 2
-
-#define FR_NEG_FRUSTRATIO_1 1
-
-#define G_MWO_MATRIX_XX_XY_I 0
-
-#define G_TX_DXT_FRAC 11
-
-#define G_TT_RGBA16 32768
-
-#define G_ZS_PIXEL 0
-
-#define G_MW_MATRIX 0
-
-#define G_CCMUX_PRIMITIVE_ALPHA 10
-
-#define G_LOD 1048576
-
-#define G_TRI_SHADE 204
-
-#define G_MV_L5 144
-
-#define G_CYC_1CYCLE 0
-
-#define G_MV_L4 142
-
-#define G_MV_L3 140
-
-#define G_SETCOMBINE 252
-
-#define G_MV_L2 138
-
-#define G_IM_SIZ_16b_LOAD_BLOCK 2
-
-#define G_MV_L7 148
-
-#define G_MV_L6 146
-
-#define G_CCMUX_LOD_FRACTION 13
-
-#define G_RDP_TRI_ZBUFF_MASK 1
-
-#define G_TEXTURE -69
-
-#define G_TEXTURE_IMAGE_FRAC 2
-
-#define G_MW_NUMLIGHT 2
-
-#define G_TD_CLAMP 0
-
-#define G_MDSFT_TEXTDETAIL 17
-
-#define G_IM_FMT_RGBA 0
-
-#define G_SETTILE 245
-
-#define G_CCMUX_TEXEL1_ALPHA 9
-
-#define G_BL_A_IN 0
-
-#define G_MV_L1 136
-
-#define G_MV_L0 134
-
-#define G_IM_SIZ_32b 3
-
-#define G_AD_DISABLE 48
-
-#define G_IM_SIZ_4b_BYTES 0
-
-#define IM_RD 64
-
-#define G_IM_SIZ_16b_BYTES 2
-
-#define G_CCMUX_TEXEL1 2
-
-#define G_CCMUX_TEXEL0 1
-
-#define G_BL_CLR_IN 0
-
-#define G_CD_BAYER 64
-
-#define G_SETENVCOLOR 251
-
-#define G_MV_MATRIX_4 156
-
-#define G_MWO_POINT_ZSCREEN 28
-
-#define G_RDPLOADSYNC 230
-
-#define G_ZS_PRIM 4
-
-#define G_MDSFT_RGBDITHER 6
-
-#define G_RDPHALF_CONT -78
-
-#define G_RM_FOG_SHADE_A 3355443200
-
-#define G_AC_NONE 0
-
-#define G_IM_SIZ_4b_SHIFT 2
-
-#define G_MV_MATRIX_3 154
-
-#define G_TF_AVERAGE 12288
-
-#define G_MV_MATRIX_2 152
-
-#define G_MV_MATRIX_1 158
-
-#define G_CCMUX_TEXEL0_ALPHA 8
-
-#define G_TX_NOLOD 0
-
-#define G_MW_PERSPNORM 14
-
-#define G_SETKEYGB 234
-
-#define G_IM_SIZ_32b_LOAD_BLOCK 3
-
-#define G_SETBLENDCOLOR 249
-
-#define G_SETTIMG 253
-
-#define G_CV_K2 -89
-
-#define G_CV_K1 -43
-
-#define G_CV_K0 175
-
-#define G_RM_FOG_PRIM_A 3288334336
-
-#define G_BL_0 3
-
-#define G_TRI_SHADE_TXTR 206
-
-#define G_LINE3D -75
-
-#define G_BL_1 2
-
-#define G_TEXTURE_GEN_LINEAR 524288
-
-#define G_CV_K5 42
-
-#define G_TX_MIRROR 1
-
-#define G_CV_K4 114
-
-#define G_CV_K3 222
-
-#define G_RDP_TRI_SHADE_MASK 4
-
-#define G_IM_SIZ_16b_INCR 0
-
-#define G_TRI_TXTR 202
-
-#define ALPHA_CVG_SEL 8192
-
-#define CVG_DST_FULL 512
-
-#define G_CULL_BACK 8192
-
-#define G_MTX_NOPUSH 0
-
-#define G_MTX_MUL 0
-
-#define G_IM_SIZ_32b_BYTES 4
-
-#define G_AD_NOISE 32
-
-#define G_ACMUX_PRIM_LOD_FRAC 6
-
-#define G_MWO_FOG 0
-
-#define G_MWO_POINT_XYSCREEN 24
-
-#define G_MWO_MATRIX_XX_XY_F 32
-
-#define G_ZBUFFER 1
-
-typedef ulong size_t;
-
-typedef struct exception exception, *Pexception;
-
-struct exception {
-    int anonymous_0;
-    int anonymous_1;
-    void * error;
-};
-
-typedef struct c_itementry c_itementry, *Pc_itementry;
-
-typedef struct object_header object_header, *Pobject_header;
-
-struct c_itementry {
-    struct object_header * header;
-    void * filename;
-    float anonymous_1;
-    float anonymous_2;
-    int anonymous_3;
-};
-
-struct object_header {
-    int offset_obj_table;
-    void * ptr_archetype;
-    int offset_obj_offset_block;
-    short num_offset_entries;
-    short num_object_grps;
-    float anonymous_4;
-    short num_table_entries;
-    short num_image_entries;
-    int offset_img_declaration;
-    int is_loaded_in_mem;
-};
-
-typedef struct $732F89B2624665A943E52F38E86E4CBC $732F89B2624665A943E52F38E86E4CBC, *P$732F89B2624665A943E52F38E86E4CBC;
-
-struct $732F89B2624665A943E52F38E86E4CBC {
-};
-
-typedef enum KSEG {
-} KSEG;
-
-typedef struct $B84834CAACFDCE10B1334219ADA11FDA $B84834CAACFDCE10B1334219ADA11FDA, *P$B84834CAACFDCE10B1334219ADA11FDA;
-
-typedef struct $B84834CAACFDCE10B1334219ADA11FDA ALGlobals;
-
-typedef struct ALSynth ALSynth, *PALSynth;
-
-typedef struct ALPlayer_s ALPlayer_s, *PALPlayer_s;
-
-typedef struct ALPlayer_s ALPlayer;
-
-typedef ALDMAproc (* ALDMANew)(void *);
-
-typedef struct ALHeap ALHeap, *PALHeap;
-
-typedef s32 ALMicroTime;
-
-typedef ALMicroTime (* ALVoiceHandler)(void *);
-
-struct ALSynth {
-    ALPlayer * head;
-    ALLink pFreeList;
-    ALLink pAllocList;
-    ALLink pLameList;
-    s32 paramSamples;
-    s32 curSamples;
-    ALDMANew dma;
-    struct ALHeap * heap;
-    struct ALParam_s * paramList;
-    struct ALMainBus_s * mainBus;
-    struct ALAuxBus_s * auxBus;
-    struct ALFilter_s * outputFilter;
-    s32 numPVoices;
-    s32 maxAuxBusses;
-    s32 outputRate;
-    s32 maxOutSamples;
-};
-
-struct $B84834CAACFDCE10B1334219ADA11FDA {
-    struct ALSynth drvr;
-};
-
-struct ALHeap {
-    u8 * base;
-    u8 * cur;
-    s32 len;
-    s32 count;
-};
-
-struct ALPlayer_s {
-    struct ALPlayer_s * next;
-    void * clientData;
-    ALVoiceHandler handler;
-    ALMicroTime callTime;
-    s32 samplesLeft;
-};
-
-typedef struct p_itementry p_itementry, *Pp_itementry;
-
-typedef struct PitemZ_header PitemZ_header, *PPitemZ_header;
-
-typedef struct item_related item_related, *Pitem_related;
-
-struct PitemZ_header {
-    int microcode_entry_num;
-    struct item_related * anonymous_1;
-    short anonymous_2;
-    short field_E;
-    float drawdistance;
-    float anonymous_4;
-    int anonymous_5;
-    int anonymous_6;
-    int anonymous_7;
-};
-
-struct p_itementry {
-    struct PitemZ_header * header;
-    void * filename;
-    float scale;
-};
-
-struct item_related {
-    short num_entries_in_block;
-    short field_2;
-    struct prop_pos_data * ptr_block;
-    short total_cmd_indexval;
-    short field_A;
-};
-
-typedef struct weapon_firing_animation_table weapon_firing_animation_table, *Pweapon_firing_animation_table;
-
-struct weapon_firing_animation_table {
-    s32 anonymous_0;
-    f32 anonymous_1;
-    f32 anonymous_2;
-    f32 anonymous_3;
-    f32 anonymous_4;
-    f32 anonymous_5;
-    f32 anonymous_6;
-    f32 anonymous_7;
-    f32 anonymous_8;
-    f32 anonymous_9;
-    f32 anonymous_10;
-    f32 anonymous_11;
-    f32 anonymous_12;
-    f32 anonymous_13;
-    f32 anonymous_14;
-    f32 anonymous_15;
-    f32 anonymous_16;
-    f32 anonymous_17;
-};
-
-typedef struct Gitemheader Gitemheader, *PGitemheader;
-
-typedef struct model_data model_data, *Pmodel_data;
-
-struct Gitemheader {
-    int offset_objtable;
-    struct model_data * guntype_modeldata;
-    int offset_objblock;
-    short num05soffset_entries;
-    short num_objgroups;
-    float drawdistance;
-    u16 num_entries;
-    u16 num_images;
-    int offset_imgdecl;
-    u32 isloaded;
-};
-
-struct model_data {
-    u32 anonymous_0;
-    struct prop_pos_data * anonymous_1;
-    u32 anonymous_2;
-};
-
-typedef struct mp_weaponset_weapon mp_weaponset_weapon, *Pmp_weaponset_weapon;
-
-struct mp_weaponset_weapon {
-    int anonymous_0;
-    int anonymous_1;
-    float anonymous_2;
-    int anonymous_3;
-    int anonymous_4;
-    int anonymous_5;
-};
-
-typedef struct ramrom_struct ramrom_struct, *Pramrom_struct;
-
-typedef struct ramrom_entry ramrom_entry, *Pramrom_entry;
-
-struct ramrom_entry {
-    int ROMaddress;
-    int is_locked;
-};
-
-struct ramrom_struct {
-    struct ramrom_entry dam1;
-    struct ramrom_entry dam2;
-    struct ramrom_entry facility1;
-    struct ramrom_entry facility2;
-    struct ramrom_entry facility3;
-    struct ramrom_entry runway1;
-    struct ramrom_entry runway2;
-    struct ramrom_entry bunker1_1;
-    struct ramrom_entry bunker1_2;
-    struct ramrom_entry silo1;
-    struct ramrom_entry silo2;
-    struct ramrom_entry frigate1;
-    struct ramrom_entry frigate2;
-    struct ramrom_entry train;
-    struct ramrom_entry null;
-};
-
-typedef struct $9574A80C820E0B95666ECD0A99E160BE $9574A80C820E0B95666ECD0A99E160BE, *P$9574A80C820E0B95666ECD0A99E160BE;
-
-typedef struct $9574A80C820E0B95666ECD0A99E160BE ALSeqData;
-
-struct $9574A80C820E0B95666ECD0A99E160BE {
-    u8 * offset;
-};
-
-typedef struct mp_stage_playercount mp_stage_playercount, *Pmp_stage_playercount;
-
-struct mp_stage_playercount {
-    short stage;
-    char min;
-    char max;
-};
-
-typedef struct music_setup music_setup, *Pmusic_setup;
-
-struct music_setup {
-    short stage_id;
-    short main_music;
-    short bg_sound;
-    short xtrack;
-};
-
-typedef struct MP_game_length_settings MP_game_length_settings, *PMP_game_length_settings;
-
-struct MP_game_length_settings {
-    u16 text_preset;
-    u16 padding;
-    int time;
-    int points;
-};
-
-
-// WARNING! conflicting data type names: /GE Current Master.h/ALVoiceHandler - /libaudio.h/ALVoiceHandler
-
-typedef struct memoryallocation memoryallocation, *Pmemoryallocation;
-
-struct memoryallocation {
-    int number;
-    void * string;
-};
-
-typedef struct $62F109188EB304B8EC258AA93B51CC96 $62F109188EB304B8EC258AA93B51CC96, *P$62F109188EB304B8EC258AA93B51CC96;
-
-struct $62F109188EB304B8EC258AA93B51CC96 {
-};
-
-
-// WARNING! conflicting data type names: /GE Current Master.h/rgba_val - /bondgame.h/rgba_val
-
-
-// WARNING! conflicting data type names: /GE Current Master.h/LEVEL_SOLO_SEQUENCE - /bondgame.h/LEVEL_SOLO_SEQUENCE
-
-typedef struct mcm_layout mcm_layout, *Pmcm_layout;
-
-struct mcm_layout {
-    int xpos;
-    int ypos;
-};
-
-typedef struct GUARDdata GUARDdata, *PGUARDdata;
-
-struct GUARDdata {
-    u16 chrnum;
-    char accuracyrating;
-    char speedrating;
-    char firecount.left;
-    char firecount.right;
-    char headnum;
-    enum guard_action_type actiontype;
-    char sleep;
-    char invalidmove;
-    char numclosearghs;
-    char numarghs;
-    char fadealpha;
-    char field_D;
-    char field_E;
-    char bodynum;
-    char beligerancy;
-    char field_11;
-    short special_bitflags;
-    int guard_bitflags;
-    int POSdata_pointer;
-    int MODELdata_pointer;
-    int pertains_to_action61;
-    f32 chrwidth;
-    int chrheight;
-    int bond_position;
-    int field_30;
-    short field_34;
-    char field_36;
-    char field_37;
-    char field_38;
-    char field_39;
-    char field_3A;
-    char field_3B;
-    int path_target_position;
-    int field_40;
-    int field_44;
-    int field_48;
-    int field_4C;
-    int field_50;
-    int field_54;
-    char type_of_motion;
-    char distance_counter_or_something;
-    short distance_to_target;
-    int field_5C;
-    int target_position;
-    int field_64;
-    int field_68;
-    int field_6C;
-    int path_segment_coverage;
-    int path_segment_length;
-    int field_78;
-    int field_7C;
-    int field_80;
-    int field_84;
-    int field_88;
-    int field_8C;
-    int field_90;
-    int segment_coverage;
-    int segment_length;
-    int field_9C;
-    int field_A0;
-    float field_A4;
-    float field_A8;
-    float clipping_height;
-    float field_B0;
-    float field_B4;
-    float field_B8;
-    struct xyzpoint prevpos;
-    int field_C8;
-    int field_CC;
-    float reaction_time;
-    int last_bond_detection_time;
-    float field_D8;
-    float field_DC;
-    float field_E0;
-    int lastshooter;
-    int timeshooter;
-    float hearingscale;
-    int field_F0;
-    char field_F4;
-    char field_F5;
-    char field_F6;
-    char field_F7;
-    char field_F8;
-    char field_F9;
-    char field_FA;
-    char field_FB;
-    int damage;
-    f32 maxdamage;
-    int action_block_pointer;
-    short action_block_offset;
-    short action_block_return;
-    char userbyte1;
-    char userbyte2;
-    char guardtype_bitflags_scientist;
-    char randomvalue;
-    int loopcounter;
-    short preset_of_2328_object_to_interact_with;
-    short FC_target;
-    short FA_target;
-    short FB_target;
-    int field_11C;
-    int field_120;
-    int field_124;
-    int field_128;
-    int field_12C;
-    int field_130;
-    int field_134;
-    int field_138;
-    float field_13C;
-    float field_140;
-    float field_144;
-    float field_148;
-    float field_14C;
-    int field_150;
-    int field_154;
-    int field_158;
-    int field_15C;
-    int handle_positiondata_right_gun;
-    int handle_positiondata_left_gun;
-    int ptr_SEbuffer1;
-    int ptr_SEbuffer2;
-    int ptr_SEbuffer3;
-    int ptr_SEbuffer4;
-    int field_178;
-    int field_17C;
-    char field_180;
-    char field_181;
-    char field_182;
-    char field_183;
-    int field_184;
-    int field_188;
-    int field_18C;
-    int field_190;
-    int field_194;
-    int field_198;
-    int field_19C;
-    int field_1A0;
-    int field_1A4;
-    int field_1A8;
-    char field_1AC;
-    char field_1AD;
-    char field_1AE;
-    char field_1AF;
-    int field_1B0;
-    int field_1B4;
-    int field_1B8;
-    int field_1BC;
-    int field_1C0;
-    int field_1C4;
-    int field_1C8;
-    int field_1CC;
-    int field_1D0;
-    int field_1D4;
-    int handle_positiondata_hat;
-};
-
-typedef struct intro_animation intro_animation, *Pintro_animation;
-
-struct intro_animation {
-    int animID;
-    float startframeoffset;
-    float playback_speed;
-    int camera_preset;
-};
-
-typedef struct $4BEAA6302150DFF77A6D6B5C2F812979 $4BEAA6302150DFF77A6D6B5C2F812979, *P$4BEAA6302150DFF77A6D6B5C2F812979;
-
-struct $4BEAA6302150DFF77A6D6B5C2F812979 {
-    float col[3];
-    float pos[3];
-    float a1;
-    float a2;
-};
-
-typedef struct playerperm playerperm, *Pplayerperm;
-
-struct playerperm {
-    int shotcount[7];
-    int killcount;
-    int ggkillcount;
-    int kills[4];
-    int drawplayercount;
-    float distance;
-    int backshotcount;
-    float armourcount;
-    int fastest2kills;
-    int slowest2kills;
-    int longestlife;
-    s32 shortestlife;
-    int most_killed_one_life;
-    int most_killed_one_time;
-    float handicap;
-    int flag_counter;
-    float player_perspective_height;
-    char order_out_in_yolt;
-    char have_token_or_goldengun;
-    char autoaim;
-    char sight;
-    int killed_civilians;
-};
-
-typedef struct $B24B31290AB3F51AC02030577BB60BEE $B24B31290AB3F51AC02030577BB60BEE, *P$B24B31290AB3F51AC02030577BB60BEE;
-
-struct $B24B31290AB3F51AC02030577BB60BEE {
-};
-
-typedef struct $1D3114E51680E29F8350BFE921C29711 $1D3114E51680E29F8350BFE921C29711, *P$1D3114E51680E29F8350BFE921C29711;
-
-typedef struct $1D3114E51680E29F8350BFE921C29711 ALKeyMap;
-
-struct $1D3114E51680E29F8350BFE921C29711 {
-    u8 velocityMin;
-    u8 velocityMax;
-    u8 keyMin;
-    u8 keyMax;
-    u8 keyBase;
-    s8 detune;
-};
-
-typedef struct enviroment_struct enviroment_struct, *Penviroment_struct;
-
-struct enviroment_struct {
-    int index;
-    float anonymous_0;
-    float anonymous_1;
-    float anonymous_2;
-    float anonymous_3;
-    float anonymous_4;
-    int anonymous_5;
-    int anonymous_6;
-    int anonymous_7;
-    int anonymous_8;
-    int anonymous_9;
-    float anonymous_10;
-    int anonymous_11;
-    float anonymous_12;
-    float anonymous_13;
-    float anonymous_14;
-    int anonymous_15;
-    float anonymous_16;
-    int anonymous_17;
-    int anonymous_18;
-    float anonymous_19;
-    float anonymous_20;
-    float anonymous_21;
-};
-
-typedef struct $2903A050EBC6442F98207E1AE6ED2D96 $2903A050EBC6442F98207E1AE6ED2D96, *P$2903A050EBC6442F98207E1AE6ED2D96;
-
-typedef struct $2903A050EBC6442F98207E1AE6ED2D96 ALSndPlayer;
-
-typedef struct ALEventQueue ALEventQueue, *PALEventQueue;
-
-typedef struct ALEvent ALEvent, *PALEvent;
-
-typedef union _union_144 _union_144, *P_union_144;
-
-typedef struct ALMIDIEvent ALMIDIEvent, *PALMIDIEvent;
-
-typedef struct ALTempoEvent ALTempoEvent, *PALTempoEvent;
-
-typedef struct ALEndEvent ALEndEvent, *PALEndEvent;
-
-typedef struct ALNoteEvent ALNoteEvent, *PALNoteEvent;
-
-typedef struct ALVolumeEvent ALVolumeEvent, *PALVolumeEvent;
-
-typedef struct ALSeqpLoopEvent ALSeqpLoopEvent, *PALSeqpLoopEvent;
-
-typedef struct ALSeqpVolEvent ALSeqpVolEvent, *PALSeqpVolEvent;
-
-typedef struct ALSeqpPriorityEvent ALSeqpPriorityEvent, *PALSeqpPriorityEvent;
-
-typedef struct ALSeqpSeqEvent ALSeqpSeqEvent, *PALSeqpSeqEvent;
-
-typedef struct ALSeqpBankEvent ALSeqpBankEvent, *PALSeqpBankEvent;
-
-typedef struct ALOscEvent ALOscEvent, *PALOscEvent;
-
-typedef struct ALSeqMarker ALSeqMarker, *PALSeqMarker;
-
-typedef struct ALBank_s ALBank_s, *PALBank_s;
-
-typedef struct ALBank_s ALBank;
-
-typedef struct ALVoiceState_s ALVoiceState_s, *PALVoiceState_s;
-
-typedef struct ALInstrument ALInstrument, *PALInstrument;
-
-typedef struct ALVoice_s ALVoice;
-
-typedef struct ALSound_s ALSound_s, *PALSound_s;
-
-typedef struct ALSound_s ALSound;
-
-typedef struct ALEnvelope ALEnvelope, *PALEnvelope;
-
-
-// WARNING! conflicting data type names: /libaudio.h/ALKeyMap - /GE Current Master.h/ALKeyMap
-
-struct ALEndEvent {
-    s32 ticks;
-    u8 status;
-    u8 type;
-    u8 len;
-};
-
-struct ALSeqpBankEvent {
-    ALBank * bank;
-};
-
-struct ALMIDIEvent {
-    s32 ticks;
-    u8 status;
-    u8 byte1;
-    u8 byte2;
-    u32 duration;
-};
-
-struct ALVolumeEvent {
-    struct ALVoice_s * voice;
-    ALMicroTime delta;
-    u8 vol;
-};
-
-struct ALSeqpPriorityEvent {
-    u8 chan;
-    u8 priority;
-};
-
-struct ALOscEvent {
-    struct ALVoiceState_s * vs;
-    void * oscState;
-    u8 chan;
-};
-
-struct ALSeqpLoopEvent {
-    struct ALSeqMarker * start;
-    struct ALSeqMarker * end;
-    s32 count;
-};
-
-struct ALTempoEvent {
-    s32 ticks;
-    u8 status;
-    u8 type;
-    u8 len;
-    u8 byte1;
-    u8 byte2;
-    u8 byte3;
-};
-
-struct ALSeqpVolEvent {
-    s16 vol;
-};
-
-struct ALNoteEvent {
-    struct ALVoice_s * voice;
-};
-
-struct ALSeqpSeqEvent {
-    void * seq;
-};
-
-union _union_144 {
-    struct ALMIDIEvent midi;
-    struct ALTempoEvent tempo;
-    struct ALEndEvent end;
-    struct ALNoteEvent note;
-    struct ALVolumeEvent vol;
-    struct ALSeqpLoopEvent loop;
-    struct ALSeqpVolEvent spvol;
-    struct ALSeqpPriorityEvent sppriority;
-    struct ALSeqpSeqEvent spseq;
-    struct ALSeqpBankEvent spbank;
-    struct ALOscEvent osc;
-};
-
-struct ALEvent {
-    s16 type;
-    union _union_144 msg;
-};
-
-struct ALBank_s {
-    s16 instCount;
-    u8 flags;
-    u8 pad;
-    s32 sampleRate;
-    struct ALInstrument * percussion;
-    struct ALInstrument * instArray[1];
-};
-
-struct ALInstrument {
-    u8 volume;
-    ALPan pan;
-    u8 priority;
-    u8 flags;
-    u8 tremType;
-    u8 tremRate;
-    u8 tremDepth;
-    u8 tremDelay;
-    u8 vibType;
-    u8 vibRate;
-    u8 vibDepth;
-    u8 vibDelay;
-    s16 bendRange;
-    s16 soundCount;
-    ALSound * soundArray[1];
+typedef struct xyzpoint xyzpoint, *Pxyzpoint;
+
+struct s_pBONDData {
+    struct Player * p1;
+    struct Player * p2;
+    struct Player * p3;
+    struct Player * p4;
+};
+
+struct xyzpoint {
+    f32 x;
+    f32 y;
+    f32 z;
+};
+
+struct Player_SubStruct_7D0 {
+    u16 field_7D0;
+    u16 field_7D2;
+    u16 field_7D4;
+    u16 field_7D6;
+    u16 field_7D8;
+    u16 field_7DA;
+    u16 field_7DC;
+    u16 field_7DE;
 };
-
-struct ALEventQueue {
-    ALLink freeList;
-    ALLink allocList;
-    s32 eventCount;
-};
-
-struct ALEnvelope {
-    ALMicroTime attackTime;
-    ALMicroTime decayTime;
-    ALMicroTime releaseTime;
-    u8 attackVolume;
-    u8 decayVolume;
-};
-
-struct $2903A050EBC6442F98207E1AE6ED2D96 {
-    ALPlayer node;
-    struct ALEventQueue evtq;
-    struct ALEvent nextEvent;
-    struct ALSynth * drvr;
-    void * sndState;
-};
-
-struct ALVoiceState_s {
-    struct ALVoiceState_s * next;
-    ALVoice voice;
-    ALSound * sound;
-    ALMicroTime envEndTime;
-    f32 pitch;
-    f32 vibrato;
-    u8 envGain;
-    u8 channel;
-    u8 key;
-    u8 velocity;
-    u8 envPhase;
-    u8 phase;
-    u8 tremelo;
-    u8 flags;
-};
-
-struct ALSound_s {
-    struct ALEnvelope * envelope;
-    struct ALKeyMap * keyMap;
-    ALWaveTable * wavetable;
-    ALPan samplePan;
-    u8 sampleVolume;
-    u8 flags;
-};
-
-struct ALSeqMarker {
-    u8 * curPtr;
-    s32 lastTicks;
-    s32 curTicks;
-    s16 lastStatus;
-};
-
-
-// WARNING! conflicting data type names: /GE Current Master.h/PROJECTILES - /bondgame.h/PROJECTILES
-
-typedef struct solo_target_times solo_target_times, *Psolo_target_times;
-
-struct solo_target_times {
-    short agent_time;
-    short secret_agent_time;
-    short OO_agent_time;
-};
-
-typedef struct ejected_cart ejected_cart, *Pejected_cart;
-
-struct ejected_cart {
-    struct Gitemheader * header;
-    u8 * text;
-};
-
-typedef struct mission_folder_setup mission_folder_setup, *Pmission_folder_setup;
-
-struct mission_folder_setup {
-    void * string_ptr;
-    short folder_text_preset;
-    short icon_text_preset;
-    int stage_id;
-    int unknown;
-    int type;
-    int mission_num;
-    void * briefing_name_ptr;
-};
-
-typedef struct MP_selectable_chars MP_selectable_chars, *PMP_selectable_chars;
-
-struct MP_selectable_chars {
-    short text_preset;
-    char gender;
-    char select_photo;
-    short body;
-    short head;
-    float pov;
-};
-
-typedef struct $DD54060F307CC511C1231C522D614BD1 $DD54060F307CC511C1231C522D614BD1, *P$DD54060F307CC511C1231C522D614BD1;
-
-struct $DD54060F307CC511C1231C522D614BD1 {
-    uchar * base;
-    int fmt;
-    int siz;
-    int xsize;
-    int ysize;
-    int lsize;
-    int addr;
-    int w;
-    int h;
-    int s;
-    int t;
-};
-
-typedef struct explosion_death_animation explosion_death_animation, *Pexplosion_death_animation;
-
-struct explosion_death_animation {
-    int anonymous_0;
-    int anonymous_1;
-    float anonymous_2;
-    float anonymous_3;
-    float anonymous_4;
-    float anonymous_5;
-    float anonymous_6;
-};
-
-typedef struct Player Player, *PPlayer;
 
 struct Player {
     int unknown;
@@ -9071,18 +604,9 @@ struct Player {
     f32 field_3C4;
     f32 field_3C8;
     f32 field_3CC;
-    char field_3D0;
-    char field_3D1;
-    char field_3D2;
-    char tint_red;
-    char field_3D4;
-    char field_3D5;
-    char field_3D6;
-    char tint_green;
-    char field_3D8;
-    char field_3D9;
-    char field_3DA;
-    char tint_blue;
+    u32 tint_red;
+    u32 tint_green;
+    u32 tint_blue;
     float tint_alpha;
     f32 field_3E0;
     float timer_for_fade;
@@ -9099,7 +623,7 @@ struct Player {
     int field_410;
     int field_414;
     int field_418;
-    int cuff_value;
+    enum CUFF_TYPES cuff_value;
     int field_420;
     int field_424;
     int field_428;
@@ -9336,21 +860,15 @@ struct Player {
     int field_7C4;
     int field_7C8;
     int field_7CC;
-    int field_7D0;
-    int field_7D4;
-    int field_7D8;
-    int field_7DC;
-    int field_7E0;
-    int field_7E4;
-    int field_7E8;
-    int field_7EC;
+    struct Player_SubStruct_7D0 field_7D0;
+    struct Player_SubStruct_7D0 field_7E0;
     short viewx;
     short viewy;
     short viewleft;
     short viewtop;
     int hand_invisible[2];
-    int hand_item[2];
-    void * ptr_hand_weapon_buffer[2];
+    enum ITEM_IDS hand_item[2];
+    u8 * ptr_hand_weapon_buffer[2];
     int copy_of_body_obj_header[8];
     int copy_of_right_weapon_obj_header[8];
     int field_850;
@@ -11475,7 +2993,7 @@ struct Player {
     int deathcount;
     int num_suicides;
     int field_29E0;
-    int field_29E4;
+    int last_kill_time;
     int field_29E8;
     int field_29EC;
     int field_29F0;
@@ -11496,7 +3014,7 @@ struct Player {
     int field_2A2C;
     int field_2A30;
     int field_2A34;
-    int field_2A38;
+    int cur_item_weapon_getname;
     f32 actual_health;
     f32 actual_armor;
     int field_2A44[2];
@@ -11514,6 +3032,10766 @@ struct Player {
     int field_2A7C;
 };
 
+typedef struct indy_resource_entry indy_resource_entry, *Pindy_resource_entry;
+
+struct indy_resource_entry {
+    u32 resourceID;
+    s32 type;
+    s32 size;
+    s32 readsize;
+    s32 writesize;
+};
+
+typedef struct s_mempBANK s_mempBANK, *Ps_mempBANK;
+
+struct s_mempBANK {
+    s32 bankstart;
+    s32 nextentry;
+    s32 bankend;
+    void * data2;
+};
+
+typedef struct player_gait_header player_gait_header, *Pplayer_gait_header;
+
+typedef struct player_gait_object_entry player_gait_object_entry, *Pplayer_gait_object_entry;
+
+typedef struct player_gait_pos_header player_gait_pos_header, *Pplayer_gait_pos_header;
+
+typedef struct player_gait_position_entry player_gait_position_entry, *Pplayer_gait_position_entry;
+
+struct player_gait_object_entry {
+    u32 field_0x0;
+    struct player_gait_header * ptr_header;
+    u32 field_0x8;
+    u32 field_0xc;
+};
+
+struct player_gait_position_entry {
+    float flt_1;
+    float flt_2;
+    float flt_3;
+    u16 field_0xc;
+    u16 field_0xe;
+    u16 field_0x10;
+    u16 field_0x12;
+    struct player_gait_header * ptr_header;
+    u32 field_0x18;
+};
+
+struct player_gait_pos_header {
+    u8 field_0x0;
+    u8 type;
+    u16 field_0x2;
+    struct player_gait_position_entry * entry;
+    struct player_gait_header * previous;
+    void * field_0xc;
+    void * field_0x10;
+    struct player_gait_header * next;
+};
+
+struct player_gait_header {
+    u8 field_0x0;
+    u8 type;
+    u16 field_0x2;
+    struct player_gait_object_entry * entry;
+    struct player_gait_header * previous;
+    void * field_0xc;
+    void * field_0x10;
+    struct player_gait_pos_header * next;
+};
+
+typedef struct LnameX_table_entry LnameX_table_entry, *PLnameX_table_entry;
+
+struct LnameX_table_entry {
+    string * extext;
+    string * jtext;
+};
+
+typedef struct portal_table_entry portal_table_entry, *Pportal_table_entry;
+
+
+// WARNING! conflicting data type names: /types.h/s32 - /ultratypes.h/s32
+
+struct portal_table_entry {
+    s32 id;
+    s32 x_min;
+    s32 y_min;
+    s32 x_max;
+    s32 y_max;
+};
+
+typedef struct resource_lookup_data_entry resource_lookup_data_entry, *Presource_lookup_data_entry;
+
+struct resource_lookup_data_entry {
+    u32 rom_size;
+    s32 pc_remaining;
+    u32 pc_size;
+    u32 buffer_remaining;
+    u8 loaded_bank;
+    u8 unk_11;
+    u16 reserved;
+};
+
+typedef struct firing_anim_struct firing_anim_struct, *Pfiring_anim_struct;
+
+struct firing_anim_struct {
+    pointer pointer;
+    dword anim;
+    f32 x;
+    f32 y;
+    f32 z;
+};
+
+typedef struct fog_element fog_element, *Pfog_element;
+
+struct fog_element {
+    u32 stageID;
+    f32 blendmultiplier;
+    f32 farfog;
+    f32 nearfog;
+    f32 maxvisrange;
+    f32 maxobfuscationrange;
+    f32 minvisrange;
+    u32 intensity;
+    u32 dif_in_light;
+    u32 far_ambiantlight;
+    u8 red;
+    u8 green;
+    u8 blue;
+    u8 clouds;
+    f32 cloudrepeat;
+    u16 skyimageid;
+    u16 reserved;
+    f32 cloudred;
+    f32 cloudgreen;
+    f32 cloudblue;
+    u8 iswater;
+    u8 padding[3];
+    f32 waterrepeat;
+    u16 waterimageid;
+    u16 reserved2;
+    f32 waterred;
+    f32 watergreen;
+    f32 waterblue;
+    f32 waterconcavity;
+};
+
+typedef struct s_mainloop_unk s_mainloop_unk, *Ps_mainloop_unk;
+
+struct s_mainloop_unk {
+    undefined4 dword_80024304;
+    undefined4 dword_80024308;
+    undefined4 dword_8002430C;
+    undefined4 dword_80024310;
+    undefined4 dword_80024314;
+    undefined4 dword_80024318;
+    undefined4 dword_8002431C;
+    undefined4 dword_80024320;
+};
+
+typedef enum STAGENUM {
+    SP_STAGE_ARCHIVES=10,
+    SP_STAGE_AZTEK=18,
+    SP_STAGE_BUNKER1=4,
+    SP_STAGE_BUNKER2=8,
+    SP_STAGE_CAVERNS=16,
+    SP_STAGE_CONTROL=15,
+    SP_STAGE_CRADLE=17,
+    SP_STAGE_DAM=0,
+    SP_STAGE_DEPOT=12,
+    SP_STAGE_EGYPT=19,
+    SP_STAGE_FACILITY=1,
+    SP_STAGE_FRIGATE=6,
+    SP_STAGE_JUNGLE=14,
+    SP_STAGE_MAX=20,
+    SP_STAGE_RUNWAY=2,
+    SP_STAGE_SILO=5,
+    SP_STAGE_STATUE=9,
+    SP_STAGE_STREETS=11,
+    SP_STAGE_SURFACE1=3,
+    SP_STAGE_SURFACE2=7,
+    SP_STAGE_TRAIN=13
+} STAGENUM;
+
+typedef enum PLAYER_ID {
+    PLAYER1=0,
+    PLAYER2=1,
+    PLAYER3=2,
+    PLAYER4=3
+} PLAYER_ID;
+
+typedef struct indy_read_buf indy_read_buf, *Pindy_read_buf;
+
+
+// WARNING! conflicting data type names: /types.h/u32 - /ultratypes.h/u32
+
+struct indy_read_buf {
+    u32 resourceID;
+    s32 type;
+    s32 size;
+};
+
+typedef struct sfxdata sfxdata, *Psfxdata;
+
+struct sfxdata {
+    s32 target_volume;
+    s32 audio_range_time;
+    s32 initial_volume;
+    void * preset_emitter;
+    void * object_emitter;
+};
+
+typedef struct ramromfilestructure ramromfilestructure, *Pramromfilestructure;
+
+typedef double f64;
+
+typedef enum LEVELID {
+    LEVELID_ARCHIVES=24,
+    LEVELID_AZTEC=28,
+    LEVELID_BASEMENT=45,
+    LEVELID_BUNKER1=9,
+    LEVELID_BUNKER2=27,
+    LEVELID_CAVERNS=39,
+    LEVELID_CAVES=50,
+    LEVELID_CITADEL=40,
+    LEVELID_COMPLEX=31,
+    LEVELID_CONTROL=23,
+    LEVELID_CRADLE=41,
+    LEVELID_CUBA=54,
+    LEVELID_DAM=33,
+    LEVELID_DEPOT=30,
+    LEVELID_EAR=51,
+    LEVELID_EGYPT=32,
+    LEVELID_ELD=44,
+    LEVELID_FACILITY=34,
+    LEVELID_FRIGATE=26,
+    LEVELID_JUNGLE=37,
+    LEVELID_LEE=52,
+    LEVELID_LIBRARY=48,
+    LEVELID_LIP=53,
+    LEVELID_LUE=47,
+    LEVELID_MAX=57,
+    LEVELID_NONE=-1,
+    LEVELID_PAM=56,
+    LEVELID_RIT=49,
+    LEVELID_RUNWAY=35,
+    LEVELID_SHO=42,
+    LEVELID_SILO=20,
+    LEVELID_STACK=46,
+    LEVELID_STATUE=22,
+    LEVELID_STREETS=29,
+    LEVELID_SURFACE=36,
+    LEVELID_SURFACE2=43,
+    LEVELID_TEMPLE=38,
+    LEVELID_TITLE=90,
+    LEVELID_TRAIN=25,
+    LEVELID_WAX=55
+} LEVELID;
+
+typedef enum DIFFICULTY {
+    DIFFICULTY_00=2,
+    DIFFICULTY_007=3,
+    DIFFICULTY_AGENT=0,
+    DIFFICULTY_MULTI=-1,
+    DIFFICULTY_SECRET=1
+} DIFFICULTY;
+
+typedef enum GAMEMODE {
+    GAMEMODE_CHEATS=2,
+    GAMEMODE_INTRO=-1,
+    GAMEMODE_MULTI=1,
+    GAMEMODE_SOLO=0
+} GAMEMODE;
+
+struct ramromfilestructure {
+    f64 randomseed;
+    f64 randomizer;
+    enum LEVELID stagenum;
+    enum DIFFICULTY difficulty;
+    u32 size_cmds;
+    struct save_file savefile;
+    f32 totaltime_ms;
+    u32 filesize;
+    enum GAMEMODE mode;
+    u32 slotnum;
+    u32 numplayers;
+    u32 scenario;
+    u32 mpstage_sel;
+    u32 gamelength;
+    u32 mp_weapon_set;
+    u32 p1_mp_char;
+    u32 p2_mp_char;
+    u32 p3_mp_char;
+    u32 p4_mp_char;
+    u32 p1_handi;
+    u32 p2_handi;
+    u32 p3_handi;
+    u32 p4_handi;
+    u32 p1_contstyle;
+    u32 p2_contstyle;
+    u32 p3_contstyle;
+    u32 p4_contstyle;
+    u32 aim_option;
+    u32 p1_flags;
+    u32 p2_flags;
+    u32 p3_flags;
+    u32 p4_flags;
+    u32 controlerstatepackets;
+};
+
+typedef struct s_mem_alloc_table s_mem_alloc_table, *Ps_mem_alloc_table;
+
+struct s_mem_alloc_table {
+    struct s_mem_alloc_entry entries[512];
+};
+
+typedef struct bg_portal_entry bg_portal_entry, *Pbg_portal_entry;
+
+struct bg_portal_entry {
+    u8 numPoints;
+    u8 padding[3];
+    struct xyzpoint point;
+};
+
+typedef struct bg_data_header bg_data_header, *Pbg_data_header;
+
+typedef struct bg_room_data bg_room_data, *Pbg_room_data;
+
+typedef struct bg_portal_data_entry bg_portal_data_entry, *Pbg_portal_data_entry;
+
+struct bg_data_header {
+    u32 RESERVED;
+    struct bg_room_data * pRoomDataTable;
+    struct bg_portal_data_entry * pPortalDataTable;
+    void * pGlobalVisCmds;
+};
+
+struct bg_portal_data_entry {
+    struct bg_portal_entry * offset_portal;
+    u8 connectedRoom1;
+    u8 connectedRoom2;
+    u16 controlbytes;
+};
+
+struct bg_room_data {
+    f32 xpos;
+    f32 ypos;
+    f32 zpos;
+    void * pPointTableBin;
+    void * pPriMappingBin;
+    void * pSecMappingBin;
+};
+
+typedef enum PROPTYPE {
+    New_Name=0
+} PROPTYPE;
+
+typedef struct indy_resource_entry_type6 indy_resource_entry_type6, *Pindy_resource_entry_type6;
+
+struct indy_resource_entry_type6 {
+    struct indy_resource_entry entry;
+    u32 data1;
+    u32 data2;
+};
+
+typedef struct indy_resource_entry_type3 indy_resource_entry_type3, *Pindy_resource_entry_type3;
+
+struct indy_resource_entry_type3 {
+    struct indy_resource_entry entry;
+    u8 strbuffer[255];
+    u32 data;
+};
+
+typedef struct indy_resource_entry_type4 indy_resource_entry_type4, *Pindy_resource_entry_type4;
+
+struct indy_resource_entry_type4 {
+    struct indy_resource_entry entry;
+    u32 data;
+};
+
+typedef struct structunknown structunknown, *Pstructunknown;
+
+struct structunknown {
+    float field_0x0;
+    float field_0x4;
+    float field_0x8;
+};
+
+typedef struct sfx_register_struct sfx_register_struct, *Psfx_register_struct;
+
+struct sfx_register_struct {
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+    undefined4 field_0x8;
+    undefined4 field_0xc;
+    undefined4 field_0x10;
+    undefined4 field_0x14;
+};
+
+typedef enum AMMOTYPES {
+    AMMO_9MM=1,
+    AMMO_9MM_2=2,
+    AMMO_BOMBCASE=16,
+    AMMO_BUG=20,
+    AMMO_CAMERA=27,
+    AMMO_DARTS=14,
+    AMMO_DYNAMITE=19,
+    AMMO_EXPLOSIVEPEN=15,
+    AMMO_FLARE=17,
+    AMMO_GEKEY=22,
+    AMMO_GGUN=13,
+    AMMO_GRENADE=5,
+    AMMO_GRENADEROUND=11,
+    AMMO_KNIFE=10,
+    AMMO_MAGNUM=12,
+    AMMO_MICRO_CAMERA=21,
+    AMMO_PITON=18,
+    AMMO_PLASTIQUE=23,
+    AMMO_PROXMINE=8,
+    AMMO_REMOTEMINE=7,
+    AMMO_RIFLE=3,
+    AMMO_ROCKETS=6,
+    AMMO_SHOTGUN=4,
+    AMMO_TANK=28,
+    AMMO_TIMEDMINE=9,
+    AMMO_TOKEN=29,
+    AMMO_UNK=26,
+    AMMO_WATCH_LASER=24,
+    AMMO_WATCH_MAGNET=25
+} AMMOTYPES;
+
+typedef enum WEAPONID {
+    CHOP=1,
+    GOLDGUN=19,
+    HKNIFE=2,
+    New_Name=4,
+    New_Name_(1)=5,
+    New_Name_(10)=14,
+    New_Name_(11)=15,
+    New_Name_(12)=16,
+    New_Name_(13)=17,
+    New_Name_(14)=18,
+    New_Name_(15)=20,
+    New_Name_(16)=21,
+    New_Name_(17)=22,
+    New_Name_(18)=23,
+    New_Name_(19)=24,
+    New_Name_(2)=6,
+    New_Name_(20)=25,
+    New_Name_(21)=26,
+    New_Name_(22)=27,
+    New_Name_(23)=28,
+    New_Name_(24)=29,
+    New_Name_(25)=30,
+    New_Name_(26)=31,
+    New_Name_(27)=32,
+    New_Name_(28)=33,
+    New_Name_(29)=34,
+    New_Name_(3)=7,
+    New_Name_(30)=35,
+    New_Name_(31)=36,
+    New_Name_(32)=37,
+    New_Name_(33)=38,
+    New_Name_(34)=39,
+    New_Name_(35)=40,
+    New_Name_(36)=41,
+    New_Name_(37)=42,
+    New_Name_(38)=43,
+    New_Name_(39)=44,
+    New_Name_(4)=8,
+    New_Name_(40)=45,
+    New_Name_(41)=46,
+    New_Name_(42)=47,
+    New_Name_(43)=48,
+    New_Name_(44)=49,
+    New_Name_(45)=50,
+    New_Name_(46)=51,
+    New_Name_(47)=52,
+    New_Name_(48)=53,
+    New_Name_(49)=54,
+    New_Name_(5)=9,
+    New_Name_(50)=55,
+    New_Name_(51)=56,
+    New_Name_(52)=57,
+    New_Name_(53)=58,
+    New_Name_(54)=59,
+    New_Name_(55)=60,
+    New_Name_(56)=61,
+    New_Name_(57)=62,
+    New_Name_(58)=63,
+    New_Name_(59)=64,
+    New_Name_(6)=10,
+    New_Name_(60)=65,
+    New_Name_(61)=66,
+    New_Name_(62)=67,
+    New_Name_(63)=68,
+    New_Name_(64)=69,
+    New_Name_(65)=70,
+    New_Name_(66)=71,
+    New_Name_(67)=72,
+    New_Name_(68)=73,
+    New_Name_(69)=74,
+    New_Name_(7)=11,
+    New_Name_(70)=75,
+    New_Name_(71)=76,
+    New_Name_(72)=77,
+    New_Name_(73)=78,
+    New_Name_(74)=79,
+    New_Name_(75)=80,
+    New_Name_(76)=81,
+    New_Name_(77)=82,
+    New_Name_(78)=83,
+    New_Name_(79)=84,
+    New_Name_(8)=12,
+    New_Name_(80)=85,
+    New_Name_(81)=86,
+    New_Name_(82)=87,
+    New_Name_(9)=13,
+    TKNIFE=3,
+    UNARMED=0
+} WEAPONID;
+
+typedef enum CAMERAMODE {
+    FADESWIRL_CAM=2,
+    FP_CAM=4,
+    FP_NOINPUT_CAM=8,
+    INTRO_CAM=1,
+    MP_CAM=9,
+    POSEND_CAM=7,
+    SWIRL_CAM=3,
+    UNK10_CAM=10,
+    UNK5_CAM=5,
+    UNK6_CAM=6
+} CAMERAMODE;
+
+typedef enum COLORMODE {
+    16BIT=1,
+    32BIT=0
+} COLORMODE;
+
+typedef uchar uch;
+
+typedef struct fog_element2 fog_element2, *Pfog_element2;
+
+struct fog_element2 {
+    u32 stageID;
+    u8 red;
+    u8 green;
+    u8 blue;
+    u8 clouds;
+    f32 cloudrepeat;
+    u16 skyimageid;
+    u16 reserved;
+    f32 cloudred;
+    f32 cloudgreen;
+    f32 cloudblue;
+    u8 iswater;
+    u8 padding[3];
+    f32 waterrepeat;
+    u16 waterimageid;
+    u16 reserved2;
+    f32 waterred;
+    f32 watergreen;
+    f32 waterblue;
+    f32 waterconcavity;
+};
+
+typedef enum enumOSEventMsg {
+    PRE_NMI_MSG=669,
+    RDP_DONE_MSG=668,
+    RSP_DONE_MSG=667,
+    VIDEO_MSG=666
+} enumOSEventMsg;
+
+typedef enum TEXTFILESTRINGS {
+    "E R R O R\n"=45097,
+    "\n"=45099,
+    "completed\n"=45101,
+    "failed\n"=45103,
+    "incomplete\n"=45102,
+    "no briefing for this mission\n"=45098,
+    "objective"=45100
+} TEXTFILESTRINGS;
+
+typedef struct sSecondFontTableController sSecondFontTableController, *PsSecondFontTableController;
+
+struct sSecondFontTableController {
+    u8 field_0x0[20];
+    u8 field_0x14[24];
+    u8 field_0x2c[24];
+    u8 font_second_font_table_controller_large[12912];
+};
+
+typedef ulong ulg;
+
+typedef enum SCHEDTASKS {
+    M_AUDTASK=2,
+    M_GFXTASK=1,
+    M_VIDTASK=3
+} SCHEDTASKS;
+
+typedef struct struct_8007ffa0_entry struct_8007ffa0_entry, *Pstruct_8007ffa0_entry;
+
+struct struct_8007ffa0_entry {
+    s32 index;
+    s32 field_0x4;
+    f32 field_0x8;
+    f32 field_0xc;
+    f32 field_0x10;
+    f32 field_0x14;
+    s32 field_0x18;
+};
+
+typedef enum MUSIC_TRACKS {
+    M_ARCHIVES=11,
+    M_ARCHIVESX=37,
+    M_AZTEC=25,
+    M_AZTECX=46,
+    M_BUNKER1=15,
+    M_BUNKER1X=41,
+    M_BUNKER2=16,
+    M_BUNKER2X=42,
+    M_CITADEL=6,
+    M_CONTROL=8,
+    M_CONTROLX=33,
+    M_CRADLE=19,
+    M_CRADLEX=48,
+    M_CUBA=49,
+    M_DAM=9,
+    M_DAMX=35,
+    M_DEATHSOLO=27,
+    M_DEPOT=4,
+    M_DEPOTX=32,
+    M_EGYPTIAN=22,
+    M_EGYPTIANX=39,
+    M_EGYPTX=47,
+    M_ELEVATOR_CONTROL=18,
+    M_ELEVATOR_WC=21,
+    M_END_SOMETHING=62,
+    M_FACILITY=7,
+    M_FACILITYX=31,
+    M_FOLDERS=23,
+    M_FRIGATE=10,
+    M_FRIGATEX=36,
+    M_GUITARGLISS=54,
+    M_INTRO=2,
+    M_INTROSWOOSH=44,
+    M_JUNGLE=55,
+    M_JUNGLEX=43,
+    M_MPDEATH=58,
+    M_MPTHEME=5,
+    M_MPTHEME2=13,
+    M_MPTHEME3=52,
+    M_NONE=0,
+    M_RUNWAY=50,
+    M_RUNWAYPLANE=51,
+    M_RUNWAYX=56,
+    M_SHORT_SOLO_DEATH=1,
+    M_SILO=12,
+    M_SILOX=38,
+    M_STATUE=17,
+    M_STATUEPART=61,
+    M_STATUEX=45,
+    M_STREETS=14,
+    M_STREETSX=40,
+    M_SURFACE1=57,
+    M_SURFACE2=28,
+    M_SURFACE2END=60,
+    M_SURFACE2X=59,
+    M_TRAIN=3,
+    M_TRAINX=29,
+    M_UNK=20,
+    M_UNK2=30,
+    M_WATCH=24,
+    M_WATERCAVERNS=26,
+    M_WATERCAVERNSX=34,
+    M_WIND=53
+} MUSIC_TRACKS;
+
+typedef struct sFontTableControllerLarge sFontTableControllerLarge, *PsFontTableControllerLarge;
+
+typedef struct sFirstFontTableController sFirstFontTableController, *PsFirstFontTableController;
+
+struct sFirstFontTableController {
+    undefined1 font_first_font_table_controller_large[676];
+};
+
+struct sFontTableControllerLarge {
+    struct sFirstFontTableController font_first_font_table_controller_large;
+    struct sSecondFontTableController font_second_font_table_controller_large;
+};
+
+typedef ushort ush;
+
+typedef struct headHat headHat, *PheadHat;
+
+struct headHat {
+    f32 xoffset;
+    f32 yoffset;
+    f32 zoffset;
+    f32 xsize;
+    f32 ysize;
+    f32 zsize;
+};
+
+typedef enum CHEAT_IDS {
+    CHEAT_05=5,
+    CHEAT_ALLGUNS=3,
+    CHEAT_EXTRA_MP_CHARS=1,
+    CHEAT_INVINCIBILITY=2,
+    CHEAT_LINEMODE=7,
+    CHEAT_MAXAMMO=4,
+    CHEAT_REMOVE_INVINCIBILITY=6,
+    NULL=0,
+    UNLOCK_CHEATS=54,
+    UNLOCK_STAGES=74,
+    UNUSED_17=23,
+    UNUSED_1C=28,
+    UNUSED_23=35,
+    UNUSED_24=36,
+    UNUSED_25=37,
+    UNUSED_26=38,
+    UNUSED_27=39,
+    UNUSED_28=40,
+    UNUSED_29=41,
+    UNUSED_2A=42,
+    UNUSED_2B=43,
+    UNUSED_2C=44,
+    UNUSED_2D=45,
+    UNUSED_2E=46,
+    UNUSED_2F=47,
+    UNUSED_30=48,
+    UNUSED_31=49,
+    UNUSED_32=50,
+    UNUSED_33=51,
+    UNUSED_34=52,
+    UNUSED_35=53,
+    UNUSED_37=55,
+    UNUSED_38=56,
+    UNUSED_39=57,
+    UNUSED_3A=58,
+    UNUSED_3B=59,
+    UNUSED_3C=60,
+    UNUSED_3D=61,
+    UNUSED_3E=62,
+    UNUSED_3F=63,
+    UNUSED_40=64,
+    UNUSED_41=65,
+    UNUSED_42=66,
+    UNUSED_43=67,
+    UNUSED_44=68,
+    UNUSED_45=69,
+    UNUSED_46=70,
+    UNUSED_47=71,
+    UNUSED_48=72,
+    UNUSED_49=73,
+    cheats_cheat_10x_health=16,
+    cheats_cheat_2x_armor=9,
+    cheats_cheat_2x_health=8,
+    cheats_cheat_dk_mode=12,
+    cheats_cheat_extra_weapons=13,
+    cheats_cheat_fast=24,
+    cheats_cheat_goldengun=19,
+    cheats_cheat_goldpp7=21,
+    cheats_cheat_infinite_ammo=11,
+    cheats_cheat_invisibility=10,
+    cheats_cheat_invisibility_mp=22,
+    cheats_cheat_laser=18,
+    cheats_cheat_magnum=17,
+    cheats_cheat_paintball=15,
+    cheats_cheat_silverpp7=20,
+    cheats_cheat_tiny_bond=14,
+    cheats_debug_2x_grenade_launch=30,
+    cheats_debug_2x_hunting_knife=33,
+    cheats_debug_2x_laser=34,
+    cheats_debug_2x_rcp90=31,
+    cheats_debug_2x_rockets=29,
+    cheats_debug_2x_throwing_knife=32,
+    cheats_debug_fast_ani=26,
+    cheats_debug_pos=25,
+    cheats_debug_slow_ani=27
+} CHEAT_IDS;
+
+typedef struct s_memstarts s_memstarts, *Ps_memstarts;
+
+struct s_memstarts {
+    undefined4 bank1start;
+    undefined4 bank2start;
+    undefined4 bank3start;
+    undefined4 bank4start;
+    undefined4 bank5start;
+    undefined4 bank6start;
+    undefined4 bank7start;
+};
+
+typedef struct s_mempMVALS s_mempMVALS, *Ps_mempMVALS;
+
+struct s_mempMVALS {
+    dword field_0x0;
+    undefined4 dword_80024414;
+    undefined4 mf;
+    undefined4 dword_8002441C;
+    undefined4 ml;
+    undefined4 dword_80024424;
+    undefined4 me;
+    undefined4 dword_8002442C;
+    undefined4 dword_80024430;
+};
+
+typedef union union_indy_resource union_indy_resource, *Punion_indy_resource;
+
+union union_indy_resource {
+    struct indy_resource_entry field0;
+    struct indy_resource_entry_type3 field1;
+    struct indy_resource_entry_type4 field2;
+    struct indy_resource_entry_type6 field3;
+};
+
+typedef struct LnameX_name_entry LnameX_name_entry, *PLnameX_name_entry;
+
+struct LnameX_name_entry {
+    char * en_file;
+    char * jp_file;
+};
+
+typedef struct playerfavoriteweapon playerfavoriteweapon, *Pplayerfavoriteweapon;
+
+struct playerfavoriteweapon {
+    u32 right;
+    u32 left;
+};
+
+#define OS_TASK_SIZE 64
+
+#define OS_TASK_OFF_UBOOT_SZ 12
+
+#define OS_TASK_OFF_YIELD_SZ 60
+
+#define OS_TASK_OFF_OUTBUFF 40
+
+#define OS_TASK_OFF_DATA_SZ 52
+
+#define OS_TASK_OFF_YIELD 56
+
+#define OS_TASK_OFF_UCODE 16
+
+#define OS_TASK_OFF_OUTBUFF_SZ 44
+
+#define OS_TASK_OFF_UDATA 24
+
+#define OS_TASK_OFF_DATA 48
+
+#define OS_TASK_OFF_STACK_SZ 36
+
+#define OS_TASK_OFF_UDATA_SZ 28
+
+#define OS_TASK_OFF_UCODE_SZ 20
+
+#define OS_TASK_OFF_FLAGS 4
+
+#define OS_TASK_OFF_TYPE 0
+
+#define OS_TASK_OFF_STACK 32
+
+#define OS_TASK_OFF_UBOOT 8
+
+#define __WORDSIZE 32
+
+typedef uint _Sizet;
+
+#define _D0 0
+
+#define _NULL 0
+
+#define _DOFF 4
+
+#define _DBIAS 1023
+
+#define _LONG_DOUBLE 0
+
+#define _DLONG 0
+
+#define _LBIAS 1023
+
+typedef ulonglong u64;
+
+typedef u64 vu64;
+
+typedef longlong s64;
+
+typedef s64 vs64;
+
+typedef union Mtx Mtx, *PMtx;
+
+typedef long Mtx_t[4][4];
+
+union Mtx {
+    Mtx_t m;
+    longlong forc_structure_alignment;
+};
+
+typedef u16 vu16;
+
+typedef short s16;
+
+typedef s16 vs16;
+
+typedef u8 vu8;
+
+typedef char s8;
+
+typedef s8 vs8;
+
+typedef u32 vu32;
+
+typedef s32 vs32;
+
+#define FALSE 0
+
+#define TRUE 1
+
+#define NULL 0
+
+typedef struct rdbPacket rdbPacket, *PrdbPacket;
+
+typedef union anon__struct_183_bitfield_1 anon__struct_183_bitfield_1, *Panon__struct_183_bitfield_1;
+
+union anon__struct_183_bitfield_1 {
+    uint type:6; // : bits 0-5
+    uint length:2; // : bits 6-7
+};
+
+struct rdbPacket {
+    union anon__struct_183_bitfield_1 field_0x0;
+    char buf[3];
+};
+
+#define RDB_TYPE_HtoG_KDEBUG 20
+
+#define RDB_TYPE_GtoH_RAMROM 9
+
+#define RDB_TYPE_GtoH_PRINT 1
+
+#define RDB_BASE_REG 3221225472
+
+#define RDB_TYPE_INVALID 0
+
+#define RDB_WRITE_INTR_REG 3221225480
+
+#define DEBUG_COMMAND_MEMORY 1
+
+#define RDB_LOG_MAX_BLOCK_SIZE 32768
+
+#define RDB_TYPE_HtoG_DATA 16
+
+#define PROF_BLOCK_SIZE 2048
+
+#define RDB_TYPE_GtoH_FAULT 2
+
+#define DEBUG_STATE_RECEIVE 1
+
+#define GIO_RDB_BASE_REG 3209166848
+
+#define RDB_TYPE_GtoH_DEBUG_READY 11
+
+#define RDB_DATA_MAX_BLOCK_SIZE 32768
+
+#define RDB_TYPE_GtoH_KDEBUG 12
+
+#define RDB_TYPE_GtoH_READY_FOR_DATA 5
+
+#define RDB_TYPE_GtoH_DEBUG_DONE 10
+
+#define RDB_TYPE_GtoH_DATA_CT 6
+
+#define RDB_TYPE_HtoG_LOG_DONE 13
+
+#define GIO_RDB_READ_INTR_REG 3209166860
+
+#define RDB_BASE_VIRTUAL_ADDR 2147483648
+
+#define DEBUG_STATE_INVALID 255
+
+#define RDB_TYPE_GtoH_LOG_CT 3
+
+#define RDB_PROF_FLUSH_SIG 2
+
+#define DEBUG_STATE_NULL 0
+
+#define RDB_READ_INTR_REG 3221225484
+
+#define GIO_RDB_READ_INTR_BIT 1073741824
+
+#define RDB_TYPE_HtoG_DEBUG 14
+
+#define RDB_TYPE_GtoH_PROF_DATA 22
+
+#define RDB_TYPE_GtoH_DATA 7
+
+#define RDB_TYPE_GtoH_LOG 4
+
+#define RDB_TYPE_HtoG_REQ_RAMROM 18
+
+#define RDB_TYPE_HtoG_FREE_RAMROM 19
+
+#define RDB_TYPE_HtoG_DEBUG_CT 15
+
+#define DEBUG_COMMAND_NULL 0
+
+#define RDB_PROF_ACK_SIG 1
+
+#define GIO_RDB_DEBUG_MINOR 2
+
+#define DEBUG_COMMAND_REGISTER 2
+
+#define GIO_RDB_PRINT_MINOR 1
+
+#define RDB_TYPE_HtoG_PROF_SIGNAL 21
+
+#define DEBUG_COMMAND_INVALID 255
+
+#define RDB_TYPE_HtoG_DATA_DONE 17
+
+#define GIO_RDB_WRITE_INTR_BIT 2147483648
+
+#define RDB_TYPE_GtoH_DEBUG 8
+
+#define GIO_RDB_WRITE_INTR_REG 3209166856
+
+typedef struct bitmap bitmap, *Pbitmap;
+
+typedef struct bitmap Bitmap;
+
+struct bitmap {
+    s16 width;
+    s16 width_img;
+    s16 s;
+    s16 t;
+    void * buf;
+    s16 actualHeight;
+    s16 LUToffset;
+};
+
+typedef struct sprite sprite, *Psprite;
+
+typedef struct sprite Sprite;
+
+typedef union Gfx Gfx, *PGfx;
+
+typedef struct Gwords Gwords, *PGwords;
+
+struct sprite {
+    s16 x;
+    s16 y;
+    s16 width;
+    s16 height;
+    f32 scalex;
+    f32 scaley;
+    s16 expx;
+    s16 expy;
+    u16 attr;
+    s16 zdepth;
+    u8 red;
+    u8 green;
+    u8 blue;
+    u8 alpha;
+    s16 startTLUT;
+    s16 nTLUT;
+    int * LUT;
+    s16 istart;
+    s16 istep;
+    s16 nbitmaps;
+    s16 ndisplist;
+    s16 bmheight;
+    s16 bmHreal;
+    u8 bmfmt;
+    u8 bmsiz;
+    Bitmap * bitmap;
+    union Gfx * rsp_dl;
+    union Gfx * rsp_dl_next;
+    s16 frac_s;
+    s16 frac_t;
+};
+
+struct Gwords {
+    uint w0;
+    uint w1;
+};
+
+union Gfx {
+    struct Gwords words;
+    longlong force_structure_alignment;
+};
+
+#define DL_SPRITE_OVERHEAD 24
+
+#define SP_FASTCOPY 32
+
+#define SP_OVERLAP 64
+
+#define SP_CUTOUT 2
+
+#define SP_FRACPOS 256
+
+#define SP_TEXSHIFT 128
+
+#define SP_EXTERN 1024
+
+#define SP_TEXSHUF 512
+
+#define DL_BM_OVERHEAD 12
+
+#define SP_SCALE 16
+
+#define SP_TRANSPARENT 1
+
+#define SP_Z 8
+
+#define SP_HIDDEN 4
+
+typedef void * __gnuc_va_list;
+
+typedef __gnuc_va_list va_list;
+
+#define SP_DRAM_STACK_SIZE64 128
+
+#define SP_UCODE_SIZE 4096
+
+#define SP_DRAM_STACK_SIZE8 1024
+
+#define SP_UCODE_DATA_SIZE 2048
+
+typedef enum AIRCRAFT_ANIMATIONS {
+    ANIM_helicopter_cradle=0,
+    ANIM_helicopter_takeoff=2,
+    ANIM_plane_runway=1
+} AIRCRAFT_ANIMATIONS;
+
+typedef enum LEVEL_SOLO_SEQUENCE {
+    SP_LEVEL_ARCHIVES=11,
+    SP_LEVEL_AZTEC=19,
+    SP_LEVEL_BUNKER1=5,
+    SP_LEVEL_BUNKER2=9,
+    SP_LEVEL_CAVERNS=17,
+    SP_LEVEL_CONTROL=16,
+    SP_LEVEL_CRADLE=18,
+    SP_LEVEL_DAM=1,
+    SP_LEVEL_DEPOT=13,
+    SP_LEVEL_EGYPT=20,
+    SP_LEVEL_FACILITY=2,
+    SP_LEVEL_FRIGATE=7,
+    SP_LEVEL_JUNGLE=15,
+    SP_LEVEL_RUNWAY=3,
+    SP_LEVEL_SILO=6,
+    SP_LEVEL_STATUE=10,
+    SP_LEVEL_STREETS=12,
+    SP_LEVEL_SURFACE1=4,
+    SP_LEVEL_SURFACE2=8,
+    SP_LEVEL_TRAIN=14
+} LEVEL_SOLO_SEQUENCE;
+
+typedef enum WATCH_BRIEFING_PAGE {
+    BRIEFING_M=2,
+    BRIEFING_MONEYPENNY=4,
+    BRIEFING_OVERVIEW=1,
+    BRIEFING_Q=3,
+    BRIEFING_TITLE=0
+} WATCH_BRIEFING_PAGE;
+
+typedef enum MP_STAGE_SELECTED {
+    MP_STAGE_ARCHIVES=9,
+    MP_STAGE_BASEMENT=5,
+    MP_STAGE_BUNKER=8,
+    MP_STAGE_CAVERNS=10,
+    MP_STAGE_CAVES=3,
+    MP_STAGE_COMPLEX=2,
+    MP_STAGE_EGYPT=11,
+    MP_STAGE_FACILITY=7,
+    MP_STAGE_LIBRARY=4,
+    MP_STAGE_RANDOM=0,
+    MP_STAGE_STACK=6,
+    MP_STAGE_TEMPLE=1
+} MP_STAGE_SELECTED;
+
+typedef enum CONTROLLER_CONFIG {
+    CONTROLLER_CONFIG_CINEMA=8,
+    CONTROLLER_CONFIG_DOMINO=6,
+    CONTROLLER_CONFIG_GALORE=5,
+    CONTROLLER_CONFIG_GOODHEAD=7,
+    CONTROLLER_CONFIG_GOODNIGHT=3,
+    CONTROLLER_CONFIG_HONEY=0,
+    CONTROLLER_CONFIG_KISSY=2,
+    CONTROLLER_CONFIG_PLENTY=4,
+    CONTROLLER_CONFIG_SOLITARE=1
+} CONTROLLER_CONFIG;
+
+typedef struct rgba_val rgba_val, *Prgba_val;
+
+struct rgba_val {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+};
+
+typedef enum MISSION_BRIEFING {
+    BRIEF_M=1,
+    BRIEF_MONEYPENNY=3,
+    BRIEF_OVERVIEW=0,
+    BRIEF_Q=2
+} MISSION_BRIEFING;
+
+typedef enum PROPS {
+    PROP_ICBM=93,
+    PROP_ICBM_nose=92,
+    PROP_ak47mag=121,
+    PROP_alarm1=0,
+    PROP_alarm2=1,
+    PROP_ammo_crate1=3,
+    PROP_ammo_crate2=4,
+    PROP_ammo_crate3=5,
+    PROP_ammo_crate4=6,
+    PROP_ammo_crate5=7,
+    PROP_apc=289,
+    PROP_archsecdoor1=297,
+    PROP_archsecdoor2=298,
+    PROP_artic=281,
+    PROP_artictrailer=286,
+    PROP_barricade=334,
+    PROP_bin1=8,
+    PROP_blotter1=9,
+    PROP_bodyarmour=115,
+    PROP_bodyarmourvest=116,
+    PROP_bollard=339,
+    PROP_bomb=255,
+    PROP_book1=10,
+    PROP_bookshelf1=11,
+    PROP_borg_crate=87,
+    PROP_boxcartridges=129,
+    PROP_boxes2x4=90,
+    PROP_boxes3x4=89,
+    PROP_boxes4x4=88,
+    PROP_brakeunit=120,
+    PROP_bridge_console1a=12,
+    PROP_bridge_console1b=13,
+    PROP_bridge_console2a=14,
+    PROP_bridge_console2b=15,
+    PROP_bridge_console3a=16,
+    PROP_bridge_console3b=17,
+    PROP_carbmw=301,
+    PROP_card_box1=18,
+    PROP_card_box2=19,
+    PROP_card_box3=20,
+    PROP_card_box4_lg=21,
+    PROP_card_box5_lg=22,
+    PROP_card_box6_lg=23,
+    PROP_carescort=302,
+    PROP_cargolf=303,
+    PROP_carweird=304,
+    PROP_carzil=305,
+    PROP_cctv=24,
+    PROP_chraudiotape=262,
+    PROP_chrautoshot=207,
+    PROP_chrblackbox=274,
+    PROP_chrblueprints=258,
+    PROP_chrbombcase=226,
+    PROP_chrbombdefuser=235,
+    PROP_chrbriefcase=198,
+    PROP_chrbug=245,
+    PROP_chrbugdetector=236,
+    PROP_chrbungee=233,
+    PROP_chrcamera=238,
+    PROP_chrcircuitboard=259,
+    PROP_chrclipboard=269,
+    PROP_chrcreditcard=250,
+    PROP_chrdarkglasses=251,
+    PROP_chrdatathief=253,
+    PROP_chrdattape=272,
+    PROP_chrdoordecoder=234,
+    PROP_chrdoorexploder=240,
+    PROP_chrdossierred=270,
+    PROP_chrdynamite=232,
+    PROP_chrexplosivepen=225,
+    PROP_chrextinguisher=128,
+    PROP_chrfingergun=229,
+    PROP_chrflarepistol=227,
+    PROP_chrfnp90=197,
+    PROP_chrgaskeyring=252,
+    PROP_chrgoldbar=267,
+    PROP_chrgolden=208,
+    PROP_chrgoldeneyekey=248,
+    PROP_chrgoldwppk=231,
+    PROP_chrgrenade=196,
+    PROP_chrgrenadelaunch=185,
+    PROP_chrgrenaderound=203,
+    PROP_chrheroin=268,
+    PROP_chrkalash=184,
+    PROP_chrkeyanalysercase=241,
+    PROP_chrkeybolt=244,
+    PROP_chrkeyyale=243,
+    PROP_chrknife=186,
+    PROP_chrlaser=187,
+    PROP_chrlectre=265,
+    PROP_chrlockexploder=239,
+    PROP_chrm16=188,
+    PROP_chrmap=260,
+    PROP_chrmicrocamera=246,
+    PROP_chrmicrocode=264,
+    PROP_chrmicrofilm=263,
+    PROP_chrmoney=266,
+    PROP_chrmp5k=189,
+    PROP_chrmp5ksil=206,
+    PROP_chrpitongun=228,
+    PROP_chrplans=256,
+    PROP_chrplastique=273,
+    PROP_chrpolarizedglasses=249,
+    PROP_chrproximitymine=200,
+    PROP_chrremotemine=199,
+    PROP_chrrocket=202,
+    PROP_chrrocketlaunch=211,
+    PROP_chrruger=190,
+    PROP_chrsafecrackercase=237,
+    PROP_chrshotgun=192,
+    PROP_chrsilverwppk=230,
+    PROP_chrskorpion=193,
+    PROP_chrsniperrifle=210,
+    PROP_chrspectre=194,
+    PROP_chrspooltape=261,
+    PROP_chrspyfile=257,
+    PROP_chrstafflist=271,
+    PROP_chrtesttube=338,
+    PROP_chrthrowknife=209,
+    PROP_chrtimedmine=201,
+    PROP_chrtt33=205,
+    PROP_chruzi=195,
+    PROP_chrvideotape=275,
+    PROP_chrweaponcase=242,
+    PROP_chrwppk=191,
+    PROP_chrwppksil=204,
+    PROP_chrwristdart=224,
+    PROP_console1=25,
+    PROP_console2=26,
+    PROP_console3=27,
+    PROP_console_sev2a=32,
+    PROP_console_sev2b=33,
+    PROP_console_sev2c=34,
+    PROP_console_sev2d=35,
+    PROP_console_sev_GEa=36,
+    PROP_console_sev_GEb=37,
+    PROP_console_seva=28,
+    PROP_console_sevb=29,
+    PROP_console_sevc=30,
+    PROP_console_sevd=31,
+    PROP_cryptdoor1a=170,
+    PROP_cryptdoor1b=171,
+    PROP_cryptdoor2a=172,
+    PROP_cryptdoor2b=173,
+    PROP_cryptdoor3=174,
+    PROP_cryptdoor4=175,
+    PROP_damchaindoor=180,
+    PROP_damgatedoor=178,
+    PROP_damtundoor=179,
+    PROP_depot_door_steel=309,
+    PROP_depot_gate_entry=308,
+    PROP_desk1=38,
+    PROP_desk2=39,
+    PROP_desk_arecibo1=95,
+    PROP_desk_lamp2=40,
+    PROP_dest_engine=99,
+    PROP_dest_exocet=100,
+    PROP_dest_gun=101,
+    PROP_dest_harpoon=102,
+    PROP_dest_seawolf=103,
+    PROP_disc_reader=41,
+    PROP_disk_drive1=42,
+    PROP_door_azt_chair=331,
+    PROP_door_azt_desk=329,
+    PROP_door_azt_desk_top=330,
+    PROP_door_aztec=327,
+    PROP_door_dest1=152,
+    PROP_door_dest2=153,
+    PROP_door_eyelid=164,
+    PROP_door_iris=165,
+    PROP_door_mf=332,
+    PROP_door_roller1=146,
+    PROP_door_roller2=147,
+    PROP_door_roller3=148,
+    PROP_door_roller4=149,
+    PROP_door_rollertrain=325,
+    PROP_door_st_arec1=150,
+    PROP_door_st_arec2=151,
+    PROP_door_win=326,
+    PROP_doorconsole=337,
+    PROP_doorpanel=336,
+    PROP_doorprison1=182,
+    PROP_doorstatgate=183,
+    PROP_explosionbit=2,
+    PROP_filing_cabinet1=43,
+    PROP_flag=333,
+    PROP_floppy=247,
+    PROP_fnp90mag=130,
+    PROP_gas_plant_met1_do1=158,
+    PROP_gas_plant_sw2_do1=155,
+    PROP_gas_plant_sw3_do1=156,
+    PROP_gas_plant_sw4_do1=157,
+    PROP_gas_plant_sw_do1=154,
+    PROP_gas_plant_wc_cub1=159,
+    PROP_gasbarrel=113,
+    PROP_gasbarrels=114,
+    PROP_gasplant_clear_door=160,
+    PROP_gastank=117,
+    PROP_glassware1=118,
+    PROP_glassware2=310,
+    PROP_glassware3=311,
+    PROP_glassware4=312,
+    PROP_goldeneyelogo=277,
+    PROP_goldenshells=131,
+    PROP_groundgun=299,
+    PROP_gun_runway1=292,
+    PROP_hatberet=220,
+    PROP_hatberetblue=221,
+    PROP_hatberetred=222,
+    PROP_hatchbolt=119,
+    PROP_hatchdoor=177,
+    PROP_hatchsevx=295,
+    PROP_hatfurry=212,
+    PROP_hatfurryblack=214,
+    PROP_hatfurrybrown=213,
+    PROP_hathelmet=217,
+    PROP_hathelmetgrey=218,
+    PROP_hatmoon=219,
+    PROP_hatpeaked=223,
+    PROP_hattbird=215,
+    PROP_hattbirdbrown=216,
+    PROP_helicopter=282,
+    PROP_hind=285,
+    PROP_jeep=280,
+    PROP_jerry_can1=44,
+    PROP_jungle3_tree=108,
+    PROP_jungle5_tree=318,
+    PROP_key_holder=294,
+    PROP_keyboard1=45,
+    PROP_kit_units1=46,
+    PROP_labbench=112,
+    PROP_landmine=313,
+    PROP_legalpage=319,
+    PROP_letter_tray1=47,
+    PROP_locker3=96,
+    PROP_locker4=97,
+    PROP_m16mag=122,
+    PROP_magnumshells=132,
+    PROP_mainframe1=48,
+    PROP_mainframe2=49,
+    PROP_metal_chair1=50,
+    PROP_metal_crate1=51,
+    PROP_metal_crate2=52,
+    PROP_metal_crate3=53,
+    PROP_metal_crate4=54,
+    PROP_milcopter=284,
+    PROP_miltruck=279,
+    PROP_missile_rack=55,
+    PROP_missile_rack2=56,
+    PROP_modembox=335,
+    PROP_motorbike=287,
+    PROP_mp5kmag=123,
+    PROP_nintendologo=276,
+    PROP_oil_drum1=57,
+    PROP_oil_drum2=58,
+    PROP_oil_drum3=59,
+    PROP_oil_drum5=60,
+    PROP_oil_drum6=61,
+    PROP_oil_drum7=62,
+    PROP_padlock=63,
+    PROP_palm=109,
+    PROP_palmtree=110,
+    PROP_phone1=64,
+    PROP_plane=291,
+    PROP_plant1=314,
+    PROP_plant11=315,
+    PROP_plant2=316,
+    PROP_plant2b=111,
+    PROP_plant3=317,
+    PROP_radio_unit1=65,
+    PROP_radio_unit2=66,
+    PROP_radio_unit3=67,
+    PROP_radio_unit4=68,
+    PROP_roofgun=98,
+    PROP_safe=254,
+    PROP_safedoor=293,
+    PROP_sat1_reflect=69,
+    PROP_satbox=71,
+    PROP_satdish=70,
+    PROP_sec_panel=91,
+    PROP_sev_door=135,
+    PROP_sev_door3=136,
+    PROP_sev_door3_wind=137,
+    PROP_sev_door4_wind=138,
+    PROP_sev_door_v1=140,
+    PROP_sev_trislide=139,
+    PROP_sevdish=296,
+    PROP_sevdoormetslide=169,
+    PROP_sevdoornowind=168,
+    PROP_sevdoorwind=167,
+    PROP_sevdoorwood=166,
+    PROP_shuttle=328,
+    PROP_shuttle_door_l=306,
+    PROP_shuttle_door_r=307,
+    PROP_silencer=127,
+    PROP_silo_lift_door=144,
+    PROP_silotopdoor=181,
+    PROP_skorpionmag=124,
+    PROP_spectremag=125,
+    PROP_speedboat=290,
+    PROP_st_pete_room_1i=320,
+    PROP_st_pete_room_2i=321,
+    PROP_st_pete_room_3t=322,
+    PROP_st_pete_room_5c=323,
+    PROP_st_pete_room_6c=324,
+    PROP_steel_door1=141,
+    PROP_steel_door2=142,
+    PROP_steel_door2b=145,
+    PROP_steel_door3=143,
+    PROP_stool1=72,
+    PROP_swipe_card2=86,
+    PROP_swivel_chair1=73,
+    PROP_tank=288,
+    PROP_tiger=283,
+    PROP_torpedo_rack=74,
+    PROP_train_door=161,
+    PROP_train_door2=162,
+    PROP_train_door3=163,
+    PROP_trainextdoor=300,
+    PROP_tt33mag=134,
+    PROP_tuning_console1=94,
+    PROP_tv1=75,
+    PROP_tv4screen=78,
+    PROP_tv_holder=76,
+    PROP_tvscreen=77,
+    PROP_uzimag=126,
+    PROP_vertdoor=176,
+    PROP_walletbond=278,
+    PROP_window=104,
+    PROP_window_cor11=107,
+    PROP_window_lib_lg1=105,
+    PROP_window_lib_sm1=106,
+    PROP_wood_lg_crate1=79,
+    PROP_wood_lg_crate2=80,
+    PROP_wood_md_crate3=81,
+    PROP_wood_sm_crate4=82,
+    PROP_wood_sm_crate5=83,
+    PROP_wood_sm_crate6=84,
+    PROP_wooden_table1=85,
+    PROP_wppkmag=133
+} PROPS;
+
+typedef enum ANIMATIONS {
+    ANIM_adjusting_crotch=158,
+    ANIM_aim_and_blow_one_handed_weapon=149,
+    ANIM_aim_one_handed_weapon_left=150,
+    ANIM_aim_one_handed_weapon_left_right=99,
+    ANIM_aim_one_handed_weapon_right=151,
+    ANIM_aim_running_left_one_handed_weapon=87,
+    ANIM_aim_running_one_handed_weapon=85,
+    ANIM_aim_running_right_one_handed_weapon=86,
+    ANIM_aim_sprinting_one_handed_weapon=88,
+    ANIM_aim_walking_left_one_handed_weapon=83,
+    ANIM_aim_walking_one_handed_weapon=82,
+    ANIM_aim_walking_right_one_handed_weapon=84,
+    ANIM_bond_eye_fire=44,
+    ANIM_bond_eye_fire_alt=176,
+    ANIM_bond_eye_walk=43,
+    ANIM_bond_watch=45,
+    ANIM_cock_one_handed_weapon_and_turn_around=100,
+    ANIM_cock_one_handed_weapon_turn_around_and_stand_up=102,
+    ANIM_conversation=152,
+    ANIM_conversation_cleaned=160,
+    ANIM_conversation_listener=161,
+    ANIM_coughing_kneel1=166,
+    ANIM_coughing_kneel2=167,
+    ANIM_coughing_standing=165,
+    ANIM_cradle_fall=180,
+    ANIM_cradle_jump=179,
+    ANIM_credits_bond_kissing=181,
+    ANIM_credits_natalya_kissing=182,
+    ANIM_dam_jump=177,
+    ANIM_dancing=170,
+    ANIM_dancing_one_handed_weapon=171,
+    ANIM_death_backward_fall_face_up1=28,
+    ANIM_death_backward_fall_face_up2=37,
+    ANIM_death_backward_spin_face_down_left=31,
+    ANIM_death_backward_spin_face_down_right=29,
+    ANIM_death_backward_spin_face_up_left=32,
+    ANIM_death_backward_spin_face_up_right=30,
+    ANIM_death_explosion_back1=133,
+    ANIM_death_explosion_back2=136,
+    ANIM_death_explosion_back_left=132,
+    ANIM_death_explosion_forward=130,
+    ANIM_death_explosion_forward_face_down=138,
+    ANIM_death_explosion_forward_right1=135,
+    ANIM_death_explosion_forward_right2=140,
+    ANIM_death_explosion_forward_right2_alt=141,
+    ANIM_death_explosion_forward_right3=142,
+    ANIM_death_explosion_forward_roll=137,
+    ANIM_death_explosion_left1=131,
+    ANIM_death_explosion_left2=139,
+    ANIM_death_explosion_right=134,
+    ANIM_death_fetal_position_left=36,
+    ANIM_death_fetal_position_right=35,
+    ANIM_death_forward_face_down=26,
+    ANIM_death_forward_face_down_hard=33,
+    ANIM_death_forward_face_down_soft=34,
+    ANIM_death_forward_spin_face_up=27,
+    ANIM_death_genitalia=22,
+    ANIM_death_head=56,
+    ANIM_death_left_leg=57,
+    ANIM_death_neck=24,
+    ANIM_death_stagger_back_to_wall=25,
+    ANIM_draw_one_handed_weapon_and_look_around=97,
+    ANIM_draw_one_handed_weapon_and_stand_up=98,
+    ANIM_draw_one_handed_weapon_and_turn_around=103,
+    ANIM_drop_weapon_and_show_fight_stance=153,
+    ANIM_extending_left_hand=61,
+    ANIM_fire_hip=3,
+    ANIM_fire_hip_forward_one_handed_weapon=70,
+    ANIM_fire_hip_one_handed_weapon_fast=68,
+    ANIM_fire_hip_one_handed_weapon_slow=69,
+    ANIM_fire_jump_to_side_left=52,
+    ANIM_fire_jump_to_side_right=53,
+    ANIM_fire_kneel_aiming_down_sights=128,
+    ANIM_fire_kneel_dual_wield=116,
+    ANIM_fire_kneel_dual_wield_hands_crossed=119,
+    ANIM_fire_kneel_dual_wield_hands_crossed_left=120,
+    ANIM_fire_kneel_dual_wield_hands_crossed_right=121,
+    ANIM_fire_kneel_dual_wield_left=117,
+    ANIM_fire_kneel_dual_wield_right=118,
+    ANIM_fire_kneel_forward_one_handed_weapon_fast=76,
+    ANIM_fire_kneel_forward_one_handed_weapon_slow=75,
+    ANIM_fire_kneel_left=9,
+    ANIM_fire_kneel_left_leg=8,
+    ANIM_fire_kneel_left_one_handed_weapon=81,
+    ANIM_fire_kneel_left_one_handed_weapon_fast=80,
+    ANIM_fire_kneel_left_one_handed_weapon_slow=79,
+    ANIM_fire_kneel_right=10,
+    ANIM_fire_kneel_right_leg=7,
+    ANIM_fire_kneel_right_one_handed_weapon_fast=78,
+    ANIM_fire_kneel_right_one_handed_weapon_slow=77,
+    ANIM_fire_roll_left=11,
+    ANIM_fire_roll_left_fast=13,
+    ANIM_fire_roll_right1=12,
+    ANIM_fire_roll_right2=39,
+    ANIM_fire_running=49,
+    ANIM_fire_running_dual_wield=110,
+    ANIM_fire_running_dual_wield_hands_crossed=111,
+    ANIM_fire_shoulder_left=4,
+    ANIM_fire_sprinting_dual_wield=112,
+    ANIM_fire_sprinting_dual_wield_hands_crossed=113,
+    ANIM_fire_standing=1,
+    ANIM_fire_standing_aiming_down_sights=127,
+    ANIM_fire_standing_draw_one_handed_weapon_fast=66,
+    ANIM_fire_standing_draw_one_handed_weapon_slow=67,
+    ANIM_fire_standing_dual_wield=122,
+    ANIM_fire_standing_dual_wield_hands_crossed_left=125,
+    ANIM_fire_standing_dual_wield_hands_crossed_right=126,
+    ANIM_fire_standing_dual_wield_left=123,
+    ANIM_fire_standing_dual_wield_right=124,
+    ANIM_fire_standing_fast=2,
+    ANIM_fire_standing_left_one_handed_weapon_fast=74,
+    ANIM_fire_standing_left_one_handed_weapon_slow=73,
+    ANIM_fire_standing_one_handed_weapon=65,
+    ANIM_fire_standing_right_one_handed_weapon=71,
+    ANIM_fire_step_right_one_handed_weapon=72,
+    ANIM_fire_throw_grenade=62,
+    ANIM_fire_turn_right1=5,
+    ANIM_fire_turn_right2=6,
+    ANIM_fire_walking=48,
+    ANIM_fire_walking_dual_wield=108,
+    ANIM_fire_walking_dual_wield_hands_crossed=109,
+    ANIM_hit_butt_long=54,
+    ANIM_hit_butt_short=55,
+    ANIM_hit_left_arm=16,
+    ANIM_hit_left_hand=18,
+    ANIM_hit_left_leg=20,
+    ANIM_hit_left_shoulder=14,
+    ANIM_hit_neck=23,
+    ANIM_hit_right_arm=17,
+    ANIM_hit_right_hand=19,
+    ANIM_hit_right_leg=21,
+    ANIM_hit_right_shoulder=15,
+    ANIM_hit_taser=129,
+    ANIM_holster_one_handed_weapon_and_adjust_suit=105,
+    ANIM_holster_one_handed_weapon_and_cross_arms=101,
+    ANIM_idle=0,
+    ANIM_idle_unarmed=106,
+    ANIM_jogging_one_handed_weapon=89,
+    ANIM_jump_backwards=60,
+    ANIM_keyboard_left_hand=174,
+    ANIM_keyboard_right_hand1=172,
+    ANIM_keyboard_right_hand2=173,
+    ANIM_keyboard_right_hand_tapping=175,
+    ANIM_laughing_in_disbelief=163,
+    ANIM_look_around=64,
+    ANIM_null143=143,
+    ANIM_null144=144,
+    ANIM_null145=145,
+    ANIM_null146=146,
+    ANIM_null169=169,
+    ANIM_null50=50,
+    ANIM_null51=51,
+    ANIM_null91=91,
+    ANIM_null92=92,
+    ANIM_null93=93,
+    ANIM_null94=94,
+    ANIM_null95=95,
+    ANIM_null96=96,
+    ANIM_running=42,
+    ANIM_running_female=115,
+    ANIM_running_hands_up=147,
+    ANIM_scratching_butt=157,
+    ANIM_scratching_leg=156,
+    ANIM_side_step_left=38,
+    ANIM_slide_left=59,
+    ANIM_slide_right=58,
+    ANIM_sneeze=159,
+    ANIM_spotting_bond=63,
+    ANIM_sprinting=41,
+    ANIM_sprinting_hands_up=148,
+    ANIM_sprinting_one_handed_weapon=90,
+    ANIM_standing_up=168,
+    ANIM_startled_and_looking_around=162,
+    ANIM_step_foward_and_hold_one_handed_weapon=104,
+    ANIM_surface_vent_jump=178,
+    ANIM_surrendering_armed=46,
+    ANIM_surrendering_armed_drop_weapon=47,
+    ANIM_surrendering_unarmed=164,
+    ANIM_swatting_flies=155,
+    ANIM_walking=40,
+    ANIM_walking_female=114,
+    ANIM_walking_unarmed=107,
+    ANIM_yawning=154
+} ANIMATIONS;
+
+
+// WARNING! conflicting data type names: /bondgame.h/COLORMODE - /COLORMODE
+
+typedef enum PROJECTILES {
+    PROJECTILES_MAX=46,
+    PROJECTILES_TYPE_BOMBCASE=55,
+    PROJECTILES_TYPE_BUG=56,
+    PROJECTILES_TYPE_GE_KEY=58,
+    PROJECTILES_TYPE_GLAUNCH_ROUND=54,
+    PROJECTILES_TYPE_GRENADE=48,
+    PROJECTILES_TYPE_KNIFE=47,
+    PROJECTILES_TYPE_MICROCAMERA=57,
+    PROJECTILES_TYPE_PLASTIQUE=59,
+    PROJECTILES_TYPE_PROX_MINE=50,
+    PROJECTILES_TYPE_REMOTE_MINE=49,
+    PROJECTILES_TYPE_ROCKET_ROUND=52,
+    PROJECTILES_TYPE_ROCKET_ROUND2=53,
+    PROJECTILES_TYPE_TIMED_MINE=51
+} PROJECTILES;
+
+typedef enum GENDER {
+    FEMALE=0,
+    MALE=1
+} GENDER;
+
+typedef enum BODIES {
+    BODY_Arctic_Commando=38,
+    BODY_Baron_Samedi=12,
+    BODY_Boris=6,
+    BODY_Civilian_1_Female=29,
+    BODY_Civilian_2=33,
+    BODY_Civilian_3=34,
+    BODY_Civilian_4=32,
+    BODY_Female_Mandy=72,
+    BODY_Female_Marion_Rosika=71,
+    BODY_Female_Sally=70,
+    BODY_Female_Vivien=73,
+    BODY_Formal_Wear=23,
+    BODY_Helicopter_Pilot=36,
+    BODY_Janus_Marine=17,
+    BODY_Janus_Special_Forces=4,
+    BODY_Jaws=13,
+    BODY_Jungle_Commando=0,
+    BODY_Jungle_Fatigues=24,
+    BODY_Left_Suit_Hand_Floating_Arm=41,
+    BODY_Male_Alan=43,
+    BODY_Male_B=50,
+    BODY_Male_Biker=61,
+    BODY_Male_Chris=54,
+    BODY_Male_Dave_Dr_Doak=51,
+    BODY_Male_Des=53,
+    BODY_Male_Duncan=47,
+    BODY_Male_Dwayne=49,
+    BODY_Male_Graeme=62,
+    BODY_Male_Grant=52,
+    BODY_Male_Jim=57,
+    BODY_Male_Joe=68,
+    BODY_Male_Joe_Altered=66,
+    BODY_Male_Joel=64,
+    BODY_Male_Karl=42,
+    BODY_Male_Ken=67,
+    BODY_Male_Lee=55,
+    BODY_Male_Mark=46,
+    BODY_Male_Martin=45,
+    BODY_Male_Mishkin=69,
+    BODY_Male_Neil=56,
+    BODY_Male_Pete=44,
+    BODY_Male_Pierce_Bond_1=74,
+    BODY_Male_Pierce_Bond_2=75,
+    BODY_Male_Pierce_Bond_3=76,
+    BODY_Male_Pierce_Bond_Parka=77,
+    BODY_Male_Pierce_Bond_Tuxedo=78,
+    BODY_Male_Robin=58,
+    BODY_Male_Scott=65,
+    BODY_Male_Shaun=48,
+    BODY_Male_Steve_Ellis=63,
+    BODY_Male_Steve_H=59,
+    BODY_Male_Terrorist=60,
+    BODY_Mayday=14,
+    BODY_Moonraker_Elite_1_Male=39,
+    BODY_Moonraker_Elite_2_Female=40,
+    BODY_Natalya_Jungle_Fatigues=79,
+    BODY_Natalya_Skirt=16,
+    BODY_Naval_Officer=20,
+    BODY_Oddjob=15,
+    BODY_Ourumov=7,
+    BODY_Parka=25,
+    BODY_Rosika=27,
+    BODY_Russian_Commandant=18,
+    BODY_Russian_Infantry=3,
+    BODY_Russian_Soldier=2,
+    BODY_Scientist_1_Male=35,
+    BODY_Scientist_2_Female=28,
+    BODY_Siberian_Guard_1_Mishkin=19,
+    BODY_Siberian_Guard_2=37,
+    BODY_Siberian_Special_Forces=21,
+    BODY_Special_Operations_Uniform=22,
+    BODY_St_Petersburg_Guard=1,
+    BODY_Trevelyan_006=9,
+    BODY_Trevelyan_Janus=8,
+    BODY_Tuxedo=5,
+    BODY_Unused_Female=26,
+    BODY_Unused_Male_1=30,
+    BODY_Unused_Male_2=31,
+    BODY_Valentin_=10,
+    BODY_Xenia=11
+} BODIES;
+
+typedef enum TEXTBANK_LEVEL_INDEX {
+    LAME=1,
+    LARCH=2,
+    LAREC=8,
+    LARK=3,
+    LASH=4,
+    LAZT=5,
+    LCAT=6,
+    LCAVE=7,
+    LCRAD=9,
+    LCRYP=10,
+    LDAM=11,
+    LDEPO=12,
+    LDEST=13,
+    LDISH=14,
+    LEAR=15,
+    LELD=16,
+    LGUN=38,
+    LIMP=17,
+    LJUN=18,
+    LLEE=19,
+    LLEN=20,
+    LLIP=21,
+    LLUE=22,
+    LMISC=44,
+    LMPMENU=40,
+    LMPWEAPONS=42,
+    LNULL=0,
+    LOAT=23,
+    LOPTIONS=43,
+    LPAM=24,
+    LPETE=25,
+    LPROPOBJ=41,
+    LREF=26,
+    LRIT=27,
+    LRUN=28,
+    LSEV=30,
+    LSEVB=29,
+    LSEVX=31,
+    LSEVXB=32,
+    LSHO=33,
+    LSILO=34,
+    LSTAT=35,
+    LTITLE=39,
+    LTRA=36,
+    LWAX=37
+} TEXTBANK_LEVEL_INDEX;
+
+typedef enum DOORSTATE {
+    CLOSED=2,
+    OPEN=1
+} DOORSTATE;
+
+typedef enum HEADS {
+    HEAD_Female_Mandy=72,
+    HEAD_Female_Marion_Rosika=71,
+    HEAD_Female_Sally=70,
+    HEAD_Female_Vivien=73,
+    HEAD_Male_Alan=43,
+    HEAD_Male_B=50,
+    HEAD_Male_Biker=61,
+    HEAD_Male_Chris=54,
+    HEAD_Male_Dave_Dr_Doak=51,
+    HEAD_Male_Des=53,
+    HEAD_Male_Duncan=47,
+    HEAD_Male_Dwayne=49,
+    HEAD_Male_Graeme=62,
+    HEAD_Male_Grant=52,
+    HEAD_Male_Jim=57,
+    HEAD_Male_Joe=68,
+    HEAD_Male_Joe_Altered=66,
+    HEAD_Male_Joel=64,
+    HEAD_Male_Karl=42,
+    HEAD_Male_Ken=67,
+    HEAD_Male_Lee=55,
+    HEAD_Male_Mark=46,
+    HEAD_Male_Martin=45,
+    HEAD_Male_Mishkin=69,
+    HEAD_Male_Neil=56,
+    HEAD_Male_Pete=44,
+    HEAD_Male_Pierce_Bond_1=74,
+    HEAD_Male_Pierce_Bond_2=75,
+    HEAD_Male_Pierce_Bond_3=76,
+    HEAD_Male_Pierce_Bond_Parka=77,
+    HEAD_Male_Pierce_Bond_Tuxedo_DEFAULT=78,
+    HEAD_Male_Robin=58,
+    HEAD_Male_Scott=65,
+    HEAD_Male_Shaun=48,
+    HEAD_Male_Steve_Ellis=63,
+    HEAD_Male_Steve_H=59,
+    HEAD_Male_Terrorist=60,
+    HEAD_Natalya_Jungle_Fatigues=79
+} HEADS;
+
+typedef enum mission_setup_type {
+    MISSION_HEADER=1,
+    MISSION_PART=0
+} mission_setup_type;
+
+typedef enum LEVEL_INDEX {
+    LEVEL_INDEX_AME=28,
+    LEVEL_INDEX_ARCH=4,
+    LEVEL_INDEX_ARK=14,
+    LEVEL_INDEX_ASH=26,
+    LEVEL_INDEX_AZT=8,
+    LEVEL_INDEX_CAT=20,
+    LEVEL_INDEX_CAVE=19,
+    LEVEL_INDEX_CONTROL=3,
+    LEVEL_INDEX_CRAD=21,
+    LEVEL_INDEX_CRYP=12,
+    LEVEL_INDEX_DAM=13,
+    LEVEL_INDEX_DEPO=10,
+    LEVEL_INDEX_DEST=6,
+    LEVEL_INDEX_DISH=18,
+    LEVEL_INDEX_EAR=31,
+    LEVEL_INDEX_ELD=24,
+    LEVEL_INDEX_IMP=25,
+    LEVEL_INDEX_JUN=17,
+    LEVEL_INDEX_LEE=32,
+    LEVEL_INDEX_LEN=34,
+    LEVEL_INDEX_LIP=33,
+    LEVEL_INDEX_LUE=27,
+    LEVEL_INDEX_OAT=30,
+    LEVEL_INDEX_PAM=36,
+    LEVEL_INDEX_PETE=9,
+    LEVEL_INDEX_REF=11,
+    LEVEL_INDEX_RIT=29,
+    LEVEL_INDEX_RUN=15,
+    LEVEL_INDEX_SEVB=7,
+    LEVEL_INDEX_SEVBUNKER=0,
+    LEVEL_INDEX_SEVX=16,
+    LEVEL_INDEX_SEVXB=23,
+    LEVEL_INDEX_SHO=22,
+    LEVEL_INDEX_SILO=1,
+    LEVEL_INDEX_STATUE=2,
+    LEVEL_INDEX_TRA=5,
+    LEVEL_INDEX_WAX=35,
+    LEVEL_INDEX_X=37
+} LEVEL_INDEX;
+
+typedef enum SCREEN_SIZE {
+    SCREEN_SIZE_320x240=0,
+    SCREEN_SIZE_440x330=1
+} SCREEN_SIZE;
+
+typedef u16 PAD;
+
+typedef enum MENU {
+    MENU_007_OPTIONS=9,
+    MENU_BRIEFING=10,
+    MENU_CHEAT=21,
+    MENU_DIFFICULTY=8,
+    MENU_DISPLAY_CAST=24,
+    MENU_EYE_INTRO=3,
+    MENU_FILE_SELECT=5,
+    MENU_GOLDENEYE_LOGO=4,
+    MENU_LEGAL_SCREEN=0,
+    MENU_MISSION_COMPLETE=13,
+    MENU_MISSION_FAILED=12,
+    MENU_MISSION_SELECT=7,
+    MENU_MODE_SELECT=6,
+    MENU_MP_CHAR_SELECT=15,
+    MENU_MP_CONTROL_STYLE=17,
+    MENU_MP_HANDICAP=16,
+    MENU_MP_OPTIONS=14,
+    MENU_MP_SCENARIO_SELECT=19,
+    MENU_MP_STAGE_SELECT=18,
+    MENU_MP_TEAMS=20,
+    MENU_NINTENDO_LOGO=1,
+    MENU_NO_CONTROLLERS=22,
+    MENU_RAREWARE_LOGO=2,
+    MENU_RUN_STAGE=11,
+    MENU_SPECTRUM_EMU=25,
+    MENU_SWITCH_SCREENS=23
+} MENU;
+
+#define OBJECTIVES_MAX 10
+
+
+// WARNING! conflicting data type names: /bondconstants.h/ITEM_IDS - /bondgame.h/ITEM_IDS
+
+typedef u16 PADEXTRA;
+
+typedef enum IMAGE_BITDEPTH {
+    D_16BIT=2,
+    D_32BIT=3,
+    D_4BIT=0,
+    D_8BIT=1
+} IMAGE_BITDEPTH;
+
+typedef enum CM_FLAGS {
+    CLAMP=1,
+    MIRROR=2
+} CM_FLAGS;
+
+typedef enum RGBA_ENUM {
+    ALPHA=3,
+    BLUE=2,
+    GREEN=1,
+    RED=0
+} RGBA_ENUM;
+
+typedef enum ACT_TYPE {
+    ACT_ANIM=3,
+    ACT_ARGH=6,
+    ACT_ATTACK=8,
+    ACT_ATTACKROLL=10,
+    ACT_ATTACKWALK=9,
+    ACT_DEAD=5,
+    ACT_DIE=4,
+    ACT_GOPOS=15,
+    ACT_INIT=0,
+    ACT_JUMPOUT=12,
+    ACT_KNEEL=2,
+    ACT_LOOKATTARGET=17,
+    ACT_NULL=23,
+    ACT_PATROL=14,
+    ACT_PREARGH=7,
+    ACT_RUNPOS=13,
+    ACT_SIDESTEP=11,
+    ACT_STAND=1,
+    ACT_STARTALARM=19,
+    ACT_SURPRISED=18,
+    ACT_SURRENDER=16,
+    ACT_TEST=22,
+    ACT_THROWGRENADE=20,
+    ACT_TURNDIR=21
+} ACT_TYPE;
+
+typedef enum HANDEDNESS {
+    LEFT_HAND=1,
+    RIGHT_HAND=0
+} HANDEDNESS;
+
+
+// WARNING! conflicting data type names: /bondconstants.h/ANIMATIONS - /bondgame.h/ANIMATIONS
+
+
+// WARNING! conflicting data type names: /bondconstants.h/COLORMODE - /COLORMODE
+
+typedef enum IMAGE_FORMAT {
+    F_CI=2,
+    F_I=4,
+    F_IA=3,
+    F_RGBA=0,
+    F_YUV=1
+} IMAGE_FORMAT;
+
+#define DOOR_LOCK_0 1
+
+#define PROPFLAG2_00800000 8388608
+
+#define CHR_FREE -1
+
+#define DOOR_LOCK_2 4
+
+#define DOOR_LOCK_1 2
+
+#define DOOR_LOCK_4 16
+
+#define DOOR_LOCK_3 8
+
+#define DOOR_LOCK_6 64
+
+#define CHR_BOND_CINEMA -8
+
+#define DOOR_LOCK_5 32
+
+#define PROPFLAG_00100000 1048576
+
+#define CHRFLAG_NO_AUTOAIM 2048
+
+#define CHRFLAG_CULL_USING_HITBOX 8388608
+
+#define DOOR_LOCK_7 128
+
+#define PROPFLAG_00020000 131072
+
+#define PROPFLAG_00000400 1024
+
+#define PROPFLAG2_00004000 16384
+
+#define CHRFLAG_NO_SHADOW 8192
+
+#define PROPFLAG_00000080 128
+
+#define PROPFLAG_00008000 32768
+
+#define PROPFLAG2_00000400 1024
+
+#define PROPFLAG2_00400000 4194304
+
+#define CHRFLAG_COUNT_DEATH_AS_CIVILIAN 1048576
+
+#define PAD_PRESET 9000
+
+#define CHR_PRESET -4
+
+#define PROPFLAG2_00020000 131072
+
+#define PROPFLAG_00002000 8192
+
+#define PROPFLAG_10000000 268435456
+
+#define CHRFLAG_INVINCIBLE 16
+
+#define CHR_SEE_DIE -5
+
+#define CHRFLAG_HIDDEN 1024
+
+#define PROPFLAG_00010000 65536
+
+#define PROPFLAG2_08000000 134217728
+
+#define PROPFLAG2_00000100 256
+
+#define CHRFLAG_00000004 4
+
+#define CHRFLAG_00000001 1
+
+#define CHRFLAG_10000000 268435456
+
+#define PROPFLAG2_80000000 2147483648
+
+#define CHRFLAG_80000000 2147483648
+
+#define CHRFLAG_HAS_BEEN_ON_SCREEN 8
+
+#define PROPFLAG2_20000000 536870912
+
+#define PROPFLAG_00004000 16384
+
+#define PROPFLAG_00000200 512
+
+#define CHR_OBJECTIVE -2
+
+#define PROPFLAG_00400000 4194304
+
+#define CHRFLAG_01000000 16777216
+
+#define PROPFLAG2_00000200 512
+
+#define CHRFLAG_SUNGLASSES 2
+
+#define CHRFLAG_00000020 32
+
+#define CHRFLAG_00040000 262144
+
+#define PROPFLAG2_00010000 65536
+
+#define CHR_CLONE -7
+
+#define CHRFLAG_02000000 33554432
+
+#define PROPFLAG_08000000 134217728
+
+#define CHRFLAG_WAS_DAMAGED 256
+
+#define PROPFLAG_80000000 2147483648
+
+#define PROPFLAG2_00001000 4096
+
+#define CHR_SEE_SHOT -6
+
+#define CHRFLAG_00000200 512
+
+#define CHRFLAG_00010000 65536
+
+#define CHRFLAG_CAN_SHOOT_CHRS 64
+
+#define PROPFLAG_00000004 4
+
+#define PADEXTRA_START 10000
+
+#define CHR_SELF -3
+
+#define PROPFLAG_00000800 2048
+
+#define PROPFLAG_00000008 8
+
+#define PROPFLAG2_00000040 64
+
+#define CHRFLAG_INCREASE_SPRINT_SPEED 524288
+
+#define PROPFLAG_20000000 536870912
+
+#define PROPFLAG_40000000 1073741824
+
+#define PROPFLAG_00000001 1
+
+#define PROPFLAG_00000002 2
+
+#define CHRFLAG_04000000 67108864
+
+#define PROPFLAG2_00000010 16
+
+#define PROPFLAG2_00000001 1
+
+#define PROPFLAG2_00000002 2
+
+#define PROPFLAG2_00000004 4
+
+#define PROPFLAG2_00000800 2048
+
+#define PROPFLAG2_00000008 8
+
+#define CHR_CLONED_NUM_START 9000
+
+#define PROPFLAG_00200000 2097152
+
+#define PROPFLAG2_00000020 32
+
+#define PROPFLAG_00000100 256
+
+#define PROPFLAG2_01000000 16777216
+
+#define GAME_TICKRATE 60
+
+#define PROPFLAG_04000000 67108864
+
+#define PROPFLAG2_00200000 2097152
+
+#define CHRFLAG_LOCK_Y_POS 4096
+
+#define PROPFLAG2_00040000 262144
+
+#define PROPFLAG_00001000 4096
+
+#define PROPFLAG_01000000 16777216
+
+#define CHRFLAG_20000000 536870912
+
+#define PROPFLAG2_00100000 1048576
+
+#define PROPFLAG_00800000 8388608
+
+#define CHRFLAG_IGNORE_ANIM_TRANSLATION 16384
+
+#define PROPFLAG2_02000000 33554432
+
+#define CHRFLAG_00000080 128
+
+#define CHRFLAG_00008000 32768
+
+#define CHR_SPAWN_NUM_START 5000
+
+#define CHRFLAG_40000000 1073741824
+
+#define PROPFLAG2_00000080 128
+
+#define PROPFLAG2_40000000 1073741824
+
+#define PROPFLAG2_00008000 32768
+
+#define CHRFLAG_WAS_HIT 2097152
+
+#define PROPFLAG_00000040 64
+
+#define CHRFLAG_00020000 131072
+
+#define PROPFLAG_00080000 524288
+
+#define PROPFLAG2_00080000 524288
+
+#define PROPFLAG_02000000 33554432
+
+#define PROPFLAG_00000010 16
+
+#define CHRFLAG_08000000 134217728
+
+#define PROPFLAG_00040000 262144
+
+#define PROPFLAG2_10000000 268435456
+
+#define PROPFLAG2_00002000 8192
+
+#define PROPFLAG2_04000000 67108864
+
+#define PROPFLAG_00000020 32
+
+#define CHRFLAG_00400000 4194304
+
+typedef struct IMAGE IMAGE, *PIMAGE;
+
+struct IMAGE {
+    ushort imagic;
+    ushort type;
+    ushort dim;
+    ushort xsize;
+    ushort ysize;
+    ushort zsize;
+    ulong min;
+    ulong max;
+    ulong wastebytes;
+    char name[80];
+    ulong colormap;
+    long file;
+    ushort flags;
+    short dorev;
+    short x;
+    short y;
+    short z;
+    short cnt;
+    ushort * ptr;
+    ushort * base;
+    ushort * tmpbuf;
+    ulong offset;
+    ulong rleend;
+    ulong * rowstart;
+    long * rowsize;
+};
+
+#define CM_COLORMAP 3
+
+#define TYPEMASK 65280
+
+#define ITYPE_VERBATIM 0
+
+#define ITYPE_RLE 256
+
+#define CM_DITHERED 1
+
+#define IMAGIC 474
+
+#define RLE_NOP 0
+
+#define CM_SCREEN 2
+
+#define BPPMASK 255
+
+#define CM_NORMAL 0
+
+typedef struct _Region_s _Region_s, *P_Region_s;
+
+struct _Region_s {
+    u8 * r_startBufferAddress;
+    u8 * r_endAddress;
+    s32 r_bufferSize;
+    s32 r_bufferCount;
+    u16 r_freeList;
+    u16 r_alignSize;
+};
+
+typedef struct _Region_s OSRegion;
+
+#define OS_RG_ALIGN_DEFAULT 8
+
+#define MAX_BUFCOUNT 32768
+
+#define OS_RG_ALIGN_16B 16
+
+#define OS_RG_ALIGN_4B 4
+
+#define OS_RG_ALIGN_2B 2
+
+#define OS_RG_ALIGN_8B 8
+
+#define BUF_FREE_WO_NEXT 32768
+
+#define GT_STATE_OFF_VTXCOUNT 8
+
+#define GT_STATE_OFF_TRANSFORM 24
+
+#define GT_STATE_OFF_RENDSTATE 0
+
+#define GT_STATE_OFF_TRICOUNT 10
+
+#define GT_STATE_OFF_VTXV0 9
+
+#define GT_STATE_SIZE 88
+
+#define GT_STATE_OFF_TEXSTATE 4
+
+#define GT_STATE_OFF_OTHERMODE 16
+
+#define GT_STATE_OFF_RDPCMDS 12
+
+#define M_GFXTASK 1
+
+#define G_OFF 0
+
+#define G_ON 1
+
+#define M_VIDTASK 3
+
+#define NUM_SEGMENTS 16
+
+#define M_AUDTASK 2
+
+typedef void (* OSErrorHandler)(s16, s16, ...);
+
+#define ERR_OSPISTARTDMA_PIMGR 28
+
+#define ERR_OSCREATETHREAD_PRI 2
+
+#define ERR_OSVISETXSCALE_VALUE 39
+
+#define ERR_ALMODDELAYOVERFLOW 133
+
+#define ERR_OSVIGETNEXTFRAMEBUFFER 38
+
+#define ERR_OSSETTLBASID 13
+
+#define ERR_OSVIGETCURRENTFRAMEBUFFER 37
+
+#define ERR_ALEVENTNOFREE 124
+
+#define ERR_OSPISTARTDMA_DIR 30
+
+#define ERR_OSSETTHREADPRI 4
+
+#define ERR_OSSETTIME 75
+
+#define ERR_OSREADHOST_ADDR 70
+
+#define ERR_OSPROFILESTART_TIME 66
+
+#define ERR_OSVISETMODE 45
+
+#define ERR_ALSYN_NO_UPDATE 106
+
+#define ERR_ALSEQSYSEX 119
+
+#define ERR_OSFREE_REGION 53
+
+#define ERR_OSGETREGIONBUFCOUNT 55
+
+#define ERR_OSPISTARTDMA_PRI 29
+
+#define ERR_OSMAPTLB_INDEX 10
+
+#define ERR_OSCREATEVIMANAGER 49
+
+#define ERR_ALSEQMETA 120
+
+#define ERR_ALBNKFNEW 113
+
+#define ERR_ALCSEQZEROSTATUS 128
+
+#define ERR_OSPISTARTDMA_DEVADDR 31
+
+#define ERR_OSSETEVENTMESG 9
+
+#define ERR_ALHEAPNOFREE 125
+
+#define ERR_OSAISETNEXTBUFFER_ADDR 15
+
+#define ERR_OSSTARTTHREAD 3
+
+#define ERR_OSREADHOST_SIZE 71
+
+#define ERR_ALSEQPUNMAP 123
+
+#define ERR_OSUNMAPTLB 12
+
+#define ERR_OSAISETNEXTBUFFER_SIZE 16
+
+#define ERR_ALSNDPSETSOUND 110
+
+#define ERR_OSVISWAPBUFFER_VIMGR 48
+
+#define ERR_ALSEQNOTMIDI0 115
+
+#define ERR_OSPROFILEINIT_STR 61
+
+#define ERR_OSPROFILESTART_FLAG 67
+
+#define ERR_OSMAPTLB_ASID 11
+
+#define ERR_OSCREATETHREAD_SP 1
+
+#define ERR_OSGETREGIONBUFSIZE 56
+
+#define ERR_OSVISETEVENT 46
+
+#define ERR_OSVISETSPECIAL_VALUE 43
+
+#define ERR_OSVISETYSCALE_VALUE 41
+
+#define ERR_OSPIRAWSTARTDMA_DIR 21
+
+#define ERR_OSPIRAWWRITEIO 20
+
+#define ERR_OSPROFILESTOP_FLAG 68
+
+#define ERR_ALCSEQZEROVEL 129
+
+#define ERR_OSMALLOC 52
+
+#define ERR_OSSPTASKLOAD_OUTSIZE 59
+
+#define ERR_ALSEQNOTMIDI 114
+
+#define ERR_OSVIGETCURRENTMODE 36
+
+#define ERR_OSPIRAWSTARTDMA_ADDR 23
+
+#define ERR_OSCREATEREGION_SIZE 51
+
+#define ERR_OSPIRAWSTARTDMA_SIZE 24
+
+#define ERR_OSVISETXSCALE_VIMGR 40
+
+#define ERR_ALCSPVNOTFREE 130
+
+#define ERR_OSJAMMESG 7
+
+#define ERR_OSPISTARTDMA_RANGE 34
+
+#define ERR_ALSEQPINVALIDPROG 121
+
+#define ERR_OSPIWRITEIO 27
+
+#define ERR_OSPROFILEINIT_ORD 64
+
+#define ERR_OSPROFILEINIT_SIZ 65
+
+#define ERR_OSPIREADIO 26
+
+#define ERR_OSSPTASKLOAD_YIELD 60
+
+#define ERR_OSSTOPTIMER 77
+
+#define ERR_OSSENDMESG 6
+
+#define ERR_OSPISTARTDMA_ADDR 32
+
+#define ERR_OSVISETSPECIAL_VIMGR 44
+
+#define ERR_ALSEQTRACKHDR 118
+
+#define ERR_OSSPTASKLOAD_DRAM 57
+
+#define ERR_OSPROFILESTOP_TIMER 69
+
+#define ERR_OSAISETFREQUENCY 14
+
+#define ERR_ALSEQP_MAP_VOICE 102
+
+#define ERR_OSFREE_ADDR 54
+
+#define ERR_OSDPSETNEXTBUFFER_ADDR 17
+
+#define ERR_OSDPSETNEXTBUFFER_SIZE 18
+
+#define ERR_ALSNDPDELETE 108
+
+#define ERR_OSSPTASKLOAD_OUT 58
+
+#define ERR_OSPIRAWSTARTDMA_DEVADDR 22
+
+#define ERR_OSCREATEMESGQUEUE 5
+
+#define ERR_ALSNDPSETPRIORITY 111
+
+#define ERR_ALHEAPFIRSTBLOCK 127
+
+#define OS_ERROR_MAGIC 1801548921
+
+#define ERR_OSPIRAWSTARTDMA_RANGE 25
+
+#define ERR_ALSNDPSETPAR 112
+
+#define ERR_OSSETTIMER 76
+
+#define ERR_OSGETTIME 74
+
+#define ERR_ALSEQP_NO_SOUND 100
+
+#define ERR_ALSNDPDEALLOCATE 107
+
+#define ERR_ALSEQNUMTRACKS 116
+
+#define ERR_OSCREATEREGION_ALIGN 50
+
+#define ERR_ALSEQP_POLY_VOICE 104
+
+#define ERR_OSVISWAPBUFFER_ADDR 47
+
+#define ERR_ALSNDP_NO_VOICE 105
+
+#define ERR_ALHEAPCORRUPT 126
+
+#define ERR_ALSEQTIME 117
+
+#define ERR_ALSNDPPLAY 109
+
+#define ERR_OSPIRAWREADIO 19
+
+#define ERR_OSAISETNEXTBUFFER_ENDADDR 132
+
+#define ERR_OSPROFILEINIT_ALN 63
+
+#define ERR_OSWRITEHOST_ADDR 72
+
+#define ERR_OSWRITEHOST_SIZE 73
+
+#define ERR_ALSEQPUNKNOWNMIDI 122
+
+#define ERR_OSCREATEPIMANAGER 35
+
+#define ERR_ALSEQP_NO_VOICE 101
+
+#define ERR_ALSEQOVERRUN 131
+
+#define ERR_OSPISTARTDMA_SIZE 33
+
+#define ERR_OSPROFILEINIT_CNT 62
+
+#define ERR_ALSEQP_OFF_VOICE 103
+
+#define ERR_OSRECVMESG 8
+
+#define ERR_OSVISETYSCALE_VIMGR 42
+
+typedef struct video_settings video_settings, *Pvideo_settings;
+
+struct video_settings {
+};
+
+typedef struct OSThread_s OSThread_s, *POSThread_s;
+
+typedef s32 OSPri;
+
+typedef s32 OSId;
+
+typedef struct __OSThreadprofile_s __OSThreadprofile_s, *P__OSThreadprofile_s;
+
+typedef struct __OSThreadContext __OSThreadContext, *P__OSThreadContext;
+
+typedef union __OSfp __OSfp, *P__OSfp;
+
+typedef struct _struct_3 _struct_3, *P_struct_3;
+
+struct _struct_3 {
+    f32 f_odd;
+    f32 f_even;
+};
+
+union __OSfp {
+    struct _struct_3 f;
+};
+
+struct __OSThreadContext {
+    u64 at;
+    u64 v0;
+    u64 v1;
+    u64 a0;
+    u64 a1;
+    u64 a2;
+    u64 a3;
+    u64 t0;
+    u64 t1;
+    u64 t2;
+    u64 t3;
+    u64 t4;
+    u64 t5;
+    u64 t6;
+    u64 t7;
+    u64 s0;
+    u64 s1;
+    u64 s2;
+    u64 s3;
+    u64 s4;
+    u64 s5;
+    u64 s6;
+    u64 s7;
+    u64 t8;
+    u64 t9;
+    u64 gp;
+    u64 sp;
+    u64 s8;
+    u64 ra;
+    u64 lo;
+    u64 hi;
+    u32 sr;
+    u32 pc;
+    u32 cause;
+    u32 badvaddr;
+    u32 rcp;
+    u32 fpcsr;
+    union __OSfp fp0;
+    union __OSfp fp2;
+    union __OSfp fp4;
+    union __OSfp fp6;
+    union __OSfp fp8;
+    union __OSfp fp10;
+    union __OSfp fp12;
+    union __OSfp fp14;
+    union __OSfp fp16;
+    union __OSfp fp18;
+    union __OSfp fp20;
+    union __OSfp fp22;
+    union __OSfp fp24;
+    union __OSfp fp26;
+    union __OSfp fp28;
+    union __OSfp fp30;
+};
+
+struct OSThread_s {
+    struct OSThread_s * next;
+    OSPri priority;
+    struct OSThread_s * * queue;
+    struct OSThread_s * tlnext;
+    u16 state;
+    u16 flags;
+    OSId id;
+    int fp;
+    struct __OSThreadprofile_s * thprof;
+    struct __OSThreadContext context;
+};
+
+struct __OSThreadprofile_s {
+    u32 flag;
+    u32 count;
+    u64 time;
+};
+
+typedef struct OSThread_s OSThread;
+
+#define OS_PRIORITY_APPMAX 127
+
+#define OS_STATE_RUNNING 4
+
+#define OS_PRIORITY_RMON 250
+
+#define OS_PRIORITY_PIMGR 150
+
+#define OS_PRIORITY_IDLE 0
+
+#define OS_PRIORITY_MAX 255
+
+#define OS_STATE_STOPPED 1
+
+#define OS_PRIORITY_VIMGR 254
+
+#define OS_STATE_RUNNABLE 2
+
+#define OS_STATE_WAITING 8
+
+#define OS_PRIORITY_SIMGR 140
+
+#define OS_PRIORITY_RMONSPIN 200
+
+typedef struct __OSEventState __OSEventState, *P__OSEventState;
+
+typedef struct OSMesgQueue_s OSMesgQueue_s, *POSMesgQueue_s;
+
+typedef struct OSMesgQueue_s OSMesgQueue;
+
+typedef void * OSMesg;
+
+
+// WARNING! conflicting data type names: /os.h/OSThread - /thread.h/OSThread
+
+struct __OSEventState {
+    OSMesgQueue * messageQueue;
+    OSMesg message;
+};
+
+struct OSMesgQueue_s {
+    OSThread * mtqueue;
+    OSThread * fullqueue;
+    s32 validCount;
+    s32 first;
+    s32 msgCount;
+    OSMesg * msg;
+};
+
+typedef struct __OSThreadTail __OSThreadTail, *P__OSThreadTail;
+
+
+// WARNING! conflicting data type names: /os.h/OSPri - /thread.h/OSPri
+
+struct __OSThreadTail {
+    OSThread * next;
+    OSPri priority;
+};
+
+typedef struct guDLPrintCB guDLPrintCB, *PguDLPrintCB;
+
+struct guDLPrintCB {
+    int dataSize;
+    int dlType;
+    int flags;
+    u32 paddr;
+};
+
+typedef struct PositionalLight PositionalLight, *PPositionalLight;
+
+struct PositionalLight {
+    float col[3];
+    float pos[3];
+    float a1;
+    float a2;
+};
+
+typedef struct Image Image, *PImage;
+
+struct Image {
+    uchar * base;
+    int fmt;
+    int siz;
+    int xsize;
+    int ysize;
+    int lsize;
+    int addr;
+    int w;
+    int h;
+    int s;
+    int t;
+};
+
+#define GU_PARSE_GBI_TYPE 1
+
+#define GU_PARSE_MEM_BLOCK 4
+
+#define GU_PARSEGBI_NONEST 2
+
+#define GU_BLINKRDP_HILITE 1
+
+#define GU_PARSEGBI_ROWMAJOR 1
+
+#define GU_PARSEGBI_ALLMTX 16
+
+#define GU_PARSERDP_VERBOSE 1
+
+#define GU_PARSE_RDP_TYPE 2
+
+#define GU_BLINKRDP_EXTRACT 2
+
+#define GU_PARSE_READY 3
+
+#define GU_PARSERDP_PRHISTO 4
+
+#define FILTER_CLAMP 1
+
+#define GU_PARSEGBI_DUMPONLY 32
+
+#define GU_PARSEGBI_SHOWDMA 8
+
+#define GU_PARSERDP_DUMPONLY 32
+
+#define GU_PARSEGBI_FLTMTX 4
+
+#define GU_PARSE_ABI_TYPE 5
+
+#define GU_PARSERDP_PRAREA 2
+
+#define FILTER_WRAP 0
+
+#define GU_PARSE_STRING_TYPE 6
+
+typedef struct huft huft, *Phuft;
+
+typedef union _union_2 _union_2, *P_union_2;
+
+union _union_2 {
+    ush n;
+    struct huft * t;
+};
+
+struct huft {
+    uch e;
+    uch b;
+    union _union_2 v;
+};
+
+#define BMAX 16
+
+#define N_MAX 288
+
+typedef struct OSPifRam OSPifRam, *POSPifRam;
+
+struct OSPifRam {
+    u32 ramarray[15];
+    u32 pifstatus;
+};
+
+typedef union __OSInodeUnit __OSInodeUnit, *P__OSInodeUnit;
+
+typedef struct _struct_195 _struct_195, *P_struct_195;
+
+struct _struct_195 {
+    u8 bank;
+    u8 page;
+};
+
+union __OSInodeUnit {
+    struct _struct_195 inode_t;
+    u16 ipage;
+};
+
+typedef struct __OSContEepromFormat __OSContEepromFormat, *P__OSContEepromFormat;
+
+struct __OSContEepromFormat {
+    u8 txsize;
+    u8 rxsize;
+    u8 cmd;
+    u8 address;
+    u8 data[8];
+};
+
+typedef struct __OSContReadFormat __OSContReadFormat, *P__OSContReadFormat;
+
+struct __OSContReadFormat {
+    u8 dummy;
+    u8 txsize;
+    u8 rxsize;
+    u8 cmd;
+    u16 button;
+    s8 stick_x;
+    s8 stick_y;
+};
+
+typedef struct __OSContRamReadFormat __OSContRamReadFormat, *P__OSContRamReadFormat;
+
+struct __OSContRamReadFormat {
+    u8 dummy;
+    u8 txsize;
+    u8 rxsize;
+    u8 cmd;
+    u16 address;
+    u8 data[32];
+    u8 datacrc;
+};
+
+typedef struct __OSInode __OSInode, *P__OSInode;
+
+struct __OSInode {
+    union __OSInodeUnit inode_page[128];
+};
+
+typedef struct __OSContRequesFormat __OSContRequesFormat, *P__OSContRequesFormat;
+
+struct __OSContRequesFormat {
+    u8 dummy;
+    u8 txsize;
+    u8 rxsize;
+    u8 cmd;
+    u8 typeh;
+    u8 typel;
+    u8 status;
+    u8 dummy1;
+};
+
+typedef struct __OSDir __OSDir, *P__OSDir;
+
+struct __OSDir {
+    u32 game_code;
+    u16 company_code;
+    union __OSInodeUnit start_page;
+    u8 status;
+    s8 reserved;
+    u16 data_sum;
+    char ext_name[4];
+    char game_name[16];
+};
+
+typedef struct __OSPackId __OSPackId, *P__OSPackId;
+
+struct __OSPackId {
+    u32 repaired;
+    u32 random;
+    u64 serial_mid;
+    u64 serial_low;
+    u16 deviceid;
+    u8 banks;
+    u8 version;
+    u16 checksum;
+    u16 inverted_checksum;
+};
+
+typedef struct __OSInodeCache __OSInodeCache, *P__OSInodeCache;
+
+struct __OSInodeCache {
+    struct __OSInode inode;
+    u8 bank;
+    u8 map[256];
+};
+
+#define CONT_EEPROM_READ 4
+
+#define CONT_SETCH 254
+
+#define PFS_64K_RAM 2
+
+#define PFS_INODE_DIST_MAP 256
+
+#define PFS_FORCE 1
+
+#define CONT_FORMAT 1
+
+#define PFS_ID_1AREA 3
+
+#define PFS_EOF 1
+
+#define PFS_SECTOR_PER_BANK 32
+
+#define EEPROM_WAIT 12000
+
+#define PFS_INODE_SIZE_PER_PAGE 128
+
+#define PFS_ID_2AREA 4
+
+#define FORMAT_END 254
+
+#define PFS_ID_3AREA 6
+
+#define CONT_RESET 255
+
+#define PFS_DELETE 1
+
+#define PFS_PAGE_SIZE 256
+
+#define PFS_SIZE_LOC 24
+
+#define PFS_32K_RAM 1
+
+#define CONT_READ 1
+
+#define PFS_LABEL_AREA 7
+
+#define CONT_RAM_READ 2
+
+#define PIFRAMSIZE 16
+
+#define PFS_PAGE_NOT_EXIST 2
+
+#define CONT_EEPROM_WRITE 5
+
+#define PFS_PAGE_NOT_USED 3
+
+#define PFS_BANK_LAPPED_BY 8
+
+#define CONT_RAM_WRITE 3
+
+#define PFS_ID_PAGE 0
+
+#define PFS_SECTOR_SIZE 4
+
+#define CHANNEL_RESET 253
+
+#define CONT_REQUEST 0
+
+#define DEF_DIR_PAGES 2
+
+#define PFS_ID_0AREA 1
+
+#define PFS_WRITTEN 2
+
+#define CON_ERR_MASK 192
+
+typedef struct debug_processor_error_entry debug_processor_error_entry, *Pdebug_processor_error_entry;
+
+struct debug_processor_error_entry {
+    u32 val1;
+    u32 val2;
+    void * string;
+};
+
+typedef struct debug_handler_entry debug_handler_entry, *Pdebug_handler_entry;
+
+struct debug_handler_entry {
+    void * address;
+    char * ptr_name;
+};
+
+#define RMON_STACKSIZE 4096
+
+#define RMON_DBG_BUF_SIZE 2048
+
+
+// WARNING! conflicting data type names: /message.h/OSMesgQueue_s - /os.h/OSMesgQueue_s
+
+typedef u32 OSEvent;
+
+
+// WARNING! conflicting data type names: /message.h/OSMesgQueue - /os.h/OSMesgQueue
+
+#define OS_EVENT_CART 2
+
+#define OS_EVENT_VI 7
+
+#define OS_EVENT_FAULT 12
+
+#define OS_EVENT_AI 6
+
+#define OS_EVENT_THREADSTATUS 13
+
+#define OS_EVENT_CPU_BREAK 10
+
+#define OS_MESG_NOBLOCK 0
+
+#define OS_EVENT_PI 8
+
+#define OS_EVENT_COUNTER 3
+
+#define OS_EVENT_DP 9
+
+#define OS_MESG_BLOCK 1
+
+#define OS_EVENT_SP 4
+
+#define OS_EVENT_SP_BREAK 11
+
+#define OS_EVENT_SI 5
+
+#define OS_EVENT_PRENMI 14
+
+#define OS_EVENT_SW2 1
+
+#define OS_EVENT_SW1 0
+
+typedef struct OSTimer_str OSTimer_str, *POSTimer_str;
+
+struct OSTimer_str {
+    struct OSTimer_str * next;
+    struct OSTimer_str * prev;
+    u64 interval;
+    u64 remaining;
+    OSMesgQueue * mq;
+    OSMesg * msg;
+};
+
+typedef struct OSTimer_str OSTimer;
+
+typedef u32 OSIntMask;
+
+typedef struct Elf32_RegInfo_MIPS Elf32_RegInfo_MIPS, *PElf32_RegInfo_MIPS;
+
+struct Elf32_RegInfo_MIPS {
+    enum Elf32_GPRMask_MIPS ri_gprmask;
+    dword field_0x4[4];
+    dword ri_gp_value;
+};
+
+typedef struct Elf32_Sym Elf32_Sym, *PElf32_Sym;
+
+struct Elf32_Sym {
+    dword st_name;
+    dword st_value;
+    dword st_size;
+    byte st_info;
+    byte st_other;
+    word st_shndx;
+};
+
+typedef struct Elf32_Shdr Elf32_Shdr, *PElf32_Shdr;
+
+typedef enum Elf_SectionHeaderType_MIPS {
+    =1879048203,
+    SHT_CHECKSUM=1879048184,
+    SHT_DYNAMIC=6,
+    SHT_DYNSYM=11,
+    SHT_FINI_ARRAY=15,
+    SHT_GNU_ATTRIBUTES=1879048181,
+    SHT_GNU_HASH=1879048182,
+    SHT_GNU_LIBLIST=1879048183,
+    SHT_GNU_verdef=1879048189,
+    SHT_GNU_verneed=1879048190,
+    SHT_GNU_versym=1879048191,
+    SHT_GROUP=17,
+    SHT_HASH=5,
+    SHT_INIT_ARRAY=14,
+    SHT_MIPS_ABIFLAGS=1879048234,
+    SHT_MIPS_AUXSYM=1879048214,
+    SHT_MIPS_CONFLICT=1879048194,
+    SHT_MIPS_CONTENT=1879048204,
+    SHT_MIPS_DEBUG=1879048197,
+    SHT_MIPS_DELTACLASS=1879048221,
+    SHT_MIPS_DELTADECL=1879048223,
+    SHT_MIPS_DELTAINST=1879048220,
+    SHT_MIPS_DELTASYM=1879048219,
+    SHT_MIPS_DENSE=1879048211,
+    SHT_MIPS_DWARF=1879048222,
+    SHT_MIPS_EH_REGION=1879048231,
+    SHT_MIPS_EVENTS=1879048225,
+    SHT_MIPS_EXTSYM=1879048210,
+    SHT_MIPS_FDESC=1879048209,
+    SHT_MIPS_GPTAB=1879048195,
+    SHT_MIPS_LIBLIST=1879048192,
+    SHT_MIPS_LINE=1879048217,
+    SHT_MIPS_LOCSTR=1879048216,
+    SHT_MIPS_LOCSYM=1879048213,
+    SHT_MIPS_MSYM=1879048193,
+    SHT_MIPS_OPTIONS=1879048205,
+    SHT_MIPS_OPTSYM=1879048215,
+    SHT_MIPS_PACKAGE=1879048199,
+    SHT_MIPS_PACKSYM=1879048200,
+    SHT_MIPS_PDESC=1879048212,
+    SHT_MIPS_PDR_EXCEPTION=1879048233,
+    SHT_MIPS_PIXIE=1879048227,
+    SHT_MIPS_REGINFO=1879048198,
+    SHT_MIPS_RELD=1879048201,
+    SHT_MIPS_RFDESC=1879048218,
+    SHT_MIPS_SHDR=1879048208,
+    SHT_MIPS_SYMBOL_LIB=1879048224,
+    SHT_MIPS_TRANSLATE=1879048226,
+    SHT_MIPS_UCODE=1879048196,
+    SHT_MIPS_WHIRL=1879048230,
+    SHT_MIPS_XLATE=1879048228,
+    SHT_MIPS_XLATE_DEBUG=1879048229,
+    SHT_MIPS_XLATE_OLD=1879048232,
+    SHT_NOBITS=8,
+    SHT_NOTE=7,
+    SHT_NULL=0,
+    SHT_PREINIT_ARRAY=16,
+    SHT_PROGBITS=1,
+    SHT_REL=9,
+    SHT_RELA=4,
+    SHT_SHLIB=10,
+    SHT_STRTAB=3,
+    SHT_SUNW_COMDAT=1879048187,
+    SHT_SUNW_move=1879048186,
+    SHT_SUNW_syminfo=1879048188,
+    SHT_SYMTAB=2,
+    SHT_SYMTAB_SHNDX=18
+} Elf_SectionHeaderType_MIPS;
+
+struct Elf32_Shdr {
+    dword sh_name;
+    enum Elf_SectionHeaderType_MIPS sh_type;
+    dword sh_flags;
+    dword sh_addr;
+    dword sh_offset;
+    dword sh_size;
+    dword sh_link;
+    dword sh_info;
+    dword sh_addralign;
+    dword sh_entsize;
+};
+
+typedef struct Elf32_Phdr Elf32_Phdr, *PElf32_Phdr;
+
+typedef enum Elf_ProgramHeaderType_MIPS {
+    PT_DYNAMIC=2,
+    PT_GNU_EH_FRAME=1685382480,
+    PT_GNU_RELRO=1685382482,
+    PT_GNU_STACK=1685382481,
+    PT_INTERP=3,
+    PT_LOAD=1,
+    PT_MIPS_ABIFLAGS=1879048195,
+    PT_MIPS_OPTIONS=1879048194,
+    PT_MIPS_REGINFO=1879048192,
+    PT_MIPS_RTPROC=1879048193,
+    PT_NOTE=4,
+    PT_NULL=0,
+    PT_PHDR=6,
+    PT_SHLIB=5,
+    PT_TLS=7
+} Elf_ProgramHeaderType_MIPS;
+
+struct Elf32_Phdr {
+    enum Elf_ProgramHeaderType_MIPS p_type;
+    dword p_offset;
+    dword p_vaddr;
+    dword p_paddr;
+    dword p_filesz;
+    dword p_memsz;
+    dword p_flags;
+    dword p_align;
+};
+
+typedef struct Elf32_Ehdr Elf32_Ehdr, *PElf32_Ehdr;
+
+struct Elf32_Ehdr {
+    byte e_ident_magic_num;
+    char e_ident_magic_str[3];
+    byte e_ident_class;
+    byte e_ident_data;
+    byte e_ident_version;
+    byte e_ident_pad[9];
+    word e_type;
+    word e_machine;
+    dword e_version;
+    dword e_entry;
+    dword e_phoff;
+    dword e_shoff;
+    dword e_flags;
+    word e_ehsize;
+    word e_phentsize;
+    word e_phnum;
+    word e_shentsize;
+    word e_shnum;
+    word e_shstrndx;
+};
+
+#define SAFE_EXP 1023
+
+#define _DMASK 32752
+
+#define _D3 3
+
+#define _D2 2
+
+#define _D1 1
+
+#define _DNAN 65528
+
+#define _DFRAC 15
+
+#define _DMAX 2047
+
+#define NAN 2
+
+#define _DSIGN 32768
+
+#define INF 1
+
+#define FINITE -1
+
+#define HUGE_EXP 1842
+
+typedef char * voidp;
+
+typedef int file_t;
+
+#define RESERVED 192
+
+#define seekable 0
+
+#define PACKED 2
+
+#define DIST_BUFSIZE 32768
+
+#define DEFLATED 8
+
+#define WARNING 2
+
+#define ORIG_NAME 8
+
+#define translate_eol 0
+
+#define MAX_MATCH 258
+
+#define CONTINUATION 2
+
+#define MIN_MATCH 3
+
+#define STORED 0
+
+#define COMMENT 16
+
+#define WSIZE 32768
+
+#define MIN_LOOKAHEAD 262
+
+#define EXTRA_FIELD 4
+
+#define ASCII 1
+
+#define INBUFSIZ 32768
+
+#define OUTBUF_EXTRA 2048
+
+#define OK 0
+
+#define MAX_DIST 32506
+
+#define ASCII_FLAG 1
+
+#define MAX_METHODS 9
+
+#define ENCRYPTED 32
+
+#define LZHED 3
+
+#define NO_FILE -1
+
+#define OUTBUFSIZ 16384
+
+#define COMPRESSED 1
+
+#define INBUF_EXTRA 64
+
+#define ERROR 1
+
+#define UNKNOWN 65535
+
+#define BINARY 0
+
+typedef struct OSIoMesg OSIoMesg, *POSIoMesg;
+
+typedef struct OSIoMesgHdr OSIoMesgHdr, *POSIoMesgHdr;
+
+typedef struct OSPiHandle_s OSPiHandle_s, *POSPiHandle_s;
+
+typedef struct OSPiHandle_s OSPiHandle;
+
+typedef struct __OSTranxInfo __OSTranxInfo, *P__OSTranxInfo;
+
+typedef struct __OSBlockInfo __OSBlockInfo, *P__OSBlockInfo;
+
+struct OSIoMesgHdr {
+    u16 type;
+    u8 pri;
+    u8 status;
+    OSMesgQueue * retQueue;
+};
+
+struct OSIoMesg {
+    struct OSIoMesgHdr hdr;
+    void * dramAddr;
+    u32 devAddr;
+    u32 size;
+    OSPiHandle * piHandle;
+};
+
+struct __OSBlockInfo {
+    u32 errStatus;
+    void * dramAddr;
+    void * C2Addr;
+    u32 sectorSize;
+    u32 C1ErrNum;
+    u32 C1ErrSector[4];
+};
+
+struct __OSTranxInfo {
+    u32 cmdType;
+    u16 transferMode;
+    u16 blockNum;
+    s32 sectorNum;
+    u32 devAddr;
+    u32 bmCtlShadow;
+    u32 seqCtlShadow;
+    struct __OSBlockInfo block[2];
+};
+
+struct OSPiHandle_s {
+    struct OSPiHandle_s * next;
+    u8 type;
+    u8 latency;
+    u8 pageSize;
+    u8 relDuration;
+    u8 pulse;
+    u8 domain;
+    u32 baseAddress;
+    u32 speed;
+    struct __OSTranxInfo transferInfo;
+};
+
+typedef struct OSPiInfo OSPiInfo, *POSPiInfo;
+
+struct OSPiInfo {
+    u8 type;
+    u32 address;
+};
+
+#define OS_MESG_PRI_HIGH 1
+
+#define OS_WRITE 1
+
+#define OS_READ 0
+
+#define OS_MESG_PRI_NORMAL 0
+
+#define DPS_REG_BASE 2753560576
+
+#define DPC_REG_BASE 2752512000
+
+typedef struct RamRomBuffer RamRomBuffer, *PRamRomBuffer;
+
+struct RamRomBuffer {
+    long type;
+    long length;
+    long magic;
+    char userdata[24573];
+};
+
+#define RAMROM_BUF_SIZE 4096
+
+#define RAMROM_FONTDATA_SIZE 1152
+
+#define GAME_APP_DATA_READY 10
+
+#define HOST_FAULT_ACK 15
+
+#define RAMROM_MSG_ADDR 16752640
+
+#define HOST_LOG_ACK 8
+
+#define RAMROM_RMON_WRITE_ADDR 16764928
+
+#define HOST_PIACCESS_REQ 1
+
+#define RAMROM_FONTDATA_OFFSET 2928
+
+#define RAMROM_PIF2BOOTSTRAP_OFFSET 4096
+
+#define RAMROM_CLOCKRATE_MASK 4294967280
+
+#define GAME_PRINTF_SEND 5
+
+#define HOST_PROF_ACK 13
+
+#define GAME_EXIT 16
+
+#define HOST_PROF_REQ 11
+
+#define RAMROM_BOOTADDR_OFFSET 8
+
+#define HOST_DBG_DATA_ACK 4
+
+#define GAME_LOG_SEND 7
+
+#define HOST_DBG_CMD_READY 2
+
+#define RAMROM_SIZE 16777216
+
+#define RAMROM_APP_WRITE_ADDR 16756736
+
+#define RAMROM_BOOTSTRAP_OFFSET 64
+
+#define HOST_PRINTF_ACK 6
+
+#define RAMROM_CLOCKRATE_OFFSET 4
+
+#define RAMROM_MSG_SIZE 24576
+
+#define RAMROM_RMON_READ_ADDR 16760832
+
+#define GAME_FAULT_SEND 14
+
+#define RAMROM_PRINTF_ADDR 16769024
+
+#define GAME_PROF_SEND 12
+
+#define HOST_APP_CMD_READY 9
+
+#define RAMROM_LOG_ADDR 16773120
+
+#define HOST_DATA_ACK 17
+
+#define RAMROM_GAME_OFFSET 4096
+
+#define GAME_DBG_DATA_SEND 3
+
+#define RAMROM_APP_READ_ADDR 16752640
+
+#define RAMROM_RELEASE_OFFSET 12
+
+
+// WARNING! conflicting data type names: /_CAPTURED_FROM_ge007.u.old.elf/__OSPackId - /CONTROLLER.H/__OSPackId
+
+typedef struct struct struct, *Pstruct;
+
+typedef struct OSViMode OSViMode, *POSViMode;
+
+typedef struct OSViCommonRegs OSViCommonRegs, *POSViCommonRegs;
+
+typedef struct OSViFieldRegs OSViFieldRegs, *POSViFieldRegs;
+
+struct struct {
+    u16 field_0x0;
+    u16 field_0x2;
+    void * field_0x4;
+    struct OSViMode * field_0x8;
+    u32 field_0xc;
+    OSMesgQueue * field_0x10;
+    OSMesg field_0x14;
+};
+
+struct OSViCommonRegs {
+    u32 ctrl;
+    u32 width;
+    u32 burst;
+    u32 vSync;
+    u32 hSync;
+    u32 leap;
+    u32 hStart;
+    u32 xScale;
+    u32 vCurrent;
+};
+
+struct OSViFieldRegs {
+    u32 origin;
+    u32 yScale;
+    u32 vStart;
+    u32 vBurst;
+    u32 vIntr;
+};
+
+struct OSViMode {
+    u8 type;
+    struct OSViCommonRegs comRegs;
+    struct OSViFieldRegs fldRegs[2];
+};
+
+typedef struct PVoice PVoice, *PPVoice;
+
+typedef struct ALLink_s ALLink_s, *PALLink_s;
+
+typedef struct ALLink_s ALLink;
+
+typedef struct ALVoice_s ALVoice_s, *PALVoice_s;
+
+typedef struct ALFilter_s ALFilter_s, *PALFilter_s;
+
+typedef struct ALADPCMFilter ALADPCMFilter, *PALADPCMFilter;
+
+typedef struct ALResampler ALResampler, *PALResampler;
+
+typedef struct ALEnvMixer_s ALEnvMixer_s, *PALEnvMixer_s;
+
+typedef struct PVoice_s PVoice_s, *PPVoice_s;
+
+typedef struct ALWaveTable_s ALWaveTable_s, *PALWaveTable_s;
+
+typedef struct ALWaveTable_s ALWaveTable;
+
+typedef short ADPCM_STATE[16];
+
+typedef struct $039A3EC5794421300707C77A911A1BDF $039A3EC5794421300707C77A911A1BDF, *P$039A3EC5794421300707C77A911A1BDF;
+
+typedef struct $039A3EC5794421300707C77A911A1BDF ALADPCMloop;
+
+typedef s32 (* ALDMAproc)(s32, s32, void *);
+
+
+// WARNING! conflicting data type names: /_CAPTURED_FROM_ge007.u.old.elf/ALFilter_s - /libaudio.h/ALFilter_s
+
+typedef short RESAMPLE_STATE[16];
+
+typedef struct ALParam_s ALParam_s, *PALParam_s;
+
+typedef short ENVMIX_STATE[40];
+
+typedef union _union_109 _union_109, *P_union_109;
+
+typedef struct ALADPCMWaveInfo ALADPCMWaveInfo, *PALADPCMWaveInfo;
+
+typedef struct ALRAWWaveInfo ALRAWWaveInfo, *PALRAWWaveInfo;
+
+
+// WARNING! conflicting data type names: /libaudio.h/ALADPCMloop - /GE Current Master.h/ALADPCMloop
+
+typedef struct ALADPCMBook ALADPCMBook, *PALADPCMBook;
+
+typedef struct ALRawLoop ALRawLoop, *PALRawLoop;
+
+struct PVoice_s {
+};
+
+struct $039A3EC5794421300707C77A911A1BDF {
+};
+
+struct ALResampler {
+    struct ALFilter_s filter;
+    RESAMPLE_STATE state;
+    float ratio;
+    int upitch;
+    float delta;
+    int first;
+    struct ALParam_s * ctrlList;
+    struct ALParam_s * ctrlTail;
+};
+
+struct ALFilter_s {
+};
+
+struct ALADPCMBook {
+    s32 order;
+    s32 npredictors;
+    s16 book[1];
+};
+
+struct ALADPCMWaveInfo {
+    struct ALADPCMloop * loop;
+    struct ALADPCMBook * book;
+};
+
+struct ALRAWWaveInfo {
+    struct ALRawLoop * loop;
+};
+
+union _union_109 {
+    struct ALADPCMWaveInfo adpcmWave;
+    struct ALRAWWaveInfo rawWave;
+};
+
+struct ALWaveTable_s {
+    u8 * base;
+    s32 len;
+    u8 type;
+    u8 flags;
+    union _union_109 waveInfo;
+};
+
+struct ALLink_s {
+    struct ALLink_s * next;
+    struct ALLink_s * prev;
+};
+
+struct ALVoice_s {
+    ALLink node;
+    struct PVoice_s * pvoice;
+    ALWaveTable * table;
+    void * clientPrivate;
+    s16 state;
+    s16 priority;
+    s16 fxBus;
+    s16 unityPitch;
+};
+
+struct ALEnvMixer_s {
+    struct ALFilter_s filter;
+    ENVMIX_STATE state;
+    short pan;
+    short volume;
+    short cvolL;
+    short cvolR;
+    short dryamt;
+    short wetamt;
+    ushort lratl;
+    short lratm;
+    short ltgt;
+    ushort rratl;
+    short rratm;
+    short rtgt;
+    int delta;
+    int segEnd;
+    int first;
+    struct ALParam_s * ctrlList;
+    struct ALParam_s * ctrlTail;
+    struct ALFilter_s * * sources;
+    int motion;
+};
+
+struct ALRawLoop {
+    u32 start;
+    u32 end;
+    u32 count;
+};
+
+struct ALADPCMFilter {
+    struct ALFilter_s filter;
+    ADPCM_STATE state[AL_MAX_ADPCM_STATES];
+    ALADPCMloop loop;
+    struct ALWaveTable_s * table;
+    int bookSize;
+    ALDMAproc dma;
+    int current;
+    int sample;
+    int lastsam;
+    int first;
+    int memin;
+    int dramstart;
+};
+
+struct ALParam_s {
+};
+
+struct PVoice {
+    ALLink node;
+    struct ALVoice_s * vvoice;
+    void * rspCode;
+    struct ALFilter_s * sourceKnob;
+    struct ALFilter_s * channelKnob;
+    struct ALADPCMFilter decoder;
+    struct ALResampler resampler;
+    struct ALEnvMixer_s envmixer;
+};
+
+typedef int * ALSetParam;
+
+typedef enum DEBUG_MENU_FLAGS {
+    FLAG_4=4,
+    FLAG_8=8
+} DEBUG_MENU_FLAGS;
+
+typedef struct __OSViContext __OSViContext, *P__OSViContext;
+
+typedef struct __OSViScale __OSViScale, *P__OSViScale;
+
+struct __OSViScale {
+    f32 factor;
+    u16 offset;
+    undefined field_0x6;
+    undefined field_0x7;
+    undefined field_0x8;
+    undefined field_0x9;
+};
+
+struct __OSViContext {
+    u16 state;
+    u16 retraceCount;
+    void * framep;
+    struct OSViMode * modep;
+    u32 control;
+    OSMesgQueue * msgq;
+    OSMesg msg;
+    struct __OSViScale x;
+    struct __OSViScale y;
+    u32 pad;
+};
+
+
+// WARNING! conflicting data type names: /_CAPTURED_FROM_ge007.u.old.elf/debug_handler_entry - /init.h/debug_handler_entry
+
+typedef enum BOOL {
+    FALSE=0,
+    TRUE=1
+} BOOL;
+
+typedef enum guard_action_type {
+    None=0,
+    dying=4,
+    fade_away=5,
+    freeze=2,
+    freeze_anim=17,
+    gettingshot=6,
+    limping=7,
+    look_around=18,
+    moving=15,
+    run_roll_fire=10,
+    sidehop=12,
+    siderun=13,
+    sidestep=11,
+    standing=1,
+    standstill_fire=8,
+    surrendering=16,
+    swattingflies=3,
+    throw_grenade=20,
+    trigger_alarm=19,
+    walk_fire=9,
+    walk_path=14
+} guard_action_type;
+
+typedef union Acmd Acmd, *PAcmd;
+
+typedef union Acmd ALCmdHandler;
+
+typedef struct Awords Awords, *PAwords;
+
+typedef struct Aadpcm Aadpcm, *PAadpcm;
+
+typedef struct Apolef Apolef, *PApolef;
+
+typedef struct Aclearbuff Aclearbuff, *PAclearbuff;
+
+typedef struct Aenvelope Aenvelope, *PAenvelope;
+
+typedef struct Ainterleave Ainterleave, *PAinterleave;
+
+typedef struct Aloadbuff Aloadbuff, *PAloadbuff;
+
+typedef struct Aenvmixer Aenvmixer, *PAenvmixer;
+
+typedef struct Aresample Aresample, *PAresample;
+
+typedef struct Areverb Areverb, *PAreverb;
+
+typedef struct Asavebuff Asavebuff, *PAsavebuff;
+
+typedef struct Asegment Asegment, *PAsegment;
+
+typedef struct Asetbuff Asetbuff, *PAsetbuff;
+
+typedef struct Asetvol Asetvol, *PAsetvol;
+
+typedef struct Admemmove Admemmove, *PAdmemmove;
+
+typedef struct Aloadadpcm Aloadadpcm, *PAloadadpcm;
+
+typedef struct Amixer Amixer, *PAmixer;
+
+typedef struct Asetloop Asetloop, *PAsetloop;
+
+typedef union anon__struct_76_bitfield_1 anon__struct_76_bitfield_1, *Panon__struct_76_bitfield_1;
+
+typedef union anon__struct_77_bitfield_1 anon__struct_77_bitfield_1, *Panon__struct_77_bitfield_1;
+
+typedef union anon__struct_79_bitfield_1 anon__struct_79_bitfield_1, *Panon__struct_79_bitfield_1;
+
+typedef union anon__struct_79_bitfield_2 anon__struct_79_bitfield_2, *Panon__struct_79_bitfield_2;
+
+typedef union anon__struct_78_bitfield_1 anon__struct_78_bitfield_1, *Panon__struct_78_bitfield_1;
+
+typedef union anon__struct_80_bitfield_1 anon__struct_80_bitfield_1, *Panon__struct_80_bitfield_1;
+
+typedef union anon__struct_80_bitfield_2 anon__struct_80_bitfield_2, *Panon__struct_80_bitfield_2;
+
+typedef union anon__struct_81_bitfield_1 anon__struct_81_bitfield_1, *Panon__struct_81_bitfield_1;
+
+typedef union anon__struct_82_bitfield_1 anon__struct_82_bitfield_1, *Panon__struct_82_bitfield_1;
+
+typedef union anon__struct_85_bitfield_1 anon__struct_85_bitfield_1, *Panon__struct_85_bitfield_1;
+
+typedef union anon__struct_86_bitfield_1 anon__struct_86_bitfield_1, *Panon__struct_86_bitfield_1;
+
+typedef union anon__struct_87_bitfield_1 anon__struct_87_bitfield_1, *Panon__struct_87_bitfield_1;
+
+typedef union anon__struct_88_bitfield_1 anon__struct_88_bitfield_1, *Panon__struct_88_bitfield_1;
+
+typedef union anon__struct_88_bitfield_2 anon__struct_88_bitfield_2, *Panon__struct_88_bitfield_2;
+
+typedef union anon__struct_89_bitfield_1 anon__struct_89_bitfield_1, *Panon__struct_89_bitfield_1;
+
+typedef union anon__struct_89_bitfield_2 anon__struct_89_bitfield_2, *Panon__struct_89_bitfield_2;
+
+typedef union anon__struct_90_bitfield_1 anon__struct_90_bitfield_1, *Panon__struct_90_bitfield_1;
+
+typedef union anon__struct_90_bitfield_2 anon__struct_90_bitfield_2, *Panon__struct_90_bitfield_2;
+
+typedef union anon__struct_91_bitfield_1 anon__struct_91_bitfield_1, *Panon__struct_91_bitfield_1;
+
+typedef union anon__struct_91_bitfield_2 anon__struct_91_bitfield_2, *Panon__struct_91_bitfield_2;
+
+typedef union anon__struct_92_bitfield_1 anon__struct_92_bitfield_1, *Panon__struct_92_bitfield_1;
+
+typedef union anon__struct_83_bitfield_1 anon__struct_83_bitfield_1, *Panon__struct_83_bitfield_1;
+
+typedef union anon__struct_83_bitfield_2 anon__struct_83_bitfield_2, *Panon__struct_83_bitfield_2;
+
+typedef union anon__struct_93_bitfield_1 anon__struct_93_bitfield_1, *Panon__struct_93_bitfield_1;
+
+union anon__struct_78_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint pad1:16; // : bits 16-31
+};
+
+union anon__struct_81_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:24; // : bits 8-31
+};
+
+union anon__struct_88_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:24; // : bits 8-31
+};
+
+union anon__struct_91_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:8; // : bits 8-15
+    uint dmemin:16; // : bits 16-31
+};
+
+union anon__struct_80_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:8; // : bits 8-15
+    uint pad2:16; // : bits 16-31
+};
+
+union anon__struct_80_bitfield_2 {
+    uint inL:16; // : bits 0-15
+    uint inR:16; // : bits 16-31
+};
+
+struct Ainterleave {
+    union anon__struct_80_bitfield_1 field_0x0;
+    union anon__struct_80_bitfield_2 field_0x4;
+};
+
+union anon__struct_88_bitfield_2 {
+    uint pad2:2; // : bits 0-1
+    uint number:4; // : bits 2-5
+    uint base:24; // : bits 6-29
+};
+
+struct Asegment {
+    union anon__struct_88_bitfield_1 field_0x0;
+    union anon__struct_88_bitfield_2 field_0x4;
+};
+
+union anon__struct_91_bitfield_2 {
+    uint dmemout:16; // : bits 0-15
+    uint count:16; // : bits 16-31
+};
+
+union anon__struct_77_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint gain:16; // : bits 16-31
+};
+
+struct Apolef {
+    union anon__struct_77_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_83_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint gain:16; // : bits 16-31
+};
+
+union anon__struct_83_bitfield_2 {
+    uint dmemi:16; // : bits 0-15
+    uint dmemo:16; // : bits 16-31
+};
+
+struct Amixer {
+    union anon__struct_83_bitfield_1 field_0x0;
+    union anon__struct_83_bitfield_2 field_0x4;
+};
+
+struct Awords {
+    uint w0;
+    uint w1;
+};
+
+union anon__struct_85_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint pitch:16; // : bits 16-31
+};
+
+struct Aresample {
+    union anon__struct_85_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_89_bitfield_2 {
+    uint dmemout:16; // : bits 0-15
+    uint count:16; // : bits 16-31
+};
+
+union anon__struct_89_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint dmemin:16; // : bits 16-31
+};
+
+struct Asetbuff {
+    union anon__struct_89_bitfield_1 field_0x0;
+    union anon__struct_89_bitfield_2 field_0x4;
+};
+
+struct Aenvelope {
+    union anon__struct_78_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_86_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint pad1:16; // : bits 16-31
+};
+
+struct Areverb {
+    union anon__struct_86_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_82_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint pad1:16; // : bits 16-31
+};
+
+struct Aenvmixer {
+    union anon__struct_82_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_90_bitfield_2 {
+    uint voltgt:16; // : bits 0-15
+    uint volrate:16; // : bits 16-31
+};
+
+union anon__struct_90_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint vol:16; // : bits 16-31
+};
+
+struct Asetvol {
+    union anon__struct_90_bitfield_1 field_0x0;
+    union anon__struct_90_bitfield_2 field_0x4;
+};
+
+union anon__struct_76_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint flags:8; // : bits 8-15
+    uint gain:16; // : bits 16-31
+};
+
+struct Aadpcm {
+    union anon__struct_76_bitfield_1 field_0x0;
+    uint addr;
+};
+
+struct Admemmove {
+    union anon__struct_91_bitfield_1 field_0x0;
+    union anon__struct_91_bitfield_2 field_0x4;
+};
+
+union anon__struct_92_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:8; // : bits 8-15
+    uint count:16; // : bits 16-31
+};
+
+struct Aloadadpcm {
+    union anon__struct_92_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_79_bitfield_2 {
+    uint pad2:16; // : bits 0-15
+    uint count:16; // : bits 16-31
+};
+
+union anon__struct_79_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:8; // : bits 8-15
+    uint dmem:16; // : bits 16-31
+};
+
+struct Aclearbuff {
+    union anon__struct_79_bitfield_1 field_0x0;
+    union anon__struct_79_bitfield_2 field_0x4;
+};
+
+struct Aloadbuff {
+    union anon__struct_81_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_87_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:24; // : bits 8-31
+};
+
+struct Asavebuff {
+    union anon__struct_87_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union anon__struct_93_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint pad1:8; // : bits 8-15
+    uint pad2:16; // : bits 16-31
+};
+
+struct Asetloop {
+    union anon__struct_93_bitfield_1 field_0x0;
+    uint addr;
+};
+
+union Acmd {
+    struct Awords words;
+    struct Aadpcm adpcm;
+    struct Apolef polef;
+    struct Aclearbuff clearbuff;
+    struct Aenvelope envelope;
+    struct Ainterleave interleave;
+    struct Aloadbuff loadbuff;
+    struct Aenvmixer envmixer;
+    struct Aresample resample;
+    struct Areverb reverb;
+    struct Asavebuff savebuff;
+    struct Asegment segment;
+    struct Asetbuff setbuff;
+    struct Asetvol setvol;
+    struct Admemmove dmemmove;
+    struct Aloadadpcm loadadpcm;
+    struct Amixer mixer;
+    struct Asetloop setloop;
+    longlong force_union_align;
+};
+
+typedef enum enum_179 {
+    GT_ALPHACOMPARE=1,
+    GT_ALPHADITHER=4,
+    GT_CLEAR=0,
+    GT_COMBKEY=6,
+    GT_CYCLETYPE=13,
+    GT_PIPELINE=14,
+    GT_RENDERMODE=3,
+    GT_RGBDITHER=5,
+    GT_TEXTCONV=7,
+    GT_TEXTDETAIL=11,
+    GT_TEXTFILT=8,
+    GT_TEXTLOD=10,
+    GT_TEXTLUT=9,
+    GT_TEXTPERSP=12,
+    GT_ZSRCSEL=2
+} enum_179;
+
+typedef union gtVtxOut gtVtxOut, *PgtVtxOut;
+
+typedef struct gtVtxOut_t gtVtxOut_t, *PgtVtxOut_t;
+
+struct gtVtxOut_t {
+    short xscrn;
+    short yscrn;
+    int zscrn;
+    short s;
+    short t;
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+};
+
+union gtVtxOut {
+    struct gtVtxOut_t v;
+    longlong force_structure_alignment;
+};
+
+typedef enum enum_179 gtStateOthermode_t;
+
+typedef union gtGlobState gtGlobState, *PgtGlobState;
+
+typedef struct gtGlobState_t gtGlobState_t, *PgtGlobState_t;
+
+typedef union Vp Vp, *PVp;
+
+typedef struct Vp_t Vp_t, *PVp_t;
+
+struct Vp_t {
+    short vscale[4];
+    short vtrans[4];
+};
+
+union Vp {
+    struct Vp_t vp;
+    longlong force_structure_alignment;
+};
+
+struct gtGlobState_t {
+    u16 perspNorm;
+    u16 pad0;
+    u32 flag;
+    union Gfx rdpOthermode;
+    u32 segBases[16];
+    union Vp viewport;
+    union Gfx * rdpCmds;
+};
+
+union gtGlobState {
+    struct gtGlobState_t sp;
+    longlong force_structure_alignment;
+};
+
+typedef union gtState gtState, *PgtState;
+
+typedef struct gtState_t gtState_t, *PgtState_t;
+
+
+// WARNING! conflicting data type names: /gbi.h/Mtx - /types.h/Mtx
+
+struct gtState_t {
+    u32 renderState;
+    u32 textureState;
+    u8 vtxCount;
+    u8 vtxV0;
+    u8 triCount;
+    u8 flag;
+    union Gfx * rdpCmds;
+    union Gfx rdpOthermode;
+    union Mtx transform;
+};
+
+union gtState {
+    struct gtState_t sp;
+    longlong force_structure_alignment;
+};
+
+typedef struct gtTriN gtTriN, *PgtTriN;
+
+struct gtTriN {
+    u8 v0;
+    u8 v1;
+    u8 v2;
+    u8 flag;
+};
+
+typedef struct gtStateL_t gtStateL_t, *PgtStateL_t;
+
+struct gtStateL_t {
+    u32 renderState;
+    u32 textureState;
+    u8 vtxCount;
+    u8 vtxV0;
+    u8 triCount;
+    u8 flag;
+    union Gfx * rdpCmds;
+    union Gfx rdpOthermode;
+};
+
+typedef struct gtGfx_t gtGfx_t, *PgtGfx_t;
+
+typedef union Vtx Vtx, *PVtx;
+
+typedef struct Vtx_t Vtx_t, *PVtx_t;
+
+typedef struct Vtx_tn Vtx_tn, *PVtx_tn;
+
+struct Vtx_t {
+    short ob[3];
+    ushort flag;
+    short tc[2];
+    uchar cn[4];
+};
+
+struct Vtx_tn {
+    short ob[3];
+    ushort flag;
+    short tc[2];
+    char n[3];
+    uchar a;
+};
+
+union Vtx {
+    struct Vtx_t v;
+    struct Vtx_tn n;
+    longlong force_structure_alignment;
+};
+
+struct gtGfx_t {
+    union gtGlobState * gstatep;
+    union gtState * statep;
+    union Vtx * vtxp;
+    struct gtTriN * trip;
+};
+
+typedef union gtGfx gtGfx, *PgtGfx;
+
+union gtGfx {
+    struct gtGfx_t obj;
+    longlong force_structure_alignment;
+};
+
+typedef union gtStateL gtStateL, *PgtStateL;
+
+union gtStateL {
+    struct gtStateL_t sp;
+    longlong force_structure_alignment;
+};
+
+#define GT_CULL_BACK 8192
+
+#define GT_ZBUFFER 1
+
+#define GT_DUMPTURBO_HANGAFTER 64
+
+#define GT_FLAG_NO_XFM 2
+
+#define GT_FLAG_NOMTX 1
+
+#define GT_TEXTURE 2
+
+#define GT_DUMPTURBO_NOTEXTURES 128
+
+#define GT_FLAG_XFM_ONLY 4
+
+#define GT_SHADING_SMOOTH 512
+
+typedef struct sGlobalImageTable sGlobalImageTable, *PsGlobalImageTable;
+
+struct sGlobalImageTable {
+    char field_0x0[120];
+    undefined field_0x78[168];
+    undefined field_0x120[168];
+    undefined field_0x1c8[168];
+    undefined field_0x270[168];
+    undefined field_0x318[168];
+    undefined field_0x3c0[168];
+    undefined field_0x468[168];
+    undefined field_0x510[168];
+    undefined field_0x5b8[168];
+    undefined field_0x660[168];
+    undefined field_0x708[168];
+    undefined field_0x7b0[168];
+    undefined field_0x858[168];
+    undefined field_0x900[168];
+    undefined field_0x9a8[168];
+    undefined field_0xa50[120];
+    struct sImageTableEntry genericimage[1];
+    struct sImageTableEntry impactimages[20];
+    struct sImageTableEntry explosion_smokeimages[6];
+    struct sImageTableEntry scattered_explosions[5];
+    struct sImageTableEntry flareimage1[1];
+    struct sImageTableEntry flareimage2[1];
+    struct sImageTableEntry flareimage3[1];
+    struct sImageTableEntry flareimage4[1];
+    struct sImageTableEntry flareimage5[1];
+    struct sImageTableEntry ammo9mmimage[1];
+    struct sImageTableEntry rifleammoimage[1];
+    struct sImageTableEntry shotgunammoimage[1];
+    struct sImageTableEntry knifeammoimage[1];
+    struct sImageTableEntry glammoimage[1];
+    struct sImageTableEntry rocketammoimage[1];
+    struct sImageTableEntry genericmineammoimage[1];
+    struct sImageTableEntry grenadeammoimage[1];
+    struct sImageTableEntry magnumammoimage[1];
+    struct sImageTableEntry goldengunammoimage[1];
+    struct sImageTableEntry remotemineammoimage[1];
+    struct sImageTableEntry timedmineammoimage[1];
+    struct sImageTableEntry proxmineammoimage[1];
+    struct sImageTableEntry tankammoimage[1];
+    struct sImageTableEntry crosshairimage[1];
+    struct sImageTableEntry betacrosshairimage[1];
+    struct sImageTableEntry glassoverlayimage[2];
+    struct sImageTableEntry monitorimages[50];
+    struct sImageTableEntry skywaterimages[3];
+    struct sImageTableEntry mainfolderimages[6];
+    struct sImageTableEntry mpradarimages[1];
+    struct sImageTableEntry mpcharselimages[64];
+    struct sImageTableEntry mpstageselimages[17];
+};
+
+typedef struct astruct astruct, *Pastruct;
+
+struct astruct {
+    undefined field_0x0;
+    undefined field_0x1;
+    undefined field_0x2;
+    undefined field_0x3;
+    undefined1 txtClipW; // Created by retype action
+    undefined field_0x5;
+    undefined1 txtClipH; // Created by retype action
+    undefined field_0x7;
+    undefined field_0x8;
+    undefined field_0x9;
+    undefined field_0xa;
+    undefined field_0xb;
+    undefined field_0xc;
+    undefined field_0xd;
+    undefined field_0xe;
+    undefined field_0xf;
+    undefined1 aspect; // Created by retype action
+    undefined field_0x11;
+    undefined field_0x12;
+    undefined field_0x13;
+    undefined field_0x14;
+    undefined field_0x15;
+    undefined field_0x16;
+    undefined field_0x17;
+    undefined field_0x18;
+    undefined field_0x19;
+    undefined field_0x1a;
+    undefined field_0x1b;
+    undefined1 width; // Created by retype action
+    undefined field_0x1d;
+    undefined1 height; // Created by retype action
+    undefined field_0x1f;
+    undefined1 ulx; // Created by retype action
+    undefined field_0x21;
+    undefined1 uly; // Created by retype action
+    undefined field_0x23;
+    int field_0x24;
+};
+
+typedef struct vis_command vis_command, *Pvis_command;
+
+struct vis_command {
+    byte type;
+    byte size;
+    undefined field_0x2;
+    undefined field_0x3;
+    int room;
+};
+
+typedef struct watchMenuObjectiveText watchMenuObjectiveText, *PwatchMenuObjectiveText;
+
+typedef ushort u16.conflict;
+
+struct watchMenuObjectiveText {
+    u8 field_0x0;
+    u8 field_0x1;
+    u8 field_0x2;
+    u8 id;
+    enum WATCH_BRIEFING_PAGE menu;
+    u16 reserved;
+    u16.conflict text;
+    struct watchMenuObjectiveText * nextentry;
+};
+
+typedef struct astruct_2 astruct_2, *Pastruct_2;
+
+struct astruct_2 {
+    u32 field_0x0;
+    u32 field_0x4;
+    float x;
+    float y;
+    float z;
+};
+
+typedef struct astruct_1 astruct_1, *Pastruct_1;
+
+struct astruct_1 {
+    undefined field_0x0;
+    undefined field_0x1;
+    undefined field_0x2;
+    undefined field_0x3;
+    undefined field_0x4;
+    undefined field_0x5;
+    undefined field_0x6;
+    undefined field_0x7;
+    undefined field_0x8;
+    undefined field_0x9;
+    undefined field_0xa;
+    undefined field_0xb;
+    undefined field_0xc;
+    undefined field_0xd;
+    undefined field_0xe;
+    undefined field_0xf;
+    undefined field_0x10;
+    undefined field_0x11;
+    undefined field_0x12;
+    undefined field_0x13;
+    undefined field_0x14;
+    undefined field_0x15;
+    undefined field_0x16;
+    undefined field_0x17;
+    undefined field_0x18;
+    undefined field_0x19;
+    undefined field_0x1a;
+    undefined field_0x1b;
+    undefined field_0x1c;
+    undefined field_0x1d;
+    undefined field_0x1e;
+    undefined field_0x1f;
+    undefined field_0x20;
+    undefined field_0x21;
+    undefined field_0x22;
+    undefined field_0x23;
+    undefined field_0x24;
+    undefined field_0x25;
+    undefined field_0x26;
+    undefined field_0x27;
+    undefined field_0x28;
+    undefined field_0x29;
+    undefined field_0x2a;
+    undefined field_0x2b;
+    undefined field_0x2c;
+    undefined field_0x2d;
+    undefined field_0x2e;
+    undefined field_0x2f;
+    undefined field_0x30;
+    undefined field_0x31;
+    undefined field_0x32;
+    undefined field_0x33;
+    undefined field_0x34;
+    undefined field_0x35;
+    undefined field_0x36;
+    undefined field_0x37;
+    undefined field_0x38;
+    undefined field_0x39;
+    undefined field_0x3a;
+    undefined field_0x3b;
+    undefined field_0x3c;
+    undefined field_0x3d;
+    undefined field_0x3e;
+    undefined field_0x3f;
+    undefined field_0x40;
+    undefined field_0x41;
+    undefined field_0x42;
+    undefined field_0x43;
+    undefined field_0x44;
+    undefined field_0x45;
+    undefined field_0x46;
+    undefined field_0x47;
+    undefined field_0x48;
+    undefined field_0x49;
+    undefined field_0x4a;
+    undefined field_0x4b;
+    undefined field_0x4c;
+    undefined field_0x4d;
+    undefined field_0x4e;
+    undefined field_0x4f;
+    undefined field_0x50;
+    undefined field_0x51;
+    undefined field_0x52;
+    undefined field_0x53;
+    undefined field_0x54;
+    undefined field_0x55;
+    undefined field_0x56;
+    undefined field_0x57;
+    undefined field_0x58;
+    undefined field_0x59;
+    undefined field_0x5a;
+    undefined field_0x5b;
+    undefined field_0x5c;
+    undefined field_0x5d;
+    undefined field_0x5e;
+    undefined field_0x5f;
+    undefined field_0x60;
+    undefined field_0x61;
+    undefined field_0x62;
+    undefined field_0x63;
+    undefined field_0x64;
+    undefined field_0x65;
+    undefined field_0x66;
+    undefined field_0x67;
+    undefined field_0x68;
+    undefined field_0x69;
+    undefined field_0x6a;
+    undefined field_0x6b;
+    undefined field_0x6c;
+    undefined field_0x6d;
+    undefined field_0x6e;
+    undefined field_0x6f;
+    undefined field_0x70;
+    undefined field_0x71;
+    undefined field_0x72;
+    undefined field_0x73;
+    undefined field_0x74;
+    undefined field_0x75;
+    undefined field_0x76;
+    undefined field_0x77;
+    undefined field_0x78;
+    undefined field_0x79;
+    undefined field_0x7a;
+    undefined field_0x7b;
+    undefined field_0x7c;
+    undefined field_0x7d;
+    undefined field_0x7e;
+    undefined field_0x7f;
+    undefined field_0x80;
+    undefined field_0x81;
+    undefined field_0x82;
+    undefined field_0x83;
+    undefined field_0x84;
+    undefined field_0x85;
+    undefined field_0x86;
+    undefined field_0x87;
+    undefined field_0x88;
+    undefined field_0x89;
+    undefined field_0x8a;
+    undefined field_0x8b;
+    undefined field_0x8c;
+    undefined field_0x8d;
+    undefined field_0x8e;
+    undefined field_0x8f;
+    undefined field_0x90;
+    undefined field_0x91;
+    undefined field_0x92;
+    undefined field_0x93;
+    undefined field_0x94;
+    undefined field_0x95;
+    undefined field_0x96;
+    undefined field_0x97;
+    undefined field_0x98;
+    undefined field_0x99;
+    undefined field_0x9a;
+    undefined field_0x9b;
+    undefined field_0x9c;
+    undefined field_0x9d;
+    undefined field_0x9e;
+    undefined field_0x9f;
+    undefined field_0xa0;
+    undefined field_0xa1;
+    undefined field_0xa2;
+    undefined field_0xa3;
+    undefined field_0xa4;
+    undefined field_0xa5;
+    undefined field_0xa6;
+    undefined field_0xa7;
+    undefined field_0xa8;
+    undefined field_0xa9;
+    undefined field_0xaa;
+    undefined field_0xab;
+    undefined field_0xac;
+    undefined field_0xad;
+    undefined field_0xae;
+    undefined field_0xaf;
+    undefined field_0xb0;
+    undefined field_0xb1;
+    undefined field_0xb2;
+    undefined field_0xb3;
+    undefined field_0xb4;
+    undefined field_0xb5;
+    undefined field_0xb6;
+    undefined field_0xb7;
+    undefined field_0xb8;
+    undefined field_0xb9;
+    undefined field_0xba;
+    undefined field_0xbb;
+    undefined field_0xbc;
+    undefined field_0xbd;
+    undefined field_0xbe;
+    undefined field_0xbf;
+    undefined field_0xc0;
+    undefined field_0xc1;
+    undefined field_0xc2;
+    undefined field_0xc3;
+    undefined field_0xc4;
+    undefined field_0xc5;
+    undefined field_0xc6;
+    undefined field_0xc7;
+    undefined field_0xc8;
+    undefined field_0xc9;
+    undefined field_0xca;
+    undefined field_0xcb;
+    undefined field_0xcc;
+    undefined field_0xcd;
+    undefined field_0xce;
+    undefined field_0xcf;
+    undefined field_0xd0;
+    undefined field_0xd1;
+    undefined field_0xd2;
+    undefined field_0xd3;
+    undefined field_0xd4;
+    undefined field_0xd5;
+    undefined field_0xd6;
+    undefined field_0xd7;
+    undefined field_0xd8;
+    undefined field_0xd9;
+    undefined field_0xda;
+    undefined field_0xdb;
+    undefined field_0xdc;
+    undefined field_0xdd;
+    undefined field_0xde;
+    undefined field_0xdf;
+    undefined field_0xe0;
+    undefined field_0xe1;
+    undefined field_0xe2;
+    undefined field_0xe3;
+    undefined field_0xe4;
+    undefined field_0xe5;
+    undefined field_0xe6;
+    undefined field_0xe7;
+    undefined field_0xe8;
+    undefined field_0xe9;
+    undefined field_0xea;
+    undefined field_0xeb;
+    undefined field_0xec;
+    undefined field_0xed;
+    undefined field_0xee;
+    undefined field_0xef;
+    undefined field_0xf0;
+    undefined field_0xf1;
+    undefined field_0xf2;
+    undefined field_0xf3;
+    undefined field_0xf4;
+    undefined field_0xf5;
+    undefined field_0xf6;
+    undefined field_0xf7;
+    undefined field_0xf8;
+    undefined field_0xf9;
+    undefined field_0xfa;
+    undefined field_0xfb;
+    undefined field_0xfc;
+    undefined field_0xfd;
+    undefined field_0xfe;
+    undefined field_0xff;
+    undefined field_0x100;
+    undefined field_0x101;
+    undefined field_0x102;
+    undefined field_0x103;
+    undefined field_0x104;
+    undefined field_0x105;
+    undefined field_0x106;
+    undefined field_0x107;
+    undefined field_0x108;
+    undefined field_0x109;
+    undefined field_0x10a;
+    undefined field_0x10b;
+    undefined field_0x10c;
+    undefined field_0x10d;
+    undefined field_0x10e;
+    undefined field_0x10f;
+    undefined field_0x110;
+    undefined field_0x111;
+    undefined field_0x112;
+    undefined field_0x113;
+    undefined field_0x114;
+    undefined field_0x115;
+    undefined field_0x116;
+    undefined field_0x117;
+    undefined field_0x118;
+    undefined field_0x119;
+    undefined field_0x11a;
+    undefined field_0x11b;
+    undefined field_0x11c;
+    undefined field_0x11d;
+    undefined field_0x11e;
+    undefined field_0x11f;
+    undefined field_0x120;
+    undefined field_0x121;
+    undefined field_0x122;
+    undefined field_0x123;
+    undefined field_0x124;
+    undefined field_0x125;
+    undefined field_0x126;
+    undefined field_0x127;
+    undefined field_0x128;
+    undefined field_0x129;
+    undefined field_0x12a;
+    undefined field_0x12b;
+    undefined field_0x12c;
+    undefined field_0x12d;
+    undefined field_0x12e;
+    undefined field_0x12f;
+    undefined field_0x130;
+    undefined field_0x131;
+    undefined field_0x132;
+    undefined field_0x133;
+    undefined field_0x134;
+    undefined field_0x135;
+    undefined field_0x136;
+    undefined field_0x137;
+    undefined field_0x138;
+    undefined field_0x139;
+    undefined field_0x13a;
+    undefined field_0x13b;
+    undefined field_0x13c;
+    undefined field_0x13d;
+    undefined field_0x13e;
+    undefined field_0x13f;
+    undefined field_0x140;
+    undefined field_0x141;
+    undefined field_0x142;
+    undefined field_0x143;
+    undefined field_0x144;
+    undefined field_0x145;
+    undefined field_0x146;
+    undefined field_0x147;
+    undefined field_0x148;
+    undefined field_0x149;
+    undefined field_0x14a;
+    undefined field_0x14b;
+    undefined field_0x14c;
+    undefined field_0x14d;
+    undefined field_0x14e;
+    undefined field_0x14f;
+    undefined field_0x150;
+    undefined field_0x151;
+    undefined field_0x152;
+    undefined field_0x153;
+    undefined field_0x154;
+    undefined field_0x155;
+    undefined field_0x156;
+    undefined field_0x157;
+    undefined field_0x158;
+    undefined field_0x159;
+    undefined field_0x15a;
+    undefined field_0x15b;
+    undefined field_0x15c;
+    undefined field_0x15d;
+    undefined field_0x15e;
+    undefined field_0x15f;
+    undefined field_0x160;
+    undefined field_0x161;
+    undefined field_0x162;
+    undefined field_0x163;
+    undefined field_0x164;
+    undefined field_0x165;
+    undefined field_0x166;
+    undefined field_0x167;
+    undefined field_0x168;
+    undefined field_0x169;
+    undefined field_0x16a;
+    undefined field_0x16b;
+    undefined field_0x16c;
+    undefined field_0x16d;
+    undefined field_0x16e;
+    undefined field_0x16f;
+    undefined field_0x170;
+    undefined field_0x171;
+    undefined field_0x172;
+    undefined field_0x173;
+    undefined field_0x174;
+    undefined field_0x175;
+    undefined field_0x176;
+    undefined field_0x177;
+    undefined field_0x178;
+    undefined field_0x179;
+    undefined field_0x17a;
+    undefined field_0x17b;
+    undefined field_0x17c;
+    undefined field_0x17d;
+    undefined field_0x17e;
+    undefined field_0x17f;
+    undefined field_0x180;
+    undefined field_0x181;
+    undefined field_0x182;
+    undefined field_0x183;
+    undefined field_0x184;
+    undefined field_0x185;
+    undefined field_0x186;
+    undefined field_0x187;
+    undefined field_0x188;
+    undefined field_0x189;
+    undefined field_0x18a;
+    undefined field_0x18b;
+    undefined field_0x18c;
+    undefined field_0x18d;
+    undefined field_0x18e;
+    undefined field_0x18f;
+    undefined field_0x190;
+    undefined field_0x191;
+    undefined field_0x192;
+    undefined field_0x193;
+    undefined field_0x194;
+    undefined field_0x195;
+    undefined field_0x196;
+    undefined field_0x197;
+    undefined field_0x198;
+    undefined field_0x199;
+    undefined field_0x19a;
+    undefined field_0x19b;
+    undefined field_0x19c;
+    undefined field_0x19d;
+    undefined field_0x19e;
+    undefined field_0x19f;
+    undefined field_0x1a0;
+    undefined field_0x1a1;
+    undefined field_0x1a2;
+    undefined field_0x1a3;
+    undefined field_0x1a4;
+    undefined field_0x1a5;
+    undefined field_0x1a6;
+    undefined field_0x1a7;
+    undefined field_0x1a8;
+    undefined field_0x1a9;
+    undefined field_0x1aa;
+    undefined field_0x1ab;
+    undefined field_0x1ac;
+    undefined field_0x1ad;
+    undefined field_0x1ae;
+    undefined field_0x1af;
+    undefined field_0x1b0;
+    undefined field_0x1b1;
+    undefined field_0x1b2;
+    undefined field_0x1b3;
+    undefined field_0x1b4;
+    undefined field_0x1b5;
+    undefined field_0x1b6;
+    undefined field_0x1b7;
+    undefined field_0x1b8;
+    undefined field_0x1b9;
+    undefined field_0x1ba;
+    undefined field_0x1bb;
+    undefined field_0x1bc;
+    undefined field_0x1bd;
+    undefined field_0x1be;
+    undefined field_0x1bf;
+    undefined field_0x1c0;
+    undefined field_0x1c1;
+    undefined field_0x1c2;
+    undefined field_0x1c3;
+    undefined field_0x1c4;
+    undefined field_0x1c5;
+    undefined field_0x1c6;
+    undefined field_0x1c7;
+    undefined field_0x1c8;
+    undefined field_0x1c9;
+    undefined field_0x1ca;
+    undefined field_0x1cb;
+    undefined field_0x1cc;
+    undefined field_0x1cd;
+    undefined field_0x1ce;
+    undefined field_0x1cf;
+    undefined field_0x1d0;
+    undefined field_0x1d1;
+    undefined field_0x1d2;
+    undefined field_0x1d3;
+    undefined field_0x1d4;
+    undefined field_0x1d5;
+    undefined field_0x1d6;
+    undefined field_0x1d7;
+    undefined field_0x1d8;
+    undefined field_0x1d9;
+    undefined field_0x1da;
+    undefined field_0x1db;
+    undefined field_0x1dc;
+    undefined field_0x1dd;
+    undefined field_0x1de;
+    undefined field_0x1df;
+    undefined field_0x1e0;
+    undefined field_0x1e1;
+    undefined field_0x1e2;
+    undefined field_0x1e3;
+    undefined field_0x1e4;
+    undefined field_0x1e5;
+    undefined field_0x1e6;
+    undefined field_0x1e7;
+    undefined field_0x1e8;
+    undefined field_0x1e9;
+    undefined field_0x1ea;
+    undefined field_0x1eb;
+    undefined field_0x1ec;
+    undefined field_0x1ed;
+    undefined field_0x1ee;
+    undefined field_0x1ef;
+    undefined field_0x1f0;
+    undefined field_0x1f1;
+    undefined field_0x1f2;
+    undefined field_0x1f3;
+    undefined field_0x1f4;
+    undefined field_0x1f5;
+    undefined field_0x1f6;
+    undefined field_0x1f7;
+    undefined field_0x1f8;
+    undefined field_0x1f9;
+    undefined field_0x1fa;
+    undefined field_0x1fb;
+    undefined field_0x1fc;
+    undefined field_0x1fd;
+    undefined field_0x1fe;
+    undefined field_0x1ff;
+    undefined field_0x200;
+    undefined field_0x201;
+    undefined field_0x202;
+    undefined field_0x203;
+    undefined field_0x204;
+    undefined field_0x205;
+    undefined field_0x206;
+    undefined field_0x207;
+    undefined field_0x208;
+    undefined field_0x209;
+    undefined field_0x20a;
+    undefined field_0x20b;
+    undefined field_0x20c;
+    undefined field_0x20d;
+    undefined field_0x20e;
+    undefined field_0x20f;
+    undefined field_0x210;
+    undefined field_0x211;
+    undefined field_0x212;
+    undefined field_0x213;
+    undefined field_0x214;
+    undefined field_0x215;
+    undefined field_0x216;
+    undefined field_0x217;
+    undefined field_0x218;
+    undefined field_0x219;
+    undefined field_0x21a;
+    undefined field_0x21b;
+    undefined field_0x21c;
+    undefined field_0x21d;
+    undefined field_0x21e;
+    undefined field_0x21f;
+    undefined field_0x220;
+    undefined field_0x221;
+    undefined field_0x222;
+    undefined field_0x223;
+    undefined field_0x224;
+    undefined field_0x225;
+    undefined field_0x226;
+    undefined field_0x227;
+    undefined field_0x228;
+    undefined field_0x229;
+    undefined field_0x22a;
+    undefined field_0x22b;
+    undefined field_0x22c;
+    undefined field_0x22d;
+    undefined field_0x22e;
+    undefined field_0x22f;
+    undefined field_0x230;
+    undefined field_0x231;
+    undefined field_0x232;
+    undefined field_0x233;
+    undefined field_0x234;
+    undefined field_0x235;
+    undefined field_0x236;
+    undefined field_0x237;
+    undefined field_0x238;
+    undefined field_0x239;
+    undefined field_0x23a;
+    undefined field_0x23b;
+    undefined field_0x23c;
+    undefined field_0x23d;
+    undefined field_0x23e;
+    undefined field_0x23f;
+    undefined field_0x240;
+    undefined field_0x241;
+    undefined field_0x242;
+    undefined field_0x243;
+    undefined field_0x244;
+    undefined field_0x245;
+    undefined field_0x246;
+    undefined field_0x247;
+    undefined field_0x248;
+    undefined field_0x249;
+    undefined field_0x24a;
+    undefined field_0x24b;
+    undefined field_0x24c;
+    undefined field_0x24d;
+    undefined field_0x24e;
+    undefined field_0x24f;
+    undefined field_0x250;
+    undefined field_0x251;
+    undefined field_0x252;
+    undefined field_0x253;
+    undefined field_0x254;
+    undefined field_0x255;
+    undefined field_0x256;
+    undefined field_0x257;
+    undefined field_0x258;
+    undefined field_0x259;
+    undefined field_0x25a;
+    undefined field_0x25b;
+    undefined field_0x25c;
+    undefined field_0x25d;
+    undefined field_0x25e;
+    undefined field_0x25f;
+    undefined field_0x260;
+    undefined field_0x261;
+    undefined field_0x262;
+    undefined field_0x263;
+    undefined field_0x264;
+    undefined field_0x265;
+    undefined field_0x266;
+    undefined field_0x267;
+    undefined field_0x268;
+    undefined field_0x269;
+    undefined field_0x26a;
+    undefined field_0x26b;
+    undefined field_0x26c;
+    undefined field_0x26d;
+    undefined field_0x26e;
+    undefined field_0x26f;
+    undefined field_0x270;
+    undefined field_0x271;
+    undefined field_0x272;
+    undefined field_0x273;
+    undefined field_0x274;
+    undefined field_0x275;
+    undefined field_0x276;
+    undefined field_0x277;
+    undefined field_0x278;
+    undefined field_0x279;
+    undefined field_0x27a;
+    undefined field_0x27b;
+    undefined field_0x27c;
+    undefined field_0x27d;
+    undefined field_0x27e;
+    undefined field_0x27f;
+    undefined field_0x280;
+    undefined field_0x281;
+    undefined field_0x282;
+    undefined field_0x283;
+    undefined field_0x284;
+    undefined field_0x285;
+    undefined field_0x286;
+    undefined field_0x287;
+    undefined field_0x288;
+    undefined field_0x289;
+    undefined field_0x28a;
+    undefined field_0x28b;
+    undefined field_0x28c;
+    undefined field_0x28d;
+    undefined field_0x28e;
+    undefined field_0x28f;
+    undefined field_0x290;
+    undefined field_0x291;
+    undefined field_0x292;
+    undefined field_0x293;
+    undefined field_0x294;
+    undefined field_0x295;
+    undefined field_0x296;
+    undefined field_0x297;
+    undefined field_0x298;
+    undefined field_0x299;
+    undefined field_0x29a;
+    undefined field_0x29b;
+    undefined field_0x29c;
+    undefined field_0x29d;
+    undefined field_0x29e;
+    undefined field_0x29f;
+    undefined field_0x2a0;
+    undefined field_0x2a1;
+    undefined field_0x2a2;
+    undefined field_0x2a3;
+    undefined field_0x2a4;
+    undefined field_0x2a5;
+    undefined field_0x2a6;
+    undefined field_0x2a7;
+    undefined field_0x2a8;
+    undefined field_0x2a9;
+    undefined field_0x2aa;
+    undefined field_0x2ab;
+    undefined field_0x2ac;
+    undefined field_0x2ad;
+    undefined field_0x2ae;
+    undefined field_0x2af;
+    undefined field_0x2b0;
+    undefined field_0x2b1;
+    undefined field_0x2b2;
+    undefined field_0x2b3;
+    undefined field_0x2b4;
+    undefined field_0x2b5;
+    undefined field_0x2b6;
+    undefined field_0x2b7;
+    undefined field_0x2b8;
+    undefined field_0x2b9;
+    undefined field_0x2ba;
+    undefined field_0x2bb;
+    undefined field_0x2bc;
+    undefined field_0x2bd;
+    undefined field_0x2be;
+    undefined field_0x2bf;
+    undefined field_0x2c0;
+    undefined field_0x2c1;
+    undefined field_0x2c2;
+    undefined field_0x2c3;
+    undefined field_0x2c4;
+    undefined field_0x2c5;
+    undefined field_0x2c6;
+    undefined field_0x2c7;
+    undefined field_0x2c8;
+    undefined field_0x2c9;
+    undefined field_0x2ca;
+    undefined field_0x2cb;
+    undefined field_0x2cc;
+    undefined field_0x2cd;
+    undefined field_0x2ce;
+    undefined field_0x2cf;
+    undefined field_0x2d0;
+    undefined field_0x2d1;
+    undefined field_0x2d2;
+    undefined field_0x2d3;
+    undefined field_0x2d4;
+    undefined field_0x2d5;
+    undefined field_0x2d6;
+    undefined field_0x2d7;
+    undefined field_0x2d8;
+    undefined field_0x2d9;
+    undefined field_0x2da;
+    undefined field_0x2db;
+    undefined field_0x2dc;
+    undefined field_0x2dd;
+    undefined field_0x2de;
+    undefined field_0x2df;
+    undefined field_0x2e0;
+    undefined field_0x2e1;
+    undefined field_0x2e2;
+    undefined field_0x2e3;
+    undefined field_0x2e4;
+    undefined field_0x2e5;
+    undefined field_0x2e6;
+    undefined field_0x2e7;
+    undefined field_0x2e8;
+    undefined field_0x2e9;
+    undefined field_0x2ea;
+    undefined field_0x2eb;
+    undefined field_0x2ec;
+    undefined field_0x2ed;
+    undefined field_0x2ee;
+    undefined field_0x2ef;
+    undefined field_0x2f0;
+    undefined field_0x2f1;
+    undefined field_0x2f2;
+    undefined field_0x2f3;
+    undefined field_0x2f4;
+    undefined field_0x2f5;
+    undefined field_0x2f6;
+    undefined field_0x2f7;
+    undefined field_0x2f8;
+    undefined field_0x2f9;
+    undefined field_0x2fa;
+    undefined field_0x2fb;
+    undefined field_0x2fc;
+    undefined field_0x2fd;
+    undefined field_0x2fe;
+    undefined field_0x2ff;
+    undefined field_0x300;
+    undefined field_0x301;
+    undefined field_0x302;
+    undefined field_0x303;
+    undefined field_0x304;
+    undefined field_0x305;
+    undefined field_0x306;
+    undefined field_0x307;
+    undefined field_0x308;
+    undefined field_0x309;
+    undefined field_0x30a;
+    undefined field_0x30b;
+    undefined field_0x30c;
+    undefined field_0x30d;
+    undefined field_0x30e;
+    undefined field_0x30f;
+    undefined field_0x310;
+    undefined field_0x311;
+    undefined field_0x312;
+    undefined field_0x313;
+    undefined field_0x314;
+    undefined field_0x315;
+    undefined field_0x316;
+    undefined field_0x317;
+    undefined field_0x318;
+    undefined field_0x319;
+    undefined field_0x31a;
+    undefined field_0x31b;
+    undefined field_0x31c;
+    undefined field_0x31d;
+    undefined field_0x31e;
+    undefined field_0x31f;
+    undefined field_0x320;
+    undefined field_0x321;
+    undefined field_0x322;
+    undefined field_0x323;
+    undefined field_0x324;
+    undefined field_0x325;
+    undefined field_0x326;
+    undefined field_0x327;
+    undefined field_0x328;
+    undefined field_0x329;
+    undefined field_0x32a;
+    undefined field_0x32b;
+    undefined field_0x32c;
+    undefined field_0x32d;
+    undefined field_0x32e;
+    undefined field_0x32f;
+    undefined field_0x330;
+    undefined field_0x331;
+    undefined field_0x332;
+    undefined field_0x333;
+    undefined field_0x334;
+    undefined field_0x335;
+    undefined field_0x336;
+    undefined field_0x337;
+    undefined field_0x338;
+    undefined field_0x339;
+    undefined field_0x33a;
+    undefined field_0x33b;
+    undefined field_0x33c;
+    undefined field_0x33d;
+    undefined field_0x33e;
+    undefined field_0x33f;
+    undefined field_0x340;
+    undefined field_0x341;
+    undefined field_0x342;
+    undefined field_0x343;
+    undefined field_0x344;
+    undefined field_0x345;
+    undefined field_0x346;
+    undefined field_0x347;
+    undefined field_0x348;
+    undefined field_0x349;
+    undefined field_0x34a;
+    undefined field_0x34b;
+    undefined field_0x34c;
+    undefined field_0x34d;
+    undefined field_0x34e;
+    undefined field_0x34f;
+    undefined field_0x350;
+    undefined field_0x351;
+    undefined field_0x352;
+    undefined field_0x353;
+    undefined field_0x354;
+    undefined field_0x355;
+    undefined field_0x356;
+    undefined field_0x357;
+    undefined field_0x358;
+    undefined field_0x359;
+    undefined field_0x35a;
+    undefined field_0x35b;
+    undefined field_0x35c;
+    undefined field_0x35d;
+    undefined field_0x35e;
+    undefined field_0x35f;
+    undefined field_0x360;
+    undefined field_0x361;
+    undefined field_0x362;
+    undefined field_0x363;
+    undefined field_0x364;
+    undefined field_0x365;
+    undefined field_0x366;
+    undefined field_0x367;
+    undefined field_0x368;
+    undefined field_0x369;
+    undefined field_0x36a;
+    undefined field_0x36b;
+    undefined field_0x36c;
+    undefined field_0x36d;
+    undefined field_0x36e;
+    undefined field_0x36f;
+    undefined field_0x370;
+    undefined field_0x371;
+    undefined field_0x372;
+    undefined field_0x373;
+    undefined field_0x374;
+    undefined field_0x375;
+    undefined field_0x376;
+    undefined field_0x377;
+    undefined field_0x378;
+    undefined field_0x379;
+    undefined field_0x37a;
+    undefined field_0x37b;
+    undefined field_0x37c;
+    undefined field_0x37d;
+    undefined field_0x37e;
+    undefined field_0x37f;
+    undefined field_0x380;
+    undefined field_0x381;
+    undefined field_0x382;
+    undefined field_0x383;
+    undefined field_0x384;
+    undefined field_0x385;
+    undefined field_0x386;
+    undefined field_0x387;
+    undefined field_0x388;
+    undefined field_0x389;
+    undefined field_0x38a;
+    undefined field_0x38b;
+    undefined field_0x38c;
+    undefined field_0x38d;
+    undefined field_0x38e;
+    undefined field_0x38f;
+    undefined field_0x390;
+    undefined field_0x391;
+    undefined field_0x392;
+    undefined field_0x393;
+    undefined field_0x394;
+    undefined field_0x395;
+    undefined field_0x396;
+    undefined field_0x397;
+    undefined field_0x398;
+    undefined field_0x399;
+    undefined field_0x39a;
+    undefined field_0x39b;
+    undefined field_0x39c;
+    undefined field_0x39d;
+    undefined field_0x39e;
+    undefined field_0x39f;
+    undefined field_0x3a0;
+    undefined field_0x3a1;
+    undefined field_0x3a2;
+    undefined field_0x3a3;
+    undefined field_0x3a4;
+    undefined field_0x3a5;
+    undefined field_0x3a6;
+    undefined field_0x3a7;
+    undefined field_0x3a8;
+    undefined field_0x3a9;
+    undefined field_0x3aa;
+    undefined field_0x3ab;
+    undefined field_0x3ac;
+    undefined field_0x3ad;
+    undefined field_0x3ae;
+    undefined field_0x3af;
+    undefined field_0x3b0;
+    undefined field_0x3b1;
+    undefined field_0x3b2;
+    undefined field_0x3b3;
+    undefined field_0x3b4;
+    undefined field_0x3b5;
+    undefined field_0x3b6;
+    undefined field_0x3b7;
+    undefined field_0x3b8;
+    undefined field_0x3b9;
+    undefined field_0x3ba;
+    undefined field_0x3bb;
+    undefined field_0x3bc;
+    undefined field_0x3bd;
+    undefined field_0x3be;
+    undefined field_0x3bf;
+    undefined field_0x3c0;
+    undefined field_0x3c1;
+    undefined field_0x3c2;
+    undefined field_0x3c3;
+    undefined field_0x3c4;
+    undefined field_0x3c5;
+    undefined field_0x3c6;
+    undefined field_0x3c7;
+    undefined field_0x3c8;
+    undefined field_0x3c9;
+    undefined field_0x3ca;
+    undefined field_0x3cb;
+    undefined field_0x3cc;
+    undefined field_0x3cd;
+    undefined field_0x3ce;
+    undefined field_0x3cf;
+    undefined field_0x3d0;
+    undefined field_0x3d1;
+    undefined field_0x3d2;
+    undefined field_0x3d3;
+    undefined field_0x3d4;
+    undefined field_0x3d5;
+    undefined field_0x3d6;
+    undefined field_0x3d7;
+    undefined field_0x3d8;
+    undefined field_0x3d9;
+    undefined field_0x3da;
+    undefined field_0x3db;
+    undefined field_0x3dc;
+    undefined field_0x3dd;
+    undefined field_0x3de;
+    undefined field_0x3df;
+    undefined field_0x3e0;
+    undefined field_0x3e1;
+    undefined field_0x3e2;
+    undefined field_0x3e3;
+    undefined field_0x3e4;
+    undefined field_0x3e5;
+    undefined field_0x3e6;
+    undefined field_0x3e7;
+    undefined field_0x3e8;
+    undefined field_0x3e9;
+    undefined field_0x3ea;
+    undefined field_0x3eb;
+    undefined field_0x3ec;
+    undefined field_0x3ed;
+    undefined field_0x3ee;
+    undefined field_0x3ef;
+    undefined field_0x3f0;
+    undefined field_0x3f1;
+    undefined field_0x3f2;
+    undefined field_0x3f3;
+    undefined field_0x3f4;
+    undefined field_0x3f5;
+    undefined field_0x3f6;
+    undefined field_0x3f7;
+    undefined field_0x3f8;
+    undefined field_0x3f9;
+    undefined field_0x3fa;
+    undefined field_0x3fb;
+    undefined field_0x3fc;
+    undefined field_0x3fd;
+    undefined field_0x3fe;
+    undefined field_0x3ff;
+    undefined field_0x400;
+    undefined field_0x401;
+    undefined field_0x402;
+    undefined field_0x403;
+    undefined field_0x404;
+    undefined field_0x405;
+    undefined field_0x406;
+    undefined field_0x407;
+    undefined field_0x408;
+    undefined field_0x409;
+    undefined field_0x40a;
+    undefined field_0x40b;
+    undefined field_0x40c;
+    undefined field_0x40d;
+    undefined field_0x40e;
+    undefined field_0x40f;
+    undefined field_0x410;
+    undefined field_0x411;
+    undefined field_0x412;
+    undefined field_0x413;
+    undefined field_0x414;
+    undefined field_0x415;
+    undefined field_0x416;
+    undefined field_0x417;
+    undefined field_0x418;
+    undefined field_0x419;
+    undefined field_0x41a;
+    undefined field_0x41b;
+    undefined field_0x41c;
+    undefined field_0x41d;
+    undefined field_0x41e;
+    undefined field_0x41f;
+    undefined field_0x420;
+    undefined field_0x421;
+    undefined field_0x422;
+    undefined field_0x423;
+    undefined field_0x424;
+    undefined field_0x425;
+    undefined field_0x426;
+    undefined field_0x427;
+    undefined field_0x428;
+    undefined field_0x429;
+    undefined field_0x42a;
+    undefined field_0x42b;
+    undefined field_0x42c;
+    undefined field_0x42d;
+    undefined field_0x42e;
+    undefined field_0x42f;
+    undefined field_0x430;
+    undefined field_0x431;
+    undefined field_0x432;
+    undefined field_0x433;
+    undefined field_0x434;
+    undefined field_0x435;
+    undefined field_0x436;
+    undefined field_0x437;
+    undefined field_0x438;
+    undefined field_0x439;
+    undefined field_0x43a;
+    undefined field_0x43b;
+    undefined field_0x43c;
+    undefined field_0x43d;
+    undefined field_0x43e;
+    undefined field_0x43f;
+    undefined field_0x440;
+    undefined field_0x441;
+    undefined field_0x442;
+    undefined field_0x443;
+    undefined field_0x444;
+    undefined field_0x445;
+    undefined field_0x446;
+    undefined field_0x447;
+    undefined field_0x448;
+    undefined field_0x449;
+    undefined field_0x44a;
+    undefined field_0x44b;
+    undefined field_0x44c;
+    undefined field_0x44d;
+    undefined field_0x44e;
+    undefined field_0x44f;
+    undefined field_0x450;
+    undefined field_0x451;
+    undefined field_0x452;
+    undefined field_0x453;
+    undefined field_0x454;
+    undefined field_0x455;
+    undefined field_0x456;
+    undefined field_0x457;
+    undefined field_0x458;
+    undefined field_0x459;
+    undefined field_0x45a;
+    undefined field_0x45b;
+    undefined field_0x45c;
+    undefined field_0x45d;
+    undefined field_0x45e;
+    undefined field_0x45f;
+    undefined field_0x460;
+    undefined field_0x461;
+    undefined field_0x462;
+    undefined field_0x463;
+    undefined field_0x464;
+    undefined field_0x465;
+    undefined field_0x466;
+    undefined field_0x467;
+    undefined field_0x468;
+    undefined field_0x469;
+    undefined field_0x46a;
+    undefined field_0x46b;
+    undefined field_0x46c;
+    undefined field_0x46d;
+    undefined field_0x46e;
+    undefined field_0x46f;
+    undefined field_0x470;
+    undefined field_0x471;
+    undefined field_0x472;
+    undefined field_0x473;
+    undefined field_0x474;
+    undefined field_0x475;
+    undefined field_0x476;
+    undefined field_0x477;
+    undefined field_0x478;
+    undefined field_0x479;
+    undefined field_0x47a;
+    undefined field_0x47b;
+    undefined field_0x47c;
+    undefined field_0x47d;
+    undefined field_0x47e;
+    undefined field_0x47f;
+    undefined field_0x480;
+    undefined field_0x481;
+    undefined field_0x482;
+    undefined field_0x483;
+    undefined field_0x484;
+    undefined field_0x485;
+    undefined field_0x486;
+    undefined field_0x487;
+    undefined field_0x488;
+    undefined field_0x489;
+    undefined field_0x48a;
+    undefined field_0x48b;
+    undefined field_0x48c;
+    undefined field_0x48d;
+    undefined field_0x48e;
+    undefined field_0x48f;
+    undefined field_0x490;
+    undefined field_0x491;
+    undefined field_0x492;
+    undefined field_0x493;
+    undefined field_0x494;
+    undefined field_0x495;
+    undefined field_0x496;
+    undefined field_0x497;
+    undefined field_0x498;
+    undefined field_0x499;
+    undefined field_0x49a;
+    undefined field_0x49b;
+    undefined field_0x49c;
+    undefined field_0x49d;
+    undefined field_0x49e;
+    undefined field_0x49f;
+    undefined field_0x4a0;
+    undefined field_0x4a1;
+    undefined field_0x4a2;
+    undefined field_0x4a3;
+    undefined field_0x4a4;
+    undefined field_0x4a5;
+    undefined field_0x4a6;
+    undefined field_0x4a7;
+    undefined field_0x4a8;
+    undefined field_0x4a9;
+    undefined field_0x4aa;
+    undefined field_0x4ab;
+    undefined field_0x4ac;
+    undefined field_0x4ad;
+    undefined field_0x4ae;
+    undefined field_0x4af;
+    undefined field_0x4b0;
+    undefined field_0x4b1;
+    undefined field_0x4b2;
+    undefined field_0x4b3;
+    undefined field_0x4b4;
+    undefined field_0x4b5;
+    undefined field_0x4b6;
+    undefined field_0x4b7;
+    undefined field_0x4b8;
+    undefined field_0x4b9;
+    undefined field_0x4ba;
+    undefined field_0x4bb;
+    undefined field_0x4bc;
+    undefined field_0x4bd;
+    undefined field_0x4be;
+    undefined field_0x4bf;
+    undefined field_0x4c0;
+    undefined field_0x4c1;
+    undefined field_0x4c2;
+    undefined field_0x4c3;
+    undefined field_0x4c4;
+    undefined field_0x4c5;
+    undefined field_0x4c6;
+    undefined field_0x4c7;
+    undefined field_0x4c8;
+    undefined field_0x4c9;
+    undefined field_0x4ca;
+    undefined field_0x4cb;
+    undefined field_0x4cc;
+    undefined field_0x4cd;
+    undefined field_0x4ce;
+    undefined field_0x4cf;
+    undefined field_0x4d0;
+    undefined field_0x4d1;
+    undefined field_0x4d2;
+    undefined field_0x4d3;
+    undefined field_0x4d4;
+    undefined field_0x4d5;
+    undefined field_0x4d6;
+    undefined field_0x4d7;
+    undefined field_0x4d8;
+    undefined field_0x4d9;
+    undefined field_0x4da;
+    undefined field_0x4db;
+    undefined field_0x4dc;
+    undefined field_0x4dd;
+    undefined field_0x4de;
+    undefined field_0x4df;
+    undefined field_0x4e0;
+    undefined field_0x4e1;
+    undefined field_0x4e2;
+    undefined field_0x4e3;
+    undefined field_0x4e4;
+    undefined field_0x4e5;
+    undefined field_0x4e6;
+    undefined field_0x4e7;
+    undefined field_0x4e8;
+    undefined field_0x4e9;
+    undefined field_0x4ea;
+    undefined field_0x4eb;
+    undefined field_0x4ec;
+    undefined field_0x4ed;
+    undefined field_0x4ee;
+    undefined field_0x4ef;
+    undefined field_0x4f0;
+    undefined field_0x4f1;
+    undefined field_0x4f2;
+    undefined field_0x4f3;
+    undefined field_0x4f4;
+    undefined field_0x4f5;
+    undefined field_0x4f6;
+    undefined field_0x4f7;
+    undefined field_0x4f8;
+    undefined field_0x4f9;
+    undefined field_0x4fa;
+    undefined field_0x4fb;
+    undefined field_0x4fc;
+    undefined field_0x4fd;
+    undefined field_0x4fe;
+    undefined field_0x4ff;
+    undefined field_0x500;
+    undefined field_0x501;
+    undefined field_0x502;
+    undefined field_0x503;
+    undefined field_0x504;
+    undefined field_0x505;
+    undefined field_0x506;
+    undefined field_0x507;
+    undefined field_0x508;
+    undefined field_0x509;
+    undefined field_0x50a;
+    undefined field_0x50b;
+    undefined field_0x50c;
+    undefined field_0x50d;
+    undefined field_0x50e;
+    undefined field_0x50f;
+    undefined field_0x510;
+    undefined field_0x511;
+    undefined field_0x512;
+    undefined field_0x513;
+    undefined field_0x514;
+    undefined field_0x515;
+    undefined field_0x516;
+    undefined field_0x517;
+    undefined field_0x518;
+    undefined field_0x519;
+    undefined field_0x51a;
+    undefined field_0x51b;
+    undefined field_0x51c;
+    undefined field_0x51d;
+    undefined field_0x51e;
+    undefined field_0x51f;
+    undefined field_0x520;
+    undefined field_0x521;
+    undefined field_0x522;
+    undefined field_0x523;
+    undefined field_0x524;
+    undefined field_0x525;
+    undefined field_0x526;
+    undefined field_0x527;
+    undefined field_0x528;
+    undefined field_0x529;
+    undefined field_0x52a;
+    undefined field_0x52b;
+    undefined field_0x52c;
+    undefined field_0x52d;
+    undefined field_0x52e;
+    undefined field_0x52f;
+    undefined field_0x530;
+    undefined field_0x531;
+    undefined field_0x532;
+    undefined field_0x533;
+    undefined field_0x534;
+    undefined field_0x535;
+    undefined field_0x536;
+    undefined field_0x537;
+    undefined field_0x538;
+    undefined field_0x539;
+    undefined field_0x53a;
+    undefined field_0x53b;
+    undefined field_0x53c;
+    undefined field_0x53d;
+    undefined field_0x53e;
+    undefined field_0x53f;
+    undefined field_0x540;
+    undefined field_0x541;
+    undefined field_0x542;
+    undefined field_0x543;
+    undefined field_0x544;
+    undefined field_0x545;
+    undefined field_0x546;
+    undefined field_0x547;
+    undefined field_0x548;
+    undefined field_0x549;
+    undefined field_0x54a;
+    undefined field_0x54b;
+    undefined field_0x54c;
+    undefined field_0x54d;
+    undefined field_0x54e;
+    undefined field_0x54f;
+    undefined field_0x550;
+    undefined field_0x551;
+    undefined field_0x552;
+    undefined field_0x553;
+    undefined field_0x554;
+    undefined field_0x555;
+    undefined field_0x556;
+    undefined field_0x557;
+    undefined field_0x558;
+    undefined field_0x559;
+    undefined field_0x55a;
+    undefined field_0x55b;
+    undefined field_0x55c;
+    undefined field_0x55d;
+    undefined field_0x55e;
+    undefined field_0x55f;
+    undefined field_0x560;
+    undefined field_0x561;
+    undefined field_0x562;
+    undefined field_0x563;
+    undefined field_0x564;
+    undefined field_0x565;
+    undefined field_0x566;
+    undefined field_0x567;
+    undefined field_0x568;
+    undefined field_0x569;
+    undefined field_0x56a;
+    undefined field_0x56b;
+    undefined field_0x56c;
+    undefined field_0x56d;
+    undefined field_0x56e;
+    undefined field_0x56f;
+    undefined field_0x570;
+    undefined field_0x571;
+    undefined field_0x572;
+    undefined field_0x573;
+    undefined field_0x574;
+    undefined field_0x575;
+    undefined field_0x576;
+    undefined field_0x577;
+    undefined field_0x578;
+    undefined field_0x579;
+    undefined field_0x57a;
+    undefined field_0x57b;
+    undefined field_0x57c;
+    undefined field_0x57d;
+    undefined field_0x57e;
+    undefined field_0x57f;
+    undefined field_0x580;
+    undefined field_0x581;
+    undefined field_0x582;
+    undefined field_0x583;
+    undefined field_0x584;
+    undefined field_0x585;
+    undefined field_0x586;
+    undefined field_0x587;
+    undefined field_0x588;
+    undefined field_0x589;
+    undefined field_0x58a;
+    undefined field_0x58b;
+    undefined field_0x58c;
+    undefined field_0x58d;
+    undefined field_0x58e;
+    undefined field_0x58f;
+    undefined field_0x590;
+    undefined field_0x591;
+    undefined field_0x592;
+    undefined field_0x593;
+    undefined field_0x594;
+    undefined field_0x595;
+    undefined field_0x596;
+    undefined field_0x597;
+    undefined field_0x598;
+    undefined field_0x599;
+    undefined field_0x59a;
+    undefined field_0x59b;
+    undefined field_0x59c;
+    undefined field_0x59d;
+    undefined field_0x59e;
+    undefined field_0x59f;
+    undefined field_0x5a0;
+    undefined field_0x5a1;
+    undefined field_0x5a2;
+    undefined field_0x5a3;
+    undefined field_0x5a4;
+    undefined field_0x5a5;
+    undefined field_0x5a6;
+    undefined field_0x5a7;
+    undefined field_0x5a8;
+    undefined field_0x5a9;
+    undefined field_0x5aa;
+    undefined field_0x5ab;
+    undefined field_0x5ac;
+    undefined field_0x5ad;
+    undefined field_0x5ae;
+    undefined field_0x5af;
+    undefined field_0x5b0;
+    undefined field_0x5b1;
+    undefined field_0x5b2;
+    undefined field_0x5b3;
+    undefined field_0x5b4;
+    undefined field_0x5b5;
+    undefined field_0x5b6;
+    undefined field_0x5b7;
+    undefined field_0x5b8;
+    undefined field_0x5b9;
+    undefined field_0x5ba;
+    undefined field_0x5bb;
+    undefined field_0x5bc;
+    undefined field_0x5bd;
+    undefined field_0x5be;
+    undefined field_0x5bf;
+    undefined field_0x5c0;
+    undefined field_0x5c1;
+    undefined field_0x5c2;
+    undefined field_0x5c3;
+    undefined field_0x5c4;
+    undefined field_0x5c5;
+    undefined field_0x5c6;
+    undefined field_0x5c7;
+    undefined field_0x5c8;
+    undefined field_0x5c9;
+    undefined field_0x5ca;
+    undefined field_0x5cb;
+    undefined field_0x5cc;
+    undefined field_0x5cd;
+    undefined field_0x5ce;
+    undefined field_0x5cf;
+    undefined field_0x5d0;
+    undefined field_0x5d1;
+    undefined field_0x5d2;
+    undefined field_0x5d3;
+    undefined field_0x5d4;
+    undefined field_0x5d5;
+    undefined field_0x5d6;
+    undefined field_0x5d7;
+    undefined field_0x5d8;
+    undefined field_0x5d9;
+    undefined field_0x5da;
+    undefined field_0x5db;
+    undefined field_0x5dc;
+    undefined field_0x5dd;
+    undefined field_0x5de;
+    undefined field_0x5df;
+    undefined field_0x5e0;
+    undefined field_0x5e1;
+    undefined field_0x5e2;
+    undefined field_0x5e3;
+    undefined field_0x5e4;
+    undefined field_0x5e5;
+    undefined field_0x5e6;
+    undefined field_0x5e7;
+    undefined field_0x5e8;
+    undefined field_0x5e9;
+    undefined field_0x5ea;
+    undefined field_0x5eb;
+    undefined field_0x5ec;
+    undefined field_0x5ed;
+    undefined field_0x5ee;
+    undefined field_0x5ef;
+    undefined field_0x5f0;
+    undefined field_0x5f1;
+    undefined field_0x5f2;
+    undefined field_0x5f3;
+    undefined field_0x5f4;
+    undefined field_0x5f5;
+    undefined field_0x5f6;
+    undefined field_0x5f7;
+    undefined field_0x5f8;
+    undefined field_0x5f9;
+    undefined field_0x5fa;
+    undefined field_0x5fb;
+    undefined field_0x5fc;
+    undefined field_0x5fd;
+    undefined field_0x5fe;
+    undefined field_0x5ff;
+    undefined field_0x600;
+    undefined field_0x601;
+    undefined field_0x602;
+    undefined field_0x603;
+    undefined field_0x604;
+    undefined field_0x605;
+    undefined field_0x606;
+    undefined field_0x607;
+    undefined field_0x608;
+    undefined field_0x609;
+    undefined field_0x60a;
+    undefined field_0x60b;
+    undefined field_0x60c;
+    undefined field_0x60d;
+    undefined field_0x60e;
+    undefined field_0x60f;
+    undefined field_0x610;
+    undefined field_0x611;
+    undefined field_0x612;
+    undefined field_0x613;
+    undefined field_0x614;
+    undefined field_0x615;
+    undefined field_0x616;
+    undefined field_0x617;
+    undefined field_0x618;
+    undefined field_0x619;
+    undefined field_0x61a;
+    undefined field_0x61b;
+    undefined field_0x61c;
+    undefined field_0x61d;
+    undefined field_0x61e;
+    undefined field_0x61f;
+    undefined field_0x620;
+    undefined field_0x621;
+    undefined field_0x622;
+    undefined field_0x623;
+    undefined field_0x624;
+    undefined field_0x625;
+    undefined field_0x626;
+    undefined field_0x627;
+    undefined field_0x628;
+    undefined field_0x629;
+    undefined field_0x62a;
+    undefined field_0x62b;
+    undefined field_0x62c;
+    undefined field_0x62d;
+    undefined field_0x62e;
+    undefined field_0x62f;
+    undefined field_0x630;
+    undefined field_0x631;
+    undefined field_0x632;
+    undefined field_0x633;
+    undefined field_0x634;
+    undefined field_0x635;
+    undefined field_0x636;
+    undefined field_0x637;
+    undefined field_0x638;
+    undefined field_0x639;
+    undefined field_0x63a;
+    undefined field_0x63b;
+    undefined field_0x63c;
+    undefined field_0x63d;
+    undefined field_0x63e;
+    undefined field_0x63f;
+    undefined field_0x640;
+    undefined field_0x641;
+    undefined field_0x642;
+    undefined field_0x643;
+    undefined field_0x644;
+    undefined field_0x645;
+    undefined field_0x646;
+    undefined field_0x647;
+    undefined field_0x648;
+    undefined field_0x649;
+    undefined field_0x64a;
+    undefined field_0x64b;
+    undefined field_0x64c;
+    undefined field_0x64d;
+    undefined field_0x64e;
+    undefined field_0x64f;
+    undefined field_0x650;
+    undefined field_0x651;
+    undefined field_0x652;
+    undefined field_0x653;
+    undefined field_0x654;
+    undefined field_0x655;
+    undefined field_0x656;
+    undefined field_0x657;
+    undefined field_0x658;
+    undefined field_0x659;
+    undefined field_0x65a;
+    undefined field_0x65b;
+    undefined field_0x65c;
+    undefined field_0x65d;
+    undefined field_0x65e;
+    undefined field_0x65f;
+    undefined field_0x660;
+    undefined field_0x661;
+    undefined field_0x662;
+    undefined field_0x663;
+    undefined field_0x664;
+    undefined field_0x665;
+    undefined field_0x666;
+    undefined field_0x667;
+    undefined field_0x668;
+    undefined field_0x669;
+    undefined field_0x66a;
+    undefined field_0x66b;
+    undefined field_0x66c;
+    undefined field_0x66d;
+    undefined field_0x66e;
+    undefined field_0x66f;
+    undefined field_0x670;
+    undefined field_0x671;
+    undefined field_0x672;
+    undefined field_0x673;
+    undefined field_0x674;
+    undefined field_0x675;
+    undefined field_0x676;
+    undefined field_0x677;
+    undefined field_0x678;
+    undefined field_0x679;
+    undefined field_0x67a;
+    undefined field_0x67b;
+    undefined field_0x67c;
+    undefined field_0x67d;
+    undefined field_0x67e;
+    undefined field_0x67f;
+    undefined field_0x680;
+    undefined field_0x681;
+    undefined field_0x682;
+    undefined field_0x683;
+    undefined field_0x684;
+    undefined field_0x685;
+    undefined field_0x686;
+    undefined field_0x687;
+    undefined field_0x688;
+    undefined field_0x689;
+    undefined field_0x68a;
+    undefined field_0x68b;
+    undefined field_0x68c;
+    undefined field_0x68d;
+    undefined field_0x68e;
+    undefined field_0x68f;
+    undefined field_0x690;
+    undefined field_0x691;
+    undefined field_0x692;
+    undefined field_0x693;
+    undefined field_0x694;
+    undefined field_0x695;
+    undefined field_0x696;
+    undefined field_0x697;
+    undefined field_0x698;
+    undefined field_0x699;
+    undefined field_0x69a;
+    undefined field_0x69b;
+    undefined field_0x69c;
+    undefined field_0x69d;
+    undefined field_0x69e;
+    undefined field_0x69f;
+    undefined field_0x6a0;
+    undefined field_0x6a1;
+    undefined field_0x6a2;
+    undefined field_0x6a3;
+    undefined field_0x6a4;
+    undefined field_0x6a5;
+    undefined field_0x6a6;
+    undefined field_0x6a7;
+    undefined field_0x6a8;
+    undefined field_0x6a9;
+    undefined field_0x6aa;
+    undefined field_0x6ab;
+    undefined field_0x6ac;
+    undefined field_0x6ad;
+    undefined field_0x6ae;
+    undefined field_0x6af;
+    undefined field_0x6b0;
+    undefined field_0x6b1;
+    undefined field_0x6b2;
+    undefined field_0x6b3;
+    undefined field_0x6b4;
+    undefined field_0x6b5;
+    undefined field_0x6b6;
+    undefined field_0x6b7;
+    undefined field_0x6b8;
+    undefined field_0x6b9;
+    undefined field_0x6ba;
+    undefined field_0x6bb;
+    undefined field_0x6bc;
+    undefined field_0x6bd;
+    undefined field_0x6be;
+    undefined field_0x6bf;
+    undefined field_0x6c0;
+    undefined field_0x6c1;
+    undefined field_0x6c2;
+    undefined field_0x6c3;
+    undefined field_0x6c4;
+    undefined field_0x6c5;
+    undefined field_0x6c6;
+    undefined field_0x6c7;
+    undefined field_0x6c8;
+    undefined field_0x6c9;
+    undefined field_0x6ca;
+    undefined field_0x6cb;
+    undefined field_0x6cc;
+    undefined field_0x6cd;
+    undefined field_0x6ce;
+    undefined field_0x6cf;
+    undefined field_0x6d0;
+    undefined field_0x6d1;
+    undefined field_0x6d2;
+    undefined field_0x6d3;
+    undefined field_0x6d4;
+    undefined field_0x6d5;
+    undefined field_0x6d6;
+    undefined field_0x6d7;
+    undefined field_0x6d8;
+    undefined field_0x6d9;
+    undefined field_0x6da;
+    undefined field_0x6db;
+    undefined field_0x6dc;
+    undefined field_0x6dd;
+    undefined field_0x6de;
+    undefined field_0x6df;
+    undefined field_0x6e0;
+    undefined field_0x6e1;
+    undefined field_0x6e2;
+    undefined field_0x6e3;
+    undefined field_0x6e4;
+    undefined field_0x6e5;
+    undefined field_0x6e6;
+    undefined field_0x6e7;
+    undefined field_0x6e8;
+    undefined field_0x6e9;
+    undefined field_0x6ea;
+    undefined field_0x6eb;
+    undefined field_0x6ec;
+    undefined field_0x6ed;
+    undefined field_0x6ee;
+    undefined field_0x6ef;
+    undefined field_0x6f0;
+    undefined field_0x6f1;
+    undefined field_0x6f2;
+    undefined field_0x6f3;
+    undefined field_0x6f4;
+    undefined field_0x6f5;
+    undefined field_0x6f6;
+    undefined field_0x6f7;
+    undefined field_0x6f8;
+    undefined field_0x6f9;
+    undefined field_0x6fa;
+    undefined field_0x6fb;
+    undefined field_0x6fc;
+    undefined field_0x6fd;
+    undefined field_0x6fe;
+    undefined field_0x6ff;
+    undefined field_0x700;
+    undefined field_0x701;
+    undefined field_0x702;
+    undefined field_0x703;
+    undefined field_0x704;
+    undefined field_0x705;
+    undefined field_0x706;
+    undefined field_0x707;
+    undefined field_0x708;
+    undefined field_0x709;
+    undefined field_0x70a;
+    undefined field_0x70b;
+    undefined field_0x70c;
+    undefined field_0x70d;
+    undefined field_0x70e;
+    undefined field_0x70f;
+    undefined field_0x710;
+    undefined field_0x711;
+    undefined field_0x712;
+    undefined field_0x713;
+    undefined field_0x714;
+    undefined field_0x715;
+    undefined field_0x716;
+    undefined field_0x717;
+    undefined field_0x718;
+    undefined field_0x719;
+    undefined field_0x71a;
+    undefined field_0x71b;
+    undefined field_0x71c;
+    undefined field_0x71d;
+    undefined field_0x71e;
+    undefined field_0x71f;
+    undefined field_0x720;
+    undefined field_0x721;
+    undefined field_0x722;
+    undefined field_0x723;
+    undefined field_0x724;
+    undefined field_0x725;
+    undefined field_0x726;
+    undefined field_0x727;
+    undefined field_0x728;
+    undefined field_0x729;
+    undefined field_0x72a;
+    undefined field_0x72b;
+    undefined field_0x72c;
+    undefined field_0x72d;
+    undefined field_0x72e;
+    undefined field_0x72f;
+    undefined field_0x730;
+    undefined field_0x731;
+    undefined field_0x732;
+    undefined field_0x733;
+    undefined field_0x734;
+    undefined field_0x735;
+    undefined field_0x736;
+    undefined field_0x737;
+    undefined field_0x738;
+    undefined field_0x739;
+    undefined field_0x73a;
+    undefined field_0x73b;
+    undefined field_0x73c;
+    undefined field_0x73d;
+    undefined field_0x73e;
+    undefined field_0x73f;
+    undefined field_0x740;
+    undefined field_0x741;
+    undefined field_0x742;
+    undefined field_0x743;
+    undefined field_0x744;
+    undefined field_0x745;
+    undefined field_0x746;
+    undefined field_0x747;
+    undefined field_0x748;
+    undefined field_0x749;
+    undefined field_0x74a;
+    undefined field_0x74b;
+    undefined field_0x74c;
+    undefined field_0x74d;
+    undefined field_0x74e;
+    undefined field_0x74f;
+    undefined field_0x750;
+    undefined field_0x751;
+    undefined field_0x752;
+    undefined field_0x753;
+    undefined field_0x754;
+    undefined field_0x755;
+    undefined field_0x756;
+    undefined field_0x757;
+    undefined field_0x758;
+    undefined field_0x759;
+    undefined field_0x75a;
+    undefined field_0x75b;
+    undefined field_0x75c;
+    undefined field_0x75d;
+    undefined field_0x75e;
+    undefined field_0x75f;
+    undefined field_0x760;
+    undefined field_0x761;
+    undefined field_0x762;
+    undefined field_0x763;
+    undefined field_0x764;
+    undefined field_0x765;
+    undefined field_0x766;
+    undefined field_0x767;
+    undefined field_0x768;
+    undefined field_0x769;
+    undefined field_0x76a;
+    undefined field_0x76b;
+    undefined field_0x76c;
+    undefined field_0x76d;
+    undefined field_0x76e;
+    undefined field_0x76f;
+    undefined field_0x770;
+    undefined field_0x771;
+    undefined field_0x772;
+    undefined field_0x773;
+    undefined field_0x774;
+    undefined field_0x775;
+    undefined field_0x776;
+    undefined field_0x777;
+    undefined field_0x778;
+    undefined field_0x779;
+    undefined field_0x77a;
+    undefined field_0x77b;
+    undefined field_0x77c;
+    undefined field_0x77d;
+    undefined field_0x77e;
+    undefined field_0x77f;
+    undefined field_0x780;
+    undefined field_0x781;
+    undefined field_0x782;
+    undefined field_0x783;
+    undefined field_0x784;
+    undefined field_0x785;
+    undefined field_0x786;
+    undefined field_0x787;
+    undefined field_0x788;
+    undefined field_0x789;
+    undefined field_0x78a;
+    undefined field_0x78b;
+    undefined field_0x78c;
+    undefined field_0x78d;
+    undefined field_0x78e;
+    undefined field_0x78f;
+    undefined field_0x790;
+    undefined field_0x791;
+    undefined field_0x792;
+    undefined field_0x793;
+    undefined field_0x794;
+    undefined field_0x795;
+    undefined field_0x796;
+    undefined field_0x797;
+    undefined field_0x798;
+    undefined field_0x799;
+    undefined field_0x79a;
+    undefined field_0x79b;
+    undefined field_0x79c;
+    undefined field_0x79d;
+    undefined field_0x79e;
+    undefined field_0x79f;
+    undefined field_0x7a0;
+    undefined field_0x7a1;
+    undefined field_0x7a2;
+    undefined field_0x7a3;
+    undefined field_0x7a4;
+    undefined field_0x7a5;
+    undefined field_0x7a6;
+    undefined field_0x7a7;
+    undefined field_0x7a8;
+    undefined field_0x7a9;
+    undefined field_0x7aa;
+    undefined field_0x7ab;
+    undefined field_0x7ac;
+    undefined field_0x7ad;
+    undefined field_0x7ae;
+    undefined field_0x7af;
+    undefined field_0x7b0;
+    undefined field_0x7b1;
+    undefined field_0x7b2;
+    undefined field_0x7b3;
+    undefined field_0x7b4;
+    undefined field_0x7b5;
+    undefined field_0x7b6;
+    undefined field_0x7b7;
+    undefined field_0x7b8;
+    undefined field_0x7b9;
+    undefined field_0x7ba;
+    undefined field_0x7bb;
+    undefined field_0x7bc;
+    undefined field_0x7bd;
+    undefined field_0x7be;
+    undefined field_0x7bf;
+    undefined field_0x7c0;
+    undefined field_0x7c1;
+    undefined field_0x7c2;
+    undefined field_0x7c3;
+    undefined field_0x7c4;
+    undefined field_0x7c5;
+    undefined field_0x7c6;
+    undefined field_0x7c7;
+    undefined field_0x7c8;
+    undefined field_0x7c9;
+    undefined field_0x7ca;
+    undefined field_0x7cb;
+    undefined field_0x7cc;
+    undefined field_0x7cd;
+    undefined field_0x7ce;
+    undefined field_0x7cf;
+    undefined field_0x7d0;
+    undefined field_0x7d1;
+    undefined field_0x7d2;
+    undefined field_0x7d3;
+    undefined field_0x7d4;
+    undefined field_0x7d5;
+    undefined field_0x7d6;
+    undefined field_0x7d7;
+    undefined field_0x7d8;
+    undefined field_0x7d9;
+    undefined field_0x7da;
+    undefined field_0x7db;
+    undefined field_0x7dc;
+    undefined field_0x7dd;
+    undefined field_0x7de;
+    undefined field_0x7df;
+    undefined field_0x7e0;
+    undefined field_0x7e1;
+    undefined field_0x7e2;
+    undefined field_0x7e3;
+    undefined field_0x7e4;
+    undefined field_0x7e5;
+    undefined field_0x7e6;
+    undefined field_0x7e7;
+    undefined field_0x7e8;
+    undefined field_0x7e9;
+    undefined field_0x7ea;
+    undefined field_0x7eb;
+    undefined field_0x7ec;
+    undefined field_0x7ed;
+    undefined field_0x7ee;
+    undefined field_0x7ef;
+    undefined2 vidwidth;
+    undefined2 vidheight;
+    short vidulx;
+    word viduly;
+};
+
+
+// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALResampler - /_CAPTURED_FROM_ge007.u.old.elf/ALResampler
+
+
+// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALEnvMixer_s - /_CAPTURED_FROM_ge007.u.old.elf/ALEnvMixer_s
+
+typedef struct ALEnvMixer_s ALEnvMixer;
+
+typedef struct ALSave_s ALSave_s, *PALSave_s;
+
+typedef struct ALSave_s ALSave;
+
+typedef struct ALFilter_s ALFilter;
+
+struct ALSave_s {
+    ALFilter filter;
+    s32 dramout;
+    s32 first;
+};
+
+typedef struct ALFreeParam ALFreeParam, *PALFreeParam;
+
+struct ALFreeParam {
+    struct ALParam_s * next;
+    s32 delta;
+    s16 type;
+    struct PVoice_s * pvoice;
+};
+
+typedef struct ALParam_s ALParam;
+
+typedef struct ALDelay ALDelay, *PALDelay;
+
+typedef struct ALLowPass ALLowPass, *PALLowPass;
+
+typedef union _union_213 _union_213, *P_union_213;
+
+typedef short POLEF_STATE[4];
+
+struct ALDelay {
+    u32 input;
+    u32 output;
+    s16 ffcoef;
+    s16 fbcoef;
+    s16 gain;
+    f32 rsinc;
+    f32 rsval;
+    s32 rsdelta;
+    f32 rsgain;
+    struct ALLowPass * lp;
+    ALResampler * rs;
+};
+
+union _union_213 {
+    s16 fccoef[16];
+    s64 force_aligned;
+};
+
+struct ALLowPass {
+    s16 fc;
+    s16 fgain;
+    union _union_213 fcvec;
+    POLEF_STATE * fstate;
+    s32 first;
+};
+
+typedef struct ALAuxBus_s ALAuxBus_s, *PALAuxBus_s;
+
+typedef struct ALAuxBus_s ALAuxBus;
+
+struct ALAuxBus_s {
+};
+
+typedef struct ALFx ALFx, *PALFx;
+
+typedef s32 (* ALSetFXParam)(void *, s32, void *);
+
+struct ALFx {
+    struct ALFilter_s filter;
+    s16 * base;
+    s16 * input;
+    u32 length;
+    struct ALDelay * delay;
+    u8 section_count;
+    ALSetFXParam paramHdl;
+};
+
+typedef struct ALLoadFilter ALLoadFilter, *PALLoadFilter;
+
+struct ALLoadFilter {
+    ALFilter filter;
+    ADPCM_STATE * state;
+    ADPCM_STATE * lstate;
+    struct ALRawLoop loop;
+    struct ALWaveTable_s * table;
+    s32 bookSize;
+    ALDMAproc dma;
+    void * dmaState;
+    s32 sample;
+    s32 lastsam;
+    s32 first;
+    s32 memin;
+};
+
+typedef struct ALMainBus_s ALMainBus_s, *PALMainBus_s;
+
+typedef struct ALMainBus_s ALMainBus;
+
+struct ALMainBus_s {
+};
+
+typedef struct HeapInfo HeapInfo, *PHeapInfo;
+
+struct HeapInfo {
+    s32 magic;
+    s32 size;
+    u8 * file;
+    s32 line;
+    s32 count;
+    s32 pad0;
+    s32 pad1;
+    s32 pad2;
+};
+
+
+// WARNING! conflicting data type names: /SYNTHINTERNALS.H/PVoice - /_CAPTURED_FROM_ge007.u.old.elf/PVoice
+
+
+// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALSetParam - /_CAPTURED_FROM_ge007.u.old.elf/ALSetParam
+
+typedef union _union_196 _union_196, *P_union_196;
+
+union _union_196 {
+    f32 f;
+    s32 i;
+};
+
+typedef union _union_195 _union_195, *P_union_195;
+
+union _union_195 {
+    f32 f;
+    s32 i;
+};
+
+typedef union _union_194 _union_194, *P_union_194;
+
+union _union_194 {
+    f32 f;
+    s32 i;
+};
+
+typedef enum enum_191 {
+    AL_ADPCM=0,
+    AL_AUXBUS=6,
+    AL_BUFFER=2,
+    AL_ENVMIX=4,
+    AL_FX=5,
+    AL_MAINBUS=7,
+    AL_RESAMPLE=1,
+    AL_SAVE=3
+} enum_191;
+
+typedef enum enum_190 {
+    AL_FILTER_ADD_SOURCE=2,
+    AL_FILTER_ADD_UPDATE=3,
+    AL_FILTER_FREE_VOICE=0,
+    AL_FILTER_RESET=4,
+    AL_FILTER_SET_DRAM=6,
+    AL_FILTER_SET_FXAMT=16,
+    AL_FILTER_SET_PAN=12,
+    AL_FILTER_SET_PITCH=7,
+    AL_FILTER_SET_SOURCE=1,
+    AL_FILTER_SET_STATE=10,
+    AL_FILTER_SET_UNITY_PITCH=8,
+    AL_FILTER_SET_VOLUME=11,
+    AL_FILTER_SET_WAVETABLE=5,
+    AL_FILTER_START=9,
+    AL_FILTER_START_VOICE=14,
+    AL_FILTER_START_VOICE_ALT=13,
+    AL_FILTER_STOP_VOICE=15
+} enum_190;
+
+typedef struct ALStartParamAlt ALStartParamAlt, *PALStartParamAlt;
+
+typedef u8 ALPan;
+
+struct ALStartParamAlt {
+    struct ALParam_s * next;
+    s32 delta;
+    s16 type;
+    s16 unity;
+    f32 pitch;
+    s16 volume;
+    ALPan pan;
+    u8 fxMix;
+    s32 samples;
+    struct ALWaveTable_s * wave;
+};
+
+typedef struct ALStartParam ALStartParam, *PALStartParam;
+
+struct ALStartParam {
+    struct ALParam_s * next;
+    s32 delta;
+    s16 type;
+    s16 unity;
+    struct ALWaveTable_s * wave;
+};
+
+typedef struct ALResampler_s ALResampler_s, *PALResampler_s;
+
+struct ALResampler_s {
+    ALFilter filter;
+    RESAMPLE_STATE * state;
+    f32 ratio;
+    s32 upitch;
+    f32 delta;
+    s32 first;
+    ALParam * ctrlList;
+    ALParam * ctrlTail;
+    s32 motion;
+};
+
+
+// WARNING! conflicting data type names: /SYNTHINTERNALS.H/ALCmdHandler - /_CAPTURED_FROM_ge007.u.old.elf/ALCmdHandler
+
+typedef union _union_197 _union_197, *P_union_197;
+
+union _union_197 {
+    f32 f;
+    s32 i;
+};
+
+#define AL_AUX_R_OUT 2048
+
+#define AL_MAIN_R_OUT 1408
+
+#define AL_AUX_L_OUT 1728
+
+#define AL_MAX_AUX_BUS_SOURCES 8
+
+#define AL_MAX_MAIN_BUS_SOURCES 1
+
+#define AL_MAX_ADPCM_STATES 3
+
+#define AL_DECODER_IN 0
+
+#define AL_RESAMPLER_OUT 0
+
+#define AL_MAX_AUX_BUS_FX 1
+
+#define AL_DECODER_OUT 320
+
+#define AL_CACHE_ALIGN 15
+
+#define AL_MAX_RSP_SAMPLES 160
+
+#define AL_MAIN_L_OUT 1088
+
+#define AL_TEMP_0 0
+
+#define AL_TEMP_2 640
+
+#define AL_TEMP_1 320
+
+#define ai_list_end 4
+
+#define SPAWN_00001000 4096
+
+#define if_door_has_been_opened_before_LENGTH 3
+
+#define bond_equip_item_cinema_LENGTH 2
+
+#define guard_try_fire_or_aim_at_target_update_LENGTH 6
+
+#define screen_fade_from_black_ID 219
+
+#define GLIST_FIRE_RAND_ANIM_SUBROUTINE 6
+
+#define jump_to_ai_list_LENGTH 4
+
+#define guard_runs_to_pad_ID 28
+
+#define bond_hide_weapons_ID 237
+
+#define if_system_power_time_less_than_ID 116
+
+#define bond_killed_in_action_LENGTH 1
+
+#define object_flags_2_set_on_LENGTH 6
+
+#define guard_kneel_ID 9
+
+#define if_level_id_less_than_LENGTH 3
+
+#define if_local_byte_1_less_than_ID 132
+
+#define trigger_fade_and_exit_level_on_button_press_LENGTH 1
+
+#define hud_countdown_start_LENGTH 1
+
+#define hud_show_all_and_unlock_controls_and_resume_mission_time_ID 216
+
+#define if_bond_y_pos_less_than_LENGTH 4
+
+#define if_guard_in_room_with_chr_ID 64
+
+#define object_drop_from_chr_LENGTH 2
+
+#define guard_set_grenade_probability_LENGTH 2
+
+#define ANIM_REVERSE_LOOPING_ANIMATION 128
+
+#define camera_look_at_bond_from_pad_LENGTH 3
+
+#define if_guard_heard_bond_within_last_10_secs_ID 63
+
+#define ai_list_end_ID 4
+
+#define ANIM_PLAY_SFX 8
+
+#define hud_countdown_hide_LENGTH 1
+
+#define if_level_id_greater_than_ID 119
+
+#define if_object_exists_LENGTH 3
+
+#define if_object_was_activated_ID 92
+
+#define SPAWN_02000000 33554432
+
+#define goto_next_LENGTH 2
+
+#define guard_try_spawning_hat_LENGTH 8
+
+#define if_chr_health_greater_than_LENGTH 4
+
+#define vehicle_start_path_LENGTH 2
+
+#define guard_sprints_to_pad_LENGTH 3
+
+#define guard_set_argh_rating_ID 146
+
+#define if_item_is_stationary_within_level_LENGTH 3
+
+#define guard_try_running_to_chr_position_LENGTH 3
+
+#define chr_try_spawning_clone_ID 193
+
+#define local_byte_2_subtract_LENGTH 2
+
+#define if_local_byte_1_less_than_random_seed_ID 133
+
+#define if_guard_distance_to_chr_greater_than_ID 80
+
+#define guard_walks_to_pad_ID 30
+
+#define SPAWN_SUNGLASSES 1
+
+#define guard_set_chr_num_LENGTH 2
+
+#define if_chr_distance_to_pad_greater_than_ID 78
+
+#define chr_equip_object_LENGTH 3
+
+#define if_local_byte_2_less_than_ID 137
+
+#define if_chr_distance_to_pad_greater_than_LENGTH 7
+
+#define hud_hide_and_lock_controls_and_pause_mission_time_ID 215
+
+#define objective_bitfield_set_on_LENGTH 5
+
+#define if_level_id_greater_than_LENGTH 3
+
+#define guard_try_firing_roll_ID 19
+
+#define chr_drop_all_held_items_ID 98
+
+#define trigger_fade_and_exit_level_on_button_press_ID 234
+
+#define if_guard_hits_less_than_LENGTH 3
+
+#define hud_countdown_start_ID 185
+
+#define if_chr_does_not_exist_ID 49
+
+#define guard_try_spawning_item_LENGTH 9
+
+#define if_guard_is_on_screen_ID 66
+
+#define guard_looks_around_self_LENGTH 1
+
+#define GLIST_END_ROUTINE 1
+
+#define if_door_state_equal_LENGTH 4
+
+#define object_activate_LENGTH 2
+
+#define chr_hit_body_part_with_item_damage_ID 24
+
+#define jump_to_ai_list_ID 5
+
+#define if_game_difficulty_less_than_LENGTH 3
+
+#define object_flags_1_set_on_LENGTH 6
+
+#define guard_surrenders_ID 33
+
+#define tv_change_screen_bank_ID 208
+
+#define if_hud_countdown_less_than_LENGTH 4
+
+#define SPAWN_00000100 256
+
+#define guard_remove_fade_ID 34
+
+#define GLIST_RUN_TO_BOND_SUBROUTINE 8
+
+#define if_item_is_attached_to_object_ID 88
+
+#define chr_hit_chr_body_part_with_held_item_LENGTH 4
+
+#define bond_collect_object_ID 99
+
+#define guard_try_running_to_bond_position_ID 40
+
+#define guard_play_animation_LENGTH 9
+
+#define HIT_RIGHT_HAND 12
+
+#define guard_try_walking_to_bond_position_LENGTH 2
+
+#define door_set_lock_LENGTH 3
+
+#define guard_set_accuracy_rating_LENGTH 2
+
+#define if_guard_counter_clockwise_direction_from_bond_greater_than_ID 74
+
+#define AI_LIST_OBJ_START 4096
+
+#define alarm_on_LENGTH 1
+
+#define object_flags_1_set_off_ID 164
+
+#define if_bond_health_greater_than_LENGTH 3
+
+#define AI_LIST_CHR_START 1025
+
+#define if_bond_collected_object_LENGTH 3
+
+#define if_room_containing_pad_is_on_screen_ID 68
+
+#define if_chr_was_damaged_since_last_check_ID 126
+
+#define guard_try_spawning_hat_ID 192
+
+#define exit_level_ID 210
+
+#define guard_try_throwing_grenade_ID 26
+
+#define if_bond_item_total_ammo_less_than_ID 226
+
+#define if_chr_bitfield_is_set_on_ID 153
+
+#define jump_to_return_ai_list_ID 7
+
+#define TARGET_FRONT_OF_CHR 2
+
+#define if_chr_health_less_than_LENGTH 4
+
+#define guard_try_throwing_grenade_LENGTH 2
+
+#define guard_try_sprinting_to_bond_position_LENGTH 2
+
+#define HIT_RIGHT_THIGH 6
+
+#define chr_remove_item_in_hand_ID 224
+
+#define chr_hit_chr_body_part_with_held_item_ID 25
+
+#define if_bond_item_total_ammo_less_than_LENGTH 4
+
+#define chr_flags_set_on_LENGTH 6
+
+#define if_guard_counter_clockwise_direction_from_bond_less_than_ID 73
+
+#define local_timer_reset_LENGTH 1
+
+#define if_bond_in_room_with_pad_LENGTH 4
+
+#define object_destroy_LENGTH 2
+
+#define guard_sprints_to_pad_ID 31
+
+#define GLIST_DETECT_BOND_SPAWN_CLONE_ON_HEARD_GUNFIRE 2
+
+#define hud_show_all_and_unlock_controls_and_resume_mission_time_LENGTH 1
+
+#define guard_flags_set_on_ID 157
+
+#define sfx_stop_channel_ID 201
+
+#define if_level_id_less_than_ID 118
+
+#define HIT_LEFT_FOOT 1
+
+#define removed_command27_LENGTH 2
+
+#define guard_set_armour_ID 144
+
+#define gas_leak_and_fade_fog_LENGTH 1
+
+#define goto_first_ID 1
+
+#define chr_remove_instant_ID 35
+
+#define if_bond_used_gadget_on_object_LENGTH 3
+
+#define if_bond_health_less_than_LENGTH 3
+
+#define local_byte_1_set_ID 129
+
+#define ANIM_MIRROR 1
+
+#define hud_countdown_set_ID 183
+
+#define guard_try_firing_run_ID 18
+
+#define bond_collect_object_LENGTH 2
+
+#define if_random_seed_less_than_LENGTH 3
+
+#define if_guard_counter_clockwise_direction_to_bond_greater_than_LENGTH 3
+
+#define vehicle_speed_ID 204
+
+#define SPAWN_00008000 32768
+
+#define HIT_HEAD 8
+
+#define SPAWN_40000000 1073741824
+
+#define ANIM_UNKNOWN 2
+
+#define ANIM_NO_TRANSLATION 64
+
+#define chr_drop_all_concealed_items_ID 97
+
+#define if_objective_all_completed_LENGTH 2
+
+#define vehicle_start_path_ID 203
+
+#define if_object_flags_2_is_set_on_LENGTH 7
+
+#define if_guard_hits_missed_less_than_LENGTH 3
+
+#define object_move_to_pad_ID 101
+
+#define removed_command2B_LENGTH 2
+
+#define local_timer_reset_start_ID 174
+
+#define chr_show_all_LENGTH 1
+
+#define DOOR_STATE_OPEN 2
+
+#define if_local_byte_2_less_than_random_seed_ID 138
+
+#define if_guard_heard_bond_ID 57
+
+#define if_sfx_channel_volume_less_than_ID 202
+
+#define chr_show_all_ID 222
+
+#define if_guard_distance_to_chr_greater_than_LENGTH 5
+
+#define if_hud_countdown_has_stopped_LENGTH 2
+
+#define guard_set_pad_preset_LENGTH 3
+
+#define debug_log_LENGTH 50
+
+#define guard_try_walking_to_chr_position_ID 45
+
+#define hud_countdown_hide_ID 182
+
+#define chr_hide_all_LENGTH 1
+
+#define SPAWN_01000000 16777216
+
+#define screen_fade_to_black_ID 218
+
+#define guard_try_setting_chr_preset_to_guard_within_distance_ID 81
+
+#define if_chr_was_shot_since_last_check_ID 248
+
+#define guard_set_health_total_LENGTH 3
+
+#define HUD_SHOW_TEXT_BOTTOM 2
+
+#define HIT_RIGHT_ARM 13
+
+#define guard_try_fire_or_aim_at_target_update_ID 22
+
+#define if_system_power_time_greater_than_ID 117
+
+#define sfx_fade_channel_volume_ID 200
+
+#define if_chr_does_not_exist_LENGTH 3
+
+#define guard_try_sprinting_to_chr_position_ID 46
+
+#define if_number_of_active_players_less_than_ID 225
+
+#define GLIST_SPAWN_CLONE_OR_RUN_TO_BOND 11
+
+#define guard_runs_to_pad_preset_LENGTH 1
+
+#define goto_next_ID 0
+
+#define exit_level_LENGTH 1
+
+#define if_door_has_been_opened_before_ID 105
+
+#define if_folder_actor_is_equal_LENGTH 3
+
+#define if_local_byte_2_less_than_random_seed_LENGTH 2
+
+#define local_byte_1_subtract_LENGTH 2
+
+#define HIT_LEFT_THIGH 3
+
+#define if_guard_room_containing_self_is_on_screen_LENGTH 2
+
+#define if_item_is_attached_to_object_LENGTH 4
+
+#define guard_try_sidestepping_ID 14
+
+#define if_guard_sees_bond_LENGTH 2
+
+#define if_bond_damage_and_pickups_disabled_ID 243
+
+#define if_guard_hits_missed_greater_than_ID 123
+
+#define DOOR_STATE_OPENING 8
+
+#define guard_try_unknown6E_LENGTH 3
+
+#define door_open_LENGTH 2
+
+#define ANIM_IDLE_POSE_WHEN_COMPLETE 16
+
+#define if_camera_is_in_intro_ID 206
+
+#define if_random_seed_less_than_ID 52
+
+#define if_guard_and_bond_within_line_of_sight_LENGTH 2
+
+#define if_guard_sees_bond_ID 50
+
+#define if_alarm_is_on_ID 55
+
+#define if_guard_is_firing_ID 232
+
+#define ANIM_DEFAULT_INTERPOLATION 16
+
+#define SPAWN_20000000 536870912
+
+#define if_guard_bitfield_is_set_on_LENGTH 3
+
+#define chr_bitfield_set_on_LENGTH 3
+
+#define guard_try_fire_or_aim_at_target_LENGTH 6
+
+#define guard_set_hearing_scale_LENGTH 3
+
+#define hud_countdown_show_ID 181
+
+#define chr_flags_set_off_ID 161
+
+#define if_object_exists_ID 90
+
+#define if_guard_heard_bond_LENGTH 2
+
+#define if_chr_dying_or_dead_ID 48
+
+#define guard_walks_to_pad_LENGTH 3
+
+#define guard_try_sidestepping_LENGTH 2
+
+#define local_byte_1_set_LENGTH 2
+
+#define music_xtrack_play_ID 244
+
+#define alarm_on_ID 37
+
+#define local_byte_1_add_ID 130
+
+#define ai_list_end_LENGTH 1
+
+#define object_flags_2_set_off_ID 167
+
+#define sfx_set_channel_volume_LENGTH 6
+
+#define guard_remove_fade_LENGTH 1
+
+#define if_bond_distance_to_pad_greater_than_LENGTH 6
+
+#define guard_try_fire_or_aim_at_target_kneel_ID 21
+
+#define if_guard_hits_greater_than_ID 121
+
+#define if_guard_hits_less_than_ID 120
+
+#define if_guard_flags_is_set_on_ID 159
+
+#define DOOR_STATE_CLOSING 4
+
+#define if_guard_distance_to_bond_less_than_LENGTH 4
+
+#define if_guard_see_another_guard_die_ID 59
+
+#define if_local_timer_less_than_ID 179
+
+#define if_alarm_is_on_unused_LENGTH 2
+
+#define if_chr_health_greater_than_ID 125
+
+#define if_local_timer_less_than_LENGTH 5
+
+#define object_rocket_launch_LENGTH 2
+
+#define if_bond_collected_object_ID 86
+
+#define guard_try_facing_target_ID 23
+
+#define SPAWN_00004000 16384
+
+#define screen_fade_to_black_LENGTH 1
+
+#define if_guard_and_bond_within_line_of_sight_ID 60
+
+#define sfx_emit_from_pad_LENGTH 6
+
+#define SPAWN_04000000 67108864
+
+#define if_local_timer_has_stopped_LENGTH 2
+
+#define if_bond_distance_to_pad_less_than_LENGTH 6
+
+#define alarm_off_ID 38
+
+#define TARGET_PAD 8
+
+#define if_local_timer_greater_than_LENGTH 5
+
+#define if_guard_room_containing_self_is_on_screen_ID 67
+
+#define camera_return_to_bond_ID 211
+
+#define ANIM_LOOP_HOLD_LAST_FRAME 4
+
+#define local_timer_start_LENGTH 1
+
+#define GLIST_KEYBOARD_RAND_ANIM_SUBROUTINE 4
+
+#define sfx_emit_from_pad_ID 198
+
+#define guard_try_running_to_side_LENGTH 2
+
+#define TARGET_CHR 4
+
+#define guard_raises_arms_LENGTH 1
+
+#define guard_try_sprinting_to_chr_position_LENGTH 3
+
+#define if_bond_used_gadget_on_object_ID 93
+
+#define SPAWN_00400000 4194304
+
+#define if_objective_bitfield_is_set_on_ID 156
+
+#define local_byte_1_add_LENGTH 2
+
+#define if_chr_flags_is_set_on_ID 162
+
+#define SPAWN_08000000 134217728
+
+#define if_door_lock_equal_LENGTH 4
+
+#define sfx_emit_from_object_ID 197
+
+#define sfx_play_ID 196
+
+#define door_open_ID 102
+
+#define if_object_in_room_with_pad_ID 230
+
+#define if_chr_flags_is_set_on_LENGTH 7
+
+#define if_guard_heard_bond_within_last_10_secs_LENGTH 2
+
+#define object_move_to_pad_LENGTH 4
+
+#define door_close_LENGTH 2
+
+#define if_mission_time_greater_than_LENGTH 4
+
+#define SPAWN_00000080 128
+
+#define guard_set_armour_LENGTH 3
+
+#define if_objective_all_completed_ID 241
+
+#define local_timer_reset_start_LENGTH 1
+
+#define door_unset_lock_ID 107
+
+#define if_guard_counter_clockwise_direction_to_bond_greater_than_ID 72
+
+#define credits_roll_LENGTH 1
+
+#define sfx_set_channel_volume_ID 199
+
+#define guard_flags_set_off_LENGTH 5
+
+#define vehicle_speed_LENGTH 5
+
+#define chr_try_spawning_clone_LENGTH 5
+
+#define if_object_was_activated_LENGTH 3
+
+#define text_print_bottom_ID 194
+
+#define guard_try_triggering_alarm_at_pad_LENGTH 4
+
+#define chr_try_spawning_next_to_unseen_chr_LENGTH 11
+
+#define sfx_stop_channel_LENGTH 2
+
+#define camera_return_to_bond_LENGTH 1
+
+#define if_object_flags_2_is_set_on_ID 168
+
+#define gas_leak_and_switch_fog_LENGTH 1
+
+#define GLIST_RUN_TO_BOND_AND_FIRE 12
+
+#define text_print_bottom_LENGTH 3
+
+#define SPAWN_00002000 8192
+
+#define bond_set_locked_velocity_LENGTH 3
+
+#define if_chr_was_damaged_since_last_check_LENGTH 3
+
+#define if_guard_see_another_guard_shot_LENGTH 2
+
+#define if_guard_shot_from_bond_missed_LENGTH 2
+
+#define bond_killed_in_action_ID 249
+
+#define if_camera_is_in_bond_swirl_ID 207
+
+#define SPAWN_SUNGLASSES_RANDOM 2
+
+#define trigger_explosions_around_bond_LENGTH 1
+
+#define if_game_difficulty_greater_than_LENGTH 3
+
+#define if_chr_was_shot_since_last_check_LENGTH 3
+
+#define chr_try_spawning_at_pad_LENGTH 12
+
+#define screen_fade_from_black_LENGTH 1
+
+#define bond_hide_weapons_LENGTH 1
+
+#define HUD_SHOW_TEXT_TOP 1
+
+#define if_chr_distance_to_pad_less_than_LENGTH 7
+
+#define local_byte_2_set_LENGTH 2
+
+#define if_game_difficulty_less_than_ID 112
+
+#define if_door_lock_equal_ID 108
+
+#define if_gas_is_leaking_LENGTH 2
+
+#define SPAWN_00000040 64
+
+#define if_guard_shot_from_bond_missed_ID 70
+
+#define goto_first_LENGTH 2
+
+#define guard_points_at_bond_ID 12
+
+#define local_timer_stop_ID 176
+
+#define if_bond_distance_to_pad_greater_than_ID 83
+
+#define SPAWN_IGNORE_PAD_SIGHT_CHECK 16
+
+#define music_xtrack_play_LENGTH 4
+
+#define if_guard_is_targeted_by_bond_LENGTH 2
+
+#define object_activate_ID 94
+
+#define if_guard_counter_clockwise_direction_to_bond_less_than_ID 71
+
+#define guard_set_pad_preset_ID 171
+
+#define object_flags_1_set_on_ID 163
+
+#define chr_remove_instant_LENGTH 2
+
+#define bond_equip_item_cinema_ID 228
+
+#define GLIST_REMOVE_CHR 17
+
+#define if_bond_in_tank_LENGTH 2
+
+#define local_timer_reset_ID 175
+
+#define if_hud_countdown_greater_than_LENGTH 4
+
+#define if_object_not_destroyed_ID 91
+
+#define GLIST_RUN_TO_BOND_AND_FIRE_HALT_CHR_RANDOMLY 13
+
+#define door_unset_lock_LENGTH 3
+
+#define HIT_RIGHT_SHOULDER 14
+
+#define label_LENGTH 2
+
+#define guard_runs_to_pad_LENGTH 3
+
+#define SPAWN_00000020 32
+
+#define if_guard_playing_animation_LENGTH 2
+
+#define guard_try_dropping_item_ID 27
+
+#define camera_orbit_pad_ID 238
+
+#define if_screen_fade_completed_LENGTH 2
+
+#define guard_bitfield_set_on_LENGTH 2
+
+#define if_chr_dying_or_dead_LENGTH 3
+
+#define set_return_ai_list_LENGTH 3
+
+#define HIT_LEFT_ARM 10
+
+#define if_guard_and_bond_within_partial_line_of_sight_ID 61
+
+#define local_byte_2_set_ID 134
+
+#define guard_try_hopping_sideways_LENGTH 2
+
+#define if_guard_distance_to_bond_less_than_ID 75
+
+#define if_camera_is_in_intro_LENGTH 2
+
+#define HUD_HIDE_ALL 0
+
+#define guard_try_sprinting_to_bond_position_ID 42
+
+#define if_credits_has_completed_ID 240
+
+#define SPAWN_80000000 2147483648
+
+#define SPAWN_00000004 4
+
+#define door_open_instant_LENGTH 2
+
+#define SPAWN_00000008 8
+
+#define guard_surrenders_LENGTH 1
+
+#define chr_set_pad_preset_ID 172
+
+#define guard_bitfield_set_on_ID 148
+
+#define if_hud_countdown_has_stopped_ID 186
+
+#define guard_kneel_LENGTH 1
+
+#define if_local_byte_2_less_than_LENGTH 3
+
+#define GLIST_DETECT_BOND_DEAF_NO_CLONE_NO_IDLE_ANIM 5
+
+#define hud_countdown_set_LENGTH 3
+
+#define if_guard_in_room_with_chr_LENGTH 3
+
+#define if_game_difficulty_greater_than_ID 113
+
+#define if_alarm_is_on_LENGTH 2
+
+#define guard_raises_arms_ID 250
+
+#define HIT_LEFT_LEG 2
+
+#define gas_leak_and_fade_fog_ID 251
+
+#define if_sfx_channel_volume_less_than_LENGTH 5
+
+#define camera_switch_LENGTH 6
+
+#define if_guard_is_targeted_by_bond_ID 69
+
+#define text_print_top_LENGTH 3
+
+#define guard_try_spawning_item_ID 191
+
+#define ANIM_TRANSLATION_SCALE_4X 32
+
+#define if_number_of_active_players_less_than_LENGTH 3
+
+#define guard_set_chr_preset_LENGTH 2
+
+#define object_destroy_ID 95
+
+#define guard_set_vision_range_LENGTH 2
+
+#define AI_LIST_GLOBAL_START 0
+
+#define SPAWN_00800000 8388608
+
+#define if_door_state_equal_ID 104
+
+#define camera_switch_ID 213
+
+#define if_credits_has_completed_LENGTH 2
+
+#define if_system_power_time_greater_than_LENGTH 4
+
+#define if_guard_hits_missed_less_than_ID 122
+
+#define if_guard_distance_to_bond_greater_than_LENGTH 4
+
+#define if_chr_health_less_than_ID 124
+
+#define if_guard_distance_to_bond_greater_than_ID 76
+
+#define SPAWN_00000200 512
+
+#define if_bond_damage_and_pickups_disabled_LENGTH 2
+
+#define if_gas_is_leaking_ID 56
+
+#define chr_try_spawning_at_pad_ID 189
+
+#define SPAWN_00010000 65536
+
+#define chr_hit_body_part_with_item_damage_LENGTH 4
+
+#define HIT_RIGHT_FOOT 4
+
+#define guard_set_chr_num_ID 142
+
+#define if_guard_hits_missed_greater_than_LENGTH 3
+
+#define if_guard_see_another_guard_die_LENGTH 2
+
+#define if_random_seed_greater_than_LENGTH 3
+
+#define if_camera_is_in_bond_swirl_LENGTH 2
+
+#define guard_bitfield_set_off_LENGTH 2
+
+#define if_chr_in_room_with_pad_LENGTH 5
+
+#define guard_set_hearing_scale_ID 139
+
+#define chr_set_chr_preset_LENGTH 3
+
+#define if_objective_num_complete_LENGTH 3
+
+#define guard_try_fire_or_aim_at_target_ID 20
+
+#define bond_set_locked_velocity_ID 229
+
+#define guard_try_unknown6F_ID 111
+
+#define local_timer_stop_LENGTH 1
+
+#define guard_bitfield_set_off_ID 149
+
+#define HIT_LEFT_HAND 9
+
+#define AI_CMDS_TOTAL 253
+
+#define if_guard_distance_to_chr_less_than_LENGTH 5
+
+#define chr_flags_set_off_LENGTH 6
+
+#define tv_change_screen_bank_LENGTH 4
+
+#define guard_set_accuracy_rating_ID 147
+
+#define object_drop_from_chr_ID 96
+
+#define bond_disable_damage_and_pickups_ID 236
+
+#define if_random_seed_greater_than_ID 53
+
+#define guard_try_firing_roll_LENGTH 2
+
+#define guard_try_running_to_bond_position_LENGTH 2
+
+#define SPAWN_00100000 1048576
+
+#define guard_try_unknown6F_LENGTH 3
+
+#define music_xtrack_stop_LENGTH 2
+
+#define alarm_off_LENGTH 1
+
+#define GLIST_STARTLE_CHR_AND_RUN_TO_BOND_SUBROUTINE 10
+
+#define sfx_play_LENGTH 4
+
+#define guard_try_hopping_sideways_ID 15
+
+#define aircraft_rotor_speed_LENGTH 5
+
+#define guard_try_walking_to_bond_position_ID 41
+
+#define chr_set_pad_preset_LENGTH 4
+
+#define local_timer_start_ID 177
+
+#define BITFIELD_DONT_POINT_AT_BOND 1
+
+#define objective_bitfield_set_off_LENGTH 5
+
+#define local_byte_2_subtract_ID 136
+
+#define ai_sleep_ID 3
+
+#define chr_try_teleporting_to_pad_ID 217
+
+#define if_bond_has_item_equipped_ID 89
+
+#define SPAWN_00000400 1024
+
+#define SPAWN_00020000 131072
+
+#define chr_hide_all_ID 221
+
+#define guard_start_patrol_ID 32
+
+#define chr_remove_item_in_hand_LENGTH 3
+
+#define if_bond_has_item_equipped_LENGTH 3
+
+#define hud_countdown_show_LENGTH 1
+
+#define if_guard_is_on_screen_LENGTH 2
+
+#define HIT_NULL_PART 0
+
+#define chr_equip_object_ID 100
+
+#define objective_bitfield_set_off_ID 155
+
+#define debug_log_ID 173
+
+#define chr_set_chr_preset_ID 170
+
+#define guard_try_dropping_item_LENGTH 5
+
+#define if_item_is_stationary_within_level_ID 87
+
+#define if_guard_playing_animation_ID 11
+
+#define if_bond_is_dead_ID 235
+
+#define HIT_RIGHT_LEG 5
+
+#define if_guard_bitfield_is_set_on_ID 150
+
+#define if_guard_counter_clockwise_direction_to_bond_less_than_LENGTH 3
+
+#define GLIST_RUN_TO_CHR_PADPRESET_AND_ACTIVATE_ALARM 9
+
+#define aircraft_rotor_speed_ID 205
+
+#define guard_play_animation_ID 10
+
+#define if_hud_countdown_greater_than_ID 188
+
+#define text_print_top_ID 195
+
+#define credits_roll_ID 239
+
+#define chr_try_teleporting_to_pad_LENGTH 5
+
+#define if_bond_in_room_with_pad_ID 85
+
+#define if_mission_time_less_than_ID 114
+
+#define object_flags_2_set_off_LENGTH 6
+
+#define chr_bitfield_set_on_ID 151
+
+#define jump_to_return_ai_list_LENGTH 1
+
+#define guard_try_firing_walk_LENGTH 2
+
+#define music_xtrack_stop_ID 245
+
+#define if_chr_distance_to_pad_less_than_ID 77
+
+#define guard_set_speed_rating_LENGTH 2
+
+#define guard_animation_stop_ID 8
+
+#define if_guard_has_stopped_moving_ID 47
+
+#define if_guard_flags_is_set_on_LENGTH 6
+
+#define object_rocket_launch_ID 252
+
+#define if_guard_hits_greater_than_LENGTH 3
+
+#define guard_points_at_bond_LENGTH 1
+
+#define GLIST_WAIT_ONE_SECOND_SUBROUTINE 14
+
+#define object_flags_1_set_off_LENGTH 6
+
+#define DOOR_STATE_CLOSED 1
+
+#define chr_drop_all_concealed_items_LENGTH 2
+
+#define if_bond_health_greater_than_ID 128
+
+#define if_alarm_is_on_unused_ID 54
+
+#define if_system_power_time_less_than_LENGTH 4
+
+#define GLIST_IDLE_RAND_ANIM_SUBROUTINE 3
+
+#define if_local_timer_has_stopped_ID 178
+
+#define guard_set_chr_preset_ID 169
+
+#define if_local_byte_1_less_than_LENGTH 3
+
+#define guard_try_triggering_alarm_at_pad_ID 36
+
+#define if_objective_num_complete_ID 109
+
+#define if_mission_time_less_than_LENGTH 4
+
+#define if_chr_in_room_with_pad_ID 84
+
+#define if_guard_and_bond_within_partial_line_of_sight_LENGTH 2
+
+#define local_byte_2_add_LENGTH 2
+
+#define if_objective_bitfield_is_set_on_LENGTH 6
+
+#define if_guard_counter_clockwise_direction_from_bond_greater_than_LENGTH 3
+
+#define if_mission_time_greater_than_ID 115
+
+#define label_ID 2
+
+#define if_guard_was_shot_within_last_10_secs_ID 62
+
+#define camera_look_at_bond_from_pad_ID 212
+
+#define guard_set_grenade_probability_ID 141
+
+#define guard_try_firing_walk_ID 17
+
+#define HIT_LEFT_SHOULDER 11
+
+#define guard_try_facing_target_LENGTH 6
+
+#define guard_flags_set_on_LENGTH 5
+
+#define hud_countdown_stop_LENGTH 1
+
+#define HIT_PELVIS 7
+
+#define if_chr_bitfield_is_set_on_LENGTH 4
+
+#define SPAWN_00040000 262144
+
+#define if_killed_civilians_greater_than_LENGTH 3
+
+#define guard_start_patrol_LENGTH 2
+
+#define if_room_containing_pad_is_on_screen_LENGTH 4
+
+#define if_guard_has_not_been_seen_ID 65
+
+#define HUD_SHOW_HUD_COUNTDOWN 4
+
+#define chr_flags_set_on_ID 160
+
+#define guard_set_argh_rating_LENGTH 2
+
+#define SPAWN_00000800 2048
+
+#define local_byte_1_subtract_ID 131
+
+#define if_guard_has_not_been_seen_LENGTH 2
+
+#define random_generate_seed_ID 51
+
+#define door_close_ID 103
+
+#define guard_set_health_total_ID 143
+
+#define GLIST_AIM_AT_BOND 0
+
+#define guard_flags_set_off_ID 158
+
+#define if_guard_is_firing_and_unknown_flag_ID 231
+
+#define sfx_emit_from_object_LENGTH 5
+
+#define guard_set_vision_range_ID 140
+
+#define guard_try_running_to_chr_position_ID 44
+
+#define if_object_in_room_with_pad_LENGTH 5
+
+#define objective_bitfield_set_on_ID 154
+
+#define if_guard_is_firing_and_unknown_flag_LENGTH 2
+
+#define guard_try_unknown6E_ID 110
+
+#define TARGET_BOND 1
+
+#define chr_bitfield_set_off_LENGTH 3
+
+#define TARGET_AIM_ONLY 32
+
+#define bond_equip_item_LENGTH 2
+
+#define GLIST_DETECT_BOND_NO_CLONE_NO_IDLE_ANIM 7
+
+#define guard_try_setting_chr_preset_to_guard_within_distance_LENGTH 4
+
+#define if_killed_civilians_greater_than_ID 247
+
+#define if_bond_y_pos_less_than_ID 214
+
+#define if_folder_actor_is_equal_ID 242
+
+#define GLIST_EXIT_LEVEL 15
+
+#define if_guard_see_another_guard_shot_ID 58
+
+#define if_screen_fade_completed_ID 220
+
+#define if_bond_in_tank_ID 209
+
+#define removed_command27_ID 39
+
+#define set_return_ai_list_ID 6
+
+#define chr_drop_all_held_items_LENGTH 2
+
+#define bond_equip_item_ID 227
+
+#define if_object_flags_1_is_set_on_LENGTH 7
+
+#define guard_looks_around_self_ID 13
+
+#define SPAWN_00080000 524288
+
+#define if_object_not_destroyed_LENGTH 3
+
+#define if_guard_is_firing_LENGTH 2
+
+#define if_guard_counter_clockwise_direction_from_bond_less_than_LENGTH 3
+
+#define if_local_timer_greater_than_ID 180
+
+#define guard_try_firing_run_LENGTH 2
+
+#define local_byte_2_add_ID 135
+
+#define GLIST_DRAW_DD44_AND_FIRE 16
+
+#define if_hud_countdown_less_than_ID 187
+
+#define hud_countdown_stop_ID 184
+
+#define hud_hide_and_lock_controls_and_pause_mission_time_LENGTH 2
+
+#define guard_try_fire_or_aim_at_target_kneel_LENGTH 6
+
+#define if_guard_has_stopped_moving_LENGTH 2
+
+#define guard_try_running_to_side_ID 16
+
+#define SPAWN_00200000 2097152
+
+#define door_set_lock_ID 106
+
+#define if_object_flags_1_is_set_on_ID 165
+
+#define guard_runs_to_pad_preset_ID 29
+
+#define TARGET_COMPASS 16
+
+#define random_generate_seed_LENGTH 1
+
+#define bond_disable_damage_and_pickups_LENGTH 1
+
+#define guard_set_speed_rating_ID 145
+
+#define if_local_byte_1_less_than_random_seed_LENGTH 2
+
+#define removed_command2B_ID 43
+
+#define if_bond_is_dead_LENGTH 2
+
+#define chr_bitfield_set_off_ID 152
+
+#define sfx_fade_channel_volume_LENGTH 6
+
+#define if_bond_distance_to_pad_less_than_ID 82
+
+#define trigger_explosions_around_bond_ID 246
+
+#define object_flags_2_set_on_ID 166
+
+#define chr_try_spawning_next_to_unseen_chr_ID 190
+
+#define gas_leak_and_switch_fog_ID 233
+
+#define ai_sleep_LENGTH 1
+
+#define door_open_instant_ID 223
+
+#define SPAWN_10000000 268435456
+
+#define guard_animation_stop_LENGTH 1
+
+#define camera_orbit_pad_LENGTH 13
+
+#define guard_try_walking_to_chr_position_LENGTH 3
+
+#define HIT_CHEST 15
+
+#define if_guard_distance_to_chr_less_than_ID 79
+
+#define if_bond_health_less_than_ID 127
+
+#define if_guard_was_shot_within_last_10_secs_LENGTH 2
+
+#define C0_CONTEXT 4
+
+#define ICACHE_LINEMASK 31
+
+#define EXC_DBE 28
+
+#define C0_CAUSE 13
+
+#define CONFIG_EC_1_1 6
+
+#define SR_IBIT8 32768
+
+#define SR_IBIT3 1024
+
+#define SR_IBIT2 512
+
+#define SR_IBIT1 256
+
+#define TLBINX_INXSHIFT 0
+
+#define EXC_BREAK 36
+
+#define SR_IBIT7 16384
+
+#define SR_IBIT6 8192
+
+#define SR_IBIT5 4096
+
+#define SR_IBIT4 2048
+
+#define CONFIG_BE 32768
+
+#define TLBLO_CACHSHIFT 3
+
+#define CACHERR_PIDX_MASK 7
+
+#define C0_EPC 14
+
+#define EXC_INT 0
+
+#define TLBLO_EXLWR 40
+
+#define C0_SR 12
+
+#define TLBHI_NPID 255
+
+#define TLBHI_PIDSHIFT 0
+
+#define E_VEC 2147484032
+
+#define CACHERR_SIDX_MASK 4194296
+
+#define TLBLO_NONCOHRNT 24
+
+#define SADDRMASK 4294959104
+
+#define CAUSE_CEMASK 805306368
+
+#define C0_REVMASK 255
+
+#define TLBCTXT_VPNMASK 8388592
+
+#define K2BASE 3221225472
+
+#define EXC_RADE 16
+
+#define CAUSE_EXCMASK 124
+
+#define SINVALID 0
+
+#define CONFIG_IC_SHFT 9
+
+#define C0_MAJREVSHIFT 4
+
+#define CONFIG_EC_3_2 7
+
+#define CONFIG_EC_3_1 1
+
+#define TLBCTXT_BASEMASK 4286578688
+
+#define C0_BADVADDR 8
+
+#define TLBLO_PFNMASK 1073741760
+
+#define PADDRMASK 4294967040
+
+#define C0_PAGEMASK 5
+
+#define TLBCTXT_VPNSHIFT 4
+
+#define EXC_WMISS 12
+
+#define PSTATEMASK 192
+
+#define SR_ERL 4
+
+#define C_FILL 20
+
+#define CAUSE_IPSHIFT 8
+
+#define CONFIG_EC_2_1 0
+
+#define SIZE_EXCVEC 128
+
+#define C0_MINREVMASK 15
+
+#define WATCHLO_ADDRMASK 4294967288
+
+#define DCACHE_LINESIZE 16
+
+#define PCLEANEXCL 128
+
+#define CONFIG_IC 3584
+
+#define CONFIG_IB 32
+
+#define C0_ENTRYLO0 2
+
+#define C0_ENTRYLO1 3
+
+#define CONFIG_K0 7
+
+#define CACH_SI 2
+
+#define CAUSE_SW1 256
+
+#define FPCSR_C 8388608
+
+#define CAUSE_SW2 512
+
+#define CACH_SD 3
+
+#define SR_IMASK0 65280
+
+#define C0_TAGHI 29
+
+#define SR_IMASK7 32768
+
+#define C0_PRID 15
+
+#define SR_IMASK8 0
+
+#define SR_IMASK5 57344
+
+#define SR_IMASK6 49152
+
+#define SR_IMASK3 63488
+
+#define SR_IMASK4 61440
+
+#define SR_IMASK1 65024
+
+#define SR_IMASK2 64512
+
+#define CAUSE_CESHIFT 28
+
+#define CAUSE_EXCSHIFT 2
+
+#define C0_IMPMASK 65280
+
+#define TLBLO_CACHMASK 56
+
+#define PINVALID 0
+
+#define EXC_FPE 60
+
+#define SR_KSU_MASK 24
+
+#define SR_KSU_USR 16
+
+#define EXC_WATCH 92
+
+#define SR_TS 2097152
+
+#define CONFIG_DC 448
+
+#define CONFIG_DB 16
+
+#define C0_MAJREVMASK 240
+
+#define WATCHLO_WTRAP 1
+
+#define TLBLO_UNCACHED 16
+
+#define CONFIG_CU 8
+
+#define SR_EXL 2
+
+#define CONFIG_CM 2147483648
+
+#define SR_SX 64
+
+#define SR_CU1 536870912
+
+#define SR_UX 32
+
+#define SR_CU0 268435456
+
+#define SR_CU3 2147483648
+
+#define SR_CU2 1073741824
+
+#define CONFIG_EC 1879048192
+
+#define CONFIG_EB 8192
+
+#define NTLBENTRIES 31
+
+#define TLBPGMASK_64K 122880
+
+#define C0_READI 1
+
+#define SR_RP 134217728
+
+#define CACHERR_ET 268435456
+
+#define SR_RE 33554432
+
+#define CACHERR_ES 134217728
+
+#define CACHERR_ER 2147483648
+
+#define CONFIG_EW 786432
+
+#define CACHERR_EI 16777216
+
+#define CONFIG_EP 251658240
+
+#define CACHERR_EE 67108864
+
+#define CONFIG_EM 16384
+
+#define CACHERR_ED 536870912
+
+#define CACHERR_EC 1073741824
+
+#define CACHERR_EB 33554432
+
+#define SR_CUMASK 4026531840
+
+#define ICACHE_SIZE 16384
+
+#define SR_SR 1048576
+
+#define C0_RFE 16
+
+#define WATCHLO_VALIDMASK 4294967291
+
+#define FPCSR_EV 2048
+
+#define C0_WRITER 6
+
+#define CONFIG_BE_SHFT 15
+
+#define FPCSR_EU 256
+
+#define FPCSR_EO 512
+
+#define C0_WATCHHI 19
+
+#define FPCSR_EI 128
+
+#define C_CDX 12
+
+#define C0_LLADDR 17
+
+#define C0_ECC 26
+
+#define SR_IE 1
+
+#define EXC_CPU 44
+
+#define SR_IMASK 65280
+
+#define DCACHE_LINEMASK 15
+
+#define TLBPGMASK_16K 24576
+
+#define C_IWBINV 0
+
+#define EXC_II 40
+
+#define C0_WRITEI 2
+
+#define FPCSR_CZ 32768
+
+#define FPCSR_CU 8192
+
+#define FPCSR_CV 65536
+
+#define FPCSR_CO 16384
+
+#define FPCSR_CI 4096
+
+#define K1SIZE 536870912
+
+#define FPCSR_RM_MASK 3
+
+#define TLBRAND_RANDMASK 63
+
+#define FPCSR_CE 131072
+
+#define CONFIG_SW 1048576
+
+#define CONFIG_SS 2097152
+
+#define C_IST 8
+
+#define K0BASE 2147483648
+
+#define KUSIZE 2147483648
+
+#define CONFIG_SM 65536
+
+#define CONFIG_SC 131072
+
+#define CONFIG_SB 12582912
+
+#define SR_FR 67108864
+
+#define EXC_VCEI 56
+
+#define TLBHI_VPN2SHIFT 13
+
+#define TLBCTXT_BASEBITS 9
+
+#define C_ILT 4
+
+#define SCLEANEXCL 4096
+
+#define TLBRAND_RANDSHIFT 0
+
+#define C0_WATCHLO 18
+
+#define SR_KX 128
+
+#define PPARITY_MASK 1
+
+#define XUT_VEC 2147483776
+
+#define C0_INX 0
+
+#define CONFIG_NONCOHRNT 3
+
+#define PDIRTYEXCL 192
+
+#define SADDR_SHIFT 4
+
+#define SDIRTYEXCL 5120
+
+#define TLBHI_PIDMASK 255
+
+#define SSTATEMASK 7168
+
+#define KUBASE 0
+
+#define EXC_WADE 20
+
+#define CONFIG_UNCACHED 2
+
+#define TLBLO_D 4
+
+#define SR_KSU_SUP 8
+
+#define SVINDEXMASK 896
+
+#define SR_KSU_KER 0
+
+#define C0_TAGLO 28
+
+#define UT_VEC 2147483648
+
+#define FPCSR_RM_RZ 1
+
+#define TLBLO_G 1
+
+#define C0_IMPSHIFT 8
+
+#define FPCSR_FZ 32
+
+#define FPCSR_FS 16777216
+
+#define EXC_IBE 24
+
+#define FPCSR_RM_RP 2
+
+#define K1BASE 2684354560
+
+#define FPCSR_FU 8
+
+#define FPCSR_RM_RM 3
+
+#define FPCSR_FV 64
+
+#define FPCSR_RM_RN 0
+
+#define FPCSR_FO 16
+
+#define TLBLO_V 2
+
+#define CACH_PD 1
+
+#define EXC_RMISS 8
+
+#define CAUSE_BD 2147483648
+
+#define FPCSR_FI 4
+
+#define CACH_PI 0
+
+#define FPCSR_EZ 1024
+
+#define C0_WIRED 6
+
+#define C0_ENTRYHI 10
+
+#define ICACHE_LINESIZE 32
+
+#define C_HWB 24
+
+#define SR_BEV 4194304
+
+#define SECC_MASK 127
+
+#define EXC_SYSCALL 32
+
+#define CAUSE_IPMASK 65280
+
+#define C0_CONFIG 16
+
+#define SR_ITS 16777216
+
+#define K0SIZE 536870912
+
+#define CONFIG_COHRNT_EXLWR 5
+
+#define SR_IMASKSHIFT 8
+
+#define TLBHI_VPN2MASK 4294959104
+
+#define C0_COMPARE 11
+
+#define DCACHE_SIZE 8192
+
+#define ECC_VEC 2147483904
+
+#define C_HWBINV 20
+
+#define CONFIG_SB_SHFT 22
+
+#define TLBLO_PFNSHIFT 6
+
+#define EXC_TRAP 52
+
+#define TLBCTXT_BASESHIFT 23
+
+#define CONFIG_DC_SHFT 6
+
+#define EXC_OV 48
+
+#define WATCHLO_RTRAP 2
+
+#define C0_COUNT 9
+
+#define SR_DE 65536
+
+#define EXC_VCED 124
+
+#define C_IINV 0
+
+#define TLBINX_PROBE 2147483648
+
+#define C0_PROBE 8
+
+#define WATCHHI_VALIDMASK 15
+
+#define EXC_MOD 4
+
+#define SR_CH 262144
+
+#define TLBWIRED_WIREDMASK 63
+
+#define C_HSV 28
+
+#define C0_CACHE_ERR 27
+
+#define TLBPGMASK_4K 0
+
+#define C0_RAND 1
+
+#define C0_ERROR_EPC 30
+
+#define PADDR_SHIFT 4
+
+#define R_VEC 3217031168
+
+#define K2SIZE 536870912
+
+#define SR_CE 131072
+
+#define CACHERR_PIDX_SHIFT 12
+
+#define TLBINX_INXMASK 63
+
+#define CAUSE_IP3 1024
+
+#define CAUSE_IP4 2048
+
+#define C_HINV 16
+
+#define CAUSE_IP7 16384
+
+#define CAUSE_IP8 32768
+
+#define CAUSE_IP5 4096
+
+#define CAUSE_IP6 8192
+
+typedef struct Gtexture Gtexture, *PGtexture;
+
+struct Gtexture {
+    uchar cmd;
+    uchar lodscale;
+    uchar tile;
+    uchar on;
+    ushort s;
+    ushort t;
+};
+
+typedef struct Light_t Light_t, *PLight_t;
+
+struct Light_t {
+    uchar col[3];
+    char pad1;
+    uchar colc[3];
+    char pad2;
+    char dir[3];
+    char pad3;
+};
+
+typedef struct Gsegment Gsegment, *PGsegment;
+
+typedef union anon__struct_60_bitfield_1 anon__struct_60_bitfield_1, *Panon__struct_60_bitfield_1;
+
+typedef union anon__struct_60_bitfield_2 anon__struct_60_bitfield_2, *Panon__struct_60_bitfield_2;
+
+union anon__struct_60_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int pad0:8; // : bits 8-15
+    int mw_index:8; // : bits 16-23
+    int number:8; // : bits 24-31
+};
+
+union anon__struct_60_bitfield_2 {
+    int pad1:8; // : bits 0-7
+    int base:24; // : bits 8-31
+};
+
+struct Gsegment {
+    union anon__struct_60_bitfield_1 field_0x0;
+    union anon__struct_60_bitfield_2 field_0x4;
+};
+
+typedef struct Gsetcolor Gsetcolor, *PGsetcolor;
+
+typedef union anon__struct_68_bitfield_1 anon__struct_68_bitfield_1, *Panon__struct_68_bitfield_1;
+
+union anon__struct_68_bitfield_1 {
+    int cmd:8; // : bits 0-7
+};
+
+struct Gsetcolor {
+    union anon__struct_68_bitfield_1 field_0x0;
+    uchar pad;
+    uchar prim_min_level;
+    uchar prim_level;
+    ulong color;
+};
+
+typedef struct Gtri Gtri, *PGtri;
+
+typedef union anon__struct_58_bitfield_1 anon__struct_58_bitfield_1, *Panon__struct_58_bitfield_1;
+
+typedef struct Tri Tri, *PTri;
+
+union anon__struct_58_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int pad:24; // : bits 8-31
+};
+
+struct Tri {
+    uchar flag;
+    uchar v[3];
+};
+
+struct Gtri {
+    union anon__struct_58_bitfield_1 field_0x0;
+    struct Tri tri;
+};
+
+typedef struct TexRect TexRect, *PTexRect;
+
+struct TexRect {
+    ulong w0;
+    ulong w1;
+    ulong w2;
+    ulong w3;
+};
+
+typedef struct Gsetcombine Gsetcombine, *PGsetcombine;
+
+typedef union anon__struct_67_bitfield_1 anon__struct_67_bitfield_1, *Panon__struct_67_bitfield_1;
+
+typedef union anon__struct_67_bitfield_2 anon__struct_67_bitfield_2, *Panon__struct_67_bitfield_2;
+
+typedef union anon__struct_67_bitfield_3 anon__struct_67_bitfield_3, *Panon__struct_67_bitfield_3;
+
+union anon__struct_67_bitfield_1 {
+    int cmd:8; // : bits 0-7
+};
+
+union anon__struct_67_bitfield_2 {
+    uint muxs0:24; // : bits 0-23
+};
+
+union anon__struct_67_bitfield_3 {
+    uint muxs1:32; // : bits 0-31
+};
+
+struct Gsetcombine {
+    union anon__struct_67_bitfield_1 field_0x0;
+    union anon__struct_67_bitfield_2 field_0x4;
+    union anon__struct_67_bitfield_3 field_0x8;
+};
+
+typedef union anon__struct_69_bitfield_2 anon__struct_69_bitfield_2, *Panon__struct_69_bitfield_2;
+
+union anon__struct_69_bitfield_2 {
+    uint pad:8; // : bits 0-7
+};
+
+typedef union anon__struct_69_bitfield_3 anon__struct_69_bitfield_3, *Panon__struct_69_bitfield_3;
+
+union anon__struct_69_bitfield_3 {
+    int x1:10; // : bits 0-9
+    int x1frac:2; // : bits 10-11
+    int y1:10; // : bits 12-21
+    int y1frac:2; // : bits 22-23
+};
+
+typedef union anon__struct_69_bitfield_1 anon__struct_69_bitfield_1, *Panon__struct_69_bitfield_1;
+
+union anon__struct_69_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int x0:10; // : bits 8-17
+    int x0frac:2; // : bits 18-19
+    int y0:10; // : bits 20-29
+    int y0frac:2; // : bits 30-31
+};
+
+typedef union anon__struct_59_bitfield_3 anon__struct_59_bitfield_3, *Panon__struct_59_bitfield_3;
+
+union anon__struct_59_bitfield_3 {
+    uchar param:8; // : bits 0-7
+};
+
+typedef union anon__struct_59_bitfield_2 anon__struct_59_bitfield_2, *Panon__struct_59_bitfield_2;
+
+union anon__struct_59_bitfield_2 {
+    int pad2:24; // : bits 0-23
+};
+
+typedef union anon__struct_59_bitfield_1 anon__struct_59_bitfield_1, *Panon__struct_59_bitfield_1;
+
+union anon__struct_59_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int pad1:24; // : bits 8-31
+};
+
+typedef struct Gsettile Gsettile, *PGsettile;
+
+typedef union anon__struct_70_bitfield_1 anon__struct_70_bitfield_1, *Panon__struct_70_bitfield_1;
+
+typedef union anon__struct_70_bitfield_2 anon__struct_70_bitfield_2, *Panon__struct_70_bitfield_2;
+
+typedef union anon__struct_70_bitfield_3 anon__struct_70_bitfield_3, *Panon__struct_70_bitfield_3;
+
+union anon__struct_70_bitfield_1 {
+    int cmd:8; // : bits 0-7
+};
+
+union anon__struct_70_bitfield_2 {
+    uint fmt:3; // : bits 0-2
+    uint siz:2; // : bits 3-4
+    uint pad0:1; // : bits 5
+    uint line:9; // : bits 6-14
+    uint tmem:9; // : bits 15-23
+    uint pad1:5; // : bits 24-28
+    uint tile:3; // : bits 29-31
+};
+
+union anon__struct_70_bitfield_3 {
+    uint palette:4; // : bits 0-3
+    uint ct:1; // : bits 4
+    uint mt:1; // : bits 5
+    uint maskt:4; // : bits 6-9
+    uint shiftt:4; // : bits 10-13
+    uint cs:1; // : bits 14
+    uint ms:1; // : bits 15
+    uint masks:4; // : bits 16-19
+    uint shifts:4; // : bits 20-23
+};
+
+struct Gsettile {
+    union anon__struct_70_bitfield_1 field_0x0;
+    union anon__struct_70_bitfield_2 field_0x4;
+    union anon__struct_70_bitfield_3 field_0x8;
+};
+
+typedef struct Gline3D Gline3D, *PGline3D;
+
+typedef union anon__struct_64_bitfield_1 anon__struct_64_bitfield_1, *Panon__struct_64_bitfield_1;
+
+union anon__struct_64_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int pad:24; // : bits 8-31
+};
+
+struct Gline3D {
+    union anon__struct_64_bitfield_1 field_0x0;
+    struct Tri line;
+};
+
+typedef struct Gloadtile Gloadtile, *PGloadtile;
+
+typedef struct Gloadtile Gloadblock;
+
+typedef union anon__struct_71_bitfield_1 anon__struct_71_bitfield_1, *Panon__struct_71_bitfield_1;
+
+typedef union anon__struct_71_bitfield_2 anon__struct_71_bitfield_2, *Panon__struct_71_bitfield_2;
+
+typedef union anon__struct_71_bitfield_3 anon__struct_71_bitfield_3, *Panon__struct_71_bitfield_3;
+
+typedef union anon__struct_71_bitfield_4 anon__struct_71_bitfield_4, *Panon__struct_71_bitfield_4;
+
+union anon__struct_71_bitfield_1 {
+    int cmd:8; // : bits 0-7
+};
+
+union anon__struct_71_bitfield_2 {
+    uint sl:12; // : bits 0-11
+    uint tl:12; // : bits 12-23
+};
+
+union anon__struct_71_bitfield_3 {
+    int pad:5; // : bits 0-4
+};
+
+union anon__struct_71_bitfield_4 {
+    uint tile:3; // : bits 0-2
+    uint sh:12; // : bits 3-14
+    uint th:12; // : bits 15-26
+};
+
+struct Gloadtile {
+    union anon__struct_71_bitfield_1 field_0x0;
+    union anon__struct_71_bitfield_2 field_0x4;
+    union anon__struct_71_bitfield_3 field_0x8;
+    union anon__struct_71_bitfield_4 field_0xc;
+};
+
+typedef union Ambient Ambient, *PAmbient;
+
+typedef struct Ambient_t Ambient_t, *PAmbient_t;
+
+struct Ambient_t {
+    uchar col[3];
+    char pad1;
+    uchar colc[3];
+    char pad2;
+};
+
+union Ambient {
+    struct Ambient_t l;
+    longlong force_structure_alignment[1];
+};
+
+typedef struct Gtexrect Gtexrect, *PGtexrect;
+
+typedef union anon__struct_72_bitfield_1 anon__struct_72_bitfield_1, *Panon__struct_72_bitfield_1;
+
+typedef union anon__struct_72_bitfield_2 anon__struct_72_bitfield_2, *Panon__struct_72_bitfield_2;
+
+typedef union anon__struct_72_bitfield_3 anon__struct_72_bitfield_3, *Panon__struct_72_bitfield_3;
+
+typedef union anon__struct_72_bitfield_4 anon__struct_72_bitfield_4, *Panon__struct_72_bitfield_4;
+
+union anon__struct_72_bitfield_1 {
+    uint cmd:8; // : bits 0-7
+    uint xl:12; // : bits 8-19
+    uint yl:12; // : bits 20-31
+};
+
+union anon__struct_72_bitfield_3 {
+    uint s:16; // : bits 0-15
+    uint t:16; // : bits 16-31
+};
+
+union anon__struct_72_bitfield_2 {
+    uint pad1:5; // : bits 0-4
+    uint tile:3; // : bits 5-7
+    uint xh:12; // : bits 8-19
+    uint yh:12; // : bits 20-31
+};
+
+union anon__struct_72_bitfield_4 {
+    uint dsdx:16; // : bits 0-15
+    uint dtdy:16; // : bits 16-31
+};
+
+struct Gtexrect {
+    union anon__struct_72_bitfield_1 field_0x0;
+    union anon__struct_72_bitfield_2 field_0x4;
+    union anon__struct_72_bitfield_3 field_0x8;
+    union anon__struct_72_bitfield_4 field_0xc;
+};
+
+typedef union anon__struct_62_bitfield_1 anon__struct_62_bitfield_1, *Panon__struct_62_bitfield_1;
+
+union anon__struct_62_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int pad0:8; // : bits 8-15
+    int sft:8; // : bits 16-23
+    int len:8; // : bits 24-31
+};
+
+typedef union Light Light, *PLight;
+
+union Light {
+    struct Light_t l;
+    longlong force_structure_alignment[2];
+};
+
+typedef union anon__struct_62_bitfield_2 anon__struct_62_bitfield_2, *Panon__struct_62_bitfield_2;
+
+union anon__struct_62_bitfield_2 {
+    uint data:32; // : bits 0-31
+};
+
+typedef union uSprite uSprite, *PuSprite;
+
+typedef struct uSprite_t uSprite_t, *PuSprite_t;
+
+struct uSprite_t {
+    void * SourceImagePointer;
+    void * TlutPointer;
+    short Stride;
+    short SubImageWidth;
+    short SubImageHeight;
+    char SourceImageType;
+    char SourceImageBitSize;
+    short ScaleX;
+    short ScaleY;
+    char FlipTextureX;
+    char FlipTextureY;
+    short SourceImageOffsetS;
+    short SourceImageOffsetT;
+    short PScreenX;
+    short PScreenY;
+    char dummy[2];
+};
+
+union uSprite {
+    struct uSprite_t s;
+    longlong force_structure_allignment[4];
+};
+
+typedef struct Lightsn Lightsn, *PLightsn;
+
+struct Lightsn {
+    union Ambient a;
+    union Light l[7];
+};
+
+typedef struct Gfillrect Gfillrect, *PGfillrect;
+
+struct Gfillrect {
+    union anon__struct_69_bitfield_1 field_0x0;
+    union anon__struct_69_bitfield_2 field_0x4;
+    union anon__struct_69_bitfield_3 field_0x8;
+};
+
+typedef struct LookAt LookAt, *PLookAt;
+
+struct LookAt {
+    union Light l[2];
+};
+
+typedef union anon__struct_57_bitfield_2 anon__struct_57_bitfield_2, *Panon__struct_57_bitfield_2;
+
+union anon__struct_57_bitfield_2 {
+    uint par:8; // : bits 0-7
+    uint len:16; // : bits 8-23
+};
+
+typedef union anon__struct_66_bitfield_2 anon__struct_66_bitfield_2, *Panon__struct_66_bitfield_2;
+
+union anon__struct_66_bitfield_2 {
+    uint fmt:3; // : bits 0-2
+    uint siz:2; // : bits 3-4
+    uint pad:7; // : bits 5-11
+    uint wd:12; // : bits 12-23
+};
+
+typedef union anon__struct_57_bitfield_1 anon__struct_57_bitfield_1, *Panon__struct_57_bitfield_1;
+
+union anon__struct_57_bitfield_1 {
+    int cmd:8; // : bits 0-7
+};
+
+typedef union anon__struct_66_bitfield_1 anon__struct_66_bitfield_1, *Panon__struct_66_bitfield_1;
+
+union anon__struct_66_bitfield_1 {
+    int cmd:8; // : bits 0-7
+};
+
+typedef struct Gloadtile Gsettilesize;
+
+typedef struct Lights0 Lights0, *PLights0;
+
+struct Lights0 {
+    union Ambient a;
+    union Light l[1];
+};
+
+typedef struct Lights3 Lights3, *PLights3;
+
+struct Lights3 {
+    union Ambient a;
+    union Light l[3];
+};
+
+typedef struct Lights4 Lights4, *PLights4;
+
+struct Lights4 {
+    union Ambient a;
+    union Light l[4];
+};
+
+typedef struct Gsetimg Gsetimg, *PGsetimg;
+
+struct Gsetimg {
+    union anon__struct_66_bitfield_1 field_0x0;
+    union anon__struct_66_bitfield_2 field_0x4;
+    uint dram;
+};
+
+typedef struct Lights1 Lights1, *PLights1;
+
+struct Lights1 {
+    union Ambient a;
+    union Light l[1];
+};
+
+typedef struct Lights2 Lights2, *PLights2;
+
+struct Lights2 {
+    union Ambient a;
+    union Light l[2];
+};
+
+typedef struct Lights7 Lights7, *PLights7;
+
+struct Lights7 {
+    union Ambient a;
+    union Light l[7];
+};
+
+typedef struct Lights5 Lights5, *PLights5;
+
+struct Lights5 {
+    union Ambient a;
+    union Light l[5];
+};
+
+typedef struct Lights6 Lights6, *PLights6;
+
+struct Lights6 {
+    union Ambient a;
+    union Light l[6];
+};
+
+typedef struct GsetothermodeL GsetothermodeL, *PGsetothermodeL;
+
+typedef union anon__struct_61_bitfield_1 anon__struct_61_bitfield_1, *Panon__struct_61_bitfield_1;
+
+typedef union anon__struct_61_bitfield_2 anon__struct_61_bitfield_2, *Panon__struct_61_bitfield_2;
+
+union anon__struct_61_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int pad0:8; // : bits 8-15
+    int sft:8; // : bits 16-23
+    int len:8; // : bits 24-31
+};
+
+union anon__struct_61_bitfield_2 {
+    uint data:32; // : bits 0-31
+};
+
+struct GsetothermodeL {
+    union anon__struct_61_bitfield_1 field_0x0;
+    union anon__struct_61_bitfield_2 field_0x4;
+};
+
+typedef struct GsetothermodeH GsetothermodeH, *PGsetothermodeH;
+
+struct GsetothermodeH {
+    union anon__struct_62_bitfield_1 field_0x0;
+    union anon__struct_62_bitfield_2 field_0x4;
+};
+
+typedef struct Gloadtile Gloadtlut;
+
+typedef struct Gdma Gdma, *PGdma;
+
+struct Gdma {
+    union anon__struct_57_bitfield_1 field_0x0;
+    union anon__struct_57_bitfield_2 field_0x4;
+    uint addr;
+};
+
+typedef union anon__struct_65_bitfield_1 anon__struct_65_bitfield_1, *Panon__struct_65_bitfield_1;
+
+union anon__struct_65_bitfield_1 {
+    int cmd:8; // : bits 0-7
+    int pad1:24; // : bits 8-31
+};
+
+typedef struct Hilite_t Hilite_t, *PHilite_t;
+
+struct Hilite_t {
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+};
+
+typedef struct Gpopmtx Gpopmtx, *PGpopmtx;
+
+struct Gpopmtx {
+    union anon__struct_59_bitfield_1 field_0x0;
+    union anon__struct_59_bitfield_2 field_0x4;
+    union anon__struct_59_bitfield_3 field_0x8;
+};
+
+typedef union Hilite Hilite, *PHilite;
+
+union Hilite {
+    struct Hilite_t h;
+    long force_alignmnet[4];
+};
+
+typedef struct Gperspnorm Gperspnorm, *PGperspnorm;
+
+struct Gperspnorm {
+    union anon__struct_65_bitfield_1 field_0x0;
+    short pad2;
+    short scale;
+};
+
+#define G_LOADBLOCK 243
+
+#define G_DMACMDSIZ 128
+
+#define G_MWO_NUMLIGHT 0
+
+#define G_TX_LOADTILE 7
+
+#define G_CYC_FILL 3145728
+
+#define G_IM_FMT_IA 3
+
+#define G_TEXTURE_SCALE_FRAC 16
+
+#define G_BL_CLR_MEM 1
+
+#define G_MOVEMEM 3
+
+#define G_CCMUX_K4 7
+
+#define G_MWO_aLIGHT_5 128
+
+#define G_CCMUX_K5 15
+
+#define G_MWO_aLIGHT_4 96
+
+#define G_MWO_aLIGHT_7 192
+
+#define G_MWO_aLIGHT_6 160
+
+#define G_MWO_aLIGHT_8 224
+
+#define G_TRI_SHADE_ZBUFF 205
+
+#define G_ACMUX_0 7
+
+#define G_MDSFT_TEXTCONV 9
+
+#define G_AD_NOTPATTERN 16
+
+#define G_RM_NOOP2 0
+
+#define G_ACMUX_1 6
+
+#define G_IM_SIZ_4b 0
+
+#define G_MDSFT_CYCLETYPE 20
+
+#define G_SETSCISSOR 237
+
+#define G_PM_1PRIMITIVE 8388608
+
+#define ZMODE_XLU 2048
+
+#define G_MWO_CLIP_RNY 12
+
+#define ZMODE_DEC 3072
+
+#define G_MWO_CLIP_RNX 4
+
+#define G_MWO_MATRIX_YX_YY_I 8
+
+#define G_MWO_aLIGHT_1 0
+
+#define G_MTX_MODELVIEW 0
+
+#define G_MWO_aLIGHT_3 64
+
+#define G_MWO_aLIGHT_2 32
+
+#define G_TP_PERSP 524288
+
+#define G_TX_CLAMP 2
+
+#define G_TT_IA16 49152
+
+#define G_POPMTX -67
+
+#define G_TX_NOMIRROR 0
+
+#define G_CD_DISABLE 192
+
+#define G_MWO_MATRIX_YX_YY_F 40
+
+#define G_RDPTILESYNC 232
+
+#define G_PM_NPRIMITIVE 0
+
+#define G_CYC_2CYCLE 1048576
+
+#define G_MDSFT_COMBKEY 8
+
+#define G_IM_SIZ_16b_SHIFT 0
+
+#define G_CULLDL -66
+
+#define FR_POS_FRUSTRATIO_2 65534
+
+#define FR_POS_FRUSTRATIO_3 65533
+
+#define G_RDPPIPESYNC 231
+
+#define FR_POS_FRUSTRATIO_1 65535
+
+#define G_MDSFT_BLENDER 16
+
+#define G_MWO_CLIP_RPY 28
+
+#define G_MWO_CLIP_RPX 20
+
+#define G_ACMUX_PRIMITIVE 3
+
+#define G_CCMUX_CENTER 6
+
+#define G_SETKEYR 235
+
+#define G_CCMUX_COMBINED_ALPHA 7
+
+#define G_IM_SIZ_8b_SHIFT 1
+
+#define G_MWO_MATRIX_WZ_WW_F 60
+
+#define G_MDSFT_TEXTLOD 16
+
+#define G_CK_KEY 256
+
+#define G_MWO_MATRIX_WZ_WW_I 28
+
+#define FR_POS_FRUSTRATIO_6 65530
+
+#define FR_POS_FRUSTRATIO_4 65532
+
+#define FR_POS_FRUSTRATIO_5 65531
+
+#define G_CD_MAGICSQ 0
+
+#define G_IM_SIZ_32b_INCR 0
+
+#define G_CCMUX_PRIM_LOD_FRAC 14
+
+#define G_IMMFIRST -65
+
+#define G_MDSFT_COLORDITHER 22
+
+#define G_TEXRECT 228
+
+#define G_BL_A_SHADE 2
+
+#define G_IM_FMT_YUV 1
+
+#define G_CK_NONE 0
+
+#define G_MTX 1
+
+#define G_IM_SIZ_8b 1
+
+#define G_TC_CONV 0
+
+#define G_MV_TXTATT 150
+
+#define G_ACMUX_SHADE 4
+
+#define G_MWO_MATRIX_XZ_XW_F 36
+
+#define CVG_DST_SAVE 768
+
+#define G_DL_PUSH 0
+
+#define G_MWO_MATRIX_XZ_XW_I 4
+
+#define G_TEXTURE_GEN 262144
+
+#define G_RDPCMDSIZ 64
+
+#define G_SETCONVERT 236
+
+#define G_CCMUX_NOISE 7
+
+#define G_CCMUX_ENV_ALPHA 12
+
+#define G_AC_THRESHOLD 1
+
+#define G_IM_FMT_I 4
+
+#define BOWTIE_VAL 0
+
+#define G_MTX_PROJECTION 1
+
+#define FORCE_BL 16384
+
+#define G_CLIPPING 8388608
+
+#define G_MWO_POINT_RGBA 16
+
+#define G_IM_SIZ_32b_LINE_BYTES 2
+
+#define G_IM_SIZ_8b_LINE_BYTES 1
+
+#define G_IM_SIZ_4b_LINE_BYTES 0
+
+#define CVG_X_ALPHA 4096
+
+#define G_TD_SHARPEN 131072
+
+#define G_LIGHTING 131072
+
+#define CVG_DST_WRAP 256
+
+#define G_SHADE 4
+
+#define G_MTX_PUSH 4
+
+#define G_MAXZ 1023
+
+#define G_RDP_TRI_FILL_MASK 8
+
+#define G_SETGEOMETRYMODE -73
+
+#define G_TRI_FILL_ZBUFF 201
+
+#define G_IM_FMT_CI 2
+
+#define G_IM_SIZ_8b_INCR 1
+
+#define G_MWO_bLIGHT_3 68
+
+#define G_MWO_bLIGHT_4 100
+
+#define G_MWO_bLIGHT_1 4
+
+#define G_TX_NOMASK 0
+
+#define G_MWO_bLIGHT_2 36
+
+#define G_MDSFT_TEXTLUT 14
+
+#define G_IM_SIZ_8b_BYTES 1
+
+#define G_SETCIMG 255
+
+#define G_VTX 4
+
+#define G_MWO_bLIGHT_7 196
+
+#define G_MWO_bLIGHT_8 228
+
+#define G_MWO_bLIGHT_5 132
+
+#define G_MWO_bLIGHT_6 164
+
+#define G_MDSFT_PIPELINE 23
+
+#define G_RDPHALF_2 -77
+
+#define G_CULL_BOTH 12288
+
+#define G_CCMUX_0 31
+
+#define G_TX_LDBLK_MAX_TXL 2047
+
+#define G_CCMUX_1 6
+
+#define G_RDPHALF_1 -76
+
+#define G_SHADING_SMOOTH 512
+
+#define G_CCMUX_SHADE 4
+
+#define G_SPRITE2D 9
+
+#define G_CCMUX_ENVIRONMENT 5
+
+#define G_CULL_FRONT 4096
+
+#define G_LOADTILE 244
+
+#define G_FOG 65536
+
+#define G_SETPRIMDEPTH 238
+
+#define G_MV_LOOKATX 132
+
+#define G_MV_LOOKATY 130
+
+#define G_SC_NON_INTERLACE 0
+
+#define G_MDSFT_BLENDMASK 0
+
+#define G_MW_FOG 8
+
+#define G_CD_ENABLE 128
+
+#define G_TEXTURE_ENABLE 2
+
+#define G_MDSFT_RENDERMODE 3
+
+#define G_MWO_MATRIX_ZZ_ZW_I 20
+
+#define G_MWO_MATRIX_ZZ_ZW_F 52
+
+#define G_BL_1MA 0
+
+#define G_SPNOOP 0
+
+#define G_TF_BILERP 8192
+
+#define G_SETZIMG 254
+
+#define G_MV_VIEWPORT 128
+
+#define G_NOOP 192
+
+#define Z_UPD 32
+
+#define G_ENDDL -72
+
+#define G_ROTATE_FRAC 16
+
+#define G_SETTILESIZE 242
+
+#define G_RM_NOOP 0
+
+#define G_RESERVED2 7
+
+#define G_TD_DETAIL 262144
+
+#define G_RESERVED3 8
+
+#define G_RESERVED0 2
+
+#define G_RESERVED1 5
+
+#define G_CLEARGEOMETRYMODE -74
+
+#define G_BL_A_FOG 1
+
+#define G_BL_CLR_FOG 3
+
+#define G_MW_SEGMENT 6
+
+#define Z_CMP 16
+
+#define AA_EN 8
+
+#define G_LOADTLUT 240
+
+#define NUMLIGHTS_5 5
+
+#define NUMLIGHTS_4 4
+
+#define NUMLIGHTS_7 7
+
+#define NUMLIGHTS_6 6
+
+#define G_MWO_MATRIX_YZ_YW_F 44
+
+#define NUMLIGHTS_1 1
+
+#define NUMLIGHTS_0 1
+
+#define NUMLIGHTS_3 3
+
+#define G_MWO_MATRIX_YZ_YW_I 12
+
+#define NUMLIGHTS_2 2
+
+#define G_SETOTHERMODE_H.conflict 186
+
+#define G_SETFILLCOLOR 247
+
+#define G_DL 6
+
+#define G_BL_CLR_BL 2
+
+#define G_CYC_COPY 2097152
+
+#define G_MWO_SEGMENT_A 10
+
+#define CLR_ON_CVG 128
+
+#define G_RDP_ADDR_FIXUP 3
+
+#define G_SETFOGCOLOR 248
+
+#define G_MWO_SEGMENT_8 8
+
+#define G_MWO_SEGMENT_9 9
+
+#define G_MWO_SEGMENT_6 6
+
+#define G_MWO_SEGMENT_7 7
+
+#define G_MWO_SEGMENT_4 4
+
+#define G_MWO_SEGMENT_5 5
+
+#define G_MWO_SEGMENT_2 2
+
+#define G_MWO_SEGMENT_3 3
+
+#define G_MWO_SEGMENT_0 0
+
+#define G_IMMCMDSIZ 64
+
+#define G_MWO_SEGMENT_1 1
+
+#define G_ACMUX_LOD_FRACTION 0
+
+#define G_IM_SIZ_16b_TILE_BYTES 2
+
+#define G_ACMUX_COMBINED 0
+
+#define G_TL_TILE 0
+
+#define G_MDSFT_TEXTPERSP 19
+
+#define G_ACMUX_ENVIRONMENT 5
+
+#define G_IM_SIZ_8b_TILE_BYTES 1
+
+#define G_MWO_MATRIX_WX_WY_I 24
+
+#define G_ACMUX_TEXEL1 2
+
+#define G_SC_EVEN_INTERLACE 2
+
+#define G_MDSFT_TEXTFILT 12
+
+#define G_IM_SIZ_16b 2
+
+#define LIGHT_6 6
+
+#define LIGHT_5 5
+
+#define G_TL_LOD 65536
+
+#define LIGHT_8 8
+
+#define LIGHT_7 7
+
+#define LIGHT_2 2
+
+#define LIGHT_1 1
+
+#define G_IM_SIZ_4b_TILE_BYTES 0
+
+#define LIGHT_4 4
+
+#define G_MWO_SEGMENT_F 15
+
+#define G_ACMUX_TEXEL0 1
+
+#define G_MW_CLIP 4
+
+#define LIGHT_3 3
+
+#define G_MWO_SEGMENT_D 13
+
+#define G_SCALE_FRAC 8
+
+#define G_MWO_SEGMENT_E 14
+
+#define G_MWO_SEGMENT_B 11
+
+#define G_IM_SIZ_32b_TILE_BYTES 2
+
+#define G_TT_NONE 0
+
+#define G_MWO_SEGMENT_C 12
+
+#define G_AD_PATTERN 0
+
+#define G_TX_RENDERTILE 0
+
+#define G_IM_SIZ_8b_LOAD_BLOCK 2
+
+#define G_SC_ODD_INTERLACE 3
+
+#define G_IM_SIZ_4b_LOAD_BLOCK 2
+
+#define G_CD_NOISE 128
+
+#define G_TRI_FILL 200
+
+#define G_FILLRECT 246
+
+#define G_SETPRIMCOLOR 250
+
+#define G_TEXRECTFLIP 229
+
+#define G_MWO_MATRIX_WX_WY_F 56
+
+#define G_MDSFT_ZSRCSEL 2
+
+#define G_RDPSETOTHERMODE 239
+
+#define G_IM_SIZ_16b_LINE_BYTES 2
+
+#define G_TRI_SHADE_TXTR_ZBUFF 207
+
+#define G_TF_POINT 0
+
+#define G_CCMUX_SCALE 6
+
+#define G_MWO_MATRIX_ZX_ZY_I 16
+
+#define TEX_EDGE 0
+
+#define G_MOVEWORD -68
+
+#define G_RM_PASS 201850880
+
+#define G_MAXFBZ 16383
+
+#define CVG_DST_CLAMP 0
+
+#define G_RDPFULLSYNC 233
+
+#define G_DL_NOPUSH 1
+
+#define G_CCMUX_COMBINED 0
+
+#define G_TX_WRAP 0
+
+#define G_MWO_POINT_ST 20
+
+#define G_TRI_TXTR_ZBUFF 203
+
+#define G_TRI1 -65
+
+#define ZMODE_INTER 1024
+
+#define G_SETOTHERMODE_L.conflict 185
+
+#define G_MDSFT_ALPHACOMPARE 0
+
+#define G_IM_SIZ_32b_SHIFT 0
+
+#define G_AC_DITHER 3
+
+#define G_TC_FILTCONV 2560
+
+#define G_MTX_LOAD 2
+
+#define G_CCMUX_PRIMITIVE 3
+
+#define G_MW_LIGHTCOL 10
+
+#define G_MW_POINTS 12
+
+#define G_TC_FILT 3072
+
+#define G_IM_SIZ_4b_INCR 3
+
+#define G_MDSFT_ALPHADITHER 4
+
+#define G_CCMUX_SHADE_ALPHA 11
+
+#define ZMODE_OPA 0
+
+#define G_BL_A_MEM 1
+
+#define G_MWO_MATRIX_ZX_ZY_F 48
+
+#define G_TP_NONE 0
+
+#define G_SETOTHERMODE_H -70
+
+#define FR_NEG_FRUSTRATIO_6 6
+
+#define G_RDP_TRI_TXTR_MASK 2
+
+#define FR_NEG_FRUSTRATIO_5 5
+
+#define G_SETOTHERMODE_L -71
+
+#define FR_NEG_FRUSTRATIO_4 4
+
+#define FR_NEG_FRUSTRATIO_3 3
+
+#define FR_NEG_FRUSTRATIO_2 2
+
+#define FR_NEG_FRUSTRATIO_1 1
+
+#define G_MWO_MATRIX_XX_XY_I 0
+
+#define G_TX_DXT_FRAC 11
+
+#define G_TT_RGBA16 32768
+
+#define G_ZS_PIXEL 0
+
+#define G_MW_MATRIX 0
+
+#define G_CCMUX_PRIMITIVE_ALPHA 10
+
+#define G_LOD 1048576
+
+#define G_TRI_SHADE 204
+
+#define G_MV_L5 144
+
+#define G_CYC_1CYCLE 0
+
+#define G_MV_L4 142
+
+#define G_MV_L3 140
+
+#define G_SETCOMBINE 252
+
+#define G_MV_L2 138
+
+#define G_IM_SIZ_16b_LOAD_BLOCK 2
+
+#define G_MV_L7 148
+
+#define G_MV_L6 146
+
+#define G_CCMUX_LOD_FRACTION 13
+
+#define G_RDP_TRI_ZBUFF_MASK 1
+
+#define G_TEXTURE -69
+
+#define G_TEXTURE_IMAGE_FRAC 2
+
+#define G_MW_NUMLIGHT 2
+
+#define G_TD_CLAMP 0
+
+#define G_MDSFT_TEXTDETAIL 17
+
+#define G_IM_FMT_RGBA 0
+
+#define G_SETTILE 245
+
+#define G_CCMUX_TEXEL1_ALPHA 9
+
+#define G_BL_A_IN 0
+
+#define G_MV_L1 136
+
+#define G_MV_L0 134
+
+#define G_IM_SIZ_32b 3
+
+#define G_AD_DISABLE 48
+
+#define G_IM_SIZ_4b_BYTES 0
+
+#define IM_RD 64
+
+#define G_IM_SIZ_16b_BYTES 2
+
+#define G_CCMUX_TEXEL1 2
+
+#define G_CCMUX_TEXEL0 1
+
+#define G_BL_CLR_IN 0
+
+#define G_CD_BAYER 64
+
+#define G_SETENVCOLOR 251
+
+#define G_MV_MATRIX_4 156
+
+#define G_MWO_POINT_ZSCREEN 28
+
+#define G_RDPLOADSYNC 230
+
+#define G_ZS_PRIM 4
+
+#define G_MDSFT_RGBDITHER 6
+
+#define G_RDPHALF_CONT -78
+
+#define G_RM_FOG_SHADE_A 3355443200
+
+#define G_AC_NONE 0
+
+#define G_IM_SIZ_4b_SHIFT 2
+
+#define G_MV_MATRIX_3 154
+
+#define G_TF_AVERAGE 12288
+
+#define G_MV_MATRIX_2 152
+
+#define G_MV_MATRIX_1 158
+
+#define G_CCMUX_TEXEL0_ALPHA 8
+
+#define G_TX_NOLOD 0
+
+#define G_MW_PERSPNORM 14
+
+#define G_SETKEYGB 234
+
+#define G_IM_SIZ_32b_LOAD_BLOCK 3
+
+#define G_SETBLENDCOLOR 249
+
+#define G_SETTIMG 253
+
+#define G_CV_K2 -89
+
+#define G_CV_K1 -43
+
+#define G_CV_K0 175
+
+#define G_RM_FOG_PRIM_A 3288334336
+
+#define G_BL_0 3
+
+#define G_TRI_SHADE_TXTR 206
+
+#define G_LINE3D -75
+
+#define G_BL_1 2
+
+#define G_TEXTURE_GEN_LINEAR 524288
+
+#define G_CV_K5 42
+
+#define G_TX_MIRROR 1
+
+#define G_CV_K4 114
+
+#define G_CV_K3 222
+
+#define G_RDP_TRI_SHADE_MASK 4
+
+#define G_IM_SIZ_16b_INCR 0
+
+#define G_TRI_TXTR 202
+
+#define ALPHA_CVG_SEL 8192
+
+#define CVG_DST_FULL 512
+
+#define G_CULL_BACK 8192
+
+#define G_MTX_NOPUSH 0
+
+#define G_MTX_MUL 0
+
+#define G_IM_SIZ_32b_BYTES 4
+
+#define G_AD_NOISE 32
+
+#define G_IM_SIZ_DD 5
+
+#define G_ACMUX_PRIM_LOD_FRAC 6
+
+#define G_MWO_FOG 0
+
+#define G_MWO_POINT_XYSCREEN 24
+
+#define G_MWO_MATRIX_XX_XY_F 32
+
+#define G_ZBUFFER 1
+
+typedef ulong size_t;
+
+typedef struct exception exception, *Pexception;
+
+struct exception {
+    int anonymous_0;
+    int anonymous_1;
+    void * error;
+};
+
+typedef struct c_itementry c_itementry, *Pc_itementry;
+
+typedef struct object_header object_header, *Pobject_header;
+
+typedef struct object_standard object_standard, *Pobject_standard;
+
+struct object_standard {
+    u16 extrascale:2;
+    u8 hidden2:1;
+    u8 type:1;
+    u16 obj;
+    u16 pad;
+    u32 flags;
+    u32 flags2;
+    void * runtime_ptr_obj_posdata;
+    void * runtime_ptr_obj_instance_controller;
+    void * runtime_MATRIX0;
+    void * runtime_MATRIX1;
+    void * runtime_MATRIX2;
+    void * runtime_MATRIX3;
+    void * runtime_MATRIX4;
+    void * runtime_MATRIX5;
+    void * runtime_MATRIX6;
+    void * runtime_MATRIX7;
+    void * runtime_MATRIX8;
+    void * runtime_MATRIX9;
+    void * runtime_MATRIXA;
+    void * runtime_MATRIXB;
+    void * runtime_MATRIXC;
+    void * runtime_MATRIXD;
+    void * runtime_MATRIXE;
+    void * runtime_MATRIXF;
+    f32 runtime_x_pos;
+    f32 runtime_y_pos;
+    f32 runtime_z_pos;
+    int runtime_bitflags;
+    int ptr_allocated_collisiondata_block;
+    int field_6C;
+    float field_70;
+    short damage;
+    short maxdamage;
+    char field_78;
+    char field_79;
+    char field_7A;
+    char field_7B;
+    char field_7C;
+    char field_7D;
+    char field_7E;
+    char field_7F;
+};
+
+struct c_itementry {
+    struct object_header * header;
+    void * filename;
+    float anonymous_1;
+    float anonymous_2;
+    int anonymous_3;
+};
+
+struct object_header {
+    int offset_obj_table;
+    struct object_standard * ptr_archetype;
+    int offset_obj_offset_block;
+    short num_offset_entries;
+    short num_object_grps;
+    float anonymous_4;
+    short num_table_entries;
+    short num_image_entries;
+    int offset_img_declaration;
+    int is_loaded_in_mem;
+};
+
+typedef struct $732F89B2624665A943E52F38E86E4CBC $732F89B2624665A943E52F38E86E4CBC, *P$732F89B2624665A943E52F38E86E4CBC;
+
+struct $732F89B2624665A943E52F38E86E4CBC {
+};
+
+typedef struct fileentry fileentry, *Pfileentry;
+
+struct fileentry {
+    s32 index;
+    string * filename;
+    s32 hw_address;
+};
+
+typedef enum KSEG {
+} KSEG;
+
+typedef struct $B84834CAACFDCE10B1334219ADA11FDA $B84834CAACFDCE10B1334219ADA11FDA, *P$B84834CAACFDCE10B1334219ADA11FDA;
+
+typedef struct $B84834CAACFDCE10B1334219ADA11FDA ALGlobals;
+
+typedef struct ALSynth ALSynth, *PALSynth;
+
+typedef struct ALPlayer_s ALPlayer_s, *PALPlayer_s;
+
+typedef struct ALPlayer_s ALPlayer;
+
+typedef ALDMAproc (* ALDMANew)(void *);
+
+typedef struct ALHeap ALHeap, *PALHeap;
+
+typedef s32 ALMicroTime;
+
+typedef ALMicroTime (* ALVoiceHandler)(void *);
+
+struct ALSynth {
+    ALPlayer * head;
+    ALLink pFreeList;
+    ALLink pAllocList;
+    ALLink pLameList;
+    s32 paramSamples;
+    s32 curSamples;
+    ALDMANew dma;
+    struct ALHeap * heap;
+    struct ALParam_s * paramList;
+    struct ALMainBus_s * mainBus;
+    struct ALAuxBus_s * auxBus;
+    struct ALFilter_s * outputFilter;
+    s32 numPVoices;
+    s32 maxAuxBusses;
+    s32 outputRate;
+    s32 maxOutSamples;
+};
+
+struct $B84834CAACFDCE10B1334219ADA11FDA {
+    struct ALSynth drvr;
+};
+
+struct ALHeap {
+    u8 * base;
+    u8 * cur;
+    s32 len;
+    s32 count;
+};
+
+struct ALPlayer_s {
+    struct ALPlayer_s * next;
+    void * clientData;
+    ALVoiceHandler handler;
+    ALMicroTime callTime;
+    s32 samplesLeft;
+};
+
+typedef struct p_itementry p_itementry, *Pp_itementry;
+
+typedef struct PitemZ_header PitemZ_header, *PPitemZ_header;
+
+typedef struct item_related item_related, *Pitem_related;
+
+struct item_related {
+    short num_entries_in_block;
+    short field_2;
+    struct prop_pos_data * ptr_block;
+    short total_cmd_indexval;
+    short field_A;
+};
+
+struct PitemZ_header {
+    int microcode_entry_num;
+    struct item_related * anonymous_1;
+    short anonymous_2;
+    short field_E;
+    float drawdistance;
+    float anonymous_4;
+    int anonymous_5;
+    int anonymous_6;
+    int anonymous_7;
+};
+
+struct p_itementry {
+    struct PitemZ_header * header;
+    void * filename;
+    float scale;
+};
+
+typedef struct lightfixture lightfixture, *Plightfixture;
+
+struct lightfixture {
+    short index;
+    short RESERVED;
+    union Gfx * ptr_start_pertinent_DL;
+    int ptr_end_pertinent_DL;
+};
+
+typedef struct weapon_firing_animation_table weapon_firing_animation_table, *Pweapon_firing_animation_table;
+
+struct weapon_firing_animation_table {
+    s32 anonymous_0;
+    f32 anonymous_1;
+    f32 anonymous_2;
+    f32 anonymous_3;
+    f32 anonymous_4;
+    f32 anonymous_5;
+    f32 anonymous_6;
+    f32 anonymous_7;
+    f32 anonymous_8;
+    f32 anonymous_9;
+    f32 anonymous_10;
+    f32 anonymous_11;
+    f32 anonymous_12;
+    f32 anonymous_13;
+    f32 anonymous_14;
+    f32 anonymous_15;
+    f32 anonymous_16;
+    f32 anonymous_17;
+};
+
+typedef struct Gitemheader Gitemheader, *PGitemheader;
+
+typedef struct model_data model_data, *Pmodel_data;
+
+struct Gitemheader {
+    int offset_objtable;
+    struct model_data * guntype_modeldata;
+    int offset_objblock;
+    short num05soffset_entries;
+    short num_objgroups;
+    float drawdistance;
+    u16 num_entries;
+    u16 num_images;
+    int offset_imgdecl;
+    u32 isloaded;
+};
+
+struct model_data {
+    u32 anonymous_0;
+    struct prop_pos_data * anonymous_1;
+    u32 anonymous_2;
+};
+
+typedef struct mp_weaponset_weapon mp_weaponset_weapon, *Pmp_weaponset_weapon;
+
+struct mp_weaponset_weapon {
+    int anonymous_0;
+    int anonymous_1;
+    float anonymous_2;
+    int anonymous_3;
+    int anonymous_4;
+    int anonymous_5;
+};
+
+typedef struct ramrom_struct ramrom_struct, *Pramrom_struct;
+
+typedef struct ramrom_entry ramrom_entry, *Pramrom_entry;
+
+struct ramrom_entry {
+    int ROMaddress;
+    int is_locked;
+};
+
+struct ramrom_struct {
+    struct ramrom_entry dam1;
+    struct ramrom_entry dam2;
+    struct ramrom_entry facility1;
+    struct ramrom_entry facility2;
+    struct ramrom_entry facility3;
+    struct ramrom_entry runway1;
+    struct ramrom_entry runway2;
+    struct ramrom_entry bunker1_1;
+    struct ramrom_entry bunker1_2;
+    struct ramrom_entry silo1;
+    struct ramrom_entry silo2;
+    struct ramrom_entry frigate1;
+    struct ramrom_entry frigate2;
+    struct ramrom_entry train;
+    struct ramrom_entry null;
+};
+
+typedef struct $9574A80C820E0B95666ECD0A99E160BE $9574A80C820E0B95666ECD0A99E160BE, *P$9574A80C820E0B95666ECD0A99E160BE;
+
+typedef struct $9574A80C820E0B95666ECD0A99E160BE ALSeqData;
+
+struct $9574A80C820E0B95666ECD0A99E160BE {
+    u8 * offset;
+};
+
+typedef struct mp_stage_playercount mp_stage_playercount, *Pmp_stage_playercount;
+
+struct mp_stage_playercount {
+    short stage;
+    char min;
+    char max;
+};
+
+typedef struct music_setup music_setup, *Pmusic_setup;
+
+struct music_setup {
+    short stage_id;
+    short main_music;
+    short bg_sound;
+    short xtrack;
+};
+
+typedef struct MP_game_length_settings MP_game_length_settings, *PMP_game_length_settings;
+
+struct MP_game_length_settings {
+    u16 text_preset;
+    u16 padding;
+    int time;
+    int points;
+};
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/ALVoiceHandler - /libaudio.h/ALVoiceHandler
+
+typedef struct memoryallocation memoryallocation, *Pmemoryallocation;
+
+struct memoryallocation {
+    int number;
+    void * string;
+};
+
+typedef struct $62F109188EB304B8EC258AA93B51CC96 $62F109188EB304B8EC258AA93B51CC96, *P$62F109188EB304B8EC258AA93B51CC96;
+
+struct $62F109188EB304B8EC258AA93B51CC96 {
+};
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/rgba_val - /bondgame.h/rgba_val
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/LEVEL_SOLO_SEQUENCE - /bondgame.h/LEVEL_SOLO_SEQUENCE
+
+typedef struct mcm_layout mcm_layout, *Pmcm_layout;
+
+struct mcm_layout {
+    int xpos;
+    int ypos;
+};
+
+typedef struct GUARDdata GUARDdata, *PGUARDdata;
+
+struct GUARDdata {
+    u16 chrnum;
+    char accuracyrating;
+    char speedrating;
+    char firecount.left;
+    char firecount.right;
+    char headnum;
+    enum guard_action_type actiontype;
+    char sleep;
+    char invalidmove;
+    char numclosearghs;
+    char numarghs;
+    char fadealpha;
+    char field_D;
+    char field_E;
+    char bodynum;
+    char beligerancy;
+    char field_11;
+    short special_bitflags;
+    int guard_bitflags;
+    int POSdata_pointer;
+    int MODELdata_pointer;
+    int pertains_to_action61;
+    f32 chrwidth;
+    int chrheight;
+    int bond_position;
+    int field_30;
+    short field_34;
+    char field_36;
+    char field_37;
+    char field_38;
+    char field_39;
+    char field_3A;
+    char field_3B;
+    int path_target_position;
+    int field_40;
+    int field_44;
+    int field_48;
+    int field_4C;
+    int field_50;
+    int field_54;
+    char type_of_motion;
+    char distance_counter_or_something;
+    short distance_to_target;
+    int field_5C;
+    int target_position;
+    int field_64;
+    int field_68;
+    int field_6C;
+    int path_segment_coverage;
+    int path_segment_length;
+    int field_78;
+    int field_7C;
+    int field_80;
+    int field_84;
+    int field_88;
+    int field_8C;
+    int field_90;
+    int segment_coverage;
+    int segment_length;
+    int field_9C;
+    int field_A0;
+    float field_A4;
+    float field_A8;
+    float clipping_height;
+    float field_B0;
+    float field_B4;
+    float field_B8;
+    struct xyzpoint prevpos;
+    int field_C8;
+    int field_CC;
+    float reaction_time;
+    int last_bond_detection_time;
+    float field_D8;
+    float field_DC;
+    float field_E0;
+    int lastshooter;
+    int timeshooter;
+    float hearingscale;
+    int field_F0;
+    char field_F4;
+    char field_F5;
+    char field_F6;
+    char field_F7;
+    char field_F8;
+    char field_F9;
+    char field_FA;
+    char field_FB;
+    int damage;
+    f32 maxdamage;
+    int action_block_pointer;
+    short action_block_offset;
+    short action_block_return;
+    char userbyte1;
+    char userbyte2;
+    char guardtype_bitflags_scientist;
+    char randomvalue;
+    int loopcounter;
+    short preset_of_2328_object_to_interact_with;
+    short FC_target;
+    short FA_target;
+    short FB_target;
+    int field_11C;
+    int field_120;
+    int field_124;
+    int field_128;
+    int field_12C;
+    int field_130;
+    int field_134;
+    int field_138;
+    float field_13C;
+    float field_140;
+    float field_144;
+    float field_148;
+    float field_14C;
+    int field_150;
+    int field_154;
+    int field_158;
+    int field_15C;
+    int handle_positiondata[2];
+    int ptr_SEbuffer1;
+    int ptr_SEbuffer2;
+    int ptr_SEbuffer3;
+    int ptr_SEbuffer4;
+    int field_178;
+    int field_17C;
+    char field_180;
+    char field_181;
+    char field_182;
+    char field_183;
+    int field_184;
+    int field_188;
+    int field_18C;
+    int field_190;
+    int field_194;
+    int field_198;
+    int field_19C;
+    int field_1A0;
+    int field_1A4;
+    int field_1A8;
+    char field_1AC;
+    char field_1AD;
+    char field_1AE;
+    char field_1AF;
+    int field_1B0;
+    int field_1B4;
+    int field_1B8;
+    int field_1BC;
+    int field_1C0;
+    int field_1C4;
+    int field_1C8;
+    int field_1CC;
+    int field_1D0;
+    int field_1D4;
+    int handle_positiondata_hat;
+};
+
+typedef struct intro_animation intro_animation, *Pintro_animation;
+
+struct intro_animation {
+    enum ANIMATIONS animID;
+    float startframeoffset;
+    float playback_speed;
+    int camera_preset;
+};
+
+typedef struct $4BEAA6302150DFF77A6D6B5C2F812979 $4BEAA6302150DFF77A6D6B5C2F812979, *P$4BEAA6302150DFF77A6D6B5C2F812979;
+
+struct $4BEAA6302150DFF77A6D6B5C2F812979 {
+    float col[3];
+    float pos[3];
+    float a1;
+    float a2;
+};
+
+typedef struct playerperm playerperm, *Pplayerperm;
+
+struct playerperm {
+    int shotcount[7];
+    int killcount;
+    int ggkillcount;
+    int kills[4];
+    int drawplayercount;
+    float distance;
+    int backshotcount;
+    float armourcount;
+    int fastest2kills;
+    int slowest2kills;
+    int longestlife;
+    s32 shortestlife;
+    int most_killed_one_life;
+    int most_killed_one_time;
+    float handicap;
+    int flag_counter;
+    float player_perspective_height;
+    char order_out_in_yolt;
+    char have_token_or_goldengun;
+    char autoaim;
+    char sight;
+    int killed_civilians;
+};
+
+typedef struct $B24B31290AB3F51AC02030577BB60BEE $B24B31290AB3F51AC02030577BB60BEE, *P$B24B31290AB3F51AC02030577BB60BEE;
+
+struct $B24B31290AB3F51AC02030577BB60BEE {
+};
+
+typedef struct $1D3114E51680E29F8350BFE921C29711 $1D3114E51680E29F8350BFE921C29711, *P$1D3114E51680E29F8350BFE921C29711;
+
+typedef struct $1D3114E51680E29F8350BFE921C29711 ALKeyMap;
+
+struct $1D3114E51680E29F8350BFE921C29711 {
+    u8 velocityMin;
+    u8 velocityMax;
+    u8 keyMin;
+    u8 keyMax;
+    u8 keyBase;
+    s8 detune;
+};
+
+typedef struct enviroment_struct enviroment_struct, *Penviroment_struct;
+
+struct enviroment_struct {
+    int index;
+    float anonymous_0;
+    float anonymous_1;
+    float anonymous_2;
+    float anonymous_3;
+    float anonymous_4;
+    int anonymous_5;
+    int anonymous_6;
+    int anonymous_7;
+    int anonymous_8;
+    int anonymous_9;
+    float anonymous_10;
+    int anonymous_11;
+    float anonymous_12;
+    float anonymous_13;
+    float anonymous_14;
+    int anonymous_15;
+    float anonymous_16;
+    int anonymous_17;
+    int anonymous_18;
+    float anonymous_19;
+    float anonymous_20;
+    float anonymous_21;
+};
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/BODIES - /bondgame.h/BODIES
+
+typedef struct $2903A050EBC6442F98207E1AE6ED2D96 $2903A050EBC6442F98207E1AE6ED2D96, *P$2903A050EBC6442F98207E1AE6ED2D96;
+
+typedef struct $2903A050EBC6442F98207E1AE6ED2D96 ALSndPlayer;
+
+typedef struct ALEventQueue ALEventQueue, *PALEventQueue;
+
+typedef struct ALEvent ALEvent, *PALEvent;
+
+typedef union _union_144 _union_144, *P_union_144;
+
+typedef struct ALMIDIEvent ALMIDIEvent, *PALMIDIEvent;
+
+typedef struct ALTempoEvent ALTempoEvent, *PALTempoEvent;
+
+typedef struct ALEndEvent ALEndEvent, *PALEndEvent;
+
+typedef struct ALNoteEvent ALNoteEvent, *PALNoteEvent;
+
+typedef struct ALVolumeEvent ALVolumeEvent, *PALVolumeEvent;
+
+typedef struct ALSeqpLoopEvent ALSeqpLoopEvent, *PALSeqpLoopEvent;
+
+typedef struct ALSeqpVolEvent ALSeqpVolEvent, *PALSeqpVolEvent;
+
+typedef struct ALSeqpPriorityEvent ALSeqpPriorityEvent, *PALSeqpPriorityEvent;
+
+typedef struct ALSeqpSeqEvent ALSeqpSeqEvent, *PALSeqpSeqEvent;
+
+typedef struct ALSeqpBankEvent ALSeqpBankEvent, *PALSeqpBankEvent;
+
+typedef struct ALOscEvent ALOscEvent, *PALOscEvent;
+
+typedef struct ALSeqMarker ALSeqMarker, *PALSeqMarker;
+
+typedef struct ALBank_s ALBank_s, *PALBank_s;
+
+typedef struct ALBank_s ALBank;
+
+typedef struct ALVoiceState_s ALVoiceState_s, *PALVoiceState_s;
+
+typedef struct ALInstrument ALInstrument, *PALInstrument;
+
+typedef struct ALVoice_s ALVoice;
+
+typedef struct ALSound_s ALSound_s, *PALSound_s;
+
+typedef struct ALSound_s ALSound;
+
+typedef struct ALEnvelope ALEnvelope, *PALEnvelope;
+
+
+// WARNING! conflicting data type names: /libaudio.h/ALKeyMap - /GE Current Master.h/ALKeyMap
+
+struct ALSeqpSeqEvent {
+    void * seq;
+};
+
+struct ALVolumeEvent {
+    struct ALVoice_s * voice;
+    ALMicroTime delta;
+    u8 vol;
+};
+
+struct ALSeqpPriorityEvent {
+    u8 chan;
+    u8 priority;
+};
+
+struct ALSeqpBankEvent {
+    ALBank * bank;
+};
+
+struct ALMIDIEvent {
+    s32 ticks;
+    u8 status;
+    u8 byte1;
+    u8 byte2;
+    u32 duration;
+};
+
+struct ALOscEvent {
+    struct ALVoiceState_s * vs;
+    void * oscState;
+    u8 chan;
+};
+
+struct ALTempoEvent {
+    s32 ticks;
+    u8 status;
+    u8 type;
+    u8 len;
+    u8 byte1;
+    u8 byte2;
+    u8 byte3;
+};
+
+struct ALSeqpLoopEvent {
+    struct ALSeqMarker * start;
+    struct ALSeqMarker * end;
+    s32 count;
+};
+
+struct ALNoteEvent {
+    struct ALVoice_s * voice;
+};
+
+struct ALEndEvent {
+    s32 ticks;
+    u8 status;
+    u8 type;
+    u8 len;
+};
+
+struct ALSeqpVolEvent {
+    s16 vol;
+};
+
+union _union_144 {
+    struct ALMIDIEvent midi;
+    struct ALTempoEvent tempo;
+    struct ALEndEvent end;
+    struct ALNoteEvent note;
+    struct ALVolumeEvent vol;
+    struct ALSeqpLoopEvent loop;
+    struct ALSeqpVolEvent spvol;
+    struct ALSeqpPriorityEvent sppriority;
+    struct ALSeqpSeqEvent spseq;
+    struct ALSeqpBankEvent spbank;
+    struct ALOscEvent osc;
+};
+
+struct ALEvent {
+    s16 type;
+    union _union_144 msg;
+};
+
+struct ALBank_s {
+    s16 instCount;
+    u8 flags;
+    u8 pad;
+    s32 sampleRate;
+    struct ALInstrument * percussion;
+    struct ALInstrument * instArray[1];
+};
+
+struct ALInstrument {
+    u8 volume;
+    ALPan pan;
+    u8 priority;
+    u8 flags;
+    u8 tremType;
+    u8 tremRate;
+    u8 tremDepth;
+    u8 tremDelay;
+    u8 vibType;
+    u8 vibRate;
+    u8 vibDepth;
+    u8 vibDelay;
+    s16 bendRange;
+    s16 soundCount;
+    ALSound * soundArray[1];
+};
+
+struct ALEventQueue {
+    ALLink freeList;
+    ALLink allocList;
+    s32 eventCount;
+};
+
+struct ALVoiceState_s {
+    struct ALVoiceState_s * next;
+    ALVoice voice;
+    ALSound * sound;
+    ALMicroTime envEndTime;
+    f32 pitch;
+    f32 vibrato;
+    u8 envGain;
+    u8 channel;
+    u8 key;
+    u8 velocity;
+    u8 envPhase;
+    u8 phase;
+    u8 tremelo;
+    u8 flags;
+};
+
+struct ALEnvelope {
+    ALMicroTime attackTime;
+    ALMicroTime decayTime;
+    ALMicroTime releaseTime;
+    u8 attackVolume;
+    u8 decayVolume;
+};
+
+struct ALSound_s {
+    struct ALEnvelope * envelope;
+    struct ALKeyMap * keyMap;
+    ALWaveTable * wavetable;
+    ALPan samplePan;
+    u8 sampleVolume;
+    u8 flags;
+};
+
+struct ALSeqMarker {
+    u8 * curPtr;
+    s32 lastTicks;
+    s32 curTicks;
+    s16 lastStatus;
+};
+
+struct $2903A050EBC6442F98207E1AE6ED2D96 {
+    ALPlayer node;
+    struct ALEventQueue evtq;
+    struct ALEvent nextEvent;
+    struct ALSynth * drvr;
+    void * sndState;
+};
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/PROJECTILES - /bondgame.h/PROJECTILES
+
+typedef struct solo_target_times solo_target_times, *Psolo_target_times;
+
+struct solo_target_times {
+    short agent_time;
+    short secret_agent_time;
+    short OO_agent_time;
+};
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/video_settings - /video.h/video_settings
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/LEVEL_INDEX - /bondgame.h/LEVEL_INDEX
+
+typedef struct ejected_cart ejected_cart, *Pejected_cart;
+
+struct ejected_cart {
+    struct Gitemheader * header;
+    u8 * text;
+};
+
+typedef struct mission_folder_setup mission_folder_setup, *Pmission_folder_setup;
+
+struct mission_folder_setup {
+    void * string_ptr;
+    short folder_text_preset;
+    short icon_text_preset;
+    int stage_id;
+    int unknown;
+    int type;
+    int mission_num;
+    void * briefing_name_ptr;
+};
+
+typedef struct MP_selectable_chars MP_selectable_chars, *PMP_selectable_chars;
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/HEADS - /bondgame.h/HEADS
+
+struct MP_selectable_chars {
+    short text_preset;
+    char gender;
+    char select_photo;
+    short body;
+    enum HEADS head;
+    f32 pov;
+};
+
+typedef struct $DD54060F307CC511C1231C522D614BD1 $DD54060F307CC511C1231C522D614BD1, *P$DD54060F307CC511C1231C522D614BD1;
+
+struct $DD54060F307CC511C1231C522D614BD1 {
+    uchar * base;
+    int fmt;
+    int siz;
+    int xsize;
+    int ysize;
+    int lsize;
+    int addr;
+    int w;
+    int h;
+    int s;
+    int t;
+};
+
+typedef struct explosion_death_animation explosion_death_animation, *Pexplosion_death_animation;
+
+struct explosion_death_animation {
+    int anonymous_0;
+    int anonymous_1;
+    float anonymous_2;
+    float anonymous_3;
+    float anonymous_4;
+    float anonymous_5;
+    float anonymous_6;
+};
+
 
 // WARNING! conflicting data type names: /GE Current Master.h/ALDMAproc - /libaudio.h/ALDMAproc
 
@@ -11526,26 +13804,6 @@ struct $5B527B901AC7720CA636E505FD36A43E {
     u8 * curBUPtr[16];
     u8 curBULen[16];
     u8 lastStatus[16];
-};
-
-typedef struct video_settings video_settings, *Pvideo_settings;
-
-struct video_settings {
-    int anonymous_0;
-    short txtClipW;
-    short txtClipH;
-    float far;
-    float scale;
-    float aspect;
-    float anonymous_6;
-    short anonymous_7;
-    short anonymous_8;
-    short width;
-    short height;
-    short ulx;
-    short uly;
-    int anonymous_12;
-    int frameb;
 };
 
 typedef struct MP_sight_aim_settings MP_sight_aim_settings, *PMP_sight_aim_settings;
@@ -11572,19 +13830,47 @@ struct mp_weapon_set_text_entry {
     struct mp_weaponset_weapon * entries;
 };
 
-typedef uint vu32;
+typedef struct room_index room_index, *Proom_index;
+
+struct room_index {
+    short bitflags;
+    char model_bin_loaded;
+    char bitflags2;
+    void * ptr_point_index;
+    void * ptr_expanded_mapping_info;
+    void * ptr_secondary_expanded_mapping_info;
+    int csize_point_index_binary;
+    int csize_primary_DL_binary;
+    int csize_secondary_DL_binary;
+    int usize_point_index_binary;
+    int usize_primary_DL_binary;
+    int usize_secondary_DL_binary;
+    int cur_room_totalsize;
+    void * ptr_unique_collision_points;
+    int bitflags3;
+    char room_loaded_mask;
+    char field_35;
+    short field_36;
+    float minxbounds;
+    float minybounds;
+    float minzbounds;
+    float maxxbounds;
+    float maxybounds;
+    float maxzbounds;
+};
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/vu32 - /types.h/vu32
 
 typedef struct weapon_stats weapon_stats, *Pweapon_stats;
 
 struct weapon_stats {
     float field_0;
-    float pos_x;
-    float pos_y;
-    float pos_z;
+    struct xyzpoint position;
     float field_0x10;
     float field_0x14;
     float field_0x18;
-    int ammotype;
+    enum AMMOTYPES ammotype;
     short mag_size;
     short time_between_shots;
     char objects_shoot_through;
@@ -11678,14 +13964,6 @@ struct TLB_manager_table_entry {
 
 struct TLB_manager_table {
     struct TLB_manager_table_entry entry[128];
-};
-
-typedef struct fileentry fileentry, *Pfileentry;
-
-struct fileentry {
-    int index;
-    string * ptr_name;
-    int hw_address;
 };
 
 typedef struct $732F89B2624665A943E52F38E86E4CBC OSLogFileHdr;
@@ -11808,15 +14086,6 @@ struct struct_0 {
     int anonymous_6;
 };
 
-typedef struct lightfixture lightfixture, *Plightfixture;
-
-struct lightfixture {
-    short index;
-    short RESERVED;
-    int ptr_start_pertinent_DL;
-    int ptr_end_pertinent_DL;
-};
-
 typedef struct struct_5 struct_5, *Pstruct_5;
 
 struct struct_5 {
@@ -11825,7 +14094,8 @@ struct struct_5 {
     int anonymous_2;
 };
 
-typedef int vs32;
+
+// WARNING! conflicting data type names: /GE Current Master.h/vs32 - /types.h/vs32
 
 typedef struct struct_4 struct_4, *Pstruct_4;
 
@@ -11906,52 +14176,8 @@ struct explosion_animation {
     int count;
 };
 
-typedef struct object_standard object_standard, *Pobject_standard;
 
-struct object_standard {
-    short extrascale;
-    char hidden2;
-    char type;
-    short obj;
-    short pad;
-    u32 flags;
-    u32 flags2;
-    int runtime_ptr_obj_posdata;
-    int runtime_ptr_obj_instance_controller;
-    int runtime_MATRIX0;
-    int runtime_MATRIX1;
-    int runtime_MATRIX2;
-    int runtime_MATRIX3;
-    int runtime_MATRIX4;
-    int runtime_MATRIX5;
-    int runtime_MATRIX6;
-    int runtime_MATRIX7;
-    int runtime_MATRIX8;
-    int runtime_MATRIX9;
-    int runtime_MATRIXA;
-    int runtime_MATRIXB;
-    int runtime_MATRIXC;
-    int runtime_MATRIXD;
-    int runtime_MATRIXE;
-    int runtime_MATRIXF;
-    float runtime_x_pos;
-    float runtime_y_pos;
-    float runtime_z_pos;
-    int runtime_bitflags;
-    int ptr_allocated_collisiondata_block;
-    int field_6C;
-    float field_70;
-    short damage;
-    short maxdamage;
-    char field_78;
-    char field_79;
-    char field_7A;
-    char field_7B;
-    char field_7C;
-    char field_7D;
-    char field_7E;
-    char field_7F;
-};
+// WARNING! conflicting data type names: /GE Current Master.h/object_standard - /bondtypes.h/object_standard
 
 typedef struct MP_handicap_menu MP_handicap_menu, *PMP_handicap_menu;
 
@@ -11996,6 +14222,17 @@ typedef void (* ALOscStop)(void *);
 
 typedef u8 ALFxId;
 
+struct ALSeq_s {
+    u8 * base;
+    u8 * trackStart;
+    u8 * curPtr;
+    s32 lastTicks;
+    s32 len;
+    f32 qnpt;
+    s16 division;
+    s16 lastStatus;
+};
+
 struct ALChanState {
     struct ALInstrument * instrument;
     s16 bendRange;
@@ -12028,17 +14265,6 @@ struct $3875EDF92ACCFC55C5A87BF2DE611375 {
     ALOscStop stopOsc;
     struct ALSeqMarker * loopStart;
     struct ALSeqMarker * loopEnd;
-};
-
-struct ALSeq_s {
-    u8 * base;
-    u8 * trackStart;
-    u8 * curPtr;
-    s32 lastTicks;
-    s32 len;
-    f32 qnpt;
-    s16 division;
-    s16 lastStatus;
 };
 
 typedef struct $8A2C38822146935C7EE1F49BBD28923A $8A2C38822146935C7EE1F49BBD28923A, *P$8A2C38822146935C7EE1F49BBD28923A;
@@ -12088,9 +14314,24 @@ union OSTask {
     longlong force_structure_alignment;
 };
 
+struct SCClient_s {
+    struct SCClient_s * next;
+    OSMesgQueue * msgQ;
+};
+
 struct OSScMsg {
     short type;
     char misc[30];
+};
+
+struct OSScTask_s {
+    struct OSScTask_s * next;
+    u32 state;
+    u32 flags;
+    void * framebuffer;
+    union OSTask list;
+    OSMesgQueue * msgQ;
+    OSMesg msg;
 };
 
 struct $4DC9E63407FE56118E8436A326234A26 {
@@ -12108,21 +14349,6 @@ struct $4DC9E63407FE56118E8436A326234A26 {
     OSScTask * gfxListTail;
     OSScTask * curRSPTask;
     OSScTask * curRDPTask;
-};
-
-struct SCClient_s {
-    struct SCClient_s * next;
-    OSMesgQueue * msgQ;
-};
-
-struct OSScTask_s {
-    struct OSScTask_s * next;
-    u32 state;
-    u32 flags;
-    void * framebuffer;
-    union OSTask list;
-    OSMesgQueue * msgQ;
-    OSMesg msg;
 };
 
 typedef struct $31E12A8E501C96F6AFEABF3D9309C7AB $31E12A8E501C96F6AFEABF3D9309C7AB, *P$31E12A8E501C96F6AFEABF3D9309C7AB;
@@ -12443,6 +14669,7 @@ typedef enum controller_buttons {
     L_CBUTTONS=2,
     L_JPAD=512,
     L_TRIG=32,
+    NONE=0,
     R_CBUTTONS=1,
     R_JPAD=256,
     R_TRIG=16,
@@ -12751,35 +14978,6 @@ typedef struct $698E1586F824213C2C7D30F8DE84E678 ALSynConfig;
 
 typedef struct $EF3ACF09A692D55A7037B16E3DC74014 OSLogItem;
 
-typedef struct room_index room_index, *Proom_index;
-
-struct room_index {
-    short bitflags;
-    char model_bin_loaded;
-    char bitflags2;
-    int ptr_point_index;
-    int ptr_expanded_mapping_info;
-    int ptr_secondary_expanded_mapping_info;
-    int csize_point_index_binary;
-    int csize_primary_DL_binary;
-    int csize_secondary_DL_binary;
-    int usize_point_index_binary;
-    int usize_primary_DL_binary;
-    int usize_secondary_DL_binary;
-    int cur_room_totalsize;
-    int ptr_unique_collision_points;
-    int bitflags3;
-    char room_loaded_mask;
-    char field_35;
-    short field_36;
-    float minxbounds;
-    float minybounds;
-    float minzbounds;
-    float maxxbounds;
-    float maxybounds;
-    float maxzbounds;
-};
-
 typedef struct displaymode displaymode, *Pdisplaymode;
 
 struct displaymode {
@@ -12809,6 +15007,9 @@ struct displaymode {
 
 typedef enum LOGIC {
 } LOGIC;
+
+
+// WARNING! conflicting data type names: /GE Current Master.h/ITEM_IDS - /bondgame.h/ITEM_IDS
 
 
 // WARNING! conflicting data type names: /GE Current Master.h/ALHeap - /libaudio.h/ALHeap
@@ -13023,6 +15224,24 @@ typedef enum enum {
 #define OS_SC_NEEDS_RDP 1
 
 
+// WARNING! conflicting data type names: /memp.h/s_mempBANK - /s_mempBANK
+
+typedef struct s_mempMEMSTARTS s_mempMEMSTARTS, *Ps_mempMEMSTARTS;
+
+struct s_mempMEMSTARTS {
+    s32 bank1start;
+    s32 bank2start;
+    s32 bank3start;
+    s32 bank4start;
+    s32 bank5start;
+    s32 bank6start;
+    s32 bank7start;
+};
+
+
+// WARNING! conflicting data type names: /memp.h/s_mempMVALS - /s_mempMVALS
+
+
 // WARNING! conflicting data type names: /ultralog.h/OSLog - /GE Current Master.h/OSLog
 
 
@@ -13039,19 +15258,107 @@ typedef enum enum {
 
 typedef u32 OSYieldResult;
 
+#define M_TASK_FLAG0 1
+
+#define SPSTATUS_SIGNAL7_SET 16384
+
+#define M_TASK_FLAG1 2
+
+#define SPSTATUS_SIGNAL3_SET 1024
+
+#define OS_YIELD_DATA_SIZE 2304
+
+#define M_HVQTASK 6
+
+#define SPSTATUS_SET_SSTEP 64
+
+#define SPSTATUS_SIGNAL5_SET 4096
+
+#define SPSTATUS_IO_FULL 16
+
+#define SPSTATUS_SIGNAL1_SET 256
+
+#define SPSTATUS_SET_INTR 16
+
+#define OS_TASK_YIELDED 1
+
+#define OS_TASK_DP_WAIT 2
+
+#define SPSTATUS_SINGLE_STEP 32
+
+#define SPSTATUS_SET_HALT 2
+
+#define SPSTATUS_DMA_FULL 8
+
+#define SPSTATUS_CLEAR_BROKE 4
+
+#define SPSTATUS_SIGNAL6_SET 8192
+
+#define SPSTATUS_INTERRUPT_ON_BREAK 64
+
+#define SPSTATUS_CLEAR_INTR 8
+
+#define SPSTATUS_DMA_BUSY 4
+
+#define SPSTATUS_CLEAR_SSTEP 32
+
+#define SPSTATUS_SIGNAL4_SET 2048
+
+#define SPSTATUS_CLEAR_INTR_ON_BREAK 128
+
+#define M_HVQMTASK 7
+
 #define OS_TASK_USR3 128
 
 #define OS_TASK_USR2 64
 
 #define OS_TASK_USR1 32
 
-#define OS_YIELD_DATA_SIZE 2304
+#define SPSTATUS_BROKE 2
+
+#define SPSTATUS_CLEAR_HALT 1
+
+#define SPSTATUS_SIGNAL0_SET 128
+
+#define SPSTATUS_SET_SIGNAL6 8388608
+
+#define SPSTATUS_SET_SIGNAL5 1048576
 
 #define OS_YIELD_AUDIO_SIZE 1024
 
-#define OS_TASK_YIELDED 1
+#define SPSTATUS_SET_SIGNAL7 33554432
 
-#define OS_TASK_DP_WAIT 2
+#define SPSTATUS_SET_SIGNAL2 16384
+
+#define SPSTATUS_SET_SIGNAL1 4096
+
+#define SPSTATUS_SET_SIGNAL4 262144
+
+#define SPSTATUS_SET_SIGNAL3 65536
+
+#define SPSTATUS_HALT 1
+
+#define SPSTATUS_SIGNAL2_SET 512
+
+#define SPSTATUS_CLEAR_SIGNAL2 8192
+
+#define SPSTATUS_CLEAR_SIGNAL3 32768
+
+#define SPSTATUS_CLEAR_SIGNAL4 131072
+
+#define SPSTATUS_CLEAR_SIGNAL5 524288
+
+#define SPSTATUS_CLEAR_SIGNAL0 512
+
+#define SPSTATUS_CLEAR_SIGNAL1 2048
+
+#define SPSTATUS_SET_SIGNAL0 1024
+
+#define SPSTATUS_CLEAR_SIGNAL6 2097152
+
+#define SPSTATUS_CLEAR_SIGNAL7 16777216
+
+#define SPSTATUS_SET_INTR_ON_BREAK 256
 
 #define OS_TASK_USR0 16
 
@@ -13067,6 +15374,13 @@ typedef struct ldiv_t ldiv_t, *Pldiv_t;
 struct ldiv_t {
     long quot;
     long rem;
+};
+
+typedef struct OSEepromUnknownStruct0 OSEepromUnknownStruct0, *POSEepromUnknownStruct0;
+
+struct OSEepromUnknownStruct0 {
+    u16 unk00;
+    u16 unk01;
 };
 
 typedef struct amConfig amConfig, *PamConfig;
@@ -13123,17 +15437,17 @@ typedef struct AMDMAState AMDMAState, *PAMDMAState;
 
 typedef struct AMDMABuffer AMDMABuffer, *PAMDMABuffer;
 
-struct AMDMAState {
-    u8 initialized;
-    struct AMDMABuffer * firstUsed;
-    struct AMDMABuffer * firstFree;
-};
-
 struct AMDMABuffer {
     ALLink node;
     u32 startAddr;
     u32 lastFrame;
     char * ptr;
+};
+
+struct AMDMAState {
+    u8 initialized;
+    struct AMDMABuffer * firstUsed;
+    struct AMDMABuffer * firstFree;
 };
 
 typedef struct AudioInfo_s AudioInfo_s, *PAudioInfo_s;
@@ -13191,6 +15505,185 @@ typedef struct evp_pkey_ctx_st EVP_PKEY_CTX;
 struct evp_pkey_ctx_st {
 };
 
+
+// WARNING! conflicting data type names: /vi.h/OSViFieldRegs - /os.h/OSViFieldRegs
+
+
+// WARNING! conflicting data type names: /vi.h/OSViCommonRegs - /os.h/OSViCommonRegs
+
+typedef struct OSViContext OSViContext, *POSViContext;
+
+
+// WARNING! conflicting data type names: /vi.h/OSViMode - /os.h/OSViMode
+
+struct OSViContext {
+    u16 unk00;
+    u16 retraceCount;
+    void * buffer;
+    struct OSViMode * unk08;
+    u32 features;
+    OSMesgQueue * mq;
+    OSMesg * msg;
+    u32 unk18;
+    u32 unk1c;
+    u32 unk20;
+    f32 unk24;
+    u16 unk28;
+    u32 unk2c;
+};
+
+#define OS_VI_PAL_HPF2 27
+
+#define OS_VI_MPAL_HPN1 36
+
+#define OS_VI_PAL_HPF1 23
+
+#define OS_VI_MPAL_HPN2 40
+
+#define OS_VI_UNK100 256
+
+#define OS_VI_NTSC_LAN1 2
+
+#define OS_VI_NTSC_LAN2 6
+
+#define OS_VI_FPAL_LAN2 48
+
+#define OS_VI_FPAL_LAN1 44
+
+#define OS_VI_PAL_HPN2 26
+
+#define OS_VI_PAL_HPN1 22
+
+#define OS_VI_MPAL_HPF1 37
+
+#define OS_VI_MPAL_HPF2 41
+
+#define OS_VI_NTSC_LAF1 3
+
+#define OS_VI_NTSC_LAF2 7
+
+#define OS_VI_GAMMA_DITHER 4
+
+#define OS_VI_FPAL_LAF2 49
+
+#define OS_VI_NTSC_HPF2 13
+
+#define OS_VI_FPAL_LAF1 45
+
+#define OS_VI_DIVOT 16
+
+#define OS_VI_NTSC_HPF1 9
+
+#define OS_VI_NTSC_HPN2 12
+
+#define OS_VI_NTSC_HPN1 8
+
+#define OS_VI_GAMMA 8
+
+#define OS_VI_GAMMA_ON 1
+
+#define OS_VI_UNK200 512
+
+#define OS_VI_FPAL_HPN2 54
+
+#define OS_VI_FPAL_HPN1 50
+
+#define OS_VI_FPAL_HPF2 55
+
+#define OS_VI_FPAL_HPF1 51
+
+#define OS_VI_PAL_LAF1 17
+
+#define OS_VI_MPAL_LAN1 30
+
+#define OS_VI_MPAL_LAN2 34
+
+#define OS_VI_PAL_LAF2 21
+
+#define OS_VI_GAMMA_DITHER_ON 4
+
+#define OS_VI_PAL_LAN1 16
+
+#define OS_VI_MPAL_LAF1 31
+
+#define OS_VI_PAL_LAN2 20
+
+#define OS_VI_MPAL_LAF2 35
+
+#define OS_VI_MPAL_LPN1 28
+
+#define OS_VI_PAL_LPF2 19
+
+#define OS_VI_PAL_LPF1 15
+
+#define OS_VI_MPAL_LPN2 32
+
+#define OS_VI_MPAL_LPF1 29
+
+#define OS_VI_PAL_LPN2 18
+
+#define OS_VI_PAL_LPN1 14
+
+#define OS_VI_DITHER_FILTER_OFF 128
+
+#define OS_VI_MPAL_LPF2 33
+
+#define OS_VI_FPAL_HAN1 52
+
+#define OS_VI_DIVOT_OFF 32
+
+#define OS_VI_FPAL_HAF1 53
+
+#define OS_VI_GAMMA_DITHER_OFF 8
+
+#define OS_VI_GAMMA_OFF 2
+
+#define OS_VI_MPAL_HAF1 39
+
+#define OS_VI_DITHER_FILTER 65536
+
+#define OS_VI_DIVOT_ON 16
+
+#define OS_VI_NTSC_LPN1 0
+
+#define OS_VI_NTSC_LPN2 4
+
+#define OS_VI_FPAL_LPN2 46
+
+#define OS_VI_FPAL_LPN1 42
+
+#define OS_VI_NTSC_LPF1 1
+
+#define OS_VI_NTSC_LPF2 5
+
+#define OS_VI_NTSC_HAF1 11
+
+#define OS_VI_FPAL_LPF2 47
+
+#define OS_VI_FPAL_LPF1 43
+
+#define OS_VI_NTSC_HAN1 10
+
+#define OS_VI_DITHER_FILTER_ON 64
+
+#define OS_VI_PAL_HAF1 25
+
+#define OS_VI_MPAL_HAN1 38
+
+#define OS_VI_PAL_HAN1 24
+
+#define TV_TYPE_PAL 0
+
+#define RESET_TYPE_BOOT_DISK 2
+
+#define TV_TYPE_MPAL 2
+
+#define RESET_TYPE_COLD_RESET 0
+
+#define TV_TYPE_NTSC 1
+
+#define RESET_TYPE_NMI 1
+
 #define LOG_SCHEDULE_GFX_TASK 101
 
 #define LOG_RDP_DONE 102
@@ -13221,29 +15714,67 @@ struct evp_pkey_ctx_st {
 
 #define SCHEDULER_PRIORITY 13
 
-typedef longlong vs64;
 
-typedef ushort vu16;
-
-typedef char vs8;
-
-typedef uchar vu8;
+// WARNING! conflicting data type names: /ultratypes.h/vs64 - /types.h/vs64
 
 
-// WARNING! conflicting data type names: /ultratypes.h/vu32 - /GE Current Master.h/vu32
-
-typedef ulonglong vu64;
-
-typedef short vs16;
+// WARNING! conflicting data type names: /ultratypes.h/vu16 - /types.h/vu16
 
 
-// WARNING! conflicting data type names: /ultratypes.h/vs32 - /GE Current Master.h/vs32
+// WARNING! conflicting data type names: /ultratypes.h/vs8 - /types.h/vs8
 
-#define FALSE 0
 
-#define TRUE 1
+// WARNING! conflicting data type names: /ultratypes.h/vu8 - /types.h/vu8
 
-#define NULL 0
+
+// WARNING! conflicting data type names: /ultratypes.h/vu32 - /types.h/vu32
+
+
+// WARNING! conflicting data type names: /ultratypes.h/vu64 - /types.h/vu64
+
+
+// WARNING! conflicting data type names: /ultratypes.h/vs16 - /types.h/vs16
+
+
+// WARNING! conflicting data type names: /ultratypes.h/vs32 - /types.h/vs32
+
+
+// WARNING! conflicting data type names: /mema.h/s_mem_alloc_table - /s_mem_alloc_table
+
+
+// WARNING! conflicting data type names: /mema.h/s_mem_alloc_entry - /s_mem_alloc_entry
+
+#define R_JPAD 256
+
+#define A_BUTTON 32768
+
+#define L_CBUTTONS 2
+
+#define U_JPAD 2048
+
+#define Z_TRIG 8192
+
+#define D_CBUTTONS 4
+
+#define B_BUTTON 16384
+
+#define D_JPAD 1024
+
+#define START_BUTTON 4096
+
+#define R_CBUTTONS 1
+
+#define U_CBUTTONS 8
+
+#define DUMMY_1 128
+
+#define DUMMY_2 64
+
+#define R_TRIG 16
+
+#define L_TRIG 32
+
+#define L_JPAD 512
 
 typedef struct Apan Apan, *PApan;
 
@@ -13342,11 +15873,11 @@ typedef struct _struct_193 _struct_193, *P_struct_193;
 
 typedef struct _struct_194 _struct_194, *P_struct_194;
 
-struct _struct_194 {
+struct _struct_193 {
     short type;
 };
 
-struct _struct_193 {
+struct _struct_194 {
     short type;
 };
 
@@ -13380,6 +15911,9 @@ struct OSProf {
     u32 * text_end;
 };
 
+
+// WARNING! conflicting data type names: /os.h/OSThread_s - /thread.h/OSThread_s
+
 typedef struct OSPfsState OSPfsState, *POSPfsState;
 
 struct OSPfsState {
@@ -13401,16 +15935,8 @@ struct OSContPad {
     u8 errno;
 };
 
-typedef struct __OSBlockInfo __OSBlockInfo, *P__OSBlockInfo;
 
-struct __OSBlockInfo {
-    u32 errStatus;
-    void * dramAddr;
-    void * C2Addr;
-    u32 sectorSize;
-    u32 C1ErrNum;
-    u32 C1ErrSector[4];
-};
+// WARNING! conflicting data type names: /os.h/__OSBlockInfo - /pi.h/__OSBlockInfo
 
 typedef struct OSContRamIo OSContRamIo, *POSContRamIo;
 
@@ -13424,11 +15950,8 @@ struct OSContRamIo {
 
 typedef struct OSDevMgr OSDevMgr, *POSDevMgr;
 
-typedef struct OSPiHandle_s OSPiHandle_s, *POSPiHandle_s;
 
-typedef struct OSPiHandle_s OSPiHandle;
-
-typedef struct __OSTranxInfo __OSTranxInfo, *P__OSTranxInfo;
+// WARNING! conflicting data type names: /os.h/OSPiHandle - /pi.h/OSPiHandle
 
 struct OSDevMgr {
     s32 active;
@@ -13438,29 +15961,6 @@ struct OSDevMgr {
     OSMesgQueue * acsQueue;
     s32 (* dma)(s32, u32, void *, u32);
     s32 (* edma)(OSPiHandle *, s32, u32, void *, u32);
-};
-
-struct __OSTranxInfo {
-    u32 cmdType;
-    u16 transferMode;
-    u16 blockNum;
-    s32 sectorNum;
-    u32 devAddr;
-    u32 bmCtlShadow;
-    u32 seqCtlShadow;
-    struct __OSBlockInfo block[2];
-};
-
-struct OSPiHandle_s {
-    struct OSPiHandle_s * next;
-    u8 type;
-    u8 latency;
-    u8 pageSize;
-    u8 relDuration;
-    u8 pulse;
-    u32 baseAddress;
-    u32 speed;
-    struct __OSTranxInfo transferInfo;
 };
 
 typedef struct OSPfs OSPfs, *POSPfs;
@@ -13494,14 +15994,11 @@ struct OSTimer_s {
     OSMesg msg;
 };
 
-typedef struct OSIoMesgHdr OSIoMesgHdr, *POSIoMesgHdr;
 
-struct OSIoMesgHdr {
-    u16 type;
-    u8 pri;
-    u8 status;
-    OSMesgQueue * retQueue;
-};
+// WARNING! conflicting data type names: /os.h/OSId - /thread.h/OSId
+
+
+// WARNING! conflicting data type names: /os.h/OSIoMesgHdr - /pi.h/OSIoMesgHdr
 
 typedef struct OSContStatus OSContStatus, *POSContStatus;
 
@@ -13530,35 +16027,41 @@ typedef enum enumOSEvent {
     OS_EVENT_VI=7
 } enumOSEvent;
 
-typedef struct OSIoMesg OSIoMesg, *POSIoMesg;
 
-struct OSIoMesg {
-    struct OSIoMesgHdr hdr;
-    void * dramAddr;
-    u32 devAddr;
-    u32 size;
-    OSPiHandle * piHandle;
+// WARNING! conflicting data type names: /os.h/OSIoMesg - /pi.h/OSIoMesg
+
+
+// WARNING! conflicting data type names: /os.h/__OSThreadContext - /thread.h/__OSThreadContext
+
+
+// WARNING! conflicting data type names: /os.h/OSPiHandle_s - /pi.h/OSPiHandle_s
+
+
+// WARNING! conflicting data type names: /os.h/OSTimer - /time.h/OSTimer
+
+typedef struct _struct_2 _struct_2, *P_struct_2;
+
+struct _struct_2 {
+    f32 f_odd;
+    f32 f_even;
 };
 
-typedef struct OSTimer_s OSTimer;
 
-typedef u32 OSEvent;
+// WARNING! conflicting data type names: /os.h/OSEvent - /message.h/OSEvent
 
-typedef struct OSPiInfo OSPiInfo, *POSPiInfo;
 
-struct OSPiInfo {
-    u8 type;
-    u8 status;
-    u32 address;
-};
+// WARNING! conflicting data type names: /os.h/__OSTranxInfo - /pi.h/__OSTranxInfo
+
+
+// WARNING! conflicting data type names: /os.h/OSPiInfo - /pi.h/OSPiInfo
+
+
+// WARNING! conflicting data type names: /os.h/__OSfp - /thread.h/__OSfp
 
 typedef u32 OSPageMask;
 
-typedef u32 OSIntMask;
 
-#define OS_VI_PAL_HPF2 27
-
-#define OS_VI_PAL_HPF1 23
+// WARNING! conflicting data type names: /os.h/OSIntMask - /interrupt.h/OSIntMask
 
 #define OS_MESG_TYPE_BASE 10
 
@@ -13566,99 +16069,37 @@ typedef u32 OSIntMask;
 
 #define OS_MESG_TYPE_LOOPBACK 10
 
-#define U_CBUTTONS 8
-
 #define CONT_RELATIVE 2
 
 #define OS_EVENT_RDB_DATA_DONE 17
 
 #define CONT_START 4096
 
-#define OS_PRIORITY_MAX 255
-
-#define OS_PRIORITY_RMONSPIN 200
-
-#define L_JPAD 512
-
 #define CONT_EEPROM 32768
 
 #define LEO_BLOCK_MODE 1
 
-#define OS_STATE_RUNNING 4
-
 #define OS_VI_BIT_32PIXEL 128
 
-#define OS_VI_MPAL_LAN1 30
-
-#define L_TRIG 32
-
-#define OS_VI_MPAL_LAN2 34
-
 #define PFS_ERR_ID_FATAL 10
-
-#define OS_EVENT_CART 2
-
-#define OS_PRIORITY_APPMAX 127
-
-#define OS_VI_MPAL_LPF1 29
-
-#define OS_VI_MPAL_LPF2 33
 
 #define OS_IM_PI 1049601
 
 #define PFS_ERR_INVALID 5
 
-#define OS_VI_DIVOT_OFF 32
-
-#define OS_READ 0
-
-#define OS_PRIORITY_RMON 250
-
-#define OS_WRITE 1
-
-#define OS_VI_GAMMA_OFF 2
-
 #define OS_SIM_STACKSIZE 4096
-
-#define Z_TRIG 8192
 
 #define OS_MESG_TYPE_DMAWRITE 12
 
-#define OS_MESG_PRI_NORMAL 0
-
-#define OS_MESG_NOBLOCK 0
-
-#define OS_MESG_BLOCK 1
-
-#define OS_VI_NTSC_HAF1 11
-
 #define OS_VI_BIT_NONINTERLACE 1
-
-#define OS_STATE_STOPPED 1
-
-#define OS_PRIORITY_VIMGR 254
-
-#define OS_STATE_RUNNABLE 2
 
 #define BLOCKSIZE 32
 
 #define EEPROM_MAXBLOCKS 64
 
-#define OS_VI_PAL_HAN1 24
-
 #define MAXCONTROLLERS 4
 
-#define OS_EVENT_FAULT 12
-
-#define OS_VI_MPAL_HPN1 36
-
 #define OS_VI_BIT_16PIXEL 64
-
-#define OS_VI_MPAL_HPN2 40
-
-#define OS_VI_PAL_HPN2 26
-
-#define OS_VI_PAL_HPN1 22
 
 #define OS_PM_1M 2088960
 
@@ -13666,17 +16107,11 @@ typedef u32 OSIntMask;
 
 #define BOOT_ADDRESS_COSIM 2147491840
 
-#define OS_VI_NTSC_HPF2 13
-
-#define OS_VI_NTSC_HPF1 9
-
 #define CONT_OVERRUN_ERROR 4
 
 #define OS_IM_ALL 4194049
 
 #define PFS_ERR_EXIST 9
-
-#define OS_PRIORITY_IDLE 0
 
 #define OS_IM_CPU 65281
 
@@ -13692,10 +16127,6 @@ typedef u32 OSIntMask;
 
 #define PFS_ERR_NOPACK 1
 
-#define OS_VI_GAMMA_ON 1
-
-#define OS_PRIORITY_SIMGR 140
-
 #define OS_PM_16M 33546240
 
 #define PFS_INITIALIZED 1
@@ -13704,47 +16135,19 @@ typedef u32 OSIntMask;
 
 #define OS_NUM_EVENTS.conflict 15
 
-#define OS_EVENT_PI 8
-
 #define OS_IM_SI 132097
-
-#define OS_VI_PAL_LAF1 17
 
 #define OS_MESG_TYPE_COUNTER 14
 
-#define OS_VI_PAL_LAF2 21
-
-#define OS_VI_GAMMA_DITHER_ON 4
-
-#define OS_VI_MPAL_LAF1 31
-
-#define OS_VI_MPAL_LAF2 35
-
-#define OS_VI_PAL_LPF2 19
-
-#define OS_VI_PAL_LPF1 15
-
 #define PFS_WRITE 1
-
-#define L_CBUTTONS 2
-
-#define OS_EVENT_COUNTER 3
 
 #define OS_PM_256K 516096
 
-#define OS_VI_GAMMA_DITHER_OFF 8
-
 #define LEO_SECTOR_MODE 3
-
-#define OS_EVENT_SP 4
 
 #define OS_VI_BIT_LORES 256
 
-#define OS_EVENT_SI 5
-
 #define CONT_DOWN 1024
-
-#define OS_MESG_PRI_HIGH 1
 
 #define OS_IM_VI 525313
 
@@ -13762,13 +16165,7 @@ typedef u32 OSIntMask;
 
 #define OS_IM_SW1 1281
 
-#define OS_VI_NTSC_HAN1 10
-
-#define OS_VI_DITHER_FILTER_ON 64
-
 #define PFS_ERR_NEW_PACK 2
-
-#define OS_VI_MPAL_HAN1 38
 
 #define OS_MESG_TYPE_VRETRACE 13
 
@@ -13780,27 +16177,9 @@ typedef u32 OSIntMask;
 
 #define OS_OTHERS 2
 
-#define OS_EVENT_VI 7
-
 #define OS_EVENT_RDB_LOG_DONE 16
 
-#define U_JPAD 2048
-
 #define PFS_ERR_INCONSISTENT 3
-
-#define B_BUTTON 16384
-
-#define OS_VI_MPAL_HPF1 37
-
-#define OS_VI_MPAL_HPF2 41
-
-#define OS_VI_NTSC_LAF1 3
-
-#define OS_VI_NTSC_LAF2 7
-
-#define OS_VI_NTSC_HPN2 12
-
-#define OS_VI_NTSC_HPN1 8
 
 #define PROF_MIN_INTERVAL 50
 
@@ -13830,8 +16209,6 @@ typedef u32 OSIntMask;
 
 #define CONT_G 8192
 
-#define OS_VI_PAL_LAN1 16
-
 #define CONT_A 32768
 
 #define OS_TV_NTSC 1
@@ -13842,8 +16219,6 @@ typedef u32 OSIntMask;
 
 #define CONT_RIGHT 256
 
-#define OS_VI_PAL_LAN2 20
-
 #define CONT_D 4
 
 #define OS_VI_BIT_NORMALINTERLACE 4
@@ -13852,15 +16227,9 @@ typedef u32 OSIntMask;
 
 #define CONT_L 32
 
-#define OS_VI_PAL_LPN2 18
-
 #define CONT_R 16
 
-#define OS_VI_PAL_LPN1 14
-
 #define OS_EVENT_RDB_READ_DONE 15
-
-#define R_CBUTTONS 1
 
 #define OS_FLAG_CPU_BREAK 1
 
@@ -13872,8 +16241,6 @@ typedef u32 OSIntMask;
 
 #define OS_VI_BIT_HIRES 512
 
-#define OS_VI_MPAL_HAF1 39
-
 #define OS_EVENT_RDB_FLUSH_PROF 21
 
 #define PFS_ONE_PAGE 8
@@ -13882,27 +16249,11 @@ typedef u32 OSIntMask;
 
 #define LEO_TRACK_MODE 2
 
-#define D_CBUTTONS 4
-
-#define START_BUTTON 4096
-
 #define RCP_IMASKSHIFT 16
-
-#define OS_VI_DIVOT_ON 16
 
 #define OS_MESG_TYPE_EDMAREAD 15
 
-#define OS_VI_NTSC_LPF1 1
-
-#define OS_VI_NTSC_LPF2 5
-
-#define A_BUTTON 32768
-
 #define OS_VI_BIT_DEFLICKINTERLACE 8
-
-#define OS_VI_NTSC_LAN1 2
-
-#define OS_VI_NTSC_LAN2 6
 
 #define PFS_ERR_CONTRFAIL 4
 
@@ -13916,12 +16267,6 @@ typedef u32 OSIntMask;
 
 #define OS_VI_BIT_INTERLACE 2
 
-#define OS_EVENT_SP_BREAK 11
-
-#define OS_EVENT_SW2 1
-
-#define OS_EVENT_SW1 0
-
 #define OS_NUM_EVENTS 23
 
 #define OS_IM_CART 3073
@@ -13930,37 +16275,17 @@ typedef u32 OSIntMask;
 
 #define OS_IM_AI 263169
 
-#define OS_PRIORITY_PIMGR 150
-
 #define OS_VI_BIT_NTSC 1024
-
-#define R_TRIG 16
 
 #define OS_MESG_TYPE_DMAREAD 11
 
 #define OS_IM_NONE 1
 
-#define OS_VI_MPAL_LPN1 28
-
-#define OS_VI_MPAL_LPN2 32
-
 #define OS_EVENT_RDB_DBG_DONE 20
 
 #define OS_EVENT_RDB_FREE_RAMROM 19
 
-#define OS_VI_DITHER_FILTER_OFF 128
-
-#define OS_EVENT_AI 6
-
-#define D_JPAD 1024
-
-#define OS_EVENT_CPU_BREAK 10
-
 #define OS_VI_BIT_POINTSAMPLE 32
-
-#define OS_STATE_WAITING 8
-
-#define OS_EVENT_PRENMI 14
 
 #define RCP_IMASK 4128768
 
@@ -13968,29 +16293,17 @@ typedef u32 OSIntMask;
 
 #define PFS_CREATE 2
 
-#define R_JPAD 256
-
 #define BOOT_ADDRESS_EMU 536936448
 
 #define OS_PIM_STACKSIZE 4096
 
 #define CONT_JOYPORT 4
 
-#define OS_EVENT_THREADSTATUS 13
-
 #define PFS_ERR_DEVICE 11
-
-#define OS_VI_NTSC_LPN1 0
-
-#define OS_VI_NTSC_LPN2 4
 
 #define OS_IM_COUNTER 33793
 
-#define OS_EVENT_DP 9
-
 #define OS_TV_MPAL 2
-
-#define OS_VI_PAL_HAF1 25
 
 #define OS_IM_RDBWRITE 9217
 
@@ -14646,6 +16959,9 @@ struct _Pft {
 
 #define _FMI 4
 
+
+// WARNING! conflicting data type names: /tlb.h/OSPageMask - /os.h/OSPageMask
+
 #define TASKBASELO 4224
 
 #define DRAM_STACK_LO 64512
@@ -14683,6 +16999,180 @@ struct _Pft {
 #define rsp_DRAM_STACK_HI 32
 
 #define rsp_DRAM_STACK_LO 0
+
+
+// WARNING! conflicting data type names: /bondtypes.h/sImageTableEntry - /sImageTableEntry
+
+typedef struct objective_entry objective_entry, *Pobjective_entry;
+
+
+// WARNING! conflicting data type names: /bondtypes.h/watchMenuObjectiveText - /auto_structs/watchMenuObjectiveText
+
+struct objective_entry {
+    u32 id;
+    enum WATCH_BRIEFING_PAGE menu;
+    u16 reserved;
+    u16 text;
+    struct watchMenuObjectiveText * nextentry;
+};
+
+typedef struct CHRdata CHRdata, *PCHRdata;
+
+struct CHRdata {
+    u16 chrnum;
+    s8 accuracyrating;
+    s8 speedrating;
+    u8 firecountleft;
+    u8 firecountright;
+    s8 headnum;
+    s8 actiontype;
+    s8 sleep;
+    s8 invalidmove;
+    s8 numclosearghs;
+    s8 numarghs;
+    u8 fadealpha;
+    s8 arghrating;
+    s8 aimendcount;
+    s8 bodynum;
+    u8 grenadeprob;
+    s8 flinchcnt;
+    s16 hidden;
+    s32 chrflags;
+    void * pad;
+    void * model;
+    void * field_20;
+    f32 chrwidth;
+    f32 chrheight;
+    void * bondpos;
+    int field_30;
+    short field_34;
+    char field_36;
+    char field_37;
+    char field_38;
+    char field_39;
+    char field_3A;
+    char field_3B;
+    int path_target_position;
+    int field_40;
+    int field_44;
+    int field_48;
+    int field_4C;
+    int field_50;
+    int field_54;
+    char type_of_motion;
+    char distance_counter_or_something;
+    short distance_to_target;
+    int field_5C;
+    int target_position;
+    int field_64;
+    int field_68;
+    int field_6C;
+    int path_segment_coverage;
+    int path_segment_length;
+    int field_78;
+    int field_7C;
+    int field_80;
+    int field_84;
+    int field_88;
+    int field_8C;
+    int field_90;
+    int segment_coverage;
+    int segment_length;
+    int field_9C;
+    int field_A0;
+    f32 sumground;
+    f32 manground;
+    f32 ground;
+    f32 fallspeed[3];
+    f32 prevpos[3];
+    s32 lastwalk60;
+    s32 lastmoveok60;
+    f32 visionrange;
+    s32 lastseetarget60;
+    f32 lastvisibletarg[3];
+    void * field_E4;
+    s32 timeshooter;
+    f32 hearingscale;
+    s32 lastheartarget60;
+    u8 shadecol[4];
+    u8 nextcol[4];
+    f32 damage;
+    f32 maxdamage;
+    void * ailist;
+    u16 aioffset;
+    u16 aireturnlist;
+    u8 flags;
+    u8 flags2;
+    u8 BITFIELD;
+    u8 random;
+    s32 timer60;
+    u16 padpreset1;
+    u16 chrpreset1;
+    u16 chrseeshot;
+    u16 chrseedie;
+    f32 field_11C[2];
+    f32 field_124[2];
+    f32 field_12C[2];
+    int field_134;
+    int field_138;
+    f32 shotbondsum;
+    f32 aimuplshoulder;
+    f32 aimuprshoulder;
+    f32 aimupback;
+    f32 aimsideback;
+    f32 aimendlshoulder;
+    f32 aimendrshoulder;
+    f32 aimendback;
+    f32 aimendsideback;
+    int * handle_positiondata[2];
+    int * ptr_SEbuffer1;
+    int * ptr_SEbuffer2;
+    int * ptr_SEbuffer3;
+    int * ptr_SEbuffer4;
+    int field_178;
+    int field_17C;
+    char field_180;
+    char field_181;
+    char field_182;
+    char field_183;
+    int field_184;
+    int field_188;
+    int field_18C;
+    int field_190;
+    int field_194;
+    int field_198;
+    int field_19C;
+    int field_1A0;
+    int field_1A4;
+    int field_1A8;
+    char field_1AC;
+    char field_1AD;
+    char field_1AE;
+    char field_1AF;
+    int field_1B0;
+    int field_1B4;
+    int field_1B8;
+    int field_1BC;
+    int field_1C0;
+    int field_1C4;
+    int field_1C8;
+    int field_1CC;
+    int field_1D0;
+    int field_1D4;
+    int * handle_positiondata_hat;
+};
+
+typedef struct rgba_valf32 rgba_valf32, *Prgba_valf32;
+
+struct rgba_valf32 {
+    f32 r;
+    f32 g;
+    f32 b;
+    f32 a;
+};
+
+
+// WARNING! conflicting data type names: /bondtypes.h/sGlobalImageTable - /auto_structs/sGlobalImageTable
 
 #define MIN_PART 3
 
@@ -15029,7 +17519,6 @@ int init(EVP_PKEY_CTX *ctx);
 void * set_stack_entry(void *stack,s32 size);
 void set_hw_address_and_unknown(void);
 void thread1_idle(void);
-void dummy_70000730(void);
 void start_idle_thread(void);
 void start_rmon_thread(void);
 void init_scheduler(void);
@@ -15041,8 +17530,8 @@ void permit_stderr(BOOL flag);
 void setUserCompareValue(u32 value);
 void CheckDisplayErrorBuffer(void *frameBufPtr);
 void CheckDisplayErrorBufferEvery16Frames(u32 framecount);
-void osCreateLog(OSLog *log,u32 *base,s32 len);
-void osCreateScheduler(OSSched *s,void *stack,OSPri priority,u8 mode,u8 numFields);
+void setcurrentcount(void);
+void osCreateScheduler(OSSched *s,void *stack,u8 mode,u8 numFields);
 void osScAddClient(OSSched *s,OSScClient *c,OSMesgQueue *msgQ);
 void osScRemoveClient(OSSched *s,OSScClient *c);
 OSMesgQueue * osScGetCmdQ(OSSched *s);
@@ -15089,12 +17578,12 @@ void video_related_7(void);
 void video_related_8(void);
 void video_related_9(float param_1);
 void receive_vi_c_msgs(int msgcount);
-void setVideoWidthHeightToMode(int videomode);
+void setVideoWidthHeightToMode(char videomode);
 void set_coloroutputmode_16bit(void);
 void set_coloroutputmode_32bit(void);
-int get_video_settings2_frameb(void);
-int get_video_settings1_frameb(void);
-void set_video_settings2_frameb(int framebuffer);
+u8 * get_video_settings2_frameb(void);
+u8 * get_video_settings1_frameb(void);
+void set_video_settings2_frameb(u8 *framebuffer);
 ulonglong get_80060824(void);
 uint * proc_70003C58(uint *param_1);
 undefined4 * proc_70003EB4(undefined4 *param_1);
@@ -15108,7 +17597,7 @@ void set_video2_settings_offset_18_1A(short param_1,short param_2);
 short get_video2_settings_offset_18(void);
 short get_video2_settings_offset_1A(void);
 void set_video2_text_clip_size(short txtClipW,short txtClipH);
-short get_video2_settings_txtClipW(void);
+s16 get_video2_settings_txtClipW(void);
 short get_video2_settings_txtClipH(void);
 void set_video2_width_height(short width,short height);
 short get_video2_settings_width(void);
@@ -15117,17 +17606,17 @@ void set_video2_ulx_uly(short ulx,short uly);
 short get_video2_settings_ulx(void);
 short get_video2_settings_uly(void);
 void set_video2_settings_offset_24(int param_1);
-void video_related_1F(f32 param_1);
+void setvideo_far(f32 param_1);
 void video_related_21(f32 param_1);
 undefined4 video_related_23(void);
 void video_related_24(float param_1,float param_2,float param_3);
-void set_page_height(f32 aspect,f32 param_2,f32 param_3);
+void set_page_height(f32 aspect,f32 height);
 void video_related_27(undefined4 *param_1);
 undefined4 * set_setfillcolor(undefined4 *DL,uint red,uint green,int blue);
-u32 indy_grab_jpg_16bit(void);
-u32 indy_grab_jpg_32bit(void);
-u32 indy_grab_rgb_16bit(void);
-u32 indy_grab_rgb_32bit(void);
+void indy_grab_jpg_16bit(void);
+void indy_grab_jpg_32bit(void);
+void indy_grab_rgb_16bit(void);
+void indy_grab_rgb_32bit(void);
 int * return_match_in_debug_notice_list(char *name,char *data);
 void get_entry_of_size_in_debug_notice_list(int size);
 void add_new_entry_to_debug_notice_list(dword name,dword data);
@@ -15184,95 +17673,94 @@ void audio_related(void *datatable,int numsamples);
 void setupaudio(void);
 void musicTrack1Play(MUSIC_TRACKS track);
 void musicTrack1Stop(void);
-ulonglong get_music1len(void);
+ulonglong get_music1vol(void);
 void musicTrack1Vol(s16 param_1);
 void music_related_0(void);
 void music_related_1(f32 rate);
 void music_related_3(float rate,s32 param_2,short length);
 void music_related_2nd_block(int param_1);
-void music_related_2nd_block_0(void);
-ulonglong get_music2len(void);
-void musicTrack2Vol(ulonglong param_1);
+void musicTrack2Stop(void);
+ulonglong get_music2vol(void);
+void musicTrack2Vol(s16 param_1);
 void music_related_5(void);
 void music_related_6(float param_1);
 void music_related_8(float param_1,undefined8 param_2,short param_3);
 void music_related_3rd_block(int param_1);
-void music_related_3rd_block_0(void);
-ulonglong get_music3len(void);
-void music_related_3rd_block_1(ulonglong param_1);
+void musicTrack3Stop(void);
+ulonglong get_music3vol(void);
+void musicTrack3Vol(ulonglong param_1);
 void music_related_10(void);
 void music_related_11(float param_1);
 void music_related_13(float param_1,undefined8 param_2,short param_3);
 void music_related_15(void);
 void music_related_16(uint *param_1);
-void music_related_17(int param_1);
-void music_related_18(int param_1,ushort *param_2);
+ALMicroTime _sndpVoiceHandler(ALSndPlayer *node);
+void _handleEvent(ALSndPlayer *sndp,u32 *event);
 void music_related_19(int **param_1);
 void music_related_20(int param_1);
-void music_related_21(int **param_1,int *param_2,ushort param_3);
+void _removeEvents(ALEventQueue *evtq,u32 *state);
 uint music_related_22(short *param_1,short *param_2);
-int ** music_related_23(undefined8 param_1,int *param_2);
+ALLink * music_related_23(void *buffer,ALLink_s *param_2);
 void music_related_24(int **param_1);
 void music_related_25(int param_1,undefined param_2);
-ulonglong music_related_26(int param_1);
-int ** play_sfx_a1(void *buffer,short entry,sfxdata *data);
-void music_related_28(int param_1);
+ulonglong sfxGetArg0Unk3F(ALLink_s *param_1);
+void play_sfx_a1(void *buffer,short entry,ALSndPlayer *data);
+void sfxDeactivate(int param_1);
 void music_related_29(byte param_1);
 void music_related_30(void);
 void music_related_32(void);
 void music_related_34(void);
 void music_related_36(longlong param_1,s16 param_2,undefined4 param_3);
-u32 music_related_37(void);
+u32 sfx_c_700091C8(void);
 void music_related_38(ulonglong param_1);
 void music_related_39(f32 param_1);
 ulonglong music_related_40(uint param_1);
 void music_related_42(ulonglong param_1,ulonglong param_2);
 void something_with_memp_c_debug(void);
-void check_memflag_tokens(int param_1,int param_2);
-void memp_related_0(int *param_1);
-uint allocate_bytes_in_bank(int param_1,uint param_2);
-undefined8 memp_related_1(void *ptrdata,int size,uint bank);
+void mempCheckMemflagTokens(int bstart,int bsize);
+void mempSetBankStarts(int *banks);
+uint mempAllocBytesInBank(u32 bytes,u8 bank);
+u32 memAddEntryOfSizeToBank(u8 *ptrdata,int size,uint bank);
 void nulled_list_all8_mem_alloc_banks_sizes(void);
-int memp_related_3(uint bank);
-uint memp_related_4(uint param_1,u32 param_2);
-void resetMemBank(u32 bank);
-void set_bank_nextentry_to_NULL(u32 bank);
-void swap_entries(undefined4 *param_1,undefined4 *param_2);
-void merge_alloc_entries(int param_1,undefined4 *param_2);
-undefined8 sort_merge_entries_in_alloc_table(int param_1);
-void memp_related_7(void);
-uint * mem_related(int param_1);
-void mem_related_model_room_buffers(uint param_1,uint param_2);
+s32 memGetBankSizeLeft(u8 bank);
+uint memAllocPackedBytesInBank(uint param_1);
+void mempResetBank(u8 bank);
+void mempNullNextEntryInBank(u8 bank);
+void memaSwap(u8 *a,u8 *b);
+void memaMerge(int param_1,undefined4 *param_2);
+s32 memaSortMergeEntries(s_mem_alloc_table *param_1);
+void memaSortMergeAllEntries(void);
+s_mem_alloc_entry * memaFindOpening(s_mem_alloc_table *param_1);
+void memaAllocRoomBuffer(u32 addr,u32 size);
 void something_with_mema_c_debug(void);
-void reinit_m_malloc_table(void *ptr_allocmem,u32 size);
+void mempInitMallocTable(void *ptr_allocmem,u32 size);
 void mem_related_calls_sort_merge_entries(void);
-int mem_related_something_find_first(uint param_1);
-int mem_related_something_find_first_0(int param_1,uint param_2);
-void mem_related_model_room_buffers_0(uint param_1,uint param_2);
+int mem_related_something_find_first(uint size);
+int mem_related_something_find_first_0(int addr,uint size);
+void mem_related_model_room_buffers_0(u32 addr,u32 size);
 void mem_related_allocated_table_related(void);
 float mem_related_something_first_related(void);
-uint generate_list_alloc_mem(void);
-uint generate_lists_before_after_mem_merge(void);
+void generate_list_alloc_mem(void);
+void memaGenerateListsBeforeAfterMerge(void);
 void mem_related_something_first_related_0(undefined *param_1);
 uint mem_related_0(void);
-undefined8 mem_related_1(int param_1,ulonglong param_2,ulonglong param_3);
+u32 mem_related_1(int addr,u32 length,u32 maxsize);
 u32 get_random_value(void);
 void increment_random_num(longlong param_1);
 u32 lotsa_shifting_random_related(ulonglong *param_1);
 byte * check_string_something(byte *param_1);
 char * strtok(char *__s,char *__delim);
-uint check_boot_switches(void);
+void check_boot_switches(void);
 byte * check_token(int param_1,byte *param_2);
 char * textpointer_load_parse_something(char *param_1,char *param_2);
-char * something_with_strings(char *param_1,char *param_2,int param_3);
-char * string_load_parse_something(char *param_1,char *param_2);
+char * something_with_strings(char *param_1,char *param_2,int size);
+void string_append_from_obseg_textbank(char *buffer,char *textfiletext);
 undefined8 something_with_strings_0(byte *param_1,char *param_2);
 void dummy7000A890(void);
 undefined8 string_related(byte *param_1,byte *param_2,longlong param_3);
-void dummy7000A8F0(void);
-uint strtol_related(uint param_1);
-ulonglong strtol_related_0(byte param_1);
-ulonglong strtol_related_1(byte param_1);
+u8 strtol_related(u8 param_1);
+u8 strtol_related_0(u8 param_1);
+u8 strtol_related_1(u8 param_1);
 ulonglong strtol_related_2(char param_1);
 long strtol(char *__nptr,char **__endptr,int __base);
 int proutSprintf(void *s,char *buf,size_t n);
@@ -15303,7 +17791,7 @@ void test_controller_presence(void);
 s32 osPfsChecker(OSPfs *param_1);
 void controller_7000B734(uint param_1);
 void controller_check_for_rumble_maybe(void);
-undefined get_attached_controller_count(void);
+u64 get_attached_controller_count(void);
 ulonglong get_num_controllers_plugged_in(void);
 void controller_rumble_related(void);
 void set_disable_all_rumble_and_something(undefined4 param_1,undefined4 param_2);
@@ -15311,12 +17799,12 @@ void set_ptr_tlb_ramrom_record(undefined4 param_1);
 void probably_ramrom_related(int param_1);
 void redirect_to_ramrom_replay_and_record_handlers_if_set(void);
 longlong controllerSchedulerRelated(void);
-undefined get_cur_controller_horz_stick_pos(char param_1);
+s32 get_cur_controller_horz_stick_pos(char param_1);
 undefined controller_7000C174(char param_1);
-undefined get_cur_controller_vert_stick_pos(char param_1);
+s32 get_cur_controller_vert_stick_pos(char param_1);
 undefined controller_7000C284(char param_1);
-ulonglong get_controller_buttons_held(char param_1,ulonglong param_2);
-ulonglong get_controller_buttons_pressed(char param_1,ulonglong param_2);
+u32 get_controller_buttons_held(char param_1,controller_buttons param_2);
+u32 get_controller_buttons_pressed(char param_1,controller_buttons param_2);
 void proc_7000C430(char *param_1,uint param_2);
 void proc_7000C470(void);
 int get_controller_3dstick_L_R(char param_1,int param_2,int param_3);
@@ -15330,7 +17818,7 @@ int save_7000C734(byte param_1,undefined *param_2);
 int save_7000C778(byte param_1,undefined *param_2);
 s32 save_7000C7BC(byte param_1,save_file *param_2,int param_3);
 s32 save_7000C808(byte address,u8 *buffer,int length);
-void controller_7000C854(int param_1,float param_2);
+void controller_7000C854(int param_1,s32 param_2);
 void reset_cont_rumble_detect(void);
 void controller_7000C930(int param_1);
 int controller_7000C954(void);
@@ -15342,7 +17830,7 @@ void rmon_entry(void);
 BOOL rmon_debug_is_final_build(void);
 s32 rmon_debug_returns_neg_1(void);
 void removed_7000ceb8(void);
-void removed_7000cec0(void);
+void rmon_debug_stub_0(void);
 void removed_7000cec8(void);
 void removed_7000ced0(void);
 void removed_7000ced8(void);
@@ -15366,11 +17854,12 @@ u32 osGetCount(void);
 void osCreateViManager(OSPri pri);
 void viMgrMain(int param_1);
 void osCreateViManager_sub(undefined param_1,undefined param_2,undefined param_3,undefined param_4,undefined param_5,undefined param_6,undefined4 param_7,undefined4 param_8);
-void osSetEventMesg(void);
+void osSetEventMesg(OSEvent param_1,OSMesgQueue *param_2,OSMesg param_3);
 void osViSetEvent(OSMesgQueue *mq,OSMesg m,u32 retraceCount);
 OSIntMask osSetIntMask(OSIntMask param_1);
 s32 osRecvMesg(OSMesgQueue *mq,OSMesg *msg,s32 flags);
 s32 osSendMesg(OSMesgQueue *mq,OSMesg msg,s32 flags);
+undefined8 FUN_7000df3c(void);
 void osViSetMode(OSViMode *modep);
 void osViSetXScale(f32 value);
 void osViSetYScale(f32 value);
@@ -15382,7 +17871,7 @@ void * osViGetCurrentFramebuffer(void);
 void * osViGetNextFramebuffer(void);
 void osViSwapBuffer(void *frameBufPtr);
 void osDpSetStatus(u32 data);
-undefined * _VirtualToPhysicalTask(void *param_1);
+OSTask * _VirtualToPhysicalTask(OSTask *intp);
 void osSpTaskLoad(OSTask *intp);
 void osSpTaskStartGo(OSTask *tp);
 s32 osDpSetNextBuffer(void *bufPtr,u64 size);
@@ -15404,7 +17893,7 @@ longlong __ll_rem(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 longlong __ll_div(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
 longlong __ll_mul(undefined4 left_u,undefined4 left_l,undefined4 right_u,undefined4 right_l);
 void __ull_divremi(ulonglong *param_1,ulonglong *param_2,undefined4 param_3,undefined4 param_4,short param_5);
-undefined4 __ll_mod(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
+undefined4 __ll_mod(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4);
 longlong __ll_lshift(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
 s32 osAiSetNextBuffer(void *bufPtr,u32 size);
 undefined4 osAiGetLength(void);
@@ -15415,7 +17904,7 @@ void _collectPVoices(ALSynth *drvr);
 void __freeParam(ALParam *param);
 ALParam *__allocParam(void);
 void dummy7000F100(void);
-longlong *alAudioFrame(Acmd *cmdList,s32 *cmdLen,s16 *outBuf,s32 outLen);
+Acmd * alAudioFrame(Acmd *cmdList,s32 *cmdLen,s16 *outBuf,s32 outLen);
 void alSynNew(ALSynth *drvr,ALSynConfig *c);
 s32 osPiStartDma(OSIoMesg *mb,s32 priority,s32 direction,u32 devAddr,void *dramAddr,u32 size,OSMesgQueue *mq);
 void osViSetSpecialFeatures(u32 func);
@@ -15428,6 +17917,7 @@ void guMtxL2F(float mf[4][4],Mtx *m);
 OSThread * __osGetCurrFaultedThread(void);
 void __osExceptionPreamble(void);
 void __osException(void);
+void FUN_7001067c(void);
 void send_mesg(void);
 void handle_CpU(void);
 void __osEnqueueAndYield(OSThread **queue);
@@ -15448,15 +17938,15 @@ void _bnkfPatchInst(ALInstrument *inst,s32 offset,s32 table);
 void removed_70010E6C(void);
 void alBnkfNew(ALBankFile *file,char *table);
 void alSeqFileNew(ALSeqFile *file,u8 *base);
-void __CSPPostNextSeqEvent(int param_1);
+void __CSPPostNextSeqEvent(ALCSPlayer *seqp);
 void __setUsptFromTempo(ALCSPlayer *seqp,f32 tempo);
 void proc_70011064(void);
 void __CSPRepostEvent(ALEventQueue *evtq,ALEventListItem *item);
 void __CSPHandleMIDIMsg(ALCSPlayer *seqp,ALEvent *event);
 void proc_70011A64(void);
-ALMicroTime __CSPVoiceHandler(void *node);
+void __CSPHandleNextSeqEvent(ALCSPlayer *seqp);
 void alCSPNew(ALCSPlayer *seqp,ALSeqpConfig *c);
-void __CSPPostNextSeqEvent(int param_1);
+void alCSPSetBank(ALCSPlayer *seqp,ALBank *b);
 s32 alCSPGetState(ALCSPlayer *seqp);
 void alCSeqGetLoc(ALCSeq *seq,ALCSeqMarker *marker);
 void alCSeqSetLoc(ALCSeq *seq,ALCSeqMarker *m);
@@ -15469,11 +17959,11 @@ void alCSeqNewMarker(ALCSeq *seq,ALCSeqMarker *m,u32 ticks);
 s32 alCSeqGetTicks(ALCSeq *seq);
 u32 alCSeqSecToTicks(ALCSeq *seq,f32 sec,u32 tempo);
 f32 alCSeqTicksToSec(ALCSeq *seq,s32 ticks,u32 tempo);
-undefined8 __alCSeqNextDelta(int param_1,uint *param_2);
+char __alCSeqNextDelta(ALCSeq *seq,s32 *pDeltaTicks);
 void alCSPSetSeq(ALCSPlayer *seqp,ALCSeq *seq);
 void alCSPPlay(ALCSPlayer *seqp);
 void alSeqpStop(ALSeqPlayer *seqp);
-void ultra_proc_70012DA0(ALCSPlayer *param_1,undefined2 param_2);
+void alCSPSetVol(ALCSPlayer *seqp,s16 vol);
 void alEvtqFlushType(ALEventQueue *evtq,s16 type);
 void alEvtqFlush(ALEventQueue *evtq);
 void alEvtqPostEvent(ALEventQueue *evtq,ALEvent *evt,ALMicroTime delta);
@@ -15551,8 +18041,8 @@ longlong __d_to_ull(double param_1);
 longlong __f_to_ull(float param_1);
 double __ll_to_d(undefined4 param_1,undefined4 param_2);
 float __ll_to_f(undefined4 param_1,undefined4 param_2);
-double __ull_to_d(undefined4 param_1,undefined4 param_2);
-float __ull_to_f(undefined4 param_1,undefined4 param_2);
+double __ull_to_d(int param_1,undefined4 param_2);
+float __ull_to_f(int param_1,undefined4 param_2);
 void __osSetSR(u32 param_1);
 u32 __osGetSR(void);
 s32 __osSiRawReadIo(u32 devAddr,u32 *data);
@@ -15571,7 +18061,7 @@ void __osSetTimerIntr(OSTime tim);
 OSTime __osInsertTimer(OSTimer *t);
 OSPri osGetThreadPri(OSThread *t);
 void __osViInit(void);
-undefined * __osViGetCurrentContext(void);
+__OSViContext * __osViGetCurrentContext(void);
 void __osViSwapContext(void);
 u32 __osSpGetStatus(void);
 void __osSpSetStatus(u32 data);
@@ -15579,7 +18069,7 @@ s32 __osSpSetPc(u32 data);
 s32 __osSpRawStartDma(s32 direction,u32 devAddr,void *dramAddr,u32 size);
 int __osSpDeviceBusy(void);
 ulonglong __osDpDeviceBusy(void);
-void __osProbeTLB(void *vaddr);
+u32 __osProbeTLB(void *vaddr);
 void alSynDelete(ALSynth *drvr);
 ulonglong __osAiDeviceBusy(void);
 void alSaveNew(ALSave *f);
@@ -15720,7 +18210,7 @@ void image_entries_load(void);
 void alloc_intro_matrices(void);
 void init_menus_or_reset(void);
 void initguards(void);
-void alloc_init_GUARDdata_entries(int param_1);
+void alloc_init_GUARDdata_entries(int guard_count);
 void set_new_rand_head_bodies(void);
 void init_obj_register_difficulty_vals(void);
 void alloc_false_GUARDdata_to_exec_global_action(void);
@@ -15734,7 +18224,7 @@ void proc_7F001910(int param_1);
 void proc_7F001928(int param_1);
 void proc_7F001940(int param_1);
 void write_monitor_ani_control_blocks(void);
-void initialize_80071E00_to_80071E78(void);
+void initialize_temp_mine_table(void);
 int load_proptype(PROPTYPE param_1);
 void proc_7F001BD4(float *param_1,float *param_2);
 void prepare_load_objects(undefined8 param_1,ushort *param_2);
@@ -15748,7 +18238,7 @@ void expand_type_0A_object(int param_1,ushort *param_2,int param_3);
 void expand_type_0B_object(int param_1,ushort *param_2);
 void proc_7F00324C(void);
 void expand_type_01_object(void);
-void proplvreset2(longlong param_1);
+void proplvreset2(longlong levelid);
 void something_with_stage_objectives(void);
 void set_parent_cur_tag_entry(int param_1);
 void setup_briefing_text_entry_parent(int param_1);
@@ -15797,7 +18287,7 @@ undefined4 proc_7F007F30(void);
 void insert_bond_eye_intro(undefined4 *param_1);
 undefined4 *load_display_rare_logo(undefined4 *param_1,undefined8 param_2,undefined8 param_3,int param_4,uint param_5);
 void proc_7F008B58(ulonglong param_1);
-undefined4 * retrieve_display_rareware_logo(undefined4 *param_1);
+void retrieve_display_rareware_logo(undefined4 *param_1);
 ulonglong proc_7F008DD0(void);
 void proc_7F008DE4(ushort **param_1,int *param_2);
 void proc_7F008E80(short *param_1,int param_2);
@@ -15818,29 +18308,29 @@ uint * add_tab2_next(undefined4 *param_1);
 undefined8 isontab2(void);
 void init_menu00_legalscreen(void);
 void update_menu00_legalscreen(void);
-void interface_menu00_legalscreen(undefined8 param_1,undefined8 param_2);
+void interface_menu00_legalscreen(void);
 uint * display_aligned_white_text_to_screen(undefined4 *param_1,int param_2,int param_3,int param_4,int param_5,byte *param_6,int param_7,int param_8);
-u32 * constructor_menu00_legalscreen(undefined4 *param_1);
+void constructor_menu00_legalscreen(Gfx *param_1);
 void reset_menutimer(void);
 void dummy7F00AAF8(void);
-void interface_menu17_switchscreens(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu17_switchscreens(undefined4 *param_1);
+void interface_menu17_switchscreens(void);
+void constructor_menu17_switchscreens(Gfx *param_1);
 void init_menu01_nintendo(void);
 void update_menu01_nintendo(void);
-void interface_menu01_nintendo(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu01_nintendo(undefined4 *param_1);
+void interface_menu01_nintendo(void);
+void constructor_menu01_nintendo(Gfx *param_1);
 int ** init_menu02_rareware(void);
 void update_menu02_rareware(void);
 void interface_menu02_rareware(void);
-u32 * constructor_menu02_rareware(undefined4 *param_1);
+void constructor_menu02_rareware(Gfx *param_1);
 void init_menu03_eyeintro(void);
 void update_menu_03_eyeintro(void);
 void interface_menu03_eyeintro(void);
-u32 * constructor_menu03_eyeintro(undefined4 *param_1);
+void constructor_menu03_eyeintro(Gfx *param_1);
 void init_menu04_goldeneyelogo(void);
 void update_menu04_goldeneyelogo(void);
-void interface_menu04_goldeneyelogo(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu04_goldeneyelogo(undefined4 *param_1);
+void interface_menu04_goldeneyelogo(void);
+void constructor_menu04_goldeneyelogo(Gfx *param_1);
 void disable_all_switches(int param_1);
 void set_item_visibility_in_objinstance(int objinstance,int item,undefined4 mode);
 void select_load_bond_picture(int objinstance,u32 bondID);
@@ -15852,31 +18342,31 @@ int get_chapter_briefing_entry(int briefing);
 void toggle_deletion_menu_for_folder(int param_1);
 void interface_menu05_filesel(void);
 int get_ptr_difficulty_name(DIFFICULTY difficulty);
-u32 * constructor_menu05_filesel(undefined4 *param_1);
+void constructor_menu05_filesel(Gfx *param_1);
 void init_menu06_modesel(void);
 void update_menu06_modesel(void);
 void interface_menu06_modesel(void);
 undefined4 proc_7F00D5E8(undefined4 param_1);
 void set_menu_cursor_pos_to_setting(int setting);
-u32 * constructor_menu06_modesel(undefined4 *param_1);
-int pull_and_display_text_for_folder_a0(undefined *param_1);
+void constructor_menu06_modesel(Gfx *param_1);
+int pull_and_display_text_for_folder_a0(LEVELID param_1);
 BOOL check_if_stage_completed_on_difficulty(int stage,DIFFICULTY difficulty);
 longlong get_highest_unlocked_difficulty_for_level(longlong stage);
 void init_menu07_missionsel(void);
 void update_menu07_missionsel(void);
-void interface_menu07_missionsel(undefined8 param_1,undefined8 param_2);
+void interface_menu07_missionsel(void);
 void set_cursor_to_stage_solo(longlong param_1);
-u32 * constructor_menu07_missionsel(undefined4 *param_1);
+void constructor_menu07_missionsel(Gfx *param_1);
 void init_menu08_difficulty(void);
 void update_menu08_difficulty(void);
 void interface_menu08_difficulty(void);
 uint * print_current_solo_briefing_stage_name(uint *param_1,byte *param_2);
 void set_cursor_pos_difficulty(int difficulty);
-u32 * constructor_menu08_difficulty(undefined4 *param_1);
+void constructor_menu08_difficulty(Gfx *param_1);
 void init_menu09_007options(void);
 void update_menu09_007options(void);
-void interface_menu09_007options(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu09_007options(undefined4 *param_1);
+void interface_menu09_007options(void);
+void constructor_menu09_007options(Gfx *param_1);
 u32 get_player_control_style(int playernum);
 BOOL check_if_mp_stage_unlocked(int stage);
 void select_game_length(void);
@@ -15885,86 +18375,86 @@ void advance_aim_settings_selection(void);
 void unlock_mp_chars(void);
 u32 get_selected_num_players(void);
 HEADS get_player_mp_char_head(int player);
-ulonglong get_player_mp_char_gender(int player);
+u8 get_player_mp_char_gender(int player);
 BODIES get_player_mp_char_body(int player);
 f32 get_player_mp_handicap(int player);
 f32 get_player_mp_char_height(int player);
 int get_mp_timelimit(void);
 int get_mp_pointlimit(void);
-void reset_mp_options_for_scenario(MPSCENARIOS scenario);
-void init_mp_options_for_scenario(longlong numplayers);
+void reset_mp_options_for_scenario(MPSCENARIOS scenarioid);
+void init_mp_options_for_scenario(u32 numplayers);
 void init_menu0E_mpoptions(void);
 void update_menu0E_mpoptions(void);
-void interface_menu0E_mpoptions(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu0E_mpoptions(undefined4 *param_1);
+void interface_menu0E_mpoptions(void);
+void constructor_menu0E_mpoptions(Gfx *param_1);
 BOOL hasPlayerSelectedMPChar(int playerchar);
 void init_menu0f_mpcharsel(void);
 void update_menu0F_mpcharsel(void);
 void interface_menu0F_mpcharsel(void);
 int proc_7F0122A8(int param_1,int param_2,int param_3);
 undefined4 * proc_7F01231C(void);
-u32 * constructor_menu0F_mpcharsel(undefined4 *param_1);
+void constructor_menu0F_mpcharsel(Gfx *param_1);
 void init_menu10_mphandicap(void);
 void update_menu10_mphandicap(void);
 void interface_menu10_mphandicap(void);
-u32 * constructor_menu10_mphandicap(undefined4 *param_1);
+void constructor_menu10_mphandicap(Gfx *param_1);
 void init_menu11_mpcontrol(void);
 void update_menu11_mpcontrols(void);
 void interface_menu11_mpcontrols(void);
-u32 * constructor_menu11_mpcontrol(undefined4 *param_1);
+void constructor_menu11_mpcontrol(Gfx *param_1);
 void init_menu12_mpstage(void);
 void update_menu12_mpstage(void);
-void interface_menu12_mpstage(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu12_mpstage(undefined4 *param_1);
+void interface_menu12_mpstage(void);
+void constructor_menu12_mpstage(Gfx *param_1);
 MPSCENARIOS get_scenario(void);
 void init_menu13_mpscenariosel(void);
 void update_menu13_mpscenario(void);
-void interface_menu13_mpscenario(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu13_mpscenario(undefined4 *param_1);
+void interface_menu13_mpscenario(void);
+void constructor_menu13_mpscenario(Gfx *param_1);
 ulonglong get_players_team_or_scenario_item_flag(int player);
 void set_players_team_or_scenario_item_flag(int player,char flag);
 void init_menu14_mpteamsel(void);
 void update_menu14_mpteams(void);
-ulonglong interface_menu14_mpteams(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu14_mpteams(undefined4 *param_1);
+ulonglong interface_menu14_mpteams(void);
+void constructor_menu14_mpteams(Gfx *param_1);
 void set_briefing_page(WATCH_BRIEFING_PAGE page);
 void load_briefing_text_for_stage(void);
 void init_menu0A_briefing(void);
 void update_menu0A_briefing(void);
-void interface_menu0A_briefing(undefined8 param_1,undefined8 param_2);
+void interface_menu0A_briefing(void);
 uint * print_objectives_and_status_to_menu(uint *param_1,int param_2,byte *param_3,int param_4);
-u32 * constructor_menu0A_briefing(undefined4 *param_1);
+void constructor_menu0A_briefing(Gfx *param_1);
 void init_menu0B_runstage(void);
 void init_menu0C_missionfailed(void);
 void update_menu0C_missionfailed(void);
-void interface_menu0C_missionfailed(undefined8 param_1,undefined8 param_2);
+void interface_menu0C_missionfailed(void);
 undefined8 proc_7F01631C(void);
-u32 * constructor_menu0C_missionfailed(undefined4 *param_1);
+void constructor_menu0C_missionfailed(Gfx *param_1);
 void init_menu0D_missioncomplete(void);
 void update_menu0D_missioncomplete(void);
-void interface_menu0D_missioncomplete(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu0D_missioncomplete(undefined4 *param_1);
+void interface_menu0D_missioncomplete(void);
+void constructor_menu0D_missioncomplete(Gfx *param_1);
 void init_menu15_cheat(void);
 void update_menu15_cheat(void);
-void interface_menu15_cheat(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu15_cheat(undefined4 *param_1);
+void interface_menu15_cheat(void);
+void constructor_menu15_cheat(Gfx *param_1);
 void init_menu16_nocontroller(void);
 void update_menu16_nocontrollers(void);
 void interface_menu16_nocontrollers(void);
-u32 * constructor_menu16_nocontrollers(undefined4 *param_1);
+void constructor_menu16_nocontrollers(Gfx *param_1);
 void do_extended_cast_display(longlong param_1);
 void init_menu18_displaycast(void);
 void update_menu18_displaycast(void);
-void interface_menu18_displaycast(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu18_displaycast(undefined4 *param_1);
+void interface_menu18_displaycast(void);
+void constructor_menu18_displaycast(Gfx *param_1);
 void init_menu19_spectrum(void);
 void update_menu19_spectrum(void);
-void interface_menu19_spectrum(undefined8 param_1,undefined8 param_2);
-u32 * constructor_menu19_spectrum(undefined4 *param_1);
-void set_menu_to_mode(longlong param_1,longlong param_2);
+void interface_menu19_spectrum(void);
+void constructor_menu19_spectrum(Gfx *param_1);
+void set_menu_to_mode(MENU param_1,u32 param_2);
 MENU get_currentmenu(void);
 void menu_init(undefined8 param_1,undefined8 param_2);
-u32 * menu_jump_constructor_handler(u32 *param_1);
+void menu_jump_constructor_handler(Gfx *DL);
 void proc_7F01B0E0(ushort *param_1,byte *param_2);
 void proc_7F01B134(ushort *param_1,ushort *param_2);
 void proc_7F01B1C8(ushort *param_1,byte *param_2);
@@ -15972,7 +18462,7 @@ undefined4 *proc_7F01B240(undefined4 *param_1,int param_2,longlong param_3,int *
 undefined4 * proc_7F01B6E0(undefined4 *param_1,int param_2,int param_3);
 void proc_7F01BAE0(short *param_1,int param_2);
 uint * proc_7F01BFF8(uint *param_1,uint param_2,int param_3);
-undefined4 * insert_imageDL(undefined4 *param_1);
+undefined4 * insert_imageDL(Gfx *param_1);
 undefined4 * proc_7F01C1A4(undefined4 *param_1);
 ulonglong die_blood_image_routine(void);
 undefined4 * proc_7F01C400(undefined4 *param_1);
@@ -15990,13 +18480,13 @@ f32 get_007_health_mod(void);
 f32 get_007_damage_mod(void);
 f32 get_007_accuracy_mod(void);
 void end_of_mission_briefing(void);
-void proc_7F01D500(void);
+void sub_GAME_7F01D500(void);
 void deleteCurrentSelectedFolder(void);
 void copyCurrentEEPROMtoStack(void);
 u8 getSelectedFolderBond(void);
 void set_selected_folder_num(u32 foldernum);
 void set_selected_difficulty(DIFFICULTY difficulty);
-void set_solo_and_ptr_briefing(undefined *param_1);
+void set_solo_and_ptr_briefing(LEVELID level);
 void proc_7F01D61C(undefined4 *param_1);
 void proc_7F01D644(undefined4 *param_1);
 void store_favorite_weapon_current_player(u32 right,u32 left);
@@ -16024,10 +18514,10 @@ int proc_7F01DE50(void);
 void proc_7F01DEB4(int param_1);
 void proc_7F01DF90(void);
 BOOL check_if_valid_folder_num(int folder);
-BOOL doesFolderHaveStageUnlockedAtDifficulty(int foldernum,STAGENUM stageid,DIFFICULTY difficulty);
+s32 isStageUnlockedAtDifficulty(int foldernum,STAGENUM stageid,DIFFICULTY difficulty);
 void proc_7F01E504(uint *param_1,undefined4 *param_2);
 void unlock_stage_in_folder_on_difficulty(int folder,longlong stagenum,longlong selecteddifficulty,int maxtime);
-void proc_7F01E760(ulonglong param_1,longlong param_2);
+void proc_7F01E760(u32 folder,CHEAT_IDS cheat);
 void get_highest_stage_difficulty_completed_in_folder(int foldernum,STAGENUM *stagenum,DIFFICULTY *difficulty);
 u32 check_egypt_completed_in_folder(int folder);
 u32 check_egypt_completed_any_folder(void);
@@ -16190,8 +18680,8 @@ void proc_7F02A044(int param_1,int param_2,float *param_3);
 undefined4 proc_7F02A0EC(int param_1,int param_2,float param_3);
 void proc_7F02A15C(int param_1,uint param_2,float *param_3,undefined4 param_4);
 undefined4 proc_7F02A1E8(int param_1,uint param_2,float param_3);
-undefined8 proc_7F02A258(int param_1);
-ulonglong proc_7F02A2A4(int param_1);
+undefined8 true_if_actor_is_dying_fading_limping_shot(GUARDdata *actor);
+s32 true_if_actor_dying_fading(GUARDdata *chr);
 undefined8 proc_7F02A2C8(void);
 undefined8 proc_7F02A428(void);
 undefined8 proc_7F02A588(int param_1);
@@ -16426,16 +18916,16 @@ void proc_7F0402B4(int param_1,byte *param_2);
 void proc_7F040310(byte *param_1,byte *param_2);
 void proc_7F040384(int *param_1,longlong param_2,float *param_3);
 void proc_7F040484(int param_1);
-undefined * init_standard_object(int param_1,ushort **param_2,undefined *param_3,uint param_4);
-undefined * proc_7F0406F8(int param_1,ushort **param_2);
+undefined *init_standard_object(object_standard *objdata,object_header *modelheader,object_standard *targetposdata,uint controller);
+undefined * init_object_no_default_pos_controller(object_standard *object,object_header *header);
 undefined * proc_7F04071C(int param_1);
 void proc_7F040754(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4 param_4);
 void proc_7F0407F4(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4 param_4);
 void proc_7F04088C(void);
 void proc_7F040BA0(void);
 void proc_7F040CF0(int param_1);
-void proc_7F040D98(int param_1,int param_2,longlong param_3);
-void proc_7F041024(int param_1,int param_2);
+void proc_7F040D98(object_standard *param_1,int param_2,longlong param_3);
+void proc_7F041024(object_standard *param_1,int param_2);
 undefined4 proc_7F041044(int param_1);
 undefined8 proc_7F041074(float *param_1,float *param_2,float *param_3,float param_4);
 undefined8 proc_7F041160(int param_1,float *param_2,float *param_3,float *param_4,float *param_5,int *param_6,ushort **param_7);
@@ -16454,11 +18944,11 @@ void proc_7F043650(int param_1);
 void proc_7F043838(float *param_1,int param_2);
 void proc_7F0439B8(void);
 undefined8 proc_7F043A6C(int param_1,int param_2,int param_3,ushort *param_4);
-void generate_explosion_at_position(int param_1,uint param_2,undefined8 param_3,undefined4 param_4);
-void handle_thrown_explosive_detonation(int param_1);
+void generate_explosion_at_position(object_header *object,uint param_2,undefined8 param_3,undefined4 param_4);
+void handle_thrown_explosive_detonation(object_header *param_1);
 void proc_7F044200(int param_1);
-void proc_7F04424C(int param_1);
-void proc_7F0442DC(int param_1);
+void proc_7F04424C(object_header *param_1);
+void proc_7F0442DC(object_header *param_1);
 undefined8 proc_7F044414(float *param_1,int param_2,float *param_3,uint param_4);
 undefined8 proc_7F0446B8(float *param_1,uint param_2,float *param_3,uint param_4);
 undefined8 proc_7F044718(undefined8 param_1,undefined8 param_2,float *param_3,int param_4);
@@ -16480,59 +18970,59 @@ void proc_7F04BFD0(int param_1,undefined4 param_2);
 void proc_7F04C044(int param_1);
 undefined8 proc_7F04C130(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F04CA44(int param_1,undefined8 param_2);
-void proc_7F04CD04(char *param_1,undefined8 param_2);
-void object_explosion_related(int param_1,float *param_2,int param_3);
+void proc_7F04CD04(object_header *param_1,undefined8 param_2);
+void object_explosion_related(object_standard *param_1,float *param_2,int param_3);
 undefined4 proc_7F04D16C(float *param_1,float *param_2,float *param_3,uint *param_4,uint *param_5,int param_6,float *param_7);
 int proc_7F04D9B0(int param_1,ushort *param_2,float *param_3,float *param_4,float *param_5,int *param_6,ushort **param_7);
-void proc_7F04DCB4(int param_1);
-void proc_7F04DD68(int param_1);
-void proc_7F04DE18(int param_1);
+void proc_7F04DCB4(object_standard *param_1);
+void proc_7F04DD68(object_standard *param_1);
+void proc_7F04DE18(object_standard *param_1);
 void proc_7F04DEFC(int param_1,float param_2,undefined8 param_3,undefined8 param_4,int param_5);
 undefined8 check_if_destroyable_object_type(int param_1);
 undefined8 check_if_collectable_object(int objdata);
 undefined8 check_if_destroyable_not_invincible(int object);
 void proc_7F04E0CC(int param_1,float param_2,float *param_3,int param_4,int param_5);
-void maybe_detonate_object(int objdata,float param_2,float *param_3,int param_4,int param_5);
-void proc_7F04E720(int param_1,float *param_2);
-void proc_7F04E9BC(int param_1,float *param_2);
+void maybe_detonate_object(object_standard *objdata,float param_2,float *param_3,int param_4,int param_5);
+void proc_7F04E720(object_standard *param_1,float *param_2);
+void proc_7F04E9BC(object_standard *param_1,float *param_2);
 void proc_7F04EA68(float *param_1,float *param_2);
 ulonglong check_if_object_has_not_been_destroyed(int param_1);
 undefined8 proc_7F04EF58(int param_1);
 undefined4 proc_7F04F170(char *param_1);
 void proc_7F04F218(int param_1,longlong param_2);
 void proc_7F04F244(int param_1,int *param_2,undefined4 *param_3,undefined4 *param_4,undefined4 *param_5);
-char * append_text_picked_up(char *param_1);
-void append_text_ammo_amount_word(char *buffer,undefined4 ammotype,longlong amount);
-char * apped_text_ammotype(char *buffer,int ammotype,int amount);
-void set_sound_effect_for_ammo_collection(undefined4 ammotype);
-int ** set_sound_effect_for_weapontype_collection(longlong weapontype);
-char * display_ammo_type_collection_text(char *finaltext,int ammotype,longlong quantity);
-void display_text_when_ammo_collected(int ammotype,longlong amount);
-void add_ammo_to_inventory(int ammotype,longlong amount,int doplaysound,int dodisplaytext);
+void append_text_picked_up(u8 *buffer,u8 *param_2,u8 *param_3);
+void append_text_ammo_amount_word(u8 *buffer,AMMOTYPES ammotype,u32 amount);
+void apped_text_ammotype(u8 *buffer,AMMOTYPES ammotype,u32 amount);
+void set_sound_effect_for_ammo_collection(AMMOTYPES ammotype);
+void set_sound_effect_for_weapontype_collection(ITEM_IDS weapontype);
+void prepare_ammo_type_collection_text(u8 *finaltext,AMMOTYPES ammotype,u32 quantity);
+void display_text_when_ammo_collected(AMMOTYPES ammotype,u32 amount);
+void add_ammo_to_inventory(AMMOTYPES ammotype,int amount,int doplaysound,int dodisplaytext);
 uint get_ammo_in_magazine(int objdata);
-uint ammo_collected_from_weapon(int objdata);
-char * generate_language_specific_text_for_weapon(char *finalstring,int itemtype);
-void display_text_for_weapon_in_lower_left_corner(int weaponid);
+uint ammo_collected_from_weapon(void *objdata);
+void generate_language_specific_text_for_weapon(char *finalstring,ITEM_IDS itemtype);
+void display_text_for_weapon_in_lower_left_corner(ITEM_IDS weaponid);
 undefined8 collect_or_interact_object(char *param_1,int param_2);
-undefined8 object_collectability_routine(object_standard *param_1);
+void object_collectability_routine(object_standard *param_1);
 undefined8 proc_7F050D30(int param_1,undefined4 *param_2,float *param_3,float *param_4);
 void proc_7F050DE8(int param_1);
 undefined *proc_7F050F50(ushort *param_1,int param_2,ushort **param_3,undefined *param_4,uint param_5);
-undefined * proc_7F051028(ushort *param_1,int param_2);
-undefined * proc_7F051084(ushort *param_1,int param_2);
-undefined * proc_7F0510C0(undefined2 *param_1,int param_2,uint param_3);
+void proc_7F051028(ushort *param_1,int param_2);
+void proc_7F051084(ushort *param_1,int param_2);
+void proc_7F0510C0(undefined2 *param_1,int item,uint param_3);
 int proc_7F05126C(int param_1,longlong param_2,int param_3);
 int proc_7F051588(void);
 int proc_7F0515B0(longlong param_1,longlong param_2,int param_3);
 int proc_7F0518A8(void);
-undefined * proc_7F0518D0(void);
-int ** trigger_remote_mine_detonation(void);
+object_standard * proc_7F0518D0(void);
+void trigger_remote_mine_detonation(void);
 int check_if_entry_is_collectable(char type,char *objposdata);
 int check_if_item_deposited(char item);
 void add_obj_to_temp_proxmine_table(undefined4 *objdata);
 void remove_obj_from_temp_proxmine_table(undefined4 *objdata);
-void detonate_proxmine_within_range(float (*xyzpos) [3]);
-void proc_7F051CC8(void);
+void detonate_proxmine_within_range(xyzpoint *xyzpos);
+void check_guard_detonate_proxmine(void);
 void link_objects(int *objdata1,int *objdata2);
 undefined *complete_object_data_block_return_position_entry(int *objdata,int *modelheader,int *targetposdata,int controller);
 undefined * proc_7F051DD8(int param_1,ushort **param_2);
@@ -16560,7 +19050,7 @@ int proc_7F053894(float *param_1,float param_2,float param_3);
 void proc_7F05396C(int param_1,float *param_2,float param_3,float param_4);
 int proc_7F0539B8(float param_1,undefined8 param_2,undefined8 param_3);
 void proc_7F0539E4(float *param_1);
-void proc_7F053A10(int param_1,float *param_2);
+void sub_GAME_7F053A10(int param_1,float *param_2);
 void proc_7F053A3C(void);
 void proc_7F053B10(int param_1);
 void play_door_opening_soundeffect_0(int param_1);
@@ -16593,52 +19083,52 @@ void stop_alarm(void);
 s32 is_alarm_on(void);
 void init_trigger_toxic_gas_effect(undefined4 *param_1);
 void proc_7F055EF8(void);
-ulonglong check_if_toxic_gas_activated(void);
-void proc_7F055F64(void);
+u32 check_if_toxic_gas_activated(void);
+void handle_gas_damage(void);
 void set_unset_clock_lock_bits(int clocklockbits,int flag);
-ulonglong is_clock_drawn_onscreen(void);
+u32 is_clock_drawn_onscreen(void);
 void set_clock_time(f32 time);
 f32 get_clock_time(void);
 void set_clock_enable(int enable);
 undefined4 get_clock_enable(void);
-void proc_7F0561E0(void);
+void if_enabled_reset_clock(void);
 undefined4 * proc_7F056210(undefined4 *param_1);
-void proc_7F0565F0(void);
+void handle_alarm_gas_timer_calldamage(void);
 void proc_7F056690(void);
 void drop_inventory(void);
 undefined8 proc_7F056850(undefined4 *param_1,longlong param_2,float param_3,undefined4 *param_4,undefined4 *param_5);
-undefined8 get_size_of_setup_object_type(int *object);
+u32 get_size_of_setup_object_type(u8 *object);
 int proc_7F056A88(int param_1);
-int proc_7F056B1C(int param_1);
+int proc_7F056B1C(object_standard *param_1);
 int proc_7F056BA8(int param_1);
-ulonglong load_model(int modelid);
+u32 load_model(int modelid);
 void proc_7F056CA0(int param_1);
 int proc_7F056EA0(undefined8 param_1,int param_2);
 int proc_7F056F08(ulonglong param_1,int *param_2,int *param_3,longlong param_4,int param_5,int param_6);
 int proc_7F057080(short param_1);
 int get_handle_to_tagged_object(int object);
-int get_ptr_text_for_watch_breifing_page(WATCH_BRIEFING_PAGE page);
-int add_objective(void);
-int get_text_for_objective(int objective);
+char * get_ptr_text_for_watch_breifing_page(WATCH_BRIEFING_PAGE page);
+u32 add_objective(void);
+u8 * get_text_for_objective(int objective);
 DIFFICULTY get_difficulty_for_objective(int objective);
-int get_status_of_objective(longlong objective);
-undefined8 check_objectives_complete(void);
+int get_status_of_objective(s32 objective);
+u32 check_objectives_complete(void);
 void display_objective_status_text_on_status_change(void);
 void proc_7F057744(ulonglong param_1);
 void proc_7F0577E8(int param_1,ulonglong param_2);
-void proc_7F057898(void);
+void objectiveHandlePhotograph(void);
 void proc_7F057AC0(float *param_1);
 void proc_7F057C14(float *param_1,float *param_2);
 void proc_7F057D44(float *param_1,float *param_2,float param_3);
 void proc_7F057D88(float *param_1,float *param_2,float param_3);
-void proc_7F057DF8(float *param_1,float *param_2,int param_3);
+void sub_GAME_7F057DF8(float *param_1,float *param_2,int param_3);
 void proc_7F057E58(float *param_1,float *param_2,float *param_3,float *param_4,int param_5);
 float cosf(float __x);
 float sinf(float __x);
-void proc_7F057FD0(undefined4 *param_1);
-void proc_7F058020(undefined4 *param_1,undefined4 *param_2);
+void guMtxIdentF_unrolled(float (*param_1) [4] [4]);
+void proc_7F058020(float (*param_1) [4] [4],float (*param_2) [4]);
 void proc_7F058068(float *param_1,float *param_2);
-void proc_7F058098(float *param_1,float *param_2);
+void sub_GAME_7F058098(float *param_1,float *param_2);
 void proc_7F0580C8(float *param_1,float *param_2,int param_3);
 void proc_7F05818C(float *param_1,float *param_2,int param_3);
 void proc_7F058274(float *param_1,float *param_2,float *param_3);
@@ -16653,8 +19143,8 @@ void proc_7F058688(float param_1,undefined8 param_2,float *param_3);
 void proc_7F058714(float *param_1,float *param_2);
 void proc_7F058860(float *param_1,float *param_2);
 void proc_7F05892C(undefined4 *param_1,float *param_2,float *param_3);
-void init_something_copy_posdata_to_it(int *posdata,int *param_2);
-void proc_7F058998(undefined4 *param_1,int param_2);
+void init_something_copy_posdata_to_it(xyzpoint *posdata,int *dest);
+void copies_first_3_floats_from_a0_to_a1_plus_0x30(xyzpoint *posdata,int dest);
 void proc_7F0589B4(float param_1,undefined8 param_2,float *param_3);
 void proc_7F0589E4(float param_1,undefined8 param_2,int param_3);
 void proc_7F058A14(float param_1,undefined8 param_2,int param_3);
@@ -16678,7 +19168,7 @@ void proc_7F059708(float *param_1,float param_2,float param_3,float param_4,floa
 void proc_7F059908(float *param_1,float param_2,float param_3,float param_4,float param_5,float param_6,float param_7,float param_8,float param_9,float param_10);
 uint proc_7F05997C(float param_1,float param_2);
 void proc_7F059A48(float *param_1,undefined2 *param_2,float param_3,float param_4,float param_5,float param_6,float param_7);
-void proc_7F059B58(float *param_1,float param_2,float param_3,float param_4,float param_5);
+void proc_7F059B58(float *param_1,float a,float x,float y,float z);
 void proc_7F059CE8(float *param_1,float param_2,float param_3,float param_4,float param_5);
 void proc_7F059D30(void);
 void proc_7F059D38(undefined4 *param_1,undefined4 *param_2);
@@ -16732,46 +19222,46 @@ void proc_7F05C594(float *param_1);
 void proc_7F05C614(void);
 void proc_7F05C6B8(void);
 undefined8 proc_7F05C6FC(int param_1,float param_2,float *param_3,int param_4);
-undefined * get_ptr_item_statistics(int item);
-void proc_7F05C8F0(undefined4 *param_1);
+weapon_stats * get_ptr_item_statistics(ITEM_IDS item);
+void copy_item_in_hand(xyzpoint *param_1);
 void copy_item_in_hand_to_main_list(undefined4 *param_1);
 void unknown_takes_playerhand(int hand);
 ulonglong proc_7F05CEBC(int param_1);
-int get_itemtype_in_hand(int hand);
-Gitemheader * get_ptr_itemheader_in_hand(int hand);
-void * proc_7F05CF30(int param_1);
-u32 proc_7F05CF48(int param_1);
-void remove_item_in_hand(int hand);
-void place_item_in_hand_swap_and_make_visible(int hand,int item);
+ITEM_IDS get_itemtype_in_hand(HAND hand);
+Gitemheader * get_ptr_itemheader_in_hand(HAND hand);
+u8 * getPlayerWeaponBufferForHand(HAND hand);
+u32 getSizeBufferWeaponInHand(HAND param_1);
+void remove_item_in_hand(HAND hand);
+void place_item_in_hand_swap_and_make_visible(HAND hand,ITEM_IDS item);
 char * get_ptr_item_text_call_line(int item);
 Gitemheader * get_ptr_weapon_model_header_line(int weapon);
-int proc_7F05D078(void);
+int getCurrentWeaponOrItem(void);
 void used_to_load_1st_person_model_on_demand(int param_1);
 longlong proc_7F05D334(longlong param_1,int param_2);
-ITEM_IDS get_next_weapon_in_cycle_for_hand(int hand,longlong direction);
-void likely_change_weapon_in_hand(int hand,int weapon,s32 direction);
+ITEM_IDS get_next_weapon_in_cycle_for_hand(HAND hand,s32 direction);
+void likely_change_weapon_in_hand(HAND hand,int weapon,s32 direction);
 void proc_7F05D610(int param_1);
 void proc_7F05D650(int param_1);
 void proc_7F05D690(void);
 void advance_through_inventory(void);
 void backstep_through_inventory(void);
 void autoadvance_on_deplete_all_ammo(void);
-void draw_item_in_hand_has_more_ammo(int hand,ITEM_IDS item);
+void draw_item_in_hand_has_more_ammo(HAND hand,ITEM_IDS item);
 void attempt_reload_item_in_hand(int hand);
 ITEM_IDS get_item_in_hand(int hand);
 void draw_item_in_hand(int param_1,int param_2);
-int return_ammo_in_hand(int hand);
+ITEM_IDS return_ammo_in_hand(HAND hand);
 void proc_7F05DA8C(int param_1,int param_2);
 void proc_7F05DAE4(int param_1);
-void remove_hands_item(int param_1,int param_2);
+void remove_hands_item(HAND param_1,int param_2);
 undefined get_hands_firing_status(int hand);
-undefined4 proc_7F05DCB8(int param_1);
-float proc_7F05DCE8(longlong param_1);
-char * proc_7F05DD38(void);
-void proc_7F05DDA4(float param_1);
+f32 proc_7F05DCB8(int param_1);
+f32 proc_7F05DCE8(longlong param_1);
+weapon_stats * proc_7F05DD38(void);
+void camera_sniper_zoom(float zoom);
 void proc_7F05DE94(float param_1);
-undefined * proc_7F05DF84(int param_1);
-undefined * proc_7F05DFA8(int param_1);
+weapon_stats * proc_7F05DF84(int param_1);
+weapon_stats * proc_7F05DFA8(int param_1);
 undefined proc_7F05DFCC(int param_1);
 ulonglong proc_7F05DFF0(int param_1);
 ulonglong proc_7F05E014(int param_1);
@@ -16796,7 +19286,7 @@ void proc_7F05F928(int param_1);
 void proc_7F05FA7C(int param_1);
 void proc_7F05FB00(int param_1);
 int ** proc_7F05FB64(int param_1);
-void handles_firing_or_throwing_weapon_in_hand(int hand);
+void handles_firing_or_throwing_weapon_in_hand(HAND hand);
 void proc_7F061920(void);
 void proc_7F061948(undefined *param_1,int param_2,float *param_3,float *param_4);
 void proc_7F061BF4(int param_1);
@@ -16816,7 +19306,6 @@ void recall_joy2_hits_edit_flag(int param_1,float *param_2,int param_3);
 void proc_7F064934(longlong param_1);
 undefined4 proc_7F0649AC(longlong param_1);
 void proc_7F0649D8(int param_1);
-void handle_weapon_id_values_possibly_1st_person_animation(uint param_1,int param_2);
 void proc_7F066E64(void);
 int get_keyanalyzer_flag(void);
 void proc_7F066F08(void);
@@ -16857,13 +19346,13 @@ void proc_7F068EC4(int param_1,undefined4 *param_2);
 void proc_7F06908C(undefined4 *param_1);
 void set_unset_ammo_on_screen_setting(int flags,int isset);
 void give_cur_player_ammo(AMMOTYPES type,int amount);
-int check_cur_player_ammo_amount_in_inventory(int type);
+int check_cur_player_ammo_amount_in_inventory(AMMOTYPES type);
 int check_cur_player_ammo_amount_total(int type);
-undefined4 get_max_ammo_for_type(AMMOTYPES type);
+int get_max_ammo_for_type(AMMOTYPES type);
 void set_max_ammo_for_cur_player(void);
 int get_ammo_in_hands_magazine(int hand);
 int get_ammo_in_hands_weapon(int hand);
-undefined4 get_ammo_type_for_weapon(int weapon);
+AMMOTYPES get_ammo_type_for_weapon(ITEM_IDS weapon);
 int get_ammo_count_for_weapon(int weapon);
 void add_ammo_to_weapon(int weapon,int ammo);
 undefined4 get_max_ammo_for_weapon(int weapon);
@@ -16871,7 +19360,7 @@ undefined4 *microcode_generation_ammo_related(int *buffer,int *imagedeclaration,
 void set_rgba_redirect_generate_microcode(int *buffer,int *imagedeclaration,f32 param_3,f32 param_4,f32 hoffset,f32 param_6,f32 voffset,int param_8);
 uint * proc_7F069A50(undefined4 *param_1,byte *param_2,uint param_3,int param_4,uint param_5,int param_6,int param_7);
 uint * display_ammo_total_in_a1(undefined4 *param_1,undefined8 param_2,uint param_3,int param_4,uint param_5,int param_6,int param_7);
-int * generate_ammo_total_microcode(void);
+u32 * generate_ammo_total_microcode(void);
 undefined4 * proc_7F06A334(undefined4 *param_1);
 void set_unset_bitflags(int bitflags,int flag);
 void proc_7F06A5E4(uint **param_1);
@@ -16887,7 +19376,7 @@ void increment_num_deaths(void);
 int get_curplayer_numdeaths(void);
 void increment_num_suicides_display_MP(void);
 int get_curplayer_numsuicides(void);
-void proc_7F06ABB0(uint **param_1,float *param_2,float *param_3,int param_4,int param_5,int param_6,int param_7,int param_8);
+void proc_7F06ABB0(int *DL,float *xypos,float *width,int height,int rotateleft90,int fliph,int flipv,int red);
 void display_image_at_on_screen_coord(int *DL,int *xypos,f32 wdivh,int width,int height,int rotateleft90,int fliph,int flipv,int red,int green,int blue,int alpha,int format,int param_14);
 int * proc_7F06B120(int *param_1,int param_2);
 void proc_7F06B248(int param_1);
@@ -16897,9 +19386,9 @@ void drawjointlist(int param_1,uint *param_2,undefined4 param_3,int param_4);
 undefined4 probably_damage_detail_blood_effect_related(int **param_1,float *param_2,float *param_3,int *param_4,ushort **param_5);
 undefined4 proc_7F06C010(int **param_1,float *param_2,float *param_3,int *param_4,ushort **param_5);
 ulonglong proc_7F06C060(int param_1,int param_2);
-uint get_obj_instance_controller_for_header(PitemZ_header *objheader);
+uint get_obj_instance_controller_for_header(object_header *objheader);
 void set_obj_instance_scale_to_zero(int *ptrobjinstance);
-uint get_aircraft_obj_instance_controller(int *objheader);
+uint get_aircraft_obj_instance_controller(object_header *objheader);
 void proc_7F06C3B4(int param_1,ushort *param_2,ushort **param_3);
 void set_aircraft_obj_inst_scale_to_zero(int *objinstance);
 void set_80036084(s32 param_1);
@@ -16910,21 +19399,21 @@ void return_null(void);
 void proc_7F06C474(int param_1,float *param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F06C550(int param_1,float *param_2,undefined4 param_3,undefined4 param_4);
 undefined2 proc_7F06C570(ushort *param_1,longlong param_2);
-int proc_7F06C660(int param_1,ushort *param_2,longlong param_3);
-int getsubmatrix(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
+int proc_7F06C660(int objinst,ushort *param_2,longlong param_3);
+int getsubmatrix(int objinst,uint param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F06C710(int param_1,undefined4 *param_2,undefined4 param_3,undefined4 param_4);
 float proc_7F06C768(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
 int extract_id_from_object_structure_microcode(int objinst,ushort *partdesc);
-void getpartoffset(longlong param_1,ushort *param_2,undefined4 *param_3,undefined4 param_4);
-void setpartoffset(longlong param_1,ushort *param_2,float *param_3,undefined4 param_4);
-void getsuboffset(int param_1,undefined4 *param_2,undefined4 param_3,undefined4 param_4);
-void setsuboffset(int param_1,float *param_2,undefined4 param_3,undefined4 param_4);
-ushort ** getsubroty(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
-void setsubroty(int param_1,float param_2,float param_3,undefined4 param_4);
+void getpartoffset(longlong objinst,ushort *partdesc,undefined4 *param_3,undefined4 param_4);
+void setpartoffset(longlong objinst,ushort *partedesc,float *param_3,undefined4 param_4);
+void getsuboffset(int objinst,undefined4 *param_2,undefined4 param_3,undefined4 param_4);
+void setsuboffset(int objinst,xyzpoint *param_2);
+ushort ** getsubroty(int objinst,uint param_2,undefined4 param_3,undefined4 param_4);
+void setsubroty(int objinst,float param_2,float param_3,undefined4 param_4);
 void set_obj_instance_controller_scale(int instancecontroller,f32 scale);
 void proc_7F06CE84(int param_1,undefined4 param_2);
-float getjointsize(int param_1,ushort *param_2,undefined8 param_3,undefined4 param_4);
-float getinstsize(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
+float getjointsize(int objinst,ushort *param_2,undefined8 param_3,undefined4 param_4);
+float getinstsize(int objinst,uint param_2,undefined4 param_3,undefined4 param_4);
 void proc_7F06D07C(float *param_1,float *param_2,float param_3);
 float proc_7F06D0CC(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5);
 void proc_7F06D160(undefined8 param_1,undefined8 param_2,float param_3);
@@ -16932,8 +19421,8 @@ uint proc_7F06D1CC(int param_1,int param_2,int param_3);
 uint proc_7F06D2E4(int param_1,longlong param_2,int param_3,int param_4,int param_5,short *param_6);
 float proc_7F06D3F4(int param_1,longlong param_2,int param_3,int param_4,int param_5,float *param_6);
 void proc_7F06D490(int param_1,ushort *param_2);
-void subcalcpos(int param_1,uint param_2,undefined4 param_3,undefined4 param_4);
-void process_01_group_heading(float **param_1,int param_2,ushort *param_3);
+void subcalcpos(int objanim,uint param_2,undefined4 param_3,undefined4 param_4);
+void process_01_group_heading(float **param_1,int objinst,ushort *partdesc);
 void proc_7F06D8B0(void);
 void proc_7F06DB5C(float **param_1,int param_2,ushort *param_3,float *param_4);
 uint proc_7F06DE04(int param_1,uint param_2,uint param_3);
@@ -17013,7 +19502,7 @@ undefined4 proc_7F07549C(int param_1,float *param_2,float *param_3,ushort **para
 uint proc_7F0754BC(int *param_1,int param_2);
 void proc_7F0755B0(void);
 void convert_obj_microcode_offset_to_rdram_addr(ushort *param_1,int param_2,int param_3);
-void proc_7F075A90(ushort **param_1,int param_2,int param_3);
+void proc_7F075A90(object_header *objheader,int param_2,int param_3);
 void proc_7F075B08(void);
 uint set_microcode_entry_numbers(ushort *param_1);
 void set_objuse_flag_compute_grp_nums_set_obj_loaded(object_header *objheader);
@@ -17021,10 +19510,10 @@ void unknown_object_microcode_handler(int param_1,ushort *param_2);
 void proc_7F075F68(int param_1,ushort **param_2,undefined4 param_3);
 void proc_7F075FAC(int param_1,ushort **param_2,undefined4 param_3);
 void proc_7F076030(int param_1,int param_2,ushort *param_3,ushort **param_4);
-void proc_7F0760C4(ushort **param_1,ushort **param_2,int *param_3);
-void proc_7F07623C(undefined8 param_1,ushort *param_2,int param_3,int param_4);
-void proc_7F0762E0(undefined8 param_1,byte *param_2,int param_3,uint *param_4);
-void load_object_fill_header(object_header *objheader,u8 *recallstring,int targetloc,int sizeleft,int param_5);
+void proc_7F0760C4(object_header *objheader,ushort **param_2,int *param_3);
+void proc_7F07623C(object_header *objheader,ushort *param_2,int param_3,int param_4);
+void proc_7F0762E0(object_header *objheader,u8 *objectstring,int targetloc,uint *buffer);
+void load_object_fill_header(object_header *objheader,u8 *recallstring,int targetloc,int sizeleft,int buffer);
 void load_object_into_memory(object_header *header,u8 *recallstring);
 void load_object_into_memory_unused_maybe(object_header *header,int *recallstring,int targetloc,int sizeleft);
 s32 is_less_than_certain_power_of_2(int number);
@@ -17037,12 +19526,12 @@ int proc_7F076848(int param_1,int param_2,int param_3);
 int proc_7F0768B8(int param_1,int param_2,int param_3);
 int proc_7F076928(int param_1,int param_2,int param_3);
 void generate_microcode_for_othermode_setting(undefined4 *DL,int param_2,longlong param_3,longlong bowtie);
-void likely_generate_DL_for_image_declaration(uint **DLtarget,uint *imgcall,int param_3,longlong param_4,uint param_5);
+void append_image_to_DL(uint **DLtarget,sImageTableEntry *imgcall,int param_3,longlong bowtie,uint ul_s_t);
 void proc_7F077BB8(s32 param_1,s32 param_2,s32 param_3);
 void proc_7F077BD0(void);
 void set_BONDdata_screensize(float width,float height);
 void set_ulx_uly(f32 ulx,f32 uly);
-void sub_GAME_7F077C30(f32 arg0,f32 arg1,f32 arg2);
+void sub_GAME_7F077C30(f32 pnear,f32 pfovy,f32 paspect);
 void proc_7F077C5C(void);
 void proc_7F077EEC(float *param_1,float *param_2,float param_3);
 void proc_7F077FB4(float *param_1,float param_2,float *param_3);
@@ -17051,26 +19540,26 @@ void proc_7F078060(float *param_1,float *param_2);
 void proc_7F0780F0(float *param_1,float param_2,float *param_3);
 void proc_7F078140(float *param_1,float *param_2,float param_3,float param_4,float param_5);
 void proc_7F078258(float *param_1,float *param_2,float param_3,float param_4);
-void proc_7F078324(int param_1);
-int proc_7F078334(void);
-void proc_7F078344(int param_1);
-int proc_7F078354(void);
-void proc_7F078364(int param_1);
-int proc_7F078374(void);
-void proc_7F078384(int param_1);
-int proc_7F078394(void);
-void proc_7F0783A4(int param_1);
-int proc_7F0783C4(void);
-void proc_7F0783D4(int param_1);
-int proc_7F0783E4(void);
-int proc_7F0783F4(void);
-void proc_7F078404(int param_1);
-int proc_7F078414(void);
+void set_BONDdata_field_10C4(int param_1);
+int get_BONDdata_field_10C4(void);
+void set_BONDdata_field_10C8(int param_1);
+int get_BONDdata_field_10C8(void);
+void set_BONDdata_field_10D8(int param_1);
+int get_BONDdata_field_10D8(void);
+void set_BONDdata_field_10E0(int param_1);
+int get_BONDdata_field_10E0(void);
+void copy_BONDdata_field_10CC_to_10E8_set_10CC(int param_1);
+int get_BONDdata_field_10CC(void);
+void set_BONDdata_field_10DC(int param_1);
+int get_BONDdata_field_10DC(void);
+int get_BONDdata_field_10E8(void);
+void set_BONDdata_field_10D0(int param_1);
+int get_BONDdata_field_10D0(void);
 void proc_7F078424(int param_1);
-int proc_7F078444(void);
-int proc_7F078454(void);
-void proc_7F078464(int param_1);
-int proc_7F078474(void);
+int get_BONDdata_field_10D4(void);
+int get_BONDdata_field_10EC(void);
+void set_BONDdata_field_10E4(int param_1);
+int get_BONDdata_field_10E4(void);
 f32 getPlayer_c_lodscalez(void);
 int getPlayer_c_lodscalezu32(void);
 f32 getPlayer_c_screenwidth(void);
@@ -17079,13 +19568,13 @@ f32 getPlayer_c_screenleft(void);
 f32 getPlayer_c_screentop(void);
 f32 getPlayer_c_perspfovy(void);
 f32 getPlayer_c_perspaspect(void);
-void proc_7F078504(undefined4 *param_1);
-void proc_7F078534(undefined4 *param_1);
-void proc_7F078568(undefined4 *param_1);
-void proc_7F078598(float *param_1);
+void setpointtocameratopnorm(xyzpoint *param_1);
+void setpointtocameratopnorminvertedy(xyzpoint *param_1);
+void setpointtocameraleftnorm(xyzpoint *param_1);
+void setpointtocameraleftnorminvertedx(xyzpoint *param_1);
 f32 getPlayer_c_perspnear(void);
 void proc_7F0785DC(void);
-void proc_7F078950(undefined4 *param_1,undefined4 *param_2);
+void proc_7F078950(xyzpoint *param_1,undefined4 *param_2);
 void proc_7F078980(undefined4 *param_1,undefined4 *param_2);
 void proc_7F0789B0(undefined4 *param_1,undefined4 *param_2);
 void proc_7F0789E0(undefined4 *param_1,undefined4 *param_2);
@@ -17105,7 +19594,7 @@ void solo_char_load(void);
 void maybe_solo_intro_camera_handler(void);
 CAMERAMODE get_camera_mode(void);
 longlong proc_7F07A534(undefined4 param_1,float *param_2,char *param_3,float *param_4,u32 param_5,float param_6);
-void set_camera_mode(int param_1);
+void set_camera_mode(CAMERAMODE param_1);
 void proc_7F07B1A4(void);
 void proc_7F07B2A0(int param_1,float param_2,float *param_3,float *param_4);
 void proc_7F07B56C(void);
@@ -17175,7 +19664,7 @@ void proc_7F080010(void);
 float proc_7F080228(void);
 void proc_7F0802C4(void);
 undefined4 * proc_7F0804E0(undefined4 *param_1);
-void proc_7F0807B0(undefined4 param_1,undefined4 param_2,undefined4 param_3,float param_4);
+void proc_7F0807B0(u32 param_1,u32 param_2,u32 param_3,float param_4);
 void proc_7F0807E0(undefined4 param_1,undefined8 param_2,int param_3,int param_4,f32 param_5,undefined param_6,undefined param_7,undefined param_8,undefined param_9,undefined param_10,undefined4 param_11);
 void fade_to_over_seconds(f32 seconds,f32 fadeto);
 ulonglong check_if_fade_to_black_complete(void);
@@ -17192,18 +19681,18 @@ void proc_7F083FC8(void);
 void proc_7F084360(void);
 void MoveBond(char param_1,char param_2,ushort param_3,ushort param_4);
 void proc_7F086990(undefined8 param_1,undefined8 param_2,ushort param_3,ushort param_4);
-undefined8 proc_7F086BF8(void);
-undefined8 proc_7F086C1C(void);
-undefined8 get_curplayer_viewport_width(void);
+int getWidth320or440(void);
+int getHeight330or240(void);
+s32 get_curplayer_viewport_width(void);
 undefined8 get_curplayer_viewport_ulx(void);
 int get_curplayer_viewport_height(void);
 int get_curplayer_viewport_uly(void);
 void possibly_reset_viewport_options_for_player(char param_1,char param_2,ushort param_3);
-void proc_7F0875E4(void);
+void proc_7F0875E4(s32 roomindex);
 void store_BONDdata_curpos_to_previous(void);
 void proc_7F0876C4(float *param_1,float *param_2,float *param_3);
 undefined4 proc_7F087A08(undefined4 param_1);
-void seems_to_load_cuff_microcode(void);
+void seems_to_load_cuff_microcode(void *instance,Gitemheader *header,void *param_3);
 undefined4 * proc_7F087E74(undefined4 *param_1);
 undefined4 * proc_7F088618(undefined4 *param_1);
 void proc_7F0888E8(void);
@@ -17212,20 +19701,20 @@ undefined4 * maybe_mp_interface(void);
 undefined8 write_stan_tiles_in_yellow(undefined8 param_1);
 void proc_7F089718(float param_1);
 void proc_7F08976C(undefined4 param_1);
-undefined4 proc_7F089778(int param_1);
+f32 proc_7F089778(int param_1);
 float proc_7F089780(int param_1);
 int get_curplayer_positiondata(void);
 void kill_current_player(void);
 int proc_7F0898E8(void);
-ulonglong record_damage_kills(void);
-void proc_7F089E4C(undefined4 param_1,float param_2,undefined8 param_3,undefined8 param_4,undefined4 param_5,undefined4 param_6);
+void record_damage_kills(f32 arg0,f32 arg1,f32 arg2,s32 arg3,f32 arg4);
+void proc_7F089E4C(f32 param_1,float param_2,f32 param_3);
 ulonglong check_if_bond_is_invincible(void);
 ulonglong check_if_healthbar_timer_greater_than_0(void);
-f32 get_BONDdata_field19C(void);
+f32 get_BONDdata_bondfadefracnew(void);
 float get_curplay_horizontal_rotation_in_degrees(void);
 float get_curplay_vertical_rotation_in_degrees(void);
 int proc_7F089F38(void);
-void set_bondata_invincible_flag(char param_1);
+void set_bondata_invincible_flag(char flag);
 ulonglong get_bondata_invincible_flag(void);
 void set_invisible_to_guards_flag(BOOL param_1);
 BOOL get_invisible_to_guards_flag(void);
@@ -17246,7 +19735,7 @@ void reset_intro_camera_message_dialogs_for_BONDdata(void);
 void proc_7F08A380(uint param_1);
 void set_flags_in_BONDdata_stationary_intro_cam(uint param_1);
 void proc_7F08A3B4(undefined4 param_1,undefined4 param_2);
-ulonglong display_string_in_lower_left_corner(char *text);
+void display_string_in_lower_left_corner(char *text,...);
 void proc_7F08A4E4(void);
 undefined4 * proc_7F08A5FC(undefined4 *param_1);
 void proc_7F08A900(void);
@@ -17254,7 +19743,7 @@ void proc_7F08A928(uint param_1);
 void proc_7F08A944(uint param_1);
 void display_string_at_top_of_screen(char *text);
 void proc_7F08A9F8(void);
-undefined4 * proc_7F08AAE8(void);
+u32 * print_player_xyz_info(void);
 undefined4 proc_7F08B0F0(char *param_1);
 undefined8 proc_7F08BCB8(undefined8 param_1);
 undefined8 proc_7F08BCC0(char *param_1,undefined8 param_2,uint param_3);
@@ -17273,19 +19762,19 @@ void reorder_inventory_ptrs_based_on_id_code(undefined4 *param_1);
 int get_ptr_next_available_weapon(void);
 void set_BONDdata_allguns_flag(int param_1);
 int get_BONDdata_allguns_flag(void);
-int * get_ptr_inventory_item(int item);
-ulonglong is_weapon_in_inv(int param_1);
+int * get_ptr_inventory_item(ITEM_IDS item);
+BOOL is_weapon_in_inv(ITEM_IDS item);
 int * get_ptr_inventory_for_item_in_hand(int item,int hand);
 ulonglong is_item_for_hand_in_inventory(int item,int hand);
 ulonglong check_if_item_available(ITEM_IDS weaponid);
 ulonglong check_if_item_for_hand_available(ITEM_IDS item,int hand);
-undefined8 add_item_to_inventory(ITEM_IDS item);
+BOOL add_item_to_inventory(ITEM_IDS item);
 undefined8 add_doubles_item_to_inventory(int right,int left);
 int proc_7F08C570(char param_1);
 void proc_7F08C61C(longlong param_1);
 undefined8 proc_7F08C724(int param_1);
 ulonglong proc_7F08C764(char *param_1);
-void proc_7F08C86C(int *param_1,int *param_2,longlong param_3);
+void proc_7F08C86C(int *nextright,int *nextleft,s32 direction);
 void proc_7F08CB10(int *param_1,int *param_2,longlong param_3);
 undefined8 proc_7F08CE70(uint param_1);
 undefined8 proc_7F08CF0C(void);
@@ -17365,9 +19854,9 @@ void display_debug_menu_text_onscreen(void);
 void handle_debug_stanview(void);
 void handle_debug_bondview(void);
 void handle_debug_case_2(void);
-void null_68(void);
-void nullsub_35(void);
-uint debug_menu_processor(undefined8 param_1,undefined8 param_2,uint param_3,uint param_4);
+void removed_do_debug_profile_flag_false(void);
+void removed_do_debug_profile_flag_true(void);
+void debug_menu_processor(u32 stick_h,u32 stick_v,controller_buttons button_held,controller_buttons button_pressed);
 u32 get_debug_render_raster(void);
 u32 get_debug_freeze_processing(void);
 u32 get_debug_limit_controller_input(void);
@@ -17386,8 +19875,8 @@ BOOL get_debug_joy2hitsedit_flag(void);
 BOOL get_debug_joy2detailedit_flag(void);
 BOOL get_debug_explosioninfo_flag(void);
 BOOL get_debug_prroomloads_flag(void);
-BOOL get_debug_VisCVG_flag(void);
-void set_debug_VisCVG_flag(BOOL param_1);
+BOOL get_linemode_flag(void);
+void set_linemode_flag(BOOL param_1);
 BOOL get_debug_007_unlock_flag(void);
 BOOL get_debug_enable_agent_levels_flag(void);
 BOOL get_debug_enable_all_levels_flag(void);
@@ -17405,18 +19894,18 @@ void proc_7F0915BC(float param_1);
 void handle_debug_intropos(void);
 void handle_debug_worldpos(void);
 void stanStoreBondCoord(void);
-int proc_7F091740(uint param_1);
-void proc_7F09177C(void);
-void proc_7F09193C(void);
-undefined8 proc_7F091A5C(longlong param_1);
-undefined8 proc_7F091A78(int param_1);
-void proc_7F091AAC(undefined8 param_1);
-void proc_7F091B64(void);
-void proc_7F092438(int param_1);
-void unload_loop_all_players(void);
-int proc_7F092774(int param_1);
-uint proc_7F0927BC(int param_1);
-void proc_7F0927F4(longlong param_1);
+int cheatButton_7F091740(controller_buttons *param_1);
+void cheatButton_7F09177C(void);
+void cheat_buttons_mp_related(void);
+u32 is_cheat_index_equal_to_1C(u32 cheatindex);
+u32 cheatCheckIfMPCheat(CHEAT_IDS cheat);
+void turn_on_cheat_for_players(u32 cheatindex);
+void handle_cheats_turned_on(CHEAT_IDS cheat);
+void cheatDisplayMessageActivateCheat(CHEAT_IDS cheat);
+void cheatDisableAllCheats(void);
+int cheatGetMenuTextPointer(CHEAT_IDS cheat);
+uint cheatCheckIfOn(CHEAT_IDS cheat);
+void set_DKMode(s32 param_1);
 undefined8 proc_7F092890(short *param_1,short *param_2,short *param_3,float *param_4,float *param_5,float *param_6,float *param_7,float *param_8);
 void proc_7F092E50(void);
 undefined4 * proc_7F09343C(undefined4 *param_1,longlong param_2);
@@ -17426,11 +19915,11 @@ undefined8 proc_7F0938FC(float *param_1,float *param_2,float *param_3);
 undefined8 proc_7F093A78(float *param_1,float *param_2,float *param_3);
 void proc_7F093BFC(float *param_1,float *param_2,float *param_3);
 float proc_7F093C48(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5);
-float proc_7F093C88(float param_1);
+float addpoint5tofloat(float param_1);
 void proc_7F093CB0(int param_1,float param_2);
 void proc_7F093FA4(int param_1,float param_2);
 uint proc_7F094298(float param_1);
-void proc_7F09442C(undefined4 param_1);
+void store_stagenum_to_copyof_stagenum(STAGENUM stagenum);
 void proc_7F094438(void);
 uint * proc_7F094488(void);
 void proc_7F097388(float *param_1,float *param_2,uint param_3,float param_4,float param_5,float *param_6);
@@ -17440,17 +19929,17 @@ undefined4 *proc_7F098A2C(undefined4 *param_1,int param_2,int param_3,int param_
 void default_player_perspective_and_height(void);
 void reset_play_data_ptrs(void);
 void init_player_data_ptrs_construct_viewports(int playercount);
-ulonglong get_num_players(void);
-void initBONDdataforPlayer(int player);
-void set_cur_player(int playernum);
+s32 get_num_players(void);
+void initBONDdataforPlayer(PLAYER_ID player);
+void set_cur_player(PLAYER_ID playernum);
 u32 get_cur_playernum(void);
-longlong proc_7F09B15C(int param_1);
+void proc_7F09B15C(int position_data_pointer);
 void set_cur_player_screen_size(short width,short height);
 void set_cur_player_viewport_size(short ulx,short uly);
-void set_watch_menu_current_size_unused_maybe(f32 size);
-void proc_7F09B224(undefined4 param_1);
-f32 get_watch_menu_current_size_unused_maybe(void);
-undefined8 proc_7F09B244(ulonglong param_1);
+void set_cur_player_fovy(f32 fovy);
+void set_cur_player_aspect(f32 aspect);
+f32 get_cur_player_fovy(void);
+s32 proc_7F09B244(ITEM_IDS param_1);
 void proc_7F09B368(int param_1);
 longlong proc_7F09B398(uint param_1);
 void proc_7F09B41C(void);
@@ -17458,7 +19947,7 @@ int proc_7F09B4D8(int param_1);
 int proc_7F09B528(int param_1);
 void proc_7F09B600(byte *param_1,byte *param_2,uint *param_3);
 undefined4 proc_7F09B740(void);
-void proc_7F09B788(longlong param_1);
+void proc_7F09B788(u64 param_1);
 void removed_7f09b7a0(void);
 void proc_7F09B7A8(void);
 void proc_7F09B7E4(void);
@@ -17491,7 +19980,7 @@ void proc_7F0A0D90(int param_1);
 void proc_7F0A0E98(int param_1);
 void proc_7F0A108C(float *param_1,float *param_2,short param_3,short param_4,int param_5,char param_6,undefined param_7);
 undefined4 * proc_7F0A1A94(undefined4 *param_1,int param_2,uint param_3);
-undefined4 * proc_7F0A1D78(undefined4 *param_1);
+void proc_7F0A1D78(undefined4 *param_1);
 void proc_7F0A1DA0(float *param_1,float *param_2,float *param_3,float *param_4,float param_5,float param_6,float param_7,float param_8);
 void proc_7F0A2160(undefined4 *param_1,undefined4 param_2,float param_3);
 void proc_7F0A28D4(void);
@@ -17521,10 +20010,10 @@ void proc_7F0A4824(undefined8 param_1,undefined8 param_2);
 void proc_7F0A4860(void);
 void init_watch_at_start_of_stage(void);
 void controller_deadzone_related(void);
-uint * proc_7F0A4B40(undefined4 *param_1);
-undefined8 proc_7F0A4D74(void);
-int cur_player_get_control_type(void);
-void cur.player.set.control_type(int param_1);
+void proc_7F0A4B40(undefined4 *param_1);
+u32 controllerCheckControllerTypesAllowed(void);
+s32 cur_player_get_control_type(void);
+void cur_player_set_control_type(int type);
 u32 get_cur_player_look_vertical_inverted(void);
 void set_cur_player_look_vertical_inverted(u32 param_1);
 u32 cur_player_get_autoaim(void);
@@ -17542,40 +20031,40 @@ void cur.player.set.screen.setting(undefined4 param_1);
 undefined4 get.screen_ratio(void);
 void set.screen_ratio(undefined4 param_1);
 int ** proc_7F0A4EF8(void);
-void proc_7F0A4F44(void);
-ulonglong is_holding_greater_than_2E_left_on_stick(void);
-ulonglong is_holding_greater_than_2E_right_on_stick(void);
-undefined4 get.controlstick_lr_enabled(void);
-void set.controlstick_lr_disabled(void);
-bool proc_7F0A4FB0(void);
-ulonglong proc_7F0A4FEC(void);
-ulonglong proc_7F0A5028(void);
-ulonglong proc_7F0A504C(void);
-undefined4 proc_7F0A5070(void);
-void proc_7F0A507C(void);
-ulonglong proc_7F0A5088(void);
-ulonglong proc_7F0A50C4(void);
-ulonglong proc_7F0A5100(void);
-ulonglong proc_7F0A5124(void);
-undefined4 proc_7F0A5148(void);
-void proc_7F0A5154(void);
+void sub_GAME_7F0A4F44(void);
+u32 is_holding_greater_than_2E_left_on_stick(void);
+u32 is_holding_greater_than_2E_right_on_stick(void);
+u32 get_controlstick_lr_enabled(void);
+void set_controlstick_lr_disabled(void);
+bool sub_GAME_7F0A4FB0(void);
+bool proc_7F0A4FEC(void);
+ulonglong is_holding_greater_than_2E_up_on_stick(void);
+ulonglong is_holding_greater_than_2E_down_on_stick(void);
+undefined4 get_D_80040AE0(void);
+void set_D_80040AE0_0(void);
+ulonglong sub_GAME_7F0A5088(void);
+ulonglong sub_GAME_7F0A50C4(void);
+ulonglong is_holding_less_than_10_up_on_stick(void);
+ulonglong is_holding_less_than_10_down_on_stick(void);
+undefined4 get_D_80040AE4(void);
+void set_D_80040AE4_0(void);
 ulonglong proc_7F0A5160(void);
 ulonglong proc_7F0A519C(void);
-int ** proc_7F0A51D8(void);
-int ** proc_7F0A5210(void);
+void sub_GAME_7F0A51D8(void);
+void proc_7F0A5210(void);
 void proc_7F0A526C(void);
 void proc_7F0A53D8(void);
 void proc_7F0A5504(void);
 void proc_7F0A55C4(void);
 void proc_7F0A56A4(void);
 void proc_7F0A5784(void);
-void proc_7F0A5860(void);
+void sub_GAME_7F0A5860(void);
 void proc_7F0A5900(void);
 void proc_7F0A5998(void);
-void proc_7F0A5A64(void);
-void proc_7F0A5AF4(void);
+void sub_GAME_7F0A5A64(void);
+void sub_GAME_7F0A5AF4(void);
 void proc_7F0A5B80(void);
-void proc_7F0A611C(float *param_1,int *param_2,int param_3,int *param_4,int *param_5,undefined4 *param_6,int param_7,int param_8,int param_9);
+void proc_7F0A611C(float *controltype_2,int *controltype_0,int param_3,int *negvspacing,int *controltype_1,undefined4 *controltype_set,int param_7,int param_8,int param_9);
 void proc_7F0A6618(void);
 void proc_7F0A66A0(void);
 void proc_7F0A672C(void);
@@ -17587,39 +20076,39 @@ float proc_7F0A6A2C(float param_1);
 void proc_7F0A6A80(void);
 undefined4 * proc_7F0A6EE8(undefined4 *param_1);
 void proc_7F0A70AC(int param_1,int param_2);
-undefined4 * proc_7F0A714C(u32 param_1,u32 param_2,u32 param_3);
+u32 * proc_7F0A714C(u32 *DL,u32 param_2,u32 param_3);
 void proc_7F0A77A8(undefined8 param_1,undefined8 param_2);
-uint * proc_7F0A77C8(undefined4 *param_1);
-uint * proc_7F0A7C18(undefined4 *param_1);
-undefined8 proc_7F0A7DBC(undefined8 param_1);
+void proc_7F0A77C8(undefined4 *param_1);
+void proc_7F0A7C18(undefined4 *param_1);
+u32 stub_return_param_7F0A7DBC(u32 param_1);
 uint * proc_7F0A7DC4(undefined4 *param_1);
-uint * debug_gun_watch_move_related(void);
-longlong proc_7F0A830C(undefined8 param_1,undefined8 param_2);
+void debug_gun_watch_move_related(void);
+void proc_7F0A830C(undefined8 param_1,undefined8 param_2);
 int ** proc_7F0A8378(void);
 uint * debug_gun_watch_move_related2(undefined8 param_1,undefined8 param_2);
 uint * proc_7F0A8B10(undefined8 param_1,u32 param_2);
 void proc_7F0A8D40(undefined2 *param_1,float param_2,int param_3);
 void proc_7F0A8ED0(ushort *param_1);
 undefined4 * proc_7F0A8FEC(void);
-void proc_7F0A9180(void);
+void call_sfx_c_700091C8(void);
 void proc_7F0A91A0(ulonglong param_1);
 undefined4 * proc_7F0A91C8(void);
 u16 proc_7F0A9358(void);
 void proc_7F0A9364(ushort param_1);
-uint * proc_7F0A9398(undefined4 *param_1,uint param_2,uint param_3,byte *param_4,uint param_5,int param_6,uint param_7,int param_8,int param_9,uint param_10,int param_11);
-float proc_7F0A95C4(float param_1,float param_2,undefined8 param_3,undefined8 param_4,float param_5);
+void proc_7F0A9398(undefined4 *param_1,uint param_2,uint param_3,byte *param_4,uint param_5,int param_6,uint param_7,int param_8,int param_9,uint param_10,int param_11);
+float sub_GAME_7F0A95C4(float param_1,float param_2,float param_3);
 undefined8 proc_7F0A9610(void);
 void proc_7F0A9684(char param_1,int *param_2,float *param_3,float *param_4);
 uint * proc_7F0A97D0(undefined4 *param_1);
 uint * proc_7F0A9AB8(undefined4 *param_1);
-uint * proc_7F0AA7C8(undefined4 *param_1);
-uint * proc_7F0AADC0(void);
-void proc_7F0AB48C(void);
-void proc_7F0AB498(void);
-void proc_7F0AB4A4(void);
-undefined8 proc_7F0AB4B0(undefined8 param_1);
-uint * proc_7F0AB4B8(undefined8 param_1,undefined8 param_2);
-int ** proc_7F0AB7A4(undefined4 *param_1,undefined4 param_2);
+void sub_GAME_7F0AA7C8(u32 *DisplayList);
+void proc_7F0AADC0(u32 *DL);
+void zero_D_80040998(void);
+void zero_D_8004099C(void);
+void zero_D_800409A4(void);
+u32 return_arg0_7F0AB4B0(u32 param_1);
+void proc_7F0AB4B8(u32 *DL,u32 param_2);
+void set_pparam1toparam2_disablejoylr_playsfx(u32 *param_1,u32 param_2);
 ulonglong proc_7F0AB7D8(int param_1);
 uint * proc_7F0AB908(undefined4 *param_1,uint param_2,int param_3,longlong param_4);
 uint * proc_7F0ABC1C(undefined4 *param_1);
@@ -17628,23 +20117,23 @@ int proc_7F0AC0E8(char *param_1);
 char * proc_7F0AC120(char *param_1);
 uint * proc_7F0AC168(undefined8 param_1,undefined8 param_2);
 longlong proc_7F0ACA28(longlong param_1,int param_2,int param_3);
-void removed_7f0acb70(void);
-void proc_7F0ACB78(int param_1);
-void proc_7F0ACB88(undefined4 param_1);
-void proc_7F0ACB94(undefined4 param_1);
-void proc_7F0ACBA0(undefined4 param_1);
-void load_font_table_controllers(void);
-undefined4 * microcode_constructor(undefined4 *DL);
+void null_init_main_7f0acb70(void);
+void setTextSpacingInverted(int spacing);
+void setTextOrientation(s32 param_1);
+void setTextWordWrap(s32 param_1);
+void setTextOverlapCorrection(s32 param_1);
+void load_font_tables(void);
+void microcode_constructor(u32 *DL);
 undefined4 * combiner_bayer_lod_perspective(undefined4 *DL);
 undefined4 *draw_blackbox_to_screen(undefined4 *param_1,uint *param_2,uint *param_3,uint *param_4,uint *param_5);
 undefined4 *microcode_constructor_related_to_menus(undefined4 *param_1,undefined8 param_2,undefined8 param_3,undefined8 param_4,uint param_5,uint param_6);
-uint * proc_7F0AD0F8(uint *param_1,int *param_2,int *param_3,uint *param_4,int param_5,int param_6,int param_7,int param_8,int param_9,int param_10,int param_11);
-uint * en_text_write_stuff(undefined4 *param_1,int *param_2,int *param_3,byte *param_4,int param_5,int param_6,uint param_7,int param_8,int param_9,int param_10,int param_11);
+uint * construct_fontchar_microcode(void *DL,int xpos,int ypos,void *ptr_tbl2entry,void *ptr_unk,void *ptr_tbl1,int ulx,int uly,int lrx,int lry,int unk);
+void en_text_write_stuff(undefined4 *param_1,int *param_2,int *param_3,byte *param_4,int param_5,int param_6,uint param_7,int param_8,int param_9,int param_10,int param_11);
 uint * proc_7F0ADDAC(uint *param_1,uint *param_2,int *param_3,uint *param_4,int param_5,int param_6,int param_7,uint param_8,uint param_9,uint param_10,int param_11,int param_12,int param_13);
 uint * proc_7F0AE45C(uint *param_1,uint param_2,int param_3,int param_4,int param_5,uint param_6,int param_7,int param_8);
-uint * jp_text_stuff(uint *param_1,uint *param_2,uint *param_3,byte *param_4,int param_5,int param_6,uint param_7,uint param_8,int param_9,int param_10,int param_11,int param_12);
+void jp_text_stuff(uint *param_1,uint *param_2,uint *param_3,byte *param_4,int param_5,int param_6,uint param_7,uint param_8,int param_9,int param_10,int param_11,int param_12);
 void proc_7F0AE98C(int *param_1,int *param_2,byte *param_3,int param_4,int *param_5,int param_6);
-void proc_7F0AEB64(int param_1,byte *param_2,byte *param_3,int param_4,int *param_5);
+void find_width_word_in_string(int max_width,byte *text,byte *textbuffer,int secondfonttable,int *firstfonttable);
 void proc_7F0AEF0C(u32 param_1,u32 param_2,u32 param_3,u32 param_4);
 u32 sub_GAME_7F0AEF20(u32 param_1,u32 param_2);
 f32 proc_7F0AEF30(f32 param_1);
@@ -17746,7 +20235,7 @@ longlong proc_7F0B3C8C(longlong param_1);
 int proc_7F0B4034(int param_1);
 int proc_7F0B4084(int param_1);
 int proc_7F0B40D4(int param_1);
-void proc_7F0B4124(int param_1);
+void load_bg_file(STAGENUM stagenum);
 void proc_7F0B47E0(void);
 void proc_7F0B4810(float param_1);
 f32 proc_7F0B4830(void);
@@ -17766,7 +20255,7 @@ undefined8 proc_7F0B519C(float *param_1,float *param_2);
 undefined8 proc_7F0B5208(int param_1,float *param_2);
 ulonglong proc_7F0B5488(float *param_1,float *param_2);
 ulonglong proc_7F0B5528(int param_1,float param_2,float *param_3);
-int proc_7F0B5864(void);
+s32 proc_7F0B5864(void);
 uint * proc_7F0B5B14(uint *param_1,undefined8 param_2,undefined8 param_3,int param_4,int param_5);
 uint * proc_7F0B5B60(uint *param_1,undefined8 param_2,undefined8 param_3,int param_4,int param_5);
 undefined8 vis_is_inline_of_sight(float *param_1,float *param_2);
@@ -17779,8 +20268,8 @@ ulonglong proc_7F0B5E50(int param_1);
 ulonglong proc_7F0B5E6C(int param_1);
 int proc_7F0B5E88(int param_1);
 void generate_room_load_string(void);
-undefined4 decompressdata_with_8448buffer(int source,int target);
-undefined4 proc_7F0B5FAC(int param_1,int param_2,int param_3);
+u8 * decompressdata_with_8448buffer(int source,u8 *target);
+int proc_7F0B5FAC(int param_1,int param_2,int param_3);
 uint * proc_7F0B609C(int param_1,uint *param_2,int param_3);
 uint * proc_7F0B61DC(int param_1,uint *param_2,int param_3);
 ulonglong proc_7F0B6314(int param_1);
@@ -17802,7 +20291,7 @@ undefined8 proc_7F0B7F84(undefined8 param_1,int param_2,int param_3,int param_4,
 undefined8 push_arg_to_table(undefined8 param_1);
 undefined4 pull_arg_from_stack(void);
 undefined4 proc_7F0B83E4(int param_1);
-byte * parse_global_vis_command_list(byte *cmd,uint mode);
+byte * parse_global_vis_command_list(vis_command *cmd,uint mode);
 byte * proc_7F0B8A24(byte *param_1);
 void proc_7F0B8A6C(void);
 uint * proc_7F0B8D78(longlong param_1);
@@ -17854,8 +20343,8 @@ undefined4 return_nearfog_values(void);
 undefined8 if_sky_present_convert_values(int param_1,float *param_2);
 void init_lightfixture_tables(void);
 int get_index_of_current_entry_in_init_lightfixture_table(void);
-void add_entry_to_init_lightfixture_table(undefined4 param_1);
-void save_ptrDL_enpoint_to_current_init_lightfixture_table(undefined4 param_1);
+void add_entry_to_init_lightfixture_table(Gfx *DL);
+void save_ptrDL_enpoint_to_current_init_lightfixture_table(int param_1);
 undefined8 check_if_imageID_is_light(longlong imageID);
 uint return_ptr_vertex_of_entry_room(char *entry,int room);
 void proc_7F0BB6F4(undefined8 param_1,ulonglong param_2);
@@ -17878,31 +20367,31 @@ void proc_7F0BC7D4(void);
 longlong proc_7F0BC85C(int param_1);
 undefined4 * proc_7F0BC9C4(undefined4 *param_1,int param_2);
 int proc_7F0BCA14(int param_1);
-void proc_7F0BCA34(int param_1,float *param_2);
-void load_resource(ulonglong param_1,longlong param_2,int param_3,int *param_4);
-void load_resource_from_indy(undefined *param_1,int param_2,int param_3,int param_4);
+void proc_7F0BCA34(int index,float *param_2);
+void load_resource(u8 *ptrdata,u32 bytes,fileentry *srcfile,resource_lookup_data_entry *lookupdata);
+void load_resource_from_indy(u8 *ptrdata,u32 bytes,fileentry *srcfile,resource_lookup_data_entry *lookupdata);
 void ob_c_debug_setup(void);
-void _load_rom_index_to_membank(int param_1,longlong param_2,int param_3,byte param_4);
-undefined *_load_resource_index_to_membank(int param_1,longlong param_2,undefined *param_3,int param_4);
-void _load_resource_named_to_membank(byte *param_1,int param_2,int param_3,byte param_4);
-undefined * _load_resource_named_to_buffer(byte *param_1,int param_2,undefined *param_3,int param_4);
-void load_bg_bytes_at_offset_to_membank(byte *param_1,int param_2,int param_3,int param_4);
-ulonglong load_rom_resource_index_to_membank(int param_1,longlong param_2,int param_3,byte param_4);
-undefined *load_resource_index_to_buffer(int param_1,longlong param_2,undefined *param_3,int param_4);
-undefined4 get_temp_remaining_buffer_for_index(int param_1);
-undefined4 get_remaining_buffer_for_index(int param_1);
-void proc_7F0BD138(int param_1,int param_2,int param_3,longlong param_4);
-undefined4 get_temp_buffer_remaining_value(byte *name);
+void _load_rom_index_to_membank(int index,longlong param_2,int size,byte bank);
+undefined * _load_resource_index_to_membank(int fileid,longlong param_2,undefined *param_3,int bank);
+u8 * _load_resource_named_to_membank(byte *filename,int param_2,int size,byte bank);
+u8 * _load_resource_named_to_buffer(byte *filename,int param_2,undefined *param_3,int param_4);
+void load_bg_bytes_at_offset_to_membank(byte *bgname,char *src,int offset,int len);
+u8 * load_rom_resource_index_to_membank(int index,longlong param_2,int size,byte bank);
+void load_resource_index_to_buffer(int index,longlong param_2,u8 *ptrdata,int bytes);
+s32 get_pc_remaining_buffer_for_index(int index);
+u32 get_rom_remaining_buffer_for_index(int param_1);
+void proc_7F0BD138(int index,u8 *ptrdata,int size,longlong param_4);
+s32 get_pc_buffer_remaining_value(byte *name);
 void something_mem_bank_a0(byte param_1);
 void proc_7F0BD234(void);
-int get_index_num_of_named_resource(byte *param_1);
+int get_index_num_of_named_resource(byte *filename);
 void removed_handle_filetable_entry(int param_1);
 void removed_loop_handle_filetable_entries(void);
 void removed_loop_filetableentries(void);
 void proc_7F0BD410(void);
 void something_with_dyn_c_debug(void);
 void set_vtx_gfx_mem_alloc(void);
-undefined4 get_ptr_displaylist(void);
+Gfx * get_ptr_displaylist(void);
 int allocate_something_in_mgfx(int param_1);
 void proc_7F0BD6C4(int param_1);
 void proc_7F0BD6E0(void);
@@ -17923,9 +20412,9 @@ void music_append_play_solo_death_short(void);
 void music_append_play_endtheme(void);
 void proc_7F0BDA84(void);
 void stage_load(LEVELID stagenum);
-undefined4 proc_7F0BDF04(void);
+STAGENUM proc_7F0BDF04(void);
 undefined4 proc_7F0BDF10(longlong param_1);
-uint * proc_7F0BE30C(undefined4 *param_1);
+uint * proc_7F0BE30C(Gfx *param_1);
 void proc_7F0BE8D0(void);
 void manage_mp_game(void);
 void proc_7F0BF800(void);
@@ -17969,7 +20458,7 @@ void proc_7F0C0BF0(void);
 void proc_7F0C0C10(void);
 undefined4 get_mission_state(void);
 void set_missionstate(ulonglong param_1);
-void proc_7F0C11FC(undefined4 param_1);
+void sub_GAME_7F0C11FC(s16 param_1);
 void setmissionstate_to_zero(void);
 void proc_7F0C1288(void);
 void proc_7F0C12CC(void);
@@ -17986,10 +20475,10 @@ int something_with_LnameX(uint param_1);
 void load_mission_text_bank(u32 param_1);
 void load_briefing_text_bank(int lnameID,undefined *target,int size);
 void blank_text_bank(int param_1);
-byte * get_textptr_for_textID(u16 id);
+u8 * get_textptr_for_textID(TEXTFILESTRINGS id);
 undefined8 MP_menu_page_adv_right(void);
 undefined8 MP_menu_page_adv_left(void);
-undefined8 check_if_player_is_pressing_anything_right(char param_1);
+s32 check_if_player_is_pressing_anything_right(char param_1);
 undefined8 check_if_player_is_pressing_anything_left(char param_1);
 int ** play_watch_sfx_beep(void);
 void unpause_game(void);
@@ -18036,14 +20525,14 @@ int type6_7_generate_link_final_image(ushort *param_1,uint param_2,int param_3,u
 void proc_7F0CB67C(int param_1,int param_2,int param_3,int param_4);
 void type8_9_doohick(int param_1,int param_2,int param_3,undefined4 param_4,int param_5);
 void proc_7F0CBAF4(int *param_1,int param_2,int param_3);
-uint * proc_7F0CBB0C(uint param_1,undefined4 *param_2);
+uint * proc_7F0CBB0C(uint imageid,undefined4 *buffer);
 int proc_7F0CBB64(int param_1);
-void proc_7F0CBB74(char *param_1,uint *param_2);
-void load_image_to_buffer(uint *param_1,uint *param_2);
-void proc_7F0CBE50(int param_1,uint *param_2);
-void proc_7F0CBEE8(uint param_1,uint *param_2);
-void proc_7F0CBF10(undefined4 param_1);
-uint proc_7F0CBF2C(uint param_1);
+void check_load_image_to_buffer(char *image,uint *buffer);
+void load_image_to_buffer(uint *image,uint *buffer);
+void proc_7F0CBE50(object_header *objheader,uint *buffer);
+void calls_load_image_to_buffer(uint image,uint *buffer);
+void proc_7F0CBF10(undefined *param_1);
+uint proc_7F0CBF2C(uint bits);
 void load_prepare_global_image_bank(void);
 void proc_7F0CC4C0(void);
 void proc_7F0CC4C8(void);
@@ -18062,18 +20551,18 @@ int proc_7F0CCAFC(float param_1);
 int proc_7F0CCB38(uint *param_1);
 uint * proc_7F0CCC50(uint *param_1,uint *param_2,int param_3,uint param_4,uint param_5,uint param_6);
 uint * proc_7F0CCFBC(uint *param_1,uint *param_2,int param_3,longlong param_4);
-uint * expland_c0_DL_psuedocommands(uint *param_1,uint *param_2,uint param_3);
+uint * expland_c0_DL_psuedocommands(uint *command,uint *facemapperimage,uint param_3);
 uint * proc_7F0CD430(uint *param_1,uint *param_2,int param_3,int param_4,int param_5,uint param_6,uint param_7);
 uint * proc_7F0CD7AC(uint *param_1,uint *param_2);
 uint * proc_7F0CDB64(uint *param_1,uint *param_2,int param_3,int param_4,int param_5,uint param_6);
-uint * proc_7F0CDE18(uint *param_1,uint *param_2,int param_3,int param_4,int param_5);
+uint * proc_7F0CDE18(uint *command,uint *facemapper_entry,int s_flags,int t_flags,int settilesize_offset);
 uint * proc_7F0CDEA8(uint *param_1,uint *param_2,int param_3,int param_4,int param_5,uint *param_6,uint param_7,uint param_8,uint param_9);
 uint * proc_7F0CDFA8(uint *param_1,uint *param_2,int param_3,int param_4,int param_5,uint param_6,uint param_7,uint param_8);
 uint * proc_7F0CE064(uint *param_1,uint *param_2,int param_3,int param_4,int param_5);
 uint * proc_7F0CE0AC(uint *param_1,uint *param_2,int param_3,int param_4,int param_5);
 uint * process_microcode_sort_display_modes_expand_image_calls(uint *param_1,int param_2,uint *param_3,uint *param_4);
 void proc_7F0CE794(int param_1,int param_2,int param_3);
-undefined4 decompressdata(int source,int target,int buffer);
+u8 * decompressdata(u8 *source,u8 *target,u8 *buffer);
 int proc_7F0CE894(void);
 ulonglong proc_7F0CE8B0(int *param_1,uint param_2,uint param_3,int param_4,int param_5,uint *param_6,uint *param_7);
 undefined8 proc_7F0CEEF0(int param_1,int param_2,ulonglong param_3,uint param_4);
@@ -18088,71 +20577,71 @@ void load_rsp_microcode(int param_1,int param_2,undefined8 param_3,undefined4 pa
 void init_indy_if_not_ready(void);
 void dummy7F0CFF64(void);
 void init_indy_if_ready(void);
-void indy_load_resource(char *param_1,undefined *param_2);
-void indy_send_capture_data(char *param_1,undefined *param_2,uint param_3);
-void indy_load_ramrom_file(char *param_1,undefined4 param_2,undefined4 param_3);
+void indy_load_resource(char *filename,u8 *targetloc);
+void indy_send_capture_data(char *name,undefined *param_2,uint size);
+void indy_load_ramrom_file(char *filename,u8 *target,s32 size);
 void check_file_exported(char *param_1,undefined4 param_2,undefined4 param_3);
-undefined4 check_file_found_on_indy(char *param_1,undefined4 *param_2);
+u8 * check_file_found_on_indy(char *name,undefined4 *size);
 u32 send_command_string(char *param_1);
 void proc_7F0D0124(void);
 u32 send_indy_close_port_cmd(void);
-void proc_7F0D0180(void);
-void proc_7F0D01D0(void);
-undefined8 proc_7F0D0220(undefined *param_1,uint param_2);
-undefined8 proc_7F0D0358(undefined *param_1,uint param_2,undefined *param_3,uint param_4);
-void proc_7F0D038C(undefined4 param_1,undefined4 param_2);
-void proc_7F0D03D4(undefined4 param_1,undefined4 param_2);
-void proc_7F0D041C(undefined4 param_1,undefined4 param_2);
-void proc_7F0D0460(undefined4 param_1,undefined4 param_2,char *param_3);
-void proc_7F0D04C4(undefined4 param_1,undefined4 param_2,undefined4 param_3);
-void proc_7F0D0514(undefined4 param_1,undefined4 param_2,char *param_3);
-void proc_7F0D0578(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4);
-void proc_7F0D05D0(undefined4 param_1,undefined4 param_2,char *param_3,undefined4 param_4);
-void proc_7F0D0644(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,uint param_5,undefined *param_6);
-void proc_7F0D06C0(undefined4 param_1,undefined4 param_2,char *param_3,uint param_4,undefined *param_5);
-void proc_7F0D0740(undefined4 param_1,undefined4 param_2,undefined4 param_3);
-void proc_7F0D0790(undefined4 param_1,undefined4 param_2,char *param_3,undefined4 param_4,undefined4 param_5);
-void proc_7F0D080C(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5);
-void proc_7F0D086C(undefined4 param_1,undefined4 param_2,char *param_3,undefined4 param_4,undefined4 param_5);
-void proc_7F0D08E8(undefined4 param_1,undefined4 param_2,undefined4 param_3);
-void proc_7F0D0938(undefined4 param_1,undefined4 param_2,char *param_3);
-void proc_7F0D099C(undefined4 param_1,undefined4 param_2,undefined4 param_3);
-void proc_7F0D09EC(undefined4 param_1,undefined4 param_2,undefined4 param_3);
-undefined8 post_indy__res_cmd_initialize(void);
-undefined8 proc_7F0D0A7C(char *param_1);
-undefined8 proc_7F0D0AC4(undefined4 param_1);
-undefined8 proc_7F0D0B0C(char *param_1);
-undefined8 proc_7F0D0B54(undefined4 param_1,undefined4 param_2);
-undefined8 proc_7F0D0BA4(char *param_1,undefined4 param_2);
-undefined8 proc_7F0D0BF4(undefined4 param_1,undefined4 param_2,uint param_3,undefined *param_4);
-undefined8 post_indy__res_cmd_send_capture_data(char *string,uint size,undefined *data);
-undefined8 proc_7F0D0CD0(undefined4 param_1);
-undefined8 post_indy__res_cmd_request_ramrom_file(char *param_1,undefined4 param_2,undefined4 param_3);
-undefined8 proc_7F0D0D74(undefined4 param_1,undefined4 param_2,undefined4 param_3);
-undefined8 proc_7F0D0DD0(char *param_1,undefined4 param_2,undefined4 param_3);
-undefined8 proc_7F0D0E2C(undefined4 param_1);
-undefined8 proc_7F0D0E74(char *param_1);
-undefined8 proc_7F0D0EBC(undefined4 param_1);
-undefined8 proc_7F0D0F04(undefined4 param_1);
-undefined8 proc_7F0D0F4C(undefined *param_1,uint param_2);
-undefined8 proc_7F0D10A8(void);
-undefined8 proc_7F0D1100(int param_1,int param_2);
-undefined8 proc_7F0D11AC(int param_1,int param_2);
-undefined8 proc_7F0D1248(int param_1,int param_2,undefined4 *param_3);
-undefined8 proc_7F0D12F4(int param_1,int param_2,undefined4 *param_3,undefined4 *param_4);
-undefined8 proc_7F0D13B0(int param_1,int param_2,undefined4 *param_3,undefined4 *param_4,int *param_5,undefined *param_6);
-undefined8 proc_7F0D1498(int param_1,int param_2,undefined4 *param_3);
-undefined8 proc_7F0D1544(int param_1,int param_2,undefined4 *param_3,undefined4 *param_4,undefined4 *param_5);
-undefined8 proc_7F0D160C(int param_1,int param_2,undefined4 *param_3);
-undefined8 proc_7F0D16B8(int param_1,int param_2,undefined4 *param_3);
-undefined8 proc_7F0D1764(undefined4 *param_1);
-undefined8 proc_7F0D17AC(undefined4 *param_1,undefined4 *param_2);
-undefined8 proc_7F0D17FC(undefined4 *param_1,undefined4 *param_2,int *param_3,undefined *param_4);
-undefined8 proc_7F0D1864(undefined4 *param_1);
-undefined8 proc_7F0D18AC(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3);
-undefined8 proc_7F0D1908(undefined4 *param_1);
-undefined8 proc_7F0D1950(undefined4 *param_1);
-undefined8 proc_7F0D1998(int param_1,int param_2);
+void sub_GAME_7F0D0180(u8 *buffer,u32 size);
+void proc_7F0D01D0(u8 *buffer,u32 size);
+undefined8 postindyresourcecommand(indy_resource_entry *cmd,u32 size);
+u32 send2indyresourcecommands(indy_resource_entry *entry1,uint size1,indy_resource_entry *entry2,uint size2);
+void post_type1_indyrescmd_sizenextcmd(s32 readsize,s32 writesize);
+void post_type2_indyrescmd_cmds_rdy_to_proc(s32 readsize,s32 writesize);
+void post_type0_indyrescmd_init(s32 readsize,s32 writesize);
+void post_type3_indyrescmd(s32 rsize,s32 wsize,char *strptr);
+void post_type4_indyrescmd_data_recieved(s32 param_1,s32 param_2,u32 param_3);
+void post_type5_indyrescmd_printfsend(s32 param_1,s32 param_2,char *param_3);
+void post_type6_indyrescmd_printfrecieved(s32 rsize,s32 wsize,u32 data1,u32 data2);
+void post_type7_indyrescmd_log_send(u32 param_1,u32 param_2,u8 *strptr,u32 param_4);
+void post_type8_indyrescmd_log_recieved(s32 rsize,s32 wsize,undefined4 data1,undefined4 data2,uint cmd2size,indy_resource_entry *cmd2);
+void post_type9_indyrescmd_app_command_ready(s32 rsize,s32 wsize,char *strptr,uint size2,indy_resource_entry *cmd2);
+void post_typeA_indyrescmd_app_command_recieved(s32 readsize,s32 writesize,u32 data);
+void post_typeF_indyrescmd_fault_send(u32 rsize,u32 wsize,char *name,u32 filesize,u32 ptarget);
+void post_type10_indyrescmd_fault_ack_by_host(s32 rsize,s32 wsize,undefined4 param_3,undefined4 param_4,undefined4 param_5);
+void post_typeD_indyrescmd_prof_send_filename(u32 rsize,u32 wsize,u8 *ptrstr,u32 size,u8 *hwaddress);
+void post_typeE_indyrescmd_prof_recv(s32 readsize,s32 writesize,u32 data);
+void post_typeB_indyrescmd_host_prof_req(s32 rsize,s32 wsize,char *strptr);
+void post_typeC_indyrescmd_prof_send(s32 readsize,s32 writesize,u32 data);
+void post_typeA_indyrescmd_app_data_recieved(s32 readsize,s32 writesize,u32 data);
+undefined8 post_indy__res_cmd_initialize_seq(void);
+u32 post_indyrescmd_game_data_send(char *strptr);
+u32 post_indyrescmd_debug_data_recv(u32 data);
+u32 post_indyrescmd_game_printf_send(char *strptr);
+u32 post_indyrescmd_debug_printf_recv(u32 data1,u32 data2);
+u32 post_indyrescmd_req_filename_size(u8 *filename,u32 size);
+u32 post_indyrescmd_1_8_2(u32 data1,u32 data2,u32 size2,indy_resource_entry *cmd2);
+u32 post_indyrescmd_send_capture_data(char *string,uint size,indy_resource_entry *data);
+u32 post_indyrescmd_recv_capture_data_success(u32 data);
+u32 post_indyrescmd_request_ramrom_file(char *name,u32 ptarget,u32 filesize);
+u32 post_indyrescmd_1_10_2(u32 param_1,u32 param_2,u32 param_3);
+u32 post_indyrescmd_game_prof_sendfile(char *strptr,u8 *phwaddr,u32 size);
+u32 post_indyrescmd_host_prof_recv(u32 data);
+u32 post_indyrescmd_1_B_2(char *strptr);
+u32 post_indyrescmd_1_C_2(u32 data);
+u32 post_indyrescmd_1_A_2(u32 data);
+undefined8 post_indyrescmd_read_command(indy_resource_entry *param_1,uint param_2);
+u32 post_indyrescmd_read_2commands(u8 *buffer1,u32 size1,u8 *buffer2,u32 size2);
+u32 post_indyrescmd_istype1_correctsize(int readsize,int writesize);
+u32 post_indyrescmd_istype2_correctvalue(int readsize,int writesize);
+undefined8 post_indyrescmd_istype4_correctvalue(int param_1,int param_2,u8 *response);
+undefined8 post_indyrescmd_istype6_correctvalue(int param_1,int param_2,u8 *response1,u8 *response2);
+undefined8 post_indyrescmd_istype8_correctvalue(int param_1,int param_2,u8 *response1,u8 *response2,u32 childsize,u8 *child);
+undefined8 post_indyrescmd_istypeA_correctvalue(int param_1,int param_2,u8 *response);
+undefined8 post_indyrescmd_istype10_correctvalue(int param_1,int param_2,undefined4 *param_3,undefined4 *param_4,undefined4 *param_5);
+undefined8 post_indyrescmd_istypeE_correctvalue(int param_1,int param_2,u8 *param_3);
+undefined8 post_indyrescmd_istypeC_correctvalue(int param_1,int param_2,u8 *param_3);
+u32 response_indyrescmd_1_4_2(u8 *response);
+u32 response_indyrescmd_1_6_2(u8 *response1,u8 *response2);
+u32 response_indyrescmd_1_8_2(u8 *response1,u8 *response2,u32 datasize,u8 *data);
+u32 response_indyrescmd_1_A_2(u8 *param_1);
+u32 response_indyrescmd_1_10_2(u32 *param_1,u32 *param_2,u32 *param_3);
+u32 response_indyrescmd_1_E_2(u8 *response);
+u32 response_indyrescmd_1_C_2(u8 *response);
+u32 response_indyrescmd_curr_matches_expected(int readsize,int writesize);
 void something_game_c_debug_related(void);
 void reset_mem_bank_5(void);
 void proc_7F0D1A7C(void);
@@ -18171,7 +20660,7 @@ void proc_7F0D2448(undefined4 param_1,undefined4 param_2,undefined4 param_3);
 undefined4 * proc_7F0D2464(undefined4 *param_1);
 undefined4 * proc_7F0D2518(undefined4 *param_1);
 MUSIC_TRACKS getmusictrack_or_randomtrack(u32 stagenum);
-short proc_7F0D2848(short param_1);
+short sub_GAME_7F0D2848(short param_1);
 short proc_7F0D2890(short param_1);
 void proc_7F0D28E0(int param_1,int param_2,undefined8 param_3,byte *param_4);
 void proc_7F0D2A84(int param_1,int param_2);

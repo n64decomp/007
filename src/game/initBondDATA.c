@@ -51,9 +51,9 @@ glabel init_player_BONDdata_stats
 /* 039C34 7F005104 8DE1FFFC */  lw    $at, -4($t7)
 /* 039C38 7F005108 15E8FFF8 */  bne   $t7, $t0, .L7F0050EC
 /* 039C3C 7F00510C ADC1FFFC */   sw    $at, -4($t6)
-/* 039C40 7F005110 3C048003 */  lui   $a0, %hi(size_right_item_buffer)
-/* 039C44 7F005114 8C84245C */  lw    $a0, %lo(size_right_item_buffer)($a0)
-/* 039C48 7F005118 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 039C40 7F005110 3C048003 */  lui   $a0, %hi(size_item_buffer)
+/* 039C44 7F005114 8C84245C */  lw    $a0, %lo(size_item_buffer)($a0)
+/* 039C48 7F005118 0C0025C8 */  jal   mempAllocBytesInBank
 /* 039C4C 7F00511C 24050004 */   li    $a1, 4
 /* 039C50 7F005120 3C108008 */  lui   $s0, %hi(pPlayer)
 /* 039C54 7F005124 2610A0B0 */  addiu $s0, %lo(pPlayer) # addiu $s0, $s0, -0x5f50
@@ -62,9 +62,9 @@ glabel init_player_BONDdata_stats
 /* 039C60 7F005130 AD220808 */   sw    $v0, 0x808($t1)
 /* 039C64 7F005134 24010001 */  li    $at, 1
 /* 039C68 7F005138 14410006 */  bne   $v0, $at, .L7F005154
-/* 039C6C 7F00513C 3C048003 */   lui   $a0, %hi(size_left_item_buffer)
-/* 039C70 7F005140 8C842460 */  lw    $a0, %lo(size_left_item_buffer)($a0)
-/* 039C74 7F005144 0C0025C8 */  jal   allocate_bytes_in_bank
+/* 039C6C 7F00513C 3C048003 */   lui   $a0, %hi(size_item_buffer+0x4)
+/* 039C70 7F005140 8C842460 */  lw    $a0, %lo(size_item_buffer+0x4)($a0)
+/* 039C74 7F005144 0C0025C8 */  jal   mempAllocBytesInBank
 /* 039C78 7F005148 24050004 */   li    $a1, 4
 /* 039C7C 7F00514C 8E0A0000 */  lw    $t2, ($s0)
 /* 039C80 7F005150 AD42080C */  sw    $v0, 0x80c($t2)
@@ -89,10 +89,10 @@ glabel init_player_BONDdata_stats
 /* 039CC8 7F005198 AD052A48 */  sw    $a1, 0x2a48($t0)
 /* 039CCC 7F00519C 8E0F0000 */  lw    $t7, ($s0)
 /* 039CD0 7F0051A0 00604025 */  move  $t0, $v1
-/* 039CD4 7F0051A4 3C038008 */  lui   $v1, %hi(cur_player_stat_ptr)
+/* 039CD4 7F0051A4 3C038008 */  lui   $v1, %hi(pPlayersPerm)
 /* 039CD8 7F0051A8 ADE02A50 */  sw    $zero, 0x2a50($t7)
 /* 039CDC 7F0051AC 8E0E0000 */  lw    $t6, ($s0)
-/* 039CE0 7F0051B0 2463A0B4 */  addiu $v1, %lo(cur_player_stat_ptr) # addiu $v1, $v1, -0x5f4c
+/* 039CE0 7F0051B0 2463A0B4 */  addiu $v1, %lo(pPlayersPerm) # addiu $v1, $v1, -0x5f4c
 /* 039CE4 7F0051B4 ADC02A54 */  sw    $zero, 0x2a54($t6)
 /* 039CE8 7F0051B8 8E090000 */  lw    $t1, ($s0)
 .L7F0051BC:
