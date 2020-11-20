@@ -77,7 +77,7 @@ SECTIONS
       build/e/src/vi.o (.text);
       build/e/src/debugmenu.o (.text);
       build/e/src/joy.o (.text);
-      build/e/src/joy_rumble.o (.text);
+      build/e/src/motor.o (.text);
       build/e/src/rmon.o (.text);
 
       build/e/src/libultra/osPiRawStartDma.o (.text);
@@ -125,7 +125,7 @@ SECTIONS
       build/e/src/libultra/syn.o (.text);
       build/e/src/libultra/osPiStartDma.o (.text);
       build/e/src/libultra/osViSetSpecialFeatures.o (.text);
-      build/e/src/libultra/_bcopy.o (.text);
+      build/e/src/libultra/bcopy.o (.text);
       build/e/src/libultra/guPerspective.o (.text);
       build/e/src/libultra/Mtx.o (.text);
       build/e/src/libultra/__osGetCurrFaultedThread.o (.text);
@@ -182,8 +182,8 @@ SECTIONS
    _rarezipSegmentStart = ADDR(.rarezip);
    _rarezipSegmentRomStart = _cdataSegmentRomEnd;
    .rarezip 0x70200000 : AT(_rarezipSegmentRomStart) {
-      build/e/src/rarezip/rarezip.o (.text);
-      build/e/src/rarezip/rarezip.o (.data);
+      build/e/src/inflate/inflate.o (.text);
+      build/e/src/inflate/inflate.o (.data);
    }
    _rarezipSegmentEnd = ADDR(.rarezip) + SIZEOF(.rarezip);
    _rarezipSegmentRomEnd = _rarezipSegmentRomStart + SIZEOF(.rarezip);
@@ -254,7 +254,7 @@ SECTIONS
       build/e/src/game/objective_status.o (.text);
       build/e/src/game/objective_status2.o (.text);
       build/e/src/game/sin.o (.text);
-      build/e/src/game/unk_057FD0.o (.text);
+      build/e/src/game/matrixmath.o (.text);
       build/e/src/game/unk_05A9E0.o (.text);
       build/e/src/game/convertangleusinginverse.o (.text);
       build/e/src/game/unk_05AB70.o (.text);
@@ -269,7 +269,7 @@ SECTIONS
       build/e/src/game/objecthandler_2.o (.text);
       build/e/src/game/othermodemicrocode.o (.text);
       build/e/src/game/bond.o (.text);
-      build/e/src/game/bond2.o (.text);
+      build/e/src/game/bondinv.o (.text);
       build/e/src/game/unk_08DBB0.o (.text);
       build/e/src/game/debugmenu_08FE00.o (.text);
       build/e/src/game/debugmenu_090490.o (.text);
@@ -295,7 +295,7 @@ SECTIONS
       build/e/src/game/ob.o (.text);
       build/e/src/game/dyn.o (.text);
       build/e/src/game/lvl.o (.text);
-      build/e/src/game/lvl_2.o (.text);
+      build/e/src/game/ramromreplay.o (.text);
       build/e/src/game/unk_0C0A70.o (.text);
       build/e/src/game/mp_music.o (.text);
       build/e/src/game/lvl_text.o (.text);
@@ -3104,7 +3104,7 @@ SECTIONS
       build/e/src/vi.o (.data);
       build/e/src/debugmenu.o (.data);
       build/e/src/joy.o (.data);
-      build/e/src/joy_rumble.o (.data);
+      build/e/src/motor.o (.data);
       build/e/src/rmon.o (.data);
 
       build/e/src/libultra/osPiRawStartDma.o (.data);
@@ -3152,7 +3152,7 @@ SECTIONS
       build/e/src/libultra/syn.o (.data);
       build/e/src/libultra/osPiStartDma.o (.data);
       build/e/src/libultra/osViSetSpecialFeatures.o (.data);
-      build/e/src/libultra/_bcopy.o (.data);
+      build/e/src/libultra/bcopy.o (.data);
       build/e/src/libultra/guPerspective.o (.data);
       build/e/src/libultra/Mtx.o (.data);
       build/e/src/libultra/__osGetCurrFaultedThread.o (.data);
@@ -3224,7 +3224,7 @@ SECTIONS
       build/e/src/vi.o (.rodata);
       build/e/src/debugmenu.o (.rodata);
       build/e/src/joy.o (.rodata);
-      build/e/src/joy_rumble.o (.rodata);
+      build/e/src/motor.o (.rodata);
       build/e/src/rmon.o (.rodata);
 
       build/e/src/libultra/osPiRawStartDma.o (.rodata);
@@ -3272,7 +3272,7 @@ SECTIONS
       build/e/src/libultra/syn.o (.rodata);
       build/e/src/libultra/osPiStartDma.o (.rodata);
       build/e/src/libultra/osViSetSpecialFeatures.o (.rodata);
-      build/e/src/libultra/_bcopy.o (.rodata);
+      build/e/src/libultra/bcopy.o (.rodata);
       build/e/src/libultra/guPerspective.o (.rodata);
       build/e/src/libultra/Mtx.o (.rodata);
       build/e/src/libultra/__osGetCurrFaultedThread.o (.rodata);
@@ -3369,7 +3369,7 @@ SECTIONS
       build/e/src/game/objective_status.o (.data);
       build/e/src/game/objective_status2.o (.data);
       build/e/src/game/sin.o (.data);
-      build/e/src/game/unk_057FD0.o (.data);
+      build/e/src/game/matrixmath.o (.data);
       build/e/src/game/unk_05A9E0.o (.data);
       build/e/src/game/convertangleusinginverse.o (.data);
       build/e/src/game/unk_05AB70.o (.data);
@@ -3384,7 +3384,7 @@ SECTIONS
       build/e/src/game/objecthandler_2.o (.data);
       build/e/src/game/othermodemicrocode.o (.data);
       build/e/src/game/bond.o (.data);
-      build/e/src/game/bond2.o (.data);
+      build/e/src/game/bondinv.o (.data);
       build/e/src/game/unk_08DBB0.o (.data);
       build/e/src/game/debugmenu_08FE00.o (.data);
       build/e/src/game/debugmenu_090490.o (.data);
@@ -3410,7 +3410,7 @@ SECTIONS
       build/e/src/game/ob.o (.data);
       build/e/src/game/dyn.o (.data);
       build/e/src/game/lvl.o (.data);
-      build/e/src/game/lvl_2.o (.data);
+      build/e/src/game/ramromreplay.o (.data);
       build/e/src/game/unk_0C0A70.o (.data);
       build/e/src/game/mp_music.o (.data);
       build/e/src/game/lvl_text.o (.data);
@@ -3491,7 +3491,7 @@ SECTIONS
       build/e/src/game/objective_status.o (.rodata);
       build/e/src/game/objective_status2.o (.rodata);
       build/e/src/game/sin.o (.rodata);
-      build/e/src/game/unk_057FD0.o (.rodata);
+      build/e/src/game/matrixmath.o (.rodata);
       build/e/src/game/unk_05A9E0.o (.rodata);
       build/e/src/game/convertangleusinginverse.o (.rodata);
       build/e/src/game/unk_05AB70.o (.rodata);
@@ -3506,7 +3506,7 @@ SECTIONS
       build/e/src/game/objecthandler_2.o (.rodata);
       build/e/src/game/othermodemicrocode.o (.rodata);
       build/e/src/game/bond.o (.rodata);
-      build/e/src/game/bond2.o (.rodata);
+      build/e/src/game/bondinv.o (.rodata);
       build/e/src/game/unk_08DBB0.o (.rodata);
       build/e/src/game/debugmenu_08FE00.o (.rodata);
       build/e/src/game/debugmenu_090490.o (.rodata);
@@ -3532,7 +3532,7 @@ SECTIONS
       build/e/src/game/ob.o (.rodata);
       build/e/src/game/dyn.o (.rodata);
       build/e/src/game/lvl.o (.rodata);
-      build/e/src/game/lvl_2.o (.rodata);
+      build/e/src/game/ramromreplay.o (.rodata);
       build/e/src/game/unk_0C0A70.o (.rodata);
       build/e/src/game/mp_music.o (.rodata);
       build/e/src/game/lvl_text.o (.rodata);
@@ -3597,7 +3597,7 @@ SECTIONS
       build/e/src/vi.o (.bss);
       build/e/src/debugmenu.o (.bss);
       build/e/src/joy.o (.bss);
-      build/e/src/joy_rumble.o (.bss);
+      build/e/src/motor.o (.bss);
       build/e/src/rmon.o (.bss);
 
       build/e/src/libultra/osPiRawStartDma.o (.bss);
@@ -3645,7 +3645,7 @@ SECTIONS
       build/e/src/libultra/syn.o (.bss);
       build/e/src/libultra/osPiStartDma.o (.bss);
       build/e/src/libultra/osViSetSpecialFeatures.o (.bss);
-      build/e/src/libultra/_bcopy.o (.bss);
+      build/e/src/libultra/bcopy.o (.bss);
       build/e/src/libultra/guPerspective.o (.bss);
       build/e/src/libultra/Mtx.o (.bss);
       build/e/src/libultra/__osGetCurrFaultedThread.o (.bss);
@@ -3742,7 +3742,7 @@ SECTIONS
       build/e/src/game/objective_status.o (.bss);
       build/e/src/game/objective_status2.o (.bss);
       build/e/src/game/sin.o (.bss);
-      build/e/src/game/unk_057FD0.o (.bss);
+      build/e/src/game/matrixmath.o (.bss);
       build/e/src/game/unk_05A9E0.o (.bss);
       build/e/src/game/convertangleusinginverse.o (.bss);
       build/e/src/game/unk_05AB70.o (.bss);
@@ -3757,7 +3757,7 @@ SECTIONS
       build/e/src/game/objecthandler_2.o (.bss);
       build/e/src/game/othermodemicrocode.o (.bss);
       build/e/src/game/bond.o (.bss);
-      build/e/src/game/bond2.o (.bss);
+      build/e/src/game/bondinv.o (.bss);
       build/e/src/game/unk_08DBB0.o (.bss);
       build/e/src/game/debugmenu_08FE00.o (.bss);
       build/e/src/game/debugmenu_090490.o (.bss);
@@ -3783,7 +3783,7 @@ SECTIONS
       build/e/src/game/ob.o (.bss);
       build/e/src/game/dyn.o (.bss);
       build/e/src/game/lvl.o (.bss);
-      build/e/src/game/lvl_2.o (.bss);
+      build/e/src/game/ramromreplay.o (.bss);
       build/e/src/game/unk_0C0A70.o (.bss);
       build/e/src/game/mp_music.o (.bss);
       build/e/src/game/lvl_text.o (.bss);
