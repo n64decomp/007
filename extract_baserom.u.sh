@@ -54,3 +54,21 @@ if [ "$DOALL" == "1" ] || [ $1 == 'images' ]; then
     #formatting matters, no comments, no extra lines, unix line endings only
     #and always end with a newline
 fi
+
+for file in assets/font/*.bmp
+do
+    #add the BMP header to the raw font image data
+    sed -i -e '1 e cat font_bmp_header.bin' $file
+    #extract the width and height from the filename
+    width=$((10#$(echo ${file: (( ${#file} - 11)) :2})))
+    height=$((10#$(echo ${file: (( ${#file} - 6)) :2})))
+    #invert the height, as the fonts are upside-down
+    height=$((256 - $height))
+    #convert the width and height from decimal to hexadecimal
+    printf -v width "%X" "$width"
+    printf -v height "%X" "$height"
+    #write the width and height values to the BMP header
+    echo -n -e \\x$width | dd conv=notrunc bs=1 seek=18 of=$file
+    echo -n -e \\x$height | dd conv=notrunc bs=1 seek=22 of=$file
+    echo -n -e \\xFF\\xFF\\xFF | dd conv=notrunc bs=1 seek=23 of=$file
+done
