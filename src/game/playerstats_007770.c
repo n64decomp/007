@@ -15,7 +15,7 @@ glabel sub_GAME_7F007770
 /* 03C2A8 7F007778 AFB30020 */  sw    $s3, 0x20($sp)
 /* 03C2AC 7F00777C AFB2001C */  sw    $s2, 0x1c($sp)
 /* 03C2B0 7F007780 AFB10018 */  sw    $s1, 0x18($sp)
-/* 03C2B4 7F007784 0FC26919 */  jal   get_num_players
+/* 03C2B4 7F007784 0FC26919 */  jal   getPlayerCount
 /* 03C2B8 7F007788 AFB00014 */   sw    $s0, 0x14($sp)
 /* 03C2BC 7F00778C 0FC26C54 */  jal   get_cur_playernum
 /* 03C2C0 7F007790 00409825 */   move  $s3, $v0

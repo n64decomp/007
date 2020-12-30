@@ -37,7 +37,7 @@ glabel display_red_blue_on_radar
 /* 0FAC04 7F0C60D4 AFA40088 */   sw    $a0, 0x88($sp)
 /* 0FAC08 7F0C60D8 0FC26C54 */  jal   get_cur_playernum
 /* 0FAC0C 7F0C60DC 0040A025 */   move  $s4, $v0
-/* 0FAC10 7F0C60E0 0FC26919 */  jal   get_num_players
+/* 0FAC10 7F0C60E0 0FC26919 */  jal   getPlayerCount
 /* 0FAC14 7F0C60E4 AFA20070 */   sw    $v0, 0x70($sp)
 /* 0FAC18 7F0C60E8 24010001 */  li    $at, 1
 /* 0FAC1C 7F0C60EC 14410003 */  bne   $v0, $at, .L7F0C60FC
@@ -65,14 +65,14 @@ glabel display_red_blue_on_radar
 /* 0FAC68 7F0C6138 10000113 */  b     .L7F0C6588
 /* 0FAC6C 7F0C613C 8FA20088 */   lw    $v0, 0x88($sp)
 .L7F0C6140:
-/* 0FAC70 7F0C6140 0C001145 */  jal   get_video2_settings_ulx
+/* 0FAC70 7F0C6140 0C001145 */  jal   viGetViewLeft
 /* 0FAC74 7F0C6144 00000000 */   nop   
 /* 0FAC78 7F0C6148 00028400 */  sll   $s0, $v0, 0x10
 /* 0FAC7C 7F0C614C 0010C403 */  sra   $t8, $s0, 0x10
-/* 0FAC80 7F0C6150 0C001127 */  jal   get_video2_settings_width
+/* 0FAC80 7F0C6150 0C001127 */  jal   viGetViewWidth
 /* 0FAC84 7F0C6154 03008025 */   move  $s0, $t8
 /* 0FAC88 7F0C6158 0050A821 */  addu  $s5, $v0, $s0
-/* 0FAC8C 7F0C615C 0C001149 */  jal   get_video2_settings_uly
+/* 0FAC8C 7F0C615C 0C001149 */  jal   viGetViewTop
 /* 0FAC90 7F0C6160 26B5FFD7 */   addiu $s5, $s5, -0x29
 /* 0FAC94 7F0C6164 8FB90074 */  lw    $t9, 0x74($sp)
 /* 0FAC98 7F0C6168 2456001A */  addiu $s6, $v0, 0x1a
@@ -217,10 +217,10 @@ glabel display_red_blue_on_radar
 /* 0FAEA8 7F0C6378 8FAA0070 */  lw    $t2, 0x70($sp)
 .L7F0C637C:
 /* 0FAEAC 7F0C637C 00135880 */  sll   $t3, $s3, 2
-/* 0FAEB0 7F0C6380 3C048008 */  lui   $a0, %hi(ptr_BONDdata_p1)
+/* 0FAEB0 7F0C6380 3C048008 */  lui   $a0, %hi(players)
 /* 0FAEB4 7F0C6384 126A007A */  beq   $s3, $t2, .L7F0C6570
 /* 0FAEB8 7F0C6388 008B2021 */   addu  $a0, $a0, $t3
-/* 0FAEBC 7F0C638C 8C849EE0 */  lw    $a0, %lo(ptr_BONDdata_p1)($a0)
+/* 0FAEBC 7F0C638C 8C849EE0 */  lw    $a0, %lo(players)($a0)
 /* 0FAEC0 7F0C6390 8C8C00D8 */  lw    $t4, 0xd8($a0)
 /* 0FAEC4 7F0C6394 55800077 */  bnezl $t4, .L7F0C6574
 /* 0FAEC8 7F0C6398 8FB80074 */   lw    $t8, 0x74($sp)

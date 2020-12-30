@@ -262,7 +262,7 @@ glabel cheatButton_7F09177C
 /* 0C62E4 7F0917B4 10000008 */  b     .L7F0917D8
 /* 0C62E8 7F0917B8 24130001 */   li    $s3, 1
 .L7F0917BC:
-/* 0C62EC 7F0917BC 0FC26919 */  jal   get_num_players
+/* 0C62EC 7F0917BC 0FC26919 */  jal   getPlayerCount
 /* 0C62F0 7F0917C0 00000000 */   nop   
 /* 0C62F4 7F0917C4 24010001 */  li    $at, 1
 /* 0C62F8 7F0917C8 14410003 */  bne   $v0, $at, .L7F0917D8
@@ -521,7 +521,7 @@ void turn_on_cheat_for_players(u32 cheatindex)
   
   uVar1 = D_8003F80C[cheatindex];
   playernum = get_cur_playernum();
-  numplayers = get_num_players();
+  numplayers = getPlayerCount();
   if (numplayers == 1) {
     handle_cheats_turned_on(cheatindex);
   }
@@ -565,7 +565,7 @@ glabel turn_on_cheat_for_players
 /* 0C65FC 7F091ACC AFB1001C */  sw    $s1, 0x1c($sp)
 /* 0C6600 7F091AD0 0FC26C54 */  jal   get_cur_playernum
 /* 0C6604 7F091AD4 8E10F808 */   lw    $s0, %lo(D_8003F808)($s0)
-/* 0C6608 7F091AD8 0FC26919 */  jal   get_num_players
+/* 0C6608 7F091AD8 0FC26919 */  jal   getPlayerCount
 /* 0C660C 7F091ADC AFA20028 */   sw    $v0, 0x28($sp)
 /* 0C6610 7F091AE0 24010001 */  li    $at, 1
 /* 0C6614 7F091AE4 14410005 */  bne   $v0, $at, .L7F091AFC
@@ -638,7 +638,7 @@ void handle_cheats_turned_on(CHEAT_IDS cheat)
   
   uVar1 = (&D_8003F808)[cheat * 4];
   playernum = get_cur_playernum();
-  numplayers = get_num_players();
+  numplayers = getPlayerCount();
   if ((uVar1 & 0x10) == 0) {
     if ((uVar1 & 0x20) == 0) {
       cheatl_ARRAY_80079e30[cheat] = cheatl_ARRAY_80079e30[cheat] | (byte)(1 << (playernum & 0x1f));
@@ -792,7 +792,7 @@ void handle_cheats_turned_on(CHEAT_IDS cheat)
     }
     break;
   case cheats_cheat_invisibility_mp:
-    set_curplayer_fade(300.00000000, 0.5f);
+    currentPlayerStartChrFade(300.00000000, 0.5f);
     break;
   case cheats_cheat_fast:
     if (get_debug_fast_bond_flag() == FALSE)
@@ -1022,7 +1022,7 @@ glabel handle_cheats_turned_on
 /* 0C66AC 7F091B7C AFA40040 */  sw    $a0, 0x40($sp)
 /* 0C66B0 7F091B80 0FC26C54 */  jal   get_cur_playernum
 /* 0C66B4 7F091B84 AFAF003C */   sw    $t7, 0x3c($sp)
-/* 0C66B8 7F091B88 0FC26919 */  jal   get_num_players
+/* 0C66B8 7F091B88 0FC26919 */  jal   getPlayerCount
 /* 0C66BC 7F091B8C AFA20038 */   sw    $v0, 0x38($sp)
 /* 0C66C0 7F091B90 8FA3003C */  lw    $v1, 0x3c($sp)
 /* 0C66C4 7F091B94 8FA60040 */  lw    $a2, 0x40($sp)
@@ -1421,7 +1421,7 @@ cheats_cheat_invisibility_mp:
 /* 0C6C74 7F092144 3C014396 */  li    $at, 0x43960000 # 300.000000
 /* 0C6C78 7F092148 44816000 */  mtc1  $at, $f12
 /* 0C6C7C 7F09214C 3C018005 */  lui   $at, %hi(finalamount)
-/* 0C6C80 7F092150 0FC20284 */  jal   set_curplayer_fade
+/* 0C6C80 7F092150 0FC20284 */  jal   currentPlayerStartChrFade
 /* 0C6C84 7F092154 C42E73D8 */   lwc1  $f14, %lo(finalamount)($at)
 /* 0C6C88 7F092158 100000B4 */  b     .L7F09242C
 /* 0C6C8C 7F09215C 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -1723,7 +1723,7 @@ glabel handle_cheats_turned_on
 /* 0C71CC 7F09265C AFA40040 */  sw    $a0, 0x40($sp)
 /* 0C71D0 7F092660 0FC26F3C */  jal   get_cur_playernum
 /* 0C71D4 7F092664 AFAF003C */   sw    $t7, 0x3c($sp)
-/* 0C71D8 7F092668 0FC26C01 */  jal   get_num_players
+/* 0C71D8 7F092668 0FC26C01 */  jal   getPlayerCount
 /* 0C71DC 7F09266C AFA20038 */   sw    $v0, 0x38($sp)
 /* 0C71E0 7F092670 8FA3003C */  lw    $v1, 0x3c($sp)
 /* 0C71E4 7F092674 8FA60040 */  lw    $a2, 0x40($sp)
@@ -2122,7 +2122,7 @@ cheats_cheat_invisibility_mp:
 /* 0C7794 7F092C24 3C014396 */  li    $at, 0x43960000 # 300.000000
 /* 0C7798 7F092C28 44816000 */  mtc1  $at, $f12
 /* 0C779C 7F092C2C 3C018005 */  lui   $at, %hi(finalamount) # $at, 0x8005
-/* 0C77A0 7F092C30 0FC20408 */  jal   set_curplayer_fade
+/* 0C77A0 7F092C30 0FC20408 */  jal   currentPlayerStartChrFade
 /* 0C77A4 7F092C34 C42E7408 */   lwc1  $f14, %lo(finalamount)($at)
 /* 0C77A8 7F092C38 100000DC */  b     .Ljp7F092FAC
 /* 0C77AC 7F092C3C 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -2470,7 +2470,7 @@ glabel cheatDisplayMessageActivateCheat
 /* 0C6F80 7F092450 AFA40020 */  sw    $a0, 0x20($sp)
 /* 0C6F84 7F092454 0FC26C54 */  jal   get_cur_playernum
 /* 0C6F88 7F092458 AFAF001C */   sw    $t7, 0x1c($sp)
-/* 0C6F8C 7F09245C 0FC26919 */  jal   get_num_players
+/* 0C6F8C 7F09245C 0FC26919 */  jal   getPlayerCount
 /* 0C6F90 7F092460 AFA20018 */   sw    $v0, 0x18($sp)
 /* 0C6F94 7F092464 8FA3001C */  lw    $v1, 0x1c($sp)
 /* 0C6F98 7F092468 8FA40020 */  lw    $a0, 0x20($sp)
@@ -2608,7 +2608,7 @@ cheat_button_mp_invis:
 /* 0C717C 7F09264C 44816000 */  mtc1  $at, $f12
 /* 0C7180 7F092650 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0C7184 7F092654 44817000 */  mtc1  $at, $f14
-/* 0C7188 7F092658 0FC20284 */  jal   set_curplayer_fade
+/* 0C7188 7F092658 0FC20284 */  jal   currentPlayerStartChrFade
 /* 0C718C 7F09265C 00000000 */   nop   
 /* 0C7190 7F092660 10000014 */  b     .L7F0926B4
 /* 0C7194 7F092664 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -2732,7 +2732,7 @@ glabel cheatDisplayMessageActivateCheat
 /* 0C6F80 7F092450 AFA40020 */  sw    $a0, 0x20($sp)
 /* 0C6F84 7F092454 0FC26C54 */  jal   get_cur_playernum
 /* 0C6F88 7F092458 AFAF001C */   sw    $t7, 0x1c($sp)
-/* 0C6F8C 7F09245C 0FC26919 */  jal   get_num_players
+/* 0C6F8C 7F09245C 0FC26919 */  jal   getPlayerCount
 /* 0C6F90 7F092460 AFA20018 */   sw    $v0, 0x18($sp)
 /* 0C6F94 7F092464 8FA3001C */  lw    $v1, 0x1c($sp)
 /* 0C6F98 7F092468 8FA40020 */  lw    $a0, 0x20($sp)
@@ -2870,7 +2870,7 @@ cheat_button_mp_invis:
 /* 0C717C 7F09264C 44816000 */  mtc1  $at, $f12
 /* 0C7180 7F092650 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0C7184 7F092654 44817000 */  mtc1  $at, $f14
-/* 0C7188 7F092658 0FC20284 */  jal   set_curplayer_fade
+/* 0C7188 7F092658 0FC20284 */  jal   currentPlayerStartChrFade
 /* 0C718C 7F09265C 00000000 */   nop   
 /* 0C7190 7F092660 10000014 */  b     .L7F0926B4
 /* 0C7194 7F092664 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -2920,7 +2920,7 @@ void cheatDisableAllCheats(void) {
     s32 phi_s0;
 
     // Node 0
-    temp_s4 = get_num_players();
+    temp_s4 = getPlayerCount();
     sp30 = get_cur_playernum();
     if (temp_s4 > 0)
     {
@@ -2994,7 +2994,7 @@ glabel cheatDisableAllCheats
 /* 0C71FC 7F0926CC AFB30024 */  sw    $s3, 0x24($sp)
 /* 0C7200 7F0926D0 AFB20020 */  sw    $s2, 0x20($sp)
 /* 0C7204 7F0926D4 AFB1001C */  sw    $s1, 0x1c($sp)
-/* 0C7208 7F0926D8 0FC26919 */  jal   get_num_players
+/* 0C7208 7F0926D8 0FC26919 */  jal   getPlayerCount
 /* 0C720C 7F0926DC AFB00018 */   sw    $s0, 0x18($sp)
 /* 0C7210 7F0926E0 0FC26C54 */  jal   get_cur_playernum
 /* 0C7214 7F0926E4 0040A025 */   move  $s4, $v0

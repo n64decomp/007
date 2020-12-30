@@ -31,7 +31,7 @@ struct portal_data_table_entry
     u16 control_bytes;
 };
 
-struct xyzpoint
+struct coord
 {
     float x;
     float y;
@@ -45,7 +45,7 @@ struct portal_3_point
     char padding1;
     char padding2;
     char padding3;
-    struct xyzpoint points[3];
+    struct coord points[3];
 };
 
 struct portal_4_point
@@ -54,7 +54,7 @@ struct portal_4_point
     char padding1;
     char padding2;
     char padding3;
-    struct xyzpoint points[4];
+    struct coord points[4];
 };
 
 struct portal_5_point
@@ -63,7 +63,7 @@ struct portal_5_point
     char padding1;
     char padding2;
     char padding3;
-    struct xyzpoint points[5];
+    struct coord points[5];
 };
 
 struct portal_6_point
@@ -72,7 +72,7 @@ struct portal_6_point
     char padding1;
     char padding2;
     char padding3;
-    struct xyzpoint points[6];
+    struct coord points[6];
 };
 
 extern struct room_data_table_entry room_data_table[];

@@ -1,7 +1,0 @@
-  7F0C15E0 returns the text bank # for a given stage# A0.  Any stage lacking a specific bank will loop endlessly.  This only applies to hacked stages, including Citadel.
-  
-  Technically the Citadel correction was a matter of giving it a valid bank pointer and its assigned number, but this patch is more generic.  It should default to Bunker I's text bank, as the default stage is Bunker I.  All invalids become valid.
-  
-//7F0C16DC:	F620C	default text bank
-2402001E	*ADDIU	V0,R0,001E
-	NOP

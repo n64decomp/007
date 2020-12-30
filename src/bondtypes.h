@@ -2,6 +2,8 @@
 #define _BONDTYPES_H_
 #include "ultra64.h"
 #include "bondconstants.h"
+#include "structs.h"
+
 struct rgba_val{
     u8 r;
     u8 g;
@@ -46,10 +48,8 @@ typedef struct PropRecord
   } Entityp;
 } PropRecord;
 
-typedef struct CHRdata CHRdata, *PCHRdata;
-
 /* unfinished struct, WIP */
-struct CHRdata {
+struct chrdata {
     u16 chrnum;
     s8 accuracyrating;
     s8 speedrating;
@@ -70,7 +70,7 @@ struct CHRdata {
     s8 flinchcnt;
     s16 hidden;
     s32 chrflags;
-    void * pad;
+    struct prop* posdata;
     void * model;
     /* 0x0020 */
     void * field_20;
@@ -154,7 +154,7 @@ struct CHRdata {
     u8 random;
     /* 0x0110 */
     s32 timer60;
-    u16 padpreset1; /* ID PAD_PRESET */
+    s16 padpreset1; /* ID PAD_PRESET */
     u16 chrpreset1; /* ID CHR_PRESET */
     u16 chrseeshot; /* ID CHR_SEE_SHOT - ignores invincible/armoured guards */
     u16 chrseedie; /* ID CHR_SEE_DIE */

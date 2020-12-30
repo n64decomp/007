@@ -8,7 +8,7 @@ struct BriefStruct UbrieftraZ = {
         TEXT(LTRA, 3)                          /* Moneypenny */
     },
     {                                          /* Objectives (Text and Difficult) */
-        {TEXT(LTRA, 4), DIFFICULTY_AGENT},     /* Destroy break units */
+        {TEXT(LTRA, 4), DIFFICULTY_AGENT},     /* Destroy brake units */
         {TEXT(LTRA, 5), DIFFICULTY_AGENT},     /* Rescue Natalya */
         {TEXT(LTRA, 6), DIFFICULTY_SECRET},    /* Locate Janus secret base */
         {TEXT(LTRA, 7), DIFFICULTY_00},        /* Crack Boris' password */

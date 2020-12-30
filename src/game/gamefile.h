@@ -6,7 +6,7 @@ struct save_data
 {
   int chksum1;
   int chksum2;
-  char completion_bitflags;
+  u8 completion_bitflags;
   char flag_007;
   char music_vol;
   char sfx_vol;

@@ -760,7 +760,7 @@ debug_collisions:
 /* 0C540C 7F0908DC 10000166 */  b     .L7F090E78
 /* 0C5410 7F0908E0 8FB80018 */   lw    $t8, 0x18($sp)
 debug_allguns:
-/* 0C5414 7F0908E4 0FC26919 */  jal   get_num_players
+/* 0C5414 7F0908E4 0FC26919 */  jal   getPlayerCount
 /* 0C5418 7F0908E8 AFA0005C */   sw    $zero, 0x5c($sp)
 /* 0C541C 7F0908EC 58400162 */  blezl $v0, .L7F090E78
 /* 0C5420 7F0908F0 8FB80018 */   lw    $t8, 0x18($sp)
@@ -773,7 +773,7 @@ debug_allguns:
 /* 0C5438 7F090908 2C440001 */   sltiu $a0, $v0, 1
 /* 0C543C 7F09090C 8FAA005C */  lw    $t2, 0x5c($sp)
 /* 0C5440 7F090910 254B0001 */  addiu $t3, $t2, 1
-/* 0C5444 7F090914 0FC26919 */  jal   get_num_players
+/* 0C5444 7F090914 0FC26919 */  jal   getPlayerCount
 /* 0C5448 7F090918 AFAB005C */   sw    $t3, 0x5c($sp)
 /* 0C544C 7F09091C 8FAC005C */  lw    $t4, 0x5c($sp)
 /* 0C5450 7F090920 0182082A */  slt   $at, $t4, $v0
@@ -785,7 +785,7 @@ debug_maxammo:
 /* 0C5464 7F090934 0FC26C54 */  jal   get_cur_playernum
 /* 0C5468 7F090938 00000000 */   nop   
 /* 0C546C 7F09093C AFA20054 */  sw    $v0, 0x54($sp)
-/* 0C5470 7F090940 0FC26919 */  jal   get_num_players
+/* 0C5470 7F090940 0FC26919 */  jal   getPlayerCount
 /* 0C5474 7F090944 AFA00058 */   sw    $zero, 0x58($sp)
 /* 0C5478 7F090948 1840000D */  blez  $v0, .L7F090980
 /* 0C547C 7F09094C 00000000 */   nop   
@@ -796,7 +796,7 @@ debug_maxammo:
 /* 0C548C 7F09095C 00000000 */   nop   
 /* 0C5490 7F090960 8FAD0058 */  lw    $t5, 0x58($sp)
 /* 0C5494 7F090964 25AE0001 */  addiu $t6, $t5, 1
-/* 0C5498 7F090968 0FC26919 */  jal   get_num_players
+/* 0C5498 7F090968 0FC26919 */  jal   getPlayerCount
 /* 0C549C 7F09096C AFAE0058 */   sw    $t6, 0x58($sp)
 /* 0C54A0 7F090970 8FAF0058 */  lw    $t7, 0x58($sp)
 /* 0C54A4 7F090974 01E2082A */  slt   $at, $t7, $v0

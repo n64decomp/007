@@ -105,8 +105,8 @@ void CheckDisplayErrorBufferEvery16Frames(u32 framecount)
         {
 			if (userCompareValue < (osGetCount() - currentcount))
             {
-				write_stderr_to_buffer((u32*)cfb_16_a);
-				write_stderr_to_buffer((u32*)cfb_16_b);
+				write_stderr_to_buffer((u32*)cfb_16[0]);
+				write_stderr_to_buffer((u32*)cfb_16[1]);
 			}
 		}
 	}

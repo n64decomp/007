@@ -52,20 +52,20 @@ void set_vtx_gfx_mem_alloc(void) {
 
     if (check_token(1, "-mgfx") != 0)
     {
-        dyn_c_debug_notice_list_entry[get_num_players()] = strtol(check_token(1, "-mgfx"), 0, 0) << 0xa;
+        dyn_c_debug_notice_list_entry[getPlayerCount()] = strtol(check_token(1, "-mgfx"), 0, 0) << 0xa;
     }
 
     if (check_token(1, "-mvtx") != 0)
     {
-        D_800482F0[get_num_players()] = strtol(check_token(1, "-mvtx"), 0, 0) << 0xa;
+        D_800482F0[getPlayerCount()] = strtol(check_token(1, "-mvtx"), 0, 0) << 0xa;
     }
 
     mempAllocBytesInBank(dyn_c_debug_notice_list_entry[sVar1] << 1, 4);
-    ptr_mgfx0_alloc_start.unk4 = (s32) ((0x80050000 + (get_num_players() * 4))->unk-7D20 + ptr_mgfx0_alloc_start);
-    ptr_mgfx0_alloc_start.unk8 = (s32) ((0x80050000 + (get_num_players() * 4))->unk-7D20 + ptr_mgfx0_alloc_start.unk4);
-    ptr_mvtx0_alloc_start = mempAllocBytesInBank(((0x80050000 + (get_num_players() * 4))->unk-7D10 * 2), 4);
-    ptr_mvtx0_alloc_start.unk4 = (s32) ((0x80050000 + (get_num_players() * 4))->unk-7D10 + ptr_mvtx0_alloc_start);
-    temp_ret = get_num_players();
+    ptr_mgfx0_alloc_start.unk4 = (s32) ((0x80050000 + (getPlayerCount() * 4))->unk-7D20 + ptr_mgfx0_alloc_start);
+    ptr_mgfx0_alloc_start.unk8 = (s32) ((0x80050000 + (getPlayerCount() * 4))->unk-7D20 + ptr_mgfx0_alloc_start.unk4);
+    ptr_mvtx0_alloc_start = mempAllocBytesInBank(((0x80050000 + (getPlayerCount() * 4))->unk-7D10 * 2), 4);
+    ptr_mvtx0_alloc_start.unk4 = (s32) ((0x80050000 + (getPlayerCount() * 4))->unk-7D10 + ptr_mvtx0_alloc_start);
+    temp_ret = getPlayerCount();
     ptr_mvtx0_alloc_start.unk8 = (s32) ((0x80050000 + (temp_ret * 4))->unk-7D10 + ptr_mvtx0_alloc_start.unk4);
     bank_in_mgfx_alloc_table = (u8)0;
     dword_CODE_bss_8008C254 = 0;
@@ -105,7 +105,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F1FD0 7F0BD4A0 24040001 */   li    $a0, 1
 /* 0F1FD4 7F0BD4A4 10400012 */  beqz  $v0, .L7F0BD4F0
 /* 0F1FD8 7F0BD4A8 00000000 */   nop   
-/* 0F1FDC 7F0BD4AC 0FC26919 */  jal   get_num_players
+/* 0F1FDC 7F0BD4AC 0FC26919 */  jal   getPlayerCount
 /* 0F1FE0 7F0BD4B0 00000000 */   nop   
 /* 0F1FE4 7F0BD4B4 3C058006 */  lui   $a1, %hi(aMgfx_1)
 /* 0F1FE8 7F0BD4B8 24A5B694 */  addiu $a1, %lo(aMgfx_1) # addiu $a1, $a1, -0x496c
@@ -129,7 +129,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F202C 7F0BD4FC 24040001 */   li    $a0, 1
 /* 0F2030 7F0BD500 10400012 */  beqz  $v0, .L7F0BD54C
 /* 0F2034 7F0BD504 00000000 */   nop   
-/* 0F2038 7F0BD508 0FC26919 */  jal   get_num_players
+/* 0F2038 7F0BD508 0FC26919 */  jal   getPlayerCount
 /* 0F203C 7F0BD50C 00000000 */   nop   
 /* 0F2040 7F0BD510 3C058006 */  lui   $a1, %hi(aMvtx_0)
 /* 0F2044 7F0BD514 24A5B6A4 */  addiu $a1, %lo(aMvtx_0) # addiu $a1, $a1, -0x495c
@@ -147,7 +147,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F2074 7F0BD544 00290821 */  addu  $at, $at, $t1
 /* 0F2078 7F0BD548 AC3982F0 */  sw    $t9, %lo(D_800482F0)($at)
 .L7F0BD54C:
-/* 0F207C 7F0BD54C 0FC26919 */  jal   get_num_players
+/* 0F207C 7F0BD54C 0FC26919 */  jal   getPlayerCount
 /* 0F2080 7F0BD550 00000000 */   nop   
 /* 0F2084 7F0BD554 00025080 */  sll   $t2, $v0, 2
 /* 0F2088 7F0BD558 3C048005 */  lui   $a0, %hi(D_800482E0)
@@ -158,7 +158,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F209C 7F0BD56C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0F20A0 7F0BD570 01602025 */   move  $a0, $t3
 /* 0F20A4 7F0BD574 3C018009 */  lui   $at, %hi(ptr_mgfx0_alloc_start)
-/* 0F20A8 7F0BD578 0FC26919 */  jal   get_num_players
+/* 0F20A8 7F0BD578 0FC26919 */  jal   getPlayerCount
 /* 0F20AC 7F0BD57C AC22C230 */   sw    $v0, %lo(ptr_mgfx0_alloc_start)($at)
 /* 0F20B0 7F0BD580 3C038009 */  lui   $v1, %hi(ptr_mgfx0_alloc_start)
 /* 0F20B4 7F0BD584 00026080 */  sll   $t4, $v0, 2
@@ -168,7 +168,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F20C4 7F0BD594 8C6F0000 */  lw    $t7, ($v1)
 /* 0F20C8 7F0BD598 8DAD82E0 */  lw    $t5, %lo(D_800482E0)($t5)
 /* 0F20CC 7F0BD59C 01AF7021 */  addu  $t6, $t5, $t7
-/* 0F20D0 7F0BD5A0 0FC26919 */  jal   get_num_players
+/* 0F20D0 7F0BD5A0 0FC26919 */  jal   getPlayerCount
 /* 0F20D4 7F0BD5A4 AC6E0004 */   sw    $t6, 4($v1)
 /* 0F20D8 7F0BD5A8 3C038009 */  lui   $v1, %hi(ptr_mgfx0_alloc_start)
 /* 0F20DC 7F0BD5AC 0002C080 */  sll   $t8, $v0, 2
@@ -178,7 +178,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F20EC 7F0BD5BC 8C790004 */  lw    $t9, 4($v1)
 /* 0F20F0 7F0BD5C0 8D0882E0 */  lw    $t0, %lo(D_800482E0)($t0)
 /* 0F20F4 7F0BD5C4 01194821 */  addu  $t1, $t0, $t9
-/* 0F20F8 7F0BD5C8 0FC26919 */  jal   get_num_players
+/* 0F20F8 7F0BD5C8 0FC26919 */  jal   getPlayerCount
 /* 0F20FC 7F0BD5CC AC690008 */   sw    $t1, 8($v1)
 /* 0F2100 7F0BD5D0 00025080 */  sll   $t2, $v0, 2
 /* 0F2104 7F0BD5D4 3C048005 */  lui   $a0, %hi(D_800482F0)
@@ -190,7 +190,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F211C 7F0BD5EC 01602025 */   move  $a0, $t3
 /* 0F2120 7F0BD5F0 3C038009 */  lui   $v1, %hi(ptr_mvtx0_alloc_start)
 /* 0F2124 7F0BD5F4 2463C240 */  addiu $v1, %lo(ptr_mvtx0_alloc_start) # addiu $v1, $v1, -0x3dc0
-/* 0F2128 7F0BD5F8 0FC26919 */  jal   get_num_players
+/* 0F2128 7F0BD5F8 0FC26919 */  jal   getPlayerCount
 /* 0F212C 7F0BD5FC AC620000 */   sw    $v0, ($v1)
 /* 0F2130 7F0BD600 3C038009 */  lui   $v1, %hi(ptr_mvtx0_alloc_start)
 /* 0F2134 7F0BD604 00026080 */  sll   $t4, $v0, 2
@@ -200,7 +200,7 @@ glabel set_vtx_gfx_mem_alloc
 /* 0F2144 7F0BD614 8C6F0000 */  lw    $t7, ($v1)
 /* 0F2148 7F0BD618 8DAD82F0 */  lw    $t5, %lo(D_800482F0)($t5)
 /* 0F214C 7F0BD61C 01AF7021 */  addu  $t6, $t5, $t7
-/* 0F2150 7F0BD620 0FC26919 */  jal   get_num_players
+/* 0F2150 7F0BD620 0FC26919 */  jal   getPlayerCount
 /* 0F2154 7F0BD624 AC6E0004 */   sw    $t6, 4($v1)
 /* 0F2158 7F0BD628 3C038009 */  lui   $v1, %hi(ptr_mvtx0_alloc_start)
 /* 0F215C 7F0BD62C 0002C080 */  sll   $t8, $v0, 2

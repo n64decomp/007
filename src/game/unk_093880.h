@@ -37,11 +37,13 @@ struct player_data {
     int killed_civilians;
 };
 
+extern struct player *players[4];
+
 extern struct player_data player1_player_data;
 extern struct player_data player2_player_data;
 extern struct player_data player3_player_data;
 extern struct player_data player4_player_data;
 
-extern struct Player * pPlayer;
+extern struct player *pPlayer;
 extern struct player_data *pPlayersPerm;
 #endif

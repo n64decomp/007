@@ -161,7 +161,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BB00 7F006FD0 28810014 */  slti  $at, $a0, 0x14
 /* 03BB04 7F006FD4 1420FFB7 */  bnez  $at, .L7F006EB4
 /* 03BB08 7F006FD8 24C60198 */   addiu $a2, $a2, 0x198
-/* 03BB0C 7F006FDC 0FC26919 */  jal   get_num_players
+/* 03BB0C 7F006FDC 0FC26919 */  jal   getPlayerCount
 /* 03BB10 7F006FE0 00000000 */   nop   
 /* 03BB14 7F006FE4 24010001 */  li    $at, 1
 /* 03BB18 7F006FE8 14410017 */  bne   $v0, $at, .L7F007048
@@ -205,7 +205,7 @@ glabel alloc_explosion_smoke_casing_scorch_impact_buffers
 /* 03BBA4 7F007074 28611F40 */  slti  $at, $v1, 0x1f40
 /* 03BBA8 7F007078 1420FFFB */  bnez  $at, .L7F007068
 /* 03BBAC 7F00707C A5E60000 */   sh    $a2, ($t7)
-/* 03BBB0 7F007080 0FC26919 */  jal   get_num_players
+/* 03BBB0 7F007080 0FC26919 */  jal   getPlayerCount
 /* 03BBB4 7F007084 00000000 */   nop   
 /* 03BBB8 7F007088 241800C8 */  li    $t8, 200
 /* 03BBBC 7F00708C 0302001A */  div   $zero, $t8, $v0

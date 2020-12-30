@@ -44,6 +44,17 @@ typedef enum MISSION_BRIEFING {
     BRIEF_MONEYPENNY
 } MISSION_BRIEFING;
 
+typedef enum OPTIONS {
+    PLAYER_OPTION_LOOK = 0,
+    PLAYER_OPTION_AUTOAIM, 
+    PLAYER_OPTION_AIM, 
+    PLAYER_OPTION_SIGHT, 
+    PLAYER_OPTION_LOOKAHEAD, 
+    PLAYER_OPTION_AMMODISPLAY, 
+    PLAYER_OPTION_SCREEN, 
+    PLAYER_OPTION_RATIO 
+} OPTIONS;
+
 typedef enum DIFFICULTY {
     DIFFICULTY_AGENT = 0,
     DIFFICULTY_SECRET,
@@ -1282,7 +1293,7 @@ typedef enum ACT_TYPE {
 
 #define CHRFLAG_INIT                         0x00000001 // initialize chr
 #define CHRFLAG_CLONE                        0x00000002 // clone on heard gunfire (used by GLIST_DETECT_BOND_SPAWN_CLONE_ON_HEARD_GUNFIRE)
-#define CHRFLAG_NEAR_MISS                    0x00000004 // chr was just nearly shot (sometimes set on direct hit)
+#define CHRFLAG_NEAR_MISS                    0x00000004 // chr was just nearly shot (sometimes set on direct hit) - resets every tick
 #define CHRFLAG_HAS_BEEN_ON_SCREEN           0x00000008 // chr has been on screen before
 #define CHRFLAG_INVINCIBLE                   0x00000010 // invincible
 #define CHRFLAG_00000020                     0x00000020 // unknown
@@ -1428,7 +1439,9 @@ typedef enum ACT_TYPE {
 #define OBJECTTYPE_35 0x35
 #define OBJECTTYPE_36 0x36
 
-
+#define CROUCH_SQUAT 0
+#define CROUCH_HALF  1
+#define CROUCH_STAND 2
 
 #endif
 

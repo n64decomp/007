@@ -1,4 +1,5 @@
 #include "ultra64.h"
+#include "libultra/controller.h"
 //0x800655a0
 char _MotorStopData[256];
 //800656a0

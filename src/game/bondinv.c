@@ -288,7 +288,7 @@ s32 check_if_item_for_hand_available(ITEM_IDS item,int hand)
 {
 #ifdef VERSION_US
     if (((pPlayer->equipallguns && (item < ITEM_BOMBCASE)) && 
-     (item == hand)) && ((get_num_players() == 1 && 
+     (item == hand)) && ((getPlayerCount() == 1 && 
      (bondwalkItemCheckBitflags(item,0x100000) != 0)))) 
     {
         return 1;
@@ -303,7 +303,7 @@ s32 check_if_item_for_hand_available(ITEM_IDS item,int hand)
     else
     {
         if ((((pPlayer->equipallguns != 0) && (item < ITEM_BOMBCASE)) &&
-         (item == hand)) && (((get_num_players() == 1 &&
+         (item == hand)) && (((getPlayerCount() == 1 &&
          (bondwalkItemCheckBitflags(item,0x100000) != 0)) &&
          ((j_text_trigger == 0 || (item != ITEM_KNIFE))))))
         {
@@ -716,7 +716,7 @@ glabel sub_GAME_7F08C86C
 /* 0C14CC 7F08C99C 8FA90028 */  lw    $t1, 0x28($sp)
 /* 0C14D0 7F08C9A0 51000051 */  beql  $t0, $zero, .L7F08CAE8
 /* 0C14D4 7F08C9A4 8FAB0028 */   lw    $t3, 0x28($sp)
-/* 0C14D8 7F08C9A8 0FC26919 */  jal   get_num_players
+/* 0C14D8 7F08C9A8 0FC26919 */  jal   getPlayerCount
 /* 0C14DC 7F08C9AC 8D300000 */   lw    $s0, ($t1)
 /* 0C14E0 7F08C9B0 24010001 */  li    $at, 1
 /* 0C14E4 7F08C9B4 5441001E */  bnel  $v0, $at, .L7F08CA30
@@ -914,7 +914,7 @@ glabel sub_GAME_7F08C86C
 /* 0C1E04 7F08D294 8FA90028 */  lw    $t1, 0x28($sp)
 /* 0C1E08 7F08D298 5100005E */  beql  $t0, $zero, .Ljp7F08D414
 /* 0C1E0C 7F08D29C 8FAD0028 */   lw    $t5, 0x28($sp)
-/* 0C1E10 7F08D2A0 0FC26C01 */  jal   get_num_players
+/* 0C1E10 7F08D2A0 0FC26C01 */  jal   getPlayerCount
 /* 0C1E14 7F08D2A4 8D300000 */   lw    $s0, ($t1)
 /* 0C1E18 7F08D2A8 24010001 */  li    $at, 1
 /* 0C1E1C 7F08D2AC 14410023 */  bne   $v0, $at, .Ljp7F08D33C
@@ -1183,7 +1183,7 @@ glabel sub_GAME_7F08CB10
 .L7F08CCE4:
 /* 0C1814 7F08CCE4 1611001E */  bne   $s0, $s1, .L7F08CD60
 /* 0C1818 7F08CCE8 00000000 */   nop   
-/* 0C181C 7F08CCEC 0FC26919 */  jal   get_num_players
+/* 0C181C 7F08CCEC 0FC26919 */  jal   getPlayerCount
 /* 0C1820 7F08CCF0 00000000 */   nop   
 /* 0C1824 7F08CCF4 24010001 */  li    $at, 1
 /* 0C1828 7F08CCF8 14410052 */  bne   $v0, $at, .L7F08CE44
@@ -1222,7 +1222,7 @@ glabel sub_GAME_7F08CB10
 /* 0C18A0 7F08CD70 10400018 */  beqz  $v0, .L7F08CDD4
 /* 0C18A4 7F08CD74 24030021 */   li    $v1, 33
 .L7F08CD78:
-/* 0C18A8 7F08CD78 0FC26919 */  jal   get_num_players
+/* 0C18A8 7F08CD78 0FC26919 */  jal   getPlayerCount
 /* 0C18AC 7F08CD7C 00000000 */   nop   
 /* 0C18B0 7F08CD80 24010001 */  li    $at, 1
 /* 0C18B4 7F08CD84 14410010 */  bne   $v0, $at, .L7F08CDC8
@@ -1436,7 +1436,7 @@ glabel sub_GAME_7F08CB10
 .Ljp7F08D614:
 /* 0C2184 7F08D614 16110024 */  bne   $s0, $s1, .Ljp7F08D6A8
 /* 0C2188 7F08D618 00000000 */   nop   
-/* 0C218C 7F08D61C 0FC26C01 */  jal   get_num_players
+/* 0C218C 7F08D61C 0FC26C01 */  jal   getPlayerCount
 /* 0C2190 7F08D620 00000000 */   nop   
 /* 0C2194 7F08D624 24010001 */  li    $at, 1
 /* 0C2198 7F08D628 1441005F */  bne   $v0, $at, .Ljp7F08D7A8
@@ -1490,7 +1490,7 @@ glabel sub_GAME_7F08CB10
 /* 0C2244 7F08D6D4 52010019 */  beql  $s0, $at, .Ljp7F08D73C
 /* 0C2248 7F08D6D8 260E0020 */   addiu $t6, $s0, 0x20
 .Ljp7F08D6DC:
-/* 0C224C 7F08D6DC 0FC26C01 */  jal   get_num_players
+/* 0C224C 7F08D6DC 0FC26C01 */  jal   getPlayerCount
 /* 0C2250 7F08D6E0 00000000 */   nop   
 /* 0C2254 7F08D6E4 24010001 */  li    $at, 1
 /* 0C2258 7F08D6E8 14410010 */  bne   $v0, $at, .Ljp7F08D72C

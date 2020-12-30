@@ -58,7 +58,7 @@ glabel init_player_BONDdata_stats
 /* 039C50 7F005120 3C108008 */  lui   $s0, %hi(pPlayer)
 /* 039C54 7F005124 2610A0B0 */  addiu $s0, %lo(pPlayer) # addiu $s0, $s0, -0x5f50
 /* 039C58 7F005128 8E090000 */  lw    $t1, ($s0)
-/* 039C5C 7F00512C 0FC26919 */  jal   get_num_players
+/* 039C5C 7F00512C 0FC26919 */  jal   getPlayerCount
 /* 039C60 7F005130 AD220808 */   sw    $v0, 0x808($t1)
 /* 039C64 7F005134 24010001 */  li    $at, 1
 /* 039C68 7F005138 14410006 */  bne   $v0, $at, .L7F005154

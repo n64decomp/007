@@ -1,5 +1,5 @@
 #include "ultra64.h"
-#include "gbi.h"
+#include "PR/gbi.h"
 
 OSMesg vi_c_debug_MSG[0x8];
 OSMesgQueue vi_c_debug_MQ;

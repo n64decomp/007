@@ -42,4 +42,7 @@ typedef struct s_room_info {
 
 void bgInitDebugNoticeList(void);
 
+s32 sub_GAME_7F0B8FD0(u8 roomA, u8 roomB);
+s32 sub_GAME_7F0B4F9C(u8 room); // u8 not s32 for sub_GAME_7F0B2FE0
+
 #endif

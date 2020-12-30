@@ -111,34 +111,23 @@ f32 get_007_accuracy_mod(void)
 
 #ifdef NONMATCHING
 void end_of_mission_briefing(void)
-
 {
-  short sVar1;
-  int iVar3;
-  save_file *folder;
-  ulonglong uVar2;
-  
-  if (((-1 < briefingpage) && (selected_difficulty != DIFFICULTY_007)) && (append_cheat_sp == FALSE)
-     ) {
-    sVar1 = (&solo_target_times_ARRAY_8002b564
-              [mission_folder_setup_entries[briefingpage].mission_num].agent_time)
-            [selected_difficulty];
+    if (((-1 < briefingpage) && (selected_difficulty != DIFFICULTY_007)) && (append_cheat_sp == FALSE)) 
+    {
+        unlock_stage_in_folder_on_difficulty(selected_folder_num, mission_folder_setup_entries[briefingpage].mission_num, selected_difficulty, get_mission_timer() / 0x3c);
 
-    unlock_stage_in_folder_on_difficulty
-              (selected_folder_num,(longlong)mission_folder_setup_entries[briefingpage].mission_num,
-               (longlong)selected_difficulty,getMissiontime() / 0x3c);
-
-    if ((longlong)(getMissiontime() / 0x3c) <= (longlong)sVar1) {
-      folder = getEEPROMforFoldernum(selected_folder_num);
-      if (check_if_cheat_unlocked(folder,(longlong)mission_folder_setup_entries[briefingpage].mission_num) == 0) {
-        proc_7F01E760(selected_folder_num,(longlong)mission_folder_setup_entries[briefingpage].mission_num);
-        newcheatunlocked = 1;
-        return;
-      }
+        if ((get_mission_timer() / 0x3c) <= (&solo_target_time_array[mission_folder_setup_entries[briefingpage].mission_num].agent_time)[selected_difficulty]) 
+        {      
+            if (check_if_cheat_unlocked(get_save_folder_ptr(selected_folder_num), mission_folder_setup_entries[briefingpage].mission_num) == 0)
+            {
+                sub_GAME_7F01E760(selected_folder_num, mission_folder_setup_entries[briefingpage].mission_num);
+                newcheatunlocked = 1;
+                return;
+            }
+        }
+        newcheatunlocked = 0;
     }
-    newcheatunlocked = 0;
-  }
-  return;
+    return;
 }
 #else
 
@@ -363,115 +352,51 @@ void set_selected_folder_num(u32 foldernum)
   selected_folder_num = foldernum;
 }
 
-
-
-
-#ifdef NONMATCHING
 void set_selected_difficulty(DIFFICULTY difficulty)
 {
-  if (difficulty != DIFFICULTY_AGENT) 
-  {
-    if (difficulty == DIFFICULTY_SECRET)
+    switch(difficulty)
     {
-      selected_difficulty = DIFFICULTY_SECRET;
-      return;
+    case DIFFICULTY_AGENT:
+    default:
+        selected_difficulty = DIFFICULTY_AGENT;
+        return;    
+    case DIFFICULTY_SECRET:
+        selected_difficulty = DIFFICULTY_SECRET;
+        return;
+    case DIFFICULTY_00:
+        selected_difficulty = DIFFICULTY_00;
+        return;
+    case DIFFICULTY_007:
+        selected_difficulty = DIFFICULTY_007;
+        return;
     }
-    if (difficulty == DIFFICULTY_00)
-    {
-      selected_difficulty = DIFFICULTY_00;
-      return;
-    }
-    if (difficulty == DIFFICULTY_007)
-    {
-      selected_difficulty = DIFFICULTY_007;
-      return;
-    }
-  }
-  else
-  {
-    selected_difficulty = DIFFICULTY_AGENT;
-  }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel set_selected_difficulty
-/* 0520CC 7F01D59C 10800009 */  beqz  $a0, .L7F01D5C4
-/* 0520D0 7F01D5A0 24020001 */   li    $v0, 1
-/* 0520D4 7F01D5A4 1082000A */  beq   $a0, $v0, .L7F01D5D0
-/* 0520D8 7F01D5A8 3C018003 */   lui   $at, %hi(selected_difficulty)
-/* 0520DC 7F01D5AC 24020002 */  li    $v0, 2
-/* 0520E0 7F01D5B0 10820009 */  beq   $a0, $v0, .L7F01D5D8
-/* 0520E4 7F01D5B4 3C018003 */   lui   $at, %hi(selected_difficulty)
-/* 0520E8 7F01D5B8 24020003 */  li    $v0, 3
-/* 0520EC 7F01D5BC 10820008 */  beq   $a0, $v0, .L7F01D5E0
-/* 0520F0 7F01D5C0 3C018003 */   lui   $at, %hi(selected_difficulty)
-.L7F01D5C4:
-/* 0520F4 7F01D5C4 3C018003 */  lui   $at, %hi(selected_difficulty)
-/* 0520F8 7F01D5C8 03E00008 */  jr    $ra
-/* 0520FC 7F01D5CC AC20A8FC */   sw    $zero, %lo(selected_difficulty)($at)
-
-.L7F01D5D0:
-/* 052100 7F01D5D0 03E00008 */  jr    $ra
-/* 052104 7F01D5D4 AC22A8FC */   sw    $v0, %lo(selected_difficulty)($at)
-
-.L7F01D5D8:
-/* 052108 7F01D5D8 03E00008 */  jr    $ra
-/* 05210C 7F01D5DC AC22A8FC */   sw    $v0, %lo(selected_difficulty)($at)
-
-.L7F01D5E0:
-/* 052110 7F01D5E0 AC22A8FC */  sw    $v0, %lo(selected_difficulty)($at)
-/* 052114 7F01D5E4 03E00008 */  jr    $ra
-/* 052118 7F01D5E8 00000000 */   nop   
-)
-#endif
-
-
-
 
 void set_solo_and_ptr_briefing(LEVELID stage)
 {
-  gamemode = GAMEMODE_SOLO;
-  selected_stage = stage;
-  briefingpage = pull_and_display_text_for_folder_a0(stage);
+    gamemode = GAMEMODE_SOLO;
+    selected_stage = stage;
+    briefingpage = pull_and_display_text_for_folder_a0(stage);
 }
 
 void sub_GAME_7F01D61C(struct save_file *savefile)
 {
-  copy_eeprom_from_to(selected_folder_num,savefile);
+    copy_eeprom_from_to(selected_folder_num,savefile);
 }
 
 
 
-#ifdef NONMATCHING
+//this feels fake, generated with a permuter session i forgot was running
 void sub_GAME_7F01D644(struct save_file *eeprom)
 {
-  selected_folder_num_copy = selected_folder_num;
-  selected_folder_num = 100;
-  copy_eepromfile_a0_from_a1_to_buffer(100,eeprom);
-  return;
+  int new_var;
+  long long new_var2;
+  new_var2 = (long long) 0x64;
+  new_var = new_var2;
+  selected_folder_num_copy = (s32) selected_folder_num;
+  selected_folder_num = new_var;
+  copy_eepromfile_a0_from_a1_to_buffer(new_var, eeprom);
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F01D644
-/* 052174 7F01D644 3C028003 */  lui   $v0, %hi(selected_folder_num)
-/* 052178 7F01D648 2442A8E8 */  addiu $v0, %lo(selected_folder_num) # addiu $v0, $v0, -0x5718
-/* 05217C 7F01D64C 8C4E0000 */  lw    $t6, ($v0)
-/* 052180 7F01D650 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 052184 7F01D654 00802825 */  move  $a1, $a0
-/* 052188 7F01D658 3C018003 */  lui   $at, %hi(selected_folder_num_copy)
-/* 05218C 7F01D65C AFBF0014 */  sw    $ra, 0x14($sp)
-/* 052190 7F01D660 24040064 */  li    $a0, 100
-/* 052194 7F01D664 AC2EA8EC */  sw    $t6, %lo(selected_folder_num_copy)($at)
-/* 052198 7F01D668 0FC07D17 */  jal   copy_eepromfile_a0_from_a1_to_buffer
-/* 05219C 7F01D66C AC440000 */   sw    $a0, ($v0)
-/* 0521A0 7F01D670 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0521A4 7F01D674 27BD0018 */  addiu $sp, $sp, 0x18
-/* 0521A8 7F01D678 03E00008 */  jr    $ra
-/* 0521AC 7F01D67C 00000000 */   nop   
-)
-#endif
 
 
 void store_favorite_weapon_current_player(u32 right,u32 left)
@@ -479,6 +404,6 @@ void store_favorite_weapon_current_player(u32 right,u32 left)
   u32 playerNum;
   
   playerNum = get_cur_playernum();
-  array_favweapon[playerNum][0] = right;
-  array_favweapon[playerNum][1] = left;
+  array_favweapon[playerNum][RIGHT_HAND] = right;
+  array_favweapon[playerNum][LEFT_HAND] = left;
 }

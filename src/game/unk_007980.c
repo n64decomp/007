@@ -16,12 +16,12 @@ void cleanupplayersoundrelated(void) {
     ? phi_return;
 
     // Node 0
-    temp_ret = get_num_players();
+    temp_ret = getPlayerCount();
     phi_return = temp_ret;
     if (temp_ret > 0)
     {
         // Node 1
-        phi_s2 = ((0 * 4) + &ptr_BONDdata_p1);
+        phi_s2 = ((0 * 4) + &players);
         phi_s4 = 0;
 loop_2:
         // Node 2
@@ -47,7 +47,7 @@ loop_3:
         }
         // Node 7
         temp_s4 = (phi_s4 + 1);
-        temp_ret_2 = get_num_players();
+        temp_ret_2 = getPlayerCount();
         phi_s2 = (phi_s2 + 4);
         phi_s4 = temp_s4;
         phi_return = temp_ret_2;
@@ -71,12 +71,12 @@ glabel cleanupplayersoundrelated
 /* 03C4C0 7F007990 AFB20020 */  sw    $s2, 0x20($sp)
 /* 03C4C4 7F007994 AFB1001C */  sw    $s1, 0x1c($sp)
 /* 03C4C8 7F007998 AFB00018 */  sw    $s0, 0x18($sp)
-/* 03C4CC 7F00799C 0FC26919 */  jal   get_num_players
+/* 03C4CC 7F00799C 0FC26919 */  jal   getPlayerCount
 /* 03C4D0 7F0079A0 0000A025 */   move  $s4, $zero
 /* 03C4D4 7F0079A4 1840001B */  blez  $v0, .L7F007A14
 /* 03C4D8 7F0079A8 00147080 */   sll   $t6, $s4, 2
-/* 03C4DC 7F0079AC 3C0F8008 */  lui   $t7, %hi(ptr_BONDdata_p1) 
-/* 03C4E0 7F0079B0 25EF9EE0 */  addiu $t7, %lo(ptr_BONDdata_p1) # addiu $t7, $t7, -0x6120
+/* 03C4DC 7F0079AC 3C0F8008 */  lui   $t7, %hi(players) 
+/* 03C4E0 7F0079B0 25EF9EE0 */  addiu $t7, %lo(players) # addiu $t7, $t7, -0x6120
 /* 03C4E4 7F0079B4 01CF9021 */  addu  $s2, $t6, $t7
 /* 03C4E8 7F0079B8 24130750 */  li    $s3, 1872
 /* 03C4EC 7F0079BC 00008825 */  move  $s1, $zero
@@ -99,7 +99,7 @@ glabel cleanupplayersoundrelated
 /* 03C524 7F0079F4 5633FFF3 */  bnel  $s1, $s3, .L7F0079C4
 /* 03C528 7F0079F8 8E580000 */   lw    $t8, ($s2)
 /* 03C52C 7F0079FC 26940001 */  addiu $s4, $s4, 1
-/* 03C530 7F007A00 0FC26919 */  jal   get_num_players
+/* 03C530 7F007A00 0FC26919 */  jal   getPlayerCount
 /* 03C534 7F007A04 26520004 */   addiu $s2, $s2, 4
 /* 03C538 7F007A08 0282082A */  slt   $at, $s4, $v0
 /* 03C53C 7F007A0C 5420FFEC */  bnezl $at, .L7F0079C0

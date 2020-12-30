@@ -644,7 +644,7 @@ def_7F005A74:
 /* 03A9C8 7F005E98 8D089C68 */  lw    $t0, %lo(dword_CODE_bss_80079C68)($t0)
 /* 03A9CC 7F005E9C 5900002C */  blezl $t0, .L7F005F50
 /* 03A9D0 7F005EA0 27A4008C */   addiu $a0, $sp, 0x8c
-/* 03A9D4 7F005EA4 0FC26919 */  jal   get_num_players
+/* 03A9D4 7F005EA4 0FC26919 */  jal   getPlayerCount
 /* 03A9D8 7F005EA8 00000000 */   nop   
 /* 03A9DC 7F005EAC 28410002 */  slti  $at, $v0, 2
 /* 03A9E0 7F005EB0 14200008 */  bnez  $at, .L7F005ED4
@@ -813,7 +813,7 @@ def_7F005A74:
 /* 03AC58 7F006128 8E420000 */  lw    $v0, ($s2)
 /* 03AC5C 7F00612C C45204BC */  lwc1  $f18, 0x4bc($v0)
 /* 03AC60 7F006130 46009103 */  div.s $f4, $f18, $f0
-/* 03AC64 7F006134 0FC26919 */  jal   get_num_players
+/* 03AC64 7F006134 0FC26919 */  jal   getPlayerCount
 /* 03AC68 7F006138 E44403C0 */   swc1  $f4, 0x3c0($v0)
 /* 03AC6C 7F00613C 24010001 */  li    $at, 1
 /* 03AC70 7F006140 14410005 */  bne   $v0, $at, .L7F006158
@@ -1406,7 +1406,7 @@ def_7F005A74:
 /* 03AA04 7F005E94 8F399CD8 */  lw    $t9, %lo(dword_CODE_bss_80079C68)($t9)
 /* 03AA08 7F005E98 5B20002C */  blezl $t9, .L7F005F4C
 /* 03AA0C 7F005E9C 27A40094 */   addiu $a0, $sp, 0x94
-/* 03AA10 7F005EA0 0FC26C01 */  jal   get_num_players
+/* 03AA10 7F005EA0 0FC26C01 */  jal   getPlayerCount
 /* 03AA14 7F005EA4 00000000 */   nop   
 /* 03AA18 7F005EA8 28410002 */  slti  $at, $v0, 2
 /* 03AA1C 7F005EAC 14200008 */  bnez  $at, .L7F005ED0
@@ -1574,7 +1574,7 @@ def_7F005A74:
 /* 03AC90 7F006120 8E420000 */  lw    $v0, ($s2)
 /* 03AC94 7F006124 C45204BC */  lwc1  $f18, 0x4bc($v0)
 /* 03AC98 7F006128 46009203 */  div.s $f8, $f18, $f0
-/* 03AC9C 7F00612C 0FC26C01 */  jal   get_num_players
+/* 03AC9C 7F00612C 0FC26C01 */  jal   getPlayerCount
 /* 03ACA0 7F006130 E44803C0 */   swc1  $f8, 0x3c0($v0)
 /* 03ACA4 7F006134 24010001 */  li    $at, 1
 /* 03ACA8 7F006138 14410005 */  bne   $v0, $at, .L7F006150

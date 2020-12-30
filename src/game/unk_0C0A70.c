@@ -207,7 +207,7 @@ void sub_GAME_7F0C0BE4(s32 arg0) {
 }
 
 void sub_GAME_7F0C0BF0(void) {
-    sub_GAME_7F0A9358();
+    get_mTrack2Vol();
 }
 
 

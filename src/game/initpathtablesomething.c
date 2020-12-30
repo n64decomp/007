@@ -24,7 +24,7 @@ glabel init_pathtable_something
 /* 03B314 7F0067E4 AE220000 */   sw    $v0, ($s1)
 /* 03B318 7F0067E8 00402025 */  move  $a0, $v0
 /* 03B31C 7F0067EC 8E050000 */  lw    $a1, ($s0)
-/* 03B320 7F0067F0 0FC2C0DB */  jal   sub_GAME_7F0B036C
+/* 03B320 7F0067F0 0FC2C0DB */  jal   isPointInsideTriStandTileUnscaled_Maybe
 /* 03B324 7F0067F4 8E060008 */   lw    $a2, 8($s0)
 /* 03B328 7F0067F8 5440001D */  bnezl $v0, .L7F006870
 /* 03B32C 7F0067FC 24020001 */   li    $v0, 1

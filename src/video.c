@@ -3,6 +3,7 @@
 #include "vi.h"
 #include "video.h"
 #include "bondgame.h"
+#include "unk_093880.h" // pPlayer
 
 /**
  * @file video.c
@@ -12,12 +13,15 @@
 
 //data
 u32 D_80023240 = 0;
-struct video_settings video1_settings = {0, 320, 240, 60.0f, 1.3333334f, 30.0f, 10000.0f, 320, 240, 320, 240, 0, 0, 1, 0};
-struct video_settings video2_settings = {0, 320, 240, 60.0f, 1.3333334f, 30.0f, 10000.0f, 320, 240, 320, 240, 0, 0, 1, 0};
+struct video_settings video1_settings[] = 
+{
+    {0, 0, 0, 0, 320, 240, 60.0f, 1.3333334f, 30.0f, 10000.0f, 320, 240, 320, 240, 0, 0, 1, 0},
+    {0, 0, 0, 0, 320, 240, 60.0f, 1.3333334f, 30.0f, 10000.0f, 320, 240, 320, 240, 0, 0, 1, 0}
+};
 s32 D_8002329C = 0;
 s32 D_800232A0 = 0;
-video_settings * ptr_video_settings1 = &video1_settings;
-video_settings * ptr_video_settings2 = &video1_settings;
+video_settings *ptr_video_settings1 = &video1_settings[0];
+video_settings *ptr_video_settings2 = &video1_settings[0];
 s32 coloroutputmode = 1;
 s32 D_800232B0 = 1;
 s32 D_800232B4 = 0;
@@ -31,21 +35,14 @@ s32 rgb_32bit_grabnum = 1;
 
 //rodata
 
-
-
-
-
-
-
 //bss
-char dword_CODE_bss_800607E0[0x40];
-Mtx *m;
-u16 word_CODE_bss_80060824;
+f32 projectionMatrixF[4][4];
+Mtx *projectionMatrix;
+u16 perspNorm;
 char dword_CODE_bss_80060828[0x50];
 u8 off_CODE_bss_80060878;
 u8 off_CODE_bss_80060879;
-//struct osViMode viMode;
-s32 viMode;
+OSViMode *viMode;
 s32 dword_CODE_bss_80060880;
 s32 dword_CODE_bss_80060884;
 s32 dword_CODE_bss_80060888;
@@ -56,16 +53,21 @@ char dword_CODE_bss_80060890[0x400];//CC[0x3C4];
  * 3C60	70003060
  */
 #ifdef NONMATCHING
+// regalloc
 void init_video_settings(void)
 {
-    video1_settings.frameb = cfb_16_a;
-    D_8002329C = 0;
-    D_800232A0 = 0;
-    ptr_video_settings1 = &video1_settings;
-    ptr_video_settings2 = &video2_settings;
+    video_settings* v1;
+    video_settings* v2;
     off_CODE_bss_80060878 = 0;
     off_CODE_bss_80060879 = 1;
-    video2_settings.frameb = cfb_16_b;
+    v1 = &video1_settings[off_CODE_bss_80060878];
+    ptr_video_settings1 = v1;
+    ptr_video_settings1->framebuf = cfb_16[off_CODE_bss_80060878];    
+    v2 = &video1_settings[off_CODE_bss_80060879];
+    ptr_video_settings2 = v2;
+    ptr_video_settings2->framebuf = cfb_16[off_CODE_bss_80060879];
+    D_8002329C = 0;
+    D_800232A0 = 0;
 }
 #else
 GLOBAL_ASM(
@@ -85,9 +87,9 @@ glabel init_video_settings
 /* 003C8C 7000308C 3C058006 */  lui   $a1, %hi(off_CODE_bss_80060879)
 /* 003C90 70003090 00007812 */  mflo  $t7
 /* 003C94 70003094 3C068002 */  lui   $a2, %hi(ptr_video_settings1)
-/* 003C98 70003098 3C09803B */  lui   $t1, %hi(cfb_16_a) # $t1, 0x803b
+/* 003C98 70003098 3C09803B */  lui   $t1, %hi(cfb_16) # $t1, 0x803b
 /* 003C9C 7000309C 0322C823 */  subu  $t9, $t9, $v0
-/* 003CA0 700030A0 25295000 */  addiu $t1, %lo(cfb_16_a) # addiu $t1, $t1, 0x5000
+/* 003CA0 700030A0 25295000 */  addiu $t1, %lo(cfb_16) # addiu $t1, $t1, 0x5000
 /* 003CA4 700030A4 24C632A4 */  addiu $a2, %lo(ptr_video_settings1) # addiu $a2, $a2, 0x32a4
 /* 003CA8 700030A8 24A50879 */  addiu $a1, %lo(off_CODE_bss_80060879) # addiu $a1, $a1, 0x879
 /* 003CAC 700030AC 24840878 */  addiu $a0, %lo(off_CODE_bss_80060878) # addiu $a0, $a0, 0x878
@@ -123,116 +125,49 @@ glabel init_video_settings
 )
 #endif
 
-
-
-/**
- * 3D24	70003124	initialize both video buffers
- */
-#ifdef NONMATCHING
 void init_both_video_buffers(void)
 {
     s32 i;
-    
-    remove_viewport_buffer();
-    for (i = 0; i != 0x25800; i += 4)
-    {
-        cfb_16_a[i] = 0;
-        cfb_16_b[i] = 0;
-        cfb_16_a[i + 1] = 0;
-        cfb_16_b[i + 1] = 0;
-        cfb_16_a[i + 2] = 0;
-        cfb_16_b[i + 2] = 0;
-        cfb_16_a[i + 3] = 0;
-        cfb_16_b[i + 3] = 0;
-    };
+    u8* p1 = cfb_16[0];
+    u8* p2 = cfb_16[1];
+    zbufDeallocate();
+    for (i = 0; i < 320*240*2; i++) {
+        p1[i] = 0;
+        p2[i] = 0;
+    }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel init_both_video_buffers
-/* 003D24 70003124 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 003D28 70003128 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 003D2C 7000312C 0FC348E0 */  jal   remove_viewport_buffer
-/* 003D30 70003130 00000000 */   nop   
-/* 003D34 70003134 3C070002 */  lui   $a3, (0x00025800 >> 16) # lui $a3, 2
-/* 003D38 70003138 3C06803E */  lui   $a2, %hi(cfb_16_b) # $a2, 0x803e
-/* 003D3C 7000313C 3C05803B */  lui   $a1, %hi(cfb_16_a) # $a1, 0x803b
-/* 003D40 70003140 24A55000 */  addiu $a1, %lo(cfb_16_a) # addiu $a1, $a1, 0x5000
-/* 003D44 70003144 24C6A800 */  addiu $a2, %lo(cfb_16_b) # addiu $a2, $a2, -0x5800
-/* 003D48 70003148 34E75800 */  ori   $a3, (0x00025800 & 0xFFFF) # ori $a3, $a3, 0x5800
-/* 003D4C 7000314C 00002025 */  move  $a0, $zero
-.L70003150:
-/* 003D50 70003150 00A41021 */  addu  $v0, $a1, $a0
-/* 003D54 70003154 A0400000 */  sb    $zero, ($v0)
-/* 003D58 70003158 00C41821 */  addu  $v1, $a2, $a0
-/* 003D5C 7000315C A0600000 */  sb    $zero, ($v1)
-/* 003D60 70003160 A0400001 */  sb    $zero, 1($v0)
-/* 003D64 70003164 A0600001 */  sb    $zero, 1($v1)
-/* 003D68 70003168 A0400002 */  sb    $zero, 2($v0)
-/* 003D6C 7000316C A0600002 */  sb    $zero, 2($v1)
-/* 003D70 70003170 A0400003 */  sb    $zero, 3($v0)
-/* 003D74 70003174 24840004 */  addiu $a0, $a0, 4
-/* 003D78 70003178 1487FFF5 */  bne   $a0, $a3, .L70003150
-/* 003D7C 7000317C A0600003 */   sb    $zero, 3($v1)
-/* 003D80 70003180 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 003D84 70003184 27BD0018 */  addiu $sp, $sp, 0x18
-/* 003D88 70003188 03E00008 */  jr    $ra
-/* 003D8C 7000318C 00000000 */   nop   
-)
-#endif
 
-/**
- * 3D90	70003190	???; 2->800232BC
- */
-#ifdef NONMATCHING
 void video_related_6(s32 arg0)
 {
-    D_800232BC = (s32) (arg0 + 2);
+    arg0 += 2;
+    D_800232BC = arg0;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel video_related_6
-/* 003D90 70003190 24840002 */  addiu $a0, $a0, 2
-/* 003D94 70003194 3C018002 */  lui   $at, %hi(D_800232BC)
-/* 003D98 70003198 03E00008 */  jr    $ra
-/* 003D9C 7000319C AC2432BC */   sw    $a0, %lo(D_800232BC)($at)
-)
-#endif
 
 /**
  * 3DA0	700031A0
  */
 #ifdef NONMATCHING
-void *video_related_7(void)
-{
+// regalloc
+void video_related_7(void) {
     s32 temp_lo;
-    s32 temp_t6;
-
-    if (D_800232B8 != 0)
-    {
-        temp_t6 = D_800232B8 + -1;
-        D_800232B8 = temp_t6;
-        if (temp_t6 == 0)
-        {
+    if (D_800232B8 != 0) {
+        D_800232B8--;
+        if (D_800232B8 == 0) {
             D_800232B4 = 0;
         }
     }
     temp_lo = D_800232B0 * D_800232B4;
-    viMode->OSViCommonRegs.hstart /*unk30*/ = (s32) (((((s32) viMode+0x8 >> 0x10) + temp_lo) << 0x10) | ((viMode+0x8 + temp_lo) & 0xffff));
-    viMode->OSViFieldRegs[0].origin /*unk44*/ = (s32) (((((s32) viMode+0xC >> 0x10) + temp_lo) << 0x10) | ((viMode+0xC + temp_lo) & 0xffff));
-    osViSetMode(viMode, &viMode);
-    osViBlack(*(D_800232BC + 3));
-    if (D_800232BC != 0)
-    {
-        if (D_800232BC < 3)
-        {
-            D_800232BC = (s32) (D_800232BC + -1);
+    viMode->fldRegs[0].vStart = (((dword_CODE_bss_80060884 >> 16) + temp_lo) << 16) | ((dword_CODE_bss_80060884 + temp_lo) & 0xffff);
+    viMode->fldRegs[1].vStart = (((dword_CODE_bss_80060888 >> 16) + temp_lo) << 16) | ((dword_CODE_bss_80060888 + temp_lo) & 0xffff);
+    osViSetMode(viMode);
+    osViBlack(D_800232BC);
+    if (D_800232BC != 0) {
+        if (D_800232BC < 3) {
+            D_800232BC--;
         }
     }
-    osViSetSpecialFeatures(0x42);
-    D_800232B0 = (s32) -(s32) D_800232B0;
-    return &D_800232B0;
+    osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON | OS_VI_GAMMA_OFF);
+    D_800232B0 = -D_800232B0;
 }
 #else
 GLOBAL_ASM(
@@ -501,7 +436,7 @@ block_19:
         phi_f0 = 1.0f;
     }
     temp_t1 = (D_800232C0 * 4);
-    (0x80020000 + temp_t1)->unk30B4 = (f32) ((f32) ptr_video_settings2->unk4 / (f32) ptr_video_settings2->unk18);
+    (0x80020000 + temp_t1)->unk30B4 = (f32) ((f32) ptr_video_settings1->unk4 / (f32) ptr_video_settings2->unk18);
     (0x80020000 + temp_t1)->unk30BC = (f32) phi_f0;
     if (*ptr_video_settings2 == 1)
     {
@@ -634,11 +569,11 @@ block_43:
     D_800232C0 = (s32) phi_t9_4;
     if (coloroutputmode != 0)
     {
-        fast3d_related_array->unk58 = (void *) ptr_video_settings2->frameb;
+        fast3d_related_array->unk58 = (void *) ptr_video_settings2->framebuf;
     }
     else
     {
-        fast3d_related_array->unk58 = &cfb_16_a;
+        fast3d_related_array->unk58 = &cfb_16;
     }
     temp_t7_4 = (off_CODE_bss_80060878 + 1);
     temp_t8_6 = (off_CODE_bss_80060879 + 1);
@@ -668,7 +603,7 @@ block_43:
     temp_a1 = (&video1_settings + (off_CODE_bss_80060879 * 0x2c));
     *&ptr_video_settings2 = temp_a1;
     bcopy(*&ptr_video_settings2, temp_a1, 0x2c, &video1_settings);
-    ptr_video_settings2->frameb = (s32) ((off_CODE_bss_80060879 * 0x25800) + &cfb_16_a);
+    ptr_video_settings2->framebuf = (s32) ((off_CODE_bss_80060879 * 0x25800) + &cfb_16);
 }
 #else
 GLOBAL_ASM(
@@ -1197,8 +1132,8 @@ glabel video_related_8
 .L70003A0C:
 /* 00460C 70003A0C 3C198005 */  lui   $t9, %hi(fast3d_related_array) 
 /* 004610 70003A10 8F39EAB0 */  lw    $t9, %lo(fast3d_related_array)($t9)
-/* 004614 70003A14 3C0E803B */  lui   $t6, %hi(cfb_16_a) # $t6, 0x803b
-/* 004618 70003A18 25CE5000 */  addiu $t6, %lo(cfb_16_a) # addiu $t6, $t6, 0x5000
+/* 004614 70003A14 3C0E803B */  lui   $t6, %hi(cfb_16) # $t6, 0x803b
+/* 004618 70003A18 25CE5000 */  addiu $t6, %lo(cfb_16) # addiu $t6, $t6, 0x5000
 /* 00461C 70003A1C AF2E0058 */  sw    $t6, 0x58($t9)
 .L70003A20:
 /* 004620 70003A20 3C028006 */  lui   $v0, %hi(off_CODE_bss_80060878)
@@ -1243,8 +1178,8 @@ glabel video_related_8
 /* 0046B4 70003AB4 3C038006 */  lui   $v1, %hi(off_CODE_bss_80060879)
 /* 0046B8 70003AB8 24630879 */  addiu $v1, %lo(off_CODE_bss_80060879) # addiu $v1, $v1, 0x879
 /* 0046BC 70003ABC 90780000 */  lbu   $t8, ($v1)
-/* 0046C0 70003AC0 3C0E803B */  lui   $t6, %hi(cfb_16_a) # $t6, 0x803b
-/* 0046C4 70003AC4 25CE5000 */  addiu $t6, %lo(cfb_16_a) # addiu $t6, $t6, 0x5000
+/* 0046C0 70003AC0 3C0E803B */  lui   $t6, %hi(cfb_16) # $t6, 0x803b
+/* 0046C4 70003AC4 25CE5000 */  addiu $t6, %lo(cfb_16) # addiu $t6, $t6, 0x5000
 /* 0046C8 70003AC8 00187880 */  sll   $t7, $t8, 2
 /* 0046CC 70003ACC 01F87821 */  addu  $t7, $t7, $t8
 /* 0046D0 70003AD0 000F7880 */  sll   $t7, $t7, 2
@@ -1263,124 +1198,33 @@ glabel video_related_8
 )
 #endif
 
-
-/**
- * 4704	70003B04	???; 800232B4=(word)F12, 800232B8=0xA
- *     accepts: F12=
- */
-#ifdef NONMATCHING
-void video_related_9(float param_1)
+void video_related_9(f32 param_1)
 {
-    float fVar1;
-    
-    fVar1 = 14.00000000;
-    if (param_1 <= 14.00000000) {
-        fVar1 = param_1;
+    if (param_1 > 14.0f) {
+        param_1 = 14.0f;
     }
-    if (fVar1 < 0.00000000) {
-        D_800232B4 = 0;
+    if (param_1 < 0.0f) {
+        param_1 = 0.0f;
     }
-    else {
-        D_800232B4 = (int)fVar1;
-    }
+    D_800232B4 = param_1;
     D_800232B8 = 10;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel video_related_9
-/* 004704 70003B04 3C014160 */  li    $at, 0x41600000 # 14.000000
-/* 004708 70003B08 44810000 */  mtc1  $at, $f0
-/* 00470C 70003B0C 00000000 */  nop   
-/* 004710 70003B10 460C003C */  c.lt.s $f0, $f12
-/* 004714 70003B14 00000000 */  nop   
-/* 004718 70003B18 45020003 */  bc1fl .L70003B28
-/* 00471C 70003B1C 44800000 */   mtc1  $zero, $f0
-/* 004720 70003B20 46000306 */  mov.s $f12, $f0
-/* 004724 70003B24 44800000 */  mtc1  $zero, $f0
-.L70003B28:
-/* 004728 70003B28 00000000 */  nop   
-/* 00472C 70003B2C 4600603C */  c.lt.s $f12, $f0
-/* 004730 70003B30 00000000 */  nop   
-/* 004734 70003B34 45020003 */  bc1fl .L70003B44
-/* 004738 70003B38 4600610D */   trunc.w.s $f4, $f12
-/* 00473C 70003B3C 46000306 */  mov.s $f12, $f0
-/* 004740 70003B40 4600610D */  trunc.w.s $f4, $f12
-.L70003B44:
-/* 004744 70003B44 3C018002 */  lui   $at, %hi(D_800232B4)
-/* 004748 70003B48 2418000A */  li    $t8, 10
-/* 00474C 70003B4C 440F2000 */  mfc1  $t7, $f4
-/* 004750 70003B50 00000000 */  nop   
-/* 004754 70003B54 AC2F32B4 */  sw    $t7, %lo(D_800232B4)($at)
-/* 004758 70003B58 3C018002 */  lui   $at, %hi(D_800232B8)
-/* 00475C 70003B5C 03E00008 */  jr    $ra
-/* 004760 70003B60 AC3832B8 */   sw    $t8, %lo(D_800232B8)($at)
-)
-#endif
 
-
-
-
-/**
- * 4764	70003B64
- */
-//Even though this is defined in vi.h, it also must be in this file to be seen??
-extern OSMesgQueue vi_c_debug_MQ;
-void receive_vi_c_msgs(int msgcount){
-  do {
-    osRecvMesg(&vi_c_debug_MQ,NULL,1);
-    msgcount += -1;
-  } while (0 < msgcount);
+void receive_vi_c_msgs(int msgcount) {
+    do {
+        osRecvMesg(&vi_c_debug_MQ, NULL, 1);
+        msgcount--;
+    } while (msgcount > 0);
 }
 
-
-/**
- * 47B0	70003BB0
- */
-#ifdef NONMATCHING
+const s16 widths_80028480[] = {320, 320, 640};
+const s16 heights_80028488[] = {240, 240, 480};
 void setVideoWidthHeightToMode(s32 videomode)
 {
-    u16 widths_80028480[] = {320, 320, 640};
-    u16 heights_80028488[] = {240, 240, 480};
-
     ptr_video_settings2->mode = videomode;
-
-    ptr_video_settings2->somethingW = widths_80028480[videomode];
-    ptr_video_settings2->txtClipW = widths_80028480[videomode];
-
-    ptr_video_settings2->somethingH = heights_80028488[videomode];
-    ptr_video_settings2->txtClipH = heights_80028488[videomode];
+    ptr_video_settings2->x = ptr_video_settings2->bufx = widths_80028480[videomode];
+    ptr_video_settings2->y = ptr_video_settings2->bufy = heights_80028488[videomode];
 }
-#else
-const u16 widths_80028480[] = {320, 320, 640};
-const u16 heights_80028488[] = {240, 240, 480}; //is this not 16bit and a list of 320x240 and 640x480 - 3 widths, 3 heights
-GLOBAL_ASM(
-.text
-glabel setVideoWidthHeightToMode
-/* 0047B0 70003BB0 3C058002 */  lui   $a1, %hi(ptr_video_settings2)
-/* 0047B4 70003BB4 24A532A8 */  addiu $a1, %lo(ptr_video_settings2) # addiu $a1, $a1, 0x32a8
-/* 0047B8 70003BB8 8CAE0000 */  lw    $t6, ($a1)
-/* 0047BC 70003BBC 00041840 */  sll   $v1, $a0, 1
-/* 0047C0 70003BC0 3C028003 */  lui   $v0, %hi(widths_80028480)
-/* 0047C4 70003BC4 A1C40000 */  sb    $a0, ($t6)
-/* 0047C8 70003BC8 00431021 */  addu  $v0, $v0, $v1
-/* 0047CC 70003BCC 84428480 */  lh    $v0, %lo(widths_80028480)($v0)
-/* 0047D0 70003BD0 8CAF0000 */  lw    $t7, ($a1)
-/* 0047D4 70003BD4 A5E20018 */  sh    $v0, 0x18($t7)
-/* 0047D8 70003BD8 8CB80000 */  lw    $t8, ($a1)
-/* 0047DC 70003BDC A7020004 */  sh    $v0, 4($t8)
-/* 0047E0 70003BE0 3C028003 */  lui   $v0, %hi(heights_80028488)
-/* 0047E4 70003BE4 00431021 */  addu  $v0, $v0, $v1
-/* 0047E8 70003BE8 84428488 */  lh    $v0, %lo(heights_80028488)($v0)
-/* 0047EC 70003BEC 8CB90000 */  lw    $t9, ($a1)
-/* 0047F0 70003BF0 A722001A */  sh    $v0, 0x1a($t9)
-/* 0047F4 70003BF4 8CA80000 */  lw    $t0, ($a1)
-/* 0047F8 70003BF8 03E00008 */  jr    $ra
-/* 0047FC 70003BFC A5020006 */   sh    $v0, 6($t0)
-)
-#endif
-
-
 
 /**
  * 4800	70003C00	sets colour output mode to 16bit	[800232AC=1]
@@ -1403,7 +1247,7 @@ void set_coloroutputmode_32bit(void)
  */
 u8 * get_video_settings2_frameb(void)
 {
-    return ptr_video_settings2->frameb;
+    return ptr_video_settings2->framebuf;
 }
 
 /**
@@ -1411,7 +1255,7 @@ u8 * get_video_settings2_frameb(void)
  */
 u8 * get_video_settings1_frameb(void)
 {
-    return ptr_video_settings1->frameb;
+    return ptr_video_settings1->framebuf;
 }
 
 /**
@@ -1419,344 +1263,56 @@ u8 * get_video_settings1_frameb(void)
  */
 void set_video2buf_frameb(u8 *arg0)
 {
-    ptr_video_settings2->frameb = arg0;
+    ptr_video_settings2->framebuf = arg0;
 }
 
 /**
  * 484C	70003C4C	V0= halfword [80060824]
  */
 u16 get_80060824(void) {
-    return word_CODE_bss_80060824;
+    return perspNorm;
 }
 
-/**
- * 4858	70003C58
- */
-#ifdef NONMATCHING
-void *video_related_F(void *arg0)
-{
-    void *temp_s0;
-    void *temp_v0;
-    void *temp_v0_2;
-    void *temp_v0_3;
-    void *temp_v1;
-    void *phi_s0;
-
-    if (pPlayer != 0)
-    {
-        (pPlayer + (off_CODE_bss_80060879 * 0x10))->unk7D0 = (s16) (ptr_video_settings2->unk1C * 2);
-        (pPlayer + (off_CODE_bss_80060879 * 0x10))->unk7D8 = (s16) ((ptr_video_settings2->unk1C * 2) + (ptr_video_settings2->unk20 * 4));
-        (pPlayer + (off_CODE_bss_80060879 * 0x10))->unk7D2 = (s16) (ptr_video_settings2->unk1E * 2);
-        (pPlayer + (off_CODE_bss_80060879 * 0x10))->unk7DA = (s16) ((ptr_video_settings2->unk1E * 2) + (ptr_video_settings2->unk22 * 4));
+Gfx *video_related_F(Gfx *gdl) {
+    if (pPlayer != NULL) {
+        pPlayer->viewports[off_CODE_bss_80060879].vp.vscale[0] = (ptr_video_settings2->viewx * 2);
+        pPlayer->viewports[off_CODE_bss_80060879].vp.vtrans[0] = (ptr_video_settings2->viewx * 2) + (ptr_video_settings2->viewleft * 4);
+        pPlayer->viewports[off_CODE_bss_80060879].vp.vscale[1] = (ptr_video_settings2->viewy * 2);
+        pPlayer->viewports[off_CODE_bss_80060879].vp.vtrans[1] = (ptr_video_settings2->viewy * 2) + (ptr_video_settings2->viewtop * 4);
     }
-    arg0->unk0 = 0x3800010;
-    arg0->unk4 = (s32) ((pPlayer + (off_CODE_bss_80060879 * 0x10)) + 0x800007d0);
-    temp_s0 = arg0 + 8;
-    m = sub_GAME_7F0BD6E0(&off_CODE_bss_80060879, &pPlayer);
-    guPerspectiveF(&dword_CODE_bss_800607E0, &word_CODE_bss_80060824, ptr_video_settings2->far, ptr_video_settings2->scale, (f32) ptr_video_settings2->aspect, (f32) ptr_video_settings2->unk14, 1.0f);
-    guMtxF2L(&dword_CODE_bss_800607E0, m);
-    temp_v0 = temp_s0;
-    temp_v0->unk0 = 0x1030040;
-    temp_s0 = temp_s0 + 8;
-    temp_v0->unk4 = (s32) (m + 0x80000000);
-    temp_v1 = temp_s0;
-    temp_v1->unk0 = 0xbc00000e;
-    temp_s0 = temp_s0 + 8;
-    temp_v1->unk4 = (?32) word_CODE_bss_80060824;
-    set_BONDdata_field_10D8(m, &m);
-    set_BONDdata_field_10DC(&dword_CODE_bss_800607E0);
-    temp_v0_2 = temp_s0;
-    if (coloroutputmode != 0)
-    {
-        temp_v0_3 = temp_s0;
-        temp_v0_3->unk0 = (s32) (((ptr_video_settings2->unk18 + -1) & 0xfff) | 0xff100000);
-        temp_v0_3->unk4 = (s32) (ptr_video_settings2->frameb + 0x80000000);
-        phi_s0 = temp_s0 + 8;
+    gSPViewport(gdl++, ((s32)&pPlayer->viewports[off_CODE_bss_80060879] + 0x80000000));
+    projectionMatrix = sub_GAME_7F0BD6E0();
+    guPerspectiveF(projectionMatrixF, &perspNorm, ptr_video_settings2->fovy, ptr_video_settings2->aspect, ptr_video_settings2->near, ptr_video_settings2->far, 1.0f);
+    guMtxF2L(projectionMatrixF, projectionMatrix);
+    gSPMatrix(gdl++, ((s32)projectionMatrix + 0x80000000), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+    gSPPerspNormalize(gdl++, perspNorm);
+    currentPlayerSetProjectionMatrix(projectionMatrix);
+    currentPlayerSetProjectionMatrixF(projectionMatrixF);
+    if (coloroutputmode != MODE_32BIT) {
+        gDPSetColorImage(gdl++, G_IM_FMT_RGBA, G_IM_SIZ_16b, ptr_video_settings2->bufx, (ptr_video_settings2->framebuf + 0x80000000));
     }
-    else
-    {
-        temp_v0_2->unk4 = 0x3b5000;
-        temp_v0_2->unk0 = (s32) (((ptr_video_settings2->unk18 + -1) & 0xfff) | 0xff180000);
-        phi_s0 = temp_s0 + 8;
+    else {
+        gDPSetColorImage(gdl++, G_IM_FMT_RGBA, G_IM_SIZ_32b, ptr_video_settings2->bufx, (cfb_16[0] + 0x80000000));
     }
-    return phi_s0;
-}
-#else
-GLOBAL_ASM(
-.text
-glabel video_related_F
-/* 004858 70003C58 3C058008 */  lui   $a1, %hi(pPlayer)
-/* 00485C 70003C5C 24A5A0B0 */  addiu $a1, %lo(pPlayer) # addiu $a1, $a1, -0x5f50
-/* 004860 70003C60 8CA20000 */  lw    $v0, ($a1)
-/* 004864 70003C64 27BDFFD0 */  addiu $sp, $sp, -0x30
-/* 004868 70003C68 AFB00024 */  sw    $s0, 0x24($sp)
-/* 00486C 70003C6C 00808025 */  move  $s0, $a0
-/* 004870 70003C70 AFBF002C */  sw    $ra, 0x2c($sp)
-/* 004874 70003C74 1040002A */  beqz  $v0, .L70003D20
-/* 004878 70003C78 AFB10028 */   sw    $s1, 0x28($sp)
-/* 00487C 70003C7C 3C118002 */  lui   $s1, %hi(ptr_video_settings2)
-/* 004880 70003C80 263132A8 */  addiu $s1, %lo(ptr_video_settings2) # addiu $s1, $s1, 0x32a8
-/* 004884 70003C84 8E2E0000 */  lw    $t6, ($s1)
-/* 004888 70003C88 3C048006 */  lui   $a0, %hi(off_CODE_bss_80060879)
-/* 00488C 70003C8C 24840879 */  addiu $a0, %lo(off_CODE_bss_80060879) # addiu $a0, $a0, 0x879
-/* 004890 70003C90 90990000 */  lbu   $t9, ($a0)
-/* 004894 70003C94 85CF001C */  lh    $t7, 0x1c($t6)
-/* 004898 70003C98 00194100 */  sll   $t0, $t9, 4
-/* 00489C 70003C9C 00484821 */  addu  $t1, $v0, $t0
-/* 0048A0 70003CA0 000FC040 */  sll   $t8, $t7, 1
-/* 0048A4 70003CA4 A53807D0 */  sh    $t8, 0x7d0($t1)
-/* 0048A8 70003CA8 8E230000 */  lw    $v1, ($s1)
-/* 0048AC 70003CAC 90990000 */  lbu   $t9, ($a0)
-/* 0048B0 70003CB0 8CAF0000 */  lw    $t7, ($a1)
-/* 0048B4 70003CB4 846A001C */  lh    $t2, 0x1c($v1)
-/* 0048B8 70003CB8 846C0020 */  lh    $t4, 0x20($v1)
-/* 0048BC 70003CBC 00194100 */  sll   $t0, $t9, 4
-/* 0048C0 70003CC0 000A5840 */  sll   $t3, $t2, 1
-/* 0048C4 70003CC4 000C6880 */  sll   $t5, $t4, 2
-/* 0048C8 70003CC8 016D7021 */  addu  $t6, $t3, $t5
-/* 0048CC 70003CCC 01E8C021 */  addu  $t8, $t7, $t0
-/* 0048D0 70003CD0 A70E07D8 */  sh    $t6, 0x7d8($t8)
-/* 0048D4 70003CD4 8E290000 */  lw    $t1, ($s1)
-/* 0048D8 70003CD8 908D0000 */  lbu   $t5, ($a0)
-/* 0048DC 70003CDC 8CAB0000 */  lw    $t3, ($a1)
-/* 0048E0 70003CE0 852A001E */  lh    $t2, 0x1e($t1)
-/* 0048E4 70003CE4 000DC900 */  sll   $t9, $t5, 4
-/* 0048E8 70003CE8 01797821 */  addu  $t7, $t3, $t9
-/* 0048EC 70003CEC 000A6040 */  sll   $t4, $t2, 1
-/* 0048F0 70003CF0 A5EC07D2 */  sh    $t4, 0x7d2($t7)
-/* 0048F4 70003CF4 8E230000 */  lw    $v1, ($s1)
-/* 0048F8 70003CF8 908B0000 */  lbu   $t3, ($a0)
-/* 0048FC 70003CFC 8CAD0000 */  lw    $t5, ($a1)
-/* 004900 70003D00 8468001E */  lh    $t0, 0x1e($v1)
-/* 004904 70003D04 84780022 */  lh    $t8, 0x22($v1)
-/* 004908 70003D08 000BC900 */  sll   $t9, $t3, 4
-/* 00490C 70003D0C 00087040 */  sll   $t6, $t0, 1
-/* 004910 70003D10 00184880 */  sll   $t1, $t8, 2
-/* 004914 70003D14 01C95021 */  addu  $t2, $t6, $t1
-/* 004918 70003D18 01B96021 */  addu  $t4, $t5, $t9
-/* 00491C 70003D1C A58A07DA */  sh    $t2, 0x7da($t4)
-.L70003D20:
-/* 004920 70003D20 3C0F0380 */  lui   $t7, (0x03800010 >> 16) # lui $t7, 0x380
-/* 004924 70003D24 3C048006 */  lui   $a0, %hi(off_CODE_bss_80060879)
-/* 004928 70003D28 35EF0010 */  ori   $t7, (0x03800010 & 0xFFFF) # ori $t7, $t7, 0x10
-/* 00492C 70003D2C 02001025 */  move  $v0, $s0
-/* 004930 70003D30 24840879 */  addiu $a0, %lo(off_CODE_bss_80060879) # addiu $a0, $a0, 0x879
-/* 004934 70003D34 AC4F0000 */  sw    $t7, ($v0)
-/* 004938 70003D38 90980000 */  lbu   $t8, ($a0)
-/* 00493C 70003D3C 8CA80000 */  lw    $t0, ($a1)
-/* 004940 70003D40 3C018000 */  lui   $at, (0x800007D0 >> 16) 
-/* 004944 70003D44 00187100 */  sll   $t6, $t8, 4
-/* 004948 70003D48 342107D0 */  ori   $at, (0x800007D0 & 0xFFFF) # ori $at, $at, 0x7d0
-/* 00494C 70003D4C 010E4821 */  addu  $t1, $t0, $t6
-/* 004950 70003D50 3C118002 */  lui   $s1, %hi(ptr_video_settings2)
-/* 004954 70003D54 01215821 */  addu  $t3, $t1, $at
-/* 004958 70003D58 263132A8 */  addiu $s1, %lo(ptr_video_settings2) # addiu $s1, $s1, 0x32a8
-/* 00495C 70003D5C AC4B0004 */  sw    $t3, 4($v0)
-/* 004960 70003D60 0FC2F5B8 */  jal   sub_GAME_7F0BD6E0
-/* 004964 70003D64 26100008 */   addiu $s0, $s0, 8
-/* 004968 70003D68 3C018006 */  lui   $at, %hi(m)
-/* 00496C 70003D6C AC220820 */  sw    $v0, %lo(m)($at)
-/* 004970 70003D70 8E230000 */  lw    $v1, ($s1)
-/* 004974 70003D74 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 004978 70003D78 44814000 */  mtc1  $at, $f8
-/* 00497C 70003D7C C4640010 */  lwc1  $f4, 0x10($v1)
-/* 004980 70003D80 8C660008 */  lw    $a2, 8($v1)
-/* 004984 70003D84 8C67000C */  lw    $a3, 0xc($v1)
-/* 004988 70003D88 E7A40010 */  swc1  $f4, 0x10($sp)
-/* 00498C 70003D8C C4660014 */  lwc1  $f6, 0x14($v1)
-/* 004990 70003D90 3C048006 */  lui   $a0, %hi(dword_CODE_bss_800607E0)
-/* 004994 70003D94 3C058006 */  lui   $a1, %hi(word_CODE_bss_80060824)
-/* 004998 70003D98 24A50824 */  addiu $a1, %lo(word_CODE_bss_80060824) # addiu $a1, $a1, 0x824
-/* 00499C 70003D9C 248407E0 */  addiu $a0, %lo(dword_CODE_bss_800607E0) # addiu $a0, $a0, 0x7e0
-/* 0049A0 70003DA0 E7A80018 */  swc1  $f8, 0x18($sp)
-/* 0049A4 70003DA4 0C003F20 */  jal   guPerspectiveF
-/* 0049A8 70003DA8 E7A60014 */   swc1  $f6, 0x14($sp)
-/* 0049AC 70003DAC 3C048006 */  lui   $a0, %hi(dword_CODE_bss_800607E0)
-/* 0049B0 70003DB0 3C058006 */  lui   $a1, %hi(m)
-/* 0049B4 70003DB4 8CA50820 */  lw    $a1, %lo(m)($a1)
-/* 0049B8 70003DB8 0C003FC4 */  jal   guMtxF2L
-/* 0049BC 70003DBC 248407E0 */   addiu $a0, %lo(dword_CODE_bss_800607E0) # addiu $a0, $a0, 0x7e0
-/* 0049C0 70003DC0 3C0D0103 */  lui   $t5, (0x01030040 >> 16) # lui $t5, 0x103
-/* 0049C4 70003DC4 3C058006 */  lui   $a1, %hi(m)
-/* 0049C8 70003DC8 35AD0040 */  ori   $t5, (0x01030040 & 0xFFFF) # ori $t5, $t5, 0x40
-/* 0049CC 70003DCC 02001025 */  move  $v0, $s0
-/* 0049D0 70003DD0 24A50820 */  addiu $a1, %lo(m) # addiu $a1, $a1, 0x820
-/* 0049D4 70003DD4 AC4D0000 */  sw    $t5, ($v0)
-/* 0049D8 70003DD8 8CB90000 */  lw    $t9, ($a1)
-/* 0049DC 70003DDC 3C018000 */  lui   $at, 0x8000
-/* 0049E0 70003DE0 26100008 */  addiu $s0, $s0, 8
-/* 0049E4 70003DE4 3C0CBC00 */  lui   $t4, (0xBC00000E >> 16) # lui $t4, 0xbc00
-/* 0049E8 70003DE8 03215021 */  addu  $t2, $t9, $at
-/* 0049EC 70003DEC AC4A0004 */  sw    $t2, 4($v0)
-/* 0049F0 70003DF0 358C000E */  ori   $t4, (0xBC00000E & 0xFFFF) # ori $t4, $t4, 0xe
-/* 0049F4 70003DF4 02001825 */  move  $v1, $s0
-/* 0049F8 70003DF8 AC6C0000 */  sw    $t4, ($v1)
-/* 0049FC 70003DFC 3C0F8006 */  lui   $t7, %hi(word_CODE_bss_80060824) 
-/* 004A00 70003E00 95EF0824 */  lhu   $t7, %lo(word_CODE_bss_80060824)($t7)
-/* 004A04 70003E04 26100008 */  addiu $s0, $s0, 8
-/* 004A08 70003E08 AC6F0004 */  sw    $t7, 4($v1)
-/* 004A0C 70003E0C 0FC1E0D9 */  jal   set_BONDdata_field_10D8
-/* 004A10 70003E10 8CA40000 */   lw    $a0, ($a1)
-/* 004A14 70003E14 3C048006 */  lui   $a0, %hi(dword_CODE_bss_800607E0)
-/* 004A18 70003E18 0FC1E0F5 */  jal   set_BONDdata_field_10DC
-/* 004A1C 70003E1C 248407E0 */   addiu $a0, %lo(dword_CODE_bss_800607E0) # addiu $a0, $a0, 0x7e0
-/* 004A20 70003E20 3C188002 */  lui   $t8, %hi(coloroutputmode) 
-/* 004A24 70003E24 8F1832AC */  lw    $t8, %lo(coloroutputmode)($t8)
-/* 004A28 70003E28 02001025 */  move  $v0, $s0
-/* 004A2C 70003E2C 3C01FF18 */  lui   $at, 0xff18
-/* 004A30 70003E30 53000011 */  beql  $t8, $zero, .L70003E78
-/* 004A34 70003E34 8E2F0000 */   lw    $t7, ($s1)
-/* 004A38 70003E38 8E280000 */  lw    $t0, ($s1)
-/* 004A3C 70003E3C 3C01FF10 */  lui   $at, 0xff10
-/* 004A40 70003E40 02001025 */  move  $v0, $s0
-/* 004A44 70003E44 850E0018 */  lh    $t6, 0x18($t0)
-/* 004A48 70003E48 26100008 */  addiu $s0, $s0, 8
-/* 004A4C 70003E4C 25C9FFFF */  addiu $t1, $t6, -1
-/* 004A50 70003E50 312B0FFF */  andi  $t3, $t1, 0xfff
-/* 004A54 70003E54 01616825 */  or    $t5, $t3, $at
-/* 004A58 70003E58 AC4D0000 */  sw    $t5, ($v0)
-/* 004A5C 70003E5C 8E390000 */  lw    $t9, ($s1)
-/* 004A60 70003E60 3C018000 */  lui   $at, 0x8000
-/* 004A64 70003E64 8F2A0028 */  lw    $t2, 0x28($t9)
-/* 004A68 70003E68 01416021 */  addu  $t4, $t2, $at
-/* 004A6C 70003E6C 1000000B */  b     .L70003E9C
-/* 004A70 70003E70 AC4C0004 */   sw    $t4, 4($v0)
-/* 004A74 70003E74 8E2F0000 */  lw    $t7, ($s1)
-.L70003E78:
-/* 004A78 70003E78 3C0B003B */  lui   $t3, %hi(0x003B5000) # $t3, 0x3b
-/* 004A7C 70003E7C 256B5000 */  addiu $t3, %lo(0x003B5000) # addiu $t3, $t3, 0x5000
-/* 004A80 70003E80 85F80018 */  lh    $t8, 0x18($t7)
-/* 004A84 70003E84 AC4B0004 */  sw    $t3, 4($v0)
-/* 004A88 70003E88 26100008 */  addiu $s0, $s0, 8
-/* 004A8C 70003E8C 2708FFFF */  addiu $t0, $t8, -1
-/* 004A90 70003E90 310E0FFF */  andi  $t6, $t0, 0xfff
-/* 004A94 70003E94 01C14825 */  or    $t1, $t6, $at
-/* 004A98 70003E98 AC490000 */  sw    $t1, ($v0)
-.L70003E9C:
-/* 004A9C 70003E9C 8FBF002C */  lw    $ra, 0x2c($sp)
-/* 004AA0 70003EA0 02001025 */  move  $v0, $s0
-/* 004AA4 70003EA4 8FB00024 */  lw    $s0, 0x24($sp)
-/* 004AA8 70003EA8 8FB10028 */  lw    $s1, 0x28($sp)
-/* 004AAC 70003EAC 03E00008 */  jr    $ra
-/* 004AB0 70003EB0 27BD0030 */   addiu $sp, $sp, 0x30
-)
-#endif
-
-
-
-/**
- * 4AB4	70003EB4
- */
-#ifdef NONMATCHING
-s32 video_related_10(s32 arg0)
-{
-    s32 phi_a0;
-
-    phi_a0 = arg0;
-    if (ptr_video_settings2->unk24 != 0)
-    {
-        phi_a0 = sub_GAME_7F0D2518(sub_GAME_7F0D2464());
-    }
-    return phi_a0;
-}
-#else
-GLOBAL_ASM(
-.text
-glabel video_related_10
-/* 004AB4 70003EB4 3C0E8002 */  lui   $t6, %hi(ptr_video_settings2) 
-/* 004AB8 70003EB8 8DCE32A8 */  lw    $t6, %lo(ptr_video_settings2)($t6)
-/* 004ABC 70003EBC 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 004AC0 70003EC0 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 004AC4 70003EC4 8DCF0024 */  lw    $t7, 0x24($t6)
-/* 004AC8 70003EC8 51E00007 */  beql  $t7, $zero, .L70003EE8
-/* 004ACC 70003ECC 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 004AD0 70003ED0 0FC34919 */  jal   sub_GAME_7F0D2464
-/* 004AD4 70003ED4 00000000 */   nop   
-/* 004AD8 70003ED8 0FC34946 */  jal   sub_GAME_7F0D2518
-/* 004ADC 70003EDC 00402025 */   move  $a0, $v0
-/* 004AE0 70003EE0 00402025 */  move  $a0, $v0
-/* 004AE4 70003EE4 8FBF0014 */  lw    $ra, 0x14($sp)
-.L70003EE8:
-/* 004AE8 70003EE8 27BD0018 */  addiu $sp, $sp, 0x18
-/* 004AEC 70003EEC 00801025 */  move  $v0, $a0
-/* 004AF0 70003EF0 03E00008 */  jr    $ra
-/* 004AF4 70003EF4 00000000 */   nop   
-)
-#endif
-
-
-/**
- * 4AF8	70003EF8	generate a generic fillrect; fries: AT,A1,A2,A3,T0,T1,T2,T3,T4,T5,T6,T7,T8,T9
- *     V0=new display list address
- *     accepts: A0=p->display list
- */
-#ifdef NONMATCHING
-s32 insert_generic_fillrect(void *arg0) //either of type Dynamic Struct or GFX Array, however Im betting Dynamic since Dynamic can contain a GFX plus other settings
-{
-    void *temp_a1;
-    void *temp_a3;
-	
-	// copied from a demo of what is probably going on here
-	/*
-	 * pointers to build the display list.
-	 /
-	dynamicp = &dynamic; //<arg0?
-	glistp = &(dynamicp->glist[0]);
-	*/
-	// so arg0 is probably pointer to dynamic struct containing glist.
-	// nothing is actually returned per say since its added to glist at a higher level.
-
-    //arg0->unk4 = 0x300000;
-    //arg0->unk0 = 0xba001402;
-	gDPSetCycleType(glistp++, G_CYC_1CYCLE);
-
-	//temp_a1 = arg0 + 8;	
-    //temp_a3 = temp_a1 + 8;
-    //temp_a1->unk0 = (s32) (((((ptr_video_settings2->unk18 + -1) & 0x3ff) << 0xe) | 0xf6000000) | (((ptr_video_settings2->unk1A + -1) & 0x3ff) * 4));
-    //temp_a1->unk4 = 0;
-	gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
-    //temp_a3->unk0 = 0xe7000000;
-    //temp_a3->unk4 = 0;
-	gDPPipeSync(glistp++);
-    //return temp_a3 + 8;
+    return gdl;
 }
 
-#else
-GLOBAL_ASM(
-.text
-glabel insert_generic_fillrect
-/* 004AF8 70003EF8 3C0EBA00 */  lui   $t6, (0xBA001402 >> 16) # lui $t6, 0xba00				#gsDPSetCycleType
-/* 004AFC 70003EFC 35CE1402 */  ori   $t6, (0xBA001402 & 0xFFFF) # ori $t6, $t6, 0x1402
-/* 004B00 70003F00 3C0F0030 */  lui   $t7, 0x30												#G_CYC_1CYCLE
-/* 004B04 70003F04 AC8F0004 */  sw    $t7, 4($a0)
-/* 004B08 70003F08 AC8E0000 */  sw    $t6, ($a0)
-/* 004B0C 70003F0C 3C068002 */  lui   $a2, %hi(ptr_video_settings2)
-/* 004B10 70003F10 8CC632A8 */  lw    $a2, %lo(ptr_video_settings2)($a2)
-/* 004B14 70003F14 24850008 */  addiu $a1, $a0, 8
-/* 004B18 70003F18 3C01F600 */  lui   $at, 0xf600
-/* 004B1C 70003F1C 84D80018 */  lh    $t8, 0x18($a2)
-/* 004B20 70003F20 84CB001A */  lh    $t3, 0x1a($a2)
-/* 004B24 70003F24 24A70008 */  addiu $a3, $a1, 8
-/* 004B28 70003F28 2719FFFF */  addiu $t9, $t8, -1
-/* 004B2C 70003F2C 332803FF */  andi  $t0, $t9, 0x3ff
-/* 004B30 70003F30 256CFFFF */  addiu $t4, $t3, -1
-/* 004B34 70003F34 318D03FF */  andi  $t5, $t4, 0x3ff
-/* 004B38 70003F38 00084B80 */  sll   $t1, $t0, 0xe
-/* 004B3C 70003F3C 01215025 */  or    $t2, $t1, $at
-/* 004B40 70003F40 000D7080 */  sll   $t6, $t5, 2
-/* 004B44 70003F44 014E7825 */  or    $t7, $t2, $t6
-/* 004B48 70003F48 ACAF0000 */  sw    $t7, ($a1)
-/* 004B4C 70003F4C ACA00004 */  sw    $zero, 4($a1)
-/* 004B50 70003F50 3C18E700 */  lui   $t8, 0xe700
-/* 004B54 70003F54 ACF80000 */  sw    $t8, ($a3)
-/* 004B58 70003F58 ACE00004 */  sw    $zero, 4($a3)
-/* 004B5C 70003F5C 03E00008 */  jr    $ra
-/* 004B60 70003F60 24E20008 */   addiu $v0, $a3, 8
-)
-#endif
+Gfx *zbufClearCurrentPlayer(Gfx *gdl);
+Gfx *zbufInit(Gfx *gdl);
+Gfx *video_related_10(Gfx *gdl) {
+    if (ptr_video_settings2->usezbuf != 0) {
+        gdl = zbufClearCurrentPlayer(zbufInit(gdl));
+    }    
+    return gdl;
+}
 
+Gfx *insert_generic_fillrect(Gfx *gdl) {	
+	gDPSetCycleType(gdl++, G_CYC_FILL);
+	gDPFillRectangle(gdl++, 0, 0, ptr_video_settings2->bufx - 1, ptr_video_settings2->bufy - 1);
+	gDPPipeSync(gdl++);
 
-
+    return gdl;
+}
 
 /**
  * 4B64	70003F64
@@ -1793,28 +1349,28 @@ void *setupscreensfornumplayers(void *arg0)
     temp_v1->unk4 = 0x10001;
     temp_v1->unk0 = 0xf7000000;
     phi_s0 = temp_s0;
-    if (get_video2_settings_uly() > 0)
+    if (viGetViewTop() > 0)
     {
         phi_s0 = temp_s0;
         if (sub_GAME_7F09B4D8(get_cur_playernum()) == 0)
         {
             temp_s0 = temp_s0 + 8;
-            sp58->unk0 = (s32) (((((get_video2_settings_uly() + -1) & 0x3ff) * 4) | 0xf6000000) | (((((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10) + -1) & 0x3ff) << 0xe));
+            sp58->unk0 = (s32) (((((viGetViewTop() + -1) & 0x3ff) * 4) | 0xf6000000) | (((((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10) + -1) & 0x3ff) << 0xe));
             sp58->unk4 = 0;
             temp_s0->unk0 = 0xe7000000;
             temp_s0->unk4 = 0;
             phi_s0 = temp_s0 + 8;
         }
     }
-    if (get_num_players() == 1)
+    if (getPlayerCount() == 1)
     {
-        sp22 = get_video2_settings_height();
+        sp22 = viGetViewHeight();
         phi_s0_4 = phi_s0;
-        if ((((s32) (get_video2_settings_uly() << 0x10) >> 0x10) + sp22) < get_video2_settings_txtClipH())
+        if ((((s32) (viGetViewTop() << 0x10) >> 0x10) + sp22) < get_video2_settings_txtClipH())
         {
             temp_s0_2 = phi_s0 + 8;
             sp50->unk0 = (s32) (((((get_video2_settings_txtClipH() + -1) & 0x3ff) * 4) | 0xf6000000) | (((((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10) + -1) & 0x3ff) << 0xe));
-            sp50->unk4 = (s32) (((get_video2_settings_height() + ((s32) (get_video2_settings_uly() << 0x10) >> 0x10)) & 0x3ff) * 4);
+            sp50->unk4 = (s32) (((viGetViewHeight() + ((s32) (viGetViewTop() << 0x10) >> 0x10)) & 0x3ff) * 4);
             temp_s0_2->unk4 = 0;
             temp_s0_2->unk0 = 0xe7000000;
             phi_s0_4 = temp_s0_2 + 8;
@@ -1825,15 +1381,15 @@ void *setupscreensfornumplayers(void *arg0)
         phi_s0_4 = phi_s0;
         if (sub_GAME_7F09B4D8(get_cur_playernum()) == 0)
         {
-            sp20 = get_video2_settings_height();
-            sp22 = get_video2_settings_height();
+            sp20 = viGetViewHeight();
+            sp22 = viGetViewHeight();
             phi_s0_2 = phi_s0;
-            if (((((s32) (get_video2_settings_uly() << 0x10) >> 0x10) + sp22) + sp20) < get_video2_settings_txtClipH())
+            if (((((s32) (viGetViewTop() << 0x10) >> 0x10) + sp22) + sp20) < get_video2_settings_txtClipH())
             {
                 temp_s0_3 = phi_s0 + 8;
                 sp48->unk0 = (s32) (((((get_video2_settings_txtClipH() + -1) & 0x3ff) * 4) | 0xf6000000) | (((((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10) + -1) & 0x3ff) << 0xe));
-                sp22 = get_video2_settings_height();
-                sp48->unk4 = (s32) ((((get_video2_settings_height() + ((s32) (get_video2_settings_uly() << 0x10) >> 0x10)) + sp22) & 0x3ff) * 4);
+                sp22 = viGetViewHeight();
+                sp48->unk4 = (s32) ((((viGetViewHeight() + ((s32) (viGetViewTop() << 0x10) >> 0x10)) + sp22) & 0x3ff) * 4);
                 temp_s0_3->unk0 = 0xe7000000;
                 temp_s0_3->unk4 = 0;
                 phi_s0_2 = temp_s0_3 + 8;
@@ -1847,7 +1403,7 @@ void *setupscreensfornumplayers(void *arg0)
             temp_s0_4 = temp_s0_4 + 8;
             temp_s1_2 = temp_s0_4;
             phi_s0_3 = temp_s0_4;
-            if (get_num_players() >= 3)
+            if (getPlayerCount() >= 3)
             {
                 temp_s0_4 = temp_s0_4 + 8;
                 temp_s1_2->unk0 = (s32) ((((get_video2_settings_txtClipH() + -1) & 0x3ff) * 4) | 0xf6280000);
@@ -1857,7 +1413,7 @@ void *setupscreensfornumplayers(void *arg0)
                 phi_s0_3 = temp_s0_4 + 8;
             }
             phi_s0_4 = phi_s0_3;
-            if (get_num_players() == 3)
+            if (getPlayerCount() == 3)
             {
                 temp_s0_5 = phi_s0_3 + 8;
                 sp30->unk0 = (s32) (((((get_video2_settings_txtClipH() + -1) & 0x3ff) * 4) | 0xf6000000) | (((((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10) + -1) & 0x3ff) << 0xe));
@@ -1918,7 +1474,7 @@ glabel setupscreensfornumplayers
 /* 004C08 70004008 014E7825 */  or    $t7, $t2, $t6
 /* 004C0C 7000400C AF0F0004 */  sw    $t7, 4($t8)
 /* 004C10 70004010 AC680004 */  sw    $t0, 4($v1)
-/* 004C14 70004014 0C001149 */  jal   get_video2_settings_uly
+/* 004C14 70004014 0C001149 */  jal   viGetViewTop
 /* 004C18 70004018 AC790000 */   sw    $t9, ($v1)
 /* 004C1C 7000401C 1840001F */  blez  $v0, .L7000409C
 /* 004C20 70004020 00000000 */   nop   
@@ -1933,7 +1489,7 @@ glabel setupscreensfornumplayers
 /* 004C44 70004044 26100008 */   addiu $s0, $s0, 8
 /* 004C48 70004048 00028C00 */  sll   $s1, $v0, 0x10
 /* 004C4C 7000404C 00114C03 */  sra   $t1, $s1, 0x10
-/* 004C50 70004050 0C001149 */  jal   get_video2_settings_uly
+/* 004C50 70004050 0C001149 */  jal   viGetViewTop
 /* 004C54 70004054 01208825 */   move  $s1, $t1
 /* 004C58 70004058 244BFFFF */  addiu $t3, $v0, -1
 /* 004C5C 7000405C 8FA40058 */  lw    $a0, 0x58($sp)
@@ -1953,14 +1509,14 @@ glabel setupscreensfornumplayers
 /* 004C94 70004094 AC600004 */  sw    $zero, 4($v1)
 /* 004C98 70004098 26100008 */  addiu $s0, $s0, 8
 .L7000409C:
-/* 004C9C 7000409C 0FC26919 */  jal   get_num_players
+/* 004C9C 7000409C 0FC26919 */  jal   getPlayerCount
 /* 004CA0 700040A0 00000000 */   nop   
 /* 004CA4 700040A4 24010001 */  li    $at, 1
 /* 004CA8 700040A8 14410030 */  bne   $v0, $at, .L7000416C
 /* 004CAC 700040AC 00000000 */   nop   
-/* 004CB0 700040B0 0C00112B */  jal   get_video2_settings_height
+/* 004CB0 700040B0 0C00112B */  jal   viGetViewHeight
 /* 004CB4 700040B4 00000000 */   nop   
-/* 004CB8 700040B8 0C001149 */  jal   get_video2_settings_uly
+/* 004CB8 700040B8 0C001149 */  jal   viGetViewTop
 /* 004CBC 700040BC A7A20022 */   sh    $v0, 0x22($sp)
 /* 004CC0 700040C0 00028C00 */  sll   $s1, $v0, 0x10
 /* 004CC4 700040C4 00114C03 */  sra   $t1, $s1, 0x10
@@ -1988,11 +1544,11 @@ glabel setupscreensfornumplayers
 /* 004D1C 7000411C 0141C025 */  or    $t8, $t2, $at
 /* 004D20 70004120 00084B80 */  sll   $t1, $t0, 0xe
 /* 004D24 70004124 03095825 */  or    $t3, $t8, $t1
-/* 004D28 70004128 0C001149 */  jal   get_video2_settings_uly
+/* 004D28 70004128 0C001149 */  jal   viGetViewTop
 /* 004D2C 7000412C AD8B0000 */   sw    $t3, ($t4)
 /* 004D30 70004130 00028C00 */  sll   $s1, $v0, 0x10
 /* 004D34 70004134 00116C03 */  sra   $t5, $s1, 0x10
-/* 004D38 70004138 0C00112B */  jal   get_video2_settings_height
+/* 004D38 70004138 0C00112B */  jal   viGetViewHeight
 /* 004D3C 7000413C 01A08825 */   move  $s1, $t5
 /* 004D40 70004140 8FB90050 */  lw    $t9, 0x50($sp)
 /* 004D44 70004144 00517021 */  addu  $t6, $v0, $s1
@@ -2012,11 +1568,11 @@ glabel setupscreensfornumplayers
 /* 004D78 70004178 00402025 */   move  $a0, $v0
 /* 004D7C 7000417C 5440007C */  bnezl $v0, .L70004370
 /* 004D80 70004180 8FBF001C */   lw    $ra, 0x1c($sp)
-/* 004D84 70004184 0C00112B */  jal   get_video2_settings_height
+/* 004D84 70004184 0C00112B */  jal   viGetViewHeight
 /* 004D88 70004188 00000000 */   nop   
-/* 004D8C 7000418C 0C00112B */  jal   get_video2_settings_height
+/* 004D8C 7000418C 0C00112B */  jal   viGetViewHeight
 /* 004D90 70004190 A7A20020 */   sh    $v0, 0x20($sp)
-/* 004D94 70004194 0C001149 */  jal   get_video2_settings_uly
+/* 004D94 70004194 0C001149 */  jal   viGetViewTop
 /* 004D98 70004198 A7A20022 */   sh    $v0, 0x22($sp)
 /* 004D9C 7000419C 00028C00 */  sll   $s1, $v0, 0x10
 /* 004DA0 700041A0 0011C403 */  sra   $t8, $s1, 0x10
@@ -2046,13 +1602,13 @@ glabel setupscreensfornumplayers
 /* 004E00 70004200 03214025 */  or    $t0, $t9, $at
 /* 004E04 70004204 00095B80 */  sll   $t3, $t1, 0xe
 /* 004E08 70004208 010B6025 */  or    $t4, $t0, $t3
-/* 004E0C 7000420C 0C00112B */  jal   get_video2_settings_height
+/* 004E0C 7000420C 0C00112B */  jal   viGetViewHeight
 /* 004E10 70004210 ADAC0000 */   sw    $t4, ($t5)
-/* 004E14 70004214 0C001149 */  jal   get_video2_settings_uly
+/* 004E14 70004214 0C001149 */  jal   viGetViewTop
 /* 004E18 70004218 A7A20022 */   sh    $v0, 0x22($sp)
 /* 004E1C 7000421C 00028C00 */  sll   $s1, $v0, 0x10
 /* 004E20 70004220 00117403 */  sra   $t6, $s1, 0x10
-/* 004E24 70004224 0C00112B */  jal   get_video2_settings_height
+/* 004E24 70004224 0C00112B */  jal   viGetViewHeight
 /* 004E28 70004228 01C08825 */   move  $s1, $t6
 /* 004E2C 7000422C 87AA0022 */  lh    $t2, 0x22($sp)
 /* 004E30 70004230 00517821 */  addu  $t7, $v0, $s1
@@ -2083,7 +1639,7 @@ glabel setupscreensfornumplayers
 /* 004E90 70004290 3C18E700 */  lui   $t8, 0xe700
 /* 004E94 70004294 AC780000 */  sw    $t8, ($v1)
 /* 004E98 70004298 AC600004 */  sw    $zero, 4($v1)
-/* 004E9C 7000429C 0FC26919 */  jal   get_num_players
+/* 004E9C 7000429C 0FC26919 */  jal   getPlayerCount
 /* 004EA0 700042A0 26100008 */   addiu $s0, $s0, 8
 /* 004EA4 700042A4 28410003 */  slti  $at, $v0, 3
 /* 004EA8 700042A8 14200011 */  bnez  $at, .L700042F0
@@ -2105,7 +1661,7 @@ glabel setupscreensfornumplayers
 /* 004EE8 700042E8 AC600004 */  sw    $zero, 4($v1)
 /* 004EEC 700042EC 26100008 */  addiu $s0, $s0, 8
 .L700042F0:
-/* 004EF0 700042F0 0FC26919 */  jal   get_num_players
+/* 004EF0 700042F0 0FC26919 */  jal   getPlayerCount
 /* 004EF4 700042F4 00000000 */   nop   
 /* 004EF8 700042F8 24010003 */  li    $at, 3
 /* 004EFC 700042FC 5441001C */  bnel  $v0, $at, .L70004370
@@ -2190,8 +1746,8 @@ s32 get_D_8002329C(void)
  */
 void set_video2_settings_offset_18_1A(s16 arg0, s16 arg1)
 {
-    ptr_video_settings2->somethingW = arg0;
-    ptr_video_settings2->somethingH = arg1;
+    ptr_video_settings2->bufx = arg0;
+    ptr_video_settings2->bufy = arg1;
 }
 
 /**
@@ -2200,7 +1756,7 @@ void set_video2_settings_offset_18_1A(s16 arg0, s16 arg1)
  */
 s16 get_video2_settings_offset_18(void)
 {
-    return ptr_video_settings2->somethingW;
+    return ptr_video_settings2->bufx;
 }
 
 /**
@@ -2209,7 +1765,7 @@ s16 get_video2_settings_offset_18(void)
  */
 s16 get_video2_settings_offset_1A(void)
 {
-    return ptr_video_settings2->somethingH;
+    return ptr_video_settings2->bufy;
 }
 
 /**
@@ -2218,9 +1774,9 @@ s16 get_video2_settings_offset_1A(void)
  *     A0->[p@800232A8+4], SP+0
  *     A1->[p@800232A8+6], SP+4
  */
-void set_video2_text_clip_size(s16 txtClipW, s16 txtClipH) {
-    ptr_video_settings2->txtClipW = txtClipW;
-    ptr_video_settings2->txtClipH = txtClipH;
+void set_video2_text_clip_size(s16 x, s16 y) {
+    ptr_video_settings2->x = x;
+    ptr_video_settings2->y = y;
 }
 
 /**
@@ -2228,7 +1784,7 @@ void set_video2_text_clip_size(s16 txtClipW, s16 txtClipH) {
  *     V0= video2 text clip width  [p@800232A8+4]; fry T6
  */
 s16 get_video2_settings_txtClipW(void) {
-    return ptr_video_settings2->txtClipW;
+    return ptr_video_settings2->x;
 }
 
 /**
@@ -2236,7 +1792,7 @@ s16 get_video2_settings_txtClipW(void) {
  *     V0= video2 text clip height [p@800232A8+6]; fry T6
  */
 s16 get_video2_settings_txtClipH(void) {
-    return ptr_video_settings2->txtClipH;
+    return ptr_video_settings2->y;
 }
 
 /**
@@ -2244,11 +1800,11 @@ s16 get_video2_settings_txtClipH(void) {
  *     set video2 width (A0) and height (A1)
  */
 #ifdef NONMATCHING
-void set_video2_width_height(short width,short height) {
-  ptr_video_settings2->width = width;
-  ptr_video_settings2->height = height;
-  set_BONDdata_screensize(ptr_video_settings2->width,ptr_video_settings2->height);
-  sub_GAME_7F077C5C();
+void set_video2_width_height(short viewx,short viewy) {
+  ptr_video_settings2->viewx = viewx;
+  ptr_video_settings2->viewy = viewy;
+  currentPlayerSetScreenSize(ptr_video_settings2->viewx,ptr_video_settings2->viewy);
+  currentPlayerSetCameraScale();
   return;
 }
 #else
@@ -2271,9 +1827,9 @@ glabel set_video2_width_height
 /* 005070 70004470 448A2000 */  mtc1  $t2, $f4
 /* 005074 70004474 448B3000 */  mtc1  $t3, $f6
 /* 005078 70004478 46802320 */  cvt.s.w $f12, $f4
-/* 00507C 7000447C 0FC1DEF6 */  jal   set_BONDdata_screensize
+/* 00507C 7000447C 0FC1DEF6 */  jal   currentPlayerSetScreenSize
 /* 005080 70004480 468033A0 */   cvt.s.w $f14, $f6
-/* 005084 70004484 0FC1DF17 */  jal   sub_GAME_7F077C5C
+/* 005084 70004484 0FC1DF17 */  jal   currentPlayerSetCameraScale
 /* 005088 70004488 00000000 */   nop   
 /* 00508C 7000448C 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 005090 70004490 27BD0018 */  addiu $sp, $sp, 0x18
@@ -2288,16 +1844,16 @@ glabel set_video2_width_height
  * 509C	7000449C
  *     V0= video2 lrx [p@800232A8+1C]; fry T6
  */
-s16 get_video2_settings_width(void) {
-    return ptr_video_settings2->width;
+s16 viGetViewWidth(void) {
+    return ptr_video_settings2->viewx;
 }
 
 /**
  * 50AC	700044AC
  *     V0= video2 lry [p@800232A8+1E]; fry T6
  */
-s16 get_video2_settings_height(void) {
-    return ptr_video_settings2->height;
+s16 viGetViewHeight(void) {
+    return ptr_video_settings2->viewy;
 }
 
 /**
@@ -2305,11 +1861,11 @@ s16 get_video2_settings_height(void) {
  *     set video2 ulx (A0) and uly (A1)
  */
 #ifdef NONMATCHING
-void set_video2_ulx_uly(s16 ulx, s16 uly)
+void set_video2_ulx_uly(s16 viewleft, s16 viewtop)
 {
-    ptr_video_settings2->ulx = ulx;
-    ptr_video_settings2->ulx = uly;
-    set_ulx_uly((f32) ptr_video_settings2->ulx, (f32) ptr_video_settings2->uly);
+    ptr_video_settings2->viewleft = viewleft;
+    ptr_video_settings2->viewleft = viewtop;
+    currentPlayerSetScreenPosition((f32) ptr_video_settings2->viewleft, (f32) ptr_video_settings2->viewtop);
 }
 #else
 GLOBAL_ASM(
@@ -2331,7 +1887,7 @@ glabel set_video2_ulx_uly
 /* 0050F0 700044F0 448A2000 */  mtc1  $t2, $f4
 /* 0050F4 700044F4 448B3000 */  mtc1  $t3, $f6
 /* 0050F8 700044F8 46802320 */  cvt.s.w $f12, $f4
-/* 0050FC 700044FC 0FC1DF05 */  jal   set_ulx_uly
+/* 0050FC 700044FC 0FC1DF05 */  jal   currentPlayerSetScreenPosition
 /* 005100 70004500 468033A0 */   cvt.s.w $f14, $f6
 /* 005104 70004504 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 005108 70004508 27BD0018 */  addiu $sp, $sp, 0x18
@@ -2346,16 +1902,16 @@ glabel set_video2_ulx_uly
  * 5114	70004514
  *     V0= video2 ulx [p@800232A8+20]; fry T6
  */
-s16 get_video2_settings_ulx(void) {
-    return ptr_video_settings2->ulx;
+s16 viGetViewLeft(void) {
+    return ptr_video_settings2->viewleft;
 }
 
 /**
  * 5124	70004524
  *     V0= video2 uly [p@800232A8+22]; fry T6
  */
-s16 get_video2_settings_uly(void) {
-    return ptr_video_settings2->uly;
+s16 viGetViewTop(void) {
+    return ptr_video_settings2->viewtop;
 }
 
 /**
@@ -2363,7 +1919,7 @@ s16 get_video2_settings_uly(void) {
  *     A0->[p@800232A8+24]; fry T6
  */
 void set_video2_settings_offset_24(int param_1) {
-  ptr_video_settings2->anonymous_12 = param_1;
+  ptr_video_settings2->usezbuf = param_1;
 }
 
 /**
@@ -2372,9 +1928,9 @@ void set_video2_settings_offset_24(int param_1) {
 #ifdef NONMATCHING
 void setvideo_far(f32 arg0)
 {
-    ptr_video_settings2->far = arg0;
-    sub_GAME_7F077C30(ptr_video_settings2->aspect, ptr_video_settings2->far, ptr_video_settings2->scale);
-    sub_GAME_7F077C5C();
+    ptr_video_settings2->fovy = arg0;
+    currentPlayerSetPerspective(ptr_video_settings2->near, ptr_video_settings2->fovy, ptr_video_settings2->aspect);
+    currentPlayerSetCameraScale();
 }
 #else
 GLOBAL_ASM(
@@ -2391,9 +1947,9 @@ glabel setvideo_far
 /* 005164 70004564 8C620000 */  lw    $v0, ($v1)
 /* 005168 70004568 C44C0010 */  lwc1  $f12, 0x10($v0)
 /* 00516C 7000456C C44E0008 */  lwc1  $f14, 8($v0)
-/* 005170 70004570 0FC1DF0C */  jal   sub_GAME_7F077C30
+/* 005170 70004570 0FC1DF0C */  jal   currentPlayerSetPerspective
 /* 005174 70004574 8C46000C */   lw    $a2, 0xc($v0)
-/* 005178 70004578 0FC1DF17 */  jal   sub_GAME_7F077C5C
+/* 005178 70004578 0FC1DF17 */  jal   currentPlayerSetCameraScale
 /* 00517C 7000457C 00000000 */   nop   
 /* 005180 70004580 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 005184 70004584 27BD0018 */  addiu $sp, $sp, 0x18
@@ -2408,16 +1964,16 @@ glabel setvideo_far
  *     F12->video2 page width [p@800232A8+C] and something else...
  */
 #ifdef NONMATCHING
-void video_related_21(f32 arg0)
+void set_page_aspect(f32 arg0)
 {
-    ptr_video_settings2->scale = arg0;
-    sub_GAME_7F077C30(ptr_video_settings2->aspect, ptr_video_settings2->far, ptr_video_settings2->scale);
-    sub_GAME_7F077C5C();
+    ptr_video_settings2->aspect = arg0;
+    currentPlayerSetPerspective(ptr_video_settings2->near, ptr_video_settings2->fovy, ptr_video_settings2->aspect);
+    currentPlayerSetCameraScale();
 }
 #else
 GLOBAL_ASM(
 .text
-glabel video_related_21
+glabel set_page_aspect
 /* 005190 70004590 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 005194 70004594 3C038002 */  lui   $v1, %hi(ptr_video_settings2)
 /* 005198 70004598 246332A8 */  addiu $v1, %lo(ptr_video_settings2) # addiu $v1, $v1, 0x32a8
@@ -2429,9 +1985,9 @@ glabel video_related_21
 /* 0051B0 700045B0 8C620000 */  lw    $v0, ($v1)
 /* 0051B4 700045B4 C44C0010 */  lwc1  $f12, 0x10($v0)
 /* 0051B8 700045B8 C44E0008 */  lwc1  $f14, 8($v0)
-/* 0051BC 700045BC 0FC1DF0C */  jal   sub_GAME_7F077C30
+/* 0051BC 700045BC 0FC1DF0C */  jal   currentPlayerSetPerspective
 /* 0051C0 700045C0 8C46000C */   lw    $a2, 0xc($v0)
-/* 0051C4 700045C4 0FC1DF17 */  jal   sub_GAME_7F077C5C
+/* 0051C4 700045C4 0FC1DF17 */  jal   currentPlayerSetCameraScale
 /* 0051C8 700045C8 00000000 */   nop   
 /* 0051CC 700045CC 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0051D0 700045D0 27BD0018 */  addiu $sp, $sp, 0x18
@@ -2444,9 +2000,9 @@ glabel video_related_21
  * 51DC	700045DC
  *     F0= [p@800232A8+8]; fry T6
  */
-f32 video_related_23(void)
+f32 viGetFovY(void)
 {
-    return ptr_video_settings2->far;
+    return ptr_video_settings2->fovy;
 }
 
 /**
@@ -2455,10 +2011,10 @@ f32 video_related_23(void)
 #ifdef NONMATCHING
 void video_related_24(f32 arg0, f32 arg1)
 {
-    ptr_video_settings2->far = arg1;
-    ptr_video_settings2->scale = (f32) (arg0 / arg1);
-    sub_GAME_7F077C30(ptr_video_settings2->aspect, ptr_video_settings2->far, ptr_video_settings2->scale);
-    sub_GAME_7F077C5C();
+    ptr_video_settings2->fovy = arg1;
+    ptr_video_settings2->aspect = (f32) (arg0 / arg1);
+    currentPlayerSetPerspective(ptr_video_settings2->near, ptr_video_settings2->fovy, ptr_video_settings2->aspect);
+    currentPlayerSetCameraScale();
 }
 #else
 GLOBAL_ASM(
@@ -2481,9 +2037,9 @@ glabel video_related_24
 /* 005224 70004624 8C620000 */  lw    $v0, ($v1)
 /* 005228 70004628 C44C0010 */  lwc1  $f12, 0x10($v0)
 /* 00522C 7000462C C44E0008 */  lwc1  $f14, 8($v0)
-/* 005230 70004630 0FC1DF0C */  jal   sub_GAME_7F077C30
+/* 005230 70004630 0FC1DF0C */  jal   currentPlayerSetPerspective
 /* 005234 70004634 8C46000C */   lw    $a2, 0xc($v0)
-/* 005238 70004638 0FC1DF17 */  jal   sub_GAME_7F077C5C
+/* 005238 70004638 0FC1DF17 */  jal   currentPlayerSetCameraScale
 /* 00523C 7000463C 00000000 */   nop   
 /* 005240 70004640 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 005244 70004644 27BD0018 */  addiu $sp, $sp, 0x18
@@ -2498,10 +2054,10 @@ glabel video_related_24
 #ifdef NONMATCHING
 void set_page_height(f32 arg0, f32 arg1)
 {
-    ptr_video_settings2->aspect = arg0;
+    ptr_video_settings2->near = arg0;
     ptr_video_settings2->unk14 = arg1;
-    sub_GAME_7F077C30(ptr_video_settings2->aspect, ptr_video_settings2->far, ptr_video_settings2->scale);
-    sub_GAME_7F077C5C();
+    currentPlayerSetPerspective(ptr_video_settings2->near, ptr_video_settings2->fovy, ptr_video_settings2->aspect);
+    currentPlayerSetCameraScale();
 }
 #else
 GLOBAL_ASM(
@@ -2522,9 +2078,9 @@ glabel set_page_height
 /* 005280 70004680 8C620000 */  lw    $v0, ($v1)
 /* 005284 70004684 C44C0010 */  lwc1  $f12, 0x10($v0)
 /* 005288 70004688 C44E0008 */  lwc1  $f14, 8($v0)
-/* 00528C 7000468C 0FC1DF0C */  jal   sub_GAME_7F077C30
+/* 00528C 7000468C 0FC1DF0C */  jal   currentPlayerSetPerspective
 /* 005290 70004690 8C46000C */   lw    $a2, 0xc($v0)
-/* 005294 70004694 0FC1DF17 */  jal   sub_GAME_7F077C5C
+/* 005294 70004694 0FC1DF17 */  jal   currentPlayerSetCameraScale
 /* 005298 70004698 00000000 */   nop   
 /* 00529C 7000469C 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0052A0 700046A0 27BD0018 */  addiu $sp, $sp, 0x18
@@ -2540,7 +2096,7 @@ glabel set_page_height
 #ifdef NONMATCHING
 void *video_related_27(void *arg0)
 {
-    arg0->unk0 = (f32) ptr_video_settings2->aspect;
+    arg0->unk0 = (f32) ptr_video_settings2->near;
     arg0->unk4 = (f32) ptr_video_settings2->unk14;
     return &ptr_video_settings2;
 }
@@ -2643,7 +2199,7 @@ void indy_grab_jpg_16bit(void)
         jpg_16bit_grabnum++;
     }
     sprintf(&iFileName, "grab.%d.temp.uix", jpg_16bit_grabnum);
-    indy_send_capture_data(&iFileName, ptr_video_settings2->frameb, (get_video2_settings_txtClipH() * get_video2_settings_txtClipW() * 2));
+    indy_send_capture_data(&iFileName, ptr_video_settings2->framebuf, (get_video2_settings_txtClipH() * get_video2_settings_txtClipW() * 2));
     sprintf(&iFileName, "uix2pix grab.%d.temp.uix", jpg_16bit_grabnum);
     response_from_command_string(&iFileName);
     sprintf(&iFileName, "fromalias grab.%d.temp.pix grab.%d.temp.rgb", jpg_16bit_grabnum, jpg_16bit_grabnum);
@@ -2784,7 +2340,7 @@ loop_1:
         goto loop_1;
     }
     sprintf(&iFileName, "grab.%d.temp.Uix", jpg_32bit_grabnum);
-    indy_send_capture_data(&iFileName, &cfb_16_a, (get_video2_settings_txtClipH() * ((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10)) * 4);
+    indy_send_capture_data(&iFileName, &cfb_16, (get_video2_settings_txtClipH() * ((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10)) * 4);
     sprintf(&iFileName, "Uix2pix -xs%d grab.%d.temp.Uix", get_video2_settings_txtClipW(), jpg_32bit_grabnum);
     response_from_command_string(&iFileName);
     sprintf(&iFileName, "fromalias grab.%d.temp.pix grab.%d.temp.rgb", jpg_32bit_grabnum, jpg_32bit_grabnum);
@@ -2847,8 +2403,8 @@ glabel indy_grab_jpg_32bit
 /* 005560 70004960 0C00110B */  jal   get_video2_settings_txtClipH
 /* 005564 70004964 01C08825 */   move  $s1, $t6
 /* 005568 70004968 00510019 */  multu $v0, $s1
-/* 00556C 7000496C 3C05803B */  lui   $a1, %hi(cfb_16_a) # $a1, 0x803b
-/* 005570 70004970 24A55000 */  addiu $a1, %lo(cfb_16_a) # addiu $a1, $a1, 0x5000
+/* 00556C 7000496C 3C05803B */  lui   $a1, %hi(cfb_16) # $a1, 0x803b
+/* 005570 70004970 24A55000 */  addiu $a1, %lo(cfb_16) # addiu $a1, $a1, 0x5000
 /* 005574 70004974 02002025 */  move  $a0, $s0
 /* 005578 70004978 00003012 */  mflo  $a2
 /* 00557C 7000497C 00067880 */  sll   $t7, $a2, 2
@@ -2929,7 +2485,7 @@ loop_1:
         goto loop_1;
     }
     sprintf(&sp30, "grab.%d.temp.uix", rgb_16bit_grabnum);
-    indy_send_capture_data(&sp30, ptr_video_settings2->frameb, (get_video2_settings_txtClipH() * ((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10)) * 2);
+    indy_send_capture_data(&sp30, ptr_video_settings2->framebuf, (get_video2_settings_txtClipH() * ((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10)) * 2);
     sprintf(&sp30, "uix2pix grab.%d.temp.uix", rgb_16bit_grabnum);
     response_from_command_string(&sp30);
     sprintf(&sp30, "fromalias grab.%d.temp.pix grab.%d.rgb", rgb_16bit_grabnum, rgb_16bit_grabnum);
@@ -3057,7 +2613,7 @@ loop_1:
         goto loop_1;
     }
     sprintf(&sp30, "grab.%d.temp.Uix", rgb_32bit_grabnum);
-    indy_send_capture_data(&sp30, &cfb_16_a, (get_video2_settings_txtClipH() * ((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10)) * 4);
+    indy_send_capture_data(&sp30, &cfb_16, (get_video2_settings_txtClipH() * ((s32) (get_video2_settings_txtClipW() << 0x10) >> 0x10)) * 4);
     sprintf(&sp30, "Uix2pix -xs%d grab.%d.temp.Uix", get_video2_settings_txtClipW(), rgb_32bit_grabnum);
     response_from_command_string(&sp30);
     sprintf(&sp30, "fromalias grab.%d.temp.pix grab.%d.rgb", rgb_32bit_grabnum, rgb_32bit_grabnum);
@@ -3117,8 +2673,8 @@ glabel indy_grab_rgb_32bit
 /* 005840 70004C40 0C00110B */  jal   get_video2_settings_txtClipH
 /* 005844 70004C44 01C08825 */   move  $s1, $t6
 /* 005848 70004C48 00510019 */  multu $v0, $s1
-/* 00584C 70004C4C 3C05803B */  lui   $a1, %hi(cfb_16_a) # $a1, 0x803b
-/* 005850 70004C50 24A55000 */  addiu $a1, %lo(cfb_16_a) # addiu $a1, $a1, 0x5000
+/* 00584C 70004C4C 3C05803B */  lui   $a1, %hi(cfb_16) # $a1, 0x803b
+/* 005850 70004C50 24A55000 */  addiu $a1, %lo(cfb_16) # addiu $a1, $a1, 0x5000
 /* 005854 70004C54 02002025 */  move  $a0, $s0
 /* 005858 70004C58 00003012 */  mflo  $a2
 /* 00585C 70004C5C 00067880 */  sll   $t7, $a2, 2

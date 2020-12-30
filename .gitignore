@@ -6,6 +6,7 @@
 *.rz
 *.tmp
 *.z64
+*.o
 /.vs
 021990.bin
 0219D0.bin
@@ -47,3 +48,6 @@ ge007.j.elf
 ge007.u.bin
 ge007.u.elf
 lib/libultra_rom.a
+tools/aaa_rip/aaa_rip
+tools/extractor/extractor
+notes/

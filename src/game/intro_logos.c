@@ -880,7 +880,7 @@ glabel insert_bond_eye_intro
 /* 03CFB8 7F008488 27A40060 */  addiu $a0, $sp, 0x60
 /* 03CFBC 7F00848C E7B00020 */  swc1  $f16, 0x20($sp)
 /* 03CFC0 7F008490 E7B20024 */  swc1  $f18, 0x24($sp)
-/* 03CFC4 7F008494 0FC165A5 */  jal   sub_GAME_7F059694
+/* 03CFC4 7F008494 0FC165A5 */  jal   matrix_4x4_7F059694
 /* 03CFC8 7F008498 E7AA001C */   swc1  $f10, 0x1c($sp)
 /* 03CFCC 7F00849C 02002025 */  move  $a0, $s0
 /* 03CFD0 7F0084A0 24050002 */  li    $a1, 2

@@ -8,17 +8,14 @@
 s32 copyof_stagenum;
 s32 dword_CODE_bss_80079E94;
 char dword_CODE_bss_80079E98[0x48];
-u32 *ptr_BONDdata_p1;
-u32 *ptr_BONDdata_p2;
-u32 *ptr_BONDdata_p3;
-u32 *ptr_BONDdata_p4;
+struct player *players[4];
 
 struct player_data player1_player_data;
 struct player_data player2_player_data;
 struct player_data player3_player_data;
 struct player_data player4_player_data;
 
-struct Player *pPlayer;
+struct player *pPlayer;
 struct player_data *pPlayersPerm;
 s32 player_num;
 s32 random_byte;
@@ -38,7 +35,7 @@ void sub_GAME_7F093880(f32 arg0, f32 arg1, ? arg2) {
     s32 sp24;
 
     // Node 0
-    sp24 = sub_GAME_7F078444();
+    sp24 = currentPlayerGetMatrix10D4();
     sp1C = (f32) (getPlayer_c_screenleft() + arg0);
     sp18 = getPlayer_c_screentop();
     sp20 = (f32) (get_ptr_currentdata()->unk38 + (arg1 + sp18));
@@ -54,7 +51,7 @@ glabel sub_GAME_7F093880
 /* 0C83B4 7F093884 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 0C83B8 7F093888 E7AC0028 */  swc1  $f12, 0x28($sp)
 /* 0C83BC 7F09388C E7AE002C */  swc1  $f14, 0x2c($sp)
-/* 0C83C0 7F093890 0FC1E111 */  jal   sub_GAME_7F078444
+/* 0C83C0 7F093890 0FC1E111 */  jal   currentPlayerGetMatrix10D4
 /* 0C83C4 7F093894 AFA60030 */   sw    $a2, 0x30($sp)
 /* 0C83C8 7F093898 0FC1E131 */  jal   getPlayer_c_screenleft
 /* 0C83CC 7F09389C AFA20024 */   sw    $v0, 0x24($sp)
@@ -1178,7 +1175,7 @@ glabel sub_GAME_7F094488
 /* 0C9004 7F0944D4 8FA406B0 */  lw    $a0, 0x6b0($sp)
 /* 0C9008 7F0944D8 55C0007B */  bnezl $t6, .L7F0946C8
 /* 0C900C 7F0944DC 92050008 */   lbu   $a1, 8($s0)
-/* 0C9010 7F0944E0 0FC26919 */  jal   get_num_players
+/* 0C9010 7F0944E0 0FC26919 */  jal   getPlayerCount
 /* 0C9014 7F0944E4 00000000 */   nop   
 /* 0C9018 7F0944E8 24010001 */  li    $at, 1
 /* 0C901C 7F0944EC 1441003B */  bne   $v0, $at, .L7F0945DC
@@ -1198,15 +1195,15 @@ glabel sub_GAME_7F094488
 /* 0C9054 7F094524 8FA406B0 */   lw    $a0, 0x6b0($sp)
 /* 0C9058 7F094528 244B0008 */  addiu $t3, $v0, 8
 /* 0C905C 7F09452C AFAB06B0 */  sw    $t3, 0x6b0($sp)
-/* 0C9060 7F094530 0C001127 */  jal   get_video2_settings_width
+/* 0C9060 7F094530 0C001127 */  jal   viGetViewWidth
 /* 0C9064 7F094534 00408825 */   move  $s1, $v0
-/* 0C9068 7F094538 0C001145 */  jal   get_video2_settings_ulx
+/* 0C9068 7F094538 0C001145 */  jal   viGetViewLeft
 /* 0C906C 7F09453C A7A2007A */   sh    $v0, 0x7a($sp)
-/* 0C9070 7F094540 0C001149 */  jal   get_video2_settings_uly
+/* 0C9070 7F094540 0C001149 */  jal   viGetViewTop
 /* 0C9074 7F094544 A7A2007C */   sh    $v0, 0x7c($sp)
 /* 0C9078 7F094548 00028400 */  sll   $s0, $v0, 0x10
 /* 0C907C 7F09454C 00106403 */  sra   $t4, $s0, 0x10
-/* 0C9080 7F094550 0C00112B */  jal   get_video2_settings_height
+/* 0C9080 7F094550 0C00112B */  jal   viGetViewHeight
 /* 0C9084 7F094554 01808025 */   move  $s0, $t4
 /* 0C9088 7F094558 87AD007C */  lh    $t5, 0x7c($sp)
 /* 0C908C 7F09455C 87AE007A */  lh    $t6, 0x7a($sp)
@@ -1221,11 +1218,11 @@ glabel sub_GAME_7F094488
 /* 0C90B0 7F094580 01C17825 */  or    $t7, $t6, $at
 /* 0C90B4 7F094584 00195380 */  sll   $t2, $t9, 0xe
 /* 0C90B8 7F094588 01EAC025 */  or    $t8, $t7, $t2
-/* 0C90BC 7F09458C 0C001145 */  jal   get_video2_settings_ulx
+/* 0C90BC 7F09458C 0C001145 */  jal   viGetViewLeft
 /* 0C90C0 7F094590 AE380000 */   sw    $t8, ($s1)
 /* 0C90C4 7F094594 00028400 */  sll   $s0, $v0, 0x10
 /* 0C90C8 7F094598 0010CC03 */  sra   $t9, $s0, 0x10
-/* 0C90CC 7F09459C 0C001149 */  jal   get_video2_settings_uly
+/* 0C90CC 7F09459C 0C001149 */  jal   viGetViewTop
 /* 0C90D0 7F0945A0 03208025 */   move  $s0, $t9
 /* 0C90D4 7F0945A4 304B03FF */  andi  $t3, $v0, 0x3ff
 /* 0C90D8 7F0945A8 320D03FF */  andi  $t5, $s0, 0x3ff
@@ -2409,9 +2406,9 @@ def_7F094A38:
 .L7F0957AC:
 /* 0CA2DC 7F0957AC 5A20018E */  blezl $s1, .L7F095DE8
 /* 0CA2E0 7F0957B0 8FAA005C */   lw    $t2, 0x5c($sp)
-/* 0CA2E4 7F0957B4 0FC1E0F9 */  jal   get_BONDdata_field_10DC
+/* 0CA2E4 7F0957B4 0FC1E0F9 */  jal   currentPlayerGetProjectionMatrixF
 /* 0CA2E8 7F0957B8 00000000 */   nop   
-/* 0CA2EC 7F0957BC 0FC1E0F1 */  jal   get_BONDdata_field_10CC
+/* 0CA2EC 7F0957BC 0FC1E0F1 */  jal   currentPlayerGetMatrix10CC
 /* 0CA2F0 7F0957C0 00408025 */   move  $s0, $v0
 /* 0CA2F4 7F0957C4 02002025 */  move  $a0, $s0
 /* 0CA2F8 7F0957C8 00402825 */  move  $a1, $v0
@@ -3939,9 +3936,9 @@ def_7F095E0C:
 /* 0CBA18 7F096EE8 3739FE81 */  ori   $t9, (0xFC40FE81 & 0xFFFF) # ori $t9, $t9, 0xfe81
 /* 0CBA1C 7F096EEC 35ADF97C */  ori   $t5, (0x55FEF97C & 0xFFFF) # ori $t5, $t5, 0xf97c
 /* 0CBA20 7F096EF0 ADED0004 */  sw    $t5, 4($t7)
-/* 0CBA24 7F096EF4 0FC1E0F9 */  jal   get_BONDdata_field_10DC
+/* 0CBA24 7F096EF4 0FC1E0F9 */  jal   currentPlayerGetProjectionMatrixF
 /* 0CBA28 7F096EF8 ADF90000 */   sw    $t9, ($t7)
-/* 0CBA2C 7F096EFC 0FC1E0F1 */  jal   get_BONDdata_field_10CC
+/* 0CBA2C 7F096EFC 0FC1E0F1 */  jal   currentPlayerGetMatrix10CC
 /* 0CBA30 7F096F00 00408025 */   move  $s0, $v0
 /* 0CBA34 7F096F04 02002025 */  move  $a0, $s0
 /* 0CBA38 7F096F08 00402825 */  move  $a1, $v0
@@ -7516,10 +7513,10 @@ glabel default_player_perspective_and_height
 #ifdef NONMATCHING
 void reset_play_data_ptrs(void)
 {
-    ptr_BONDdata_p1[0] = NULL;
-    ptr_BONDdata_p1[1] = NULL;
-    ptr_BONDdata_p1[2] = NULL;
-    ptr_BONDdata_p1[3] = NULL;
+    players[0] = NULL;
+    players[1] = NULL;
+    players[2] = NULL;
+    players[3] = NULL;
     pPlayer = NULL;
     pPlayersPerm = NULL;
     player_num = 0;
@@ -7533,8 +7530,8 @@ void reset_play_data_ptrs(void)
 GLOBAL_ASM(
 .text
 glabel reset_play_data_ptrs
-/* 0CEE5C 7F09A32C 3C028008 */  lui   $v0, %hi(ptr_BONDdata_p1)
-/* 0CEE60 7F09A330 24429EE0 */  addiu $v0, %lo(ptr_BONDdata_p1) # addiu $v0, $v0, -0x6120
+/* 0CEE5C 7F09A32C 3C028008 */  lui   $v0, %hi(players)
+/* 0CEE60 7F09A330 24429EE0 */  addiu $v0, %lo(players) # addiu $v0, $v0, -0x6120
 /* 0CEE64 7F09A334 AC400000 */  sw    $zero, ($v0)
 /* 0CEE68 7F09A338 AC400004 */  sw    $zero, 4($v0)
 /* 0CEE6C 7F09A33C AC400008 */  sw    $zero, 8($v0)
@@ -7568,17 +7565,17 @@ void init_player_data_ptrs_construct_viewports(int playercount)
 {
     int player;
     
-    ptr_BONDdata_p1[0] = NULL;
-    ptr_BONDdata_p1[1] = NULL;
-    ptr_BONDdata_p1[2] = NULL;
-    ptr_BONDdata_p1[3] = NULL;
+    players[0] = NULL;
+    players[1] = NULL;
+    players[2] = NULL;
+    players[3] = NULL;
 
     random_byte = get_random_value() & 0xff;
     if (playercount < 1) {
         initBONDdataforPlayer(0);
         set_cur_player(0);
-        set_cur_player_screen_size( get_video2_settings_width(), get_video2_settings_height() );
-        set_cur_player_viewport_size( get_video2_settings_ulx(), get_video2_settings_uly() );
+        set_cur_player_screen_size( viGetViewWidth(), viGetViewHeight() );
+        set_cur_player_viewport_size( viGetViewLeft(), viGetViewTop() );
     }
     else {
         for (player = 0; player != playercount; player++)
@@ -7593,8 +7590,8 @@ void init_player_data_ptrs_construct_viewports(int playercount)
 GLOBAL_ASM(
 .text
 glabel init_player_data_ptrs_construct_viewports
-/* 0CEEBC 7F09A38C 3C028008 */  lui   $v0, %hi(ptr_BONDdata_p1)
-/* 0CEEC0 7F09A390 24429EE0 */  addiu $v0, %lo(ptr_BONDdata_p1) # addiu $v0, $v0, -0x6120
+/* 0CEEBC 7F09A38C 3C028008 */  lui   $v0, %hi(players)
+/* 0CEEC0 7F09A390 24429EE0 */  addiu $v0, %lo(players) # addiu $v0, $v0, -0x6120
 /* 0CEEC4 7F09A394 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 0CEEC8 7F09A398 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 0CEECC 7F09A39C AFB10018 */  sw    $s1, 0x18($sp)
@@ -7627,20 +7624,20 @@ glabel init_player_data_ptrs_construct_viewports
 /* 0CEF2C 7F09A3FC 00002025 */   move  $a0, $zero
 /* 0CEF30 7F09A400 0FC26C43 */  jal   set_cur_player
 /* 0CEF34 7F09A404 00002025 */   move  $a0, $zero
-/* 0CEF38 7F09A408 0C001127 */  jal   get_video2_settings_width
+/* 0CEF38 7F09A408 0C001127 */  jal   viGetViewWidth
 /* 0CEF3C 7F09A40C 00000000 */   nop   
 /* 0CEF40 7F09A410 00028400 */  sll   $s0, $v0, 0x10
 /* 0CEF44 7F09A414 00107C03 */  sra   $t7, $s0, 0x10
-/* 0CEF48 7F09A418 0C00112B */  jal   get_video2_settings_height
+/* 0CEF48 7F09A418 0C00112B */  jal   viGetViewHeight
 /* 0CEF4C 7F09A41C 01E08025 */   move  $s0, $t7
 /* 0CEF50 7F09A420 02002025 */  move  $a0, $s0
 /* 0CEF54 7F09A424 0FC26C77 */  jal   set_cur_player_screen_size
 /* 0CEF58 7F09A428 00402825 */   move  $a1, $v0
-/* 0CEF5C 7F09A42C 0C001145 */  jal   get_video2_settings_ulx
+/* 0CEF5C 7F09A42C 0C001145 */  jal   viGetViewLeft
 /* 0CEF60 7F09A430 00000000 */   nop   
 /* 0CEF64 7F09A434 00028400 */  sll   $s0, $v0, 0x10
 /* 0CEF68 7F09A438 0010C403 */  sra   $t8, $s0, 0x10
-/* 0CEF6C 7F09A43C 0C001149 */  jal   get_video2_settings_uly
+/* 0CEF6C 7F09A43C 0C001149 */  jal   viGetViewTop
 /* 0CEF70 7F09A440 03008025 */   move  $s0, $t8
 /* 0CEF74 7F09A444 02002025 */  move  $a0, $s0
 /* 0CEF78 7F09A448 0FC26C7E */  jal   set_cur_player_viewport_size
@@ -7654,74 +7651,28 @@ glabel init_player_data_ptrs_construct_viewports
 )
 #endif
 
-
-
-
-
-#ifdef NONMATCHING
-u32 get_num_players(void)
+s32 getPlayerCount(void)
 {
-    u32 uVar1;
-    
-    uVar1 = (u32)(ptr_BONDdata_p1[0] != NULL);
-    if (ptr_BONDdata_p1[1] != NULL) {
-        uVar1 = (uint)(ptr_BONDdata_p1[0] != NULL) + 1;
+    s32 count = 0;
+    s32 i;
+    for (i = 0; i < 4; i++) {
+        if (players[i] != NULL) {
+            count++;
+        }
     }
-    if (ptr_BONDdata_p1[2] != NULL) {
-        uVar1 = uVar1 + 1;
-    }
-    if (ptr_BONDdata_p1[3] != NULL) {
-        uVar1 = uVar1 + 1;
-    }
-    return uVar1;
+    return count;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel get_num_players
-/* 0CEF94 7F09A464 3C0E8008 */  lui   $t6, %hi(ptr_BONDdata_p1) 
-/* 0CEF98 7F09A468 8DCE9EE0 */  lw    $t6, %lo(ptr_BONDdata_p1)($t6)
-/* 0CEF9C 7F09A46C 00001825 */  move  $v1, $zero
-/* 0CEFA0 7F09A470 3C0F8008 */  lui   $t7, %hi(ptr_BONDdata_p2) 
-/* 0CEFA4 7F09A474 11C00002 */  beqz  $t6, .L7F09A480
-/* 0CEFA8 7F09A478 3C188008 */   lui   $t8, %hi(ptr_BONDdata_p3) 
-/* 0CEFAC 7F09A47C 24030001 */  li    $v1, 1
-.L7F09A480:
-/* 0CEFB0 7F09A480 8DEF9EE4 */  lw    $t7, %lo(ptr_BONDdata_p2)($t7)
-/* 0CEFB4 7F09A484 3C198008 */  lui   $t9, %hi(ptr_BONDdata_p4) 
-/* 0CEFB8 7F09A488 11E00002 */  beqz  $t7, .L7F09A494
-/* 0CEFBC 7F09A48C 00000000 */   nop   
-/* 0CEFC0 7F09A490 24630001 */  addiu $v1, $v1, 1
-.L7F09A494:
-/* 0CEFC4 7F09A494 8F189EE8 */  lw    $t8, %lo(ptr_BONDdata_p3)($t8)
-/* 0CEFC8 7F09A498 13000002 */  beqz  $t8, .L7F09A4A4
-/* 0CEFCC 7F09A49C 00000000 */   nop   
-/* 0CEFD0 7F09A4A0 24630001 */  addiu $v1, $v1, 1
-.L7F09A4A4:
-/* 0CEFD4 7F09A4A4 8F399EEC */  lw    $t9, %lo(ptr_BONDdata_p4)($t9)
-/* 0CEFD8 7F09A4A8 13200002 */  beqz  $t9, .L7F09A4B4
-/* 0CEFDC 7F09A4AC 00000000 */   nop   
-/* 0CEFE0 7F09A4B0 24630001 */  addiu $v1, $v1, 1
-.L7F09A4B4:
-/* 0CEFE4 7F09A4B4 03E00008 */  jr    $ra
-/* 0CEFE8 7F09A4B8 00601025 */   move  $v0, $v1
-)
-#endif
-
-
-
-
 
 #ifdef NONMATCHING
 void initBONDdataforPlayer(PLAYER_ID player)
 {
     int iVar1;
     int iVar2;
-    Player **ppPVar3;
+    player **ppPVar3;
     int *dest;
     int *src;
     int *src_next;
-    Player *pPVar4;
+    player *pPVar4;
     int array234undefined4 [234];
     int iStack4;
     f32 temp_3f36e15f8e;
@@ -7736,8 +7687,8 @@ void initBONDdataforPlayer(PLAYER_ID player)
         src = src_next;
         dest = dest + 3;
     } while (src_next != (int *)0x80040148);
-    pPVar4 = (Player *)mempAllocBytesInBank(0x2a80,4);
-    ppPVar3 = ptr_BONDdata_p1 + player;
+    pPVar4 = (player *)mempAllocBytesInBank(0x2a80,4);
+    ppPVar3 = players + player;
     *ppPVar3 = pPVar4;
     pPVar4->unknown = 0;
     (*ppPVar3)->xpos = 0.00000000;
@@ -7774,14 +7725,14 @@ void initBONDdataforPlayer(PLAYER_ID player)
     (*ppPVar3)->field_90 = 0.00000000;
     (*ppPVar3)->field_94 = 0;
     (*ppPVar3)->field_98 = 0.00000000;
-    (*ppPVar3)->field_1274 = 0.00000000;
+    (*ppPVar3)->swaytarget = 0.00000000;
     (*ppPVar3)->field_1278 = 0.00000000;
     (*ppPVar3)->field_127C = 0.00000000;
-    (*ppPVar3)->crouchposition = 2;
-    (*ppPVar3)->field_29FC = 2;
+    (*ppPVar3)->crouchpos = 2;
+    (*ppPVar3)->autocrouchpos = 2;
     (*ppPVar3)->ducking_height_offset = 0.00000000;
     (*ppPVar3)->field_A4 = 0.00000000;
-    (*ppPVar3)->position_data_pointer = 0;
+    (*ppPVar3)->prop = 0;
     (*ppPVar3)->field_AC = 1;
     (*ppPVar3)->field_D0 = 0;
     (*ppPVar3)->ptr_char_objectinstance = 0;
@@ -7828,11 +7779,11 @@ void initBONDdataforPlayer(PLAYER_ID player)
     (*ppPVar3)->boost_factor_x = 0.00000000;
     (*ppPVar3)->boost_factor_y = 0.00000000;
     (*ppPVar3)->boost_factor_z = 0.00000000;
-    (*ppPVar3)->viewport_alpha = -1.00000000;
     (*ppPVar3)->bondfadetime60 = -1.00000000;
-    (*ppPVar3)->bondfadetimemax = 0.00000000;
+    (*ppPVar3)->bondfadetimemax60 = -1.00000000;
     (*ppPVar3)->bondfadefracold = 0.00000000;
     (*ppPVar3)->bondfadefracnew = 0.00000000;
+    (*ppPVar3)->field_19C = 0.00000000;
     (*ppPVar3)->field_1A0 = 0;
     (*ppPVar3)->field_1C0 = 0;
     (*ppPVar3)->field_1C4 = 0;
@@ -7866,20 +7817,20 @@ void initBONDdataforPlayer(PLAYER_ID player)
     (*ppPVar3)->field_3C4 = 0.00000000;
     (*ppPVar3)->field_3C8 = 0.00000000;
     (*ppPVar3)->field_3CC = 1.00000000;
-    (*ppPVar3)->tint_red = 0xff;
-    (*ppPVar3)->tint_green = 0xff;
-    (*ppPVar3)->tint_blue = 0xff;
-    (*ppPVar3)->tint_alpha = 0.00000000;
+    (*ppPVar3)->colourscreenred = 0xff;
+    (*ppPVar3)->colourscreengreen = 0xff;
+    (*ppPVar3)->colourscreenblue = 0xff;
+    (*ppPVar3)->colourscreenfrac = 0.00000000;
     (*ppPVar3)->field_3E0 = -1.00000000;
     (*ppPVar3)->timer_for_fade = -1.00000000;
-    (*ppPVar3)->field_3E8 = 0xff;
-    (*ppPVar3)->field_3EC = 0xff;
-    (*ppPVar3)->field_3F0 = 0xff;
-    (*ppPVar3)->field_3F4 = 0xff;
-    (*ppPVar3)->field_3F8 = 0xff;
-    (*ppPVar3)->field_3FC = 0xff;
-    (*ppPVar3)->field_400 = 0.00000000;
-    (*ppPVar3)->field_404 = 0.00000000;
+    (*ppPVar3)->colourfaderedold = 0xff;
+    (*ppPVar3)->colourfaderednew = 0xff;
+    (*ppPVar3)->colourfadegreenold = 0xff;
+    (*ppPVar3)->colourfadegreennew = 0xff;
+    (*ppPVar3)->colourfadeblueold = 0xff;
+    (*ppPVar3)->colourfadebluenew = 0xff;
+    (*ppPVar3)->colourfadefracold = 0.00000000;
+    (*ppPVar3)->colourfadefracnew = 0.00000000;
     (*ppPVar3)->cuff_value = CUFF_BLUE;
     (*ppPVar3)->field_420 = 1;
     (*ppPVar3)->field_424 = 0;
@@ -7894,7 +7845,7 @@ void initBONDdataforPlayer(PLAYER_ID player)
     (*ppPVar3)->field_4F0 = 0;
     (*ppPVar3)->field_4F4 = 1.00000000;
     (*ppPVar3)->field_4F8 = 1.00000000;
-    (*ppPVar3)->scaled_velocity = 0.00000000;
+    (*ppPVar3)->headpos = 0.00000000;
     (*ppPVar3)->field_500 = 0.00000000;
     (*ppPVar3)->field_504 = 0.00000000;
     (*ppPVar3)->field_508 = 0.00000000;
@@ -7903,7 +7854,7 @@ void initBONDdataforPlayer(PLAYER_ID player)
     (*ppPVar3)->field_514 = 0.00000000;
     (*ppPVar3)->field_518 = 1.00000000;
     (*ppPVar3)->field_51C = 0.00000000;
-    (*ppPVar3)->velocity = 0.00000000;
+    (*ppPVar3)->headpossum = 0.00000000;
     (*ppPVar3)->field_524 = 0.00000000;
     (*ppPVar3)->field_528 = 0.00000000;
     (*ppPVar3)->field_52C = 0.00000000;
@@ -7932,7 +7883,7 @@ void initBONDdataforPlayer(PLAYER_ID player)
     (*ppPVar3)->field_588 = 0.00000000;
     (*ppPVar3)->field_58C = 1.00000000;
     (*ppPVar3)->field_590 = 0.00000000;
-    (*ppPVar3)->field_594 = 0;
+    (*ppPVar3)->standcnt = 0;
     iVar1 = 0;
     do {
         *(undefined2 *)((int)&((*ppPVar3)->field_7D0).field_7D0 + iVar1) = 0x280;
@@ -7967,7 +7918,7 @@ void initBONDdataforPlayer(PLAYER_ID player)
         pPVar4->right_weapon = *src;
         pPVar4->right_weapon_attack = src[1];
         pPVar4->previous_right_weapon = src[2];
-        pPVar4 = (Player *)&pPVar4->zpos;
+        pPVar4 = (player *)&pPVar4->zpos;
         src = dest;
     } while (dest != &iStack4);
     src = array234undefined4;
@@ -7978,7 +7929,7 @@ void initBONDdataforPlayer(PLAYER_ID player)
         pPVar4->left_weapon_attack = src[1];
         pPVar4->left_weapon_previous = src[2];
         src = dest;
-        pPVar4 = (Player *)&pPVar4->zpos;
+        pPVar4 = (player *)&pPVar4->zpos;
     } while (dest != &iStack4);
     (*ppPVar3)->field_FC0 = 1.00000000;
     (*ppPVar3)->field_FC4 = 1.00000000;
@@ -8036,8 +7987,8 @@ void initBONDdataforPlayer(PLAYER_ID player)
     (*ppPVar3)->field_10CC = 0;
     (*ppPVar3)->field_10D0 = 0;
     (*ppPVar3)->field_10D4 = 0;
-    (*ppPVar3)->field_10D8 = 0;
-    (*ppPVar3)->field_10DC = 0;
+    (*ppPVar3)->projmatrix = 0;
+    (*ppPVar3)->projmatrixf = 0;
     (*ppPVar3)->field_10E0 = 0;
     (*ppPVar3)->field_10E4 = 0;
     (*ppPVar3)->field_10E8 = 0;
@@ -8142,8 +8093,8 @@ glabel initBONDdataforPlayer
 /* 0CF030 7F09A500 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0CF034 7F09A504 24050004 */   li    $a1, 4
 /* 0CF038 7F09A508 8FAC03D0 */  lw    $t4, 0x3d0($sp)
-/* 0CF03C 7F09A50C 3C198008 */  lui   $t9, %hi(ptr_BONDdata_p1) 
-/* 0CF040 7F09A510 27399EE0 */  addiu $t9, %lo(ptr_BONDdata_p1) # addiu $t9, $t9, -0x6120
+/* 0CF03C 7F09A50C 3C198008 */  lui   $t9, %hi(players) 
+/* 0CF040 7F09A510 27399EE0 */  addiu $t9, %lo(players) # addiu $t9, $t9, -0x6120
 /* 0CF044 7F09A514 000C6880 */  sll   $t5, $t4, 2
 /* 0CF048 7F09A518 01B91821 */  addu  $v1, $t5, $t9
 /* 0CF04C 7F09A51C AC620000 */  sw    $v0, ($v1)
@@ -8956,8 +8907,8 @@ glabel initBONDdataforPlayer
 /* 0CFC10 7F09B0A0 0C0025CC */  jal   mempAllocBytesInBank
 /* 0CFC14 7F09B0A4 24050004 */   li    $a1, 4
 /* 0CFC18 7F09B0A8 8FAC03D0 */  lw    $t4, 0x3d0($sp)
-/* 0CFC1C 7F09B0AC 3C198008 */  lui   $t9, %hi(ptr_BONDdata_p1) # $t9, 0x8008
-/* 0CFC20 7F09B0B0 27399F50 */  addiu $t9, %lo(ptr_BONDdata_p1) # addiu $t9, $t9, -0x60b0
+/* 0CFC1C 7F09B0AC 3C198008 */  lui   $t9, %hi(players) # $t9, 0x8008
+/* 0CFC20 7F09B0B0 27399F50 */  addiu $t9, %lo(players) # addiu $t9, $t9, -0x60b0
 /* 0CFC24 7F09B0B4 000C6880 */  sll   $t5, $t4, 2
 /* 0CFC28 7F09B0B8 01B91821 */  addu  $v1, $t5, $t9
 /* 0CFC2C 7F09B0BC AC620000 */  sw    $v0, ($v1)
@@ -9737,7 +9688,7 @@ glabel initBONDdataforPlayer
 #ifdef NONMATCHING
 void set_cur_player(PLAYER_ID playernum)
 {
-    pPlayer = ptr_BONDdata_p1[playernum];
+    pPlayer = players[playernum];
     pPlayersPerm = player1_playerdata[playernum];
     player_num = playernum;
     return;
@@ -9747,9 +9698,9 @@ GLOBAL_ASM(
 .text
 glabel set_cur_player
 /* 0CFC3C 7F09B10C 00047080 */  sll   $t6, $a0, 2
-/* 0CFC40 7F09B110 3C0F8008 */  lui   $t7, %hi(ptr_BONDdata_p1)
+/* 0CFC40 7F09B110 3C0F8008 */  lui   $t7, %hi(players)
 /* 0CFC44 7F09B114 01EE7821 */  addu  $t7, $t7, $t6
-/* 0CFC48 7F09B118 8DEF9EE0 */  lw    $t7, %lo(ptr_BONDdata_p1)($t7)
+/* 0CFC48 7F09B118 8DEF9EE0 */  lw    $t7, %lo(players)($t7)
 /* 0CFC4C 7F09B11C 3C018008 */  lui   $at, %hi(player_num)
 /* 0CFC50 7F09B120 AC24A0B8 */  sw    $a0, %lo(player_num)($at)
 /* 0CFC54 7F09B124 0004C0C0 */  sll   $t8, $a0, 3
@@ -9779,21 +9730,21 @@ s32 get_cur_playernum(void) {
 
 
 #ifdef NONMATCHING
-void proc_7F09B15C(int position_data_pointer)
+void proc_7F09B15C(int prop)
 {
-    Player *pPVar1;
+    player *pPVar1;
     s32 numplayers;
-    Player **ppPVar2;
+    player **ppPVar2;
     int i;
     
     i = 0;
-    numplayers = get_num_players();
+    numplayers = getPlayerCount();
     if (0 < numplayers) {
-        ppPVar2 = ptr_BONDdata_p1;
-        pPVar1 = ptr_BONDdata_p1[0];
-        while (ppPVar2 = ppPVar2 + 1, position_data_pointer != pPVar1->position_data_pointer) {
+        ppPVar2 = players;
+        pPVar1 = players[0];
+        while (ppPVar2 = ppPVar2 + 1, prop != pPVar1->prop) {
             i = i + 1;
-            numplayers = get_num_players();
+            numplayers = getPlayerCount();
             if (numplayers <= i) {
                 return;
             }
@@ -9812,12 +9763,12 @@ glabel sub_GAME_7F09B15C
 /* 0CFC98 7F09B168 AFB1001C */  sw    $s1, 0x1c($sp)
 /* 0CFC9C 7F09B16C 00809025 */  move  $s2, $a0
 /* 0CFCA0 7F09B170 AFB00018 */  sw    $s0, 0x18($sp)
-/* 0CFCA4 7F09B174 0FC26919 */  jal   get_num_players
+/* 0CFCA4 7F09B174 0FC26919 */  jal   getPlayerCount
 /* 0CFCA8 7F09B178 00008825 */   move  $s1, $zero
 /* 0CFCAC 7F09B17C 18400010 */  blez  $v0, .L7F09B1C0
 /* 0CFCB0 7F09B180 00117080 */   sll   $t6, $s1, 2
-/* 0CFCB4 7F09B184 3C0F8008 */  lui   $t7, %hi(ptr_BONDdata_p1) 
-/* 0CFCB8 7F09B188 25EF9EE0 */  addiu $t7, %lo(ptr_BONDdata_p1) # addiu $t7, $t7, -0x6120
+/* 0CFCB4 7F09B184 3C0F8008 */  lui   $t7, %hi(players) 
+/* 0CFCB8 7F09B188 25EF9EE0 */  addiu $t7, %lo(players) # addiu $t7, $t7, -0x6120
 /* 0CFCBC 7F09B18C 01CF8021 */  addu  $s0, $t6, $t7
 /* 0CFCC0 7F09B190 8E180000 */  lw    $t8, ($s0)
 .L7F09B194:
@@ -9828,7 +9779,7 @@ glabel sub_GAME_7F09B15C
 /* 0CFCD4 7F09B1A4 10000007 */  b     .L7F09B1C4
 /* 0CFCD8 7F09B1A8 02201025 */   move  $v0, $s1
 .L7F09B1AC:
-/* 0CFCDC 7F09B1AC 0FC26919 */  jal   get_num_players
+/* 0CFCDC 7F09B1AC 0FC26919 */  jal   getPlayerCount
 /* 0CFCE0 7F09B1B0 26310001 */   addiu $s1, $s1, 1
 /* 0CFCE4 7F09B1B4 0222082A */  slt   $at, $s1, $v0
 /* 0CFCE8 7F09B1B8 5420FFF6 */  bnezl $at, .L7F09B194
@@ -10284,7 +10235,7 @@ loop_1:
     {
         // Node 2
         phi_v1_2 = phi_v1_3;
-        if (*(&ptr_BONDdata_p1 + (temp_v0 * 4)) != 0)
+        if (*(&players + (temp_v0 * 4)) != 0)
         {
             // Node 3
             phi_v1_2 = (phi_v1_3 + 1);
@@ -10307,9 +10258,9 @@ GLOBAL_ASM(
 glabel sub_GAME_7F09B4D8
 /* 0D0008 7F09B4D8 3C058008 */  lui   $a1, %hi(dword_CODE_bss_8007A0C0)
 /* 0D000C 7F09B4DC 3C078008 */  lui   $a3, %hi(dword_CODE_bss_8007A0D0)
-/* 0D0010 7F09B4E0 3C068008 */  lui   $a2, %hi(ptr_BONDdata_p1)
+/* 0D0010 7F09B4E0 3C068008 */  lui   $a2, %hi(players)
 /* 0D0014 7F09B4E4 00001825 */  move  $v1, $zero
-/* 0D0018 7F09B4E8 24C69EE0 */  addiu $a2, %lo(ptr_BONDdata_p1) # addiu $a2, $a2, -0x6120
+/* 0D0018 7F09B4E8 24C69EE0 */  addiu $a2, %lo(players) # addiu $a2, $a2, -0x6120
 /* 0D001C 7F09B4EC 24E7A0D0 */  addiu $a3, %lo(dword_CODE_bss_8007A0D0) # addiu $a3, $a3, -0x5f30
 /* 0D0020 7F09B4F0 24A5A0C0 */  addiu $a1, %lo(dword_CODE_bss_8007A0C0) # addiu $a1, $a1, -0x5f40
 /* 0D0024 7F09B4F4 8CA20000 */  lw    $v0, ($a1)
@@ -10338,25 +10289,25 @@ glabel sub_GAME_7F09B4D8
 #ifdef NONMATCHING
 int proc_7F09B528(int param_1)
 {
-    if (ptr_BONDdata_p1[dword_CODE_bss_8007A0C0] != NULL) {
+    if (players[dword_CODE_bss_8007A0C0] != NULL) {
         if (param_1 == 0) {
             return dword_CODE_bss_8007A0C0;
         }
         param_1--;
     }
-    if (ptr_BONDdata_p1[dword_CODE_bss_8007A0C4] != NULL) {
+    if (players[dword_CODE_bss_8007A0C4] != NULL) {
         if (param_1 == 0) {
             return dword_CODE_bss_8007A0C4;
         }
         param_1--;
     }
-    if (ptr_BONDdata_p1[dword_CODE_bss_8007A0C8] != NULL) {
+    if (players[dword_CODE_bss_8007A0C8] != NULL) {
         if (param_1 == 0) {
             return dword_CODE_bss_8007A0C8;
         }
         param_1--;
     }
-    if ((ptr_BONDdata_p1[dword_CODE_bss_8007A0CC] != NULL) && (param_1 == 0)) {
+    if ((players[dword_CODE_bss_8007A0CC] != NULL) && (param_1 == 0)) {
         return dword_CODE_bss_8007A0CC;
     }
     return 0;
@@ -10367,8 +10318,8 @@ GLOBAL_ASM(
 glabel sub_GAME_7F09B528
 /* 0D0058 7F09B528 3C038008 */  lui   $v1, %hi(dword_CODE_bss_8007A0C0)
 /* 0D005C 7F09B52C 8C63A0C0 */  lw    $v1, %lo(dword_CODE_bss_8007A0C0)($v1)
-/* 0D0060 7F09B530 3C028008 */  lui   $v0, %hi(ptr_BONDdata_p1)
-/* 0D0064 7F09B534 24429EE0 */  addiu $v0, %lo(ptr_BONDdata_p1) # addiu $v0, $v0, -0x6120
+/* 0D0060 7F09B530 3C028008 */  lui   $v0, %hi(players)
+/* 0D0064 7F09B534 24429EE0 */  addiu $v0, %lo(players) # addiu $v0, $v0, -0x6120
 /* 0D0068 7F09B538 00037080 */  sll   $t6, $v1, 2
 /* 0D006C 7F09B53C 004E7821 */  addu  $t7, $v0, $t6
 /* 0D0070 7F09B540 8DF80000 */  lw    $t8, ($t7)

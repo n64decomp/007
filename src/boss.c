@@ -484,7 +484,7 @@ loop_29:
                         if (current_stage_num != 0x5a)
                         {
                             phi_s1_2 = 0;
-                            if (get_num_players() > 0)
+                            if (getPlayerCount() > 0)
                             {
 loop_44:
                                 set_cur_player(sub_GAME_7F09B528(phi_s1_2));
@@ -493,7 +493,7 @@ loop_44:
                                 sub_GAME_7F0BF800();
                                 temp_s1 = phi_s1_2 + 1;
                                 phi_s1_2 = temp_s1;
-                                if (temp_s1 < get_num_players())
+                                if (temp_s1 < getPlayerCount())
                                 {
                                     goto loop_44;
                                 }
@@ -1013,7 +1013,7 @@ glabel mainloop
 /* 0071A8 700065A8 2401005A */  li    $at, 90
 /* 0071AC 700065AC 13210018 */  beq   $t9, $at, .L70006610
 /* 0071B0 700065B0 00000000 */   nop   
-/* 0071B4 700065B4 0FC26919 */  jal   get_num_players
+/* 0071B4 700065B4 0FC26919 */  jal   getPlayerCount
 /* 0071B8 700065B8 00008825 */   move  $s1, $zero
 /* 0071BC 700065BC 18400014 */  blez  $v0, .L70006610
 /* 0071C0 700065C0 00000000 */   nop   
@@ -1032,7 +1032,7 @@ glabel mainloop
 /* 0071F0 700065F0 860507F6 */   lh    $a1, 0x7f6($s0)
 /* 0071F4 700065F4 0FC2FE00 */  jal   sub_GAME_7F0BF800
 /* 0071F8 700065F8 00000000 */   nop   
-/* 0071FC 700065FC 0FC26919 */  jal   get_num_players
+/* 0071FC 700065FC 0FC26919 */  jal   getPlayerCount
 /* 007200 70006600 26310001 */   addiu $s1, $s1, 1
 /* 007204 70006604 0222082A */  slt   $at, $s1, $v0
 /* 007208 70006608 1420FFEE */  bnez  $at, .L700065C4

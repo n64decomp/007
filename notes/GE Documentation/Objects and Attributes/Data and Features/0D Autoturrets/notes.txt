@@ -1,4 +1,0 @@
-Sub: Poked around enough, finally got it.  I was actually tracing the flash, turned out they shared the same counter and I missed this before.  Of course, since damage is separate, you have to set them independently:  It seems to fire more than one bullet at once.  I’ll prob have to keep tracing to disable some JALs I imagine if I can.
-80052b74 = 31DE4 Damage frequency value, how often hit
-7F0497FC Damage of drone gun
-7F04935C Firing rate of drone gun bullets/flash (it’s actually a SLTIU of a counter, was set to alternate (1) but setting higher works nicely)

@@ -41,8 +41,8 @@ u32 D_80040988 = 0;
 u32 D_8004098C = 0;
 u32 D_80040990 = 0;
 u32 watch_screen_index = 0;
-u32 D_80040998 = 0;
-u32 D_8004099C = 0;
+u32 controller_options_index = 0;
+u32 game_options_index = 0;
 
 // rodata
 
@@ -1264,7 +1264,7 @@ glabel sub_GAME_7F0A2C44
 /* 0D79F4 7F0A2EC4 356B0040 */  ori   $t3, (0x01030040 & 0xFFFF) # ori $t3, $t3, 0x40
 /* 0D79F8 7F0A2EC8 260A0008 */  addiu $t2, $s0, 8
 /* 0D79FC 7F0A2ECC AFAA00D0 */  sw    $t2, 0xd0($sp)
-/* 0D7A00 7F0A2ED0 0FC1E0DD */  jal   get_BONDdata_field_10D8
+/* 0D7A00 7F0A2ED0 0FC1E0DD */  jal   currentPlayerGetProjectionMatrix
 /* 0D7A04 7F0A2ED4 AE0B0000 */   sw    $t3, ($s0)
 /* 0D7A08 7F0A2ED8 AE020004 */  sw    $v0, 4($s0)
 /* 0D7A0C 7F0A2EDC 8FB100D0 */  lw    $s1, 0xd0($sp)
@@ -1272,7 +1272,7 @@ glabel sub_GAME_7F0A2C44
 /* 0D7A14 7F0A2EE4 35CE0040 */  ori   $t6, (0x01020040 & 0xFFFF) # ori $t6, $t6, 0x40
 /* 0D7A18 7F0A2EE8 262D0008 */  addiu $t5, $s1, 8
 /* 0D7A1C 7F0A2EEC AFAD00D0 */  sw    $t5, 0xd0($sp)
-/* 0D7A20 7F0A2EF0 0FC1E0D5 */  jal   get_BONDdata_field_10C8
+/* 0D7A20 7F0A2EF0 0FC1E0D5 */  jal   currentPlayerGetMatrix10C8
 /* 0D7A24 7F0A2EF4 AE2E0000 */   sw    $t6, ($s1)
 /* 0D7A28 7F0A2EF8 AE220004 */  sw    $v0, 4($s1)
 /* 0D7A2C 7F0A2EFC 8FBF0044 */  lw    $ra, 0x44($sp)
@@ -2595,7 +2595,7 @@ glabel sub_GAME_7F0A3F04
 /* 0D8A98 7F0A3F68 8F29000C */  lw    $t1, 0xc($t9)
 /* 0D8A9C 7F0A3F6C 8F210008 */  lw    $at, 8($t9)
 /* 0D8AA0 7F0A3F70 AF09000C */  sw    $t1, 0xc($t8)
-/* 0D8AA4 7F0A3F74 0FC1E111 */  jal   sub_GAME_7F078444
+/* 0D8AA4 7F0A3F74 0FC1E111 */  jal   currentPlayerGetMatrix10D4
 /* 0D8AA8 7F0A3F78 AF010008 */   sw    $at, 8($t8)
 /* 0D8AAC 7F0A3F7C 8FAA00BC */  lw    $t2, 0xbc($sp)
 /* 0D8AB0 7F0A3F80 24040004 */  li    $a0, 4
@@ -2946,7 +2946,7 @@ glabel sub_GAME_7F0A3F04
 /* 0D9014 7F0A44E4 358C0040 */  ori   $t4, (0x01030040 & 0xFFFF) # ori $t4, $t4, 0x40
 /* 0D9018 7F0A44E8 262D0008 */  addiu $t5, $s1, 8
 /* 0D901C 7F0A44EC AFAD00A0 */  sw    $t5, 0xa0($sp)
-/* 0D9020 7F0A44F0 0FC1E0DD */  jal   get_BONDdata_field_10D8
+/* 0D9020 7F0A44F0 0FC1E0DD */  jal   currentPlayerGetProjectionMatrix
 /* 0D9024 7F0A44F4 AE2C0000 */   sw    $t4, ($s1)
 /* 0D9028 7F0A44F8 0C003A2C */  jal   osVirtualToPhysical
 /* 0D902C 7F0A44FC 00402025 */   move  $a0, $v0
@@ -3027,7 +3027,7 @@ glabel sub_GAME_7F0A4594
 /* 0D90D4 7F0A45A4 C4860014 */  lwc1  $f6, 0x14($a0)
 /* 0D90D8 7F0A45A8 E7A60020 */  swc1  $f6, 0x20($sp)
 /* 0D90DC 7F0A45AC C4880018 */  lwc1  $f8, 0x18($a0)
-/* 0D90E0 7F0A45B0 0FC1E0F1 */  jal   get_BONDdata_field_10CC
+/* 0D90E0 7F0A45B0 0FC1E0F1 */  jal   currentPlayerGetMatrix10CC
 /* 0D90E4 7F0A45B4 E7A80024 */   swc1  $f8, 0x24($sp)
 /* 0D90E8 7F0A45B8 00402025 */  move  $a0, $v0
 /* 0D90EC 7F0A45BC 0FC1611D */  jal   matrix_4x4_transform_vector_in_place

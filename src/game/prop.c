@@ -286,7 +286,7 @@ glabel prepare_load_objects
 /* 036938 7F001E08 00000000 */  nop   
 /* 03693C 7F001E0C 468041A0 */  cvt.s.w $f6, $f8
 /* 036940 7F001E10 460A3103 */  div.s $f4, $f6, $f10
-/* 036944 7F001E14 0FC26919 */  jal   get_num_players
+/* 036944 7F001E14 0FC26919 */  jal   getPlayerCount
 /* 036948 7F001E18 E6240074 */   swc1  $f4, 0x74($s1)
 /* 03694C 7F001E1C 28410002 */  slti  $at, $v0, 2
 /* 036950 7F001E20 1420001B */  bnez  $at, .L7F001E90
@@ -407,7 +407,7 @@ glabel prepare_load_objects
 /* 036AF8 7F001FC8 00000000 */   nop   
 /* 036AFC 7F001FCC 8FAE006C */  lw    $t6, 0x6c($sp)
 /* 036B00 7F001FD0 02002025 */  move  $a0, $s0
-/* 036B04 7F001FD4 0FC0E969 */  jal   sub_GAME_7F03A5A4
+/* 036B04 7F001FD4 0FC0E969 */  jal   attachNewChild
 /* 036B08 7F001FD8 8DC50018 */   lw    $a1, 0x18($t6)
 /* 036B0C 7F001FDC 100001D2 */  b     .L7F002728
 /* 036B10 7F001FE0 8FBF0034 */   lw    $ra, 0x34($sp)
@@ -445,7 +445,7 @@ glabel prepare_load_objects
 /* 036B8C 7F00205C E7A60020 */  swc1  $f6, 0x20($sp)
 /* 036B90 7F002060 C44A0014 */  lwc1  $f10, 0x14($v0)
 /* 036B94 7F002064 AFA20064 */  sw    $v0, 0x64($sp)
-/* 036B98 7F002068 0FC16642 */  jal   sub_GAME_7F059908
+/* 036B98 7F002068 0FC16642 */  jal   matrix_4x4_7F059908
 /* 036B9C 7F00206C E7AA0024 */   swc1  $f10, 0x24($sp)
 /* 036BA0 7F002070 8FA20064 */  lw    $v0, 0x64($sp)
 /* 036BA4 7F002074 C4440000 */  lwc1  $f4, ($v0)
@@ -503,7 +503,7 @@ glabel prepare_load_objects
 /* 036C68 7F002138 C6040010 */  lwc1  $f4, 0x10($s0)
 /* 036C6C 7F00213C E7A40020 */  swc1  $f4, 0x20($sp)
 /* 036C70 7F002140 C6080014 */  lwc1  $f8, 0x14($s0)
-/* 036C74 7F002144 0FC16642 */  jal   sub_GAME_7F059908
+/* 036C74 7F002144 0FC16642 */  jal   matrix_4x4_7F059908
 /* 036C78 7F002148 E7A80024 */   swc1  $f8, 0x24($sp)
 /* 036C7C 7F00214C 8E2C000C */  lw    $t4, 0xc($s1)
 /* 036C80 7F002150 02002025 */  move  $a0, $s0
@@ -1025,7 +1025,7 @@ glabel expand_08_obj_set_guard_MP_weapons
 /* 037330 7F002800 24050001 */  li    $a1, 1
 .L7F002804:
 /* 037334 7F002804 AFA50018 */  sw    $a1, 0x18($sp)
-/* 037338 7F002808 0FC26919 */  jal   get_num_players
+/* 037338 7F002808 0FC26919 */  jal   getPlayerCount
 /* 03733C 7F00280C AFA7002C */   sw    $a3, 0x2c($sp)
 /* 037340 7F002810 28410002 */  slti  $at, $v0, 2
 /* 037344 7F002814 8FA50018 */  lw    $a1, 0x18($sp)
@@ -1327,7 +1327,7 @@ glabel sub_GAME_7F002A3C
 /* 037698 7F002B68 46062281 */  sub.s $f10, $f4, $f6
 /* 03769C 7F002B6C E7A0001C */  swc1  $f0, 0x1c($sp)
 /* 0376A0 7F002B70 E7A80020 */  swc1  $f8, 0x20($sp)
-/* 0376A4 7F002B74 0FC16642 */  jal   sub_GAME_7F059908
+/* 0376A4 7F002B74 0FC16642 */  jal   matrix_4x4_7F059908
 /* 0376A8 7F002B78 E7AA0018 */   swc1  $f10, 0x18($sp)
 /* 0376AC 7F002B7C 8E0F0014 */  lw    $t7, 0x14($s0)
 /* 0376B0 7F002B80 8FA5003C */  lw    $a1, 0x3c($sp)
@@ -1597,7 +1597,7 @@ glabel sub_GAME_7F002E3C
 /* 037A5C 7F002F2C 00000000 */  nop   
 /* 037A60 7F002F30 46809120 */  cvt.s.w $f4, $f18
 /* 037A64 7F002F34 46082183 */  div.s $f6, $f4, $f8
-/* 037A68 7F002F38 0FC26919 */  jal   get_num_players
+/* 037A68 7F002F38 0FC26919 */  jal   getPlayerCount
 /* 037A6C 7F002F3C E6060074 */   swc1  $f6, 0x74($s0)
 /* 037A70 7F002F40 28410002 */  slti  $at, $v0, 2
 /* 037A74 7F002F44 14200004 */  bnez  $at, .L7F002F58
@@ -1670,7 +1670,7 @@ glabel sub_GAME_7F002E3C
 /* 037B70 7F003040 ADAC001C */  sw    $t4, 0x1c($t5)
 .L7F003044:
 /* 037B74 7F003044 8FA40024 */  lw    $a0, 0x24($sp)
-/* 037B78 7F003048 0FC0E969 */  jal   sub_GAME_7F03A5A4
+/* 037B78 7F003048 0FC0E969 */  jal   attachNewChild
 /* 037B7C 7F00304C 8E250010 */   lw    $a1, 0x10($s1)
 /* 037B80 7F003050 8E05006C */  lw    $a1, 0x6c($s0)
 /* 037B84 7F003054 3C018005 */  lui   $at, %hi(D_8004EF58)
@@ -2178,7 +2178,7 @@ glabel sub_GAME_7F003480
 /* 03828C 7F00375C C6040010 */  lwc1  $f4, 0x10($s0)
 /* 038290 7F003760 E7A40020 */  swc1  $f4, 0x20($sp)
 /* 038294 7F003764 C6080014 */  lwc1  $f8, 0x14($s0)
-/* 038298 7F003768 0FC16642 */  jal   sub_GAME_7F059908
+/* 038298 7F003768 0FC16642 */  jal   matrix_4x4_7F059908
 /* 03829C 7F00376C E7A80024 */   swc1  $f8, 0x24($sp)
 /* 0382A0 7F003770 8FA801D0 */  lw    $t0, 0x1d0($sp)
 /* 0382A4 7F003774 3C0A8004 */  lui   $t2, %hi(PitemZ_entries)
@@ -2687,7 +2687,7 @@ glabel proplvreset2
 /* 03884C 7F003D1C AD410000 */  sw    $at, ($t2)
 /* 038850 7F003D20 904B0000 */  lbu   $t3, ($v0)
 /* 038854 7F003D24 A3A00175 */  sb    $zero, 0x175($sp)
-/* 038858 7F003D28 0FC26919 */  jal   get_num_players
+/* 038858 7F003D28 0FC26919 */  jal   getPlayerCount
 /* 03885C 7F003D2C A3AB0174 */   sb    $t3, 0x174($sp)
 /* 038860 7F003D30 28410002 */  slti  $at, $v0, 2
 /* 038864 7F003D34 14200004 */  bnez  $at, .L7F003D48
@@ -3069,7 +3069,7 @@ glabel proplvreset2
 /* 038DD8 7F0042A8 02602025 */   move  $a0, $s3
 /* 038DDC 7F0042AC 0FC01589 */  jal   sub_GAME_7F005624
 /* 038DE0 7F0042B0 02802025 */   move  $a0, $s4
-/* 038DE4 7F0042B4 0FC26919 */  jal   get_num_players
+/* 038DE4 7F0042B4 0FC26919 */  jal   getPlayerCount
 /* 038DE8 7F0042B8 00008025 */   move  $s0, $zero
 /* 038DEC 7F0042BC 1840000C */  blez  $v0, .L7F0042F0
 /* 038DF0 7F0042C0 00000000 */   nop   
@@ -3080,7 +3080,7 @@ glabel proplvreset2
 /* 038E00 7F0042D0 2404000E */   li    $a0, 14
 /* 038E04 7F0042D4 0FC01897 */  jal   alloc_additional_item_slots
 /* 038E08 7F0042D8 00402025 */   move  $a0, $v0
-/* 038E0C 7F0042DC 0FC26919 */  jal   get_num_players
+/* 038E0C 7F0042DC 0FC26919 */  jal   getPlayerCount
 /* 038E10 7F0042E0 26100001 */   addiu $s0, $s0, 1
 /* 038E14 7F0042E4 0202082A */  slt   $at, $s0, $v0
 /* 038E18 7F0042E8 1420FFF6 */  bnez  $at, .L7F0042C4
@@ -3094,12 +3094,12 @@ glabel proplvreset2
 /* 038E34 7F004304 00000000 */   nop   
 /* 038E38 7F004308 244C0004 */  addiu $t4, $v0, 4
 /* 038E3C 7F00430C 240D0001 */  li    $t5, 1
-/* 038E40 7F004310 0FC26919 */  jal   get_num_players
+/* 038E40 7F004310 0FC26919 */  jal   getPlayerCount
 /* 038E44 7F004314 018DA004 */   sllv  $s4, $t5, $t4
 /* 038E48 7F004318 28410002 */  slti  $at, $v0, 2
 /* 038E4C 7F00431C 14200007 */  bnez  $at, .L7F00433C
 /* 038E50 7F004320 00000000 */   nop   
-/* 038E54 7F004324 0FC26919 */  jal   get_num_players
+/* 038E54 7F004324 0FC26919 */  jal   getPlayerCount
 /* 038E58 7F004328 00000000 */   nop   
 /* 038E5C 7F00432C 244E0014 */  addiu $t6, $v0, 0x14
 /* 038E60 7F004330 240F0001 */  li    $t7, 1
@@ -3390,7 +3390,7 @@ obj_03_expand:
 /* 039288 7F004758 100000E8 */  b     other_obj_expand
 /* 03928C 7F00475C 00000000 */   nop   
 ammo_box_expand:
-/* 039290 7F004760 0FC26919 */  jal   get_num_players
+/* 039290 7F004760 0FC26919 */  jal   getPlayerCount
 /* 039294 7F004764 24100001 */   li    $s0, 1
 /* 039298 7F004768 28410002 */  slti  $at, $v0, 2
 /* 03929C 7F00476C 1420000E */  bnez  $at, .L7F0047A8
@@ -3694,7 +3694,7 @@ other_obj_expand:
 /* 0396EC 7F004BBC 0FC1B39E */  jal   set_obj_instance_controller_scale
 /* 0396F0 7F004BC0 8C850014 */   lw    $a1, 0x14($a0)
 /* 0396F4 7F004BC4 8E440010 */  lw    $a0, 0x10($s2)
-/* 0396F8 7F004BC8 0FC0E969 */  jal   sub_GAME_7F03A5A4
+/* 0396F8 7F004BC8 0FC0E969 */  jal   attachNewChild
 /* 0396FC 7F004BCC 8E050010 */   lw    $a1, 0x10($s0)
 /* 039700 7F004BD0 10000084 */  b     .L7F004DE4
 /* 039704 7F004BD4 00000000 */   nop   
@@ -4080,7 +4080,7 @@ glabel jpt_8004F02C
 /* 03888C 7F003D1C AD410000 */  sw    $at, ($t2)
 /* 038890 7F003D20 904B0000 */  lbu   $t3, ($v0)
 /* 038894 7F003D24 A3A00175 */  sb    $zero, 0x175($sp)
-/* 038898 7F003D28 0FC26C01 */  jal   get_num_players
+/* 038898 7F003D28 0FC26C01 */  jal   getPlayerCount
 /* 03889C 7F003D2C A3AB0174 */   sb    $t3, 0x174($sp)
 /* 0388A0 7F003D30 28410002 */  slti  $at, $v0, 2
 /* 0388A4 7F003D34 14200004 */  bnez  $at, .L7F003D48
@@ -4462,7 +4462,7 @@ glabel jpt_8004F02C
 /* 038E18 7F0042A8 02602025 */   move  $a0, $s3
 /* 038E1C 7F0042AC 0FC01591 */  jal   sub_GAME_7F005624
 /* 038E20 7F0042B0 02802025 */   move  $a0, $s4
-/* 038E24 7F0042B4 0FC26C01 */  jal   get_num_players
+/* 038E24 7F0042B4 0FC26C01 */  jal   getPlayerCount
 /* 038E28 7F0042B8 00008025 */   move  $s0, $zero
 /* 038E2C 7F0042BC 1840000C */  blez  $v0, .L7F0042F0
 /* 038E30 7F0042C0 00000000 */   nop   
@@ -4473,7 +4473,7 @@ glabel jpt_8004F02C
 /* 038E40 7F0042D0 2404000E */   li    $a0, 14
 /* 038E44 7F0042D4 0FC01897 */  jal   alloc_additional_item_slots
 /* 038E48 7F0042D8 00402025 */   move  $a0, $v0
-/* 038E4C 7F0042DC 0FC26C01 */  jal   get_num_players
+/* 038E4C 7F0042DC 0FC26C01 */  jal   getPlayerCount
 /* 038E50 7F0042E0 26100001 */   addiu $s0, $s0, 1
 /* 038E54 7F0042E4 0202082A */  slt   $at, $s0, $v0
 /* 038E58 7F0042E8 1420FFF6 */  bnez  $at, .L7F0042C4
@@ -4487,12 +4487,12 @@ glabel jpt_8004F02C
 /* 038E74 7F004304 00000000 */   nop   
 /* 038E78 7F004308 244C0004 */  addiu $t4, $v0, 4
 /* 038E7C 7F00430C 240D0001 */  li    $t5, 1
-/* 038E80 7F004310 0FC26C01 */  jal   get_num_players
+/* 038E80 7F004310 0FC26C01 */  jal   getPlayerCount
 /* 038E84 7F004314 018DA004 */   sllv  $s4, $t5, $t4
 /* 038E88 7F004318 28410002 */  slti  $at, $v0, 2
 /* 038E8C 7F00431C 14200007 */  bnez  $at, .L7F00433C
 /* 038E90 7F004320 00000000 */   nop   
-/* 038E94 7F004324 0FC26C01 */  jal   get_num_players
+/* 038E94 7F004324 0FC26C01 */  jal   getPlayerCount
 /* 038E98 7F004328 00000000 */   nop   
 /* 038E9C 7F00432C 244E0014 */  addiu $t6, $v0, 0x14
 /* 038EA0 7F004330 240F0001 */  li    $t7, 1
@@ -4788,7 +4788,7 @@ obj_03_expand:
 /* 0392D8 7F004768 100000E8 */  b     other_obj_expand
 /* 0392DC 7F00476C 00000000 */   nop   
 ammo_box_expand:
-/* 0392E0 7F004770 0FC26C01 */  jal   get_num_players
+/* 0392E0 7F004770 0FC26C01 */  jal   getPlayerCount
 /* 0392E4 7F004774 24100001 */   li    $s0, 1
 /* 0392E8 7F004778 28410002 */  slti  $at, $v0, 2
 /* 0392EC 7F00477C 1420000E */  bnez  $at, .L7F0047B8
@@ -5092,7 +5092,7 @@ other_obj_expand:
 /* 03973C 7F004BCC 0FC1B51A */  jal   set_obj_instance_controller_scale
 /* 039740 7F004BD0 8C850014 */   lw    $a1, 0x14($a0)
 /* 039744 7F004BD4 8E440010 */  lw    $a0, 0x10($s2)
-/* 039748 7F004BD8 0FC0EA29 */  jal   sub_GAME_7F03A5A4
+/* 039748 7F004BD8 0FC0EA29 */  jal   attachNewChild
 /* 03974C 7F004BDC 8E050010 */   lw    $a1, 0x10($s0)
 /* 039750 7F004BE0 10000084 */  b     .L7F004DF4
 /* 039754 7F004BE4 00000000 */   nop   

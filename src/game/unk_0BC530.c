@@ -22,19 +22,19 @@ glabel sub_GAME_7F0BC530
 /* 0F1068 7F0BC538 AFB00018 */  sw    $s0, 0x18($sp)
 /* 0F106C 7F0BC53C AFB20020 */  sw    $s2, 0x20($sp)
 /* 0F1070 7F0BC540 AFB1001C */  sw    $s1, 0x1c($sp)
-/* 0F1074 7F0BC544 0FC26919 */  jal   get_num_players
+/* 0F1074 7F0BC544 0FC26919 */  jal   getPlayerCount
 /* 0F1078 7F0BC548 00008025 */   move  $s0, $zero
 /* 0F107C 7F0BC54C 1840000D */  blez  $v0, .L7F0BC584
 /* 0F1080 7F0BC550 00107080 */   sll   $t6, $s0, 2
-/* 0F1084 7F0BC554 3C0F8008 */  lui   $t7, %hi(ptr_BONDdata_p1) 
-/* 0F1088 7F0BC558 25EF9EE0 */  addiu $t7, %lo(ptr_BONDdata_p1) # addiu $t7, $t7, -0x6120
+/* 0F1084 7F0BC554 3C0F8008 */  lui   $t7, %hi(players) 
+/* 0F1088 7F0BC558 25EF9EE0 */  addiu $t7, %lo(players) # addiu $t7, $t7, -0x6120
 /* 0F108C 7F0BC55C 01CF8821 */  addu  $s1, $t6, $t7
 /* 0F1090 7F0BC560 2412FFFF */  li    $s2, -1
 /* 0F1094 7F0BC564 8E380000 */  lw    $t8, ($s1)
 .L7F0BC568:
 /* 0F1098 7F0BC568 26100001 */  addiu $s0, $s0, 1
 /* 0F109C 7F0BC56C 26310004 */  addiu $s1, $s1, 4
-/* 0F10A0 7F0BC570 0FC26919 */  jal   get_num_players
+/* 0F10A0 7F0BC570 0FC26919 */  jal   getPlayerCount
 /* 0F10A4 7F0BC574 AF12108C */   sw    $s2, 0x108c($t8)
 /* 0F10A8 7F0BC578 0202082A */  slt   $at, $s0, $v0
 /* 0F10AC 7F0BC57C 5420FFFA */  bnezl $at, .L7F0BC568

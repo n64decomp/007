@@ -83,8 +83,10 @@ CODEFILES := $(foreach dir,src,$(wildcard $(dir)/*.c))
 CODEOBJECTS := $(foreach file,$(CODEFILES),$(BUILD_DIR)/$(file:.c=.o))
 
 LIBULTRA := lib/libultra_rom.a
-ULTRAFILES := $(foreach dir,src/libultra,$(wildcard $(dir)/*.s))
-ULTRAOBJECTS := $(foreach file,$(ULTRAFILES),$(BUILD_DIR)/$(file:.s=.o))
+ULTRAFILES_S := $(foreach dir,src/libultra,$(wildcard $(dir)/*.s))
+ULTRAFILES_C := $(foreach dir,src/libultra,$(wildcard $(dir)/*.c))
+ULTRAOBJECTS := $(foreach file,$(ULTRAFILES_S),$(BUILD_DIR)/$(file:.s=.o)) \
+				$(foreach file,$(ULTRAFILES_C),$(BUILD_DIR)/$(file:.c=.o))
 
 GAMEFILES := $(foreach dir,src/game,$(wildcard $(dir)/*.c))
 GAMEOBJECTS := $(foreach file,$(GAMEFILES),$(BUILD_DIR)/$(file:.c=.o))
@@ -124,7 +126,8 @@ OBJECTS := $(RSPOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(OBSEGMENT)
 INCLUDE := -I . -I include -I include/ultra64 -I src -I src/game -I src/inflate
 
 CC := $(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/bin/cc
-CFLAGS := -Wo,-loopunroll,0 -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm $(CFLAGWARNING) -woff 819,820,852,821,838 -signed $(INCLUDE) -mips2 $(LCDEFS)
+CFLAGS := 0 -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm $(CFLAGWARNING) -woff 819,820,852,821,838 -signed $(INCLUDE) -mips2 $(LCDEFS) -DTARGET_N64
+CFLAGS_LIBULTRA := 0 -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm $(CFLAGWARNING) -woff 819,820,852,821,838 -signed $(INCLUDE) -mips2 $(LCDEFS) -DTARGET_N64
 
 LD := $(TOOLCHAIN)ld
 LD_SCRIPT := ge007.$(COUNTRYCODE).ld
@@ -155,6 +158,9 @@ clean:
 	rm -f $(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(COUNTRYCODE).map \
 	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) \
 	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONT_OBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES) $(RSPOBJECTS)
+
+$(BUILD_DIR)/src/libultra/%.o: src/libultra/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
 
 $(BUILD_DIR)/rsp/%.bin: rsp/*.s
 	$(ARMIPS) -sym $@.sym -strequ CODE_FILE $(BUILD_DIR)/rsp/$*.bin -strequ DATA_FILE $(BUILD_DIR)/rsp/$*_data.bin $<

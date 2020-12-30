@@ -105,7 +105,7 @@ GLOBAL_ASM(
 glabel sub_GAME_7F09B820
 /* 0D0350 7F09B820 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0D0354 7F09B824 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0D0358 7F09B828 0FC26919 */  jal   get_num_players
+/* 0D0358 7F09B828 0FC26919 */  jal   getPlayerCount
 /* 0D035C 7F09B82C 00000000 */   nop   
 /* 0D0360 7F09B830 28410002 */  slti  $at, $v0, 2
 /* 0D0364 7F09B834 1420000F */  bnez  $at, .L7F09B874

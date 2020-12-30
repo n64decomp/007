@@ -1,1 +1,0 @@
-  This display list is designed for non-mipmapped images but does not disable mipmap usage currently.  A correction is coming forthwith.

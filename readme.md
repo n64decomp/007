@@ -1,5 +1,8 @@
 This is a working Goldeneye 007 decompilation! 
 
+[![GE-CI](https://github.com/kholdfuzion/goldeneye_src/workflows/GE-CI/badge.svg)](https://kholdfuzion.github.io/goldeneyestatus/)
+
+
 ## Setup
 The only requirements for Ubuntu 16.04 and 18.04 should be 
 ```

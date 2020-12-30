@@ -2,10 +2,12 @@
 #define _CHR_H_
 #include "ultra64.h"
 #include "bondgame.h"
+#include "chrai.h"
+#include "bondtypes.h"  // chrdata
 
-struct animation_something
-{
-  s32 anonymous_0;
+ struct animation_something
+ {
+   s32 anonymous_0;
   s32 field_4;
   s32 field_8;
   f32 field_C;
@@ -16,7 +18,7 @@ struct animation_something
   s32 field_20;
   struct struck_animation_table *field_24;
   s32 field_28;
-};
+ };
 
 struct struck_animation_table
 {
@@ -173,7 +175,7 @@ extern s32 D_8002C910;
 extern s32 D_8002CC58;
 extern s32 show_patrols_flag;
 extern s32 player1_guardID;
-extern s32 ptr_guard_data;
+extern struct chrdata *ptr_guard_data;
 extern s32 num_guards;
 extern s32 D_8002CC6C[];
 extern s32 D_8002CCA8;

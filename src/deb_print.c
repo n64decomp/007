@@ -590,7 +590,7 @@ void set_ptr_video_buffers(s32 arg0, s32 arg1) {
  *     calls 70005984: A0=803B5000, A1=803DA800
  */
 void set_video_buffer_pointers(void) {
-    set_ptr_video_buffers(&cfb_16_a, &cfb_16_b);
+    set_ptr_video_buffers(&cfb_16[0], &cfb_16[1]);
 }
 
 

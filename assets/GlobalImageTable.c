@@ -1,7 +1,7 @@
 #include "ultra64.h"
 #include "bondconstants.h"
 #include "bondtypes.h"
-#include <gbi.h>
+#include "PR/gbi.h"
 
 struct sGlobalImageTable GlobalImageTable = {
     { //globalDL_0x000

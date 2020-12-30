@@ -71,6 +71,14 @@ struct struct_20 {
     void * anonymous_19;
 };
 
+struct Pad {
+    u32 padNumber;
+    s32* neighbours;
+    u32 pathSetIndex;
+    s32 dist_tmp;
+};
+
+extern struct Pad * ptr_setup_path_tbl;
 extern u32 D_800312A0[];
 extern u32 D_800312B4[];
 extern u32 D_800312C8[];

@@ -90,7 +90,7 @@ glabel sub_GAME_7F0B3200
 
 
 #ifdef NONMATCHING
-f32 sub_GAME_7F0B32D8(struct xyzpoint *param_1,struct xyzpoint *param_2,struct xyzpoint *param_3)
+f32 sub_GAME_7F0B32D8(struct coord *param_1,struct coord *param_2,struct coord *param_3)
 
 {
 

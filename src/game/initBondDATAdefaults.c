@@ -347,11 +347,11 @@ glabel sets_a_bunch_of_BONDdata_values_to_default
 /* 03B2A4 7F006774 0FC1BF7A */  jal   sub_GAME_7F06FDE8
 /* 03B2A8 7F006778 8DC50008 */   lw    $a1, 8($t6)
 /* 03B2AC 7F00677C 8E240000 */  lw    $a0, ($s1)
-/* 03B2B0 7F006780 3C057F09 */  lui   $a1, %hi(sub_GAME_7F08DBB0) # $a1, 0x7f09
-/* 03B2B4 7F006784 24A5DBB0 */  addiu $a1, %lo(sub_GAME_7F08DBB0) # addiu $a1, $a1, -0x2450
+/* 03B2B0 7F006780 3C057F09 */  lui   $a1, %hi(currentPlayerToggle5BC) # $a1, 0x7f09
+/* 03B2B4 7F006784 24A5DBB0 */  addiu $a1, %lo(currentPlayerToggle5BC) # addiu $a1, $a1, -0x2450
 /* 03B2B8 7F006788 0FC1BF8F */  jal   sub_GAME_7F06FE3C
 /* 03B2BC 7F00678C 24840598 */   addiu $a0, $a0, 0x598
-/* 03B2C0 7F006790 0FC236F2 */  jal   sub_GAME_7F08DBC8
+/* 03B2C0 7F006790 0FC236F2 */  jal   currentPlayerUpdateIdleHeadRoll
 /* 03B2C4 7F006794 00000000 */   nop   
 /* 03B2C8 7F006798 8FBF0044 */  lw    $ra, 0x44($sp)
 /* 03B2CC 7F00679C D7B40020 */  ldc1  $f20, 0x20($sp)
@@ -640,11 +640,11 @@ glabel sets_a_bunch_of_BONDdata_values_to_default
 /* 03B300 7F006790 0FC1C0F6 */  jal   sub_GAME_7F06FDE8
 /* 03B304 7F006794 8DC50008 */   lw    $a1, 8($t6)
 /* 03B308 7F006798 8E240000 */  lw    $a0, ($s1)
-/* 03B30C 7F00679C 3C057F09 */  lui   $a1, %hi(sub_GAME_7F08DBB0) # $a1, 0x7f09
-/* 03B310 7F0067A0 24A5E690 */  addiu $a1, %lo(sub_GAME_7F08DBB0) # addiu $a1, $a1, -0x1970
+/* 03B30C 7F00679C 3C057F09 */  lui   $a1, %hi(currentPlayerToggle5BC) # $a1, 0x7f09
+/* 03B310 7F0067A0 24A5E690 */  addiu $a1, %lo(currentPlayerToggle5BC) # addiu $a1, $a1, -0x1970
 /* 03B314 7F0067A4 0FC1C10B */  jal   sub_GAME_7F06FE3C
 /* 03B318 7F0067A8 24840598 */   addiu $a0, $a0, 0x598
-/* 03B31C 7F0067AC 0FC239AA */  jal   sub_GAME_7F08DBC8
+/* 03B31C 7F0067AC 0FC239AA */  jal   currentPlayerUpdateIdleHeadRoll
 /* 03B320 7F0067B0 00000000 */   nop   
 /* 03B324 7F0067B4 8FBF0044 */  lw    $ra, 0x44($sp)
 /* 03B328 7F0067B8 D7B40020 */  ldc1  $f20, 0x20($sp)

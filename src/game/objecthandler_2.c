@@ -1,4 +1,5 @@
 #include "ultra64.h"
+#include "structs.h"
 
 //D:80054600
 const char aGetsubmatrixNoObjinst[] = "getsubmatrix: no objinst!\n";
@@ -1072,38 +1073,14 @@ glabel getinstsize
 
 
 
-
-#ifdef NONMATCHING
-void sub_GAME_7F06D07C(void) {
-
+// Also matches with float*s
+void interpolate3dVectors(struct float3 *v,struct float3 *w,float k)
+{
+  v->x += (w->x - v->x) * k;
+  v->y += (w->y - v->y) * k;
+  v->z += (w->z - v->z) * k;
+  return;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F06D07C
-/* 0A1BAC 7F06D07C C4800000 */  lwc1  $f0, ($a0)
-/* 0A1BB0 7F06D080 C4A40000 */  lwc1  $f4, ($a1)
-/* 0A1BB4 7F06D084 44866000 */  mtc1  $a2, $f12
-/* 0A1BB8 7F06D088 C4820004 */  lwc1  $f2, 4($a0)
-/* 0A1BBC 7F06D08C 46002181 */  sub.s $f6, $f4, $f0
-/* 0A1BC0 7F06D090 C48E0008 */  lwc1  $f14, 8($a0)
-/* 0A1BC4 7F06D094 460C3202 */  mul.s $f8, $f6, $f12
-/* 0A1BC8 7F06D098 46080280 */  add.s $f10, $f0, $f8
-/* 0A1BCC 7F06D09C E48A0000 */  swc1  $f10, ($a0)
-/* 0A1BD0 7F06D0A0 C4B00004 */  lwc1  $f16, 4($a1)
-/* 0A1BD4 7F06D0A4 46028481 */  sub.s $f18, $f16, $f2
-/* 0A1BD8 7F06D0A8 460C9102 */  mul.s $f4, $f18, $f12
-/* 0A1BDC 7F06D0AC 46041180 */  add.s $f6, $f2, $f4
-/* 0A1BE0 7F06D0B0 E4860004 */  swc1  $f6, 4($a0)
-/* 0A1BE4 7F06D0B4 C4A80008 */  lwc1  $f8, 8($a1)
-/* 0A1BE8 7F06D0B8 460E4281 */  sub.s $f10, $f8, $f14
-/* 0A1BEC 7F06D0BC 460C5402 */  mul.s $f16, $f10, $f12
-/* 0A1BF0 7F06D0C0 46107480 */  add.s $f18, $f14, $f16
-/* 0A1BF4 7F06D0C4 03E00008 */  jr    $ra
-/* 0A1BF8 7F06D0C8 E4920008 */   swc1  $f18, 8($a0)
-)
-#endif
-
 
 
 
@@ -1485,7 +1462,7 @@ glabel sub_GAME_7F06D490
 /* 0A2028 7F06D4F8 51E0000B */  beql  $t7, $zero, .L7F06D528
 /* 0A202C 7F06D4FC 8E380054 */   lw    $t8, 0x54($s1)
 /* 0A2030 7F06D500 44060000 */  mfc1  $a2, $f0
-/* 0A2034 7F06D504 0FC1B41F */  jal   sub_GAME_7F06D07C
+/* 0A2034 7F06D504 0FC1B41F */  jal   interpolate3dVectors
 /* 0A2038 7F06D508 24450024 */   addiu $a1, $v0, 0x24
 /* 0A203C 7F06D50C C60C0030 */  lwc1  $f12, 0x30($s0)
 /* 0A2040 7F06D510 C60E0020 */  lwc1  $f14, 0x20($s0)

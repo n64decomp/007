@@ -1,5 +1,6 @@
 #include "ultra64.h"
 #include "game/lightfixture.h"
+#include "assets/images/image_externs.h"
 
 // bss
 //CODE.bss:80082660
@@ -19,49 +20,56 @@ s32 dword_CODE_bss_80083318;
 //D:80046030
 s32 D_80046030[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-
+//this mostly matches 4 bytes different
+#ifdef NONMATCHING
 void init_lightfixture_tables(void)
 {
     s32 i;
-
-    for (i=0;i<0x64;i++)
-    {
-        light_fixture_table[i].index = 0;
-    }
-
-    for (i=0;i<0x400;i=i+8)
-    {
-        word_CODE_bss_80082B18[i+2] = 0;
-        word_CODE_bss_80082B18[i+4] = 0;
-        word_CODE_bss_80082B18[i+6] = 0;
-        word_CODE_bss_80082B18[i+0] = 0;
-    }
-
+    for (i=0;i<0x64;i++) {light_fixture_table[i].index = 0;}
+    for (i=0;i<0x400;i++) {word_CODE_bss_80082B18[i] = 0;}
     D_80046030[0] = 0;
 }
+#else
+GLOBAL_ASM(
+.text
+glabel init_lightfixture_tables
+/* 0F0000 7F0BB4D0 3C038008 */  lui   $v1, %hi(light_fixture_table)
+/* 0F0004 7F0BB4D4 3C028008 */  lui   $v0, %hi(cur_entry_lightfixture_table)
+/* 0F0008 7F0BB4D8 24422B10 */  addiu $v0, %lo(cur_entry_lightfixture_table) # addiu $v0, $v0, 0x2b10
+/* 0F000C 7F0BB4DC 24632660 */  addiu $v1, %lo(light_fixture_table) # addiu $v1, $v1, 0x2660
+.L7F0BB4E0:
+/* 0F0010 7F0BB4E0 2463000C */  addiu $v1, $v1, 0xc
+/* 0F0014 7F0BB4E4 0062082B */  sltu  $at, $v1, $v0
+/* 0F0018 7F0BB4E8 1420FFFD */  bnez  $at, .L7F0BB4E0
+/* 0F001C 7F0BB4EC A460FFF4 */   sh    $zero, -0xc($v1)
+/* 0F0020 7F0BB4F0 3C038008 */  lui   $v1, %hi(word_CODE_bss_80082B18)
+/* 0F0024 7F0BB4F4 3C028008 */  lui   $v0, %hi(dword_CODE_bss_80083318)
+/* 0F0028 7F0BB4F8 24423318 */  addiu $v0, %lo(dword_CODE_bss_80083318) # addiu $v0, $v0, 0x3318
+/* 0F002C 7F0BB4FC 24632B18 */  addiu $v1, %lo(word_CODE_bss_80082B18) # addiu $v1, $v1, 0x2b18
+.L7F0BB500:
+                                /*v1 offsets don't match*/
+/* 0F0030 7F0BB500 24630010 */  addiu $v1, $v1, 0x10
+/* 0F0034 7F0BB504 A460FFF4 */  sh    $zero, -0xc($v1)
+/* 0F0038 7F0BB508 A460FFF8 */  sh    $zero, -8($v1)
+/* 0F003C 7F0BB50C A460FFFC */  sh    $zero, -4($v1)
+/* 0F0040 7F0BB510 1462FFFB */  bne   $v1, $v0, .L7F0BB500
+/* 0F0044 7F0BB514 A460FFF0 */   sh    $zero, -0x10($v1)
+/* 0F0048 7F0BB518 3C018004 */  lui   $at, %hi(D_80046030)
+/* 0F004C 7F0BB51C 03E00008 */  jr    $ra
+/* 0F0050 7F0BB520 AC206030 */   sw    $zero, %lo(D_80046030)($at)
+)
+#endif
 
 
 s32 get_index_of_current_entry_in_init_lightfixture_table(void)
 {
     s32 i;
 
-    for (i = 0; i != 0x64; i+=4)
+    for (i = 0; i != 0x64; i++)
     {
         if (light_fixture_table[i].index == 0)
         {
             return i;
-        }
-        if (light_fixture_table[i+1].index == 0)
-        {
-            return i + 1;
-        }
-        if (light_fixture_table[i+2].index == 0)
-        {
-            return i + 2;
-        }
-        if (light_fixture_table[i+3].index == 0)
-        {
-            return i + 3;
         }
     }
     return 0x64;
@@ -86,87 +94,27 @@ void save_ptrDL_enpoint_to_current_init_lightfixture_table(Gfx *param_1)
 }
 
 
-
-#ifdef NONMATCHING
 s32 check_if_imageID_is_light(s32 imageID)
 {
-    if (imageID == 0xC9)
+    if ((imageID == _image201_ID_LIGHT)  || 
+        (imageID == _image203_ID_LIGHT)  || 
+        (imageID == _image205_ID_LIGHT)  || 
+        (imageID == _image252_ID_LIGHT)  || 
+        (imageID == _image254_ID_LIGHT)  || 
+        (imageID == _image255_ID_LIGHT)  || 
+        (imageID == _image256_ID_LIGHT) || 
+        (imageID == _image428_ID_LIGHT) || 
+        (imageID == _image982_ID_LIGHT) || 
+        (imageID == _image1383_ID_LIGHT))
     {
         return 1;
-    }
-    if (imageID == 0xCB)
+    } 
+    else
     {
-        return 1;
+        return 0;
     }
-    if (imageID == 0xCD)
-    {
-        return 1;
-    }
-    if (imageID == 0xFC)
-    {
-        return 1;
-    }
-    if (imageID == 0xFE)
-    {
-        return 1;
-    }
-    if (imageID == 0xFF)
-    {
-        return 1;
-    }
-    if (imageID == 0x100)
-    {
-        return 1;
-    }
-    if (imageID == 0x1AC)
-    {
-        return 1;
-    }
-    if (imageID == 0x3D6)
-    {
-        return 1;
-    }
-    if (imageID == 0x567)
-    {
-        return 1;
-    }
-    return 0;
 }
 
-#else
-GLOBAL_ASM(
-.text
-glabel check_if_imageID_is_light
-/* 0F0160 7F0BB630 240100C9 */  li    $at, 201
-/* 0F0164 7F0BB634 10810013 */  beq   $a0, $at, .L7F0BB684
-/* 0F0168 7F0BB638 240100CB */   li    $at, 203
-/* 0F016C 7F0BB63C 10810011 */  beq   $a0, $at, .L7F0BB684
-/* 0F0170 7F0BB640 240100CD */   li    $at, 205
-/* 0F0174 7F0BB644 1081000F */  beq   $a0, $at, .L7F0BB684
-/* 0F0178 7F0BB648 240100FC */   li    $at, 252
-/* 0F017C 7F0BB64C 1081000D */  beq   $a0, $at, .L7F0BB684
-/* 0F0180 7F0BB650 240100FE */   li    $at, 254
-/* 0F0184 7F0BB654 1081000B */  beq   $a0, $at, .L7F0BB684
-/* 0F0188 7F0BB658 240100FF */   li    $at, 255
-/* 0F018C 7F0BB65C 10810009 */  beq   $a0, $at, .L7F0BB684
-/* 0F0190 7F0BB660 24010100 */   li    $at, 256
-/* 0F0194 7F0BB664 10810007 */  beq   $a0, $at, .L7F0BB684
-/* 0F0198 7F0BB668 240101AC */   li    $at, 428
-/* 0F019C 7F0BB66C 10810005 */  beq   $a0, $at, .L7F0BB684
-/* 0F01A0 7F0BB670 240103D6 */   li    $at, 982
-/* 0F01A4 7F0BB674 10810003 */  beq   $a0, $at, .L7F0BB684
-/* 0F01A8 7F0BB678 24010567 */   li    $at, 1383
-/* 0F01AC 7F0BB67C 14810003 */  bne   $a0, $at, .L7F0BB68C
-/* 0F01B0 7F0BB680 00001025 */   move  $v0, $zero
-.L7F0BB684:
-/* 0F01B4 7F0BB684 03E00008 */  jr    $ra
-/* 0F01B8 7F0BB688 24020001 */   li    $v0, 1
-
-.L7F0BB68C:
-/* 0F01BC 7F0BB68C 03E00008 */  jr    $ra
-/* 0F01C0 7F0BB690 00000000 */   nop   
-)
-#endif
 
 
 

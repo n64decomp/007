@@ -1,0 +1,108 @@
+name: GE-CI
+
+on:
+  push:
+    branches: master
+    paths-ignore:
+    - 'tools/**'
+  pull_request:
+    branches: master
+    
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  buildus:
+    
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Depedencies
+        run: |
+          sudo apt update
+          sudo apt install binutils-mips-linux-gnu make
+      
+      - name: Get US File
+        env:
+          FILE_US: ${{ secrets.SECRET_FILE_US  }}
+        run: wget -O baserom.u.z64 $FILE_US
+      
+      - name: Extract US Assets
+        run: ./extract_baserom.u.sh
+
+      - name: Make US 
+        run: make -j VERSION=US
+          
+      - name: Make report
+        run: make -C tools/report
+        
+      - name: Stats
+        run: python3 tools/ge-stats.py --version us --report
+        #git diff HEAD^ HEAD --name-only
+            
+        # expected args
+        # 1481 15854 12774 232276 564 1312 652 20330 15471 269772 49 336 tools/report/index.html "src/game/bond.c"
+      
+      # Replace this with Git push to repo
+      # but somehow avoid loop
+      
+      #- uses: actions/download-artifact@v2
+      #  with:
+      #    name: my-artifact
+      #    path: tools/report/index.html
+      - name: Upload output files
+
+        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          API_TOKEN_USER: ${{ secrets.API_TOKEN_USER }}
+          API_TOKEN_EMAIL: ${{ secrets.API_TOKEN_EMAIL }}
+
+        with:
+          destination_repo: 'kholdfuzion/goldeneyestatus'
+          user_email: $API_TOKEN_EMAIL
+          user_name: $API_TOKEN_USER
+          source_file: |
+            tools/report/cursor.cur
+            tools/report/index.html
+            tools/report/sfx.ogg
+            tools/report/background.jpg
+
+  buildjp:
+    
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Depedencies
+        run: |
+          sudo apt update
+          sudo apt install binutils-mips-linux-gnu make
+      
+      - name: Get US File
+        env:
+          FILE_US: ${{ secrets.SECRET_FILE_US  }}
+        run: wget -O baserom.u.z64 $FILE_US
+      
+      - name: Get JP File
+        env:
+          FILE_JP: ${{ secrets.SECRET_FILE_JP  }}
+        run: wget -O baserom.j.z64 $FILE_JP
+
+      - name: Extract US Assets
+        run: ./extract_baserom.u.sh
+
+      - name: Extract JP Assets
+        run: ./extract_diff.j.sh
+
+      - name: Make JP 
+        run: make -j VERSION=JP
+
+      - name: Stats
+        run: python3 tools/ge-stats.py --version jp
+      
+#need way of telling report that JAP passed/failed

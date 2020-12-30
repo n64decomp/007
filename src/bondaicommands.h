@@ -952,8 +952,10 @@
 //=============================================================================
 // note: uses chr->visionrange while checking for bond. once bond has been spotted,
 // check if bond and guard are within line of sight (ignores facing direction).
+// injured guards will also set spotted Bond state (won't work with invincible/armored guards).
 // if bond breaks line of sight, do not goto label. if bond has broken line of
-// sight for more than 10 seconds, reset spotted bond state
+// sight for more than 10 seconds, reset spotted bond state. when using with
+// command 3E, make sure 32 takes priority over command 3E
 //===========================================================================*/
 #define if_guard_sees_bond_ID 0x32
 #define if_guard_sees_bond_LENGTH 0x02
@@ -1112,16 +1114,22 @@
         label,
 
 /*=============================================================================
-// name: if_guard_was_shot_within_last_10_secs
+// name: if_guard_was_shot_or_seen_bond_within_last_10_secs
 // command id: 3E
-// info: if guard was shot (from anyone) within the last 10 seconds, goto label
+// info: if guard was shot (from anyone) or saw Bond within the last 10 seconds, goto label
 //=============================================================================
-// note: command will not count guard as shot if they are invincible/have armour
+// note: command will not count guard as shot if they are invincible/have armour.
+// if guard saw Bond (using command 32) in the last 10 seconds, goto label. when
+// using with command 32, make sure 32 takes priority over command 3E. if guard
+// was injured within the last 10 seconds, goto label when finished injury reaction
+// animation (will not work with invincible/armored guards).
+// to check if guard was hit/damaged use commands 7E/F8 instead, or check if
+// guard flags CHRFLAG_WAS_DAMAGED/CHRFLAG_WAS_HIT are set using command 9F/A2
 //===========================================================================*/
-#define if_guard_was_shot_within_last_10_secs_ID 0x3E
-#define if_guard_was_shot_within_last_10_secs_LENGTH 0x02
-#define if_guard_was_shot_within_last_10_secs(label) \
-        if_guard_was_shot_within_last_10_secs_ID, \
+#define if_guard_was_shot_or_seen_bond_within_last_10_secs_ID 0x3E
+#define if_guard_was_shot_or_seen_bond_within_last_10_secs_LENGTH 0x02
+#define if_guard_was_shot_or_seen_bond_within_last_10_secs(label) \
+        if_guard_was_shot_or_seen_bond_within_last_10_secs_ID, \
         label,
 
 /*=============================================================================
@@ -2436,7 +2444,7 @@
 /*=============================================================================
 // name: if_guard_bitfield_is_set_on
 // command id: 96
-// info: if bits is set on in chr->BITFIELD, goto label
+// info: if any bits in argument are set on in chr->BITFIELD, goto label
 //=============================================================================
 // note: can be used by obj ai lists, obj lists are free to utilize the entire
 //       spectrum of flags
@@ -2483,7 +2491,7 @@
 /*=============================================================================
 // name: if_chr_bitfield_is_set_on
 // command id: 99
-// info: if bits is set on in chr->BITFIELD, goto label
+// info: if any bits in argument are set on in chr->BITFIELD, goto label
 //===========================================================================*/
 #define if_chr_bitfield_is_set_on_ID 0x99
 #define if_chr_bitfield_is_set_on_LENGTH 0x04

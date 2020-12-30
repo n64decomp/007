@@ -19,7 +19,7 @@ if [ "$DOALL" == "1" ] || [ $1 == 'files' ]; then
 fi
 
 if [ "$DOALL" == "1" ] || [ $1 == 'images' ]; then
-    while IFS=, read -r offset size name
+    while IFS=, read -r offset size name compressed extract
     do
         echo "removing $name"
         rm -f $name

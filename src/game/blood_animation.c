@@ -737,15 +737,15 @@ glabel sub_GAME_7F01C670
 /* 051384 7F01C854 AC6F0004 */  sw    $t7, 4($v1)
 /* 051388 7F01C858 26100008 */  addiu $s0, $s0, 8
 /* 05138C 7F01C85C AFB00040 */  sw    $s0, 0x40($sp)
-/* 051390 7F01C860 0C001127 */  jal   get_video2_settings_width
+/* 051390 7F01C860 0C001127 */  jal   viGetViewWidth
 /* 051394 7F01C864 26100008 */   addiu $s0, $s0, 8
-/* 051398 7F01C868 0C001145 */  jal   get_video2_settings_ulx
+/* 051398 7F01C868 0C001145 */  jal   viGetViewLeft
 /* 05139C 7F01C86C A7A20026 */   sh    $v0, 0x26($sp)
-/* 0513A0 7F01C870 0C001149 */  jal   get_video2_settings_uly
+/* 0513A0 7F01C870 0C001149 */  jal   viGetViewTop
 /* 0513A4 7F01C874 A7A20028 */   sh    $v0, 0x28($sp)
 /* 0513A8 7F01C878 00028C00 */  sll   $s1, $v0, 0x10
 /* 0513AC 7F01C87C 0011C403 */  sra   $t8, $s1, 0x10
-/* 0513B0 7F01C880 0C00112B */  jal   get_video2_settings_height
+/* 0513B0 7F01C880 0C00112B */  jal   viGetViewHeight
 /* 0513B4 7F01C884 03008825 */   move  $s1, $t8
 /* 0513B8 7F01C888 87B90028 */  lh    $t9, 0x28($sp)
 /* 0513BC 7F01C88C 87A80026 */  lh    $t0, 0x26($sp)
@@ -762,11 +762,11 @@ glabel sub_GAME_7F01C670
 /* 0513E8 7F01C8B8 03214025 */  or    $t0, $t9, $at
 /* 0513EC 7F01C8BC 000C6B00 */  sll   $t5, $t4, 0xc
 /* 0513F0 7F01C8C0 010D4825 */  or    $t1, $t0, $t5
-/* 0513F4 7F01C8C4 0C001145 */  jal   get_video2_settings_ulx
+/* 0513F4 7F01C8C4 0C001145 */  jal   viGetViewLeft
 /* 0513F8 7F01C8C8 AD490000 */   sw    $t1, ($t2)
 /* 0513FC 7F01C8CC 00028C00 */  sll   $s1, $v0, 0x10
 /* 051400 7F01C8D0 00115C03 */  sra   $t3, $s1, 0x10
-/* 051404 7F01C8D4 0C001149 */  jal   get_video2_settings_uly
+/* 051404 7F01C8D4 0C001149 */  jal   viGetViewTop
 /* 051408 7F01C8D8 01608825 */   move  $s1, $t3
 /* 05140C 7F01C8DC 00117880 */  sll   $t7, $s1, 2
 /* 051410 7F01C8E0 8FAD0040 */  lw    $t5, 0x40($sp)
@@ -785,11 +785,11 @@ glabel sub_GAME_7F01C670
 /* 051444 7F01C914 3C0AB300 */  lui   $t2, 0xb300
 /* 051448 7F01C918 AC8A0000 */  sw    $t2, ($a0)
 /* 05144C 7F01C91C AFA40038 */  sw    $a0, 0x38($sp)
-/* 051450 7F01C920 0C001127 */  jal   get_video2_settings_width
+/* 051450 7F01C920 0C001127 */  jal   viGetViewWidth
 /* 051454 7F01C924 26100008 */   addiu $s0, $s0, 8
 /* 051458 7F01C928 00028C00 */  sll   $s1, $v0, 0x10
 /* 05145C 7F01C92C 00115C03 */  sra   $t3, $s1, 0x10
-/* 051460 7F01C930 0C00112B */  jal   get_video2_settings_height
+/* 051460 7F01C930 0C00112B */  jal   viGetViewHeight
 /* 051464 7F01C934 01608825 */   move  $s1, $t3
 /* 051468 7F01C938 3C0C0001 */  lui   $t4, (0x00014000 >> 16) # lui $t4, 1
 /* 05146C 7F01C93C 358C4000 */  ori   $t4, (0x00014000 & 0xFFFF) # ori $t4, $t4, 0x4000
