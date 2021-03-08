@@ -3,7 +3,7 @@ This is a working Goldeneye 007 decompilation!
 [![NTSC-Status](https://github.com/kholdfuzion/goldeneye_src/workflows/NTSC-Status/badge.svg)](https://kholdfuzion.github.io/goldeneyestatus/)
 [![JP-Status](https://github.com/kholdfuzion/goldeneye_src/workflows/JP-Status/badge.svg)](https://kholdfuzion.github.io/goldeneyestatus/JPN.htm)
 
-This repo builds a matching USA. JPN or PAL ROM.
+This repo builds a matching USA. JPN or (currently broken PAL ROM).
 
 This repo does not include all assets necessary for compiling the ROMs. A prior copy of the game is required to extract the assets.
 
