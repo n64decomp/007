@@ -168,10 +168,10 @@ glabel sub_GAME_7F0A1DA0
 /* 0D6A6C 7F0A1F3C C6320000 */  lwc1  $f18, ($s1)
 /* 0D6A70 7F0A1F40 44023000 */  mfc1  $v0, $f6
 /* 0D6A74 7F0A1F44 C7A60084 */  lwc1  $f6, 0x84($sp)
-/* 0D6A78 7F0A1F48 3C048006 */  lui   $a0, %hi(ptr_sfx_buf)
+/* 0D6A78 7F0A1F48 3C048006 */  lui   $a0, %hi(g_musicSfxBufferPtr)
 /* 0D6A7C 7F0A1F4C 0002C843 */  sra   $t9, $v0, 1
 /* 0D6A80 7F0A1F50 44995000 */  mtc1  $t9, $f10
-/* 0D6A84 7F0A1F54 8C843720 */  lw    $a0, %lo(ptr_sfx_buf)($a0)
+/* 0D6A84 7F0A1F54 8C843720 */  lw    $a0, %lo(g_musicSfxBufferPtr)($a0)
 /* 0D6A88 7F0A1F58 24050047 */  li    $a1, 71
 /* 0D6A8C 7F0A1F5C 468053A0 */  cvt.s.w $f14, $f10
 /* 0D6A90 7F0A1F60 00003025 */  move  $a2, $zero
@@ -263,7 +263,7 @@ glabel sub_GAME_7F0A1DA0
 /* 0D6BE0 7F0A20B0 E7A400C4 */  swc1  $f4, 0xc4($sp)
 /* 0D6BE4 7F0A20B4 46149102 */  mul.s $f4, $f18, $f20
 /* 0D6BE8 7F0A20B8 460A2180 */  add.s $f6, $f4, $f10
-/* 0D6BEC 7F0A20BC 0C002914 */  jal   get_random_value
+/* 0D6BEC 7F0A20BC 0C002914 */  jal   randomGetNext
 /* 0D6BF0 7F0A20C0 E7A600C8 */   swc1  $f6, 0xc8($sp)
 /* 0D6BF4 7F0A20C4 44828000 */  mtc1  $v0, $f16
 /* 0D6BF8 7F0A20C8 4405F000 */  mfc1  $a1, $f30
@@ -341,7 +341,7 @@ glabel sub_GAME_7F0A2160
 /* 0D6CAC 7F0A217C F7B40018 */  sdc1  $f20, 0x18($sp)
 /* 0D6CB0 7F0A2180 AFA40058 */  sw    $a0, 0x58($sp)
 /* 0D6CB4 7F0A2184 AFA5005C */  sw    $a1, 0x5c($sp)
-/* 0D6CB8 7F0A2188 0C002914 */  jal   get_random_value
+/* 0D6CB8 7F0A2188 0C002914 */  jal   randomGetNext
 /* 0D6CBC 7F0A218C AFA60060 */   sw    $a2, 0x60($sp)
 /* 0D6CC0 7F0A2190 3C012F80 */  li    $at, 0x2F800000 # 0.000000
 /* 0D6CC4 7F0A2194 4481A000 */  mtc1  $at, $f20
@@ -357,7 +357,7 @@ glabel sub_GAME_7F0A2160
 .L7F0A21BC:
 /* 0D6CEC 7F0A21BC 46143002 */  mul.s $f0, $f6, $f20
 /* 0D6CF0 7F0A21C0 46000280 */  add.s $f10, $f0, $f0
-/* 0D6CF4 7F0A21C4 0C002914 */  jal   get_random_value
+/* 0D6CF4 7F0A21C4 0C002914 */  jal   randomGetNext
 /* 0D6CF8 7F0A21C8 46165601 */   sub.s $f24, $f10, $f22
 /* 0D6CFC 7F0A21CC 44828000 */  mtc1  $v0, $f16
 /* 0D6D00 7F0A21D0 04410005 */  bgez  $v0, .L7F0A21E8
@@ -374,7 +374,7 @@ glabel sub_GAME_7F0A2160
 /* 0D6D28 7F0A21F8 C430771C */  lwc1  $f16, %lo(D_8005771C)($at)
 /* 0D6D2C 7F0A21FC 46064282 */  mul.s $f10, $f8, $f6
 /* 0D6D30 7F0A2200 46105101 */  sub.s $f4, $f10, $f16
-/* 0D6D34 7F0A2204 0C002914 */  jal   get_random_value
+/* 0D6D34 7F0A2204 0C002914 */  jal   randomGetNext
 /* 0D6D38 7F0A2208 E7A40050 */   swc1  $f4, 0x50($sp)
 /* 0D6D3C 7F0A220C 3C108004 */  lui   $s0, %hi(D_80040940)
 /* 0D6D40 7F0A2210 26100940 */  addiu $s0, %lo(D_80040940) # addiu $s0, $s0, 0x940
@@ -446,7 +446,7 @@ glabel sub_GAME_7F0A2160
 /* 0D6E44 7F0A2314 00006012 */  mflo  $t4
 /* 0D6E48 7F0A2318 46022482 */  mul.s $f18, $f4, $f2
 /* 0D6E4C 7F0A231C 014C5821 */  addu  $t3, $t2, $t4
-/* 0D6E50 7F0A2320 0C002914 */  jal   get_random_value
+/* 0D6E50 7F0A2320 0C002914 */  jal   randomGetNext
 /* 0D6E54 7F0A2324 E5720024 */   swc1  $f18, 0x24($t3)
 /* 0D6E58 7F0A2328 44824000 */  mtc1  $v0, $f8
 /* 0D6E5C 7F0A232C 3C013F00 */  li    $at, 0x3F000000 # 0.500000
@@ -470,7 +470,7 @@ glabel sub_GAME_7F0A2160
 /* 0D6EA0 7F0A2370 46089182 */  mul.s $f6, $f18, $f8
 /* 0D6EA4 7F0A2374 4600328D */  trunc.w.s $f10, $f6
 /* 0D6EA8 7F0A2378 440D5000 */  mfc1  $t5, $f10
-/* 0D6EAC 7F0A237C 0C002914 */  jal   get_random_value
+/* 0D6EAC 7F0A237C 0C002914 */  jal   randomGetNext
 /* 0D6EB0 7F0A2380 A5CD0038 */   sh    $t5, 0x38($t6)
 /* 0D6EB4 7F0A2384 44828000 */  mtc1  $v0, $f16
 /* 0D6EB8 7F0A2388 04410005 */  bgez  $v0, .L7F0A23A0
@@ -499,7 +499,7 @@ glabel sub_GAME_7F0A2160
 /* 0D6F10 7F0A23E0 01120019 */  multu $t0, $s2
 /* 0D6F14 7F0A23E4 00006812 */  mflo  $t5
 /* 0D6F18 7F0A23E8 032D7021 */  addu  $t6, $t9, $t5
-/* 0D6F1C 7F0A23EC 0C002914 */  jal   get_random_value
+/* 0D6F1C 7F0A23EC 0C002914 */  jal   randomGetNext
 /* 0D6F20 7F0A23F0 A5C0003C */   sh    $zero, 0x3c($t6)
 /* 0D6F24 7F0A23F4 44824000 */  mtc1  $v0, $f8
 /* 0D6F28 7F0A23F8 04410005 */  bgez  $v0, .L7F0A2410
@@ -521,7 +521,7 @@ glabel sub_GAME_7F0A2160
 /* 0D6F64 7F0A2434 46082282 */  mul.s $f10, $f4, $f8
 /* 0D6F68 7F0A2438 4600518D */  trunc.w.s $f6, $f10
 /* 0D6F6C 7F0A243C 440B3000 */  mfc1  $t3, $f6
-/* 0D6F70 7F0A2440 0C002914 */  jal   get_random_value
+/* 0D6F70 7F0A2440 0C002914 */  jal   randomGetNext
 /* 0D6F74 7F0A2444 A5EB0048 */   sh    $t3, 0x48($t7)
 /* 0D6F78 7F0A2448 C7A00060 */  lwc1  $f0, 0x60($sp)
 /* 0D6F7C 7F0A244C 44828000 */  mtc1  $v0, $f16
@@ -552,7 +552,7 @@ glabel sub_GAME_7F0A2160
 /* 0D6FDC 7F0A24AC 00005812 */  mflo  $t3
 /* 0D6FE0 7F0A24B0 018B7821 */  addu  $t7, $t4, $t3
 /* 0D6FE4 7F0A24B4 A5E0004C */  sh    $zero, 0x4c($t7)
-/* 0D6FE8 7F0A24B8 0C002914 */  jal   get_random_value
+/* 0D6FE8 7F0A24B8 0C002914 */  jal   randomGetNext
 /* 0D6FEC 7F0A24BC E7A00044 */   swc1  $f0, 0x44($sp)
 /* 0D6FF0 7F0A24C0 44829000 */  mtc1  $v0, $f18
 /* 0D6FF4 7F0A24C4 04410005 */  bgez  $v0, .L7F0A24DC
@@ -574,7 +574,7 @@ glabel sub_GAME_7F0A2160
 /* 0D7030 7F0A2500 46122282 */  mul.s $f10, $f4, $f18
 /* 0D7034 7F0A2504 4600520D */  trunc.w.s $f8, $f10
 /* 0D7038 7F0A2508 440E4000 */  mfc1  $t6, $f8
-/* 0D703C 7F0A250C 0C002914 */  jal   get_random_value
+/* 0D703C 7F0A250C 0C002914 */  jal   randomGetNext
 /* 0D7040 7F0A2510 A70E0058 */   sh    $t6, 0x58($t8)
 /* 0D7044 7F0A2514 44823000 */  mtc1  $v0, $f6
 /* 0D7048 7F0A2518 24050005 */  li    $a1, 5
@@ -730,7 +730,7 @@ glabel sub_GAME_7F0A2160
 /* 0D729C 7F0A276C 03320019 */  multu $t9, $s2
 /* 0D72A0 7F0A2770 00007012 */  mflo  $t6
 /* 0D72A4 7F0A2774 018EC021 */  addu  $t8, $t4, $t6
-/* 0D72A8 7F0A2778 0C002914 */  jal   get_random_value
+/* 0D72A8 7F0A2778 0C002914 */  jal   randomGetNext
 /* 0D72AC 7F0A277C E70A0014 */   swc1  $f10, 0x14($t8)
 /* 0D72B0 7F0A2780 44824000 */  mtc1  $v0, $f8
 /* 0D72B4 7F0A2784 3C014F80 */  li    $at, 0x4F800000 # 4294967296.000000
@@ -749,7 +749,7 @@ glabel sub_GAME_7F0A2160
 /* 0D72E4 7F0A27B4 46128282 */  mul.s $f10, $f16, $f18
 /* 0D72E8 7F0A27B8 00007812 */  mflo  $t7
 /* 0D72EC 7F0A27BC 010F5821 */  addu  $t3, $t0, $t7
-/* 0D72F0 7F0A27C0 0C002914 */  jal   get_random_value
+/* 0D72F0 7F0A27C0 0C002914 */  jal   randomGetNext
 /* 0D72F4 7F0A27C4 E56A0018 */   swc1  $f10, 0x18($t3)
 /* 0D72F8 7F0A27C8 44824000 */  mtc1  $v0, $f8
 /* 0D72FC 7F0A27CC 3C018005 */  lui   $at, %hi(D_80057724)
@@ -768,7 +768,7 @@ glabel sub_GAME_7F0A2160
 /* 0D732C 7F0A27FC 46168482 */  mul.s $f18, $f16, $f22
 /* 0D7330 7F0A2800 0000C812 */  mflo  $t9
 /* 0D7334 7F0A2804 01396021 */  addu  $t4, $t1, $t9
-/* 0D7338 7F0A2808 0C002914 */  jal   get_random_value
+/* 0D7338 7F0A2808 0C002914 */  jal   randomGetNext
 /* 0D733C 7F0A280C E5920028 */   swc1  $f18, 0x28($t4)
 /* 0D7340 7F0A2810 44825000 */  mtc1  $v0, $f10
 /* 0D7344 7F0A2814 3C014F80 */  li    $at, 0x4F800000 # 4294967296.000000
@@ -785,7 +785,7 @@ glabel sub_GAME_7F0A2160
 /* 0D736C 7F0A283C 46162402 */  mul.s $f16, $f4, $f22
 /* 0D7370 7F0A2840 00005012 */  mflo  $t2
 /* 0D7374 7F0A2844 01CA4021 */  addu  $t0, $t6, $t2
-/* 0D7378 7F0A2848 0C002914 */  jal   get_random_value
+/* 0D7378 7F0A2848 0C002914 */  jal   randomGetNext
 /* 0D737C 7F0A284C E510002C */   swc1  $f16, 0x2c($t0)
 /* 0D7380 7F0A2850 44829000 */  mtc1  $v0, $f18
 /* 0D7384 7F0A2854 3C014F80 */  li    $at, 0x4F800000 # 4294967296.000000
@@ -1195,7 +1195,7 @@ glabel sub_GAME_7F0A2C44
 /* 0D78E8 7F0A2DB8 8DAE0000 */  lw    $t6, ($t5)
 /* 0D78EC 7F0A2DBC 59C00035 */  blezl $t6, .L7F0A2E94
 /* 0D78F0 7F0A2DC0 26940001 */   addiu $s4, $s4, 1
-/* 0D78F4 7F0A2DC4 0FC2F5B8 */  jal   sub_GAME_7F0BD6E0
+/* 0D78F4 7F0A2DC4 0FC2F5B8 */  jal   dynAllocateMatrix
 /* 0D78F8 7F0A2DC8 00000000 */   nop   
 /* 0D78FC 7F0A2DCC 8E6F0000 */  lw    $t7, ($s3)
 /* 0D7900 7F0A2DD0 00408825 */  move  $s1, $v0
@@ -2325,7 +2325,7 @@ glabel sub_GAME_7F0A3C08
 /* 0D8748 7F0A3C18 AFB00020 */  sw    $s0, 0x20($sp)
 /* 0D874C 7F0A3C1C 00808025 */  move  $s0, $a0
 /* 0D8750 7F0A3C20 AFA50034 */  sw    $a1, 0x34($sp)
-/* 0D8754 7F0A3C24 0C002914 */  jal   get_random_value
+/* 0D8754 7F0A3C24 0C002914 */  jal   randomGetNext
 /* 0D8758 7F0A3C28 AFA60038 */   sw    $a2, 0x38($sp)
 /* 0D875C 7F0A3C2C 44822000 */  mtc1  $v0, $f4
 /* 0D8760 7F0A3C30 8FA50034 */  lw    $a1, 0x34($sp)
@@ -2420,7 +2420,7 @@ glabel sub_GAME_7F0A3C08
 /* 0D88AC 7F0A3D7C C4A80004 */  lwc1  $f8, 4($a1)
 /* 0D88B0 7F0A3D80 E6080014 */  swc1  $f8, 0x14($s0)
 /* 0D88B4 7F0A3D84 C4A60008 */  lwc1  $f6, 8($a1)
-/* 0D88B8 7F0A3D88 0C002914 */  jal   get_random_value
+/* 0D88B8 7F0A3D88 0C002914 */  jal   randomGetNext
 /* 0D88BC 7F0A3D8C E6060018 */   swc1  $f6, 0x18($s0)
 /* 0D88C0 7F0A3D90 44825000 */  mtc1  $v0, $f10
 /* 0D88C4 7F0A3D94 3C014F80 */  li    $at, 0x4F800000 # 4294967296.000000
@@ -2601,7 +2601,7 @@ glabel sub_GAME_7F0A3F04
 /* 0D8AB0 7F0A3F80 24040004 */  li    $a0, 4
 /* 0D8AB4 7F0A3F84 8D4B0000 */  lw    $t3, ($t2)
 /* 0D8AB8 7F0A3F88 AFA200A4 */  sw    $v0, 0xa4($sp)
-/* 0D8ABC 7F0A3F8C 0FC2F5B1 */  jal   sub_GAME_7F0BD6C4
+/* 0D8ABC 7F0A3F8C 0FC2F5B1 */  jal   dynAllocate7F0BD6C4
 /* 0D8AC0 7F0A3F90 AFAB00A0 */   sw    $t3, 0xa0($sp)
 /* 0D8AC4 7F0A3F94 86040006 */  lh    $a0, 6($s0)
 /* 0D8AC8 7F0A3F98 00408825 */  move  $s1, $v0

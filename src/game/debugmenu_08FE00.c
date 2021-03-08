@@ -138,12 +138,12 @@ glabel print_debug_mcm_to_stdout
 /* 0C4A44 7F08FF14 240400C0 */  li    $a0, 192
 /* 0C4A48 7F08FF18 00002825 */  move  $a1, $zero
 /* 0C4A4C 7F08FF1C 00003025 */  move  $a2, $zero
-/* 0C4A50 7F08FF20 0C002C1B */  jal   set_debug_text_color
+/* 0C4A50 7F08FF20 0C002C1B */  jal   debmenuSetPrimColor
 /* 0C4A54 7F08FF24 240700C0 */   li    $a3, 192
 /* 0C4A58 7F08FF28 10000004 */  b     .L7F08FF3C
 /* 0C4A5C 7F08FF2C 8E980000 */   lw    $t8, ($s4)
 .L7F08FF30:
-/* 0C4A60 7F08FF30 0C002C1B */  jal   set_debug_text_color
+/* 0C4A60 7F08FF30 0C002C1B */  jal   debmenuSetPrimColor
 /* 0C4A64 7F08FF34 240700C0 */   li    $a3, 192
 /* 0C4A68 7F08FF38 8E980000 */  lw    $t8, ($s4)
 .L7F08FF3C:
@@ -176,11 +176,11 @@ glabel print_debug_mcm_to_stdout
 /* 0C4ACC 7F08FF9C 00000000 */   nop   
 /* 0C4AD0 7F08FFA0 0006000D */  break 6
 .L7F08FFA4:
-/* 0C4AD4 7F08FFA4 0C002C10 */  jal   set_final_debug_text_positions
+/* 0C4AD4 7F08FFA4 0C002C10 */  jal   debmenuSetPosition
 /* 0C4AD8 7F08FFA8 00000000 */   nop   
 /* 0C4ADC 7F08FFAC 8ECC0000 */  lw    $t4, ($s6)
 /* 0C4AE0 7F08FFB0 01926821 */  addu  $t5, $t4, $s2
-/* 0C4AE4 7F08FFB4 0C002C7A */  jal   write_string_stdout
+/* 0C4AE4 7F08FFB4 0C002C7A */  jal   debmenuWriteString
 /* 0C4AE8 7F08FFB8 8DA40000 */   lw    $a0, ($t5)
 /* 0C4AEC 7F08FFBC 3C0E8003 */  lui   $t6, %hi(ptr_last_debuggrp_cutoff) 
 /* 0C4AF0 7F08FFC0 8DCE6B74 */  lw    $t6, %lo(ptr_last_debuggrp_cutoff)($t6)
@@ -263,12 +263,12 @@ glabel sub_GAME_7F09000C
 /* 0C4BE0 7F0900B0 240400C0 */  li    $a0, 192
 /* 0C4BE4 7F0900B4 00002825 */  move  $a1, $zero
 /* 0C4BE8 7F0900B8 00003025 */  move  $a2, $zero
-/* 0C4BEC 7F0900BC 0C002C1B */  jal   set_debug_text_color
+/* 0C4BEC 7F0900BC 0C002C1B */  jal   debmenuSetPrimColor
 /* 0C4BF0 7F0900C0 240700C0 */   li    $a3, 192
 /* 0C4BF4 7F0900C4 10000004 */  b     .L7F0900D8
 /* 0C4BF8 7F0900C8 8EF80000 */   lw    $t8, ($s7)
 .L7F0900CC:
-/* 0C4BFC 7F0900CC 0C002C1B */  jal   set_debug_text_color
+/* 0C4BFC 7F0900CC 0C002C1B */  jal   debmenuSetPrimColor
 /* 0C4C00 7F0900D0 240700C0 */   li    $a3, 192
 /* 0C4C04 7F0900D4 8EF80000 */  lw    $t8, ($s7)
 .L7F0900D8:
@@ -301,12 +301,12 @@ glabel sub_GAME_7F09000C
 /* 0C4C68 7F090138 00000000 */   nop   
 /* 0C4C6C 7F09013C 0006000D */  break 6
 .L7F090140:
-/* 0C4C70 7F090140 0C002C10 */  jal   set_final_debug_text_positions
+/* 0C4C70 7F090140 0C002C10 */  jal   debmenuSetPosition
 /* 0C4C74 7F090144 00000000 */   nop   
 /* 0C4C78 7F090148 3C0C8003 */  lui   $t4, %hi(ptr_textptrs) 
 /* 0C4C7C 7F09014C 8D8C6B78 */  lw    $t4, %lo(ptr_textptrs)($t4)
 /* 0C4C80 7F090150 01926821 */  addu  $t5, $t4, $s2
-/* 0C4C84 7F090154 0C002C7A */  jal   write_string_stdout
+/* 0C4C84 7F090154 0C002C7A */  jal   debmenuWriteString
 /* 0C4C88 7F090158 8DA40000 */   lw    $a0, ($t5)
 /* 0C4C8C 7F09015C 3C048005 */  lui   $a0, %hi(aMenu_cErrorTriedToCallFont_makegt)
 /* 0C4C90 7F090160 0C0033D1 */  jal   osSyncPrintf

@@ -3,21 +3,20 @@
 
 #include "ultra64.h"
 
-//im just padding
-extern u32 D_80023300;
-
-struct debug_processor_error_entry
+typedef struct 
 {
-  u32 val1;
-  u32 val2;
-  void *string;
-};
+  u32 mask;
+  u32 value;
+  char *string;
+} regDesc_t;
 
-extern struct debug_processor_error_entry debug_processor_error_table[];
-extern void *stack_ptrs_1[];
-extern void *stack_ptrs_2[];
-extern void *stack_ptrs_3[];
-extern char stderr_buffer[2280];
+extern void *g_StackPtrs1[];
+extern void *g_StackPtrs2[];
+extern void *g_StackPtrs3[];
 
-void write_stderr_to_buffer(u32 *buffer);
+void deboutWriteChar(unsigned char c);
+void deboutScrollUp(s32 numlines);
+void deboutInitBuffers();
+void deboutDrawToBuffer(u16 *buffer);
+
 #endif

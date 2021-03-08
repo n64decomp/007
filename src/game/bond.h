@@ -782,10 +782,27 @@ struct player
   s32 field_7C8;
   s32 field_7CC;
   Vp viewports[2];
+
+  /**
+   * Offset 0x7f0.
+   */
   s16 viewx;
+
+  /**
+   * Offset 0x7f2.
+   */
   s16 viewy;
+
+  /**
+   * Offset 0x7f4.
+   */
   s16 viewleft;
+
+  /**
+   * Offset 0x7f6.
+   */
   s16 viewtop;
+  
   s32 hand_invisible[2];
   s32 hand_item[2];
   u8 *ptr_hand_weapon_buffer[2];
@@ -921,10 +938,9 @@ struct player
   s32 ammo_total_unknown2;
   s32 ammo_total_tank;
   s32 ammo_total_mp_token;
-  s32 bloodcnt;
-  s32 field_11AC;
-  s32 field_11B0;
-  s32 field_11B4;
+  u8 *field_11A8;
+  u8 *field_11AC;
+  u8 *field_11B0[2];
   s32 field_11B8;
   f32 zoomintime;
   f32 zoomintimemax;

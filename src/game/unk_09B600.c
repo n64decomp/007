@@ -51,7 +51,7 @@ glabel sub_GAME_7F09B600
 /* 0D01B8 7F09B688 01CC7021 */  addu  $t6, $t6, $t4
 /* 0D01BC 7F09B68C AFAE0048 */  sw    $t6, 0x48($sp)
 /* 0D01C0 7F09B690 AFAF004C */  sw    $t7, 0x4c($sp)
-/* 0D01C4 7F09B694 0C00292B */  jal   lotsa_shifting_randomizer_related
+/* 0D01C4 7F09B694 0C00292B */  jal   randomGetNextFrom
 /* 0D01C8 7F09B698 02402025 */   move  $a0, $s2
 /* 0D01CC 7F09B69C 26100001 */  addiu $s0, $s0, 1
 /* 0D01D0 7F09B6A0 26310007 */  addiu $s1, $s1, 7
@@ -77,7 +77,7 @@ glabel sub_GAME_7F09B600
 /* 0D0218 7F09B6E8 018A6021 */  addu  $t4, $t4, $t2
 /* 0D021C 7F09B6EC AFAC0048 */  sw    $t4, 0x48($sp)
 /* 0D0220 7F09B6F0 AFAD004C */  sw    $t5, 0x4c($sp)
-/* 0D0224 7F09B6F4 0C00292B */  jal   lotsa_shifting_randomizer_related
+/* 0D0224 7F09B6F4 0C00292B */  jal   randomGetNextFrom
 /* 0D0228 7F09B6F8 02402025 */   move  $a0, $s2
 /* 0D022C 7F09B6FC 2610FFFF */  addiu $s0, $s0, -1
 /* 0D0230 7F09B700 26310003 */  addiu $s1, $s1, 3

@@ -14,6 +14,8 @@ $(BUILD_DIR)/$(OBSEG_DIR)/text/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/text/%.elf
 $(BUILD_DIR)/$(OBSEG_DIR)/text/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/text/%.o
 	$(LD) -T assets/obseg/text/LnameX.ld -o $@ $<
 	
+$(BUILD_DIR)/$(OBSEG_DIR)/text/%.o: $(OBSEG_DIR)/text/$(COUNTRYCODE)/%.c
+	$(CC) -c $(CFLAGS) -o $@ -O2 $<
 
 $(BUILD_DIR)/$(OBSEG_DIR)/text/%.o: $(OBSEG_DIR)/text/%.c
 	$(CC) -c $(CFLAGS) -o $@ -O2 $<

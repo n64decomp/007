@@ -46,4 +46,12 @@ extern struct player_data player4_player_data;
 
 extern struct player *pPlayer;
 extern struct player_data *pPlayersPerm;
+
+void reset_play_data_ptrs(void);
+void init_player_data_ptrs_construct_viewports(int playercount);
+void sub_GAME_7F09B41C(void);
+s32 sub_GAME_7F09B528(s32 param_1);
+void set_cur_player(s32 playernum);
+s32 getPlayerCount(void);
+
 #endif

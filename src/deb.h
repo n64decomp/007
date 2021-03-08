@@ -3,7 +3,7 @@
 
 #include "ultra64.h"
 
-void debInitDebugNoticeList(void);
-void debCheckAddDebugNoticeListEntry(void *arg0, char *string);
+void debInit(void);
+void debTryAdd(void *data, const char *name);
 
 #endif

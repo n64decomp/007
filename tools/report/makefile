@@ -4,7 +4,6 @@ CC = @gcc
 #Source directories
 SRCDIR = ./
 OUTNAME = $(SRCDIR)report
-TEMPLATE = $(SRCDIR)template.html
 OUTHTML = $(SRCDIR)index.html
 
 #Compiler flags
@@ -18,12 +17,11 @@ LFLAGS = $(OBJS) -o $(OUTNAME) -s
 LFLAGSDBG = $(OBJS) -o $(OUTNAME)
 
 #Main recipes
-all: copy_html report
+all: report
 
 debug: CC = gcc
 debug: CFLAGS = $(CFLAGSDBG)
 debug: LFLAGS = $(LFLAGSDBG)
-debug: copy_html
 debug: report
 
 report: $(OBJS)
@@ -33,9 +31,6 @@ clean:
 	@rm $(OUTNAME)
 	@rm $(OUTHTML)
 	@rm $(SRCDIR)*.o
-
-copy_html:
-	@cp -f $(TEMPLATE) $(OUTHTML)
 
 #Individual recipes
 $(OBJDIR)main.o: $(SRCDIR)main.c $(SRCDIR)objectives.h

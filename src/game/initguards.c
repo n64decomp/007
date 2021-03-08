@@ -1,5 +1,6 @@
 #include "ultra64.h"
 #include "game/chr.h"
+#include "game/chrobjdata.h"
 
 void init_guards(void) {
     animation_rate = 1.0f;
@@ -70,8 +71,19 @@ glabel alloc_init_GUARDdata_entries
 
 
 #ifdef NONMATCHING
-void set_new_rand_head_bodies(void) {
+//
+void set_new_rand_head_bodies(void)
+{
+    s32 i;
+  
+    for (i=0; c_item_entries[i].header; i++)
+    {
+        c_item_entries[i].header->offset_obj_table = 0;
+    }
 
+    current_random_male_head = randomGetNext() % num_male_heads;
+    current_random_female_head = randomGetNext() % num_female_heads;
+    current_random_body = randomGetNext() % num_bodies;
 }
 #else
 GLOBAL_ASM(
@@ -93,7 +105,7 @@ glabel set_new_rand_head_bodies
 /* 035AB0 7F000F80 5460FFFD */  bnezl $v1, .L7F000F78
 /* 035AB4 7F000F84 AC600000 */   sw    $zero, ($v1)
 .L7F000F88:
-/* 035AB8 7F000F88 0C002914 */  jal   get_random_value
+/* 035AB8 7F000F88 0C002914 */  jal   randomGetNext
 /* 035ABC 7F000F8C 00000000 */   nop   
 /* 035AC0 7F000F90 3C188003 */  lui   $t8, %hi(num_male_heads) 
 /* 035AC4 7F000F94 8F18CD04 */  lw    $t8, %lo(num_male_heads)($t8)
@@ -105,7 +117,7 @@ glabel set_new_rand_head_bodies
 /* 035ADC 7F000FAC 00000000 */   nop   
 /* 035AE0 7F000FB0 0007000D */  break 7
 .L7F000FB4:
-/* 035AE4 7F000FB4 0C002914 */  jal   get_random_value
+/* 035AE4 7F000FB4 0C002914 */  jal   randomGetNext
 /* 035AE8 7F000FB8 00000000 */   nop   
 /* 035AEC 7F000FBC 3C088003 */  lui   $t0, %hi(num_female_heads) 
 /* 035AF0 7F000FC0 8D08CD08 */  lw    $t0, %lo(num_female_heads)($t0)
@@ -117,7 +129,7 @@ glabel set_new_rand_head_bodies
 /* 035B08 7F000FD8 00000000 */   nop   
 /* 035B0C 7F000FDC 0007000D */  break 7
 .L7F000FE0:
-/* 035B10 7F000FE0 0C002914 */  jal   get_random_value
+/* 035B10 7F000FE0 0C002914 */  jal   randomGetNext
 /* 035B14 7F000FE4 00000000 */   nop   
 /* 035B18 7F000FE8 3C0A8003 */  lui   $t2, %hi(num_bodies) 
 /* 035B1C 7F000FEC 8D4ACD00 */  lw    $t2, %lo(num_bodies)($t2)

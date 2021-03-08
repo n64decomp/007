@@ -131,7 +131,7 @@
 #define TARGET_PAD                      0x0008 // set target type to pad
 #define TARGET_COMPASS                  0x0010 // set target to compass direction (hex) N: 0000 E: C000 S: 8000: W: 4000
 #define TARGET_AIM_ONLY                 0x0020 // aim at target instead of firing
-#define TARGET_180_RANGE                0x0040 // limits target to 180 degrees in front of guard (cannot be used with bond target flag)
+#define TARGET_DONTTURN                 0x0040 // limits target to 180 degrees in front of guard (cannot be used with bond target flag)
 
 // command 18/19 - target body part values
 #define HIT_NULL_PART                   0x00 // null part, no reaction - 1x damage

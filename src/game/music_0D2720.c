@@ -84,7 +84,7 @@ glabel getmusictrack_or_randomtrack
 /* 1072B0 7F0D2780 5720FFFD */  bnezl $t9, .L7F0D2778
 /* 1072B4 7F0D2784 84590002 */   lh    $t9, 2($v0)
 .L7F0D2788:
-/* 1072B8 7F0D2788 0C002914 */  jal   get_random_value
+/* 1072B8 7F0D2788 0C002914 */  jal   randomGetNext
 /* 1072BC 7F0D278C AFA30020 */   sw    $v1, 0x20($sp)
 /* 1072C0 7F0D2790 8FA30020 */  lw    $v1, 0x20($sp)
 /* 1072C4 7F0D2794 3C048005 */  lui   $a0, %hi(random_tracks)
@@ -121,7 +121,7 @@ glabel getmusictrack_or_randomtrack
 /* 10732C 7F0D27FC 5560FFFD */  bnezl $t3, .L7F0D27F4
 /* 107330 7F0D2800 844B0002 */   lh    $t3, 2($v0)
 .L7F0D2804:
-/* 107334 7F0D2804 0C002914 */  jal   get_random_value
+/* 107334 7F0D2804 0C002914 */  jal   randomGetNext
 /* 107338 7F0D2808 AFA30018 */   sw    $v1, 0x18($sp)
 /* 10733C 7F0D280C 8FA30018 */  lw    $v1, 0x18($sp)
 /* 107340 7F0D2810 3C048005 */  lui   $a0, %hi(random_tracks)
@@ -148,132 +148,29 @@ glabel getmusictrack_or_randomtrack
 
 
 
-#ifdef NONMATCHING
-void sub_GAME_7F0D2848(s32 arg0) {
-    void *temp_v1;
-    s32 temp_v0;
-    s32 phi_v0;
-    void *phi_v1;
-
-    // Node 0
-    temp_v1 = (0x80050000 + -0x14f0);
-    if (music_setup_entries != 0)
-    {
-        // Node 1
-        phi_v0 = *temp_v1;
-        phi_v1 = temp_v1;
-        // Node 2
-        if (arg0 == phi_v0)
-        {
-            // Node 3
-            return phi_v1->unk4;
-        }
-        // Node 4
-        temp_v0 = phi_v1->unk8;
-        phi_v0 = temp_v0;
-        phi_v1 = (phi_v1 + 8);
-        if (temp_v0 != 0)
-        {
-            goto loop_2;
-        }
-    }
-    // Node 5
-    return -1;
+s32 musicGetBgTrackForStage(s32 stageID)
+{
+  s32 i;
+  for (i=0; music_setup_entries[i].stage_id!=0; i++)
+  {
+      if (stageID == music_setup_entries[i].stage_id) 
+      {
+        return music_setup_entries[i].bg_sound;
+      }
+  }
+  return -1;
 }
 
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0D2848
-/* 107378 7F0D2848 3C0E8005 */  lui   $t6, %hi(music_setup_entries) 
-/* 10737C 7F0D284C 85CEEB10 */  lh    $t6, %lo(music_setup_entries)($t6)
-/* 107380 7F0D2850 3C0F8005 */  lui   $t7, %hi(music_setup_entries)
-/* 107384 7F0D2854 25E3EB10 */  addiu $v1, $t7, %lo(music_setup_entries)
-/* 107388 7F0D2858 51C0000B */  beql  $t6, $zero, .L7F0D2888
-/* 10738C 7F0D285C 2402FFFF */   li    $v0, -1
-/* 107390 7F0D2860 84620000 */  lh    $v0, ($v1)
-.L7F0D2864:
-/* 107394 7F0D2864 54820004 */  bnel  $a0, $v0, .L7F0D2878
-/* 107398 7F0D2868 84620008 */   lh    $v0, 8($v1)
-/* 10739C 7F0D286C 03E00008 */  jr    $ra
-/* 1073A0 7F0D2870 84620004 */   lh    $v0, 4($v1)
 
-/* 1073A4 7F0D2874 84620008 */  lh    $v0, 8($v1)
-.L7F0D2878:
-/* 1073A8 7F0D2878 24630008 */  addiu $v1, $v1, 8
-/* 1073AC 7F0D287C 1440FFF9 */  bnez  $v0, .L7F0D2864
-/* 1073B0 7F0D2880 00000000 */   nop   
-/* 1073B4 7F0D2884 2402FFFF */  li    $v0, -1
-.L7F0D2888:
-/* 1073B8 7F0D2888 03E00008 */  jr    $ra
-/* 1073BC 7F0D288C 00000000 */   nop   
-)
-#endif
-
-
-
-
-
-#ifdef NONMATCHING
-void sub_GAME_7F0D2890(s32 arg0) {
-    void *temp_v1;
-    s32 temp_v0;
-    s32 phi_v0;
-    void *phi_v1;
-
-    // Node 0
-    temp_v1 = (0x80050000 + -0x14f0);
-    if (music_setup_entries != 0)
-    {
-        // Node 1
-        phi_v0 = *temp_v1;
-        phi_v1 = temp_v1;
-        // Node 2
-        if (arg0 == phi_v0)
-        {
-            // Node 3
-            return phi_v1->unk6;
-        }
-        // Node 4
-        temp_v0 = phi_v1->unk8;
-        phi_v0 = temp_v0;
-        phi_v1 = (phi_v1 + 8);
-        if (temp_v0 != 0)
-        {
-            goto loop_2;
-        }
-    }
-    // Node 5
-    return -1;
+s32 musicGetXTrackForStage(s32 stageID)
+{
+  s32 i;
+  for (i=0; music_setup_entries[i].stage_id!=0; i++)
+  {
+      if (stageID == music_setup_entries[i].stage_id) 
+      {
+        return music_setup_entries[i].xtrack;
+      }
+  }
+  return -1;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0D2890
-/* 1073C0 7F0D2890 3C0E8005 */  lui   $t6, %hi(music_setup_entries) 
-/* 1073C4 7F0D2894 85CEEB10 */  lh    $t6, %lo(music_setup_entries)($t6)
-/* 1073C8 7F0D2898 3C0F8005 */  lui   $t7, %hi(music_setup_entries)
-/* 1073CC 7F0D289C 25E3EB10 */  addiu $v1, $t7, %lo(music_setup_entries)
-/* 1073D0 7F0D28A0 51C0000B */  beql  $t6, $zero, .L7F0D28D0
-/* 1073D4 7F0D28A4 2402FFFF */   li    $v0, -1
-/* 1073D8 7F0D28A8 84620000 */  lh    $v0, ($v1)
-.L7F0D28AC:
-/* 1073DC 7F0D28AC 54820004 */  bnel  $a0, $v0, .L7F0D28C0
-/* 1073E0 7F0D28B0 84620008 */   lh    $v0, 8($v1)
-/* 1073E4 7F0D28B4 03E00008 */  jr    $ra
-/* 1073E8 7F0D28B8 84620006 */   lh    $v0, 6($v1)
-
-/* 1073EC 7F0D28BC 84620008 */  lh    $v0, 8($v1)
-.L7F0D28C0:
-/* 1073F0 7F0D28C0 24630008 */  addiu $v1, $v1, 8
-/* 1073F4 7F0D28C4 1440FFF9 */  bnez  $v0, .L7F0D28AC
-/* 1073F8 7F0D28C8 00000000 */   nop   
-/* 1073FC 7F0D28CC 2402FFFF */  li    $v0, -1
-.L7F0D28D0:
-/* 107400 7F0D28D0 03E00008 */  jr    $ra
-/* 107404 7F0D28D4 00000000 */   nop   
-)
-#endif
-
-
-

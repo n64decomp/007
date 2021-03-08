@@ -111,6 +111,7 @@ extern struct struct_20 D_80031D58;
 extern u32 monitor_animation_microcode[];
 extern u32 dword_D_80031F00[];
 extern u32 dword_D_80031F44[];
+extern u32 temp_mine_table[30];
 extern f32 gas_damage_flag;
 extern u32 gas_cutoff_flag;
 extern struct object_standard * ptr_setup_objects;

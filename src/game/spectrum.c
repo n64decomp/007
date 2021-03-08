@@ -391,20 +391,20 @@ glabel spectrum_p1controller_to_kempston
 /* 1077C0 7F0D2C90 AFA00030 */  sw    $zero, 0x30($sp)
 /* 1077C4 7F0D2C94 AFA0002C */  sw    $zero, 0x2c($sp)
 /* 1077C8 7F0D2C98 AFA00028 */  sw    $zero, 0x28($sp)
-/* 1077CC 7F0D2C9C 0C002F43 */  jal   redirect_to_ramrom_replay_and_record_handlers_if_set
+/* 1077CC 7F0D2C9C 0C002F43 */  jal   joyConsumeSamplesWrapper
 /* 1077D0 7F0D2CA0 AFA00024 */   sw    $zero, 0x24($sp)
 /* 1077D4 7F0D2CA4 00002025 */  move  $a0, $zero
-/* 1077D8 7F0D2CA8 0C0030C3 */  jal   get_controller_buttons_held
+/* 1077D8 7F0D2CA8 0C0030C3 */  jal   joyGetButtons
 /* 1077DC 7F0D2CAC 3405FFFF */   li    $a1, 65535
 /* 1077E0 7F0D2CB0 00002025 */  move  $a0, $zero
 /* 1077E4 7F0D2CB4 2405FFFD */  li    $a1, -3
 /* 1077E8 7F0D2CB8 24060003 */  li    $a2, 3
-/* 1077EC 7F0D2CBC 0C00312D */  jal   get_controller_3dstick_L_R
+/* 1077EC 7F0D2CBC 0C00312D */  jal   joyGetStickXInRange
 /* 1077F0 7F0D2CC0 AFA20020 */   sw    $v0, 0x20($sp)
 /* 1077F4 7F0D2CC4 00002025 */  move  $a0, $zero
 /* 1077F8 7F0D2CC8 2405FFFD */  li    $a1, -3
 /* 1077FC 7F0D2CCC 24060003 */  li    $a2, 3
-/* 107800 7F0D2CD0 0C00314A */  jal   get_controller_3dstick_U_D
+/* 107800 7F0D2CD0 0C00314A */  jal   joyGetStickYInRange
 /* 107804 7F0D2CD4 AFA2001C */   sw    $v0, 0x1c($sp)
 /* 107808 7F0D2CD8 240E00FF */  li    $t6, 255
 /* 10780C 7F0D2CDC 3C018005 */  lui   $at, %hi(D_8004EC34)

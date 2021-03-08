@@ -2,6 +2,7 @@
 #include "ultra64.h"
 #include "bondgame.h"
 #include "deb_video.h"
+#include "tlb_manage.h"
 
 /**
  * @file deb_video.c
@@ -9,6 +10,13 @@
  * 
  * I should probably be renamed...
  */
+
+#define IEEE_FLOAT_FRACTION_BITMASK   0x7FFFFF
+#define IEEE_FLOAT_FRACTION_BIT_COUNT       23
+#define IEEE_FLOAT_EXPONENT_BITMASK 0x7F800000
+#define IEEE_FLOAT_EXPONENT_BIT_COUNT        8
+#define IEEE_FLOAT_SIGN_BITMASK     0x80000000
+#define IEEE_FLOAT_SIGN_BIT_COUNT            1
 
 //bss
 char tlbthread[0x6B0];
@@ -27,7 +35,7 @@ char indy_read_buffer[0x60];
  * 5AE0	70004EE0
  */
 void init_tlb(void) {
-    set_video_buffer_pointers();
+    deboutInitBuffers();
     osCreateMesgQueue(&tlbMesgQ, &tlbMesgBuf, 1);
     osCreateThread(&tlbthread, 5, &tlbproc, 0, &tlbStack, 0x28);
     osStartThread(&tlbthread);
@@ -98,7 +106,7 @@ glabel tlbproc
 /* 005C08 70005008 16790014 */  bne   $s3, $t9, .L7000505C
 /* 005C0C 7000500C 00000000 */   nop   
 /* 005C10 70005010 8D08365C */  lw    $t0, %lo(ptr_tlbthread_maybe)($t0)
-/* 005C14 70005014 0C000676 */  jal   translate_load_rom_from_TLBaddress
+/* 005C14 70005014 0C000676 */  jal   tlbmanageTranslateLoadRomFromTlbAddress
 /* 005C18 70005018 8D040124 */   lw    $a0, 0x124($t0)
 /* 005C1C 7000501C 3C098006 */  lui   $t1, %hi(ptr_tlbthread_maybe) 
 /* 005C20 70005020 8D29365C */  lw    $t1, %lo(ptr_tlbthread_maybe)($t1)
@@ -545,16 +553,16 @@ s32 debug_sp_related_11(u32 arg0, u32 arg1)
     s32 temp_v0;
     void *temp_t8;
 
-    sp1C = (?32) stack_ptrs_1;
-    sp1C.unk4 = (?32) stack_ptrs_1.unk4;
-    sp1C.unk8 = (?32) stack_ptrs_1.unk8;
-    sp1C.unkC = (?32) stack_ptrs_1.unkC;
-    sp1C.unk10 = (?32) stack_ptrs_1.unk10;
-    sp8 = (?32) stack_ptrs_2;
-    sp8.unk4 = (?32) stack_ptrs_2.unk4;
-    sp8.unk8 = (?32) stack_ptrs_2.unk8;
-    sp8.unkC = (?32) stack_ptrs_2.unkC;
-    sp8.unk10 = (?32) stack_ptrs_2.unk10;
+    sp1C = (?32) g_StackPtrs1;
+    sp1C.unk4 = (?32) g_StackPtrs1.unk4;
+    sp1C.unk8 = (?32) g_StackPtrs1.unk8;
+    sp1C.unkC = (?32) g_StackPtrs1.unkC;
+    sp1C.unk10 = (?32) g_StackPtrs1.unk10;
+    sp8 = (?32) g_StackPtrs2;
+    sp8.unk4 = (?32) g_StackPtrs2.unk4;
+    sp8.unk8 = (?32) g_StackPtrs2.unk8;
+    sp8.unkC = (?32) g_StackPtrs2.unkC;
+    sp8.unk10 = (?32) g_StackPtrs2.unk10;
     if (arg1 <= 0)
     {
         return 0;
@@ -575,15 +583,15 @@ s32 debug_sp_related_11(u32 arg0, u32 arg1)
 GLOBAL_ASM(
 .text
 glabel debug_sp_related_11
-/* 006020 70005420 3C0E8002 */  lui   $t6, %hi(stack_ptrs_1) 
-/* 006024 70005424 25CE36DC */  addiu $t6, %lo(stack_ptrs_1) # addiu $t6, $t6, 0x36dc
+/* 006020 70005420 3C0E8002 */  lui   $t6, %hi(g_StackPtrs1) 
+/* 006024 70005424 25CE36DC */  addiu $t6, %lo(g_StackPtrs1) # addiu $t6, $t6, 0x36dc
 /* 006028 70005428 8DC10000 */  lw    $at, ($t6)
 /* 00602C 7000542C 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 006030 70005430 27A7001C */  addiu $a3, $sp, 0x1c
 /* 006034 70005434 ACE10000 */  sw    $at, ($a3)
 /* 006038 70005438 8DD90004 */  lw    $t9, 4($t6)
-/* 00603C 7000543C 3C098002 */  lui   $t1, %hi(stack_ptrs_2) 
-/* 006040 70005440 252936F0 */  addiu $t1, %lo(stack_ptrs_2) # addiu $t1, $t1, 0x36f0
+/* 00603C 7000543C 3C098002 */  lui   $t1, %hi(g_StackPtrs2) 
+/* 006040 70005440 252936F0 */  addiu $t1, %lo(g_StackPtrs2) # addiu $t1, $t1, 0x36f0
 /* 006044 70005444 ACF90004 */  sw    $t9, 4($a3)
 /* 006048 70005448 8DC10008 */  lw    $at, 8($t6)
 /* 00604C 7000544C 27A80008 */  addiu $t0, $sp, 8
@@ -645,11 +653,11 @@ s32 debug_sp_related_12(u32 arg0, u32 arg1) {
     u32 sp4;
 
     // Node 0
-    sp4 = (?32) stack_ptrs_3;
-    sp4.unk4 = (?32) stack_ptrs_3.unk4;
-    sp4.unk8 = (?32) stack_ptrs_3.unk8;
-    sp4.unkC = (?32) stack_ptrs_3.unkC;
-    sp4.unk10 = (?32) stack_ptrs_3.unk10;
+    sp4 = (?32) g_StackPtrs3;
+    sp4.unk4 = (?32) g_StackPtrs3.unk4;
+    sp4.unk8 = (?32) g_StackPtrs3.unk8;
+    sp4.unkC = (?32) g_StackPtrs3.unkC;
+    sp4.unk10 = (?32) g_StackPtrs3.unk10;
     if (arg1 <= 0)
     {
         // Node 2
@@ -678,8 +686,8 @@ s32 debug_sp_related_12(u32 arg0, u32 arg1) {
 GLOBAL_ASM(
 .text
 glabel debug_sp_related_12
-/* 0060E4 700054E4 3C0E8002 */  lui   $t6, %hi(stack_ptrs_3) 
-/* 0060E8 700054E8 25CE3704 */  addiu $t6, %lo(stack_ptrs_3) # addiu $t6, $t6, 0x3704
+/* 0060E4 700054E4 3C0E8002 */  lui   $t6, %hi(g_StackPtrs3) 
+/* 0060E8 700054E8 25CE3704 */  addiu $t6, %lo(g_StackPtrs3) # addiu $t6, $t6, 0x3704
 /* 0060EC 700054EC 8DC10000 */  lw    $at, ($t6)
 /* 0060F0 700054F0 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0060F4 700054F4 27A20004 */  addiu $v0, $sp, 4
@@ -715,138 +723,5 @@ glabel debug_sp_related_12
 /* 00615C 7000555C 27BD0018 */   addiu $sp, $sp, 0x18
 )
 #endif
-
-
-//maybe newfile, falls on 0 address and logically does different things
-
-/**
- * 6160	70005560
- *     V0= TRUE if F12 a normal single precision float
- *     accepts: F12= single-precision float
- */
-#ifdef NONMATCHING
-s32 _is_normal_single_precision_float(f32 arg0) {
-    // Node 0
-    if ((u32) (arg0 & 0x7fffff) >= 1U)
-    {
-        // Node 1
-        if (0U < (u32) ((arg0 >> 0x17) & 0xff))
-        {
-            // Node 2
-            return;
-            // (possible return value: (0U < (u32) (((arg0 >> 0x17) & 0xff) ^ 0xff)))
-        }
-    }
-    // (possible return value: ((u32) (arg0 & 0x7fffff) < 1U))
-}
-#else
-GLOBAL_ASM(
-.text
-glabel _is_normal_single_precision_float
-/* 006160 70005560 E7AC0000 */  swc1  $f12, ($sp)
-/* 006164 70005564 8FA40000 */  lw    $a0, ($sp)
-/* 006168 70005568 3C01007F */  lui   $at, (0x007FFFFF >> 16) # lui $at, 0x7f
-/* 00616C 7000556C 3421FFFF */  ori   $at, (0x007FFFFF & 0xFFFF) # ori $at, $at, 0xffff
-/* 006170 70005570 00811024 */  and   $v0, $a0, $at
-/* 006174 70005574 2C4E0001 */  sltiu $t6, $v0, 1
-/* 006178 70005578 15C00008 */  bnez  $t6, .L7000559C
-/* 00617C 7000557C 01C01025 */   move  $v0, $t6
-/* 006180 70005580 00041DC2 */  srl   $v1, $a0, 0x17
-/* 006184 70005584 306F00FF */  andi  $t7, $v1, 0xff
-/* 006188 70005588 000F102B */  sltu  $v0, $zero, $t7
-/* 00618C 7000558C 10400003 */  beqz  $v0, .L7000559C
-/* 006190 70005590 00000000 */   nop   
-/* 006194 70005594 39E200FF */  xori  $v0, $t7, 0xff
-/* 006198 70005598 0002102B */  sltu  $v0, $zero, $v0
-.L7000559C:
-/* 00619C 7000559C 03E00008 */  jr    $ra
-/* 0061A0 700055A0 00000000 */   nop   
-)
-#endif
-
-
-
-
-/**
- * 61A4	700055A4
- *     V0= TRUE if A1 a normal single precision float; would have set result as short at A0
- *     accepts: A0=(unused) p->target, A1=single-precision float
- */
-#ifdef NONMATCHING
-void is_normal_single_precision_float(s32 arg0, s32 arg1) {
-    _is_normal_single_precision_float(arg1);
-}
-#else
-GLOBAL_ASM(
-.text
-glabel is_normal_single_precision_float
-/* 0061A4 700055A4 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0061A8 700055A8 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0061AC 700055AC 44856000 */  mtc1  $a1, $f12
-/* 0061B0 700055B0 0C001558 */  jal   _is_normal_single_precision_float
-/* 0061B4 700055B4 AFA40018 */   sw    $a0, 0x18($sp)
-/* 0061B8 700055B8 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0061BC 700055BC 27BD0018 */  addiu $sp, $sp, 0x18
-/* 0061C0 700055C0 03E00008 */  jr    $ra
-/* 0061C4 700055C4 00000000 */   nop   
-)
-#endif
-
-
-
-
-
-/**
- * 61C8	700055C8
- *     removed: set normality of single-precision floats A1, A2, A3, SP+10 in table at A0
- */
-#ifdef NONMATCHING
-void set_normality_of_single_precision_floats(s32 arg0, s32 arg1, ? arg2, ? arg3, s32 arg6, ? arg8, ? arg9, ? argA) {
-    // Node 0
-    is_normal_single_precision_float(arg1, arg1);
-    is_normal_single_precision_float((arg6 + 2), arg8);
-    is_normal_single_precision_float((arg6 + 4), arg9);
-    is_normal_single_precision_float((arg6 + 6), argA);
-    return;
-    // (possible return value: is_normal_single_precision_float((arg6 + 6), argA))
-}
-#else
-GLOBAL_ASM(
-.text
-glabel set_normality_of_single_precision_floats
-/* 0061C8 700055C8 44856000 */  mtc1  $a1, $f12
-/* 0061CC 700055CC 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0061D0 700055D0 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0061D4 700055D4 44056000 */  mfc1  $a1, $f12
-/* 0061D8 700055D8 AFA40018 */  sw    $a0, 0x18($sp)
-/* 0061DC 700055DC AFA60020 */  sw    $a2, 0x20($sp)
-/* 0061E0 700055E0 0C001569 */  jal   is_normal_single_precision_float
-/* 0061E4 700055E4 AFA70024 */   sw    $a3, 0x24($sp)
-/* 0061E8 700055E8 8FA40018 */  lw    $a0, 0x18($sp)
-/* 0061EC 700055EC 8FA50020 */  lw    $a1, 0x20($sp)
-/* 0061F0 700055F0 0C001569 */  jal   is_normal_single_precision_float
-/* 0061F4 700055F4 24840002 */   addiu $a0, $a0, 2
-/* 0061F8 700055F8 8FA40018 */  lw    $a0, 0x18($sp)
-/* 0061FC 700055FC 8FA50024 */  lw    $a1, 0x24($sp)
-/* 006200 70005600 0C001569 */  jal   is_normal_single_precision_float
-/* 006204 70005604 24840004 */   addiu $a0, $a0, 4
-/* 006208 70005608 8FA40018 */  lw    $a0, 0x18($sp)
-/* 00620C 7000560C 8FA50028 */  lw    $a1, 0x28($sp)
-/* 006210 70005610 0C001569 */  jal   is_normal_single_precision_float
-/* 006214 70005614 24840006 */   addiu $a0, $a0, 6
-/* 006218 70005618 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 00621C 7000561C 27BD0018 */  addiu $sp, $sp, 0x18
-/* 006220 70005620 03E00008 */  jr    $ra
-/* 006224 70005624 00000000 */   nop   
-)
-#endif
-
-/**
- * 6228	70005628
- *     unconditional return
- */
-void debug_indy_stub_2(void) {
-    return;
-}
 
 

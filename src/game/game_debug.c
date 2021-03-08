@@ -9,7 +9,7 @@
 s32 D_8004EAE0[] = {0, 0, 0, 0};
 
 void gameInitDebugNoticeList(void) {
-    debCheckAddDebugNoticeListEntry(&D_8004EAE0, "game_c_debug");
+    debTryAdd(&D_8004EAE0, "game_c_debug");
 }
 
 void reset_mem_bank_5(void) {

@@ -1,11 +1,7 @@
-#include "ultra64.h"
-
-
-
-
+#include "blood_decrypt.h"
 
 #ifdef NONMATCHING
-void decrypt_bleeding_animation_data(void) {
+u8 *decrypt_bleeding_animation_data(u8*, s32, s32, u8*, s8*) {
 
 }
 #else
@@ -141,8 +137,12 @@ glabel decrypt_bleeding_animation_data
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F01CC94(void) {
-
+// Uses sltu instead of slt for comparison
+void sub_GAME_7F01CC94(u8* arg0, u16 arg1, u8* arg2) {
+    while (arg1-- != 0) {
+        *arg2++ = (arg0[0] & 0xF0) | (arg0[1] >> 4);
+        arg0 += 2;
+    }
 }
 #else
 GLOBAL_ASM(
@@ -338,7 +338,7 @@ glabel sub_GAME_7F01CCEC
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F01CEEC(void) {
+void sub_GAME_7F01CEEC(u8*, s32, u8*) {
 
 }
 #else
@@ -434,7 +434,7 @@ glabel sub_GAME_7F01CEEC
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F01D02C(void) {
+void sub_GAME_7F01D02C(u8*, s32, u8*) {
 
 }
 #else
@@ -530,7 +530,7 @@ glabel sub_GAME_7F01D02C
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F01D16C(void) {
+void sub_GAME_7F01D16C(u8*, s32, s32, u8*) {
 
 }
 #else

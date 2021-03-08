@@ -183,10 +183,13 @@ extern s32 D_8002CCAC;
 extern s32 D_8002CCB0;
 extern s32 D_8002CCB4;
 extern u8 D_8002CCB8;
-extern s32 num_bodies;
-extern s32 num_male_heads;
-extern s32 num_female_heads;
+extern u32 num_bodies;
+extern u32 num_male_heads;
+extern u32 num_female_heads;
 extern s32 list_of_bodies[];
 extern s32 random_male_heads[];
 extern s32 random_female_heads[];
+extern u32 current_random_body;
+extern u32 current_random_male_head;
+extern u32 current_random_female_head;
 #endif

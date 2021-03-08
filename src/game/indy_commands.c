@@ -20,7 +20,7 @@ void sub_GAME_7F0D0180(u8 *buffer,u32 size)
   int i;
   
   for (i = 4; i != 100000; i + 4){;}
-  rmon_debug_stub_0();
+  rmon7000CEC0();
   for (i = 4; i != 100000; i + 4){;}
 }
 #else
@@ -36,7 +36,7 @@ glabel sub_GAME_7F0D0180
 .L7F0D0198:
 /* 104CC8 7F0D0198 5443FFFF */  bnel  $v0, $v1, .L7F0D0198
 /* 104CCC 7F0D019C 24420004 */   addiu $v0, $v0, 4
-/* 104CD0 7F0D01A0 0C0033B0 */  jal   rmon_debug_stub_0
+/* 104CD0 7F0D01A0 0C0033B0 */  jal   rmon7000CEC0
 /* 104CD4 7F0D01A4 00000000 */   nop   
 /* 104CD8 7F0D01A8 3C030001 */  lui   $v1, (0x000186A0 >> 16) # lui $v1, 1
 /* 104CDC 7F0D01AC 346386A0 */  ori   $v1, (0x000186A0 & 0xFFFF) # ori $v1, $v1, 0x86a0
@@ -62,7 +62,7 @@ void sub_GAME_7F0D01D0(u8 *buffer,u32 size)
   int i;
   
   for (i = 4; i != 100000; i + 4){;}
-  rmon_debug_stub();
+  rmon7000CEB8();
   for (i = 4; i != 100000; i + 4){;}
 }
 #else
@@ -78,7 +78,7 @@ glabel sub_GAME_7F0D01D0
 .L7F0D01E8:
 /* 104D18 7F0D01E8 5443FFFF */  bnel  $v0, $v1, .L7F0D01E8
 /* 104D1C 7F0D01EC 24420004 */   addiu $v0, $v0, 4
-/* 104D20 7F0D01F0 0C0033AE */  jal   rmon_debug_stub
+/* 104D20 7F0D01F0 0C0033AE */  jal   rmon7000CEB8
 /* 104D24 7F0D01F4 00000000 */   nop   
 /* 104D28 7F0D01F8 3C030001 */  lui   $v1, (0x000186A0 >> 16) # lui $v1, 1
 /* 104D2C 7F0D01FC 346386A0 */  ori   $v1, (0x000186A0 & 0xFFFF) # ori $v1, $v1, 0x86a0
@@ -262,7 +262,7 @@ void post_type3_indyrescmd(s32 rsize,s32 wsize,char *strptr)
     cmd.entry.size = 0x114;
     cmd.entry.readsize = rsize;
     cmd.entry.writesize = wsize;
-    something_with_strings(cmd.strbuffer,strptr,0x100);
+    strncpy(cmd.strbuffer,strptr,0x100);
     cmd.data = 0;
     postindyresourcecommand(&cmd.entry,0x114);
 }
@@ -285,7 +285,7 @@ glabel post_type3_indyrescmd
 /* 104FC0 7F0D0490 AFAF0020 */  sw    $t7, 0x20($sp)
 /* 104FC4 7F0D0494 AFB80024 */  sw    $t8, 0x24($sp)
 /* 104FC8 7F0D0498 24060100 */  li    $a2, 256
-/* 104FCC 7F0D049C 0C0029E8 */  jal   something_with_strings
+/* 104FCC 7F0D049C 0C0029E8 */  jal   strncpy
 /* 104FD0 7F0D04A0 27A40030 */   addiu $a0, $sp, 0x30
 /* 104FD4 7F0D04A4 A3A0012F */  sb    $zero, 0x12f($sp)
 /* 104FD8 7F0D04A8 27A4001C */  addiu $a0, $sp, 0x1c
@@ -333,7 +333,7 @@ void post_type5_indyrescmd_printfsend(s32 param_1,s32 param_2,char *param_3)
     cmd.size = 0x114;
     cmd.readsize = param_1;
     cmd.writesize = param_2;
-    something_with_strings(acStack256,param_3,0x100);
+    strncpy(acStack256,param_3,0x100);
     uStack1 = 0;
     postindyresourcecommand(&cmd,0x114);
 }
@@ -356,7 +356,7 @@ glabel post_type5_indyrescmd_printfsend
 /* 105074 7F0D0544 AFAF0020 */  sw    $t7, 0x20($sp)
 /* 105078 7F0D0548 AFB80024 */  sw    $t8, 0x24($sp)
 /* 10507C 7F0D054C 24060100 */  li    $a2, 256
-/* 105080 7F0D0550 0C0029E8 */  jal   something_with_strings
+/* 105080 7F0D0550 0C0029E8 */  jal   strncpy
 /* 105084 7F0D0554 27A40030 */   addiu $a0, $sp, 0x30
 /* 105088 7F0D0558 A3A0012F */  sb    $zero, 0x12f($sp)
 /* 10508C 7F0D055C 27A4001C */  addiu $a0, $sp, 0x1c
@@ -415,7 +415,7 @@ glabel post_type7_indyrescmd_log_send
 /* 105138 7F0D0608 AFAF001C */  sw    $t7, 0x1c($sp)
 /* 10513C 7F0D060C AFB80020 */  sw    $t8, 0x20($sp)
 /* 105140 7F0D0610 24060100 */  li    $a2, 256
-/* 105144 7F0D0614 0C0029E8 */  jal   something_with_strings
+/* 105144 7F0D0614 0C0029E8 */  jal   strncpy
 /* 105148 7F0D0618 27A4002C */   addiu $a0, $sp, 0x2c
 /* 10514C 7F0D061C 8FA9013C */  lw    $t1, 0x13c($sp)
 /* 105150 7F0D0620 A3A0012B */  sb    $zero, 0x12b($sp)
@@ -508,7 +508,7 @@ glabel post_type9_indyrescmd_app_command_ready
 /* 105234 7F0D0704 AFAF0020 */  sw    $t7, 0x20($sp)
 /* 105238 7F0D0708 AFA90024 */  sw    $t1, 0x24($sp)
 /* 10523C 7F0D070C 24060100 */  li    $a2, 256
-/* 105240 7F0D0710 0C0029E8 */  jal   something_with_strings
+/* 105240 7F0D0710 0C0029E8 */  jal   strncpy
 /* 105244 7F0D0714 27A40030 */   addiu $a0, $sp, 0x30
 /* 105248 7F0D0718 A3A0012F */  sb    $zero, 0x12f($sp)
 /* 10524C 7F0D071C 27A4001C */  addiu $a0, $sp, 0x1c
@@ -568,7 +568,7 @@ glabel post_typeF_indyrescmd_fault_send
 /* 1052F8 7F0D07C8 AFAF0020 */  sw    $t7, 0x20($sp)
 /* 1052FC 7F0D07CC AFB80024 */  sw    $t8, 0x24($sp)
 /* 105300 7F0D07D0 24060100 */  li    $a2, 256
-/* 105304 7F0D07D4 0C0029E8 */  jal   something_with_strings
+/* 105304 7F0D07D4 0C0029E8 */  jal   strncpy
 /* 105308 7F0D07D8 27A40030 */   addiu $a0, $sp, 0x30
 /* 10530C 7F0D07DC 8FA90144 */  lw    $t1, 0x144($sp)
 /* 105310 7F0D07E0 8FAA0148 */  lw    $t2, 0x148($sp)
@@ -653,7 +653,7 @@ glabel post_typeD_indyrescmd_prof_send_filename
 /* 1053D4 7F0D08A4 AFAF0020 */  sw    $t7, 0x20($sp)
 /* 1053D8 7F0D08A8 AFB80024 */  sw    $t8, 0x24($sp)
 /* 1053DC 7F0D08AC 24060100 */  li    $a2, 256
-/* 1053E0 7F0D08B0 0C0029E8 */  jal   something_with_strings
+/* 1053E0 7F0D08B0 0C0029E8 */  jal   strncpy
 /* 1053E4 7F0D08B4 27A40030 */   addiu $a0, $sp, 0x30
 /* 1053E8 7F0D08B8 8FA90144 */  lw    $t1, 0x144($sp)
 /* 1053EC 7F0D08BC 8FAA0148 */  lw    $t2, 0x148($sp)
@@ -715,7 +715,7 @@ glabel post_typeB_indyrescmd_host_prof_req
 /* 105498 7F0D0968 AFAF0020 */  sw    $t7, 0x20($sp)
 /* 10549C 7F0D096C AFB80024 */  sw    $t8, 0x24($sp)
 /* 1054A0 7F0D0970 24060400 */  li    $a2, 1024
-/* 1054A4 7F0D0974 0C0029E8 */  jal   something_with_strings
+/* 1054A4 7F0D0974 0C0029E8 */  jal   strncpy
 /* 1054A8 7F0D0978 27A40030 */   addiu $a0, $sp, 0x30
 /* 1054AC 7F0D097C A3A0042F */  sb    $zero, 0x42f($sp)
 /* 1054B0 7F0D0980 27A4001C */  addiu $a0, $sp, 0x1c

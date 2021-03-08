@@ -55,6 +55,7 @@ SECTIONS
       build/u/src/video.o (.text);
       build/u/src/deb.o (.text);
       build/u/src/deb_video.o (.text);
+      build/u/src/unused_fp.o (.text);
       build/u/src/deb_print.o (.text);
       build/u/src/debug_getlastRA.o (.text);
       build/u/src/ramrom.o (.text);
@@ -365,7 +366,7 @@ SECTIONS
       build/u/src/game/unk_092E50.o (.text);
       build/u/src/game/unk_093880.o (.text);
       build/u/src/game/unk_09B600.o (.text);
-      build/u/src/game/unk_09B740.o (.text);
+      build/u/src/game/chrObjRandom.o (.text);
       build/u/src/game/unk_09B7A0.o (.text);
       build/u/src/game/unk_09C250.o (.text);
       build/u/src/game/unk_0A1DA0.o (.text);
@@ -421,7 +422,6 @@ SECTIONS
    }
    _romfiles_117880SegmentEnd = ADDR(.romfiles_117880) + SIZEOF(.romfiles_117880);
    _romfiles_117880SegmentRomEnd = _romfiles_117880SegmentRomStart + SIZEOF(.romfiles_117880);
-
 
 
 
@@ -3172,6 +3172,7 @@ SECTIONS
       build/u/src/video.o (.data);
       build/u/src/deb.o (.data);
       build/u/src/deb_video.o (.data);
+      build/u/src/unused_fp.o (.data);
       build/u/src/deb_print.o (.data);
       build/u/src/debug_getlastRA.o (.data);
       build/u/src/ramrom.o (.data);
@@ -3379,6 +3380,7 @@ SECTIONS
       build/u/src/video.o (.rodata);
       build/u/src/deb.o (.rodata);
       build/u/src/deb_video.o (.rodata);
+      build/u/src/unused_fp.o (.rodata);
       build/u/src/deb_print.o (.rodata);
       build/u/src/debug_getlastRA.o (.rodata);
       build/u/src/ramrom.o (.rodata);
@@ -3657,7 +3659,7 @@ SECTIONS
       build/u/src/game/unk_092E50.o (.data);
       build/u/src/game/unk_093880.o (.data);
       build/u/src/game/unk_09B600.o (.data);
-      build/u/src/game/unk_09B740.o (.data);
+      build/u/src/game/chrObjRandom.o (.data);
       build/u/src/game/unk_09B7A0.o (.data);
       build/u/src/game/unk_09C250.o (.data);
       build/u/src/game/unk_0A1DA0.o (.data);
@@ -3779,7 +3781,7 @@ SECTIONS
       build/u/src/game/unk_092E50.o (.rodata);
       build/u/src/game/unk_093880.o (.rodata);
       build/u/src/game/unk_09B600.o (.rodata);
-      build/u/src/game/unk_09B740.o (.rodata);
+      build/u/src/game/chrObjRandom.o (.rodata);
       build/u/src/game/unk_09B7A0.o (.rodata);
       build/u/src/game/unk_09C250.o (.rodata);
       build/u/src/game/unk_0A1DA0.o (.rodata);
@@ -3839,6 +3841,7 @@ SECTIONS
       build/u/src/video.o (.bss);
       build/u/src/deb.o (.bss);
       build/u/src/deb_video.o (.bss);
+      build/u/src/unused_fp.o (.bss);
       build/u/src/deb_print.o (.bss);
       build/u/src/debug_getlastRA.o (.bss);
       build/u/src/ramrom.o (.bss);
@@ -4117,7 +4120,7 @@ SECTIONS
       build/u/src/game/unk_092E50.o (.bss);
       build/u/src/game/unk_093880.o (.bss);
       build/u/src/game/unk_09B600.o (.bss);
-      build/u/src/game/unk_09B740.o (.bss);
+      build/u/src/game/chrObjRandom.o (.bss);
       build/u/src/game/unk_09B7A0.o (.bss);
       build/u/src/game/unk_09C250.o (.bss);
       build/u/src/game/unk_0A1DA0.o (.bss);
@@ -4198,7 +4201,6 @@ SECTIONS
    }
    _cfbSegmentEnd = ADDR(.cfb) + SIZEOF(.cfb);
    _cfbSegmentRomEnd = _cfbSegmentRomStart + SIZEOF(.cfb);
-
 
    /*move em to end, out of the way*/
    /DISCARD/ : {

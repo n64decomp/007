@@ -498,10 +498,10 @@ extern s32 screen_size;
 extern s32 spectrum_related_flag;
 extern s32 is_emulating_spectrum;
 extern s32 is_cheat_menu_available;
-extern s32 ptr_logo_and_walletbond_DL;
-extern s32 ptr_menu_videobuffer;
+extern Gfx * ptr_logo_and_walletbond_DL;
+extern u8 * ptr_menu_videobuffer;
 extern s32 something_legalscreen_constructor;
-extern s32 ptr_folder_object_instance;
+extern struct object_standard * ptr_folder_object_instance;
 extern s32 set0_never_used;
 extern s32 set0_never_used_0;
 extern s32 D_8002A968;
@@ -780,6 +780,8 @@ extern u32 intro_animation_count;
 extern u32 objinstance;
 extern u32 ptrobjinstance;
 extern u32 full_actor_intro;
+
 void set_menu_to_mode(MENU menu, s32 mode);
+s32 get_selected_num_players(void);
 
 #endif

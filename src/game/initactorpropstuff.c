@@ -1,107 +1,28 @@
 #include "ultra64.h"
 #include "game/initactorpropstuff.h"
 #include "game/chr.h"
+#include "game/bondwalk.h"
 
 
-
-
-
-
-
-#ifdef NONMATCHING
 void reset_counter_rand_body_head(void) {
-  num_bodies = 0;
-  if (list_of_bodies[0] >= 0 ) {
-    num_bodies = 1;
-    while (list_of_bodies[num_bodies] >= 0) {
-      num_bodies += 1;
+    num_bodies = 0;
+    while (list_of_bodies[num_bodies] >= 0)
+    {
+        num_bodies += 1;
     }
-  }
-  num_male_heads = 0;
-  if (random_male_heads[0] >= 0) {
-    num_male_heads = 1;
-    while (random_male_heads[num_male_heads] >= 0) {
-      num_male_heads += 1;
-    }
-  }
-  num_female_heads = 0;
-  if (random_female_heads[0] >= 0) {
-    num_female_heads = 1;
-    while (random_female_heads[num_female_heads] >= 0) {
-      num_female_heads += 1;
-    }
-  }
-  return;
-}
-#else
-GLOBAL_ASM(
-.text
-glabel reset_counter_rand_body_head
-/* 034C40 7F000110 3C048003 */  lui   $a0, %hi(list_of_bodies)
-/* 034C44 7F000114 2484CD0C */  addiu $a0, %lo(list_of_bodies) # addiu $a0, $a0, -0x32f4
-/* 034C48 7F000118 00007080 */  sll   $t6, $zero, 2
-/* 034C4C 7F00011C 008E7821 */  addu  $t7, $a0, $t6
-/* 034C50 7F000120 8DF80000 */  lw    $t8, ($t7)
-/* 034C54 7F000124 3C038003 */  lui   $v1, %hi(num_bodies)
-/* 034C58 7F000128 2463CD00 */  addiu $v1, %lo(num_bodies) # addiu $v1, $v1, -0x3300
-/* 034C5C 7F00012C AC600000 */  sw    $zero, ($v1)
-/* 034C60 7F000130 07000009 */  bltz  $t8, .L7F000158
-/* 034C64 7F000134 00001025 */   move  $v0, $zero
-/* 034C68 7F000138 24590001 */  addiu $t9, $v0, 1
-.L7F00013C:
-/* 034C6C 7F00013C 00194080 */  sll   $t0, $t9, 2
-/* 034C70 7F000140 00884821 */  addu  $t1, $a0, $t0
-/* 034C74 7F000144 8D2A0000 */  lw    $t2, ($t1)
-/* 034C78 7F000148 AC790000 */  sw    $t9, ($v1)
-/* 034C7C 7F00014C 03201025 */  move  $v0, $t9
-/* 034C80 7F000150 0543FFFA */  bgezl $t2, .L7F00013C
-/* 034C84 7F000154 24590001 */   addiu $t9, $v0, 1
-.L7F000158:
-/* 034C88 7F000158 3C048003 */  lui   $a0, %hi(random_male_heads)
-/* 034C8C 7F00015C 2484CDB8 */  addiu $a0, %lo(random_male_heads) # addiu $a0, $a0, -0x3248
-/* 034C90 7F000160 00005880 */  sll   $t3, $zero, 2
-/* 034C94 7F000164 008B6021 */  addu  $t4, $a0, $t3
-/* 034C98 7F000168 8D8D0000 */  lw    $t5, ($t4)
-/* 034C9C 7F00016C 3C038003 */  lui   $v1, %hi(num_male_heads)
-/* 034CA0 7F000170 2463CD04 */  addiu $v1, %lo(num_male_heads) # addiu $v1, $v1, -0x32fc
-/* 034CA4 7F000174 AC600000 */  sw    $zero, ($v1)
-/* 034CA8 7F000178 05A00009 */  bltz  $t5, .L7F0001A0
-/* 034CAC 7F00017C 00001025 */   move  $v0, $zero
-/* 034CB0 7F000180 244E0001 */  addiu $t6, $v0, 1
-.L7F000184:
-/* 034CB4 7F000184 000E7880 */  sll   $t7, $t6, 2
-/* 034CB8 7F000188 008FC021 */  addu  $t8, $a0, $t7
-/* 034CBC 7F00018C 8F190000 */  lw    $t9, ($t8)
-/* 034CC0 7F000190 AC6E0000 */  sw    $t6, ($v1)
-/* 034CC4 7F000194 01C01025 */  move  $v0, $t6
-/* 034CC8 7F000198 0723FFFA */  bgezl $t9, .L7F000184
-/* 034CCC 7F00019C 244E0001 */   addiu $t6, $v0, 1
-.L7F0001A0:
-/* 034CD0 7F0001A0 3C048003 */  lui   $a0, %hi(random_female_heads)
-/* 034CD4 7F0001A4 2484CE20 */  addiu $a0, %lo(random_female_heads) # addiu $a0, $a0, -0x31e0
-/* 034CD8 7F0001A8 00004080 */  sll   $t0, $zero, 2
-/* 034CDC 7F0001AC 00884821 */  addu  $t1, $a0, $t0
-/* 034CE0 7F0001B0 8D2A0000 */  lw    $t2, ($t1)
-/* 034CE4 7F0001B4 3C038003 */  lui   $v1, %hi(num_female_heads)
-/* 034CE8 7F0001B8 2463CD08 */  addiu $v1, %lo(num_female_heads) # addiu $v1, $v1, -0x32f8
-/* 034CEC 7F0001BC AC600000 */  sw    $zero, ($v1)
-/* 034CF0 7F0001C0 05400009 */  bltz  $t2, .L7F0001E8
-/* 034CF4 7F0001C4 00001025 */   move  $v0, $zero
-/* 034CF8 7F0001C8 244B0001 */  addiu $t3, $v0, 1
-.L7F0001CC:
-/* 034CFC 7F0001CC 000B6080 */  sll   $t4, $t3, 2
-/* 034D00 7F0001D0 008C6821 */  addu  $t5, $a0, $t4
-/* 034D04 7F0001D4 8DAE0000 */  lw    $t6, ($t5)
-/* 034D08 7F0001D8 AC6B0000 */  sw    $t3, ($v1)
-/* 034D0C 7F0001DC 01601025 */  move  $v0, $t3
-/* 034D10 7F0001E0 05C3FFFA */  bgezl $t6, .L7F0001CC
-/* 034D14 7F0001E4 244B0001 */   addiu $t3, $v0, 1
-.L7F0001E8:
-/* 034D18 7F0001E8 03E00008 */  jr    $ra
-/* 034D1C 7F0001EC 00000000 */   nop   
-)
-#endif
 
+    num_male_heads = 0;
+    while (random_male_heads[num_male_heads] >= 0)
+    {
+        num_male_heads += 1;
+    }
+
+    num_female_heads = 0;
+    while (random_female_heads[num_female_heads] >= 0)
+    {
+        num_female_heads += 1;
+    }
+}
 
 
 #ifdef NONMATCHING
@@ -704,9 +625,6 @@ glabel somethingwith_weapon_animation_groups
 void sub_GAME_7F000980(void) {
     sub_GAME_7F0009A0();
 }
-
-
-extern char dword_CODE_bss_80075DC8[20][160]; // TODO: This seems like an array of 20 of these. Fix the other files? (Aliasing violation)
 
 void sub_GAME_7F0009A0(void) {
     u32 *end = &dword_CODE_bss_80075DC8[20];

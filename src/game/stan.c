@@ -234,7 +234,7 @@ u32 stanRemovedAnimationRoutine(s32 arg0) {
 }
 
 void stanInitDebugNoticeList(void) {
-    debCheckAddDebugNoticeListEntry(&stan_c_debug_notice_list_entry, &aStan_c_debug);//"stan_c_debug");
+    debTryAdd(&stan_c_debug_notice_list_entry, &aStan_c_debug);//"stan_c_debug");
 }
 
 
@@ -796,7 +796,7 @@ void stanLoadFile(void *arg0) {
     stanLoaded = 1;
     stan_prefix.clippingfile = arg0;
     standTileStart = (s32) (arg0->unk4 + -0x80);
-    if (check_token(1, "-stanlinelog") != 0)
+    if (tokenFind(1, "-stanlinelog") != 0)
     {
         stanlinelog_flag = 1;
     }
@@ -822,7 +822,7 @@ glabel stanLoadFile
 /* 0E4114 7F0AF5E4 2719FF80 */  addiu $t9, $t8, -0x80
 /* 0E4118 7F0AF5E8 AC390F58 */  sw    $t9, %lo(standTileStart)($at)
 /* 0E411C 7F0AF5EC 24A585BC */  addiu $a1, %lo(aStanlinelog) # addiu $a1, $a1, -0x7a44
-/* 0E4120 7F0AF5F0 0C0029A8 */  jal   check_token
+/* 0E4120 7F0AF5F0 0C0029A8 */  jal   tokenFind
 /* 0E4124 7F0AF5F4 24040001 */   li    $a0, 1
 /* 0E4128 7F0AF5F8 10400003 */  beqz  $v0, .L7F0AF608
 /* 0E412C 7F0AF5FC 24080001 */   li    $t0, 1
@@ -6376,12 +6376,12 @@ GLOBAL_ASM(
 glabel sub_GAME_7F0B3044
 /* 0E7B74 7F0B3044 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 0E7B78 7F0B3048 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0E7B7C 7F0B304C 0FC2F5DF */  jal   num_microcode_cmds_that_fit
+/* 0E7B7C 7F0B304C 0FC2F5DF */  jal   dynGetFreeGfx
 /* 0E7B80 7F0B3050 AFA0001C */   sw    $zero, 0x1c($sp)
 /* 0E7B84 7F0B3054 28411000 */  slti  $at, $v0, 0x1000
 /* 0E7B88 7F0B3058 14200005 */  bnez  $at, .L7F0B3070
 /* 0E7B8C 7F0B305C 00000000 */   nop   
-/* 0E7B90 7F0B3060 0FC2F5E9 */  jal   sub_GAME_7F0BD7A4
+/* 0E7B90 7F0B3060 0FC2F5E9 */  jal   dynGetFreeVtx
 /* 0E7B94 7F0B3064 00000000 */   nop   
 /* 0E7B98 7F0B3068 28411000 */  slti  $at, $v0, 0x1000
 /* 0E7B9C 7F0B306C 10200010 */  beqz  $at, .L7F0B30B0

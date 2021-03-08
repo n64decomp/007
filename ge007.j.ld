@@ -55,6 +55,7 @@ SECTIONS
       build/j/src/video.o (.text);
       build/j/src/deb.o (.text);
       build/j/src/deb_video.o (.text);
+      build/j/src/unused_fp.o (.text);
       build/j/src/deb_print.o (.text);
       build/j/src/debug_getlastRA.o (.text);
       build/j/src/ramrom.o (.text);
@@ -365,7 +366,7 @@ SECTIONS
       build/j/src/game/unk_092E50.o (.text);
       build/j/src/game/unk_093880.o (.text);
       build/j/src/game/unk_09B600.o (.text);
-      build/j/src/game/unk_09B740.o (.text);
+      build/j/src/game/chrObjRandom.o (.text);
       build/j/src/game/unk_09B7A0.o (.text);
       build/j/src/game/unk_09C250.o (.text);
       build/j/src/game/unk_0A1DA0.o (.text);
@@ -3169,6 +3170,7 @@ SECTIONS
       build/j/src/video.o (.data);
       build/j/src/deb.o (.data);
       build/j/src/deb_video.o (.data);
+      build/j/src/unused_fp.o (.data);
       build/j/src/deb_print.o (.data);
       build/j/src/debug_getlastRA.o (.data);
       build/j/src/ramrom.o (.data);
@@ -3377,6 +3379,7 @@ SECTIONS
       build/j/src/video.o (.rodata);
       build/j/src/deb.o (.rodata);
       build/j/src/deb_video.o (.rodata);
+      build/j/src/unused_fp.o (.rodata);
       build/j/src/deb_print.o (.rodata);
       build/j/src/debug_getlastRA.o (.rodata);
       build/j/src/ramrom.o (.rodata);
@@ -3656,7 +3659,7 @@ SECTIONS
       build/j/src/game/unk_092E50.o (.data);
       build/j/src/game/unk_093880.o (.data);
       build/j/src/game/unk_09B600.o (.data);
-      build/j/src/game/unk_09B740.o (.data);
+      build/j/src/game/chrObjRandom.o (.data);
       build/j/src/game/unk_09B7A0.o (.data);
       build/j/src/game/unk_09C250.o (.data);
       build/j/src/game/unk_0A1DA0.o (.data);
@@ -3778,7 +3781,7 @@ SECTIONS
       build/j/src/game/unk_092E50.o (.rodata);
       build/j/src/game/unk_093880.o (.rodata);
       build/j/src/game/unk_09B600.o (.rodata);
-      build/j/src/game/unk_09B740.o (.rodata);
+      build/j/src/game/chrObjRandom.o (.rodata);
       build/j/src/game/unk_09B7A0.o (.rodata);
       build/j/src/game/unk_09C250.o (.rodata);
       build/j/src/game/unk_0A1DA0.o (.rodata);
@@ -3838,6 +3841,7 @@ SECTIONS
       build/j/src/video.o (.bss);
       build/j/src/deb.o (.bss);
       build/j/src/deb_video.o (.bss);
+      build/j/src/unused_fp.o (.bss);
       build/j/src/deb_print.o (.bss);
       build/j/src/debug_getlastRA.o (.bss);
       build/j/src/ramrom.o (.bss);
@@ -4116,7 +4120,7 @@ SECTIONS
       build/j/src/game/unk_092E50.o (.bss);
       build/j/src/game/unk_093880.o (.bss);
       build/j/src/game/unk_09B600.o (.bss);
-      build/j/src/game/unk_09B740.o (.bss);
+      build/j/src/game/chrObjRandom.o (.bss);
       build/j/src/game/unk_09B7A0.o (.bss);
       build/j/src/game/unk_09C250.o (.bss);
       build/j/src/game/unk_0A1DA0.o (.bss);

@@ -3,7 +3,7 @@
 #include "ultra64.h"
 
 
-extern u32 return_tlb_random_value(void);
+extern u32 tlbRandomGetNext(void);
 
 #endif
 

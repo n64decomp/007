@@ -1,6 +1,7 @@
 #include "ultra64.h"
 #include "game/debugmenu_090490.h"
 #include "game/initgamedata.h"
+#include "boss.h"
 
 // data
 //D:80036BA0
@@ -426,7 +427,7 @@ void removed_do_debug_profile_flag_true(void) {
 
 
 #ifdef NONMATCHING
-void debug_menu_processor(void) {
+s32 debug_menu_processor(s8 arg0, s8 arg1, u16 arg2, u16 arg3) {
 
 }
 #else
@@ -539,7 +540,7 @@ glabel debug_menu_processor
 /* 0C5108 7F0905D8 0C0012ED */  jal   indy_grab_rgb_32bit
 /* 0C510C 7F0905DC 00000000 */   nop   
 /* 0C5110 7F0905E0 3C018003 */  lui   $at, %hi(grab_rgb_screenshot_flag)
-/* 0C5114 7F0905E4 0C000F00 */  jal   set_coloroutputmode_16bit
+/* 0C5114 7F0905E4 0C000F00 */  jal   viSetColorMode16Bit
 /* 0C5118 7F0905E8 AC206FFC */   sw    $zero, %lo(grab_rgb_screenshot_flag)($at)
 /* 0C511C 7F0905EC 0C0038B4 */  jal   osViBlack
 /* 0C5120 7F0905F0 00002025 */   move  $a0, $zero
@@ -555,7 +556,7 @@ glabel debug_menu_processor
 /* 0C5144 7F090614 0C001235 */  jal   indy_grab_jpg_32bit
 /* 0C5148 7F090618 00000000 */   nop   
 /* 0C514C 7F09061C 3C018003 */  lui   $at, %hi(grab_jpeg_screenshot_flag)
-/* 0C5150 7F090620 0C000F00 */  jal   set_coloroutputmode_16bit
+/* 0C5150 7F090620 0C000F00 */  jal   viSetColorMode16Bit
 /* 0C5154 7F090624 AC207000 */   sw    $zero, %lo(grab_jpeg_screenshot_flag)($at)
 /* 0C5158 7F090628 0C0038B4 */  jal   osViBlack
 /* 0C515C 7F09062C 00002025 */   move  $a0, $zero
@@ -814,7 +815,7 @@ debug_displayspeed:
 /* 0C54CC 7F09099C 3B190001 */  xori  $t9, $t8, 1
 /* 0C54D0 7F0909A0 17200134 */  bnez  $t9, .L7F090E74
 /* 0C54D4 7F0909A4 AC590000 */   sw    $t9, ($v0)
-/* 0C54D8 7F0909A8 0C002BC0 */  jal   blank_debug_buffer_chars
+/* 0C54D8 7F0909A8 0C002BC0 */  jal   debmenuReset
 /* 0C54DC 7F0909AC 00000000 */   nop   
 /* 0C54E0 7F0909B0 10000131 */  b     .L7F090E78
 /* 0C54E4 7F0909B4 8FB80018 */   lw    $t8, 0x18($sp)
@@ -868,7 +869,7 @@ debug_testingmanpos:
 /* 0C5588 7F090A58 10000106 */  b     .L7F090E74
 /* 0C558C 7F090A5C AC4C0000 */   sw    $t4, ($v0)
 debug_playtitle:
-/* 0C5590 7F090A60 0C001A54 */  jal   set_loaded_stage
+/* 0C5590 7F090A60 0C001A54 */  jal   bossSetLoadedStage
 /* 0C5594 7F090A64 2404005A */   li    $a0, 90
 /* 0C5598 7F090A68 10000103 */  b     .L7F090E78
 /* 0C559C 7F090A6C 8FB80018 */   lw    $t8, 0x18($sp)
@@ -885,12 +886,12 @@ debug_prroomloads:
 /* 0C55C0 7F090A90 100000F8 */  b     .L7F090E74
 /* 0C55C4 7F090A94 AC4E0000 */   sw    $t6, ($v0)
 debug_showmemuse:
-/* 0C55C8 7F090A98 0C0017FD */  jal   enable_show_mem_use_flag
+/* 0C55C8 7F090A98 0C0017FD */  jal   bossEnableShowMemUseFlag
 /* 0C55CC 7F090A9C 00000000 */   nop   
 /* 0C55D0 7F090AA0 100000F5 */  b     .L7F090E78
 /* 0C55D4 7F090AA4 8FB80018 */   lw    $t8, 0x18($sp)
 debug_showmembars:
-/* 0C55D8 7F090AA8 0C001801 */  jal   mem_bars_flag_toggle
+/* 0C55D8 7F090AA8 0C001801 */  jal   bossMemBarsFlagToggle
 /* 0C55DC 7F090AAC 00000000 */   nop   
 /* 0C55E0 7F090AB0 100000F1 */  b     .L7F090E78
 /* 0C55E4 7F090AB4 8FB80018 */   lw    $t8, 0x18($sp)
@@ -900,7 +901,7 @@ debug_grabrgb:
 /* 0C55F0 7F090AC0 AC236FFC */  sw    $v1, %lo(grab_rgb_screenshot_flag)($at)
 /* 0C55F4 7F090AC4 0C0038B4 */  jal   osViBlack
 /* 0C55F8 7F090AC8 24040001 */   li    $a0, 1
-/* 0C55FC 7F090ACC 0C000F04 */  jal   set_coloroutputmode_32bit
+/* 0C55FC 7F090ACC 0C000F04 */  jal   viSetColorMode32Bit
 /* 0C5600 7F090AD0 00000000 */   nop   
 /* 0C5604 7F090AD4 100000E8 */  b     .L7F090E78
 /* 0C5608 7F090AD8 8FB80018 */   lw    $t8, 0x18($sp)
@@ -910,7 +911,7 @@ debug_grabjpeg:
 /* 0C5614 7F090AE4 AC237000 */  sw    $v1, %lo(grab_jpeg_screenshot_flag)($at)
 /* 0C5618 7F090AE8 0C0038B4 */  jal   osViBlack
 /* 0C561C 7F090AEC 24040001 */   li    $a0, 1
-/* 0C5620 7F090AF0 0C000F04 */  jal   set_coloroutputmode_32bit
+/* 0C5620 7F090AF0 0C000F04 */  jal   viSetColorMode32Bit
 /* 0C5624 7F090AF4 00000000 */   nop   
 /* 0C5628 7F090AF8 100000DF */  b     .L7F090E78
 /* 0C562C 7F090AFC 8FB80018 */   lw    $t8, 0x18($sp)
@@ -1201,7 +1202,7 @@ def_7F090EA8:
 /* 0C59F8 7F090EC8 24010001 */  li    $at, 1
 /* 0C59FC 7F090ECC 15610003 */  bne   $t3, $at, .L7F090EDC
 /* 0C5A00 7F090ED0 00000000 */   nop   
-/* 0C5A04 7F090ED4 0C002BC0 */  jal   blank_debug_buffer_chars
+/* 0C5A04 7F090ED4 0C002BC0 */  jal   debmenuReset
 /* 0C5A08 7F090ED8 00000000 */   nop   
 .L7F090EDC:
 /* 0C5A0C 7F090EDC 3C018003 */  lui   $at, %hi(show_debug_menu_flag)

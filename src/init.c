@@ -48,6 +48,11 @@ OSMesgQueue *sched_cmdQ;
 void mainproc(void *args);
 
 extern u8 * _rarezipSegmentStart;
+
+
+u32         osPiGetStatus(void);
+void __osSetFpcCsr(u32);
+u32 __osGetFpcCsr(void);
 /**
  * 1110	70000510
  * ???	initializes TLB index...
@@ -56,40 +61,46 @@ extern u8 * _rarezipSegmentStart;
 #ifdef NONMATCHING
 void init(void)
 {
-    s32 *cdata_vaddr_start;
-    s32 cdata_rom_size;
-    s32 datapos;
-    u32 *dest;
-    u32 *source;
-    u32 i;
+    u32 src = get_csegmentSegmentStart();
+    u32 datastart = get_cdataSegmentRomStart();
+    u32 datacomplen = (get_cdataSegmentRomEnd() - datastart);
+    u32 inflatestart = get_rarezipSegmentRomStart();
+    u32 inflatelen = (get_rarezipSegmentRomEnd() - inflatestart);
+    u32 dst = &_rarezipSegmentRomStart - datacomplen;
+    u32 j;
+    s32 i;
 
-    cdata_vaddr_start = get_csegmentSegmentStart();
-    cdata_rom_size = (get_cdataSegmentRomEnd() - get_cdataSegmentRomStart());
-
-	for (datapos = ((cdata_rom_size + (get_rarezipSegmentRomEnd() - get_rarezipSegmentRomStart())) + -1); datapos >= 0; datapos--)
+	for (i = datacomplen + inflatelen - 1; (i >= 0); i--)
     {
-		_rarezipSegmentStart[-cdata_rom_size + datapos] = &cdata_vaddr_start[datapos];
+		((u8 *)dst)[i] = ((u8 *)src)[i];
 	}
 
-    jump_decompressfile((_rarezipSegmentStart - cdata_rom_size), cdata_vaddr_start, 0x80300000);
-
-    if ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) >= 0xfffb1)
+    jump_decompressfile(dst, src, 0x80300000);
+    if (1)
     {
-        osPiRawStartDma(0, 0x101000, 0x70100400, ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) + 0xfff00050));
-        while ((osPiGetStatus() & 1) != 0) {}
-    }
+        if ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) >= 0xfffb1)
+        {
+            osPiRawStartDma(0, 0x101000, 0x70100400, ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) + 0xfff00050));
+            while ((osPiGetStatus() & 1) != 0) {}
+        }
 
-    osInitialize();
-    set_hardwire_TLB_to_2();
+        osInitialize();
+        set_hardwire_TLB_to_2();
+    }
 
 
 	//IM BROKEN FIX ME!!!!!!!
-	source = (u32 *)resolve_TLBaddress_for_InvalidHit;
+	//src = (u32 *)resolve_TLBaddress_for_InvalidHit;
 	//UT_VEC
-	dest = (u32 *)0x80000000;
+	//dst = (u32 *)0x80000000;
 	//XUT_VEC
-    while ( (u32)dest != (u32)dest + 0x80 ) { *dest = *source; dest++; source++;}
+    //while ( (u32)dst != (u32)dst + 0x80 ) { *dst = *src; dst++; src++;}
 	//TO HERE
+    while( i < 0x80)
+    {
+		((u32 *)0x80000000)[i++] = ((u32 *)&resolve_TLBaddress_for_InvalidHit)[i++];
+	}
+
 
     osWritebackDCacheAll();
     osInvalICache(0x80000000, 0x4000);
@@ -103,6 +114,7 @@ void init(void)
     osCreateThread(&mainThread, 3, &mainproc, 0, set_stack_entry(&sp_main, 0x8000), 0xa);
     osStartThread(&mainThread);
 }
+
 #else
 GLOBAL_ASM(
 .section .text
@@ -285,7 +297,7 @@ void idleCreateThread(void)
  */
 void rmonCreateThread(void) 
 {
-    osCreateThread(&rmonThread, (OSId)0, rmonproc, 0, set_stack_entry(&sp_rmon, 0x300), (OSPri)250);
+    osCreateThread(&rmonThread, (OSId)0, rmonMain, 0, set_stack_entry(&sp_rmon, 0x300), (OSPri)250);
     osStartThread(&rmonThread);
 }
 
@@ -309,7 +321,7 @@ void schedulerInitThread(void)
 }
 
 /**
- * 149C	7000089C	start main game setup and loop
+ * 149C	7000089C	datastart main game setup and loop
  *	calls command line parser, debug console setup, etc.
  *	called by 70000510, using 7000D430: A0=8005D640, A1=3, A2=7000089C, A3=0, SP+10=[803B3948], SP+14=0xA
  *	never returns; 7000601C is an infinite loop
@@ -320,7 +332,7 @@ void mainproc(void *args)
 	viDebugRemoved();
 	piCreateManager();
 	rmonCreateThread();
-	if (check_boot_switches() != 0)
+	if (tokenReadIo() != 0)
 	{
 		osStopThread(0);
 	}
@@ -335,7 +347,7 @@ void mainproc(void *args)
  *	copies table from 8002304C-80023084 to stack
  */
 #ifdef NONMATCHING
-void *setuplastentryofdebughandler(void)
+void setuplastentryofdebughandler(void)
 {
     ? sp8;
     void *temp_t6;

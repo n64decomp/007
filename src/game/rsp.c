@@ -23,13 +23,13 @@ u32 fast3d_related_1[] = {
 };
 
 //D:8004EAB0
-u32 *fast3d_related_array = &fast3d_related_0;
+u32 **fast3d_related_array = &fast3d_related_0;
 
 
 
 
 void rspInitDebugNoticeList(void) {
-    debCheckAddDebugNoticeListEntry(&D_8004E9E0, "rsp_c_debug");
+    debTryAdd(&D_8004E9E0, "rsp_c_debug");
 }
 
 
@@ -73,7 +73,7 @@ glabel allocate_init_rsp_buffers
 
 
 #ifdef NONMATCHING
-void *load_rsp_microcode(s32 arg0, s32 arg1, ? arg2, ?32 arg3) {
+void *load_rsp_microcode(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     void *temp_v0;
 
     // Node 0

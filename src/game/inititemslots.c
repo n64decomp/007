@@ -1,4 +1,5 @@
 #include "ultra64.h"
+#include "game/unk_093880.h"
 #include "game/bondinv.h"
 
 
@@ -44,44 +45,10 @@ glabel sub_GAME_7F0061F0
 #endif
 
 
-#ifdef NONMATCHING
-void alloc_additional_item_slots(s32 arg0) {
-    // Node 0
-    pPlayer->unk11E8 = (s32) (arg0 + 0x1e);
-    pPlayer->unk11E4 = mempAllocBytesInBank(((((pPlayer->unk11E8 * 0x14) + 0xf) | 0xf) ^ 0xf), 4);
-    reinit_BONDdata_inventory();
+
+void alloc_additional_item_slots(s32 additionalentries)
+{
+  pPlayer->equipmaxitems = additionalentries + 0x1e;
+  pPlayer->p_itemcur = mempAllocBytesInBank((pPlayer->equipmaxitems * 0x14 + 0xfU | 0xf) ^ 0xf,'\x04');
+  reinit_BONDdata_inventory();
 }
-
-#else
-GLOBAL_ASM(
-.text
-glabel alloc_additional_item_slots
-/* 03AD8C 7F00625C 3C028008 */  lui   $v0, %hi(pPlayer)
-/* 03AD90 7F006260 2442A0B0 */  addiu $v0, %lo(pPlayer) # addiu $v0, $v0, -0x5f50
-/* 03AD94 7F006264 8C4F0000 */  lw    $t7, ($v0)
-/* 03AD98 7F006268 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 03AD9C 7F00626C AFBF0014 */  sw    $ra, 0x14($sp)
-/* 03ADA0 7F006270 248E001E */  addiu $t6, $a0, 0x1e
-/* 03ADA4 7F006274 ADEE11E8 */  sw    $t6, 0x11e8($t7)
-/* 03ADA8 7F006278 8C580000 */  lw    $t8, ($v0)
-/* 03ADAC 7F00627C 24050004 */  li    $a1, 4
-/* 03ADB0 7F006280 8F0411E8 */  lw    $a0, 0x11e8($t8)
-/* 03ADB4 7F006284 0004C880 */  sll   $t9, $a0, 2
-/* 03ADB8 7F006288 0324C821 */  addu  $t9, $t9, $a0
-/* 03ADBC 7F00628C 0019C880 */  sll   $t9, $t9, 2
-/* 03ADC0 7F006290 2724000F */  addiu $a0, $t9, 0xf
-/* 03ADC4 7F006294 3488000F */  ori   $t0, $a0, 0xf
-/* 03ADC8 7F006298 0C0025C8 */  jal   mempAllocBytesInBank
-/* 03ADCC 7F00629C 3904000F */   xori  $a0, $t0, 0xf
-/* 03ADD0 7F0062A0 3C0A8008 */  lui   $t2, %hi(pPlayer) 
-/* 03ADD4 7F0062A4 8D4AA0B0 */  lw    $t2, %lo(pPlayer)($t2)
-/* 03ADD8 7F0062A8 0FC22FFC */  jal   reinit_BONDdata_inventory
-/* 03ADDC 7F0062AC AD4211E4 */   sw    $v0, 0x11e4($t2)
-/* 03ADE0 7F0062B0 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 03ADE4 7F0062B4 27BD0018 */  addiu $sp, $sp, 0x18
-/* 03ADE8 7F0062B8 03E00008 */  jr    $ra
-/* 03ADEC 7F0062BC 00000000 */   nop
-)
-#endif
-
-

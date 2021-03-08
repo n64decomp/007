@@ -2,17 +2,14 @@
 #define _TLB_MANAGE_H_
 #include "ultra64.h"
 
-struct s_tlbmanage_table_entry
-{
-    s32 context_value;
-    s32 pagenum;
-    s64 RESERVED;
-};
+/**
+ * Block size, in bytes.
+ */
+#define TLB_ALLOCATION_BLOCK_SIZE 0x2000
 
-struct s_tlbmapping_table_entry
-{
-    u8 entry0;
-    u8 entry1;
-};
+void tlbmanageEstablishManagementTable(void);
+void tlbmanageResetCurrentEntriesCount(void);
+void tlbmanageTranslateLoadRomFromTlbAddress(u32 address);
+u8 (*tlbmanageGetTlbAllocatedBlock(void))[TLB_ALLOCATION_BLOCK_SIZE];
 
 #endif

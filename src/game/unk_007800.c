@@ -1,79 +1,41 @@
 #include "ultra64.h"
-
-
+#include "game/unk_09C250.h"
+#include "video.h"
 
 #ifdef NONMATCHING
-void cleanupExplosions(void) {
-    ? temp_ret;
-    void *temp_t8;
-    s32 temp_s0;
-    void *temp_t7;
-    s32 temp_s0_2;
-    s32 phi_s0;
-    s32 phi_s0_2;
-    ? phi_return;
-    ? phi_return_2;
-    ? phi_return_3;
-    ? phi_return_4;
-
-    // Node 0
+//come back once prop for explosions and smoke is merged from AIListLogic branch
+//code should match already
+//
+void cleanupExplosions(void)
+{
+    s32 i;
+  
     D_80040170 = 0;
-    temp_ret = video_related_9(0);
-    phi_s0 = 0;
-    phi_return_3 = temp_ret;
-    phi_return_4 = temp_ret;
-    if (ptr_explosion_buf != 0)
-    {
-loop_1:
-        // Node 1
-        temp_t8 = (ptr_explosion_buf + phi_s0);
-        if (*temp_t8 != 0)
+    viSet800232B4(0.0);
+    if (ptr_explosion_buf) {
+        for (i = 0; i<0x1fe0; i++)
         {
-            // Node 2
-            sub_GAME_7F03A538(*temp_t8);
-            unset_stateflag_0x04_for_posdata(*(ptr_explosion_buf + phi_s0));
-            *(ptr_explosion_buf + phi_s0) = 0;
-            phi_return_4 = set_last_obj_pos_data(*(ptr_explosion_buf + phi_s0));
-        }
-        // Node 3
-        temp_s0 = (phi_s0 + 0x3e0);
-        phi_s0 = temp_s0;
-        phi_return_3 = phi_return_4;
-        phi_return_4 = phi_return_4;
-        if (temp_s0 != 0x1740)
-        {
-            goto loop_1;
+            if (ptr_explosion_buf) {
+                sub_GAME_7F03A538(ptr_explosion_buf[i].prop);
+                propHide(ptr_explosion_buf[i].prop);
+                propFree(ptr_explosion_buf[i].prop);
+                ptr_explosion_buf[i].prop = 0;
+            }
         }
     }
-    // Node 4
-    phi_s0_2 = 0;
-    phi_return = phi_return_3;
-    phi_return_2 = phi_return_3;
-    if (ptr_smoke_buf != 0)
-    {
-loop_5:
-        // Node 5
-        temp_t7 = (ptr_smoke_buf + phi_s0_2);
-        if (*temp_t7 != 0)
+
+  
+    if (ptr_smoke_buf) {
+        for (i = 0; i<0x1fe0; i++)
         {
-            // Node 6
-            sub_GAME_7F03A538(*temp_t7);
-            unset_stateflag_0x04_for_posdata(*(ptr_smoke_buf + phi_s0_2));
-            *(ptr_smoke_buf + phi_s0_2) = 0;
-            phi_return_2 = set_last_obj_pos_data(*(ptr_smoke_buf + phi_s0_2));
-        }
-        // Node 7
-        temp_s0_2 = (phi_s0_2 + 0x198);
-        phi_s0_2 = temp_s0_2;
-        phi_return = phi_return_2;
-        phi_return_2 = phi_return_2;
-        if (temp_s0_2 != 0x1fe0)
-        {
-            goto loop_5;
+            if (ptr_smoke_buf) {
+                sub_GAME_7F03A538(ptr_smoke_buf[i].prop);
+                propHide(ptr_smoke_buf[i].prop);
+                propFree(ptr_smoke_buf[i].prop);
+                ptr_smoke_buf[i].prop = 0;
+            }
         }
     }
-    // Node 8
-    return phi_return;
 }
 #else
 GLOBAL_ASM(
@@ -86,7 +48,7 @@ glabel cleanupExplosions
 /* 03C340 7F007810 AFB20020 */  sw    $s2, 0x20($sp)
 /* 03C344 7F007814 AFB1001C */  sw    $s1, 0x1c($sp)
 /* 03C348 7F007818 AFB00018 */  sw    $s0, 0x18($sp)
-/* 03C34C 7F00781C 0C000EC1 */  jal   video_related_9
+/* 03C34C 7F00781C 0C000EC1 */  jal   viSet800232B4
 /* 03C350 7F007820 AC200170 */   sw    $zero, %lo(D_80040170)($at)
 /* 03C354 7F007824 3C118008 */  lui   $s1, %hi(ptr_explosion_buf)
 /* 03C358 7F007828 2631A144 */  addiu $s1, %lo(ptr_explosion_buf) # addiu $s1, $s1, -0x5ebc
@@ -105,11 +67,11 @@ glabel cleanupExplosions
 /* 03C388 7F007858 00000000 */   nop   
 /* 03C38C 7F00785C 8E390000 */  lw    $t9, ($s1)
 /* 03C390 7F007860 03304021 */  addu  $t0, $t9, $s0
-/* 03C394 7F007864 0FC0E905 */  jal   unset_stateflag_0x04_for_posdata
+/* 03C394 7F007864 0FC0E905 */  jal   propHide
 /* 03C398 7F007868 8D040000 */   lw    $a0, ($t0)
 /* 03C39C 7F00786C 8E290000 */  lw    $t1, ($s1)
 /* 03C3A0 7F007870 01305021 */  addu  $t2, $t1, $s0
-/* 03C3A4 7F007874 0FC0E921 */  jal   set_last_obj_pos_data
+/* 03C3A4 7F007874 0FC0E921 */  jal   propFree
 /* 03C3A8 7F007878 8D440000 */   lw    $a0, ($t2)
 /* 03C3AC 7F00787C 8E2B0000 */  lw    $t3, ($s1)
 /* 03C3B0 7F007880 01706021 */  addu  $t4, $t3, $s0
@@ -136,11 +98,11 @@ glabel cleanupExplosions
 /* 03C3F8 7F0078C8 00000000 */   nop   
 /* 03C3FC 7F0078CC 8E380000 */  lw    $t8, ($s1)
 /* 03C400 7F0078D0 0310C821 */  addu  $t9, $t8, $s0
-/* 03C404 7F0078D4 0FC0E905 */  jal   unset_stateflag_0x04_for_posdata
+/* 03C404 7F0078D4 0FC0E905 */  jal   propHide
 /* 03C408 7F0078D8 8F240000 */   lw    $a0, ($t9)
 /* 03C40C 7F0078DC 8E280000 */  lw    $t0, ($s1)
 /* 03C410 7F0078E0 01104821 */  addu  $t1, $t0, $s0
-/* 03C414 7F0078E4 0FC0E921 */  jal   set_last_obj_pos_data
+/* 03C414 7F0078E4 0FC0E921 */  jal   propFree
 /* 03C418 7F0078E8 8D240000 */   lw    $a0, ($t1)
 /* 03C41C 7F0078EC 8E2A0000 */  lw    $t2, ($s1)
 /* 03C420 7F0078F0 01505821 */  addu  $t3, $t2, $s0

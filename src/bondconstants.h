@@ -1027,8 +1027,8 @@ typedef enum SCREEN_SIZE
 
 typedef enum COLORMODE
 {
-  MODE_32BIT = 0x0,
-  MODE_16BIT = 0x1
+  COLORMODE_32BIT = 0x0,
+  COLORMODE_16BIT = 0x1
 } COLORMODE;
 
 typedef enum CAMERAMODE {
@@ -1270,6 +1270,9 @@ typedef enum ACT_TYPE {
     ACT_THROWGRENADE,
     ACT_TURNDIR,
     ACT_TEST,
+    ACT_BONDINTRO,
+    ACT_BONDDIE,
+    ACT_BONDMULTI,
     ACT_NULL
 } ACT_TYPE;
 

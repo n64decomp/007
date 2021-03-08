@@ -1,25 +1,38 @@
 #include "ultra64.h"
 
+/**
+ * @file random.c
+ * This file contains code to get a random value and set the next seed.
+ * The methods here are the same as in tlb_random and chrObjRandom (but different globals).
+ */
 
-u64 randseed = 0xAB8D9F7781280783;
-
-
+u64 g_randomSeed = 0xAB8D9F7781280783;
 
 #ifdef NONMATCHING
-u32 get_random_value(void) {
-  ulonglong uVar1;
-  
-  uVar1 = ((randseed << 0x3f) >> 0x1f | (randseed << 0x1f) >> 0x20) ^ (randseed << 0x2c) >> 0x20;
-  randseed = uVar1 >> 0x14 & 0xfff ^ uVar1;
-  return (u32)randseed;
+/**
+ * Iterates the current random seed and returns a 32 bit value.
+ * Same assembly instructions as tlbRandomGetNext and chrObjRandomGetNext, but different globals.
+ */ 
+s32 randomGetNext(void) {
+    // best -O1 guess
+    // g_randomSeed ^= (((((g_randomSeed << 0x3f) >> 0x1f) | ((g_randomSeed << 0x1f) >> 0x20)) ^ ((g_randomSeed << 0x2c) >> 0x20)) >> 0x14) & 0xfff;
+    // return (s32)(g_randomSeed);
+
+    // best -O2 guess
+    // u64 t = ((g_randomSeed << 0x3f) >> 0x1f);
+    // t |= ((g_randomSeed << 0x1f) >> 0x20);
+    // t ^= ((g_randomSeed << 0x2c) >> 0x20);
+    // t = g_randomSeed ^ ((t >> 0x14) & 0xfff);
+    // g_randomSeed = t;
+    // return (s32)(t);
 }
 #else
 GLOBAL_ASM(
 .text
-glabel get_random_value
-/* 00B050 7000A450 3C048002 */  lui   $a0, %hi(randseed)
-/* 00B054 7000A454 DC844460 */  ld    $a0, %lo(randseed)($a0)
-/* 00B058 7000A458 3C018002 */  lui   $at, %hi(randseed)
+glabel randomGetNext
+/* 00B050 7000A450 3C048002 */  lui   $a0, %hi(g_randomSeed)
+/* 00B054 7000A454 DC844460 */  ld    $a0, %lo(g_randomSeed)($a0)
+/* 00B058 7000A458 3C018002 */  lui   $at, %hi(g_randomSeed)
 /* 00B05C 7000A45C 000437FC */  dsll32 $a2, $a0, 0x1f
 /* 00B060 7000A460 00042FF8 */  dsll  $a1, $a0, 0x1f
 /* 00B064 7000A464 000637FA */  dsrl  $a2, $a2, 0x1f
@@ -32,7 +45,7 @@ glabel get_random_value
 /* 00B080 7000A480 30840FFF */  andi  $a0, $a0, 0xfff
 /* 00B084 7000A484 00862026 */  xor   $a0, $a0, $a2
 /* 00B088 7000A488 0004103C */  dsll32 $v0, $a0, 0
-/* 00B08C 7000A48C FC244460 */  sd    $a0, %lo(randseed)($at)
+/* 00B08C 7000A48C FC244460 */  sd    $a0, %lo(g_randomSeed)($at)
 /* 00B090 7000A490 03E00008 */  jr    $ra
 /* 00B094 7000A494 0002103F */   dsra32 $v0, $v0, 0
 )
@@ -41,17 +54,24 @@ glabel get_random_value
 
 
 #ifdef NONMATCHING
-void increment_random_num(u64 param_1) {
-  randseed = param_1 + 1;
-  return;
+/**
+ * This sets the global random seed. This is called from boss mainloop by randomSetSeed(osGetCount()),
+ * so the argument may just be 32bit.
+ * 
+ * Assembly assigns zero to $a0 at the end of the function, which seems odd.
+ * 
+ * Same assembly instructions as chrObjRandomSetSeed.
+ */ 
+void randomSetSeed(u32 param_1) {
+    g_randomSeed = param_1 + 1;
 }
 #else
 GLOBAL_ASM(
 .text
-glabel increment_random_num
+glabel randomSetSeed
 /* 00B098 7000A498 64840001 */  daddiu $a0, $a0, 1
-/* 00B09C 7000A49C 3C018002 */  lui   $at, %hi(randseed)
-/* 00B0A0 7000A4A0 FC244460 */  sd    $a0, %lo(randseed)($at)
+/* 00B09C 7000A49C 3C018002 */  lui   $at, %hi(g_randomSeed)
+/* 00B0A0 7000A4A0 FC244460 */  sd    $a0, %lo(g_randomSeed)($at)
 /* 00B0A4 7000A4A4 03E00008 */  jr    $ra
 /* 00B0A8 7000A4A8 24040000 */   li    $a0, 0
 )
@@ -60,19 +80,27 @@ glabel increment_random_num
 
 
 #ifdef NONMATCHING
-u32 lotsa_shifting_random_related(ulonglong *param_1) {
-  ulonglong uVar1;
-  
-  uVar1 = *param_1;
-  uVar1 = ((uVar1 << 0x3f) >> 0x1f | (uVar1 << 0x1f) >> 0x20) ^ (uVar1 << 0x2c) >> 0x20;
-  uVar1 = uVar1 >> 0x14 & 0xfff ^ uVar1;
-  *param_1 = uVar1;
-  return (u32)uVar1;
+/**
+ * Iterates the parameter as if it were the random seed and returns the next 32 bit random value.
+ * This uses the same logic as randomGetNext.
+ */ 
+s32 randomGetNextFrom(u64 *param_1) {
+    // best -O1 guess
+    // *param_1 ^= (((((*param_1 << 0x3f) >> 0x1f) | ((*param_1 << 0x1f) >> 0x20)) ^ ((*param_1 << 0x2c) >> 0x20)) >> 0x14) & 0xfff;
+    // return (s32)(*param_1);
+
+    // best -O2 guess
+    // u64 t = ((*param_1 << 0x3f) >> 0x1f);
+    // t |= ((*param_1 << 0x1f) >> 0x20);
+    // t ^= ((*param_1 << 0x2c) >> 0x20);
+    // t = *param_1 ^ ((t >> 0x14) & 0xfff);
+    // *param_1 = t;
+    // return (s32)(t);
 }
 #else
 GLOBAL_ASM(
 .text
-glabel lotsa_shifting_randomizer_related
+glabel randomGetNextFrom
 /* 00B0AC 7000A4AC DC870000 */  ld    $a3, ($a0)
 /* 00B0B0 7000A4B0 000737FC */  dsll32 $a2, $a3, 0x1f
 /* 00B0B4 7000A4B4 00072FF8 */  dsll  $a1, $a3, 0x1f

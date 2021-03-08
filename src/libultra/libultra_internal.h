@@ -76,6 +76,7 @@ void __osPiGetAccess(void);
 void __osSetSR(u32);
 u32 __osGetSR(void);
 void __osSetFpcCsr(u32);
+u32 __osGetFpcCsr(void);
 s32 __osSiRawReadIo(void *, u32 *);
 s32 __osSiRawWriteIo(void *, u32);
 s32 osPiRawReadIo(u32 a0, u32 *a1);

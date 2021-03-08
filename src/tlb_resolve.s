@@ -11,8 +11,8 @@ glabel resolve_TLBaddress_for_InvalidHit
 /* 002760 70001B60 40802800 */  mtc0  $zero, $5
 /* 002764 70001B64 00000000 */  nop   
 /* 002768 70001B68 401A2000 */  mfc0  $k0, $4
-/* 00276C 70001B6C 3C1B8006 */  lui   $k1, %hi(TLB_manager_mapping_table_end) # $k1, 0x8006
-/* 002770 70001B70 277BE4A4 */  addiu $k1, %lo(TLB_manager_mapping_table_end) # addiu $k1, $k1, -0x1b5c
+/* 00276C 70001B6C 3C1B8006 */  lui   $k1, %hi(g_tlbmanageMappingTableEnd) # $k1, 0x8006
+/* 002770 70001B70 277BE4A4 */  addiu $k1, %lo(g_tlbmanageMappingTableEnd) # addiu $k1, $k1, -0x1b5c
 /* 002774 70001B74 8F7B0000 */  lw    $k1, ($k1)
 /* 002778 70001B78 035BD021 */  addu  $k0, $k0, $k1
 /* 00277C 70001B7C 8F5B0000 */  lw    $k1, ($k0)

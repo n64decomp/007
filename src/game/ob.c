@@ -185,7 +185,7 @@ void obInitDebugNoticeList(void)
     int file_count;
     struct fileentry *filetable_entry;
     
-    debCheckAddDebugNoticeListEntry(&ob_c_debug_notice_list_entry,"ob_c_debug");
+    debTryAdd(&ob_c_debug_notice_list_entry,"ob_c_debug");
     filetable_entry = &file_resource_table[0];
     file_count = file_entry_max - 1;
     if (1 < file_count) {
@@ -216,7 +216,7 @@ glabel obInitDebugNoticeList
 /* 0F1760 7F0BCC30 3C048004 */  lui   $a0, %hi(ob_c_debug_notice_list_entry)
 /* 0F1764 7F0BCC34 3C058006 */  lui   $a1, %hi(aOb_c_debug)
 /* 0F1768 7F0BCC38 24A5B674 */  addiu $a1, %lo(aOb_c_debug) # addiu $a1, $a1, -0x498c
-/* 0F176C 7F0BCC3C 0C001398 */  jal   debCheckAddDebugNoticeListEntry
+/* 0F176C 7F0BCC3C 0C001398 */  jal   debTryAdd
 /* 0F1770 7F0BCC40 24846050 */   addiu $a0, %lo(ob_c_debug_notice_list_entry) # addiu $a0, $a0, 0x6050
 /* 0F1774 7F0BCC44 3C038005 */  lui   $v1, %hi(file_entry_max)
 /* 0F1778 7F0BCC48 8C6382D4 */  lw    $v1, %lo(file_entry_max)($v1)
@@ -737,7 +737,7 @@ int get_index_num_of_named_resource(u8 *resname)
     for (i = 1; i < file_entry_max; i++)
     {
         if ((file_resource_table[i].filename) && \
-        (something_with_strings_0(resname,file_resource_table[i].filename) == 0));
+        (strcmp(resname,file_resource_table[i].filename) == 0));
         {
             return i;
         }
@@ -787,7 +787,7 @@ glabel get_index_num_of_named_resource
 .L7F0BD294:
 /* 0F1DC4 7F0BD294 50A00008 */  beql  $a1, $zero, .L7F0BD2B8
 /* 0F1DC8 7F0BD298 8E420000 */   lw    $v0, ($s2)
-/* 0F1DCC 7F0BD29C 0C002A13 */  jal   something_with_strings_0
+/* 0F1DCC 7F0BD29C 0C002A13 */  jal   strcmp
 /* 0F1DD0 7F0BD2A0 02602025 */   move  $a0, $s3
 /* 0F1DD4 7F0BD2A4 54400004 */  bnezl $v0, .L7F0BD2B8
 /* 0F1DD8 7F0BD2A8 8E420000 */   lw    $v0, ($s2)

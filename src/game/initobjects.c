@@ -1,6 +1,7 @@
 #include "ultra64.h"
 #include "game/initobjects.h"
 #include "game/chrai.h"
+#include "game/chrobjhandler.h"
 //this file may very well be a few different sub files
 
 struct object_animation_controller ptr_monitorimageobjectanimationcontroller = {&monitor_animation_microcode, 0, 0xFFFF, 0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 1.0, 0.0};
@@ -350,8 +351,10 @@ glabel reinit_between_menus
 #endif
 
 #ifdef NONMATCHING
-void sub_GAME_7F001910(void) {
-
+void sub_GAME_7F001910(struct object_standard *object)
+{
+    object->flags2 = (u32)D_80030B00;
+    D_80030B00 = object;
 }
 #else
 GLOBAL_ASM(
@@ -525,30 +528,12 @@ glabel write_monitor_ani_control_blocks
 )
 #endif
 
-#ifdef NONMATCHING
-void initialize_temp_mine_table(void) {
 
+void initialize_temp_mine_table(void) {
+    s32 i;
+    for (i=0; i<30; i++)
+    {
+        temp_mine_table[i] = 0;
+    }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel initialize_temp_mine_table
-/* 036638 7F001B08 3C018007 */  lui   $at, %hi(temp_mine_table)
-/* 03663C 7F001B0C AC201E00 */  sw    $zero, %lo(temp_mine_table)($at)
-/* 036640 7F001B10 3C018007 */  lui   $at, %hi(temp_mine_table+0x4)
-/* 036644 7F001B14 3C038007 */  lui   $v1, %hi(temp_mine_table+0x8)
-/* 036648 7F001B18 3C028007 */  lui   $v0, %hi(gas_damage_flag)
-/* 03664C 7F001B1C 24421E78 */  addiu $v0, %lo(gas_damage_flag) # addiu $v0, $v0, 0x1e78
-/* 036650 7F001B20 24631E08 */  addiu $v1, %lo(temp_mine_table+0x8) # addiu $v1, $v1, 0x1e08
-/* 036654 7F001B24 AC201E04 */  sw    $zero, %lo(temp_mine_table+0x4)($at)
-.L7F001B28:
-/* 036658 7F001B28 24630010 */  addiu $v1, $v1, 0x10
-/* 03665C 7F001B2C AC60FFF4 */  sw    $zero, -0xc($v1)
-/* 036660 7F001B30 AC60FFF8 */  sw    $zero, -8($v1)
-/* 036664 7F001B34 AC60FFFC */  sw    $zero, -4($v1)
-/* 036668 7F001B38 1462FFFB */  bne   $v1, $v0, .L7F001B28
-/* 03666C 7F001B3C AC60FFF0 */   sw    $zero, -0x10($v1)
-/* 036670 7F001B40 03E00008 */  jr    $ra
-/* 036674 7F001B44 00000000 */   nop   
-)
-#endif
+

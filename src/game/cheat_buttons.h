@@ -12,4 +12,6 @@ struct struct_15 {
     int anonymous_3;
 };
 
+extern char off_CODE_bss_80079E30[0x4C];
+
 #endif

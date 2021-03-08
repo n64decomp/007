@@ -10,10 +10,18 @@ VERSION := US
 # If COMPARE is 1, check the output sha1sum when building 'all'
 COMPARE := 1
 
+ifeq ($(shell type mips-linux-gnu-ld >/dev/null 2>/dev/null; echo $$?), 0)
+  TOOLCHAIN := mips-linux-gnu-
+else ifeq ($(shell type mips64-linux-gnu-ld >/dev/null 2>/dev/null; echo $$?), 0)
+  TOOLCHAIN := mips64-linux-gnu-
+else
+  TOOLCHAIN := mips64-elf-
+endif
 
-
-TOOLCHAIN := mips-linux-gnu-
-QEMU_IRIX := tools/irix/qemu-irix
+QEMU_IRIX := $(shell which qemu-irix 2>/dev/null)
+ifeq (, $(QEMU_IRIX))
+  $(error Using the IDO compiler requires qemu-irix. Please install qemu-irix package or set the QEMU_IRIX environment variable to the full qemu-irix binary path)
+endif
 IRIX_ROOT := tools/irix/root
 # other tools
 TOOLS_DIR := tools
@@ -51,7 +59,9 @@ LCDEFS := -DVERSION_JP
 ASMDEFS := --defsym VERSION_JP=1
 endif
 
-BUILD_DIR := build/$(COUNTRYCODE)
+BUILD_DIR_BASE := build
+# BUILD_DIR is the location where all build artifacts are placed
+BUILD_DIR      := $(BUILD_DIR_BASE)/$(COUNTRYCODE)
 include assets/Makefile.obseg
 include assets/Makefile.music
 BUILD_SUB_DIRS := \
@@ -63,15 +73,9 @@ BUILD_SUB_DIRS := \
 $(shell mkdir -p $(BUILD_DIR))
 $(foreach subdir,$(BUILD_SUB_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(subdir)))
 
-
-
-
-
-
-
-APPELF := ge007.$(COUNTRYCODE).elf
-APPROM := ge007.$(COUNTRYCODE).z64
-APPBIN := ge007.$(COUNTRYCODE).bin
+APPELF := $(BUILD_DIR)/ge007.$(COUNTRYCODE).elf
+APPROM := $(BUILD_DIR)/ge007.$(COUNTRYCODE).z64
+APPBIN := $(BUILD_DIR)/ge007.$(COUNTRYCODE).bin
 
 HEADERFILES := $(foreach dir,src,$(wildcard $(dir)/*.s))
 HEADEROBJECTS := $(foreach file,$(HEADERFILES),$(BUILD_DIR)/$(file:.s=.o))
@@ -144,7 +148,21 @@ all: $(APPROM)
 ifeq ($(COMPARE),1)
 	@$(SHA1SUM) -c ge007.$(COUNTRYCODE).sha1
 endif
+.SECONDARY:
+	$(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(COUNTRYCODE).map \
+	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) \
+	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONT_OBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES) 
+ifeq ($(filter clean dataclean codeclean print-%,$(MAKECMDGOALS)),)
 
+  # Make tools if out of date
+  $(info Building tools...)
+  DUMMY != make -s -C tools >&2 || echo FAIL
+    ifeq ($(DUMMY),FAIL)
+      $(error Failed to build tools)
+    endif
+  $(info Building ROM...)
+
+endif
 
 codeclean:
 	rm -f $(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(COUNTRYCODE).map \
@@ -214,7 +232,6 @@ $(APPROM):	$(APPBIN)
 	$(N64CKSUM) $< $@
 	rm header.tmp
 
+.PRECIOUS: %.bin  %.o
+
 .PHONY: all default codeclean dataclean clean
-
-
-

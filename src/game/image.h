@@ -15,5 +15,9 @@ struct image_entry
 
 extern s32 ptr_texture_alloc_start;
 extern struct image_entry image_entries[];
+extern s32 dword_CODE_bss_8008D090;
+extern u32 bytes;
+
+void nullsub_41(s32 arg0);
 
 #endif

@@ -24,6 +24,7 @@ enum OBJECTIVE_LINES
 struct mission
 {
 	char *out_name;
+	unsigned int time;
 	char *diff;
 	char *title;
 	char *part;
@@ -33,10 +34,13 @@ struct mission
 char *diff_char[OBJECTIVES_MAX] = {"a.", "b.", "c.", "d.", "e.", NULL};
 int line_rows[] = {1330, 1428, 1527, 1625, 1724, 1822, 1921, 2020, 2119};
 
+#define TIME_SECS(mins, secs) ((mins * 60) + secs)
+
 struct mission missions[MISSIONS_MAX] =
 {
 	{
 		"Dam (Agent)",
+		TIME_SECS(0, 52),
 		"Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part i: Dam",
@@ -47,6 +51,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Facility (Agent)",
+		TIME_SECS(0, 42),
 		"Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part ii: Facility",
@@ -60,6 +65,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Runway (Agent)",
+		TIME_SECS(0, 21),
 		"Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part iii: Runway",
@@ -71,6 +77,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Surface i (Agent)",
+		TIME_SECS(1, 2),
 		"Agent: James Bond",
 		"Mission 2: Severnaya",
 		"Part i: Surface",
@@ -82,6 +89,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Bunker i (Agent)",
+		TIME_SECS(0, 16),
 		"Agent: James Bond",
 		"Mission 2: Severnaya",
 		"Part ii: Bunker",
@@ -93,6 +101,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Silo (Agent)",
+		TIME_SECS(0, 59),
 		"Agent: James Bond",
 		"Mission 3: Kirghizstan",
 		"Part i: Launch Silo #4",
@@ -104,6 +113,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Frigate (Agent)",
+		TIME_SECS(0, 22),
 		"Agent: James Bond",
 		"Mission 4: Monte Carlo",
 		"Part i: Frigate",
@@ -115,6 +125,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Surface ii (Agent)",
+		TIME_SECS(0, 46),
 		"Agent: James Bond",
 		"Mission 5: Severnaya",
 		"Part i: Surface",
@@ -126,6 +137,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Bunker ii (Agent)",
+		TIME_SECS(0, 23),
 		"Agent: James Bond",
 		"Mission 5: Severnaya",
 		"Part ii: Bunker",
@@ -137,6 +149,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Statue (Agent)",
+		TIME_SECS(2, 18),
 		"Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part i: Statue Park",
@@ -151,6 +164,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Archives (Agent)",
+		TIME_SECS(0, 15),
 		"Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part ii: Military Archives",
@@ -163,6 +177,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Streets (Agent)",
+		TIME_SECS(1, 11),
 		"Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part iii: Streets",
@@ -174,6 +189,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Depot (Agent)",
+		TIME_SECS(0, 23),
 		"Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part iv: Depot",
@@ -184,6 +200,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Train (Agent)",
+		TIME_SECS(0, 56),
 		"Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part v: Train",
@@ -196,6 +213,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Jungle (Agent)",
+		TIME_SECS(0, 49),
 		"Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part i: Jungle",
@@ -208,6 +226,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Control (Agent)",
+		TIME_SECS(3, 55),
 		"Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part ii: Control",
@@ -220,6 +239,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Caverns (Agent)",
+		TIME_SECS(1, 1),
 		"Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part iii: Water Caverns",
@@ -230,6 +250,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Cradle (Agent)",
+		TIME_SECS(0, 33),
 		"Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part iv: Antenna Cradle",
@@ -242,6 +263,7 @@ struct mission missions[MISSIONS_MAX] =
 
 	{
 		"Dam (Secret Agent)",
+		TIME_SECS(1, 16),
 		"Secret Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part i: Dam",
@@ -253,6 +275,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Facility (Secret Agent)",
+		TIME_SECS(0, 51),
 		"Secret Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part ii: Facility",
@@ -267,6 +290,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Runway (Secret Agent)",
+		TIME_SECS(0, 22),
 		"Secret Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part iii: Runway",
@@ -279,6 +303,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Surface i (Secret Agent)",
+		TIME_SECS(1, 46),
 		"Secret Agent: James Bond",
 		"Mission 2: Severnaya",
 		"Part i: Surface",
@@ -292,6 +317,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Bunker i (Secret Agent)",
+		TIME_SECS(0, 20),
 		"Secret Agent: James Bond",
 		"Mission 2: Severnaya",
 		"Part ii: Bunker",
@@ -304,6 +330,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Silo (Secret Agent)",
+		TIME_SECS(1, 7),
 		"Secret Agent: James Bond",
 		"Mission 3: Kirghizstan",
 		"Part i: Launch Silo #4",
@@ -317,6 +344,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Frigate (Secret Agent)",
+		TIME_SECS(0, 58),
 		"Secret Agent: James Bond",
 		"Mission 4: Monte Carlo",
 		"Part i: Frigate",
@@ -330,6 +358,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Surface ii (Secret Agent)",
+		TIME_SECS(0, 47),
 		"Secret Agent: James Bond",
 		"Mission 5: Severnaya",
 		"Part i: Surface",
@@ -342,6 +371,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Bunker ii (Secret Agent)",
+		TIME_SECS(0, 42),
 		"Secret Agent: James Bond",
 		"Mission 5: Severnaya",
 		"Part ii: Bunker",
@@ -355,6 +385,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Statue (Secret Agent)",
+		TIME_SECS(2, 17),
 		"Secret Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part i: Statue Park",
@@ -369,6 +400,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Archives (Secret Agent)",
+		TIME_SECS(0, 53),
 		"Secret Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part ii: Military Archives",
@@ -382,6 +414,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Streets (Secret Agent)",
+		TIME_SECS(1, 54),
 		"Secret Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part iii: Streets",
@@ -394,6 +427,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Depot (Secret Agent)",
+		TIME_SECS(0, 39),
 		"Secret Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part iv: Depot",
@@ -407,6 +441,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Train (Secret Agent)",
+		TIME_SECS(1, 23),
 		"Secret Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part v: Train",
@@ -420,6 +455,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Jungle (Secret Agent)",
+		TIME_SECS(0, 51),
 		"Secret Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part i: Jungle",
@@ -433,6 +469,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Control (Secret Agent)",
+		TIME_SECS(4, 1),
 		"Secret Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part ii: Control",
@@ -445,6 +482,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Caverns (Secret Agent)",
+		TIME_SECS(1, 12),
 		"Secret Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part iii: Water Caverns",
@@ -458,6 +496,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Cradle (Secret Agent)",
+		TIME_SECS(0, 33),
 		"Secret Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part iv: Antenna Cradle",
@@ -469,6 +508,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Aztec (Secret Agent)",
+		TIME_SECS(1, 30),
 		"Secret Agent: James Bond",
 		"Mission 8: Teotihuaca'n",
 		"Part i: Aztec Complex",
@@ -481,6 +521,7 @@ struct mission missions[MISSIONS_MAX] =
 
 	{
 		"Dam (00 Agent)",
+		TIME_SECS(1, 54),
 		"00 Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part i: Dam",
@@ -494,6 +535,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Facility (00 Agent)",
+		TIME_SECS(0, 51),
 		"00 Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part ii: Facility",
@@ -508,6 +550,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Runway (00 Agent)",
+		TIME_SECS(0, 28),
 		"00 Agent: James Bond",
 		"Mission 1: Arkangelsk",
 		"Part iii: Runway",
@@ -521,6 +564,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Surface i (00 Agent)",
+		TIME_SECS(1, 47),
 		"00 Agent: James Bond",
 		"Mission 2: Severnaya",
 		"Part i: Surface",
@@ -534,6 +578,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Bunker i (00 Agent)",
+		TIME_SECS(1, 1),
 		"00 Agent: James Bond",
 		"Mission 2: Severnaya",
 		"Part ii: Bunker",
@@ -548,6 +593,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Silo (00 Agent)",
+		TIME_SECS(1, 21),
 		"00 Agent: James Bond",
 		"Mission 3: Kirghizstan",
 		"Part i: Launch Silo #4",
@@ -562,6 +608,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Frigate (00 Agent)",
+		TIME_SECS(1, 4),
 		"00 Agent: James Bond",
 		"Mission 4: Monte Carlo",
 		"Part i: Frigate",
@@ -575,6 +622,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Surface ii (00 Agent)",
+		TIME_SECS(1, 18),
 		"00 Agent: James Bond",
 		"Mission 5: Severnaya",
 		"Part i: Surface",
@@ -588,6 +636,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Bunker ii (00 Agent)",
+		TIME_SECS(0, 53),
 		"00 Agent: James Bond",
 		"Mission 5: Severnaya",
 		"Part ii: Bunker",
@@ -602,6 +651,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Statue (00 Agent)",
+		TIME_SECS(2, 17),
 		"00 Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part i: Statue Park",
@@ -616,6 +666,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Archives (00 Agent)",
+		TIME_SECS(0, 53),
 		"00 Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part ii: Military Archives",
@@ -629,6 +680,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Streets (00 Agent)",
+		TIME_SECS(1, 54),
 		"00 Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part iii: Streets",
@@ -641,6 +693,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Depot (00 Agent)",
+		TIME_SECS(0, 45),
 		"00 Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part iv: Depot",
@@ -655,6 +708,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Train (00 Agent)",
+		TIME_SECS(1, 48),
 		"00 Agent: James Bond",
 		"Mission 6: St. Petersburg",
 		"Part v: Train",
@@ -669,6 +723,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Jungle (00 Agent)",
+		TIME_SECS(0, 52),
 		"00 Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part i: Jungle",
@@ -682,6 +737,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Control (00 Agent)",
+		TIME_SECS(4, 2),
 		"00 Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part ii: Control",
@@ -694,6 +750,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Caverns (00 Agent)",
+		TIME_SECS(1, 29),
 		"00 Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part iii: Water Caverns",
@@ -708,6 +765,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Cradle (00 Agent)",
+		TIME_SECS(0, 33),
 		"00 Agent: James Bond",
 		"Mission 7: Cuba",
 		"Part iv: Antenna Cradle",
@@ -719,6 +777,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Aztec (00 Agent)",
+		TIME_SECS(1, 35),
 		"00 Agent: James Bond",
 		"Mission 8: Teotihuaca'n",
 		"Part i: Aztec Complex",
@@ -730,6 +789,7 @@ struct mission missions[MISSIONS_MAX] =
 	},
 	{
 		"Egypt (00 Agent)",
+		TIME_SECS(0, 44),
 		"00 Agent: James Bond",
 		"Mission 9: el-Saghira",
 		"Part i: Egyptian Temple",
@@ -743,6 +803,7 @@ struct mission missions[MISSIONS_MAX] =
 	/* End of struct */
 	{
 		NULL,
+		0,
 		NULL,
 		NULL,
 		NULL,

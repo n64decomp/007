@@ -1,46 +1,59 @@
 #ifndef _MUSIC_H_
 #define _MUSIC_H_
 #include "ultra64.h"
-#include "bondgame.h"
+#include "include/PR/libaudio.h"
 
-extern s32 music_unused;
-extern s32 music1_track_num;
-extern s32 music1len;
-extern s32 music2_track_num;
-extern s32 music2len;
-extern s32 music3_track_num;
-extern s32 music3len;
-extern s32 music1_playing;
-extern s32 music2_playing;
-extern s32 music3_playing;
+typedef enum MUSIC_FADESTATE_e {
+    /**
+     * Music track is fading out.
+     */
+    MUSIC_FADESTATE_FADE_OUT = -1,
 
-extern u32 hp[4];
-extern u32 *ptr_sfx_buf;
-extern s32 D_80063724;
-extern s32 seqp_1;
-extern s32 seqp_2;
-extern s32 seqp_3;
-extern void *ptr_musicdatatable;
+    /**
+     * Default state. Also reached when forcibly halted by application.
+     */
+    MUSIC_FADESTATE_UNSET,
 
-extern char D_80063738[0x80];
-extern char D_800637B8[0x7E];
-extern s16 D_80063836;
-extern s32 D_80063838;
-extern s32 D_8006383C;
-extern s32 D_80063840;
-extern s16 musicTrack1_length;
-extern s16 D_80063846;
-extern s16 D_80063848;
-extern s16 music1_length;
-extern s16 music2_length;
-extern s16 music3_length;
-extern s32 music1_rate;
-extern s32 music2_rate;
-extern s32 music3_rate;
-extern s32 D_8006385C;
-extern char D_80063860[0xF8];
-extern char D_80063958[0xF8];
-extern char D_80063A50[0x100];
+    /**
+     * Music track is fading in.
+     */
+    MUSIC_FADESTATE_FADE_IN
+} MUSIC_FADESTATE;
+
+void musicSeqPlayerInit(void);
+
+void musicTrack1Play(s32 track);
+void musicTrack1Stop(void);
+u16 musicTrack1GetVolume(void);
+void musicTrack1ApplySeqpVol(u16 volume);
+void musicTrack1SaveCurrentVolumeAsTrackDefault(void);
+void musicTrack1FadeOut(f32 fadeTime);
+void musicTrack1FadeIn(f32 fadeTime, u16 volume);
+
+void musicTrack2Play(s32 track);
+void musicTrack2Stop(void);
+u16 musicTrack2GetVolume(void);
+void musicTrack2ApplySeqpVol(u16 volume);
+void musicTrack2SaveCurrentVolumeAsTrackDefault(void);
+void musicTrack2FadeOut(f32 fadeTime);
+void musicTrack2FadeIn(f32 fadeTime, u16 volume);
+
+void musicTrack3Play(s32 track);
+void musicTrack3Stop(void);
+u16 musicTrack3GetVolume(void);
+void musicTrack3ApplySeqpVol(u16 volume);
+void musicTrack3SaveCurrentVolumeAsTrackDefault(void);
+void musicTrack3FadeOut(f32 fadeTime);
+void musicTrack3FadeIn(f32 fadeTime, u16 volume);
+
+void musicFadeTick(void);
+
+extern s32 g_musicXTrack1Fade;
+extern s32 g_musicXTrack2Fade;
+extern s32 g_musicXTrack3Fade;
+
+extern ALBank *g_musicSfxBufferPtr;
+
 extern char D_80063B50[0x54];
 extern s32 D_80063BA4;
 extern s32 D_80063BA8;

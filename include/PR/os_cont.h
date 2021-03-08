@@ -150,6 +150,7 @@ typedef struct {
 #define L_CBUTTONS	CONT_C
 #define R_CBUTTONS	CONT_F
 #define D_CBUTTONS	CONT_D
+#define ANY_BUTTON 0xFFFF
 
 /* Controller error number */
 

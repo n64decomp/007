@@ -1,0 +1,74 @@
+name: JP-Status
+
+on:
+  push:
+    branches: master
+    paths-ignore: # Don't trigger on files that are updated by the CI or other non-breaking files
+    - 'tools/**'
+    - '*.md'
+    - '.github/**'
+    - '.gitignore'
+    - 'CppProperties.json'
+  pull_request:
+    branches: master
+    
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  buildjp:
+    
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Depedencies
+        run: |
+          sudo apt update
+          sudo apt install binutils-mips-linux-gnu make
+          wget https://github.com/n64decomp/qemu-irix/releases/download/v2.11-deb/qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
+          sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
+      
+      - name: Get US File
+        env:
+          FILE_US: ${{ secrets.SECRET_FILE_US  }}
+        run: wget -O baserom.u.z64 $FILE_US
+      
+      - name: Get JP File
+        env:
+          FILE_JP: ${{ secrets.SECRET_FILE_JP  }}
+        run: wget -O baserom.j.z64 $FILE_JP
+
+      - name: Extract US Assets
+        run: ./extract_baserom.u.sh
+
+      - name: Extract JP Assets
+        run: ./extract_diff.j.sh
+
+      - name: Make JP 
+        run: make -j VERSION=JP
+          
+      - name: Make report
+        run: make -C tools/report
+        
+      - name: Stats
+        run: python3 tools/ge-stats.py --version jp --report
+     
+      - name: Upload output files
+
+        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          API_TOKEN_USER: ${{ secrets.API_TOKEN_USER }}
+          API_TOKEN_EMAIL: ${{ secrets.API_TOKEN_EMAIL }}
+
+        with:
+          destination_repo: 'kholdfuzion/goldeneyestatus'
+          user_email: $API_TOKEN_EMAIL
+          user_name: $API_TOKEN_USER
+          source_file: |
+            tools/report/JPN.htm
+      
+#need way of telling report that JP passed/failed

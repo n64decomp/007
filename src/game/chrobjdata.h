@@ -676,4 +676,6 @@ extern struct PitemZ_header PdoorconsoleZ_header;
 extern struct PitemZ_header PchrtesttubeZ_header;
 extern struct PitemZ_header Pbollardz_header;
 
+extern struct c_itementry c_item_entries[];
+
 #endif

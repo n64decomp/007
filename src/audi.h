@@ -1,7 +1,9 @@
 #ifndef _AUDI_H_
 #define _AUDI_H_
 
-void amCreateAudioMgr(void);
-void startaudiThread(void);
+#include "ultra64.h"
+
+void amCreateAudioManager(ALSynConfig* alconf);
+void amStartAudioThread(void);
 
 #endif
