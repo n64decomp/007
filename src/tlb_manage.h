@@ -1,6 +1,6 @@
 #ifndef _TLB_MANAGE_H_
 #define _TLB_MANAGE_H_
-#include "ultra64.h"
+#include <ultra64.h>
 
 /**
  * Block size, in bytes.

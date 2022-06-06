@@ -1,99 +1,41 @@
-#include "ultra64.h"
+#include <ultra64.h>
 #include "debugmenu.h"
 #include "vi.h"
 #include "game/dyn.h"
 
-u32 g_DebugMenuTexture[] = {
-    0x00000000, 0x00227A00, 0x007A348B, 0x00223434, 0x00115811, 0x00696900, 0x00000000, 0x00009C00,
-    0x00004600, 0x00460000, 0x00004600, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000046,
-    0x00229C11, 0x00346900, 0x00229C11, 0x00699C11, 0x00005834, 0x00ADAD34, 0x00118B34, 0x009CAD7A,
-    0x00229C11, 0x00229C11, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00113411,
-    0x00000000, 0x0046CE00, 0x00AD58DE, 0x00466969, 0x009C9C69, 0x008B8B00, 0x00469C00, 0x0022CE00,
-    0x00583400, 0x00345800, 0x007ACE69, 0x00005800, 0x00000000, 0x00000000, 0x00000000, 0x00003446,
-    0x008B007A, 0x00588B00, 0x008B008B, 0x0022007A, 0x00119C69, 0x008B0000, 0x009C1100, 0x0022008B,
-    0x008B007A, 0x008B007A, 0x00000000, 0x00000000, 0x00225869, 0x00000000, 0x69582200, 0x009C698B,
-    0x00000000, 0x0046CE00, 0x00222258, 0x00DEEF7A, 0x00AD1111, 0x0069EF9C, 0x008B0000, 0x00460000,
-    0x008B0000, 0x00008B00, 0x0058CE34, 0x00008B00, 0x00000000, 0x00000000, 0x00000000, 0x00008B00,
-    0x008B008B, 0x00008B00, 0x0011007A, 0x00118B46, 0x0058467A, 0x00CEAD22, 0x009C8B00, 0x0000117A,
-    0x00698B46, 0x008B00AD, 0x0034AD00, 0x0034AD00, 0x228B4600, 0x8B8B8B8B, 0x00468B22, 0x0011008B,
-    0x00000000, 0x00007A00, 0x00000000, 0x009C9C00, 0x00118B34, 0x22ADBD46, 0x008B8B34, 0x00000000,
-    0x008B0000, 0x00008B00, 0x007A2269, 0x22ADEF9C, 0x00000000, 0x22ADADAD, 0x00000000, 0x00226900,
-    0x008B008B, 0x00008B00, 0x00007A00, 0x0000117A, 0x009C347A, 0x0000008B, 0x00CE117A, 0x00002269,
-    0x008B227A, 0x00229C8B, 0x00001100, 0x00001100, 0xAD580000, 0x34343434, 0x000058AD, 0x0000BD34,
-    0x00000000, 0x00112200, 0x00000000, 0x22DEDE22, 0x00CE5858, 0x0046468B, 0x008BAD00, 0x00000000,
-    0x008B0000, 0x00008B00, 0x00000000, 0x00008B00, 0x00003400, 0x00000000, 0x00002200, 0x00691100,
-    0x008B008B, 0x00008B00, 0x00691158, 0x0011008B, 0x007A9CAD, 0x1122008B, 0x008B008B, 0x00008B00,
-    0x008B008B, 0x0000227A, 0x00002200, 0x00002200, 0x228B4600, 0x8B8B8B8B, 0x00468B22, 0x00006900,
-    0x00000000, 0x00228B00, 0x00000000, 0x008B8B00, 0x0034BD00, 0x00119C46, 0x007A6969, 0x00000000,
-    0x00583400, 0x00345800, 0x00000000, 0x00005800, 0x0011FF00, 0x00000000, 0x00228B00, 0x008B0000,
-    0x00349C22, 0x008BCE69, 0x22BDAD8B, 0x007A9C11, 0x00008B8B, 0x118B9C11, 0x00349C22, 0x00005800,
-    0x00349C11, 0x00588B11, 0x00228B00, 0x0069AD00, 0x00225869, 0x00000000, 0x69582200, 0x0000BD00,
-    0x00000000, 0x00000000, 0x00000000, 0x00464600, 0x00004600, 0x00000000, 0x00000000, 0x00000000,
-    0x00004600, 0x00460000, 0x00000000, 0x00000000, 0x00583400, 0x00000000, 0x00000000, 0x58340000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x008B0000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00229C11, 0x00221100, 0x11223400, 0x00003411, 0x11342200, 0x00343422, 0x00343422, 0x00002222,
-    0x00220022, 0x00342222, 0x00003434, 0x00341122, 0x22341100, 0x11110022, 0x22221134, 0x00002200,
-    0x00343411, 0x00003400, 0x00343411, 0x00113411, 0x00343434, 0x11341134, 0x11220034, 0x34220034,
-    0x11340022, 0x11220034, 0x00223422, 0x00008B34, 0x00460000, 0x00587A00, 0x00005800, 0x00000000,
-    0x348B008B, 0x0069BD00, 0x11DE7A58, 0x00AD69DE, 0x22CE7A9C, 0x11CE7AAD, 0x11CE7AAD, 0x00AD7ADE,
-    0x22CE00CE, 0x0069CE58, 0x00008BCE, 0x22CE22CE, 0x46CE4600, 0x7ABD00FF, 0x58FF46CE, 0x00AD7A9C,
-    0x11CE7A7A, 0x00AD7A8B, 0x22CE7A7A, 0x118B7ABD, 0x469CCECE, 0x8B8B34CE, 0x8B8B00BD, 0xBD8B22BD,
-    0x58CE00CE, 0x22BD00CE, 0x00BD7AAD, 0x00008B00, 0x007A1100, 0x00008B00, 0x00694658, 0x00000000,
-    0x468B7ABD, 0x00588B22, 0x008B008B, 0x46460011, 0x008B007A, 0x118B3458, 0x008B3458, 0x46460011,
-    0x008B008B, 0x00008B00, 0x0000117A, 0x008B7A11, 0x008B0000, 0x589C58BD, 0x11AD698B, 0x4646007A,
-    0x118B007A, 0x5846007A, 0x118B007A, 0x46580011, 0x34228B46, 0x6934008B, 0x007A008B, 0x58348B7A,
-    0x11696946, 0x00695846, 0x00113458, 0x00008B00, 0x00116900, 0x00008B00, 0x00110011, 0x00000000,
-    0x468B8B9C, 0x009C228B, 0x00DEAD7A, 0x58340000, 0x008B007A, 0x11DEAD00, 0x00DEAD00, 0x583400AD,
-    0x46DEADBD, 0x00008B00, 0x3411117A, 0x00DEAD00, 0x008B0000, 0x5846AD7A, 0x118B8B8B, 0x5834007A,
-    0x11DEAD34, 0x5834007A, 0x11DEDE46, 0x0058AD34, 0x00008B00, 0x5834008B, 0x008B117A, 0x00BDDE8B,
-    0x0022AD00, 0x0011BD00, 0x00226900, 0x00008B00, 0x00008B00, 0x00008B00, 0x00000000, 0x00000000,
-    0x348B348B, 0x469C8BAD, 0x008B007A, 0x347A0058, 0x008B009C, 0x008B008B, 0x008B0000, 0x228B007A,
-    0x008B008B, 0x00008B00, 0x46462269, 0x008B117A, 0x008B007A, 0x6934347A, 0x118B34DE, 0x118B009C,
-    0x008B0000, 0x228B009C, 0x008B117A, 0x3434008B, 0x00008B00, 0x4646008B, 0x0022CE00, 0x00ADBD8B,
-    0x008B007A, 0x00008B00, 0x008B0058, 0x00008B00, 0x00003446, 0x00008B00, 0x00000000, 0x00000000,
-    0x00697A9C, 0x7A9C00BD, 0x69CEAD58, 0x0058AD58, 0x22BDAD34, 0x22CEAD8B, 0x22BD2200, 0x0058AD58,
-    0x22AD00CE, 0x008BBD7A, 0x007A7A00, 0x22BD228B, 0x69BDADBD, 0x8B9C00BD, 0x69CE227A, 0x0058AD34,
-    0x22CE6900, 0x009CEF69, 0x22BD2258, 0x7A9C9C22, 0x0046CE34, 0x007AAD11, 0x00005800, 0x00580058,
-    0x22AD00CE, 0x0058BD34, 0x00AD9C9C, 0x00008B00, 0x0000008B, 0x00008B00, 0x00000000, 0x22222222,
-    0x00002211, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x0058588B, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x0000CE34, 0x0000007A, 0x1158AD00, 0x00000000, 0x7A7A7A7A,
-    0x00693400, 0x00000000, 0x22690000, 0x00000000, 0x0000008B, 0x00000000, 0x0000589C, 0x11000000,
-    0x22690000, 0x00001100, 0x00001100, 0x22690000, 0x008B7A00, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00004646, 0x00004600, 0x00464600, 0x00000000, 0x00000000,
-    0x0046AD00, 0x00000000, 0x008B0000, 0x00000000, 0x0000008B, 0x00000000, 0x00116900, 0x00000000,
-    0x008B0000, 0x00006900, 0x00006900, 0x008B0000, 0x00008B00, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00226900, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00008B00, 0x00008B00, 0x00008B00, 0x00000000, 0x00000000,
-    0x00005800, 0x008B9C34, 0x00CEAD69, 0x007AAD9C, 0x008BADBD, 0x007AAD34, 0x009CDE7A, 0x008B9CCE,
-    0x11CEAD69, 0x00589C00, 0x008BAD69, 0x008BAD69, 0x00008B00, 0x7AAD9C9C, 0x22CEAD69, 0x007AAD34,
-    0x22CEAD69, 0x008B9CDE, 0x22DE9C69, 0x007AAD9C, 0x009CDE7A, 0x118B00AD, 0x11CE00DE, 0x34CE00DE,
-    0x22CE34AD, 0x22CE00DE, 0x00BD9CAD, 0x00008B00, 0x00008B00, 0x00008B00, 0x229C347A, 0x00000000,
-    0x00000000, 0x009CAD7A, 0x008B007A, 0x69340034, 0x4634009C, 0x46CE9CBD, 0x00226900, 0x4646008B,
-    0x008B008B, 0x00008B00, 0x0000007A, 0x00DE7A00, 0x00008B00, 0x46468B69, 0x119C008B, 0x4646008B,
-    0x008B0069, 0x5846008B, 0x008B0000, 0x008B7A58, 0x00226900, 0x008B008B, 0x007A117A, 0x008B8B8B,
-    0x0058BD00, 0x008B008B, 0x00464646, 0x00467A00, 0x00008B00, 0x00008B46, 0x7A349C22, 0x00000000,
-    0x00000000, 0x4634227A, 0x009C007A, 0x58460022, 0x4646009C, 0x34460034, 0x00226900, 0x3446009C,
-    0x008B008B, 0x00008B00, 0x0000007A, 0x008B6911, 0x00008B00, 0x46468B69, 0x118B008B, 0x3458008B,
-    0x00AD0069, 0x584600AD, 0x008B0000, 0x0069348B, 0x00226911, 0x008B009C, 0x0011DE00, 0x00ADBD8B,
-    0x00699C11, 0x00469C34, 0x00225858, 0x00008B00, 0x00008B00, 0x00008B00, 0x00000000, 0x00000000,
-    0x00000000, 0x119C8BCE, 0x22ADAD58, 0x007A9C46, 0x0069ADAD, 0x1169AD46, 0x008BBD7A, 0x0069ADAD,
-    0x22AD00BD, 0x118BCE69, 0x0000007A, 0x227A34CE, 0x008BBD7A, 0x7A699C46, 0x69BD00CE, 0x007A9C22,
-    0x00BD9C58, 0x0069ADAD, 0x22CE9C34, 0x008BAD58, 0x00009C8B, 0x00699CAD, 0x11005800, 0x00580069,
-    0x11BD349C, 0x00009C00, 0x00ADAD9C, 0x00008B00, 0x00008B00, 0x00008B00, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0000008B,
-    0x00000000, 0x00000000, 0x00004646, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x008B0000, 0x0000008B, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00226900, 0x00000000, 0x00008B46, 0x00008B00, 0x00467A00, 0x00000000, 0x00000000 
-};
 
-typedef struct {
-    u8 chr;
-    u8 color;
-} character;
+#ifdef LEFTOVERDEBUG
+
+// This is a 128 x 21 sprite of characers in greyscale at one byte per pixel.
+// Each character is 4 x 7 pixels. There's 3 rows with 32 characters per row.
+u32 g_DebugMenuTexture[] = {
+	// space    !           "           #           $           %           &           '           (           )           *           +           ,           -           .           /           0           1           2           3           4           5           6           7           8           9           :           ;           <           =           >           ?
+	0x00000000, 0x00227a00, 0x007a348b, 0x00223434, 0x00115811, 0x00696900, 0x00000000, 0x00009c00, 0x00004600, 0x00460000, 0x00004600, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000046, 0x00229c11, 0x00346900, 0x00229c11, 0x00699c11, 0x00005834, 0x00adad34, 0x00118b34, 0x009cad7a, 0x00229c11, 0x00229c11, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00113411,
+	0x00000000, 0x0046ce00, 0x00ad58de, 0x00466969, 0x009c9c69, 0x008b8b00, 0x00469c00, 0x0022ce00, 0x00583400, 0x00345800, 0x007ace69, 0x00005800, 0x00000000, 0x00000000, 0x00000000, 0x00003446, 0x008b007a, 0x00588b00, 0x008b008b, 0x0022007a, 0x00119c69, 0x008b0000, 0x009c1100, 0x0022008b, 0x008b007a, 0x008b007a, 0x00000000, 0x00000000, 0x00225869, 0x00000000, 0x69582200, 0x009c698b,
+	0x00000000, 0x0046ce00, 0x00222258, 0x00deef7a, 0x00ad1111, 0x0069ef9c, 0x008b0000, 0x00460000, 0x008b0000, 0x00008b00, 0x0058ce34, 0x00008b00, 0x00000000, 0x00000000, 0x00000000, 0x00008b00, 0x008b008b, 0x00008b00, 0x0011007a, 0x00118b46, 0x0058467a, 0x00cead22, 0x009c8b00, 0x0000117a, 0x00698b46, 0x008b00ad, 0x0034ad00, 0x0034ad00, 0x228b4600, 0x8b8b8b8b, 0x00468b22, 0x0011008b,
+	0x00000000, 0x00007a00, 0x00000000, 0x009c9c00, 0x00118b34, 0x22adbd46, 0x008b8b34, 0x00000000, 0x008b0000, 0x00008b00, 0x007a2269, 0x22adef9c, 0x00000000, 0x22adadad, 0x00000000, 0x00226900, 0x008b008b, 0x00008b00, 0x00007a00, 0x0000117a, 0x009c347a, 0x0000008b, 0x00ce117a, 0x00002269, 0x008b227a, 0x00229c8b, 0x00001100, 0x00001100, 0xad580000, 0x34343434, 0x000058ad, 0x0000bd34,
+	0x00000000, 0x00112200, 0x00000000, 0x22dede22, 0x00ce5858, 0x0046468b, 0x008bad00, 0x00000000, 0x008b0000, 0x00008b00, 0x00000000, 0x00008b00, 0x00003400, 0x00000000, 0x00002200, 0x00691100, 0x008b008b, 0x00008b00, 0x00691158, 0x0011008b, 0x007a9cad, 0x1122008b, 0x008b008b, 0x00008b00, 0x008b008b, 0x0000227a, 0x00002200, 0x00002200, 0x228b4600, 0x8b8b8b8b, 0x00468b22, 0x00006900,
+	0x00000000, 0x00228b00, 0x00000000, 0x008b8b00, 0x0034bd00, 0x00119c46, 0x007a6969, 0x00000000, 0x00583400, 0x00345800, 0x00000000, 0x00005800, 0x0011ff00, 0x00000000, 0x00228b00, 0x008b0000, 0x00349c22, 0x008bce69, 0x22bdad8b, 0x007a9c11, 0x00008b8b, 0x118b9c11, 0x00349c22, 0x00005800, 0x00349c11, 0x00588b11, 0x00228b00, 0x0069ad00, 0x00225869, 0x00000000, 0x69582200, 0x0000bd00,
+	0x00000000, 0x00000000, 0x00000000, 0x00464600, 0x00004600, 0x00000000, 0x00000000, 0x00000000, 0x00004600, 0x00460000, 0x00000000, 0x00000000, 0x00583400, 0x00000000, 0x00000000, 0x58340000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x008b0000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+
+	// @        A           B           C           D           E           F           G           H           I           J           K           L           M           N           O           P           Q           R           S           T           U           V           W           X           Y           Z           [           \           ]           ^           _
+	0x00229c11, 0x00221100, 0x11223400, 0x00003411, 0x11342200, 0x00343422, 0x00343422, 0x00002222, 0x00220022, 0x00342222, 0x00003434, 0x00341122, 0x22341100, 0x11110022, 0x22221134, 0x00002200, 0x00343411, 0x00003400, 0x00343411, 0x00113411, 0x00343434, 0x11341134, 0x11220034, 0x34220034, 0x11340022, 0x11220034, 0x00223422, 0x00008b34, 0x00460000, 0x00587a00, 0x00005800, 0x00000000,
+	0x348b008b, 0x0069bd00, 0x11de7a58, 0x00ad69de, 0x22ce7a9c, 0x11ce7aad, 0x11ce7aad, 0x00ad7ade, 0x22ce00ce, 0x0069ce58, 0x00008bce, 0x22ce22ce, 0x46ce4600, 0x7abd00ff, 0x58ff46ce, 0x00ad7a9c, 0x11ce7a7a, 0x00ad7a8b, 0x22ce7a7a, 0x118b7abd, 0x469ccece, 0x8b8b34ce, 0x8b8b00bd, 0xbd8b22bd, 0x58ce00ce, 0x22bd00ce, 0x00bd7aad, 0x00008b00, 0x007a1100, 0x00008b00, 0x00694658, 0x00000000,
+	0x468b7abd, 0x00588b22, 0x008b008b, 0x46460011, 0x008b007a, 0x118b3458, 0x008b3458, 0x46460011, 0x008b008b, 0x00008b00, 0x0000117a, 0x008b7a11, 0x008b0000, 0x589c58bd, 0x11ad698b, 0x4646007a, 0x118b007a, 0x5846007a, 0x118b007a, 0x46580011, 0x34228b46, 0x6934008b, 0x007a008b, 0x58348b7a, 0x11696946, 0x00695846, 0x00113458, 0x00008b00, 0x00116900, 0x00008b00, 0x00110011, 0x00000000,
+	0x468b8b9c, 0x009c228b, 0x00dead7a, 0x58340000, 0x008b007a, 0x11dead00, 0x00dead00, 0x583400ad, 0x46deadbd, 0x00008b00, 0x3411117a, 0x00dead00, 0x008b0000, 0x5846ad7a, 0x118b8b8b, 0x5834007a, 0x11dead34, 0x5834007a, 0x11dede46, 0x0058ad34, 0x00008b00, 0x5834008b, 0x008b117a, 0x00bdde8b, 0x0022ad00, 0x0011bd00, 0x00226900, 0x00008b00, 0x00008b00, 0x00008b00, 0x00000000, 0x00000000,
+	0x348b348b, 0x469c8bad, 0x008b007a, 0x347a0058, 0x008b009c, 0x008b008b, 0x008b0000, 0x228b007a, 0x008b008b, 0x00008b00, 0x46462269, 0x008b117a, 0x008b007a, 0x6934347a, 0x118b34de, 0x118b009c, 0x008b0000, 0x228b009c, 0x008b117a, 0x3434008b, 0x00008b00, 0x4646008b, 0x0022ce00, 0x00adbd8b, 0x008b007a, 0x00008b00, 0x008b0058, 0x00008b00, 0x00003446, 0x00008b00, 0x00000000, 0x00000000,
+	0x00697a9c, 0x7a9c00bd, 0x69cead58, 0x0058ad58, 0x22bdad34, 0x22cead8b, 0x22bd2200, 0x0058ad58, 0x22ad00ce, 0x008bbd7a, 0x007a7a00, 0x22bd228b, 0x69bdadbd, 0x8b9c00bd, 0x69ce227a, 0x0058ad34, 0x22ce6900, 0x009cef69, 0x22bd2258, 0x7a9c9c22, 0x0046ce34, 0x007aad11, 0x00005800, 0x00580058, 0x22ad00ce, 0x0058bd34, 0x00ad9c9c, 0x00008b00, 0x0000008b, 0x00008b00, 0x00000000, 0x22222222,
+	0x00002211, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0058588b, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0000ce34, 0x0000007a, 0x1158ad00, 0x00000000, 0x7a7a7a7a,
+
+	// `        a           b           c           d           e           f           g           h           i           j           k           l           m           n           o           p           q           r           s           t           u           v           w           x           y           z           {           |           }           ~           blank/unused
+	0x00693400, 0x00000000, 0x22690000, 0x00000000, 0x0000008b, 0x00000000, 0x0000589c, 0x11000000, 0x22690000, 0x00001100, 0x00001100, 0x22690000, 0x008b7a00, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00004646, 0x00004600, 0x00464600, 0x00000000, 0x00000000,
+	0x0046ad00, 0x00000000, 0x008b0000, 0x00000000, 0x0000008b, 0x00000000, 0x00116900, 0x00000000, 0x008b0000, 0x00006900, 0x00006900, 0x008b0000, 0x00008b00, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00226900, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00008b00, 0x00008b00, 0x00008b00, 0x00000000, 0x00000000,
+	0x00005800, 0x008b9c34, 0x00cead69, 0x007aad9c, 0x008badbd, 0x007aad34, 0x009cde7a, 0x008b9cce, 0x11cead69, 0x00589c00, 0x008bad69, 0x008bad69, 0x00008b00, 0x7aad9c9c, 0x22cead69, 0x007aad34, 0x22cead69, 0x008b9cde, 0x22de9c69, 0x007aad9c, 0x009cde7a, 0x118b00ad, 0x11ce00de, 0x34ce00de, 0x22ce34ad, 0x22ce00de, 0x00bd9cad, 0x00008b00, 0x00008b00, 0x00008b00, 0x229c347a, 0x00000000,
+	0x00000000, 0x009cad7a, 0x008b007a, 0x69340034, 0x4634009c, 0x46ce9cbd, 0x00226900, 0x4646008b, 0x008b008b, 0x00008b00, 0x0000007a, 0x00de7a00, 0x00008b00, 0x46468b69, 0x119c008b, 0x4646008b, 0x008b0069, 0x5846008b, 0x008b0000, 0x008b7a58, 0x00226900, 0x008b008b, 0x007a117a, 0x008b8b8b, 0x0058bd00, 0x008b008b, 0x00464646, 0x00467a00, 0x00008b00, 0x00008b46, 0x7a349c22, 0x00000000,
+	0x00000000, 0x4634227a, 0x009c007a, 0x58460022, 0x4646009c, 0x34460034, 0x00226900, 0x3446009c, 0x008b008b, 0x00008b00, 0x0000007a, 0x008b6911, 0x00008b00, 0x46468b69, 0x118b008b, 0x3458008b, 0x00ad0069, 0x584600ad, 0x008b0000, 0x0069348b, 0x00226911, 0x008b009c, 0x0011de00, 0x00adbd8b, 0x00699c11, 0x00469c34, 0x00225858, 0x00008b00, 0x00008b00, 0x00008b00, 0x00000000, 0x00000000,
+	0x00000000, 0x119c8bce, 0x22adad58, 0x007a9c46, 0x0069adad, 0x1169ad46, 0x008bbd7a, 0x0069adad, 0x22ad00bd, 0x118bce69, 0x0000007a, 0x227a34ce, 0x008bbd7a, 0x7a699c46, 0x69bd00ce, 0x007a9c22, 0x00bd9c58, 0x0069adad, 0x22ce9c34, 0x008bad58, 0x00009c8b, 0x00699cad, 0x11005800, 0x00580069, 0x11bd349c, 0x00009c00, 0x00adad9c, 0x00008b00, 0x00008b00, 0x00008b00, 0x00000000, 0x00000000,
+	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0000008b, 0x00000000, 0x00000000, 0x00004646, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x008b0000, 0x0000008b, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00226900, 0x00000000, 0x00008b46, 0x00008b00, 0x00467a00, 0x00000000, 0x00000000,
+};
 
 s32 g_DebugMenuTextStartX = 5;
 s32 g_DebugMenuTextStartY = 1;
@@ -106,14 +48,15 @@ Gfx g_DebugMenuTextureDisplayList[] = {
     gsDPSetRenderMode(IM_RD | CVG_DST_FULL | ZMODE_OPA | FORCE_BL | GBL_c1(G_BL_CLR_MEM, G_BL_A_IN, G_BL_CLR_IN, G_BL_1), IM_RD | CVG_DST_FULL | ZMODE_OPA | FORCE_BL | GBL_c2(G_BL_CLR_MEM, G_BL_A_IN, G_BL_CLR_IN, G_BL_1)),
     gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT),
     gsDPSetTexturePersp(G_TP_NONE),
+    //gsDPSetTextureLUT(G_TT_NONE),
     gsDPSetAlphaCompare(G_AC_NONE),
     gsDPLoadTextureBlock(&g_DebugMenuTexture, G_IM_FMT_IA, G_IM_SIZ_8b, 128, 21, 0, (G_TX_NOMIRROR | G_TX_WRAP), (G_TX_NOMIRROR | G_TX_WRAP), G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD),
     gsDPLoadSync(),
     gsSPEndDisplayList()
 };
 character g_DebugMenuTextBuffer[80][35] = {0};
-Gfx g_DebugMenuPrimitiveColors[32] = {0};
-Gfx g_DebugMenuEnvironmentColors[32] = {0};
+Gfx g_DHudFgGbiPtrs[32] = {0};
+Gfx g_DHudBgGbiPtrs[32] = {0};
 s32 g_DebugMenuCurrentColorIndex = 0;
 
 #define ANSI_COLOR_CODE_FG_BLACK   "\x1B[30m"
@@ -176,30 +119,36 @@ Gfx g_DebugMenuEndDisplayList = gsSPEndDisplayList();
 Gfx g_DebugMenuNoOp = gsDPNoOp();
 Gfx g_DebugMenuPrimitiveColor = gsDPSetPrimColor(0, 0, 255, 255, 255, 0);
 Gfx g_DebugMenuEnvironmentColor = gsDPSetEnvColor(0, 0, 0, 0);
-u32 g_DebugMenuRandomThreshold = 0xFF; // Static?
+#endif
 
 /**
  * Removed
  */
+#ifdef LEFTOVERDEBUG
 u32 debmenu7000AD80(s32 arg0, s32 arg1) {
     // Removed
     return 0;
 }
+#endif
 
 /**
  * Removed
  */
+#ifdef LEFTOVERDEBUG
 u32 debmenu7000AD90(s32 arg0, s32 arg1) {
     // Removed
     return 0;
 }
+#endif
 
 /**
  * Removed
  */
+#ifdef LEFTOVERDEBUG
 void debmenu7000ADA0(void) {
     // Removed
 }
+#endif
 
 /**
  * Removed
@@ -209,32 +158,39 @@ void debmenu7000ADA8(void) {
 }
 
 void debmenuInit(void) {
+    #ifdef LEFTOVERDEBUG
     debmenuReset();
+    #endif
 }
 
+#ifdef LEFTOVERDEBUG
 void debmenuWriteCharAtPos(s32 x, s32 y, unsigned char c) {
     s32 i;
     for (i = 0; i < 32; i++) {
-        if ((g_DebugMenuPrimitiveColor.words.w1 == g_DebugMenuPrimitiveColors[i].words.w1) &&
-            (g_DebugMenuEnvironmentColor.words.w1 == g_DebugMenuEnvironmentColors[i].words.w1)) {
+        if ((g_DebugMenuPrimitiveColor.words.w1 == g_DHudFgGbiPtrs[i].words.w1) &&
+            (g_DebugMenuEnvironmentColor.words.w1 == g_DHudBgGbiPtrs[i].words.w1)) {
             goto end;
         }
     }
-    g_DebugMenuPrimitiveColors[g_DebugMenuCurrentColorIndex] = g_DebugMenuPrimitiveColor;
-    g_DebugMenuEnvironmentColors[g_DebugMenuCurrentColorIndex] = g_DebugMenuEnvironmentColor;
+    g_DHudFgGbiPtrs[g_DebugMenuCurrentColorIndex] = g_DebugMenuPrimitiveColor;
+    g_DHudBgGbiPtrs[g_DebugMenuCurrentColorIndex] = g_DebugMenuEnvironmentColor;
     g_DebugMenuCurrentColorIndex = ((g_DebugMenuCurrentColorIndex + 1) % 32);
     i = g_DebugMenuCurrentColorIndex;
 end:
     g_DebugMenuTextBuffer[x][y].chr = c;
     g_DebugMenuTextBuffer[x][y].color = i;
 }
+#endif
 
 void debmenuResetPosition(void) {
+    #ifdef LEFTOVERDEBUG
     g_DebugMenuTextCurrentX = g_DebugMenuTextStartX;
     g_DebugMenuTextCurrentY = g_DebugMenuTextStartY;
+    #endif
 }
 
 void debmenuReset(void) {
+    #ifdef LEFTOVERDEBUG
     s32 x;
     s32 y;  
     for (y = 0; y < 35; y++) {
@@ -245,15 +201,18 @@ void debmenuReset(void) {
     debmenuResetPosition();
     debmenu7000ADA0();
     g_DebugMenuCurrentColorIndex = 0;
+    #endif
 }
 
 /**
  * Removed.
  * Called from debmenu7000AF98
  */
+#ifdef LEFTOVERDEBUG
 void debmenu7000AF84(s32 x1, s32 y1, s32 x2, s32 y2) {
     // Removed
 }
+#endif
 
 #ifdef NONMATCHING
 s32 debmenu7000AF98(s32 height) {
@@ -274,6 +233,11 @@ s32 debmenu7000AF98(s32 height) {
         ret = y;
     }
     return ret;
+}
+#else
+#ifndef LEFTOVERDEBUG
+s32 debmenu7000AF98(s32 height) {
+
 }
 #else
 GLOBAL_ASM(
@@ -328,23 +292,31 @@ glabel debmenu7000AF98
 /* 00BC3C 7000B03C 27BD0028 */   addiu $sp, $sp, 0x28
 )
 #endif
+#endif
 
-void debmenuSetPosition(s32 x, s32 y) {
+void debmenuSetPos(s32 x, s32 y) {
+    #ifdef LEFTOVERDEBUG
     x += g_DebugMenuTextStartX;
     y += g_DebugMenuTextStartY;
     g_DebugMenuTextCurrentX = x;
     g_DebugMenuTextCurrentY = y;
+    #endif
 }
 
-void debmenuSetPrimColor(s32 r, s32 g, s32 b, s32 a) {
+void debmenuSetFgColour(s32 r, s32 g, s32 b, s32 a) {
+    #ifdef LEFTOVERDEBUG
     g_DebugMenuPrimitiveColor.words.w1 = ((r << 24) | (g << 16) | (b << 8) | (255 - a));
+    #endif
 }
 
 void debmenuSetEnvColor(s32 r, s32 g, s32 b, s32 a) {
+    #ifdef LEFTOVERDEBUG
     g_DebugMenuEnvironmentColor.words.w1 = ((r << 24) | (g << 16) | (b << 8) | (255 - a));
+    #endif
 }
 
 void debmenuWriteChar(unsigned char c) {
+    #ifdef LEFTOVERDEBUG
     s32 width = ((viGetX() - 13) / 4);
     s32 height = ((viGetY() - 10) / 7);
     if ((c == '\0') || ((c >= ' ') && (c <= '~'))) {
@@ -358,88 +330,141 @@ void debmenuWriteChar(unsigned char c) {
             g_DebugMenuTextCurrentY = g_DebugMenuTextStartY;
         }
     }
+    #endif
 }
 
 void debmenuSetPositionAndWriteChar(s32 x, s32 y, unsigned char c)
 {
-    debmenuSetPosition(x, y);
+    #ifdef LEFTOVERDEBUG
+    debmenuSetPos(x, y);
     debmenuWriteChar(c);
+    #endif
 }
 
-void debmenuWriteString(const unsigned char *str) {
+void debmenuPrintString(const unsigned char *str) {
+    #ifdef LEFTOVERDEBUG
     while (*str != '\0') {
         debmenuWriteChar(*str++);
     }
+    #endif
 }
 
-void debmenuSetPositionAndWriteString(s32 x, s32 y, const unsigned char *str) {  
-    debmenuSetPosition(x, y);
+void debmenuSetPositionAndWriteString(s32 x, s32 y, const unsigned char *str) { 
+    #ifdef LEFTOVERDEBUG
+    debmenuSetPos(x, y);
     while (*str != '\0') {
         debmenuWriteChar(*str++);
     }
+    #endif
 }
 
-#ifdef NONMATCHING
+//hacky hack for DEBUGMENU until properly decompiled
+#if !defined(DEBUGMENU) && defined(LEFTOVERDEBUG)
+u32 percentage = 0xFF; // Static?
+#endif
+#ifdef DEBUGMENU
 u32 get_random_value(void);
-// Decent attempt but still lots of diffs
-Gfx *debmenuDraw(Gfx *gdl) {
-    s32 y;
-    s32 x;
-    s32 index = -1;
-    Gfx *end;
-    s32 size;
-    s32 free;
-    for (y = 0; y < 35; y++) {
-        for (x = 0; x < 80; x++) {
-            u8 var = g_DebugMenuTextBuffer[x][y].color;
-            if (g_DebugMenuTextBuffer[x][y].chr != '\0') {
-                if (var != index) {
-                    end += 2;
-                    index = var;
-                }
-                end += 3;
-            }
-        }
-    }
-    size = ((u8*)end - (u8*)gdl);
-    free = dynGetFreeGfx(gdl);
-    if (size <= 0) {
-        return gdl;
-    }
-    free -= 2048;
-    if (free <= 0) {
-        g_DebugMenuRandomThreshold = 0;
-    } else if (free < size) {
-        g_DebugMenuRandomThreshold = ((free * 255) / size);
-    } else {
-        g_DebugMenuRandomThreshold = 256;
-    }
-    gSPDisplayList(gdl++, g_DebugMenuTextureDisplayList);
-    index = -1;
-    for (y = 0; y < 35; y++) {
-        for (x = 0; x < 80; x++) {
-            character *ptr = &g_DebugMenuTextBuffer[x][y];
-            u32 var2 = ptr->chr;
-            u8 var1 = ptr->color;
-            if (var2 != '\0') {
-                if (var1 != index) {
-                    *(gdl++) = g_DebugMenuPrimitiveColors[var1];
-                    *(gdl++) = g_DebugMenuEnvironmentColors[var1];
-                    index = var1;
-                }
-                if ((randomGetNext() & 0xFF) < g_DebugMenuRandomThreshold) {
-                    if (dynGetFreeGfx(gdl) >= 1024) {
-                        s32 s = ((var2 - 32) % 32);
-                        s32 t = ((var2 - 32) / 32);
-                        gSPTextureRectangle(gdl++, ((x * 4) * 4), ((y * 7) * 4), (((x + 1) * 4) * 4), (((y + 1) * 7) * 4), G_TX_RENDERTILE, ((s * 4) * 32), ((t * 7) * 32), (1 << 10), (1 << 10));
+// very close gSPTextureRectangle has some reordering issues
+Gfx *debmenuDraw(Gfx *gdl)
+{
+    #if defined(LEFTOVERDEBUG)
+	s32 x;
+	s32 y;
+	s32 appliedpaletteindex;
+	s32 available;
+	s32 needed;
+	Gfx *gdl2;
+	static u32 percentage = 255;
+	// Calculate how much space is needed in the display list
+	// based on the number of characters to draw and the number
+	// of times the colours will be changed.
+	gdl2 = gdl;
+	appliedpaletteindex = -1;
+	for (y = 0; y < 35; y++) {
+		for (x = 0; x < 80; x++) {
+			u32 c = g_DebugMenuTextBuffer[x][y].chr;
+			s32 paletteindex = g_DebugMenuTextBuffer[x][y].color;
+			if (c != '\0') {
+				if (paletteindex != appliedpaletteindex) {
+					gdl2 += 2;
+					appliedpaletteindex = paletteindex;
+				}
+				if (1);
+				gdl2 += 3;
+			}
+		}
+	}
+	// Make sure there'll be a least 256 GBI commands free (2KB)
+	available = dynGetFreeGfx(gdl) - 256 * sizeof(Gfx);
+	needed = (u32)gdl2 - (u32)gdl;
+	if (needed <= 0) { // shouldn't be possible
+		return gdl;
+	}
+	{
+		s32 x;
+		s32 appliedpaletteindex = -1;
+		// Write a "percentage" (out of 255) into a global variable
+		// which shows how much of the displaylist will be committed,
+		// provided 2KB is kept free.
+		if (available <= 0) {
+			// There's already less than 2KB free in the display list
+			percentage = 0;
+		} else if (needed > available) {
+			// The display list would end with less than 2KB free,
+			// so calculate the percentage
+			percentage = available * 255 / needed;
+		} else {
+			// The display list would end with at least 2KB free,
+			// so the displaylist can be committed in full
+			percentage = 256;
+		}
+		gSPDisplayList(gdl++, g_DebugMenuTextureDisplayList);
+		// Build the display list for real this time.
+		// Regardless of the availability checks above, just stop when
+		// there's less than 1KB of free space... sort of. It still writes
+		// the colour change commands, but the debug HUD doesn't exactly
+		// draw rainbows so it's no big deal.
+		for (y = 0; y < 35; y++) {
+			for (x = 0; x < 80; x++) {
+				u32 c = g_DebugMenuTextBuffer[x][y].chr;
+				s32 paletteindex = g_DebugMenuTextBuffer[x][y].color;
+				if (c != '\0') {
+					if (paletteindex != appliedpaletteindex) {
+						*gdl = g_DHudFgGbiPtrs[paletteindex]; gdl++;
+						*gdl = g_DHudBgGbiPtrs[paletteindex]; gdl++;
+						appliedpaletteindex = paletteindex;
+					}
+                #ifndef DEBUGMENU
+                    if ((randomGetNext() & 0xFF) < percentage) {
+                #else
+                    if(1) {
+                #endif
+				    	if (dynGetFreeGfx(gdl) >= 1024) {
+				    		gSPTextureRectangle(gdl++,
+				    				// Screen coords to draw at
+				    				x * 4 * 4,
+				    				y * 7 * 4,
+				    				x * 4 * 4 + 4 * 4,
+				    				y * 7 * 4 + 7 * 4,
+				    				0,
+				    				// Sprite X and Y positions
+				    				((c - ' ') % 32) * 4 * 32,
+				    				((s32)(c - ' ') >> 5) * 7 * 32,
+				    				1024, 1024);
+				    	}
                     }
-                }
-            }
-        }
-    }
+				}
+			}
+		}
+	}
+    #endif
     return gdl;
 }
+
+
 #else
+
+#ifndef VERSION_EU
 GLOBAL_ASM(
 .text
 glabel debmenuDraw
@@ -447,7 +472,7 @@ glabel debmenuDraw
 /* 00BE80 7000B280 AFB5002C */  sw    $s5, 0x2c($sp)
 /* 00BE84 7000B284 AFB1001C */  sw    $s1, 0x1c($sp)
 /* 00BE88 7000B288 AFB00018 */  sw    $s0, 0x18($sp)
-/* 00BE8C 7000B28C 3C078002 */  lui   $a3, %hi(g_DebugMenuPrimitiveColors)
+/* 00BE8C 7000B28C 3C078002 */  lui   $a3, %hi(g_DHudFgGbiPtrs)
 /* 00BE90 7000B290 00808025 */  move  $s0, $a0
 /* 00BE94 7000B294 AFBF003C */  sw    $ra, 0x3c($sp)
 /* 00BE98 7000B298 AFBE0038 */  sw    $fp, 0x38($sp)
@@ -458,7 +483,7 @@ glabel debmenuDraw
 /* 00BEAC 7000B2AC AFB20020 */  sw    $s2, 0x20($sp)
 /* 00BEB0 7000B2B0 00808825 */  move  $s1, $a0
 /* 00BEB4 7000B2B4 2406FFFF */  li    $a2, -1
-/* 00BEB8 7000B2B8 24E76610 */  addiu $a3, %lo(g_DebugMenuPrimitiveColors) # addiu $a3, $a3, 0x6610
+/* 00BEB8 7000B2B8 24E76610 */  addiu $a3, %lo(g_DHudFgGbiPtrs) # addiu $a3, $a3, 0x6610
 /* 00BEBC 7000B2BC 0000A825 */  move  $s5, $zero
 /* 00BEC0 7000B2C0 00004025 */  move  $t0, $zero
 .L7000B2C4:
@@ -493,9 +518,9 @@ glabel debmenuDraw
 .L7000B32C:
 /* 00BF2C 7000B32C 1C600004 */  bgtz  $v1, .L7000B340
 /* 00BF30 7000B330 2414FFFF */   li    $s4, -1
-/* 00BF34 7000B334 3C018002 */  lui   $at, %hi(g_DebugMenuRandomThreshold)
+/* 00BF34 7000B334 3C018002 */  lui   $at, %hi(percentage)
 /* 00BF38 7000B338 10000017 */  b     .L7000B398
-/* 00BF3C 7000B33C AC2068B8 */   sw    $zero, %lo(g_DebugMenuRandomThreshold)($at)
+/* 00BF3C 7000B33C AC2068B8 */   sw    $zero, %lo(percentage)($at)
 .L7000B340:
 /* 00BF40 7000B340 0064082A */  slt   $at, $v1, $a0
 /* 00BF44 7000B344 10200011 */  beqz  $at, .L7000B38C
@@ -513,15 +538,15 @@ glabel debmenuDraw
 /* 00BF70 7000B370 00000000 */   nop   
 /* 00BF74 7000B374 0006000D */  break 6
 .L7000B378:
-/* 00BF78 7000B378 3C018002 */  lui   $at, %hi(g_DebugMenuRandomThreshold)
+/* 00BF78 7000B378 3C018002 */  lui   $at, %hi(percentage)
 /* 00BF7C 7000B37C 0000C012 */  mflo  $t8
-/* 00BF80 7000B380 AC3868B8 */  sw    $t8, %lo(g_DebugMenuRandomThreshold)($at)
+/* 00BF80 7000B380 AC3868B8 */  sw    $t8, %lo(percentage)($at)
 /* 00BF84 7000B384 10000005 */  b     .L7000B39C
 /* 00BF88 7000B388 02001025 */   move  $v0, $s0
 .L7000B38C:
 /* 00BF8C 7000B38C 24190100 */  li    $t9, 256
-/* 00BF90 7000B390 3C018002 */  lui   $at, %hi(g_DebugMenuRandomThreshold)
-/* 00BF94 7000B394 AC3968B8 */  sw    $t9, %lo(g_DebugMenuRandomThreshold)($at)
+/* 00BF90 7000B390 3C018002 */  lui   $at, %hi(percentage)
+/* 00BF94 7000B394 AC3968B8 */  sw    $t9, %lo(percentage)($at)
 .L7000B398:
 /* 00BF98 7000B398 02001025 */  move  $v0, $s0
 .L7000B39C:
@@ -530,11 +555,11 @@ glabel debmenuDraw
 /* 00BFA4 7000B3A4 3C090600 */  lui   $t1, 0x600
 /* 00BFA8 7000B3A8 AC490000 */  sw    $t1, ($v0)
 /* 00BFAC 7000B3AC AC4A0004 */  sw    $t2, 4($v0)
-/* 00BFB0 7000B3B0 3C1E8002 */  lui   $fp, %hi(g_DebugMenuEnvironmentColors) 
-/* 00BFB4 7000B3B4 3C178002 */  lui   $s7, %hi(g_DebugMenuPrimitiveColors) 
+/* 00BFB0 7000B3B0 3C1E8002 */  lui   $fp, %hi(g_DHudBgGbiPtrs) 
+/* 00BFB4 7000B3B4 3C178002 */  lui   $s7, %hi(g_DHudFgGbiPtrs) 
 /* 00BFB8 7000B3B8 26100008 */  addiu $s0, $s0, 8
-/* 00BFBC 7000B3BC 26F76610 */  addiu $s7, %lo(g_DebugMenuPrimitiveColors) # addiu $s7, $s7, 0x6610
-/* 00BFC0 7000B3C0 27DE6710 */  addiu $fp, %lo(g_DebugMenuEnvironmentColors) # addiu $fp, $fp, 0x6710
+/* 00BFBC 7000B3BC 26F76610 */  addiu $s7, %lo(g_DHudFgGbiPtrs) # addiu $s7, $s7, 0x6610
+/* 00BFC0 7000B3C0 27DE6710 */  addiu $fp, %lo(g_DHudBgGbiPtrs) # addiu $fp, $fp, 0x6710
 /* 00BFC4 7000B3C4 AFA00040 */  sw    $zero, 0x40($sp)
 /* 00BFC8 7000B3C8 0000A825 */  move  $s5, $zero
 /* 00BFCC 7000B3CC 24160050 */  li    $s6, 80
@@ -566,8 +591,8 @@ glabel debmenuDraw
 .L7000B42C:
 /* 00C02C 7000B42C 0C002914 */  jal   randomGetNext
 /* 00C030 7000B430 00000000 */   nop   
-/* 00C034 7000B434 3C0B8002 */  lui   $t3, %hi(g_DebugMenuRandomThreshold) 
-/* 00C038 7000B438 8D6B68B8 */  lw    $t3, %lo(g_DebugMenuRandomThreshold)($t3)
+/* 00C034 7000B434 3C0B8002 */  lui   $t3, %hi(percentage) 
+/* 00C038 7000B438 8D6B68B8 */  lw    $t3, %lo(percentage)($t3)
 /* 00C03C 7000B43C 304A00FF */  andi  $t2, $v0, 0xff
 /* 00C040 7000B440 014B082B */  sltu  $at, $t2, $t3
 /* 00C044 7000B444 5020002F */  beql  $at, $zero, .L7000B504
@@ -643,4 +668,10 @@ glabel debmenuDraw
 /* 00C150 7000B550 03E00008 */  jr    $ra
 /* 00C154 7000B554 27BD0088 */   addiu $sp, $sp, 0x88
 )
+#else
+Gfx *debmenuDraw(Gfx *gdl) 
+{
+    return gdl;
+}
+#endif
 #endif

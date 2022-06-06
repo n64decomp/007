@@ -1,4 +1,4 @@
-#include "assets/obseg/brief/Ubrief.h"
+#include "Ubrief.h"
 
 struct BriefStruct UbriefsevxZ = {
     {                                          /* Mission Briefing */

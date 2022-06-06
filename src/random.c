@@ -1,4 +1,8 @@
-#include "ultra64.h"
+#include <ultra64.h>
+
+/**
+ * EU .data, offset from start of data_seg : 0x36a0
+*/
 
 /**
  * @file random.c
@@ -9,11 +13,13 @@
 u64 g_randomSeed = 0xAB8D9F7781280783;
 
 #ifdef NONMATCHING
+// https://decomp.me/scratch/4prWp
+// -mips3 -O2
 /**
  * Iterates the current random seed and returns a 32 bit value.
  * Same assembly instructions as tlbRandomGetNext and chrObjRandomGetNext, but different globals.
  */ 
-s32 randomGetNext(void) {
+u32 randomGetNext(void) {
     // best -O1 guess
     // g_randomSeed ^= (((((g_randomSeed << 0x3f) >> 0x1f) | ((g_randomSeed << 0x1f) >> 0x20)) ^ ((g_randomSeed << 0x2c) >> 0x20)) >> 0x14) & 0xfff;
     // return (s32)(g_randomSeed);
@@ -62,7 +68,7 @@ glabel randomGetNext
  * 
  * Same assembly instructions as chrObjRandomSetSeed.
  */ 
-void randomSetSeed(u32 param_1) {
+void randomSetSeed(u64 param_1) {
     g_randomSeed = param_1 + 1;
 }
 #else
@@ -84,7 +90,7 @@ glabel randomSetSeed
  * Iterates the parameter as if it were the random seed and returns the next 32 bit random value.
  * This uses the same logic as randomGetNext.
  */ 
-s32 randomGetNextFrom(u64 *param_1) {
+u32 randomGetNextFrom(u64 *param_1) {
     // best -O1 guess
     // *param_1 ^= (((((*param_1 << 0x3f) >> 0x1f) | ((*param_1 << 0x1f) >> 0x20)) ^ ((*param_1 << 0x2c) >> 0x20)) >> 0x14) & 0xfff;
     // return (s32)(*param_1);

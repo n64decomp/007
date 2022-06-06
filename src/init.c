@@ -1,11 +1,18 @@
 #include <ultra64.h>
-#include "bondgame.h"
+#include <PR/os.h>
+#include <PR/os_internal.h>
+#include <bondgame.h>
 #include "boot.h"
 #include "sched.h"
-#include "rmon.h"
+#include "rmon.h" /*<PR/rmon.h>*/
 #include "tlb_resolve.h"
 #include "tlb_hardwire.h"
 #include "init.h"
+#include "thread_config.h"
+
+/**
+ * EU .data, offset from start of data_seg : 0x22B0
+*/
 
 /**
  * @file init.c
@@ -18,6 +25,7 @@
  */
 
 #define NUM_FIELDS  1
+
 
 u32 unknown_val_80023040 = 0;
 /*D:80023044*/
@@ -34,7 +42,6 @@ struct debug_handler_entry debug_handler_table[] =
     {sp_main, "main"},
     {sp_audi, "audi"},
     {0, 0},
-    {0, 0},
 };
 
 OSThread rmonThread;
@@ -47,74 +54,78 @@ OSMesgQueue *sched_cmdQ;
 
 void mainproc(void *args);
 
-extern u8 * _rarezipSegmentStart;
+extern u8 * _inflateSegmentStart;
 
 
-u32         osPiGetStatus(void);
-void __osSetFpcCsr(u32);
-u32 __osGetFpcCsr(void);
 /**
  * 1110	70000510
  * ???	initializes TLB index...
  *	copies compressed 21990 to virtual address 701EE400, using 70200000 to decompress
  */
 #ifdef NONMATCHING
+//
+// https://decomp.me/scratch/vhVzi
+//
+
+// left to fix:
+// minor reg swapping
+//
+
+extern u32* _alt_startSegmentRomStart;
+extern u32* _alt_startSegmentStart;
 void init(void)
 {
-    u32 src = get_csegmentSegmentStart();
-    u32 datastart = get_cdataSegmentRomStart();
-    u32 datacomplen = (get_cdataSegmentRomEnd() - datastart);
-    u32 inflatestart = get_rarezipSegmentRomStart();
-    u32 inflatelen = (get_rarezipSegmentRomEnd() - inflatestart);
-    u32 dst = &_rarezipSegmentRomStart - datacomplen;
-    u32 j;
     s32 i;
+    u32 csegmentSegmentVaddrStart = get_csegmentSegmentStart();
+    u32 cdataSegmentRomStart = get_cdataSegmentRomStart();
+    s32 j;
+    u32 cdataSegmentRomSize = get_cdataSegmentRomEnd() - cdataSegmentRomStart;
+    u32 inflateSegmentRomStart = get_inflateSegmentRomStart();
+    u32 inflateromSize = get_inflateSegmentRomEnd() - inflateSegmentRomStart;
+    s32 codeAndDataSegRomSize;
 
-	for (i = datacomplen + inflatelen - 1; (i >= 0); i--)
+    for (j = (cdataSegmentRomSize + (inflateromSize)) - 1; j >= 0; j--)
     {
-		((u8 *)dst)[i] = ((u8 *)src)[i];
-	}
-
-    jump_decompressfile(dst, src, 0x80300000);
-    if (1)
-    {
-        if ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) >= 0xfffb1)
-        {
-            osPiRawStartDma(0, 0x101000, 0x70100400, ((&_rarezipSegmentRomStart - &_codeSegmentRomStart) + 0xfff00050));
-            while ((osPiGetStatus() & 1) != 0) {}
-        }
-
-        osInitialize();
-        set_hardwire_TLB_to_2();
+        ((u8 *)(0x70200000 - cdataSegmentRomSize))[j] = ((u8*)csegmentSegmentVaddrStart)[j];
     }
 
-
-	//IM BROKEN FIX ME!!!!!!!
-	//src = (u32 *)resolve_TLBaddress_for_InvalidHit;
-	//UT_VEC
-	//dst = (u32 *)0x80000000;
-	//XUT_VEC
-    //while ( (u32)dst != (u32)dst + 0x80 ) { *dst = *src; dst++; src++;}
-	//TO HERE
-    while( i < 0x80)
+    jump_decompressfile(0x70200000 - cdataSegmentRomSize, csegmentSegmentVaddrStart, 0x80300000);
+    if (0) {}
+    codeAndDataSegRomSize = (u32)&_inflateSegmentRomStart - (u32)&_codeSegmentRomStart;
+    if ((codeAndDataSegRomSize > 0xFFFB0))
     {
-		((u32 *)0x80000000)[i++] = ((u32 *)&resolve_TLBaddress_for_InvalidHit)[i++];
-	}
+        osPiRawStartDma(0, &_alt_startSegmentRomStart, &_alt_startSegmentStart, codeAndDataSegRomSize + 0xFFF00050);
+        while ((osPiGetStatus() & 1)) {}
+    }
+    osInitialize();
+    set_hardwire_TLB_to_2();
 
+    codeAndDataSegRomSize = 0x80000000;
+    
+    j=&resolve_TLBaddress_for_InvalidHit;
+    i=codeAndDataSegRomSize;
+    
+    while (i!=0x80000080)
+    {
+	    *(__exceptionVector *)i = *(__exceptionVector *)j;
+         i+=0x10; j+=0x10;
+    }
 
     osWritebackDCacheAll();
-    osInvalICache(0x80000000, 0x4000);
+    osInvalICache(codeAndDataSegRomSize, 0x4000);
 
 	for (i=2; i<32; i++)
     {
 		osUnmapTLB(i);
 	}
 
-    __osSetFpcCsr((__osGetFpcCsr() | 0xe80));
-    osCreateThread(&mainThread, 3, &mainproc, 0, set_stack_entry(&sp_main, 0x8000), 0xa);
+    __osSetFpcCsr(__osGetFpcCsr() | 0xE80);
+    osCreateThread(&mainThread, MAIN_THREAD_ID, &mainproc, NULL, set_stack_entry(sp_main, 0x8000), MAIN_THREAD_PRIORITY);
     osStartThread(&mainThread);
 }
 
+
+//#ifdef NONMATCHING
 #else
 GLOBAL_ASM(
 .section .text
@@ -129,9 +140,9 @@ glabel init
 /* 00112C 7000052C 0C000135 */  jal   get_cdataSegmentRomEnd
 /* 001130 70000530 AFA20034 */   sw    $v0, 0x34($sp)
 /* 001134 70000534 8FAE0034 */  lw    $t6, 0x34($sp)
-/* 001138 70000538 0C000138 */  jal   get_rarezipSegmentRomStart
+/* 001138 70000538 0C000138 */  jal   get_inflateSegmentRomStart
 /* 00113C 7000053C 004E8823 */   subu  $s1, $v0, $t6
-/* 001140 70000540 0C00013B */  jal   get_rarezipSegmentRomEnd
+/* 001140 70000540 0C00013B */  jal   get_inflateSegmentRomEnd
 /* 001144 70000544 AFA20028 */   sw    $v0, 0x28($sp)
 /* 001148 70000548 8FAF0028 */  lw    $t7, 0x28($sp)
 /* 00114C 7000054C 3C0A7020 */  lui   $t2, 0x7020
@@ -154,10 +165,10 @@ glabel init
 .L7000058C:
 /* 00118C 7000058C 0C00013E */  jal   jump_decompressfile
 /* 001190 70000590 01512023 */   subu  $a0, $t2, $s1
-/* 001194 70000594 3C0B0003 */  lui   $t3, %hi(_rarezipSegmentRomStart) # $t3, 3
+/* 001194 70000594 3C0B0003 */  lui   $t3, %hi(_inflateSegmentRomStart) # $t3, 3
 /* 001198 70000598 3C0C0000 */  lui   $t4, %hi(_codeSegmentRomStart) # $t4, 0
 /* 00119C 7000059C 258C1050 */  addiu $t4, %lo(_codeSegmentRomStart) # addiu $t4, $t4, 0x1050
-/* 0011A0 700005A0 256B3590 */  addiu $t3, %lo(_rarezipSegmentRomStart) # addiu $t3, $t3, 0x3590
+/* 0011A0 700005A0 256B3590 */  addiu $t3, %lo(_inflateSegmentRomStart) # addiu $t3, $t3, 0x3590
 /* 0011A4 700005A4 3C01000F */  lui   $at, (0x000FFFB1 >> 16) # lui $at, 0xf
 /* 0011A8 700005A8 3421FFB1 */  ori   $at, (0x000FFFB1 & 0xFFFF) # ori $at, $at, 0xffb1
 /* 0011AC 700005AC 016C1023 */  subu  $v0, $t3, $t4
@@ -287,7 +298,7 @@ void idleproc(void *arg)
  */
 void idleCreateThread(void) 
 {
-    osCreateThread(&idleThread, (OSId)1, idleproc, 0, set_stack_entry(&sp_idle, 0x40), (OSPri)0);
+    osCreateThread(&idleThread, IDLE_THREAD_ID, idleproc, 0, set_stack_entry(&sp_idle, 0x40), IDLE_THREAD_PRIORITY);
     osStartThread(&idleThread);
 }
 
@@ -297,7 +308,7 @@ void idleCreateThread(void)
  */
 void rmonCreateThread(void) 
 {
-    osCreateThread(&rmonThread, (OSId)0, rmonMain, 0, set_stack_entry(&sp_rmon, 0x300), (OSPri)250);
+    osCreateThread(&rmonThread, RMON_THREAD_ID, rmonMain, 0, set_stack_entry(&sp_rmon, 0x300), RMON_THREAD_PRIORITY);
     osStartThread(&rmonThread);
 }
 
@@ -309,15 +320,15 @@ void schedulerInitThread(void)
     osCreateMesgQueue(&gfxFrameMsgQ, &gfxFrameMsgBuf, 32);
     if (osTvType == 2) //OS_TV_MPAL
     { 
-        osCreateScheduler(&sc, &shedThread, OS_VI_MPAL_LAN1, NUM_FIELDS);
+        osCreateScheduler(&os_scheduler, &shedThread, OS_VI_MPAL_LAN1, NUM_FIELDS);
     }
     else 
     {
-        osCreateScheduler(&sc, &shedThread, OS_VI_NTSC_LAN1, NUM_FIELDS);
+        osCreateScheduler(&os_scheduler, &shedThread, OS_VI_NTSC_LAN1, NUM_FIELDS);
 	}
 
-    osScAddClient(&sc, &gfxClient, &gfxFrameMsgQ, 0);
-    sched_cmdQ = osScGetCmdQ(&sc);
+    osScAddClient(&os_scheduler, &gfxClient, &gfxFrameMsgQ, 0);
+    sched_cmdQ = osScGetCmdQ(&os_scheduler);
 }
 
 /**
@@ -348,41 +359,46 @@ void mainproc(void *args)
  */
 #ifdef NONMATCHING
 void setuplastentryofdebughandler(void)
-{
-    ? sp8;
-    void *temp_t6;
-    void *temp_t0;
-    void *temp_v0;
-    void *phi_t6;
-    void *phi_t0;
-    void *phi_v0;
 
-    phi_t6 = &debug_handler_table;
-    phi_t0 = &sp8;
-loop_1:
-    temp_t6 = (phi_t6 + 0xc);
-    temp_t0 = (phi_t0 + 0xc);
-    temp_t0->unk-C = (?32) *phi_t6;
-    temp_t0->unk-8 = (?32) temp_t6->unk-8;
-    temp_t0->unk-4 = (?32) temp_t6->unk-4;
-    phi_t6 = temp_t6;
-    phi_t0 = temp_t0;
-    if (temp_t6 != (&debug_handler_table + 0x30))
-    {
-        goto loop_1;
-    }
-    *temp_t0 = (?32) *temp_t6;
-    temp_t0->unk4 = (?32) temp_t6->unk4;
-    phi_v0 = &sp8;
-loop_3:
-    temp_v0 = (phi_v0 + 8);
-    phi_v0 = temp_v0;
-    if (phi_v0->unk8 != 0)
-    {
-        goto loop_3;
-    }
-    return temp_v0;
+{
+  //debug_handler_entry *new;
+  //debug_handler_entry *old;
+  debug_handler_entry local_38 [7];
+  s32 i;
+  
+  //debug_handler_entry *nextnewname;
+  //debug_handler_entry *nextoldname;
+  /*
+  nextoldname = debug_handler_table;
+  nextnewname = local_38;
+  do {
+    new = nextnewname;
+    old = nextoldname;
+    new->address = old->address;
+    new->ptr_name = old->ptr_name;
+    new[1].address = old[1].address;
+    nextoldname = &old[1].ptr_name;
+    nextnewname = &new[1].ptr_name;
+  } while (&old[1].ptr_name != debug_handler_table + 6);
+  (&new[1].ptr_name)->address = debug_handler_table[6].address;
+  new[2].address = old[2].address;
+  nextnewname = local_38;
+  while (local_38[1].address != 0x0) {
+    local_38[1].address = nextnewname[2].address;
+    nextnewname = nextnewname + 1;
+  }
+  return;
+  */
+ for (i=0;i<8;i++)
+ {
+     *(debug_handler_entry*)&local_38[i]=*(debug_handler_entry*)&debug_handler_table[i];
+ }
+ for (i=1;local_38[i].address; i++)
+ {
+     local_38[i].address = local_38[i+1].address;
+ }
 }
+//#ifdef NONMATCHING
 #else
 GLOBAL_ASM(
 .section .text

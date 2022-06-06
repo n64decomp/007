@@ -1,4 +1,5 @@
-#include "ultra64.h"
+#include <ultra64.h>
+#include "unk_01B240.h"
 
 
 s32 D_8002BB00 = 0;
@@ -25,6 +26,7 @@ s32 D_8002BB2C = 0;
 
 
 #ifdef NONMATCHING
+
 void sub_GAME_7F01B240(void) {
 
 }

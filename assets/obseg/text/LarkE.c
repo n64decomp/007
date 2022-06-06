@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LarkE[] = {
+char *LarkE[] = {
  "Inside the chemical weapons facility you should quickly and efficiently proceed to the bottling area and place demolition charges on the main gas tanks.\nPolitical considerations demand that collateral damage is minimized on this mission. Non-military personnel should be disregarded.\n",
  "You'll be working with 006 on this assignment, the bottling room is the rendezvous point. \nDon't forget to contact our double agent scientist before you leave, and warn him to get out. He will provide you with a decoder for the final security door. There are no women or casinos for a thousand miles, 007, so even you will be able to concentrate on this mission.\n",
  "Now listen carefully, Bond. Those bombs will be armed as soon as the last one is set. Don't be too close when you set them off or you'll go up in flames as well, and while you're at it, please try and bring back that door-opener undamaged for once. Too much rough handling like the last mission and it might go wrong at a bad time.\nHonestly 007, sometimes I think you damage your equipment on purpose.\n",
@@ -69,7 +68,7 @@ struct stringentry LarkE[] = {
  "keycard B\n",
  "keycard B\n",
  "Picked up a clearance B keycard.\n",
- NULL,
+ 0,
  "This is a remotely locked\nsecurity door.\n",
  "Chemical Warfare Facility #2\n",
  "Double agent contact has been killed!\n"

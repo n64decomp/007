@@ -1,20 +1,24 @@
-#include "ultra64.h"
-#include "game/ob.h"
-#include "memp.h"
-#include "assets/obseg/obseg.h"
-#include "game/decompress.h"
-
+#include <ultra64.h>
+#include "ob.h"
+#include <deb.h>
+#include <memp.h>
+#include <assets/obseg/obseg.h>
+#include "decompress.h"
+#include "indy_comms.h"
+#include "assets/obseg/file_resource_id_enums.h"
 
 //bss
 //800888b0
-struct resource_lookup_data_entry resource_lookup_data_array[736];
+
+struct resource_lookup_data_entry resource_lookup_data_array[OBJ_INDEX_MAX];
+
 
 // data
 //D:80046050
 s32 ob_c_debug_notice_list_entry = 0;
 
 
-#include "assets/obseg/file_resource_table.inc.c"
+#include <assets/obseg/file_resource_table.inc.c>
 /* struct fileentry file_resource_table[] = 
    {
        blah;
@@ -52,34 +56,28 @@ void load_resource(u8 *ptrdata, u32 bytes, struct fileentry *srcfile, struct res
     }
 }
 
-
-
-
-#ifdef NONMATCHING
-//need to tinker with stack size
 void resource_load_from_indy(u8 *ptrdata, u32 bytes, struct fileentry *srcfile, struct resource_lookup_data_entry *lookupdata)
 {
-    void *sp2124;
-    u8 buffer[8450];
     u8 *pPayload;
-    u32 size;
-static const u8 rz_header_1[] = {0x11, 0x72, 0x00, 0x00};
-static const u8 rz_header_2[] = {0x11, 0x72, 0x00, 0x00};
-    if (bytes == 0)
+    u8 buffer[8448];
+    s32 size;
+    static const u8 rz_header_1[] = {0x11, 0x72, 0x00, 0x00};
+    static const u8 rz_header_2[] = {0x11, 0x72, 0x00, 0x00};
+
+    if (!bytes)
     {
-        load_resource_on_indy(srcfile->filename, ptrdata);
+        indycommHostLoadFile(srcfile->filename, ptrdata);
         return;
     }
-    check_file_found_on_indy(srcfile->filename, lookupdata->pc_size);
+    indycommHostCheckFileExists(srcfile->filename, &lookupdata->pc_size);
     pPayload = (ptrdata + bytes) - ((lookupdata->pc_size + 7) & -8);
-    if ((u32) (pPayload - ptrdata) < 8U)
+    if ((pPayload - ptrdata) < (u32)8)
     {
         lookupdata->pc_remaining = 0;
     }
     else
     {
-        sp2124 = pPayload;
-        load_resource_on_indy(srcfile->filename, pPayload);
+        indycommHostLoadFile(srcfile->filename, pPayload);
         if ((pPayload[0] == rz_header_1[0]) && (pPayload[1] == rz_header_2[1]))
         {
             size = decompressdata(pPayload, ptrdata, &buffer);
@@ -89,89 +87,9 @@ static const u8 rz_header_2[] = {0x11, 0x72, 0x00, 0x00};
             bcopy(pPayload, ptrdata, lookupdata->pc_size);
             size = lookupdata->pc_size;
         }
-        lookupdata->pc_remaining = (s32) size;
+        lookupdata->pc_remaining = size;
     }
 }
-#else
-GLOBAL_ASM(
-.rdata
-/*8005b66c*/
-glabel rz_header_1
-.word 0x11720000
-/*8005b670*/
-glabel rz_header_2
-.word 0x11720000
-.text
-glabel resource_load_from_indy
-/* 0F1664 7F0BCB34 27BDDED8 */  addiu $sp, $sp, -0x2128
-/* 0F1668 7F0BCB38 AFB10018 */  sw    $s1, 0x18($sp)
-/* 0F166C 7F0BCB3C AFB00014 */  sw    $s0, 0x14($sp)
-/* 0F1670 7F0BCB40 00808025 */  move  $s0, $a0
-/* 0F1674 7F0BCB44 00E08825 */  move  $s1, $a3
-/* 0F1678 7F0BCB48 AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0F167C 7F0BCB4C 14A00006 */  bnez  $a1, .L7F0BCB68
-/* 0F1680 7F0BCB50 AFA5212C */   sw    $a1, 0x212c($sp)
-/* 0F1684 7F0BCB54 8CC40004 */  lw    $a0, 4($a2)
-/* 0F1688 7F0BCB58 0FC33FE7 */  jal   load_resource_on_indy
-/* 0F168C 7F0BCB5C 02002825 */   move  $a1, $s0
-/* 0F1690 7F0BCB60 1000002D */  b     .L7F0BCC18
-/* 0F1694 7F0BCB64 8FBF001C */   lw    $ra, 0x1c($sp)
-.L7F0BCB68:
-/* 0F1698 7F0BCB68 8CC40004 */  lw    $a0, 4($a2)
-/* 0F169C 7F0BCB6C AFA62130 */  sw    $a2, 0x2130($sp)
-/* 0F16A0 7F0BCB70 0FC34026 */  jal   check_file_found_on_indy
-/* 0F16A4 7F0BCB74 26250008 */   addiu $a1, $s1, 8
-/* 0F16A8 7F0BCB78 8E390008 */  lw    $t9, 8($s1)
-/* 0F16AC 7F0BCB7C 8FAF212C */  lw    $t7, 0x212c($sp)
-/* 0F16B0 7F0BCB80 2401FFF8 */  li    $at, -8
-/* 0F16B4 7F0BCB84 27280007 */  addiu $t0, $t9, 7
-/* 0F16B8 7F0BCB88 01014824 */  and   $t1, $t0, $at
-/* 0F16BC 7F0BCB8C 020FC021 */  addu  $t8, $s0, $t7
-/* 0F16C0 7F0BCB90 03093823 */  subu  $a3, $t8, $t1
-/* 0F16C4 7F0BCB94 00F05023 */  subu  $t2, $a3, $s0
-/* 0F16C8 7F0BCB98 2D410008 */  sltiu $at, $t2, 8
-/* 0F16CC 7F0BCB9C 10200003 */  beqz  $at, .L7F0BCBAC
-/* 0F16D0 7F0BCBA0 8FA62130 */   lw    $a2, 0x2130($sp)
-/* 0F16D4 7F0BCBA4 1000001B */  b     .L7F0BCC14
-/* 0F16D8 7F0BCBA8 AE200004 */   sw    $zero, 4($s1)
-.L7F0BCBAC:
-/* 0F16DC 7F0BCBAC 8CC40004 */  lw    $a0, 4($a2)
-/* 0F16E0 7F0BCBB0 AFA72124 */  sw    $a3, 0x2124($sp)
-/* 0F16E4 7F0BCBB4 0FC33FE7 */  jal   load_resource_on_indy
-/* 0F16E8 7F0BCBB8 00E02825 */   move  $a1, $a3
-/* 0F16EC 7F0BCBBC 8FA72124 */  lw    $a3, 0x2124($sp)
-/* 0F16F0 7F0BCBC0 3C0C8006 */  lui   $t4, %hi(rz_header_1) 
-/* 0F16F4 7F0BCBC4 918CB66C */  lbu   $t4, %lo(rz_header_1)($t4)
-/* 0F16F8 7F0BCBC8 90EB0000 */  lbu   $t3, ($a3)
-/* 0F16FC 7F0BCBCC 3C0E8006 */  lui   $t6, %hi(rz_header_2 + 0x1) 
-/* 0F1700 7F0BCBD0 02002825 */  move  $a1, $s0
-/* 0F1704 7F0BCBD4 156C000B */  bne   $t3, $t4, .L7F0BCC04
-/* 0F1708 7F0BCBD8 00E02025 */   move  $a0, $a3
-/* 0F170C 7F0BCBDC 90ED0001 */  lbu   $t5, 1($a3)
-/* 0F1710 7F0BCBE0 91CEB671 */  lbu   $t6, %lo(rz_header_2 + 0x1)($t6)
-/* 0F1714 7F0BCBE4 27A60024 */  addiu $a2, $sp, 0x24
-/* 0F1718 7F0BCBE8 15AE0006 */  bne   $t5, $t6, .L7F0BCC04
-/* 0F171C 7F0BCBEC 00000000 */   nop   
-/* 0F1720 7F0BCBF0 00E02025 */  move  $a0, $a3
-/* 0F1724 7F0BCBF4 0FC339FC */  jal   decompressdata
-/* 0F1728 7F0BCBF8 02002825 */   move  $a1, $s0
-/* 0F172C 7F0BCBFC 10000004 */  b     .L7F0BCC10
-/* 0F1730 7F0BCC00 00401825 */   move  $v1, $v0
-.L7F0BCC04:
-/* 0F1734 7F0BCC04 0C003E5C */  jal   bcopy
-/* 0F1738 7F0BCC08 8E260008 */   lw    $a2, 8($s1)
-/* 0F173C 7F0BCC0C 8E230008 */  lw    $v1, 8($s1)
-.L7F0BCC10:
-/* 0F1740 7F0BCC10 AE230004 */  sw    $v1, 4($s1)
-.L7F0BCC14:
-/* 0F1744 7F0BCC14 8FBF001C */  lw    $ra, 0x1c($sp)
-.L7F0BCC18:
-/* 0F1748 7F0BCC18 8FB00014 */  lw    $s0, 0x14($sp)
-/* 0F174C 7F0BCC1C 8FB10018 */  lw    $s1, 0x18($sp)
-/* 0F1750 7F0BCC20 03E00008 */  jr    $ra
-/* 0F1754 7F0BCC24 27BD2128 */   addiu $sp, $sp, 0x2128
-)
-#endif
 
 
 
@@ -180,27 +98,16 @@ glabel resource_load_from_indy
 #ifdef NONMATCHING
 void obInitDebugNoticeList(void)
 {
-    struct resource_lookup_data_entry *lookupentry;
-    struct resource_lookup_data_entry *nextlookup;
-    int file_count;
-    struct fileentry *filetable_entry;
-    
+    s32 i;
+ 
     debTryAdd(&ob_c_debug_notice_list_entry,"ob_c_debug");
-    filetable_entry = &file_resource_table[0];
-    file_count = file_entry_max - 1;
-    if (1 < file_count) {
-        lookupentry = resource_lookup_data_array + 1;
-        while (nextlookup < resource_lookup_data_array + file_count) {
-            filetable_entry = filetable_entry + 1;
-            nextlookup = lookupentry + 1;
-            lookupentry->rom_size = filetable_entry[1].hw_address - filetable_entry->hw_address;
-            lookupentry->pc_remaining = 0;
-            lookupentry->pc_size = 0;
-            lookupentry->rom_remaining = 0;
-            lookupentry = nextlookup;
-        } ;
+    for (i = 0; i < (file_entry_max - 1); i++)
+    {
+        resource_lookup_data_array[i].rom_size = (file_resource_table[i+1].hw_address - file_resource_table[i].hw_address);
+        resource_lookup_data_array[i].pc_remaining = 0;
+        resource_lookup_data_array[i].pc_size = 0;
+        resource_lookup_data_array[i].rom_remaining = 0;
     }
-    return;
 }
 #else
 GLOBAL_ASM(
@@ -254,28 +161,58 @@ glabel obInitDebugNoticeList
 #endif
 
 
+#if !defined(LEFTOVERDEBUG)
+/* VERSION_EU */
+/* same as below version, shuffled in EU */
+void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
+{
+  s32 index;
+  struct fileentry *fileentry;
 
+  index = get_index_num_of_named_resource(bgname);
+  fileentry = &file_resource_table[index];
+  
+  if (resource_lookup_data_array[index].rom_size != 0)
+  {
+    //if the size of offset data would exceed file size, loop forever
+    if ((resource_lookup_data_array[index].rom_size + 0xF) < (offset + len))
+    {
+      while (1){};
+    }
+    romCopy(target, &fileentry->hw_address[offset], len, fileentry);
+  }
 
+}
+#endif
 
-
-void _load_rom_index_to_membank(s32 index,s32 param_2,s32 size,u8 bank) {
+#if defined(LEFTOVERDEBUG)
+/* no VERSION_EU */
+void _load_rom_index_to_membank(s32 index,s32 param_2,s32 size,u8 bank)
+{
     load_rom_resource_index_to_membank(index, param_2, size, bank);
 }
+#endif
 
-void _load_resource_index_to_membank(int index,s32 param_2,u8 *ptrdata,int size) {
+#if defined(LEFTOVERDEBUG)
+/* no VERSION_EU */
+void _load_resource_index_to_membank(int index,s32 param_2,u8 *ptrdata,int size)
+{
     load_resource_index_to_buffer(index, param_2, ptrdata, size);
 }
+#endif
 
-void _load_resource_named_to_membank(u8 *filename,s32 param_2,s32 size,u8 bank)
+void _load_resource_named_to_membank(u8 *filename, s32 param_2, s32 size, u8 bank)
 {
     load_rom_resource_index_to_membank(get_index_num_of_named_resource(filename), param_2, size, bank);
 }
 
-void _load_resource_named_to_buffer(u8 *filename,s32 bank,u8 *ptrdata,int size)
+void _load_resource_named_to_buffer(u8 *filename, s32 bank, u8 *ptrdata, int size)
 {
     load_resource_index_to_buffer(get_index_num_of_named_resource(filename), bank, ptrdata, size);
 }
 
+#if defined(LEFTOVERDEBUG)
+/* no VERSION_EU */
 /**
  * 0F18AC 7F0BCD7C
  * loads data stored at an offset of a bg file
@@ -299,66 +236,64 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
   }
 
 }
+#endif
 
 
 
 
-#ifdef NONMATCHING//
-u8 * load_rom_resource_index_to_membank(s32 index,s32 type,s32 size,u8 bank)
+#ifdef NONMATCHING
+u8 * load_rom_resource_index_to_membank(s32 index,s32 param_2,s32 size,u8 bank)
+
 {
-    
-    u8 *ptrdata;
-    if (((type == 0) || (type == 1)) || (type == 2))
-    {
-        if (resource_lookup_data_array[index].pc_remaining == 0)
-        {
-            resource_lookup_data_array[index].pc_remaining = mempGetBankSizeLeft(bank);
-        }
-        ptrdata = mempAllocBytesInBank(resource_lookup_data_array[index].pc_remaining, bank);
-        resource_lookup_data_array[index].rom_remaining = resource_lookup_data_array[index].pc_remaining;
-        if (file_resource_table[index].hw_address == 0)
-        {
-            resource_load_from_indy(ptrdata, resource_lookup_data_array[index].rom_remaining, &file_resource_table[index], &resource_lookup_data_array[index]);
-        }
-        else
-        {
-            load_resource(ptrdata, resource_lookup_data_array[index].rom_remaining, &file_resource_table[index], &resource_lookup_data_array[index]);
-        }
-        if (type != 0)
-        {
-            mempAddEntryOfSizeToBank(ptrdata, resource_lookup_data_array[index].pc_remaining, bank);
-        }
+    u32 unk;
+  u32 bytes;
+  u8 *ptrdata;
+ 
+  if (((param_2 == 0) || (param_2 == 1)) || (param_2 == 2)) {
+    bytes = resource_lookup_data_array[index].pc_remaining;
+    if (bytes == 0) {
+      bytes = mempGetBankSizeLeft(bank);
+      resource_lookup_data_array[index].pc_remaining = bytes;
     }
-    else
-    {
-        if (resource_lookup_data_array[index].pc_remaining == 0)
-        {
-            if (resource_lookup_data_array[index].rom_size == 0)
-            {
-                resource_lookup_data_array[index].pc_remaining = resource_lookup_data_array[index].pc_size;
-            }
-            else
-            {
-                resource_lookup_data_array[index].pc_remaining = resource_lookup_data_array[index].rom_size;
-            }
-        }
-        ptrdata = mempAllocBytesInBank(resource_lookup_data_array[index].pc_remaining,bank);
-        resource_lookup_data_array[index].rom_remaining = resource_lookup_data_array[index].pc_remaining;
-        if (file_resource_table[index].hw_address == 0)
-        {
-            resource_load_from_indy(ptrdata, 0, &file_resource_table[index], &resource_lookup_data_array[index]);
-        }
-        else
-        {
-            
-            load_resource(ptrdata , 0, &file_resource_table[index], &resource_lookup_data_array[index]);
-        }
-        if (size == 0)
-        {
-            resource_lookup_data_array[index].loaded_bank = bank;
-        }
+    ptrdata = mempAllocBytesInBank(bytes,bank);
+    bytes = resource_lookup_data_array[index].pc_remaining;
+    resource_lookup_data_array[index].rom_remaining = bytes;
+    if (file_resource_table[index].hw_address == 0) {
+      resource_load_from_indy(ptrdata, bytes, &file_resource_table[index], &resource_lookup_data_array[index]);
     }
-    return ptrdata;
+    else {
+      load_resource(ptrdata, bytes, &file_resource_table[index], &resource_lookup_data_array[index]);
+    }
+    if (param_2 != 0) {
+      mempAddEntryOfSizeToBank(ptrdata, resource_lookup_data_array[index].pc_remaining, bank);
+    }
+  }
+  else {
+    bytes = resource_lookup_data_array[index].pc_remaining;
+    if (bytes == 0) {
+      bytes = resource_lookup_data_array[index].rom_size;
+      if (bytes == 0) {
+        bytes = resource_lookup_data_array[index].pc_size;
+        resource_lookup_data_array[index].pc_remaining = bytes;
+      }
+      else {
+        resource_lookup_data_array[index].pc_remaining = bytes;
+      }
+    }
+    ptrdata = mempAllocBytesInBank(bytes,bank);
+    resource_lookup_data_array[index].rom_remaining =
+         resource_lookup_data_array[index].pc_remaining;
+    if (file_resource_table[index].hw_address == 0) {
+      resource_load_from_indy(ptrdata, 0, &file_resource_table[index], &resource_lookup_data_array[index]);
+    }
+    else {
+      load_resource(ptrdata,0, &file_resource_table[index], &resource_lookup_data_array[index]);
+    }
+    if (size == 0) {
+      resource_lookup_data_array[index].loaded_bank = bank;
+    }
+  }
+  return ptrdata;
 }
 #else
 GLOBAL_ASM(
@@ -499,13 +434,13 @@ glabel load_rom_resource_index_to_membank
 
 /*
  *this matches except:
- *baserom.u.z64                                                                   
- *000F 1BC0: AE 0C 00 0C 8F A5 00 2C  0F C2 F2 A8 8F A4 00 28  ......., .......( 
- *ge007.u.z64               this   is flipped with   this                 
- *000F 1BC0: AE 0C 00 0C 8F A4 00 28  0F C2 F2 A8 8F A5 00 2C  .......( .......,
+f1bc0:    sw      t4,0xc(s0)                        f1bc0:    sw      t4,0xc(s0)
+f1bc4:    lw      a1,0x2c(sp)                     r f1bc4:    lw      a0,0x28(sp)
+f1bc8:    jal     load_resource                     f1bc8:    jal     load_resource
+f1bcc:    lw      a0,0x28(sp)                     r f1bcc:    lw      a1,0x2c(sp)
  */
-#ifdef NONMATCHING//
-u8* load_resource_index_to_buffer(s32 index,s32 bank,u8 *ptrdata,s32 bytes)
+#ifdef NONMATCHING
+u8* load_resource_index_to_buffer(s32 index,s32 bank,u8 *ptrdata,u32 bytes)
 {
     if (resource_lookup_data_array[index].pc_remaining == 0)
     {
@@ -651,17 +586,23 @@ s32 get_rom_remaining_buffer_for_index(s32 index)
 
 
 #ifdef NONMATCHING
+//f1c74:    addiu   t7,t7,-0x7750                   | f1c74:    addiu   sp,sp,-0x18 //moved
+//                                                  > f1c78:    addiu   t7,t7,-0x7750
+//f1c78:    sll     t6,t6,0x2                         f1c7c:    sll     t6,t6,0x2
+//f1c7c:    addiu   sp,sp,-0x18                     | f1c80:    addu    v0,t6,t7
+//f1c80:    addu    v0,t6,t7                        | f1c84:    sw      ra,0x14(sp)
+//f1c84:    sw      ra,0x14(sp)                     r f1c88:    sw      a1,0x1c(sp)
+//f1c88:    sw      a1,0x1c(sp)                     r f1c8c:    sw      a2,0x20(sp) //extra reg save
 void sub_GAME_7F0BD138(int index, u8 *ptrdata, u32 size, u32 param_4)
 {
-  u32 new_var;
-  resource_lookup_data_array[index].pc_remaining = size;
-  resource_lookup_data_array[index].rom_remaining = size;
-  new_var = param_4;
-  if (new_var)
-  {
-    mempAddEntryOfSizeToBank(ptrdata, size, 4);
-  }
+    resource_lookup_data_array[index].pc_remaining = size;
+    resource_lookup_data_array[index].rom_remaining = size;
 
+
+    if (param_4 !=0 )
+    {
+        mempAddEntryOfSizeToBank(ptrdata, size, 4);
+    }
 }
 #else
 GLOBAL_ASM(
@@ -727,44 +668,44 @@ void obBlankResourcesInBank5(void) {
 
 
 #ifdef NONMATCHING
-
+//needs work
 int get_index_num_of_named_resource(u8 *resname)
 {
-
     int i;
-    int buffer [3];
-    
+    int size;
+    //if file exists, return index
     for (i = 1; i < file_entry_max; i++)
     {
-        if ((file_resource_table[i].filename) && \
-        (strcmp(resname,file_resource_table[i].filename) == 0));
+        if ((file_resource_table[i].filename) && 
+            (strcmp(resname,file_resource_table[i].filename) == 0));
         {
             return i;
         }
     }
-
     i = file_entry_max;
-    if (file_entry_max < OBJ_INDEX_MAX) {
-        file_entry_max += 1;
-
-        if (check_file_found_on_indy(resname,buffer) != 0) {
-            file_resource_table[i].index = i;
-            file_resource_table[i].filename = resname;
-            resource_lookup_data_array[i].unk_11 = '\0';
-            file_resource_table[i].hw_address = 0;
-            resource_lookup_data_array[i].rom_size = 0;
-            resource_lookup_data_array[i].pc_remaining = 0;
-            resource_lookup_data_array[i].rom_remaining = 0;
-            resource_lookup_data_array[i].loaded_bank = '\0';
-            resource_lookup_data_array[i].pc_size = (buffer[0] + 0xfU | 0xf) ^ 0xf;
-        }
+    //too many files exist
+    if (file_entry_max >= OBJ_INDEX_MAX) {
+        return 0;
     }
-    else {
-        i = 0;
+    //we have room, see if on indy and make room
+    file_entry_max += 1;
+    if (indycommHostCheckFileExists(resname,size) == 0) {
+        return 0;
     }
+    file_resource_table[i].index = i;
+    file_resource_table[i].filename = resname;
+    resource_lookup_data_array[i].unk_11 = '\0';
+    file_resource_table[i].hw_address = 0;
+    resource_lookup_data_array[i].rom_size = 0;
+    resource_lookup_data_array[i].pc_remaining = 0;
+    resource_lookup_data_array[i].rom_remaining = 0;
+    resource_lookup_data_array[i].loaded_bank = '\0';
+    resource_lookup_data_array[i].pc_size = (size + 0xf | 0xf) ^ 0xf;
     return i;
 }
 #else
+
+#if defined(LEFTOVERDEBUG)
 GLOBAL_ASM(
 .text
 glabel get_index_num_of_named_resource
@@ -810,7 +751,7 @@ glabel get_index_num_of_named_resource
 /* 0F1E10 7F0BD2E0 244E0001 */  addiu $t6, $v0, 1
 /* 0F1E14 7F0BD2E4 AE4E0000 */  sw    $t6, ($s2)
 /* 0F1E18 7F0BD2E8 02602025 */  move  $a0, $s3
-/* 0F1E1C 7F0BD2EC 0FC34026 */  jal   check_file_found_on_indy
+/* 0F1E1C 7F0BD2EC 0FC34026 */  jal   indycommHostCheckFileExists
 /* 0F1E20 7F0BD2F0 27A50034 */   addiu $a1, $sp, 0x34
 /* 0F1E24 7F0BD2F4 14400003 */  bnez  $v0, .L7F0BD304
 /* 0F1E28 7F0BD2F8 00117880 */   sll   $t7, $s1, 2
@@ -853,6 +794,96 @@ glabel get_index_num_of_named_resource
 )
 #endif
 
+#if !defined(LEFTOVERDEBUG)
+GLOBAL_ASM(
+.text
+glabel get_index_num_of_named_resource
+/* 0EEFFC 7F0BC60C 27BDFFC0 */  addiu $sp, $sp, -0x40
+/* 0EF000 7F0BC610 AFB2001C */  sw    $s2, 0x1c($sp)
+/* 0EF004 7F0BC614 3C128004 */  lui   $s2, %hi(file_entry_max) # $s2, 0x8004
+/* 0EF008 7F0BC618 26520F54 */  addiu $s2, %lo(file_entry_max) # addiu $s2, $s2, 0xf54
+/* 0EF00C 7F0BC61C 8E420000 */  lw    $v0, ($s2)
+/* 0EF010 7F0BC620 AFB30020 */  sw    $s3, 0x20($sp)
+/* 0EF014 7F0BC624 AFB10018 */  sw    $s1, 0x18($sp)
+/* 0EF018 7F0BC628 28410002 */  slti  $at, $v0, 2
+/* 0EF01C 7F0BC62C 00809825 */  move  $s3, $a0
+/* 0EF020 7F0BC630 AFBF0024 */  sw    $ra, 0x24($sp)
+/* 0EF024 7F0BC634 AFB00014 */  sw    $s0, 0x14($sp)
+/* 0EF028 7F0BC638 14200012 */  bnez  $at, .L7F0BC684
+/* 0EF02C 7F0BC63C 24110001 */   li    $s1, 1
+/* 0EF030 7F0BC640 3C108004 */  lui   $s0, %hi(file_resource_table + 0xC) # $s0, 0x8004
+/* 0EF034 7F0BC644 2610EAD0 */  addiu $s0, %lo(file_resource_table + 0xC) # addiu $s0, $s0, -0x1530
+/* 0EF038 7F0BC648 8E050004 */  lw    $a1, 4($s0)
+.L7F0BC64C:
+/* 0EF03C 7F0BC64C 50A00008 */  beql  $a1, $zero, .L7F0BC670
+/* 0EF040 7F0BC650 8E420000 */   lw    $v0, ($s2)
+/* 0EF044 7F0BC654 0C00272B */  jal   strcmp
+/* 0EF048 7F0BC658 02602025 */   move  $a0, $s3
+/* 0EF04C 7F0BC65C 54400004 */  bnezl $v0, .L7F0BC670
+/* 0EF050 7F0BC660 8E420000 */   lw    $v0, ($s2)
+/* 0EF054 7F0BC664 1000002E */  b     .L7F0BC720
+/* 0EF058 7F0BC668 02201025 */   move  $v0, $s1
+/* 0EF05C 7F0BC66C 8E420000 */  lw    $v0, ($s2)
+.L7F0BC670:
+/* 0EF060 7F0BC670 26310001 */  addiu $s1, $s1, 1
+/* 0EF064 7F0BC674 2610000C */  addiu $s0, $s0, 0xc
+/* 0EF068 7F0BC678 0222082A */  slt   $at, $s1, $v0
+/* 0EF06C 7F0BC67C 5420FFF3 */  bnezl $at, .L7F0BC64C
+/* 0EF070 7F0BC680 8E050004 */   lw    $a1, 4($s0)
+.L7F0BC684:
+/* 0EF074 7F0BC684 2841030C */  slti  $at, $v0, 0x30c
+/* 0EF078 7F0BC688 14200003 */  bnez  $at, .L7F0BC698
+/* 0EF07C 7F0BC68C 00408825 */   move  $s1, $v0
+/* 0EF080 7F0BC690 10000023 */  b     .L7F0BC720
+/* 0EF084 7F0BC694 00001025 */   move  $v0, $zero
+.L7F0BC698:
+/* 0EF088 7F0BC698 244E0001 */  addiu $t6, $v0, 1
+/* 0EF08C 7F0BC69C AE4E0000 */  sw    $t6, ($s2)
+/* 0EF090 7F0BC6A0 02602025 */  move  $a0, $s3
+/* 0EF094 7F0BC6A4 0FC33D6E */  jal   indycommHostCheckFileExists
+/* 0EF098 7F0BC6A8 27A50034 */   addiu $a1, $sp, 0x34
+/* 0EF09C 7F0BC6AC 14400003 */  bnez  $v0, .L7F0BC6BC
+/* 0EF0A0 7F0BC6B0 00117880 */   sll   $t7, $s1, 2
+/* 0EF0A4 7F0BC6B4 1000001A */  b     .L7F0BC720
+/* 0EF0A8 7F0BC6B8 00001025 */   move  $v0, $zero
+.L7F0BC6BC:
+/* 0EF0AC 7F0BC6BC 01F17823 */  subu  $t7, $t7, $s1
+/* 0EF0B0 7F0BC6C0 3C188004 */  lui   $t8, %hi(file_resource_table) # $t8, 0x8004
+/* 0EF0B4 7F0BC6C4 2718EAC4 */  addiu $t8, %lo(file_resource_table) # addiu $t8, $t8, -0x153c
+/* 0EF0B8 7F0BC6C8 000F7880 */  sll   $t7, $t7, 2
+/* 0EF0BC 7F0BC6CC 0011C880 */  sll   $t9, $s1, 2
+/* 0EF0C0 7F0BC6D0 01F88021 */  addu  $s0, $t7, $t8
+/* 0EF0C4 7F0BC6D4 0331C821 */  addu  $t9, $t9, $s1
+/* 0EF0C8 7F0BC6D8 3C088007 */  lui   $t0, %hi(resource_lookup_data_array) # $t0, 0x8007
+/* 0EF0CC 7F0BC6DC 2508F920 */  addiu $t0, %lo(resource_lookup_data_array) # addiu $t0, $t0, -0x6e0
+/* 0EF0D0 7F0BC6E0 0019C880 */  sll   $t9, $t9, 2
+/* 0EF0D4 7F0BC6E4 AE110000 */  sw    $s1, ($s0)
+/* 0EF0D8 7F0BC6E8 AE130004 */  sw    $s3, 4($s0)
+/* 0EF0DC 7F0BC6EC 03281821 */  addu  $v1, $t9, $t0
+/* 0EF0E0 7F0BC6F0 A0600011 */  sb    $zero, 0x11($v1)
+/* 0EF0E4 7F0BC6F4 AE000008 */  sw    $zero, 8($s0)
+/* 0EF0E8 7F0BC6F8 AC600000 */  sw    $zero, ($v1)
+/* 0EF0EC 7F0BC6FC AC600004 */  sw    $zero, 4($v1)
+/* 0EF0F0 7F0BC700 8FA90034 */  lw    $t1, 0x34($sp)
+/* 0EF0F4 7F0BC704 AC60000C */  sw    $zero, 0xc($v1)
+/* 0EF0F8 7F0BC708 A0600010 */  sb    $zero, 0x10($v1)
+/* 0EF0FC 7F0BC70C 252A000F */  addiu $t2, $t1, 0xf
+/* 0EF100 7F0BC710 354B000F */  ori   $t3, $t2, 0xf
+/* 0EF104 7F0BC714 396C000F */  xori  $t4, $t3, 0xf
+/* 0EF108 7F0BC718 AC6C0008 */  sw    $t4, 8($v1)
+/* 0EF10C 7F0BC71C 02201025 */  move  $v0, $s1
+.L7F0BC720:
+/* 0EF110 7F0BC720 8FBF0024 */  lw    $ra, 0x24($sp)
+/* 0EF114 7F0BC724 8FB00014 */  lw    $s0, 0x14($sp)
+/* 0EF118 7F0BC728 8FB10018 */  lw    $s1, 0x18($sp)
+/* 0EF11C 7F0BC72C 8FB2001C */  lw    $s2, 0x1c($sp)
+/* 0EF120 7F0BC730 8FB30020 */  lw    $s3, 0x20($sp)
+/* 0EF124 7F0BC734 03E00008 */  jr    $ra
+/* 0EF128 7F0BC738 27BD0040 */   addiu $sp, $sp, 0x40
+)
+#endif
+#endif
+
 
 
 
@@ -887,26 +918,17 @@ void removed_loop_filetableentries(void)
 
 
 #ifdef NONMATCHING
-void *sub_GAME_7F0BD410(void) {
-    u32 temp_v0;
-    u32 phi_v0;
-
-    // Node 0
-    if (file_entry_max >= 2)
+void sub_GAME_7F0BD410(void)
+{
+  struct resource_lookup_data_entry *entry= &resource_lookup_data_array[1];
+  
+    if (file_entry_max > 1) 
     {
-        // Node 1
-        phi_v0 = &resource_lookup_data_array+0x14;
-loop_2:
-        // Node 2
-        temp_v0 = (phi_v0 + 0x14);
-        phi_v0 = temp_v0;
-        if (temp_v0 < (u32) ((file_entry_max * 0x14) + &resource_lookup_data_array))
+        for (;&resource_lookup_data_array[file_entry_max] > entry;entry++)
         {
-            goto loop_2;
+            ;
         }
     }
-    // Node 3
-    return &resource_lookup_data_array+0x14;
 }
 
 #else

@@ -1,8 +1,8 @@
 #ifndef _UBRIEF_H_
 #define _UBRIEF_H_
 
-#include "ultra64.h"
-#include "bondgame.h"
+#include <ultra64.h>
+#include <bondgame.h>
 
 struct BriefObjectiveStruct
 {

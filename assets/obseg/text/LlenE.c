@@ -1,14 +1,13 @@
-#include "game/lvl_text.h"
 
-struct stringentry LlenE[] = {
- NULL,
- NULL,
- NULL,
- NULL,
- NULL,
- NULL,
- NULL,
- NULL,
+char *LlenE[] = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
  "Natalya: James, are you alright?\n",
  "Bond: Yes, I'm fine thank you.\n",
  "Natalya: Ohhh, James...\n",
@@ -138,12 +137,12 @@ struct stringentry LlenE[] = {
  "IN NINTENDOVISION\n",
  "Produced by Rare\n",
  "Presented by Nintendo\n",
- #ifdef VERSION_US
+ #if defined(LANG_US) || defined(LANG_EU)
  "JAMES BOND WILL RETURN\n",
-  NULL,
-  NULL
+  0,
+  0
  #endif
- #ifdef VERSION_JP
+ #if defined(LANG_JP)
   "Executive Producer\n",
   "Hiroshi Yamauchi\n",
   "Nintendo Producer\n",

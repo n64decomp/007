@@ -1,9 +1,8 @@
-#include "game/lvl_text.h"
 
-struct stringentry LlueE[] = {
- NULL,
- NULL,
- NULL,
- NULL,
- NULL
+char *LlueE[] = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0
 };

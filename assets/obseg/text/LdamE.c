@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LdamE[] = {
+char *LdamE[] = {
  "MI6 has confirmed the existence of a secret chemical warfare facility at the Byelomorye dam, USSR. Its heavily guarded location and workings are a cause for major concern. Nerve gas produced there has been turning up in the hands of hostile regimes around the world and deals with international terrorists have been rumored. This facility should be destroyed with extreme prejudice.\n",
  "The area around the dam is well defended against full scale military attack but a lone agent stands a much better chance. The easiest way to gain entrance to the weapons factory will be to get down the face of the dam. \nQ had an idea about that.\n",
  "Information concerning shipping and contacts is stored on a computer system in a secret ops room within the dam. With this covert modem connected to their satellite link we can intercept the data when a backup is carried out.\nAs for getting down the dam, use the bungee rope. At the bottom of the jump, use the piton gun. Simple.",
@@ -35,6 +34,6 @@ struct stringentry LdamE[] = {
  "covert modem\n",
  "Picked up a covert modem.\n",
  "Covert modem incorrectly installed.\n",
- NULL,
- NULL
+ 0,
+ 0
 };

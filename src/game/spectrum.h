@@ -1,6 +1,6 @@
 #ifndef _SPECTRUM_H_
 #define _SPECTRUM_H_
-#include "ultra64.h"
+#include <ultra64.h>
 
 typedef enum SPECTRUMROMS {
     ROM_SABRE,
@@ -17,6 +17,6 @@ typedef enum SPECTRUMROMS {
 
 extern void init_spectrum_game(u32 game);
 extern void run_spectrum_game(void);
-extern void spectrum_draw_screen(u32);
+extern Gfx* spectrum_draw_screen(Gfx* DL);
 
 #endif

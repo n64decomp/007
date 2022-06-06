@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LsevE[] = {
+char *LsevE[] = {
  "A spy satellite has detected increased levels of activity at an old observatory complex near Severnaya (62.08n, 102.58e) in Russia.\n\nOther sources have confirmed the shipment of a large amount of computer hardware to that location, and an influx of skilled personnel.\n",
  "007, I want you to infiltrate this base and find out what the devil's going on there. The satellite photographs reveal that there has been recent underground excavation. We'd like to know the exact nature and planned extent of the workings.\n\nBy the way, this is a covert operation. You may have to neutralize the security, but try not to be too obvious about it.\n",
  "You'll be doing some computer hacking on this mission, 007. I know you'd rather be cracking open a bottle of bubbly than cracking passwords, so I've taken the liberty of putting together a little gadget which will do the hard work for you. If you attach the data thief to their mainframe it should override any computer security measures and download the information we require.\n",
@@ -48,5 +47,5 @@ struct stringentry LsevE[] = {
  "Satellite Control Bunker\n",
  "Present day\n",
  "Mainframe destroyed!\nData cannot be downloaded.\n",
- NULL
+ 0
 };

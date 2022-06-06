@@ -1,9 +1,8 @@
-#include "game/lvl_text.h"
 
-struct stringentry LshoE[] = {
- NULL,
- NULL,
- NULL,
- NULL,
- NULL
+char *LshoE[] = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0
 };

@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LcradE[] = {
+char *LcradE[] = {
  "Janus control communications have been jammed and the Goldeneye satellite orbit is decaying. Only Trevelyan and his personal bodyguard remain unaccounted for.\n",
  "You know my feelings about personal vendettas interfering with mission success, 007. However, in this case, I think we can turn a blind eye to whatever happens out there. \n\nBe careful, and remember,\n                   - you are licensed to kill.\n",
  "Would you believe it, 007? There's another blasted control thingy actually on the antenna cradle. Trevelyan might be able to realign the antenna and get one last firing message through to the satellite. Get out there and destroy it! We don't want things going pear-shaped at the last minute.\n",
@@ -36,5 +35,5 @@ struct stringentry LcradE[] = {
  "settle the score with trevelyan\n",
  "\n",
  "Antenna Cradle, Janus Base, Cuba\n",
- NULL
+ 0
 };

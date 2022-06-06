@@ -1,6 +1,11 @@
-#include "ultra64.h"
-#include "game/bond.h"
-#include "libultra/os.h"
+#include <ultra64.h>
+#include <memp.h>
+#include "bondview.h"
+#include <PR/os.h>
+#include <PR/gbi.h>
+#include <macro.h>
+#include "player_2.h"
+#include <fr.h>
 
 // bss
 s32 z_buffer_width;
@@ -13,23 +18,29 @@ void zbufDeallocate(void) {
     z_buffer = 0;
 }
 
-#define ALIGN64(val) (((val) + 0x3F) & ~0x3F)
-u32 mempAllocBytesInBank(u32 bytes,u8 bank);
-s32 getPlayerCount(void);
-void zbufAllocate(void) {
-    if (resolution != 0) {
-        z_buffer_width = 440;
-        z_buffer_height = 330;
-    } else {
-        z_buffer_width = 320;
-        if (getPlayerCount() == 1) {
-            z_buffer_height = 240;
-        } else {
-            z_buffer_height = 120;
+void zbufAllocate(void)
+{
+    if (resolution != 0)
+    {
+        z_buffer_width = Z_BUFFER_4_3_WIDTH;
+        z_buffer_height = Z_BUFFER_4_3_HEIGHT;
+    }
+    else
+    {
+        z_buffer_width = SCREEN_WIDTH;
+
+        if (getPlayerCount() == 1)
+        {
+            z_buffer_height = SCREEN_HEIGHT;
+        }
+        else
+        {
+            z_buffer_height = Z_BUFFER_HEIGHT;
         }
     }
+
     z_buffer = mempAllocBytesInBank((z_buffer_width * z_buffer_height * 2) + 64, 4);
-    z_buffer = ALIGN64(z_buffer);
+    z_buffer = ALIGN64_V1(z_buffer);
 }
 
 void zbufSetBuffer(s32 buffer, s32 width, s32 height) {
@@ -45,7 +56,7 @@ Gfx *zbufInit(Gfx *gdl) {
         zbufAllocate();
     }
     if (!(get_cur_playernum() < 2) || ((getPlayerCount() == 2) && (get_cur_playernum() == 1))) {
-        phi_a3 = 320 * 240;
+        phi_a3 = SCREEN_WIDTH * SCREEN_HEIGHT;
     } else {
         phi_a3 = 0;
     }
@@ -56,8 +67,6 @@ Gfx *zbufInit(Gfx *gdl) {
     return gdl;
 }
 
-s16 viGetX(void);
-s16 viGetY(void);
 Gfx *zbufClearCurrentPlayer(Gfx *gdl) {
     s32 start_x;
     s32 end_x;

@@ -271,7 +271,7 @@ int strcspn(s, reject)
 
 /* ========================================================================
  * Add an environment variable (if any) before argv, and update argc.
- * Return the expanded environment variable to be freed later, or NULL 
+ * Return the expanded environment variable to be freed later, or NULL
  * if no options were added to argv.
  */
 #define SEPARATOR	" \t"	/* separators in env variable */

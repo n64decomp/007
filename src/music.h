@@ -1,7 +1,56 @@
 #ifndef _MUSIC_H_
 #define _MUSIC_H_
-#include "ultra64.h"
-#include "include/PR/libaudio.h"
+#include <ultra64.h>
+#include <PR/libaudio.h>
+
+#define VOLUME_MAX 0x7fff
+
+/**
+ * Counting definitions for music in this file, there
+ * are 63 distinct entries. This exlcudes the "NONE" music
+ * and control sequence entries.
+ */
+#define NUM_MUSIC_TRACKS  63
+
+/**
+ * Metadata for a sequence "file" entry / data content of single sequence.
+ * Based on original ALSeqData in n64devkit\ultra\usr\include\PR\libaudio.h.
+ */
+typedef struct
+{
+    // address is offset from the start of .sbk file
+    u8 *address;
+
+    // seq length after uncompressed.
+    u16 uncompressed_len;
+
+    // len is data segment length in the rom. This is the 1172 compressed length.
+    u16 len;
+} RareALSeqData;
+
+/**
+ * Structure for storing collection of sequence metadatas.
+ * These are stored 1172 compressed.
+ * Based on original ALSeqFile in n64devkit\ultra\usr\include\PR\libaudio.h.
+ */
+typedef struct
+{
+    /**
+     * number of sequences.
+     */
+    u16 seqCount;
+
+    /**
+     * Unknown, maybe unused padding.
+     */
+    u16 unk;
+
+    /**
+     * ARRAY of sequence info. This is a "dynamic" array, more space
+     * will be allocated from ALHeap at runtime.
+     */
+    RareALSeqData seqArray[1];
+} RareALSeqBankFile;
 
 typedef enum MUSIC_FADESTATE_e {
     /**
@@ -54,8 +103,8 @@ extern s32 g_musicXTrack3Fade;
 
 extern ALBank *g_musicSfxBufferPtr;
 
-extern char D_80063B50[0x54];
-extern s32 D_80063BA4;
-extern s32 D_80063BA8;
+extern ALSndPlayer g_sndPlayer;
+extern s16 *g_sndSfxSlotVolume;
+extern u16 *g_sndSfxSlotNaturalVolume;
 
 #endif

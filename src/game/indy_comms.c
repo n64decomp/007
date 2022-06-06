@@ -1,27 +1,29 @@
-#include "ultra64.h"
-#include "game/indy_commands.h"
-#include "game/indy_comms.h"
+#include <ultra64.h>
+#include "indy_commands.h"
+#include "indy_comms.h"
 
-s32 init_indy_if_not_ready(void) {
+s32 indycommInit(void) {
     if (indy_ready != 1)
     {
         indy_ready = 1;
-        init_indy_if_ready();
+        indycommHostinit();
     }
 }
 
-void nullsub_48(void) {
-    return;
+void indycomm_removed(void) {
+    #ifdef DEBUG
+        //removed
+    #endif
 }
 
-void init_indy_if_ready(void) {
+void indycommHostinit(void) {
     if (indy_ready)
     {
-        post_indy__res_cmd_initialize_seq();
+        indycmdSendInitPacket();
     }
 }
 
-void load_resource_on_indy(u8 *filename, u8 *targetloc)
+void indycommHostLoadFile(char *filename, u8 *targetloc)
 {
     u8 response1 [8];
     u8 response2 [4];
@@ -29,25 +31,25 @@ void load_resource_on_indy(u8 *filename, u8 *targetloc)
   
     if (indy_ready)
     {
-        post_indyrescmd_req_filename_size(filename,0x400000);
-        response_indyrescmd_1_8_2(response1,response2,(u32)&size,targetloc);
+        indycmdSendLoadFile(filename,0x400000);
+        indycmdReceiveFile(response1,response2,(u32)&size,targetloc);
     }
     return;
 }
 
-void indy_send_capture_data(u8 *filename, u8 *data, u32 size)
+void indycommHostSendDump(char *filename, u8 *data, u32 size)
 {
     u8 auStack4 [4];
   
     if (indy_ready) 
     {
-        post_indyrescmd_send_capture_data(filename, size, (struct indy_resource_entry *)data);
-        response_indyrescmd_1_A_2(auStack4);
+        indycmdSendDump(filename, size, data);
+        indycmdAckSendDump(auStack4);
     }
     return;
 }
 
-void indy_load_ramrom_file(u8 *filename, u8 *target, s32 size)
+void indycommHostRamRomLoad(char *filename, u8 *target, s32 size)
 {
     u32 uStack4;
     u32 uStack8;
@@ -55,55 +57,55 @@ void indy_load_ramrom_file(u8 *filename, u8 *target, s32 size)
   
     if (indy_ready)
     {
-        post_indyrescmd_request_ramrom_file(filename,target,size);
-        response_indyrescmd_1_10_2(&uStack4,&uStack8,&uStack12);
+        indycmdSendRamRomLoad(filename,target,size);
+        indycmdReceiveRamRom(&uStack4,&uStack8,&uStack12);
     }
     return;
 }
 
-void check_file_exported(u8 *filename, s32 size, u8 * data)
+void indycommHostSaveFile(char *filename, s32 size, u8 * data)
 {
     u8 auStack4 [4];
   
     if (indy_ready)
     {
-        post_indyrescmd_game_prof_sendfile(filename,data,size);
-        response_indyrescmd_1_E_2(auStack4);
+        indycmdSendHostExportFile(filename,data,size);
+        indycmdAckHostExportFile(auStack4);
     }
 }
 
-u8 * check_file_found_on_indy(u8 *name, s32 *size)
+u8 * indycommHostCheckFileExists(char *name, s32 *size)
 {
     u8 *response;  
     if (!indy_ready) {
         return NULL;
     } else {
-        post_indyrescmd_game_printf_send(name);
-        response_indyrescmd_1_6_2(&response,size);
+        indycmdSendHostCheckFileExists(name);
+        indycmdAckHostCheckFileExists(&response,size);
     }
     return response;
 }
 
-u8 *send_command_string(u8 *cmdstr)
+u8 *indycommHostSendCmd(u8 *cmdstr)
 {
     u8 *local_4;  
     if (!indy_ready) {
         return NULL;
     }
     else {
-        post_indyrescmd_1_B_2(cmdstr);
-        response_indyrescmd_1_C_2(&local_4);
+        indycmdSendHostCmdPacket(cmdstr);
+        indycmdAckHostCmdPacket(&local_4);
     }
     return local_4;
 }
 
-void sub_GAME_7F0D0124(void) {
+void indycommHost7F0D0124(void) {
     if (indy_ready)
     {
-        rmon7000CEB0();
+        rmonStatus();
     }
 }
 
-void send_indy_close_port_cmd(void) {
-    send_command_string("sleep 5; /etc/killall ghost gload");
+void indycommHostCloseConnection(void) {
+    indycommHostSendCmd("sleep 5; /etc/killall ghost gload");
 }

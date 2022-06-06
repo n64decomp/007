@@ -1,4 +1,4 @@
-#include "ultra64.h"
+#include <ultra64.h>
 #include "zlib.h"
 
 //this definately isn't proper way this data was represented, but works for now
@@ -33,7 +33,7 @@ u32 decompressdata(u8 *src, u8 *dst, struct huft *hlist)
     rz_inbuf = (s32) (rz_inbuf + 2);
     rz_wp = 0;
     rz_inptr = 0;
-    loop_to_decompress_entire_file();
+    zlib_inflate();
     return rz_wp;
 }
 #else
@@ -77,7 +77,7 @@ glabel decompressdata
 /* 10339C 7F0CE86C ACED0000 */  sw    $t5, ($a3)
 /* 1033A0 7F0CE870 AC20D35C */  sw    $zero, %lo(rz_wp)($at)
 /* 1033A4 7F0CE874 3C018009 */  lui   $at, %hi(rz_inptr)
-/* 1033A8 7F0CE878 0FC33F35 */  jal   loop_to_decompress_entire_file
+/* 1033A8 7F0CE878 0FC33F35 */  jal   zlib_inflate
 /* 1033AC 7F0CE87C AC20D358 */   sw    $zero, %lo(rz_inptr)($at)
 /* 1033B0 7F0CE880 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 1033B4 7F0CE884 3C028009 */  lui   $v0, %hi(rz_wp)

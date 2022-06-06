@@ -1,5 +1,5 @@
-#include "assets/obseg/bg/bg_all_p.h"
-#include "assets/obseg/bg/bg_silo_all_p.h"
+#include "bg_all_p.h"
+#include "bg_silo_all_p.h"
 
 struct bg_header header = {0, &room_data_table, &portal_data_table, &global_visibility_commands, 0};
 
@@ -163,7 +163,13 @@ struct portal_data_table_entry portal_data_table[] = {
     {&portal_10, 0x0C, 0x0D, 0x0000},
     {&portal_11, 0x0D, 0x0E, 0x0000},
     {&portal_33, 0x24, 0x27, 0x0000},
+
+#if defined(BUGFIX_R2)
+    {&portal_34, 0x24, 0x0C, 0x0008},
+#else
     {&portal_34, 0x24, 0x0C, 0x0000},
+#endif
+
     {&portal_35, 0x25, 0x05, 0x0005},
     {&portal_36, 0x27, 0x25, 0x0000},
     {&portal_37, 0x26, 0x27, 0x0000},

@@ -1,4 +1,4 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 
 // rodata
@@ -90,7 +90,7 @@ glabel sub_GAME_7F0B3200
 
 
 #ifdef NONMATCHING
-f32 sub_GAME_7F0B32D8(struct coord *param_1,struct coord *param_2,struct coord *param_3)
+f32 sub_GAME_7F0B32D8(coord3d *param_1,coord3d *param_2,coord3d *param_3)
 
 {
 

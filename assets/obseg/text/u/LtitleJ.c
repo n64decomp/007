@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LtitleJ[] = {
+char * LtitleJ[] = {
     "‚Ó‚©",
     "ƒ‘",
     "ƒÂ",
@@ -288,5 +287,5 @@ struct stringentry LtitleJ[] = {
     "2.4 Goodhead\n",
     "Select Control Style\n",
     "Control Style\n",
-    NULL
+    0
 };

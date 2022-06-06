@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LmpweaponsJ[] = {
+char * LmpweaponsJ[] = {
     "†ğ‚¡ƒáÊÒÙ!",
     "‘€Ü€ã€ø",
     "…æ‚õ†ñ‚×",
@@ -15,6 +14,6 @@ struct stringentry LmpweaponsJ[] = {
     "€ù€»€»‚×",
     "†Â„“‚×",
     "‚¡†âé€ä€Ñ€ë\n",
-    NULL,
-    NULL
+    0,
+    0
 };

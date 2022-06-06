@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LpeteE[] = {
+char *LpeteE[] = {
  "After escaping KGB interrogation at the military archives, Natalya has been recaptured by General Ourumov. She is being taken by car to the Janus operations base in St. Petersburg.\n",
  "Get after them, 007! We can't afford to let the trail go cold and the chances are they'll lead you straight to Trevelyan. Keep a clear head though, any civilian casualties on the streets of St. Petersburg could create an unfortunate international incident.\nWe believe that Valentin Zukovsky is still in the area - he may be able to help you.\n",
  "No gadgets this time, 007. Though you should be on the lookout for hardware the Russians may have left lying around. Keys in the ignition and all that, old chap.\n",
@@ -30,7 +29,7 @@ struct stringentry LpeteE[] = {
  "minimize civilian casualties\n",
  "contact valentin\n",
  "St. Petersburg\n",
- NULL,
- NULL,
- NULL
+ 0,
+ 0,
+ 0
 };

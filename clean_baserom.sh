@@ -11,11 +11,18 @@ if [ "$DOALL" == "1" ] || [ $1 == 'files' ]; then
         echo "removing $name"
         rm -f $name
     done < filelist.u.csv
+
     while IFS=, read -r offset size name compressed extract
     do
         echo "removing $name"
         rm -f $name
     done < filediff.j.csv
+
+    while IFS=, read -r offset size name compressed extract
+    do
+        echo "removing $name"
+        rm -f $name
+    done < filediff.e.csv
 fi
 
 if [ "$DOALL" == "1" ] || [ $1 == 'images' ]; then

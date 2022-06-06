@@ -1,8 +1,8 @@
-#include "ultra64.h"
-#include "game/dyn.h"
-#include "token.h"
-#include "str.h"
-#include "memp.h"
+#include <ultra64.h>
+#include "dyn.h"
+#include <token.h>
+#include <str.h>
+#include <memp.h>
 
 /**
  * This file handles memory usage for graphics related tasks.

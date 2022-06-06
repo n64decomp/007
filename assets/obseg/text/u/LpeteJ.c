@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LpeteJ[] = {
+char *LpeteJ[] = {
     " ‚²‚´„ª„”ÏºâKGB‚Ã…¥‚É¿àƒäÂ‚ÀÅÉƒ\n€ä€ß€»€÷€ÐÓ€Ò€ø€ò€ë„€‚²Ò‚¡Ïß´Ì…¯Ø´Ì\nÅØ´É€Â\n\n ‚Íƒ…Ó†Šó€Ú€Ï€×€ã€…“€â€ø€ø€þÏºâ\n€ó€æ€ÜÒ‚²‚´†¡†ŠÒ†˜Ï„²ãÌ‚¿ãß¼Í\nÅÌ»â€Â\n",
     " ƒƒ»ó‚ÍàÒƒ¸„ö»ÎÄ»€ÂÃÒØØ‚Íà¸\n„¯‚æ¼åÂÏÓ»ÀØÇ¹€Â‚ÍàÓƒ¹íºÎÉ¸\n€ã€ùÿ€È€ø€ó€ÏÒÜÍÖÍ†‹»ÌÁãØÆ€Â\n Å¿Å€»¿Îâ‚ÓóÜƒÛƒÜÏ‚‚õÅÎÄ»€Â\n€Ú€Ï€×€ã€…“€â€ø€ø€þÒ†’†‰ó†Œ‚©ƒøÏ†“†”¸\n‚ÀÆÃÍÓ‚¤‚¥„Â„ÃÖÍËÎæáØÆ€Â\n ØðƒìÁÏ»âÓíÒÿ€Å€ù€Ï€â€Æ€ÏÒ…àÂ¸\n†áÌ‚€‚¸„Ì‚ÅÌ‚ÕÄ»€Â\n",
     " 007ƒ‰ƒŠÜƒ¢ƒ£ƒ¤Ó‚¼»ï€ÂÅ¿Å‚óÎà\n€ú€Û€Ð‚²æ…ªÅÌ»´ÉƒæÝ†Ž‚‡Îô¸‚Ì´Ì\nƒÄáƒäÂàãâìµä€Â\n",
@@ -30,7 +29,7 @@ struct stringentry LpeteJ[] = {
     "†’†ŒÒ†“†”¸‚Ôƒ¢†–Ï\n",
     "ÿ€Å€ù€Ï€â€Æ€ÏÍ‚ú‚û\n",
     "€Ú€Ï€×€ã€…“€â€ø€ø€þ†’†‰ƒè\n",
-    NULL,
-    NULL,
-    NULL
+    0,
+    0,
+    0
 };

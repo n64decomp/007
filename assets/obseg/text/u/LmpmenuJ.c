@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LmpmenuJ[] = {
+char *LmpmenuJ[] = {
     "…æƒÁ†å",
     "„ÓôÃ€À",
     "…¨„€à€Í€Ê€ÖÓôÃ€À",

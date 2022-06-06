@@ -1,9 +1,36 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 
 
 #ifdef NONMATCHING
 void sub_GAME_7F01B0E0(void) {
+    s32 temp_a2;
+    u8 *temp_a1;
+    u8 temp_v0;
+    void *phi_a3;
+    u8 *phi_a1;
+    s32 phi_v0;
+    s32 phi_a2;
+
+    phi_a3 = arg0 + 0xA;
+    phi_a2 = arg0->unk0 * arg0->unk2;
+    phi_a1 = arg1;
+    do {
+        temp_v0 = phi_a3->unk0;
+        temp_a2 = phi_a2 - temp_v0;
+        phi_a3 += 2;
+        phi_v0 = temp_v0 - 1;
+        phi_a2 = temp_a2;
+loop_2:
+        *phi_a1 = phi_a3->unk1;
+        temp_a1 = phi_a1 + 1;
+        phi_a1 = temp_a1;
+        phi_v0 += -1;
+        phi_a1 = temp_a1;
+        if (phi_v0 > 0) {
+            goto loop_2;
+        }
+    } while (temp_a2 > 0);
 
 }
 #else

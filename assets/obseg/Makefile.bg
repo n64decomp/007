@@ -1,9 +1,14 @@
 #bg
+
+# COUNTRYCODE specific needs to be above the base directory in this makefile
+$(BUILD_DIR)/$(OBSEG_DIR)/bg/%.seg: $(OBSEG_DIR)/bg/$(COUNTRYCODE)/%.bin
+	@cp -f $< $@
+
 $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.seg: $(OBSEG_DIR)/bg/%.bin
-	$(MAKEBG) $< $@
+	@cp -f $< $@
 
 $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.seg: $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.bin
-	$(MAKEBG) $< $@
+	@cp -f $< $@
 
 $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.bin: $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.elf
 	$(OBJCOPY) $< $@ -O binary
@@ -12,6 +17,9 @@ $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.elf: $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.o
 	$(LD) -T assets/obseg/bg/bg_all_p.ld -o $@ $<
 
 $(BUILD_DIR)/$(OBSEG_DIR)/bg/%.o: $(OBSEG_DIR)/bg/%.c
+	$(CC) -c $(CFLAGS) -o $@ -O2 $<
+
+$(BUILD_DIR)/$(OBSEG_DIR)/bg/%.o: $(OBSEG_DIR)/bg/$(COUNTRYCODE)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -O2 $<
 
 
@@ -26,7 +34,7 @@ BG_SEG_FILES = \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_dest_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_sevb_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_azt_all_p.seg \
-	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_pete_all_p.seg \
+    $(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_pete_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_depo_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_ref_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_cryp_all_p.seg \
@@ -51,4 +59,4 @@ BG_SEG_FILES = \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_lip_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_pam_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_wax_all_p.seg 
-
+	

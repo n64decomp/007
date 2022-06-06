@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LrunE[] = {
+char *LrunE[] = {
  "The service runway is the obvious escape route from the Arkangelsk chemical weapons facility.\n",
  "006 knew this was going to be a risky mission. His sacrifice should give you enough time to find an aircraft.\n\nKeep a cool head and you'll get out alive. Just be certain to knock out the heavy gun emplacements and missile battery or they'll swat you out of the air like a silly fly.\n",
  "No time for gadgets here, 007. Just improvise with what you can find close to hand.\n",
@@ -26,11 +25,11 @@ struct stringentry LrunE[] = {
  "ignition key\n",
  "ignition key\n",
  "Picked up an ignition key.\n",
- NULL,
- NULL,
- NULL,
- NULL,
+ 0,
+ 0,
+ 0,
+ 0,
  "This door leads back\ninto the gasplant!\n",
- NULL,
- NULL
+ 0,
+ 0
 };

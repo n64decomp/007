@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LtraJ[] = {
+char * LtraJ[] = {
     " „ë„ì„í„î<€ó€æ€Ü>Ò€ì€ÊŠ\n€Ð€ù€Ê€×€…€ã€ùÿ€È€ø€ó€Ï(…Ù006)Ó\n€ä€ß€»€÷€Ð¸ƒø„çÏ‚Ãá€€Ò€ø€ò€ëàÍ‚²‚´†¡†Š\nÏƒçáƒû¹ð€Â\n",
     " …Äƒ™ÏÜƒø„ç„è‚À„Š„‘ó…†©Î…¿‚©¸‚æ´Ì\n»ØÆ€Â\n …¦ƒø„‰Î‡À‚ÆÓ‚ÿã€†ðƒÜ¸…·´Ì‚‚õÏ\n†ª´Ì‚ÕÄ»€Â007€Â\n",
     " 007€Â‚Ø‚·Î„Š…¡ìµß€Â†«†Š…ëÒ\n€ù€»€Ö€ô€å€Ê€ã¸‚¬‚­Æãõ€„œƒƒ€Û€Ü€â€ðæ\n„Š‚õÅ€†¡†ŠÓ„µ„¶ÆâÓíìµ€Â\n",
@@ -46,7 +45,7 @@ struct stringentry LtraJ[] = {
     "†¡†ŠÒŠ€ÐÒƒæ\n",
     "Š€ÐÒƒæ¸‚¡Ï‚ºãÉ\n",
     "‚²‚´†¡†Š ‡¹Ï‚ð¿´Ì„ø‚‚á\n",
-    NULL,
-    NULL,
-    NULL
+    0,
+    0,
+    0
 };

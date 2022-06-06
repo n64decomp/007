@@ -1,9 +1,9 @@
 #ifndef _INITBONDDATA_H_
 #define _INITBONDDATA_H_
-#include "ultra64.h"
+#include <ultra64.h>
 
 struct BONDdata_item_control_blocks {
-    int BONDdata_item_control_blocks_initdata;
+    int hand_data_dummy;
     int field_4;
     int field_8;
     int field_C;
@@ -22,8 +22,8 @@ struct BONDdata_item_control_blocks {
     int field_40;
     int field_44;
     int field_48;
-    int field_4C;
-    int field_50;
+    int field_4C;//targetflag
+    int field_50;//targettoshoot
     int field_54;
     int field_58;
     int field_5C;
@@ -106,7 +106,7 @@ struct BONDdata_item_control_blocks {
     float field_190;
     int field_194;
     int field_198;
-    int field_19C;
+    int bondbreathing;
     float field_1A0;
     float field_1A4;
     int field_1A8;
@@ -239,5 +239,7 @@ struct BONDdata_item_control_blocks {
     int field_3A4;
     int anonymous_0;
 };
+
+void init_player_BONDdata_stats(void);
 
 #endif

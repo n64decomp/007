@@ -1,8 +1,13 @@
-#include "ultra64.h"
+
+#include <ultra64.h>
 #include "deb_print.h"
-#include "bondgame.h"
-#include "video.h"
-#include "PR/R4300.h"
+#include <bondgame.h>
+#include "fr.h"
+#include <PR/R4300.h>
+
+/**
+ * EU .data, offset from start of data_seg : 0x2540
+*/
 
 // Padding
 u32 D_80023300 = 0;
@@ -118,11 +123,16 @@ static regDesc_t fpcsrDesc[] = {
     {0, 0, ""}
 };
 
-void *g_StackPtrs1[] = {&sp_rmon, &sp_idle, &sp_shed, &sp_main, &sp_audi};
-void *g_StackPtrs2[] = {&sp_idle, &sp_shed, &sp_main, &sp_audi, &sp_debug};
-void *g_StackPtrs3[] = {&sp_rmon, &sp_idle, &sp_shed, &sp_main, &sp_audi};
+void *g_StackPtrs1[STACK_POINTER_COUNT] = {&sp_rmon, &sp_idle, &sp_shed, &sp_main, &sp_audi};
 
+#ifndef VERSION_EU
+void *g_StackPtrs2[STACK_POINTER_COUNT] = {&sp_idle, &sp_shed, &sp_main, &sp_audi, &sp_debug};
+#else
+// no sp_debug
+void *g_StackPtrs2[STACK_POINTER_COUNT] = {&sp_idle, &sp_shed, &sp_main, &sp_audi, &cfb_16};
+#endif
 
+void *g_StackPtrs3[STACK_POINTER_COUNT] = {&sp_rmon, &sp_idle, &sp_shed, &sp_main, &sp_audi};
 
 // 71 x 32 text buffer (32th line is not drawn)
 unsigned char g_DebugOutputTextBuffer[32][71] = {0};
@@ -134,7 +144,7 @@ static s32 g_DebugOutputCurrentPosY = 0;
 u32 g_DebugOutputBitmaps[] = {
     0x00000000, 0x22220200, 0x55000000, 0x05F5F500, 0x27427200,     // ' ',  '!',  '\"', '#',  '$'
     0x05124500, 0x34255300, 0x22000000, 0x24444420, 0x42222240,     // '%',  '&',  '\'', '(',  ')'
-    0x06F6F600, 0x00272000, 0x00000240, 0x00070000, 0x00000200,     // '*',  '+',  '´',  '-',  '.'
+    0x06F6F600, 0x00272000, 0x00000240, 0x00070000, 0x00000200,     // '*',  '+',  '\,',  '-',  '.'
     0x11224480, 0x25555200, 0x26222700, 0x25125700, 0x61211600,     // '/',  '0',  '1',  '2',  '3'
     0x33557300, 0x64611600, 0x24655200, 0x71112200, 0x25755200,     // '4',  '5',  '6',  '7',  '8'
     0x25531600, 0x00200200, 0x00200640, 0x01242100, 0x00707000,     // '9',  ':',  ';',  '<',  '='
@@ -159,39 +169,68 @@ u16 *g_DebugOutputVideoBuffer2 = NULL;
 // Padding
 u32 D_80024184[4] = {0};
 
-void deboutWriteCharAtPos(s32 x, s32 y, unsigned char c) {
-    if ((c == '\t') || (c == '\n')) {
+/**
+ * DebConTextPos
+ * Sets the position where text will be displayed inside console window
+ * (Does not draw - see print_to_vidbuff1)
+ * @param x: column in which to display text (0-71)
+ * @param y: line in which to display text (0-31)
+ * @param c: Character to Print
+ */
+void deboutWriteCharAtPos(s32 x, s32 y, unsigned char c)
+{
+    // replace tabs and line feeds with nothing
+    if ((c == '\t') || (c == '\n'))
+    {
         c = '\0';
     }
-    if ((c > '\0') && (c < ' ') || (c > '~')) {
+    // is printable char? if not replace with "?"
+    if ((c > '\0') && (c < ' ') || (c > '~'))
+    {
         c = '?';
     }
-    if (((x >= 0) && (x <= 71)) && ((y >= 0) && (y <= 31))) {
+    if (((x >= 0) && (x <= 71)) && ((y >= 0) && (y <= 31)))
+    {
+        // Debug Window is 71 chars wide 32 rows high
+        //! BUG 71 is accepted as xpos but will overflow the buffer
         g_DebugOutputTextBuffer[y][x] = c;
     }
 }
 
-void deboutWriteChar(unsigned char c) {
-    if (c != '\0') {
-        if (c == '\t') {
-            do {
-                deboutWriteChar(' ');
+/**
+ * deboutWriteChar
+ * Parse Character and save to On-Screen Buffer
+ * @param c: Character to parse
+ */
+void deboutWriteChar(unsigned char c)
+{
+    if (c != '\0')
+    {
+        if (c == '\t')
+        {
+            do
+            {
+                deboutWriteChar(' '); // fill with blanks
             } while (g_DebugOutputCurrentPosX & 7);
 
             return;
         }
-        if (c == '\n') {
+        if (c == '\n')
+        {
             g_DebugOutputCurrentPosY++;
             g_DebugOutputCurrentPosX = 0;
         }
-        if (g_DebugOutputCurrentPosY > 30) {
+        if (g_DebugOutputCurrentPosY > 30)
+        {
             deboutScrollUp(g_DebugOutputCurrentPosY - 30);
             g_DebugOutputCurrentPosY = 30;
         }
-        if (c != '\n') {
+        if (c != '\n')
+        {
             deboutWriteCharAtPos(g_DebugOutputCurrentPosX, g_DebugOutputCurrentPosY, c);
             g_DebugOutputCurrentPosX++;
-            if (g_DebugOutputCurrentPosX > 70) {
+            if (g_DebugOutputCurrentPosX > 70)
+            {
                 g_DebugOutputCurrentPosX = 0;
                 g_DebugOutputCurrentPosY++;
             }
@@ -199,56 +238,94 @@ void deboutWriteChar(unsigned char c) {
     }
 }
 
-void deboutScrollUp(s32 numlines) {
+/**
+ * Scroll Buffer up by a number of lines
+ * @param LinesToScroll: Number of Lines to scroll upward
+ */
+void deboutScrollUp(s32 numlines)
+{
     s32 y;
     s32 x;
-    while (numlines-- > 0) {
-        for (y = 0; y < 31; y++) {
-            for (x = 0; x < 71; x++) {
+    while (numlines-- > 0)
+    {
+        for (y = 0; y < 31; y++)
+        {
+            for (x = 0; x < 71; x++)
+            {
                 g_DebugOutputTextBuffer[y][x] = g_DebugOutputTextBuffer[y + 1][x];
             }
         }
     }
 }
-
-void deboutDrawChar(s32 x, s32 y, unsigned char c) {
-    s32 bitmap_x;
-    s32 bitmap_y;
-    u32 bitmap;
-    s16 screen_w = viGetX();
-    u16 *ptr;
-    if (c == '\0') {
-        c = ' ';
+/**
+ * Print 4x8 1bit Glyph to stderr screen at position (x,y)
+ * @param x: Pixels from left within the stderr box
+ * @param y: Pixels from top within the stderr box
+ * @param c: the character to display
+ */
+void deboutDrawChar(s32 x, s32 y, unsigned char c)
+{
+    s32  bitmap_x;
+    s32  bitmap_y;
+    u32  bitmap;
+    s16  screen_w = viGetX();
+    u16 *Vidbufp;
+    if (c == '\0')
+    {
+        c = ' '; //replace nul with space
     }
-    if ((c >= ' ') && (c <= '~')) {
-        ptr = (g_DebugOutputVideoBuffer1 + x + (y * screen_w));
-        bitmap = g_DebugOutputBitmaps[c - ' '];
-        for (bitmap_y = 0; bitmap_y < 7; bitmap_y++) {
-            for (bitmap_x = 0; bitmap_x < 4; bitmap_x++) {
-                if (bitmap & (1 << 31)) {
-                    *ptr = GPACK_RGBA5551(255, 255, 255, 1);
-                } else {
-                    *ptr = GPACK_RGBA5551(0, 0, 0, 1);
+    if ((c >= ' ') && (c <= '~')) //if valid char
+    {
+        Vidbufp = (g_DebugOutputVideoBuffer1 + x + (y * screen_w));
+        bitmap  = g_DebugOutputBitmaps[c - ' '];
+        for (bitmap_y = 0; bitmap_y < 7; bitmap_y++)
+        {
+            for (bitmap_x = 0; bitmap_x < 4; bitmap_x++)
+            {
+                if (bitmap & (1 << 31))
+                {
+                    *Vidbufp = GPACK_RGBA5551(255, 255, 255, 1);
                 }
-                ptr++;
-                bitmap <<= 1;
+                else
+                {
+                    *Vidbufp = GPACK_RGBA5551(0, 0, 0, 1);
+                }
+                Vidbufp++;
+                bitmap <<= 1; //
             }
-            ptr += screen_w;
-            ptr -= 4;
+            Vidbufp += screen_w;
+            Vidbufp -= 4;
         }
     }
 }
 
-void deboutSetBuffers(u16 *buffer1, u16 *buffer2) {
-    g_DebugOutputVideoBuffer1 = K0_TO_K1(buffer1);
-    g_DebugOutputVideoBuffer2 = K0_TO_K1(buffer2);
+/**
+ * Set pointers to video buffers 1 & 2.
+ * Converts values to uncached addresses
+ * @param cfba | A0000000 -> 8002417C
+ * @param cfbb | A0000000 -> 80024180
+ */
+void deboutSetBuffers(u16 *buffer1, u16 *buffer2)
+{
+    g_DebugOutputVideoBuffer1 = (void *)K0_TO_K1(buffer1);
+    g_DebugOutputVideoBuffer2 = (void *)K0_TO_K1(buffer2);
 }
 
-void deboutInitBuffers(void) {
+/**
+ * Set up the 2 16bit CFBs to Direct mapped, uncached memory
+ */
+void deboutInitBuffers(void)
+{
     deboutSetBuffers(&cfb_16[0], &cfb_16[1]);
 }
 
-void deboutDrawToBuffer(u16 *buffer) {
+/**
+ * deboutDrawToBuffer
+ * write stderr to video buffer
+ * @param buffer: video buffer to render output 
+ */
+void deboutDrawToBuffer(u16 *buffer)
+{
     s32 screen_w;
     s32 screen_h;
     s32 output_w;
@@ -256,13 +333,15 @@ void deboutDrawToBuffer(u16 *buffer) {
     s32 x;
     s32 y;
     deboutInitBuffers();
-    g_DebugOutputVideoBuffer1 = K0_TO_K1(buffer);
-    screen_w = ((viGetX() - 13) / 4);
-    screen_h = ((viGetY() - 10) / 7);
-    output_w = screen_w - 5; // - margin_w
-    output_h = screen_h - 1; // - margin_h
-    for (y = 0; ((y < output_h) && (y < 31)); y++) {
-        for (x = 0; ((x < output_w) && (x < 71)); x++) {
+    g_DebugOutputVideoBuffer1 = (void *)K0_TO_K1(buffer); // overwrite cfba
+    screen_w                  = ((viGetX() - 13) / 4);
+    screen_h                  = ((viGetY() - 10) / 7);
+    output_w                  = screen_w - 5; // - margin_w
+    output_h                  = screen_h - 1; // - margin_h
+    for (y = 0; ((y < output_h) && (y < 31)); y++)
+    {
+        for (x = 0; ((x < output_w) && (x < 71)); x++)
+        {
             deboutDrawChar(((x + 5) * 4), ((y + 1) * 7), g_DebugOutputTextBuffer[y][x]);
         }
     }

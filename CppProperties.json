@@ -1,21 +1,203 @@
 {
     "configurations": [
         {
-            "name": "MIPS3-DEBUG",
+            "name": "MIPS2-DEBUG",
             "configurationType": "Debug",
             "generator": "Unix Makefiles",
-            "includePath": [
-                "${env.INCLUDE}",
-                "${workspaceRoot}\\**",
-                ""
+            "compilerPath": "",
+            "cStandard": "c89",
+            "includePath": [ /*INCLUDE := -I . -I include -I include/ultra64 -I include/PR -I src -I src/game -I src/inflate*/
+                "${workspaceRoot}",
+                "${workspaceRoot}\\include",
+                "${workspaceRoot}\\src",
+                "${workspaceRoot}\\src\\game",
+                "${workspaceRoot}\\src\\inflate"
             ],
-            "wslPath": "${defaultWSLPath}",
+            "defines": [
+                "DEBUG",
+                "TRI4_Ext",
+                "VERSION_US",
+                "TARGET_N64", /* IDO 5.3 Defs below */
+                "_MIPS_FPSET=16",
+                "_MIPS_ISA=2",
+                "_ABIO32=1",
+                "_MIPS_SIM=_ABIO32",
+                "_MIPS_SZINT=32",
+                "_MIPS_SZLONG=32",
+                "_MIPS_SZPTR=32",
+                "__EXTENSIONS__",
+                "LANGUAGE_C",
+                "_LANGUAGE_C",
+                "__INLINE_INTRINSICS",
+                "sgi",
+                "__sgi",
+                "unix",
+                "mips",
+                "host_mips",
+                "__unix",
+                "__host_mips",
+                "_SVR4_SOURCE",
+                "_MODERN_C",
+                "_SGI_SOURCE",
+                "__DSO__",
+                "SYSTYPE_SVR4",
+                "_SYSTYPE_SVR4",
+                "_LONGLONG",
+                "__mips=2",
+                "_MIPSEB",
+                "MIPSEB",
+                "__STDC__=1"
+            ],
+            "undefines": [ "__cplusplus" ]
+        },
+        {
+            "name": "MIPS2-FINAL US",
+            "configurationType": "Release",
+            "generator": "Unix Makefiles",
+            "cStandard": "c89",
+            "includePath": [
+                "${workspaceRoot}",
+                "${workspaceRoot}\\include",
+                "${workspaceRoot}\\src",
+                "${workspaceRoot}\\src\\game",
+                "${workspaceRoot}\\src\\inflate" 
+            ],
             "defines": [
                 "TRI4_Ext",
-                "DEBUG"
-            ]
-            //"compilerPath": "/usr/",
-                   }
+                "VERSION_US",
+                "TARGET_N64", /* IDO 5.3 Defs below */
 
+                "_MIPS_FPSET=16",
+                "_MIPS_ISA=2",
+                "_ABIO32=1",
+                "_MIPS_SIM=_ABIO32",
+                "_MIPS_SZINT=32",
+                "_MIPS_SZLONG=32",
+                "_MIPS_SZPTR=32",
+                "__EXTENSIONS__",
+                "LANGUAGE_C",
+                "_LANGUAGE_C",
+                "__INLINE_INTRINSICS",
+                "sgi",
+                "__sgi",
+                "unix",
+                "mips",
+                "host_mips",
+                "__unix",
+                "__host_mips",
+                "_SVR4_SOURCE",
+                "_MODERN_C",
+                "_SGI_SOURCE",
+                "__DSO__",
+                "SYSTYPE_SVR4",
+                "_SYSTYPE_SVR4",
+                "_LONGLONG",
+                "__mips=2",
+                "_MIPSEB",
+                "MIPSEB",
+                "__STDC__=1"
+            ],
+            "undefines": [ "__cplusplus" ]
+        },
+        {
+            "name": "LibUltra-Debug",
+            "configurationType": "Release",
+            "generator": "Unix Makefiles",
+            "cStandard": "c89",
+            "includePath": [/*include -I include/PR -I src/libultra*/
+                "${workspaceRoot}",
+                "${workspaceRoot}\\include",
+                "${workspaceRoot}\\include\\PR",
+                "${workspaceRoot}\\src\\libultrare",
+                "${workspaceRoot}\\src\\libultra"
+            ],
+            "defines": [
+                "_DEBUG",
+                "TRI4_Ext",
+                "VERSION_US",
+                "TARGET_N64", /* IDO 5.3 Defs below */
+
+                "_MIPS_FPSET=16",
+                "_MIPS_ISA=2",
+                "_ABIO32=1",
+                "_MIPS_SIM=_ABIO32",
+                "_MIPS_SZINT=32",
+                "_MIPS_SZLONG=32",
+                "_MIPS_SZPTR=32",
+                "__EXTENSIONS__",
+                "LANGUAGE_C",
+                "_LANGUAGE_C",
+                "__INLINE_INTRINSICS",
+                "sgi",
+                "__sgi",
+                "unix",
+                "mips",
+                "host_mips",
+                "__unix",
+                "__host_mips",
+                "_SVR4_SOURCE",
+                "_MODERN_C",
+                "_SGI_SOURCE",
+                "__DSO__",
+                "SYSTYPE_SVR4",
+                "_SYSTYPE_SVR4",
+                "_LONGLONG",
+                "__mips=2",
+                "_MIPSEB",
+                "MIPSEB",
+                "__STDC__=1"
+            ],
+            "undefines": [ "__cplusplus" ]
+        },
+        {
+            "name": "LibUltra-FINAL",
+            "configurationType": "Release",
+            "generator": "Unix Makefiles",
+            "cStandard": "c89",
+            "includePath": [
+                "${workspaceRoot}",
+                "${workspaceRoot}\\include",
+                "${workspaceRoot}\\include\\PR",
+                "${workspaceRoot}\\src\\libultrare",
+                "${workspaceRoot}\\src\\libultra"
+            ],
+            "defines": [
+                "_FINALROM",
+                "TRI4_Ext",
+                "VERSION_US",
+                "TARGET_N64",/* IDO 5.3 Defs below */
+
+                "_MIPS_FPSET=16",
+                "_MIPS_ISA=2",
+                "_ABIO32=1",
+                "_MIPS_SIM=_ABIO32",
+                "_MIPS_SZINT=32",
+                "_MIPS_SZLONG=32",
+                "_MIPS_SZPTR=32",
+                "__EXTENSIONS__",
+                "LANGUAGE_C",
+                "_LANGUAGE_C",
+                "__INLINE_INTRINSICS",
+                "sgi",
+                "__sgi",
+                "unix",
+                "mips",
+                "host_mips",
+                "__unix",
+                "__host_mips",
+                "_SVR4_SOURCE",
+                "_MODERN_C",
+                "_SGI_SOURCE",
+                "__DSO__",
+                "SYSTYPE_SVR4",
+                "_SYSTYPE_SVR4",
+                "_LONGLONG",
+                "__mips=2",
+                "_MIPSEB",
+                "MIPSEB",
+                "__STDC__=1"
+            ],
+            "undefines": [ "__cplusplus" ]
+        }
     ]
 }

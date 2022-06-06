@@ -1,12 +1,15 @@
-#include "ultra64.h"
+#include <ultra64.h>
+#include <memp.h>
+#include "spectrum.h"
+#include <bondconstants.h>
 
 // bss
-s32 ptr_sectrum_monitor_data_temp_buf;
-s32 ptr_sectrum_game_data_temp_buf;
-s32 ptr_spectrum_roms;
-s32 ptr_300alloc;
-s32 ptr_6000alloc;
-s32 ptr_pc_keyboard_table_alloc;
+u8* ptr_sectrum_monitor_data_temp_buf;
+u8* ptr_sectrum_game_data_temp_buf;
+u8* ptr_spectrum_roms;
+u8* ptr_300alloc;
+u8* ptr_6000alloc;
+u8* ptr_pc_keyboard_table_alloc;
 s8 spectrum_header16_15;
 s8 byte_CODE_bss_8008E339;
 s8 byte_CODE_bss_8008E33A;
@@ -24,11 +27,11 @@ s8 byte_CODE_bss_8008E345;
 s8 byte_CODE_bss_8008E346;
 s8 byte_CODE_bss_8008E347;
 s8 spec_I;
-s8 byte_CODE_bss_8008E349;
+s8 spec_R;
 s8 spec_IFF2_lower;
 s8 spec_IFF2_upper;
 s8 spec_IM;
-s8 byte_CODE_bss_8008E34D;
+u8 spec_cur_rom_id;
 s16 spec_IX;
 s16 spec_IY;
 s16 spec_SP;
@@ -37,30 +40,39 @@ s16 spec_PC;
 
 // data
 s8 D_8004EC30 = 0x0;
-s8 D_8004EC34[] = {0xFF, 0xFF, 0xFF, 0xFF};
-
-s8 D_8004EC38[] = {0xFF, 0xFF, 0xFF, 0xFF};
-
-s8 D_8004EC3C[] = {0xFF, 0x0, 0x0, 0x0};
-
-s16 D_8004EC40[] = {
-        0,     0, 0x7FE, 0x3FE, 0x3FD, 0x3FB, 0x3F7, 0x3EF, 0x4F7, 0x3FD,
-    0x4FD, 0x4FE, 0x4FB, 0x6FB, 0x7F7, 0x6F7, 0x8FB,  0xEF, 0x4FE, 0x3FE,
-    0x3FD, 0x3FB, 0x3F7, 0x3EF, 0x4EF, 0x4F7, 0x4FB, 0x4FD,  0xFD, 0x5FD,
-    0x7F7, 0x6FB, 0x8FB,  0xEF, 0x3FD, 0x1FE, 0x7EF,  0xF7, 0x1FB, 0x2FB,
-    0x1F7, 0x1EF, 0x6EF, 0x5FB, 0x6F7, 0x6FB, 0x6FD, 0x7FB, 0x7F7, 0x5FD,
-    0x5FE, 0x2FE, 0x2F7, 0x1FD, 0x2EF, 0x5F7,  0xEF, 0x2FD,  0xFB, 0x5EF,
-     0xFD, 0x8FF, 0x8FF, 0x8FF, 0x4EF, 0x6F7, 0x8FF, 0x1FE, 0x7EF,  0xF7,
-    0x1FB, 0x2FB, 0x1F7, 0x1EF, 0x6EF, 0x5FB, 0x6F7, 0x6FB, 0x6FD, 0x7FB,
-    0x7F7, 0x5FD, 0x5FE, 0x2FE, 0x2F7, 0x1FD, 0x2EF, 0x5F7,  0xEF, 0x2FD,
-     0xFB, 0x5EF,  0xFD, 0x8FF, 0x8FF, 0x8FF, 0x8FF, 0x8FF,     0,     0
+u8 spec_keyboard_buffer[] = 
+{
+    0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF
 };
 
-s32 D_8004ED08 = 0;
+u8 D_8004EC40 = 0;
 
-s16 D_8004ED0C[] = {
-    1,  0x21,0x8001,0x8021, 0x401, 0x421,0x8401,0x8421,
-    1,  0x3F,0xF801,0xF83F, 0x7C1, 0x7FF,0xFFC1,0xFFFF
+s16 D_8004EC44[] = 
+{
+    0x7FE, 0x3FE, 0x3FD, 0x3FB, 0x3F7, 0x3EF, 0x4F7, 0x3FD,
+    0x4FD, 0x4FE, 0x4FB, 0x6FB, 0x7F7, 0x6F7, 0x8FB,  0xEF,
+    0x4FE, 0x3FE, 0x3FD, 0x3FB, 0x3F7, 0x3EF, 0x4EF, 0x4F7,
+    0x4FB, 0x4FD,  0xFD, 0x5FD, 0x7F7, 0x6FB, 0x8FB,  0xEF,
+    0x3FD, 0x1FE, 0x7EF,  0xF7, 0x1FB, 0x2FB, 0x1F7, 0x1EF,
+    0x6EF, 0x5FB, 0x6F7, 0x6FB, 0x6FD, 0x7FB, 0x7F7, 0x5FD,
+    0x5FE, 0x2FE, 0x2F7, 0x1FD, 0x2EF, 0x5F7,  0xEF, 0x2FD,
+     0xFB, 0x5EF,  0xFD, 0x8FF, 0x8FF, 0x8FF, 0x4EF, 0x6F7,
+    0x8FF, 0x1FE, 0x7EF,  0xF7, 0x1FB, 0x2FB, 0x1F7, 0x1EF,
+    0x6EF, 0x5FB, 0x6F7, 0x6FB, 0x6FD, 0x7FB, 0x7F7, 0x5FD,
+    0x5FE, 0x2FE, 0x2F7, 0x1FD, 0x2EF, 0x5F7,  0xEF, 0x2FD,
+     0xFB, 0x5EF,  0xFD, 0x8FF, 0x8FF, 0x8FF, 0x8FF, 0x8FF
+};
+
+s32 D_8004ED04 = 0;
+s8 D_8004ED08 = 0;
+
+s16 spec_palette[] = {
+    0x0001, 0x0021, 0x8001, 0x8021, 
+    0x0401, 0x0421, 0x8401, 0x8421,
+    0x0001, 0x003F, 0xF801, 0xF83F, 
+    0x07C1, 0x07FF, 0xFFC1, 0xFFFF
 };
 //
 char* romnames[] = {
@@ -76,7 +88,13 @@ char* romnames[] = {
     "em/data/cookie.seg.rz"
 };
 
-u32 D_8004ED54[] = {0x7000000, 0x0,0xFF000000,0xFF000000};
+u8 spec_OUT_port[] = 
+{
+    0x07, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0xFF, 0x00, 0x00, 0x00,
+    0xFF, 0x00, 0x00, 0x00
+};
 
 // rodata
 //8005C114
@@ -379,7 +397,112 @@ glabel sub_GAME_7F0D2A84
 
 #ifdef NONMATCHING
 void spectrum_p1controller_to_kempston(void) {
+    u32 goUp;
+    u32 goDown;
+    u32 goLeft;
+    u32 goRight;
+    u32 goAction;
+    u32 btns;
+    s32 stickX;
+    s32 stickY;
+    s32 i;
 
+
+    goUp = 0;
+    goDown = 0;
+    goLeft = 0;
+    goRight = 0;
+    goAction = 0;
+    joyConsumeSamplesWrapper();
+    btns = joyGetButtons(PLAYER_1, 0xFFFF);
+    stickX = joyGetStickXInRange(PLAYER_1, -3, 3);
+    stickY = joyGetStickYInRange(PLAYER_1, -3, 3);
+    
+    //im having a dumb moment here, match this and reg usage should match for rest
+    for(i=0;i!=9;++i)
+    {
+        spec_keyboard_buffer[i] = 0xFF;
+    }
+    
+
+
+    if ((btns & Z_TRIG)) {
+        goAction = 1;
+    }
+    if ((btns & (L_CBUTTONS|L_JPAD)) || (stickX < -1)) {
+        goLeft = 1;
+    }
+    if ((btns & (R_CBUTTONS|R_JPAD)) || (stickX >= 2)) {
+        goRight = 1;
+    }
+    if ((btns & (U_CBUTTONS|U_JPAD)) || (stickY >= 2)) {
+        goUp = 1;
+    }
+    if ((btns & (D_CBUTTONS|D_JPAD)) || (stickY < -1)) {
+        goDown = 1;
+    }
+
+    if ((spec_cur_rom_id == ROM_JETPAC) && (btns & (B_BUTTON|A_BUTTON))) {
+        goUp = 1;
+    }
+
+    if (((spec_cur_rom_id == ROM_ALIEN8) || (spec_cur_rom_id == ROM_KNIGHTLORE)) && (btns & (B_BUTTON|A_BUTTON)))
+    {
+        goDown = 1;
+    }
+
+    if (((spec_cur_rom_id == ROM_SABRE) || (spec_cur_rom_id == ROM_ATIC) || (spec_cur_rom_id == ROM_UNDER) ||  (spec_cur_rom_id == ROM_COOKIE) || 
+    (spec_cur_rom_id == ROM_ALIEN8) || (spec_cur_rom_id == ROM_KNIGHTLORE)) && (btns & (B_BUTTON|A_BUTTON)))
+    {
+        spec_keyboard_buffer[0x4] = (u8) (spec_keyboard_buffer[0x4] & 0xFE); //'0' key (sabre: A,B button)
+    }
+
+    if (((spec_cur_rom_id == ROM_JETPAC) || (spec_cur_rom_id == ROM_PSSST)) && (btns & (B_BUTTON|A_BUTTON))) {
+        spec_keyboard_buffer[0x3] = (u8) (spec_keyboard_buffer[0x3] & 0xEF);
+    }
+    if ((spec_cur_rom_id == ROM_GUNFRIGHT) && (btns & (B_BUTTON|A_BUTTON))) {
+        spec_keyboard_buffer[0x3] = (u8) (spec_keyboard_buffer[0x3] & 0xFB);
+    }
+    if (spec_cur_rom_id == ROM_JETMAN) {
+        if (btns & (B_BUTTON|A_BUTTON)) {
+            spec_keyboard_buffer[0x4] = (u8) (spec_keyboard_buffer[0x4] & 0xEF);
+        }
+        if (btns & A_BUTTON) {
+            spec_keyboard_buffer[0x0] = (u8) spec_keyboard_buffer[0x0] & 0xFD; 
+        }
+        if (btns & B_BUTTON) {
+            spec_keyboard_buffer[0x7] = (u8) (spec_keyboard_buffer[0x7] & 0xFE); 
+        }
+    }
+    if (spec_cur_rom_id == ROM_UNDER) {
+        if (btns & A_BUTTON) {
+            goUp = 1;
+        }
+        if (btns & B_BUTTON) {
+            spec_keyboard_buffer[0x7] = (u8) (spec_keyboard_buffer[0x7] & 0xFE); 
+        }
+    }
+    if (spec_cur_rom_id == ROM_ATIC) {
+        if ((btns & (B_BUTTON|A_BUTTON)) != 0) {
+            spec_keyboard_buffer[0x0] = (u8) spec_keyboard_buffer[0x0] & 0xFD; 
+        }
+        if ((btns & L_JPAD) != 0) {
+            spec_keyboard_buffer[0x3] = (u8) (spec_keyboard_buffer[0x3] & 0xF7);
+        }
+        if ((btns & D_JPAD) != 0) {
+            spec_keyboard_buffer[0x3] = (u8) (spec_keyboard_buffer[0x3] & 0xEF);
+        }
+        if ((btns & R_JPAD) != 0) {
+            spec_keyboard_buffer[0x4] = (u8) (spec_keyboard_buffer[0x4] & 0xEF);
+        }
+    }
+    if (btns & L_TRIG) {
+        for(i=0; i<0x4000; i++) 
+        {
+            ptr_spectrum_roms[i] = 0;
+        }
+    }
+    D_8004EC40 = (goAction * 0x10) | (goUp * 8) | (goDown * 4) | (goLeft * 2) | goRight;
 }
 #else
 GLOBAL_ASM(
@@ -407,14 +530,14 @@ glabel spectrum_p1controller_to_kempston
 /* 107800 7F0D2CD0 0C00314A */  jal   joyGetStickYInRange
 /* 107804 7F0D2CD4 AFA2001C */   sw    $v0, 0x1c($sp)
 /* 107808 7F0D2CD8 240E00FF */  li    $t6, 255
-/* 10780C 7F0D2CDC 3C018005 */  lui   $at, %hi(D_8004EC34)
-/* 107810 7F0D2CE0 3C048005 */  lui   $a0, %hi(D_8004EC34+1)
-/* 107814 7F0D2CE4 3C058005 */  lui   $a1, %hi(D_8004EC3C+1)
+/* 10780C 7F0D2CDC 3C018005 */  lui   $at, %hi(spec_keyboard_buffer)
+/* 107810 7F0D2CE0 3C048005 */  lui   $a0, %hi(spec_keyboard_buffer+1)
+/* 107814 7F0D2CE4 3C058005 */  lui   $a1, %hi(spec_keyboard_buffer+9)
 /* 107818 7F0D2CE8 8FA70020 */  lw    $a3, 0x20($sp)
 /* 10781C 7F0D2CEC 8FA8001C */  lw    $t0, 0x1c($sp)
-/* 107820 7F0D2CF0 24A5EC3D */  addiu $a1, %lo(D_8004EC3C+1) # addiu $a1, $a1, -0x13c3
-/* 107824 7F0D2CF4 2484EC35 */  addiu $a0, %lo(D_8004EC34+1) # addiu $a0, $a0, -0x13cb
-/* 107828 7F0D2CF8 A02EEC34 */  sb    $t6, %lo(D_8004EC34)($at)
+/* 107820 7F0D2CF0 24A5EC3D */  addiu $a1, %lo(spec_keyboard_buffer+9) # addiu $a1, $a1, -0x13c3
+/* 107824 7F0D2CF4 2484EC35 */  addiu $a0, %lo(spec_keyboard_buffer+1) # addiu $a0, $a0, -0x13cb
+/* 107828 7F0D2CF8 A02EEC34 */  sb    $t6, %lo(spec_keyboard_buffer)($at)
 /* 10782C 7F0D2CFC 240300FF */  li    $v1, 255
 .L7F0D2D00:
 /* 107830 7F0D2D00 24840004 */  addiu $a0, $a0, 4
@@ -461,8 +584,8 @@ glabel spectrum_p1controller_to_kempston
 /* 1078B4 7F0D2D84 24060001 */   li    $a2, 1
 /* 1078B8 7F0D2D88 AFA60030 */  sw    $a2, 0x30($sp)
 .L7F0D2D8C:
-/* 1078BC 7F0D2D8C 3C038009 */  lui   $v1, %hi(byte_CODE_bss_8008E34D)
-/* 1078C0 7F0D2D90 9063E34D */  lbu   $v1, %lo(byte_CODE_bss_8008E34D)($v1)
+/* 1078BC 7F0D2D8C 3C038009 */  lui   $v1, %hi(spec_cur_rom_id)
+/* 1078C0 7F0D2D90 9063E34D */  lbu   $v1, %lo(spec_cur_rom_id)($v1)
 /* 1078C4 7F0D2D94 24040002 */  li    $a0, 2
 /* 1078C8 7F0D2D98 8FA60030 */  lw    $a2, 0x30($sp)
 /* 1078CC 7F0D2D9C 14830005 */  bne   $a0, $v1, .L7F0D2DB4
@@ -496,15 +619,15 @@ glabel spectrum_p1controller_to_kempston
 /* 10792C 7F0D2DFC 30F8C000 */   andi  $t8, $a3, 0xc000
 .L7F0D2E00:
 /* 107930 7F0D2E00 13000005 */  beqz  $t8, .L7F0D2E18
-/* 107934 7F0D2E04 3C028005 */   lui   $v0, %hi(D_8004EC34)
-/* 107938 7F0D2E08 2442EC34 */  addiu $v0, %lo(D_8004EC34) # addiu $v0, $v0, -0x13cc
+/* 107934 7F0D2E04 3C028005 */   lui   $v0, %hi(spec_keyboard_buffer)
+/* 107938 7F0D2E08 2442EC34 */  addiu $v0, %lo(spec_keyboard_buffer) # addiu $v0, $v0, -0x13cc
 /* 10793C 7F0D2E0C 90590004 */  lbu   $t9, 4($v0)
 /* 107940 7F0D2E10 332900FE */  andi  $t1, $t9, 0xfe
 /* 107944 7F0D2E14 A0490004 */  sb    $t1, 4($v0)
 .L7F0D2E18:
-/* 107948 7F0D2E18 3C028005 */  lui   $v0, %hi(D_8004EC34)
+/* 107948 7F0D2E18 3C028005 */  lui   $v0, %hi(spec_keyboard_buffer)
 /* 10794C 7F0D2E1C 10830003 */  beq   $a0, $v1, .L7F0D2E2C
-/* 107950 7F0D2E20 2442EC34 */   addiu $v0, %lo(D_8004EC34) # addiu $v0, $v0, -0x13cc
+/* 107950 7F0D2E20 2442EC34 */   addiu $v0, %lo(spec_keyboard_buffer) # addiu $v0, $v0, -0x13cc
 /* 107954 7F0D2E24 24010008 */  li    $at, 8
 /* 107958 7F0D2E28 14610006 */  bne   $v1, $at, .L7F0D2E44
 .L7F0D2E2C:
@@ -732,8 +855,8 @@ glabel init_spectrum_game
 /* 107C30 7F0D3100 1420FFF8 */  bnez  $at, .L7F0D30E4
 /* 107C34 7F0D3104 A1380000 */   sb    $t8, ($t1)
 /* 107C38 7F0D3108 8FAA0018 */  lw    $t2, 0x18($sp)
-/* 107C3C 7F0D310C 3C038009 */  lui   $v1, %hi(byte_CODE_bss_8008E34D)
-/* 107C40 7F0D3110 2463E34D */  addiu $v1, %lo(byte_CODE_bss_8008E34D) # addiu $v1, $v1, -0x1cb3
+/* 107C3C 7F0D310C 3C038009 */  lui   $v1, %hi(spec_cur_rom_id)
+/* 107C40 7F0D3110 2463E34D */  addiu $v1, %lo(spec_cur_rom_id) # addiu $v1, $v1, -0x1cb3
 /* 107C44 7F0D3114 314200FF */  andi  $v0, $t2, 0xff
 /* 107C48 7F0D3118 28410005 */  slti  $at, $v0, 5
 /* 107C4C 7F0D311C 14200003 */  bnez  $at, .L7F0D312C
@@ -854,8 +977,8 @@ glabel init_spectrum_game
 /* 107E10 7F0D32E0 A0AD0000 */  sb    $t5, ($a1)
 /* 107E14 7F0D32E4 A02DE34A */  sb    $t5, %lo(spec_IFF2_lower)($at)
 /* 107E18 7F0D32E8 904F0014 */  lbu   $t7, 0x14($v0)
-/* 107E1C 7F0D32EC 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E349)
-/* 107E20 7F0D32F0 A02FE349 */  sb    $t7, %lo(byte_CODE_bss_8008E349)($at)
+/* 107E1C 7F0D32EC 3C018009 */  lui   $at, %hi(spec_R)
+/* 107E20 7F0D32F0 A02FE349 */  sb    $t7, %lo(spec_R)($at)
 /* 107E24 7F0D32F4 90590015 */  lbu   $t9, 0x15($v0)
 /* 107E28 7F0D32F8 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E339)
 /* 107E2C 7F0D32FC A039E339 */  sb    $t9, %lo(byte_CODE_bss_8008E339)($at)
@@ -896,39 +1019,22 @@ glabel init_spectrum_game
 
 
 
-#ifdef NONMATCHING
-void run_spectrum_game(void) {
 
+void run_spectrum_game(void)
+{
+    spectrum_p1controller_to_kempston();
+    spectrum_hw_emulation();
+    sub_GAME_7F0D2A84(ptr_spectrum_roms + 0x4000,ptr_6000alloc);
+    return;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel run_spectrum_game
-/* 107EA4 7F0D3374 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 107EA8 7F0D3378 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 107EAC 7F0D337C 0FC34B21 */  jal   spectrum_p1controller_to_kempston
-/* 107EB0 7F0D3380 00000000 */   nop   
-/* 107EB4 7F0D3384 0FC34E0B */  jal   spectrum_hw_emulation
-/* 107EB8 7F0D3388 00000000 */   nop   
-/* 107EBC 7F0D338C 3C048009 */  lui   $a0, %hi(ptr_spectrum_roms)
-/* 107EC0 7F0D3390 8C84E328 */  lw    $a0, %lo(ptr_spectrum_roms)($a0)
-/* 107EC4 7F0D3394 3C058009 */  lui   $a1, %hi(ptr_6000alloc)
-/* 107EC8 7F0D3398 8CA5E330 */  lw    $a1, %lo(ptr_6000alloc)($a1)
-/* 107ECC 7F0D339C 0FC34AA1 */  jal   sub_GAME_7F0D2A84
-/* 107ED0 7F0D33A0 24844000 */   addiu $a0, $a0, 0x4000
-/* 107ED4 7F0D33A4 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 107ED8 7F0D33A8 27BD0018 */  addiu $sp, $sp, 0x18
-/* 107EDC 7F0D33AC 03E00008 */  jr    $ra
-/* 107EE0 7F0D33B0 00000000 */   nop   
-)
-#endif
+
 
 
 
 
 
 #ifdef NONMATCHING
-void spectrum_draw_screen(void) {
+Gfx* spectrum_draw_screen(Gfx* DL) {
 
 }
 #else
@@ -952,8 +1058,8 @@ glabel spectrum_draw_screen
 /* 107F1C 7F0D33EC AC4B0000 */  sw    $t3, ($v0)
 /* 107F20 7F0D33F0 AC400004 */  sw    $zero, 4($v0)
 /* 107F24 7F0D33F4 00801825 */  move  $v1, $a0
-/* 107F28 7F0D33F8 3C0E8005 */  lui   $t6, %hi(D_8004ED0C) 
-/* 107F2C 7F0D33FC 25CEED0C */  addiu $t6, %lo(D_8004ED0C) # addiu $t6, $t6, -0x12f4
+/* 107F28 7F0D33F8 3C0E8005 */  lui   $t6, %hi(spec_palette) 
+/* 107F2C 7F0D33FC 25CEED0C */  addiu $t6, %lo(spec_palette) # addiu $t6, $t6, -0x12f4
 /* 107F30 7F0D3400 24840008 */  addiu $a0, $a0, 8
 /* 107F34 7F0D3404 3C10FD10 */  lui   $s0, 0xfd10
 /* 107F38 7F0D3408 AC6E0004 */  sw    $t6, 4($v1)
@@ -1146,8 +1252,58 @@ glabel spectrum_draw_screen
 
 
 #ifdef NONMATCHING
-void spectrum_input_handling(void) {
+//just a quick copy paste from decomp me
+//looks like loop got partly unrolled
+u16 spectrum_input_handling(u32 arg0, u8 arg1, u8 arg2) {
+    s32 temp_v0;
+    s32 temp_v0_2;
+    u32 temp_a0;
+    u32 temp_a0_2;
+    u32 temp_a0_3;
+    u32 phi_a1;
+    s32 phi_v0;
+    u16 phi_v1;
+    u16 phi_v1_2;
+    u16 phi_v1_3;
+    u16 phi_v1_4;
+    u16 phi_v1_5;
 
+    temp_v0 = arg2 & 0xFF;
+    phi_a1 = arg1 & 0xFF;
+    if (temp_v0 == 0xFE) {
+        phi_v0 = 0;
+        phi_v1_5 = 0xFFU;
+        do {
+            phi_v1_4 = phi_v1_5;
+            if ((phi_a1 & 1) == 0) {
+                phi_v1_4 = phi_v1_5 & (u8) spec_keyboard_buffer[phi_v0] & 0xFF;
+            }
+            temp_a0 = (phi_a1 >> 1) & 0xFF;
+            phi_v1_3 = phi_v1_4;
+            if ((temp_a0 & 1) == 0) {
+                phi_v1_3 = phi_v1_4 & spec_keyboard_buffer[phi_v0+1] & 0xFF;
+            }
+            temp_a0_2 = (temp_a0 >> 1) & 0xFF;
+            phi_v1_2 = phi_v1_3;
+            if ((temp_a0_2 & 1) == 0) {
+                phi_v1_2 = phi_v1_3 & spec_keyboard_buffer[phi_v0+2] & 0xFF;
+            }
+            temp_a0_3 = (temp_a0_2 >> 1) & 0xFF;
+            phi_v1 = phi_v1_2;
+            if ((temp_a0_3 & 1) == 0) {
+                phi_v1 = phi_v1_2 & spec_keyboard_buffer[phi_v0+3] & 0xFF;
+            }
+            temp_v0_2 = phi_v0 + 4;
+            phi_a1 = (temp_a0_3 >> 1) & 0xFF;
+            phi_v0 = temp_v0_2;
+            phi_v1_5 = phi_v1;
+        } while (temp_v0_2 != 8);
+        return phi_v1;
+    }
+    if (temp_v0 == 0x1F) {
+        return (u16) D_8004EC40;
+    }
+    return 0xFFU;
 }
 #else
 GLOBAL_ASM(
@@ -1161,9 +1317,9 @@ glabel spectrum_input_handling
 /* 10821C 7F0D36EC AFA40000 */  sw    $a0, ($sp)
 /* 108220 7F0D36F0 14410030 */  bne   $v0, $at, .L7F0D37B4
 /* 108224 7F0D36F4 AFA60008 */   sw    $a2, 8($sp)
-/* 108228 7F0D36F8 3C068005 */  lui   $a2, %hi(D_8004EC34)
+/* 108228 7F0D36F8 3C068005 */  lui   $a2, %hi(spec_keyboard_buffer)
 /* 10822C 7F0D36FC 240300FF */  li    $v1, 255
-/* 108230 7F0D3700 24C6EC34 */  addiu $a2, %lo(D_8004EC34) # addiu $a2, $a2, -0x13cc
+/* 108230 7F0D3700 24C6EC34 */  addiu $a2, %lo(spec_keyboard_buffer) # addiu $a2, $a2, -0x13cc
 /* 108234 7F0D3704 00001025 */  move  $v0, $zero
 /* 108238 7F0D3708 24070008 */  li    $a3, 8
 .L7F0D370C:
@@ -1236,43 +1392,22 @@ void nullsub_50(void) {
 }
 
 
+u8 sub_GAME_7F0D37DC(u32 cycles, u8 specA, u8 port, u8 value)
+{
+  int temp_v0;
+  if (port == 0xFE)
+  {
+    temp_v0 = value & 7;
+    if (temp_v0 != spec_OUT_port[0])
+    {
+      spec_OUT_port[0] = temp_v0;
+    }
 
+    return 0;
+  }
 
-
-
-#ifdef NONMATCHING
-void sub_GAME_7F0D37DC(void) {
-
+  return 0;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0D37DC
-/* 10830C 7F0D37DC 30CE00FF */  andi  $t6, $a2, 0xff
-/* 108310 7F0D37E0 240100FE */  li    $at, 254
-/* 108314 7F0D37E4 AFA40000 */  sw    $a0, ($sp)
-/* 108318 7F0D37E8 AFA50004 */  sw    $a1, 4($sp)
-/* 10831C 7F0D37EC AFA60008 */  sw    $a2, 8($sp)
-/* 108320 7F0D37F0 AFA7000C */  sw    $a3, 0xc($sp)
-/* 108324 7F0D37F4 15C1000A */  bne   $t6, $at, .L7F0D3820
-/* 108328 7F0D37F8 30EF00FF */   andi  $t7, $a3, 0xff
-/* 10832C 7F0D37FC 3C188005 */  lui   $t8, %hi(D_8004ED54) 
-/* 108330 7F0D3800 9318ED54 */  lbu   $t8, %lo(D_8004ED54)($t8)
-/* 108334 7F0D3804 31E20007 */  andi  $v0, $t7, 7
-/* 108338 7F0D3808 3C018005 */  lui   $at, %hi(D_8004ED54)
-/* 10833C 7F0D380C 10580002 */  beq   $v0, $t8, .L7F0D3818
-/* 108340 7F0D3810 00000000 */   nop   
-/* 108344 7F0D3814 A022ED54 */  sb    $v0, %lo(D_8004ED54)($at)
-.L7F0D3818:
-/* 108348 7F0D3818 03E00008 */  jr    $ra
-/* 10834C 7F0D381C 00001025 */   move  $v0, $zero
-
-.L7F0D3820:
-/* 108350 7F0D3820 00001025 */  move  $v0, $zero
-/* 108354 7F0D3824 03E00008 */  jr    $ra
-/* 108358 7F0D3828 00000000 */   nop   
-)
-#endif
 
 
 
@@ -1280,8 +1415,7344 @@ glabel sub_GAME_7F0D37DC
 
 #ifdef NONMATCHING
 void spectrum_hw_emulation(void) {
+    u8 sp2A7;
+    u8 sp2A6;
+    u8 sp2A5;
+    u8 sp2A4;
+    u8 sp2A3;
+    u8 sp2A2;
+    u8 sp2A1;
+    u8 sp2A0;
+    u8 sp29F;
+    u8 I;
+    u8 sp29D;
+    u8 sp29C;
+    u8 IM;
+    u16 PC;
+    u16 IX;
+    u16 IY;
+    u16 SP;
+    u32 sp28C;
+    s32 sp288;
+    u8 sp287;
+    u8 sp286;
+    u8 sp285;
+    u8 sp284;
+    u32 sp280;
+    u8 sp27F;
+    u8 sp27E;
+    s16 sp27C;
+    u32 sp278;
+    s32 sp274;
+    s32 sp270;
+    s32 sp26C;
+    s16 sp26A;
+    u32 sp264;
+    s32 sp260;
+    s32 sp25C;
+    u16 sp25A;
+    u8 sp259;
+    u8 sp258;
+    u8 sp257;
+    u8 sp256;
+    s16 sp254;
+    u8 sp253;
+    s16 sp250;
+    u8 sp24F;
+    s32 sp248;
+    s16 sp246;
+    u32 sp240;
+    s16 sp23E;
+    u32 sp238;
+    s16 sp236;
+    u32 sp230;
+    u16 sp22E;
+    u8 sp22D;
+    u8 sp22C;
+    s32 sp228;
+    u16 sp226;
+    u16 sp224;
+    u8 sp223;
+    u16 sp220;
+    u8 sp21F;
+    u16 sp21C;
+    s32 sp218;
+    s16 sp216;
+    u32 sp210;
+    s16 sp20E;
+    u16 sp20C;
+    u16 sp20A;
+    u16 sp208;
+    u16 sp206;
+    u16 sp204;
+    u16 sp202;
+    u16 sp200;
+    u16 sp1FE;
+    u16 sp1FC;
+    u16 sp1FA;
+    u16 sp1F8;
+    u16 sp1F6;
+    u16 sp1F4;
+    u16 sp1F2;
+    s16 sp1F0;
+    s8 sp1EF;
+    s16 sp1EC;
+    s8 sp1EB;
+    s16 sp1E8;
+    s8 sp1E7;
+    s16 sp1E4;
+    s8 sp1E3;
+    s16 sp1E0;
+    u8 sp1DF;
+    s16 sp1DC;
+    u8 sp1DB;
+    u16 sp1D8;
+    s16 sp1D6;
+    u8 sp1D5;
+    s16 sp1D2;
+    u8 sp1D1;
+    s16 sp1CE;
+    s8 sp1CD;
+    s16 sp1CA;
+    s8 sp1C9;
+    s16 sp1C6;
+    s8 sp1C5;
+    s16 sp1C2;
+    s8 sp1C1;
+    s16 sp1BE;
+    u8 sp1BD;
+    s16 sp1BA;
+    u8 sp1B9;
+    u16 sp1B6;
+    s16 sp1B4;
+    u8 sp1B3;
+    s16 sp1B0;
+    u8 sp1AF;
+    s16 sp1AC;
+    s8 sp1AB;
+    s16 sp1A8;
+    s8 sp1A7;
+    s16 sp1A4;
+    s8 sp1A3;
+    s16 sp1A0;
+    s8 sp19F;
+    s16 sp19C;
+    u8 sp19B;
+    s16 sp198;
+    u8 sp197;
+    u16 sp194;
+    s16 sp192;
+    u8 sp191;
+    s16 sp18E;
+    u8 sp18D;
+    s16 sp18A;
+    s8 sp189;
+    s16 sp186;
+    s8 sp185;
+    s16 sp182;
+    s8 sp181;
+    s16 sp17E;
+    s8 sp17D;
+    s16 sp17A;
+    u8 sp179;
+    s16 sp176;
+    u8 sp175;
+    u16 sp172;
+    s16 sp170;
+    u8 sp16F;
+    s16 sp16C;
+    u8 sp16B;
+    u16 sp168;
+    u16 sp166;
+    u16 sp164;
+    s16 sp162;
+    s8 sp161;
+    s16 sp15E;
+    s8 sp15D;
+    s16 sp15A;
+    s8 sp159;
+    s16 sp156;
+    s8 sp155;
+    s16 sp152;
+    u8 sp151;
+    s16 sp14E;
+    u8 sp14D;
+    u16 sp14A;
+    s16 sp148;
+    u8 sp147;
+    s16 sp144;
+    u8 sp143;
+    s16 sp140;
+    u8 sp13F;
+    u16 sp13C;
+    u8 sp13B;
+    u8 sp13A;
+    u8 sp139;
+    s8 sp138;
+    s8 sp137;
+    s8 sp136;
+    s8 sp135;
+    s8 sp134;
+    s8 sp133;
+    s8 sp132;
+    s8 sp131;
+    s8 sp130;
+    s8 sp12F;
+    s8 sp12E;
+    s8 sp12D;
+    s8 sp12C;
+    s8 sp12B;
+    s8 sp12A;
+    s8 sp129;
+    s8 sp128;
+    s8 sp127;
+    s8 sp126;
+    s8 sp125;
+    s8 sp124;
+    s8 sp123;
+    s8 sp122;
+    s8 sp121;
+    s8 sp120;
+    s8 sp11F;
+    s8 sp11E;
+    s8 sp11D;
+    s8 sp11C;
+    s8 sp11B;
+    s8 sp11A;
+    s8 sp119;
+    s8 sp118;
+    s8 sp117;
+    s8 sp116;
+    s8 sp115;
+    s8 sp114;
+    s8 sp113;
+    s8 sp112;
+    s8 sp111;
+    s8 sp110;
+    s8 sp10F;
+    s8 sp10E;
+    s8 sp10D;
+    s8 sp10C;
+    s8 sp10B;
+    s8 sp10A;
+    s8 sp109;
+    s8 sp108;
+    s8 sp107;
+    s8 sp106;
+    s8 sp105;
+    s8 sp104;
+    s8 sp103;
+    s8 sp102;
+    s8 sp101;
+    u8 sp100;
+    s16 spFE;
+    u8 spFD;
+    s16 spFA;
+    u8 spF9;
+    s8 spF8;
+    s8 spF7;
+    s8 spF6;
+    s8 spF5;
+    u8 spF4;
+    u8 spF3;
+    u16 spF0;
+    s16 spEE;
+    u8 spED;
+    u16 spEA;
+    u16 spE8;
+    u16 spE6;
+    u8 spE5;
+    s8 spE4;
+    u8 spE3;
+    u16 spE0;
+    s16 spDE;
+    u32 spD8;
+    u16 spD6;
+    u16 spD4;
+    s16 spD2;
+    u32 spCC;
+    s16 spCA;
+    u16 spC8;
+    s16 spC6;
+    u32 spC0;
+    u16 spBE;
+    u16 spBC;
+    s16 spBA;
+    u32 spB4;
+    s16 spB2;
+    u16 spB0;
+    s16 spAE;
+    u32 spA8;
+    u16 spA6;
+    u8 spA5;
+    u8 spA4;
+    u16 spA2;
+    s16 spA0;
+    u32 sp9C;
+    s16 sp9A;
+    u8 sp99;
+    u8 sp98;
+    s8 sp97;
+    u16 sp94;
+    u16 sp92;
+    u32 sp8C;
+    u16 sp8A;
+    u16 sp88;
+    u16 sp86;
+    u32 sp80;
+    s16 sp7E;
+    u8 sp7D;
+    u8 sp7C;
+    s16 sp7A;
+    u8 sp79;
+    u16 sp76;
+    u8 sp75;
+    u8 sp74;
+    u8 sp73;
+    s16 sp70;
+    u8 sp6F;
+    u16 sp6C;
+    u8 sp6B;
+    u8 sp6A;
+    u8 sp69;
+    s16 sp66;
+    u8 sp65;
+    u16 sp62;
+    u8 sp61;
+    u8 sp60;
+    u8 sp5F;
+    s16 sp5C;
+    u8 sp5B;
+    u16 sp58;
+    u8 sp57;
+    s16 sp54;
+    u8 sp53;
+    s32 sp4C;
+    s32 sp48;
+    s32 sp44;
+    s32 sp40;
+    s32 sp3C;
+    s32 sp38;
+    s16 temp_t1_15;
+    s16 temp_t1_6;
+    s16 temp_t1_73;
+    s16 temp_t1_74;
+    s16 temp_t1_79;
+    s16 temp_t2_2;
+    s16 temp_t2_84;
+    s16 temp_t3_11;
+    s16 temp_t3_12;
+    s16 temp_t3_83;
+    s16 temp_t4_4;
+    s16 temp_t4_72;
+    s16 temp_t5_4;
+    s16 temp_t5_76;
+    s16 temp_t6_23;
+    s16 temp_t6_24;
+    s16 temp_t6_81;
+    s16 temp_t6_87;
+    s16 temp_t7_10;
+    s16 temp_t7_11;
+    s16 temp_t7_12;
+    s16 temp_t9_5;
+    s16 temp_t9_64;
+    s32 temp_at;
+    s32 temp_at_2;
+    s32 temp_t0_100;
+    s32 temp_t0_101;
+    s32 temp_t0_102;
+    s32 temp_t0_11;
+    s32 temp_t0_15;
+    s32 temp_t0_18;
+    s32 temp_t0_19;
+    s32 temp_t0_20;
+    s32 temp_t0_21;
+    s32 temp_t0_22;
+    s32 temp_t0_24;
+    s32 temp_t0_25;
+    s32 temp_t0_26;
+    s32 temp_t0_27;
+    s32 temp_t0_28;
+    s32 temp_t0_29;
+    s32 temp_t0_2;
+    s32 temp_t0_30;
+    s32 temp_t0_35;
+    s32 temp_t0_36;
+    s32 temp_t0_37;
+    s32 temp_t0_3;
+    s32 temp_t0_41;
+    s32 temp_t0_44;
+    s32 temp_t0_45;
+    s32 temp_t0_48;
+    s32 temp_t0_49;
+    s32 temp_t0_4;
+    s32 temp_t0_51;
+    s32 temp_t0_53;
+    s32 temp_t0_58;
+    s32 temp_t0_60;
+    s32 temp_t0_61;
+    s32 temp_t0_62;
+    s32 temp_t0_63;
+    s32 temp_t0_64;
+    s32 temp_t0_65;
+    s32 temp_t0_66;
+    s32 temp_t0_67;
+    s32 temp_t0_68;
+    s32 temp_t0_6;
+    s32 temp_t0_72;
+    s32 temp_t0_74;
+    s32 temp_t0_75;
+    s32 temp_t0_76;
+    s32 temp_t0_77;
+    s32 temp_t0_78;
+    s32 temp_t0_79;
+    s32 temp_t0_7;
+    s32 temp_t0_80;
+    s32 temp_t0_81;
+    s32 temp_t0_82;
+    s32 temp_t0_83;
+    s32 temp_t0_84;
+    s32 temp_t0_85;
+    s32 temp_t0_86;
+    s32 temp_t0_88;
+    s32 temp_t0_89;
+    s32 temp_t0_8;
+    s32 temp_t0_90;
+    s32 temp_t0_91;
+    s32 temp_t0_92;
+    s32 temp_t0_94;
+    s32 temp_t0_95;
+    s32 temp_t0_97;
+    s32 temp_t0_98;
+    s32 temp_t0_9;
+    s32 temp_t1;
+    s32 temp_t1_13;
+    s32 temp_t1_14;
+    s32 temp_t1_17;
+    s32 temp_t1_18;
+    s32 temp_t1_19;
+    s32 temp_t1_20;
+    s32 temp_t1_21;
+    s32 temp_t1_22;
+    s32 temp_t1_24;
+    s32 temp_t1_27;
+    s32 temp_t1_28;
+    s32 temp_t1_29;
+    s32 temp_t1_30;
+    s32 temp_t1_31;
+    s32 temp_t1_32;
+    s32 temp_t1_33;
+    s32 temp_t1_34;
+    s32 temp_t1_36;
+    s32 temp_t1_40;
+    s32 temp_t1_45;
+    s32 temp_t1_46;
+    s32 temp_t1_47;
+    s32 temp_t1_4;
+    s32 temp_t1_50;
+    s32 temp_t1_51;
+    s32 temp_t1_52;
+    s32 temp_t1_54;
+    s32 temp_t1_58;
+    s32 temp_t1_60;
+    s32 temp_t1_62;
+    s32 temp_t1_63;
+    s32 temp_t1_64;
+    s32 temp_t1_66;
+    s32 temp_t1_67;
+    s32 temp_t1_68;
+    s32 temp_t1_69;
+    s32 temp_t1_70;
+    s32 temp_t1_71;
+    s32 temp_t1_72;
+    s32 temp_t1_75;
+    s32 temp_t1_76;
+    s32 temp_t1_7;
+    s32 temp_t1_81;
+    s32 temp_t1_83;
+    s32 temp_t1_84;
+    s32 temp_t1_85;
+    s32 temp_t1_8;
+    s32 temp_t1_9;
+    s32 temp_t2;
+    s32 temp_t2_10;
+    s32 temp_t2_11;
+    s32 temp_t2_12;
+    s32 temp_t2_14;
+    s32 temp_t2_15;
+    s32 temp_t2_16;
+    s32 temp_t2_17;
+    s32 temp_t2_18;
+    s32 temp_t2_20;
+    s32 temp_t2_22;
+    s32 temp_t2_23;
+    s32 temp_t2_27;
+    s32 temp_t2_28;
+    s32 temp_t2_29;
+    s32 temp_t2_30;
+    s32 temp_t2_31;
+    s32 temp_t2_32;
+    s32 temp_t2_33;
+    s32 temp_t2_34;
+    s32 temp_t2_35;
+    s32 temp_t2_36;
+    s32 temp_t2_37;
+    s32 temp_t2_38;
+    s32 temp_t2_39;
+    s32 temp_t2_40;
+    s32 temp_t2_41;
+    s32 temp_t2_46;
+    s32 temp_t2_48;
+    s32 temp_t2_4;
+    s32 temp_t2_52;
+    s32 temp_t2_54;
+    s32 temp_t2_56;
+    s32 temp_t2_60;
+    s32 temp_t2_62;
+    s32 temp_t2_63;
+    s32 temp_t2_64;
+    s32 temp_t2_65;
+    s32 temp_t2_66;
+    s32 temp_t2_68;
+    s32 temp_t2_69;
+    s32 temp_t2_70;
+    s32 temp_t2_71;
+    s32 temp_t2_73;
+    s32 temp_t2_74;
+    s32 temp_t2_75;
+    s32 temp_t2_77;
+    s32 temp_t2_7;
+    s32 temp_t2_81;
+    s32 temp_t2_82;
+    s32 temp_t2_83;
+    s32 temp_t2_85;
+    s32 temp_t2_86;
+    s32 temp_t2_87;
+    s32 temp_t2_8;
+    s32 temp_t2_90;
+    s32 temp_t2_91;
+    s32 temp_t2_92;
+    s32 temp_t2_93;
+    s32 temp_t2_94;
+    s32 temp_t2_95;
+    s32 temp_t2_96;
+    s32 temp_t2_97;
+    s32 temp_t2_9;
+    s32 temp_t3_10;
+    s32 temp_t3_14;
+    s32 temp_t3_15;
+    s32 temp_t3_19;
+    s32 temp_t3_20;
+    s32 temp_t3_22;
+    s32 temp_t3_23;
+    s32 temp_t3_25;
+    s32 temp_t3_26;
+    s32 temp_t3_27;
+    s32 temp_t3_28;
+    s32 temp_t3_29;
+    s32 temp_t3_30;
+    s32 temp_t3_31;
+    s32 temp_t3_33;
+    s32 temp_t3_34;
+    s32 temp_t3_35;
+    s32 temp_t3_36;
+    s32 temp_t3_37;
+    s32 temp_t3_38;
+    s32 temp_t3_39;
+    s32 temp_t3_40;
+    s32 temp_t3_42;
+    s32 temp_t3_45;
+    s32 temp_t3_47;
+    s32 temp_t3_48;
+    s32 temp_t3_49;
+    s32 temp_t3_4;
+    s32 temp_t3_51;
+    s32 temp_t3_52;
+    s32 temp_t3_54;
+    s32 temp_t3_55;
+    s32 temp_t3_56;
+    s32 temp_t3_57;
+    s32 temp_t3_60;
+    s32 temp_t3_61;
+    s32 temp_t3_62;
+    s32 temp_t3_63;
+    s32 temp_t3_64;
+    s32 temp_t3_65;
+    s32 temp_t3_66;
+    s32 temp_t3_67;
+    s32 temp_t3_69;
+    s32 temp_t3_6;
+    s32 temp_t3_70;
+    s32 temp_t3_72;
+    s32 temp_t3_73;
+    s32 temp_t3_75;
+    s32 temp_t3_76;
+    s32 temp_t3_77;
+    s32 temp_t3_78;
+    s32 temp_t3_81;
+    s32 temp_t3_85;
+    s32 temp_t3_86;
+    s32 temp_t3_87;
+    s32 temp_t3_9;
+    s32 temp_t4_12;
+    s32 temp_t4_13;
+    s32 temp_t4_15;
+    s32 temp_t4_16;
+    s32 temp_t4_18;
+    s32 temp_t4_21;
+    s32 temp_t4_22;
+    s32 temp_t4_23;
+    s32 temp_t4_24;
+    s32 temp_t4_25;
+    s32 temp_t4_26;
+    s32 temp_t4_28;
+    s32 temp_t4_30;
+    s32 temp_t4_31;
+    s32 temp_t4_33;
+    s32 temp_t4_34;
+    s32 temp_t4_36;
+    s32 temp_t4_37;
+    s32 temp_t4_39;
+    s32 temp_t4_3;
+    s32 temp_t4_42;
+    s32 temp_t4_43;
+    s32 temp_t4_46;
+    s32 temp_t4_48;
+    s32 temp_t4_51;
+    s32 temp_t4_52;
+    s32 temp_t4_55;
+    s32 temp_t4_57;
+    s32 temp_t4_58;
+    s32 temp_t4_61;
+    s32 temp_t4_66;
+    s32 temp_t4_67;
+    s32 temp_t4_69;
+    s32 temp_t4_70;
+    s32 temp_t4_74;
+    s32 temp_t4_75;
+    s32 temp_t4_76;
+    s32 temp_t4_77;
+    s32 temp_t4_78;
+    s32 temp_t4_79;
+    s32 temp_t4_80;
+    s32 temp_t4_81;
+    s32 temp_t4_82;
+    s32 temp_t4_86;
+    s32 temp_t4_87;
+    s32 temp_t4_8;
+    s32 temp_t4_9;
+    s32 temp_t5;
+    s32 temp_t5_10;
+    s32 temp_t5_13;
+    s32 temp_t5_14;
+    s32 temp_t5_15;
+    s32 temp_t5_16;
+    s32 temp_t5_17;
+    s32 temp_t5_18;
+    s32 temp_t5_19;
+    s32 temp_t5_20;
+    s32 temp_t5_21;
+    s32 temp_t5_22;
+    s32 temp_t5_23;
+    s32 temp_t5_24;
+    s32 temp_t5_26;
+    s32 temp_t5_2;
+    s32 temp_t5_31;
+    s32 temp_t5_32;
+    s32 temp_t5_33;
+    s32 temp_t5_34;
+    s32 temp_t5_37;
+    s32 temp_t5_38;
+    s32 temp_t5_39;
+    s32 temp_t5_40;
+    s32 temp_t5_41;
+    s32 temp_t5_42;
+    s32 temp_t5_43;
+    s32 temp_t5_46;
+    s32 temp_t5_47;
+    s32 temp_t5_50;
+    s32 temp_t5_51;
+    s32 temp_t5_52;
+    s32 temp_t5_53;
+    s32 temp_t5_55;
+    s32 temp_t5_56;
+    s32 temp_t5_57;
+    s32 temp_t5_59;
+    s32 temp_t5_5;
+    s32 temp_t5_62;
+    s32 temp_t5_63;
+    s32 temp_t5_64;
+    s32 temp_t5_65;
+    s32 temp_t5_68;
+    s32 temp_t5_70;
+    s32 temp_t5_72;
+    s32 temp_t5_74;
+    s32 temp_t5_75;
+    s32 temp_t5_77;
+    s32 temp_t5_81;
+    s32 temp_t5_82;
+    s32 temp_t5_83;
+    s32 temp_t5_86;
+    s32 temp_t6_11;
+    s32 temp_t6_15;
+    s32 temp_t6_16;
+    s32 temp_t6_17;
+    s32 temp_t6_20;
+    s32 temp_t6_21;
+    s32 temp_t6_22;
+    s32 temp_t6_26;
+    s32 temp_t6_29;
+    s32 temp_t6_2;
+    s32 temp_t6_30;
+    s32 temp_t6_31;
+    s32 temp_t6_32;
+    s32 temp_t6_34;
+    s32 temp_t6_36;
+    s32 temp_t6_37;
+    s32 temp_t6_38;
+    s32 temp_t6_39;
+    s32 temp_t6_43;
+    s32 temp_t6_44;
+    s32 temp_t6_46;
+    s32 temp_t6_48;
+    s32 temp_t6_50;
+    s32 temp_t6_51;
+    s32 temp_t6_52;
+    s32 temp_t6_53;
+    s32 temp_t6_54;
+    s32 temp_t6_55;
+    s32 temp_t6_57;
+    s32 temp_t6_59;
+    s32 temp_t6_5;
+    s32 temp_t6_63;
+    s32 temp_t6_64;
+    s32 temp_t6_65;
+    s32 temp_t6_66;
+    s32 temp_t6_69;
+    s32 temp_t6_6;
+    s32 temp_t6_70;
+    s32 temp_t6_71;
+    s32 temp_t6_72;
+    s32 temp_t6_73;
+    s32 temp_t6_76;
+    s32 temp_t6_77;
+    s32 temp_t6_79;
+    s32 temp_t6_7;
+    s32 temp_t6_83;
+    s32 temp_t6_84;
+    s32 temp_t6_88;
+    s32 temp_t6_89;
+    s32 temp_t6_8;
+    s32 temp_t6_90;
+    s32 temp_t6_91;
+    s32 temp_t6_92;
+    s32 temp_t6_94;
+    s32 temp_t6_95;
+    s32 temp_t6_96;
+    s32 temp_t7;
+    s32 temp_t7_14;
+    s32 temp_t7_15;
+    s32 temp_t7_16;
+    s32 temp_t7_17;
+    s32 temp_t7_18;
+    s32 temp_t7_19;
+    s32 temp_t7_20;
+    s32 temp_t7_21;
+    s32 temp_t7_22;
+    s32 temp_t7_24;
+    s32 temp_t7_25;
+    s32 temp_t7_26;
+    s32 temp_t7_27;
+    s32 temp_t7_28;
+    s32 temp_t7_29;
+    s32 temp_t7_32;
+    s32 temp_t7_33;
+    s32 temp_t7_36;
+    s32 temp_t7_37;
+    s32 temp_t7_39;
+    s32 temp_t7_3;
+    s32 temp_t7_40;
+    s32 temp_t7_41;
+    s32 temp_t7_42;
+    s32 temp_t7_46;
+    s32 temp_t7_47;
+    s32 temp_t7_48;
+    s32 temp_t7_49;
+    s32 temp_t7_4;
+    s32 temp_t7_51;
+    s32 temp_t7_52;
+    s32 temp_t7_53;
+    s32 temp_t7_54;
+    s32 temp_t7_55;
+    s32 temp_t7_56;
+    s32 temp_t7_57;
+    s32 temp_t7_58;
+    s32 temp_t7_59;
+    s32 temp_t7_60;
+    s32 temp_t7_61;
+    s32 temp_t7_62;
+    s32 temp_t7_66;
+    s32 temp_t7_68;
+    s32 temp_t7_69;
+    s32 temp_t7_6;
+    s32 temp_t7_70;
+    s32 temp_t7_71;
+    s32 temp_t7_76;
+    s32 temp_t7_77;
+    s32 temp_t7_7;
+    s32 temp_t7_84;
+    s32 temp_t7_86;
+    s32 temp_t7_87;
+    s32 temp_t7_8;
+    s32 temp_t7_90;
+    s32 temp_t7_93;
+    s32 temp_t7_94;
+    s32 temp_t7_95;
+    s32 temp_t7_96;
+    s32 temp_t7_97;
+    s32 temp_t7_98;
+    s32 temp_t7_99;
+    s32 temp_t8_10;
+    s32 temp_t8_12;
+    s32 temp_t8_13;
+    s32 temp_t8_14;
+    s32 temp_t8_16;
+    s32 temp_t8_17;
+    s32 temp_t8_18;
+    s32 temp_t8_19;
+    s32 temp_t8_20;
+    s32 temp_t8_21;
+    s32 temp_t8_22;
+    s32 temp_t8_23;
+    s32 temp_t8_24;
+    s32 temp_t8_25;
+    s32 temp_t8_26;
+    s32 temp_t8_27;
+    s32 temp_t8_2;
+    s32 temp_t8_30;
+    s32 temp_t8_32;
+    s32 temp_t8_37;
+    s32 temp_t8_38;
+    s32 temp_t8_39;
+    s32 temp_t8_40;
+    s32 temp_t8_41;
+    s32 temp_t8_42;
+    s32 temp_t8_43;
+    s32 temp_t8_44;
+    s32 temp_t8_46;
+    s32 temp_t8_47;
+    s32 temp_t8_48;
+    s32 temp_t8_49;
+    s32 temp_t8_51;
+    s32 temp_t8_53;
+    s32 temp_t8_54;
+    s32 temp_t8_55;
+    s32 temp_t8_56;
+    s32 temp_t8_58;
+    s32 temp_t8_5;
+    s32 temp_t8_60;
+    s32 temp_t8_61;
+    s32 temp_t8_62;
+    s32 temp_t8_63;
+    s32 temp_t8_64;
+    s32 temp_t8_67;
+    s32 temp_t8_68;
+    s32 temp_t8_69;
+    s32 temp_t8_70;
+    s32 temp_t8_71;
+    s32 temp_t8_72;
+    s32 temp_t8_73;
+    s32 temp_t8_76;
+    s32 temp_t8_77;
+    s32 temp_t8_79;
+    s32 temp_t8_7;
+    s32 temp_t8_8;
+    s32 temp_t8_9;
+    s32 temp_t9_11;
+    s32 temp_t9_14;
+    s32 temp_t9_15;
+    s32 temp_t9_16;
+    s32 temp_t9_17;
+    s32 temp_t9_18;
+    s32 temp_t9_19;
+    s32 temp_t9_20;
+    s32 temp_t9_21;
+    s32 temp_t9_24;
+    s32 temp_t9_25;
+    s32 temp_t9_26;
+    s32 temp_t9_27;
+    s32 temp_t9_28;
+    s32 temp_t9_29;
+    s32 temp_t9_2;
+    s32 temp_t9_31;
+    s32 temp_t9_32;
+    s32 temp_t9_36;
+    s32 temp_t9_37;
+    s32 temp_t9_3;
+    s32 temp_t9_44;
+    s32 temp_t9_45;
+    s32 temp_t9_46;
+    s32 temp_t9_47;
+    s32 temp_t9_51;
+    s32 temp_t9_54;
+    s32 temp_t9_55;
+    s32 temp_t9_56;
+    s32 temp_t9_57;
+    s32 temp_t9_59;
+    s32 temp_t9_61;
+    s32 temp_t9_66;
+    s32 temp_t9_67;
+    s32 temp_t9_69;
+    s32 temp_t9_73;
+    s32 temp_t9_74;
+    s32 temp_t9_7;
+    s32 temp_t9_8;
+    s32 temp_t9_9;
+    s32 temp_v0;
+    s32 temp_v0_10;
+    s32 temp_v0_12;
+    s32 temp_v0_14;
+    s32 temp_v0_16;
+    s32 temp_v0_18;
+    s32 temp_v0_20;
+    s32 temp_v0_22;
+    s32 temp_v0_24;
+    s32 temp_v0_26;
+    s32 temp_v0_4;
+    s32 temp_v0_6;
+    s32 temp_v0_8;
+    s8 temp_s2_4;
+    s8 temp_s2_5;
+    s8 temp_s2_6;
+    s8 temp_s2_7;
+    s8 temp_s3_5;
+    s8 temp_s3_6;
+    s8 temp_s3_7;
+    s8 temp_s3_8;
+    s8 temp_s4_3;
+    s8 temp_s4_4;
+    s8 temp_s4_5;
+    s8 temp_s4_6;
+    s8 temp_s5_4;
+    s8 temp_s5_5;
+    s8 temp_s5_6;
+    s8 temp_s5_7;
+    s8 temp_t0_12;
+    s8 temp_t0_16;
+    s8 temp_t0_17;
+    s8 temp_t0_38;
+    s8 temp_t0_39;
+    s8 temp_t0_42;
+    s8 temp_t0_46;
+    s8 temp_t0_54;
+    s8 temp_t0_5;
+    s8 temp_t0_69;
+    s8 temp_t0_71;
+    s8 temp_t1_16;
+    s8 temp_t1_2;
+    s8 temp_t1_37;
+    s8 temp_t1_38;
+    s8 temp_t1_42;
+    s8 temp_t1_43;
+    s8 temp_t1_48;
+    s8 temp_t1_49;
+    s8 temp_t1_61;
+    s8 temp_t2_25;
+    s8 temp_t2_26;
+    s8 temp_t2_3;
+    s8 temp_t2_47;
+    s8 temp_t2_49;
+    s8 temp_t2_50;
+    s8 temp_t2_53;
+    s8 temp_t2_55;
+    s8 temp_t2_58;
+    s8 temp_t2_59;
+    s8 temp_t2_5;
+    s8 temp_t2_80;
+    s8 temp_t3_18;
+    s8 temp_t3_21;
+    s8 temp_t3_2;
+    s8 temp_t3_32;
+    s8 temp_t3_50;
+    s8 temp_t3_53;
+    s8 temp_t3_58;
+    s8 temp_t3_59;
+    s8 temp_t3_5;
+    s8 temp_t4_19;
+    s8 temp_t4_20;
+    s8 temp_t4_32;
+    s8 temp_t4_40;
+    s8 temp_t4_44;
+    s8 temp_t4_47;
+    s8 temp_t4_50;
+    s8 temp_t4_5;
+    s8 temp_t4_65;
+    s8 temp_t4_68;
+    s8 temp_t4_71;
+    s8 temp_t4_7;
+    s8 temp_t5_11;
+    s8 temp_t5_12;
+    s8 temp_t5_25;
+    s8 temp_t5_3;
+    s8 temp_t5_44;
+    s8 temp_t5_45;
+    s8 temp_t5_49;
+    s8 temp_t5_54;
+    s8 temp_t5_66;
+    s8 temp_t5_67;
+    s8 temp_t5_8;
+    s8 temp_t5_9;
+    s8 temp_t6_18;
+    s8 temp_t6_19;
+    s8 temp_t6_27;
+    s8 temp_t6_28;
+    s8 temp_t6_33;
+    s8 temp_t6_35;
+    s8 temp_t6_3;
+    s8 temp_t6_49;
+    s8 temp_t6_56;
+    s8 temp_t6_58;
+    s8 temp_t6_80;
+    s8 temp_t7_31;
+    s8 temp_t7_44;
+    s8 temp_t7_45;
+    s8 temp_t7_50;
+    s8 temp_t7_63;
+    s8 temp_t7_65;
+    s8 temp_t7_78;
+    s8 temp_t7_83;
+    s8 temp_t7_9;
+    s8 temp_t8;
+    s8 temp_t8_31;
+    s8 temp_t8_34;
+    s8 temp_t8_35;
+    s8 temp_t8_3;
+    s8 temp_t8_45;
+    s8 temp_t8_4;
+    s8 temp_t9_12;
+    s8 temp_t9_13;
+    s8 temp_t9_34;
+    s8 temp_t9_35;
+    s8 temp_t9_38;
+    s8 temp_t9_39;
+    s8 temp_t9_41;
+    s8 temp_t9_43;
+    s8 temp_t9_49;
+    s8 temp_t9_4;
+    s8 temp_t9_58;
+    s8 temp_t9_62;
+    u16 temp_t0_104;
+    u16 temp_t0_99;
+    u16 temp_t1_3;
+    u16 temp_t1_55;
+    u16 temp_t1_57;
+    u16 temp_t1_59;
+    u16 temp_t1_82;
+    u16 temp_t2_67;
+    u16 temp_t2_72;
+    u16 temp_t2_76;
+    u16 temp_t3_16;
+    u16 temp_t3_7;
+    u16 temp_t3_88;
+    u16 temp_t3_8;
+    u16 temp_t4_2;
+    u16 temp_t4_35;
+    u16 temp_t4_54;
+    u16 temp_t4_56;
+    u16 temp_t4_88;
+    u16 temp_t5_36;
+    u16 temp_t5_58;
+    u16 temp_t5_84;
+    u16 temp_t6_45;
+    u16 temp_t6_68;
+    u16 temp_t6_85;
+    u16 temp_t7_72;
+    u16 temp_t7_73;
+    u16 temp_t7_89;
+    u16 temp_t8_11;
+    u16 temp_t8_57;
+    u16 temp_t8_65;
+    u16 temp_t8_75;
+    u16 temp_t8_78;
+    u16 temp_t9_33;
+    u16 temp_t9_53;
+    u16 temp_t9_72;
+    u16 temp_v0_11;
+    u16 temp_v0_13;
+    u16 temp_v0_15;
+    u16 temp_v0_17;
+    u16 temp_v0_19;
+    u16 temp_v0_21;
+    u16 temp_v0_23;
+    u16 temp_v0_25;
+    u16 temp_v0_2;
+    u16 temp_v0_3;
+    u16 temp_v0_5;
+    u16 temp_v0_7;
+    u16 temp_v0_9;
+    u32 temp_a0;
+    u32 temp_a0_10;
+    u32 temp_a0_11;
+    u32 temp_a0_12;
+    u32 temp_a0_13;
+    u32 temp_a0_14;
+    u32 temp_a0_15;
+    u32 temp_a0_16;
+    u32 temp_a0_17;
+    u32 temp_a0_18;
+    u32 temp_a0_19;
+    u32 temp_a0_20;
+    u32 temp_a0_21;
+    u32 temp_a0_22;
+    u32 temp_a0_23;
+    u32 temp_a0_24;
+    u32 temp_a0_25;
+    u32 temp_a0_26;
+    u32 temp_a0_2;
+    u32 temp_a0_3;
+    u32 temp_a0_4;
+    u32 temp_a0_5;
+    u32 temp_a0_6;
+    u32 temp_a0_7;
+    u32 temp_a0_8;
+    u32 temp_a0_9;
+    u32 temp_t0;
+    u32 temp_t0_10;
+    u32 temp_t0_14;
+    u32 temp_t0_55;
+    u32 temp_t0_87;
+    u32 temp_t0_93;
+    u32 temp_t1_53;
+    u32 temp_t1_77;
+    u32 temp_t1_78;
+    u32 temp_t1_80;
+    u32 temp_t2_6;
+    u32 temp_t2_88;
+    u32 temp_t3;
+    u32 temp_t3_13;
+    u32 temp_t3_44;
+    u32 temp_t3_80;
+    u32 temp_t4_11;
+    u32 temp_t4_59;
+    u32 temp_t4_62;
+    u32 temp_t4_63;
+    u32 temp_t4_64;
+    u32 temp_t4_6;
+    u32 temp_t4_73;
+    u32 temp_t4_83;
+    u32 temp_t4_84;
+    u32 temp_t5_35;
+    u32 temp_t5_60;
+    u32 temp_t5_61;
+    u32 temp_t5_73;
+    u32 temp_t5_78;
+    u32 temp_t5_80;
+    u32 temp_t5_85;
+    u32 temp_t6_13;
+    u32 temp_t6_14;
+    u32 temp_t6_25;
+    u32 temp_t6_82;
+    u32 temp_t7_13;
+    u32 temp_t7_2;
+    u32 temp_t7_5;
+    u32 temp_t7_67;
+    u32 temp_t7_85;
+    u32 temp_t7_88;
+    u32 temp_t8_15;
+    u32 temp_t8_28;
+    u32 temp_t8_50;
+    u32 temp_t8_52;
+    u32 temp_t8_66;
+    u32 temp_t8_74;
+    u32 temp_t8_80;
+    u32 temp_t9_10;
+    u32 temp_t9_30;
+    u32 temp_t9_50;
+    u32 temp_t9_68;
+    u32 temp_t9_6;
+    u32 temp_t9_71;
+    u8 temp_a3;
+    u8 temp_a3_2;
+    u8 temp_a3_3;
+    u8 temp_a3_4;
+    u8 temp_s0;
+    u8 temp_s0_10;
+    u8 temp_s0_11;
+    u8 temp_s0_2;
+    u8 temp_s0_3;
+    u8 temp_s0_4;
+    u8 temp_s0_5;
+    u8 temp_s0_6;
+    u8 temp_s0_7;
+    u8 temp_s0_8;
+    u8 temp_s0_9;
+    u8 temp_s1;
+    u8 temp_s1_2;
+    u8 temp_s1_3;
+    u8 temp_s1_4;
+    u8 temp_s1_5;
+    u8 temp_s1_6;
+    u8 temp_s1_7;
+    u8 temp_s2;
+    u8 temp_s2_2;
+    u8 temp_s2_3;
+    u8 temp_s2_8;
+    u8 temp_s3;
+    u8 temp_s3_2;
+    u8 temp_s3_3;
+    u8 temp_s3_4;
+    u8 temp_s3_9;
+    u8 temp_s4;
+    u8 temp_s4_2;
+    u8 temp_s4_7;
+    u8 temp_s4_8;
+    u8 temp_s5;
+    u8 temp_s5_2;
+    u8 temp_s5_3;
+    u8 temp_s5_8;
+    u8 temp_s5_9;
+    u8 temp_s6;
+    u8 temp_s6_2;
+    u8 temp_s6_3;
+    u8 temp_s6_4;
+    u8 temp_s6_5;
+    u8 temp_s6_6;
+    u8 temp_s6_7;
+    u8 temp_s7;
+    u8 temp_s7_2;
+    u8 temp_s7_3;
+    u8 temp_s7_4;
+    u8 temp_s7_5;
+    u8 temp_s7_6;
+    u8 temp_s7_7;
+    u8 temp_s7_8;
+    u8 temp_t0_103;
+    u8 temp_t0_13;
+    u8 temp_t0_23;
+    u8 temp_t0_31;
+    u8 temp_t0_32;
+    u8 temp_t0_33;
+    u8 temp_t0_34;
+    u8 temp_t0_40;
+    u8 temp_t0_43;
+    u8 temp_t0_47;
+    u8 temp_t0_50;
+    u8 temp_t0_52;
+    u8 temp_t0_56;
+    u8 temp_t0_57;
+    u8 temp_t0_59;
+    u8 temp_t0_70;
+    u8 temp_t0_73;
+    u8 temp_t0_96;
+    u8 temp_t1_11;
+    u8 temp_t1_12;
+    u8 temp_t1_23;
+    u8 temp_t1_25;
+    u8 temp_t1_26;
+    u8 temp_t1_35;
+    u8 temp_t1_39;
+    u8 temp_t1_41;
+    u8 temp_t1_44;
+    u8 temp_t1_56;
+    u8 temp_t1_5;
+    u8 temp_t1_65;
+    u8 temp_t2_13;
+    u8 temp_t2_19;
+    u8 temp_t2_21;
+    u8 temp_t2_24;
+    u8 temp_t2_42;
+    u8 temp_t2_43;
+    u8 temp_t2_44;
+    u8 temp_t2_45;
+    u8 temp_t2_51;
+    u8 temp_t2_57;
+    u8 temp_t2_61;
+    u8 temp_t2_78;
+    u8 temp_t2_79;
+    u8 temp_t2_89;
+    u8 temp_t3_17;
+    u8 temp_t3_24;
+    u8 temp_t3_3;
+    u8 temp_t3_41;
+    u8 temp_t3_43;
+    u8 temp_t3_46;
+    u8 temp_t3_68;
+    u8 temp_t3_71;
+    u8 temp_t3_74;
+    u8 temp_t3_82;
+    u8 temp_t3_84;
+    u8 temp_t4;
+    u8 temp_t4_10;
+    u8 temp_t4_14;
+    u8 temp_t4_17;
+    u8 temp_t4_27;
+    u8 temp_t4_29;
+    u8 temp_t4_38;
+    u8 temp_t4_41;
+    u8 temp_t4_45;
+    u8 temp_t4_49;
+    u8 temp_t4_53;
+    u8 temp_t4_85;
+    u8 temp_t5_27;
+    u8 temp_t5_28;
+    u8 temp_t5_29;
+    u8 temp_t5_30;
+    u8 temp_t5_48;
+    u8 temp_t5_69;
+    u8 temp_t5_6;
+    u8 temp_t5_71;
+    u8 temp_t5_7;
+    u8 temp_t6;
+    u8 temp_t6_10;
+    u8 temp_t6_12;
+    u8 temp_t6_40;
+    u8 temp_t6_41;
+    u8 temp_t6_42;
+    u8 temp_t6_47;
+    u8 temp_t6_4;
+    u8 temp_t6_60;
+    u8 temp_t6_61;
+    u8 temp_t6_67;
+    u8 temp_t6_74;
+    u8 temp_t6_75;
+    u8 temp_t6_78;
+    u8 temp_t6_86;
+    u8 temp_t6_93;
+    u8 temp_t6_9;
+    u8 temp_t7_23;
+    u8 temp_t7_30;
+    u8 temp_t7_34;
+    u8 temp_t7_35;
+    u8 temp_t7_43;
+    u8 temp_t7_64;
+    u8 temp_t7_74;
+    u8 temp_t7_75;
+    u8 temp_t7_79;
+    u8 temp_t7_80;
+    u8 temp_t7_81;
+    u8 temp_t7_82;
+    u8 temp_t7_91;
+    u8 temp_t7_92;
+    u8 temp_t8_29;
+    u8 temp_t8_33;
+    u8 temp_t8_36;
+    u8 temp_t8_59;
+    u8 temp_t8_6;
+    u8 temp_t9;
+    u8 temp_t9_22;
+    u8 temp_t9_23;
+    u8 temp_t9_40;
+    u8 temp_t9_42;
+    u8 temp_t9_48;
+    u8 temp_t9_52;
+    u8 temp_t9_60;
+    u8 temp_t9_63;
+    void *temp_t1_10;
+    void *temp_t3_79;
+    void *temp_t4_60;
+    void *temp_t5_79;
+    void *temp_t6_62;
+    void *temp_t7_38;
+    void *temp_t9_65;
+    void *temp_t9_70;
+    s8 phi_s2;
+    s8 phi_s3;
+    u8 phi_s0;
+    u8 phi_s1;
+    u8 phi_s7;
+    u8 phi_s6;
+    s8 phi_s4;
+    s8 phi_s5;
+    s8 phi_s2_2;
+    s8 phi_s2_3;
+    s8 phi_s2_4;
+    s8 phi_s2_5;
+    u16 phi_t0;
+    u8 phi_s0_2;
+    u8 phi_s1_2;
+    u8 phi_s2_6;
+    u8 phi_s3_2;
+    u8 phi_s4_2;
+    u8 phi_s5_2;
+    u8 phi_s6_2;
+    u8 phi_s7_2;
+    s8 phi_s2_7;
+    s8 phi_s3_3;
+    u8 phi_s0_3;
+    u8 phi_s1_3;
+    u8 phi_s7_3;
+    u8 phi_s6_3;
+    s8 phi_s4_3;
+    s8 phi_s5_3;
+    s8 phi_s2_8;
+    s8 phi_s2_9;
+    s8 phi_s2_10;
+    s8 phi_s2_11;
+    u8 phi_s0_4;
+    s32 phi_s1_4;
+    u8 phi_s6_4;
+    u8 phi_s6_5;
+    u8 phi_s6_6;
+    s8 phi_s4_4;
 
+    sp280 = 0x11100;
+    sp2A5 = 0;
+    sp2A0 = 0;
+    sp2A1 = 0;
+    sp2A2 = 0;
+    sp2A3 = 0;
+    sp2A4 = 0;
+    sp2A6 = 0;
+    sp2A5 = byte_CODE_bss_8008E341;
+    sp2A6 = off_CODE_bss_8008E340;
+    sp2A4 = byte_CODE_bss_8008E342;
+    sp2A3 = byte_CODE_bss_8008E343;
+    sp2A2 = off_CODE_bss_8008E344;
+    sp2A1 = byte_CODE_bss_8008E345;
+    sp2A0 = byte_CODE_bss_8008E346;
+    temp_t6 = spec_R
+    IM = 0;
+    sp29C = 0;
+    sp29D = 0;
+    sp2A7 = 0;
+    I = 0;
+    sp29F = 0;
+    PC = 0;
+    SP = 0;
+    IY = 0;
+    IX = 0;
+    sp288 = 0;
+    sp286 = 0;
+    sp287 = 0;
+    sp28C = 0;
+    temp_s0 = spectrum_header16_15;
+    temp_s1 = byte_CODE_bss_8008E339;
+    temp_s2 = byte_CODE_bss_8008E33A;
+    temp_s3 = byte_CODE_bss_8008E33B;
+    temp_s4 = off_CODE_bss_8008E33C;
+    temp_s5 = byte_CODE_bss_8008E33D;
+    temp_s6 = byte_CODE_bss_8008E33E;
+    temp_s7 = byte_CODE_bss_8008E33F;
+    sp2A7 = temp_t6;
+    sp288 = (s32) temp_t6;
+    sp29F = byte_CODE_bss_8008E347;
+    sp29D = spec_IFF2_lower;
+    sp29C = spec_IFF2_upper;
+    I = spec_I;
+    IM = spec_IM;
+    IX = spec_IX;
+    IY = spec_IY;
+    SP = spec_SP;
+    PC = spec_PC;
+    phi_s2 = (s8) temp_s2;
+    phi_s3 = (s8) temp_s3;
+    phi_s0 = temp_s0;
+    phi_s1 = temp_s1;
+    phi_s7 = temp_s7;
+    phi_s6 = temp_s6;
+    phi_s4 = (s8) temp_s4;
+    phi_s5 = (s8) temp_s5;
+    phi_s0_2 = temp_s0;
+    phi_s1_2 = temp_s1;
+    phi_s2_6 = temp_s2;
+    phi_s3_2 = temp_s3;
+    phi_s4_2 = temp_s4;
+    phi_s5_2 = temp_s5;
+    phi_s6_2 = temp_s6;
+    phi_s7_2 = temp_s7;
+    if ((0x11100 != 0) || (sp285 == 0)) {
+        do {
+loop_2:
+            temp_t4 = sp286;
+            sp286 = 0;
+            sp285 = 1;
+            sp287 = temp_t4;
+            temp_t9 = *(PC + ptr_spectrum_roms);
+            temp_t3 = temp_t9 & 0xFF;
+            temp_at = temp_t3 < 0x100U;
+            PC += 1;
+            sp288 += 1;
+            sp284 = temp_t9;
+            phi_s2_2 = phi_s2;
+            phi_s2_3 = phi_s2;
+            phi_s2_4 = phi_s2;
+            phi_s2_5 = phi_s2;
+            phi_s2_7 = phi_s2;
+            phi_s3_3 = phi_s3;
+            phi_s0_3 = phi_s0;
+            phi_s1_3 = phi_s1;
+            phi_s7_3 = phi_s7;
+            phi_s6_3 = phi_s6;
+            phi_s4_3 = phi_s4;
+            phi_s5_3 = phi_s5;
+            phi_s2_7 = phi_s2;
+            phi_s2_8 = phi_s2;
+            phi_s2_9 = phi_s2;
+            phi_s2_10 = phi_s2;
+            phi_s2_11 = phi_s2;
+            phi_s2_7 = phi_s2;
+            phi_s3_3 = phi_s3;
+            phi_s3_3 = phi_s3;
+            phi_s0_3 = phi_s0;
+            phi_s0_3 = phi_s0;
+            phi_s1_3 = phi_s1;
+            phi_s1_3 = phi_s1;
+            phi_s7_3 = phi_s7;
+            phi_s7_3 = phi_s7;
+            phi_s7_3 = phi_s7;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_4 = phi_s6;
+            phi_s6_5 = phi_s6;
+            phi_s6_6 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s6_3 = phi_s6;
+            phi_s4_3 = phi_s4;
+            phi_s4_3 = phi_s4;
+            phi_s4_3 = phi_s4;
+            phi_s4_4 = phi_s4;
+            phi_s4_3 = phi_s4;
+            phi_s4_3 = phi_s4;
+            phi_s5_3 = phi_s5;
+            phi_s5_3 = phi_s5;
+            if (temp_at != 0) {
+                switch (temp_t3) {                  /* switch 1 */
+                case 0x0:                           /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x1:                           /* switch 1 */
+                    temp_t6_2 = ptr_spectrum_roms;
+                    sp28C += 0xA;
+                    temp_t4_2 = PC + 1;
+                    temp_s3_2 = *(PC + temp_t6_2);
+                    temp_t2 = temp_t4_2 & 0xFFFF;
+                    PC = temp_t4_2;
+                    PC = temp_t4_2 + 1;
+                    phi_s2_7 = (s8) *(temp_t2 + temp_t6_2);
+                    phi_s3_3 = (s8) temp_s3_2;
+                    break;
+                case 0x2:                           /* switch 1 */
+                    sp28C += 7;
+                    if (((phi_s2 << 8) | phi_s3) >= 0x5B00) {
+                        *(ptr_spectrum_roms + ((phi_s2 << 8) | phi_s3)) = phi_s0;
+                    } else if (((phi_s2 << 8) | phi_s3) >= 0x5800) {
+                        *(ptr_spectrum_roms + ((phi_s2 << 8) | phi_s3)) = phi_s0;
+                        *(ptr_300alloc + ((phi_s2 << 8) | phi_s3))[0x5800] = 1;
+                    } else if (((phi_s2 << 8) | phi_s3) >= 0x4000) {
+                        *(ptr_spectrum_roms + ((phi_s2 << 8) | phi_s3)) = phi_s0;
+                        *(ptr_300alloc + (((s32) (((phi_s2 << 8) | phi_s3) & 0x1800) >> 3) | (((phi_s2 << 8) | phi_s3) & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x3:                           /* switch 1 */
+                    temp_t8 = (phi_s3 + 1) & 0xFF;
+                    sp28C += 6;
+                    phi_s3_3 = temp_t8;
+                    if (temp_t8 == 0) {
+                        phi_s2_7 = (phi_s2 + 1) & 0xFF;
+                    }
+                    break;
+                case 0x4:                           /* switch 1 */
+                    temp_t3_2 = (phi_s2 + 1) & 0xFF;
+                    temp_t1 = (temp_t3_2 & 0xF) == 0;
+                    temp_t9_2 = temp_t3_2 == 0;
+                    sp44 = temp_t9_2;
+                    sp28C += 4;
+                    sp48 = temp_t1;
+                    phi_s2_7 = temp_t3_2;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t3_2 & 0xA8) | (temp_t1 * 0x10) | (temp_t9_2 << 6) | ((temp_t3_2 == 0x80) * 4)) & 0xFF;
+                    break;
+                case 0x5:                           /* switch 1 */
+                    sp28C += 4;
+                    temp_t6_3 = (phi_s2 - 1) & 0xFF;
+                    temp_t7 = (phi_s2 & 0xF) == 0;
+                    sp48 = temp_t7;
+                    temp_t4_3 = temp_t6_3 == 0;
+                    sp44 = temp_t4_3;
+                    phi_s2_7 = temp_t6_3;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t7 * 0x10) | 2 | ((temp_t6_3 & 0xA8) | ((temp_t6_3 == 0x7F) * 4) | (temp_t4_3 << 6))) & 0xFF;
+                    break;
+                case 0x6:                           /* switch 1 */
+                    sp28C += 7;
+                    temp_s2_2 = *(PC + ptr_spectrum_roms);
+                    PC += 1;
+                    phi_s2_7 = (s8) temp_s2_2;
+                    break;
+                case 0x7:                           /* switch 1 */
+                    temp_t6_4 = ((phi_s0 * 2) | ((s32) phi_s0 >> 7)) & 0xFF;
+                    sp28C += 4;
+                    phi_s0_3 = temp_t6_4;
+                    phi_s1_3 = ((phi_s1 & 0xC4) | (temp_t6_4 & 0x29)) & 0xFF;
+                    break;
+                case 0x8:                           /* switch 1 */
+                    sp27F = phi_s0;
+                    sp27E = phi_s1;
+                    temp_s0_2 = sp2A6;
+                    temp_s1_2 = sp2A5;
+                    sp28C += 4;
+                    sp2A6 = sp27F;
+                    sp2A5 = sp27E;
+                    phi_s0_3 = temp_s0_2;
+                    phi_s1_3 = temp_s1_2;
+                    break;
+                case 0x9:                           /* switch 1 */
+                    sp28C += 0xB;
+                    if (sp287 == 0) {
+                        temp_t4_4 = phi_s7 + phi_s3;
+                        temp_t0 = (u32) (temp_t4_4 & 0xFFFF) >> 8;
+                        sp27C = temp_t4_4;
+                        temp_t2_2 = temp_t0 + (phi_s6 + phi_s2);
+                        sp27C = (s16) temp_t0;
+                        sp27C = temp_t2_2;
+                        phi_s1_3 = (((((temp_t0 & 0xFFFF) + (phi_s6 & 0xF) + (phi_s2 & 0xF)) > 0xF) * 0x10) | (phi_s1 & 0xC4) | ((unksp27D & 0x28) | ((s32) temp_t2_2 >> 8))) & 0xFF;
+                        phi_s7_3 = unksp27D;
+                        phi_s6_3 = unksp27D;
+                    } else {
+                        if (sp287 == 1) {
+                            sp278 = (u32) IX;
+                        } else {
+                            sp278 = (u32) IY;
+                        }
+                        temp_t0_2 = ((phi_s1 & 0xC4) | (((u32) ((sp278 & 0xFFF) + ((phi_s2 << 8) | phi_s3)) > 0xFFFU) * 0x10)) & 0xFF;
+                        temp_t7_2 = sp278 + ((phi_s2 << 8) | phi_s3);
+                        sp278 = temp_t7_2;
+                        if (sp287 == 1) {
+                            IX = (u16) temp_t7_2;
+                        } else {
+                            IY = (u16) sp278;
+                        }
+                        phi_s1_3 = (temp_t0_2 | (((sp278 >> 8) & 0x28) | (sp278 >> 0x10))) & 0xFF;
+                    }
+                    break;
+                case 0xA:                           /* switch 1 */
+                    sp28C += 7;
+                    phi_s0_3 = *(((phi_s2 << 8) | phi_s3) + ptr_spectrum_roms);
+                    break;
+                case 0xB:                           /* switch 1 */
+                    temp_t8_2 = phi_s3 == 0;
+                    sp28C += 6;
+                    sp48 = temp_t8_2;
+                    phi_s3_3 = (phi_s3 - 1) & 0xFF;
+                    if (temp_t8_2 != 0) {
+                        phi_s2_7 = (phi_s2 - 1) & 0xFF;
+                    }
+                    break;
+                case 0xC:                           /* switch 1 */
+                    temp_t1_2 = (phi_s3 + 1) & 0xFF;
+                    temp_t0_3 = (temp_t1_2 & 0xF) == 0;
+                    temp_t6_5 = temp_t1_2 == 0;
+                    sp44 = temp_t6_5;
+                    sp28C += 4;
+                    sp48 = temp_t0_3;
+                    phi_s3_3 = temp_t1_2;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t1_2 & 0xA8) | (temp_t0_3 * 0x10) | (temp_t6_5 << 6) | ((temp_t1_2 == 0x80) * 4)) & 0xFF;
+                    break;
+                case 0xD:                           /* switch 1 */
+                    sp28C += 4;
+                    temp_t8_3 = (phi_s3 - 1) & 0xFF;
+                    temp_t9_3 = (phi_s3 & 0xF) == 0;
+                    sp48 = temp_t9_3;
+                    temp_t5 = temp_t8_3 == 0;
+                    sp44 = temp_t5;
+                    phi_s3_3 = temp_t8_3;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t9_3 * 0x10) | 2 | ((temp_t8_3 & 0xA8) | ((temp_t8_3 == 0x7F) * 4) | (temp_t5 << 6))) & 0xFF;
+                    break;
+                case 0xE:                           /* switch 1 */
+                    sp28C += 7;
+                    temp_s3_3 = *(PC + ptr_spectrum_roms);
+                    PC += 1;
+                    phi_s3_3 = (s8) temp_s3_3;
+                    break;
+                case 0xF:                           /* switch 1 */
+                    temp_t3_3 = (((s32) phi_s0 >> 1) | (phi_s0 << 7)) & 0xFF;
+                    sp28C += 4;
+                    phi_s0_3 = temp_t3_3;
+                    phi_s1_3 = ((phi_s1 & 0xC4) | (phi_s0 & 1) | (temp_t3_3 & 0x28)) & 0xFF;
+                    break;
+                case 0x10:                          /* switch 1 */
+                    temp_t4_5 = (phi_s2 - 1) & 0xFF;
+                    sp28C += 8;
+                    phi_s2_7 = temp_t4_5;
+                    if (temp_t4_5 == 0) {
+                        PC += 1;
+                    } else {
+                        temp_t2_3 = *(PC + ptr_spectrum_roms);
+                        sp28C += 5;
+                        PC = PC + temp_t2_3 + 1;
+                        sp274 = (s32) temp_t2_3;
+                    }
+                    break;
+                case 0x11:                          /* switch 1 */
+                    temp_t3_4 = ptr_spectrum_roms;
+                    sp28C += 0xA;
+                    temp_t1_3 = PC + 1;
+                    temp_s5_2 = *(PC + temp_t3_4);
+                    temp_t7_3 = temp_t1_3 & 0xFFFF;
+                    PC = temp_t1_3;
+                    PC = temp_t1_3 + 1;
+                    phi_s4_3 = (s8) *(temp_t7_3 + temp_t3_4);
+                    phi_s5_3 = (s8) temp_s5_2;
+                    break;
+                case 0x12:                          /* switch 1 */
+                    sp28C += 7;
+                    if (((phi_s4 << 8) | phi_s5) >= 0x5B00) {
+                        *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = phi_s0;
+                    } else if (((phi_s4 << 8) | phi_s5) >= 0x5800) {
+                        *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = phi_s0;
+                        *(ptr_300alloc + ((phi_s4 << 8) | phi_s5))[0x5800] = 1;
+                    } else if (((phi_s4 << 8) | phi_s5) >= 0x4000) {
+                        *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = phi_s0;
+                        *(ptr_300alloc + (((s32) (((phi_s4 << 8) | phi_s5) & 0x1800) >> 3) | (((phi_s4 << 8) | phi_s5) & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x13:                          /* switch 1 */
+                    temp_t8_4 = (phi_s5 + 1) & 0xFF;
+                    sp28C += 6;
+                    phi_s5_3 = temp_t8_4;
+                    if (temp_t8_4 == 0) {
+                        phi_s4_3 = (phi_s4 + 1) & 0xFF;
+                    }
+                    break;
+                case 0x14:                          /* switch 1 */
+                    temp_t9_4 = (phi_s4 + 1) & 0xFF;
+                    temp_t2_4 = (temp_t9_4 & 0xF) == 0;
+                    temp_t0_4 = temp_t9_4 == 0;
+                    sp44 = temp_t0_4;
+                    sp28C += 4;
+                    sp48 = temp_t2_4;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t9_4 & 0xA8) | (temp_t2_4 * 0x10) | (temp_t0_4 << 6) | ((temp_t9_4 == 0x80) * 4)) & 0xFF;
+                    phi_s4_3 = temp_t9_4;
+                    break;
+                case 0x15:                          /* switch 1 */
+                    sp28C += 4;
+                    temp_t3_5 = (phi_s4 - 1) & 0xFF;
+                    temp_t6_6 = (phi_s4 & 0xF) == 0;
+                    sp48 = temp_t6_6;
+                    temp_t1_4 = temp_t3_5 == 0;
+                    sp44 = temp_t1_4;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t6_6 * 0x10) | 2 | ((temp_t3_5 & 0xA8) | ((temp_t3_5 == 0x7F) * 4) | (temp_t1_4 << 6))) & 0xFF;
+                    phi_s4_3 = temp_t3_5;
+                    break;
+                case 0x16:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_s4_2 = *(PC + ptr_spectrum_roms);
+                    PC += 1;
+                    phi_s4_3 = (s8) temp_s4_2;
+                    break;
+                case 0x17:                          /* switch 1 */
+                    temp_t7_4 = (s32) phi_s0 >> 7;
+                    temp_t1_5 = ((phi_s0 * 2) | (phi_s1 & 1)) & 0xFF;
+                    sp28C += 4;
+                    sp270 = temp_t7_4;
+                    phi_s0_3 = temp_t1_5;
+                    phi_s1_3 = ((phi_s1 & 0xC4) | (temp_t1_5 & 0x28) | temp_t7_4) & 0xFF;
+                    break;
+                case 0x18:                          /* switch 1 */
+                    temp_t7_5 = sp28C + 7;
+                    sp28C = temp_t7_5;
+                    temp_t2_5 = *(PC + ptr_spectrum_roms);
+                    sp28C = temp_t7_5 + 5;
+                    PC = PC + temp_t2_5 + 1;
+                    sp26C = (s32) temp_t2_5;
+                    break;
+                case 0x19:                          /* switch 1 */
+                    sp28C += 0xB;
+                    if (sp287 == 0) {
+                        temp_t1_6 = phi_s7 + phi_s5;
+                        temp_t2_6 = (u32) (temp_t1_6 & 0xFFFF) >> 8;
+                        sp26A = temp_t1_6;
+                        temp_t9_5 = temp_t2_6 + (phi_s6 + phi_s4);
+                        sp26A = (s16) temp_t2_6;
+                        sp26A = temp_t9_5;
+                        phi_s1_3 = (((((temp_t2_6 & 0xFFFF) + (phi_s6 & 0xF) + (phi_s4 & 0xF)) > 0xF) * 0x10) | (phi_s1 & 0xC4) | ((unksp26B & 0x28) | ((s32) temp_t9_5 >> 8))) & 0xFF;
+                        phi_s7_3 = unksp26B;
+                        phi_s6_3 = unksp26B;
+                    } else {
+                        if (sp287 == 1) {
+                            sp264 = (u32) IX;
+                        } else {
+                            sp264 = (u32) IY;
+                        }
+                        temp_t2_7 = ((phi_s1 & 0xC4) | (((u32) ((sp264 & 0xFFF) + ((phi_s4 << 8) | phi_s5)) > 0xFFFU) * 0x10)) & 0xFF;
+                        temp_t4_6 = sp264 + ((phi_s4 << 8) | phi_s5);
+                        sp264 = temp_t4_6;
+                        if (sp287 == 1) {
+                            IX = (u16) temp_t4_6;
+                        } else {
+                            IY = (u16) sp264;
+                        }
+                        phi_s1_3 = (temp_t2_7 | (((sp264 >> 8) & 0x28) | (sp264 >> 0x10))) & 0xFF;
+                    }
+                    break;
+                case 0x1A:                          /* switch 1 */
+                    sp28C += 7;
+                    phi_s0_3 = *(((phi_s4 << 8) | phi_s5) + ptr_spectrum_roms);
+                    break;
+                case 0x1B:                          /* switch 1 */
+                    temp_t5_2 = phi_s5 == 0;
+                    sp28C += 6;
+                    sp48 = temp_t5_2;
+                    phi_s5_3 = (phi_s5 - 1) & 0xFF;
+                    if (temp_t5_2 != 0) {
+                        phi_s4_3 = (phi_s4 - 1) & 0xFF;
+                    }
+                    break;
+                case 0x1C:                          /* switch 1 */
+                    temp_t0_5 = (phi_s5 + 1) & 0xFF;
+                    temp_t2_8 = (temp_t0_5 & 0xF) == 0;
+                    temp_t3_6 = temp_t0_5 == 0;
+                    sp44 = temp_t3_6;
+                    sp28C += 4;
+                    sp48 = temp_t2_8;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t0_5 & 0xA8) | (temp_t2_8 * 0x10) | (temp_t3_6 << 6) | ((temp_t0_5 == 0x80) * 4)) & 0xFF;
+                    phi_s5_3 = temp_t0_5;
+                    break;
+                case 0x1D:                          /* switch 1 */
+                    sp28C += 4;
+                    temp_t5_3 = (phi_s5 - 1) & 0xFF;
+                    temp_t7_6 = (phi_s5 & 0xF) == 0;
+                    sp48 = temp_t7_6;
+                    temp_t8_5 = temp_t5_3 == 0;
+                    sp44 = temp_t8_5;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t7_6 * 0x10) | 2 | ((temp_t5_3 & 0xA8) | ((temp_t5_3 == 0x7F) * 4) | (temp_t8_5 << 6))) & 0xFF;
+                    phi_s5_3 = temp_t5_3;
+                    break;
+                case 0x1E:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_s5_3 = *(PC + ptr_spectrum_roms);
+                    PC += 1;
+                    phi_s5_3 = (s8) temp_s5_3;
+                    break;
+                case 0x1F:                          /* switch 1 */
+                    temp_t1_7 = phi_s0 & 1;
+                    temp_t8_6 = (((s32) phi_s0 >> 1) | (phi_s1 << 7)) & 0xFF;
+                    sp28C += 4;
+                    sp260 = temp_t1_7;
+                    phi_s0_3 = temp_t8_6;
+                    phi_s1_3 = ((phi_s1 & 0xC4) | (temp_t8_6 & 0x28) | temp_t1_7) & 0xFF;
+                    break;
+                case 0x20:                          /* switch 1 */
+                    sp28C += 7;
+                    if ((phi_s1 & 0x40) != 0) {
+                        PC += 1;
+                    } else {
+                        temp_t4_7 = *(PC + ptr_spectrum_roms);
+                        sp28C += 5;
+                        PC = PC + temp_t4_7 + 1;
+                        sp25C = (s32) temp_t4_7;
+                    }
+                    break;
+                case 0x21:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if (sp287 == 0) {
+                        temp_t2_9 = ptr_spectrum_roms;
+                        temp_t3_7 = PC + 1;
+                        temp_t0_6 = temp_t3_7 & 0xFFFF;
+                        temp_s7_2 = *(PC + temp_t2_9);
+                        PC = temp_t3_7;
+                        PC = temp_t3_7 + 1;
+                        phi_s7_3 = temp_s7_2;
+                        phi_s6_3 = *(temp_t0_6 + temp_t2_9);
+                    } else {
+                        if (sp287 == 1) {
+                            temp_t4_8 = ptr_spectrum_roms;
+                            IX = *(PC + temp_t4_8) | ((temp_t4_8 + PC)->unk1 << 8);
+                        } else {
+                            temp_t8_7 = ptr_spectrum_roms;
+                            IY = *(PC + temp_t8_7) | ((temp_t8_7 + PC)->unk1 << 8);
+                        }
+                        PC += 2;
+                    }
+                    break;
+                case 0x22:                          /* switch 1 */
+                    temp_t6_7 = ptr_spectrum_roms;
+                    sp28C += 0x10;
+                    temp_t3_8 = *(PC + temp_t6_7) | ((temp_t6_7 + PC)->unk1 << 8);
+                    sp25A = temp_t3_8;
+                    PC += 2;
+                    if (sp287 == 0) {
+                        temp_t2_10 = temp_t3_8 & 0xFFFF;
+                        if (temp_t2_10 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t2_10) = phi_s7;
+                        } else if ((s32) sp25A >= 0x5800) {
+                            *(ptr_spectrum_roms + sp25A) = phi_s7;
+                            *(ptr_300alloc + sp25A)[0x5800] = 1;
+                        } else if ((s32) sp25A >= 0x4000) {
+                            *(ptr_spectrum_roms + sp25A) = phi_s7;
+                            *(ptr_300alloc + (((s32) (sp25A & 0x1800) >> 3) | (sp25A & 0xFF))) = 1;
+                        }
+                        if ((sp25A + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = phi_s6;
+                        } else if ((sp25A + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = phi_s6;
+                            (ptr_300alloc + sp25A)[0x57FF] = 1;
+                        } else if ((sp25A + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = phi_s6;
+                            temp_t2_11 = sp25A + 1;
+                            *(ptr_300alloc + (((s32) (temp_t2_11 & 0x1800) >> 3) | (temp_t2_11 & 0xFF))) = 1;
+                        }
+                    } else if (sp287 == 1) {
+                        if ((s32) sp25A >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp25A) = (s8) IX;
+                        } else if ((s32) sp25A >= 0x5800) {
+                            *(ptr_spectrum_roms + sp25A) = (s8) IX;
+                            *(ptr_300alloc + sp25A)[0x5800] = 1;
+                        } else if ((s32) sp25A >= 0x4000) {
+                            *(ptr_spectrum_roms + sp25A) = (s8) IX;
+                            *(ptr_300alloc + (((s32) (sp25A & 0x1800) >> 3) | (sp25A & 0xFF))) = 1;
+                        }
+                        if ((sp25A + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = (s8) ((s32) IX >> 8);
+                        } else if ((sp25A + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = (s8) ((s32) IX >> 8);
+                            (ptr_300alloc + sp25A)[0x57FF] = 1;
+                        } else if ((sp25A + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = (s8) ((s32) IX >> 8);
+                            temp_t2_12 = sp25A + 1;
+                            *(ptr_300alloc + (((s32) (temp_t2_12 & 0x1800) >> 3) | (temp_t2_12 & 0xFF))) = 1;
+                        }
+                    } else {
+                        if ((s32) sp25A >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp25A) = (s8) IY;
+                        } else if ((s32) sp25A >= 0x5800) {
+                            *(ptr_spectrum_roms + sp25A) = (s8) IY;
+                            *(ptr_300alloc + sp25A)[0x5800] = 1;
+                        } else if ((s32) sp25A >= 0x4000) {
+                            *(ptr_spectrum_roms + sp25A) = (s8) IY;
+                            *(ptr_300alloc + (((s32) (sp25A & 0x1800) >> 3) | (sp25A & 0xFF))) = 1;
+                        }
+                        if ((sp25A + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = (s8) ((s32) IY >> 8);
+                        } else if ((sp25A + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = (s8) ((s32) IY >> 8);
+                            (ptr_300alloc + sp25A)[0x57FF] = 1;
+                        } else if ((sp25A + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + sp25A)->unk1 = (s8) ((s32) IY >> 8);
+                            temp_t6_8 = sp25A + 1;
+                            *(ptr_300alloc + (((s32) (temp_t6_8 & 0x1800) >> 3) | (temp_t6_8 & 0xFF))) = 1;
+                        }
+                    }
+                    break;
+                case 0x23:                          /* switch 1 */
+                    sp28C += 6;
+                    if (sp287 == 0) {
+                        temp_t6_9 = (phi_s7 + 1) & 0xFF;
+                        phi_s7_3 = temp_t6_9;
+                        if (temp_t6_9 == 0) {
+                            phi_s6_3 = (phi_s6 + 1) & 0xFF;
+                        }
+                    } else if (sp287 == 1) {
+                        IX += 1;
+                    } else {
+                        IY += 1;
+                    }
+                    break;
+                case 0x24:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        temp_t6_10 = (phi_s6 + 1) & 0xFF;
+                        temp_t8_8 = (temp_t6_10 & 0xF) == 0;
+                        temp_t7_7 = temp_t6_10 == 0;
+                        sp44 = temp_t7_7;
+                        sp48 = temp_t8_8;
+                        phi_s1_3 = ((phi_s1 & 1) | (temp_t6_10 & 0xA8) | (temp_t8_8 * 0x10) | (temp_t7_7 << 6) | ((temp_t6_10 == 0x80) * 4)) & 0xFF;
+                        phi_s6_3 = temp_t6_10;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t6_11 = sp48 >> 8;
+                        temp_t2_13 = temp_t6_11 + 1;
+                        temp_t4_9 = temp_t2_13 & 0xFF;
+                        sp259 = (u8) temp_t6_11;
+                        sp44 = (temp_t2_13 & 0xFF) == 0;
+                        temp_t3_9 = (temp_t2_13 & 0xF) == 0;
+                        sp259 = temp_t2_13;
+                        sp48 = temp_t3_9;
+                        phi_s1_3 = ((phi_s1 & 1) | (temp_t4_9 & 0xA8) | (temp_t3_9 * 0x10) | (sp44 << 6) | ((temp_t4_9 == 0x80) * 4)) & 0xFF;
+                        if (sp287 == 1) {
+                            IX = (IX & 0xFF) | (temp_t4_9 << 8);
+                        } else {
+                            IY = (IY & 0xFF) | (sp259 << 8);
+                        }
+                    }
+                    break;
+                case 0x25:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        temp_t6_12 = (phi_s6 - 1) & 0xFF;
+                        temp_t2_14 = (phi_s6 & 0xF) == 0;
+                        sp48 = temp_t2_14;
+                        temp_t7_8 = temp_t6_12 == 0;
+                        sp44 = temp_t7_8;
+                        phi_s1_3 = ((phi_s1 & 1) | (temp_t2_14 * 0x10) | 2 | ((temp_t6_12 & 0xA8) | ((temp_t6_12 == 0x7F) * 4) | (temp_t7_8 << 6))) & 0xFF;
+                        phi_s6_3 = temp_t6_12;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t0_7 = sp48 >> 8;
+                        temp_t1_8 = (temp_t0_7 & 0xF) == 0;
+                        temp_t4_10 = (temp_t0_7 & 0xFF) - 1;
+                        sp258 = (u8) temp_t0_7;
+                        sp48 = temp_t1_8;
+                        temp_t0_8 = (temp_t4_10 & 0xFF) == 0;
+                        sp44 = temp_t0_8;
+                        sp258 = temp_t4_10;
+                        phi_s1_3 = ((phi_s1 & 1) | (temp_t1_8 * 0x10) | 2 | ((temp_t4_10 & 0xA8) | (((temp_t4_10 & 0xFF) == 0x7F) * 4) | (temp_t0_8 << 6))) & 0xFF;
+                        if (sp287 == 1) {
+                            IX = (IX & 0xFF) | (temp_t4_10 << 8);
+                        } else {
+                            IY = (IY & 0xFF) | (sp258 << 8);
+                        }
+                    }
+                    break;
+                case 0x26:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        phi_s6_3 = *(PC + ptr_spectrum_roms);
+                    } else if (sp287 == 1) {
+                        IX = (*(PC + ptr_spectrum_roms) << 8) | (IX & 0xFF);
+                    } else {
+                        IY = (*(PC + ptr_spectrum_roms) << 8) | (IY & 0xFF);
+                    }
+                    PC += 1;
+                    break;
+                case 0x27:                          /* switch 1 */
+                    sp28C += 4;
+                    sp256 = phi_s1 & 1;
+                    sp257 = 0;
+                    if (((phi_s1 & 0x10) != 0) || ((phi_s0 & 0xF) >= 0xA)) {
+                        sp257 = 6;
+                    }
+                    if (((phi_s1 & 1) != 0) || (((s32) phi_s0 >> 4) >= 0xA)) {
+                        sp257 |= 0x60;
+                    }
+                    if ((phi_s1 & 2) != 0) {
+                        temp_t8_9 = (phi_s0 - sp257) & 0x1FF;
+                        sp254 = (s16) temp_t8_9;
+                        sp253 = sp257;
+                        temp_t3_10 = unksp255 == 0;
+                        sp48 = temp_t3_10;
+                        phi_s0_4 = unksp255;
+                        phi_s1_4 = ((temp_t8_9 & 0xA8) | (temp_t8_9 >> 8) | (((phi_s0 & 0xF) < (sp257 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ sp257) & 0x80 & (temp_t8_9 ^ phi_s0)) >> 5) | 2 | (temp_t3_10 << 6)) & 0xFF;
+                    } else {
+                        if (((s32) phi_s0 >= 0x91) && ((phi_s0 & 0xF) >= 0xA)) {
+                            sp257 |= 0x60;
+                        }
+                        temp_t2_15 = phi_s0 + sp257;
+                        sp250 = (s16) temp_t2_15;
+                        temp_t8_10 = unksp251 == 0;
+                        sp48 = temp_t8_10;
+                        sp24F = sp257;
+                        phi_s0_4 = unksp251;
+                        phi_s1_4 = ((temp_t2_15 & 0xA8) | (temp_t2_15 >> 8) | ((((phi_s0 & 0xF) + (sp257 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ sp257) & 0x80 & (temp_t2_15 ^ phi_s0)) >> 5) | (temp_t8_10 << 6)) & 0xFF;
+                    }
+                    phi_s0_3 = phi_s0_4;
+                    phi_s1_3 = (*(phi_s0_4 + ptr_pc_keyboard_table_alloc) | ((phi_s1_4 | sp256) & 0xFB)) & 0xFF;
+                    break;
+                case 0x28:                          /* switch 1 */
+                    temp_t6_13 = sp28C + 7;
+                    sp28C = temp_t6_13;
+                    if ((phi_s1 & 0x40) != 0) {
+                        temp_t7_9 = *(PC + ptr_spectrum_roms);
+                        sp28C = temp_t6_13 + 5;
+                        PC = PC + temp_t7_9 + 1;
+                        sp248 = (s32) temp_t7_9;
+                    } else {
+                        PC += 1;
+                    }
+                    break;
+                case 0x29:                          /* switch 1 */
+                    sp28C += 0xB;
+                    if (sp287 == 0) {
+                        if (sp287 == 0) {
+                            temp_t7_10 = phi_s7 * 2;
+                            temp_t4_11 = (u32) (temp_t7_10 & 0xFFFF) >> 8;
+                            sp246 = temp_t7_10;
+                            temp_t5_4 = temp_t4_11 + (phi_s6 * 2);
+                            sp246 = (s16) temp_t4_11;
+                            sp246 = temp_t5_4;
+                            phi_s1_3 = (((((temp_t4_11 & 0xFFFF) + (phi_s6 & 0xF) + (phi_s6 & 0xF)) > 0xF) * 0x10) | (phi_s1 & 0xC4) | ((unksp247 & 0x28) | ((s32) temp_t5_4 >> 8))) & 0xFF;
+                            phi_s7_3 = unksp247;
+                            phi_s6_3 = unksp247;
+                        } else {
+                            if (sp287 == 1) {
+                                sp240 = (u32) IX;
+                            } else {
+                                sp240 = (u32) IY;
+                            }
+                            temp_t4_12 = ((phi_s1 & 0xC4) | (((u32) ((sp240 & 0xFFF) + ((phi_s6 << 8) | phi_s7)) > 0xFFFU) * 0x10)) & 0xFF;
+                            temp_t6_14 = sp240 + ((phi_s6 << 8) | phi_s7);
+                            sp240 = temp_t6_14;
+                            if (sp287 == 1) {
+                                IX = (u16) temp_t6_14;
+                            } else {
+                                IY = (u16) sp240;
+                            }
+                            phi_s1_3 = (temp_t4_12 | (((sp240 >> 8) & 0x28) | (sp240 >> 0x10))) & 0xFF;
+                        }
+                    } else if (sp287 == 1) {
+                        if (sp287 == 0) {
+                            temp_t3_11 = phi_s7 + (IX & 0xFF);
+                            temp_t9_6 = (u32) (temp_t3_11 & 0xFFFF) >> 8;
+                            temp_t0_9 = (s32) IX >> 8;
+                            sp23E = temp_t3_11;
+                            temp_t3_12 = temp_t9_6 + (phi_s6 + temp_t0_9);
+                            sp23E = (s16) temp_t9_6;
+                            sp23E = temp_t3_12;
+                            phi_s1_3 = (((((temp_t9_6 & 0xFFFF) + (phi_s6 & 0xF) + (temp_t0_9 & 0xF)) > 0xF) * 0x10) | (phi_s1 & 0xC4) | ((unksp23F & 0x28) | ((s32) temp_t3_12 >> 8))) & 0xFF;
+                            phi_s7_3 = unksp23F;
+                            phi_s6_3 = unksp23F;
+                        } else {
+                            if (sp287 == 1) {
+                                sp238 = (u32) IX;
+                            } else {
+                                sp238 = (u32) IY;
+                            }
+                            temp_t1_9 = (((s32) IX >> 8) << 8) | (IX & 0xFF);
+                            temp_t2_16 = ((phi_s1 & 0xC4) | (((u32) ((sp238 & 0xFFF) + temp_t1_9) > 0xFFFU) * 0x10)) & 0xFF;
+                            temp_t3_13 = sp238 + temp_t1_9;
+                            sp238 = temp_t3_13;
+                            if (sp287 == 1) {
+                                IX = (u16) temp_t3_13;
+                            } else {
+                                IY = (u16) sp238;
+                            }
+                            phi_s1_3 = (temp_t2_16 | (((sp238 >> 8) & 0x28) | (sp238 >> 0x10))) & 0xFF;
+                        }
+                    } else if (sp287 == 0) {
+                        temp_t7_11 = phi_s7 + (IY & 0xFF);
+                        temp_t0_10 = (u32) (temp_t7_11 & 0xFFFF) >> 8;
+                        temp_t4_13 = (s32) IY >> 8;
+                        sp236 = temp_t7_11;
+                        temp_t7_12 = temp_t0_10 + (phi_s6 + temp_t4_13);
+                        sp236 = (s16) temp_t0_10;
+                        sp236 = temp_t7_12;
+                        phi_s1_3 = (((((temp_t0_10 & 0xFFFF) + (phi_s6 & 0xF) + (temp_t4_13 & 0xF)) > 0xF) * 0x10) | (phi_s1 & 0xC4) | ((unksp237 & 0x28) | ((s32) temp_t7_12 >> 8))) & 0xFF;
+                        phi_s7_3 = unksp237;
+                        phi_s6_3 = unksp237;
+                    } else {
+                        if (sp287 == 1) {
+                            sp230 = (u32) IX;
+                        } else {
+                            sp230 = (u32) IY;
+                        }
+                        temp_t9_7 = (((s32) IY >> 8) << 8) | (IY & 0xFF);
+                        temp_t6_15 = ((phi_s1 & 0xC4) | (((u32) ((sp230 & 0xFFF) + temp_t9_7) > 0xFFFU) * 0x10)) & 0xFF;
+                        temp_t7_13 = sp230 + temp_t9_7;
+                        sp230 = temp_t7_13;
+                        if (sp287 == 1) {
+                            IX = (u16) temp_t7_13;
+                        } else {
+                            IY = (u16) sp230;
+                        }
+                        phi_s1_3 = (temp_t6_15 | (((sp230 >> 8) & 0x28) | (sp230 >> 0x10))) & 0xFF;
+                    }
+                    break;
+                case 0x2A:                          /* switch 1 */
+                    temp_t5_5 = ptr_spectrum_roms;
+                    sp28C += 0x10;
+                    temp_t8_11 = *(PC + temp_t5_5) | ((temp_t5_5 + PC)->unk1 << 8);
+                    sp22E = temp_t8_11;
+                    PC += 2;
+                    if (sp287 == 0) {
+                        temp_t1_10 = (temp_t8_11 & 0xFFFF) + temp_t5_5;
+                        phi_s7_3 = temp_t1_10->unk0;
+                        phi_s6_3 = temp_t1_10->unk1;
+                    } else if (sp287 == 1) {
+                        temp_t6_16 = ptr_spectrum_roms;
+                        IX = *(sp22E + temp_t6_16) | ((temp_t6_16 + sp22E)->unk1 << 8);
+                    } else {
+                        temp_t2_17 = ptr_spectrum_roms;
+                        IY = *(sp22E + temp_t2_17) | ((temp_t2_17 + sp22E)->unk1 << 8);
+                    }
+                    break;
+                case 0x2B:                          /* switch 1 */
+                    sp28C += 6;
+                    if (sp287 == 0) {
+                        temp_t2_18 = phi_s7 == 0;
+                        sp48 = temp_t2_18;
+                        phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                        if (temp_t2_18 != 0) {
+                            phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                        }
+                    } else if (sp287 == 1) {
+                        IX += -1;
+                    } else {
+                        IY += -1;
+                    }
+                    break;
+                case 0x2C:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        temp_t4_14 = (phi_s7 + 1) & 0xFF;
+                        temp_t3_14 = (temp_t4_14 & 0xF) == 0;
+                        temp_t9_8 = temp_t4_14 == 0;
+                        sp44 = temp_t9_8;
+                        sp48 = temp_t3_14;
+                        phi_s1_3 = ((phi_s1 & 1) | (temp_t4_14 & 0xA8) | (temp_t3_14 * 0x10) | (temp_t9_8 << 6) | ((temp_t4_14 == 0x80) * 4)) & 0xFF;
+                        phi_s7_3 = temp_t4_14;
+                    } else {
+                        if (sp287 == 1) {
+                            sp22D = (u8) IX;
+                        } else {
+                            sp22D = (u8) IY;
+                        }
+                        temp_t2_19 = sp22D + 1;
+                        temp_t0_11 = (temp_t2_19 & 0xF) == 0;
+                        temp_t6_17 = (temp_t2_19 & 0xFF) == 0;
+                        sp48 = temp_t0_11;
+                        sp44 = temp_t6_17;
+                        sp22D = temp_t2_19;
+                        phi_s1_3 = ((phi_s1 & 1) | (temp_t2_19 & 0xA8) | (temp_t0_11 * 0x10) | (temp_t6_17 << 6) | (((temp_t2_19 & 0xFF) == 0x80) * 4)) & 0xFF;
+                        if (sp287 == 1) {
+                            IX = (IX & 0xFF00) | (temp_t2_19 & 0xFF);
+                        } else {
+                            IY = (IY & 0xFF00) | sp22D;
+                        }
+                    }
+                    break;
+                case 0x2D:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        temp_t1_11 = (phi_s7 - 1) & 0xFF;
+                        temp_t7_14 = (phi_s7 & 0xF) == 0;
+                        sp48 = temp_t7_14;
+                        temp_t4_15 = temp_t1_11 == 0;
+                        sp44 = temp_t4_15;
+                        phi_s1_3 = ((phi_s1 & 1) | (temp_t7_14 * 0x10) | 2 | ((temp_t1_11 & 0xA8) | ((temp_t1_11 == 0x7F) * 4) | (temp_t4_15 << 6))) & 0xFF;
+                        phi_s7_3 = temp_t1_11;
+                    } else {
+                        if (sp287 == 1) {
+                            sp22C = (u8) IX;
+                        } else {
+                            sp22C = (u8) IY;
+                        }
+                        temp_t3_15 = (sp22C & 0xF) == 0;
+                        temp_t1_12 = sp22C - 1;
+                        sp48 = temp_t3_15;
+                        temp_t2_20 = (temp_t1_12 & 0xFF) == 0;
+                        temp_s1_3 = ((phi_s1 & 1) | (temp_t3_15 * 0x10) | 2 | ((temp_t1_12 & 0xA8) | (((temp_t1_12 & 0xFF) == 0x7F) * 4) | (temp_t2_20 << 6))) & 0xFF;
+                        sp44 = temp_t2_20;
+                        sp22C = temp_t1_12;
+                        if (sp287 == 1) {
+                            IX = (IX & 0xFF00) | (temp_t1_12 & 0xFF);
+                            phi_s1_3 = temp_s1_3;
+                        } else {
+                            IY = (IY & 0xFF00) | sp22C;
+                            phi_s1_3 = temp_s1_3;
+                        }
+                    }
+                    break;
+                case 0x2E:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        phi_s7_3 = *(PC + ptr_spectrum_roms);
+                    } else if (sp287 == 1) {
+                        IX = *(PC + ptr_spectrum_roms) | (IX & 0xFF00);
+                    } else {
+                        IY = *(PC + ptr_spectrum_roms) | (IY & 0xFF00);
+                    }
+                    PC += 1;
+                    break;
+                case 0x2F:                          /* switch 1 */
+                    temp_t2_21 = ~phi_s0 & 0xFF;
+                    sp28C += 4;
+                    phi_s0_3 = temp_t2_21;
+                    phi_s1_3 = ((phi_s1 & 0xC5) | (temp_t2_21 & 0x28) | 0x12) & 0xFF;
+                    break;
+                case 0x30:                          /* switch 1 */
+                    sp28C += 7;
+                    if ((phi_s1 & 1) != 0) {
+                        PC += 1;
+                    } else {
+                        temp_t6_18 = *(PC + ptr_spectrum_roms);
+                        sp28C += 5;
+                        PC = PC + temp_t6_18 + 1;
+                        sp228 = (s32) temp_t6_18;
+                    }
+                    break;
+                case 0x31:                          /* switch 1 */
+                    temp_t4_16 = ptr_spectrum_roms;
+                    sp28C += 0xA;
+                    SP = *(PC + temp_t4_16) | ((temp_t4_16 + PC)->unk1 << 8);
+                    PC += 2;
+                    break;
+                case 0x32:                          /* switch 1 */
+                    temp_t9_9 = ptr_spectrum_roms;
+                    sp28C += 0xD;
+                    temp_t3_16 = *(PC + temp_t9_9) | ((temp_t9_9 + PC)->unk1 << 8);
+                    temp_t2_22 = temp_t3_16 & 0xFFFF;
+                    sp226 = temp_t3_16;
+                    PC += 2;
+                    if (temp_t2_22 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t2_22) = phi_s0;
+                    } else if ((s32) sp226 >= 0x5800) {
+                        *(ptr_spectrum_roms + sp226) = phi_s0;
+                        *(ptr_300alloc + sp226)[0x5800] = 1;
+                    } else if ((s32) sp226 >= 0x4000) {
+                        *(ptr_spectrum_roms + sp226) = phi_s0;
+                        *(ptr_300alloc + (((s32) (sp226 & 0x1800) >> 3) | (sp226 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x33:                          /* switch 1 */
+                    sp28C += 6;
+                    SP += 1;
+                    break;
+                case 0x34:                          /* switch 1 */
+                    sp28C += 0xB;
+                    if (sp287 == 0) {
+                        sp224 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t0_12 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp224 = temp_t0_12 + sp48;
+                    }
+                    temp_t4_17 = *(sp224 + ptr_spectrum_roms);
+                    temp_t5_6 = temp_t4_17 + 1;
+                    sp223 = temp_t4_17;
+                    temp_t8_12 = (temp_t5_6 & 0xF) == 0;
+                    temp_t1_13 = (temp_t5_6 & 0xFF) == 0;
+                    sp48 = temp_t8_12;
+                    sp44 = temp_t1_13;
+                    sp223 = temp_t5_6;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t5_6 & 0xA8) | (temp_t8_12 * 0x10) | (temp_t1_13 << 6) | (((temp_t5_6 & 0xFF) == 0x80) * 4)) & 0xFF;
+                    if ((s32) sp224 >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp224) = temp_t5_6;
+                    } else if ((s32) sp224 >= 0x5800) {
+                        *(ptr_spectrum_roms + sp224) = sp223;
+                        *(ptr_300alloc + sp224)[0x5800] = 1;
+                    } else if ((s32) sp224 >= 0x4000) {
+                        *(ptr_spectrum_roms + sp224) = sp223;
+                        *(ptr_300alloc + (((s32) (sp224 & 0x1800) >> 3) | (sp224 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x35:                          /* switch 1 */
+                    sp28C += 0xB;
+                    if (sp287 == 0) {
+                        sp220 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t6_19 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp220 = temp_t6_19 + sp48;
+                    }
+                    temp_t5_7 = *(sp220 + ptr_spectrum_roms);
+                    temp_t6_20 = (temp_t5_7 & 0xF) == 0;
+                    temp_t0_13 = temp_t5_7 - 1;
+                    sp48 = temp_t6_20;
+                    sp21F = temp_t5_7;
+                    sp21F = temp_t0_13;
+                    temp_t1_14 = (temp_t0_13 & 0xFF) == 0;
+                    sp44 = temp_t1_14;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t6_20 * 0x10) | 2 | ((temp_t0_13 & 0xA8) | (((temp_t0_13 & 0xFF) == 0x7F) * 4) | (temp_t1_14 << 6))) & 0xFF;
+                    if ((s32) sp220 >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp220) = sp21F;
+                    } else if ((s32) sp220 >= 0x5800) {
+                        *(ptr_spectrum_roms + sp220) = sp21F;
+                        *(ptr_300alloc + sp220)[0x5800] = 1;
+                    } else if ((s32) sp220 >= 0x4000) {
+                        *(ptr_spectrum_roms + sp220) = sp21F;
+                        *(ptr_300alloc + (((s32) (sp220 & 0x1800) >> 3) | (sp220 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x36:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if (sp287 == 0) {
+                        sp21C = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 5;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t5_8 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp21C = temp_t5_8 + sp48;
+                    }
+                    if ((s32) sp21C >= 0x5B00) {
+                        temp_t8_13 = ptr_spectrum_roms;
+                        *(temp_t8_13 + sp21C) = *(PC + temp_t8_13);
+                    } else if ((s32) sp21C >= 0x5800) {
+                        temp_t6_21 = ptr_spectrum_roms;
+                        *(temp_t6_21 + sp21C) = *(PC + temp_t6_21);
+                        *(ptr_300alloc + sp21C)[0x5800] = 1;
+                    } else if ((s32) sp21C >= 0x4000) {
+                        temp_t6_22 = ptr_spectrum_roms;
+                        *(temp_t6_22 + sp21C) = *(PC + temp_t6_22);
+                        *(ptr_300alloc + (((s32) (sp21C & 0x1800) >> 3) | (sp21C & 0xFF))) = 1;
+                    }
+                    PC += 1;
+                    break;
+                case 0x37:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s1_3 = ((phi_s1 & 0xC4) | 1 | (phi_s0 & 0x28)) & 0xFF;
+                    break;
+                case 0x38:                          /* switch 1 */
+                    temp_t9_10 = sp28C + 7;
+                    sp28C = temp_t9_10;
+                    if ((phi_s1 & 1) != 0) {
+                        temp_t5_9 = *(PC + ptr_spectrum_roms);
+                        sp28C = temp_t9_10 + 5;
+                        PC = PC + temp_t5_9 + 1;
+                        sp218 = (s32) temp_t5_9;
+                    } else {
+                        PC += 1;
+                    }
+                    break;
+                case 0x39:                          /* switch 1 */
+                    sp28C += 0xB;
+                    if (sp287 == 0) {
+                        temp_t6_23 = phi_s7 + (SP & 0xFF);
+                        temp_t0_14 = (u32) (temp_t6_23 & 0xFFFF) >> 8;
+                        temp_t4_18 = (s32) SP >> 8;
+                        sp216 = temp_t6_23;
+                        temp_t6_24 = temp_t0_14 + (phi_s6 + temp_t4_18);
+                        sp216 = (s16) temp_t0_14;
+                        sp216 = temp_t6_24;
+                        phi_s1_3 = (((((temp_t0_14 & 0xFFFF) + (phi_s6 & 0xF) + (temp_t4_18 & 0xF)) > 0xF) * 0x10) | (phi_s1 & 0xC4) | ((unksp217 & 0x28) | ((s32) temp_t6_24 >> 8))) & 0xFF;
+                        phi_s7_3 = unksp217;
+                        phi_s6_3 = unksp217;
+                    } else {
+                        if (sp287 == 1) {
+                            sp210 = (u32) IX;
+                        } else {
+                            sp210 = (u32) IY;
+                        }
+                        temp_t2_23 = (((s32) SP >> 8) << 8) | (SP & 0xFF);
+                        temp_t5_10 = ((phi_s1 & 0xC4) | (((u32) ((sp210 & 0xFFF) + temp_t2_23) > 0xFFFU) * 0x10)) & 0xFF;
+                        temp_t6_25 = sp210 + temp_t2_23;
+                        sp210 = temp_t6_25;
+                        if (sp287 == 1) {
+                            IX = (u16) temp_t6_25;
+                        } else {
+                            IY = (u16) sp210;
+                        }
+                        phi_s1_3 = (temp_t5_10 | (((sp210 >> 8) & 0x28) | (sp210 >> 0x10))) & 0xFF;
+                    }
+                    break;
+                case 0x3A:                          /* switch 1 */
+                    temp_t9_11 = ptr_spectrum_roms;
+                    sp28C += 0xD;
+                    temp_t1_15 = *(PC + temp_t9_11) | ((temp_t9_11 + PC)->unk1 << 8);
+                    temp_t7_15 = temp_t1_15 & 0xFFFF;
+                    sp20E = temp_t1_15;
+                    PC += 2;
+                    phi_s0_3 = *(temp_t7_15 + temp_t9_11);
+                    break;
+                case 0x3B:                          /* switch 1 */
+                    sp28C += 6;
+                    SP += -1;
+                    break;
+                case 0x3C:                          /* switch 1 */
+                    temp_t2_24 = (phi_s0 + 1) & 0xFF;
+                    temp_t0_15 = (temp_t2_24 & 0xF) == 0;
+                    temp_t7_16 = temp_t2_24 == 0;
+                    sp44 = temp_t7_16;
+                    sp28C += 4;
+                    sp48 = temp_t0_15;
+                    phi_s0_3 = temp_t2_24;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t2_24 & 0xA8) | (temp_t0_15 * 0x10) | (temp_t7_16 << 6) | ((temp_t2_24 == 0x80) * 4)) & 0xFF;
+                    break;
+                case 0x3D:                          /* switch 1 */
+                    sp28C += 4;
+                    temp_t3_17 = (phi_s0 - 1) & 0xFF;
+                    temp_t6_26 = (phi_s0 & 0xF) == 0;
+                    sp48 = temp_t6_26;
+                    temp_t8_14 = temp_t3_17 == 0;
+                    sp44 = temp_t8_14;
+                    phi_s0_3 = temp_t3_17;
+                    phi_s1_3 = ((phi_s1 & 1) | (temp_t6_26 * 0x10) | 2 | ((temp_t3_17 & 0xA8) | ((temp_t3_17 == 0x7F) * 4) | (temp_t8_14 << 6))) & 0xFF;
+                    break;
+                case 0x3E:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_s0_3 = *(PC + ptr_spectrum_roms);
+                    PC += 1;
+                    phi_s0_3 = temp_s0_3;
+                    break;
+                case 0x3F:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s1_3 = ((phi_s1 & 0xC4) | ((phi_s1 & 1) ^ 1) | ((phi_s1 & 1) * 0x10) | (phi_s0 & 0x28)) & 0xFF;
+                    break;
+                case 0x40:                          /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x41:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s2_7 = phi_s3 & 0xFF;
+                    break;
+                case 0x42:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s2_7 = phi_s4 & 0xFF;
+                    break;
+                case 0x43:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s2_7 = phi_s5 & 0xFF;
+                    break;
+                case 0x44:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s2_7 = phi_s6 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        phi_s2_7 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x45:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s2_7 = phi_s7 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        phi_s2_7 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x46:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp20C = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t4_19 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp20C = temp_t4_19 + sp48;
+                    }
+                    phi_s2_7 = (s8) *(sp20C + ptr_spectrum_roms);
+                    break;
+                case 0x47:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s2_7 = phi_s0 & 0xFF;
+                    break;
+                case 0x48:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s3_3 = phi_s2 & 0xFF;
+                    break;
+                case 0x49:                          /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x4A:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s3_3 = phi_s4 & 0xFF;
+                    break;
+                case 0x4B:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s3_3 = phi_s5 & 0xFF;
+                    break;
+                case 0x4C:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s3_3 = phi_s6 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        phi_s3_3 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x4D:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s3_3 = phi_s7 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        phi_s3_3 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x4E:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp20A = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t3_18 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp20A = temp_t3_18 + sp48;
+                    }
+                    phi_s3_3 = (s8) *(sp20A + ptr_spectrum_roms);
+                    break;
+                case 0x4F:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s3_3 = phi_s0 & 0xFF;
+                    break;
+                case 0x50:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s4_3 = phi_s2 & 0xFF;
+                    break;
+                case 0x51:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s4_3 = phi_s3 & 0xFF;
+                    break;
+                case 0x52:                          /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x53:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s4_3 = phi_s5 & 0xFF;
+                    break;
+                case 0x54:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s4_3 = phi_s6 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        phi_s4_3 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x55:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s4_3 = phi_s7 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        phi_s4_3 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x56:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp208 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t0_16 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp208 = temp_t0_16 + sp48;
+                    }
+                    phi_s4_3 = (s8) *(sp208 + ptr_spectrum_roms);
+                    break;
+                case 0x57:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s4_3 = phi_s0 & 0xFF;
+                    break;
+                case 0x58:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s5_3 = phi_s2 & 0xFF;
+                    break;
+                case 0x59:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s5_3 = phi_s3 & 0xFF;
+                    break;
+                case 0x5A:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s5_3 = phi_s4 & 0xFF;
+                    break;
+                case 0x5B:                          /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x5C:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s5_3 = phi_s6 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        phi_s5_3 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x5D:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s5_3 = phi_s7 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        phi_s5_3 = (s8) unksp4B;
+                    }
+                    break;
+                case 0x5E:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp206 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t2_25 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp206 = temp_t2_25 + sp48;
+                    }
+                    phi_s5_3 = (s8) *(sp206 + ptr_spectrum_roms);
+                    break;
+                case 0x5F:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s5_3 = phi_s0 & 0xFF;
+                    break;
+                case 0x60:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s6_3 = phi_s2 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF) | (phi_s2 << 8);
+                    } else {
+                        IY = (IY & 0xFF) | (phi_s2 << 8);
+                    }
+                    break;
+                case 0x61:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s6_3 = phi_s3 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF) | (phi_s3 << 8);
+                    } else {
+                        IY = (IY & 0xFF) | (phi_s3 << 8);
+                    }
+                    break;
+                case 0x62:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s6_3 = phi_s4 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF) | (phi_s4 << 8);
+                    } else {
+                        IY = (IY & 0xFF) | (phi_s4 << 8);
+                    }
+                    break;
+                case 0x63:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s6_3 = phi_s5 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF) | (phi_s5 << 8);
+                    } else {
+                        IY = (IY & 0xFF) | (phi_s5 << 8);
+                    }
+                    break;
+                case 0x64:                          /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x65:                          /* switch 1 */
+                    temp_t3_19 = sp287 == 0;
+                    sp28C += 4;
+                    if (temp_t3_19 != 0) {
+                        if (temp_t3_19 != 0) {
+                            phi_s6_3 = phi_s7 & 0xFF;
+                        } else {
+                            if (sp287 == 1) {
+                                sp48 = IX & 0xFF;
+                            } else {
+                                sp48 = IY & 0xFF;
+                            }
+                            phi_s6_3 = unksp4B;
+                        }
+                    } else if (sp287 == 1) {
+                        if (sp287 == 0) {
+                            sp44 = (s32) phi_s7;
+                        } else {
+                            if (sp287 == 1) {
+                                sp40 = IX & 0xFF;
+                            } else {
+                                sp40 = IY & 0xFF;
+                            }
+                            sp44 = sp40;
+                        }
+                        IX = (sp44 << 8) | (IX & 0xFF);
+                    } else {
+                        if (sp287 == 0) {
+                            sp3C = (s32) phi_s7;
+                        } else {
+                            if (sp287 == 1) {
+                                sp38 = IX & 0xFF;
+                            } else {
+                                sp38 = IY & 0xFF;
+                            }
+                            sp3C = sp38;
+                        }
+                        IY = (sp3C << 8) | (IY & 0xFF);
+                    }
+                    break;
+                case 0x66:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp204 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t9_12 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp204 = temp_t9_12 + sp48;
+                    }
+                    phi_s6_3 = *(sp204 + ptr_spectrum_roms);
+                    break;
+                case 0x67:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s6_3 = phi_s0 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF) | (phi_s0 << 8);
+                    } else {
+                        IY = (IY & 0xFF) | (phi_s0 << 8);
+                    }
+                    break;
+                case 0x68:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s7_3 = phi_s2 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF00) | phi_s2;
+                    } else {
+                        IY = (IY & 0xFF00) | phi_s2;
+                    }
+                    break;
+                case 0x69:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s7_3 = phi_s3 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF00) | phi_s3;
+                    } else {
+                        IY = (IY & 0xFF00) | phi_s3;
+                    }
+                    break;
+                case 0x6A:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s7_3 = phi_s4 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF00) | phi_s4;
+                    } else {
+                        IY = (IY & 0xFF00) | phi_s4;
+                    }
+                    break;
+                case 0x6B:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s7_3 = phi_s5 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF00) | phi_s5;
+                    } else {
+                        IY = (IY & 0xFF00) | phi_s5;
+                    }
+                    break;
+                case 0x6C:                          /* switch 1 */
+                    temp_t3_20 = sp287 == 0;
+                    sp28C += 4;
+                    if (temp_t3_20 != 0) {
+                        if (temp_t3_20 != 0) {
+                            phi_s7_3 = phi_s6 & 0xFF;
+                        } else {
+                            if (sp287 == 1) {
+                                sp48 = (s32) IX >> 8;
+                            } else {
+                                sp48 = (s32) IY >> 8;
+                            }
+                            phi_s7_3 = unksp4B;
+                        }
+                    } else if (sp287 == 1) {
+                        if (sp287 == 0) {
+                            sp44 = (s32) phi_s6;
+                        } else {
+                            if (sp287 == 1) {
+                                sp40 = (s32) IX >> 8;
+                            } else {
+                                sp40 = (s32) IY >> 8;
+                            }
+                            sp44 = sp40;
+                        }
+                        IX = sp44 | (IX & 0xFF00);
+                    } else {
+                        if (sp287 == 0) {
+                            sp3C = (s32) phi_s6;
+                        } else {
+                            if (sp287 == 1) {
+                                sp38 = (s32) IX >> 8;
+                            } else {
+                                sp38 = (s32) IY >> 8;
+                            }
+                            sp3C = sp38;
+                        }
+                        IY = sp3C | (IY & 0xFF00);
+                    }
+                    break;
+                case 0x6D:                          /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x6E:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp202 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t6_27 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp202 = temp_t6_27 + sp48;
+                    }
+                    phi_s7_3 = *(sp202 + ptr_spectrum_roms);
+                    break;
+                case 0x6F:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s7_3 = phi_s0 & 0xFF;
+                    } else if (sp287 == 1) {
+                        IX = (IX & 0xFF00) | phi_s0;
+                    } else {
+                        IY = (IY & 0xFF00) | phi_s0;
+                    }
+                    break;
+                case 0x70:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp200 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t0_17 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp200 = temp_t0_17 + sp48;
+                    }
+                    if ((s32) sp200 >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp200) = phi_s2;
+                    } else if ((s32) sp200 >= 0x5800) {
+                        *(ptr_spectrum_roms + sp200) = phi_s2;
+                        *(ptr_300alloc + sp200)[0x5800] = 1;
+                    } else if ((s32) sp200 >= 0x4000) {
+                        *(ptr_spectrum_roms + sp200) = phi_s2;
+                        *(ptr_300alloc + (((s32) (sp200 & 0x1800) >> 3) | (sp200 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x71:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1FE = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t5_11 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1FE = temp_t5_11 + sp48;
+                    }
+                    if ((s32) sp1FE >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp1FE) = phi_s3;
+                    } else if ((s32) sp1FE >= 0x5800) {
+                        *(ptr_spectrum_roms + sp1FE) = phi_s3;
+                        *(ptr_300alloc + sp1FE)[0x5800] = 1;
+                    } else if ((s32) sp1FE >= 0x4000) {
+                        *(ptr_spectrum_roms + sp1FE) = phi_s3;
+                        *(ptr_300alloc + (((s32) (sp1FE & 0x1800) >> 3) | (sp1FE & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x72:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1FC = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t4_20 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1FC = temp_t4_20 + sp48;
+                    }
+                    if ((s32) sp1FC >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp1FC) = phi_s4;
+                    } else if ((s32) sp1FC >= 0x5800) {
+                        *(ptr_spectrum_roms + sp1FC) = phi_s4;
+                        *(ptr_300alloc + sp1FC)[0x5800] = 1;
+                    } else if ((s32) sp1FC >= 0x4000) {
+                        *(ptr_spectrum_roms + sp1FC) = phi_s4;
+                        *(ptr_300alloc + (((s32) (sp1FC & 0x1800) >> 3) | (sp1FC & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x73:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1FA = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t9_13 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1FA = temp_t9_13 + sp48;
+                    }
+                    if ((s32) sp1FA >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp1FA) = phi_s5;
+                    } else if ((s32) sp1FA >= 0x5800) {
+                        *(ptr_spectrum_roms + sp1FA) = phi_s5;
+                        *(ptr_300alloc + sp1FA)[0x5800] = 1;
+                    } else if ((s32) sp1FA >= 0x4000) {
+                        *(ptr_spectrum_roms + sp1FA) = phi_s5;
+                        *(ptr_300alloc + (((s32) (sp1FA & 0x1800) >> 3) | (sp1FA & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x74:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1F8 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t1_16 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1F8 = temp_t1_16 + sp48;
+                    }
+                    if ((s32) sp1F8 >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp1F8) = phi_s6;
+                    } else if ((s32) sp1F8 >= 0x5800) {
+                        *(ptr_spectrum_roms + sp1F8) = phi_s6;
+                        *(ptr_300alloc + sp1F8)[0x5800] = 1;
+                    } else if ((s32) sp1F8 >= 0x4000) {
+                        *(ptr_spectrum_roms + sp1F8) = phi_s6;
+                        *(ptr_300alloc + (((s32) (sp1F8 & 0x1800) >> 3) | (sp1F8 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x75:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1F6 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t3_21 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1F6 = temp_t3_21 + sp48;
+                    }
+                    if ((s32) sp1F6 >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp1F6) = phi_s7;
+                    } else if ((s32) sp1F6 >= 0x5800) {
+                        *(ptr_spectrum_roms + sp1F6) = phi_s7;
+                        *(ptr_300alloc + sp1F6)[0x5800] = 1;
+                    } else if ((s32) sp1F6 >= 0x4000) {
+                        *(ptr_spectrum_roms + sp1F6) = phi_s7;
+                        *(ptr_300alloc + (((s32) (sp1F6 & 0x1800) >> 3) | (sp1F6 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x76:                          /* switch 1 */
+                    temp_t8_15 = sp28C + 4;
+                    sp28C = temp_t8_15;
+                    if (temp_t8_15 < sp280) {
+                        sp28C = temp_t8_15 + (((sp280 - temp_t8_15) + 3) & ~3);
+                    }
+                    PC += -1;
+                    break;
+                case 0x77:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1F4 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t2_26 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1F4 = temp_t2_26 + sp48;
+                    }
+                    if ((s32) sp1F4 >= 0x5B00) {
+                        *(ptr_spectrum_roms + sp1F4) = phi_s0;
+                    } else if ((s32) sp1F4 >= 0x5800) {
+                        *(ptr_spectrum_roms + sp1F4) = phi_s0;
+                        *(ptr_300alloc + sp1F4)[0x5800] = 1;
+                    } else if ((s32) sp1F4 >= 0x4000) {
+                        *(ptr_spectrum_roms + sp1F4) = phi_s0;
+                        *(ptr_300alloc + (((s32) (sp1F4 & 0x1800) >> 3) | (sp1F4 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0x78:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s0_3 = phi_s2 & 0xFF;
+                    break;
+                case 0x79:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s0_3 = phi_s3 & 0xFF;
+                    break;
+                case 0x7A:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s0_3 = phi_s4 & 0xFF;
+                    break;
+                case 0x7B:                          /* switch 1 */
+                    sp28C += 4;
+                    phi_s0_3 = phi_s5 & 0xFF;
+                    break;
+                case 0x7C:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s0_3 = phi_s6 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        phi_s0_3 = unksp4B;
+                    }
+                    break;
+                case 0x7D:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        phi_s0_3 = phi_s7 & 0xFF;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        phi_s0_3 = unksp4B;
+                    }
+                    break;
+                case 0x7E:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1F2 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t5_12 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1F2 = temp_t5_12 + sp48;
+                    }
+                    phi_s0_3 = *(sp1F2 + ptr_spectrum_roms);
+                    break;
+                case 0x7F:                          /* switch 1 */
+                    sp28C += 4;
+                    break;
+                case 0x80:                          /* switch 1 */
+                    temp_t7_17 = phi_s2 & 0xFF;
+                    temp_t0_18 = phi_s0 + temp_t7_17;
+                    sp28C += 4;
+                    sp1F0 = (s16) temp_t0_18;
+                    temp_t2_27 = unksp1F1 == 0;
+                    sp48 = temp_t2_27;
+                    sp1EF = phi_s2;
+                    phi_s0_3 = unksp1F1;
+                    phi_s1_3 = ((temp_t0_18 & 0xA8) | (temp_t0_18 >> 8) | ((((phi_s0 & 0xF) + (temp_t7_17 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t7_17) & 0x80 & (temp_t0_18 ^ phi_s0)) >> 5) | (temp_t2_27 << 6)) & 0xFF;
+                    break;
+                case 0x81:                          /* switch 1 */
+                    temp_t3_22 = phi_s3 & 0xFF;
+                    temp_t9_14 = phi_s0 + temp_t3_22;
+                    sp28C += 4;
+                    sp1EC = (s16) temp_t9_14;
+                    temp_t2_28 = unksp1ED == 0;
+                    sp48 = temp_t2_28;
+                    sp1EB = phi_s3;
+                    phi_s0_3 = unksp1ED;
+                    phi_s1_3 = ((temp_t9_14 & 0xA8) | (temp_t9_14 >> 8) | ((((phi_s0 & 0xF) + (temp_t3_22 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t3_22) & 0x80 & (temp_t9_14 ^ phi_s0)) >> 5) | (temp_t2_28 << 6)) & 0xFF;
+                    break;
+                case 0x82:                          /* switch 1 */
+                    temp_t5_13 = phi_s4 & 0xFF;
+                    temp_t7_18 = phi_s0 + temp_t5_13;
+                    sp28C += 4;
+                    sp1E8 = (s16) temp_t7_18;
+                    temp_t2_29 = unksp1E9 == 0;
+                    sp48 = temp_t2_29;
+                    sp1E7 = phi_s4;
+                    phi_s0_3 = unksp1E9;
+                    phi_s1_3 = ((temp_t7_18 & 0xA8) | (temp_t7_18 >> 8) | ((((phi_s0 & 0xF) + (temp_t5_13 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t5_13) & 0x80 & (temp_t7_18 ^ phi_s0)) >> 5) | (temp_t2_29 << 6)) & 0xFF;
+                    break;
+                case 0x83:                          /* switch 1 */
+                    temp_t4_21 = phi_s5 & 0xFF;
+                    temp_t3_23 = phi_s0 + temp_t4_21;
+                    sp28C += 4;
+                    sp1E4 = (s16) temp_t3_23;
+                    temp_t2_30 = unksp1E5 == 0;
+                    sp48 = temp_t2_30;
+                    sp1E3 = phi_s5;
+                    phi_s0_3 = unksp1E5;
+                    phi_s1_3 = ((temp_t3_23 & 0xA8) | (temp_t3_23 >> 8) | ((((phi_s0 & 0xF) + (temp_t4_21 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t4_21) & 0x80 & (temp_t3_23 ^ phi_s0)) >> 5) | (temp_t2_30 << 6)) & 0xFF;
+                    break;
+                case 0x84:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp1DF = phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        sp1DF = (u8) sp48;
+                    }
+                    temp_t9_15 = phi_s0 + sp1DF;
+                    sp1E0 = (s16) temp_t9_15;
+                    temp_t8_16 = unksp1E1 == 0;
+                    sp48 = temp_t8_16;
+                    phi_s0_3 = unksp1E1;
+                    phi_s1_3 = ((temp_t9_15 & 0xA8) | (temp_t9_15 >> 8) | ((((phi_s0 & 0xF) + (sp1DF & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ sp1DF) & 0x80 & (temp_t9_15 ^ phi_s0)) >> 5) | (temp_t8_16 << 6)) & 0xFF;
+                    break;
+                case 0x85:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp1DB = phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        sp1DB = (u8) sp48;
+                    }
+                    temp_t4_22 = phi_s0 + sp1DB;
+                    sp1DC = (s16) temp_t4_22;
+                    temp_t0_19 = unksp1DD == 0;
+                    sp48 = temp_t0_19;
+                    phi_s0_3 = unksp1DD;
+                    phi_s1_3 = ((temp_t4_22 & 0xA8) | (temp_t4_22 >> 8) | ((((phi_s0 & 0xF) + (sp1DB & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ sp1DB) & 0x80 & (temp_t4_22 ^ phi_s0)) >> 5) | (temp_t0_19 << 6)) & 0xFF;
+                    break;
+                case 0x86:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1D8 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t6_28 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1D8 = temp_t6_28 + sp48;
+                    }
+                    temp_t3_24 = *(sp1D8 + ptr_spectrum_roms);
+                    temp_t6_29 = phi_s0 + temp_t3_24;
+                    sp1D6 = (s16) temp_t6_29;
+                    temp_t2_31 = unksp1D7 == 0;
+                    sp48 = temp_t2_31;
+                    sp1D5 = temp_t3_24;
+                    phi_s0_3 = unksp1D7;
+                    phi_s1_3 = ((temp_t6_29 & 0xA8) | (temp_t6_29 >> 8) | ((((phi_s0 & 0xF) + (temp_t3_24 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t3_24) & 0x80 & (temp_t6_29 ^ phi_s0)) >> 5) | (temp_t2_31 << 6)) & 0xFF;
+                    break;
+                case 0x87:                          /* switch 1 */
+                    temp_t4_23 = phi_s0 & 0xFF;
+                    temp_t8_17 = phi_s0 + temp_t4_23;
+                    sp28C += 4;
+                    sp1D2 = (s16) temp_t8_17;
+                    sp1D1 = phi_s0;
+                    temp_t2_32 = unksp1D3 == 0;
+                    sp48 = temp_t2_32;
+                    phi_s0_3 = unksp1D3;
+                    phi_s1_3 = ((temp_t8_17 & 0xA8) | (temp_t8_17 >> 8) | ((((phi_s0 & 0xF) + (temp_t4_23 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t4_23) & 0x80 & (temp_t8_17 ^ phi_s0)) >> 5) | (temp_t2_32 << 6)) & 0xFF;
+                    break;
+                case 0x88:                          /* switch 1 */
+                    temp_t7_19 = phi_s2 & 0xFF;
+                    temp_t5_14 = phi_s0 + temp_t7_19 + (phi_s1 & 1);
+                    sp28C += 4;
+                    sp1CE = (s16) temp_t5_14;
+                    temp_t7_20 = unksp1CF == 0;
+                    sp48 = temp_t7_20;
+                    sp1CD = phi_s2;
+                    phi_s0_3 = unksp1CF;
+                    phi_s1_3 = ((temp_t5_14 & 0xA8) | (temp_t5_14 >> 8) | ((((phi_s0 & 0xF) + (temp_t7_19 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t7_19) & 0x80 & (temp_t5_14 ^ phi_s0)) >> 5) | (temp_t7_20 << 6)) & 0xFF;
+                    break;
+                case 0x89:                          /* switch 1 */
+                    temp_t6_30 = phi_s3 & 0xFF;
+                    temp_t1_17 = phi_s0 + temp_t6_30 + (phi_s1 & 1);
+                    sp28C += 4;
+                    sp1CA = (s16) temp_t1_17;
+                    temp_t6_31 = unksp1CB == 0;
+                    sp48 = temp_t6_31;
+                    sp1C9 = phi_s3;
+                    phi_s0_3 = unksp1CB;
+                    phi_s1_3 = ((temp_t1_17 & 0xA8) | (temp_t1_17 >> 8) | ((((phi_s0 & 0xF) + (temp_t6_30 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t6_30) & 0x80 & (temp_t1_17 ^ phi_s0)) >> 5) | (temp_t6_31 << 6)) & 0xFF;
+                    break;
+                case 0x8A:                          /* switch 1 */
+                    temp_t2_33 = phi_s4 & 0xFF;
+                    temp_t0_20 = phi_s0 + temp_t2_33 + (phi_s1 & 1);
+                    sp28C += 4;
+                    sp1C6 = (s16) temp_t0_20;
+                    temp_t2_34 = unksp1C7 == 0;
+                    sp48 = temp_t2_34;
+                    sp1C5 = phi_s4;
+                    phi_s0_3 = unksp1C7;
+                    phi_s1_3 = ((temp_t0_20 & 0xA8) | (temp_t0_20 >> 8) | ((((phi_s0 & 0xF) + (temp_t2_33 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t2_33) & 0x80 & (temp_t0_20 ^ phi_s0)) >> 5) | (temp_t2_34 << 6)) & 0xFF;
+                    break;
+                case 0x8B:                          /* switch 1 */
+                    temp_t7_21 = phi_s5 & 0xFF;
+                    temp_t4_24 = phi_s0 + temp_t7_21 + (phi_s1 & 1);
+                    sp28C += 4;
+                    sp1C2 = (s16) temp_t4_24;
+                    temp_t7_22 = unksp1C3 == 0;
+                    sp48 = temp_t7_22;
+                    sp1C1 = phi_s5;
+                    phi_s0_3 = unksp1C3;
+                    phi_s1_3 = ((temp_t4_24 & 0xA8) | (temp_t4_24 >> 8) | ((((phi_s0 & 0xF) + (temp_t7_21 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t7_21) & 0x80 & (temp_t4_24 ^ phi_s0)) >> 5) | (temp_t7_22 << 6)) & 0xFF;
+                    break;
+                case 0x8C:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp1BD = phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        sp1BD = (u8) sp48;
+                    }
+                    temp_t6_32 = phi_s0 + sp1BD + (phi_s1 & 1);
+                    sp1BE = (s16) temp_t6_32;
+                    temp_t0_21 = unksp1BF == 0;
+                    sp48 = temp_t0_21;
+                    phi_s0_3 = unksp1BF;
+                    phi_s1_3 = ((temp_t6_32 & 0xA8) | (temp_t6_32 >> 8) | ((((phi_s0 & 0xF) + (sp1BD & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ sp1BD) & 0x80 & (temp_t6_32 ^ phi_s0)) >> 5) | (temp_t0_21 << 6)) & 0xFF;
+                    break;
+                case 0x8D:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp1B9 = phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        sp1B9 = (u8) sp48;
+                    }
+                    temp_t5_15 = phi_s0 + sp1B9 + (phi_s1 & 1);
+                    sp1BA = (s16) temp_t5_15;
+                    temp_t3_25 = unksp1BB == 0;
+                    sp48 = temp_t3_25;
+                    phi_s0_3 = unksp1BB;
+                    phi_s1_3 = ((temp_t5_15 & 0xA8) | (temp_t5_15 >> 8) | ((((phi_s0 & 0xF) + (sp1B9 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ sp1B9) & 0x80 & (temp_t5_15 ^ phi_s0)) >> 5) | (temp_t3_25 << 6)) & 0xFF;
+                    break;
+                case 0x8E:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp1B6 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t6_33 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp1B6 = temp_t6_33 + sp48;
+                    }
+                    temp_t7_23 = *(sp1B6 + ptr_spectrum_roms);
+                    temp_t0_22 = phi_s0 + temp_t7_23 + (phi_s1 & 1);
+                    sp1B4 = (s16) temp_t0_22;
+                    sp1B3 = temp_t7_23;
+                    temp_t7_24 = unksp1B5 == 0;
+                    sp48 = temp_t7_24;
+                    phi_s0_3 = unksp1B5;
+                    phi_s1_3 = ((temp_t0_22 & 0xA8) | (temp_t0_22 >> 8) | ((((phi_s0 & 0xF) + (temp_t7_23 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t7_23) & 0x80 & (temp_t0_22 ^ phi_s0)) >> 5) | (temp_t7_24 << 6)) & 0xFF;
+                    break;
+                case 0x8F:                          /* switch 1 */
+                    temp_t5_16 = phi_s0 & 0xFF;
+                    temp_t2_35 = phi_s0 + temp_t5_16 + (phi_s1 & 1);
+                    sp28C += 4;
+                    sp1B0 = (s16) temp_t2_35;
+                    sp1AF = phi_s0;
+                    temp_t5_17 = unksp1B1 == 0;
+                    sp48 = temp_t5_17;
+                    phi_s0_3 = unksp1B1;
+                    phi_s1_3 = ((temp_t2_35 & 0xA8) | (temp_t2_35 >> 8) | ((((phi_s0 & 0xF) + (temp_t5_16 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t5_16) & 0x80 & (temp_t2_35 ^ phi_s0)) >> 5) | (temp_t5_17 << 6)) & 0xFF;
+                    break;
+                case 0x90:                          /* switch 1 */
+                    temp_t8_18 = phi_s2 & 0xFF;
+                    temp_t3_26 = (phi_s0 - temp_t8_18) & 0x1FF;
+                    sp28C += 4;
+                    sp1AC = (s16) temp_t3_26;
+                    temp_t5_18 = unksp1AD == 0;
+                    sp48 = temp_t5_18;
+                    sp1AB = phi_s2;
+                    phi_s0_3 = unksp1AD;
+                    phi_s1_3 = ((temp_t3_26 & 0xA8) | (temp_t3_26 >> 8) | (((phi_s0 & 0xF) < (temp_t8_18 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t8_18) & 0x80 & (temp_t3_26 ^ phi_s0)) >> 5) | 2 | (temp_t5_18 << 6)) & 0xFF;
+                    break;
+                case 0x91:                          /* switch 1 */
+                    temp_t1_18 = phi_s3 & 0xFF;
+                    temp_t9_16 = (phi_s0 - temp_t1_18) & 0x1FF;
+                    sp28C += 4;
+                    sp1A8 = (s16) temp_t9_16;
+                    temp_t5_19 = unksp1A9 == 0;
+                    sp48 = temp_t5_19;
+                    sp1A7 = phi_s3;
+                    phi_s0_3 = unksp1A9;
+                    phi_s1_3 = ((temp_t9_16 & 0xA8) | (temp_t9_16 >> 8) | (((phi_s0 & 0xF) < (temp_t1_18 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t1_18) & 0x80 & (temp_t9_16 ^ phi_s0)) >> 5) | 2 | (temp_t5_19 << 6)) & 0xFF;
+                    break;
+                case 0x92:                          /* switch 1 */
+                    temp_t3_27 = phi_s4 & 0xFF;
+                    temp_t8_19 = (phi_s0 - temp_t3_27) & 0x1FF;
+                    sp28C += 4;
+                    sp1A4 = (s16) temp_t8_19;
+                    temp_t5_20 = unksp1A5 == 0;
+                    sp48 = temp_t5_20;
+                    sp1A3 = phi_s4;
+                    phi_s0_3 = unksp1A5;
+                    phi_s1_3 = ((temp_t8_19 & 0xA8) | (temp_t8_19 >> 8) | (((phi_s0 & 0xF) < (temp_t3_27 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t3_27) & 0x80 & (temp_t8_19 ^ phi_s0)) >> 5) | 2 | (temp_t5_20 << 6)) & 0xFF;
+                    break;
+                case 0x93:                          /* switch 1 */
+                    temp_t9_17 = phi_s5 & 0xFF;
+                    temp_t1_19 = (phi_s0 - temp_t9_17) & 0x1FF;
+                    sp28C += 4;
+                    sp1A0 = (s16) temp_t1_19;
+                    temp_t5_21 = unksp1A1 == 0;
+                    sp48 = temp_t5_21;
+                    sp19F = phi_s5;
+                    phi_s0_3 = unksp1A1;
+                    phi_s1_3 = ((temp_t1_19 & 0xA8) | (temp_t1_19 >> 8) | (((phi_s0 & 0xF) < (temp_t9_17 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t9_17) & 0x80 & (temp_t1_19 ^ phi_s0)) >> 5) | 2 | (temp_t5_21 << 6)) & 0xFF;
+                    break;
+                case 0x94:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp19B = phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        sp19B = (u8) sp48;
+                    }
+                    temp_t7_25 = (phi_s0 - sp19B) & 0x1FF;
+                    sp19C = (s16) temp_t7_25;
+                    temp_t6_34 = unksp19D == 0;
+                    sp48 = temp_t6_34;
+                    phi_s0_3 = unksp19D;
+                    phi_s1_3 = ((temp_t7_25 & 0xA8) | (temp_t7_25 >> 8) | (((phi_s0 & 0xF) < (sp19B & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ sp19B) & 0x80 & (temp_t7_25 ^ phi_s0)) >> 5) | 2 | (temp_t6_34 << 6)) & 0xFF;
+                    break;
+                case 0x95:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp197 = phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        sp197 = (u8) sp48;
+                    }
+                    temp_t2_36 = (phi_s0 - sp197) & 0x1FF;
+                    sp198 = (s16) temp_t2_36;
+                    temp_t5_22 = unksp199 == 0;
+                    sp48 = temp_t5_22;
+                    phi_s0_3 = unksp199;
+                    phi_s1_3 = ((temp_t2_36 & 0xA8) | (temp_t2_36 >> 8) | (((phi_s0 & 0xF) < (sp197 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ sp197) & 0x80 & (temp_t2_36 ^ phi_s0)) >> 5) | 2 | (temp_t5_22 << 6)) & 0xFF;
+                    break;
+                case 0x96:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp194 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t6_35 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp194 = temp_t6_35 + sp48;
+                    }
+                    temp_t0_23 = *(sp194 + ptr_spectrum_roms);
+                    temp_t6_36 = (phi_s0 - temp_t0_23) & 0x1FF;
+                    sp192 = (s16) temp_t6_36;
+                    sp191 = temp_t0_23;
+                    temp_t9_18 = unksp193 == 0;
+                    sp48 = temp_t9_18;
+                    phi_s0_3 = unksp193;
+                    phi_s1_3 = ((temp_t6_36 & 0xA8) | (temp_t6_36 >> 8) | (((phi_s0 & 0xF) < (temp_t0_23 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t0_23) & 0x80 & (temp_t6_36 ^ phi_s0)) >> 5) | 2 | (temp_t9_18 << 6)) & 0xFF;
+                    break;
+                case 0x97:                          /* switch 1 */
+                    temp_t1_20 = phi_s0 & 0xFF;
+                    temp_t3_28 = (phi_s0 - temp_t1_20) & 0x1FF;
+                    sp28C += 4;
+                    sp18E = (s16) temp_t3_28;
+                    sp18D = phi_s0;
+                    temp_t9_19 = unksp18F == 0;
+                    sp48 = temp_t9_19;
+                    phi_s0_3 = unksp18F;
+                    phi_s1_3 = ((temp_t3_28 & 0xA8) | (temp_t3_28 >> 8) | (((phi_s0 & 0xF) < (temp_t1_20 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t1_20) & 0x80 & (temp_t3_28 ^ phi_s0)) >> 5) | 2 | (temp_t9_19 << 6)) & 0xFF;
+                    break;
+                case 0x98:                          /* switch 1 */
+                    temp_t6_37 = phi_s2 & 0xFF;
+                    temp_t0_24 = phi_s1 & 1;
+                    temp_t9_20 = ((phi_s0 - temp_t6_37) - temp_t0_24) & 0x1FF;
+                    sp28C += 4;
+                    sp18A = (s16) temp_t9_20;
+                    temp_t5_23 = unksp18B == 0;
+                    sp48 = temp_t5_23;
+                    sp189 = phi_s2;
+                    phi_s0_3 = unksp18B;
+                    phi_s1_3 = ((temp_t9_20 & 0xA8) | (temp_t9_20 >> 8) | (((phi_s0 & 0xF) < ((temp_t6_37 & 0xF) + temp_t0_24)) * 0x10) | ((s32) ((phi_s0 ^ temp_t6_37) & 0x80 & (temp_t9_20 ^ phi_s0)) >> 5) | 2 | (temp_t5_23 << 6)) & 0xFF;
+                    break;
+                case 0x99:                          /* switch 1 */
+                    temp_t8_20 = phi_s3 & 0xFF;
+                    temp_t7_26 = phi_s1 & 1;
+                    temp_t5_24 = ((phi_s0 - temp_t8_20) - temp_t7_26) & 0x1FF;
+                    sp28C += 4;
+                    sp186 = (s16) temp_t5_24;
+                    temp_t2_37 = unksp187 == 0;
+                    sp48 = temp_t2_37;
+                    sp185 = phi_s3;
+                    phi_s0_3 = unksp187;
+                    phi_s1_3 = ((temp_t5_24 & 0xA8) | (temp_t5_24 >> 8) | (((phi_s0 & 0xF) < ((temp_t8_20 & 0xF) + temp_t7_26)) * 0x10) | ((s32) ((phi_s0 ^ temp_t8_20) & 0x80 & (temp_t5_24 ^ phi_s0)) >> 5) | 2 | (temp_t2_37 << 6)) & 0xFF;
+                    break;
+                case 0x9A:                          /* switch 1 */
+                    temp_t1_21 = phi_s4 & 0xFF;
+                    temp_t3_29 = phi_s1 & 1;
+                    temp_t2_38 = ((phi_s0 - temp_t1_21) - temp_t3_29) & 0x1FF;
+                    sp28C += 4;
+                    sp182 = (s16) temp_t2_38;
+                    temp_t4_25 = unksp183 == 0;
+                    sp48 = temp_t4_25;
+                    sp181 = phi_s4;
+                    phi_s0_3 = unksp183;
+                    phi_s1_3 = ((temp_t2_38 & 0xA8) | (temp_t2_38 >> 8) | (((phi_s0 & 0xF) < ((temp_t1_21 & 0xF) + temp_t3_29)) * 0x10) | ((s32) ((phi_s0 ^ temp_t1_21) & 0x80 & (temp_t2_38 ^ phi_s0)) >> 5) | 2 | (temp_t4_25 << 6)) & 0xFF;
+                    break;
+                case 0x9B:                          /* switch 1 */
+                    temp_t6_38 = phi_s5 & 0xFF;
+                    temp_t9_21 = phi_s1 & 1;
+                    temp_t4_26 = ((phi_s0 - temp_t6_38) - temp_t9_21) & 0x1FF;
+                    sp28C += 4;
+                    sp17E = (s16) temp_t4_26;
+                    temp_t0_25 = unksp17F == 0;
+                    sp48 = temp_t0_25;
+                    sp17D = phi_s5;
+                    phi_s0_3 = unksp17F;
+                    phi_s1_3 = ((temp_t4_26 & 0xA8) | (temp_t4_26 >> 8) | (((phi_s0 & 0xF) < ((temp_t6_38 & 0xF) + temp_t9_21)) * 0x10) | ((s32) ((phi_s0 ^ temp_t6_38) & 0x80 & (temp_t4_26 ^ phi_s0)) >> 5) | 2 | (temp_t0_25 << 6)) & 0xFF;
+                    break;
+                case 0x9C:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp179 = phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        sp179 = (u8) sp48;
+                    }
+                    temp_t3_30 = phi_s1 & 1;
+                    temp_t7_27 = ((phi_s0 - sp179) - temp_t3_30) & 0x1FF;
+                    sp17A = (s16) temp_t7_27;
+                    temp_t1_22 = unksp17B == 0;
+                    sp48 = temp_t1_22;
+                    phi_s0_3 = unksp17B;
+                    phi_s1_3 = ((temp_t7_27 & 0xA8) | (temp_t7_27 >> 8) | (((phi_s0 & 0xF) < ((sp179 & 0xF) + temp_t3_30)) * 0x10) | ((s32) ((phi_s0 ^ sp179) & 0x80 & (temp_t7_27 ^ phi_s0)) >> 5) | 2 | (temp_t1_22 << 6)) & 0xFF;
+                    break;
+                case 0x9D:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp175 = phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        sp175 = (u8) sp48;
+                    }
+                    temp_t0_26 = phi_s1 & 1;
+                    temp_t2_39 = ((phi_s0 - sp175) - temp_t0_26) & 0x1FF;
+                    sp176 = (s16) temp_t2_39;
+                    temp_t8_21 = unksp177 == 0;
+                    sp48 = temp_t8_21;
+                    phi_s0_3 = unksp177;
+                    phi_s1_3 = ((temp_t2_39 & 0xA8) | (temp_t2_39 >> 8) | (((phi_s0 & 0xF) < ((sp175 & 0xF) + temp_t0_26)) * 0x10) | ((s32) ((phi_s0 ^ sp175) & 0x80 & (temp_t2_39 ^ phi_s0)) >> 5) | 2 | (temp_t8_21 << 6)) & 0xFF;
+                    break;
+                case 0x9E:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp172 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t5_25 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp172 = temp_t5_25 + sp48;
+                    }
+                    temp_t5_26 = phi_s1 & 1;
+                    temp_t1_23 = *(sp172 + ptr_spectrum_roms);
+                    temp_t3_31 = ((phi_s0 - temp_t1_23) - temp_t5_26) & 0x1FF;
+                    sp170 = (s16) temp_t3_31;
+                    sp16F = temp_t1_23;
+                    temp_t7_28 = unksp171 == 0;
+                    sp48 = temp_t7_28;
+                    phi_s0_3 = unksp171;
+                    phi_s1_3 = ((temp_t3_31 & 0xA8) | (temp_t3_31 >> 8) | (((phi_s0 & 0xF) < ((temp_t1_23 & 0xF) + temp_t5_26)) * 0x10) | ((s32) ((phi_s0 ^ temp_t1_23) & 0x80 & (temp_t3_31 ^ phi_s0)) >> 5) | 2 | (temp_t7_28 << 6)) & 0xFF;
+                    break;
+                case 0x9F:                          /* switch 1 */
+                    temp_t6_39 = phi_s0 & 0xFF;
+                    temp_t8_22 = phi_s1 & 1;
+                    temp_t7_29 = ((phi_s0 - temp_t6_39) - temp_t8_22) & 0x1FF;
+                    sp28C += 4;
+                    sp16C = (s16) temp_t7_29;
+                    sp16B = phi_s0;
+                    temp_t0_27 = unksp16D == 0;
+                    sp48 = temp_t0_27;
+                    phi_s0_3 = unksp16D;
+                    phi_s1_3 = ((temp_t7_29 & 0xA8) | (temp_t7_29 >> 8) | (((phi_s0 & 0xF) < ((temp_t6_39 & 0xF) + temp_t8_22)) * 0x10) | ((s32) ((phi_s0 ^ temp_t6_39) & 0x80 & (temp_t7_29 ^ phi_s0)) >> 5) | 2 | (temp_t0_27 << 6)) & 0xFF;
+                    break;
+                case 0xA0:                          /* switch 1 */
+                    temp_t9_22 = phi_s0 & phi_s2 & 0xFF;
+                    temp_t2_40 = temp_t9_22 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t2_40;
+                    phi_s0_3 = temp_t9_22;
+                    phi_s1_3 = (*(temp_t9_22 + ptr_pc_keyboard_table_alloc) | ((temp_t9_22 & 0xA8) | (temp_t2_40 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA1:                          /* switch 1 */
+                    temp_t4_27 = phi_s0 & phi_s3 & 0xFF;
+                    temp_t0_28 = temp_t4_27 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t0_28;
+                    phi_s0_3 = temp_t4_27;
+                    phi_s1_3 = (*(temp_t4_27 + ptr_pc_keyboard_table_alloc) | ((temp_t4_27 & 0xA8) | (temp_t0_28 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA2:                          /* switch 1 */
+                    temp_t7_30 = phi_s0 & phi_s4 & 0xFF;
+                    temp_t1_24 = temp_t7_30 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t1_24;
+                    phi_s0_3 = temp_t7_30;
+                    phi_s1_3 = (*(temp_t7_30 + ptr_pc_keyboard_table_alloc) | ((temp_t7_30 & 0xA8) | (temp_t1_24 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA3:                          /* switch 1 */
+                    temp_t5_27 = phi_s0 & phi_s5 & 0xFF;
+                    temp_t2_41 = temp_t5_27 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t2_41;
+                    phi_s0_3 = temp_t5_27;
+                    phi_s1_3 = (*(temp_t5_27 + ptr_pc_keyboard_table_alloc) | ((temp_t5_27 & 0xA8) | (temp_t2_41 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA4:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp48 = (s32) phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp44 = (s32) IX >> 8;
+                        } else {
+                            sp44 = (s32) IY >> 8;
+                        }
+                        sp48 = sp44;
+                    }
+                    temp_t2_42 = phi_s0 & sp48 & 0xFF;
+                    temp_t4_28 = temp_t2_42 == 0;
+                    sp48 = temp_t4_28;
+                    phi_s0_3 = temp_t2_42;
+                    phi_s1_3 = (*(temp_t2_42 + ptr_pc_keyboard_table_alloc) | ((temp_t2_42 & 0xA8) | (temp_t4_28 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA5:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp48 = (s32) phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp44 = IX & 0xFF;
+                        } else {
+                            sp44 = IY & 0xFF;
+                        }
+                        sp48 = sp44;
+                    }
+                    temp_t4_29 = phi_s0 & sp48 & 0xFF;
+                    temp_t0_29 = temp_t4_29 == 0;
+                    sp48 = temp_t0_29;
+                    phi_s0_3 = temp_t4_29;
+                    phi_s1_3 = (*(temp_t4_29 + ptr_pc_keyboard_table_alloc) | ((temp_t4_29 & 0xA8) | (temp_t0_29 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA6:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp168 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t7_31 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp168 = temp_t7_31 + sp48;
+                    }
+                    temp_t6_40 = phi_s0 & *(ptr_spectrum_roms + sp168) & 0xFF;
+                    temp_t7_32 = temp_t6_40 == 0;
+                    sp48 = temp_t7_32;
+                    phi_s0_3 = temp_t6_40;
+                    phi_s1_3 = (*(temp_t6_40 + ptr_pc_keyboard_table_alloc) | ((temp_t6_40 & 0xA8) | (temp_t7_32 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA7:                          /* switch 1 */
+                    temp_t9_23 = phi_s0 & phi_s0 & 0xFF;
+                    temp_t0_30 = temp_t9_23 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t0_30;
+                    phi_s0_3 = temp_t9_23;
+                    phi_s1_3 = (*(temp_t9_23 + ptr_pc_keyboard_table_alloc) | ((temp_t9_23 & 0xA8) | (temp_t0_30 << 6) | 0x10)) & 0xFF;
+                    break;
+                case 0xA8:                          /* switch 1 */
+                    temp_t1_25 = (phi_s0 ^ phi_s2) & 0xFF;
+                    temp_t4_30 = temp_t1_25 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t4_30;
+                    phi_s0_3 = temp_t1_25;
+                    phi_s1_3 = (*(temp_t1_25 + ptr_pc_keyboard_table_alloc) | ((temp_t1_25 & 0xA8) | (temp_t4_30 << 6))) & 0xFF;
+                    break;
+                case 0xA9:                          /* switch 1 */
+                    temp_t6_41 = (phi_s0 ^ phi_s3) & 0xFF;
+                    temp_t8_23 = temp_t6_41 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t8_23;
+                    phi_s0_3 = temp_t6_41;
+                    phi_s1_3 = (*(temp_t6_41 + ptr_pc_keyboard_table_alloc) | ((temp_t6_41 & 0xA8) | (temp_t8_23 << 6))) & 0xFF;
+                    break;
+                case 0xAA:                          /* switch 1 */
+                    temp_t2_43 = (phi_s0 ^ phi_s4) & 0xFF;
+                    temp_t7_33 = temp_t2_43 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t7_33;
+                    phi_s0_3 = temp_t2_43;
+                    phi_s1_3 = (*(temp_t2_43 + ptr_pc_keyboard_table_alloc) | ((temp_t2_43 & 0xA8) | (temp_t7_33 << 6))) & 0xFF;
+                    break;
+                case 0xAB:                          /* switch 1 */
+                    temp_t5_28 = (phi_s0 ^ phi_s5) & 0xFF;
+                    temp_t9_24 = temp_t5_28 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t9_24;
+                    phi_s0_3 = temp_t5_28;
+                    phi_s1_3 = (*(temp_t5_28 + ptr_pc_keyboard_table_alloc) | ((temp_t5_28 & 0xA8) | (temp_t9_24 << 6))) & 0xFF;
+                    break;
+                case 0xAC:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp48 = (s32) phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp44 = (s32) IX >> 8;
+                        } else {
+                            sp44 = (s32) IY >> 8;
+                        }
+                        sp48 = sp44;
+                    }
+                    temp_t5_29 = (phi_s0 ^ sp48) & 0xFF;
+                    temp_t9_25 = temp_t5_29 == 0;
+                    sp48 = temp_t9_25;
+                    phi_s0_3 = temp_t5_29;
+                    phi_s1_3 = (*(temp_t5_29 + ptr_pc_keyboard_table_alloc) | ((temp_t5_29 & 0xA8) | (temp_t9_25 << 6))) & 0xFF;
+                    break;
+                case 0xAD:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp48 = (s32) phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp44 = IX & 0xFF;
+                        } else {
+                            sp44 = IY & 0xFF;
+                        }
+                        sp48 = sp44;
+                    }
+                    temp_t5_30 = (phi_s0 ^ sp48) & 0xFF;
+                    temp_t9_26 = temp_t5_30 == 0;
+                    sp48 = temp_t9_26;
+                    phi_s0_3 = temp_t5_30;
+                    phi_s1_3 = (*(temp_t5_30 + ptr_pc_keyboard_table_alloc) | ((temp_t5_30 & 0xA8) | (temp_t9_26 << 6))) & 0xFF;
+                    break;
+                case 0xAE:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp166 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t3_32 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp166 = temp_t3_32 + sp48;
+                    }
+                    temp_t0_31 = (phi_s0 ^ *(ptr_spectrum_roms + sp166)) & 0xFF;
+                    temp_t3_33 = temp_t0_31 == 0;
+                    sp48 = temp_t3_33;
+                    phi_s0_3 = temp_t0_31;
+                    phi_s1_3 = (*(temp_t0_31 + ptr_pc_keyboard_table_alloc) | ((temp_t0_31 & 0xA8) | (temp_t3_33 << 6))) & 0xFF;
+                    break;
+                case 0xAF:                          /* switch 1 */
+                    temp_t2_44 = (phi_s0 ^ phi_s0) & 0xFF;
+                    temp_t4_31 = temp_t2_44 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t4_31;
+                    phi_s0_3 = temp_t2_44;
+                    phi_s1_3 = (*(temp_t2_44 + ptr_pc_keyboard_table_alloc) | ((temp_t2_44 & 0xA8) | (temp_t4_31 << 6))) & 0xFF;
+                    break;
+                case 0xB0:                          /* switch 1 */
+                    temp_t1_26 = (phi_s0 | phi_s2) & 0xFF;
+                    temp_t5_31 = temp_t1_26 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t5_31;
+                    phi_s0_3 = temp_t1_26;
+                    phi_s1_3 = (*(temp_t1_26 + ptr_pc_keyboard_table_alloc) | ((temp_t1_26 & 0xA8) | (temp_t5_31 << 6))) & 0xFF;
+                    break;
+                case 0xB1:                          /* switch 1 */
+                    temp_t6_42 = (phi_s0 | phi_s3) & 0xFF;
+                    temp_t8_24 = temp_t6_42 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t8_24;
+                    phi_s0_3 = temp_t6_42;
+                    phi_s1_3 = (*(temp_t6_42 + ptr_pc_keyboard_table_alloc) | ((temp_t6_42 & 0xA8) | (temp_t8_24 << 6))) & 0xFF;
+                    break;
+                case 0xB2:                          /* switch 1 */
+                    temp_t7_34 = (phi_s0 | phi_s4) & 0xFF;
+                    temp_t9_27 = temp_t7_34 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t9_27;
+                    phi_s0_3 = temp_t7_34;
+                    phi_s1_3 = (*(temp_t7_34 + ptr_pc_keyboard_table_alloc) | ((temp_t7_34 & 0xA8) | (temp_t9_27 << 6))) & 0xFF;
+                    break;
+                case 0xB3:                          /* switch 1 */
+                    temp_t0_32 = (phi_s0 | phi_s5) & 0xFF;
+                    temp_t3_34 = temp_t0_32 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t3_34;
+                    phi_s0_3 = temp_t0_32;
+                    phi_s1_3 = (*(temp_t0_32 + ptr_pc_keyboard_table_alloc) | ((temp_t0_32 & 0xA8) | (temp_t3_34 << 6))) & 0xFF;
+                    break;
+                case 0xB4:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp48 = (s32) phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp44 = (s32) IX >> 8;
+                        } else {
+                            sp44 = (s32) IY >> 8;
+                        }
+                        sp48 = sp44;
+                    }
+                    temp_t0_33 = (phi_s0 | sp48) & 0xFF;
+                    temp_t3_35 = temp_t0_33 == 0;
+                    sp48 = temp_t3_35;
+                    phi_s0_3 = temp_t0_33;
+                    phi_s1_3 = (*(temp_t0_33 + ptr_pc_keyboard_table_alloc) | ((temp_t0_33 & 0xA8) | (temp_t3_35 << 6))) & 0xFF;
+                    break;
+                case 0xB5:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp48 = (s32) phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp44 = IX & 0xFF;
+                        } else {
+                            sp44 = IY & 0xFF;
+                        }
+                        sp48 = sp44;
+                    }
+                    temp_t0_34 = (phi_s0 | sp48) & 0xFF;
+                    temp_t3_36 = temp_t0_34 == 0;
+                    sp48 = temp_t3_36;
+                    phi_s0_3 = temp_t0_34;
+                    phi_s1_3 = (*(temp_t0_34 + ptr_pc_keyboard_table_alloc) | ((temp_t0_34 & 0xA8) | (temp_t3_36 << 6))) & 0xFF;
+                    break;
+                case 0xB6:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp164 = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t4_32 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp164 = temp_t4_32 + sp48;
+                    }
+                    temp_t2_45 = (phi_s0 | *(ptr_spectrum_roms + sp164)) & 0xFF;
+                    temp_t4_33 = temp_t2_45 == 0;
+                    sp48 = temp_t4_33;
+                    phi_s0_3 = temp_t2_45;
+                    phi_s1_3 = (*(temp_t2_45 + ptr_pc_keyboard_table_alloc) | ((temp_t2_45 & 0xA8) | (temp_t4_33 << 6))) & 0xFF;
+                    break;
+                case 0xB7:                          /* switch 1 */
+                    temp_t7_35 = (phi_s0 | phi_s0) & 0xFF;
+                    temp_t5_32 = temp_t7_35 == 0;
+                    sp28C += 4;
+                    sp48 = temp_t5_32;
+                    phi_s0_3 = temp_t7_35;
+                    phi_s1_3 = (*(temp_t7_35 + ptr_pc_keyboard_table_alloc) | ((temp_t7_35 & 0xA8) | (temp_t5_32 << 6))) & 0xFF;
+                    break;
+                case 0xB8:                          /* switch 1 */
+                    temp_t1_27 = phi_s2 & 0xFF;
+                    temp_t8_25 = (phi_s0 - temp_t1_27) & 0x1FF;
+                    temp_t3_37 = (temp_t8_25 & 0xFFFF) == 0;
+                    sp28C += 4;
+                    sp162 = (s16) temp_t8_25;
+                    sp48 = temp_t3_37;
+                    sp161 = phi_s2;
+                    phi_s1_3 = ((temp_t8_25 & 0xA8) | (temp_t8_25 >> 8) | (((phi_s0 & 0xF) < (temp_t1_27 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t1_27) & 0x80 & (temp_t8_25 ^ phi_s0)) >> 5) | 2 | (temp_t3_37 << 6)) & 0xFF;
+                    break;
+                case 0xB9:                          /* switch 1 */
+                    temp_t5_33 = phi_s3 & 0xFF;
+                    temp_t4_34 = (phi_s0 - temp_t5_33) & 0x1FF;
+                    temp_t3_38 = (temp_t4_34 & 0xFFFF) == 0;
+                    sp28C += 4;
+                    sp15E = (s16) temp_t4_34;
+                    sp48 = temp_t3_38;
+                    sp15D = phi_s3;
+                    phi_s1_3 = ((temp_t4_34 & 0xA8) | (temp_t4_34 >> 8) | (((phi_s0 & 0xF) < (temp_t5_33 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t5_33) & 0x80 & (temp_t4_34 ^ phi_s0)) >> 5) | 2 | (temp_t3_38 << 6)) & 0xFF;
+                    break;
+                case 0xBA:                          /* switch 1 */
+                    temp_t2_46 = phi_s4 & 0xFF;
+                    temp_t6_43 = (phi_s0 - temp_t2_46) & 0x1FF;
+                    temp_t3_39 = (temp_t6_43 & 0xFFFF) == 0;
+                    sp28C += 4;
+                    sp15A = (s16) temp_t6_43;
+                    sp48 = temp_t3_39;
+                    sp159 = phi_s4;
+                    phi_s1_3 = ((temp_t6_43 & 0xA8) | (temp_t6_43 >> 8) | (((phi_s0 & 0xF) < (temp_t2_46 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t2_46) & 0x80 & (temp_t6_43 ^ phi_s0)) >> 5) | 2 | (temp_t3_39 << 6)) & 0xFF;
+                    break;
+                case 0xBB:                          /* switch 1 */
+                    temp_t7_36 = phi_s5 & 0xFF;
+                    temp_t1_28 = (phi_s0 - temp_t7_36) & 0x1FF;
+                    temp_t3_40 = (temp_t1_28 & 0xFFFF) == 0;
+                    sp28C += 4;
+                    sp156 = (s16) temp_t1_28;
+                    sp48 = temp_t3_40;
+                    sp155 = phi_s5;
+                    phi_s1_3 = ((temp_t1_28 & 0xA8) | (temp_t1_28 >> 8) | (((phi_s0 & 0xF) < (temp_t7_36 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t7_36) & 0x80 & (temp_t1_28 ^ phi_s0)) >> 5) | 2 | (temp_t3_40 << 6)) & 0xFF;
+                    break;
+                case 0xBC:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp151 = phi_s6;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX >> 8;
+                        } else {
+                            sp48 = (s32) IY >> 8;
+                        }
+                        sp151 = (u8) sp48;
+                    }
+                    temp_t9_28 = (phi_s0 - sp151) & 0x1FF;
+                    temp_t6_44 = (temp_t9_28 & 0xFFFF) == 0;
+                    sp152 = (s16) temp_t9_28;
+                    sp48 = temp_t6_44;
+                    phi_s1_3 = ((temp_t9_28 & 0xA8) | (temp_t9_28 >> 8) | (((phi_s0 & 0xF) < (sp151 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ sp151) & 0x80 & (temp_t9_28 ^ phi_s0)) >> 5) | 2 | (temp_t6_44 << 6)) & 0xFF;
+                    break;
+                case 0xBD:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        sp14D = phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = IX & 0xFF;
+                        } else {
+                            sp48 = IY & 0xFF;
+                        }
+                        sp14D = (u8) sp48;
+                    }
+                    temp_t5_34 = (phi_s0 - sp14D) & 0x1FF;
+                    temp_t7_37 = (temp_t5_34 & 0xFFFF) == 0;
+                    sp14E = (s16) temp_t5_34;
+                    sp48 = temp_t7_37;
+                    phi_s1_3 = ((temp_t5_34 & 0xA8) | (temp_t5_34 >> 8) | (((phi_s0 & 0xF) < (sp14D & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ sp14D) & 0x80 & (temp_t5_34 ^ phi_s0)) >> 5) | 2 | (temp_t7_37 << 6)) & 0xFF;
+                    break;
+                case 0xBE:                          /* switch 1 */
+                    sp28C += 7;
+                    if (sp287 == 0) {
+                        sp14A = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        sp28C += 8;
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t2_47 = *(PC + ptr_spectrum_roms);
+                        PC += 1;
+                        sp14A = temp_t2_47 + sp48;
+                    }
+                    temp_t3_41 = *(sp14A + ptr_spectrum_roms);
+                    temp_t2_48 = (phi_s0 - temp_t3_41) & 0x1FF;
+                    temp_t0_35 = (temp_t2_48 & 0xFFFF) == 0;
+                    sp147 = temp_t3_41;
+                    sp148 = (s16) temp_t2_48;
+                    sp48 = temp_t0_35;
+                    phi_s1_3 = ((temp_t2_48 & 0xA8) | (temp_t2_48 >> 8) | (((phi_s0 & 0xF) < (temp_t3_41 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t3_41) & 0x80 & (temp_t2_48 ^ phi_s0)) >> 5) | 2 | (temp_t0_35 << 6)) & 0xFF;
+                    break;
+                case 0xBF:                          /* switch 1 */
+                    temp_t1_29 = phi_s0 & 0xFF;
+                    temp_t8_26 = (phi_s0 - temp_t1_29) & 0x1FF;
+                    temp_t0_36 = (temp_t8_26 & 0xFFFF) == 0;
+                    sp28C += 4;
+                    sp144 = (s16) temp_t8_26;
+                    sp48 = temp_t0_36;
+                    sp143 = phi_s0;
+                    phi_s1_3 = ((temp_t8_26 & 0xA8) | (temp_t8_26 >> 8) | (((phi_s0 & 0xF) < (temp_t1_29 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t1_29) & 0x80 & (temp_t8_26 ^ phi_s0)) >> 5) | 2 | (temp_t0_36 << 6)) & 0xFF;
+                    break;
+                case 0xC0:                          /* switch 1 */
+                    temp_t5_35 = sp28C + 5;
+                    sp28C = temp_t5_35;
+                    if ((phi_s1 & 0x40) == 0) {
+                        temp_t0_37 = ptr_spectrum_roms;
+                        sp28C = temp_t5_35 + 6;
+                        PC = *(SP + temp_t0_37) | ((temp_t0_37 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xC1:                          /* switch 1 */
+                    sp28C += 0xA;
+                    temp_t7_38 = SP + ptr_spectrum_roms;
+                    temp_s3_4 = temp_t7_38->unk0;
+                    temp_s2_3 = temp_t7_38->unk1;
+                    SP += 2;
+                    phi_s2_7 = (s8) temp_s2_3;
+                    phi_s3_3 = (s8) temp_s3_4;
+                    break;
+                case 0xC2:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 0x40) == 0) {
+                        temp_t9_29 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t9_29) | ((temp_t9_29 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xC3:                          /* switch 1 */
+                    temp_t7_39 = ptr_spectrum_roms;
+                    sp28C += 0xA;
+                    PC = *(PC + temp_t7_39) | ((temp_t7_39 + PC)->unk1 << 8);
+                    break;
+                case 0xC4:                          /* switch 1 */
+                    temp_t9_30 = sp28C + 0xA;
+                    sp28C = temp_t9_30;
+                    if ((phi_s1 & 0x40) == 0) {
+                        sp28C = temp_t9_30 + 7;
+                        temp_t5_36 = SP - 2;
+                        temp_t3_42 = temp_t5_36 & 0xFFFF;
+                        SP = temp_t5_36;
+                        if (temp_t3_42 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t3_42) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t5_37 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t5_37 & 0x1800) >> 3) | (temp_t5_37 & 0xFF))) = 1;
+                        }
+                        temp_t8_27 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t8_27) | ((temp_t8_27 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xC5:                          /* switch 1 */
+                    temp_t6_45 = SP - 2;
+                    temp_t7_40 = temp_t6_45 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t6_45;
+                    if (temp_t7_40 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t7_40) = phi_s3;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = phi_s3;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = phi_s3;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s2;
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s2;
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s2;
+                        temp_t7_41 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t7_41 & 0x1800) >> 3) | (temp_t7_41 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0xC6:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t3_43 = *(PC + ptr_spectrum_roms);
+                    temp_t1_30 = phi_s0 + temp_t3_43;
+                    sp140 = (s16) temp_t1_30;
+                    temp_t5_38 = unksp141 == 0;
+                    temp_s1_4 = ((temp_t1_30 & 0xA8) | (temp_t1_30 >> 8) | ((((phi_s0 & 0xF) + (temp_t3_43 & 0xF)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t3_43) & 0x80 & (temp_t1_30 ^ phi_s0)) >> 5) | (temp_t5_38 << 6)) & 0xFF;
+                    sp48 = temp_t5_38;
+                    PC += 1;
+                    sp13F = temp_t3_43;
+                    phi_s0_3 = unksp141;
+                    phi_s1_3 = temp_s1_4;
+                    break;
+                case 0xC7:                          /* switch 1 */
+                    temp_t4_35 = SP - 2;
+                    temp_t5_39 = temp_t4_35 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t4_35;
+                    if (temp_t5_39 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t5_39) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t9_31 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t9_31 & 0x1800) >> 3) | (temp_t9_31 & 0xFF))) = 1;
+                    }
+                    PC = 0;
+                    break;
+                case 0xC8:                          /* switch 1 */
+                    temp_t8_28 = sp28C + 5;
+                    sp28C = temp_t8_28;
+                    if ((phi_s1 & 0x40) != 0) {
+                        temp_t5_40 = ptr_spectrum_roms;
+                        sp28C = temp_t8_28 + 6;
+                        PC = *(SP + temp_t5_40) | ((temp_t5_40 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xC9:                          /* switch 1 */
+                    temp_t1_31 = ptr_spectrum_roms;
+                    temp_t3_44 = sp28C + 4;
+                    sp28C = temp_t3_44;
+                    sp28C = temp_t3_44 + 6;
+                    PC = *(SP + temp_t1_31) | ((temp_t1_31 + SP)->unk1 << 8);
+                    SP += 2;
+                    break;
+                case 0xCA:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 0x40) != 0) {
+                        temp_t9_32 = ptr_spectrum_roms;
+                        phi_t0 = *(PC + temp_t9_32) | ((temp_t9_32 + PC)->unk1 << 8);
+block_1690:
+                        PC = phi_t0;
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xCB:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 != 0) {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        temp_t5_41 = ptr_spectrum_roms;
+                        temp_t9_33 = PC + 1;
+                        temp_t4_36 = temp_t9_33 & 0xFFFF;
+                        sp13C = *(PC + temp_t5_41) + sp48;
+                        PC = temp_t9_33;
+                        sp28C += 8;
+                        temp_t8_29 = *(temp_t4_36 + temp_t5_41);
+                        sp13B = temp_t8_29;
+                        sp13A = temp_t8_29 & 7;
+                        sp13B = (temp_t8_29 & 0xF8) | 6;
+                    } else {
+                        sp28C += 4;
+                        sp288 += 1;
+                        sp13C = (phi_s6 << 8) | phi_s7;
+                        sp13B = *(PC + *(s32 *)0x8008E328);
+                    }
+                    PC += 1;
+                    switch ((s32) sp13B) {          /* switch 9; irregular */
+                    case 0x0:                       /* switch 9 */
+                        temp_t0_38 = ((phi_s2 * 2) | ((s32) phi_s2 >> 7)) & 0xFF;
+                        temp_t1_32 = temp_t0_38 == 0;
+                        sp48 = temp_t1_32;
+                        phi_s2_7 = temp_t0_38;
+                        phi_s1_3 = (*(temp_t0_38 + ptr_pc_keyboard_table_alloc) | ((temp_t0_38 & 1) | (temp_t0_38 & 0xA8) | (temp_t1_32 << 6))) & 0xFF;
+                        break;
+                    case 0x1:                       /* switch 9 */
+                        temp_t2_49 = ((phi_s3 * 2) | ((s32) phi_s3 >> 7)) & 0xFF;
+                        temp_t7_42 = temp_t2_49 == 0;
+                        sp48 = temp_t7_42;
+                        phi_s3_3 = temp_t2_49;
+                        phi_s1_3 = (*(temp_t2_49 + ptr_pc_keyboard_table_alloc) | ((temp_t2_49 & 1) | (temp_t2_49 & 0xA8) | (temp_t7_42 << 6))) & 0xFF;
+                        break;
+                    case 0x2:                       /* switch 9 */
+                        temp_t0_39 = ((phi_s4 * 2) | ((s32) phi_s4 >> 7)) & 0xFF;
+                        temp_t5_42 = temp_t0_39 == 0;
+                        sp48 = temp_t5_42;
+                        phi_s1_3 = (*(temp_t0_39 + ptr_pc_keyboard_table_alloc) | ((temp_t0_39 & 1) | (temp_t0_39 & 0xA8) | (temp_t5_42 << 6))) & 0xFF;
+                        phi_s4_3 = temp_t0_39;
+                        break;
+                    case 0x3:                       /* switch 9 */
+                        temp_t2_50 = ((phi_s5 * 2) | ((s32) phi_s5 >> 7)) & 0xFF;
+                        temp_t6_46 = temp_t2_50 == 0;
+                        sp48 = temp_t6_46;
+                        phi_s1_3 = (*(temp_t2_50 + ptr_pc_keyboard_table_alloc) | ((temp_t2_50 & 1) | (temp_t2_50 & 0xA8) | (temp_t6_46 << 6))) & 0xFF;
+                        phi_s5_3 = temp_t2_50;
+                        break;
+                    case 0x4:                       /* switch 9 */
+                        temp_t0_40 = ((phi_s6 * 2) | ((s32) phi_s6 >> 7)) & 0xFF;
+                        temp_t4_37 = temp_t0_40 == 0;
+                        sp48 = temp_t4_37;
+                        phi_s1_3 = (*(temp_t0_40 + ptr_pc_keyboard_table_alloc) | ((temp_t0_40 & 1) | (temp_t0_40 & 0xA8) | (temp_t4_37 << 6))) & 0xFF;
+                        phi_s6_3 = temp_t0_40;
+                        break;
+                    case 0x5:                       /* switch 9 */
+                        temp_t2_51 = ((phi_s7 * 2) | ((s32) phi_s7 >> 7)) & 0xFF;
+                        temp_t8_30 = temp_t2_51 == 0;
+                        sp48 = temp_t8_30;
+                        phi_s1_3 = (*(temp_t2_51 + ptr_pc_keyboard_table_alloc) | ((temp_t2_51 & 1) | (temp_t2_51 & 0xA8) | (temp_t8_30 << 6))) & 0xFF;
+                        phi_s7_3 = temp_t2_51;
+                        break;
+                    case 0x6:                       /* switch 9 */
+                        sp28C += 7;
+                        temp_t7_43 = *(sp13C + ptr_spectrum_roms);
+                        temp_t4_38 = (temp_t7_43 * 2) | ((s32) temp_t7_43 >> 7);
+                        temp_t5_43 = (temp_t4_38 & 0xFF) == 0;
+                        temp_t1_33 = temp_t4_38 & 0xFF;
+                        sp139 = temp_t7_43;
+                        sp139 = temp_t4_38;
+                        sp48 = temp_t5_43;
+                        phi_s1_3 = (*(temp_t1_33 + ptr_pc_keyboard_table_alloc) | ((temp_t1_33 & 1) | (temp_t4_38 & 0xA8) | (temp_t5_43 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = temp_t4_38;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0x7:                       /* switch 9 */
+                        temp_t6_47 = ((phi_s0 * 2) | ((s32) phi_s0 >> 7)) & 0xFF;
+                        temp_t0_41 = temp_t6_47 == 0;
+                        sp48 = temp_t0_41;
+                        phi_s0_3 = temp_t6_47;
+                        phi_s1_3 = (*(temp_t6_47 + ptr_pc_keyboard_table_alloc) | ((temp_t6_47 & 1) | (temp_t6_47 & 0xA8) | (temp_t0_41 << 6))) & 0xFF;
+                        break;
+                    case 0x8:                       /* switch 9 */
+                        temp_t5_44 = phi_s2 & 1;
+                        temp_t8_31 = (((s32) phi_s2 >> 1) | (temp_t5_44 << 7)) & 0xFF;
+                        temp_t4_39 = temp_t8_31 == 0;
+                        sp48 = temp_t4_39;
+                        sp138 = temp_t5_44;
+                        phi_s2_7 = temp_t8_31;
+                        phi_s1_3 = (*(temp_t8_31 + ptr_pc_keyboard_table_alloc) | (temp_t5_44 | (temp_t8_31 & 0xA8) | (temp_t4_39 << 6))) & 0xFF;
+                        break;
+                    case 0x9:                       /* switch 9 */
+                        temp_t7_44 = phi_s3 & 1;
+                        temp_t0_42 = (((s32) phi_s3 >> 1) | (temp_t7_44 << 7)) & 0xFF;
+                        temp_t2_52 = temp_t0_42 == 0;
+                        sp48 = temp_t2_52;
+                        sp137 = temp_t7_44;
+                        phi_s3_3 = temp_t0_42;
+                        phi_s1_3 = (*(temp_t0_42 + ptr_pc_keyboard_table_alloc) | (temp_t7_44 | (temp_t0_42 & 0xA8) | (temp_t2_52 << 6))) & 0xFF;
+                        break;
+                    case 0xA:                       /* switch 9 */
+                        temp_t9_34 = phi_s4 & 1;
+                        temp_t4_40 = (((s32) phi_s4 >> 1) | (temp_t9_34 << 7)) & 0xFF;
+                        temp_t1_34 = temp_t4_40 == 0;
+                        sp48 = temp_t1_34;
+                        sp136 = temp_t9_34;
+                        phi_s1_3 = (*(temp_t4_40 + ptr_pc_keyboard_table_alloc) | (temp_t9_34 | (temp_t4_40 & 0xA8) | (temp_t1_34 << 6))) & 0xFF;
+                        phi_s4_3 = temp_t4_40;
+                        break;
+                    case 0xB:                       /* switch 9 */
+                        temp_t5_45 = phi_s5 & 1;
+                        temp_t2_53 = (((s32) phi_s5 >> 1) | (temp_t5_45 << 7)) & 0xFF;
+                        temp_t3_45 = temp_t2_53 == 0;
+                        sp48 = temp_t3_45;
+                        sp135 = temp_t5_45;
+                        phi_s1_3 = (*(temp_t2_53 + ptr_pc_keyboard_table_alloc) | (temp_t5_45 | (temp_t2_53 & 0xA8) | (temp_t3_45 << 6))) & 0xFF;
+                        phi_s5_3 = temp_t2_53;
+                        break;
+                    case 0xC:                       /* switch 9 */
+                        temp_t7_45 = phi_s6 & 1;
+                        temp_t1_35 = (((s32) phi_s6 >> 1) | (temp_t7_45 << 7)) & 0xFF;
+                        temp_t6_48 = temp_t1_35 == 0;
+                        sp48 = temp_t6_48;
+                        sp134 = temp_t7_45;
+                        phi_s1_3 = (*(temp_t1_35 + ptr_pc_keyboard_table_alloc) | (temp_t7_45 | (temp_t1_35 & 0xA8) | (temp_t6_48 << 6))) & 0xFF;
+                        phi_s6_3 = temp_t1_35;
+                        break;
+                    case 0xD:                       /* switch 9 */
+                        temp_t9_35 = phi_s7 & 1;
+                        temp_t3_46 = (((s32) phi_s7 >> 1) | (temp_t9_35 << 7)) & 0xFF;
+                        temp_t8_32 = temp_t3_46 == 0;
+                        sp48 = temp_t8_32;
+                        sp133 = temp_t9_35;
+                        phi_s1_3 = (*(temp_t3_46 + ptr_pc_keyboard_table_alloc) | (temp_t9_35 | (temp_t3_46 & 0xA8) | (temp_t8_32 << 6))) & 0xFF;
+                        phi_s7_3 = temp_t3_46;
+                        break;
+                    case 0xE:                       /* switch 9 */
+                        sp28C += 7;
+                        temp_t0_43 = *(sp13C + ptr_spectrum_roms);
+                        temp_t2_54 = temp_t0_43 & 0xFF;
+                        temp_t6_49 = temp_t2_54 & 1;
+                        temp_t4_41 = (temp_t2_54 >> 1) | ((temp_t6_49 & 0xFF) << 7);
+                        temp_t5_46 = temp_t4_41 & 0xFF;
+                        sp139 = temp_t0_43;
+                        temp_t1_36 = temp_t5_46 == 0;
+                        sp48 = temp_t1_36;
+                        sp139 = temp_t4_41;
+                        sp132 = temp_t6_49;
+                        phi_s1_3 = (*(temp_t5_46 + ptr_pc_keyboard_table_alloc) | (temp_t6_49 | (temp_t4_41 & 0xA8) | (temp_t1_36 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = temp_t4_41;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0xF:                       /* switch 9 */
+                        temp_t2_55 = phi_s0 & 1;
+                        temp_t8_33 = (((s32) phi_s0 >> 1) | (temp_t2_55 << 7)) & 0xFF;
+                        temp_t7_46 = temp_t8_33 == 0;
+                        sp48 = temp_t7_46;
+                        sp131 = temp_t2_55;
+                        phi_s0_3 = temp_t8_33;
+                        phi_s1_3 = (*(temp_t8_33 + ptr_pc_keyboard_table_alloc) | (temp_t2_55 | (temp_t8_33 & 0xA8) | (temp_t7_46 << 6))) & 0xFF;
+                        break;
+                    case 0x10:                      /* switch 9 */
+                        temp_t5_47 = (s32) phi_s2 >> 7;
+                        temp_t1_37 = ((phi_s2 * 2) | (phi_s1 & 1)) & 0xFF;
+                        temp_t3_47 = temp_t1_37 == 0;
+                        sp48 = temp_t3_47;
+                        sp130 = (s8) temp_t5_47;
+                        phi_s2_7 = temp_t1_37;
+                        phi_s1_3 = (*(temp_t1_37 + ptr_pc_keyboard_table_alloc) | (temp_t5_47 | (temp_t1_37 & 0xA8) | (temp_t3_47 << 6))) & 0xFF;
+                        break;
+                    case 0x11:                      /* switch 9 */
+                        temp_t0_44 = (s32) phi_s3 >> 7;
+                        temp_t8_34 = ((phi_s3 * 2) | (phi_s1 & 1)) & 0xFF;
+                        temp_t7_47 = temp_t8_34 == 0;
+                        sp48 = temp_t7_47;
+                        sp12F = (s8) temp_t0_44;
+                        phi_s3_3 = temp_t8_34;
+                        phi_s1_3 = (*(temp_t8_34 + ptr_pc_keyboard_table_alloc) | (temp_t0_44 | (temp_t8_34 & 0xA8) | (temp_t7_47 << 6))) & 0xFF;
+                        break;
+                    case 0x12:                      /* switch 9 */
+                        temp_t6_50 = (s32) phi_s4 >> 7;
+                        temp_t1_38 = ((phi_s4 * 2) | (phi_s1 & 1)) & 0xFF;
+                        temp_t3_48 = temp_t1_38 == 0;
+                        sp48 = temp_t3_48;
+                        sp12E = (s8) temp_t6_50;
+                        phi_s1_3 = (*(temp_t1_38 + ptr_pc_keyboard_table_alloc) | (temp_t6_50 | (temp_t1_38 & 0xA8) | (temp_t3_48 << 6))) & 0xFF;
+                        phi_s4_3 = temp_t1_38;
+                        break;
+                    case 0x13:                      /* switch 9 */
+                        temp_t9_36 = (s32) phi_s5 >> 7;
+                        temp_t8_35 = ((phi_s5 * 2) | (phi_s1 & 1)) & 0xFF;
+                        temp_t7_48 = temp_t8_35 == 0;
+                        sp48 = temp_t7_48;
+                        sp12D = (s8) temp_t9_36;
+                        phi_s1_3 = (*(temp_t8_35 + ptr_pc_keyboard_table_alloc) | (temp_t9_36 | (temp_t8_35 & 0xA8) | (temp_t7_48 << 6))) & 0xFF;
+                        phi_s5_3 = temp_t8_35;
+                        break;
+                    case 0x14:                      /* switch 9 */
+                        temp_t4_42 = (s32) phi_s6 >> 7;
+                        temp_t1_39 = ((phi_s6 * 2) | (phi_s1 & 1)) & 0xFF;
+                        temp_t3_49 = temp_t1_39 == 0;
+                        sp48 = temp_t3_49;
+                        sp12C = (s8) temp_t4_42;
+                        phi_s1_3 = (*(temp_t1_39 + ptr_pc_keyboard_table_alloc) | (temp_t4_42 | (temp_t1_39 & 0xA8) | (temp_t3_49 << 6))) & 0xFF;
+                        phi_s6_3 = temp_t1_39;
+                        break;
+                    case 0x15:                      /* switch 9 */
+                        temp_t2_56 = (s32) phi_s7 >> 7;
+                        temp_t8_36 = ((phi_s7 * 2) | (phi_s1 & 1)) & 0xFF;
+                        temp_t7_49 = temp_t8_36 == 0;
+                        sp48 = temp_t7_49;
+                        sp12B = (s8) temp_t2_56;
+                        phi_s1_3 = (*(temp_t8_36 + ptr_pc_keyboard_table_alloc) | (temp_t2_56 | (temp_t8_36 & 0xA8) | (temp_t7_49 << 6))) & 0xFF;
+                        phi_s7_3 = temp_t8_36;
+                        break;
+                    case 0x16:                      /* switch 9 */
+                        sp28C += 7;
+                        temp_t5_48 = *(sp13C + ptr_spectrum_roms);
+                        temp_t6_51 = temp_t5_48 & 0xFF;
+                        temp_t2_57 = (temp_t6_51 * 2) | (phi_s1 & 1);
+                        temp_t1_40 = temp_t6_51 >> 7;
+                        temp_t0_45 = temp_t2_57 & 0xFF;
+                        sp139 = temp_t5_48;
+                        temp_t9_37 = temp_t0_45 == 0;
+                        sp48 = temp_t9_37;
+                        sp139 = temp_t2_57;
+                        sp12A = (s8) temp_t1_40;
+                        phi_s1_3 = (*(temp_t0_45 + ptr_pc_keyboard_table_alloc) | (temp_t1_40 | (temp_t2_57 & 0xA8) | (temp_t9_37 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = temp_t2_57;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0x17:                      /* switch 9 */
+                        temp_t4_43 = (s32) phi_s0 >> 7;
+                        temp_t1_41 = ((phi_s0 * 2) | (phi_s1 & 1)) & 0xFF;
+                        temp_t6_52 = temp_t1_41 == 0;
+                        sp48 = temp_t6_52;
+                        sp129 = (s8) temp_t4_43;
+                        phi_s0_3 = temp_t1_41;
+                        phi_s1_3 = (*(temp_t1_41 + ptr_pc_keyboard_table_alloc) | (temp_t4_43 | (temp_t1_41 & 0xA8) | (temp_t6_52 << 6))) & 0xFF;
+                        break;
+                    case 0x18:                      /* switch 9 */
+                        temp_t0_46 = phi_s2 & 1;
+                        temp_t9_38 = (((s32) phi_s2 >> 1) | (phi_s1 << 7)) & 0xFF;
+                        temp_t8_37 = temp_t9_38 == 0;
+                        sp48 = temp_t8_37;
+                        sp128 = temp_t0_46;
+                        phi_s2_7 = temp_t9_38;
+                        phi_s1_3 = (*(temp_t9_38 + ptr_pc_keyboard_table_alloc) | (temp_t0_46 | (temp_t9_38 & 0xA8) | (temp_t8_37 << 6))) & 0xFF;
+                        break;
+                    case 0x19:                      /* switch 9 */
+                        temp_t3_50 = phi_s3 & 1;
+                        temp_t1_42 = (((s32) phi_s3 >> 1) | (phi_s1 << 7)) & 0xFF;
+                        temp_t6_53 = temp_t1_42 == 0;
+                        sp48 = temp_t6_53;
+                        sp127 = temp_t3_50;
+                        phi_s3_3 = temp_t1_42;
+                        phi_s1_3 = (*(temp_t1_42 + ptr_pc_keyboard_table_alloc) | (temp_t3_50 | (temp_t1_42 & 0xA8) | (temp_t6_53 << 6))) & 0xFF;
+                        break;
+                    case 0x1A:                      /* switch 9 */
+                        temp_t5_49 = phi_s4 & 1;
+                        temp_t9_39 = (((s32) phi_s4 >> 1) | (phi_s1 << 7)) & 0xFF;
+                        temp_t8_38 = temp_t9_39 == 0;
+                        sp48 = temp_t8_38;
+                        sp126 = temp_t5_49;
+                        phi_s1_3 = (*(temp_t9_39 + ptr_pc_keyboard_table_alloc) | (temp_t5_49 | (temp_t9_39 & 0xA8) | (temp_t8_38 << 6))) & 0xFF;
+                        phi_s4_3 = temp_t9_39;
+                        break;
+                    case 0x1B:                      /* switch 9 */
+                        temp_t7_50 = phi_s5 & 1;
+                        temp_t1_43 = (((s32) phi_s5 >> 1) | (phi_s1 << 7)) & 0xFF;
+                        temp_t6_54 = temp_t1_43 == 0;
+                        sp48 = temp_t6_54;
+                        sp125 = temp_t7_50;
+                        phi_s1_3 = (*(temp_t1_43 + ptr_pc_keyboard_table_alloc) | (temp_t7_50 | (temp_t1_43 & 0xA8) | (temp_t6_54 << 6))) & 0xFF;
+                        phi_s5_3 = temp_t1_43;
+                        break;
+                    case 0x1C:                      /* switch 9 */
+                        temp_t2_58 = phi_s6 & 1;
+                        temp_t9_40 = (((s32) phi_s6 >> 1) | (phi_s1 << 7)) & 0xFF;
+                        temp_t8_39 = temp_t9_40 == 0;
+                        sp48 = temp_t8_39;
+                        sp124 = temp_t2_58;
+                        phi_s1_3 = (*(temp_t9_40 + ptr_pc_keyboard_table_alloc) | (temp_t2_58 | (temp_t9_40 & 0xA8) | (temp_t8_39 << 6))) & 0xFF;
+                        phi_s6_3 = temp_t9_40;
+                        break;
+                    case 0x1D:                      /* switch 9 */
+                        temp_t4_44 = phi_s7 & 1;
+                        temp_t1_44 = (((s32) phi_s7 >> 1) | (phi_s1 << 7)) & 0xFF;
+                        temp_t6_55 = temp_t1_44 == 0;
+                        sp48 = temp_t6_55;
+                        sp123 = temp_t4_44;
+                        phi_s1_3 = (*(temp_t1_44 + ptr_pc_keyboard_table_alloc) | (temp_t4_44 | (temp_t1_44 & 0xA8) | (temp_t6_55 << 6))) & 0xFF;
+                        phi_s7_3 = temp_t1_44;
+                        break;
+                    case 0x1E:                      /* switch 9 */
+                        sp28C += 7;
+                        temp_t0_47 = *(sp13C + ptr_spectrum_roms);
+                        temp_t5_50 = temp_t0_47 & 0xFF;
+                        temp_t4_45 = (temp_t5_50 >> 1) | (phi_s1 << 7);
+                        temp_t9_41 = temp_t5_50 & 1;
+                        temp_t3_51 = temp_t4_45 & 0xFF;
+                        sp139 = temp_t0_47;
+                        temp_t7_51 = temp_t3_51 == 0;
+                        sp48 = temp_t7_51;
+                        sp139 = temp_t4_45;
+                        sp122 = temp_t9_41;
+                        phi_s1_3 = (*(temp_t3_51 + ptr_pc_keyboard_table_alloc) | (temp_t9_41 | (temp_t4_45 & 0xA8) | (temp_t7_51 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = temp_t4_45;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0x1F:                      /* switch 9 */
+                        temp_t2_59 = phi_s0 & 1;
+                        temp_t9_42 = (((s32) phi_s0 >> 1) | (phi_s1 << 7)) & 0xFF;
+                        temp_t5_51 = temp_t9_42 == 0;
+                        sp48 = temp_t5_51;
+                        sp121 = temp_t2_59;
+                        phi_s0_3 = temp_t9_42;
+                        phi_s1_3 = (*(temp_t9_42 + ptr_pc_keyboard_table_alloc) | (temp_t2_59 | (temp_t9_42 & 0xA8) | (temp_t5_51 << 6))) & 0xFF;
+                        break;
+                    case 0x20:                      /* switch 9 */
+                        temp_t1_45 = (s32) phi_s2 >> 7;
+                        temp_s2_4 = (phi_s2 * 2) & 0xFF;
+                        temp_t7_52 = temp_s2_4 == 0;
+                        sp48 = temp_t7_52;
+                        sp120 = (s8) temp_t1_45;
+                        phi_s2_7 = temp_s2_4;
+                        phi_s1_3 = (*(temp_s2_4 + ptr_pc_keyboard_table_alloc) | (temp_t1_45 | (temp_s2_4 & 0xA8) | (temp_t7_52 << 6))) & 0xFF;
+                        break;
+                    case 0x21:                      /* switch 9 */
+                        temp_t4_46 = (s32) phi_s3 >> 7;
+                        temp_s3_5 = (phi_s3 * 2) & 0xFF;
+                        temp_t0_48 = temp_s3_5 == 0;
+                        sp48 = temp_t0_48;
+                        sp11F = (s8) temp_t4_46;
+                        phi_s3_3 = temp_s3_5;
+                        phi_s1_3 = (*(temp_s3_5 + ptr_pc_keyboard_table_alloc) | (temp_t4_46 | (temp_s3_5 & 0xA8) | (temp_t0_48 << 6))) & 0xFF;
+                        break;
+                    case 0x22:                      /* switch 9 */
+                        temp_t5_52 = (s32) phi_s4 >> 7;
+                        temp_s4_3 = (phi_s4 * 2) & 0xFF;
+                        temp_t8_40 = temp_s4_3 == 0;
+                        sp48 = temp_t8_40;
+                        sp11E = (s8) temp_t5_52;
+                        phi_s1_3 = (*(temp_s4_3 + ptr_pc_keyboard_table_alloc) | (temp_t5_52 | (temp_s4_3 & 0xA8) | (temp_t8_40 << 6))) & 0xFF;
+                        phi_s4_3 = temp_s4_3;
+                        break;
+                    case 0x23:                      /* switch 9 */
+                        temp_t7_53 = (s32) phi_s5 >> 7;
+                        temp_s5_4 = (phi_s5 * 2) & 0xFF;
+                        temp_t3_52 = temp_s5_4 == 0;
+                        sp48 = temp_t3_52;
+                        sp11D = (s8) temp_t7_53;
+                        phi_s1_3 = (*(temp_s5_4 + ptr_pc_keyboard_table_alloc) | (temp_t7_53 | (temp_s5_4 & 0xA8) | (temp_t3_52 << 6))) & 0xFF;
+                        phi_s5_3 = temp_s5_4;
+                        break;
+                    case 0x24:                      /* switch 9 */
+                        temp_t0_49 = (s32) phi_s6 >> 7;
+                        temp_s6_2 = (phi_s6 * 2) & 0xFF;
+                        temp_t2_60 = temp_s6_2 == 0;
+                        sp48 = temp_t2_60;
+                        sp11C = (s8) temp_t0_49;
+                        phi_s1_3 = (*(temp_s6_2 + ptr_pc_keyboard_table_alloc) | (temp_t0_49 | (temp_s6_2 & 0xA8) | (temp_t2_60 << 6))) & 0xFF;
+                        phi_s6_3 = temp_s6_2;
+                        break;
+                    case 0x25:                      /* switch 9 */
+                        temp_t8_41 = (s32) phi_s7 >> 7;
+                        temp_s7_3 = (phi_s7 * 2) & 0xFF;
+                        temp_t1_46 = temp_s7_3 == 0;
+                        sp48 = temp_t1_46;
+                        sp11B = (s8) temp_t8_41;
+                        phi_s1_3 = (*(temp_s7_3 + ptr_pc_keyboard_table_alloc) | (temp_t8_41 | (temp_s7_3 & 0xA8) | (temp_t1_46 << 6))) & 0xFF;
+                        phi_s7_3 = temp_s7_3;
+                        break;
+                    case 0x26:                      /* switch 9 */
+                        sp28C += 7;
+                        temp_t0_50 = *(sp13C + ptr_spectrum_roms);
+                        temp_t5_53 = temp_t0_50 & 0xFF;
+                        temp_t7_54 = temp_t5_53 >> 7;
+                        temp_t2_61 = temp_t5_53 * 2;
+                        temp_t1_47 = temp_t2_61 & 0xFF;
+                        sp139 = temp_t0_50;
+                        temp_t8_42 = temp_t1_47 == 0;
+                        sp48 = temp_t8_42;
+                        sp139 = temp_t2_61;
+                        sp11A = (s8) temp_t7_54;
+                        phi_s1_3 = (*(temp_t1_47 + ptr_pc_keyboard_table_alloc) | (temp_t7_54 | (temp_t2_61 & 0xA8) | (temp_t8_42 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = temp_t2_61;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0x27:                      /* switch 9 */
+                        temp_t0_51 = (s32) phi_s0 >> 7;
+                        temp_s0_4 = (phi_s0 * 2) & 0xFF;
+                        temp_t7_55 = temp_s0_4 == 0;
+                        sp48 = temp_t7_55;
+                        sp119 = (s8) temp_t0_51;
+                        phi_s0_3 = temp_s0_4;
+                        phi_s1_3 = (*(temp_s0_4 + ptr_pc_keyboard_table_alloc) | (temp_t0_51 | (temp_s0_4 & 0xA8) | (temp_t7_55 << 6))) & 0xFF;
+                        break;
+                    case 0x28:                      /* switch 9 */
+                        temp_t1_48 = phi_s2 & 1;
+                        temp_s2_5 = ((s32) phi_s2 >> 1) & 0xFF;
+                        temp_t2_62 = temp_s2_5 == 0;
+                        sp48 = temp_t2_62;
+                        sp118 = temp_t1_48;
+                        phi_s2_7 = temp_s2_5;
+                        phi_s1_3 = (*(temp_s2_5 + ptr_pc_keyboard_table_alloc) | (temp_t1_48 | (temp_s2_5 & 0xA8) | (temp_t2_62 << 6))) & 0xFF;
+                        break;
+                    case 0x29:                      /* switch 9 */
+                        temp_t6_56 = phi_s3 & 1;
+                        temp_s3_6 = ((s32) phi_s3 >> 1) & 0xFF;
+                        temp_t8_43 = temp_s3_6 == 0;
+                        sp48 = temp_t8_43;
+                        sp117 = temp_t6_56;
+                        phi_s3_3 = temp_s3_6;
+                        phi_s1_3 = (*(temp_s3_6 + ptr_pc_keyboard_table_alloc) | (temp_t6_56 | (temp_s3_6 & 0xA8) | (temp_t8_43 << 6))) & 0xFF;
+                        break;
+                    case 0x2A:                      /* switch 9 */
+                        temp_t3_53 = phi_s4 & 1;
+                        temp_s4_4 = ((s32) phi_s4 >> 1) & 0xFF;
+                        temp_t7_56 = temp_s4_4 == 0;
+                        sp48 = temp_t7_56;
+                        sp116 = temp_t3_53;
+                        phi_s1_3 = (*(temp_s4_4 + ptr_pc_keyboard_table_alloc) | (temp_t3_53 | (temp_s4_4 & 0xA8) | (temp_t7_56 << 6))) & 0xFF;
+                        phi_s4_3 = temp_s4_4;
+                        break;
+                    case 0x2B:                      /* switch 9 */
+                        temp_t9_43 = phi_s5 & 1;
+                        temp_s5_5 = ((s32) phi_s5 >> 1) & 0xFF;
+                        temp_t2_63 = temp_s5_5 == 0;
+                        sp48 = temp_t2_63;
+                        sp115 = temp_t9_43;
+                        phi_s1_3 = (*(temp_s5_5 + ptr_pc_keyboard_table_alloc) | (temp_t9_43 | (temp_s5_5 & 0xA8) | (temp_t2_63 << 6))) & 0xFF;
+                        phi_s5_3 = temp_s5_5;
+                        break;
+                    case 0x2C:                      /* switch 9 */
+                        temp_t4_47 = phi_s6 & 1;
+                        temp_s6_3 = ((s32) (s8) phi_s6 >> 1) & 0xFF;
+                        temp_t8_44 = temp_s6_3 == 0;
+                        sp48 = temp_t8_44;
+                        sp114 = temp_t4_47;
+                        phi_s1_3 = (*(temp_s6_3 + ptr_pc_keyboard_table_alloc) | (temp_t4_47 | (temp_s6_3 & 0xA8) | (temp_t8_44 << 6))) & 0xFF;
+                        phi_s6_3 = temp_s6_3;
+                        break;
+                    case 0x2D:                      /* switch 9 */
+                        temp_t5_54 = phi_s7 & 1;
+                        temp_s7_4 = ((s32) (s8) phi_s7 >> 1) & 0xFF;
+                        temp_t7_57 = temp_s7_4 == 0;
+                        sp48 = temp_t7_57;
+                        sp113 = temp_t5_54;
+                        phi_s1_3 = (*(temp_s7_4 + ptr_pc_keyboard_table_alloc) | (temp_t5_54 | (temp_s7_4 & 0xA8) | (temp_t7_57 << 6))) & 0xFF;
+                        phi_s7_3 = temp_s7_4;
+                        break;
+                    case 0x2E:                      /* switch 9 */
+                        sp28C += 7;
+                        temp_t0_52 = *(sp13C + ptr_spectrum_roms);
+                        sp139 = temp_t0_52;
+                        temp_t8_45 = temp_t0_52 & 1;
+                        sp112 = temp_t8_45;
+                        temp_t7_58 = (s32) (s8) sp139 >> 1;
+                        temp_t5_55 = temp_t7_58 & 0xFF;
+                        temp_t3_54 = temp_t5_55 == 0;
+                        sp48 = temp_t3_54;
+                        sp139 = (u8) temp_t7_58;
+                        phi_s1_3 = (*(temp_t5_55 + ptr_pc_keyboard_table_alloc) | (temp_t8_45 | (temp_t7_58 & 0xA8) | (temp_t3_54 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = (s8) temp_t7_58;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0x2F:                      /* switch 9 */
+                        temp_t1_49 = phi_s0 & 1;
+                        temp_s0_5 = ((s32) (s8) phi_s0 >> 1) & 0xFF;
+                        temp_t9_44 = temp_s0_5 == 0;
+                        sp48 = temp_t9_44;
+                        sp111 = temp_t1_49;
+                        phi_s0_3 = temp_s0_5;
+                        phi_s1_3 = (*(temp_s0_5 + ptr_pc_keyboard_table_alloc) | (temp_t1_49 | (temp_s0_5 & 0xA8) | (temp_t9_44 << 6))) & 0xFF;
+                        break;
+                    case 0x30:                      /* switch 9 */
+                        temp_t4_48 = (s32) phi_s2 >> 7;
+                        temp_s2_6 = ((phi_s2 * 2) | 1) & 0xFF;
+                        temp_t7_59 = temp_s2_6 == 0;
+                        sp48 = temp_t7_59;
+                        sp110 = (s8) temp_t4_48;
+                        phi_s2_7 = temp_s2_6;
+                        phi_s1_3 = (*(temp_s2_6 + ptr_pc_keyboard_table_alloc) | (temp_t4_48 | (temp_s2_6 & 0xA8) | (temp_t7_59 << 6))) & 0xFF;
+                        break;
+                    case 0x31:                      /* switch 9 */
+                        temp_t3_55 = (s32) phi_s3 >> 7;
+                        temp_s3_7 = ((phi_s3 * 2) | 1) & 0xFF;
+                        temp_t9_45 = temp_s3_7 == 0;
+                        sp48 = temp_t9_45;
+                        sp10F = (s8) temp_t3_55;
+                        phi_s3_3 = temp_s3_7;
+                        phi_s1_3 = (*(temp_s3_7 + ptr_pc_keyboard_table_alloc) | (temp_t3_55 | (temp_s3_7 & 0xA8) | (temp_t9_45 << 6))) & 0xFF;
+                        break;
+                    case 0x32:                      /* switch 9 */
+                        temp_t8_46 = (s32) phi_s4 >> 7;
+                        temp_s4_5 = ((phi_s4 * 2) | 1) & 0xFF;
+                        temp_t7_60 = temp_s4_5 == 0;
+                        sp48 = temp_t7_60;
+                        sp10E = (s8) temp_t8_46;
+                        phi_s1_3 = (*(temp_s4_5 + ptr_pc_keyboard_table_alloc) | (temp_t8_46 | (temp_s4_5 & 0xA8) | (temp_t7_60 << 6))) & 0xFF;
+                        phi_s4_3 = temp_s4_5;
+                        break;
+                    case 0x33:                      /* switch 9 */
+                        temp_t2_64 = (s32) phi_s5 >> 7;
+                        temp_s5_6 = ((phi_s5 * 2) | 1) & 0xFF;
+                        temp_t9_46 = temp_s5_6 == 0;
+                        sp48 = temp_t9_46;
+                        sp10D = (s8) temp_t2_64;
+                        phi_s1_3 = (*(temp_s5_6 + ptr_pc_keyboard_table_alloc) | (temp_t2_64 | (temp_s5_6 & 0xA8) | (temp_t9_46 << 6))) & 0xFF;
+                        phi_s5_3 = temp_s5_6;
+                        break;
+                    case 0x34:                      /* switch 9 */
+                        temp_t5_56 = (s32) phi_s6 >> 7;
+                        temp_s6_4 = ((phi_s6 * 2) | 1) & 0xFF;
+                        temp_t7_61 = temp_s6_4 == 0;
+                        sp48 = temp_t7_61;
+                        sp10C = (s8) temp_t5_56;
+                        phi_s1_3 = (*(temp_s6_4 + ptr_pc_keyboard_table_alloc) | (temp_t5_56 | (temp_s6_4 & 0xA8) | (temp_t7_61 << 6))) & 0xFF;
+                        phi_s6_3 = temp_s6_4;
+                        break;
+                    case 0x35:                      /* switch 9 */
+                        temp_t1_50 = (s32) phi_s7 >> 7;
+                        temp_s7_5 = ((phi_s7 * 2) | 1) & 0xFF;
+                        temp_t9_47 = temp_s7_5 == 0;
+                        sp48 = temp_t9_47;
+                        sp10B = (s8) temp_t1_50;
+                        phi_s1_3 = (*(temp_s7_5 + ptr_pc_keyboard_table_alloc) | (temp_t1_50 | (temp_s7_5 & 0xA8) | (temp_t9_47 << 6))) & 0xFF;
+                        phi_s7_3 = temp_s7_5;
+                        break;
+                    case 0x36:                      /* switch 9 */
+                        sp28C += 7;
+                        temp_t4_49 = *(sp13C + ptr_spectrum_roms);
+                        temp_t8_47 = temp_t4_49 & 0xFF;
+                        temp_t9_48 = (temp_t8_47 * 2) | 1;
+                        temp_t1_51 = temp_t9_48 & 0xFF;
+                        temp_t2_65 = temp_t8_47 >> 7;
+                        sp139 = temp_t4_49;
+                        temp_t3_56 = temp_t1_51 == 0;
+                        sp48 = temp_t3_56;
+                        sp139 = temp_t9_48;
+                        sp10A = (s8) temp_t2_65;
+                        phi_s1_3 = (*(temp_t1_51 + ptr_pc_keyboard_table_alloc) | (temp_t2_65 | (temp_t9_48 & 0xA8) | (temp_t3_56 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = temp_t9_48;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0x37:                      /* switch 9 */
+                        temp_t8_48 = (s32) phi_s0 >> 7;
+                        temp_s0_6 = ((phi_s0 * 2) | 1) & 0xFF;
+                        temp_t0_53 = temp_s0_6 == 0;
+                        sp48 = temp_t0_53;
+                        sp109 = (s8) temp_t8_48;
+                        phi_s0_3 = temp_s0_6;
+                        phi_s1_3 = (*(temp_s0_6 + ptr_pc_keyboard_table_alloc) | (temp_t8_48 | (temp_s0_6 & 0xA8) | (temp_t0_53 << 6))) & 0xFF;
+                        break;
+                    case 0x38:                      /* switch 9 */
+                        temp_t4_50 = phi_s2 & 1;
+                        temp_s2_7 = ((u32) phi_s2 >> 1) & 0xFF;
+                        temp_t3_57 = temp_s2_7 == 0;
+                        sp48 = temp_t3_57;
+                        sp108 = temp_t4_50;
+                        phi_s2_7 = temp_s2_7;
+                        phi_s1_3 = (*(temp_s2_7 + ptr_pc_keyboard_table_alloc) | (temp_t4_50 | (temp_s2_7 & 0xA8) | (temp_t3_57 << 6))) & 0xFF;
+                        break;
+                    case 0x39:                      /* switch 9 */
+                        temp_t9_49 = phi_s3 & 1;
+                        temp_s3_8 = ((u32) phi_s3 >> 1) & 0xFF;
+                        temp_t7_62 = temp_s3_8 == 0;
+                        sp48 = temp_t7_62;
+                        sp107 = temp_t9_49;
+                        phi_s3_3 = temp_s3_8;
+                        phi_s1_3 = (*(temp_s3_8 + ptr_pc_keyboard_table_alloc) | (temp_t9_49 | (temp_s3_8 & 0xA8) | (temp_t7_62 << 6))) & 0xFF;
+                        break;
+                    case 0x3A:                      /* switch 9 */
+                        temp_t0_54 = phi_s4 & 1;
+                        temp_s4_6 = ((u32) phi_s4 >> 1) & 0xFF;
+                        temp_t6_57 = temp_s4_6 == 0;
+                        sp48 = temp_t6_57;
+                        sp106 = temp_t0_54;
+                        phi_s1_3 = (*(temp_s4_6 + ptr_pc_keyboard_table_alloc) | (temp_t0_54 | (temp_s4_6 & 0xA8) | (temp_t6_57 << 6))) & 0xFF;
+                        phi_s4_3 = temp_s4_6;
+                        break;
+                    case 0x3B:                      /* switch 9 */
+                        temp_t3_58 = phi_s5 & 1;
+                        temp_s5_7 = ((u32) phi_s5 >> 1) & 0xFF;
+                        temp_t1_52 = temp_s5_7 == 0;
+                        sp48 = temp_t1_52;
+                        sp105 = temp_t3_58;
+                        phi_s1_3 = (*(temp_s5_7 + ptr_pc_keyboard_table_alloc) | (temp_t3_58 | (temp_s5_7 & 0xA8) | (temp_t1_52 << 6))) & 0xFF;
+                        phi_s5_3 = temp_s5_7;
+                        break;
+                    case 0x3C:                      /* switch 9 */
+                        temp_t7_63 = phi_s6 & 1;
+                        temp_s6_5 = ((u32) phi_s6 >> 1) & 0xFF;
+                        temp_t8_49 = temp_s6_5 == 0;
+                        sp48 = temp_t8_49;
+                        sp104 = temp_t7_63;
+                        phi_s1_3 = (*(temp_s6_5 + ptr_pc_keyboard_table_alloc) | (temp_t7_63 | (temp_s6_5 & 0xA8) | (temp_t8_49 << 6))) & 0xFF;
+                        phi_s6_3 = temp_s6_5;
+                        break;
+                    case 0x3D:                      /* switch 9 */
+                        temp_t6_58 = phi_s7 & 1;
+                        temp_s7_6 = ((u32) phi_s7 >> 1) & 0xFF;
+                        temp_t4_51 = temp_s7_6 == 0;
+                        sp48 = temp_t4_51;
+                        sp103 = temp_t6_58;
+                        phi_s1_3 = (*(temp_s7_6 + ptr_pc_keyboard_table_alloc) | (temp_t6_58 | (temp_s7_6 & 0xA8) | (temp_t4_51 << 6))) & 0xFF;
+                        phi_s7_3 = temp_s7_6;
+                        break;
+                    case 0x3E:                      /* switch 9 */
+                        sp28C += 7;
+                        temp_t7_64 = *(sp13C + ptr_spectrum_roms);
+                        temp_t0_55 = temp_t7_64 & 0xFF;
+                        temp_t3_59 = temp_t0_55 & 1;
+                        temp_t8_50 = temp_t0_55 >> 1;
+                        temp_t4_52 = temp_t8_50 & 0xFF;
+                        sp139 = temp_t7_64;
+                        temp_t6_59 = temp_t4_52 == 0;
+                        sp48 = temp_t6_59;
+                        sp139 = (u8) temp_t8_50;
+                        sp102 = temp_t3_59;
+                        phi_s1_3 = (*(temp_t4_52 + ptr_pc_keyboard_table_alloc) | (temp_t3_59 | (temp_t8_50 & 0xA8) | (temp_t6_59 << 6))) & 0xFF;
+                        if ((s32) sp13C >= 0x5B00) {
+                            *(ptr_spectrum_roms + sp13C) = (s8) temp_t8_50;
+                        } else if ((s32) sp13C >= 0x5800) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + sp13C)[0x5800] = 1;
+                        } else if ((s32) sp13C >= 0x4000) {
+                            *(ptr_spectrum_roms + sp13C) = sp139;
+                            *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                        }
+                        break;
+                    case 0x3F:                      /* switch 9 */
+                        temp_t7_65 = phi_s0 & 1;
+                        temp_s0_7 = ((u32) phi_s0 >> 1) & 0xFF;
+                        temp_t3_60 = temp_s0_7 == 0;
+                        sp48 = temp_t3_60;
+                        sp101 = temp_t7_65;
+                        phi_s0_3 = temp_s0_7;
+                        phi_s1_3 = (*(temp_s0_7 + ptr_pc_keyboard_table_alloc) | (temp_t7_65 | (temp_s0_7 & 0xA8) | (temp_t3_60 << 6))) & 0xFF;
+                        break;
+                    default:                        /* switch 9 */
+                        temp_t5_57 = sp13B & 0xC7;
+                        sp100 = ((s32) sp13B >> 3) & 7;
+                        sp48 = temp_t5_57;
+                        switch (temp_t5_57) {       /* switch 10; irregular */
+                        default:                    /* switch 10 */
+                            switch (sp48) {         /* switch 11; irregular */
+                            case 0x40:              /* switch 11 */
+                                if ((phi_s2 & (1 << sp100)) != 0) {
+                                    sp44 = 0x10;
+                                } else {
+                                    sp44 = 0x54;
+                                }
+                                phi_s1_3 = (sp44 | (phi_s1 & 1) | (phi_s2 & 0x28)) & 0xFF;
+                                break;
+                            case 0x41:              /* switch 11 */
+                                if ((phi_s3 & (1 << sp100)) != 0) {
+                                    sp48 = 0x10;
+                                } else {
+                                    sp48 = 0x54;
+                                }
+                                phi_s1_3 = (sp48 | (phi_s1 & 1) | (phi_s3 & 0x28)) & 0xFF;
+                                break;
+                            case 0x42:              /* switch 11 */
+                                if ((phi_s4 & (1 << sp100)) != 0) {
+                                    sp48 = 0x10;
+                                } else {
+                                    sp48 = 0x54;
+                                }
+                                phi_s1_3 = (sp48 | (phi_s1 & 1) | (phi_s4 & 0x28)) & 0xFF;
+                                break;
+                            case 0x43:              /* switch 11 */
+                                if ((phi_s5 & (1 << sp100)) != 0) {
+                                    sp48 = 0x10;
+                                } else {
+                                    sp48 = 0x54;
+                                }
+                                phi_s1_3 = (sp48 | (phi_s1 & 1) | (phi_s5 & 0x28)) & 0xFF;
+                                break;
+                            case 0x44:              /* switch 11 */
+                                if ((phi_s6 & (1 << sp100)) != 0) {
+                                    sp48 = 0x10;
+                                } else {
+                                    sp48 = 0x54;
+                                }
+                                phi_s1_3 = (sp48 | (phi_s1 & 1) | (phi_s6 & 0x28)) & 0xFF;
+                                break;
+                            case 0x45:              /* switch 11 */
+                                if ((phi_s7 & (1 << sp100)) != 0) {
+                                    sp48 = 0x10;
+                                } else {
+                                    sp48 = 0x54;
+                                }
+                                phi_s1_3 = (sp48 | (phi_s1 & 1) | (phi_s7 & 0x28)) & 0xFF;
+                                break;
+                            case 0x46:              /* switch 11 */
+                                sp28C += 4;
+                                temp_t6_60 = *(sp13C + ptr_spectrum_roms);
+                                sp139 = temp_t6_60;
+                                if ((temp_t6_60 & (1 << sp100)) != 0) {
+                                    sp48 = 0x10;
+                                } else {
+                                    sp48 = 0x54;
+                                }
+                                phi_s1_3 = (sp48 | (phi_s1 & 1) | (sp139 & 0x28)) & 0xFF;
+                                if ((s32) sp13C >= 0x5B00) {
+                                    *(ptr_spectrum_roms + sp13C) = sp139;
+                                } else if ((s32) sp13C >= 0x5800) {
+                                    *(ptr_spectrum_roms + sp13C) = sp139;
+                                    *(ptr_300alloc + sp13C)[0x5800] = 1;
+                                } else if ((s32) sp13C >= 0x4000) {
+                                    *(ptr_spectrum_roms + sp13C) = sp139;
+                                    *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                                }
+                                break;
+                            case 0x47:              /* switch 11 */
+                                if ((phi_s0 & (1 << sp100)) != 0) {
+                                    sp48 = 0x10;
+                                } else {
+                                    sp48 = 0x54;
+                                }
+                                phi_s1_3 = (sp48 | (phi_s1 & 1) | (phi_s0 & 0x28)) & 0xFF;
+                                break;
+                            case 0x80:              /* switch 11 */
+                                phi_s2_7 = phi_s2 & ~(1 << sp100) & 0xFF;
+                                break;
+                            case 0x81:              /* switch 11 */
+                                phi_s3_3 = phi_s3 & ~(1 << sp100) & 0xFF;
+                                break;
+                            case 0x82:              /* switch 11 */
+                                phi_s4_3 = phi_s4 & ~(1 << sp100) & 0xFF;
+                                break;
+                            case 0x83:              /* switch 11 */
+                                phi_s5_3 = phi_s5 & ~(1 << sp100) & 0xFF;
+                                break;
+                            case 0x84:              /* switch 11 */
+                                phi_s6_3 = phi_s6 & ~(1 << sp100) & 0xFF;
+                                break;
+                            case 0x85:              /* switch 11 */
+                                phi_s7_3 = phi_s7 & ~(1 << sp100) & 0xFF;
+                                break;
+                            case 0x86:              /* switch 11 */
+                                sp28C += 4;
+                                temp_t0_56 = *(sp13C + ptr_spectrum_roms);
+                                temp_t6_61 = temp_t0_56 & ~(1 << sp100);
+                                sp139 = temp_t0_56;
+                                sp139 = temp_t6_61;
+                                if ((s32) sp13C >= 0x5B00) {
+                                    *(ptr_spectrum_roms + sp13C) = temp_t6_61;
+                                } else if ((s32) sp13C >= 0x5800) {
+                                    *(ptr_spectrum_roms + sp13C) = sp139;
+                                    *(ptr_300alloc + sp13C)[0x5800] = 1;
+                                } else if ((s32) sp13C >= 0x4000) {
+                                    *(ptr_spectrum_roms + sp13C) = sp139;
+                                    *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                                }
+                                break;
+                            case 0x87:              /* switch 11 */
+                                phi_s0_3 = phi_s0 & ~(1 << sp100) & 0xFF;
+                                break;
+                            }
+                            break;
+                        case 0xC0:                  /* switch 10 */
+                            phi_s2_7 = (phi_s2 | (1 << sp100)) & 0xFF;
+                            break;
+                        case 0xC1:                  /* switch 10 */
+                            phi_s3_3 = (phi_s3 | (1 << sp100)) & 0xFF;
+                            break;
+                        case 0xC2:                  /* switch 10 */
+                            phi_s4_3 = (phi_s4 | (1 << sp100)) & 0xFF;
+                            break;
+                        case 0xC3:                  /* switch 10 */
+                            phi_s5_3 = (phi_s5 | (1 << sp100)) & 0xFF;
+                            break;
+                        case 0xC4:                  /* switch 10 */
+                            phi_s6_3 = (phi_s6 | (1 << sp100)) & 0xFF;
+                            break;
+                        case 0xC5:                  /* switch 10 */
+                            phi_s7_3 = (phi_s7 | (1 << sp100)) & 0xFF;
+                            break;
+                        case 0xC6:                  /* switch 10 */
+                            sp28C += 4;
+                            temp_t0_57 = *(sp13C + ptr_spectrum_roms);
+                            temp_t4_53 = temp_t0_57 | (1 << sp100);
+                            sp139 = temp_t0_57;
+                            sp139 = temp_t4_53;
+                            if ((s32) sp13C >= 0x5B00) {
+                                *(ptr_spectrum_roms + sp13C) = temp_t4_53;
+                            } else if ((s32) sp13C >= 0x5800) {
+                                *(ptr_spectrum_roms + sp13C) = sp139;
+                                *(ptr_300alloc + sp13C)[0x5800] = 1;
+                            } else if ((s32) sp13C >= 0x4000) {
+                                *(ptr_spectrum_roms + sp13C) = sp139;
+                                *(ptr_300alloc + (((s32) (sp13C & 0x1800) >> 3) | (sp13C & 0xFF))) = 1;
+                            }
+                            break;
+                        case 0xC7:                  /* switch 10 */
+                            phi_s0_3 = (phi_s0 | (1 << sp100)) & 0xFF;
+                            break;
+                        }
+                        break;
+                    }
+                    if (sp287 != 0) {
+                        switch (sp13A) {            /* switch 6 */
+                        case 0:                     /* switch 6 */
+                            phi_s2_7 = (s8) sp139;
+                            break;
+                        case 1:                     /* switch 6 */
+                            phi_s3_3 = (s8) sp139;
+                            break;
+                        case 2:                     /* switch 6 */
+                            phi_s4_3 = (s8) sp139;
+                            break;
+                        case 3:                     /* switch 6 */
+                            phi_s5_3 = (s8) sp139;
+                            break;
+                        case 4:                     /* switch 6 */
+                            phi_s6_3 = sp139;
+                            break;
+                        case 5:                     /* switch 6 */
+                            phi_s7_3 = sp139;
+                            break;
+                        case 7:                     /* switch 6 */
+                            phi_s0_3 = sp139;
+                            break;
+                        }
+                    }
+                    break;
+                case 0xCC:                          /* switch 1 */
+                    temp_t1_53 = sp28C + 0xA;
+                    sp28C = temp_t1_53;
+                    if ((phi_s1 & 0x40) != 0) {
+                        sp28C = temp_t1_53 + 7;
+                        temp_t4_54 = SP - 2;
+                        temp_t0_58 = temp_t4_54 & 0xFFFF;
+                        SP = temp_t4_54;
+                        if (temp_t0_58 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t0_58) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t4_55 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t4_55 & 0x1800) >> 3) | (temp_t4_55 & 0xFF))) = 1;
+                        }
+                        temp_t7_66 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t7_66) | ((temp_t7_66 + PC)->unk1 << 8);
+                    } else {
+                        phi_t0 = PC + 2;
+                        goto block_1690;
+                    }
+                    break;
+                case 0xCD:                          /* switch 1 */
+                    temp_t7_67 = sp28C + 0xA;
+                    temp_t4_56 = SP - 2;
+                    temp_t1_54 = temp_t4_56 & 0xFFFF;
+                    sp28C = temp_t7_67;
+                    sp28C = temp_t7_67 + 7;
+                    SP = temp_t4_56;
+                    if (temp_t1_54 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t1_54) = PC + 2;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = PC + 2;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = PC + 2;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        temp_t4_57 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t4_57 & 0x1800) >> 3) | (temp_t4_57 & 0xFF))) = 1;
+                    }
+                    temp_t2_66 = ptr_spectrum_roms;
+                    PC = *(PC + temp_t2_66) | ((temp_t2_66 + PC)->unk1 << 8);
+                    break;
+                case 0xCE:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t0_59 = *(PC + ptr_spectrum_roms);
+                    temp_t3_61 = phi_s0 + temp_t0_59 + (phi_s1 & 1);
+                    spFE = (s16) temp_t3_61;
+                    spFD = temp_t0_59;
+                    temp_t0_60 = unkspFF == 0;
+                    sp48 = temp_t0_60;
+                    PC += 1;
+                    phi_s0_3 = unkspFF;
+                    phi_s1_3 = ((temp_t3_61 & 0xA8) | (temp_t3_61 >> 8) | ((((phi_s0 & 0xF) + (temp_t0_59 & 0xF) + (phi_s1 & 1)) > 0xF) * 0x10) | ((s32) ((~phi_s0 ^ temp_t0_59) & 0x80 & (temp_t3_61 ^ phi_s0)) >> 5) | (temp_t0_60 << 6)) & 0xFF;
+                    break;
+                case 0xCF:                          /* switch 1 */
+                    temp_t5_58 = SP - 2;
+                    temp_t0_61 = temp_t5_58 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t5_58;
+                    if (temp_t0_61 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t0_61) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t3_62 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t3_62 & 0x1800) >> 3) | (temp_t3_62 & 0xFF))) = 1;
+                    }
+                    PC = 8;
+                    break;
+                case 0xD0:                          /* switch 1 */
+                    temp_t9_50 = sp28C + 5;
+                    sp28C = temp_t9_50;
+                    if ((phi_s1 & 1) == 0) {
+                        temp_t4_58 = ptr_spectrum_roms;
+                        sp28C = temp_t9_50 + 6;
+                        PC = *(SP + temp_t4_58) | ((temp_t4_58 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xD1:                          /* switch 1 */
+                    sp28C += 0xA;
+                    temp_t6_62 = SP + ptr_spectrum_roms;
+                    temp_s5_8 = temp_t6_62->unk0;
+                    temp_s4_7 = temp_t6_62->unk1;
+                    SP += 2;
+                    phi_s4_3 = (s8) temp_s4_7;
+                    phi_s5_3 = (s8) temp_s5_8;
+                    break;
+                case 0xD2:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 1) == 0) {
+                        temp_t8_51 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t8_51) | ((temp_t8_51 + PC)->unk1 << 8);
+                    } else {
+                        phi_t0 = PC + 2;
+                        goto block_1690;
+                    }
+                    break;
+                case 0xD3:                          /* switch 1 */
+                    temp_a0 = sp28C + 0xB;
+                    sp28C = temp_a0;
+                    temp_v0 = sub_GAME_7F0D37DC(temp_a0, phi_s0, *(PC + ptr_spectrum_roms), phi_s0);
+                    sp48 = temp_v0;
+                    sp28C += temp_v0;
+                    phi_t0 = PC + 1;
+                    goto block_1690;
+                case 0xD4:                          /* switch 1 */
+                    temp_t8_52 = sp28C + 0xA;
+                    sp28C = temp_t8_52;
+                    if ((phi_s1 & 1) == 0) {
+                        sp28C = temp_t8_52 + 7;
+                        temp_t2_67 = SP - 2;
+                        temp_t9_51 = temp_t2_67 & 0xFFFF;
+                        SP = temp_t2_67;
+                        if (temp_t9_51 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t9_51) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t2_68 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t2_68 & 0x1800) >> 3) | (temp_t2_68 & 0xFF))) = 1;
+                        }
+                        temp_t5_59 = ptr_spectrum_roms;
+                        phi_t0 = *(PC + temp_t5_59) | ((temp_t5_59 + PC)->unk1 << 8);
+                        goto block_1690;
+                    }
+                    PC += 2;
+                    break;
+                case 0xD5:                          /* switch 1 */
+                    temp_t1_55 = SP - 2;
+                    temp_t6_63 = temp_t1_55 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t1_55;
+                    if (temp_t6_63 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t6_63) = phi_s5;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = phi_s5;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = phi_s5;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s4;
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s4;
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s4;
+                        temp_t6_64 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t6_64 & 0x1800) >> 3) | (temp_t6_64 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0xD6:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t9_52 = *(PC + ptr_spectrum_roms);
+                    temp_t0_62 = (phi_s0 - temp_t9_52) & 0x1FF;
+                    spFA = (s16) temp_t0_62;
+                    spF9 = temp_t9_52;
+                    temp_t2_69 = unkspFB == 0;
+                    sp48 = temp_t2_69;
+                    PC += 1;
+                    phi_s0_3 = unkspFB;
+                    phi_s1_3 = ((temp_t0_62 & 0xA8) | (temp_t0_62 >> 8) | (((phi_s0 & 0xF) < (temp_t9_52 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t9_52) & 0x80 & (temp_t0_62 ^ phi_s0)) >> 5) | 2 | (temp_t2_69 << 6)) & 0xFF;
+                    break;
+                case 0xD7:                          /* switch 1 */
+                    temp_t9_53 = SP - 2;
+                    temp_t2_70 = temp_t9_53 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t9_53;
+                    if (temp_t2_70 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t2_70) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t7_68 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t7_68 & 0x1800) >> 3) | (temp_t7_68 & 0xFF))) = 1;
+                    }
+                    PC = 0x10;
+                    break;
+                case 0xD8:                          /* switch 1 */
+                    temp_t5_60 = sp28C + 5;
+                    sp28C = temp_t5_60;
+                    if ((phi_s1 & 1) != 0) {
+                        temp_t0_63 = ptr_spectrum_roms;
+                        sp28C = temp_t5_60 + 6;
+                        PC = *(SP + temp_t0_63) | ((temp_t0_63 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xD9:                          /* switch 1 */
+                    spF8 = phi_s2;
+                    spF7 = phi_s3;
+                    spF6 = phi_s4;
+                    spF5 = phi_s5;
+                    spF4 = phi_s6;
+                    spF3 = phi_s7;
+                    temp_s2_8 = sp2A4;
+                    temp_s3_9 = sp2A3;
+                    temp_s4_8 = sp2A2;
+                    temp_s5_9 = sp2A1;
+                    temp_s6_6 = sp2A0;
+                    temp_s7_7 = sp29F;
+                    sp28C += 4;
+                    sp2A4 = (u8) spF8;
+                    sp2A3 = (u8) spF7;
+                    sp2A2 = (u8) spF6;
+                    sp2A1 = (u8) spF5;
+                    sp2A0 = spF4;
+                    sp29F = spF3;
+                    phi_s2_7 = (s8) temp_s2_8;
+                    phi_s3_3 = (s8) temp_s3_9;
+                    phi_s7_3 = temp_s7_7;
+                    phi_s6_3 = temp_s6_6;
+                    phi_s4_3 = (s8) temp_s4_8;
+                    phi_s5_3 = (s8) temp_s5_9;
+                    break;
+                case 0xDA:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 1) != 0) {
+                        temp_t0_64 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t0_64) | ((temp_t0_64 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xDB:                          /* switch 1 */
+                    temp_a0_2 = sp28C + 0xB;
+                    sp28C = temp_a0_2;
+                    temp_v0_2 = spectrum_input_handling(temp_a0_2, phi_s0, *(PC + ptr_spectrum_roms));
+                    temp_t2_71 = (s32) (temp_v0_2 & 0xFFFF) >> 8;
+                    spF0 = temp_v0_2;
+                    sp28C += temp_t2_71;
+                    PC += 1;
+                    phi_s0_3 = unkspF1;
+                    break;
+                case 0xDC:                          /* switch 1 */
+                    temp_t4_59 = sp28C + 0xA;
+                    sp28C = temp_t4_59;
+                    if ((phi_s1 & 1) != 0) {
+                        sp28C = temp_t4_59 + 7;
+                        temp_t2_72 = SP - 2;
+                        temp_t3_63 = temp_t2_72 & 0xFFFF;
+                        SP = temp_t2_72;
+                        if (temp_t3_63 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t3_63) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t2_73 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t2_73 & 0x1800) >> 3) | (temp_t2_73 & 0xFF))) = 1;
+                        }
+                        temp_t8_53 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t8_53) | ((temp_t8_53 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xDD:                          /* switch 1 */
+                    sp286 = 1;
+                    sp28C += 4;
+                    sp285 = 0;
+                    break;
+                case 0xDE:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t1_56 = *(PC + ptr_spectrum_roms);
+                    temp_t7_69 = phi_s1 & 1;
+                    temp_t6_65 = ((phi_s0 - temp_t1_56) - temp_t7_69) & 0x1FF;
+                    spEE = (s16) temp_t6_65;
+                    spED = temp_t1_56;
+                    temp_t3_64 = unkspEF == 0;
+                    sp48 = temp_t3_64;
+                    PC += 1;
+                    phi_s0_3 = unkspEF;
+                    phi_s1_3 = ((temp_t6_65 & 0xA8) | (temp_t6_65 >> 8) | (((phi_s0 & 0xF) < ((temp_t1_56 & 0xF) + temp_t7_69)) * 0x10) | ((s32) ((phi_s0 ^ temp_t1_56) & 0x80 & (temp_t6_65 ^ phi_s0)) >> 5) | 2 | (temp_t3_64 << 6)) & 0xFF;
+                    break;
+                case 0xDF:                          /* switch 1 */
+                    temp_t1_57 = SP - 2;
+                    temp_t3_65 = temp_t1_57 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t1_57;
+                    if (temp_t3_65 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t3_65) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t0_65 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t0_65 & 0x1800) >> 3) | (temp_t0_65 & 0xFF))) = 1;
+                    }
+                    PC = 0x18;
+                    break;
+                case 0xE0:                          /* switch 1 */
+                    temp_t5_61 = sp28C + 5;
+                    sp28C = temp_t5_61;
+                    if ((phi_s1 & 4) == 0) {
+                        temp_t6_66 = ptr_spectrum_roms;
+                        sp28C = temp_t5_61 + 6;
+                        PC = *(SP + temp_t6_66) | ((temp_t6_66 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xE1:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if (sp287 == 0) {
+                        temp_t4_60 = SP + ptr_spectrum_roms;
+                        temp_s7_8 = temp_t4_60->unk0;
+                        temp_s6_7 = temp_t4_60->unk1;
+                        SP += 2;
+                        phi_s7_3 = temp_s7_8;
+                        phi_s6_3 = temp_s6_7;
+                    } else if (sp287 == 1) {
+                        temp_t2_74 = ptr_spectrum_roms;
+                        IX = *(SP + temp_t2_74) | ((temp_t2_74 + SP)->unk1 << 8);
+                        SP += 2;
+                    } else {
+                        temp_t8_54 = *(void *)0x8008E328;
+                        temp_t6_67 = *(SP + temp_t8_54);
+                        temp_t4_61 = (temp_t8_54 + SP)->unk1 << 8;
+                        SP += 2;
+                        IY = temp_t6_67 | temp_t4_61;
+                    }
+                    break;
+                case 0xE2:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 4) == 0) {
+                        temp_t7_70 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t7_70) | ((temp_t7_70 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xE3:                          /* switch 1 */
+                    sp28C += 0x13;
+                    if (sp287 == 0) {
+                        temp_t0_66 = ptr_spectrum_roms;
+                        spEA = *(SP + temp_t0_66) | ((temp_t0_66 + SP)->unk1 << 8);
+                        if ((s32) SP >= 0x5B00) {
+                            *(ptr_spectrum_roms + SP) = phi_s7;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = phi_s7;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = phi_s7;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = phi_s6;
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = phi_s6;
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = phi_s6;
+                            temp_t7_71 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t7_71 & 0x1800) >> 3) | (temp_t7_71 & 0xFF))) = 1;
+                        }
+                        phi_s7_3 = unkspEB;
+                        phi_s6_3 = ((s32) spEA >> 8) & 0xFF;
+                    } else if (sp287 == 1) {
+                        temp_t1_58 = ptr_spectrum_roms;
+                        spE8 = *(SP + temp_t1_58) | ((temp_t1_58 + SP)->unk1 << 8);
+                        if ((s32) SP >= 0x5B00) {
+                            *(ptr_spectrum_roms + SP) = (s8) IX;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = (s8) IX;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = (s8) IX;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IX >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IX >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IX >> 8);
+                            temp_t5_62 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t5_62 & 0x1800) >> 3) | (temp_t5_62 & 0xFF))) = 1;
+                        }
+                        IX = spE8;
+                    } else {
+                        temp_t9_54 = ptr_spectrum_roms;
+                        spE6 = *(SP + temp_t9_54) | ((temp_t9_54 + SP)->unk1 << 8);
+                        if ((s32) SP >= 0x5B00) {
+                            *(ptr_spectrum_roms + SP) = (s8) IY;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = (s8) IY;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = (s8) IY;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IY >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IY >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IY >> 8);
+                            temp_t5_63 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t5_63 & 0x1800) >> 3) | (temp_t5_63 & 0xFF))) = 1;
+                        }
+                        IY = spE6;
+                    }
+                    break;
+                case 0xE4:                          /* switch 1 */
+                    temp_t4_62 = sp28C + 0xA;
+                    sp28C = temp_t4_62;
+                    if ((phi_s1 & 4) == 0) {
+                        sp28C = temp_t4_62 + 7;
+                        temp_t6_68 = SP - 2;
+                        temp_t9_55 = temp_t6_68 & 0xFFFF;
+                        SP = temp_t6_68;
+                        if (temp_t9_55 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t9_55) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t6_69 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t6_69 & 0x1800) >> 3) | (temp_t6_69 & 0xFF))) = 1;
+                        }
+                        temp_t3_66 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t3_66) | ((temp_t3_66 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xE5:                          /* switch 1 */
+                    sp28C += 0xB;
+                    if (sp287 == 0) {
+                        temp_t7_72 = SP - 2;
+                        temp_t6_70 = temp_t7_72 & 0xFFFF;
+                        SP = temp_t7_72;
+                        if (temp_t6_70 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t6_70) = phi_s7;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = phi_s7;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = phi_s7;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = phi_s6;
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = phi_s6;
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = phi_s6;
+                            temp_t6_71 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t6_71 & 0x1800) >> 3) | (temp_t6_71 & 0xFF))) = 1;
+                        }
+                    } else if (sp287 == 1) {
+                        temp_t1_59 = SP - 2;
+                        temp_t6_72 = temp_t1_59 & 0xFFFF;
+                        SP = temp_t1_59;
+                        if (temp_t6_72 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t6_72) = (s8) IX;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = (s8) IX;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = (s8) IX;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IX >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IX >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IX >> 8);
+                            temp_t8_55 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t8_55 & 0x1800) >> 3) | (temp_t8_55 & 0xFF))) = 1;
+                        }
+                    } else {
+                        temp_t7_73 = SP - 2;
+                        temp_t3_67 = temp_t7_73 & 0xFFFF;
+                        SP = temp_t7_73;
+                        if (temp_t3_67 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t3_67) = (s8) IY;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = (s8) IY;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = (s8) IY;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IY >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IY >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) IY >> 8);
+                            temp_t2_75 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t2_75 & 0x1800) >> 3) | (temp_t2_75 & 0xFF))) = 1;
+                        }
+                    }
+                    break;
+                case 0xE6:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t3_68 = phi_s0 & *(ptr_spectrum_roms + PC) & 0xFF;
+                    temp_t8_56 = temp_t3_68 == 0;
+                    sp48 = temp_t8_56;
+                    phi_t0 = PC + 1;
+                    phi_s0_3 = temp_t3_68;
+                    phi_s1_3 = (*(temp_t3_68 + ptr_pc_keyboard_table_alloc) | ((temp_t3_68 & 0xA8) | (temp_t8_56 << 6) | 0x10)) & 0xFF;
+                    goto block_1690;
+                case 0xE7:                          /* switch 1 */
+                    temp_t2_76 = SP - 2;
+                    temp_t9_56 = temp_t2_76 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t2_76;
+                    if (temp_t9_56 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t9_56) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t1_60 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t1_60 & 0x1800) >> 3) | (temp_t1_60 & 0xFF))) = 1;
+                    }
+                    PC = 0x20;
+                    break;
+                case 0xE8:                          /* switch 1 */
+                    temp_t4_63 = sp28C + 5;
+                    sp28C = temp_t4_63;
+                    if ((phi_s1 & 4) != 0) {
+                        temp_t6_73 = ptr_spectrum_roms;
+                        sp28C = temp_t4_63 + 6;
+                        PC = *(SP + temp_t6_73) | ((temp_t6_73 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xE9:                          /* switch 1 */
+                    sp28C += 4;
+                    if (sp287 == 0) {
+                        PC = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        PC = (u16) sp48;
+                    }
+                    break;
+                case 0xEA:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 4) != 0) {
+                        temp_t2_77 = ptr_spectrum_roms;
+                        phi_t0 = *(PC + temp_t2_77) | ((temp_t2_77 + PC)->unk1 << 8);
+                        goto block_1690;
+                    }
+                    PC += 2;
+                    break;
+                case 0xEB:                          /* switch 1 */
+                    spE5 = phi_s6;
+                    spE4 = phi_s5;
+                    sp28C += 4;
+                    phi_s7_3 = (u8) spE4;
+                    phi_s6_3 = phi_s4 & 0xFF;
+                    phi_s4_3 = (s8) spE5;
+                    phi_s5_3 = phi_s7 & 0xFF;
+                    break;
+                case 0xEC:                          /* switch 1 */
+                    temp_t4_64 = sp28C + 0xA;
+                    sp28C = temp_t4_64;
+                    if ((phi_s1 & 4) != 0) {
+                        sp28C = temp_t4_64 + 7;
+                        temp_t8_57 = SP - 2;
+                        temp_t3_69 = temp_t8_57 & 0xFFFF;
+                        SP = temp_t8_57;
+                        if (temp_t3_69 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t3_69) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t8_58 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t8_58 & 0x1800) >> 3) | (temp_t8_58 & 0xFF))) = 1;
+                        }
+                        temp_t0_67 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t0_67) | ((temp_t0_67 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xED:                          /* switch 1 */
+                    sp28C += 4;
+                    temp_t8_59 = *(PC + ptr_spectrum_roms);
+                    temp_t3_70 = temp_t8_59 & 0xFF;
+                    temp_at_2 = temp_t3_70 < 0x7F;
+                    PC += 1;
+                    sp288 += 1;
+                    sp48 = temp_t3_70;
+                    spE3 = temp_t8_59;
+                    if (temp_at_2 == 0) {
+                        switch (temp_t3_70) {       /* switch 7 */
+                        case 0xA0:                  /* switch 7 */
+                            sp28C += 0xC;
+                            temp_t3_71 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp7D = temp_t3_71;
+                            if (((phi_s4 << 8) | phi_s5) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = temp_t3_71;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = sp7D;
+                                *(ptr_300alloc + ((phi_s4 << 8) | phi_s5))[0x5800] = 1;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x4000) {
+                                temp_t9_57 = phi_s4 << 8;
+                                *(ptr_spectrum_roms + (temp_t9_57 | phi_s5)) = sp7D;
+                                *(ptr_300alloc + (((s32) (((phi_s4 << 8) | phi_s5) & 0x1800) >> 3) | ((temp_t9_57 | phi_s5) & 0xFF))) = 1;
+                            }
+                            temp_t2_78 = (phi_s7 + 1) & 0xFF;
+                            phi_s7_3 = temp_t2_78;
+                            if (temp_t2_78 == 0) {
+                                phi_s6_3 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t9_58 = (phi_s5 + 1) & 0xFF;
+                            phi_s5_3 = temp_t9_58;
+                            if (temp_t9_58 == 0) {
+                                phi_s4_3 = (phi_s4 + 1) & 0xFF;
+                            }
+                            temp_t5_64 = phi_s3 == 0;
+                            temp_t1_61 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t5_64;
+                            phi_s3_3 = temp_t1_61;
+                            if (temp_t5_64 != 0) {
+                                phi_s2_8 = (phi_s2 - 1) & 0xFF;
+                            }
+                            phi_s2_7 = phi_s2_8;
+                            phi_s1_3 = ((phi_s1 & 0xC1) | (sp7D & 0x28) | (((phi_s2_8 | temp_t1_61) > 0) * 4)) & 0xFF;
+                            break;
+                        case 0xA1:                  /* switch 7 */
+                            sp28C += 0xC;
+                            sp7C = phi_s1 & 1;
+                            temp_t6_74 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            temp_t1_62 = (phi_s0 - temp_t6_74) & 0x1FF;
+                            temp_t0_68 = (temp_t1_62 & 0xFFFF) == 0;
+                            sp79 = temp_t6_74;
+                            sp7A = (s16) temp_t1_62;
+                            temp_t7_74 = (phi_s7 + 1) & 0xFF;
+                            sp48 = temp_t0_68;
+                            phi_s7_3 = temp_t7_74;
+                            if (temp_t7_74 == 0) {
+                                phi_s6_3 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t3_72 = phi_s3 == 0;
+                            temp_t4_65 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t3_72;
+                            phi_s3_3 = temp_t4_65;
+                            if (temp_t3_72 != 0) {
+                                phi_s2_9 = (phi_s2 - 1) & 0xFF;
+                            }
+                            phi_s2_7 = phi_s2_9;
+                            phi_s1_3 = ((((temp_t1_62 & 0xA8) | (temp_t1_62 >> 8) | (((phi_s0 & 0xF) < (temp_t6_74 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t6_74) & 0x80 & (temp_t1_62 ^ phi_s0)) >> 5) | 2 | (temp_t0_68 << 6)) & 0xFF & 0xFA) | sp7C | (((phi_s2_9 | temp_t4_65) > 0) * 4)) & 0xFF;
+                            break;
+                        case 0xA2:                  /* switch 7 */
+                            temp_a0_3 = sp28C + 0xC;
+                            sp28C = temp_a0_3;
+                            temp_v0_3 = spectrum_input_handling(temp_a0_3, (u8) phi_s2, (u8) phi_s3);
+                            sp76 = temp_v0_3;
+                            if (((phi_s6 << 8) | phi_s7) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) temp_v0_3;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) sp76;
+                                *(ptr_300alloc + ((phi_s6 << 8) | phi_s7))[0x5800] = 1;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x4000) {
+                                temp_t5_65 = phi_s6 << 8;
+                                *(ptr_spectrum_roms + (temp_t5_65 | phi_s7)) = (s8) sp76;
+                                *(ptr_300alloc + (((s32) (((phi_s6 << 8) | phi_s7) & 0x1800) >> 3) | ((temp_t5_65 | phi_s7) & 0xFF))) = 1;
+                            }
+                            temp_t6_75 = (phi_s7 + 1) & 0xFF;
+                            sp28C += (s32) sp76 >> 8;
+                            phi_s7_3 = temp_t6_75;
+                            if (temp_t6_75 == 0) {
+                                phi_s6_3 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t9_59 = (phi_s2 - 1) & 0xFF;
+                            phi_s2_7 = (s8) temp_t9_59;
+                            phi_s1_3 = (((*(temp_t9_59 + ptr_pc_keyboard_table_alloc) ^ phi_s3) & 4) | ((temp_t9_59 & 0xA8) | ((temp_t9_59 > 0) << 6) | 2)) & 0xFF;
+                            break;
+                        case 0xA3:                  /* switch 7 */
+                            temp_a0_4 = sp28C + 0xC;
+                            sp28C = temp_a0_4;
+                            temp_a3 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp75 = temp_a3;
+                            temp_v0_4 = sub_GAME_7F0D37DC(temp_a0_4, (u8) phi_s2, (u8) phi_s3, temp_a3);
+                            temp_t7_75 = (phi_s7 + 1) & 0xFF;
+                            sp28C += temp_v0_4;
+                            sp48 = temp_v0_4;
+                            phi_s7_3 = temp_t7_75;
+                            if (temp_t7_75 == 0) {
+                                phi_s6_3 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t5_66 = (phi_s2 - 1) & 0xFF;
+                            phi_s2_7 = temp_t5_66;
+                            phi_s1_3 = ((phi_s1 & 1) | 0x12 | (temp_t5_66 & 0xA8) | ((temp_t5_66 == 0) << 6)) & 0xFF;
+                            break;
+                        case 0xA8:                  /* switch 7 */
+                            sp28C += 0xC;
+                            temp_t9_60 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp74 = temp_t9_60;
+                            if (((phi_s4 << 8) | phi_s5) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = temp_t9_60;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = sp74;
+                                *(ptr_300alloc + ((phi_s4 << 8) | phi_s5))[0x5800] = 1;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x4000) {
+                                temp_t7_76 = phi_s4 << 8;
+                                *(ptr_spectrum_roms + (temp_t7_76 | phi_s5)) = sp74;
+                                *(ptr_300alloc + (((s32) (((phi_s4 << 8) | phi_s5) & 0x1800) >> 3) | ((temp_t7_76 | phi_s5) & 0xFF))) = 1;
+                            }
+                            temp_t1_63 = phi_s7 == 0;
+                            sp48 = temp_t1_63;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t1_63 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t8_60 = phi_s5 == 0;
+                            sp48 = temp_t8_60;
+                            phi_s5_3 = (phi_s5 - 1) & 0xFF;
+                            if (temp_t8_60 != 0) {
+                                phi_s4_3 = (phi_s4 - 1) & 0xFF;
+                            }
+                            temp_t6_76 = phi_s3 == 0;
+                            temp_t5_67 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t6_76;
+                            phi_s3_3 = temp_t5_67;
+                            if (temp_t6_76 != 0) {
+                                phi_s2_10 = (phi_s2 - 1) & 0xFF;
+                            }
+                            phi_s2_7 = phi_s2_10;
+                            phi_s1_3 = ((phi_s1 & 0xC1) | (sp74 & 0x28) | (((phi_s2_10 | temp_t5_67) > 0) * 4)) & 0xFF;
+                            break;
+                        case 0xA9:                  /* switch 7 */
+                            sp28C += 0xC;
+                            sp73 = phi_s1 & 1;
+                            temp_t2_79 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            temp_t5_68 = (phi_s0 - temp_t2_79) & 0x1FF;
+                            temp_t4_66 = (temp_t5_68 & 0xFFFF) == 0;
+                            sp6F = temp_t2_79;
+                            sp70 = (s16) temp_t5_68;
+                            temp_t1_64 = phi_s7 == 0;
+                            sp48 = temp_t4_66;
+                            sp48 = temp_t1_64;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t1_64 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t8_61 = phi_s3 == 0;
+                            temp_t2_80 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t8_61;
+                            phi_s3_3 = temp_t2_80;
+                            if (temp_t8_61 != 0) {
+                                phi_s2_11 = (phi_s2 - 1) & 0xFF;
+                            }
+                            phi_s2_7 = phi_s2_11;
+                            phi_s1_3 = ((((temp_t5_68 & 0xA8) | (temp_t5_68 >> 8) | (((phi_s0 & 0xF) < (temp_t2_79 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t2_79) & 0x80 & (temp_t5_68 ^ phi_s0)) >> 5) | 2 | (temp_t4_66 << 6)) & 0xFF & 0xFA) | sp73 | (((phi_s2_11 | temp_t2_80) > 0) * 4)) & 0xFF;
+                            break;
+                        case 0xAA:                  /* switch 7 */
+                            temp_a0_5 = sp28C + 0xC;
+                            sp28C = temp_a0_5;
+                            temp_v0_5 = spectrum_input_handling(temp_a0_5, (u8) phi_s2, (u8) phi_s3);
+                            sp6C = temp_v0_5;
+                            if (((phi_s6 << 8) | phi_s7) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) temp_v0_5;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) sp6C;
+                                *(ptr_300alloc + ((phi_s6 << 8) | phi_s7))[0x5800] = 1;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x4000) {
+                                temp_t9_61 = phi_s6 << 8;
+                                *(ptr_spectrum_roms + (temp_t9_61 | phi_s7)) = (s8) sp6C;
+                                *(ptr_300alloc + (((s32) (((phi_s6 << 8) | phi_s7) & 0x1800) >> 3) | ((temp_t9_61 | phi_s7) & 0xFF))) = 1;
+                            }
+                            temp_t3_73 = phi_s7 == 0;
+                            sp28C += (s32) sp6C >> 8;
+                            sp48 = temp_t3_73;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t3_73 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t8_62 = (phi_s2 - 1) & 0xFF;
+                            phi_s2_7 = (s8) temp_t8_62;
+                            phi_s1_3 = (((*(temp_t8_62 + ptr_pc_keyboard_table_alloc) ^ phi_s3 ^ 4) & 4) | ((temp_t8_62 & 0xA8) | ((temp_t8_62 > 0) << 6) | 2)) & 0xFF;
+                            break;
+                        case 0xAB:                  /* switch 7 */
+                            temp_a0_6 = sp28C + 0xC;
+                            sp28C = temp_a0_6;
+                            temp_a3_2 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp6B = temp_a3_2;
+                            temp_v0_6 = sub_GAME_7F0D37DC(temp_a0_6, (u8) phi_s2, (u8) phi_s3, temp_a3_2);
+                            temp_t2_81 = phi_s7 == 0;
+                            sp48 = temp_v0_6;
+                            sp28C += temp_v0_6;
+                            sp48 = temp_t2_81;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t2_81 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t0_69 = (phi_s2 - 1) & 0xFF;
+                            phi_s2_7 = temp_t0_69;
+                            phi_s1_3 = ((phi_s1 & 1) | 0x12 | (temp_t0_69 & 0xA8) | ((temp_t0_69 == 0) << 6)) & 0xFF;
+                            break;
+                        case 0xB0:                  /* switch 7 */
+                            sp28C += 0xC;
+                            temp_t1_65 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp6A = temp_t1_65;
+                            if (((phi_s4 << 8) | phi_s5) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = temp_t1_65;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = sp6A;
+                                *(ptr_300alloc + ((phi_s4 << 8) | phi_s5))[0x5800] = 1;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x4000) {
+                                temp_t7_77 = phi_s4 << 8;
+                                *(ptr_spectrum_roms + (temp_t7_77 | phi_s5)) = sp6A;
+                                *(ptr_300alloc + (((s32) (((phi_s4 << 8) | phi_s5) & 0x1800) >> 3) | ((temp_t7_77 | phi_s5) & 0xFF))) = 1;
+                            }
+                            temp_t5_69 = (phi_s7 + 1) & 0xFF;
+                            phi_s7_3 = temp_t5_69;
+                            phi_s7_3 = temp_t5_69;
+                            if (temp_t5_69 == 0) {
+                                phi_s6_4 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t7_78 = (phi_s5 + 1) & 0xFF;
+                            phi_s6_3 = phi_s6_4;
+                            phi_s5_3 = temp_t7_78;
+                            phi_s6_3 = phi_s6_4;
+                            phi_s5_3 = temp_t7_78;
+                            if (temp_t7_78 == 0) {
+                                phi_s4_4 = (phi_s4 + 1) & 0xFF;
+                            }
+                            temp_t4_67 = phi_s3 == 0;
+                            temp_t9_62 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t4_67;
+                            phi_s3_3 = temp_t9_62;
+                            phi_s4_3 = phi_s4_4;
+                            phi_s3_3 = temp_t9_62;
+                            phi_s4_3 = phi_s4_4;
+                            if (temp_t4_67 != 0) {
+                                phi_s2_2 = (phi_s2 - 1) & 0xFF;
+                            }
+                            temp_t9_63 = ((phi_s1 & 0xC1) | (sp6A & 0x28) | (((phi_s2_2 | temp_t9_62) > 0) * 4)) & 0xFF;
+                            phi_s2_7 = phi_s2_2;
+                            phi_s1_3 = temp_t9_63;
+                            phi_s2_7 = phi_s2_2;
+                            phi_s1_3 = temp_t9_63;
+                            if ((phi_s2_2 | temp_t9_62) != 0) {
+                                sp28C += 5;
+                                phi_t0 = PC - 2;
+                                goto block_1690;
+                            }
+                            break;
+                        case 0xB1:                  /* switch 7 */
+                            sp28C += 0xC;
+                            sp69 = phi_s1 & 1;
+                            temp_t0_70 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            temp_t5_70 = (phi_s0 - temp_t0_70) & 0x1FF;
+                            temp_t1_66 = (temp_t5_70 & 0xFFFF) == 0;
+                            sp65 = temp_t0_70;
+                            sp66 = (s16) temp_t5_70;
+                            temp_t7_79 = (phi_s7 + 1) & 0xFF;
+                            sp48 = temp_t1_66;
+                            phi_s7_3 = temp_t7_79;
+                            phi_s7_3 = temp_t7_79;
+                            if (temp_t7_79 == 0) {
+                                phi_s6_5 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t6_77 = phi_s3 == 0;
+                            temp_t4_68 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t6_77;
+                            phi_s3_3 = temp_t4_68;
+                            phi_s6_3 = phi_s6_5;
+                            phi_s3_3 = temp_t4_68;
+                            phi_s6_3 = phi_s6_5;
+                            if (temp_t6_77 != 0) {
+                                phi_s2_3 = (phi_s2 - 1) & 0xFF;
+                            }
+                            temp_t6_78 = ((((temp_t5_70 & 0xA8) | (temp_t5_70 >> 8) | (((phi_s0 & 0xF) < (temp_t0_70 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t0_70) & 0x80 & (temp_t5_70 ^ phi_s0)) >> 5) | 2 | (temp_t1_66 << 6)) & 0xFF & 0xFA) | sp69 | (((phi_s2_3 | temp_t4_68) > 0) * 4)) & 0xFF;
+                            phi_s2_7 = phi_s2_3;
+                            phi_s1_3 = temp_t6_78;
+                            phi_s2_7 = phi_s2_3;
+                            phi_s1_3 = temp_t6_78;
+                            if ((temp_t6_78 & 0x44) == 4) {
+                                sp28C += 5;
+                                phi_t0 = PC - 2;
+                                goto block_1690;
+                            }
+                            break;
+                        case 0xB2:                  /* switch 7 */
+                            temp_a0_7 = sp28C + 0xC;
+                            sp28C = temp_a0_7;
+                            temp_v0_7 = spectrum_input_handling(temp_a0_7, (u8) phi_s2, (u8) phi_s3);
+                            sp62 = temp_v0_7;
+                            if (((phi_s6 << 8) | phi_s7) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) temp_v0_7;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) sp62;
+                                *(ptr_300alloc + ((phi_s6 << 8) | phi_s7))[0x5800] = 1;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x4000) {
+                                temp_t4_69 = phi_s6 << 8;
+                                *(ptr_spectrum_roms + (temp_t4_69 | phi_s7)) = (s8) sp62;
+                                *(ptr_300alloc + (((s32) (((phi_s6 << 8) | phi_s7) & 0x1800) >> 3) | ((temp_t4_69 | phi_s7) & 0xFF))) = 1;
+                            }
+                            temp_t5_71 = (phi_s7 + 1) & 0xFF;
+                            sp28C += (s32) sp62 >> 8;
+                            phi_s7_3 = temp_t5_71;
+                            phi_s7_3 = temp_t5_71;
+                            if (temp_t5_71 == 0) {
+                                phi_s6_6 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t6_79 = (phi_s2 - 1) & 0xFF;
+                            temp_t3_74 = (((*(temp_t6_79 + ptr_pc_keyboard_table_alloc) ^ phi_s3) & 4) | ((temp_t6_79 & 0xA8) | ((temp_t6_79 > 0) << 6) | 2)) & 0xFF;
+                            phi_s2_7 = (s8) temp_t6_79;
+                            phi_s1_3 = temp_t3_74;
+                            phi_s6_3 = phi_s6_6;
+                            phi_s2_7 = (s8) temp_t6_79;
+                            phi_s1_3 = temp_t3_74;
+                            phi_s6_3 = phi_s6_6;
+                            if (temp_t6_79 != 0) {
+                                sp28C += 5;
+                                phi_t0 = PC - 2;
+                                goto block_1690;
+                            }
+                            break;
+                        case 0xB3:                  /* switch 7 */
+                            temp_a0_8 = sp28C + 0xC;
+                            sp28C = temp_a0_8;
+                            temp_a3_3 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp61 = temp_a3_3;
+                            temp_v0_8 = sub_GAME_7F0D37DC(temp_a0_8, (u8) phi_s2, (u8) phi_s3, temp_a3_3);
+                            temp_t7_80 = (phi_s7 + 1) & 0xFF;
+                            sp28C += temp_v0_8;
+                            sp48 = temp_v0_8;
+                            phi_s7_3 = temp_t7_80;
+                            if (temp_t7_80 == 0) {
+                                phi_s6_3 = (phi_s6 + 1) & 0xFF;
+                            }
+                            temp_t6_80 = (phi_s2 - 1) & 0xFF;
+                            phi_s2_7 = temp_t6_80;
+                            phi_s1_3 = ((phi_s1 & 1) | 0x12 | (temp_t6_80 & 0xA8) | ((temp_t6_80 == 0) << 6)) & 0xFF;
+                            if (temp_t6_80 != 0) {
+                                sp28C += 5;
+                                PC += -2;
+                            }
+                            break;
+                        case 0xB8:                  /* switch 7 */
+                            sp28C += 0xC;
+                            temp_t7_81 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp60 = temp_t7_81;
+                            if (((phi_s4 << 8) | phi_s5) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = temp_t7_81;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s4 << 8) | phi_s5)) = sp60;
+                                *(ptr_300alloc + ((phi_s4 << 8) | phi_s5))[0x5800] = 1;
+                            } else if (((phi_s4 << 8) | phi_s5) >= 0x4000) {
+                                temp_t3_75 = phi_s4 << 8;
+                                *(ptr_spectrum_roms + (temp_t3_75 | phi_s5)) = sp60;
+                                *(ptr_300alloc + (((s32) (((phi_s4 << 8) | phi_s5) & 0x1800) >> 3) | ((temp_t3_75 | phi_s5) & 0xFF))) = 1;
+                            }
+                            temp_t4_70 = phi_s7 == 0;
+                            sp48 = temp_t4_70;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t4_70 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t1_67 = phi_s5 == 0;
+                            sp48 = temp_t1_67;
+                            phi_s5_3 = (phi_s5 - 1) & 0xFF;
+                            if (temp_t1_67 != 0) {
+                                phi_s4_3 = (phi_s4 - 1) & 0xFF;
+                            }
+                            temp_t2_82 = phi_s3 == 0;
+                            temp_t0_71 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t2_82;
+                            phi_s3_3 = temp_t0_71;
+                            if (temp_t2_82 != 0) {
+                                phi_s2_4 = (phi_s2 - 1) & 0xFF;
+                            }
+                            phi_s2_7 = phi_s2_4;
+                            phi_s1_3 = ((phi_s1 & 0xC1) | (sp60 & 0x28) | (((phi_s2_4 | temp_t0_71) > 0) * 4)) & 0xFF;
+                            if ((phi_s2_4 | temp_t0_71) != 0) {
+                                sp28C += 5;
+                                PC += -2;
+                            }
+                            break;
+                        case 0xB9:                  /* switch 7 */
+                            sp28C += 0xC;
+                            sp5F = phi_s1 & 1;
+                            temp_t7_82 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            temp_t1_68 = (phi_s0 - temp_t7_82) & 0x1FF;
+                            temp_t5_72 = (temp_t1_68 & 0xFFFF) == 0;
+                            sp5B = temp_t7_82;
+                            sp5C = (s16) temp_t1_68;
+                            temp_t8_63 = phi_s7 == 0;
+                            sp48 = temp_t5_72;
+                            sp48 = temp_t8_63;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t8_63 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t0_72 = phi_s3 == 0;
+                            temp_t7_83 = (phi_s3 - 1) & 0xFF;
+                            sp48 = temp_t0_72;
+                            phi_s3_3 = temp_t7_83;
+                            if (temp_t0_72 != 0) {
+                                phi_s2_5 = (phi_s2 - 1) & 0xFF;
+                            }
+                            temp_t0_73 = ((((temp_t1_68 & 0xA8) | (temp_t1_68 >> 8) | (((phi_s0 & 0xF) < (temp_t7_82 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t7_82) & 0x80 & (temp_t1_68 ^ phi_s0)) >> 5) | 2 | (temp_t5_72 << 6)) & 0xFF & 0xFA) | sp5F | (((phi_s2_5 | temp_t7_83) > 0) * 4)) & 0xFF;
+                            phi_s2_7 = phi_s2_5;
+                            phi_s1_3 = temp_t0_73;
+                            if ((temp_t0_73 & 0x44) == 4) {
+                                sp28C += 5;
+                                PC += -2;
+                            }
+                            break;
+                        case 0xBA:                  /* switch 7 */
+                            temp_a0_9 = sp28C + 0xC;
+                            sp28C = temp_a0_9;
+                            temp_v0_9 = spectrum_input_handling(temp_a0_9, (u8) phi_s2, (u8) phi_s3);
+                            sp58 = temp_v0_9;
+                            if (((phi_s6 << 8) | phi_s7) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) temp_v0_9;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = (s8) sp58;
+                                *(ptr_300alloc + ((phi_s6 << 8) | phi_s7))[0x5800] = 1;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x4000) {
+                                temp_t7_84 = phi_s6 << 8;
+                                *(ptr_spectrum_roms + (temp_t7_84 | phi_s7)) = (s8) sp58;
+                                *(ptr_300alloc + (((s32) (((phi_s6 << 8) | phi_s7) & 0x1800) >> 3) | ((temp_t7_84 | phi_s7) & 0xFF))) = 1;
+                            }
+                            temp_t8_64 = phi_s7 == 0;
+                            sp28C += (s32) sp58 >> 8;
+                            sp48 = temp_t8_64;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t8_64 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t3_76 = (phi_s2 - 1) & 0xFF;
+                            phi_s2_7 = (s8) temp_t3_76;
+                            phi_s1_3 = (((*(temp_t3_76 + ptr_pc_keyboard_table_alloc) ^ phi_s3 ^ 4) & 4) | ((temp_t3_76 & 0xA8) | ((temp_t3_76 > 0) << 6) | 2)) & 0xFF;
+                            if (temp_t3_76 != 0) {
+                                sp28C += 5;
+                                PC += -2;
+                            }
+                            break;
+                        case 0xBB:                  /* switch 7 */
+                            temp_a0_10 = sp28C + 0xC;
+                            sp28C = temp_a0_10;
+                            temp_a3_4 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            sp57 = temp_a3_4;
+                            temp_v0_10 = sub_GAME_7F0D37DC(temp_a0_10, (u8) phi_s2, (u8) phi_s3, temp_a3_4);
+                            temp_t0_74 = phi_s7 == 0;
+                            sp48 = temp_v0_10;
+                            sp28C += temp_v0_10;
+                            sp48 = temp_t0_74;
+                            phi_s7_3 = (phi_s7 - 1) & 0xFF;
+                            if (temp_t0_74 != 0) {
+                                phi_s6_3 = (phi_s6 - 1) & 0xFF;
+                            }
+                            temp_t4_71 = (phi_s2 - 1) & 0xFF;
+                            phi_s2_7 = temp_t4_71;
+                            phi_s1_3 = ((phi_s1 & 1) | 0x12 | (temp_t4_71 & 0xA8) | ((temp_t4_71 == 0) << 6)) & 0xFF;
+                            if (temp_t4_71 != 0) {
+                                sp28C += 5;
+                                PC += -2;
+                            }
+                            break;
+                        }
+                    } else {
+                        switch (sp48) {             /* switch 8 */
+                        case 0x40:                  /* switch 8 */
+                            temp_a0_11 = sp28C + 8;
+                            sp28C = temp_a0_11;
+                            temp_v0_11 = spectrum_input_handling(temp_a0_11, (u8) phi_s2, (u8) phi_s3);
+                            temp_t2_83 = (s32) (temp_v0_11 & 0xFFFF) >> 8;
+                            spE0 = temp_v0_11;
+                            temp_t3_77 = unkspE1 == 0;
+                            sp48 = temp_t3_77;
+                            sp28C += temp_t2_83;
+                            phi_s2_7 = (s8) unkspE1;
+                            phi_s1_3 = (*(unkspE1 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (unkspE1 & 0xA8) | (temp_t3_77 << 6))) & 0xFF;
+                            break;
+                        case 0x41:                  /* switch 8 */
+                            temp_a0_12 = sp28C + 8;
+                            sp28C = temp_a0_12;
+                            temp_v0_12 = sub_GAME_7F0D37DC(temp_a0_12, (u8) phi_s2, (u8) phi_s3, (u8) phi_s2);
+                            sp48 = temp_v0_12;
+                            sp28C += temp_v0_12;
+                            break;
+                        case 0x42:                  /* switch 8 */
+                            temp_t4_72 = (phi_s2 << 8) | phi_s3;
+                            temp_t7_85 = ((((phi_s6 << 8) | phi_s7) - (temp_t4_72 & 0xFFFF)) - (phi_s1 & 1)) & 0x1FFFF;
+                            sp28C += 0xB;
+                            temp_t1_69 = (temp_t7_85 & 0xFFFF) == 0;
+                            spDE = temp_t4_72;
+                            spD8 = temp_t7_85;
+                            sp48 = temp_t1_69;
+                            phi_s1_3 = (((temp_t7_85 >> 8) & 0xA8) | (temp_t7_85 >> 0x10) | 2 | (((((phi_s6 << 8) | phi_s7) & 0xFFF) < ((temp_t4_72 & 0xFFF) + (phi_s1 & 1))) * 0x10) | ((u32) ((((phi_s6 << 8) | phi_s7) ^ temp_t4_72) & (((phi_s6 << 8) | phi_s7) ^ temp_t7_85) & 0x8000) >> 0xD) | (temp_t1_69 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unkspDB;
+                            phi_s6_3 = (temp_t7_85 >> 8) & 0xFF;
+                            break;
+                        case 0x43:                  /* switch 8 */
+                            temp_t1_70 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t8_65 = *(PC + temp_t1_70) | ((temp_t1_70 + PC)->unk1 << 8);
+                            temp_t0_75 = temp_t8_65 & 0xFFFF;
+                            spD6 = temp_t8_65;
+                            PC += 2;
+                            if (temp_t0_75 >= 0x5B00) {
+                                *(ptr_spectrum_roms + temp_t0_75) = phi_s3;
+                            } else if ((s32) spD6 >= 0x5800) {
+                                *(ptr_spectrum_roms + spD6) = phi_s3;
+                                *(ptr_300alloc + spD6)[0x5800] = 1;
+                            } else if ((s32) spD6 >= 0x4000) {
+                                *(ptr_spectrum_roms + spD6) = phi_s3;
+                                *(ptr_300alloc + (((s32) (spD6 & 0x1800) >> 3) | (spD6 & 0xFF))) = 1;
+                            }
+                            if ((spD6 + 1) >= 0x5B00) {
+                                (ptr_spectrum_roms + spD6)->unk1 = phi_s2;
+                            } else if ((spD6 + 1) >= 0x5800) {
+                                (ptr_spectrum_roms + spD6)->unk1 = phi_s2;
+                                (ptr_300alloc + spD6)[0x57FF] = 1;
+                            } else if ((spD6 + 1) >= 0x4000) {
+                                (ptr_spectrum_roms + spD6)->unk1 = phi_s2;
+                                temp_t0_76 = spD6 + 1;
+                                *(ptr_300alloc + (((s32) (temp_t0_76 & 0x1800) >> 3) | (temp_t0_76 & 0xFF))) = 1;
+                            }
+                            break;
+                        case 0x44:                  /* switch 8 */
+                            temp_t1_71 = -(s32) phi_s0 & 0xFF;
+                            temp_t0_77 = temp_t1_71 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t0_77;
+                            phi_s0_3 = (u8) temp_t1_71;
+                            phi_s1_3 = ((temp_t1_71 & 0xA8) | (temp_t0_77 << 6) | (((temp_t1_71 & 0xF) > 0) * 0x10) | ((temp_t1_71 == 0x80) * 4) | 2 | (temp_t1_71 > 0)) & 0xFF;
+                            break;
+                        case 0x45:                  /* switch 8 */
+                            temp_t3_78 = ptr_spectrum_roms;
+                            temp_t5_73 = sp28C + 4;
+                            sp28C = temp_t5_73;
+                            sp28C = temp_t5_73 + 6;
+                            sp29D = sp29C;
+                            PC = *(SP + temp_t3_78) | ((temp_t3_78 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x46:                  /* switch 8 */
+                            IM = 0;
+                            sp28C += 4;
+                            break;
+                        case 0x47:                  /* switch 8 */
+                            I = phi_s0;
+                            sp28C += 5;
+                            break;
+                        case 0x48:                  /* switch 8 */
+                            temp_a0_13 = sp28C + 8;
+                            sp28C = temp_a0_13;
+                            temp_v0_13 = spectrum_input_handling(temp_a0_13, (u8) phi_s2, (u8) phi_s3);
+                            temp_t0_78 = (s32) (temp_v0_13 & 0xFFFF) >> 8;
+                            spD4 = temp_v0_13;
+                            temp_t7_86 = unkspD5 == 0;
+                            sp48 = temp_t7_86;
+                            sp28C += temp_t0_78;
+                            phi_s3_3 = (s8) unkspD5;
+                            phi_s1_3 = (*(unkspD5 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (unkspD5 & 0xA8) | (temp_t7_86 << 6))) & 0xFF;
+                            break;
+                        case 0x49:                  /* switch 8 */
+                            temp_a0_14 = sp28C + 8;
+                            sp28C = temp_a0_14;
+                            temp_v0_14 = sub_GAME_7F0D37DC(temp_a0_14, (u8) phi_s2, (u8) phi_s3, (u8) phi_s3);
+                            sp48 = temp_v0_14;
+                            sp28C += temp_v0_14;
+                            break;
+                        case 0x4A:                  /* switch 8 */
+                            temp_t2_84 = (phi_s2 << 8) | phi_s3;
+                            temp_t4_73 = ((phi_s6 << 8) | phi_s7) + (temp_t2_84 & 0xFFFF) + (phi_s1 & 1);
+                            sp28C += 0xB;
+                            temp_t0_79 = (temp_t4_73 & 0xFFFF) == 0;
+                            spD2 = temp_t2_84;
+                            spCC = temp_t4_73;
+                            sp48 = temp_t0_79;
+                            phi_s1_3 = (((temp_t4_73 >> 8) & 0xA8) | (temp_t4_73 >> 0x10) | ((((((phi_s6 << 8) | phi_s7) & 0xFFF) + (temp_t2_84 & 0xFFF) + (phi_s1 & 1)) > 0xFFF) * 0x10) | ((u32) ((~((phi_s6 << 8) | phi_s7) ^ temp_t2_84) & (((phi_s6 << 8) | phi_s7) ^ temp_t4_73) & 0x8000) >> 0xD) | (temp_t0_79 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unkspCF;
+                            phi_s6_3 = (temp_t4_73 >> 8) & 0xFF;
+                            break;
+                        case 0x4B:                  /* switch 8 */
+                            temp_t0_80 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t6_81 = *(PC + temp_t0_80) | ((temp_t0_80 + PC)->unk1 << 8);
+                            temp_t7_87 = temp_t6_81 & 0xFFFF;
+                            spCA = temp_t6_81;
+                            PC += 2;
+                            temp_t3_79 = temp_t7_87 + temp_t0_80;
+                            phi_s2_7 = (s8) temp_t3_79->unk1;
+                            phi_s3_3 = (s8) temp_t3_79->unk0;
+                            break;
+                        case 0x4C:                  /* switch 8 */
+                            temp_t5_74 = -(s32) phi_s0 & 0xFF;
+                            temp_t4_74 = temp_t5_74 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t4_74;
+                            phi_s0_3 = (u8) temp_t5_74;
+                            phi_s1_3 = ((temp_t5_74 & 0xA8) | (temp_t4_74 << 6) | (((temp_t5_74 & 0xF) > 0) * 0x10) | ((temp_t5_74 == 0x80) * 4) | 2 | (temp_t5_74 > 0)) & 0xFF;
+                            break;
+                        case 0x4D:                  /* switch 8 */
+                            temp_t4_75 = ptr_spectrum_roms;
+                            temp_t7_88 = sp28C + 4;
+                            sp28C = temp_t7_88;
+                            sp28C = temp_t7_88 + 6;
+                            PC = *(SP + temp_t4_75) | ((temp_t4_75 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x4E:                  /* switch 8 */
+                            IM = 1;
+                            sp28C += 4;
+                            break;
+                        case 0x4F:                  /* switch 8 */
+                            sp2A7 = phi_s0;
+                            sp28C += 5;
+                            sp288 = phi_s0 & 0xFF;
+                            break;
+                        case 0x50:                  /* switch 8 */
+                            temp_a0_15 = sp28C + 8;
+                            sp28C = temp_a0_15;
+                            temp_v0_15 = spectrum_input_handling(temp_a0_15, (u8) phi_s2, (u8) phi_s3);
+                            temp_t5_75 = (s32) (temp_v0_15 & 0xFFFF) >> 8;
+                            spC8 = temp_v0_15;
+                            temp_t4_76 = unkspC9 == 0;
+                            sp48 = temp_t4_76;
+                            sp28C += temp_t5_75;
+                            phi_s1_3 = (*(unkspC9 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (unkspC9 & 0xA8) | (temp_t4_76 << 6))) & 0xFF;
+                            phi_s4_3 = (s8) unkspC9;
+                            break;
+                        case 0x51:                  /* switch 8 */
+                            temp_a0_16 = sp28C + 8;
+                            sp28C = temp_a0_16;
+                            temp_v0_16 = sub_GAME_7F0D37DC(temp_a0_16, (u8) phi_s2, (u8) phi_s3, (u8) phi_s4);
+                            sp48 = temp_v0_16;
+                            sp28C += temp_v0_16;
+                            break;
+                        case 0x52:                  /* switch 8 */
+                            temp_t9_64 = (phi_s4 << 8) | phi_s5;
+                            temp_t8_66 = ((((phi_s6 << 8) | phi_s7) - (temp_t9_64 & 0xFFFF)) - (phi_s1 & 1)) & 0x1FFFF;
+                            sp28C += 0xB;
+                            temp_t2_85 = (temp_t8_66 & 0xFFFF) == 0;
+                            spC6 = temp_t9_64;
+                            spC0 = temp_t8_66;
+                            sp48 = temp_t2_85;
+                            phi_s1_3 = (((temp_t8_66 >> 8) & 0xA8) | (temp_t8_66 >> 0x10) | 2 | (((((phi_s6 << 8) | phi_s7) & 0xFFF) < ((temp_t9_64 & 0xFFF) + (phi_s1 & 1))) * 0x10) | ((u32) ((((phi_s6 << 8) | phi_s7) ^ temp_t9_64) & (((phi_s6 << 8) | phi_s7) ^ temp_t8_66) & 0x8000) >> 0xD) | (temp_t2_85 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unkspC3;
+                            phi_s6_3 = (temp_t8_66 >> 8) & 0xFF;
+                            break;
+                        case 0x53:                  /* switch 8 */
+                            temp_t2_86 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t7_89 = *(PC + temp_t2_86) | ((temp_t2_86 + PC)->unk1 << 8);
+                            temp_t0_81 = temp_t7_89 & 0xFFFF;
+                            spBE = temp_t7_89;
+                            PC += 2;
+                            if (temp_t0_81 >= 0x5B00) {
+                                *(ptr_spectrum_roms + temp_t0_81) = phi_s5;
+                            } else if ((s32) spBE >= 0x5800) {
+                                *(ptr_spectrum_roms + spBE) = phi_s5;
+                                *(ptr_300alloc + spBE)[0x5800] = 1;
+                            } else if ((s32) spBE >= 0x4000) {
+                                *(ptr_spectrum_roms + spBE) = phi_s5;
+                                *(ptr_300alloc + (((s32) (spBE & 0x1800) >> 3) | (spBE & 0xFF))) = 1;
+                            }
+                            if ((spBE + 1) >= 0x5B00) {
+                                (ptr_spectrum_roms + spBE)->unk1 = phi_s4;
+                            } else if ((spBE + 1) >= 0x5800) {
+                                (ptr_spectrum_roms + spBE)->unk1 = phi_s4;
+                                (ptr_300alloc + spBE)[0x57FF] = 1;
+                            } else if ((spBE + 1) >= 0x4000) {
+                                (ptr_spectrum_roms + spBE)->unk1 = phi_s4;
+                                temp_t0_82 = spBE + 1;
+                                *(ptr_300alloc + (((s32) (temp_t0_82 & 0x1800) >> 3) | (temp_t0_82 & 0xFF))) = 1;
+                            }
+                            break;
+                        case 0x54:                  /* switch 8 */
+                            temp_t2_87 = -(s32) phi_s0 & 0xFF;
+                            temp_t0_83 = temp_t2_87 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t0_83;
+                            phi_s0_3 = (u8) temp_t2_87;
+                            phi_s1_3 = ((temp_t2_87 & 0xA8) | (temp_t0_83 << 6) | (((temp_t2_87 & 0xF) > 0) * 0x10) | ((temp_t2_87 == 0x80) * 4) | 2 | (temp_t2_87 > 0)) & 0xFF;
+                            break;
+                        case 0x55:                  /* switch 8 */
+                            temp_t0_84 = ptr_spectrum_roms;
+                            temp_t3_80 = sp28C + 4;
+                            sp28C = temp_t3_80;
+                            sp28C = temp_t3_80 + 6;
+                            PC = *(SP + temp_t0_84) | ((temp_t0_84 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x56:                  /* switch 8 */
+                            IM = 2;
+                            sp28C += 4;
+                            break;
+                        case 0x57:                  /* switch 8 */
+                            temp_t1_72 = I == 0;
+                            sp28C += 5;
+                            sp48 = temp_t1_72;
+                            phi_s0_3 = I;
+                            phi_s1_3 = ((phi_s1 & 1) | (I & 0xA8) | (temp_t1_72 << 6) | (sp29C * 4)) & 0xFF;
+                            break;
+                        case 0x58:                  /* switch 8 */
+                            temp_a0_17 = sp28C + 8;
+                            sp28C = temp_a0_17;
+                            temp_v0_17 = spectrum_input_handling(temp_a0_17, (u8) phi_s2, (u8) phi_s3);
+                            temp_t8_67 = (s32) (temp_v0_17 & 0xFFFF) >> 8;
+                            spBC = temp_v0_17;
+                            temp_t0_85 = unkspBD == 0;
+                            sp48 = temp_t0_85;
+                            sp28C += temp_t8_67;
+                            phi_s1_3 = (*(unkspBD + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (unkspBD & 0xA8) | (temp_t0_85 << 6))) & 0xFF;
+                            phi_s5_3 = (s8) unkspBD;
+                            break;
+                        case 0x59:                  /* switch 8 */
+                            temp_a0_18 = sp28C + 8;
+                            sp28C = temp_a0_18;
+                            temp_v0_18 = sub_GAME_7F0D37DC(temp_a0_18, (u8) phi_s2, (u8) phi_s3, (u8) phi_s5);
+                            sp48 = temp_v0_18;
+                            sp28C += temp_v0_18;
+                            break;
+                        case 0x5A:                  /* switch 8 */
+                            temp_t5_76 = (phi_s4 << 8) | phi_s5;
+                            temp_t6_82 = ((phi_s6 << 8) | phi_s7) + (temp_t5_76 & 0xFFFF) + (phi_s1 & 1);
+                            sp28C += 0xB;
+                            temp_t8_68 = (temp_t6_82 & 0xFFFF) == 0;
+                            spBA = temp_t5_76;
+                            spB4 = temp_t6_82;
+                            sp48 = temp_t8_68;
+                            phi_s1_3 = (((temp_t6_82 >> 8) & 0xA8) | (temp_t6_82 >> 0x10) | ((((((phi_s6 << 8) | phi_s7) & 0xFFF) + (temp_t5_76 & 0xFFF) + (phi_s1 & 1)) > 0xFFF) * 0x10) | ((u32) ((~((phi_s6 << 8) | phi_s7) ^ temp_t5_76) & (((phi_s6 << 8) | phi_s7) ^ temp_t6_82) & 0x8000) >> 0xD) | (temp_t8_68 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unkspB7;
+                            phi_s6_3 = (temp_t6_82 >> 8) & 0xFF;
+                            break;
+                        case 0x5B:                  /* switch 8 */
+                            temp_t8_69 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t1_73 = *(PC + temp_t8_69) | ((temp_t8_69 + PC)->unk1 << 8);
+                            temp_t0_86 = temp_t1_73 & 0xFFFF;
+                            spB2 = temp_t1_73;
+                            PC += 2;
+                            temp_t9_65 = temp_t0_86 + temp_t8_69;
+                            phi_s4_3 = (s8) temp_t9_65->unk1;
+                            phi_s5_3 = (s8) temp_t9_65->unk0;
+                            break;
+                        case 0x5C:                  /* switch 8 */
+                            temp_t3_81 = -(s32) phi_s0 & 0xFF;
+                            temp_t6_83 = temp_t3_81 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t6_83;
+                            phi_s0_3 = (u8) temp_t3_81;
+                            phi_s1_3 = ((temp_t3_81 & 0xA8) | (temp_t6_83 << 6) | (((temp_t3_81 & 0xF) > 0) * 0x10) | ((temp_t3_81 == 0x80) * 4) | 2 | (temp_t3_81 > 0)) & 0xFF;
+                            break;
+                        case 0x5D:                  /* switch 8 */
+                            temp_t6_84 = ptr_spectrum_roms;
+                            temp_t0_87 = sp28C + 4;
+                            sp28C = temp_t0_87;
+                            sp28C = temp_t0_87 + 6;
+                            PC = *(SP + temp_t6_84) | ((temp_t6_84 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x5E:                  /* switch 8 */
+                            IM = 3;
+                            sp28C += 4;
+                            break;
+                        case 0x5F:                  /* switch 8 */
+                            temp_s0_8 = (sp2A7 & 0x80) | (sp288 & 0x7F);
+                            temp_t3_82 = temp_s0_8 & 0xFF;
+                            sp28C += 5;
+                            temp_t5_77 = temp_t3_82 == 0;
+                            temp_t8_70 = (phi_s1 & 1) | (temp_t3_82 & 0xA8);
+                            temp_t0_88 = temp_t5_77 << 6;
+                            sp2A7 = temp_s0_8;
+                            sp48 = temp_t5_77;
+                            phi_s0_3 = temp_t3_82;
+                            phi_s1_3 = (temp_t8_70 | temp_t0_88 | (sp29C * 4)) & 0xFF;
+                            break;
+                        case 0x60:                  /* switch 8 */
+                            temp_a0_19 = sp28C + 8;
+                            sp28C = temp_a0_19;
+                            temp_v0_19 = spectrum_input_handling(temp_a0_19, (u8) phi_s2, (u8) phi_s3);
+                            temp_t8_71 = (s32) (temp_v0_19 & 0xFFFF) >> 8;
+                            spB0 = temp_v0_19;
+                            temp_t7_90 = unkspB1 == 0;
+                            sp48 = temp_t7_90;
+                            sp28C += temp_t8_71;
+                            phi_s1_3 = (*(unkspB1 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (unkspB1 & 0xA8) | (temp_t7_90 << 6))) & 0xFF;
+                            phi_s6_3 = unkspB1;
+                            break;
+                        case 0x61:                  /* switch 8 */
+                            temp_a0_20 = sp28C + 8;
+                            sp28C = temp_a0_20;
+                            temp_v0_20 = sub_GAME_7F0D37DC(temp_a0_20, (u8) phi_s2, (u8) phi_s3, phi_s6);
+                            sp48 = temp_v0_20;
+                            sp28C += temp_v0_20;
+                            break;
+                        case 0x62:                  /* switch 8 */
+                            temp_t1_74 = (phi_s6 << 8) | phi_s7;
+                            temp_t2_88 = ((((phi_s6 << 8) | phi_s7) - (temp_t1_74 & 0xFFFF)) - (phi_s1 & 1)) & 0x1FFFF;
+                            sp28C += 0xB;
+                            temp_t0_89 = (temp_t2_88 & 0xFFFF) == 0;
+                            spAE = temp_t1_74;
+                            spA8 = temp_t2_88;
+                            sp48 = temp_t0_89;
+                            phi_s1_3 = (((temp_t2_88 >> 8) & 0xA8) | (temp_t2_88 >> 0x10) | 2 | (((((phi_s6 << 8) | phi_s7) & 0xFFF) < ((temp_t1_74 & 0xFFF) + (phi_s1 & 1))) * 0x10) | ((u32) ((((phi_s6 << 8) | phi_s7) ^ temp_t1_74) & (((phi_s6 << 8) | phi_s7) ^ temp_t2_88) & 0x8000) >> 0xD) | (temp_t0_89 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unkspAB;
+                            phi_s6_3 = (temp_t2_88 >> 8) & 0xFF;
+                            break;
+                        case 0x63:                  /* switch 8 */
+                            temp_t0_90 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t6_85 = *(PC + temp_t0_90) | ((temp_t0_90 + PC)->unk1 << 8);
+                            temp_t4_77 = temp_t6_85 & 0xFFFF;
+                            spA6 = temp_t6_85;
+                            PC += 2;
+                            if (temp_t4_77 >= 0x5B00) {
+                                *(ptr_spectrum_roms + temp_t4_77) = phi_s7;
+                            } else if ((s32) spA6 >= 0x5800) {
+                                *(ptr_spectrum_roms + spA6) = phi_s7;
+                                *(ptr_300alloc + spA6)[0x5800] = 1;
+                            } else if ((s32) spA6 >= 0x4000) {
+                                *(ptr_spectrum_roms + spA6) = phi_s7;
+                                *(ptr_300alloc + (((s32) (spA6 & 0x1800) >> 3) | (spA6 & 0xFF))) = 1;
+                            }
+                            if ((spA6 + 1) >= 0x5B00) {
+                                (ptr_spectrum_roms + spA6)->unk1 = phi_s6;
+                            } else if ((spA6 + 1) >= 0x5800) {
+                                (ptr_spectrum_roms + spA6)->unk1 = phi_s6;
+                                (ptr_300alloc + spA6)[0x57FF] = 1;
+                            } else if ((spA6 + 1) >= 0x4000) {
+                                (ptr_spectrum_roms + spA6)->unk1 = phi_s6;
+                                temp_t4_78 = spA6 + 1;
+                                *(ptr_300alloc + (((s32) (temp_t4_78 & 0x1800) >> 3) | (temp_t4_78 & 0xFF))) = 1;
+                            }
+                            break;
+                        case 0x64:                  /* switch 8 */
+                            temp_t0_91 = -(s32) phi_s0 & 0xFF;
+                            temp_t4_79 = temp_t0_91 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t4_79;
+                            phi_s0_3 = (u8) temp_t0_91;
+                            phi_s1_3 = ((temp_t0_91 & 0xA8) | (temp_t4_79 << 6) | (((temp_t0_91 & 0xF) > 0) * 0x10) | ((temp_t0_91 == 0x80) * 4) | 2 | (temp_t0_91 > 0)) & 0xFF;
+                            break;
+                        case 0x65:                  /* switch 8 */
+                            temp_t4_80 = ptr_spectrum_roms;
+                            temp_t5_78 = sp28C + 4;
+                            sp28C = temp_t5_78;
+                            sp28C = temp_t5_78 + 6;
+                            PC = *(SP + temp_t4_80) | ((temp_t4_80 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x66:                  /* switch 8 */
+                            IM = 0;
+                            sp28C += 4;
+                            break;
+                        case 0x67:                  /* switch 8 */
+                            sp28C += 0xE;
+                            temp_t2_89 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            temp_t7_91 = (phi_s0 * 0x10) | ((s32) temp_t2_89 >> 4);
+                            temp_t6_86 = ((phi_s0 & 0xF0) | (temp_t2_89 & 0xF)) & 0xFF;
+                            spA4 = temp_t7_91;
+                            spA5 = temp_t2_89;
+                            phi_s0_3 = temp_t6_86;
+                            if (((phi_s6 << 8) | phi_s7) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = temp_t7_91;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = spA4;
+                                *(ptr_300alloc + ((phi_s6 << 8) | phi_s7))[0x5800] = 1;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x4000) {
+                                temp_t0_92 = phi_s6 << 8;
+                                *(ptr_spectrum_roms + (temp_t0_92 | phi_s7)) = spA4;
+                                *(ptr_300alloc + (((s32) (((phi_s6 << 8) | phi_s7) & 0x1800) >> 3) | ((temp_t0_92 | phi_s7) & 0xFF))) = 1;
+                            }
+                            temp_t4_81 = temp_t6_86 == 0;
+                            sp48 = temp_t4_81;
+                            phi_s1_3 = (*(temp_t6_86 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (temp_t6_86 & 0xA8) | (temp_t4_81 << 6))) & 0xFF;
+                            break;
+                        case 0x68:                  /* switch 8 */
+                            temp_a0_21 = sp28C + 8;
+                            sp28C = temp_a0_21;
+                            temp_v0_21 = spectrum_input_handling(temp_a0_21, (u8) phi_s2, (u8) phi_s3);
+                            temp_t2_90 = (s32) (temp_v0_21 & 0xFFFF) >> 8;
+                            spA2 = temp_v0_21;
+                            temp_t1_75 = unkspA3 == 0;
+                            sp48 = temp_t1_75;
+                            sp28C += temp_t2_90;
+                            phi_s1_3 = (*(unkspA3 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (unkspA3 & 0xA8) | (temp_t1_75 << 6))) & 0xFF;
+                            phi_s7_3 = unkspA3;
+                            break;
+                        case 0x69:                  /* switch 8 */
+                            temp_a0_22 = sp28C + 8;
+                            sp28C = temp_a0_22;
+                            temp_v0_22 = sub_GAME_7F0D37DC(temp_a0_22, (u8) phi_s2, (u8) phi_s3, phi_s7);
+                            sp48 = temp_v0_22;
+                            sp28C += temp_v0_22;
+                            break;
+                        case 0x6A:                  /* switch 8 */
+                            temp_t6_87 = (phi_s6 << 8) | phi_s7;
+                            temp_t0_93 = ((phi_s6 << 8) | phi_s7) + (temp_t6_87 & 0xFFFF) + (phi_s1 & 1);
+                            sp28C += 0xB;
+                            temp_t2_91 = (temp_t0_93 & 0xFFFF) == 0;
+                            spA0 = temp_t6_87;
+                            sp9C = temp_t0_93;
+                            sp48 = temp_t2_91;
+                            phi_s1_3 = (((temp_t0_93 >> 8) & 0xA8) | (temp_t0_93 >> 0x10) | ((((((phi_s6 << 8) | phi_s7) & 0xFFF) + (temp_t6_87 & 0xFFF) + (phi_s1 & 1)) > 0xFFF) * 0x10) | ((u32) ((~((phi_s6 << 8) | phi_s7) ^ temp_t6_87) & (((phi_s6 << 8) | phi_s7) ^ temp_t0_93) & 0x8000) >> 0xD) | (temp_t2_91 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unksp9F;
+                            phi_s6_3 = (temp_t0_93 >> 8) & 0xFF;
+                            break;
+                        case 0x6B:                  /* switch 8 */
+                            temp_t2_92 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t3_83 = *(PC + temp_t2_92) | ((temp_t2_92 + PC)->unk1 << 8);
+                            temp_t1_76 = temp_t3_83 & 0xFFFF;
+                            sp9A = temp_t3_83;
+                            PC += 2;
+                            temp_t5_79 = temp_t1_76 + temp_t2_92;
+                            phi_s7_3 = temp_t5_79->unk0;
+                            phi_s6_3 = temp_t5_79->unk1;
+                            break;
+                        case 0x6C:                  /* switch 8 */
+                            temp_t9_66 = -(s32) phi_s0 & 0xFF;
+                            temp_t0_94 = temp_t9_66 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t0_94;
+                            phi_s0_3 = (u8) temp_t9_66;
+                            phi_s1_3 = ((temp_t9_66 & 0xA8) | (temp_t0_94 << 6) | (((temp_t9_66 & 0xF) > 0) * 0x10) | ((temp_t9_66 == 0x80) * 4) | 2 | (temp_t9_66 > 0)) & 0xFF;
+                            break;
+                        case 0x6D:                  /* switch 8 */
+                            temp_t0_95 = ptr_spectrum_roms;
+                            temp_t1_77 = sp28C + 4;
+                            sp28C = temp_t1_77;
+                            sp28C = temp_t1_77 + 6;
+                            PC = *(SP + temp_t0_95) | ((temp_t0_95 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x6E:                  /* switch 8 */
+                            IM = 1;
+                            sp28C += 4;
+                            break;
+                        case 0x6F:                  /* switch 8 */
+                            sp28C += 5;
+                            temp_t7_92 = *(((phi_s6 << 8) | phi_s7) + ptr_spectrum_roms);
+                            temp_t0_96 = (phi_s0 & 0xF) | (temp_t7_92 * 0x10);
+                            temp_t3_84 = ((phi_s0 & 0xF0) | ((s32) temp_t7_92 >> 4)) & 0xFF;
+                            sp98 = temp_t0_96;
+                            sp99 = temp_t7_92;
+                            phi_s0_3 = temp_t3_84;
+                            if (((phi_s6 << 8) | phi_s7) >= 0x5B00) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = temp_t0_96;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x5800) {
+                                *(ptr_spectrum_roms + ((phi_s6 << 8) | phi_s7)) = sp98;
+                                *(ptr_300alloc + ((phi_s6 << 8) | phi_s7))[0x5800] = 1;
+                            } else if (((phi_s6 << 8) | phi_s7) >= 0x4000) {
+                                temp_t6_88 = phi_s6 << 8;
+                                *(ptr_spectrum_roms + (temp_t6_88 | phi_s7)) = sp98;
+                                *(ptr_300alloc + (((s32) (((phi_s6 << 8) | phi_s7) & 0x1800) >> 3) | ((temp_t6_88 | phi_s7) & 0xFF))) = 1;
+                            }
+                            temp_t8_72 = temp_t3_84 == 0;
+                            sp48 = temp_t8_72;
+                            phi_s1_3 = (*(temp_t3_84 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (temp_t3_84 & 0xA8) | (temp_t8_72 << 6))) & 0xFF;
+                            break;
+                        case 0x70:                  /* switch 8 */
+                            temp_a0_23 = sp28C + 8;
+                            sp28C = temp_a0_23;
+                            temp_v0_23 = spectrum_input_handling(temp_a0_23, (u8) phi_s2, (u8) phi_s3);
+                            temp_t8_73 = temp_v0_23 & 0xFFFF;
+                            sp28C += temp_t8_73 >> 8;
+                            temp_t2_93 = temp_t8_73 & 0xFF;
+                            temp_t0_97 = temp_t2_93 == 0;
+                            sp97 = (s8) temp_t8_73;
+                            sp48 = temp_t0_97;
+                            sp94 = temp_v0_23;
+                            phi_s1_3 = (*(temp_t2_93 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (temp_t8_73 & 0xA8) | (temp_t0_97 << 6))) & 0xFF;
+                            break;
+                        case 0x71:                  /* switch 8 */
+                            temp_a0_24 = sp28C + 8;
+                            sp28C = temp_a0_24;
+                            temp_v0_24 = sub_GAME_7F0D37DC(temp_a0_24, (u8) phi_s2, (u8) phi_s3, 0U);
+                            sp48 = temp_v0_24;
+                            sp28C += temp_v0_24;
+                            break;
+                        case 0x72:                  /* switch 8 */
+                            sp28C += 0xB;
+                            temp_t5_80 = ((((phi_s6 << 8) | phi_s7) - SP) - (phi_s1 & 1)) & 0x1FFFF;
+                            temp_t8_74 = temp_t5_80 >> 8;
+                            temp_t9_67 = (temp_t5_80 & 0xFFFF) == 0;
+                            sp92 = SP;
+                            sp8C = temp_t5_80;
+                            sp48 = temp_t9_67;
+                            phi_s1_3 = ((temp_t8_74 & 0xA8) | (temp_t5_80 >> 0x10) | 2 | (((((phi_s6 << 8) | phi_s7) & 0xFFF) < ((SP & 0xFFF) + (phi_s1 & 1))) * 0x10) | ((u32) ((((phi_s6 << 8) | phi_s7) ^ SP) & (((phi_s6 << 8) | phi_s7) ^ temp_t5_80) & 0x8000) >> 0xD) | (temp_t9_67 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unksp8F;
+                            phi_s6_3 = temp_t8_74 & 0xFF;
+                            break;
+                        case 0x73:                  /* switch 8 */
+                            temp_t6_89 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t8_75 = *(PC + temp_t6_89) | ((temp_t6_89 + PC)->unk1 << 8);
+                            temp_t4_82 = temp_t8_75 & 0xFFFF;
+                            sp8A = temp_t8_75;
+                            PC += 2;
+                            if (temp_t4_82 >= 0x5B00) {
+                                *(ptr_spectrum_roms + temp_t4_82) = (s8) SP;
+                            } else if ((s32) sp8A >= 0x5800) {
+                                *(ptr_spectrum_roms + sp8A) = (s8) SP;
+                                *(ptr_300alloc + sp8A)[0x5800] = 1;
+                            } else if ((s32) sp8A >= 0x4000) {
+                                *(ptr_spectrum_roms + sp8A) = (s8) SP;
+                                *(ptr_300alloc + (((s32) (sp8A & 0x1800) >> 3) | (sp8A & 0xFF))) = 1;
+                            }
+                            if ((sp8A + 1) >= 0x5B00) {
+                                (ptr_spectrum_roms + sp8A)->unk1 = (s8) ((s32) SP >> 8);
+                            } else if ((sp8A + 1) >= 0x5800) {
+                                (ptr_spectrum_roms + sp8A)->unk1 = (s8) ((s32) SP >> 8);
+                                (ptr_300alloc + sp8A)[0x57FF] = 1;
+                            } else if ((sp8A + 1) >= 0x4000) {
+                                (ptr_spectrum_roms + sp8A)->unk1 = (s8) ((s32) SP >> 8);
+                                temp_t6_90 = sp8A + 1;
+                                *(ptr_300alloc + (((s32) (temp_t6_90 & 0x1800) >> 3) | (temp_t6_90 & 0xFF))) = 1;
+                            }
+                            break;
+                        case 0x74:                  /* switch 8 */
+                            temp_t0_98 = -(s32) phi_s0 & 0xFF;
+                            temp_t6_91 = temp_t0_98 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t6_91;
+                            phi_s0_3 = (u8) temp_t0_98;
+                            phi_s1_3 = ((temp_t0_98 & 0xA8) | (temp_t6_91 << 6) | (((temp_t0_98 & 0xF) > 0) * 0x10) | ((temp_t0_98 == 0x80) * 4) | 2 | (temp_t0_98 > 0)) & 0xFF;
+                            break;
+                        case 0x75:                  /* switch 8 */
+                            temp_t6_92 = ptr_spectrum_roms;
+                            temp_t9_68 = sp28C + 4;
+                            sp28C = temp_t9_68;
+                            sp28C = temp_t9_68 + 6;
+                            PC = *(SP + temp_t6_92) | ((temp_t6_92 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x76:                  /* switch 8 */
+                            IM = 2;
+                            sp28C += 4;
+                            break;
+                        case 0x78:                  /* switch 8 */
+                            temp_a0_25 = sp28C + 8;
+                            sp28C = temp_a0_25;
+                            temp_v0_25 = spectrum_input_handling(temp_a0_25, (u8) phi_s2, (u8) phi_s3);
+                            temp_t9_69 = (s32) (temp_v0_25 & 0xFFFF) >> 8;
+                            sp88 = temp_v0_25;
+                            temp_t7_93 = unksp89 == 0;
+                            sp48 = temp_t7_93;
+                            sp28C += temp_t9_69;
+                            phi_s0_3 = unksp89;
+                            phi_s1_3 = (*(unksp89 + ptr_pc_keyboard_table_alloc) | ((phi_s1 & 1) | (unksp89 & 0xA8) | (temp_t7_93 << 6))) & 0xFF;
+                            break;
+                        case 0x79:                  /* switch 8 */
+                            temp_a0_26 = sp28C + 8;
+                            sp28C = temp_a0_26;
+                            temp_v0_26 = sub_GAME_7F0D37DC(temp_a0_26, (u8) phi_s2, (u8) phi_s3, phi_s0);
+                            sp48 = temp_v0_26;
+                            sp28C += temp_v0_26;
+                            break;
+                        case 0x7A:                  /* switch 8 */
+                            temp_t4_83 = ((phi_s6 << 8) | phi_s7) + SP + (phi_s1 & 1);
+                            sp28C += 0xB;
+                            temp_t1_78 = temp_t4_83 >> 8;
+                            temp_t5_81 = (temp_t4_83 & 0xFFFF) == 0;
+                            sp86 = SP;
+                            sp80 = temp_t4_83;
+                            sp48 = temp_t5_81;
+                            phi_s1_3 = ((temp_t1_78 & 0xA8) | (temp_t4_83 >> 0x10) | ((((((phi_s6 << 8) | phi_s7) & 0xFFF) + (SP & 0xFFF) + (phi_s1 & 1)) > 0xFFF) * 0x10) | ((u32) ((~((phi_s6 << 8) | phi_s7) ^ SP) & (((phi_s6 << 8) | phi_s7) ^ temp_t4_83) & 0x8000) >> 0xD) | (temp_t5_81 << 6) | 2) & 0xFF;
+                            phi_s7_3 = unksp83;
+                            phi_s6_3 = temp_t1_78 & 0xFF;
+                            break;
+                        case 0x7B:                  /* switch 8 */
+                            temp_t7_94 = ptr_spectrum_roms;
+                            sp28C += 0x10;
+                            temp_t1_79 = *(PC + temp_t7_94) | ((temp_t7_94 + PC)->unk1 << 8);
+                            temp_t8_76 = temp_t1_79 & 0xFFFF;
+                            sp7E = temp_t1_79;
+                            PC += 2;
+                            SP = *(temp_t8_76 + temp_t7_94) | ((temp_t7_94 + temp_t8_76)->unk1 << 8);
+                            break;
+                        case 0x7C:                  /* switch 8 */
+                            temp_t5_82 = -(s32) phi_s0 & 0xFF;
+                            temp_t7_95 = temp_t5_82 == 0;
+                            sp28C += 4;
+                            sp48 = temp_t7_95;
+                            phi_s0_3 = (u8) temp_t5_82;
+                            phi_s1_3 = ((temp_t5_82 & 0xA8) | (temp_t7_95 << 6) | (((temp_t5_82 & 0xF) > 0) * 0x10) | ((temp_t5_82 == 0x80) * 4) | 2 | (temp_t5_82 > 0)) & 0xFF;
+                            break;
+                        case 0x7D:                  /* switch 8 */
+                            temp_t7_96 = ptr_spectrum_roms;
+                            temp_t4_84 = sp28C + 4;
+                            sp28C = temp_t4_84;
+                            sp28C = temp_t4_84 + 6;
+                            PC = *(SP + temp_t7_96) | ((temp_t7_96 + SP)->unk1 << 8);
+                            SP += 2;
+                            break;
+                        case 0x7E:                  /* switch 8 */
+                            IM = 3;
+                            sp28C += 4;
+                            break;
+                        default:                    /* switch 8 */
+                        default:                    /* switch 7 */
+                            sp28C += 4;
+                            break;
+                        }
+                    }
+                    break;
+                case 0xEE:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t4_85 = (phi_s0 ^ *(ptr_spectrum_roms + PC)) & 0xFF;
+                    temp_t5_83 = temp_t4_85 == 0;
+                    sp48 = temp_t5_83;
+                    temp_s0_9 = temp_t4_85;
+                    temp_s1_5 = (*(temp_t4_85 + ptr_pc_keyboard_table_alloc) | ((temp_t4_85 & 0xA8) | (temp_t5_83 << 6))) & 0xFF;
+                    PC += 1;
+                    phi_s0_3 = temp_s0_9;
+                    phi_s1_3 = temp_s1_5;
+                    break;
+                case 0xEF:                          /* switch 1 */
+                    temp_t0_99 = SP - 2;
+                    temp_t3_85 = temp_t0_99 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t0_99;
+                    if (temp_t3_85 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t3_85) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t8_77 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t8_77 & 0x1800) >> 3) | (temp_t8_77 & 0xFF))) = 1;
+                    }
+                    phi_t0 = 0x28U;
+                    goto block_1690;
+                case 0xF0:                          /* switch 1 */
+                    temp_t1_80 = sp28C + 5;
+                    sp28C = temp_t1_80;
+                    if ((phi_s1 & 0x80) == 0) {
+                        temp_t2_94 = ptr_spectrum_roms;
+                        sp28C = temp_t1_80 + 6;
+                        PC = *(SP + temp_t2_94) | ((temp_t2_94 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xF1:                          /* switch 1 */
+                    sp28C += 0xA;
+                    temp_t9_70 = SP + ptr_spectrum_roms;
+                    temp_s1_6 = temp_t9_70->unk0;
+                    temp_s0_10 = temp_t9_70->unk1;
+                    SP += 2;
+                    phi_s0_3 = temp_s0_10;
+                    phi_s1_3 = temp_s1_6;
+                    break;
+                case 0xF2:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 0x80) == 0) {
+                        temp_t4_86 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t4_86) | ((temp_t4_86 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xF3:                          /* switch 1 */
+                    sp29C = 0;
+                    sp29D = 0;
+                    sp28C += 4;
+                    sp285 = 0;
+                    break;
+                case 0xF4:                          /* switch 1 */
+                    temp_t9_71 = sp28C + 0xA;
+                    sp28C = temp_t9_71;
+                    if ((phi_s1 & 0x80) == 0) {
+                        sp28C = temp_t9_71 + 7;
+                        temp_t8_78 = SP - 2;
+                        temp_t3_86 = temp_t8_78 & 0xFFFF;
+                        SP = temp_t8_78;
+                        if (temp_t3_86 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t3_86) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t8_79 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t8_79 & 0x1800) >> 3) | (temp_t8_79 & 0xFF))) = 1;
+                        }
+                        temp_t1_81 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t1_81) | ((temp_t1_81 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xF5:                          /* switch 1 */
+                    temp_t5_84 = SP - 2;
+                    temp_t0_100 = temp_t5_84 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t5_84;
+                    if (temp_t0_100 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t0_100) = phi_s1;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = phi_s1;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = phi_s1;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s0;
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s0;
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = phi_s0;
+                        temp_t0_101 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t0_101 & 0x1800) >> 3) | (temp_t0_101 & 0xFF))) = 1;
+                    }
+                    break;
+                case 0xF6:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t6_93 = (phi_s0 | *(ptr_spectrum_roms + PC)) & 0xFF;
+                    temp_t4_87 = temp_t6_93 == 0;
+                    sp48 = temp_t4_87;
+                    temp_s0_11 = temp_t6_93;
+                    temp_s1_7 = (*(temp_t6_93 + ptr_pc_keyboard_table_alloc) | ((temp_t6_93 & 0xA8) | (temp_t4_87 << 6))) & 0xFF;
+                    PC += 1;
+                    phi_s0_3 = temp_s0_11;
+                    phi_s1_3 = temp_s1_7;
+                    break;
+                case 0xF7:                          /* switch 1 */
+                    temp_t9_72 = SP - 2;
+                    temp_t0_102 = temp_t9_72 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t9_72;
+                    if (temp_t0_102 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t0_102) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t7_97 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t7_97 & 0x1800) >> 3) | (temp_t7_97 & 0xFF))) = 1;
+                    }
+                    PC = 0x30;
+                    break;
+                case 0xF8:                          /* switch 1 */
+                    temp_t5_85 = sp28C + 5;
+                    sp28C = temp_t5_85;
+                    if ((phi_s1 & 0x80) != 0) {
+                        temp_t2_95 = ptr_spectrum_roms;
+                        sp28C = temp_t5_85 + 6;
+                        PC = *(SP + temp_t2_95) | ((temp_t2_95 + SP)->unk1 << 8);
+                        SP += 2;
+                    }
+                    break;
+                case 0xF9:                          /* switch 1 */
+                    sp28C += 6;
+                    if (sp287 == 0) {
+                        SP = (phi_s6 << 8) | phi_s7;
+                    } else {
+                        if (sp287 == 1) {
+                            sp48 = (s32) IX;
+                        } else {
+                            sp48 = (s32) IY;
+                        }
+                        SP = (u16) sp48;
+                    }
+                    break;
+                case 0xFA:                          /* switch 1 */
+                    sp28C += 0xA;
+                    if ((phi_s1 & 0x80) != 0) {
+                        temp_t9_73 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t9_73) | ((temp_t9_73 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xFB:                          /* switch 1 */
+                    sp28C += 4;
+                    sp29D = 1;
+                    sp29C = 1;
+                    sp285 = 0;
+                    break;
+                case 0xFC:                          /* switch 1 */
+                    temp_t8_80 = sp28C + 0xA;
+                    sp28C = temp_t8_80;
+                    if ((phi_s1 & 0x80) != 0) {
+                        sp28C = temp_t8_80 + 7;
+                        temp_t1_82 = SP - 2;
+                        temp_t9_74 = temp_t1_82 & 0xFFFF;
+                        SP = temp_t1_82;
+                        if (temp_t9_74 >= 0x5B00) {
+                            *(ptr_spectrum_roms + temp_t9_74) = PC + 2;
+                        } else if ((s32) SP >= 0x5800) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + SP)[0x5800] = 1;
+                        } else if ((s32) SP >= 0x4000) {
+                            *(ptr_spectrum_roms + SP) = PC + 2;
+                            *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                        }
+                        if ((SP + 1) >= 0x5B00) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                        } else if ((SP + 1) >= 0x5800) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            (ptr_300alloc + SP)[0x57FF] = 1;
+                        } else if ((SP + 1) >= 0x4000) {
+                            (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) (PC + 2) >> 8);
+                            temp_t1_83 = SP + 1;
+                            *(ptr_300alloc + (((s32) (temp_t1_83 & 0x1800) >> 3) | (temp_t1_83 & 0xFF))) = 1;
+                        }
+                        temp_t3_87 = ptr_spectrum_roms;
+                        PC = *(PC + temp_t3_87) | ((temp_t3_87 + PC)->unk1 << 8);
+                    } else {
+                        PC += 2;
+                    }
+                    break;
+                case 0xFD:                          /* switch 1 */
+                    sp286 = 2;
+                    sp28C += 4;
+                    sp285 = 0;
+                    break;
+                case 0xFE:                          /* switch 1 */
+                    sp28C += 7;
+                    temp_t0_103 = *(PC + ptr_spectrum_roms);
+                    temp_t6_94 = (phi_s0 - temp_t0_103) & 0x1FF;
+                    temp_t2_96 = (temp_t6_94 & 0xFFFF) == 0;
+                    sp53 = temp_t0_103;
+                    sp54 = (s16) temp_t6_94;
+                    sp48 = temp_t2_96;
+                    PC += 1;
+                    phi_s1_3 = ((temp_t6_94 & 0xA8) | (temp_t6_94 >> 8) | (((phi_s0 & 0xF) < (temp_t0_103 & 0xF)) * 0x10) | ((s32) ((phi_s0 ^ temp_t0_103) & 0x80 & (temp_t6_94 ^ phi_s0)) >> 5) | 2 | (temp_t2_96 << 6)) & 0xFF;
+                    break;
+                case 0xFF:                          /* switch 1 */
+                    temp_t0_104 = SP - 2;
+                    temp_t2_97 = temp_t0_104 & 0xFFFF;
+                    sp28C += 0xB;
+                    SP = temp_t0_104;
+                    if (temp_t2_97 >= 0x5B00) {
+                        *(ptr_spectrum_roms + temp_t2_97) = (s8) PC;
+                    } else if ((s32) SP >= 0x5800) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + SP)[0x5800] = 1;
+                    } else if ((s32) SP >= 0x4000) {
+                        *(ptr_spectrum_roms + SP) = (s8) PC;
+                        *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                    }
+                    if ((SP + 1) >= 0x5B00) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    } else if ((SP + 1) >= 0x5800) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        (ptr_300alloc + SP)[0x57FF] = 1;
+                    } else if ((SP + 1) >= 0x4000) {
+                        (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                        temp_t6_95 = SP + 1;
+                        *(ptr_300alloc + (((s32) (temp_t6_95 & 0x1800) >> 3) | (temp_t6_95 & 0xFF))) = 1;
+                    }
+                    phi_t0 = 0x38U;
+                    goto block_1690;
+                }
+            }
+            phi_s2 = phi_s2_7;
+            phi_s3 = phi_s3_3;
+            phi_s0 = phi_s0_3;
+            phi_s1 = phi_s1_3;
+            phi_s7 = phi_s7_3;
+            phi_s6 = phi_s6_3;
+            phi_s4 = phi_s4_3;
+            phi_s5 = phi_s5_3;
+            phi_s0_2 = phi_s0_3;
+            phi_s1_2 = phi_s1_3;
+            phi_s2_6 = (u8) phi_s2_7;
+            phi_s3_2 = (u8) phi_s3_3;
+            phi_s4_2 = (u8) phi_s4_3;
+            phi_s5_2 = (u8) phi_s5_3;
+            phi_s6_2 = phi_s6_3;
+            phi_s7_2 = phi_s7_3;
+            if (sp28C < sp280) {
+                goto loop_2;
+            }
+        } while (sp285 == 0);
+    }
+    if ((sp28C >= sp280) && (sp285 != 0)) {
+        sp28C -= sp280;
+        if (sp29D != 0) {
+            if (*(PC + ptr_spectrum_roms) == 0x76) {
+                PC += 1;
+            }
+            sp29C = 0;
+            sp29D = 0;
+            sp28C += 5;
+            sp48 = (s32) IM;
+            switch (IM) {                        /* switch 12; irregular */
+            case 0:                                 /* switch 12 */
+            case 1:                                 /* switch 12 */
+            case 2:                                 /* switch 12 */
+                temp_t4_88 = SP - 2;
+                temp_t1_84 = temp_t4_88 & 0xFFFF;
+                sp28C += 8;
+                SP = temp_t4_88;
+                if (temp_t1_84 >= 0x5B00) {
+                    *(ptr_spectrum_roms + temp_t1_84) = (s8) PC;
+                } else if ((s32) SP >= 0x5800) {
+                    *(ptr_spectrum_roms + SP) = (s8) PC;
+                    *(ptr_300alloc + SP)[0x5800] = 1;
+                } else if ((s32) SP >= 0x4000) {
+                    *(ptr_spectrum_roms + SP) = (s8) PC;
+                    *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                }
+                if ((SP + 1) >= 0x5B00) {
+                    (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                } else if ((SP + 1) >= 0x5800) {
+                    (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    (ptr_300alloc + SP)[0x57FF] = 1;
+                } else if ((SP + 1) >= 0x4000) {
+                    (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    temp_t6_96 = SP + 1;
+                    *(ptr_300alloc + (((s32) (temp_t6_96 & 0x1800) >> 3) | (temp_t6_96 & 0xFF))) = 1;
+                }
+                PC = 0x38;
+                break;
+            case 3:                                 /* switch 12 */
+                temp_t1_85 = ptr_spectrum_roms;
+                temp_t7_98 = (I << 8) | 0xFF;
+                sp28C += 0xE;
+                temp_t3_88 = SP - 2;
+                temp_t5_86 = temp_t3_88 & 0xFFFF;
+                sp4C = *(temp_t7_98 + temp_t1_85) | ((temp_t1_85 + temp_t7_98)->unk1 << 8);
+                SP = temp_t3_88;
+                if (temp_t5_86 >= 0x5B00) {
+                    *(ptr_spectrum_roms + temp_t5_86) = (s8) PC;
+                } else if ((s32) SP >= 0x5800) {
+                    *(ptr_spectrum_roms + SP) = (s8) PC;
+                    *(ptr_300alloc + SP)[0x5800] = 1;
+                } else if ((s32) SP >= 0x4000) {
+                    *(ptr_spectrum_roms + SP) = (s8) PC;
+                    *(ptr_300alloc + (((s32) (SP & 0x1800) >> 3) | (SP & 0xFF))) = 1;
+                }
+                if ((SP + 1) >= 0x5B00) {
+                    (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                } else if ((SP + 1) >= 0x5800) {
+                    (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    (ptr_300alloc + SP)[0x57FF] = 1;
+                } else if ((SP + 1) >= 0x4000) {
+                    (ptr_spectrum_roms + SP)->unk1 = (s8) ((s32) PC >> 8);
+                    temp_t7_99 = SP + 1;
+                    *(ptr_300alloc + (((s32) (temp_t7_99 & 0x1800) >> 3) | (temp_t7_99 & 0xFF))) = 1;
+                }
+                PC = (u16) sp4C;
+                break;
+            }
+        }
+    }
+    spectrum_header16_15 = phi_s0_2;
+    byte_CODE_bss_8008E339 = phi_s1_2;
+    byte_CODE_bss_8008E33A = phi_s2_6;
+    byte_CODE_bss_8008E33B = phi_s3_2;
+    off_CODE_bss_8008E33C = phi_s4_2;
+    byte_CODE_bss_8008E33D = phi_s5_2;
+    byte_CODE_bss_8008E33E = phi_s6_2;
+    byte_CODE_bss_8008E33F = phi_s7_2;
+    off_CODE_bss_8008E340 = sp2A6;
+    byte_CODE_bss_8008E341 = sp2A5;
+    byte_CODE_bss_8008E342 = sp2A4;
+    byte_CODE_bss_8008E343 = sp2A3;
+    off_CODE_bss_8008E344 = sp2A2;
+    byte_CODE_bss_8008E345 = sp2A1;
+    byte_CODE_bss_8008E346 = sp2A0;
+    byte_CODE_bss_8008E347 = sp29F;
+    spec_IFF2_lower = sp29D;
+    spec_IFF2_upper = sp29C;
+    spec_I = I;
+    byte_CODE_bss_8008E349 = sp2A7;
+    spec_IM = IM;
+    spec_IX = IX;
+    spec_IY = IY;
+    spec_SP = SP;
+    sp2A7 = (u8) sp288;
+    *(u16 *)spec_PC = PC;
 }
+//#ifdef NONMATCHING
 #else
 GLOBAL_ASM(
 .late_rodata
@@ -1780,14 +9251,14 @@ glabel spectrum_hw_emulation
 /* 1083B8 7F0D3888 A3A002A4 */  sb    $zero, 0x2a4($sp)
 /* 1083BC 7F0D388C A3A002A6 */  sb    $zero, 0x2a6($sp)
 /* 1083C0 7F0D3890 A3AE02A5 */  sb    $t6, 0x2a5($sp)
-/* 1083C4 7F0D3894 3C0E8009 */  lui   $t6, %hi(byte_CODE_bss_8008E349) 
+/* 1083C4 7F0D3894 3C0E8009 */  lui   $t6, %hi(spec_R) 
 /* 1083C8 7F0D3898 A3AD02A6 */  sb    $t5, 0x2a6($sp)
 /* 1083CC 7F0D389C A3AF02A4 */  sb    $t7, 0x2a4($sp)
 /* 1083D0 7F0D38A0 A3B802A3 */  sb    $t8, 0x2a3($sp)
 /* 1083D4 7F0D38A4 A3B902A2 */  sb    $t9, 0x2a2($sp)
 /* 1083D8 7F0D38A8 A3A802A1 */  sb    $t0, 0x2a1($sp)
 /* 1083DC 7F0D38AC A3A902A0 */  sb    $t1, 0x2a0($sp)
-/* 1083E0 7F0D38B0 91CEE349 */  lbu   $t6, %lo(byte_CODE_bss_8008E349)($t6)
+/* 1083E0 7F0D38B0 91CEE349 */  lbu   $t6, %lo(spec_R)($t6)
 /* 1083E4 7F0D38B4 3C0A8009 */  lui   $t2, %hi(byte_CODE_bss_8008E347) 
 /* 1083E8 7F0D38B8 3C0B8009 */  lui   $t3, %hi(spec_IFF2_lower) 
 /* 1083EC 7F0D38BC 3C0C8009 */  lui   $t4, %hi(spec_IFF2_upper) 
@@ -18527,8 +25998,8 @@ spectrum_op_FF:
 /* 1177F8 7F0E2CC8 3C018009 */  lui   $at, %hi(spec_I)
 /* 1177FC 7F0E2CCC A028E348 */  sb    $t0, %lo(spec_I)($at)
 /* 117800 7F0E2CD0 93AA029B */  lbu   $t2, 0x29b($sp)
-/* 117804 7F0E2CD4 3C018009 */  lui   $at, %hi(byte_CODE_bss_8008E349)
-/* 117808 7F0E2CD8 A02EE349 */  sb    $t6, %lo(byte_CODE_bss_8008E349)($at)
+/* 117804 7F0E2CD4 3C018009 */  lui   $at, %hi(spec_R)
+/* 117808 7F0E2CD8 A02EE349 */  sb    $t6, %lo(spec_R)($at)
 /* 11780C 7F0E2CDC 97AC0296 */  lhu   $t4, 0x296($sp)
 /* 117810 7F0E2CE0 3C018009 */  lui   $at, %hi(spec_IM)
 /* 117814 7F0E2CE4 A02AE34C */  sb    $t2, %lo(spec_IM)($at)

@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LoptionsJ[] = {
+char * LoptionsJ[] = {
     "„ŒË\n",
     "†Ç…•\n",
     "‚õ„Š\n",
@@ -62,7 +61,7 @@ struct stringentry LoptionsJ[] = {
     "4.\"Q\"Ò…à„æ\n",
     "5.€î€ç€»“€å€»\n",
     "1.ƒ¹†É‚€‚\n",
-    NULL,
-    NULL,
-    NULL
+    0,
+    0,
+    0
 };

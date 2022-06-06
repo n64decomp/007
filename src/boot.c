@@ -1,6 +1,6 @@
 #include <ultra64.h>
 #include "boot.h"
-#include "bondgame.h"
+#include <bondgame.h>
 #include "inflate/inflate.h"
 
 /**
@@ -57,7 +57,7 @@ glabel boot
 /**
  *10BC	700004BC	V0=80020D90: target address for 21990 (USA)
  */
-u32 *get_csegmentSegmentStart(void)
+u32 get_csegmentSegmentStart(void)
 {
 	return &_csegmentSegmentStart;
 }
@@ -65,33 +65,33 @@ u32 *get_csegmentSegmentStart(void)
 /**
  *10C8	700004C8	V0=21990: ROM address of main compressed block (USA)
  */
-u32 *get_cdataSegmentRomStart(void)
+u32 get_cdataSegmentRomStart(void)
 {
 	return &_cdataSegmentRomStart;
 }
 
 /**
- *10D4	700004D4	V0=33590: ROM address of 70200000 RareZip ASM [33590-34B30 ROM] (USA)
+ *10D4	700004D4	V0=33590: ROM address of 70200000 inflate ASM [33590-34B30 ROM] (USA)
  */
-u32 *get_cdataSegmentRomEnd(void)
+u32 get_cdataSegmentRomEnd(void)
 {
 	return &_cdataSegmentRomEnd;
 }
 
 /**
- *10E0	700004E0	V0=33590: ROM address of 70200000 RareZip ASM [33590-34B30 ROM] (USA)
+ *10E0	700004E0	V0=33590: ROM address of 70200000 inflate ASM [33590-34B30 ROM] (USA)
  */
-u32 *get_rarezipSegmentRomStart(void)
+u32 get_inflateSegmentRomStart(void)
 {
-	return &_rarezipSegmentRomStart;
+	return &_inflateSegmentRomStart;
 }
 
 /**
  *10EC	700004EC	V0=34B30: ROM address of 7F- TLB routines (USA)
  */
-u32 *get_rarezipSegmentRomEnd(void)
+u32 get_inflateSegmentRomEnd(void)
 {
-	return &_rarezipSegmentRomEnd;
+	return &_inflateSegmentRomEnd;
 }
 
 /**

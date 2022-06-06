@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LtitleE[] = {
+char *LtitleE[] = {
  "hour",
  "minute",
  "second",
@@ -288,10 +287,10 @@ struct stringentry LtitleE[] = {
  "2.4 Goodhead\n",
  "Select Control Style\n",
  "Control Style\n",
- #ifdef VERSION_US
- NULL
+ #ifdef LANG_US
+ 0
  #endif
- #ifdef VERSION_JP
+ #ifdef LANG_JP
  "Russian Soldier\n",
  "Russian Infantry\n",
  "Scientist\n",

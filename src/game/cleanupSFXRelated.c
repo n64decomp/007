@@ -1,20 +1,22 @@
-#include "ultra64.h"
-#include "game/bond.h"
+#include <ultra64.h>
+#include <snd.h>
+#include <PR/libaudio.h>
+#include "bondview.h"
 
 void cleanupSFXRelated(void) {
-    if (SFX_80036458 != 0)
+    if (SFX_80036458[0] != 0)
     {
-        if (sfxGetArg0Unk3F(SFX_80036458) != 0)
+        if (sndGetPlayingState(SFX_80036458[0]) != AL_STOPPED)
         {
-            sfxDeactivate(SFX_80036458);
+            sndDeactivate(SFX_80036458[0]);
         }
     }
 
-    if (SFX_8003645C != 0)
+    if (SFX_80036458[1] != 0)
     {
-        if (sfxGetArg0Unk3F(SFX_8003645C) != 0)
+        if (sndGetPlayingState(SFX_80036458[1]) != AL_STOPPED)
         {
-            sfxDeactivate(SFX_8003645C);
+            sndDeactivate(SFX_80036458[1]);
         }
     }
 

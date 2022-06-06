@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LpropobjJ[] = {
+char * LpropobjJ[] = {
     "¸‚¡Ï‚ºãÉ",
     "",
     "",
@@ -66,7 +65,7 @@ struct stringentry LpropobjJ[] = {
     "…¨„€à€Í€Ê€Ö\n",
     "„†¿¸‚¡Ï‚ºãÉ\n",
     "€ú€Ê€×ÄãÌ»ØÆ\n",
-    NULL,
-    NULL,
-    NULL
+    0,
+    0,
+    0
 };

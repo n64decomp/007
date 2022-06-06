@@ -1,0 +1,475 @@
+# makefile to build libultra files.
+# This is designed to keep "original" libultra files separate from the Rare modified files.
+# The current approach is to explicitly list each .c and .s file, as either original or Rare.
+# 
+
+LIBULTRA_INCLUDE := -I . -I include -I include/PR -I src/libultrare -I src/libultra
+LIBULTRA_OPTIMIZATION := -O1
+LIBULTRA_ASM_OPTIMIZATION := -O1
+
+
+# disable trying to link to __assert function
+ASSERT_FLAG := -DNDEBUG
+#ASSERT_FLAG := 
+
+# no `-signed` flag
+CFLAGS_LIBULTRA = -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm $(CFLAGWARNING) -woff 819,820,852,821,838,649 $(LIBULTRA_INCLUDE) $(LCDEFS) $(ASSERT_FLAG) -DTARGET_N64 $(MIPSISET) $(LIBULTRA_OPTIMIZATION)
+
+ASFLAGS_LIBULTRA = -march=vr4300 -mabi=32 $(INCLUDE) $(ASMDEFS) $(LIBULTRA_ASM_OPTIMIZATION)
+
+# #############################################################################################
+# file definitions
+# #############################################################################################
+#
+# This section is an explicit list of files used to build the ROM.
+#
+# The variables prefixed with "LIBULTRA" are the original libultra files,
+# prefix of "LIBULTRARE" means Rare modified.
+
+# #################
+# audio
+# #################
+
+LIBULTRA_AUDIO_C_FILES := \
+    auxbus \
+    bnkf \
+    cents2ratio \
+    copy \
+    cseq \
+    cspgetstate \
+    csplayer \
+    cspplay \
+    cspsetseq \
+    cspsetvol \
+    cspstop \
+    event \
+    filter \
+    heapalloc \
+    heapinit \
+    load \
+    mainbus \
+    resample \
+    save \
+    seq \
+    seqplayer \
+    seqpsetbank \
+    sl \
+    synaddplayer \
+    synallocfx \
+    synallocvoice \
+    syndelete \
+    synfreevoice \
+    synsetfxmix \
+    synsetpan \
+    synsetpitch \
+    synsetpriority \
+    synsetvol \
+    synstartvoice \
+    synstartvoiceparam \
+    synstopvoice \
+    synthesizer 
+
+LIBULTRA_AUDIO_S_FILES := 
+
+
+LIBULTRARE_AUDIO_C_FILES := \
+    drvrNew \
+    reverb 
+
+LIBULTRARE_AUDIO_S_FILES := \
+    env 
+
+# #################
+# gt
+# #################
+
+# nothing to do
+
+# #################
+# gu
+# #################
+
+LIBULTRA_GU_C_FILES := \
+    align \
+    cosf \
+    coss \
+    lookat \
+    lookatref \
+    mtxutil \
+    normalize \
+    ortho \
+    perspective \
+    rotate \
+    scale \
+    sinf \
+    sins \
+    translate
+
+LIBULTRA_GU_S_FILES := \
+    libm_vals \
+    sqrtf
+
+
+LIBULTRARE_GU_C_FILES := 
+
+LIBULTRARE_GU_S_FILES := 
+
+# #################
+# io
+# #################
+
+LIBULTRA_IO_C_FILES := \
+    ai \
+    aigetlen \
+    aisetfreq \
+    contpfs \
+    contquery \
+    crc \
+    dp \
+    dpctr \
+    dpsetnextbuf \
+    dpsetstat \
+    piacs \
+    pidma \
+    pigetcmdq \
+    pigetstat \
+    pirawdma \
+    pirawread \
+    piread \
+    siacs \
+    si \
+    sirawdma \
+    sirawread \
+    sirawwrite \
+    sp \
+    spgetstat \
+    sprawdma \
+    spsetpc \
+    spsetstat \
+    sptaskyield \
+    sptaskyielded \
+    viblack \
+    vigetcurrcontext \
+    vigetcurrframebuf \
+    vigetnextframebuf \
+    vimodentsclan1 \
+    virepeatline \
+    visetspecial \
+    visetxscale \
+    visetyscale \
+    visetevent \
+    visetmode \
+    viswapbuf \
+    viswapcontext 
+
+LIBULTRA_IO_S_FILES := 
+
+
+LIBULTRARE_IO_C_FILES := \
+    aisetnextbuf \
+    conteeplongread \
+    conteeplongwrite \
+    conteepprobe \
+    conteepread \
+    conteepwrite \
+    contramread \
+    contramwrite \
+    contreaddata \
+    controller \
+    devmgr \
+    epirawdma \
+    epirawwrite \
+    leodiskinit \
+    leointerrupt \
+    pfsinit \
+    pfsisplug \
+    pimgr \
+    sptask \
+    vi \
+    vimgr \
+    vimodepallan1 \
+    vitbl
+
+LIBULTRARE_IO_S_FILES := 
+
+# #################
+# libc
+# #################
+
+LIBULTRA_LIBC_C_FILES := \
+    ldiv \
+    ll \
+    llcvt \
+    string \
+    xldtob \
+    xlitob 
+
+LIBULTRA_LIBC_S_FILES := \
+    bcmp \
+    bcopy \
+    bzero 
+
+
+LIBULTRARE_LIBC_C_FILES := \
+    xprintf 
+
+LIBULTRARE_LIBC_S_FILES := 
+
+
+# #################
+# os
+# #################
+
+LIBULTRA_OS_C_FILES := \
+    createmesgqueue \
+    createthread \
+    getcurrfaultthread \
+    getthreadpri \
+    gettime \
+    jammesg \
+    recvmesg \
+    resetglobalintmask \
+    sendmesg \
+    seteventmesg \
+    setthreadpri \
+    settimer \
+    startthread \
+    stopthread \
+    timerintr \
+    virtualtophysical 
+
+LIBULTRA_OS_S_FILES := \
+    exception \
+    getcount \
+    getfpccsr \
+    getsr \
+    gettlbhi \
+    interrupt \
+    invaldcache \
+    invalicache \
+    kdebugserver \
+    parameters \
+    probetlb \
+    setcompare \
+    setfpccsr \
+    sethwinterrupt \
+    setintmask \
+    setsr \
+    thread \
+    unmaptlb \
+    writebackdcacheall \
+    writebackdcache \
+    yieldthread 
+
+
+LIBULTRARE_OS_C_FILES := \
+    destroythread \
+    initialize 
+
+LIBULTRARE_OS_S_FILES := 
+
+# #################
+# rg
+# #################
+
+# nothing to do
+
+# #################
+# sched
+# #################
+
+# nothing to do
+
+# #################
+# sp
+# #################
+
+# nothing to do
+
+# #################
+# "all"
+# #################
+
+ULTRAFILES_S := $(foreach dir,src/libultrare,$(wildcard $(dir)/*.s))
+
+ULTRAOBJECTS := $(foreach file,$(ULTRAFILES_S),$(BUILD_DIR)/$(file:.s=.o)) \
+				$(foreach file,$(ULTRAFILES_C),$(BUILD_DIR)/$(file:.c=.o)) \
+                \
+				$(foreach file,$(LIBULTRA_AUDIO_C_FILES),$(BUILD_DIR)/src/libultra/audio/$(file).o) \
+				$(foreach file,$(LIBULTRA_AUDIO_S_FILES),$(BUILD_DIR)/src/libultra/audio/$(file).o) \
+				$(foreach file,$(LIBULTRARE_AUDIO_C_FILES),$(BUILD_DIR)/src/libultrare/audio/$(file).o) \
+				$(foreach file,$(LIBULTRARE_AUDIO_S_FILES),$(BUILD_DIR)/src/libultrare/audio/$(file).o) \
+                \
+				$(foreach file,$(LIBULTRA_GU_C_FILES),$(BUILD_DIR)/src/libultra/gu/$(file).o) \
+				$(foreach file,$(LIBULTRA_GU_S_FILES),$(BUILD_DIR)/src/libultra/gu/$(file).o) \
+				$(foreach file,$(LIBULTRARE_GU_C_FILES),$(BUILD_DIR)/src/libultrare/gu/$(file).o) \
+				$(foreach file,$(LIBULTRARE_GU_S_FILES),$(BUILD_DIR)/src/libultrare/gu/$(file).o) \
+                \
+				$(foreach file,$(LIBULTRA_IO_C_FILES),$(BUILD_DIR)/src/libultra/io/$(file).o) \
+				$(foreach file,$(LIBULTRA_IO_S_FILES),$(BUILD_DIR)/src/libultra/io/$(file).o) \
+				$(foreach file,$(LIBULTRARE_IO_C_FILES),$(BUILD_DIR)/src/libultrare/io/$(file).o) \
+				$(foreach file,$(LIBULTRARE_IO_S_FILES),$(BUILD_DIR)/src/libultrare/io/$(file).o) \
+                \
+				$(foreach file,$(LIBULTRA_LIBC_C_FILES),$(BUILD_DIR)/src/libultra/libc/$(file).o) \
+				$(foreach file,$(LIBULTRA_LIBC_S_FILES),$(BUILD_DIR)/src/libultra/libc/$(file).o) \
+				$(foreach file,$(LIBULTRARE_LIBC_C_FILES),$(BUILD_DIR)/src/libultrare/libc/$(file).o) \
+				$(foreach file,$(LIBULTRARE_LIBC_S_FILES),$(BUILD_DIR)/src/libultrare/libc/$(file).o) \
+                \
+				$(foreach file,$(LIBULTRA_OS_C_FILES),$(BUILD_DIR)/src/libultra/os/$(file).o) \
+				$(foreach file,$(LIBULTRA_OS_S_FILES),$(BUILD_DIR)/src/libultra/os/$(file).o) \
+				$(foreach file,$(LIBULTRARE_OS_C_FILES),$(BUILD_DIR)/src/libultrare/os/$(file).o) \
+				$(foreach file,$(LIBULTRARE_OS_S_FILES),$(BUILD_DIR)/src/libultrare/os/$(file).o) 
+
+# #############################################################################################
+# build specifications
+# #############################################################################################
+#
+# This section lists the build specifications for each file group.
+# Optimization or iset adjustments are made here.
+#
+
+$(BUILD_DIR)/src/libultra/%.o: src/libultra/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultra/%.o: src/libultra/%.s
+	$(AS) $(ASFLAGS) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/%.o: src/libultrare/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/%.o: src/libultrare/%.s
+	$(AS) $(ASFLAGS) -o $@ $<
+
+# #################
+# audio
+# #################
+
+$(BUILD_DIR)/src/libultra/audio/%.o: LIBULTRA_OPTIMIZATION := -O3
+$(BUILD_DIR)/src/libultrare/audio/%.o: LIBULTRA_OPTIMIZATION := -O3
+
+# assert is used in env.c
+$(BUILD_DIR)/src/libultrare/audio/env.o: ASSERT_FLAG :=
+
+$(BUILD_DIR)/src/libultra/audio/%.o: src/libultra/audio/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultra/audio/%.o: src/libultra/audio/%.s
+	$(AS) $(ASFLAGS) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/audio/%.o: src/libultrare/audio/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/audio/%.o: src/libultrare/audio/%.s
+	$(AS) $(ASFLAGS) -o $@ $<
+
+# #################
+# gt
+# #################
+
+# nothing to do
+
+# #################
+# gu
+# #################
+
+$(BUILD_DIR)/src/libultra/gu/%.o: LIBULTRA_OPTIMIZATION := -O3
+$(BUILD_DIR)/src/libultrare/gu/%.o: LIBULTRA_OPTIMIZATION := -O3
+
+$(BUILD_DIR)/src/libultra/gu/%.o: src/libultra/gu/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultra/gu/%.o: src/libultra/gu/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/gu/%.o: src/libultrare/gu/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/gu/%.o: src/libultrare/gu/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+# #################
+# io
+# #################
+
+# io is -O1, except for EU which is -O2
+
+ifeq ($(VERSION), EU)
+$(BUILD_DIR)/src/libultrare/io/vimgr.o: LIBULTRA_OPTIMIZATION := -O2
+$(BUILD_DIR)/src/libultrare/io/pimgr.o: LIBULTRA_OPTIMIZATION := -O2
+endif
+
+$(BUILD_DIR)/src/libultra/io/%.o: src/libultra/io/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultra/io/%.o: src/libultra/io/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/io/%.o: src/libultrare/io/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+
+$(BUILD_DIR)/src/libultrare/io/%.o: src/libultrare/io/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+# #################
+# libc
+# #################
+
+$(BUILD_DIR)/src/libultra/libc/%.o: LIBULTRA_OPTIMIZATION := -O3
+$(BUILD_DIR)/src/libultrare/libc/%.o: LIBULTRA_OPTIMIZATION := -O3
+
+$(BUILD_DIR)/src/libultra/libc/ll.o: LIBULTRA_OPTIMIZATION := -O1
+$(BUILD_DIR)/src/libultra/libc/llcvt.o: LIBULTRA_OPTIMIZATION := -O1
+
+$(BUILD_DIR)/src/libultra/libc/ll.o: MIPSISET := -mips3 -o32
+$(BUILD_DIR)/src/libultra/libc/llcvt.o: MIPSISET := -mips3 -o32
+
+$(BUILD_DIR)/src/libultra/libc/%.o: src/libultra/libc/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultra/libc/%.o: src/libultra/libc/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/libc/%.o: src/libultrare/libc/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/libc/%.o: src/libultrare/libc/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+# #################
+# os
+# #################
+
+# os is -O1, except for `exception`
+
+# note that `_FINALROM` is defined, this is for the declaration of `__osEventStateTab[OS_NUM_EVENTS]`
+
+$(BUILD_DIR)/src/libultra/os/%.o: src/libultra/os/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -D_FINALROM -o $@ $<
+
+$(BUILD_DIR)/src/libultra/os/%.o: src/libultra/os/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/os/%.o: src/libultrare/os/%.c
+	$(CC) -c $(CFLAGS_LIBULTRA) -D_FINALROM -o $@ $<
+
+$(BUILD_DIR)/src/libultrare/os/%.o: src/libultrare/os/%.s
+	$(AS) $(ASFLAGS_LIBULTRA) -o $@ $<
+
+# #################
+# rg
+# #################
+
+# nothing to do
+
+# #################
+# sched
+# #################
+
+# nothing to do
+
+# #################
+# sp
+# #################
+
+# nothing to do

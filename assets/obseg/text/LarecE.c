@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LarecE[] = {
+char *LarecE[] = {
  "The Janus Control Center has been located in an underground complex in the Cuban jungle.\n",
  "Into the lion's den, 007. Well, just be careful. Remember that you and Miss Simonova are a team, it's critical that you protect her while she's hacking into the Janus computers. With any luck she'll be able to stop the Goldeneye from firing.\n",
  "While you're there old boy, see if you can't erase their databases. The details of Janus' criminal bankrolls are stored on specially armored mainframe units. That information is worth millions to Janus - I'm sure you'll find some way of deleting it.\n",
@@ -46,7 +45,7 @@ struct stringentry LarecE[] = {
  "disable goldeneye satellite\n",
  "destroy armored mainframes\n",
  "Janus Control Center, Cuba\n",
- NULL,
- NULL,
- NULL
+ 0,
+ 0,
+ 0
 };

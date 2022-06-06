@@ -1,6 +1,6 @@
-#include "ultra64.h"
+#include <ultra64.h>
 #include "joy.h"
-#include "libultra/os.h"
+#include <PR/os.h>
 
 /**
  * Number of samples in contdata.
@@ -11,6 +11,8 @@
 #define JOY_CLAMP_MAX        120
 #define JOY_CLAMP_MAX_F   120.0f
 #define JOY_CLAMP_OFFSET      60
+
+
 
 struct contdata {
     /* 0x000 */ struct contsample samples[CONTSAMPLE_LEN];
@@ -66,6 +68,7 @@ OSMesgQueue g_ContEnablePollReceiveMessageQueue;
 OSContStatus g_ContStatus[MAXCONTROLLERS];
 OSPfs g_ContPfs[MAXCONTROLLERS];
 s32 g_ContDebugData = 0;
+
 struct contdata *g_ContDataPtr = &g_ContData[CONTDATA_REGULAR];
 s32 g_ContBusy = 0;
 s32 g_ContPollDisableCount = 0;
@@ -100,6 +103,7 @@ s32 g_ContRumblePakInitState[MAXCONTROLLERS] = {0};
 s32 g_ContRumblePakCurrentState[MAXCONTROLLERS] = {0};
 s32 g_ContRumblePakTimer60[MAXCONTROLLERS] = {0};
 s32 g_ContRumblePakTargetState[MAXCONTROLLERS] = {0};
+
 
 s32 g_ContQueuesCreated = 0;
 s32 g_ContInitDone = 0;
@@ -152,7 +156,7 @@ void joyInit(void)
             g_ContData[i].samples[0].pads[j].button = 0;
             g_ContData[i].samples[0].pads[j].stick_x = 0;
             g_ContData[i].samples[0].pads[j].stick_y = 0;
-            g_ContData[i].samples[0].pads[j].errnum = 0;
+            g_ContData[i].samples[0].pads[j].errno = 0;
         }
     }
 }
@@ -230,7 +234,7 @@ void joyCheckStatus(void)
 
         for (i = 0; i < MAXCONTROLLERS; i++)
         {
-            if (g_ContStatus[i].errnum & CONT_NO_RESPONSE_ERROR)
+            if (g_ContStatus[i].errno & CONT_NO_RESPONSE_ERROR)
             {
                 slots -= 1 << i;
             }
@@ -254,7 +258,7 @@ void joyCheckStatus(void)
     {
         if ((g_ConnectedControllers & (1 << i))
             && (g_ContStatus[i].type & (CONT_ABSOLUTE | CONT_RELATIVE))
-            && !(g_ContStatus[i].errnum))
+            && !(g_ContStatus[i].errno))
         {
             // This seems like a typo in the original, doing a bitwise AND
             // between a logical test on the left and a bitshift on the right.
@@ -316,7 +320,7 @@ void joyRumblePakTick(void)
                 {
                     set_rumble_pak_init_state_not_ready(i);
                 }
-#ifdef VERSION_JP
+#ifdef BUGFIX_R1
             }
             else if (g_ContRumblePakTargetState[i] == RUMBLEPAKSTATE_UNKNOWN)
             {
@@ -389,6 +393,7 @@ void joyConsumeSamples(struct contdata *contdata)
         {
             // Do not remove the following trailing backslash. The "while(true)"
             // needs to be on the same line as previous, otherwise the build breaks.
+            // Search for WHILE_ONE_LINE to see other places in code like this.
             samplenum = ((contdata->curstart + 1) % CONTSAMPLE_LEN); \
             while (TRUE)
             {
@@ -483,8 +488,8 @@ void joyPoll(void)
 
             for (i = 0; i < MAXCONTROLLERS; i++)
             {
-                if (((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i].errnum == 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i].errnum != 0)) ||
-                    ((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i].errnum != 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i].errnum == 0)))
+                if (((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i].errno == 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i].errno != 0)) ||
+                    ((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i].errno != 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i].errno == 0)))
                     {
                     joyCheckStatus();
                     break;
@@ -1061,10 +1066,10 @@ void joyRumblePakStop(void)
 
     for (i = 0; i < MAXCONTROLLERS; i++)
     {
-#ifdef VERSION_US
+#if defined(BUGFIX_R0)
         g_ContRumblePakCurrentState[i] = RUMBLEPAKSTATE_ON;
         g_ContRumblePakTargetState[i] = RUMBLEPAKSTATE_OFF;
-#else if VERSION_JP
+#else
         g_ContRumblePakTargetState[i] = RUMBLEPAKSTATE_UNKNOWN;
 #endif
     }

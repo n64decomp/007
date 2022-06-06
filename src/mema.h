@@ -1,7 +1,7 @@
 #ifndef _MEMA_H_
 #define _MEMA_H_
 
-#include "ultra64.h"
+#include <ultra64.h>
 
 typedef struct allocation {
     s32 addr;

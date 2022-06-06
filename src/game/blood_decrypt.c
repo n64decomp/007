@@ -136,45 +136,14 @@ glabel decrypt_bleeding_animation_data
 
 
 
-#ifdef NONMATCHING
-// Uses sltu instead of slt for comparison
-void sub_GAME_7F01CC94(u8* arg0, u16 arg1, u8* arg2) {
-    while (arg1-- != 0) {
+void sub_GAME_7F01CC94(u8* arg0, u16 arg1, u8* arg2)
+{
+    while (arg1-- > 0)
+    {
         *arg2++ = (arg0[0] & 0xF0) | (arg0[1] >> 4);
         arg0 += 2;
     }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F01CC94
-/* 0517C4 7F01CC94 AFA50004 */  sw    $a1, 4($sp)
-/* 0517C8 7F01CC98 30AEFFFF */  andi  $t6, $a1, 0xffff
-/* 0517CC 7F01CC9C 25C5FFFF */  addiu $a1, $t6, -1
-/* 0517D0 7F01CCA0 30AFFFFF */  andi  $t7, $a1, 0xffff
-/* 0517D4 7F01CCA4 000E102A */  slt   $v0, $zero, $t6
-/* 0517D8 7F01CCA8 1040000E */  beqz  $v0, .L7F01CCE4
-/* 0517DC 7F01CCAC 01E02825 */   move  $a1, $t7
-.L7F01CCB0:
-/* 0517E0 7F01CCB0 90980001 */  lbu   $t8, 1($a0)
-/* 0517E4 7F01CCB4 90880000 */  lbu   $t0, ($a0)
-/* 0517E8 7F01CCB8 0005102A */  slt   $v0, $zero, $a1
-/* 0517EC 7F01CCBC 24A5FFFF */  addiu $a1, $a1, -1
-/* 0517F0 7F01CCC0 0018C903 */  sra   $t9, $t8, 4
-/* 0517F4 7F01CCC4 310900F0 */  andi  $t1, $t0, 0xf0
-/* 0517F8 7F01CCC8 03295025 */  or    $t2, $t9, $t1
-/* 0517FC 7F01CCCC 30ABFFFF */  andi  $t3, $a1, 0xffff
-/* 051800 7F01CCD0 A0CA0000 */  sb    $t2, ($a2)
-/* 051804 7F01CCD4 24C60001 */  addiu $a2, $a2, 1
-/* 051808 7F01CCD8 01602825 */  move  $a1, $t3
-/* 05180C 7F01CCDC 1440FFF4 */  bnez  $v0, .L7F01CCB0
-/* 051810 7F01CCE0 24840002 */   addiu $a0, $a0, 2
-.L7F01CCE4:
-/* 051814 7F01CCE4 03E00008 */  jr    $ra
-/* 051818 7F01CCE8 00000000 */   nop   
-)
-#endif
-
 
 
 #ifdef NONMATCHING
@@ -611,7 +580,7 @@ glabel sub_GAME_7F01D1C0
 /* 051D64 7F01D234 1420FFFC */  bnez  $at, .L7F01D228
 /* 051D68 7F01D238 254A0001 */   addiu $t2, $t2, 1
 .L7F01D23C:
-/* 051D6C 7F01D23C 0BC074A7 */  j     func_7F01D29C
+/* 051D6C 7F01D23C 0BC074A7 */  j     .L7F01D29C
 /* 051D70 7F01D240 24C6FFFF */   addiu $a2, $a2, -1
 
 .L7F01D244:
@@ -642,7 +611,7 @@ glabel sub_GAME_7F01D1C0
 /* 051DC0 7F01D290 2529FFFF */  addiu $t1, $t1, -1
 /* 051DC4 7F01D294 1D20FFF0 */  bgtz  $t1, .L7F01D258
 /* 051DC8 7F01D298 00000000 */   nop   
-glabel func_7F01D29C
+.L7F01D29C:
 /* 051DCC 7F01D29C 1CC0FFCC */  bgtz  $a2, .L7F01D1D0
 /* 051DD0 7F01D2A0 00801025 */   move  $v0, $a0
 /* 051DD4 7F01D2A4 03E00008 */  jr    $ra

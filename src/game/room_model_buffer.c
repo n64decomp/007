@@ -1,4 +1,4 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 //TODO this is not correct size afaik, but it fills a gap this way
 //shrinking slightly from 0x271CA0 to allow some room for shifting, 

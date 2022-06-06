@@ -1,6 +1,6 @@
-#include "ultra64.h"
-#include "game/unk_092E50.h"
-
+#include <ultra64.h>
+#include "unk_092E50.h"
+#include "initunk_007290.h"
 
 
 void sub_GAME_7F007290(void)

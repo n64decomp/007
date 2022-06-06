@@ -1,4 +1,4 @@
-.section .ob_seg, "a"
+.section .data
 
 
 .macro obseg_file_rz path name
@@ -13,6 +13,9 @@
   .ifdef VERSION_EU
     .incbin "build\/e\/assets\/obseg\/\path\/\name\.rz"
   .endif
+  .ifdef VERSION_DEBUG
+    .incbin "build\/d\/assets\/obseg\/\path\/\name\.rz"
+  .endif
     .balign 16
   end_\name:
 .endm
@@ -21,13 +24,20 @@
   .global \name
   \name:
   .ifdef VERSION_US
+    #.warning "obseg_file_Z: build\/u\/assets\/obseg\/\path\/\name\.rz"
     .incbin "build\/u\/assets\/obseg\/\path\/\name\.rz"
   .endif
   .ifdef VERSION_JP
+    #.warning "obseg_file_Z: build\/j\/assets\/obseg\/\path\/\name\.rz"
     .incbin "build\/j\/assets\/obseg\/\path\/\name\.rz"
   .endif
   .ifdef VERSION_EU
+    #.warning "obseg_file_Z: build\/e\/assets\/obseg\/\path\/\name\.rz"
     .incbin "build\/e\/assets\/obseg\/\path\/\name\.rz"
+  .endif
+  .ifdef VERSION_DEBUG
+    #.warning "obseg_file_Z: build\/d\/assets\/obseg\/\path\/\name\.rz"
+    .incbin "build\/d\/assets\/obseg\/\path\/\name\.rz"
   .endif
     .balign 16
   end_\name:
@@ -47,6 +57,10 @@
 
   .ifdef VERSION_EU
     .incbin "build/e/assets/obseg/bg/\sname\.seg"
+  .endif
+
+  .ifdef VERSION_DEBUG
+    .incbin "build/d/assets/obseg/bg/\sname\.seg"
   .endif
   end_\name:
 .endm
@@ -695,92 +709,224 @@ obseg_file_Z setup, UsetuptraZ
 
 obseg_file_rz text, LameE
 obseg_file_rz text, LameJ
+.ifdef VERSION_EU
+obseg_file_rz text, LameP
+.endif
 obseg_file_rz text, LarchE
 obseg_file_rz text, LarchJ
+.ifdef VERSION_EU
+obseg_file_rz text, LarchP
+.endif
 obseg_file_rz text, LarecE
 obseg_file_rz text, LarecJ
+.ifdef VERSION_EU
+obseg_file_rz text, LarecP
+.endif
 obseg_file_rz text, LarkE
 obseg_file_rz text, LarkJ
+.ifdef VERSION_EU
+obseg_file_rz text, LarkP
+.endif
 obseg_file_rz text, LashE
 obseg_file_rz text, LashJ
+.ifdef VERSION_EU
+obseg_file_rz text, LashP
+.endif
 obseg_file_rz text, LaztE
 obseg_file_rz text, LaztJ
+.ifdef VERSION_EU
+obseg_file_rz text, LaztP
+.endif
 obseg_file_rz text, LcatE
 obseg_file_rz text, LcatJ
+.ifdef VERSION_EU
+obseg_file_rz text, LcatP
+.endif
 obseg_file_rz text, LcaveE
 obseg_file_rz text, LcaveJ
+.ifdef VERSION_EU
+obseg_file_rz text, LcaveP
+.endif
 obseg_file_rz text, LcradE
 obseg_file_rz text, LcradJ
+.ifdef VERSION_EU
+obseg_file_rz text, LcradP
+.endif
 obseg_file_rz text, LcrypE
 obseg_file_rz text, LcrypJ
+.ifdef VERSION_EU
+obseg_file_rz text, LcrypP
+.endif
 obseg_file_rz text, LdamE
 obseg_file_rz text, LdamJ
+.ifdef VERSION_EU
+obseg_file_rz text, LdamP
+.endif
 obseg_file_rz text, LdepoE
 obseg_file_rz text, LdepoJ
+.ifdef VERSION_EU
+obseg_file_rz text, LdepoP
+.endif
 obseg_file_rz text, LdestE
 obseg_file_rz text, LdestJ
+.ifdef VERSION_EU
+obseg_file_rz text, LdestP
+.endif
 obseg_file_rz text, LdishE
 obseg_file_rz text, LdishJ
+.ifdef VERSION_EU
+obseg_file_rz text, LdishP
+.endif
 obseg_file_rz text, LearE
 obseg_file_rz text, LearJ
+.ifdef VERSION_EU
+obseg_file_rz text, LearP
+.endif
 obseg_file_rz text, LeldE
 obseg_file_rz text, LeldJ
+.ifdef VERSION_EU
+obseg_file_rz text, LeldP
+.endif
 obseg_file_rz text, LgunE
 obseg_file_rz text, LgunJ
+.ifdef VERSION_EU
+obseg_file_rz text, LgunP
+.endif
 obseg_file_rz text, LimpE
 obseg_file_rz text, LimpJ
+.ifdef VERSION_EU
+obseg_file_rz text, LimpP
+.endif
 obseg_file_rz text, LjunE
 obseg_file_rz text, LjunJ
+.ifdef VERSION_EU
+obseg_file_rz text, LjunP
+.endif
 obseg_file_rz text, LleeE
 obseg_file_rz text, LleeJ
+.ifdef VERSION_EU
+obseg_file_rz text, LleeP
+.endif
 obseg_file_rz text, LlenE
 obseg_file_rz text, LlenJ
+.ifdef VERSION_EU
+obseg_file_rz text, LlenP
+.endif
 obseg_file_rz text, LlipE
 obseg_file_rz text, LlipJ
+.ifdef VERSION_EU
+obseg_file_rz text, LlipP
+.endif
 obseg_file_rz text, LlueE
 obseg_file_rz text, LlueJ
+.ifdef VERSION_EU
+obseg_file_rz text, LlueP
+.endif
 obseg_file_rz text, LmiscE
 obseg_file_rz text, LmiscJ
+.ifdef VERSION_EU
+obseg_file_rz text, LmiscP
+.endif
 obseg_file_rz text, LmpmenuE
 obseg_file_rz text, LmpmenuJ
+.ifdef VERSION_EU
+obseg_file_rz text, LmpmenuP
+.endif
 obseg_file_rz text, LmpweaponsE
 obseg_file_rz text, LmpweaponsJ
+.ifdef VERSION_EU
+obseg_file_rz text, LmpweaponsP
+.endif
 obseg_file_rz text, LoatE
 obseg_file_rz text, LoatJ
+.ifdef VERSION_EU
+obseg_file_rz text, LoatP
+.endif
 obseg_file_rz text, LoptionsE
 obseg_file_rz text, LoptionsJ
+.ifdef VERSION_EU
+obseg_file_rz text, LoptionsP
+.endif
 obseg_file_rz text, LpamE
 obseg_file_rz text, LpamJ
+.ifdef VERSION_EU
+obseg_file_rz text, LpamP
+.endif
 obseg_file_rz text, LpeteE
 obseg_file_rz text, LpeteJ
+.ifdef VERSION_EU
+obseg_file_rz text, LpeteP
+.endif
 obseg_file_rz text, LpropobjE
 obseg_file_rz text, LpropobjJ
+.ifdef VERSION_EU
+obseg_file_rz text, LpropobjP
+.endif
 obseg_file_rz text, LrefE
 obseg_file_rz text, LrefJ
+.ifdef VERSION_EU
+obseg_file_rz text, LrefP
+.endif
 obseg_file_rz text, LritE
 obseg_file_rz text, LritJ
+.ifdef VERSION_EU
+obseg_file_rz text, LritP
+.endif
 obseg_file_rz text, LrunE
 obseg_file_rz text, LrunJ
+.ifdef VERSION_EU
+obseg_file_rz text, LrunP
+.endif
 obseg_file_rz text, LsevE
 obseg_file_rz text, LsevJ
+.ifdef VERSION_EU
+obseg_file_rz text, LsevP
+.endif
 obseg_file_rz text, LsevbE
 obseg_file_rz text, LsevbJ
+.ifdef VERSION_EU
+obseg_file_rz text, LsevbP
+.endif
 obseg_file_rz text, LsevxE
 obseg_file_rz text, LsevxJ
+.ifdef VERSION_EU
+obseg_file_rz text, LsevxP
+.endif
 obseg_file_rz text, LsevxbE
 obseg_file_rz text, LsevxbJ
+.ifdef VERSION_EU
+obseg_file_rz text, LsevxbP
+.endif
 obseg_file_rz text, LshoE
 obseg_file_rz text, LshoJ
+.ifdef VERSION_EU
+obseg_file_rz text, LshoP
+.endif
 obseg_file_rz text, LsiloE
 obseg_file_rz text, LsiloJ
+.ifdef VERSION_EU
+obseg_file_rz text, LsiloP
+.endif
 obseg_file_rz text, LstatE
 obseg_file_rz text, LstatJ
+.ifdef VERSION_EU
+obseg_file_rz text, LstatP
+.endif
 obseg_file_rz text, LtitleE
 obseg_file_rz text, LtitleJ
+.ifdef VERSION_EU
+obseg_file_rz text, LtitleP
+.endif
 obseg_file_rz text, LtraE
 obseg_file_rz text, LtraJ
+.ifdef VERSION_EU
+obseg_file_rz text, LtraP
+.endif
 obseg_file_rz text, LwaxE
 obseg_file_rz text, LwaxJ
+.ifdef VERSION_EU
+obseg_file_rz text, LwaxP
+.endif
 
 .global ob__ob_end_seg
 ob__ob_end_seg:

@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LarecJ[] = {
+char * LarecJ[] = {
     " „ë„ì„í„î<€ó€æ€Ü>Ò…À…žƒèæ€Ö€Ì€»‹Ò\n‚€Ë€Ï€þ€øÒƒè‚ÕÏ‚Ò…‡Æâ‚Žæ‚‚ÄãÉ€Â\n",
     " 007€»ß»ßóÆÑ€ÂÍÏ¿Á‚¼‚Žó»Ì\nÁðÄ»€Â\n\n €ä€ß€»€÷€Ðæ€ó€æ€ÜÒ€Ù€Ï‘€Ì€»€ß¸€é€Ê€Ö\n€Ï€þÅÌ»â‚©€†°Ï‚Íƒ…¸‚µ´ÌºéÌ\nÁðÄ»€Â\n †‡“¸„è¼€Õ€ýÓ‚Íƒ…æ…›´Ì»âÒóÆ€Â\n",
     " 007 „…ƒè‚“ó‚ÍàÒ‰€»€ßŽ€»€Ü¸„Ü„¯Å\n‚Æ‚Ç¸„Ä…äÅÌÁã€Â€ó€æ€ÜÒ‚Š‚‹‚Æ‚ÇÓ»ÁË\n¿Ò€Ú€»‹€»€Ù€Ï‘€Ì€»€ßÏ…·‡¼ÄãÌ»â\nìµä¼€Â\n ÈÒ‚Æ‚ÇÓ€ó€æ€ÜÏÍ´ÌÎÁÌÓÎàÎ»\nÜÒÎ¹ð€Â\n ‚óÎà»»\"„Ä…ä„§…£\"¸ƒÕ´Ì»âðä¼€À\n",
@@ -46,7 +45,7 @@ struct stringentry LarecJ[] = {
     "€€»€ø‰€Ï€Ð€Ñ‚Î‚Ï¸‚ë„„Ï\n",
     "‚«ÌÒ€Ú€»‹€»€Ù€Ï‘€Ì€»€ßÒ‚¬‚­\n",
     "€ó€æ€Ü‚È‚Œ„…ƒè €Ö€Ì€»‹\n",
-    NULL,
-    NULL,
-    NULL
+    0,
+    0,
+    0
 };

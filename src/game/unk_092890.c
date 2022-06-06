@@ -1,8 +1,167 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 
 #ifdef NONMATCHING
 void sub_GAME_7F092890(void) {
+
+    f64 sp150;
+    f64 sp148;
+    f64 sp140;
+    f64 sp138;
+    f64 sp130;
+    f64 sp128;
+    f64 sp120;
+    f64 sp118;
+    f64 sp110;
+    f64 sp108;
+    f64 sp100;
+    f64 spF8;
+    f64 spF0;
+    f64 spD8;
+    f64 spD0;
+    f64 spC8;
+    f64 spC0;
+    f64 spB8;
+    f64 spB0;
+    f64 spA0;
+    f64 sp98;
+    f64 sp90;
+    f64 sp88;
+    f64 sp80;
+    f64 sp78;
+    f64 sp70;
+    f64 sp68;
+    f64 sp60;
+    f64 sp58;
+    f64 sp50;
+    f64 sp48;
+    f64 sp40;
+    f64 sp38;
+    f64 temp_f10;
+    f64 temp_f10_2;
+    f64 temp_f12;
+    f64 temp_f12_2;
+    f64 temp_f14;
+    f64 temp_f16;
+    f64 temp_f18;
+    f64 temp_f20;
+    f64 temp_f22;
+    f64 temp_f24;
+    f64 temp_f26;
+    f64 temp_f28;
+    f64 temp_f2;
+    f64 temp_f30;
+    f64 temp_f4;
+    f64 temp_f4_2;
+    f64 temp_f6;
+    f64 temp_f6_2;
+    f64 temp_f6_3;
+    f64 temp_f6_4;
+    f64 temp_f8;
+    f64 temp_f8_2;
+    f64 temp_f8_3;
+    f64 temp_f8_4;
+    f64 temp_f8_5;
+    f64 phi_f0;
+    f64 phi_f2;
+
+    sp90 = (f64) arg3->unk0;
+    temp_f6 = (f64) arg3->unk4;
+    sp98 = temp_f6;
+    temp_f8 = (f64) arg3->unk8;
+    spA0 = temp_f8;
+    temp_f6_2 = (f64) arg6->unk0;
+    sp78 = temp_f6_2;
+    temp_f8_2 = (f64) arg6->unk4;
+    sp80 = temp_f8_2;
+    temp_f4 = (f64) arg6->unk8;
+    sp88 = temp_f4;
+    sp60 = (f64) arg5->unk0;
+    sp68 = (f64) arg5->unk4;
+    sp70 = (f64) arg5->unk8;
+    temp_f10 = (f64) (arg1->unk0 - arg0->unk0);
+    sp140 = temp_f10;
+    sp38 = temp_f6_2;
+    temp_f6_3 = (f64) (arg2->unk0 - arg1->unk0);
+    sp128 = temp_f6_3;
+    sp40 = temp_f8_2;
+    temp_f8_3 = (f64) (arg1->unk2 - arg0->unk2);
+    sp148 = temp_f8_3;
+    temp_f8_4 = (f64) (arg2->unk2 - arg1->unk2);
+    sp130 = temp_f8_4;
+    temp_f8_5 = (f64) (arg1->unk4 - arg0->unk4);
+    sp150 = temp_f8_5;
+    sp138 = (f64) (arg2->unk4 - arg1->unk4);
+    sp110 = (f64) (arg2->unk0 - arg0->unk0);
+    sp118 = (f64) (arg2->unk2 - arg0->unk2);
+    sp48 = temp_f4;
+    sp120 = (f64) (arg2->unk4 - arg0->unk4);
+    temp_f18 = temp_f8_3 * sp138;
+    temp_f20 = temp_f8_5 * sp130;
+    temp_f22 = temp_f8_5 * temp_f6_3;
+    temp_f24 = temp_f10 * sp138;
+    temp_f12 = temp_f18 - temp_f20;
+    temp_f26 = temp_f10 * temp_f8_4;
+    temp_f28 = sp148 * temp_f6_3;
+    temp_f14 = temp_f22 - temp_f24;
+    temp_f16 = temp_f26 - temp_f28;
+    spF8 = temp_f16;
+    sp100 = temp_f14;
+    sp108 = temp_f12;
+    spF0 = ((temp_f8 + (f64) arg0->unk4) * temp_f16) + ((temp_f12 * ((f64) arg0->unk0 + sp90)) + (temp_f14 * ((f64) arg0->unk2 + temp_f6)));
+    if (((sp48 * temp_f16) + ((temp_f12 * sp38) + (temp_f14 * sp40))) == 0.0) {
+        return 0;
+    }
+    sp48 = sp60;
+    temp_f30 = temp_f28 - temp_f26;
+    sp40 = sp68;
+    sp38 = sp70;
+    sp50 = ((spF0 - (temp_f12 * sp60)) - (temp_f14 * sp68)) - (sp70 * temp_f16);
+    sp58 = sp78;
+    temp_f2 = sp50 / ((sp88 * temp_f16) + ((temp_f12 * sp78) + (temp_f14 * sp80)));
+    temp_f6_4 = (sp58 * temp_f2) + sp48;
+    spC8 = temp_f6_4;
+    temp_f10_2 = (sp80 * temp_f2) + sp40;
+    spD0 = temp_f10_2;
+    temp_f4_2 = (sp88 * temp_f2) + sp38;
+    spD8 = temp_f4_2;
+    sp58 = temp_f10_2;
+    spB0 = temp_f6_4 - (sp90 + (f64) arg0->unk0);
+    spB8 = sp58 - (sp98 + (f64) arg0->unk2);
+    spC0 = temp_f4_2 - (spA0 + (f64) arg0->unk4);
+    if (temp_f30 != 0.0) {
+        phi_f2 = ((spB0 * sp148) - (sp140 * spB8)) / temp_f30;
+    } else {
+        temp_f12_2 = temp_f20 - temp_f18;
+        if (temp_f12_2 != 0.0) {
+            phi_f2 = ((spB8 * sp150) - (sp148 * spC0)) / temp_f12_2;
+        } else {
+            phi_f2 = ((spC0 * sp140) - (sp150 * spB0)) / (temp_f24 - temp_f22);
+        }
+    }
+    if (sp140 != 0.0) {
+        phi_f0 = (spB0 - (phi_f2 * sp110)) / sp140;
+    } else if (sp148 != 0.0) {
+        phi_f0 = (spB8 - (phi_f2 * sp118)) / sp148;
+    } else {
+        phi_f0 = (spC0 - (phi_f2 * sp120)) / sp150;
+    }
+    if ((phi_f0 >= 0.0) && (phi_f2 >= 0.0) && ((phi_f0 + phi_f2) <= 1.0)) {
+        if ((((spD8 - (f64) arg4->unk8) * sp88) + ((sp78 * (spC8 - (f64) arg4->unk0)) + (sp80 * (spD0 - (f64) arg4->unk4)))) >= 0.0) {
+            arg7->unk0 = (f32) spC8;
+            arg7->unk4 = (f32) spD0;
+            arg7->unk8 = (f32) spD8;
+            arg7->unkC = (f32) sp108;
+            arg7->unk10 = (f32) sp100;
+            arg7->unk2A = 0;
+            arg7->unk14 = (f32) spF8;
+            return 1;
+        }
+        /* Duplicate return node #18. Try simplifying control flow for better match */
+        return 0;
+    }
+    return 0;
+
 
 }
 #else

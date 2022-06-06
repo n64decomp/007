@@ -1,6 +1,9 @@
-#include "ultra64.h"
-#include "game/lightfixture.h"
-#include "assets/images/image_externs.h"
+#include <ultra64.h>
+#include "lightfixture.h"
+#include <bondconstants.h>
+#include <assets/image_externs.h>
+
+
 
 // bss
 //CODE.bss:80082660
@@ -15,10 +18,12 @@ s16 word_CODE_bss_80082B18[0x400];
 //CODE.bss:80083318
 s32 dword_CODE_bss_80083318;
 
-
 // data
 //D:80046030
-s32 D_80046030[] = {0, 0, 0, 0, 0, 0, 0, 0};
+s32 D_80046030 = 0; 
+
+s32 D_80046034[] = {0, 0, 0, 0, 0, 0, 0};
+
 
 //this mostly matches 4 bytes different
 #ifdef NONMATCHING
@@ -30,6 +35,7 @@ void init_lightfixture_tables(void)
     D_80046030[0] = 0;
 }
 #else
+#if defined(LEFTOVERDEBUG)
 GLOBAL_ASM(
 .text
 glabel init_lightfixture_tables
@@ -58,6 +64,37 @@ glabel init_lightfixture_tables
 /* 0F004C 7F0BB51C 03E00008 */  jr    $ra
 /* 0F0050 7F0BB520 AC206030 */   sw    $zero, %lo(D_80046030)($at)
 )
+#endif
+
+#if !defined(LEFTOVERDEBUG)
+GLOBAL_ASM(
+.text
+glabel init_lightfixture_tables
+/* 0ED2C0 7F0BA8D0 3C038007 */  lui   $v1, %hi(light_fixture_table) # $v1, 0x8007
+/* 0ED2C4 7F0BA8D4 3C028007 */  lui   $v0, %hi(cur_entry_lightfixture_table) # $v0, 0x8007
+/* 0ED2C8 7F0BA8D8 2442D480 */  addiu $v0, %lo(cur_entry_lightfixture_table) # addiu $v0, $v0, -0x2b80
+/* 0ED2CC 7F0BA8DC 2463CFD0 */  addiu $v1, %lo(light_fixture_table) # addiu $v1, $v1, -0x3030
+.L7F0BA8E0:
+/* 0ED2D0 7F0BA8E0 2463000C */  addiu $v1, $v1, 0xc
+/* 0ED2D4 7F0BA8E4 0062082B */  sltu  $at, $v1, $v0
+/* 0ED2D8 7F0BA8E8 1420FFFD */  bnez  $at, .L7F0BA8E0
+/* 0ED2DC 7F0BA8EC A460FFF4 */   sh    $zero, -0xc($v1)
+/* 0ED2E0 7F0BA8F0 3C038007 */  lui   $v1, %hi(word_CODE_bss_80082B18) # $v1, 0x8007
+/* 0ED2E4 7F0BA8F4 3C028007 */  lui   $v0, %hi(dword_CODE_bss_80083318) # $v0, 0x8007
+/* 0ED2E8 7F0BA8F8 2442DC88 */  addiu $v0, %lo(dword_CODE_bss_80083318) # addiu $v0, $v0, -0x2378
+/* 0ED2EC 7F0BA8FC 2463D488 */  addiu $v1, %lo(word_CODE_bss_80082B18) # addiu $v1, $v1, -0x2b78
+.L7F0BA900:
+/* 0ED2F0 7F0BA900 24630010 */  addiu $v1, $v1, 0x10
+/* 0ED2F4 7F0BA904 A460FFF4 */  sh    $zero, -0xc($v1)
+/* 0ED2F8 7F0BA908 A460FFF8 */  sh    $zero, -8($v1)
+/* 0ED2FC 7F0BA90C A460FFFC */  sh    $zero, -4($v1)
+/* 0ED300 7F0BA910 1462FFFB */  bne   $v1, $v0, .L7F0BA900
+/* 0ED304 7F0BA914 A460FFF0 */   sh    $zero, -0x10($v1)
+/* 0ED308 7F0BA918 3C018004 */  lui   $at, 0x8004
+/* 0ED30C 7F0BA91C 03E00008 */  jr    $ra
+/* 0ED310 7F0BA920 AC20EAA0 */   sw    $zero, -0x1560($at)
+)
+#endif
 #endif
 
 
@@ -96,17 +133,18 @@ void save_ptrDL_enpoint_to_current_init_lightfixture_table(Gfx *param_1)
 
 s32 check_if_imageID_is_light(s32 imageID)
 {
-    if ((imageID == _image201_ID_LIGHT)  || 
-        (imageID == _image203_ID_LIGHT)  || 
-        (imageID == _image205_ID_LIGHT)  || 
-        (imageID == _image252_ID_LIGHT)  || 
-        (imageID == _image254_ID_LIGHT)  || 
-        (imageID == _image255_ID_LIGHT)  || 
-        (imageID == _image256_ID_LIGHT) || 
-        (imageID == _image428_ID_LIGHT) || 
-        (imageID == _image982_ID_LIGHT) || 
-        (imageID == _image1383_ID_LIGHT))
+    if ((imageID == IMAGE_WALL_LAMP)     || 
+        (imageID == IMAGE_203_LIGHT)  || 
+        (imageID == IMAGE_205_LIGHT)  || 
+        (imageID == IMAGE_252_LIGHT)  || 
+        (imageID == IMAGE_PANEL_LAMP)    || 
+        (imageID == IMAGE_255_LIGHT)  || 
+        (imageID == IMAGE_256_LIGHT)  || 
+        (imageID == IMAGE_HANGING_LAMP)  || 
+        (imageID == IMAGE_NEON_LAMP)     || 
+        (imageID == IMAGE_LINEAR_LAMP))
     {
+        // Will darken when shot
         return 1;
     } 
     else

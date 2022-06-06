@@ -5,30 +5,7 @@
 
 .section .music
 
-.global _sfxctlSegmentRomStart
-_sfxctlSegmentRomStart:
- .incbin "assets/music/sfx.ctl"
-.global _sfxctlSegmentRomEnd
-_sfxctlSegmentRomEnd:
-
-.global _sfxtblSegmentRomStart
-_sfxtblSegmentRomStart:
- .incbin "assets/music/sfx.tbl"
-.global _sfxtblSegmentRomEnd
-_sfxtblSegmentRomEnd:
-
-.global _instrumentsctlSegmentRomStart
-_instrumentsctlSegmentRomStart:
- .incbin "assets/music/instruments.ctl"
-.global _instrumentsctlSegmentRomEnd
-_instrumentsctlSegmentRomEnd:
-
-.global _instrumentstblSegmentRomStart
-_instrumentstblSegmentRomStart:
- .incbin "assets/music/instruments.tbl"
-.global _instrumentstblSegmentRomEnd
-_instrumentstblSegmentRomEnd:
-
+#calculates and stores the total number of music samples
 .global _musicsampletblSegmentRomStart
 _musicsampletblSegmentRomStart:
 .global number_music_samples
@@ -36,6 +13,7 @@ number_music_samples:
  .half (table_music_data_end - number_music_samples)/8
  .half 0x0000
 number_music_samples_end:
+
 
 
 .macro music_table_entry name sized
@@ -126,6 +104,9 @@ _musicsampletblSegmentRomEnd:
   .ifdef VERSION_EU
     .incbin "build\/e\/assets\/music\/\name\.rz"
   .endif
+  .ifdef VERSION_DEBUG
+    .incbin "build\/d\/assets\/music\/\name\.rz"
+  .endif
   end_\name:
 
   .section .musicdecompressed
@@ -151,6 +132,9 @@ music_fileA is used for the entries that end with A....the A doesn't seem to be 
   .endif
   .ifdef VERSION_EU
     .incbin "build\/e\/assets\/music\/\name\.rz"
+  .endif
+  .ifdef VERSION_DEBUG
+    .incbin "build\/d\/assets\/music\/\name\.rz"
   .endif
     .byte 0xA
   end_\name:

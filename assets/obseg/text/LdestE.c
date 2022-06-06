@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LdestE[] = {
+char *LdestE[] = {
  "A demonstration of the Pirate stealth helicopter by the French military has been unexpectedly postponed. Official channels insist that nothing is wrong but unofficially MI6 has been asked to help salvage a very tricky hostage situation on board the frigate La Fayette. It seems that the Janus crime syndicate will stop at nothing in its attempt to hijack the helicopter.\n",
  "This is the best chance we've had in years to get a lead on Janus. The French are prepared to play along with an entrapment scenario. We need you to place a tracker on the Pirate so that we can trace its movements after Janus steals it.\n\nThis must go smoothly, 007. If the press get a sniff of this, we'll all have egg on our faces.\n",
  "The French have kindly given us technical details of the Pirate so I've managed to convert this tracker bug into quite a clever little chap. It's undetectable and it locks out all weapon firing commands.\nJanus is also threatening to blow up the ship. They are most likely to have placed explosives on the bridge and in the engine room. Take care, 007, and be certain to use the bomb defuser correctly.\n",
@@ -32,5 +31,5 @@ struct stringentry LdestE[] = {
  "tracker bug\n",
  "Picked up a tracker bug.\n",
  "Mission Failure: Unacceptable hostage\ncasualties!\n",
- NULL
+ 0
 };

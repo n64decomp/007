@@ -1,5 +1,5 @@
-#include "ultra64.h"
-#include "inflate/inflate.h"
+#include <ultra64.h>
+#include "inflate.h"
 
 #define GETBYTE()   (inbuf[inptr++])
 #define NEXTBYTE()  (u8)GETBYTE()
@@ -56,6 +56,11 @@ u32 dbits = 6;
 u32 hufts = 0;
 
 
+/* Given a list of code lengths and a maximum table size, make a set of
+   tables to decode that set of codes.  Return zero on success, one if
+   the given code set is incomplete (the tables are still built in this
+   case), two if the input is invalid (all zero length codes or an
+   oversubscribed set of lengths), and three if not enough memory. */
 s32 huft_build(u32 *b, u32 n, u32 s, u16 *d, u8 *e, struct huft **t, s32 *m)
 {
 	u32 a;                   /* counter for codes of length k */

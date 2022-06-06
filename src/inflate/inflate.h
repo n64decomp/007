@@ -1,5 +1,5 @@
-#ifndef _RAREZIP_H_
-#define _RAREZIP_H_
+#ifndef _INFLATE_H_
+#define _INFLATE_H_
 struct huft {
 	u8 e;                /* number of extra bits or operation */
 	u8 b;                /* number of bits in this code or subcode */

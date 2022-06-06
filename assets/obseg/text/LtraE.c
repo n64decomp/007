@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LtraE[] = {
+char *LtraE[] = {
  "The leader of Janus, Alec Trevelyan, is holding Natalya hostage on his armored train.\n",
  "We've lost experienced agents before in hostage situations. Keep a clear head, 007, and don't get sidetracked settling old scores.\n",
  "A train, 007, pretty simple. Destroy the braking units in each carriage and the emergency \nsystems should bring it to a halt.\n",
@@ -46,7 +45,7 @@ struct stringentry LtraE[] = {
  "train door key\n",
  "Picked up a door key.\n",
  "Converted Missile Train, heading east\n",
- NULL,
- NULL,
- NULL
+ 0,
+ 0,
+ 0
 };

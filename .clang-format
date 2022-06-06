@@ -1,0 +1,209 @@
+---
+# default tab width for all files
+IndentWidth: 4
+TabWidth: 4
+---
+# specifics for C
+Language: Cpp
+
+# N/A to C
+AccessModifierOffset: -2
+
+# allignments
+# horizontally aligns long list of arguments after an open bracket
+AlignAfterOpenBracket: Align
+
+# initialization for an array of structs aligns the fields into columns
+# AlignArrayOfStructures: Right
+
+AlignConsecutiveAssignments: AcrossComments
+AlignConsecutiveBitFields: AcrossEmptyLinesAndComments
+AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments
+AlignConsecutiveMacros: AcrossComments
+AlignEscapedNewlines: Left
+
+# horizontally align operands of binary and ternary expressions
+AlignOperands: Align
+
+# aligns trailing comments.
+AlignTrailingComments: true
+
+# If a function call or braced initializer list doesn't fit on a line, break all arguments onto seperate lines
+AllowAllArgumentsOnNextLine: false
+
+# deprecated
+AllowAllConstructorInitializersOnNextLine: false
+
+# If a function call or braced initializer list doesn't fit on a line, break all arguments onto seperate lines
+AllowAllParametersOfDeclarationOnNextLine: false
+
+# allman even short blocks
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+
+# allman even short blocks except for empty (eg stubs stay on one line like chrGetNumArghs(){} )
+AllowShortFunctionsOnASingleLine: Empty
+
+# allman should be used, but if no brace supplied dont break
+AllowShortIfStatementsOnASingleLine: WithoutElse
+
+# N/A C however  Merge all lambdas fitting on a single line
+AllowShortLambdasOnASingleLine: All
+
+# allman should be used, but if no brace supplied dont break
+AllowShortLoopsOnASingleLine: true
+
+# deprecated 
+AlwaysBreakAfterDefinitionReturnType: None
+
+# no extra breaks after return
+AlwaysBreakAfterReturnType: None
+
+# keep blocks of strings together and indented +1 rather than indented + var length
+AlwaysBreakBeforeMultilineStrings: true
+
+# N/A to C
+AlwaysBreakTemplateDeclarations: No
+
+# 
+# AttributeMacros:
+
+# if args broken, place each on new line
+BinPackArguments: false
+BinPackParameters: false
+
+BitFieldColonSpacing: Both
+
+BraceWrapping: 
+  AfterCaseLabel:  true
+  AfterClass:      true
+  AfterControlStatement: Always
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  BeforeLambdaBody: true
+  BeforeWhile:     false
+  IndentBraces:    false
+  SplitEmptyFunction: false
+  SplitEmptyRecord:   false
+  SplitEmptyNamespace: false
+
+BreakAfterJavaFieldAnnotations: true
+
+# break after opperator and allign
+BreakBeforeBinaryOperators: None
+
+BreakBeforeBraces: Allman
+
+# ternary operators will be placed after line breaks.
+BreakBeforeTernaryOperators: true
+
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
+
+# break and align strings that are too long
+BreakStringLiterals: true
+
+# dont arbitarelly cut lines off at col 80
+ColumnLimit: 0
+CompactNamespaces: false
+
+# deprecated
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+
+Cpp11BracedListStyle: true
+
+# use specified line ending and pointer allignment
+DeriveLineEnding: false
+DerivePointerAlignment: false
+
+DisableFormat: false
+
+# EmptyLineAfterAccessModifier: Never
+# EmptyLineBeforeAccessModifier: LogicalBlock
+
+ExperimentalAutoDetectBinPacking: false
+
+# adds missing namespace end comments for short namespaces and fixes invalid existing ones.
+FixNamespaceComments: true
+
+# A vector of macros that should be interpreted as controls instead of as function calls.
+ForEachMacros:   ['FOREACH', 'BOOST_FOREACH']
+# IfMacros:        ['IF', 'IF_ELSE']
+
+# dont resort includes
+IncludeBlocks: Preserve
+IncludeCategories: 
+  - Regex:           ^"(llvm|llvm-c|clang|clang-c)/
+    Priority:        2
+  - Regex:           ^(<|"(gtest|gmock|isl|json)/)
+    Priority:        3
+  - Regex:           .*
+    Priority:        1
+IncludeIsMainRegex: (Test)?$
+
+# indents
+IndentCaseBlocks: false
+IndentCaseLabels: true
+IndentExternBlock: AfterExternBlock
+IndentGotoLabels: false
+IndentPPDirectives: AfterHash
+IndentWrappedFunctionNames: true
+
+# remove empty lines
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+
+MacroBlockBegin: "#pragma region"
+MacroBlockEnd : "#pragma endregion"
+
+NamespaceIndentation: None
+
+# pointer is each variable not type so stick * to variable
+PointerAlignment: Right
+DerivePointerAlignment: false
+#ReferenceAlignment: Pointer
+
+# qualifier should be left of type (volatile int)
+# QualifierAlignment: Left
+
+ReflowComments: true
+
+# includes are sorted in an ASCIIbetical or case insensitive fashion
+SortIncludes: true
+SortUsingDeclarations: true
+
+# spacings
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAroundPointerQualifiers: After
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement : false
+SpacesInContainerLiterals : false
+# SpacesInLineCommentPrefix : 1
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+Standard: Cpp03
+TypenameMacros: ['BITFLAG']
+UseTab: Never
+WhitespaceSensitiveMacros : ['BOOST_PP_STRINGIZE']
+...

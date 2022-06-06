@@ -1,86 +1,127 @@
-#include "ultra64.h"
-#include "bondgame.h"
-#include "game/lvl_text.h"
+#include <ultra64.h>
+#include <bondgame.h>
+#include <memp.h>
+#include "lvl_text.h"
 
 // bss
 //CODE.bss:8008C640
-s32 ptr_text;
-//CODE.bss:8008C644
-s32 table_text_pointers;
-//8008C648
-char dword_CODE_bss_8008C648[0x90];
-//CODE.bss:8008C6D8
-s32 dword_CODE_bss_8008C6D8;
-//CODE.bss:8008C6DC
-s32 dword_CODE_bss_8008C6DC;
-//CODE.bss:8008C6E0
-s32 dword_CODE_bss_8008C6E0;
-//CODE.bss:8008C6E4
-s32 dword_CODE_bss_8008C6E4;
-//CODE.bss:8008C6E8
-s32 dword_CODE_bss_8008C6E8;
-//CODE.bss:8008C6EC
-s32 dword_CODE_bss_8008C6EC;
-//CODE.bss:8008C6F0
-s32 dword_CODE_bss_8008C6F0;
+s32 ptr_text[45];
+
 //CODE.bss:8008C6F4
-s32 ptr_j_char_data_buf;
+s32 ptr_char_data_buf;
 //CODE.bss:8008C6F8
-s32 ptr_j_char_registry;
+s32 ptr_char_registry;
 
 
-#ifdef VERSION_JP
+#ifdef LANG_JP
 s32 j_text_trigger = 1;
 #else
+/**
+ * EU .data 80041150
+*/
 s32 j_text_trigger = 0;
 #endif
 
-void *LnameX_lookuptable[] = {
-    NULL, NULL,                    /* Null (unused) */
-    "LameE", "LameJ",              /* Library (multi) */
-    "LarchE", "LarchJ",            /* Archives */
-    "LarkE", "LarkJ",              /* Facility */
-    "LashE", "LashJ",              /* Stack (multi) */
-    "LaztE", "LaztJ",              /* Aztec */
-    "LcatE", "LcatJ",              /* Citadel (multi) */
-    "LcaveE", "LcaveJ",            /* Caverns */
-    "LarecE", "LarecJ",            /* Control */
-    "LcradE", "LcradJ",            /* Cradle */
-    "LcrypE", "LcrypJ",            /* Egypt */
-    "LdamE", "LdamJ",              /* Dam */
-    "LdepoE", "LdepoJ",            /* Depot */
-    "LdestE", "LdestJ",            /* Frigate */
-    "LdishE", "LdishJ",            /* Temple (multi) */
-    "LearE", "LearJ",              /* Ear (unused) */
-    "LeldE", "LeldJ",              /* Eld (unused) */
-    "LimpE", "LimpJ",              /* Basement (multi) */
-    "LjunE", "LjunJ",              /* Jungle */
-    "LleeE", "LleeJ",              /* Lee (unused) */
-    "LlenE", "LlenJ",              /* Cuba */
-    "LlipE", "LlipJ",              /* Lip (unused) */
-    "LlueE", "LlueJ",              /* Lue (unused) */
-    "LoatE", "LoatJ",              /* Cave (multi) */
-    "LpamE", "LpamJ",              /* Pam (unused) */
-    "LpeteE", "LpeteJ",            /* Streets */
-    "LrefE", "LrefJ",              /* Complex (multi) */
-    "LritE", "LritJ",              /* Rit (unused) */
-    "LrunE", "LrunJ",              /* Runway */
-    "LsevbE", "LsevbJ",            /* Bunker 2 */
-    "LsevE", "LsevJ",              /* Bunker 1 */
-    "LsevxE", "LsevxJ",            /* Surface 1 */
-    "LsevxbE", "LsevxbJ",          /* Surface 2 */
-    "LshoE", "LshoJ",              /* Sho (unused) */
-    "LsiloE", "LsiloJ",            /* Silo */
-    "LstatE", "LstatJ",            /* Statue */
-    "LtraE", "LtraJ",              /* Train */
-    "LwaxE", "LwaxJ",              /* Wax (unused) */
-    "LgunE", "LgunJ",              /* Guns */
-    "LtitleE", "LtitleJ",          /* Stage and menu titles */
-    "LmpmenuE", "LmpmenuJ",        /* Multi menus */
-    "LpropobjE", "LpropobjJ",      /* In-game pickups */
-    "LmpweaponsE", "LmpweaponsJ",  /* Multi weapon select */
-    "LoptionsE", "LoptionsJ",      /* Solo in-game menus */
-    "LmiscE", "LmiscJ"};           /* Cheat options */
+
+#if defined(LANG_US) || defined(LANG_JP)
+
+void *LnameX_lookuptable[45][2] = {
+    {NULL, NULL},                    /* Null (unused) */
+    {"LameE", "LameJ"},              /* Library (multi) */
+    {"LarchE", "LarchJ"},            /* Archives */
+    {"LarkE", "LarkJ"},              /* Facility */
+    {"LashE", "LashJ"},              /* Stack (multi) */
+    {"LaztE", "LaztJ"},              /* Aztec */
+    {"LcatE", "LcatJ"},              /* Citadel (multi) */
+    {"LcaveE", "LcaveJ"},            /* Caverns */
+    {"LarecE", "LarecJ"},            /* Control */
+    {"LcradE", "LcradJ"},            /* Cradle */
+    {"LcrypE", "LcrypJ"},            /* Egypt */
+    {"LdamE", "LdamJ"},              /* Dam */
+    {"LdepoE", "LdepoJ"},            /* Depot */
+    {"LdestE", "LdestJ"},            /* Frigate */
+    {"LdishE", "LdishJ"},            /* Temple (multi) */
+    {"LearE", "LearJ"},              /* Ear (unused) */
+    {"LeldE", "LeldJ"},              /* Eld (unused) */
+    {"LimpE", "LimpJ"},              /* Basement (multi) */
+    {"LjunE", "LjunJ"},              /* Jungle */
+    {"LleeE", "LleeJ"},              /* Lee (unused) */
+    {"LlenE", "LlenJ"},              /* Cuba */
+    {"LlipE", "LlipJ"},              /* Lip (unused) */
+    {"LlueE", "LlueJ"},              /* Lue (unused) */
+    {"LoatE", "LoatJ"},              /* Cave (multi) */
+    {"LpamE", "LpamJ"},              /* Pam (unused) */
+    {"LpeteE", "LpeteJ"},            /* Streets */
+    {"LrefE", "LrefJ"},              /* Complex (multi) */
+    {"LritE", "LritJ"},              /* Rit (unused) */
+    {"LrunE", "LrunJ"},              /* Runway */
+    {"LsevbE", "LsevbJ"},            /* Bunker 2 */
+    {"LsevE", "LsevJ"},              /* Bunker 1 */
+    {"LsevxE", "LsevxJ"},            /* Surface 1 */
+    {"LsevxbE", "LsevxbJ"},          /* Surface 2 */
+    {"LshoE", "LshoJ"},              /* Shooting Range (unused) */
+    {"LsiloE", "LsiloJ"},            /* Silo */
+    {"LstatE", "LstatJ"},            /* Statue */
+    {"LtraE", "LtraJ"},              /* Train */
+    {"LwaxE", "LwaxJ"},              /* Wax (unused) */
+    {"LgunE", "LgunJ"},              /* Guns */
+    {"LtitleE", "LtitleJ"},          /* Stage and menu titles */
+    {"LmpmenuE", "LmpmenuJ"},        /* Multi menus */
+    {"LpropobjE", "LpropobjJ"},      /* In-game pickups */
+    {"LmpweaponsE", "LmpweaponsJ"},  /* Multi weapon select */
+    {"LoptionsE", "LoptionsJ"},      /* Solo in-game menus */
+    {"LmiscE", "LmiscJ"}};           /* Cheat options */
+
+#endif
+
+#if defined(LANG_EU)
+void *LnameX_lookuptable[45][2] = {
+    {NULL, NULL},                    /* Null (unused) */
+    {"LameP", "LameJ"},              /* Library (multi) */
+    {"LarchP", "LarchJ"},            /* Archives */
+    {"LarkP", "LarkJ"},              /* Facility */
+    {"LashP", "LashJ"},              /* Stack (multi) */
+    {"LaztP", "LaztJ"},              /* Aztec */
+    {"LcatP", "LcatJ"},              /* Citadel (multi) */
+    {"LcaveP", "LcaveJ"},            /* Caverns */
+    {"LarecP", "LarecJ"},            /* Control */
+    {"LcradP", "LcradJ"},            /* Cradle */
+    {"LcrypP", "LcrypJ"},            /* Egypt */
+    {"LdamP", "LdamJ"},              /* Dam */
+    {"LdepoP", "LdepoJ"},            /* Depot */
+    {"LdestP", "LdestJ"},            /* Frigate */
+    {"LdishP", "LdishJ"},            /* Temple (multi) */
+    {"LearP", "LearJ"},              /* Ear (unused) */
+    {"LeldP", "LeldJ"},              /* Eld (unused) */
+    {"LimpP", "LimpJ"},              /* Basement (multi) */
+    {"LjunP", "LjunJ"},              /* Jungle */
+    {"LleeP", "LleeJ"},              /* Lee (unused) */
+    {"LlenP", "LlenJ"},              /* Cuba */
+    {"LlipP", "LlipJ"},              /* Lip (unused) */
+    {"LlueP", "LlueJ"},              /* Lue (unused) */
+    {"LoatP", "LoatJ"},              /* Cave (multi) */
+    {"LpamP", "LpamJ"},              /* Pam (unused) */
+    {"LpeteP", "LpeteJ"},            /* Streets */
+    {"LrefP", "LrefJ"},              /* Complex (multi) */
+    {"LritP", "LritJ"},              /* Rit (unused) */
+    {"LrunP", "LrunJ"},              /* Runway */
+    {"LsevbP", "LsevbJ"},            /* Bunker 2 */
+    {"LsevP", "LsevJ"},              /* Bunker 1 */
+    {"LsevxP", "LsevxJ"},            /* Surface 1 */
+    {"LsevxbP", "LsevxbJ"},          /* Surface 2 */
+    {"LshoP", "LshoJ"},              /* Shooting Range (unused) */
+    {"LsiloP", "LsiloJ"},            /* Silo */
+    {"LstatP", "LstatJ"},            /* Statue */
+    {"LtraP", "LtraJ"},              /* Train */
+    {"LwaxP", "LwaxJ"},              /* Wax (unused) */
+    {"LgunP", "LgunJ"},              /* Guns */
+    {"LtitleP", "LtitleJ"},          /* Stage and menu titles */
+    {"LmpmenuP", "LmpmenuJ"},        /* Multi menus */
+    {"LpropobjP", "LpropobjJ"},      /* In-game pickups */
+    {"LmpweaponsP", "LmpweaponsJ"},  /* Multi weapon select */
+    {"LoptionsP", "LoptionsJ"},      /* Solo in-game menus */
+    {"LmiscP", "LmiscJ"}};           /* Cheat options */
+#endif
 
 LEVELID get_textbank_number_for_stagenum(LEVELID level)
 {
@@ -207,7 +248,7 @@ void init_LnameX(void)
     }
 
     ptr_text = 0;
-    ppuVar2 = (u8 **)table_text_pointers;
+    ppuVar2 = (u8 **)ptr_text;
     do {
         ppuVar2 = ppuVar2 + 4;
         ppuVar2[1] = NULL;
@@ -216,13 +257,13 @@ void init_LnameX(void)
         *ppuVar2 = NULL;
         ppuVar2 = ppuVar2;
     } while (ppuVar2 != &ptr_char_data_buf);
-    table_text_pointers[37] = _load_resource_named_to_membank((&ptr_LgunX)[j_text_trigger],1,0x100,6);
-    table_text_pointers[38] = _load_resource_named_to_membank((&ptr_LtitleX)[j_text_trigger],1,0x100,6);
-    table_text_pointers[39] = _load_resource_named_to_membank((&ptr_LmpmenuX)[j_text_trigger],1,0x100,6);
-    table_text_pointers[40] = _load_resource_named_to_membank((&ptr_LpropobjX)[j_text_trigger],1,0x100,6);
-    table_text_pointers[41] =  _load_resource_named_to_membank((&ptr_LmpweaponsX)[j_text_trigger],1,0x100,6);
-    table_text_pointers[42] = _load_resource_named_to_membank((&ptr_LoptionsX)[j_text_trigger],1,0x100,6);
-    table_text_pointers[43] = _load_resource_named_to_membank((&ptr_LmiscX)[j_text_trigger],1,0x100,6);
+    ptr_text[37] = _load_resource_named_to_membank((&ptr_LgunX)[j_text_trigger],1,0x100,6);
+    ptr_text[38] = _load_resource_named_to_membank((&ptr_LtitleX)[j_text_trigger],1,0x100,6);
+    ptr_text[39] = _load_resource_named_to_membank((&ptr_LmpmenuX)[j_text_trigger],1,0x100,6);
+    ptr_text[40] = _load_resource_named_to_membank((&ptr_LpropobjX)[j_text_trigger],1,0x100,6);
+    ptr_text[41] =  _load_resource_named_to_membank((&ptr_LmpweaponsX)[j_text_trigger],1,0x100,6);
+    ptr_text[42] = _load_resource_named_to_membank((&ptr_LoptionsX)[j_text_trigger],1,0x100,6);
+    ptr_text[43] = _load_resource_named_to_membank((&ptr_LmiscX)[j_text_trigger],1,0x100,6);
     return;
 }
 #else
@@ -241,13 +282,13 @@ glabel init_LnameX
 /* 0F6240 7F0C1710 24042E80 */  li    $a0, 11904
 /* 0F6244 7F0C1714 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0F6248 7F0C1718 24050006 */   li    $a1, 6
-/* 0F624C 7F0C171C 3C018009 */  lui   $at, %hi(ptr_j_char_data_buf)
-/* 0F6250 7F0C1720 AC22C6F4 */  sw    $v0, %lo(ptr_j_char_data_buf)($at)
+/* 0F624C 7F0C171C 3C018009 */  lui   $at, %hi(ptr_char_data_buf)
+/* 0F6250 7F0C1720 AC22C6F4 */  sw    $v0, %lo(ptr_char_data_buf)($at)
 /* 0F6254 7F0C1724 24040100 */  li    $a0, 256
 /* 0F6258 7F0C1728 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0F625C 7F0C172C 24050006 */   li    $a1, 6
-/* 0F6260 7F0C1730 3C048009 */  lui   $a0, %hi(ptr_j_char_registry)
-/* 0F6264 7F0C1734 2484C6F8 */  addiu $a0, %lo(ptr_j_char_registry) # addiu $a0, $a0, -0x3908
+/* 0F6260 7F0C1730 3C048009 */  lui   $a0, %hi(ptr_char_registry)
+/* 0F6264 7F0C1734 2484C6F8 */  addiu $a0, %lo(ptr_char_registry) # addiu $a0, $a0, -0x3908
 /* 0F6268 7F0C1738 AC820000 */  sw    $v0, ($a0)
 /* 0F626C 7F0C173C 00001825 */  move  $v1, $zero
 /* 0F6270 7F0C1740 240500F8 */  li    $a1, 248
@@ -297,10 +338,10 @@ glabel init_LnameX
 /* 0F631C 7F0C17EC 8E480000 */  lw    $t0, ($s2)
 .L7F0C17F0:
 /* 0F6320 7F0C17F0 3C018009 */  lui   $at, %hi(ptr_text)
-/* 0F6324 7F0C17F4 3C028009 */  lui   $v0, %hi(table_text_pointers)
-/* 0F6328 7F0C17F8 3C038009 */  lui   $v1, %hi(ptr_j_char_data_buf)
-/* 0F632C 7F0C17FC 2463C6F4 */  addiu $v1, %lo(ptr_j_char_data_buf) # addiu $v1, $v1, -0x390c
-/* 0F6330 7F0C1800 2442C644 */  addiu $v0, %lo(table_text_pointers) # addiu $v0, $v0, -0x39bc
+/* 0F6324 7F0C17F4 3C028009 */  lui   $v0, %hi(ptr_text+0x4)
+/* 0F6328 7F0C17F8 3C038009 */  lui   $v1, %hi(ptr_char_data_buf)
+/* 0F632C 7F0C17FC 2463C6F4 */  addiu $v1, %lo(ptr_char_data_buf) # addiu $v1, $v1, -0x390c
+/* 0F6330 7F0C1800 2442C644 */  addiu $v0, %lo(ptr_text+0x4) # addiu $v0, $v0, -0x39bc
 /* 0F6334 7F0C1804 AC20C640 */  sw    $zero, %lo(ptr_text)($at)
 .L7F0C1808:
 /* 0F6338 7F0C1808 24420010 */  addiu $v0, $v0, 0x10
@@ -443,8 +484,8 @@ glabel something_with_LnameJ
 /* 0F6478 7F0C1948 00001825 */  move  $v1, $zero
 /* 0F647C 7F0C194C 240600F8 */  li    $a2, 248
 /* 0F6480 7F0C1950 11C00035 */  beqz  $t6, .L7F0C1A28
-/* 0F6484 7F0C1954 3C058009 */   lui   $a1, %hi(ptr_j_char_registry)
-/* 0F6488 7F0C1958 24A5C6F8 */  addiu $a1, %lo(ptr_j_char_registry) # addiu $a1, $a1, -0x3908
+/* 0F6484 7F0C1954 3C058009 */   lui   $a1, %hi(ptr_char_registry)
+/* 0F6488 7F0C1958 24A5C6F8 */  addiu $a1, %lo(ptr_char_registry) # addiu $a1, $a1, -0x3908
 /* 0F648C 7F0C195C 8CAF0000 */  lw    $t7, ($a1)
 .L7F0C1960:
 /* 0F6490 7F0C1960 01E31021 */  addu  $v0, $t7, $v1
@@ -575,7 +616,7 @@ int something_with_LnameX(uint param_1)
                 *(ushort *)(ptr_char_registry + iVar4 + 2) =
                      uVar3 | *(ushort *)(ptr_char_registry + iVar4 + 2) & 0xc000;
                 romCopy((char *)(ptr_char_data_buf + iVar9 * 0x60),
-                        (char *)(_efontcharSegmentStart + ((int)(param_1 & 0x1fff) >> 1) * 0x20),
+                        (char *)(_efontcharSegmentRomStart + ((int)(param_1 & 0x1fff) >> 1) * 0x20),
                         0x80);
                 puVar2 = ptr_char_data_buf + iVar9 * 0x60;
             }
@@ -585,7 +626,7 @@ int something_with_LnameX(uint param_1)
             *(ushort *)(ptr_char_registry + indexto * 2) =
                  (ushort)indexfrom & 0x3fff | *(ushort *)(ptr_char_registry + indexto * 2) & 0xc000;
             romCopy((char *)(ptr_char_data_buf + indexto * 0x60),
-                    (char *)(_jfontcharSegmentStart + indexfrom * 0x18),0x60);
+                    (char *)(_jfontcharSegmentRomStart + indexfrom * 0x18),0x60);
             puVar2 = ptr_char_data_buf + indexto * 0x60;
         }
     }
@@ -606,8 +647,8 @@ glabel something_with_LnameX
 /* 0F6580 7F0C1A50 00004025 */   move  $t0, $zero
 /* 0F6584 7F0C1A54 24080001 */  li    $t0, 1
 .L7F0C1A58:
-/* 0F6588 7F0C1A58 3C0C8009 */  lui   $t4, %hi(ptr_j_char_registry) 
-/* 0F658C 7F0C1A5C 8D8CC6F8 */  lw    $t4, %lo(ptr_j_char_registry)($t4)
+/* 0F6588 7F0C1A58 3C0C8009 */  lui   $t4, %hi(ptr_char_registry) 
+/* 0F658C 7F0C1A5C 8D8CC6F8 */  lw    $t4, %lo(ptr_char_registry)($t4)
 /* 0F6590 7F0C1A60 00002825 */  move  $a1, $zero
 /* 0F6594 7F0C1A64 00003825 */  move  $a3, $zero
 /* 0F6598 7F0C1A68 2409007C */  li    $t1, 124
@@ -667,16 +708,16 @@ glabel something_with_LnameX
 /* 0F664C 7F0C1B1C 31F9FF3F */  andi  $t9, $t7, 0xff3f
 /* 0F6650 7F0C1B20 372E0080 */  ori   $t6, $t9, 0x80
 /* 0F6654 7F0C1B24 A08E0000 */  sb    $t6, ($a0)
-/* 0F6658 7F0C1B28 3C0F8009 */  lui   $t7, %hi(ptr_j_char_data_buf) 
-/* 0F665C 7F0C1B2C 8DEFC6F4 */  lw    $t7, %lo(ptr_j_char_data_buf)($t7)
+/* 0F6658 7F0C1B28 3C0F8009 */  lui   $t7, %hi(ptr_char_data_buf) 
+/* 0F665C 7F0C1B2C 8DEFC6F4 */  lw    $t7, %lo(ptr_char_data_buf)($t7)
 /* 0F6660 7F0C1B30 0000C012 */  mflo  $t8
 /* 0F6664 7F0C1B34 030F1021 */  addu  $v0, $t8, $t7
 /* 0F6668 7F0C1B38 1000006F */  b     .L7F0C1CF8
 /* 0F666C 7F0C1B3C 8FBF001C */   lw    $ra, 0x1c($sp)
 .L7F0C1B40:
 /* 0F6670 7F0C1B40 90990000 */  lbu   $t9, ($a0)
-/* 0F6674 7F0C1B44 3C098009 */  lui   $t1, %hi(ptr_j_char_registry) 
-/* 0F6678 7F0C1B48 2529C6F8 */  addiu $t1, %lo(ptr_j_char_registry) # addiu $t1, $t1, -0x3908
+/* 0F6674 7F0C1B44 3C098009 */  lui   $t1, %hi(ptr_char_registry) 
+/* 0F6678 7F0C1B48 2529C6F8 */  addiu $t1, %lo(ptr_char_registry) # addiu $t1, $t1, -0x3908
 /* 0F667C 7F0C1B4C 332EFF3F */  andi  $t6, $t9, 0xff3f
 /* 0F6680 7F0C1B50 35D80080 */  ori   $t8, $t6, 0x80
 /* 0F6684 7F0C1B54 A0980000 */  sb    $t8, ($a0)
@@ -688,8 +729,8 @@ glabel something_with_LnameX
 /* 0F669C 7F0C1B6C 332EFF3F */  andi  $t6, $t9, 0xff3f
 /* 0F66A0 7F0C1B70 35D80080 */  ori   $t8, $t6, 0x80
 /* 0F66A4 7F0C1B74 A0980002 */  sb    $t8, 2($a0)
-/* 0F66A8 7F0C1B78 3C198009 */  lui   $t9, %hi(ptr_j_char_data_buf) 
-/* 0F66AC 7F0C1B7C 8F39C6F4 */  lw    $t9, %lo(ptr_j_char_data_buf)($t9)
+/* 0F66A8 7F0C1B78 3C198009 */  lui   $t9, %hi(ptr_char_data_buf) 
+/* 0F66AC 7F0C1B7C 8F39C6F4 */  lw    $t9, %lo(ptr_char_data_buf)($t9)
 /* 0F66B0 7F0C1B80 00007812 */  mflo  $t7
 /* 0F66B4 7F0C1B84 1000005B */  b     .L7F0C1CF4
 /* 0F66B8 7F0C1B88 01F91021 */   addu  $v0, $t7, $t9
@@ -702,8 +743,8 @@ glabel something_with_LnameX
 /* 0F66D0 7F0C1BA0 000A3840 */  sll   $a3, $t2, 1
 /* 0F66D4 7F0C1BA4 01871821 */  addu  $v1, $t4, $a3
 /* 0F66D8 7F0C1BA8 906E0000 */  lbu   $t6, ($v1)
-/* 0F66DC 7F0C1BAC 3C098009 */  lui   $t1, %hi(ptr_j_char_registry) 
-/* 0F66E0 7F0C1BB0 2529C6F8 */  addiu $t1, %lo(ptr_j_char_registry) # addiu $t1, $t1, -0x3908
+/* 0F66DC 7F0C1BAC 3C098009 */  lui   $t1, %hi(ptr_char_registry) 
+/* 0F66E0 7F0C1BB0 2529C6F8 */  addiu $t1, %lo(ptr_char_registry) # addiu $t1, $t1, -0x3908
 /* 0F66E4 7F0C1BB4 31D8FF3F */  andi  $t8, $t6, 0xff3f
 /* 0F66E8 7F0C1BB8 370F0080 */  ori   $t7, $t8, 0x80
 /* 0F66EC 7F0C1BBC A06F0000 */  sb    $t7, ($v1)
@@ -718,29 +759,29 @@ glabel something_with_LnameX
 /* 0F6710 7F0C1BE0 31F9C000 */  andi  $t9, $t7, 0xc000
 /* 0F6714 7F0C1BE4 03197025 */  or    $t6, $t8, $t9
 /* 0F6718 7F0C1BE8 A46E0000 */  sh    $t6, ($v1)
-/* 0F671C 7F0C1BEC 3C0F8009 */  lui   $t7, %hi(ptr_j_char_data_buf) 
-/* 0F6720 7F0C1BF0 8DEFC6F4 */  lw    $t7, %lo(ptr_j_char_data_buf)($t7)
-/* 0F6724 7F0C1BF4 3C190011 */  lui   $t9, %hi(_jfontcharSegmentStart) # $t9, 0x11
-/* 0F6728 7F0C1BF8 27397940 */  addiu $t9, %lo(_jfontcharSegmentStart) # addiu $t9, $t9, 0x7940
+/* 0F671C 7F0C1BEC 3C0F8009 */  lui   $t7, %hi(ptr_char_data_buf) 
+/* 0F6720 7F0C1BF0 8DEFC6F4 */  lw    $t7, %lo(ptr_char_data_buf)($t7)
+/* 0F6724 7F0C1BF4 3C190011 */  lui   $t9, %hi(_jfontcharSegmentRomStart) # $t9, 0x11
+/* 0F6728 7F0C1BF8 27397940 */  addiu $t9, %lo(_jfontcharSegmentRomStart) # addiu $t9, $t9, 0x7940
 /* 0F672C 7F0C1BFC 0000C012 */  mflo  $t8
 /* 0F6730 7F0C1C00 03192821 */  addu  $a1, $t8, $t9
 /* 0F6734 7F0C1C04 AFA80024 */  sw    $t0, 0x24($sp)
 /* 0F6738 7F0C1C08 0C001707 */  jal   romCopy
 /* 0F673C 7F0C1C0C 010F2021 */   addu  $a0, $t0, $t7
-/* 0F6740 7F0C1C10 3C0E8009 */  lui   $t6, %hi(ptr_j_char_data_buf) 
+/* 0F6740 7F0C1C10 3C0E8009 */  lui   $t6, %hi(ptr_char_data_buf) 
 /* 0F6744 7F0C1C14 8FA80024 */  lw    $t0, 0x24($sp)
-/* 0F6748 7F0C1C18 8DCEC6F4 */  lw    $t6, %lo(ptr_j_char_data_buf)($t6)
+/* 0F6748 7F0C1C18 8DCEC6F4 */  lw    $t6, %lo(ptr_char_data_buf)($t6)
 /* 0F674C 7F0C1C1C 10000035 */  b     .L7F0C1CF4
 /* 0F6750 7F0C1C20 010E1021 */   addu  $v0, $t0, $t6
 .L7F0C1C24:
 /* 0F6754 7F0C1C24 11000032 */  beqz  $t0, .L7F0C1CF0
-/* 0F6758 7F0C1C28 3C028009 */   lui   $v0, %hi(ptr_j_char_data_buf)
+/* 0F6758 7F0C1C28 3C028009 */   lui   $v0, %hi(ptr_char_data_buf)
 /* 0F675C 7F0C1C2C 05600030 */  bltz  $t3, .L7F0C1CF0
 /* 0F6760 7F0C1C30 000B1840 */   sll   $v1, $t3, 1
 /* 0F6764 7F0C1C34 01831021 */  addu  $v0, $t4, $v1
 /* 0F6768 7F0C1C38 904F0000 */  lbu   $t7, ($v0)
-/* 0F676C 7F0C1C3C 3C098009 */  lui   $t1, %hi(ptr_j_char_registry) 
-/* 0F6770 7F0C1C40 2529C6F8 */  addiu $t1, %lo(ptr_j_char_registry) # addiu $t1, $t1, -0x3908
+/* 0F676C 7F0C1C3C 3C098009 */  lui   $t1, %hi(ptr_char_registry) 
+/* 0F6770 7F0C1C40 2529C6F8 */  addiu $t1, %lo(ptr_char_registry) # addiu $t1, $t1, -0x3908
 /* 0F6774 7F0C1C44 31F8FF3F */  andi  $t8, $t7, 0xff3f
 /* 0F6778 7F0C1C48 37190080 */  ori   $t9, $t8, 0x80
 /* 0F677C 7F0C1C4C A0590000 */  sb    $t9, ($v0)
@@ -765,27 +806,27 @@ glabel something_with_LnameX
 /* 0F67C8 7F0C1C98 8D380000 */  lw    $t8, ($t1)
 /* 0F67CC 7F0C1C9C 03031021 */  addu  $v0, $t8, $v1
 /* 0F67D0 7F0C1CA0 94590002 */  lhu   $t9, 2($v0)
-/* 0F67D4 7F0C1CA4 3C188009 */  lui   $t8, %hi(ptr_j_char_data_buf) 
+/* 0F67D4 7F0C1CA4 3C188009 */  lui   $t8, %hi(ptr_char_data_buf) 
 /* 0F67D8 7F0C1CA8 332EC000 */  andi  $t6, $t9, 0xc000
 /* 0F67DC 7F0C1CAC 00EE7825 */  or    $t7, $a3, $t6
 /* 0F67E0 7F0C1CB0 A44F0002 */  sh    $t7, 2($v0)
-/* 0F67E4 7F0C1CB4 8F18C6F4 */  lw    $t8, %lo(ptr_j_char_data_buf)($t8)
+/* 0F67E4 7F0C1CB4 8F18C6F4 */  lw    $t8, %lo(ptr_char_data_buf)($t8)
 /* 0F67E8 7F0C1CB8 32191FFF */  andi  $t9, $s0, 0x1fff
 /* 0F67EC 7F0C1CBC 00197043 */  sra   $t6, $t9, 1
 /* 0F67F0 7F0C1CC0 01182021 */  addu  $a0, $t0, $t8
-/* 0F67F4 7F0C1CC4 3C180012 */  lui   $t8, %hi(_efontcharSegmentStart) # $t8, 0x12
-/* 0F67F8 7F0C1CC8 27183040 */  addiu $t8, %lo(_efontcharSegmentStart) # addiu $t8, $t8, 0x3040
+/* 0F67F4 7F0C1CC4 3C180012 */  lui   $t8, %hi(_efontcharSegmentRomStart) # $t8, 0x12
+/* 0F67F8 7F0C1CC8 27183040 */  addiu $t8, %lo(_efontcharSegmentRomStart) # addiu $t8, $t8, 0x3040
 /* 0F67FC 7F0C1CCC 000E79C0 */  sll   $t7, $t6, 7
 /* 0F6800 7F0C1CD0 01F82821 */  addu  $a1, $t7, $t8
 /* 0F6804 7F0C1CD4 0C001707 */  jal   romCopy
 /* 0F6808 7F0C1CD8 AFA80024 */   sw    $t0, 0x24($sp)
-/* 0F680C 7F0C1CDC 3C198009 */  lui   $t9, %hi(ptr_j_char_data_buf) 
+/* 0F680C 7F0C1CDC 3C198009 */  lui   $t9, %hi(ptr_char_data_buf) 
 /* 0F6810 7F0C1CE0 8FA80024 */  lw    $t0, 0x24($sp)
-/* 0F6814 7F0C1CE4 8F39C6F4 */  lw    $t9, %lo(ptr_j_char_data_buf)($t9)
+/* 0F6814 7F0C1CE4 8F39C6F4 */  lw    $t9, %lo(ptr_char_data_buf)($t9)
 /* 0F6818 7F0C1CE8 10000002 */  b     .L7F0C1CF4
 /* 0F681C 7F0C1CEC 01191021 */   addu  $v0, $t0, $t9
 .L7F0C1CF0:
-/* 0F6820 7F0C1CF0 8C42C6F4 */  lw    $v0, %lo(ptr_j_char_data_buf)($v0)
+/* 0F6820 7F0C1CF0 8C42C6F4 */  lw    $v0, %lo(ptr_char_data_buf)($v0)
 .L7F0C1CF4:
 /* 0F6824 7F0C1CF4 8FBF001C */  lw    $ra, 0x1c($sp)
 .L7F0C1CF8:
@@ -797,96 +838,26 @@ glabel something_with_LnameX
 #endif
 
 
-
-
-
-#ifdef NONMATCHING
-void load_mission_text_bank(u32 param_1)
+void load_mission_text_bank(u32 id)
 {
-    *(u8 **)(&ptr_text + param_1) = _load_resource_named_to_membank((byte *)(&(&LnameX_lookuptable)[param_1].en_file)[j_text_trigger],1,0x100,4);
+    ptr_text[id] = _load_resource_named_to_membank(LnameX_lookuptable[id][j_text_trigger],1,0x100,4);
 }
-#else
-GLOBAL_ASM(
-.text
-glabel load_mission_text_bank
-/* 0F6838 7F0C1D08 3C188005 */  lui   $t8, %hi(j_text_trigger) 
-/* 0F683C 7F0C1D0C 8F1884D0 */  lw    $t8, %lo(j_text_trigger)($t8)
-/* 0F6840 7F0C1D10 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0F6844 7F0C1D14 000478C0 */  sll   $t7, $a0, 3
-/* 0F6848 7F0C1D18 AFA40018 */  sw    $a0, 0x18($sp)
-/* 0F684C 7F0C1D1C 0018C880 */  sll   $t9, $t8, 2
-/* 0F6850 7F0C1D20 01F94021 */  addu  $t0, $t7, $t9
-/* 0F6854 7F0C1D24 3C048005 */  lui   $a0, %hi(LnameX_lookuptable)
-/* 0F6858 7F0C1D28 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0F685C 7F0C1D2C 00882021 */  addu  $a0, $a0, $t0
-/* 0F6860 7F0C1D30 8C8484D4 */  lw    $a0, %lo(LnameX_lookuptable)($a0)
-/* 0F6864 7F0C1D34 24050001 */  li    $a1, 1
-/* 0F6868 7F0C1D38 24060100 */  li    $a2, 256
-/* 0F686C 7F0C1D3C 0FC2F341 */  jal   _load_resource_named_to_membank
-/* 0F6870 7F0C1D40 24070004 */   li    $a3, 4
-/* 0F6874 7F0C1D44 8FA90018 */  lw    $t1, 0x18($sp)
-/* 0F6878 7F0C1D48 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0F687C 7F0C1D4C 3C018009 */  lui   $at, %hi(ptr_text)
-/* 0F6880 7F0C1D50 00095080 */  sll   $t2, $t1, 2
-/* 0F6884 7F0C1D54 002A0821 */  addu  $at, $at, $t2
-/* 0F6888 7F0C1D58 AC22C640 */  sw    $v0, %lo(ptr_text)($at)
-/* 0F688C 7F0C1D5C 03E00008 */  jr    $ra
-/* 0F6890 7F0C1D60 27BD0018 */   addiu $sp, $sp, 0x18
-)
-#endif
 
 
-
-
-
-#ifdef NONMATCHING
-void load_briefing_text_bank(int lnameID,undefined *target,int size)
+void load_briefing_text_bank(int lnameID,u8 *target,int size)
 {
-    *(u8 **)(&ptr_text + lnameID) = _load_resource_named_to_buffer((byte *)(&(&LnameX_lookuptable)[lnameID].en_file)[j_text_trigger],1,target, size);
+   ptr_text[lnameID] = _load_resource_named_to_buffer(LnameX_lookuptable[lnameID][j_text_trigger],1,target,size);
 }
-#else
-GLOBAL_ASM(
-.text
-glabel load_briefing_text_bank
-/* 0F6894 7F0C1D64 3C188005 */  lui   $t8, %hi(j_text_trigger) 
-/* 0F6898 7F0C1D68 8F1884D0 */  lw    $t8, %lo(j_text_trigger)($t8)
-/* 0F689C 7F0C1D6C 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0F68A0 7F0C1D70 000478C0 */  sll   $t7, $a0, 3
-/* 0F68A4 7F0C1D74 AFA40018 */  sw    $a0, 0x18($sp)
-/* 0F68A8 7F0C1D78 0018C880 */  sll   $t9, $t8, 2
-/* 0F68AC 7F0C1D7C 00C03825 */  move  $a3, $a2
-/* 0F68B0 7F0C1D80 01F94021 */  addu  $t0, $t7, $t9
-/* 0F68B4 7F0C1D84 3C048005 */  lui   $a0, %hi(LnameX_lookuptable)
-/* 0F68B8 7F0C1D88 00A03025 */  move  $a2, $a1
-/* 0F68BC 7F0C1D8C AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0F68C0 7F0C1D90 AFA5001C */  sw    $a1, 0x1c($sp)
-/* 0F68C4 7F0C1D94 00882021 */  addu  $a0, $a0, $t0
-/* 0F68C8 7F0C1D98 8C8484D4 */  lw    $a0, %lo(LnameX_lookuptable)($a0)
-/* 0F68CC 7F0C1D9C 0FC2F350 */  jal   _load_resource_named_to_buffer
-/* 0F68D0 7F0C1DA0 24050001 */   li    $a1, 1
-/* 0F68D4 7F0C1DA4 8FA90018 */  lw    $t1, 0x18($sp)
-/* 0F68D8 7F0C1DA8 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0F68DC 7F0C1DAC 3C018009 */  lui   $at, %hi(ptr_text)
-/* 0F68E0 7F0C1DB0 00095080 */  sll   $t2, $t1, 2
-/* 0F68E4 7F0C1DB4 002A0821 */  addu  $at, $at, $t2
-/* 0F68E8 7F0C1DB8 AC22C640 */  sw    $v0, %lo(ptr_text)($at)
-/* 0F68EC 7F0C1DBC 03E00008 */  jr    $ra
-/* 0F68F0 7F0C1DC0 27BD0018 */   addiu $sp, $sp, 0x18
-)
-#endif
-
-
-
 
 
 void blank_text_bank(s32 textBank) {
-    (&ptr_text)[textBank] = 0;
+    ptr_text[textBank] = 0;
 }
 
 
-u8 * get_textptr_for_textID(s32 slotID)
+u8 * langGet(s32 slotID)
 {
-    u32 * textbank_ptr = (&ptr_text)[slotID >> 10]; /* get the text file bank ID index the text ptr table */
+    u32 * textbank_ptr = ptr_text[slotID >> 10]; /* get the text file bank ID index the text ptr table */
     u32 textslot_offset = textbank_ptr[slotID & 0x03FF]; /* load the textbank ptr table then get the slot's offset */
 
     u32 output_slot = textslot_offset; /* add the text slot offset to the base ptr to get the ptr to text file's slot */

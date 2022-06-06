@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LlenJ[] = {
+char * LlenJ[] = {
     "\n",
     "\n",
     "\n",
@@ -56,5 +55,5 @@ struct stringentry LlenJ[] = {
     "Gareth Jones\n",
     "Gavin Hood\n",
     "\"JAMES BOND WILL RETURN\"\n",
-    NULL
+    0
 };

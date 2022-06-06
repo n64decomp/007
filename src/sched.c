@@ -1,12 +1,18 @@
 #include <ultra64.h>
-#include "libultra/os.h"
+#include <PR/os.h>
 #include "init.h"
 #include "sched.h"
-#include "bondgame.h"
+#include <bondgame.h>
 #include "deb_print.h"
-#include "video.h"
+#include "fr.h"
 #include "joy.h"
 #include "music.h"
+#include "speed_graph.h"
+#include "thread_config.h"
+
+/**
+ * EU .data, offset from start of data_seg : 0x2300
+*/
 
 /**
  * @file sched.c
@@ -47,24 +53,29 @@ u32 stderr_unused = 0;
 u32 stderr_enabled = 0;
 u32 stderr_active = 0;
 u32 stderr_permitted = 0;
+
+/**
+ * EU .data, offset from start of data_seg : 0x2310
+*/
 u32 userCompareValue = 45000000;
 u32 currentcount = 0;
 u32 dp_busy = 0;
 u32 dpCount = 0;
 //800230b0
-s32 g_ViCurrentIndex = 0;
-f32 g_ViXScales[2] = {1.0, 1.0};
-f32 g_ViYScales[2] = {1.0, 1.0};
-s32 something_with_osVI_14[2] = {0, 0}; // boolean
+s32 g_schedViCurrentFrameBuffer = 0;
+f32 g_ViXScales[NUM_VIDEO_FRAME_BUFFERS] = {1.0, 1.0};
+f32 g_ViYScales[NUM_VIDEO_FRAME_BUFFERS] = {1.0, 1.0};
+s32 g_ViChangeVideoModes[NUM_VIDEO_FRAME_BUFFERS] = {0, 0}; // boolean
 
-OSSched sc;
-//temporary until i get proper sized structs
+OSSched os_scheduler;
 OSScClient gfxClient[3];
-//char gfxClient[0x18];
-
 u32 g_DisplayPerformanceCounters[4]; // clock, cmc, pipe, tmem
-OSViMode g_ViModes[2];
-OSViMode *g_ViModePtrs[2];
+
+/**
+ * EU .bss 0x80051f00.
+*/
+OSViMode g_ViModes[NUM_VIDEO_FRAME_BUFFERS];
+OSViMode *g_ViModePtrs[NUM_VIDEO_FRAME_BUFFERS];
 
 /**
  * 1570	70000970
@@ -116,10 +127,9 @@ void CheckDisplayErrorBuffer(u32 *buffer)
 }
 
 /**
- * 15F8	700009F8
+ * Address 0x700009F8.
  * test to display stderr every 16th frame
  */
-
 void CheckDisplayErrorBufferEvery16Frames(u32 framecount)
 {
 	if (!(framecount & 0xf))
@@ -128,8 +138,8 @@ void CheckDisplayErrorBufferEvery16Frames(u32 framecount)
         {
 			if (userCompareValue < (osGetCount() - currentcount))
             {
-				deboutDrawToBuffer((u32*)cfb_16[0]);
-				deboutDrawToBuffer((u32*)cfb_16[1]);
+				deboutDrawToBuffer((u16*)cfb_16[0]);
+				deboutDrawToBuffer((u16*)cfb_16[1]);
 			}
 		}
 	}
@@ -140,11 +150,13 @@ void CheckDisplayErrorBufferEvery16Frames(u32 framecount)
  * 1688	70000A88
  * store current Count to 800230A4
  */
-void osCreateLog(void){
+void osCreateLog(void)
+{
 	currentcount=osGetCount();
 }
 
-void osCreateScheduler (OSSched * sc, void * stack, u8 mode, u32 numFields) {
+void osCreateScheduler (OSSched * sc, void * stack, u8 mode, u32 numFields)
+{
     sc->curRSPTask = 0;
     sc->curRDPTask = 0;
     sc->clientList = 0;
@@ -160,15 +172,15 @@ void osCreateScheduler (OSSched * sc, void * stack, u8 mode, u32 numFields) {
     osCreateMesgQueue(&sc->cmdQ, sc->cmdMsgBuf, OS_SC_MAX_MESGS);
     osCreateViManager(OS_PRIORITY_VIMGR);
     viMode = &osViModeTable[mode];
-    dword_CODE_bss_80060880 = viMode->comRegs.hStart;
-    dword_CODE_bss_80060884 = viMode->fldRegs[0].vStart;
-    dword_CODE_bss_80060888 = viMode->fldRegs[1].vStart;
+    g_viOriginalHstart = viMode->comRegs.hStart;
+    g_viOriginalVstart0 = viMode->fldRegs[0].vStart;
+    g_viOriginalVstart1 = viMode->fldRegs[1].vStart;
     osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg)RSP_DONE_MSG); 
     osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg)RDP_DONE_MSG);
     osSetEventMesg(OS_EVENT_PRENMI, &sc->interruptQ, (OSMesg)PRE_NMI_MSG);
     osViSetEvent(&sc->interruptQ, (OSMesg)VIDEO_MSG, numFields);
     osCreateLog();
-    osCreateThread(sc->thread, 2, &__scMain, sc, set_stack_entry(&sp_shed, 0x200), 0x1e);
+    osCreateThread(sc->thread, SCHED_THREAD_ID, &__scMain, sc, set_stack_entry(&sp_shed, 0x200), SCHED_THREAD_PRIORITY);
     osStartThread(sc->thread);
 }
 
@@ -176,7 +188,7 @@ void osScAddClient(OSSched *sc, OSScClient *c, OSMesgQueue *msgQ, OSScClient *ne
 {
     OSIntMask mask;
 
-    mask = osSetIntMask(1);
+    mask = osSetIntMask(OS_IM_NONE);
 
     c->msgQ = msgQ;
     c[1].next = next;
@@ -196,7 +208,7 @@ void osScRemoveClient(OSSched *sc, OSScClient *c)
     OSScClient *prev   = 0;
     OSIntMask  mask;
 
-    mask = osSetIntMask(1);
+    mask = osSetIntMask(OS_IM_NONE);
     
     while (client != 0) 
     {
@@ -305,7 +317,7 @@ void __scHandleRetrace(OSSched *sc) {
     OSScTask    *dp = 0;
     speedGraphVideoRelated_1();
     sc->frameCount++;
-    video_related_7();
+    viVsyncRelated();
     joyPoll();
     musicFadeTick();
     while (osRecvMesg(&sc->cmdQ, (OSMesg*)&rspTask, OS_MESG_NOBLOCK) != -1) {
@@ -331,7 +343,11 @@ void __scHandleRSP(OSSched *sc) {
     s32 state;
     t = sc->curRSPTask;
     sc->curRSPTask = 0;
-    speedGraphVideoRelated_3(0x10001);
+#if defined(VERSION_EU)
+    speedGraphDisplay(0x10001);
+#else
+    profileSetMarker(0x10001);
+#endif
     if ((t->state & OS_SC_YIELD) && osSpTaskYielded(&t->list)) {
         t->state |= OS_SC_YIELDED;
         if ((t->flags & OS_SC_TYPE_MASK) == OS_SC_XBUS) {
@@ -361,7 +377,11 @@ void __scHandleRDP(OSSched *sc)
     OSScTask *t, *sp = NULL, *dp = NULL; 
     s32 state;
     if (sc->curRDPTask != NULL) {
-        speedGraphVideoRelated_3(0x10002);
+#if defined(VERSION_EU)
+    speedGraphDisplay(0x10002);
+#else
+    profileSetMarker(0x10002);
+#endif
         osDpGetCounters(g_DisplayPerformanceCounters);
         t = sc->curRDPTask;
         sc->curRDPTask = NULL;
@@ -402,14 +422,14 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t)
                     osViBlack(FALSE);
                     firsttime = 0;
                 }
-                if (something_with_osVI_14[g_ViCurrentIndex]) {
-                    OSIntMask mask = osSetIntMask(0x80401);
-                    *g_ViModePtrs[g_ViCurrentIndex] = g_ViModes[g_ViCurrentIndex];
+                if (g_ViChangeVideoModes[g_schedViCurrentFrameBuffer]) {
+                    OSIntMask mask = osSetIntMask(OS_IM_VI);
+                    *g_ViModePtrs[g_schedViCurrentFrameBuffer] = g_ViModes[g_schedViCurrentFrameBuffer];
                     osSetIntMask(mask);
                 }
-                osViSetXScale(g_ViXScales[g_ViCurrentIndex]);
-                osViSetYScale(g_ViYScales[g_ViCurrentIndex]);
-                g_ViCurrentIndex = ((g_ViCurrentIndex + 1) % 2);
+                osViSetXScale(g_ViXScales[g_schedViCurrentFrameBuffer]);
+                osViSetYScale(g_ViYScales[g_schedViCurrentFrameBuffer]);
+                g_schedViCurrentFrameBuffer = ((g_schedViCurrentFrameBuffer + 1) % 2);
                 CheckDisplayErrorBuffer(t->framebuffer);
                 osViSwapBuffer(t->framebuffer);
             }
@@ -461,12 +481,21 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp)
         
         if (sp->list.t.type == 2)
         {
-            speedGraphVideoRelated_3(0x30001);
+#if defined(VERSION_EU)
+            speedGraphDisplay(0x30001);
+#else
+            profileSetMarker(0x30001);
+#endif
         }
         else
         {
-            speedGraphVideoRelated_3(0x40001);
-            speedGraphVideoRelated_3(0x20002);
+#if defined(VERSION_EU)
+            speedGraphDisplay(0x40001);
+            speedGraphDisplay(0x20002);
+#else
+            profileSetMarker(0x40001);
+            profileSetMarker(0x20002);
+#endif
         }
         sp->state &= ~(OS_SC_YIELD | OS_SC_YIELDED); 
         osSpTaskLoad(&sp->list);

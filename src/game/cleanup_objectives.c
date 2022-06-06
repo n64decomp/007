@@ -1,4 +1,4 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 
 
@@ -36,16 +36,16 @@ glabel cleanupObjectives
 /* 03C114 7F0075E4 1040000C */  beqz  $v0, .L7F007618
 /* 03C118 7F0075E8 24050002 */   li    $a1, 2
 /* 03C11C 7F0075EC 9049000E */  lbu   $t1, 0xe($v0)
-/* 03C120 7F0075F0 3C0B8007 */  lui   $t3, %hi(dword_CODE_bss_80075D5C) 
+/* 03C120 7F0075F0 3C0B8007 */  lui   $t3, %hi(dword_CODE_bss_80075D58+4) 
 /* 03C124 7F0075F4 312A0001 */  andi  $t2, $t1, 1
 /* 03C128 7F0075F8 11400007 */  beqz  $t2, .L7F007618
 /* 03C12C 7F0075FC 00000000 */   nop   
-/* 03C130 7F007600 8D6B5D5C */  lw    $t3, %lo(dword_CODE_bss_80075D5C)($t3)
+/* 03C130 7F007600 8D6B5D5C */  lw    $t3, %lo(dword_CODE_bss_80075D58+4)($t3)
 /* 03C134 7F007604 240C0001 */  li    $t4, 1
-/* 03C138 7F007608 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D5C)
+/* 03C138 7F007608 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D58+4)
 /* 03C13C 7F00760C 10AB0002 */  beq   $a1, $t3, .L7F007618
 /* 03C140 7F007610 00000000 */   nop   
-/* 03C144 7F007614 AC2C5D5C */  sw    $t4, %lo(dword_CODE_bss_80075D5C)($at)
+/* 03C144 7F007614 AC2C5D5C */  sw    $t4, %lo(dword_CODE_bss_80075D58+4)($at)
 .L7F007618:
 /* 03C148 7F007618 3C068007 */  lui   $a2, %hi(dword_CODE_bss_80075D58)
 /* 03C14C 7F00761C 24C65D58 */  addiu $a2, %lo(dword_CODE_bss_80075D58) # addiu $a2, $a2, 0x5d58

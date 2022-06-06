@@ -2,7 +2,7 @@ name: JP-Status
 
 on:
   push:
-    branches: master
+    branches: master # Only trigger on master
     paths-ignore: # Don't trigger on files that are updated by the CI or other non-breaking files
     - 'tools/**'
     - '*.md'
@@ -10,7 +10,7 @@ on:
     - '.gitignore'
     - 'CppProperties.json'
   pull_request:
-    branches: master
+    branches: master # Only trigger on master
     
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,6 +29,13 @@ jobs:
           sudo apt install binutils-mips-linux-gnu make
           wget https://github.com/n64decomp/qemu-irix/releases/download/v2.11-deb/qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
           sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
+
+      - name: Get precompiled recomp to save time
+        env:
+          IDO_RECOMP: ${{ secrets.FILE_RECOMP  }}
+        run: |
+          wget -O recomp.zip $IDO_RECOMP
+          unzip -u recomp.zip -d tools/ido5.3_recomp
       
       - name: Get US File
         env:
@@ -47,7 +54,7 @@ jobs:
         run: ./extract_diff.j.sh
 
       - name: Make JP 
-        run: make -j VERSION=JP
+        run: make -j IDO_RECOMP=YES VERSION=JP
           
       - name: Make report
         run: make -C tools/report

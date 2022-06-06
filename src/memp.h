@@ -1,7 +1,7 @@
 #ifndef _MEMP_H_
 #define _MEMP_H_
 
-#include "ultra64.h"
+#include <ultra64.h>
 
 /*
 * Align to 16 bit boundary. Version "b", without preliminary addition.
@@ -29,7 +29,7 @@ typedef struct s_mempMVALS {
 void mempInitDebugNoticeList(void);
 void mempCheckMemflagTokens(int bstart,int bsize);
 void mempSetBankStarts(s32 banks[8]);
-u32 mempAllocBytesInBank(u32 bytes,u8 bank);
+void *mempAllocBytesInBank(u32 bytes,u8 bank);
 s32 mempAddEntryOfSizeToBank(u8* ptrdata, u32 size, u8 bank);
 void nulled_mempLoopAllMemBanks(void);
 s32 mempGetBankSizeLeft(u8 bank);

@@ -1,8 +1,8 @@
-#include "ultra64.h"
-#include "deb.h"
-#include "game/ob.h"
-#include "memp.h"
-#include "game/game_debug.h"
+#include <ultra64.h>
+#include <deb.h>
+#include "ob.h"
+#include <memp.h>
+#include "game_debug.h"
 
 // data
 //D:8004EAE0

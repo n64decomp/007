@@ -8,12 +8,20 @@
 #define M_HVQTASK 6
 #define M_HVQMTASK 7
 
+/**
+ * Size of Yield buffer.  The taskHdrPtr->t.yield_data_ptr must point to a 
+ * buffer of this size.  (The size is in bytes).  ONLY If the task will NEVER
+ * yield it may be a null pointer.  The buffer must be aligned to a 64 bit
+ * boundary.  The taskHdrPtr->t.yield_data_ptr must be set to point to the
+ * buffer BEFORE the task is started.
+ */
 #if (defined(F3DEX_GBI) || defined(F3DLP_GBI) || defined(F3DEX_GBI_2))
 #define OS_YIELD_DATA_SIZE 0xc00
 #else
 #define OS_YIELD_DATA_SIZE 0x900
 #endif
 #define OS_YIELD_AUDIO_SIZE 0x400
+#define OS_YIELD_GFX_DATA_SIZE 0xBA0
 
 /* Flags  */
 #define M_TASK_FLAG0 1
@@ -21,6 +29,18 @@
 #ifdef VERSION_SH
 #define M_TASK_FLAG2 4
 #endif
+
+/*
+ * Task Flags field
+ */
+#define OS_TASK_YIELDED			0x0001
+#define OS_TASK_DP_WAIT			0x0002
+#define	OS_TASK_LOADABLE		0x0004
+#define	OS_TASK_SP_ONLY			0x0008
+#define OS_TASK_USR0			0x0010
+#define OS_TASK_USR1			0x0020
+#define OS_TASK_USR2			0x0040
+#define OS_TASK_USR3			0x0080
 
 /* SpStatus */
 #define SPSTATUS_CLEAR_HALT 0x00000001
@@ -65,9 +85,50 @@
 #define SPSTATUS_SIGNAL6_SET 0x2000
 #define SPSTATUS_SIGNAL7_SET 0x4000
 
-/* Types */
-/* Types */
 
+// =================================================================================================
+//
+// Type definitions
+//
+//
+
+/*
+ * Task List Structure.
+ *
+ * Things an app might pass to the SP via the task list.
+ * Not every task ucode would need/use every field, but
+ *
+ *	- type (audio, gfx, video, ...)
+ *	- flags
+ *		- wait for DP to drain before running new task
+ *		- SEE BIT DEFINITIONS UNDER "Task Flags field"
+ *	- pointer to boot ucode
+ *	- size of boot ucode
+ *	- pointer to ucode
+ *	- size of ucode
+ *	- pointer to initial DMEM data
+ *	- size of initial DMEM data 
+ *	- pointer to DRAM stack
+ *	- size of DRAM stack (max)
+ *	- pointer to output buffer
+ *	- pointer to store output buffer length
+ *	- generic data pointer (for display list, etc.)
+ *	- generic data length (for display list, etc.)
+ *	- pointer to buffer where to store saved DMEM (in yield case)
+ *	- size of buffer to store saved DMEM.
+ *
+ * IMPORTANT!!! Watch alignment issues.
+ *
+ * IMPORTANT!!! Watch data cache issues.  The RCP may write data into the
+ * dram_stack, output_buff, output_buff_size, and the yield_data_ptr areas.
+ * These buffers should be cache aligned and use the entire line (16 bytes) to
+ * avoid corruption by writebacks by the CPU (cache tearing).
+ *
+ * IMPORTANT!!! all addresses are virtual addresses. Library does
+ * any necessary translation.
+ *
+ * documentation copied from n64devkit\ultra\usr\include\PR\sptask.h
+ */
 typedef struct
 {
     /*0x00*/ u32 type;
@@ -86,7 +147,7 @@ typedef struct
     /*0x24*/ u32 dram_stack_size;
 
     /*0x28*/ u64 *output_buff;
-    /*0x2C*/ u64 *output_buff_size;
+    /*0x2C*/ u64 *output_buff_size; // why is this u64*
 
     /*0x30*/ u64 *data_ptr;
     /*0x34*/ u32 data_size;

@@ -1,9 +1,8 @@
-#include "game/lvl_text.h"
 
-struct stringentry LimpE[] = {
- NULL,
- NULL,
- NULL,
- NULL,
- NULL
+char *LimpE[] = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0
 };

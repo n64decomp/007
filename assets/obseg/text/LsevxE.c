@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LsevxE[] = {
+char *LsevxE[] = {
  "A spy satellite has detected increased levels of activity at an old observatory complex near Severnaya (62.08n, 102.58e) in Russia.\n\nOther sources have confirmed the shipment of a large amount of computer hardware to that location, and an influx of skilled personnel.\n",
  "It might be coincidence that there is a new head of the Soviet Space Weapons Division, your old friend General Ourumov, or it might not. Penetrate the base and find out what is going on. Building plans for the underground section would be ideal. They're unlikely to be just lying around so look for a safe - there's bound to be someone you can borrow a key from. \n",
  "I've looked over the recon photographs and I advise you to stay clear of the main bunker entrance by the helipad. However, there seems to be a ventilation tower nearby which would make an excellent spot for a covert entry.\nYou ought to power down the comms dish too, no point in letting them tell the whole of Russia you've dropped in.\n",
@@ -23,10 +22,10 @@ struct stringentry LsevxE[] = {
  "enter base via ventilation tower\n",
  "Severnaya Installation, Siberian Plateau\n",
  "Four years ago\n",
- NULL,
- NULL,
- NULL,
- NULL,
+ 0,
+ 0,
+ 0,
+ 0,
  "This safe is locked.\n",
  "severnaya\n",
  "bunker plans\n",

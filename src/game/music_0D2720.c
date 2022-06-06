@@ -1,4 +1,5 @@
-#include "ultra64.h"
+#include <ultra64.h>
+#include "bondconstants.h"
 
 struct music_setup
 {
@@ -11,38 +12,78 @@ struct music_setup
 // data
 //D:8004EB10
 struct music_setup music_setup_entries[] = {
-{   9,    0xF, 0xFFFF,   0x29},
-{0x14,    0xC, 0xFFFF,   0x26},
-{0x16,   0x11, 0xFFFF,   0x3D},
-{0x17,      8, 0xFFFF,   0x12},
-{0x18,    0xB, 0xFFFF,   0x25},
-{0x19,      3, 0xFFFF,   0x1D},
-{0x1A,    0xA, 0xFFFF,   0x3E},
-{0x1B,   0x10, 0xFFFF,   0x2A},
-{0x1C,   0x19, 0xFFFF,   0x2E},
-{0x1D,    0xE, 0xFFFF,   0x28},
-{0x1E,      4, 0xFFFF,   0x20},
-{0x20,   0x16, 0xFFFF,   0x2F},
-{0x21,      9, 0xFFFF,   0x35},
-{0x22,      7, 0xFFFF,   0x1F},
-{0x23,   0x32, 0xFFFF,   0x33},
-{0x24,   0x39, 0xFFFF,   0x35},
-{0x25,   0x37, 0xFFFF,   0x2B},
-{0x27,   0x1A, 0xFFFF,   0x15},
-{0x28,      6, 0xFFFF, 0xFFFF},
-{0x29,   0x13, 0xFFFF,   0x30},
-{0x2A,   0x1C, 0xFFFF, 0xFFFF},
-{0x2B,   0x1C,   0x35,   0x3C},
-{0x36,   0x31, 0xFFFF, 0xFFFF},
-{0}
+    { LEVELID_BUNKER1,   M_BUNKER1,      0xFFFF,   M_BUNKER1X },
+    { LEVELID_SILO,      M_SILO,         0xFFFF,   M_SILOX },
+    { LEVELID_STATUE,    M_STATUE,       0xFFFF,   M_STATUEPART },
+    { LEVELID_CONTROL,   M_CONTROL,      0xFFFF,   M_ELEVATOR_CONTROL },
+    { LEVELID_ARCHIVES,  M_ARCHIVES,     0xFFFF,   M_ARCHIVESX },
+    { LEVELID_TRAIN,     M_TRAIN,        0xFFFF,   M_TRAINX },
+    { LEVELID_FRIGATE,   M_FRIGATE,      0xFFFF,   M_END_SOMETHING },
+    { LEVELID_BUNKER2,   M_BUNKER2,      0xFFFF,   M_BUNKER2X },
+    { LEVELID_AZTEC,     M_AZTEC,        0xFFFF,   M_AZTECX },
+    { LEVELID_STREETS,   M_STREETS,      0xFFFF,   M_STREETSX },
+    { LEVELID_DEPOT,     M_DEPOT,        0xFFFF,   M_DEPOTX },
+    { LEVELID_EGYPT,     M_EGYPTIAN,     0xFFFF,   M_EGYPTX },
+    { LEVELID_DAM,       M_DAM,          0xFFFF,   M_WIND },
+    { LEVELID_FACILITY,  M_FACILITY,     0xFFFF,   M_FACILITYX },
+    { LEVELID_RUNWAY,    M_RUNWAY,       0xFFFF,   M_RUNWAYPLANE },
+    { LEVELID_SURFACE,   M_SURFACE1,     0xFFFF,   M_WIND },
+    { LEVELID_JUNGLE,    M_JUNGLE,       0xFFFF,   M_JUNGLEX },
+    { LEVELID_CAVERNS,   M_WATERCAVERNS, 0xFFFF,   M_ELEVATOR_WC },
+    { LEVELID_CITADEL,   M_CITADEL,      0xFFFF,   0xFFFF },
+    { LEVELID_CRADLE,    M_CRADLE,       0xFFFF,   M_CRADLEX },
+    { LEVELID_SHO,       M_SURFACE2,     0xFFFF,   0xFFFF },
+    { LEVELID_SURFACE2,  M_SURFACE2,     M_WIND,   M_SURFACE2END },
+    { LEVELID_CUBA,      M_CUBA,         0xFFFF,   0xFFFF },
+    { 0 }
 };
 
 //D:8004EBD0
 s16 random_tracks[] = {
-        3,     4,     5,     6,     7,     8,     9,   0xA,   0xB,   0xC,   0xD,
-      0xE,   0xF,  0x10,  0x11,  0x12,  0x13,  0x15,  0x16,  0x19,  0x1A,  0x1C,
-     0x1D,  0x1F,  0x20,  0x21,  0x22,  0x23,  0x24,  0x25,  0x26,  0x28,  0x29,
-     0x2A,  0x2B,  0x2D,  0x2E,  0x2F,  0x30,  0x32,  0x34,  0x38,  0x39,     0
+    M_TRAIN,
+    M_DEPOT,
+    M_MPTHEME,
+    M_CITADEL,
+    M_FACILITY,
+    M_CONTROL,
+    M_DAM,
+    M_FRIGATE,
+    M_ARCHIVES,
+    M_SILO,
+    M_MPTHEME2,
+    M_STREETS,
+    M_BUNKER1,
+    M_BUNKER2,
+    M_STATUE,
+    M_ELEVATOR_CONTROL,
+    M_CRADLE,
+    M_ELEVATOR_WC,
+    M_EGYPTIAN,
+    M_AZTEC,
+    M_WATERCAVERNS,
+    M_SURFACE2,
+    M_TRAINX,
+    M_FACILITYX,
+    M_DEPOTX,
+    M_CONTROLX,
+    M_WATERCAVERNSX,
+    M_DAMX,
+    M_FRIGATEX,
+    M_ARCHIVESX,
+    M_SILOX,
+    M_STREETSX,
+    M_BUNKER1X,
+    M_BUNKER2X,
+    M_JUNGLEX,
+    M_STATUEX,
+    M_AZTECX,
+    M_EGYPTX,
+    M_CRADLEX,
+    M_RUNWAY,
+    M_MPTHEME3,
+    M_RUNWAYX,
+    M_SURFACE1,
+    M_NONE
 };
 
 
@@ -150,27 +191,29 @@ glabel getmusictrack_or_randomtrack
 
 s32 musicGetBgTrackForStage(s32 stageID)
 {
-  s32 i;
-  for (i=0; music_setup_entries[i].stage_id!=0; i++)
-  {
-      if (stageID == music_setup_entries[i].stage_id) 
-      {
-        return music_setup_entries[i].bg_sound;
-      }
-  }
-  return -1;
+    s32 i;
+    for (i=0; music_setup_entries[i].stage_id!=0; i++)
+    {
+        if (stageID == music_setup_entries[i].stage_id) 
+        {
+            return music_setup_entries[i].bg_sound;
+        }
+    }
+
+    return -1;
 }
 
 
 s32 musicGetXTrackForStage(s32 stageID)
 {
-  s32 i;
-  for (i=0; music_setup_entries[i].stage_id!=0; i++)
-  {
-      if (stageID == music_setup_entries[i].stage_id) 
-      {
-        return music_setup_entries[i].xtrack;
-      }
-  }
-  return -1;
+    s32 i;
+    for (i=0; music_setup_entries[i].stage_id!=0; i++)
+    {
+        if (stageID == music_setup_entries[i].stage_id) 
+        {
+            return music_setup_entries[i].xtrack;
+        }
+    }
+
+    return -1;
 }

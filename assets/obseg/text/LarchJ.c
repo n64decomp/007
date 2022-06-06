@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LarchJ[] = {
+char *LarchJ[] = {
     " €ÏŠÓ€ú€Û€Ð‚²Ïß´Ì„²‚ÄãÌÅØ´É€Â\n‚²Ò‚Ã…¥‚É¿à„†ÍÅÌóÜƒÍ‚ÀÅÎÁÌÓ\nÎàÎ»€Â\n",
     " ØÉ…¯Ø´ÉÒóÆ¿€Â007€Âƒƒ‘Î\n„æ»…õæ‚Àƒ¼â‚Ž¸„á‚ïÅØÆ€Â\n\n €ú€Û€Ðó„ìƒø¸…ö…÷Æâ…ö…÷ƒ¶Î¹Ì»Î»\n¿à€ºÎÉÒƒÑ€»Ò€à€Ë€Ï€ÜÓ\n…¨‚Îƒö…ø€ï€Û€Ì€Ö€ÏÍƒ ‚ú…ÚÆÒÙóÆ€Â\n‚ÍÓ…½‚™…ùƒùÒ‚áóÓ…ÚÒå¿â×¼óÆ€Â\n‚æ‚çÓ…úÄãØÇ¹€Â007€Â\n",
     " 007€ÂƒÍ‚ÀóÀâ¿ô¼¿Ó‚ó… …¬ð€Â\n»ËÜ¿õ´ÌÓ»àãÎ»¿àÒ€Â\n ÜÅƒäÂ‚ÀÆ‚ŽæóÀÉÎà€\n€ë€ö€Ñ€ã€ù€Ù€»†€»ÜË»óÏ‚¾´ÌÀÌÁã€Â\n ßäÅÁ„êÚß€Â\n",
@@ -64,5 +63,5 @@ struct stringentry LarchJ[] = {
     "„“„”Òƒæ\n",
     "„“„”Òƒæ\n",
     "„“„”Òƒæ¸‚¡Ï‚ºãÉ\n",
-    NULL
+    0
 };

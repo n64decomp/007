@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LsevxbE[] = {
+char *LsevxbE[] = {
  "The Pirate helicopter was tracked to Severnaya, where a Keyhole-1 ELINT satellite recorded a brief firefight.\nAfter the Pirate left, the same satellite observed a troop helicopter being made ready at a Spetznaz camp, 200 miles due south.\nThe only way that we can get you there quickly is to drop you from  a spy plane, and the Soviet Special Forces will be there before you. \n",
  "You should remember this place, 007. We need any evidence of Janus' presence there, and fast. Disable the troop helicopter so that nothing can be removed from the scene, and destroy their surveillance cameras.\nThis had to be an inside job, Bond. Find out who their contact was - the macabre way to do it would be to use their casualty list. Of course, you'd have to know who was there first.\n",
  "Right, I've altered a standard mine to take a ten-second fuse. There's only one, so don't play around with it. That should take care of their helicopter. This is a covert op, so I've fitted a silencer to your pistol. Satisfied? No? Well, tough; that's all you're getting. \n",
@@ -31,10 +30,10 @@ struct stringentry LsevxbE[] = {
  "comms room key \n",
  "comms room key \n",
  "Picked up comms room key.\n",
- NULL,
- NULL,
- NULL,
- NULL,
+ 0,
+ 0,
+ 0,
+ 0,
  "this access hatch has\nbeen welded shut.\n",
- NULL
+ 0
 };

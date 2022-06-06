@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LmpweaponsE[] = {
+char *LmpweaponsE[] = {
  "Slappers only!",
  "Pistols",
  "Automatics",
@@ -15,6 +14,6 @@ struct stringentry LmpweaponsE[] = {
  "Lasers",
  "Golden Gun",
  "Throwing Knives",
- NULL,
- NULL
+ 0,
+ 0
 };

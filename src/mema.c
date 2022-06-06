@@ -1,10 +1,17 @@
-#include "ultra64.h"
+#include <ultra64.h>
 #include "mema.h"
 #include "deb.h"
 
+
+#if defined(VERSION_EU)
+#define ALLOCATIONS_LENGTH 125
+#else
+#define ALLOCATIONS_LENGTH 509
+#endif
+
 s32 g_MemoryAllocationBuffer;
 s32 g_MemoryAllocationBufferSize;
-allocation g_MemoryAllocations[512];
+allocation g_MemoryAllocations[ALLOCATIONS_LENGTH+3];
 void *g_MemoryAllocationDebugData = NULL;
 
 // Swap two allocations.
@@ -31,7 +38,9 @@ s32 memaIterateAndMergeInternal(allocation *allocations) {
     s32 any = FALSE;
     allocation *prev = &allocations[1];
     allocation *curr = &allocations[2];
-    allocation *last = &allocations[509];
+
+    allocation *last = &allocations[ALLOCATIONS_LENGTH];
+
     u32 addr = 0;
     while (curr <= last) {
         if (curr->size != 0) {
@@ -65,8 +74,8 @@ allocation *memaSearch(allocation *allocations) {
     allocation *best;
     u32 min;
     s32 i;
-    for (i = 0; i < 508; i++) {
-        while (curr <= &allocations[509]) {
+    for (i = 0; i < (ALLOCATIONS_LENGTH-1); i++) {
+        while (curr <= &allocations[ALLOCATIONS_LENGTH]) {
             if (curr->size == 0) {
                 return curr;
             }
@@ -85,7 +94,7 @@ allocation *memaSearch(allocation *allocations) {
     }
     min = 0xFFFFFFFF;
     best = curr;
-    while (curr <= &allocations[509]) {
+    while (curr <= &allocations[ALLOCATIONS_LENGTH]) {
         if (curr->size < min) {            
             best = curr;
             min = curr->size;
@@ -99,7 +108,7 @@ allocation *memaSearch(allocation *allocations) {
 // based on the relative address in the buffer. Then look forward and backwards
 // for a free allocation. If none is found, then use the more advanced memaSearch method.
 void memaRegisterInternal(s32 addr, s32 size) {
-    s32 index = ((addr - g_MemoryAllocationBuffer) * 508) / g_MemoryAllocationBufferSize;
+    s32 index = ((addr - g_MemoryAllocationBuffer) * (ALLOCATIONS_LENGTH-1)) / g_MemoryAllocationBufferSize;
     allocation *curr = &g_MemoryAllocations[index + 2];
     while (curr->size != 0) {
         curr++;
@@ -130,11 +139,11 @@ void memaSetBuffer(s32 buffer, s32 size) {
     g_MemoryAllocations[0].size = 0;
     g_MemoryAllocations[1].addr = 0;
     g_MemoryAllocations[1].size = 0;
-    g_MemoryAllocations[510].addr = -1;
-    g_MemoryAllocations[510].size = 0;
-    g_MemoryAllocations[511].addr = -1;
-    g_MemoryAllocations[511].size = 0xFFFFFFFF;
-    for (curr = &g_MemoryAllocations[2]; curr <= &g_MemoryAllocations[509]; curr++) {
+    g_MemoryAllocations[ALLOCATIONS_LENGTH+1].addr = -1;
+    g_MemoryAllocations[ALLOCATIONS_LENGTH+1].size = 0;
+    g_MemoryAllocations[ALLOCATIONS_LENGTH+2].addr = -1;
+    g_MemoryAllocations[ALLOCATIONS_LENGTH+2].size = 0xFFFFFFFF;
+    for (curr = &g_MemoryAllocations[2]; curr <= &g_MemoryAllocations[ALLOCATIONS_LENGTH]; curr++) {
         curr->addr = 0;
         curr->size = 0;
     }
@@ -380,11 +389,13 @@ void memaRegister(u32 addr, u32 size) {
 // ac54:    bnel    v1,v0,0xac54 ~>                  r ac54:    bnel    v0,v1,0xac54 ~>
 void mema7000A040(void) {
     s32 i;
-    for (i = 0; &g_MemoryAllocations[i] != &g_MemoryAllocations[508]; i += 4) {
+    for (i = 0; &g_MemoryAllocations[i] != &g_MemoryAllocations[ALLOCATIONS_LENGTH-1]; i += 4) {
         // Removed
     }
 }
 #else
+
+#if defined(LEFTOVERDEBUG)
 GLOBAL_ASM(
 .text
 glabel mema7000A040
@@ -399,6 +410,24 @@ glabel mema7000A040
 /* 00AC5C 7000A05C 03E00008 */  jr    $ra
 /* 00AC60 7000A060 00000000 */   nop   
 )
+#endif
+
+#if !defined(LEFTOVERDEBUG)
+GLOBAL_ASM(
+.text
+glabel mema7000A040
+/* 00A0A0 700094A0 3C038005 */  lui   $v1, %hi(g_MemoryAllocations) # $v1, 0x8005
+/* 00A0A4 700094A4 3C028005 */  lui   $v0, %hi(g_MemoryAllocations + 0x3E0) # $v0, 0x8005
+/* 00A0A8 700094A8 244271E8 */  addiu $v0, %lo(g_MemoryAllocations + 0x3E0) # addiu $v0, $v0, 0x71e8
+/* 00A0AC 700094AC 24636E08 */  addiu $v1, %lo(g_MemoryAllocations) # addiu $v1, $v1, 0x6e08
+/* 00A0B0 700094B0 24630020 */  addiu $v1, $v1, 0x20
+.L700094B4:
+/* 00A0B4 700094B4 5462FFFF */  bnel  $v1, $v0, .L700094B4
+/* 00A0B8 700094B8 24630020 */   addiu $v1, $v1, 0x20
+/* 00A0BC 700094BC 03E00008 */  jr    $ra
+/* 00A0C0 700094C0 00000000 */   nop 
+)
+#endif
 #endif
 
 // Calculate the ratio between the sum of all allocations minus
@@ -598,7 +627,7 @@ glabel memaDump
 void memaDumpPrePostMerge(void) {
     s32 i;    
     memaDump();
-    for (i = 0; i < 508; i++) {
+    for (i = 0; i < (ALLOCATIONS_LENGTH-1); i++) {
         memaIterateAndMergeInternal(&g_MemoryAllocations);
     }
     memaDump();

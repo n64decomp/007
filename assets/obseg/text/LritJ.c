@@ -1,9 +1,8 @@
-#include "game/lvl_text.h"
 
-struct stringentry LritJ[] = {
- NULL,
- NULL,
- NULL,
- NULL,
- NULL
+char *LritJ[] = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0
 };

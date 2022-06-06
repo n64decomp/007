@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LpropobjE[] = {
+char *LpropobjE[] = {
  "Picked up ",
  "some ",
  "a ",
@@ -66,7 +65,7 @@ struct stringentry LpropobjE[] = {
  "body armor.\n",
  "Picked up something.\n",
  "This door is locked.\n",
- NULL,
- NULL,
- NULL
+ 0,
+ 0,
+ 0
 };

@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LstatE[] = {
+char *LstatE[] = {
  "Following the Severnaya incident, MI6 has lost track of the Pirate helicopter. Presumably the bugging device has been located and destroyed. Natalya Simonova, who returned to St. Petersburg against our advice, has gone missing. We can only assume that she has been abducted by the Janus syndicate in a belated attempt to cover their tracks.\n",
  "The situation is critical, 007. Janus know we're on to them and they're taking control. We're going to circumvent the usual channels on this one. I've arranged contact with an ex-KGB agent, Valentin Zukovsky, in Statue Park, St. Petersburg. He claims he can set up a meeting with Janus. Apparently, the head of Janus wants to see you in person. Frankly, I'm uneasy about this but it's all we've got to go on.\n",
  "No gizmos this time, old boy.\n",

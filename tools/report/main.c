@@ -10,22 +10,22 @@
 enum PROGRAM_ARGUMENTS
 {
 	PROGRAM_NAME = 0,
-	SRC_DIR,
-	SRC_DIR_MAX,
-	GAME_DIR,
-	GAME_DIR_MAX,
-	INFLATE_DIR,
-	INFLATE_DIR_MAX,
-	LIBULTRA_DIR,
-	LIBULTRA_DIR_MAX,
-	DECOMPILED_WORDS,
-	DECOMPILED_WORDS_MAX,
-	DECOMPILED_FILES,
-	DECOMPILED_FILES_MAX,
-	HTML_TEMPLATE,
-	HTML_OUTPUT,
-	LAST_MODIFIED_FILE,
-	LOG_LEVEL,
+	SRC_DIR,              /* int, size in 32-bit words of completed functions, in src/ directory */
+    SRC_DIR_MAX,          /* int, size in 32-bit words of all tracked functions, in src/ directory */
+    GAME_DIR,             /* int, size in 32-bit words of completed functions, in src/game/ directory */
+    GAME_DIR_MAX,         /* int, size in 32-bit words of all tracked functions, in src/game/ directory */
+    INFLATE_DIR,          /* int, size in 32-bit words of completed functions, in src/inflate/ directory */
+    INFLATE_DIR_MAX,      /* int, size in 32-bit words of all tracked functions, in src/inflate/ directory */
+    LIBULTRA_DIR,         /* int, size in 32-bit words of completed functions, in src/libultrare/ directory */
+    LIBULTRA_DIR_MAX,     /* int, size in 32-bit words of all tracked functions, in src/libultrare/ directory */
+    DECOMPILED_WORDS,     /* int, size in 32-bit words of all completed functions */
+    DECOMPILED_WORDS_MAX, /* int, size in 32-bit words of all tracked functions */
+    DECOMPILED_FILES,     /* int, count of all fully completed files */
+    DECOMPILED_FILES_MAX, /* int, count of all tracked files */
+    HTML_TEMPLATE,        /* string: path to html template input file */
+    HTML_OUTPUT,          /* string: path to generated html file */
+    LAST_MODIFIED_FILE,   /* string: name of last modified file */
+    LOG_LEVEL,            /* int (enum): LOG_MIN = 0, LOG_DEF, LOG_MAX */
 	ARGS_MAX
 };
 
@@ -140,7 +140,7 @@ int main(int argc, char **argv)
 	}
 	if(argc != ARGS_MAX) /* incorrect number of arguments */
 	{
-		printf("\n  About: Generate decompiled statistics website\n\n  Syntax: %s src max game max inflate max libultra max decompiled_words max_words decompiled_files all_files html_template html_output last_modified_file verbosity_level (0-2)\n\n  Note: Each dir's statistic must be followed with the total words for the dir.\n  Example: 1481 15854 12641 232276 564 1312 556 20330 15242 269772 49 336 ./template.html ./index.html \"src/game/bond.c\" 1", argv[PROGRAM_NAME]);
+		printf("\n  About: Generate decompiled statistics website\n\n  Syntax: %s src max game max inflate max libultra max decompiled_words max_words decompiled_files all_files html_template html_output last_modified_file verbosity_level (0-2)\n\n  Note: Each dir's statistic must be followed with the total words for the dir.\n  Example: 1481 15854 12641 232276 564 1312 556 20330 15242 269772 49 336 ./template.html ./index.html \"src/game/bondview.c\" 1", argv[PROGRAM_NAME]);
 		goto exit;
 	}
 

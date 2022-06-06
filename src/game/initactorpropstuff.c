@@ -1,26 +1,33 @@
-#include "ultra64.h"
-#include "game/initactorpropstuff.h"
-#include "game/chr.h"
-#include "game/bondwalk.h"
+#include <ultra64.h>
+#include "initactorpropstuff.h"
+#include "chr.h"
+#include "gun.h"
+#include "math_floor.h"
 
-
-void reset_counter_rand_body_head(void) {
+/** 
+ * Gets the number of currently allocated heads and bodies
+ * Note: Compile-time static? why bother with a function?
+ */
+void reset_counter_rand_body_head(void)
+{
     num_bodies = 0;
     while (list_of_bodies[num_bodies] >= 0)
     {
-        num_bodies += 1;
+        num_bodies++;
     }
-
+#ifdef ISGOLDFINGER
+    return; //return early as we have a new function for heads
+#endif
     num_male_heads = 0;
     while (random_male_heads[num_male_heads] >= 0)
     {
-        num_male_heads += 1;
+        num_male_heads++;
     }
 
     num_female_heads = 0;
     while (random_female_heads[num_female_heads] >= 0)
     {
-        num_female_heads += 1;
+        num_female_heads++;
     }
 }
 
@@ -47,8 +54,8 @@ glabel sub_GAME_7F0001F0
 /* 034D4C 7F00021C AFB4002C */  sw    $s4, 0x2c($sp)
 /* 034D50 7F000220 10200011 */  beqz  $at, .L7F000268
 /* 034D54 7F000224 00008825 */   move  $s1, $zero
-/* 034D58 7F000228 3C148004 */  lui   $s4, %hi(model_guard_character)
-/* 034D5C 7F00022C 2694D400 */  addiu $s4, %lo(model_guard_character) # addiu $s4, $s4, -0x2c00
+/* 034D58 7F000228 3C148004 */  lui   $s4, %hi(skeleton_guard)
+/* 034D5C 7F00022C 2694D400 */  addiu $s4, %lo(skeleton_guard) # addiu $s4, $s4, -0x2c00
 /* 034D60 7F000230 27B50040 */  addiu $s5, $sp, 0x40
 .L7F000234:
 /* 034D64 7F000234 00002025 */  move  $a0, $zero
@@ -102,8 +109,8 @@ glabel sub_GAME_7F000290
 /* 034DEC 7F0002BC AFB4002C */  sw    $s4, 0x2c($sp)
 /* 034DF0 7F0002C0 10200010 */  beqz  $at, .L7F000304
 /* 034DF4 7F0002C4 00008825 */   move  $s1, $zero
-/* 034DF8 7F0002C8 3C148004 */  lui   $s4, %hi(model_guard_character)
-/* 034DFC 7F0002CC 2694D400 */  addiu $s4, %lo(model_guard_character) # addiu $s4, $s4, -0x2c00
+/* 034DF8 7F0002C8 3C148004 */  lui   $s4, %hi(skeleton_guard)
+/* 034DFC 7F0002CC 2694D400 */  addiu $s4, %lo(skeleton_guard) # addiu $s4, $s4, -0x2c00
 /* 034E00 7F0002D0 27B5003C */  addiu $s5, $sp, 0x3c
 .L7F0002D4:
 /* 034E04 7F0002D4 00002025 */  move  $a0, $zero
@@ -173,7 +180,7 @@ glabel sub_GAME_7F00032C
 .L7F000388:
 /* 034EB8 7F000388 C60C0004 */  lwc1  $f12, 4($s0)
 /* 034EBC 7F00038C 004FC021 */  addu  $t8, $v0, $t7
-/* 034EC0 7F000390 0FC170F6 */  jal   sub_GAME_7F05C3D8
+/* 034EC0 7F000390 0FC170F6 */  jal   floorFloatToInt
 /* 034EC4 7F000394 AE180000 */   sw    $t8, ($s0)
 /* 034EC8 7F000398 8E040000 */  lw    $a0, ($s0)
 /* 034ECC 7F00039C 00002825 */  move  $a1, $zero
@@ -240,7 +247,7 @@ glabel sub_GAME_7F00032C
 
 #ifdef NONMATCHING
 void sub_GAME_7F00046C(void) {
-
+    // Same as PD's func0f00052c
 }
 #else
 GLOBAL_ASM(
@@ -626,11 +633,18 @@ void sub_GAME_7F000980(void) {
     sub_GAME_7F0009A0();
 }
 
+#if defined (VERSION_EU)
+#define POS 0x19
+#else
+#define POS 0x27
+#endif
+
 void sub_GAME_7F0009A0(void) {
     u32 *end = &dword_CODE_bss_80075DC8[20];
     u32 *ptr = &dword_CODE_bss_80075DC8[0];
     while(end > ptr) {
-        ptr[39] = 0;
-        ptr += 0x28;
+        ptr[POS] = 0;
+        ptr += POS+1;
     }
 }
+

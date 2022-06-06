@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LsevbE[] = {
+char *LsevbE[] = {
  "Escape is the first priority. Find the staff and casualty lists, and the CCTV tape of your capture. If there are any witnesses, try and bring them out as well. \n",
  "Unbelievable, 007. If this gets out we'll be the laughing stock of the international community. As soon as you get back - IF you get back - you're getting a performance review. Only completing the objectives will give you a hope of keeping your rather checkered career intact. \n",
  "You've got your wits and that's about it, 007. Not much I can do to help you here. You might try to find your equipment again when you escape from the cell, though. It took me a lot of time to get all of that stuff together.\n",
@@ -98,10 +97,10 @@ struct stringentry LsevbE[] = {
  "cctv video tape\n",
  "Goldeneye CCTV video tape\n",
  "Picked up a video tape.\n",
- NULL,
- NULL,
- NULL,
- NULL,
+ 0,
+ 0,
+ 0,
+ 0,
  "This safe is locked.\n",
  "Severnaya Bunker Complex\n",
  "\n",

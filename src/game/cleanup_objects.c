@@ -1,9 +1,60 @@
-#include "ultra64.h"
+#include <ultra64.h>
+
+#include <bondtypes.h>
+#include "chrai.h"
+#include "cleanup_objects.h"
+#include "loadobjectmodel.h"
 
 
 #ifdef NONMATCHING
-void cleanupObjects(s32 stage) {
+/**
+ * decomp status:
+ * - compiles: yes
+ * - stack resize: ok
+ * - identical instructions: fail
+ * - identical registers: fail
+ * 
+ * notes: something wrong with the comparison to 0x38. Also the first compare to NULL is wrong.
+ */
+void cleanupObjects(s32 stage)
+{
+    object_standard *obj = g_chraiCurrentSetup.propDefs;
 
+    if (obj != NULL)
+    {
+        for (; obj->type != 0x30;)
+        {
+            switch (obj->type)
+            {
+                case 1:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 17:
+                case 20:
+                case 21:
+                case 36:
+                case 39:
+                case 40:
+                case 41:
+                case 42:
+                case 43:
+                case 45:
+                case 47:
+                    objFreePermanently((ObjectRecord *)obj, 1);
+                    break;
+            }
+
+            obj = &(((s32*)obj)[sizepropdef(obj)]);
+        }
+    }
 }
 #else
 GLOBAL_ASM(
@@ -60,8 +111,8 @@ glabel jpt_8004F210
 glabel cleanupObjects
 /* 03C030 7F007500 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 03C034 7F007504 AFB00018 */  sw    $s0, 0x18($sp)
-/* 03C038 7F007508 3C108007 */  lui   $s0, %hi(ptr_setup_objects)
-/* 03C03C 7F00750C 8E105D0C */  lw    $s0, %lo(ptr_setup_objects)($s0)
+/* 03C038 7F007508 3C108007 */  lui   $s0, %hi(g_chraiCurrentSetup+0x0c)
+/* 03C03C 7F00750C 8E105D0C */  lw    $s0, %lo(g_chraiCurrentSetup+0x0c)($s0)
 /* 03C040 7F007510 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 03C044 7F007514 AFA40020 */  sw    $a0, 0x20($sp)
 /* 03C048 7F007518 52000019 */  beql  $s0, $zero, .L7F007580
@@ -81,10 +132,10 @@ glabel cleanupObjects
 /* 03C07C 7F00754C 00000000 */   nop 
 .L7F007550:
 /* 03C080 7F007550 02002025 */  move  $a0, $s0
-/* 03C084 7F007554 0FC10409 */  jal   sub_GAME_7F041024
+/* 03C084 7F007554 0FC10409 */  jal   objFreePermanently
 /* 03C088 7F007558 24050001 */   li    $a1, 1
 .L7F00755C:
-/* 03C08C 7F00755C 0FC15A3D */  jal   get_size_of_setup_object_type
+/* 03C08C 7F00755C 0FC15A3D */  jal   sizepropdef
 /* 03C090 7F007560 02002025 */   move  $a0, $s0
 /* 03C094 7F007564 00027880 */  sll   $t7, $v0, 2
 /* 03C098 7F007568 01F08021 */  addu  $s0, $t7, $s0

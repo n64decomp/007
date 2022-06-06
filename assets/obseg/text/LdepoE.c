@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LdepoE[] = {
+char *LdepoE[] = {
  "The Janus operations base in St. Petersburg is located in a disused military rail depot. From here the crime syndicate coordinates illegal arms deals, international terrorism and extortion.\n",
  "Quite a nest of vipers, 007 - do your best to disrupt the Janus operations. We'd be particularly interested if you could retrieve their blueprints for a modified version of the stealth helicopter, it seems they may be thinking of going into production. We also believe that Ourumov has taken Natalya to Trevelyan's converted missile train in the depot. You need to be on that train when it leaves. \n",
  "They've got a pretty sophisticated computer network hidden away somewhere in that depot, 007. Be a good chap and shut it down for them.\n\nOh, and don't forget to blow up the Janus arms cache - I'm just sorry I can't be there myself to enjoy the fireworks.\n",
@@ -21,20 +20,20 @@ struct stringentry LdepoE[] = {
  "obtain safe key\n",
  "recover helicopter blueprints\n",
  "locate trevelyan's train\n",
- NULL,
- NULL,
- NULL,
- NULL,
+ 0,
+ 0,
+ 0,
+ 0,
  "This safe is locked.\n",
  "\n",
  "helicopter blueprints\n",
  "blueprints\n",
- NULL,
+ 0,
  "Picked up the blueprints\n",
  "\n",
  "safe key\n",
  "safe key\n",
  "Safe Key\n",
  "Picked up a safe key.\n",
- NULL
+ 0
 };

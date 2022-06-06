@@ -1,0 +1,2 @@
+//D:8003CB20
+MODELFILEHEADER(fist, 0, &SKELETON(standard_gun), 0, 0x24, 3, 243.84764, 0, 0xE)

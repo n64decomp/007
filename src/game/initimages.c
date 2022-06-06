@@ -1,10 +1,37 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 extern image_entries;
 
 #ifdef NONMATCHING
 void image_entries_load(void) {
+    image_entry *piVar1;
+    image_entry *piVar2;
+    uint         uVar3;
+    uint         uVar4;
+    uint         uVar5;
+    uint         uVar6;
 
+    piVar1 = image_entries;
+    uVar3  = 0;
+    piVar2 = image_entries;
+    if (image_entries[0].size != -1) //this (& 0xFFFFFF) is auto genrated by bitfield
+    {
+        uVar5 = image_entries[0].size;
+        uVar4 = image_entries[0].size;
+        do
+        {
+            uVar6 = (uVar3 ^ uVar4) ^ uVar4;
+            uVar4 = *(uint *)(piVar1 + 1);
+            uVar3 += uVar5;
+            *(uint *)piVar1 = uVar6;
+            uVar5           = uVar4;
+            piVar1          = piVar1 + 1;
+            piVar2          = piVar1;
+        } while (uVar5 != -1);
+    }
+    *(uint *)piVar2 =
+        (uVar3 ^ *(uint *)piVar2) ^ *(uint *)piVar2;
+    return;
 }
 #else
 GLOBAL_ASM(

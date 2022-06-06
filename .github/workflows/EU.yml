@@ -1,0 +1,81 @@
+name: EU-Status
+
+on:
+  push:
+    branches: master
+    paths-ignore: # Don't trigger on files that are updated by the CI or other non-breaking files
+    - 'tools/**'
+    - '*.md'
+    - '.github/**'
+    - '.gitignore'
+    - 'CppProperties.json'
+  pull_request:
+    branches: master
+    
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  buildeu:
+    
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Depedencies
+        run: |
+          sudo apt update
+          sudo apt install binutils-mips-linux-gnu make
+          wget https://github.com/n64decomp/qemu-irix/releases/download/v2.11-deb/qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
+          sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
+
+      - name: Get precompiled recomp to save time
+        env:
+          IDO_RECOMP: ${{ secrets.FILE_RECOMP  }}
+        run: |
+          wget -O recomp.zip $IDO_RECOMP
+          unzip -u recomp.zip -d tools/ido5.3_recomp
+      
+      - name: Get US File
+        env:
+          FILE_US: ${{ secrets.SECRET_FILE_US  }}
+        run: wget -O baserom.u.z64 $FILE_US
+      
+      - name: Get EU File
+        env:
+          FILE_EU: ${{ secrets.SECRET_FILE_EU  }}
+        run: wget -O baserom.e.z64 $FILE_EU
+
+      - name: Extract US Assets
+        run: ./extract_baserom.u.sh
+
+      - name: Extract EU Assets
+        run: ./extract_diff.e.sh
+
+      - name: Make EU 
+        run: make -j IDO_RECOMP=YES VERSION=EU
+          
+      - name: Make report
+        run: make -C tools/report
+        
+      - name: Stats
+        run: python3 tools/ge-stats.py --version eu --report
+     
+      - name: Upload output files
+
+        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          API_TOKEN_USER: ${{ secrets.API_TOKEN_USER }}
+          API_TOKEN_EMAIL: ${{ secrets.API_TOKEN_EMAIL }}
+
+        with:
+          destination_repo: 'kholdfuzion/goldeneyestatus'
+          user_email: $API_TOKEN_EMAIL
+          user_name: $API_TOKEN_USER
+          source_file: |
+            tools/report/EU.htm
+      
+#need way of telling report that EU passed/failed

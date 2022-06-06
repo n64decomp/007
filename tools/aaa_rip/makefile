@@ -6,8 +6,8 @@ SRCDIR = ./
 OUTNAME = aaa_rip
 
 #Compiler flags
-CFLAGS = -shared -ansi -Os -std=c89
-CFLAGSDBG = -shared -ansi -g -std=c89
+CFLAGS = -shared -ansi -Os -std=c89 -Wno-unused-parameter
+CFLAGSDBG = -shared -ansi -g -std=c89 -DVERBOSE_OUTPUT
 WFLAGS = -W -Wall -Wextra -pedantic -Wunreachable-code -Wno-unused-result
 
 #Linker flags

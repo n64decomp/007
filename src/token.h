@@ -1,7 +1,13 @@
 #ifndef _TOKEN_H_
 #define _TOKEN_H_
 
-#include "ultra64.h"
+#include <ultra64.h>
+
+#if defined(LEFTOVERDEBUG)
+#define G_TOKEN_STRING_LEN 160
+#else
+#define G_TOKEN_STRING_LEN 15
+#endif
 
 void tokenSetString(const char *str);
 s32 tokenReadIo(void);

@@ -1,4 +1,6 @@
-#include "ultra64.h"
+#include <ultra64.h>
+#include <memp.h>
+#include "unk_09B7A0.h"
 
 // bss
 //CODE.bss:8007A0D0
@@ -33,6 +35,21 @@ void null_init_main_1(void) {
 
 #ifdef NONMATCHING
 void sub_GAME_7F09B7A8(void) {
+    //extern s32 dword_CODE_bss_8007A0D4;
+    //extern s32 dword_CODE_bss_8007A0E8;
+
+    s32 temp_v0;
+    s32 temp_v1;
+    s32 phi_v0;
+
+    temp_v1 = dword_CODE_bss_8007A0D4;
+    phi_v0 = 0;
+    if (temp_v1 > 0) {
+        do {
+            temp_v0 = phi_v0 + 0x14;
+            phi_v0 = temp_v0;
+        } while (temp_v0 < (temp_v1 * 0x14));
+    }
 
 }
 #else
@@ -65,6 +82,21 @@ glabel sub_GAME_7F09B7A8
 
 #ifdef NONMATCHING
 void sub_GAME_7F09B7E4(void) {
+    //extern s32 dword_CODE_bss_8007A0DC;
+    //extern s32 dword_CODE_bss_8007A0EC;
+
+    s32 temp_v0;
+    s32 temp_v1;
+    s32 phi_v0;
+
+    temp_v1 = dword_CODE_bss_8007A0DC;
+    phi_v0 = 0;
+    if (temp_v1 > 0) {
+        do {
+            temp_v0 = phi_v0 + 0x14;
+            phi_v0 = temp_v0;
+        } while (temp_v0 < (temp_v1 * 0x14));
+    }
 
 }
 #else
@@ -97,6 +129,86 @@ glabel sub_GAME_7F09B7E4
 
 #ifdef NONMATCHING
 void sub_GAME_7F09B820(void) {
+    //s32 getPlayerCount();                               /* extern */
+    //s32 lvlGetCurrentStageToLoad();                     /* extern */
+    //void *mempAllocBytesInBank(s32, ?, void **);        /* extern */
+    //extern s32 dword_CODE_bss_8007A0D0;
+    //extern s32 dword_CODE_bss_8007A0D4;
+    //extern s32 dword_CODE_bss_8007A0D8;
+    //extern s32 dword_CODE_bss_8007A0DC;
+    //extern void *dword_CODE_bss_8007A0E0;
+    //extern void *dword_CODE_bss_8007A0E4;
+    //extern void *dword_CODE_bss_8007A0E8;
+    //extern void *dword_CODE_bss_8007A0EC;
+    //extern s16 word_CODE_bss_8007A0F0;
+    //extern s16 word_CODE_bss_8007A0F2;
+
+    s32 temp_v0;
+    s32 temp_v1;
+    s32 temp_v1_2;
+    s32 *phi_t0;
+    s32 phi_v0;
+    s32 phi_v1;
+    s32 phi_v0_2;
+    s32 phi_v1_2;
+
+    if (getPlayerCount() >= 2) {
+        dword_CODE_bss_8007A0D0 = 0xBB8;
+        dword_CODE_bss_8007A0D4 = 0x50;
+        dword_CODE_bss_8007A0D8 = 0x1F4;
+        goto block_6;
+    }
+    temp_v0 = lvlGetCurrentStageToLoad();
+    if ((temp_v0 != 0x1E) && (temp_v0 != 0x1D)) {
+        dword_CODE_bss_8007A0D0 = 0x1F4;
+        dword_CODE_bss_8007A0D4 = 0x14;
+        dword_CODE_bss_8007A0D8 = 0x5DC;
+        dword_CODE_bss_8007A0DC = 0x28;
+        phi_t0 = &dword_CODE_bss_8007A0D4;
+    } else {
+        dword_CODE_bss_8007A0D0 = 0x1F4;
+        dword_CODE_bss_8007A0D4 = 0x14;
+        dword_CODE_bss_8007A0D8 = 0x1F4;
+block_6:
+        dword_CODE_bss_8007A0DC = 0x14;
+        phi_t0 = &dword_CODE_bss_8007A0D4;
+    }
+    dword_CODE_bss_8007A0E8 = mempAllocBytesInBank(*phi_t0 * 0x14, 4);
+    dword_CODE_bss_8007A0E0 = mempAllocBytesInBank(dword_CODE_bss_8007A0D0 * 0x10, 4, &dword_CODE_bss_8007A0E8);
+    dword_CODE_bss_8007A0EC = mempAllocBytesInBank(dword_CODE_bss_8007A0DC * 0x14, 4);
+    dword_CODE_bss_8007A0E4 = mempAllocBytesInBank(dword_CODE_bss_8007A0D8 * 0x10, 4);
+    word_CODE_bss_8007A0F0 = (s16) dword_CODE_bss_8007A0D0;
+    dword_CODE_bss_8007A0E8->unk0 = (void *) dword_CODE_bss_8007A0E0;
+    dword_CODE_bss_8007A0E8->unkC = (s16) dword_CODE_bss_8007A0D0;
+    dword_CODE_bss_8007A0E8->unkE = 0;
+    dword_CODE_bss_8007A0E8->unk10 = -1;
+    dword_CODE_bss_8007A0E8->unk12 = -1;
+    phi_v0 = 0x14;
+    phi_v1 = 1;
+    phi_v0_2 = 0x14;
+    if (dword_CODE_bss_8007A0D4 >= 2) {
+        do {
+            temp_v1 = phi_v1 + 1;
+            (dword_CODE_bss_8007A0E8 + phi_v0)->unkE = -1;
+            phi_v0 += 0x14;
+            phi_v1 = temp_v1;
+        } while (temp_v1 < dword_CODE_bss_8007A0D4);
+    }
+    word_CODE_bss_8007A0F2 = (s16) dword_CODE_bss_8007A0D8;
+    dword_CODE_bss_8007A0EC->unk0 = (void *) dword_CODE_bss_8007A0E4;
+    dword_CODE_bss_8007A0EC->unkC = (s16) dword_CODE_bss_8007A0D8;
+    dword_CODE_bss_8007A0EC->unkE = 0;
+    dword_CODE_bss_8007A0EC->unk10 = -1;
+    dword_CODE_bss_8007A0EC->unk12 = -1;
+    phi_v1_2 = 1;
+    if (dword_CODE_bss_8007A0DC >= 2) {
+        do {
+            temp_v1_2 = phi_v1_2 + 1;
+            (dword_CODE_bss_8007A0EC + phi_v0_2)->unkE = -1;
+            phi_v0_2 += 0x14;
+            phi_v1_2 = temp_v1_2;
+        } while (temp_v1_2 < dword_CODE_bss_8007A0DC);
+    }
 
 }
 #else
@@ -125,7 +237,7 @@ glabel sub_GAME_7F09B820
 /* 0D039C 7F09B86C 10000022 */  b     .L7F09B8F8
 /* 0D03A0 7F09B870 AD230000 */   sw    $v1, ($t1)
 .L7F09B874:
-/* 0D03A4 7F09B874 0FC2F7C1 */  jal   sub_GAME_7F0BDF04
+/* 0D03A4 7F09B874 0FC2F7C1 */  jal   lvlGetCurrentStageToLoad
 /* 0D03A8 7F09B878 00000000 */   nop   
 /* 0D03AC 7F09B87C 2401001E */  li    $at, 30
 /* 0D03B0 7F09B880 10410011 */  beq   $v0, $at, .L7F09B8C8
@@ -288,6 +400,68 @@ glabel sub_GAME_7F09B820
 
 #ifdef NONMATCHING
 void sub_GAME_7F09BAC4(void) {
+    //s32 *extract_id_from_object_structure_microcode(void *, void *); /* extern */
+    //void *get_ptr_obj_pos_list_current_entry();         /* extern */
+
+    s32 *temp_v0_2;
+    void *temp_a0;
+    void *temp_a1;
+    void *temp_a1_2;
+    void *temp_s1;
+    void *temp_v0;
+    void *temp_v0_3;
+    void *temp_v0_4;
+    void *phi_s1;
+    void *phi_a1;
+    void *phi_a1_2;
+    void *phi_a1_3;
+
+    temp_v0 = get_ptr_obj_pos_list_current_entry();
+    phi_s1 = temp_v0;
+    if (temp_v0 != 0) {
+        do {
+            if (phi_s1->unk0 == 1) {
+                temp_a0 = phi_s1->unk4->unk14;
+                temp_a1 = *temp_a0->unk8;
+                phi_a1 = temp_a1;
+                if (temp_a1 != 0) {
+loop_4:
+                    phi_a1_2 = phi_a1;
+                    phi_a1_3 = phi_a1;
+                    if ((phi_a1->unk0 & 0xFF) == 0x18) {
+                        temp_v0_2 = extract_id_from_object_structure_microcode(temp_a0, phi_a1);
+                        if (arg0 == *temp_v0_2) {
+                            *temp_v0_2 = arg1;
+                        }
+                    } else {
+                        temp_v0_3 = phi_a1->unk14;
+                        if (temp_v0_3 != 0) {
+                            phi_a1_3 = temp_v0_3;
+                        } else if (phi_a1 != 0) {
+loop_10:
+                            temp_v0_4 = phi_a1_2->unkC;
+                            if (temp_v0_4 != 0) {
+                                phi_a1_3 = temp_v0_4;
+                            } else {
+                                temp_a1_2 = phi_a1_2->unk8;
+                                phi_a1_2 = temp_a1_2;
+                                phi_a1_3 = temp_a1_2;
+                                if (temp_a1_2 != 0) {
+                                    goto loop_10;
+                                }
+                            }
+                        }
+                        phi_a1 = phi_a1_3;
+                        if (phi_a1_3 != 0) {
+                            goto loop_4;
+                        }
+                    }
+                }
+            }
+            temp_s1 = phi_s1->unk24;
+            phi_s1 = temp_s1;
+        } while (temp_s1 != 0);
+    }
 
 }
 #else

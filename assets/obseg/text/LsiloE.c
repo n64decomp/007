@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LsiloE[] = {
+char *LsiloE[] = {
  "MI6 has become concerned that unscheduled test firings from a missile silo in Kirghizstan are being used to cover the launch of Goldeneye weapons satellites.\n\nDeep intelligence reports suggest that this operation may well be outside the control of the former Soviet powers in the region.",
  "Infiltrate the silo and ascertain what is being placed into orbit; if it is the satellites, recover their control circuitry and sabotage the launches. You are authorized to destroy the base if necessary.\n\nThis is a matter of international security, 007. Consider the military personnel expendable.\n",
  "The layout of the missile silo means that a few carefully placed explosive charges will destroy the entire complex - concentrate on the fuel rooms (H4, C3, K2 and A1). 007, remember to treat the timed explosives with respect - you know what happened to 004 in Beirut.\n\nOh, and get me a picture of the satellite, there's a good chap.\n",
@@ -72,5 +71,5 @@ struct stringentry LsiloE[] = {
  "Soviet Missile Silo, Kirghizstan\n",
  "Two years ago\n",
  "Silo infiltrated -\nexplosive charges automatically primed!\n",
- NULL
+ 0
 };

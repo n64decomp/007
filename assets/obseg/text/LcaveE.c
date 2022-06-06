@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LcaveE[] = {
+char *LcaveE[] = {
  "The Janus Control Center communicates with the Goldeneye weapons system via a large satellite dish which is usually concealed underwater. The pumps which allow Janus to flood the communications dish are housed in a subterranean cave complex defended by crack Janus troops.\n",
  "Don't jeopardize the mission by going for the man, Bond - nobody needs a dead hero. You'll be on your own but CIA combat support will be waiting. Find a radio and inform Jack Wade of the exact location of the dish and he'll send in the cavalry.\n",
  "The satellite communication dish is exposed. If you remove the water pumps, Janus will be unable to hide it again.\nDestroy the servo control consoles close to the pumps and be sure to disable the master console.\n",
@@ -42,7 +41,7 @@ struct stringentry LcaveE[] = {
  "code card c\n",
  "code card (blast door c)\n",
  "Picked up a code card\n",
- NULL,
- NULL,
- NULL
+ 0,
+ 0,
+ 0
 };

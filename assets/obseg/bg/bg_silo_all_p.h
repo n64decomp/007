@@ -1,5 +1,5 @@
 
- #include "ultra64.h"
+ #include <ultra64.h>
 
 extern u32 point_table_binary_1[];
 extern u32 point_table_binary_2[];

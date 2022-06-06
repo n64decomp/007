@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LmiscE[] = {
+char *LmiscE[] = {
  "Invincible",
  "All Guns",
  "Super x2 Health",

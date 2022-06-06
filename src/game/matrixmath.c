@@ -1,4 +1,10 @@
 #include "matrixmath.h"
+#include "math_atan2f.h"
+#include <PR/gu.h>
+#include <math.h>
+
+/* Avoid Gimble Lock? */
+#define EPSILON FLT_EPSILON * 16
 
 // bss
 //CODE.bss:80075DA0
@@ -7,17 +13,206 @@ f32 flt_CODE_bss_80075DA0;
 
 // data
 //D:80032310
-f32 D_80032310[2] = {65536.0f, 65536.0f};
-
-// f32 D_80032310 = 65536.0;
-// //D:80032314     
-// f32 D_80032314 = 65536.0;
+f32 D_80032310[2] = {M_U16_MAX_VALUE_F, M_U16_MAX_VALUE_F};
 
 
-// rodata
-//D:800536F0
 
-void matrix_4x4_set_identity(Mtxf *matrix) {
+//#ifdef VERSION_EU
+
+#ifdef VERSION_EU
+#ifdef NONMATCHING
+void matrix_4x4_copy_homogeneous_eu(Mtxf *src,Mtxf *dst)
+{
+
+}
+#else
+GLOBAL_ASM(
+.text
+glabel matrix_4x4_copy_homogeneous_eu
+/* 08ACC0 7F0582D0 00001025 */  move  $v0, $zero
+/* 08ACC4 7F0582D4 00A03025 */  move  $a2, $a1
+/* 08ACC8 7F0582D8 00803825 */  move  $a3, $a0
+/* 08ACCC 7F0582DC 24080003 */  li    $t0, 3
+.L7F0582E0:
+/* 08ACD0 7F0582E0 00001825 */  move  $v1, $zero
+/* 08ACD4 7F0582E4 00C02025 */  move  $a0, $a2
+/* 08ACD8 7F0582E8 00E02825 */  move  $a1, $a3
+.L7F0582EC:
+/* 08ACDC 7F0582EC C4A40000 */  lwc1  $f4, ($a1)
+/* 08ACE0 7F0582F0 24630001 */  addiu $v1, $v1, 1
+/* 08ACE4 7F0582F4 24840004 */  addiu $a0, $a0, 4
+/* 08ACE8 7F0582F8 24A50004 */  addiu $a1, $a1, 4
+/* 08ACEC 7F0582FC 1468FFFB */  bne   $v1, $t0, .L7F0582EC
+/* 08ACF0 7F058300 E484FFFC */   swc1  $f4, -4($a0)
+/* 08ACF4 7F058304 24420001 */  addiu $v0, $v0, 1
+/* 08ACF8 7F058308 24C6000C */  addiu $a2, $a2, 0xc
+/* 08ACFC 7F05830C 1448FFF4 */  bne   $v0, $t0, .L7F0582E0
+/* 08AD00 7F058310 24E7000C */   addiu $a3, $a3, 0xc
+/* 08AD04 7F058314 03E00008 */  jr    $ra
+/* 08AD08 7F058318 00000000 */   nop   
+)
+#endif
+#endif
+
+
+#ifdef VERSION_EU
+#ifdef NONMATCHING
+void matrix_4x4_multiply_homogeneous_in_place_eu (Mtxf * src, Mtxf * dst)
+{
+
+}
+#else
+GLOBAL_ASM(
+.text
+glabel matrix_4x4_multiply_homogeneous_in_place_eu
+/* 08AD0C 7F05831C 27BDFFC0 */  addiu $sp, $sp, -0x40
+/* 08AD10 7F058320 AFBF0014 */  sw    $ra, 0x14($sp)
+/* 08AD14 7F058324 AFA50044 */  sw    $a1, 0x44($sp)
+/* 08AD18 7F058328 0FC160D3 */  jal   matrix_4x4_multiply_homogeneous_eu
+/* 08AD1C 7F05832C 27A6001C */   addiu $a2, $sp, 0x1c
+/* 08AD20 7F058330 27A4001C */  addiu $a0, $sp, 0x1c
+/* 08AD24 7F058334 0FC160B4 */  jal   matrix_4x4_copy_homogeneous_eu
+/* 08AD28 7F058338 8FA50044 */   lw    $a1, 0x44($sp)
+/* 08AD2C 7F05833C 8FBF0014 */  lw    $ra, 0x14($sp)
+/* 08AD30 7F058340 27BD0040 */  addiu $sp, $sp, 0x40
+/* 08AD34 7F058344 03E00008 */  jr    $ra
+/* 08AD38 7F058348 00000000 */   nop   
+)
+#endif
+#endif
+
+
+#ifdef VERSION_EU
+#ifdef NONMATCHING
+void matrix_4x4_multiply_homogeneous_eu (Mtxf * lhs, Mtxf * rhs, Mtxf * result)
+{
+
+}
+#else
+GLOBAL_ASM(
+.text
+glabel matrix_4x4_multiply_homogeneous_eu
+/* 08AD3C 7F05834C 00001825 */  move  $v1, $zero
+/* 08AD40 7F058350 00804025 */  move  $t0, $a0
+/* 08AD44 7F058354 240A000C */  li    $t2, 12
+/* 08AD48 7F058358 24090003 */  li    $t1, 3
+.L7F05835C:
+/* 08AD4C 7F05835C 00001025 */  move  $v0, $zero
+/* 08AD50 7F058360 00C32021 */  addu  $a0, $a2, $v1
+/* 08AD54 7F058364 00A03825 */  move  $a3, $a1
+.L7F058368:
+/* 08AD58 7F058368 C5120000 */  lwc1  $f18, ($t0)
+/* 08AD5C 7F05836C C4F00000 */  lwc1  $f16, ($a3)
+/* 08AD60 7F058370 C50E000C */  lwc1  $f14, 0xc($t0)
+/* 08AD64 7F058374 C4EC0004 */  lwc1  $f12, 4($a3)
+/* 08AD68 7F058378 46109402 */  mul.s $f16, $f18, $f16
+/* 08AD6C 7F05837C C4F20008 */  lwc1  $f18, 8($a3)
+/* 08AD70 7F058380 C50A0018 */  lwc1  $f10, 0x18($t0)
+/* 08AD74 7F058384 460C7302 */  mul.s $f12, $f14, $f12
+/* 08AD78 7F058388 24420001 */  addiu $v0, $v0, 1
+/* 08AD7C 7F05838C 2484000C */  addiu $a0, $a0, 0xc
+/* 08AD80 7F058390 460A9282 */  mul.s $f10, $f18, $f10
+/* 08AD84 7F058394 24E7000C */  addiu $a3, $a3, 0xc
+/* 08AD88 7F058398 460C8300 */  add.s $f12, $f16, $f12
+/* 08AD8C 7F05839C 460C5300 */  add.s $f12, $f10, $f12
+/* 08AD90 7F0583A0 1449FFF1 */  bne   $v0, $t1, .L7F058368
+/* 08AD94 7F0583A4 E48CFFF4 */   swc1  $f12, -0xc($a0)
+/* 08AD98 7F0583A8 24630004 */  addiu $v1, $v1, 4
+/* 08AD9C 7F0583AC 146AFFEB */  bne   $v1, $t2, .L7F05835C
+/* 08ADA0 7F0583B0 25080004 */   addiu $t0, $t0, 4
+/* 08ADA4 7F0583B4 03E00008 */  jr    $ra
+/* 08ADA8 7F0583B8 00000000 */   nop   
+)
+#endif
+#endif
+
+
+#ifdef VERSION_EU
+#ifdef NONMATCHING
+void matrix_4x4_copy_eu (Mtxf * src, Mtxf * dst)
+{
+
+}
+#else
+GLOBAL_ASM(
+.text
+glabel matrix_4x4_copy_eu
+/* 08ADAC 7F0583BC 00001025 */  move  $v0, $zero
+/* 08ADB0 7F0583C0 00A03025 */  move  $a2, $a1
+/* 08ADB4 7F0583C4 00803825 */  move  $a3, $a0
+/* 08ADB8 7F0583C8 24090003 */  li    $t1, 3
+.L7F0583CC:
+/* 08ADBC 7F0583CC 00001825 */  move  $v1, $zero
+/* 08ADC0 7F0583D0 00C02025 */  move  $a0, $a2
+/* 08ADC4 7F0583D4 00E04025 */  move  $t0, $a3
+.L7F0583D8:
+/* 08ADC8 7F0583D8 C5040000 */  lwc1  $f4, ($t0)
+/* 08ADCC 7F0583DC 24630001 */  addiu $v1, $v1, 1
+/* 08ADD0 7F0583E0 24840004 */  addiu $a0, $a0, 4
+/* 08ADD4 7F0583E4 25080004 */  addiu $t0, $t0, 4
+/* 08ADD8 7F0583E8 1469FFFB */  bne   $v1, $t1, .L7F0583D8
+/* 08ADDC 7F0583EC E484FFFC */   swc1  $f4, -4($a0)
+/* 08ADE0 7F0583F0 24420001 */  addiu $v0, $v0, 1
+/* 08ADE4 7F0583F4 24C60010 */  addiu $a2, $a2, 0x10
+/* 08ADE8 7F0583F8 1449FFF4 */  bne   $v0, $t1, .L7F0583CC
+/* 08ADEC 7F0583FC 24E7000C */   addiu $a3, $a3, 0xc
+/* 08ADF0 7F058400 44800000 */  mtc1  $zero, $f0
+/* 08ADF4 7F058404 3C013F80 */  li    $at, 0x3F800000 # 1.000000
+/* 08ADF8 7F058408 44813000 */  mtc1  $at, $f6
+/* 08ADFC 7F05840C E4A0000C */  swc1  $f0, 0xc($a1)
+/* 08AE00 7F058410 E4A0001C */  swc1  $f0, 0x1c($a1)
+/* 08AE04 7F058414 E4A0002C */  swc1  $f0, 0x2c($a1)
+/* 08AE08 7F058418 E4A00030 */  swc1  $f0, 0x30($a1)
+/* 08AE0C 7F05841C E4A00034 */  swc1  $f0, 0x34($a1)
+/* 08AE10 7F058420 E4A00038 */  swc1  $f0, 0x38($a1)
+/* 08AE14 7F058424 03E00008 */  jr    $ra
+/* 08AE18 7F058428 E4A6003C */   swc1  $f6, 0x3c($a1)
+)
+#endif
+#endif
+
+#ifdef VERSION_EU
+#ifdef NONMATCHING
+void matrix_7f05842c_eu (Mtxf * src, Mtxf * dst)
+{
+    
+}
+#else
+GLOBAL_ASM(
+.text
+glabel matrix_7f05842c_eu
+/* 08AE1C 7F05842C 00001025 */  move  $v0, $zero
+/* 08AE20 7F058430 00A03025 */  move  $a2, $a1
+/* 08AE24 7F058434 00803825 */  move  $a3, $a0
+/* 08AE28 7F058438 24080003 */  li    $t0, 3
+.L7F05843C:
+/* 08AE2C 7F05843C 00001825 */  move  $v1, $zero
+/* 08AE30 7F058440 00C02025 */  move  $a0, $a2
+/* 08AE34 7F058444 00E02825 */  move  $a1, $a3
+.L7F058448:
+/* 08AE38 7F058448 C4A40000 */  lwc1  $f4, ($a1)
+/* 08AE3C 7F05844C 24630001 */  addiu $v1, $v1, 1
+/* 08AE40 7F058450 24840004 */  addiu $a0, $a0, 4
+/* 08AE44 7F058454 24A50004 */  addiu $a1, $a1, 4
+/* 08AE48 7F058458 1468FFFB */  bne   $v1, $t0, .L7F058448
+/* 08AE4C 7F05845C E484FFFC */   swc1  $f4, -4($a0)
+/* 08AE50 7F058460 24420001 */  addiu $v0, $v0, 1
+/* 08AE54 7F058464 24C6000C */  addiu $a2, $a2, 0xc
+/* 08AE58 7F058468 1448FFF4 */  bne   $v0, $t0, .L7F05843C
+/* 08AE5C 7F05846C 24E70010 */   addiu $a3, $a3, 0x10
+/* 08AE60 7F058470 03E00008 */  jr    $ra
+/* 08AE64 7F058474 00000000 */   nop  
+)
+#endif
+#endif
+
+
+//nexthere
+
+//#endif
+
+void matrix_4x4_set_identity(Mtxf *matrix)
+{
     matrix->m[0][0] = 1.0f;
     matrix->m[0][1] = 0.0f;
     matrix->m[0][2] = 0.0f;
@@ -36,44 +231,54 @@ void matrix_4x4_set_identity(Mtxf *matrix) {
     matrix->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_copy(Mtxf *src, Mtxf *dst) {
+void matrix_4x4_copy(Mtxf *src, Mtxf *dst)
+{
     s32 i, j;
-    for (i = 0; i < 4; i++) {
-        for (j = 0; j < 4; j++) {
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < 4; j++)
+        {
             dst->m[i][j] = src->m[i][j];
         }
     }
 }
 
-void matrix_4x4_multiply(Mtxf *lhs, Mtxf *rhs, Mtxf *result);
-
-void matrix_4x4_multiply_in_place(Mtxf *lhs, Mtxf *rhs) {
+void matrix_4x4_multiply_in_place(Mtxf *lhs, Mtxf *rhs)
+{
     Mtxf result;
     matrix_4x4_multiply(lhs, rhs, &result);
     matrix_4x4_copy(&result, rhs);
 }
 
-void matrix_4x4_multiply_homogeneous_in_place(Mtxf *lhs, Mtxf *rhs) {
+void matrix_4x4_multiply_homogeneous_in_place(Mtxf *lhs, Mtxf *rhs)
+{
     Mtxf result;
     matrix_4x4_multiply_homogeneous(lhs, rhs, &result);
     matrix_4x4_copy(&result, rhs);
 }
 
-void matrix_4x4_multiply(Mtxf *lhs, Mtxf *rhs, Mtxf *result) {
+void matrix_4x4_multiply(Mtxf *lhs, Mtxf *rhs, Mtxf *result)
+{
     s32 i, j;
-    for (i = 0; i < 4; i++) {
-        for (j = 0; j < 4; j++) {
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < 4; j++)
+        {
             result->m[j][i] = lhs->m[0][i] * rhs->m[j][0] + lhs->m[1][i] * rhs->m[j][1] + lhs->m[2][i] * rhs->m[j][2] + lhs->m[3][i] * rhs->m[j][3];
         }
     }
 }
 
-s32 matrix_4x4_multiply_homogeneous(Mtxf *lhs, Mtxf *rhs, Mtxf *result) {
+s32 matrix_4x4_multiply_homogeneous(Mtxf *lhs, Mtxf *rhs, Mtxf *result)
+{
     s32 i, j;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 4; j++) {
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 4; j++)
+        {
             result->m[j][i] = (lhs->m[0][i] * rhs->m[j][0]) + (lhs->m[1][i] * rhs->m[j][1]) + (lhs->m[2][i] * rhs->m[j][2]);
-            if (j == 3) {
+            if (j == 3)
+            {
                 result->m[j][i] += lhs->m[3][i];
             }
         }
@@ -85,7 +290,8 @@ s32 matrix_4x4_multiply_homogeneous(Mtxf *lhs, Mtxf *rhs, Mtxf *result) {
     result->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_7F058274(Mtxf *arg0, Mtxf *arg1, Mtxf *arg2) {
+void matrix_4x4_7F058274(Mtxf *arg0, Mtxf *arg1, Mtxf *arg2)
+{
     arg2->m[0][0] = (arg0->m[0][0] * arg1->m[0][0]);
     arg2->m[1][0] = (arg0->m[0][0] * arg1->m[1][0]);
     arg2->m[2][0] = (arg0->m[0][0] * arg1->m[2][0]);
@@ -104,14 +310,17 @@ void matrix_4x4_7F058274(Mtxf *arg0, Mtxf *arg1, Mtxf *arg2) {
     arg2->m[3][3] = (arg0->m[2][3] * arg1->m[3][2]);
 }
 
-void matrix_4x4_rotate_vector(Mtxf *matrix, vec3 vector, vec3 result) {
+void matrix_4x4_rotate_vector(Mtxf *matrix, vec3 vector, vec3 result)
+{
     s32 i;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++)
+    {
         result[i] = matrix->m[0][i] * vector[0] + matrix->m[1][i] * vector[1] + matrix->m[2][i] * vector[2];
     }
 }
 
-void matrix_4x4_rotate_vector_in_place(Mtxf *matrix, vec3 vector) {
+void matrix_4x4_rotate_vector_in_place(Mtxf *matrix, vec3 vector)
+{
     vec3 result;
     matrix_4x4_rotate_vector(matrix, vector, result);
     vector[0] = result[0];
@@ -119,23 +328,26 @@ void matrix_4x4_rotate_vector_in_place(Mtxf *matrix, vec3 vector) {
     vector[2] = result[2];
 }
 
-void matrix_4x4_transform_vector(Mtxf *matrix, vec3 vector, vec3 result) {
+void matrix_4x4_transform_vector(Mtxf *matrix, vec3 vector, vec3 result)
+{
     matrix_4x4_rotate_vector(matrix, vector, result);
     result[0] += matrix->m[3][0];
     result[1] += matrix->m[3][1];
     result[2] += matrix->m[3][2];
 }
 
-void matrix_4x4_transform_vector_in_place(Mtxf *matrix, vec3 vector) {
+void matrix_4x4_transform_vector_in_place(Mtxf *matrix, vec3 vector)
+{
     matrix_4x4_rotate_vector_in_place(matrix, vector);
     vector[0] += matrix->m[3][0];
     vector[1] += matrix->m[3][1];
     vector[2] += matrix->m[3][2];
 }
 
-void matrix_4x4_set_position_and_rotation_around_y(f32* position, f32 angle, Mtxf *matrix) {
-    f32 cosine = cosf(angle);
-    f32 sine = sinf(angle);
+void matrix_4x4_set_position_and_rotation_around_y(f32 *position, f32 angle, Mtxf *matrix)
+{
+    f32 cosine      = cosf(angle);
+    f32 sine        = sinf(angle);
     matrix->m[0][0] = cosine;
     matrix->m[0][1] = 0.0f;
     matrix->m[0][2] = -sine;
@@ -154,9 +366,10 @@ void matrix_4x4_set_position_and_rotation_around_y(f32* position, f32 angle, Mtx
     matrix->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_set_rotation_around_x(f32 angle, Mtxf *matrix) {
-    f32 cosine = cosf(angle);
-    f32 sine = sinf(angle);
+void matrix_4x4_set_rotation_around_x(f32 angle, Mtxf *matrix)
+{
+    f32 cosine      = cosf(angle);
+    f32 sine        = sinf(angle);
     matrix->m[0][0] = 1.0f;
     matrix->m[0][1] = 0.0f;
     matrix->m[0][2] = 0.0f;
@@ -175,9 +388,10 @@ void matrix_4x4_set_rotation_around_x(f32 angle, Mtxf *matrix) {
     matrix->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_set_rotation_around_y(f32 angle, Mtxf *matrix) {
-    f32 cosine = cosf(angle);
-    f32 sine = sinf(angle);
+void matrix_4x4_set_rotation_around_y(f32 angle, Mtxf *matrix)
+{
+    f32 cosine      = cosf(angle);
+    f32 sine        = sinf(angle);
     matrix->m[0][0] = cosine;
     matrix->m[0][1] = 0.0f;
     matrix->m[0][2] = -sine;
@@ -196,9 +410,10 @@ void matrix_4x4_set_rotation_around_y(f32 angle, Mtxf *matrix) {
     matrix->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_set_rotation_around_z(f32 angle, Mtxf *matrix) {
-    f32 cosine = cosf(angle);
-    f32 sine = sinf(angle);
+void matrix_4x4_set_rotation_around_z(f32 angle, Mtxf *matrix)
+{
+    f32 cosine      = cosf(angle);
+    f32 sine        = sinf(angle);
     matrix->m[0][0] = cosine;
     matrix->m[0][1] = sine;
     matrix->m[0][2] = 0.0f;
@@ -217,13 +432,14 @@ void matrix_4x4_set_rotation_around_z(f32 angle, Mtxf *matrix) {
     matrix->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_set_rotation_around_xyz(vec3 angles, Mtxf *matrix) {
-    f32 cos_x = cosf(angles[0]);
-    f32 sin_x = sinf(angles[0]);
-    f32 cos_y = cosf(angles[1]);
-    f32 sin_y = sinf(angles[1]);
-    f32 cos_z = cosf(angles[2]);
-    f32 sin_z = sinf(angles[2]);
+void matrix_4x4_set_rotation_around_xyz(vec3 angles, Mtxf *matrix)
+{
+    f32 cos_x       = cosf(angles[0]);
+    f32 sin_x       = sinf(angles[0]);
+    f32 cos_y       = cosf(angles[1]);
+    f32 sin_y       = sinf(angles[1]);
+    f32 cos_z       = cosf(angles[2]);
+    f32 sin_z       = sinf(angles[2]);
     f32 sin_x_sin_z = sin_x * sin_z;
     f32 cos_x_sin_z = cos_x * sin_z;
     f32 sin_x_cos_z = sin_x * cos_z;
@@ -246,71 +462,77 @@ void matrix_4x4_set_rotation_around_xyz(vec3 angles, Mtxf *matrix) {
     matrix->m[3][3] = 1.0f;
 }
 
-f32 atan2f(f32, f32);
-
-#define EPSILON 0.0000019073486f
-
 // https://stackoverflow.com/a/15029416
-void matrix_4x4_get_rotation_around_xyz(Mtxf *matrix, vec3 angles) {
+void matrix_4x4_get_rotation_around_xyz(Mtxf *matrix, vec3 angles)
+{
     f32 norm;
     f32 sin_x_cos_y = matrix->m[1][2];
     f32 cos_x_cos_y = matrix->m[2][2];
-    norm = sqrtf((sin_x_cos_y * sin_x_cos_y) + (cos_x_cos_y * cos_x_cos_y));
-    if (EPSILON < norm) {
+    norm            = sqrtf(SQR(sin_x_cos_y) + SQR(cos_x_cos_y));
+    if (EPSILON < norm)
+    {
         angles[0] = atan2f(matrix->m[1][2], matrix->m[2][2]);
         angles[1] = atan2f(-matrix->m[0][2], norm);
         angles[2] = atan2f(matrix->m[0][1], matrix->m[0][0]);
-    } else {
+    }
+    else
+    {
         angles[0] = 0.0f;
         angles[1] = atan2f(-matrix->m[0][2], norm);
         angles[2] = atan2f(-matrix->m[1][0], matrix->m[1][1]);
     }
 }
 
-void matrix_4x4_set_position(vec3 position, Mtxf *matrix);
-
-void matrix_4x4_set_position_and_rotation_around_xyz(vec3 position, vec3 rotation, Mtxf *matrix) {
+void matrix_4x4_set_position_and_rotation_around_xyz(vec3 position, vec3 rotation, Mtxf *matrix)
+{
     matrix_4x4_set_rotation_around_xyz(rotation, matrix);
     matrix_4x4_set_position(position, matrix);
 }
 
-void matrix_4x4_set_identity_and_position(vec3 position, Mtxf *matrix) {
+void matrix_4x4_set_identity_and_position(vec3 position, Mtxf *matrix)
+{
     matrix_4x4_set_identity(matrix);
     matrix_4x4_set_position(position, matrix);
 }
 
-void matrix_4x4_set_position(vec3 position, Mtxf *matrix) {
+void matrix_4x4_set_position(vec3 position, Mtxf *matrix)
+{
     matrix->m[3][0] = position[0];
     matrix->m[3][1] = position[1];
     matrix->m[3][2] = position[2];
 }
 
-void matrix_column_1_scalar_multiply(f32 scalar, f32* matrix) {
+void matrix_column_1_scalar_multiply(f32 scalar, f32 *matrix)
+{
     matrix[0] *= scalar;
     matrix[1] *= scalar;
     matrix[2] *= scalar;
 }
 
-void matrix_column_2_scalar_multiply(f32 scalar, f32* matrix) {
+void matrix_column_2_scalar_multiply(f32 scalar, f32 *matrix)
+{
     matrix[4] *= scalar;
     matrix[5] *= scalar;
     matrix[6] *= scalar;
 }
 
-void matrix_column_3_scalar_multiply(f32 scalar, f32* matrix) {
+void matrix_column_3_scalar_multiply(f32 scalar, f32 *matrix)
+{
     matrix[8] *= scalar;
     matrix[9] *= scalar;
     matrix[10] *= scalar;
     matrix[11] *= scalar;
 }
 
-void matrix_column_3_scalar_multiply_2(f32 scalar, f32* matrix) {
+void matrix_column_3_scalar_multiply_2(f32 scalar, f32 *matrix)
+{
     matrix[8] *= scalar;
     matrix[9] *= scalar;
     matrix[10] *= scalar;
 }
 
-void matrix_scalar_multiply(f32 scalar, f32* matrix) {
+void matrix_scalar_multiply(f32 scalar, f32 *matrix)
+{
     matrix[0] *= scalar;
     matrix[1] *= scalar;
     matrix[2] *= scalar;
@@ -325,7 +547,8 @@ void matrix_scalar_multiply(f32 scalar, f32* matrix) {
     matrix[11] *= scalar;
 }
 
-void matrix_scalar_multiply_2(f32 scalar, f32* matrix) {
+void matrix_scalar_multiply_2(f32 scalar, f32 *matrix)
+{
     matrix[0] *= scalar;
     matrix[1] *= scalar;
     matrix[2] *= scalar;
@@ -337,14 +560,16 @@ void matrix_scalar_multiply_2(f32 scalar, f32* matrix) {
     matrix[10] *= scalar;
 }
 
-void matrix_row_3_scalar_multiply(f32 scalar, f32* matrix) {
+void matrix_row_3_scalar_multiply(f32 scalar, f32 *matrix)
+{
     matrix[2] *= scalar;
     matrix[6] *= scalar;
     matrix[10] *= scalar;
     matrix[14] *= scalar;
 }
 
-void matrix_scalar_multiply_3(f32 scalar, f32* matrix) {
+void matrix_scalar_multiply_3(f32 scalar, f32 *matrix)
+{
     matrix[0] *= scalar;
     matrix[4] *= scalar;
     matrix[8] *= scalar;
@@ -359,16 +584,19 @@ void matrix_scalar_multiply_3(f32 scalar, f32* matrix) {
     matrix[14] *= scalar;
 }
 
-void matrix_4x4_7F058C4C(f32 arg0) {
-    D_80032310[0] = (65536.0f * arg0);
+void matrix_4x4_7F058C4C(f32 arg0)
+{
+    D_80032310[0] = (M_U16_MAX_VALUE_F * arg0);
 }
 
-void matrix_4x4_7F058C64(void) {
+void matrix_4x4_7F058C64(void)
+{
     flt_CODE_bss_80075DA0 = D_80032310[0];
-    D_80032310[0] = 65536.0f;
+    D_80032310[0]         = M_U16_MAX_VALUE_F;
 }
 
-void matrix_4x4_7F058C88(void) {
+void matrix_4x4_7F058C88(void)
+{
     D_80032310[0] = flt_CODE_bss_80075DA0;
 }
 
@@ -381,23 +609,25 @@ void matrix_4x4_7F058C88(void) {
 //     var2 = (s32)(matrix[(index) * 2 + 1] * D_80032310[(index) & 1]); \
 //     result[index + 0] = GET_HIGH_S16(var1, var2); \
 //     result[index + 8] = GET_LOW_S16(var1, var2);
-#define	FTOFIX32(x)	(long)((x) * D_80032310[0])
+#    define FTOFIX32(x) (long)((x)*D_80032310[0])
 
-void sub_GAME_7F058C9C(f32 mf[4][4], s32 ms[4][4]) {
-    int	i, j;
-	int	e1,e2;
-	int	*ai,*af;
+void matrix_4x4_f32_to_s32(f32 mf[4][4], s32 ms[4][4])
+{
+    int  i, j;
+    int  e1, e2;
+    int *ai, *af;
 
-	ai=(int*)&ms[0][0];
-	af=(int*)&ms[2][0];
+    ai = (int *)&ms[0][0];
+    af = (int *)&ms[2][0];
 
-	for (i=0; i<4; i++)
-	for (j=0; j<2; j++) {
-		e1=FTOFIX32(mf[i][j*2]);
-		e2=FTOFIX32(mf[i][j*2+1]);
-		*(ai++) = (e1 & 0xffff0000 ) | ((e2 >> 16)&0xffff);
-		*(af++) = ((e1 << 16) & 0xffff0000) | (e2 & 0xffff);
-	}
+    for (i = 0; i < 4; i++)
+        for (j = 0; j < 2; j++)
+        {
+            e1      = FTOFIX32(mf[i][j * 2]);
+            e2      = FTOFIX32(mf[i][j * 2 + 1]);
+            *(ai++) = (e1 & 0xffff0000) | ((e2 >> 16) & 0xffff);
+            *(af++) = ((e1 << 16) & 0xffff0000) | (e2 & 0xffff);
+        }
 }
 
 
@@ -449,7 +679,7 @@ void sub_GAME_7F058C9C(f32 mf[4][4], s32 ms[4][4]) {
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F058C9C
+glabel matrix_4x4_f32_to_s32
 /* 08D7CC 7F058C9C 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 08D7D0 7F058CA0 AFB1000C */  sw    $s1, 0xc($sp)
 /* 08D7D4 7F058CA4 AFB30014 */  sw    $s3, 0x14($sp)
@@ -708,7 +938,7 @@ void matrix_4x4_7F059044(Mtxf *arg0, Mtx* arg1) {
     s32 i, j;
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
-            arg1->m[i][j] = arg0->m[i][j] * 65536.0f;
+            arg1->m[i][j] = arg0->m[i][j] * M_U16_MAX_VALUE_F;
         }
     }
 }
@@ -717,7 +947,7 @@ void matrix_4x4_7F05914C(Mtx* arg0, Mtxf *arg1) {
     s32 i, j;
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
-            arg1->m[i][j] = arg0->m[i][j] / 65536.0f;
+            arg1->m[i][j] = arg0->m[i][j] / M_U16_MAX_VALUE_F;
         }
     }
 }
@@ -1316,8 +1546,6 @@ void matrix_4x4_7F059424(Mtxf *arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32
     arg0->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_7F059424(Mtxf *arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9);
-
 void matrix_4x4_7F059694(Mtxf *arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9) {
     matrix_4x4_7F059424(arg0, arg1, arg2, arg3, arg4 - arg1, arg5 - arg2, arg6 - arg3, arg7, arg8, arg9);
 }
@@ -1446,11 +1674,9 @@ glabel sub_GAME_7F05997C
 )
 #endif
 
-u16 sub_GAME_7F05997C(f32 arg0, f32 arg1);
-
 void matrix_4x4_7F059A48(Mtxf *matrix, u16* arg1, f32 angle, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
     f32 temp_f12_2 = cosf(angle * 0.5f) / sinf(angle * 0.5f);
-    arg6 *= 65536.0f;
+    arg6 *= M_U16_MAX_VALUE_F;
     matrix->m[0][0] = ((temp_f12_2 / arg3) * arg6);
     matrix->m[1][1] = (temp_f12_2 * arg6);
     matrix->m[1][0] = 0.0f;
@@ -1471,8 +1697,6 @@ void matrix_4x4_7F059A48(Mtxf *matrix, u16* arg1, f32 angle, f32 arg3, f32 arg4,
         *arg1 = sub_GAME_7F05997C(arg4, arg5);
     }
 }
-
-void guNormalize(f32 *x, f32 *y, f32 *z);
 
 void matrix_4x4_7F059B58(Mtxf *matrix, f32 angle, f32 x, f32 y, f32 z) {
     f32 sine;
@@ -1514,12 +1738,8 @@ void matrix_4x4_7F059B58(Mtxf *matrix, f32 angle, f32 x, f32 y, f32 z) {
     matrix_4x4_set_identity(matrix);
 }
 
-void guAlignF(float mf[4][4], float a, float x, float y, float z);
-
-#define RAD2DEG(x) x * 57.295776f
-
 void matrix_4x4_align(Mtxf *matrix, f32 angle, f32 x, f32 y, f32 z) {
-    angle = RAD2DEG(angle);
+    angle = RadToDeg(angle);
     guAlignF(matrix->m, angle, x, y, z);
 }
 
@@ -1783,10 +2003,6 @@ glabel sub_GAME_7F059FB8
 )
 #endif
 
-void matrix_4x4_7F05A310(Mtxf *arg0, Mtxf *arg1);
-
-f32 matrix_4x4_determinant(Mtxf *matrix);
-
 void matrix_4x4_7F05A250(Mtxf *arg0, Mtxf *arg1) {
     s32 i, j;
     f32 inv_det;
@@ -1799,474 +2015,69 @@ void matrix_4x4_7F05A250(Mtxf *arg0, Mtxf *arg1) {
     }
 }
 
-#ifdef NONMATCHING
-f32 matrix_3x3_determinant(f32 a, f32 d, f32 g, f32 b, f32 e, f32 h, f32 c, f32 f, f32 i);
-// Stack pointer mostly
-void matrix_4x4_7F05A310(Mtxf arg0, Mtxf arg1) {
-    f32 m00 = arg0->m[0][0];
-    f32 m01 = arg0->m[0][1];
-    f32 m02 = arg0->m[0][2];
-    f32 m03 = arg0->m[0][3];
-    f32 m10 = arg0->m[1][0];
-    f32 m11 = arg0->m[1][1];
-    f32 m12 = arg0->m[1][2];
-    f32 m13 = arg0->m[1][3];
-    f32 m20 = arg0->m[2][0];
-    f32 m21 = arg0->m[2][1];
-    f32 m22 = arg0->m[2][2];
-    f32 m23 = arg0->m[2][3];
-    f32 m30 = arg0->m[3][0];
-    f32 m31 = arg0->m[3][1];
-    f32 m32 = arg0->m[3][2];
-    f32 m33 = arg0->m[3][3];
-    arg1->m[0][0] =  matrix_3x3_determinant(m11, m21, m31, m12, m22, m32, m13, m23, m33);
-    arg1->m[1][0] = -matrix_3x3_determinant(m10, m20, m30, m12, m22, m32, m13, m23, m33);
-    arg1->m[2][0] =  matrix_3x3_determinant(m10, m20, m30, m11, m21, m31, m13, m23, m33);
-    arg1->m[3][0] = -matrix_3x3_determinant(m10, m20, m30, m11, m21, m31, m12, m22, m32);
-    arg1->m[0][1] = -matrix_3x3_determinant(m01, m21, m31, m02, m22, m32, m03, m23, m33);
-    arg1->m[1][1] =  matrix_3x3_determinant(m00, m20, m30, m02, m22, m32, m03, m23, m33);
-    arg1->m[2][1] = -matrix_3x3_determinant(m00, m20, m30, m01, m21, m31, m03, m23, m33);
-    arg1->m[3][1] =  matrix_3x3_determinant(m00, m20, m30, m01, m21, m31, m02, m22, m32);
-    arg1->m[0][2] =  matrix_3x3_determinant(m01, m11, m31, m02, m12, m32, m03, m13, m33);
-    arg1->m[1][2] = -matrix_3x3_determinant(m00, m10, m30, m02, m12, m32, m03, m13, m33);
-    arg1->m[2][2] =  matrix_3x3_determinant(m00, m10, m30, m01, m11, m31, m03, m13, m33);
-    arg1->m[3][2] = -matrix_3x3_determinant(m00, m10, m30, m01, m11, m31, m02, m12, m32);
-    arg1->m[0][3] = -matrix_3x3_determinant(m01, m11, m21, m02, m12, m22, m03, m13, m23);
-    arg1->m[1][3] =  matrix_3x3_determinant(m00, m10, m20, m02, m12, m22, m03, m13, m23);
-    arg1->m[2][3] = -matrix_3x3_determinant(m00, m10, m20, m01, m11, m21, m03, m13, m23);
-    arg1->m[3][3] =  matrix_3x3_determinant(m00, m10, m20, m01, m11, m21, m02, m12, m22);
+void matrix_4x4_7F05A310(Mtxf *arg0, Mtxf *arg1)
+{
+    f32 mtx00, mtx10, mtx20, mtx30;
+	f32 mtx04, mtx14, mtx24, mtx34;
+	f32 mtx08, mtx18, mtx28, mtx38;
+	f32 mtx0c, mtx1c, mtx2c, mtx3c;
+
+	mtx00 = arg0->m[0][0]; mtx04 = arg0->m[0][1];
+	mtx08 = arg0->m[0][2]; mtx0c = arg0->m[0][3];
+	mtx10 = arg0->m[1][0]; mtx14 = arg0->m[1][1];
+	mtx18 = arg0->m[1][2]; mtx1c = arg0->m[1][3];
+	mtx20 = arg0->m[2][0]; mtx24 = arg0->m[2][1];
+	mtx28 = arg0->m[2][2]; mtx2c = arg0->m[2][3];
+	mtx30 = arg0->m[3][0]; mtx34 = arg0->m[3][1];
+	mtx38 = arg0->m[3][2]; mtx3c = arg0->m[3][3];
+
+	arg1->m[0][0] =  matrix_3x3_determinant(mtx14, mtx24, mtx34, mtx18, mtx28, mtx38, mtx1c, mtx2c, mtx3c);
+	arg1->m[1][0] = -matrix_3x3_determinant(mtx10, mtx20, mtx30, mtx18, mtx28, mtx38, mtx1c, mtx2c, mtx3c);
+	arg1->m[2][0] =  matrix_3x3_determinant(mtx10, mtx20, mtx30, mtx14, mtx24, mtx34, mtx1c, mtx2c, mtx3c);
+	arg1->m[3][0] = -matrix_3x3_determinant(mtx10, mtx20, mtx30, mtx14, mtx24, mtx34, mtx18, mtx28, mtx38);
+	arg1->m[0][1] = -matrix_3x3_determinant(mtx04, mtx24, mtx34, mtx08, mtx28, mtx38, mtx0c, mtx2c, mtx3c);
+	arg1->m[1][1] =  matrix_3x3_determinant(mtx00, mtx20, mtx30, mtx08, mtx28, mtx38, mtx0c, mtx2c, mtx3c);
+	arg1->m[2][1] = -matrix_3x3_determinant(mtx00, mtx20, mtx30, mtx04, mtx24, mtx34, mtx0c, mtx2c, mtx3c);
+	arg1->m[3][1] =  matrix_3x3_determinant(mtx00, mtx20, mtx30, mtx04, mtx24, mtx34, mtx08, mtx28, mtx38);
+	arg1->m[0][2] =  matrix_3x3_determinant(mtx04, mtx14, mtx34, mtx08, mtx18, mtx38, mtx0c, mtx1c, mtx3c);
+	arg1->m[1][2] = -matrix_3x3_determinant(mtx00, mtx10, mtx30, mtx08, mtx18, mtx38, mtx0c, mtx1c, mtx3c);
+	arg1->m[2][2] =  matrix_3x3_determinant(mtx00, mtx10, mtx30, mtx04, mtx14, mtx34, mtx0c, mtx1c, mtx3c);
+	arg1->m[3][2] = -matrix_3x3_determinant(mtx00, mtx10, mtx30, mtx04, mtx14, mtx34, mtx08, mtx18, mtx38);
+	arg1->m[0][3] = -matrix_3x3_determinant(mtx04, mtx14, mtx24, mtx08, mtx18, mtx28, mtx0c, mtx1c, mtx2c);
+	arg1->m[1][3] =  matrix_3x3_determinant(mtx00, mtx10, mtx20, mtx08, mtx18, mtx28, mtx0c, mtx1c, mtx2c);
+	arg1->m[2][3] = -matrix_3x3_determinant(mtx00, mtx10, mtx20, mtx04, mtx14, mtx24, mtx0c, mtx1c, mtx2c);
+	arg1->m[3][3] =  matrix_3x3_determinant(mtx00, mtx10, mtx20, mtx04, mtx14, mtx24, mtx08, mtx18, mtx28);
 }
-#else
-GLOBAL_ASM(
-.text
-glabel matrix_4x4_7F05A310
-/* 08EE40 7F05A310 27BDFF58 */  addiu $sp, $sp, -0xa8
-/* 08EE44 7F05A314 AFBF0064 */  sw    $ra, 0x64($sp)
-/* 08EE48 7F05A318 AFB00060 */  sw    $s0, 0x60($sp)
-/* 08EE4C 7F05A31C F7BE0058 */  sdc1  $f30, 0x58($sp)
-/* 08EE50 7F05A320 F7BC0050 */  sdc1  $f28, 0x50($sp)
-/* 08EE54 7F05A324 F7BA0048 */  sdc1  $f26, 0x48($sp)
-/* 08EE58 7F05A328 F7B80040 */  sdc1  $f24, 0x40($sp)
-/* 08EE5C 7F05A32C F7B60038 */  sdc1  $f22, 0x38($sp)
-/* 08EE60 7F05A330 F7B40030 */  sdc1  $f20, 0x30($sp)
-/* 08EE64 7F05A334 C4840008 */  lwc1  $f4, 8($a0)
-/* 08EE68 7F05A338 C49E0004 */  lwc1  $f30, 4($a0)
-/* 08EE6C 7F05A33C C49C0000 */  lwc1  $f28, ($a0)
-/* 08EE70 7F05A340 E7A40084 */  swc1  $f4, 0x84($sp)
-/* 08EE74 7F05A344 C486000C */  lwc1  $f6, 0xc($a0)
-/* 08EE78 7F05A348 00A08025 */  move  $s0, $a1
-/* 08EE7C 7F05A34C E7A60074 */  swc1  $f6, 0x74($sp)
-/* 08EE80 7F05A350 C4880010 */  lwc1  $f8, 0x10($a0)
-/* 08EE84 7F05A354 E7A800A0 */  swc1  $f8, 0xa0($sp)
-/* 08EE88 7F05A358 C48A0020 */  lwc1  $f10, 0x20($a0)
-/* 08EE8C 7F05A35C C48C0014 */  lwc1  $f12, 0x14($a0)
-/* 08EE90 7F05A360 C482001C */  lwc1  $f2, 0x1c($a0)
-/* 08EE94 7F05A364 C4800018 */  lwc1  $f0, 0x18($a0)
-/* 08EE98 7F05A368 E7AA009C */  swc1  $f10, 0x9c($sp)
-/* 08EE9C 7F05A36C C4960034 */  lwc1  $f22, 0x34($a0)
-/* 08EEA0 7F05A370 C48E0024 */  lwc1  $f14, 0x24($a0)
-/* 08EEA4 7F05A374 C492002C */  lwc1  $f18, 0x2c($a0)
-/* 08EEA8 7F05A378 C4900028 */  lwc1  $f16, 0x28($a0)
-/* 08EEAC 7F05A37C C49A003C */  lwc1  $f26, 0x3c($a0)
-/* 08EEB0 7F05A380 C4980038 */  lwc1  $f24, 0x38($a0)
-/* 08EEB4 7F05A384 C4940030 */  lwc1  $f20, 0x30($a0)
-/* 08EEB8 7F05A388 44070000 */  mfc1  $a3, $f0
-/* 08EEBC 7F05A38C 4406B000 */  mfc1  $a2, $f22
-/* 08EEC0 7F05A390 E7AC0090 */  swc1  $f12, 0x90($sp)
-/* 08EEC4 7F05A394 E7A20070 */  swc1  $f2, 0x70($sp)
-/* 08EEC8 7F05A398 E7A20018 */  swc1  $f2, 0x18($sp)
-/* 08EECC 7F05A39C E7A00080 */  swc1  $f0, 0x80($sp)
-/* 08EED0 7F05A3A0 E7AE008C */  swc1  $f14, 0x8c($sp)
-/* 08EED4 7F05A3A4 E7B2006C */  swc1  $f18, 0x6c($sp)
-/* 08EED8 7F05A3A8 E7B2001C */  swc1  $f18, 0x1c($sp)
-/* 08EEDC 7F05A3AC E7B0007C */  swc1  $f16, 0x7c($sp)
-/* 08EEE0 7F05A3B0 E7B00010 */  swc1  $f16, 0x10($sp)
-/* 08EEE4 7F05A3B4 E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08EEE8 7F05A3B8 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08EEEC 7F05A3BC E7B80014 */   swc1  $f24, 0x14($sp)
-/* 08EEF0 7F05A3C0 E6000000 */  swc1  $f0, ($s0)
-/* 08EEF4 7F05A3C4 C7A8006C */  lwc1  $f8, 0x6c($sp)
-/* 08EEF8 7F05A3C8 C7A60070 */  lwc1  $f6, 0x70($sp)
-/* 08EEFC 7F05A3CC C7A4007C */  lwc1  $f4, 0x7c($sp)
-/* 08EF00 7F05A3D0 4406A000 */  mfc1  $a2, $f20
-/* 08EF04 7F05A3D4 E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08EF08 7F05A3D8 E7B80014 */  swc1  $f24, 0x14($sp)
-/* 08EF0C 7F05A3DC 8FA70080 */  lw    $a3, 0x80($sp)
-/* 08EF10 7F05A3E0 C7AE009C */  lwc1  $f14, 0x9c($sp)
-/* 08EF14 7F05A3E4 C7AC00A0 */  lwc1  $f12, 0xa0($sp)
-/* 08EF18 7F05A3E8 E7A8001C */  swc1  $f8, 0x1c($sp)
-/* 08EF1C 7F05A3EC E7A60018 */  swc1  $f6, 0x18($sp)
-/* 08EF20 7F05A3F0 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08EF24 7F05A3F4 E7A40010 */   swc1  $f4, 0x10($sp)
-/* 08EF28 7F05A3F8 46000287 */  neg.s $f10, $f0
-/* 08EF2C 7F05A3FC 4406A000 */  mfc1  $a2, $f20
-/* 08EF30 7F05A400 E60A0010 */  swc1  $f10, 0x10($s0)
-/* 08EF34 7F05A404 C7A8006C */  lwc1  $f8, 0x6c($sp)
-/* 08EF38 7F05A408 C7A60070 */  lwc1  $f6, 0x70($sp)
-/* 08EF3C 7F05A40C C7A4008C */  lwc1  $f4, 0x8c($sp)
-/* 08EF40 7F05A410 E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08EF44 7F05A414 E7B60014 */  swc1  $f22, 0x14($sp)
-/* 08EF48 7F05A418 8FA70090 */  lw    $a3, 0x90($sp)
-/* 08EF4C 7F05A41C C7AE009C */  lwc1  $f14, 0x9c($sp)
-/* 08EF50 7F05A420 C7AC00A0 */  lwc1  $f12, 0xa0($sp)
-/* 08EF54 7F05A424 E7A8001C */  swc1  $f8, 0x1c($sp)
-/* 08EF58 7F05A428 E7A60018 */  swc1  $f6, 0x18($sp)
-/* 08EF5C 7F05A42C 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08EF60 7F05A430 E7A40010 */   swc1  $f4, 0x10($sp)
-/* 08EF64 7F05A434 E6000020 */  swc1  $f0, 0x20($s0)
-/* 08EF68 7F05A438 C7A6007C */  lwc1  $f6, 0x7c($sp)
-/* 08EF6C 7F05A43C C7A40080 */  lwc1  $f4, 0x80($sp)
-/* 08EF70 7F05A440 C7AA008C */  lwc1  $f10, 0x8c($sp)
-/* 08EF74 7F05A444 4406A000 */  mfc1  $a2, $f20
-/* 08EF78 7F05A448 E7B80020 */  swc1  $f24, 0x20($sp)
-/* 08EF7C 7F05A44C E7B60014 */  swc1  $f22, 0x14($sp)
-/* 08EF80 7F05A450 8FA70090 */  lw    $a3, 0x90($sp)
-/* 08EF84 7F05A454 C7AE009C */  lwc1  $f14, 0x9c($sp)
-/* 08EF88 7F05A458 C7AC00A0 */  lwc1  $f12, 0xa0($sp)
-/* 08EF8C 7F05A45C E7A6001C */  swc1  $f6, 0x1c($sp)
-/* 08EF90 7F05A460 E7A40018 */  swc1  $f4, 0x18($sp)
-/* 08EF94 7F05A464 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08EF98 7F05A468 E7AA0010 */   swc1  $f10, 0x10($sp)
-/* 08EF9C 7F05A46C 46000207 */  neg.s $f8, $f0
-/* 08EFA0 7F05A470 4406B000 */  mfc1  $a2, $f22
-/* 08EFA4 7F05A474 E6080030 */  swc1  $f8, 0x30($s0)
-/* 08EFA8 7F05A478 C7A6006C */  lwc1  $f6, 0x6c($sp)
-/* 08EFAC 7F05A47C C7A40074 */  lwc1  $f4, 0x74($sp)
-/* 08EFB0 7F05A480 C7AA007C */  lwc1  $f10, 0x7c($sp)
-/* 08EFB4 7F05A484 E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08EFB8 7F05A488 E7B80014 */  swc1  $f24, 0x14($sp)
-/* 08EFBC 7F05A48C 8FA70084 */  lw    $a3, 0x84($sp)
-/* 08EFC0 7F05A490 C7AE008C */  lwc1  $f14, 0x8c($sp)
-/* 08EFC4 7F05A494 4600F306 */  mov.s $f12, $f30
-/* 08EFC8 7F05A498 E7A6001C */  swc1  $f6, 0x1c($sp)
-/* 08EFCC 7F05A49C E7A40018 */  swc1  $f4, 0x18($sp)
-/* 08EFD0 7F05A4A0 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08EFD4 7F05A4A4 E7AA0010 */   swc1  $f10, 0x10($sp)
-/* 08EFD8 7F05A4A8 46000207 */  neg.s $f8, $f0
-/* 08EFDC 7F05A4AC 4406A000 */  mfc1  $a2, $f20
-/* 08EFE0 7F05A4B0 E6080004 */  swc1  $f8, 4($s0)
-/* 08EFE4 7F05A4B4 C7A6006C */  lwc1  $f6, 0x6c($sp)
-/* 08EFE8 7F05A4B8 C7A40074 */  lwc1  $f4, 0x74($sp)
-/* 08EFEC 7F05A4BC C7AA007C */  lwc1  $f10, 0x7c($sp)
-/* 08EFF0 7F05A4C0 E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08EFF4 7F05A4C4 E7B80014 */  swc1  $f24, 0x14($sp)
-/* 08EFF8 7F05A4C8 8FA70084 */  lw    $a3, 0x84($sp)
-/* 08EFFC 7F05A4CC C7AE009C */  lwc1  $f14, 0x9c($sp)
-/* 08F000 7F05A4D0 4600E306 */  mov.s $f12, $f28
-/* 08F004 7F05A4D4 E7A6001C */  swc1  $f6, 0x1c($sp)
-/* 08F008 7F05A4D8 E7A40018 */  swc1  $f4, 0x18($sp)
-/* 08F00C 7F05A4DC 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F010 7F05A4E0 E7AA0010 */   swc1  $f10, 0x10($sp)
-/* 08F014 7F05A4E4 E6000014 */  swc1  $f0, 0x14($s0)
-/* 08F018 7F05A4E8 C7A4006C */  lwc1  $f4, 0x6c($sp)
-/* 08F01C 7F05A4EC C7AA0074 */  lwc1  $f10, 0x74($sp)
-/* 08F020 7F05A4F0 C7A8008C */  lwc1  $f8, 0x8c($sp)
-/* 08F024 7F05A4F4 4406A000 */  mfc1  $a2, $f20
-/* 08F028 7F05A4F8 4407F000 */  mfc1  $a3, $f30
-/* 08F02C 7F05A4FC E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08F030 7F05A500 E7B60014 */  swc1  $f22, 0x14($sp)
-/* 08F034 7F05A504 C7AE009C */  lwc1  $f14, 0x9c($sp)
-/* 08F038 7F05A508 4600E306 */  mov.s $f12, $f28
-/* 08F03C 7F05A50C E7A4001C */  swc1  $f4, 0x1c($sp)
-/* 08F040 7F05A510 E7AA0018 */  swc1  $f10, 0x18($sp)
-/* 08F044 7F05A514 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F048 7F05A518 E7A80010 */   swc1  $f8, 0x10($sp)
-/* 08F04C 7F05A51C 46000187 */  neg.s $f6, $f0
-/* 08F050 7F05A520 4406A000 */  mfc1  $a2, $f20
-/* 08F054 7F05A524 E6060024 */  swc1  $f6, 0x24($s0)
-/* 08F058 7F05A528 C7A4007C */  lwc1  $f4, 0x7c($sp)
-/* 08F05C 7F05A52C C7AA0084 */  lwc1  $f10, 0x84($sp)
-/* 08F060 7F05A530 C7A8008C */  lwc1  $f8, 0x8c($sp)
-/* 08F064 7F05A534 4407F000 */  mfc1  $a3, $f30
-/* 08F068 7F05A538 E7B80020 */  swc1  $f24, 0x20($sp)
-/* 08F06C 7F05A53C E7B60014 */  swc1  $f22, 0x14($sp)
-/* 08F070 7F05A540 C7AE009C */  lwc1  $f14, 0x9c($sp)
-/* 08F074 7F05A544 4600E306 */  mov.s $f12, $f28
-/* 08F078 7F05A548 E7A4001C */  swc1  $f4, 0x1c($sp)
-/* 08F07C 7F05A54C E7AA0018 */  swc1  $f10, 0x18($sp)
-/* 08F080 7F05A550 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F084 7F05A554 E7A80010 */   swc1  $f8, 0x10($sp)
-/* 08F088 7F05A558 E6000034 */  swc1  $f0, 0x34($s0)
-/* 08F08C 7F05A55C C7AA0070 */  lwc1  $f10, 0x70($sp)
-/* 08F090 7F05A560 C7A80074 */  lwc1  $f8, 0x74($sp)
-/* 08F094 7F05A564 C7A60080 */  lwc1  $f6, 0x80($sp)
-/* 08F098 7F05A568 4406B000 */  mfc1  $a2, $f22
-/* 08F09C 7F05A56C E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08F0A0 7F05A570 E7B80014 */  swc1  $f24, 0x14($sp)
-/* 08F0A4 7F05A574 8FA70084 */  lw    $a3, 0x84($sp)
-/* 08F0A8 7F05A578 C7AE0090 */  lwc1  $f14, 0x90($sp)
-/* 08F0AC 7F05A57C 4600F306 */  mov.s $f12, $f30
-/* 08F0B0 7F05A580 E7AA001C */  swc1  $f10, 0x1c($sp)
-/* 08F0B4 7F05A584 E7A80018 */  swc1  $f8, 0x18($sp)
-/* 08F0B8 7F05A588 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F0BC 7F05A58C E7A60010 */   swc1  $f6, 0x10($sp)
-/* 08F0C0 7F05A590 E6000008 */  swc1  $f0, 8($s0)
-/* 08F0C4 7F05A594 C7A80070 */  lwc1  $f8, 0x70($sp)
-/* 08F0C8 7F05A598 C7A60074 */  lwc1  $f6, 0x74($sp)
-/* 08F0CC 7F05A59C C7A40080 */  lwc1  $f4, 0x80($sp)
-/* 08F0D0 7F05A5A0 4406A000 */  mfc1  $a2, $f20
-/* 08F0D4 7F05A5A4 E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08F0D8 7F05A5A8 E7B80014 */  swc1  $f24, 0x14($sp)
-/* 08F0DC 7F05A5AC 8FA70084 */  lw    $a3, 0x84($sp)
-/* 08F0E0 7F05A5B0 C7AE00A0 */  lwc1  $f14, 0xa0($sp)
-/* 08F0E4 7F05A5B4 4600E306 */  mov.s $f12, $f28
-/* 08F0E8 7F05A5B8 E7A8001C */  swc1  $f8, 0x1c($sp)
-/* 08F0EC 7F05A5BC E7A60018 */  swc1  $f6, 0x18($sp)
-/* 08F0F0 7F05A5C0 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F0F4 7F05A5C4 E7A40010 */   swc1  $f4, 0x10($sp)
-/* 08F0F8 7F05A5C8 46000287 */  neg.s $f10, $f0
-/* 08F0FC 7F05A5CC 4406A000 */  mfc1  $a2, $f20
-/* 08F100 7F05A5D0 E60A0018 */  swc1  $f10, 0x18($s0)
-/* 08F104 7F05A5D4 C7A80070 */  lwc1  $f8, 0x70($sp)
-/* 08F108 7F05A5D8 C7A60074 */  lwc1  $f6, 0x74($sp)
-/* 08F10C 7F05A5DC C7A40090 */  lwc1  $f4, 0x90($sp)
-/* 08F110 7F05A5E0 4407F000 */  mfc1  $a3, $f30
-/* 08F114 7F05A5E4 E7BA0020 */  swc1  $f26, 0x20($sp)
-/* 08F118 7F05A5E8 E7B60014 */  swc1  $f22, 0x14($sp)
-/* 08F11C 7F05A5EC C7AE00A0 */  lwc1  $f14, 0xa0($sp)
-/* 08F120 7F05A5F0 4600E306 */  mov.s $f12, $f28
-/* 08F124 7F05A5F4 E7A8001C */  swc1  $f8, 0x1c($sp)
-/* 08F128 7F05A5F8 E7A60018 */  swc1  $f6, 0x18($sp)
-/* 08F12C 7F05A5FC 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F130 7F05A600 E7A40010 */   swc1  $f4, 0x10($sp)
-/* 08F134 7F05A604 E6000028 */  swc1  $f0, 0x28($s0)
-/* 08F138 7F05A608 C7A60080 */  lwc1  $f6, 0x80($sp)
-/* 08F13C 7F05A60C C7A40084 */  lwc1  $f4, 0x84($sp)
-/* 08F140 7F05A610 C7AA0090 */  lwc1  $f10, 0x90($sp)
-/* 08F144 7F05A614 4406A000 */  mfc1  $a2, $f20
-/* 08F148 7F05A618 4407F000 */  mfc1  $a3, $f30
-/* 08F14C 7F05A61C E7B80020 */  swc1  $f24, 0x20($sp)
-/* 08F150 7F05A620 E7B60014 */  swc1  $f22, 0x14($sp)
-/* 08F154 7F05A624 C7AE00A0 */  lwc1  $f14, 0xa0($sp)
-/* 08F158 7F05A628 4600E306 */  mov.s $f12, $f28
-/* 08F15C 7F05A62C E7A6001C */  swc1  $f6, 0x1c($sp)
-/* 08F160 7F05A630 E7A40018 */  swc1  $f4, 0x18($sp)
-/* 08F164 7F05A634 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F168 7F05A638 E7AA0010 */   swc1  $f10, 0x10($sp)
-/* 08F16C 7F05A63C 46000207 */  neg.s $f8, $f0
-/* 08F170 7F05A640 4600F306 */  mov.s $f12, $f30
-/* 08F174 7F05A644 E6080038 */  swc1  $f8, 0x38($s0)
-/* 08F178 7F05A648 C7AA0080 */  lwc1  $f10, 0x80($sp)
-/* 08F17C 7F05A64C C7A80070 */  lwc1  $f8, 0x70($sp)
-/* 08F180 7F05A650 C7A60074 */  lwc1  $f6, 0x74($sp)
-/* 08F184 7F05A654 E7AA0010 */  swc1  $f10, 0x10($sp)
-/* 08F188 7F05A658 C7AA006C */  lwc1  $f10, 0x6c($sp)
-/* 08F18C 7F05A65C C7A4007C */  lwc1  $f4, 0x7c($sp)
-/* 08F190 7F05A660 8FA70084 */  lw    $a3, 0x84($sp)
-/* 08F194 7F05A664 8FA6008C */  lw    $a2, 0x8c($sp)
-/* 08F198 7F05A668 C7AE0090 */  lwc1  $f14, 0x90($sp)
-/* 08F19C 7F05A66C E7A8001C */  swc1  $f8, 0x1c($sp)
-/* 08F1A0 7F05A670 E7A60018 */  swc1  $f6, 0x18($sp)
-/* 08F1A4 7F05A674 E7AA0020 */  swc1  $f10, 0x20($sp)
-/* 08F1A8 7F05A678 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F1AC 7F05A67C E7A40014 */   swc1  $f4, 0x14($sp)
-/* 08F1B0 7F05A680 46000107 */  neg.s $f4, $f0
-/* 08F1B4 7F05A684 4600E306 */  mov.s $f12, $f28
-/* 08F1B8 7F05A688 E604000C */  swc1  $f4, 0xc($s0)
-/* 08F1BC 7F05A68C C7A60080 */  lwc1  $f6, 0x80($sp)
-/* 08F1C0 7F05A690 C7A40070 */  lwc1  $f4, 0x70($sp)
-/* 08F1C4 7F05A694 C7AA0074 */  lwc1  $f10, 0x74($sp)
-/* 08F1C8 7F05A698 E7A60010 */  swc1  $f6, 0x10($sp)
-/* 08F1CC 7F05A69C C7A6006C */  lwc1  $f6, 0x6c($sp)
-/* 08F1D0 7F05A6A0 C7A8007C */  lwc1  $f8, 0x7c($sp)
-/* 08F1D4 7F05A6A4 8FA70084 */  lw    $a3, 0x84($sp)
-/* 08F1D8 7F05A6A8 8FA6009C */  lw    $a2, 0x9c($sp)
-/* 08F1DC 7F05A6AC C7AE00A0 */  lwc1  $f14, 0xa0($sp)
-/* 08F1E0 7F05A6B0 E7A4001C */  swc1  $f4, 0x1c($sp)
-/* 08F1E4 7F05A6B4 E7AA0018 */  swc1  $f10, 0x18($sp)
-/* 08F1E8 7F05A6B8 E7A60020 */  swc1  $f6, 0x20($sp)
-/* 08F1EC 7F05A6BC 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F1F0 7F05A6C0 E7A80014 */   swc1  $f8, 0x14($sp)
-/* 08F1F4 7F05A6C4 E600001C */  swc1  $f0, 0x1c($s0)
-/* 08F1F8 7F05A6C8 C7A80090 */  lwc1  $f8, 0x90($sp)
-/* 08F1FC 7F05A6CC C7A60070 */  lwc1  $f6, 0x70($sp)
-/* 08F200 7F05A6D0 C7A40074 */  lwc1  $f4, 0x74($sp)
-/* 08F204 7F05A6D4 E7A80010 */  swc1  $f8, 0x10($sp)
-/* 08F208 7F05A6D8 C7A8006C */  lwc1  $f8, 0x6c($sp)
-/* 08F20C 7F05A6DC C7AA008C */  lwc1  $f10, 0x8c($sp)
-/* 08F210 7F05A6E0 4407F000 */  mfc1  $a3, $f30
-/* 08F214 7F05A6E4 8FA6009C */  lw    $a2, 0x9c($sp)
-/* 08F218 7F05A6E8 C7AE00A0 */  lwc1  $f14, 0xa0($sp)
-/* 08F21C 7F05A6EC 4600E306 */  mov.s $f12, $f28
-/* 08F220 7F05A6F0 E7A6001C */  swc1  $f6, 0x1c($sp)
-/* 08F224 7F05A6F4 E7A40018 */  swc1  $f4, 0x18($sp)
-/* 08F228 7F05A6F8 E7A80020 */  swc1  $f8, 0x20($sp)
-/* 08F22C 7F05A6FC 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F230 7F05A700 E7AA0014 */   swc1  $f10, 0x14($sp)
-/* 08F234 7F05A704 46000287 */  neg.s $f10, $f0
-/* 08F238 7F05A708 4407F000 */  mfc1  $a3, $f30
-/* 08F23C 7F05A70C E60A002C */  swc1  $f10, 0x2c($s0)
-/* 08F240 7F05A710 C7A40090 */  lwc1  $f4, 0x90($sp)
-/* 08F244 7F05A714 C7AA0080 */  lwc1  $f10, 0x80($sp)
-/* 08F248 7F05A718 C7A80084 */  lwc1  $f8, 0x84($sp)
-/* 08F24C 7F05A71C E7A40010 */  swc1  $f4, 0x10($sp)
-/* 08F250 7F05A720 C7A4007C */  lwc1  $f4, 0x7c($sp)
-/* 08F254 7F05A724 C7A6008C */  lwc1  $f6, 0x8c($sp)
-/* 08F258 7F05A728 8FA6009C */  lw    $a2, 0x9c($sp)
-/* 08F25C 7F05A72C C7AE00A0 */  lwc1  $f14, 0xa0($sp)
-/* 08F260 7F05A730 4600E306 */  mov.s $f12, $f28
-/* 08F264 7F05A734 E7AA001C */  swc1  $f10, 0x1c($sp)
-/* 08F268 7F05A738 E7A80018 */  swc1  $f8, 0x18($sp)
-/* 08F26C 7F05A73C E7A40020 */  swc1  $f4, 0x20($sp)
-/* 08F270 7F05A740 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F274 7F05A744 E7A60014 */   swc1  $f6, 0x14($sp)
-/* 08F278 7F05A748 E600003C */  swc1  $f0, 0x3c($s0)
-/* 08F27C 7F05A74C 8FBF0064 */  lw    $ra, 0x64($sp)
-/* 08F280 7F05A750 8FB00060 */  lw    $s0, 0x60($sp)
-/* 08F284 7F05A754 D7BE0058 */  ldc1  $f30, 0x58($sp)
-/* 08F288 7F05A758 D7BC0050 */  ldc1  $f28, 0x50($sp)
-/* 08F28C 7F05A75C D7BA0048 */  ldc1  $f26, 0x48($sp)
-/* 08F290 7F05A760 D7B80040 */  ldc1  $f24, 0x40($sp)
-/* 08F294 7F05A764 D7B60038 */  ldc1  $f22, 0x38($sp)
-/* 08F298 7F05A768 D7B40030 */  ldc1  $f20, 0x30($sp)
-/* 08F29C 7F05A76C 03E00008 */  jr    $ra
-/* 08F2A0 7F05A770 27BD00A8 */   addiu $sp, $sp, 0xa8
-)
-#endif
 
- #ifdef NONMATCHING
-f32 matrix_3x3_determinant(f32 a, f32 d, f32 g, f32 b, f32 e, f32 h, f32 c, f32 f, f32 i);
- // Stack pointer mostly
-f32 matrix_4x4_determinant(Mtxf *matrix) {
-    f32 det;
-    f32 a = matrix->m[0][0];
-    f32 b = matrix->m[0][1];
-    f32 c = matrix->m[0][2];
-    f32 d = matrix->m[0][3];
-    f32 e = matrix->m[1][0];
-    f32 f = matrix->m[1][1];
-    f32 g = matrix->m[1][2];
-    f32 h = matrix->m[1][3];
-    f32 i = matrix->m[2][0];
-    f32 j = matrix->m[2][1];
-    f32 k = matrix->m[2][2];
-    f32 l = matrix->m[2][3];
-    f32 m = matrix->m[3][0];
-    f32 n = matrix->m[3][1];
-    f32 o = matrix->m[3][2];
-    f32 p = matrix->m[3][3];
-    det = (a * matrix_3x3_determinant(f, j, n, g, k, o, h, l, p)) - (b * matrix_3x3_determinant(e, i, m, g, k, o, h, l, p)) + (c * matrix_3x3_determinant(e, i, m, f, j, n, h, l, p)) - (d * matrix_3x3_determinant(e, i, m, f, j, n, g, k, o));
-    // det = (a * matrix_3x3_determinant(f, g, h, j, k, l, n, o, p)) - (b * matrix_3x3_determinant(e, g, h, i, k, l, m, o, p)) + (c * matrix_3x3_determinant(e, f, h, i, j, l, m, n, p)) - (d * matrix_3x3_determinant(e, f, g, i, j, k, m, n, o));
-    return det;
+f32 matrix_4x4_determinant(Mtxf *matrix)
+{
+    f32 tmp;
+	f32 sp78, sp74, sp70, sp6c;
+	f32 sp68, sp64, sp60, sp5c;
+	f32 sp58, sp54, sp50, sp4c;
+	f32 sp48, sp44, sp40, sp3c;
+	f32 sp38;
+	f32 sp34;
+	f32 sp30;
+
+	sp78 = matrix->m[0][0]; sp68 = matrix->m[0][1];
+	sp58 = matrix->m[0][2]; sp48 = matrix->m[0][3];
+	sp74 = matrix->m[1][0]; sp64 = matrix->m[1][1];
+	sp54 = matrix->m[1][2]; sp44 = matrix->m[1][3];
+	sp70 = matrix->m[2][0]; sp60 = matrix->m[2][1];
+	sp50 = matrix->m[2][2]; sp40 = matrix->m[2][3];
+	sp6c = matrix->m[3][0]; sp5c = matrix->m[3][1];
+	sp4c = matrix->m[3][2]; sp3c = matrix->m[3][3];
+
+	sp30 = matrix_3x3_determinant(sp74, sp70, sp6c, sp64, sp60, sp5c, sp44, sp40, sp3c);
+	sp34 = matrix_3x3_determinant(sp74, sp70, sp6c, sp54, sp50, sp4c, sp44, sp40, sp3c);
+	sp38 = matrix_3x3_determinant(sp64, sp60, sp5c, sp54, sp50, sp4c, sp44, sp40, sp3c);
+
+	tmp = matrix_3x3_determinant(sp74, sp70, sp6c, sp64, sp60, sp5c, sp54, sp50, sp4c);
+
+	return (sp78 * sp38 - sp68 * sp34 + sp58 * sp30) - tmp * sp48;
+
 }
-#else
-GLOBAL_ASM(
-.text
-glabel matrix_4x4_determinant
-/* 08F2A4 7F05A774 27BDFF80 */  addiu $sp, $sp, -0x80
-/* 08F2A8 7F05A778 AFBF002C */  sw    $ra, 0x2c($sp)
-/* 08F2AC 7F05A77C C4840000 */  lwc1  $f4, ($a0)
-/* 08F2B0 7F05A780 E7A40078 */  swc1  $f4, 0x78($sp)
-/* 08F2B4 7F05A784 C4860004 */  lwc1  $f6, 4($a0)
-/* 08F2B8 7F05A788 E7A60068 */  swc1  $f6, 0x68($sp)
-/* 08F2BC 7F05A78C C4880008 */  lwc1  $f8, 8($a0)
-/* 08F2C0 7F05A790 E7A80058 */  swc1  $f8, 0x58($sp)
-/* 08F2C4 7F05A794 C48A000C */  lwc1  $f10, 0xc($a0)
-/* 08F2C8 7F05A798 E7AA0048 */  swc1  $f10, 0x48($sp)
-/* 08F2CC 7F05A79C C4840018 */  lwc1  $f4, 0x18($a0)
-/* 08F2D0 7F05A7A0 C4800014 */  lwc1  $f0, 0x14($a0)
-/* 08F2D4 7F05A7A4 C48C0010 */  lwc1  $f12, 0x10($a0)
-/* 08F2D8 7F05A7A8 E7A40054 */  swc1  $f4, 0x54($sp)
-/* 08F2DC 7F05A7AC C4860028 */  lwc1  $f6, 0x28($a0)
-/* 08F2E0 7F05A7B0 C482001C */  lwc1  $f2, 0x1c($a0)
-/* 08F2E4 7F05A7B4 C4900024 */  lwc1  $f16, 0x24($a0)
-/* 08F2E8 7F05A7B8 C48E0020 */  lwc1  $f14, 0x20($a0)
-/* 08F2EC 7F05A7BC E7A60050 */  swc1  $f6, 0x50($sp)
-/* 08F2F0 7F05A7C0 C4880030 */  lwc1  $f8, 0x30($a0)
-/* 08F2F4 7F05A7C4 C492002C */  lwc1  $f18, 0x2c($a0)
-/* 08F2F8 7F05A7C8 44070000 */  mfc1  $a3, $f0
-/* 08F2FC 7F05A7CC E7A8006C */  swc1  $f8, 0x6c($sp)
-/* 08F300 7F05A7D0 C48A0034 */  lwc1  $f10, 0x34($a0)
-/* 08F304 7F05A7D4 8FA6006C */  lw    $a2, 0x6c($sp)
-/* 08F308 7F05A7D8 E7AA005C */  swc1  $f10, 0x5c($sp)
-/* 08F30C 7F05A7DC C4840038 */  lwc1  $f4, 0x38($a0)
-/* 08F310 7F05A7E0 C7A8005C */  lwc1  $f8, 0x5c($sp)
-/* 08F314 7F05A7E4 E7A4004C */  swc1  $f4, 0x4c($sp)
-/* 08F318 7F05A7E8 C486003C */  lwc1  $f6, 0x3c($a0)
-/* 08F31C 7F05A7EC E7A00064 */  swc1  $f0, 0x64($sp)
-/* 08F320 7F05A7F0 E7AC0074 */  swc1  $f12, 0x74($sp)
-/* 08F324 7F05A7F4 E7A6003C */  swc1  $f6, 0x3c($sp)
-/* 08F328 7F05A7F8 C7AA003C */  lwc1  $f10, 0x3c($sp)
-/* 08F32C 7F05A7FC E7A20044 */  swc1  $f2, 0x44($sp)
-/* 08F330 7F05A800 E7A20018 */  swc1  $f2, 0x18($sp)
-/* 08F334 7F05A804 E7B00060 */  swc1  $f16, 0x60($sp)
-/* 08F338 7F05A808 E7B00010 */  swc1  $f16, 0x10($sp)
-/* 08F33C 7F05A80C E7AE0070 */  swc1  $f14, 0x70($sp)
-/* 08F340 7F05A810 E7B20040 */  swc1  $f18, 0x40($sp)
-/* 08F344 7F05A814 E7B2001C */  swc1  $f18, 0x1c($sp)
-/* 08F348 7F05A818 E7A80014 */  swc1  $f8, 0x14($sp)
-/* 08F34C 7F05A81C 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F350 7F05A820 E7AA0020 */   swc1  $f10, 0x20($sp)
-/* 08F354 7F05A824 C7A40050 */  lwc1  $f4, 0x50($sp)
-/* 08F358 7F05A828 C7A6004C */  lwc1  $f6, 0x4c($sp)
-/* 08F35C 7F05A82C C7A80044 */  lwc1  $f8, 0x44($sp)
-/* 08F360 7F05A830 E7A40010 */  swc1  $f4, 0x10($sp)
-/* 08F364 7F05A834 C7A4003C */  lwc1  $f4, 0x3c($sp)
-/* 08F368 7F05A838 C7AA0040 */  lwc1  $f10, 0x40($sp)
-/* 08F36C 7F05A83C E7A00030 */  swc1  $f0, 0x30($sp)
-/* 08F370 7F05A840 C7AC0074 */  lwc1  $f12, 0x74($sp)
-/* 08F374 7F05A844 C7AE0070 */  lwc1  $f14, 0x70($sp)
-/* 08F378 7F05A848 8FA6006C */  lw    $a2, 0x6c($sp)
-/* 08F37C 7F05A84C 8FA70054 */  lw    $a3, 0x54($sp)
-/* 08F380 7F05A850 E7A60014 */  swc1  $f6, 0x14($sp)
-/* 08F384 7F05A854 E7A80018 */  swc1  $f8, 0x18($sp)
-/* 08F388 7F05A858 E7A40020 */  swc1  $f4, 0x20($sp)
-/* 08F38C 7F05A85C 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F390 7F05A860 E7AA001C */   swc1  $f10, 0x1c($sp)
-/* 08F394 7F05A864 C7A60050 */  lwc1  $f6, 0x50($sp)
-/* 08F398 7F05A868 C7A8004C */  lwc1  $f8, 0x4c($sp)
-/* 08F39C 7F05A86C C7AA0044 */  lwc1  $f10, 0x44($sp)
-/* 08F3A0 7F05A870 E7A60010 */  swc1  $f6, 0x10($sp)
-/* 08F3A4 7F05A874 C7A6003C */  lwc1  $f6, 0x3c($sp)
-/* 08F3A8 7F05A878 C7A40040 */  lwc1  $f4, 0x40($sp)
-/* 08F3AC 7F05A87C E7A00034 */  swc1  $f0, 0x34($sp)
-/* 08F3B0 7F05A880 C7AC0064 */  lwc1  $f12, 0x64($sp)
-/* 08F3B4 7F05A884 C7AE0060 */  lwc1  $f14, 0x60($sp)
-/* 08F3B8 7F05A888 8FA6005C */  lw    $a2, 0x5c($sp)
-/* 08F3BC 7F05A88C 8FA70054 */  lw    $a3, 0x54($sp)
-/* 08F3C0 7F05A890 E7A80014 */  swc1  $f8, 0x14($sp)
-/* 08F3C4 7F05A894 E7AA0018 */  swc1  $f10, 0x18($sp)
-/* 08F3C8 7F05A898 E7A60020 */  swc1  $f6, 0x20($sp)
-/* 08F3CC 7F05A89C 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F3D0 7F05A8A0 E7A4001C */   swc1  $f4, 0x1c($sp)
-/* 08F3D4 7F05A8A4 C7A80060 */  lwc1  $f8, 0x60($sp)
-/* 08F3D8 7F05A8A8 C7AA005C */  lwc1  $f10, 0x5c($sp)
-/* 08F3DC 7F05A8AC C7A40054 */  lwc1  $f4, 0x54($sp)
-/* 08F3E0 7F05A8B0 E7A80010 */  swc1  $f8, 0x10($sp)
-/* 08F3E4 7F05A8B4 C7A8004C */  lwc1  $f8, 0x4c($sp)
-/* 08F3E8 7F05A8B8 C7A60050 */  lwc1  $f6, 0x50($sp)
-/* 08F3EC 7F05A8BC E7A00038 */  swc1  $f0, 0x38($sp)
-/* 08F3F0 7F05A8C0 C7AC0074 */  lwc1  $f12, 0x74($sp)
-/* 08F3F4 7F05A8C4 C7AE0070 */  lwc1  $f14, 0x70($sp)
-/* 08F3F8 7F05A8C8 8FA6006C */  lw    $a2, 0x6c($sp)
-/* 08F3FC 7F05A8CC 8FA70064 */  lw    $a3, 0x64($sp)
-/* 08F400 7F05A8D0 E7AA0014 */  swc1  $f10, 0x14($sp)
-/* 08F404 7F05A8D4 E7A40018 */  swc1  $f4, 0x18($sp)
-/* 08F408 7F05A8D8 E7A80020 */  swc1  $f8, 0x20($sp)
-/* 08F40C 7F05A8DC 0FC16A4A */  jal   matrix_3x3_determinant
-/* 08F410 7F05A8E0 E7A6001C */   swc1  $f6, 0x1c($sp)
-/* 08F414 7F05A8E4 C7AA0078 */  lwc1  $f10, 0x78($sp)
-/* 08F418 7F05A8E8 C7A40038 */  lwc1  $f4, 0x38($sp)
-/* 08F41C 7F05A8EC C7A80068 */  lwc1  $f8, 0x68($sp)
-/* 08F420 7F05A8F0 8FBF002C */  lw    $ra, 0x2c($sp)
-/* 08F424 7F05A8F4 46045182 */  mul.s $f6, $f10, $f4
-/* 08F428 7F05A8F8 C7AA0034 */  lwc1  $f10, 0x34($sp)
-/* 08F42C 7F05A8FC 460A4102 */  mul.s $f4, $f8, $f10
-/* 08F430 7F05A900 C7AA0058 */  lwc1  $f10, 0x58($sp)
-/* 08F434 7F05A904 46043201 */  sub.s $f8, $f6, $f4
-/* 08F438 7F05A908 C7A60030 */  lwc1  $f6, 0x30($sp)
-/* 08F43C 7F05A90C 46065102 */  mul.s $f4, $f10, $f6
-/* 08F440 7F05A910 C7A60048 */  lwc1  $f6, 0x48($sp)
-/* 08F444 7F05A914 27BD0080 */  addiu $sp, $sp, 0x80
-/* 08F448 7F05A918 46044280 */  add.s $f10, $f8, $f4
-/* 08F44C 7F05A91C 46060202 */  mul.s $f8, $f0, $f6
-/* 08F450 7F05A920 03E00008 */  jr    $ra
-/* 08F454 7F05A924 46085001 */   sub.s $f0, $f10, $f8
-)
-#endif
-
-
-f32 matrix_2x2_determinant(f32 a, f32 c, f32 b, f32 d);
 
 f32 matrix_3x3_determinant(f32 a, f32 d, f32 g, f32 b, f32 e, f32 h, f32 c, f32 f, f32 i) {
     f32 determinant = (a * matrix_2x2_determinant(e, h, f, i)) - (b * matrix_2x2_determinant(d, g, f, i)) + (c * matrix_2x2_determinant(d, g, e, h));

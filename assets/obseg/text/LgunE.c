@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LgunE[] = {
+char *LgunE[] = {
  "   D5K\n",
  "   Issue\n",
  "   Mine\n",
@@ -224,5 +223,5 @@ struct stringentry LgunE[] = {
  "died",
  "times",
  "suicide count",
- NULL
+ 0
 };

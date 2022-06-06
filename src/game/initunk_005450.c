@@ -1,4 +1,6 @@
-#include "ultra64.h"
+#include <ultra64.h>
+
+#include "initunk_005450.h"
 
 //called by stage load
 

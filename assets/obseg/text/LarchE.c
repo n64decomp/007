@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LarchE[] = {
+char *LarchE[] = {
  "Captured by the Russians, Bond must escape their military prison.\n",
  "Again? Captured again? I hope you can defend your performance, 007, because there isn't a lawyer in the land who'd take on the case.\nYour only chance is to speak directly to Defense Minister Mishkin. He's a reasonable man, for a member of the Politburo.\nFailure is not an option, Bond.\n",
  "Up to you to get out of this one, 007. I can't hold your hand all the time. By the way, get that flight recorder for me, would you? Thanks.\n",
@@ -52,7 +51,7 @@ struct stringentry LarchE[] = {
  "interrogation room key\n",
  "interrogation room key\n",
  "Picked up a door key.\n",
- NULL,
+ 0,
  "This safe is locked.\n",
  "flight\n",
  "recorder\n",
@@ -64,5 +63,5 @@ struct stringentry LarchE[] = {
  "safe key\n",
  "Safe Key\n",
  "Picked up a safe key.\n",
- NULL
+ 0
 };

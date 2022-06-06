@@ -1,19 +1,28 @@
-#include "ultra64.h"
-#include "bondgame.h"
+#include <ultra64.h>
+#include <bondgame.h>
 #include "ramrom.h"
 #include "deb.h"
 #include "str.h"
 #include "memp.h"
+#include "fault.h"
 
 struct deblistentry
 {
     struct deblistentry *next;
-    u32 data;
-    const char *name;
-    s32 unused;
+    void                *data;
+    const char          *name;
+    s32                  unused;
 };
 
+/**
+ * EU .bss 80053e60
+*/
+#if defined(LEFTOVERDEBUG)
 u8 g_DebBuffer[0x400];
+#else
+u8 g_DebBuffer[0x10];
+#endif
+
 u32 g_DebDebugData[] = {0, 0};
 struct deblistentry *g_DebList = NULL;
 s32 D_800232EC[] = {0, 0, 0};
@@ -32,31 +41,42 @@ struct deblistentry *debFind(const char *name)
 }
 
 u8 *debAllocate(s32 size) {
+#ifdef LEFTOVERDEBUG
     u8 **pos = &g_DebMemPos;
     u8 *curr = *pos;
     u8 *prev = curr;
     curr += size;
-    if (curr > (g_DebBuffer + 0x400)) {
+
+    if (curr > (g_DebBuffer + 0x400))
+    {
         curr -= size;
         *pos = curr;
         return mempAllocBytesInBank(size, 6);
-    } else {
+    }
+    else
+    {
         *pos = curr;
     }
+
     return prev;
+#else
+    return &g_DebBuffer;
+#endif
 }
 
-void debAdd(const char *name, u32 data) {
+void debAdd(const char *name, void *data) {
+#ifdef LEFTOVERDEBUG
     struct deblistentry *entry = debAllocate(sizeof(struct deblistentry));
     entry->next = g_DebList;
     entry->data = data;
     entry->name = name;
     g_DebList = entry;
+#endif
 }
 
 void debInit(void) {
     debTryAdd(&g_DebDebugData, "deb_c_debug");
-    init_tlb();
+    faultInit();
 }
 
 void debTryAdd(void* data, const char *name) {
@@ -65,7 +85,8 @@ void debTryAdd(void* data, const char *name) {
     }
 }
 
-void deb70004E98(void) {
+
+void debLoopEntries(void) {
     struct deblistentry *entry = g_DebList;
     while (entry != NULL) {
         // Removed

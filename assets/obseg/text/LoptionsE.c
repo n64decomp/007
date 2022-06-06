@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LoptionsE[] = {
+char *LoptionsE[] = {
  "fire\n",
  "aim\n",
  "action\n",
@@ -62,7 +61,7 @@ struct stringentry LoptionsE[] = {
  "4. Q branch\n",
  "5. moneypenny\n",
  "1. mission objectives\n",
- NULL,
- NULL,
- NULL
+ 0,
+ 0,
+ 0
 };

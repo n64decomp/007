@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LaztE[] = {
+char *LaztE[] = {
  "The Drax Corporation continues to be involved in unlicensed space exploration. Many of their projects are of a military nature and constitute a threat to the new world political order.",
  "The Drax launch facility is located in a South American Aztec ruin. They are scheduled to launch a stolen Nasa shuttle with an unknown military payload. We're sending you in alone, 007. Penetrating the base security will be tricky, but once you're in, we believe you will be able to recover the shuttle right out from under their noses. \n",
  "Simple plan, 007. Reprogram the guidance computer with the information on this floppy - then we can take control as soon as the old girl reaches orbit. Now pay attention, one thing we don't know is the Drax launch protocol - you'll have to find that data and install it to initiate the launch. Can't be too difficult to spot, it'll be lying around in some high security area.\n",
@@ -35,14 +34,14 @@ struct stringentry LaztE[] = {
  "security smart card\n",
  "-\n",
  "Picked up a smart card.\n",
- NULL,
- NULL,
- NULL,
- NULL,
+ 0,
+ 0,
+ 0,
+ 0,
  "This mainframe is inoperative.\n",
- NULL,
- NULL,
- NULL,
- NULL,
+ 0,
+ 0,
+ 0,
+ 0,
  "This door requires\na security smart card.\n"
 };

@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LmpmenuE[] = {
+char *LmpmenuE[] = {
  "Lemming Award",
  "Where's the Ammo?",
  "Where's the Armor?",

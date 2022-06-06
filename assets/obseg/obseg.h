@@ -1,4 +1,4 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 extern u8 bg_sev_all_p_seg[];
 extern u8 bg_silo_all_p_seg[];
@@ -637,92 +637,224 @@ extern u8 UsetupsiloZ[];
 extern u8 UsetupstatueZ[];
 extern u8 UsetuptraZ[];
 
-extern u8 LameE[];
-extern u8 LameJ[];
-extern u8 LarchE[];
-extern u8 LarchJ[];
-extern u8 LarecE[];
-extern u8 LarecJ[];
-extern u8 LarkE[];
-extern u8 LarkJ[];
-extern u8 LashE[];
-extern u8 LashJ[];
-extern u8 LaztE[];
-extern u8 LaztJ[];
-extern u8 LcatE[];
-extern u8 LcatJ[];
-extern u8 LcaveE[];
-extern u8 LcaveJ[];
-extern u8 LcradE[];
-extern u8 LcradJ[];
-extern u8 LcrypE[];
-extern u8 LcrypJ[];
-extern u8 LdamE[];
-extern u8 LdamJ[];
-extern u8 LdepoE[];
-extern u8 LdepoJ[];
-extern u8 LdestE[];
-extern u8 LdestJ[];
-extern u8 LdishE[];
-extern u8 LdishJ[];
-extern u8 LearE[];
-extern u8 LearJ[];
-extern u8 LeldE[];
-extern u8 LeldJ[];
-extern u8 LgunE[];
-extern u8 LgunJ[];
-extern u8 LimpE[];
-extern u8 LimpJ[];
-extern u8 LjunE[];
-extern u8 LjunJ[];
-extern u8 LleeE[];
-extern u8 LleeJ[];
-extern u8 LlenE[];
-extern u8 LlenJ[];
-extern u8 LlipE[];
-extern u8 LlipJ[];
-extern u8 LlueE[];
-extern u8 LlueJ[];
-extern u8 LmiscE[];
-extern u8 LmiscJ[];
-extern u8 LmpmenuE[];
-extern u8 LmpmenuJ[];
-extern u8 LmpweaponsE[];
-extern u8 LmpweaponsJ[];
-extern u8 LoatE[];
-extern u8 LoatJ[];
-extern u8 LoptionsE[];
-extern u8 LoptionsJ[];
-extern u8 LpamE[];
-extern u8 LpamJ[];
-extern u8 LpeteE[];
-extern u8 LpeteJ[];
-extern u8 LpropobjE[];
-extern u8 LpropobjJ[];
-extern u8 LrefE[];
-extern u8 LrefJ[];
-extern u8 LritE[];
-extern u8 LritJ[];
-extern u8 LrunE[];
-extern u8 LrunJ[];
-extern u8 LsevE[];
-extern u8 LsevJ[];
-extern u8 LsevbE[];
-extern u8 LsevbJ[];
-extern u8 LsevxE[];
-extern u8 LsevxJ[];
-extern u8 LsevxbE[];
-extern u8 LsevxbJ[];
-extern u8 LshoE[];
-extern u8 LshoJ[];
-extern u8 LsiloE[];
-extern u8 LsiloJ[];
-extern u8 LstatE[];
-extern u8 LstatJ[];
-extern u8 LtitleE[];
-extern u8 LtitleJ[];
-extern u8 LtraE[];
-extern u8 LtraJ[];
-extern u8 LwaxE[];
-extern u8 LwaxJ[];
+	extern u8 LameE[];
+	extern u8 LameJ[];
+#ifdef VERSION_EU
+	extern u8 LameP[];
+#endif
+	extern u8 LarchE[];
+	extern u8 LarchJ[];
+#ifdef VERSION_EU
+	extern u8 LarchP[];
+#endif
+	extern u8 LarecE[];
+	extern u8 LarecJ[];
+#ifdef VERSION_EU
+	extern u8 LarecP[];
+#endif
+	extern u8 LarkE[];
+	extern u8 LarkJ[];
+#ifdef VERSION_EU
+	extern u8 LarkP[];
+#endif
+	extern u8 LashE[];
+	extern u8 LashJ[];
+#ifdef VERSION_EU
+	extern u8 LashP[];
+#endif
+	extern u8 LaztE[];
+	extern u8 LaztJ[];
+#ifdef VERSION_EU
+	extern u8 LaztP[];
+#endif
+	extern u8 LcatE[];
+	extern u8 LcatJ[];
+#ifdef VERSION_EU
+	extern u8 LcatP[];
+#endif
+	extern u8 LcaveE[];
+	extern u8 LcaveJ[];
+#ifdef VERSION_EU
+	extern u8 LcaveP[];
+#endif
+	extern u8 LcradE[];
+	extern u8 LcradJ[];
+#ifdef VERSION_EU
+	extern u8 LcradP[];
+#endif
+	extern u8 LcrypE[];
+	extern u8 LcrypJ[];
+#ifdef VERSION_EU
+	extern u8 LcrypP[];
+#endif
+	extern u8 LdamE[];
+	extern u8 LdamJ[];
+#ifdef VERSION_EU
+	extern u8 LdamP[];
+#endif
+	extern u8 LdepoE[];
+	extern u8 LdepoJ[];
+#ifdef VERSION_EU
+	extern u8 LdepoP[];
+#endif
+	extern u8 LdestE[];
+	extern u8 LdestJ[];
+#ifdef VERSION_EU
+	extern u8 LdestP[];
+#endif
+	extern u8 LdishE[];
+	extern u8 LdishJ[];
+#ifdef VERSION_EU
+	extern u8 LdishP[];
+#endif
+	extern u8 LearE[];
+	extern u8 LearJ[];
+#ifdef VERSION_EU
+	extern u8 LearP[];
+#endif
+	extern u8 LeldE[];
+	extern u8 LeldJ[];
+#ifdef VERSION_EU
+	extern u8 LeldP[];
+#endif
+	extern u8 LgunE[];
+	extern u8 LgunJ[];
+#ifdef VERSION_EU
+	extern u8 LgunP[];
+#endif
+	extern u8 LimpE[];
+	extern u8 LimpJ[];
+#ifdef VERSION_EU
+	extern u8 LimpP[];
+#endif
+	extern u8 LjunE[];
+	extern u8 LjunJ[];
+#ifdef VERSION_EU
+	extern u8 LjunP[];
+#endif
+	extern u8 LleeE[];
+	extern u8 LleeJ[];
+#ifdef VERSION_EU
+	extern u8 LleeP[];
+#endif
+	extern u8 LlenE[];
+	extern u8 LlenJ[];
+#ifdef VERSION_EU
+	extern u8 LlenP[];
+#endif
+	extern u8 LlipE[];
+	extern u8 LlipJ[];
+#ifdef VERSION_EU
+	extern u8 LlipP[];
+#endif
+	extern u8 LlueE[];
+	extern u8 LlueJ[];
+#ifdef VERSION_EU
+	extern u8 LlueP[];
+#endif
+	extern u8 LmiscE[];
+	extern u8 LmiscJ[];
+#ifdef VERSION_EU
+	extern u8 LmiscP[];
+#endif
+	extern u8 LmpmenuE[];
+	extern u8 LmpmenuJ[];
+#ifdef VERSION_EU
+	extern u8 LmpmenuP[];
+#endif
+	extern u8 LmpweaponsE[];
+	extern u8 LmpweaponsJ[];
+#ifdef VERSION_EU
+	extern u8 LmpweaponsP[];
+#endif
+	extern u8 LoatE[];
+	extern u8 LoatJ[];
+#ifdef VERSION_EU
+	extern u8 LoatP[];
+#endif
+	extern u8 LoptionsE[];
+	extern u8 LoptionsJ[];
+#ifdef VERSION_EU
+	extern u8 LoptionsP[];
+#endif
+	extern u8 LpamE[];
+	extern u8 LpamJ[];
+#ifdef VERSION_EU
+	extern u8 LpamP[];
+#endif
+	extern u8 LpeteE[];
+	extern u8 LpeteJ[];
+#ifdef VERSION_EU
+	extern u8 LpeteP[];
+#endif
+	extern u8 LpropobjE[];
+	extern u8 LpropobjJ[];
+#ifdef VERSION_EU
+	extern u8 LpropobjP[];
+#endif
+	extern u8 LrefE[];
+	extern u8 LrefJ[];
+#ifdef VERSION_EU
+	extern u8 LrefP[];
+#endif
+	extern u8 LritE[];
+	extern u8 LritJ[];
+#ifdef VERSION_EU
+	extern u8 LritP[];
+#endif
+	extern u8 LrunE[];
+	extern u8 LrunJ[];
+#ifdef VERSION_EU
+	extern u8 LrunP[];
+#endif
+	extern u8 LsevE[];
+	extern u8 LsevJ[];
+#ifdef VERSION_EU
+	extern u8 LsevP[];
+#endif
+	extern u8 LsevbE[];
+	extern u8 LsevbJ[];
+#ifdef VERSION_EU
+	extern u8 LsevbP[];
+#endif
+	extern u8 LsevxE[];
+	extern u8 LsevxJ[];
+#ifdef VERSION_EU
+	extern u8 LsevxP[];
+#endif
+	extern u8 LsevxbE[];
+	extern u8 LsevxbJ[];
+#ifdef VERSION_EU
+	extern u8 LsevxbP[];
+#endif
+	extern u8 LshoE[];
+	extern u8 LshoJ[];
+#ifdef VERSION_EU
+	extern u8 LshoP[];
+#endif
+	extern u8 LsiloE[];
+	extern u8 LsiloJ[];
+#ifdef VERSION_EU
+	extern u8 LsiloP[];
+#endif
+	extern u8 LstatE[];
+	extern u8 LstatJ[];
+#ifdef VERSION_EU
+	extern u8 LstatP[];
+#endif
+	extern u8 LtitleE[];
+	extern u8 LtitleJ[];
+#ifdef VERSION_EU
+	extern u8 LtitleP[];
+#endif
+	extern u8 LtraE[];
+	extern u8 LtraJ[];
+#ifdef VERSION_EU
+	extern u8 LtraP[];
+#endif
+	extern u8 LwaxE[];
+	extern u8 LwaxJ[];
+#ifdef VERSION_EU
+	extern u8 LwaxP[];
+#endif
 extern u8 ob__ob_end_seg[];

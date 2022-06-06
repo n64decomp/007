@@ -1,7 +1,7 @@
 #ifndef _DYN_H_
 #define _DYN_H_
 
-#include "ultra64.h"
+#include <ultra64.h>
 
 /*
 * Align to 16 bit boundary. Version "a", with preliminary addition.

@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LsevxJ[] = {
+char *LsevxJ[] = {
     "         €…€…€…5†ùƒ(4†ùƒ™)€…€…€…\n\n ƒêƒë‚Î‚Ïæ€ú€Û€Ð€…€Ýÿ€È€ø€ä€óƒìƒíÒ\nƒî»ƒïƒð€Ý€Ï€ß€»óÒ‚ë‡³Î‚õÀ¸„Ü„¯ÅÉ€Â\n\n ƒöƒ÷Ò€Ù€Ï‘€Ì€»€ßÝƒøƒùæƒúáƒûØãÌ\n»âÍ»¼‚Æ‚ÇÜºâ€Â\n",
     " ÈÃÏÓ€¿ËÌ€Ð€»€Õ€Ï€ÿ€øÒ‚„‚…‚†‚‡‚ˆ‚‰\n¸‚®…ÅÅÌ»É€Ò€ø€ò€ëÒ€„„‚‚†‚‡‚£„ƒæºâ\nÍ‚ÜåãØÆ€Â\n\n ƒè‚Õ„…ƒèÏ‚¹‚ºÅ€„†æ‚åãÌ»â¿¸‚‚\nÅÌÀÌ‚ÕÄ»€Â„‡‚¨’€ö€ÏÒƒŠ‚éæ‚Àƒ¼ãõ\n‚Ë„ˆ„‰óÆ€ÂôÃ¿Ò„‡ƒ²Ò‚áÒ„“„”Ï…·‚ÊÄã\nÌ»âÍ‚Ü»ØÆÒó€ØíÓ€Õ€ý¸‚¡Ï‚ºãÌ\n‚ÕÄ»€Â\n",
     " ƒêƒë‚Î‚ÏÒ„ „¡¿àÙâÍ€ì€÷”€»€ãÏºâ\n‚º€ú¿àÒ‚¹‚ºÓÊ·´ÍƒÒƒÓÎ‚ÙæÆâ€Â\nÈãßáÜÈÒƒŽƒìÏºâ‚Ð‚Ù€ß€û€»¿à‚¹‚º\nÆâÒæ‚¼‚½ìµä¼€Â\n\n Èã¿à€ö€ö€Ð€Ï€â€äÒ„™„š¸ƒÄâÃÍ¸\n‚ÿãíÏÎ€Â‚óæ‚¹‚ºÅÉ‚Ž‚Òæ€€ú€Û€Ð‚áÏ\nƒÕã‚¢â‚ŽÓ€ÊÍØí»¿àÒ€Â\n",
@@ -43,6 +42,6 @@ struct stringentry LsevxJ[] = {
     "ƒ¢‡´Òƒæ\n",
     "ƒ¢‡´Òƒæ\n",
     "ƒ¢‡´Òƒæ¸‚¡Ï‚ºãÉ\n",
-    NULL,
-    NULL
+    0,
+    0
 };

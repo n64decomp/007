@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LgunJ[] = {
+char * LgunJ[] = {
     "   D5K\n",
     " …˜†Àƒ¿ƒò\n",
     "  ƒ“„Ž\n",
@@ -224,5 +223,5 @@ struct stringentry LgunJ[] = {
     "…¤…ò",
     "ƒŠ„Û",
     "…æƒÁƒŠ„È",
-    NULL
+    0
 };

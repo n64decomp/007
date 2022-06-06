@@ -1,7 +1,7 @@
 #ifndef _LIGHTFIXTURE_H_
 #define _LIGHTFIXTURE_H_
 
-#include "ultra64.h"
+#include <ultra64.h>
 
 typedef struct s_lightfixture {
     s16 index;

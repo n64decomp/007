@@ -1,5 +1,5 @@
-#include "ultra64.h"
-#include "game/objecthandler.h"
+#include <ultra64.h>
+#include "objecthandler.h"
 
 
 void sub_GAME_7F0009E0(s32 arg0, s32 arg1, s32 arg2) {

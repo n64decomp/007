@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LrunJ[] = {
+char *LrunJ[] = {
     "\n ‚²‚´ƒÎƒÏƒÐæƒÑ€»ÒƒÍ‚À€ø€»€ãóºâ€Â\n",
     " ƒ‰ƒŠÒ€ï€Ê€Û€Í€ÏæƒÒƒÓÎÃÍÓ006Üƒƒ‘\nƒÔƒÕð´ÉÓí......\n\n ‚ÍÒƒÖƒ×¸‚¼ƒØÏÇíƒÙ‚‚ñ¸‚Ì´ÌƒÍ‚À\nÅÎÄ»€ÂƒÛƒÜÏ‚‚õÆãõ‚¼‚ŽÏ‚˜ÀÌ\nƒ¾â‚ŽæóÀâÓíóÆ€Â\n ‚±ƒÝƒÞƒ”ƒßÍ€ï€Ú€Ñ€øƒÞƒß¸‚­Æ‚Ž¸‚ÿãÎ»\nó‚ÕÄ»€ÂÄÜÎ»Í€é€ÓÒß¼ÏƒáÊ‚ÛÍÄã\nÌÅØ¼¿ÜÅãØÇ¹€Â\n",
     " ƒ¢ƒ£ƒ¤¸‚´ƒâÆâ‚Ó‚©æÎ¿´ÉÒó\n‚¡ƒìÏºâÜÒóƒÄáƒäÂÌÁã€Â\n",
@@ -31,6 +30,6 @@ struct stringentry LrunJ[] = {
     "\n",
     "\n",
     "ÃÒŠ€ÐÓ‚„‚…‚†‚‡‚ˆ‚‰ÖÍ\nËÎæ´Ì»ØÆ€Â\n",
-    NULL,
-    NULL
+    0,
+    0
 };

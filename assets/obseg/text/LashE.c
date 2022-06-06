@@ -1,9 +1,8 @@
-#include "game/lvl_text.h"
 
-struct stringentry LashE[] = {
- NULL,
- NULL,
- NULL,
- NULL,
- NULL
+char *LashE[] = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0
 };

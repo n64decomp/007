@@ -1,4 +1,4 @@
-#include "ultra64.h"
+#include <ultra64.h>
 
 /**
  * @file chrObjRandom.c
@@ -15,7 +15,7 @@ u64 g_chrObjRandomSeed = 0xAB8D9F7781280783;
  * Iterates the current random seed and returns a 32 bit value.
  * Same assembly instructions as randomGetNext and tlbRandomGetNext, but different globals.
  */ 
-s32 chrObjRandomGetNext(void) {
+u32 chrObjRandomGetNext(void) {
     // best guess comments copied from random.c
 
     // best -O1 guess

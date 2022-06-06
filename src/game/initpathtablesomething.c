@@ -1,12 +1,33 @@
-#include "ultra64.h"
-
+#include <ultra64.h>
+#include <bondtypes.h>
+#include "stan.h"
 
 
 
 
 #ifdef NONMATCHING
-void init_pathtable_something(void) {
+typedef coord3d_s32 {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+s32 init_pathtable_something( coord3d_s32 *tilepos, u8 *tilename, StandTilePoint *tilestack)
+{
+    coord3d coord;
 
+   
+    tilestack = stanMatchTileName(tilename);
+    if ((tilestack == 0) || (isPointInsideTriStandTileUnscaled_Maybe(tilestack, tilepos->x, tilepos->z) == 0))
+    {
+        tilestack = sub_GAME_7F0AFB78(coord.x, coord.y, coord.z, 0);
+        if ((tilestack != 0) && (walkTilesBetweenPoints_NoCallback(tilestack, tilepos->x, tilepos->z, tilepos->x, tilepos->z) != 0))
+        {
+            return 2;
+        }
+        tilestack = 0;
+        return 0;
+    }
+    return 1;
 }
 #else
 GLOBAL_ASM(
@@ -47,7 +68,7 @@ glabel init_pathtable_something
 /* 03B36C 7F00683C 02202025 */  move  $a0, $s1
 /* 03B370 7F006840 8FA5002C */  lw    $a1, 0x2c($sp)
 /* 03B374 7F006844 8FA60034 */  lw    $a2, 0x34($sp)
-/* 03B378 7F006848 0FC2C2F9 */  jal   sub_GAME_7F0B0BE4
+/* 03B378 7F006848 0FC2C2F9 */  jal   walkTilesBetweenPoints_NoCallback
 /* 03B37C 7F00684C E7AA0010 */   swc1  $f10, 0x10($sp)
 /* 03B380 7F006850 50400004 */  beql  $v0, $zero, .L7F006864
 /* 03B384 7F006854 AE200000 */   sw    $zero, ($s1)

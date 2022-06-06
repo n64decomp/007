@@ -1,205 +1,584 @@
+
+
+/*
+==============================================================================
+//# AI Lists and Commands
+//## Programmed by Mark Edmonds
+==============================================================================
+
+ AI lists are responsible for all character programming and much of the logic
+ used in each stage. Without AI lists guards would not talk, move, or even
+ respond to you.
+
+ Each character has an AI list assigned to it. An AI list is a list of commands
+ for characters to follow. Commands could be things like go to a certain room,
+ shoot the player or say something. AI lists also contain if-statements, so it
+ may for example check if the player is in sight then jump to a different part
+ of the AI list if so.
+
+ In some cases AI lists are assigned to objects as well (Dam truck, the
+ runway plane and Cradle helicopter). Some AI lists, such as those
+ which implement general level logic, are run automatically for the duration
+ of the level without being assigned to a character or object.
+
+ There are 17 "global" AI lists. These global AI lists handle common tasks such
+ as generic combat, patrolling and sitting idle in a chair. They are available
+ to use in any stage. The rest of the AI lists are specific to each stage and
+ can only be used by that stage.
+
+ Under the hood, AI in GoldenEye and Perfect Dark use a Symbolic Language
+ (similar to Bytecode/Pcode) with a 1 or 2 byte "Command" followed by a variable
+ length array of parameters.
+ At run-time, a small "interpreter" - ai() scans over the code and runs
+ the subroutine identified by the instruction - also known as a "branch table".
+ However, All these details are abstracted away via meaningful C macros.
+
+==============================================================================
+//###Terminology:
+ chr              Character
+ BG               Background
+ Entiry           Character or Object that can use an AI list (like guards and
+                  Trucks)
+ GAIList          Global List
+ Global AI Lists  0000-0011 range
+ Chr AI Lists     0401-04FF range
+ BG AI Lists      1000-10FF range
+
+==============================================================================
+
+//## IDs and Naming
+#############################
+
+ Every AI list has a unique ID. These IDs are required so AI lists can
+ reference other AI lists, such as assigning a different one. The IDs also
+ determine what type of AI list it is and if/when it's started automatically
+ depending on what range the ID falls into.
+
+//### Global AI List info
+==============================================================================
+ Global AI lists can be assigned as the initial AI list for characters or
+ assigned manually by other AI lists. They are not started automatically.
+ Global AI lists can be referenced using constants such as GAILIST_AIM_AT_BOND
+
+//### Entity AI List info
+==============================================================================
+ These are similar to global AI lists, but they are specific to individual
+ stages. They are defined in each stage's setup file and use constants such
+ as AILIST_SCIENTIST (no G prefix). They do not run automatically; they must
+ be assigned as the initial function for an Entity or invoked by another
+ function.
+ Multiple Entities can use the same AI List - each Entity is treated as an
+ independent thread with their own instance of unique data.
+
+//### Background AI List info
+==============================================================================
+ AI lists in this range will be started automatically when the stage is
+ started using gameplay (but not run when using the cinema menu). They are
+ commonly used for overarching stage logic that isn't specific to a character,
+ such as monitoring objectives, or waiting for the player to enter a room then
+ triggering a radio message.
+ BG AI Lists cannot run Entity commands due to the lack of level presence.
+ Attempting to do so will crash the game.
+
+//## AI Commands
+######################
+
+ //### AI commands with CHR_NUM argument
+==============================================================================
+ Most commands with "chr" in the name use a CHR_NUM argument. For the most 
+ part, this can be used with any loaded chr number and it will work fine.  
+ There is however one exception to this and that is the special CHR_XXX ID :
+ CHR_BOND_CINEMA.
+ This ID only works when bond has a third person model assigned (intro/exit
+ cutscene).
+ Only use CHR_BOND_CINEMA for intro/exit cutscene specific logic
+
+//### Vehicle/aircraft AI command
+==============================================================================
+ Commands with a vehicle/aircraft prefix can only be executed by
+ vehicle/aircraft objects. These types of objects do not use a chr struct.
+ Most non-vehicle commands will crash if they try to access caller's
+ chr struct
+
+//### AI commands with label argument
+==============================================================================
+ Most commands will have a label argument in their function description. This
+ is used when a command has a false/true state. For example, the jog to bond
+ command (28) has goto label argument. When the command is executed, it will
+ check if the guard is able to jog to bond. If for some reason the command
+ fails (bond is unreachable/guard is dying/etc) then the command will not
+ goto label and the next command will be executed. The most common use of
+ commands with goto labels are jumping out of an infinite loop - for an
+ example check global AI List GAILIST_STARTLE_AND_RUN_TO_BOND
+
+ //### Yielding
+==============================================================================
+ When rendering a frame, the engine needs to iterate all characters and allow
+ each of them to process a bit of their AI list. They can't process the list
+ for too long or the engine will not be able to produce a frame in time and
+ will cause frame lag. But it's also not desirable to give each AI list a
+ fixed amount of CPU time before pausing it for the next frame, because then
+ the state of the game may change between any two commands which would
+ introduce bugs.
+ Instead, each AI list is able to choose when to pause and yield control back
+ to the game engine. This is done using the yield command. When yielding, the
+ AI list is declaring that it's done for this frame. The game engine will
+ continue the AI list from the next command in a later frame.
+ Any time there's a loop, there must be a yield inside it otherwise the game
+ would soft lock. Yields should also be done around relatively CPU heavy
+ operations such as when spawning characters in bulk.
+
+//### Labels, If Statements and Loops
+==============================================================================
+ AI lists lack native language constructs such as if/else/endif and while
+ loops, however they do have primitive if/goto statements which can be used to
+ achieve the same effect, albeit with less readable code.
+
+ The primitive building blocks are:
+
+     Labels: A label is a marker in the AI list. It is given a number so it can
+             be identified. This number should be unique if it marks the start
+             of a while loop. If it's the destination of an if statement then it
+             can be a reused number.
+
+     Goto Next: Jumps to the next label with the given ID.
+
+     Goto First: Jumps to the first label in the AI list with the given ID. These
+                 are used for loops.
+
+ IF statements: Many commands will check for a condition then jump to the next
+                label with the given ID if the condition passes. If the
+                condition fails execution continues from the next command as
+                normal.
+
+ TRY statements: These commands make the character attempt to do something and
+                 then go to the label if successful, otherwise execution
+                 continues from the next command. An example is pathfinding;
+                 if the character can't find a path to the destination then it
+                 will fail.
+
+ This project provides some macros to help give some structure to the AI lists:
+
+    DO: Is just the same as declaring a label followed by yield.
+
+    LOOP: Is literally just a GotoFirst, but LOOP was a more meaningful name
+          given the intention.
+
+    CONTINUE: Used when a loop has multiple points that jump back to the top of
+              the loop. Like LOOP, it's also the same as a GotoFirst but with a
+              more meaningful name.
+
+    BREAK: Used then we want to exit a loop, the lable given should be below as
+           this is literally a GotoNext but with a more meaningful name.
+
+//### Co-Ordinate System
+==============================================================================
+
+ The N64 uses the right-handed coordinate system as do most others.
+ In the right-handed system, the Z axis points out toward the viewer.
+ However, The view coordinate system puts the view (camera) at the point of
+ origin and places the direction of the view along the Z-axis. This means X
+ "points left" according to Bond and other Entities.
+ This is also known as North-counterclockwise convention.
+
+ GE will also turn Negative angles into positive angles for AI
+ so -90 becomes 270.
+
+     Ortho View
+                    90 Y+. Azimuth
+                        /|\
+                      .``|``
+                     '   |
+                    -    |
+                   .     |
+                         |  S  180
+                  E 270  |  /
+                      '-.|/`
+                -      /` ```--..
+                .    /`          ``--..     .
+              0 .  /`                  ``--:.`.
+                ./`                       :----' X+ W 90
+            |'-.`
+            |    `-
+         Z+ ```````` N 0
+ 
+
+     10x10 Grid showing angles at distance from origin (Chr)
+
+       45  39  31  22  11 ^ 349 338 329 321 315
+       51  45  37  27  14 0 346 333 323 315 309
+       59  53  45  34  18 | 342 326 315 307 301
+       68  63  56  45  27 | 333 315 304 297 292
+       79  76  72  63  45 | 315 297 288 284 281
+       90 <-------------------------------- -90
+      101 104 108 117 135 | 225 243 252 256 259
+      112 117 124 135 154 | 206 225 236 243 248
+      121 127 135 146 162 1 198 214 225 233 239
+      129 135 143 154 166 8 194 206 217 225 231
+      135 141 149 158 169 0 191 202 211 219 225
+
+
+ Calling Angle Commands such as AngleToBondGreaterThan will therefore accept
+ angles in a Counter-Clockwise rotation from 0 to 360 (or 0 - 6.28 Radian)
+
+ ===========================================================================
+*/
+
 #ifndef _BONDAICOMMANDS_H_
 #define _BONDAICOMMANDS_H_
-#include "ultra64.h"
+#include <ultra64.h>
 
-#define chararray16(input) (input & 0xFF00) >> 8, input & 0x00FF
-#define chararray24(input) (input & 0xFF0000) >> 16, (input & 0x00FF00) >> 8, input & 0x0000FF
-#define chararray32(input) (input & 0xFF000000) >> 24, (input & 0x00FF0000) >> 16, (input & 0x0000FF00) >> 8, input & 0x000000FF
-
-/*=============================================================================
-// chr ai commands reference
-// programmed by mark edmonds
-//=============================================================================
-// terminology:
-// chr              character
-// obj              objective
-// list             list of ai commands - list must end with 04 command
-// glist            global list
-// chr ai lists     0401-04FF range
-// obj ai lists     1000-10FF range
-// global ai lists  0000-0011 range
-//=============================================================================
-// ai list intro
-//=============================================================================
-// ai list are a list of ai commands that are executed from top to bottom.
-// they are used to control guard ai (fire, chase, go to position, etc) and
-// objective ai (objective logic, mission fail state, spawning guards, etc)
-//=============================================================================
-// character ai list info
-//=============================================================================
-// chr ai lists drive the gameplay, such as attacking/chasing player. a chr ai
-// list will not execute until a guard is assigned that list (unlike obj lists).
-// multiple guards can use the same ai list - each guard is treated as a independent
-// thread with their own instance of unique data
-//=============================================================================
-// objective ai list info
-//=============================================================================
-// each obj ai list (10XX) will have with a obj ai assigned at at level start.
-// obj ai lists run continuously in the background without a guard attached.
-// they still have a chr struct but lack a model/position in the level, they are
-// commonly used for level scripting (objectives) or monitoring guard spawns.
-// obj ai lists cannot run guard commands due to the lack of level presence
-//=============================================================================
-// global ai list info
-//=============================================================================
-// global ai lists are 0x11 useful lists accessible with every level. the above
-// lists (chr/obj) are unique to each level setup file, compared to global lists
-// which are accessible throughout the entire game. they contain generic ai lists
-// used for most levels
-//=============================================================================
-// ai command note
-//=============================================================================
-// commands with guard/vehicle/aircraft prefix are exclusive to chr ai lists,
-// they can't be executed by obj ai lists (10XX) or it will crash! commands with
-// chr prefix can be used by obj/chr ai lists - exceptions to this rule are detailed
-// within the command description
-//=============================================================================
-// ai commands with chr number argument
-//=============================================================================
-// most commands with a chr prefix use a chr number argument. for the most part,
-// this can be used with any loaded chr num and it will work fine. there is however
-// one exception to this and that is special chr num ID CHR_BOND_CINEMA. this ID
-// only works when bond has a third person model assigned (intro/exit cutscene).
-// only use CHR_BOND_CINEMA for intro/exit cutscene specific logic
-//=============================================================================
-// vehicle/aircraft ai command
-//=============================================================================
-// commands with a vehicle/aircraft prefix can only be executed by vehicle/aircraft
-// objects. these types of objects do not use a chr struct. most non-vehicle
-// commands will crash if they try to access caller's chr struct
-//=============================================================================
-// ai commands with label argument
-//=============================================================================
-// most commands will have a label argument in their function description. this
-// is used when a command has a false/true state. for example, the run to bond
-// command (28) has goto label argument. when the command is executed, it will
-// check if the guard is able to run to bond. if for some reason the command fails
-// (bond is unreachable/guard is dying/etc) then the command will not goto label
-// and the next command will be executed. the most common use of commands with
-// goto labels are jumping out of an infinite loop - for an example check global
-// ai list GLIST_STARTLE_CHR_AND_RUN_TO_BOND_SUBROUTINE
-//===========================================================================*/
+#define CharArrayFrom16(input) ((input) & 0xFF00) >> 8, (input) & 0x00FF
+#define CharArrayFrom24(input) ((input) & 0xFF0000) >> 16, ((input) & 0x00FF00) >> 8, (input) & 0x0000FF
+#define CharArrayFrom32(input) ((input) & 0xFF000000) >> 24, ((input) & 0x00FF0000) >> 16, ((input) & 0x0000FF00) >> 8, (input) & 0x000000FF
 
 #define AI_LIST_GLOBAL_START 0x0000
 #define AI_LIST_CHR_START 0x0401
 #define AI_LIST_OBJ_START 0x1000
 
-#define AI_CMDS_TOTAL (object_rocket_launch_ID + 1)
+#if defined(__INTELLISENSE__)
+#    define AI_ERR_SUB (GAILIST_DEAD_AI)
+#    define AI_ERR_NOTSUB (GAILIST_DEAD_AI)
+#    define AI_ERR_NOTCHR (GAILIST_DEAD_AI)
+#    define AI_ERR_NO_THIS 1
+#else
+#    define AI_ERR_SUB (('E','R','R','O','R',':',' ','A','I','_','L','I','S','T',' ','I','S',' ','A',' ','S','U','B','R','O','U','T','I','N','E',' ','O','R',' ','N','O','T',' ','F','O','R',' ','C','H','R'), 1)
+#    define AI_ERR_NOTSUB (('E','R','R','O','R',':',' ','A','I','_','L','I','S','T',' ','N','O','T',' ','A',' ','S','U','B','R','O','U','T','I','N','E',' ','O','R',' ','N','O','T',' ','F','O','R',' ','C','H','R'), 1)
+#    define AI_ERR_NOTCHR (('E','R','R','O','R',':',' ','A','I','_','L','I','S','T',' ','N','O','T',' ','F','O','R',' ','C','H','R'), 1)
+#    define AI_ERR_NO_THIS ((('E','R','R','O','R',':',' ','C','a','n','n','o','t',' ','C','a','l','l',' ','A','I','_','L','I','S','T',' ','w','i','t','h','o','u','t',' ','d','e','f','i','n','i','n','g',' ','T','H','I','S',' ','f','o','r',' ','r','e','t','u','r','n'),1))\
+
+#endif
+
 
 /*=============================================================================
-// global ai lists - glists
+// global ai lists - gailists
 //===========================================================================*/
-#define GLIST_AIM_AT_BOND                              0x0000 // continuously aim at bond with weapon
-#define GLIST_END_ROUTINE                              0x0001 // end routine (loop forever)
-#define GLIST_DETECT_BOND_SPAWN_CLONE_ON_HEARD_GUNFIRE 0x0002 // wait for bond detection (spawn clone when heard bond)
-#define GLIST_IDLE_RAND_ANIM_SUBROUTINE                0x0003 // play idle animation (subroutine)
-#define GLIST_KEYBOARD_RAND_ANIM_SUBROUTINE            0x0004 // play use keyboard animation (subroutine)
-#define GLIST_DETECT_BOND_DEAF_NO_CLONE_NO_IDLE_ANIM   0x0005 // wait for bond detection (deaf/no clones/no idling)
-#define GLIST_FIRE_RAND_ANIM_SUBROUTINE                0x0006 // fire at bond with random animation (subroutine)
-#define GLIST_DETECT_BOND_NO_CLONE_NO_IDLE_ANIM        0x0007 // wait for bond detection (no clones/no idling)
-#define GLIST_RUN_TO_BOND_SUBROUTINE                   0x0008 // run to bond and fire (subroutine)
-#define GLIST_RUN_TO_CHR_PADPRESET_AND_ACTIVATE_ALARM  0x0009 // run to chr->padpreset1 and activate alarm
-#define GLIST_STARTLE_CHR_AND_RUN_TO_BOND_SUBROUTINE   0x000A // startle character (subroutine)
-#define GLIST_SPAWN_CLONE_OR_RUN_TO_BOND               0x000B // if chr has been seen, run to bond - else spawn clone
-#define GLIST_RUN_TO_BOND_AND_FIRE                     0x000C // run to bond and fire
-#define GLIST_RUN_TO_BOND_AND_FIRE_HALT_CHR_RANDOMLY   0x000D // forever chase bond and fire (halt randomly)
-#define GLIST_WAIT_ONE_SECOND_SUBROUTINE               0x000E // wait for one second (subroutine)
-#define GLIST_EXIT_LEVEL                               0x000F // exit level
-#define GLIST_DRAW_DD44_AND_FIRE                       0x0010 // draw dd44 and fire
-#define GLIST_REMOVE_CHR                               0x0011 // remove chr
+
+/**
+ * Is the called AI List a subroutine (will it return)
+ * Per Setup Subroutines should be added to SETUPSUBROUTINES at the top of the 
+ * setup.
+ * eg
+ * #define SETUPSUBROUTINES(ID) (ID == ACTIVATE_OBJECT) |\
+ */
+#define isSubroutine(ID) ((ID == GAILIST_PLAY_IDLE_ANIMATION) |\
+                            (ID == GAILIST_BASH_KEYBOARD) | \
+                            (ID == GAILIST_ATTACK_BOND) | \
+                            (ID == GAILIST_RUN_TO_BOND) | \
+                            (ID == GAILIST_STARTLE_AND_RUN_TO_BOND) | \
+                            (ID == GAILIST_WAIT_ONE_SECOND) \
+                            IF(NOT(DEFINED(SETUPSUBROUTINES(ID))))\
+                            (\
+                                | SETUPSUBROUTINES(ID)\
+                            ))\
+
+
+typedef enum GAILISTID
+{
+    /**
+      Try aiming at bond, otherwise do nothing
+      @return No Return - AI List can only be changed by a 3rd party via SetChrAiList
+     */
+    GAILIST_AIM_AT_BOND,
+
+    /**
+      Dead or Removed AI. 
+      Use when AI has no more to do (or use YIELD_FOREVER)
+      @return No Return - AI List can only be changed by a 3rd party via SetChrAiList
+    */
+    GAILIST_DEAD_AI,
+
+    /**
+      Stand Guard and Kill Time or patrol (Not typicaly used for patrolling). 
+      While killing time, play Idle animations 
+      On detecting Bond, Send a clone OR Run to Bond and Attack. 
+      This AI List is used by nearly all guards either as default or as a result
+      of detecting Bond or finnishing their assigned behaivior.
+      @return No Return - AI List can only be changed by a 3rd party via SetChrAiList
+     */
+    GAILIST_STANDARD_GUARD,
+
+    /**
+      Play one random idle animation
+      @return to caller if called with CALL 
+      -or-
+      return to List set by SetReturnAiList - If not set will crash
+     */
+    GAILIST_PLAY_IDLE_ANIMATION,
+
+    /**
+      Bash that Keyboard once with a random animation
+      @return to caller if called with CALL 
+      -or-
+      return to List set by SetReturnAiList - If not set will crash
+     */
+    GAILIST_BASH_KEYBOARD,
+
+    /**
+      Stand Guard Statically (No Clones, No animations) or patrol.
+      On detecting Bond (sight/near-miss only), Act like a Standard Guard. 
+      @return to Standard Guard
+     */
+    GAILIST_SIMPLE_GUARD_DEAF,
+
+    /**
+      Attack Bond once via 1 random animation
+      @return to caller if called with CALL
+      -or-
+      return to List set by SetReturnAiList - If not set will crash
+     */
+    GAILIST_ATTACK_BOND,
+
+    /**
+      Stand Guard Statically (No Clones, No animations) or patrol (Typical use of this type). 
+      On detecting Bond, Act like a Standard Guard.
+      @return to Standard Guard
+     */
+    GAILIST_SIMPLE_GUARD,
+
+    /**
+      Run to bond and fire if seen, otherwise wait.
+      @return to caller if called with CALL
+      -or-
+      return to List set by SetReturnAiList - If not set will crash
+     */
+    GAILIST_RUN_TO_BOND,
+
+    /**
+      Stand Guard Statically (No Clones, No animations) or patrol. 
+      On detecting Bond, Run to padpreset1 and activate alarm. 
+      Act like a Standard Guard thereafter
+      @return to Standard Guard
+     */
+    GAILIST_SIMPLE_GUARD_ALARM_RAISER,
+
+    /**
+      Startle character then Run To Bond
+      @return to caller if called with CALL
+      -or-
+      return to List set by SetReturnAiList - If not set will crash
+     */
+    GAILIST_STARTLE_AND_RUN_TO_BOND,
+
+     /**
+      If Calling Chr NOT been seen, Send Clone after Bond, otherwise Act like a
+      Standard Guard
+      @return to Standard Guard
+     */
+    GAILIST_TRY_CLONE_SEND_OR_RUN_TO_BOND,
+
+    /**
+      Run to bond then act like a Standard Guard
+      @return to Standard Guard
+     */
+    GAILIST_STANDARD_CLONE,
+
+    /**
+       Persistently chase Bond and Attack (halt randomly)
+       @return No Return - AI List can only be changed by a 3rd party via SetChrAiList
+     */
+    GAILIST_PERSISTENTLY_CHASE_AND_ATTACK_BOND,
+
+    /**
+      Wait for one second then return
+      @return to caller if called with CALL -or- return to List set by SetReturnAiList - If not set will crash
+     */
+    GAILIST_WAIT_ONE_SECOND,
+
+    /**
+      Exit level and set BG AI to nothing
+      @return No Return - AI is Dead
+     */
+    GAILIST_END_LEVEL,
+
+    /**
+      Draw TT33, Aim and fire.
+      Act like a Standard Guard thereafter
+      @return to Standard Guard
+     */
+    GAILIST_DRAW_TT33_AND_ATTCK_BOND,
+
+    /**
+      Remove Calling chr and set AI to nothing
+      @return No Return - AI is dead
+     */
+    GAILIST_REMOVE_CHR
+} GAILISTID;
+
+
 /*===========================================================================*/
 
 /*=============================================================================
-// command bitfield flags and common settings
+## command bitfield flags and common settings
 //===========================================================================*/
-// command 0A - animation flags
-#define ANIM_MIRROR                     0x01 // mirror animation
-#define ANIM_UNKNOWN                    0x02 // ?? (cancels no translation flag)
-#define ANIM_LOOP_HOLD_LAST_FRAME       0x04 // loop/hold last frame (required for reverse flag)
-#define ANIM_PLAY_SFX                   0x08 // play sneeze sfx with animation 9F (triggers 50% of the time)
-#define ANIM_IDLE_POSE_WHEN_COMPLETE    0x10 // idle pose after animation has completed (does not work with looping animations)
-#define ANIM_TRANSLATION_SCALE_4X       0x20 // translation scale multiplier x4 (used for dam and cradle cinema)
-#define ANIM_NO_TRANSLATION             0x40 // no translation
-#define ANIM_REVERSE_LOOPING_ANIMATION  0x80 // reverse animation (only for looped animations)
 
-#define ANIM_DEFAULT_INTERPOLATION      0x10 // use this if interpolation value isn't important
+// command 0A - animation flags
+#define ANIM_MIRROR                     0x01 /* Mirror animation*/
+#define ANIM_UNKNOWN                    0x02 /* ?? (cancels no translation flag)*/
+#define ANIM_LOOP_HOLD_LAST_FRAME       0x04 /* Loop/hold last frame (required for reverse flag)*/
+#define ANIM_PLAY_SFX                   0x08 /* Play sneeze sfx with animation 9f (triggers 50% of the time)*/
+#define ANIM_IDLE_POSE_WHEN_COMPLETE    0x10 /* Idle pose after animation has completed (does not work with looping animations)*/
+#define ANIM_TRANSLATION_SCALE_4X       0x20 /* Translation scale multiplier x4 (used for dam and cradle cinema)*/
+#define ANIM_NO_TRANSLATION             0x40 /* No translation*/
+#define ANIM_REVERSE_LOOPING_ANIMATION  0x80 /* Reverse animation (only for looped animations)*/
+
+#define ANIM_DEFAULT_INTERPOLATION      0x10 /* Use this if interpolation value isn't important*/
 
 // command 14/15/16/17 - target flags
-#define TARGET_BOND                     0x0001 // set target to bond (ignores target argument)
-#define TARGET_FRONT_OF_CHR             0x0002 // set target to front of chr
-#define TARGET_CHR                      0x0004 // set target type to chr_num
-#define TARGET_PAD                      0x0008 // set target type to pad
-#define TARGET_COMPASS                  0x0010 // set target to compass direction (hex) N: 0000 E: C000 S: 8000: W: 4000
-#define TARGET_AIM_ONLY                 0x0020 // aim at target instead of firing
-#define TARGET_DONTTURN                 0x0040 // limits target to 180 degrees in front of guard (cannot be used with bond target flag)
+#define TARGET_BOND                     0x0001 /* Set target to bond (ignores target argument)*/
+#define TARGET_FRONT_OF_CHR             0x0002 /* Set target to front of chr*/
+#define TARGET_CHR                      0x0004 /* Set target type to chr_num*/
+#define TARGET_PAD                      0x0008 /* Set target type to pad*/
+#define TARGET_COMPASS                  0x0010 /* Set target to compass direction (hex) N: 0000 E: C000 S: 8000: W: 4000*/
+#define TARGET_AIM_ONLY                 0x0020 /* Aim at target instead of firing*/
+#define TARGET_DONTTURN                 0x0040 /* Limits target to 180 degrees in front of guard (cannot be used with TARGET_BOND flag)*/
 
 // command 18/19 - target body part values
-#define HIT_NULL_PART                   0x00 // null part, no reaction - 1x damage
-#define HIT_LEFT_FOOT                   0x01 // left foot - 1x damage
-#define HIT_LEFT_LEG                    0x02 // left leg - 1x damage
-#define HIT_LEFT_THIGH                  0x03 // left thigh - 1x damage
-#define HIT_RIGHT_FOOT                  0x04 // right foot - 1x damage
-#define HIT_RIGHT_LEG                   0x05 // right leg - 1x damage
-#define HIT_RIGHT_THIGH                 0x06 // right thigh - 1x damage
-#define HIT_PELVIS                      0x07 // pelvis - 1x damage
-#define HIT_HEAD                        0x08 // head - 4x damage
-#define HIT_LEFT_HAND                   0x09 // left hand - 1x damage
-#define HIT_LEFT_ARM                    0x0A // left arm - 1x damage
-#define HIT_LEFT_SHOULDER               0x0B // left shoulder - 1x damage
-#define HIT_RIGHT_HAND                  0x0C // right hand - 1x damage
-#define HIT_RIGHT_ARM                   0x0D // right arm - 1x damage
-#define HIT_RIGHT_SHOULDER              0x0E // right shoulder - 1x damage
-#define HIT_CHEST                       0x0F // chest - 2x damage
+typedef enum HITTARGET
+{
+    HIT_NULL_PART,          /* Null part, no reaction - 1x damage*/
+    HIT_LEFT_FOOT,          /* Left foot              - 1x damage*/
+    HIT_LEFT_LEG,           /* Left leg               - 1x damage*/
+    HIT_LEFT_THIGH,         /* Left thigh             - 1x damage*/
+    HIT_RIGHT_FOOT,         /* Right foot             - 1x damage*/
+    HIT_RIGHT_LEG,          /* Right leg              - 1x damage*/
+    HIT_RIGHT_THIGH,        /* Right thigh            - 1x damage*/
+    HIT_PELVIS,             /* Pelvis                 - 1x damage*/
+    HIT_HEAD,               /* Head                   - 4x damage*/
+    HIT_LEFT_HAND,          /* Left hand              - 1x damage*/
+    HIT_LEFT_ARM,           /* Left arm               - 1x damage*/
+    HIT_LEFT_SHOULDER,      /* Left shoulder          - 1x damage*/
+    HIT_RIGHT_HAND,         /* Right hand             - 1x damage*/
+    HIT_RIGHT_ARM,          /* Right arm              - 1x damage*/
+    HIT_RIGHT_SHOULDER,     /* Right shoulder         - 1x damage*/
+    HIT_CHEST,              /* Chest                  - 2x damage*/
+    HIT_GUN         = 0x64, /* GUN                    - 0x damage*/
+    HIT_HAT         = 0x6E, /* HAT                    - 0x damage*/
+    HIT_GENERAL     = 0xC8,
+    HIT_GENERALHALF = 0xC9
+} HITTARGET;
 
 // command 68 - door states
-#define DOOR_STATE_CLOSED               0x01 // closed
-#define DOOR_STATE_OPEN                 0x02 // opened
-#define DOOR_STATE_CLOSING              0x04 // closing
-#define DOOR_STATE_OPENING              0x08 // opening
+#define DOOR_STATE_CLOSED               0x01 /* Closed*/
+#define DOOR_STATE_OPEN                 0x02 /* Opened*/
+#define DOOR_STATE_CLOSING              0x04 /* Closing*/
+#define DOOR_STATE_OPENING              0x08 /* Opening*/
 
 // command BD/BE - spawn flags
-#define SPAWN_SUNGLASSES                0x00000001 // sunglasses
-#define SPAWN_SUNGLASSES_RANDOM         0x00000002 // sunglasses (random, 50% of the time)
-#define SPAWN_00000004                  0x00000004 // unknown
-#define SPAWN_00000008                  0x00000008 // unknown
-#define SPAWN_IGNORE_PAD_SIGHT_CHECK    0x00000010 // ignore check for pad within view (force spawn)
-#define SPAWN_00000020                  0x00000020 // unknown
-#define SPAWN_00000040                  0x00000040 // unknown
-#define SPAWN_00000080                  0x00000080 // unknown
-#define SPAWN_00000100                  0x00000100 // unknown
-#define SPAWN_00000200                  0x00000200 // unknown
-#define SPAWN_00000400                  0x00000400 // unknown
-#define SPAWN_00000800                  0x00000800 // unknown
-#define SPAWN_00001000                  0x00001000 // unknown
-#define SPAWN_00002000                  0x00002000 // unknown
-#define SPAWN_00004000                  0x00004000 // unknown
-#define SPAWN_00008000                  0x00008000 // unknown
-#define SPAWN_00010000                  0x00010000 // unknown
-#define SPAWN_00020000                  0x00020000 // unknown
-#define SPAWN_00040000                  0x00040000 // unknown
-#define SPAWN_00080000                  0x00080000 // unknown
-#define SPAWN_00100000                  0x00100000 // unknown
-#define SPAWN_00200000                  0x00200000 // unknown
-#define SPAWN_00400000                  0x00400000 // unknown
-#define SPAWN_00800000                  0x00800000 // unknown
-#define SPAWN_01000000                  0x01000000 // unknown
-#define SPAWN_02000000                  0x02000000 // unknown
-#define SPAWN_04000000                  0x04000000 // unknown
-#define SPAWN_08000000                  0x08000000 // unknown
-#define SPAWN_10000000                  0x10000000 // unknown
-#define SPAWN_20000000                  0x20000000 // unknown
-#define SPAWN_40000000                  0x40000000 // unknown
-#define SPAWN_80000000                  0x80000000 // unknown
+#define SPAWN_SUNGLASSES                0x00000001 /* Sunglasses*/
+#define SPAWN_SUNGLASSES_RANDOM         0x00000002 /* Sunglasses (random, 50% of the time)*/
+#define SPAWN_00000004                  0x00000004 /* Unknown*/
+#define SPAWN_00000008                  0x00000008 /* unknown*/
+#define SPAWN_IGNORE_PAD_SIGHT_CHECK    0x00000010 /* Ignore check for pad within view (force spawn)*/
+#define SPAWN_00000020                  0x00000020 /* unknown*/
+#define SPAWN_00000040                  0x00000040 /* unknown*/
+#define SPAWN_00000080                  0x00000080 /* unknown*/
+#define SPAWN_00000100                  0x00000100 /* unknown*/
+#define SPAWN_00000200                  0x00000200 /* unknown*/
+#define SPAWN_00000400                  0x00000400 /* unknown*/
+#define SPAWN_00000800                  0x00000800 /* unknown*/
+#define SPAWN_00001000                  0x00001000 /* unknown*/
+#define SPAWN_00002000                  0x00002000 /* unknown*/
+#define SPAWN_00004000                  0x00004000 /* unknown*/
+#define SPAWN_00008000                  0x00008000 /* unknown*/
+#define SPAWN_00010000                  0x00010000 /* unknown*/
+#define SPAWN_00020000                  0x00020000 /* unknown*/
+#define SPAWN_00040000                  0x00040000 /* unknown*/
+#define SPAWN_00080000                  0x00080000 /* unknown*/
+#define SPAWN_00100000                  0x00100000 /* unknown*/
+#define SPAWN_00200000                  0x00200000 /* unknown*/
+#define SPAWN_00400000                  0x00400000 /* unknown*/
+#define SPAWN_00800000                  0x00800000 /* unknown*/
+#define SPAWN_01000000                  0x01000000 /* unknown*/
+#define SPAWN_02000000                  0x02000000 /* unknown*/
+#define SPAWN_04000000                  0x04000000 /* unknown*/
+#define SPAWN_08000000                  0x08000000 /* unknown*/
+#define SPAWN_10000000                  0x10000000 /* unknown*/
+#define SPAWN_20000000                  0x20000000 /* unknown*/
+#define SPAWN_40000000                  0x40000000 /* unknown*/
+#define SPAWN_80000000                  0x80000000 /* unknown*/
 
 // command D7 - hud flags
-#define HUD_HIDE_ALL                    0x00 // hide all
-#define HUD_SHOW_TEXT_TOP               0x01 // don't hide top text
-#define HUD_SHOW_TEXT_BOTTOM            0x02 // don't hide bottom text
-#define HUD_SHOW_HUD_COUNTDOWN          0x04 // don't hide hud countdown
+#define HUD_HIDE_ALL                    0x00 /* Hide all*/
+#define HUD_SHOW_TEXT_TOP               0x01 /* Don't hide top text*/
+#define HUD_SHOW_TEXT_BOTTOM            0x02 /* Don't hide bottom text*/
+#define HUD_SHOW_HUD_COUNTDOWN          0x04 /* Don't hide hud countdown*/
 
-// command 94/95/96/97/98/99 chr->BITFIELD - used for ai list GLIST_FIRE_RAND_ANIM_SUBROUTINE
-#define BITFIELD_DONT_POINT_AT_BOND     0x01 // if set, don't point at bond
 /*===========================================================================*/
+
+/**
+   Simple Switch Statement.
+   Test should separate Command from value.
+   Empty Test is equivelant to a switch default:.
+   Limited to 16 cases.
+   Format: SWITCH(VARIABLE_TO_TEST,
+                  TEST_COMMAND, TEST_VALUE,
+                      CASE_CONTENT,...)
+ */
+#define SWITCH(VAR, \
+               CASE0, CASE_VAL0, CASE_CONTENT0,\
+               CASE1, CASE_VAL1, CASE_CONTENT1,\
+               CASE2, CASE_VAL2, CASE_CONTENT2,\
+               CASE3, CASE_VAL3, CASE_CONTENT3,\
+               CASE4, CASE_VAL4, CASE_CONTENT4,\
+               CASE5, CASE_VAL5, CASE_CONTENT5,\
+               CASE6, CASE_VAL6, CASE_CONTENT6,\
+               CASE7, CASE_VAL7, CASE_CONTENT7,\
+               CASE8, CASE_VAL8, CASE_CONTENT8,\
+               CASE9, CASE_VAL9, CASE_CONTENT9,\
+               CASEA, CASE_VALA, CASE_CONTENTA,\
+               CASEB, CASE_VALB, CASE_CONTENTB,\
+               CASEC, CASE_VALC, CASE_CONTENTC,\
+               CASED, CASE_VALD, CASE_CONTENTD,\
+               CASEE, CASE_VALE, CASE_CONTENTE,\
+               CASEF, CASE_VALF, CASE_CONTENTF)\
+VAR \
+IF_VA(NOT(IS_EMPTY(CASEF)))(0}; Error: Switch Limited to 15 elements + 1 default                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            \
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            \
+                                     /*This is here to stop the spread of errors*/u8 CASEF[] = {)\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENTF)))(                                                    CASEE (CASE_VALE,lblNext) EXPAND_ARGS_STACK(CASE_CONTENTF)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENTE)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENTF)))(Label(lblNext)) CASED (CASE_VALD,lblNext) EXPAND_ARGS_STACK(CASE_CONTENTE)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENTD)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENTE)))(Label(lblNext)) CASEC (CASE_VALC,lblNext) EXPAND_ARGS_STACK(CASE_CONTENTD)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENTC)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENTD)))(Label(lblNext)) CASEB (CASE_VALB,lblNext) EXPAND_ARGS_STACK(CASE_CONTENTC)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENTB)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENTC)))(Label(lblNext)) CASEA (CASE_VALA,lblNext) EXPAND_ARGS_STACK(CASE_CONTENTB)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENTA)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENTB)))(Label(lblNext)) CASE9 (CASE_VAL9,lblNext) EXPAND_ARGS_STACK(CASE_CONTENTA)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT9)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENTA)))(Label(lblNext)) CASE8 (CASE_VAL8,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT9)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT8)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT9)))(Label(lblNext)) CASE7 (CASE_VAL7,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT8)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT7)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT8)))(Label(lblNext)) CASE6 (CASE_VAL6,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT7)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT6)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT7)))(Label(lblNext)) CASE5 (CASE_VAL5,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT6)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT5)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT6)))(Label(lblNext)) CASE4 (CASE_VAL4,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT5)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT4)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT5)))(Label(lblNext)) CASE3 (CASE_VAL3,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT4)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT3)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT4)))(Label(lblNext)) CASE2 (CASE_VAL2,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT3)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT2)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT3)))(Label(lblNext)) CASE1 (CASE_VAL1,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT2)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT1)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT2)))(Label(lblNext)) CASE0 (CASE_VAL0,lblNext) EXPAND_ARGS_STACK(CASE_CONTENT1)(lblDone))\
+IF_VA(NOT(IS_EMPTY(CASE_CONTENT0)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT1)))(Label(lblNext))                           EXPAND_ARGS_STACK(CASE_CONTENT0)(lblDone) \
+Label(lblDone))
+ 
+#include "aicommands2.h"
+
+#if 0
+
+//temporary thunking for ai names
+#define DO(label_id) \
+        label(label_id) \
+        ai_sleep
+
+#define LOOP(label) \
+        goto_first(label)
+
+#define CONTINUE(label) \
+        goto_first(label)
+
+#define YIELD_FOREVER(label_id) \
+        label(label_id) \
+        ai_sleep \
+        goto_first(label_id)
+
+#define RETURN(label_id)\
+        label(label_id) \
+            jump_to_return_ai_list \
+            ai_list_end
+
 
 /*=============================================================================
 // ai command shortcuts
@@ -333,7 +712,7 @@
 // info: used for ai list parser to check when list ends
 //=============================================================================
 // note: not recommended to execute this command - to finish a list create an
-// infinite loop (goto_loop_infinite) or jump to GLIST_END_ROUTINE when list has
+// infinite loop (goto_loop_infinite) or jump to GAILIST_DEAD_AI when list has
 // finished tasks
 //===========================================================================*/
 #define ai_list_end_ID 0x04
@@ -353,7 +732,7 @@
 #define jump_to_ai_list(chr_num, ai_list) \
         jump_to_ai_list_ID, \
         chr_num, \
-        chararray16(ai_list),
+        CharArrayFrom16(ai_list),
 
 /*=============================================================================
 // name: set_return_ai_list
@@ -366,7 +745,7 @@
 #define set_return_ai_list_LENGTH 0x03
 #define set_return_ai_list(ai_list) \
         set_return_ai_list_ID, \
-        chararray16(ai_list),
+        CharArrayFrom16(ai_list),
 
 /*=============================================================================
 // name: jump_to_return_ai_list
@@ -417,9 +796,9 @@
 #define guard_play_animation_LENGTH 0x09
 #define guard_play_animation(animation_id, start_time30, end_time30, bitfield, interpol_time60) \
         guard_play_animation_ID, \
-        chararray16(animation_id), \
-        chararray16(start_time30), \
-        chararray16(end_time30), \
+        CharArrayFrom16(animation_id), \
+        CharArrayFrom16(start_time30), \
+        CharArrayFrom16(end_time30), \
         bitfield, \
         interpol_time60,
 
@@ -439,8 +818,8 @@
 // command id: 0C
 // info: guard points if bond is directly in front of guard, else command is ignored
 //=============================================================================
-// note: global ai list GLIST_FIRE_RAND_ANIM_SUBROUTINE skips this command if
-// bitfield flag BITFIELD_DONT_POINT_AT_BOND is on
+// note: global ai list GAILIST_ATTACK_BOND skips this command if
+// bitfield flag FLAGS2_DONT_POINT_AT_BOND is on
 //===========================================================================*/
 #define guard_points_at_bond_ID 0x0C
 #define guard_points_at_bond_LENGTH 0x01
@@ -547,8 +926,8 @@
 #define guard_try_fire_or_aim_at_target_LENGTH 0x06
 #define guard_try_fire_or_aim_at_target(bitfield, target, label) \
         guard_try_fire_or_aim_at_target_ID, \
-        chararray16(bitfield), \
-        chararray16(target), \
+        CharArrayFrom16(bitfield), \
+        CharArrayFrom16(target), \
         label,
 
 /*=============================================================================
@@ -563,8 +942,8 @@
 #define guard_try_fire_or_aim_at_target_kneel_LENGTH 0x06
 #define guard_try_fire_or_aim_at_target_kneel(bitfield, target, label) \
         guard_try_fire_or_aim_at_target_kneel_ID, \
-        chararray16(bitfield), \
-        chararray16(target), \
+        CharArrayFrom16(bitfield), \
+        CharArrayFrom16(target), \
         label,
 
 /*=============================================================================
@@ -580,8 +959,8 @@
 #define guard_try_fire_or_aim_at_target_update_LENGTH 0x06
 #define guard_try_fire_or_aim_at_target_update(bitfield, target, label) \
         guard_try_fire_or_aim_at_target_update_ID, \
-        chararray16(bitfield), \
-        chararray16(target), \
+        CharArrayFrom16(bitfield), \
+        CharArrayFrom16(target), \
         label,
 
 /*=============================================================================
@@ -597,8 +976,8 @@
 #define guard_try_facing_target_LENGTH 0x06
 #define guard_try_facing_target(bitfield, target, label) \
         guard_try_facing_target_ID, \
-        chararray16(bitfield), \
-        chararray16(target), \
+        CharArrayFrom16(bitfield), \
+        CharArrayFrom16(target), \
         label,
 
 /*=============================================================================
@@ -660,7 +1039,7 @@
 #define guard_try_dropping_item_LENGTH 0x05
 #define guard_try_dropping_item(prop_num, item_num, label) \
         guard_try_dropping_item_ID, \
-        chararray16(prop_num), \
+        CharArrayFrom16(prop_num), \
         item_num, \
         label,
 
@@ -673,7 +1052,7 @@
 #define guard_runs_to_pad_LENGTH 0x03
 #define guard_runs_to_pad(pad) \
         guard_runs_to_pad_ID, \
-        chararray16(pad),
+        CharArrayFrom16(pad),
 
 /*=============================================================================
 // name: guard_runs_to_pad_preset
@@ -694,7 +1073,7 @@
 #define guard_walks_to_pad_LENGTH 0x03
 #define guard_walks_to_pad(pad) \
         guard_walks_to_pad_ID, \
-        chararray16(pad),
+        CharArrayFrom16(pad),
 
 /*=============================================================================
 // name: guard_sprints_to_pad
@@ -705,15 +1084,15 @@
 #define guard_sprints_to_pad_LENGTH 0x03
 #define guard_sprints_to_pad(pad) \
         guard_sprints_to_pad_ID, \
-        chararray16(pad),
+        CharArrayFrom16(pad),
 
 /*=============================================================================
 // name: guard_start_patrol
 // command id: 20
 // info: makes guard walk a predefined path within setup
 //=============================================================================
-// note: usually paired with goto GLIST_DETECT_BOND_DEAF_NO_CLONE_NO_IDLE_ANIM
-//       or GLIST_DETECT_BOND_NO_CLONE_NO_IDLE_ANIM
+// note: usually paired with goto GAILIST_SIMPLE_GUARD_DEAF
+//       or GAILIST_SIMPLE_GUARD
 //===========================================================================*/
 #define guard_start_patrol_ID 0x20
 #define guard_start_patrol_LENGTH 0x02
@@ -772,7 +1151,7 @@
 #define guard_try_triggering_alarm_at_pad_LENGTH 0x04
 #define guard_try_triggering_alarm_at_pad(pad, label) \
         guard_try_triggering_alarm_at_pad_ID, \
-        chararray16(pad), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1211,7 +1590,7 @@
 #define if_room_containing_pad_is_on_screen_LENGTH 0x04
 #define if_room_containing_pad_is_on_screen(pad, label) \
         if_room_containing_pad_is_on_screen_ID, \
-        chararray16(pad), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1328,7 +1707,7 @@
 #define if_guard_distance_to_bond_less_than_LENGTH 0x04
 #define if_guard_distance_to_bond_less_than(distance, label) \
         if_guard_distance_to_bond_less_than_ID, \
-        chararray16(distance), \
+        CharArrayFrom16(distance), \
         label,
 
 /*=============================================================================
@@ -1342,7 +1721,7 @@
 #define if_guard_distance_to_bond_greater_than_LENGTH 0x04
 #define if_guard_distance_to_bond_greater_than(distance, label) \
         if_guard_distance_to_bond_greater_than_ID, \
-        chararray16(distance), \
+        CharArrayFrom16(distance), \
         label,
 
 /*=============================================================================
@@ -1357,8 +1736,8 @@
 #define if_chr_distance_to_pad_less_than(chr_num, distance, pad, label) \
         if_chr_distance_to_pad_less_than_ID, \
         chr_num, \
-        chararray16(distance), \
-        chararray16(pad), \
+        CharArrayFrom16(distance), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1373,8 +1752,8 @@
 #define if_chr_distance_to_pad_greater_than(chr_num, distance, pad, label) \
         if_chr_distance_to_pad_greater_than_ID, \
         chr_num, \
-        chararray16(distance), \
-        chararray16(pad), \
+        CharArrayFrom16(distance), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1388,7 +1767,7 @@
 #define if_guard_distance_to_chr_less_than_LENGTH 0x05
 #define if_guard_distance_to_chr_less_than(distance, chr_num, label) \
         if_guard_distance_to_chr_less_than_ID, \
-        chararray16(distance), \
+        CharArrayFrom16(distance), \
         chr_num, \
         label,
 
@@ -1403,7 +1782,7 @@
 #define if_guard_distance_to_chr_greater_than_LENGTH 0x05
 #define if_guard_distance_to_chr_greater_than(distance, chr_num, label) \
         if_guard_distance_to_chr_greater_than_ID, \
-        chararray16(distance), \
+        CharArrayFrom16(distance), \
         chr_num, \
         label,
 
@@ -1421,7 +1800,7 @@
 #define guard_try_setting_chr_preset_to_guard_within_distance_LENGTH 0x04
 #define guard_try_setting_chr_preset_to_guard_within_distance(distance, label) \
         guard_try_setting_chr_preset_to_guard_within_distance_ID, \
-        chararray16(distance), \
+        CharArrayFrom16(distance), \
         label,
 
 /*=============================================================================
@@ -1435,8 +1814,8 @@
 #define if_bond_distance_to_pad_less_than_LENGTH 0x06
 #define if_bond_distance_to_pad_less_than(distance, pad, label) \
         if_bond_distance_to_pad_less_than_ID, \
-        chararray16(distance), \
-        chararray16(pad), \
+        CharArrayFrom16(distance), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1450,8 +1829,8 @@
 #define if_bond_distance_to_pad_greater_than_LENGTH 0x06
 #define if_bond_distance_to_pad_greater_than(distance, pad, label) \
         if_bond_distance_to_pad_greater_than_ID, \
-        chararray16(distance), \
-        chararray16(pad), \
+        CharArrayFrom16(distance), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1464,7 +1843,7 @@
 #define if_chr_in_room_with_pad(chr_num, pad, label) \
         if_chr_in_room_with_pad_ID, \
         chr_num, \
-        chararray16(pad), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1476,7 +1855,7 @@
 #define if_bond_in_room_with_pad_LENGTH 0x04
 #define if_bond_in_room_with_pad(pad, label) \
         if_bond_in_room_with_pad_ID, \
-        chararray16(pad), \
+        CharArrayFrom16(pad), \
         label,
 
 /*=============================================================================
@@ -1682,7 +2061,7 @@
 // info: makes chr hold tagged object
 //=============================================================================
 // note: if chr's hands are occupied, object will be equipped as an concealed
-// attachment. but if tagged object's handedness flag is free on guard then
+// attachment. but if tagged object's GUNHAND flag is free on guard then
 // guard will equip weapon. tagged object's prop must have a holding position
 // command within the model file
 //===========================================================================*/
@@ -1909,7 +2288,7 @@
 #define if_mission_time_less_than_LENGTH 0x04
 #define if_mission_time_less_than(seconds, label) \
         if_mission_time_less_than_ID, \
-        chararray16(seconds), \
+        CharArrayFrom16(seconds), \
         label,
 
 /*=============================================================================
@@ -1923,7 +2302,7 @@
 #define if_mission_time_greater_than_LENGTH 0x04
 #define if_mission_time_greater_than(seconds, label) \
         if_mission_time_greater_than_ID, \
-        chararray16(seconds), \
+        CharArrayFrom16(seconds), \
         label,
 
 /*=============================================================================
@@ -1937,7 +2316,7 @@
 #define if_system_power_time_less_than_LENGTH 0x04
 #define if_system_power_time_less_than(minutes, label) \
         if_system_power_time_less_than_ID, \
-        chararray16(minutes), \
+        CharArrayFrom16(minutes), \
         label,
 
 /*=============================================================================
@@ -1951,7 +2330,7 @@
 #define if_system_power_time_greater_than_LENGTH 0x04
 #define if_system_power_time_greater_than(minutes, label) \
         if_system_power_time_greater_than_ID, \
-        chararray16(minutes), \
+        CharArrayFrom16(minutes), \
         label,
 
 /*=============================================================================
@@ -2278,7 +2657,7 @@
 #define guard_set_hearing_scale_LENGTH 0x03
 #define guard_set_hearing_scale(hearing_scale) \
         guard_set_hearing_scale_ID, \
-        chararray16(hearing_scale),
+        CharArrayFrom16(hearing_scale),
 
 /*=============================================================================
 // name: guard_set_vision_range
@@ -2338,7 +2717,7 @@
 #define guard_set_health_total_LENGTH 0x03
 #define guard_set_health_total(total_health) \
         guard_set_health_total_ID, \
-        chararray16(total_health),
+        CharArrayFrom16(total_health),
 
 /*=============================================================================
 // name: guard_set_armour
@@ -2360,7 +2739,7 @@
 #define guard_set_armour_LENGTH 0x03
 #define guard_set_armour(armour_value) \
         guard_set_armour_ID, \
-        chararray16(armour_value),
+        CharArrayFrom16(armour_value),
 
 /*=============================================================================
 // name: guard_set_speed_rating
@@ -2415,7 +2794,7 @@
 // info: set chr->BITFIELD on
 //=============================================================================
 // note: can be used to store a custom flag per chr, useful for missions. global
-// lists use flag 01, which is defined as BITFIELD_DONT_POINT_AT_BOND. other bits
+// lists use flag 01, which is defined as FLAGS2_DONT_POINT_AT_BOND. other bits
 // are free to use for setup's ai lists. can be used by obj ai lists, obj lists
 // are free to utilize the entire spectrum of flags
 //===========================================================================*/
@@ -2431,7 +2810,7 @@
 // info: set chr->BITFIELD off
 //=============================================================================
 // note: can be used to store a custom flag per chr, useful for missions. global
-// lists use flag 01, which is defined as BITFIELD_DONT_POINT_AT_BOND. other bits
+// lists use flag 01, which is defined as FLAGS2_DONT_POINT_AT_BOND. other bits
 // are free to use for setup's ai lists. can be used by obj ai lists, obj lists
 // are free to utilize the entire spectrum of flags
 //===========================================================================*/
@@ -2462,7 +2841,7 @@
 // info: set chr->BITFIELD on
 //=============================================================================
 // note: can be used to store a custom flag per chr, useful for missions. global
-// lists use flag 01, which is defined as BITFIELD_DONT_POINT_AT_BOND. other bits
+// lists use flag 01, which is defined as FLAGS2_DONT_POINT_AT_BOND. other bits
 // are free to use for setup's ai lists
 //===========================================================================*/
 #define chr_bitfield_set_on_ID 0x97
@@ -2478,7 +2857,7 @@
 // info: set chr->BITFIELD off
 //=============================================================================
 // note: can be used to store a custom flag per chr, useful for missions. global
-// lists use flag 01, which is defined as BITFIELD_DONT_POINT_AT_BOND. other bits
+// lists use flag 01, which is defined as FLAGS2_DONT_POINT_AT_BOND. other bits
 // are free to use for setup's ai lists
 //===========================================================================*/
 #define chr_bitfield_set_off_ID 0x98
@@ -2516,7 +2895,7 @@
 #define objective_bitfield_set_on_LENGTH 0x05
 #define objective_bitfield_set_on(bitfield) \
         objective_bitfield_set_on_ID, \
-        chararray32(bitfield)
+        CharArrayFrom32(bitfield)
 
 /*=============================================================================
 // name: objective_bitfield_set_off
@@ -2533,7 +2912,7 @@
 #define objective_bitfield_set_off_LENGTH 0x05
 #define objective_bitfield_set_off(bitfield) \
         objective_bitfield_set_off_ID, \
-        chararray32(bitfield)
+        CharArrayFrom32(bitfield)
 
 /*=============================================================================
 // name: if_objective_bitfield_is_set_on
@@ -2546,7 +2925,7 @@
 #define if_objective_bitfield_is_set_on_LENGTH 0x06
 #define if_objective_bitfield_is_set_on(bitfield, label) \
         if_objective_bitfield_is_set_on_ID, \
-        chararray32(bitfield), \
+        CharArrayFrom32(bitfield), \
         label,
 
 /*=============================================================================
@@ -2562,7 +2941,7 @@
 #define guard_flags_set_on_LENGTH 0x05
 #define guard_flags_set_on(bitfield) \
         guard_flags_set_on_ID, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: guard_flags_set_off
@@ -2577,7 +2956,7 @@
 #define guard_flags_set_off_LENGTH 0x05
 #define guard_flags_set_off(bitfield) \
         guard_flags_set_off_ID, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: if_guard_flags_is_set_on
@@ -2592,7 +2971,7 @@
 #define if_guard_flags_is_set_on_LENGTH 0x06
 #define if_guard_flags_is_set_on(bitfield, label) \
         if_guard_flags_is_set_on_ID, \
-        chararray32(bitfield), \
+        CharArrayFrom32(bitfield), \
         label,
 
 /*=============================================================================
@@ -2608,7 +2987,7 @@
 #define chr_flags_set_on(chr_num, bitfield) \
         chr_flags_set_on_ID, \
         chr_num, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: chr_flags_set_off
@@ -2623,7 +3002,7 @@
 #define chr_flags_set_off(chr_num, bitfield) \
         chr_flags_set_off_ID, \
         chr_num, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: if_chr_flags_is_set_on
@@ -2638,7 +3017,7 @@
 #define if_chr_flags_is_set_on(chr_num, bitfield, label) \
         if_chr_flags_is_set_on_ID, \
         chr_num, \
-        chararray32(bitfield), \
+        CharArrayFrom32(bitfield), \
         label,
 
 /*=============================================================================
@@ -2653,7 +3032,7 @@
 #define object_flags_1_set_on(object_tag, bitfield) \
         object_flags_1_set_on_ID, \
         object_tag, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: object_flags_1_set_off
@@ -2667,7 +3046,7 @@
 #define object_flags_1_set_off(object_tag, bitfield) \
         object_flags_1_set_off_ID, \
         object_tag, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: if_object_flags_1_is_set_on
@@ -2681,7 +3060,7 @@
 #define if_object_flags_1_is_set_on(object_tag, bitfield, label) \
         if_object_flags_1_is_set_on_ID, \
         object_tag, \
-        chararray32(bitfield), \
+        CharArrayFrom32(bitfield), \
         label,
 
 /*=============================================================================
@@ -2696,7 +3075,7 @@
 #define object_flags_2_set_on(object_tag, bitfield) \
         object_flags_2_set_on_ID, \
         object_tag, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: object_flags_2_set_off
@@ -2710,7 +3089,7 @@
 #define object_flags_2_set_off(object_tag, bitfield) \
         object_flags_2_set_off_ID, \
         object_tag, \
-        chararray32(bitfield),
+        CharArrayFrom32(bitfield),
 
 /*=============================================================================
 // name: if_object_flags_2_is_set_on
@@ -2724,7 +3103,7 @@
 #define if_object_flags_2_is_set_on(object_tag, bitfield, label) \
         if_object_flags_2_is_set_on_ID, \
         object_tag, \
-        chararray32(bitfield), \
+        CharArrayFrom32(bitfield), \
         label,
 
 /*=============================================================================
@@ -2867,7 +3246,7 @@
 #define if_local_timer_less_than_LENGTH 0x05
 #define if_local_timer_less_than(time60, label) \
         if_local_timer_less_than_ID, \
-        chararray24(time60), \
+        CharArrayFrom24(time60), \
         label,
 
 /*=============================================================================
@@ -2882,7 +3261,7 @@
 #define if_local_timer_greater_than_LENGTH 0x05
 #define if_local_timer_greater_than(time60, label) \
         if_local_timer_greater_than_ID, \
-        chararray24(time60), \
+        CharArrayFrom24(time60), \
         label,
 
 /*=============================================================================
@@ -2919,7 +3298,7 @@
 #define hud_countdown_set_LENGTH 0x03
 #define hud_countdown_set(seconds) \
         hud_countdown_set_ID, \
-        chararray16(seconds),
+        CharArrayFrom16(seconds),
 
 /*=============================================================================
 // name: hud_countdown_stop
@@ -2966,7 +3345,7 @@
 #define if_hud_countdown_less_than_LENGTH 0x04
 #define if_hud_countdown_less_than(seconds, label) \
         if_hud_countdown_less_than_ID, \
-        chararray16(seconds), \
+        CharArrayFrom16(seconds), \
         label,
 
 /*=============================================================================
@@ -2981,7 +3360,7 @@
 #define if_hud_countdown_greater_than_LENGTH 0x04
 #define if_hud_countdown_greater_than(seconds, label) \
         if_hud_countdown_greater_than_ID, \
-        chararray16(seconds), \
+        CharArrayFrom16(seconds), \
         label,
 
 /*=============================================================================
@@ -2998,9 +3377,9 @@
         chr_try_spawning_at_pad_ID, \
         body_num, \
         head_num, \
-        chararray16(pad), \
-        chararray16(ai_list), \
-        chararray32(bitfield), \
+        CharArrayFrom16(pad), \
+        CharArrayFrom16(ai_list), \
+        CharArrayFrom32(bitfield), \
         label,
 
 /*=============================================================================
@@ -3019,8 +3398,8 @@
         body_num, \
         head_num, \
         chr_num_target, \
-        chararray16(ai_list), \
-        chararray32(bitfield), \
+        CharArrayFrom16(ai_list), \
+        CharArrayFrom32(bitfield), \
         label,
 
 /*=============================================================================
@@ -3036,9 +3415,9 @@
 #define guard_try_spawning_item_LENGTH 0x09
 #define guard_try_spawning_item(prop_num, item_num, prop_bitfield, label) \
         guard_try_spawning_item_ID, \
-        chararray16(prop_num), \
+        CharArrayFrom16(prop_num), \
         item_num, \
-        chararray32(prop_bitfield), \
+        CharArrayFrom32(prop_bitfield), \
         label,
 
 /*=============================================================================
@@ -3053,8 +3432,8 @@
 #define guard_try_spawning_hat_LENGTH 0x08
 #define guard_try_spawning_hat(prop_num, prop_bitfield, label) \
         guard_try_spawning_hat_ID, \
-        chararray16(prop_num), \
-        chararray32(prop_bitfield), \
+        CharArrayFrom16(prop_num), \
+        CharArrayFrom32(prop_bitfield), \
         label,
 
 /*=============================================================================
@@ -3070,7 +3449,7 @@
 #define chr_try_spawning_clone(chr_num, ai_list, label) \
         chr_try_spawning_clone_ID, \
         chr_num, \
-        chararray16(ai_list), \
+        CharArrayFrom16(ai_list), \
         label,
 
 /*=============================================================================
@@ -3133,7 +3512,7 @@
         sfx_emit_from_object_ID, \
         channel_num, \
         object_tag, \
-        chararray16(vol_decay_time60),
+        CharArrayFrom16(vol_decay_time60),
 
 /*=============================================================================
 // name: sfx_emit_from_pad
@@ -3148,8 +3527,8 @@
 #define sfx_emit_from_pad(channel_num, pad, vol_decay_time60) \
         sfx_emit_from_pad_ID, \
         channel_num, \
-        chararray16(pad), \
-        chararray16(vol_decay_time60),
+        CharArrayFrom16(pad), \
+        CharArrayFrom16(vol_decay_time60),
 
 /*=============================================================================
 // name: sfx_set_channel_volume
@@ -3164,8 +3543,8 @@
 #define sfx_set_channel_volume(channel_num, target_volume, transition_time60) \
         sfx_set_channel_volume_ID, \
         channel_num, \
-        chararray16(target_volume), \
-        chararray16(transition_time60),
+        CharArrayFrom16(target_volume), \
+        CharArrayFrom16(transition_time60),
 
 /*=============================================================================
 // name: sfx_fade_channel_volume
@@ -3180,8 +3559,8 @@
 #define sfx_fade_channel_volume(channel_num, fade_volume_percent, fade_time60) \
         sfx_fade_channel_volume_ID, \
         channel_num, \
-        chararray16(fade_volume_percent), \
-        chararray16(fade_time60),
+        CharArrayFrom16(fade_volume_percent), \
+        CharArrayFrom16(fade_time60),
 
 /*=============================================================================
 // name: sfx_stop_channel
@@ -3207,7 +3586,7 @@
 #define if_sfx_channel_volume_less_than(channel_num, volume, label) \
         if_sfx_channel_volume_less_than_ID, \
         channel_num, \
-        chararray16(volume), \
+        CharArrayFrom16(volume), \
         label,
 
 /*=============================================================================
@@ -3233,8 +3612,8 @@
 #define vehicle_speed_LENGTH 0x05
 #define vehicle_speed(top_speed, acceleration_time60) \
         vehicle_speed_ID, \
-        chararray16(top_speed), \
-        chararray16(acceleration_time60),
+        CharArrayFrom16(top_speed), \
+        CharArrayFrom16(acceleration_time60),
 
 /*=============================================================================
 // name: aircraft_rotor_speed
@@ -3248,8 +3627,8 @@
 #define aircraft_rotor_speed_LENGTH 0x05
 #define aircraft_rotor_speed(rotor_speed, acceleration_time60) \
         aircraft_rotor_speed_ID, \
-        chararray16(rotor_speed), \
-        chararray16(acceleration_time60),
+        CharArrayFrom16(rotor_speed), \
+        CharArrayFrom16(acceleration_time60),
 
 /*=============================================================================
 // name: if_camera_is_in_intro
@@ -3310,7 +3689,7 @@
 // command id: D2
 // info: exits the level
 //=============================================================================
-// note: recommend not to use this command, instead goto GLIST_EXIT_LEVEL for
+// note: recommend not to use this command, instead goto GAILIST_END_LEVEL for
 // exit cutscene list. retail game has a glitch with hires mode that needs to
 // execute this command in a loop, check cuba's 1000 list
 //===========================================================================*/
@@ -3349,7 +3728,7 @@
 #define camera_look_at_bond_from_pad_LENGTH 0x03
 #define camera_look_at_bond_from_pad(pad) \
         camera_look_at_bond_from_pad_ID, \
-        chararray16(pad),
+        CharArrayFrom16(pad),
 
 /*=============================================================================
 // name: camera_switch
@@ -3368,8 +3747,8 @@
 #define camera_switch(object_tag, look_at_bond_flag, unused_flag) \
         camera_switch_ID, \
         object_tag, \
-        chararray16(look_at_bond_flag), \
-        chararray16(unused_flag),
+        CharArrayFrom16(look_at_bond_flag), \
+        CharArrayFrom16(unused_flag),
 
 /*=============================================================================
 // name: if_bond_y_pos_less_than
@@ -3384,7 +3763,7 @@
 #define if_bond_y_pos_less_than_LENGTH 0x04
 #define if_bond_y_pos_less_than(y_pos, label) \
         if_bond_y_pos_less_than_ID, \
-        chararray16(y_pos), \
+        CharArrayFrom16(y_pos), \
         label,
 
 /*=============================================================================
@@ -3709,12 +4088,12 @@
 #define camera_orbit_pad_LENGTH 0x0D
 #define camera_orbit_pad(lat_distance, vert_distance, orbit_speed60, pad, y_pos_offset, initial_rotation) \
         camera_orbit_pad_ID, \
-        chararray16(lat_distance), \
-        chararray16(vert_distance), \
-        chararray16(orbit_speed60), \
-        chararray16(pad), \
-        chararray16(y_pos_offset), \
-        chararray16(initial_rotation),
+        CharArrayFrom16(lat_distance), \
+        CharArrayFrom16(vert_distance), \
+        CharArrayFrom16(orbit_speed60), \
+        CharArrayFrom16(pad), \
+        CharArrayFrom16(y_pos_offset), \
+        CharArrayFrom16(initial_rotation),
 
 /*=============================================================================
 // name: credits_roll
@@ -3912,4 +4291,5 @@
         object_rocket_launch_ID, \
         object_tag,
 
+#endif
 #endif

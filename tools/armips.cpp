@@ -4173,7 +4173,7 @@ private:
 	std::wstring outputName;
 };
 
-// file: Util/CRC.h
+// file: Util/crc.h
 
 unsigned short getCrc16(unsigned char* Source, size_t len);
 unsigned int getCrc32(unsigned char* Source, size_t len);
@@ -13748,7 +13748,7 @@ bool ByteArray::toFile(const std::wstring& fileName)
 	return length == size_;
 }
 
-// file: Util/CRC.cpp
+// file: Util/crc.cpp
 #include <stdio.h>
 
 const unsigned short Crc16Table[] = /* CRC lookup table */

@@ -2,7 +2,7 @@ name: NTSC-Status
 
 on:
   push:
-    branches: master
+    branches: master # Only trigger on master
     paths-ignore: # Don't trigger on files that are updated by the CI or other non-breaking files
     - 'tools/**'
     - '*.md'
@@ -11,7 +11,7 @@ on:
     - 'CppProperties.json'
     
   pull_request:
-    branches: master
+    branches: master # Only trigger on master
     
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -30,17 +30,24 @@ jobs:
           sudo apt install binutils-mips-linux-gnu make
           wget https://github.com/n64decomp/qemu-irix/releases/download/v2.11-deb/qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
           sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
-      
+
+      - name: Get precompiled recomp to save time
+        env:
+          IDO_RECOMP: ${{ secrets.FILE_RECOMP  }}
+        run: |
+          wget -O recomp.zip $IDO_RECOMP
+          unzip -u recomp.zip -d tools/ido5.3_recomp
+
       - name: Get US File
         env:
           FILE_US: ${{ secrets.SECRET_FILE_US  }}
         run: wget -O baserom.u.z64 $FILE_US
-      
+
       - name: Extract US Assets
         run: ./extract_baserom.u.sh
-
+      
       - name: Make US 
-        run: make -j VERSION=US
+        run: make -j IDO_RECOMP=YES VERSION=US
           
       - name: Make report
         run: make -C tools/report
@@ -50,7 +57,7 @@ jobs:
         #git diff HEAD^ HEAD --name-only
             
         # expected args
-        # 1481 15854 12774 232276 564 1312 652 20330 15471 269772 49 336 tools/report/index.html "src/game/bond.c"
+        # 1481 15854 12774 232276 564 1312 652 20330 15471 269772 49 336 tools/report/index.html "src/game/bondview.c"
       
       # Replace this with Git push to repo
       # but somehow avoid loop

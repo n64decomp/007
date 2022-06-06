@@ -1,0 +1,75 @@
+/**************************************************************************
+ *									  *
+ *		 Copyright (C) 1994, Silicon Graphics, Inc.		  *
+ *									  *
+ *  These coded instructions, statements, and computer programs  contain  *
+ *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *
+ *  are protected by Federal copyright law.  They  may  not be disclosed  *
+ *  to  third  parties  or copied or duplicated in any form, in whole or  *
+ *  in part, without the prior written consent of Silicon Graphics, Inc.  *
+ *									  *
+ **************************************************************************/
+
+#include "guint.h"
+
+/*
+ * S = sin (a)
+ * C = cos (a)
+ * H = sqrt (X*X + Z*Z)
+ *
+ * [   v   ]  [  C  S        ]  [  1           ]  [ -Z/H  X/H    ]
+ *            [ -S  C        ]  [     H  Y     ]  [     1        ]
+ *            [        1     ]  [    -Y  H     ]  [ -X/H -Z/H    ]
+ *            [           1  ]  [           1  ]  [           1  ]
+ *
+ */
+
+void guAlignF(float mf[4][4], float a, float x, float y, float z)
+{
+	static float	dtor = 3.1415926 / 180.0;
+	float	s, c, h, hinv;
+
+	guNormalize(&x, &y, &z);
+
+	a *= dtor;
+	s = sinf (a);
+	c = cosf (a);
+	h = sqrtf (x*x + z*z);
+
+	guMtxIdentF(mf);
+
+	if (h != 0) {
+		hinv = 1 / h;
+
+		mf[0][0] = (-z*c - s*y*x) * hinv;
+		mf[1][0] = (z*s - c*y*x) * hinv;
+		mf[2][0] = -x;
+		mf[3][0] = 0;
+
+		mf[0][1] = s*h;
+		mf[1][1] = c*h;
+		mf[2][1] = -y;
+		mf[3][1] = 0;
+
+		mf[0][2] = (c*x - s*y*z) * hinv;
+		mf[1][2] = (-s*x - c*y*z) * hinv;
+		mf[2][2] = -z;
+		mf[3][2] = 0;
+
+		mf[0][3] = 0;
+		mf[1][3] = 0;
+		mf[2][3] = 0;
+		mf[3][3] = 1;
+	} else {
+		/* XXX: should do this right */
+	}
+}
+
+void guAlign(Mtx *m, float a, float x, float y, float z)
+{
+	Matrix	mf;
+
+	guAlignF(mf, a, x, y, z);
+
+	guMtxF2L(mf, m);
+}

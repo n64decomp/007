@@ -1,5 +1,6 @@
 #include <stdarg.h>
-#include "ultra64.h"
+#include <ultra64.h>
+/*#include <stddef.h>*/
 
 
 

@@ -1,6 +1,6 @@
-#include "ultra64.h"
-#include "game/mainmenu.h"
-#include "bondconstants.h"
+#include <ultra64.h>
+#include "front.h"
+#include <bondconstants.h>
  /**
   * initGameData
   * 
@@ -25,7 +25,7 @@ void initGameData(void) {
     slider_007_mode_health = 1.0f;
     slider_007_mode_accuracy = 1.0f;
     slider_007_mode_damage = 1.0f;
-    do_not_play_intro_movie = 0;
+    intro_character_index = 0;
     randomly_selected_intro_animation = 0;
     intro_animation_count = 0;
     objinstance = 0;

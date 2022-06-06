@@ -1,8 +1,8 @@
 #ifndef _BG_ALL_P_H_
 #define _BG_ALL_P_H_
 
-#include "ultra64.h"
-
+#include <ultra64.h>
+#include <bondtypes.h>
 struct bg_header
 {
     u32 RESERVED;
@@ -31,12 +31,6 @@ struct portal_data_table_entry
     u16 control_bytes;
 };
 
-struct coord
-{
-    float x;
-    float y;
-    float z;
-};
 
 /* 3 */
 struct portal_3_point
@@ -45,7 +39,7 @@ struct portal_3_point
     char padding1;
     char padding2;
     char padding3;
-    struct coord points[3];
+    coord3d points[3];
 };
 
 struct portal_4_point
@@ -54,7 +48,7 @@ struct portal_4_point
     char padding1;
     char padding2;
     char padding3;
-    struct coord points[4];
+    coord3d points[4];
 };
 
 struct portal_5_point
@@ -63,7 +57,7 @@ struct portal_5_point
     char padding1;
     char padding2;
     char padding3;
-    struct coord points[5];
+    coord3d points[5];
 };
 
 struct portal_6_point
@@ -72,7 +66,7 @@ struct portal_6_point
     char padding1;
     char padding2;
     char padding3;
-    struct coord points[6];
+    coord3d points[6];
 };
 
 extern struct room_data_table_entry room_data_table[];

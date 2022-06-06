@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LjunE[] = {
+char *LjunE[] = {
  "Satellite reconnaissance has been unable to locate any installation near the coordinates recovered from the Janus computers in St. Petersburg. It seems likely that a ground search will be necessary. The CIA has provided you with a light aircraft. Underfly Janus radar and parachute in to the drop, proceed through the jungle eliminating any opposition and attempt to locate the Janus base.\n",
  "Miss Simonova will be with you on this mission. If Janus is operating a Goldeneye satellite, her computing skills will be essential when you try to disable their systems.\nJack Wade has given her some basic firearms training and he thinks she'll be able to carry her weight in a combat situation. Be careful though, 007, remember she isn't an experienced operative like yourself.\n",
  "You'll know you're on the right trail if you encounter Janus troops or automated defenses. Be especially wary of their robotic drone guns. I'm giving you some triggered mines for their ammo dump, try not to waste them on silly things. Oh, and look out for that Xenia woman, 007, I think she's after you. You lucky devil.\n",
@@ -43,6 +42,6 @@ struct stringentry LjunE[] = {
  "blow up ammo dump\n",
  "escort natalya to janus base\n",
  "Cuban Jungle\n",
- NULL,
- NULL
+ 0,
+ 0
 };

@@ -1,6 +1,5 @@
-#include "game/lvl_text.h"
 
-struct stringentry LmiscJ[] = {
+char * LmiscJ[] = {
     "‚¼„€ò€»Š",
     "€Ô€»€ø†‚‡€ò€»Š",
     "‚œ€Õ2‡Ã€ò€»Š",
@@ -70,7 +69,7 @@ struct stringentry LmiscJ[] = {
     "„€Ü€ú€»€ò€»Š",
     "€ù€»†€»‚¼Å ‚±„‘‚´",
     "…ªá‚Ó‚© 60 ƒÂ",
-    NULL,
-    NULL,
-    NULL
+    0,
+    0,
+    0
 };

@@ -1,10 +1,16 @@
 #ifndef _UNK_0C0A70_H_
 #define _UNK_0C0A70_H_
-#include "ultra64.h"
+#include <ultra64.h>
 
 extern s32 D_80048490;
 extern s32 D_80048494;
-extern s32 D_80048498;
+extern s32 speedgraphframes;
+
+#if defined (BUGFIX_R1)
+extern f32 jpD_800484CC;
+extern f32 jpD_800484D0;
+#endif
+
 extern s32 D_8004849C;
 extern s32 D_800484A0;
 extern s32 D_800484A4;

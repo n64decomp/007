@@ -1,5 +1,5 @@
-#include "ultra64.h"
-
+#include <ultra64.h>
+#include "ejectedcartridges.h"
 
 
 
@@ -41,7 +41,7 @@ glabel something_with_ejected_cartridges
 /* 039BCC 7F00509C 8E110000 */  lw    $s1, ($s0)
 /* 039BD0 7F0050A0 02202025 */  move  $a0, $s1
 .L7F0050A4:
-/* 039BD4 7F0050A4 0FC1D953 */  jal   load_object_into_memory
+/* 039BD4 7F0050A4 0FC1D953 */  jal   fileLoad
 /* 039BD8 7F0050A8 8E050004 */   lw    $a1, 4($s0)
 /* 039BDC 7F0050AC 8E110008 */  lw    $s1, 8($s0)
 /* 039BE0 7F0050B0 26100008 */  addiu $s0, $s0, 8

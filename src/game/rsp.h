@@ -1,10 +1,27 @@
 #ifndef _RSP_H_
 #define _RSP_H_
-#include "ultra64.h"
+
+#include <ultra64.h>
+
+#include <sched.h>
+#include <PR/gbi.h>
+#include <PR/os.h>
+#include <PR/sptask.h>
+
+/**
+ * This is cast to type OSMesg for a call to osSendMesg.
+ * Name based on struct GFXInfo from \n64devkit\ultra\usr\src\pr\demos_old\simple\gfx.h.
+ */ 
+struct GfxInfo_s {
+    OSScTask task;
+    u32 cfb;
+    u32 unk5C;
+};
 
 void rspInitDebugNoticeList(void);
-void *load_rsp_microcode(Gfx *arg0, Gfx *arg1, s32 arg2, s32 *arg3);
+void rspAllocateBuffers(void);
+void rspGfxTaskStart(Gfx *firstGdl, Gfx *gdl, s32 arg2, OSMesg rspReplyMsg);
 
-extern u32 **fast3d_related_array;
+extern struct GfxInfo_s *g_gfxTaskSettingsList;
 
 #endif
