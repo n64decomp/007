@@ -18,7 +18,7 @@
  */
 void cleanupObjects(s32 stage)
 {
-    object_standard *obj = g_chraiCurrentSetup.propDefs;
+    object_standard *obj = g_CurrentSetup.propDefs;
 
     if (obj != NULL)
     {
@@ -111,8 +111,8 @@ glabel jpt_8004F210
 glabel cleanupObjects
 /* 03C030 7F007500 27BDFFE0 */  addiu $sp, $sp, -0x20
 /* 03C034 7F007504 AFB00018 */  sw    $s0, 0x18($sp)
-/* 03C038 7F007508 3C108007 */  lui   $s0, %hi(g_chraiCurrentSetup+0x0c)
-/* 03C03C 7F00750C 8E105D0C */  lw    $s0, %lo(g_chraiCurrentSetup+0x0c)($s0)
+/* 03C038 7F007508 3C108007 */  lui   $s0, %hi(g_CurrentSetup+0x0c)
+/* 03C03C 7F00750C 8E105D0C */  lw    $s0, %lo(g_CurrentSetup+0x0c)($s0)
 /* 03C040 7F007510 AFBF001C */  sw    $ra, 0x1c($sp)
 /* 03C044 7F007514 AFA40020 */  sw    $a0, 0x20($sp)
 /* 03C048 7F007518 52000019 */  beql  $s0, $zero, .L7F007580

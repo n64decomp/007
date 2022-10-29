@@ -26,7 +26,7 @@ struct Model *makeonebody(s32 body, s32 head, struct ModelFileHeader *bodyHeader
     f32 scale;
     f32 pov;
     s32 opcode;
-    struct ModelNode_HeaderRecord *node;
+    struct ModelRoData_HeaderRecord *node;
 
     scale = c_item_entries[body].scale * 0.10000001f;
     opcode = 0;
@@ -101,7 +101,7 @@ struct Model *makeonebody(s32 body, s32 head, struct ModelFileHeader *bodyHeader
             {
                 if (headHeader->Switches[0] != 0)
                 {
-                    node = extract_id_from_object_structure_microcode(model, headHeader->Switches[0]);
+                    node = modelGetNodeRwData(model, headHeader->Switches[0]);
                     node->ModelType = 0;
                 }
             }

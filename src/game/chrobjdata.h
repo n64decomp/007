@@ -41,10 +41,10 @@ extern struct ModelNode player_gait_hdr;
 extern struct ModelNode player_gait_pos_hdr_1;
 extern struct ModelNode player_gait_pos_hdr_2;
 extern struct ModelNode player_gait_pos_hdr_3;
-extern struct ModelNode_HeaderRecord player_gait_obj;
-extern struct ModelNode_GroupRecord player_gait_pos_1;
-extern struct ModelNode_GroupRecord player_gait_pos_2;
-extern struct ModelNode_GroupRecord player_gait_pos_3;
+extern struct ModelRoData_HeaderRecord player_gait_obj;
+extern struct ModelRoData_GroupRecord player_gait_pos_1;
+extern struct ModelRoData_GroupRecord player_gait_pos_2;
+extern struct ModelRoData_GroupRecord player_gait_pos_3;
 
 extern struct ModelFileHeader player_gait_object_header;
 

@@ -96,9 +96,7 @@ u8 spec_OUT_port[] =
     0xFF, 0x00, 0x00, 0x00
 };
 
-// rodata
-//8005C114
-const char aEmDataSpec_rom_seg_rz[] = "em/data/spec_rom.seg.rz";
+
 
 
 
@@ -756,7 +754,9 @@ glabel spectrum_p1controller_to_kempston
 
 
 
-
+// rodata
+//8005C114
+const char aEmDataSpec_rom_seg_rz[] = "em/data/spec_rom.seg.rz";
 
 #ifdef NONMATCHING
 void init_spectrum_game(void) {

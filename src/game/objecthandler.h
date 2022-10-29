@@ -3,18 +3,33 @@
 #include <ultra64.h>
 #include <bondtypes.h>
 
-extern s32 D_80036084;
-extern f32 D_80036088;
+struct bondstruct_unk_animation_related {
+    char* unk00;
+    char* unk04;
+    char* unk08;
+};
+
+struct bondstruct_unk_op07_related {
+    s32 unk00;
+    s32 unk04;
+    s32 unk0C;
+};
+
+extern s32 g_ModelDistanceDisabled;
+extern f32 g_ModelDistanceScale;
 extern u32 D_80036250;
 extern s32 D_80036410;
-extern s32 D_80036414;
+extern struct bondstruct_unk_animation_related* D_80036414;
 extern s32 D_80036418;
 extern s32 D_8003641C;
-extern s32 vtxallocator;
+extern u32 D_800363F0;
+extern struct Vertex* (*vtxallocator)(s32 numvertices);
+extern struct bondstruct_unk_op07_related D_800360C4[];
+extern Vertex D_800363E0;
 
 // arg0 unknown pointer
 void sub_GAME_7F070090(void *arg0, f32 arg1, f32 arg2);
-void sub_GAME_7F06FF18(Model *, f32, f32);
+void modelSetAnimRateForDuration(Model *, f32, f32);
 void sub_GAME_7F06FF5C(Model *model, s32 arg1);
 void modelSetScale(Model*, f32);
 void getsuboffset(Model *, coord3d *);
@@ -30,7 +45,7 @@ void modelSetAnimLooping(Model *, f32, f32);
 void modelSetAnimEndFrame(Model *, f32);
 void sub_GAME_7F06CE84(Model *, f32);
 
-void *extract_id_from_object_structure_microcode(Model *Objinst, ModelNode *root);
+union ModelRwData* modelGetNodeRwData(Model *Objinst, ModelNode *root);
 f32 getsubroty(Model *objinst);
 void setsubroty(Model *objinst, f32 radHeading);
 void modelSetAnimationWithMerge(Model *, ModelAnimation *, s32, f32, f32, f32, s32);
@@ -74,8 +89,8 @@ u32 sub_GAME_7F0701E0(void);
 // arg0: unknown type. arg1: unknown type. arg5: unknown type, maybe struct.
 void sub_GAME_7F06D2E4(s32, s32, ModelSkeleton*, void* anim, s32, s16*);
 
-// arg2 unknown type.
-void sub_GAME_7F075FAC(Model *, ModelFileHeader *, void *);
+void sub_GAME_7F075F68(struct Model *, struct ModelFileHeader *, u32 *);
+void sub_GAME_7F075FAC(struct Model *, struct ModelFileHeader *, u32 *);
 void modelSetAnimFlipFunction(Model *, void *);
 void subcalcmatrices(struct unk_joint_list *, Model *);
 void instcalcmatrices(struct unk_joint_list *arg0, Model *arg1);
@@ -83,6 +98,8 @@ void load_object_fill_header(struct ModelFileHeader *objheader, u8 *name, void *
 void* get_obj_instance_controller_for_header(struct ModelFileHeader* arg0);
 void subdraw(s32 arg0, struct Model *);
 void sub_GAME_7F06EFC4(struct Model *);
+void sub_GAME_7F076030(Model *pmodel, ModelFileHeader *pmodeldef, ModelNode *pnode, ModelFileHeader *cmodeldef);
+void modelInitRwData(Model *model, ModelNode *startnode);
 
 #ifndef VERSION_EU
 void return_null(void);

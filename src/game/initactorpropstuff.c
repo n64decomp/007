@@ -33,8 +33,23 @@ void reset_counter_rand_body_head(void)
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0001F0(void) {
-
+//close, ops swapped
+//34d80:    addu    s1,s1,v0                        | 34d80:    addiu   s0,s0,1
+//34d84:    addiu   s0,s0,1                         | 34d84:    addu    s1,s1,v0
+u32 sub_GAME_7F0001F0(void *ani,int aniid,int param_3)
+{
+  short asStack8 [4];
+  u32 uVar1;
+  u32 i;
+  
+  
+  i = 0;
+  while (aniid < param_3) {
+      uVar1 = sub_GAME_7F06D2E4(0,0,&skeleton_guard,ani,aniid,asStack8);
+      aniid=1+aniid;
+      i = i + uVar1 & 0xffff;
+  }
+  return i;
 }
 #else
 GLOBAL_ASM(
@@ -142,6 +157,7 @@ glabel sub_GAME_7F000290
 
 
 #ifdef NONMATCHING
+//pd is raceInitAnimGroup
 void sub_GAME_7F00032C(void) {
 
 }
@@ -244,44 +260,17 @@ glabel sub_GAME_7F00032C
 #endif
 
 
+//pd is raceInitAnimGroups
+void sub_GAME_7F00046C(struct attackanimgroup **groups)
+{
+	s32 i;
 
-#ifdef NONMATCHING
-void sub_GAME_7F00046C(void) {
-    // Same as PD's func0f00052c
+	for (i = 0; i < 32; i++) {
+		if (groups[i]->len < 0) {
+			groups[i]->len = sub_GAME_7F00032C(groups[i]->animcfg);
+		}
+	}
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F00046C
-/* 034F9C 7F00046C 27BDFFD8 */  addiu $sp, $sp, -0x28
-/* 034FA0 7F000470 AFB20020 */  sw    $s2, 0x20($sp)
-/* 034FA4 7F000474 AFB1001C */  sw    $s1, 0x1c($sp)
-/* 034FA8 7F000478 AFB00018 */  sw    $s0, 0x18($sp)
-/* 034FAC 7F00047C AFBF0024 */  sw    $ra, 0x24($sp)
-/* 034FB0 7F000480 00808025 */  move  $s0, $a0
-/* 034FB4 7F000484 00008825 */  move  $s1, $zero
-/* 034FB8 7F000488 24120080 */  li    $s2, 128
-.L7F00048C:
-/* 034FBC 7F00048C 8E020000 */  lw    $v0, ($s0)
-/* 034FC0 7F000490 8C4E0004 */  lw    $t6, 4($v0)
-/* 034FC4 7F000494 05C30006 */  bgezl $t6, .L7F0004B0
-/* 034FC8 7F000498 26310004 */   addiu $s1, $s1, 4
-/* 034FCC 7F00049C 0FC000CB */  jal   sub_GAME_7F00032C
-/* 034FD0 7F0004A0 8C440000 */   lw    $a0, ($v0)
-/* 034FD4 7F0004A4 8E0F0000 */  lw    $t7, ($s0)
-/* 034FD8 7F0004A8 ADE20004 */  sw    $v0, 4($t7)
-/* 034FDC 7F0004AC 26310004 */  addiu $s1, $s1, 4
-.L7F0004B0:
-/* 034FE0 7F0004B0 1632FFF6 */  bne   $s1, $s2, .L7F00048C
-/* 034FE4 7F0004B4 26100004 */   addiu $s0, $s0, 4
-/* 034FE8 7F0004B8 8FBF0024 */  lw    $ra, 0x24($sp)
-/* 034FEC 7F0004BC 8FB00018 */  lw    $s0, 0x18($sp)
-/* 034FF0 7F0004C0 8FB1001C */  lw    $s1, 0x1c($sp)
-/* 034FF4 7F0004C4 8FB20020 */  lw    $s2, 0x20($sp)
-/* 034FF8 7F0004C8 03E00008 */  jr    $ra
-/* 034FFC 7F0004CC 27BD0028 */   addiu $sp, $sp, 0x28
-)
-#endif
 
 
 
@@ -640,8 +629,8 @@ void sub_GAME_7F000980(void) {
 #endif
 
 void sub_GAME_7F0009A0(void) {
-    u32 *end = &dword_CODE_bss_80075DC8[20];
-    u32 *ptr = &dword_CODE_bss_80075DC8[0];
+    u32 *end = &g_Casings[20];
+    u32 *ptr = &g_Casings[0];
     while(end > ptr) {
         ptr[POS] = 0;
         ptr += POS+1;

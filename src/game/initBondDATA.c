@@ -129,8 +129,8 @@ void init_player_BONDdata_stats(void) {
     g_CurrentPlayer->crosshair_x_pos = 0.0f;
     g_CurrentPlayer->crosshair_y_pos = 0.0f;
     g_CurrentPlayer->guncrossdamp = 0.9f;
-    g_CurrentPlayer->field_FFC = 0.0f;
-    g_CurrentPlayer->field_1000 = 0.0f;
+    g_CurrentPlayer->field_FFC.x = 0.0f;
+    g_CurrentPlayer->field_FFC.y = 0.0f;
     g_CurrentPlayer->gun_azimuth_angle = 0.0f;
     g_CurrentPlayer->gun_azimuth_turning = 0.0f;
     g_CurrentPlayer->gunaimdamp = 0.9f;
@@ -139,10 +139,10 @@ void init_player_BONDdata_stats(void) {
     g_CurrentPlayer->unk1018 = 0.0f;
     g_CurrentPlayer->copiedgoldeneye = FALSE;
     g_CurrentPlayer->magnetattracttime = -1;
-    g_CurrentPlayer->field_106C = 0.0f;
-    g_CurrentPlayer->field_1070 = 0.0f;
-    g_CurrentPlayer->field_1074 = 0.0f;
-    g_CurrentPlayer->field_1078 = 0;
+    g_CurrentPlayer->gunsync = 0.0f;
+    g_CurrentPlayer->syncchange = 0.0f;
+    g_CurrentPlayer->synccount = 0.0f;
+    g_CurrentPlayer->syncoffset = 0;
     g_CurrentPlayer->field_107C = 0.0f;
     g_CurrentPlayer->field_1080 = 0.0f;
     bgunCalculateBlend(GUNRIGHT);

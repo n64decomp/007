@@ -142,7 +142,7 @@ s32 sizepropdef(PropDefHeaderRecord *pdef)
  */
 ObjectRecord *setupGetPtrToCommandByIndex(s32 index) //#MATCH
 {
-    PropDefHeaderRecord *object = g_chraiCurrentSetup.propDefs; //wow, first use of header, cool
+    PropDefHeaderRecord *object = g_CurrentSetup.propDefs; //wow, first use of header, cool
 
     if (index >= 0 && object)
     {
@@ -172,7 +172,7 @@ s32 tagGetCommandIndex(struct ObjectRecord *tag)
     PropDefHeaderRecord *object;
     s32 i;
 
-    object = g_chraiCurrentSetup.propDefs;
+    object = g_CurrentSetup.propDefs;
 
     if (object != NULL)
     {
@@ -200,7 +200,7 @@ s32 setupGetCommandIndexByProp(struct PropRecord *prop)
     PropDefHeaderRecord *object;
     s32 i;
 
-    object = g_chraiCurrentSetup.propDefs;
+    object = g_CurrentSetup.propDefs;
 
     if (object != NULL)
     {
@@ -220,7 +220,7 @@ s32 setupGetCommandIndexByProp(struct PropRecord *prop)
 
 
 
-s32 modelLoad(u32 modelid)
+s32 modelLoad(s32 modelid)
 {
     if (PitemZ_entries[modelid].header->RootNode == NULL) 
     {
@@ -315,7 +315,7 @@ void setupUpdateObjectRoomPosition(ObjectRecord *obj)
 /**
  * Address 0x7F056EA0.
 */
-struct ObjectRecord *setupCommandGetObject(s32 arg0, s32 index)
+struct ObjectRecord *setupCommandGetObject(s32 stageID, s32 index)
 {
     struct PropDefHeaderRecord *obj;
 
@@ -390,7 +390,7 @@ struct ObjectRecord *setupCommandGetObject(s32 arg0, s32 index)
 
 #ifdef NONMATCHING
 
-PropRecord *setupFindObjForReuse(s32 arg0, PropRecord **arg1, PropRecord **arg2, s32 arg3, s32 arg4, s32 arg5)
+PropRecord *setupFindObjForReuse(s32 stageID, PropRecord **arg1, PropRecord **arg2, s32 arg3, s32 arg4, s32 arg5)
 {
     PropRecord *temp_s0;
     PropRecord *temp_s0_2;
@@ -407,7 +407,7 @@ PropRecord *setupFindObjForReuse(s32 arg0, PropRecord **arg1, PropRecord **arg2,
     PropRecord *phi_s3_3;
 
 
-    temp_s0  = g_chraiCurrentSetup.props;
+    temp_s0  = g_CurrentSetup.props;
     phi_s0   = temp_s0;
     phi_s2   = NULL;
     phi_s3   = NULL;
@@ -423,7 +423,7 @@ loop_3:
             phi_s2_3 = phi_s2;
             phi_s3_3 = phi_s3;
             phi_s2_3 = phi_s2;
-            if ((arg0 & 0xFF) == phi_v1)
+            if ((stageID & 0xFF) == phi_v1)
             {
                 temp_v0 = phi_s0->pos.AsArray[2];
                 if (temp_v0 == 0)
@@ -434,7 +434,7 @@ loop_3:
                     }
                     goto block_19;
                 }
-                if ((arg0 != 8) && ((phi_s0->unk64 & 0x80) == 0) && ((phi_s0->unk2 & 4) == 0) && (temp_v0->unk1C == 0) && ((arg4 == 0) || (sub_GAME_7F06C060(phi_s0->stan, arg5) != 0)))
+                if ((stageID != 8) && ((phi_s0->unk64 & 0x80) == 0) && ((phi_s0->unk2 & 4) == 0) && (temp_v0->unk1C == 0) && ((arg4 == 0) || (modelmgrCanSlotFitRwdata(phi_s0->stan, arg5) != 0)))
                 {
                     if ((phi_s2 == 0) && ((phi_s0->pos.AsArray[2]->unk1 & 2) == 0))
                     {
@@ -476,8 +476,8 @@ GLOBAL_ASM(
 glabel setupFindObjForReuse
 /* 08BA38 7F056F08 27BDFFC0 */  addiu $sp, $sp, -0x40
 /* 08BA3C 7F056F0C AFB00018 */  sw    $s0, 0x18($sp)
-/* 08BA40 7F056F10 3C108007 */  lui   $s0, %hi(g_chraiCurrentSetup+0x0c)
-/* 08BA44 7F056F14 8E105D0C */  lw    $s0, %lo(g_chraiCurrentSetup+0x0c)($s0)
+/* 08BA40 7F056F10 3C108007 */  lui   $s0, %hi(g_CurrentSetup+0x0c)
+/* 08BA44 7F056F14 8E105D0C */  lw    $s0, %lo(g_CurrentSetup+0x0c)($s0)
 /* 08BA48 7F056F18 AFBE0038 */  sw    $fp, 0x38($sp)
 /* 08BA4C 7F056F1C AFB70034 */  sw    $s7, 0x34($sp)
 /* 08BA50 7F056F20 AFB30024 */  sw    $s3, 0x24($sp)
@@ -529,7 +529,7 @@ glabel setupFindObjForReuse
 /* 08BB00 7F056FD0 00000000 */   nop   
 /* 08BB04 7F056FD4 12200005 */  beqz  $s1, .L7F056FEC
 /* 08BB08 7F056FD8 02A02825 */   move  $a1, $s5
-/* 08BB0C 7F056FDC 0FC1B018 */  jal   sub_GAME_7F06C060
+/* 08BB0C 7F056FDC 0FC1B018 */  jal   modelmgrCanSlotFitRwdata
 /* 08BB10 7F056FE0 8E040014 */   lw    $a0, 0x14($s0)
 /* 08BB14 7F056FE4 1040000C */  beqz  $v0, .L7F057018
 /* 08BB18 7F056FE8 00000000 */   nop   

@@ -616,7 +616,7 @@ int something_with_LnameX(uint param_1)
                 *(ushort *)(ptr_char_registry + iVar4 + 2) =
                      uVar3 | *(ushort *)(ptr_char_registry + iVar4 + 2) & 0xc000;
                 romCopy((char *)(ptr_char_data_buf + iVar9 * 0x60),
-                        (char *)(_efontcharSegmentRomStart + ((int)(param_1 & 0x1fff) >> 1) * 0x20),
+                        (char *)(_efontchardataSegmentRomStart + ((int)(param_1 & 0x1fff) >> 1) * 0x20),
                         0x80);
                 puVar2 = ptr_char_data_buf + iVar9 * 0x60;
             }
@@ -626,7 +626,7 @@ int something_with_LnameX(uint param_1)
             *(ushort *)(ptr_char_registry + indexto * 2) =
                  (ushort)indexfrom & 0x3fff | *(ushort *)(ptr_char_registry + indexto * 2) & 0xc000;
             romCopy((char *)(ptr_char_data_buf + indexto * 0x60),
-                    (char *)(_jfontcharSegmentRomStart + indexfrom * 0x18),0x60);
+                    (char *)(_jfontchardataSegmentRomStart + indexfrom * 0x18),0x60);
             puVar2 = ptr_char_data_buf + indexto * 0x60;
         }
     }
@@ -761,8 +761,8 @@ glabel something_with_LnameX
 /* 0F6718 7F0C1BE8 A46E0000 */  sh    $t6, ($v1)
 /* 0F671C 7F0C1BEC 3C0F8009 */  lui   $t7, %hi(ptr_char_data_buf) 
 /* 0F6720 7F0C1BF0 8DEFC6F4 */  lw    $t7, %lo(ptr_char_data_buf)($t7)
-/* 0F6724 7F0C1BF4 3C190011 */  lui   $t9, %hi(_jfontcharSegmentRomStart) # $t9, 0x11
-/* 0F6728 7F0C1BF8 27397940 */  addiu $t9, %lo(_jfontcharSegmentRomStart) # addiu $t9, $t9, 0x7940
+/* 0F6724 7F0C1BF4 3C190011 */  lui   $t9, %hi(_jfontchardataSegmentRomStart) # $t9, 0x11
+/* 0F6728 7F0C1BF8 27397940 */  addiu $t9, %lo(_jfontchardataSegmentRomStart) # addiu $t9, $t9, 0x7940
 /* 0F672C 7F0C1BFC 0000C012 */  mflo  $t8
 /* 0F6730 7F0C1C00 03192821 */  addu  $a1, $t8, $t9
 /* 0F6734 7F0C1C04 AFA80024 */  sw    $t0, 0x24($sp)
@@ -814,8 +814,8 @@ glabel something_with_LnameX
 /* 0F67E8 7F0C1CB8 32191FFF */  andi  $t9, $s0, 0x1fff
 /* 0F67EC 7F0C1CBC 00197043 */  sra   $t6, $t9, 1
 /* 0F67F0 7F0C1CC0 01182021 */  addu  $a0, $t0, $t8
-/* 0F67F4 7F0C1CC4 3C180012 */  lui   $t8, %hi(_efontcharSegmentRomStart) # $t8, 0x12
-/* 0F67F8 7F0C1CC8 27183040 */  addiu $t8, %lo(_efontcharSegmentRomStart) # addiu $t8, $t8, 0x3040
+/* 0F67F4 7F0C1CC4 3C180012 */  lui   $t8, %hi(_efontchardataSegmentRomStart) # $t8, 0x12
+/* 0F67F8 7F0C1CC8 27183040 */  addiu $t8, %lo(_efontchardataSegmentRomStart) # addiu $t8, $t8, 0x3040
 /* 0F67FC 7F0C1CCC 000E79C0 */  sll   $t7, $t6, 7
 /* 0F6800 7F0C1CD0 01F82821 */  addu  $a1, $t7, $t8
 /* 0F6804 7F0C1CD4 0C001707 */  jal   romCopy
@@ -862,5 +862,5 @@ u8 * langGet(s32 slotID)
 
     u32 output_slot = textslot_offset; /* add the text slot offset to the base ptr to get the ptr to text file's slot */
     output_slot += (u32)textbank_ptr;
-    return (textslot_offset != 0) ? output_slot : NULL;
+    return (textslot_offset != 0) ? (u8*)output_slot : NULL;
 }

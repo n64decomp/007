@@ -183,6 +183,33 @@ typedef struct WeaponStats
     u32 BitFlags;
 } WeaponStats;
 
+typedef struct AmmoStats {
+    /**
+     * The maximum amount of ammo.
+     */
+    u32 MaxAmmo;
+
+    /**
+     * Unknown (field 0x04).
+     */
+    u16 field_04;
+
+    /**
+     * Unknown (field 0x06).
+     */
+    u16 field_06;
+
+    /**
+     * Unknown (field 0x08).
+     */
+    u16 field_08;
+
+    /**
+     * Unknown (field 0x0A).
+     */
+    u16 field_0A;
+} AmmoStats;
+
 typedef struct GunModelFileRecord
 {
   ModelFileHeader * item_header;
@@ -203,16 +230,50 @@ typedef struct GunModelFileRecord
   f32 equip_watch_z;
 } GunModelFileRecord;
 
+typedef struct CasingRecord {
+    f32 unk00;
+    coord3d pos;
+    coord3d vel;
+#if VERSION_EU
+    f32 unk1C[3][3];
+    f32 unk40[3][3];
+#else
+    Mtxf unk1C;
+    Mtxf unk5C;
+#endif
+    ModelFileHeader *header;
+} CasingRecord;
+
 typedef struct CartridgeModelFileRecord {
     ModelFileHeader* header;
     char * text;
 } CartridgeModelFileRecord;
 
-#if defined(VERSION_EU)
-extern char dword_CODE_bss_80075DC8[20][104];
-#else
-extern char dword_CODE_bss_80075DC8[20][160];
-#endif
+struct RicochetSoundsSmall {
+    u16 arr[20];
+};
+
+struct PunchSounds {
+    u16 arr[3];
+};
+
+struct BulletFleshSounds {
+    u16 arr[2];
+};
+
+struct LaserRichochetSounds {
+    u16 arr[2];
+};
+
+struct RicochetSoundsLarge {
+    u16 arr[36];
+};
+
+struct EarWhistleSounds {
+    s16 arr[5];
+};
+
+extern CasingRecord g_Casings[20];
 
 f32 bondwalkItemGetForceOfImpact(ITEM_IDS item);
 
@@ -232,7 +293,7 @@ void display_in_game_crosshair(s32 *gdl);
 
 WeaponStats *get_ptr_item_statistics(ITEM_IDS item);
 
-s32 getCurrentPlayerWeaponId(GUNHAND hand);
+ITEM_IDS getCurrentPlayerWeaponId(GUNHAND hand);
 s32 currentPlayerEquipWeaponWrapper(GUNHAND hand, s32 next_weapon);
 void sub_GAME_7F068E6C(void);
 void attempt_reload_item_in_hand(GUNHAND hand);
@@ -249,8 +310,8 @@ f32 bondwalkItemGetDestructionAmount(ITEM_IDS item);
 u16 bondwalkItemGetSound(ITEM_IDS item);
 u8 bondwalkItemGetSoundTriggerRate(ITEM_IDS item);
 
-void recall_joy2_hits_edit_detail_edit_flag(s32 arg0, u8 *arg1, s32 arg2);
-void recall_joy2_hits_edit_flag(s32 arg0, coord3d *arg1, s32 arg2);
+void recall_joy2_hits_edit_detail_edit_flag(enum ITEM_IDS item, PropRecord* prop, s32 texture_index);
+void recall_joy2_hits_edit_flag(enum ITEM_IDS item, coord3d* arg1, s32 texture_index);
 void sub_GAME_7F05EB0C(ObjectRecord *arg0, coord3d *arg1,  StandTile *arg2, Mtxf *arg3, coord3d *arg4, Mtxf *arg5,  PropRecord *arg6);
 void sub_GAME_7F061948(struct ChrRecord_f180 *arg0, ITEM_IDS item, coord3d *arg2, coord3d *arg3);
 void sub_GAME_7F068190(coord3d *arg0, coord3d *arg1);
@@ -259,12 +320,17 @@ void inc_curplayer_hitcount_with_weapon(ITEM_IDS item, SHOT_REGISTER shot_regist
 s8 get_hands_firing_status(GUNHAND hand);
 void gunFireTankShell(s32 hand);
 void         remove_item_in_hand(GUNHAND hand);
-void         currentPlayerUnEquipWeaponWrapper(GUNHAND hand, s32 weapid);
+void currentPlayerUnEquipWeaponWrapper(enum GUNHAND hand, enum ITEM_IDS weapid);
 s32          currentPlayerGetAmmoCount(AMMOTYPE ammotype);
 s32          get_civilian_casualties(void);
 s32 Gun_hand_without_item(enum GUNHAND arg0);
+void sub_GAME_7F05FB00(enum GUNHAND hand);
 
-void bgunCalculateBlend(s32 arg0);
+void bgunCalculateBlend(enum GUNHAND handnum);
 void gunSetBondWeaponSway(f32 arg0, f32 arg1, f32 speed_verta, f32 speed_theta);
 void gunSetOffsetRelated(f32 param_1);
+
+s32 get_curplayer_shot_register(SHOT_REGISTER shot_register);
+void get_bullet_angle(f32* horizontal_angle, f32* vertical_angle);
+
 #endif

@@ -13,7 +13,7 @@
  */
 
 //bss
-struct s_mempBANK memory_bank_ptrs[7];
+MemoryPool g_mempPools[7];
 
 //data
 void *ptr_memp_c_debug_debug_notice_list = 0;
@@ -40,24 +40,24 @@ void mempCheckMemflagTokens(s32 bstart, s32 bsize)
 {
     s_mempMVALS sp20;
     
-    memory_bank_ptrs[0].bankstart = bstart;
-    memory_bank_ptrs[0].bankend = bstart + bsize;
+    g_mempPools[0].start = bstart;
+    g_mempPools[0].end = bstart + bsize;
     
     sp20 = sdefaultmvals;
 
     if (tokenFind(1, "-mf")) {
-        sp20.var2 = strtol(tokenFind(1, "-mf"), NULL, 0);
+        sp20.mf = strtol(tokenFind(1, "-mf"), NULL, 0);
     }
     if (tokenFind(1, "-ml")) {
-        sp20.var4 = strtol(tokenFind(1, "-ml"), NULL, 0);
+        sp20.ml = strtol(tokenFind(1, "-ml"), NULL, 0);
     }
     if (tokenFind(1, "-me")) {
-        sp20.var6 = strtol(tokenFind(1, "-me"), NULL, 0);
+        sp20.me = strtol(tokenFind(1, "-me"), NULL, 0);
     }
-    if (sp20.var6 == 0) {
-        sp20.var2 = 0;
-        sp20.var6 = ((j_text_trigger ? 308 : 296) * 1024);
-        sp20.var4 = bsize - sp20.var6;
+    if (sp20.me == 0) {
+        sp20.mf = 0;
+        sp20.me = ((j_text_trigger ? 308 : 296) * 1024);
+        sp20.ml = bsize - sp20.me;
     }
 
     mempSetBankStarts((s32*)&sp20);
@@ -82,7 +82,7 @@ void mempSetBankStarts(s32 banks[8])
     }
 
     var3 = bankstarts[6];
-    var1 = (memory_bank_ptrs[0].bankend - memory_bank_ptrs[0].bankstart);
+    var1 = (g_mempPools[0].end - g_mempPools[0].start);
     for (i = 0; i < 7; i++) {
         bankstarts[i] = ((s64)bankstarts[i] * var1) / var3;
     }
@@ -91,11 +91,11 @@ void mempSetBankStarts(s32 banks[8])
         bankstarts[i] = ALIGN16_b(bankstarts[i]);
     }
 
-    var2 = memory_bank_ptrs[0].bankstart;
+    var2 = g_mempPools[0].start;
     for (i = 0; i < 6; i++) {
-        memory_bank_ptrs[i + 1].bankstart = bankstarts[i] + var2;
-        memory_bank_ptrs[i + 1].nextentry = 0;
-        memory_bank_ptrs[i + 1].bankend = bankstarts[i + 1] + var2;
+        g_mempPools[i + 1].start = bankstarts[i] + var2;
+        g_mempPools[i + 1].pos = 0;
+        g_mempPools[i + 1].end = bankstarts[i + 1] + var2;
     }
 }
 
@@ -105,40 +105,55 @@ void mempSetBankStarts(s32 banks[8])
  *     accepts: A0=size, A1=bank
  */
 #ifdef NONMATCHING
-u32 mempAllocBytesInBank(u32 bytes, u8 bank)
+// https://decomp.me/scratch/cdPCZ
+// Non-matching - maybe asm?
+void *mempAllocBytesInBank(s32 bytes, u8 poolnum)
 {
-    s32 temp_v0_2;
-    u32 next;
-    while (TRUE) {
-        if (memory_bank_ptrs[bank].nextentry == 0) {
-            while (TRUE) {}
-            needmemallocation = 1;
+    for (;;)
+    {
+        u8 *allocation = g_mempPools[poolnum].pos;
+
+        if (g_mempPools[poolnum].pos == 0) // uninitialized
+        {
+            for (;;);
         }
-        if (memory_bank_ptrs[bank].bankend < memory_bank_ptrs[bank].nextentry) {
-            nulled_mempLoopAllMemBanks();
-            while (TRUE) {}
-        }
-        if ((memory_bank_ptrs[bank].nextentry + bytes) >= memory_bank_ptrs[bank].bankend) {
-            break;
-        }
-        if (memory_bank_ptrs[6].bankend >= (memory_bank_ptrs[6].nextentry + bytes)) {
-            temp_v0_2 = needmemallocation;
-            needmemallocation = 1;
-            bank = 6;
-            if (temp_v0_2 == 0) {
-                continue;
-            }        
-        } else {
-            nulled_mempLoopAllMemBanks();
-            while (TRUE) {}
+        else
+        {
+            if (g_mempPools[poolnum].pos > g_mempPools[poolnum].end) // overflow
+            {
+                nulled_mempLoopAllMemBanks();
+                for (;;);
+            }
+
+            if (g_mempPools[poolnum].pos + bytes > g_mempPools[poolnum].end) // Overflow, try pool 6
+            {
+                poolnum = MEMPOOL_PERMANENT;
+                
+                if (g_mempPools[MEMPOOL_PERMANENT].pos + bytes <= g_mempPools[MEMPOOL_PERMANENT].end) // good
+                {
+                    u32 v0 = needmemallocation;
+                    if (1);
+                    needmemallocation = TRUE;
+
+                    if (v0 == 0);
+                }
+                else // overflow
+                {
+                    nulled_mempLoopAllMemBanks();
+                    for (;;);
+                }
+            }
+            else // good, allocate the mem and exit
+            {
+                g_mempPools[poolnum].pos += bytes;
+                g_mempPools[poolnum].prevpos = allocation;
+
+                if (1);
+
+                return allocation;
+            }
         }
     }
-
-    next = memory_bank_ptrs[bank].nextentry;
-    memory_bank_ptrs[bank].nextentry += bytes;
-    memory_bank_ptrs[bank].data2 = next;
-
-    return next;
 }
 #else
 GLOBAL_ASM(
@@ -147,10 +162,10 @@ glabel mempAllocBytesInBank
 /* 00A320 70009720 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 00A324 70009724 AFA5001C */  sw    $a1, 0x1c($sp)
 /* 00A328 70009728 30A700FF */  andi  $a3, $a1, 0xff
-/* 00A32C 7000972C 3C058006 */  lui   $a1, %hi(memory_bank_ptrs)
+/* 00A32C 7000972C 3C058006 */  lui   $a1, %hi(g_mempPools)
 /* 00A330 70009730 3C0A8002 */  lui   $t2, %hi(needmemallocation) 
 /* 00A334 70009734 254A4404 */  addiu $t2, %lo(needmemallocation) # addiu $t2, $t2, 0x4404
-/* 00A338 70009738 24A53BB0 */  addiu $a1, %lo(memory_bank_ptrs) # addiu $a1, $a1, 0x3bb0
+/* 00A338 70009738 24A53BB0 */  addiu $a1, %lo(g_mempPools) # addiu $a1, $a1, 0x3bb0
 /* 00A33C 7000973C AFBF0014 */  sw    $ra, 0x14($sp)
 /* 00A340 70009740 00803025 */  move  $a2, $a0
 /* 00A344 70009744 0007C100 */  sll   $t8, $a3, 4
@@ -219,37 +234,37 @@ s32 mempAddEntryOfSizeToBank(u8* ptrdata, u32 newsize, u8 bank)
     s32 oldsize;
     s32 diffsize;
     
-    if (needmemallocation && (ptrdata == (u8*)memory_bank_ptrs[6].data2)) {
+    if (needmemallocation && (ptrdata == (u8*)g_mempPools[6].prevpos)) {
         bank = 6;
     }
 
-    if (memory_bank_ptrs[bank].nextentry == 0) {
+    if (g_mempPools[bank].pos == 0) {
         while(TRUE) {}
     }
 
-    if (ptrdata != (u8*)memory_bank_ptrs[bank].data2) {
+    if (ptrdata != (u8*)g_mempPools[bank].prevpos) {
         return 2;
     }
 
-    oldsize = (memory_bank_ptrs[bank].nextentry - memory_bank_ptrs[bank].data2);
+    oldsize = (g_mempPools[bank].pos - g_mempPools[bank].prevpos);
     diffsize = (newsize - oldsize);
 
     if (diffsize <= 0) {
-        memory_bank_ptrs[bank].nextentry += diffsize;
+        g_mempPools[bank].pos += diffsize;
         return 1;
     }
 
-    if (memory_bank_ptrs[bank].nextentry > memory_bank_ptrs[bank].bankend) {
+    if (g_mempPools[bank].pos > g_mempPools[bank].end) {
         nulled_mempLoopAllMemBanks();
         while(TRUE) {}
     }
 
-    if (memory_bank_ptrs[bank].nextentry + diffsize > memory_bank_ptrs[bank].bankend) {
+    if (g_mempPools[bank].pos + diffsize > g_mempPools[bank].end) {
         nulled_mempLoopAllMemBanks();
         while(TRUE) {}
     }
     
-    memory_bank_ptrs[bank].nextentry += diffsize;
+    g_mempPools[bank].pos += diffsize;
     
     return 1;
 }
@@ -267,14 +282,14 @@ glabel mempAddEntryOfSizeToBank
 /* 00A420 70009820 AFA5001C */  sw    $a1, 0x1c($sp)
 /* 00A424 70009824 11E00006 */  beqz  $t7, .L70009840
 /* 00A428 70009828 00803825 */   move  $a3, $a0
-/* 00A42C 7000982C 3C188006 */  lui   $t8, %hi(memory_bank_ptrs+0x6C) 
-/* 00A430 70009830 8F183C1C */  lw    $t8, %lo(memory_bank_ptrs+0x6C)($t8)
+/* 00A42C 7000982C 3C188006 */  lui   $t8, %hi(g_mempPools+0x6C) 
+/* 00A430 70009830 8F183C1C */  lw    $t8, %lo(g_mempPools+0x6C)($t8)
 /* 00A434 70009834 14980002 */  bne   $a0, $t8, .L70009840
 /* 00A438 70009838 00000000 */   nop   
 /* 00A43C 7000983C 24060006 */  li    $a2, 6
 .L70009840:
-/* 00A440 70009840 3C0A8006 */  lui   $t2, %hi(memory_bank_ptrs) 
-/* 00A444 70009844 254A3BB0 */  addiu $t2, %lo(memory_bank_ptrs) # addiu $t2, $t2, 0x3bb0
+/* 00A440 70009840 3C0A8006 */  lui   $t2, %hi(g_mempPools) 
+/* 00A444 70009844 254A3BB0 */  addiu $t2, %lo(g_mempPools) # addiu $t2, $t2, 0x3bb0
 /* 00A448 70009848 0006C900 */  sll   $t9, $a2, 4
 /* 00A44C 7000984C 032A2821 */  addu  $a1, $t9, $t2
 /* 00A450 70009850 8CA40004 */  lw    $a0, 4($a1)
@@ -331,19 +346,22 @@ glabel mempAddEntryOfSizeToBank
 
 void nulled_mempLoopAllMemBanks(void) {
     u8 bank;
-    for (bank = 1; bank < 7; bank++) {}
+    for (bank = MEMPOOL_MF; bank < MEMPOOL_7; bank++)
+    {
+    }
 }
 
 s32 mempGetBankSizeLeft(u8 bank) {
     if (needmemallocation) {
-        bank = 6;
+        bank = MEMPOOL_PERMANENT;
     }
 
-    if ((bank == 4) && (memory_bank_ptrs[4].bankstart == memory_bank_ptrs[4].bankend)) {
-        bank = 6;
+    if ((bank == MEMPOOL_STAGE) && (g_mempPools[MEMPOOL_STAGE].start == g_mempPools[MEMPOOL_STAGE].end))
+    {
+        bank = MEMPOOL_PERMANENT;
     }
 
-    return memory_bank_ptrs[bank].bankend - memory_bank_ptrs[bank].nextentry;
+    return g_mempPools[bank].end - g_mempPools[bank].pos;
 }
 
 // Last three bits contains the bank, the rest contains the size.
@@ -352,13 +370,13 @@ u32 mempAllocPackedBytesInBank(u32 sizeandbank) {
 }
 
 void mempResetBank(u8 bank) {
-    memory_bank_ptrs[bank].data2 = 0;
-    memory_bank_ptrs[bank].nextentry = memory_bank_ptrs[bank].bankstart;
+    g_mempPools[bank].prevpos = 0;
+    g_mempPools[bank].pos = g_mempPools[bank].start;
 }
 
 void mempNullNextEntryInBank(u8 bank) {
     nulled_mempLoopAllMemBanks();
-    if (memory_bank_ptrs[bank].nextentry != 0) {
-        memory_bank_ptrs[bank].nextentry = 0;
+    if (g_mempPools[bank].pos != 0) {
+        g_mempPools[bank].pos = 0;
     }
 }

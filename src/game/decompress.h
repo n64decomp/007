@@ -5,6 +5,6 @@
 
 
 u32 decompressdata(u8 *src, u8 *dst, struct huft *hlist);
-s32 sub_GAME_7F0CE894(void);
+s32 rzipGetSomething(void);
 
 #endif

@@ -53,11 +53,11 @@ d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/decompressbuffer.o
 d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/decompressbuffer.o
 d41d8cd98f00b204e9800998ecf8427e,.data,build/u/src/decompressbuffer.o
 d41d8cd98f00b204e9800998ecf8427e,.rodata,build/u/src/decompressbuffer.o
-377a8cb4f582defa3f1bb86cd30a60c1,.text,build/u/src/fault.o
-d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/fault.o
-d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/fault.o
-d41d8cd98f00b204e9800998ecf8427e,.data,build/u/src/fault.o
-d41d8cd98f00b204e9800998ecf8427e,.rodata,build/u/src/fault.o
+377a8cb4f582defa3f1bb86cd30a60c1,.text,build/u/src/crash.o
+d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/crash.o
+d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/crash.o
+d41d8cd98f00b204e9800998ecf8427e,.data,build/u/src/crash.o
+d41d8cd98f00b204e9800998ecf8427e,.rodata,build/u/src/crash.o
 c6af3c2e9a83066c1ff902c20ee56af0,.text,build/u/src/fr.o
 d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/fr.o
 d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/fr.o

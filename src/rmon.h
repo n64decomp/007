@@ -7,7 +7,7 @@
 #define _RMON_H_
 
 void rmonMain(void);
-s32 rmonIsDisabled(void);
+s32 rmonGetToken(void);
 s32 rmonStatus(void);
 void osWriteHost(void * arg0, u32 arg1);
 void osReadHost(void * arg0, u32 arg1);

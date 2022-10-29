@@ -104,7 +104,7 @@ bg_room_data * ptr_bgdata_room_fileposition_list;
 s32 dword_CODE_bss_8007FF90;
 
 //CODE.bss:8007FF94
-s32 dword_CODE_bss_8007FF94;
+f32* dword_CODE_bss_8007FF94;
 
 #ifndef VERSION_EU
 //CODE.bss:8007FF98
@@ -144,7 +144,7 @@ s32 eu_bss_8007BFA4;
 char dword_CODE_bss_80081600[0x18];
 
 //CODE.bss:80081618
-char table_for_portals[0xFA0];
+struct unk_portalstruct table_for_portals[200];
 
 
 // data
@@ -171,15 +171,12 @@ s32 levelentry_index = 1;
  */
 s32 bgViewRelated[] = { 1, 1, -1, -1 };
 
-#if defined(VERSION_EU)
-s_room_info array_room_info[0x8b] = {0};
-s32 MaxNumRooms = 0x8b ;
-#else
+
 //D:80041414 //This is why 150 is room limit
-s_room_info array_room_info[0x96] = {0};
+s_room_info array_room_info[MAXROOMCOUNT] = {0};
 //D:800442F4
-s32 MaxNumRooms = 0x96 ;
-#endif
+s32 MaxNumRooms = MAXROOMCOUNT;
+
 
 //D:800442F8
 s32 D_800442F8 = 0;
@@ -241,8 +238,14 @@ struct levelentry levelinfotable[] = {
 
 //D:8004481C
 u32 D_8004481C[] = {0x1000100, 0};
+
 //D:80044824
-u32 D_80044824[] = {0x32C2E32, 0x373E3F4E, 0x56595D72, 0x76797AFF, 0x11003AFF};
+s_specialportal specialportalarray[] = {
+    {0x03,
+        {0x2C,0x2E,0x32, 0x37,0x3E,0x3F,0x4E, 0x56,0x59,0x5D,0x72, 0x76,0x79,0x7A,0xFF}},
+    {0x11,
+        {0x00,0x3A,0xFF}}
+};
 
 /**
  * Bond's current room.
@@ -653,18 +656,39 @@ void bgInitDebugNoticeList(void) {
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0B37EC(void) {
+//logically close, not close codegen
+void sub_GAME_7F0B37EC(void) 
+{
+    u8* portals;
+    s32 i;
+    s32 p;
 
+    for ( i=0; i!=2; i++)
+    {
+        if (levelentry_index == specialportalarray[i].levelid & 0xFF) {
+            portals = specialportalarray[i].portallist;
+            for ( p=0; (portals[p] & 0xFF) != 0xFF; p++)
+            {
+                ptr_bgdata_portals[portals[p] & 0xff].controlbytes1 |= 2;
+            }
+        } else {
+            portals = specialportalarray[i].portallist;
+            for ( p=0; portals[p] != 0xFF; p++)
+            {
+                ;
+            }
+        }
+    }
 }
 #else
 GLOBAL_ASM(
 .text
 glabel sub_GAME_7F0B37EC
-/* 0E831C 7F0B37EC 3C028004 */  lui   $v0, %hi(D_80044824)
+/* 0E831C 7F0B37EC 3C028004 */  lui   $v0, %hi(specialportalarray)
 /* 0E8320 7F0B37F0 3C038004 */  lui   $v1, %hi(g_BgCurrentRoom)
 /* 0E8324 7F0B37F4 3C088008 */  lui   $t0, %hi(ptr_bgdata_portals) 
 /* 0E8328 7F0B37F8 3C078004 */  lui   $a3, %hi(levelentry_index)
-/* 0E832C 7F0B37FC 24424824 */  addiu $v0, %lo(D_80044824) # addiu $v0, $v0, 0x4824
+/* 0E832C 7F0B37FC 24424824 */  addiu $v0, %lo(specialportalarray) # addiu $v0, $v0, 0x4824
 /* 0E8330 7F0B3800 24634838 */  addiu $v1, %lo(g_BgCurrentRoom) # addiu $v1, $v1, 0x4838
 /* 0E8334 7F0B3804 24E71400 */  addiu $a3, %lo(levelentry_index) # addiu $a3, $a3, 0x1400
 /* 0E8338 7F0B3808 2508FF80 */  addiu $t0, %lo(ptr_bgdata_portals) # addiu $t0, $t0, -0x80
@@ -898,8 +922,38 @@ glabel sub_GAME_7F0B38B4
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0B39BC(void) {
-
+void sub_GAME_7F0B39BC(int curroom,int unk1, bbox2d * screensize,s32 next)
+{
+    int i;
+    
+    array_room_info[curroom].bitflags0 = '\x01';
+    
+    if (array_room_info[curroom].room_loaded_mask == '\0') {
+        for (i = 0; i < g_BgNumberOfRoomsDrawn; i++)
+        {
+            if (curroom == dword_CODE_bss_8007FFA0[i].roomid) {
+                if (dword_CODE_bss_8007FFA0[i].unk1 < unk1) {
+                    dword_CODE_bss_8007FFA0[i].unk1 = unk1;
+                }
+                sub_GAME_7F0B5CC0(screensize,&dword_CODE_bss_8007FFA0[i].bbox);
+                dword_CODE_bss_8007FFA0[i].bbox.min.x = screensize->min.x;
+                dword_CODE_bss_8007FFA0[i].bbox.min.y = screensize->min.y;
+                dword_CODE_bss_8007FFA0[i].bbox.max.x = screensize->max.x;
+                dword_CODE_bss_8007FFA0[i].bbox.max.y = screensize->max.y;
+                dword_CODE_bss_8007FFA0[i].next =  next;
+                
+                return;
+            }
+        }
+        dword_CODE_bss_8007FFA0[g_BgNumberOfRoomsDrawn].roomid = curroom;
+        dword_CODE_bss_8007FFA0[g_BgNumberOfRoomsDrawn].unk1 = unk1;
+        dword_CODE_bss_8007FFA0[g_BgNumberOfRoomsDrawn].bbox.min.x = screensize->min.x;
+        dword_CODE_bss_8007FFA0[g_BgNumberOfRoomsDrawn].bbox.min.y = screensize->min.y;
+        dword_CODE_bss_8007FFA0[g_BgNumberOfRoomsDrawn].bbox.max.x = screensize->max.x;
+        dword_CODE_bss_8007FFA0[g_BgNumberOfRoomsDrawn].bbox.max.y = screensize->max.y;        
+        dword_CODE_bss_8007FFA0[g_BgNumberOfRoomsDrawn].next = next;
+    }
+    return;
 }
 #else
 
@@ -1121,188 +1175,34 @@ void bgZeroBitflags2ForRoom(s32 roomnum)
 
 
 
-#ifdef NONMATCHING
+
 s32 sub_GAME_7F0B3B20(void)
 {
     s32 i;
     
-    if (array_room_info[0].bitflags2) {
-        return 0;
-    }
-    if (array_room_info[1].bitflags2) {
-        return 1;
-    }
-    for (i=2;i<0x96;i+=4)
+    for (i=0;i<MAXROOMCOUNT;i++)
     {
         if (array_room_info[i].bitflags2) {
             return i;
         };
-        if (array_room_info[i+1].bitflags2) {
-            return i+1;
-        };
-        if (array_room_info[i+2].bitflags2) {
-            return i+2;
-        };
-        if (array_room_info[i+3].bitflags2) {
-            return i+3;
-        };
     }
     return -1;
 }
-#else
-
-#if defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B3B20
-/* 0E8650 7F0B3B20 3C0E8004 */  lui   $t6, %hi(array_room_info+0x3) 
-/* 0E8654 7F0B3B24 91CE1417 */  lbu   $t6, %lo(array_room_info+0x3)($t6)
-/* 0E8658 7F0B3B28 3C0F8004 */  lui   $t7, %hi(array_room_info + 0x53)
-/* 0E865C 7F0B3B2C 11C00003 */  beqz  $t6, .L7F0B3B3C
-/* 0E8660 7F0B3B30 00000000 */   nop   
-/* 0E8664 7F0B3B34 03E00008 */  jr    $ra
-/* 0E8668 7F0B3B38 00001025 */   move  $v0, $zero
-
-.L7F0B3B3C:
-/* 0E866C 7F0B3B3C 91EF1467 */  lbu   $t7, %lo(array_room_info + 0x53)($t7)
-/* 0E8670 7F0B3B40 3C028004 */  lui   $v0, %hi(array_room_info + 0xA0)
-/* 0E8674 7F0B3B44 244214B4 */  addiu $v0, %lo(array_room_info + 0xA0) # addiu $v0, $v0, 0x14b4
-/* 0E8678 7F0B3B48 11E00003 */  beqz  $t7, .L7F0B3B58
-/* 0E867C 7F0B3B4C 24030002 */   li    $v1, 2
-/* 0E8680 7F0B3B50 03E00008 */  jr    $ra
-/* 0E8684 7F0B3B54 24020001 */   li    $v0, 1
-
-.L7F0B3B58:
-/* 0E8688 7F0B3B58 24040096 */  li    $a0, 150
-.L7F0B3B5C:
-/* 0E868C 7F0B3B5C 90580003 */  lbu   $t8, 3($v0)
-/* 0E8690 7F0B3B60 53000004 */  beql  $t8, $zero, .L7F0B3B74
-/* 0E8694 7F0B3B64 90590053 */   lbu   $t9, 0x53($v0)
-/* 0E8698 7F0B3B68 03E00008 */  jr    $ra
-/* 0E869C 7F0B3B6C 00601025 */   move  $v0, $v1
-
-/* 0E86A0 7F0B3B70 90590053 */  lbu   $t9, 0x53($v0)
-.L7F0B3B74:
-/* 0E86A4 7F0B3B74 53200004 */  beql  $t9, $zero, .L7F0B3B88
-/* 0E86A8 7F0B3B78 904800A3 */   lbu   $t0, 0xa3($v0)
-/* 0E86AC 7F0B3B7C 03E00008 */  jr    $ra
-/* 0E86B0 7F0B3B80 24620001 */   addiu $v0, $v1, 1
-
-/* 0E86B4 7F0B3B84 904800A3 */  lbu   $t0, 0xa3($v0)
-.L7F0B3B88:
-/* 0E86B8 7F0B3B88 51000004 */  beql  $t0, $zero, .L7F0B3B9C
-/* 0E86BC 7F0B3B8C 904900F3 */   lbu   $t1, 0xf3($v0)
-/* 0E86C0 7F0B3B90 03E00008 */  jr    $ra
-/* 0E86C4 7F0B3B94 24620002 */   addiu $v0, $v1, 2
-
-/* 0E86C8 7F0B3B98 904900F3 */  lbu   $t1, 0xf3($v0)
-.L7F0B3B9C:
-/* 0E86CC 7F0B3B9C 51200004 */  beql  $t1, $zero, .L7F0B3BB0
-/* 0E86D0 7F0B3BA0 24630004 */   addiu $v1, $v1, 4
-/* 0E86D4 7F0B3BA4 03E00008 */  jr    $ra
-/* 0E86D8 7F0B3BA8 24620003 */   addiu $v0, $v1, 3
-
-/* 0E86DC 7F0B3BAC 24630004 */  addiu $v1, $v1, 4
-.L7F0B3BB0:
-/* 0E86E0 7F0B3BB0 1464FFEA */  bne   $v1, $a0, .L7F0B3B5C
-/* 0E86E4 7F0B3BB4 24420140 */   addiu $v0, $v0, 0x140
-/* 0E86E8 7F0B3BB8 2402FFFF */  li    $v0, -1
-/* 0E86EC 7F0B3BBC 03E00008 */  jr    $ra
-/* 0E86F0 7F0B3BC0 00000000 */   nop   
-)
-#endif
-
-
-#if !defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B3B20
-/* 0E5800 7F0B2E10 3C0E8004 */  lui   $t6, %hi(array_room_info+0x3) # $t6, 0x8004
-/* 0E5804 7F0B2E14 91CEAC67 */  lbu   $t6, %lo(array_room_info+0x3)($t6)
-/* 0E5808 7F0B2E18 3C0F8004 */  lui   $t7, %hi(array_room_info + 0x53)
-/* 0E580C 7F0B2E1C 11C00003 */  beqz  $t6, .L7F0B2E2C
-/* 0E5810 7F0B2E20 00000000 */   nop   
-/* 0E5814 7F0B2E24 03E00008 */  jr    $ra
-/* 0E5818 7F0B2E28 00001025 */   move  $v0, $zero
-
-.L7F0B2E2C:
-/* 0E581C 7F0B2E2C 91EFACB7 */  lbu   $t7, %lo(array_room_info + 0x53)($t7)
-/* 0E5820 7F0B2E30 3C188004 */  lui   $t8, %hi(array_room_info + 0xA0)
-/* 0E5824 7F0B2E34 11E00003 */  beqz  $t7, .L7F0B2E44
-/* 0E5828 7F0B2E38 00000000 */   nop   
-/* 0E582C 7F0B2E3C 03E00008 */  jr    $ra
-/* 0E5830 7F0B2E40 24020001 */   li    $v0, 1
-
-.L7F0B2E44:
-/* 0E5834 7F0B2E44 9318AD07 */  lbu   $t8, %lo(array_room_info + 0xa3)($t8)
-/* 0E5838 7F0B2E48 3C028004 */  lui   $v0, %hi(array_room_info + 0xf0) # $v0, 0x8004
-/* 0E583C 7F0B2E4C 2442AD54 */  addiu $v0, %lo(array_room_info + 0xf0) # addiu $v0, $v0, -0x52ac
-/* 0E5840 7F0B2E50 13000003 */  beqz  $t8, .L7F0B2E60
-/* 0E5844 7F0B2E54 24030003 */   li    $v1, 3
-/* 0E5848 7F0B2E58 03E00008 */  jr    $ra
-/* 0E584C 7F0B2E5C 24020002 */   li    $v0, 2
-
-.L7F0B2E60:
-/* 0E5850 7F0B2E60 2404008B */  li    $a0, 139
-.L7F0B2E64:
-/* 0E5854 7F0B2E64 90590003 */  lbu   $t9, 3($v0)
-/* 0E5858 7F0B2E68 53200004 */  beql  $t9, $zero, .L7F0B2E7C
-/* 0E585C 7F0B2E6C 90480053 */   lbu   $t0, 0x53($v0)
-/* 0E5860 7F0B2E70 03E00008 */  jr    $ra
-/* 0E5864 7F0B2E74 00601025 */   move  $v0, $v1
-
-/* 0E5868 7F0B2E78 90480053 */  lbu   $t0, 0x53($v0)
-.L7F0B2E7C:
-/* 0E586C 7F0B2E7C 51000004 */  beql  $t0, $zero, .L7F0B2E90
-/* 0E5870 7F0B2E80 904900A3 */   lbu   $t1, 0xa3($v0)
-/* 0E5874 7F0B2E84 03E00008 */  jr    $ra
-/* 0E5878 7F0B2E88 24620001 */   addiu $v0, $v1, 1
-
-/* 0E587C 7F0B2E8C 904900A3 */  lbu   $t1, 0xa3($v0)
-.L7F0B2E90:
-/* 0E5880 7F0B2E90 51200004 */  beql  $t1, $zero, .L7F0B2EA4
-/* 0E5884 7F0B2E94 904A00F3 */   lbu   $t2, 0xf3($v0)
-/* 0E5888 7F0B2E98 03E00008 */  jr    $ra
-/* 0E588C 7F0B2E9C 24620002 */   addiu $v0, $v1, 2
-
-/* 0E5890 7F0B2EA0 904A00F3 */  lbu   $t2, 0xf3($v0)
-.L7F0B2EA4:
-/* 0E5894 7F0B2EA4 51400004 */  beql  $t2, $zero, .L7F0B2EB8
-/* 0E5898 7F0B2EA8 24630004 */   addiu $v1, $v1, 4
-/* 0E589C 7F0B2EAC 03E00008 */  jr    $ra
-/* 0E58A0 7F0B2EB0 24620003 */   addiu $v0, $v1, 3
-
-/* 0E58A4 7F0B2EB4 24630004 */  addiu $v1, $v1, 4
-.L7F0B2EB8:
-/* 0E58A8 7F0B2EB8 1464FFEA */  bne   $v1, $a0, .L7F0B2E64
-/* 0E58AC 7F0B2EBC 24420140 */   addiu $v0, $v0, 0x140
-/* 0E58B0 7F0B2EC0 2402FFFF */  li    $v0, -1
-/* 0E58B4 7F0B2EC4 03E00008 */  jr    $ra
-/* 0E58B8 7F0B2EC8 00000000 */   nop   
-)
-#endif
-
-
-#endif
 
 
 
 
 
 #ifdef NONMATCHING
+//unrolled sb are in reverse order
 void sub_GAME_7F0B3BC4(void)
 {
   s32 i;
   
   g_BgNumberOfRoomsDrawn = 0;
-  array_room_info[0].bitflags2 = '\0';
-  array_room_info[1].bitflags2 = '\0';
-  for (i=2;i!=MaxNumRooms;i=i+4)
+  for (i=0;i!=MAXROOMCOUNT;i++)
   {
     array_room_info[i].bitflags2 = '\0';
-    array_room_info[i+1].bitflags2 = '\0';
-    array_room_info[i+2].bitflags2 = '\0';
-    array_room_info[i+3].bitflags2 = '\0';
   }
 }
 #else
@@ -2077,271 +1977,38 @@ glabel sub_GAME_7F0B3C8C
 
 
 
-#ifdef NONMATCHING
-int sub_GAME_7F0B4034(int room)
-
+s32 sub_GAME_7F0B4034(s32 room)
 {
-  bg_room_data *pbVar1;
-  f32 fVar2;
-  
-  if (ptr_bgdata_room_fileposition_list[room].ypos == 0.00000000)
-  {
-    fVar2 = (ptr_bgdata_room_fileposition_list[room+1].ypos;
-    pbVar1 = ptr_bgdata_room_fileposition_list + room;
-    while( true )
+    int i = room;
+    while (ptr_bgdata_room_fileposition_list[i].pPriMappingBin == 0)
     {
-      room = room + 1;
-      if (fVar2 != 0.00000000) break;
-      fVar2 = pbVar1[2].ypos;
-      pbVar1 = pbVar1 + 1;
+        i++;
     }
-  }
-  return room;
+    return i;
 }
-#else
-#if defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B4034
-/* 0E8B64 7F0B4034 3C028008 */  lui   $v0, %hi(ptr_bgdata_room_fileposition_list)
-/* 0E8B68 7F0B4038 8C42FF8C */  lw    $v0, %lo(ptr_bgdata_room_fileposition_list)($v0)
-/* 0E8B6C 7F0B403C 00047080 */  sll   $t6, $a0, 2
-/* 0E8B70 7F0B4040 01C47023 */  subu  $t6, $t6, $a0
-/* 0E8B74 7F0B4044 000E70C0 */  sll   $t6, $t6, 3
-/* 0E8B78 7F0B4048 004E7821 */  addu  $t7, $v0, $t6
-/* 0E8B7C 7F0B404C 8DF80004 */  lw    $t8, 4($t7)
-/* 0E8B80 7F0B4050 0004C880 */  sll   $t9, $a0, 2
-/* 0E8B84 7F0B4054 00801825 */  move  $v1, $a0
-/* 0E8B88 7F0B4058 17000008 */  bnez  $t8, .L7F0B407C
-/* 0E8B8C 7F0B405C 0324C823 */   subu  $t9, $t9, $a0
-/* 0E8B90 7F0B4060 0019C8C0 */  sll   $t9, $t9, 3
-/* 0E8B94 7F0B4064 00592021 */  addu  $a0, $v0, $t9
-/* 0E8B98 7F0B4068 8C88001C */  lw    $t0, 0x1c($a0)
-.L7F0B406C:
-/* 0E8B9C 7F0B406C 24630001 */  addiu $v1, $v1, 1
-/* 0E8BA0 7F0B4070 24840018 */  addiu $a0, $a0, 0x18
-/* 0E8BA4 7F0B4074 5100FFFD */  beql  $t0, $zero, .L7F0B406C
-/* 0E8BA8 7F0B4078 8C88001C */   lw    $t0, 0x1c($a0)
-.L7F0B407C:
-/* 0E8BAC 7F0B407C 03E00008 */  jr    $ra
-/* 0E8BB0 7F0B4080 00601025 */   move  $v0, $v1
-)
-#endif
-
-#if !defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B4034
-/* 0E5D60 7F0B3370 3C028007 */  lui   $v0, %hi(ptr_bgdata_room_fileposition_list) # $v0, 0x8007
-/* 0E5D64 7F0B3374 8C42B3D4 */  lw    $v0, %lo(ptr_bgdata_room_fileposition_list)($v0)
-/* 0E5D68 7F0B3378 00047080 */  sll   $t6, $a0, 2
-/* 0E5D6C 7F0B337C 01C47023 */  subu  $t6, $t6, $a0
-/* 0E5D70 7F0B3380 000E70C0 */  sll   $t6, $t6, 3
-/* 0E5D74 7F0B3384 004E7821 */  addu  $t7, $v0, $t6
-/* 0E5D78 7F0B3388 8DF80004 */  lw    $t8, 4($t7)
-/* 0E5D7C 7F0B338C 0004C880 */  sll   $t9, $a0, 2
-/* 0E5D80 7F0B3390 00801825 */  move  $v1, $a0
-/* 0E5D84 7F0B3394 17000008 */  bnez  $t8, .L7F0B33B8
-/* 0E5D88 7F0B3398 0324C823 */   subu  $t9, $t9, $a0
-/* 0E5D8C 7F0B339C 0019C8C0 */  sll   $t9, $t9, 3
-/* 0E5D90 7F0B33A0 00592021 */  addu  $a0, $v0, $t9
-/* 0E5D94 7F0B33A4 8C88001C */  lw    $t0, 0x1c($a0)
-.L7F0B33A8:
-/* 0E5D98 7F0B33A8 24630001 */  addiu $v1, $v1, 1
-/* 0E5D9C 7F0B33AC 24840018 */  addiu $a0, $a0, 0x18
-/* 0E5DA0 7F0B33B0 5100FFFD */  beql  $t0, $zero, .L7F0B33A8
-/* 0E5DA4 7F0B33B4 8C88001C */   lw    $t0, 0x1c($a0)
-.L7F0B33B8:
-/* 0E5DA8 7F0B33B8 03E00008 */  jr    $ra
-/* 0E5DAC 7F0B33BC 00601025 */   move  $v0, $v1
-)
-#endif
-#endif
 
 
-
-
-
-#ifdef NONMATCHING
-s32 sub_GAME_7F0B4084(s32 arg0) {
-    s32 temp_v1;
-    void *phi_a0;
-    s32 phi_v1;
-    s32 phi_v1_2;
-
-    // Node 0
-    phi_v1 = arg0;
-    if ((ptr_bgdata_room_fileposition_list + (arg0 * 0x18))->unk8 == 0)
+s32 sub_GAME_7F0B4084(s32 room)
+{
+    int i = room;
+    while (ptr_bgdata_room_fileposition_list[i].pSecMappingBin == 0)
     {
-        // Node 1
-        phi_a0 = (ptr_bgdata_room_fileposition_list + (arg0 * 0x18));
-        phi_v1_2 = arg0;
-loop_2:
-        // Node 2
-        temp_v1 = (phi_v1_2 + 1);
-        phi_a0 = (phi_a0 + 0x18);
-        phi_v1 = temp_v1;
-        phi_v1_2 = temp_v1;
-        if (phi_a0->unk20 == 0)
-        {
-            goto loop_2;
-        }
+        i++;
     }
-    // Node 3
-    return phi_v1;
+    return i;
 }
-#else
-#if defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B4084
-/* 0E8BB4 7F0B4084 3C028008 */  lui   $v0, %hi(ptr_bgdata_room_fileposition_list)
-/* 0E8BB8 7F0B4088 8C42FF8C */  lw    $v0, %lo(ptr_bgdata_room_fileposition_list)($v0)
-/* 0E8BBC 7F0B408C 00047080 */  sll   $t6, $a0, 2
-/* 0E8BC0 7F0B4090 01C47023 */  subu  $t6, $t6, $a0
-/* 0E8BC4 7F0B4094 000E70C0 */  sll   $t6, $t6, 3
-/* 0E8BC8 7F0B4098 004E7821 */  addu  $t7, $v0, $t6
-/* 0E8BCC 7F0B409C 8DF80008 */  lw    $t8, 8($t7)
-/* 0E8BD0 7F0B40A0 0004C880 */  sll   $t9, $a0, 2
-/* 0E8BD4 7F0B40A4 00801825 */  move  $v1, $a0
-/* 0E8BD8 7F0B40A8 17000008 */  bnez  $t8, .L7F0B40CC
-/* 0E8BDC 7F0B40AC 0324C823 */   subu  $t9, $t9, $a0
-/* 0E8BE0 7F0B40B0 0019C8C0 */  sll   $t9, $t9, 3
-/* 0E8BE4 7F0B40B4 00592021 */  addu  $a0, $v0, $t9
-/* 0E8BE8 7F0B40B8 8C880020 */  lw    $t0, 0x20($a0)
-.L7F0B40BC:
-/* 0E8BEC 7F0B40BC 24630001 */  addiu $v1, $v1, 1
-/* 0E8BF0 7F0B40C0 24840018 */  addiu $a0, $a0, 0x18
-/* 0E8BF4 7F0B40C4 5100FFFD */  beql  $t0, $zero, .L7F0B40BC
-/* 0E8BF8 7F0B40C8 8C880020 */   lw    $t0, 0x20($a0)
-.L7F0B40CC:
-/* 0E8BFC 7F0B40CC 03E00008 */  jr    $ra
-/* 0E8C00 7F0B40D0 00601025 */   move  $v0, $v1
-)
-#endif
-
-#if !defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B4084
-/* 0E5DB0 7F0B33C0 3C028007 */  lui   $v0, %hi(ptr_bgdata_room_fileposition_list) # $v0, 0x8007
-/* 0E5DB4 7F0B33C4 8C42B3D4 */  lw    $v0, %lo(ptr_bgdata_room_fileposition_list)($v0)
-/* 0E5DB8 7F0B33C8 00047080 */  sll   $t6, $a0, 2
-/* 0E5DBC 7F0B33CC 01C47023 */  subu  $t6, $t6, $a0
-/* 0E5DC0 7F0B33D0 000E70C0 */  sll   $t6, $t6, 3
-/* 0E5DC4 7F0B33D4 004E7821 */  addu  $t7, $v0, $t6
-/* 0E5DC8 7F0B33D8 8DF80008 */  lw    $t8, 8($t7)
-/* 0E5DCC 7F0B33DC 0004C880 */  sll   $t9, $a0, 2
-/* 0E5DD0 7F0B33E0 00801825 */  move  $v1, $a0
-/* 0E5DD4 7F0B33E4 17000008 */  bnez  $t8, .L7F0B3408
-/* 0E5DD8 7F0B33E8 0324C823 */   subu  $t9, $t9, $a0
-/* 0E5DDC 7F0B33EC 0019C8C0 */  sll   $t9, $t9, 3
-/* 0E5DE0 7F0B33F0 00592021 */  addu  $a0, $v0, $t9
-/* 0E5DE4 7F0B33F4 8C880020 */  lw    $t0, 0x20($a0)
-.L7F0B33F8:
-/* 0E5DE8 7F0B33F8 24630001 */  addiu $v1, $v1, 1
-/* 0E5DEC 7F0B33FC 24840018 */  addiu $a0, $a0, 0x18
-/* 0E5DF0 7F0B3400 5100FFFD */  beql  $t0, $zero, .L7F0B33F8
-/* 0E5DF4 7F0B3404 8C880020 */   lw    $t0, 0x20($a0)
-.L7F0B3408:
-/* 0E5DF8 7F0B3408 03E00008 */  jr    $ra
-/* 0E5DFC 7F0B340C 00601025 */   move  $v0, $v1
-)
-#endif
-#endif
 
 
-
-
-
-#ifdef NONMATCHING
-s32 sub_GAME_7F0B40D4(s32 arg0) {
-    s32 temp_v1;
-    void *phi_a0;
-    s32 phi_v1;
-    s32 phi_v1_2;
-
-    // Node 0
-    phi_v1 = arg0;
-    if (*(ptr_bgdata_room_fileposition_list + (arg0 * 0x18)) == 0)
+s32 sub_GAME_7F0B40D4(s32 room)
+{
+    int i = room;
+    while (ptr_bgdata_room_fileposition_list[i].pPointTableBin == 0)
     {
-        // Node 1
-        phi_a0 = (ptr_bgdata_room_fileposition_list + (arg0 * 0x18));
-        phi_v1_2 = arg0;
-loop_2:
-        // Node 2
-        temp_v1 = (phi_v1_2 + 1);
-        phi_a0 = (phi_a0 + 0x18);
-        phi_v1 = temp_v1;
-        phi_v1_2 = temp_v1;
-        if (phi_a0->unk18 == 0)
-        {
-            goto loop_2;
-        }
+        i++;
     }
-    // Node 3
-    return phi_v1;
+    return i;
 }
-#else
 
-#if defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B40D4
-/* 0E8C04 7F0B40D4 3C028008 */  lui   $v0, %hi(ptr_bgdata_room_fileposition_list)
-/* 0E8C08 7F0B40D8 8C42FF8C */  lw    $v0, %lo(ptr_bgdata_room_fileposition_list)($v0)
-/* 0E8C0C 7F0B40DC 00047080 */  sll   $t6, $a0, 2
-/* 0E8C10 7F0B40E0 01C47023 */  subu  $t6, $t6, $a0
-/* 0E8C14 7F0B40E4 000E70C0 */  sll   $t6, $t6, 3
-/* 0E8C18 7F0B40E8 004E7821 */  addu  $t7, $v0, $t6
-/* 0E8C1C 7F0B40EC 8DF80000 */  lw    $t8, ($t7)
-/* 0E8C20 7F0B40F0 0004C880 */  sll   $t9, $a0, 2
-/* 0E8C24 7F0B40F4 00801825 */  move  $v1, $a0
-/* 0E8C28 7F0B40F8 17000008 */  bnez  $t8, .L7F0B411C
-/* 0E8C2C 7F0B40FC 0324C823 */   subu  $t9, $t9, $a0
-/* 0E8C30 7F0B4100 0019C8C0 */  sll   $t9, $t9, 3
-/* 0E8C34 7F0B4104 00592021 */  addu  $a0, $v0, $t9
-/* 0E8C38 7F0B4108 8C880018 */  lw    $t0, 0x18($a0)
-.L7F0B410C:
-/* 0E8C3C 7F0B410C 24630001 */  addiu $v1, $v1, 1
-/* 0E8C40 7F0B4110 24840018 */  addiu $a0, $a0, 0x18
-/* 0E8C44 7F0B4114 5100FFFD */  beql  $t0, $zero, .L7F0B410C
-/* 0E8C48 7F0B4118 8C880018 */   lw    $t0, 0x18($a0)
-.L7F0B411C:
-/* 0E8C4C 7F0B411C 03E00008 */  jr    $ra
-/* 0E8C50 7F0B4120 00601025 */   move  $v0, $v1
-)
-#endif
-
-#if !defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B40D4
-/* 0E5E00 7F0B3410 3C028007 */  lui   $v0, %hi(ptr_bgdata_room_fileposition_list) # $v0, 0x8007
-/* 0E5E04 7F0B3414 8C42B3D4 */  lw    $v0, %lo(ptr_bgdata_room_fileposition_list)($v0)
-/* 0E5E08 7F0B3418 00047080 */  sll   $t6, $a0, 2
-/* 0E5E0C 7F0B341C 01C47023 */  subu  $t6, $t6, $a0
-/* 0E5E10 7F0B3420 000E70C0 */  sll   $t6, $t6, 3
-/* 0E5E14 7F0B3424 004E7821 */  addu  $t7, $v0, $t6
-/* 0E5E18 7F0B3428 8DF80000 */  lw    $t8, ($t7)
-/* 0E5E1C 7F0B342C 0004C880 */  sll   $t9, $a0, 2
-/* 0E5E20 7F0B3430 00801825 */  move  $v1, $a0
-/* 0E5E24 7F0B3434 17000008 */  bnez  $t8, .L7F0B3458
-/* 0E5E28 7F0B3438 0324C823 */   subu  $t9, $t9, $a0
-/* 0E5E2C 7F0B343C 0019C8C0 */  sll   $t9, $t9, 3
-/* 0E5E30 7F0B3440 00592021 */  addu  $a0, $v0, $t9
-/* 0E5E34 7F0B3444 8C880018 */  lw    $t0, 0x18($a0)
-.L7F0B3448:
-/* 0E5E38 7F0B3448 24630001 */  addiu $v1, $v1, 1
-/* 0E5E3C 7F0B344C 24840018 */  addiu $a0, $a0, 0x18
-/* 0E5E40 7F0B3450 5100FFFD */  beql  $t0, $zero, .L7F0B3448
-/* 0E5E44 7F0B3454 8C880018 */   lw    $t0, 0x18($a0)
-.L7F0B3458:
-/* 0E5E48 7F0B3458 03E00008 */  jr    $ra
-/* 0E5E4C 7F0B345C 00601025 */   move  $v0, $v1
-)
-#endif
-#endif
 
 
 
@@ -3328,37 +2995,10 @@ f32 get_room_data_float1(void){
 }
 
 
-
-
-
-
-#ifdef NONMATCHING
-f32 sub_GAME_7F0B4848(void) {
-    void *temp_v0;
-
-    temp_v0 = ((levelentry_index * 0x18) + &levelinfotable);
-    return (temp_v0->unk14 / temp_v0->unkC);
+f32 sub_GAME_7F0B4848(void)
+{
+    return levelinfotable[levelentry_index].unknownfloat / levelinfotable[levelentry_index].levelscale;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B4848
-/* 0E9378 7F0B4848 3C0E8004 */  lui   $t6, %hi(levelentry_index) 
-/* 0E937C 7F0B484C 8DCE1400 */  lw    $t6, %lo(levelentry_index)($t6)
-/* 0E9380 7F0B4850 3C188004 */  lui   $t8, %hi(levelinfotable) 
-/* 0E9384 7F0B4854 2718448C */  addiu $t8, %lo(levelinfotable) # addiu $t8, $t8, 0x448c
-/* 0E9388 7F0B4858 000E7880 */  sll   $t7, $t6, 2
-/* 0E938C 7F0B485C 01EE7823 */  subu  $t7, $t7, $t6
-/* 0E9390 7F0B4860 000F78C0 */  sll   $t7, $t7, 3
-/* 0E9394 7F0B4864 01F81021 */  addu  $v0, $t7, $t8
-/* 0E9398 7F0B4868 C4440014 */  lwc1  $f4, 0x14($v0)
-/* 0E939C 7F0B486C C446000C */  lwc1  $f6, 0xc($v0)
-/* 0E93A0 7F0B4870 03E00008 */  jr    $ra
-/* 0E93A4 7F0B4874 46062003 */   div.s $f0, $f4, $f6
-)
-#endif
-
-
 
 
 //sub_GAME_7F0B4878
@@ -3817,7 +3457,7 @@ Gfx *bgLevelRender(Gfx *arg0)
 {
     gSPSetLights1(arg0++, GlobalLight);
     gSPLookAt(arg0++, sub_GAME_7F078474());
-    gSPSegment(arg0++, 0x0F, ptr_bg_data);
+    gSPSegment(arg0++, SPSEGMENT_BG_DL, ptr_bg_data);
 
     if (dword_CODE_bss_8007FF88 == 1)
     {
@@ -3837,22 +3477,11 @@ Gfx *bgLevelRender(Gfx *arg0)
 
 
 
-#ifdef NONMATCHING
-s32 sub_GAME_7F0B4F9C(u8 arg0) {
-    return (dword_CODE_bss_8007FF94 + (arg0 * 4))->unk4;
+f32 sub_GAME_7F0B4F9C(s32 arg0) 
+{
+	return dword_CODE_bss_8007FF94[arg0 + 1];
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B4F9C
-/* 0E9ACC 7F0B4F9C 3C0E8008 */  lui   $t6, %hi(dword_CODE_bss_8007FF94) 
-/* 0E9AD0 7F0B4FA0 8DCEFF94 */  lw    $t6, %lo(dword_CODE_bss_8007FF94)($t6)
-/* 0E9AD4 7F0B4FA4 00047880 */  sll   $t7, $a0, 2
-/* 0E9AD8 7F0B4FA8 01CFC021 */  addu  $t8, $t6, $t7
-/* 0E9ADC 7F0B4FAC 03E00008 */  jr    $ra
-/* 0E9AE0 7F0B4FB0 C7000004 */   lwc1  $f0, 4($t8)
-)
-#endif
+
 
 
 
@@ -3940,72 +3569,15 @@ Gfx *bgScissorCurrentPlayerView(Gfx *arg0, s32 left, s32 top, s32 width, s32 hei
 
 
 
-#ifdef NONMATCHING
-s32 sub_GAME_7F0B5168(void) {
-    void *temp_v1;
-    void *phi_v1;
 
-    // Node 0
-    phi_v1 = &table_for_portals;
-loop_1:
-    // Node 1
-    temp_v1 = (phi_v1 + 0x50);
-    temp_v1->unk-3C = -1;
-    temp_v1->unk-28 = -1;
-    temp_v1->unk-14 = -1;
-    temp_v1->unk-50 = -1;
-    phi_v1 = temp_v1;
-    if (temp_v1 != &table_for_portals+0xFA0)
-    {
-        goto loop_1;
+void sub_GAME_7F0B5168(void) {
+    s32 i;
+
+    for (i = 0; i < 200; i++) {
+        table_for_portals[i].unk0 = -1;
     }
-    // Node 2
-    return -1;
 }
 
-#else
-#if defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B5168
-/* 0E9C98 7F0B5168 3C038008 */  lui   $v1, %hi(table_for_portals)
-/* 0E9C9C 7F0B516C 3C048008 */  lui   $a0, %hi(table_for_portals+0xFA0)
-/* 0E9CA0 7F0B5170 248425B8 */  addiu $a0, %lo(table_for_portals+0xFA0) # addiu $a0, $a0, 0x25b8
-/* 0E9CA4 7F0B5174 24631618 */  addiu $v1, %lo(table_for_portals) # addiu $v1, $v1, 0x1618
-/* 0E9CA8 7F0B5178 2402FFFF */  li    $v0, -1
-.L7F0B517C:
-/* 0E9CAC 7F0B517C 24630050 */  addiu $v1, $v1, 0x50
-/* 0E9CB0 7F0B5180 AC62FFC4 */  sw    $v0, -0x3c($v1)
-/* 0E9CB4 7F0B5184 AC62FFD8 */  sw    $v0, -0x28($v1)
-/* 0E9CB8 7F0B5188 AC62FFEC */  sw    $v0, -0x14($v1)
-/* 0E9CBC 7F0B518C 1464FFFB */  bne   $v1, $a0, .L7F0B517C
-/* 0E9CC0 7F0B5190 AC62FFB0 */   sw    $v0, -0x50($v1)
-/* 0E9CC4 7F0B5194 03E00008 */  jr    $ra
-/* 0E9CC8 7F0B5198 00000000 */   nop   
-)
-#endif
-
-#if !defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B5168
-/* 0E6E94 7F0B44A4 3C038007 */  lui   $v1, %hi(table_for_portals) # $v1, 0x8007
-/* 0E6E98 7F0B44A8 3C048007 */  lui   $a0, %hi(table_for_portals+0xFA0) # $a0, 0x8007
-/* 0E6E9C 7F0B44AC 2484CF60 */  addiu $a0, %lo(table_for_portals+0xFA0) # addiu $a0, $a0, -0x30a0
-/* 0E6EA0 7F0B44B0 2463BFC0 */  addiu $v1, %lo(table_for_portals) # addiu $v1, $v1, -0x4040
-/* 0E6EA4 7F0B44B4 2402FFFF */  li    $v0, -1
-.L7F0B44B8:
-/* 0E6EA8 7F0B44B8 24630050 */  addiu $v1, $v1, 0x50
-/* 0E6EAC 7F0B44BC AC62FFC4 */  sw    $v0, -0x3c($v1)
-/* 0E6EB0 7F0B44C0 AC62FFD8 */  sw    $v0, -0x28($v1)
-/* 0E6EB4 7F0B44C4 AC62FFEC */  sw    $v0, -0x14($v1)
-/* 0E6EB8 7F0B44C8 1464FFFB */  bne   $v1, $a0, .L7F0B44B8
-/* 0E6EBC 7F0B44CC AC62FFB0 */   sw    $v0, -0x50($v1)
-/* 0E6EC0 7F0B44D0 03E00008 */  jr    $ra
-/* 0E6EC4 7F0B44D4 00000000 */   nop   
-)
-#endif
-#endif
 
 
 
@@ -4430,74 +4002,28 @@ glabel sub_GAME_7F0B5208
 #endif
 
 
+s32 sub_GAME_7F0B5488(coord3d* arg0, coord3d* arg1)
+{
+    Mtxf* temp_a0;
+    s32 var_v0;
 
+    temp_a0 = currentPlayerGetMatrix10CC();
+    arg1->x = arg0->x * room_data_float2;
+    arg1->y = arg0->y * room_data_float2;
+    arg1->z = arg0->z * room_data_float2;
+    matrix_4x4_transform_vector_in_place(temp_a0, arg1->f);
 
-
-#ifdef NONMATCHING
-void sub_GAME_7F0B5488(void *arg0, void *arg1) {
-    // Node 0
-    *arg1 = (f32) (*arg0 * room_data_float2);
-    arg1->unk4 = (f32) (arg0->unk4 * room_data_float2);
-    arg1->unk8 = (f32) (arg0->unk8 * room_data_float2);
-    matrix_4x4_transform_vector_in_place(currentPlayerGetMatrix10CC(), arg1, arg0);
     sub_GAME_7F078060(arg1, arg1);
-    if (0.0f < arg1->unk8)
+
+    if (arg1->z > 0.0f)
     {
-        // Node 1
+        return 0;
     }
-    // Node 2
-    return 1;
+    else
+    {
+        return 1;
+    }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0B5488
-/* 0E9FB8 7F0B5488 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 0E9FBC 7F0B548C AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0E9FC0 7F0B5490 AFB00018 */  sw    $s0, 0x18($sp)
-/* 0E9FC4 7F0B5494 00A08025 */  move  $s0, $a1
-/* 0E9FC8 7F0B5498 0FC1E0F1 */  jal   currentPlayerGetMatrix10CC
-/* 0E9FCC 7F0B549C AFA40020 */   sw    $a0, 0x20($sp)
-/* 0E9FD0 7F0B54A0 8FA60020 */  lw    $a2, 0x20($sp)
-/* 0E9FD4 7F0B54A4 3C038004 */  lui   $v1, %hi(room_data_float2)
-/* 0E9FD8 7F0B54A8 246313F8 */  addiu $v1, %lo(room_data_float2) # addiu $v1, $v1, 0x13f8
-/* 0E9FDC 7F0B54AC C4660000 */  lwc1  $f6, ($v1)
-/* 0E9FE0 7F0B54B0 C4C40000 */  lwc1  $f4, ($a2)
-/* 0E9FE4 7F0B54B4 00402025 */  move  $a0, $v0
-/* 0E9FE8 7F0B54B8 02002825 */  move  $a1, $s0
-/* 0E9FEC 7F0B54BC 46062202 */  mul.s $f8, $f4, $f6
-/* 0E9FF0 7F0B54C0 E6080000 */  swc1  $f8, ($s0)
-/* 0E9FF4 7F0B54C4 C4700000 */  lwc1  $f16, ($v1)
-/* 0E9FF8 7F0B54C8 C4CA0004 */  lwc1  $f10, 4($a2)
-/* 0E9FFC 7F0B54CC 46105482 */  mul.s $f18, $f10, $f16
-/* 0EA000 7F0B54D0 E6120004 */  swc1  $f18, 4($s0)
-/* 0EA004 7F0B54D4 C4660000 */  lwc1  $f6, ($v1)
-/* 0EA008 7F0B54D8 C4C40008 */  lwc1  $f4, 8($a2)
-/* 0EA00C 7F0B54DC 46062202 */  mul.s $f8, $f4, $f6
-/* 0EA010 7F0B54E0 0FC1611D */  jal   matrix_4x4_transform_vector_in_place
-/* 0EA014 7F0B54E4 E6080008 */   swc1  $f8, 8($s0)
-/* 0EA018 7F0B54E8 02002025 */  move  $a0, $s0
-/* 0EA01C 7F0B54EC 0FC1E018 */  jal   sub_GAME_7F078060
-/* 0EA020 7F0B54F0 02002825 */   move  $a1, $s0
-/* 0EA024 7F0B54F4 44805000 */  mtc1  $zero, $f10
-/* 0EA028 7F0B54F8 C6100008 */  lwc1  $f16, 8($s0)
-/* 0EA02C 7F0B54FC 8FBF001C */  lw    $ra, 0x1c($sp)
-/* 0EA030 7F0B5500 24020001 */  li    $v0, 1
-/* 0EA034 7F0B5504 4610503C */  c.lt.s $f10, $f16
-/* 0EA038 7F0B5508 00000000 */  nop   
-/* 0EA03C 7F0B550C 45000003 */  bc1f  .L7F0B551C
-/* 0EA040 7F0B5510 00000000 */   nop   
-/* 0EA044 7F0B5514 10000001 */  b     .L7F0B551C
-/* 0EA048 7F0B5518 00001025 */   move  $v0, $zero
-.L7F0B551C:
-/* 0EA04C 7F0B551C 8FB00018 */  lw    $s0, 0x18($sp)
-/* 0EA050 7F0B5520 03E00008 */  jr    $ra
-/* 0EA054 7F0B5524 27BD0020 */   addiu $sp, $sp, 0x20
-)
-#endif
-
-
-
 
 
 #ifdef NONMATCHING
@@ -5790,7 +5316,7 @@ u32 * sub_GAME_7F0B609C(int roomID, int *data, u32 size)
     dest = bgDecompress(source,data);
     puVar1 = (size - dest) + data;
     sub_GAME_7F0CE794(data,puVar1,dest);
-    sub_GAME_7F0BC4C4(roomID);
+    clear_light_fixturetable_in_room(roomID);
     puVar1 = process_microcode_sort_display_modes_expand_image_calls(puVar1,dest,data,NULL);
     if (dest < puVar1) {
       dest = puVar1;
@@ -5868,7 +5394,7 @@ glabel sub_GAME_7F0B609C
 /* 0EACB4 7F0B6184 AFA50028 */  sw    $a1, 0x28($sp)
 /* 0EACB8 7F0B6188 0FC339E5 */  jal   sub_GAME_7F0CE794
 /* 0EACBC 7F0B618C 00403025 */   move  $a2, $v0
-/* 0EACC0 7F0B6190 0FC2F131 */  jal   sub_GAME_7F0BC4C4
+/* 0EACC0 7F0B6190 0FC2F131 */  jal   clear_light_fixturetable_in_room
 /* 0EACC4 7F0B6194 8FA40038 */   lw    $a0, 0x38($sp)
 /* 0EACC8 7F0B6198 8FA40028 */  lw    $a0, 0x28($sp)
 /* 0EACCC 7F0B619C 02202825 */  move  $a1, $s1
@@ -5958,7 +5484,7 @@ glabel sub_GAME_7F0B609C
 /* 0EACB4 7F0B6184 AFA50028 */  sw    $a1, 0x28($sp)
 /* 0EACB8 7F0B6188 0FC339E5 */  jal   sub_GAME_7F0CE794
 /* 0EACBC 7F0B618C 00403025 */   move  $a2, $v0
-/* 0EACC0 7F0B6190 0FC2F131 */  jal   sub_GAME_7F0BC4C4
+/* 0EACC0 7F0B6190 0FC2F131 */  jal   clear_light_fixturetable_in_room
 /* 0EACC4 7F0B6194 8FA40038 */   lw    $a0, 0x38($sp)
 /* 0EACC8 7F0B6198 8FA40028 */  lw    $a0, 0x28($sp)
 /* 0EACCC 7F0B619C 02202825 */  move  $a1, $s1
@@ -6285,7 +5811,7 @@ void sub_GAME_7F0B6368(s32 rooms) {
                         // Node 9
                         sp1C = temp_v1_2;
                         sp28 = temp_ret_2;
-                        sub_GAME_7F0BB978(rooms, sp28);
+                        redarken_lights_in_room(rooms, sp28);
                     }
                 }
                 else
@@ -6448,7 +5974,7 @@ glabel sub_GAME_7F0B6368
 /* 0EAF74 7F0B6444 8FA70028 */   lw    $a3, 0x28($sp)
 /* 0EAF78 7F0B6448 8FA40030 */  lw    $a0, 0x30($sp)
 /* 0EAF7C 7F0B644C AFA3001C */  sw    $v1, 0x1c($sp)
-/* 0EAF80 7F0B6450 0FC2EE5E */  jal   sub_GAME_7F0BB978
+/* 0EAF80 7F0B6450 0FC2EE5E */  jal   redarken_lights_in_room
 /* 0EAF84 7F0B6454 AFA20028 */   sw    $v0, 0x28($sp)
 /* 0EAF88 7F0B6458 8FA3001C */  lw    $v1, 0x1c($sp)
 /* 0EAF8C 7F0B645C 10000003 */  b     .L7F0B646C
@@ -6618,7 +6144,7 @@ glabel sub_GAME_7F0B6368
 /* 0E8170 7F0B5780 8FA70028 */   lw    $a3, 0x28($sp)
 /* 0E8174 7F0B5784 8FA40030 */  lw    $a0, 0x30($sp)
 /* 0E8178 7F0B5788 AFA3001C */  sw    $v1, 0x1c($sp)
-/* 0E817C 7F0B578C 0FC2EB5E */  jal   sub_GAME_7F0BB978
+/* 0E817C 7F0B578C 0FC2EB5E */  jal   redarken_lights_in_room
 /* 0E8180 7F0B5790 AFA20028 */   sw    $v0, 0x28($sp)
 /* 0E8184 7F0B5794 8FA3001C */  lw    $v1, 0x1c($sp)
 /* 0E8188 7F0B5798 10000003 */  b     .L7F0B57A8
@@ -6884,7 +6410,7 @@ Gfx *sub_GAME_7F0B677C(Gfx *arg0, s32 room_index)
         {
             arg0 = sub_GAME_7F0BC9C4(arg0, room_index);
 
-            gSPSegment(arg0++, 0x0E, OS_K0_TO_PHYSICAL(array_room_info[room_index].ptr_point_index));
+            gSPSegment(arg0++, SPSEGMENT_BG_VTX, OS_K0_TO_PHYSICAL(array_room_info[room_index].ptr_point_index));
             gSPDisplayList(arg0++, OS_K0_TO_PHYSICAL(array_room_info[room_index].ptr_expanded_mapping_info));
 
             array_room_info[room_index].model_bin_loaded = 1;
@@ -6916,7 +6442,7 @@ Gfx *sub_GAME_7F0B6898(Gfx *arg0, s32 room_index)
         {
             arg0 = sub_GAME_7F0BC9C4(arg0, room_index);
 
-            gSPSegment(arg0++, 0x0E, OS_K0_TO_PHYSICAL(array_room_info[room_index].ptr_point_index));
+            gSPSegment(arg0++, SPSEGMENT_BG_VTX, OS_K0_TO_PHYSICAL(array_room_info[room_index].ptr_point_index));
             gSPDisplayList(arg0++, OS_K0_TO_PHYSICAL(array_room_info[room_index].ptr_secondary_expanded_mapping_info));
 
             array_room_info[room_index].model_bin_loaded = 1;
@@ -13679,84 +13205,20 @@ glabel sub_GAME_7F0B9F14
 #endif
 
 
+bool bgIsBboxOverlapping(coord3d *portalbbmin, coord3d *portalbbmax, coord3d *propbbmin, coord3d *propbbmax)
+{
+    s32 i;
 
-
-
-#ifdef NONMATCHING
-void sub_GAME_7F0BA26C(s32 arg0, void *arg1, void *arg2, s32 arg3) {
-    s32 temp_v1;
-    void *phi_t0;
-    void *phi_t1;
-    s32 phi_v1;
-
-    // Node 0
-    phi_t0 = arg1;
-    phi_t1 = arg2;
-    phi_v1 = 0;
-loop_1:
-    // Node 1
-    temp_v1 = (phi_v1 + 4);
-    if (*phi_t0 < *phi_t1)
+    for (i = 0; i < 3; i++)
     {
-        // Node 3
-        return 0;
+        if (propbbmin->f[i] > portalbbmax->f[i] || propbbmax->f[i] < portalbbmin->f[i])
+        {
+            return FALSE;
+        }
     }
-    // Node 2
-    if (*(arg3 + phi_v1) < *(arg0 + phi_v1))
-    {
-        // Node 3
-        return 0;
-    }
-    // Node 4
-    phi_t0 = (phi_t0 + 4);
-    phi_t1 = (phi_t1 + 4);
-    phi_v1 = temp_v1;
-    if (temp_v1 != 0xc)
-    {
-        goto loop_1;
-    }
-    // Node 5
-    return 1;
+
+    return TRUE;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0BA26C
-/* 0EED9C 7F0BA26C 00001825 */  move  $v1, $zero
-/* 0EEDA0 7F0BA270 00A04025 */  move  $t0, $a1
-/* 0EEDA4 7F0BA274 00C04825 */  move  $t1, $a2
-/* 0EEDA8 7F0BA278 2402000C */  li    $v0, 12
-.L7F0BA27C:
-/* 0EEDAC 7F0BA27C C5040000 */  lwc1  $f4, ($t0)
-/* 0EEDB0 7F0BA280 C5260000 */  lwc1  $f6, ($t1)
-/* 0EEDB4 7F0BA284 00E37021 */  addu  $t6, $a3, $v1
-/* 0EEDB8 7F0BA288 00837821 */  addu  $t7, $a0, $v1
-/* 0EEDBC 7F0BA28C 4606203C */  c.lt.s $f4, $f6
-/* 0EEDC0 7F0BA290 24630004 */  addiu $v1, $v1, 4
-/* 0EEDC4 7F0BA294 25080004 */  addiu $t0, $t0, 4
-/* 0EEDC8 7F0BA298 45010007 */  bc1t  .L7F0BA2B8
-/* 0EEDCC 7F0BA29C 00000000 */   nop   
-/* 0EEDD0 7F0BA2A0 C5C80000 */  lwc1  $f8, ($t6)
-/* 0EEDD4 7F0BA2A4 C5EA0000 */  lwc1  $f10, ($t7)
-/* 0EEDD8 7F0BA2A8 460A403C */  c.lt.s $f8, $f10
-/* 0EEDDC 7F0BA2AC 00000000 */  nop   
-/* 0EEDE0 7F0BA2B0 45000003 */  bc1f  .L7F0BA2C0
-/* 0EEDE4 7F0BA2B4 00000000 */   nop   
-.L7F0BA2B8:
-/* 0EEDE8 7F0BA2B8 03E00008 */  jr    $ra
-/* 0EEDEC 7F0BA2BC 00001025 */   move  $v0, $zero
-
-.L7F0BA2C0:
-/* 0EEDF0 7F0BA2C0 1462FFEE */  bne   $v1, $v0, .L7F0BA27C
-/* 0EEDF4 7F0BA2C4 25290004 */   addiu $t1, $t1, 4
-/* 0EEDF8 7F0BA2C8 24020001 */  li    $v0, 1
-/* 0EEDFC 7F0BA2CC 03E00008 */  jr    $ra
-/* 0EEE00 7F0BA2D0 00000000 */   nop   
-)
-#endif
-
-
-
 
 
 #ifdef NONMATCHING
@@ -13894,7 +13356,7 @@ glabel sub_GAME_7F0BA2D4
 /* 0EEFD0 7F0BA4A0 02C02025 */  move  $a0, $s6
 /* 0EEFD4 7F0BA4A4 02E02825 */  move  $a1, $s7
 /* 0EEFD8 7F0BA4A8 27A600A0 */  addiu $a2, $sp, 0xa0
-/* 0EEFDC 7F0BA4AC 0FC2E89B */  jal   sub_GAME_7F0BA26C
+/* 0EEFDC 7F0BA4AC 0FC2E89B */  jal   bgIsBboxOverlapping
 /* 0EEFE0 7F0BA4B0 27A70094 */   addiu $a3, $sp, 0x94
 /* 0EEFE4 7F0BA4B4 1040001F */  beqz  $v0, .L7F0BA534
 /* 0EEFE8 7F0BA4B8 3C0E8008 */   lui   $t6, %hi(ptr_bgdata_portals) 

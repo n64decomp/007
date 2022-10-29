@@ -13,8 +13,8 @@ GLOBAL_ASM(
 glabel init_path_table_links
 /* 03B3C0 7F006890 27BDFF20 */  addiu $sp, $sp, -0xe0
 /* 03B3C4 7F006894 AFB40028 */  sw    $s4, 0x28($sp)
-/* 03B3C8 7F006898 3C148007 */  lui   $s4, %hi(g_chraiCurrentSetup+0)
-/* 03B3CC 7F00689C 26945D00 */  addiu $s4, %lo(g_chraiCurrentSetup+0) # addiu $s4, $s4, 0x5d00
+/* 03B3C8 7F006898 3C148007 */  lui   $s4, %hi(g_CurrentSetup+0)
+/* 03B3CC 7F00689C 26945D00 */  addiu $s4, %lo(g_CurrentSetup+0) # addiu $s4, $s4, 0x5d00
 /* 03B3D0 7F0068A0 AFB00018 */  sw    $s0, 0x18($sp)
 /* 03B3D4 7F0068A4 8E900000 */  lw    $s0, ($s4)
 /* 03B3D8 7F0068A8 8E8E0004 */  lw    $t6, 4($s4)

@@ -460,7 +460,7 @@ void handle_debug_intropos(void)
     f32 x;
 
     bondviewGetCurrentPlayersPosition();  //normally would return a coord3d pos but not here
-    x = 6.2831855f -  get_curplay_horizontal_rotation_in_degrees();
+    x = M_TAU_F -  get_curplay_horizontal_rotation_in_degrees();
     cosf(x);
     sinf(x);
     cosf(x);

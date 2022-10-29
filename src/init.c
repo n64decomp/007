@@ -10,6 +10,8 @@
 #include "init.h"
 #include "thread_config.h"
 
+#include "usb.h"
+
 /**
  * EU .data, offset from start of data_seg : 0x22B0
 */
@@ -342,14 +344,28 @@ void mainproc(void *args)
 	idleCreateThread();
 	viDebugRemoved();
 	piCreateManager();
+#ifdef ENABLE_USB
+    // make debug print output available as soon as possible.
+    // This uses blocking calls, and the PI manager, so can't be called
+    // before here.
+    usb_initialize();
+#else
 	rmonCreateThread();
+#endif
 	if (tokenReadIo() != 0)
 	{
 		osStopThread(0);
 	}
 	
-    osSetThreadPri(0, 0xa);
+    osSetThreadPri(NULL, 0xa);
+    // Timers are initialized via:
+    // schedulerInitThread -> osCreateScheduler -> osCreateViManager -> __osTimerServicesInit
     schedulerInitThread();
+#ifdef ENABLE_USB
+    // Unlike the pure source, this version injects a dependency on timer, so can't init
+    // before here.
+    rmonCreateThread();
+#endif
     bossEntry();
 }
 

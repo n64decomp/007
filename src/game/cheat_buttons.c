@@ -1242,19 +1242,19 @@ void cheatButtonHandleCheatsTurnedOn(CHEAT_ID cheat_id)
             return;
 
         case CHEAT_FAST_ANIMATION:
-            if (get_animation_rate() < 4.0f)
+            if (getAnimationRate() < 4.0f)
             {
                 HUDMESSAGEBOTTOM((char *)langGet(TEXT(LMISC, 0x34)));
-                animation_speed_related(4.0f);
+                setAnimationRate(4.0f);
                 return;
             }
             return;
 
         case CHEAT_SLOW_ANIMATION:
-            if (get_animation_rate() > 0.25f)
+            if (getAnimationRate() > 0.25f)
             {
                 HUDMESSAGEBOTTOM((char *)langGet(TEXT(LMISC, 0x32)));
-                animation_speed_related(0.25);
+                setAnimationRate(0.25);
                 return;
             }
             return;

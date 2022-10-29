@@ -9,7 +9,7 @@ void initGameData(void) {
     current_menu = MENU_INVALID;
     menu_update = 0;
     maybe_prev_menu = MENU_INVALID;
-    menu_timer = 0;
+    g_MenuTimer = 0;
     selected_stage = -1;
     briefingpage = BRIEFING_INVALID;
     selected_difficulty = DIFFICULTY_MULTI;
@@ -20,7 +20,7 @@ void initGameData(void) {
     is_first_time_on_legal_screen = 1;
     is_first_time_on_main_menu = 1;
     prev_keypresses = 0;
-    maybe_is_in_menu = 1;
+    maybe_is_in_menu = TRUE;
     slider_007_mode_reaction = 0.0f;
     slider_007_mode_health = 1.0f;
     slider_007_mode_accuracy = 1.0f;

@@ -644,7 +644,7 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
                         player_pos_x.x = (f32) playerprop->position.x;
                         player_pos_x.y = (f32) playerprop->position.y;
                         player_pos_x.z = (f32) playerprop->position.z;
-                        #ifdef DEBUG
+                        #ifdef ENABLE_LOG
                         osSyncPrintf("%s%sbond world pos=%f,%f,%f dist from prev=%f\n",
                                      "",
                                      "",

@@ -187,11 +187,13 @@ class StatResults:
 
 
 def mtime_os(file, now):
+    print('using os')
     return int(os.path.getmtime(file))
 
 
 
 def mtime_git(file, now):
+    print('using git')
     try:
         date_str = now.strftime('%Y-%m-%dT%H:%M:%S%z')
         result = subprocess.run(['git', 'log', '-1', '--format=\"%ct\"', '--date=local', '--before=\"' + date_str + '\"', '--', file], stdout=subprocess.PIPE, universal_newlines=True)
@@ -237,6 +239,10 @@ def process_source_files(search, stats: StatResults, mtime_resolver):
                 sfc.asm_functions = set()
                 sfc.parent = s
                 sfc.mtime = mtime_resolver(file, stats.now)
+                import datetime
+
+                x = datetime.datetime.fromtimestamp(sfc.mtime)
+                print(sfc.path, ' = ', x.strftime('%c'))
 
                 # The `completed` list is manually configured to specify which files should not be
                 # counted against the total. This is done by simply not adding asm function
@@ -662,6 +668,7 @@ def main():
     if print_method == 'non_matching' and not run_report:
         mtime_use_os = True
 
+    print(subprocess.run(['git', 'diff', 'origin/master', '--name-only', '"@{10 minutes ago}"']).stdout)
     # Default to using git log to get the file's modified date.
     # Git log will be much slower, but cloning a new repo (i.e., github actions online)
     # will reset all the modified timestamps to the same value, so will need to

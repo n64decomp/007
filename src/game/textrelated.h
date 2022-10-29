@@ -1,6 +1,7 @@
 #ifndef _TEXTRELATED_H_
 #define _TEXTRELATED_H_
 #include <ultra64.h>
+#include "bondtypes.h"
 
 extern s32 ptrFirstFontTableSmall;
 extern s32 ptrSecondFontTableSmall;

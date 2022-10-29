@@ -10,7 +10,7 @@ void matrix_4x4_7F059694(Mtxf *arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32
 void matrix_4x4_multiply(Mtxf *lhs, Mtxf *rhs, Mtxf *result);
 void matrix_4x4_set_position(vec3 position, Mtxf *matrix);
 void matrix_4x4_7F059424(Mtxf *arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9);
-u16  sub_GAME_7F05997C(f32 arg0, f32 arg1);
+u32 sub_GAME_7F05997C(f32 arg0, f32 arg1);
 void matrix_4x4_7F05A310(Mtxf *arg0, Mtxf *arg1);
 
 f32  matrix_4x4_determinant(Mtxf *matrix);
@@ -19,7 +19,7 @@ f32  matrix_2x2_determinant(f32 a, f32 c, f32 b, f32 d);
 
 void matrix_4x4_7F058C4C(f32 arg0);
 void matrix_4x4_copy(Mtxf *src, Mtxf *dst);
-s32  matrix_4x4_multiply_homogeneous(Mtxf *lhs, Mtxf *rhs, Mtxf *result);
+void matrix_4x4_multiply_homogeneous(Mtxf *lhs, Mtxf *rhs, Mtxf *result);
 
 void matrix_4x4_f32_to_s32(Mtxf *a, Mtxf *b);
 void matrix_4x4_multiply_homogeneous_in_place(Mtxf *lhs, Mtxf *rhs);
@@ -33,9 +33,14 @@ void matrix_4x4_set_rotation_around_z(f32 angle, Mtxf *matrix);
 void matrix_4x4_multiply_in_place(Mtxf *lhs, Mtxf *rhs);
 void matrix_4x4_set_identity_and_position(vec3 position, Mtxf *matrix);
 void matrix_column_3_scalar_multiply_2(f32 scalar, f32 *matrix);
+void matrix_4x4_set_position_and_rotation_around_y(f32 *position, f32 angle, Mtxf *matrix);
+void matrix_scalar_multiply_2(f32 scalar, f32 *matrix);
+void matrix_4x4_set_rotation_around_xyz(vec3 angles, Mtxf *matrix);
 
 // tenative guess
 void sub_GAME_7F058E78(Mtxf *arg0, Mtxf *arg1);
+void matrix_7f05842c_eu (Mtxf * src, f32 dst[3][3]);
+void matrix_4x4_multiply_homogeneous_in_place_eu (f32 src[3][3], f32 dst[3][3]);
 
 /* matrixmath_misc.h */
 

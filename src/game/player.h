@@ -16,16 +16,7 @@ struct player_data {
     int killed_gg_owner_count;
 
     /* 0x24 */
-    int killed_p1;
-
-    /* 0x28 */
-    int killed_p2;
-
-    /* 0x2c */
-    int killed_p3;
-
-    /* 0x30 */
-    int killed_p4;
+    int kill_counts[MAX_PLAYER_COUNT];
 
     /* 0x34 */
     int time_other_players_on_screen;
@@ -106,8 +97,11 @@ void set_cur_player(s32 playernum);
 s32 getPlayerCount(void);
 void set_cur_player_screen_size(u32 width, u32 height);
 void set_cur_player_viewport_size(u32 ulx, u32 uly);
-void store_stagenum_to_copyof_stagenum(s32 stagenum);
+void skySetStageNum(s32 stagenum);
 void sub_GAME_7F094438(void);
-Gfx * sub_GAME_7F094488(Gfx *arg0);
+Gfx * skyRender(Gfx *arg0);
+void sub_GAME_7F097388(SkyRelated18 *arg0, Mtxf *arg1, u16 arg2, f32 arg3, f32 arg4, SkyRelated38 *arg5);
+Gfx *sub_GAME_7F097818(Gfx *gdl, SkyRelated38 *arg1, SkyRelated38 *arg2, SkyRelated38 *arg3, f32 arg4, bool textured);
+Gfx *sub_GAME_7F098A2C(Gfx *gdl, SkyRelated38 *arg1, SkyRelated38 *arg2, SkyRelated38 *arg3, SkyRelated38 *arg4, f32 arg5);
 
 #endif

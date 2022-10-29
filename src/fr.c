@@ -11,6 +11,9 @@
 #include "game/bondview.h"
 #include "game/viewport.h"
 #include "game/dyn.h"
+#ifdef ENABLE_USB
+#include "usb.h"
+#endif
 
 /**
  * EU .data, offset from start of data_seg : 0x2484
@@ -1933,7 +1936,8 @@ Gfx *viSetFillColor(Gfx *gdl, s32 r, s32 g, s32 b)
  */
 void indyGrabJpg16bit(void)
 {
-    #ifdef LEFTOVERDEBUG
+#ifdef LEFTOVERDEBUG
+    #ifndef ENABLE_USB
     s32 *pgrabnum = &g_indyJpg16BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -1966,7 +1970,11 @@ void indyGrabJpg16bit(void)
 
     sprintf(buffer, "imgview grab.%d.jpeg", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
+    #else
+     //msg.msgtype
+usb_write(DATATYPE_RAWBINARY  , (u8*)g_ViBackData->framebuf, (viGetX() * viGetY() * 2));
     #endif
+#endif
 }
 
 /**
@@ -1975,7 +1983,8 @@ void indyGrabJpg16bit(void)
  */
 void indyGrabJpg32bit(void)
 {
-    #ifdef LEFTOVERDEBUG
+    #if defined(LEFTOVERDEBUG) 
+    #if !defined(ENABLE_USB)
     s32 *pgrabnum = &g_indyJpg32BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -2008,6 +2017,9 @@ void indyGrabJpg32bit(void)
 
     sprintf(buffer, "imgview grab.%d.jpeg", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
+    #else
+usb_write(DATATYPE_RAWBINARY  , (u8*)&cfb_16, (viGetX() * viGetY() * 4));
+    #endif
     #endif
 }
 
@@ -2017,7 +2029,8 @@ void indyGrabJpg32bit(void)
  */
 void indyGrabRgb16bit(void)
 {
-    #ifdef LEFTOVERDEBUG
+    #if defined(LEFTOVERDEBUG) 
+    #if !defined(ENABLE_USB)
     s32 *pgrabnum = &g_indyRgb16BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -2047,6 +2060,10 @@ void indyGrabRgb16bit(void)
 
     sprintf(buffer, "imgview grab.%d.rgb", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
+    #else
+     //msg.msgtype
+usb_write(DATATYPE_RAWBINARY  , (u8*)g_ViBackData->framebuf, (viGetX() * viGetY() * 2));
+    #endif
     #endif
 }
 
@@ -2056,7 +2073,8 @@ void indyGrabRgb16bit(void)
  */
 void indyGrabRgb32bit(void)
 {
-    #ifdef LEFTOVERDEBUG
+    #if defined(LEFTOVERDEBUG) 
+    #if !defined(ENABLE_USB)
     s32 *pgrabnum = &g_indyRgb32BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -2086,5 +2104,9 @@ void indyGrabRgb32bit(void)
 
     sprintf(buffer, "imgview grab.%d.rgb", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
+    #else
+     //msg.msgtype
+usb_write(DATATYPE_RAWBINARY  , (u8*)&cfb_16, (viGetX() * viGetY() * 4));
+    #endif
     #endif
 }

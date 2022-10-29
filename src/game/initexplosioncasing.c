@@ -12,7 +12,7 @@ void alloc_explosion_smoke_casing_scorch_impact_buffers(void)
 
     numExplosionEntries = 0;
     numSmokeEntries = 0;
-    numCasingEntries = 0;
+    numParticleEntries = 0;
     numScorchEntries = 0;
     numImpactEntries = 0;
     D_80040178 = 1.0f;
@@ -43,6 +43,7 @@ void alloc_explosion_smoke_casing_scorch_impact_buffers(void)
 
     if (getPlayerCount() == 1)
     {
+        // scorches are the circle burn marks left on the ground from explosions
         ptr_scorch_buf = (struct Scorch*)mempAllocBytesInBank(SCORCH_BUFFER_LEN * sizeof(struct Scorch), 4);
 
         for (i=0; i<SCORCH_BUFFER_LEN; i++)
@@ -58,17 +59,17 @@ void alloc_explosion_smoke_casing_scorch_impact_buffers(void)
         ptr_bullet_impact_buf[i].unk00 = -1;
     }
 
-    max_casings = MAX_BULLET_CASINGS / getPlayerCount();
+    max_particles = MAX_FLYING_PARTICLES / getPlayerCount();
 
     if ((lvlGetCurrentStageToLoad() == LEVELID_STREETS) || (lvlGetCurrentStageToLoad() == LEVELID_DEPOT))
     {
-        max_casings = (s32) max_casings >> 1;
+        max_particles = (s32) max_particles >> 1;
     }
 
-    ptr_ejected_casing_buf = (struct EjectedCasing*)mempAllocBytesInBank(((max_casings * sizeof(struct EjectedCasing)) + 0xF) & ~0xF, 4);
+    ptr_flying_particles_buf = (struct FlyingParticles*)mempAllocBytesInBank(((max_particles * sizeof(struct FlyingParticles)) + 0xF) & ~0xF, 4);
 
-    for (i=0; i<max_casings; i++)
+    for (i=0; i<max_particles; i++)
     {
-        ptr_ejected_casing_buf[i].unk00 = 0;
+        ptr_flying_particles_buf[i].unk00 = 0;
     }
 }

@@ -1,7 +1,7 @@
 #include <ultra64.h>
 #include <memp.h>
 #include "textrelated.h"
-
+#include "bondtypes.h"
 
 // data
 s32 D_80040E80 = 0;
@@ -307,33 +307,15 @@ Gfx *combiner_bayer_lod_perspective(Gfx *gdl)
 }
 
 #ifdef NONMATCHING
-s32 draw_blackbox_to_screen(void *arg0, void *arg1, void *arg2, void *arg3, void *arg4) {
-    void *temp_a0;
-    void *temp_t0;
-    void *temp_t1;
-    void *temp_v1;
-    void *temp_a1;
-
-    // Node 0
-    *arg0 = 0xb900031d;
-    arg0->unk4 = 0x504240;
-    temp_a0 = (arg0 + 8);
-    *temp_a0 = 0xfcffffff;
-    temp_a0->unk4 = 0xfffdf6fb;
-    temp_t0 = (temp_a0 + 8);
-    *temp_t0 = 0xfa000000;
-    temp_t0->unk4 = 0;
-    temp_t1 = (temp_t0 + 8);
-    *temp_t1 = (s32) ((((*arg4 & 0x3ff) * 4) | 0xf6000000) | ((*arg3 & 0x3ff) << 0xe));
-    temp_v1 = (temp_t1 + 8);
-    temp_t1->unk4 = (s32) (((*arg2 & 0x3ff) * 4) | ((*arg1 & 0x3ff) << 0xe));
-    temp_a1 = (temp_v1 + 8);
-    temp_v1->unk4 = 0x504240;
-    *temp_v1 = 0xb900031d;
-    *temp_a1 = 0xfcff97ff;
-    temp_a1->unk4 = 0xff2dfeff;
-    return;
-    // (possible return value: (temp_a1 + 8))
+Gfx* draw_blackbox_to_screen(Gfx *glist, s32 ulx, s32 uly, s32 lrx, s32 lry)
+{
+    gDPSetRenderMode(glist++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+    gDPSetCombineMode(glist++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    gDPSetPrimColor(glist++, 0, 0, 0x00, 0x00, 0x00, 0x00);
+    gDPFillRectangle(glist++, ulx, uly, lrx, lry);
+    gDPSetRenderMode(glist++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+    gDPSetCombineLERP(glist++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0);
+    return glist;
 }
 
 #else
@@ -398,11 +380,11 @@ glabel draw_blackbox_to_screen
 
 
 #ifdef NONMATCHING
-s32 microcode_constructor_related_to_menus(Gfx *gdl, s32 arg1, s32 arg2, s32 arg3, s32 arg4, u32 RGBA)
+Gfx * microcode_constructor_related_to_menus(Gfx *gdl, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 color)
 {
     gDPSetRenderMode(gdl++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
     gDPSetCombineMode(gdl++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    gDPSetPrimColor(gdl++, 0, 0, RGBA, RGBA, RGBA, RGBA);
+    gDPSetPrimColor(gdl++, 0, 0, color.word, color.word, color.word, color.word);
     gDPFillRectangle(gdl++, arg1, arg2, arg3, arg4);
     gDPSetCombineLERP(gdl++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0);
     return gdl;
@@ -477,13 +459,13 @@ glabel microcode_constructor_related_to_menus
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0AD0F8(void) {
+Gfx * construct_fontchar_microcode(Gfx *DL,int xpos,int ypos,void *ptr_tbl2entry,void *ptr_unk,void *ptr_tbl1,int ulx,int uly,int lrx,int lry,int unk) {
 
 }
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F0AD0F8
+glabel construct_fontchar_microcode
 /* 0E1C28 7F0AD0F8 27BDFF10 */  addiu $sp, $sp, -0xf0
 /* 0E1C2C 7F0AD0FC 8FB90100 */  lw    $t9, 0x100($sp)
 /* 0E1C30 7F0AD100 AFBF001C */  sw    $ra, 0x1c($sp)
@@ -1267,7 +1249,7 @@ glabel en_text_write_stuff
 /* 0E27AC 7F0ADC7C 00006012 */  mflo  $t4
 /* 0E27B0 7F0ADC80 01887021 */  addu  $t6, $t4, $t0
 /* 0E27B4 7F0ADC84 25CFFCE8 */  addiu $t7, $t6, -0x318
-/* 0E27B8 7F0ADC88 0FC2B43E */  jal   sub_GAME_7F0AD0F8
+/* 0E27B8 7F0ADC88 0FC2B43E */  jal   construct_fontchar_microcode
 /* 0E27BC 7F0ADC8C AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0E27C0 7F0ADC90 00409825 */  move  $s3, $v0
 /* 0E27C4 7F0ADC94 92150000 */  lbu   $s5, ($s0)
@@ -1323,7 +1305,7 @@ glabel en_text_write_stuff
 /* 0E2880 7F0ADD50 AFBE0020 */  sw    $fp, 0x20($sp)
 /* 0E2884 7F0ADD54 AFAC001C */  sw    $t4, 0x1c($sp)
 /* 0E2888 7F0ADD58 AFA80024 */  sw    $t0, 0x24($sp)
-/* 0E288C 7F0ADD5C 0FC2B43E */  jal   sub_GAME_7F0AD0F8
+/* 0E288C 7F0ADD5C 0FC2B43E */  jal   construct_fontchar_microcode
 /* 0E2890 7F0ADD60 AFAF0028 */   sw    $t7, 0x28($sp)
 /* 0E2894 7F0ADD64 00409825 */  move  $s3, $v0
 /* 0E2898 7F0ADD68 26100002 */  addiu $s0, $s0, 2
@@ -1474,7 +1456,7 @@ glabel en_text_write_stuff
 /* 0E27AC 7F0ADC7C 00006012 */  mflo  $t4
 /* 0E27B0 7F0ADC80 01887021 */  addu  $t6, $t4, $t0
 /* 0E27B4 7F0ADC84 25CFFCE8 */  addiu $t7, $t6, -0x318
-/* 0E27B8 7F0ADC88 0FC2B43E */  jal   sub_GAME_7F0AD0F8
+/* 0E27B8 7F0ADC88 0FC2B43E */  jal   construct_fontchar_microcode
 /* 0E27BC 7F0ADC8C AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0E27C0 7F0ADC90 00409825 */  move  $s3, $v0
 /* 0E27C4 7F0ADC94 92150000 */  lbu   $s5, ($s0)
@@ -1530,7 +1512,7 @@ glabel en_text_write_stuff
 /* 0E2880 7F0ADD50 AFBE0020 */  sw    $fp, 0x20($sp)
 /* 0E2884 7F0ADD54 AFAC001C */  sw    $t4, 0x1c($sp)
 /* 0E2888 7F0ADD58 AFA80024 */  sw    $t0, 0x24($sp)
-/* 0E288C 7F0ADD5C 0FC2B43E */  jal   sub_GAME_7F0AD0F8
+/* 0E288C 7F0ADD5C 0FC2B43E */  jal   construct_fontchar_microcode
 /* 0E2890 7F0ADD60 AFAF0028 */   sw    $t7, 0x28($sp)
 /* 0E2894 7F0ADD64 00409825 */  move  $s3, $v0
 /* 0E2898 7F0ADD68 26100002 */  addiu $s0, $s0, 2
@@ -1682,7 +1664,7 @@ glabel en_text_write_stuff
 /* 0DF92C 7F0ACF3C 00006012 */  mflo  $t4
 /* 0DF930 7F0ACF40 01887021 */  addu  $t6, $t4, $t0
 /* 0DF934 7F0ACF44 25CFFCE8 */  addiu $t7, $t6, -0x318
-/* 0DF938 7F0ACF48 0FC2B0EE */  jal   sub_GAME_7F0AD0F8
+/* 0DF938 7F0ACF48 0FC2B0EE */  jal   construct_fontchar_microcode
 /* 0DF93C 7F0ACF4C AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0DF940 7F0ACF50 00409825 */  move  $s3, $v0
 /* 0DF944 7F0ACF54 92150000 */  lbu   $s5, ($s0)
@@ -1738,7 +1720,7 @@ glabel en_text_write_stuff
 /* 0DFA00 7F0AD010 AFBE0020 */  sw    $fp, 0x20($sp)
 /* 0DFA04 7F0AD014 AFAC001C */  sw    $t4, 0x1c($sp)
 /* 0DFA08 7F0AD018 AFA80024 */  sw    $t0, 0x24($sp)
-/* 0DFA0C 7F0AD01C 0FC2B0EE */  jal   sub_GAME_7F0AD0F8
+/* 0DFA0C 7F0AD01C 0FC2B0EE */  jal   construct_fontchar_microcode
 /* 0DFA10 7F0AD020 AFAF0028 */   sw    $t7, 0x28($sp)
 /* 0DFA14 7F0AD024 00409825 */  move  $s3, $v0
 /* 0DFA18 7F0AD028 26100002 */  addiu $s0, $s0, 2

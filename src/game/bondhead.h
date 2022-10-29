@@ -6,8 +6,8 @@
 
 struct init_bond_anim_unk {
     u32 anim_id;
-    f32 unk04;
-    f32 unk08;
+    f32 loopframe;
+    f32 endframe;
     f32 unk0C;
 
     f32 unk10;

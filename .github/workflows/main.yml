@@ -17,13 +17,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  changedfiles:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      all: ${{ steps.changes.outputs.all}}
+    steps:
+        # Make sure we have some code to diff.
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Get changed files
+        id: changes
+        # Set outputs using the command.
+        run: |
+          echo "::set-output name=all::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
+   
   buildus:
     
     runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
-
+      #  with:
+      #    fetch-depth: 2
       - name: Install Depedencies
         run: |
           sudo apt update
@@ -43,19 +59,40 @@ jobs:
           FILE_US: ${{ secrets.SECRET_FILE_US  }}
         run: wget -O baserom.u.z64 $FILE_US
 
+      # cach is only usefull if downloading things takes longer than copying things - in this case, extraction is quicker
+      #- name: Cache Assets
+      #  id: cache-assets
+      #  uses: actions/cache@v3
+      #  with:
+      #    path: assets
+      #    key: ${{ hashFiles('extract_baserom.u.sh') }}
+
       - name: Extract US Assets
+        #if: steps.cache-assets.outputs.cache-hit != 'true'
         run: ./extract_baserom.u.sh
       
       - name: Make US 
-        run: make -j IDO_RECOMP=YES VERSION=US
+        run: make -j IDO_RECOMP=YES VERSION=US VERBOSE=1
           
       - name: Make report
         run: make -C tools/report
-        
+
+      # for refrence, these diff commands wont work in GHA, so, "Last modified file" will never work
+      # GHA makes new copies of all files (so modified date is all the same) and wont lok at logs (commands below)
+      #- name: difftest1
+      #  run: git diff --name-only origin/master ${GITHUB_HEAD_REF}
+
+      #- name: difftest2    
+      #  run: git diff --name-only ${{ github.event.before }} ${{ github.sha }} 
+
+      #- name: difftest3
+      #  run: git diff --name-only -1
+
+      #- name: difftest4
+      #  run: git diff --name-only @"{10 minutes ago}"
+
       - name: Stats
-        run: python3 tools/ge-stats.py --version us --report
-        #git diff HEAD^ HEAD --name-only
-            
+        run: python3 tools/ge-stats.py --version us --report           
         # expected args
         # 1481 15854 12774 232276 564 1312 652 20330 15471 269772 49 336 tools/report/index.html "src/game/bondview.c"
       

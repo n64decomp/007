@@ -1,7 +1,7 @@
 #include <ultra64.h>
 #include <memp.h>
 #include "initanitable.h"
-
+#include "objecthandler.h"
 
 //bss
 char dword_CODE_bss_80069170[0x2D0];
@@ -11,7 +11,11 @@ OSMesg animMesg[8];
 struct animation_table_data * ptr_animation_table;
 
 //data
-void * D_80029D60[] = {NULL, &dword_CODE_bss_80069170, &dword_CODE_bss_80069170};
+struct bondstruct_unk_animation_related D_80029D60 = {
+    NULL,
+    &dword_CODE_bss_80069170,
+    &dword_CODE_bss_80069170
+};
 
 s32 animation_table_ptrs1[] = {
     PTR_ANIM_idle,
@@ -268,19 +272,22 @@ glabel expand_ani_table_entries
 )
 #endif
 
-
+extern u8* _animation_dataSegmentRomStart;
+extern u8* _animation_dataSegmentStart;
+extern u8* _animation_dataSegmentEnd;
 #ifdef NONMATCHING
 void alloc_load_expand_ani_table(void) {
-    s32 temp_a2;
-    ? temp_ret;
+    //u32 sp18;
+    u32 size;
+    //void *temp_v0;
 
-    // Node 0
     osCreateMesgQueue(&animMsgQ, &animMesg, 8);
     sub_GAME_7F0009E0(&D_80029D60, &animMsgQ, &dword_CODE_bss_80069458);
-    temp_a2 = (&0x0000E7E0 - 0);
-    temp_ret = mempAllocBytesInBank(temp_a2, 6, temp_a2);
-    ptr_animation_table = temp_ret;
-    romCopy(temp_ret, &_animation_dataSegmentRomStart, sp18);
+    size = ((u32)_animation_dataSegmentEnd - (u32)_animation_dataSegmentStart);
+    //sp18 = size;
+    //temp_v0 = mempAllocBytesInBank(size, 6U);
+    ptr_animation_table =  mempAllocBytesInBank(size, 6U);
+    romCopy(ptr_animation_table, &_animation_dataSegmentRomStart, size);
     expand_ani_table_entries(&animation_table_ptrs1);
     expand_ani_table_entries(&animation_table_ptrs2);
 }

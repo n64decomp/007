@@ -68,6 +68,15 @@ BG_VIOLET:= 105
 BG_CYAN:= 106
 BG_WHITE:= 107
 
+# define a "newline" variable to be used in make scripts
+# use with ${\n}
+# https://stackoverflow.com/questions/12528637/how-do-i-execute-each-command-in-a-list
+define \n
+
+
+endef
+#end newline.
+
 ### Build Functions ###
 # Common build print status function
 PRINT_STATUS = @echo "$(call SET_TEXTATTRIB,$(FG_GREEN))$(1) $(call SET_TEXTATTRIB,$(FG_OLIVE))$(2)$(call SET_TEXTATTRIB,$(FG_GRAY)) $(if $3, -> $(call SET_TEXTATTRIB,$(FG_NAVY))$(3))$(RESTORECOLOUR)"
@@ -201,33 +210,52 @@ endif
 ifeq ($(VERSION), US)
  COUNTRYCODE := u
  OUTCODE := $(COUNTRYCODE)
- LCDEFS := -DVERSION_US -DLANG_US -DREFRESH_NTSC -DLEFTOVERDEBUG -DLEFTOVERSPECTRUM -DBUGFIX_R0
- ASMDEFS := --defsym VERSION_US=1 --defsym LANG_US=1 --defsym REFRESH_NTSC=1 --defsym LEFTOVERDEBUG=1 --defsym LEFTOVERSPECTRUM=1 --defsym BUGFIX_R0=1
+ LANG := US
+ LCDEFS := -DVERSION_US -DLANG_US -DREFRESH_NTSC -DLEFTOVERDEBUG -DLEFTOVERSPECTRUM -DBUGFIX_R0 -DBYTEMATCH
+ ASMDEFS := --defsym VERSION_US=1 --defsym LANG_US=1 --defsym REFRESH_NTSC=1 --defsym LEFTOVERDEBUG=1 --defsym LEFTOVERSPECTRUM=1 --defsym BUGFIX_R0=1 --defsym BYTEMATCH=1
+ LDFILEOPTS := -DVERSION_$(LANG) -DOUTCODE=$(OUTCODE)
 endif
 
 ifeq ($(VERSION), EU)
  COUNTRYCODE := e
  OUTCODE := $(COUNTRYCODE)
- LCDEFS := -DVERSION_EU -DLANG_EU -DREFRESH_PAL -DBUGFIX_R1 -DBUGFIX_R2 
- ASMDEFS := --defsym VERSION_EU=1 --defsym LANG_EU=1 --defsym REFRESH_PAL=1 --defsym BUGFIX_R1=1 --defsym BUGFIX_R2=1
+ LANG := EU
+ LCDEFS := -DVERSION_EU -DLANG_EU -DREFRESH_PAL -DBUGFIX_R1 -DBUGFIX_R2 -DBYTEMATCH
+ ASMDEFS := --defsym VERSION_EU=1 --defsym LANG_EU=1 --defsym REFRESH_PAL=1 --defsym BUGFIX_R1=1 --defsym BUGFIX_R2=1 --defsym BYTEMATCH=1
+ LDFILEOPTS := -DVERSION_$(LANG) -DOUTCODE=$(OUTCODE)
 endif
 
 ifeq ($(VERSION), JP)
  COUNTRYCODE := j
  OUTCODE := $(COUNTRYCODE)
- LCDEFS := -DVERSION_JP -DLANG_JP -DREFRESH_NTSC -DBUGFIX_R1 -DLEFTOVERDEBUG -DLEFTOVERSPECTRUM
- ASMDEFS := --defsym VERSION_JP=1 --defsym LANG_JP=1 --defsym REFRESH_NTSC=1 --defsym BUGFIX_R1=1 --defsym LEFTOVERDEBUG=1 --defsym LEFTOVERSPECTRUM=1
+ LANG := JP
+ LCDEFS := -DVERSION_JP -DLANG_JP -DREFRESH_NTSC -DBUGFIX_R1 -DLEFTOVERDEBUG -DLEFTOVERSPECTRUM -DBYTEMATCH
+ ASMDEFS := --defsym VERSION_JP=1 --defsym LANG_JP=1 --defsym REFRESH_NTSC=1 --defsym BUGFIX_R1=1 --defsym LEFTOVERDEBUG=1 --defsym LEFTOVERSPECTRUM=1 --defsym BYTEMATCH=1
+ LDFILEOPTS := -DVERSION_$(LANG) -DOUTCODE=$(OUTCODE)
 endif
 
 ifeq ($(VERSION), DEBUG)
  COUNTRYCODE := u
  OUTCODE := d
- LCDEFS := -DVERSION_US -DLANG_US -DREFRESH_NTSC -DLEFTOVERDEBUG -DLEFTOVERSPECTRUM -DBUGFIX_R0 -DDEBUGMENU
+ LANG := US
+ LCDEFS := -DVERSION_US -DLANG_US -DREFRESH_NTSC -DLEFTOVERDEBUG -DLEFTOVERSPECTRUM -DBUGFIX_R0 -DDEBUGMENU -DVERSION_DEBUG
  ASMDEFS := --defsym VERSION_DEBUG=1 --defsym LANG_US=1 --defsym REFRESH_NTSC=1 --defsym LEFTOVERDEBUG=1 --defsym LEFTOVERSPECTRUM=1 --defsym BUGFIX_R0=1 --defsym DEBUGMENU=1
  COMPARE := 0
+ LDFILEOPTS := -DVERSION_$(LANG) -DOUTCODE=$(OUTCODE)
 endif
 
-ALLOWED_VERSIONS := US EU JP DEBUG
+ifeq ($(VERSION), USB)
+ COUNTRYCODE := u
+ OUTCODE := usb
+ LANG := US
+ LCDEFS := -DVERSION_US -DLANG_US -DREFRESH_NTSC -DLEFTOVERDEBUG -DLEFTOVERSPECTRUM -DBUGFIX_R0 -DDEBUGMENU -DENABLE_USB
+ ASMDEFS := --defsym VERSION_US=1 --defsym LANG_US=1 --defsym REFRESH_NTSC=1 --defsym LEFTOVERDEBUG=1 --defsym LEFTOVERSPECTRUM=1 --defsym BUGFIX_R0=1 --defsym DEBUGMENU=1 --defsym ENABLE_USB=1
+ COMPARE := 0
+ LDFILEOPTS := -DVERSION_$(LANG) -DOUTCODE=$(OUTCODE) -DENABLE_USB
+endif
+
+ALLOWED_VERSIONS := US EU JP DEBUG USB
+ALLOWED_COUNTRYCODE := u e j
 
 BUILD_DIR_BASE := build
 # BUILD_DIR is the location where all build artifacts are placed
@@ -312,7 +340,8 @@ INCLUDE := -I . -I include -I include/ultra64 -I include/PR -I src -I src/game -
 # 712 : illegal combination of pointer and integer                                    - could be fixed by casting, but implicit is fine.
 # 807 : member cannot be of function or incomplete type                               - Variable length structs
 # 838 : Microsoft extension (unnamed structs)                                         - used for "Inheritance" and member/array call swapping
-WOFF :=  -woff 609,649,709,712,807,838
+# 763 : Max Float
+WOFF :=  -woff 609,649,709,712,807,838,763
 
 ifeq ($(IDO_RECOMP), NO)
   CC := $(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/bin/cc
@@ -323,7 +352,7 @@ endif
 CFLAGS := -Wab,-r4300_mul -non_shared -Olimit 2000 -G 0 -Xcpluscomm $(CFLAGWARNING) $(WOFF) -signed $(INCLUDE) $(MIPSISET) $(LCDEFS) -DTARGET_N64
 
 LD := $(TOOLCHAIN)ld
-LD_SCRIPT := ge007.$(OUTCODE).ld
+LD_SCRIPT := build/ge007.$(OUTCODE).ld
 
 # --no-warn-mismatch is needed to link -mips3 object files (some libultra math) with the regular files compiled with -mips2
 LDFLAGS := -T $(LD_SCRIPT) -Map build/ge007.$(OUTCODE).map --no-warn-mismatch
@@ -374,7 +403,7 @@ endif
 	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) \
 	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES) 
 
-ifeq ($(filter clean dataclean help codeclean context cmdbuilder test stanclean setupclean colour print-%,$(MAKECMDGOALS)),)
+ifeq ($(filter clean nuke dataclean help codeclean context cmdbuilder test stanclean setupclean colour print-%,$(MAKECMDGOALS)),)
 # Dont print version on "default" since it will be spat out twice
     ifneq ($(filter $(VERSION),$(ALLOWED_VERSIONS)),)
       #$(info VERSION=$(VERSION))
@@ -472,9 +501,10 @@ endif
 #	$(CC) -c -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm $(CFLAGWARNING) -woff 819,820,852,821,838,649 -signed $(INCLUDE) $(MIPSISET) $(LCDEFS) -DTARGET_N64 $(OPTIMIZATION) -o $@ $<
 
 #Link Files
-$(APPELF): $(RSPOBJECTS) $(ULTRAOBJECTS) $(HEADEROBJECTS) $(OBSEG_RZ) $(BUILD_DIR)/$(OBSEGMENT) $(MUSIC_RZ_FILES) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(ROMOBJECTS) $(ASSET_DATAOBJECTS) $(ROMOBJECTS2) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) $(OBSEG_OBJECTS) pb14
+$(APPELF): $(RSPOBJECTS) $(ULTRAOBJECTS) $(HEADEROBJECTS) $(OBSEG_RZ) $(BUILD_DIR)/$(OBSEGMENT) $(MUSIC_RZ_FILES) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(ROMOBJECTS) $(ASSET_DATAOBJECTS) $(ROMOBJECTS2) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) $(OBSEG_OBJECTS) pb14 ge007.ld
+	cpp $(LDFILEOPTS) -P ge007.ld -o build/ge007.$(OUTCODE).ld
 	@echo "Linking Files into ELF" 
-	$(LD) $(LDFLAGS) -o $@  & $(call IncrementProgressBarFromAtRate,87,1.5)
+	$(LD) $(LDFLAGS) -o $@
 
 $(APPBIN): $(APPELF)
   ifeq ($(VERBOSE),0)
@@ -523,8 +553,8 @@ ifeq ($(VERBOSE),1)
 	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(RSPOBJECTS)
 else
 	@clear
-	$(call SetupProgressBar)
-	@echo "\n\nDeleting All Code Binaries Only [Assets will be left from previous compile]"
+	@$(call SetupProgressBar)
+	@echo "\n\n\nDeleting All Code Binaries Only [Assets will be left from previous compile]"
 	@rm -f $(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(OUTCODE).map
 	@$(call DrawProgressBar,50)
 	@rm -f $(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(RSPOBJECTS)
@@ -537,28 +567,46 @@ dataclean:
 	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES) \
 	$(STAN_BUILD_FILES) $(SETUP_BUILD_FILES)
 
-clean:
+# "Conditionals control what 'make' actually "sees" in the makefile, so they cannot be used to control recipes at the time of execution."
+# https://www.gnu.org/software/make/manual/html_node/Conditionals.html
 ifeq ($(VERBOSE),1)
+clean::
+	# if this command is modified, make sure to update this in the `nuke` recipe.
 	rm -f $(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(OUTCODE).map \
 	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) \
 	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES) $(RSPOBJECTS) \
 	$(STAN_BUILD_FILES) $(SETUP_BUILD_FILES)
 else
+clean::
 	@clear
-	@echo "\n\nDeleting All Code and Asset Binaries"
-	$(call SetupProgressBar)
-	@$(call DrawProgressBar,0)
-	@rm -f $(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(OUTCODE).map
-	@$(call DrawProgressBar,1,4)
-	@rm -f $(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS)
-	@$(call DrawProgressBar,2,4)
-	@rm -f $(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS)
-	@$(call DrawProgressBar,3,4)
-	@rm -f $(IMAGE_OBJS) $(MUSIC_RZ_FILES) $(RSPOBJECTS) $(STAN_BUILD_FILES) $(SETUP_BUILD_FILES)
-	@$(call DrawProgressBar,100)
-endif
-	@echo "\033[1J$(RESTORESCROLLREGION)\nAll Code and Asset Binaries Cleared! Make will Re-Build these next time.\n"
+	@echo "\n\n\nDeleting All Code and Asset Binaries"
+	@$(call SetupProgressBar)
+	@rm -f $(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(OUTCODE).map & $(call IncrementProgressBarFromAtRate,0,0.125)
+	@rm -f $(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) & $(call IncrementProgressBarFromAtRate,25,0.125)
+	@rm -f $(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) & $(call IncrementProgressBarFromAtRate,50,0.125)
+	@rm -f $(IMAGE_OBJS) $(MUSIC_RZ_FILES) $(RSPOBJECTS) $(STAN_BUILD_FILES) $(SETUP_BUILD_FILES)& $(call IncrementProgressBarFromAtRate,75,0.125)
 
+	@$(call DrawProgressBar,100)
+	@echo "\033[1J$(RESTORESCROLLREGION)\nAll Code and Asset Binaries Cleared! Make will Re-Build these next time.\n"
+endif
+
+nuke:
+	@echo deleting files specified from make clean ...
+	@# if this command is modified, update the `clean` recipe above.
+	rm -f $(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(OUTCODE).map \
+	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) \
+	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES) $(RSPOBJECTS) \
+	$(STAN_BUILD_FILES) $(SETUP_BUILD_FILES)
+	@echo
+	@echo make: deleting build folders and files
+	$(foreach x,$(ALLOWED_COUNTRYCODE),rm -r -f -d "$(BUILD_DIR_BASE)/$(x)/"${\n})
+	@echo
+	@echo make: deleting bin / rsp / asp
+	rm -r -f -d "bin/"
+	@echo
+	@echo make: deleting assets
+	rm -r -f -d "assets/images/split/"
+	rm -r -f "assets/music/*.bin" "assets/obseg/bg/*.bin" "assets/obseg/brief/*.bin" "assets/obseg/chr/*.bin" "assets/obseg/gun/*.bin" "assets/obseg/prop/*.bin" "assets/obseg/setup/*.bin" "assets/obseg/setup/e/*.bin" "assets/obseg/setup/u/*.bin" "assets/obseg/setup/j/*.bin" "assets/obseg/stan/*.bin" "assets/obseg/text/*.bin" "assets/obseg/text/e/*.bin" "assets/obseg/text/u/*.bin" "assets/obseg/text/j/*.bin" "assets/ramrom/*.bin" "assets/ramrom/e/*.bin" "assets/ramrom/u/*.bin" "assets/ramrom/j/*.bin"
 
 #         0    4                             35                                            80             80(with colour codes)
 help:
@@ -567,7 +615,10 @@ help:
 	@echo "  supported targets:"
 	@echo ""
 	@echo "    all                            $(call SET_TEXTATTRIB,$(FG_LIME)) Build$(RESTORECOLOUR) all (default)"
-	@echo "    clean                          $(call SET_TEXTATTRIB,$(FG_RED)) Delete all$(RESTORECOLOUR) build artifacts"
+	@echo "    clean                          $(call SET_TEXTATTRIB,$(FG_RED)) Delete all$(RESTORECOLOUR) known build artifacts"
+	@echo "    nuke                           $(call SET_TEXTATTRIB,$(FG_RED)) Delete all$(RESTORECOLOUR) files explicitly listed in Makefile (same as make clean),"
+	@echo "                                    all build output for all versions, any .bin file in assets folders,"
+	@echo "                                    and asp/rsp bin."
 	@echo "    dataclean                      $(call SET_TEXTATTRIB,$(FG_RED)) Delete$(RESTORECOLOUR) only asset build artifacts"
 	@echo "    codeclean                      $(call SET_TEXTATTRIB,$(FG_RED)) Delete$(RESTORECOLOUR) only code (asm, .c) build artifacts"
 	@echo "    libultraclean                  $(call SET_TEXTATTRIB,$(FG_RED)) Delete$(RESTORECOLOUR) only code (asm, .c) build artifacts "
@@ -692,6 +743,9 @@ testPB:
 	$(call SetupProgressBar)
 	$(call IncrementProgressBarFromAtRate,0,0.125)
 
+textures:
+	for file in assets/images/split/*.bin; do ../../tools/mktex/build/tex2png $file .assets/images/out; done
+
 colour:
 	@echo "\033[3A"
   ifeq ($(VERBOSE),0)
@@ -707,8 +761,12 @@ colour:
 	-e "s/((([^\/]*([^s][^t][^d][^i][^n])\.c)|([^\/]*\.o))\s)/$$(echo "$(call SET_TEXTATTRIB,$(FG_WHITE))")&$$(echo "$(RESTORECOLOUR)")/g" 
 	@echo "$(SAVECURSOR)$(RESTORESCROLLREGION)$(RESTORECURSOR)\033[1A"
 
-ifeq ($(VERBOSE),0)
-.SILENT:
+# hide output by default, unless this one of the following targets
+ifeq ($(filter nuke,$(MAKECMDGOALS)),)
+else
+	ifeq ($(VERBOSE),0)
+	.SILENT:
+	endif
 endif
 
 

@@ -80,7 +80,7 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
     modelSetScale(&g_CurrentPlayer->model, IDO_POINT_ONE);
 
 #if defined (BUGFIX_R1)
-    sub_GAME_7F06FF18(&g_CurrentPlayer->model, ANIMRATE, 0.0f);
+    modelSetAnimRateForDuration(&g_CurrentPlayer->model, ANIMRATE, 0.0f);
 #endif
 
     g_CurrentPlayer->headanim = 0;
@@ -146,11 +146,11 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
         sub_GAME_7F0062C0(
             // match hack: addu address calculated backwards
             (void*)((s32)g_BondMoveAnimationSetup[i].anim_id + (s32)&ptr_animation_table->data),
-            (s32)g_BondMoveAnimationSetup[i].unk04,
-            (s32)g_BondMoveAnimationSetup[i].unk08,
+            (s32)g_BondMoveAnimationSetup[i].loopframe,
+            (s32)g_BondMoveAnimationSetup[i].endframe,
             &spD0);
 
-        g_BondMoveAnimationSetup[i].unk0C = (f32) (((f32) spD0[2] * IDO_POINT_ONE) / (g_BondMoveAnimationSetup[i].unk08 - g_BondMoveAnimationSetup[i].unk04));
+        g_BondMoveAnimationSetup[i].unk0C = (f32) (((f32) spD0[2] * IDO_POINT_ONE) / (g_BondMoveAnimationSetup[i].endframe - g_BondMoveAnimationSetup[i].loopframe));
     }
 
     sp90 = D_8002A790;
@@ -161,26 +161,26 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
     matrix_4x4_set_identity(&sp50);
 
     sp90.unk_matrix = &sp50;
-    sp90.mtxlist = &g_CurrentPlayer->field_6D0;
+    sp90.mtxlist = &g_CurrentPlayer->bondheadmatrices[0];
 
     subcalcmatrices(&sp90, &g_CurrentPlayer->model);
 
-    g_CurrentPlayer->standheight = g_CurrentPlayer->field_704;
+    g_CurrentPlayer->standheight = g_CurrentPlayer->bondheadmatrices[0].m[3][1];
     g_CurrentPlayer->standbodyoffset.x = 0.0f;
-    g_CurrentPlayer->standbodyoffset.y = g_CurrentPlayer->field_744 - g_CurrentPlayer->field_704;
-    g_CurrentPlayer->standbodyoffset.z = g_CurrentPlayer->field_748 - g_CurrentPlayer->field_708;
+    g_CurrentPlayer->standbodyoffset.y = g_CurrentPlayer->bondheadmatrices[1].m[3][1] - g_CurrentPlayer->bondheadmatrices[0].m[3][1];
+    g_CurrentPlayer->standbodyoffset.z = g_CurrentPlayer->bondheadmatrices[1].m[3][2] - g_CurrentPlayer->bondheadmatrices[0].m[3][2];
 
     modelSetAnimation(
         &g_CurrentPlayer->model,
         // match hack: addu address calculated backwards
         (struct ModelAnimation *) ((s32)g_BondMoveAnimationSetup[g_CurrentPlayer->headanim].anim_id + (s32)&ptr_animation_table->data),
         0,
-        g_BondMoveAnimationSetup[g_CurrentPlayer->headanim].unk04,
+        g_BondMoveAnimationSetup[g_CurrentPlayer->headanim].loopframe,
         0.5f,
         0.0f);
 
-    modelSetAnimLooping(&g_CurrentPlayer->model, g_BondMoveAnimationSetup[g_CurrentPlayer->headanim].unk04, 0.0f);
-    modelSetAnimEndFrame(&g_CurrentPlayer->model, g_BondMoveAnimationSetup[g_CurrentPlayer->headanim].unk08);
+    modelSetAnimLooping(&g_CurrentPlayer->model, g_BondMoveAnimationSetup[g_CurrentPlayer->headanim].loopframe, 0.0f);
+    modelSetAnimEndFrame(&g_CurrentPlayer->model, g_BondMoveAnimationSetup[g_CurrentPlayer->headanim].endframe);
     modelSetAnimFlipFunction(&g_CurrentPlayer->model, bheadFlipAnimation);
 
     bheadUpdateIdleRoll();

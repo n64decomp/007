@@ -23,4 +23,6 @@ void bondinvSetAllGunsFlag(s32 all_guns);
 bool          bondinvHasPropInInv(PropRecord *prop);
 WeaponObjRecord *bondinvRemovePropWeaponByID(ITEM_IDS weaponnum);
 void bondinvRemoveItemByID(ITEM_IDS weaponnum);
+s32 bondinvGetWeaponOfChoice(s32 *weapon1, s32 *weapon2);
+
 #endif

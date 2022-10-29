@@ -154,9 +154,9 @@ extern f32 flt_CODE_bss_8006960C;
 //CODE.bss:80069610
 extern f32 flt_CODE_bss_80069610;
 //CODE.bss:80069614
-extern f32 flt_CODE_bss_80069614;
+extern f32 ninLogoRotRate;
 //CODE.bss:80069618
-extern f32 flt_CODE_bss_80069618;
+extern f32 ninLogoScale;
 //CODE.bss:80069620
 extern coord3d dword_CODE_bss_80069620[0x4];
 
@@ -179,13 +179,7 @@ extern s32 mp_char_prev_select_player[4];
 extern s32 dword_CODE_bss_80069730[4];
 
 //CODE.bss:80069740
-extern s32 has_selected_char_player1;
-//CODE.bss:80069744
-extern s32 has_selected_char_player2;
-//CODE.bss:80069748
-extern s32 has_selected_char_player3;
-//CODE.bss:8006974C
-extern s32 has_selected_char_player4;
+extern s32 player_has_selected_char[];
 //CODE.bss:80069750
 extern s32 size_mp_select_image_player1;
 //CODE.bss:80069754
@@ -195,13 +189,7 @@ extern s32 size_mp_select_image_player3;
 //CODE.bss:8006975C
 extern s32 size_mp_select_image_player4;
 //CODE.bss:80069760
-extern s32 handicap_player1;
-//CODE.bss:80069764
-extern s32 handicap_player2;
-//CODE.bss:80069768
-extern s32 handicap_player3;
-//CODE.bss:8006976C
-extern s32 handicap_player4;
+extern s32 player_handicap[];
 //CODE.bss:80069770
 extern char* g_textPtrTAB1;
 //CODE.bss:80069774
@@ -230,13 +218,7 @@ extern s32 highlight_enemy_damage;
 //CODE.bss:800697A4                     .align 3
 
 //CODE.bss:800697A8
-extern s32 handicap_player1;
-//CODE.bss:800697AC
-extern s32 handicap_player2;
-//CODE.bss:800697B0
-extern s32 handicap_player3;
-//CODE.bss:800697B4
-extern s32 handicap_player4;
+extern s32 player_handicap[];
 //CODE.bss:800697B8
 extern u32 controlstyle_player[];
 
@@ -267,13 +249,13 @@ CODE.bss:800697F0     dword_CODE_bss_800697F0:.space 0x130
 extern MENU current_menu;
 extern MENU menu_update;
 extern MENU maybe_prev_menu;
-extern s32 menu_timer;
-extern s32 tab_1_selected;
-extern s32 tab_2_selected;
-extern s32 tab_3_selected;
-extern s32 tab_1_highlight;
-extern s32 tab_2_highlight;
-extern s32 tab_3_highlight;
+extern s32 g_MenuTimer;
+extern s32 tab_start_selected;
+extern s32 tab_next_selected;
+extern s32 tab_prev_selected;
+extern s32 tab_start_highlight;
+extern s32 tab_next_highlight;
+extern s32 tab_prev_highlight;
 
 extern f32 tab2_first_x_coord;
 extern f32 tab1_max_x_coord;
@@ -286,7 +268,7 @@ extern s32 selected_stage;
 extern s32 briefingpage;
 extern DIFFICULTY selected_difficulty;
 extern s32 g_AppendCheatSinglePlayer;
-extern s32 append_cheat_mp;
+extern s32 g_AppendCheatMultiPlayer;
 extern f32 cursor_h_pos;
 extern f32 cursor_v_pos;
 extern s32 final_menu_briefing_page;
@@ -307,11 +289,7 @@ extern s32 is_emulating_spectrum;
 extern s32 is_cheat_menu_available;
 extern Gfx * ptr_logo_and_walletbond_DL;
 extern s32 ptr_menu_videobuffer;
-extern struct object_standard * ptr_folder_object_instance;
-extern s32 set0_never_used;
-extern s32 set0_never_used_0;
-extern s32 D_8002A968;
-extern s32 dword_D_8002A96C;
+extern  Model * walletinst[];
 extern struct rgba_u8 RGBA_8002A970;
 extern struct rgba_u8 RGBA_8002A974;
 extern struct rgba_u8 RGBA_8002A978;
@@ -333,10 +311,7 @@ extern f32 slider_007_mode_accuracy;
 extern struct mission_folder_setup mission_folder_setup_entries[];
 
 extern s32 selected_num_players;
-extern s32 player_1_char;
-extern s32 player_2_char;
-extern s32 player_3_char;
-extern s32 player_4_char;
+extern s32 player_char[];
 extern s32 MP_stage_selected;
 extern s32 game_length;
 extern s32 aim_sight_adjustment;

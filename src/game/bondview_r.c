@@ -109,7 +109,7 @@ void bondviewLoadSetupIntroSection(void)
 
     start_pos = D_8002A780;
 
-    intro_record = (struct SetupIntroEmpty *)g_chraiCurrentSetup.intro;
+    intro_record = (struct SetupIntroEmpty *)g_CurrentSetup.intro;
     g_isBondKIA = 0;
     g_bondviewForceDisarm = 0;
     resolution = 0;
@@ -179,10 +179,10 @@ void bondviewLoadSetupIntroSection(void)
             {
                 case INTROTYPE_SPAWN:
                 {
-                    if (g_chraiCurrentSetup.pads != NULL
+                    if (g_CurrentSetup.pads != NULL
                         && (check_ramrom_flags() == ((struct SetupIntroSpawn*)intro_record)->is_demo_playback))
                     {
-                        g_Startpad[startpadcount] = &g_chraiCurrentSetup.pads[((struct SetupIntroSpawn*)intro_record)->index];
+                        g_Startpad[startpadcount] = &g_CurrentSetup.pads[((struct SetupIntroSpawn*)intro_record)->index];
                         startpadcount++;
                     }
 
@@ -247,11 +247,11 @@ void bondviewLoadSetupIntroSection(void)
                         g_IntroSwirl = intro_swirl;
                     }
 
-                    intro_swirl->unk08.fval = intro_swirl->unk08.ival / 65536.0f;
-                    intro_swirl->unk0C.fval = intro_swirl->unk0C.ival / 65536.0f;
-                    intro_swirl->unk10.fval = intro_swirl->unk10.ival / 65536.0f;
-                    intro_swirl->unk14.fval = intro_swirl->unk14.ival / 65536.0f;
-                    intro_swirl->unk18.fval = intro_swirl->unk18.ival / 65536.0f;
+                    intro_swirl->unk08.fval = intro_swirl->unk08.ival / M_U16_MAX_VALUE_F;
+                    intro_swirl->unk0C.fval = intro_swirl->unk0C.ival / M_U16_MAX_VALUE_F;
+                    intro_swirl->unk10.fval = intro_swirl->unk10.ival / M_U16_MAX_VALUE_F;
+                    intro_swirl->unk14.fval = intro_swirl->unk14.ival / M_U16_MAX_VALUE_F;
+                    intro_swirl->unk18.fval = intro_swirl->unk18.ival / M_U16_MAX_VALUE_F;
                     
                     intro_record = (struct SetupIntroEmpty*)((s32)intro_record + sizeof(struct SetupIntroSwirl));
                 }
@@ -284,8 +284,8 @@ void bondviewLoadSetupIntroSection(void)
                         ((struct SetupIntroCamera*)intro_record)->unk04.fval = ((struct SetupIntroCamera*)intro_record)->unk04.ival / 100.0f;
                         ((struct SetupIntroCamera*)intro_record)->unk08.fval = ((struct SetupIntroCamera*)intro_record)->unk08.ival / 100.0f;
                         ((struct SetupIntroCamera*)intro_record)->unk0C.fval = ((struct SetupIntroCamera*)intro_record)->unk0C.ival / 100.0f;
-                        ((struct SetupIntroCamera*)intro_record)->unk10.fval = ((struct SetupIntroCamera*)intro_record)->unk10.ival / 65536.0f;
-                        ((struct SetupIntroCamera*)intro_record)->unk14.fval = ((struct SetupIntroCamera*)intro_record)->unk14.ival / 65536.0f;
+                        ((struct SetupIntroCamera*)intro_record)->unk10.fval = ((struct SetupIntroCamera*)intro_record)->unk10.ival / M_U16_MAX_VALUE_F;
+                        ((struct SetupIntroCamera*)intro_record)->unk14.fval = ((struct SetupIntroCamera*)intro_record)->unk14.ival / M_U16_MAX_VALUE_F;
 
                         ((struct SetupIntroCamera*)intro_record)->lang1c.lang_ptr = langGet(((struct SetupIntroCamera*)intro_record)->lang1c.lang_index[1]);
                         
@@ -326,7 +326,7 @@ void bondviewLoadSetupIntroSection(void)
                     intro_credits = (struct SetupIntroCredits*)intro_record;
                     
                     // hack: bad address math
-                    credits = (CreditsEntry*)((s32)dword_CODE_bss_80075D28 + (s32)intro_credits->unk04);
+                    credits = (CreditsEntry*)((s32)g_ptrStageSetupFile + (s32)intro_credits->unk04);
                     D_80036440 = credits;
 
                     // what is the point of this?
@@ -398,7 +398,7 @@ void bondviewLoadSetupIntroSection(void)
         stan_height = bondviewYPositionRelated(start_stan, start_pos.f[0], start_pos.f[2]);
         start_pos.f[1] = g_CurrentPlayer->field_29BC + stan_height;
         g_CurrentPlayer->field_70 = stan_height;
-        start_look_angle = 6.2831855f - atan2f(g_Startpad[rand_pad_index]->look.f[0], g_Startpad[rand_pad_index]->look.f[2]);
+        start_look_angle = M_TAU_F - atan2f(g_Startpad[rand_pad_index]->look.f[0], g_Startpad[rand_pad_index]->look.f[2]);
     }
     else
     {
@@ -408,7 +408,7 @@ void bondviewLoadSetupIntroSection(void)
         g_CurrentPlayer->field_70 = stan_height;
     }
 
-    g_CurrentPlayer->vv_theta = (start_look_angle * 360.0f) / 6.2831855f;
+    g_CurrentPlayer->vv_theta = (start_look_angle * 360.0f) / M_TAU_F;
     g_CurrentPlayer->stanHeight = stan_height;
     g_CurrentPlayer->field_6C = stan_height / FIELD_6C_FACTOR;
     change_player_pos_to_target(&g_CurrentPlayer->field_488, &start_pos, start_stan);

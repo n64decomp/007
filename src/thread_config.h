@@ -17,6 +17,10 @@
 #define AUDI_THREAD_PRIORITY  (OSPri)20
 #define SCHED_THREAD_PRIORITY (OSPri)30
 #define TLB_THREAD_PRIORITY   (OSPri)40
+#ifdef ENABLE_USB
+#define RMON_THREAD_PRIORITY  (OSPri)120
+#else
 #define RMON_THREAD_PRIORITY  (OSPri)250
+#endif
 
 #endif

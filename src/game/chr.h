@@ -118,8 +118,7 @@ struct unk_joint_list {
     s32 unk08;
     Gfx *gdl;
 
-    // unknown type
-    void *mtxlist;
+    Mtxf * mtxlist;
     u32 unk14;
     u32 unk18;
     u32 unk1C;
@@ -287,8 +286,8 @@ void        setanimationdebugflag(s32 param_1);
 void        disable_sounds_attached_to_player_then_something(PropRecord* prop);
 void        chrPositionRelated7F020D94(ChrRecord *);
 void        set_or_unset_GUARDdata_flag(ChrRecord *guard,s32 param_2);
-f32         get_animation_rate(void);
-void        animation_speed_related(f32);
+f32         getAnimationRate(void);
+void        setAnimationRate(f32);
 PropRecord *init_GUARDdata_with_set_values(PropRecord *, Model *, coord3d *, f32 arg2, StandTile * arg3, s32 arg4);
 PropRecord *replace_GUARDdata_with_actual_values(struct Model * arg0, coord3d * arg1, f32 arg2, StandTile * arg3, s32 arg4);
 void        chrSetHiddenToRandom(ChrRecord *arg0);

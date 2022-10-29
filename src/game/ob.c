@@ -10,7 +10,7 @@
 //bss
 //800888b0
 
-struct resource_lookup_data_entry resource_lookup_data_array[OBJ_INDEX_MAX];
+ resource_lookup_data_entry resource_lookup_data_array[OBJ_INDEX_MAX];
 
 
 // data
@@ -32,10 +32,10 @@ s32 file_entry_max = OBJ_INDEX_END;
 
 
 
-void load_resource(u8 *ptrdata, u32 bytes, struct fileentry *srcfile, struct resource_lookup_data_entry *lookupdata)
+void load_resource(u8 *ptrdata, s32 bytes,  fileentry *srcfile,  resource_lookup_data_entry *lookupdata)
 {
     u8 *source;
-    u8 buffer[0x2100];
+    u8  buffer[0x2100];
     s32 unused;
     
 
@@ -47,16 +47,30 @@ void load_resource(u8 *ptrdata, u32 bytes, struct fileentry *srcfile, struct res
     source = (ptrdata + bytes) - ((lookupdata->rom_size + 7) & -8);
     if ((u32) (source - ptrdata) < 8U)
     {
-        lookupdata->pc_remaining = 0;
+        lookupdata->poolRemaining = 0;
     }
     else
     {
+#if DEBUG
+        char sp54[128];
+        u32  stack[2];
+#endif
+
         romCopy(source, srcfile->hw_address, lookupdata->rom_size);
-        lookupdata->pc_remaining = decompressdata(source, ptrdata, buffer);;
+        lookupdata->poolRemaining = decompressdata(source, ptrdata, buffer);;
+#if DEBUG
+        if (result == 0)
+        {
+            sprintf(sp54, "DMA-Crash %s %d Ram: %02x%02x%02x%02x%02x%02x%02x%02x", "ob.c", 204, scratch[0], scratch[1], scratch[2], scratch[3], scratch[4], scratch[5], scratch[6], scratch[7]);
+            crashSetMessage(sp54);
+            CRASH();
+        }
+#endif
+
     }
 }
 
-void resource_load_from_indy(u8 *ptrdata, u32 bytes, struct fileentry *srcfile, struct resource_lookup_data_entry *lookupdata)
+void resource_load_from_indy(u8 *ptrdata, s32 bytes,  fileentry *srcfile,  resource_lookup_data_entry *lookupdata)
 {
     u8 *pPayload;
     u8 buffer[8448];
@@ -71,9 +85,9 @@ void resource_load_from_indy(u8 *ptrdata, u32 bytes, struct fileentry *srcfile, 
     }
     indycommHostCheckFileExists(srcfile->filename, &lookupdata->pc_size);
     pPayload = (ptrdata + bytes) - ((lookupdata->pc_size + 7) & -8);
-    if ((pPayload - ptrdata) < (u32)8)
+    if ((pPayload - ptrdata) < 8U)
     {
-        lookupdata->pc_remaining = 0;
+        lookupdata->poolRemaining = 0;
     }
     else
     {
@@ -87,7 +101,7 @@ void resource_load_from_indy(u8 *ptrdata, u32 bytes, struct fileentry *srcfile, 
             bcopy(pPayload, ptrdata, lookupdata->pc_size);
             size = lookupdata->pc_size;
         }
-        lookupdata->pc_remaining = size;
+        lookupdata->poolRemaining = size;
     }
 }
 
@@ -104,7 +118,7 @@ void obInitDebugNoticeList(void)
     for (i = 0; i < (file_entry_max - 1); i++)
     {
         resource_lookup_data_array[i].rom_size = (file_resource_table[i+1].hw_address - file_resource_table[i].hw_address);
-        resource_lookup_data_array[i].pc_remaining = 0;
+        resource_lookup_data_array[i].poolRemaining = 0;
         resource_lookup_data_array[i].pc_size = 0;
         resource_lookup_data_array[i].rom_remaining = 0;
     }
@@ -167,7 +181,7 @@ glabel obInitDebugNoticeList
 void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
 {
   s32 index;
-  struct fileentry *fileentry;
+   fileentry *fileentry;
 
   index = get_index_num_of_named_resource(bgname);
   fileentry = &file_resource_table[index];
@@ -201,14 +215,14 @@ void _load_resource_index_to_membank(int index,s32 param_2,u8 *ptrdata,int size)
 }
 #endif
 
-void _load_resource_named_to_membank(u8 *filename, s32 param_2, s32 size, u8 bank)
+void _load_resource_named_to_membank(char *filename, FILELOADMETHOD loadMethod, s32 size, u8 bank)
 {
-    load_rom_resource_index_to_membank(get_index_num_of_named_resource(filename), param_2, size, bank);
+    load_rom_resource_index_to_membank(get_index_num_of_named_resource(filename), loadMethod, size, bank);
 }
 
-void _load_resource_named_to_buffer(u8 *filename, s32 bank, u8 *ptrdata, int size)
+void _load_resource_named_to_buffer(char *filename, FILELOADMETHOD loadMethod, u8 *ptrdata, s32 size)
 {
-    load_resource_index_to_buffer(get_index_num_of_named_resource(filename), bank, ptrdata, size);
+    load_resource_index_to_buffer(get_index_num_of_named_resource(filename), loadMethod, ptrdata, size);
 }
 
 #if defined(LEFTOVERDEBUG)
@@ -220,7 +234,7 @@ void _load_resource_named_to_buffer(u8 *filename, s32 bank, u8 *ptrdata, int siz
 void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
 {
   s32 index;
-  struct fileentry *fileentry;
+   fileentry *fileentry;
 
   index = get_index_num_of_named_resource(bgname);
   fileentry = &file_resource_table[index];
@@ -241,229 +255,101 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
 
 
 
-#ifdef NONMATCHING
-u8 * load_rom_resource_index_to_membank(s32 index,s32 param_2,s32 size,u8 bank)
 
+void *load_rom_resource_index_to_membank(s32 index, FILELOADMETHOD loadMethod, s32 size, u8 bank) //#MATCH https://decomp.me/scratch/uqiBe
 {
-    u32 unk;
-  u32 bytes;
-  u8 *ptrdata;
- 
-  if (((param_2 == 0) || (param_2 == 1)) || (param_2 == 2)) {
-    bytes = resource_lookup_data_array[index].pc_remaining;
-    if (bytes == 0) {
-      bytes = mempGetBankSizeLeft(bank);
-      resource_lookup_data_array[index].pc_remaining = bytes;
-    }
-    ptrdata = mempAllocBytesInBank(bytes,bank);
-    bytes = resource_lookup_data_array[index].pc_remaining;
-    resource_lookup_data_array[index].rom_remaining = bytes;
-    if (file_resource_table[index].hw_address == 0) {
-      resource_load_from_indy(ptrdata, bytes, &file_resource_table[index], &resource_lookup_data_array[index]);
-    }
-    else {
-      load_resource(ptrdata, bytes, &file_resource_table[index], &resource_lookup_data_array[index]);
-    }
-    if (param_2 != 0) {
-      mempAddEntryOfSizeToBank(ptrdata, resource_lookup_data_array[index].pc_remaining, bank);
-    }
-  }
-  else {
-    bytes = resource_lookup_data_array[index].pc_remaining;
-    if (bytes == 0) {
-      bytes = resource_lookup_data_array[index].rom_size;
-      if (bytes == 0) {
-        bytes = resource_lookup_data_array[index].pc_size;
-        resource_lookup_data_array[index].pc_remaining = bytes;
-      }
-      else {
-        resource_lookup_data_array[index].pc_remaining = bytes;
-      }
-    }
-    ptrdata = mempAllocBytesInBank(bytes,bank);
-    resource_lookup_data_array[index].rom_remaining =
-         resource_lookup_data_array[index].pc_remaining;
-    if (file_resource_table[index].hw_address == 0) {
-      resource_load_from_indy(ptrdata, 0, &file_resource_table[index], &resource_lookup_data_array[index]);
-    }
-    else {
-      load_resource(ptrdata,0, &file_resource_table[index], &resource_lookup_data_array[index]);
-    }
-    if (size == 0) {
-      resource_lookup_data_array[index].loaded_bank = bank;
-    }
-  }
-  return ptrdata;
-}
-#else
-GLOBAL_ASM(
-.text
-glabel load_rom_resource_index_to_membank
-/* 0F193C 7F0BCE0C 27BDFFD0 */  addiu $sp, $sp, -0x30
-/* 0F1940 7F0BCE10 AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0F1944 7F0BCE14 AFB10018 */  sw    $s1, 0x18($sp)
-/* 0F1948 7F0BCE18 AFB00014 */  sw    $s0, 0x14($sp)
-/* 0F194C 7F0BCE1C AFA40030 */  sw    $a0, 0x30($sp)
-/* 0F1950 7F0BCE20 AFA50034 */  sw    $a1, 0x34($sp)
-/* 0F1954 7F0BCE24 AFA60038 */  sw    $a2, 0x38($sp)
-/* 0F1958 7F0BCE28 10A00006 */  beqz  $a1, .L7F0BCE44
-/* 0F195C 7F0BCE2C AFA7003C */   sw    $a3, 0x3c($sp)
-/* 0F1960 7F0BCE30 24010001 */  li    $at, 1
-/* 0F1964 7F0BCE34 10A10003 */  beq   $a1, $at, .L7F0BCE44
-/* 0F1968 7F0BCE38 24010002 */   li    $at, 2
-/* 0F196C 7F0BCE3C 14A10033 */  bne   $a1, $at, .L7F0BCF0C
-/* 0F1970 7F0BCE40 8FAD0030 */   lw    $t5, 0x30($sp)
-.L7F0BCE44:
-/* 0F1974 7F0BCE44 8FAF0030 */  lw    $t7, 0x30($sp)
-/* 0F1978 7F0BCE48 3C198009 */  lui   $t9, %hi(resource_lookup_data_array) 
-/* 0F197C 7F0BCE4C 273988B0 */  addiu $t9, %lo(resource_lookup_data_array) # addiu $t9, $t9, -0x7750
-/* 0F1980 7F0BCE50 000FC080 */  sll   $t8, $t7, 2
-/* 0F1984 7F0BCE54 030FC021 */  addu  $t8, $t8, $t7
-/* 0F1988 7F0BCE58 0018C080 */  sll   $t8, $t8, 2
-/* 0F198C 7F0BCE5C 03198821 */  addu  $s1, $t8, $t9
-/* 0F1990 7F0BCE60 8E300004 */  lw    $s0, 4($s1)
-/* 0F1994 7F0BCE64 56000006 */  bnezl $s0, .L7F0BCE80
-/* 0F1998 7F0BCE68 02002025 */   move  $a0, $s0
-/* 0F199C 7F0BCE6C 0C002644 */  jal   mempGetBankSizeLeft
-/* 0F19A0 7F0BCE70 93A4003F */   lbu   $a0, 0x3f($sp)
-/* 0F19A4 7F0BCE74 AE220004 */  sw    $v0, 4($s1)
-/* 0F19A8 7F0BCE78 00408025 */  move  $s0, $v0
-/* 0F19AC 7F0BCE7C 02002025 */  move  $a0, $s0
-.L7F0BCE80:
-/* 0F19B0 7F0BCE80 0C0025C8 */  jal   mempAllocBytesInBank
-/* 0F19B4 7F0BCE84 93A5003F */   lbu   $a1, 0x3f($sp)
-/* 0F19B8 7F0BCE88 8E300004 */  lw    $s0, 4($s1)
-/* 0F19BC 7F0BCE8C 3C0A8004 */  lui   $t2, %hi(file_resource_table) 
-/* 0F19C0 7F0BCE90 254A6054 */  addiu $t2, %lo(file_resource_table) # addiu $t2, $t2, 0x6054
-/* 0F19C4 7F0BCE94 AE30000C */  sw    $s0, 0xc($s1)
-/* 0F19C8 7F0BCE98 8FA80030 */  lw    $t0, 0x30($sp)
-/* 0F19CC 7F0BCE9C 00402025 */  move  $a0, $v0
-/* 0F19D0 7F0BCEA0 02203825 */  move  $a3, $s1
-/* 0F19D4 7F0BCEA4 00084880 */  sll   $t1, $t0, 2
-/* 0F19D8 7F0BCEA8 01284823 */  subu  $t1, $t1, $t0
-/* 0F19DC 7F0BCEAC 00094880 */  sll   $t1, $t1, 2
-/* 0F19E0 7F0BCEB0 012A3021 */  addu  $a2, $t1, $t2
-/* 0F19E4 7F0BCEB4 8CCB0008 */  lw    $t3, 8($a2)
-/* 0F19E8 7F0BCEB8 02002825 */  move  $a1, $s0
-/* 0F19EC 7F0BCEBC 15600007 */  bnez  $t3, .L7F0BCEDC
-/* 0F19F0 7F0BCEC0 00000000 */   nop   
-/* 0F19F4 7F0BCEC4 02002825 */  move  $a1, $s0
-/* 0F19F8 7F0BCEC8 02203825 */  move  $a3, $s1
-/* 0F19FC 7F0BCECC 0FC2F2CD */  jal   resource_load_from_indy
-/* 0F1A00 7F0BCED0 AFA20024 */   sw    $v0, 0x24($sp)
-/* 0F1A04 7F0BCED4 10000004 */  b     .L7F0BCEE8
-/* 0F1A08 7F0BCED8 8FB00024 */   lw    $s0, 0x24($sp)
-.L7F0BCEDC:
-/* 0F1A0C 7F0BCEDC 0FC2F2A8 */  jal   load_resource
-/* 0F1A10 7F0BCEE0 AFA40024 */   sw    $a0, 0x24($sp)
-/* 0F1A14 7F0BCEE4 8FB00024 */  lw    $s0, 0x24($sp)
-.L7F0BCEE8:
-/* 0F1A18 7F0BCEE8 8FAC0034 */  lw    $t4, 0x34($sp)
-/* 0F1A1C 7F0BCEEC 02002025 */  move  $a0, $s0
-/* 0F1A20 7F0BCEF0 93A6003F */  lbu   $a2, 0x3f($sp)
-/* 0F1A24 7F0BCEF4 51800035 */  beql  $t4, $zero, .L7F0BCFCC
-/* 0F1A28 7F0BCEF8 8FBF001C */   lw    $ra, 0x1c($sp)
-/* 0F1A2C 7F0BCEFC 0C002601 */  jal   mempAddEntryOfSizeToBank
-/* 0F1A30 7F0BCF00 8E250004 */   lw    $a1, 4($s1)
-/* 0F1A34 7F0BCF04 10000031 */  b     .L7F0BCFCC
-/* 0F1A38 7F0BCF08 8FBF001C */   lw    $ra, 0x1c($sp)
-.L7F0BCF0C:
-/* 0F1A3C 7F0BCF0C 000D7080 */  sll   $t6, $t5, 2
-/* 0F1A40 7F0BCF10 01CD7021 */  addu  $t6, $t6, $t5
-/* 0F1A44 7F0BCF14 3C0F8009 */  lui   $t7, %hi(resource_lookup_data_array) 
-/* 0F1A48 7F0BCF18 25EF88B0 */  addiu $t7, %lo(resource_lookup_data_array) # addiu $t7, $t7, -0x7750
-/* 0F1A4C 7F0BCF1C 000E7080 */  sll   $t6, $t6, 2
-/* 0F1A50 7F0BCF20 01CF8821 */  addu  $s1, $t6, $t7
-/* 0F1A54 7F0BCF24 8E300004 */  lw    $s0, 4($s1)
-/* 0F1A58 7F0BCF28 56000009 */  bnezl $s0, .L7F0BCF50
-/* 0F1A5C 7F0BCF2C 02002025 */   move  $a0, $s0
-/* 0F1A60 7F0BCF30 8E220000 */  lw    $v0, ($s1)
-/* 0F1A64 7F0BCF34 10400003 */  beqz  $v0, .L7F0BCF44
-/* 0F1A68 7F0BCF38 00408025 */   move  $s0, $v0
-/* 0F1A6C 7F0BCF3C 10000003 */  b     .L7F0BCF4C
-/* 0F1A70 7F0BCF40 AE220004 */   sw    $v0, 4($s1)
-.L7F0BCF44:
-/* 0F1A74 7F0BCF44 8E300008 */  lw    $s0, 8($s1)
-/* 0F1A78 7F0BCF48 AE300004 */  sw    $s0, 4($s1)
-.L7F0BCF4C:
-/* 0F1A7C 7F0BCF4C 02002025 */  move  $a0, $s0
-.L7F0BCF50:
-/* 0F1A80 7F0BCF50 0C0025C8 */  jal   mempAllocBytesInBank
-/* 0F1A84 7F0BCF54 93A5003F */   lbu   $a1, 0x3f($sp)
-/* 0F1A88 7F0BCF58 8E390004 */  lw    $t9, 4($s1)
-/* 0F1A8C 7F0BCF5C 3C0A8004 */  lui   $t2, %hi(file_resource_table) 
-/* 0F1A90 7F0BCF60 254A6054 */  addiu $t2, %lo(file_resource_table) # addiu $t2, $t2, 0x6054
-/* 0F1A94 7F0BCF64 AE39000C */  sw    $t9, 0xc($s1)
-/* 0F1A98 7F0BCF68 8FA80030 */  lw    $t0, 0x30($sp)
-/* 0F1A9C 7F0BCF6C 00408025 */  move  $s0, $v0
-/* 0F1AA0 7F0BCF70 02203825 */  move  $a3, $s1
-/* 0F1AA4 7F0BCF74 00084880 */  sll   $t1, $t0, 2
-/* 0F1AA8 7F0BCF78 01284823 */  subu  $t1, $t1, $t0
-/* 0F1AAC 7F0BCF7C 00094880 */  sll   $t1, $t1, 2
-/* 0F1AB0 7F0BCF80 012A3021 */  addu  $a2, $t1, $t2
-/* 0F1AB4 7F0BCF84 8CCB0008 */  lw    $t3, 8($a2)
-/* 0F1AB8 7F0BCF88 02002025 */  move  $a0, $s0
-/* 0F1ABC 7F0BCF8C 00002825 */  move  $a1, $zero
-/* 0F1AC0 7F0BCF90 15600006 */  bnez  $t3, .L7F0BCFAC
-/* 0F1AC4 7F0BCF94 00000000 */   nop   
-/* 0F1AC8 7F0BCF98 00402025 */  move  $a0, $v0
-/* 0F1ACC 7F0BCF9C 0FC2F2CD */  jal   resource_load_from_indy
-/* 0F1AD0 7F0BCFA0 00002825 */   move  $a1, $zero
-/* 0F1AD4 7F0BCFA4 10000004 */  b     .L7F0BCFB8
-/* 0F1AD8 7F0BCFA8 8FAC0038 */   lw    $t4, 0x38($sp)
-.L7F0BCFAC:
-/* 0F1ADC 7F0BCFAC 0FC2F2A8 */  jal   load_resource
-/* 0F1AE0 7F0BCFB0 02203825 */   move  $a3, $s1
-/* 0F1AE4 7F0BCFB4 8FAC0038 */  lw    $t4, 0x38($sp)
-.L7F0BCFB8:
-/* 0F1AE8 7F0BCFB8 93AD003F */  lbu   $t5, 0x3f($sp)
-/* 0F1AEC 7F0BCFBC 55800003 */  bnezl $t4, .L7F0BCFCC
-/* 0F1AF0 7F0BCFC0 8FBF001C */   lw    $ra, 0x1c($sp)
-/* 0F1AF4 7F0BCFC4 A22D0010 */  sb    $t5, 0x10($s1)
-/* 0F1AF8 7F0BCFC8 8FBF001C */  lw    $ra, 0x1c($sp)
-.L7F0BCFCC:
-/* 0F1AFC 7F0BCFCC 02001025 */  move  $v0, $s0
-/* 0F1B00 7F0BCFD0 8FB00014 */  lw    $s0, 0x14($sp)
-/* 0F1B04 7F0BCFD4 8FB10018 */  lw    $s1, 0x18($sp)
-/* 0F1B08 7F0BCFD8 03E00008 */  jr    $ra
-/* 0F1B0C 7F0BCFDC 27BD0030 */   addiu $sp, $sp, 0x30
-)
-#endif
+    resource_lookup_data_entry *info = &resource_lookup_data_array[index];
+    s32                         bytes;
+    void                       *ptrdata = NULL;
 
-
-
-/*
- *this matches except:
-f1bc0:    sw      t4,0xc(s0)                        f1bc0:    sw      t4,0xc(s0)
-f1bc4:    lw      a1,0x2c(sp)                     r f1bc4:    lw      a0,0x28(sp)
-f1bc8:    jal     load_resource                     f1bc8:    jal     load_resource
-f1bcc:    lw      a0,0x28(sp)                     r f1bcc:    lw      a1,0x2c(sp)
- */
-#ifdef NONMATCHING
-u8* load_resource_index_to_buffer(s32 index,s32 bank,u8 *ptrdata,u32 bytes)
-{
-    if (resource_lookup_data_array[index].pc_remaining == 0)
+    if (loadMethod == FILELOADMETHOD_EXTRAMEM || loadMethod == FILELOADMETHOD_DEFAULT || loadMethod == 2)
     {
-        if (resource_lookup_data_array[index].rom_size > 0)
+        // bytes = info->poolRemaining;
+        if (info->poolRemaining == 0)
+        { // verify pool remaining is 0
+            info->poolRemaining = mempGetBankSizeLeft(bank);
+            // info->poolRemaining = bytes;
+        }
+        // bytes = info->poolRemaining;
+        ptrdata             = mempAllocBytesInBank(info->poolRemaining, bank); // get pointer to allocated space
+        info->rom_remaining = info->poolRemaining;
+
+        if (file_resource_table[index].hw_address == 0)
         {
-            resource_lookup_data_array[index].pc_remaining = resource_lookup_data_array[index].rom_size;
+            resource_load_from_indy(ptrdata, info->poolRemaining, &file_resource_table[index], info);
         }
         else
         {
-            resource_lookup_data_array[index].pc_remaining = resource_lookup_data_array[index].pc_size;
+            load_resource(ptrdata, info->poolRemaining, &file_resource_table[index], info);
+        }
+        if (loadMethod != FILELOADMETHOD_EXTRAMEM)
+        {
+            // mempRealloc
+            mempAddEntryOfSizeToBank(ptrdata, info->poolRemaining, bank);
         }
     }
-    if (((bank == 0) || (bank == 1)) || (bank == 2))
+    else // skipped in PD
+    {
+        if (info->poolRemaining == 0)
+        {
+            if (info->rom_size != 0)
+            {
+                info->poolRemaining = info->rom_size;
+            }
+            else
+            {
+                info->poolRemaining = info->pc_size;
+            }
+        }
+        ptrdata             = mempAllocBytesInBank(info->poolRemaining, bank);
+        info->rom_remaining = info->poolRemaining;
+
+        if (file_resource_table[index].hw_address == 0)
+        {
+            resource_load_from_indy(ptrdata, 0, &file_resource_table[index], info);
+        }
+        else
+        {
+            load_resource(ptrdata, 0, &file_resource_table[index], info);
+        }
+        if (size == 0)
+        {
+            info->loaded_bank = bank;
+        }
+    }
+    return ptrdata;
+}
+
+
+
+
+
+void *load_resource_index_to_buffer(s32 index, FILELOADMETHOD loadMethod, void *ptrdata, s32 bytes) //#match https://decomp.me/scratch/YExRh
+{
+    resource_lookup_data_entry *info = &resource_lookup_data_array[index];
+
+    if (!info->poolRemaining)
+    {
+        if (info->rom_size)
+        {
+            info->poolRemaining = info->rom_size;
+        }
+        else
+        {
+            info->poolRemaining = info->pc_size;
+        }
+    }
+    if (loadMethod == FILELOADMETHOD_EXTRAMEM || loadMethod == FILELOADMETHOD_DEFAULT || loadMethod == 2)
     {
         if (!file_resource_table[index].hw_address)
         {
-            resource_lookup_data_array[index].rom_remaining = bytes;
+            info->rom_remaining = bytes;
             resource_load_from_indy(ptrdata, bytes, &file_resource_table[index], &resource_lookup_data_array[index]);
         }
         else
         {
-            resource_lookup_data_array[index].rom_remaining = bytes;
-            //flip happens here
+            info->rom_remaining = bytes;
+            //fix a1/a0 inversion by manual pointer "info"
             load_resource(ptrdata, bytes, &file_resource_table[index], &resource_lookup_data_array[index]);
         }
     }
@@ -475,97 +361,12 @@ u8* load_resource_index_to_buffer(s32 index,s32 bank,u8 *ptrdata,u32 bytes)
         }
         else
         {
-            
             load_resource(ptrdata, 0, &file_resource_table[index], &resource_lookup_data_array[index]);
         }
     }
+
     return ptrdata;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel load_resource_index_to_buffer
-/* 0F1B10 7F0BCFE0 00047080 */  sll   $t6, $a0, 2
-/* 0F1B14 7F0BCFE4 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 0F1B18 7F0BCFE8 01C47021 */  addu  $t6, $t6, $a0
-/* 0F1B1C 7F0BCFEC 3C0F8009 */  lui   $t7, %hi(resource_lookup_data_array) 
-/* 0F1B20 7F0BCFF0 AFB00018 */  sw    $s0, 0x18($sp)
-/* 0F1B24 7F0BCFF4 25EF88B0 */  addiu $t7, %lo(resource_lookup_data_array) # addiu $t7, $t7, -0x7750
-/* 0F1B28 7F0BCFF8 000E7080 */  sll   $t6, $t6, 2
-/* 0F1B2C 7F0BCFFC 01CF8021 */  addu  $s0, $t6, $t7
-/* 0F1B30 7F0BD000 8E180004 */  lw    $t8, 4($s0)
-/* 0F1B34 7F0BD004 AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0F1B38 7F0BD008 AFA60028 */  sw    $a2, 0x28($sp)
-/* 0F1B3C 7F0BD00C 17000008 */  bnez  $t8, .L7F0BD030
-/* 0F1B40 7F0BD010 AFA7002C */   sw    $a3, 0x2c($sp)
-/* 0F1B44 7F0BD014 8E020000 */  lw    $v0, ($s0)
-/* 0F1B48 7F0BD018 50400004 */  beql  $v0, $zero, .L7F0BD02C
-/* 0F1B4C 7F0BD01C 8E190008 */   lw    $t9, 8($s0)
-/* 0F1B50 7F0BD020 10000003 */  b     .L7F0BD030
-/* 0F1B54 7F0BD024 AE020004 */   sw    $v0, 4($s0)
-/* 0F1B58 7F0BD028 8E190008 */  lw    $t9, 8($s0)
-.L7F0BD02C:
-/* 0F1B5C 7F0BD02C AE190004 */  sw    $t9, 4($s0)
-.L7F0BD030:
-/* 0F1B60 7F0BD030 10A00005 */  beqz  $a1, .L7F0BD048
-/* 0F1B64 7F0BD034 24010001 */   li    $at, 1
-/* 0F1B68 7F0BD038 10A10003 */  beq   $a1, $at, .L7F0BD048
-/* 0F1B6C 7F0BD03C 24010002 */   li    $at, 2
-/* 0F1B70 7F0BD040 14A10019 */  bne   $a1, $at, .L7F0BD0A8
-/* 0F1B74 7F0BD044 00046880 */   sll   $t5, $a0, 2
-.L7F0BD048:
-/* 0F1B78 7F0BD048 00044080 */  sll   $t0, $a0, 2
-/* 0F1B7C 7F0BD04C 01044023 */  subu  $t0, $t0, $a0
-/* 0F1B80 7F0BD050 3C098004 */  lui   $t1, %hi(file_resource_table) 
-/* 0F1B84 7F0BD054 25296054 */  addiu $t1, %lo(file_resource_table) # addiu $t1, $t1, 0x6054
-/* 0F1B88 7F0BD058 00084080 */  sll   $t0, $t0, 2
-/* 0F1B8C 7F0BD05C 01093021 */  addu  $a2, $t0, $t1
-/* 0F1B90 7F0BD060 8CCA0008 */  lw    $t2, 8($a2)
-/* 0F1B94 7F0BD064 8FAB002C */  lw    $t3, 0x2c($sp)
-/* 0F1B98 7F0BD068 8FAC002C */  lw    $t4, 0x2c($sp)
-/* 0F1B9C 7F0BD06C 15400008 */  bnez  $t2, .L7F0BD090
-/* 0F1BA0 7F0BD070 02003825 */   move  $a3, $s0
-/* 0F1BA4 7F0BD074 AE0B000C */  sw    $t3, 0xc($s0)
-/* 0F1BA8 7F0BD078 8FA40028 */  lw    $a0, 0x28($sp)
-/* 0F1BAC 7F0BD07C 8FA5002C */  lw    $a1, 0x2c($sp)
-/* 0F1BB0 7F0BD080 0FC2F2CD */  jal   resource_load_from_indy
-/* 0F1BB4 7F0BD084 02003825 */   move  $a3, $s0
-/* 0F1BB8 7F0BD088 10000019 */  b     .L7F0BD0F0
-/* 0F1BBC 7F0BD08C 8FBF001C */   lw    $ra, 0x1c($sp)
-.L7F0BD090:
-/* 0F1BC0 7F0BD090 AE0C000C */  sw    $t4, 0xc($s0)
-/* 0F1BC4 7F0BD094 8FA5002C */  lw    $a1, 0x2c($sp)
-/* 0F1BC8 7F0BD098 0FC2F2A8 */  jal   load_resource
-/* 0F1BCC 7F0BD09C 8FA40028 */   lw    $a0, 0x28($sp)
-/* 0F1BD0 7F0BD0A0 10000013 */  b     .L7F0BD0F0
-/* 0F1BD4 7F0BD0A4 8FBF001C */   lw    $ra, 0x1c($sp)
-.L7F0BD0A8:
-/* 0F1BD8 7F0BD0A8 01A46823 */  subu  $t5, $t5, $a0
-/* 0F1BDC 7F0BD0AC 3C0E8004 */  lui   $t6, %hi(file_resource_table) 
-/* 0F1BE0 7F0BD0B0 25CE6054 */  addiu $t6, %lo(file_resource_table) # addiu $t6, $t6, 0x6054
-/* 0F1BE4 7F0BD0B4 000D6880 */  sll   $t5, $t5, 2
-/* 0F1BE8 7F0BD0B8 01AE3021 */  addu  $a2, $t5, $t6
-/* 0F1BEC 7F0BD0BC 8CCF0008 */  lw    $t7, 8($a2)
-/* 0F1BF0 7F0BD0C0 02003825 */  move  $a3, $s0
-/* 0F1BF4 7F0BD0C4 8FA40028 */  lw    $a0, 0x28($sp)
-/* 0F1BF8 7F0BD0C8 15E00006 */  bnez  $t7, .L7F0BD0E4
-/* 0F1BFC 7F0BD0CC 00002825 */   move  $a1, $zero
-/* 0F1C00 7F0BD0D0 8FA40028 */  lw    $a0, 0x28($sp)
-/* 0F1C04 7F0BD0D4 0FC2F2CD */  jal   resource_load_from_indy
-/* 0F1C08 7F0BD0D8 00002825 */   move  $a1, $zero
-/* 0F1C0C 7F0BD0DC 10000004 */  b     .L7F0BD0F0
-/* 0F1C10 7F0BD0E0 8FBF001C */   lw    $ra, 0x1c($sp)
-.L7F0BD0E4:
-/* 0F1C14 7F0BD0E4 0FC2F2A8 */  jal   load_resource
-/* 0F1C18 7F0BD0E8 02003825 */   move  $a3, $s0
-/* 0F1C1C 7F0BD0EC 8FBF001C */  lw    $ra, 0x1c($sp)
-.L7F0BD0F0:
-/* 0F1C20 7F0BD0F0 8FA20028 */  lw    $v0, 0x28($sp)
-/* 0F1C24 7F0BD0F4 8FB00018 */  lw    $s0, 0x18($sp)
-/* 0F1C28 7F0BD0F8 03E00008 */  jr    $ra
-/* 0F1C2C 7F0BD0FC 27BD0020 */   addiu $sp, $sp, 0x20
-)
-#endif
 
 
 
@@ -574,7 +375,7 @@ glabel load_resource_index_to_buffer
 
 s32 get_pc_remaining_buffer_for_index(s32 index)
 {
-    return resource_lookup_data_array[index].pc_remaining;
+    return resource_lookup_data_array[index].poolRemaining;
 }
 
 
@@ -595,7 +396,7 @@ s32 get_rom_remaining_buffer_for_index(s32 index)
 //f1c88:    sw      a1,0x1c(sp)                     r f1c8c:    sw      a2,0x20(sp) //extra reg save
 void sub_GAME_7F0BD138(int index, u8 *ptrdata, u32 size, u32 param_4)
 {
-    resource_lookup_data_array[index].pc_remaining = size;
+    resource_lookup_data_array[index].poolRemaining = size;
     resource_lookup_data_array[index].rom_remaining = size;
 
 
@@ -642,7 +443,7 @@ s32 get_pc_buffer_remaining_value(u8 *name)
     int index;
     
     index = get_index_num_of_named_resource(name);
-    return resource_lookup_data_array[index].pc_remaining;
+    return resource_lookup_data_array[index].poolRemaining;
 }
 
 
@@ -654,7 +455,7 @@ void obBlankResourcesLoadedInBank(u8 bank)
             resource_lookup_data_array[i].loaded_bank = '\0';
         }
         if (bank == 4) {
-            resource_lookup_data_array[i].pc_remaining = 0;
+            resource_lookup_data_array[i].poolRemaining = 0;
         }
     }
 }
@@ -697,7 +498,7 @@ int get_index_num_of_named_resource(u8 *resname)
     resource_lookup_data_array[i].unk_11 = '\0';
     file_resource_table[i].hw_address = 0;
     resource_lookup_data_array[i].rom_size = 0;
-    resource_lookup_data_array[i].pc_remaining = 0;
+    resource_lookup_data_array[i].poolRemaining = 0;
     resource_lookup_data_array[i].rom_remaining = 0;
     resource_lookup_data_array[i].loaded_bank = '\0';
     resource_lookup_data_array[i].pc_size = (size + 0xf | 0xf) ^ 0xf;

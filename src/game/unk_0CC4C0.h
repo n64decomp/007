@@ -14,7 +14,7 @@ struct image_sound
     /**
      * Number of items in sfx array.
     */
-    u16 sfx_len;
+    s16 sfx_len;
 
     /**
      * Number of items in thing2 array.

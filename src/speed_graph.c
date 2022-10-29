@@ -141,31 +141,31 @@ void speedGraphVideoRelated_2(void) {
 void profileSetMarker(s32 arg0)
 {
     s32 index;
-    s32 var2;
+    s32 mf;
     OSIntMask mask;
     s32 index2;
     unknown_s *pp;
 
     index = arg0 & 0xFFFF;
     mask = osSetIntMask(OS_IM_NONE);
-    var2 = arg0 >> 16;
+    mf = arg0 >> 16;
     index2 = dword_CODE_bss_800607D0[index];
 
-    if (var2 == 3)
+    if (mf == 3)
     {
         // set highest bit
-        var2 = dword_CODE_bss_8005F3F0[index] | 0x8000;
+        mf = dword_CODE_bss_8005F3F0[index] | 0x8000;
     }
-    else if (var2 == 6)
+    else if (mf == 6)
     {
         // clear highest bit
-        var2 = dword_CODE_bss_8005F3F0[index] & 0x7FFF;
+        mf = dword_CODE_bss_8005F3F0[index] & 0x7FFF;
     }
 
     pp = &dword_CODE_bss_800604B0[index][index2];
-    pp->unk0 = var2;
+    pp->unk0 = mf;
     pp->osCount = osGetCount();
-    dword_CODE_bss_8005F3F0[index] = var2;
+    dword_CODE_bss_8005F3F0[index] = mf;
 
     index2++;
     

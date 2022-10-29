@@ -54,7 +54,7 @@ jobs:
         run: ./extract_diff.e.sh
 
       - name: Make EU 
-        run: make -j IDO_RECOMP=YES VERSION=EU
+        run: make -j IDO_RECOMP=YES VERSION=EU VERBOSE=1
           
       - name: Make report
         run: make -C tools/report

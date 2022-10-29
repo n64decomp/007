@@ -7,13 +7,13 @@ ModelNode player_gait_pos_hdr_2 = {2, &player_gait_pos_2, &player_gait_pos_hdr_1
 //D:8003C5C8
 ModelNode player_gait_pos_hdr_3 = {2, &player_gait_pos_3, &player_gait_pos_hdr_2, 0, 0, 0};
 //D:8003C5E0
-ModelNode_HeaderRecord player_gait_obj = {1, &player_gait_pos_hdr_1, 0, 0, 0, 0};
+ModelRoData_HeaderRecord player_gait_obj = {1, &player_gait_pos_hdr_1, 0, 0, 0, 0};
 //D:8003C5F0
-ModelNode_GroupRecord player_gait_pos_1 = {{0.0, 0.0, 0.0}, 0x0001, 0x0002, 0xFFFF, 0xFFFF, &player_gait_pos_hdr_2, 0};
+ModelRoData_GroupRecord player_gait_pos_1 = {{0.0, 0.0, 0.0}, 0x0001, 0x0002, 0xFFFF, 0xFFFF, &player_gait_pos_hdr_2, 0};
 //D:8003C60C
-ModelNode_GroupRecord player_gait_pos_2 = {{1.177982, 41.14437, 0.0}, 0x0002, 0x0003, 0xFFFF, 0xFFFF, &player_gait_pos_hdr_3, 0};
+ModelRoData_GroupRecord player_gait_pos_2 = {{1.177982, 41.14437, 0.0}, 0x0002, 0x0003, 0xFFFF, 0xFFFF, &player_gait_pos_hdr_3, 0};
 //D:8003C628
-ModelNode_GroupRecord player_gait_pos_3 = {{-2.576027, 480.42902, 0.0}, 0x0003, 0x0000, 0xFFFF, 0xFFFF, NULL, 0};
+ModelRoData_GroupRecord player_gait_pos_3 = {{-2.576027, 480.42902, 0.0}, 0x0003, 0x0000, 0xFFFF, 0xFFFF, NULL, 0};
 
 //FIXME File split likely
 //D:8003C644

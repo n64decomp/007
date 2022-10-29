@@ -4,13 +4,13 @@
 #include <bondtypes.h>
 
 typedef struct s_shattered_window_piece {
-    s32* piece;
+    s32 piece;
     f32 x;
     f32 y;
     f32 z;
     f32 field_0x10;
     f32 field_0x14;
-    s32 field_0x18;
+    f32 field_0x18;
     f32 field_0x1c;
     f32 field_0x20;
     f32 field_0x24;
@@ -50,9 +50,24 @@ typedef struct s_shattered_window_piece {
     u8 field_0x67;
 } s_shattered_window_piece;
 
+typedef struct bondstruct_unk_8007A170 {
+    u32 unk00;
+    s16 unk04;
+    s16 unk06;
+    u32 unk08;
+    u32 unk0C;
+    u32 unk10;
+    u32 unk14;
+    u32 unk18;
+    u32 unk1c;
+    u32 unk20;
+    u32 unk24;
+    u32 unk28;
+} bondstruct_unk_8007A170;
+
 extern s32 SHATTERED_WINDOW_PIECES_BUFFER_LEN;
 extern s_shattered_window_piece* ptr_shattered_window_pieces;
-extern u32 D_80040940;
+extern s32 D_80040940;
 
 extern u32 D_80040980;
 extern u32 D_80040984;
@@ -78,5 +93,6 @@ Gfx *sub_GAME_7F0A3B40(Gfx *gdl, s32 *arg1);
 Gfx * sub_GAME_7F0A3330(Gfx *arg0, void * arg1, s32 arg2);
 void sub_GAME_7F0A2F30(s32 *arg0, s32 arg1, s32 arg2, f32 arg3);
 struct WatchVertex *setup_watch_rectangles(struct WatchVertex *vtx, s32 startx, s32 startz, s32 width, s32 height, s32 horizontal_offset, s32 vertical_offset);
+void sub_GAME_7F0A2160(coord3d * arg0, f32 arg1, f32 arg2);
 
 #endif

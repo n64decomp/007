@@ -3740,15 +3740,1012 @@ float M315             = DegToRad(315.00001);
 u16 * g_DebugOutputVideoBuffer1 = NULL;
 u16 * g_DebugOutputVideoBuffer2 = NULL;
 
-void  deboutSetBuffers(u16 *buffer1, u16 *buffer2)
+void  crashSetBuffers(u16 *buffer1, u16 *buffer2)
 {
     g_DebugOutputVideoBuffer1 = (void*)K0_TO_K1(buffer1);
     g_DebugOutputVideoBuffer2 = (void*)K0_TO_K1(buffer2);
 }
-void deboutSetBuffers2(u16 *buffer1, u16 *buffer2)
+void crashSetBuffers2(u16 *buffer1, u16 *buffer2)
 {
     g_DebugOutputVideoBuffer1 = OS_PHYSICAL_TO_K1(buffer1);
     g_DebugOutputVideoBuffer2 = OS_PHYSICAL_TO_K1(buffer2);
 }
 
 
+extern stagesetup *_load_resource_named_to_membank();
+f32                g_scale_1_0_item_related = 1.0f;
+char              *setup_text_pointers[]    = {
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "UsetupsevbunkerZ",
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "UsetupsiloZ",
+    "UsetupsevbunkerZ",
+    "UsetupstatueZ",
+    "UsetupcontrolZ",
+    "UsetuparchZ",
+    "UsetuptraZ",
+    "UsetupdestZ",
+    "UsetupsevbZ",
+    "UsetupaztZ",
+    "UsetuppeteZ",
+    "UsetupdepoZ",
+    "UsetuprefZ",
+    "UsetupcrypZ",
+    "UsetupdamZ",
+    "UsetuparkZ",
+    "UsetuprunZ",
+    "UsetupsevxZ",
+    "UsetupjunZ",
+    "UsetupdishZ",
+    "UsetupcaveZ",
+    "UsetupcatZ",
+    "UsetupcradZ",
+    "UsetupshoZ",
+    "UsetupsevxbZ",
+    "UsetupeldZ",
+    "UsetupimpZ",
+    "UsetupashZ",
+    "UsetuplueZ",
+    "UsetupameZ",
+    "UsetupritZ",
+    "UsetupoatZ",
+    "UsetupearZ",
+    "UsetupleeZ",
+    "UsetuplipZ",
+    "UsetuplenZ",
+    "UsetupwaxZ",
+    "UsetuppamZ",
+    NULL,
+    NULL};
+char *only_read_by_stageload[64];
+struct ObjectRecord *setupCommandGetObject(s32 stageID, s32 index);
+const char          *tokenFind(s32 index, const char *token);
+
+void                 proplvreset2(s32 stageID)
+{
+    stagesetup          *resource;
+    stagesetup          *phi_a3;
+    stagesetup          *phi_a3_2;
+    stagesetup          *phi_a3_3;
+    AIListRecord        *ailists;
+    AIListRecord        *itementries_1_4;
+    AIListRecord        *temp_v0_9;
+    AIRecord            *bnoobj_4;
+    AIRecord            *phi_v1_3;
+    BoundPadRecord      *boundpads;
+    ChrRecord           *bnoobj_13;
+    ChrRecord           *chr;
+    ItemModelFileRecord *itementries_1;
+    ItemModelFileRecord *nextitementry;
+    ModelNode           *waypoints_10;
+
+    PadRecord           *pad;
+
+    PathRecord          *bnochr_4;
+    PathRecord          *patrolpath;
+    PathRecord          *patrolpaths;
+    PropRecord          *pad_5;
+    ObjectRecord        *prop;
+    PropRecord          *prop_2;
+    PropRecord          *vtextptr1;
+    StandTile           *temp_a0_8;
+    Model               *modal;
+    WeaponObjRecord     *temp_s0_8;
+    WeaponObjRecord     *vtextptr3;
+    WeaponObjRecord     *vtextptr4;
+    char                *vtextptr;
+    char               **ptronly_read_by_stageload;
+    char                *ptrsp174;
+    char                *sp174;
+    char                *textptr;
+    f32                 *temp_a0_6;
+    f32                 *waypoints_9;
+    f32                  ptrsp174_4;
+    f32                  ptrsp174_6;
+    f32                  roompos;
+    f32                  roompos_2;
+    f32                  sp10C;
+    f32                  sp110;
+    f32                  sp114;
+    f32                  sp118;
+    f32                  sp11C;
+    f32                  sp120;
+    f32                  sp150;
+    f32                  sp15C;
+    f32                  spE8;
+    f32                  temp_v0_19;
+    s16                  bnoobj_5;
+    s16                  phi_v1_10;
+    s16                  phi_v1_4;
+    s16                  temp_v0_18;
+    s32                 *itementries_1_5;
+    s32                 *temp_a0_3;
+    s32                 *temp_t9;
+    s32                  bnochr;
+    s32                  bnoobj;
+    s32                  bnoobj_2;
+    s32                  bnoobj_3;
+    s32                  bnoprop;
+    s32                  i;
+    s32                  itementries_1_8;
+    s32                  itementries_1_9;
+    s32                  pad_3;
+    s32                  pad_4;
+    s32                  phi_a1;
+    s32                  phi_s1;
+    s32                  phi_s3;
+    s32                  phi_s3_2;
+    s32                  phi_s3_3;
+    s32                  phi_s3_4;
+    s32                  phi_s4;
+    s32                  phi_s4_2;
+    s32                  phi_s4_3;
+    s32                  phi_v1;
+    s32                  phi_v1_2;
+    s32                  ptrsp174_2;
+    s32                  ptrsp174_3;
+    s32                  ptrsp174_5;
+    s32                  sp74;
+    s32                  sp80;
+    s32                  temp_s0_10;
+    s32                  temp_s0_11;
+    s32                  temp_s0_4;
+    s32                  temp_s0_7;
+    s32                  temp_s0_9;
+    s32                  temp_s3;
+    s32                  temp_s3_10;
+    s32                  temp_s3_11;
+    s32                  temp_s3_12;
+    s32                  temp_s3_13;
+    s32                  temp_s3_14;
+    s32                  temp_s3_15;
+    s32                  temp_s3_16;
+    s32                  temp_s3_17;
+    s32                  temp_s3_18;
+    s32                  temp_s3_19;
+    s32                  temp_s3_20;
+    s32                  temp_s3_2;
+    s32                  temp_s3_3;
+    s32                  temp_s3_4;
+    s32                  temp_s3_5;
+    s32                  temp_s3_6;
+    s32                  temp_s3_7;
+    s32                  temp_s3_8;
+    s32                  temp_s3_9;
+    s32                  temp_s4;
+    s32                  temp_s4_2;
+    s32                  temp_v0_15;
+    s32                  temp_v0_16;
+    ObjectRecord        *vtextptr0;
+    s32                  vtextptr2;
+    s32                  vtextptr5;
+    s32                  vtextptr6;
+    s32                  waypoints_3;
+    s32                  waypoints_4;
+
+    s8                  *itementries_1_6;
+    s8                  *itementries_1_7;
+
+    s8                  *temp_v0_11;
+    s8                  *temp_v0_13;
+    s8                  *waypoints_5;
+    s8                  *waypoints_6;
+    s8                   sp175;
+    u16                  temp_a0_7;
+    u8                  *temp_t2;
+    u8                   propdefType;
+
+    u8                   temp_s0_5;
+    void               **bnoobj_7;
+
+    void               **waypoints_7;
+    void                *bnoobj_10;
+    char                *boundpadnames;
+    char                *padnames;
+
+    void                *path;
+    void                *temp_a0_5;
+    void                *temp_s0_6;
+    void                *temp_t0;
+    waygroup            *itementries_1_3;
+    waygroup            *phi_a0;
+    waygroup            *temp_a0;
+    waygroup            *temp_v0_8;
+    waygroup            *waygroups;
+    waygroup             temp_v0_7;
+    waypoint            *itementries_1_2;
+    waypoint            *pathwaypoint;
+    waypoint            *temp_a0_2;
+    waypoint            *temp_v0_6;
+    waypoint            *waypoints;
+
+    bnochr  = tokenFind(1, "-nochr") == 0;
+    bnoprop = bnochr;
+    if (bnochr)
+    {
+        bnoprop = tokenFind(1, "-noprop") == 0;
+    }
+    
+    bnoobj  = tokenFind(1, "-noobj") == 0;
+    
+    if (bnoobj)
+    {
+        bnoprop = tokenFind(1, "-noprop") == 0;
+    }
+
+    g_scale_1_0_item_related = 1.0f;
+
+    // for each itme
+    itementries_1 = PitemZ_entries;
+    do
+    {
+        nextitementry         = itementries_1 + sizeof(itementries_1);
+        itementries_1->header = NULL;
+        itementries_1         = nextitementry;
+    } while (nextitementry < (PitemZ_entries + 0xFF0));
+
+    textptr = setup_text_pointers[stageID];
+
+    // ptrsp174 = &sp174;
+    // ptronly_read_by_stageload = &only_read_by_stageload;
+    if ((stageID < 0x3B) && textptr)
+    {
+        // struct copy
+        // ptrsp174 = ptronly_read_by_stageload;
+
+        sp175    = 0;
+        sp174    = *vtextptr;
+        phi_s3   = 0;
+        phi_s3_3 = 0;
+        phi_s4_3 = 0;
+        if (getPlayerCount() >= 2)
+        {
+            strcat(ptrsp174, "mp_");
+        }
+        strcat(ptrsp174, *textptr + 1);
+        resource                = _load_resource_named_to_membank(ptrsp174, 1, 0x100, 4);
+        g_ptrStageSetupFile = resource;
+        load_mission_text_bank(get_textbank_number_for_stagenum(stageID));
+        g_CurrentSetup.pathwaypoints  = resource->pathwaypoints;
+        g_CurrentSetup.waypointgroups = resource->waypointgroups;
+        g_CurrentSetup.intro          = resource->intro;
+        g_CurrentSetup.propDefs       = resource->propDefs;
+        g_CurrentSetup.patrolpaths    = resource->patrolpaths;
+        g_CurrentSetup.ailists        = resource->ailists;
+        g_CurrentSetup.pads           = resource->pads;
+        g_CurrentSetup.boundpads      = resource->boundpads;
+        padnames                           = resource->padnames;
+        phi_a3                             = &g_CurrentSetup;
+        phi_a3_3                           = &g_CurrentSetup;
+        if (padnames != 0)
+        {
+            g_CurrentSetup.padnames = resource->padnames;
+        }
+        else
+        {
+            g_CurrentSetup.padnames = NULL;
+        }
+        boundpadnames = resource->boundpadnames;
+        if (boundpadnames != 0)
+        {
+            g_CurrentSetup.boundpadnames = resource->boundpadnames;
+        }
+        else
+        {
+            g_CurrentSetup.boundpadnames = NULL;
+        }
+        waypoints = g_CurrentSetup.pathwaypoints;
+        if (waypoints != 0)
+        {
+            itementries_1_2 = waypoints;
+            phi_v1          = 0;
+            if (waypoints->padID >= 0)
+            {
+                do
+                {
+                    bnoobj_2        = phi_v1 + 0x10;
+                    // itementries_1_2->neighbours += resource;
+                    temp_v0_6       = g_CurrentSetup.pathwaypoints + bnoobj_2;
+                    itementries_1_2 = temp_v0_6;
+                    phi_v1          = bnoobj_2;
+                } while (temp_v0_6->padID >= 0);
+            }
+        }
+        waygroups = g_CurrentSetup.waypointgroups;
+        if (waygroups != 0)
+        {
+            itementries_1_3 = waygroups;
+            phi_v1_2        = 0;
+            if (waygroups->neighbours != 0)
+            {
+                phi_a0 = waygroups->neighbours;
+                do
+                {
+                    // itementries_1_3->neighbours = phi_a0 + resource;
+                    temp_v0_7       = g_CurrentSetup.waypointgroups[phi_v1_2];
+                    bnoobj_3        = phi_v1_2++;
+                    // temp_v0_7->waypoints = temp_v0_7->waypoints;
+                    // temp_v0_8 = g_CurrentSetup.waypointgroups[bnoobj_3];
+                    temp_a0         = temp_v0_8->neighbours;
+                    phi_a0          = temp_a0;
+                    itementries_1_3 = temp_v0_8;
+                    phi_v1_2        = bnoobj_3;
+                } while (temp_a0 != 0);
+            }
+        }
+        ailists = g_CurrentSetup.ailists;
+        if (ailists != 0)
+        {
+            itementries_1_4 = ailists;
+            phi_a1          = 0;
+            if (ailists->ailist != 0)
+            {
+                phi_v1_3 = ailists->ailist;
+                do
+                {
+                    // itementries_1_4->ailist = phi_v1_3 + resource;
+                    waypoints_3     = phi_a1 + 8;
+                    temp_v0_9       = g_CurrentSetup.ailists + waypoints_3;
+                    bnoobj_4        = temp_v0_9->ailist;
+                    phi_v1_3        = bnoobj_4;
+                    itementries_1_4 = temp_v0_9;
+                    phi_a1          = waypoints_3;
+                } while (bnoobj_4 != 0);
+            }
+        }
+        patrolpaths = g_CurrentSetup.patrolpaths;
+        if (patrolpaths != 0)
+        {
+            patrolpath = patrolpaths;
+            i          = 0;
+            if (patrolpaths->waypoints != 0)
+            {
+                pathwaypoint = patrolpaths->waypoints;
+                do
+                {
+                    // patrolpath->pathwaypoints = pathwaypoint + resource;
+                    // path = phi_a3->patrolpaths [i];
+                    //  temp_a0_3 = path->unk0;
+                    itementries_1_5 = temp_a0_3;
+                    phi_v1_4        = 0;
+                    phi_a3_2        = phi_a3;
+                    phi_v1_10       = 0;
+                    if (*temp_a0_3 >= 0)
+                    {
+                        do
+                        {
+                            bnoobj_5 = phi_v1_10 + 1;
+                            itementries_1_5 += 4;
+                            phi_v1_4  = bnoobj_5;
+                            phi_v1_10 = bnoobj_5;
+                        } while (0); // itementries_1_5->unk4 >= 0);
+                        phi_a3_2 = &g_CurrentSetup;
+                    }
+                    // path->unk6 = phi_v1_4;
+
+                    bnochr_4     = phi_a3_2->patrolpaths + waypoints_4;
+                    // temp_a0_2 = bnochr_4->pathwaypoints;
+                    pathwaypoint = temp_a0_2;
+                    patrolpath   = bnochr_4;
+                    phi_a3       = phi_a3_2;
+                    i++;
+                    phi_a3_3 = phi_a3_2;
+                } while (temp_a0_2 != 0);
+            }
+        }
+        if (phi_a3_3->pads != 0)
+        {
+            pad             = g_CurrentSetup.pads;
+            // temp_v0_11 = pad->plink;
+            itementries_1_6 = temp_v0_11;
+            pad             = pad;
+            roompos         = get_room_data_float2();
+            if (temp_v0_11 != 0)
+            {
+                do
+                {
+                    // waypoints_5 = resource + itementries_1_6;
+                    // pad->plink = waypoints_5;
+                    pad->pos.f[0] *= roompos;
+                    pad->pos.f[1] *= roompos;
+                    pad->pos.f[2] *= roompos;
+                    sp15C = roompos;
+                    init_pathtable_something(pad, waypoints_5, pad + 0x28);
+                    // pad = pad->unk50;
+                    itementries_1_6 = pad;
+                    pad += 0x2C;
+                } while (pad != 0);
+            }
+            //sprintf("pad number %d has no stan! (%s)\n",(char *)num);
+            //sprintf("pad number %d changed stan from %s to %s\n",(char *)num);
+        }
+        if (g_CurrentSetup.boundpads != 0)
+        {
+            boundpads       = g_CurrentSetup.boundpads;
+            // temp_v0_13 = boundpads->plink;
+            itementries_1_7 = temp_v0_13;
+            boundpads       = &boundpads;
+            roompos_2       = get_room_data_float2();
+            if (temp_v0_13 != 0)
+            {
+                do
+                {
+                    // waypoints_6 = resource + itementries_1_7;
+                    //  boundpads->plink = waypoints_6;
+                    boundpads->pos.x *= roompos_2;
+                    boundpads->pos.y *= roompos_2;
+                    boundpads->pos.z *= roompos_2;
+                    boundpads->bbox.xmin *= roompos_2;
+                    boundpads->bbox.xmax *= roompos_2;
+                    boundpads->bbox.ymin *= roompos_2;
+                    boundpads->bbox.ymax *= roompos_2;
+                    boundpads->bbox.zmin *= roompos_2;
+                    boundpads->bbox.zmax *= roompos_2;
+                    sp150 = roompos_2;
+                    init_pathtable_something(boundpads, waypoints_6, boundpads + 0x28);
+                    //  boundpads = boundpads->unk68;
+                    itementries_1_7 = boundpads;
+                    boundpads++;
+                } while (boundpads != 0);
+            }
+        }
+        waypoints_7 = g_CurrentSetup.padnames;
+        if (waypoints_7 != 0)
+        {
+            padnames = waypoints_7;
+            i        = 0;
+            if (*waypoints_7 != 0)
+            {
+                padnames = *waypoints_7;
+                do
+                {
+                    // *padnames = padnames + resource;
+
+                    padnames = g_CurrentSetup.padnames[i];
+                    padnames = *padnames;
+                    padnames = padnames;
+                    padnames = padnames;
+                    i++;
+                } while (padnames != 0);
+            }
+        }
+        boundpadnames = g_CurrentSetup.boundpadnames;
+        if (boundpadnames != 0)
+        {
+            temp_t0       = *boundpadnames;
+            boundpadnames = temp_t0;
+            boundpadnames = boundpadnames;
+            i             = 0;
+            if (temp_t0 != 0)
+            {
+                do
+                {
+                    //    *boundpadnames = boundpadnames + resource;
+
+                    bnoobj_7      = g_CurrentSetup.boundpadnames[i];
+                    temp_a0_5     = *bnoobj_7;
+                    boundpadnames = temp_a0_5;
+                    boundpadnames = bnoobj_7;
+                    i++;
+                } while (temp_a0_5 != 0);
+            }
+            //sprintf("vol number %d has no stan! (%s)\n",(char *)num);
+            //sprintf("vol number %d changed stan from %s to %s\n",(char *)num);
+        }
+        if (bnoprop != 0)
+        {
+            alloc_init_GUARDdata_entries(load_proptype(PROPDEF_GUARD, boundpadnames));
+            temp_s4 = load_proptype(PROPDEF_GUARD);
+            phi_s3  = load_proptype(PROPDEF_COLLECTABLE);
+            phi_s3 += load_proptype(PROPDEF_KEY);
+            phi_s3 += load_proptype(PROPDEF_HAT);
+            phi_s4_3 = temp_s4;
+        }
+        else
+        {
+            alloc_init_GUARDdata_entries(0, boundpadnames);
+        }
+        phi_s3_2 = phi_s3;
+        phi_s4   = phi_s4_3;
+        if (bnoprop != 0)
+        {
+            // load std props for all stages
+            phi_s4 += load_proptype(PROPDEF_DOOR);
+            phi_s4 += load_proptype(PROPDEF_CCTV);
+            phi_s4 += load_proptype(PROPDEF_AUTOGUN);
+            phi_s4 += load_proptype(PROPDEF_RACK);
+            phi_s4 += load_proptype(PROPDEF_MONITOR);
+            phi_s4 += load_proptype(PROPDEF_MULTI_MONITOR);
+            phi_s4 += load_proptype(PROPDEF_ARMOUR);
+            phi_s4 += load_proptype(PROPDEF_PROP);
+            phi_s4 += load_proptype(PROPDEF_GLASS);
+            phi_s4 += load_proptype(PROPDEF_TINTED_GLASS);
+            phi_s4 += load_proptype(PROPDEF_SAFE);
+            phi_s4 += load_proptype(PROPDEF_UNK41);
+            phi_s4 += load_proptype(PROPDEF_GAS_RELEASING);
+            phi_s4 += load_proptype(PROPDEF_ALARM);
+            phi_s4 += load_proptype(PROPDEF_MAGAZINE);
+            phi_s4 += load_proptype(PROPDEF_AMMO);
+            phi_s4 += load_proptype(PROPDEF_TINTED_GLASS);
+            phi_s4 += load_proptype(PROPDEF_TANK);
+            phi_s3_2 = phi_s4;
+            phi_s4 += load_proptype(PROPDEF_AIRCRAFT);
+        }
+        sub_GAME_7F005540(phi_s3_2); // without planbe
+        sub_GAME_7F005624(phi_s4);
+        i = 0;
+        if (getPlayerCount() > 0)
+        {
+            do
+            {
+                set_cur_player(i);
+                alloc_additional_item_slots(load_proptype(0xE));
+                i++;
+            } while (i < getPlayerCount());
+        }
+        if (g_CurrentSetup.propDefs != 0)
+        {
+            temp_s4_2 = 1 << (lvlGetSelectedDifficulty() + 4);
+            phi_s4_2  = temp_s4_2;
+            if (getPlayerCount() >= 2)
+            {
+                phi_s4_2 = temp_s4_2 | (1 << (getPlayerCount() + 0x14));
+            }
+            prop        = g_CurrentSetup.propDefs;
+            propdefType = prop->type;
+
+            if (propdefType != PROPDEF_END)
+
+            {
+                do
+                {
+                    switch (propdefType)
+                    {
+                        // switch 1
+                        case PROPDEF_GUARD_ATTRIBUTE: // switch 1
+                        {
+                                     temp_s0_5 = prop->;
+                            ChrRecord *chr = chrFindByLiteralId(((GuardRecord *)prop)->chrnum);
+                            if ((chr != 0) && (chr->prop != 0) && (chr->model != 0))
+                            {
+                                chr->grenadeprob = temp_s0_5;
+                            }
+                            #ifdef DEBUG
+                            else
+                            {
+                                osSyncPrintf("grenade prob: no chr number %d for obj number %d! ", (char *)lVar7);
+                            }
+                            #endif
+                            break;
+                        }
+                        case PROPDEF_GUARD: // switch 1
+                            if (bnoprop != 0)
+                            {
+                                expand_09_characters(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_DOOR: // switch 1
+                            if ((bnoprop != 0) && (prop->flags2 & phi_s4_2) == 0)
+                                {
+                                    setupDoor(stageID, prop, phi_s3_3);
+                                }
+                            break;
+                        case PROPDEF_DOOR_SCALE: // switch 1
+                            g_scale_1_0_item_related = ((GlobalDoorScaleRecord *)prop)->Scale / 65536.0f;
+                            break;
+                        case PROPDEF_COLLECTABLE: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                weaponAssignToHome(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_KEY: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                setupKey(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_HAT: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                setupHat(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_CCTV: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                setupCctv(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_AUTOGUN: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                setupAutogun(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_RACK: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                setupHangingMonitors(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_MONITOR: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                setupSingleMonitor(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_MULTI_MONITOR: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                setupMultiMonitor(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_ARMOUR: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                ((BodyArmourRecord*)prop)->Strength /= 65536.0f;
+                                // prop->unk84 = prop->Strength;
+                                domakedefaultobj(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_TINTED_GLASS: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                if ((prop->flags * 8) < 0)
+                                {
+                                    temp_v0_18 = prop->pad;
+                                    if (temp_v0_18 >= 0x2710)
+                                    {
+                                        BoundPadRecord *temp_s0_6 = &g_CurrentSetup.boundpads[temp_v0_18 - 0x2710];
+                                        TintedGlassRecord *prop      = prop;
+                                        sub_GAME_7F001BD4(temp_s0_6, &sp118);
+                                        temp_a0_6   = &sp118;
+                                        waypoints_9 = &sp10C;
+                                        sp10C       = (temp_s0_6->up.x * 10.0f) + sp118;
+                                        sp110       = (temp_s0_6->up.y * 10.0f) + sp11C;
+                                        sp114       = (temp_s0_6->up.z * 10.0f) + sp120;
+                                        sp118 -= 10.0f * temp_s0_6->up.x;
+                                        sp11C -= 10.0f * temp_s0_6->up.y;
+                                        sp120 -= 10.0f * temp_s0_6->up.z;
+                                        prop->unk8c = sub_GAME_7F0B9E04(temp_a0_6, waypoints_9);
+                                        prop->unk90 = (prop->unk90 / 65536.0f);
+                                    }
+                                }
+                                domakedefaultobj(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_PROP:          // switch 1
+                        case PROPDEF_ALARM:         // switch 1
+                        case PROPDEF_MAGAZINE:      // switch 1
+                        case PROPDEF_GAS_RELEASING: // switch 1
+                        case PROPDEF_UNK41:         // switch 1
+                        case PROPDEF_GLASS:         // switch 1
+                        case PROPDEF_SAFE:          // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                domakedefaultobj(stageID, prop, phi_s3_3);
+                            }
+                            break;
+                        case PROPDEF_AMMO: // switch 1
+                            pad_4 = 1;
+                            if (getPlayerCount() >= 2)
+                            {
+                                // bnoobj_10 = getPtrMPWeaponSetData() + (lastmpweaponnum * 0x18);
+                                //  temp_s0_7 = bnoobj_10->unk10;
+                                //(prop + (bnoobj_10->unkC * 4))->unk7E = temp_s0_7;
+                                pad_4 = temp_s0_7;
+                            }
+                            if ((pad_4 > 0) && (bnoprop != 0))
+                            {
+                                pad_5  = prop;
+                                phi_s1 = 0;
+                                if ((prop->flags2 & phi_s4_2) == 0)
+                                {
+                                    do
+                                    {
+                                        // if (pad_5->unk82 > 0)
+                                        {
+                                            // temp_a0_7 = pad_5->unk80;
+                                            if (temp_a0_7 != 0xFFFF)
+                                            {
+                                                modelLoad(temp_a0_7);
+                                            }
+                                        }
+                                        ptrsp174_2 = phi_s1 + 4;
+                                        pad_5 += 4;
+                                        phi_s1 = ptrsp174_2;
+                                    } while (ptrsp174_2 != 0x34);
+                                    domakedefaultobj(stageID, prop, phi_s3_3);
+                                }
+                            }
+                            break;
+                        case PROPDEF_TANK: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                TankRecord *prop = prop;
+                                PropRecord *prp;
+                                spE8             = 0.0f;
+                                weaponLoadProjectileModels(0x20);
+                                domakedefaultobj(stageID, prop, phi_s3_3);
+                                prop->turret_vertical_angle    = 0.0f;
+                                prop->turret_orientation_angle = 0.0f;
+                                prp                     = prop->prop;
+                                prop->tank_orientation_angle   = M_TAU_F - atan2f(prop->mtx.m[3][3], prop->mtx.m[3][4]);
+                                if (prp != 0)
+                                {
+                                    spE8 = stanGetPositionYValue(prp->stan, prp->pos.x, prp->pos.z);
+                                }
+                                prop->stan_y = spE8;
+                                prop->unkD0  = spE8 / 0.17000002f;
+                            }
+                            break;
+                        case PROPDEF_VEHICHLE: // switch 1
+                            if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))
+                            {
+                                VehichleRecord *prop = prop;
+                                domakedefaultobj(stageID, prop, phi_s3_3);
+                                temp_a0_8 = prop->model;
+                                if (temp_a0_8 != 0)
+                                {
+                                    // waypoints_10 = temp_a0_8->obj->Switches->unk14;
+                                    if (waypoints_10 != 0)
+                                    {
+                                        extract_id_from_object_structure_microcode(temp_a0_8, waypoints_10); // = 1;//( prop->flags & 0x10000000) == 0;
+                                    }
+                                }
+                                prop->speed        = 0.0f;
+                                prop->wheelxrot    = 0.0f;
+                                prop->wheelyrot    = 0.0f;
+                                prop->speedaim     = 0.0f;
+                                prop->turnrot60    = 0.0f;
+                                prop->roty         = 0.0f;
+                                prop->speedtime60  = -1.0f;
+                                prop->ailist       = ailistFindById(prop->ailist);
+                                prop->aioffset     = 0;
+                                prop->aireturnlist = -1;
+                                prop->path         = 0;
+                                prop->nextstep     = 0;
+                                prop->Sound        = 0;
+                            }
+                            break;
+                        case PROPDEF_AIRCRAFT: // switch 1
+                            if ((bnoprop != 0) && 1)
+                                ; //(( prop->flags2 & phi_s4_2) == 0))
+                            {
+                                AircraftRecord *prop = prop;
+                                domakedefaultobj(stageID, prop, phi_s3_3);
+                                prop->speed           = 0.0f;
+                                prop->speedaim        = 0.0f;
+                                prop->rotoryrot       = 0.0f;
+                                prop->rotaryspeed     = 0.0f;
+                                prop->rotaryspeedaim  = 0.0f;
+                                prop->yrot            = 0.0f;
+                                prop->speedtime60     = -1.0f;
+                                prop->rotaryspeedtime = -1.0f;
+                                prop->ailist          = ailistFindById(prop->ailist);
+                                prop->aioffset        = 0;
+                                prop->aireturnlist    = -1;
+                                prop->nextstep        = 0;
+                                prop->path            = 0;
+                                prop->Sound           = 0;
+                            }
+                            break;
+                        case PROPDEF_TAG: // switch 1
+                            vtextptr0    = setupCommandGetObject(stageID, prop->pad + phi_s3_3);
+                            prop->flags2 = vtextptr0;
+                            if (vtextptr0 != 0)
+                            {
+                                vtextptr0->runtime_bitflags |= 0x10;
+                            }
+                            set_parent_cur_tag_entry(prop);
+                            break;
+                        case PROPDEF_RENAME: // switch 1
+                        {
+                            ObjectRecord *pdef = setupCommandGetObject(stageID, prop->obj + phi_s3_3);
+                            // prop->prev = vtextptr1;
+                            if (pdef != 0)
+                            {
+                                pdef->runtime_bitflags |= 0x400;
+                            }
+                            bondinvAddTextOverride(prop);
+                            break;
+                        }
+                        case PROPDEF_WATCH_MENU_OBJECTIVE_TEXT: // switch 1
+                            setup_briefing_text_entry_parent(prop);
+                            break;
+                        case PROPDEF_CAMERAPOS: // switch 1
+                        {
+                            CutsceneRecord *prop = prop;
+                            prop->x /= 100.0f;
+                            prop->y /= 100.0f;
+                            prop->z /= 100.0f;
+                            prop->theta /= 65536.0f;
+                            prop->verta /= 65536.0f;
+                            break;
+                        }
+                        case PROPDEF_OBJECTIVE_START: // switch 1
+                            add_ptr_to_objective(prop);
+                            break;
+                        case PROPDEF_OBJECTIVE_ENTER_ROOM: // switch 1
+                            set_parent_cur_obj_enter_room(prop);
+                            break;
+                        case PROPDEF_OBJECTIVE_DEPOSIT_OBJECT_IN_ROOM: // switch 1
+                            set_parent_cur_obj_deposited_in_room(prop);
+                            break;
+                        case PROPDEF_OBJECTIVE_PHOTOGRAPH: // switch 1
+                            set_parent_cur_obj_photograph(prop);
+                            break;
+                    }
+                    prop += sizepropdef(prop);
+                    propdefType = prop->type;
+
+                    phi_s3_3 += 1;
+                } while (propdefType != PROPDEF_END);
+                prop = g_CurrentSetup.propDefs;
+            }
+            propdefType = prop->type;
+
+            phi_s3_4 = 0;
+            if (propdefType != PROPDEF_END)
+            {
+                do
+                {
+                    switch (propdefType)
+                    {
+                        case PROPDEF_PROP:
+                        case PROPDEF_KEY:
+                        case PROPDEF_MAGAZINE:
+                        case PROPDEF_COLLECTABLE:
+                        case PROPDEF_MONITOR:
+                        case PROPDEF_AMMO:
+                        case PROPDEF_ARMOUR:
+                        case PROPDEF_GAS_RELEASING:
+                        case PROPDEF_UNK41:
+                        case PROPDEF_GLASS:
+                        case PROPDEF_SAFE:
+                        case PROPDEF_TINTED_GLASS:
+                            if ((prop->prop != 0) && ((prop->flags & 0x8000) != 0))
+                            {
+                                vtextptr2 = setupCommandGetObject(stageID, phi_s3_4 + prop->pad);
+                                if ((vtextptr2 != 0) && (vtextptr2->prop != 0))
+                                {
+                                    modal                  = prop->model;
+                                    prop->runtime_bitflags = prop->runtime_bitflags | 0x80000;
+                                    modelSetScale(modal, modal->scale);
+                                    chrpropReparent(prop->prop, vtextptr2->prop);
+                                }
+                              #ifdef DEBUG
+                                else
+                                {
+                                    osSyncPrintf("inobj link not found for object number %d\n");
+                                }
+                                #endif
+                            }
+                            break;
+                        case PROPDEF_LINK:
+                            temp_s0_8 = setupGetPtrToCommandByIndex(prop->chr + phi_s3_4);
+                            vtextptr3 = setupGetPtrToCommandByIndex(prop->flags + phi_s3_4);
+                            if ((temp_s0_8 != 0) && (vtextptr3 != 0) && (temp_s0_8->type == 8) && (vtextptr3->type == 8))
+                            {
+                                propweaponSetDual(temp_s0_8, vtextptr3);
+                            }
+                            #ifdef DEBUG
+                            else if ((temp_s0_8->type != PROPDEF_COLLECTABLE) && (vtextptr3->type != PROPDEF_COLLECTABLE))
+                            {
+                                osSyncPrintf("link type wrong for doublegun object number %d\n");
+                            }
+                            else
+                            {
+                                osSyncPrintf("link not found for doublegun object number %d\n");
+                            }
+                            #endif
+                            break;
+                        case PROPDEF_SWITCH:
+                            ptrsp174_3 = prop->flags;
+                            temp_s0_9  = setupCommandGetObject(stageID, phi_s3_4 + prop->chr);
+                            vtextptr4  = setupGetPtrToCommandByIndex(phi_s3_4 + ptrsp174_3);
+                            if (temp_s0_9 != 0)
+                            {
+                                bnoobj_13 = temp_s0_9->prop;
+                                if ((bnoobj_13 != 0) && (vtextptr4 != 0) && (vtextptr4->type == 1) && (vtextptr4->prop != 0))
+                                {
+                                    prop->chr   = bnoobj_13;
+                                    prop->flags = vtextptr4->prop;
+                                    initSetLevelLoadPropSwitch(prop);
+                                    temp_s0_9->runtime_bitflags |= 1;
+                                }
+                            }
+                            #ifdef DEBUG
+                            else
+                            {
+                                osSyncPrintf("doorlink object number %d not initialised\n");
+                            }
+                            #endif
+                            break;
+                        case PROPDEF_SAFE_ITEM:
+                            ptrsp174_4 = prop->flags;
+                            sp80       = prop->flags2;
+                            temp_s0_10 = setupCommandGetObject(stageID, phi_s3_4 + prop->chr);
+                            ptrsp174_5 = setupCommandGetObject(stageID, phi_s3_4 + ptrsp174_4);
+                            vtextptr5  = setupCommandGetObject(stageID, phi_s3_4 + sp80);
+                            if ((temp_s0_10 != 0) && (temp_s0_10->prop != 0) && (ptrsp174_5 != 0) && (ptrsp174_5->prop != 0) && (ptrsp174_5->type == 0x2B) && (vtextptr5 != 0) && (vtextptr5->prop != 0) && (vtextptr5->type == 1))
+                            {
+                                prop->obj    = temp_s0_10;
+                                prop->flags  = ptrsp174_5;
+                                prop->flags2 = vtextptr5;
+                                sp74         = vtextptr5;
+                                initSetLevelLoadPropSafeItem(prop);
+                                temp_s0_10->flags2 |= 0x400;
+                                sp74->flags2 |= 0x400;
+                            }
+                            #ifdef DEBUG
+                            else
+                            {
+                                osSyncPrintf("safelink object number %d not initialised\n");
+                            }
+                            #endif
+                            break;
+                        case PROPDEF_LOCK_DOOR:
+                            ptrsp174_6 = prop->flags;
+                            temp_s0_11 = setupCommandGetObject(stageID, phi_s3_4 + prop->obj);
+                            vtextptr6  = setupCommandGetObject(stageID, phi_s3_4 + ptrsp174_6);
+                            if ((temp_s0_11 != 0) && (temp_s0_11->prop != 0) && (vtextptr6 != 0) && (vtextptr6->prop != 0) && (temp_s0_11->type == 1))
+                            {
+                                prop->obj   = temp_s0_11;
+                                prop->flags = vtextptr6;
+                                initSetLevelLoadPropLockDoor(prop);
+                                temp_s0_11->runtime_bitflags |= 0x2000;
+                            }
+                            #ifdef DEBUG
+                            else
+                            {
+                                osSyncPrintf("doorlock object number %d not initialised\n");
+                            }
+                            #endif
+                            break;
+                    }
+                    prop        = (sizepropdef(prop) * 4) + prop;
+                    propdefType = prop->type;
+
+                    prop = prop;
+                    phi_s3_4 += 1;
+                } while (propdefType != PROPDEF_END);
+            }
+        }
+    }
+    else
+    {
+        g_CurrentSetup.pathwaypoints  = NULL;
+        g_CurrentSetup.waypointgroups = NULL;
+        g_CurrentSetup.intro          = NULL;
+        g_CurrentSetup.propDefs       = NULL;
+        g_CurrentSetup.patrolpaths    = NULL;
+        g_CurrentSetup.ailists        = NULL;
+        g_CurrentSetup.pads           = NULL;
+        g_CurrentSetup.boundpads      = NULL;
+        g_CurrentSetup.padnames       = NULL;
+        g_CurrentSetup.boundpadnames  = NULL;
+        alloc_init_GUARDdata_entries(0);
+        sub_GAME_7F005540(0);
+        sub_GAME_7F005624(0);
+    }
+    alloc_false_GUARDdata_to_exec_global_action();
+}

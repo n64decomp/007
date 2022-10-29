@@ -8,6 +8,51 @@
 #include "file2.h"
 #include "front.h"
 
+
+
+// bss
+//CODE.bss:80069920
+//CODE.bss:80069980
+//CODE.bss:800699E0
+//CODE.bss:80069A40
+//CODE.bss:80069AA0
+//CODE.bss:80069B00
+save_data saves[6];
+
+//CODE.bss:80069B60
+u32 dword_CODE_bss_80069B60;
+
+//data
+//D:8002C510
+s32 save_selected_bond[] = {0,0,0,0};
+
+//D:8002C520
+save_data D_8002C520 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0};
+//D:8002C580
+// Default Save
+save_data D_8002C580 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0};
+//D:8002C5E0
+save_data D_8002C5E0 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0};
+//D:8002C640
+smallSave blankSmallSave = {0, 0, 0x42};
+
+//D:8002C660
+save_data D_8002C660 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0};
+
+//D:8002C6C0
+save_data D_8002C6C0 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//D:8002C720
+save_data D_8002C720 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//D:8002C780
+save_data D_8002C780 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//D:8002C7E0
+save_data D_8002C7E0 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//D:8002C840
+save_data D_8002C840 = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//D:8002C8A0
+save_data blank_eeprom = {0, 0, 0x80, 0x00, 0xFF, 0xFF, DEFAULT_OPTIONS, 0x00, 0x00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+
 /**
  *
  *
@@ -595,9 +640,9 @@ bool fileIsFolderValid(s32 folder)
  * @param foldernum
  * @param stage
  * @param difficulty
- * @return 0, 1, or 3
+ * @return 0, 1, or 3 (STAGESTATUS_LOCKED, STAGESTATUS_UNLOCKED, STAGESTATUS_COMPLETED)
  */
-s32 fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DIFFICULTY difficulty)
+STAGESTATUS fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DIFFICULTY difficulty)
 {
     save_data* save;
     s32 i;
@@ -612,13 +657,13 @@ s32 fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DI
         {
             if ( fileGetSaveStageCompletedForDifficulty(save, stage, difficulty))
             {
-                return 3; //found on first try, we are last completed stage
+                return STAGESTATUS_COMPLETED; //found on first try, stage has been completed and a time saved.
             }
 
             if ((stage == SP_LEVEL_AZTEC && difficulty < DIFFICULTY_SECRET) ||
                 (stage == SP_LEVEL_EGYPT && difficulty < DIFFICULTY_00))
             {
-                return 0; //we cant possibly have a completed bonus stage below each set dificulty
+                return STAGESTATUS_LOCKED; //we cant possibly have a completed bonus stage below each set dificulty
             }
 
             //still cant find it, do a search (this is probably how a cheat can unlock stages without having to actualy do them all)
@@ -635,7 +680,7 @@ s32 fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DI
                 //if the first uncomplete stage is not less than current
                 if (stage <= istage)
                 {
-                    return 1;
+                    return STAGESTATUS_UNLOCKED;
                 }
             }
 
@@ -646,7 +691,7 @@ s32 fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DI
                 {
                     if ( fileGetSaveStageCompletedForDifficulty(save, stage - 1, i))
                     {
-                        return 1;
+                        return STAGESTATUS_UNLOCKED;
                     }
                 }
             }
@@ -673,7 +718,7 @@ s32 fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DI
 
                     if (difficulty <= i)
                     {
-                        return 1;
+                        return STAGESTATUS_UNLOCKED;
                     }
                 }
             }// difficulty < DIFFICULTY_007
@@ -682,23 +727,23 @@ s32 fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DI
         // no save, current level is dam, its unlocked.
         if (stage == SP_LEVEL_DAM)
         {
-            return 1;
+            return STAGESTATUS_UNLOCKED;
         }
 
         // no save, cheat enabled, its unlocked.
         if (get_debug_enable_agent_levels_flag() && difficulty == DIFFICULTY_AGENT)
         {
-            return 1;
+            return STAGESTATUS_UNLOCKED;
         }
 
         // no save, cheat enabled, its unlocked. (basically a repeat of above)
         if (get_debug_enable_all_levels_flag())
         {
-            return 1;
+            return STAGESTATUS_UNLOCKED;
         }
     }
     // After all that the stage is not unlocked
-    return 0;
+    return STAGESTATUS_LOCKED;
 }
 
 /**
@@ -874,7 +919,7 @@ LEVEL_SOLO_SEQUENCE fileGetHighestStageUnlockedForFolder(s32 foldernum)
             }
         }
     }
-    return 0;
+    return SP_LEVEL_DAM;
 }
 
 /**
@@ -908,9 +953,9 @@ LEVEL_SOLO_SEQUENCE fileGetHighestStageUnlockedAnyFolder(void)
  */
 bool fileIsCradleCompletedForFolder(s32 folder)
 {
-    return ( fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_CRADLE, DIFFICULTY_AGENT) == 3) ||
-            ( fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_CRADLE, DIFFICULTY_SECRET) == 3) ||
-            ( fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_CRADLE, DIFFICULTY_00) == 3);
+    return (fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_CRADLE, DIFFICULTY_AGENT) == STAGESTATUS_COMPLETED) ||
+           (fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_CRADLE, DIFFICULTY_SECRET) == STAGESTATUS_COMPLETED) ||
+           (fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_CRADLE, DIFFICULTY_00) == STAGESTATUS_COMPLETED);
 }
 
 /**
@@ -921,8 +966,8 @@ bool fileIsCradleCompletedForFolder(s32 folder)
  */
 bool fileIsAztecCompletedOnSecretOr00ForFolder(s32 folder)
 {
-    return ( fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_AZTEC, DIFFICULTY_SECRET) == 3) ||
-            ( fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_AZTEC, DIFFICULTY_00) == 3);
+    return (fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_AZTEC, DIFFICULTY_SECRET) == STAGESTATUS_COMPLETED) ||
+           (fileIsStageUnlockedAtDifficulty(folder, SP_LEVEL_AZTEC, DIFFICULTY_00) == STAGESTATUS_COMPLETED);
 }
 
 /**
@@ -933,7 +978,7 @@ bool fileIsAztecCompletedOnSecretOr00ForFolder(s32 folder)
  */
 bool fileIsEgyptCompletedOn00ForFolder(int foldernum)
 {
-    return fileIsStageUnlockedAtDifficulty(foldernum, SP_LEVEL_EGYPT, DIFFICULTY_00) == 3;
+    return fileIsStageUnlockedAtDifficulty(foldernum, SP_LEVEL_EGYPT, DIFFICULTY_00) == STAGESTATUS_COMPLETED;
 }
 
 /**

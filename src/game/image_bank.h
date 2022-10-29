@@ -8,7 +8,13 @@ extern struct sImageTableEntry *crosshairimage;
 
 extern struct sImageTableEntry *mainfolderimages;
 extern struct sImageTableEntry *genericimage;
+extern struct sImageTableEntry *skywaterimages;
 
-void load_prepare_global_image_bank(void);
+extern u8* img_curpos;
+extern s32 img_bitcount;
+
+void texReset(void);
+u32 texReadBits(s32 bitCount);
+void texSetBitstring(s32 pos);
 
 #endif

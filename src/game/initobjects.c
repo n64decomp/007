@@ -221,7 +221,7 @@ void initialize_temp_mine_table(void)
 
     for (i=0; i<30; i++)
     {
-        temp_mine_table[i] = 0;
+        temp_mine_table[i] = NULL;
     }
 }
 

@@ -52,7 +52,7 @@ s32 tokenReadIo(void)
     u32 address;
     s32 debug = FALSE;
     address = 0xFFB000;
-    if (rmonIsDisabled()) {
+    if (rmonGetToken()) {
         g_TokenString[0] = 0;
     } else {
         for (ptr = g_TokenString, end = (g_TokenString + G_TOKEN_STRING_LEN); (ptr != end); ptr++) {

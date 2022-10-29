@@ -7,6 +7,7 @@
 
 void init_menus_or_reset(void)
 {
+    s32 i;
     current_menu = ~MENU_LEGAL_SCREEN;
     maybe_prev_menu = ~MENU_LEGAL_SCREEN;
     screen_size = SCREEN_SIZE_320x240;
@@ -15,9 +16,9 @@ void init_menus_or_reset(void)
     folder_selection_screen_option_icon = 0;
     folder_selected_for_deletion = -1;
     folder_selected_for_deletion_choice = 1;
-    tab_1_highlight = FALSE;
-    tab_2_highlight = FALSE;
-    tab_3_highlight = FALSE;
+    tab_start_highlight = FALSE;
+    tab_next_highlight = FALSE;
+    tab_prev_highlight = FALSE;
     maybe_is_in_menu = TRUE;
 
     if (prev_keypresses)
@@ -35,14 +36,15 @@ void init_menus_or_reset(void)
 #if defined(VERSION_EU)
     ptr_menu_videobuffer = mempAllocBytesInBank(0x55040, 4);
 #else
-    ptr_menu_videobuffer = mempAllocBytesInBank(0x4b040, 4);
+     ptr_menu_videobuffer = mempAllocBytesInBank(0x4b040, 4);
 #endif
+
     ptr_menu_videobuffer = ALIGN64_V1(ptr_menu_videobuffer);
 
-    ptr_folder_object_instance = 0x0;
-    set0_never_used = 0;
-    set0_never_used_0 = 0;
-    D_8002A968 = 0;
+    for (i = 0; i < 4; i++)
+    {
+        walletinst[i] = NULL;
+    }
 
     alloc_intro_matrices();
 }

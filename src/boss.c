@@ -160,7 +160,7 @@ void bossInitMainthreadData(void)
     viInitDebugNoticeList();
     viInitVideoSettings();
     indycommInit();
-    g_DebugAndUpdateStageFlag = rmonIsDisabled();
+    g_DebugAndUpdateStageFlag = rmonGetToken();
     obInitDebugNoticeList();
     rspInitDebugNoticeList();
     dynInitDebugNoticeList();
@@ -477,7 +477,7 @@ void bossMainloop(void)
 #if defined(VERSION_EU)
                             profileSetMarker();
                             speedGraphVideoRelated_2();
-                            speedGraphDisplay(0x20004);
+                            speedGraphDisplay(0x20000);
 #else
                             video_DL_related_4();
                             speedGraphVideoRelated_2();
@@ -500,7 +500,7 @@ void bossMainloop(void)
                                 g_DebugMode = g_DebugHighlightedOption;
 			                } else 
 #endif
-#ifndef DEBUGMEN
+#ifndef DEBUGMENU
                             if (g_BossIsDebugMenuOpen)
 #endif
                             {

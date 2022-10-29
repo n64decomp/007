@@ -1,5 +1,5 @@
-#ifndef _DEBUG_PRINT_H_
-#define _DEBUG_PRINT_H_
+#ifndef _TLB_PAGING_H_
+#define _TLB_PAGING_H_
 
 #include <ultra64.h>
 
@@ -18,9 +18,14 @@ extern void *g_StackPtrs1[STACK_POINTER_COUNT];
 extern void *g_StackPtrs2[STACK_POINTER_COUNT];
 extern void *g_StackPtrs3[STACK_POINTER_COUNT];
 
-void deboutWriteChar(unsigned char c);
-void deboutScrollUp(s32 numlines);
-void deboutInitBuffers();
-void deboutDrawToBuffer(u16 *buffer);
+void crashInit(void);
+void crashMain(void* arg0);
+
+void crashAppendChar(unsigned char c);
+void crashScroll(s32 numlines);
+void crashInitBuffers();
+void crashRenderFrame(u16 *buffer);
+
+
 
 #endif

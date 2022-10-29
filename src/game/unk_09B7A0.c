@@ -400,7 +400,7 @@ glabel sub_GAME_7F09B820
 
 #ifdef NONMATCHING
 void sub_GAME_7F09BAC4(void) {
-    //s32 *extract_id_from_object_structure_microcode(void *, void *); /* extern */
+    //s32 *modelGetNodeRwData(void *, void *); /* extern */
     //void *get_ptr_obj_pos_list_current_entry();         /* extern */
 
     s32 *temp_v0_2;
@@ -429,7 +429,7 @@ loop_4:
                     phi_a1_2 = phi_a1;
                     phi_a1_3 = phi_a1;
                     if ((phi_a1->unk0 & 0xFF) == 0x18) {
-                        temp_v0_2 = extract_id_from_object_structure_microcode(temp_a0, phi_a1);
+                        temp_v0_2 = modelGetNodeRwData(temp_a0, phi_a1);
                         if (arg0 == *temp_v0_2) {
                             *temp_v0_2 = arg1;
                         }
@@ -497,7 +497,7 @@ glabel sub_GAME_7F09BAC4
 /* 0D0654 7F09BB24 304F00FF */  andi  $t7, $v0, 0xff
 /* 0D0658 7F09BB28 55F00009 */  bnel  $t7, $s0, .L7F09BB50
 /* 0D065C 7F09BB2C 8CA20014 */   lw    $v0, 0x14($a1)
-/* 0D0660 7F09BB30 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 0D0660 7F09BB30 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 0D0664 7F09BB34 00000000 */   nop   
 /* 0D0668 7F09BB38 8C580000 */  lw    $t8, ($v0)
 /* 0D066C 7F09BB3C 56780015 */  bnel  $s3, $t8, .L7F09BB94

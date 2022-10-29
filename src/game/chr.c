@@ -151,352 +151,352 @@ f32 g_AiReactionSpeed = 1.0f;
 s32 g_SeenBondRecentlyGuardCount = 0;
 
 struct struck_animation_table D_8002CE54[] = {
-    {0x35C8, 0, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 0, 26.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 0, 23.0, -1.0},
     {0, 0, 0.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002CEE0[] = {
-    {0x35C8, 0, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 0, 26.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 0, 23.0, -1.0},
     {0, 0, 0.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002CF6C[] = {
-    {0x35C8, 0, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 1, 26.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 1, 23.0, -1.0},
-    {0x540C, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_left_leg, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, 0.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D014[] = {
-    {0x33AC, 0, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 0, 23.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 0, 26.0, -1.0},
     {0, 0, 0.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D0A0[] = {
-    {0x33AC, 0, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 0, 23.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 0, 26.0, -1.0},
     {0, 0, 0.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D12C[] = {
-    {0x33AC, 0, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 1, 23.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 1, 26.0, -1.0},
-    {0x540C, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_left_leg, 0, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, 0.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D1D4[] = {
-    {0x30B8, 0, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x30B8, 1, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x31DC, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x31DC, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x32C8, 0, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x32C8, 1, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x384C, 0, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x384C, 1, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x3AF0, 0, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3AF0, 1, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3C10, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3C10, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3D04, 0, -1.0, 0.5, 0, 28.0, -1.0},
-    {0x3D04, 1, -1.0, 0.5, 0, 28.0, -1.0},
-    {0x282C, 0, -1.0, 0.5, 0, 79.0, 415.0},
-    {0x282C, 1, -1.0, 0.5, 0, 79.0, 415.0},
+    {PTR_ANIM_death_forward_face_down, 0, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_face_down, 1, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_spin_face_up, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_forward_spin_face_up, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 0, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 1, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_hard, 0, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_forward_face_down_hard, 1, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_fetal_position_right, 0, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_right, 1, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 0, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 1, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_genitalia, 0, -1.0, 0.5, 0, 79.0, 415.0},
+    {PTR_ANIM_death_genitalia, 1, -1.0, 0.5, 0, 79.0, 415.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D3B0[] = {
-    {0x30B8, 0, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x30B8, 1, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x31DC, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x31DC, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x32C8, 0, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x32C8, 1, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x33AC, 0, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 1, 23.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 1, 23.0, -1.0},
-    {0x35C8, 0, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 1, 26.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 1, 26.0, -1.0},
-    {0x384C, 0, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x384C, 1, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x39C0, 0, -1.0, 0.5, 0, 94.0, 66.0},
-    {0x39C0, 1, -1.0, 0.5, 0, 94.0, 66.0},
-    {0x3AF0, 0, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3AF0, 1, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3C10, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3C10, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3D04, 0, -1.0, 0.5, 0, 28.0, -1.0},
-    {0x3D04, 1, -1.0, 0.5, 0, 28.0, -1.0},
-    {0x2E64, 0, -1.0, 0.5, 0, 87.0, 203.0},
-    {0x2E64, 1, -1.0, 0.5, 0, 87.0, 203.0},
-    {0x51C4, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x51C4, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 0, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_face_down, 1, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_spin_face_up, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_forward_spin_face_up, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 0, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 1, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_hard, 0, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_forward_face_down_hard, 1, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, -1.0, 0.5, 0, 94.0, 66.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, -1.0, 0.5, 0, 94.0, 66.0},
+    {PTR_ANIM_death_fetal_position_right, 0, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_right, 1, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 0, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 1, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_neck, 0, -1.0, 0.5, 0, 87.0, 203.0},
+    {PTR_ANIM_death_neck, 1, -1.0, 0.5, 0, 87.0, 203.0},
+    {PTR_ANIM_death_head, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_head, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D6DC[] = {
-    {0x35C8, 0, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 0, 26.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 0, 23.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D768[] = {
-    {0x35C8, 0, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 0, 26.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 0, 23.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D7F4[] = {
-    {0x35C8, 0, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 1, 26.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 1, 23.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D880[] = {
-    {0x33AC, 0, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 0, 23.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 0, 26.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D90C[] = {
-    {0x33AC, 0, -1.0, 0.5, 0, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 0, 23.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 0, 27.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 0, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 0, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 0, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 0, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 0, 26.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002D998[] = {
-    {0x33AC, 0, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 1, 23.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 1, 26.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002DA24[] = {
-    {0x30B8, 0, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x30B8, 1, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x31DC, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x31DC, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x32C8, 0, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x32C8, 1, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x33AC, 0, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x33AC, 1, -1.0, 0.5, 1, 25.0, -1.0},
-    {0x34D4, 0, -1.0, 0.5, 1, 23.0, -1.0},
-    {0x34D4, 1, -1.0, 0.5, 1, 23.0, -1.0},
-    {0x35C8, 0, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x35C8, 1, -1.0, 0.5, 1, 27.0, -1.0},
-    {0x36D8, 0, -1.0, 0.5, 1, 26.0, -1.0},
-    {0x36D8, 1, -1.0, 0.5, 1, 26.0, -1.0},
-    {0x384C, 0, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x384C, 1, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x39C0, 0, -1.0, 0.5, 0, 94.0, 66.0},
-    {0x39C0, 1, -1.0, 0.5, 0, 94.0, 66.0},
-    {0x3AF0, 0, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3AF0, 1, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3C10, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3C10, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3D04, 0, -1.0, 0.5, 0, 28.0, -1.0},
-    {0x3D04, 1, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 0, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_face_down, 1, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_spin_face_up, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_forward_spin_face_up, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 0, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 1, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 0, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_right, 1, -1.0, 0.5, 1, 25.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 0, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_right, 1, -1.0, 0.5, 1, 23.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 0, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_down_left, 1, -1.0, 0.5, 1, 27.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 0, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_backward_spin_face_up_left, 1, -1.0, 0.5, 1, 26.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_hard, 0, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_forward_face_down_hard, 1, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, -1.0, 0.5, 0, 94.0, 66.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, -1.0, 0.5, 0, 94.0, 66.0},
+    {PTR_ANIM_death_fetal_position_right, 0, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_right, 1, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 0, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 1, -1.0, 0.5, 0, 28.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002DCE0[] = {
-    {0x30B8, 0, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x30B8, 1, -1.0, 0.5, 0, 55.0, 39.0},
-    {0x31DC, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x31DC, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x32C8, 0, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x32C8, 1, -1.0, 0.5, 1, 29.0, -1.0},
-    {0x384C, 0, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x384C, 1, -1.0, 0.5, 0, 97.0, 64.0},
-    {0x39C0, 0, -1.0, 0.5, 0, 94.0, 66.0},
-    {0x39C0, 1, -1.0, 0.5, 0, 94.0, 66.0},
-    {0x3AF0, 0, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3AF0, 1, -1.0, 0.5, 0, 31.0, -1.0},
-    {0x3C10, 0, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3C10, 1, -1.0, 0.5, 0, 36.0, -1.0},
-    {0x3D04, 0, -1.0, 0.5, 0, 28.0, -1.0},
-    {0x3D04, 1, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 0, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_face_down, 1, -1.0, 0.5, 0, 55.0, 39.0},
+    {PTR_ANIM_death_forward_spin_face_up, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_forward_spin_face_up, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 0, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up1, 1, -1.0, 0.5, 1, 29.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_hard, 0, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_forward_face_down_hard, 1, -1.0, 0.5, 0, 97.0, 64.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, -1.0, 0.5, 0, 94.0, 66.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, -1.0, 0.5, 0, 94.0, 66.0},
+    {PTR_ANIM_death_fetal_position_right, 0, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_right, 1, -1.0, 0.5, 0, 31.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 0, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_fetal_position_left, 1, -1.0, 0.5, 0, 36.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 0, -1.0, 0.5, 0, 28.0, -1.0},
+    {PTR_ANIM_death_backward_fall_face_up2, 1, -1.0, 0.5, 0, 28.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002DEBC[] = {
-    {0x2F94, 0, -1.0, 0.5, 0, 67.0, 54.0},
-    {0x2F94, 1, -1.0, 0.5, 0, 67.0, 54.0},
+    {PTR_ANIM_death_stagger_back_to_wall, 0, -1.0, 0.5, 0, 67.0, 54.0},
+    {PTR_ANIM_death_stagger_back_to_wall, 1, -1.0, 0.5, 0, 67.0, 54.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002DF10[] = {
-    {0x1F84, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x2134, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_leg, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_leg, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002DF64[] = {
-    {0x1F84, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x2134, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_leg, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_leg, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002DFB8[] = {
-    {0x1F84, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x2134, 1, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x540C, 1, 20.0, 0.40000001, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_leg, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_leg, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_left_leg, 1, 20.0, 0.40000001, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E028[] = {
-    {0x2134, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1F84, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_leg, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_leg, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E07C[] = {
-    {0x2134, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1F84, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_leg, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_leg, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E0D0[] = {
-    {0x2134, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1F84, 1, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x540C, 0, 20.0, 0.40000001, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_leg, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_leg, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_left_leg, 0, 20.0, 0.40000001, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E140[] = {
-    {0x282C, 0, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x282C, 1, 30.0, 0.5, 0, -1.0, -1.0},
-    {0x39C0, 0, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x39C0, 1, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 0, 15.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 1, 15.0, 0.5, 0, -1.0, -1.0},
-    {0x3AF0, 0, 10.0, 0.25, 0, -1.0, -1.0},
-    {0x3AF0, 1, 10.0, 0.25, 0, -1.0, -1.0},
+    {PTR_ANIM_death_genitalia, 0, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_genitalia, 1, 30.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 0, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 1, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_fetal_position_right, 0, 10.0, 0.25, 0, -1.0, -1.0},
+    {PTR_ANIM_death_fetal_position_right, 1, 10.0, 0.25, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E23C[] = {
-    {0x2E64, 0, 15.0, 0.5, 0, 87.0, 203.0},
-    {0x2E64, 1, 15.0, 0.5, 0, 87.0, 203.0},
-    {0x39C0, 0, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x39C0, 1, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 0, 15.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 1, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_neck, 0, 15.0, 0.5, 0, 87.0, 203.0},
+    {PTR_ANIM_death_neck, 1, 15.0, 0.5, 0, 87.0, 203.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 0, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 1, 15.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E300[] = {
-    {0x1C9C, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1E40, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_hand, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_hand, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E354[] = {
-    {0x1A6C, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1B54, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_arm, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_arm, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E3A8[] = {
-    {0x186C, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1984, 1, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x39C0, 0, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_shoulder, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_shoulder, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, 20.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E418[] = {
-    {0x1E40, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1C9C, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_hand, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_hand, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E46C[] = {
-    {0x1B54, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x1A6C, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_arm, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_arm, 1, -1.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E4C0[] = {
-    {0x1984, 0, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x186C, 1, -1.0, 0.5, 0, -1.0, -1.0},
-    {0x39C0, 1, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_right_shoulder, 0, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_hit_left_shoulder, 1, -1.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, 20.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E530[] = {
-    {0x39C0, 0, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x39C0, 1, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 0, 15.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 1, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 0, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 1, 15.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 struct struck_animation_table D_8002E5BC[] = {
-    {0x39C0, 0, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x39C0, 1, 20.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 0, 15.0, 0.5, 0, -1.0, -1.0},
-    {0x30B8, 1, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 0, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down_soft, 1, 20.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 0, 15.0, 0.5, 0, -1.0, -1.0},
+    {PTR_ANIM_death_forward_face_down, 1, 15.0, 0.5, 0, -1.0, -1.0},
     {0, 0, -1.0, 0.5, 0, -1.0, -1.0}
 };
 
 
 
 struct explosion_death_animation D_8002E648[] = {
-    {0x98C8, 0, 0.5, 9.0, 18.0, 29.0, -1.0},
-    {0x98C8, 1, 0.5, 9.0, 18.0, 29.0, -1.0},
-    {0xA1B8, 0, 0.5, 11.0, 19.0, 31.0, -1.0},
-    {0xA1B8, 1, 0.5, 11.0, 19.0, 31.0, -1.0},
-    {0xA094, 0, 0.5, 6.0, 20.0, 27.0, -1.0},
-    {0xA094, 1, 0.5, 6.0, 20.0, 27.0, -1.0},
-    {0xA424, 0, 0.5, 29.0, 36.0, 48.0, -1.0},
-    {0xA424, 1, 0.5, 29.0, 36.0, 48.0, -1.0},
-    {0xA538, 0, 0.5, 29.0, 38.0, 49.0, -1.0},
-    {0xA538, 1, 0.5, 29.0, 38.0, 49.0, -1.0},
-    {0xA650, 0, 0.5, 19.0, 30.0, 42.0, -1.0},
-    {0xA650, 1, 0.5, 19.0, 30.0, 42.0, -1.0},
-    {0x9A2C, 0, 0.5, 9.0, 21.0, 29.0, 55.0},
-    {0x9A2C, 1, 0.5, 9.0, 21.0, 29.0, 55.0},
-    {0x9D5C, 0, 0.5, 6.0, 18.0, 27.0, -1.0},
-    {0x9D5C, 1, 0.5, 6.0, 18.0, 27.0, -1.0},
-    {0x9E44, 0, 0.5, 6.0, 19.0, 29.0, -1.0},
-    {0x9E44, 1, 0.5, 6.0, 19.0, 29.0, -1.0},
-    {0x9B48, 0, 0.5, 8.0, 14.0, 25.0, -1.0},
-    {0x9B48, 1, 0.5, 8.0, 14.0, 25.0, -1.0},
-    {0x9C4C, 0, 0.5, 8.0, 19.0, 25.0, -1.0},
-    {0x9C4C, 1, 0.5, 8.0, 19.0, 25.0, -1.0},
-    {0x9F48, 0, 0.5, 12.0, 21.0, 29.0, -1.0},
-    {0x9F48, 1, 0.5, 12.0, 21.0, 29.0, -1.0},
-    {0xA2F8, 0, 0.5, 22.0, 30.0, 41.0, -1.0},
-    {0xA2F8, 1, 0.5, 22.0, 30.0, 41.0, -1.0},
+    {PTR_ANIM_death_explosion_forward, 0, 0.5, 9.0, 18.0, 29.0, -1.0},
+    {PTR_ANIM_death_explosion_forward, 1, 0.5, 9.0, 18.0, 29.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_face_down, 0, 0.5, 11.0, 19.0, 31.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_face_down, 1, 0.5, 11.0, 19.0, 31.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_roll, 0, 0.5, 6.0, 20.0, 27.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_roll, 1, 0.5, 6.0, 20.0, 27.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right2, 0, 0.5, 29.0, 36.0, 48.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right2, 1, 0.5, 29.0, 36.0, 48.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right2_alt, 0, 0.5, 29.0, 38.0, 49.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right2_alt, 1, 0.5, 29.0, 38.0, 49.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right3, 0, 0.5, 19.0, 30.0, 42.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right3, 1, 0.5, 19.0, 30.0, 42.0, -1.0},
+    {PTR_ANIM_death_explosion_left1, 0, 0.5, 9.0, 21.0, 29.0, 55.0},
+    {PTR_ANIM_death_explosion_left1, 1, 0.5, 9.0, 21.0, 29.0, 55.0},
+    {PTR_ANIM_death_explosion_right, 0, 0.5, 6.0, 18.0, 27.0, -1.0},
+    {PTR_ANIM_death_explosion_right, 1, 0.5, 6.0, 18.0, 27.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right1, 0, 0.5, 6.0, 19.0, 29.0, -1.0},
+    {PTR_ANIM_death_explosion_forward_right1, 1, 0.5, 6.0, 19.0, 29.0, -1.0},
+    {PTR_ANIM_death_explosion_back_left, 0, 0.5, 8.0, 14.0, 25.0, -1.0},
+    {PTR_ANIM_death_explosion_back_left, 1, 0.5, 8.0, 14.0, 25.0, -1.0},
+    {PTR_ANIM_death_explosion_back1, 0, 0.5, 8.0, 19.0, 25.0, -1.0},
+    {PTR_ANIM_death_explosion_back1, 1, 0.5, 8.0, 19.0, 25.0, -1.0},
+    {PTR_ANIM_death_explosion_back2, 0, 0.5, 12.0, 21.0, 29.0, -1.0},
+    {PTR_ANIM_death_explosion_back2, 1, 0.5, 12.0, 21.0, 29.0, -1.0},
+    {PTR_ANIM_death_explosion_left2, 0, 0.5, 22.0, 30.0, 41.0, -1.0},
+    {PTR_ANIM_death_explosion_left2, 1, 0.5, 22.0, 30.0, 41.0, -1.0},
     {0, 0, 0.5, 0.0, 0.0, 0.0, -1.0},
 };
 
@@ -1791,7 +1791,7 @@ glabel sub_GAME_7F01FC10
 /* 0548F4 7F01FDC4 8FA40038 */  lw    $a0, 0x38($sp)
 /* 0548F8 7F01FDC8 8C880008 */  lw    $t0, 8($a0)
 /* 0548FC 7F01FDCC 8D050000 */  lw    $a1, ($t0)
-/* 054900 7F01FDD0 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 054900 7F01FDD0 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 054904 7F01FDD4 E7AE002C */   swc1  $f14, 0x2c($sp)
 /* 054908 7F01FDD8 8E090014 */  lw    $t1, 0x14($s0)
 /* 05490C 7F01FDDC C60200AC */  lwc1  $f2, 0xac($s0)
@@ -2114,7 +2114,7 @@ glabel sub_GAME_7F01FC10
 /* 0548F4 7F01FDC4 8FA40038 */  lw    $a0, 0x38($sp)
 /* 0548F8 7F01FDC8 8C880008 */  lw    $t0, 8($a0)
 /* 0548FC 7F01FDCC 8D050000 */  lw    $a1, ($t0)
-/* 054900 7F01FDD0 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 054900 7F01FDD0 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 054904 7F01FDD4 E7AE002C */   swc1  $f14, 0x2c($sp)
 /* 054908 7F01FDD8 8E090014 */  lw    $t1, 0x14($s0)
 /* 05490C 7F01FDDC C60200AC */  lwc1  $f2, 0xac($s0)
@@ -2382,7 +2382,7 @@ glabel sub_GAME_7F01FC10
 /* 0548F4 7F01FDC4 8FA40038 */  lw    $a0, 0x38($sp)
 /* 0548F8 7F01FDC8 8C880008 */  lw    $t0, 8($a0)
 /* 0548FC 7F01FDCC 8D050000 */  lw    $a1, ($t0)
-/* 054900 7F01FDD0 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 054900 7F01FDD0 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 054904 7F01FDD4 E7AE002C */   swc1  $f14, 0x2c($sp)
 /* 054908 7F01FDD8 8E090014 */  lw    $t1, 0x14($s0)
 /* 05490C 7F01FDDC C60200AC */  lwc1  $f2, 0xac($s0)
@@ -2634,7 +2634,7 @@ glabel init_GUARDdata_with_set_values
 /* 054CC4 7F020194 3C058003 */  lui   $a1, %hi(animation_rate)
 /* 054CC8 7F020198 8CA5C900 */  lw    $a1, %lo(animation_rate)($a1)
 /* 054CCC 7F02019C 4406A000 */  mfc1  $a2, $f20
-/* 054CD0 7F0201A0 0FC1BFC6 */  jal   sub_GAME_7F06FF18
+/* 054CD0 7F0201A0 0FC1BFC6 */  jal   modelSetAnimRateForDuration
 /* 054CD4 7F0201A4 02402025 */   move  $a0, $s2
 /* 054CD8 7F0201A8 3C028003 */  lui   $v0, %hi(player1_guardID)
 /* 054CDC 7F0201AC 2442CC60 */  addiu $v0, %lo(player1_guardID) # addiu $v0, $v0, -0x33a0
@@ -2843,7 +2843,7 @@ glabel init_GUARDdata_with_set_values
 /* 0529F8 7F020008 46105482 */  mul.s $f18, $f10, $f16
 /* 0529FC 7F02000C 4406A000 */  mfc1  $a2, $f20
 /* 052A00 7F020010 44059000 */  mfc1  $a1, $f18
-/* 052A04 7F020014 0FC1C02E */  jal   sub_GAME_7F06FF18
+/* 052A04 7F020014 0FC1C02E */  jal   modelSetAnimRateForDuration
 /* 052A08 7F020018 00000000 */   nop   
 /* 052A0C 7F02001C 3C028003 */  lui   $v0, %hi(player1_guardID) # $v0, 0x8003
 /* 052A10 7F020020 244281B0 */  addiu $v0, %lo(player1_guardID) # addiu $v0, $v0, -0x7e50
@@ -3160,7 +3160,7 @@ glabel disable_sounds_attached_to_player_then_something
  * Address 0x7F020540 (VERSION_US, VERSION_JP).
  * Address 0x7F0203B4 (VERSION_EU).
  */
-void animation_speed_related(f32 arg0)
+void setAnimationRate(f32 arg0)
 {
     s32 i;
 
@@ -3172,9 +3172,9 @@ void animation_speed_related(f32 arg0)
         {
 #if defined(REFRESH_PAL)
 /* should reference D_80047E4C (1.2f) */
-            sub_GAME_7F06FF18(ptr_guard_data[i].model, animation_rate * 1.2f, 600.0f);
+            modelSetAnimRateForDuration(ptr_guard_data[i].model, animation_rate * 1.2f, 600.0f);
 #else
-            sub_GAME_7F06FF18(ptr_guard_data[i].model, animation_rate, 600.0f);
+            modelSetAnimRateForDuration(ptr_guard_data[i].model, animation_rate, 600.0f);
 #endif
         }
     }
@@ -3183,7 +3183,7 @@ void animation_speed_related(f32 arg0)
 
 
 
-f32 get_animation_rate(void)
+f32 getAnimationRate(void)
 {
   return animation_rate;
 }
@@ -5040,7 +5040,7 @@ glabel sub_GAME_7F020EF0
 /* 056508 7F0219D8 8D050010 */  lw    $a1, 0x10($t0)
 /* 05650C 7F0219DC 10A0000E */  beqz  $a1, .L7F021A18
 /* 056510 7F0219E0 00000000 */   nop   
-/* 056514 7F0219E4 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 056514 7F0219E4 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 056518 7F0219E8 01A02025 */   move  $a0, $t5
 /* 05651C 7F0219EC 8C430000 */  lw    $v1, ($v0)
 /* 056520 7F0219F0 10600009 */  beqz  $v1, .L7F021A18
@@ -5049,7 +5049,7 @@ glabel sub_GAME_7F020EF0
 /* 05652C 7F0219FC 8F050004 */  lw    $a1, 4($t8)
 /* 056530 7F021A00 10A00005 */  beqz  $a1, .L7F021A18
 /* 056534 7F021A04 00000000 */   nop   
-/* 056538 7F021A08 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 056538 7F021A08 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 05653C 7F021A0C 8FA40110 */   lw    $a0, 0x110($sp)
 /* 056540 7F021A10 8FB90108 */  lw    $t9, 0x108($sp)
 /* 056544 7F021A14 AC590000 */  sw    $t9, ($v0)
@@ -5912,7 +5912,7 @@ glabel sub_GAME_7F020EF0
 /* 056830 7F021CC0 8DC50010 */  lw    $a1, 0x10($t6)
 /* 056834 7F021CC4 10A0000E */  beqz  $a1, .Ljp7F021D00
 /* 056838 7F021CC8 00000000 */   nop   
-/* 05683C 7F021CCC 0FC1B363 */  jal   extract_id_from_object_structure_microcode
+/* 05683C 7F021CCC 0FC1B363 */  jal   modelGetNodeRwData
 /* 056840 7F021CD0 03002025 */   move  $a0, $t8
 /* 056844 7F021CD4 8C430000 */  lw    $v1, ($v0)
 /* 056848 7F021CD8 10600009 */  beqz  $v1, .Ljp7F021D00
@@ -5921,7 +5921,7 @@ glabel sub_GAME_7F020EF0
 /* 056854 7F021CE4 8D050004 */  lw    $a1, 4($t0)
 /* 056858 7F021CE8 10A00005 */  beqz  $a1, .Ljp7F021D00
 /* 05685C 7F021CEC 00000000 */   nop   
-/* 056860 7F021CF0 0FC1B363 */  jal   extract_id_from_object_structure_microcode
+/* 056860 7F021CF0 0FC1B363 */  jal   modelGetNodeRwData
 /* 056864 7F021CF4 8FA40110 */   lw    $a0, 0x110($sp)
 /* 056868 7F021CF8 8FAF0108 */  lw    $t7, 0x108($sp)
 /* 05686C 7F021CFC AC4F0000 */  sw    $t7, ($v0)
@@ -6838,7 +6838,7 @@ glabel sub_GAME_7F020EF0
 /* 054390 7F0219A0 8DC50010 */  lw    $a1, 0x10($t6)
 /* 054394 7F0219A4 10A0000E */  beqz  $a1, .L7F0219E0
 /* 054398 7F0219A8 00000000 */   nop   
-/* 05439C 7F0219AC 0FC1B3A3 */  jal   extract_id_from_object_structure_microcode
+/* 05439C 7F0219AC 0FC1B3A3 */  jal   modelGetNodeRwData
 /* 0543A0 7F0219B0 03002025 */   move  $a0, $t8
 /* 0543A4 7F0219B4 8C430000 */  lw    $v1, ($v0)
 /* 0543A8 7F0219B8 10600009 */  beqz  $v1, .L7F0219E0
@@ -6847,7 +6847,7 @@ glabel sub_GAME_7F020EF0
 /* 0543B4 7F0219C4 8D050004 */  lw    $a1, 4($t0)
 /* 0543B8 7F0219C8 10A00005 */  beqz  $a1, .L7F0219E0
 /* 0543BC 7F0219CC 00000000 */   nop   
-/* 0543C0 7F0219D0 0FC1B3A3 */  jal   extract_id_from_object_structure_microcode
+/* 0543C0 7F0219D0 0FC1B3A3 */  jal   modelGetNodeRwData
 /* 0543C4 7F0219D4 8FA40110 */   lw    $a0, 0x110($sp)
 /* 0543C8 7F0219D8 8FAF0108 */  lw    $t7, 0x108($sp)
 /* 0543CC 7F0219DC AC4F0000 */  sw    $t7, ($v0)
@@ -7435,7 +7435,7 @@ glabel sub_GAME_7F0221DC
 /* 056EF0 7F0223C0 12800097 */  beqz  $s4, .L7F022620
 /* 056EF4 7F0223C4 02C02025 */   move  $a0, $s6
 /* 056EF8 7F0223C8 8E900004 */  lw    $s0, 4($s4)
-/* 056EFC 7F0223CC 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 056EFC 7F0223CC 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 056F00 7F0223D0 02802825 */   move  $a1, $s4
 /* 056F04 7F0223D4 0040A025 */  move  $s4, $v0
 /* 056F08 7F0223D8 00008825 */  move  $s1, $zero
@@ -7466,7 +7466,7 @@ glabel sub_GAME_7F0221DC
 /* 056F64 7F022434 1040000A */  beqz  $v0, .L7F022460
 /* 056F68 7F022438 00402825 */   move  $a1, $v0
 /* 056F6C 7F02243C 8C510004 */  lw    $s1, 4($v0)
-/* 056F70 7F022440 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 056F70 7F022440 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 056F74 7F022444 AFA8003C */   sw    $t0, 0x3c($sp)
 /* 056F78 7F022448 8FA8003C */  lw    $t0, 0x3c($sp)
 /* 056F7C 7F02244C 8E0B0010 */  lw    $t3, 0x10($s0)
@@ -7992,9 +7992,9 @@ glabel sub_GAME_7F022980
 /* 0576DC 7F022BAC 10000008 */  b     .L7F022BD0
 /* 0576E0 7F022BB0 8EA30000 */   lw    $v1, ($s5)
 .L7F022BB4:
-/* 0576E4 7F022BB4 3C0C8005 */  lui   $t4, %hi(image_entries)
+/* 0576E4 7F022BB4 3C0C8005 */  lui   $t4, %hi(g_Textures)
 /* 0576E8 7F022BB8 018B6021 */  addu  $t4, $t4, $t3
-/* 0576EC 7F022BBC 918C9300 */  lbu   $t4, %lo(image_entries)($t4)
+/* 0576EC 7F022BBC 918C9300 */  lbu   $t4, %lo(g_Textures)($t4)
 /* 0576F0 7F022BC0 318D000F */  andi  $t5, $t4, 0xf
 /* 0576F4 7F022BC4 000D7080 */  sll   $t6, $t5, 2
 /* 0576F8 7F022BC8 02AE7821 */  addu  $t7, $s5, $t6
@@ -8036,7 +8036,7 @@ glabel sub_GAME_7F022980
 /* 057778 7F022C48 00003025 */   move  $a2, $zero
 /* 05777C 7F022C4C 8622003A */  lh    $v0, 0x3a($s1)
 /* 057780 7F022C50 3C158005 */  lui   $s5, %hi(D_8004E86C)
-/* 057784 7F022C54 3C0C8005 */  lui   $t4, %hi(image_entries)
+/* 057784 7F022C54 3C0C8005 */  lui   $t4, %hi(g_Textures)
 /* 057788 7F022C58 04410004 */  bgez  $v0, .L7F022C6C
 /* 05778C 7F022C5C 000258C0 */   sll   $t3, $v0, 3
 /* 057790 7F022C60 26B5E86C */  addiu $s5, %lo(D_8004E86C) # addiu $s5, $s5, -0x1794
@@ -8044,7 +8044,7 @@ glabel sub_GAME_7F022980
 /* 057798 7F022C68 8EB00000 */   lw    $s0, ($s5)
 .L7F022C6C:
 /* 05779C 7F022C6C 018B6021 */  addu  $t4, $t4, $t3
-/* 0577A0 7F022C70 918C9300 */  lbu   $t4, %lo(image_entries)($t4)
+/* 0577A0 7F022C70 918C9300 */  lbu   $t4, %lo(g_Textures)($t4)
 /* 0577A4 7F022C74 3C158005 */  lui   $s5, %hi(D_8004E86C)
 /* 0577A8 7F022C78 26B5E86C */  addiu $s5, %lo(D_8004E86C) # addiu $s5, $s5, -0x1794
 /* 0577AC 7F022C7C 318D000F */  andi  $t5, $t4, 0xf

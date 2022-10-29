@@ -295,7 +295,7 @@ glabel sub_GAME_7F007F30
 /* 03CBDC 7F0080AC 8C650000 */  lw    $a1, ($v1)
 /* 03CBE0 7F0080B0 50A00008 */  beql  $a1, $zero, .L7F0080D4
 /* 03CBE4 7F0080B4 8C650008 */   lw    $a1, 8($v1)
-/* 03CBE8 7F0080B8 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 03CBE8 7F0080B8 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 03CBEC 7F0080BC 00C02025 */   move  $a0, $a2
 /* 03CBF0 7F0080C0 A4550000 */  sh    $s5, ($v0)
 /* 03CBF4 7F0080C4 8E860000 */  lw    $a2, ($s4)
@@ -305,7 +305,7 @@ glabel sub_GAME_7F007F30
 .L7F0080D4:
 /* 03CC04 7F0080D4 50A00005 */  beql  $a1, $zero, .L7F0080EC
 /* 03CC08 7F0080D8 8FA80128 */   lw    $t0, 0x128($sp)
-/* 03CC0C 7F0080DC 0FC1B1E7 */  jal   extract_id_from_object_structure_microcode
+/* 03CC0C 7F0080DC 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 03CC10 7F0080E0 00C02025 */   move  $a0, $a2
 /* 03CC14 7F0080E4 AC550000 */  sw    $s5, ($v0)
 /* 03CC18 7F0080E8 8FA80128 */  lw    $t0, 0x128($sp)
@@ -547,7 +547,7 @@ glabel sub_GAME_7F007F30
 /* 03AA1C 7F00802C 8C650000 */  lw    $a1, ($v1)
 /* 03AA20 7F008030 50A00008 */  beql  $a1, $zero, .L7F008054
 /* 03AA24 7F008034 8C650008 */   lw    $a1, 8($v1)
-/* 03AA28 7F008038 0FC1B3A3 */  jal   extract_id_from_object_structure_microcode
+/* 03AA28 7F008038 0FC1B3A3 */  jal   modelGetNodeRwData
 /* 03AA2C 7F00803C 00C02025 */   move  $a0, $a2
 /* 03AA30 7F008040 A4550000 */  sh    $s5, ($v0)
 /* 03AA34 7F008044 8E860000 */  lw    $a2, ($s4)
@@ -557,7 +557,7 @@ glabel sub_GAME_7F007F30
 .L7F008054:
 /* 03AA44 7F008054 50A00005 */  beql  $a1, $zero, .L7F00806C
 /* 03AA48 7F008058 8FA80128 */   lw    $t0, 0x128($sp)
-/* 03AA4C 7F00805C 0FC1B3A3 */  jal   extract_id_from_object_structure_microcode
+/* 03AA4C 7F00805C 0FC1B3A3 */  jal   modelGetNodeRwData
 /* 03AA50 7F008060 00C02025 */   move  $a0, $a2
 /* 03AA54 7F008064 AC550000 */  sw    $s5, ($v0)
 /* 03AA58 7F008068 8FA80128 */  lw    $t0, 0x128($sp)
@@ -788,7 +788,7 @@ Gfx *retrieve_display_rareware_logo(Gfx *gdl)
 #endif
 
     D_8002A7D0 = (1 - D_8002A7D0);
-    gSPSegment(gdl++, 2, osVirtualToPhysical(virtualaddress));
+    gSPSegment(gdl++, SPSEGMENT_GETITLE, osVirtualToPhysical(virtualaddress));
     if ((gunbarrel_mode == 0) || (gunbarrel_mode == 1)) {
         s32 var1;
         s32 var2;
@@ -820,7 +820,7 @@ Gfx *retrieve_display_rareware_logo(Gfx *gdl)
     return gdl;
 }
 
-s32 sub_GAME_7F008DD0(void) {
+s32 isGunBarrelInMode2(void) {
     return (gunbarrel_mode == 2);
 }
 
@@ -829,11 +829,11 @@ s32 sub_GAME_7F008DD0(void) {
 void sub_GAME_7F01B0E0(s32, s32);
 extern void *unknown2;
 extern void *unknown2_end;
-void sub_GAME_7F008DE4(u8 **arg0, s32 *arg1) {
-    dword_CODE_bss_8006958C = *arg0;
-    *arg1 -= 0x40400;
-    *arg0 += 0x40400;
-    dword_CODE_bss_80069588 = *arg0;
+void sub_GAME_7F008DE4(u8 **addr, s32 *size) {
+    dword_CODE_bss_8006958C = *addr;
+    *size -= 0x40400;
+    *addr += 0x40400;
+    dword_CODE_bss_80069588 = *addr;
     romCopy(dword_CODE_bss_80069588, &unknown2, ALIGN64_V2(((u32)&unknown2_end - (u32)&unknown2)));
     sub_GAME_7F01B0E0(dword_CODE_bss_80069588, dword_CODE_bss_8006958C);
 }
@@ -985,7 +985,7 @@ glabel sub_GAME_7F008E80
 /* 03DB04 7F008FD4 AD410008 */  sw    $at, 8($t2)
 /* 03DB08 7F008FD8 8FA50060 */  lw    $a1, 0x60($sp)
 /* 03DB0C 7F008FDC 02203025 */  move  $a2, $s1
-/* 03DB10 7F008FE0 0FC32EBD */  jal   sub_GAME_7F0CBAF4
+/* 03DB10 7F008FE0 0FC32EBD */  jal   texInitPool
 /* 03DB14 7F008FE4 27A40040 */   addiu $a0, $sp, 0x40
 /* 03DB18 7F008FE8 8FA60060 */  lw    $a2, 0x60($sp)
 /* 03DB1C 7F008FEC 8FA70064 */  lw    $a3, 0x64($sp)
@@ -1051,7 +1051,7 @@ glabel sub_GAME_7F008E80
 /* 03DC0C 7F0090DC 24050000 */   li    $a1, 0
 /* 03DC10 7F0090E0 8E240000 */  lw    $a0, ($s1)
 /* 03DC14 7F0090E4 3C053F00 */  lui   $a1, 0x3f00
-/* 03DC18 7F0090E8 0FC1BFC6 */  jal   sub_GAME_7F06FF18
+/* 03DC18 7F0090E8 0FC1BFC6 */  jal   modelSetAnimRateForDuration
 /* 03DC1C 7F0090EC 24060000 */   li    $a2, 0
 /* 03DC20 7F0090F0 3C0F8007 */  lui   $t7, %hi(ptr_animation_table) 
 /* 03DC24 7F0090F4 8DEF9538 */  lw    $t7, %lo(ptr_animation_table)($t7)
@@ -1223,7 +1223,7 @@ glabel sub_GAME_7F008E80
 /* 03B944 7F008F54 AD410008 */  sw    $at, 8($t2)
 /* 03B948 7F008F58 8FA50060 */  lw    $a1, 0x60($sp)
 /* 03B94C 7F008F5C 02203025 */  move  $a2, $s1
-/* 03B950 7F008F60 0FC32C05 */  jal   sub_GAME_7F0CBAF4
+/* 03B950 7F008F60 0FC32C05 */  jal   texInitPool
 /* 03B954 7F008F64 27A40040 */   addiu $a0, $sp, 0x40
 /* 03B958 7F008F68 8FA60060 */  lw    $a2, 0x60($sp)
 /* 03B95C 7F008F6C 8FA70064 */  lw    $a3, 0x64($sp)
@@ -1290,7 +1290,7 @@ glabel sub_GAME_7F008E80
 /* 03BA50 7F009060 3C053F19 */  lui   $a1, (0x3F19999A >> 16) # lui $a1, 0x3f19
 /* 03BA54 7F009064 34A5999A */  ori   $a1, (0x3F19999A & 0xFFFF) # ori $a1, $a1, 0x999a
 /* 03BA58 7F009068 8E240000 */  lw    $a0, ($s1)
-/* 03BA5C 7F00906C 0FC1C02E */  jal   sub_GAME_7F06FF18
+/* 03BA5C 7F00906C 0FC1C02E */  jal   modelSetAnimRateForDuration
 /* 03BA60 7F009070 24060000 */   li    $a2, 0
 /* 03BA64 7F009074 3C0F8006 */  lui   $t7, %hi(ptr_animation_table) # $t7, 0x8006
 /* 03BA68 7F009078 8DEF8478 */  lw    $t7, %lo(ptr_animation_table)($t7)
@@ -1379,7 +1379,7 @@ void sub_GAME_7F00920C(void)
 
     if (D_8002A7F8)
     {
-        set_obj_instance_scale_to_zero(D_8002A7F8);
+        clear_model_obj(D_8002A7F8);
     }
 }
 
@@ -1466,7 +1466,10 @@ Gfx *sub_GAME_7F009254(Gfx *gdl) {
             intro_state_blood_animation = die_blood_image_routine(1);
             intro_eye_counter = 2;
         }
-        gdl = sub_GAME_7F01C400(insert_bond_eye_intro(insert_sight_backdrop_eye_intro(insert_sniper_sight_eye_intro(gdl))));
+        gdl = insert_sniper_sight_eye_intro(gdl);
+        gdl = insert_sight_backdrop_eye_intro(gdl);
+        gdl = insert_bond_eye_intro(gdl);
+        gdl = gunbarrelBloodOverlayDL(gdl);
         if (intro_state_blood_animation != 0) {
             gunbarrel_mode++;
             word_CODE_bss_80069584 = 0;
@@ -1479,7 +1482,10 @@ Gfx *sub_GAME_7F009254(Gfx *gdl) {
         word_CODE_bss_80069584 += INCVAL;
         intro_eye_counter++;
         g_TitleX = ((sins(word_CODE_bss_80069584) * 64.0f) / 32768.0f) + dword_CODE_bss_8006957C;
-        gdl = sub_GAME_7F01CA18(insert_bond_eye_intro(insert_sight_backdrop_eye_intro(insert_sniper_sight_eye_intro(gdl))));
+        gdl = insert_sniper_sight_eye_intro(gdl);
+        gdl = insert_sight_backdrop_eye_intro(gdl);
+        gdl = insert_bond_eye_intro(gdl);
+        gdl = sub_GAME_7F01CA18(gdl);
         if (intro_eye_counter >= INTRO_EYE_COUNTER_CASE_4)
         {
             intro_eye_counter = 0;
@@ -1490,7 +1496,10 @@ Gfx *sub_GAME_7F009254(Gfx *gdl) {
     case 5:
         word_CODE_bss_80069584 += INCVAL;
         g_TitleX = ((sins(word_CODE_bss_80069584) * 64.0f) / 32768.0f) + dword_CODE_bss_8006957C;
-        gdl = sub_GAME_7F01CA18(insert_bond_eye_intro(insert_sight_backdrop_eye_intro(insert_sniper_sight_eye_intro(gdl))));
+        gdl = insert_sniper_sight_eye_intro(gdl);
+        gdl = insert_sight_backdrop_eye_intro(gdl);
+        gdl = insert_bond_eye_intro(gdl);
+        gdl = sub_GAME_7F01CA18(gdl);
         
         intro_eye_counter += INTRO_EYE_COUNTER_CASE_5_ADD;
         
@@ -1514,6 +1523,6 @@ Gfx *sub_GAME_7F009254(Gfx *gdl) {
     return gdl;
 }
 
-s32 sub_GAME_7F009744(void) {
+s32 isGunBarrelInMode9(void) {
     return (gunbarrel_mode == 9);
 }

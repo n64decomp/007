@@ -20,7 +20,7 @@ typedef struct s_room_info {
     u8 bitflags1;
     u8 model_bin_loaded;
     u8 bitflags2;
-    void * ptr_point_index;
+    Vtx * ptr_point_index;
     void * ptr_expanded_mapping_info;
     void * ptr_secondary_expanded_mapping_info;
     s32 csize_point_index_binary;
@@ -35,12 +35,8 @@ typedef struct s_room_info {
     u8 room_loaded_mask;
     u8 field_35;
     s16 field_36;
-    f32 minxbounds;
-    f32 minybounds;
-    f32 minzbounds;
-    f32 maxxbounds;
-    f32 maxybounds;
-    f32 maxzbounds;
+    coord3d minbounds;
+    coord3d maxbounds;
 } s_room_info;
 
 typedef struct s_bound_info 
@@ -90,6 +86,22 @@ typedef struct bg_room_data
     coord3d pos;
 } bg_room_data;
 
+typedef struct s_specialportal 
+{
+    u8 levelid;
+    u8 portallist[];
+} s_specialportal;
+
+typedef struct unk_portalstruct 
+{
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10;
+} unk_portalstruct;
+
+extern struct unk_portalstruct table_for_portals[200];
 extern s32 MaxNumRooms;
 extern f32 room_data_float2;
 
@@ -102,7 +114,7 @@ void bgInitDebugNoticeList(void);
 // sub_GAME_7F033B38 requres arg be s32
 s32 sub_GAME_7F0B8FD0(s32 roomA, u8 roomB);
 
-s32 sub_GAME_7F0B4F9C(u8 room); // u8 not s32 for sub_GAME_7F0B2FE0
+//f32 sub_GAME_7F0B4F9C(s32 room); // u8 not s32 for sub_GAME_7F0B2FE0
 u32 bgDecompress(u8* source, u8 *target);
 void sub_GAME_7F0B65C4(s32 roomID);
 void load_bg_file(LEVEL_INDEX stagenum);
@@ -126,5 +138,8 @@ f32 get_room_data_float1(void);
 u8 getROOMID_Bitflags(int roomID);
 s32 bgGet2dBboxByRoomId(s32 room_id, struct bbox2d *result);
 f32 bgGetLevelVisibilityScale(void);
+void sub_GAME_7F0B5CC0(struct bbox2d *a, struct bbox2d *b);
+f32 get_room_data_float2(void);
+
 
 #endif

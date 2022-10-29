@@ -37,5 +37,4 @@ extern s32 animation_table_ptrs1[];
 */
 extern s32 animation_table_ptrs2[];
 
-
 #endif

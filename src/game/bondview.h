@@ -6,6 +6,7 @@
 #include "chr.h"
 #include "matrixmath.h"
 #include "watch.h"
+#include "image.h"
 
 typedef struct invitem_weap
 {
@@ -88,9 +89,10 @@ struct collision434 {
 */
 struct hand
 {
-  s32 weaponnum;
-  s32 weaponnum_watchmenu;
-  s32 previous_weapon;
+  ITEM_IDS weaponnum;
+  ITEM_IDS weaponnum_watchmenu;
+  ITEM_IDS previous_weapon;
+
   s8 weapon_firing_status;
 
   s8 field_87D;
@@ -127,22 +129,7 @@ struct hand
   s32 field_8E0;
   s32 field_8E4;
   s32 field_8E8;
-  s32 field_8EC;
-  s32 field_8F0;
-  s32 field_8F4;
-  s32 field_8F8;
-  s32 field_8FC;
-  s32 field_900;
-  s32 field_904;
-  s32 field_908;
-  s32 field_90C;
-  s32 field_910;
-  s32 field_914;
-  s32 field_918;
-  s32 field_91C;
-  s32 field_920;
-  s32 field_924;
-  s32 field_928;
+  Mtxf field_8EC;
   s32 field_92C;
   s32 field_930;
   s32 field_934;
@@ -162,47 +149,14 @@ struct hand
   s32 field_96C;
   s32 field_970;
   s32 field_974;
-  s32 field_978;
-  s32 field_97C;
-  s32 field_980;
-  s32 field_984;
-  s32 field_988;
-  s32 field_98C;
-  s32 field_990;
-  s32 field_994;
-  s32 field_998;
-  s32 field_99C;
-  s32 field_9A0;
-  s32 field_9A4;
-  s32 field_9A8;
-  s32 field_9AC;
-  s32 field_9B0;
-  s32 field_9B4;
-  s32 field_9B8;
-  s32 field_9BC;
-  s32 field_9C0;
-  s32 field_9C4;
-  s32 field_9C8;
-  s32 field_9CC;
-  s32 field_9D0;
-  s32 field_9D4;
-  s32 field_9D8;
-  s32 field_9DC;
-  s32 field_9E0;
-  s32 field_9E4;
-  s32 field_9E8;
-  s32 field_9EC;
-  s32 field_9F0;
-  s32 field_9F4;
-  s32 field_9F8;
-  s32 field_9FC;
-  s32 field_A00;
-  s32 field_A04;
-  s32 field_A08;
-  f32 field_A0C;
-  s32 field_A10;
-  s32 field_A14;
-  s32 field_A18; // sway state?
+  coord3d blendpos[4];
+  coord3d blendlook[4];
+  coord3d blendup[4];
+  s32 curblendpos;
+  f32 dampt;
+  f32 blendscale;
+  f32 blendscale1;
+  s32 sideflag;
   f32 weapon_theta_displacement;
   f32 weapon_verta_displacement;
   s32 field_A24;
@@ -217,22 +171,12 @@ struct hand
   s32 field_A48;
   s32 field_A4C;
   s32 field_A50;
-  s32 field_A54;
-  s32 field_A58;
-  s32 field_A5C;
-  s32 field_A60;
-  s32 field_A64;
-  s32 field_A68;
-  s32 field_A6C;
-  s32 field_A70;
-  s32 field_A74;
-  s32 field_A78;
-  s32 field_A7C;
-  s32 noise;
-  s32 field_A84;
-  s32 field_A88;
+  ChrRecord_f180 field_A54;
+  f32 noise;
+  f32 field_A84;
+  f32 field_A88;
   s32 field_A8C;
-  s32 field_A90;
+  ObjectRecord* field_A90;
   s32 field_A94;
   s32 field_A98;
   s32 field_A9C;
@@ -270,10 +214,8 @@ struct hand
   s32 field_B4C;
   s32 field_B50;
   s32 field_B54;
-  s32 field_B58;
-  s32 field_B5C;
-  s32 field_B60;
-  s32 field_B64;
+  coord3d field_B58;
+  f32 field_B64;
   s32 field_B68;
   s32 field_B6C;
   s32 field_B70;
@@ -315,9 +257,7 @@ struct hand
   s32 field_C00;
   s32 field_C04;
   s32 field_C08;  
-  s32 item_related1;
-  s32 item_related2;
-  s32 item_related3;
+  coord3d item_related;
 };
 
 typedef struct InvItem {
@@ -601,15 +541,15 @@ struct player
   */
   s32 outside_watch_menu;
   s32 open_close_solo_watch_menu;
-  s32 field_1D4;
-  s32 field_1D8;
-  s32 pause_watch_position;
-  s32 field_1E0;
-  s32 field_1E4;
-  s32 field_1E8;
-  s32 field_1EC;
-  s32 field_1F0;
-  s32 field_1F4;
+  f32 field_1D4;
+  f32 field_1D8;
+  f32 pause_watch_position;
+  f32 field_1E0;
+  f32 field_1E4;
+  f32 field_1E8;
+  f32 field_1EC;
+  f32 field_1F0;
+  f32 field_1F4;
   s32 field_1F8;
   s32 field_1FC;
   /**
@@ -803,9 +743,9 @@ struct player
   struct collision434 previous_collision_info;
   struct collision434 field_488;
 
-  u32 resetheadpos; // bool
-  u32 resetheadrot; // bool
-  u32 resetheadtick; // bool 0x4e4
+  s32 resetheadpos; // bool
+  s32 resetheadrot; // bool
+  s32 resetheadtick; // bool 0x4e4
 
   s32 headanim; // index into array of pointers. Pointers are for animations.
 
@@ -924,81 +864,8 @@ struct player
   s32 field_6C8;
   s32 field_6CC;
 
-  // struct? this gets pointed to. Pointer called "mtxlist" takes address of this property.
-  // bondheadmatrices 0 - 3 
-  s32 field_6D0;
-  s32 field_6D4;
-  s32 field_6D8;
-  s32 field_6DC;
-  
-  f32 field_6E0;
-  f32 field_6E4;
-  f32 field_6E8;
+  Mtxf bondheadmatrices[4];
 
-  s32 field_6EC;
-  
-  f32 field_6F0;
-  f32 field_6F4;
-  f32 field_6F8;
-
-  s32 field_6FC;
-
-
-  f32 field_700;
-  f32 field_704;  // related to standheight
-  f32 field_708;
-
-  s32 field_70C;
-  s32 field_710;
-  s32 field_714;
-  s32 field_718;
-  s32 field_71C;
-  s32 field_720;
-  s32 field_724;
-  s32 field_728;
-  s32 field_72C;
-  s32 field_730;
-  s32 field_734;
-  s32 field_738;
-  s32 field_73C;
-  s32 field_740;
-
-  f32 field_744;
-  f32 field_748;
-
-  s32 field_74C;
-  s32 field_750;
-  s32 field_754;
-  s32 field_758;
-  s32 field_75C;
-  s32 field_760;
-  s32 field_764;
-  s32 field_768;
-  s32 field_76C;
-  s32 field_770;
-  s32 field_774;
-  s32 field_778;
-  s32 field_77C;
-  s32 field_780;
-  s32 field_784;
-  s32 field_788;
-  s32 field_78C;
-  s32 field_790;
-  s32 field_794;
-  s32 field_798;
-  s32 field_79C;
-  s32 field_7A0;
-  s32 field_7A4;
-  s32 field_7A8;
-  s32 field_7AC;
-  s32 field_7B0;
-  s32 field_7B4;
-  s32 field_7B8;
-  s32 field_7BC;
-  s32 field_7C0;
-  s32 field_7C4;
-  s32 field_7C8;
-  s32 field_7CC;
   Vp viewports[2];
 
   /**
@@ -1021,35 +888,16 @@ struct player
    */
   s16 viewtop;
   
-  s32 hand_invisible[2];
-  s32 hand_item[2];
-  u8 *ptr_hand_weapon_buffer[2];
+  s32 hand_invisible[2]; /* 0x7f8*/
+  ITEM_IDS hand_item[2]; /* 0x800 */
+  u8 *ptr_hand_weapon_buffer[2]; /* 0x808 */
   
   /**
    * Offset 0x810.
    */
   ModelFileHeader copy_of_body_obj_header[2];
   
-  s32 field_850;
-  s32 field_854;
-  s32 field_858;
-  s32 field_85C;
-  s32 field_860;
-
-  /**
-   * Offset 0x864.
-   */
-  s32 right_item_related1;
-
-  /**
-   * Offset 0x868.
-   */
-  s32 right_item_related2;
-
-  /**
-   * Offset 0x86c.
-   */
-  s32 right_item_related3;
+  struct texpool item_related[2]; /* 0x850 */
 
   /**
    * Offset 0x870.
@@ -1086,38 +934,20 @@ struct player
   f32 crosshair_x_pos;
   f32 crosshair_y_pos;
   f32 guncrossdamp;
-  f32 field_FFC;
-  f32 field_1000;
+  coord2d field_FFC;
   f32 gun_azimuth_angle;
   f32 gun_azimuth_turning;
   f32 gunaimdamp;
-  f32 field_1010;
-  f32 holds_neg_pi;
-  f32 field_1018;
-  s32 field_101C;
-  s32 field_1020;
-  s32 field_1024;
-  s32 field_1028;
-  s32 field_102C;
-  s32 field_1030;
-  s32 field_1034;
-  s32 field_1038;
-  s32 field_103C;
-  s32 field_1040;
-  s32 field_1044;
-  s32 field_1048;
-  s32 field_104C;
-  s32 field_1050;
-  s32 field_1054;
-  s32 field_1058;
+  coord3d field_1010;
+  Mtxf field_101C;
   s32 last_z_trigger_timer;
   s32 copiedgoldeneye;
   s32 ammodispflags;
   s32 field_1068;
-  f32 field_106C;
-  f32 field_1070;
-  f32 field_1074;
-  s32 field_1078;
+  f32 gunsync;
+  f32 syncchange;
+  f32 synccount;
+  s32 syncoffset;
   f32 field_107C;
   f32 field_1080;
   f32 sniper_zoom;
@@ -1236,10 +1066,10 @@ struct player
   s32 gunsightmode;
   s32 field_112C;
   s32 ammoheldarr[30];
-  u8 *field_11A8;
-  u8 *field_11AC;
-  u8 *field_11B0[2];
-  s32 field_11B8;
+  u8 *bloodImgCur;
+  u8 *bloodImgNxt;
+  u8 *bloodImgBufPtrArray[2];
+  s32 bloodImgIdx;
   f32 zoomintime;
   f32 zoomintimemax;
   f32 zoominfovy;
@@ -1260,9 +1090,9 @@ struct player
   f32 swaytarget;
   f32 field_1278;
   f32 field_127C;
-  s32 field_1280;
+  f32 field_1280;
   s32 players_cur_animation;
-  s32 field_1288;
+  f32 field_1288;
 
   /**
    * This buffers button presses.
@@ -2679,7 +2509,7 @@ struct player
   s32 field_29B4;
 
   // Alt field_29C0 ?? Used in EU.
-  f32 field_29B8;
+  s32 field_29B8;
 
   /**
    * Related to player perspective.
@@ -2696,10 +2526,7 @@ struct player
   s32 deathcount;
   s32 num_suicides;
   s32 field_29E0;
-  s32 last_kill_time;
-  s32 field_29E8;
-  s32 field_29EC;
-  s32 field_29F0;
+  s32 last_kill_time[4];
 
   /**
    * Holds mission offset timer value.
@@ -2721,18 +2548,13 @@ struct player
   f32 field_2A0C;
   s32 ptr_text_first_mp_award;
   s32 ptr_text_second_mp_award;
-  s32 field_2A18;
-  s32 field_2A1C;
-  s32 field_2A20;
-  s32 field_2A24;
-  s32 field_2A28;
-  s32 field_2A2C;
+  coord3d field_2A18[2];
   s32 field_2A30;
   s32 field_2A34;
   s32 cur_item_weapon_getname;
   f32 actual_health;
   f32 actual_armor;
-  s32 field_2A44[2];
+  ITEM_IDS field_2A44[2];
   f32 field_2A4C;
   s32 lock_hand_model[2];
   s32 cur_player_control_type_0;
@@ -2772,6 +2594,52 @@ struct struct_4 {
     float anonymous_2;
     float anonymous_3;
 };
+
+#ifdef BUGFIX_R0
+typedef struct bondstruct_unk_80036634
+{
+    u32 field_0x0;
+    u32 field_0x4;
+    s32 field_0x8;
+    f32 field_0xC;
+    u32 field_0x10;
+    u32 field_0x14;
+    s32 field_0x18;
+    f32 field_0x1c;
+    u32 field_0x20;
+    u32 field_0x24;
+    u32 field_0x28;
+} bondstruct_unk_80036634;
+#else
+typedef struct bondstruct_unk_80036634
+{
+    f32 field_0x0;
+    f32 field_0x4;
+    f32 field_0x8;
+    f32 field_0xC;
+    f32 field_0x10;
+    f32 field_0x14;
+    f32 field_0x18;
+    f32 field_0x1c;
+    u32 field_0x20;
+    u32 field_0x24;
+    u32 field_0x28;
+} bondstruct_unk_80036634;
+#endif
+
+typedef struct bondstruct_unk_80036794 { // time related idk
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+} bondstruct_unk_80036794;
+
+typedef struct bondstruct_unk_80035904 {
+    u32 unk00;
+    coord3d unk04;
+    coord3d unk10;
+    f32 unk1C;
+    f32 unk20;
+} bondstruct_unk_80035904;
 
 //D:80036424
 extern s32 g_bondviewForceDisarm;
@@ -2910,7 +2778,7 @@ D:80036624                     .word 0xFFFFFF00, 0xFFFFFF00, 0x4FFFFFF
 //D:80036630
 extern u32 D_80036630;
 //D:80036634
-extern u32 D_80036634[];
+extern bondstruct_unk_80036634 D_80036634[];
 /*
 D:80036638                     .byte 0
 D:80036639                     .byte 0, 0, 0xA
@@ -3096,12 +2964,6 @@ extern StandTilePoint *dword_CODE_bss_80079DA4;
 #define BSS_80079DA8_LENGTH 8
 extern s32 dword_CODE_bss_80079DA8[];
 
-#ifndef VERSION_EU
-extern char dword_CODE_bss_80079DC8[];
-#else
-extern char dword_CODE_bss_80079DC8[];
-#endif
-
 
 u32 get_camera_mode(void);
 
@@ -3192,7 +3054,7 @@ Mtxf *currentPlayerGetMatrix10EC(void);
 f32 get_curplay_horizontal_rotation_in_degrees(void);
 Mtxf *currentPlayerGetMatrix10CC(void);
 void sub_GAME_7F077EEC(struct coord2d *in, coord3d *out, f32 value);
-s32 sub_GAME_7F078BF4(coord3d *, f32, struct bbox2d *);
+s32 camIsPosInScreenBox(coord3d *, f32, struct bbox2d *);
 
 void bondviewTransformManyPosToViewMatrix(RenderPosView *arg0, s32 arg1);
 s32 sub_GAME_7F078474(void);
@@ -3206,7 +3068,7 @@ void     sub_GAME_7F08A928(int param_1);
 void     sub_GAME_7F08A944(PLAYERFLAG flag);
 void     set_camera_mode(s32 arg0);
 bool     isBondInTank(void);
-void     hudmsgTopShow(s8 *string);
+void     hudmsgTopShow(char* string);
 void     SurroundWithExplosions(int delay);
 s32 check_watch_page_transistion_running(void);
 f32 bondviewWatchAnimationRelated(void);
@@ -3216,4 +3078,8 @@ s32 bondviewGetRandomSpawnPadIndex(void);
 void change_player_pos_to_target(struct collision434* arg0, struct coord3d *arg1, struct StandTile *arg2);
 void sub_GAME_7F089718(f32);
 void sub_GAME_7F08A900(void);
+Mtxf *currentPlayerGetProjectionMatrixF(void);
+int redirect_get_BONDdata_autoaim_x(void);
+void sub_GAME_7F077FF4(coord3d *in, coord3d *out);
+
 #endif

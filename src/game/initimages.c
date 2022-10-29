@@ -1,6 +1,6 @@
 #include <ultra64.h>
 
-extern image_entries;
+extern g_Textures;
 
 #ifdef NONMATCHING
 void image_entries_load(void) {
@@ -11,13 +11,13 @@ void image_entries_load(void) {
     uint         uVar5;
     uint         uVar6;
 
-    piVar1 = image_entries;
+    piVar1 = g_Textures;
     uVar3  = 0;
-    piVar2 = image_entries;
-    if (image_entries[0].size != -1) //this (& 0xFFFFFF) is auto genrated by bitfield
+    piVar2 = g_Textures;
+    if (g_Textures[0].size != -1) //this (& 0xFFFFFF) is auto genrated by bitfield
     {
-        uVar5 = image_entries[0].size;
-        uVar4 = image_entries[0].size;
+        uVar5 = g_Textures[0].size;
+        uVar4 = g_Textures[0].size;
         do
         {
             uVar6 = (uVar3 ^ uVar4) ^ uVar4;
@@ -37,8 +37,8 @@ void image_entries_load(void) {
 GLOBAL_ASM(
 .text
 glabel image_entries_load
-/* 035700 7F000BD0 3C048005 */  lui   $a0, %hi(image_entries)
-/* 035704 7F000BD4 24829300 */  addiu $v0, $a0, %lo(image_entries)
+/* 035700 7F000BD0 3C048005 */  lui   $a0, %hi(g_Textures)
+/* 035704 7F000BD4 24829300 */  addiu $v0, $a0, %lo(g_Textures)
 /* 035708 7F000BD8 8C4E0000 */  lw    $t6, ($v0)
 /* 03570C 7F000BDC 3C0100FF */  lui   $at, (0x00FFFFFF >> 16) # lui $at, 0xff
 /* 035710 7F000BE0 3421FFFF */  ori   $at, (0x00FFFFFF & 0xFFFF) # ori $at, $at, 0xffff
@@ -46,8 +46,8 @@ glabel image_entries_load
 /* 035718 7F000BE8 01C17824 */  and   $t7, $t6, $at
 /* 03571C 7F000BEC 10EF0014 */  beq   $a3, $t7, .L7F000C40
 /* 035720 7F000BF0 00001825 */   move  $v1, $zero
-/* 035724 7F000BF4 3C188005 */  lui   $t8, %hi(image_entries) 
-/* 035728 7F000BF8 27189300 */  addiu $t8, %lo(image_entries) # addiu $t8, $t8, -0x6d00
+/* 035724 7F000BF4 3C188005 */  lui   $t8, %hi(g_Textures) 
+/* 035728 7F000BF8 27189300 */  addiu $t8, %lo(g_Textures) # addiu $t8, $t8, -0x6d00
 /* 03572C 7F000BFC 8F050000 */  lw    $a1, ($t8)
 /* 035730 7F000C00 3C0100FF */  lui   $at, (0x00FFFFFF >> 16) # lui $at, 0xff
 /* 035734 7F000C04 3421FFFF */  ori   $at, (0x00FFFFFF & 0xFFFF) # ori $at, $at, 0xffff

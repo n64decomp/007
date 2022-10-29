@@ -92,7 +92,7 @@ glabel decompressdata
 
 
 
-s32 sub_GAME_7F0CE894(void) {
+s32 rzipGetSomething(void) {
     return (rz_inbuf + rz_inptr);
 }
 

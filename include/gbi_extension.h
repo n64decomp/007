@@ -130,6 +130,62 @@
 	gsSP4Triangles(x1, y1, z1, x2, y2, z2, 0, 0, 0, 0, 0, 0)
 
 
+/**
+ * B1	rsp_tri4
+ * Draws up to four triangles at a time.
+ * Expects values from 0-F, corresponding with # points declared by vertex command.
+ * Triangles with all points set to 0 are not drawn.
+ *
+ * upper word
+ * 0000F000	z4
+ * 00000F00	z3
+ * 000000F0	z2
+ * 0000000F	z1
+ *
+ * lower word
+ * f0000000	y4
+ * 0f000000	x4
+ * 00f00000	y3
+ * 000f0000	x3
+ * 0000f000	y2
+ * 00000f00	x2
+ * 000000f0	y1
+ * 0000000f	x1
+ */
+#define	gDPTri4(pkt, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) \
+{                                          \
+    Gfx *_g = (Gfx *)(pkt);                \
+    _g->words.w0 = (_SHIFTL(G_TRI4, 24, 8) \
+            | _SHIFTL(z4, 12, 4)           \
+            | _SHIFTL(z3, 8, 4)            \
+            | _SHIFTL(z2, 4, 4)            \
+            | _SHIFTL(z1, 0, 4));          \
+    _g->words.w1 = (_SHIFTL(y4, 28, 4)     \
+            | _SHIFTL(x4, 24, 4)           \
+            | _SHIFTL(y3, 20, 4)           \
+            | _SHIFTL(x3, 16, 4)           \
+            | _SHIFTL(y2, 12, 4)           \
+            | _SHIFTL(x2, 8, 4)            \
+            | _SHIFTL(y1, 4, 4)            \
+            | _SHIFTL(x1, 0, 4));          \
+}
+
+#define gDPTri3(pkt, x1, y1, z1, x2, y2, z2, x3, y3, z3) \
+    gDPTri4(pkt, x1, y1, z1, x2, y2, z2, x3, y3, z3, 0, 0, 0)
+
+#define gDPTri2(pkt, x1, y1, z1, x2, y2, z2) \
+    gDPTri4(pkt, x1, y1, z1, x2, y2, z2, 0, 0, 0, 0, 0, 0)
+
+#define gDPTri1(pkt, x1, y1, z1) \
+    gDPTri4(pkt, x1, y1, z1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+#define	gDPLoadTLUT06(pkt, a, b, c, d)				                                        \
+{                                                                                           \
+    Gfx *_g = (Gfx *)pkt;                                                                   \
+    _g->words.w0 = _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL((a), 14, 10) | _SHIFTL((b), 2, 10); \
+    _g->words.w1 = _SHIFTL(0x06, 24, 8) | _SHIFTL((c), 14, 10) | _SHIFTL((d), 2, 10);       \
+}
+
 /*
  * Texturing macro Overrides
  */

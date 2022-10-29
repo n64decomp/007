@@ -12,7 +12,7 @@ ModelNode ModelNode_05000018 = {0x2, ModelNode_GroupRecord_05000060, 0x0, 0x0, 0
 ModelNode ModelNode_05000030 = {0xA, ModelNode_BoundingBoxRecord_0500007c, ModelNode_05000018, 0x0, 0x0, ModelNode_05000048};
 ModelNode ModelNode_05000048 = {0x18, ModelNode_DisplayList_CollisionRecord_05000230, ModelNode_05000030, 0x0, 0x0, 0x0};
 
-ModelNode_GroupRecord ModelNode_GroupRecord_05000060 = 
+ModelRoData_GroupRecord ModelNode_GroupRecord_05000060 = 
 {
     {962.5, 2015.0167, -36.117146},
     0x0, 
@@ -23,7 +23,7 @@ ModelNode_GroupRecord ModelNode_GroupRecord_05000060 =
     304.6402
 };
 
-ModelNode_BoundingBoxRecord ModelNode_BoundingBoxRecord_0500007c = 
+ModelRoData_BoundingBoxRecord ModelNode_BoundingBoxRecord_0500007c = 
 {
     0x1, 
     {-146.0, 146.0, -265.0, 265.0, -36.0, 36.0}
@@ -116,7 +116,7 @@ s16 POINT_USAGE_ARRAY_05000218[VERTEXGROUPCOUNT0] =
     0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 
 };
 
-ModelNode_DisplayList_CollisionRecord ModelNode_DisplayList_CollisionRecord_05000230 = 
+ModelRoData_DisplayList_CollisionRecord ModelNode_DisplayList_CollisionRecord_05000230 = 
 {
     GFX_ARRAY_PRIMARY_05000250, 
     GFX_ARRAY_SECONDARY_050002B0, 

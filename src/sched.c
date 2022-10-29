@@ -3,7 +3,7 @@
 #include "init.h"
 #include "sched.h"
 #include <bondgame.h>
-#include "deb_print.h"
+#include "crash.h"
 #include "fr.h"
 #include "joy.h"
 #include "music.h"
@@ -121,7 +121,7 @@ void CheckDisplayErrorBuffer(u32 *buffer)
 {
 	if ((stderr_permitted && stderr_active) || stderr_enabled )
     {
-		deboutDrawToBuffer(buffer);
+		crashRenderFrame(buffer);
 		currentcount = osGetCount();
 	}
 }
@@ -138,8 +138,8 @@ void CheckDisplayErrorBufferEvery16Frames(u32 framecount)
         {
 			if (userCompareValue < (osGetCount() - currentcount))
             {
-				deboutDrawToBuffer((u16*)cfb_16[0]);
-				deboutDrawToBuffer((u16*)cfb_16[1]);
+				crashRenderFrame((u16*)cfb_16[0]);
+				crashRenderFrame((u16*)cfb_16[1]);
 			}
 		}
 	}

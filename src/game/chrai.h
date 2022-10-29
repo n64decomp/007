@@ -4,7 +4,7 @@
 
 #include <bondtypes.h>
 
-
+#define CHRAI_TICKRATE_F 60.0f
 
 /*
 Stop Scolling:
@@ -316,14 +316,14 @@ struct bss_80073370 {
 
 struct bss_80073DC0 {
     u32 unk00;
-    u32 unk04;
-    u32 unk08;
-    u32 unk0C;
+    f32 unk04;
+    f32 unk08;
+    f32 unk0C;
 
-    u32 unk10;
-    u32 unk14;
-    u32 unk18;
-    u32 unk1C;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
 
     u32 unk20;
     u32 unk24;
@@ -345,7 +345,7 @@ struct bss_80073DC0 {
     u32 unk58;
     u32 unk5C;
 
-    u32 unk60;
+    f32 unk60;
     u32 unk64;
     u32 unk68;
     u32 unk6C;
@@ -358,10 +358,10 @@ struct bss_80073DC0 {
     u32 unk80;
     u32 unk84;
     u32 unk88;
-    u32 unk8C; 
+    f32 unk8C; 
 
     u32 unk90;
-    u32 unk94;
+    f32 unk94;
     u32 unk98;
     u32 unk9C;
 
@@ -375,9 +375,9 @@ struct bss_80073DC0 {
     u32 unkB8;
     u32 unkBC;
 
-    u32 unkC0;
-    u32 unkC4;
-    u32 unkC8;
+    f32 unkC0;
+    f32 unkC4;
+    f32 unkC8;
     u32 unkCC;
 
     u32 unkD0;
@@ -389,6 +389,7 @@ struct bss_80073DC0 {
     u32 unkE4;
     u32 unkE8;
 };
+
 
 struct bss_80075030 {
     s32 unk00;
@@ -449,11 +450,11 @@ extern u32 monAnim2DRandEffectFlash[];
 extern u32 monAnim00Bond[];
 extern u32 monAnim34[];
 extern u32 monAnim35Taser[];
-extern u32 temp_mine_table[30];
+extern WeaponObjRecord* temp_mine_table[30];
 extern f32 gas_damage_flag;
 extern u32 gas_cutoff_flag;
 extern f32 difficulty ;
-extern stagesetup g_chraiCurrentSetup;
+extern stagesetup g_CurrentSetup;
 extern s16 * ptr_list_object_lookup_indices;
 extern PropRecord pos_data_entry[];
 
@@ -478,7 +479,7 @@ extern struct object_animation_controller g_MonitorAnimController;
 extern struct object_animation_controller g_UnknownAnimController;
 extern struct object_animation_controller g_TaserAnimController;
 
-extern CreditsEntry *dword_CODE_bss_80075D28;
+extern stagesetup                        *g_ptrStageSetupFile;
 
 void          alarmDeactivate(void);
 s32           chraiitemsize(u8 *AIList, s32 offset);
@@ -498,7 +499,7 @@ void          chrpropRegisterRooms(PropRecord *posData);
 
 void          chrpropActivate(PropRecord *);
 void          chrpropEnable(PropRecord *);
-void          chrpropActivateThisFrame(Model *);
+void          chrpropActivateThisFrame(PropRecord *);
 void          chrpropReparent(PropRecord *newChild, PropRecord *host);
 AIRecord     *ailistFindById(s32 ID);
 void          chraiGetCollisionBounds(PropRecord *arg0, struct rect4f **arg1, s32 *arg2, f32 *arg3, f32 *arg4);
@@ -512,10 +513,10 @@ PropRecord   *get_ptr_obj_pos_list_current_entry(void);
 void          chraiGetPropRoomIds(PropRecord *self, s32 *roomids);
 void          chrpropFree(PropRecord *prop);
 void          chrpropDisable(PropRecord *prop);
-f32           chrpropBBOXGetXmin(ModelNode_BoundingBoxRecord *modelBoundingBox);
-f32           chrpropBBOXGetYmin(ModelNode_BoundingBoxRecord *modelBoundingBox);
-f32           chrpropBBOXGetYmax(ModelNode_BoundingBoxRecord *modelBoundingBox);
-f32           chrpropBBOXGetZmin(ModelNode_BoundingBoxRecord *modelBoundingBox);
+f32           chrpropBBOXGetXmin(ModelRoData_BoundingBoxRecord *modelBoundingBox);
+f32           chrpropBBOXGetYmin(ModelRoData_BoundingBoxRecord *modelBoundingBox);
+f32           chrpropBBOXGetYmax(ModelRoData_BoundingBoxRecord *modelBoundingBox);
+f32           chrpropBBOXGetZmin(ModelRoData_BoundingBoxRecord *modelBoundingBox);
 ObjectRecord *sub_GAME_7F03FAB0(PadRecord *pad, s32 RoomID);
 void          chraiGetCollisionBounds(PropRecord *arg0, struct rect4f **arg1, s32 *arg2, f32 *arg3, f32 *arg4);
 void chrpropGetCollisionBounds(PropRecord *arg0, f32 *arg1, f32 *arg2, f32 *arg3);

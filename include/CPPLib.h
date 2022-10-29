@@ -579,22 +579,22 @@ HAS_ARGS((      ()))
     COUNTPARAMS((A, B, C, D, E,  F,G,H,I))
 
 #enAdif
-#define LIST_TO_TUPLE(list) \	
-    IF_ELSE(IS_PAREN(list))\	
-    (\	
-        EVAL16((LIST_TO_TUPLE_INNER(SECOND list, FIRST list)))\	
-    )\	
-    (\	
-        list\	
+#define LIST_TO_TUPLE(list) \
+    IF_ELSE(IS_PAREN(list))\
+    (\
+        EVAL16((LIST_TO_TUPLE_INNER(SECOND list, FIRST list)))\
+    )\
+    (\
+        list\
     )	
     	
-#define LIST_TO_TUPLE_INNER(list, listb)        \	
-    IF_ELSE(HAS_ARGS(list))      \	
-    (\	
-        EXPAND(DEFER4(_LIST_TO_TUPLE_INNER)()(TRY_EXPAND((POP_ARG list)), PUSH_ARG(FIRST list, listb)))\	
-    )\	
-    (\	
-        0 listb\	
+#define LIST_TO_TUPLE_INNER(list, listb)        \
+    IF_ELSE(HAS_ARGS(list))      \
+    (\
+        EXPAND(DEFER4(_LIST_TO_TUPLE_INNER)()(TRY_EXPAND((POP_ARG list)), PUSH_ARG(FIRST list, listb)))\
+    )\
+    (\
+        0 listb\
     )	
 #define _LIST_TO_TUPLE_INNER() LIST_TO_TUPLE_INNER	
 // list to tuple	

@@ -330,6 +330,12 @@ typedef enum PROPFLAG2
     PROPFLAG2_80000000                   = 0x80000000  // unknown
 }PROPFLAG2;
 
+typedef enum DOORFLAG
+{
+    DOORFLAG_100                         = 0x00000100,
+    DOORFLAG_CANNOT_ACTIVATE             = 0x02000000,
+    DOORFLAG_KEEPOPEN                    = 0x80000000
+}DOORFLAG;
 
 /* door lock flags*/
 BITFLAG(DOOR_LOCK,
@@ -443,6 +449,10 @@ BITFLAG(RUNTIMEBITFLAG,
 #define QUADRANT_FRONT         0x08
 #define QUADRANT_2NDWPTOTARGET 0x10 // second waypoint on route to target
 #define QUADRANT_20            0x20 // second waypoint on route to target
+
+#define CULLMODE_NONE  1
+#define CULLMODE_FRONT 2
+#define CULLMODE_BACK  3
 
 #pragma endregion
 
@@ -779,7 +789,9 @@ typedef enum CHEAT_IDS
     CHEAT_UNLOCK_AZTEK,
     CHEAT_UNLOCK_EGYPT,
 
-    CHEAT_INVALID
+    CHEAT_INVALID,
+
+    CHEAT_MAX = CHEAT_INVALID+5
 } CHEAT_ID;
 
 //Controller stuff including Rumble Pak are in joy.c
@@ -1199,6 +1211,15 @@ typedef enum MODELNODE_OPCODE
     MODELNODE_OPCODE_MAX
 } MODELNODE_OPCODE;
 
+typedef enum MODELNODE_CHILD
+{
+    MODELNODE_CHILD_NULL,
+    MODELNODE_CHILD_VTX,
+    MODELNODE_CHILD_IMAGE,
+    MODELNODE_CHILD_TRI,
+    MODELNODE_CHILD_MAX
+} MODELNODE_CHILD;
+
 typedef enum MP_STAGE_SELECTED
 {
     MP_STAGE_RANDOM,
@@ -1388,6 +1409,8 @@ typedef enum PLAYER_ID
     PLAYER_3,
     PLAYER_4
 } PLAYER_ID;
+
+#define MAX_PLAYER_COUNT 4
 
 typedef enum RGBA_ENUM
 {
@@ -1949,6 +1972,13 @@ typedef enum SPEED
     SPEED_SPRINT
 } SPEED;
 
+typedef enum STAGESTATUS
+{
+    STAGESTATUS_LOCKED,
+    STAGESTATUS_UNLOCKED,
+    STAGESTATUS_NOTCOMPLETED,
+    STAGESTATUS_COMPLETED
+} STAGESTATUS;
 
 typedef enum TEXTBANK_LEVEL_INDEX
 {
@@ -2020,6 +2050,28 @@ typedef enum WATCH_BRIEFING_PAGE
 } WATCH_BRIEFING_PAGE;
 
 
+typedef enum AWARD {
+
+    AWARD_MOSTSUICIDAL     = 0x00001,
+    AWARD_WHONEEDSAMMO     = 0x00002,
+    AWARD_WHERESTHEARMOR   = 0x00004,
+    AWARD_ACNEGATIVE10     = 0x00008,
+    AWARD_MARKSMANSHIP     = 0x00010,
+    AWARD_MOSTPROFESSIONAL = 0x00020,
+    AWARD_MOSTDEADLY       = 0x00040,
+    AWARD_MOSTHARMLESS     = 0x00080,
+    AWARD_MOSTCOWARDLY     = 0x00100,
+    AWARD_MOSTFRANTIC      = 0x00200,
+    AWARD_MOSTHONORABLE    = 0x00400,
+    AWARD_MOSTDISHONORABLE = 0x00800,
+    AWARD_SHORTESTINNINGS  = 0x01000,
+    AWARD_LONGESTINNINGS   = 0x02000,
+    AWARD_DOUBLEKILL       = 0x04000,
+    AWARD_TRIPLEKILL       = 0x08000,
+    AWARD_QUADKILL         = 0x10000
+} AWARD;
+
+
 typedef enum WAYMODE
 {
     WAYMODE_0,
@@ -2030,6 +2082,20 @@ typedef enum WAYMODE
     WAYMODE_5,
     WAYMODE_MAGIC
 } WAYMODE;
+
+typedef enum SPSEGMENT
+{
+    SPSEGMENT_PHYSICAL   = 0,
+    SPSEGMENT_UNKNOWN    = 1,
+    SPSEGMENT_GETITLE    = 2,
+    SPSEGMENT_MODEL_MTX  = 3,
+    SPSEGMENT_MODEL_VTX  = 4,
+    SPSEGMENT_MODEL_COL1 = 5,
+    SPSEGMENT_MODEL_COL2 = 6,
+    SPSEGMENT_BG_COL     = 13,
+    SPSEGMENT_BG_VTX     = 14,
+    SPSEGMENT_BG_DL      = 15
+} SPSEGMENT;
 
 #pragma region Object Instance Stuff
     typedef enum BODIES
@@ -2959,7 +3025,13 @@ typedef enum WAYMODE
     } VIDEOMODE;
 #pragma endregion
 
- 
+#if !defined(VERSION_EU)
+#define MAXROOMCOUNT    150
+#else
+#define MAXROOMCOUNT    139
+#endif 
+
+
 /* special chr num IDs */
 #define CHR_BOND_CINEMA -8 /* only works when bond has a third person model (intro/exit cutscene) */
 #define CHR_CLONE       -7
@@ -2980,9 +3052,17 @@ typedef enum WAYMODE
 #define OBJECTIVES_MAX           10
 #define MAX_CHRWAYPOINTS         6
 #define MAX_WAYMODE              ((s32)WAYMODE_MAGIC)
+#define MAX_TEXTURES             3001
 #define PROPRECORD_STAN_ROOM_LEN 4
 #define NUMBER_SHOTGUN_BULLETS   5
 
+#ifdef VERSION_EU
+#define NTSC 0
+#define PAL 1
+#else
+#define NTSC 1
+#define PAL 0
+#endif
 
 #pragma endregion
 
@@ -3193,7 +3273,11 @@ typedef enum WAYMODE
 
 #define forever for (;;)
 
+#define ARRAYCOUNT(a) (s32)(sizeof(a) / sizeof(a[0]))
+#define ALIGN8(val)         (((val) + 0x7 | 0x7) ^ 0x7)
+#define RANDOMFRAC() ((f32) randomGetNext() * 2.3283064e-10f)
 
 #pragma endregion
+
 #endif
 

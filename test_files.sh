@@ -16,7 +16,7 @@ usage() {
 }
 
 [ $# -eq 0 ] && usage
-while getopts "i:ch" arg; do
+while getopts "i:chv" arg; do
   case $arg in
     i)
         SRC="${OPTARG}"

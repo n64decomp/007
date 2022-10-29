@@ -54,7 +54,7 @@ jobs:
         run: ./extract_diff.j.sh
 
       - name: Make JP 
-        run: make -j IDO_RECOMP=YES VERSION=JP
+        run: make -j IDO_RECOMP=YES VERSION=JP VERBOSE=1
           
       - name: Make report
         run: make -C tools/report
@@ -64,7 +64,7 @@ jobs:
      
       - name: Upload output files
 
-        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+        uses: dmnemec/copy_file_to_another_repo_action@main
 
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
@@ -75,7 +75,6 @@ jobs:
           destination_repo: 'kholdfuzion/goldeneyestatus'
           user_email: $API_TOKEN_EMAIL
           user_name: $API_TOKEN_USER
-          source_file: |
-            tools/report/JPN.htm
+          source_file: 'tools/report/JPN.htm'
       
 #need way of telling report that JP passed/failed

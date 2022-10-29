@@ -215,25 +215,29 @@ void debmenu7000AF84(s32 x1, s32 y1, s32 x2, s32 y2) {
 #endif
 
 #ifdef NONMATCHING
-s32 debmenu7000AF98(s32 height) {
-    s32 x;
-    s32 y;
-    s32 ret;
-    for (y = 33; y > 0; y--) {
-        s32 y2 = (y + height);
-        if (y2 >= 0 && y2 < 35) {
-            for (x = 0; x < 80; x++) {
-                debmenu7000AF84(x, y2, x, y);
+#ifndef LEFTOVERDEBUG
+void debmenu7000AF98(s32 height)
+{
+    s32 x; s32 y;
+
+    for (y = 33, height = height + 33;  y != 0; y--, height--)
+    {
+        if ((height >= 0) && (height < 35)) {
+            for ( x = 0; x != 80; x++)
+            {
+                debmenu7000AF84(x, height, x, y);
             }
-        } else {            
-            for (x = 0; x < 80; x++) {
-                debmenuWriteCharAtPos(x, y, '\0');
+            
+        } else {
+            for (x = 0; x != 80; x++)
+            {
+                debmenuWriteCharAtPos(x, y, 0);
             }
+            
         }
-        ret = y;
     }
-    return ret;
 }
+#endif
 #else
 #ifndef LEFTOVERDEBUG
 s32 debmenu7000AF98(s32 height) {

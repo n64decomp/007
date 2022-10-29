@@ -383,7 +383,7 @@ void lvlStageLoad(s32 stage)
     set_contents_of_80036078(1);
     set_mt_tex_alloc();
     sub_GAME_7F0A47D4();
-    load_prepare_global_image_bank();
+    texReset();
     load_font_tables();
 
     /* If title screen, initialize screen and folder setup. 
@@ -418,7 +418,7 @@ void lvlStageLoad(s32 stage)
         }
 
         load_bg_file(g_CurrentStageToLoad);
-        store_stagenum_to_copyof_stagenum(g_CurrentStageToLoad);
+        skySetStageNum(g_CurrentStageToLoad);
         init_watch_at_start_of_stage();
         sub_GAME_7F0C11FC(stage);
 
@@ -509,7 +509,7 @@ void lvlStageLoad(s32 stage)
         s32 s0;
         
         init_path_table_links();
-        something_with_ejected_cartridges();
+        init_ejected_cartridges();
 
         for (s0 = 0; s0 < getPlayerCount(); s0++)
         {
@@ -599,7 +599,7 @@ glabel lvlStageLoad
 /* 0F26C4 7F0BDB94 00000000 */   nop
 /* 0F26C8 7F0BDB98 0FC291F5 */  jal   sub_GAME_7F0A47D4
 /* 0F26CC 7F0BDB9C 00000000 */   nop
-/* 0F26D0 7F0BDBA0 0FC32FEC */  jal   load_prepare_global_image_bank
+/* 0F26D0 7F0BDBA0 0FC32FEC */  jal   texReset
 /* 0F26D4 7F0BDBA4 00000000 */   nop
 /* 0F26D8 7F0BDBA8 0FC2B2EB */  jal   load_font_tables
 /* 0F26DC 7F0BDBAC 00000000 */   nop
@@ -652,7 +652,7 @@ glabel lvlStageLoad
 /* 0F2788 7F0BDC58 0FC2D049 */  jal   load_bg_file
 /* 0F278C 7F0BDC5C 00000000 */   nop
 /* 0F2790 7F0BDC60 3C048005 */  lui   $a0, %hi(g_CurrentStageToLoad)
-/* 0F2794 7F0BDC64 0FC2510B */  jal   store_stagenum_to_copyof_stagenum
+/* 0F2794 7F0BDC64 0FC2510B */  jal   skySetStageNum
 /* 0F2798 7F0BDC68 8C848364 */   lw    $a0, %lo(g_CurrentStageToLoad)($a0)
 /* 0F279C 7F0BDC6C 0FC2921A */  jal   init_watch_at_start_of_stage
 /* 0F27A0 7F0BDC70 00000000 */   nop
@@ -778,7 +778,7 @@ glabel lvlStageLoad
 .L7F0BDE34:
 /* 0F2964 7F0BDE34 0FC01A24 */  jal   init_path_table_links
 /* 0F2968 7F0BDE38 00000000 */   nop
-/* 0F296C 7F0BDE3C 0FC01410 */  jal   something_with_ejected_cartridges
+/* 0F296C 7F0BDE3C 0FC01410 */  jal   init_ejected_cartridges
 /* 0F2970 7F0BDE40 00000000 */   nop
 /* 0F2974 7F0BDE44 0FC26919 */  jal   getPlayerCount
 /* 0F2978 7F0BDE48 00008025 */   move  $s0, $zero
@@ -904,7 +904,7 @@ glabel lvlStageLoad
 /* 0F32C4 7F0BE754 00000000 */   nop
 /* 0F32C8 7F0BE758 0FC294DD */  jal   sub_GAME_7F0A47D4
 /* 0F32CC 7F0BE75C 00000000 */   nop
-/* 0F32D0 7F0BE760 0FC33324 */  jal   load_prepare_global_image_bank
+/* 0F32D0 7F0BE760 0FC33324 */  jal   texReset
 /* 0F32D4 7F0BE764 00000000 */   nop
 /* 0F32D8 7F0BE768 0FC2B5D7 */  jal   load_font_tables
 /* 0F32DC 7F0BE76C 00000000 */   nop
@@ -957,7 +957,7 @@ glabel lvlStageLoad
 /* 0F3388 7F0BE818 0FC2D335 */  jal   load_bg_file
 /* 0F338C 7F0BE81C 00000000 */   nop
 /* 0F3390 7F0BE820 3C048005 */  lui   $a0, %hi(g_CurrentStageToLoad) # $a0, 0x8005
-/* 0F3394 7F0BE824 0FC253F3 */  jal   store_stagenum_to_copyof_stagenum
+/* 0F3394 7F0BE824 0FC253F3 */  jal   skySetStageNum
 /* 0F3398 7F0BE828 8C848394 */   lw    $a0, %lo(g_CurrentStageToLoad)($a0)
 /* 0F339C 7F0BE82C 0FC29502 */  jal   init_watch_at_start_of_stage
 /* 0F33A0 7F0BE830 00000000 */   nop
@@ -1083,7 +1083,7 @@ glabel lvlStageLoad
 .Ljp7F0BE9F4:
 /* 0F3564 7F0BE9F4 0FC01A2C */  jal   init_path_table_links
 /* 0F3568 7F0BE9F8 00000000 */   nop
-/* 0F356C 7F0BE9FC 0FC01418 */  jal   something_with_ejected_cartridges
+/* 0F356C 7F0BE9FC 0FC01418 */  jal   init_ejected_cartridges
 /* 0F3570 7F0BEA00 00000000 */   nop
 /* 0F3574 7F0BEA04 0FC26C01 */  jal   getPlayerCount
 /* 0F3578 7F0BEA08 00008025 */   move  $s0, $zero
@@ -1226,7 +1226,7 @@ glabel lvlStageLoad
 /* 0EF944 7F0BCF54 00000000 */   nop   
 /* 0EF948 7F0BCF58 0FC28EC6 */  jal   sub_GAME_7F0A45D8
 /* 0EF94C 7F0BCF5C 00000000 */   nop   
-/* 0EF950 7F0BCF60 0FC32D34 */  jal   load_prepare_global_image_bank
+/* 0EF950 7F0BCF60 0FC32D34 */  jal   texReset
 /* 0EF954 7F0BCF64 00000000 */   nop   
 /* 0EF958 7F0BCF68 0FC2AF9B */  jal   load_font_tables
 /* 0EF95C 7F0BCF6C 00000000 */   nop   
@@ -1279,7 +1279,7 @@ glabel lvlStageLoad
 /* 0EFA08 7F0BD018 0FC2CD18 */  jal   load_bg_file
 /* 0EFA0C 7F0BD01C 00000000 */   nop   
 /* 0EFA10 7F0BD020 3C048004 */  lui   $a0, %hi(g_CurrentStageToLoad) # $a0, 0x8004
-/* 0EFA14 7F0BD024 0FC24E5B */  jal   store_stagenum_to_copyof_stagenum
+/* 0EFA14 7F0BD024 0FC24E5B */  jal   skySetStageNum
 /* 0EFA18 7F0BD028 8C840FE4 */   lw    $a0, %lo(g_CurrentStageToLoad)($a0)
 /* 0EFA1C 7F0BD02C 0FC28EE2 */  jal   init_watch_at_start_of_stage
 /* 0EFA20 7F0BD030 00000000 */   nop   
@@ -1405,7 +1405,7 @@ glabel lvlStageLoad
 .L7F0BD1F4:
 /* 0EFBE4 7F0BD1F4 0FC01A04 */  jal   init_path_table_links
 /* 0EFBE8 7F0BD1F8 00000000 */   nop   
-/* 0EFBEC 7F0BD1FC 0FC013F8 */  jal   something_with_ejected_cartridges
+/* 0EFBEC 7F0BD1FC 0FC013F8 */  jal   init_ejected_cartridges
 /* 0EFBF0 7F0BD200 00000000 */   nop   
 /* 0EFBF4 7F0BD204 0FC26669 */  jal   getPlayerCount
 /* 0EFBF8 7F0BD208 00008025 */   move  $s0, $zero
@@ -1907,8 +1907,8 @@ glabel lvlPortalDebug7F0BDF10
 
 Gfx* lvlRender(Gfx* DL)
 {
-    gSPSegment(DL++, 0, NULL);
-    gSPSegment(DL++, 1, osVirtualToPhysical(ptr_font_DL));
+    gSPSegment(DL++, SPSEGMENT_PHYSICAL, NULL);
+    gSPSegment(DL++, SPSEGMENT_UNKNOWN, osVirtualToPhysical(ptr_font_DL));
 
     gSPDisplayList(DL++, &fontDL_0x040);
     gSPDisplayList(DL++, &fontDL_0x020);
@@ -1957,7 +1957,7 @@ Gfx* lvlRender(Gfx* DL)
             }
 
             DL = viSetupScreensForNumPlayers(DL);
-            DL = sub_GAME_7F094488(DL);
+            DL = skyRender(DL);
             sub_GAME_7F0B4884();
             determing_type_of_object_and_detection();
             chraiUpdateOnscreenPropCount();
@@ -2327,7 +2327,7 @@ void lvlManageMpGame(void)
             mp_game_time_limit_2 = g_MpTime;
             if ((current_time_copy < mp_game_time_limit_2) && (sp180 >= mp_game_time_limit_2))
             {
-                end_game_and_show_game_over_menu(0);
+                mpCalculateAwards(0);
             }
         }
 
@@ -2363,7 +2363,7 @@ void lvlManageMpGame(void)
                 if (mp_player_currently_in_dying_animation == 0)
                 {
                     // end game after dying players are finished dying
-                    end_game_and_show_game_over_menu(0);
+                    mpCalculateAwards(0);
                 }
                 else
                 {
@@ -2452,7 +2452,7 @@ void lvlManageMpGame(void)
             temp_v1_7 = var_player_count2 - 1;
             if (not_dead_count >= temp_v1_7)
             {
-                end_game_and_show_game_over_menu(0);
+                mpCalculateAwards(0);
             }
             else if (killed_count >= temp_v1_7)
             {
@@ -2910,7 +2910,7 @@ glabel lvlManageMpGame
 /* 0F39D0 7F0BEEA0 01C3082A */   slt   $at, $t6, $v1
 /* 0F39D4 7F0BEEA4 14200003 */  bnez  $at, .L7F0BEEB4
 /* 0F39D8 7F0BEEA8 00000000 */   nop
-/* 0F39DC 7F0BEEAC 0FC3094C */  jal   end_game_and_show_game_over_menu
+/* 0F39DC 7F0BEEAC 0FC3094C */  jal   mpCalculateAwards
 /* 0F39E0 7F0BEEB0 00002025 */   move  $a0, $zero
 .L7F0BEEB4:
 /* 0F39E4 7F0BEEB4 3C188005 */  lui   $t8, %hi(g_MpPoint)
@@ -2977,7 +2977,7 @@ glabel lvlManageMpGame
 /* 0F3AC4 7F0BEF94 00000000 */   nop
 /* 0F3AC8 7F0BEF98 14A00005 */  bnez  $a1, .L7F0BEFB0
 /* 0F3ACC 7F0BEF9C 00000000 */   nop
-/* 0F3AD0 7F0BEFA0 0FC3094C */  jal   end_game_and_show_game_over_menu
+/* 0F3AD0 7F0BEFA0 0FC3094C */  jal   mpCalculateAwards
 /* 0F3AD4 7F0BEFA4 00002025 */   move  $a0, $zero
 /* 0F3AD8 7F0BEFA8 10000003 */  b     .L7F0BEFB8
 /* 0F3ADC 7F0BEFAC 00000000 */   nop
@@ -3128,7 +3128,7 @@ glabel lvlManageMpGame
 /* 0F3CE0 7F0BF1B0 03E3082A */  slt   $at, $ra, $v1
 /* 0F3CE4 7F0BF1B4 54200006 */  bnezl $at, .L7F0BF1D0
 /* 0F3CE8 7F0BF1B8 01A3082A */   slt   $at, $t5, $v1
-/* 0F3CEC 7F0BF1BC 0FC3094C */  jal   end_game_and_show_game_over_menu
+/* 0F3CEC 7F0BF1BC 0FC3094C */  jal   mpCalculateAwards
 /* 0F3CF0 7F0BF1C0 00002025 */   move  $a0, $zero
 /* 0F3CF4 7F0BF1C4 10000006 */  b     .L7F0BF1E0
 /* 0F3CF8 7F0BF1C8 00000000 */   nop
@@ -3801,7 +3801,7 @@ glabel lvlManageMpGame
 /* 0F4648 7F0BFAD8 01C3082A */   slt   $at, $t6, $v1
 /* 0F464C 7F0BFADC 14200003 */  bnez  $at, .Ljp7F0BFAEC
 /* 0F4650 7F0BFAE0 00000000 */   nop
-/* 0F4654 7F0BFAE4 0FC30C78 */  jal   end_game_and_show_game_over_menu
+/* 0F4654 7F0BFAE4 0FC30C78 */  jal   mpCalculateAwards
 /* 0F4658 7F0BFAE8 00002025 */   move  $a0, $zero
 .Ljp7F0BFAEC:
 /* 0F465C 7F0BFAEC 3C188005 */  lui   $t8, %hi(g_MpPoint) # $t8, 0x8005
@@ -3868,7 +3868,7 @@ glabel lvlManageMpGame
 /* 0F473C 7F0BFBCC 00000000 */   nop
 /* 0F4740 7F0BFBD0 14A00005 */  bnez  $a1, .Ljp7F0BFBE8
 /* 0F4744 7F0BFBD4 00000000 */   nop
-/* 0F4748 7F0BFBD8 0FC30C78 */  jal   end_game_and_show_game_over_menu
+/* 0F4748 7F0BFBD8 0FC30C78 */  jal   mpCalculateAwards
 /* 0F474C 7F0BFBDC 00002025 */   move  $a0, $zero
 /* 0F4750 7F0BFBE0 10000003 */  b     .Ljp7F0BFBF0
 /* 0F4754 7F0BFBE4 00000000 */   nop
@@ -4019,7 +4019,7 @@ glabel lvlManageMpGame
 /* 0F4958 7F0BFDE8 03E3082A */  slt   $at, $ra, $v1
 /* 0F495C 7F0BFDEC 54200006 */  bnezl $at, .Ljp7F0BFE08
 /* 0F4960 7F0BFDF0 01A3082A */   slt   $at, $t5, $v1
-/* 0F4964 7F0BFDF4 0FC30C78 */  jal   end_game_and_show_game_over_menu
+/* 0F4964 7F0BFDF4 0FC30C78 */  jal   mpCalculateAwards
 /* 0F4968 7F0BFDF8 00002025 */   move  $a0, $zero
 /* 0F496C 7F0BFDFC 10000006 */  b     .Ljp7F0BFE18
 /* 0F4970 7F0BFE00 00000000 */   nop
@@ -4685,7 +4685,7 @@ glabel lvlManageMpGame
 /* 0F0CD4 7F0BE2E4 01C3082A */   slt   $at, $t6, $v1
 /* 0F0CD8 7F0BE2E8 14200003 */  bnez  $at, .Leu7F0BE2F8
 /* 0F0CDC 7F0BE2EC 00000000 */   nop   
-/* 0F0CE0 7F0BE2F0 0FC30684 */  jal   end_game_and_show_game_over_menu
+/* 0F0CE0 7F0BE2F0 0FC30684 */  jal   mpCalculateAwards
 /* 0F0CE4 7F0BE2F4 00002025 */   move  $a0, $zero
 .Leu7F0BE2F8:
 /* 0F0CE8 7F0BE2F8 3C188004 */  lui   $t8, %hi(g_MpPoint) # $t8, 0x8004
@@ -4752,7 +4752,7 @@ glabel lvlManageMpGame
 /* 0F0DC8 7F0BE3D8 00000000 */   nop   
 /* 0F0DCC 7F0BE3DC 14A00005 */  bnez  $a1, .L7F0BE3F4
 /* 0F0DD0 7F0BE3E0 00000000 */   nop   
-/* 0F0DD4 7F0BE3E4 0FC30684 */  jal   end_game_and_show_game_over_menu
+/* 0F0DD4 7F0BE3E4 0FC30684 */  jal   mpCalculateAwards
 /* 0F0DD8 7F0BE3E8 00002025 */   move  $a0, $zero
 /* 0F0DDC 7F0BE3EC 10000003 */  b     .L7F0BE3FC
 /* 0F0DE0 7F0BE3F0 00000000 */   nop   
@@ -4903,7 +4903,7 @@ glabel lvlManageMpGame
 /* 0F0FE4 7F0BE5F4 03E3082A */  slt   $at, $ra, $v1
 /* 0F0FE8 7F0BE5F8 54200006 */  bnezl $at, .L7F0BE614
 /* 0F0FEC 7F0BE5FC 01A3082A */   slt   $at, $t5, $v1
-/* 0F0FF0 7F0BE600 0FC30684 */  jal   end_game_and_show_game_over_menu
+/* 0F0FF0 7F0BE600 0FC30684 */  jal   mpCalculateAwards
 /* 0F0FF4 7F0BE604 00002025 */   move  $a0, $zero
 /* 0F0FF8 7F0BE608 10000006 */  b     .L7F0BE624
 /* 0F0FFC 7F0BE60C 00000000 */   nop   

@@ -5149,11 +5149,11 @@ _AI_CMD(
         {
             if (isNotBoundPad(padnum))
             {
-                pad = &g_chraiCurrentSetup.pads[padnum];
+                pad = &g_CurrentSetup.pads[padnum];
             }
             else
             {
-                pad = (PadRecord *)&g_chraiCurrentSetup.boundpads[getBoundPadNum(padnum)];
+                pad = (PadRecord *)&g_CurrentSetup.boundpads[getBoundPadNum(padnum)];
             }
             matrix_4x4_7F059908(&matrix, 0, 0, 0, -pad->target.x, -pad->target.y, -pad->target.z, pad->up.x, pad->up.y, pad->up.z);
             if (obj->model)
@@ -9482,11 +9482,11 @@ _AI_CMD(
         u16        sfxID = CharArrayTo16(ai->val,2);
         if (isNotBoundPad(padnum))
         {
-            pad = &g_chraiCurrentSetup.pads[padnum];
+            pad = &g_CurrentSetup.pads[padnum];
         }
         else
         {
-            pad = (PadRecord *) &g_chraiCurrentSetup.boundpads[getBoundPadNum(padnum)];
+            pad = (PadRecord *) &g_CurrentSetup.boundpads[getBoundPadNum(padnum)];
         }
         if (ai->SlotID >= 0 && ai->SlotID < 8 && pad)
         {
@@ -10151,11 +10151,11 @@ _AI_CMD(
         u16       padnum = CharArrayTo16(ai->val,0);
         if (isNotBoundPad(padnum))
         {
-            dword_CODE_bss_800799F8 = &g_chraiCurrentSetup.pads[padnum];
+            dword_CODE_bss_800799F8 = &g_CurrentSetup.pads[padnum];
         }
         else
         {
-            dword_CODE_bss_800799F8 = (PadRecord *) &g_chraiCurrentSetup.boundpads[getBoundPadNum(padnum)];
+            dword_CODE_bss_800799F8 = (PadRecord *) &g_CurrentSetup.boundpads[getBoundPadNum(padnum)];
         }
         set_camera_mode(CAMERAMODE_POSEND);
         Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
@@ -10392,11 +10392,11 @@ _AI_CMD(
             padnum = chrResolvePadId(ChrEntityp, padnum);
             if (isNotBoundPad(padnum))
             {
-                pad = &g_chraiCurrentSetup.pads[padnum];
+                pad = &g_CurrentSetup.pads[padnum];
             }
             else
             {
-                pad = (PadRecord *) &g_chraiCurrentSetup.boundpads[getBoundPadNum(padnum)];
+                pad = (PadRecord *) &g_CurrentSetup.boundpads[getBoundPadNum(padnum)];
             }
             FacingDirection = atan2f(pad->target.x, pad->target.z);
             pos.x = pad->pos.x;
@@ -10673,7 +10673,7 @@ _AI_CMD(
             door->openedTime = g_GlobalTimer;
             door->openstate = DOORSTATE_STATIONARY;
             sub_GAME_7F052B00(door);
-            sub_GAME_7F053598(door);
+            doorActivatePortal(door);
             sub_GAME_7F053B10(door);
         }
         Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
@@ -10956,11 +10956,11 @@ _AI_CMD(
         ObjectRecord *obj = objFindByTagId(ai->val[0]);
         if (isNotBoundPad(padnum))
         {
-            pad = &g_chraiCurrentSetup.pads[padnum * 1];
+            pad = &g_CurrentSetup.pads[padnum * 1];
         }
         else
         {
-            pad = (PadRecord *) &g_chraiCurrentSetup.boundpads[getBoundPadNum(padnum)];
+            pad = (PadRecord *) &g_CurrentSetup.boundpads[getBoundPadNum(padnum)];
         }
         if (pad->stan && obj && obj->prop && (pad->stan->RoomID == obj->prop->stan->RoomID))
         {
@@ -11838,7 +11838,7 @@ _AI_CMD(
             sub_GAME_7F03FDA8(obj->prop);
             if (obj->runtime_bitflags & RUNTIMEBITFLAG_DEPOSIT)
             {
-                obj->unk6C->id |= 0x601;
+                obj->unk6C->flags |= 0x601;
                 sub_GAME_7F03FE14(obj->prop);
                 matrix_4x4_set_identity(&obj->unk6C->m);
                 obj->unk6C->pos.x = 0;
