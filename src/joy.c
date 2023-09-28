@@ -2,11 +2,6 @@
 #include "joy.h"
 #include <PR/os.h>
 
-/**
- * Number of samples in contdata.
- */
-#define CONTSAMPLE_LEN   20
-
 #define JOY_CLAMP_MIN          0
 #define JOY_CLAMP_MAX        120
 #define JOY_CLAMP_MAX_F   120.0f
@@ -430,9 +425,18 @@ void joyConsumeSamplesWrapper(void)
 
 #ifdef NONMATCHING
 // Stack + Regalloc
+// https://decomp.me/scratch/IOID3 97.27%
 void joyPoll(void)
 {
     OSMesg msg;
+
+    s32 padding[6];
+
+    static s32 count = 0;
+    s32 index;
+    s8 i_s8;
+    s32 i;
+    
     // Check if there are any disable requests
     if (osRecvMesg(&g_ContDisablePollSendMessageQueue, &msg, OS_MESG_NOBLOCK) == 0)
     {
@@ -451,9 +455,10 @@ void joyPoll(void)
     // Check if there are any enable requests
     if (osRecvMesg(&g_ContEnablePollSendMessageQueue, &msg, OS_MESG_NOBLOCK) == 0)
     {
-        osContStartPollData(&g_ContInputMessageQueue);
+        osContStartReadData(&g_ContInputMessageQueue);
         g_ContBusy = TRUE;
         osSendMesg(&g_ContEnablePollReceiveMessageQueue, &msg, OS_MESG_NOBLOCK);
+   
         g_ContPollDisableCount--;
 
         return;
@@ -464,10 +469,6 @@ void joyPoll(void)
         // Poll controller input from SI
         if (osRecvMesg(&g_ContInputMessageQueue, &msg, OS_MESG_NOBLOCK) == 0)
         {
-            static s32 count = 0;
-            s32 index;
-            s8 i;
-
             g_ContBusy = FALSE;
             index = ((g_ContData[CONTDATA_REGULAR].nextlast + 1) % CONTSAMPLE_LEN);
 
@@ -476,9 +477,10 @@ void joyPoll(void)
                 index = g_ContData[CONTDATA_REGULAR].nextlast;
             }
 
+
             osContGetReadData(g_ContData[CONTDATA_REGULAR].samples[index].pads);
             g_ContData[CONTDATA_REGULAR].nextlast = index;
-            g_ContData[CONTDATA_REGULAR].nextsecondlast = ((g_ContData[CONTDATA_REGULAR].nextlast + 19) % CONTSAMPLE_LEN);
+            g_ContData[CONTDATA_REGULAR].nextsecondlast = ((g_ContData[CONTDATA_REGULAR].nextlast + (CONTSAMPLE_LEN - 1)) % CONTSAMPLE_LEN);
             g_ContCheckStatusTimer60++;
 
             if ((g_ContCheckStatusTimer60 % 120) == 0)
@@ -486,12 +488,13 @@ void joyPoll(void)
                 joyCheckStatus();
             }
 
-            for (i = 0; i < MAXCONTROLLERS; i++)
-            {
-                if (((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i].errno == 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i].errno != 0)) ||
-                    ((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i].errno != 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i].errno == 0)))
-                    {
+            for (i_s8 = 0; i_s8 < MAXCONTROLLERS; i_s8++)
+            {                
+                if (((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i_s8].errno == 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i_s8].errno != 0)) ||
+                    ((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i_s8].errno != 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i_s8].errno == 0)))
+                {
                     joyCheckStatus();
+                    
                     break;
                 }
             }
@@ -503,7 +506,6 @@ void joyPoll(void)
 
             if (count >= 60)
             {
-                s32 i;
                 for (i = 0; i < MAXCONTROLLERS; i++)
                 {
                     if (g_ContBadReadsStickX[i] || g_ContBadReadsStickY[i] || g_ContBadReadsButtons[i] || g_ContBadReadsButtonsPressed[i])
@@ -514,6 +516,7 @@ void joyPoll(void)
                         g_ContBadReadsButtonsPressed[i] = 0;
                     }
                 }
+                
                 count = 0;
             }
         }

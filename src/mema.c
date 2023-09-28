@@ -2,6 +2,32 @@
 #include "mema.h"
 #include "deb.h"
 
+/**
+ * mema - memory (ad hoc) allocation system.
+ *
+ * Mema's heap is 300KB and is itself allocated out of memp's stage pool.
+ * Memp resets its stage pool each time a new stage is loaded, which means mema
+ * is also reset each time a stage is loaded.
+ *
+ * Unlike memp, mema supports freeing of individual allocations. This makes it
+ * a good system to use when the allocation is somewhat temporary and should be
+ * freed without having to load a new stage. It's used by the (inaccessible)
+ * Perfect Head editor, file listings and room code.
+ *
+ * Mema tracks what has been allocated by storing references to free spaces in
+ * its spaces array. The allocations themselves are not referenced. When
+ * initialising the spaces array, the first element is set to the entire heap
+ * and the remaining elements are set to 0.
+ *
+ * This creates a bit of a terminology problem. Just remember that a memaspace
+ * is not an allocation; it's a free space that is available for allocation.
+ *
+ * Due to the ability to free individual allocations, both the heap and the
+ * spaces array can become fragmented. Mema supports defragmenting the spaces
+ * array: entries are ordered by address, and back to back entries are merged.
+ * The data in the heap itself is never moved, as that would require updating
+ * pointers throughout the game code which mema cannot do.
+ */
 
 #if defined(VERSION_EU)
 #define ALLOCATIONS_LENGTH 125
@@ -9,13 +35,34 @@
 #define ALLOCATIONS_LENGTH 509
 #endif
 
-s32 g_MemoryAllocationBuffer;
-s32 g_MemoryAllocationBufferSize;
-allocation g_MemoryAllocations[ALLOCATIONS_LENGTH+3];
+typedef struct memaspace {
+    s32 addr;
+    u32 size;
+} memaspace;
+
+/**
+ * This structure contains dummy entries before and after the spaces array.
+ * These are used as start and end markers, but could have been avoided by
+ * using loop counters (eg. a typical i < numspaces loop).
+ */
+struct memaheap {
+	u32 unk000;
+    u32 unk004;
+	struct memaspace start;
+    //u32 unk010;
+    //u32 unk014;
+	struct memaspace spaces[ALLOCATIONS_LENGTH - 1];
+	struct memaspace end1;
+	struct memaspace end2;
+};
+
+s32 g_MemaHeapStart;
+s32 g_MemaHeapSize;
+struct memaheap g_MemoryAllocations;
 void *g_MemoryAllocationDebugData = NULL;
 
 // Swap two allocations.
-void memaSwap(allocation *a, allocation *b) {
+void memaSwap(memaspace *a, memaspace *b) {
     u32 tempaddr = a->addr;
     u32 tempsize = a->size;
     a->addr = b->addr;
@@ -25,7 +72,7 @@ void memaSwap(allocation *a, allocation *b) {
 }
 
 // Merge two allocations.
-void memaMerge(allocation *a, allocation *b) {
+void memaMerge(memaspace *a, memaspace *b) {
     a->size = (a->size + b->size);
     b->addr = 0;
     b->size = 0;
@@ -34,12 +81,11 @@ void memaMerge(allocation *a, allocation *b) {
 // Do a single iteration over the allocations and attempt to
 // merge adjacent ones. Return value indicates if there were
 // any merges.
-s32 memaIterateAndMergeInternal(allocation *allocations) {
+s32 memaDefragPass(struct memaheap *heap) {
     s32 any = FALSE;
-    allocation *prev = &allocations[1];
-    allocation *curr = &allocations[2];
-
-    allocation *last = &allocations[ALLOCATIONS_LENGTH];
+	struct memaspace *prev = &heap->start;
+	struct memaspace *curr = &heap->spaces[0];
+	struct memaspace *last = &heap->spaces[ALLOCATIONS_LENGTH - 2];
 
     u32 addr = 0;
     while (curr <= last) {
@@ -62,110 +108,152 @@ s32 memaIterateAndMergeInternal(allocation *allocations) {
 
 // Do multiple merge iterations until there are no
 // mergable pairs left.
-void memaMergeAll(void) {
-    while (memaIterateAndMergeInternal(&g_MemoryAllocations));
+void memaDefrag(void)
+{
+    while (memaDefragPass(&g_MemoryAllocations));
 }
 
-// Loop through all allocations and attempt to find a free one. Alternatively,
-// if two can be merged, then do that and use the leftover one. If none is found,
-// then use the smallest allocation in the buffer.
-allocation *memaSearch(allocation *allocations) {
-    allocation *curr = &allocations[2];
-    allocation *best;
+/**
+ * Defrag the spaces list in an attempt to free up any slot.
+ *
+ * If none can be found, return the smallest run of free space so it can be
+ * overwritten by the caller.
+ */
+memaspace *memaSearch(struct memaheap *heap)
+{
+    struct memaspace *curr = &heap->spaces[0];
+	struct memaspace *best;
+
     u32 min;
     s32 i;
-    for (i = 0; i < (ALLOCATIONS_LENGTH-1); i++) {
-        while (curr <= &allocations[ALLOCATIONS_LENGTH]) {
+
+    // Do 124 passes over the list. This ensures the list is in order by the
+	// end. Though in most cases it's roughly in order anyway, and the excessive
+	// looping is just wasting CPU cycles. In reality this situation probably
+	// never occurs.
+    for (i = 0; i < (ALLOCATIONS_LENGTH - 1); i++) {
+        while (curr <= &heap->spaces[ALLOCATIONS_LENGTH - 2]) {
             if (curr->size == 0) {
                 return curr;
             }
+
             if ((u32)curr[1].addr < (u32)curr[0].addr) {
                 memaSwap(&curr[0], &curr[1]);
             }
+
             if (curr[1].addr == (curr[0].size + curr[0].addr)) {
+                // Found two that can be merged
                 curr[0].size += curr[1].size;
                 curr[1].addr = 0;
                 curr[1].size = 0;
                 return &curr[1];
             }
+
             curr++;
         }
-        curr = &allocations[2];
+
+        curr = &heap->spaces[0];
     }
+
+    // If this code is reached then the spaces list is so badly and unrepairably
+	// fragmented that we can't find any slot to record the free space in.
+	// Find the smallest run of free space and use that instead.
+	// The caller will overwrite it with its own free allocation, causing the
+	// original run of free space to be unusable until the mema heap is reset.
     min = 0xFFFFFFFF;
     best = curr;
-    while (curr <= &allocations[ALLOCATIONS_LENGTH]) {
+    while (curr <= &heap->spaces[ALLOCATIONS_LENGTH - 2]) {
         if (curr->size < min) {            
             best = curr;
             min = curr->size;
         }
+
         curr++;
     }
+
     return best;
 }
 
-// Register a new allocation. Start by calculating a suitable index to start search from 
-// based on the relative address in the buffer. Then look forward and backwards
-// for a free allocation. If none is found, then use the more advanced memaSearch method.
-void memaRegisterInternal(s32 addr, s32 size) {
-    s32 index = ((addr - g_MemoryAllocationBuffer) * (ALLOCATIONS_LENGTH-1)) / g_MemoryAllocationBufferSize;
-    allocation *curr = &g_MemoryAllocations[index + 2];
+void _memaFree(s32 addr, s32 size)
+{
+    // Choose an index in the spaces array which we'll mark a space as free,
+	// based on how far into the heap the allocation is. This is a rough
+	// estimate and doesn't need to be any particular index, but the defrag
+	// function tries to order the spaces by address so the closer we get to it
+	// the less work the defrag function will have to do should it be called.
+    s32 index = ((addr - g_MemaHeapStart) * (ALLOCATIONS_LENGTH-1)) / g_MemaHeapSize;
+    struct memaspace *curr = &g_MemoryAllocations.spaces[index];
+
+    // If the entry is taken, keep moving forward until a zero is found.
     while (curr->size != 0) {
         curr++;
     }
+
+    // If we reached the end of the spaces list, go backwards instead
     if (curr->addr == -1) {
-        curr = &g_MemoryAllocations[index + 2];
+        curr = &g_MemoryAllocations.spaces[index];
+
         while (curr->size != 0) {
             curr--;
         }
+
         if (curr->addr == 0) {
-            curr = memaSearch(g_MemoryAllocations);
+            curr = memaSearch(&g_MemoryAllocations);
         }
     }
+
+    // Mark this space as free
     curr->addr = addr;
     curr->size = size;
 }
 
 // Initialize the (removed) debug features.
-void memaInit(void) {
+void memaInit(void)
+{
     debTryAdd(&g_MemoryAllocationDebugData, "mema_c_debug");
 }
 
-// Initialize g_MemoryAllocations given a new buffer. The first
-// and last two allocations serve as sentinels.
-void memaSetBuffer(s32 buffer, s32 size) {
-    allocation *curr;
-    g_MemoryAllocations[0].addr = 0;
-    g_MemoryAllocations[0].size = 0;
-    g_MemoryAllocations[1].addr = 0;
-    g_MemoryAllocations[1].size = 0;
-    g_MemoryAllocations[ALLOCATIONS_LENGTH+1].addr = -1;
-    g_MemoryAllocations[ALLOCATIONS_LENGTH+1].size = 0;
-    g_MemoryAllocations[ALLOCATIONS_LENGTH+2].addr = -1;
-    g_MemoryAllocations[ALLOCATIONS_LENGTH+2].size = 0xFFFFFFFF;
-    for (curr = &g_MemoryAllocations[2]; curr <= &g_MemoryAllocations[ALLOCATIONS_LENGTH]; curr++) {
-        curr->addr = 0;
-        curr->size = 0;
-    }
-    g_MemoryAllocations[2].addr = g_MemoryAllocationBuffer = buffer;
-    g_MemoryAllocations[2].size = g_MemoryAllocationBufferSize = size;
+void memaReset(void *heapaddr, u32 heapsize)
+{
+   struct memaspace *space;
+
+    g_MemoryAllocations.unk000 = 0;
+    g_MemoryAllocations.unk004 = 0;
+
+	g_MemoryAllocations.start.addr = 0;
+	g_MemoryAllocations.start.size = 0;
+
+	g_MemoryAllocations.end1.addr = 0xffffffff;
+	g_MemoryAllocations.end1.size = 0;
+	g_MemoryAllocations.end2.addr = 0xffffffff;
+	g_MemoryAllocations.end2.size = 0xffffffff;
+
+	for (space = &g_MemoryAllocations.spaces[0]; space <= &g_MemoryAllocations.spaces[ALLOCATIONS_LENGTH - 2]; space++) {
+		space->addr = 0;
+		space->size = 0;
+	}
+
+	g_MemoryAllocations.spaces[0].addr = g_MemaHeapStart = (uintptr_t) heapaddr;
+	g_MemoryAllocations.spaces[0].size = g_MemaHeapSize = heapsize;
 }
 
-void memaIterateAndMerge(void) {
-    memaIterateAndMergeInternal(&g_MemoryAllocations);
+void memaSingleDefragPass(void)
+{
+    memaDefragPass(&g_MemoryAllocations);
 }
+
 
 #ifdef NONMATCHING
 // Attempt to free up some memory. Start by looking through the first 16 allocations
 // for a suitable one. If none is found, then look through the rest for any that are
 // large enough. If this also fails, then do 8 merge iterations and then look through
 // entire buffer again. If successful, return the address to the freed memory, otherwise 0.
-s32 memaFree(u32 amount) {
+s32 memaAlloc(u32 amount) {
     s32 addr;
     u32 diff;
     s32 i;
-    allocation *curr = &g_MemoryAllocations[2];
-    allocation *best = NULL;
+    memaspace *curr = &g_MemoryAllocations[2];
+    memaspace *best = NULL;
     for (i = 0; i < 16; i++, curr++) {
         if (curr->size >= amount) {
             if (curr->addr == -1) {
@@ -186,7 +274,7 @@ s32 memaFree(u32 amount) {
         }
         if (curr->addr == -1) {
             for (i = 0; i < 8; i++) {
-                memaIterateAndMergeInternal(g_MemoryAllocations);
+                memaDefragPass(g_MemoryAllocations);
             }
             curr = &g_MemoryAllocations[2];
             while (curr->size < amount) {
@@ -208,7 +296,7 @@ s32 memaFree(u32 amount) {
 #else
 GLOBAL_ASM(
 .text
-glabel memaFree
+glabel memaAlloc
 /* 00AA34 70009E34 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 00AA38 70009E38 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 00AA3C 70009E3C AFB10018 */  sw    $s1, 0x18($sp)
@@ -270,7 +358,7 @@ glabel memaFree
 /* 00AB08 70009F08 3C118006 */  lui   $s1, %hi(g_MemoryAllocations + 0x10)
 /* 00AB0C 70009F0C 26313C38 */  addiu $s1, %lo(g_MemoryAllocations + 0x10) # addiu $s1, $s1, 0x3c38
 .L70009F10:
-/* 00AB10 70009F10 0C002694 */  jal   memaIterateAndMergeInternal
+/* 00AB10 70009F10 0C002694 */  jal   memaDefragPass
 /* 00AB14 70009F14 02602025 */   move  $a0, $s3
 /* 00AB18 70009F18 26100001 */  addiu $s0, $s0, 1
 /* 00AB1C 70009F1C 1614FFFC */  bne   $s0, $s4, .L70009F10
@@ -317,31 +405,45 @@ glabel memaFree
 )
 #endif
 
+
 #ifdef NONMATCHING
-// Find the allocation of the given address and reduce its size by the given 
+// Find the memaspace of the given address and reduce its size by the given 
 // amount. If successful, return the same address, otherwise 0.
-s32 memaShrink(s32 addr, u32 amount) {
-    allocation *curr = &g_MemoryAllocations[2];
-    while (curr->addr != -1) {
-        if ((curr->addr == addr) && (curr->size >= amount)) {
-            break;
-        }        
-        curr++;
-        if (curr->addr == -1) {
-            return 0;
+
+// Only regalloc problems left. Called memaGrow in PD
+
+// https://decomp.me/scratch/tGfms 93.83%
+s32 memaGrow(s32 addr, u32 amount)
+{
+    memaspace *curr = &g_MemoryAllocations[2];
+
+    while (curr->addr != -1)
+    {    
+        if (curr->addr == addr && curr->size >= amount)
+        {
+            goto found;
         }
+
+        curr++;
     }
+
+    return 0;
+
+found:
     curr->addr += amount;
     curr->size -= amount;
-    if (curr->size == 0) {
+
+    if (curr->size == 0)
+    {
         curr->addr = 0;
     }
+
     return addr;
 }
 #else
 GLOBAL_ASM(
 .text
-glabel memaShrink
+glabel memaGrow
 /* 00ABA8 70009FA8 3C198006 */  lui   $t9, %hi(g_MemoryAllocations + 0x10) 
 /* 00ABAC 70009FAC 8F393C38 */  lw    $t9, %lo(g_MemoryAllocations + 0x10)($t9)
 /* 00ABB0 70009FB0 3C188006 */  lui   $t8, %hi(g_MemoryAllocations + 0x10) 
@@ -381,61 +483,35 @@ glabel memaShrink
 )
 #endif
 
-void memaRegister(u32 addr, u32 size) {
-    memaRegisterInternal(addr, size);
+void memaFree(void *addr, s32 size)
+{
+	_memaFree((uintptr_t) addr, size);
 }
 
-#ifdef NONMATCHING
-// ac54:    bnel    v1,v0,0xac54 ~>                  r ac54:    bnel    v0,v1,0xac54 ~>
-void mema7000A040(void) {
+
+void mema7000A040(void)
+{
     s32 i;
-    for (i = 0; &g_MemoryAllocations[i] != &g_MemoryAllocations[ALLOCATIONS_LENGTH-1]; i += 4) {
-        // Removed
+    struct memaspace *curr;
+
+    for (i=0; i<ALLOCATIONS_LENGTH - 1; i++)
+    {
+        curr = &g_MemoryAllocations.spaces[i];
+
+        if (curr->addr)
+        {
+            // removed
+        }
     }
 }
-#else
 
-#if defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel mema7000A040
-/* 00AC40 7000A040 3C038006 */  lui   $v1, %hi(g_MemoryAllocations)
-/* 00AC44 7000A044 3C028006 */  lui   $v0, %hi(g_MemoryAllocations + 0xFE0)
-/* 00AC48 7000A048 24424C08 */  addiu $v0, %lo(g_MemoryAllocations + 0xFE0) # addiu $v0, $v0, 0x4c08
-/* 00AC4C 7000A04C 24633C28 */  addiu $v1, %lo(g_MemoryAllocations) # addiu $v1, $v1, 0x3c28
-/* 00AC50 7000A050 24630020 */  addiu $v1, $v1, 0x20
-.L7000A054:
-/* 00AC54 7000A054 5462FFFF */  bnel  $v1, $v0, .L7000A054
-/* 00AC58 7000A058 24630020 */   addiu $v1, $v1, 0x20
-/* 00AC5C 7000A05C 03E00008 */  jr    $ra
-/* 00AC60 7000A060 00000000 */   nop   
-)
-#endif
-
-#if !defined(LEFTOVERDEBUG)
-GLOBAL_ASM(
-.text
-glabel mema7000A040
-/* 00A0A0 700094A0 3C038005 */  lui   $v1, %hi(g_MemoryAllocations) # $v1, 0x8005
-/* 00A0A4 700094A4 3C028005 */  lui   $v0, %hi(g_MemoryAllocations + 0x3E0) # $v0, 0x8005
-/* 00A0A8 700094A8 244271E8 */  addiu $v0, %lo(g_MemoryAllocations + 0x3E0) # addiu $v0, $v0, 0x71e8
-/* 00A0AC 700094AC 24636E08 */  addiu $v1, %lo(g_MemoryAllocations) # addiu $v1, $v1, 0x6e08
-/* 00A0B0 700094B0 24630020 */  addiu $v1, $v1, 0x20
-.L700094B4:
-/* 00A0B4 700094B4 5462FFFF */  bnel  $v1, $v0, .L700094B4
-/* 00A0B8 700094B8 24630020 */   addiu $v1, $v1, 0x20
-/* 00A0BC 700094BC 03E00008 */  jr    $ra
-/* 00A0C0 700094C0 00000000 */   nop 
-)
-#endif
-#endif
 
 // Calculate the ratio between the sum of all allocations minus
 // the largest one, and the sum of all allocations.
 f32 memaCalculateNonLargestToTotalRatio(void) {
     u32 tot = 0;
     u32 max = 0;
-    allocation *curr = &g_MemoryAllocations[2];
+    memaspace *curr = &g_MemoryAllocations.spaces[0];
     while (curr->addr != -1) {
         tot += curr->size;
         if (max < curr->size) {
@@ -449,178 +525,70 @@ f32 memaCalculateNonLargestToTotalRatio(void) {
     return ((f32)(tot - max) / tot);
 }
 
-#ifdef NONMATCHING
 // Print a list of allocations, in descending size order. Sizes are specified in
 // kilobytes, rounded to nearest integer. Up to 200 allocations can be listed.
-void memaDump(void) {
-    const char buffer[4096];
-    const char *pos;
-    s32 count = 0;
+void memaDump(void)
+{
+    char *pos;
     u32 tot = 0;
     s32 lim = (1 << 31);
-    allocation *curr = &g_MemoryAllocations[2];
-    while (curr->addr != -1) {
+    s32 count;
+    memaspace *curr;
+    char buffer[4096];
+    u32 max;
+    u32 acc;
+
+    count = 0;
+
+    for (curr = &g_MemoryAllocations.spaces[0], tot = 0; curr->addr != -1; curr++)
+    {
         tot += curr->size;
-        curr++;
     }
+
     pos = buffer;
-    while (TRUE) {
-        u32 max = 0;
-        u32 acc = 0;
-        curr = &g_MemoryAllocations[2];
-        while (curr->addr != -1) {
-            if ((curr->size < lim) && (curr->size > max)) {
+
+    for (max = 0, acc = 0; 1; lim = max, max = 0)
+    {
+        for (curr = &g_MemoryAllocations.spaces[0]; curr->addr != -1; curr++)
+        {
+            if ((curr->size < lim) && (curr->size > max))
+            {
                 max = curr->size;
                 acc++;
             }
-            curr++;
         }
-        if (acc == 0) {
+        
+        if (acc == 0)
+        {
             break;
         }
-        curr = &g_MemoryAllocations[2];
-        while (curr->addr != -1) {
-            if (curr->size == max) {
-                if (count < 200) {
+
+        
+        lim = max;
+        
+        for (curr = &g_MemoryAllocations.spaces[0],acc=0; curr->addr != -1; curr++)
+        {
+            if (curr->size == lim)
+            {
+                if (count < 200)
+                {
                     pos += sprintf(pos, "%d ", ((curr->size + 512) / 1024));
-                } else if (count == 200) {
+                }
+                else if (count == 200)
+                {
                     pos += sprintf(pos, "...");
                 }
+                
                 count++;
             }
-            curr++;
         }
     }
-    if (count > 200) {
+    
+    if (count > 200)
+    {
         sprintf(pos, "[%d]", count);
     }
 }
-#else
-const char aD_3[] = "%d ";
-const char a___[] = "...";
-const char aD_5[] = "[%d]";
-GLOBAL_ASM(
-.text
-glabel memaDump
-/* 00AD00 7000A100 27BDEF98 */  addiu $sp, $sp, -0x1068
-/* 00AD04 7000A104 3C048006 */  lui   $a0, %hi(g_MemoryAllocations + 0x10)
-/* 00AD08 7000A108 8C843C38 */  lw    $a0, %lo(g_MemoryAllocations + 0x10)($a0)
-/* 00AD0C 7000A10C AFB5002C */  sw    $s5, 0x2c($sp)
-/* 00AD10 7000A110 AFB00018 */  sw    $s0, 0x18($sp)
-/* 00AD14 7000A114 2415FFFF */  li    $s5, -1
-/* 00AD18 7000A118 AFB20020 */  sw    $s2, 0x20($sp)
-/* 00AD1C 7000A11C 3C108006 */  lui   $s0, %hi(g_MemoryAllocations + 0x10)
-/* 00AD20 7000A120 AFBF003C */  sw    $ra, 0x3c($sp)
-/* 00AD24 7000A124 AFBE0038 */  sw    $fp, 0x38($sp)
-/* 00AD28 7000A128 AFB70034 */  sw    $s7, 0x34($sp)
-/* 00AD2C 7000A12C AFB60030 */  sw    $s6, 0x30($sp)
-/* 00AD30 7000A130 AFB40028 */  sw    $s4, 0x28($sp)
-/* 00AD34 7000A134 AFB30024 */  sw    $s3, 0x24($sp)
-/* 00AD38 7000A138 AFB1001C */  sw    $s1, 0x1c($sp)
-/* 00AD3C 7000A13C 3C038000 */  lui   $v1, 0x8000
-/* 00AD40 7000A140 00009025 */  move  $s2, $zero
-/* 00AD44 7000A144 26103C38 */  addiu $s0, %lo(g_MemoryAllocations + 0x10) # addiu $s0, $s0, 0x3c38
-/* 00AD48 7000A148 12A40008 */  beq   $s5, $a0, .L7000A16C
-/* 00AD4C 7000A14C 00001025 */   move  $v0, $zero
-.L7000A150:
-/* 00AD50 7000A150 8E0F0008 */  lw    $t7, 8($s0)
-/* 00AD54 7000A154 8E0E0004 */  lw    $t6, 4($s0)
-/* 00AD58 7000A158 26100008 */  addiu $s0, $s0, 8
-/* 00AD5C 7000A15C 16AFFFFC */  bne   $s5, $t7, .L7000A150
-/* 00AD60 7000A160 004E1021 */   addu  $v0, $v0, $t6
-/* 00AD64 7000A164 3C108006 */  lui   $s0, %hi(g_MemoryAllocations + 0x10)
-/* 00AD68 7000A168 26103C38 */  addiu $s0, %lo(g_MemoryAllocations + 0x10) # addiu $s0, $s0, 0x3c38
-.L7000A16C:
-/* 00AD6C 7000A16C 3C1E8003 */  lui   $fp, %hi(a___) 
-/* 00AD70 7000A170 3C168003 */  lui   $s6, %hi(aD_3)
-/* 00AD74 7000A174 27B10054 */  addiu $s1, $sp, 0x54
-/* 00AD78 7000A178 26D691E0 */  addiu $s6, %lo(aD_3) # addiu $s6, $s6, -0x6e20
-/* 00AD7C 7000A17C 27DE91E4 */  addiu $fp, %lo(a___) # addiu $fp, $fp, -0x6e1c
-/* 00AD80 7000A180 00009825 */  move  $s3, $zero
-/* 00AD84 7000A184 0000A025 */  move  $s4, $zero
-/* 00AD88 7000A188 241700C8 */  li    $s7, 200
-.L7000A18C:
-/* 00AD8C 7000A18C 12A4000D */  beq   $s5, $a0, .L7000A1C4
-/* 00AD90 7000A190 00000000 */   nop   
-/* 00AD94 7000A194 8E020004 */  lw    $v0, 4($s0)
-.L7000A198:
-/* 00AD98 7000A198 0043082B */  sltu  $at, $v0, $v1
-/* 00AD9C 7000A19C 10200005 */  beqz  $at, .L7000A1B4
-/* 00ADA0 7000A1A0 0262082B */   sltu  $at, $s3, $v0
-/* 00ADA4 7000A1A4 50200004 */  beql  $at, $zero, .L7000A1B8
-/* 00ADA8 7000A1A8 8E180008 */   lw    $t8, 8($s0)
-/* 00ADAC 7000A1AC 00409825 */  move  $s3, $v0
-/* 00ADB0 7000A1B0 26940001 */  addiu $s4, $s4, 1
-.L7000A1B4:
-/* 00ADB4 7000A1B4 8E180008 */  lw    $t8, 8($s0)
-.L7000A1B8:
-/* 00ADB8 7000A1B8 26100008 */  addiu $s0, $s0, 8
-/* 00ADBC 7000A1BC 56B8FFF6 */  bnel  $s5, $t8, .L7000A198
-/* 00ADC0 7000A1C0 8E020004 */   lw    $v0, 4($s0)
-.L7000A1C4:
-/* 00ADC4 7000A1C4 12800022 */  beqz  $s4, .L7000A250
-/* 00ADC8 7000A1C8 3C108006 */   lui   $s0, %hi(g_MemoryAllocations + 0x10)
-/* 00ADCC 7000A1CC 26103C38 */  addiu $s0, %lo(g_MemoryAllocations + 0x10) # addiu $s0, $s0, 0x3c38
-/* 00ADD0 7000A1D0 12A4001C */  beq   $s5, $a0, .L7000A244
-/* 00ADD4 7000A1D4 0000A025 */   move  $s4, $zero
-/* 00ADD8 7000A1D8 8E020004 */  lw    $v0, 4($s0)
-.L7000A1DC:
-/* 00ADDC 7000A1DC 2A4100C8 */  slti  $at, $s2, 0xc8
-/* 00ADE0 7000A1E0 56620011 */  bnel  $s3, $v0, .L7000A228
-/* 00ADE4 7000A1E4 8E080008 */   lw    $t0, 8($s0)
-/* 00ADE8 7000A1E8 10200008 */  beqz  $at, .L7000A20C
-/* 00ADEC 7000A1EC 02202025 */   move  $a0, $s1
-/* 00ADF0 7000A1F0 24460200 */  addiu $a2, $v0, 0x200
-/* 00ADF4 7000A1F4 0006CA82 */  srl   $t9, $a2, 0xa
-/* 00ADF8 7000A1F8 03203025 */  move  $a2, $t9
-/* 00ADFC 7000A1FC 0C002B25 */  jal   sprintf
-/* 00AE00 7000A200 02C02825 */   move  $a1, $s6
-/* 00AE04 7000A204 10000006 */  b     .L7000A220
-/* 00AE08 7000A208 02228821 */   addu  $s1, $s1, $v0
-.L7000A20C:
-/* 00AE0C 7000A20C 16570004 */  bne   $s2, $s7, .L7000A220
-/* 00AE10 7000A210 02202025 */   move  $a0, $s1
-/* 00AE14 7000A214 0C002B25 */  jal   sprintf
-/* 00AE18 7000A218 03C02825 */   move  $a1, $fp
-/* 00AE1C 7000A21C 02228821 */  addu  $s1, $s1, $v0
-.L7000A220:
-/* 00AE20 7000A220 26520001 */  addiu $s2, $s2, 1
-/* 00AE24 7000A224 8E080008 */  lw    $t0, 8($s0)
-.L7000A228:
-/* 00AE28 7000A228 26100008 */  addiu $s0, $s0, 8
-/* 00AE2C 7000A22C 56A8FFEB */  bnel  $s5, $t0, .L7000A1DC
-/* 00AE30 7000A230 8E020004 */   lw    $v0, 4($s0)
-/* 00AE34 7000A234 3C108006 */  lui   $s0, %hi(g_MemoryAllocations + 0x10)
-/* 00AE38 7000A238 3C048006 */  lui   $a0, %hi(g_MemoryAllocations + 0x10)
-/* 00AE3C 7000A23C 8C843C38 */  lw    $a0, %lo(g_MemoryAllocations + 0x10)($a0)
-/* 00AE40 7000A240 26103C38 */  addiu $s0, %lo(g_MemoryAllocations + 0x10) # addiu $s0, $s0, 0x3c38
-.L7000A244:
-/* 00AE44 7000A244 02601825 */  move  $v1, $s3
-/* 00AE48 7000A248 1000FFD0 */  b     .L7000A18C
-/* 00AE4C 7000A24C 00009825 */   move  $s3, $zero
-.L7000A250:
-/* 00AE50 7000A250 2A4100C9 */  slti  $at, $s2, 0xc9
-/* 00AE54 7000A254 14200005 */  bnez  $at, .L7000A26C
-/* 00AE58 7000A258 02202025 */   move  $a0, $s1
-/* 00AE5C 7000A25C 3C058003 */  lui   $a1, %hi(aD_5)
-/* 00AE60 7000A260 24A591E8 */  addiu $a1, %lo(aD_5) # addiu $a1, $a1, -0x6e18
-/* 00AE64 7000A264 0C002B25 */  jal   sprintf
-/* 00AE68 7000A268 02403025 */   move  $a2, $s2
-.L7000A26C:
-/* 00AE6C 7000A26C 8FBF003C */  lw    $ra, 0x3c($sp)
-/* 00AE70 7000A270 8FB00018 */  lw    $s0, 0x18($sp)
-/* 00AE74 7000A274 8FB1001C */  lw    $s1, 0x1c($sp)
-/* 00AE78 7000A278 8FB20020 */  lw    $s2, 0x20($sp)
-/* 00AE7C 7000A27C 8FB30024 */  lw    $s3, 0x24($sp)
-/* 00AE80 7000A280 8FB40028 */  lw    $s4, 0x28($sp)
-/* 00AE84 7000A284 8FB5002C */  lw    $s5, 0x2c($sp)
-/* 00AE88 7000A288 8FB60030 */  lw    $s6, 0x30($sp)
-/* 00AE8C 7000A28C 8FB70034 */  lw    $s7, 0x34($sp)
-/* 00AE90 7000A290 8FBE0038 */  lw    $fp, 0x38($sp)
-/* 00AE94 7000A294 03E00008 */  jr    $ra
-/* 00AE98 7000A298 27BD1068 */   addiu $sp, $sp, 0x1068
-)
-#endif
 
 // Dump a list of allocations before and after a full
 // merge pass.
@@ -628,89 +596,89 @@ void memaDumpPrePostMerge(void) {
     s32 i;    
     memaDump();
     for (i = 0; i < (ALLOCATIONS_LENGTH-1); i++) {
-        memaIterateAndMergeInternal(&g_MemoryAllocations);
+        memaDefragPass(&g_MemoryAllocations);
     }
     memaDump();
 }
 
-void mema7000A2F8(void (*func)(u32, allocation*)) {
-    allocation *curr = &g_MemoryAllocations[2];
+void mema7000A2F8(void (*func)(u32, memaspace*)) {
+    memaspace *curr = &g_MemoryAllocations.spaces[0];
     while (curr->addr != -1) {
         func((curr->addr + curr->size), curr);
         curr++;
     }
 }
 
-// Return the size of the largest allocation, after
-// a full merge pass.
-u32 memaGetLargestAllocSize(void) {
-    allocation *curr;
-    u32 max = 0;
-    memaMergeAll();
-    curr = &g_MemoryAllocations[2];
-    while (curr->addr != -1) {
-        if (max < curr->size) {
-            max = curr->size;
-        }
-        curr++;
-    }
-    if (max != 0) {
-        return max;
-    }
-    return 0;
+/**
+ * Find and return the largest amount of contiguous free space in the pool.
+ * ie. the biggest allocation that mema can currently make.
+ */
+s32 memaGetLongestFree(void)
+{
+	struct memaspace *curr;
+	s32 biggest = 0;
+
+	memaDefrag();
+
+	curr = &g_MemoryAllocations.spaces[0];
+
+	while (curr->addr != -1) {
+		if (curr->size > biggest) {
+			biggest = curr->size;
+		}
+
+		curr++;
+	}
+
+	if (biggest) {
+		return biggest;
+	}
+
+	return 0;
 }
 
-#ifdef NONMATCHING
-// Resize an existing allocation. Either by shrinking the old one, or
-// by registering a new allocation containing the remaining bytes.
-s32 memaResize(s32 addr, u32 newsize, u32 oldsize) {
-    if (newsize < oldsize) {
-        if (memaShrink((addr + newsize), (oldsize - newsize)) == 0) {
-            return 0;
-        } else {
+/**
+ * Resize an existing memaspace. Either by shrinking the old one, or
+ * by registering a new memaspace containing the remaining bytes.
+ * 
+ * US address 7000A3DC.
+*/
+s32 memaRealloc(s32 addr, u32 oldsize, u32 newsize)
+{
+    if ((newsize > oldsize))
+    {
+        if (memaGrow(addr + oldsize, newsize - oldsize) == 0)
+        {
+			return 0;
+		}
+        else
+        {
             return 1;
         }
+	}
+
+    /**
+     * Hack: the following few `if` statements are probably not what was originally
+     * here, but it shifts the temp registers enough to generate a match.
+     * https://decomp.me/scratch/RoPAF 99.62%
+    */
+
+    if (addr + 1) {}
+    else if (addr + 2) {}
+    else if (addr + 3) {}
+
+    if (oldsize + 1) {}
+    else if (oldsize + 2) {}
+    else if (oldsize + 3) {}
+
+    if (newsize + 1) {}
+    else if (newsize + 2) {}
+    else if (newsize + 3) {}
+
+    if ((oldsize > newsize))
+    {
+        memaFree(addr + newsize, oldsize - newsize);
     }
-    else {
-        if (newsize > oldsize) {
-            memaRegister((addr + oldsize), (newsize - oldsize));
-        }
-        return 1;
-    }
+    
+	return 1;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel memaResize
-/* 00AFDC 7000A3DC 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 00AFE0 7000A3E0 00A6082B */  sltu  $at, $a1, $a2
-/* 00AFE4 7000A3E4 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 00AFE8 7000A3E8 AFA40018 */  sw    $a0, 0x18($sp)
-/* 00AFEC 7000A3EC 1020000A */  beqz  $at, .L7000A418
-/* 00AFF0 7000A3F0 00A03825 */   move  $a3, $a1
-/* 00AFF4 7000A3F4 00852021 */  addu  $a0, $a0, $a1
-/* 00AFF8 7000A3F8 0C0027EA */  jal   memaShrink
-/* 00AFFC 7000A3FC 00C52823 */   subu  $a1, $a2, $a1
-/* 00B000 7000A400 14400003 */  bnez  $v0, .L7000A410
-/* 00B004 7000A404 00000000 */   nop   
-/* 00B008 7000A408 1000000A */  b     .L7000A434
-/* 00B00C 7000A40C 00001025 */   move  $v0, $zero
-.L7000A410:
-/* 00B010 7000A410 10000008 */  b     .L7000A434
-/* 00B014 7000A414 24020001 */   li    $v0, 1
-.L7000A418:
-/* 00B018 7000A418 00C7082B */  sltu  $at, $a2, $a3
-/* 00B01C 7000A41C 10200004 */  beqz  $at, .L7000A430
-/* 00B020 7000A420 8FA90018 */   lw    $t1, 0x18($sp)
-/* 00B024 7000A424 01262021 */  addu  $a0, $t1, $a2
-/* 00B028 7000A428 0C002808 */  jal   memaRegister
-/* 00B02C 7000A42C 00E62823 */   subu  $a1, $a3, $a2
-.L7000A430:
-/* 00B030 7000A430 24020001 */  li    $v0, 1
-.L7000A434:
-/* 00B034 7000A434 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 00B038 7000A438 27BD0018 */  addiu $sp, $sp, 0x18
-/* 00B03C 7000A43C 03E00008 */  jr    $ra
-/* 00B040 7000A440 00000000 */   nop   
-)
-#endif

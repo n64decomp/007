@@ -51,12 +51,12 @@ BG_SEG_FILES = \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_ash_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_sho_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_ame_all_p.seg \
-	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_oat_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_rit_all_p.seg \
-	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_len_all_p.seg \
+	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_oat_all_p.seg \
+	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_lip_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_lee_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_ear_all_p.seg \
-	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_lip_all_p.seg \
+	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_len_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_pam_all_p.seg \
 	$(BUILD_DIR)/$(OBSEG_DIR)/bg/bg_wax_all_p.seg 
 	

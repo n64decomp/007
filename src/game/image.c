@@ -2765,7 +2765,7 @@ void texLoadFromModelFileHeader(ModelFileHeader* arg0, struct texpool* arg1)
 }
 
 
-void texLoadFromTextureNum(u32 texturenum, struct texpool *arg1)
+void texLoadFromTextureNum(s32 texturenum, struct texpool *arg1)
 {
     u32 texturenumcopy;
     texturenumcopy = texturenum;

@@ -28,8 +28,8 @@ void initGameData(void) {
     intro_character_index = 0;
     randomly_selected_intro_animation = 0;
     intro_animation_count = 0;
-    objinstance = 0;
-    ptrobjinstance = 0;
+    cast_model = 0;
+    cast_model_weapon = 0;
     full_actor_intro = 0;
 }
 

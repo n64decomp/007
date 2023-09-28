@@ -266,6 +266,7 @@ ALMicroTime sndPlayerVoiceHandler(void *node)
  *   to make a difference, it's present in sndplayer.c _handleEvent ...
  */
 #ifdef NONMATCHING
+// https://decomp.me/scratch/2v3fu 97.63%
 void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
 {
     // declarations

@@ -7,6 +7,7 @@
 
 #include "ultra64.h"
 #include "bondtypes.h"
+#include "bondaicommands.h"
 
 // forward declarations
 PadRecord padlist[];
@@ -1432,29 +1433,2411 @@ PathRecord patrolpaths[] = {
 };
 
 
-u32 ai_0[] = { 0x200005fd, 0x00070400 };
-u32 ai_10[] = { 0x02060355, 0x00832c01, 0x06022c9c, 0x00000100, 0x365e0b02, 0x36020703, 0xad57320a, 0x009c0000, 0x01002c01, 0x07022cae, 0x020b03ad, 0x49320a00, 0xb4000258, 0x18b40001, 0x8617b400, 0x014a16b4, 0x0000d215, 0xb4000096, 0x14b40000, 0x5a13b400, 0x001e1201, 0x0b0212ad, 0x54310a00, 0xa4010002, 0x00005f01, 0xa4020002, 0x00005f02, 0x010b0213, 0xa4030002, 0x00005f03, 0xa4040002, 0x00005f04, 0x010b0214, 0xa4050002, 0x00005f05, 0xa4060002, 0x00005f06, 0x010b0215, 0xa4070002, 0x00005f07, 0xa4080002, 0x00005f08, 0x010b0216, 0x010b0217, 0x010b0218, 0xad434c0a, 0x0005fd00, 0x01040000 };
-u32 ai_11[] = { 0x9b000001, 0x00020003, 0x9c000001, 0x00369c00, 0x0004000a, 0x01000236, 0x9c000008, 0x000d0100, 0x020ac314, 0x06671466, 0x00ae020b, 0x03b40003, 0x842c010b, 0x022c6609, 0x670a020c, 0x03680002, 0x2c010c02, 0x2c9a0000, 0x01009b00, 0x00040001, 0x00020dc3, 0x14076614, 0x6700ae02, 0x0e03b400, 0x03842c01, 0x0e022c67, 0x09660a02, 0x0f036800, 0x012c010f, 0x022c9b00, 0x0001009b, 0x00000800, 0x01000400 };
-u32 ai_12[] = { 0x0200039c, 0x00000400, 0x369c0000, 0x0800365c, 0x0b2c0236, 0x5c0b3602, 0x36010002, 0x2c9c0000, 0x01000a9a, 0x00000400, 0x0100020a, 0x9c000100, 0x000b9a00, 0x00080001, 0x00020bc3, 0x140f0100, 0x04000000 };
-u32 ai_13[] = { 0x0206035d, 0x132c5c13, 0x2d010602, 0x2c59320b, 0x022dc314, 0x09010602, 0x0b9a0000, 0x1000c314, 0x08020c03, 0x010c0400 };
-u32 ai_14[] = { 0x0206035d, 0x0f2c5c0f, 0x2d010602, 0x2c59490b, 0x022dc314, 0x0a010602, 0x0bc3140b, 0x022cae02, 0x0d03b400, 0x012c2c01, 0x0d022c9a, 0x00002000, 0x020c0301, 0x0c040000 };
-u32 ai_15[] = { 0x0206039c, 0x00002000, 0x2c010602, 0x2cb7001e, 0xb9b5f400, 0x00ffc314, 0x0c020a03, 0x9c000001, 0x002c0036, 0x022c9a00, 0x01000002, 0x36bb000a, 0x2c010a02, 0x2c9c0000, 0x0800079c, 0x00000100, 0x040207b8, 0xb7000aae, 0x9c000001, 0x0036c314, 0x0e020c03, 0xb400012c, 0x2c010c02, 0x2c010702, 0x369a0001, 0x0000b902, 0x04c3140d, 0x9a000100, 0x00020b03, 0xbb00012c, 0x010b022c, 0x9a000040, 0x009a0000, 0x8000b605, 0xfd000104 };
-u32 ai_1[] = { 0x91329332, 0x05fd0002, 0x04000000 };
-u32 ai_3[] = { 0x91329332, 0x05fd0005, 0x04000000 };
-u32 ai_2[] = { 0x9001f48f, 0x01f49150, 0x93509250, 0x9d000008, 0x0005fd00, 0x02040000 };
-u32 ai_4[] = { 0x90001491, 0x50935002, 0x04140021, 0x00000602, 0x0603462c, 0x3a2c3b2c, 0x322c3c2c, 0x0106022c, 0x3335c82d, 0x35642c16, 0x00010000, 0x0a022d1a, 0x0a022c09, 0xae020b03, 0x3335fa2c, 0xb40000b4, 0x08010b02, 0x2c140021, 0x00002c02, 0x2c160001, 0x00002c02, 0x2c020a03, 0x2f08010a, 0x02080104, 0x04000000 };
-u32 ai_16[] = { 0x0204039c, 0x00004000, 0x2c010402, 0x2ceb5fec, 0xd700da02, 0x0a03dc2c, 0x010a022c, 0xddeaed03, 0x0303d516, 0x00020000, 0xd9f80081, 0x2c022c03, 0x03dbfc17, 0xe9ae020c, 0x03b40002, 0x582c010c, 0x022cda02, 0x0d03dc2c, 0x010d022c, 0xd205fd00, 0x01025f05, 0xfd000104 };
-u32 ai_17[] = { 0x02060355, 0x00824055, 0x00164003, 0x55001741, 0x55006b41, 0x55005442, 0x55005542, 0x55004e42, 0x03550027, 0x43550025, 0x4355007e, 0x44550041, 0x4455006d, 0x4555004b, 0x45010602, 0x4003ad53, 0x54415254, 0x0a00ac00, 0x0061ac01, 0x0065ac02, 0x00630106, 0x024103ad, 0x53435245, 0x454e0a00, 0xac000067, 0xac01005a, 0xac020059, 0x01060242, 0x03ad4455, 0x43540a00, 0xac000075, 0xac010080, 0xac020076, 0x01060243, 0x03ad4241, 0x590a00ac, 0x000054ac, 0x01007dac, 0x02007c01, 0x06024403, 0xad415a54, 0x310a00ac, 0x000076ac, 0x01006fac, 0x02007001, 0x06024503, 0xad415a54, 0x320a00ac, 0x00005fac, 0x01005bac, 0x02007c01, 0x06040000 };
-u32 ai_18[] = { 0x8e00ae02, 0x4a03b400, 0x00780401, 0x4a02049c, 0x00040000, 0x0bae020a, 0x03b40002, 0x582c010a, 0x022c3103, 0x2c010402, 0x2cad7370, 0x61776e31, 0x00f33602, 0x56bd27ff, 0x23280406, 0x00000000, 0x080236ad, 0x2d3e6661, 0x696c0001, 0x040208ad, 0x7331204f, 0x4b210001, 0x04020b03, 0x9c000200, 0x002c010b, 0x022c0104, 0x04000000 };
-u32 ai_19[] = { 0x8e01ae02, 0x4a03b400, 0x00780401, 0x4a02049c, 0x00040000, 0x0bae020a, 0x03b40002, 0x582c010a, 0x022c3104, 0x2c010402, 0x2cad7370, 0x61776e32, 0x00f33602, 0x56bd27ff, 0x23280407, 0x00000000, 0x080236ad, 0x2d3e6661, 0x696c0001, 0x040208ad, 0x7332204f, 0x4b210001, 0x04020b03, 0x9c000200, 0x002c010b, 0x022c0104, 0x04000000 };
-u32 ai_20[] = { 0x8e02ae02, 0x4a03b400, 0x00780401, 0x4a02049c, 0x00040000, 0x0bae020a, 0x03b40002, 0x582c010a, 0x022c3105, 0x2c010402, 0x2cad7370, 0x61776e33, 0x00f33602, 0x56bd27ff, 0x23280408, 0x00000000, 0x080236ad, 0x2d3e6661, 0x696c0001, 0x040208ad, 0x7333204f, 0x4b210001, 0x04020b03, 0x9c000200, 0x002c010b, 0x022c0104, 0x04000000 };
-u32 ai_5[] = { 0x8e0305fd, 0x04090400 };
-u32 ai_6[] = { 0x8e0405fd, 0x04090400 };
-u32 ai_7[] = { 0x8e0505fd, 0x04090400 };
-u32 ai_8[] = { 0x02409128, 0x9328002c, 0x02419132, 0x9332002c, 0x0242913c, 0x933c002c, 0x02439150, 0x9350002c, 0x022c3335, 0x82390236, 0x8f002890, 0x000a8dcc, 0xbf00bb16, 0x00000000, 0x2c022c02, 0x2c000802, 0x398f0028, 0x90001402, 0x2cbf00bb, 0x16800000, 0x002c022c, 0xbf00bb16, 0x90000000, 0x08020805, 0xfd040a04 };
-u32 ai_9[] = { 0x023a034c, 0x012c364c, 0x03200928, 0x0a02362a, 0x0a020a03, 0x4c019036, 0x4c032009, 0x3c3b0236, 0x2f3c010a, 0x023b3c2c, 0x0008023c, 0x03013a02, 0x2c023d33, 0x350a2c1a, 0x08022c35, 0x322c0e08, 0x022c353c, 0x2c130802, 0x2c35502c, 0x1308022c, 0x35642c11, 0x08022c35, 0x962c1208, 0x022c35c8, 0x2c140001, 0x00000802, 0x2c150001, 0x00000802, 0x08032f2c, 0x0108022c, 0x3c2c000a, 0x020a0301, 0x3a022c03, 0x013d0209, 0x4236ad44, 0x454c4554, 0x45210023, 0xfd05fd00, 0x01023601, 0x3a040000 };
-u32 ai_21[] = { 0x9a000400, 0x009b0002, 0x00000206, 0x03312a2c, 0x01060106, 0x022c9a00, 0x0200009b, 0x00040000, 0x05fd0001, 0x04000000 };
-u32 ai_22[] = { 0x0058025b, 0x03681504, 0x5a015b02, 0x5e036815, 0x01586815, 0x0859015e, 0x025c0368, 0x15085901, 0x5c025d03, 0x68150257, 0x6815045a, 0x015d0257, 0xd012002f, 0x015b025a, 0xd012002e, 0x015e0258, 0xd012002e, 0x015c0259, 0xd012002f, 0x015d0400 };
+u8 ai_0[] = { 
+    // 0x20
+    guard_start_patrol(
+        // path_num
+        0x0)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x700)
+    // 0x04
+    ai_list_end
+    ,0x00
+ };
+u8 ai_10[] = { 
+    // 0x02
+    label(
+        // id
+        0x6)
+    // 0x03
+    ai_sleep
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x8300, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x10000, 0x36)
+    // 0x5e
+    object_activate(
+        // object_tag
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x02
+    label(
+        // id
+        0x7)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: W2
+    0xad, 0x57, 0x32, 0x0a, 0x00,
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x10000, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x7)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: I2
+    0xad, 0x49, 0x32, 0x0a, 0x00,
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x580200, 0x18)
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x860100, 0x17)
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x4a0100, 0x16)
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0xd20000, 0x15)
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x960000, 0x14)
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x5a0000, 0x13)
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x1e0000, 0x12)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x12)
+    // 0xad
+    // debug_log: T1
+    0xad, 0x54, 0x31, 0x0a, 0x00,
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x1, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x1)
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x2, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x2)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x13)
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x3, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x3)
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x4, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x4)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x14)
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x5, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x5)
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x6, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x6)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x15)
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x7, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x7)
+    // 0xa4
+    object_flags_1_set_off(
+        // object_tag, bitfield
+        0x8, 0x200)
+    // 0x5f
+    object_destroy(
+        // object_tag
+        0x8)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x16)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x17)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x18)
+    // 0xad
+    // debug_log: CL
+    0xad, 0x43, 0x4c, 0x0a, 0x00,
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x100)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00
+ };
+u8 ai_11[] = { 
+    // 0x9b
+    objective_bitfield_set_off(
+        // bitfield
+        0x10000)
+    // 0x02
+    label(
+        // id
+        0x0)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x10000, 0x36)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x40000, 0xa)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x80000, 0xd)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0x614)
+    // 0x67
+    door_close(
+        // object_tag
+        0x14)
+    // 0x66
+    door_open(
+        // object_tag
+        0x0)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x840300, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x66
+    door_open(
+        // object_tag
+        0x9)
+    // 0x67
+    door_close(
+        // object_tag
+        0xa)
+    // 0x02
+    label(
+        // id
+        0xc)
+    // 0x03
+    ai_sleep
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x0, 0x2, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xc)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x10000)
+    // 0x9b
+    objective_bitfield_set_off(
+        // bitfield
+        0x40000)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x02
+    label(
+        // id
+        0xd)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0x714)
+    // 0x66
+    door_open(
+        // object_tag
+        0x14)
+    // 0x67
+    door_close(
+        // object_tag
+        0x0)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xe)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x840300, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xe)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x67
+    door_close(
+        // object_tag
+        0x9)
+    // 0x66
+    door_open(
+        // object_tag
+        0xa)
+    // 0x02
+    label(
+        // id
+        0xf)
+    // 0x03
+    ai_sleep
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x0, 0x1, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xf)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9b
+    objective_bitfield_set_off(
+        // bitfield
+        0x10000)
+    // 0x9b
+    objective_bitfield_set_off(
+        // bitfield
+        0x80000)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x04
+    ai_list_end
+    ,0x00
+ };
+u8 ai_12[] = { 
+    // 0x02
+    label(
+        // id
+        0x0)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x40000, 0x36)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x80000, 0x36)
+    // 0x5c
+    if_object_was_activated(
+        // object_tag, label
+        0xb, 0x2c)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x5c
+    if_object_was_activated(
+        // object_tag, label
+        0xb, 0x36)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x10000, 0xa)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x40000)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x100, 0xb)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x80000)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0xf14)
+    // 0x01
+    goto_first(
+        // label
+        0x0)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_13[] = { 
+    // 0x02
+    label(
+        // id
+        0x6)
+    // 0x03
+    ai_sleep
+    // 0x5d
+    if_bond_used_gadget_on_object(
+        // object_tag, label
+        0x13, 0x2c)
+    // 0x5c
+    if_object_was_activated(
+        // object_tag, label
+        0x13, 0x2d)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x59
+    if_bond_has_item_equipped(
+        // item_num, label
+        0x32, 0xb)
+    // 0x02
+    label(
+        // id
+        0x2d)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0x914)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x100000)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0x814)
+    // 0x02
+    label(
+        // id
+        0xc)
+    // 0x03
+    ai_sleep
+    // 0x01
+    goto_first(
+        // label
+        0xc)
+    // 0x04
+    ai_list_end
+    ,0x00
+ };
+u8 ai_14[] = { 
+    // 0x02
+    label(
+        // id
+        0x6)
+    // 0x03
+    ai_sleep
+    // 0x5d
+    if_bond_used_gadget_on_object(
+        // object_tag, label
+        0xf, 0x2c)
+    // 0x5c
+    if_object_was_activated(
+        // object_tag, label
+        0xf, 0x2d)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x59
+    if_bond_has_item_equipped(
+        // item_num, label
+        0x49, 0xb)
+    // 0x02
+    label(
+        // id
+        0x2d)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0xa14)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0xb14)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xd)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x2c0100, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xd)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x200000)
+    // 0x02
+    label(
+        // id
+        0xc)
+    // 0x03
+    ai_sleep
+    // 0x01
+    goto_first(
+        // label
+        0xc)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00
+ };
+u8 ai_15[] = { 
+    // 0x02
+    label(
+        // id
+        0x6)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x200000, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xb7
+    hud_countdown_set(
+        // seconds
+        0x1e00)
+    // 0xb9
+    hud_countdown_start
+    // 0xb5
+    hud_countdown_show
+    // 0xf4
+    music_xtrack_play(
+        // music_slot, seconds_stopped_duration, seconds_total_duration
+        0x0, 0x0, 0xff)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0xc14)
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x10000, 0x2c)
+    // 0x00
+    goto_next(
+        // label
+        0x36)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x100)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0xbb
+    if_hud_countdown_less_than(
+        // seconds, label
+        0xa00, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x80000, 0x7)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x10000, 0x4)
+    // 0x02
+    label(
+        // id
+        0x7)
+    // 0xb8
+    hud_countdown_stop
+    // 0xb7
+    hud_countdown_set(
+        // seconds
+        0xa00)
+    // 0xae
+    local_timer_reset_start
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x10000, 0x36)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0xe14)
+    // 0x02
+    label(
+        // id
+        0xc)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x2c0100, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xc)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x7)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x100)
+    // 0xb9
+    hud_countdown_start
+    // 0x02
+    label(
+        // id
+        0x4)
+    // 0xc3
+    text_print_top(
+        // text_slot
+        0xd14)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x100)
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x03
+    ai_sleep
+    // 0xbb
+    if_hud_countdown_less_than(
+        // seconds, label
+        0x100, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x400000)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x800000)
+    // 0xb6
+    hud_countdown_hide
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x100)
+    // 0x04
+    ai_list_end
+
+ };
+u8 ai_1[] = { 
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x32)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x32)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x200)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_3[] = { 
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x32)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x32)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x500)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_2[] = { 
+    // 0x90
+    guard_set_armour(
+        // armour_value
+        0xf401)
+    // 0x8f
+    guard_set_health_total(
+        // total_health
+        0xf401)
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x50)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x50)
+    // 0x92
+    guard_set_argh_rating(
+        // speed_rating
+        0x50)
+    // 0x9d
+    guard_flags_set_on(
+        // bitfield
+        0x80000)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x200)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00
+ };
+u8 ai_4[] = { 
+    // 0x90
+    guard_set_armour(
+        // armour_value
+        0x1400)
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x50)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x50)
+    // 0x02
+    label(
+        // id
+        0x4)
+    // 0x14
+    guard_try_fire_or_aim_at_target(
+        // bitfield, target, label
+        0x2100, 0x0, 0x6)
+    // 0x02
+    label(
+        // id
+        0x6)
+    // 0x03
+    ai_sleep
+    // 0x46
+    if_guard_shot_from_bond_missed(
+        // label
+        0x2c)
+    // 0x3a
+    if_guard_see_another_guard_shot(
+        // label
+        0x2c)
+    // 0x3b
+    if_guard_see_another_guard_die(
+        // label
+        0x2c)
+    // 0x32
+    if_guard_sees_bond(
+        // label
+        0x2c)
+    // 0x3c
+    if_guard_and_bond_within_line_of_sight(
+        // label
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x33
+    random_generate_seed
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0xc8, 0x2d)
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0x64, 0x2c)
+    // 0x16
+    guard_try_fire_or_aim_at_target_update(
+        // bitfield, target, label
+        0x100, 0x0, 0xa)
+    // 0x02
+    label(
+        // id
+        0x2d)
+    // 0x1a
+    guard_try_throwing_grenade(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x09
+    guard_kneel
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x03
+    ai_sleep
+    // 0x33
+    random_generate_seed
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0xfa, 0x2c)
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0xb40000, 0x8)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x14
+    guard_try_fire_or_aim_at_target(
+        // bitfield, target, label
+        0x2100, 0x0, 0x2c)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x16
+    guard_try_fire_or_aim_at_target_update(
+        // bitfield, target, label
+        0x100, 0x0, 0x2c)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0x2f
+    if_guard_has_stopped_moving(
+        // label
+        0x8)
+    // 0x01
+    goto_first(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x8)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_16[] = { 
+    // 0x02
+    label(
+        // id
+        0x4)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x400000, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xeb
+    if_bond_is_dead(
+        // label
+        0x5f)
+    // 0xec
+    bond_disable_damage_and_pickups
+    // 0xd7
+    hud_hide_and_lock_controls_and_pause_mission_time(
+        // bitfield
+        0x0)
+    // 0xda
+    screen_fade_to_black
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0xdc
+    if_screen_fade_completed(
+        // label
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xdd
+    chr_hide_all
+    // 0xea
+    trigger_fade_and_exit_level_on_button_press
+    // 0xed
+    bond_hide_weapons
+    // 0x03
+    ai_sleep
+    // 0x03
+    ai_sleep
+    // 0x03
+    ai_sleep
+    // 0xd5
+    camera_switch(
+        // object_tag, look_at_bond_flag, unused_flag
+        0x16, 0x200, 0x0)
+    // 0xd9
+    chr_try_teleporting_to_pad(
+        // chr_num, pad, label
+        0xf8, 0x8100, 0x2c)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x03
+    ai_sleep
+    // 0x03
+    ai_sleep
+    // 0xdb
+    screen_fade_from_black
+    // 0xfc
+    object_rocket_launch(
+        // object_tag
+        0x17)
+    // 0xe9
+    switch_fog_instantly
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xc)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x580200, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xc)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xda
+    screen_fade_to_black
+    // 0x02
+    label(
+        // id
+        0xd)
+    // 0x03
+    ai_sleep
+    // 0xdc
+    if_screen_fade_completed(
+        // label
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xd)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xd2
+    exit_level
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x100)
+    // 0x02
+    label(
+        // id
+        0x5f)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x100)
+    // 0x04
+    ai_list_end
+
+ };
+u8 ai_17[] = { 
+    // 0x02
+    label(
+        // id
+        0x6)
+    // 0x03
+    ai_sleep
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x8200, 0x40)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x1600, 0x40)
+    // 0x03
+    ai_sleep
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x1700, 0x41)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x6b00, 0x41)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x5400, 0x42)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x5500, 0x42)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x4e00, 0x42)
+    // 0x03
+    ai_sleep
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x2700, 0x43)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x2500, 0x43)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x7e00, 0x44)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x4100, 0x44)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x6d00, 0x45)
+    // 0x55
+    if_bond_in_room_with_pad(
+        // pad, label
+        0x4b00, 0x45)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x40)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: START
+    0xad, 0x53, 0x54, 0x41, 0x52, 0x54, 0x0a, 0x00,
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x0, 0x6100)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x1, 0x6500)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x2, 0x6300)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x41)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: SCREEN
+    0xad, 0x53, 0x43, 0x52, 0x45, 0x45, 0x4e, 0x0a, 0x00,
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x0, 0x6700)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x1, 0x5a00)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x2, 0x5900)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x42)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: DUCT
+    0xad, 0x44, 0x55, 0x43, 0x54, 0x0a, 0x00,
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x0, 0x7500)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x1, 0x8000)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x2, 0x7600)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x43)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: BAY
+    0xad, 0x42, 0x41, 0x59, 0x0a, 0x00,
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x0, 0x5400)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x1, 0x7d00)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x2, 0x7c00)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x44)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: AZT1
+    0xad, 0x41, 0x5a, 0x54, 0x31, 0x0a, 0x00,
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x0, 0x7600)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x1, 0x6f00)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x2, 0x7000)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x45)
+    // 0x03
+    ai_sleep
+    // 0xad
+    // debug_log: AZT2
+    0xad, 0x41, 0x5a, 0x54, 0x32, 0x0a, 0x00,
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x0, 0x5f00)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x1, 0x5b00)
+    // 0xac
+    chr_set_pad_preset(
+        // chr_num, pad_preset
+        0x2, 0x7c00)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00
+ };
+u8 ai_18[] = { 
+    // 0x8e
+    guard_set_chr_num(
+        // chr_num
+        0x0)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0x4a)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x780000, 0x4)
+    // 0x01
+    goto_first(
+        // label
+        0x4a)
+    // 0x02
+    label(
+        // id
+        0x4)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x400, 0xb)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x580200, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x31
+    if_chr_does_not_exist(
+        // chr_num, label
+        0x3, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xad
+    // debug_log: spawn1
+    0xad, 0x73, 0x70, 0x61, 0x77, 0x6e, 0x31, 0x00,
+    // 0xf3
+    if_bond_damage_and_pickups_disabled(
+        // label
+        0x36)
+    // 0x02
+    label(
+        // id
+        0x56)
+    // 0xbd
+    chr_try_spawning_at_pad(
+        // body_num, head_num, pad, ai_list, bitfield, label
+        0x27, 0xff, 0x2823, 0x604, 0x0, 0x8)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0xad
+    // debug_log: ->fail
+    0xad, 0x2d, 0x3e, 0x66, 0x61, 0x69, 0x6c, 0x00,
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0x8)
+    // 0xad
+    // debug_log: s1 OK!
+    0xad, 0x73, 0x31, 0x20, 0x4f, 0x4b, 0x21, 0x00,
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x200, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_19[] = { 
+    // 0x8e
+    guard_set_chr_num(
+        // chr_num
+        0x1)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0x4a)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x780000, 0x4)
+    // 0x01
+    goto_first(
+        // label
+        0x4a)
+    // 0x02
+    label(
+        // id
+        0x4)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x400, 0xb)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x580200, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x31
+    if_chr_does_not_exist(
+        // chr_num, label
+        0x4, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xad
+    // debug_log: spawn2
+    0xad, 0x73, 0x70, 0x61, 0x77, 0x6e, 0x32, 0x00,
+    // 0xf3
+    if_bond_damage_and_pickups_disabled(
+        // label
+        0x36)
+    // 0x02
+    label(
+        // id
+        0x56)
+    // 0xbd
+    chr_try_spawning_at_pad(
+        // body_num, head_num, pad, ai_list, bitfield, label
+        0x27, 0xff, 0x2823, 0x704, 0x0, 0x8)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0xad
+    // debug_log: ->fail
+    0xad, 0x2d, 0x3e, 0x66, 0x61, 0x69, 0x6c, 0x00,
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0x8)
+    // 0xad
+    // debug_log: s2 OK!
+    0xad, 0x73, 0x32, 0x20, 0x4f, 0x4b, 0x21, 0x00,
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x200, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_20[] = { 
+    // 0x8e
+    guard_set_chr_num(
+        // chr_num
+        0x2)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0x4a)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x780000, 0x4)
+    // 0x01
+    goto_first(
+        // label
+        0x4a)
+    // 0x02
+    label(
+        // id
+        0x4)
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x400, 0xb)
+    // 0xae
+    local_timer_reset_start
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0xb4
+    if_local_timer_greater_than(
+        // time60, label
+        0x580200, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x31
+    if_chr_does_not_exist(
+        // chr_num, label
+        0x5, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xad
+    // debug_log: spawn3
+    0xad, 0x73, 0x70, 0x61, 0x77, 0x6e, 0x33, 0x00,
+    // 0xf3
+    if_bond_damage_and_pickups_disabled(
+        // label
+        0x36)
+    // 0x02
+    label(
+        // id
+        0x56)
+    // 0xbd
+    chr_try_spawning_at_pad(
+        // body_num, head_num, pad, ai_list, bitfield, label
+        0x27, 0xff, 0x2823, 0x804, 0x0, 0x8)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0xad
+    // debug_log: ->fail
+    0xad, 0x2d, 0x3e, 0x66, 0x61, 0x69, 0x6c, 0x00,
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0x8)
+    // 0xad
+    // debug_log: s3 OK!
+    0xad, 0x73, 0x33, 0x20, 0x4f, 0x4b, 0x21, 0x00,
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x02
+    label(
+        // id
+        0xb)
+    // 0x03
+    ai_sleep
+    // 0x9c
+    if_objective_bitfield_is_set_on(
+        // bitfield, label
+        0x200, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0xb)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x4)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_5[] = { 
+    // 0x8e
+    guard_set_chr_num(
+        // chr_num
+        0x3)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x904)
+    // 0x04
+    ai_list_end
+    ,0x00
+ };
+u8 ai_6[] = { 
+    // 0x8e
+    guard_set_chr_num(
+        // chr_num
+        0x4)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x904)
+    // 0x04
+    ai_list_end
+    ,0x00
+ };
+u8 ai_7[] = { 
+    // 0x8e
+    guard_set_chr_num(
+        // chr_num
+        0x5)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x904)
+    // 0x04
+    ai_list_end
+    ,0x00
+ };
+u8 ai_8[] = { 
+    // 0x02
+    label(
+        // id
+        0x40)
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x28)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x28)
+    // 0x00
+    goto_next(
+        // label
+        0x2c)
+    // 0x02
+    label(
+        // id
+        0x41)
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x32)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x32)
+    // 0x00
+    goto_next(
+        // label
+        0x2c)
+    // 0x02
+    label(
+        // id
+        0x42)
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x3c)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x3c)
+    // 0x00
+    goto_next(
+        // label
+        0x2c)
+    // 0x02
+    label(
+        // id
+        0x43)
+    // 0x91
+    guard_set_speed_rating(
+        // speed_rating
+        0x50)
+    // 0x93
+    guard_set_accuracy_rating(
+        // accuracy_rating
+        0x50)
+    // 0x00
+    goto_next(
+        // label
+        0x2c)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x33
+    random_generate_seed
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0x82, 0x39)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x8f
+    guard_set_health_total(
+        // total_health
+        0x2800)
+    // 0x90
+    guard_set_armour(
+        // armour_value
+        0xa00)
+    // 0x8d
+    guard_set_grenade_probability(
+        // grenade_prob
+        0xcc)
+    // 0xbf
+    guard_try_spawning_item(
+        // prop_num, item_num, prop_bitfield, label
+        0xbb00, 0x16, 0x0, 0x2c)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x00
+    goto_next(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x39)
+    // 0x8f
+    guard_set_health_total(
+        // total_health
+        0x2800)
+    // 0x90
+    guard_set_armour(
+        // armour_value
+        0x1400)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xbf
+    guard_try_spawning_item(
+        // prop_num, item_num, prop_bitfield, label
+        0xbb00, 0x16, 0x80, 0x2c)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0xbf
+    guard_try_spawning_item(
+        // prop_num, item_num, prop_bitfield, label
+        0xbb00, 0x16, 0x90, 0x8)
+    // 0x02
+    label(
+        // id
+        0x8)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0xa04)
+    // 0x04
+    ai_list_end
+
+ };
+u8 ai_9[] = { 
+    // 0x02
+    label(
+        // id
+        0x3a)
+    // 0x03
+    ai_sleep
+    // 0x4c
+    if_guard_distance_to_bond_greater_than(
+        // distance, label
+        0x2c01, 0x36)
+    // 0x4c
+    if_guard_distance_to_bond_greater_than(
+        // distance, label
+        0x2003, 0x9)
+    // 0x28
+    guard_try_running_to_bond_position(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x2a
+    guard_try_sprinting_to_bond_position(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0x4c
+    if_guard_distance_to_bond_greater_than(
+        // distance, label
+        0x9001, 0x36)
+    // 0x4c
+    if_guard_distance_to_bond_greater_than(
+        // distance, label
+        0x2003, 0x9)
+    // 0x3c
+    if_guard_and_bond_within_line_of_sight(
+        // label
+        0x3b)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x2f
+    if_guard_has_stopped_moving(
+        // label
+        0x3c)
+    // 0x01
+    goto_first(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0x3b)
+    // 0x3c
+    if_guard_and_bond_within_line_of_sight(
+        // label
+        0x2c)
+    // 0x00
+    goto_next(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x3c)
+    // 0x03
+    ai_sleep
+    // 0x01
+    goto_first(
+        // label
+        0x3a)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x02
+    label(
+        // id
+        0x3d)
+    // 0x33
+    random_generate_seed
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0xa, 0x2c)
+    // 0x1a
+    guard_try_throwing_grenade(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0x32, 0x2c)
+    // 0x0e
+    guard_try_sidestepping(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0x3c, 0x2c)
+    // 0x13
+    guard_try_firing_roll(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0x50, 0x2c)
+    // 0x13
+    guard_try_firing_roll(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0x64, 0x2c)
+    // 0x11
+    guard_try_firing_walk(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0x96, 0x2c)
+    // 0x12
+    guard_try_firing_run(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x35
+    if_random_seed_greater_than(
+        // cbyte, label
+        0xc8, 0x2c)
+    // 0x14
+    guard_try_fire_or_aim_at_target(
+        // bitfield, target, label
+        0x100, 0x0, 0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x15
+    guard_try_fire_or_aim_at_target_kneel(
+        // bitfield, target, label
+        0x100, 0x0, 0x8)
+    // 0x02
+    label(
+        // id
+        0x8)
+    // 0x03
+    ai_sleep
+    // 0x2f
+    if_guard_has_stopped_moving(
+        // label
+        0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x8)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x3c
+    if_guard_and_bond_within_line_of_sight(
+        // label
+        0x2c)
+    // 0x00
+    goto_next(
+        // label
+        0xa)
+    // 0x02
+    label(
+        // id
+        0xa)
+    // 0x03
+    ai_sleep
+    // 0x01
+    goto_first(
+        // label
+        0x3a)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x03
+    ai_sleep
+    // 0x01
+    goto_first(
+        // label
+        0x3d)
+    // 0x02
+    label(
+        // id
+        0x9)
+    // 0x42
+    if_guard_is_on_screen(
+        // label
+        0x36)
+    // 0xad
+    // debug_log: DELETE!
+    0xad, 0x44, 0x45, 0x4c, 0x45, 0x54, 0x45, 0x21, 0x00,
+    // 0x23
+    chr_remove_instant(
+        // chr_num
+        0xfd)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x100)
+    // 0x02
+    label(
+        // id
+        0x36)
+    // 0x01
+    goto_first(
+        // label
+        0x3a)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00
+ };
+u8 ai_21[] = { 
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x400)
+    // 0x9b
+    objective_bitfield_set_off(
+        // bitfield
+        0x200)
+    // 0x02
+    label(
+        // id
+        0x6)
+    // 0x03
+    ai_sleep
+    // 0x31
+    if_chr_does_not_exist(
+        // chr_num, label
+        0x2a, 0x2c)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x01
+    goto_first(
+        // label
+        0x6)
+    // 0x02
+    label(
+        // id
+        0x2c)
+    // 0x9a
+    objective_bitfield_set_on(
+        // bitfield
+        0x200)
+    // 0x9b
+    objective_bitfield_set_off(
+        // bitfield
+        0x400)
+    // 0x05
+    jump_to_ai_list(
+        // chr_num, ai_list
+        0xfd, 0x100)
+    // 0x04
+    ai_list_end
+    ,0x00,0x00,0x00
+ };
+u8 ai_22[] = { 
+    // 0x00
+    goto_next(
+        // label
+        0x58)
+    // 0x02
+    label(
+        // id
+        0x5b)
+    // 0x03
+    ai_sleep
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x15, 0x4, 0x5a)
+    // 0x01
+    goto_first(
+        // label
+        0x5b)
+    // 0x02
+    label(
+        // id
+        0x5e)
+    // 0x03
+    ai_sleep
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x15, 0x1, 0x58)
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x15, 0x8, 0x59)
+    // 0x01
+    goto_first(
+        // label
+        0x5e)
+    // 0x02
+    label(
+        // id
+        0x5c)
+    // 0x03
+    ai_sleep
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x15, 0x8, 0x59)
+    // 0x01
+    goto_first(
+        // label
+        0x5c)
+    // 0x02
+    label(
+        // id
+        0x5d)
+    // 0x03
+    ai_sleep
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x15, 0x2, 0x57)
+    // 0x68
+    if_door_state_equal(
+        // object_tag, door_state, label
+        0x15, 0x4, 0x5a)
+    // 0x01
+    goto_first(
+        // label
+        0x5d)
+    // 0x02
+    label(
+        // id
+        0x57)
+    // 0xd0
+    tv_change_screen_bank(
+        // object_tag, screen_index, screen_bank
+        0x12, 0x0, 0x2f)
+    // 0x01
+    goto_first(
+        // label
+        0x5b)
+    // 0x02
+    label(
+        // id
+        0x5a)
+    // 0xd0
+    tv_change_screen_bank(
+        // object_tag, screen_index, screen_bank
+        0x12, 0x0, 0x2e)
+    // 0x01
+    goto_first(
+        // label
+        0x5e)
+    // 0x02
+    label(
+        // id
+        0x58)
+    // 0xd0
+    tv_change_screen_bank(
+        // object_tag, screen_index, screen_bank
+        0x12, 0x0, 0x2e)
+    // 0x01
+    goto_first(
+        // label
+        0x5c)
+    // 0x02
+    label(
+        // id
+        0x59)
+    // 0xd0
+    tv_change_screen_bank(
+        // object_tag, screen_index, screen_bank
+        0x12, 0x0, 0x2f)
+    // 0x01
+    goto_first(
+        // label
+        0x5d)
+    // 0x04
+    ai_list_end
+    ,0x00
+ };
 
 AIListRecord ailists[] = {
     /* index = 0 */

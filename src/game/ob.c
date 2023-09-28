@@ -110,14 +110,15 @@ void resource_load_from_indy(u8 *ptrdata, s32 bytes,  fileentry *srcfile,  resou
 
 
 #ifdef NONMATCHING
-void obInitDebugNoticeList(void)
+void obInit(void)
 {
     s32 i;
  
     debTryAdd(&ob_c_debug_notice_list_entry,"ob_c_debug");
-    for (i = 0; i < (file_entry_max - 1); i++)
+    for (i = file_entry_max-1; i > 1 ; i--)
     {
-        resource_lookup_data_array[i].rom_size = (file_resource_table[i+1].hw_address - file_resource_table[i].hw_address);
+        s32 size = (file_resource_table[i+1].hw_address - file_resource_table[i].hw_address);
+        resource_lookup_data_array[i].rom_size = size;
         resource_lookup_data_array[i].poolRemaining = 0;
         resource_lookup_data_array[i].pc_size = 0;
         resource_lookup_data_array[i].rom_remaining = 0;
@@ -131,7 +132,7 @@ glabel aOb_c_debug
 /*"ob_c_debug"*/
 .word 0x6F625F63, 0x5F646562, 0x75670000
 .text
-glabel obInitDebugNoticeList
+glabel obInit
 /* 0F1758 7F0BCC28 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0F175C 7F0BCC2C AFBF0014 */  sw    $ra, 0x14($sp)
 /* 0F1760 7F0BCC30 3C048004 */  lui   $a0, %hi(ob_c_debug_notice_list_entry)
@@ -183,7 +184,7 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
   s32 index;
    fileentry *fileentry;
 
-  index = get_index_num_of_named_resource(bgname);
+  index = fileGetIndex(bgname);
   fileentry = &file_resource_table[index];
   
   if (resource_lookup_data_array[index].rom_size != 0)
@@ -201,28 +202,28 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
 
 #if defined(LEFTOVERDEBUG)
 /* no VERSION_EU */
-void _load_rom_index_to_membank(s32 index,s32 param_2,s32 size,u8 bank)
+void *_fileIndexLoadToBank(s32 index, FILELOADMETHOD param_2, s32 size, u8 bank)
 {
-    load_rom_resource_index_to_membank(index, param_2, size, bank);
+    return fileIndexLoadToBank(index, param_2, size, bank);
 }
 #endif
 
 #if defined(LEFTOVERDEBUG)
 /* no VERSION_EU */
-void _load_resource_index_to_membank(int index,s32 param_2,u8 *ptrdata,int size)
+void *_fileIndexLoadToAddr(int index, FILELOADMETHOD param_2, u8 *ptrdata, int size)
 {
-    load_resource_index_to_buffer(index, param_2, ptrdata, size);
+    return fileIndexLoadToAddr(index, param_2, ptrdata, size);
 }
 #endif
 
-void _load_resource_named_to_membank(char *filename, FILELOADMETHOD loadMethod, s32 size, u8 bank)
+void *_fileNameLoadToBank(char *filename, FILELOADMETHOD loadMethod, s32 size, u8 bank)
 {
-    load_rom_resource_index_to_membank(get_index_num_of_named_resource(filename), loadMethod, size, bank);
+    return fileIndexLoadToBank(fileGetIndex(filename), loadMethod, size, bank);
 }
 
-void _load_resource_named_to_buffer(char *filename, FILELOADMETHOD loadMethod, u8 *ptrdata, s32 size)
+void * _fileNameLoadToAddr(char *filename, FILELOADMETHOD loadMethod, u8 *ptrdata, s32 size)
 {
-    load_resource_index_to_buffer(get_index_num_of_named_resource(filename), loadMethod, ptrdata, size);
+    return fileIndexLoadToAddr(fileGetIndex(filename), loadMethod, ptrdata, size);
 }
 
 #if defined(LEFTOVERDEBUG)
@@ -236,7 +237,7 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
   s32 index;
    fileentry *fileentry;
 
-  index = get_index_num_of_named_resource(bgname);
+  index = fileGetIndex(bgname);
   fileentry = &file_resource_table[index];
   
   if (resource_lookup_data_array[index].rom_size != 0)
@@ -256,7 +257,7 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
 
 
 
-void *load_rom_resource_index_to_membank(s32 index, FILELOADMETHOD loadMethod, s32 size, u8 bank) //#MATCH https://decomp.me/scratch/uqiBe
+void *fileIndexLoadToBank(s32 index, FILELOADMETHOD loadMethod, s32 size, u8 bank) //#MATCH https://decomp.me/scratch/uqiBe
 {
     resource_lookup_data_entry *info = &resource_lookup_data_array[index];
     s32                         bytes;
@@ -324,7 +325,7 @@ void *load_rom_resource_index_to_membank(s32 index, FILELOADMETHOD loadMethod, s
 
 
 
-void *load_resource_index_to_buffer(s32 index, FILELOADMETHOD loadMethod, void *ptrdata, s32 bytes) //#match https://decomp.me/scratch/YExRh
+void *fileIndexLoadToAddr(s32 index, FILELOADMETHOD loadMethod, void *ptrdata, s32 bytes) //#match https://decomp.me/scratch/YExRh
 {
     resource_lookup_data_entry *info = &resource_lookup_data_array[index];
 
@@ -385,64 +386,22 @@ s32 get_rom_remaining_buffer_for_index(s32 index)
 }
 
 
-
-#ifdef NONMATCHING
-//f1c74:    addiu   t7,t7,-0x7750                   | f1c74:    addiu   sp,sp,-0x18 //moved
-//                                                  > f1c78:    addiu   t7,t7,-0x7750
-//f1c78:    sll     t6,t6,0x2                         f1c7c:    sll     t6,t6,0x2
-//f1c7c:    addiu   sp,sp,-0x18                     | f1c80:    addu    v0,t6,t7
-//f1c80:    addu    v0,t6,t7                        | f1c84:    sw      ra,0x14(sp)
-//f1c84:    sw      ra,0x14(sp)                     r f1c88:    sw      a1,0x1c(sp)
-//f1c88:    sw      a1,0x1c(sp)                     r f1c8c:    sw      a2,0x20(sp) //extra reg save
-void sub_GAME_7F0BD138(int index, u8 *ptrdata, u32 size, u32 param_4)
+void fileSetSize(s32 filenum, u8* ptr, u32 size, s32 reallocate)
 {
-    resource_lookup_data_array[index].poolRemaining = size;
-    resource_lookup_data_array[index].rom_remaining = size;
-
-
-    if (param_4 !=0 )
+    resource_lookup_data_array[filenum].poolRemaining = size;
+    resource_lookup_data_array[filenum].rom_remaining = size;
+    if (reallocate != 0)
     {
-        mempAddEntryOfSizeToBank(ptrdata, size, 4);
+        mempAddEntryOfSizeToBank(ptr, resource_lookup_data_array[filenum].poolRemaining, 4U);
     }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0BD138
-/* 0F1C68 7F0BD138 00047080 */  sll   $t6, $a0, 2
-/* 0F1C6C 7F0BD13C 01C47021 */  addu  $t6, $t6, $a0
-/* 0F1C70 7F0BD140 3C0F8009 */  lui   $t7, %hi(resource_lookup_data_array) 
-/* 0F1C74 7F0BD144 25EF88B0 */  addiu $t7, %lo(resource_lookup_data_array) # addiu $t7, $t7, -0x7750
-/* 0F1C78 7F0BD148 000E7080 */  sll   $t6, $t6, 2
-/* 0F1C7C 7F0BD14C 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0F1C80 7F0BD150 01CF1021 */  addu  $v0, $t6, $t7
-/* 0F1C84 7F0BD154 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0F1C88 7F0BD158 AFA5001C */  sw    $a1, 0x1c($sp)
-/* 0F1C8C 7F0BD15C AC460004 */  sw    $a2, 4($v0)
-/* 0F1C90 7F0BD160 10E00005 */  beqz  $a3, .L7F0BD178
-/* 0F1C94 7F0BD164 AC46000C */   sw    $a2, 0xc($v0)
-/* 0F1C98 7F0BD168 00A02025 */  move  $a0, $a1
-/* 0F1C9C 7F0BD16C 00C02825 */  move  $a1, $a2
-/* 0F1CA0 7F0BD170 0C002601 */  jal   mempAddEntryOfSizeToBank
-/* 0F1CA4 7F0BD174 24060004 */   li    $a2, 4
-.L7F0BD178:
-/* 0F1CA8 7F0BD178 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0F1CAC 7F0BD17C 27BD0018 */  addiu $sp, $sp, 0x18
-/* 0F1CB0 7F0BD180 03E00008 */  jr    $ra
-/* 0F1CB4 7F0BD184 00000000 */   nop   
-)
-#endif
-
-
-
-
 
 
 s32 get_pc_buffer_remaining_value(u8 *name)
 {
     int index;
     
-    index = get_index_num_of_named_resource(name);
+    index = fileGetIndex(name);
     return resource_lookup_data_array[index].poolRemaining;
 }
 
@@ -461,7 +420,7 @@ void obBlankResourcesLoadedInBank(u8 bank)
 }
 
 void obBlankResourcesInBank5(void) {
-  obBlankResourcesLoadedInBank(5);
+  obBlankResourcesLoadedInBank(MEMPOOL_ME);
 }
 
 
@@ -470,7 +429,7 @@ void obBlankResourcesInBank5(void) {
 
 #ifdef NONMATCHING
 //needs work
-int get_index_num_of_named_resource(u8 *resname)
+int fileGetIndex(u8 *resname)
 {
     int i;
     int size;
@@ -509,7 +468,7 @@ int get_index_num_of_named_resource(u8 *resname)
 #if defined(LEFTOVERDEBUG)
 GLOBAL_ASM(
 .text
-glabel get_index_num_of_named_resource
+glabel fileGetIndex
 /* 0F1D84 7F0BD254 27BDFFC0 */  addiu $sp, $sp, -0x40
 /* 0F1D88 7F0BD258 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 0F1D8C 7F0BD25C 3C128005 */  lui   $s2, %hi(file_entry_max)
@@ -598,7 +557,7 @@ glabel get_index_num_of_named_resource
 #if !defined(LEFTOVERDEBUG)
 GLOBAL_ASM(
 .text
-glabel get_index_num_of_named_resource
+glabel fileGetIndex
 /* 0EEFFC 7F0BC60C 27BDFFC0 */  addiu $sp, $sp, -0x40
 /* 0EF000 7F0BC610 AFB2001C */  sw    $s2, 0x1c($sp)
 /* 0EF004 7F0BC614 3C128004 */  lui   $s2, %hi(file_entry_max) # $s2, 0x8004

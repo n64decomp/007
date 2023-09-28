@@ -15,6 +15,7 @@ extern struct huft *rz_hlist;
    the next table, which codes e - 16 bits, and lastly e == 99 indicates
    an unused code.  If a code with e == 99 is looked up, this implies an
    error in the data. */
+// from gzip 1.2.4 inflate.c (public domain)
 struct huft {
 	u8 e;                /* number of extra bits or operation */
 	u8 b;                /* number of bits in this code or subcode */

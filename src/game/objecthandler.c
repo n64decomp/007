@@ -142,7 +142,7 @@ u32 D_80036248 = 0;
 //D:8003624C
 u32 D_8003624C = 0;
 //D:80036250
-u32 D_80036250 = 1;
+u32 g_ModelAnimMergingEnabled = 1;
 //D:80036254
 u32 D_80036254 = 0;
 //D:80036258
@@ -286,15 +286,7 @@ s32 D_80036418 =  0;
 s32 D_8003641C =  0;
 
 
-#if defined(LEFTOVERDEBUG)
-// rodata
-//D:80054420
-const char aDrawjointlistNoGfxlist[] = "drawjointlist: no gfxlist!\n";
-//D:8005443C
-const char aDrawjointlistNoObject0xX[] = "drawjointlist: no object! (0x%X)\n";
-//D:80054460
-const char aDrawjointlistObjectNotInitialised0[] = "drawjointlist: object not initialised! (0x%X)\n";
-#endif
+
 
 /*
 */
@@ -533,14 +525,14 @@ glabel sub_GAME_7F06B29C
 /* 09FE34 7F06B304 02002825 */  move  $a1, $s0
 /* 09FE38 7F06B308 8C470004 */  lw    $a3, 4($v0)
 /* 09FE3C 7F06B30C 00003025 */  move  $a2, $zero
-/* 09FE40 7F06B310 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FE40 7F06B310 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FE44 7F06B314 AFA70100 */   sw    $a3, 0x100($sp)
 /* 09FE48 7F06B318 8FA70100 */  lw    $a3, 0x100($sp)
 /* 09FE4C 7F06B31C 00408025 */  move  $s0, $v0
 /* 09FE50 7F06B320 00003025 */  move  $a2, $zero
 /* 09FE54 7F06B324 10E0000A */  beqz  $a3, .L7F06B350
 /* 09FE58 7F06B328 00E02825 */   move  $a1, $a3
-/* 09FE5C 7F06B32C 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FE5C 7F06B32C 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FE60 7F06B330 8E240000 */   lw    $a0, ($s1)
 /* 09FE64 7F06B334 C44A0038 */  lwc1  $f10, 0x38($v0)
 /* 09FE68 7F06B338 C6040038 */  lwc1  $f4, 0x38($s0)
@@ -560,14 +552,14 @@ glabel sub_GAME_7F06B29C
 /* 09FE98 7F06B368 02002825 */  move  $a1, $s0
 /* 09FE9C 7F06B36C 8C470014 */  lw    $a3, 0x14($v0)
 /* 09FEA0 7F06B370 00003025 */  move  $a2, $zero
-/* 09FEA4 7F06B374 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FEA4 7F06B374 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FEA8 7F06B378 AFA700F0 */   sw    $a3, 0xf0($sp)
 /* 09FEAC 7F06B37C 8FA700F0 */  lw    $a3, 0xf0($sp)
 /* 09FEB0 7F06B380 00408025 */  move  $s0, $v0
 /* 09FEB4 7F06B384 00003025 */  move  $a2, $zero
 /* 09FEB8 7F06B388 10E0000A */  beqz  $a3, .L7F06B3B4
 /* 09FEBC 7F06B38C 00E02825 */   move  $a1, $a3
-/* 09FEC0 7F06B390 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FEC0 7F06B390 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FEC4 7F06B394 8E240000 */   lw    $a0, ($s1)
 /* 09FEC8 7F06B398 C4480038 */  lwc1  $f8, 0x38($v0)
 /* 09FECC 7F06B39C C60A0038 */  lwc1  $f10, 0x38($s0)
@@ -587,14 +579,14 @@ glabel sub_GAME_7F06B29C
 /* 09FEFC 7F06B3CC 02002825 */  move  $a1, $s0
 /* 09FF00 7F06B3D0 8C470014 */  lw    $a3, 0x14($v0)
 /* 09FF04 7F06B3D4 00003025 */  move  $a2, $zero
-/* 09FF08 7F06B3D8 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FF08 7F06B3D8 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FF0C 7F06B3DC AFA700E0 */   sw    $a3, 0xe0($sp)
 /* 09FF10 7F06B3E0 8FA700E0 */  lw    $a3, 0xe0($sp)
 /* 09FF14 7F06B3E4 00408025 */  move  $s0, $v0
 /* 09FF18 7F06B3E8 00003025 */  move  $a2, $zero
 /* 09FF1C 7F06B3EC 10E0000A */  beqz  $a3, .L7F06B418
 /* 09FF20 7F06B3F0 00E02825 */   move  $a1, $a3
-/* 09FF24 7F06B3F4 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FF24 7F06B3F4 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FF28 7F06B3F8 8E240000 */   lw    $a0, ($s1)
 /* 09FF2C 7F06B3FC C4460038 */  lwc1  $f6, 0x38($v0)
 /* 09FF30 7F06B400 C6080038 */  lwc1  $f8, 0x38($s0)
@@ -611,7 +603,7 @@ glabel sub_GAME_7F06B29C
 .L7F06B428:
 /* 09FF58 7F06B428 8E240000 */  lw    $a0, ($s1)
 /* 09FF5C 7F06B42C 02002825 */  move  $a1, $s0
-/* 09FF60 7F06B430 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FF60 7F06B430 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FF64 7F06B434 00003025 */   move  $a2, $zero
 /* 09FF68 7F06B438 C4440038 */  lwc1  $f4, 0x38($v0)
 /* 09FF6C 7F06B43C 46002187 */  neg.s $f6, $f4
@@ -620,7 +612,7 @@ glabel sub_GAME_7F06B29C
 .L7F06B448:
 /* 09FF78 7F06B448 8E240000 */  lw    $a0, ($s1)
 /* 09FF7C 7F06B44C 02002825 */  move  $a1, $s0
-/* 09FF80 7F06B450 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FF80 7F06B450 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FF84 7F06B454 00003025 */   move  $a2, $zero
 /* 09FF88 7F06B458 8E030004 */  lw    $v1, 4($s0)
 /* 09FF8C 7F06B45C C44A0008 */  lwc1  $f10, 8($v0)
@@ -642,7 +634,7 @@ glabel sub_GAME_7F06B29C
 .L7F06B49C:
 /* 09FFCC 7F06B49C 8E240000 */  lw    $a0, ($s1)
 /* 09FFD0 7F06B4A0 02002825 */  move  $a1, $s0
-/* 09FFD4 7F06B4A4 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 09FFD4 7F06B4A4 0FC1B198 */  jal   modelFindNodeMtx
 /* 09FFD8 7F06B4A8 00003025 */   move  $a2, $zero
 /* 09FFDC 7F06B4AC 8E030004 */  lw    $v1, 4($s0)
 /* 09FFE0 7F06B4B0 C4420008 */  lwc1  $f2, 8($v0)
@@ -681,7 +673,7 @@ glabel sub_GAME_7F06B29C
 .L7F06B530:
 /* 0A0060 7F06B530 8E240000 */  lw    $a0, ($s1)
 /* 0A0064 7F06B534 02002825 */  move  $a1, $s0
-/* 0A0068 7F06B538 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A0068 7F06B538 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A006C 7F06B53C 00003025 */   move  $a2, $zero
 /* 0A0070 7F06B540 8E030004 */  lw    $v1, 4($s0)
 /* 0A0074 7F06B544 C4460008 */  lwc1  $f6, 8($v0)
@@ -704,7 +696,7 @@ glabel sub_GAME_7F06B29C
 .L7F06B588:
 /* 0A00B8 7F06B588 8E240000 */  lw    $a0, ($s1)
 /* 0A00BC 7F06B58C 02002825 */  move  $a1, $s0
-/* 0A00C0 7F06B590 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A00C0 7F06B590 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A00C4 7F06B594 00003025 */   move  $a2, $zero
 /* 0A00C8 7F06B598 8E030004 */  lw    $v1, 4($s0)
 /* 0A00CC 7F06B59C C4480008 */  lwc1  $f8, 8($v0)
@@ -726,7 +718,7 @@ glabel sub_GAME_7F06B29C
 .L7F06B5DC:
 /* 0A010C 7F06B5DC 8E240000 */  lw    $a0, ($s1)
 /* 0A0110 7F06B5E0 02002825 */  move  $a1, $s0
-/* 0A0114 7F06B5E4 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A0114 7F06B5E4 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A0118 7F06B5E8 00003025 */   move  $a2, $zero
 /* 0A011C 7F06B5EC 8E030004 */  lw    $v1, 4($s0)
 /* 0A0120 7F06B5F0 C4440008 */  lwc1  $f4, 8($v0)
@@ -748,7 +740,7 @@ glabel sub_GAME_7F06B29C
 .L7F06B630:
 /* 0A0160 7F06B630 8E240000 */  lw    $a0, ($s1)
 /* 0A0164 7F06B634 02002825 */  move  $a1, $s0
-/* 0A0168 7F06B638 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A0168 7F06B638 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A016C 7F06B63C 00003025 */   move  $a2, $zero
 /* 0A0170 7F06B640 8E060004 */  lw    $a2, 4($s0)
 /* 0A0174 7F06B644 8E240000 */  lw    $a0, ($s1)
@@ -810,7 +802,7 @@ def_7F06B2F4:
 /* 0A0248 7F06B718 AFA00078 */  sw    $zero, 0x78($sp)
 /* 0A024C 7F06B71C AFA00074 */  sw    $zero, 0x74($sp)
 /* 0A0250 7F06B720 AFA70080 */  sw    $a3, 0x80($sp)
-/* 0A0254 7F06B724 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A0254 7F06B724 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A0258 7F06B728 AFA8007C */   sw    $t0, 0x7c($sp)
 /* 0A025C 7F06B72C 8FA30114 */  lw    $v1, 0x114($sp)
 /* 0A0260 7F06B730 8FA70080 */  lw    $a3, 0x80($sp)
@@ -1173,6 +1165,15 @@ glabel sub_GAME_7F06BB28
 
 
 
+#if defined(LEFTOVERDEBUG)
+// rodata
+//D:80054420
+const char aDrawjointlistNoGfxlist[] = "drawjointlist: no gfxlist!\n";
+//D:8005443C
+const char aDrawjointlistNoObject0xX[] = "drawjointlist: no object! (0x%X)\n";
+//D:80054460
+const char aDrawjointlistObjectNotInitialised0[] = "drawjointlist: object not initialised! (0x%X)\n";
+#endif
 
 #ifdef NONMATCHING
 void drawjointlist(void) {
@@ -1670,19 +1671,19 @@ glabel probably_damage_detail_blood_effect_related
 /* 0A0AC0 7F06BF90 00008825 */   move  $s1, $zero
 .L7F06BF94:
 /* 0A0AC4 7F06BF94 8E640000 */  lw    $a0, ($s3)
-/* 0A0AC8 7F06BF98 0FC1BA5C */  jal   sub_GAME_7F06E970
+/* 0A0AC8 7F06BF98 0FC1BA5C */  jal   modelApplyDistanceRelations
 /* 0A0ACC 7F06BF9C 02002825 */   move  $a1, $s0
 /* 0A0AD0 7F06BFA0 10000009 */  b     .L7F06BFC8
 /* 0A0AD4 7F06BFA4 00000000 */   nop   
 .L7F06BFA8:
 /* 0A0AD8 7F06BFA8 8E640000 */  lw    $a0, ($s3)
-/* 0A0ADC 7F06BFAC 0FC1BA6F */  jal   process_12_handle_switch
+/* 0A0ADC 7F06BFAC 0FC1BA6F */  jal   modelApplyToggleRelations
 /* 0A0AE0 7F06BFB0 02002825 */   move  $a1, $s0
 /* 0A0AE4 7F06BFB4 10000004 */  b     .L7F06BFC8
 /* 0A0AE8 7F06BFB8 00000000 */   nop   
 .L7F06BFBC:
 /* 0A0AEC 7F06BFBC 8E640000 */  lw    $a0, ($s3)
-/* 0A0AF0 7F06BFC0 0FC1BA82 */  jal   process_17_pointer_to_head
+/* 0A0AF0 7F06BFC0 0FC1BA82 */  jal   modelApplyHeadRelations
 /* 0A0AF4 7F06BFC4 02002825 */   move  $a1, $s0
 def_7F06BEEC:
 .L7F06BFC8:

@@ -3,7 +3,7 @@
 
 // rodata
 
-f32 sub_GAME_7F0B3200(coord2d *arg0, coord2d *arg1, coord2d *arg2, coord2d *arg3)
+f32 unkGeometry7F0B3200(coord2d *arg0, coord2d *arg1, coord2d *arg2, coord2d *arg3)
 {
     f32 mult1 = arg2->f[1] - arg3->f[1];
     f32 mult2 = arg3->f[0] - arg2->f[0];
@@ -63,7 +63,7 @@ f32 sub_GAME_7F0B32D8(struct coord3d *arg0, coord2d *arg1, coord2d *arg2)
 }
 
 
-f32 sub_GAME_7F0B33DC(coord3d *arg0, coord2d *arg1, coord2d *arg2,coord2d *arg3)
+f32 unkGeometry7F0B33DC(coord3d *arg0, coord2d *arg1, coord2d *arg2,coord2d *arg3)
 {
     f32 spac;
     f32 spa8;

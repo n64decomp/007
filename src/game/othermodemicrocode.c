@@ -86,7 +86,8 @@ s32 ceil1000(s32 arg0)
 }
 
 
-s32 sub_GAME_7F0767D8(s32 arg0, s32 arg1, s32 arg2) {
+s32 sub_GAME_7F0767D8(s32 arg0, s32 arg1, s32 arg2)
+{
     s32 ret;
     ret = 0;
 
@@ -103,7 +104,8 @@ s32 sub_GAME_7F0767D8(s32 arg0, s32 arg1, s32 arg2) {
 }
 
 
-s32 sub_GAME_7F076848(s32 arg0, s32 arg1, s32 arg2) {
+s32 sub_GAME_7F076848(s32 arg0, s32 arg1, s32 arg2)
+{
     s32 ret;
     ret = 0;
 
@@ -120,7 +122,8 @@ s32 sub_GAME_7F076848(s32 arg0, s32 arg1, s32 arg2) {
 }
 
 
-s32 sub_GAME_7F0768B8(s32 arg0, s32 arg1, s32 arg2) {
+s32 sub_GAME_7F0768B8(s32 arg0, s32 arg1, s32 arg2)
+{
     s32 ret;
     ret = 0;
 
@@ -137,7 +140,8 @@ s32 sub_GAME_7F0768B8(s32 arg0, s32 arg1, s32 arg2) {
 }
 
 
-s32 sub_GAME_7F076928(s32 arg0, s32 arg1, s32 arg2) {
+s32 sub_GAME_7F076928(s32 arg0, s32 arg1, s32 arg2)
+{
     s32 ret;
     ret = 0;
 
@@ -298,8 +302,392 @@ void texSetRenderMode(Gfx **gdlptr, s32 arg1, s32 numcycles, s32 arg3)
 
 
 #ifdef NONMATCHING
-void likely_generate_DL_for_image_declaration(Gfx**, struct sImageTableEntry*, s32, s32, s32) {
 
+// First pass mips2c output (initial guess at variables, everything compiles).
+// Display list commands are probably correct, but almost every single one has wrong arguments.
+// https://decomp.me/scratch/Q6Ss8 28%
+void likely_generate_DL_for_image_declaration(Gfx **arg0, sImageTableEntry *arg1, s32 arg2, s32 arg3, s32 arg4)
+{
+    Gfx *sp16C;
+    u32 sp144;
+    s32 sp140;
+    s32 sp13C;
+    s32 sp138;
+    s32 sp134;
+    s32 spD0;
+    s32 spCC;
+    s32 spCA;
+    s32 spC4;
+    s32 spC0;
+    s32 spBC;
+
+    struct tex *temp_s6;
+    
+    u8 var_s1;
+    u8 var_s2;
+    s32 var_s3;
+    u8 var_s4;
+    u8 var_s5;
+    s32 var_a2;
+    s32 var_v0;
+    s32 var_s0;
+
+    sp16C = *arg0;
+
+    if (arg1 == NULL)
+    {
+        texSetRenderMode(&sp16C, arg2, 1, arg3);
+
+        if (arg3 >= 2)
+        {
+            gSPTexture(sp16C++, 0xffff, 0xffff, arg3, G_TX_RENDERTILE, G_ON);
+        }
+        else
+        {
+            gSPTexture(sp16C++, 0xffff, 0xffff, 0, G_TX_RENDERTILE, G_ON);
+        }
+
+        gDPSetCombineMode(sp16C++, G_CC_SHADE, G_CC_SHADE);
+    }
+    else
+    {
+        var_s5 = arg1->width;
+        var_s4 = arg1->height;
+        
+        if ((u32) arg1->index < 0xBB9U)
+        {
+            texLoad((s32 *) arg1, NULL);
+        }
+
+        temp_s6 = texFindInPool((s32) (arg1->index | 0x80000000) - 8, NULL);
+
+        if (arg1->level == 0)
+        {
+            if (temp_s6 != NULL)
+            {
+                var_s1 = temp_s6->gbiformat;
+                var_s2 = temp_s6->depth;
+                sp144 = temp_s6->next;
+            }
+            else
+            {
+                var_s1 = arg1->format;
+                var_s2 = arg1->depth;
+            }
+
+            switch (var_s2)
+            {
+                default:                                /* switch 1 */
+                    var_s3 = sp13C;
+                    break;
+                case 3:                                 /* switch 1 */
+                    sp140 = 3;
+                    var_s3 = sub_GAME_7F076928((s32) var_s5, (s32) var_s4, 1) - 1;
+                    sp138 = ceil1000((s32) var_s5);
+                    sp134 = (s32) (var_s5 + 3) >> 2;
+                    break;
+                case 2:                                 /* switch 1 */
+                    sp140 = 2;
+                    var_s3 = sub_GAME_7F0768B8((s32) var_s5, (s32) var_s4, 1) - 1;
+                    sp138 = ceil2000((s32) var_s5);
+                    sp134 = (s32) (var_s5 + 3) >> 2;
+                    break;
+                case 1:                                 /* switch 1 */
+                    sp140 = 2;
+                    var_s3 = sub_GAME_7F076848((s32) var_s5, (s32) var_s4, 1) - 1;
+                    sp138 = ceil4000((s32) var_s5);
+                    sp134 = (s32) (var_s5 + 7) >> 3;
+                    break;
+                case 0:                                 /* switch 1 */
+                    sp140 = 2;
+                    var_s3 = sub_GAME_7F0767D8((s32) var_s5, (s32) var_s4, 1) - 1;
+                    sp138 = ceil8000((s32) var_s5);
+                    sp134 = (s32) (var_s5 + 0xF) >> 4;
+                    break;
+            }
+
+            texSetRenderMode(&sp16C, arg2, 1, arg3);
+
+            if (arg3 >= 2)
+            {
+                gSPTexture(sp16C++, 0xffff, 0xffff, arg3, G_TX_RENDERTILE, G_ON);
+            }
+            else
+            {
+                gSPTexture(sp16C++, 0xffff, 0xffff, 0, G_TX_RENDERTILE, G_ON);
+            }
+    
+            gSPTexture(sp16C++, 0, 0, 2, G_TX_RENDERTILE, G_ON);
+
+            // line 206
+            switch (var_s1)
+            {
+                case 0:
+                    gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                break;
+
+                case 3:
+                    gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                break;
+
+                case 4:
+                    gDPSetCombineLERP(sp16C++, TEXEL0, 0, SHADE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, SHADE, COMBINED, 0, COMBINED, 0, SHADE);
+                break;
+
+                case 2:
+                    switch (sp144)
+                    {
+                        case 0x8000:
+                            gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                        break;
+
+                        case 0xc000:
+                            gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                        break;
+                    }
+                break;
+            }
+
+            // line 264
+            // temp_v0_4->words.w0 = (var_s1 & 7) << 0x15 | 0xFD000000 | (sp140 & 3) << 0x13;
+            // temp_v0_4->words.w1 = arg1->index;
+            gDPSetTextureImage(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 1, arg1->index);
+
+            // temp_a1->words.w0 = (var_s1 & 7) << 0x15 | 0xF5000000 | (sp140 & 3) << 0x13;
+            // temp_a1->words.w1 = ((arg1->flagsT & 3) << 0x12) | 0x07000000U | ((arg1->flagsS & 3) << 8);
+            gDPSetTile(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+
+            gDPLoadSync(sp16C++);
+
+            //if (var_s3 < 0x7FF)
+            //{
+            //    var_a3 = var_s3;
+            //}
+
+            // temp_t0->words.w0 = 0xF3000000;
+            // temp_t0->words.w1 = ((var_a3 & 0xFFF) << 0xC) | 0x07000000U | (sp138 & 0xFFF);
+            gDPLoadBlock(sp16C++, G_TX_LOADTILE, 0, 0, 0, 0);
+
+            gDPPipeSync(sp16C++);
+
+            if (var_s1 == 2)
+            {
+                gDPSetTile(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0100, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+                gDPLoadSync(sp16C++);
+
+                // temp_a0_2->words.w0 = ((temp_a2 & 0x3FF) << 0xE) | 0xF0000000 | temp_t6_3;
+                // temp_a0_2->words.w1 = (((temp_s6->unk0a + temp_a2) & 0x3FF) << 0xE) | 0x07000000U | temp_t6_3;
+                gDPLoadTLUTCmd(sp16C++, G_TX_LOADTILE, 0);
+                gDPPipeSync(sp16C++);
+
+                // temp_t8_8->words.w0 = 0xBA000E02;
+                // temp_t8_8->words.w1 = sp144;
+                gDPSetTextureLUT(sp16C++, sp144);
+            }
+            else
+            {
+                gDPSetTextureLUT(sp16C++, G_TT_NONE);
+            }
+
+            // temp_s0->words.w0 = (var_s1 & 7) << 0x15 | 0xF5000000 | ((var_s2 & 3) << 0x13) | ((sp134 & 0x1FF) << 9);
+            // temp_s0->words.w1 = ((is_less_than_certain_power_of_2((s32) var_s5) & 0xF) * 0x10) | ((arg1->flagsT & 3) << 0x12) | ((sp58 & 0xF) << 0xE) | ((arg1->flagsS & 3) << 8);
+            gDPSetTile(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+
+            // temp_v1_2->words.w0 = (temp_a0_3 << 0xC) | 0xF2000000 | temp_a0_3;
+            // temp_v1_2->words.w1 = (((((var_s5 - 1) * 4) + arg4) & 0xFFF) << 0xC) | ((((var_s4 - 1) * 4) + arg4) & 0xFFF);
+            gDPSetTileSize(sp16C++, G_TX_RENDERTILE, 0, 0, 0, 0);
+        }
+        else
+        {
+            spD0 = 0;
+            spCC = (s32) arg1->level;
+
+            if (temp_s6 != NULL)
+            {
+                var_s1 = temp_s6->gbiformat;
+                var_s2 = temp_s6->depth;
+                spCA = temp_s6->maxlod;
+            }
+            else
+            {
+                var_s1 = arg1->format;
+                var_s2 = spC4;
+                spCA = arg1->depth;
+            }
+
+            // line 362
+            if ((temp_s6 != NULL) && (temp_s6->next & 0x20000000))
+            {
+                sub_GAME_7F0CC9D4(temp_s6, &spC0, &spBC);
+            }
+            else if (spCA == 0)
+            {
+                spC0 = 2;
+                spBC = sub_GAME_7F0767D8((s32) var_s5, (s32) var_s4, spCC) - 1;
+            }
+            else if (spCA == 1)
+            {
+                spC0 = 2;
+                spBC = sub_GAME_7F076848((s32) var_s5, (s32) var_s4, spCC) - 1;
+            }
+            else if (spCA == 2)
+            {
+                spC0 = 2;
+                spBC = sub_GAME_7F0768B8((s32) var_s5, (s32) var_s4, spCC) - 1;
+            }
+            else if (spCA == 3)
+            {
+                spC0 = 3;
+                spBC = sub_GAME_7F076928((s32) var_s5, (s32) var_s4, spCC) - 1;
+            }
+
+            texSetRenderMode(&sp16C, arg2, 2, arg3);
+
+            // line 400
+            if (arg3 >= 2)
+            {
+                gSPTexture(sp16C++, 0xffff, 0xffff, 0, G_TX_RENDERTILE, G_OFF);
+            }
+            else
+            {
+                gSPTexture(sp16C++, 0xffff, 0xffff, 1, G_TX_RENDERTILE, G_OFF);
+            }
+
+            // line 417
+            switch (var_s1)
+            {
+                case 0:
+                    gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                break;
+
+                case 3:
+                    gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                break;
+
+                case 4:
+                    gDPSetCombineLERP(sp16C++, TEXEL0, 0, SHADE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0, SHADE, COMBINED, 0, COMBINED, 0, SHADE);
+                break;
+
+                case 2:
+                    switch (var_s2)
+                    {
+                        case 0x8000:
+                            gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                        break;
+
+                        case 0xc000:
+                            gDPSetCombineMode(sp16C++, G_CC_MODULATEIA, G_CC_MODULATEIA);
+                        break;
+                    }
+                break;
+            }
+
+            // line 478
+            // temp_v0_8->words.w0 = (var_s1_2 & 7) << 0x15 | 0xFD000000 | ((spC0 & 3) << 0x13);
+            // temp_v0_8->words.w1 = arg1->index;
+            gDPSetTextureImage(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 1, arg1->index);
+
+            // temp_a0_4->words.w0 = (var_s1_2 & 7) << 0x15 | 0xF5000000 | ((spC0 & 3) << 0x13);
+            // temp_a0_4->words.w1 = 0x07000000;
+            gDPSetTile(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+
+            gDPLoadSync(sp16C++);
+
+            // line 496
+            // if (spBC < 0x7FF)
+            // {
+            //     var_a3_2 = spBC;
+            // }
+
+            // temp_a2_2->words.w0 = 0xF3000000;
+            // temp_a2_2->words.w1 = ((var_a3_2 & 0xFFF) << 0xC) | 0x07000000U;
+            gDPLoadBlock(sp16C++, G_TX_LOADTILE, 0, 0, 0, 0);
+
+            gDPPipeSync(sp16C++);
+
+            // line 505
+            if (var_s1 == 2)
+            {
+                gDPSetTile(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 0x0100, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+                gDPLoadSync(sp16C++);
+
+                // temp_a2_4 = temp_a2_3 - var_a3_3;
+                
+                // temp_a0_5->words.w0 = ((temp_a2_4 & 0x3FF) << 0xE) | 0xF0000000 | (var_a3_3 & 0x3FF) * 4;
+                // temp_a0_5->words.w1 = (((temp_s6->unk0a + temp_a2_4) & 0x3FF) << 0xE) | 0x07000000U | (var_a3_3 & 0x3FF) * 4;
+                gDPLoadTLUTCmd(sp16C++, G_TX_LOADTILE, 0);
+                gDPPipeSync(sp16C++);
+
+                // temp_t9_4->words.w0 = 0xBA000E02;
+                // temp_t9_4->words.w1 = var_s2_2;
+                gDPSetTextureLUT(sp16C++, var_s2);
+            }
+            else
+            {
+                gDPSetTextureLUT(sp16C++, G_TT_NONE);
+            }
+
+            for (var_s1 = 0; var_s1 < spCC; var_s1++)
+            {
+                if (var_s1 > 0)
+                {
+                    if ((temp_s6 != NULL) && (temp_s6->next & 0x20000000))
+                        {
+                            var_s5 = texGetWidthAtLod(temp_s6, var_s1);
+                            var_s4 = texGetHeightAtLod(temp_s6, var_s1);
+                        }
+                        else
+                        {
+                            if ((s32) var_s5 >= 2)
+                            {
+                                var_s5 = (u8) ((s32) var_s5 >> 1);
+                            }
+                            
+                            if ((s32) var_s4 >= 2)
+                            {
+                                var_s4 = (u8) ((s32) var_s4 >> 1);
+                            }
+                        }
+                }
+
+                switch (spCA)
+                {
+                    default:
+                        var_v0 = ((var_s0 & 0x1FF) << 9);
+                        var_a2 = var_s0 * var_s4;
+                        break;
+                    case 3:
+                        var_s0 = (s32) (var_s5 + 3) / 4;
+                        var_v0 = ((var_s0 & 0x1FF) << 9);
+                        var_a2 = var_s0 * var_s4;
+                        break;
+                    case 2:
+                        var_s0 = (s32) (var_s5 + 3) / 4;
+                        var_v0 = ((var_s0 & 0x1FF) << 9);
+                        var_a2 = var_s0 * var_s4;
+                        break;
+                    case 1:
+                        var_s0 = (s32) (var_s5 + 7) / 8;
+                        var_v0 = ((var_s0 & 0x1FF) << 9);
+                        var_a2 = var_s0 * var_s4;
+                        break;
+                    case 0:
+                        var_s0 = (s32) (var_s5 + 0xF) / 16;
+                        var_v0 = ((var_s0 & 0x1FF) << 9);
+                        var_a2 = var_s0 * var_s4;
+                        break;
+                }
+                
+                gDPSetTile(sp16C++, G_IM_FMT_RGBA, G_IM_SIZ_4b, is_less_than_certain_power_of_2(var_s5), 0x0000, G_TX_RENDERTILE, var_v0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+                gDPSetTileSize(sp16C++, G_TX_RENDERTILE, 0, arg4, var_s5 - 1, var_s4 - 1);
+
+                spD0 += var_a2;
+            }
+        }
+        
+    }
+
+    *arg0 = sp16C;
 }
 #else
 GLOBAL_ASM(

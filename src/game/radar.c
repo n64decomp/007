@@ -51,14 +51,9 @@ Gfx *display_red_blue_on_radar(Gfx *DL)
         return DL;
     }
     g_CurrentPlayer = g_CurrentPlayer;
-    if (g_CurrentPlayer->mpmenuon != 0)
+    if (g_CurrentPlayer->mpmenuon || g_CurrentPlayer->bonddead)
     {
-block_4:
         return DL;
-    }
-    if (g_CurrentPlayer->bonddead != 0)
-    {
-        goto block_4;
     }
     if (cheatIsActive(CHEAT_NORADAR) != 0)
     {
@@ -73,6 +68,7 @@ block_4:
         phi_s5 = temp_s5;
         if ((curplayernum & 1) == 0)
         {
+            // phi_s5 and temp_s5 are the same
             phi_s5 = temp_s5 + 0xF;
         }
     }
@@ -118,6 +114,7 @@ block_4:
     if (playerCount_2 > 0)
     {
         phi_s3 = 0;
+        // should be a for loop
 loop_22:
         if (phi_s3 != curplayernum)
         {
@@ -129,7 +126,7 @@ loop_22:
                 temp_f20 = temp_v0_4->position.x - temp_v1->position.x;
                 temp_f22 = temp_v0_4->position.z - temp_v1->position.z;
                 temp_f24 = (f32) 0x10;
-                temp_f28 = ((atan2f(temp_f20, temp_f22, temp_a0_2) * 180.0f) / 3.1415927f) + g_CurrentPlayer->vv_theta + 180.0f;
+                temp_f28 = ((atan2f(temp_f20, temp_f22, temp_a0_2) * 180.0f) / M_PI_F) + g_CurrentPlayer->vv_theta + 180.0f;
                 temp_f2 = sqrtf((temp_f20 * temp_f20) + (temp_f22 * temp_f22)) * (16.0f / 4000.0f);
                 if ((scenario == 5) || (scenario == 6) || (scenario == 7) || (scenario == 2) || (scenario == 3))
                 {

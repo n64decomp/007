@@ -47,14 +47,14 @@ Model * retrieve_header_for_body_and_head(s32 body, s32 head, u32 bitflags);
 
 s32 get_current_random_body(void);
 
-s32 select_psuedorandom_heads(s32 id);
+s32 bodyChooseHead(s32 id);
 
 s32 get_random_head(s32 id);
 f32 chrGetDistanceToBond(ChrRecord *guardData);
 s32 chrCheckTargetInSight(ChrRecord *self);
 bool actor_fire_or_aim_at_target_update(ChrRecord *self, s32 newtargettype, s32 newtargetid);
 void chrlvAlertGuardToPlayerPosition(ChrRecord *);
-void chrlvIdleAnimationRelated7F023A94(ChrRecord *arg0, f32 duration);
+void chrlvIdleAnimationRelated7F023A94(ChrRecord *self, f32 mergetime);
 f32 chrGetAngleToBond(ChrRecord *arg0);
 s32 chrHasStoppedOrPatroling(ChrRecord *);
 s32 chrResolvePadId(ChrRecord *guardData,s32 padNo);
@@ -80,7 +80,7 @@ bool if_actor_able_set_on_path(ChrRecord *self, s32 pathid);
 f32 chrlvGetSubrotySideback(ChrRecord *arg0);
 f32 chrlvGetAimLimitAngle(f32 arg0);
 void chrlvUpdateAimendbackShoulders(ChrRecord *arg0, void *arg1, s32 same, s32 swap, f32 next);
-void sub_GAME_7F02D118(ChrRecord *arg0, s32 hand, s32 arg2);
+void chrSetFiring(ChrRecord *arg0, s32 hand, s32 firing);
 s32 sub_GAME_7F02D630(ChrRecord *arg0, GUNHAND hand, coord3d *arg2);
 void chrlvTriggerFireWeapon(ChrRecord *arg0);
 s32 chrlvGeometryRelated7F02FC34(coord3d *arg0, coord3d *arg1, coord3d *arg2, f32 arg3);

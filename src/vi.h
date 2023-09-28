@@ -8,6 +8,6 @@ extern OSMesgQueue vi_c_debug_MQ;
 extern u32 viDLEnd[];
 
 void viDebugRemoved(void);
-void viInitDebugNoticeList(void);
+void viInit(void);
 
 #endif

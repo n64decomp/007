@@ -186,14 +186,16 @@ class StatResults:
 
 
 
-def mtime_os(file, now):
-    print('using os')
+def mtime_os(file, now, qlocal = False):
+    if not qlocal:
+        print('using os')
     return int(os.path.getmtime(file))
 
 
 
-def mtime_git(file, now):
-    print('using git')
+def mtime_git(file, now, qlocal = False):
+    if not qlocal:
+        print('using git')
     try:
         date_str = now.strftime('%Y-%m-%dT%H:%M:%S%z')
         result = subprocess.run(['git', 'log', '-1', '--format=\"%ct\"', '--date=local', '--before=\"' + date_str + '\"', '--', file], stdout=subprocess.PIPE, universal_newlines=True)
@@ -207,7 +209,7 @@ def mtime_git(file, now):
     return int(log_out)
 
 
-def process_source_files(search, stats: StatResults, mtime_resolver):
+def process_source_files(search, stats: StatResults, mtime_resolver, qlocal = False):
 
     stats.search_dirs = search
 
@@ -238,11 +240,12 @@ def process_source_files(search, stats: StatResults, mtime_resolver):
 
                 sfc.asm_functions = set()
                 sfc.parent = s
-                sfc.mtime = mtime_resolver(file, stats.now)
+                sfc.mtime = mtime_resolver(file, stats.now, qlocal)
                 import datetime
 
                 x = datetime.datetime.fromtimestamp(sfc.mtime)
-                print(sfc.path, ' = ', x.strftime('%c'))
+                if not qlocal:
+                    print(sfc.path, ' = ', x.strftime('%c'))
 
                 # The `completed` list is manually configured to specify which files should not be
                 # counted against the total. This is done by simply not adding asm function
@@ -631,6 +634,7 @@ def print_help():
     print('  -n, --non_matching     print csv of all non matching function definitions')
     print('  --mtime_os             use OS last modified time instead of git log')
     print('  -h, --help             display this help text and exit')
+    print('  --qlocal               quiet "local" version. Disable all the extra print statements included for github actions.')
 
 def main():
     # default to US version
@@ -638,9 +642,10 @@ def main():
     run_report = False
     print_method = 'default'
     mtime_use_os = False
+    qlocal = False
 
     if (len(sys.argv) > 1):
-        arguments, values = getopt.getopt(sys.argv[1:], "hv:rn", ["help", "version=", "report", "non_matching", "mtime_os"])
+        arguments, values = getopt.getopt(sys.argv[1:], "hv:rn", ["help", "version=", "report", "non_matching", "mtime_os", "qlocal"])
 
         for current_argument, current_value in arguments:
             if current_argument in ("-h", "--help"):
@@ -654,6 +659,8 @@ def main():
                 print_method = 'non_matching'
             elif current_argument in ("--mtime_os"):
                 mtime_use_os = True
+            elif current_argument in ("--qlocal"):
+                qlocal = True
 
     if version not in __supported_versions:
         print('fatal: version', version, 'not supported! Supported versions are: ', ', '.join(__supported_versions))
@@ -668,7 +675,8 @@ def main():
     if print_method == 'non_matching' and not run_report:
         mtime_use_os = True
 
-    print(subprocess.run(['git', 'diff', 'origin/master', '--name-only', '"@{10 minutes ago}"']).stdout)
+    if not qlocal:
+        print(subprocess.run(['git', 'diff', 'origin/master', '--name-only', '"@{10 minutes ago}"']).stdout)
     # Default to using git log to get the file's modified date.
     # Git log will be much slower, but cloning a new repo (i.e., github actions online)
     # will reset all the modified timestamps to the same value, so will need to
@@ -707,7 +715,7 @@ def main():
 
     stats = StatResults()
 
-    process_source_files(search, stats, mtime_resolver)
+    process_source_files(search, stats, mtime_resolver, qlocal)
     apply_build_map(stats, version)
     generate_default_stats(stats)
 

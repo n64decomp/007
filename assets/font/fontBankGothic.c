@@ -1,6 +1,6 @@
 #include <ultra64.h>
-
-u32 font_first_font_table_controller_small[] = 
+//bank gothic
+u32 fontBankGothic_kerning[] = 
 {
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF,
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF,
@@ -18,7 +18,7 @@ u32 font_first_font_table_controller_small[] =
 };
 
 
-u32 font_second_font_table_controller_small1[] = 
+u32 fontBankGothic_fontchartable[] = 
 {
     0x00000000, 0x00000002, 0x00000008, 0x00000002, 0x00000000, 0x00000B80,
     0x00000001, 0x00000000, 0x00000005, 0x00000001, 0x00000000, 0x00000BC8,
@@ -116,7 +116,7 @@ u32 font_second_font_table_controller_small1[] =
     0x0000005D, 0x00000004, 0x00000003, 0x00000008, 0x00000000, 0x00002490
 };
 
-u32 font_second_font_table_controller_small2[] = 
+u32 fontBankGothic_fontbytes[] = 
 {
     0x00000000, 0xB8000000, 0x00000000, 0x272B2B2B, 0x2B2B2B2B, 0xBDCBCBCB,
     0xCBCBCBCB, 0xBFCECECE, 0xCECECECE, 0xA4B4B4B4, 0xB4B4B4B4, 0x4B545454,

@@ -101,9 +101,144 @@ u8 spec_OUT_port[] =
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0D28E0(void) {
 
+// https://decomp.me/scratch/lXRos 89.33%
+
+struct spec_struct {
+    u32 D_8004EC40;
+    s16 D_8004EC44[96];
+    u8 D_8004ED04;
+    u8 D_8004ED05;
+    u8 D_8004ED06;
+    u8 D_8004ED07;
+};
+
+extern struct spec_struct D_8004EC40;
+
+void sub_GAME_7F0D28E0(u8 *arg0, s32 arg1, s32 arg2, u8 *arg3)
+{
+    s32 var_a1;
+    s32 temp_t1;
+    u8 *var_s0;
+    u8 *var_v0;
+    s32 var_v1;
+    s32 var_a0;
+    s32 var_t0;
+    u8 temp_a3;
+    s32 var_a2;
+    s32 i;
+
+    void* pp;
+    s32 temp_v1;
+
+    
+    var_v0 = &arg0[((arg2 << 5) & 0x1800) | ((arg2 << 8) & 0x700) | ((arg2 << 2) & 0xE0) | (arg1 >> 3)];
+    temp_t1 = arg0[((arg2 << 2) & 0x3E0) + (arg1 >> 3) + 0x1800];
+
+    if(*var_v0);
+
+    // problem area: need copy of t1, one for each `if` branch.
+    
+    if ((temp_t1 & 0x80) && (D_8004EC40.D_8004ED04 != 0))
+    {
+        var_a0 = (temp_t1 >> 3) & 7;
+        var_v1 = temp_t1 & 7;
+    }
+    else
+    {
+        var_v1 = (temp_t1 >> 3) & 7;
+        var_a0 = temp_t1 & 7;
+    }
+
+    if (!(temp_t1 & 0x40))
+    {
+        var_a0 = (var_a0 + 8) & 0xff;
+        var_v1 = (var_v1 + 8) & 0xff;
+    }
+    
+    for (i = 0; i < 8; i++)
+    {
+        temp_a3 = *var_v0;
+
+        if (temp_a3 & 0x80)
+        {
+            var_a2 = var_a0;
+        }
+        else
+        {
+            var_a2 = var_v1;
+        }
+        
+        if (temp_a3 & 0x40)
+        {
+            var_t0 = var_a0;
+        }
+        else
+        {
+            var_t0 = var_v1;
+        }
+        
+        arg3[0] = (s8) (var_t0 | (var_a2 * 0x10));
+
+        if (temp_a3 & 0x20)
+        {
+            var_a2 = var_a0;
+        }
+        else
+        {
+            var_a2 = var_v1;
+        }
+        if (temp_a3 & 0x10)
+        {
+            var_t0 = var_a0;
+        }
+        else
+        {
+            var_t0 = var_v1;
+        }
+        arg3[1] = (s8) (var_t0 | (var_a2 * 0x10));
+
+        if (temp_a3 & 8)
+        {
+            var_a2 = var_a0;
+        }
+        else
+        {
+            var_a2 = var_v1;
+        }
+        if (temp_a3 & 4)
+        {
+            var_t0 = var_a0;
+        }
+        else
+        {
+            var_t0 = var_v1;
+        }
+        arg3[2] = (s8) (var_t0 | (var_a2 * 0x10));
+
+        if (temp_a3 & 2)
+        {
+            var_a2 = var_a0;
+        }
+        else
+        {
+            var_a2 = var_v1;
+        }
+        if (temp_a3 & 1)
+        {
+            var_t0 = var_a0;
+        }
+        else
+        {
+            var_t0 = var_v1;
+        }
+        arg3[3] = (s8) (var_t0 | (var_a2 * 0x10));
+
+        arg3 += 0x20;
+        var_v0 += 0x100;
+    }
 }
+
 #else
 GLOBAL_ASM(
 .text
@@ -836,7 +971,7 @@ glabel init_spectrum_game
 /* 107BE8 7F0D30B8 2484C114 */  addiu $a0, %lo(aEmDataSpec_rom_seg_rz) # addiu $a0, $a0, -0x3eec
 /* 107BEC 7F0D30BC 24050001 */  li    $a1, 1
 /* 107BF0 7F0D30C0 24060100 */  li    $a2, 256
-/* 107BF4 7F0D30C4 0FC2F341 */  jal   _load_resource_named_to_membank
+/* 107BF4 7F0D30C4 0FC2F341 */  jal   _fileNameLoadToBank
 /* 107BF8 7F0D30C8 24070004 */   li    $a3, 4
 /* 107BFC 7F0D30CC 3C038009 */  lui   $v1, %hi(ptr_sectrum_monitor_data_temp_buf)
 /* 107C00 7F0D30D0 2463E320 */  addiu $v1, %lo(ptr_sectrum_monitor_data_temp_buf) # addiu $v1, $v1, -0x1ce0
@@ -870,7 +1005,7 @@ glabel init_spectrum_game
 /* 107C68 7F0D3138 8C84ED2C */  lw    $a0, %lo(romnames)($a0)
 /* 107C6C 7F0D313C 24050001 */  li    $a1, 1
 /* 107C70 7F0D3140 24060100 */  li    $a2, 256
-/* 107C74 7F0D3144 0FC2F341 */  jal   _load_resource_named_to_membank
+/* 107C74 7F0D3144 0FC2F341 */  jal   _fileNameLoadToBank
 /* 107C78 7F0D3148 24070004 */   li    $a3, 4
 /* 107C7C 7F0D314C 3C038009 */  lui   $v1, %hi(ptr_sectrum_game_data_temp_buf)
 /* 107C80 7F0D3150 2463E324 */  addiu $v1, %lo(ptr_sectrum_game_data_temp_buf) # addiu $v1, $v1, -0x1cdc
@@ -1394,19 +1529,19 @@ void nullsub_50(void) {
 
 u8 sub_GAME_7F0D37DC(u32 cycles, u8 specA, u8 port, u8 value)
 {
-  int temp_v0;
-  if (port == 0xFE)
-  {
-    temp_v0 = value & 7;
-    if (temp_v0 != spec_OUT_port[0])
+    int temp_v0;
+    if (port == 0xFE)
     {
-      spec_OUT_port[0] = temp_v0;
+        temp_v0 = value & 7;
+        if (temp_v0 != spec_OUT_port[0])
+        {
+            spec_OUT_port[0] = temp_v0;
+        }
+
+        return 0;
     }
 
     return 0;
-  }
-
-  return 0;
 }
 
 

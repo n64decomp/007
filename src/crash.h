@@ -7,7 +7,7 @@
 #define STACK_POINTER_COUNT  5
 
 
-typedef struct 
+typedef struct regDesc_t
 {
     u32 mask;
     u32 value;

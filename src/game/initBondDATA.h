@@ -55,6 +55,7 @@ struct BONDdata_item_control_blocks {
     int field_C4;
     int field_C8;
     int field_CC;
+    // "reload flag", set when pressing B
     int field_D0;
     float field_D4;
     int field_D8;

@@ -57,8 +57,8 @@ struct VideoSettings_s g_ViDataArray[NUM_VIDEO_SETTINGS] =
 #else
 struct VideoSettings_s g_ViDataArray[NUM_VIDEO_SETTINGS] = 
 {
-    {0, 0, 0, 0, 320, 240, 60.0f, 1.3333334f, 30.0f, 10000.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 320, 240, 0, 0, 1, NULL},
-    {0, 0, 0, 0, 320, 240, 60.0f, 1.3333334f, 30.0f, 10000.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 320, 240, 0, 0, 1, NULL}
+    {0, 0, 0, 0, 320, 240, 60.0f, ASPECT_RATIO_SD, 30.0f, 10000.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 320, 240, 0, 0, 1, NULL},
+    {0, 0, 0, 0, 320, 240, 60.0f, ASPECT_RATIO_SD, 30.0f, 10000.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 320, 240, 0, 0, 1, NULL}
 };
 #endif
 
@@ -284,6 +284,8 @@ void viVsyncRelated(void)
  * 3E98 70003298
  * Some code (and defines) based on n64devkit\ultra\usr\src\pr\demos\blockmonkey\block.c
  * 
+ * https://decomp.me/scratch/0yXle 98.52%
+ * 
  * decomp status:
  * - compiles: yes
  * - stack resize: ok
@@ -492,11 +494,9 @@ void video_related_8(void)
     g_ViFrontIndex = (g_ViFrontIndex + 1) % NUM_VIDEO_SETTINGS;
     g_ViBackIndex = (g_ViBackIndex + 1) % NUM_VIDEO_SETTINGS;
 
-    // first li 44, needs to be signed. (sizeof(VideoSettings) == 44)
-    g_ViFrontData = (VideoSettings*)((u8*)&g_ViDataArray + (g_ViFrontIndex * (s32)sizeof(VideoSettings)));
-    g_ViBackData = (VideoSettings*)((u8*)&g_ViDataArray + (g_ViBackIndex * (s32)sizeof(VideoSettings)));
+    g_ViFrontData = g_ViDataArray + g_ViFrontIndex;
+	g_ViBackData = g_ViDataArray + g_ViBackIndex;
     
-    // second li 44, can be signed or unsigned.
     bcopy(settings, g_ViBackData, sizeof(VideoSettings));
     g_ViBackData->framebuf = cfb_16[g_ViBackIndex];
 }
@@ -1114,7 +1114,7 @@ glabel video_related_8
 /* 003A44 70002E44 3C188002 */   lui   $t8, %hi(g_viColorOutputMode) # $t8, 0x8002
 /* 003A48 70002E48 24010002 */  li    $at, 2
 /* 003A4C 70002E4C 10610043 */  beq   $v1, $at, .L70002F5C
-/* 003A50 70002E50 3C0E8002 */   lui   $t6, 0x8002
+/* 003A50 70002E50 3C0E8002 */   lui   $t6, 0x8002 # fixme?
 /* 003A54 70002E54 10000050 */  b     .L70002F98
 /* 003A58 70002E58 00000000 */   nop   
 .L70002E5C:
@@ -1227,7 +1227,7 @@ glabel video_related_8
 /* 003BE4 70002FE4 3C0D8002 */  lui   $t5, %hi(g_viColorOutputMode) # $t5, 0x8002
 /* 003BE8 70002FE8 340AFFFF */  li    $t2, 65535
 /* 003BEC 70002FEC 468084A0 */  cvt.s.w $f18, $f16
-/* 003BF0 70002FF0 3C088002 */  lui   $t0, 0x8002
+/* 003BF0 70002FF0 3C088002 */  lui   $t0, %hi(D_800232A0)
 /* 003BF4 70002FF4 46802220 */  cvt.s.w $f8, $f4
 /* 003BF8 70002FF8 460A3083 */  div.s $f2, $f6, $f10
 /* 003BFC 70002FFC 14600003 */  bnez  $v1, .L7000300C
@@ -1236,22 +1236,22 @@ glabel video_related_8
 /* 003C08 70003008 00000000 */  nop   
 .L7000300C:
 /* 003C0C 7000300C 8FFF1160 */  lw    $ra, %lo(D_800232C0)($ra)
-/* 003C10 70003010 3C018002 */  lui   $at, 0x8002
+/* 003C10 70003010 3C018002 */  lui   $at, %hi(g_ViXScales)
 /* 003C14 70003014 001F6080 */  sll   $t4, $ra, 2
 /* 003C18 70003018 002C0821 */  addu  $at, $at, $t4
-/* 003C1C 7000301C E4220F74 */  swc1  $f2, 0xf74($at)
-/* 003C20 70003020 3C018002 */  lui   $at, 0x8002
+/* 003C1C 7000301C E4220F74 */  swc1  $f2, %lo(g_ViXScales)($at)
+/* 003C20 70003020 3C018002 */  lui   $at, %hi(g_ViYScales)
 /* 003C24 70003024 002C0821 */  addu  $at, $at, $t4
-/* 003C28 70003028 E4200F7C */  swc1  $f0, 0xf7c($at)
+/* 003C28 70003028 E4200F7C */  swc1  $f0, %lo(g_ViYScales)($at)
 /* 003C2C 7000302C 90EE0000 */  lbu   $t6, ($a3)
 /* 003C30 70003030 24010001 */  li    $at, 1
 /* 003C34 70003034 15C100F2 */  bne   $t6, $at, .L70003400
 /* 003C38 70003038 00000000 */   nop   
 /* 003C3C 7000303C 8DAD114C */  lw    $t5, %lo(g_viColorOutputMode)($t5)
-/* 003C40 70003040 3C018005 */  lui   $at, 0x8005
+/* 003C40 70003040 3C018005 */  lui   $at, %hi(g_ViModePtrs)
 /* 003C44 70003044 002C0821 */  addu  $at, $at, $t4
 /* 003C48 70003048 11A00019 */  beqz  $t5, .L700030B0
-/* 003C4C 7000304C AC391FA0 */   sw    $t9, 0x1fa0($at)
+/* 003C4C 7000304C AC391FA0 */   sw    $t9, %lo(g_ViModePtrs)($at)
 /* 003C50 70003050 001FC080 */  sll   $t8, $ra, 2
 /* 003C54 70003054 031FC021 */  addu  $t8, $t8, $ra
 /* 003C58 70003058 3C0F8005 */  lui   $t7, %hi(g_ViModes) # $t7, 0x8005
@@ -1415,7 +1415,7 @@ glabel video_related_8
 /* 003E94 70003294 10000001 */  b     .L7000329C
 /* 003E98 70003298 2403000E */   li    $v1, 14
 .L7000329C:
-/* 003E9C 7000329C 8D081140 */  lw    $t0, 0x1140($t0)
+/* 003E9C 7000329C 8D081140 */  lw    $t0, %lo(D_800232A0)($t0)
 /* 003EA0 700032A0 30D8FFFF */  andi  $t8, $a2, 0xffff
 /* 003EA4 700032A4 00787821 */  addu  $t7, $v1, $t8
 /* 003EA8 700032A8 01E87021 */  addu  $t6, $t7, $t0
@@ -1937,7 +1937,6 @@ Gfx *viSetFillColor(Gfx *gdl, s32 r, s32 g, s32 b)
 void indyGrabJpg16bit(void)
 {
 #ifdef LEFTOVERDEBUG
-    #ifndef ENABLE_USB
     s32 *pgrabnum = &g_indyJpg16BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -1970,10 +1969,6 @@ void indyGrabJpg16bit(void)
 
     sprintf(buffer, "imgview grab.%d.jpeg", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
-    #else
-     //msg.msgtype
-usb_write(DATATYPE_RAWBINARY  , (u8*)g_ViBackData->framebuf, (viGetX() * viGetY() * 2));
-    #endif
 #endif
 }
 
@@ -1984,7 +1979,6 @@ usb_write(DATATYPE_RAWBINARY  , (u8*)g_ViBackData->framebuf, (viGetX() * viGetY(
 void indyGrabJpg32bit(void)
 {
     #if defined(LEFTOVERDEBUG) 
-    #if !defined(ENABLE_USB)
     s32 *pgrabnum = &g_indyJpg32BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -2017,9 +2011,6 @@ void indyGrabJpg32bit(void)
 
     sprintf(buffer, "imgview grab.%d.jpeg", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
-    #else
-usb_write(DATATYPE_RAWBINARY  , (u8*)&cfb_16, (viGetX() * viGetY() * 4));
-    #endif
     #endif
 }
 
@@ -2029,8 +2020,7 @@ usb_write(DATATYPE_RAWBINARY  , (u8*)&cfb_16, (viGetX() * viGetY() * 4));
  */
 void indyGrabRgb16bit(void)
 {
-    #if defined(LEFTOVERDEBUG) 
-    #if !defined(ENABLE_USB)
+    #if defined(LEFTOVERDEBUG)
     s32 *pgrabnum = &g_indyRgb16BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -2060,11 +2050,7 @@ void indyGrabRgb16bit(void)
 
     sprintf(buffer, "imgview grab.%d.rgb", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
-    #else
-     //msg.msgtype
-usb_write(DATATYPE_RAWBINARY  , (u8*)g_ViBackData->framebuf, (viGetX() * viGetY() * 2));
-    #endif
-    #endif
+#endif
 }
 
 /**
@@ -2073,8 +2059,7 @@ usb_write(DATATYPE_RAWBINARY  , (u8*)g_ViBackData->framebuf, (viGetX() * viGetY(
  */
 void indyGrabRgb32bit(void)
 {
-    #if defined(LEFTOVERDEBUG) 
-    #if !defined(ENABLE_USB)
+    #if defined(LEFTOVERDEBUG)
     s32 *pgrabnum = &g_indyRgb32BitGrabnum;
     char buffer[250];
     s32 filesize;
@@ -2104,9 +2089,5 @@ void indyGrabRgb32bit(void)
 
     sprintf(buffer, "imgview grab.%d.rgb", *pgrabnum);
     indycommHostSendCmd((u8*)&buffer);
-    #else
-     //msg.msgtype
-usb_write(DATATYPE_RAWBINARY  , (u8*)&cfb_16, (viGetX() * viGetY() * 4));
-    #endif
     #endif
 }

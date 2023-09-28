@@ -28,6 +28,9 @@ struct AwardMetrics {
 	s32 shortest_inning;              // 0x34
 };
 
+extern s32 g_stopPlayFlag;
+extern s32 g_gameOverFlag;
+
 s32 mpFindMaxInt(int param_1, int param_2, int param_3, int param_4, int param_5);
 
 s32 mpFindMinInt(int param_1, int param_2, int param_3, int param_4, int param_5);
@@ -41,5 +44,6 @@ void mpCalculateAwards(int arg0);
 s32 get_points_for_mp_player(s32 arg0);
 void mpwatchSetStopPlayFlag(void);
 Gfx * mp_watch_menu_display(Gfx *arg0);
+s32 disablePlayerActionsWhenPausedOrInMpMenu(void);
 
 #endif

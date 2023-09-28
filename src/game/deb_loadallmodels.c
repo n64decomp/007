@@ -8,6 +8,7 @@
 #include "aicommands2.h"
 #include "dyn.h"
 #include "memp.h"
+#include <macro.h>
 
 //i belong in a header, probably to another file
 

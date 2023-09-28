@@ -93,12 +93,12 @@ bg_file_seg bg_imp_all_p_seg, bg_imp_all_p
 bg_file_seg bg_ash_all_p_seg, bg_ash_all_p
 bg_file_seg bg_sho_all_p_seg, bg_sho_all_p
 bg_file_seg bg_ame_all_p_seg, bg_ame_all_p
-bg_file_seg bg_oat_all_p_seg, bg_oat_all_p
 bg_file_seg bg_rit_all_p_seg, bg_rit_all_p
-bg_file_seg bg_len_all_p_seg, bg_len_all_p
+bg_file_seg bg_oat_all_p_seg, bg_oat_all_p
+bg_file_seg bg_lip_all_p_seg, bg_lip_all_p
 bg_file_seg bg_lee_all_p_seg, bg_lee_all_p
 bg_file_seg bg_ear_all_p_seg, bg_ear_all_p
-bg_file_seg bg_lip_all_p_seg, bg_lip_all_p
+bg_file_seg bg_len_all_p_seg, bg_len_all_p
 bg_file_seg bg_pam_all_p_seg, bg_pam_all_p
 bg_file_seg bg_wax_all_p_seg, bg_wax_all_p
 

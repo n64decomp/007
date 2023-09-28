@@ -4,17 +4,36 @@
 #include <ultra64.h>
 #include <bondtypes.h>
 
-typedef struct NearFogRecord {
 #if defined(VERSION_EU)
+
+// TODO: FIXME:
+// There's something terrible going on with NearFogRecord on EU
+// the function chrobjFogVisRangeRelated() treats it as a struct
+// with 3 floats, but declaring it as such makes the struct too big.
+// NearFogRecordF was created so we can cast it where applicable...
+// but it isn't an ideal fix.
+
+typedef struct NearFogRecord {
     s16 NearFog;
     s16 MaxVisRange;
     s16 MaxObfuscationRange;
-#else
+} NearFogRecord;
+
+typedef struct NearFogRecordF {
     f32 NearFog;
     f32 MaxVisRange;
     f32 MaxObfuscationRange;
-#endif
+} NearFogRecordF;
+
+#else
+
+typedef struct NearFogRecord {
+    f32 NearFog;
+    f32 MaxVisRange;
+    f32 MaxObfuscationRange;
 } NearFogRecord;
+
+#endif
 
 //New Definitions below
 // SubRecords
@@ -125,7 +144,7 @@ typedef struct EnvironmentRecord
      * ID = StageID + Token eg, Bunker Cinema is 9 + 900 = 909
     */
 #if defined(VERSION_EU)
-    u16 Id;
+    s16 Id;
 #else
     u32 Id;
 #endif

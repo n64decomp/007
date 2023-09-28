@@ -230,8 +230,8 @@ extern s32 D_8002C910;
 extern s32 D_8002CC58;
 extern s32 show_patrols_flag;
 extern s32 player1_guardID;
-extern ChrRecord *ptr_guard_data;
-extern s32 num_guards;
+extern ChrRecord *g_ChrSlots;
+extern s32 g_NumChrSlots;
 extern struct unk_joint_list D_8002CC6C;
 extern s32 D_8002CCAC;
 extern s32 D_8002CCB0;
@@ -285,11 +285,11 @@ void        sub_GAME_7F022EE0(s32 param_1);
 void        setanimationdebugflag(s32 param_1);
 void        disable_sounds_attached_to_player_then_something(PropRecord* prop);
 void        chrPositionRelated7F020D94(ChrRecord *);
-void        set_or_unset_GUARDdata_flag(ChrRecord *guard,s32 param_2);
+void        chrSetMoving(ChrRecord *guard,s32 param_2);
 f32         getAnimationRate(void);
 void        setAnimationRate(f32);
 PropRecord *init_GUARDdata_with_set_values(PropRecord *, Model *, coord3d *, f32 arg2, StandTile * arg3, s32 arg4);
-PropRecord *replace_GUARDdata_with_actual_values(struct Model * arg0, coord3d * arg1, f32 arg2, StandTile * arg3, s32 arg4);
+PropRecord *chrAllocate(struct Model * arg0, coord3d * arg1, f32 arg2, StandTile * arg3, s32 arg4);
 void        chrSetHiddenToRandom(ChrRecord *arg0);
 void        chrRemoved7F022E1C(f32 arg0);
 void        chrDecrementAnimationTablePointerCount(void);
@@ -307,9 +307,12 @@ s32         get_numguards(void);
 Gfx        *chrRenderProp(PropRecord *arg0, Gfx *arg1, s32 arg2);
 void        chrAddHealth(ChrRecord *chr, f32 health);
 void        chrSetMaxDamage(ChrRecord *chr, f32 maxdamage);
+s32 sub_GAME_7F03DA50(struct PropRecord *arg0, s32 arg1);
+s32 sub_GAME_7F023194(PropRecord *arg0, struct coord3d *arg1, struct coord2d *arg2, struct coord2d *arg3);
 
 //tentative signature
 s32         sub_GAME_7F01FC10(Model *, coord3d *, coord3d *, f32 *);
+void sub_GAME_7F0221DC(Model *arg0, s32 arg1, ModelNode *arg2, struct coord3d *arg3);
 
 #ifdef BUGFIX_R1
 s32 not_in_us_7F0209EC(s32 bodynum, s32 headnum);

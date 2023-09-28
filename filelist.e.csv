@@ -26,12 +26,12 @@
 7148064,0,assets/obseg/bg/bg_ash_all_p.bin,0,1
 7148064,0,assets/obseg/bg/bg_lue_all_p.bin,0,1
 7148064,40800,assets/obseg/bg/bg_ame_all_p.bin,0,1
-7188864,0,assets/obseg/bg/bg_rit_all_p.bin,0,0
-7188864,28240,assets/obseg/bg/bg_oat_all_p.bin,0,1
+7188864,0,assets/obseg/bg/bg_oat_all_p.bin,0,0
+7188864,28240,assets/obseg/bg/bg_rit_all_p.bin,0,1
 7217104,0,assets/obseg/bg/bg_ear_all_p.bin,0,0
 7217104,0,assets/obseg/bg/bg_lee_all_p.bin,0,0
-7217104,0,assets/obseg/bg/bg_lip_all_p.bin,0,0
-7217104,4000,assets/obseg/bg/bg_len_all_p.bin,0,1
+7217104,0,assets/obseg/bg/bg_len_all_p.bin,0,0
+7217104,4000,assets/obseg/bg/bg_lip_all_p.bin,0,1
 7221104,0,assets/obseg/bg/bg_wax_all_p.bin,0,0
 7221104,0,assets/obseg/bg/bg_pam_all_p.bin,0,0
 7221104,9344,assets/obseg/chr/CarmourguardZ,1,1

@@ -111,15 +111,15 @@ void set_solo_and_ptr_briefing(LEVELID stage)
     briefingpage = pull_and_display_text_for_folder_a0(stage);
 }
 
-void sub_GAME_7F01D61C(struct save_file *savefile)
+void sub_GAME_7F01D61C(struct save_data *savefile)
 {
-    fileCopySave(selected_folder_num,savefile);
+    fileCopySave(selected_folder_num, savefile);
 }
 
 
 
 //this feels fake, generated with a permuter session i forgot was running
-void set_selected_foldernum_and_copy_demo_eeprom(struct save_file *eeprom)
+void set_selected_foldernum_and_copy_demo_eeprom(struct save_data *eeprom)
 {
   int new_var;
   long long new_var2;

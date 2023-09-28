@@ -2,7 +2,7 @@ WeaponStats knife_stats = {
 	1.0, //MuzzleFlashExtension
 	14.0, -24.799999, -34.0, //PosXYZ
 	3.0, 3.0, 8.5, //PlayXYZ
-	0, 0, //ammotype magsize
+	AMMO_NONE, 0, //ammotype magsize
 	0xFF, 0x06, //AutomaticFiringRate SingleFiringRate
 	1, //ObjectsShootThrough
 	0, 0, //SoundTriggerRate Sound
@@ -23,5 +23,8 @@ WeaponStats knife_stats = {
 	 2.0, //field_60
 	 4.0, //field_64
 	 0.0, //ForceOfImpact
-	 0x160D91 //BitFlags
+	 WEAPONSTATBITFLAG_00000001 | 
+     WEAPONSTATBITFLAG_CLICKY | WEAPONSTATBITFLAG_00000080 | 
+     WEAPONSTATBITFLAG_ONLY_1_HANDED | WEAPONSTATBITFLAG_MIRROR_DUAL | WEAPONSTATBITFLAG_SHOW_FIRST_PERSON | 
+     WEAPONSTATBITFLAG_USE_HOLD_TIME | WEAPONSTATBITFLAG_HAS_AMMO | WEAPONSTATBITFLAG_CAN_DUAL_WIELD //BitFlags
 };

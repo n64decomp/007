@@ -225,6 +225,7 @@ void sub_GAME_7F0D1DFC(s32 arg1, ?32 argC) {
     sub_GAME_7F0D1B94(arg1, ((D_8004EAF0 + arg1) - D_8004EAF4), argC);
     return;
     // (possible return value: sub_GAME_7F0D1B94(arg1, ((D_8004EAF0 + arg1) - D_8004EAF4), argC))
+    // IDA: return sub_GAME_7F0D1B94(a1, (float)(D_8004EAF0 + a2) - D_8004EAF4, a3, a4, a5);
 }
 
 #else
@@ -262,6 +263,7 @@ void sub_GAME_7F0D1E44(s32 arg1, ?32 argE, ?32 argF, ?32 arg10) {
     sub_GAME_7F0D1BD0(arg1, ((D_8004EAF0 + arg1) - D_8004EAF4), argE, argF, arg10);
     return;
     // (possible return value: sub_GAME_7F0D1BD0(arg1, ((D_8004EAF0 + arg1) - D_8004EAF4), argE, argF, arg10))
+    //IDA: return sub_GAME_7F0D1BD0(a1, (float)(D_8004EAF0 + a2) - D_8004EAF4, a3, a4, a5, a6, a7);
 }
 
 #else

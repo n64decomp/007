@@ -139,7 +139,7 @@ glabel get_obj_instance_controller_for_header
 /* 0A0D1C 7F06C1EC 12C00006 */  beqz  $s6, .L7F06C208
 /* 0A0D20 7F06C1F0 02C02025 */   move  $a0, $s6
 /* 0A0D24 7F06C1F4 02A02825 */  move  $a1, $s5
-/* 0A0D28 7F06C1F8 0FC1D7DA */  jal   sub_GAME_7F075F68
+/* 0A0D28 7F06C1F8 0FC1D7DA */  jal   modelInit
 /* 0A0D2C 7F06C1FC 8FA60040 */   lw    $a2, 0x40($sp)
 /* 0A0D30 7F06C200 87B9003E */  lh    $t9, 0x3e($sp)
 /* 0A0D34 7F06C204 A6D90002 */  sh    $t9, 2($s6)
@@ -267,7 +267,7 @@ glabel get_aircraft_obj_instance_controller
 /* 0A0EB4 7F06C384 02002025 */   move  $a0, $s0
 /* 0A0EB8 7F06C388 8FA50030 */  lw    $a1, 0x30($sp)
 /* 0A0EBC 7F06C38C 8FA60028 */  lw    $a2, 0x28($sp)
-/* 0A0EC0 7F06C390 0FC1D7EB */  jal   sub_GAME_7F075FAC
+/* 0A0EC0 7F06C390 0FC1D7EB */  jal   animInit
 /* 0A0EC4 7F06C394 A7A80026 */   sh    $t0, 0x26($sp)
 /* 0A0EC8 7F06C398 87A80026 */  lh    $t0, 0x26($sp)
 /* 0A0ECC 7F06C39C A6080002 */  sh    $t0, 2($s0)
@@ -285,24 +285,25 @@ glabel get_aircraft_obj_instance_controller
 
 
 
-void sub_GAME_7F06C3B4(Model *model, s32 node,  ModelFileHeader *header)
+void modelAttachHead(Model *model, ModelNode *node,  ModelFileHeader *head)
 {
-    sub_GAME_7F076030(model,model->obj,node,header);
-    modelInitRwData(model,header->RootNode);
+    modelAttachPart(model,model->obj,node,head);
+    modelInitRwData(model,head->RootNode);
 }
 
-void set_aircraft_obj_inst_scale_to_zero(Model *objinstance)
+void clear_aircraft_model_obj(Model *objinstance)
 
 {
     objinstance->obj = NULL;
     return;
 }
 
-void set_80036084(s32 param_1) {
+void modelSetDistanceDisabled(s32 param_1) {
   g_ModelDistanceDisabled = param_1;
 }
 
-void set_float_80036088(f32 param_1) {
+// PD: modelSetDistanceScale
+void modelSetDistanceScale(f32 param_1) {
   g_ModelDistanceScale = param_1;
 }
 
@@ -350,6 +351,7 @@ void set_vtxallocator(s32 param_1) {
 
 
 #if defined(LEFTOVERDEBUG)
+//called after a debug print during failed model operation
 void return_null(void) {
   return;
 }
@@ -392,7 +394,8 @@ void sub_GAME_7F06C550(Model* model, coord3d* coord)
 }
 
 
-s32 sub_GAME_7F06C570(ModelNode *node, s32 arg1)
+// PD: model0001a524
+s32 modelFindNodeMtxIndex(ModelNode *node, s32 arg1)
 {
     s32 index;
     union ModelRoData *rodata1;
@@ -404,19 +407,19 @@ s32 sub_GAME_7F06C570(ModelNode *node, s32 arg1)
     {
         switch (node->Opcode & 0xff)
         {
-            case MODELNODE_OPCODE_HEADERRECORD:
+            case MODELNODE_OPCODE_HEADER:
                 rodata1 = node->Data;
                 return (s16)rodata1->Header.ModelType;
 
-            case MODELNODE_OPCODE_GROUPRECORD:
+            case MODELNODE_OPCODE_GROUP:
                 rodata2 = node->Data;
                 return rodata2->Group.MatrixIDs[arg1 == 0x200 ? 2 : (arg1 == 0x100 ? 1 : 0)];
 
-            case MODELNODE_OPCODE_UNUSED_03:
+            case MODELNODE_OPCODE_OP03:
                 rodata3 = node->Data;
                 return rodata3->Group.MatrixIDs[arg1 == 0x200 ? 2 : (arg1 == 0x100 ? 1 : 0)];
 
-            case MODELNODE_OPCODE_GROUPSIMPLERECORD:
+            case MODELNODE_OPCODE_GROUPSIMPLE:
                 rodata4 = node->Data;
                 return rodata4->GroupSimple.Group1;
                 break;
@@ -429,8 +432,9 @@ s32 sub_GAME_7F06C570(ModelNode *node, s32 arg1)
 }
 
 
-Mtxf *sub_GAME_7F06C660(struct Model *model, struct ModelNode *node, s32 arg2) {
-    s32 index = sub_GAME_7F06C570(node, arg2);
+// PD: model0001a5cc
+Mtxf *modelFindNodeMtx(struct Model *model, struct ModelNode *node, s32 arg2) {
+    s32 index = modelFindNodeMtxIndex(node, arg2);
 
     if (index >= 0) {
         return &model->render_pos[index].pos;
@@ -441,6 +445,7 @@ Mtxf *sub_GAME_7F06C660(struct Model *model, struct ModelNode *node, s32 arg2) {
 
 
 //rejoined per EU
+// PD: model0001a60c
 Mtxf *getsubmatrix(Model *objinst)
 {
     #if defined(LEFTOVERDEBUG)
@@ -455,7 +460,7 @@ Mtxf *getsubmatrix(Model *objinst)
         return_null();
     }
     #endif
-    return sub_GAME_7F06C660(objinst, objinst->obj->RootNode, 0);
+    return modelFindNodeMtx(objinst, objinst->obj->RootNode, 0);
 }
 
 
@@ -499,47 +504,47 @@ union ModelRwData* modelGetNodeRwData(Model *Objinst, ModelNode *root)
 
     switch (root->Opcode & 0xff)
     {
-        case MODELNODE_OPCODE_HEADERRECORD:
+        case MODELNODE_OPCODE_HEADER:
         {
             index = root->Data->Header.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+        case MODELNODE_OPCODE_DLCOLLISION:
         {
             index = root->Data->DisplayListCollisions.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_OP07RECORD:
+        case MODELNODE_OPCODE_OP07:
         {
             index = root->Data->Op07.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_LODRECORD:
+        case MODELNODE_OPCODE_LOD:
         {
             index = root->Data->LOD.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_SWITCHRECORD:
+        case MODELNODE_OPCODE_SWITCH:
         {
             index = root->Data->Switch.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_BSPRECORD:
+        case MODELNODE_OPCODE_BSP:
         {
             index = root->Data->BSP.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_OP11RECORD:
+        case MODELNODE_OPCODE_OP11:
         {
             index = root->Data->Op11.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_GUNFIRERECORD:
+        case MODELNODE_OPCODE_GUNFIRE:
         {
             index = root->Data->Gunfire.RwDataIndex;
             break;
         }
-        case MODELNODE_OPCODE_HEADPLACEHOLDERRECORD:
+        case MODELNODE_OPCODE_HEAD:
         {
             index = root->Data->HeadPlaceholder.RwDataIndex;
             break;
@@ -549,7 +554,7 @@ union ModelRwData* modelGetNodeRwData(Model *Objinst, ModelNode *root)
     while (root->Parent)
     {
         root = root->Parent;
-        if ((root->Opcode & 0xFF) == MODELNODE_OPCODE_HEADPLACEHOLDERRECORD)
+        if ((root->Opcode & 0xFF) == MODELNODE_OPCODE_HEAD)
         {
 			ModelRwData_HeadPlaceholderRecord *tmp = modelGetNodeRwData(Objinst, root);
             data = tmp->RwDatas;
@@ -578,7 +583,7 @@ void getpartoffset(Model *objinst, ModelNode *part, coord3d *offset) //#MATCH - 
     #endif
     switch (part->Opcode & 0xFF)
     {
-        case 1:
+        case MODELNODE_OPCODE_HEADER:
         {
             struct modeldata_root *root = modelGetNodeRwData(objinst, part);
             offset->x                   = root->pos.x;
@@ -586,7 +591,7 @@ void getpartoffset(Model *objinst, ModelNode *part, coord3d *offset) //#MATCH - 
             offset->z                   = root->pos.z;
             break;
         }
-        case 2:
+        case MODELNODE_OPCODE_GROUP:
         {
             ModelRoData_GroupRecord *prt = &part->Data->Group;
             offset->x                  = prt->Origin.x;
@@ -594,7 +599,7 @@ void getpartoffset(Model *objinst, ModelNode *part, coord3d *offset) //#MATCH - 
             offset->z                  = prt->Origin.z;
             break;
         }
-        case 3:
+        case MODELNODE_OPCODE_OP03:
         {
             ModelRoData_GroupSimpleRecord *prt = &part->Data->GroupSimple; //UNUSED at this time
             offset->x                        = prt->Origin.x;
@@ -602,7 +607,7 @@ void getpartoffset(Model *objinst, ModelNode *part, coord3d *offset) //#MATCH - 
             offset->z                        = prt->Origin.z;
             break;
         }
-        case 21:
+        case MODELNODE_OPCODE_GROUPSIMPLE:
         {
             ModelRoData_GroupSimpleRecord *prt = &part->Data->GroupSimple;
             offset->x                        = prt->Origin.x;
@@ -640,7 +645,7 @@ void setpartoffset(Model *model, ModelNode *node, coord3d *pos)
 #endif
     switch (node->Opcode & 0xff)
     {
-        case MODELNODE_OPCODE_HEADERRECORD:
+        case MODELNODE_OPCODE_HEADER:
             {
                 ModelRwData_HeaderRecord *rwdata = modelGetNodeRwData(model, node);
                 coord3d diff[1];
@@ -658,7 +663,7 @@ void setpartoffset(Model *model, ModelNode *node, coord3d *pos)
                 rwdata->unk4c.x += diff[0].x; rwdata->unk4c.z += diff[0].z;
             }
             break;
-        case MODELNODE_OPCODE_GROUPRECORD:
+        case MODELNODE_OPCODE_GROUP:
             {
                 ModelRoData_GroupRecord *rodata = &node->Data->Group;
                 rodata->Origin.x = pos->x;
@@ -666,7 +671,7 @@ void setpartoffset(Model *model, ModelNode *node, coord3d *pos)
                 rodata->Origin.z = pos->z;
             }
             break;
-        case MODELNODE_OPCODE_UNUSED_03:
+        case MODELNODE_OPCODE_OP03:
             {
                 ModelRoData_GroupRecord *rodata = &node->Data->Group;
                 rodata->Origin.x = pos->x;
@@ -674,7 +679,7 @@ void setpartoffset(Model *model, ModelNode *node, coord3d *pos)
                 rodata->Origin.z = pos->z;
             }
             break;
-        case MODELNODE_OPCODE_GROUPSIMPLERECORD:
+        case MODELNODE_OPCODE_GROUPSIMPLE:
             {
                 ModelRoData_GroupSimpleRecord *rodata = &node->Data->GroupSimple;
                 rodata->Origin.x = pos->x;
@@ -808,7 +813,7 @@ void setsubroty(Model *model, f32 angle)
     }
 #endif
     node = model->obj->RootNode;
-    if ((node->Opcode & 0xff) == MODELNODE_OPCODE_HEADERRECORD)
+    if ((node->Opcode & 0xff) == MODELNODE_OPCODE_HEADER)
     {
         ModelRwData_HeaderRecord *rwdata = modelGetNodeRwData(model, node);
         f32 diff = angle - rwdata->unk14;
@@ -860,52 +865,52 @@ f32 getjointsize(Model *model, ModelNode *node)
         {
             switch (node->Opcode & 0xFF)
             {
-                case MODELNODE_OPCODE_HEADERRECORD:
+                case MODELNODE_OPCODE_HEADER:
                 {
                     ModelRoData_HeaderRecord *rodata = &node->Data->Header;
                     return rodata->GroupsAsF32 * model->scale;
                 }
-                case MODELNODE_OPCODE_GROUPRECORD:
+                case MODELNODE_OPCODE_GROUP:
                 {
                     ModelRoData_GroupRecord *rodata = &node->Data->Group;
                     return rodata->BoundingVolumeRadius * model->scale;
                 }
-                case MODELNODE_OPCODE_UNUSED_03:
+                case MODELNODE_OPCODE_OP03:
                 {
                     ModelRoData_GroupRecord *rodata = &node->Data->Group;
                     return rodata->BoundingVolumeRadius * model->scale;
                 }
-                case MODELNODE_OPCODE_GROUPSIMPLERECORD:
+                case MODELNODE_OPCODE_GROUPSIMPLE:
                 {
                     ModelRoData_GroupSimpleRecord *rodata = &node->Data->GroupSimple;
                     return rodata->BoundingVolumeRadius * model->scale;
                 }
-                case MODELNODE_OPCODE_OP11RECORD:
+                case MODELNODE_OPCODE_OP11:
                 {
                     ModelRoData_Op11Record *rodata = &node->Data->Op11;
                     return rodata->BoundingVolumeRadius * model->scale;
                 }
-                case MODELNODE_OPCODE_GUNFIRERECORD:
+                case MODELNODE_OPCODE_GUNFIRE:
                 {
                     ModelRoData_GunfireRecord *rodata = &node->Data->Gunfire;
                     return rodata->Scale * model->scale;
                 }
-                case MODELNODE_OPCODE_SHADOWRECORD:
+                case MODELNODE_OPCODE_SHADOW:
                 {
                     ModelRoData_ShadowRecord *rodata = &node->Data->Shadow;
                     return rodata->Scale * model->scale;
                 }
-                case MODELNODE_OPCODE_OP14RECORD:
+                case MODELNODE_OPCODE_OP14:
                 {
                     ModelRoData_Op14Record *rodata = &node->Data->Op14;
                     return rodata->Scale * model->scale;
                 }
-                case MODELNODE_OPCODE_INTERLINKAGERECORD:
+                case MODELNODE_OPCODE_INTERLINK:
                 {
                     ModelRoData_InterlinkageRecord *rodata = &node->Data->Interlinkage;
                     return rodata->Scale * model->scale;
                 }
-                case MODELNODE_OPCODE_OP16RECORD:
+                case MODELNODE_OPCODE_OP16:
                 {
                     ModelNode_Op16Record *rodata = &node->Data->Op16;
                     return rodata->Scale * model->scale;
@@ -922,6 +927,7 @@ f32 getjointsize(Model *model, ModelNode *node)
 
 /**
  * Address 0x7F06D00C.
+ * PD: model0001af80
 */
 f32 getinstsize(Model *arg0)
 {
@@ -944,15 +950,17 @@ f32 getinstsize(Model *arg0)
 
 
 
-void interpolate3dVectors(vec3d *v, vec3d *w, float k)
+// PD: model0001af98
+void interpolate3dVectors(vec3d *v, vec3d *w, float frac)
 {
-    v->x += (w->x - v->x) * k;
-    v->y += (w->y - v->y) * k;
-    v->z += (w->z - v->z) * k;
+    v->x += (w->x - v->x) * frac;
+    v->y += (w->y - v->y) * frac;
+    v->z += (w->z - v->z) * frac;
   return;
 }
 
 
+// PD: model0001afe8
 f32 sub_GAME_7F06D0CC(f32 arg0, f32 angle, f32 mult)
 {
     f32 value = angle - arg0;
@@ -985,6 +993,7 @@ f32 sub_GAME_7F06D0CC(f32 arg0, f32 angle, f32 mult)
 }
 
 
+// PD: model0001b07c
 void sub_GAME_7F06D160(coord3d *arg0, coord3d *arg1, f32 mult)
 {
     arg0->x = sub_GAME_7F06D0CC(arg0->x, arg1->x, mult);
@@ -1414,122 +1423,61 @@ void subcalcpos(Model *arg0)
     }
 }
 
+void process_01_group_heading(ModelRenderData* renderdata, Model* model, ModelNode* node)
+{
+    union ModelRoData* rodata;
+    union ModelRwData* rwdata;
+    f32 scale;
+    f32* pos;
+    f32 unk14;
+    Mtxf* var_a3;
+    s32 modeltype;
+    RenderPosView* renderpos;
+    Mtxf sp20;
 
+    rodata = node->Data;
+    rwdata = modelGetNodeRwData(model, node);
 
-#ifdef NONMATCHING
-void process_01_group_heading(ModelRenderData *arg0, Model *model, ModelNode *node) {
+    scale = model->scale;
+    pos = &rwdata->Header.pos.x;
+    unk14 = rwdata->Header.unk14;
+    modeltype = (s16)rodata->Header.ModelType;
+    renderpos = &model->render_pos[modeltype];
 
+    if (node->Parent != NULL)
+    {
+        var_a3 = modelFindNodeMtx(model, node->Parent, 0);
+    }
+    else
+    {
+        var_a3 = renderdata->unk00;
+    }
+
+    if (rwdata->Header.unk18 != 0.0f)
+    {
+        unk14 = sub_GAME_7F06D0CC(unk14, rwdata->Header.unk1c, rwdata->Header.unk18);
+    }
+
+    if (var_a3 != NULL)
+    {
+        matrix_4x4_set_position_and_rotation_around_y(pos, unk14, &sp20);
+
+        if (scale != 1.0f)
+        {
+            matrix_scalar_multiply_2(scale, sp20.m[0]);
+        }
+
+        matrix_4x4_multiply_homogeneous(var_a3, &sp20, &renderpos->pos);
+        return;
+    }
+
+    matrix_4x4_set_position_and_rotation_around_y(pos, unk14, &renderpos->pos);
+
+    if (scale != 1.0f)
+    {
+        matrix_scalar_multiply_2(scale, renderpos->pos.m[0]);
+    }
 }
-#else
-void process_01_group_heading(ModelRenderData *arg0, Model *model, ModelNode *node);
-GLOBAL_ASM(
-.text
-glabel process_01_group_heading
-/* 0A2268 7F06D738 27BDFF80 */  addiu $sp, $sp, -0x80
-/* 0A226C 7F06D73C AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0A2270 7F06D740 AFA40080 */  sw    $a0, 0x80($sp)
-/* 0A2274 7F06D744 8CCE0004 */  lw    $t6, 4($a2)
-/* 0A2278 7F06D748 00A03825 */  move  $a3, $a1
-/* 0A227C 7F06D74C 00A02025 */  move  $a0, $a1
-/* 0A2280 7F06D750 00C02825 */  move  $a1, $a2
-/* 0A2284 7F06D754 AFA70084 */  sw    $a3, 0x84($sp)
-/* 0A2288 7F06D758 AFA60088 */  sw    $a2, 0x88($sp)
-/* 0A228C 7F06D75C 0FC1B1E7 */  jal   modelGetNodeRwData
-/* 0A2290 7F06D760 AFAE007C */   sw    $t6, 0x7c($sp)
-/* 0A2294 7F06D764 8FA70084 */  lw    $a3, 0x84($sp)
-/* 0A2298 7F06D768 8FB8007C */  lw    $t8, 0x7c($sp)
-/* 0A229C 7F06D76C 244F0008 */  addiu $t7, $v0, 8
-/* 0A22A0 7F06D770 C4E40014 */  lwc1  $f4, 0x14($a3)
-/* 0A22A4 7F06D774 AFAF0070 */  sw    $t7, 0x70($sp)
-/* 0A22A8 7F06D778 8FA60088 */  lw    $a2, 0x88($sp)
-/* 0A22AC 7F06D77C E7A40074 */  swc1  $f4, 0x74($sp)
-/* 0A22B0 7F06D780 87030002 */  lh    $v1, 2($t8)
-/* 0A22B4 7F06D784 8CF9000C */  lw    $t9, 0xc($a3)
-/* 0A22B8 7F06D788 C44C0014 */  lwc1  $f12, 0x14($v0)
-/* 0A22BC 7F06D78C 00034980 */  sll   $t1, $v1, 6
-/* 0A22C0 7F06D790 03295021 */  addu  $t2, $t9, $t1
-/* 0A22C4 7F06D794 AFAA0060 */  sw    $t2, 0x60($sp)
-/* 0A22C8 7F06D798 8CC50008 */  lw    $a1, 8($a2)
-/* 0A22CC 7F06D79C 00404025 */  move  $t0, $v0
-/* 0A22D0 7F06D7A0 8FAB0080 */  lw    $t3, 0x80($sp)
-/* 0A22D4 7F06D7A4 10A00009 */  beqz  $a1, .L7F06D7CC
-/* 0A22D8 7F06D7A8 00E02025 */   move  $a0, $a3
-/* 0A22DC 7F06D7AC 00003025 */  move  $a2, $zero
-/* 0A22E0 7F06D7B0 AFA20078 */  sw    $v0, 0x78($sp)
-/* 0A22E4 7F06D7B4 0FC1B198 */  jal   sub_GAME_7F06C660
-/* 0A22E8 7F06D7B8 E7AC006C */   swc1  $f12, 0x6c($sp)
-/* 0A22EC 7F06D7BC 8FA80078 */  lw    $t0, 0x78($sp)
-/* 0A22F0 7F06D7C0 C7AC006C */  lwc1  $f12, 0x6c($sp)
-/* 0A22F4 7F06D7C4 10000002 */  b     .L7F06D7D0
-/* 0A22F8 7F06D7C8 00403825 */   move  $a3, $v0
-.L7F06D7CC:
-/* 0A22FC 7F06D7CC 8D670000 */  lw    $a3, ($t3)
-.L7F06D7D0:
-/* 0A2300 7F06D7D0 C5000018 */  lwc1  $f0, 0x18($t0)
-/* 0A2304 7F06D7D4 44803000 */  mtc1  $zero, $f6
-/* 0A2308 7F06D7D8 00000000 */  nop   
-/* 0A230C 7F06D7DC 46003032 */  c.eq.s $f6, $f0
-/* 0A2310 7F06D7E0 00000000 */  nop   
-/* 0A2314 7F06D7E4 45010007 */  bc1t  .L7F06D804
-/* 0A2318 7F06D7E8 00000000 */   nop   
-/* 0A231C 7F06D7EC C50E001C */  lwc1  $f14, 0x1c($t0)
-/* 0A2320 7F06D7F0 44060000 */  mfc1  $a2, $f0
-/* 0A2324 7F06D7F4 0FC1B433 */  jal   sub_GAME_7F06D0CC
-/* 0A2328 7F06D7F8 AFA70068 */   sw    $a3, 0x68($sp)
-/* 0A232C 7F06D7FC 8FA70068 */  lw    $a3, 0x68($sp)
-/* 0A2330 7F06D800 46000306 */  mov.s $f12, $f0
-.L7F06D804:
-/* 0A2334 7F06D804 10E00019 */  beqz  $a3, .L7F06D86C
-/* 0A2338 7F06D808 8FA40070 */   lw    $a0, 0x70($sp)
-/* 0A233C 7F06D80C 44056000 */  mfc1  $a1, $f12
-/* 0A2340 7F06D810 8FA40070 */  lw    $a0, 0x70($sp)
-/* 0A2344 7F06D814 27A60020 */  addiu $a2, $sp, 0x20
-/* 0A2348 7F06D818 0FC16134 */  jal   matrix_4x4_set_position_and_rotation_around_y
-/* 0A234C 7F06D81C AFA70068 */   sw    $a3, 0x68($sp)
-/* 0A2350 7F06D820 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0A2354 7F06D824 44815000 */  mtc1  $at, $f10
-/* 0A2358 7F06D828 C7A80074 */  lwc1  $f8, 0x74($sp)
-/* 0A235C 7F06D82C 8FA70068 */  lw    $a3, 0x68($sp)
-/* 0A2360 7F06D830 27A50020 */  addiu $a1, $sp, 0x20
-/* 0A2364 7F06D834 460A4032 */  c.eq.s $f8, $f10
-/* 0A2368 7F06D838 00000000 */  nop   
-/* 0A236C 7F06D83C 45030006 */  bc1tl .L7F06D858
-/* 0A2370 7F06D840 00E02025 */   move  $a0, $a3
-/* 0A2374 7F06D844 46004306 */  mov.s $f12, $f8
-/* 0A2378 7F06D848 0FC162C4 */  jal   matrix_scalar_multiply_2
-/* 0A237C 7F06D84C AFA70068 */   sw    $a3, 0x68($sp)
-/* 0A2380 7F06D850 8FA70068 */  lw    $a3, 0x68($sp)
-/* 0A2384 7F06D854 00E02025 */  move  $a0, $a3
-.L7F06D858:
-/* 0A2388 7F06D858 27A50020 */  addiu $a1, $sp, 0x20
-/* 0A238C 7F06D85C 0FC16063 */  jal   matrix_4x4_multiply_homogeneous
-/* 0A2390 7F06D860 8FA60060 */   lw    $a2, 0x60($sp)
-/* 0A2394 7F06D864 1000000F */  b     .L7F06D8A4
-/* 0A2398 7F06D868 8FBF0014 */   lw    $ra, 0x14($sp)
-.L7F06D86C:
-/* 0A239C 7F06D86C 44056000 */  mfc1  $a1, $f12
-/* 0A23A0 7F06D870 0FC16134 */  jal   matrix_4x4_set_position_and_rotation_around_y
-/* 0A23A4 7F06D874 8FA60060 */   lw    $a2, 0x60($sp)
-/* 0A23A8 7F06D878 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0A23AC 7F06D87C 44819000 */  mtc1  $at, $f18
-/* 0A23B0 7F06D880 C7B00074 */  lwc1  $f16, 0x74($sp)
-/* 0A23B4 7F06D884 8FA50060 */  lw    $a1, 0x60($sp)
-/* 0A23B8 7F06D888 46128032 */  c.eq.s $f16, $f18
-/* 0A23BC 7F06D88C 00000000 */  nop   
-/* 0A23C0 7F06D890 45030004 */  bc1tl .L7F06D8A4
-/* 0A23C4 7F06D894 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0A23C8 7F06D898 0FC162C4 */  jal   matrix_scalar_multiply_2
-/* 0A23CC 7F06D89C 46008306 */   mov.s $f12, $f16
-/* 0A23D0 7F06D8A0 8FBF0014 */  lw    $ra, 0x14($sp)
-.L7F06D8A4:
-/* 0A23D4 7F06D8A4 27BD0080 */  addiu $sp, $sp, 0x80
-/* 0A23D8 7F06D8A8 03E00008 */  jr    $ra
-/* 0A23DC 7F06D8AC 00000000 */   nop   
-)
-#endif
-
-
-
 
 
 #ifdef NONMATCHING
@@ -1574,7 +1522,7 @@ glabel sub_GAME_7F06D8B0
 /* 0A2428 7F06D8F8 11800006 */  beqz  $t4, .L7F06D914
 /* 0A242C 7F06D8FC AFAC001C */   sw    $t4, 0x1c($sp)
 /* 0A2430 7F06D900 00A02025 */  move  $a0, $a1
-/* 0A2434 7F06D904 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A2434 7F06D904 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A2438 7F06D908 01802825 */   move  $a1, $t4
 /* 0A243C 7F06D90C 10000003 */  b     .L7F06D91C
 /* 0A2440 7F06D910 AFA200AC */   sw    $v0, 0xac($sp)
@@ -1788,7 +1736,7 @@ glabel sub_GAME_7F06DB5C
 /* 0A26D4 7F06DBA4 11800006 */  beqz  $t4, .L7F06DBC0
 /* 0A26D8 7F06DBA8 AFAC001C */   sw    $t4, 0x1c($sp)
 /* 0A26DC 7F06DBAC 00A02025 */  move  $a0, $a1
-/* 0A26E0 7F06DBB0 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A26E0 7F06DBB0 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A26E4 7F06DBB4 01802825 */   move  $a1, $t4
 /* 0A26E8 7F06DBB8 10000003 */  b     .L7F06DBC8
 /* 0A26EC 7F06DBBC AFA2009C */   sw    $v0, 0x9c($sp)
@@ -2369,7 +2317,7 @@ glabel sub_GAME_7F06E2B8
 /* 0A2E34 7F06E304 8C8B0000 */   lw    $t3, ($a0)
 /* 0A2E38 7F06E308 00A02025 */  move  $a0, $a1
 /* 0A2E3C 7F06E30C 00E02825 */  move  $a1, $a3
-/* 0A2E40 7F06E310 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A2E40 7F06E310 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A2E44 7F06E314 AFA3004C */   sw    $v1, 0x4c($sp)
 /* 0A2E48 7F06E318 8FA3004C */  lw    $v1, 0x4c($sp)
 /* 0A2E4C 7F06E31C 10000003 */  b     .L7F06E32C
@@ -2736,7 +2684,7 @@ void process_15_subposition(ModelRenderData* arg0, Model *model, ModelNode *node
 
     if (node->Parent)
     {
-        sp68 = sub_GAME_7F06C660(model, node->Parent, 0);
+        sp68 = modelFindNodeMtx(model, node->Parent, 0);
     }
     else
     {
@@ -2754,12 +2702,14 @@ void process_15_subposition(ModelRenderData* arg0, Model *model, ModelNode *node
     }
 }
 
-
-void process_08_distance_triggers(Model* model, ModelNode* node)
+/*
+* Address: 0x7F06E858
+*/
+void modelUpdateDistanceRelations(Model* model, ModelNode* node)
 {
     union ModelRoData *rodata = node->Data;
     union ModelRwData *rwdata = modelGetNodeRwData(model, node);
-    Mtxf *mtx = sub_GAME_7F06C660(model, node, 0);
+    Mtxf *mtx = modelFindNodeMtx(model, node, 0);
     f32 distance;
 
     if (g_ModelDistanceDisabled)
@@ -2790,8 +2740,10 @@ void process_08_distance_triggers(Model* model, ModelNode* node)
     node->Child = NULL;
 }
 
-
-void sub_GAME_7F06E970(Model* model, ModelNode* node)
+/*
+* Address: 0x7F06E970
+*/
+void modelApplyDistanceRelations(Model* model, ModelNode* node)
 {
     ModelRoData_LODRecord *rodata = &node->Data->LOD;
     ModelRwData_LODRecord *rwdata = modelGetNodeRwData(model, node);
@@ -2807,7 +2759,7 @@ void sub_GAME_7F06E970(Model* model, ModelNode* node)
 }
 
 
-void process_12_handle_switch(Model* model, ModelNode* node)
+void modelApplyToggleRelations(Model* model, ModelNode* node)
 {
     ModelRoData_SwitchRecord *rodata = &node->Data->Switch;
     ModelRwData_SwitchRecord *rwdata = modelGetNodeRwData(model, node);
@@ -2823,7 +2775,7 @@ void process_12_handle_switch(Model* model, ModelNode* node)
 }
 
 
-void process_17_pointer_to_head(Model* model, ModelNode* bodynode)
+void modelApplyHeadRelations(Model* model, ModelNode* bodynode)
 {
     struct ModelRwData_HeadPlaceholderRecord *rwdata = modelGetNodeRwData(model, bodynode);
 
@@ -2842,7 +2794,7 @@ void process_17_pointer_to_head(Model* model, ModelNode* bodynode)
 }
 
 
-void sub_GAME_7F06EA54(ModelNode *basenode, bool visible)
+void modelApplyReorderRelationsByArg(ModelNode *basenode, bool visible)
 {
     union ModelRoData *rodata = basenode->Data;
     ModelNode *node1;
@@ -2907,18 +2859,18 @@ void sub_GAME_7F06EA54(ModelNode *basenode, bool visible)
 }
 
 
-void sub_GAME_7F06EB10(Model* model, ModelNode* node)
+void modelApplyReorderRelations(Model* model, ModelNode* node)
 {
     union ModelRwData *rwdata = modelGetNodeRwData(model, node);
-    sub_GAME_7F06EA54(node, rwdata->BSP.visible);
+    modelApplyReorderRelationsByArg(node, rwdata->BSP.visible);
 }
 
 
-void process_09_head_hat_placement_interlink(Model *model, ModelNode *node)
+void modelUpdateReorderRelations(Model *model, ModelNode *node)
 {
     union ModelRoData *rodata = node->Data;
     union ModelRwData *rwdata = modelGetNodeRwData(model, node);
-    Mtxf *mtx = sub_GAME_7F06C660(model, node, 0);
+    Mtxf *mtx = modelFindNodeMtx(model, node, 0);
     coord3d sp38;
     coord3d sp2c;
     f32 tmp;
@@ -2928,7 +2880,7 @@ void process_09_head_hat_placement_interlink(Model *model, ModelNode *node)
         sp38.x = rodata->BSP.Vector.f[0];
         sp38.y = rodata->BSP.Vector.f[1];
         sp38.z = rodata->BSP.Vector.f[2];
-        matrix_4x4_rotate_vector_in_place(mtx, sp38.f);
+        mtx4RotateVecInPlace(mtx, sp38.f);
     }
     else if (rodata->BSP.reserved == 2)
     {
@@ -2953,7 +2905,7 @@ void process_09_head_hat_placement_interlink(Model *model, ModelNode *node)
     sp2c.y = rodata->BSP.Point.f[1];
     sp2c.z = rodata->BSP.Point.f[2];
 
-    matrix_4x4_transform_vector_in_place(mtx, sp2c.f);
+    mtx4TransformVecInPlace(mtx, &sp2c);
 
     tmp = sp38.f[0] * sp2c.f[0] + sp38.f[1] * sp2c.f[1] + sp38.f[2] * sp2c.f[2];
 
@@ -2966,7 +2918,7 @@ void process_09_head_hat_placement_interlink(Model *model, ModelNode *node)
         rwdata->BSP.visible = FALSE;
     }
 
-    sub_GAME_7F06EB10(model, node);
+    modelApplyReorderRelations(model, node);
 }
 
 
@@ -2974,7 +2926,7 @@ void process_07_unknown(Model *model, ModelNode *node)
 {
     union ModelRoData *rodata = node->Data;
     union ModelRwData *rwdata = modelGetNodeRwData(model, node);
-    Mtxf *mtx = sub_GAME_7F06C660(model, node, 0);
+    Mtxf *mtx = modelFindNodeMtx(model, node, 0);
     f32 ratio;
     f32 coord_multiplied;
     coord3d coord;
@@ -3006,7 +2958,7 @@ void process_07_unknown(Model *model, ModelNode *node)
 }
 
 
-void sub_GAME_7F06EEA4(Model *model, ModelNode *parent)
+void modelUpdateRelationsQuick(Model *model, ModelNode *parent)
 {
     ModelNode *node = parent->Child;
     ModelNode **unused_parent;
@@ -3018,31 +2970,31 @@ void sub_GAME_7F06EEA4(Model *model, ModelNode *parent)
 
         switch (type)
         {
-            case MODELNODE_OPCODE_HEADERRECORD:
-            case MODELNODE_OPCODE_GROUPRECORD:
-            case MODELNODE_OPCODE_UNUSED_03:
-            case MODELNODE_OPCODE_OP11RECORD:
-            case MODELNODE_OPCODE_GUNFIRERECORD:
-            case MODELNODE_OPCODE_SHADOWRECORD:
-            case MODELNODE_OPCODE_OP14RECORD:
-            case MODELNODE_OPCODE_INTERLINKAGERECORD:
-            case MODELNODE_OPCODE_OP16RECORD:
-            case MODELNODE_OPCODE_GROUPSIMPLERECORD:
+            case MODELNODE_OPCODE_HEADER:
+            case MODELNODE_OPCODE_GROUP:
+            case MODELNODE_OPCODE_OP03:
+            case MODELNODE_OPCODE_OP11:
+            case MODELNODE_OPCODE_GUNFIRE:
+            case MODELNODE_OPCODE_SHADOW:
+            case MODELNODE_OPCODE_OP14:
+            case MODELNODE_OPCODE_INTERLINK:
+            case MODELNODE_OPCODE_OP16:
+            case MODELNODE_OPCODE_GROUPSIMPLE:
                 dochildren = FALSE;
                 break;
-            case MODELNODE_OPCODE_LODRECORD:
-                process_08_distance_triggers(model, node);
+            case MODELNODE_OPCODE_LOD:
+                modelUpdateDistanceRelations(model, node);
                 break;
-            case MODELNODE_OPCODE_BSPRECORD:
-                process_09_head_hat_placement_interlink(model, node);
+            case MODELNODE_OPCODE_BSP:
+                modelUpdateReorderRelations(model, node);
                 break;
-            case MODELNODE_OPCODE_OP07RECORD:
+            case MODELNODE_OPCODE_OP07:
                 process_07_unknown(model, node);
                 break;
-            case MODELNODE_OPCODE_HEADPLACEHOLDERRECORD:
-                process_17_pointer_to_head(model, node);
+            case MODELNODE_OPCODE_HEAD:
+                modelApplyHeadRelations(model, node);
                 break;
-            case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+            case MODELNODE_OPCODE_DLCOLLISION:
                 break;
         }
 
@@ -3084,28 +3036,28 @@ void sub_GAME_7F06EFC4(Model *model)
 
         switch (type)
         {
-            case MODELNODE_OPCODE_LODRECORD:
-                process_08_distance_triggers(model, node);
+            case MODELNODE_OPCODE_LOD:
+                modelUpdateDistanceRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_BSPRECORD:
-                process_09_head_hat_placement_interlink(model, node);
+            case MODELNODE_OPCODE_BSP:
+                modelUpdateReorderRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_OP07RECORD:
+            case MODELNODE_OPCODE_OP07:
                 process_07_unknown(model, node);
                 break;
 
-            case MODELNODE_OPCODE_SWITCHRECORD:
-                process_12_handle_switch(model, node);
+            case MODELNODE_OPCODE_SWITCH:
+                modelApplyToggleRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_HEADPLACEHOLDERRECORD:
-                process_17_pointer_to_head(model, node);
+            case MODELNODE_OPCODE_HEAD:
+                modelApplyHeadRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_HEADERRECORD:
-            case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+            case MODELNODE_OPCODE_HEADER:
+            case MODELNODE_OPCODE_DLCOLLISION:
             default:
                 break;
         }
@@ -3131,7 +3083,7 @@ void sub_GAME_7F06EFC4(Model *model)
 }
 
 
-void sub_GAME_7F06F0D0(ModelRenderData *arg0, Model *model)
+void modelUpdateMatrices(ModelRenderData *arg0, Model *model)
 {
     ModelNode *node = model->obj->RootNode;
 
@@ -3141,43 +3093,43 @@ void sub_GAME_7F06F0D0(ModelRenderData *arg0, Model *model)
 
         switch (type)
         {
-            case MODELNODE_OPCODE_HEADERRECORD:
+            case MODELNODE_OPCODE_HEADER:
                 process_01_group_heading(arg0, model, node);
                 break;
 
-            case MODELNODE_OPCODE_GROUPRECORD:
+            case MODELNODE_OPCODE_GROUP:
                 process_02_position(arg0, model, node);
                 break;
 
-            case MODELNODE_OPCODE_UNUSED_03:
+            case MODELNODE_OPCODE_OP03:
                 process_03_unknown(arg0, model, node);
                 break;
 
-            case MODELNODE_OPCODE_GROUPSIMPLERECORD:
+            case MODELNODE_OPCODE_GROUPSIMPLE:
                 process_15_subposition(arg0, model, node);
                 break;
 
-            case MODELNODE_OPCODE_LODRECORD:
-                process_08_distance_triggers(model, node);
+            case MODELNODE_OPCODE_LOD:
+                modelUpdateDistanceRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_BSPRECORD:
-                process_09_head_hat_placement_interlink(model, node);
+            case MODELNODE_OPCODE_BSP:
+                modelUpdateReorderRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_OP07RECORD:
+            case MODELNODE_OPCODE_OP07:
                 process_07_unknown(model, node);
                 break;
 
-            case MODELNODE_OPCODE_SWITCHRECORD:
-                process_12_handle_switch(model, node);
+            case MODELNODE_OPCODE_SWITCH:
+                modelApplyToggleRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_HEADPLACEHOLDERRECORD:
-                process_17_pointer_to_head(model, node);
+            case MODELNODE_OPCODE_HEAD:
+                modelApplyHeadRelations(model, node);
                 break;
 
-            case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+            case MODELNODE_OPCODE_DLCOLLISION:
             default:
                 break;
         }
@@ -3226,7 +3178,7 @@ void instcalcmatrices(struct unk_joint_list* arg0, Model* arg1)
 #endif
     arg1->render_pos = (RenderPosView* ) arg0->mtxlist;
     arg0->mtxlist += arg1->obj->numMatrices;
-    sub_GAME_7F06F0D0((ModelRenderData* ) arg0, arg1);
+    modelUpdateMatrices((ModelRenderData* ) arg0, arg1);
 }
 
 
@@ -3365,7 +3317,7 @@ f32 sub_GAME_7F06F5C4(Model *model)
     f32 unk3c;
     ModelAnimation *modelAnimation;
 
-    unk3c = model->unk3c;
+    unk3c = model->endframe;
     if (unk3c >= 0.0f)
     {
         return unk3c;
@@ -3408,19 +3360,57 @@ f32 modelGetAbsAnimSpeed(Model *model)
 /**
  * Unused Function
 */
-f32 sub_GAME_7F06F640(Model *model) {
-    return modelGetAnimSpeed(model) * model->unka4;
+f32 modelGetEffectiveAnimSpeed(Model *model) {
+    return modelGetAnimSpeed(model) * model->playspeed;
 }
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F06F66C(void) {
+s32 modelConstrainOrWrapAnimFrame(s32 frame, ModelAnimation *anim, f32 endframe)
+{
+    //s32 frame;
+    //u16 animnum->unk4;
+    //u16 animnum->unk4;
 
+    //frame = frame;
+    if (frame < 0)
+    {
+        if (animnum->unk7 & 1)
+        {
+            //animnum->unk4 = animnum->unk4;
+            frame = animnum->unk4 - ((s32) -frame % (s32) animnum->unk4);
+        }
+        else
+        {
+            frame = 0;
+        }
+    }
+    else if ((endframe >= 0.0f) && ((s32) endframe < frame))
+    {
+        frame = ceilFloatToInt(endframe);
+    }
+    else
+    {
+        //animnum->unk4 = animnum->unk4;
+        if (frame >= (s32) animnum->unk4)
+        {
+            if (animnum->unk7 & 1)
+            {
+                frame = frame % (s32) animnum->unk4;
+            }
+            else
+            {
+                frame = animnum->unk4 - 1;
+            }
+        }
+    }
+    return frame;
 }
 #else
+s32 modelConstrainOrWrapAnimFrame(s32 frame, ModelAnimation *anim, f32 endframe);
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F06F66C
+glabel modelConstrainOrWrapAnimFrame
 /* 0A419C 7F06F66C 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0A41A0 7F06F670 44866000 */  mtc1  $a2, $f12
 /* 0A41A4 7F06F674 04810017 */  bgez  $a0, .L7F06F6D4
@@ -3507,7 +3497,7 @@ glabel sub_GAME_7F06F66C
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F06F780(Model *model, f32 arg1)
+void modelCopyAnimForMerge(Model *model, f32 arg1)
 {
     ModelNode      *temp_a1;
     f32             temp_f10;
@@ -3517,14 +3507,13 @@ void sub_GAME_7F06F780(Model *model, f32 arg1)
     f32             temp_f6;
     f32             temp_f8;
     modeldata_root *temp_v0_2;
-    void           *temp_v0;
-
-    if ((arg1 > 0.0f) && (temp_v0 = model->anim, (temp_v0 != 0)))
+    
+    if ((arg1 > 0.0f) && (model->anim != 0))
     {
         temp_a1      = model->obj->RootNode;
         model->unk58 = model->unk28;
         model->unk5C = model->unk2C;
-        model->unk54 = temp_v0;
+        model->unk54 = model->anim;
         model->unk25 = model->unk24;
         model->unk60 = model->unk30;
         model->unk62 = model->unk32;
@@ -3533,7 +3522,7 @@ void sub_GAME_7F06F780(Model *model, f32 arg1)
         model->unk78 = model->oldspeed;
         model->unk7C = model->timespeed;
         model->unk80 = model->elapsespeed;
-        model->unk6C = model->unk3C;
+        model->unk6C = model->endframe;
         if ((temp_a1->Opcode & 0xFF) == 1)
         {
             temp_v0_2                   = modelGetNodeRwData(model, temp_a1);
@@ -3560,7 +3549,7 @@ void sub_GAME_7F06F780(Model *model, f32 arg1)
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F06F780
+glabel modelCopyAnimForMerge
 /* 0A42B0 7F06F780 44856000 */  mtc1  $a1, $f12
 /* 0A42B4 7F06F784 44802000 */  mtc1  $zero, $f4
 /* 0A42B8 7F06F788 27BDFFE8 */  addiu $sp, $sp, -0x18
@@ -3632,7 +3621,7 @@ glabel sub_GAME_7F06F780
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F06F878(Model *model, void *anim, s32 arg2, f32 startframe, f32 half, f32 arg5)
+void modelSetAnimation2(Model *model, void *anim, s32 arg2, f32 startframe, f32 half, f32 arg5)
 {
     void           *sp80;
     f32             sp70;
@@ -3681,10 +3670,10 @@ void sub_GAME_7F06F878(Model *model, void *anim, s32 arg2, f32 startframe, f32 h
     }
     model->anim  = anim;
     model->unk24 = arg2;
-    model->unk3C = -1.0f;
+    model->endframe = -1.0f;
     model->speed = half;
     model->timespeed = 0.0f;
-    sub_GAME_7F06FF64(startframe, model, startframe, anim);
+    modelSetAnimFrame(startframe, model, startframe, anim);
     model->unk26 = 0;
     temp_a1      = model->obj->RootNode;
     if ((temp_a1->Opcode & 0xFF) == 1)
@@ -3783,7 +3772,7 @@ glabel D_80054D44
 glabel D_80054D48
 .word 0x40c90fdb /*6.2831855*/
 .text
-glabel sub_GAME_7F06F878
+glabel modelSetAnimation2
 /* 0A43A8 7F06F878 27BDFF70 */  addiu $sp, $sp, -0x90
 /* 0A43AC 7F06F87C AFBF0024 */  sw    $ra, 0x24($sp)
 /* 0A43B0 7F06F880 AFB10020 */  sw    $s1, 0x20($sp)
@@ -3821,7 +3810,7 @@ glabel sub_GAME_7F06F878
 /* 0A4428 7F06F8F8 44805000 */  mtc1  $zero, $f10
 /* 0A442C 7F06F8FC 02202025 */  move  $a0, $s1
 /* 0A4430 7F06F900 E6280040 */  swc1  $f8, 0x40($s1)
-/* 0A4434 7F06F904 0FC1BFD9 */  jal   sub_GAME_7F06FF64
+/* 0A4434 7F06F904 0FC1BFD9 */  jal   modelSetAnimFrame
 /* 0A4438 7F06F908 E62A004C */   swc1  $f10, 0x4c($s1)
 /* 0A443C 7F06F90C 8E390008 */  lw    $t9, 8($s1)
 /* 0A4440 7F06F910 A2200026 */  sb    $zero, 0x26($s1)
@@ -4043,21 +4032,22 @@ glabel sub_GAME_7F06F878
 
 void modelSetAnimationWithMerge(Model *model, ModelAnimation *modelAnimation, s32 flip, f32 startframe, f32 speed, f32 timemerge, s32 domerge) {
     if (domerge != 0) {
-        sub_GAME_7F06F780(model, timemerge);
+        modelCopyAnimForMerge(model, timemerge);
     }
-    sub_GAME_7F06F878(model, modelAnimation, flip, startframe, speed, timemerge);
+    modelSetAnimation2(model, modelAnimation, flip, startframe, speed, timemerge);
 }
 
 
 
 void modelSetAnimation(Model *model, ModelAnimation *modelAnimation, s32 flip, f32 startframe, f32 speed, f32 merge) {
-    sub_GAME_7F06F780(model, merge);
-    sub_GAME_7F06F878(model, modelAnimation, flip, startframe, speed, merge);
+    modelCopyAnimForMerge(model, merge);
+    modelSetAnimation2(model, modelAnimation, flip, startframe, speed, merge);
 }
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F06FCFC(void) {
+void sub_GAME_7F06FCFC()
+{
 
 }
 #else
@@ -4135,9 +4125,9 @@ void modelSetAnimEndFrame(Model *model, f32 endframe) {
     ModelAnimation *modelAnimation = model->anim;
     
     if ((modelAnimation != NULL) && (endframe < (modelAnimation->unk04 - 1))) {
-        model->unk3c = endframe;
+        model->endframe = endframe;
     } else {
-        model->unk3c = -1.0f;
+        model->endframe = -1.0f;
     }
 }
 
@@ -4195,15 +4185,15 @@ void sub_GAME_7F06FE90(Model *model, f32 arg1, f32 arg2)
     modelSetAnimSpeed(model, t, arg2);
 }
 
-void modelSetAnimRateForDuration(Model *model, f32 animation_rate, f32 arg2) {
-    if (arg2 > 0.0f) {
-        model->unkb0 = arg2;
+void modelSetAnimPlaySpeed(Model *model, f32 animation_rate, f32 startframe) {
+    if (startframe > 0.0f) {
+        model->unkb0 = startframe;
         model->animrate = animation_rate;
         model->unkb4 = 0.0f;
-        model->unkac = model->unka4;
+        model->unkac = model->playspeed;
         return;
     }
-    model->unka4 = animation_rate;
+    model->playspeed = animation_rate;
     model->unkb0 = 0.0f;
 }
 
@@ -4212,225 +4202,102 @@ void sub_GAME_7F06FF5C(Model *model, s32 arg1) {
     model->unka0 = arg1;
 }
 
-#ifdef NONMATCHING
-void sub_GAME_7F06FF64(void) {
 
+void modelSetAnimFrame(Model* model, f32 frame)
+{
+    s32 framea;
+    s32 frameb;
+    bool forwards;
+
+    framea = floorFloatToInt(frame);
+
+    forwards = (model->speed >= 0);
+    frameb = (forwards ? framea + 1 : framea - 1);
+
+    model->framea = modelConstrainOrWrapAnimFrame(framea, model->anim, model->endframe);
+    model->frameb = modelConstrainOrWrapAnimFrame(frameb, model->anim, model->endframe);
+
+    if (model->framea == model->frameb)
+    {
+        model->unk2c = 0.0f;
+        model->unk28 = model->framea;
+    }
+    else if (forwards)
+    {
+        f32 tmp = frame - framea;
+        model->unk2c = tmp;
+        model->unk28 = model->framea + tmp;
+    }
+    else
+    {
+        f32 tmp = 1.0f - (frame - (f32) frameb);
+        model->unk2c = tmp;
+        model->unk28 = model->frameb + (1.0f - tmp);
+    }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F06FF64
-/* 0A4A94 7F06FF64 27BDFFD0 */  addiu $sp, $sp, -0x30
-/* 0A4A98 7F06FF68 AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0A4A9C 7F06FF6C AFB00018 */  sw    $s0, 0x18($sp)
-/* 0A4AA0 7F06FF70 AFA50034 */  sw    $a1, 0x34($sp)
-/* 0A4AA4 7F06FF74 00808025 */  move  $s0, $a0
-/* 0A4AA8 7F06FF78 0FC170F6 */  jal   floorFloatToInt
-/* 0A4AAC 7F06FF7C C7AC0034 */   lwc1  $f12, 0x34($sp)
-/* 0A4AB0 7F06FF80 C6040040 */  lwc1  $f4, 0x40($s0)
-/* 0A4AB4 7F06FF84 44803000 */  mtc1  $zero, $f6
-/* 0A4AB8 7F06FF88 00402025 */  move  $a0, $v0
-/* 0A4ABC 7F06FF8C 00004025 */  move  $t0, $zero
-/* 0A4AC0 7F06FF90 4604303E */  c.le.s $f6, $f4
-/* 0A4AC4 7F06FF94 2447FFFF */  addiu $a3, $v0, -1
-/* 0A4AC8 7F06FF98 45000002 */  bc1f  .L7F06FFA4
-/* 0A4ACC 7F06FF9C 00000000 */   nop   
-/* 0A4AD0 7F06FFA0 24080001 */  li    $t0, 1
-.L7F06FFA4:
-/* 0A4AD4 7F06FFA4 11000003 */  beqz  $t0, .L7F06FFB4
-/* 0A4AD8 7F06FFA8 00000000 */   nop   
-/* 0A4ADC 7F06FFAC 10000001 */  b     .L7F06FFB4
-/* 0A4AE0 7F06FFB0 24470001 */   addiu $a3, $v0, 1
-.L7F06FFB4:
-/* 0A4AE4 7F06FFB4 8E050020 */  lw    $a1, 0x20($s0)
-/* 0A4AE8 7F06FFB8 8E06003C */  lw    $a2, 0x3c($s0)
-/* 0A4AEC 7F06FFBC AFA80024 */  sw    $t0, 0x24($sp)
-/* 0A4AF0 7F06FFC0 AFA70028 */  sw    $a3, 0x28($sp)
-/* 0A4AF4 7F06FFC4 0FC1BD9B */  jal   sub_GAME_7F06F66C
-/* 0A4AF8 7F06FFC8 AFA4002C */   sw    $a0, 0x2c($sp)
-/* 0A4AFC 7F06FFCC 8FA40028 */  lw    $a0, 0x28($sp)
-/* 0A4B00 7F06FFD0 A6020030 */  sh    $v0, 0x30($s0)
-/* 0A4B04 7F06FFD4 8E050020 */  lw    $a1, 0x20($s0)
-/* 0A4B08 7F06FFD8 0FC1BD9B */  jal   sub_GAME_7F06F66C
-/* 0A4B0C 7F06FFDC 8E06003C */   lw    $a2, 0x3c($s0)
-/* 0A4B10 7F06FFE0 8FA70028 */  lw    $a3, 0x28($sp)
-/* 0A4B14 7F06FFE4 8FA80024 */  lw    $t0, 0x24($sp)
-/* 0A4B18 7F06FFE8 A6020032 */  sh    $v0, 0x32($s0)
-/* 0A4B1C 7F06FFEC 86040032 */  lh    $a0, 0x32($s0)
-/* 0A4B20 7F06FFF0 86030030 */  lh    $v1, 0x30($s0)
-/* 0A4B24 7F06FFF4 14830007 */  bne   $a0, $v1, .L7F070014
-/* 0A4B28 7F06FFF8 00000000 */   nop   
-/* 0A4B2C 7F06FFFC 44835000 */  mtc1  $v1, $f10
-/* 0A4B30 7F070000 44804000 */  mtc1  $zero, $f8
-/* 0A4B34 7F070004 46805420 */  cvt.s.w $f16, $f10
-/* 0A4B38 7F070008 E608002C */  swc1  $f8, 0x2c($s0)
-/* 0A4B3C 7F07000C 1000001B */  b     .L7F07007C
-/* 0A4B40 7F070010 E6100028 */   swc1  $f16, 0x28($s0)
-.L7F070014:
-/* 0A4B44 7F070014 1100000B */  beqz  $t0, .L7F070044
-/* 0A4B48 7F070018 8FAE002C */   lw    $t6, 0x2c($sp)
-/* 0A4B4C 7F07001C 448E2000 */  mtc1  $t6, $f4
-/* 0A4B50 7F070020 44834000 */  mtc1  $v1, $f8
-/* 0A4B54 7F070024 C7B20034 */  lwc1  $f18, 0x34($sp)
-/* 0A4B58 7F070028 468021A0 */  cvt.s.w $f6, $f4
-/* 0A4B5C 7F07002C 468042A0 */  cvt.s.w $f10, $f8
-/* 0A4B60 7F070030 46069001 */  sub.s $f0, $f18, $f6
-/* 0A4B64 7F070034 46005400 */  add.s $f16, $f10, $f0
-/* 0A4B68 7F070038 E600002C */  swc1  $f0, 0x2c($s0)
-/* 0A4B6C 7F07003C 1000000F */  b     .L7F07007C
-/* 0A4B70 7F070040 E6100028 */   swc1  $f16, 0x28($s0)
-.L7F070044:
-/* 0A4B74 7F070044 44879000 */  mtc1  $a3, $f18
-/* 0A4B78 7F070048 C7A40034 */  lwc1  $f4, 0x34($sp)
-/* 0A4B7C 7F07004C 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0A4B80 7F070050 468091A0 */  cvt.s.w $f6, $f18
-/* 0A4B84 7F070054 44811000 */  mtc1  $at, $f2
-/* 0A4B88 7F070058 44845000 */  mtc1  $a0, $f10
-/* 0A4B8C 7F07005C 00000000 */  nop   
-/* 0A4B90 7F070060 46805420 */  cvt.s.w $f16, $f10
-/* 0A4B94 7F070064 46062201 */  sub.s $f8, $f4, $f6
-/* 0A4B98 7F070068 46081001 */  sub.s $f0, $f2, $f8
-/* 0A4B9C 7F07006C 46001481 */  sub.s $f18, $f2, $f0
-/* 0A4BA0 7F070070 E600002C */  swc1  $f0, 0x2c($s0)
-/* 0A4BA4 7F070074 46128100 */  add.s $f4, $f16, $f18
-/* 0A4BA8 7F070078 E6040028 */  swc1  $f4, 0x28($s0)
-.L7F07007C:
-/* 0A4BAC 7F07007C 8FBF001C */  lw    $ra, 0x1c($sp)
-/* 0A4BB0 7F070080 8FB00018 */  lw    $s0, 0x18($sp)
-/* 0A4BB4 7F070084 27BD0030 */  addiu $sp, $sp, 0x30
-/* 0A4BB8 7F070088 03E00008 */  jr    $ra
-/* 0A4BBC 7F07008C 00000000 */   nop   
-)
-#endif
 
 
+void modelSetAnimFrame2(Model* model, f32 frame1, f32 frame2)
+{
+    s32 framea;
+    s32 frameb;
+    bool forwards;
 
+    modelSetAnimFrame(model, frame1);
 
+    if (model->anim2 != NULL)
+    {
+        framea = floorFloatToInt(frame2);
 
-#ifdef NONMATCHING
-void sub_GAME_7F070090(void) {
+        forwards = (model->speed2 >= 0.0f);
+        frameb = forwards ? (framea + 1) : (framea - 1);
 
+        model->frame2a = modelConstrainOrWrapAnimFrame(framea, model->anim2, model->unk6c);
+        model->frame2b = modelConstrainOrWrapAnimFrame(frameb, model->anim2, model->unk6c);
+
+        if (model->frame2a == model->frame2b)
+        {
+            model->unk5c = 0.0f;
+            model->unk58 = model->frame2a;
+        }
+        else if (forwards != 0)
+        {
+            f32 tmp = frame2 - framea;
+            model->unk5c = tmp;
+            model->unk58 = model->frame2a + tmp;
+        }
+        else
+        {
+            f32 tmp = 1.0f - (frame2 - (f32) frameb);
+            model->unk5c = tmp;
+            model->unk58 = model->frame2b + (1.0f - tmp);
+        }
+    }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F070090
-/* 0A4BC0 7F070090 44856000 */  mtc1  $a1, $f12
-/* 0A4BC4 7F070094 27BDFFD0 */  addiu $sp, $sp, -0x30
-/* 0A4BC8 7F070098 AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0A4BCC 7F07009C AFB00018 */  sw    $s0, 0x18($sp)
-/* 0A4BD0 7F0700A0 44056000 */  mfc1  $a1, $f12
-/* 0A4BD4 7F0700A4 00808025 */  move  $s0, $a0
-/* 0A4BD8 7F0700A8 0FC1BFD9 */  jal   sub_GAME_7F06FF64
-/* 0A4BDC 7F0700AC AFA60038 */   sw    $a2, 0x38($sp)
-/* 0A4BE0 7F0700B0 8E0E0054 */  lw    $t6, 0x54($s0)
-/* 0A4BE4 7F0700B4 51C00043 */  beql  $t6, $zero, .L7F0701C4
-/* 0A4BE8 7F0700B8 8FBF001C */   lw    $ra, 0x1c($sp)
-/* 0A4BEC 7F0700BC 0FC170F6 */  jal   floorFloatToInt
-/* 0A4BF0 7F0700C0 C7AC0038 */   lwc1  $f12, 0x38($sp)
-/* 0A4BF4 7F0700C4 C6040070 */  lwc1  $f4, 0x70($s0)
-/* 0A4BF8 7F0700C8 44803000 */  mtc1  $zero, $f6
-/* 0A4BFC 7F0700CC 00402025 */  move  $a0, $v0
-/* 0A4C00 7F0700D0 00004025 */  move  $t0, $zero
-/* 0A4C04 7F0700D4 4604303E */  c.le.s $f6, $f4
-/* 0A4C08 7F0700D8 2447FFFF */  addiu $a3, $v0, -1
-/* 0A4C0C 7F0700DC 45000002 */  bc1f  .L7F0700E8
-/* 0A4C10 7F0700E0 00000000 */   nop   
-/* 0A4C14 7F0700E4 24080001 */  li    $t0, 1
-.L7F0700E8:
-/* 0A4C18 7F0700E8 11000003 */  beqz  $t0, .L7F0700F8
-/* 0A4C1C 7F0700EC 00000000 */   nop   
-/* 0A4C20 7F0700F0 10000001 */  b     .L7F0700F8
-/* 0A4C24 7F0700F4 24470001 */   addiu $a3, $v0, 1
-.L7F0700F8:
-/* 0A4C28 7F0700F8 8E050054 */  lw    $a1, 0x54($s0)
-/* 0A4C2C 7F0700FC 8E06006C */  lw    $a2, 0x6c($s0)
-/* 0A4C30 7F070100 AFA80024 */  sw    $t0, 0x24($sp)
-/* 0A4C34 7F070104 AFA70028 */  sw    $a3, 0x28($sp)
-/* 0A4C38 7F070108 0FC1BD9B */  jal   sub_GAME_7F06F66C
-/* 0A4C3C 7F07010C AFA4002C */   sw    $a0, 0x2c($sp)
-/* 0A4C40 7F070110 8FA40028 */  lw    $a0, 0x28($sp)
-/* 0A4C44 7F070114 A6020060 */  sh    $v0, 0x60($s0)
-/* 0A4C48 7F070118 8E050054 */  lw    $a1, 0x54($s0)
-/* 0A4C4C 7F07011C 0FC1BD9B */  jal   sub_GAME_7F06F66C
-/* 0A4C50 7F070120 8E06006C */   lw    $a2, 0x6c($s0)
-/* 0A4C54 7F070124 8FA70028 */  lw    $a3, 0x28($sp)
-/* 0A4C58 7F070128 8FA80024 */  lw    $t0, 0x24($sp)
-/* 0A4C5C 7F07012C A6020062 */  sh    $v0, 0x62($s0)
-/* 0A4C60 7F070130 86040062 */  lh    $a0, 0x62($s0)
-/* 0A4C64 7F070134 86030060 */  lh    $v1, 0x60($s0)
-/* 0A4C68 7F070138 14830007 */  bne   $a0, $v1, .L7F070158
-/* 0A4C6C 7F07013C 00000000 */   nop   
-/* 0A4C70 7F070140 44835000 */  mtc1  $v1, $f10
-/* 0A4C74 7F070144 44804000 */  mtc1  $zero, $f8
-/* 0A4C78 7F070148 46805420 */  cvt.s.w $f16, $f10
-/* 0A4C7C 7F07014C E608005C */  swc1  $f8, 0x5c($s0)
-/* 0A4C80 7F070150 1000001B */  b     .L7F0701C0
-/* 0A4C84 7F070154 E6100058 */   swc1  $f16, 0x58($s0)
-.L7F070158:
-/* 0A4C88 7F070158 1100000B */  beqz  $t0, .L7F070188
-/* 0A4C8C 7F07015C 8FAF002C */   lw    $t7, 0x2c($sp)
-/* 0A4C90 7F070160 448F2000 */  mtc1  $t7, $f4
-/* 0A4C94 7F070164 44834000 */  mtc1  $v1, $f8
-/* 0A4C98 7F070168 C7B20038 */  lwc1  $f18, 0x38($sp)
-/* 0A4C9C 7F07016C 468021A0 */  cvt.s.w $f6, $f4
-/* 0A4CA0 7F070170 468042A0 */  cvt.s.w $f10, $f8
-/* 0A4CA4 7F070174 46069001 */  sub.s $f0, $f18, $f6
-/* 0A4CA8 7F070178 46005400 */  add.s $f16, $f10, $f0
-/* 0A4CAC 7F07017C E600005C */  swc1  $f0, 0x5c($s0)
-/* 0A4CB0 7F070180 1000000F */  b     .L7F0701C0
-/* 0A4CB4 7F070184 E6100058 */   swc1  $f16, 0x58($s0)
-.L7F070188:
-/* 0A4CB8 7F070188 44879000 */  mtc1  $a3, $f18
-/* 0A4CBC 7F07018C C7A40038 */  lwc1  $f4, 0x38($sp)
-/* 0A4CC0 7F070190 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0A4CC4 7F070194 468091A0 */  cvt.s.w $f6, $f18
-/* 0A4CC8 7F070198 44811000 */  mtc1  $at, $f2
-/* 0A4CCC 7F07019C 44845000 */  mtc1  $a0, $f10
-/* 0A4CD0 7F0701A0 00000000 */  nop   
-/* 0A4CD4 7F0701A4 46805420 */  cvt.s.w $f16, $f10
-/* 0A4CD8 7F0701A8 46062201 */  sub.s $f8, $f4, $f6
-/* 0A4CDC 7F0701AC 46081001 */  sub.s $f0, $f2, $f8
-/* 0A4CE0 7F0701B0 46001481 */  sub.s $f18, $f2, $f0
-/* 0A4CE4 7F0701B4 E600005C */  swc1  $f0, 0x5c($s0)
-/* 0A4CE8 7F0701B8 46128100 */  add.s $f4, $f16, $f18
-/* 0A4CEC 7F0701BC E6040058 */  swc1  $f4, 0x58($s0)
-.L7F0701C0:
-/* 0A4CF0 7F0701C0 8FBF001C */  lw    $ra, 0x1c($sp)
-.L7F0701C4:
-/* 0A4CF4 7F0701C4 8FB00018 */  lw    $s0, 0x18($sp)
-/* 0A4CF8 7F0701C8 27BD0030 */  addiu $sp, $sp, 0x30
-/* 0A4CFC 7F0701CC 03E00008 */  jr    $ra
-/* 0A4D00 7F0701D0 00000000 */   nop   
-)
-#endif
-
-
-
 
 
 /**
  * Address 0x7F0701D4.
 */
-void sub_GAME_7F0701D4(s32 arg0)
+void modelSetAnimMergingEnabled(s32 arg0)
 {
-    D_80036250 = arg0;
+    g_ModelAnimMergingEnabled = arg0;
 }
 
 
 /**
  * Address 0x7F0701E0.
 */
-u32 sub_GAME_7F0701E0(void)
+u32 modelIsAnimMergingEnabled(void)
 {
-    return D_80036250;
+    return g_ModelAnimMergingEnabled;
 }
 
 
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0701EC(void) {
+void modelSetAnimFrame2WithChrStuff(void) {
 
 }
 #else
@@ -4439,7 +4306,7 @@ GLOBAL_ASM(
 glabel D_80054D4C
 .word 0x40c90fdb /*6.2831855*/
 .text
-glabel sub_GAME_7F0701EC
+glabel modelSetAnimFrame2WithChrStuff
 /* 0A4D1C 7F0701EC 27BDFF08 */  addiu $sp, $sp, -0xf8
 /* 0A4D20 7F0701F0 AFBF005C */  sw    $ra, 0x5c($sp)
 /* 0A4D24 7F0701F4 AFB30058 */  sw    $s3, 0x58($sp)
@@ -4563,7 +4430,7 @@ glabel sub_GAME_7F0701EC
 .L7F0703B0:
 /* 0A4EE0 7F0703B0 8E26003C */  lw    $a2, 0x3c($s1)
 /* 0A4EE4 7F0703B4 AFA700B8 */  sw    $a3, 0xb8($sp)
-/* 0A4EE8 7F0703B8 0FC1BD9B */  jal   sub_GAME_7F06F66C
+/* 0A4EE8 7F0703B8 0FC1BD9B */  jal   modelConstrainOrWrapAnimFrame
 /* 0A4EEC 7F0703BC 02402025 */   move  $a0, $s2
 /* 0A4EF0 7F0703C0 A6220030 */  sh    $v0, 0x30($s1)
 /* 0A4EF4 7F0703C4 8FB80094 */  lw    $t8, 0x94($sp)
@@ -4663,7 +4530,7 @@ glabel sub_GAME_7F0701EC
 .L7F07052C:
 /* 0A505C 7F07052C 02402025 */  move  $a0, $s2
 /* 0A5060 7F070530 8E250020 */  lw    $a1, 0x20($s1)
-/* 0A5064 7F070534 0FC1BD9B */  jal   sub_GAME_7F06F66C
+/* 0A5064 7F070534 0FC1BD9B */  jal   modelConstrainOrWrapAnimFrame
 /* 0A5068 7F070538 8E26003C */   lw    $a2, 0x3c($s1)
 /* 0A506C 7F07053C A6220032 */  sh    $v0, 0x32($s1)
 /* 0A5070 7F070540 86290032 */  lh    $t1, 0x32($s1)
@@ -4713,8 +4580,8 @@ glabel sub_GAME_7F0701EC
 /* 0A5118 7F0705E8 46000506 */  mov.s $f20, $f0
 /* 0A511C 7F0705EC 0FC15FAB */  jal   sinf
 /* 0A5120 7F0705F0 C60C0030 */   lwc1  $f12, 0x30($s0)
-/* 0A5124 7F0705F4 3C0A8003 */  lui   $t2, %hi(D_80036250) 
-/* 0A5128 7F0705F8 8D4A6250 */  lw    $t2, %lo(D_80036250)($t2)
+/* 0A5124 7F0705F4 3C0A8003 */  lui   $t2, %hi(g_ModelAnimMergingEnabled) 
+/* 0A5128 7F0705F8 8D4A6250 */  lw    $t2, %lo(g_ModelAnimMergingEnabled)($t2)
 /* 0A512C 7F0705FC C7A200C8 */  lwc1  $f2, 0xc8($sp)
 /* 0A5130 7F070600 C7AC00D0 */  lwc1  $f12, 0xd0($sp)
 /* 0A5134 7F070604 11400056 */  beqz  $t2, .L7F070760
@@ -4962,13 +4829,13 @@ glabel sub_GAME_7F0701EC
 .L7F070984:
 /* 0A54B4 7F070984 8FA4006C */  lw    $a0, 0x6c($sp)
 /* 0A54B8 7F070988 8E250054 */  lw    $a1, 0x54($s1)
-/* 0A54BC 7F07098C 0FC1BD9B */  jal   sub_GAME_7F06F66C
+/* 0A54BC 7F07098C 0FC1BD9B */  jal   modelConstrainOrWrapAnimFrame
 /* 0A54C0 7F070990 8E26006C */   lw    $a2, 0x6c($s1)
 /* 0A54C4 7F070994 A6220060 */  sh    $v0, 0x60($s1)
 /* 0A54C8 7F070998 8FA4006C */  lw    $a0, 0x6c($sp)
 /* 0A54CC 7F07099C 8E250054 */  lw    $a1, 0x54($s1)
 /* 0A54D0 7F0709A0 8E26006C */  lw    $a2, 0x6c($s1)
-/* 0A54D4 7F0709A4 0FC1BD9B */  jal   sub_GAME_7F06F66C
+/* 0A54D4 7F0709A4 0FC1BD9B */  jal   modelConstrainOrWrapAnimFrame
 /* 0A54D8 7F0709A8 24840001 */   addiu $a0, $a0, 1
 /* 0A54DC 7F0709AC A6220062 */  sh    $v0, 0x62($s1)
 /* 0A54E0 7F0709B0 82250025 */  lb    $a1, 0x25($s1)
@@ -5033,7 +4900,7 @@ glabel sub_GAME_7F0701EC
 /* 0A55B4 7F070A84 02202025 */  move  $a0, $s1
 /* 0A55B8 7F070A88 8FA50100 */  lw    $a1, 0x100($sp)
 /* 0A55BC 7F070A8C 4406A000 */  mfc1  $a2, $f20
-/* 0A55C0 7F070A90 0FC1C024 */  jal   sub_GAME_7F070090
+/* 0A55C0 7F070A90 0FC1C024 */  jal   modelSetAnimFrame2
 /* 0A55C4 7F070A94 00000000 */   nop   
 /* 0A55C8 7F070A98 10000008 */  b     .L7F070ABC
 /* 0A55CC 7F070A9C 8FBF005C */   lw    $ra, 0x5c($sp)
@@ -5042,7 +4909,7 @@ glabel sub_GAME_7F0701EC
 /* 0A55D4 7F070AA4 02202025 */  move  $a0, $s1
 /* 0A55D8 7F070AA8 8FA50100 */  lw    $a1, 0x100($sp)
 /* 0A55DC 7F070AAC 4406A000 */  mfc1  $a2, $f20
-/* 0A55E0 7F070AB0 0FC1C024 */  jal   sub_GAME_7F070090
+/* 0A55E0 7F070AB0 0FC1C024 */  jal   modelSetAnimFrame2
 /* 0A55E4 7F070AB4 00000000 */   nop   
 .L7F070AB8:
 /* 0A55E8 7F070AB8 8FBF005C */  lw    $ra, 0x5c($sp)
@@ -5067,13 +4934,13 @@ glabel sub_GAME_7F0701EC
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F070AEC(void) {
+void modelTickAnimQuarterSpeed(void) {
 
 }
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F070AEC
+glabel modelTickAnimQuarterSpeed
 /* 0A561C 7F070AEC 27BDFF78 */  addiu $sp, $sp, -0x88
 /* 0A5620 7F070AF0 AFBF0054 */  sw    $ra, 0x54($sp)
 /* 0A5624 7F070AF4 AFB10050 */  sw    $s1, 0x50($sp)
@@ -5300,14 +5167,14 @@ glabel sub_GAME_7F070AEC
 /* 0A5948 7F070E18 4407C000 */  mfc1  $a3, $f24
 /* 0A594C 7F070E1C E7B20084 */  swc1  $f18, 0x84($sp)
 /* 0A5950 7F070E20 E7B80010 */  swc1  $f24, 0x10($sp)
-/* 0A5954 7F070E24 0FC1C07B */  jal   sub_GAME_7F0701EC
+/* 0A5954 7F070E24 0FC1C07B */  jal   modelSetAnimFrame2WithChrStuff
 /* 0A5958 7F070E28 02002025 */   move  $a0, $s0
 /* 0A595C 7F070E2C 10000006 */  b     .L7F070E48
 /* 0A5960 7F070E30 C7B20084 */   lwc1  $f18, 0x84($sp)
 .L7F070E34:
 /* 0A5964 7F070E34 4405A000 */  mfc1  $a1, $f20
 /* 0A5968 7F070E38 4406C000 */  mfc1  $a2, $f24
-/* 0A596C 7F070E3C 0FC1C024 */  jal   sub_GAME_7F070090
+/* 0A596C 7F070E3C 0FC1C024 */  jal   modelSetAnimFrame2
 /* 0A5970 7F070E40 E7B20084 */   swc1  $f18, 0x84($sp)
 /* 0A5974 7F070E44 C7B20084 */  lwc1  $f18, 0x84($sp)
 .L7F070E48:
@@ -5357,7 +5224,7 @@ glabel sub_GAME_7F070AEC
 /* 0A5A1C 7F070EEC 44069000 */  mfc1  $a2, $f18
 /* 0A5A20 7F070EF0 8E070058 */  lw    $a3, 0x58($s0)
 /* 0A5A24 7F070EF4 02002025 */  move  $a0, $s0
-/* 0A5A28 7F070EF8 0FC1C07B */  jal   sub_GAME_7F0701EC
+/* 0A5A28 7F070EF8 0FC1C07B */  jal   modelSetAnimFrame2WithChrStuff
 /* 0A5A2C 7F070EFC E7A40010 */   swc1  $f4, 0x10($sp)
 /* 0A5A30 7F070F00 10000015 */  b     .L7F070F58
 /* 0A5A34 7F070F04 8FBF0054 */   lw    $ra, 0x54($sp)
@@ -5366,7 +5233,7 @@ glabel sub_GAME_7F070AEC
 /* 0A5A3C 7F070F0C 44069000 */  mfc1  $a2, $f18
 /* 0A5A40 7F070F10 4407C000 */  mfc1  $a3, $f24
 /* 0A5A44 7F070F14 02002025 */  move  $a0, $s0
-/* 0A5A48 7F070F18 0FC1C07B */  jal   sub_GAME_7F0701EC
+/* 0A5A48 7F070F18 0FC1C07B */  jal   modelSetAnimFrame2WithChrStuff
 /* 0A5A4C 7F070F1C E7B80010 */   swc1  $f24, 0x10($sp)
 /* 0A5A50 7F070F20 1000000D */  b     .L7F070F58
 /* 0A5A54 7F070F24 8FBF0054 */   lw    $ra, 0x54($sp)
@@ -5374,14 +5241,14 @@ glabel sub_GAME_7F070AEC
 /* 0A5A58 7F070F28 10400006 */  beqz  $v0, .L7F070F44
 /* 0A5A5C 7F070F2C 02002025 */   move  $a0, $s0
 /* 0A5A60 7F070F30 44059000 */  mfc1  $a1, $f18
-/* 0A5A64 7F070F34 0FC1C024 */  jal   sub_GAME_7F070090
+/* 0A5A64 7F070F34 0FC1C024 */  jal   modelSetAnimFrame2
 /* 0A5A68 7F070F38 8FA60080 */   lw    $a2, 0x80($sp)
 /* 0A5A6C 7F070F3C 10000006 */  b     .L7F070F58
 /* 0A5A70 7F070F40 8FBF0054 */   lw    $ra, 0x54($sp)
 .L7F070F44:
 /* 0A5A74 7F070F44 44059000 */  mfc1  $a1, $f18
 /* 0A5A78 7F070F48 4406C000 */  mfc1  $a2, $f24
-/* 0A5A7C 7F070F4C 0FC1C024 */  jal   sub_GAME_7F070090
+/* 0A5A7C 7F070F4C 0FC1C024 */  jal   modelSetAnimFrame2
 /* 0A5A80 7F070F50 02002025 */   move  $a0, $s0
 .L7F070F54:
 /* 0A5A84 7F070F54 8FBF0054 */  lw    $ra, 0x54($sp)
@@ -5400,7 +5267,7 @@ glabel sub_GAME_7F070AEC
 #endif
 
 
-void sub_GAME_7F070F80(ModelRenderData *renderdata)
+void modelApplyRenderModeType1(ModelRenderData *renderdata)
 {
     gDPPipeSync(renderdata->gdl++);
     gDPSetCycleType(renderdata->gdl++, G_CYC_1CYCLE);
@@ -5553,7 +5420,7 @@ Model Type 4: Normal Fog/Lighting object
       B900031DC41041C8 SetRendermode(AA_OPA_StanFOG_2)//FcBl ClrOnCvg
     endif
 */
-void sub_GAME_7F071030(ModelRenderData *renderdata, bool arg1)
+void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
 {
     if (renderdata->unk30 == 7)
     {
@@ -5836,7 +5703,7 @@ void sub_GAME_7F071030(ModelRenderData *renderdata, bool arg1)
 }
 
 
-void sub_GAME_7F071B44(ModelRenderData *renderdata, bool arg1)
+void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
 {
     if (renderdata->unk30 == 7)
     {
@@ -6111,7 +5978,7 @@ void sub_GAME_7F071B44(ModelRenderData *renderdata, bool arg1)
 }
 
 
-void sub_GAME_7F072644(ModelRenderData *renderdata)
+void modelApplyRenderModeType2(ModelRenderData *renderdata)
 {
     gDPPipeSync(renderdata->gdl++);
     gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
@@ -6163,26 +6030,26 @@ void modelRenderNodeGundl(ModelRenderData* renderdata, ModelNode* arg1)
 
             if (rodata->ModelType == 1)
             {
-                sub_GAME_7F070F80(renderdata);
+                modelApplyRenderModeType1(renderdata);
             }
             else if (rodata->ModelType == 3)
             {
-                sub_GAME_7F071030(renderdata, 1);
+                modelApplyRenderModeType3(renderdata, 1);
             }
             else if (rodata->ModelType == 4)
             {
-                sub_GAME_7F071B44(renderdata, 1);
+                modelApplyRenderModeType4(renderdata, 1);
             }
             else if (rodata->ModelType == 2)
             {
-                sub_GAME_7F072644(renderdata);
+                modelApplyRenderModeType2(renderdata);
             }
 
             gSPDisplayList(renderdata->gdl++, rodata->Primary);
 
             if ((rodata->ModelType == 3) && rodata->Secondary)
             {
-                sub_GAME_7F071030(renderdata, 0);
+                modelApplyRenderModeType3(renderdata, 0);
                 gSPDisplayList(renderdata->gdl++, rodata->Secondary);
             }
         }
@@ -6196,7 +6063,7 @@ void modelRenderNodeGundl(ModelRenderData* renderdata, ModelNode* arg1)
                 modelApplyCullMode(renderdata);
             }
 
-            sub_GAME_7F071B44(renderdata, 0);
+            modelApplyRenderModeType4(renderdata, 0);
             gSPDisplayList(renderdata->gdl++, rodata->Secondary);
         }
     }
@@ -6224,19 +6091,19 @@ void modelRenderNodeDl(ModelRenderData *renderdata, Model *model, ModelNode *nod
 
                 if (rodata->DisplayListCollisions.ModelType == 1)
                 {
-                    sub_GAME_7F070F80(renderdata);
+                    modelApplyRenderModeType1(renderdata);
                 }
                 else if (rodata->DisplayListCollisions.ModelType == 3)
                 {
-                    sub_GAME_7F071030(renderdata, TRUE);
+                    modelApplyRenderModeType3(renderdata, TRUE);
                 }
                 else if (rodata->DisplayListCollisions.ModelType == 4)
                 {
-                    sub_GAME_7F071B44(renderdata, TRUE);
+                    modelApplyRenderModeType4(renderdata, TRUE);
                 }
                 else if (rodata->DisplayListCollisions.ModelType == 2)
                 {
-                    sub_GAME_7F072644(renderdata);
+                    modelApplyRenderModeType2(renderdata);
                 }
 
                 gSPSegment(renderdata->gdl++, SPSEGMENT_MODEL_VTX, osVirtualToPhysical(rwdata->DisplayListCollisions.Vertices));
@@ -6245,7 +6112,7 @@ void modelRenderNodeDl(ModelRenderData *renderdata, Model *model, ModelNode *nod
 
                 if (rodata->DisplayListCollisions.ModelType == 3 && rodata->DisplayListCollisions.Secondary)
                 {
-                    sub_GAME_7F071030(renderdata, FALSE);
+                    modelApplyRenderModeType3(renderdata, FALSE);
                     gSPDisplayList(renderdata->gdl++, rodata->DisplayListCollisions.Secondary);
                 }
             }
@@ -6266,7 +6133,7 @@ void modelRenderNodeDl(ModelRenderData *renderdata, Model *model, ModelNode *nod
 
                 gSPSegment(renderdata->gdl++, SPSEGMENT_MODEL_VTX, osVirtualToPhysical(rwdata->DisplayListCollisions.Vertices));
 
-                sub_GAME_7F071B44(renderdata, FALSE);
+                modelApplyRenderModeType4(renderdata, FALSE);
 
                 gSPDisplayList(renderdata->gdl++, rodata->DisplayListCollisions.Secondary);
             }
@@ -6432,7 +6299,7 @@ void dotube(ModelRenderData* renderdata, Model* model, ModelNode* node)
 
     if (renderdata->flags & 1)
     {
-        renderpos_index2 = sub_GAME_7F06C570(node, 0);
+        renderpos_index2 = modelFindNodeMtxIndex(node, 0);
         render_pos2 = &model->render_pos[renderpos_index2];
         rw_index = rwdata->index;
         rw_index2 = rwdata2->index;
@@ -6442,13 +6309,13 @@ void dotube(ModelRenderData* renderdata, Model* model, ModelNode* node)
         {
             rw_index_sel = rw_index2;
             rw_index_sel2 = rw_index;
-            renderpos_index = sub_GAME_7F06C570(node, 0x200);
+            renderpos_index = modelFindNodeMtxIndex(node, 0x200);
         }
         else
         {
             rw_index_sel = rw_index;
             rw_index_sel2 = rw_index2;
-            renderpos_index = sub_GAME_7F06C570(rodata->unk04, 0x200);
+            renderpos_index = modelFindNodeMtxIndex(rodata->unk04, 0x200);
         }
 
         render_pos = &model->render_pos[renderpos_index];
@@ -6655,6 +6522,7 @@ void sub_GAME_7F0737FC(s32 param_1,struct Model *param_2,struct ModelNode *param
 }
 
 
+// PD: modelRenderNodeChrGunfire
 void dogfnegx(ModelRenderData *renderdata, Model *model, ModelNode *node)
 {
     u32 unused[3];
@@ -6687,7 +6555,7 @@ void dogfnegx(ModelRenderData *renderdata, Model *model, ModelNode *node)
 
     if ((renderdata->flags & 2) && rwdata->Gunfire.visible)
     {
-        s32 index = sub_GAME_7F06C570(node, 0);
+        s32 index = modelFindNodeMtxIndex(node, 0);
         mtx = &model->render_pos[index].pos;
 
         spe0.x = -(rodata->Offset.f[0] * mtx->m[0][0] + rodata->Offset.f[1] * mtx->m[1][0] + rodata->Offset.f[2] * mtx->m[2][0] + mtx->m[3][0]);
@@ -6902,7 +6770,7 @@ glabel doshadow
 /* 0A8C00 7F0740D0 AFA7007C */  sw    $a3, 0x7c($sp)
 /* 0A8C04 7F0740D4 E7A20040 */  swc1  $f2, 0x40($sp)
 /* 0A8C08 7F0740D8 E7AC0048 */  swc1  $f12, 0x48($sp)
-/* 0A8C0C 7F0740DC 0FC1B15C */  jal   sub_GAME_7F06C570
+/* 0A8C0C 7F0740DC 0FC1B15C */  jal   modelFindNodeMtxIndex
 /* 0A8C10 7F0740E0 E7AE0044 */   swc1  $f14, 0x44($sp)
 /* 0A8C14 7F0740E4 8FA7007C */  lw    $a3, 0x7c($sp)
 /* 0A8C18 7F0740E8 00024980 */  sll   $t1, $v0, 6
@@ -7256,7 +7124,7 @@ glabel doshadow
 /* 0A6BD4 7F0741E4 AFA7007C */  sw    $a3, 0x7c($sp)
 /* 0A6BD8 7F0741E8 E7A20048 */  swc1  $f2, 0x48($sp)
 /* 0A6BDC 7F0741EC E7AC0044 */  swc1  $f12, 0x44($sp)
-/* 0A6BE0 7F0741F0 0FC1B32A */  jal   sub_GAME_7F06C570
+/* 0A6BE0 7F0741F0 0FC1B32A */  jal   modelFindNodeMtxIndex
 /* 0A6BE4 7F0741F4 E7AE0040 */   swc1  $f14, 0x40($sp)
 /* 0A6BE8 7F0741F8 8FA7007C */  lw    $a3, 0x7c($sp)
 /* 0A6BEC 7F0741FC 00025980 */  sll   $t3, $v0, 6
@@ -7547,60 +7415,60 @@ void sub_GAME_7F074524(Gfx *param_1,struct Model *param_2, struct ModelNode *par
 void sub_GAME_7F074534(ModelRenderData* data, Model* model, ModelNode* node) {
     u32 id = node->Opcode & 0xFF;
     switch (id) {
-    case MODELNODE_OPCODE_LODRECORD:
-        sub_GAME_7F06E970(model, node);
+    case MODELNODE_OPCODE_LOD:
+        modelApplyDistanceRelations(model, node);
         return;
-    case MODELNODE_OPCODE_SWITCHRECORD:
-        process_12_handle_switch(model, node);
+    case MODELNODE_OPCODE_SWITCH:
+        modelApplyToggleRelations(model, node);
         return;
-    case MODELNODE_OPCODE_HEADPLACEHOLDERRECORD:
-        process_17_pointer_to_head(model, node);
+    case MODELNODE_OPCODE_HEAD:
+        modelApplyHeadRelations(model, node);
         return;
-    case MODELNODE_OPCODE_BSPRECORD:
-        sub_GAME_7F06EB10(model, node);
+    case MODELNODE_OPCODE_BSP:
+        modelApplyReorderRelations(model, node);
         return;
-    case MODELNODE_OPCODE_OP11RECORD:
+    case MODELNODE_OPCODE_OP11:
         sub_GAME_7F0737FC(data, model, node);
         return;
-    case MODELNODE_OPCODE_GUNFIRERECORD:
+    case MODELNODE_OPCODE_GUNFIRE:
         dogfnegx(data, model, node);
         return;
-    case MODELNODE_OPCODE_SHADOWRECORD:
+    case MODELNODE_OPCODE_SHADOW:
         doshadow(data, model, node);
         return;
-    case MODELNODE_OPCODE_BOUNDINGBOXRECORD:
+    case MODELNODE_OPCODE_BBOX:
         sub_GAME_7F074514(data, model, node);
         return;
-    case MODELNODE_OPCODE_UNUSED_17:
+    case MODELNODE_OPCODE_OP17:
         sub_GAME_7F074524(data, model, node);
         return;
-    case MODELNODE_OPCODE_DISPLAYLISTRECORD:
+    case MODELNODE_OPCODE_DL:
         modelRenderNodeGundl(data, node);
         return;
-    case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+    case MODELNODE_OPCODE_DLCOLLISION:
         modelRenderNodeDl(data, model, node);
         return;
-    case MODELNODE_OPCODE_UNUSED_20:
+    case MODELNODE_OPCODE_OP20:
         sub_GAME_7F072C10(data, model, node);
         return;
-    case MODELNODE_OPCODE_DISPLAYLISTPRIMARYRECORD:
+    case MODELNODE_OPCODE_DLPRIMARY:
         dorottex(data, node);
         return;
-    case MODELNODE_OPCODE_UNUSED_05:
+    case MODELNODE_OPCODE_OP05:
         sub_GAME_7F07306C(data, model, node);
         return;
-    case MODELNODE_OPCODE_OP07RECORD:
+    case MODELNODE_OPCODE_OP07:
         dotube(data, model, node);
         return;
-    case MODELNODE_OPCODE_UNUSED_06:
+    case MODELNODE_OPCODE_OP06:
         sub_GAME_7F0737EC(data,model,node);
         return;
-    case MODELNODE_OPCODE_HEADERRECORD:
-    case MODELNODE_OPCODE_GROUPRECORD:
-    case MODELNODE_OPCODE_UNUSED_03:
-    case MODELNODE_OPCODE_OP14RECORD:
-    case MODELNODE_OPCODE_INTERLINKAGERECORD:
-    case MODELNODE_OPCODE_OP16RECORD:
+    case MODELNODE_OPCODE_HEADER:
+    case MODELNODE_OPCODE_GROUP:
+    case MODELNODE_OPCODE_OP03:
+    case MODELNODE_OPCODE_OP14:
+    case MODELNODE_OPCODE_INTERLINK:
+    case MODELNODE_OPCODE_OP16:
     default:
         return;
     }
@@ -8113,7 +7981,7 @@ glabel sub_GAME_7F074C68
 /* 0A97A4 7F074C74 AFA7002C */  sw    $a3, 0x2c($sp)
 /* 0A97A8 7F074C78 8CAE0004 */  lw    $t6, 4($a1)
 /* 0A97AC 7F074C7C 00003025 */  move  $a2, $zero
-/* 0A97B0 7F074C80 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A97B0 7F074C80 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A97B4 7F074C84 AFAE001C */   sw    $t6, 0x1c($sp)
 /* 0A97B8 7F074C88 8FA4001C */  lw    $a0, 0x1c($sp)
 /* 0A97BC 7F074C8C 00402825 */  move  $a1, $v0
@@ -8148,7 +8016,7 @@ glabel sub_GAME_7F074CAC
 /* 0A97F4 7F074CC4 00003025 */  move  $a2, $zero
 /* 0A97F8 7F074CC8 AFA700BC */  sw    $a3, 0xbc($sp)
 /* 0A97FC 7F074CCC AFA500B4 */  sw    $a1, 0xb4($sp)
-/* 0A9800 7F074CD0 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A9800 7F074CD0 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A9804 7F074CD4 AFA800AC */   sw    $t0, 0xac($sp)
 /* 0A9808 7F074CD8 3C0B8003 */  lui   $t3, %hi(D_80036408) 
 /* 0A980C 7F074CDC 256B6408 */  addiu $t3, %lo(D_80036408) # addiu $t3, $t3, 0x6408
@@ -8243,7 +8111,7 @@ glabel sub_GAME_7F074CAC
 /* 0A996C 7F074E3C 50A0001F */  beql  $a1, $zero, .L7F074EBC
 /* 0A9970 7F074E40 C4480030 */   lwc1  $f8, 0x30($v0)
 /* 0A9974 7F074E44 AFA300A8 */  sw    $v1, 0xa8($sp)
-/* 0A9978 7F074E48 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 0A9978 7F074E48 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A997C 7F074E4C AFA800AC */   sw    $t0, 0xac($sp)
 /* 0A9980 7F074E50 8FA300A8 */  lw    $v1, 0xa8($sp)
 /* 0A9984 7F074E54 C4440030 */  lwc1  $f4, 0x30($v0)
@@ -8695,19 +8563,19 @@ glabel sub_GAME_7F0752FC
 /* 0A9F68 7F075438 00008825 */   move  $s1, $zero
 .L7F07543C:
 /* 0A9F6C 7F07543C 02402025 */  move  $a0, $s2
-/* 0A9F70 7F075440 0FC1BA5C */  jal   sub_GAME_7F06E970
+/* 0A9F70 7F075440 0FC1BA5C */  jal   modelApplyDistanceRelations
 /* 0A9F74 7F075444 02002825 */   move  $a1, $s0
 /* 0A9F78 7F075448 10000009 */  b     .L7F075470
 /* 0A9F7C 7F07544C 00000000 */   nop   
 .L7F075450:
 /* 0A9F80 7F075450 02402025 */  move  $a0, $s2
-/* 0A9F84 7F075454 0FC1BA6F */  jal   process_12_handle_switch
+/* 0A9F84 7F075454 0FC1BA6F */  jal   modelApplyToggleRelations
 /* 0A9F88 7F075458 02002825 */   move  $a1, $s0
 /* 0A9F8C 7F07545C 10000004 */  b     .L7F075470
 /* 0A9F90 7F075460 00000000 */   nop   
 .L7F075464:
 /* 0A9F94 7F075464 02402025 */  move  $a0, $s2
-/* 0A9F98 7F075468 0FC1BA82 */  jal   process_17_pointer_to_head
+/* 0A9F98 7F075468 0FC1BA82 */  jal   modelApplyHeadRelations
 /* 0A9F9C 7F07546C 02002825 */   move  $a1, $s0
 def_7F0753C4:
 .L7F075470:
@@ -8802,7 +8670,7 @@ void sub_GAME_7F0755B0(void)
     if (var) \
         var = (void *)((u32)var + diff)
 
-void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fileramaddr)
+void modelPromoteNodeOffsetsToPointers(ModelNode *node, u32 vma, u32 fileramaddr)
 {
     s32 diff = fileramaddr - vma;
     s32 i;
@@ -8819,28 +8687,28 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
 
         switch (type)
         {
-            case MODELNODE_OPCODE_HEADERRECORD:
+            case MODELNODE_OPCODE_HEADER:
                 {
                     ModelRoData_HeaderRecord* rodata = &node->Data->Header;
                     PROMOTE(rodata->FirstGroup);
                     break;
                 }
 
-            case MODELNODE_OPCODE_GROUPRECORD:
+            case MODELNODE_OPCODE_GROUP:
                 {
                     ModelRoData_GroupRecord* rodata = &node->Data->Group;
                     PROMOTE(rodata->ChildGroup);
                     break;
                 }
 
-            case MODELNODE_OPCODE_UNUSED_03:
+            case MODELNODE_OPCODE_OP03:
                 {
                     ModelRoData_GroupRecord* rodata = &node->Data->Group;
                     PROMOTE(rodata->ChildGroup);
                     break;
                 }
 
-            case MODELNODE_OPCODE_DISPLAYLISTRECORD:
+            case MODELNODE_OPCODE_DL:
                 {
                     ModelRoData_DisplayListRecord* rodata = &node->Data->DisplayList;
                     PROMOTE(rodata->Vertices);
@@ -8848,7 +8716,7 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+            case MODELNODE_OPCODE_DLCOLLISION:
                 {
                     ModelRoData_DisplayList_CollisionRecord* rodata = &node->Data->DisplayListCollisions;
                     PROMOTE(rodata->Vertices);
@@ -8862,14 +8730,14 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_UNUSED_20:
+            case MODELNODE_OPCODE_OP20:
                 {
                     ModelRoData_HeaderRecord* rodata = &node->Data->Header;
                     PROMOTE(rodata->FirstGroup);
                     break;
                 }
 
-            case MODELNODE_OPCODE_UNUSED_05:
+            case MODELNODE_OPCODE_OP05:
                 {
                     ModelRoData_Op05Record* rodata = &node->Data->Op05;
 
@@ -8886,7 +8754,7 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_OP07RECORD:
+            case MODELNODE_OPCODE_OP07:
                 {
                     ModelRoData_Op07Record* rodata = &node->Data->Op07;
                     PROMOTE(rodata->unk00);
@@ -8905,14 +8773,14 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_UNUSED_06:
+            case MODELNODE_OPCODE_OP06:
                 {
                     ModelRoData_Op06Record* rodata = &node->Data->Op06;
                     rodata->BaseAddr = (void *)fileramaddr;
                     break;
                 }
 
-            case MODELNODE_OPCODE_LODRECORD:
+            case MODELNODE_OPCODE_LOD:
                 {
                     ModelRoData_LODRecord* rodata = &node->Data->LOD;
                     PROMOTE(rodata->Affects);
@@ -8920,14 +8788,14 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_SWITCHRECORD:
+            case MODELNODE_OPCODE_SWITCH:
                 {
                     ModelRoData_SwitchRecord* rodata = &node->Data->Switch;
                     PROMOTE(rodata->Controls);
                     break;
                 }
 
-            case MODELNODE_OPCODE_BSPRECORD:
+            case MODELNODE_OPCODE_BSP:
                 {
                     ModelRoData_BSPRecord* rodata = &node->Data->BSP;
                     PROMOTE(rodata->leftChild);
@@ -8935,14 +8803,14 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_UNUSED_17:
+            case MODELNODE_OPCODE_OP17:
                 {
                     ModelRoData_GroupRecord* rodata = &node->Data->Group;
                     PROMOTE(rodata->ChildGroup);
                     break;
                 }
 
-            case MODELNODE_OPCODE_OP11RECORD:
+            case MODELNODE_OPCODE_OP11:
                 {
                     ModelRoData_Op11Record* rodata = &node->Data->Op11;
                     PROMOTE(rodata->unk0c[15]);
@@ -8950,7 +8818,7 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_GUNFIRERECORD:
+            case MODELNODE_OPCODE_GUNFIRE:
                 {
                     ModelRoData_GunfireRecord* rodata = &node->Data->Gunfire;
                     PROMOTE(rodata->Image);
@@ -8958,7 +8826,7 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_SHADOWRECORD:
+            case MODELNODE_OPCODE_SHADOW:
                 {
                     ModelRoData_ShadowRecord* rodata = &node->Data->Shadow;
                     PROMOTE(rodata->image);
@@ -8967,7 +8835,7 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
                     break;
                 }
 
-            case MODELNODE_OPCODE_DISPLAYLISTPRIMARYRECORD:
+            case MODELNODE_OPCODE_DLPRIMARY:
                 {
                     ModelRoData_DisplayListPrimaryRecord* rodata = &node->Data->DisplayListPrimary;
                     PROMOTE(rodata->Vertices);
@@ -9000,57 +8868,16 @@ void convert_obj_microcode_offset_to_rdram_addr(ModelNode *node, u32 vma, u32 fi
 }
 
 
-#ifdef NONMATCHING
-void sub_GAME_7F075A90(ModelFileHeader *header, s32 arg1, ModelNode **node) {
+void sub_GAME_7F075A90(ModelFileHeader *header, s32 vma, u32 addr) {
+    s32 diff = addr - vma;
     s32 i;
+
     for(i = 0;i < header->numSwitches;i++)
     {
-        if (header->Switches[i] != 0) {
-            header->Switches[i] = header->Switches[i] + (node - arg1);
-        }
+        PROMOTE(header->Switches[i]);
     }
-    convert_obj_microcode_offset_to_rdram_addr(header->RootNode, arg1, header->numSwitches);
+    modelPromoteNodeOffsetsToPointers(header->RootNode, vma, addr);
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F075A90
-/* 0AA5C0 7F075A90 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 0AA5C4 7F075A94 AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0AA5C8 7F075A98 AFB10018 */  sw    $s1, 0x18($sp)
-/* 0AA5CC 7F075A9C AFB00014 */  sw    $s0, 0x14($sp)
-/* 0AA5D0 7F075AA0 8487000C */  lh    $a3, 0xc($a0)
-/* 0AA5D4 7F075AA4 00808025 */  move  $s0, $a0
-/* 0AA5D8 7F075AA8 00A08825 */  move  $s1, $a1
-/* 0AA5DC 7F075AAC 18E0000E */  blez  $a3, .L7F075AE8
-/* 0AA5E0 7F075AB0 00001025 */   move  $v0, $zero
-/* 0AA5E4 7F075AB4 00001825 */  move  $v1, $zero
-.L7F075AB8:
-/* 0AA5E8 7F075AB8 8E0E0008 */  lw    $t6, 8($s0)
-/* 0AA5EC 7F075ABC 00D17823 */  subu  $t7, $a2, $s1
-/* 0AA5F0 7F075AC0 24420001 */  addiu $v0, $v0, 1
-/* 0AA5F4 7F075AC4 01C32021 */  addu  $a0, $t6, $v1
-/* 0AA5F8 7F075AC8 8C850000 */  lw    $a1, ($a0)
-/* 0AA5FC 7F075ACC 10A00003 */  beqz  $a1, .L7F075ADC
-/* 0AA600 7F075AD0 00AFC021 */   addu  $t8, $a1, $t7
-/* 0AA604 7F075AD4 AC980000 */  sw    $t8, ($a0)
-/* 0AA608 7F075AD8 8607000C */  lh    $a3, 0xc($s0)
-.L7F075ADC:
-/* 0AA60C 7F075ADC 0047082A */  slt   $at, $v0, $a3
-/* 0AA610 7F075AE0 1420FFF5 */  bnez  $at, .L7F075AB8
-/* 0AA614 7F075AE4 24630004 */   addiu $v1, $v1, 4
-.L7F075AE8:
-/* 0AA618 7F075AE8 8E040000 */  lw    $a0, ($s0)
-/* 0AA61C 7F075AEC 0FC1D577 */  jal   convert_obj_microcode_offset_to_rdram_addr
-/* 0AA620 7F075AF0 02202825 */   move  $a1, $s1
-/* 0AA624 7F075AF4 8FBF001C */  lw    $ra, 0x1c($sp)
-/* 0AA628 7F075AF8 8FB00014 */  lw    $s0, 0x14($sp)
-/* 0AA62C 7F075AFC 8FB10018 */  lw    $s1, 0x18($sp)
-/* 0AA630 7F075B00 03E00008 */  jr    $ra
-/* 0AA634 7F075B04 27BD0020 */   addiu $sp, $sp, 0x20
-)
-#endif
-
 
 void REMOVED_sub_GAME_7F075B08(s32 param_1,s32 param_2,s32 param_3,s32 param_4)
 {
@@ -9070,7 +8897,7 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
 
         switch (type)
         {
-            case MODELNODE_OPCODE_HEADERRECORD:
+            case MODELNODE_OPCODE_HEADER:
                 if (1)
                 {
                     ModelRoData_HeaderRecord *rodata = &node->Data->Header;
@@ -9078,7 +8905,7 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
                     len += sizeof(struct ModelRwData_HeaderRecord) / 4;
                     break;
                 }
-            case MODELNODE_OPCODE_OP07RECORD:
+            case MODELNODE_OPCODE_OP07:
                 if (1)
                 {
                     ModelRoData_Op07Record *rodata = &node->Data->Op07;
@@ -9086,7 +8913,7 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
                     len += sizeof(struct ModelRwData_Op07Record) / 4;
                     break;
                 }
-            case MODELNODE_OPCODE_LODRECORD:
+            case MODELNODE_OPCODE_LOD:
                 if (1)
                 {
                     ModelRoData_LODRecord *rodata = &node->Data->LOD;
@@ -9095,7 +8922,7 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
                     node->Child = rodata->Affects;
                     break;
                 }
-            case MODELNODE_OPCODE_SWITCHRECORD:
+            case MODELNODE_OPCODE_SWITCH:
                 if (1)
                 {
                     ModelRoData_SwitchRecord *rodata = &node->Data->Switch;
@@ -9104,7 +8931,7 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
                     node->Child = rodata->Controls;
                     break;
                 }
-            case MODELNODE_OPCODE_HEADPLACEHOLDERRECORD:
+            case MODELNODE_OPCODE_HEAD:
                 if (1)
                 {
                     ModelRoData_HeadPlaceholderRecord *rodata = &node->Data->HeadPlaceholder;
@@ -9113,16 +8940,16 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
                     node->Child = NULL;
                     break;
                 }
-            case MODELNODE_OPCODE_BSPRECORD:
+            case MODELNODE_OPCODE_BSP:
                 if (1)
                 {
                     ModelRoData_BSPRecord *rodata = &node->Data->BSP;
                     rodata->RwDataIndex = len;
                     len += sizeof(struct ModelRwData_BSPRecord) / 4;
-                    sub_GAME_7F06EA54(node, FALSE);
+                    modelApplyReorderRelationsByArg(node, FALSE);
                     break;
                 }
-            case MODELNODE_OPCODE_OP11RECORD:
+            case MODELNODE_OPCODE_OP11:
                 if (1)
                 {
                     ModelRoData_Op11Record *rodata = &node->Data->Op11;
@@ -9130,7 +8957,7 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
                     len += sizeof(struct ModelRwData_Op11Record) / 4;
                     break;
                 }
-            case MODELNODE_OPCODE_GUNFIRERECORD:
+            case MODELNODE_OPCODE_GUNFIRE:
                 if (1)
                 {
                     ModelRoData_GunfireRecord *rodata = &node->Data->Gunfire;
@@ -9138,7 +8965,7 @@ s32 modelCalculateRwDataIndexes(ModelNode *basenode)
                     len += sizeof(struct ModelRwData_GunfireRecord) / 4;
                     break;
                 }
-            case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+            case MODELNODE_OPCODE_DLCOLLISION:
                 if (1)
                 {
                     ModelRoData_DisplayList_CollisionRecord *rodata = &node->Data->DisplayListCollisions;
@@ -9198,7 +9025,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
 
         switch (type)
         {
-            case MODELNODE_OPCODE_HEADERRECORD:
+            case MODELNODE_OPCODE_HEADER:
                 if (1)
                 {
                     ModelRwData_HeaderRecord* rwdata = &modelGetNodeRwData(model, node)->Header;
@@ -9233,7 +9060,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
                     break;
                 }
 
-            case MODELNODE_OPCODE_OP07RECORD:
+            case MODELNODE_OPCODE_OP07:
                 if (1)
                 {
                     ModelRwData_Op07Record* rwdata = &modelGetNodeRwData(model, node)->Op07;
@@ -9242,7 +9069,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
                 }
 
 
-            case MODELNODE_OPCODE_LODRECORD:
+            case MODELNODE_OPCODE_LOD:
                 if (1)
                 {
                     ModelRoData_LODRecord* rodata = &node->Data->LOD;
@@ -9252,7 +9079,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
                     break;
                 }
 
-            case MODELNODE_OPCODE_SWITCHRECORD:
+            case MODELNODE_OPCODE_SWITCH:
                 if (1)
                 {
                     ModelRoData_SwitchRecord* rodata = &node->Data->Switch;
@@ -9262,7 +9089,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
                     break;
                 }
 
-            case MODELNODE_OPCODE_HEADPLACEHOLDERRECORD:
+            case MODELNODE_OPCODE_HEAD:
                 if (1)
                 {
                     ModelRwData_HeadPlaceholderRecord* rwdata = &modelGetNodeRwData(model, node)->HeadPlaceholder;
@@ -9271,16 +9098,16 @@ void modelInitRwData(Model *model, ModelNode *startnode)
                     break;
                 }
 
-            case MODELNODE_OPCODE_BSPRECORD:
+            case MODELNODE_OPCODE_BSP:
                 if (1)
                 {
                     ModelRwData_BSPRecord* rwdata = &modelGetNodeRwData(model, node)->BSP;
                     rwdata->visible = FALSE;
-                    sub_GAME_7F06EB10(model, node);
+                    modelApplyReorderRelations(model, node);
                     break;
                 }
 
-            case MODELNODE_OPCODE_OP11RECORD:
+            case MODELNODE_OPCODE_OP11:
                 if (1)
                 {
                     ModelRwData_Op11Record* rwdata = &modelGetNodeRwData(model, node)->Op11;
@@ -9288,7 +9115,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
                     break;
                 }
 
-            case MODELNODE_OPCODE_GUNFIRERECORD:
+            case MODELNODE_OPCODE_GUNFIRE:
                 if (1)
                 {
                     ModelRwData_GunfireRecord* rwdata = &modelGetNodeRwData(model, node)->Gunfire;
@@ -9296,7 +9123,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
                     break;
                 }
 
-            case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+            case MODELNODE_OPCODE_DLCOLLISION:
                 if (1)
                 {
                     ModelRoData_DisplayList_CollisionRecord* rodata = &node->Data->DisplayListCollisions;
@@ -9337,7 +9164,7 @@ void modelInitRwData(Model *model, ModelNode *startnode)
 }
 
 
-void sub_GAME_7F075F68(struct Model *objinst, struct ModelFileHeader *header, u32 *data)
+void modelInit(struct Model *objinst, struct ModelFileHeader *header, u32 *data)
 {
   objinst->obj = header;
   objinst->datas = data;
@@ -9349,9 +9176,10 @@ void sub_GAME_7F075F68(struct Model *objinst, struct ModelFileHeader *header, u3
 }
 
 
-void sub_GAME_7F075FAC(struct Model *objinst, struct ModelFileHeader *header, u32 *data)
+// PD: animInit
+void animInit(struct Model *objinst, struct ModelFileHeader *header, u32 *data)
 {    
-    sub_GAME_7F075F68(objinst, header, data);
+    modelInit(objinst, header, data);
     objinst->anim = NULL;
     objinst->anim2 = NULL;
     objinst->animlooping = 0;
@@ -9366,15 +9194,16 @@ void sub_GAME_7F075FAC(struct Model *objinst, struct ModelFileHeader *header, u3
     objinst->unk88 = 0.0f;
     objinst->unkb0 = 0.0f;
     objinst->speed = 1.0f;
-    objinst->unk70 = 1.0f;
-    objinst->unka4 = 1.0f;
+    objinst->speed2 = 1.0f;
+    objinst->playspeed = 1.0f;
     objinst->unkb8 = 1.0f;
-    objinst->unk3c = -1.0f;
+    objinst->endframe = -1.0f;
     objinst->unk6c = -1.0f;
 }
 
 
-void sub_GAME_7F076030(Model *pmodel, ModelFileHeader *pmodeldef, ModelNode *pnode, ModelFileHeader *cmodeldef)
+// PD: model00023108
+void modelAttachPart(Model *pmodel, ModelFileHeader *pmodeldef, ModelNode *pnode, ModelFileHeader *cmodeldef)
 {
     ModelRwData_HeadPlaceholderRecord *rwdata = modelGetNodeRwData(pmodel, pnode);
     ModelNode *node;
@@ -9425,7 +9254,7 @@ void modelIterateDisplayLists(ModelFileHeader *fileheader, ModelNode **nodeptr, 
 
         switch (type)
         {
-            case MODELNODE_OPCODE_DISPLAYLISTRECORD:
+            case MODELNODE_OPCODE_DL:
                 rodata = node->Data;
 
                 if (node != *nodeptr)
@@ -9438,7 +9267,7 @@ void modelIterateDisplayLists(ModelFileHeader *fileheader, ModelNode **nodeptr, 
                 }
                 break;
 
-            case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+            case MODELNODE_OPCODE_DLCOLLISION:
                 rodata = node->Data;
 
                 if (node != *nodeptr)
@@ -9451,7 +9280,7 @@ void modelIterateDisplayLists(ModelFileHeader *fileheader, ModelNode **nodeptr, 
                 }
                 break;
 
-            case MODELNODE_OPCODE_DISPLAYLISTPRIMARYRECORD:
+            case MODELNODE_OPCODE_DLPRIMARY:
                 rodata = node->Data;
 
                 if (node != *nodeptr)
@@ -9460,18 +9289,18 @@ void modelIterateDisplayLists(ModelFileHeader *fileheader, ModelNode **nodeptr, 
                 }
                 break;
 
-            case MODELNODE_OPCODE_LODRECORD:
+            case MODELNODE_OPCODE_LOD:
                 rodata = node->Data;
                 node->Child = rodata->LOD.Affects;
                 break;
 
-            case MODELNODE_OPCODE_SWITCHRECORD:
+            case MODELNODE_OPCODE_SWITCH:
                 rodata = node->Data;
                 node->Child = rodata->Switch.Controls;
                 break;
 
-            case MODELNODE_OPCODE_BSPRECORD:
-                sub_GAME_7F06EA54(node, TRUE);
+            case MODELNODE_OPCODE_BSP:
+                modelApplyReorderRelationsByArg(node, TRUE);
                 break;
         }
 
@@ -9507,7 +9336,7 @@ void modelNodeReplaceGdl(u32 arg0, ModelNode *node, Gfx *find, Gfx *replacement)
     u32 type = node->Opcode & 0xff;
 
     switch (type) {
-        case MODELNODE_OPCODE_DISPLAYLISTRECORD:
+        case MODELNODE_OPCODE_DL:
             rodata = node->Data;
 
             if (rodata->DisplayList.Primary == find)
@@ -9523,7 +9352,7 @@ void modelNodeReplaceGdl(u32 arg0, ModelNode *node, Gfx *find, Gfx *replacement)
             }
             break;
 
-        case MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD:
+        case MODELNODE_OPCODE_DLCOLLISION:
             rodata = node->Data;
 
             if (rodata->DisplayListCollisions.Primary == find)
@@ -9539,7 +9368,7 @@ void modelNodeReplaceGdl(u32 arg0, ModelNode *node, Gfx *find, Gfx *replacement)
             }
             break;
 
-        case MODELNODE_OPCODE_DISPLAYLISTPRIMARYRECORD:
+        case MODELNODE_OPCODE_DLPRIMARY:
             rodata = node->Data;
 
             if (rodata->DisplayListPrimary.Primary == find)

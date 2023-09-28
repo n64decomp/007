@@ -3752,8 +3752,8 @@ void crashSetBuffers2(u16 *buffer1, u16 *buffer2)
 }
 
 
-extern stagesetup *_load_resource_named_to_membank();
-f32                g_scale_1_0_item_related = 1.0f;
+extern stagesetup *_fileNameLoadToBank();
+f32                g_g_DoorScale = 1.0f;
 char              *setup_text_pointers[]    = {
     NULL,
     NULL,
@@ -3990,7 +3990,7 @@ void                 proplvreset2(s32 stageID)
         bnoprop = tokenFind(1, "-noprop") == 0;
     }
 
-    g_scale_1_0_item_related = 1.0f;
+    g_g_DoorScale = 1.0f;
 
     // for each itme
     itementries_1 = PitemZ_entries;
@@ -4020,9 +4020,9 @@ void                 proplvreset2(s32 stageID)
             strcat(ptrsp174, "mp_");
         }
         strcat(ptrsp174, *textptr + 1);
-        resource                = _load_resource_named_to_membank(ptrsp174, 1, 0x100, 4);
+        resource                = _fileNameLoadToBank(ptrsp174, 1, 0x100, 4);
         g_ptrStageSetupFile = resource;
-        load_mission_text_bank(get_textbank_number_for_stagenum(stageID));
+        langLoadToBank(langGetLangBankIndexFromStagenum(stageID));
         g_CurrentSetup.pathwaypoints  = resource->pathwaypoints;
         g_CurrentSetup.waypointgroups = resource->waypointgroups;
         g_CurrentSetup.intro          = resource->intro;
@@ -4348,7 +4348,7 @@ void                 proplvreset2(s32 stageID)
                                 }
                             break;
                         case PROPDEF_DOOR_SCALE: // switch 1
-                            g_scale_1_0_item_related = ((GlobalDoorScaleRecord *)prop)->Scale / 65536.0f;
+                            g_g_DoorScale = ((GlobalDoorScaleRecord *)prop)->Scale / 65536.0f;
                             break;
                         case PROPDEF_COLLECTABLE: // switch 1
                             if ((bnoprop != 0) && ((prop->flags2 & phi_s4_2) == 0))

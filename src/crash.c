@@ -140,7 +140,7 @@
 // bss - TLB section
 
 OSThread g_tlbThread;
-u8 g_tlbUnused[0x500];
+u8 g_CrashMessage[0x500];
 char g_tlbStack[0x2300];
 OSMesgQueue g_faultMesgQ;
 OSMesg *g_faultMesgBuf;
@@ -150,7 +150,7 @@ OSMesg *g_faultMesgBuf;
 */
 
 // Padding
-u32 D_80023300 = 0;
+u32 g_CrashEnabled = FALSE;
 
 //The following regDesc's are similar to PR/Tools/Gload/Server.c 
 /*
@@ -313,6 +313,7 @@ u32 D_80024184[4] = {0};
 
 void crashMain(void* arg0);
 
+void crashPrintDescription(u32 mask, char *label, struct regDesc_t *description);
 // end forward declarations
 
 /**
@@ -605,45 +606,35 @@ u8 *crashIndyFileGetAddressSubsequentData(u8 *arg0)
  */
 s32 crashIndyScanLoadResourceIdFromBuffer(u32 arg0)
 {
-    u32 *temp_v1;
-    u8 *phi_s0 = (u8 *)0xE00004;
-    u8 *v0;
-    u32 a0 = arg0;
-    u8 *phi_s3;
+	u32 this = 0x00e00004;
+	u32 prev = 0x00e00004;
 
-    phi_s3 = phi_s0;
+	while (TRUE) {
+		u32 next = crashIndyFileGetAddressSubsequentData(this);
 
-    while (1)
-    {
-        v0 = crashIndyFileGetAddressSubsequentData(phi_s0);
+		if (arg0 >= (u32)g_indyCurrentReadBufferResourceId) {
+			prev = this;
 
-        temp_v1 = g_indyCurrentReadBufferResourceId;
+			if (g_indyCurrentReadBufferResourceId == 0) {
+				return FALSE;
+			}
 
-        if (a0 < (u32)temp_v1)
-        {
-            break;
-        }
+			this = next;
+		} else {
+			break;
+		}
+	}
 
-        phi_s3 = phi_s0;
+	crashIndyFileGetAddressSubsequentData(prev);
 
-        if (temp_v1 == NULL)
-        {
-            return 0;
-        }
-
-        phi_s0 = v0;
-    }
-
-    crashIndyFileGetAddressSubsequentData(phi_s3);
-
-    return 1;
+	return TRUE;
 }
 
 /**
  * 5FC8    700053C8
  *     V0= TRUE if valid indy.read.buf.resourceID    [matches 826475BE]
  */
-u32 crashIidyIsValidReadBufferResourceId(void)
+u32 crashIndyIsValidReadBufferResourceId(void)
 {
     crashIndyFileGetAddressSubsequentData((u8*)0xe00000);
     return ((u32)g_indyCurrentReadBufferResourceId ^ 0x826475be) == 0;

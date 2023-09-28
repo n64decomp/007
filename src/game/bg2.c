@@ -33,11 +33,11 @@ u32 sub_GAME_7F0BA5C0(u32 arg0, u32 arg1) {
         phi_v0 = arg0;
 loop_2:
         // Node 2
-        if (FogDL_primary_80044940 != 0)
+        if (DL_LUT_PRIMARY_ADDFOG != 0)
         {
             // Node 3
-            phi_a0 = FogDL_primary_80044940;
-            phi_v1 = &FogDL_primary_80044940;
+            phi_a0 = DL_LUT_PRIMARY_ADDFOG;
+            phi_v1 = &DL_LUT_PRIMARY_ADDFOG;
 loop_4:
             // Node 4
             if (*phi_v0 == phi_a0)
@@ -77,12 +77,12 @@ glabel sub_GAME_7F0BA5C0
 /* 0EF0F0 7F0BA5C0 0085082B */  sltu  $at, $a0, $a1
 /* 0EF0F4 7F0BA5C4 1020001C */  beqz  $at, .L7F0BA638
 /* 0EF0F8 7F0BA5C8 00801025 */   move  $v0, $a0
-/* 0EF0FC 7F0BA5CC 3C068004 */  lui   $a2, %hi(FogDL_primary_80044940)
-/* 0EF100 7F0BA5D0 24C64940 */  addiu $a2, %lo(FogDL_primary_80044940) # addiu $a2, $a2, 0x4940
+/* 0EF0FC 7F0BA5CC 3C068004 */  lui   $a2, %hi(DL_LUT_PRIMARY_ADDFOG)
+/* 0EF100 7F0BA5D0 24C64940 */  addiu $a2, %lo(DL_LUT_PRIMARY_ADDFOG) # addiu $a2, $a2, 0x4940
 /* 0EF104 7F0BA5D4 8CCE0000 */  lw    $t6, ($a2)
 .L7F0BA5D8:
-/* 0EF108 7F0BA5D8 3C0F8004 */  lui   $t7, %hi(FogDL_primary_80044940) 
-/* 0EF10C 7F0BA5DC 25EF4940 */  addiu $t7, %lo(FogDL_primary_80044940) # addiu $t7, $t7, 0x4940
+/* 0EF108 7F0BA5D8 3C0F8004 */  lui   $t7, %hi(DL_LUT_PRIMARY_ADDFOG) 
+/* 0EF10C 7F0BA5DC 25EF4940 */  addiu $t7, %lo(DL_LUT_PRIMARY_ADDFOG) # addiu $t7, $t7, 0x4940
 /* 0EF110 7F0BA5E0 11C00011 */  beqz  $t6, .L7F0BA628
 /* 0EF114 7F0BA5E4 00C01825 */   move  $v1, $a2
 /* 0EF118 7F0BA5E8 8DE40000 */  lw    $a0, ($t7)

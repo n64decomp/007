@@ -71,7 +71,7 @@
       build/OUTCODE/src/game/gun.o (.text);
       build/OUTCODE/src/game/bondwalk2.o (.text);
       build/OUTCODE/src/game/objecthandler.o (.text);
-      build/OUTCODE/src/game/objecthandler_1.o (.text);
+      build/OUTCODE/src/game/model.o (.text);
       build/OUTCODE/src/game/objecthandler_2.o (.text);
       build/OUTCODE/src/game/othermodemicrocode.o (.text);
       build/OUTCODE/src/game/bondview.o (.text);

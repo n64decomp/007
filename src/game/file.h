@@ -4,10 +4,6 @@
 
 #include <bondconstants.h>
 
-// unknown/unused struct. Adding so that a definition exists.
-//Private Struct, Move to C
-struct save_file { s32* data; };
-
 typedef struct save_data
 {
   s32 chksum1;
@@ -63,8 +59,8 @@ s32 getSelectedFolderBond(void);
 void set_selected_folder_num(u32 foldernum);
 void set_selected_difficulty(DIFFICULTY difficulty);
 void set_solo_and_ptr_briefing(LEVELID stage);
-void sub_GAME_7F01D61C(struct save_file *savefile);
-void set_selected_foldernum_and_copy_demo_eeprom(struct save_file *eeprom);
+void sub_GAME_7F01D61C(struct save_data *savefile);
+void set_selected_foldernum_and_copy_demo_eeprom(struct save_data *eeprom);
 void store_favorite_weapon_current_player(u32 right,u32 left);
 
 #endif

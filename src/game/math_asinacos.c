@@ -28,6 +28,7 @@ u16 table_3[] = {
     0x39A, 0x31E, 0x28C, 0x1CD,     0,     0
 };
 
+// PD: func0f096890
 static s32 sub_GAME_7F05AB70(s32 arg0)
 {
     s32 mask;

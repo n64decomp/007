@@ -224,6 +224,27 @@ typedef enum CHRFLAG
     CHRFLAG_80000000                     = 0x80000000   // unknown
 }CHRFLAG;
 
+// collision detection types
+typedef enum CDTYPE
+{
+    CDTYPE_OBJS                   = 0x0001,
+    CDTYPE_DOORS                  = 0x0002,
+    CDTYPE_PLAYERS                = 0x0004,
+    CDTYPE_CHRS                   = 0x0008,
+    CDTYPE_PATHBLOCKER            = 0x0010, // glass and scenery with OBJFLAG_PATHBLOCKER
+    CDTYPE_BG                     = 0x0020,
+    CDTYPE_OBJSIMMUNETOGUNFIRE    = 0x0080,
+    CDTYPE_AIOPAQUE               = 0x0100, // exclude objects with OBJFLAG_AISEETHROUGH
+    CDTYPE_OBJSIMMUNETOEXPLOSIONS = 0x0200,
+    CDTYPE_OBJSNOTSAFEORHELI      = 0x0400,
+    CDTYPE_DOORSWITHOUTFLAG       = 0x0800,
+    CDTYPE_CLOSEDDOORS            = 0x1000,
+    CDTYPE_OPENDOORS              = 0x2000,
+    CDTYPE_AJARDOORS              = 0x4000,
+    CDTYPE_DOORSLOCKEDTOAI        = 0x8000,
+    CDTYPE_ALL                    = 0x003f
+} CDTYPE;
+
 typedef enum GUARD_SETUP_FLAG // u16
 {
     GUARD_SETUP_FLAG_NONE                = 0,
@@ -260,82 +281,124 @@ BITFLAG(PS_FLAGS2,
 // prop definition flags
 typedef enum PROPFLAG
 {
-    PROPFLAG_00000001                    = 0x00000001, // unknown
-    PROPFLAG_ONSCREEN                    = 0x00000002, // onscreen
-    PROPFLAG_ENABLED                     = 0x00000004, // unknown
-    PROPFLAG_00000008                    = 0x00000008, // unknown
-    PROPFLAG_00000010                    = 0x00000010, // unknown
-    PROPFLAG_00000020                    = 0x00000020, // unknown
-    PROPFLAG_00000040                    = 0x00000040, // unknown
-    PROPFLAG_00000080                    = 0x00000080, // unknown
-    PROPFLAG_00000100                    = 0x00000100, // unknown
-    PROPFLAG_00000200                    = 0x00000200, // unknown
+    PROPFLAG_RENDERPOSTBG                = 0x00000001, // Fall to Ground
+    PROPFLAG_ONSCREEN                    = 0x00000002, //  In Air Rotated 90 Deg Upside-Down
+    PROPFLAG_ENABLED                     = 0x00000004, // In Air Upside-Down
+    PROPFLAG_00000008                    = 0x00000008, // In Air
+    PROPFLAG_00000010                    = 0x00000010, // Scale to Pad Bounds
+    PROPFLAG_00000020                    = 0x00000020, // Scale X to Pad Bounds
+    PROPFLAG_00000040                    = 0x00000040, // Scale Y to Pad Bounds
+    PROPFLAG_00000080                    = 0x00000080, // Scale Z to Pad Bounds
+    PROPFLAG_00000100                    = 0x00000100, // Force Collisions
+    PROPFLAG_00000200                    = 0x00000200, // Glass Env Mapping Style
     PROPFLAG_ILLUMINATED                 = 0x00000400, /* ignore Stan Colour?*/
-    PROPFLAG_00000800                    = 0x00000800, // unknown
-    PROPFLAG_00001000                    = 0x00001000, // unknown
+    PROPFLAG_00000800                    = 0x00000800, // Free Standing Glass
+    PROPFLAG_00001000                    = 0x00001000, // Absolute Position
     PROPFLAG_AIUNDROPPABLE               = 0x00002000, /* Item Not Droppedz*/
-    PROPFLAG_ASSIGNEDTOCHR               = 0x00004000, // unknown
-    PROPFLAG_00008000                    = 0x00008000, // unknown
-    PROPFLAG_00010000                    = 0x00010000, // unknown
-    PROPFLAG_00020000                    = 0x00020000, // unknown
-    PROPFLAG_00040000                    = 0x00040000, // unknown
-    PROPFLAG_00080000                    = 0x00080000, // unknown
+    PROPFLAG_ASSIGNEDTOCHR               = 0x00004000, // Assigned to Actor
+    PROPFLAG_INSIDEANOTHEROBJ            = 0x00008000, // Embedded Object
+    PROPFLAG_FORCEMORTAL                 = 0x00010000, // unknown
+    PROPFLAG_INVINCIBLE                  = 0x00020000, // Invincible
+    PROPFLAG_00040000                    = 0x00040000, // Allow Pickup (chr_type)
+    PROPFLAG_00080000                    = 0x00080000, // Collect Object by Interaction Button Only
     PROPFLAG_UNCOLLECTABLE               = 0x00100000, /* Item Not Collectable*/
-    PROPFLAG_00200000                    = 0x00200000, // unknown
+    PROPFLAG_00200000                    = 0x00200000, // Bounce and Destroy If Shot
     PROPFLAG_00400000                    = 0x00400000, // unknown
     PROPFLAG_00800000                    = 0x00800000, // unknown
-    PROPFLAG_01000000                    = 0x01000000, // unknown
-    PROPFLAG_02000000                    = 0x02000000, // unknown
-    PROPFLAG_04000000                    = 0x04000000, // unknown
-    PROPFLAG_08000000                    = 0x08000000, // unknown
-    PROPFLAG_WEAPON_LEFTHANDED           = 0x10000000, /* Left Handed*/
-    PROPFLAG_NO_AI_INTERACTION           = 0x20000000, /* Concealed*/
-    PROPFLAG_40000000                    = 0x40000000, /* No Ammo on pickup*/
-    PROPFLAG_80000000                    = 0x80000000 // unknown
+    PROPFLAG_01000000                    = 0x01000000, // Embedded Object
+    PROPFLAG_CANNOT_ACTIVATE             = 0x02000000, // Cannot Activate Door/Object
+    PROPFLAG_04000000                    = 0x04000000, // AI Sees Through Door/Object
+    PROPFLAG_DOOR_TWOWAY                 = 0x08000000, // Open Away From Player
+    PROPFLAG_WEAPON_LEFTHANDED           = 0x10000000, /* Area Behind Door Invisible/Monitor Fixed/Left-Handed weapon/Disable security camera/drone gun*/
+    PROPFLAG_CULL_BEHIND_DOOR            = 0x10000000,
+    PROPFLAG_FIXED_MONITOR               = 0x10000000,
+    PROPFLAG_CCTV_DISABLED               = 0x10000000,
+    PROPFLAG_IS_DRONE_GUN                = 0x10000000,
+    PROPFLAG_DOOR_OPENTOFRONT            = 0x20000000, /* Open Backwards/Special Function/Conceal Weapon*/
+    PROPFLAG_SPECIAL_FUNC                = 0x20000000,
+    PROPFLAG_CONCEAL_GUN                 = 0x20000000,
+    PROPFLAG_MONITOR_RENDERPOSTBG        = 0x40000000, /* No Ammo on pickup / Area Behind Door Visible*/
+    PROPFLAG_NO_PORTAL_CLOSE             = 0x40000000,
+    PROPFLAG_NO_AMMO                     = 0x40000000, 
+    PROPFLAG_80000000                    = 0x80000000, // Open By Default/Weapon Paired for Player
+    PROPFLAG_IS_DOUBLE                   = 0x80000000
 }PROPFLAG;
 // prop definition flags 
 typedef enum PROPFLAG2
 {
-    PROPFLAG2_00000001                   = 0x00000001, // unknown
-    PROPFLAG2_00000002                   = 0x00000002, // unknown
-    PROPFLAG2_00000004                   = 0x00000004, // unknown
-    PROPFLAG2_00000008                   = 0x00000008, // unknown
-    PROPFLAG2_00000010                   = 0x00000010, // unknown
-    PROPFLAG2_00000020                   = 0x00000020, // unknown
-    PROPFLAG2_00000040                   = 0x00000040, // unknown
-    PROPFLAG2_00000080                   = 0x00000080, // unknown
-    PROPFLAG2_00000100                   = 0x00000100, // unknown
-    PROPFLAG2_00000200                   = 0x00000200, // unknown
-    PROPFLAG2_00000400                   = 0x00000400, // unknown
-    PROPFLAG2_00000800                   = 0x00000800, // unknown
-    PROPFLAG2_00001000                   = 0x00001000, // unknown
-    PROPFLAG2_00002000                   = 0x00002000, // unknown
-    PROPFLAG2_00004000                   = 0x00004000, // unknown
-    PROPFLAG2_00008000                   = 0x00008000, // unknown
-    PROPFLAG2_00010000                   = 0x00010000, // unknown
-    PROPFLAG2_00020000                   = 0x00020000, // unknown
-    PROPFLAG2_00040000                   = 0x00040000, // unknown
-    PROPFLAG2_00080000                   = 0x00080000, // unknown
-    PROPFLAG2_00100000                   = 0x00100000, // unknown
-    PROPFLAG2_00200000                   = 0x00200000, // unknown
-    PROPFLAG2_00400000                   = 0x00400000, // unknown
-    PROPFLAG2_00800000                   = 0x00800000, // unknown
-    PROPFLAG2_01000000                   = 0x01000000, // unknown
-    PROPFLAG2_02000000                   = 0x02000000, // unknown
-    PROPFLAG2_04000000                   = 0x04000000, // unknown
-    PROPFLAG2_08000000                   = 0x08000000, // unknown
-    PROPFLAG2_10000000                   = 0x10000000, // unknown
-    PROPFLAG2_20000000                   = 0x20000000, // unknown
-    PROPFLAG2_40000000                   = 0x40000000, // unknown
-    PROPFLAG2_80000000                   = 0x80000000  // unknown
-}PROPFLAG2;
+    PROPFLAG2_00000001            = 0x00000001, // Activate Drone Gun
+    PROPFLAG2_00000002            = 0x00000002, // lightweight (move when shot)
+    PROPFLAG2_00000004            = 0x00000004, // Interaction Text Not Shown for Doors
+    PROPFLAG2_00000008            = 0x00000008, // Don't Load in Multiplayer
+    PROPFLAG2_00000010            = 0x00000010, // Don't Load on Agent Mode
+    PROPFLAG2_00000020            = 0x00000020, // Don't Load on Secret Agent Mode
+    PROPFLAG2_00000040            = 0x00000040, // Don't Load on 00 Agent Mode
+    PROPFLAG2_00000080            = 0x00000080, // Don't Load on 007 Mode
+    PROPFLAG2_NOFALL              = 0x00000100, // immobile
+    PROPFLAG2_FALLWITHOUTROTATION = 0x00000200, // used with mines
+    PROPFLAG2_LINKEDTOSAFE        = 0x00000400, // unknown
+    PROPFLAG2_INTERACTCHECKLOS    = 0x00000800, // Don't activate if stan gap Bond/Object
+    PROPFLAG2_00001000            = 0x00001000, // Watch Magnet Attract through Walls/Objects
+    PROPFLAG2_00002000            = 0x00002000, // Remove When Destroyed
+    PROPFLAG2_00004000            = 0x00004000, // Immune to Gunfire
+    PROPFLAG2_SHOOTTHROUGH        = 0x00008000, // Can Shoot Through Object
+    PROPFLAG2_00010000            = 0x00010000, // Always Visible (in front)
+    PROPFLAG2_00020000            = 0x00020000, // unknown
+    PROPFLAG2_00040000            = 0x00040000, // Hide inventory item (for tagged armor/ammo/magazine)
+    PROPFLAG2_00080000            = 0x00080000, // Invincible Except to Explosions
+    PROPFLAG2_00100000            = 0x00100000, // Bulletproof Glass    
+    PROPFLAG2_00200000            = 0x00200000, // Immune to Explosions
+    PROPFLAG2_00400000            = 0x00400000, // Don't load on 2P
+    PROPFLAG2_00800000            = 0x00800000, // Don't load on 3P
+    PROPFLAG2_01000000            = 0x01000000, // Don't load on 4P
+    PROPFLAG2_THROWTHROUGH        = 0x02000000, // Rockets/Mines/Grenades Pass Through
+    PROPFLAG2_04000000            = 0x04000000, // unknown
+    PROPFLAG2_08000000            = 0x08000000, // One-Way Lock (Front)
+    PROPFLAG2_10000000            = 0x10000000, // One-Way Lock (Back)
+    PROPFLAG2_20000000            = 0x20000000, // Character AI Cannot Operate
+    PROPFLAG2_40000000            = 0x40000000, // Deactivate Special Feature
+    PROPFLAG2_DOOR_ALTCOORDSYSTEM = 0x80000000  // Massive Explosion (08 Type)/Rotating Disabled Drone Gun (0D Type)
+} PROPFLAG2;
 
 typedef enum DOORFLAG
 {
-    DOORFLAG_100                         = 0x00000100,
-    DOORFLAG_CANNOT_ACTIVATE             = 0x02000000,
-    DOORFLAG_KEEPOPEN                    = 0x80000000
-}DOORFLAG;
+    DOORFLAG_080             = 0x00000080,
+    DOORFLAG_100             = 0x00000100,
+    DOORFLAG_CANNOT_ACTIVATE = 0x02000000,
+    DOORFLAG_KEEPOPEN        = 0x80000000
+
+} DOORFLAG;
+
+typedef enum DROPTYPE
+{
+    DROPTYPE_DEFAULT      = 1,
+    DROPTYPE_SURRENDER    = 2,
+    DROPTYPE_THROWGRENADE = 3,
+    DROPTYPE_HAT          = 4
+} DROPTYPE;
+
+typedef enum PROJECTILEFLAG
+{
+    PROJECTILEFLAG_AIRBORNE    = 0x00000001,
+    PROJECTILEFLAG_00000002    = 0x00000002,
+    PROJECTILEFLAG_STICKY      = 0x00000004,
+    PROJECTILEFLAG_POWERED     = 0x00000010,
+    PROJECTILEFLAG_00000020    = 0x00000020,
+    PROJECTILEFLAG_LAUNCHING   = 0x00000080,
+    PROJECTILEFLAG_00000100    = 0x00000100,
+    PROJECTILEFLAG_FALLING     = 0x00000400,
+    PROJECTILEFLAG_SLIDING     = 0x00000800,
+    PROJECTILEFLAG_00001000    = 0x00001000,
+    PROJECTILEFLAG_00002000    = 0x00002000,
+    PROJECTILEFLAG_NOTIMELIMIT = 0x00004000,
+    PROJECTILEFLAG_INROOM      = 0x00008000,
+    PROJECTILEFLAG_00010000    = 0x00010000,
+    PROJECTILEFLAG_LIGHTWEIGHT = 0x40000000,
+    PROJECTILEFLAG_FREE        = 0x80000000
+} PROJECTILE_FLAG;
+
+// Might be the same flags as PROJECTILEFLAG
+#define EMBEDMENTFLAG_FREE 0x00000001
 
 /* door lock flags*/
 BITFLAG(DOOR_LOCK,
@@ -371,23 +434,23 @@ BITFLAG(RUNTIMEBITFLAG,
         00000001,
         00000002,
         REMOVE, /* removes object when set                                     */
-        00000008,
+        ISRETICK,
         00000010,
         THROWING_KNIFE_RELATED,
-        00000040,
+        EMBEDDED,
         DEPOSIT, /* depositted (thrown/launching)                               */
         00000100,
         BEENOPENED,
         DESTROYED, /* only set with disabled or destroyed doors                   */
         00000800,
         00001000,
-        00002000,
+        PADLOCKEDDOOR,
         ACTIVATED, /* activated                                                   */
         00008000,
         00010000,
         00020000, /* owner 2bit (0-3) used to                                    */
         00040000, /* attribute kills to players                                  */
-        00080000,
+        HASOWNER,
         00100000,
         00200000,
         00400000,
@@ -404,6 +467,42 @@ BITFLAG(RUNTIMEBITFLAG,
 
 #define RUNTIMEBITFLAG_OWNER    0x60000
 #define RUNTIMEBITSHIFT_OWNER   0x11
+
+BITFLAG(WEAPONSTATBITFLAG,
+        00000001,
+        SINGLE_USE_RELOAD, /* skip from fire to reload animation; item "disappears" after use, redrawn from off-screen like knives" */
+        BURST_FIRE, /* fire three round burst*/
+        HAS_AUTO_AIM, /* auto aim capable*/
+        CLICKY, /* if holding trigger, click if empty */
+        00000020,
+        00000040,
+        00000080,
+        ONLY_1_HANDED, /* requires HOLD_AS_GUN as well */
+        HOLD_AS_GUN, /* default 2 handed*/
+        MIRROR_DUAL, /* mirror double weapon, not copy */
+        SHOW_FIRST_PERSON, /* display 1st person model */
+        FIRST_SHOT_ACCURACY, /* for a single first shot, inaccuracy multiplied by 0.25 */
+        HIDE_FIRST_PERSON_HAND, /* hide first person model in hand */
+        HIDE_FIRST_PERSON_MENU, /* hide first person model in menu */
+        DISABLE_CROUCH, /* can not crouch */
+        PLAYER_STAT_HIT, /* count hits in player statistics */
+        USE_HOLD_TIME, /* increment hold time when used, to consider as weapon of choice */
+        HAS_AMMO,
+        HIDE_AMMO_DISPLAY, /* do not display ammo on screen */
+        CAN_DUAL_WIELD, /* capable of doubles */
+        AMMO_CLIP_LIMIT, /* limit ammo to assigned value on clip */
+        NO_CLIP_RELOADS, /* no ammo clip/reloads - draw straight from ammo supply (right of icon) */
+        00800000,
+        01000000,
+        02000000,
+        04000000,
+        08000000,
+        10000000,
+        20000000,
+        40000000,
+        80000000
+)
+
 
 #define OBJECTTYPE_00 0x00
 #define OBJECTTYPE_01 0x01
@@ -457,6 +556,14 @@ BITFLAG(RUNTIMEBITFLAG,
 #pragma endregion
 
 #pragma region Constants
+
+#define SP_BOOT_SZ 0x10
+#define SP_RMON_SZ 0x300
+#define SP_IDLE_SZ 0x40
+#define SP_SHED_SZ 0x200
+#define SP_MAIN_SZ 0x8000
+#define SP_AUDI_SZ 0x1000
+#define SP_DEBUG_SZ 0x6B0
 
 /*
 Enums Index by adding 1 to the list from the first value, unless this value
@@ -798,28 +905,103 @@ typedef enum CHEAT_IDS
 
 typedef enum CONTROLLER_CONFIG
 {
+    /* 1.1 */
     CONTROLLER_CONFIG_HONEY,
+
+    /* 1.2 */
     CONTROLLER_CONFIG_SOLITARE,
+
+    /* 1.3 */
     CONTROLLER_CONFIG_KISSY,
+
+    /* 1.4 */
     CONTROLLER_CONFIG_GOODNIGHT,
+
+    /* 2.1 */
     CONTROLLER_CONFIG_PLENTY,
+
+    /* 2.2 */
     CONTROLLER_CONFIG_GALORE,
+
+    /* 2.3 */
     CONTROLLER_CONFIG_DOMINO,
+
+    /* 2.4 */
     CONTROLLER_CONFIG_GOODHEAD,
+    
     CONTROLLER_CONFIG_CINEMA
 } CONTROLLER_CONFIG;
+
+enum WALLETBOND_SWITCHNAMES
+{
+    SW_TABS,
+    SW_PAPER,
+    SW_EYESONLY,
+    SW_OHMSS,
+    SW_CONFIDENTIAL,
+    SW_CONFIDENTIAL2,
+    SW_CLASSIFIED,
+    SW_PHOTOBOND,
+    SW_BROSNAN,
+    SW_CONNERY,
+    SW_DALTON,
+    SW_MOORE,
+    SW_PHOTOBRIEF,
+    SW_COVER,
+    SW_PHOTOCOVER,
+    SW_BROSNANCOVER,
+    SW_CONNERYCOVER,
+    SW_DALTONCOVER,
+    SW_MOORECOVER,
+    SW_SLIDES,
+    SW_PICS,
+    GFXHIT0_PICS,
+    SW_BRIEF1,
+    SW_BRIEF2,
+    SW_BRIEF3,
+    SW_BRIEF4,
+    SW_BRIEF5,
+    SW_BRIEF6,
+    SW_BRIEF7,
+    SW_BRIEF8,
+    SW_BRIEF9,
+    SW_BRIEF10,
+    SW_BRIEF11,
+    SW_BRIEF12,
+    SW_BRIEF13,
+    SW_BRIEF14,
+    SW_BRIEF15,
+    SW_BRIEF16,
+    SW_BRIEF17,
+    SW_BRIEF18,
+    SW_BRIEF19,
+    SW_BRIEF20,
+    SW_BLANK
+} ;
+
+typedef enum GAMELENGTH
+{
+    LEN_UNLIMITED,
+    LEN_5MIN,
+    LEN_10MIN,
+    LEN_20MIN,
+    LEN_5PT,
+    LEN_10PT,
+    LEN_20PT,
+    LEN_LAST
+} GAMELENGTH;
 
 typedef enum CUFF_TYPES
 {
     CUFF_BLUE,
-    CUFF_TUX,
+    CUFF_BROSNAN,
     CUFF_JUNGLE,
     CUFF_BOILER,
     CUFF_SNOW,
-    CUFF_WHITE,
-    CUFF_TUX6,
-    CUFF_TUX7,
-    CUFF_TUX8
+    CUFF_CONNERY,
+    CUFF_DALTON,
+    CUFF_MOORE,
+    CUFF_FOLDER
 } CUFF_TYPES;
 
 typedef enum CREDITS_ALIGNMENT
@@ -918,6 +1100,7 @@ typedef enum DEBUG_OPTIONS
     DEB_FOG
 } DEBUG_MODES;
 
+
 typedef enum DIFFICULTY
 {
     DIFFICULTY_MULTI = -1,
@@ -962,6 +1145,37 @@ typedef enum E_EXPLOSIONTYPE
     E_EXPLOSIONTYPE_COUNT
 } E_EXPLOSIONTYPE;
 
+/* index into array_explosion_types.
+* Is this the same as E_EXPLOSIONTYPE ?
+* Some names are based on logic in chrobjWeaponTick method.
+*/
+typedef enum EXPLOSION_DEF
+{
+    EXPLOSION_DEF_00,
+    EXPLOSION_DEF_01,
+    EXPLOSION_DEF_02,
+    EXPLOSION_DEF_03,
+    EXPLOSION_DEF_04,
+    EXPLOSION_DEF_05,
+    EXPLOSION_DEF_06,
+    EXPLOSION_DEF_07,
+    EXPLOSION_DEF_08,
+    EXPLOSION_DEF_09,
+    EXPLOSION_DEF_10,
+    EXPLOSION_DEF_11,
+    EXPLOSION_DEF_DRONE,
+    // used with grenades and mines
+    EXPLOSION_DEF_STANDARD,
+    EXPLOSION_DEF_14,
+    EXPLOSION_DEF_15,
+    EXPLOSION_DEF_16,
+    EXPLOSION_DEF_MASSIVE,
+    EXPLOSION_DEF_PLAYER,
+    EXPLOSION_DEF_FACILITY_REMOTE,
+    EXPLOSION_DEF_20,
+    EXPLOSION_DEF_21
+} EXPLOSION_DEF;
+
 typedef enum GAMEMODE
 {
     GAMEMODE_INTRO = -1,
@@ -977,29 +1191,25 @@ typedef enum GUNHAND //Canonical name
 } GUNHAND;
 
 
-#define HIT_TYPES(HIT) \
-    HIT DEFAULT        \
-    HIT STONE          \
-    HIT WOOD           \
-    HIT METAL          \
-    HIT GLASS          \
-    HIT WATER          \
-    HIT SNOW           \
-    HIT DIRT           \
-    HIT MUD            \
-    HIT TILE           \
-    HIT METALOBJ       \
-    HIT CHR            \
-    HIT GLASS_XLU
 /*Hit Type for triangle (Canonical name)*/
 typedef enum HIT_TYPE
 {
-    CREATE_TYPES(ENUM, HIT, HIT_TYPES)
+    HIT_DEFAULT,
+    HIT_STONE,
+    HIT_WOOD,
+    HIT_METAL,
+    HIT_GLASS,
+    HIT_WATER,
+    HIT_SNOW,
+    HIT_DIRT,
+    HIT_MUD,
+    HIT_TILE,
+    HIT_METALOBJ,
+    HIT_CHR,
+    HIT_GLASS_XLU,
     HIT_TYPE_COUNT
-}HIT_TYPE;
-#ifdef DEBUG
-    char *HIT_TYPE_ToString[] = { CREATE_TYPES(STRINGS, HIT, HIT_TYPES) };
-#endif
+} HIT_TYPE;
+
     
 #define IMAGE(NAME, SZ, HS, HT, F3, F4, F5, F6) IMAGE_ ## NAME,
 typedef enum IMAGEIDS
@@ -1064,7 +1274,12 @@ typedef enum LEVELID
     LEVELID_WAX,
     LEVELID_PAM,
     LEVELID_MAX,
-    LEVELID_TITLE = 90
+    LEVELID_TITLE = 90,
+    LEVELID_BUNKER2_MP  = LEVELID_BUNKER2 + ENVIRONMENTDATA_PLAYERS_4,
+    LEVELID_ARCHIVES_MP = LEVELID_ARCHIVES + ENVIRONMENTDATA_PLAYERS_4,
+    LEVELID_CAVERNS_MP  = LEVELID_CAVERNS + ENVIRONMENTDATA_PLAYERS_4,
+    LEVELID_FACILITY_MP = LEVELID_FACILITY + ENVIRONMENTDATA_PLAYERS_4,
+    LEVELID_EGYPT_MP    = LEVELID_EGYPT + ENVIRONMENTDATA_PLAYERS_4
 } LEVELID;
 
 typedef enum LEVEL_SOLO_SEQUENCE
@@ -1135,6 +1350,17 @@ typedef enum LEVEL_INDEX
     LEVEL_INDEX_MAX = LEVEL_INDEX_X
 } LEVEL_INDEX;
 
+typedef enum TEXT_ALIGNMENT
+{
+    LEFT_ALIGN,
+    CENTER_ALIGN,
+    RIGHT_ALIGN,
+    TOP_ALIGN = LEFT_ALIGN,
+    BOTTOM_ALIGN = RIGHT_ALIGN
+} TEXT_ALIGNMENT;
+
+
+
 typedef enum MENU
 {
     MENU_INVALID = -1,
@@ -1184,30 +1410,30 @@ typedef enum MISSION_BRIEFING
 typedef enum MODELNODE_OPCODE
 {
     MODELNODE_OPCODE_NULL,
-    MODELNODE_OPCODE_HEADERRECORD,
-    MODELNODE_OPCODE_GROUPRECORD,
-    MODELNODE_OPCODE_UNUSED_03,
-    MODELNODE_OPCODE_DISPLAYLISTRECORD,
-    MODELNODE_OPCODE_UNUSED_05,
-    MODELNODE_OPCODE_UNUSED_06,
-    MODELNODE_OPCODE_OP07RECORD,
-    MODELNODE_OPCODE_LODRECORD,
-    MODELNODE_OPCODE_BSPRECORD,
-    MODELNODE_OPCODE_BOUNDINGBOXRECORD,
-    MODELNODE_OPCODE_OP11RECORD,
-    MODELNODE_OPCODE_GUNFIRERECORD,
-    MODELNODE_OPCODE_SHADOWRECORD,
-    MODELNODE_OPCODE_OP14RECORD,
-    MODELNODE_OPCODE_INTERLINKAGERECORD,
-    MODELNODE_OPCODE_OP16RECORD,
-    MODELNODE_OPCODE_UNUSED_17,
-    MODELNODE_OPCODE_SWITCHRECORD,
-    MODELNODE_OPCODE_UNUSED_19,
-    MODELNODE_OPCODE_UNUSED_20,
-    MODELNODE_OPCODE_GROUPSIMPLERECORD,
-    MODELNODE_OPCODE_DISPLAYLISTPRIMARYRECORD,
-    MODELNODE_OPCODE_HEADPLACEHOLDERRECORD,
-    MODELNODE_OPCODE_DISPLAYLIST_COLLISIONRECORD,
+    MODELNODE_OPCODE_HEADER,
+    MODELNODE_OPCODE_GROUP,
+    MODELNODE_OPCODE_OP03,
+    MODELNODE_OPCODE_DL,
+    MODELNODE_OPCODE_OP05,
+    MODELNODE_OPCODE_OP06,
+    MODELNODE_OPCODE_OP07,
+    MODELNODE_OPCODE_LOD,
+    MODELNODE_OPCODE_BSP,
+    MODELNODE_OPCODE_BBOX,
+    MODELNODE_OPCODE_OP11,
+    MODELNODE_OPCODE_GUNFIRE,
+    MODELNODE_OPCODE_SHADOW,
+    MODELNODE_OPCODE_OP14,
+    MODELNODE_OPCODE_INTERLINK,
+    MODELNODE_OPCODE_OP16,
+    MODELNODE_OPCODE_OP17,
+    MODELNODE_OPCODE_SWITCH,
+    MODELNODE_OPCODE_OP19,
+    MODELNODE_OPCODE_OP20,
+    MODELNODE_OPCODE_GROUPSIMPLE,
+    MODELNODE_OPCODE_DLPRIMARY,
+    MODELNODE_OPCODE_HEAD,
+    MODELNODE_OPCODE_DLCOLLISION,
     MODELNODE_OPCODE_MAX
 } MODELNODE_OPCODE;
 
@@ -1411,6 +1637,7 @@ typedef enum PLAYER_ID
 } PLAYER_ID;
 
 #define MAX_PLAYER_COUNT 4
+#define MAX_FOLDER_COUNT 4
 
 typedef enum RGBA_ENUM
 {
@@ -2029,14 +2256,30 @@ typedef enum TEXTBANK_LEVEL_INDEX
     LMISC        /* Cheat options */
 } TEXTBANK_LEVEL_INDEX;
 
+#define GUNSIGHTREASON_1         0x01
+#define GUNSIGHTREASON_NOTAIMING 0x02
+#define GUNSIGHTREASON_NOCONTROL 0x04
+#define GUNSIGHTREASON_DAMAGE    0x10
 
+#define GUNAMMOREASON_OPTION     0x01
+#define GUNAMMOREASON_NOCONTROL  0x02
+#define GUNAMMOREASON_DAMAGE     0x08
 
 typedef enum WATCH_ANIMATION_STATE_IDS {
     WATCH_ANIMATION_0x0 = 0,
-    WATCH_ANIMATION_0x4 = 4,
-    WATCH_ANIMATION_0x5 = 5,
-    WATCH_ANIMATION_0x6 = 6,
-    WATCH_ANIMATION_0xc = 12
+    WATCH_ANIMATION_0x1,
+    WATCH_ANIMATION_0x2,
+    WATCH_ANIMATION_0x3,
+    WATCH_ANIMATION_0x4,
+    WATCH_ANIMATION_0x5,
+    WATCH_ANIMATION_0x6,
+    WATCH_ANIMATION_0x7,
+    WATCH_ANIMATION_0x8,
+    WATCH_ANIMATION_0x9,
+    WATCH_ANIMATION_0xa,
+    WATCH_ANIMATION_0xb,
+    WATCH_ANIMATION_0xc,
+    WATCH_ANIMATION_0xd
 } WATCH_ANIMATION_STATE;
 
 typedef enum WATCH_BRIEFING_PAGE
@@ -2097,6 +2340,26 @@ typedef enum SPSEGMENT
     SPSEGMENT_BG_DL      = 15
 } SPSEGMENT;
 
+typedef enum TVCMD
+{
+    TVCMD_STOPSCROLL     = 0x00,
+    TVCMD_SCROLLRELX     = 0x01,
+    TVCMD_SCROLLRELY     = 0x02,
+    TVCMD_SCROLLABSX     = 0x03,
+    TVCMD_SCROLLABSY     = 0x04,
+    TVCMD_SCALEABSX      = 0x05,
+    TVCMD_SCALEABSY      = 0x06,
+    TVCMD_SETTEXTURE     = 0x07,
+    TVCMD_PAUSE          = 0x08,
+    TVCMD_SETCMDLIST     = 0x09,
+    TVCMD_RANDSETCMDLIST = 0x0a,
+    TVCMD_RESTART        = 0x0b,
+    TVCMD_YIELD          = 0x0c,
+    TVCMD_SETCOLOUR      = 0x0d,
+    TVCMD_ROTATEABS      = 0x0e,
+    TVCMD_ROTATEREL      = 0x0f
+} TVCMD;
+
 #pragma region Object Instance Stuff
     typedef enum BODIES
     {
@@ -2105,7 +2368,12 @@ typedef enum SPSEGMENT
         BODY_Russian_Soldier,
         BODY_Russian_Infantry,
         BODY_Janus_Special_Forces,
-        BODY_Tuxedo,
+        BODY_Brosnan_Tuxedo,
+        /*
+        BODY_Connery_Tuxedo,
+        BODY_Dalton_Tuxedo,
+        BODY_Moore_Tuxedo,
+        */
         BODY_Boris,
         BODY_Ourumov,
         BODY_Trevelyan_Janus,
@@ -2225,11 +2493,16 @@ typedef enum SPSEGMENT
         HEAD_Female_Mandy,
         HEAD_Female_Vivien,
         HEAD_BOND_START,
-        HEAD_Male_Pierce_Bond_1 = HEAD_BOND_START,
-        HEAD_Male_Pierce_Bond_2,
-        HEAD_Male_Pierce_Bond_3,
-        HEAD_Male_Pierce_Bond_Parka,
-        HEAD_Male_Pierce_Bond_Tuxedo_DEFAULT,
+        HEAD_Male_Brosnan_Boiler = HEAD_BOND_START,
+        HEAD_Male_Brosnan_Default,
+        HEAD_Male_Brosnan_Jungle,
+        HEAD_Male_Brosnan_Parka,
+        HEAD_Male_Brosnan_Tuxedo,
+        /*
+        HEAD_Male_Connery_Tuxedo,
+        HEAD_Male_Dalton_Tuxedo,
+        HEAD_Male_Moore_Tuxedo,
+        */
         HEAD_Natalya_Jungle_Fatigues,
         HEAD_END,
         /*The following are some maybe helpfull counts (maybe GE doesnt need them, but thought Id ad while here)*/
@@ -2603,26 +2876,19 @@ typedef enum SPSEGMENT
     } PROJECTILES;
 
     /** For use in Prop Records (Not to be confused with Object (canonical - Prop Definition) Records  which use PROPDEF (canonical Name)) */
-    #define PROP_TYPES(TYPE)\
-        TYPE NUL            \
-        TYPE OBJ            \
-        TYPE DOOR           \
-        TYPE CHR            \
-        TYPE WEAPON         \
-        TYPE PLAYER         \
-        TYPE VIEWER         \
-        TYPE EXPLOSION      \
-        TYPE SMOKE
-
     typedef enum PROP_TYPE
     {
-        CREATE_TYPES(ENUM, PROP_TYPE, PROP_TYPES)
+        PROP_TYPE_NUL,
+        PROP_TYPE_OBJ,
+        PROP_TYPE_DOOR,
+        PROP_TYPE_CHR,
+        PROP_TYPE_WEAPON,
+        PROP_TYPE_PLAYER,
+        PROP_TYPE_VIEWER,
+        PROP_TYPE_EXPLOSION,
+        PROP_TYPE_SMOKE,
         PROP_TYPE_MAX
     } PROP_TYPE;
-
-    #ifdef DEBUG
-    char *PROP_TYPE_ToString[] = { CREATE_TYPES(STRINGS, PROP_TYPE, PROP_TYPES) };
-    #endif
 
 #pragma endregion
 
@@ -2630,79 +2896,75 @@ typedef enum SPSEGMENT
     // used by characters
      
     /*Action Type to be performed by chr (canonical names)*/
-    #define ACT_STATUS(STATUS)  \
-        STATUS NONE             \
-        STATUS NORMAL           \
-        STATUS COVERWAIT        \
-        STATUS GRENADEWAIT      \
-        STATUS WAITING          \
-        STATUS COVERGOTO        \
-        STATUS COVERBREAK       \
-        STATUS COVERSEEN        \
-        STATUS FLANKLEFT        \
-        STATUS FLANKRIGHT       \
-        STATUS DODGE            \
-        STATUS GRENADE          \
-        STATUS WAITSEEN         \
-        STATUS WITHDRAW         \
-        STATUS SHOOTING         \
-        STATUS SYNCSHOOT        \
-        STATUS WAITTIMEOUT      \
-        STATUS COVERTIMEOUT     \
-        STATUS TRACKING         \
-        STATUS RETREAT          \
-        STATUS SURRENDER        \
-        STATUS TALKING          \
-        STATUS LISTENING        \
-        STATUS GOTOALARM        \
-        STATUS BOTFRIENDFOLLOW  \
-        STATUS BOTHIDE          \
-        STATUS BOTPATH          \
-        STATUS BOTINJURED       \
-        STATUS BOTNORMAL        \
-        STATUS BOTSHOOTING      \
-        STATUS DRUGGED          \
-        STATUS PANIC            \
-        STATUS RUNFROMGRENADE   \
-        STATUS UNARMEDATTACK
     typedef enum ACT_STATUS
     {
-        CREATE_TYPES(ENUM, , ACT_STATUS)
-            ACT_STATUS_MAX
+        ACT_STATUS_NONE,
+        ACT_STATUS_NORMAL,
+        ACT_STATUS_COVERWAIT,
+        ACT_STATUS_GRENADEWAIT,
+        ACT_STATUS_WAITING,
+        ACT_STATUS_COVERGOTO,
+        ACT_STATUS_COVERBREAK,
+        ACT_STATUS_COVERSEEN,
+        ACT_STATUS_FLANKLEFT,
+        ACT_STATUS_FLANKRIGHT,
+        ACT_STATUS_DODGE,
+        ACT_STATUS_GRENADE,
+        ACT_STATUS_WAITSEEN,
+        ACT_STATUS_WITHDRAW,
+        ACT_STATUS_SHOOTING,
+        ACT_STATUS_SYNCSHOOT,
+        ACT_STATUS_WAITTIMEOUT,
+        ACT_STATUS_COVERTIMEOUT,
+        ACT_STATUS_TRACKING,
+        ACT_STATUS_RETREAT,
+        ACT_STATUS_SURRENDER,
+        ACT_STATUS_TALKING,
+        ACT_STATUS_LISTENING,
+        ACT_STATUS_GOTOALARM,
+        ACT_STATUS_BOTFRIENDFOLLOW,
+        ACT_STATUS_BOTHIDE,
+        ACT_STATUS_BOTPATH,
+        ACT_STATUS_BOTINJURED,
+        ACT_STATUS_BOTNORMAL,
+        ACT_STATUS_BOTSHOOTING,
+        ACT_STATUS_DRUGGED,
+        ACT_STATUS_PANIC,
+        ACT_STATUS_RUNFROMGRENADE,
+        ACT_STATUS_UNARMEDATTACK,
+        ACT_STATUS_MAX
     } ACT_STATUS;
 
-    #ifdef DEBUG
-    char *ACT_STATUS_ToString[] = {CREATE_TYPES(STRINGS, , ACT_STATUS)};
-    #endif
-
-    #define ACT_TYPES(ACT)  \
-        ACT INIT            \
-        ACT STAND           \
-        ACT KNEEL           \
-        ACT ANIM            \
-        ACT DIE             \
-        ACT DEAD            \
-        ACT ARGH            \
-        ACT PREARGH         \
-        ACT ATTACK          \
-        ACT ATTACKWALK      \
-        ACT ATTACKROLL      \
-        ACT SIDESTEP        \
-        ACT JUMPOUT         \
-        ACT RUNPOS          \
-        ACT PATROL          \
-        ACT GOPOS           \
-        ACT SURRENDER       \
-        ACT LOOKATTARGET    \
-        ACT SURPRISED       \
-        ACT STARTALARM      \
-        ACT THROWGRENADE    \
-        ACT TURNDIR         \
-        ACT TEST            \
-        ACT BONDINTRO       \
-        ACT BONDDIE         \
-        ACT BONDMULTI       \
-    /*	PD ONLY
+    /*Action Type to be performed by chr (canonical names)*/
+    typedef enum ACT_TYPE
+    {
+        ACT_INIT,
+        ACT_STAND,
+        ACT_KNEEL,
+        ACT_ANIM,
+        ACT_DIE,
+        ACT_DEAD,
+        ACT_ARGH,
+        ACT_PREARGH,
+        ACT_ATTACK,
+        ACT_ATTACKWALK,
+        ACT_ATTACKROLL,
+        ACT_SIDESTEP,
+        ACT_JUMPOUT,
+        ACT_RUNPOS,
+        ACT_PATROL,
+        ACT_GOPOS,
+        ACT_SURRENDER,
+        ACT_LOOKATTARGET,
+        ACT_SURPRISED,
+        ACT_STARTALARM,
+        ACT_THROWGRENADE,
+        ACT_TURNDIR,
+        ACT_TEST,
+        ACT_BONDINTRO,
+        ACT_BONDDIE,
+        ACT_BONDMULTI,
+        /*	PD ONLY
         ACT_BOT_ATTACKSTAND
         ACT_BOT_ATTACKKNEEL
         ACT_BOT_ATTACKSTRAFE
@@ -2713,17 +2975,9 @@ typedef enum SPSEGMENT
         ACT_ROBOTATTACK
         ACT_SKJUMP* 
         */
-    /*Action Type to be performed by chr (canonical names)*/
-    typedef enum ACT_TYPE
-    {
-        CREATE_TYPES(ENUM, ACT, ACT_TYPES)
         ACT_NULL,
         ACT_TYPE_MAX
     } ACT_TYPE;
-
-    #ifdef DEBUG
-    char *ACT_TYPE_ToString[] = {CREATE_TYPES(STRINGS, ACT, ACT_TYPES) "ACT_NULL"};
-    #endif
 
 
     typedef enum AMMOTYPE
@@ -2941,6 +3195,12 @@ typedef enum SPSEGMENT
 #pragma endregion
 
 #pragma region Setup 
+
+    /**
+     * enums were listed in a particular order, it appears the first few are associated with the start/intro
+     * of a level:
+     *     if (g_CurrentPlayer->redbloodfinished && g_CurrentPlayer->deathanimfinished && (D_80036510 >= CAMERAMODE_SWIRL))
+    */
    typedef enum CAMERAMODE
     {
         CAMERAMODE_NONE,
@@ -2948,8 +3208,8 @@ typedef enum SPSEGMENT
         CAMERAMODE_FADESWIRL,
         CAMERAMODE_SWIRL,
         CAMERAMODE_FP,
-        CAMERAMODE_UNK5,
-        CAMERAMODE_UNK6,
+        CAMERAMODE_DEATH_CAM_FIRST,
+        CAMERAMODE_DEATH_CAM_SECOND,
         CAMERAMODE_POSEND,
         CAMERAMODE_FP_NOINPUT,
         CAMERAMODE_MP,
@@ -2988,6 +3248,13 @@ typedef enum SPSEGMENT
         OBJECTIVESTATUS_COMPLETE,
         OBJECTIVESTATUS_FAILED
     } OBJECTIVESTATUS;
+
+    typedef enum TANK_RUN_STATE
+    {
+        TANK_RUN_STATE_NOT_RUNNING = 0,
+        TANK_RUN_STATE_STARTING,
+        TANK_RUN_STATE_RUNNING
+    } TANK_RUN_STATE;
 
 #pragma endregion
 
@@ -3057,15 +3324,21 @@ typedef enum SPSEGMENT
 #define NUMBER_SHOTGUN_BULLETS   5
 
 #ifdef VERSION_EU
-#define NTSC 0
-#define PAL 1
+    #define NTSC 0
+    #define PAL 1
+    #define TICKS_PER_SECOND 50
+    #define FRAMES_PER_SECOND 25
 #else
-#define NTSC 1
-#define PAL 0
+    #define NTSC 1
+    #define PAL 0
+    #define TICKS_PER_SECOND 60
+    #define FRAMES_PER_SECOND 30
 #endif
 
 #pragma endregion
 
+#define S32_MAX  2147483647
+#define U32_MAX  4294967295
 #pragma region Inline Macro Functions
 #ifndef _MATH_EXT_H_
     #define M_TAU_F               6.2831855f
@@ -3276,6 +3549,15 @@ typedef enum SPSEGMENT
 #define ARRAYCOUNT(a) (s32)(sizeof(a) / sizeof(a[0]))
 #define ALIGN8(val)         (((val) + 0x7 | 0x7) ^ 0x7)
 #define RANDOMFRAC() ((f32) randomGetNext() * 2.3283064e-10f)
+#define MAXFLOAT ((float)3.40282346638528860e+38)
+
+#define HUDHALIGN_RIGHT  0
+#define HUDHALIGN_LEFT   1
+#define HUDHALIGN_MIDDLE 2
+
+#define HUDVALIGN_BOTTOM 0
+#define HUDVALIGN_TOP    1
+#define HUDVALIGN_MIDDLE 2
 
 #pragma endregion
 

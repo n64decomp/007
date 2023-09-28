@@ -35,7 +35,7 @@
 
 // forward declarations
 
-u32 check_if_item_held_like_pistol            (PropRecord *arg0);
+u32 weaponIsOneHanded            (PropRecord *arg0);
 void chrlvIdleAnimationRelated                (ChrRecord *self, f32 arg1);
 f32 chrlvGetGuard007SpeedRating               (ChrRecord *self, f32 min, f32 max);
 s32 chrlvGetGuard007SpeedRatingInt            (ChrRecord *self, s32 arg1);
@@ -43,9 +43,9 @@ f32 chrlvGetGuard007ArghRating                (ChrRecord *self, f32 min, f32 max
 void chrlvKneelingAnimationRelated            (ChrRecord *self);
 void chrlvIdleAnimationRelated7F023E14        (ChrRecord *self, f32 arg1);
 void chrlvKneelingAnimationRelated7F023E48    (ChrRecord *self);
-void chrlvActorKneel                          (ChrRecord *self);
+void chrKneelChooseAnimation                          (ChrRecord *self);
 void chrlvPerformAnimationForActor            (ChrRecord *self, s32 arg1, s32 arg2, s32 arg3, u8 arg4, s32 arg5);
-void chrlvExtendLeftHandAnimationRelated      (ChrRecord *self);
+void chrStartAlarmChooseAnimation      (ChrRecord *self);
 void chrlvThrowGrenadeAnimationRelated        (ChrRecord *self, PropRecord *arg1, s32 arg2, s32 arg3);
 void chrlvSpotBondAnimationRelated            (ChrRecord *self, f32 arg1);
 void chrlvActorShuffleFeet                    (ChrRecord *self);
@@ -73,7 +73,7 @@ s32 chrlvStanRoomRelatedPad                   (ChrRecord *self, PadRecord *arg1)
 void play_sound_for_shot_actor                (ChrRecord *);
 void sub_GAME_7F025560                        (ChrRecord *self, s32 attack_type, s32 arg2);
 coord3d *chrlvGetChrOrPresetLocation          (ChrRecord *self, s32 flags, s32 lookup_id, StandTile **stan);
-void sub_GAME_7F02D184                        (ChrRecord *self);
+void chrStopFiring                        (ChrRecord *self);
 void sub_GAME_7F0281F4                        (ChrRecord *self);
 s32 plot_course_for_actor                     (ChrRecord *self, coord3d *arg1, StandTile *stan, SPEED speed);
 void chrlvPlotCourseRelated                   (ChrRecord *self);
@@ -143,7 +143,7 @@ s32 chrResolveId                              (ChrRecord *self, s32 id);
 s32 sub_GAME_7F033780                         (waypoint *arg0, coord3d *arg1, f32 angle);
 s32 chrlvFindPathNeighborRelated              (coord3d *bondpos, StandTile *stan, f32 rot, u8 quadrant);
 s32 sub_GAME_7F033EAC                         (coord3d *arg0, StandTile *arg1);
-PropRecord *actionblock_guard_constructor_BDBE(s32 bodynum, s32 headnum, coord3d *pos, StandTile *stan, f32 yrot, AIListRecord *ailist, s32 arg5);
+PropRecord *chrSpawnAtCoord(s32 bodynum, s32 headnum, coord3d *pos, StandTile *stan, f32 angle, AIListRecord *ailist, s32 spawnflags);
 void chrlvInitActAttack                       (ChrRecord *self, struct anim_group_info ** arg1, s32 arg2, point2d *arg3, s32 attack_type, s32 arg5, s32 arg6);
 s32 chrlvPatrolCalculateStep                  (ChrRecord *self, bool *forward, s32 numsteps);
 s32 sub_GAME_7F028510                         (coord3d *arg0, StandTile *arg1);
@@ -218,7 +218,7 @@ s32 get_current_random_body(void)
  * @param id: Integer Index of body
  * @return an integer ID of a head to use
  */
-s32 select_psuedorandom_heads(s32 id)
+s32 bodyChooseHead(s32 id)
 {
     s32 ret;
 
@@ -281,7 +281,7 @@ void expand_09_characters(s32 stageid, GuardRecord *arg1, s32 arg2)
         {
             headid = (arg1->HeadID >= 0)
                 ? arg1->HeadID
-                : select_psuedorandom_heads(bodyid);
+                : bodyChooseHead(bodyid);
         }
 
         sp38 = retrieve_header_for_body_and_head(bodyid, headid, (u32) arg1->bitflags);
@@ -289,7 +289,7 @@ void expand_09_characters(s32 stageid, GuardRecord *arg1, s32 arg2)
         if (sp38 != 0)
         {
             sp3C = atan2f(pad->look.f[0], pad->look.f[2]);
-            temp_v0_4 = replace_GUARDdata_with_actual_values(sp38, (PadRecord *)&sp48, sp3C, sp54, ailistFindById(arg1->AIListID));
+            temp_v0_4 = chrAllocate(sp38, (PadRecord *)&sp48, sp3C, sp54, ailistFindById(arg1->AIListID));
             
             if (temp_v0_4 != 0)
             {
@@ -327,13 +327,13 @@ void expand_09_characters(s32 stageid, GuardRecord *arg1, s32 arg2)
  * Address 0x7F023910.
  * dont think this is right, shouldnt it check for gun flags not chr?
  */
-u32 check_if_item_held_like_pistol(PropRecord *arg0)
+u32 weaponIsOneHanded(PropRecord *arg0)
 {
     if (arg0 != NULL)
     {
         ChrRecord *v = (ChrRecord*)arg0->voidp;
 
-        return bondwalkItemCheckBitflags(v->act_bytes.padding[84], 0x100U);
+        return bondwalkItemCheckBitflags(v->act_bytes.padding[84], WEAPONSTATBITFLAG_ONLY_1_HANDED);
     }
 
     return 0U;
@@ -355,8 +355,8 @@ void chrlvIdleAnimationRelated(ChrRecord *self, f32 duration)
     if (
         ((left != NULL) && (right != NULL))
         || ((left == NULL) && (right == NULL))
-        || (check_if_item_held_like_pistol(left) != 0)
-        || (check_if_item_held_like_pistol(right) != 0))
+        || (weaponIsOneHanded(left) != 0)
+        || (weaponIsOneHanded(right) != 0))
     {
         modelSetAnimation(self->model, (void*)&ptr_animation_table->data[(s32)&ANIM_DATA_idle_unarmed], randomGetNext() & 1, 0, 0.25f, duration);
         modelSetAnimLooping(self->model, 0, 16.0f);
@@ -384,41 +384,41 @@ void chrlvIdleAnimationRelated(ChrRecord *self, f32 duration)
 #define RATE 1.0f
 #endif
 
-void chrlvIdleAnimationRelated7F023A94(ChrRecord *self, f32 arg1)
+void chrlvIdleAnimationRelated7F023A94(ChrRecord *self, f32 mergetime)
 {
-    f32 f2;
+    f32 fsleep;
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
     self->actiontype = ACT_STAND;
 
-    self->act_stand.unk02c = 0;
+    self->act_stand.prestand = 0;
     self->act_stand.face_entitytype = 0;
     self->act_stand.face_entityid = 0;
-    self->act_stand.unk038 = 0;
-    self->act_stand.unk03c = 2;
-    self->act_stand.unk040 = 0;
+    self->act_stand.reaim = 0;
+    self->act_stand.turning = 2;
+    self->act_stand.checkfacingwall = 0;
     //eu bug, doesnt use pal version of CHRLV_SEEN_RECENT_CHECK) + CHRLV_DEFAULT_TIMER;
     //so temp hardcoded to 120) + 180;
-    self->act_stand.unk044 = (randomGetNext() % (u32) 120) + 180;
+    self->act_stand.wallcount = (randomGetNext() % (u32) 120) + 180;
 
-    f2 = arg1;
+    fsleep = mergetime;
 
-    if (self->model->unka4 != RATE)
+    if (self->model->playspeed != RATE)
     {
 #if defined(BUGFIX_R1)
-        f2 *= (RATE / self->model->unka4);
+        fsleep *= (RATE / self->model->playspeed);
 #else
-        f2 = arg1 / self->model->unka4;
+        fsleep = mergetime / self->model->playspeed;
 #endif
     }
 
-    if (f2 > 127.0f)
+    if (fsleep > 127.0f)
     {
-        f2 = 127.0f;
+        fsleep = 127.0f;
     }
 
-    self->sleep = (s8) (s32) f2;
-    chrlvIdleAnimationRelated(self, arg1);
+    self->sleep = (s8) (s32) fsleep;
+    chrlvIdleAnimationRelated(self, mergetime);
 }
 
 
@@ -476,22 +476,23 @@ f32 chrlvGetGuard007ArghRating(ChrRecord *self, f32 min, f32 max)
 
 /**
  * Address 0x7F023CB8.
+ * PD: chrStand
  */
 void chrlvKneelingAnimationRelated(ChrRecord *self)
 {
     if (self->actiontype == ACT_KNEEL)
     {
-        sub_GAME_7F02D184(self);
+        chrStopFiring(self);
 
         self->actiontype = ACT_STAND;
-        self->act_stand.unk02c = 1;
+        self->act_stand.prestand = 1;
         self->act_stand.face_entitytype = 0;
         self->act_stand.face_entityid = 0;
-        self->act_stand.unk038 = 0;
-        self->act_stand.unk03c = 2;
-        self->act_stand.unk040 = 0;       
+        self->act_stand.reaim = 0;
+        self->act_stand.turning = 2;
+        self->act_stand.checkfacingwall = 0;       
         // bug/typo??: this is the only code like this not adjusted for VERSION_EU
-        self->act_stand.unk044 = (randomGetNext() % 120) + 180;
+        self->act_stand.wallcount = (randomGetNext() % 120) + 180;
         self->sleep = 0;
 
         if ((s32)objecthandlerGetModelAnim(self->model) == (s32)&ANIM_DATA_fire_kneel_forward_one_handed_weapon_slow + (s32)&ptr_animation_table->data)
@@ -515,11 +516,12 @@ void chrlvKneelingAnimationRelated(ChrRecord *self)
 
 /**
  * Address 0x7F023E14.
+ * PD: func0f02ed28
  */
 void chrlvIdleAnimationRelated7F023E14(ChrRecord *self, f32 arg1)
 {
     chrlvIdleAnimationRelated7F023A94(self, arg1);
-    self->act_stand.unk040 = 1;
+    self->act_stand.checkfacingwall = 1;
 }
 
 
@@ -527,11 +529,12 @@ void chrlvIdleAnimationRelated7F023E14(ChrRecord *self, f32 arg1)
 
 /**
  * Address 0x7F023E48.
+ * PD: chrStop
  */
 void chrlvKneelingAnimationRelated7F023E48(ChrRecord *self)
 {
     chrlvKneelingAnimationRelated(self);
-    self->act_stand.unk040 = 1;
+    self->act_stand.checkfacingwall = 1;
 }
 
 
@@ -540,26 +543,27 @@ void chrlvKneelingAnimationRelated7F023E48(ChrRecord *self)
 
 /**
  * Address 0x7F023E74.
+ * PD: chrKneelChooseAnimation
  */
-void chrlvActorKneel(ChrRecord *self)
+void chrKneelChooseAnimation(ChrRecord *self)
 {
     PropRecord *left;
     PropRecord *right;
 
     left = chrGetEquippedWeaponProp(self, GUNLEFT);
     right = chrGetEquippedWeaponProp(self, GUNRIGHT);
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
     
-    if (((left != NULL) && (right != NULL))
-        || ((left == NULL) && (right == NULL))
-        || (check_if_item_held_like_pistol(left) != 0)
-        || (check_if_item_held_like_pistol(right) != 0))
+    if ((left && right)
+        || (!left && !right)
+        || weaponIsOneHanded(left)
+        || weaponIsOneHanded(right))
     {
         s32 r = randomGetNext() & 1;
         modelSetAnimation(self->model, (struct ModelAnimation*)&ptr_animation_table->data[(s32)&ANIM_DATA_fire_kneel_forward_one_handed_weapon_slow], r, 0.0f, chrlvGetGuard007SpeedRating(self, 0.5f, 0.8f), 16.0f);
         modelSetAnimEndFrame(self->model, 28.0f);
     }
-    else if ((right != NULL) || (left != NULL))
+    else if (right || left)
     {
         modelSetAnimation(self->model, (struct ModelAnimation*)&ptr_animation_table->data[(s32)&ANIM_DATA_fire_kneel_left_leg], left != NULL, 0.0f, chrlvGetGuard007SpeedRating(self, 0.5f, 0.8f), 16.0f);
         modelSetAnimEndFrame(self->model, 27.0f);
@@ -585,7 +589,7 @@ void chrlvPerformAnimationForActor(ChrRecord *self, s32 arg1, s32 arg2, s32 arg3
         phi_f0 = -0.5f;
     }
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
     modelSetAnimation(self->model, (void *) animation_table_ptrs1[arg1], (arg4 & 1) != 0, farg2, phi_f0, (f32)arg5);
 
     if (arg3 >= 0)
@@ -623,32 +627,29 @@ void chrlvPerformAnimationForActor(ChrRecord *self, s32 arg1, s32 arg2, s32 arg3
  * Extend left hand = ACT_STARTALARM.
  * 
  * Address 0x7F024150.
+ * PD: chrStartAlarmChooseAnimation
  */
-void chrlvExtendLeftHandAnimationRelated(ChrRecord *self)
+void chrStartAlarmChooseAnimation(ChrRecord *self)
 {
-    PropRecord *left;
-    PropRecord *right;
-    s32 phi_a2;
+    PropRecord *left = chrGetEquippedWeaponProp(self, GUNLEFT);
+    PropRecord *right = chrGetEquippedWeaponProp(self, GUNRIGHT);
+    bool flip = FALSE;
 
-    left = chrGetEquippedWeaponProp(self, GUNLEFT);
-    right = chrGetEquippedWeaponProp(self, GUNRIGHT);
-
-    phi_a2 = 0;
-    if ((left != NULL) && (right == NULL))
+    if (left && !right)
     {
-        phi_a2 = 1;
+        flip = TRUE;
     }
-    else if (((left != NULL) && (right != NULL)) || ((left == NULL) && (right == NULL)))
+    else if ((left && right) || (!left && !right))
     {
-        phi_a2 = randomGetNext() & 1;
+        flip = randomGetNext() & 1;
     }
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
 
     self->actiontype = ACT_STARTALARM;
     self->sleep = 0;
 
-    modelSetAnimation(self->model, (void*)&ptr_animation_table->data[(s32)&ANIM_DATA_extending_left_hand], phi_a2, 40.0f, 1.0f, 16.0f);
+    modelSetAnimation(self->model, (void*)&ptr_animation_table->data[(s32)&ANIM_DATA_extending_left_hand], flip, 40.0f, 1.0f, 16.0f);
     modelSetAnimEndFrame(self->model, 82.0f);
 }
 
@@ -656,10 +657,11 @@ void chrlvExtendLeftHandAnimationRelated(ChrRecord *self)
 
 /**
  * Address 0x7F024238.
+ * PD: chrThrowGrenade
  */
 void chrlvThrowGrenadeAnimationRelated(ChrRecord *self, PropRecord *arg1, s32 arg2, s32 arg3)
 {
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
 
     self->actiontype = ACT_THROWGRENADE;
     self->sleep = 0;
@@ -722,7 +724,7 @@ void chrlvActorShuffleFeet(ChrRecord *self)
     if ((temp_f0 < 0.17453294f) || (temp_f0 > 6.1086526f))
     {
         chrlvSpotBondAnimationRelated(self, 16.0f);
-        sub_GAME_7F02D184(self);
+        chrStopFiring(self);
         self->actiontype = ACT_SURPRISED;
         self->sleep = 0;
 
@@ -742,7 +744,7 @@ void chrlvActorShuffleFeet(ChrRecord *self)
  */
 void chrlvSurrenderAnimationRelated(ChrRecord *self)
 {
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
     self->actiontype = ACT_SURPRISED;
     self->sleep = 0;
     modelSetAnimation(self->model, (struct ModelAnimation*)&ptr_animation_table->data[(s32)&ANIM_DATA_surrendering_armed], randomGetNext() & 1, 0.0f, chrlvGetGuard007SpeedRating(self, 0.35f, 0.56f), 16.0f);
@@ -753,6 +755,7 @@ void chrlvSurrenderAnimationRelated(ChrRecord *self)
 
 /**
  * Address 0x7F024548.
+ * PD: chrSurprisedChooseAnimation
  */
 void chrlvActorLookFlustered(ChrRecord *self)
 {
@@ -760,7 +763,7 @@ void chrlvActorLookFlustered(ChrRecord *self)
 
     sp2C = randomGetNext() % 3U;
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
 
     self->actiontype = ACT_SURPRISED;
     self->sleep = 0;
@@ -785,6 +788,7 @@ void chrlvActorLookFlustered(ChrRecord *self)
 
 /**
  * Address 0x7F024648.
+ * PD: chrSurrenderChooseAnimation
  */
 void chrlvActorThrowWeaponSurrender(ChrRecord *self)
 {
@@ -796,7 +800,7 @@ void chrlvActorThrowWeaponSurrender(ChrRecord *self)
         left = chrGetEquippedWeaponProp(self, GUNLEFT);
         right = chrGetEquippedWeaponProp(self, GUNRIGHT);
 
-        sub_GAME_7F02D184(self);
+        chrStopFiring(self);
 
         self->actiontype = ACT_SURRENDER;
 
@@ -839,7 +843,7 @@ void chrlvActorFadeAway(ChrRecord *self)
 {
     if (self->actiontype != ACT_DEAD)
     {
-        sub_GAME_7F02D184(self);
+        chrStopFiring(self);
         self->actiontype = ACT_DEAD;
         self->act_dead.allowfade = -1;
         self->sleep = 0;
@@ -851,6 +855,7 @@ void chrlvActorFadeAway(ChrRecord *self)
 /**
  * chrStepToSide
  * Address 0x7F024800.
+ * PD: chrSidestepChooseAnimation (Somewhat similar)
  */
 void chrlvSideStepAnimationRelated(ChrRecord *self, GUNHAND side)
 {
@@ -869,16 +874,16 @@ void chrlvSideStepAnimationRelated(ChrRecord *self, GUNHAND side)
         sp2C = randomGetNext() & 1;
         phi_v1 = randomGetNext() & 1;
     }
-    else if (check_if_item_held_like_pistol(left) == 0)
+    else if (weaponIsOneHanded(left) == 0)
     {
-        if ((check_if_item_held_like_pistol(right) == 0) && ((left != NULL) || (right != NULL)))
+        if ((weaponIsOneHanded(right) == 0) && ((left != NULL) || (right != NULL)))
         {
             sp2C = left != 0;
             phi_v1 = randomGetNext() & 1;
         }
     }
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
 
     self->actiontype = ACT_SIDESTEP;
     self->sleep = 0;
@@ -920,6 +925,7 @@ void chrlvSideStepAnimationRelated(ChrRecord *self, GUNHAND side)
 /**
  * chrHopToSide
  * Address 0x7F024A84.
+ * PD: chrSidestepChooseAnimation (somewhat similar)
  */
 void chrlvFireJumpToSideAnimationRelated(ChrRecord *self, GUNHAND side)
 {
@@ -939,13 +945,13 @@ void chrlvFireJumpToSideAnimationRelated(ChrRecord *self, GUNHAND side)
     else if (
         ((left != NULL) && (right != NULL))
         || ((left == NULL) && (right == NULL))
-        || (check_if_item_held_like_pistol(left) != 0)
-        || (check_if_item_held_like_pistol(right) != 0))
+        || (weaponIsOneHanded(left) != 0)
+        || (weaponIsOneHanded(right) != 0))
     {
         side2 = randomGetNext() & 1;
     }
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
 
     self->actiontype = ACT_JUMPOUT;
     self->sleep = 0;
@@ -987,6 +993,7 @@ void chrlvFireJumpToSideAnimationRelated(ChrRecord *self, GUNHAND side)
  *  // run to coord
  * Address 0x7F024CF8 (not EU).
  * Address 0x7F024CE0 (VERSION_EU).
+ * PD: chrJumpOutChooseAnimation (has a few things in common)
  */
 void sub_GAME_7F024CF8(ChrRecord *self, coord3d *arg1)
 {
@@ -1015,7 +1022,7 @@ void sub_GAME_7F024CF8(ChrRecord *self, coord3d *arg1)
     }
     else
     {
-        if ((check_if_item_held_like_pistol(left)) || (check_if_item_held_like_pistol(right)))
+        if ((weaponIsOneHanded(left)) || (weaponIsOneHanded(right)))
         {
             sp2C = 0;
             phi_a2 = left != 0;
@@ -1026,7 +1033,7 @@ void sub_GAME_7F024CF8(ChrRecord *self, coord3d *arg1)
         }
     }
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
 
     self->actiontype = ACT_RUNPOS;
     self->act_runpos.pos.f[0] = arg1->f[0];
@@ -1060,7 +1067,7 @@ void sub_GAME_7F024CF8(ChrRecord *self, coord3d *arg1)
 
 void chrlvDeathStaggerAnimationRelated(ChrRecord *self)
 {
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
     self->actiontype = ACT_TEST;
     self->sleep = 0;
     modelSetAnimation(self->model, (struct ModelAnimation*)&ptr_animation_table->data[(s32)&ANIM_DATA_death_stagger_back_to_wall], 0, 10.0f, 0.5f, 16.0f);
@@ -1371,7 +1378,7 @@ void sub_GAME_7F025560(ChrRecord *self, s32 attack_type, s32 arg2)
     }
     else
     {
-        if ((check_if_item_held_like_pistol(left) != 0) || (check_if_item_held_like_pistol(right) != 0))
+        if ((weaponIsOneHanded(left) != 0) || (weaponIsOneHanded(right) != 0))
         {
             last_arg2 = left != 0;
             animation_pointer = (struct anim_group_info **)ptr_pistol_firing_animation_groups;
@@ -1443,7 +1450,7 @@ void sub_GAME_7F0256F0(ChrRecord *self, s32 attack_type, s32 arg2)
     }
     else
     {
-        if ((check_if_item_held_like_pistol(left) != 0) || (check_if_item_held_like_pistol(right) != 0))
+        if ((weaponIsOneHanded(left) != 0) || (weaponIsOneHanded(right) != 0))
         {
             last_arg2 = left != 0;
             animation_pointer = (struct anim_group_info **)ptr_crouched_pistol_firing_animation_groups;
@@ -1557,7 +1564,7 @@ void chrlvInitActAttackWalk(ChrRecord *chr, s32 arg1)
             sp70.p[0] = 1;
         }
     }
-    else if (check_if_item_held_like_pistol(left) || check_if_item_held_like_pistol(right))
+    else if (weaponIsOneHanded(left) || weaponIsOneHanded(right))
     {
         sp78 = (s32)left != 0;
 
@@ -1706,7 +1713,7 @@ void chrlvInitActAttackRoll(ChrRecord *chr, GUNHAND side)
             sp64.p[0] = sp7C == 0;
         }
     }
-    else if (check_if_item_held_like_pistol(left) || check_if_item_held_like_pistol(right))
+    else if (weaponIsOneHanded(left) || weaponIsOneHanded(right))
     {
         sp7C = (s32)left != 0;
         sp78 = 1;
@@ -1991,10 +1998,10 @@ f32 chrlvPathingCollisionRelated(PropRecord *arg0, f32 arg1, f32 arg2, s32 objFl
     dest_x = arg0->pos.f[0] + (sp5C.f[0] * arg2);
     dest_z = arg0->pos.f[2] + (sp5C.f[2] * arg2);
 
-    set_or_unset_GUARDdata_flag(chr, 0);
+    chrSetMoving(chr, 0);
     sub_GAME_7F0B1CC4();
 
-    if (sub_GAME_7F0B0E24(&stan, arg0->pos.f[0], arg0->pos.f[2], dest_x, dest_z, objFlags, unkHeight, unkA, 0.0f, 1.0f) != 0)
+    if (stanTestLineUnobstructed(&stan, arg0->pos.f[0], arg0->pos.f[2], dest_x, dest_z, objFlags, unkHeight, unkA, 0.0f, 1.0f) != 0)
     {
         ret = arg2;
     }
@@ -2006,7 +2013,7 @@ f32 chrlvPathingCollisionRelated(PropRecord *arg0, f32 arg1, f32 arg2, s32 objFl
         ret = sqrtf((dest_x * dest_x) + (dest_z * dest_z));
     }
 
-    set_or_unset_GUARDdata_flag(chr, 1);
+    chrSetMoving(chr, 1);
 
     return ret;
 }
@@ -2109,7 +2116,7 @@ void triggered_on_shot_hit(ChrRecord *self, coord3d *arg1, f32 arg2, s32 req_ani
                     {
                         struck_ani = &D_8002DEBC[randomGetNext() & 1];
 
-                        sub_GAME_7F02D184(self);
+                        chrStopFiring(self);
                         self->actiontype = ACT_DIE;
                         self->act_die.notifychrindex = 0;
                         self->act_die.thudframe1 = struck_ani->sfx1_timer_60;
@@ -2148,7 +2155,7 @@ void triggered_on_shot_hit(ChrRecord *self, coord3d *arg1, f32 arg2, s32 req_ani
 
                     tr = (randomGetNext() % (u32)D_8002C914[animation_something_index].field_20);
                     struck_anib = &D_8002C914[animation_something_index].field_1C[tr];
-                    sub_GAME_7F02D184(self);
+                    chrStopFiring(self);
 
                     self->actiontype = ACT_DIE;
                     self->act_die.notifychrindex = 0;
@@ -2199,7 +2206,7 @@ void triggered_on_shot_hit(ChrRecord *self, coord3d *arg1, f32 arg2, s32 req_ani
             if ((req_animation_id == 7) && (arg2 > 2.3561945f) && (arg2 < 3.926991f) && ((u32) (randomGetNext() % (u32)5) < 2U))
             {
                 u32 sp54 = randomGetNext() % (u32)5;
-                sub_GAME_7F02D184(self);
+                chrStopFiring(self);
                 self->actiontype = ACT_ARGH;
                 self->act_argh.notifychrindex = 0;
                 self->act_argh.unk30 = g_GlobalTimer;
@@ -2271,7 +2278,7 @@ void triggered_on_shot_hit(ChrRecord *self, coord3d *arg1, f32 arg2, s32 req_ani
                     tr = (randomGetNext() % (u32) something_ani->field_28);
                     struck_ani = &something_ani->field_24[tr];
 
-                    sub_GAME_7F02D184(self);
+                    chrStopFiring(self);
                     
                     self->actiontype = ACT_ARGH;
                     self->act_argh.notifychrindex = 0;
@@ -2395,7 +2402,7 @@ void play_sound_for_shot_actor(ChrRecord *self)
     static s32 male_guard_yelp_counter = 0;
     static s32 female_guard_yelp_counter = 0;
 
-    if ((self->prop->type != PROP_TYPE_VIEWER) || (g_playerPointers[sub_GAME_7F09B15C(self->prop)]->bonddead == 0))
+    if ((self->prop->type != PROP_TYPE_VIEWER) || (g_playerPointers[getPlayerPointerIndex(self->prop)]->bonddead == 0))
     {
         /*
         * decomp issue: mystery section.
@@ -2413,7 +2420,7 @@ void play_sound_for_shot_actor(ChrRecord *self)
             }
             else
             {
-                if (get_player_mp_char_gender(sub_GAME_7F09B15C(self->prop)) != 0)
+                if (get_player_mp_char_gender(getPlayerPointerIndex(self->prop)) != 0)
                 {
                     male = 1;
                 }
@@ -2457,7 +2464,7 @@ void play_sound_for_shot_actor(ChrRecord *self)
             }
         }
 
-        sub_GAME_7F053A10(sndstate, &self->prop->pos);
+        chrobjSndCreatePostEventDefault(sndstate, &self->prop->pos);
     }
 }
 #else
@@ -2474,7 +2481,7 @@ glabel play_sound_for_shot_actor
 /* 05BBAC 7F02707C 00A02025 */  move  $a0, $a1
 /* 05BBB0 7F027080 55E1000C */  bnel  $t7, $at, .L7F0270B4
 /* 05BBB4 7F027084 8FA90068 */   lw    $t1, 0x68($sp)
-/* 05BBB8 7F027088 0FC26C57 */  jal   sub_GAME_7F09B15C
+/* 05BBB8 7F027088 0FC26C57 */  jal   getPlayerPointerIndex
 /* 05BBBC 7F02708C AFA00060 */   sw    $zero, 0x60($sp)
 /* 05BBC0 7F027090 0002C080 */  sll   $t8, $v0, 2
 /* 05BBC4 7F027094 3C198008 */  lui   $t9, %hi(g_playerPointers)
@@ -2512,7 +2519,7 @@ glabel play_sound_for_shot_actor
 .L7F027110:
 /* 05BC40 7F027110 8FB80068 */  lw    $t8, 0x68($sp)
 /* 05BC44 7F027114 8F040018 */  lw    $a0, 0x18($t8)
-/* 05BC48 7F027118 0FC26C57 */  jal   sub_GAME_7F09B15C
+/* 05BC48 7F027118 0FC26C57 */  jal   getPlayerPointerIndex
 /* 05BC4C 7F02711C AFA30060 */   sw    $v1, 0x60($sp)
 /* 05BC50 7F027120 0FC040C3 */  jal   get_player_mp_char_gender
 /* 05BC54 7F027124 00402025 */   move  $a0, $v0
@@ -2600,7 +2607,7 @@ glabel play_sound_for_shot_actor
 .L7F02725C:
 /* 05BD8C 7F02725C 8FAF0068 */  lw    $t7, 0x68($sp)
 /* 05BD90 7F027260 8DE50018 */  lw    $a1, 0x18($t7)
-/* 05BD94 7F027264 0FC14E84 */  jal   sub_GAME_7F053A10
+/* 05BD94 7F027264 0FC14E84 */  jal   chrobjSndCreatePostEventDefault
 /* 05BD98 7F027268 24A50008 */   addiu $a1, $a1, 8
 /* 05BD9C 7F02726C 8FBF0014 */  lw    $ra, 0x14($sp)
 .L7F027270:
@@ -2639,7 +2646,7 @@ bool handles_shot_actors(ChrRecord *self, s32 hitpart, coord3d *vector, s32 weap
         {
             s16 mrs[3] = metal_ricochet_SFX;
             ALSoundState * p = sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, mrs[randomGetNext() % 3U], NULL);
-            sub_GAME_7F053A10(p, &self->prop->pos);
+            chrobjSndCreatePostEventDefault(p, &self->prop->pos);
         }
     }
 
@@ -2766,7 +2773,7 @@ bool handles_shot_actors(ChrRecord *self, s32 hitpart, coord3d *vector, s32 weap
         if (self->prop->type == PROP_TYPE_VIEWER)
         {
             playerNum = get_cur_playernum();
-            set_cur_player(sub_GAME_7F09B15C(self->prop));
+            set_cur_player(getPlayerPointerIndex(self->prop));
             record_damage_kills(damageToCause * 0.125f, vector->x, vector->z, playerNum, 1);
             set_cur_player(playerNum);
         }
@@ -2904,7 +2911,7 @@ s32 chrlvExplosionDamage(ChrRecord *self, coord3d *arg1, f32 damage, s32 arg3)
             explosion_animation_table[sp40].table[t]
             ];
         
-        sub_GAME_7F02D184(self);
+        chrStopFiring(self);
         
         self->actiontype = ACT_DIE;
         self->act_die.notifychrindex = 0;
@@ -3138,6 +3145,7 @@ s32 chrlvStanRoomRelatedPad(ChrRecord *self, PadRecord *arg1)
 
 /**
  * Address 0x7F027E90.
+ * PD: chrGoPosInitMagic
 */
 void chrlvSetGoposSegDistTotal(ChrRecord *self, struct waydata *arg1, coord3d *arg2)
 {
@@ -3166,23 +3174,24 @@ void chrlvSetGoposSegDistTotal(ChrRecord *self, struct waydata *arg1, coord3d *a
  * @param target_stan: out parameter, will contain pointer to target stan
  * 
  * Address 0x7F027F20.
+ * PD: chrGoPosGetCurWaypointInfoWithFlags (somewhat similar)
 */
 void chrlvActGoposRelated(ChrRecord *self, coord3d *target_point, StandTile **target_stan)
 {
-    waypoint *temp_v0;
-    PadRecord *temp_v1;
+    waypoint *waypoint;
+    PadRecord *pad;
 
-    temp_v0 = self->act_gopos.waypoints[self->act_gopos.curindex];
+    waypoint = self->act_gopos.waypoints[self->act_gopos.curindex];
 
-    if (temp_v0 != 0)
+    if (waypoint != 0)
     {
-        temp_v1 = &g_CurrentSetup.pads[temp_v0->padID];
+        pad = &g_CurrentSetup.pads[waypoint->padID];
 
-        target_point->f[0] = temp_v1->pos.f[0];
-        target_point->f[1] = temp_v1->pos.f[1];
-        target_point->f[2] = temp_v1->pos.f[2];
+        target_point->f[0] = pad->pos.f[0];
+        target_point->f[1] = pad->pos.f[1];
+        target_point->f[2] = pad->pos.f[2];
 
-        *target_stan = temp_v1->stan;
+        *target_stan = pad->stan;
     }
     else
     {
@@ -3198,6 +3207,7 @@ void chrlvActGoposRelated(ChrRecord *self, coord3d *target_point, StandTile **ta
 
 /**
  * Address 0x7F027FA8.
+ * PD: func0f0370a8 (but GE has much more cases)
 */
 f32 chrlvModelScaleAnimationRelated(ChrRecord *self)
 {
@@ -3247,6 +3257,7 @@ f32 chrlvModelScaleAnimationRelated(ChrRecord *self)
 
 /**
  * Address 0x7F028144.
+ * PD: chrGoPosCalculateBaseTtl
 */
 s32 chrlvMovementTargetRelated(ChrRecord *self)
 {
@@ -3280,6 +3291,7 @@ s32 chrlvMovementTargetRelated(ChrRecord *self)
 
 /**
  * Address 0x7F0281F4.
+ * PD: chrGoPosClearRestartTtl
 */
 void sub_GAME_7F0281F4(ChrRecord *self)
 {
@@ -3290,6 +3302,7 @@ void sub_GAME_7F0281F4(ChrRecord *self)
 /**
  * Address 0x7F0281FC (US,JP)
  * Address 0x7F028214 (VERSION_EU)
+ * PD: chrGoPosConsiderRestart
 */
 void chrlvPlotCourseRelated(ChrRecord *self)
 {
@@ -3336,6 +3349,7 @@ void chrlvPlotCourseRelated(ChrRecord *self)
 
 /**
  * Address 0x7F02828C.
+ * PD: chrGoPosInitExpensive
 */
 void chrlvActGoposSetTargetPosRelated(ChrRecord *self)
 {
@@ -3359,6 +3373,7 @@ void chrlvActGoposSetTargetPosRelated(ChrRecord *self)
 
 /**
  * Address 0x7F0282E0.
+ * PD: chrGoPosAdvanceWaypoint
 */
 void chrlvActGoposIncCurIndex(ChrRecord *self)
 {
@@ -3459,6 +3474,7 @@ s32 chrlvPatrolCalculateStep(ChrRecord *self, bool *forward, s32 numsteps)
 
 /**
  * Address 0x7F0283FC.
+ * PD: chrPatrolCalculatePadNum (had some nice finds when searching for "patrol" in "chraction.c" in PD)
 */
 // notes: 99.33% match, only failing regalloc on a single line
 PadRecord *chrlvGetPatrolStepPad(ChrRecord *self, s32 numsteps)
@@ -3567,7 +3583,7 @@ s32 sub_GAME_7F028510(coord3d *arg0, StandTile *arg1)
     
     roomids[0] = arg1->room;
     roomids[1] = -1;
-    sub_GAME_7F03E3FC((s32*)&roomids);
+    roomGetProps((s32*)&roomids);
     
     for (temp_s0 = ptr_list_object_lookup_indices; *temp_s0 >= 0; temp_s0++)
     {
@@ -3619,10 +3635,10 @@ void chrlvTravelTickMagic(ChrRecord *self, struct waydata *arg1, f32 arg2, coord
     
     if (arg1->segdisttotal <= arg1->segdistdone)
     {
-        set_or_unset_GUARDdata_flag(self, 0);
+        chrSetMoving(self, 0);
         
         if (
-            (sub_GAME_7F0B18B8(&arg4, arg3->f[0], arg3->f[2], self->chrwidth, 0x1F, 0.0f, 1.0f) < 0)
+            (stanTestVolume(&arg4, arg3->f[0], arg3->f[2], self->chrwidth, 0x1F, 0.0f, 1.0f) < 0)
             && sub_GAME_7F028510(arg3, arg4))
         {
             self_prop = self->prop;
@@ -3683,7 +3699,7 @@ void chrlvTravelTickMagic(ChrRecord *self, struct waydata *arg1, f32 arg2, coord
             }
         }
 
-        set_or_unset_GUARDdata_flag(self, 1);
+        chrSetMoving(self, 1);
     }
 }
 
@@ -3783,7 +3799,7 @@ void get_sound_at_range(ChrRecord *self, s32 arg1, s32 arg2)
     else
     {
         s32 t;
-        if (check_if_item_held_like_pistol(left) || check_if_item_held_like_pistol(right))
+        if (weaponIsOneHanded(left) || weaponIsOneHanded(right))
         {
             t = 0;
             flag = t;
@@ -3888,7 +3904,7 @@ s32 plot_course_for_actor(ChrRecord *self, coord3d *arg1, StandTile *stan, SPEED
         && !(waypointFindRoute(prop_waypoint, target_waypoint, (waypoint **)&sp44, MAX_CHRWAYPOINTS) < 2)
     )
     {
-        sub_GAME_7F02D184(self);
+        chrStopFiring(self);
 
         self->actiontype = ACT_GOPOS;
 
@@ -3954,7 +3970,7 @@ void chrlvWalkingAnimationRelated(ChrRecord *self)
     else
     {
         s32 t;
-        if (check_if_item_held_like_pistol(left) || check_if_item_held_like_pistol(right))
+        if (weaponIsOneHanded(left) || weaponIsOneHanded(right))
         {
             t = 0;
             flag = t;
@@ -4026,7 +4042,7 @@ void set_actor_on_path(ChrRecord *self, struct patrol_path *path)
         next_step = 0;
     }
 
-    sub_GAME_7F02D184(self);
+    chrStopFiring(self);
     self->actiontype = ACT_PATROL;
     self->act_patrol.path = path;
 
@@ -4122,7 +4138,7 @@ glabel set_actor_on_path
 /* 05DD08 7F0291D8 02002025 */   move  $a0, $s0
 /* 05DD0C 7F0291DC 00006025 */  move  $t4, $zero
 .L7F0291E0:
-/* 05DD10 7F0291E0 0FC0B461 */  jal   sub_GAME_7F02D184
+/* 05DD10 7F0291E0 0FC0B461 */  jal   chrStopFiring
 /* 05DD14 7F0291E4 AFAC0020 */   sw    $t4, 0x20($sp)
 /* 05DD18 7F0291E8 8FAC0020 */  lw    $t4, 0x20($sp)
 /* 05DD1C 7F0291EC 240F000E */  li    $t7, 14
@@ -4210,7 +4226,7 @@ s32 chrlvAttackRelated7F0292A8(ChrRecord *self, coord3d *arg1, StandTile *arg2)
     {
         stan = arg2;
         sp3C = chrlvGetChrOrPresetLocation(self, flags, self->act_attack.entityid, &sp40);
-        set_or_unset_GUARDdata_flag(self, 0);
+        chrSetMoving(self, 0);
 
         if ((flags & 1) != 0)
         {
@@ -4218,7 +4234,7 @@ s32 chrlvAttackRelated7F0292A8(ChrRecord *self, coord3d *arg1, StandTile *arg2)
             
             if (bondviewGetVisibleToGuardsFlag() != 0)
             {
-                if ((sub_GAME_7F0B0E24(&stan, arg1->x, arg1->f[2], sp3C->x, sp3C->f[2], 0x11B, arg1->f[1], arg1->f[1], sp3C->f[1], sp3C->f[1]) != 0) && (stan == sp40))
+                if ((stanTestLineUnobstructed(&stan, arg1->x, arg1->f[2], sp3C->x, sp3C->f[2], 0x11B, arg1->f[1], arg1->f[1], sp3C->f[1], sp3C->f[1]) != 0) && (stan == sp40))
                 {
                     setSeenBondTimeToNow(self);
                     ret = 1;
@@ -4229,20 +4245,20 @@ s32 chrlvAttackRelated7F0292A8(ChrRecord *self, coord3d *arg1, StandTile *arg2)
         }
         else if ((flags & 4) != 0)
         {
-            if ((sub_GAME_7F0B0E24(&stan, arg1->x, arg1->f[2], sp3C->x, sp3C->f[2], 0x117, arg1->f[1], arg1->f[1], sp3C->f[1], sp3C->f[1]) != 0) && (stan == sp40))
+            if ((stanTestLineUnobstructed(&stan, arg1->x, arg1->f[2], sp3C->x, sp3C->f[2], 0x117, arg1->f[1], arg1->f[1], sp3C->f[1], sp3C->f[1]) != 0) && (stan == sp40))
             {
                 ret = 1;
             }
         }
         else if ((flags & 8) != 0)
         {
-            if ((sub_GAME_7F0B0E24(&stan, arg1->x, arg1->f[2], sp3C->x, sp3C->f[2], 0x11F, arg1->f[1], arg1->f[1], sp3C->f[1], sp3C->f[1]) != 0) && (stan == sp40))
+            if ((stanTestLineUnobstructed(&stan, arg1->x, arg1->f[2], sp3C->x, sp3C->f[2], 0x11F, arg1->f[1], arg1->f[1], sp3C->f[1], sp3C->f[1]) != 0) && (stan == sp40))
             {
                 ret = 1;
             }
         }
 
-        set_or_unset_GUARDdata_flag(self, 1);
+        chrSetMoving(self, 1);
     }
 
     return ret;
@@ -4268,18 +4284,18 @@ bool chrCanSeeBond(ChrRecord *self)
         bondprop = get_curplayer_positiondata();
         myheight = self->chrheight - 20.0f;
 
-        set_or_unset_GUARDdata_flag(self, FALSE);
+        chrSetMoving(self, FALSE);
         bondviewUpdateGuardTankFlagsRelated(g_CurrentPlayer->prop, 0);
 
         mystan = myprop->stan;
 
-        if (sub_GAME_7F0B0E24(&mystan, myprop->pos.x, myprop->pos.z, bondprop->pos.x, bondprop->pos.z, 0x11B, myheight, myheight, 0.0f, 1.0f) && (mystan == bondprop->stan))
+        if (stanTestLineUnobstructed(&mystan, myprop->pos.x, myprop->pos.z, bondprop->pos.x, bondprop->pos.z, 0x11B, myheight, myheight, 0.0f, 1.0f) && (mystan == bondprop->stan))
         {
             setSeenBondTimeToNow(self);
             pass = TRUE;
         }
 
-        set_or_unset_GUARDdata_flag(self, TRUE);
+        chrSetMoving(self, TRUE);
         bondviewUpdateGuardTankFlagsRelated(g_CurrentPlayer->prop, 1);
     }
 
@@ -4299,16 +4315,16 @@ bool check_if_position_in_same_room(ChrRecord *self, coord3d *pos, StandTile *st
     f32         myheight = self->chrheight - 20.0f;
     bool        pass     = FALSE;
 
-    set_or_unset_GUARDdata_flag(self, 0);
+    chrSetMoving(self, 0);
 
     propstan = myprop->stan;
 
-    if (sub_GAME_7F0B0E24(&propstan, myprop->pos.x, myprop->pos.z, pos->x, pos->z, 0x113, myheight, myheight, 0.0f, 1.0f) && (propstan == stan))
+    if (stanTestLineUnobstructed(&propstan, myprop->pos.x, myprop->pos.z, pos->x, pos->z, 0x113, myheight, myheight, 0.0f, 1.0f) && (propstan == stan))
     {
         pass = TRUE;
     }
 
-    set_or_unset_GUARDdata_flag(self, 1);
+    chrSetMoving(self, 1);
 
     return pass;
 }
@@ -4362,7 +4378,7 @@ s32 chrlvCurrentPlayerCall7F0B0E24(ChrRecord *self)
 
     bond_stan = bond_prop->stan;
     
-    if ((sub_GAME_7F0B0E24(
+    if ((stanTestLineUnobstructed(
             &bond_stan,
             bond_prop->pos.f[0],
             bond_prop->pos.f[2],
@@ -4410,7 +4426,7 @@ s32 chrlvCall7F0B0E24WithChrWidthHeight(PropRecord *arg0, coord3d *arg1, coord3d
     ret = 0;
 
     chrGetChrWidthHeight(arg0, &sp50, &sp58, &sp54);
-    set_or_unset_GUARDdata_flag(sp7C, 0);
+    chrSetMoving(sp7C, 0);
 
     sp78 = arg0->pos.f[0] + chrz;
     sp74 = arg0->pos.f[2] - chrx;
@@ -4420,8 +4436,8 @@ s32 chrlvCall7F0B0E24WithChrWidthHeight(PropRecord *arg0, coord3d *arg1, coord3d
     stan = arg0->stan;
 
     if (
-        (sub_GAME_7F0B0E24(&stan, arg0->pos.f[0], arg0->pos.f[2], sp78, sp74, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
-        && (sub_GAME_7F0B0E24(&stan, sp78, sp74, sp70, sp6C, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
+        (stanTestLineUnobstructed(&stan, arg0->pos.f[0], arg0->pos.f[2], sp78, sp74, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
+        && (stanTestLineUnobstructed(&stan, sp78, sp74, sp70, sp6C, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
         )
     {
         sp78 = arg0->pos.f[0] - chrz;
@@ -4433,15 +4449,15 @@ s32 chrlvCall7F0B0E24WithChrWidthHeight(PropRecord *arg0, coord3d *arg1, coord3d
         stan = arg0->stan;
 
         if (
-            (sub_GAME_7F0B0E24(&stan, arg0->pos.f[0], arg0->pos.f[2], sp78, sp74, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
-            && (sub_GAME_7F0B0E24(&stan, sp78, sp74, sp70, sp6C, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
+            (stanTestLineUnobstructed(&stan, arg0->pos.f[0], arg0->pos.f[2], sp78, sp74, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
+            && (stanTestLineUnobstructed(&stan, sp78, sp74, sp70, sp6C, 0x1F, sp58, sp54, 0.0f, 1.0f) != 0)
             )
         {
             ret = 1;
         }
     }
 
-    set_or_unset_GUARDdata_flag(sp7C, 1);
+    chrSetMoving(sp7C, 1);
 
     return ret;
 }
@@ -4539,7 +4555,7 @@ void chrlvAlertGuardToPlayerPosition(ChrRecord *self)
 */
 bool chrHasStoppedOrPatroling(ChrRecord *self) //chrHasStoppedOrPatroling
 {
-    if ((self->actiontype == ACT_STAND) && !self->act_stand.unk02c && !self->act_stand.unk038)
+    if ((self->actiontype == ACT_STAND) && !self->act_stand.prestand && !self->act_stand.reaim)
     {
         return TRUE;
     }
@@ -5124,7 +5140,9 @@ bool actor_kneel_aim_at_actor(ChrRecord *self, s32 targettype, s32 targetid)
 
 
 
-
+/**
+ * Address 0x7F02AAF4
+*/
 bool actor_fire_or_aim_at_target_update(ChrRecord *self, s32 newtargettype, s32 newtargetid)
 {
     if (self->actiontype == ACT_ATTACK)
@@ -5156,8 +5174,8 @@ bool check_set_actor_standing_still(ChrRecord *self, s32 faceentitytype, s32 fac
 
         self->act_stand.face_entitytype = faceentitytype;
         self->act_stand.face_entityid   = faceentityid;
-        self->act_stand.unk038          = 0;
-        self->act_stand.unk040          = 0;
+        self->act_stand.reaim          = 0;
+        self->act_stand.checkfacingwall          = 0;
 
         return TRUE;
     }
@@ -5261,13 +5279,13 @@ void chrlvTickStand(ChrRecord *self)
         return;
     }
 
-    if (self->act_stand.unk02c != 0)
+    if (self->act_stand.prestand != 0)
     {
         // needs to save $f0 into sp(0x3c)
         if (objecthandlerGetModelField28(self->model) >= sub_GAME_7F06F5C4(self->model))
         {
             chrlvIdleAnimationRelated(self, 8.0f);
-            self->act_stand.unk02c = 0;
+            self->act_stand.prestand = 0;
         }
 
         self->sleep = 0;
@@ -5277,15 +5295,15 @@ void chrlvTickStand(ChrRecord *self)
 
     if (self->act_stand.face_entitytype > 0)
     {
-        if (self->act_stand.unk038)
+        if (self->act_stand.reaim)
         {
             subrotyarg2 = objecthandlerGetModelAnim(self->model)->unk04 - 1;
-            self->act_stand.unk03c = chrlvSetSubroty(self, self->act_stand.unk03c, subrotyarg2, 1.0f, 0.0f);
+            self->act_stand.turning = chrlvSetSubroty(self, self->act_stand.turning, subrotyarg2, 1.0f, 0.0f);
 
-            if (self->act_stand.unk03c != 1)
+            if (self->act_stand.turning != 1)
             {
                 chrlvIdleAnimationRelated(self, 8.0f);
-                self->act_stand.unk038 = 0;
+                self->act_stand.reaim = 0;
 
                 if (self->act_stand.face_entitytype & 0x10)
                 {
@@ -5301,13 +5319,13 @@ void chrlvTickStand(ChrRecord *self)
                 left = chrGetEquippedWeaponProp(self, 1);
                 right = chrGetEquippedWeaponProp(self, 0);
 
-                self->act_stand.unk038 = 1;
-                self->act_stand.unk03c = 1;
+                self->act_stand.reaim = 1;
+                self->act_stand.turning = 1;
                 
                 if (((left != NULL) && (right != NULL))
                     || ((left == NULL) && (right == NULL))
-                    || check_if_item_held_like_pistol(left)
-                    || check_if_item_held_like_pistol(right))
+                    || weaponIsOneHanded(left)
+                    || weaponIsOneHanded(right))
                 {
                     // required to fix stack above
                     // looks like it doesn't matter which `s32` is used.
@@ -5354,16 +5372,16 @@ void chrlvTickStand(ChrRecord *self)
 
     self->sleep = ((u32)randomGetNext() % 5U) + 0xE;
 
-    if (self->act_stand.unk040)
+    if (self->act_stand.checkfacingwall)
     {
         if (self->chrflags & 0x80)
         {
-            self->act_stand.unk040 = 0;
+            self->act_stand.checkfacingwall = 0;
             return;
         }
 
-        self->act_stand.unk044 -= self->sleep;
-        if (self->act_stand.unk044 < 0)
+        self->act_stand.wallcount -= self->sleep;
+        if (self->act_stand.wallcount < 0)
         {
             subroty = getsubroty(self->model);
 
@@ -5450,7 +5468,7 @@ void chrlvTickStand(ChrRecord *self)
             }
             else
             {
-                self->act_stand.unk040 = 0;
+                self->act_stand.checkfacingwall = 0;
             }
         }
     }
@@ -5488,7 +5506,7 @@ void chrlvTickAnim(ChrRecord *self)
     {
         if (((D_80048380 & 1) == 0) && (chrGetDistanceToBond(self) < 800.0f))
         {
-            sub_GAME_7F053A10(sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, 0x101, 0), &self->prop->pos);
+            chrobjSndCreatePostEventDefault(sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, 0x101, 0), &self->prop->pos);
         }
 
         self->chrflags |= 0x2000000;
@@ -5596,7 +5614,7 @@ void chrlvIterateGuardSeeShotDie(ChrRecord *self, s32 flag)
 
     for (; i < numguards && alert_count < 4; i++)
     {
-        guard = &ptr_guard_data[i];
+        guard = &g_ChrSlots[i];
 
         if (guard->model != NULL)
         {
@@ -5656,7 +5674,7 @@ void chrlvTickDie(ChrRecord *self)
     {
         p = sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, body_hit_SFX[thud_index], NULL);
 
-        sub_GAME_7F053A10(p, &self->prop->pos);
+        chrobjSndCreatePostEventDefault(p, &self->prop->pos);
 
         thud_index++;
         if (thud_index >= 0xB)
@@ -5671,7 +5689,7 @@ void chrlvTickDie(ChrRecord *self)
     {
         p = sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, body_hit_SFX[thud_index], NULL);
 
-        sub_GAME_7F053A10(p, &self->prop->pos);
+        chrobjSndCreatePostEventDefault(p, &self->prop->pos);
 
         thud_index++;
         if (thud_index >= 0xB)
@@ -5947,7 +5965,7 @@ void sub_GAME_7F02BFE4(ChrRecord *self, s32 arg1, s32 arg2)
         //     if (phi_a2 != NULL)
         //     {
         //         sndPlaySfx(g_musicSfxBufferPtr, (s16) sp30, phi_a2);
-        //         sub_GAME_7F053A10(phi_a2, &self->prop->pos);
+        //         chrobjSndCreatePostEventDefault(phi_a2, &self->prop->pos);
 
         //         self->field_178[arg1] = g_GlobalTimer + sp33;
         //         self->hidden |= 0x80;
@@ -6059,7 +6077,7 @@ glabel sub_GAME_7F02BFE4
 /* 060C74 7F02C144 8FA6002C */  lw    $a2, 0x2c($sp)
 /* 060C78 7F02C148 8E050018 */  lw    $a1, 0x18($s0)
 /* 060C7C 7F02C14C 8CC40000 */  lw    $a0, ($a2)
-/* 060C80 7F02C150 0FC14E84 */  jal   sub_GAME_7F053A10
+/* 060C80 7F02C150 0FC14E84 */  jal   chrobjSndCreatePostEventDefault
 /* 060C84 7F02C154 24A50008 */   addiu $a1, $a1, 8
 /* 060C88 7F02C158 3C0C8005 */  lui   $t4, %hi(g_GlobalTimer) 
 /* 060C8C 7F02C15C 8D8C837C */  lw    $t4, %lo(g_GlobalTimer)($t4)
@@ -6173,9 +6191,9 @@ s32 chrlvSetSubroty(ChrRecord *self, s32 arg1, f32 arg2, f32 arg3, f32 arg4)
         roty = getsubroty(model);
 
 #if defined(BUGFIX_R1)
-        temp_f14 = 0.06283186f * arg3 * g_JP_GlobalTimerDelta * model->unka4;
+        temp_f14 = 0.06283186f * arg3 * g_JP_GlobalTimerDelta * model->playspeed;
 #else /* VERSION_US */
-        temp_f14 = 0.06283186f * arg3 * g_GlobalTimerDelta * model->unka4;
+        temp_f14 = 0.06283186f * arg3 * g_GlobalTimerDelta * model->playspeed;
 #endif
 
         if (self->actiontype == ACT_ATTACK)
@@ -6434,7 +6452,7 @@ s32 chrlvUpdateAimendsideback(ChrRecord *self, struct weapon_firing_animation_ta
                 
                 if (weapon_prop_model->obj->Switches[0])
                 {
-                    temp_a0 = sub_GAME_7F06C660(weapon_prop_model, weapon_prop_model->obj->Switches[0], 0);
+                    temp_a0 = modelFindNodeMtx(weapon_prop_model, weapon_prop_model->obj->Switches[0], 0);
                     spB8 = weapon_prop_model->obj->Switches[0]->Data;
                     sub_GAME_7F058E78(temp_a0, &spBC);
 
@@ -6444,7 +6462,7 @@ s32 chrlvUpdateAimendsideback(ChrRecord *self, struct weapon_firing_animation_ta
                     spAC.f[1] = spB8[1];
                     spAC.f[2] = spB8[2];
 
-                    matrix_4x4_transform_vector_in_place(&spBC, &spAC);
+                    mtx4TransformVecInPlace(&spBC, &spAC);
 
                     sp104.f[0] = spAC.f[0];
                     sp104.f[1] = spAC.f[1];
@@ -6454,7 +6472,7 @@ s32 chrlvUpdateAimendsideback(ChrRecord *self, struct weapon_firing_animation_ta
                 }
                 else if (weapon_prop_model->obj->Switches[1])
                 {
-                    temp_a0 = sub_GAME_7F06C660(weapon_prop_model, weapon_prop_model->obj->Switches[1], 0);
+                    temp_a0 = modelFindNodeMtx(weapon_prop_model, weapon_prop_model->obj->Switches[1], 0);
                     sub_GAME_7F058E78(temp_a0, &sp68);
                     matrix_4x4_multiply_homogeneous_in_place(currentPlayerGetMatrix10EC(), &sp68);
                     sp104.f[0] = sp68.m[3][0];
@@ -6505,7 +6523,7 @@ s32 chrlvUpdateAimendsideback(ChrRecord *self, struct weapon_firing_animation_ta
 
             if ((attack_type & 1) && ((attack_type & 0x60) == 0))
             {
-                t1 = (((f32) ((s32) ((s32) ((f32) g_GlobalTimer * self->model->unka4) + self->chrnum) % 60) * M_TAU_F) / 60.0f);
+                t1 = (((f32) ((s32) ((s32) ((f32) g_GlobalTimer * self->model->playspeed) + self->chrnum) % 60) * M_TAU_F) / 60.0f);
                 t1 = sinf(t1) * (chrlvGetAimLimitAngle(dxdydz_square) * 0.5f);
                 calc_aimendsideback += t1;
 
@@ -6657,16 +6675,17 @@ void chrlvResetAimend(ChrRecord *self)
 
 /**
  * Address 0x7F02D118.
+ * PD: chrSetFiring
 */
-void sub_GAME_7F02D118(ChrRecord *self, s32 hand, s32 arg2)
+void chrSetFiring(ChrRecord *self, s32 hand, s32 firing)
 {
-    PropRecord *temp_v0;
+    PropRecord *prop;
 
-    temp_v0 = chrGetEquippedWeaponProp(self, hand);
+    prop = chrGetEquippedWeaponProp(self, hand);
 
-    if (temp_v0 != NULL)
+    if (prop != NULL)
     {
-        sub_GAME_7F052574(temp_v0, arg2);
+        weaponSetGunfireVisible(prop, firing);
     }
 }
 
@@ -6679,13 +6698,13 @@ void sub_GAME_7F02D118(ChrRecord *self, s32 hand, s32 arg2)
 */
 s32 sub_GAME_7F02D148(ChrRecord *self, s32 hand)
 {
-    PropRecord *temp_v0;
+    PropRecord *prop;
 
-    temp_v0 = chrGetEquippedWeaponProp(self, hand);
+    prop = chrGetEquippedWeaponProp(self, hand);
 
-    if (temp_v0 != NULL)
+    if (prop != NULL)
     {
-        return sub_GAME_7F052604(temp_v0);
+        return weaponIsGunfireVisible(prop);
     }
 
     return 0;
@@ -6694,11 +6713,12 @@ s32 sub_GAME_7F02D148(ChrRecord *self, s32 hand)
 
 /**
  * Address 0x7F02D184.
+ * PD: chrStopFiring
 */
-void sub_GAME_7F02D184(ChrRecord *self)
+void chrStopFiring(ChrRecord *self)
 {
-    sub_GAME_7F02D118(self, GUNRIGHT, 0);
-    sub_GAME_7F02D118(self, GUNLEFT, 0);
+    chrSetFiring(self, GUNRIGHT, FALSE);
+    chrSetFiring(self, GUNLEFT, FALSE);
     chrlvResetAimend(self);
 }
 
@@ -6730,7 +6750,7 @@ void chrlvToggleHiddenRelated(ChrRecord *self, s32 hand, s32 arg2)
 
     if (arg2 == 0)
     {
-        sub_GAME_7F02D118(self, hand, 0);
+        chrSetFiring(self, hand, FALSE);
     }
 }
 
@@ -6927,7 +6947,7 @@ s32 sub_GAME_7F02D630(ChrRecord *self, GUNHAND hand, coord3d *arg2)
         {
             if (weapon_prop_model->obj->Switches[0])
             {
-                temp_a0 = sub_GAME_7F06C660(weapon_prop_model, weapon_prop_model->obj->Switches[0], 0);
+                temp_a0 = modelFindNodeMtx(weapon_prop_model, weapon_prop_model->obj->Switches[0], 0);
                 spB8 = weapon_prop_model->obj->Switches[0]->Data;
 
                 arg2->f[0] = spB8[0];
@@ -6935,13 +6955,13 @@ s32 sub_GAME_7F02D630(ChrRecord *self, GUNHAND hand, coord3d *arg2)
                 arg2->f[2] = spB8[2];
 
                 matrix_4x4_multiply_homogeneous(currentPlayerGetMatrix10D4(), temp_a0, &sp74);
-                matrix_4x4_transform_vector_in_place(&sp74, arg2);
+                mtx4TransformVecInPlace(&sp74, arg2);
 
                 ret = 1;
             }
             else if (weapon_prop_model->obj->Switches[1])
             {
-                temp_a0_2 = sub_GAME_7F06C660(weapon_prop_model, weapon_prop_model->obj->Switches[1], 0);
+                temp_a0_2 = modelFindNodeMtx(weapon_prop_model, weapon_prop_model->obj->Switches[1], 0);
                 matrix_4x4_multiply_homogeneous(currentPlayerGetMatrix10D4(), temp_a0_2, &sp68);
 
                 arg2->f[0] = sp68.m[3][0];
@@ -6976,13 +6996,13 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
     StandTile *sp254; // 596
     f32 subroty; // 592
     f32 sp24C; // 588
-     coord3d sp240; // 576
+    coord3d sp240; // 576
     StandTile *self_stan; // 572
     StandTile *sp238; // 568
     s32 sp234; // 564
     s32 sp230; // 560
     s32 sp22C; // 556
-     coord3d sp220;
+    coord3d sp220;
     s32 sp21C;
     f32 dy;
     f32 dz;
@@ -6990,18 +7010,18 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
     f32 sp20C; // 524
     struct WeaponObjRecord *sp208;
     Mtxf sp1C8;
-     coord3d sp1BC;  // 444
+    coord3d sp1BC;  // 444
     PropRecord *weapon_prop;
-     coord3d sp1AC; // 428
+    coord3d sp1AC; // 428
     Mtxf sp16C;
     Mtxf sp12C;
     struct WeaponObjRecord *sp128; // 296
     Mtxf spE8;
-     coord3d spDC; // 220
+    coord3d spDC; // 220
     Mtxf sp9C;
     Mtxf sp5C; // 92
     s32 sp44;
-    struct ObjectRecord_f6c * temp_v0_4;
+    s32 unused;
     f32 sp4C;
     
     self_prop = self->prop;
@@ -7078,7 +7098,7 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
                     }
                 }
 
-                if (sub_GAME_7F0B0E24(&self_stan, self_prop->pos.x, self_prop->pos.f[2], sp240.f[0], sp240.f[2], 2, sp240.f[1] - self->ground, sp240.f[1] - self->ground, 0.0f, 1.0f) != 0)
+                if (stanTestLineUnobstructed(&self_stan, self_prop->pos.x, self_prop->pos.f[2], sp240.f[0], sp240.f[2], 2, sp240.f[1] - self->ground, sp240.f[1] - self->ground, 0.0f, 1.0f) != 0)
                 {
                     sp238 = self_stan;
                 }
@@ -7104,11 +7124,11 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
                     sp258.f[1] = sp240.f[1] + (sp220.f[1] * M_U16_MAX_VALUE_F);
                     sp258.f[2] = sp240.f[2] + (sp220.f[2] * M_U16_MAX_VALUE_F);
                     
-                    set_or_unset_GUARDdata_flag(self, 0);
+                    chrSetMoving(self, 0);
                     sub_GAME_7F0B1CC4();
                     self_stan = sp238;
 
-                    if (sub_GAME_7F0B0E24(&self_stan, sp240.f[0], sp240.f[2], sp258.f[0], sp258.f[2], 0x1B, sp240.f[1], sp240.f[1], sp258.f[1], sp258.f[1]) == 0)
+                    if (stanTestLineUnobstructed(&self_stan, sp240.f[0], sp240.f[2], sp258.f[0], sp258.f[2], 0x1B, sp240.f[1], sp240.f[1], sp258.f[1], sp258.f[1]) == 0)
                     {
                         chrlvStanLineDirIntersection(&sp240, &sp220, &sp258);
                         sp254 = self_stan;
@@ -7117,7 +7137,7 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
                         sp258.f[2] -= 26.0f * sp220.f[2];
                     }
 
-                    set_or_unset_GUARDdata_flag(self, 1);
+                    chrSetMoving(self, 1);
 
                     dx = sp258.f[0] - sp240.f[0];
                     dy = sp258.f[1] - sp240.f[1];
@@ -7149,27 +7169,27 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
                                 
                                 if (sp208->runtime_bitflags & RUNTIMEBITFLAG_DEPOSIT)
                                 {
-                                    sp208->unk6C->flags |= 0x80;
+                                    sp208->projectile->flags |= 0x80;
                                     sp208->timer = -1;
-                                    sp208->unk6C->flags |= 0x20;
+                                    sp208->projectile->flags |= 0x20;
 
-                                    sp208->unk6C->unkb0 = sp208->runtime_pos.y;
-                                    sp208->unk6C->unkb4 = sp208->unk6C->pos.f[1];
+                                    sp208->projectile->unkB0 = sp208->runtime_pos.y;
+                                    sp208->projectile->unkB4 = sp208->projectile->speed.f[1];
 
-                                  /*  sp208->unk6C->vec.x = sp1AC.f[0];
-                                    sp208->unk6C->vec.y = sp1AC.f[1];
-                                    sp208->unk6C->vec.z = sp1AC.f[2];*/
-                                    sp208->unk6C->vec.x = sp1AC.f[0];
-                                    sp208->unk6C->vec.y = sp1AC.f[1];
-                                    sp208->unk6C->vec.z = sp1AC.f[2];
+                                  /*  sp208->projectile->unk10.x = sp1AC.f[0];
+                                    sp208->projectile->unk10.y = sp1AC.f[1];
+                                    sp208->projectile->unk10.z = sp1AC.f[2];*/
+                                    sp208->projectile->unk10.x = sp1AC.f[0];
+                                    sp208->projectile->unk10.y = sp1AC.f[1];
+                                    sp208->projectile->unk10.z = sp1AC.f[2];
                                     
-                                    if (sp208->unk6C->unk98[0] == NULL)
+                                    if (sp208->projectile->sound1 == NULL)
                                     {
-                                        sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, 1, (ALSoundState *)&sp208->unk6C->unk98[0]);
+                                        sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, 1, (ALSoundState *)&sp208->projectile->sound1);
                                     }
-                                    else if (sp208->unk6C->unk98[1] == NULL)
+                                    else if (sp208->projectile->sound2 == NULL)
                                     {
-                                        sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, 1, (ALSoundState *)&sp208->unk6C->unk98[1]);
+                                        sndPlaySfx((struct ALBankAlt_s *)g_musicSfxBufferPtr, 1, (ALSoundState *)&sp208->projectile->sound2);
                                     }
                                 }
                             }
@@ -7198,12 +7218,12 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
                                 
                                 if (sp128->runtime_bitflags & RUNTIMEBITFLAG_DEPOSIT)
                                 {
-                                    sp128->unk6C->unk8c = 0.3f;
-                                    sp128->unk6C->unk94 = 0.13333333f;
+                                    sp128->projectile->unk8C = 0.3f;
+                                    sp128->projectile->unk94 = 0.13333333f;
 #ifdef REFRESH_PAL
-                                    sp128->unk6C->refreshrate = 50;
+                                    sp128->projectile->refreshrate = 50;
 #else
-                                    sp128->unk6C->refreshrate = 60;
+                                    sp128->projectile->refreshrate = 60;
 #endif
                                 }
                             }
@@ -7325,7 +7345,7 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
 
                         if (sp264 != 0)
                         {
-                            sub_GAME_7F061948(&self->unk180[hand], prop_selfchr->act_attack.attack_item, &sp240, &sp258);
+                            CapBeamLengthAndDecideIfRendered(&self->unk180[hand], prop_selfchr->act_attack.attack_item, &sp240, &sp258);
                         }
                     }
                 }
@@ -7336,7 +7356,7 @@ void chrlvFireWeaponRelated(ChrRecord *self, s32 hand)
             sub_GAME_7F02BFE4(self, hand, phi_a2);
         }
 
-        sub_GAME_7F02D118(self, hand, sp27C);
+        chrSetFiring(self, hand, sp27C);
     }
 }
 
@@ -7716,532 +7736,6 @@ void chrlvTickAttackCommon(ChrRecord *self)
         }
     }
 }
-
-//#else
-
-#ifdef NONMATCHING
-    // should be implemented above, but untested.
-//#else
-
-GLOBAL_ASM(
-.late_rodata
-glabel D_80051FC8
-.word 0x40c90fdb /*6.2831855*/
-.text
-glabel chrlvTickAttackCommon
-/* 060EE4 7F02E4F4 27BDFF90 */  addiu $sp, $sp, -0x70
-/* 060EE8 7F02E4F8 AFBF0044 */  sw    $ra, 0x44($sp)
-/* 060EEC 7F02E4FC AFB30040 */  sw    $s3, 0x40($sp)
-/* 060EF0 7F02E500 AFB2003C */  sw    $s2, 0x3c($sp)
-/* 060EF4 7F02E504 AFB10038 */  sw    $s1, 0x38($sp)
-/* 060EF8 7F02E508 AFB00034 */  sw    $s0, 0x34($sp)
-/* 060EFC 7F02E50C F7B80028 */  sdc1  $f24, 0x28($sp)
-/* 060F00 7F02E510 F7B60020 */  sdc1  $f22, 0x20($sp)
-/* 060F04 7F02E514 F7B40018 */  sdc1  $f20, 0x18($sp)
-/* 060F08 7F02E518 8C93001C */  lw    $s3, 0x1c($a0)
-/* 060F0C 7F02E51C 00808025 */  move  $s0, $a0
-/* 060F10 7F02E520 0FC1BDD7 */  jal   objecthandlerGetModelField28
-/* 060F14 7F02E524 02602025 */   move  $a0, $s3
-/* 060F18 7F02E528 8E0F0044 */  lw    $t7, 0x44($s0)
-/* 060F1C 7F02E52C 8E0E0048 */  lw    $t6, 0x48($s0)
-/* 060F20 7F02E530 46000506 */  mov.s $f20, $f0
-/* 060F24 7F02E534 25F8FFE7 */  addiu $t8, $t7, -0x19
-/* 060F28 7F02E538 01D8082A */  slt   $at, $t6, $t8
-/* 060F2C 7F02E53C 5020004B */  beql  $at, $zero, .L7F02E66C
-/* 060F30 7F02E540 3C013F00 */   lui   $at, 0x3f00
-/* 060F34 7F02E544 8E790054 */  lw    $t9, 0x54($s3)
-/* 060F38 7F02E548 57200048 */  bnezl $t9, .L7F02E66C
-/* 060F3C 7F02E54C 3C013F00 */   lui   $at, 0x3f00
-/* 060F40 7F02E550 8E05002C */  lw    $a1, 0x2c($s0)
-/* 060F44 7F02E554 3C014120 */  li    $at, 0x41200000 # 10.000000
-/* 060F48 7F02E558 44813000 */  mtc1  $at, $f6
-/* 060F4C 7F02E55C C4A40018 */  lwc1  $f4, 0x18($a1)
-/* 060F50 7F02E560 46062200 */  add.s $f8, $f4, $f6
-/* 060F54 7F02E564 4600403C */  c.lt.s $f8, $f0
-/* 060F58 7F02E568 00000000 */  nop   
-/* 060F5C 7F02E56C 4502003F */  bc1fl .L7F02E66C
-/* 060F60 7F02E570 3C013F00 */   lui   $at, 0x3f00
-/* 060F64 7F02E574 C4AA001C */  lwc1  $f10, 0x1c($a1)
-/* 060F68 7F02E578 460A003C */  c.lt.s $f0, $f10
-/* 060F6C 7F02E57C 00000000 */  nop   
-/* 060F70 7F02E580 4502003A */  bc1fl .L7F02E66C
-/* 060F74 7F02E584 3C013F00 */   lui   $at, 0x3f00
-/* 060F78 7F02E588 4480B000 */  mtc1  $zero, $f22
-/* 060F7C 7F02E58C C4A20024 */  lwc1  $f2, 0x24($a1)
-/* 060F80 7F02E590 4616103C */  c.lt.s $f2, $f22
-/* 060F84 7F02E594 00000000 */  nop   
-/* 060F88 7F02E598 45030006 */  bc1tl .L7F02E5B4
-/* 060F8C 7F02E59C 82080036 */   lb    $t0, 0x36($s0)
-/* 060F90 7F02E5A0 4602003C */  c.lt.s $f0, $f2
-/* 060F94 7F02E5A4 00000000 */  nop   
-/* 060F98 7F02E5A8 45020030 */  bc1fl .L7F02E66C
-/* 060F9C 7F02E5AC 3C013F00 */   li    $at, 0x3F000000 # 0.500000
-/* 060FA0 7F02E5B0 82080036 */  lb    $t0, 0x36($s0)
-.L7F02E5B4:
-/* 060FA4 7F02E5B4 15000024 */  bnez  $t0, .L7F02E648
-/* 060FA8 7F02E5B8 00000000 */   nop   
-/* 060FAC 7F02E5BC 0FC0B8C5 */  jal   chrlvAttackrollAnimationRelated7F02E2E0
-/* 060FB0 7F02E5C0 02002025 */   move  $a0, $s0
-/* 060FB4 7F02E5C4 1440001E */  bnez  $v0, .L7F02E640
-/* 060FB8 7F02E5C8 00000000 */   nop   
-/* 060FBC 7F02E5CC 0FC1BDD3 */  jal   objecthandlerGetModelAnim
-/* 060FC0 7F02E5D0 02602025 */   move  $a0, $s3
-/* 060FC4 7F02E5D4 3C013F00 */  li    $at, 0x3F000000 # 0.500000
-/* 060FC8 7F02E5D8 4481C000 */  mtc1  $at, $f24
-/* 060FCC 7F02E5DC 3C063F4C */  lui   $a2, (0x3F4CCCCD >> 16) # lui $a2, 0x3f4c
-/* 060FD0 7F02E5E0 34C6CCCD */  ori   $a2, (0x3F4CCCCD & 0xFFFF) # ori $a2, $a2, 0xcccd
-/* 060FD4 7F02E5E4 4405C000 */  mfc1  $a1, $f24
-/* 060FD8 7F02E5E8 00408825 */  move  $s1, $v0
-/* 060FDC 7F02E5EC 0FC08ED1 */  jal   chrlvGetGuard007SpeedRating
-/* 060FE0 7F02E5F0 02002025 */   move  $a0, $s0
-/* 060FE4 7F02E5F4 8E09002C */  lw    $t1, 0x2c($s0)
-/* 060FE8 7F02E5F8 3C014100 */  li    $at, 0x41000000 # 8.000000
-/* 060FEC 7F02E5FC 44818000 */  mtc1  $at, $f16
-/* 060FF0 7F02E600 82660024 */  lb    $a2, 0x24($s3)
-/* 060FF4 7F02E604 8D27001C */  lw    $a3, 0x1c($t1)
-/* 060FF8 7F02E608 E7A00010 */  swc1  $f0, 0x10($sp)
-/* 060FFC 7F02E60C 02602025 */  move  $a0, $s3
-/* 061000 7F02E610 02202825 */  move  $a1, $s1
-/* 061004 7F02E614 0FC1BF92 */  jal   modelSetAnimation
-/* 061008 7F02E618 E7B00014 */   swc1  $f16, 0x14($sp)
-/* 06100C 7F02E61C 8E0A002C */  lw    $t2, 0x2c($s0)
-/* 061010 7F02E620 C5400014 */  lwc1  $f0, 0x14($t2)
-/* 061014 7F02E624 4600B03E */  c.le.s $f22, $f0
-/* 061018 7F02E628 00000000 */  nop   
-/* 06101C 7F02E62C 45000004 */  bc1f  .L7F02E640
-/* 061020 7F02E630 00000000 */   nop   
-/* 061024 7F02E634 44050000 */  mfc1  $a1, $f0
-/* 061028 7F02E638 0FC1BFE2 */  jal   modelSetAnimEndFrame
-/* 06102C 7F02E63C 02602025 */   move  $a0, $s3
-.L7F02E640:
-/* 061030 7F02E640 10000004 */  b     .L7F02E654
-/* 061034 7F02E644 820B0034 */   lb    $t3, 0x34($s0)
-.L7F02E648:
-/* 061038 7F02E648 0FC0B8FB */  jal   chrlvAttackrollAnimationRelated7F02E3B8
-/* 06103C 7F02E64C 02002025 */   move  $a0, $s0
-/* 061040 7F02E650 820B0034 */  lb    $t3, 0x34($s0)
-.L7F02E654:
-/* 061044 7F02E654 02602025 */  move  $a0, $s3
-/* 061048 7F02E658 256C0001 */  addiu $t4, $t3, 1
-/* 06104C 7F02E65C 0FC1BDD7 */  jal   objecthandlerGetModelField28
-/* 061050 7F02E660 A20C0033 */   sb    $t4, 0x33($s0)
-/* 061054 7F02E664 46000506 */  mov.s $f20, $f0
-/* 061058 7F02E668 3C013F00 */  li    $at, 0x3F000000 # 0.500000
-.L7F02E66C:
-/* 06105C 7F02E66C 4481C000 */  mtc1  $at, $f24
-/* 061060 7F02E670 4480B000 */  mtc1  $zero, $f22
-/* 061064 7F02E674 0FC1BDD9 */  jal   sub_GAME_7F06F5C4
-/* 061068 7F02E678 02602025 */   move  $a0, $s3
-/* 06106C 7F02E67C 4614003E */  c.le.s $f0, $f20
-/* 061070 7F02E680 00000000 */  nop   
-/* 061074 7F02E684 45020076 */  bc1fl .L7F02E860
-/* 061078 7F02E688 8E02004C */   lw    $v0, 0x4c($s0)
-/* 06107C 7F02E68C 820D0037 */  lb    $t5, 0x37($s0)
-/* 061080 7F02E690 15A00006 */  bnez  $t5, .L7F02E6AC
-/* 061084 7F02E694 00000000 */   nop   
-/* 061088 7F02E698 82030034 */  lb    $v1, 0x34($s0)
-/* 06108C 7F02E69C 82020033 */  lb    $v0, 0x33($s0)
-/* 061090 7F02E6A0 0062082A */  slt   $at, $v1, $v0
-/* 061094 7F02E6A4 1020000F */  beqz  $at, .L7F02E6E4
-/* 061098 7F02E6A8 00000000 */   nop   
-.L7F02E6AC:
-/* 06109C 7F02E6AC 0FC0B8C5 */  jal   chrlvAttackrollAnimationRelated7F02E2E0
-/* 0610A0 7F02E6B0 02002025 */   move  $a0, $s0
-/* 0610A4 7F02E6B4 14400066 */  bnez  $v0, .L7F02E850
-/* 0610A8 7F02E6B8 00000000 */   nop   
-/* 0610AC 7F02E6BC 8E0F004C */  lw    $t7, 0x4c($s0)
-/* 0610B0 7F02E6C0 31EE0001 */  andi  $t6, $t7, 1
-/* 0610B4 7F02E6C4 11C00003 */  beqz  $t6, .L7F02E6D4
-/* 0610B8 7F02E6C8 00000000 */   nop   
-/* 0610BC 7F02E6CC 0FC0A6F9 */  jal   chrlvSetTargetToPlayer
-/* 0610C0 7F02E6D0 02002025 */   move  $a0, $s0
-.L7F02E6D4:
-/* 0610C4 7F02E6D4 0FC08F8C */  jal   chrlvKneelingAnimationRelated7F023E48
-/* 0610C8 7F02E6D8 02002025 */   move  $a0, $s0
-/* 0610CC 7F02E6DC 10000151 */  b     .L7F02EC24
-/* 0610D0 7F02E6E0 8FBF0044 */   lw    $ra, 0x44($sp)
-.L7F02E6E4:
-/* 0610D4 7F02E6E4 14620006 */  bne   $v1, $v0, .L7F02E700
-/* 0610D8 7F02E6E8 24580001 */   addiu $t8, $v0, 1
-/* 0610DC 7F02E6EC A2180033 */  sb    $t8, 0x33($s0)
-/* 0610E0 7F02E6F0 0FC0B8FB */  jal   chrlvAttackrollAnimationRelated7F02E3B8
-/* 0610E4 7F02E6F4 02002025 */   move  $a0, $s0
-/* 0610E8 7F02E6F8 10000055 */  b     .L7F02E850
-/* 0610EC 7F02E6FC 00000000 */   nop   
-.L7F02E700:
-/* 0610F0 7F02E700 82190031 */  lb    $t9, 0x31($s0)
-/* 0610F4 7F02E704 3C014140 */  li    $at, 0x41400000 # 12.000000
-/* 0610F8 7F02E708 02602025 */  move  $a0, $s3
-/* 0610FC 7F02E70C 13200050 */  beqz  $t9, .L7F02E850
-/* 061100 7F02E710 00000000 */   nop   
-/* 061104 7F02E714 82080036 */  lb    $t0, 0x36($s0)
-/* 061108 7F02E718 4600C306 */  mov.s $f12, $f24
-/* 06110C 7F02E71C 51000014 */  beql  $t0, $zero, .L7F02E770
-/* 061110 7F02E720 8E05002C */   lw    $a1, 0x2c($s0)
-/* 061114 7F02E724 8E05002C */  lw    $a1, 0x2c($s0)
-/* 061118 7F02E728 C4A00020 */  lwc1  $f0, 0x20($a1)
-/* 06111C 7F02E72C 4600B03C */  c.lt.s $f22, $f0
-/* 061120 7F02E730 00000000 */  nop   
-/* 061124 7F02E734 45020004 */  bc1fl .L7F02E748
-/* 061128 7F02E738 C4AE0018 */   lwc1  $f14, 0x18($a1)
-/* 06112C 7F02E73C 10000002 */  b     .L7F02E748
-/* 061130 7F02E740 46000386 */   mov.s $f14, $f0
-/* 061134 7F02E744 C4AE0018 */  lwc1  $f14, 0x18($a1)
-.L7F02E748:
-/* 061138 7F02E748 C4A20024 */  lwc1  $f2, 0x24($a1)
-/* 06113C 7F02E74C 4602B03C */  c.lt.s $f22, $f2
-/* 061140 7F02E750 00000000 */  nop   
-/* 061144 7F02E754 45000003 */  bc1f  .L7F02E764
-/* 061148 7F02E758 00000000 */   nop   
-/* 06114C 7F02E75C 1000000D */  b     .L7F02E794
-/* 061150 7F02E760 46001506 */   mov.s $f20, $f2
-.L7F02E764:
-/* 061154 7F02E764 1000000B */  b     .L7F02E794
-/* 061158 7F02E768 C4B4001C */   lwc1  $f20, 0x1c($a1)
-/* 06115C 7F02E76C 8E05002C */  lw    $a1, 0x2c($s0)
-.L7F02E770:
-/* 061160 7F02E770 C4A00020 */  lwc1  $f0, 0x20($a1)
-/* 061164 7F02E774 C4AE0018 */  lwc1  $f14, 0x18($a1)
-/* 061168 7F02E778 4600B03C */  c.lt.s $f22, $f0
-/* 06116C 7F02E77C 00000000 */  nop   
-/* 061170 7F02E780 45020004 */  bc1fl .L7F02E794
-/* 061174 7F02E784 C4B4001C */   lwc1  $f20, 0x1c($a1)
-/* 061178 7F02E788 10000002 */  b     .L7F02E794
-/* 06117C 7F02E78C 46000506 */   mov.s $f20, $f0
-/* 061180 7F02E790 C4B4001C */  lwc1  $f20, 0x1c($a1)
-.L7F02E794:
-/* 061184 7F02E794 460EA001 */  sub.s $f0, $f20, $f14
-/* 061188 7F02E798 44811000 */  mtc1  $at, $f2
-/* 06118C 7F02E79C 3C014180 */  li    $at, 0x41800000 # 16.000000
-/* 061190 7F02E7A0 4602003C */  c.lt.s $f0, $f2
-/* 061194 7F02E7A4 00000000 */  nop   
-/* 061198 7F02E7A8 45020005 */  bc1fl .L7F02E7C0
-/* 06119C 7F02E7AC 44812000 */   mtc1  $at, $f4
-/* 0611A0 7F02E7B0 46180482 */  mul.s $f18, $f0, $f24
-/* 0611A4 7F02E7B4 1000000D */  b     .L7F02E7EC
-/* 0611A8 7F02E7B8 46029303 */   div.s $f12, $f18, $f2
-/* 0611AC 7F02E7BC 44812000 */  mtc1  $at, $f4
-.L7F02E7C0:
-/* 0611B0 7F02E7C0 00000000 */  nop   
-/* 0611B4 7F02E7C4 4600203C */  c.lt.s $f4, $f0
-/* 0611B8 7F02E7C8 00000000 */  nop   
-/* 0611BC 7F02E7CC 45020008 */  bc1fl .L7F02E7F0
-/* 0611C0 7F02E7D0 8209003A */   lb    $t1, 0x3a($s0)
-/* 0611C4 7F02E7D4 46180182 */  mul.s $f6, $f0, $f24
-/* 0611C8 7F02E7D8 3C013D80 */  li    $at, 0x3D800000 # 0.062500
-/* 0611CC 7F02E7DC 44814000 */  mtc1  $at, $f8
-/* 0611D0 7F02E7E0 00000000 */  nop   
-/* 0611D4 7F02E7E4 46083302 */  mul.s $f12, $f6, $f8
-/* 0611D8 7F02E7E8 00000000 */  nop   
-.L7F02E7EC:
-/* 0611DC 7F02E7EC 8209003A */  lb    $t1, 0x3a($s0)
-.L7F02E7F0:
-/* 0611E0 7F02E7F0 51200006 */  beql  $t1, $zero, .L7F02E80C
-/* 0611E4 7F02E7F4 A2000031 */   sb    $zero, 0x31($s0)
-/* 0611E8 7F02E7F8 820A003B */  lb    $t2, 0x3b($s0)
-/* 0611EC 7F02E7FC 51400003 */  beql  $t2, $zero, .L7F02E80C
-/* 0611F0 7F02E800 A2000031 */   sb    $zero, 0x31($s0)
-/* 0611F4 7F02E804 460C6300 */  add.s $f12, $f12, $f12
-/* 0611F8 7F02E808 A2000031 */  sb    $zero, 0x31($s0)
-.L7F02E80C:
-/* 0611FC 7F02E80C E7AE005C */  swc1  $f14, 0x5c($sp)
-/* 061200 7F02E810 0FC1BDD3 */  jal   objecthandlerGetModelAnim
-/* 061204 7F02E814 E7AC0060 */   swc1  $f12, 0x60($sp)
-/* 061208 7F02E818 C7AE005C */  lwc1  $f14, 0x5c($sp)
-/* 06120C 7F02E81C 3C014100 */  li    $at, 0x41000000 # 8.000000
-/* 061210 7F02E820 44815000 */  mtc1  $at, $f10
-/* 061214 7F02E824 C7AC0060 */  lwc1  $f12, 0x60($sp)
-/* 061218 7F02E828 82660024 */  lb    $a2, 0x24($s3)
-/* 06121C 7F02E82C 44077000 */  mfc1  $a3, $f14
-/* 061220 7F02E830 02602025 */  move  $a0, $s3
-/* 061224 7F02E834 00402825 */  move  $a1, $v0
-/* 061228 7F02E838 E7AA0014 */  swc1  $f10, 0x14($sp)
-/* 06122C 7F02E83C 0FC1BF92 */  jal   modelSetAnimation
-/* 061230 7F02E840 E7AC0010 */   swc1  $f12, 0x10($sp)
-/* 061234 7F02E844 4405A000 */  mfc1  $a1, $f20
-/* 061238 7F02E848 0FC1BFE2 */  jal   modelSetAnimEndFrame
-/* 06123C 7F02E84C 02602025 */   move  $a0, $s3
-.L7F02E850:
-/* 061240 7F02E850 0FC1BDD7 */  jal   objecthandlerGetModelField28
-/* 061244 7F02E854 02602025 */   move  $a0, $s3
-/* 061248 7F02E858 46000506 */  mov.s $f20, $f0
-/* 06124C 7F02E85C 8E02004C */  lw    $v0, 0x4c($s0)
-.L7F02E860:
-/* 061250 7F02E860 304B0040 */  andi  $t3, $v0, 0x40
-/* 061254 7F02E864 5560002B */  bnezl $t3, .L7F02E914
-/* 061258 7F02E868 8E05002C */   lw    $a1, 0x2c($s0)
-/* 06125C 7F02E86C 8E05002C */  lw    $a1, 0x2c($s0)
-/* 061260 7F02E870 304C0020 */  andi  $t4, $v0, 0x20
-/* 061264 7F02E874 02602025 */  move  $a0, $s3
-/* 061268 7F02E878 C4A2000C */  lwc1  $f2, 0xc($a1)
-/* 06126C 7F02E87C 1180000F */  beqz  $t4, .L7F02E8BC
-/* 061270 7F02E880 C4AC0004 */   lwc1  $f12, 4($a1)
-/* 061274 7F02E884 E7A20050 */  swc1  $f2, 0x50($sp)
-/* 061278 7F02E888 0FC1BDD9 */  jal   sub_GAME_7F06F5C4
-/* 06127C 7F02E88C E7AC004C */   swc1  $f12, 0x4c($sp)
-/* 061280 7F02E890 C7AC004C */  lwc1  $f12, 0x4c($sp)
-/* 061284 7F02E894 C7A20050 */  lwc1  $f2, 0x50($sp)
-/* 061288 7F02E898 02602025 */  move  $a0, $s3
-/* 06128C 7F02E89C 460C003C */  c.lt.s $f0, $f12
-/* 061290 7F02E8A0 00000000 */  nop   
-/* 061294 7F02E8A4 45020006 */  bc1fl .L7F02E8C0
-/* 061298 7F02E8A8 826D0024 */   lb    $t5, 0x24($s3)
-/* 06129C 7F02E8AC 0FC1BDD9 */  jal   sub_GAME_7F06F5C4
-/* 0612A0 7F02E8B0 E7A20050 */   swc1  $f2, 0x50($sp)
-/* 0612A4 7F02E8B4 C7A20050 */  lwc1  $f2, 0x50($sp)
-/* 0612A8 7F02E8B8 46000306 */  mov.s $f12, $f0
-.L7F02E8BC:
-/* 0612AC 7F02E8BC 826D0024 */  lb    $t5, 0x24($s3)
-.L7F02E8C0:
-/* 0612B0 7F02E8C0 02002025 */  move  $a0, $s0
-/* 0612B4 7F02E8C4 3C053F80 */  lui   $a1, 0x3f80
-/* 0612B8 7F02E8C8 11A00004 */  beqz  $t5, .L7F02E8DC
-/* 0612BC 7F02E8CC 3C063FCC */   lui   $a2, (0x3FCCCCCD >> 16) # lui $a2, 0x3fcc
-/* 0612C0 7F02E8D0 3C018005 */  lui   $at, %hi(D_80051FC8) # $at, 0x8005
-/* 0612C4 7F02E8D4 C4308100 */  lwc1  $f16, %lo(D_80051FC8)($at)
-/* 0612C8 7F02E8D8 46028081 */  sub.s $f2, $f16, $f2
-.L7F02E8DC:
-/* 0612CC 7F02E8DC 34C6CCCD */  ori   $a2, (0x3FCCCCCD & 0xFFFF) # ori $a2, $a2, 0xcccd
-/* 0612D0 7F02E8E0 E7A20050 */  swc1  $f2, 0x50($sp)
-/* 0612D4 7F02E8E4 0FC08ED1 */  jal   chrlvGetGuard007SpeedRating
-/* 0612D8 7F02E8E8 E7AC004C */   swc1  $f12, 0x4c($sp)
-/* 0612DC 7F02E8EC C7AC004C */  lwc1  $f12, 0x4c($sp)
-/* 0612E0 7F02E8F0 C7A20050 */  lwc1  $f2, 0x50($sp)
-/* 0612E4 7F02E8F4 82050030 */  lb    $a1, 0x30($s0)
-/* 0612E8 7F02E8F8 44070000 */  mfc1  $a3, $f0
-/* 0612EC 7F02E8FC 44066000 */  mfc1  $a2, $f12
-/* 0612F0 7F02E900 02002025 */  move  $a0, $s0
-/* 0612F4 7F02E904 0FC0B0B9 */  jal   chrlvSetSubroty
-/* 0612F8 7F02E908 E7A20010 */   swc1  $f2, 0x10($sp)
-/* 0612FC 7F02E90C A2020030 */  sb    $v0, 0x30($s0)
-/* 061300 7F02E910 8E05002C */  lw    $a1, 0x2c($s0)
-.L7F02E914:
-/* 061304 7F02E914 C4B20028 */  lwc1  $f18, 0x28($a1)
-/* 061308 7F02E918 4614903C */  c.lt.s $f18, $f20
-/* 06130C 7F02E91C 00000000 */  nop   
-/* 061310 7F02E920 4500000F */  bc1f  .L7F02E960
-/* 061314 7F02E924 00000000 */   nop   
-/* 061318 7F02E928 C4A4002C */  lwc1  $f4, 0x2c($a1)
-/* 06131C 7F02E92C 02002025 */  move  $a0, $s0
-/* 061320 7F02E930 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 061324 7F02E934 4604A03C */  c.lt.s $f20, $f4
-/* 061328 7F02E938 00000000 */  nop   
-/* 06132C 7F02E93C 45000008 */  bc1f  .L7F02E960
-/* 061330 7F02E940 00000000 */   nop   
-/* 061334 7F02E944 44813000 */  mtc1  $at, $f6
-/* 061338 7F02E948 82060039 */  lb    $a2, 0x39($s0)
-/* 06133C 7F02E94C 82070038 */  lb    $a3, 0x38($s0)
-/* 061340 7F02E950 0FC0B13D */  jal   chrlvUpdateAimendsideback
-/* 061344 7F02E954 E7A60010 */   swc1  $f6, 0x10($sp)
-/* 061348 7F02E958 10000004 */  b     .L7F02E96C
-/* 06134C 7F02E95C 00008825 */   move  $s1, $zero
-.L7F02E960:
-/* 061350 7F02E960 0FC0B44B */  jal   chrlvResetAimend
-/* 061354 7F02E964 02002025 */   move  $a0, $s0
-/* 061358 7F02E968 00008825 */  move  $s1, $zero
-.L7F02E96C:
-/* 06135C 7F02E96C 02009025 */  move  $s2, $s0
-.L7F02E970:
-/* 061360 7F02E970 824F0038 */  lb    $t7, 0x38($s2)
-/* 061364 7F02E974 02002025 */  move  $a0, $s0
-/* 061368 7F02E978 02202825 */  move  $a1, $s1
-/* 06136C 7F02E97C 11E000A2 */  beqz  $t7, .L7F02EC08
-/* 061370 7F02E980 00000000 */   nop   
-/* 061374 7F02E984 824E003A */  lb    $t6, 0x3a($s2)
-/* 061378 7F02E988 55C0006A */  bnezl $t6, .L7F02EB34
-/* 06137C 7F02E98C 82090031 */   lb    $t1, 0x31($s0)
-/* 061380 7F02E990 8E05002C */  lw    $a1, 0x2c($s0)
-/* 061384 7F02E994 02002025 */  move  $a0, $s0
-/* 061388 7F02E998 00003025 */  move  $a2, $zero
-/* 06138C 7F02E99C C4A80018 */  lwc1  $f8, 0x18($a1)
-/* 061390 7F02E9A0 4614403E */  c.le.s $f8, $f20
-/* 061394 7F02E9A4 00000000 */  nop   
-/* 061398 7F02E9A8 45000046 */  bc1f  .L7F02EAC4
-/* 06139C 7F02E9AC 00000000 */   nop   
-/* 0613A0 7F02E9B0 C4AA001C */  lwc1  $f10, 0x1c($a1)
-/* 0613A4 7F02E9B4 02202825 */  move  $a1, $s1
-/* 0613A8 7F02E9B8 460AA03C */  c.lt.s $f20, $f10
-/* 0613AC 7F02E9BC 00000000 */  nop   
-/* 0613B0 7F02E9C0 45000040 */  bc1f  .L7F02EAC4
-/* 0613B4 7F02E9C4 00000000 */   nop   
-/* 0613B8 7F02E9C8 02002025 */  move  $a0, $s0
-/* 0613BC 7F02E9CC 0FC0B47E */  jal   chrlvToggleHiddenRelated
-/* 0613C0 7F02E9D0 24060001 */   li    $a2, 1
-/* 0613C4 7F02E9D4 82190007 */  lb    $t9, 7($s0)
-/* 0613C8 7F02E9D8 3C188004 */  lui   $t8, %hi(g_GlobalTimer) # $t8, 0x8004
-/* 0613CC 7F02E9DC 8F180FFC */  lw    $t8, %lo(g_GlobalTimer)($t8)
-/* 0613D0 7F02E9E0 2401000A */  li    $at, 10
-/* 0613D4 7F02E9E4 17210031 */  bne   $t9, $at, .L7F02EAAC
-/* 0613D8 7F02E9E8 AE180044 */   sw    $t8, 0x44($s0)
-/* 0613DC 7F02E9EC 8E05002C */  lw    $a1, 0x2c($s0)
-/* 0613E0 7F02E9F0 3C014248 */  li    $at, 0x42480000 # 50.000000
-/* 0613E4 7F02E9F4 44813000 */  mtc1  $at, $f6
-/* 0613E8 7F02E9F8 C4B0001C */  lwc1  $f16, 0x1c($a1)
-/* 0613EC 7F02E9FC C4B20018 */  lwc1  $f18, 0x18($a1)
-/* 0613F0 7F02EA00 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0613F4 7F02EA04 44815000 */  mtc1  $at, $f10
-/* 0613F8 7F02EA08 46128101 */  sub.s $f4, $f16, $f18
-/* 0613FC 7F02EA0C 3C0141F0 */  li    $at, 0x41F00000 # 30.000000
-/* 061400 7F02EA10 44818000 */  mtc1  $at, $f16
-/* 061404 7F02EA14 46062202 */  mul.s $f8, $f4, $f6
-/* 061408 7F02EA18 460A4003 */  div.s $f0, $f8, $f10
-/* 06140C 7F02EA1C 4610003C */  c.lt.s $f0, $f16
-/* 061410 7F02EA20 00000000 */  nop   
-/* 061414 7F02EA24 4502001C */  bc1fl .L7F02EA98
-/* 061418 7F02EA28 4405C000 */   mfc1  $a1, $f24
-/* 06141C 7F02EA2C 4600048D */  trunc.w.s $f18, $f0
-/* 061420 7F02EA30 8E080040 */  lw    $t0, 0x40($s0)
-/* 061424 7F02EA34 240C0032 */  li    $t4, 50
-/* 061428 7F02EA38 02602025 */  move  $a0, $s3
-/* 06142C 7F02EA3C 440A9000 */  mfc1  $t2, $f18
-/* 061430 7F02EA40 3C053DCC */  lui   $a1, (0x3DCCCCCD >> 16) # lui $a1, 0x3dcc
-/* 061434 7F02EA44 000A5840 */  sll   $t3, $t2, 1
-/* 061438 7F02EA48 018B6823 */  subu  $t5, $t4, $t3
-/* 06143C 7F02EA4C 010D082A */  slt   $at, $t0, $t5
-/* 061440 7F02EA50 54200008 */  bnezl $at, .L7F02EA74
-/* 061444 7F02EA54 4406B000 */   mfc1  $a2, $f22
-/* 061448 7F02EA58 4405C000 */  mfc1  $a1, $f24
-/* 06144C 7F02EA5C 4406B000 */  mfc1  $a2, $f22
-/* 061450 7F02EA60 0FC1BFFB */  jal   modelSetAnimSpeed
-/* 061454 7F02EA64 02602025 */   move  $a0, $s3
-/* 061458 7F02EA68 1000006A */  b     .L7F02EC14
-/* 06145C 7F02EA6C 26310001 */   addiu $s1, $s1, 1
-/* 061460 7F02EA70 4406B000 */  mfc1  $a2, $f22
-.L7F02EA74:
-/* 061464 7F02EA74 0FC1BFFB */  jal   modelSetAnimSpeed
-/* 061468 7F02EA78 34A5CCCD */   ori   $a1, (0x3DCCCCCD & 0xFFFF) # ori $a1, $a1, 0xcccd
-/* 06146C 7F02EA7C 3C0E8004 */  lui   $t6, %hi(g_ClockTimer) # $t6, 0x8004
-/* 061470 7F02EA80 8DCE0FF4 */  lw    $t6, %lo(g_ClockTimer)($t6)
-/* 061474 7F02EA84 8E0F0040 */  lw    $t7, 0x40($s0)
-/* 061478 7F02EA88 01EEC021 */  addu  $t8, $t7, $t6
-/* 06147C 7F02EA8C 10000060 */  b     .L7F02EC10
-/* 061480 7F02EA90 AE180040 */   sw    $t8, 0x40($s0)
-/* 061484 7F02EA94 4405C000 */  mfc1  $a1, $f24
-.L7F02EA98:
-/* 061488 7F02EA98 4406B000 */  mfc1  $a2, $f22
-/* 06148C 7F02EA9C 0FC1BFFB */  jal   modelSetAnimSpeed
-/* 061490 7F02EAA0 02602025 */   move  $a0, $s3
-/* 061494 7F02EAA4 1000005B */  b     .L7F02EC14
-/* 061498 7F02EAA8 26310001 */   addiu $s1, $s1, 1
-.L7F02EAAC:
-/* 06149C 7F02EAAC 4405C000 */  mfc1  $a1, $f24
-/* 0614A0 7F02EAB0 4406B000 */  mfc1  $a2, $f22
-/* 0614A4 7F02EAB4 0FC1BFFB */  jal   modelSetAnimSpeed
-/* 0614A8 7F02EAB8 02602025 */   move  $a0, $s3
-/* 0614AC 7F02EABC 10000055 */  b     .L7F02EC14
-/* 0614B0 7F02EAC0 26310001 */   addiu $s1, $s1, 1
-.L7F02EAC4:
-/* 0614B4 7F02EAC4 0FC0B47E */  jal   chrlvToggleHiddenRelated
-/* 0614B8 7F02EAC8 02202825 */   move  $a1, $s1
-/* 0614BC 7F02EACC 82190007 */  lb    $t9, 7($s0)
-/* 0614C0 7F02EAD0 2401000A */  li    $at, 10
-/* 0614C4 7F02EAD4 02002025 */  move  $a0, $s0
-/* 0614C8 7F02EAD8 1721000C */  bne   $t9, $at, .L7F02EB0C
-/* 0614CC 7F02EADC 3C063F4C */   lui   $a2, 0x3f4c
-/* 0614D0 7F02EAE0 4405C000 */  mfc1  $a1, $f24
-/* 0614D4 7F02EAE4 3C063F4C */  lui   $a2, (0x3F4CCCCD >> 16) # lui $a2, 0x3f4c
-/* 0614D8 7F02EAE8 34C6CCCD */  ori   $a2, (0x3F4CCCCD & 0xFFFF) # ori $a2, $a2, 0xcccd
-/* 0614DC 7F02EAEC 0FC08ED1 */  jal   chrlvGetGuard007SpeedRating
-/* 0614E0 7F02EAF0 02002025 */   move  $a0, $s0
-/* 0614E4 7F02EAF4 44050000 */  mfc1  $a1, $f0
-/* 0614E8 7F02EAF8 4406B000 */  mfc1  $a2, $f22
-/* 0614EC 7F02EAFC 0FC1BFFB */  jal   modelSetAnimSpeed
-/* 0614F0 7F02EB00 02602025 */   move  $a0, $s3
-/* 0614F4 7F02EB04 10000043 */  b     .L7F02EC14
-/* 0614F8 7F02EB08 26310001 */   addiu $s1, $s1, 1
-.L7F02EB0C:
-/* 0614FC 7F02EB0C 4405C000 */  mfc1  $a1, $f24
-/* 061500 7F02EB10 0FC08ED1 */  jal   chrlvGetGuard007SpeedRating
-/* 061504 7F02EB14 34C6CCCD */   ori   $a2, (0x3F4CCCCD & 0xFFFF) # ori $a2, $a2, 0xcccd
-/* 061508 7F02EB18 44050000 */  mfc1  $a1, $f0
-/* 06150C 7F02EB1C 4406B000 */  mfc1  $a2, $f22
-/* 061510 7F02EB20 0FC1BFFB */  jal   modelSetAnimSpeed
-/* 061514 7F02EB24 02602025 */   move  $a0, $s3
-/* 061518 7F02EB28 1000003A */  b     .L7F02EC14
-/* 06151C 7F02EB2C 26310001 */   addiu $s1, $s1, 1
-/* 061520 7F02EB30 82090031 */  lb    $t1, 0x31($s0)
-.L7F02EB34:
-/* 061524 7F02EB34 02002025 */  move  $a0, $s0
-/* 061528 7F02EB38 00003025 */  move  $a2, $zero
-/* 06152C 7F02EB3C 1520002E */  bnez  $t1, .L7F02EBF8
-/* 061530 7F02EB40 00000000 */   nop   
-/* 061534 7F02EB44 82020032 */  lb    $v0, 0x32($s0)
-/* 061538 7F02EB48 12220004 */  beq   $s1, $v0, .L7F02EB5C
-/* 06153C 7F02EB4C 02025021 */   addu  $t2, $s0, $v0
-/* 061540 7F02EB50 814C003A */  lb    $t4, 0x3a($t2)
-/* 061544 7F02EB54 15800028 */  bnez  $t4, .L7F02EBF8
-/* 061548 7F02EB58 00000000 */   nop   
-.L7F02EB5C:
-/* 06154C 7F02EB5C 8E05002C */  lw    $a1, 0x2c($s0)
-/* 061550 7F02EB60 C4A00020 */  lwc1  $f0, 0x20($a1)
-/* 061554 7F02EB64 4600B03E */  c.le.s $f22, $f0
-/* 061558 7F02EB68 00000000 */  nop   
-/* 06155C 7F02EB6C 4502000B */  bc1fl .L7F02EB9C
-/* 061560 7F02EB70 4616003C */   c.lt.s $f0, $f22
-/* 061564 7F02EB74 4614003E */  c.le.s $f0, $f20
-/* 061568 7F02EB78 00000000 */  nop   
-/* 06156C 7F02EB7C 45020007 */  bc1fl .L7F02EB9C
-/* 061570 7F02EB80 4616003C */   c.lt.s $f0, $f22
-/* 061574 7F02EB84 C4A40024 */  lwc1  $f4, 0x24($a1)
-/* 061578 7F02EB88 4604A03E */  c.le.s $f20, $f4
-/* 06157C 7F02EB8C 00000000 */  nop   
-/* 061580 7F02EB90 4503000B */  bc1tl .L7F02EBC0
-/* 061584 7F02EB94 82080033 */   lb    $t0, 0x33($s0)
-/* 061588 7F02EB98 4616003C */  c.lt.s $f0, $f22
-.L7F02EB9C:
-/* 06158C 7F02EB9C 00000000 */  nop   
-/* 061590 7F02EBA0 45000015 */  bc1f  .L7F02EBF8
-/* 061594 7F02EBA4 00000000 */   nop   
-/* 061598 7F02EBA8 C4A60018 */  lwc1  $f6, 0x18($a1)
-/* 06159C 7F02EBAC 4614303E */  c.le.s $f6, $f20
-/* 0615A0 7F02EBB0 00000000 */  nop   
-/* 0615A4 7F02EBB4 45000010 */  bc1f  .L7F02EBF8
-/* 0615A8 7F02EBB8 00000000 */   nop   
-/* 0615AC 7F02EBBC 82080033 */  lb    $t0, 0x33($s0)
-.L7F02EBC0:
-/* 0615B0 7F02EBC0 24060001 */  li    $a2, 1
-/* 0615B4 7F02EBC4 00C25823 */  subu  $t3, $a2, $v0
-/* 0615B8 7F02EBC8 250D0001 */  addiu $t5, $t0, 1
-/* 0615BC 7F02EBCC A2060031 */  sb    $a2, 0x31($s0)
-/* 0615C0 7F02EBD0 A20B0032 */  sb    $t3, 0x32($s0)
-/* 0615C4 7F02EBD4 A20D0033 */  sb    $t5, 0x33($s0)
-/* 0615C8 7F02EBD8 3C0F8004 */  lui   $t7, %hi(g_GlobalTimer) # $t7, 0x8004
-/* 0615CC 7F02EBDC 8DEF0FFC */  lw    $t7, %lo(g_GlobalTimer)($t7)
-/* 0615D0 7F02EBE0 02002025 */  move  $a0, $s0
-/* 0615D4 7F02EBE4 02202825 */  move  $a1, $s1
-/* 0615D8 7F02EBE8 0FC0B47E */  jal   chrlvToggleHiddenRelated
-/* 0615DC 7F02EBEC AE0F0044 */   sw    $t7, 0x44($s0)
-/* 0615E0 7F02EBF0 10000008 */  b     .L7F02EC14
-/* 0615E4 7F02EBF4 26310001 */   addiu $s1, $s1, 1
-.L7F02EBF8:
-/* 0615E8 7F02EBF8 0FC0B47E */  jal   chrlvToggleHiddenRelated
-/* 0615EC 7F02EBFC 02202825 */   move  $a1, $s1
-/* 0615F0 7F02EC00 10000004 */  b     .L7F02EC14
-/* 0615F4 7F02EC04 26310001 */   addiu $s1, $s1, 1
-.L7F02EC08:
-/* 0615F8 7F02EC08 0FC0B47E */  jal   chrlvToggleHiddenRelated
-/* 0615FC 7F02EC0C 00003025 */   move  $a2, $zero
-.L7F02EC10:
-/* 061600 7F02EC10 26310001 */  addiu $s1, $s1, 1
-.L7F02EC14:
-/* 061604 7F02EC14 24010002 */  li    $at, 2
-/* 061608 7F02EC18 1621FF55 */  bne   $s1, $at, .L7F02E970
-/* 06160C 7F02EC1C 26520001 */   addiu $s2, $s2, 1
-/* 061610 7F02EC20 8FBF0044 */  lw    $ra, 0x44($sp)
-.L7F02EC24:
-/* 061614 7F02EC24 D7B40018 */  ldc1  $f20, 0x18($sp)
-/* 061618 7F02EC28 D7B60020 */  ldc1  $f22, 0x20($sp)
-/* 06161C 7F02EC2C D7B80028 */  ldc1  $f24, 0x28($sp)
-/* 061620 7F02EC30 8FB00034 */  lw    $s0, 0x34($sp)
-/* 061624 7F02EC34 8FB10038 */  lw    $s1, 0x38($sp)
-/* 061628 7F02EC38 8FB2003C */  lw    $s2, 0x3c($sp)
-/* 06162C 7F02EC3C 8FB30040 */  lw    $s3, 0x40($sp)
-/* 061630 7F02EC40 03E00008 */  jr    $ra
-/* 061634 7F02EC44 27BD0070 */   addiu $sp, $sp, 0x70
-)
-#endif
-
-//#endif
 
 
 /**
@@ -8754,8 +8248,8 @@ s32 chrlvApplySpeed(ChrRecord *self, coord3d *arg1, s32 arg2, f32 *speedPtr)
         accel = ACCEL_C;
     }
 
-    maxSpeed *= self_model->unka4;
-    accel *= self_model->unka4;
+    maxSpeed *= self_model->playspeed;
+    accel *= self_model->playspeed;
 
     // void chrobjCallsApplySpeed(f32 *openPosition, f32 maxFrac, f32 *speedPtr, f32 accel, f32 decel, f32 maxSpeed)
     chrobjCallsApplySpeed(
@@ -9085,16 +8579,16 @@ s32 sub_GAME_7F030128(ChrRecord *self, coord3d *point, StandTile *arg2, coord3d 
     
     chrGetChrWidthHeight(self->prop, &sp34, &sp3C, &sp38);
     
-    set_or_unset_GUARDdata_flag(self, 0);
+    chrSetMoving(self, 0);
     
     if (
-        sub_GAME_7F0B0E24(&sp44, point->f[0], point->f[2], dest->f[0], dest->f[2], objflags, sp3C, sp38, 0.0f, 1.0f) 
+        stanTestLineUnobstructed(&sp44, point->f[0], point->f[2], dest->f[0], dest->f[2], objflags, sp3C, sp38, 0.0f, 1.0f) 
         && ((arg4 == NULL) || (sp44 == arg4)))
     {
         sp40 = 1;
     }
 
-    set_or_unset_GUARDdata_flag(self, 1);
+    chrSetMoving(self, 1);
 
     return sp40;
 }
@@ -9139,23 +8633,23 @@ s32 sub_GAME_7F0301FC(ChrRecord *self, coord3d *point, StandTile *arg2, coord3d 
         temp_f20 = arg4 * dd.f[0];
         temp_f22 = arg4 * dd.f[2];
 
-        set_or_unset_GUARDdata_flag(self, 0);
+        chrSetMoving(self, 0);
 
         pstan = arg2;
 
-        if (sub_GAME_7F0B0E24(&pstan, point->f[0], point->f[2], point->f[0] + temp_f22, point->f[2] - temp_f20, arg5, sp64, sp60, 0.0f, 1.0f)
-            && sub_GAME_7F0B0E24(&pstan, point->f[0] + temp_f22, point->f[2] - temp_f20, dest->f[0] + temp_f22, dest->f[2] - temp_f20, arg5, sp64, sp60, 0.0f, 1.0f))
+        if (stanTestLineUnobstructed(&pstan, point->f[0], point->f[2], point->f[0] + temp_f22, point->f[2] - temp_f20, arg5, sp64, sp60, 0.0f, 1.0f)
+            && stanTestLineUnobstructed(&pstan, point->f[0] + temp_f22, point->f[2] - temp_f20, dest->f[0] + temp_f22, dest->f[2] - temp_f20, arg5, sp64, sp60, 0.0f, 1.0f))
         {
             pstan = arg2;
 
-            if (sub_GAME_7F0B0E24(&pstan, point->f[0], point->f[2], point->f[0] - temp_f22, point->f[2] + temp_f20, arg5, sp64, sp60, 0.0f, 1.0f)
-                && sub_GAME_7F0B0E24(&pstan, point->f[0] - temp_f22, point->f[2] + temp_f20, dest->f[0] - temp_f22, dest->f[2] + temp_f20, arg5, sp64, sp60, 0.0f, 1.0f))
+            if (stanTestLineUnobstructed(&pstan, point->f[0], point->f[2], point->f[0] - temp_f22, point->f[2] + temp_f20, arg5, sp64, sp60, 0.0f, 1.0f)
+                && stanTestLineUnobstructed(&pstan, point->f[0] - temp_f22, point->f[2] + temp_f20, dest->f[0] - temp_f22, dest->f[2] + temp_f20, arg5, sp64, sp60, 0.0f, 1.0f))
             {
                 ret = 1;
             }
         }
 
-        set_or_unset_GUARDdata_flag(self, 1);
+        chrSetMoving(self, 1);
     }
 
     return ret;
@@ -9179,20 +8673,20 @@ s32 sub_GAME_7F0304AC(ChrRecord *self, coord3d *mypos, StandTile *mystan, coord3
     pass = FALSE;
 
     chrGetChrWidthHeight(self->prop, &sp34, &sp3C, &sp38);
-    set_or_unset_GUARDdata_flag(self, 0);
+    chrSetMoving(self, 0);
 
-    if (sub_GAME_7F0B0E24(&sp44, mypos->x, mypos->z, arg3->x, arg3->z, arg6, sp3C, sp38, 0.0f, 1.0f))
+    if (stanTestLineUnobstructed(&sp44, mypos->x, mypos->z, arg3->x, arg3->z, arg6, sp3C, sp38, 0.0f, 1.0f))
     {
         sp30 = sp44; // duplicate var? needed?
 
-        if (sub_GAME_7F0B0E24(&sp30, arg3->x, arg3->z, bondpos->x, bondpos->z, arg6, sp3C, sp38, 0.0f, 1.0f)
+        if (stanTestLineUnobstructed(&sp30, arg3->x, arg3->z, bondpos->x, bondpos->z, arg6, sp3C, sp38, 0.0f, 1.0f)
             && ((bondstan == NULL) || (sp30 == bondstan)))
         {
             pass = TRUE;
         }
     }
 
-    set_or_unset_GUARDdata_flag(self, 1);
+    chrSetMoving(self, 1);
 
     return pass;
 }
@@ -9217,13 +8711,13 @@ s32 sub_GAME_7F0305E0(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
     sp48 = 0;
 
     chrGetChrWidthHeight(self->prop, &sp3C, &sp44, &sp40);
-    set_or_unset_GUARDdata_flag(self, 0);
+    chrSetMoving(self, 0);
 
-    if (sub_GAME_7F0B0E24(&sp4C, arg1->x, arg1->f[2], arg3->x, arg3->f[2], arg6, sp44, sp40, 0.0f, 1.0f))
+    if (stanTestLineUnobstructed(&sp4C, arg1->x, arg1->f[2], arg3->x, arg3->f[2], arg6, sp44, sp40, 0.0f, 1.0f))
     {
         sp38 = sp4C;
 
-        if (sub_GAME_7F0B0E24(&sp38, arg3->x, arg3->f[2], arg4->x, arg4->f[2], arg6, sp44, sp40, 0.0f, 1.0f)
+        if (stanTestLineUnobstructed(&sp38, arg3->x, arg3->f[2], arg4->x, arg4->f[2], arg6, sp44, sp40, 0.0f, 1.0f)
             && sub_GAME_7F0301FC(self, arg1, arg2, arg3, arg5, arg6)
             && sub_GAME_7F0301FC(self, arg3, sp4C, arg4, arg5, arg6))
         {
@@ -9231,7 +8725,7 @@ s32 sub_GAME_7F0305E0(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
         }
     }
 
-    set_or_unset_GUARDdata_flag(self, 1);
+    chrSetMoving(self, 1);
 
     return sp48;
 }
@@ -9325,12 +8819,12 @@ s32 sub_GAME_7F03081C(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
     sp94 = 1.2f * (arg7 * spA0.f[0]);
     sp90 = 1.2f * (arg7 * spA0.f[2]);
 
-    set_or_unset_GUARDdata_flag(self, 0);
+    chrSetMoving(self, 0);
     sub_GAME_7F0B1CC4();
 
     spAC = arg2;
 
-    if ((sub_GAME_7F0B0E24(
+    if ((stanTestLineUnobstructed(
         &spAC,
         arg1->f[0],
         arg1->f[2],
@@ -9341,7 +8835,7 @@ s32 sub_GAME_7F03081C(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
         sp48,
         0.0f,
         1.0f) == 0)
-        || (sub_GAME_7F0B0E24(
+        || (stanTestLineUnobstructed(
             &spAC,
             arg1->f[0] + sp98,
             arg1->f[2] - sp9C,
@@ -9361,7 +8855,7 @@ s32 sub_GAME_7F03081C(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
 
     spAC = arg2;
 
-    if ((sub_GAME_7F0B0E24(
+    if ((stanTestLineUnobstructed(
         &spAC,
         arg1->f[0],
         arg1->f[2],
@@ -9372,7 +8866,7 @@ s32 sub_GAME_7F03081C(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
         sp48,
         0.0f,
         1.0f) == 0)
-        || (sub_GAME_7F0B0E24(
+        || (stanTestLineUnobstructed(
             &spAC,
             arg1->f[0] - sp98,
             arg1->f[2] + sp9C,
@@ -9427,8 +8921,8 @@ s32 sub_GAME_7F03081C(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
     {
         spAC = arg2;
 
-        if (sub_GAME_7F0B0E24(&spAC, arg1->f[0], arg1->f[2], arg3->f[0], arg3->f[2], arg8, sp4C, sp48, 0.0f, 1.0f)
-            && sub_GAME_7F0B18B8(&spAC, arg3->f[0], arg3->f[2], arg7, arg8, sp4C, sp48) < 0)
+        if (stanTestLineUnobstructed(&spAC, arg1->f[0], arg1->f[2], arg3->f[0], arg3->f[2], arg8, sp4C, sp48, 0.0f, 1.0f)
+            && stanTestVolume(&spAC, arg3->f[0], arg3->f[2], arg7, arg8, sp4C, sp48) < 0)
         {
             sp50 = 1;
         }
@@ -9439,7 +8933,7 @@ s32 sub_GAME_7F03081C(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
         }
     }
 
-    set_or_unset_GUARDdata_flag(self, 1);
+    chrSetMoving(self, 1);
 
     return sp50;
 }
@@ -9499,12 +8993,12 @@ s32 sub_GAME_7F030D70(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
     sp94 = 1.2f * (arg7 * spA0.f[0]);
     sp90 = 1.2f * (arg7 * spA0.f[2]);
 
-    set_or_unset_GUARDdata_flag(self, 0);
+    chrSetMoving(self, 0);
     sub_GAME_7F0B1CC4();
 
     spAC = arg2;
 
-    if ((sub_GAME_7F0B0E24(
+    if ((stanTestLineUnobstructed(
         &spAC,
         arg1->f[0],
         arg1->f[2],
@@ -9515,7 +9009,7 @@ s32 sub_GAME_7F030D70(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
         sp48,
         0.0f,
         1.0f) == 0)
-        || (sub_GAME_7F0B0E24(
+        || (stanTestLineUnobstructed(
             &spAC,
             arg1->f[0] + sp98,
             arg1->f[2] - sp9C,
@@ -9537,7 +9031,7 @@ s32 sub_GAME_7F030D70(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
 
     spAC = arg2;
 
-    if ((sub_GAME_7F0B0E24(
+    if ((stanTestLineUnobstructed(
         &spAC,
         arg1->f[0],
         arg1->f[2],
@@ -9548,7 +9042,7 @@ s32 sub_GAME_7F030D70(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
         sp48,
         0.0f,
         1.0f) == 0)
-        || (sub_GAME_7F0B0E24(
+        || (stanTestLineUnobstructed(
             &spAC,
             arg1->f[0] - sp98,
             arg1->f[2] + sp9C,
@@ -9615,8 +9109,8 @@ s32 sub_GAME_7F030D70(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
     {
         spAC = arg2;
 
-        if (sub_GAME_7F0B0E24(&spAC, arg1->f[0], arg1->f[2], arg3->f[0], arg3->f[2], arg8, sp4C, sp48, 0.0f, 1.0f)
-            && sub_GAME_7F0B18B8(&spAC, arg3->f[0], arg3->f[2], arg7, arg8, sp4C, sp48) < 0)
+        if (stanTestLineUnobstructed(&spAC, arg1->f[0], arg1->f[2], arg3->f[0], arg3->f[2], arg8, sp4C, sp48, 0.0f, 1.0f)
+            && stanTestVolume(&spAC, arg3->f[0], arg3->f[2], arg7, arg8, sp4C, sp48) < 0)
         {
             sp50 = 1;
         }
@@ -9627,7 +9121,7 @@ s32 sub_GAME_7F030D70(ChrRecord *self, coord3d *arg1, StandTile *arg2, coord3d *
         }
     }
 
-    set_or_unset_GUARDdata_flag(self, 1);
+    chrSetMoving(self, 1);
 
     return sp50;
 }
@@ -10028,7 +9522,7 @@ void chrlvTravelTick(ChrRecord *self, coord3d *arg1, StandTile *arg2, struct way
         if (phi_s3 != NULL)
         {
             obj = phi_s3->obj;
-            if (!(obj->flags2 & PROPFLAG_NO_AI_INTERACTION))
+            if (!(obj->flags2 & PROPFLAG_DOOR_OPENTOFRONT))
             {
                 dx = phi_s3->pos.f[0] - self_prop->pos.f[0];
                 dy = phi_s3->pos.f[1] - self_prop->pos.f[1];
@@ -10037,7 +9531,7 @@ void chrlvTravelTick(ChrRecord *self, coord3d *arg1, StandTile *arg2, struct way
                 if (((dx * dx) + (dy * dy) + (dz  * dz )) < 40000.0f)
                 {
                     sub_GAME_7F0281F4(self);
-                    sub_GAME_7F055B78(self_prop, phi_s3->door);
+                    doorsChooseSwingDirection(self_prop, phi_s3->door);
                     doorActivate(phi_s3->door, 1);
 
                     if (((self->hidden & CHRHIDDEN_OFFSCREEN_PATROL) == 0)
@@ -10480,7 +9974,7 @@ void chrlvAllChrTick(void)
 
     for (i=0; i<max; i++)
     {
-        guard = &ptr_guard_data[i];
+        guard = &g_ChrSlots[i];
 
         if (guard->model != NULL)
         {
@@ -11029,7 +10523,7 @@ bool sub_GAME_7F0333F8(ChrRecord *self)
     Model  *mymodel;
     coord3d zeropos;
     coord3d pos;
-    vec3    vec;
+    struct coord3d vec;
     f32     scale;
 
     if (chrlvCurrentPlayerCall7F0B0E24(self))
@@ -11038,7 +10532,7 @@ bool sub_GAME_7F0333F8(ChrRecord *self)
         scale   = getinstsize(mymodel) * 0.8f;
         sub_GAME_7F068190(&zeropos, &pos);
         getsuboffset(mymodel, &vec);
-        matrix_4x4_transform_vector_in_place(currentPlayerGetMatrix10CC(), &vec);
+        mtx4TransformVecInPlace(camGetWorldToScreenMtxf(), &vec);
 
         if (sub_GAME_7F041074(&zeropos, &pos, &vec, scale))
         {
@@ -11231,7 +10725,7 @@ bool check_if_able_to_then_kneel(ChrRecord *self)
 {
     if (chrIsNotDeadOrShot(self))
     {
-        chrlvActorKneel(self);
+        chrKneelChooseAnimation(self);
 
         return TRUE;
     }
@@ -11502,7 +10996,7 @@ bool sub_GAME_7F033B38(ChrRecord *self, f32 distance)
 
     for (i = 0; i < numguards; i++)
     {
-        chr = &ptr_guard_data[i];
+        chr = &g_ChrSlots[i];
 
         if ((chr != self) && chr->model && !chrIsDead(chr))
         {
@@ -11620,36 +11114,38 @@ s32 chrIsTargetNearlyInSight(ChrRecord *self)
 
 /**
  * Address 0x7F033EAC.
+ * PD: chrIsPosOffScreen
 */
 s32 sub_GAME_7F033EAC(coord3d *arg0, StandTile *arg1)
 {
-    bool pass;
+    bool offscreen;
     bbox2d sp1C;
 
-    pass = TRUE;
+    offscreen = TRUE;
 
     if (getROOMID_Bitflags(getTileRoom(arg1)) && fogPositionIsVisibleThroughFog(arg0, 0.0f))
     {
         if (bgGet2dBboxByRoomId(getTileRoom(arg1), &sp1C))
         {
-            pass = camIsPosInScreenBox(arg0, 200.0f, &sp1C) == 0;
+            offscreen = camIsPosInScreenBox(arg0, 200.0f, &sp1C) == 0;
         }
         else
         {
-            pass = sub_GAME_7F078A58(arg0, 200.0f) == 0;
+            offscreen = sub_GAME_7F078A58(arg0, 200.0f) == 0;
         }
     }
 
-    return pass;
+    return offscreen;
 }
 
 
 /**
  * Address 0x7F033F48.
+ * PD: chrAdjustPosForSpawn
 */
-bool sub_GAME_7F033F48(coord3d *pos, StandTile **arg1, f32 facing, bool b)
+bool sub_GAME_7F033F48(coord3d *pos, StandTile **arg1, f32 facing, bool allowonscreen)
 {
-    coord3d angle;
+    coord3d testpos;
     StandTile *s;
     s32 i;
     StandTile **spp;
@@ -11657,28 +11153,28 @@ bool sub_GAME_7F033F48(coord3d *pos, StandTile **arg1, f32 facing, bool b)
     s = *arg1;
     spp = &s;
 
-    if ((sub_GAME_7F0B18B8(spp, pos->f[0], pos->z, 20.0f, 0x1F, 0.0f, 1.0f) < 0) &&
-        (b || sub_GAME_7F033EAC(pos, *arg1)))
+    if ((stanTestVolume(spp, pos->f[0], pos->z, 20.0f, 0x1F, 0.0f, 1.0f) < 0) &&
+        (allowonscreen || sub_GAME_7F033EAC(pos, *arg1)))
     {
         return TRUE;
     }
 
     for (i = 0; i < 8; i++)
     {
-        angle.f[0] = pos->f[0] + (sinf(facing) * 60.0f);
-        angle.f[1] = pos->f[1];
-        angle.f[2] = pos->f[2] + (cosf(facing) * 60.0f);
+        testpos.f[0] = pos->f[0] + (sinf(facing) * 60.0f);
+        testpos.f[1] = pos->f[1];
+        testpos.f[2] = pos->f[2] + (cosf(facing) * 60.0f);
 
         s = *arg1;
 
-        if (sub_GAME_7F0B0E24(spp, pos->f[0], pos->f[2], angle.f[0], angle.f[2], 0x13, 0.0f, 1.0f, 0.0f, 1.0f)
-            && (sub_GAME_7F0B18B8(spp, angle.f[0], angle.f[2], 20.0f, 0x1F, 0.0f, 1.0f) < 0)
-            && (b || sub_GAME_7F033EAC(&angle, s)))
+        if (stanTestLineUnobstructed(spp, pos->f[0], pos->f[2], testpos.f[0], testpos.f[2], 0x13, 0.0f, 1.0f, 0.0f, 1.0f)
+            && (stanTestVolume(spp, testpos.f[0], testpos.f[2], 20.0f, 0x1F, 0.0f, 1.0f) < 0)
+            && (allowonscreen || sub_GAME_7F033EAC(&testpos, s)))
         {
             *arg1 = s;
 
-            pos->f[0] = angle.f[0]; //send back upstream
-            pos->f[2] = angle.f[2];
+            pos->f[0] = testpos.f[0]; //send back upstream
+            pos->f[2] = testpos.f[2];
 
             return TRUE;
         }
@@ -11698,8 +11194,9 @@ bool sub_GAME_7F033F48(coord3d *pos, StandTile **arg1, f32 facing, bool b)
 
 /**
  * Address 0x7F03415C.
+ * PD: chrSpawnAtCoord
 */
-PropRecord *actionblock_guard_constructor_BDBE(s32 bodynum, s32 headnum, coord3d *pos, StandTile *stan, f32 yrot, AIListRecord *ailist, s32 arg5)
+PropRecord *chrSpawnAtCoord(s32 bodynum, s32 headnum, coord3d *pos, StandTile *stan, f32 angle, AIListRecord *ailist, s32 spawnflags)
 {
     PropRecord *chrprop;
     coord3d newpos; //struct copy here would have been more efficient
@@ -11711,7 +11208,7 @@ PropRecord *actionblock_guard_constructor_BDBE(s32 bodynum, s32 headnum, coord3d
     {
         if (headnum < 0)
         {
-            headnum = select_psuedorandom_heads(bodynum);
+            headnum = bodyChooseHead(bodynum);
         }
 
         newpos.x = pos->x;
@@ -11719,13 +11216,13 @@ PropRecord *actionblock_guard_constructor_BDBE(s32 bodynum, s32 headnum, coord3d
         newpos.z = pos->z;
         stancopy = stan;
 
-        if (sub_GAME_7F033F48(&newpos, &stancopy, yrot, ((arg5 & 0x10) != 0)))
+        if (sub_GAME_7F033F48(&newpos, &stancopy, angle, ((spawnflags & 0x10) != 0)))
         {
-            chrHeader = retrieve_header_for_body_and_head(bodynum, headnum, arg5);
+            chrHeader = retrieve_header_for_body_and_head(bodynum, headnum, spawnflags);
 
             if (chrHeader != NULL)
             {
-                chrprop = replace_GUARDdata_with_actual_values(chrHeader, &newpos, yrot, stancopy, ailist);
+                chrprop = chrAllocate(chrHeader, &newpos, angle, stancopy, ailist);
 
                 if (chrprop != NULL)
                 {
@@ -11765,7 +11262,7 @@ PropRecord *chrSpawnAtPad(ChrRecord *self, s32 bodynum, s32 headnum, s32 padid, 
     #ifdef ENABLE_LOG
     osSyncPrintf("%s%s new char x = %f, y = %f, z = %f \n", "", "", pad->pos.x, pad->pos.y, pad->pos.z);
     #endif
-    return actionblock_guard_constructor_BDBE(bodynum, headnum, &pad->pos, pad->stan, atan2f(pad->look.f[0], pad->look.f[2]), ailist, flags);
+    return chrSpawnAtCoord(bodynum, headnum, &pad->pos, pad->stan, atan2f(pad->look.f[0], pad->look.f[2]), ailist, flags);
 }
 
 
@@ -11783,7 +11280,7 @@ PropRecord *chrSpawnAtChr(ChrRecord *self, s32 bodynum, s32 headnum, s32 chrnum,
         f32 chrRadHeading   = getsubroty(chr->model);
         PropRecord *chrprop = chr->prop;
 
-        return actionblock_guard_constructor_BDBE(bodynum, headnum, &chrprop->pos, chrprop->stan, chrRadHeading, ailist, flags);
+        return chrSpawnAtCoord(bodynum, headnum, &chrprop->pos, chrprop->stan, chrRadHeading, ailist, flags);
     }
 
     return NULL;
@@ -11886,7 +11383,7 @@ bool chrTryStartAlarm(ChrRecord *self, s32 PadId)
 
         if (objinst && objIsHealthy(objinst))
         {
-            chrlvExtendLeftHandAnimationRelated(self);
+            chrStartAlarmChooseAnimation(self);
 
             return TRUE;
         }

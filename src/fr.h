@@ -24,6 +24,8 @@
 #define VIEWPORT_WIDTH_WIDESCREEN SCREEN_WIDTH_320
 #define VIEWPORT_WIDTH_CINEMA     SCREEN_WIDTH_320
 
+#define SCREEN_HALF_WIDTH (SCREEN_WIDTH_320 / 2)
+
 /* 304 = 320 - 16 ?? */
 #define VIEWPORT_HEIGHT_FULLSCREEN 304
 #define VIEWPORT_HEIGHT_WIDESCREEN 248
@@ -84,6 +86,14 @@
 #define Z_BUFFER_4_3_HEIGHT 330
 #define Z_BUFFER_4_3_WIDTH  440
 
+
+// 4:3
+#define ASPECT_RATIO_SD    (1.3333334f)
+#define ASPECT_RATIO_PAL    (1.1764706f)
+
+#define ASPECT_RATIO_EU_400_330    (1.5873016119f)
+#define ASPECT_RATIO_EU_320_272    (1.40056025982f)
+
 #if defined(VERSION_EU)
 /* PAL */
 #define	SCREEN_HEIGHT                      SCREEN_HEIGHT_272
@@ -99,6 +109,7 @@
 #define VIEWPORT_ULY_4P_PLAYER_34          VIEWPORT_ULY_4P_PLAYER_34_PAL
 #define VIEWPORT_ULY_WIDESCREEN_OFFSET     VIEWPORT_ULY_WIDESCREEN_OFFSET_PAL
 #define Z_BUFFER_HEIGHT                    Z_BUFFER_HEIGHT_PAL
+#define ASPECT_RATIO                       ASPECT_RATIO_PAL
 #else
 /* NTSC */
 #define	SCREEN_HEIGHT                      SCREEN_HEIGHT_240
@@ -114,12 +125,16 @@
 #define VIEWPORT_ULY_4P_PLAYER_34          VIEWPORT_ULY_4P_PLAYER_34_NTSC
 #define VIEWPORT_ULY_WIDESCREEN_OFFSET     VIEWPORT_ULY_WIDESCREEN_OFFSET_NTSC
 #define Z_BUFFER_HEIGHT                    Z_BUFFER_HEIGHT_NTSC
+#define ASPECT_RATIO                       ASPECT_RATIO_SD
 #endif
+
 
 #define SCREEN_WIDTH      SCREEN_WIDTH_320
 
 #define XSCALE_MAX      0x400
 #define YSCALE_MAX      0x800
+
+#define FOV_Y_F         60.0f
 
 typedef struct VideoSettings_s {
     /**
@@ -187,7 +202,8 @@ s32 viGetHorizontalOffset(void);
 void video_related_8(void);
 void viSetBuf(s16 x, s16 y);
 void viSetXY(s16 x, s16 y);
-
+Gfx *viSetFillColor(Gfx *gdl, s32 r, s32 g, s32 b);
+Gfx *viFillScreen(Gfx *gdl);
 Gfx *viSetupScreensForNumPlayers(Gfx *gdl);
 
 void indyGrabJpg16bit(void);

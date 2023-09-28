@@ -28,7 +28,7 @@ assets/jfont_dl.bin
 assets/font_chardataj.bin
 assets/font_chardatae.bin
 assets/ge007.u.29D160.Globalimagetable.bin
-assets/Globalimagetable_commandblock.bin
+assets/rarewarelogo.bin
 assets/ge007.u.2A4D50.usedby7F008DE4.bin
 assets/ge007.u.117880.jfont_dl.bin
 assets/ge007.u.117940.jfont_chardata.bin
@@ -93,3 +93,17 @@ uld_c.c
 umerge_c.c
 uopt_c.c
 usplit_c.c
+
+#exclude local user scripts in root folder
+/my_*.sh
+assets/obseg/em/data/alien8.seg
+assets/obseg/em/data/atic.seg
+assets/obseg/em/data/cookie.seg
+assets/obseg/em/data/gunfright.seg
+assets/obseg/em/data/jetman.seg
+assets/obseg/em/data/jetpac.seg
+assets/obseg/em/data/knightlore.seg
+assets/obseg/em/data/pssst.seg
+assets/obseg/em/data/sabre.seg
+assets/obseg/em/data/spec_rom.seg
+assets/obseg/em/data/under.seg

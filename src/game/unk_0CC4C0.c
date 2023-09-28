@@ -6,7 +6,7 @@
 
 // bss
 //8008D140
-s32 dword_CODE_bss_8008D140;
+s32 g_TexLutMode;
 //8008D144
 s32 dword_CODE_bss_8008D144;
 //8008D148
@@ -158,7 +158,7 @@ void sub_GAME_7F0CC4C8(void)
         dword_CODE_bss_8008D148[i].unk_0 = 0;
         dword_CODE_bss_8008D2A8[i].unk_0 = 0;
     }
-    dword_CODE_bss_8008D140 = -1;
+    g_TexLutMode = -1;
 }
 
 
@@ -183,10 +183,10 @@ s32 unused_copy_byte_array(u8* src, s32 count, u8* dst)
 
 
 u32 texSetLutMode(s32 arg0) {
-    if (arg0 == dword_CODE_bss_8008D140) {
+    if (arg0 == g_TexLutMode) {
         return 0;
     }
-    dword_CODE_bss_8008D140 = arg0;
+    g_TexLutMode = arg0;
     return 1;
 }
 
@@ -215,7 +215,7 @@ s32 sub_GAME_7F0CC574(s32 index, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg
         dword_CODE_bss_8008D148[index].unk_20 = arg8;
         dword_CODE_bss_8008D148[index].unk_24 = arg9;
         dword_CODE_bss_8008D148[index].unk_28 = argA;
-        
+
     }
     return retval;
 }
@@ -224,7 +224,7 @@ s32 sub_GAME_7F0CC574(s32 index, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg
 s32 sub_GAME_7F0CC690(s32 index,s32 arg1,s32 arg2,s32 arg3,s32 arg4)
 {
     s32 retval;
-    
+
     retval = 0;
     if ((((dword_CODE_bss_8008D2A8[index].unk_0 == 0) || (arg1 != dword_CODE_bss_8008D2A8[index].unk_4)) || (arg2 != dword_CODE_bss_8008D2A8[index].unk_8)) ||
        ((arg3 != dword_CODE_bss_8008D2A8[index].unk_C || (arg4 != dword_CODE_bss_8008D2A8[index].unk_10))))
@@ -466,72 +466,36 @@ Gfx *sub_GAME_7F0CCC50(Gfx *gdl, struct tex *tex, s32 arg2, s32 shifts, s32 shif
     return gdl;
 }
 
+Gfx* sub_GAME_7F0CCFBC(Gfx* arg0, Gfx* arg1, struct tex* tex, s32 arg3)
+{
+    s32 lod = tex->maxlod ? tex->maxlod - 1 : 0;
 
-#ifdef NONMATCHING
-void sub_GAME_7F0CCFBC(void) {
+    if (arg3)
+    {
+        if (arg1 != NULL)
+        {
+            u32 v0 = (arg1->words.w0 & ~0x3800) | (lod << 11);
 
+            if (v0 != arg1->words.w0)
+            {
+                arg0->words.w0 = v0;
+                arg0->words.w1 = arg1->words.w1;
+                arg0++;
+            }
+        }
+        else
+        {
+            gSPTexture(arg0++, 0xffff, 0xffff, lod, G_TX_RENDERTILE, G_ON);
+        }
+    }
+    else
+    {
+        arg1->words.w0 &= ~0x3800;
+        arg1->words.w0 |= lod << 11;
+    }
+
+    return arg0;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0CCFBC
-/* 101AEC 7F0CCFBC 27BDFFF8 */  addiu $sp, $sp, -8
-/* 101AF0 7F0CCFC0 AFB00004 */  sw    $s0, 4($sp)
-/* 101AF4 7F0CCFC4 90C2000B */  lbu   $v0, 0xb($a2)
-/* 101AF8 7F0CCFC8 00808025 */  move  $s0, $a0
-/* 101AFC 7F0CCFCC 00001825 */  move  $v1, $zero
-/* 101B00 7F0CCFD0 00027142 */  srl   $t6, $v0, 5
-/* 101B04 7F0CCFD4 11C00003 */  beqz  $t6, .L7F0CCFE4
-/* 101B08 7F0CCFD8 00000000 */   nop   
-/* 101B0C 7F0CCFDC 10000001 */  b     .L7F0CCFE4
-/* 101B10 7F0CCFE0 25C3FFFF */   addiu $v1, $t6, -1
-.L7F0CCFE4:
-/* 101B14 7F0CCFE4 50E0001A */  beql  $a3, $zero, .L7F0CD050
-/* 101B18 7F0CCFE8 8CAD0000 */   lw    $t5, ($a1)
-/* 101B1C 7F0CCFEC 10A0000D */  beqz  $a1, .L7F0CD024
-/* 101B20 7F0CCFF0 02001025 */   move  $v0, $s0
-/* 101B24 7F0CCFF4 8CA40000 */  lw    $a0, ($a1)
-/* 101B28 7F0CCFF8 2401C7FF */  li    $at, -14337
-/* 101B2C 7F0CCFFC 0003C2C0 */  sll   $t8, $v1, 0xb
-/* 101B30 7F0CD000 00817824 */  and   $t7, $a0, $at
-/* 101B34 7F0CD004 01F81025 */  or    $v0, $t7, $t8
-/* 101B38 7F0CD008 50440018 */  beql  $v0, $a0, .L7F0CD06C
-/* 101B3C 7F0CD00C 02001025 */   move  $v0, $s0
-/* 101B40 7F0CD010 AE020000 */  sw    $v0, ($s0)
-/* 101B44 7F0CD014 8CB90004 */  lw    $t9, 4($a1)
-/* 101B48 7F0CD018 26100008 */  addiu $s0, $s0, 8
-/* 101B4C 7F0CD01C 10000012 */  b     .L7F0CD068
-/* 101B50 7F0CD020 AE19FFFC */   sw    $t9, -4($s0)
-.L7F0CD024:
-/* 101B54 7F0CD024 30680007 */  andi  $t0, $v1, 7
-/* 101B58 7F0CD028 00084AC0 */  sll   $t1, $t0, 0xb
-/* 101B5C 7F0CD02C 3C01BB00 */  lui   $at, 0xbb00
-/* 101B60 7F0CD030 01215025 */  or    $t2, $t1, $at
-/* 101B64 7F0CD034 354B0001 */  ori   $t3, $t2, 1
-/* 101B68 7F0CD038 240CFFFF */  li    $t4, -1
-/* 101B6C 7F0CD03C AC4C0004 */  sw    $t4, 4($v0)
-/* 101B70 7F0CD040 AC4B0000 */  sw    $t3, ($v0)
-/* 101B74 7F0CD044 10000008 */  b     .L7F0CD068
-/* 101B78 7F0CD048 26100008 */   addiu $s0, $s0, 8
-/* 101B7C 7F0CD04C 8CAD0000 */  lw    $t5, ($a1)
-.L7F0CD050:
-/* 101B80 7F0CD050 2401C7FF */  li    $at, -14337
-/* 101B84 7F0CD054 0003C2C0 */  sll   $t8, $v1, 0xb
-/* 101B88 7F0CD058 01A17024 */  and   $t6, $t5, $at
-/* 101B8C 7F0CD05C ACAE0000 */  sw    $t6, ($a1)
-/* 101B90 7F0CD060 01D8C825 */  or    $t9, $t6, $t8
-/* 101B94 7F0CD064 ACB90000 */  sw    $t9, ($a1)
-.L7F0CD068:
-/* 101B98 7F0CD068 02001025 */  move  $v0, $s0
-.L7F0CD06C:
-/* 101B9C 7F0CD06C 8FB00004 */  lw    $s0, 4($sp)
-/* 101BA0 7F0CD070 03E00008 */  jr    $ra
-/* 101BA4 7F0CD074 27BD0008 */   addiu $sp, $sp, 8
-)
-#endif
-
-
-
 
 
 #ifdef NONMATCHING
@@ -1355,7 +1319,6 @@ Gfx *sub_GAME_7F0CDB64(Gfx *gdl, struct tex *tex, s32 arg2, s32 arg3, s32 arg4, 
 #ifdef NONMATCHING
 Gfx * sub_GAME_7F0CDE18(Gfx *DL,u8 *facemapper_entry,s32 s_flags,s32 t_flags,s32 settilesize_offset)
 {
-   
     DL = expland_c0DL_psuedocommands(DL,facemapper_entry,0);
     DL = sub_GAME_7F0CD430(DL,facemapper_entry,s_flags,t_flags,settilesize_offset,0,0);
     //1029a0:    srl     t8,t7,0x5                      | 1029a0:    sra     t8,t7,0x5
@@ -1417,7 +1380,6 @@ Gfx * sub_GAME_7F0CDEA8(Gfx *DL,u8 *arg1,s32 arg2,s32 arg3,s32 arg4,u32 arg5,u32
 {
     u32 uVar1;
 
-    
     uVar1 = texGetSizeInBytes(arg5,NULL);
     DL = sub_GAME_7F0CD7AC(DL,arg5);
     gDPTileSync(DL++);

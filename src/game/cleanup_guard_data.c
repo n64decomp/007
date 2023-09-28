@@ -12,23 +12,23 @@ void cleanupGuardData(void) {
     s32 phi_v1;
 
     // Node 0
-    if (num_guards > 0)
+    if (g_NumChrSlots > 0)
     {
         // Node 1
         phi_s0 = 0;
         phi_s2 = 0;
-        phi_v1 = num_guards;
+        phi_v1 = g_NumChrSlots;
 loop_2:
         // Node 2
-        temp_v0 = (ptr_guard_data + phi_s0);
+        temp_v0 = (g_ChrSlots + phi_s0);
         if (temp_v0->unk1C != 0)
         {
             // Node 3
             disable_sounds_attached_to_player_then_something(temp_v0->unk18);
-            chrpropDelist((ptr_guard_data + phi_s0)->unk18);
-            chrpropDisable((ptr_guard_data + phi_s0)->unk18);
-            chrpropFree((ptr_guard_data + phi_s0)->unk18);
-            phi_v1 = num_guards;
+            chrpropDelist((g_ChrSlots + phi_s0)->unk18);
+            chrpropDisable((g_ChrSlots + phi_s0)->unk18);
+            chrpropFree((g_ChrSlots + phi_s0)->unk18);
+            phi_v1 = g_NumChrSlots;
         }
         // Node 4
         temp_s2 = (phi_s2 + 1);
@@ -47,8 +47,8 @@ loop_2:
 GLOBAL_ASM(
 .text
 glabel cleanupGuardData
-/* 03BEE0 7F0073B0 3C038003 */  lui   $v1, %hi(num_guards)
-/* 03BEE4 7F0073B4 8C63CC68 */  lw    $v1, %lo(num_guards)($v1)
+/* 03BEE0 7F0073B0 3C038003 */  lui   $v1, %hi(g_NumChrSlots)
+/* 03BEE4 7F0073B4 8C63CC68 */  lw    $v1, %lo(g_NumChrSlots)($v1)
 /* 03BEE8 7F0073B8 27BDFFD8 */  addiu $sp, $sp, -0x28
 /* 03BEEC 7F0073BC AFB20020 */  sw    $s2, 0x20($sp)
 /* 03BEF0 7F0073C0 AFBF0024 */  sw    $ra, 0x24($sp)
@@ -56,8 +56,8 @@ glabel cleanupGuardData
 /* 03BEF8 7F0073C8 AFB00018 */  sw    $s0, 0x18($sp)
 /* 03BEFC 7F0073CC 1860001D */  blez  $v1, .L7F007444
 /* 03BF00 7F0073D0 00009025 */   move  $s2, $zero
-/* 03BF04 7F0073D4 3C118003 */  lui   $s1, %hi(ptr_guard_data)
-/* 03BF08 7F0073D8 2631CC64 */  addiu $s1, %lo(ptr_guard_data) # addiu $s1, $s1, -0x339c
+/* 03BF04 7F0073D4 3C118003 */  lui   $s1, %hi(g_ChrSlots)
+/* 03BF08 7F0073D8 2631CC64 */  addiu $s1, %lo(g_ChrSlots) # addiu $s1, $s1, -0x339c
 /* 03BF0C 7F0073DC 00008025 */  move  $s0, $zero
 .L7F0073E0:
 /* 03BF10 7F0073E0 8E2E0000 */  lw    $t6, ($s1)
@@ -79,8 +79,8 @@ glabel cleanupGuardData
 /* 03BF50 7F007420 01505821 */  addu  $t3, $t2, $s0
 /* 03BF54 7F007424 0FC0E921 */  jal   chrpropFree
 /* 03BF58 7F007428 8D640018 */   lw    $a0, 0x18($t3)
-/* 03BF5C 7F00742C 3C038003 */  lui   $v1, %hi(num_guards)
-/* 03BF60 7F007430 8C63CC68 */  lw    $v1, %lo(num_guards)($v1)
+/* 03BF5C 7F00742C 3C038003 */  lui   $v1, %hi(g_NumChrSlots)
+/* 03BF60 7F007430 8C63CC68 */  lw    $v1, %lo(g_NumChrSlots)($v1)
 /* 03BF64 7F007434 26520001 */  addiu $s2, $s2, 1
 .L7F007438:
 /* 03BF68 7F007438 0243082A */  slt   $at, $s2, $v1

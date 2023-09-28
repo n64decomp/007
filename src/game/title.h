@@ -22,4 +22,6 @@ extern s32 virtualaddress;
 extern s32 dword_CODE_bss_80069594;
 
 extern u32 D_8002A7D0;
+
+Gfx *sub_GAME_7F007CC8(Gfx *gdl, s32 arg1, struct FolderSelect *arg2, struct FolderSelect *arg3);
 #endif

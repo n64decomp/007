@@ -5,7 +5,7 @@
 #include "math_asinfacosf.h"
 #include "math_unk_05A9E0.h"
 #include "chrobjdata.h"
-
+#include "ob.h"
 
 //file split per EU
 #ifdef NONMATCHING
@@ -32,7 +32,7 @@ glabel sub_GAME_7F0762E0
 /* 0AAE44 7F076314 8C8E0008 */  lw    $t6, 8($a0)
 /* 0AAE48 7F076318 0080A825 */  move  $s5, $a0
 /* 0AAE4C 7F07631C 00A02025 */  move  $a0, $a1
-/* 0AAE50 7F076320 0FC2F495 */  jal   get_index_num_of_named_resource
+/* 0AAE50 7F076320 0FC2F495 */  jal   fileGetIndex
 /* 0AAE54 7F076324 AFAE0054 */   sw    $t6, 0x54($sp)
 /* 0AAE58 7F076328 AFA20050 */  sw    $v0, 0x50($sp)
 /* 0AAE5C 7F07632C 0FC2F447 */  jal   get_rom_remaining_buffer_for_index
@@ -119,7 +119,7 @@ glabel sub_GAME_7F0762E0
 /* 0AAF90 7F076460 2CEE0001 */  sltiu $t6, $a3, 1
 /* 0AAF94 7F076464 01C03825 */  move  $a3, $t6
 /* 0AAF98 7F076468 01A03025 */  move  $a2, $t5
-/* 0AAF9C 7F07646C 0FC2F44E */  jal   sub_GAME_7F0BD138
+/* 0AAF9C 7F07646C 0FC2F44E */  jal   fileSetSize
 /* 0AAFA0 7F076470 8FA40050 */   lw    $a0, 0x50($sp)
 .L7F076474:
 /* 0AAFA4 7F076474 8FBF003C */  lw    $ra, 0x3c($sp)
@@ -142,24 +142,24 @@ glabel sub_GAME_7F0762E0
 
 
 #ifdef NONMATCHING
-void load_object_fill_header(struct ModelFileHeader *objheader, s8 *name, s32 targetloc, s32 sizeleft, s32 buffer)
+void load_object_fill_header(struct ModelFileHeader *objheader, s8 *name, u8* dst, s32 size, struct texpool * buffer)
 {
 
-    struct ModelNode **phi_v0;
+    struct ModelNode *filedata;
 
-    if (targetloc != 0)
+    if (dst != 0)
     {
-        phi_v0 = _load_resource_named_to_buffer(name, 0, targetloc, sizeleft);
+        filedata = _fileNameLoadToAddr(name, 0, dst, size);
     }
     else
     {
-        phi_v0 = _load_resource_named_to_membank(name, 0, 0x100, 4);
+        filedata = _fileNameLoadToBank(name, 0, 0x100, 4);
     }
-    objheader->Switches = phi_v0;
-    objheader->Textures = &phi_v0[objheader->numSwitches];
-    objheader->RootNode = objheader->Textures + (objheader->numtextures * 0xC);
-    sub_GAME_7F075A90(objheader, 0x5000000, phi_v0);
-    sub_GAME_7F0762E0(objheader, name, targetloc, buffer);
+    objheader->Switches = filedata;
+    objheader->Textures = &filedata[objheader->numSwitches];
+    objheader->RootNode = objheader->Textures[objheader->numtextures];
+    sub_GAME_7F075A90(objheader, 0x5000000, filedata);
+    sub_GAME_7F0762E0(objheader, name, dst, buffer);
 }
 
 #else
@@ -174,7 +174,7 @@ glabel load_object_fill_header
 /* 0AAFE8 7F0764B8 10C00006 */  beqz  $a2, .L7F0764D4
 /* 0AAFEC 7F0764BC AFA60028 */   sw    $a2, 0x28($sp)
 /* 0AAFF0 7F0764C0 00A02025 */  move  $a0, $a1
-/* 0AAFF4 7F0764C4 0FC2F350 */  jal   _load_resource_named_to_buffer
+/* 0AAFF4 7F0764C4 0FC2F350 */  jal   _fileNameLoadToAddr
 /* 0AAFF8 7F0764C8 00002825 */   move  $a1, $zero
 /* 0AAFFC 7F0764CC 10000007 */  b     .L7F0764EC
 /* 0AB000 7F0764D0 00403025 */   move  $a2, $v0
@@ -182,7 +182,7 @@ glabel load_object_fill_header
 /* 0AB004 7F0764D4 8FA40024 */  lw    $a0, 0x24($sp)
 /* 0AB008 7F0764D8 00002825 */  move  $a1, $zero
 /* 0AB00C 7F0764DC 24060100 */  li    $a2, 256
-/* 0AB010 7F0764E0 0FC2F341 */  jal   _load_resource_named_to_membank
+/* 0AB010 7F0764E0 0FC2F341 */  jal   _fileNameLoadToBank
 /* 0AB014 7F0764E4 24070004 */   li    $a3, 4
 /* 0AB018 7F0764E8 00403025 */  move  $a2, $v0
 .L7F0764EC:

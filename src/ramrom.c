@@ -1,13 +1,12 @@
 #include <ultra64.h>
 #include "ramrom.h"
+#include <macro.h>
 
 /**
  * @file ramrom.c
  * This file contains code to handle reading and writing rom addresses. 
  */
 
-#define align_addr_zero(X) ((((X) + 0xF) | 0xF) ^ 0xF)
-#define align_addr_even(X) (((X) | 1) ^ 1)
 
 OSIoMesg memoryMesgMB;
 OSMesg memoryMesg;
@@ -19,7 +18,8 @@ OSMesgQueue memoryMesgQueue;
  * romCreateMesgQueue
  * creates a message queue
  */
-void romCreateMesgQueue(void) {
+void romCreateMesgQueue(void)
+{
     osCreateMesgQueue(&memoryMesgQueue, &memoryMesg, 1);
 }
 
@@ -28,7 +28,8 @@ void romCreateMesgQueue(void) {
  * doRomCopy
  * invalidate cache and do pi dma 
  */
-void doRomCopy(void *target, void *source, u32 size) {
+void doRomCopy(void *target, void *source, u32 size)
+{
     osInvalDCache(target, size);
     osPiStartDma(&memoryMesgMB, 0, 0, source, target, size, &memoryMesgQueue);
 }
@@ -38,7 +39,8 @@ void doRomCopy(void *target, void *source, u32 size) {
  * romReceiveMesg 
  * receives a message queue 
  */
-void romReceiveMesg(void) {
+void romReceiveMesg(void)
+{
     osRecvMesg(&memoryMesgQueue, 0, 1);
 }
 
@@ -48,7 +50,8 @@ void romReceiveMesg(void) {
  * romCopy
  * copy from rom to ram
  */
-void romCopy(void *target, void *source, u32 size) {
+void romCopy(void *target, void *source, u32 size)
+{
     doRomCopy(target, source, size);
     romReceiveMesg();
 }
@@ -59,7 +62,8 @@ void romCopy(void *target, void *source, u32 size) {
  * romCopyAligned
  * aligns data, does a romCopy(), then returns aligned pointer to target
  */
-s32 romCopyAligned(void *target, void *source, s32 length) {
+s32 romCopyAligned(void *target, void *source, s32 length)
+{
     s32 target_offset;
     s32 *target_aligned;
     s32 *source_aligned;
@@ -67,9 +71,9 @@ s32 romCopyAligned(void *target, void *source, s32 length) {
 
     source_aligned = align_addr_even((s32)source);
     source_offset = (s32)source - (s32)source_aligned;
-    target_aligned = align_addr_zero((s32)target);
+    target_aligned = ALIGN16_a((s32)target);
     target_offset = source_offset;
-    romCopy(target_aligned, source_aligned, align_addr_zero((s32)source_offset + length));
+    romCopy(target_aligned, source_aligned, ALIGN16_a((s32)source_offset + length));
     return ((s32)target_aligned + target_offset);
 }
 
@@ -78,7 +82,8 @@ s32 romCopyAligned(void *target, void *source, s32 length) {
  * doRomWrite
  * actually writes to rom (buffer on Indy) 
  */
-void doRomWrite(void *source, void *target, u32 size) {
+void doRomWrite(void *source, void *target, u32 size)
+{
     osWritebackDCache(source, size);
     osPiStartDma(&memoryMesgMB, 0, 1, target, source, size, &memoryMesgQueue);
 }
@@ -89,7 +94,8 @@ void doRomWrite(void *source, void *target, u32 size) {
  * romWrite
  * let's write to the rom (buffer on Indy)
  */
-void romWrite(void *source, void *target, u32 size) {
+void romWrite(void *source, void *target, u32 size)
+{
     doRomWrite(source, target, size);
     romReceiveMesg();
 }

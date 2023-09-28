@@ -3,6 +3,7 @@
 #include "sched.h"
 #include "audi.h"
 #include "thread_config.h"
+#include "bondgame.h"
 
 /**
  * EU .data, offset from start of data_seg : 0x23A0
@@ -392,7 +393,7 @@ void amCreateAudioManager(ALSynConfig* alconf)
         g_AudioManager.cmdList[j] = (Acmd *)alHeapDBAlloc(0, 0, alconf->heap, 1, MAX_ACMD_SIZE * sizeof(Acmd));
     }
 
-    osCreateThread(&g_AudioManager.audioThread, AUDI_THREAD_ID, &amMain, 0, (void*)set_stack_entry((u8*)(&sp_audi), 0x1000), AUDI_THREAD_PRIORITY);
+    osCreateThread(&g_AudioManager.audioThread, AUDI_THREAD_ID, &amMain, 0, (void*)setSPToEnd((u8*)(&sp_audi), sizeof(sp_audi)), AUDI_THREAD_PRIORITY);
 }
 
 /**

@@ -118,12 +118,12 @@ void init_player_BONDdata_stats(void) {
     g_CurrentPlayer->field_FD0 = 0;
     g_CurrentPlayer->z_trigger_timer = 0;
     g_CurrentPlayer->field_FD8 = 0;
-    g_CurrentPlayer->field_FDC = 0xFF;
-    g_CurrentPlayer->field_FDD = 0xFF;
-    g_CurrentPlayer->field_FDE = 0xFF;
-    g_CurrentPlayer->field_FDF = 0;
+    g_CurrentPlayer->tileColor.rgba[0] = 0xFF;
+    g_CurrentPlayer->tileColor.rgba[1] = 0xFF;
+    g_CurrentPlayer->tileColor.rgba[2] = 0xFF;
+    g_CurrentPlayer->tileColor.rgba[3] = 0;
     g_CurrentPlayer->resetshadecol = 1;
-    g_CurrentPlayer->field_FE4 = 0;
+    g_CurrentPlayer->aimtype = 0;
     g_CurrentPlayer->crosshair_angle[] = 0.0f;
     g_CurrentPlayer->crosshair_angle[] = 0.0f;
     g_CurrentPlayer->crosshair_x_pos = 0.0f;
@@ -135,7 +135,7 @@ void init_player_BONDdata_stats(void) {
     g_CurrentPlayer->gun_azimuth_turning = 0.0f;
     g_CurrentPlayer->gunaimdamp = 0.9f;
     g_CurrentPlayer->field_1010 = 0.0f;
-    g_CurrentPlayer->holds_neg_pi = -3.1415927f;
+    g_CurrentPlayer->holds_neg_pi = -M_PI_F;
     g_CurrentPlayer->unk1018 = 0.0f;
     g_CurrentPlayer->copiedgoldeneye = FALSE;
     g_CurrentPlayer->magnetattracttime = -1;

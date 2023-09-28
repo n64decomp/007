@@ -20,191 +20,79 @@ f32 D_80032310[2] = {M_U16_MAX_VALUE_F, M_U16_MAX_VALUE_F};
 //#ifdef VERSION_EU
 
 #ifdef VERSION_EU
-#ifdef NONMATCHING
-void matrix_4x4_copy_homogeneous_eu(Mtxf *src,Mtxf *dst)
+void matrix_4x4_copy_homogeneous_eu(f32 src[3][3], f32 dst[3][3])
 {
-
+    s32 i, j;
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            dst[i][j] = src[i][j];
+        }
+    }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel matrix_4x4_copy_homogeneous_eu
-/* 08ACC0 7F0582D0 00001025 */  move  $v0, $zero
-/* 08ACC4 7F0582D4 00A03025 */  move  $a2, $a1
-/* 08ACC8 7F0582D8 00803825 */  move  $a3, $a0
-/* 08ACCC 7F0582DC 24080003 */  li    $t0, 3
-.L7F0582E0:
-/* 08ACD0 7F0582E0 00001825 */  move  $v1, $zero
-/* 08ACD4 7F0582E4 00C02025 */  move  $a0, $a2
-/* 08ACD8 7F0582E8 00E02825 */  move  $a1, $a3
-.L7F0582EC:
-/* 08ACDC 7F0582EC C4A40000 */  lwc1  $f4, ($a1)
-/* 08ACE0 7F0582F0 24630001 */  addiu $v1, $v1, 1
-/* 08ACE4 7F0582F4 24840004 */  addiu $a0, $a0, 4
-/* 08ACE8 7F0582F8 24A50004 */  addiu $a1, $a1, 4
-/* 08ACEC 7F0582FC 1468FFFB */  bne   $v1, $t0, .L7F0582EC
-/* 08ACF0 7F058300 E484FFFC */   swc1  $f4, -4($a0)
-/* 08ACF4 7F058304 24420001 */  addiu $v0, $v0, 1
-/* 08ACF8 7F058308 24C6000C */  addiu $a2, $a2, 0xc
-/* 08ACFC 7F05830C 1448FFF4 */  bne   $v0, $t0, .L7F0582E0
-/* 08AD00 7F058310 24E7000C */   addiu $a3, $a3, 0xc
-/* 08AD04 7F058314 03E00008 */  jr    $ra
-/* 08AD08 7F058318 00000000 */   nop   
-)
-#endif
 #endif
 
 
 #ifdef VERSION_EU
-#ifdef NONMATCHING
-void matrix_4x4_multiply_homogeneous_in_place_eu (f32 src[3][3], f32 dst[3][3])
+void matrix_4x4_multiply_homogeneous_in_place_eu (f32 lhs[3][3], f32 rhs[3][3])
 {
-
+    f32 result[3][3];
+    matrix_4x4_multiply_homogeneous_eu(lhs, rhs, &result);
+    matrix_4x4_copy_homogeneous_eu(&result, rhs);
 }
-#else
-GLOBAL_ASM(
-.text
-glabel matrix_4x4_multiply_homogeneous_in_place_eu
-/* 08AD0C 7F05831C 27BDFFC0 */  addiu $sp, $sp, -0x40
-/* 08AD10 7F058320 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 08AD14 7F058324 AFA50044 */  sw    $a1, 0x44($sp)
-/* 08AD18 7F058328 0FC160D3 */  jal   matrix_4x4_multiply_homogeneous_eu
-/* 08AD1C 7F05832C 27A6001C */   addiu $a2, $sp, 0x1c
-/* 08AD20 7F058330 27A4001C */  addiu $a0, $sp, 0x1c
-/* 08AD24 7F058334 0FC160B4 */  jal   matrix_4x4_copy_homogeneous_eu
-/* 08AD28 7F058338 8FA50044 */   lw    $a1, 0x44($sp)
-/* 08AD2C 7F05833C 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 08AD30 7F058340 27BD0040 */  addiu $sp, $sp, 0x40
-/* 08AD34 7F058344 03E00008 */  jr    $ra
-/* 08AD38 7F058348 00000000 */   nop   
-)
-#endif
 #endif
 
 
 #ifdef VERSION_EU
-#ifdef NONMATCHING
-void matrix_4x4_multiply_homogeneous_eu (Mtxf * lhs, Mtxf * rhs, Mtxf * result)
+void matrix_4x4_multiply_homogeneous_eu(f32 lhs[3][3], f32 rhs[3][3], f32 result[3][3])
 {
-
+    s32 i, j;
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            result[j][i] = (lhs[0][i] * rhs[j][0]) + (lhs[1][i] * rhs[j][1]) + (lhs[2][i] * rhs[j][2]);
+        }
+    }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel matrix_4x4_multiply_homogeneous_eu
-/* 08AD3C 7F05834C 00001825 */  move  $v1, $zero
-/* 08AD40 7F058350 00804025 */  move  $t0, $a0
-/* 08AD44 7F058354 240A000C */  li    $t2, 12
-/* 08AD48 7F058358 24090003 */  li    $t1, 3
-.L7F05835C:
-/* 08AD4C 7F05835C 00001025 */  move  $v0, $zero
-/* 08AD50 7F058360 00C32021 */  addu  $a0, $a2, $v1
-/* 08AD54 7F058364 00A03825 */  move  $a3, $a1
-.L7F058368:
-/* 08AD58 7F058368 C5120000 */  lwc1  $f18, ($t0)
-/* 08AD5C 7F05836C C4F00000 */  lwc1  $f16, ($a3)
-/* 08AD60 7F058370 C50E000C */  lwc1  $f14, 0xc($t0)
-/* 08AD64 7F058374 C4EC0004 */  lwc1  $f12, 4($a3)
-/* 08AD68 7F058378 46109402 */  mul.s $f16, $f18, $f16
-/* 08AD6C 7F05837C C4F20008 */  lwc1  $f18, 8($a3)
-/* 08AD70 7F058380 C50A0018 */  lwc1  $f10, 0x18($t0)
-/* 08AD74 7F058384 460C7302 */  mul.s $f12, $f14, $f12
-/* 08AD78 7F058388 24420001 */  addiu $v0, $v0, 1
-/* 08AD7C 7F05838C 2484000C */  addiu $a0, $a0, 0xc
-/* 08AD80 7F058390 460A9282 */  mul.s $f10, $f18, $f10
-/* 08AD84 7F058394 24E7000C */  addiu $a3, $a3, 0xc
-/* 08AD88 7F058398 460C8300 */  add.s $f12, $f16, $f12
-/* 08AD8C 7F05839C 460C5300 */  add.s $f12, $f10, $f12
-/* 08AD90 7F0583A0 1449FFF1 */  bne   $v0, $t1, .L7F058368
-/* 08AD94 7F0583A4 E48CFFF4 */   swc1  $f12, -0xc($a0)
-/* 08AD98 7F0583A8 24630004 */  addiu $v1, $v1, 4
-/* 08AD9C 7F0583AC 146AFFEB */  bne   $v1, $t2, .L7F05835C
-/* 08ADA0 7F0583B0 25080004 */   addiu $t0, $t0, 4
-/* 08ADA4 7F0583B4 03E00008 */  jr    $ra
-/* 08ADA8 7F0583B8 00000000 */   nop   
-)
-#endif
 #endif
 
 
 #ifdef VERSION_EU
-#ifdef NONMATCHING
-void matrix_4x4_copy_eu (Mtxf * src, Mtxf * dst)
+void matrix_4x4_copy_eu(f32 src[][3], f32 dst[4][4])
 {
+    s32 i, j;
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            dst[i][j] = src[i][j];
+        }
+    }
 
+    dst[0][3] = 0.0;
+    dst[1][3] = 0.0;
+    dst[2][3] = 0.0;
+    dst[3][0] = 0.0;
+    dst[3][1] = 0.0;
+    dst[3][2] = 0.0;
+    dst[3][3] = 1.0;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel matrix_4x4_copy_eu
-/* 08ADAC 7F0583BC 00001025 */  move  $v0, $zero
-/* 08ADB0 7F0583C0 00A03025 */  move  $a2, $a1
-/* 08ADB4 7F0583C4 00803825 */  move  $a3, $a0
-/* 08ADB8 7F0583C8 24090003 */  li    $t1, 3
-.L7F0583CC:
-/* 08ADBC 7F0583CC 00001825 */  move  $v1, $zero
-/* 08ADC0 7F0583D0 00C02025 */  move  $a0, $a2
-/* 08ADC4 7F0583D4 00E04025 */  move  $t0, $a3
-.L7F0583D8:
-/* 08ADC8 7F0583D8 C5040000 */  lwc1  $f4, ($t0)
-/* 08ADCC 7F0583DC 24630001 */  addiu $v1, $v1, 1
-/* 08ADD0 7F0583E0 24840004 */  addiu $a0, $a0, 4
-/* 08ADD4 7F0583E4 25080004 */  addiu $t0, $t0, 4
-/* 08ADD8 7F0583E8 1469FFFB */  bne   $v1, $t1, .L7F0583D8
-/* 08ADDC 7F0583EC E484FFFC */   swc1  $f4, -4($a0)
-/* 08ADE0 7F0583F0 24420001 */  addiu $v0, $v0, 1
-/* 08ADE4 7F0583F4 24C60010 */  addiu $a2, $a2, 0x10
-/* 08ADE8 7F0583F8 1449FFF4 */  bne   $v0, $t1, .L7F0583CC
-/* 08ADEC 7F0583FC 24E7000C */   addiu $a3, $a3, 0xc
-/* 08ADF0 7F058400 44800000 */  mtc1  $zero, $f0
-/* 08ADF4 7F058404 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 08ADF8 7F058408 44813000 */  mtc1  $at, $f6
-/* 08ADFC 7F05840C E4A0000C */  swc1  $f0, 0xc($a1)
-/* 08AE00 7F058410 E4A0001C */  swc1  $f0, 0x1c($a1)
-/* 08AE04 7F058414 E4A0002C */  swc1  $f0, 0x2c($a1)
-/* 08AE08 7F058418 E4A00030 */  swc1  $f0, 0x30($a1)
-/* 08AE0C 7F05841C E4A00034 */  swc1  $f0, 0x34($a1)
-/* 08AE10 7F058420 E4A00038 */  swc1  $f0, 0x38($a1)
-/* 08AE14 7F058424 03E00008 */  jr    $ra
-/* 08AE18 7F058428 E4A6003C */   swc1  $f6, 0x3c($a1)
-)
-#endif
 #endif
 
 #ifdef VERSION_EU
-#ifdef NONMATCHING
-void matrix_7f05842c_eu (Mtxf * src, f32 dst[3][3])
+void matrix_7f05842c_eu(f32 src[][4], f32 dst[3][3])
 {
-    
+    s32 i, j;
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            dst[i][j] = src[i][j];
+        }
+    }
 }
-#else
-void matrix_7f05842c_eu (Mtxf * src, f32 dst[3][3]);
-GLOBAL_ASM(
-.text
-glabel matrix_7f05842c_eu
-/* 08AE1C 7F05842C 00001025 */  move  $v0, $zero
-/* 08AE20 7F058430 00A03025 */  move  $a2, $a1
-/* 08AE24 7F058434 00803825 */  move  $a3, $a0
-/* 08AE28 7F058438 24080003 */  li    $t0, 3
-.L7F05843C:
-/* 08AE2C 7F05843C 00001825 */  move  $v1, $zero
-/* 08AE30 7F058440 00C02025 */  move  $a0, $a2
-/* 08AE34 7F058444 00E02825 */  move  $a1, $a3
-.L7F058448:
-/* 08AE38 7F058448 C4A40000 */  lwc1  $f4, ($a1)
-/* 08AE3C 7F05844C 24630001 */  addiu $v1, $v1, 1
-/* 08AE40 7F058450 24840004 */  addiu $a0, $a0, 4
-/* 08AE44 7F058454 24A50004 */  addiu $a1, $a1, 4
-/* 08AE48 7F058458 1468FFFB */  bne   $v1, $t0, .L7F058448
-/* 08AE4C 7F05845C E484FFFC */   swc1  $f4, -4($a0)
-/* 08AE50 7F058460 24420001 */  addiu $v0, $v0, 1
-/* 08AE54 7F058464 24C6000C */  addiu $a2, $a2, 0xc
-/* 08AE58 7F058468 1448FFF4 */  bne   $v0, $t0, .L7F05843C
-/* 08AE5C 7F05846C 24E70010 */   addiu $a3, $a3, 0x10
-/* 08AE60 7F058470 03E00008 */  jr    $ra
-/* 08AE64 7F058474 00000000 */   nop  
-)
-#endif
 #endif
 
 
@@ -311,38 +199,38 @@ void matrix_4x4_7F058274(Mtxf *arg0, Mtxf *arg1, Mtxf *arg2)
     arg2->m[3][3] = (arg0->m[2][3] * arg1->m[3][2]);
 }
 
-void matrix_4x4_rotate_vector(Mtxf *matrix, vec3 vector, vec3 result)
+void matrix_4x4_rotate_vector(Mtxf *matrix, struct coord3d *vector, struct coord3d *result)
 {
     s32 i;
     for (i = 0; i < 3; i++)
     {
-        result[i] = matrix->m[0][i] * vector[0] + matrix->m[1][i] * vector[1] + matrix->m[2][i] * vector[2];
+        result->f[i] = matrix->m[0][i] * vector->f[0] + matrix->m[1][i] * vector->f[1] + matrix->m[2][i] * vector->f[2];
     }
 }
 
-void matrix_4x4_rotate_vector_in_place(Mtxf *matrix, vec3 vector)
+void mtx4RotateVecInPlace(Mtxf *matrix, struct coord3d *vector)
 {
-    vec3 result;
-    matrix_4x4_rotate_vector(matrix, vector, result);
-    vector[0] = result[0];
-    vector[1] = result[1];
-    vector[2] = result[2];
+    struct coord3d result;
+    matrix_4x4_rotate_vector(matrix, vector, &result);
+    vector->f[0] = result.f[0];
+    vector->f[1] = result.f[1];
+    vector->f[2] = result.f[2];
 }
 
-void matrix_4x4_transform_vector(Mtxf *matrix, vec3 vector, vec3 result)
+void matrix_4x4_transform_vector(Mtxf *matrix, struct coord3d *vector, struct coord3d *result)
 {
     matrix_4x4_rotate_vector(matrix, vector, result);
-    result[0] += matrix->m[3][0];
-    result[1] += matrix->m[3][1];
-    result[2] += matrix->m[3][2];
+    result->f[0] += matrix->m[3][0];
+    result->f[1] += matrix->m[3][1];
+    result->f[2] += matrix->m[3][2];
 }
 
-void matrix_4x4_transform_vector_in_place(Mtxf *matrix, vec3 vector)
+void mtx4TransformVecInPlace(Mtxf *matrix, struct coord3d *vector)
 {
-    matrix_4x4_rotate_vector_in_place(matrix, vector);
-    vector[0] += matrix->m[3][0];
-    vector[1] += matrix->m[3][1];
-    vector[2] += matrix->m[3][2];
+    mtx4RotateVecInPlace(matrix, vector);
+    vector->f[0] += matrix->m[3][0];
+    vector->f[1] += matrix->m[3][1];
+    vector->f[2] += matrix->m[3][2];
 }
 
 void matrix_4x4_set_position_and_rotation_around_y(f32 *position, f32 angle, Mtxf *matrix)
@@ -433,14 +321,14 @@ void matrix_4x4_set_rotation_around_z(f32 angle, Mtxf *matrix)
     matrix->m[3][3] = 1.0f;
 }
 
-void matrix_4x4_set_rotation_around_xyz(vec3 angles, Mtxf *matrix)
+void matrix_4x4_set_rotation_around_xyz(struct coord3d *angles, Mtxf *matrix)
 {
-    f32 cos_x       = cosf(angles[0]);
-    f32 sin_x       = sinf(angles[0]);
-    f32 cos_y       = cosf(angles[1]);
-    f32 sin_y       = sinf(angles[1]);
-    f32 cos_z       = cosf(angles[2]);
-    f32 sin_z       = sinf(angles[2]);
+    f32 cos_x       = cosf(angles->f[0]);
+    f32 sin_x       = sinf(angles->f[0]);
+    f32 cos_y       = cosf(angles->f[1]);
+    f32 sin_y       = sinf(angles->f[1]);
+    f32 cos_z       = cosf(angles->f[2]);
+    f32 sin_z       = sinf(angles->f[2]);
     f32 sin_x_sin_z = sin_x * sin_z;
     f32 cos_x_sin_z = cos_x * sin_z;
     f32 sin_x_cos_z = sin_x * cos_z;
@@ -464,7 +352,7 @@ void matrix_4x4_set_rotation_around_xyz(vec3 angles, Mtxf *matrix)
 }
 
 // https://stackoverflow.com/a/15029416
-void matrix_4x4_get_rotation_around_xyz(Mtxf *matrix, vec3 angles)
+void matrix_4x4_get_rotation_around_xyz(Mtxf *matrix, struct coord3d *angles)
 {
     f32 norm;
     f32 sin_x_cos_y = matrix->m[1][2];
@@ -472,35 +360,35 @@ void matrix_4x4_get_rotation_around_xyz(Mtxf *matrix, vec3 angles)
     norm            = sqrtf(SQR(sin_x_cos_y) + SQR(cos_x_cos_y));
     if (EPSILON < norm)
     {
-        angles[0] = atan2f(matrix->m[1][2], matrix->m[2][2]);
-        angles[1] = atan2f(-matrix->m[0][2], norm);
-        angles[2] = atan2f(matrix->m[0][1], matrix->m[0][0]);
+        angles->f[0] = atan2f(matrix->m[1][2], matrix->m[2][2]);
+        angles->f[1] = atan2f(-matrix->m[0][2], norm);
+        angles->f[2] = atan2f(matrix->m[0][1], matrix->m[0][0]);
     }
     else
     {
-        angles[0] = 0.0f;
-        angles[1] = atan2f(-matrix->m[0][2], norm);
-        angles[2] = atan2f(-matrix->m[1][0], matrix->m[1][1]);
+        angles->f[0] = 0.0f;
+        angles->f[1] = atan2f(-matrix->m[0][2], norm);
+        angles->f[2] = atan2f(-matrix->m[1][0], matrix->m[1][1]);
     }
 }
 
-void matrix_4x4_set_position_and_rotation_around_xyz(vec3 position, vec3 rotation, Mtxf *matrix)
+void matrix_4x4_set_position_and_rotation_around_xyz(struct coord3d *position, struct coord3d * rotation, Mtxf *matrix)
 {
     matrix_4x4_set_rotation_around_xyz(rotation, matrix);
     matrix_4x4_set_position(position, matrix);
 }
 
-void matrix_4x4_set_identity_and_position(vec3 position, Mtxf *matrix)
+void matrix_4x4_set_identity_and_position(struct coord3d * position, Mtxf *matrix)
 {
     matrix_4x4_set_identity(matrix);
     matrix_4x4_set_position(position, matrix);
 }
 
-void matrix_4x4_set_position(vec3 position, Mtxf *matrix)
+void matrix_4x4_set_position(struct coord3d *position, Mtxf *matrix)
 {
-    matrix->m[3][0] = position[0];
-    matrix->m[3][1] = position[1];
-    matrix->m[3][2] = position[2];
+    matrix->m[3][0] = position->f[0];
+    matrix->m[3][1] = position->f[1];
+    matrix->m[3][2] = position->f[2];
 }
 
 void matrix_column_1_scalar_multiply(f32 scalar, f32 *matrix)

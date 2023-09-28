@@ -38,7 +38,7 @@ enum MEMPOOL
     MEMPOOL_7
 };
 
-void mempInitDebugNoticeList(void);
+void mempInit(void);
 void mempCheckMemflagTokens(int bstart,int bsize);
 void mempSetBankStarts(s32 banks[8]);
 void *mempAllocBytesInBank(u32 bytes,u8 bank);

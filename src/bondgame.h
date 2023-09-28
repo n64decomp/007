@@ -1,6 +1,9 @@
 #ifndef _BONDGAME_H_
 #define _BONDGAME_H_
 #include <ultra64.h>
+//#include <bondaicommands.h> // game ai commands actually... this shouldnt be here as they are only needed by setups
+#include <bondconstants.h>  // game constants
+#include <bondtypes.h>      // game structs and types
 
 extern u32 *_codeSegmentStart;
 extern u32 *_codeSegmentEnd;
@@ -22,17 +25,17 @@ extern u32 *_gameSegmentVaddrEnd;
 extern u32 *_gameSegmentRomStart;
 extern u32 *_gameSegmentRomEnd;
 
+extern u32* _alt_startSegmentRomStart;
+extern u32* _alt_startSegmentStart;
 
-extern u8 sp_boot[];
-extern u8 sp_rmon[];
-extern u8 sp_idle[];
-extern u8 sp_shed[];
-extern u8 sp_main[];
-extern u8 sp_audi[];
-extern u8 sp_debug[];
+extern u8 sp_boot[SP_BOOT_SZ];
+extern u8 sp_rmon[SP_RMON_SZ];
+extern u8 sp_idle[SP_IDLE_SZ];
+extern u8 sp_shed[SP_SHED_SZ];
+extern u8 sp_main[SP_MAIN_SZ];
+extern u8 sp_audi[SP_AUDI_SZ];
+extern u8 sp_debug[SP_DEBUG_SZ];
 
-//#include <bondaicommands.h> // game ai commands actually... this shouldnt be here as they are only needed by setups
-#include <bondconstants.h>  // game constants
-#include <bondtypes.h>      // game structs and types
+
 
 #endif

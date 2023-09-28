@@ -51,7 +51,7 @@ typedef struct s_shattered_window_piece {
 } s_shattered_window_piece;
 
 typedef struct bondstruct_unk_8007A170 {
-    u32 unk00;
+    s32 unk00;
     s16 unk04;
     s16 unk06;
     u32 unk08;
@@ -94,5 +94,6 @@ Gfx * sub_GAME_7F0A3330(Gfx *arg0, void * arg1, s32 arg2);
 void sub_GAME_7F0A2F30(s32 *arg0, s32 arg1, s32 arg2, f32 arg3);
 struct WatchVertex *setup_watch_rectangles(struct WatchVertex *vtx, s32 startx, s32 startz, s32 width, s32 height, s32 horizontal_offset, s32 vertical_offset);
 void sub_GAME_7F0A2160(coord3d * arg0, f32 arg1, f32 arg2);
+void sub_GAME_7F0A3EA0(void);
 
 #endif

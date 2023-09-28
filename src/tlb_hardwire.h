@@ -3,7 +3,7 @@
 #include <ultra64.h>
 
 
-extern void set_hardwire_TLB_to_2(void);
+extern void initTLBPrepareContext(void);
 
 #endif
 

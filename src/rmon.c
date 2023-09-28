@@ -138,7 +138,7 @@ void osWriteHost(void * buffer, u32 size)
 	if (size);
     #ifdef ENABLE_USB
     //flesh out a proper ge parser on pc app
-    //usb_write(DATATYPE_RAWBINARY  , buffer, size);
+    usb_write(DATATYPE_RMONBINARY  , buffer, size);
     #endif
 }
 
@@ -150,12 +150,41 @@ void osWriteHost(void * buffer, u32 size)
 */
 void osReadHost(void * buffer, u32 size)
 {
+#ifdef ENABLE_USB
+    char incoming_type = 0;
+    int incoming_size = 0;
+#endif
     if (buffer);
 	if (size);
-    #ifdef ENABLE_USB 
+#ifdef ENABLE_USB 
     //flesh out a proper pc side tool still
-    //usb_read(buffer, size);
-    #endif
+    osSyncPrintf("USB: Waiting for data\n");
+    while(1)
+    {
+        // Check if there's data in USB
+        // Needs to be a while loop because we can't write to USB if there's data that needs to be read first
+        while (usb_poll() != 0)
+        {
+            int header = usb_poll();
+            // Store the size and type from the header
+            incoming_type = USBHEADER_GETTYPE(header);
+            incoming_size = USBHEADER_GETSIZE(header);
+            osSyncPrintf("USB: Received header %d\n", incoming_type);
+            osSyncPrintf("USB: Received size %d\n", incoming_size);
+            // Ensure we're receiving a text command
+            if (incoming_type != DATATYPE_RMONBINARY)
+            {
+                //errortype = 1;
+                usb_purge();
+                osSyncPrintf("USB: Received invalid type %d\n", incoming_type);
+                return;
+            }
+            osSyncPrintf("USB: Read data\n");
+            usb_read(buffer, size);
+            return;
+        }
+    }
+#endif
 }
 
 

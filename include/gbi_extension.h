@@ -69,6 +69,16 @@
 /***
  ***  4 Triangles
  ***/
+/**
+ * Remarks:
+ * Ryan: I've been learning a lot about PD's graphics microcode lately. It's likely that the decision to
+ * implement tri4 was to reduce memory usage in RDRAM. But to fit 4 tris in one command they had to limit
+ * themselves to 4 bits per vertex, which means they can only address up to 16 vertices. They could have
+ * fit 32 vertices in DMEM if they wanted. In stock microcodes the vertex IDs are pre-multiplied by 10
+ * which makes it easy for the RSP to calculate the vertex offset in the DMEM buffer (it can use a
+ * single shift operation). But because PD is using a compact format there's more work for the RSP to
+ * calculate it. So they've sacrificed RSP performance for memory saving.
+*/
 
 //cannot use 2tri with 4tri, so lets just make sure they are undefined so errors happen.
 #undef gSP2Triangles
@@ -184,6 +194,14 @@
     Gfx *_g = (Gfx *)pkt;                                                                   \
     _g->words.w0 = _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL((a), 14, 10) | _SHIFTL((b), 2, 10); \
     _g->words.w1 = _SHIFTL(0x06, 24, 8) | _SHIFTL((c), 14, 10) | _SHIFTL((d), 2, 10);       \
+}
+
+#define	gDPLoadTLUTCmd2(pkt, tile, count)				\
+{									\
+	Gfx *_g = (Gfx *)pkt;						\
+									\
+	_g->words.w0 = _SHIFTL(G_LOADTLUT, 24, 8) | 0xff0;			\
+	_g->words.w1 = _SHIFTL((tile), 24, 3) | _SHIFTL((count), 14, 10) | 0xff0;\
 }
 
 /*

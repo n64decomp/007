@@ -50,20 +50,20 @@ Additionally [qemu-irix](https://github.com/n64decomp/qemu-irix/releases) is nee
 sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
 ```
 
-#### Step 2: Recompile IDO
-
-Recompile IDO for your platform for increased compile speed
-```bash
-cd tools/ido5.3_recomp 
-make
-```
-
-#### Step 3: Clone the repository
+#### Step 2: Clone the repository
 
 Clone this repository where you wish to have the project, with a command such as:
 
 ```bash
 git clone https://github.com/kholdfuzion/goldeneye_src
+```
+
+#### Step 3: Recompile IDO
+
+Recompile IDO for your platform for increased compile speed
+```bash
+cd tools/ido5.3_recomp 
+make
 ```
 
 #### Step 4: Prepare baserom(s) for asset extraction

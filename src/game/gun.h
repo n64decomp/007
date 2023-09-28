@@ -231,7 +231,7 @@ typedef struct GunModelFileRecord
 } GunModelFileRecord;
 
 typedef struct CasingRecord {
-    f32 unk00;
+    f32 floor_y_pos;
     coord3d pos;
     coord3d vel;
 #if VERSION_EU
@@ -289,17 +289,17 @@ u16 *get_ptr_short_watch_text_for_item(ITEM_IDS item);
 
 s32 bondwalkItemHasAmmo(ITEM_IDS item);
 
-void display_in_game_crosshair(s32 *gdl);
+void gunDrawSight(s32 *gdl);
 
 WeaponStats *get_ptr_item_statistics(ITEM_IDS item);
 
 ITEM_IDS getCurrentPlayerWeaponId(GUNHAND hand);
 s32 currentPlayerEquipWeaponWrapper(GUNHAND hand, s32 next_weapon);
-void sub_GAME_7F068E6C(void);
+void update_bullet_casings(void);
 void attempt_reload_item_in_hand(GUNHAND hand);
 void set_max_ammo_for_cur_player(void);
-void set_unset_ammo_on_screen_setting(s32 flags, s32 isset);
-void set_unset_bitflags(s32 bitflags, s32 flag);
+void gunSetGunAmmoVisible(s32 reason, s32 enable);
+void gunSetSightVisible(s32 reason, s32 visible);
 
 s32 get_max_ammo_for_type(s32);
 void give_cur_player_ammo(s32, s32);
@@ -313,7 +313,7 @@ u8 bondwalkItemGetSoundTriggerRate(ITEM_IDS item);
 void recall_joy2_hits_edit_detail_edit_flag(enum ITEM_IDS item, PropRecord* prop, s32 texture_index);
 void recall_joy2_hits_edit_flag(enum ITEM_IDS item, coord3d* arg1, s32 texture_index);
 void sub_GAME_7F05EB0C(ObjectRecord *arg0, coord3d *arg1,  StandTile *arg2, Mtxf *arg3, coord3d *arg4, Mtxf *arg5,  PropRecord *arg6);
-void sub_GAME_7F061948(struct ChrRecord_f180 *arg0, ITEM_IDS item, coord3d *arg2, coord3d *arg3);
+void CapBeamLengthAndDecideIfRendered(struct ChrRecord_f180 *arg0, ITEM_IDS item, coord3d *arg2, coord3d *arg3);
 void sub_GAME_7F068190(coord3d *arg0, coord3d *arg1);
 
 void inc_curplayer_hitcount_with_weapon(ITEM_IDS item, SHOT_REGISTER shot_register);
@@ -332,5 +332,26 @@ void gunSetOffsetRelated(f32 param_1);
 
 s32 get_curplayer_shot_register(SHOT_REGISTER shot_register);
 void get_bullet_angle(f32* horizontal_angle, f32* vertical_angle);
+
+ITEM_IDS get_item_in_hand_or_watch_menu(GUNHAND hand);
+void draw_item_in_hand(GUNHAND hand, s32 next_weapon);
+void sub_GAME_7F05DAE4(GUNHAND hand);
+void sub_GAME_7F067F58(f32 turn_x, f32 turn_y, f32 max_aim_lock_speed);
+s32 get_ammo_count_for_weapon(ITEM_IDS weapon);
+void add_ammo_to_weapon(ITEM_IDS weapon, s32 ammo);
+s32 get_ammo_in_hands_magazine(GUNHAND hand);
+void autoadvance_on_deplete_all_ammo(void);
+f32 getCurrentPlayerNoise(GUNHAND hand);
+void camera_sniper_zoom_in(f32 zoom);
+void camera_sniper_zoom_out(f32 zoom);
+f32 get_item_in_hand_zoom(void);
+void advance_through_inventory(void);
+void backstep_through_inventory(void);
+void gunSetAimType(s32 param_1);
+void sub_GAME_7F067FBC(f32 turn_x, f32 turn_y);
+void gunTickGameplay(s32 arg0);
+
+Gfx *gunDrawHudString(Gfx *gdl, s8 *text, s32 x, s32 halign, s32 y, s32 valign, bool glow);
+Gfx *gunDrawHudInteger(Gfx *gdl, s32 value, s32 x, s32 halign, s32 y, s32 valign, bool glow);
 
 #endif

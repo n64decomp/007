@@ -129,17 +129,17 @@ void bondviewLoadSetupIntroSection(void)
     camera_80036438 = 0;
     D_8003643C = 0;
     D_80036440 = NULL;
-    flt_CODE_bss_80079990.f[0] = FLOAT_INIT;
-    flt_CODE_bss_80079990.f[1] = FLOAT_INIT;
-    flt_CODE_bss_80079990.f[2] = FLOAT_INIT;
-    D_80036444 = 0;
+    g_ForceBondMoveOffset.f[0] = FLOAT_INIT;
+    g_ForceBondMoveOffset.f[1] = FLOAT_INIT;
+    g_ForceBondMoveOffset.f[2] = FLOAT_INIT;
+    g_SurroundBondWithExplosionsFlag = 0;
     startpadcount = 0;
     in_tank_flag = 0;
-    D_8003644C = 0;
-    ptr_playerstank = NULL;
+    g_WorldTankProp = 0;
+    g_PlayerTankProp = NULL;
     g_PlayerTankYOffset = FLOAT_INIT;
-    SFX_80036458[0] = NULL;
-    SFX_80036458[1] = NULL;
+    g_TankSfxState[0] = NULL;
+    g_TankSfxState[1] = NULL;
     g_TankTurnSpeed = FLOAT_INIT;
     g_TankOrientationAngle = FLOAT_INIT;
     D_80036468 = FLOAT_INIT;
@@ -151,11 +151,11 @@ void bondviewLoadSetupIntroSection(void)
     g_BondCanEnterTank = 0;
     g_TankTurretAngle = FLOAT_INIT;
     g_TankTurretTurn = FLOAT_INIT;
-    D_8003648C = 0;
+    g_ExplodeTankOnDeathFlag = 0;
     D_800364B0 = 1;
     g_PlayerInvincible = 0;
     g_CameraMode = 0;
-    enable_move_after_cinema = 0;
+    g_CameraAfterCinema = 0;
     D_8003649C = 0;
     stop_time_flag = 0;
     D_800364A4 = FLOAT_INIT;
@@ -412,9 +412,9 @@ void bondviewLoadSetupIntroSection(void)
     g_CurrentPlayer->stanHeight = stan_height;
     g_CurrentPlayer->field_6C = stan_height / FIELD_6C_FACTOR;
     change_player_pos_to_target(&g_CurrentPlayer->field_488, &start_pos, start_stan);
-    g_CurrentPlayer->field_488.field_10.f[0] = -sinf(start_look_angle);
-    g_CurrentPlayer->field_488.field_10.f[1] = FLOAT_INIT;
-    g_CurrentPlayer->field_488.field_10.f[2] = cosf(start_look_angle);
+    g_CurrentPlayer->field_488.theta_transform.f[0] = -sinf(start_look_angle);
+    g_CurrentPlayer->field_488.theta_transform.f[1] = FLOAT_INIT;
+    g_CurrentPlayer->field_488.theta_transform.f[2] = cosf(start_look_angle);
     sub_GAME_7F089718(D_800364D0);
     dword_CODE_bss_80079DA0 = 0;
     
@@ -426,8 +426,8 @@ void bondviewLoadSetupIntroSection(void)
     }
 
     bondviewResetIntroCameraMessageDialogs();
-    sub_GAME_7F08A900();
-    g_CurrentPlayer->prop = chrpropAllocate();
+    bondviewResetUpperTextDisplay();
+    g_CurrentPlayer->prop = propAllocate();
     g_CurrentPlayer->prop->obj = NULL;
     g_CurrentPlayer->prop->type = PROP_TYPE_VIEWER;
     
@@ -466,5 +466,5 @@ void bondviewLoadSetupIntroSection(void)
     g_CurrentPlayer->startnewbonddie = 1;
     g_CurrentPlayer->redbloodfinished = 0;
     g_CurrentPlayer->deathanimfinished = 0;
-    D_80036510 = 0;
+    D_80036510 = CAMERAMODE_NONE;
 }

@@ -20,6 +20,8 @@ s32 load_body_head_if_not_loaded(s32 model)
 /**
  * Address 0x7F0232E8 (VERSION_US)
  * Address 0x7F0235D8 (other version)
+ * Not a very descriptive name for a function. What it does is load Bond's model or those
+ * for spawning guards. It is not used for guards that spawn at level loading.
 */
 struct Model *makeonebody(s32 body, s32 head, struct ModelFileHeader *bodyHeader, struct ModelFileHeader *headHeader, s32 sunglasses, struct Model *model)
 {
@@ -95,7 +97,7 @@ struct Model *makeonebody(s32 body, s32 head, struct ModelFileHeader *bodyHeader
         if ((headHeader != 0) && (c_item_entries[body].hasHead == 0))
         {
             bodyHeader->numRecords -= headHeader->numRecords;
-            sub_GAME_7F06C3B4(model, opcode, headHeader);
+            modelAttachHead(model, opcode, headHeader);
 
             if ((sunglasses == 0) && ((s32) headHeader->numSwitches > 0))
             {

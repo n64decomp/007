@@ -66,8 +66,12 @@ s32 dword_CODE_bss_80069594;
 u32 D_8002A7D0 = 0;
 u8 gunbarrel_mode = 0x3;
 u32 D_8002A7D8 = 0;
+/*
 s32 D_8002A7DC[3] = {0x00, 0x00, 0x00};
 s32 D_8002A7E8[3] = {0xFF, 0xFF, 0xFF};
+*/
+struct FolderSelect D_8002A7DC = { 0x00, 0x00, 0x00 };
+struct FolderSelect D_8002A7E8 = { 0xFF, 0xFF, 0xFF };
 u32 D_8002A7F4 = 0;
 u32 D_8002A7F8 = 0;
 u32 D_8002A7FC = 0;
@@ -139,7 +143,7 @@ Gfx *insert_sight_backdrop_eye_intro(Gfx *gdl)
     return gdl;
 }
 
-Gfx *sub_GAME_7F007CC8(Gfx *gdl, s32 arg1, s32 arg2[3], s32 arg3[3])
+Gfx *sub_GAME_7F007CC8(Gfx *gdl, s32 arg1, struct FolderSelect *arg2, struct FolderSelect *arg3)
 {
     gDPSetRenderMode(gdl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
     gDPSetCycleType(gdl++, G_CYC_1CYCLE);
@@ -152,8 +156,8 @@ Gfx *sub_GAME_7F007CC8(Gfx *gdl, s32 arg1, s32 arg2[3], s32 arg3[3])
 
 Gfx *insert_sniper_sight_eye_intro(Gfx *gdl)
 {
-    s32 sp3C[3] = D_8002A7DC;
-    s32 sp30[3] = D_8002A7E8;
+    struct FolderSelect sp3C = D_8002A7DC;
+    struct FolderSelect sp30 = D_8002A7E8;
 
     gSPDisplayList(gdl++, &fontDL_0x000);
 
@@ -161,7 +165,7 @@ Gfx *insert_sniper_sight_eye_intro(Gfx *gdl)
 
     gDPSetCombineMode(gdl++, G_CC_MODULATEI_PRIM, G_CC_MODULATEI_PRIM);
 
-    return sub_GAME_7F007CC8(gdl, floorFloat((viGetX() * g_TitleX) / 1280.0f), sp3C, sp30);
+    return sub_GAME_7F007CC8(gdl, floorFloat((viGetX() * g_TitleX) / 1280.0f), &sp3C, &sp30);
 }
 
 Gfx *sub_GAME_7F007E70(Gfx *gdl, u32 alpha)
@@ -261,7 +265,7 @@ glabel sub_GAME_7F007F30
 .L7F008030:
 /* 03CB60 7F008030 8E640000 */  lw    $a0, ($s3)
 /* 03CB64 7F008034 24050001 */  li    $a1, 1
-/* 03CB68 7F008038 0FC1C2BB */  jal   sub_GAME_7F070AEC
+/* 03CB68 7F008038 0FC1C2BB */  jal   modelTickAnimQuarterSpeed
 /* 03CB6C 7F00803C 24060001 */   li    $a2, 1
 /* 03CB70 7F008040 8E0C0000 */  lw    $t4, ($s0)
 /* 03CB74 7F008044 240100E6 */  li    $at, 230
@@ -281,7 +285,7 @@ glabel sub_GAME_7F007F30
 .L7F008078:
 /* 03CBA8 7F008078 3C138003 */  lui   $s3, %hi(D_8002A7F4)
 /* 03CBAC 7F00807C 2673A7F4 */  addiu $s3, %lo(D_8002A7F4) # addiu $s3, $s3, -0x580c
-/* 03CBB0 7F008080 0FC1B100 */  jal   set_80036084
+/* 03CBB0 7F008080 0FC1B100 */  jal   modelSetDistanceDisabled
 /* 03CBB4 7F008084 24040001 */   li    $a0, 1
 /* 03CBB8 7F008088 0FC1CFF2 */  jal   sub_GAME_7F073FC8
 /* 03CBBC 7F00808C 24040050 */   li    $a0, 80
@@ -324,7 +328,7 @@ glabel sub_GAME_7F007F30
 /* 03CC48 7F008118 8E8A0000 */  lw    $t2, ($s4)
 /* 03CC4C 7F00811C 8E640000 */  lw    $a0, ($s3)
 /* 03CC50 7F008120 00003025 */  move  $a2, $zero
-/* 03CC54 7F008124 0FC1B198 */  jal   sub_GAME_7F06C660
+/* 03CC54 7F008124 0FC1B198 */  jal   modelFindNodeMtx
 /* 03CC58 7F008128 8D45001C */   lw    $a1, 0x1c($t2)
 /* 03CC5C 7F00812C 8E8B0000 */  lw    $t3, ($s4)
 /* 03CC60 7F008130 AFA200DC */  sw    $v0, 0xdc($sp)
@@ -364,7 +368,7 @@ glabel sub_GAME_7F007F30
 /* 03CCE8 7F0081B8 27A400DC */  addiu $a0, $sp, 0xdc
 /* 03CCEC 7F0081BC 0FC1AF03 */  jal   drawjointlist
 /* 03CCF0 7F0081C0 02002825 */   move  $a1, $s0
-/* 03CCF4 7F0081C4 0FC1B100 */  jal   set_80036084
+/* 03CCF4 7F0081C4 0FC1B100 */  jal   modelSetDistanceDisabled
 /* 03CCF8 7F0081C8 00002025 */   move  $a0, $zero
 /* 03CCFC 7F0081CC 0FC1AC92 */  jal   sub_GAME_7F06B248
 /* 03CD00 7F0081D0 02002025 */   move  $a0, $s0
@@ -513,7 +517,7 @@ glabel sub_GAME_7F007F30
 .L7F007FB0:
 /* 03A9A0 7F007FB0 8E640000 */  lw    $a0, ($s3)
 /* 03A9A4 7F007FB4 24050001 */  li    $a1, 1
-/* 03A9A8 7F007FB8 0FC1C323 */  jal   sub_GAME_7F070AEC
+/* 03A9A8 7F007FB8 0FC1C323 */  jal   modelTickAnimQuarterSpeed
 /* 03A9AC 7F007FBC 24060001 */   li    $a2, 1
 /* 03A9B0 7F007FC0 8E0C0000 */  lw    $t4, ($s0)
 /* 03A9B4 7F007FC4 240100BF */  li    $at, 191
@@ -533,7 +537,7 @@ glabel sub_GAME_7F007F30
 .L7F007FF8:
 /* 03A9E8 7F007FF8 3C138002 */  lui   $s3, %hi(D_8002A7F4) # $s3, 0x8002
 /* 03A9EC 7F007FFC 26735D44 */  addiu $s3, %lo(D_8002A7F4) # addiu $s3, $s3, 0x5d44
-/* 03A9F0 7F008000 0FC1B2D0 */  jal   set_80036084
+/* 03A9F0 7F008000 0FC1B2D0 */  jal   modelSetDistanceDisabled
 /* 03A9F4 7F008004 24040001 */   li    $a0, 1
 /* 03A9F8 7F008008 0FC1D037 */  jal   sub_GAME_7F073FC8
 /* 03A9FC 7F00800C 24040050 */   li    $a0, 80
@@ -576,7 +580,7 @@ glabel sub_GAME_7F007F30
 /* 03AA88 7F008098 8E8A0000 */  lw    $t2, ($s4)
 /* 03AA8C 7F00809C 8E640000 */  lw    $a0, ($s3)
 /* 03AA90 7F0080A0 00003025 */  move  $a2, $zero
-/* 03AA94 7F0080A4 0FC1B366 */  jal   sub_GAME_7F06C660
+/* 03AA94 7F0080A4 0FC1B366 */  jal   modelFindNodeMtx
 /* 03AA98 7F0080A8 8D45001C */   lw    $a1, 0x1c($t2)
 /* 03AA9C 7F0080AC 8E8B0000 */  lw    $t3, ($s4)
 /* 03AAA0 7F0080B0 AFA200DC */  sw    $v0, 0xdc($sp)
@@ -616,7 +620,7 @@ glabel sub_GAME_7F007F30
 /* 03AB28 7F008138 27A400DC */  addiu $a0, $sp, 0xdc
 /* 03AB2C 7F00813C 0FC1B0EF */  jal   drawjointlist
 /* 03AB30 7F008140 02002825 */   move  $a1, $s0
-/* 03AB34 7F008144 0FC1B2D0 */  jal   set_80036084
+/* 03AB34 7F008144 0FC1B2D0 */  jal   modelSetDistanceDisabled
 /* 03AB38 7F008148 00002025 */   move  $a0, $zero
 /* 03AB3C 7F00814C 0FC1AE7E */  jal   sub_GAME_7F06B248
 /* 03AB40 7F008150 02002025 */   move  $a0, $s0
@@ -761,16 +765,16 @@ Gfx *load_display_rare_logo(Gfx *gdl, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     return gdl;
 }
 
-extern void *_GlobalimagetablecmdblkSegmentRomStart;
-extern void *_GlobalimagetablecmdblkSegmentStart;
-extern void *_GlobalimagetablecmdblkSegmentEnd; 
+extern void *_rarewarelogoSegmentRomStart;
+extern void *_rarewarelogoSegmentStart;
+extern void *_rarewarelogoSegmentEnd; 
 void sub_GAME_7F008B58(s32 address, s32 size) {
     gunbarrel_mode = 0;
     g_TitleX = 880.0f;
     D_8002A89C = -40.0f;
     intro_eye_counter = 0;
     virtualaddress = address;
-    romCopy(virtualaddress, &_GlobalimagetablecmdblkSegmentRomStart, ALIGN64_V2((u32)&_GlobalimagetablecmdblkSegmentEnd - (u32)&_GlobalimagetablecmdblkSegmentStart));
+    romCopy(virtualaddress, &_rarewarelogoSegmentRomStart, ALIGN64_V2((u32)&_rarewarelogoSegmentEnd - (u32)&_rarewarelogoSegmentStart));
 }
 
 Gfx *retrieve_display_rareware_logo(Gfx *gdl)
@@ -1051,7 +1055,7 @@ glabel sub_GAME_7F008E80
 /* 03DC0C 7F0090DC 24050000 */   li    $a1, 0
 /* 03DC10 7F0090E0 8E240000 */  lw    $a0, ($s1)
 /* 03DC14 7F0090E4 3C053F00 */  lui   $a1, 0x3f00
-/* 03DC18 7F0090E8 0FC1BFC6 */  jal   modelSetAnimRateForDuration
+/* 03DC18 7F0090E8 0FC1BFC6 */  jal   modelSetAnimPlaySpeed
 /* 03DC1C 7F0090EC 24060000 */   li    $a2, 0
 /* 03DC20 7F0090F0 3C0F8007 */  lui   $t7, %hi(ptr_animation_table) 
 /* 03DC24 7F0090F4 8DEF9538 */  lw    $t7, %lo(ptr_animation_table)($t7)
@@ -1290,7 +1294,7 @@ glabel sub_GAME_7F008E80
 /* 03BA50 7F009060 3C053F19 */  lui   $a1, (0x3F19999A >> 16) # lui $a1, 0x3f19
 /* 03BA54 7F009064 34A5999A */  ori   $a1, (0x3F19999A & 0xFFFF) # ori $a1, $a1, 0x999a
 /* 03BA58 7F009068 8E240000 */  lw    $a0, ($s1)
-/* 03BA5C 7F00906C 0FC1C02E */  jal   modelSetAnimRateForDuration
+/* 03BA5C 7F00906C 0FC1C02E */  jal   modelSetAnimPlaySpeed
 /* 03BA60 7F009070 24060000 */   li    $a2, 0
 /* 03BA64 7F009074 3C0F8006 */  lui   $t7, %hi(ptr_animation_table) # $t7, 0x8006
 /* 03BA68 7F009078 8DEF8478 */  lw    $t7, %lo(ptr_animation_table)($t7)
@@ -1374,7 +1378,7 @@ void sub_GAME_7F00920C(void)
 {
     if (D_8002A7F4)
     {
-        set_aircraft_obj_inst_scale_to_zero(D_8002A7F4);
+        clear_aircraft_model_obj(D_8002A7F4);
     }
 
     if (D_8002A7F8)
@@ -1450,7 +1454,9 @@ Gfx *sub_GAME_7F009254(Gfx *gdl) {
         break;
 
     case 2:
-        gdl = insert_bond_eye_intro(insert_sight_backdrop_eye_intro(insert_sniper_sight_eye_intro(gdl)));
+        gdl = insert_sniper_sight_eye_intro(gdl);
+        gdl = insert_sight_backdrop_eye_intro(gdl);
+        gdl = insert_bond_eye_intro(gdl);
         intro_eye_counter--;
         if (intro_eye_counter < 0) {
             gunbarrel_mode++;

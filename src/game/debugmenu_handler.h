@@ -31,7 +31,7 @@ s32 get_debug_joy2skyedit_flag(void);
 s32 get_debug_joy2hitsedit_flag(void);
 s32 get_debug_joy2detailedit_flag(void);
 s32 get_debug_explosioninfo_flag(void);
-s32 get_debug_prroomloads_flag(void);
+s32 debugIsRoomStateDebugEnabled(void);
 s32 get_debug_VisCVG_flag(void);
 void set_debug_VisCVG_flag(s32 flag);
 s32 get_debug_007_unlock_flag(void);

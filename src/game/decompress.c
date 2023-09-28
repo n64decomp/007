@@ -13,27 +13,71 @@ const u8 rz_header_bytes[40] = {
 
 
 #ifdef NONMATCHING
-//
-u32 decompressdata(u8 *src, u8 *dst, struct huft *hlist)
-{
-    rz_inbuf = src;
-    rz_outbuf = dst;
-    rz_hlist = hlist;
-    if ((src[0] != rz_header_bytes[0]) || (src[1] != rz_header_bytes[5]))
+// https://decomp.me/scratch/IRSKp 96%
+
+struct aaa {
+    u8 unk00;
+    u8 unk01;
+    u8 unk02;
+    u8 unk03;
+    u8 unk04;
+    u8 unk05;
+    u8 unk06;
+    u8 unk07;
+    u8 unk08;
+    u8 unk09;
+    u8 unk0A;
+    u8 unk0B;
+    s32 unk0C;
+    s32 unk10;
+    s32 unk14;
+    u8 unk18;
+};
+
+u32 decompressdata(u8 *arg0, u8 *arg1, struct huft *arg2)
+{    
+    s32 unused = 0;
+    struct aaa *p = &rz_header_bytes;
+    
+    rz_inbuf = arg0;
+    rz_outbuf = arg1;
+    rz_hlist = arg2;
+
+    //if(1);
+    
+    //if ((arg0[0] != rz_header_bytes[0]) || (arg0[1] != rz_header_bytes[5]))
+    if ((arg0[0] != p->unk00) || (arg0[1] != p->unk05))
     {
-        if (src[1] != rz_header_bytes[8])
+        u8 a0m1;// = arg0[-1];
+        u8 a0m2;// = arg0[-2];
+        
+        //if(arg0[-1]);
+        a0m1 = arg0[-1];
+        
+        //if (arg0[-1] == rz_header_bytes[8])
+        if (a0m1 == p->unk08)
         {
-
+            unused = 2;
         }
-        if (src[2] != rz_header_bytes[0x18])
-        {
 
+        //if(arg0[-2]);
+        a0m2 = arg0[-2];
+        
+        //if (arg0[-2] == rz_header_bytes[24])
+        if (a0m2 == p->unk18)
+        {
+            unused = 1;
         }
     }
-    rz_inbuf = (s32) (rz_inbuf + 2);
+
+    if (unused);
+    
+    rz_inbuf += 2;
     rz_wp = 0;
     rz_inptr = 0;
+    
     zlib_inflate();
+
     return rz_wp;
 }
 #else

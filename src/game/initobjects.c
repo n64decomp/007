@@ -6,12 +6,12 @@
 #include "chrobjhandler.h"
 //this file may very well be a few different sub files
 
-struct object_animation_controller g_InitialMonitorAnimController = {&monAnim00Bond, 0, 0xFFFF, 0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 1.0, 0.0};
+MonitorRecord g_InitialMonitorAnimController = {&monAnim00Bond, 0, 0xFFFF, 0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 1.0, 0.0};
 struct object_animation_controller g_InitialUnknownAnimController = {&monAnim34, 0, 0xFFFF, 0, 0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 1.0};
 struct object_animation_controller g_InitialTaserAnimController = {&monAnim35Taser, 0, 0xFFFF, 0, 0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 1.0};
 
 f32 unused_8002a3bc = 0.0f;
-f32 scale_1_0_item_related = 1.0f;
+f32 g_DoorScale = 1.0f;
 
 // forward declarations
 
@@ -70,23 +70,23 @@ void alloc_lookup_buffers(void)
     s32 i;
 
     ptr_list_object_lookup_indices = (s16*)mempAllocBytesInBank(PTR_LIST_OBJECT_LOOKUP_INDICES_LEN * sizeof(s16), 4);
-    ptr_room_lookup_buffer_maybe = (s16*)mempAllocBytesInBank((((MaxNumRooms * 4) + 0xF) | 0xF) ^ 0xF, 4);
-    dword_CODE_bss_8007161C = (s16*)mempAllocBytesInBank(BSS_8007161C_LEN * sizeof(struct unk_8007161c), 4);
+    RoomPropListChunkIndexes = (s16*)mempAllocBytesInBank((((MaxNumRooms * 4) + 0xF) | 0xF) ^ 0xF, 4);
+    RoomPropListChunks = (s16*)mempAllocBytesInBank(BSS_8007161C_LEN * sizeof(struct roomproplistchunk), 4);
 
     ptr_list_object_lookup_indices[0] = -1;
 
     for (i=0; i<MaxNumRooms; i++)
     {
-        ptr_room_lookup_buffer_maybe[i] = -1;
+        RoomPropListChunkIndexes[i] = -1;
     }
 
     for (i=0; i<BSS_8007161C_LEN; i++)
     {
-        dword_CODE_bss_8007161C[i].data[0] = -2;
+        RoomPropListChunks[i].propnums[0] = -2;
 
         for (j=1; j<BSS_8007161C_DATA_LEN; j++)
         {
-            dword_CODE_bss_8007161C[i].data[j] = -1;
+            RoomPropListChunks[i].propnums[j] = -1;
         }
     }
 }
@@ -115,48 +115,48 @@ void reinit_between_menus(void)
     clock_drawn_flag = 1;
     clock_enable = 0;
     clock_time = 0.0f;
-    D_80030AF4 = 0;
+    g_RemoteMineOwnerTriggerFlag = 0;
 
-    for (i=0; i<PROJECTILEDATA_START_ADDRESS_LEN; i++)
+    for (i = 0; i < MAX_WEAPON_SLOTS; i++)
     {
-        ProjectileData_start_address[i].unk10 = 0;
+        g_WeaponSlots[i].prop = NULL;
     }
 
-    D_80030AF8 = 0;
+    g_NextWeaponSlot = 0;
 
-    for (i=0; i<BSS_80072E70_DATA_LEN; i++)
+    for (i = 0; i < MAX_HAT_SLOTS; i++)
     {
-        dword_CODE_bss_80072E70[i].unk10 = 0;
+        g_HatSlots[i].prop = NULL;
     }
     
-    D_80030AFC = 0;
+    g_NextHatSlot = 0;
 
-    for (i=0; i<BSS_80073370_DATA_LEN; i++)
+    for (i=0; i < MAX_AMMO_CRATES; i++)
     {
-        dword_CODE_bss_80073370[i].unk10 = 0;
+        g_AmmoCrates[i].prop = NULL;
     }
 
-    for (i=0; i<BSS_80073DC0_DATA_LEN; i++)
+    for (i = 0; i < PROJECTILES_ARR_MAX; i++)
     {
-        dword_CODE_bss_80073DC0[i].unk00 = 0x80000000;
-        dword_CODE_bss_80073DC0[i].unk98 = 0;
-        dword_CODE_bss_80073DC0[i].unk9C = 0;
+        g_Projectiles[i].flags = 0x80000000;
+        g_Projectiles[i].sound1 = NULL;
+        g_Projectiles[i].sound2 = NULL;
     }
 
-    for (i=0; i<BSS_80075030_DATA_LEN; i++)
+    for (i = 0; i < EMBEDMENT_ARR_MAX; i++)
     {
-        dword_CODE_bss_80075030[i].unk00 = 1;
+        g_Embedments[i].flags = 1;
     }
 
     g_LevelLoadPropSwitch = NULL;
     g_LevelLoadPropLockDoor = NULL;
     g_LevelLoadPropSafeItem = NULL;
-    D_80030B0C = 0;
+    D_80030B0C = NULL;
     bodypartshot = -1;
     F_80030B14 = 1.0f;
     F_80030B18 = 1.0f;
-    F_80030B1C = 1.0f;
-    F_80030B20 = 1.0f;
+    g_AutogunPendingDamageTick = 1.0f;
+    g_AutogunDamageScalar = 1.0f;
     F_80030B24 = 1.0f;
     g_SoloAmmoMultiplier = 1.0f;
 }
@@ -199,7 +199,7 @@ void initSetLevelLoadPropSafeItem(struct ObjectRecord *arg0)
 */
 void write_monitor_ani_control_blocks(void)
 {
-    struct object_animation_controller spEC;
+    MonitorRecord spEC;
     struct object_animation_controller sp78;
     struct object_animation_controller sp4;
 

@@ -63,6 +63,11 @@ EnvironmentRecord * g_EnvironmentAltp;
 */
 s32 D_800825F4;
 
+#if defined(VERSION_EU)
+EnvironmentRecord dword_CODE_bss_800825F8;
+s32 bss_800825F8_padding[2];
+#endif
+
 /**
  * Unreferenced.
  * 
@@ -623,7 +628,7 @@ void fogRemoved7F0BAA5C(s32 a)
     return;
 }
 
-#if defined(VERSION_US) || defined(VERSION_JP)
+
 /**
  * Address 0x7F0BAA64.
 */
@@ -724,179 +729,6 @@ void fogLoadLevelEnvironment(s32 level_id, s32 arg1)
     fogLoadFoglessCurrentEnvironment(sp1C);
     g_EnvironmentFoundp = NULL;
 }
-#endif
-#if defined(VERSION_EU)
-GLOBAL_ASM(
-.late_rodata
-glabel default_near_fog
-.word 0x7f7fffff  /*3.4028235e38*/
-glabel D_80058D74
-.word 0x461c4000  /*10000.0*/
-.text
-glabel fogLoadLevelEnvironment
-/* 0EC824 7F0B9E34 27BDFFD8 */  addiu $sp, $sp, -0x28
-/* 0EC828 7F0B9E38 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0EC82C 7F0B9E3C AFA5002C */  sw    $a1, 0x2c($sp)
-/* 0EC830 7F0B9E40 AFA0001C */  sw    $zero, 0x1c($sp)
-/* 0EC834 7F0B9E44 0FC26669 */  jal   getPlayerCount
-/* 0EC838 7F0B9E48 AFA40028 */   sw    $a0, 0x28($sp)
-/* 0EC83C 7F0B9E4C 24010001 */  li    $at, 1
-/* 0EC840 7F0B9E50 8FA6001C */  lw    $a2, 0x1c($sp)
-/* 0EC844 7F0B9E54 8FA70028 */  lw    $a3, 0x28($sp)
-/* 0EC848 7F0B9E58 14410002 */  bne   $v0, $at, .L7F0B9E64
-/* 0EC84C 7F0B9E5C 00404025 */   move  $t0, $v0
-/* 0EC850 7F0B9E60 00004025 */  move  $t0, $zero
-.L7F0B9E64:
-/* 0EC854 7F0B9E64 3C018005 */  lui   $at, %hi(default_near_fog) # $at, 0x8005
-/* 0EC858 7F0B9E68 C424D7C0 */  lwc1  $f4, %lo(default_near_fog)($at)
-/* 0EC85C 7F0B9E6C 8FAE002C */  lw    $t6, 0x2c($sp)
-/* 0EC860 7F0B9E70 3C018004 */  lui   $at, %hi(g_ScaledFarFogIntensity) # $at, 0x8004
-/* 0EC864 7F0B9E74 44803000 */  mtc1  $zero, $f6
-/* 0EC868 7F0B9E78 E424E2B4 */  swc1  $f4, %lo(g_ScaledFarFogIntensity)($at)
-/* 0EC86C 7F0B9E7C 3C018004 */  lui   $at, %hi(g_ScaledDifferenceFromFarFogIntensity) # $at, 0x8004
-/* 0EC870 7F0B9E80 11C0001A */  beqz  $t6, .L7F0B9EEC
-/* 0EC874 7F0B9E84 E426E2B8 */   swc1  $f6, %lo(g_ScaledDifferenceFromFarFogIntensity)($at)
-/* 0EC878 7F0B9E88 3C098004 */  lui   $t1, %hi(fog_tables)
-/* 0EC87C 7F0B9E8C 2523E300 */  addiu $v1, $t1, %lo(fog_tables)
-/* 0EC880 7F0B9E90 846F0000 */  lh    $t7, ($v1)
-/* 0EC884 7F0B9E94 3C188004 */  lui   $t8, %hi(fog_tables) # $t8, 0x8004
-/* 0EC888 7F0B9E98 2718E300 */  addiu $t8, %lo(fog_tables) # addiu $t8, $t8, -0x1d00
-/* 0EC88C 7F0B9E9C 11E00013 */  beqz  $t7, .L7F0B9EEC
-/* 0EC890 7F0B9EA0 24E40384 */   addiu $a0, $a3, 0x384
-/* 0EC894 7F0B9EA4 87020000 */  lh    $v0, ($t8)
-.L7F0B9EA8:
-/* 0EC898 7F0B9EA8 1482000C */  bne   $a0, $v0, .L7F0B9EDC
-/* 0EC89C 7F0B9EAC 3C028007 */   lui   $v0, %hi(g_EnvironmentFoundp) # $v0, 0x8007
-/* 0EC8A0 7F0B9EB0 2442CF88 */  addiu $v0, %lo(g_EnvironmentFoundp) # addiu $v0, $v0, -0x3078
-/* 0EC8A4 7F0B9EB4 AC430000 */  sw    $v1, ($v0)
-/* 0EC8A8 7F0B9EB8 3C018007 */  lui   $at, %hi(g_EnvironmentMainp) # $at, 0x8007
-/* 0EC8AC 7F0B9EBC AC23CF8C */  sw    $v1, %lo(g_EnvironmentMainp)($at)
-/* 0EC8B0 7F0B9EC0 3C018007 */  lui   $at, %hi(g_EnvironmentAltp) # $at, 0x8007
-/* 0EC8B4 7F0B9EC4 24790024 */  addiu $t9, $v1, 0x24
-/* 0EC8B8 7F0B9EC8 AC39CF90 */  sw    $t9, %lo(g_EnvironmentAltp)($at)
-/* 0EC8BC 7F0B9ECC 0FC2E67E */  jal   fogLoadCurrentEnvironment
-/* 0EC8C0 7F0B9ED0 8C440000 */   lw    $a0, ($v0)
-/* 0EC8C4 7F0B9ED4 10000065 */  b     .L7F0BA06C
-/* 0EC8C8 7F0B9ED8 8FBF0014 */   lw    $ra, 0x14($sp)
-.L7F0B9EDC:
-/* 0EC8CC 7F0B9EDC 84620024 */  lh    $v0, 0x24($v1)
-/* 0EC8D0 7F0B9EE0 24630024 */  addiu $v1, $v1, 0x24
-/* 0EC8D4 7F0B9EE4 1440FFF0 */  bnez  $v0, .L7F0B9EA8
-/* 0EC8D8 7F0B9EE8 00000000 */   nop   
-.L7F0B9EEC:
-/* 0EC8DC 7F0B9EEC 3C098004 */  lui   $t1, %hi(fog_tables) # $t1, 0x8004
-/* 0EC8E0 7F0B9EF0 2529E300 */  addiu $t1, %lo(fog_tables) # addiu $t1, $t1, -0x1d00
-/* 0EC8E4 7F0B9EF4 85250000 */  lh    $a1, ($t1)
-/* 0EC8E8 7F0B9EF8 3C0A8004 */  lui   $t2, %hi(fog_tables) # $t2, 0x8004
-/* 0EC8EC 7F0B9EFC 254AE300 */  addiu $t2, %lo(fog_tables) # addiu $t2, $t2, -0x1d00
-/* 0EC8F0 7F0B9F00 10A00019 */  beqz  $a1, .L7F0B9F68
-/* 0EC8F4 7F0B9F04 01201825 */   move  $v1, $t1
-/* 0EC8F8 7F0B9F08 00085880 */  sll   $t3, $t0, 2
-/* 0EC8FC 7F0B9F0C 01685823 */  subu  $t3, $t3, $t0
-/* 0EC900 7F0B9F10 000B58C0 */  sll   $t3, $t3, 3
-/* 0EC904 7F0B9F14 01685821 */  addu  $t3, $t3, $t0
-/* 0EC908 7F0B9F18 000B5880 */  sll   $t3, $t3, 2
-/* 0EC90C 7F0B9F1C 00EB2021 */  addu  $a0, $a3, $t3
-/* 0EC910 7F0B9F20 85420000 */  lh    $v0, ($t2)
-.L7F0B9F24:
-/* 0EC914 7F0B9F24 1482000C */  bne   $a0, $v0, .L7F0B9F58
-/* 0EC918 7F0B9F28 3C028007 */   lui   $v0, %hi(g_EnvironmentFoundp) # $v0, 0x8007
-/* 0EC91C 7F0B9F2C 2442CF88 */  addiu $v0, %lo(g_EnvironmentFoundp) # addiu $v0, $v0, -0x3078
-/* 0EC920 7F0B9F30 AC430000 */  sw    $v1, ($v0)
-/* 0EC924 7F0B9F34 3C018007 */  lui   $at, %hi(g_EnvironmentMainp) # $at, 0x8007
-/* 0EC928 7F0B9F38 AC23CF8C */  sw    $v1, %lo(g_EnvironmentMainp)($at)
-/* 0EC92C 7F0B9F3C 3C018007 */  lui   $at, %hi(g_EnvironmentAltp) # $at, 0x8007
-/* 0EC930 7F0B9F40 246C0024 */  addiu $t4, $v1, 0x24
-/* 0EC934 7F0B9F44 AC2CCF90 */  sw    $t4, %lo(g_EnvironmentAltp)($at)
-/* 0EC938 7F0B9F48 0FC2E67E */  jal   fogLoadCurrentEnvironment
-/* 0EC93C 7F0B9F4C 8C440000 */   lw    $a0, ($v0)
-/* 0EC940 7F0B9F50 10000046 */  b     .L7F0BA06C
-/* 0EC944 7F0B9F54 8FBF0014 */   lw    $ra, 0x14($sp)
-.L7F0B9F58:
-/* 0EC948 7F0B9F58 84620024 */  lh    $v0, 0x24($v1)
-/* 0EC94C 7F0B9F5C 24630024 */  addiu $v1, $v1, 0x24
-/* 0EC950 7F0B9F60 1440FFF0 */  bnez  $v0, .L7F0B9F24
-/* 0EC954 7F0B9F64 00000000 */   nop   
-.L7F0B9F68:
-/* 0EC958 7F0B9F68 29010002 */  slti  $at, $t0, 2
-/* 0EC95C 7F0B9F6C 5420001D */  bnezl $at, .L7F0B9FE4
-/* 0EC960 7F0B9F70 3C014170 */   lui   $at, 0x4170
-/* 0EC964 7F0B9F74 10A0001A */  beqz  $a1, .L7F0B9FE0
-/* 0EC968 7F0B9F78 01201825 */   move  $v1, $t1
-/* 0EC96C 7F0B9F7C 00082080 */  sll   $a0, $t0, 2
-/* 0EC970 7F0B9F80 00882023 */  subu  $a0, $a0, $t0
-/* 0EC974 7F0B9F84 000420C0 */  sll   $a0, $a0, 3
-/* 0EC978 7F0B9F88 3C0D8004 */  lui   $t5, %hi(fog_tables) # $t5, 0x8004
-/* 0EC97C 7F0B9F8C 25ADE300 */  addiu $t5, %lo(fog_tables) # addiu $t5, $t5, -0x1d00
-/* 0EC980 7F0B9F90 00882021 */  addu  $a0, $a0, $t0
-/* 0EC984 7F0B9F94 00042080 */  sll   $a0, $a0, 2
-/* 0EC988 7F0B9F98 85A20000 */  lh    $v0, ($t5)
-.L7F0B9F9C:
-/* 0EC98C 7F0B9F9C 1482000C */  bne   $a0, $v0, .L7F0B9FD0
-/* 0EC990 7F0B9FA0 3C028007 */   lui   $v0, %hi(g_EnvironmentFoundp) # $v0, 0x8007
-/* 0EC994 7F0B9FA4 2442CF88 */  addiu $v0, %lo(g_EnvironmentFoundp) # addiu $v0, $v0, -0x3078
-/* 0EC998 7F0B9FA8 AC430000 */  sw    $v1, ($v0)
-/* 0EC99C 7F0B9FAC 3C018007 */  lui   $at, %hi(g_EnvironmentMainp) # $at, 0x8007
-/* 0EC9A0 7F0B9FB0 AC23CF8C */  sw    $v1, %lo(g_EnvironmentMainp)($at)
-/* 0EC9A4 7F0B9FB4 3C018007 */  lui   $at, %hi(g_EnvironmentAltp) # $at, 0x8007
-/* 0EC9A8 7F0B9FB8 246E0024 */  addiu $t6, $v1, 0x24
-/* 0EC9AC 7F0B9FBC AC2ECF90 */  sw    $t6, %lo(g_EnvironmentAltp)($at)
-/* 0EC9B0 7F0B9FC0 0FC2E67E */  jal   fogLoadCurrentEnvironment
-/* 0EC9B4 7F0B9FC4 8C440000 */   lw    $a0, ($v0)
-/* 0EC9B8 7F0B9FC8 10000028 */  b     .L7F0BA06C
-/* 0EC9BC 7F0B9FCC 8FBF0014 */   lw    $ra, 0x14($sp)
-.L7F0B9FD0:
-/* 0EC9C0 7F0B9FD0 84620024 */  lh    $v0, 0x24($v1)
-/* 0EC9C4 7F0B9FD4 24630024 */  addiu $v1, $v1, 0x24
-/* 0EC9C8 7F0B9FD8 1440FFF0 */  bnez  $v0, .L7F0B9F9C
-/* 0EC9CC 7F0B9FDC 00000000 */   nop   
-.L7F0B9FE0:
-/* 0EC9D0 7F0B9FE0 3C014170 */  li    $at, 0x41700000 # 15.000000
-.L7F0B9FE4:
-/* 0EC9D4 7F0B9FE4 44816000 */  mtc1  $at, $f12
-/* 0EC9D8 7F0B9FE8 3C018005 */  lui   $at, %hi(D_80058D74) # $at, 0x8005
-/* 0EC9DC 7F0B9FEC C42ED7C4 */  lwc1  $f14, %lo(D_80058D74)($at)
-/* 0EC9E0 7F0B9FF0 AFA6001C */  sw    $a2, 0x1c($sp)
-/* 0EC9E4 7F0B9FF4 0C001028 */  jal   viSetZRange
-/* 0EC9E8 7F0B9FF8 AFA70028 */   sw    $a3, 0x28($sp)
-/* 0EC9EC 7F0B9FFC 3C048004 */  lui   $a0, %hi(fog_tables2) # $a0, 0x8004
-/* 0EC9F0 7F0BA000 3C018007 */  lui   $at, %hi(g_FogSkyIsEnabled) # $at, 0x8007
-/* 0EC9F4 7F0BA004 2484E9C0 */  addiu $a0, %lo(fog_tables2) # addiu $a0, $a0, -0x1640
-/* 0EC9F8 7F0BA008 AC20CF60 */  sw    $zero, %lo(g_FogSkyIsEnabled)($at)
-/* 0EC9FC 7F0BA00C 8C8F0000 */  lw    $t7, ($a0)
-/* 0ECA00 7F0BA010 8FA6001C */  lw    $a2, 0x1c($sp)
-/* 0ECA04 7F0BA014 8FA70028 */  lw    $a3, 0x28($sp)
-/* 0ECA08 7F0BA018 11E0000B */  beqz  $t7, .L7F0BA048
-/* 0ECA0C 7F0BA01C 00801825 */   move  $v1, $a0
-/* 0ECA10 7F0BA020 3C188004 */  lui   $t8, %hi(fog_tables2) # $t8, 0x8004
-/* 0ECA14 7F0BA024 2718E9C0 */  addiu $t8, %lo(fog_tables2) # addiu $t8, $t8, -0x1640
-/* 0ECA18 7F0BA028 8F020000 */  lw    $v0, ($t8)
-.L7F0BA02C:
-/* 0ECA1C 7F0BA02C 54E20003 */  bnel  $a3, $v0, .L7F0BA03C
-/* 0ECA20 7F0BA030 8C620038 */   lw    $v0, 0x38($v1)
-/* 0ECA24 7F0BA034 00603025 */  move  $a2, $v1
-/* 0ECA28 7F0BA038 8C620038 */  lw    $v0, 0x38($v1)
-.L7F0BA03C:
-/* 0ECA2C 7F0BA03C 24630038 */  addiu $v1, $v1, 0x38
-/* 0ECA30 7F0BA040 1440FFFA */  bnez  $v0, .L7F0BA02C
-/* 0ECA34 7F0BA044 00000000 */   nop   
-.L7F0BA048:
-/* 0ECA38 7F0BA048 14C00002 */  bnez  $a2, .L7F0BA054
-/* 0ECA3C 7F0BA04C 00000000 */   nop   
-/* 0ECA40 7F0BA050 00803025 */  move  $a2, $a0
-.L7F0BA054:
-/* 0ECA44 7F0BA054 0FC2E768 */  jal   fogLoadFoglessCurrentEnvironment
-/* 0ECA48 7F0BA058 00C02025 */   move  $a0, $a2
-/* 0ECA4C 7F0BA05C 3C028007 */  lui   $v0, %hi(g_EnvironmentFoundp) # $v0, 0x8007
-/* 0ECA50 7F0BA060 2442CF88 */  addiu $v0, %lo(g_EnvironmentFoundp) # addiu $v0, $v0, -0x3078
-/* 0ECA54 7F0BA064 AC400000 */  sw    $zero, ($v0)
-/* 0ECA58 7F0BA068 8FBF0014 */  lw    $ra, 0x14($sp)
-.L7F0BA06C:
-/* 0ECA5C 7F0BA06C 27BD0028 */  addiu $sp, $sp, 0x28
-/* 0ECA60 7F0BA070 03E00008 */  jr    $ra
-/* 0ECA64 7F0BA074 00000000 */   nop   
-)
-#endif
 
 #if defined(VERSION_US) || defined(VERSION_JP)
 /**
@@ -906,17 +738,27 @@ glabel fogLoadLevelEnvironment
  */
 void fogSwitchToSolosky2(f32 arg0)
 {
+#if defined(VERSION_US) || defined(VERSION_JP)
     static EnvironmentRecord dword_CODE_bss_800825F8;
+#endif
 
     dword_CODE_bss_800825F8 = *g_EnvironmentMainp;
 
     dword_CODE_bss_800825F8.Visibility.BlendMultiplier = 
         g_EnvironmentMainp->Visibility.BlendMultiplier
+#if defined(VERSION_EU)
+        + (arg0 * ((f32)g_EnvironmentAltp->Visibility.BlendMultiplier - (f32)g_EnvironmentMainp->Visibility.BlendMultiplier));
+#else
         + (arg0 * (g_EnvironmentAltp->Visibility.BlendMultiplier - g_EnvironmentMainp->Visibility.BlendMultiplier));
+#endif
 
     dword_CODE_bss_800825F8.Visibility.FarFog = 
         g_EnvironmentMainp->Visibility.FarFog
+#if defined(VERSION_EU)
+        + (arg0 * ((f32)g_EnvironmentAltp->Visibility.FarFog - (f32)g_EnvironmentMainp->Visibility.FarFog));
+#else
         + (arg0 * (g_EnvironmentAltp->Visibility.FarFog - g_EnvironmentMainp->Visibility.FarFog));
+#endif
 
     dword_CODE_bss_800825F8.Fog.DifferenceFromFarIntensity = 
         (f32)g_EnvironmentMainp->Fog.DifferenceFromFarIntensity
@@ -944,9 +786,18 @@ void fogSwitchToSolosky2(f32 arg0)
 
     fogLoadCurrentEnvironment(&dword_CODE_bss_800825F8);
 }
-#endif
-#if defined(VERSION_EU)
 
+#else
+
+/**
+ * 
+ * .bss
+glabel dword_CODE_bss_800825F8
+.word 0,0,0,0
+.word 0,0,0,0
+.word 0,0,0,0
+ * 
+*/
 /**
  * hack:
  * variables referenced in the following asm are wrong, just used
@@ -955,11 +806,7 @@ void fogSwitchToSolosky2(f32 arg0)
 GLOBAL_ASM(
 
 
-.bss
-glabel dword_CODE_bss_800825F8
-.word 0,0,0,0
-.word 0,0,0,0
-.word 0,0,0,0
+
 
 .text
 glabel fogSwitchToSolosky2
@@ -1302,7 +1149,7 @@ s32 fogPositionIsVisibleThroughFog(coord3d *pos, f32 range)
     }
 
     player_pos = bondviewGetCurrentPlayersPosition();
-    player_mtx = currentPlayerGetMatrix10CC();
+    player_mtx = camGetWorldToScreenMtxf();
 
     sp24.f[0] = pos->f[0] - player_pos->f[0];
     sp24.f[1] = pos->f[1] - player_pos->f[1];

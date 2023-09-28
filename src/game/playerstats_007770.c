@@ -1,6 +1,6 @@
 #include <ultra64.h>
 
-void sub_GAME_7F007770(void) {
+void set_favorite_weapon_for_every_player(void) {
     int right_hand;
     int left_hand;
     int player_count;

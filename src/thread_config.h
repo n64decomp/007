@@ -23,4 +23,6 @@
 #define RMON_THREAD_PRIORITY  (OSPri)250
 #endif
 
+#define STACKSIZE_MAIN 0x8000
+
 #endif

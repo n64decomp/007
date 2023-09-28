@@ -14,19 +14,19 @@
 #define DEFAULT_HEADDAMP        0.9166f
 #define DEFAULT_HEADLOOKSUM_VAL 11.990406f
 #define DEFAULT_VIEWPORT_V_VAL  0x220
-#define DEFAULT_C_SCREENHEIGHT  272.0f
+#define DEFAULT_C_SCREENHEIGHT  (f32)SCREEN_HEIGHT
 #define DEFAULT_C_HALFHEIGHT    136.0f
-#define DEFAULT_SCREENYMAXF     272.0f
-#define DEFAULT_ASPECT          1.1764706f
+#define DEFAULT_SCREENYMAXF     (f32)SCREEN_HEIGHT
+#define DEFAULT_ASPECT          ASPECT_RATIO
 #elif defined(VERSION_US) || defined(VERSION_JP)
 #define DEFAULT_FIELD_3B8_Z     9.999998f
 #define DEFAULT_HEADDAMP        0.93f
 #define DEFAULT_HEADLOOKSUM_VAL 14.285716f
 #define DEFAULT_VIEWPORT_V_VAL  0x1E0
-#define DEFAULT_C_SCREENHEIGHT  240.0f
+#define DEFAULT_C_SCREENHEIGHT  (f32)SCREEN_HEIGHT
 #define DEFAULT_C_HALFHEIGHT    120.0f
-#define DEFAULT_SCREENYMAXF     240.0f
-#define DEFAULT_ASPECT          1.3333334f
+#define DEFAULT_SCREENYMAXF     (f32)SCREEN_HEIGHT
+#define DEFAULT_ASPECT          ASPECT_RATIO
 #endif
 
 //newfile per EU
@@ -144,12 +144,12 @@ void initBONDdataforPlayer(s32 player_num)
     g_playerPointers[player_num]->field_84 = 0.0f;
     g_playerPointers[player_num]->field_88 = 0.0f;
     g_playerPointers[player_num]->field_8C = 0;
-    g_playerPointers[player_num]->field_90 = 0.0f;
+    g_playerPointers[player_num]->vertical_bounce_adjust = 0.0f;
     g_playerPointers[player_num]->field_94 = 0;
     g_playerPointers[player_num]->field_98 = 0.0f;
     g_playerPointers[player_num]->swaytarget = 0.0f;
-    g_playerPointers[player_num]->field_1278 = 0.0f;
-    g_playerPointers[player_num]->field_127C = 0.0f;
+    g_playerPointers[player_num]->swayoffset0 = 0.0f;
+    g_playerPointers[player_num]->swayoffset2 = 0.0f;
     g_playerPointers[player_num]->crouchpos = 2;
     g_playerPointers[player_num]->autocrouchpos = 2;
     g_playerPointers[player_num]->ducking_height_offset = 0.0f;
@@ -178,17 +178,20 @@ void initBONDdataforPlayer(s32 player_num)
     g_playerPointers[player_num]->insightaimmode = 0;
     g_playerPointers[player_num]->autoyaimenabled = 1;
     g_playerPointers[player_num]->autoaimy = 0.0f;
-    g_playerPointers[player_num]->autoyaimtime = 0;
+    g_playerPointers[player_num]->autoaim_target_y = NULL;
     g_playerPointers[player_num]->autoyaimtime60 = -1;
     g_playerPointers[player_num]->autoxaimenabled = 1;
     g_playerPointers[player_num]->autoaimx = 0.0f;
-    g_playerPointers[player_num]->autoxaimtime = 0;
+    g_playerPointers[player_num]->autoaim_target_x = NULL;
     g_playerPointers[player_num]->autoxaimtime60 = -1;
     g_playerPointers[player_num]->vv_theta = 0.0f;
     g_playerPointers[player_num]->speedtheta = 0.0f;
     g_playerPointers[player_num]->vv_costheta = 1.0f;
     g_playerPointers[player_num]->vv_sintheta = 0.0f;
     g_playerPointers[player_num]->vv_verta = -4.0f;
+    // @bug
+    // -229.1831 degrees = -4 radians
+    // This doesn't matter, because bondviewApplyVertaTheta overwrites vv_verta360 with the value from vv_verta
     g_playerPointers[player_num]->vv_verta360 = -229.1831f;
     g_playerPointers[player_num]->speedverta = 0.0f;
     g_playerPointers[player_num]->vv_cosverta = 1.0f;
@@ -232,7 +235,7 @@ void initBONDdataforPlayer(s32 player_num)
     g_playerPointers[player_num]->step_in_view_watch_animation = 0;
     g_playerPointers[player_num]->pause_animation_counter = 0.0f;
     g_playerPointers[player_num]->buttons_pressed = 0;
-    g_playerPointers[player_num]->field_3B6 = 0;
+    g_playerPointers[player_num]->prev_buttons_pressed = 0;
     g_playerPointers[player_num]->field_3B8.x = 0.0f;
     g_playerPointers[player_num]->field_3B8.y = 0.0f;
     g_playerPointers[player_num]->field_3B8.z = DEFAULT_FIELD_3B8_Z;
@@ -267,44 +270,44 @@ void initBONDdataforPlayer(s32 player_num)
     g_playerPointers[player_num]->headwalkingtime60 = 0;
     g_playerPointers[player_num]->headamplitude = 1.0f;
     g_playerPointers[player_num]->sideamplitude = 1.0f;
-    g_playerPointers[player_num]->headpos[0] = 0.0f;
-    g_playerPointers[player_num]->headpos[1] = 0.0f;
-    g_playerPointers[player_num]->headpos[2] = 0.0f;
-    g_playerPointers[player_num]->headlook[0] = 0.0f;
-    g_playerPointers[player_num]->headlook[1] = 0.0f;
-    g_playerPointers[player_num]->headlook[2] = 1.0f;
-    g_playerPointers[player_num]->headup[0] = 0.0f;
-    g_playerPointers[player_num]->headup[1] = 1.0f;
-    g_playerPointers[player_num]->headup[2] = 0.0f;
-    g_playerPointers[player_num]->headpossum[0] = 0.0f;
-    g_playerPointers[player_num]->headpossum[1] = 0.0f;
-    g_playerPointers[player_num]->headpossum[2] = 0.0f;
-    g_playerPointers[player_num]->headlooksum[0] = 0.0f;
-    g_playerPointers[player_num]->headlooksum[1] = 0.0f;
-    g_playerPointers[player_num]->headlooksum[2] = DEFAULT_HEADLOOKSUM_VAL;
-    g_playerPointers[player_num]->headupsum[0] = 0.0f;
-    g_playerPointers[player_num]->headupsum[1] = DEFAULT_HEADLOOKSUM_VAL;
-    g_playerPointers[player_num]->headupsum[2] = 0.0f;
-    g_playerPointers[player_num]->headbodyoffset[0] = 0.0f;
-    g_playerPointers[player_num]->headbodyoffset[1] = 0.0f;
-    g_playerPointers[player_num]->headbodyoffset[2] = 0.0f;
+    g_playerPointers[player_num]->headpos.f[0] = 0.0f;
+    g_playerPointers[player_num]->headpos.f[1] = 0.0f;
+    g_playerPointers[player_num]->headpos.f[2] = 0.0f;
+    g_playerPointers[player_num]->headlook.f[0] = 0.0f;
+    g_playerPointers[player_num]->headlook.f[1] = 0.0f;
+    g_playerPointers[player_num]->headlook.f[2] = 1.0f;
+    g_playerPointers[player_num]->headup.f[0] = 0.0f;
+    g_playerPointers[player_num]->headup.f[1] = 1.0f;
+    g_playerPointers[player_num]->headup.f[2] = 0.0f;
+    g_playerPointers[player_num]->headpossum.f[0] = 0.0f;
+    g_playerPointers[player_num]->headpossum.f[1] = 0.0f;
+    g_playerPointers[player_num]->headpossum.f[2] = 0.0f;
+    g_playerPointers[player_num]->headlooksum.f[0] = 0.0f;
+    g_playerPointers[player_num]->headlooksum.f[1] = 0.0f;
+    g_playerPointers[player_num]->headlooksum.f[2] = DEFAULT_HEADLOOKSUM_VAL;
+    g_playerPointers[player_num]->headupsum.f[0] = 0.0f;
+    g_playerPointers[player_num]->headupsum.f[1] = DEFAULT_HEADLOOKSUM_VAL;
+    g_playerPointers[player_num]->headupsum.f[2] = 0.0f;
+    g_playerPointers[player_num]->headbodyoffset.f[0] = 0.0f;
+    g_playerPointers[player_num]->headbodyoffset.f[1] = 0.0f;
+    g_playerPointers[player_num]->headbodyoffset.f[2] = 0.0f;
     g_playerPointers[player_num]->standheight = 0.0f;
     g_playerPointers[player_num]->standbodyoffset.x = 0.0f;
     g_playerPointers[player_num]->standbodyoffset.y = 0.0f;
     g_playerPointers[player_num]->standbodyoffset.z = 0.0f;
     g_playerPointers[player_num]->standfrac = 0.0f;
-    g_playerPointers[player_num]->standlook[0][0] = 0.0f;
-    g_playerPointers[player_num]->standlook[0][1] = 0.0f;
-    g_playerPointers[player_num]->standlook[0][2] = 1.0f;
-    g_playerPointers[player_num]->standlook[1][0] = 0.0f;
-    g_playerPointers[player_num]->standlook[1][1] = 0.0f;
-    g_playerPointers[player_num]->standlook[1][2] = 1.0f;
-    g_playerPointers[player_num]->standup[0][0] = 0.0f;
-    g_playerPointers[player_num]->standup[0][1] = 1.0f;
-    g_playerPointers[player_num]->standup[0][2] = 0.0f;
-    g_playerPointers[player_num]->standup[1][0] = 0.0f;
-    g_playerPointers[player_num]->standup[1][1] = 1.0f;
-    g_playerPointers[player_num]->standup[1][2] = 0.0f;
+    g_playerPointers[player_num]->standlook[0].f[0] = 0.0f;
+    g_playerPointers[player_num]->standlook[0].f[1] = 0.0f;
+    g_playerPointers[player_num]->standlook[0].f[2] = 1.0f;
+    g_playerPointers[player_num]->standlook[1].f[0] = 0.0f;
+    g_playerPointers[player_num]->standlook[1].f[1] = 0.0f;
+    g_playerPointers[player_num]->standlook[1].f[2] = 1.0f;
+    g_playerPointers[player_num]->standup[0].f[0] = 0.0f;
+    g_playerPointers[player_num]->standup[0].f[1] = 1.0f;
+    g_playerPointers[player_num]->standup[0].f[2] = 0.0f;
+    g_playerPointers[player_num]->standup[1].f[0] = 0.0f;
+    g_playerPointers[player_num]->standup[1].f[1] = 1.0f;
+    g_playerPointers[player_num]->standup[1].f[2] = 0.0f;
     g_playerPointers[player_num]->standcnt = 0;
 
     for (i = 0; i < 2; i++)
@@ -344,12 +347,12 @@ void initBONDdataforPlayer(s32 player_num)
     g_playerPointers[player_num]->field_FD0 = 0;
     g_playerPointers[player_num]->z_trigger_timer = 0;
     g_playerPointers[player_num]->field_FD8 = 0;
-    g_playerPointers[player_num]->field_FDC = 0xFF;
-    g_playerPointers[player_num]->field_FDD = 0xFF;
-    g_playerPointers[player_num]->field_FDE = 0xFF;
-    g_playerPointers[player_num]->field_FDF = 0;
+    g_playerPointers[player_num]->tileColor.rgba[0] = 0xFF;
+    g_playerPointers[player_num]->tileColor.rgba[1] = 0xFF;
+    g_playerPointers[player_num]->tileColor.rgba[2] = 0xFF;
+    g_playerPointers[player_num]->tileColor.rgba[3] = 0;
     g_playerPointers[player_num]->resetshadecol = 1;
-    g_playerPointers[player_num]->field_FE4 = 0;
+    g_playerPointers[player_num]->aimtype = 0;
     g_playerPointers[player_num]->crosshair_angle.x = 0.0f;
     g_playerPointers[player_num]->crosshair_angle.y = 0.0f;
     g_playerPointers[player_num]->crosshair_x_pos = 0.0f;
@@ -361,11 +364,11 @@ void initBONDdataforPlayer(s32 player_num)
     g_playerPointers[player_num]->gun_azimuth_turning = 0.0f;
     g_playerPointers[player_num]->gunaimdamp = 0.9f;
     g_playerPointers[player_num]->field_1010.x = 0.0f;
-    g_playerPointers[player_num]->field_1010.y = -3.1415927f;
+    g_playerPointers[player_num]->field_1010.y = -M_PI_F;
     g_playerPointers[player_num]->field_1010.z = 0.0f;
     g_playerPointers[player_num]->last_z_trigger_timer = 0;
     g_playerPointers[player_num]->copiedgoldeneye = 0;
-    g_playerPointers[player_num]->ammodispflags = 0;
+    g_playerPointers[player_num]->gunammooff = 0;
     g_playerPointers[player_num]->gunsync = 0.0f;
     g_playerPointers[player_num]->syncchange = 0.0f;
     g_playerPointers[player_num]->synccount = 0.0f;
@@ -431,7 +434,7 @@ void initBONDdataforPlayer(s32 player_num)
     g_playerPointers[player_num]->players_cur_animation = 0;
     g_playerPointers[player_num]->field_1288 = 0.0f;
     g_playerPointers[player_num]->bondinvincible = 0;
-    g_playerPointers[player_num]->field_29B8 = 7;
+    g_playerPointers[player_num]->healthDamageType = 7;
     g_playerPointers[player_num]->field_29BC = 1.0f;
     g_playerPointers[player_num]->field_29C0 = 0.0f;
     g_playerPointers[player_num]->mpmenuon = 0;
@@ -473,8 +476,7 @@ s32 get_cur_playernum(void) {
     return player_num;
 }
 
-
-s32 sub_GAME_7F09B15C( PropRecord* prop)
+s32 getPlayerPointerIndex(PropRecord* prop)
 {
     s32 i;
 
@@ -509,7 +511,7 @@ void set_cur_player_viewport_size(u32 ulx, u32 uly) {
 }
 
 void set_cur_player_fovy(f32 fovy) {
-            #ifdef XBLADEBUG
+    #ifdef XBLADEBUG
         if (g_CurrentPlayer == NULL) {
         assertPrint_8291E690(".\\ported\\player.cpp",0x26a,"Assertion failed: g_CurrentPlayer");
     }
@@ -536,229 +538,44 @@ f32 get_cur_player_fovy(void) {
 }
 
 
-
-
-
-
-#ifdef NONMATCHING
-
-/* looks vaguely like this, couldn't quite get there */
-PROP sub_GAME_7F09B244(ITEM_IDS arg0)
+PROP getPropForHeldItem(ITEM_IDS arg0)
 {
     PROP ret = -1;
     switch (arg0)
     {
-        case ITEM_KNIFE:         return PROP_CHRKNIFE;         /* weapon_multi_hunting_knife */
-        case ITEM_WPPK:          return PROP_CHRWPPK;          /* weapon_multi_pp7 */
-        case ITEM_SKORPION:      return PROP_CHRSKORPION;      /* weapon_multi_klobb */
-        case ITEM_AK47:          return PROP_CHRKALASH;        /* weapon_multi_kf7 */
-        case ITEM_UZI:           return PROP_CHRUZI;           /* weapon_multi_zmg */
-        case ITEM_MP5K:          return PROP_CHRMP5K;          /* weapon_multi_d5k */
-        case ITEM_SPECTRE:       return PROP_CHRSPECTRE;       /* weapon_multi_phantom */
-        case ITEM_M16:           return PROP_CHRM16;           /* weapon_multi_ar33 */
-        case ITEM_FNP90:         return PROP_CHRFNP90;         /* weapon_multi_rcp90 */
-        case ITEM_SHOTGUN:       return PROP_CHRSHOTGUN;       /* weapon_multi_shotgun */
-        case ITEM_GRENADELAUNCH: return PROP_CHRGRENADELAUNCH; /* weapon_multi_grenade_laun */
-        case ITEM_GRENADE:       return PROP_CHRGRENADE;       /* weapon_multi_hand */
-        case ITEM_REMOTEMINE:    return PROP_CHRREMOTEMINE;    /* weapon_multi_remote */
-        case ITEM_PROXIMITYMINE: return PROP_CHRPROXIMITYMINE; /* weapon_multi_prox */
-        case ITEM_TIMEDMINE:     return PROP_CHRTIMEDMINE;     /* weapon_multi_timed */
-        case ITEM_RUGER:         return PROP_CHRRUGER;         /* weapon_multi_cougar */
-        case ITEM_LASER:         return PROP_CHRLASER;         /* weapon_multi_moonraker */
-        case ITEM_SNIPERRIFLE:   return PROP_CHRSNIPERRIFLE;   /* weapon_multi_sniper */
-        case ITEM_MP5KSIL:       return PROP_CHRMP5KSIL;       /* weapon_multi_d5k_silent */
-        case ITEM_TT33:          return PROP_CHRTT33;          /* weapon_multi_dd44 */
-        case ITEM_WPPKSIL:       return PROP_CHRWPPKSIL;       /* weapon_multi_pp7_silent */
-        case ITEM_THROWKNIFE:    return PROP_CHRTHROWKNIFE;    /* weapon_multi_throwing_knife */
-        case ITEM_AUTOSHOT:      return PROP_CHRAUTOSHOT;      /* weapon_multi_auto_shot */
-        case ITEM_ROCKETLAUNCH:  return PROP_CHRROCKETLAUNCH;  /* weapon_multi_rocket_launch */
-        case ITEM_GOLDENGUN:     return PROP_CHRGOLDEN;        /* weapon_multi_goldengun */
-        case ITEM_SILVERWPPK:    return PROP_CHRWPPK;          /* weapon_multi_pp7_special1 */
-        case ITEM_GOLDWPPK:      return PROP_CHRWPPK;          /* weapon_multi_pp7_special2 */
-        case ITEM_TOKEN:         ret = PROP_FLAG;
-        /* weapon_multi_none */
-        case ITEM_UNARMED:
-        case ITEM_FIST:
-        default:
-            return ret;
+        case ITEM_KNIFE:         ret = PROP_CHRKNIFE;         break; /* weapon_multi_hunting_knife */
+        case ITEM_WPPK:          ret = PROP_CHRWPPK;          break; /* weapon_multi_pp7 */
+        case ITEM_SKORPION:      ret = PROP_CHRSKORPION;      break; /* weapon_multi_klobb */
+        case ITEM_AK47:          ret = PROP_CHRKALASH;        break; /* weapon_multi_kf7 */
+        case ITEM_UZI:           ret = PROP_CHRUZI;           break; /* weapon_multi_zmg */
+        case ITEM_MP5K:          ret = PROP_CHRMP5K;          break; /* weapon_multi_d5k */
+        case ITEM_SPECTRE:       ret = PROP_CHRSPECTRE;       break; /* weapon_multi_phantom */
+        case ITEM_M16:           ret = PROP_CHRM16;           break; /* weapon_multi_ar33 */
+        case ITEM_FNP90:         ret = PROP_CHRFNP90;         break; /* weapon_multi_rcp90 */
+        case ITEM_SHOTGUN:       ret = PROP_CHRSHOTGUN;       break; /* weapon_multi_shotgun */
+        case ITEM_GRENADELAUNCH: ret = PROP_CHRGRENADELAUNCH; break; /* weapon_multi_grenade_laun */
+        case ITEM_GRENADE:       ret = PROP_CHRGRENADE;       break; /* weapon_multi_hand */
+        case ITEM_REMOTEMINE:    ret = PROP_CHRREMOTEMINE;    break; /* weapon_multi_remote */
+        case ITEM_PROXIMITYMINE: ret = PROP_CHRPROXIMITYMINE; break; /* weapon_multi_prox */
+        case ITEM_TIMEDMINE:     ret = PROP_CHRTIMEDMINE;     break; /* weapon_multi_timed */
+        case ITEM_RUGER:         ret = PROP_CHRRUGER;         break; /* weapon_multi_cougar */
+        case ITEM_LASER:         ret = PROP_CHRLASER;         break; /* weapon_multi_moonraker */
+        case ITEM_SNIPERRIFLE:   ret = PROP_CHRSNIPERRIFLE;   break; /* weapon_multi_sniper */
+        case ITEM_MP5KSIL:       ret = PROP_CHRMP5KSIL;       break; /* weapon_multi_d5k_silent */
+        case ITEM_TT33:          ret = PROP_CHRTT33;          break; /* weapon_multi_dd44 */
+        case ITEM_WPPKSIL:       ret = PROP_CHRWPPKSIL;       break; /* weapon_multi_pp7_silent */
+        case ITEM_THROWKNIFE:    ret = PROP_CHRTHROWKNIFE;    break; /* weapon_multi_throwing_knife */
+        case ITEM_AUTOSHOT:      ret = PROP_CHRAUTOSHOT;      break; /* weapon_multi_auto_shot */
+        case ITEM_ROCKETLAUNCH:  ret = PROP_CHRROCKETLAUNCH;  break; /* weapon_multi_rocket_launch */
+        case ITEM_GOLDENGUN:     ret = PROP_CHRGOLDEN;        break; /* weapon_multi_goldengun */
+        case ITEM_SILVERWPPK:    ret = PROP_CHRWPPK;          break; /* weapon_multi_pp7_special1 */
+        case ITEM_GOLDWPPK:      ret = PROP_CHRWPPK;          break; /* weapon_multi_pp7_special2 */
+        case ITEM_TOKEN:         ret = PROP_FLAG;             break;
+        case ITEM_UNARMED:       break;
+        case ITEM_TASER:         break;
     }
     return ret;
 }
-
-
-#else
-GLOBAL_ASM(
-.late_rodata
-/*D:8005762C*/
-glabel jpt_weapon_multi
-.word weapon_multi_none
-.word weapon_multi_none
-.word weapon_multi_hunting_knife
-.word weapon_multi_throwing_knife
-.word weapon_multi_pp7
-.word weapon_multi_pp7_silent
-.word weapon_multi_dd44
-.word weapon_multi_klobb
-.word weapon_multi_kf7
-.word weapon_multi_zmg
-.word weapon_multi_d5k
-.word weapon_multi_d5k_silent
-.word weapon_multi_phantom
-.word weapon_multi_ar33
-.word weapon_multi_rcp90
-.word weapon_multi_shotgun
-.word weapon_multi_auto_shot
-.word weapon_multi_sniper
-.word weapon_multi_cougar
-.word weapon_multi_goldengun
-.word weapon_multi_pp7_special1
-.word weapon_multi_pp7_special2
-.word weapon_multi_moonraker
-/*.word weapon_multi_none*/
-/*.word weapon_multi_grenade_laun*/
-/*.word weapon_multi_rocket_launch*/
-/*.word weapon_multi_hand*/
-/*.word weapon_multi_timed*/
-/*.word weapon_multi_prox*/
-/*.word weapon_multi_remote*/
-/*.word weapon_multi_none*/
-/*.word weapon_multi_none*/
-
-.text
-glabel sub_GAME_7F09B244
-/* 0CFD74 7F09B244 28810020 */  slti  $at, $a0, 0x20
-/* 0CFD78 7F09B248 14200006 */  bnez  $at, .L7F09B264
-/* 0CFD7C 7F09B24C 2403FFFF */   li    $v1, -1
-/* 0CFD80 7F09B250 24010058 */  li    $at, 88
-/* 0CFD84 7F09B254 50810042 */  beql  $a0, $at, .L7F09B360
-/* 0CFD88 7F09B258 2403014D */   li    $v1, 333
-/* 0CFD8C 7F09B25C 03E00008 */  jr    $ra
-/* 0CFD90 7F09B260 00601025 */   move  $v0, $v1
-
-.L7F09B264:
-/* 0CFD94 7F09B264 2C810020 */  sltiu $at, $a0, 0x20
-/* 0CFD98 7F09B268 1020003D */  beqz  $at, .L7F09B360
-/* 0CFD9C 7F09B26C 00047080 */   sll   $t6, $a0, 2
-/* 0CFDA0 7F09B270 3C018005 */  lui   $at, %hi(jpt_weapon_multi)
-/* 0CFDA4 7F09B274 002E0821 */  addu  $at, $at, $t6
-/* 0CFDA8 7F09B278 8C2E762C */  lw    $t6, %lo(jpt_weapon_multi)($at)
-/* 0CFDAC 7F09B27C 01C00008 */  jr    $t6
-/* 0CFDB0 7F09B280 00000000 */   nop
-weapon_multi_hunting_knife:
-/* 0CFDB4 7F09B284 03E00008 */  jr    $ra
-/* 0CFDB8 7F09B288 240200BA */   li    $v0, 186
-
-weapon_multi_pp7:
-/* 0CFDBC 7F09B28C 03E00008 */  jr    $ra
-/* 0CFDC0 7F09B290 240200BF */   li    $v0, 191
-
-weapon_multi_klobb:
-/* 0CFDC4 7F09B294 03E00008 */  jr    $ra
-/* 0CFDC8 7F09B298 240200C1 */   li    $v0, 193
-
-weapon_multi_kf7:
-/* 0CFDCC 7F09B29C 03E00008 */  jr    $ra
-/* 0CFDD0 7F09B2A0 240200B8 */   li    $v0, 184
-
-weapon_multi_zmg:
-/* 0CFDD4 7F09B2A4 03E00008 */  jr    $ra
-/* 0CFDD8 7F09B2A8 240200C3 */   li    $v0, 195
-
-weapon_multi_d5k:
-/* 0CFDDC 7F09B2AC 03E00008 */  jr    $ra
-/* 0CFDE0 7F09B2B0 240200BD */   li    $v0, 189
-
-weapon_multi_phantom:
-/* 0CFDE4 7F09B2B4 03E00008 */  jr    $ra
-/* 0CFDE8 7F09B2B8 240200C2 */   li    $v0, 194
-
-weapon_multi_ar33:
-/* 0CFDEC 7F09B2BC 03E00008 */  jr    $ra
-/* 0CFDF0 7F09B2C0 240200BC */   li    $v0, 188
-
-weapon_multi_rcp90:
-/* 0CFDF4 7F09B2C4 03E00008 */  jr    $ra
-/* 0CFDF8 7F09B2C8 240200C5 */   li    $v0, 197
-
-weapon_multi_shotgun:
-/* 0CFDFC 7F09B2CC 03E00008 */  jr    $ra
-/* 0CFE00 7F09B2D0 240200C0 */   li    $v0, 192
-
-weapon_multi_grenade_laun:
-/* 0CFE04 7F09B2D4 03E00008 */  jr    $ra
-/* 0CFE08 7F09B2D8 240200B9 */   li    $v0, 185
-
-weapon_multi_hand:
-/* 0CFE0C 7F09B2DC 03E00008 */  jr    $ra
-/* 0CFE10 7F09B2E0 240200C4 */   li    $v0, 196
-
-weapon_multi_remote:
-/* 0CFE14 7F09B2E4 03E00008 */  jr    $ra
-/* 0CFE18 7F09B2E8 240200C7 */   li    $v0, 199
-
-weapon_multi_prox:
-/* 0CFE1C 7F09B2EC 03E00008 */  jr    $ra
-/* 0CFE20 7F09B2F0 240200C8 */   li    $v0, 200
-
-weapon_multi_timed:
-/* 0CFE24 7F09B2F4 03E00008 */  jr    $ra
-/* 0CFE28 7F09B2F8 240200C9 */   li    $v0, 201
-
-weapon_multi_cougar:
-/* 0CFE2C 7F09B2FC 03E00008 */  jr    $ra
-/* 0CFE30 7F09B300 240200BE */   li    $v0, 190
-
-weapon_multi_moonraker:
-/* 0CFE34 7F09B304 03E00008 */  jr    $ra
-/* 0CFE38 7F09B308 240200BB */   li    $v0, 187
-
-weapon_multi_sniper:
-/* 0CFE3C 7F09B30C 03E00008 */  jr    $ra
-/* 0CFE40 7F09B310 240200D2 */   li    $v0, 210
-
-weapon_multi_d5k_silent:
-/* 0CFE44 7F09B314 03E00008 */  jr    $ra
-/* 0CFE48 7F09B318 240200CE */   li    $v0, 206
-
-weapon_multi_dd44:
-/* 0CFE4C 7F09B31C 03E00008 */  jr    $ra
-/* 0CFE50 7F09B320 240200CD */   li    $v0, 205
-
-weapon_multi_pp7_silent:
-/* 0CFE54 7F09B324 03E00008 */  jr    $ra
-/* 0CFE58 7F09B328 240200CC */   li    $v0, 204
-
-weapon_multi_throwing_knife:
-/* 0CFE5C 7F09B32C 03E00008 */  jr    $ra
-/* 0CFE60 7F09B330 240200D1 */   li    $v0, 209
-
-weapon_multi_auto_shot:
-/* 0CFE64 7F09B334 03E00008 */  jr    $ra
-/* 0CFE68 7F09B338 240200CF */   li    $v0, 207
-
-weapon_multi_rocket_launch:
-/* 0CFE6C 7F09B33C 03E00008 */  jr    $ra
-/* 0CFE70 7F09B340 240200D3 */   li    $v0, 211
-
-weapon_multi_goldengun:
-/* 0CFE74 7F09B344 03E00008 */  jr    $ra
-/* 0CFE78 7F09B348 240200D0 */   li    $v0, 208
-
-weapon_multi_pp7_special1:
-/* 0CFE7C 7F09B34C 03E00008 */  jr    $ra
-/* 0CFE80 7F09B350 240200BF */   li    $v0, 191
-
-weapon_multi_pp7_special2:
-/* 0CFE84 7F09B354 03E00008 */  jr    $ra
-/* 0CFE88 7F09B358 240200BF */   li    $v0, 191
-
-/* 0CFE8C 7F09B35C 2403014D */  li    $v1, 333
-weapon_multi_none:
-.L7F09B360:
-/* 0CFE90 7F09B360 03E00008 */  jr    $ra
-/* 0CFE94 7F09B364 00601025 */   move  $v0, $v1
-)
-#endif
 
 
 void sub_GAME_7F09B368(enum GUNHAND hand)
@@ -766,84 +583,28 @@ void sub_GAME_7F09B368(enum GUNHAND hand)
     chrSetWeaponFlag4(g_CurrentPlayer->prop->chr, hand);
 }
 
+void sub_GAME_7F09B398(enum GUNHAND hand)
+{
+    ChrRecord *chr;
+    enum ITEM_IDS wepid;
+    enum PROP prop;
+    s32 flags;
 
-#ifdef NONMATCHING
-// NOTE: i think the return value from
-// something_with_generating_object is supposed
-// to be returned here?
-void sub_GAME_7F09B398(GUNHAND hand) {
-    struct ChrRecord* temp_v0;
-    ITEM_IDS weaponNum;
-    s32 weaponIdMaybe;
+    chr = g_CurrentPlayer->prop->chr;
 
-    temp_v0 = g_CurrentPlayer->prop->chr;
-    if (!temp_v0->handle_positiondata[hand]) {
-        weaponNum = getCurrentPlayerWeaponId(hand);
-        weaponIdMaybe = sub_GAME_7F09B244(weaponNum);
-        if (weaponIdMaybe >= 0) {
-            something_with_generating_object(temp_v0, weaponIdMaybe, weaponNum, hand == GUNRIGHT ? 0 : 0x10000000, 0, 0);
+    if (chr->weapons_held[hand] == NULL)
+    {
+        wepid = getCurrentPlayerWeaponId(hand);
+        prop = getPropForHeldItem(wepid);
+        if (prop >= 0)
+        {
+            flags = ((hand * 4) == 0)
+                  ? 0
+                  : PROPFLAG_WEAPON_LEFTHANDED;
+            something_with_generating_object(chr, prop, wepid, flags, NULL, NULL);
         }
     }
 }
-#else
-GLOBAL_ASM(
-.late_rodata
-/*hack for jtbl*/
-.word weapon_multi_none
-.word weapon_multi_grenade_laun
-.word weapon_multi_rocket_launch
-.word weapon_multi_hand
-.word weapon_multi_timed
-.word weapon_multi_prox
-.word weapon_multi_remote
-.word weapon_multi_none
-.word weapon_multi_none
-
-.text
-glabel sub_GAME_7F09B398
-/* 0CFEC8 7F09B398 3C0E8008 */  lui   $t6, %hi(g_CurrentPlayer)
-/* 0CFECC 7F09B39C 8DCEA0B0 */  lw    $t6, %lo(g_CurrentPlayer)($t6)
-/* 0CFED0 7F09B3A0 27BDFFC8 */  addiu $sp, $sp, -0x38
-/* 0CFED4 7F09B3A4 AFBF001C */  sw    $ra, 0x1c($sp)
-/* 0CFED8 7F09B3A8 8DCF00A8 */  lw    $t7, 0xa8($t6)
-/* 0CFEDC 7F09B3AC 00041880 */  sll   $v1, $a0, 2
-/* 0CFEE0 7F09B3B0 8DE20004 */  lw    $v0, 4($t7)
-/* 0CFEE4 7F09B3B4 0043C021 */  addu  $t8, $v0, $v1
-/* 0CFEE8 7F09B3B8 8F190160 */  lw    $t9, 0x160($t8)
-/* 0CFEEC 7F09B3BC 57200014 */  bnezl $t9, .L7F09B410
-/* 0CFEF0 7F09B3C0 8FBF001C */   lw    $ra, 0x1c($sp)
-/* 0CFEF4 7F09B3C4 AFA20034 */  sw    $v0, 0x34($sp)
-/* 0CFEF8 7F09B3C8 0FC17674 */  jal   getCurrentPlayerWeaponId
-/* 0CFEFC 7F09B3CC AFA30024 */   sw    $v1, 0x24($sp)
-/* 0CFF00 7F09B3D0 AFA20030 */  sw    $v0, 0x30($sp)
-/* 0CFF04 7F09B3D4 0FC26C91 */  jal   sub_GAME_7F09B244
-/* 0CFF08 7F09B3D8 00402025 */   move  $a0, $v0
-/* 0CFF0C 7F09B3DC 8FA30024 */  lw    $v1, 0x24($sp)
-/* 0CFF10 7F09B3E0 0440000A */  bltz  $v0, .L7F09B40C
-/* 0CFF14 7F09B3E4 00402825 */   move  $a1, $v0
-/* 0CFF18 7F09B3E8 14600003 */  bnez  $v1, .L7F09B3F8
-/* 0CFF1C 7F09B3EC 8FA40034 */   lw    $a0, 0x34($sp)
-/* 0CFF20 7F09B3F0 10000002 */  b     .L7F09B3FC
-/* 0CFF24 7F09B3F4 00003825 */   move  $a3, $zero
-.L7F09B3F8:
-/* 0CFF28 7F09B3F8 3C071000 */  lui   $a3, 0x1000
-.L7F09B3FC:
-/* 0CFF2C 7F09B3FC 8FA60030 */  lw    $a2, 0x30($sp)
-/* 0CFF30 7F09B400 AFA00010 */  sw    $zero, 0x10($sp)
-/* 0CFF34 7F09B404 0FC14885 */  jal   something_with_generating_object
-/* 0CFF38 7F09B408 AFA00014 */   sw    $zero, 0x14($sp)
-.L7F09B40C:
-/* 0CFF3C 7F09B40C 8FBF001C */  lw    $ra, 0x1c($sp)
-.L7F09B410:
-/* 0CFF40 7F09B410 27BD0038 */  addiu $sp, $sp, 0x38
-/* 0CFF44 7F09B414 03E00008 */  jr    $ra
-/* 0CFF48 7F09B418 00000000 */   nop
-)
-#endif
-
-
-
-
 
 void shuffle_player_ids(void) {
     s32 i;
@@ -861,10 +622,6 @@ void shuffle_player_ids(void) {
         array_PLAYER_IDs[i + random % (4 - i)] = temp;
     }
 }
-
-
-
-
 
 s32 sub_GAME_7F09B4D8(s32 current_player_num) {
     s32 i;
@@ -887,11 +644,6 @@ s32 sub_GAME_7F09B4D8(s32 current_player_num) {
     return position;
 }
 
-
-
-
-
-
 s32 get_nth_player_from_shuffled(PLAYER_ID id)
 {
     s32 i;
@@ -907,4 +659,3 @@ s32 get_nth_player_from_shuffled(PLAYER_ID id)
 
     return 0;
 }
-

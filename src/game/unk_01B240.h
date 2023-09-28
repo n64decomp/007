@@ -4,6 +4,6 @@
 
 #include "include/PR/gbi.h"
 
-Gfx *sub_GAME_7F01B240(Gfx*, s32, s32, s32[3], s32[3]);
+Gfx *sub_GAME_7F01B240(Gfx*, s32, s32, struct FolderSelect *, struct FolderSelect *);
 
 #endif

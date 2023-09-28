@@ -165,11 +165,11 @@ Rotate Image:
 #define PTR_LIST_OBJECT_LOOKUP_INDICES_LEN 512
 #define BSS_8007161C_LEN 256
 #define BSS_8007161C_DATA_LEN 16
-#define PROJECTILEDATA_START_ADDRESS_LEN 30
-#define BSS_80072E70_DATA_LEN 10
-#define BSS_80073370_DATA_LEN 20
-#define BSS_80073DC0_DATA_LEN 20
-#define BSS_80075030_DATA_LEN 40
+#define MAX_WEAPON_SLOTS 30
+#define MAX_HAT_SLOTS 10
+#define MAX_AMMO_CRATES 20
+#define PROJECTILES_ARR_MAX 20
+#define EMBEDMENT_ARR_MAX 40
 #define ONSCREEN_PROP_LIST_LEN 500
 
 
@@ -178,242 +178,9 @@ Rotate Image:
  * Getting a match on alloc_lookup_buffers makes it seem
  * the struct is just one continuous array. (or maybe there's no struct....)
 */
-struct unk_8007161c
+struct roomproplistchunk
 {
-    s16 data[16];
-};
-
-struct projectile_data {
-    u32 unk00;
-    u32 unk04;
-    u32 unk08;
-    u32 unk0C;
-
-    u32 unk10;
-    u32 unk14;
-    u32 unk18;
-    u32 unk1C;
-
-    u32 unk20;
-    u32 unk24;
-    u32 unk28;
-    u32 unk2C;
-
-    u32 unk30;
-    u32 unk34;
-    u32 unk38;
-    u32 unk3C;
-
-    u32 unk40;
-    u32 unk44;
-    u32 unk48;
-    u32 unk4C;
-
-    u32 unk50;
-    u32 unk54;
-    u32 unk58;
-    u32 unk5C;
-
-    u32 unk60;
-    u32 unk64;
-    u32 unk68;
-    u32 unk6C;
-
-    u32 unk70;
-    u32 unk74;
-    u32 unk78;
-    u32 unk7C;
-
-    u32 unk80;
-    u32 unk84;
-};
-
-struct bss_80072E70 {
-    u32 unk00;
-    u32 unk04;
-    u32 unk08;
-    u32 unk0C;
-
-    u32 unk10;
-    u32 unk14;
-    u32 unk18;
-    u32 unk1C;
-
-    u32 unk20;
-    u32 unk24;
-    u32 unk28;
-    u32 unk2C;
-
-    u32 unk30;
-    u32 unk34;
-    u32 unk38;
-    u32 unk3C;
-
-    u32 unk40;
-    u32 unk44;
-    u32 unk48;
-    u32 unk4C;
-
-    u32 unk50;
-    u32 unk54;
-    u32 unk58;
-    u32 unk5C;
-
-    u32 unk60;
-    u32 unk64;
-    u32 unk68;
-    u32 unk6C;
-
-    u32 unk70;
-    u32 unk74;
-    u32 unk78;
-    u32 unk7C;
-};
-
-struct bss_80073370 {
-    u32 unk00;
-    u32 unk04;
-    u32 unk08;
-    u32 unk0C;
-
-    u32 unk10;
-    u32 unk14;
-    u32 unk18;
-    u32 unk1C;
-
-    u32 unk20;
-    u32 unk24;
-    u32 unk28;
-    u32 unk2C;
-
-    u32 unk30;
-    u32 unk34;
-    u32 unk38;
-    u32 unk3C;
-
-    u32 unk40;
-    u32 unk44;
-    u32 unk48;
-    u32 unk4C;
-
-    u32 unk50;
-    u32 unk54;
-    u32 unk58;
-    u32 unk5C;
-
-    u32 unk60;
-    u32 unk64;
-    u32 unk68;
-    u32 unk6C;
-
-    u32 unk70;
-    u32 unk74;
-    u32 unk78;
-    u32 unk7C;
-
-    u32 unk80;
-};
-
-struct bss_80073DC0 {
-    u32 unk00;
-    f32 unk04;
-    f32 unk08;
-    f32 unk0C;
-
-    f32 unk10;
-    f32 unk14;
-    f32 unk18;
-    f32 unk1C;
-
-    u32 unk20;
-    u32 unk24;
-    u32 unk28;
-    u32 unk2C;
-
-    u32 unk30;
-    u32 unk34;
-    u32 unk38;
-    u32 unk3C;
-
-    u32 unk40;
-    u32 unk44;
-    u32 unk48;
-    u32 unk4C;
-
-    u32 unk50;
-    u32 unk54;
-    u32 unk58;
-    u32 unk5C;
-
-    f32 unk60;
-    u32 unk64;
-    u32 unk68;
-    u32 unk6C;
-
-    u32 unk70;
-    u32 unk74;
-    u32 unk78;
-    u32 unk7C;
-
-    u32 unk80;
-    u32 unk84;
-    u32 unk88;
-    f32 unk8C; 
-
-    u32 unk90;
-    f32 unk94;
-    u32 unk98;
-    u32 unk9C;
-
-    u32 unkA0;
-    u32 unkA4;
-    u32 unkA8;
-    u32 unkAC;
-
-    u32 unkB0;
-    u32 unkB4;
-    u32 unkB8;
-    u32 unkBC;
-
-    f32 unkC0;
-    f32 unkC4;
-    f32 unkC8;
-    u32 unkCC;
-
-    u32 unkD0;
-    u32 unkD4;
-    u32 unkD8;
-    u32 unkDC;
-
-    u32 unkE0;
-    u32 unkE4;
-    u32 unkE8;
-};
-
-
-struct bss_80075030 {
-    s32 unk00;
-    u32 unk04;
-    u32 unk08;
-    u32 unk0C;
-
-    u32 unk10;
-    u32 unk14;
-    u32 unk18;
-    u32 unk1C;
-
-    u32 unk20;
-    u32 unk24;
-    u32 unk28;
-    u32 unk2C;
-
-    u32 unk30;
-    u32 unk34;
-    u32 unk38;
-    u32 unk3C;
-
-    u32 unk40;
-    u32 unk44;
+    s16 propnums[16];
 };
 
 extern struct SetupPtrs g_SetupPtrs;
@@ -465,17 +232,20 @@ extern PropRecord *ptr_obj_pos_list_final_entry;
 extern s32                                g_OnScreenPropCount;
 extern PropRecord **                      g_LastOnScreenProp;
 extern PropRecord *                       g_OnScreenPropList[];
-extern s16 *                              ptr_room_lookup_buffer_maybe;
-extern struct unk_8007161c *              dword_CODE_bss_8007161C;
+extern PropRecord *                       g_InteractProp;
+extern s16 *                              RoomPropListChunkIndexes;
+extern struct roomproplistchunk *         RoomPropListChunks;
 extern sfxRecord                          sfx_related[];
-extern struct projectile_data             ProjectileData_start_address[];
-extern struct bss_80072E70                dword_CODE_bss_80072E70[];
-extern struct bss_80073370                dword_CODE_bss_80073370[];
-extern struct bss_80073DC0                dword_CODE_bss_80073DC0[];
-extern struct bss_80075030                dword_CODE_bss_80075030[];
+extern struct WeaponObjRecord             g_WeaponSlots[];
+extern struct HatRecord                   g_HatSlots[];
+extern struct AmmoCrateRecord             g_AmmoCrates[];
+extern struct Projectile                  g_Projectiles[];
+extern struct Embedment                   g_Embedments[];
+extern struct coord3d                     flt_CODE_bss_80075B78;
+extern struct coord3d                     flt_CODE_bss_80075B88;
 
 
-extern struct object_animation_controller g_MonitorAnimController;
+extern MonitorRecord g_MonitorAnimController;
 extern struct object_animation_controller g_UnknownAnimController;
 extern struct object_animation_controller g_TaserAnimController;
 
@@ -487,12 +257,12 @@ void          check_deactivate_gas_sound(void);
 void          handle_mp_respawn_and_some_things(void);
 void          determing_type_of_object_and_detection(void);
 void          chraiUpdateOnscreenPropCount(void);
-void          sub_GAME_7F03D78C(void);
+void          chrpropUpdateAutoaimTarget(void);
 void          chraiCheckUseHeldItems(void);
-s32           bond_interact_object(void);
+bool          bond_interact_object(void);
 void          sub_GAME_7F03D0D4(void);
 void          chrpropRegisterRoom(PropRecord *, s16);
-PropRecord*           chrpropAllocate();
+PropRecord*           propAllocate();
 void          chrpropDeregisterRooms(PropRecord *);
 void          sub_GAME_7F03E27C(PropRecord *, coord3d *, coord3d *, f32);
 void          chrpropRegisterRooms(PropRecord *posData);
@@ -506,7 +276,7 @@ void          chraiGetCollisionBounds(PropRecord *arg0, struct rect4f **arg1, s3
 void          sub_GAME_7F03D058(PropRecord *prop, bool unset);
 void          chraiGetCollisionBoundsWithoutY(PropRecord *arg0, struct rect4f **arg1, s32 *arg2);
 s32 chrpropTestPointInPolygon(coord3d *point, struct rect4f *polygon, s32 edges);
-void          sub_GAME_7F03E3FC(s32 *roomids);
+void          roomGetProps(s32 *roomids);
 ObjectRecord *scan_position_data_table_for_normal_object_at_preset(s32 arg0);
 Gfx          *chrpropsRenderPass(Gfx *arg0, s32 roomid, s32 arg2);
 PropRecord   *get_ptr_obj_pos_list_current_entry(void);
@@ -521,11 +291,12 @@ ObjectRecord *sub_GAME_7F03FAB0(PadRecord *pad, s32 RoomID);
 void          chraiGetCollisionBounds(PropRecord *arg0, struct rect4f **arg1, s32 *arg2, f32 *arg3, f32 *arg4);
 void chrpropGetCollisionBounds(PropRecord *arg0, f32 *arg1, f32 *arg2, f32 *arg3);
 f32 sub_GAME_7F03CFE8(PropRecord *arg0);
-f32 chrpropSumMatrixPosX(struct modeldata_unk_pos* arg0, Mtxf *arg1);
-f32 chrpropSumMatrixNegX(struct modeldata_unk_pos* arg0, Mtxf *arg1);
-f32 chrpropSumMatrixPosY(struct modeldata_unk_pos* arg0, Mtxf *arg1);
-f32 chrpropSumMatrixNegY(struct modeldata_unk_pos* arg0, Mtxf *arg1);
-f32 chrpropSumMatrixPosZ(struct modeldata_unk_pos* arg0, Mtxf *arg1);
-f32 chrpropSumMatrixNegZ(struct modeldata_unk_pos* arg0, Mtxf *arg1);
-void sub_GAME_7F03F540(struct modeldata_unk_pos *arg0, Mtxf *arg1, s32* arg2, struct collision_data *arg3);
+f32 chrpropSumMatrixPosX(struct ModelRoData_BoundingBoxRecord *bbox, Mtxf *arg1);
+f32 chrpropSumMatrixNegX(struct ModelRoData_BoundingBoxRecord *bbox, Mtxf *arg1);
+f32 chrpropSumMatrixPosY(struct ModelRoData_BoundingBoxRecord *bbox, Mtxf *arg1);
+f32 chrpropSumMatrixNegY(struct ModelRoData_BoundingBoxRecord *bbox, Mtxf *arg1);
+f32 chrpropSumMatrixPosZ(struct ModelRoData_BoundingBoxRecord *bbox, Mtxf *arg1);
+f32 chrpropSumMatrixNegZ(struct ModelRoData_BoundingBoxRecord *bbox, Mtxf *arg1);
+void sub_GAME_7F03F540(struct ModelRoData_BoundingBoxRecord *bbox, Mtxf *arg1, struct rect4f* arg2, struct collision_data *arg3);
+void sub_GAME_7F03F948(struct coord3d *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 *arg4);
 #endif

@@ -568,5 +568,4 @@ extern struct ChrModelFileRecord c_item_entries[];
 extern struct ModelSkeleton SKELETON(guard);
 extern struct ModelSkeleton SKELETON(suit_lf_hand);
 
-extern struct object_weapon blank_08_object_preset_1[];
 #endif

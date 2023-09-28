@@ -24,12 +24,12 @@ da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_imp_all_p.s
 da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_ash_all_p.seg
 da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_sho_all_p.seg
 46774d70127cae35b898f5b94246c77f6e239a71  build/u/assets/obseg/bg/bg_ame_all_p.seg
-da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_oat_all_p.seg
-70ac79017821950bc71d0f5ea0148cde1825a615  build/u/assets/obseg/bg/bg_rit_all_p.seg
-da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_len_all_p.seg
+da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_rit_all_p.seg
+70ac79017821950bc71d0f5ea0148cde1825a615  build/u/assets/obseg/bg/bg_oat_all_p.seg
+da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_lip_all_p.seg
 da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_lee_all_p.seg
 da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_ear_all_p.seg
-53ea3a1252992714b8f09235909390c001a3f3b8  build/u/assets/obseg/bg/bg_lip_all_p.seg
+53ea3a1252992714b8f09235909390c001a3f3b8  build/u/assets/obseg/bg/bg_len_all_p.seg
 da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_pam_all_p.seg
 da39a3ee5e6b4b0d3255bfef95601890afd80709  build/u/assets/obseg/bg/bg_wax_all_p.seg
 f4e72081570eae7ec26d1fcca157b762f686f465  build/u/assets/obseg/brief/UbriefarchZ.rz

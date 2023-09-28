@@ -2,7 +2,7 @@ WeaponStats fist_stats = {
 	1.0, //MuzzleFlashExtension
 	11.0, -50.0, -33.0, //PosXYZ
 	3.0, 3.0, 8.5, //PlayXYZ
-	0, 0, //ammotype magsize
+	AMMO_NONE, 0, //ammotype magsize
 	0xFF, 0x06, //AutomaticFiringRate SingleFiringRate
 	1, //ObjectsShootThrough
 	0, 0, //SoundTriggerRate Sound
@@ -23,5 +23,9 @@ WeaponStats fist_stats = {
 	2.0, //field_60
 	4.0, //field_64
 	0.0, //ForceOfImpact
-	0x64D91//BitFlags
+	WEAPONSTATBITFLAG_00000001 | 
+    WEAPONSTATBITFLAG_CLICKY | WEAPONSTATBITFLAG_00000080 | 
+    WEAPONSTATBITFLAG_ONLY_1_HANDED | WEAPONSTATBITFLAG_MIRROR_DUAL | WEAPONSTATBITFLAG_SHOW_FIRST_PERSON | 
+    WEAPONSTATBITFLAG_HIDE_FIRST_PERSON_MENU | 
+    WEAPONSTATBITFLAG_USE_HOLD_TIME | WEAPONSTATBITFLAG_HAS_AMMO//BitFlags
 };

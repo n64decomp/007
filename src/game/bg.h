@@ -109,14 +109,14 @@ extern bg_room_data * ptr_bgdata_room_fileposition_list;
 extern s_room_info array_room_info[];
 
 
-void bgInitDebugNoticeList(void);
+void bgInit(void);
 
 // sub_GAME_7F033B38 requres arg be s32
 s32 sub_GAME_7F0B8FD0(s32 roomA, u8 roomB);
 
 //f32 sub_GAME_7F0B4F9C(s32 room); // u8 not s32 for sub_GAME_7F0B2FE0
 u32 bgDecompress(u8* source, u8 *target);
-void sub_GAME_7F0B65C4(s32 roomID);
+void delete_room_data(s32 roomID);
 void load_bg_file(LEVEL_INDEX stagenum);
 
 s32 bgDebugRemoved7F0B9DE4(s32 arg0, s32 arg1, s32 arg2);
@@ -140,6 +140,8 @@ s32 bgGet2dBboxByRoomId(s32 room_id, struct bbox2d *result);
 f32 bgGetLevelVisibilityScale(void);
 void sub_GAME_7F0B5CC0(struct bbox2d *a, struct bbox2d *b);
 f32 get_room_data_float2(void);
-
+s32 sub_GAME_7F0B9CC8(s32 arg0, s32 arg1, struct coord3d *arg2, struct coord3d *arg3);
+void sub_GAME_7F0B96CC(s32 arg0, struct PortalMetric *arg1);
+void bgLoadFromDynamicCCRMLUT(s32 arg0, s32 arg1, s32 arg2);
 
 #endif

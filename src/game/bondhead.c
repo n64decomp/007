@@ -72,20 +72,20 @@ void bheadUpdateIdleRoll()
 {
     f32 mult = 1.0f / UINT_MAX;
 
-	g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt][0] = ((f32)randomGetNext() * mult - 0.5f) * 0.02f;
-	g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt][2] = 1;
-	g_CurrentPlayer->standup[g_CurrentPlayer->standcnt][0] = ((f32)randomGetNext() * mult - 0.5f) * 0.02f;
-	g_CurrentPlayer->standup[g_CurrentPlayer->standcnt][1] = 1;
+	g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt].f[0] = ((f32)randomGetNext() * mult - 0.5f) * 0.02f;
+	g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt].f[2] = 1;
+	g_CurrentPlayer->standup[g_CurrentPlayer->standcnt].f[0] = ((f32)randomGetNext() * mult - 0.5f) * 0.02f;
+	g_CurrentPlayer->standup[g_CurrentPlayer->standcnt].f[1] = 1;
 
 	if (g_CurrentPlayer->standcnt)
     {
-		g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt][1] = (f32)randomGetNext() * mult * 0.01f;
-		g_CurrentPlayer->standup[g_CurrentPlayer->standcnt][2] = (f32)randomGetNext() * mult * -0.01f;
+		g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt].f[1] = (f32)randomGetNext() * mult * 0.01f;
+		g_CurrentPlayer->standup[g_CurrentPlayer->standcnt].f[2] = (f32)randomGetNext() * mult * -0.01f;
 	}
     else
     {
-		g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt][1] = (f32)randomGetNext() * mult * -0.01f;
-		g_CurrentPlayer->standup[g_CurrentPlayer->standcnt][2] = (f32)randomGetNext() * mult * 0.01f;
+		g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt].f[1] = (f32)randomGetNext() * mult * -0.01f;
+		g_CurrentPlayer->standup[g_CurrentPlayer->standcnt].f[2] = (f32)randomGetNext() * mult * 0.01f;
 	}
 
 	g_CurrentPlayer->standcnt = 1 - g_CurrentPlayer->standcnt;
@@ -102,23 +102,23 @@ void bheadUpdatePos(coord3d *vel)
 
     if (g_CurrentPlayer->resetheadpos)
     {
-        g_CurrentPlayer->headpossum[0] = 0.0f;
-        g_CurrentPlayer->headpossum[1] = (vel->f[1] / (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
-        g_CurrentPlayer->headpossum[2] = 0.0f;
+        g_CurrentPlayer->headpossum.f[0] = 0.0f;
+        g_CurrentPlayer->headpossum.f[1] = (vel->f[1] / (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
+        g_CurrentPlayer->headpossum.f[2] = 0.0f;
 
         g_CurrentPlayer->resetheadpos = FALSE;
     }
 
     for (i = 0; i < g_ClockTimer; i++)
     {
-        g_CurrentPlayer->headpossum[0] = ((CURRENTPLAYERUPDATEHEADPOS_SCALE * g_CurrentPlayer->headpossum[0]) + vel->f[0]);
-        g_CurrentPlayer->headpossum[1] = ((CURRENTPLAYERUPDATEHEADPOS_SCALE * g_CurrentPlayer->headpossum[1]) + vel->f[1]);
-        g_CurrentPlayer->headpossum[2] = ((CURRENTPLAYERUPDATEHEADPOS_SCALE * g_CurrentPlayer->headpossum[2]) + vel->f[2]);
+        g_CurrentPlayer->headpossum.f[0] = ((CURRENTPLAYERUPDATEHEADPOS_SCALE * g_CurrentPlayer->headpossum.f[0]) + vel->f[0]);
+        g_CurrentPlayer->headpossum.f[1] = ((CURRENTPLAYERUPDATEHEADPOS_SCALE * g_CurrentPlayer->headpossum.f[1]) + vel->f[1]);
+        g_CurrentPlayer->headpossum.f[2] = ((CURRENTPLAYERUPDATEHEADPOS_SCALE * g_CurrentPlayer->headpossum.f[2]) + vel->f[2]);
     }
 
-    g_CurrentPlayer->headpos[0] = (g_CurrentPlayer->headpossum[0] * (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
-    g_CurrentPlayer->headpos[1] = (g_CurrentPlayer->headpossum[1] * (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
-    g_CurrentPlayer->headpos[2] = (g_CurrentPlayer->headpossum[2] * (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
+    g_CurrentPlayer->headpos.f[0] = (g_CurrentPlayer->headpossum.f[0] * (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
+    g_CurrentPlayer->headpos.f[1] = (g_CurrentPlayer->headpossum.f[1] * (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
+    g_CurrentPlayer->headpos.f[2] = (g_CurrentPlayer->headpossum.f[2] * (1.0f - CURRENTPLAYERUPDATEHEADPOS_SCALE));
 #undef CURRENTPLAYERUPDATEHEADPOS_SCALE
 }
 
@@ -128,32 +128,35 @@ void bheadUpdateRot(coord3d *lookvel, coord3d *upvel)
 
 	if (g_CurrentPlayer->resetheadrot)
     {
-		g_CurrentPlayer->headlooksum[0] = lookvel->f[0] / (1.0f - g_CurrentPlayer->headdamp);
-		g_CurrentPlayer->headlooksum[1] = lookvel->f[1] / (1.0f - g_CurrentPlayer->headdamp);
-		g_CurrentPlayer->headlooksum[2] = lookvel->f[2] / (1.0f - g_CurrentPlayer->headdamp);
-		g_CurrentPlayer->headupsum[0] = upvel->f[0] / (1.0f - g_CurrentPlayer->headdamp);
-		g_CurrentPlayer->headupsum[1] = upvel->f[1] / (1.0f - g_CurrentPlayer->headdamp);
-		g_CurrentPlayer->headupsum[2] = upvel->f[2] / (1.0f - g_CurrentPlayer->headdamp);
+		g_CurrentPlayer->headlooksum.f[0] = lookvel->f[0] / (1.0f - g_CurrentPlayer->headdamp);
+		g_CurrentPlayer->headlooksum.f[1] = lookvel->f[1] / (1.0f - g_CurrentPlayer->headdamp);
+		g_CurrentPlayer->headlooksum.f[2] = lookvel->f[2] / (1.0f - g_CurrentPlayer->headdamp);
+		
+        g_CurrentPlayer->headupsum.f[0] = upvel->f[0] / (1.0f - g_CurrentPlayer->headdamp);
+		g_CurrentPlayer->headupsum.f[1] = upvel->f[1] / (1.0f - g_CurrentPlayer->headdamp);
+		g_CurrentPlayer->headupsum.f[2] = upvel->f[2] / (1.0f - g_CurrentPlayer->headdamp);
 
 		g_CurrentPlayer->resetheadrot = FALSE;
 	}
 
 	for (i = 0; i < g_ClockTimer; i++)
     {
-		g_CurrentPlayer->headlooksum[0] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headlooksum[0] + lookvel->f[0];
-		g_CurrentPlayer->headlooksum[1] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headlooksum[1] + lookvel->f[1];
-		g_CurrentPlayer->headlooksum[2] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headlooksum[2] + lookvel->f[2];
-		g_CurrentPlayer->headupsum[0] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headupsum[0] + upvel->f[0];
-		g_CurrentPlayer->headupsum[1] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headupsum[1] + upvel->f[1];
-		g_CurrentPlayer->headupsum[2] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headupsum[2] + upvel->f[2];
+		g_CurrentPlayer->headlooksum.f[0] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headlooksum.f[0] + lookvel->f[0];
+		g_CurrentPlayer->headlooksum.f[1] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headlooksum.f[1] + lookvel->f[1];
+		g_CurrentPlayer->headlooksum.f[2] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headlooksum.f[2] + lookvel->f[2];
+		
+        g_CurrentPlayer->headupsum.f[0] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headupsum.f[0] + upvel->f[0];
+		g_CurrentPlayer->headupsum.f[1] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headupsum.f[1] + upvel->f[1];
+		g_CurrentPlayer->headupsum.f[2] = g_CurrentPlayer->headdamp * g_CurrentPlayer->headupsum.f[2] + upvel->f[2];
 	}
 
-	g_CurrentPlayer->headlook[0] = g_CurrentPlayer->headlooksum[0] * (1.0f - g_CurrentPlayer->headdamp);
-	g_CurrentPlayer->headlook[1] = g_CurrentPlayer->headlooksum[1] * (1.0f - g_CurrentPlayer->headdamp);
-	g_CurrentPlayer->headlook[2] = g_CurrentPlayer->headlooksum[2] * (1.0f - g_CurrentPlayer->headdamp);
-	g_CurrentPlayer->headup[0] = g_CurrentPlayer->headupsum[0] * (1.0f - g_CurrentPlayer->headdamp);
-	g_CurrentPlayer->headup[1] = g_CurrentPlayer->headupsum[1] * (1.0f - g_CurrentPlayer->headdamp);
-	g_CurrentPlayer->headup[2] = g_CurrentPlayer->headupsum[2] * (1.0f - g_CurrentPlayer->headdamp);
+	g_CurrentPlayer->headlook.f[0] = g_CurrentPlayer->headlooksum.f[0] * (1.0f - g_CurrentPlayer->headdamp);
+	g_CurrentPlayer->headlook.f[1] = g_CurrentPlayer->headlooksum.f[1] * (1.0f - g_CurrentPlayer->headdamp);
+	g_CurrentPlayer->headlook.f[2] = g_CurrentPlayer->headlooksum.f[2] * (1.0f - g_CurrentPlayer->headdamp);
+	
+    g_CurrentPlayer->headup.f[0] = g_CurrentPlayer->headupsum.f[0] * (1.0f - g_CurrentPlayer->headdamp);
+	g_CurrentPlayer->headup.f[1] = g_CurrentPlayer->headupsum.f[1] * (1.0f - g_CurrentPlayer->headdamp);
+	g_CurrentPlayer->headup.f[2] = g_CurrentPlayer->headupsum.f[2] * (1.0f - g_CurrentPlayer->headdamp);
 }
 
 void bheadSetdamp(f32 headdamp)
@@ -161,22 +164,25 @@ void bheadSetdamp(f32 headdamp)
 	if (headdamp != g_CurrentPlayer->headdamp)
     {
 		f32 divisor = 1.0f - headdamp;
-		g_CurrentPlayer->headlooksum[0] = (g_CurrentPlayer->headlooksum[0] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
-		g_CurrentPlayer->headlooksum[1] = (g_CurrentPlayer->headlooksum[1] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
-		g_CurrentPlayer->headlooksum[2] = (g_CurrentPlayer->headlooksum[2] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
-		g_CurrentPlayer->headupsum[0] = (g_CurrentPlayer->headupsum[0] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
-		g_CurrentPlayer->headupsum[1] = (g_CurrentPlayer->headupsum[1] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
-		g_CurrentPlayer->headupsum[2] = (g_CurrentPlayer->headupsum[2] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
-		g_CurrentPlayer->headdamp = headdamp;
+		
+        g_CurrentPlayer->headlooksum.f[0] = (g_CurrentPlayer->headlooksum.f[0] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
+		g_CurrentPlayer->headlooksum.f[1] = (g_CurrentPlayer->headlooksum.f[1] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
+		g_CurrentPlayer->headlooksum.f[2] = (g_CurrentPlayer->headlooksum.f[2] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
+		
+        g_CurrentPlayer->headupsum.f[0] = (g_CurrentPlayer->headupsum.f[0] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
+		g_CurrentPlayer->headupsum.f[1] = (g_CurrentPlayer->headupsum.f[1] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
+		g_CurrentPlayer->headupsum.f[2] = (g_CurrentPlayer->headupsum.f[2] * (1.0f - g_CurrentPlayer->headdamp)) / divisor;
+		
+        g_CurrentPlayer->headdamp = headdamp;
 	}
 }
 
-void bheadUpdate(f32 arg0, f32 arg1)
+void bheadUpdate(f32 percent_speed, f32 speedsideways)
 {
     coord3d headpos;
     coord3d lookvel;
     coord3d upvel;
-    f32 spC0;
+    f32 abs_anim_speed;
     struct unk_joint_list sp80;
     Mtxf sp40;
     coord3d sp34;
@@ -186,17 +192,17 @@ void bheadUpdate(f32 arg0, f32 arg1)
     lookvel = D_80036B0C;
     upvel = D_80036B18;
 
-    spC0 = modelGetAbsAnimSpeed(&g_CurrentPlayer->model);
+    abs_anim_speed = modelGetAbsAnimSpeed(&g_CurrentPlayer->model);
 
     if (g_CurrentPlayer->headanim == 0)
     {
-        if (spC0 > 0.7f)
+        if (abs_anim_speed > 0.7f)
         {
             g_CurrentPlayer->headamplitude = 1.0f;
         }
-        else if (spC0 > 0.1f)
+        else if (abs_anim_speed > 0.1f)
         {
-            g_CurrentPlayer->headamplitude = (((spC0 - 0.1f) * 0.6f) / 0.59999996f) + 0.4f;
+            g_CurrentPlayer->headamplitude = (((abs_anim_speed - 0.1f) * 0.6f) / 0.59999996f) + 0.4f;
         }
         else
         {
@@ -217,16 +223,15 @@ void bheadUpdate(f32 arg0, f32 arg1)
     }
 
     sp80 = D_80036B24;
-
     sp34 = D_80036B64;
 
-    sp30 = sub_GAME_7F0701E0();
+    sp30 = modelIsAnimMergingEnabled();
 
     g_CurrentPlayer->resetheadtick = 0;
 
-    sub_GAME_7F0701D4(0);
-    sub_GAME_7F070AEC(&g_CurrentPlayer->model, g_ClockTimer, 1);
-    sub_GAME_7F0701D4((s32) sp30);
+    modelSetAnimMergingEnabled(0);
+    modelTickAnimQuarterSpeed(&g_CurrentPlayer->model, g_ClockTimer, 1);
+    modelSetAnimMergingEnabled((s32) sp30);
 
     subcalcpos(&g_CurrentPlayer->model);
     matrix_4x4_set_identity(&sp40);
@@ -236,9 +241,9 @@ void bheadUpdate(f32 arg0, f32 arg1)
 
     subcalcmatrices(&sp80, &g_CurrentPlayer->model);
 
-    g_CurrentPlayer->headbodyoffset[0] = g_CurrentPlayer->standbodyoffset.x;
-    g_CurrentPlayer->headbodyoffset[1] = g_CurrentPlayer->standbodyoffset.y;
-    g_CurrentPlayer->headbodyoffset[2] = g_CurrentPlayer->standbodyoffset.z;
+    g_CurrentPlayer->headbodyoffset.f[0] = g_CurrentPlayer->standbodyoffset.x;
+    g_CurrentPlayer->headbodyoffset.f[1] = g_CurrentPlayer->standbodyoffset.y;
+    g_CurrentPlayer->headbodyoffset.f[2] = g_CurrentPlayer->standbodyoffset.z;
 
     getsuboffset(&g_CurrentPlayer->model, (struct float3 *) &sp34);
 
@@ -247,10 +252,10 @@ void bheadUpdate(f32 arg0, f32 arg1)
     
     setsuboffset(&g_CurrentPlayer->model, (coord3d *) &sp34);
 
-    if (spC0 > 0.0f)
+    if (abs_anim_speed > 0.0f)
     {
-        g_CurrentPlayer->bondheadmatrices[0].m[3][0] += arg1;
-        g_CurrentPlayer->bondheadmatrices[0].m[3][2] *= arg0;
+        g_CurrentPlayer->bondheadmatrices[0].m[3][0] += speedsideways;
+        g_CurrentPlayer->bondheadmatrices[0].m[3][2] *= percent_speed;
 
         if (g_ClockTimer > 0)
         {
@@ -258,9 +263,9 @@ void bheadUpdate(f32 arg0, f32 arg1)
             g_CurrentPlayer->bondheadmatrices[0].m[3][2] /= g_GlobalTimerDelta;
         }
 
-        headpos.f[0] = g_CurrentPlayer->bondheadmatrices[0].m[3][0] * g_CurrentPlayer->headamplitude;
+        headpos.f[0] =   g_CurrentPlayer->bondheadmatrices[0].m[3][0] * g_CurrentPlayer->headamplitude;
         headpos.f[1] = ((g_CurrentPlayer->bondheadmatrices[0].m[3][1] - g_CurrentPlayer->standheight) * g_CurrentPlayer->headamplitude) + g_CurrentPlayer->standheight;
-        headpos.f[2] = g_CurrentPlayer->bondheadmatrices[0].m[3][2] * g_CurrentPlayer->headamplitude;
+        headpos.f[2] =   g_CurrentPlayer->bondheadmatrices[0].m[3][2] * g_CurrentPlayer->headamplitude;
 
         if (g_CurrentPlayer->headanim >= 0)
         {
@@ -275,7 +280,7 @@ void bheadUpdate(f32 arg0, f32 arg1)
             g_CurrentPlayer->headwalkingtime60 += g_ClockTimer;
 
 #if defined(VERSION_EU)
-            if (g_CurrentPlayer->headwalkingtime60 >= 0x33)
+            if (g_CurrentPlayer->headwalkingtime60 > TICKS_PER_SECOND)
             {
                 bheadSetdamp(0.916599988937f);
             }
@@ -284,7 +289,7 @@ void bheadUpdate(f32 arg0, f32 arg1)
                 bheadSetdamp(0.987999975681f);
             }
 #else
-            if (g_CurrentPlayer->headwalkingtime60 >= 0x3D)
+            if (g_CurrentPlayer->headwalkingtime60 > TICKS_PER_SECOND)
             {
                 bheadSetdamp(0.93f);
             }
@@ -309,9 +314,9 @@ void bheadUpdate(f32 arg0, f32 arg1)
     }
     else
     {
-        g_CurrentPlayer->headbodyoffset[0] = g_CurrentPlayer->standbodyoffset.x;
-        g_CurrentPlayer->headbodyoffset[1] = g_CurrentPlayer->standbodyoffset.y;
-        g_CurrentPlayer->headbodyoffset[2] = g_CurrentPlayer->standbodyoffset.z;
+        g_CurrentPlayer->headbodyoffset.f[0] = g_CurrentPlayer->standbodyoffset.x;
+        g_CurrentPlayer->headbodyoffset.f[1] = g_CurrentPlayer->standbodyoffset.y;
+        g_CurrentPlayer->headbodyoffset.f[2] = g_CurrentPlayer->standbodyoffset.z;
 
         headpos.f[0] = 0.0f;
         headpos.f[1] = g_CurrentPlayer->standheight;
@@ -331,18 +336,22 @@ void bheadUpdate(f32 arg0, f32 arg1)
             g_CurrentPlayer->standfrac -= 1.0f;
         }
 
+        // result = x vector plus ((y - x vector) * scaler)
+        // lookvel = ...
         sub_GAME_7F05AE00(
-            &g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt][0],
-            &g_CurrentPlayer->standlook[1 - g_CurrentPlayer->standcnt][0],
+            &g_CurrentPlayer->standlook[g_CurrentPlayer->standcnt].f[0],
+            &g_CurrentPlayer->standlook[1 - g_CurrentPlayer->standcnt].f[0],
             g_CurrentPlayer->standfrac,
             &lookvel);
 
         lookvel.f[0] *= (1.0f + (5.0f * bondviewGetBondBreathing()));
         lookvel.f[1] *= (1.0f + (5.0f * bondviewGetBondBreathing()));
 
+        // result = x vector plus ((y - x vector) * scaler)
+        // upvel = ...
         sub_GAME_7F05AE00(
-            &g_CurrentPlayer->standup[g_CurrentPlayer->standcnt][0],
-            &g_CurrentPlayer->standup[1 - g_CurrentPlayer->standcnt][0],
+            &g_CurrentPlayer->standup[g_CurrentPlayer->standcnt].f[0],
+            &g_CurrentPlayer->standup[1 - g_CurrentPlayer->standcnt].f[0],
             g_CurrentPlayer->standfrac,
             &upvel);
 
@@ -357,6 +366,8 @@ void bheadUpdate(f32 arg0, f32 arg1)
 
 
 /**
+ * Adjust Bond model based on speed (speedforwards).
+ * Toggle the currently selected headanim index.
  * Address 0x7F08E8BC.
 */
 void bheadAdjustAnimation(f32 speed)
@@ -435,6 +446,7 @@ void bheadSetSpeed(f32 speed)
 f32 bheadGetBreathingValue(void)
 {
 	if (g_CurrentPlayer->headanim >= 0) {
+        // bondviewGetBondBreathing() * (1/80) + (1/240)
 		f32 a = bondviewGetBondBreathing() * 0.012500001f + 0.004166667f;
 		f32 b = modelGetAbsAnimSpeed(&g_CurrentPlayer->model);
 

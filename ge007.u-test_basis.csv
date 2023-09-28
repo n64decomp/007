@@ -633,11 +633,11 @@ d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/game/null_007970.o
 d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/game/null_007970.o
 d41d8cd98f00b204e9800998ecf8427e,.data,build/u/src/game/null_007970.o
 d41d8cd98f00b204e9800998ecf8427e,.rodata,build/u/src/game/null_007970.o
-eb1d4282f3c092f900ae0384b32c45ff,.text,build/u/src/game/objecthandler_1.o
-d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/game/objecthandler_1.o
-d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/game/objecthandler_1.o
-d41d8cd98f00b204e9800998ecf8427e,.data,build/u/src/game/objecthandler_1.o
-63392afd7ef8420cf22b9e1f4b947ac7,.rodata,build/u/src/game/objecthandler_1.o
+eb1d4282f3c092f900ae0384b32c45ff,.text,build/u/src/game/model.o
+d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/game/model.o
+d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/game/model.o
+d41d8cd98f00b204e9800998ecf8427e,.data,build/u/src/game/model.o
+63392afd7ef8420cf22b9e1f4b947ac7,.rodata,build/u/src/game/model.o
 b9ecfe8ecc3ef965e425146c53659a76,.text,build/u/src/game/objecthandler_2.o
 d41d8cd98f00b204e9800998ecf8427e,.code,build/u/src/game/objecthandler_2.o
 d41d8cd98f00b204e9800998ecf8427e,.bss,build/u/src/game/objecthandler_2.o

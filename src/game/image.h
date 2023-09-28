@@ -91,5 +91,6 @@ s32 texInflateNonZlib(u8 *src, u8 *dst, s32 arg2, s32 forcenumimages, struct tex
 s32 texInflateZlib(u8 *src, u8 *dst, s32 arg2, s32 forcenumimages, struct texpool *arg4);
 void texLoad(s32 *updateword, struct texpool *pool);
 void texInitPool(struct texpool *arg0, u8 *arg1, s32 arg2);
+void texLoadFromTextureNum(s32 texturenum, struct texpool *arg1);
 
 #endif

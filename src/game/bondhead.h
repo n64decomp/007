@@ -20,7 +20,7 @@ s32 waypointFindRoute(waypoint *, waypoint *, waypoint ** arr, s32 arr_len);
 waypoint * sub_GAME_7F08FB90(waypoint *, waypoint *);
 void bheadFlipAnimation();
 void bheadUpdateIdleRoll();
-void bheadUpdate(f32 arg0, f32 arg1);
+void bheadUpdate(f32 percent_speed, f32 speedsideways);
 void bheadAdjustAnimation(f32 arg0);
 void bheadStartDeathAnimation(struct ModelAnimation *arg0, s32 arg1, f32 arg2, f32 arg3);
 void bheadSetSpeed(f32 arg0);

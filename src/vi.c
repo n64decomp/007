@@ -33,7 +33,7 @@ void viDebugRemoved(void) {
     return;
 }
 
-void viInitDebugNoticeList(void)
+void viInit(void)
 {
 #if defined(VERSION_EU)
     debTryAdd(&eu_D_80022330, "vi_c_debug");

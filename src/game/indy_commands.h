@@ -2,10 +2,12 @@
 #define _INDY_COMMANDS_H_
 #include <ultra64.h>
 
+#define INDYMAGIC 0x9abf1623
+
 typedef enum INDYCMDTYPE {
     INDY_INIT=0,
-    INDY_SIZE=1,
-    INDY_END=2,
+    INDY_STARTCMDSEQ=1,
+    INDY_ENDCMDSEQ=2,
     INDY_RESCMD=3,
     INDY_RESCMDDATARCVD=4,
     INDY_SENDCHECKFILEEXISTS=5,
@@ -38,9 +40,9 @@ typedef struct indy_resource_entry_type1 {
     indy_resource_entry_header entry;
 } indy_resource_entry_type1;
 
-typedef struct indy_resource_entry_type2 {
+typedef struct s_indyResCmd02End {
     indy_resource_entry_header entry;
-} indy_resource_entry_type2;
+} s_indyResCmd02End;
 
 typedef struct indy_resource_entry_type3 {
     indy_resource_entry_header entry;
@@ -57,24 +59,24 @@ typedef struct indy_resource_entry_type5 {
     u8 strbuffer[256];
 } indy_resource_entry_type5;
 
-struct indy_resource_entry_type6 {
+typedef struct indy_resource_entry_type6 {
     struct indy_resource_entry_header entry;
     u32 data1;
     u32 data2;
-};
+} indy_resource_entry_type6;
 
-struct indy_resource_entry_type7 {
+typedef struct indy_resource_entry_type7 {
     struct indy_resource_entry_header entry;
     u8 strbuffer[256];
     u32 size;
-};
+} indy_resource_entry_type7;
 
-struct indy_resource_entry_type8 {
+typedef struct indy_resource_entry_type8 {
     struct indy_resource_entry_header entry;
     u32 data1;
     u32 data2;
     u32 size;
-};
+} indy_resource_entry_type8;
 
 typedef struct indy_resource_entry_type9 {
     indy_resource_entry_header entry;
@@ -115,12 +117,12 @@ typedef struct indy_resource_entry_typeF {
     u8* hwaddress;
 } indy_resource_entry_typeF;
 
-struct indy_resource_entry_type10 {
+typedef struct indy_resource_entry_type10 {
     struct indy_resource_entry_header entry;
     u32 data1;
     u32 data2;
     u32 data3;
-};
+} indy_resource_entry_type10;
 
 
 

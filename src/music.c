@@ -9,6 +9,7 @@
 #include "music.h"
 #include "ramrom.h"
 #include "snd.h"
+#include <macro.h>
 
 /**
  * EU .data, offset from start of data_seg : 0x3570

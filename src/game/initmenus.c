@@ -31,7 +31,7 @@ void init_menus_or_reset(void)
         menu_update = MENU_FILE_SELECT;
     }
 
-    ptr_logo_and_walletbond_DL = (Gfx *)mempAllocBytesInBank(0x78000, 4);
+    ptr_logo_and_walletbond_DL = (u8 *)mempAllocBytesInBank(0x78000, 4);
 
 #if defined(VERSION_EU)
     ptr_menu_videobuffer = mempAllocBytesInBank(0x55040, 4);

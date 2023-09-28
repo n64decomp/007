@@ -2,7 +2,7 @@
 #include "matrixmath.h"
 
 /**
- * x vector plus ((difference to y vector) * scaler).
+ * result = x vector plus ((y - x vector) * scaler).
  */
 void sub_GAME_7F05AE00(vec3d *x, vec3d *y, f32 scaler, vec3d *result)
 {
@@ -39,117 +39,26 @@ f32 sub_GAME_7F05AE50(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4)
     return total;
 }
 
-/**
- * Following is cleaned up mips_to_c output.
- * 
- * decomp status:
- * - compiles: yes
- * - stack resize: fail
- * - identical instructions: fail
- * - identical registers: fail
- */
-#ifdef NONMATCHING
-void sub_GAME_7F05AEFC(vec3d *arg0, vec3d *arg1, vec3d *arg2, vec3d *arg3, f32 arg4, vec3d *result)
+void sub_GAME_7F05AEFC(coord3d *arg0, coord3d *arg1, coord3d *arg2, coord3d *arg3, f32 arg4, coord3d *arg5)
 {
-    f32 square;
-    f32 cube;
-    f32 temp_f8;
-    f32 temp_f14;
-    f32 temp_f16;
-    f32 temp_f18;
+    f32 stack;
+    f32 mult0;
+    f32 mult1;
+    f32 mult2;
+    f32 mult3;
 
-    square = arg4 * arg4;
-    cube   = square * arg4;
+    f32 squared = arg4 * arg4;
+    f32 cubed = arg4 * arg4 * arg4;
 
-    temp_f8  = 0.5f * (cube - square);
-    temp_f14 = square - ((arg4 + cube) * 0.5f);
-    temp_f16 = 1.0f + (1.5f * cube) - (2.5f * square);
-    temp_f18 = (-1.5f * cube) + (0.5f * arg4) + (2.0f * square);
+    mult0 = squared - 0.5f * (arg4 + cubed);
+    mult1 = 1.5f * cubed - 2.5f * squared + 1.0f;
+    mult2 = -1.5f * cubed + 2.0f * squared + 0.5f * arg4;
+    mult3 = 0.5f * (cubed - squared);
 
-    result->f[0] = (temp_f8 * arg3->f[0]) + ((temp_f14 * arg0->f[0]) + (temp_f16 * arg1->f[0]) + (temp_f18 * arg2->f[0]));
-    result->f[1] = (temp_f8 * arg3->f[1]) + ((temp_f14 * arg0->f[1]) + (temp_f16 * arg1->f[1]) + (temp_f18 * arg2->f[1]));
-    result->f[2] = (temp_f8 * arg3->f[2]) + ((temp_f14 * arg0->f[2]) + (temp_f16 * arg1->f[2]) + (temp_f18 * arg2->f[2]));
+    arg5->x = mult0 * arg0->f[0] + mult1 * arg1->f[0] + mult2 * arg2->f[0] + mult3 * arg3->f[0];
+    arg5->y = mult0 * arg0->f[1] + mult1 * arg1->f[1] + mult2 * arg2->f[1] + mult3 * arg3->f[1];
+    arg5->z = mult0 * arg0->f[2] + mult1 * arg1->f[2] + mult2 * arg2->f[2] + mult3 * arg3->f[2];
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F05AEFC
-/* 08FA2C 7F05AEFC 27BDFFD8 */  addiu $sp, $sp, -0x28
-/* 08FA30 7F05AF00 C7AC0038 */  lwc1  $f12, 0x38($sp)
-/* 08FA34 7F05AF04 3C013F00 */  li    $at, 0x3F000000 # 0.500000
-/* 08FA38 7F05AF08 44813000 */  mtc1  $at, $f6
-/* 08FA3C 7F05AF0C 460C6002 */  mul.s $f0, $f12, $f12
-/* 08FA40 7F05AF10 8FAE003C */  lw    $t6, 0x3c($sp)
-/* 08FA44 7F05AF14 460C0082 */  mul.s $f2, $f0, $f12
-/* 08FA48 7F05AF18 46001101 */  sub.s $f4, $f2, $f0
-/* 08FA4C 7F05AF1C 46026280 */  add.s $f10, $f12, $f2
-/* 08FA50 7F05AF20 46062202 */  mul.s $f8, $f4, $f6
-/* 08FA54 7F05AF24 44812000 */  mtc1  $at, $f4
-/* 08FA58 7F05AF28 3C013FC0 */  li    $at, 0x3FC00000 # 1.500000
-/* 08FA5C 7F05AF2C 46045182 */  mul.s $f6, $f10, $f4
-/* 08FA60 7F05AF30 44815000 */  mtc1  $at, $f10
-/* 08FA64 7F05AF34 3C014020 */  li    $at, 0x40200000 # 2.500000
-/* 08FA68 7F05AF38 E7A80000 */  swc1  $f8, ($sp)
-/* 08FA6C 7F05AF3C 46025102 */  mul.s $f4, $f10, $f2
-/* 08FA70 7F05AF40 46060381 */  sub.s $f14, $f0, $f6
-/* 08FA74 7F05AF44 44813000 */  mtc1  $at, $f6
-/* 08FA78 7F05AF48 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 08FA7C 7F05AF4C 46003282 */  mul.s $f10, $f6, $f0
-/* 08FA80 7F05AF50 460A2181 */  sub.s $f6, $f4, $f10
-/* 08FA84 7F05AF54 44812000 */  mtc1  $at, $f4
-/* 08FA88 7F05AF58 3C01BFC0 */  li    $at, 0xBFC00000 # -1.500000
-/* 08FA8C 7F05AF5C 44815000 */  mtc1  $at, $f10
-/* 08FA90 7F05AF60 46043400 */  add.s $f16, $f6, $f4
-/* 08FA94 7F05AF64 3C013F00 */  li    $at, 0x3F000000 # 0.500000
-/* 08FA98 7F05AF68 46025182 */  mul.s $f6, $f10, $f2
-/* 08FA9C 7F05AF6C 46000100 */  add.s $f4, $f0, $f0
-/* 08FAA0 7F05AF70 46043280 */  add.s $f10, $f6, $f4
-/* 08FAA4 7F05AF74 44813000 */  mtc1  $at, $f6
-/* 08FAA8 7F05AF78 00000000 */  nop   
-/* 08FAAC 7F05AF7C 460C3102 */  mul.s $f4, $f6, $f12
-/* 08FAB0 7F05AF80 C4E60000 */  lwc1  $f6, ($a3)
-/* 08FAB4 7F05AF84 46045480 */  add.s $f18, $f10, $f4
-/* 08FAB8 7F05AF88 46083282 */  mul.s $f10, $f6, $f8
-/* 08FABC 7F05AF8C C4840000 */  lwc1  $f4, ($a0)
-/* 08FAC0 7F05AF90 46047182 */  mul.s $f6, $f14, $f4
-/* 08FAC4 7F05AF94 C4A40000 */  lwc1  $f4, ($a1)
-/* 08FAC8 7F05AF98 46048102 */  mul.s $f4, $f16, $f4
-/* 08FACC 7F05AF9C 46043180 */  add.s $f6, $f6, $f4
-/* 08FAD0 7F05AFA0 C4C40000 */  lwc1  $f4, ($a2)
-/* 08FAD4 7F05AFA4 46049102 */  mul.s $f4, $f18, $f4
-/* 08FAD8 7F05AFA8 46043180 */  add.s $f6, $f6, $f4
-/* 08FADC 7F05AFAC 46065100 */  add.s $f4, $f10, $f6
-/* 08FAE0 7F05AFB0 E5C40000 */  swc1  $f4, ($t6)
-/* 08FAE4 7F05AFB4 C4EA0004 */  lwc1  $f10, 4($a3)
-/* 08FAE8 7F05AFB8 C4840004 */  lwc1  $f4, 4($a0)
-/* 08FAEC 7F05AFBC 46085182 */  mul.s $f6, $f10, $f8
-/* 08FAF0 7F05AFC0 00000000 */  nop   
-/* 08FAF4 7F05AFC4 46047282 */  mul.s $f10, $f14, $f4
-/* 08FAF8 7F05AFC8 C4A40004 */  lwc1  $f4, 4($a1)
-/* 08FAFC 7F05AFCC 46048102 */  mul.s $f4, $f16, $f4
-/* 08FB00 7F05AFD0 46045280 */  add.s $f10, $f10, $f4
-/* 08FB04 7F05AFD4 C4C40004 */  lwc1  $f4, 4($a2)
-/* 08FB08 7F05AFD8 46049102 */  mul.s $f4, $f18, $f4
-/* 08FB0C 7F05AFDC 46045280 */  add.s $f10, $f10, $f4
-/* 08FB10 7F05AFE0 460A3100 */  add.s $f4, $f6, $f10
-/* 08FB14 7F05AFE4 E5C40004 */  swc1  $f4, 4($t6)
-/* 08FB18 7F05AFE8 C4E60008 */  lwc1  $f6, 8($a3)
-/* 08FB1C 7F05AFEC C4840008 */  lwc1  $f4, 8($a0)
-/* 08FB20 7F05AFF0 46083282 */  mul.s $f10, $f6, $f8
-/* 08FB24 7F05AFF4 C4A80008 */  lwc1  $f8, 8($a1)
-/* 08FB28 7F05AFF8 46047182 */  mul.s $f6, $f14, $f4
-/* 08FB2C 7F05AFFC 00000000 */  nop   
-/* 08FB30 7F05B000 46088102 */  mul.s $f4, $f16, $f8
-/* 08FB34 7F05B004 46043200 */  add.s $f8, $f6, $f4
-/* 08FB38 7F05B008 C4C60008 */  lwc1  $f6, 8($a2)
-/* 08FB3C 7F05B00C 27BD0028 */  addiu $sp, $sp, 0x28
-/* 08FB40 7F05B010 46069102 */  mul.s $f4, $f18, $f6
-/* 08FB44 7F05B014 46044180 */  add.s $f6, $f8, $f4
-/* 08FB48 7F05B018 46065200 */  add.s $f8, $f10, $f6
-/* 08FB4C 7F05B01C 03E00008 */  jr    $ra
-/* 08FB50 7F05B020 E5C80008 */   swc1  $f8, 8($t6)
-)
-#endif
 
 /**
  * Following is cleaned up mips_to_c output.

@@ -23,7 +23,7 @@ ItemModelFileRecord PitemZ_entries[] = {
     PROPFILERECORD(card_box4_lg, 0.1)
     PROPFILERECORD(card_box5_lg, 0.1)
     PROPFILERECORD(card_box6_lg, 0.1)
-    PROPFILERECORD(cctv, 0.1)
+    #include <assets/obseg/prop/cctv/propFileRecord.inc.c>
     PROPFILERECORD(console1, 0.1)
     PROPFILERECORD(console2, 0.1)
     PROPFILERECORD(console3, 0.1)

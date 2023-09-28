@@ -1809,7 +1809,7 @@ void sub_GAME_7F0C11FC(s32 stagenum)
     return;
 }
 
-void sub_GAME_7F0C1268(void)
+void set_missionstate_zero(void)
 {
   set_missionstate(MISSION_STATE_0);
 }

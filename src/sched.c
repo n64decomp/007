@@ -166,7 +166,7 @@ void osCreateScheduler (OSSched * sc, void * stack, u8 mode, u32 numFields)
     sc->audioListTail = 0;
     sc->gfxListTail = 0;
     sc->retraceMsg.type = OS_SC_RETRACE_MSG;
-    sc->prenmiMsg.type = 5; // OS_SC_PRE_NMI_MSG
+    sc->prenmiMsg.type = OS_SC_PRE_NMI_MSG;
     sc->thread = stack;
     osCreateMesgQueue(&sc->interruptQ, sc->intBuf, OS_SC_MAX_MESGS);
     osCreateMesgQueue(&sc->cmdQ, sc->cmdMsgBuf, OS_SC_MAX_MESGS);
@@ -180,7 +180,7 @@ void osCreateScheduler (OSSched * sc, void * stack, u8 mode, u32 numFields)
     osSetEventMesg(OS_EVENT_PRENMI, &sc->interruptQ, (OSMesg)PRE_NMI_MSG);
     osViSetEvent(&sc->interruptQ, (OSMesg)VIDEO_MSG, numFields);
     osCreateLog();
-    osCreateThread(sc->thread, SCHED_THREAD_ID, &__scMain, sc, set_stack_entry(&sp_shed, 0x200), SCHED_THREAD_PRIORITY);
+    osCreateThread(sc->thread, SCHED_THREAD_ID, &__scMain, sc, setSPToEnd(&sp_shed, sizeof(sp_shed)), SCHED_THREAD_PRIORITY);
     osStartThread(sc->thread);
 }
 

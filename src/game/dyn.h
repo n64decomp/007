@@ -3,12 +3,7 @@
 
 #include <ultra64.h>
 
-/*
-* Align to 16 bit boundary. Version "a", with preliminary addition.
-*/
-#define ALIGN16_a(val)        (((val) + 0xf | 0xf) ^ 0xf)
-
-void dynInitDebugNoticeList(void);
+void dynInit(void);
 void dynInitMemory(void);
 Gfx *dynGetMasterDisplayList(void);
 s32 dynGetFreeGfx2(Gfx *gdl);

@@ -7,21 +7,22 @@
 #ifdef NONMATCHING
 
 //CODE.bss:80075D30
-extern struct objective_entry *objective_ptrs[10];
-extern OBJECTIVESTATUS         dword_CODE_bss_80075D58[10]; //This is an array of 10 OBJECTIVESTATUS,
+extern struct objective_entry *objective_ptrs[OBJECTIVES_MAX];
+extern OBJECTIVESTATUS         dword_CODE_bss_80075D58[OBJECTIVES_MAX]; //This is an array of 10 OBJECTIVESTATUS,
 
 //CODE.bss:80075D80
 extern u32                    *ptr_last_tag_entry_type16;
 //CODE.bss:80075D84
 extern u32                    *ptr_last_briefing_setup_entry_type23;
 //CODE.bss:80075D88
-extern u32                    *ptr_last_enter_room_subobject_entry_type20;
+struct criteria_roomentered *ptr_last_enter_room_subobject_entry_type20;
 //CODE.bss:80075D8C
-extern u32                    *ptr_last_deposit_in_room_subobject_entry_type21;
+extern struct criteria_deposit *ptr_last_deposit_in_room_subobject_entry_type21;
 //CODE.bss:80075D90
 extern u32                    *ptr_last_photo_obj_in_room_subobject_entry_type1E;
 // data
-extern s32                     num_objective_ptrs[];
+extern s32                     objective_count;
+extern s32                     objective_count_related;
 /*
  * Clears Objectives and states
  * Note: this matches in everthing except that calling the var "dword_CODE_bss_80075D58"
@@ -35,7 +36,7 @@ void something_with_stage_objectives() //#99% MATCH
 
     if (bossGetStageNum() != LEVELID_TITLE)
     {
-        num_objective_ptrs[0] = -1;
+        objective_count = -1;
         //dword_CODE_bss_80075D58 = NULL;
         //dword_CODE_bss_80075D58+4 = NULL;
         //*dword_CODE_bss_80075D58+8 = *clear2;
@@ -69,8 +70,8 @@ glabel something_with_stage_objectives
 /* 039A00 7F004ED0 2401005A */  li    $at, 90
 /* 039A04 7F004ED4 10410011 */  beq   $v0, $at, .L7F004F1C
 /* 039A08 7F004ED8 240EFFFF */   li    $t6, -1
-/* 039A0C 7F004EDC 3C018003 */  lui   $at, %hi(num_objective_ptrs)
-/* 039A10 7F004EE0 AC2E22F0 */  sw    $t6, %lo(num_objective_ptrs)($at)
+/* 039A0C 7F004EDC 3C018003 */  lui   $at, %hi(objective_count)
+/* 039A10 7F004EE0 AC2E22F0 */  sw    $t6, %lo(objective_count)($at)
 /* 039A14 7F004EE4 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D58)
 /* 039A18 7F004EE8 AC205D58 */  sw    $zero, %lo(dword_CODE_bss_80075D58)($at)
 /* 039A1C 7F004EEC 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D58+4)
@@ -129,8 +130,8 @@ glabel something_with_stage_objectives
 /* 039A50 7F004EE0 2401005A */  li    $at, 90
 /* 039A54 7F004EE4 10410011 */  beq   $v0, $at, .L7F004F2C
 /* 039A58 7F004EE8 240EFFFF */   li    $t6, -1
-/* 039A5C 7F004EEC 3C018003 */  lui   $at, %hi(num_objective_ptrs) # $at, 0x8003
-/* 039A60 7F004EF0 AC2E2330 */  sw    $t6, %lo(num_objective_ptrs)($at)
+/* 039A5C 7F004EEC 3C018003 */  lui   $at, %hi(objective_count) # $at, 0x8003
+/* 039A60 7F004EF0 AC2E2330 */  sw    $t6, %lo(objective_count)($at)
 /* 039A64 7F004EF4 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D58) # $at, 0x8007
 /* 039A68 7F004EF8 AC205D98 */  sw    $zero, %lo(dword_CODE_bss_80075D58)($at)
 /* 039A6C 7F004EFC 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D58+4) # $at, 0x8007
@@ -147,8 +148,8 @@ glabel something_with_stage_objectives
 /* 039A94 7F004F24 1443FFFB */  bne   $v0, $v1, .L7F004F14
 /* 039A98 7F004F28 AC40FFF0 */   sw    $zero, -0x10($v0)
 .L7F004F2C:
-/* 039A9C 7F004F2C 3C018003 */  lui   $at, %hi(num_objective_ptrs+4) # $at, 0x8003
-/* 039AA0 7F004F30 AC202334 */  sw    $zero, %lo(num_objective_ptrs+4)($at)
+/* 039A9C 7F004F2C 3C018003 */  lui   $at, %hi(objective_count+4) # $at, 0x8003
+/* 039AA0 7F004F30 AC202334 */  sw    $zero, %lo(objective_count+4)($at)
 /* 039AA4 7F004F34 3C018007 */  lui   $at, %hi(objective_ptrs) # $at, 0x8007
 /* 039AA8 7F004F38 AC205D70 */  sw    $zero, %lo(objective_ptrs)($at)
 /* 039AAC 7F004F3C 3C018007 */  lui   $at, %hi(objective_ptrs+4) # $at, 0x8007
@@ -191,8 +192,8 @@ glabel something_with_stage_objectives
 /* 039A50 7F004EE0 2401005A */  li    $at, 90
 /* 039A54 7F004EE4 10410011 */  beq   $v0, $at, .L7F004F2C
 /* 039A58 7F004EE8 240EFFFF */   li    $t6, -1
-/* 039A5C 7F004EEC 3C018003 */  lui   $at, %hi(num_objective_ptrs) # $at, 0x8003
-/* 039A60 7F004EF0 AC2E2330 */  sw    $t6, %lo(num_objective_ptrs)($at)
+/* 039A5C 7F004EEC 3C018003 */  lui   $at, %hi(objective_count) # $at, 0x8003
+/* 039A60 7F004EF0 AC2E2330 */  sw    $t6, %lo(objective_count)($at)
 /* 039A64 7F004EF4 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D58) # $at, 0x8007
 /* 039A68 7F004EF8 AC205D98 */  sw    $zero, %lo(dword_CODE_bss_80075D58)($at)
 /* 039A6C 7F004EFC 3C018007 */  lui   $at, %hi(dword_CODE_bss_80075D58+4) # $at, 0x8007
@@ -209,8 +210,8 @@ glabel something_with_stage_objectives
 /* 039A94 7F004F24 1443FFFB */  bne   $v0, $v1, .L7F004F14
 /* 039A98 7F004F28 AC40FFF0 */   sw    $zero, -0x10($v0)
 .L7F004F2C:
-/* 039A9C 7F004F2C 3C018003 */  lui   $at, %hi(num_objective_ptrs+4) # $at, 0x8003
-/* 039AA0 7F004F30 AC202334 */  sw    $zero, %lo(num_objective_ptrs+4)($at)
+/* 039A9C 7F004F2C 3C018003 */  lui   $at, %hi(objective_count+4) # $at, 0x8003
+/* 039AA0 7F004F30 AC202334 */  sw    $zero, %lo(objective_count+4)($at)
 /* 039AA4 7F004F34 3C018007 */  lui   $at, %hi(objective_ptrs) # $at, 0x8007
 /* 039AA8 7F004F38 AC205D70 */  sw    $zero, %lo(objective_ptrs)($at)
 /* 039AAC 7F004F3C 3C018007 */  lui   $at, %hi(objective_ptrs+4) # $at, 0x8007
@@ -291,42 +292,15 @@ glabel setup_briefing_text_entry_parent
 #endif
 
 
-#ifdef NONMATCHING
-s32 add_ptr_to_objective(void *arg0) {
-    // Node 0
-    (0x80070000 + (arg0->unk4 * 4))->unk5D30 = arg0;
-    if (num_objective_ptrs < arg0->unk4)
-    {
-        // Node 1
-        num_objective_ptrs = (s32) arg0->unk4;
-        return;
-        // (possible return value: arg0->unk4)
-    }
-    // (possible return value: arg0->unk4)
-}
+void add_ptr_to_objective(struct objective_entry* objective)
+{
+    objective_ptrs[objective->menu] = objective;
 
-#else
-GLOBAL_ASM(
-.text
-glabel add_ptr_to_objective
-/* 039AE8 7F004FB8 8C8E0004 */  lw    $t6, 4($a0)
-/* 039AEC 7F004FBC 3C018007 */  lui   $at, %hi(objective_ptrs)
-/* 039AF0 7F004FC0 3C038003 */  lui   $v1, %hi(num_objective_ptrs)
-/* 039AF4 7F004FC4 000E7880 */  sll   $t7, $t6, 2
-/* 039AF8 7F004FC8 002F0821 */  addu  $at, $at, $t7
-/* 039AFC 7F004FCC AC245D30 */  sw    $a0, %lo(objective_ptrs)($at)
-/* 039B00 7F004FD0 246322F0 */  addiu $v1, %lo(num_objective_ptrs) # addiu $v1, $v1, 0x22f0
-/* 039B04 7F004FD4 8C780000 */  lw    $t8, ($v1)
-/* 039B08 7F004FD8 8C820004 */  lw    $v0, 4($a0)
-/* 039B0C 7F004FDC 0302082A */  slt   $at, $t8, $v0
-/* 039B10 7F004FE0 10200002 */  beqz  $at, .L7F004FEC
-/* 039B14 7F004FE4 00000000 */   nop   
-/* 039B18 7F004FE8 AC620000 */  sw    $v0, ($v1)
-.L7F004FEC:
-/* 039B1C 7F004FEC 03E00008 */  jr    $ra
-/* 039B20 7F004FF0 00000000 */   nop   
-)
-#endif
+    if (objective_count < objective->menu)
+    {
+        objective_count = objective->menu;
+    }
+}
 
 
 #ifdef NONMATCHING

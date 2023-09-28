@@ -11,7 +11,7 @@ struct memallocstring
 
 LEVELID bossGetStageNum();
 void bossSetLoadedStage(LEVELID stage);
-void bossInitDebugNoticeList(void);
+void bossInit(void);
 void bossEnableShowMemUseFlag(void);
 void bossMemBarsFlagToggle(void);
 void bossRunTitleStage(void);

@@ -29,7 +29,7 @@ struct s_mempMVALS sdefaultmvals = {
     0,  0x00
 };
 
-void mempInitDebugNoticeList(void)
+void mempInit(void)
 {
     debTryAdd(&ptr_memp_c_debug_debug_notice_list, "memp_c_debug");
 }
@@ -229,6 +229,7 @@ glabel mempAllocBytesInBank
 
 #ifdef NONMATCHING
 // Mostly regalloc
+// https://decomp.me/scratch/IkY1t 98.98%
 s32 mempAddEntryOfSizeToBank(u8* ptrdata, u32 newsize, u8 bank)
 {
     s32 oldsize;

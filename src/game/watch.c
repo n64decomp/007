@@ -16,7 +16,7 @@
 #include "textrelated.h"
 #include "unk_0A1DA0.h"
 #include "unk_0C0A70.h"
-
+#include "assets/obseg/text/LoptionE.h"
 
 #define WATCH_BACKGROUND_VERTEX_COUNT 30
 
@@ -64,25 +64,25 @@ f32 D_800409D4 = 0.0f;
 s32 D_800409D8 = 8;
 //D:800409DC
 u16 D_800409DC[] = {
-    /*1.1 honey*/    TEXT(LOPTIONS,0x9), /*weapon*/TEXT(LOPTIONS,0x3), /*action*/TEXT(LOPTIONS,0x2), /*fire*/TEXT(LOPTIONS,0x0),    /*aim*/TEXT(LOPTIONS,0x1),    /*aim*/TEXT(LOPTIONS,0x1), /*look*/TEXT(LOPTIONS,0x6), /*look*/TEXT(LOPTIONS,0x6), /*pause*/TEXT(LOPTIONS,0x4), /*move*/TEXT(LOPTIONS,0x5),
-    /*1.2 solitaire*/TEXT(LOPTIONS,0xA), /*weapon*/TEXT(LOPTIONS,0x3), /*action*/TEXT(LOPTIONS,0x2), /*fire*/TEXT(LOPTIONS,0x0),    /*aim*/TEXT(LOPTIONS,0x1),    /*aim*/TEXT(LOPTIONS,0x1), /*move*/TEXT(LOPTIONS,0x5), /*move*/TEXT(LOPTIONS,0x5), /*pause*/TEXT(LOPTIONS,0x4), /*look*/TEXT(LOPTIONS,0x6),
-    /*1.3 kissy*/    TEXT(LOPTIONS,0xB),   /*fire*/TEXT(LOPTIONS,0x0), /*action*/TEXT(LOPTIONS,0x2),  /*aim*/TEXT(LOPTIONS,0x1), /*weapon*/TEXT(LOPTIONS,0x3), /*weapon*/TEXT(LOPTIONS,0x3), /*look*/TEXT(LOPTIONS,0x6), /*look*/TEXT(LOPTIONS,0x6), /*pause*/TEXT(LOPTIONS,0x4), /*move*/TEXT(LOPTIONS,0x5),
-    /*1.4 goodnight*/TEXT(LOPTIONS,0xC),   /*fire*/TEXT(LOPTIONS,0x0), /*action*/TEXT(LOPTIONS,0x2),  /*aim*/TEXT(LOPTIONS,0x1), /*weapon*/TEXT(LOPTIONS,0x3), /*weapon*/TEXT(LOPTIONS,0x3), /*move*/TEXT(LOPTIONS,0x5), /*move*/TEXT(LOPTIONS,0x5), /*pause*/TEXT(LOPTIONS,0x4), /*look*/TEXT(LOPTIONS,0x6),
-    /*2.1 plenty*/   TEXT(LOPTIONS,0xD),      /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),     /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),
-    /*2.2 galore*/   TEXT(LOPTIONS,0xE),      /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),     /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),
-    /*2.3 domino*/   TEXT(LOPTIONS,0xF),      /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),     /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),
-    /*2.4 goodhead*/ TEXT(LOPTIONS,0x10),     /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),      /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7),     /*?*/TEXT(LOPTIONS,0x7),    /*?*/TEXT(LOPTIONS,0x7)
+    /*1.1 honey*/    TEXT(LOPTIONS, OPTION_STR_09), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*action*/TEXT(LOPTIONS, OPTION_STR_02), /*fire*/TEXT(LOPTIONS, OPTION_STR_00),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*move*/TEXT(LOPTIONS, OPTION_STR_05),
+    /*1.2 solitaire*/TEXT(LOPTIONS, OPTION_STR_0A), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*action*/TEXT(LOPTIONS, OPTION_STR_02), /*fire*/TEXT(LOPTIONS, OPTION_STR_00),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*look*/TEXT(LOPTIONS, OPTION_STR_06),
+    /*1.3 kissy*/    TEXT(LOPTIONS, OPTION_STR_0B),   /*fire*/TEXT(LOPTIONS, OPTION_STR_00), /*action*/TEXT(LOPTIONS, OPTION_STR_02),  /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*move*/TEXT(LOPTIONS, OPTION_STR_05),
+    /*1.4 goodnight*/TEXT(LOPTIONS, OPTION_STR_0C),   /*fire*/TEXT(LOPTIONS, OPTION_STR_00), /*action*/TEXT(LOPTIONS, OPTION_STR_02),  /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*look*/TEXT(LOPTIONS, OPTION_STR_06),
+    /*2.1 plenty*/   TEXT(LOPTIONS, OPTION_STR_0D),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),
+    /*2.2 galore*/   TEXT(LOPTIONS, OPTION_STR_0E),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),
+    /*2.3 domino*/   TEXT(LOPTIONS, OPTION_STR_0F),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),
+    /*2.4 goodhead*/ TEXT(LOPTIONS, OPTION_STR_10),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07)
 };
 
 struct game_options game_options_entries[] = {
-    { {TEXT(LOPTIONS,0x11), TEXT(LOPTIONS,0x1C), TEXT(LOPTIONS,0x1B), 0}, 0}, //look up/down, reverse, upright
-    { {TEXT(LOPTIONS,0x12), TEXT(LOPTIONS,0x1A), TEXT(LOPTIONS,0x19), 0}, 1}, //autoaim, off, on
-    { {TEXT(LOPTIONS,0x14), TEXT(LOPTIONS,0x1E), TEXT(LOPTIONS,0x1D), 0}, 0}, //aim control, hold, toggle
-    { {TEXT(LOPTIONS,0x15), TEXT(LOPTIONS,0x1A), TEXT(LOPTIONS,0x19), 0}, 1}, //sight on screen, off, on
-    { {TEXT(LOPTIONS,0x13), TEXT(LOPTIONS,0x1A), TEXT(LOPTIONS,0x19), 0}, 1}, //look ahead, off, on
-    { {TEXT(LOPTIONS,0x16), TEXT(LOPTIONS,0x1A), TEXT(LOPTIONS,0x19), 0}, 1}, //ammo on screen, off, on
-    { {TEXT(LOPTIONS,0x17), TEXT(LOPTIONS,0x1F), TEXT(LOPTIONS,0x20), TEXT(LOPTIONS,0x21)}, 0}, //screen, full, wide, cinema
-    { {TEXT(LOPTIONS,0x18), TEXT(LOPTIONS,0x22), TEXT(LOPTIONS,0x23), 0}, 0} //ratio, normal, 16:9
+    { {TEXT(LOPTIONS, OPTION_STR_11), TEXT(LOPTIONS, OPTION_STR_1C), TEXT(LOPTIONS, OPTION_STR_1B), 0}, 0}, //look up/down, reverse, upright
+    { {TEXT(LOPTIONS, OPTION_STR_12), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //autoaim, off, on
+    { {TEXT(LOPTIONS, OPTION_STR_14), TEXT(LOPTIONS, OPTION_STR_1E), TEXT(LOPTIONS, OPTION_STR_1D), 0}, 0}, //aim control, hold, toggle
+    { {TEXT(LOPTIONS, OPTION_STR_15), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //sight on screen, off, on
+    { {TEXT(LOPTIONS, OPTION_STR_13), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //look ahead, off, on
+    { {TEXT(LOPTIONS, OPTION_STR_16), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //ammo on screen, off, on
+    { {TEXT(LOPTIONS, OPTION_STR_17), TEXT(LOPTIONS, OPTION_STR_1F), TEXT(LOPTIONS, OPTION_STR_20), TEXT(LOPTIONS, OPTION_STR_21)}, 0}, //screen, full, wide, cinema
+    { {TEXT(LOPTIONS, OPTION_STR_18), TEXT(LOPTIONS, OPTION_STR_22), TEXT(LOPTIONS, OPTION_STR_23), 0}, 0} //ratio, normal, 16:9
 };
 
 //D:80040ADC
@@ -357,202 +357,54 @@ void controller_deadzone_related(void)
 
 
 
-#ifdef NONMATCHING
-//code seems to match, can't seem to get data lined up correctly
 Gfx * sub_GAME_7F0A4B40(Gfx *DL)
 {
-    u8 buffer [0x16];
-    int *fontTBL1;
-    int *fontTBL2;
-    
-    u32 y;
-    u32 x;
-    
-    if (10 < joyGetStickX(PLAYER_1)) {
+    if (10 < joyGetStickX(PLAYER_1))
+    {
         D_80040B48 += 1;
     }
 
-    if (joyGetStickX(PLAYER_1) < -10) {
+    if (joyGetStickX(PLAYER_1) < -10)
+    {
         D_80040B48 -= 1;
     }
 
-    if (10 < joyGetStickY(PLAYER_1)) {
+    if (10 < joyGetStickY(PLAYER_1))
+    {
         D_80040B4C -= 1;
     }
 
-    if (joyGetStickY(PLAYER_1) < -10) {
+    if (joyGetStickY(PLAYER_1) < -10)
+    {
         D_80040B4C += 1;
     }
+    
     gDPSetRenderMode(DL++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
     gDPSetCombineMode(DL++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     gDPSetPrimColor(DL++, 0, 0, 0xFF, 0x00, 0x00, 0xFF);
     gDPFillRectangle(DL++, D_80040B48, D_80040B4C, D_80040B48+1, D_80040B4C+1);
 
-    fontTBL1 = ptrFirstFontTableSmall;
-    fontTBL2 = ptrSecondFontTableSmall;
-    sprintf(buffer,"%d, %d\n",D_80040B48,D_80040B4C);
+    {
+        u8 buffer [0x12];
+        struct font * pFontFile;
+        struct fontchar * pFontChars;
+        s32 y;
+        s32 x;
+        
+        pFontFile = ptrFontBankGothic;
+        pFontChars = ptrFontBankGothicChars;
+        sprintf(buffer,"%d, %d\n",D_80040B48,D_80040B4C);
+    
+        DL = microcode_constructor(DL++);
 
-    DL = microcode_constructor(DL++);
-    sub_GAME_7F0AE98C(x,y,buffer,fontTBL2,fontTBL1,0);
-    DL = en_text_write_stuff(DL,&D_80040B48,&D_80040B4C,buffer,fontTBL2,fontTBL1, 0xff0000ff,y,x,0,0);
-    D_80040B4C = (D_80040B4C - fontTBL2[0x224]) + 1;
+        textMeasure(&x, &y, buffer, pFontChars, pFontFile, 0);
+        DL = textRender(DL, &D_80040B48, &D_80040B4C, buffer, pFontChars, pFontFile, 0xff0000ff, y, x, 0, 0);
+        // HACK: what is this: ((s32*)pFontChars)[0x224]
+        D_80040B4C = (D_80040B4C - ((s32*)pFontChars)[0x224]) + 1;
+    }
+    
     return DL;
 }
-#else
-// rodata
-//D:80057760
-const char aDD[] =  "%d, %d\n";
-
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0A4B40
-/* 0D9670 7F0A4B40 27BDFF80 */  addiu $sp, $sp, -0x80
-/* 0D9674 7F0A4B44 AFB00038 */  sw    $s0, 0x38($sp)
-/* 0D9678 7F0A4B48 00808025 */  move  $s0, $a0
-/* 0D967C 7F0A4B4C AFBF0044 */  sw    $ra, 0x44($sp)
-/* 0D9680 7F0A4B50 AFB20040 */  sw    $s2, 0x40($sp)
-/* 0D9684 7F0A4B54 AFB1003C */  sw    $s1, 0x3c($sp)
-/* 0D9688 7F0A4B58 0C00303B */  jal   joyGetStickX
-/* 0D968C 7F0A4B5C 00002025 */   move  $a0, $zero
-/* 0D9690 7F0A4B60 2841000B */  slti  $at, $v0, 0xb
-/* 0D9694 7F0A4B64 14200006 */  bnez  $at, .L7F0A4B80
-/* 0D9698 7F0A4B68 00002025 */   move  $a0, $zero
-/* 0D969C 7F0A4B6C 3C128004 */  lui   $s2, %hi(D_80040B48)
-/* 0D96A0 7F0A4B70 26520B48 */  addiu $s2, %lo(D_80040B48) # addiu $s2, $s2, 0xb48
-/* 0D96A4 7F0A4B74 8E4E0000 */  lw    $t6, ($s2)
-/* 0D96A8 7F0A4B78 25CF0001 */  addiu $t7, $t6, 1
-/* 0D96AC 7F0A4B7C AE4F0000 */  sw    $t7, ($s2)
-.L7F0A4B80:
-/* 0D96B0 7F0A4B80 3C128004 */  lui   $s2, %hi(D_80040B48)
-/* 0D96B4 7F0A4B84 0C00303B */  jal   joyGetStickX
-/* 0D96B8 7F0A4B88 26520B48 */   addiu $s2, %lo(D_80040B48) # addiu $s2, $s2, 0xb48
-/* 0D96BC 7F0A4B8C 2841FFF6 */  slti  $at, $v0, -0xa
-/* 0D96C0 7F0A4B90 10200004 */  beqz  $at, .L7F0A4BA4
-/* 0D96C4 7F0A4B94 00000000 */   nop
-/* 0D96C8 7F0A4B98 8E580000 */  lw    $t8, ($s2)
-/* 0D96CC 7F0A4B9C 2719FFFF */  addiu $t9, $t8, -1
-/* 0D96D0 7F0A4BA0 AE590000 */  sw    $t9, ($s2)
-.L7F0A4BA4:
-/* 0D96D4 7F0A4BA4 0C00307F */  jal   joyGetStickY
-/* 0D96D8 7F0A4BA8 00002025 */   move  $a0, $zero
-/* 0D96DC 7F0A4BAC 2841000B */  slti  $at, $v0, 0xb
-/* 0D96E0 7F0A4BB0 14200006 */  bnez  $at, .L7F0A4BCC
-/* 0D96E4 7F0A4BB4 00002025 */   move  $a0, $zero
-/* 0D96E8 7F0A4BB8 3C118004 */  lui   $s1, %hi(D_80040B4C)
-/* 0D96EC 7F0A4BBC 26310B4C */  addiu $s1, %lo(D_80040B4C) # addiu $s1, $s1, 0xb4c
-/* 0D96F0 7F0A4BC0 8E2A0000 */  lw    $t2, ($s1)
-/* 0D96F4 7F0A4BC4 254BFFFF */  addiu $t3, $t2, -1
-/* 0D96F8 7F0A4BC8 AE2B0000 */  sw    $t3, ($s1)
-.L7F0A4BCC:
-/* 0D96FC 7F0A4BCC 3C118004 */  lui   $s1, %hi(D_80040B4C)
-/* 0D9700 7F0A4BD0 0C00307F */  jal   joyGetStickY
-/* 0D9704 7F0A4BD4 26310B4C */   addiu $s1, %lo(D_80040B4C) # addiu $s1, $s1, 0xb4c
-/* 0D9708 7F0A4BD8 2841FFF6 */  slti  $at, $v0, -0xa
-/* 0D970C 7F0A4BDC 10200004 */  beqz  $at, .L7F0A4BF0
-/* 0D9710 7F0A4BE0 02001025 */   move  $v0, $s0
-/* 0D9714 7F0A4BE4 8E2C0000 */  lw    $t4, ($s1)
-/* 0D9718 7F0A4BE8 258D0001 */  addiu $t5, $t4, 1
-/* 0D971C 7F0A4BEC AE2D0000 */  sw    $t5, ($s1)
-.L7F0A4BF0:
-/* 0D9720 7F0A4BF0 26100008 */  addiu $s0, $s0, 8
-/* 0D9724 7F0A4BF4 3C0EB900 */  lui   $t6, (0xB900031D >> 16) # lui $t6, 0xb900
-/* 0D9728 7F0A4BF8 3C0F0050 */  lui   $t7, (0x00504240 >> 16) # lui $t7, 0x50
-/* 0D972C 7F0A4BFC 35EF4240 */  ori   $t7, (0x00504240 & 0xFFFF) # ori $t7, $t7, 0x4240
-/* 0D9730 7F0A4C00 35CE031D */  ori   $t6, (0xB900031D & 0xFFFF) # ori $t6, $t6, 0x31d
-/* 0D9734 7F0A4C04 02001825 */  move  $v1, $s0
-/* 0D9738 7F0A4C08 AC4E0000 */  sw    $t6, ($v0)
-/* 0D973C 7F0A4C0C AC4F0004 */  sw    $t7, 4($v0)
-/* 0D9740 7F0A4C10 3C18FCFF */  lui   $t8, (0xFCFFFFFF >> 16) # lui $t8, 0xfcff
-/* 0D9744 7F0A4C14 3C19FFFD */  lui   $t9, (0xFFFDF6FB >> 16) # lui $t9, 0xfffd
-/* 0D9748 7F0A4C18 3739F6FB */  ori   $t9, (0xFFFDF6FB & 0xFFFF) # ori $t9, $t9, 0xf6fb
-/* 0D974C 7F0A4C1C 3718FFFF */  ori   $t8, (0xFCFFFFFF & 0xFFFF) # ori $t8, $t8, 0xffff
-/* 0D9750 7F0A4C20 26100008 */  addiu $s0, $s0, 8
-/* 0D9754 7F0A4C24 AC780000 */  sw    $t8, ($v1)
-/* 0D9758 7F0A4C28 AC790004 */  sw    $t9, 4($v1)
-/* 0D975C 7F0A4C2C 02004025 */  move  $t0, $s0
-/* 0D9760 7F0A4C30 3C0BFF00 */  lui   $t3, (0xFF0000FF >> 16) # lui $t3, 0xff00
-/* 0D9764 7F0A4C34 356B00FF */  ori   $t3, (0xFF0000FF & 0xFFFF) # ori $t3, $t3, 0xff
-/* 0D9768 7F0A4C38 3C0AFA00 */  lui   $t2, 0xfa00
-/* 0D976C 7F0A4C3C AD0A0000 */  sw    $t2, ($t0)
-/* 0D9770 7F0A4C40 AD0B0004 */  sw    $t3, 4($t0)
-/* 0D9774 7F0A4C44 8E4C0000 */  lw    $t4, ($s2)
-/* 0D9778 7F0A4C48 8E390000 */  lw    $t9, ($s1)
-/* 0D977C 7F0A4C4C 3C01F600 */  lui   $at, 0xf600
-/* 0D9780 7F0A4C50 258D0001 */  addiu $t5, $t4, 1
-/* 0D9784 7F0A4C54 31AE03FF */  andi  $t6, $t5, 0x3ff
-/* 0D9788 7F0A4C58 272A0001 */  addiu $t2, $t9, 1
-/* 0D978C 7F0A4C5C 314B03FF */  andi  $t3, $t2, 0x3ff
-/* 0D9790 7F0A4C60 000E7B80 */  sll   $t7, $t6, 0xe
-/* 0D9794 7F0A4C64 26100008 */  addiu $s0, $s0, 8
-/* 0D9798 7F0A4C68 01E1C025 */  or    $t8, $t7, $at
-/* 0D979C 7F0A4C6C 000B6080 */  sll   $t4, $t3, 2
-/* 0D97A0 7F0A4C70 030C6825 */  or    $t5, $t8, $t4
-/* 0D97A4 7F0A4C74 02004825 */  move  $t1, $s0
-/* 0D97A8 7F0A4C78 AD2D0000 */  sw    $t5, ($t1)
-/* 0D97AC 7F0A4C7C 8E2A0000 */  lw    $t2, ($s1)
-/* 0D97B0 7F0A4C80 8E4E0000 */  lw    $t6, ($s2)
-/* 0D97B4 7F0A4C84 3C0D8004 */  lui   $t5, %hi(ptrFirstFontTableSmall)
-/* 0D97B8 7F0A4C88 314B03FF */  andi  $t3, $t2, 0x3ff
-/* 0D97BC 7F0A4C8C 31CF03FF */  andi  $t7, $t6, 0x3ff
-/* 0D97C0 7F0A4C90 000FCB80 */  sll   $t9, $t7, 0xe
-/* 0D97C4 7F0A4C94 000BC080 */  sll   $t8, $t3, 2
-/* 0D97C8 7F0A4C98 03386025 */  or    $t4, $t9, $t8
-/* 0D97CC 7F0A4C9C AD2C0004 */  sw    $t4, 4($t1)
-/* 0D97D0 7F0A4CA0 3C0E8004 */  lui   $t6, %hi(ptrSecondFontTableSmall)
-/* 0D97D4 7F0A4CA4 8DAD0EAC */  lw    $t5, %lo(ptrFirstFontTableSmall)($t5)
-/* 0D97D8 7F0A4CA8 8DCE0EB0 */  lw    $t6, %lo(ptrSecondFontTableSmall)($t6)
-/* 0D97DC 7F0A4CAC 3C058005 */  lui   $a1, %hi(aDD)
-/* 0D97E0 7F0A4CB0 26100008 */  addiu $s0, $s0, 8
-/* 0D97E4 7F0A4CB4 24A57760 */  addiu $a1, %lo(aDD) # addiu $a1, $a1, 0x7760
-/* 0D97E8 7F0A4CB8 8E270000 */  lw    $a3, ($s1)
-/* 0D97EC 7F0A4CBC 8E460000 */  lw    $a2, ($s2)
-/* 0D97F0 7F0A4CC0 27A4005C */  addiu $a0, $sp, 0x5c
-/* 0D97F4 7F0A4CC4 AFAD0058 */  sw    $t5, 0x58($sp)
-/* 0D97F8 7F0A4CC8 0C002B25 */  jal   sprintf
-/* 0D97FC 7F0A4CCC AFAE0054 */   sw    $t6, 0x54($sp)
-/* 0D9800 7F0A4CD0 0FC2B366 */  jal   microcode_constructor
-/* 0D9804 7F0A4CD4 02002025 */   move  $a0, $s0
-/* 0D9808 7F0A4CD8 8FAF0058 */  lw    $t7, 0x58($sp)
-/* 0D980C 7F0A4CDC 00408025 */  move  $s0, $v0
-/* 0D9810 7F0A4CE0 27A4004C */  addiu $a0, $sp, 0x4c
-/* 0D9814 7F0A4CE4 27A50050 */  addiu $a1, $sp, 0x50
-/* 0D9818 7F0A4CE8 27A6005C */  addiu $a2, $sp, 0x5c
-/* 0D981C 7F0A4CEC 8FA70054 */  lw    $a3, 0x54($sp)
-/* 0D9820 7F0A4CF0 AFA00014 */  sw    $zero, 0x14($sp)
-/* 0D9824 7F0A4CF4 0FC2BA63 */  jal   sub_GAME_7F0AE98C
-/* 0D9828 7F0A4CF8 AFAF0010 */   sw    $t7, 0x10($sp)
-/* 0D982C 7F0A4CFC 8FAA0054 */  lw    $t2, 0x54($sp)
-/* 0D9830 7F0A4D00 8FAB0058 */  lw    $t3, 0x58($sp)
-/* 0D9834 7F0A4D04 8FB80050 */  lw    $t8, 0x50($sp)
-/* 0D9838 7F0A4D08 8FAC004C */  lw    $t4, 0x4c($sp)
-/* 0D983C 7F0A4D0C 3C19FF00 */  lui   $t9, (0xFF0000FF >> 16) # lui $t9, 0xff00
-/* 0D9840 7F0A4D10 373900FF */  ori   $t9, (0xFF0000FF & 0xFFFF) # ori $t9, $t9, 0xff
-/* 0D9844 7F0A4D14 AFB90018 */  sw    $t9, 0x18($sp)
-/* 0D9848 7F0A4D18 02002025 */  move  $a0, $s0
-/* 0D984C 7F0A4D1C 02402825 */  move  $a1, $s2
-/* 0D9850 7F0A4D20 02203025 */  move  $a2, $s1
-/* 0D9854 7F0A4D24 27A7005C */  addiu $a3, $sp, 0x5c
-/* 0D9858 7F0A4D28 AFA00024 */  sw    $zero, 0x24($sp)
-/* 0D985C 7F0A4D2C AFA00028 */  sw    $zero, 0x28($sp)
-/* 0D9860 7F0A4D30 AFAA0010 */  sw    $t2, 0x10($sp)
-/* 0D9864 7F0A4D34 AFAB0014 */  sw    $t3, 0x14($sp)
-/* 0D9868 7F0A4D38 AFB8001C */  sw    $t8, 0x1c($sp)
-/* 0D986C 7F0A4D3C 0FC2B6AF */  jal   en_text_write_stuff
-/* 0D9870 7F0A4D40 AFAC0020 */   sw    $t4, 0x20($sp)
-/* 0D9874 7F0A4D44 8FAE0054 */  lw    $t6, 0x54($sp)
-/* 0D9878 7F0A4D48 8E2D0000 */  lw    $t5, ($s1)
-/* 0D987C 7F0A4D4C 8FBF0044 */  lw    $ra, 0x44($sp)
-/* 0D9880 7F0A4D50 8DCF0890 */  lw    $t7, 0x890($t6)
-/* 0D9884 7F0A4D54 8FB00038 */  lw    $s0, 0x38($sp)
-/* 0D9888 7F0A4D58 8FB20040 */  lw    $s2, 0x40($sp)
-/* 0D988C 7F0A4D5C 01AF5023 */  subu  $t2, $t5, $t7
-/* 0D9890 7F0A4D60 254B0001 */  addiu $t3, $t2, 1
-/* 0D9894 7F0A4D64 AE2B0000 */  sw    $t3, ($s1)
-/* 0D9898 7F0A4D68 8FB1003C */  lw    $s1, 0x3c($sp)
-/* 0D989C 7F0A4D6C 03E00008 */  jr    $ra
-/* 0D98A0 7F0A4D70 27BD0080 */   addiu $sp, $sp, 0x80
-)
-#endif
 
 
 
@@ -2192,13 +2044,13 @@ void sub_GAME_7F0A69A8(void)
  * Address 0x7F0A6A2C. (VERSION_US, VERSION_JP)
  * Address 0x7F0A5D78. (VERSION_EU)
 */
-f32 sub_GAME_7F0A6A2C(f32 arg0)
+f32 watchWrapAroundPI(f32 arg0)
 {
-    if (arg0 > 3.1415927f)
+    if (arg0 > M_PI_F)
     {
         arg0 = arg0 - M_TAU_F;
     }
-    else if (arg0 < -3.1415927f)
+    else if (arg0 < M_MINUS_PI_F)
     {
         arg0 = arg0 + M_TAU_F;
     }
@@ -2282,7 +2134,7 @@ void sub_GAME_7F0A6A80(void)
     D_80040B14 += ((D_80040B1C * jpD_800484D0 * M_TAU_F) / 360.0f);
     #endif
 
-    D_80040B14 = sub_GAME_7F0A6A2C(D_80040B14);
+    D_80040B14 = watchWrapAroundPI(D_80040B14);
 
     temp_1 = D_80040B0C << 0x10;
     if (temp_1 < randomGetNext())
@@ -2664,17 +2516,17 @@ Gfx *draw_abort_cancel_confirm(Gfx *gdl)
     s32 sp64;
     s32 sp60;
 
-    s32 pFirstFontTable;
-    s32 pSecondFontTable;
+    s32 pFontFile;
+    s32 pFontChars;
     s32 sp54;
     s32 sp50;
     s32 sp4C;
 
-    pFirstFontTable = ptrFirstFontTableSmall;
-    pSecondFontTable = ptrSecondFontTableSmall;
-    sp54 = langGet(TEXT(LOPTIONS, 0x24)); //abort:
-    sp50 = langGet(TEXT(LOPTIONS, 0x25)); //confirm
-    sp4C = langGet(TEXT(LOPTIONS, 0x26)); //cancel
+    pFontFile = ptrFontBankGothic;
+    pFontChars = ptrFontBankGothicChars;
+    sp54 = langGet(TEXT(LOPTIONS, OPTION_STR_24)); //abort:
+    sp50 = langGet(TEXT(LOPTIONS, OPTION_STR_25)); //confirm
+    sp4C = langGet(TEXT(LOPTIONS, OPTION_STR_26)); //cancel
     sp7C = 0x51;
 
     sp78 = (j_text_trigger ? 0xF : 0) + 0xBD;
@@ -2706,30 +2558,30 @@ Gfx *draw_abort_cancel_confirm(Gfx *gdl)
 
     if (watch_item_is_actively_selected != 0)
     {
-        sub_GAME_7F0AE98C(&sp60, &sp64, sp54, pSecondFontTable, pFirstFontTable, 0);
+        textMeasure(&sp60, &sp64, sp54, pFontChars, pFontFile, 0);
 
-        gdl = en_text_write_stuff(gdl, &sp7C, &sp70, sp54, pSecondFontTable, pFirstFontTable, 0xA0FFA0F0, sp64, sp60, 0, 0);
+        gdl = textRender(gdl, &sp7C, &sp70, sp54, pFontChars, pFontFile, 0xA0FFA0F0, sp64, sp60, 0, 0);
 
         if (D_800409A4 != 0)
         {
-            gdl = jp_text_write_stuff(gdl, &sp78, &sp6C, sp50, pSecondFontTable, pFirstFontTable, -1, 0x7000A0, viGetX(), viGetY(), 0, 0);
-            gdl = en_text_write_stuff(gdl, &sp74, &sp68, sp4C, pSecondFontTable, pFirstFontTable, 0xFF00B0, viGetX(), viGetY(), 0, 0);
+            gdl = textRenderGlow(gdl, &sp78, &sp6C, sp50, pFontChars, pFontFile, -1, 0x7000A0, viGetX(), viGetY(), 0, 0);
+            gdl = textRender(gdl, &sp74, &sp68, sp4C, pFontChars, pFontFile, 0xFF00B0, viGetX(), viGetY(), 0, 0);
         }
         else
         {
             if (D_800409A4 == 0)
             {
-                gdl = en_text_write_stuff(gdl, &sp78, &sp6C, sp50, pSecondFontTable, pFirstFontTable, 0xFF00B0, viGetX(), viGetY(), 0, 0);
-                gdl = jp_text_write_stuff(gdl, &sp74, &sp68, sp4C, pSecondFontTable, pFirstFontTable, -1, 0x7000A0, viGetX(), viGetY(), 0, 0);
+                gdl = textRender(gdl, &sp78, &sp6C, sp50, pFontChars, pFontFile, 0xFF00B0, viGetX(), viGetY(), 0, 0);
+                gdl = textRenderGlow(gdl, &sp74, &sp68, sp4C, pFontChars, pFontFile, -1, 0x7000A0, viGetX(), viGetY(), 0, 0);
             }
         }
     }
     else
     {
-        sub_GAME_7F0AE98C(&sp60, &sp64, sp54, pSecondFontTable, pFirstFontTable, 0);
-        gdl = en_text_write_stuff(gdl, &sp7C, &sp70, sp54, pSecondFontTable, pFirstFontTable, 0x800080, sp64, sp60, 0, 0);
-        gdl = en_text_write_stuff(gdl, &sp78, &sp6C, sp50, pSecondFontTable, pFirstFontTable, 0x800080, viGetX(), viGetY(), 0, 0);
-        gdl = en_text_write_stuff(gdl, &sp74, &sp68, sp4C, pSecondFontTable, pFirstFontTable, 0x800080, viGetX(), viGetY(), 0, 0);
+        textMeasure(&sp60, &sp64, sp54, pFontChars, pFontFile, 0);
+        gdl = textRender(gdl, &sp7C, &sp70, sp54, pFontChars, pFontFile, 0x800080, sp64, sp60, 0, 0);
+        gdl = textRender(gdl, &sp78, &sp6C, sp50, pFontChars, pFontFile, 0x800080, viGetX(), viGetY(), 0, 0);
+        gdl = textRender(gdl, &sp74, &sp68, sp4C, pFontChars, pFontFile, 0x800080, viGetX(), viGetY(), 0, 0);
     }
 
     return gdl;
@@ -2744,31 +2596,31 @@ Gfx *draw_text_mission_status(Gfx *gdl)
     s32 sp60;
     s32 sp5C;
     s32 sp58;
-    s32 ptr_first_font;
-    s32 ptr_second_font;
+    s32 pFontFile;
+    s32 pFontChars;
     s32 sp4C;
     s32 joffset;
 
-    txtptr_1 = langGet(TEXT(LOPTIONS, 0x27)); //mission status:
-    ptr_first_font = ptrFirstFontTableSmall;
-    ptr_second_font = ptrSecondFontTableSmall;
+    txtptr_1 = langGet(TEXT(LOPTIONS, OPTION_STR_27)); //mission status:
+    pFontFile = ptrFontBankGothic;
+    pFontChars = ptrFontBankGothicChars;
 
     if (objectiveIsAllComplete())
     {
         sp4C = 0xFF00B0;
-        txtptr_2 = langGet(TEXT(LOPTIONS, 0x28)); //complete
+        txtptr_2 = langGet(TEXT(LOPTIONS, OPTION_STR_28)); //complete
     }
     else
     {
         sp4C = D_80040AF4;
-        txtptr_2 = langGet(TEXT(LOPTIONS, 0x29)); //incomplete
+        txtptr_2 = langGet(TEXT(LOPTIONS, OPTION_STR_29)); //incomplete
     }
 
     gdl = microcode_constructor(gdl);
-    sub_GAME_7F0AE98C(&sp5C, &sp58, txtptr_1, ptr_second_font, ptr_first_font, 0);
+    textMeasure(&sp5C, &sp58, txtptr_1, pFontChars, pFontFile, 0);
     sp64 = 0x51;
     sp60 = YOFFSET_MISSIONSTATUS;
-    gdl = en_text_write_stuff(gdl, &sp64, &sp60, txtptr_1, ptr_second_font, ptr_first_font, 0xFF00B0, sp58, sp5C, 0, 0);
+    gdl = textRender(gdl, &sp64, &sp60, txtptr_1, pFontChars, pFontFile, 0xFF00B0, sp58, sp5C, 0, 0);
 
     if (j_text_trigger)
     {
@@ -2781,8 +2633,8 @@ Gfx *draw_text_mission_status(Gfx *gdl)
 
     sp64 = sp64 + sp58 + joffset + 4;
     sp60 = sp60 - sp5C;
-    sub_GAME_7F0AE98C(&sp5C, &sp58, txtptr_2, ptr_second_font, ptr_first_font, 0);
-    gdl = en_text_write_stuff(gdl, &sp64, &sp60, txtptr_2, ptr_second_font, ptr_first_font, sp4C, sp58, sp5C, 0, 0);
+    textMeasure(&sp5C, &sp58, txtptr_2, pFontChars, pFontFile, 0);
+    gdl = textRender(gdl, &sp64, &sp60, txtptr_2, pFontChars, pFontFile, sp4C, sp58, sp5C, 0, 0);
     gdl = draw_abort_cancel_confirm(gdl);
 
     return gdl;
@@ -2801,11 +2653,11 @@ Gfx *draw_text_q_watch_v201_beta(Gfx *gdl)
     s32 sp4C;
     s32 sp48;
     s32 sp44;
-    s32 pFirstFontTable;
-    s32 pSecondFontTable;
+    s32 pFontFile;
+    s32 pFontChars;
     s32 joffset;
 
-    txtptr = langGet(TEXT(LOPTIONS, 0x2B)); //q watch v2.01 beta
+    txtptr = langGet(TEXT(LOPTIONS, OPTION_STR_2B)); //q watch v2.01 beta
 
     if (j_text_trigger)
     {
@@ -2819,11 +2671,11 @@ Gfx *draw_text_q_watch_v201_beta(Gfx *gdl)
     sp4C = YOFFSET_7;
     sp48 = 0;
     sp44 = 0;
-    pFirstFontTable = ptrFirstFontTableSmall;
-    pSecondFontTable = ptrSecondFontTableSmall;
+    pFontFile = ptrFontBankGothic;
+    pFontChars = ptrFontBankGothicChars;
     gdl = microcode_constructor(gdl);
-    sub_GAME_7F0AE98C(&sp48, &sp44, txtptr, pSecondFontTable, pFirstFontTable, 0);
-    gdl = en_text_write_stuff(gdl, &sp50, &sp4C, txtptr, pSecondFontTable, pFirstFontTable, 0xFF00B0, sp44, sp48, 0, 0);
+    textMeasure(&sp48, &sp44, txtptr, pFontChars, pFontFile, 0);
+    gdl = textRender(gdl, &sp50, &sp4C, txtptr, pFontChars, pFontFile, 0xFF00B0, sp44, sp48, 0, 0);
     return gdl;
 }
 
@@ -2865,10 +2717,10 @@ glabel draw_current_hand_item_and_ammo
 /* 0DC9E0 7F0A7EB0 AFB00038 */  sw    $s0, 0x38($sp)
 /* 0DC9E4 7F0A7EB4 0FC2F5B8 */  jal   dynAllocateMatrix
 /* 0DC9E8 7F0A7EB8 00808025 */   move  $s0, $a0
-/* 0DC9EC 7F0A7EBC 3C0E8004 */  lui   $t6, %hi(ptrFirstFontTableSmall)
-/* 0DC9F0 7F0A7EC0 3C0F8004 */  lui   $t7, %hi(ptrSecondFontTableSmall)
-/* 0DC9F4 7F0A7EC4 8DCE0EAC */  lw    $t6, %lo(ptrFirstFontTableSmall)($t6)
-/* 0DC9F8 7F0A7EC8 8DEF0EB0 */  lw    $t7, %lo(ptrSecondFontTableSmall)($t7)
+/* 0DC9EC 7F0A7EBC 3C0E8004 */  lui   $t6, %hi(ptrFontBankGothic)
+/* 0DC9F0 7F0A7EC0 3C0F8004 */  lui   $t7, %hi(ptrFontBankGothicChars)
+/* 0DC9F4 7F0A7EC4 8DCE0EAC */  lw    $t6, %lo(ptrFontBankGothic)($t6)
+/* 0DC9F8 7F0A7EC8 8DEF0EB0 */  lw    $t7, %lo(ptrFontBankGothicChars)($t7)
 /* 0DC9FC 7F0A7ECC AFA20114 */  sw    $v0, 0x114($sp)
 /* 0DCA00 7F0A7ED0 AFA00084 */  sw    $zero, 0x84($sp)
 /* 0DCA04 7F0A7ED4 AFA00080 */  sw    $zero, 0x80($sp)
@@ -3096,7 +2948,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0DCD58 7F0A8228 8FA60054 */  lw    $a2, 0x54($sp)
 /* 0DCD5C 7F0A822C 8FA70078 */  lw    $a3, 0x78($sp)
 /* 0DCD60 7F0A8230 AFA00014 */  sw    $zero, 0x14($sp)
-/* 0DCD64 7F0A8234 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DCD64 7F0A8234 0FC2BA63 */  jal   textMeasure
 /* 0DCD68 7F0A8238 AFAD0010 */   sw    $t5, 0x10($sp)
 /* 0DCD6C 7F0A823C 8FAE0078 */  lw    $t6, 0x78($sp)
 /* 0DCD70 7F0A8240 8FAF007C */  lw    $t7, 0x7c($sp)
@@ -3114,7 +2966,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0DCDA0 7F0A8270 AFAE0010 */  sw    $t6, 0x10($sp)
 /* 0DCDA4 7F0A8274 AFAF0014 */  sw    $t7, 0x14($sp)
 /* 0DCDA8 7F0A8278 AFB9001C */  sw    $t9, 0x1c($sp)
-/* 0DCDAC 7F0A827C 0FC2B6AF */  jal   en_text_write_stuff
+/* 0DCDAC 7F0A827C 0FC2B6AF */  jal   textRender
 /* 0DCDB0 7F0A8280 AFA80020 */   sw    $t0, 0x20($sp)
 /* 0DCDB4 7F0A8284 8FAA007C */  lw    $t2, 0x7c($sp)
 /* 0DCDB8 7F0A8288 240900AA */  li    $t1, 170
@@ -3125,7 +2977,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0DCDCC 7F0A829C 8FA60050 */  lw    $a2, 0x50($sp)
 /* 0DCDD0 7F0A82A0 8FA70078 */  lw    $a3, 0x78($sp)
 /* 0DCDD4 7F0A82A4 AFA00014 */  sw    $zero, 0x14($sp)
-/* 0DCDD8 7F0A82A8 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DCDD8 7F0A82A8 0FC2BA63 */  jal   textMeasure
 /* 0DCDDC 7F0A82AC AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0DCDE0 7F0A82B0 8FAB0078 */  lw    $t3, 0x78($sp)
 /* 0DCDE4 7F0A82B4 8FAC007C */  lw    $t4, 0x7c($sp)
@@ -3143,7 +2995,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0DCE14 7F0A82E4 AFAB0010 */  sw    $t3, 0x10($sp)
 /* 0DCE18 7F0A82E8 AFAC0014 */  sw    $t4, 0x14($sp)
 /* 0DCE1C 7F0A82EC AFAE001C */  sw    $t6, 0x1c($sp)
-/* 0DCE20 7F0A82F0 0FC2B6AF */  jal   en_text_write_stuff
+/* 0DCE20 7F0A82F0 0FC2B6AF */  jal   textRender
 /* 0DCE24 7F0A82F4 AFAF0020 */   sw    $t7, 0x20($sp)
 /* 0DCE28 7F0A82F8 8FBF003C */  lw    $ra, 0x3c($sp)
 /* 0DCE2C 7F0A82FC 8FB00038 */  lw    $s0, 0x38($sp)
@@ -3183,10 +3035,10 @@ glabel draw_current_hand_item_and_ammo
 /* 0D9BB8 7F0A71C8 AFB00038 */  sw    $s0, 0x38($sp)
 /* 0D9BBC 7F0A71CC 0FC2F2A4 */  jal   dynAllocateMatrix
 /* 0D9BC0 7F0A71D0 00808025 */   move  $s0, $a0
-/* 0D9BC4 7F0A71D4 3C0E8004 */  lui   $t6, %hi(ptrFirstFontTableSmall) # $t6, 0x8004
-/* 0D9BC8 7F0A71D8 3C0F8004 */  lui   $t7, %hi(ptrSecondFontTableSmall) # $t7, 0x8004
-/* 0D9BCC 7F0A71DC 8DCEAAFC */  lw    $t6, %lo(ptrFirstFontTableSmall)($t6)
-/* 0D9BD0 7F0A71E0 8DEFAB00 */  lw    $t7, %lo(ptrSecondFontTableSmall)($t7)
+/* 0D9BC4 7F0A71D4 3C0E8004 */  lui   $t6, %hi(ptrFontBankGothic) # $t6, 0x8004
+/* 0D9BC8 7F0A71D8 3C0F8004 */  lui   $t7, %hi(ptrFontBankGothicChars) # $t7, 0x8004
+/* 0D9BCC 7F0A71DC 8DCEAAFC */  lw    $t6, %lo(ptrFontBankGothic)($t6)
+/* 0D9BD0 7F0A71E0 8DEFAB00 */  lw    $t7, %lo(ptrFontBankGothicChars)($t7)
 /* 0D9BD4 7F0A71E4 AFA20114 */  sw    $v0, 0x114($sp)
 /* 0D9BD8 7F0A71E8 AFA00084 */  sw    $zero, 0x84($sp)
 /* 0D9BDC 7F0A71EC AFA00080 */  sw    $zero, 0x80($sp)
@@ -3414,7 +3266,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0D9F30 7F0A7540 8FA60054 */  lw    $a2, 0x54($sp)
 /* 0D9F34 7F0A7544 8FA70078 */  lw    $a3, 0x78($sp)
 /* 0D9F38 7F0A7548 AFA00014 */  sw    $zero, 0x14($sp)
-/* 0D9F3C 7F0A754C 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0D9F3C 7F0A754C 0FC2B713 */  jal   textMeasure
 /* 0D9F40 7F0A7550 AFAD0010 */   sw    $t5, 0x10($sp)
 /* 0D9F44 7F0A7554 8FAE0078 */  lw    $t6, 0x78($sp)
 /* 0D9F48 7F0A7558 8FAF007C */  lw    $t7, 0x7c($sp)
@@ -3432,7 +3284,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0D9F78 7F0A7588 AFAE0010 */  sw    $t6, 0x10($sp)
 /* 0D9F7C 7F0A758C AFAF0014 */  sw    $t7, 0x14($sp)
 /* 0D9F80 7F0A7590 AFB9001C */  sw    $t9, 0x1c($sp)
-/* 0D9F84 7F0A7594 0FC2B35F */  jal   en_text_write_stuff
+/* 0D9F84 7F0A7594 0FC2B35F */  jal   textRender
 /* 0D9F88 7F0A7598 AFA80020 */   sw    $t0, 0x20($sp)
 /* 0D9F8C 7F0A759C 8FAA007C */  lw    $t2, 0x7c($sp)
 /* 0D9F90 7F0A75A0 240900C6 */  li    $t1, 198
@@ -3443,7 +3295,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0D9FA4 7F0A75B4 8FA60050 */  lw    $a2, 0x50($sp)
 /* 0D9FA8 7F0A75B8 8FA70078 */  lw    $a3, 0x78($sp)
 /* 0D9FAC 7F0A75BC AFA00014 */  sw    $zero, 0x14($sp)
-/* 0D9FB0 7F0A75C0 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0D9FB0 7F0A75C0 0FC2B713 */  jal   textMeasure
 /* 0D9FB4 7F0A75C4 AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0D9FB8 7F0A75C8 8FAB0078 */  lw    $t3, 0x78($sp)
 /* 0D9FBC 7F0A75CC 8FAC007C */  lw    $t4, 0x7c($sp)
@@ -3461,7 +3313,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0D9FEC 7F0A75FC AFAB0010 */  sw    $t3, 0x10($sp)
 /* 0D9FF0 7F0A7600 AFAC0014 */  sw    $t4, 0x14($sp)
 /* 0D9FF4 7F0A7604 AFAE001C */  sw    $t6, 0x1c($sp)
-/* 0D9FF8 7F0A7608 0FC2B35F */  jal   en_text_write_stuff
+/* 0D9FF8 7F0A7608 0FC2B35F */  jal   textRender
 /* 0D9FFC 7F0A760C AFAF0020 */   sw    $t7, 0x20($sp)
 /* 0DA000 7F0A7610 8FBF003C */  lw    $ra, 0x3c($sp)
 /* 0DA004 7F0A7614 8FB00038 */  lw    $s0, 0x38($sp)
@@ -3728,10 +3580,10 @@ glabel draw_watch_inventory_page
 /* 0DD254 7F0A8724 27A608E0 */  addiu $a2, $sp, 0x8e0
 /* 0DD258 7F0A8728 0FC18C01 */  jal   set_enviro_fog_for_items_in_solo_watch_menu
 /* 0DD25C 7F0A872C 24070040 */   li    $a3, 64
-/* 0DD260 7F0A8730 3C098004 */  lui   $t1, %hi(ptrFirstFontTableSmall)
-/* 0DD264 7F0A8734 3C0A8004 */  lui   $t2, %hi(ptrSecondFontTableSmall)
-/* 0DD268 7F0A8738 8D290EAC */  lw    $t1, %lo(ptrFirstFontTableSmall)($t1)
-/* 0DD26C 7F0A873C 8D4A0EB0 */  lw    $t2, %lo(ptrSecondFontTableSmall)($t2)
+/* 0DD260 7F0A8730 3C098004 */  lui   $t1, %hi(ptrFontBankGothic)
+/* 0DD264 7F0A8734 3C0A8004 */  lui   $t2, %hi(ptrFontBankGothicChars)
+/* 0DD268 7F0A8738 8D290EAC */  lw    $t1, %lo(ptrFontBankGothic)($t1)
+/* 0DD26C 7F0A873C 8D4A0EB0 */  lw    $t2, %lo(ptrFontBankGothicChars)($t2)
 /* 0DD270 7F0A8740 AFA20928 */  sw    $v0, 0x928($sp)
 /* 0DD274 7F0A8744 AFA00860 */  sw    $zero, 0x860($sp)
 /* 0DD278 7F0A8748 AFA0085C */  sw    $zero, 0x85c($sp)
@@ -3794,7 +3646,7 @@ glabel draw_watch_inventory_page
 /* 0DD340 7F0A8810 27A60084 */  addiu $a2, $sp, 0x84
 /* 0DD344 7F0A8814 8FA70854 */  lw    $a3, 0x854($sp)
 /* 0DD348 7F0A8818 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0DD34C 7F0A881C 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DD34C 7F0A881C 0FC2BA63 */  jal   textMeasure
 /* 0DD350 7F0A8820 AFB80010 */   sw    $t8, 0x10($sp)
 /* 0DD354 7F0A8824 3C198005 */  lui   $t9, %hi(j_text_trigger)
 /* 0DD358 7F0A8828 8F3984D0 */  lw    $t9, %lo(j_text_trigger)($t9)
@@ -3849,7 +3701,7 @@ glabel draw_watch_inventory_page
 /* 0DD404 7F0A88D4 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DD408 7F0A88D8 AFB90024 */  sw    $t9, 0x24($sp)
 /* 0DD40C 7F0A88DC AFAB0010 */  sw    $t3, 0x10($sp)
-/* 0DD410 7F0A88E0 0FC2B6AF */  jal   en_text_write_stuff
+/* 0DD410 7F0A88E0 0FC2B6AF */  jal   textRender
 /* 0DD414 7F0A88E4 AFAC0014 */   sw    $t4, 0x14($sp)
 /* 0DD418 7F0A88E8 3C098005 */  lui   $t1, %hi(j_text_trigger)
 /* 0DD41C 7F0A88EC 8D2984D0 */  lw    $t1, %lo(j_text_trigger)($t1)
@@ -3871,12 +3723,12 @@ glabel draw_watch_inventory_page
 /* 0DD454 7F0A8924 AFAC0014 */  sw    $t4, 0x14($sp)
 /* 0DD458 7F0A8928 0FC2B405 */  jal   microcode_constructor_related_to_menus
 /* 0DD45C 7F0A892C 24E70052 */   addiu $a3, $a3, 0x52
-/* 0DD460 7F0A8930 3C0D8004 */  lui   $t5, %hi(ptrSecondFontTableSmall)
-/* 0DD464 7F0A8934 8DAD0EB0 */  lw    $t5, %lo(ptrSecondFontTableSmall)($t5)
-/* 0DD468 7F0A8938 3C108004 */  lui   $s0, %hi(ptrFirstFontTableSmall)
+/* 0DD460 7F0A8930 3C0D8004 */  lui   $t5, %hi(ptrFontBankGothicChars)
+/* 0DD464 7F0A8934 8DAD0EB0 */  lw    $t5, %lo(ptrFontBankGothicChars)($t5)
+/* 0DD468 7F0A8938 3C108004 */  lui   $s0, %hi(ptrFontBankGothic)
 /* 0DD46C 7F0A893C 3C048004 */  lui   $a0, %hi(g_curWatchItemIndex)
 /* 0DD470 7F0A8940 AFA20928 */  sw    $v0, 0x928($sp)
-/* 0DD474 7F0A8944 8E100EAC */  lw    $s0, %lo(ptrFirstFontTableSmall)($s0)
+/* 0DD474 7F0A8944 8E100EAC */  lw    $s0, %lo(ptrFontBankGothic)($s0)
 /* 0DD478 7F0A8948 8C8409B8 */  lw    $a0, %lo(g_curWatchItemIndex)($a0)
 /* 0DD47C 7F0A894C 0FC234D0 */  jal   bondinvGetNameByIndex
 /* 0DD480 7F0A8950 AFAD0058 */   sw    $t5, 0x58($sp)
@@ -3904,7 +3756,7 @@ glabel draw_watch_inventory_page
 /* 0DD4D8 7F0A89A8 27A60060 */  addiu $a2, $sp, 0x60
 /* 0DD4DC 7F0A89AC 8FA70058 */  lw    $a3, 0x58($sp)
 /* 0DD4E0 7F0A89B0 AFB00010 */  sw    $s0, 0x10($sp)
-/* 0DD4E4 7F0A89B4 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DD4E4 7F0A89B4 0FC2BA63 */  jal   textMeasure
 /* 0DD4E8 7F0A89B8 AFA00014 */   sw    $zero, 0x14($sp)
 /* 0DD4EC 7F0A89BC 3C0F8004 */  lui   $t7, %hi(D_800409C0)
 /* 0DD4F0 7F0A89C0 8DEF09C0 */  lw    $t7, %lo(D_800409C0)($t7)
@@ -3921,7 +3773,7 @@ glabel draw_watch_inventory_page
 /* 0DD51C 7F0A89EC 2402000E */   li    $v0, 14
 .L7F0A89F0:
 /* 0DD520 7F0A89F0 AFB00010 */  sw    $s0, 0x10($sp)
-/* 0DD524 7F0A89F4 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DD524 7F0A89F4 0FC2BA63 */  jal   textMeasure
 /* 0DD528 7F0A89F8 AFA20014 */   sw    $v0, 0x14($sp)
 /* 0DD52C 7F0A89FC 3C038005 */  lui   $v1, %hi(j_text_trigger)
 /* 0DD530 7F0A8A00 8C6384D0 */  lw    $v1, %lo(j_text_trigger)($v1)
@@ -3960,7 +3812,7 @@ glabel draw_watch_inventory_page
 /* 0DD5A4 7F0A8A74 AFA00024 */  sw    $zero, 0x24($sp)
 /* 0DD5A8 7F0A8A78 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DD5AC 7F0A8A7C AFAC0010 */  sw    $t4, 0x10($sp)
-/* 0DD5B0 7F0A8A80 0FC2B6AF */  jal   en_text_write_stuff
+/* 0DD5B0 7F0A8A80 0FC2B6AF */  jal   textRender
 /* 0DD5B4 7F0A8A84 AFAE001C */   sw    $t6, 0x1c($sp)
 /* 0DD5B8 7F0A8A88 1000001A */  b     .L7F0A8AF4
 /* 0DD5BC 7F0A8A8C AFA20928 */   sw    $v0, 0x928($sp)
@@ -3989,7 +3841,7 @@ glabel draw_watch_inventory_page
 /* 0DD60C 7F0A8ADC AFB00014 */  sw    $s0, 0x14($sp)
 /* 0DD610 7F0A8AE0 AFA00028 */  sw    $zero, 0x28($sp)
 /* 0DD614 7F0A8AE4 AFA2002C */  sw    $v0, 0x2c($sp)
-/* 0DD618 7F0A8AE8 0FC2B9BB */  jal   jp_text_write_stuff
+/* 0DD618 7F0A8AE8 0FC2B9BB */  jal   textRenderGlow
 /* 0DD61C 7F0A8AEC AFB80010 */   sw    $t8, 0x10($sp)
 /* 0DD620 7F0A8AF0 AFA20928 */  sw    $v0, 0x928($sp)
 .L7F0A8AF4:
@@ -4213,10 +4065,10 @@ glabel draw_watch_inventory_page
 /* 0DDE34 7F0A92C4 24070040 */   li    $a3, 64
 /* 0DDE38 7F0A92C8 3C0B8005 */  lui   $t3, %hi(j_text_trigger) # $t3, 0x8005
 /* 0DDE3C 7F0A92CC 8D6B8500 */  lw    $t3, %lo(j_text_trigger)($t3)
-/* 0DDE40 7F0A92D0 3C098004 */  lui   $t1, %hi(ptrFirstFontTableSmall) # $t1, 0x8004
-/* 0DDE44 7F0A92D4 3C0A8004 */  lui   $t2, %hi(ptrSecondFontTableSmall) # $t2, 0x8004
-/* 0DDE48 7F0A92D8 8D290EDC */  lw    $t1, %lo(ptrFirstFontTableSmall)($t1)
-/* 0DDE4C 7F0A92DC 8D4A0EE0 */  lw    $t2, %lo(ptrSecondFontTableSmall)($t2)
+/* 0DDE40 7F0A92D0 3C098004 */  lui   $t1, %hi(ptrFontBankGothic) # $t1, 0x8004
+/* 0DDE44 7F0A92D4 3C0A8004 */  lui   $t2, %hi(ptrFontBankGothicChars) # $t2, 0x8004
+/* 0DDE48 7F0A92D8 8D290EDC */  lw    $t1, %lo(ptrFontBankGothic)($t1)
+/* 0DDE4C 7F0A92DC 8D4A0EE0 */  lw    $t2, %lo(ptrFontBankGothicChars)($t2)
 /* 0DDE50 7F0A92E0 AFA20930 */  sw    $v0, 0x930($sp)
 /* 0DDE54 7F0A92E4 AFA00868 */  sw    $zero, 0x868($sp)
 /* 0DDE58 7F0A92E8 AFA00864 */  sw    $zero, 0x864($sp)
@@ -4288,7 +4140,7 @@ glabel draw_watch_inventory_page
 /* 0DDF3C 7F0A93CC 27A6008C */  addiu $a2, $sp, 0x8c
 /* 0DDF40 7F0A93D0 8FA7085C */  lw    $a3, 0x85c($sp)
 /* 0DDF44 7F0A93D4 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0DDF48 7F0A93D8 0FC2BD4F */  jal   sub_GAME_7F0AE98C
+/* 0DDF48 7F0A93D8 0FC2BD4F */  jal   textMeasure
 /* 0DDF4C 7F0A93DC AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0DDF50 7F0A93E0 3C0B8005 */  lui   $t3, %hi(j_text_trigger) # $t3, 0x8005
 /* 0DDF54 7F0A93E4 8D6B8500 */  lw    $t3, %lo(j_text_trigger)($t3)
@@ -4343,7 +4195,7 @@ glabel draw_watch_inventory_page
 /* 0DE000 7F0A9490 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DE004 7F0A9494 AFAB0024 */  sw    $t3, 0x24($sp)
 /* 0DE008 7F0A9498 AFAE0010 */  sw    $t6, 0x10($sp)
-/* 0DE00C 7F0A949C 0FC2B99B */  jal   en_text_write_stuff
+/* 0DE00C 7F0A949C 0FC2B99B */  jal   textRender
 /* 0DE010 7F0A94A0 AFAF0014 */   sw    $t7, 0x14($sp)
 /* 0DE014 7F0A94A4 3C0C8005 */  lui   $t4, %hi(j_text_trigger) # $t4, 0x8005
 /* 0DE018 7F0A94A8 8D8C8500 */  lw    $t4, %lo(j_text_trigger)($t4)
@@ -4365,12 +4217,12 @@ glabel draw_watch_inventory_page
 /* 0DE050 7F0A94E0 AFAF0014 */  sw    $t7, 0x14($sp)
 /* 0DE054 7F0A94E4 0FC2B6F1 */  jal   microcode_constructor_related_to_menus
 /* 0DE058 7F0A94E8 24E70052 */   addiu $a3, $a3, 0x52
-/* 0DE05C 7F0A94EC 3C188004 */  lui   $t8, %hi(ptrSecondFontTableSmall) # $t8, 0x8004
-/* 0DE060 7F0A94F0 8F180EE0 */  lw    $t8, %lo(ptrSecondFontTableSmall)($t8)
-/* 0DE064 7F0A94F4 3C108004 */  lui   $s0, %hi(ptrFirstFontTableSmall) # $s0, 0x8004
+/* 0DE05C 7F0A94EC 3C188004 */  lui   $t8, %hi(ptrFontBankGothicChars) # $t8, 0x8004
+/* 0DE060 7F0A94F0 8F180EE0 */  lw    $t8, %lo(ptrFontBankGothicChars)($t8)
+/* 0DE064 7F0A94F4 3C108004 */  lui   $s0, %hi(ptrFontBankGothic) # $s0, 0x8004
 /* 0DE068 7F0A94F8 3C048004 */  lui   $a0, %hi(g_curWatchItemIndex) # $a0, 0x8004
 /* 0DE06C 7F0A94FC AFA20930 */  sw    $v0, 0x930($sp)
-/* 0DE070 7F0A9500 8E100EDC */  lw    $s0, %lo(ptrFirstFontTableSmall)($s0)
+/* 0DE070 7F0A9500 8E100EDC */  lw    $s0, %lo(ptrFontBankGothic)($s0)
 /* 0DE074 7F0A9504 8C8409E8 */  lw    $a0, %lo(g_curWatchItemIndex)($a0)
 /* 0DE078 7F0A9508 0FC2374A */  jal   bondinvGetNameByIndex
 /* 0DE07C 7F0A950C AFB8005C */   sw    $t8, 0x5c($sp)
@@ -4398,7 +4250,7 @@ glabel draw_watch_inventory_page
 /* 0DE0D4 7F0A9564 27A60064 */  addiu $a2, $sp, 0x64
 /* 0DE0D8 7F0A9568 8FA7005C */  lw    $a3, 0x5c($sp)
 /* 0DE0DC 7F0A956C AFB00010 */  sw    $s0, 0x10($sp)
-/* 0DE0E0 7F0A9570 0FC2BD4F */  jal   sub_GAME_7F0AE98C
+/* 0DE0E0 7F0A9570 0FC2BD4F */  jal   textMeasure
 /* 0DE0E4 7F0A9574 AFA00014 */   sw    $zero, 0x14($sp)
 /* 0DE0E8 7F0A9578 3C098004 */  lui   $t1, %hi(D_800409C0) # $t1, 0x8004
 /* 0DE0EC 7F0A957C 8D2909F0 */  lw    $t1, %lo(D_800409C0)($t1)
@@ -4415,7 +4267,7 @@ glabel draw_watch_inventory_page
 /* 0DE118 7F0A95A8 2402000E */   li    $v0, 14
 .Ljp7F0A95AC:
 /* 0DE11C 7F0A95AC AFB00010 */  sw    $s0, 0x10($sp)
-/* 0DE120 7F0A95B0 0FC2BD4F */  jal   sub_GAME_7F0AE98C
+/* 0DE120 7F0A95B0 0FC2BD4F */  jal   textMeasure
 /* 0DE124 7F0A95B4 AFA20014 */   sw    $v0, 0x14($sp)
 /* 0DE128 7F0A95B8 3C038005 */  lui   $v1, %hi(j_text_trigger) # $v1, 0x8005
 /* 0DE12C 7F0A95BC 8C638500 */  lw    $v1, %lo(j_text_trigger)($v1)
@@ -4455,7 +4307,7 @@ glabel draw_watch_inventory_page
 /* 0DE1A4 7F0A9634 AFA00024 */  sw    $zero, 0x24($sp)
 /* 0DE1A8 7F0A9638 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DE1AC 7F0A963C AFB80010 */  sw    $t8, 0x10($sp)
-/* 0DE1B0 7F0A9640 0FC2B99B */  jal   en_text_write_stuff
+/* 0DE1B0 7F0A9640 0FC2B99B */  jal   textRender
 /* 0DE1B4 7F0A9644 AFA9001C */   sw    $t1, 0x1c($sp)
 /* 0DE1B8 7F0A9648 1000001A */  b     .Ljp7F0A96B4
 /* 0DE1BC 7F0A964C AFA20930 */   sw    $v0, 0x930($sp)
@@ -4484,7 +4336,7 @@ glabel draw_watch_inventory_page
 /* 0DE20C 7F0A969C AFB00014 */  sw    $s0, 0x14($sp)
 /* 0DE210 7F0A96A0 AFA00028 */  sw    $zero, 0x28($sp)
 /* 0DE214 7F0A96A4 AFA2002C */  sw    $v0, 0x2c($sp)
-/* 0DE218 7F0A96A8 0FC2BCA7 */  jal   jp_text_write_stuff
+/* 0DE218 7F0A96A8 0FC2BCA7 */  jal   textRenderGlow
 /* 0DE21C 7F0A96AC AFAB0010 */   sw    $t3, 0x10($sp)
 /* 0DE220 7F0A96B0 AFA20930 */  sw    $v0, 0x930($sp)
 .Ljp7F0A96B4:
@@ -4708,10 +4560,10 @@ glabel draw_watch_inventory_page
 /* 0DA434 7F0A7A44 24070040 */   li    $a3, 64
 /* 0DA438 7F0A7A48 3C0B8004 */  lui   $t3, %hi(j_text_trigger) # $t3, 0x8004
 /* 0DA43C 7F0A7A4C 8D6B1150 */  lw    $t3, %lo(j_text_trigger)($t3)
-/* 0DA440 7F0A7A50 3C098004 */  lui   $t1, %hi(ptrFirstFontTableSmall) # $t1, 0x8004
-/* 0DA444 7F0A7A54 3C0A8004 */  lui   $t2, %hi(ptrSecondFontTableSmall) # $t2, 0x8004
-/* 0DA448 7F0A7A58 8D29AAFC */  lw    $t1, %lo(ptrFirstFontTableSmall)($t1)
-/* 0DA44C 7F0A7A5C 8D4AAB00 */  lw    $t2, %lo(ptrSecondFontTableSmall)($t2)
+/* 0DA440 7F0A7A50 3C098004 */  lui   $t1, %hi(ptrFontBankGothic) # $t1, 0x8004
+/* 0DA444 7F0A7A54 3C0A8004 */  lui   $t2, %hi(ptrFontBankGothicChars) # $t2, 0x8004
+/* 0DA448 7F0A7A58 8D29AAFC */  lw    $t1, %lo(ptrFontBankGothic)($t1)
+/* 0DA44C 7F0A7A5C 8D4AAB00 */  lw    $t2, %lo(ptrFontBankGothicChars)($t2)
 /* 0DA450 7F0A7A60 AFA20930 */  sw    $v0, 0x930($sp)
 /* 0DA454 7F0A7A64 AFA00868 */  sw    $zero, 0x868($sp)
 /* 0DA458 7F0A7A68 AFA00864 */  sw    $zero, 0x864($sp)
@@ -4783,7 +4635,7 @@ glabel draw_watch_inventory_page
 /* 0DA53C 7F0A7B4C 27A6008C */  addiu $a2, $sp, 0x8c
 /* 0DA540 7F0A7B50 8FA7085C */  lw    $a3, 0x85c($sp)
 /* 0DA544 7F0A7B54 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0DA548 7F0A7B58 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DA548 7F0A7B58 0FC2B713 */  jal   textMeasure
 /* 0DA54C 7F0A7B5C AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0DA550 7F0A7B60 3C0B8004 */  lui   $t3, %hi(j_text_trigger) # $t3, 0x8004
 /* 0DA554 7F0A7B64 8D6B1150 */  lw    $t3, %lo(j_text_trigger)($t3)
@@ -4838,7 +4690,7 @@ glabel draw_watch_inventory_page
 /* 0DA600 7F0A7C10 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DA604 7F0A7C14 AFAB0024 */  sw    $t3, 0x24($sp)
 /* 0DA608 7F0A7C18 AFAE0010 */  sw    $t6, 0x10($sp)
-/* 0DA60C 7F0A7C1C 0FC2B35F */  jal   en_text_write_stuff
+/* 0DA60C 7F0A7C1C 0FC2B35F */  jal   textRender
 /* 0DA610 7F0A7C20 AFAF0014 */   sw    $t7, 0x14($sp)
 /* 0DA614 7F0A7C24 3C0C8004 */  lui   $t4, %hi(j_text_trigger) # $t4, 0x8004
 /* 0DA618 7F0A7C28 8D8C1150 */  lw    $t4, %lo(j_text_trigger)($t4)
@@ -4860,12 +4712,12 @@ glabel draw_watch_inventory_page
 /* 0DA650 7F0A7C60 AFAF0014 */  sw    $t7, 0x14($sp)
 /* 0DA654 7F0A7C64 0FC2B0B5 */  jal   microcode_constructor_related_to_menus
 /* 0DA658 7F0A7C68 24E70052 */   addiu $a3, $a3, 0x52
-/* 0DA65C 7F0A7C6C 3C188004 */  lui   $t8, %hi(ptrSecondFontTableSmall) # $t8, 0x8004
-/* 0DA660 7F0A7C70 8F18AB00 */  lw    $t8, %lo(ptrSecondFontTableSmall)($t8)
-/* 0DA664 7F0A7C74 3C108004 */  lui   $s0, %hi(ptrFirstFontTableSmall) # $s0, 0x8004
+/* 0DA65C 7F0A7C6C 3C188004 */  lui   $t8, %hi(ptrFontBankGothicChars) # $t8, 0x8004
+/* 0DA660 7F0A7C70 8F18AB00 */  lw    $t8, %lo(ptrFontBankGothicChars)($t8)
+/* 0DA664 7F0A7C74 3C108004 */  lui   $s0, %hi(ptrFontBankGothic) # $s0, 0x8004
 /* 0DA668 7F0A7C78 3C048004 */  lui   $a0, %hi(g_curWatchItemIndex) # $a0, 0x8004
 /* 0DA66C 7F0A7C7C AFA20930 */  sw    $v0, 0x930($sp)
-/* 0DA670 7F0A7C80 8E10AAFC */  lw    $s0, %lo(ptrFirstFontTableSmall)($s0)
+/* 0DA670 7F0A7C80 8E10AAFC */  lw    $s0, %lo(ptrFontBankGothic)($s0)
 /* 0DA674 7F0A7C84 8C84A608 */  lw    $a0, %lo(g_curWatchItemIndex)($a0)
 /* 0DA678 7F0A7C88 0FC235EA */  jal   bondinvGetNameByIndex
 /* 0DA67C 7F0A7C8C AFB8005C */   sw    $t8, 0x5c($sp)
@@ -4893,7 +4745,7 @@ glabel draw_watch_inventory_page
 /* 0DA6D4 7F0A7CE4 27A60064 */  addiu $a2, $sp, 0x64
 /* 0DA6D8 7F0A7CE8 8FA7005C */  lw    $a3, 0x5c($sp)
 /* 0DA6DC 7F0A7CEC AFB00010 */  sw    $s0, 0x10($sp)
-/* 0DA6E0 7F0A7CF0 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DA6E0 7F0A7CF0 0FC2B713 */  jal   textMeasure
 /* 0DA6E4 7F0A7CF4 AFA00014 */   sw    $zero, 0x14($sp)
 /* 0DA6E8 7F0A7CF8 3C098004 */  lui   $t1, %hi(D_800409C0) # $t1, 0x8004
 /* 0DA6EC 7F0A7CFC 8D29A610 */  lw    $t1, %lo(D_800409C0)($t1)
@@ -4910,7 +4762,7 @@ glabel draw_watch_inventory_page
 /* 0DA718 7F0A7D28 2402000E */   li    $v0, 14
 .L7F0A7D2C:
 /* 0DA71C 7F0A7D2C AFB00010 */  sw    $s0, 0x10($sp)
-/* 0DA720 7F0A7D30 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DA720 7F0A7D30 0FC2B713 */  jal   textMeasure
 /* 0DA724 7F0A7D34 AFA20014 */   sw    $v0, 0x14($sp)
 /* 0DA728 7F0A7D38 3C038004 */  lui   $v1, %hi(j_text_trigger) # $v1, 0x8004
 /* 0DA72C 7F0A7D3C 8C631150 */  lw    $v1, %lo(j_text_trigger)($v1)
@@ -4950,7 +4802,7 @@ glabel draw_watch_inventory_page
 /* 0DA7A4 7F0A7DB4 AFA00024 */  sw    $zero, 0x24($sp)
 /* 0DA7A8 7F0A7DB8 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DA7AC 7F0A7DBC AFB80010 */  sw    $t8, 0x10($sp)
-/* 0DA7B0 7F0A7DC0 0FC2B35F */  jal   en_text_write_stuff
+/* 0DA7B0 7F0A7DC0 0FC2B35F */  jal   textRender
 /* 0DA7B4 7F0A7DC4 AFA9001C */   sw    $t1, 0x1c($sp)
 /* 0DA7B8 7F0A7DC8 1000001A */  b     .L7F0A7E34
 /* 0DA7BC 7F0A7DCC AFA20930 */   sw    $v0, 0x930($sp)
@@ -4979,7 +4831,7 @@ glabel draw_watch_inventory_page
 /* 0DA80C 7F0A7E1C AFB00014 */  sw    $s0, 0x14($sp)
 /* 0DA810 7F0A7E20 AFA00028 */  sw    $zero, 0x28($sp)
 /* 0DA814 7F0A7E24 AFA2002C */  sw    $v0, 0x2c($sp)
-/* 0DA818 7F0A7E28 0FC2B66B */  jal   jp_text_write_stuff
+/* 0DA818 7F0A7E28 0FC2B66B */  jal   textRenderGlow
 /* 0DA81C 7F0A7E2C AFAB0010 */   sw    $t3, 0x10($sp)
 /* 0DA820 7F0A7E30 AFA20930 */  sw    $v0, 0x930($sp)
 .L7F0A7E34:
@@ -5008,8 +4860,8 @@ Gfx *unused_draw_watch_inventory_page(Gfx *gdl, Mtx *param_2) {
     s32 sp5C;    
     s32 sp58;
     s32 sp54;
-    s32 ptr_first_font;
-    s32 ptr_second_font;
+    s32 pFontFile;
+    s32 pFontChars;
 
     u16 *long_name;
     s32 temp_2;
@@ -5017,8 +4869,8 @@ Gfx *unused_draw_watch_inventory_page(Gfx *gdl, Mtx *param_2) {
     sp58 = 0;
     sp54 = 0;
 
-    ptr_first_font = ptrFirstFontTableSmall;
-    ptr_second_font = ptrSecondFontTableSmall;
+    pFontFile = ptrFontBankGothic;
+    pFontChars = ptrFontBankGothicChars;
 
     long_name = bondinvGetLongNameByIndex(g_curWatchItemIndex);
     gdl = draw_background_health_and_armor(gdl, param_2, 0);
@@ -5034,7 +4886,7 @@ Gfx *unused_draw_watch_inventory_page(Gfx *gdl, Mtx *param_2) {
         sub_GAME_7F0A5B80();
         gdl = microcode_constructor(gdl);
 
-        sub_GAME_7F0AE98C(&sp58, &sp54, long_name, ptr_second_font, ptr_first_font, 0);
+        textMeasure(&sp58, &sp54, long_name, pFontChars, pFontFile, 0);
 
         sp70 = ((s32) (0xAA - sp54) / 2) + 0x4B;
         temp_2 = sp70;
@@ -5047,16 +4899,16 @@ Gfx *unused_draw_watch_inventory_page(Gfx *gdl, Mtx *param_2) {
             sub_GAME_7F0A8378();
             if (D_800409C4 == 0)
             {
-                gdl = en_text_write_stuff(gdl, &sp70, &sp6C, long_name, ptr_second_font, ptr_first_font, 0xA0FFA0F0, sp54, 0x64, 0, 0);
+                gdl = textRender(gdl, &sp70, &sp6C, long_name, pFontChars, pFontFile, 0xA0FFA0F0, sp54, 0x64, 0, 0);
             }
             else
             {
-                gdl = jp_text_write_stuff(gdl, &sp70, &sp6C, long_name, ptr_second_font, ptr_first_font, -1, 0x7000A0, sp54 + 1, 0x64, 0, 0);
+                gdl = textRenderGlow(gdl, &sp70, &sp6C, long_name, pFontChars, pFontFile, -1, 0x7000A0, sp54 + 1, 0x64, 0, 0);
             }
         }
         else
         {
-            gdl = en_text_write_stuff(gdl, &sp70, &sp6C, long_name, ptr_second_font, ptr_first_font, 0xAA00B0, sp54, 0x64, 0, 0);
+            gdl = textRender(gdl, &sp70, &sp6C, long_name, pFontChars, pFontFile, 0xAA00B0, sp54, 0x64, 0, 0);
         }
 
     }
@@ -5489,10 +5341,10 @@ GLOBAL_ASM(
 glabel sub_GAME_7F0A9398
 /* 0DDEC8 7F0A9398 27BDFF98 */  addiu $sp, $sp, -0x68
 /* 0DDECC 7F0A939C AFA70074 */  sw    $a3, 0x74($sp)
-/* 0DDED0 7F0A93A0 3C028004 */  lui   $v0, %hi(ptrFirstFontTableSmall)
-/* 0DDED4 7F0A93A4 8C420EAC */  lw    $v0, %lo(ptrFirstFontTableSmall)($v0)
-/* 0DDED8 7F0A93A8 3C078004 */  lui   $a3, %hi(ptrSecondFontTableSmall)
-/* 0DDEDC 7F0A93AC 8CE70EB0 */  lw    $a3, %lo(ptrSecondFontTableSmall)($a3)
+/* 0DDED0 7F0A93A0 3C028004 */  lui   $v0, %hi(ptrFontBankGothic)
+/* 0DDED4 7F0A93A4 8C420EAC */  lw    $v0, %lo(ptrFontBankGothic)($v0)
+/* 0DDED8 7F0A93A8 3C078004 */  lui   $a3, %hi(ptrFontBankGothicChars)
+/* 0DDEDC 7F0A93AC 8CE70EB0 */  lw    $a3, %lo(ptrFontBankGothicChars)($a3)
 /* 0DDEE0 7F0A93B0 AFB00038 */  sw    $s0, 0x38($sp)
 /* 0DDEE4 7F0A93B4 00808025 */  move  $s0, $a0
 /* 0DDEE8 7F0A93B8 AFBF003C */  sw    $ra, 0x3c($sp)
@@ -5505,7 +5357,7 @@ glabel sub_GAME_7F0A9398
 /* 0DDF04 7F0A93D4 27A40054 */  addiu $a0, $sp, 0x54
 /* 0DDF08 7F0A93D8 AFA20010 */  sw    $v0, 0x10($sp)
 /* 0DDF0C 7F0A93DC AFA20050 */  sw    $v0, 0x50($sp)
-/* 0DDF10 7F0A93E0 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DDF10 7F0A93E0 0FC2BA63 */  jal   textMeasure
 /* 0DDF14 7F0A93E4 AFA7004C */   sw    $a3, 0x4c($sp)
 /* 0DDF18 7F0A93E8 8FAF0084 */  lw    $t7, 0x84($sp)
 /* 0DDF1C 7F0A93EC 8FA2006C */  lw    $v0, 0x6c($sp)
@@ -5600,7 +5452,7 @@ glabel sub_GAME_7F0A9398
 /* 0DE068 7F0A9538 AFAD0014 */  sw    $t5, 0x14($sp)
 /* 0DE06C 7F0A953C AFAE0018 */  sw    $t6, 0x18($sp)
 /* 0DE070 7F0A9540 AFAF001C */  sw    $t7, 0x1c($sp)
-/* 0DE074 7F0A9544 0FC2B6AF */  jal   en_text_write_stuff
+/* 0DE074 7F0A9544 0FC2B6AF */  jal   textRender
 /* 0DE078 7F0A9548 AFB80020 */   sw    $t8, 0x20($sp)
 /* 0DE07C 7F0A954C 00408025 */  move  $s0, $v0
 .L7F0A9550:
@@ -5625,7 +5477,7 @@ glabel sub_GAME_7F0A9398
 /* 0DE0C8 7F0A9598 AFAC0014 */  sw    $t4, 0x14($sp)
 /* 0DE0CC 7F0A959C AFAD0018 */  sw    $t5, 0x18($sp)
 /* 0DE0D0 7F0A95A0 AFAE001C */  sw    $t6, 0x1c($sp)
-/* 0DE0D4 7F0A95A4 0FC2B9BB */  jal   jp_text_write_stuff
+/* 0DE0D4 7F0A95A4 0FC2B9BB */  jal   textRenderGlow
 /* 0DE0D8 7F0A95A8 AFB90024 */   sw    $t9, 0x24($sp)
 /* 0DE0DC 7F0A95AC 00408025 */  move  $s0, $v0
 .L7F0A95B0:
@@ -5787,10 +5639,10 @@ glabel sub_GAME_7F0A97D0
 /* 0DE300 7F0A97D0 27BDF7B0 */  addiu $sp, $sp, -0x850
 /* 0DE304 7F0A97D4 3C068004 */  lui   $a2, %hi(D_800409D8)
 /* 0DE308 7F0A97D8 8CC609D8 */  lw    $a2, %lo(D_800409D8)($a2)
-/* 0DE30C 7F0A97DC 3C0E8004 */  lui   $t6, %hi(ptrFirstFontTableSmall)
-/* 0DE310 7F0A97E0 3C0F8004 */  lui   $t7, %hi(ptrSecondFontTableSmall)
-/* 0DE314 7F0A97E4 8DCE0EAC */  lw    $t6, %lo(ptrFirstFontTableSmall)($t6)
-/* 0DE318 7F0A97E8 8DEF0EB0 */  lw    $t7, %lo(ptrSecondFontTableSmall)($t7)
+/* 0DE30C 7F0A97DC 3C0E8004 */  lui   $t6, %hi(ptrFontBankGothic)
+/* 0DE310 7F0A97E0 3C0F8004 */  lui   $t7, %hi(ptrFontBankGothicChars)
+/* 0DE314 7F0A97E4 8DCE0EAC */  lw    $t6, %lo(ptrFontBankGothic)($t6)
+/* 0DE318 7F0A97E8 8DEF0EB0 */  lw    $t7, %lo(ptrFontBankGothicChars)($t7)
 /* 0DE31C 7F0A97EC AFB00034 */  sw    $s0, 0x34($sp)
 /* 0DE320 7F0A97F0 AFBF003C */  sw    $ra, 0x3c($sp)
 /* 0DE324 7F0A97F4 AFB10038 */  sw    $s1, 0x38($sp)
@@ -5868,7 +5720,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DE42C 7F0A98FC 27A60074 */  addiu $a2, $sp, 0x74
 /* 0DE430 7F0A9900 8FA70054 */  lw    $a3, 0x54($sp)
 /* 0DE434 7F0A9904 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0DE438 7F0A9908 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DE438 7F0A9908 0FC2BA63 */  jal   textMeasure
 /* 0DE43C 7F0A990C AFAE0010 */   sw    $t6, 0x10($sp)
 /* 0DE440 7F0A9910 8E220000 */  lw    $v0, ($s1)
 /* 0DE444 7F0A9914 8FA40850 */  lw    $a0, 0x850($sp)
@@ -5901,7 +5753,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DE4A0 7F0A9970 AFA8001C */  sw    $t0, 0x1c($sp)
 /* 0DE4A4 7F0A9974 8D2A2A64 */  lw    $t2, 0x2a64($t1)
 /* 0DE4A8 7F0A9978 AFA20028 */  sw    $v0, 0x28($sp)
-/* 0DE4AC 7F0A997C 0FC2B6AF */  jal   en_text_write_stuff
+/* 0DE4AC 7F0A997C 0FC2B6AF */  jal   textRender
 /* 0DE4B0 7F0A9980 AFAA0024 */   sw    $t2, 0x24($sp)
 /* 0DE4B4 7F0A9984 3C038008 */  lui   $v1, %hi(g_CurrentPlayer)
 /* 0DE4B8 7F0A9988 8C63A0B0 */  lw    $v1, %lo(g_CurrentPlayer)($v1)
@@ -5931,7 +5783,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DE510 7F0A99E0 02003025 */  move  $a2, $s0
 /* 0DE514 7F0A99E4 8FA70054 */  lw    $a3, 0x54($sp)
 /* 0DE518 7F0A99E8 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0DE51C 7F0A99EC 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0DE51C 7F0A99EC 0FC2BA63 */  jal   textMeasure
 /* 0DE520 7F0A99F0 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0DE524 7F0A99F4 8E390000 */  lw    $t9, ($s1)
 /* 0DE528 7F0A99F8 241800AA */  li    $t8, 170
@@ -5976,7 +5828,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DE5B8 7F0A9A88 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DE5BC 7F0A9A8C AFAD0010 */  sw    $t5, 0x10($sp)
 /* 0DE5C0 7F0A9A90 AFAE0014 */  sw    $t6, 0x14($sp)
-/* 0DE5C4 7F0A9A94 0FC2B6AF */  jal   en_text_write_stuff
+/* 0DE5C4 7F0A9A94 0FC2B6AF */  jal   textRender
 /* 0DE5C8 7F0A9A98 AFB8001C */   sw    $t8, 0x1c($sp)
 /* 0DE5CC 7F0A9A9C AFA20850 */  sw    $v0, 0x850($sp)
 /* 0DE5D0 7F0A9AA0 8FBF003C */  lw    $ra, 0x3c($sp)
@@ -5996,10 +5848,10 @@ glabel sub_GAME_7F0A97D0
 /* 0DB500 7F0A8B10 27BDF7B0 */  addiu $sp, $sp, -0x850
 /* 0DB504 7F0A8B14 3C068004 */  lui   $a2, %hi(D_800409D8) # $a2, 0x8004
 /* 0DB508 7F0A8B18 8CC6A628 */  lw    $a2, %lo(D_800409D8)($a2)
-/* 0DB50C 7F0A8B1C 3C0E8004 */  lui   $t6, %hi(ptrFirstFontTableSmall) # $t6, 0x8004
-/* 0DB510 7F0A8B20 3C0F8004 */  lui   $t7, %hi(ptrSecondFontTableSmall) # $t7, 0x8004
-/* 0DB514 7F0A8B24 8DCEAAFC */  lw    $t6, %lo(ptrFirstFontTableSmall)($t6)
-/* 0DB518 7F0A8B28 8DEFAB00 */  lw    $t7, %lo(ptrSecondFontTableSmall)($t7)
+/* 0DB50C 7F0A8B1C 3C0E8004 */  lui   $t6, %hi(ptrFontBankGothic) # $t6, 0x8004
+/* 0DB510 7F0A8B20 3C0F8004 */  lui   $t7, %hi(ptrFontBankGothicChars) # $t7, 0x8004
+/* 0DB514 7F0A8B24 8DCEAAFC */  lw    $t6, %lo(ptrFontBankGothic)($t6)
+/* 0DB518 7F0A8B28 8DEFAB00 */  lw    $t7, %lo(ptrFontBankGothicChars)($t7)
 /* 0DB51C 7F0A8B2C AFB00034 */  sw    $s0, 0x34($sp)
 /* 0DB520 7F0A8B30 AFBF003C */  sw    $ra, 0x3c($sp)
 /* 0DB524 7F0A8B34 AFB10038 */  sw    $s1, 0x38($sp)
@@ -6077,7 +5929,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DB62C 7F0A8C3C 27A60074 */  addiu $a2, $sp, 0x74
 /* 0DB630 7F0A8C40 8FA70054 */  lw    $a3, 0x54($sp)
 /* 0DB634 7F0A8C44 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0DB638 7F0A8C48 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DB638 7F0A8C48 0FC2B713 */  jal   textMeasure
 /* 0DB63C 7F0A8C4C AFAE0010 */   sw    $t6, 0x10($sp)
 /* 0DB640 7F0A8C50 8E220000 */  lw    $v0, ($s1)
 /* 0DB644 7F0A8C54 8FA40850 */  lw    $a0, 0x850($sp)
@@ -6110,7 +5962,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DB6A0 7F0A8CB0 AFA8001C */  sw    $t0, 0x1c($sp)
 /* 0DB6A4 7F0A8CB4 8D2A2A5C */  lw    $t2, 0x2a5c($t1)
 /* 0DB6A8 7F0A8CB8 AFA20028 */  sw    $v0, 0x28($sp)
-/* 0DB6AC 7F0A8CBC 0FC2B35F */  jal   en_text_write_stuff
+/* 0DB6AC 7F0A8CBC 0FC2B35F */  jal   textRender
 /* 0DB6B0 7F0A8CC0 AFAA0024 */   sw    $t2, 0x24($sp)
 /* 0DB6B4 7F0A8CC4 3C038007 */  lui   $v1, %hi(g_CurrentPlayer) # $v1, 0x8007
 /* 0DB6B8 7F0A8CC8 8C638BC0 */  lw    $v1, %lo(g_CurrentPlayer)($v1)
@@ -6140,7 +5992,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DB710 7F0A8D20 02003025 */  move  $a2, $s0
 /* 0DB714 7F0A8D24 8FA70054 */  lw    $a3, 0x54($sp)
 /* 0DB718 7F0A8D28 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0DB71C 7F0A8D2C 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DB71C 7F0A8D2C 0FC2B713 */  jal   textMeasure
 /* 0DB720 7F0A8D30 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0DB724 7F0A8D34 8E390000 */  lw    $t9, ($s1)
 /* 0DB728 7F0A8D38 241800AA */  li    $t8, 170
@@ -6185,7 +6037,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DB7B8 7F0A8DC8 AFA20028 */  sw    $v0, 0x28($sp)
 /* 0DB7BC 7F0A8DCC AFAD0010 */  sw    $t5, 0x10($sp)
 /* 0DB7C0 7F0A8DD0 AFAE0014 */  sw    $t6, 0x14($sp)
-/* 0DB7C4 7F0A8DD4 0FC2B35F */  jal   en_text_write_stuff
+/* 0DB7C4 7F0A8DD4 0FC2B35F */  jal   textRender
 /* 0DB7C8 7F0A8DD8 AFB8001C */   sw    $t8, 0x1c($sp)
 /* 0DB7CC 7F0A8DDC AFA20850 */  sw    $v0, 0x850($sp)
 /* 0DB7D0 7F0A8DE0 8FBF003C */  lw    $ra, 0x3c($sp)
@@ -7999,29 +7851,29 @@ Gfx *display_text_buttons_dual_control(Gfx *gdl)
 
     if (joyGetButtons(PLAYER_1, A_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, 0x03)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //weapon
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, 0x03)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //weapon
     }
 
     if (joyGetButtons(PLAYER_1, B_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, 0x02)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //action
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, 0x02)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //action
     }
 
     if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 5))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x00)); //fire
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_00)); //fire
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x01)); //aim
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_01)); //aim
     }
 
     if (joyGetButtons(PLAYER_1, Z_TRIG))
@@ -8035,40 +7887,40 @@ Gfx *display_text_buttons_dual_control(Gfx *gdl)
 
     if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 6))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x05)); //move
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_05)); //move
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x06)); //look
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_06)); //look
     }
 
     gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_4, textptr_aux, 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0);
 
     if (joyGetButtons(1, A_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, 0x03)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //weapon
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, 0x03)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //weapon
     }
 
     if (joyGetButtons(1, B_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, 0x02)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //action
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, 0x02)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //action
     }
 
     if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 5))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x01)); //aim
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_01)); //aim
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x00)); //fire
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_00)); //fire
     }
 
     if (joyGetButtons(1, Z_TRIG))
@@ -8082,11 +7934,11 @@ Gfx *display_text_buttons_dual_control(Gfx *gdl)
 
     if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 6))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x06)); //look
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_06)); //look
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, 0x05)); //move
+        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_05)); //move
     }
 
     gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_4, textptr_aux, 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1);
@@ -8214,7 +8066,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DFA48 7F0AAF18 46105482 */  mul.s $f18, $f10, $f16
 /* 0DFA4C 7F0AAF1C 46123100 */  add.s $f4, $f6, $f18
 /* 0DFA50 7F0AAF20 E4440000 */  swc1  $f4, ($v0)
-/* 0DFA54 7F0AAF24 0FC29A8B */  jal   sub_GAME_7F0A6A2C
+/* 0DFA54 7F0AAF24 0FC29A8B */  jal   watchWrapAroundPI
 /* 0DFA58 7F0AAF28 C44C0000 */   lwc1  $f12, ($v0)
 /* 0DFA5C 7F0AAF2C 3C018004 */  lui   $at, %hi(D_80040B24)
 /* 0DFA60 7F0AAF30 E4200B24 */  swc1  $f0, %lo(D_80040B24)($at)
@@ -8414,7 +8266,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DFD50 7F0AB220 46105182 */  mul.s $f6, $f10, $f16
 /* 0DFD54 7F0AB224 46062480 */  add.s $f18, $f4, $f6
 /* 0DFD58 7F0AB228 E4520000 */  swc1  $f18, ($v0)
-/* 0DFD5C 7F0AB22C 0FC29A8B */  jal   sub_GAME_7F0A6A2C
+/* 0DFD5C 7F0AB22C 0FC29A8B */  jal   watchWrapAroundPI
 /* 0DFD60 7F0AB230 C44C0000 */   lwc1  $f12, ($v0)
 /* 0DFD64 7F0AB234 3C018004 */  lui   $at, %hi(D_80040B34)
 /* 0DFD68 7F0AB238 E4200B34 */  swc1  $f0, %lo(D_80040B34)($at)
@@ -8685,7 +8537,7 @@ glabel sub_GAME_7F0AADC0
 /* 0E063C 7F0ABACC 460A4402 */  mul.s $f16, $f8, $f10
 /* 0E0640 7F0ABAD0 46109100 */  add.s $f4, $f18, $f16
 /* 0E0644 7F0ABAD4 E4440000 */  swc1  $f4, ($v0)
-/* 0E0648 7F0ABAD8 0FC29D73 */  jal   sub_GAME_7F0A6A2C
+/* 0E0648 7F0ABAD8 0FC29D73 */  jal   watchWrapAroundPI
 /* 0E064C 7F0ABADC C44C0000 */   lwc1  $f12, ($v0)
 /* 0E0650 7F0ABAE0 3C018004 */  lui   $at, %hi(D_80040B24) # $at, 0x8004
 /* 0E0654 7F0ABAE4 E4200B54 */  swc1  $f0, %lo(D_80040B24)($at)
@@ -8882,7 +8734,7 @@ glabel sub_GAME_7F0AADC0
 /* 0E0938 7F0ABDC8 46083282 */  mul.s $f10, $f6, $f8
 /* 0E093C 7F0ABDCC 460A9400 */  add.s $f16, $f18, $f10
 /* 0E0940 7F0ABDD0 E4500000 */  swc1  $f16, ($v0)
-/* 0E0944 7F0ABDD4 0FC29D73 */  jal   sub_GAME_7F0A6A2C
+/* 0E0944 7F0ABDD4 0FC29D73 */  jal   watchWrapAroundPI
 /* 0E0948 7F0ABDD8 C44C0000 */   lwc1  $f12, ($v0)
 /* 0E094C 7F0ABDDC 3C018004 */  lui   $at, %hi(D_80040B34) # $at, 0x8004
 /* 0E0950 7F0ABDE0 E4200B64 */  swc1  $f0, %lo(D_80040B34)($at)
@@ -9153,7 +9005,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DCC3C 7F0AA24C 460A4402 */  mul.s $f16, $f8, $f10
 /* 0DCC40 7F0AA250 46109100 */  add.s $f4, $f18, $f16
 /* 0DCC44 7F0AA254 E4440000 */  swc1  $f4, ($v0)
-/* 0DCC48 7F0AA258 0FC29753 */  jal   sub_GAME_7F0A6A2C
+/* 0DCC48 7F0AA258 0FC29753 */  jal   watchWrapAroundPI
 /* 0DCC4C 7F0AA25C C44C0000 */   lwc1  $f12, ($v0)
 /* 0DCC50 7F0AA260 3C018004 */  lui   $at, %hi(D_80040B24) # $at, 0x8004
 /* 0DCC54 7F0AA264 E420A774 */  swc1  $f0, %lo(D_80040B24)($at)
@@ -9350,7 +9202,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DCF38 7F0AA548 46083282 */  mul.s $f10, $f6, $f8
 /* 0DCF3C 7F0AA54C 460A9400 */  add.s $f16, $f18, $f10
 /* 0DCF40 7F0AA550 E4500000 */  swc1  $f16, ($v0)
-/* 0DCF44 7F0AA554 0FC29753 */  jal   sub_GAME_7F0A6A2C
+/* 0DCF44 7F0AA554 0FC29753 */  jal   watchWrapAroundPI
 /* 0DCF48 7F0AA558 C44C0000 */   lwc1  $f12, ($v0)
 /* 0DCF4C 7F0AA55C 3C018004 */  lui   $at, %hi(D_80040B34) # $at, 0x8004
 /* 0DCF50 7F0AA560 E420A784 */  swc1  $f0, %lo(D_80040B34)($at)
@@ -9544,19 +9396,19 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
     s32 sp58;
     s32 sp54;
     s32 sp50;
-    s32 ptr_first_font;
-    s32 ptr_second_font;
+    s32 pFontFile;
+    s32 pFontChars;
 
     gdl = draw_background_health_and_armor(gdl, param_2, 0);
     
     if (check_watch_page_transistion_running() != 1) {
         
         gdl = sub_GAME_7F0AADC0(gdl);
-        ptr_first_font = ptrFirstFontTableSmall;
-        ptr_second_font = ptrSecondFontTableSmall;
+        pFontFile = ptrFontBankGothic;
+        pFontChars = ptrFontBankGothicChars;
         
         gdl = microcode_constructor(gdl);
-        textptr = langGet(TEXT(LOPTIONS, 0x32)); //control style
+        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_32)); //control style
     
         sp5C = XOFFSET_1;
         sp58 = 0x1A;
@@ -9570,24 +9422,24 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
             }
         }
         
-        sub_GAME_7F0AE98C(&sp50, &sp54, textptr, ptr_second_font, ptr_first_font, 0);
+        textMeasure(&sp50, &sp54, textptr, pFontChars, pFontFile, 0);
         
         if ((watch_item_is_actively_selected != 0) && (controller_options_index == 0))
         {
-            gdl = jp_text_write_stuff(gdl, &sp5C, &sp58, textptr, ptr_second_font, ptr_first_font, phi_s1, 0x7000A0, sp54 + 1, sp50, 0, 0);
+            gdl = textRenderGlow(gdl, &sp5C, &sp58, textptr, pFontChars, pFontFile, phi_s1, 0x7000A0, sp54 + 1, sp50, 0, 0);
         } else
         {
-            gdl = en_text_write_stuff(gdl, &sp5C, &sp58, textptr, ptr_second_font, ptr_first_font, phi_s1, sp54, sp50, 0, 0);
+            gdl = textRender(gdl, &sp5C, &sp58, textptr, pFontChars, pFontFile, phi_s1, sp54, sp50, 0, 0);
         }
         
         gdl = sub_GAME_7F0A97D0(gdl);
-        textptr = langGet(TEXT(LOPTIONS, 0x33)); //controller;
+        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_33)); //controller;
         
         phi_s1 = 0xFF00B0;
         
         if (controllerCheckDualControllerTypesAllowed())
         {
-            textptr = langGet(TEXT(LOPTIONS, 0x34)); //controllers;
+            textptr = langGet(TEXT(LOPTIONS, OPTION_STR_34)); //controllers;
         }
         sp5C = XOFFSET_1;
         sp58 = 0x2B;
@@ -9601,14 +9453,14 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
             }
         }
         
-        sub_GAME_7F0AE98C(&sp50, &sp54, textptr, ptr_second_font, ptr_first_font, 0);
+        textMeasure(&sp50, &sp54, textptr, pFontChars, pFontFile, 0);
 
         if ((watch_item_is_actively_selected != 0) && (controller_options_index == 1))
         {
-            gdl = jp_text_write_stuff(gdl, &sp5C, &sp58, textptr, ptr_second_font, ptr_first_font, phi_s1, 0x7000A0, sp54 + 1, sp50, 0, 0);
+            gdl = textRenderGlow(gdl, &sp5C, &sp58, textptr, pFontChars, pFontFile, phi_s1, 0x7000A0, sp54 + 1, sp50, 0, 0);
         } else
         {
-            gdl = en_text_write_stuff(gdl, &sp5C, &sp58, textptr, ptr_second_font, ptr_first_font, phi_s1, sp54, sp50, 0, 0);
+            gdl = textRender(gdl, &sp5C, &sp58, textptr, pFontChars, pFontFile, phi_s1, sp54, sp50, 0, 0);
         }
         
     }
@@ -10072,8 +9924,8 @@ Gfx *draw_watch_game_options_page(Gfx *gdl, Mtx *param_2) {
     s32 sp4C;
     s32 sp48;
 
-    s32 ptr_first_font;
-    s32 ptr_second_font;
+    s32 pFontFile;
+    s32 pFontChars;
     
     gdl = draw_background_health_and_armor(gdl, param_2, 0);
 
@@ -10081,11 +9933,11 @@ Gfx *draw_watch_game_options_page(Gfx *gdl, Mtx *param_2) {
     {
         gdl = sub_GAME_7F0A91C8(gdl);
         gdl = sub_GAME_7F0A8FEC(gdl);
-        ptr_first_font = ptrFirstFontTableSmall;
-        ptr_second_font = ptrSecondFontTableSmall;
+        pFontFile = ptrFontBankGothic;
+        pFontChars = ptrFontBankGothicChars;
         gdl = microcode_constructor(gdl);
 
-        textptr = langGet(TEXT(LOPTIONS, 0x35)); //music
+        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_35)); //music
 
         sp54 = XOFFSET_1;
         sp50 = YOFFSET_8;
@@ -10101,19 +9953,19 @@ Gfx *draw_watch_game_options_page(Gfx *gdl, Mtx *param_2) {
             }
         }
 
-        sub_GAME_7F0AE98C(&sp48, &sp4C, textptr, ptr_second_font, ptr_first_font, 0);
+        textMeasure(&sp48, &sp4C, textptr, pFontChars, pFontFile, 0);
 
         if ((watch_item_is_actively_selected != 0) && (game_options_index == 0))
         {
-            gdl = jp_text_write_stuff(gdl, &sp54, &sp50, textptr, ptr_second_font, ptr_first_font, sp5C, 0x7000A0, sp4C + 1, sp48, 0, 0);
+            gdl = textRenderGlow(gdl, &sp54, &sp50, textptr, pFontChars, pFontFile, sp5C, 0x7000A0, sp4C + 1, sp48, 0, 0);
         }
         else
         {
-            gdl = en_text_write_stuff(gdl, &sp54, &sp50, textptr, ptr_second_font, ptr_first_font, sp5C, sp4C, sp48, 0, 0);
+            gdl = textRender(gdl, &sp54, &sp50, textptr, pFontChars, pFontFile, sp5C, sp4C, sp48, 0, 0);
         }
 
         sp5C = 0xFF00B0;
-        textptr = langGet(TEXT(LOPTIONS, 0x36)); //fx
+        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_36)); //fx
 
         sp54 = XOFFSET_1;
         sp50 = YOFFSET_9;
@@ -10128,15 +9980,15 @@ Gfx *draw_watch_game_options_page(Gfx *gdl, Mtx *param_2) {
             }
         }
 
-        sub_GAME_7F0AE98C(&sp48, &sp4C, textptr, ptr_second_font, ptr_first_font, 0);
+        textMeasure(&sp48, &sp4C, textptr, pFontChars, pFontFile, 0);
 
         if ((watch_item_is_actively_selected != 0) && (game_options_index == 1))
         {
-            gdl = jp_text_write_stuff(gdl, &sp54, &sp50, textptr, ptr_second_font, ptr_first_font, sp5C, 0x7000A0, sp4C + 1, sp48, 0, 0);
+            gdl = textRenderGlow(gdl, &sp54, &sp50, textptr, pFontChars, pFontFile, sp5C, 0x7000A0, sp4C + 1, sp48, 0, 0);
         }
         else
         {
-            gdl = en_text_write_stuff(gdl, &sp54, &sp50, textptr, ptr_second_font, ptr_first_font, sp5C, sp4C, sp48, 0, 0);
+            gdl = textRender(gdl, &sp54, &sp50, textptr, pFontChars, pFontFile, sp5C, sp4C, sp48, 0, 0);
         }
 
         gdl = draw_toggle_options(gdl);
@@ -10167,60 +10019,33 @@ int sub_GAME_7F0AC0E8(u8 *arg) {
 }
 
 
-#ifndef VERSION_EU
 u8 *sub_GAME_7F0AC120(u8 *arg)
 {
-    u8 cVar1;
-    u8 *pcVar2;
+    u8 *ret;
 
-    cVar1 = *arg;
-    pcVar2 = arg;
+    ret = arg;
 
-    while (cVar1) {
-
-        if (cVar1 == 0xA) {
-            arg += 1;
-
-            if (arg[0]) {
-                pcVar2 = arg;
+    while (*arg != 0)
+    {
+        if (*arg == 0xa)
+        {
+            if (*++arg != 0)
+            {
+                ret = arg;                
             }
         }
-
-        cVar1 = arg[1];
-        arg += 1;
+#if defined(VERSION_EU)
+        else
+        {
+            arg++;
+        }
+#else
+            arg++;
+#endif
     }
 
-    return pcVar2;
+    return ret;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel sub_GAME_7F0AC120
-/* 0DDE38 7F0AB448 90820000 */  lbu   $v0, ($a0)
-/* 0DDE3C 7F0AB44C 00801825 */  move  $v1, $a0
-/* 0DDE40 7F0AB450 2405000A */  li    $a1, 10
-/* 0DDE44 7F0AB454 1040000D */  beqz  $v0, .L7F0AB48C
-/* 0DDE48 7F0AB458 00000000 */   nop   
-.L7F0AB45C:
-/* 0DDE4C 7F0AB45C 54A20008 */  bnel  $a1, $v0, .L7F0AB480
-/* 0DDE50 7F0AB460 24840001 */   addiu $a0, $a0, 1
-/* 0DDE54 7F0AB464 90820001 */  lbu   $v0, 1($a0)
-/* 0DDE58 7F0AB468 24840001 */  addiu $a0, $a0, 1
-/* 0DDE5C 7F0AB46C 10400005 */  beqz  $v0, .L7F0AB484
-/* 0DDE60 7F0AB470 00000000 */   nop   
-/* 0DDE64 7F0AB474 10000003 */  b     .L7F0AB484
-/* 0DDE68 7F0AB478 00801825 */   move  $v1, $a0
-/* 0DDE6C 7F0AB47C 24840001 */  addiu $a0, $a0, 1
-.L7F0AB480:
-/* 0DDE70 7F0AB480 90820000 */  lbu   $v0, ($a0)
-.L7F0AB484:
-/* 0DDE74 7F0AB484 1440FFF5 */  bnez  $v0, .L7F0AB45C
-/* 0DDE78 7F0AB488 00000000 */   nop   
-.L7F0AB48C:
-/* 0DDE7C 7F0AB48C 03E00008 */  jr    $ra
-/* 0DDE80 7F0AB490 00601025 */   move  $v0, $v1
-)
-#endif
 
 
 #ifdef NONMATCHING
@@ -10352,10 +10177,10 @@ glabel draw_watch_mission_briefing_page
 /* 0E0D54 7F0AC224 8DA1FFFC */  lw    $at, -4($t5)
 /* 0E0D58 7F0AC228 15B9FFF8 */  bne   $t5, $t9, .L7F0AC20C
 /* 0E0D5C 7F0AC22C AD81FFFC */   sw    $at, -4($t4)
-/* 0E0D60 7F0AC230 3C0F8004 */  lui   $t7, %hi(ptrFirstFontTableSmall)
-/* 0E0D64 7F0AC234 3C0E8004 */  lui   $t6, %hi(ptrSecondFontTableSmall)
-/* 0E0D68 7F0AC238 8DEF0EAC */  lw    $t7, %lo(ptrFirstFontTableSmall)($t7)
-/* 0E0D6C 7F0AC23C 8DCE0EB0 */  lw    $t6, %lo(ptrSecondFontTableSmall)($t6)
+/* 0E0D60 7F0AC230 3C0F8004 */  lui   $t7, %hi(ptrFontBankGothic)
+/* 0E0D64 7F0AC234 3C0E8004 */  lui   $t6, %hi(ptrFontBankGothicChars)
+/* 0E0D68 7F0AC238 8DEF0EAC */  lw    $t7, %lo(ptrFontBankGothic)($t7)
+/* 0E0D6C 7F0AC23C 8DCE0EB0 */  lw    $t6, %lo(ptrFontBankGothicChars)($t6)
 /* 0E0D70 7F0AC240 3C088005 */  lui   $t0, %hi(D_800577C0)
 /* 0E0D74 7F0AC244 250877C0 */  addiu $t0, %lo(D_800577C0) # addiu $t0, $t0, 0x77c0
 /* 0E0D78 7F0AC248 AFA00D54 */  sw    $zero, 0xd54($sp)
@@ -10395,7 +10220,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E0DFC 7F0AC2CC 02003025 */  move  $a2, $s0
 /* 0E0E00 7F0AC2D0 8FA70D48 */  lw    $a3, 0xd48($sp)
 /* 0E0E04 7F0AC2D4 AFA00014 */  sw    $zero, 0x14($sp)
-/* 0E0E08 7F0AC2D8 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0E0E08 7F0AC2D8 0FC2BA63 */  jal   textMeasure
 /* 0E0E0C 7F0AC2DC AFB90010 */   sw    $t9, 0x10($sp)
 /* 0E0E10 7F0AC2E0 8FA20D50 */  lw    $v0, 0xd50($sp)
 /* 0E0E14 7F0AC2E4 240D00AA */  li    $t5, 170
@@ -10437,7 +10262,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E0EA0 7F0AC370 AFA80010 */  sw    $t0, 0x10($sp)
 /* 0E0EA4 7F0AC374 AFAA0014 */  sw    $t2, 0x14($sp)
 /* 0E0EA8 7F0AC378 AFAD001C */  sw    $t5, 0x1c($sp)
-/* 0E0EAC 7F0AC37C 0FC2B6AF */  jal   en_text_write_stuff
+/* 0E0EAC 7F0AC37C 0FC2B6AF */  jal   textRender
 /* 0E0EB0 7F0AC380 AFAC0020 */   sw    $t4, 0x20($sp)
 /* 0E0EB4 7F0AC384 3C0F8004 */  lui   $t7, %hi(mission_brief_index)
 /* 0E0EB8 7F0AC388 8DEF09A0 */  lw    $t7, %lo(mission_brief_index)($t7)
@@ -10653,7 +10478,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E11CC 7F0AC69C AFA00024 */  sw    $zero, 0x24($sp)
 /* 0E11D0 7F0AC6A0 AFB90010 */  sw    $t9, 0x10($sp)
 /* 0E11D4 7F0AC6A4 AFAA0014 */  sw    $t2, 0x14($sp)
-/* 0E11D8 7F0AC6A8 0FC2B6AF */  jal   en_text_write_stuff
+/* 0E11D8 7F0AC6A8 0FC2B6AF */  jal   textRender
 /* 0E11DC 7F0AC6AC AFA8001C */   sw    $t0, 0x1c($sp)
 /* 0E11E0 7F0AC6B0 AFA20DE8 */  sw    $v0, 0xde8($sp)
 /* 0E11E4 7F0AC6B4 0FC2B03A */  jal   sub_GAME_7F0AC0E8
@@ -10668,7 +10493,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E1208 7F0AC6D8 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0E120C 7F0AC6DC 00403025 */  move  $a2, $v0
 /* 0E1210 7F0AC6E0 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0E1214 7F0AC6E4 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0E1214 7F0AC6E4 0FC2BA63 */  jal   textMeasure
 /* 0E1218 7F0AC6E8 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0E121C 7F0AC6EC 0C001107 */  jal   viGetX
 /* 0E1220 7F0AC6F0 00000000 */   nop
@@ -10758,7 +10583,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E1340 7F0AC810 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0E1344 7F0AC814 02203025 */  move  $a2, $s1
 /* 0E1348 7F0AC818 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0E134C 7F0AC81C 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0E134C 7F0AC81C 0FC2BA63 */  jal   textMeasure
 /* 0E1350 7F0AC820 AFA90010 */   sw    $t1, 0x10($sp)
 /* 0E1354 7F0AC824 3C028005 */  lui   $v0, %hi(j_text_trigger)
 /* 0E1358 7F0AC828 8C4284D0 */  lw    $v0, %lo(j_text_trigger)($v0)
@@ -10797,7 +10622,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E13D0 7F0AC8A0 AFA00024 */  sw    $zero, 0x24($sp)
 /* 0E13D4 7F0AC8A4 AFAF0010 */  sw    $t7, 0x10($sp)
 /* 0E13D8 7F0AC8A8 AFAE0014 */  sw    $t6, 0x14($sp)
-/* 0E13DC 7F0AC8AC 0FC2B6AF */  jal   en_text_write_stuff
+/* 0E13DC 7F0AC8AC 0FC2B6AF */  jal   textRender
 /* 0E13E0 7F0AC8B0 AFA90018 */   sw    $t1, 0x18($sp)
 /* 0E13E4 7F0AC8B4 8FB90074 */  lw    $t9, 0x74($sp)
 /* 0E13E8 7F0AC8B8 AFA20DE8 */  sw    $v0, 0xde8($sp)
@@ -10824,7 +10649,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E142C 7F0AC8FC 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0E1430 7F0AC900 27A60170 */  addiu $a2, $sp, 0x170
 /* 0E1434 7F0AC904 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0E1438 7F0AC908 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0E1438 7F0AC908 0FC2BA63 */  jal   textMeasure
 /* 0E143C 7F0AC90C AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0E1440 7F0AC910 8FAC0D48 */  lw    $t4, 0xd48($sp)
 /* 0E1444 7F0AC914 8FAF0D4C */  lw    $t7, 0xd4c($sp)
@@ -10843,7 +10668,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E1478 7F0AC948 27A70170 */  addiu $a3, $sp, 0x170
 /* 0E147C 7F0AC94C AFA00024 */  sw    $zero, 0x24($sp)
 /* 0E1480 7F0AC950 AFAC0010 */  sw    $t4, 0x10($sp)
-/* 0E1484 7F0AC954 0FC2B6AF */  jal   en_text_write_stuff
+/* 0E1484 7F0AC954 0FC2B6AF */  jal   textRender
 /* 0E1488 7F0AC958 AFAF0014 */   sw    $t7, 0x14($sp)
 /* 0E148C 7F0AC95C 8FB90D60 */  lw    $t9, 0xd60($sp)
 /* 0E1490 7F0AC960 8FAA0D4C */  lw    $t2, 0xd4c($sp)
@@ -10858,7 +10683,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E14B4 7F0AC984 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0E14B8 7F0AC988 27A60190 */  addiu $a2, $sp, 0x190
 /* 0E14BC 7F0AC98C 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0E14C0 7F0AC990 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0E14C0 7F0AC990 0FC2BA63 */  jal   textMeasure
 /* 0E14C4 7F0AC994 AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0E14C8 7F0AC998 0C001107 */  jal   viGetX
 /* 0E14CC 7F0AC99C 00000000 */   nop
@@ -10880,7 +10705,7 @@ glabel draw_watch_mission_briefing_page
 /* 0E150C 7F0AC9DC AFA00024 */  sw    $zero, 0x24($sp)
 /* 0E1510 7F0AC9E0 AFAC0010 */  sw    $t4, 0x10($sp)
 /* 0E1514 7F0AC9E4 AFAF0014 */  sw    $t7, 0x14($sp)
-/* 0E1518 7F0AC9E8 0FC2B6AF */  jal   en_text_write_stuff
+/* 0E1518 7F0AC9E8 0FC2B6AF */  jal   textRender
 /* 0E151C 7F0AC9EC AFA9001C */   sw    $t1, 0x1c($sp)
 /* 0E1520 7F0AC9F0 AFA20DE8 */  sw    $v0, 0xde8($sp)
 .L7F0AC9F4:
@@ -10968,10 +10793,10 @@ glabel draw_watch_mission_briefing_page
 /* 0DDF40 7F0AB550 8DA1FFFC */  lw    $at, -4($t5)
 /* 0DDF44 7F0AB554 15B9FFF8 */  bne   $t5, $t9, .L7F0AB538
 /* 0DDF48 7F0AB558 AD81FFFC */   sw    $at, -4($t4)
-/* 0DDF4C 7F0AB55C 3C0F8004 */  lui   $t7, %hi(ptrFirstFontTableSmall) # $t7, 0x8004
-/* 0DDF50 7F0AB560 3C0E8004 */  lui   $t6, %hi(ptrSecondFontTableSmall) # $t6, 0x8004
-/* 0DDF54 7F0AB564 8DEFAAFC */  lw    $t7, %lo(ptrFirstFontTableSmall)($t7)
-/* 0DDF58 7F0AB568 8DCEAB00 */  lw    $t6, %lo(ptrSecondFontTableSmall)($t6)
+/* 0DDF4C 7F0AB55C 3C0F8004 */  lui   $t7, %hi(ptrFontBankGothic) # $t7, 0x8004
+/* 0DDF50 7F0AB560 3C0E8004 */  lui   $t6, %hi(ptrFontBankGothicChars) # $t6, 0x8004
+/* 0DDF54 7F0AB564 8DEFAAFC */  lw    $t7, %lo(ptrFontBankGothic)($t7)
+/* 0DDF58 7F0AB568 8DCEAB00 */  lw    $t6, %lo(ptrFontBankGothicChars)($t6)
 /* 0DDF5C 7F0AB56C AFA00D54 */  sw    $zero, 0xd54($sp)
 /* 0DDF60 7F0AB570 AFA00D50 */  sw    $zero, 0xd50($sp)
 /* 0DDF64 7F0AB574 3404AC28 */  li    $a0, 44072
@@ -11001,7 +10826,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DDFC4 7F0AB5D4 02003025 */  move  $a2, $s0
 /* 0DDFC8 7F0AB5D8 8FA70D48 */  lw    $a3, 0xd48($sp)
 /* 0DDFCC 7F0AB5DC AFA00014 */  sw    $zero, 0x14($sp)
-/* 0DDFD0 7F0AB5E0 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DDFD0 7F0AB5E0 0FC2B713 */  jal   textMeasure
 /* 0DDFD4 7F0AB5E4 AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0DDFD8 7F0AB5E8 8FA20D50 */  lw    $v0, 0xd50($sp)
 /* 0DDFDC 7F0AB5EC 240800AA */  li    $t0, 170
@@ -11043,7 +10868,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE068 7F0AB678 AFAF0010 */  sw    $t7, 0x10($sp)
 /* 0DE06C 7F0AB67C AFAE0014 */  sw    $t6, 0x14($sp)
 /* 0DE070 7F0AB680 AFA8001C */  sw    $t0, 0x1c($sp)
-/* 0DE074 7F0AB684 0FC2B35F */  jal   en_text_write_stuff
+/* 0DE074 7F0AB684 0FC2B35F */  jal   textRender
 /* 0DE078 7F0AB688 AFA90020 */   sw    $t1, 0x20($sp)
 /* 0DE07C 7F0AB68C 3C0B8004 */  lui   $t3, %hi(mission_brief_index) # $t3, 0x8004
 /* 0DE080 7F0AB690 8D6BA5F0 */  lw    $t3, %lo(mission_brief_index)($t3)
@@ -11241,7 +11066,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE34C 7F0AB95C AFA00024 */  sw    $zero, 0x24($sp)
 /* 0DE350 7F0AB960 AFAB0010 */  sw    $t3, 0x10($sp)
 /* 0DE354 7F0AB964 AFB80014 */  sw    $t8, 0x14($sp)
-/* 0DE358 7F0AB968 0FC2B35F */  jal   en_text_write_stuff
+/* 0DE358 7F0AB968 0FC2B35F */  jal   textRender
 /* 0DE35C 7F0AB96C AFAD001C */   sw    $t5, 0x1c($sp)
 /* 0DE360 7F0AB970 AFA20DE8 */  sw    $v0, 0xde8($sp)
 /* 0DE364 7F0AB974 0FC2AD04 */  jal   sub_GAME_7F0AC0E8
@@ -11256,7 +11081,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE388 7F0AB998 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0DE38C 7F0AB99C 00403025 */  move  $a2, $v0
 /* 0DE390 7F0AB9A0 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0DE394 7F0AB9A4 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DE394 7F0AB9A4 0FC2B713 */  jal   textMeasure
 /* 0DE398 7F0AB9A8 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0DE39C 7F0AB9AC 0C000F9B */  jal   viGetX
 /* 0DE3A0 7F0AB9B0 00000000 */   nop   
@@ -11346,7 +11171,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE4C0 7F0ABAD0 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0DE4C4 7F0ABAD4 02203025 */  move  $a2, $s1
 /* 0DE4C8 7F0ABAD8 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0DE4CC 7F0ABADC 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DE4CC 7F0ABADC 0FC2B713 */  jal   textMeasure
 /* 0DE4D0 7F0ABAE0 AFA80010 */   sw    $t0, 0x10($sp)
 /* 0DE4D4 7F0ABAE4 3C028004 */  lui   $v0, %hi(j_text_trigger) # $v0, 0x8004
 /* 0DE4D8 7F0ABAE8 8C421150 */  lw    $v0, %lo(j_text_trigger)($v0)
@@ -11385,7 +11210,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE550 7F0ABB60 AFA00024 */  sw    $zero, 0x24($sp)
 /* 0DE554 7F0ABB64 AFAF0010 */  sw    $t7, 0x10($sp)
 /* 0DE558 7F0ABB68 AFAE0014 */  sw    $t6, 0x14($sp)
-/* 0DE55C 7F0ABB6C 0FC2B35F */  jal   en_text_write_stuff
+/* 0DE55C 7F0ABB6C 0FC2B35F */  jal   textRender
 /* 0DE560 7F0ABB70 AFA80018 */   sw    $t0, 0x18($sp)
 /* 0DE564 7F0ABB74 8FAB0074 */  lw    $t3, 0x74($sp)
 /* 0DE568 7F0ABB78 AFA20DE8 */  sw    $v0, 0xde8($sp)
@@ -11412,7 +11237,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE5AC 7F0ABBBC 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0DE5B0 7F0ABBC0 27A60170 */  addiu $a2, $sp, 0x170
 /* 0DE5B4 7F0ABBC4 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0DE5B8 7F0ABBC8 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DE5B8 7F0ABBC8 0FC2B713 */  jal   textMeasure
 /* 0DE5BC 7F0ABBCC AFB80010 */   sw    $t8, 0x10($sp)
 /* 0DE5C0 7F0ABBD0 8FAC0D48 */  lw    $t4, 0xd48($sp)
 /* 0DE5C4 7F0ABBD4 8FAF0D4C */  lw    $t7, 0xd4c($sp)
@@ -11431,7 +11256,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE5F8 7F0ABC08 27A70170 */  addiu $a3, $sp, 0x170
 /* 0DE5FC 7F0ABC0C AFA00024 */  sw    $zero, 0x24($sp)
 /* 0DE600 7F0ABC10 AFAC0010 */  sw    $t4, 0x10($sp)
-/* 0DE604 7F0ABC14 0FC2B35F */  jal   en_text_write_stuff
+/* 0DE604 7F0ABC14 0FC2B35F */  jal   textRender
 /* 0DE608 7F0ABC18 AFAF0014 */   sw    $t7, 0x14($sp)
 /* 0DE60C 7F0ABC1C 8FAB0D60 */  lw    $t3, 0xd60($sp)
 /* 0DE610 7F0ABC20 8FB80D4C */  lw    $t8, 0xd4c($sp)
@@ -11446,7 +11271,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE634 7F0ABC44 27A50D50 */  addiu $a1, $sp, 0xd50
 /* 0DE638 7F0ABC48 27A60190 */  addiu $a2, $sp, 0x190
 /* 0DE63C 7F0ABC4C 8FA70D48 */  lw    $a3, 0xd48($sp)
-/* 0DE640 7F0ABC50 0FC2B713 */  jal   sub_GAME_7F0AE98C
+/* 0DE640 7F0ABC50 0FC2B713 */  jal   textMeasure
 /* 0DE644 7F0ABC54 AFB80010 */   sw    $t8, 0x10($sp)
 /* 0DE648 7F0ABC58 0C000F9B */  jal   viGetX
 /* 0DE64C 7F0ABC5C 00000000 */   nop   
@@ -11468,7 +11293,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE68C 7F0ABC9C AFA00024 */  sw    $zero, 0x24($sp)
 /* 0DE690 7F0ABCA0 AFAC0010 */  sw    $t4, 0x10($sp)
 /* 0DE694 7F0ABCA4 AFAF0014 */  sw    $t7, 0x14($sp)
-/* 0DE698 7F0ABCA8 0FC2B35F */  jal   en_text_write_stuff
+/* 0DE698 7F0ABCA8 0FC2B35F */  jal   textRender
 /* 0DE69C 7F0ABCAC AFA8001C */   sw    $t0, 0x1c($sp)
 /* 0DE6A0 7F0ABCB0 AFA20DE8 */  sw    $v0, 0xde8($sp)
 .L7F0ABCB4:

@@ -208,7 +208,7 @@ extern long long int rspbootTextEnd[];
 extern long long int gsp3DTextStart[];
 extern long long int gsp3DDataStart[];
 
-void rspInitDebugNoticeList(void)
+void rspInit(void)
 {
     debTryAdd(&g_gfxDebugEntryData, "rsp_c_debug");
 }

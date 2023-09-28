@@ -18,7 +18,7 @@ on:
 jobs:
   buildjp:
     
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
@@ -64,7 +64,7 @@ jobs:
      
       - name: Upload output files
 
-        uses: dmnemec/copy_file_to_another_repo_action@main
+        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
 
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
@@ -75,6 +75,7 @@ jobs:
           destination_repo: 'kholdfuzion/goldeneyestatus'
           user_email: $API_TOKEN_EMAIL
           user_name: $API_TOKEN_USER
-          source_file: 'tools/report/JPN.htm'
+          source_file: |
+            tools/report/JPN.htm
       
 #need way of telling report that JP passed/failed

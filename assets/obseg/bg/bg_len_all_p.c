@@ -1,5 +1,5 @@
 #include "bg_all_p.h"
-#include "bg_lip_all_p.h"
+#include "bg_len_all_p.h"
 
 struct bg_header header = {0, &room_data_table, &portal_data_table, &global_visibility_commands, 0};
 

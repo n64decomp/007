@@ -3,6 +3,12 @@
 
 #include <ultra64.h>
 
+
+/**
+ * Number of samples in contdata.
+ */
+#define CONTSAMPLE_LEN   20
+
 struct contsample {
 	OSContPad pads[MAXCONTROLLERS];
 };

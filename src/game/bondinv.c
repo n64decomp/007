@@ -274,7 +274,7 @@ int bondinvItemAvailableForHand(ITEM_IDS right, ITEM_IDS left)
         right < ITEM_BOMBCASE &&
         right == left &&
         getPlayerCount() == 1 &&
-        bondwalkItemCheckBitflags(right, 0x100000))
+        bondwalkItemCheckBitflags(right, WEAPONSTATBITFLAG_CAN_DUAL_WIELD))
     {
         return TRUE;
     }
@@ -289,7 +289,7 @@ int bondinvItemAvailableForHand(ITEM_IDS right, ITEM_IDS left)
             right < ITEM_BOMBCASE &&
             right == left &&
             getPlayerCount() == 1 &&
-            bondwalkItemCheckBitflags(right, 0x100000) &&
+            bondwalkItemCheckBitflags(right, WEAPONSTATBITFLAG_CAN_DUAL_WIELD) &&
             (j_text_trigger == FALSE || (right != ITEM_KNIFE)))
         {
             return TRUE;
@@ -561,7 +561,7 @@ void bondinvCycleForward(s32 *nextright, s32 *nextleft, s32 requireammo)
     {
         s32 candidate = *nextright;
 
-        if (getPlayerCount() == 1 && bondwalkItemCheckBitflags(*nextright, 0x100000) && (*nextleft < *nextright) && (requireammo == FALSE || bondwalkItemHasAmmo(*nextright)) && (weapon1 != *nextright || *nextright < weapon2)
+        if (getPlayerCount() == 1 && bondwalkItemCheckBitflags(*nextright, WEAPONSTATBITFLAG_CAN_DUAL_WIELD) && (*nextleft < *nextright) && (requireammo == FALSE || bondwalkItemHasAmmo(*nextright)) && (weapon1 != *nextright || *nextright < weapon2)
 #ifdef BUGFIX_R1
             && (!j_text_trigger || *nextright != ITEM_KNIFE)
 #endif
@@ -671,7 +671,7 @@ void bondinvCycleBackward(s32 *nextright, s32 *nextleft, s32 requireammo)
         {
             if (candidate == weapon1)
             {
-                if (getPlayerCount() == 1 && bondwalkItemCheckBitflags(candidate, 0x100000) && (requireammo == FALSE || bondwalkItemHasAmmo(candidate)) && (candidate != *nextright || candidate < *nextleft) && (weapon2 < candidate)
+                if (getPlayerCount() == 1 && bondwalkItemCheckBitflags(candidate, WEAPONSTATBITFLAG_CAN_DUAL_WIELD) && (requireammo == FALSE || bondwalkItemHasAmmo(candidate)) && (candidate != *nextright || candidate < *nextleft) && (weapon2 < candidate)
 #ifdef BUGFIX_R1
                     && (!j_text_trigger || candidate != ITEM_KNIFE)
 #endif
@@ -690,7 +690,7 @@ void bondinvCycleBackward(s32 *nextright, s32 *nextleft, s32 requireammo)
 #endif
             )
             {
-                if (getPlayerCount() == 1 && bondwalkItemCheckBitflags(candidate, 0x100000) && (candidate != *nextright || candidate < *nextleft))
+                if (getPlayerCount() == 1 && bondwalkItemCheckBitflags(candidate, WEAPONSTATBITFLAG_CAN_DUAL_WIELD) && (candidate != *nextright || candidate < *nextleft))
                 {
                     weapon1 = candidate;
                     weapon2 = candidate;
@@ -1389,9 +1389,9 @@ u8 *bondinvGetActivatedTextObject(ObjectRecord *obj)
 {
     textoverride *override = bondinvGetTextbyObj(obj);
 
-    if (override && override->unk8)
+    if (override && override->pickuptext)
     {
-        return langGet(override->unk8);
+        return langGet(override->pickuptext);
     }
 
     return NULL;
@@ -1401,9 +1401,9 @@ u8 *bondinvGetActivatedTextWeapon(ITEM_IDS weaponnum)
 {
     textoverride *override = bondinvGetTextbyWeaponID(weaponnum);
 
-    if (override && override->unk8)
+    if (override && override->pickuptext)
     {
-        return langGet(override->unk8);
+        return langGet(override->pickuptext);
     }
 
     return NULL;
@@ -1415,7 +1415,7 @@ void bondinvIncrementHeldTime(s32 weapon1, s32 weapon2)
     s32 leastusedindex;
     s32 i;
 
-    if (!bondwalkItemCheckBitflags(weapon1, 0x20000))
+    if (!bondwalkItemCheckBitflags(weapon1, WEAPONSTATBITFLAG_USE_HOLD_TIME))
     {
         return;
     }
@@ -1423,7 +1423,7 @@ void bondinvIncrementHeldTime(s32 weapon1, s32 weapon2)
     leastusedtime  = 0x7fffffff;
     leastusedindex = 0;
 
-    if (!bondwalkItemCheckBitflags(weapon2, 0x20000))
+    if (!bondwalkItemCheckBitflags(weapon2, WEAPONSTATBITFLAG_USE_HOLD_TIME))
     {
         weapon2 = ITEM_UNARMED;
     }

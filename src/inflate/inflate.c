@@ -12,6 +12,12 @@
 //this file is modified from inflate.c found in gzip...
 //does this create a license conflict in rare's original source tree?
 
+// -- no, because Mark Adler placed the original inflate.c used in gzip in the public domain.
+// The rest of gzip (1.2.4, 1993-08-20 release) was licensed under GPL2, RARE seems to have
+// been careful not to include any of that (e.g., decompress.c or other entry points).
+//
+// -- BB, June 23, 2023
+
 u8 *inbuf = 0;
 u8 *outbuf = 0;
 

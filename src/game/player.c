@@ -45,7 +45,7 @@ void sub_GAME_7F093880(f32 offset_x, f32 offset_y, coord3d* out) {
     screen_top = getPlayer_c_screentop();
     coords.y = fogGetCurrentEnvironmentp()->WaterConcavity + (offset_y + screen_top);
     sub_GAME_7F077EEC(&coords, out, 100.0f);
-    matrix_4x4_rotate_vector_in_place(player_mtxf, out->f);
+    mtx4RotateVecInPlace(player_mtxf, out->f);
 }
 
 
@@ -794,7 +794,7 @@ Gfx *skyRender(Gfx *gdl)
         s32 i;
         s32 unused[3];
 
-        matrix_4x4_multiply(currentPlayerGetProjectionMatrixF(), currentPlayerGetMatrix10CC(), &sp3cc);
+        matrix_4x4_multiply(currentPlayerGetProjectionMatrixF(), camGetWorldToScreenMtxf(), &sp3cc);
         guScaleF(dword_CODE_bss_80079E98.m, 1.0f / scale, 1.0f / scale, 1.0f / scale);
         matrix_4x4_multiply(&sp3cc, &dword_CODE_bss_80079E98, &sp38c);
 
@@ -1275,7 +1275,7 @@ Gfx *skyRender(Gfx *gdl)
         s32 i;
         s32 stack[2];
 
-        matrix_4x4_multiply(currentPlayerGetProjectionMatrixF(), currentPlayerGetMatrix10CC(), &sp1ec);
+        matrix_4x4_multiply(currentPlayerGetProjectionMatrixF(), camGetWorldToScreenMtxf(), &sp1ec);
         guScaleF(dword_CODE_bss_80079E98.m, 1.0f / scale, 1.0f / scale, 1.0f / scale);
         matrix_4x4_multiply(&sp1ec, &dword_CODE_bss_80079E98, &sp1ac);
 

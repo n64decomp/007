@@ -1,19 +1,18 @@
 #ifndef UNFL_USB_H
 #define UNFL_USB_H
-
-#include <ultra64.h>
     
     /*********************************
              DataType macros
     *********************************/
     
     // UNCOMMENT THE #DEFINE IF USING LIBDRAGON
-    ///#define LIBDRAGON                    
-
+    //#define LIBDRAGON
+    
     // Settings
     #define USE_OSRAW          0           // Use if you're doing USB operations without the PI Manager (libultra only)
     #define DEBUG_ADDRESS_SIZE 8*1024*1024 // Max size of USB I/O. The bigger this value, the more ROM you lose!
-   
+    #define CHECK_EMULATOR     0           // Stops the USB library from working if it detects an emulator to prevent problems
+    
     // Cart definitions
     #define CART_NONE      0
     #define CART_64DRIVE   1
@@ -25,33 +24,30 @@
     #define DATATYPE_RAWBINARY  0x02
     #define DATATYPE_HEADER     0x03
     #define DATATYPE_SCREENSHOT 0x04
-    
-    extern int usb_datatype;
-    extern int usb_datasize;
-    extern int usb_dataleft;
-    extern int usb_readblock;
-
+    #define DATATYPE_HEARTBEAT  0x05
+    #define DATATYPE_RMONBINARY  0x69
+        
     
     /*********************************
             Convenience macros
     *********************************/
     
     // Use these to conveniently read the header from usb_poll()
-    #define USBHEADER_GETTYPE(header) ((header & 0xFF000000) >> 24)
-    #define USBHEADER_GETSIZE(header) ((header & 0x00FFFFFF))
+    #define USBHEADER_GETTYPE(header) (((header) & 0xFF000000) >> 24)
+    #define USBHEADER_GETSIZE(header) (((header) & 0x00FFFFFF))
     
-
+    
     /*********************************
               USB Functions
     *********************************/
-
+    
     /*==============================
         usb_initialize
         Initializes the USB buffers and pointers
         @return 1 if the USB initialization was successful, 0 if not
     ==============================*/
     
-    extern u32 usb_initialize();
+    extern char usb_initialize(void);
     
     
     /*==============================
@@ -60,7 +56,7 @@
         @return The CART macro that corresponds to the identified flashcart
     ==============================*/
     
-    extern char usb_getcart();
+    extern char usb_getcart(void);
     
     
     /*==============================
@@ -73,8 +69,8 @@
     ==============================*/
     
     extern void usb_write(int datatype, const void* data, int size);
-
-    extern void usb_write_text(const u8* data, int size);
+    
+    //extern void usb_write_text( u8 * data, int size);
     
     
     /*==============================
@@ -84,7 +80,7 @@
         @return The data header, or 0
     ==============================*/
     
-    extern u32 usb_poll();
+    extern unsigned long usb_poll(void);
     
     
     /*==============================
@@ -94,7 +90,7 @@
         @param The number of bytes to read
     ==============================*/
     
-    extern s32 usb_read(void* buffer, int size);
+    extern void usb_read(void* buffer, int size);
     
     
     /*==============================
@@ -120,7 +116,27 @@
         Purges the incoming USB data
     ==============================*/
     
-    extern void usb_purge();
+    extern void usb_purge(void);
+
+
+    /*==============================
+        usb_timedout
+        Checks if the USB timed out recently
+        @return 1 if the USB timed out, 0 if not
+    ==============================*/
+
+    extern char usb_timedout(void);
+
+
+    /*==============================
+        usb_sendheartbeat
+        Sends a heartbeat packet to the PC
+        This is done once automatically at initialization,
+        but can be called manually to ensure that the
+        host side tool is aware of the current USB protocol
+        version.
+    ==============================*/
+
+    extern void usb_sendheartbeat(void);
 
 #endif
-

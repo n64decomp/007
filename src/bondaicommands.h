@@ -228,6 +228,16 @@
 #define _BONDAICOMMANDS_H_
 #include <ultra64.h>
 
+
+
+// Reverse endieness, to write things like 0x700 to be translated into 0x00, 0x07.
+// This is not compatible with aicommands2.h
+#define CharArrayFrom16Rev(input) (input) & 0x00FF, ((input) & 0xFF00) >> 8
+#define CharArrayFrom24Rev(input) (input) & 0x0000FF, ((input) & 0x00FF00) >> 8, ((input) & 0xFF0000) >> 16
+#define CharArrayFrom32Rev(input) (input) & 0x000000FF, ((input) & 0x0000FF00) >> 8, ((input) & 0x00FF0000) >> 16, ((input) & 0xFF000000) >> 24
+
+
+ // "standard" aicommands2.h definition
 #define CharArrayFrom16(input) ((input) & 0xFF00) >> 8, (input) & 0x00FF
 #define CharArrayFrom24(input) ((input) & 0xFF0000) >> 16, ((input) & 0x00FF00) >> 8, (input) & 0x0000FF
 #define CharArrayFrom32(input) ((input) & 0xFF000000) >> 24, ((input) & 0x00FF0000) >> 16, ((input) & 0x0000FF00) >> 8, (input) & 0x000000FF
@@ -554,101 +564,102 @@ IF_VA(NOT(IS_EMPTY(CASE_CONTENT1)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT2)))(Label(lb
 IF_VA(NOT(IS_EMPTY(CASE_CONTENT0)))(IF_VA(NOT(IS_EMPTY(CASE_CONTENT1)))(Label(lblNext))                           EXPAND_ARGS_STACK(CASE_CONTENT0)(lblDone) \
 Label(lblDone))
  
+ 
 #include "aicommands2.h"
 
-#if 0
+#if 1
 
-//temporary thunking for ai names
-#define DO(label_id) \
-        label(label_id) \
-        ai_sleep
+// //temporary thunking for ai names
+// #define DO(label_id) \
+//         label(label_id) \
+//         ai_sleep
 
-#define LOOP(label) \
-        goto_first(label)
+// #define LOOP(label) \
+//         goto_first(label)
 
-#define CONTINUE(label) \
-        goto_first(label)
+// #define CONTINUE(label) \
+//         goto_first(label)
 
-#define YIELD_FOREVER(label_id) \
-        label(label_id) \
-        ai_sleep \
-        goto_first(label_id)
+// #define YIELD_FOREVER(label_id) \
+//         label(label_id) \
+//         ai_sleep \
+//         goto_first(label_id)
 
-#define RETURN(label_id)\
-        label(label_id) \
-            jump_to_return_ai_list \
-            ai_list_end
+// #define RETURN(label_id)\
+//         label(label_id) \
+//             jump_to_return_ai_list \
+//             ai_list_end
 
 
-/*=============================================================================
-// ai command shortcuts
-//===========================================================================*/
-#define goto_loop_start(label_id) \
-        label(label_id) \
-        ai_sleep
+// /*=============================================================================
+// // ai command shortcuts
+// //===========================================================================*/
+// #define goto_loop_start(label_id) \
+//         label(label_id) \
+//         ai_sleep
 
-#define goto_loop_repeat(label) \
-        goto_first(label)
+// #define goto_loop_repeat(label) \
+//         goto_first(label)
 
-#define goto_loop_infinite(label_id) \
-        label(label_id) \
-        ai_sleep \
-        goto_first(label_id)
+// #define goto_loop_infinite(label_id) \
+//         label(label_id) \
+//         ai_sleep \
+//         goto_first(label_id)
 
-#define random_generate_greater_than(byte, label) \
-        random_generate_seed \
-        if_random_seed_greater_than(byte, label)
+// #define random_generate_greater_than(byte, label) \
+//         random_generate_seed \
+//         if_random_seed_greater_than(byte, label)
 
-#define random_generate_less_than(byte, label) \
-        random_generate_seed \
-        if_random_seed_less_than(byte, label)
+// #define random_generate_less_than(byte, label) \
+//         random_generate_seed \
+//         if_random_seed_less_than(byte, label)
 
-#define if_guard_meters_to_bond_less_than(distance, label) \
-        if_guard_distance_to_bond_less_than((distance * 10U), label)
+// #define if_guard_meters_to_bond_less_than(distance, label) \
+//         if_guard_distance_to_bond_less_than((distance * 10U), label)
 
-#define if_guard_meters_to_bond_greater_than(distance, label) \
-        if_guard_distance_to_bond_greater_than((distance * 10U), label)
+// #define if_guard_meters_to_bond_greater_than(distance, label) \
+//         if_guard_distance_to_bond_greater_than((distance * 10U), label)
 
-#define if_chr_meters_to_pad_less_than(chr_num, distance, pad, label) \
-        if_chr_distance_to_pad_less_than(chr_num, (distance * 10U), pad, label)
+// #define if_chr_meters_to_pad_less_than(chr_num, distance, pad, label) \
+//         if_chr_distance_to_pad_less_than(chr_num, (distance * 10U), pad, label)
 
-#define if_chr_meters_to_pad_greater_than(chr_num, distance, pad, label) \
-        if_chr_distance_to_pad_greater_than(chr_num, (distance * 10U), pad, label)
+// #define if_chr_meters_to_pad_greater_than(chr_num, distance, pad, label) \
+//         if_chr_distance_to_pad_greater_than(chr_num, (distance * 10U), pad, label)
 
-#define if_guard_meters_to_chr_less_than(distance, chr_num, label) \
-        if_guard_distance_to_chr_less_than((distance * 10U), chr_num, label)
+// #define if_guard_meters_to_chr_less_than(distance, chr_num, label) \
+//         if_guard_distance_to_chr_less_than((distance * 10U), chr_num, label)
 
-#define if_guard_meters_to_chr_greater_than(distance, chr_num, label) \
-        if_guard_distance_to_chr_greater_than((distance * 10U), chr_num, label)
+// #define if_guard_meters_to_chr_greater_than(distance, chr_num, label) \
+//         if_guard_distance_to_chr_greater_than((distance * 10U), chr_num, label)
 
-#define guard_try_setting_chr_preset_to_guard_within_meters(distance, label) \
-        guard_try_setting_chr_preset_to_guard_within_distance((distance * 10U), label)
+// #define guard_try_setting_chr_preset_to_guard_within_meters(distance, label) \
+//         guard_try_setting_chr_preset_to_guard_within_distance((distance * 10U), label)
 
-#define if_bond_meters_to_pad_less_than(distance, pad, label) \
-        if_bond_distance_to_pad_less_than((distance * 10U), pad, label)
+// #define if_bond_meters_to_pad_less_than(distance, pad, label) \
+//         if_bond_distance_to_pad_less_than((distance * 10U), pad, label)
 
-#define if_bond_meters_to_pad_greater_than(distance, pad, label) \
-        if_bond_distance_to_pad_greater_than((distance * 10U), pad, label)
+// #define if_bond_meters_to_pad_greater_than(distance, pad, label) \
+//         if_bond_distance_to_pad_greater_than((distance * 10U), pad, label)
 
-#define debug_log_end \
-        '\0',
+// #define debug_log_end \
+//         '\0',
 
-#define if_local_timer_seconds_less_than(seconds, label) \
-        if_local_timer_less_than((SECS_TO_TIMER60(seconds)), label)
+// #define if_local_timer_seconds_less_than(seconds, label) \
+//         if_local_timer_less_than((SECS_TO_TIMER60(seconds)), label)
 
-#define if_local_timer_seconds_greater_than(seconds, label) \
-        if_local_timer_greater_than((SECS_TO_TIMER60(seconds)), label)
+// #define if_local_timer_seconds_greater_than(seconds, label) \
+//         if_local_timer_greater_than((SECS_TO_TIMER60(seconds)), label)
 
-#define camera_transition_from_bond \
-        bond_hide_weapons \
-        ai_sleep \
-        ai_sleep \
-        ai_sleep
+// #define camera_transition_from_bond \
+//         bond_hide_weapons \
+//         ai_sleep \
+//         ai_sleep \
+//         ai_sleep
 
-#define camera_transition_to_bond \
-        ai_sleep \
-        ai_sleep \
-        ai_sleep
+// #define camera_transition_to_bond \
+//         ai_sleep \
+//         ai_sleep \
+//         ai_sleep
 /*===========================================================================*/
 
 /*=============================================================================
@@ -732,7 +743,7 @@ Label(lblDone))
 #define jump_to_ai_list(chr_num, ai_list) \
         jump_to_ai_list_ID, \
         chr_num, \
-        CharArrayFrom16(ai_list),
+        CharArrayFrom16Rev(ai_list),
 
 /*=============================================================================
 // name: set_return_ai_list
@@ -745,7 +756,7 @@ Label(lblDone))
 #define set_return_ai_list_LENGTH 0x03
 #define set_return_ai_list(ai_list) \
         set_return_ai_list_ID, \
-        CharArrayFrom16(ai_list),
+        CharArrayFrom16Rev(ai_list),
 
 /*=============================================================================
 // name: jump_to_return_ai_list
@@ -796,9 +807,9 @@ Label(lblDone))
 #define guard_play_animation_LENGTH 0x09
 #define guard_play_animation(animation_id, start_time30, end_time30, bitfield, interpol_time60) \
         guard_play_animation_ID, \
-        CharArrayFrom16(animation_id), \
-        CharArrayFrom16(start_time30), \
-        CharArrayFrom16(end_time30), \
+        CharArrayFrom16Rev(animation_id), \
+        CharArrayFrom16Rev(start_time30), \
+        CharArrayFrom16Rev(end_time30), \
         bitfield, \
         interpol_time60,
 
@@ -926,8 +937,8 @@ Label(lblDone))
 #define guard_try_fire_or_aim_at_target_LENGTH 0x06
 #define guard_try_fire_or_aim_at_target(bitfield, target, label) \
         guard_try_fire_or_aim_at_target_ID, \
-        CharArrayFrom16(bitfield), \
-        CharArrayFrom16(target), \
+        CharArrayFrom16Rev(bitfield), \
+        CharArrayFrom16Rev(target), \
         label,
 
 /*=============================================================================
@@ -942,8 +953,8 @@ Label(lblDone))
 #define guard_try_fire_or_aim_at_target_kneel_LENGTH 0x06
 #define guard_try_fire_or_aim_at_target_kneel(bitfield, target, label) \
         guard_try_fire_or_aim_at_target_kneel_ID, \
-        CharArrayFrom16(bitfield), \
-        CharArrayFrom16(target), \
+        CharArrayFrom16Rev(bitfield), \
+        CharArrayFrom16Rev(target), \
         label,
 
 /*=============================================================================
@@ -959,8 +970,8 @@ Label(lblDone))
 #define guard_try_fire_or_aim_at_target_update_LENGTH 0x06
 #define guard_try_fire_or_aim_at_target_update(bitfield, target, label) \
         guard_try_fire_or_aim_at_target_update_ID, \
-        CharArrayFrom16(bitfield), \
-        CharArrayFrom16(target), \
+        CharArrayFrom16Rev(bitfield), \
+        CharArrayFrom16Rev(target), \
         label,
 
 /*=============================================================================
@@ -976,8 +987,8 @@ Label(lblDone))
 #define guard_try_facing_target_LENGTH 0x06
 #define guard_try_facing_target(bitfield, target, label) \
         guard_try_facing_target_ID, \
-        CharArrayFrom16(bitfield), \
-        CharArrayFrom16(target), \
+        CharArrayFrom16Rev(bitfield), \
+        CharArrayFrom16Rev(target), \
         label,
 
 /*=============================================================================
@@ -1039,7 +1050,7 @@ Label(lblDone))
 #define guard_try_dropping_item_LENGTH 0x05
 #define guard_try_dropping_item(prop_num, item_num, label) \
         guard_try_dropping_item_ID, \
-        CharArrayFrom16(prop_num), \
+        CharArrayFrom16Rev(prop_num), \
         item_num, \
         label,
 
@@ -1052,7 +1063,7 @@ Label(lblDone))
 #define guard_runs_to_pad_LENGTH 0x03
 #define guard_runs_to_pad(pad) \
         guard_runs_to_pad_ID, \
-        CharArrayFrom16(pad),
+        CharArrayFrom16Rev(pad),
 
 /*=============================================================================
 // name: guard_runs_to_pad_preset
@@ -1073,7 +1084,7 @@ Label(lblDone))
 #define guard_walks_to_pad_LENGTH 0x03
 #define guard_walks_to_pad(pad) \
         guard_walks_to_pad_ID, \
-        CharArrayFrom16(pad),
+        CharArrayFrom16Rev(pad),
 
 /*=============================================================================
 // name: guard_sprints_to_pad
@@ -1084,7 +1095,7 @@ Label(lblDone))
 #define guard_sprints_to_pad_LENGTH 0x03
 #define guard_sprints_to_pad(pad) \
         guard_sprints_to_pad_ID, \
-        CharArrayFrom16(pad),
+        CharArrayFrom16Rev(pad),
 
 /*=============================================================================
 // name: guard_start_patrol
@@ -1151,7 +1162,7 @@ Label(lblDone))
 #define guard_try_triggering_alarm_at_pad_LENGTH 0x04
 #define guard_try_triggering_alarm_at_pad(pad, label) \
         guard_try_triggering_alarm_at_pad_ID, \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -1590,7 +1601,7 @@ Label(lblDone))
 #define if_room_containing_pad_is_on_screen_LENGTH 0x04
 #define if_room_containing_pad_is_on_screen(pad, label) \
         if_room_containing_pad_is_on_screen_ID, \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -1707,7 +1718,7 @@ Label(lblDone))
 #define if_guard_distance_to_bond_less_than_LENGTH 0x04
 #define if_guard_distance_to_bond_less_than(distance, label) \
         if_guard_distance_to_bond_less_than_ID, \
-        CharArrayFrom16(distance), \
+        CharArrayFrom16Rev(distance), \
         label,
 
 /*=============================================================================
@@ -1721,7 +1732,7 @@ Label(lblDone))
 #define if_guard_distance_to_bond_greater_than_LENGTH 0x04
 #define if_guard_distance_to_bond_greater_than(distance, label) \
         if_guard_distance_to_bond_greater_than_ID, \
-        CharArrayFrom16(distance), \
+        CharArrayFrom16Rev(distance), \
         label,
 
 /*=============================================================================
@@ -1736,8 +1747,8 @@ Label(lblDone))
 #define if_chr_distance_to_pad_less_than(chr_num, distance, pad, label) \
         if_chr_distance_to_pad_less_than_ID, \
         chr_num, \
-        CharArrayFrom16(distance), \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(distance), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -1752,8 +1763,8 @@ Label(lblDone))
 #define if_chr_distance_to_pad_greater_than(chr_num, distance, pad, label) \
         if_chr_distance_to_pad_greater_than_ID, \
         chr_num, \
-        CharArrayFrom16(distance), \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(distance), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -1767,7 +1778,7 @@ Label(lblDone))
 #define if_guard_distance_to_chr_less_than_LENGTH 0x05
 #define if_guard_distance_to_chr_less_than(distance, chr_num, label) \
         if_guard_distance_to_chr_less_than_ID, \
-        CharArrayFrom16(distance), \
+        CharArrayFrom16Rev(distance), \
         chr_num, \
         label,
 
@@ -1782,7 +1793,7 @@ Label(lblDone))
 #define if_guard_distance_to_chr_greater_than_LENGTH 0x05
 #define if_guard_distance_to_chr_greater_than(distance, chr_num, label) \
         if_guard_distance_to_chr_greater_than_ID, \
-        CharArrayFrom16(distance), \
+        CharArrayFrom16Rev(distance), \
         chr_num, \
         label,
 
@@ -1800,7 +1811,7 @@ Label(lblDone))
 #define guard_try_setting_chr_preset_to_guard_within_distance_LENGTH 0x04
 #define guard_try_setting_chr_preset_to_guard_within_distance(distance, label) \
         guard_try_setting_chr_preset_to_guard_within_distance_ID, \
-        CharArrayFrom16(distance), \
+        CharArrayFrom16Rev(distance), \
         label,
 
 /*=============================================================================
@@ -1814,8 +1825,8 @@ Label(lblDone))
 #define if_bond_distance_to_pad_less_than_LENGTH 0x06
 #define if_bond_distance_to_pad_less_than(distance, pad, label) \
         if_bond_distance_to_pad_less_than_ID, \
-        CharArrayFrom16(distance), \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(distance), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -1829,8 +1840,8 @@ Label(lblDone))
 #define if_bond_distance_to_pad_greater_than_LENGTH 0x06
 #define if_bond_distance_to_pad_greater_than(distance, pad, label) \
         if_bond_distance_to_pad_greater_than_ID, \
-        CharArrayFrom16(distance), \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(distance), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -1843,7 +1854,7 @@ Label(lblDone))
 #define if_chr_in_room_with_pad(chr_num, pad, label) \
         if_chr_in_room_with_pad_ID, \
         chr_num, \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -1855,7 +1866,7 @@ Label(lblDone))
 #define if_bond_in_room_with_pad_LENGTH 0x04
 #define if_bond_in_room_with_pad(pad, label) \
         if_bond_in_room_with_pad_ID, \
-        CharArrayFrom16(pad), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -2085,7 +2096,7 @@ Label(lblDone))
 #define object_move_to_pad(object_tag, pad) \
         object_move_to_pad_ID, \
         object_tag, \
-        chrarray16(pad),
+        CharArrayFrom16Rev(pad),
 
 /*=============================================================================
 // name: door_open
@@ -2288,7 +2299,7 @@ Label(lblDone))
 #define if_mission_time_less_than_LENGTH 0x04
 #define if_mission_time_less_than(seconds, label) \
         if_mission_time_less_than_ID, \
-        CharArrayFrom16(seconds), \
+        CharArrayFrom16Rev(seconds), \
         label,
 
 /*=============================================================================
@@ -2302,7 +2313,7 @@ Label(lblDone))
 #define if_mission_time_greater_than_LENGTH 0x04
 #define if_mission_time_greater_than(seconds, label) \
         if_mission_time_greater_than_ID, \
-        CharArrayFrom16(seconds), \
+        CharArrayFrom16Rev(seconds), \
         label,
 
 /*=============================================================================
@@ -2316,7 +2327,7 @@ Label(lblDone))
 #define if_system_power_time_less_than_LENGTH 0x04
 #define if_system_power_time_less_than(minutes, label) \
         if_system_power_time_less_than_ID, \
-        CharArrayFrom16(minutes), \
+        CharArrayFrom16Rev(minutes), \
         label,
 
 /*=============================================================================
@@ -2330,7 +2341,7 @@ Label(lblDone))
 #define if_system_power_time_greater_than_LENGTH 0x04
 #define if_system_power_time_greater_than(minutes, label) \
         if_system_power_time_greater_than_ID, \
-        CharArrayFrom16(minutes), \
+        CharArrayFrom16Rev(minutes), \
         label,
 
 /*=============================================================================
@@ -2657,7 +2668,7 @@ Label(lblDone))
 #define guard_set_hearing_scale_LENGTH 0x03
 #define guard_set_hearing_scale(hearing_scale) \
         guard_set_hearing_scale_ID, \
-        CharArrayFrom16(hearing_scale),
+        CharArrayFrom16Rev(hearing_scale),
 
 /*=============================================================================
 // name: guard_set_vision_range
@@ -2717,7 +2728,7 @@ Label(lblDone))
 #define guard_set_health_total_LENGTH 0x03
 #define guard_set_health_total(total_health) \
         guard_set_health_total_ID, \
-        CharArrayFrom16(total_health),
+        CharArrayFrom16Rev(total_health),
 
 /*=============================================================================
 // name: guard_set_armour
@@ -2739,7 +2750,7 @@ Label(lblDone))
 #define guard_set_armour_LENGTH 0x03
 #define guard_set_armour(armour_value) \
         guard_set_armour_ID, \
-        CharArrayFrom16(armour_value),
+        CharArrayFrom16Rev(armour_value),
 
 /*=============================================================================
 // name: guard_set_speed_rating
@@ -2895,7 +2906,7 @@ Label(lblDone))
 #define objective_bitfield_set_on_LENGTH 0x05
 #define objective_bitfield_set_on(bitfield) \
         objective_bitfield_set_on_ID, \
-        CharArrayFrom32(bitfield)
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: objective_bitfield_set_off
@@ -2912,7 +2923,7 @@ Label(lblDone))
 #define objective_bitfield_set_off_LENGTH 0x05
 #define objective_bitfield_set_off(bitfield) \
         objective_bitfield_set_off_ID, \
-        CharArrayFrom32(bitfield)
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: if_objective_bitfield_is_set_on
@@ -2925,7 +2936,7 @@ Label(lblDone))
 #define if_objective_bitfield_is_set_on_LENGTH 0x06
 #define if_objective_bitfield_is_set_on(bitfield, label) \
         if_objective_bitfield_is_set_on_ID, \
-        CharArrayFrom32(bitfield), \
+        CharArrayFrom32Rev(bitfield), \
         label,
 
 /*=============================================================================
@@ -2941,7 +2952,7 @@ Label(lblDone))
 #define guard_flags_set_on_LENGTH 0x05
 #define guard_flags_set_on(bitfield) \
         guard_flags_set_on_ID, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: guard_flags_set_off
@@ -2956,7 +2967,7 @@ Label(lblDone))
 #define guard_flags_set_off_LENGTH 0x05
 #define guard_flags_set_off(bitfield) \
         guard_flags_set_off_ID, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: if_guard_flags_is_set_on
@@ -2971,7 +2982,7 @@ Label(lblDone))
 #define if_guard_flags_is_set_on_LENGTH 0x06
 #define if_guard_flags_is_set_on(bitfield, label) \
         if_guard_flags_is_set_on_ID, \
-        CharArrayFrom32(bitfield), \
+        CharArrayFrom32Rev(bitfield), \
         label,
 
 /*=============================================================================
@@ -2987,7 +2998,7 @@ Label(lblDone))
 #define chr_flags_set_on(chr_num, bitfield) \
         chr_flags_set_on_ID, \
         chr_num, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: chr_flags_set_off
@@ -3002,7 +3013,7 @@ Label(lblDone))
 #define chr_flags_set_off(chr_num, bitfield) \
         chr_flags_set_off_ID, \
         chr_num, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: if_chr_flags_is_set_on
@@ -3017,7 +3028,7 @@ Label(lblDone))
 #define if_chr_flags_is_set_on(chr_num, bitfield, label) \
         if_chr_flags_is_set_on_ID, \
         chr_num, \
-        CharArrayFrom32(bitfield), \
+        CharArrayFrom32Rev(bitfield), \
         label,
 
 /*=============================================================================
@@ -3032,7 +3043,7 @@ Label(lblDone))
 #define object_flags_1_set_on(object_tag, bitfield) \
         object_flags_1_set_on_ID, \
         object_tag, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: object_flags_1_set_off
@@ -3046,7 +3057,7 @@ Label(lblDone))
 #define object_flags_1_set_off(object_tag, bitfield) \
         object_flags_1_set_off_ID, \
         object_tag, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: if_object_flags_1_is_set_on
@@ -3060,7 +3071,7 @@ Label(lblDone))
 #define if_object_flags_1_is_set_on(object_tag, bitfield, label) \
         if_object_flags_1_is_set_on_ID, \
         object_tag, \
-        CharArrayFrom32(bitfield), \
+        CharArrayFrom32Rev(bitfield), \
         label,
 
 /*=============================================================================
@@ -3075,7 +3086,7 @@ Label(lblDone))
 #define object_flags_2_set_on(object_tag, bitfield) \
         object_flags_2_set_on_ID, \
         object_tag, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: object_flags_2_set_off
@@ -3089,7 +3100,7 @@ Label(lblDone))
 #define object_flags_2_set_off(object_tag, bitfield) \
         object_flags_2_set_off_ID, \
         object_tag, \
-        CharArrayFrom32(bitfield),
+        CharArrayFrom32Rev(bitfield),
 
 /*=============================================================================
 // name: if_object_flags_2_is_set_on
@@ -3103,7 +3114,7 @@ Label(lblDone))
 #define if_object_flags_2_is_set_on(object_tag, bitfield, label) \
         if_object_flags_2_is_set_on_ID, \
         object_tag, \
-        CharArrayFrom32(bitfield), \
+        CharArrayFrom32Rev(bitfield), \
         label,
 
 /*=============================================================================
@@ -3140,9 +3151,9 @@ Label(lblDone))
 //===========================================================================*/
 #define guard_set_pad_preset_ID 0xAB
 #define guard_set_pad_preset_LENGTH 0x03
-#define guard_set_pad_preset(chr_preset) \
+#define guard_set_pad_preset(pad_preset) \
         guard_set_pad_preset_ID, \
-        chrarray16(pad_preset),
+        CharArrayFrom16Rev(pad_preset),
 
 /*=============================================================================
 // name: chr_set_pad_preset
@@ -3151,10 +3162,10 @@ Label(lblDone))
 //===========================================================================*/
 #define chr_set_pad_preset_ID 0xAC
 #define chr_set_pad_preset_LENGTH 0x04
-#define chr_set_pad_preset(chr_num, chr_preset) \
+#define chr_set_pad_preset(chr_num, pad_preset) \
         chr_set_pad_preset_ID, \
         chr_num, \
-        chrarray16(pad_preset),
+        CharArrayFrom16Rev(pad_preset),
 
 /*=============================================================================
 // name: debug_log
@@ -3246,7 +3257,7 @@ Label(lblDone))
 #define if_local_timer_less_than_LENGTH 0x05
 #define if_local_timer_less_than(time60, label) \
         if_local_timer_less_than_ID, \
-        CharArrayFrom24(time60), \
+        CharArrayFrom24Rev(time60), \
         label,
 
 /*=============================================================================
@@ -3261,7 +3272,7 @@ Label(lblDone))
 #define if_local_timer_greater_than_LENGTH 0x05
 #define if_local_timer_greater_than(time60, label) \
         if_local_timer_greater_than_ID, \
-        CharArrayFrom24(time60), \
+        CharArrayFrom24Rev(time60), \
         label,
 
 /*=============================================================================
@@ -3298,7 +3309,7 @@ Label(lblDone))
 #define hud_countdown_set_LENGTH 0x03
 #define hud_countdown_set(seconds) \
         hud_countdown_set_ID, \
-        CharArrayFrom16(seconds),
+        CharArrayFrom16Rev(seconds),
 
 /*=============================================================================
 // name: hud_countdown_stop
@@ -3345,7 +3356,7 @@ Label(lblDone))
 #define if_hud_countdown_less_than_LENGTH 0x04
 #define if_hud_countdown_less_than(seconds, label) \
         if_hud_countdown_less_than_ID, \
-        CharArrayFrom16(seconds), \
+        CharArrayFrom16Rev(seconds), \
         label,
 
 /*=============================================================================
@@ -3360,7 +3371,7 @@ Label(lblDone))
 #define if_hud_countdown_greater_than_LENGTH 0x04
 #define if_hud_countdown_greater_than(seconds, label) \
         if_hud_countdown_greater_than_ID, \
-        CharArrayFrom16(seconds), \
+        CharArrayFrom16Rev(seconds), \
         label,
 
 /*=============================================================================
@@ -3377,9 +3388,9 @@ Label(lblDone))
         chr_try_spawning_at_pad_ID, \
         body_num, \
         head_num, \
-        CharArrayFrom16(pad), \
-        CharArrayFrom16(ai_list), \
-        CharArrayFrom32(bitfield), \
+        CharArrayFrom16Rev(pad), \
+        CharArrayFrom16Rev(ai_list), \
+        CharArrayFrom32Rev(bitfield), \
         label,
 
 /*=============================================================================
@@ -3398,8 +3409,8 @@ Label(lblDone))
         body_num, \
         head_num, \
         chr_num_target, \
-        CharArrayFrom16(ai_list), \
-        CharArrayFrom32(bitfield), \
+        CharArrayFrom16Rev(ai_list), \
+        CharArrayFrom32Rev(bitfield), \
         label,
 
 /*=============================================================================
@@ -3415,9 +3426,9 @@ Label(lblDone))
 #define guard_try_spawning_item_LENGTH 0x09
 #define guard_try_spawning_item(prop_num, item_num, prop_bitfield, label) \
         guard_try_spawning_item_ID, \
-        CharArrayFrom16(prop_num), \
+        CharArrayFrom16Rev(prop_num), \
         item_num, \
-        CharArrayFrom32(prop_bitfield), \
+        CharArrayFrom32Rev(prop_bitfield), \
         label,
 
 /*=============================================================================
@@ -3432,8 +3443,8 @@ Label(lblDone))
 #define guard_try_spawning_hat_LENGTH 0x08
 #define guard_try_spawning_hat(prop_num, prop_bitfield, label) \
         guard_try_spawning_hat_ID, \
-        CharArrayFrom16(prop_num), \
-        CharArrayFrom32(prop_bitfield), \
+        CharArrayFrom16Rev(prop_num), \
+        CharArrayFrom32Rev(prop_bitfield), \
         label,
 
 /*=============================================================================
@@ -3449,7 +3460,7 @@ Label(lblDone))
 #define chr_try_spawning_clone(chr_num, ai_list, label) \
         chr_try_spawning_clone_ID, \
         chr_num, \
-        CharArrayFrom16(ai_list), \
+        CharArrayFrom16Rev(ai_list), \
         label,
 
 /*=============================================================================
@@ -3464,7 +3475,7 @@ Label(lblDone))
 #define text_print_bottom_LENGTH 0x03
 #define text_print_bottom(text_slot) \
         text_print_bottom_ID, \
-        chrarray16(text_slot),
+        CharArrayFrom16Rev(text_slot),
 
 /*=============================================================================
 // name: text_print_top
@@ -3478,7 +3489,7 @@ Label(lblDone))
 #define text_print_top_LENGTH 0x03
 #define text_print_top(text_slot) \
         text_print_top_ID, \
-        chrarray16(text_slot),
+        CharArrayFrom16Rev(text_slot),
 
 /*=============================================================================
 // name: sfx_play
@@ -3495,7 +3506,7 @@ Label(lblDone))
 #define sfx_play_LENGTH 0x04
 #define sfx_play(sound_num, channel_num) \
         sfx_play_ID, \
-        chrarray16(sound_num), \
+        CharArrayFrom16Rev(sound_num), \
         channel_num,
 
 /*=============================================================================
@@ -3512,7 +3523,7 @@ Label(lblDone))
         sfx_emit_from_object_ID, \
         channel_num, \
         object_tag, \
-        CharArrayFrom16(vol_decay_time60),
+        CharArrayFrom16Rev(vol_decay_time60),
 
 /*=============================================================================
 // name: sfx_emit_from_pad
@@ -3527,8 +3538,8 @@ Label(lblDone))
 #define sfx_emit_from_pad(channel_num, pad, vol_decay_time60) \
         sfx_emit_from_pad_ID, \
         channel_num, \
-        CharArrayFrom16(pad), \
-        CharArrayFrom16(vol_decay_time60),
+        CharArrayFrom16Rev(pad), \
+        CharArrayFrom16Rev(vol_decay_time60),
 
 /*=============================================================================
 // name: sfx_set_channel_volume
@@ -3543,8 +3554,8 @@ Label(lblDone))
 #define sfx_set_channel_volume(channel_num, target_volume, transition_time60) \
         sfx_set_channel_volume_ID, \
         channel_num, \
-        CharArrayFrom16(target_volume), \
-        CharArrayFrom16(transition_time60),
+        CharArrayFrom16Rev(target_volume), \
+        CharArrayFrom16Rev(transition_time60),
 
 /*=============================================================================
 // name: sfx_fade_channel_volume
@@ -3559,8 +3570,8 @@ Label(lblDone))
 #define sfx_fade_channel_volume(channel_num, fade_volume_percent, fade_time60) \
         sfx_fade_channel_volume_ID, \
         channel_num, \
-        CharArrayFrom16(fade_volume_percent), \
-        CharArrayFrom16(fade_time60),
+        CharArrayFrom16Rev(fade_volume_percent), \
+        CharArrayFrom16Rev(fade_time60),
 
 /*=============================================================================
 // name: sfx_stop_channel
@@ -3586,7 +3597,7 @@ Label(lblDone))
 #define if_sfx_channel_volume_less_than(channel_num, volume, label) \
         if_sfx_channel_volume_less_than_ID, \
         channel_num, \
-        CharArrayFrom16(volume), \
+        CharArrayFrom16Rev(volume), \
         label,
 
 /*=============================================================================
@@ -3612,8 +3623,8 @@ Label(lblDone))
 #define vehicle_speed_LENGTH 0x05
 #define vehicle_speed(top_speed, acceleration_time60) \
         vehicle_speed_ID, \
-        CharArrayFrom16(top_speed), \
-        CharArrayFrom16(acceleration_time60),
+        CharArrayFrom16Rev(top_speed), \
+        CharArrayFrom16Rev(acceleration_time60),
 
 /*=============================================================================
 // name: aircraft_rotor_speed
@@ -3627,8 +3638,8 @@ Label(lblDone))
 #define aircraft_rotor_speed_LENGTH 0x05
 #define aircraft_rotor_speed(rotor_speed, acceleration_time60) \
         aircraft_rotor_speed_ID, \
-        CharArrayFrom16(rotor_speed), \
-        CharArrayFrom16(acceleration_time60),
+        CharArrayFrom16Rev(rotor_speed), \
+        CharArrayFrom16Rev(acceleration_time60),
 
 /*=============================================================================
 // name: if_camera_is_in_intro
@@ -3728,7 +3739,7 @@ Label(lblDone))
 #define camera_look_at_bond_from_pad_LENGTH 0x03
 #define camera_look_at_bond_from_pad(pad) \
         camera_look_at_bond_from_pad_ID, \
-        CharArrayFrom16(pad),
+        CharArrayFrom16Rev(pad),
 
 /*=============================================================================
 // name: camera_switch
@@ -3747,8 +3758,8 @@ Label(lblDone))
 #define camera_switch(object_tag, look_at_bond_flag, unused_flag) \
         camera_switch_ID, \
         object_tag, \
-        CharArrayFrom16(look_at_bond_flag), \
-        CharArrayFrom16(unused_flag),
+        CharArrayFrom16Rev(look_at_bond_flag), \
+        CharArrayFrom16Rev(unused_flag),
 
 /*=============================================================================
 // name: if_bond_y_pos_less_than
@@ -3763,7 +3774,7 @@ Label(lblDone))
 #define if_bond_y_pos_less_than_LENGTH 0x04
 #define if_bond_y_pos_less_than(y_pos, label) \
         if_bond_y_pos_less_than_ID, \
-        CharArrayFrom16(y_pos), \
+        CharArrayFrom16Rev(y_pos), \
         label,
 
 /*=============================================================================
@@ -3807,7 +3818,7 @@ Label(lblDone))
 #define chr_try_teleporting_to_pad(chr_num, pad, label) \
         chr_try_teleporting_to_pad_ID, \
         chr_num, \
-        chrarray16(pad), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -3979,7 +3990,7 @@ Label(lblDone))
 #define if_object_in_room_with_pad(object_tag, pad, label) \
         if_object_in_room_with_pad_ID, \
         object_tag, \
-        chrarray16(pad), \
+        CharArrayFrom16Rev(pad), \
         label,
 
 /*=============================================================================
@@ -4012,10 +4023,10 @@ Label(lblDone))
 // note: this command can't be stopped after executing. level must have a fog
 // assigned or will crash!
 //===========================================================================*/
-#define gas_leak_and_switch_fog_ID 0xE9
-#define gas_leak_and_switch_fog_LENGTH 0x01
-#define gas_leak_and_switch_fog \
-        gas_leak_and_switch_fog_ID,
+#define switch_fog_instantly_ID 0xE9
+#define switch_fog_instantly_LENGTH 0x01
+#define switch_fog_instantly \
+        switch_fog_instantly_ID,
 
 /*=============================================================================
 // name: trigger_fade_and_exit_level_on_button_press
@@ -4088,12 +4099,12 @@ Label(lblDone))
 #define camera_orbit_pad_LENGTH 0x0D
 #define camera_orbit_pad(lat_distance, vert_distance, orbit_speed60, pad, y_pos_offset, initial_rotation) \
         camera_orbit_pad_ID, \
-        CharArrayFrom16(lat_distance), \
-        CharArrayFrom16(vert_distance), \
-        CharArrayFrom16(orbit_speed60), \
-        CharArrayFrom16(pad), \
-        CharArrayFrom16(y_pos_offset), \
-        CharArrayFrom16(initial_rotation),
+        CharArrayFrom16Rev(lat_distance), \
+        CharArrayFrom16Rev(vert_distance), \
+        CharArrayFrom16Rev(orbit_speed60), \
+        CharArrayFrom16Rev(pad), \
+        CharArrayFrom16Rev(y_pos_offset), \
+        CharArrayFrom16Rev(initial_rotation),
 
 /*=============================================================================
 // name: credits_roll
@@ -4293,3 +4304,5 @@ Label(lblDone))
 
 #endif
 #endif
+
+

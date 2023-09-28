@@ -76,11 +76,11 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
     }
 #endif
 
-    sub_GAME_7F075FAC(&g_CurrentPlayer->model, &player_gait_object_header, &g_CurrentPlayer->field_654);
+    animInit(&g_CurrentPlayer->model, &player_gait_object_header, &g_CurrentPlayer->field_654);
     modelSetScale(&g_CurrentPlayer->model, IDO_POINT_ONE);
 
 #if defined (BUGFIX_R1)
-    modelSetAnimRateForDuration(&g_CurrentPlayer->model, ANIMRATE, 0.0f);
+    modelSetAnimPlaySpeed(&g_CurrentPlayer->model, ANIMRATE, 0.0f);
 #endif
 
     g_CurrentPlayer->headanim = 0;
@@ -90,55 +90,49 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
     g_CurrentPlayer->headwalkingtime60 = 0;
     g_CurrentPlayer->headamplitude = 1.0f;
     g_CurrentPlayer->sideamplitude = 1.0f;
-    g_CurrentPlayer->headpos[0] = 0.0f;
-    g_CurrentPlayer->headpos[1] = 0.0f;
-    g_CurrentPlayer->headpos[2] = 0.0f;
-    g_CurrentPlayer->headlook[0] = 0.0f;
-    g_CurrentPlayer->headlook[1] = 0.0f;
-    g_CurrentPlayer->headlook[2] = 0.0f;
-    g_CurrentPlayer->headup[0] = 0.0f;
-    g_CurrentPlayer->headup[1] = 0.0f;
-    g_CurrentPlayer->headup[2] = 0.0f;
-    g_CurrentPlayer->headpossum[0] = 0.0f;
-    g_CurrentPlayer->headpossum[1] = 0.0f;
-    g_CurrentPlayer->headpossum[2] = 0.0f;
-    g_CurrentPlayer->headlooksum[0] = 0.0f;
-    g_CurrentPlayer->headlooksum[1] = 0.0f;
+    g_CurrentPlayer->headpos.f[0] = 0.0f;
+    g_CurrentPlayer->headpos.f[1] = 0.0f;
+    g_CurrentPlayer->headpos.f[2] = 0.0f;
+    g_CurrentPlayer->headlook.f[0] = 0.0f;
+    g_CurrentPlayer->headlook.f[1] = 0.0f;
+    g_CurrentPlayer->headlook.f[2] = 0.0f;
+    g_CurrentPlayer->headup.f[0] = 0.0f;
+    g_CurrentPlayer->headup.f[1] = 0.0f;
+    g_CurrentPlayer->headup.f[2] = 0.0f;
+    g_CurrentPlayer->headpossum.f[0] = 0.0f;
+    g_CurrentPlayer->headpossum.f[1] = 0.0f;
+    g_CurrentPlayer->headpossum.f[2] = 0.0f;
+    g_CurrentPlayer->headlooksum.f[0] = 0.0f;
+    g_CurrentPlayer->headlooksum.f[1] = 0.0f;
+    g_CurrentPlayer->headlooksum.f[2] = HEADSUM;
 
 
-    g_CurrentPlayer->headlooksum[2] = HEADSUM;
-
-
-    g_CurrentPlayer->headupsum[0] = 0.0f;
-
-
-    g_CurrentPlayer->headupsum[1] = HEADSUM;
-
-
-    g_CurrentPlayer->headupsum[2] = 0.0f;
+    g_CurrentPlayer->headupsum.f[0] = 0.0f;
+    g_CurrentPlayer->headupsum.f[1] = HEADSUM;
+    g_CurrentPlayer->headupsum.f[2] = 0.0f;
     g_CurrentPlayer->resetheadpos = 1;
     g_CurrentPlayer->resetheadrot = 1;
     g_CurrentPlayer->resetheadtick = 1;
-    g_CurrentPlayer->headbodyoffset[0] = 0.0f;
-    g_CurrentPlayer->headbodyoffset[1] = 0.0f;
-    g_CurrentPlayer->headbodyoffset[2] = 0.0f;
+    g_CurrentPlayer->headbodyoffset.f[0] = 0.0f;
+    g_CurrentPlayer->headbodyoffset.f[1] = 0.0f;
+    g_CurrentPlayer->headbodyoffset.f[2] = 0.0f;
     g_CurrentPlayer->standheight = 0.0f;
     g_CurrentPlayer->standbodyoffset.x = 0.0f;
     g_CurrentPlayer->standbodyoffset.y = 0.0f;
     g_CurrentPlayer->standbodyoffset.z = 0.0f;
     g_CurrentPlayer->standfrac = 0.0f;
-    g_CurrentPlayer->standlook[0][0] = 0.0f;
-    g_CurrentPlayer->standlook[0][1] = 0.0f;
-    g_CurrentPlayer->standlook[0][2] = 1.0f;
-    g_CurrentPlayer->standlook[1][0] = 0.0f;
-    g_CurrentPlayer->standlook[1][1] = 0.0f;
-    g_CurrentPlayer->standlook[1][2] = 1.0f;
-    g_CurrentPlayer->standup[0][0] = 0.0f;
-    g_CurrentPlayer->standup[0][1] = 1.0f;
-    g_CurrentPlayer->standup[0][2] = 0.0f;
-    g_CurrentPlayer->standup[1][0] = 0.0f;
-    g_CurrentPlayer->standup[1][1] = 1.0f;
-    g_CurrentPlayer->standup[1][2] = 0.0f;
+    g_CurrentPlayer->standlook[0].f[0] = 0.0f;
+    g_CurrentPlayer->standlook[0].f[1] = 0.0f;
+    g_CurrentPlayer->standlook[0].f[2] = 1.0f;
+    g_CurrentPlayer->standlook[1].f[0] = 0.0f;
+    g_CurrentPlayer->standlook[1].f[1] = 0.0f;
+    g_CurrentPlayer->standlook[1].f[2] = 1.0f;
+    g_CurrentPlayer->standup[0].f[0] = 0.0f;
+    g_CurrentPlayer->standup[0].f[1] = 1.0f;
+    g_CurrentPlayer->standup[0].f[2] = 0.0f;
+    g_CurrentPlayer->standup[1].f[0] = 0.0f;
+    g_CurrentPlayer->standup[1].f[1] = 1.0f;
+    g_CurrentPlayer->standup[1].f[2] = 0.0f;
     g_CurrentPlayer->standcnt = 0;
 
     for (i=0; i<2; i++)

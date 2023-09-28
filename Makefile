@@ -8,7 +8,7 @@ default: colour
 FINAL := YES
 VERSION := US
 IDO_RECOMP := YES
-VERBOSE := 0
+VERBOSE := 2
 # If COMPARE is 1, check the output sha1sum when building 'all', and if fail to match
 # then compare ELF sections to known md5 checksums.
 # If compare is 2, it will just compare the sha1sum.
@@ -298,7 +298,7 @@ GAMEOBJECTS := $(foreach file,$(GAMEFILES_S),$(BUILD_DIR)/$(file:.s=.o)) \
 				$(foreach file,$(GAMEFILES_C),$(BUILD_DIR)/$(file:.c=.o))
 
 
-ASSET_DATAFILES := assets/GlobalImageTable.c assets/animationtable_data.c assets/animationtable_entries.c assets/font_dl.c assets/font_chardataj.c assets/font_chardatae.c assets/Globalimagetable_commandblock.c
+ASSET_DATAFILES := assets/GlobalImageTable.c assets/animationtable_data.c assets/animationtable_entries.c assets/font_dl.c assets/font_chardataj.c assets/font_chardatae.c assets/rarewarelogo.c
 ASSET_DATAOBJECTS := $(foreach file,$(ASSET_DATAFILES),$(BUILD_DIR)/$(file:.c=.o))
 
 ROMFILES2 := assets/romfiles2.s
@@ -447,21 +447,16 @@ $(BUILD_DIR)/assets/images/split/%.o: assets/images/split/%.bin pb5
 $(BUILD_DIR)/$(OBSEGMENT): $(OBSEG_RZ) $(IMAGE_OBJS) pb6
 	$(call PRINT_STATUS,Compressing6:,$<,$@)
 
-#Build C files in root/
-$(BUILD_DIR)/%.o: src/%.c pb7
-	$(call PRINT_STATUS,Compiling7:,$<,$@)
-	$(ASM_PREPROC) $(OPTIMIZATION) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION)
-	$(ASM_PREPROC) $(OPTIMIZATION) $< --post-process $@ --assembler "$(AS) $(ASFLAGS)" --asm-prelude tools/asmpreproc/prelude.s
-
 
 #Build C files in src/
-$(BUILD_DIR)/src/%.o: src/%.c pb8
+$(BUILD_DIR)/src/%.o: src/%.c 
 	$(call PRINT_STATUS,Compiling8:,$<,$@)
-    # convert AI_PRINT commands from readable to byte-array
-    #	echo $<
-    #	echo filter =  $(filter-out %chraidata.c,$<)
-    # for some reason, normal ifeq doesnt work, so has to be single line...
-	$(if $(filter %chraidata.c,$<), $(ConvertAIPRINT) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION), $(ASM_PREPROC) $(OPTIMIZATION) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION); $(ASM_PREPROC) $(OPTIMIZATION) $< --post-process $@ --assembler "$(AS) $(ASFLAGS)" --asm-prelude tools/asmpreproc/prelude.s)
+	@if grep -q 'GLOBAL_ASM(' $<; then \
+		$(ASM_PREPROC) $(OPTIMIZATION) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION); \
+		$(ASM_PREPROC) $(OPTIMIZATION) $< --post-process $@ --assembler "$(AS) $(ASFLAGS)" --asm-prelude tools/asmpreproc/prelude.s; \
+	else \
+		$(CC) -c $(CFLAGS) -o $@ $(OPTIMIZATION) $<; \
+	fi
 
 
 #Build RamRom
@@ -490,8 +485,7 @@ $(BUILD_DIR)/assets/%.o: assets/%.c pb4
 ifeq ($(filter-out %setup%,$<),)
 	$(ConvertAIPRINT) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION) 
 else
-	$(ASM_PREPROC) $(OPTIMIZATION) $< | $(CC) -c $(CFLAGS) tools/asmpreproc/include-stdin.c -o $@ $(OPTIMIZATION)
-	$(ASM_PREPROC) $(OPTIMIZATION) $< --post-process $@ --assembler "$(AS) $(ASFLAGS)" --asm-prelude tools/asmpreproc/prelude.s
+	$(CC) -c $(CFLAGS) -o $@ $(OPTIMIZATION) $<
 endif
 
 #$(BUILD_DIR)/src/random.o: OPTIMIZATION := -O3
@@ -744,8 +738,8 @@ testPB:
 	$(call IncrementProgressBarFromAtRate,0,0.125)
 
 textures:
-	for file in assets/images/split/*.bin; do ../../tools/mktex/build/tex2png $file .assets/images/out; done
-
+	$(foreach x,$(IMAGE_BINS),tools/mktex/build/tex2png $(x) assets/images/out ${\n})
+	
 colour:
 	@echo "\033[3A"
   ifeq ($(VERBOSE),0)

@@ -2,6 +2,7 @@
 #include <memp.h>
 #include "textrelated.h"
 #include "bondtypes.h"
+#include "game/lvl_text.h"
 
 // data
 s32 D_80040E80 = 0;
@@ -15,10 +16,10 @@ s32 text_y = 0;
 s32 text_s = 0;
 s32 text_t = 0;
 s32 D_80040EA8 = 0;
-s32 ptrFirstFontTableSmall = 0;
-s32 ptrSecondFontTableSmall = 0;
-s32 ptrFirstFontTableLarge = 0;
-s32 ptrSecondFontTableLarge = 0;
+s32 ptrFontBankGothic = 0;
+s32 ptrFontBankGothicChars = 0;
+s32 ptrFontZurichBold = 0;
+s32 ptrFontZurichBoldChars = 0;
 
 u16 D_80040EBC[] = {
     0x0000, 0x5555, 0xaaaa, 0xffff,
@@ -104,36 +105,36 @@ void load_font_tables(void)
     text_s = 0;
     MACROSIZE = 0x24b0 - 0;
     text_t = 0;
-    ptrFirstFontTableSmall = mempAllocBytesInBank(MACROSIZE, 4);
-    ptrSecondFontTableSmall = (s32) (ptrFirstFontTableSmall + 0x2a4);
-    romCopy(&ptrFirstFontTableSmall, &_fonttablectlsmall1SegmentRomStart, MACROSIZE);
+    ptrFontBankGothic = mempAllocBytesInBank(MACROSIZE, 4);
+    ptrFontBankGothicChars = (s32) (ptrFontBankGothic + 0x2a4);
+    romCopy(&ptrFontBankGothic, &_fontbankgothicSegmentRomStart, MACROSIZE);
     i = 0;
 loop_1:
-    temp_v0 = ptrSecondFontTableSmall + i;
+    temp_v0 = ptrFontBankGothicChars + i;
     i_next = i + 0x18;
-    temp_v0->unk14 = (s32) (temp_v0->unk14 + ptrFirstFontTableSmall);
+    temp_v0->unk14 = (s32) (temp_v0->unk14 + ptrFontBankGothic);
     i = i_next;
     if (i_next < 0x8d0)
     {
         goto loop_1;
     }
     MACROSIZE = 0x3540 - 0;
-    ptrFirstFontTableLarge = mempAllocBytesInBank(MACROSIZE, 4);
-    ptrSecondFontTableLarge = (s32) (ptrFirstFontTableLarge + 0x2a4);
-    romCopy(&ptrFirstFontTableLarge, &_fonttablectllarge1SegmentRomStart, MACROSIZE);
-    ptrSecondFontTableLarge->unk14 = (s32) (ptrSecondFontTableLarge->unk14 + ptrFirstFontTableLarge);
-    ptrSecondFontTableLarge->unk2C = (s32) (ptrSecondFontTableLarge->unk2C + ptrFirstFontTableLarge);
+    ptrFontZurichBold = mempAllocBytesInBank(MACROSIZE, 4);
+    ptrFontZurichBoldChars = (s32) (ptrFontZurichBold + 0x2a4);
+    romCopy(&ptrFontZurichBold, &_fontzurichboldSegmentRomStart, MACROSIZE);
+    ptrFontZurichBoldChars->unk14 = (s32) (ptrFontZurichBoldChars->unk14 + ptrFontZurichBold);
+    ptrFontZurichBoldChars->unk2C = (s32) (ptrFontZurichBoldChars->unk2C + ptrFontZurichBold);
     phi_v1_2 = 0x30;
 loop_3:
-    temp_v0_2 = ptrSecondFontTableLarge + phi_v1_2;
-    temp_v0_2->unk14 = (s32) (temp_v0_2->unk14 + ptrFirstFontTableLarge);
-    temp_v0_3 = ptrSecondFontTableLarge + phi_v1_2;
-    temp_v0_3->unk2C = (s32) (temp_v0_3->unk2C + ptrFirstFontTableLarge);
-    temp_v0_4 = ptrSecondFontTableLarge + phi_v1_2;
-    temp_v0_4->unk44 = (s32) (temp_v0_4->unk44 + ptrFirstFontTableLarge);
-    temp_v0_5 = ptrSecondFontTableLarge + phi_v1_2;
+    temp_v0_2 = ptrFontZurichBoldChars + phi_v1_2;
+    temp_v0_2->unk14 = (s32) (temp_v0_2->unk14 + ptrFontZurichBold);
+    temp_v0_3 = ptrFontZurichBoldChars + phi_v1_2;
+    temp_v0_3->unk2C = (s32) (temp_v0_3->unk2C + ptrFontZurichBold);
+    temp_v0_4 = ptrFontZurichBoldChars + phi_v1_2;
+    temp_v0_4->unk44 = (s32) (temp_v0_4->unk44 + ptrFontZurichBold);
+    temp_v0_5 = ptrFontZurichBoldChars + phi_v1_2;
     temp_v1_2 = phi_v1_2 + 0x60;
-    temp_v0_5->unk5C = (s32) (temp_v0_5->unk5C + ptrFirstFontTableLarge);
+    temp_v0_5->unk5C = (s32) (temp_v0_5->unk5C + ptrFontZurichBold);
     phi_v1_2 = temp_v1_2;
     if (temp_v1_2 != 0x8d0)
     {
@@ -174,22 +175,22 @@ glabel load_font_tables
 /* 0E1748 7F0ACC18 AFA6001C */  sw    $a2, 0x1c($sp)
 /* 0E174C 7F0ACC1C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0E1750 7F0ACC20 24050004 */   li    $a1, 4
-/* 0E1754 7F0ACC24 3C078004 */  lui   $a3, %hi(ptrFirstFontTableSmall)
-/* 0E1758 7F0ACC28 3C088004 */  lui   $t0, %hi(ptrSecondFontTableSmall) 
-/* 0E175C 7F0ACC2C 25080EB0 */  addiu $t0, %lo(ptrSecondFontTableSmall) # addiu $t0, $t0, 0xeb0
-/* 0E1760 7F0ACC30 24E70EAC */  addiu $a3, %lo(ptrFirstFontTableSmall) # addiu $a3, $a3, 0xeac
+/* 0E1754 7F0ACC24 3C078004 */  lui   $a3, %hi(ptrFontBankGothic)
+/* 0E1758 7F0ACC28 3C088004 */  lui   $t0, %hi(ptrFontBankGothicChars) 
+/* 0E175C 7F0ACC2C 25080EB0 */  addiu $t0, %lo(ptrFontBankGothicChars) # addiu $t0, $t0, 0xeb0
+/* 0E1760 7F0ACC30 24E70EAC */  addiu $a3, %lo(ptrFontBankGothic) # addiu $a3, $a3, 0xeac
 /* 0E1764 7F0ACC34 245902A4 */  addiu $t9, $v0, 0x2a4
-/* 0E1768 7F0ACC38 3C05002E */  lui   $a1, %hi(_fonttablectlsmall1SegmentRomStart) # $a1, 0x2e
+/* 0E1768 7F0ACC38 3C05002E */  lui   $a1, %hi(_fontbankgothicSegmentRomStart) # $a1, 0x2e
 /* 0E176C 7F0ACC3C ACE20000 */  sw    $v0, ($a3)
 /* 0E1770 7F0ACC40 8FA6001C */  lw    $a2, 0x1c($sp)
 /* 0E1774 7F0ACC44 AD190000 */  sw    $t9, ($t0)
 /* 0E1778 7F0ACC48 00402025 */  move  $a0, $v0
 /* 0E177C 7F0ACC4C 0C001707 */  jal   romCopy
-/* 0E1780 7F0ACC50 24A563F0 */   addiu $a1, %lo(_fonttablectlsmall1SegmentRomStart) # addiu $a1, $a1, 0x63f0
-/* 0E1784 7F0ACC54 3C078004 */  lui   $a3, %hi(ptrFirstFontTableSmall)
-/* 0E1788 7F0ACC58 3C088004 */  lui   $t0, %hi(ptrSecondFontTableSmall) 
-/* 0E178C 7F0ACC5C 25080EB0 */  addiu $t0, %lo(ptrSecondFontTableSmall) # addiu $t0, $t0, 0xeb0
-/* 0E1790 7F0ACC60 24E70EAC */  addiu $a3, %lo(ptrFirstFontTableSmall) # addiu $a3, $a3, 0xeac
+/* 0E1780 7F0ACC50 24A563F0 */   addiu $a1, %lo(_fontbankgothicSegmentRomStart) # addiu $a1, $a1, 0x63f0
+/* 0E1784 7F0ACC54 3C078004 */  lui   $a3, %hi(ptrFontBankGothic)
+/* 0E1788 7F0ACC58 3C088004 */  lui   $t0, %hi(ptrFontBankGothicChars) 
+/* 0E178C 7F0ACC5C 25080EB0 */  addiu $t0, %lo(ptrFontBankGothicChars) # addiu $t0, $t0, 0xeb0
+/* 0E1790 7F0ACC60 24E70EAC */  addiu $a3, %lo(ptrFontBankGothic) # addiu $a3, $a3, 0xeac
 /* 0E1794 7F0ACC64 00001825 */  move  $v1, $zero
 .L7F0ACC68:
 /* 0E1798 7F0ACC68 8D090000 */  lw    $t1, ($t0)
@@ -210,23 +211,23 @@ glabel load_font_tables
 /* 0E17D4 7F0ACCA4 AFA6001C */  sw    $a2, 0x1c($sp)
 /* 0E17D8 7F0ACCA8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0E17DC 7F0ACCAC 24050004 */   li    $a1, 4
-/* 0E17E0 7F0ACCB0 3C078004 */  lui   $a3, %hi(ptrFirstFontTableLarge)
-/* 0E17E4 7F0ACCB4 3C088004 */  lui   $t0, %hi(ptrSecondFontTableLarge) 
-/* 0E17E8 7F0ACCB8 25080EB8 */  addiu $t0, %lo(ptrSecondFontTableLarge) # addiu $t0, $t0, 0xeb8
-/* 0E17EC 7F0ACCBC 24E70EB4 */  addiu $a3, %lo(ptrFirstFontTableLarge) # addiu $a3, $a3, 0xeb4
+/* 0E17E0 7F0ACCB0 3C078004 */  lui   $a3, %hi(ptrFontZurichBold)
+/* 0E17E4 7F0ACCB4 3C088004 */  lui   $t0, %hi(ptrFontZurichBoldChars) 
+/* 0E17E8 7F0ACCB8 25080EB8 */  addiu $t0, %lo(ptrFontZurichBoldChars) # addiu $t0, $t0, 0xeb8
+/* 0E17EC 7F0ACCBC 24E70EB4 */  addiu $a3, %lo(ptrFontZurichBold) # addiu $a3, $a3, 0xeb4
 /* 0E17F0 7F0ACCC0 244F02A4 */  addiu $t7, $v0, 0x2a4
-/* 0E17F4 7F0ACCC4 3C05002F */  lui   $a1, %hi(_fonttablectllarge1SegmentRomStart) # $a1, 0x2f
+/* 0E17F4 7F0ACCC4 3C05002F */  lui   $a1, %hi(_fontzurichboldSegmentRomStart) # $a1, 0x2f
 /* 0E17F8 7F0ACCC8 ACE20000 */  sw    $v0, ($a3)
 /* 0E17FC 7F0ACCCC 8FA6001C */  lw    $a2, 0x1c($sp)
 /* 0E1800 7F0ACCD0 AD0F0000 */  sw    $t7, ($t0)
 /* 0E1804 7F0ACCD4 00402025 */  move  $a0, $v0
 /* 0E1808 7F0ACCD8 0C001707 */  jal   romCopy
-/* 0E180C 7F0ACCDC 24A588A0 */   addiu $a1, %lo(_fonttablectllarge1SegmentRomStart) # addiu $a1, $a1, -0x7760
-/* 0E1810 7F0ACCE0 3C088004 */  lui   $t0, %hi(ptrSecondFontTableLarge) 
-/* 0E1814 7F0ACCE4 25080EB8 */  addiu $t0, %lo(ptrSecondFontTableLarge) # addiu $t0, $t0, 0xeb8
+/* 0E180C 7F0ACCDC 24A588A0 */   addiu $a1, %lo(_fontzurichboldSegmentRomStart) # addiu $a1, $a1, -0x7760
+/* 0E1810 7F0ACCE0 3C088004 */  lui   $t0, %hi(ptrFontZurichBoldChars) 
+/* 0E1814 7F0ACCE4 25080EB8 */  addiu $t0, %lo(ptrFontZurichBoldChars) # addiu $t0, $t0, 0xeb8
 /* 0E1818 7F0ACCE8 8D020000 */  lw    $v0, ($t0)
-/* 0E181C 7F0ACCEC 3C078004 */  lui   $a3, %hi(ptrFirstFontTableLarge)
-/* 0E1820 7F0ACCF0 24E70EB4 */  addiu $a3, %lo(ptrFirstFontTableLarge) # addiu $a3, $a3, 0xeb4
+/* 0E181C 7F0ACCEC 3C078004 */  lui   $a3, %hi(ptrFontZurichBold)
+/* 0E1820 7F0ACCF0 24E70EB4 */  addiu $a3, %lo(ptrFontZurichBold) # addiu $a3, $a3, 0xeb4
 /* 0E1824 7F0ACCF4 8CF90000 */  lw    $t9, ($a3)
 /* 0E1828 7F0ACCF8 8C580014 */  lw    $t8, 0x14($v0)
 /* 0E182C 7F0ACCFC 24030030 */  li    $v1, 48
@@ -1118,14 +1119,14 @@ glabel construct_fontchar_microcode
 
 
 #ifdef NONMATCHING
-void en_text_write_stuff(void) {
+void textRender(void) {
 
 }
 #else
 #ifdef VERSION_US
 GLOBAL_ASM(
 .text
-glabel en_text_write_stuff
+glabel textRender
 /* 0E25EC 7F0ADABC 27BDFF58 */  addiu $sp, $sp, -0xa8
 /* 0E25F0 7F0ADAC0 240E0001 */  li    $t6, 1
 /* 0E25F4 7F0ADAC4 3C018004 */  lui   $at, %hi(D_80040EA8)
@@ -1289,7 +1290,7 @@ glabel en_text_write_stuff
 /* 0E2844 7F0ADD14 24040002 */  li    $a0, 2
 /* 0E2848 7F0ADD18 24890080 */  addiu $t1, $a0, 0x80
 .L7F0ADD1C:
-/* 0E284C 7F0ADD1C 0FC3068C */  jal   something_with_LnameX
+/* 0E284C 7F0ADD1C 0FC3068C */  jal   langGetJpnCharPixels
 /* 0E2850 7F0ADD20 AFA9006C */   sw    $t1, 0x6c($sp)
 /* 0E2854 7F0ADD24 8FAC00A0 */  lw    $t4, 0xa0($sp)
 /* 0E2858 7F0ADD28 8FA800C8 */  lw    $t0, 0xc8($sp)
@@ -1332,7 +1333,7 @@ glabel en_text_write_stuff
 #ifdef VERSION_JP
 GLOBAL_ASM(
 .text
-glabel en_text_write_stuff
+glabel textRender
 /* 0E25EC 7F0ADABC 27BDFF58 */  addiu $sp, $sp, -0xa8
 /* 0E25F0 7F0ADAC0 240E0001 */  li    $t6, 1
 /* 0E25F4 7F0ADAC4 3C018004 */  lui   $at, %hi(D_80040EA8)
@@ -1496,7 +1497,7 @@ glabel en_text_write_stuff
 /* 0E2844 7F0ADD14 24040002 */  li    $a0, 2
 /* 0E2848 7F0ADD18 24890080 */  addiu $t1, $a0, 0x80
 .L7F0ADD1C:
-/* 0E284C 7F0ADD1C 0FC3068C */  jal   something_with_LnameX
+/* 0E284C 7F0ADD1C 0FC3068C */  jal   langGetJpnCharPixels
 /* 0E2850 7F0ADD20 AFA9006C */   sw    $t1, 0x6c($sp)
 /* 0E2854 7F0ADD24 8FAC00A0 */  lw    $t4, 0xa0($sp)
 /* 0E2858 7F0ADD28 8FA800C8 */  lw    $t0, 0xc8($sp)
@@ -1540,7 +1541,7 @@ glabel en_text_write_stuff
 #ifdef VERSION_EU
 GLOBAL_ASM(
 .text
-glabel en_text_write_stuff
+glabel textRender
 /* 0DF76C 7F0ACD7C 27BDFF58 */  addiu $sp, $sp, -0xa8
 /* 0DF770 7F0ACD80 240E0001 */  li    $t6, 1
 /* 0DF774 7F0ACD84 3C018004 */  lui   $at, %hi(D_80040EA8) # $at, 0x8004
@@ -1704,7 +1705,7 @@ glabel en_text_write_stuff
 /* 0DF9C4 7F0ACFD4 24040002 */  li    $a0, 2
 /* 0DF9C8 7F0ACFD8 24890080 */  addiu $t1, $a0, 0x80
 .L7F0ACFDC:
-/* 0DF9CC 7F0ACFDC 0FC303C4 */  jal   something_with_LnameX
+/* 0DF9CC 7F0ACFDC 0FC303C4 */  jal   langGetJpnCharPixels
 /* 0DF9D0 7F0ACFE0 AFA9006C */   sw    $t1, 0x6c($sp)
 /* 0DF9D4 7F0ACFE4 8FAC00A0 */  lw    $t4, 0xa0($sp)
 /* 0DF9D8 7F0ACFE8 8FA800C8 */  lw    $t0, 0xc8($sp)
@@ -2398,14 +2399,14 @@ glabel sub_GAME_7F0AE45C
 
 
 #ifdef NONMATCHING
-void jp_text_write_stuff(void) {
+void textRenderGlow(void) {
 
 }
 #else
 #ifdef VERSION_US
 GLOBAL_ASM(
 .text
-glabel jp_text_write_stuff
+glabel textRenderGlow
 /* 0E321C 7F0AE6EC 27BDFF68 */  addiu $sp, $sp, -0x98
 /* 0E3220 7F0AE6F0 240E0001 */  li    $t6, 1
 /* 0E3224 7F0AE6F4 3C018004 */  lui   $at, %hi(D_80040EA8)
@@ -2542,7 +2543,7 @@ glabel jp_text_write_stuff
 /* 0E3414 7F0AE8E4 24040002 */  li    $a0, 2
 /* 0E3418 7F0AE8E8 248B0080 */  addiu $t3, $a0, 0x80
 .L7F0AE8EC:
-/* 0E341C 7F0AE8EC 0FC3068C */  jal   something_with_LnameX
+/* 0E341C 7F0AE8EC 0FC3068C */  jal   langGetJpnCharPixels
 /* 0E3420 7F0AE8F0 AFAB0074 */   sw    $t3, 0x74($sp)
 /* 0E3424 7F0AE8F4 8FAC0090 */  lw    $t4, 0x90($sp)
 /* 0E3428 7F0AE8F8 8FAD00B4 */  lw    $t5, 0xb4($sp)
@@ -2589,7 +2590,7 @@ glabel jp_text_write_stuff
 #ifdef VERSION_JP
 GLOBAL_ASM(
 .text
-glabel jp_text_write_stuff
+glabel textRenderGlow
 /* 0E321C 7F0AE6EC 27BDFF68 */  addiu $sp, $sp, -0x98
 /* 0E3220 7F0AE6F0 240E0001 */  li    $t6, 1
 /* 0E3224 7F0AE6F4 3C018004 */  lui   $at, %hi(D_80040EA8)
@@ -2726,7 +2727,7 @@ glabel jp_text_write_stuff
 /* 0E3414 7F0AE8E4 24040002 */  li    $a0, 2
 /* 0E3418 7F0AE8E8 248B0080 */  addiu $t3, $a0, 0x80
 .L7F0AE8EC:
-/* 0E341C 7F0AE8EC 0FC3068C */  jal   something_with_LnameX
+/* 0E341C 7F0AE8EC 0FC3068C */  jal   langGetJpnCharPixels
 /* 0E3420 7F0AE8F0 AFAB0074 */   sw    $t3, 0x74($sp)
 /* 0E3424 7F0AE8F4 8FAC0090 */  lw    $t4, 0x90($sp)
 /* 0E3428 7F0AE8F8 8FAD00B4 */  lw    $t5, 0xb4($sp)
@@ -2774,7 +2775,7 @@ glabel jp_text_write_stuff
 #ifdef VERSION_EU
 GLOBAL_ASM(
 .text
-glabel jp_text_write_stuff
+glabel textRenderGlow
 /* 0E039C 7F0AD9AC 27BDFF68 */  addiu $sp, $sp, -0x98
 /* 0E03A0 7F0AD9B0 240E0001 */  li    $t6, 1
 /* 0E03A4 7F0AD9B4 3C018004 */  lui   $at, %hi(D_80040EA8) # $at, 0x8004
@@ -2911,7 +2912,7 @@ glabel jp_text_write_stuff
 /* 0E0594 7F0ADBA4 24040002 */  li    $a0, 2
 /* 0E0598 7F0ADBA8 248B0080 */  addiu $t3, $a0, 0x80
 .L7F0ADBAC:
-/* 0E059C 7F0ADBAC 0FC303C4 */  jal   something_with_LnameX
+/* 0E059C 7F0ADBAC 0FC303C4 */  jal   langGetJpnCharPixels
 /* 0E05A0 7F0ADBB0 AFAB0074 */   sw    $t3, 0x74($sp)
 /* 0E05A4 7F0ADBB4 8FAC0090 */  lw    $t4, 0x90($sp)
 /* 0E05A8 7F0ADBB8 8FAD00B4 */  lw    $t5, 0xb4($sp)
@@ -2962,13 +2963,87 @@ glabel jp_text_write_stuff
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0AE98C(void) {
+void textMeasure(s32 *textheight, s32 *textwidth, char *text, struct fontchar *font1, struct font *font2, s32 lineheight)
+{
+	unsigned char prevchar;
+	unsigned char thischar;
+	s32 longest;
+	s32 tmp;
 
+	prevchar = 'H';
+	thischar = '\0';
+	longest = 0;
+	*textheight = 0;
+	*textwidth = 0;
+
+
+    if (lineheight == 0)
+    {
+		lineheight = font1['['].baseline + font1['['].height;
+    }
+    if ((j_text_trigger) && (lineheight < 14))
+    {
+        lineheight = 14;
+    }
+
+	if (text)
+    {
+		while (*text != '\0')
+        {
+			if (*text == ' ')
+            {
+				// Space
+				if (text[1] != '\n') {
+					*textwidth += 5;
+				}
+
+				prevchar = 'H';
+				text++;
+			} else if (*text == '\n') {
+				// Line break
+
+				if (*textwidth > longest) {
+					longest = *textwidth;
+				}
+
+				*textwidth = 0;
+				*textheight += lineheight;
+				text++;
+			} else if (*text < 0x80)
+            {
+					// Normal single-byte character
+					thischar = *text;
+					tmp = font2->kerning[font1[prevchar - 0x21].kerningindex * 13 + font1[thischar - 0x21].kerningindex] + text_spacing - 1;
+					*textwidth = font1[thischar - 0x21].width + *textwidth - tmp;
+
+					prevchar = *text;
+					text++;
+            }
+            else if ((s32) text < 0xC0)
+            {
+					// Multi-byte character
+					tmp = font2->kerning[0] + text_spacing - 1;
+					*textwidth = *textwidth - tmp + 11;
+					text += 2;
+            }
+            else
+            {
+					// Multi-byte character
+					tmp = font2->kerning[0] + text_spacing - 1;
+					*textwidth = *textwidth - tmp + 15;
+					text += 2;
+            }
+        };
+    }
+    if (*textwidth < longest)
+    {
+        *textwidth = longest;
+    }
 }
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F0AE98C
+glabel textMeasure
 /* 0E34BC 7F0AE98C 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0E34C0 7F0AE990 AFB00008 */  sw    $s0, 8($sp)
 /* 0E34C4 7F0AE994 8FB0002C */  lw    $s0, 0x2c($sp)
@@ -3180,7 +3255,7 @@ glabel sub_GAME_7F0AEB64
 /* 0E377C 7F0AEC4C 27A4007C */  addiu $a0, $sp, 0x7c
 /* 0E3780 7F0AEC50 02803025 */  move  $a2, $s4
 /* 0E3784 7F0AEC54 02603825 */  move  $a3, $s3
-/* 0E3788 7F0AEC58 0FC2BA63 */  jal   sub_GAME_7F0AE98C
+/* 0E3788 7F0AEC58 0FC2BA63 */  jal   textMeasure
 /* 0E378C 7F0AEC5C AFB90010 */   sw    $t9, 0x10($sp)
 /* 0E3790 7F0AEC60 8FAB008C */  lw    $t3, 0x8c($sp)
 /* 0E3794 7F0AEC64 8FAE0080 */  lw    $t6, 0x80($sp)

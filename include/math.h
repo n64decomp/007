@@ -45,9 +45,9 @@
 
 
 /* Half of PI. (PI/2)*/
-#define M_HALF_PI       M_PI_F / 2
+#define M_HALF_PI       (M_PI_F / 2)
 /* 3 Halves of PI. (3*(PI/2))*/
-#define M_THREE_HALF_PI 3 * M_HALF_PI
+#define M_THREE_HALF_PI (3 * M_HALF_PI)
 
 
 #define M_U16_MAX_VALUE_F 65536.0f
@@ -68,6 +68,8 @@
 #define RAD2BYTE(RAD)         (char)(256.0f / M_TAU_F * (RAD))
 /* Converts an angle from Degrees to Radians */
 #define DegToRad(DEG)         (float)((DEG) * M_TAU_F / 360.0f)
+/* Converts an angle from Degrees to Radians with only one multiply*/
+#define DegToRad1Fact(DEG)         (float)((DEG) * (float)(M_TAU / 360.0))
 /* Converts and halves an angle from Degrees to Radians */
 #define mDegToHalfRad(x)      ((x * M_PI_F) / 360.0f)
 /* Converts an angle from Radians to Degrees */

@@ -7,8 +7,8 @@
 struct legal_screen_text {
     s32 h_pos;
     s32 v_pos;
-    s32 flag;
-    s32 flag2;
+    s32 halign;
+    s32 valign;
     u16 txtID;
     u16 anonymous_5;
 };
@@ -39,7 +39,7 @@ struct mp_stage_playercount {
 
 struct mp_stage_setup {
     u16 folder_text_preset;
-    s16 select_screen_text_preset;
+    u16 select_screen_text_preset;
     s32 photo;
     s32 stage_id;
     s32 unlock_after;
@@ -48,25 +48,25 @@ struct mp_stage_setup {
 };
 
 struct MP_selectable_chars {
-    short text_preset;
-    char gender;
-    char select_photo;
+    u16 text_preset;
+    u8 gender;
+    u8 select_photo;
     short body;
     short head;
     float pov;
 };
 
 struct MP_handicap_menu {
-    short text_preset;
-    short padding;
+    u16 text_preset;
+    u16 padding;
     float damage_modifier;
 };
 
 struct MP_controller_configuration_menu {
-    u16 anonymous_0;
+    u16 text_preset;
     //char field_1;
-    char field_2;
-    char field_3;
+    u8 field_2;
+    u8 field_3;
 };
 
 struct MP_sight_aim_settings {
@@ -76,8 +76,8 @@ struct MP_sight_aim_settings {
 };
 
 struct intro_char {
-    int body;
-    int head;
+    enum BODIES body;
+    enum HEADS head;
     short text1;
     short text2;
     short text3;
@@ -119,40 +119,24 @@ extern f32 flt_CODE_bss_800695BC;
 extern f32 flt_CODE_bss_800695C0;
 //CODE.bss:800695C4                     .align 3
 //CODE.bss:800695C8
-extern f32 flt_CODE_bss_800695C8;
-//CODE.bss:800695CC
-extern f32 flt_CODE_bss_800695CC;
-//CODE.bss:800695D0
-extern f32 flt_CODE_bss_800695D0;
+extern struct coord3d flt_CODE_bss_800695C8;
 //CODE.bss:800695D4                     .align 3
 //CODE.bss:800695D8
-extern f32 flt_CODE_bss_800695D8;
-//CODE.bss:800695DC
-extern f32 flt_CODE_bss_800695DC;
-//CODE.bss:800695E0
-extern f32 flt_CODE_bss_800695E0;
+extern struct coord3d flt_CODE_bss_800695D8;
+
 //CODE.bss:800695E4
-extern f32 flt_CODE_bss_800695E4;
+extern s32 bss_800695E4;
+
 //CODE.bss:800695E8
-extern f32 flt_CODE_bss_800695E8;
-//CODE.bss:800695EC
-extern f32 flt_CODE_bss_800695EC;
-//CODE.bss:800695F0
-extern f32 flt_CODE_bss_800695F0;
+extern struct coord3d flt_CODE_bss_800695E8;
+
 //CODE.bss:800695F4                     .align 3
 //CODE.bss:800695F8
-extern f32 flt_CODE_bss_800695F8;
-//CODE.bss:800695FC
-extern f32 flt_CODE_bss_800695FC;
-//CODE.bss:80069600
-extern f32 flt_CODE_bss_80069600;
+extern struct coord3d flt_CODE_bss_800695F8;
 //CODE.bss:80069604                     .align 3
 //CODE.bss:80069608
-extern f32 flt_CODE_bss_80069608;
-//CODE.bss:8006960C
-extern f32 flt_CODE_bss_8006960C;
-//CODE.bss:80069610
-extern f32 flt_CODE_bss_80069610;
+extern struct coord3d flt_CODE_bss_80069608;
+
 //CODE.bss:80069614
 extern f32 ninLogoRotRate;
 //CODE.bss:80069618
@@ -181,13 +165,7 @@ extern s32 dword_CODE_bss_80069730[4];
 //CODE.bss:80069740
 extern s32 player_has_selected_char[];
 //CODE.bss:80069750
-extern s32 size_mp_select_image_player1;
-//CODE.bss:80069754
-extern s32 size_mp_select_image_player2;
-//CODE.bss:80069758
-extern s32 size_mp_select_image_player3;
-//CODE.bss:8006975C
-extern s32 size_mp_select_image_player4;
+extern s32 size_mp_select_image_player[];
 //CODE.bss:80069760
 extern s32 player_handicap[];
 //CODE.bss:80069770
@@ -220,7 +198,7 @@ extern s32 highlight_enemy_damage;
 //CODE.bss:800697A8
 extern s32 player_handicap[];
 //CODE.bss:800697B8
-extern u32 controlstyle_player[];
+extern s32 controlstyle_player[];
 
 
 //CODE.bss:800697C8
@@ -287,21 +265,12 @@ extern s32 screen_size;
 extern s32 spectrum_related_flag;
 extern s32 is_emulating_spectrum;
 extern s32 is_cheat_menu_available;
-extern Gfx * ptr_logo_and_walletbond_DL;
+extern u8 * ptr_logo_and_walletbond_DL;
 extern s32 ptr_menu_videobuffer;
 extern  Model * walletinst[];
-extern struct rgba_u8 RGBA_8002A970;
-extern struct rgba_u8 RGBA_8002A974;
-extern struct rgba_u8 RGBA_8002A978;
-extern struct rgba_u8 RGBA_8002A97C;
-extern struct rgba_u8 RGBA_8002A980;
-extern struct rgba_u8 RGBA_8002A984;
-extern struct rgba_u8 RGBA_8002A988;
-extern struct rgba_u8 RGBA_8002A98C;
-extern u32 dword_D_8002A990;
-extern u32 dword_D_8002A994;
-extern u32 dword_D_8002A998;
-extern u32 dword_D_8002A99C;
+extern Lights1 gelogolight;
+extern Lights1 ninlogolight;
+
 extern f32 slider_007_mode_reaction;
 extern f32 slider_007_mode_health;
 extern f32 slider_007_mode_damage;
@@ -325,14 +294,14 @@ extern s32 unlock_control_style;
 extern s32 unlock_aim_sight;
 extern s16 solo_target_time_array[20][3];
 
-extern u32 intro_character_index;
+extern s32 intro_character_index;
 extern u32 randomly_selected_intro_animation;
 extern u32 intro_animation_count;
-extern u32 objinstance;
-extern u32 ptrobjinstance;
+extern struct Model *cast_model;
+extern struct Model *cast_model_weapon;
 extern u32 full_actor_intro;
 
-void set_menu_to_mode(MENU menu, s32 mode);
+void frontChangeMenu(MENU menu, s32 reload);
 s32 get_selected_num_players(void);
 void do_extended_cast_display(s32 flag);
 MPSCENARIOS get_scenario(void);

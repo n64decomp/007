@@ -3,18 +3,13 @@
 
 #include <ultra64.h>
 
-typedef struct allocation {
-    s32 addr;
-    u32 size;
-} allocation;
-
 void memaInit(void);
-void memaSetBuffer(s32 buffer, s32 size);
-void memaIterateAndMerge(void);
-s32 memaFree(u32 size);
-void memaRegister(u32 addr, u32 size);
+void memaReset(void *heapaddr, u32 heapsize);
+void memaSingleDefragPass(void);
+s32 memaAlloc(u32 size);
+void memaFree(void *addr, s32 size);
 void memaDumpPrePostMerge(void);
-u32 memaGetLargestAllocSize(void);
-s32 memaResize(s32 addr, u32 newsize, u32 oldsize);
+s32 memaGetLongestFree(void);
+s32 memaRealloc(s32 addr, u32 newsize, u32 oldsize);
 
 #endif

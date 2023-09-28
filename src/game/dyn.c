@@ -3,6 +3,7 @@
 #include <token.h>
 #include <str.h>
 #include <memp.h>
+#include <macro.h>
 
 /**
  * This file handles memory usage for graphics related tasks.
@@ -40,7 +41,7 @@ char membars_string1[] = ">>>>>>>>>>>>>>>>>>>>>>>>>";
 char membars_string2[] = "=========================";
 char membars_string3[] = "-------------------------";
 
-void dynInitDebugNoticeList(void) {
+void dynInit(void) {
     debTryAdd(&D_800482E0, "dyn_c_debug");
 }
 
@@ -118,40 +119,26 @@ s32 dynGetFreeVtx(void) {
 	return g_VtxBuffers[g_GfxActiveBufferIndex + 1] - g_GfxMemPos;
 }
 
-#ifdef NONMATCHING
-// $f2 is used for 0.0f instead of $f0
-f32 dynCalculateMembarLength(const char* arg0, f32 arg1, f32 arg2) {
-    strlen(arg0);
+// Address 0x7F0BD7CC NTSC
+void dynCalculateMembarLength(const char* arg0, f32 arg1, f32 arg2)
+{
+    s32 len;
+    f32 zero = 0;
+    
+    len = strlen(arg0);
+    
     arg1 /= arg2;
-    if (arg1 < 0.0f) {
-        return 0.0f;
+    
+    if(zero);
+    
+    if (arg1 < zero && len > 1)
+    {
+        if (len > 1)
+        {
+            
+        }
     }
 }
-#else
-f32 dynCalculateMembarLength(const char* arg0, f32 arg1, f32 arg2);
-GLOBAL_ASM(
-.text
-glabel dynCalculateMembarLength
-/* 0F22FC 7F0BD7CC 44856000 */  mtc1  $a1, $f12
-/* 0F2300 7F0BD7D0 27BDFFE8 */  addiu $sp, $sp, -0x18
-/* 0F2304 7F0BD7D4 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0F2308 7F0BD7D8 AFA60020 */  sw    $a2, 0x20($sp)
-/* 0F230C 7F0BD7DC 0C004E1F */  jal   strlen
-/* 0F2310 7F0BD7E0 E7AC001C */   swc1  $f12, 0x1c($sp)
-/* 0F2314 7F0BD7E4 C7AC001C */  lwc1  $f12, 0x1c($sp)
-/* 0F2318 7F0BD7E8 C7A40020 */  lwc1  $f4, 0x20($sp)
-/* 0F231C 7F0BD7EC 44800000 */  mtc1  $zero, $f0
-/* 0F2320 7F0BD7F0 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 0F2324 7F0BD7F4 46046303 */  div.s $f12, $f12, $f4
-/* 0F2328 7F0BD7F8 4600603C */  c.lt.s $f12, $f0
-/* 0F232C 7F0BD7FC 00000000 */  nop   
-/* 0F2330 7F0BD800 45000001 */  bc1f  .L7F0BD808
-/* 0F2334 7F0BD804 00000000 */   nop   
-.L7F0BD808:
-/* 0F2338 7F0BD808 03E00008 */  jr    $ra
-/* 0F233C 7F0BD80C 27BD0018 */   addiu $sp, $sp, 0x18
-)
-#endif
 
 void dynDrawMembars(Gfx *gdl) {
     dynCalculateMembarLength(membars_string2, ((Gfx*)g_GfxBuffers[g_GfxActiveBufferIndex + 1] - gdl), ((Gfx*)g_GfxBuffers[g_GfxActiveBufferIndex + 1] - (Gfx*)g_GfxBuffers[g_GfxActiveBufferIndex]));

@@ -52,9 +52,10 @@ SECTIONS
 
    _alt_startSegmentRomStart = _startSegmentRomStart + 0x100000;
    _alt_startSegmentStart = _startSegmentStart - 0x10000000 + 0x100000;
+   
 
    /* 0x70000450, 0x70020D90 001050-021990 */
-   BEGIN_SEG(code, _startSegmentRomEnd, 0x70000450) SUBALIGN(16)
+   BEGIN_SEG(code, _startSegmentRomEnd, (_startSegmentEnd - 0x10000000)) SUBALIGN(16)
    {
 #include "ld/lib.text.ld.inc"
    }
@@ -125,13 +126,13 @@ SECTIONS
    }
    END_SEG(Globalimagetable)
 
-   BEGIN_SEG(Globalimagetablecmdblk, _GlobalimagetableSegmentRomEnd, 0x02000000)
+   BEGIN_SEG(rarewarelogo, _GlobalimagetableSegmentRomEnd, 0x02000000)
    {
-      build/OUTCODE/assets/Globalimagetable_commandblock.o (.data);
+      build/OUTCODE/assets/rarewarelogo.o (.data);
    }
-   END_SEG(Globalimagetablecmdblk)
+   END_SEG(rarewarelogo)
 
-   BEGIN_SEG(romfiles2, _GlobalimagetablecmdblkSegmentRomEnd, _romfiles2SegmentRomStart)
+   BEGIN_SEG(romfiles2, _rarewarelogoSegmentRomEnd, _romfiles2SegmentRomStart)
    {
       build/OUTCODE/assets/romfiles2.o (.data);
    }
@@ -144,21 +145,21 @@ SECTIONS
    END_SEG(ramromfiles)
 
 
-   BEGIN_SEG(fonttablectlsmall1, _ramromfilesSegmentRomEnd, _fonttablectlsmall1SegmentRomStart)
+   BEGIN_SEG(fontbankgothic, _ramromfilesSegmentRomEnd, 0)
    {
-      build/OUTCODE/assets/font/font_first_font_table_controller_small.o (.data);
+      build/OUTCODE/assets/font/fontBankGothic.o (.data);
    }
-   END_SEG(fonttablectlsmall1)
+   END_SEG(fontbankgothic)
 
-   BEGIN_SEG(fonttablectllarge1, _fonttablectlsmall1SegmentRomEnd, _fonttablectllarge1SegmentRomStart)
+   BEGIN_SEG(fontzurichbold, _fontbankgothicSegmentRomEnd, 0)
    {
-      build/OUTCODE/assets/font/font_first_font_table_controller_large.o (.data);
+      build/OUTCODE/assets/font/fontZurichBold.o (.data);
    }
-   END_SEG(fonttablectllarge1)
+   END_SEG(fontzurichbold)
 
 
 
-   BEGIN_SEG(musicfiles, _fonttablectllarge1SegmentRomEnd, _musicfilesSegmentRomStart)
+   BEGIN_SEG(musicfiles, _fontzurichboldSegmentRomEnd, _musicfilesSegmentRomStart)
    {
       build/OUTCODE/assets/music/sfx.ctl.o (.data);
       build/OUTCODE/assets/music/sfx.tbl.o (.data);

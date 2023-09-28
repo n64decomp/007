@@ -14,7 +14,7 @@ f32 acosf(f32 cosinef)
         cosines = (cosinef * 32767.0f);
     }
 
-    return (acos(cosines) * 3.1415927f) / 65535.0f;
+    return (acos(cosines) * M_PI_F) / 65535.0f;
 }
 
 f32 asinf(f32 sinef)
@@ -29,5 +29,5 @@ f32 asinf(f32 sinef)
         sines = (sinef * 32767.0f);
     }
 
-    return (asin(sines) * 3.1415927f) / 65535.0f;
+    return (asin(sines) * M_PI_F) / 65535.0f;
 }

@@ -204,7 +204,7 @@ s32 animation_table_ptrs1[] = {
     0
 };
 
-s32 animation_table_ptrs2[] = {
+struct ModelAnimation *animation_table_ptrs2[] = {
     PTR_ANIM_helicopter_cradle,
     PTR_ANIM_plane_runway,
     PTR_ANIM_helicopter_takeoff,

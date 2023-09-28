@@ -23,11 +23,6 @@
 #define DEFAULT_007_SOLO_AMMO_MULTIPLIER DEFAULT_00_AGENT_SOLO_AMMO_MULTIPLIER
 #define DEFAULT_007_AI_REACTION_SPEED DEFAULT_00_AGENT_AI_REACTION_SPEED
 
-struct ramrom_struct {
-    u32 *address;
-    u32 locked;
-};
-
 struct LvlMpUnknown {
     u8 unk_0;
     u8 unk_1;
@@ -48,18 +43,18 @@ extern s32 dword_CODE_bss_8008C268;
 extern s32 dword_CODE_bss_8008C26C;
 extern char ramrom_data_target[0x380];
 extern s32 record_slot_num;
-extern s32 address_demo_loaded;
+extern u8 * address_demo_loaded;
 extern s32 dword_CODE_bss_8008C5F8;
 
 #if defined(BUGFIX_R1)
 extern f32 g_JP_GlobalTimerDelta;
 #endif
 
-void lvInitDebugNoticeList(void);
+void lvInit(void);
 Gfx * lvlRender(Gfx *);
 void lvlSetSelectedDifficulty(DIFFICULTY arg0);
 void lvlManageMpGame(void);
-void lvlUpdateMpPlayerData(void);
+void lvlViewMoveTick(void);
 void lvlUnloadStageTextData(void);
 DIFFICULTY lvlGetSelectedDifficulty(void);
 void lvlStageLoad(s32 stage);
