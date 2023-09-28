@@ -44,7 +44,7 @@ If you don't have host development tools already installed then you will also ne
 sudo apt-get install build-essential
 ```
 
-Additionally [qemu-irix](https://github.com/n64decomp/qemu-irix/releases) is needed. Download the package to a desired location and install with:
+Optionally [qemu-irix](https://github.com/n64decomp/qemu-irix/releases) is needed. Download the package to a desired location and install with:
 
 ```bash
 sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
