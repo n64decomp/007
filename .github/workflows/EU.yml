@@ -23,12 +23,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Bypass Cloudflare for GitHub Action
-        uses: xiaotianxt/bypass-cloudflare-for-github-action@v1.1.1
-        with:
-          cf_zone_id: ${{ secrets.CF_ZONE_ID }}
-          cf_api_token: ${{ secrets.CF_API_TOKEN }}
-      - uses: actions/checkout@v2
+    #  - name: Bypass Cloudflare for GitHub Action
+    #    uses: xiaotianxt/bypass-cloudflare-for-github-action@v1.1.1
+    #    with:
+    #      cf_zone_id: ${{ secrets.CF_ZONE_ID }}
+    #      cf_api_token: ${{ secrets.CF_API_TOKEN }}
+    #  - uses: actions/checkout@v2
 
       - name: Install Depedencies
         run: |
@@ -69,19 +69,19 @@ jobs:
       - name: Stats
         run: python3 tools/ge-stats.py --version eu --report
      
-      - name: Upload output files
+    #  - name: Upload output files
 
-        uses: AXDOOMER/copy_file_to_another_repo_action@e54ae5087212906dac7ef96dee19e31190913257
+    #    uses: AXDOOMER/copy_file_to_another_repo_action@e54ae5087212906dac7ef96dee19e31190913257
 
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-          API_TOKEN_USER: ${{ secrets.API_TOKEN_USER }}
-          API_TOKEN_EMAIL: ${{ secrets.API_TOKEN_EMAIL }}
+    #    env:
+    #      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+    #      API_TOKEN_USER: ${{ secrets.API_TOKEN_USER }}
+    #      API_TOKEN_EMAIL: ${{ secrets.API_TOKEN_EMAIL }}
 
-        with:
-          destination_repo: 'kholdfuzion/goldeneyestatus'
-          user_email: $API_TOKEN_EMAIL
-          user_name: $API_TOKEN_USER
-          source_file: tools/report/EU.htm
+    #    with:
+    #      destination_repo: 'kholdfuzion/goldeneyestatus'
+    #      user_email: $API_TOKEN_EMAIL
+    #      user_name: $API_TOKEN_USER
+    #      source_file: tools/report/EU.htm
       
 #need way of telling report that EU passed/failed
