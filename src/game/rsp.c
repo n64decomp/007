@@ -215,7 +215,7 @@ void rspInit(void)
 
 void rspAllocateBuffers(void)
 {
-    g_gfxRdpOutputBufferStart = mempAllocBytesInBank(RSP_MEMP_ALLOC_SIZE_BYTES, RSP_MEMP_BANK);
+    g_gfxRdpOutputBufferStart = mempAllocBytesInBank(RSP_MEMP_ALLOC_SIZE_BYTES, MEMPOOL_PERMANENT);
     g_gfxRdpOutputBufferEnd = g_gfxRdpOutputBufferStart + RSP_MEMP_ALLOC_SIZE_BYTES;
 }
 

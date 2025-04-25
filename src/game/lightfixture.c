@@ -115,7 +115,7 @@ Vtx * return_ptr_vertex_of_entry_room(Gfx * gfx, s32 room_index)
 
     // weird memory checking, not sure what's going on here
     if (((s32) ret & 0xFF000000) == 0x0E000000) {
-        ret = (s32)array_room_info[room_index].ptr_point_index + ((s32) ret & 0xFFFFFF);
+        ret = (s32)g_BgRoomInfo[room_index].ptr_point_index + ((s32) ret & 0xFFFFFF);
     }
 
     return ret;
@@ -185,7 +185,7 @@ void redarken_lights_in_room(s32 room_index)
     s32 i;
     struct s_darkened_light* unk;
 
-    vertex = array_room_info[room_index].ptr_point_index;
+    vertex = g_BgRoomInfo[room_index].ptr_point_index;
 
     for (i = 0; i < DARKENED_LIGHT_TABLE_MAX; i++)
     {
@@ -208,7 +208,7 @@ void darken_vertex_in_room(Vtx * vertex, s32 room_index)
     if (darkened_light_table_contains_vertex(vertex, room_index) != 0) { return; }
 
     // weird memory stuff going on here
-    vtx_index = ((u32)vertex - (u32)array_room_info[room_index].ptr_point_index) >> 4;
+    vtx_index = ((u32)vertex - (u32)g_BgRoomInfo[room_index].ptr_point_index) >> 4;
 
     darkened_light_table[cur_entry_darkened_light_table].room_index = (u16) room_index;
     darkened_light_table[cur_entry_darkened_light_table].vtx_index = vtx_index;
@@ -233,7 +233,7 @@ s32 darkened_light_table_contains_vertex(Vtx * vertex, s32 room_index)
     s32 i;
 
     // weird memory stuff going on here
-    vtx_index = ((u32)vertex - (u32)array_room_info[room_index].ptr_point_index) >> 4;
+    vtx_index = ((u32)vertex - (u32)g_BgRoomInfo[room_index].ptr_point_index) >> 4;
 
     for (i = 0; i < DARKENED_LIGHT_TABLE_MAX; i++)
     {
@@ -298,7 +298,7 @@ s32 sub_GAME_7F0BBCCC(coord16 * coord, s32 room_index)
     {
         if (room_index == darkened_light_table[i].room_index)
         {
-            vertex = &array_room_info[room_index].ptr_point_index[darkened_light_table[i].vtx_index];
+            vertex = &g_BgRoomInfo[room_index].ptr_point_index[darkened_light_table[i].vtx_index];
 
             var_s0 = vertex->v.ob[0] - coord->AsArray[0];
             var_s1 = vertex->v.ob[1] - coord->AsArray[1];
@@ -382,7 +382,7 @@ void sub_GAME_7F0BBE0C(Gfx * gfx, u32 tri_type, s32 room_index)
         dist_nn = sqrtf((diff_x_13 * diff_x_13) + (diff_y_13 * diff_y_13) + (diff_z_13 * diff_z_13));
         inv_dist_13 = 10.0f / (get_room_data_float2() * dist_nn);
 
-        sub_GAME_7F0BCA34(light_fixture_table[i].room_index, &origin);
+        getRoomPositionScaledByIndex(light_fixture_table[i].room_index, &origin);
 
         for (dist_tween = 0.0f; dist_tween < 1.0f; dist_tween += inv_dist_12)
         {

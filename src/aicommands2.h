@@ -27,5333 +27,5333 @@
 #include   <bondconstants.h>
 // make sure this is after constants
 
-//Define All Commands At Once From File: 
+//Define All Commands At Once From File:
 
 //Number of bytes for AI cmds, GE 1, PD 2
-#define AICMDSIZE ((u8)(AI_CMD_COUNT / 255) + 1) 
+#define AICMDSIZE ((u8)(AI_CMD_COUNT / 255) + 1)
 
 # 1 "src/aicommands.def"
 # 1 "include/CPPLib.h"
 # 649 "include/CPPLib.h"
 # 87 "src/aicommands.def"
 //==============================================================================
-//## GOTO NEXT 
+//## GOTO NEXT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Skips all commands between this command and LABEL then continues 
-  executing after found LABEL 
-******************************************************************************** 
-  @param     LABEL: 8bit Integer/enum ID of label to Go To 
-  @return    Continue execution from LABEL or End 
-  @exception Does Not search from beginning 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Skips all commands between this command and LABEL then continues
+  executing after found LABEL
+********************************************************************************
+  @param     LABEL: 8bit Integer/enum ID of label to Go To
+  @return    Continue execution from LABEL or End
+  @exception Does Not search from beginning
+*******************************************************************************/
 #define GotoNext(LABEL)  \
                     AI_GotoNext  ,  \
-                    LABEL ,   
- 
-#define AI_GotoNext_LENGTH   (AICMDSIZE +1    ) 
+                    LABEL ,
+
+#define AI_GotoNext_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 169 "src/aicommands.def"
 //ALIAS FOR SYNTAX SUGER
-/******************************************************************************* 
-  Skips all commands between this command and LABEL then continues 
-  executing after found LABEL 
-******************************************************************************** 
-  @param     LABEL: 8bit Integer/enum ID of label to Go To 
-  @return    Continue execution from LABEL or End 
-  @exception Does Not search from beginning 
-*******************************************************************************/  
+/*******************************************************************************
+  Skips all commands between this command and LABEL then continues
+  executing after found LABEL
+********************************************************************************
+  @param     LABEL: 8bit Integer/enum ID of label to Go To
+  @return    Continue execution from LABEL or End
+  @exception Does Not search from beginning
+*******************************************************************************/
 #define BREAK(LABEL)  \
-                GotoNext(LABEL)   
+                GotoNext(LABEL)
 
 
- 
+
 # 175 "src/aicommands.def"
 //==============================================================================
-//## GOTO FIRST 
+//## GOTO FIRST
 //==============================================================================
 
- 
-/******************************************************************************* 
- Starting from the beginning, Skips all commands until LABEL - continues 
- executing after found LABEL 
-******************************************************************************** 
- @param     LABEL: 8bit Integer/enum ID of label to Go To 
- @return    Continue execution from LABEL or End 
- @exception None 
-*******************************************************************************/   
+
+/*******************************************************************************
+ Starting from the beginning, Skips all commands until LABEL - continues
+ executing after found LABEL
+********************************************************************************
+ @param     LABEL: 8bit Integer/enum ID of label to Go To
+ @return    Continue execution from LABEL or End
+ @exception None
+*******************************************************************************/
 #define GotoFirst(LABEL)  \
                     AI_GotoFirst  ,  \
-                    LABEL ,   
- 
-#define AI_GotoFirst_LENGTH   (AICMDSIZE +1    ) 
+                    LABEL ,
+
+#define AI_GotoFirst_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 209 "src/aicommands.def"
 //ALIAS FOR SYNTAX SUGER
-/******************************************************************************* 
-  LOOP back to DO with ID 
-******************************************************************************** 
-  @param     ID: 8bit Integer/enum ID of DO 
-  @return    Loop Back and Continue execution from LABEL 
-  @exception Must have valid DO ID 
-*******************************************************************************/  
+/*******************************************************************************
+  LOOP back to DO with ID
+********************************************************************************
+  @param     ID: 8bit Integer/enum ID of DO
+  @return    Loop Back and Continue execution from LABEL
+  @exception Must have valid DO ID
+*******************************************************************************/
 #define LOOP(ID)  \
-                GotoFirst(ID)   
+                GotoFirst(ID)
 
 
- 
+
 # 226 "src/aicommands.def"
-/******************************************************************************* 
-  Exit LOOP early and go back to DO with ID 
-******************************************************************************** 
-  @param     ID: 8bit Integer/enum ID of DO 
-  @return    Loop back and Continue execution from LABEL 
-  @exception Must have valid DO ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Exit LOOP early and go back to DO with ID
+********************************************************************************
+  @param     ID: 8bit Integer/enum ID of DO
+  @return    Loop back and Continue execution from LABEL
+  @exception Must have valid DO ID
+*******************************************************************************/
 #define CONTINUE(ID)  \
-                GotoFirst(ID)   
+                GotoFirst(ID)
 
 
- 
+
 # 241 "src/aicommands.def"
 //==============================================================================
-//## LABEL 
+//## LABEL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Used as a target for Loops and Conditionals 
-******************************************************************************** 
-  @param     ID: 8bit Integer/enum ID 
-  @return    Nothing 
-  @exception None  
-*******************************************************************************/   
+
+/*******************************************************************************
+  Used as a target for Loops and Conditionals
+********************************************************************************
+  @param     ID: 8bit Integer/enum ID
+  @return    Nothing
+  @exception None
+*******************************************************************************/
 #define Label(ID)  \
                     AI_Label  ,  \
-                    ID ,   
- 
-#define AI_Label_LENGTH   (AICMDSIZE +1    ) 
+                    ID ,
+
+#define AI_Label_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 274 "src/aicommands.def"
 //ALIAS FOR SYNTAX SUGER
-/******************************************************************************* 
-  DO LOOP with ID 
-******************************************************************************** 
-  @param     ID: 8bit Integer/enum ID of DO 
-  @return    Nothing 
-  @exception Do NOT re-use the ID again within this block 
-*******************************************************************************/  
+/*******************************************************************************
+  DO LOOP with ID
+********************************************************************************
+  @param     ID: 8bit Integer/enum ID of DO
+  @return    Nothing
+  @exception Do NOT re-use the ID again within this block
+*******************************************************************************/
 #define DO(ID)  \
-                Label(ID)                           Yield()   
+                Label(ID)                           Yield()
 
 
- 
-/******************************************************************************* 
-  DO INFINITE LOOP with ID 
-******************************************************************************** 
-  @param     ID: 8bit Integer/enum ID of LOOP 
-  @return    Nothing 
-  @exception Must have uniqe ID 
-*******************************************************************************/  
+
+/*******************************************************************************
+  DO INFINITE LOOP with ID
+********************************************************************************
+  @param     ID: 8bit Integer/enum ID of LOOP
+  @return    Nothing
+  @exception Must have uniqe ID
+*******************************************************************************/
 #define YIELD_FOREVER(ID)  \
-                Label(ID)                   Yield()                   GotoFirst(ID)   
+                Label(ID)                   Yield()                   GotoFirst(ID)
 
 
- 
+
 # 315 "src/aicommands.def"
 //==============================================================================
-//## Yield 
+//## Yield
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Halt the AI List - frees engine to start executing next AI List until all  
-  Lists have been executed for game tick. 
-******************************************************************************** 
-  @return    Current Ai List Position 
-  @exception Offscreen/idle guard's will take 14 game ticks instead of 1 tick 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Halt the AI List - frees engine to start executing next AI List until all
+  Lists have been executed for game tick.
+********************************************************************************
+  @return    Current Ai List Position
+  @exception Offscreen/idle guard's will take 14 game ticks instead of 1 tick
+*******************************************************************************/
 #define Yield()  \
-                    AI_Yield  ,     
- 
-#define AI_Yield_LENGTH   (AICMDSIZE    ) 
+                    AI_Yield  ,
+
+#define AI_Yield_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## END 
+//## END
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Used for AI List parser to check when List ends 
-******************************************************************************** 
-  @exception: Not recommended to execute this command - to finish a List create 
-              an infinite loop (YIELD_FOREVER) or jump to GAILIST_DEAD_AI 
-              when List has finished tasks 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Used for AI List parser to check when List ends
+********************************************************************************
+  @exception: Not recommended to execute this command - to finish a List create
+              an infinite loop (YIELD_FOREVER) or jump to GAILIST_DEAD_AI
+              when List has finished tasks
+*******************************************************************************/
 #define EndList()  \
-                    AI_EndList     
- 
-#define AI_EndList_LENGTH   (AICMDSIZE    ) 
+                    AI_EndList
+
+#define AI_EndList_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 391 "src/aicommands.def"
 //==============================================================================
-//## JUMP TO AI LIST 
+//## JUMP TO AI LIST
 //==============================================================================
 
- 
-/****************************************************************************** 
-  Set Chr's current AI List to beginning of AI_LIST_ID and execute at 
-  next opertunity. 
-******************************************************************************* 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      AI_LIST_ID: 16bit pointer to AI List within Chr/Global 
-  @exception: Not recommended to Goto a BG List (10XX) 
-******************************************************************************/   
+
+/******************************************************************************
+  Set Chr's current AI List to beginning of AI_LIST_ID and execute at
+  next opertunity.
+*******************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      AI_LIST_ID: 16bit pointer to AI List within Chr/Global
+  @exception: Not recommended to Goto a BG List (10XX)
+******************************************************************************/
 #define SetChrAiList(CHR_NUM, AI_LIST_ID)  \
                     AI_SetChrAiList  ,  \
                     CHR_NUM , \
-                    CharArrayFrom16(AI_LIST_ID) ,   
- 
-#define AI_SetChrAiList_LENGTH   (AICMDSIZE +1   +2    ) 
+                    CharArrayFrom16(AI_LIST_ID) ,
+
+#define AI_SetChrAiList_LENGTH   (AICMDSIZE +1   +2    )
 
 
- 
+
 //POLYMORPHS
-/****************************************************************************** 
-  Jump my AI to AI_LIST_ID then return to Standard Guard 
-******************************************************************************* 
-  @return     Continue execution from begginning of Standard Guard  
-  @param      AI_LIST_ID: AI List to execute  
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX)  
-******************************************************************************/  
+/******************************************************************************
+  Jump my AI to AI_LIST_ID then return to Standard Guard
+*******************************************************************************
+  @return     Continue execution from begginning of Standard Guard
+  @param      AI_LIST_ID: AI List to execute
+  @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+******************************************************************************/
 #define JUMPTO_THEN_GUARD(AI_LIST_ID)  \
-                SetReturnAiList(GAILIST_STANDARD_GUARD)SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_SUB))   
+                SetReturnAiList(GAILIST_STANDARD_GUARD)SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_SUB))
 
 
- 
+
 # 460 "src/aicommands.def"
-/****************************************************************************** 
-  Jump my AI to AI_LIST_ID and loop 
-******************************************************************************* 
-  @return     Continue execution from begginning of AI_LIST_ID 
-  @param      AI_LIST_ID: AI List to execute  
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX)  
-******************************************************************************/  
+/******************************************************************************
+  Jump my AI to AI_LIST_ID and loop
+*******************************************************************************
+  @return     Continue execution from begginning of AI_LIST_ID
+  @param      AI_LIST_ID: AI List to execute
+  @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+******************************************************************************/
 #define JUMPTO_THEN_LOOP(AI_LIST_ID)  \
-                SetReturnAiList(AI_LIST_ID)SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_SUB))   
+                SetReturnAiList(AI_LIST_ID)SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_SUB))
 
 
- 
+
 # 475 "src/aicommands.def"
-/****************************************************************************** 
-  Set my AI List program counter to beginning of a List and execute 
-******************************************************************************* 
-  @return     Continue execution from begginning of AI_LIST_ID  
-  @param      AI_LIST_ID: AI List to execute  
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX)  
-******************************************************************************/  
+/******************************************************************************
+  Set my AI List program counter to beginning of a List and execute
+*******************************************************************************
+  @return     Continue execution from begginning of AI_LIST_ID
+  @param      AI_LIST_ID: AI List to execute
+  @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+******************************************************************************/
 #define JumpTo(AI_LIST_ID)  \
-                SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_SUB))   
+                SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_SUB))
 
 
- 
+
 # 490 "src/aicommands.def"
-/****************************************************************************** 
-  Set Bond's AI List program counter to beginning of a List 
-******************************************************************************* 
-  @param      AI_LIST_ID: AI List for Bond to execute during cinema 
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX)  
-              Only use when Bond has a 3rd person model (cutscenes)  
-******************************************************************************/  
+/******************************************************************************
+  Set Bond's AI List program counter to beginning of a List
+*******************************************************************************
+  @param      AI_LIST_ID: AI List for Bond to execute during cinema
+  @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+              Only use when Bond has a 3rd person model (cutscenes)
+******************************************************************************/
 #define SetBondsAiList(AI_LIST_ID)  \
-                SetChrAiList(CHR_BOND_CINEMA, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_NOTCHR))   
+                SetChrAiList(CHR_BOND_CINEMA, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_NOTCHR))
 
 
- 
+
 # 505 "src/aicommands.def"
-/******************************************************************************   
-  Call AI Subroutine with AI_LIST_ID and return (If subroutine allows) 
-*******************************************************************************  
-  @return     Restart execution on Return               
-  @param      AI_LIST_ID: AI List to execute (Must be a subroutine/have return) 
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX) 
-              THIS must be defined for this function to be able to return 
-******************************************************************************/  
+/******************************************************************************
+  Call AI Subroutine with AI_LIST_ID and return (If subroutine allows)
+*******************************************************************************
+  @return     Restart execution on Return
+  @param      AI_LIST_ID: AI List to execute (Must be a subroutine/have return)
+  @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+              THIS must be defined for this function to be able to return
+******************************************************************************/
 #define CALL(AI_LIST_ID)  \
-                                  IF_ELSE (  DEFINED (  THIS )                     )  (  AI_ERR_NO_THIS   )  (  (                    SetReturnAiList(THIS)SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) && isSubroutine(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_NOTSUB)) )  )  ,    
+                                  IF_ELSE (  DEFINED (  THIS )                     )  (  AI_ERR_NO_THIS   )  (  (                    SetReturnAiList(THIS)SetChrAiList(CHR_SELF, (!isBGAIListID(AI_LIST_ID) && isSubroutine(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_NOTSUB)) )  )  ,
 
 
- 
+
 //==============================================================================
-//## SET RETURN AI LIST 
+//## SET RETURN AI LIST
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set the Return AI List - used by aiReturn 
-******************************************************************************** 
-  @param      AI_LIST_ID to be abale to return to 
-  @exception: Not recommended to set stored List to a BG List (10XX) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set the Return AI List - used by aiReturn
+********************************************************************************
+  @param      AI_LIST_ID to be abale to return to
+  @exception: Not recommended to set stored List to a BG List (10XX)
+*******************************************************************************/
 #define SetReturnAiList(AI_LIST_ID)  \
                     AI_SetReturnAiList  ,  \
-                    CharArrayFrom16(AI_LIST_ID) ,   
- 
-#define AI_SetReturnAiList_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(AI_LIST_ID) ,
+
+#define AI_SetReturnAiList_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
-//## JUMP TO RETURN AI LIST 
+//## JUMP TO RETURN AI LIST
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Jump the return AI List set in chr struct - pointer set by SetReturnAiList 
-  Used for subroutine Lists. 
-******************************************************************************** 
-  @return     Continue execution from begginning of stored return list ID 
-  @exception: If stored return List pointer is not set, game will crash 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Jump the return AI List set in chr struct - pointer set by SetReturnAiList
+  Used for subroutine Lists.
+********************************************************************************
+  @return     Continue execution from begginning of stored return list ID
+  @exception: If stored return List pointer is not set, game will crash
+*******************************************************************************/
 #define Return()  \
-                    AI_Return  ,     
- 
-#define AI_Return_LENGTH   (AICMDSIZE    ) 
+                    AI_Return  ,
+
+#define AI_Return_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## GUARD ANIMATION STOP 
+//## GUARD ANIMATION STOP
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Imediatly Reset me back to idle pose 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Imediatly Reset me back to idle pose
+*******************************************************************************/
 #define Stop()  \
-                    AI_Stop  ,     
- 
-#define AI_Stop_LENGTH   (AICMDSIZE    ) 
+                    AI_Stop  ,
+
+#define AI_Stop_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 651 "src/aicommands.def"
 //==============================================================================
-//## GUARD KNEEL 
+//## GUARD KNEEL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Make me kneel on one knee 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Make me kneel on one knee
+*******************************************************************************/
 #define Kneel()  \
-                    AI_Kneel  ,     
- 
-#define AI_Kneel_LENGTH   (AICMDSIZE    ) 
+                    AI_Kneel  ,
+
+#define AI_Kneel_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 683 "src/aicommands.def"
 //==============================================================================
-//## PLAY ANIMATION 
+//## PLAY ANIMATION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Play an animation 
-******************************************************************************** 
-  @param      START/END: set to -1/-1 will playback the entire animation length. 
-  @param      INTERPOL_TIME: will set how long it will take to transition 
-                             from the previous state. 
-  @param      ANIMATION_ID: Use ANIM_# enum 
-  @param      BITFIELD: Use ANIM_# Bitflags 
-  @exception: If interpolation time is too low it may crash! - use 16 if unsure. 
-              Start/End Keyframe 30 tick units. 
-              Interpolation use 60 tick units. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Play an animation
+********************************************************************************
+  @param      START/END: set to -1/-1 will playback the entire animation length.
+  @param      INTERPOL_TIME: will set how long it will take to transition
+                             from the previous state.
+  @param      ANIMATION_ID: Use ANIM_# enum
+  @param      BITFIELD: Use ANIM_# Bitflags
+  @exception: If interpolation time is too low it may crash! - use 16 if unsure.
+              Start/End Keyframe 30 tick units.
+              Interpolation use 60 tick units.
+*******************************************************************************/
 #define PlayAnimation(ANIMATION_ID, START_TIME30, END_TIME30, BITFIELD, INTERPOL_TIME60)  \
                     AI_PlayAnimation  ,  \
                     CharArrayFrom16(ANIMATION_ID) , \
                     CharArrayFrom16(START_TIME30) , \
                     CharArrayFrom16(END_TIME30) , \
                     BITFIELD , \
-                    INTERPOL_TIME60 ,   
- 
-#define AI_PlayAnimation_LENGTH   (AICMDSIZE +2   +2   +2   +1   +1    ) 
+                    INTERPOL_TIME60 ,
+
+#define AI_PlayAnimation_LENGTH   (AICMDSIZE +2   +2   +2   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Play an animation 
-*******************************************************************************/  
+/*******************************************************************************
+  Play an animation
+*******************************************************************************/
 #define PlayAnimationSimple(ANIMATION_ID)  \
-                PlayAnimation(ANIMATION_ID, -1, -1,                     ANIM_UNKNOWN | ANIM_LOOP_HOLD_LAST_FRAME,                     ANIM_DEFAULT_INTERPOLATION)   
+                PlayAnimation(ANIMATION_ID, -1, -1,                     ANIM_UNKNOWN | ANIM_LOOP_HOLD_LAST_FRAME,                     ANIM_DEFAULT_INTERPOLATION)
 
 
- 
+
 # 764 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD PLAYING ANIMATION 
+//## IF GUARD PLAYING ANIMATION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Am I in animation playback state? (ACT_ANIM) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Am I in animation playback state? (ACT_ANIM)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFPlayingAnimation(GOTOLABEL)  \
                     AI_IFPlayingAnimation  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFPlayingAnimation_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFPlayingAnimation_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD POINTS AT BOND 
+//## GUARD POINTS AT BOND
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Point only if Bond is directly in front of me, else command is 
-  ignored 
-******************************************************************************** 
-  @exception: Global AI List GAILIST_ATTACK_BOND skips this command 
-              if bitfield flag FLAGS2_DONT_POINT_AT_BOND is on 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Point only if Bond is directly in front of me, else command is
+  ignored
+********************************************************************************
+  @exception: Global AI List GAILIST_ATTACK_BOND skips this command
+              if bitfield flag FLAGS2_DONT_POINT_AT_BOND is on
+*******************************************************************************/
 #define PointAtBond()  \
-                    AI_PointAtBond  ,     
- 
-#define AI_PointAtBond_LENGTH   (AICMDSIZE    ) 
+                    AI_PointAtBond  ,
+
+#define AI_PointAtBond_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 839 "src/aicommands.def"
 //==============================================================================
-//## GUARD LOOKS AROUND SELF 
+//## GUARD LOOKS AROUND SELF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Make me look around when shots land near me 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Make me look around when shots land near me
+*******************************************************************************/
 #define LookSurprised()  \
-                    AI_LookSurprised  ,     
- 
-#define AI_LookSurprised_LENGTH   (AICMDSIZE    ) 
+                    AI_LookSurprised  ,
+
+#define AI_LookSurprised_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 871 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY SIDESTEPPING 
+//## GUARD TRY SIDESTEPPING
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to sidestep 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Direction is random 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to sidestep
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Direction is random
+*******************************************************************************/
 #define TRYSidestepping(GOTOLABEL)  \
                     AI_TRYSidestepping  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSidestepping_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSidestepping_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY HOPPING SIDEWAYS 
+//## GUARD TRY HOPPING SIDEWAYS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to hop sideways 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Direction is random 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to hop sideways
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Direction is random
+*******************************************************************************/
 #define TRYSideHopping(GOTOLABEL)  \
                     AI_TRYSideHopping  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSideHopping_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSideHopping_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY RUNNING TO SIDE 
+//## GUARD TRY RUNNING TO SIDE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to Run sideways of Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Direction is random 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to Run sideways of Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Direction is random
+*******************************************************************************/
 #define TRYSideRunning(GOTOLABEL)  \
                     AI_TRYSideRunning  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSideRunning_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSideRunning_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY FIRING WALK 
+//## GUARD TRY FIRING WALK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to walk and fire at Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Bond needs to be at long distance away from guard to work 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to walk and fire at Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Bond needs to be at long distance away from guard to work
+*******************************************************************************/
 #define TRYFiringWalk(GOTOLABEL)  \
                     AI_TRYFiringWalk  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFiringWalk_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFiringWalk_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY FIRING RUN 
+//## GUARD TRY FIRING RUN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to Run and fire at Bond, 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Bond needs to be at long distance away from guard to work 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to Run and fire at Bond,
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Bond needs to be at long distance away from guard to work
+*******************************************************************************/
 #define TRYFiringRun(GOTOLABEL)  \
                     AI_TRYFiringRun  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFiringRun_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFiringRun_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY FIRING ROLL 
+//## GUARD TRY FIRING ROLL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to roll on ground then fire at Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Bond cannot be too close to guard or it will not work 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to roll on ground then fire at Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Bond cannot be too close to guard or it will not work
+*******************************************************************************/
 #define TRYFiringRoll(GOTOLABEL)  \
                     AI_TRYFiringRoll  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFiringRoll_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFiringRoll_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY FIRE OR AIM AT TARGET 
+//## GUARD TRY FIRE OR AIM AT TARGET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try making me aim/fire their weapon at TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-  @param      BITFIELD: 16bit Target Type 
-  @exception: Use TARGET_# flags to set the target type (pad/Bond/chr) or use 
-              Seperated commands eg GUARD_TRYFIRE_AT_PAD 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try making me aim/fire their weapon at TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+  @param      BITFIELD: 16bit Target Type
+  @exception: Use TARGET_# flags to set the target type (pad/Bond/chr) or use
+              Seperated commands eg GUARD_TRYFIRE_AT_PAD
+*******************************************************************************/
 #define TRYFireOrAimAtTarget(BITFIELD, TARGET, GOTOLABEL)  \
                     AI_TRYFireOrAimAtTarget  ,  \
                     CharArrayFrom16(BITFIELD) , \
                     CharArrayFrom16(TARGET) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFireOrAimAtTarget_LENGTH   (AICMDSIZE +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFireOrAimAtTarget_LENGTH   (AICMDSIZE +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Try making me aim/fire their weapon at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try making me aim/fire their weapon at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYFireAtPad(TARGET, GOTOLABEL)  \
-                TRYFireOrAimAtTarget(TARGET_PAD, TARGET, GOTOLABEL)   
+                TRYFireOrAimAtTarget(TARGET_PAD, TARGET, GOTOLABEL)
 
 
- 
+
 # 1186 "src/aicommands.def"
-/******************************************************************************* 
-  Try making me aim/fire their weapon at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try making me aim/fire their weapon at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYAimAtPad(TARGET, GOTOLABEL)  \
-                TRYFireOrAimAtTarget(TARGET_PAD | TARGET_AIM_ONLY, TARGET, GOTOLABEL)   
+                TRYFireOrAimAtTarget(TARGET_PAD | TARGET_AIM_ONLY, TARGET, GOTOLABEL)
 
 
- 
+
 # 1190 "src/aicommands.def"
-/******************************************************************************* 
-  Try making me aim/fire their weapon at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try making me aim/fire their weapon at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYFireAtBond(GOTOLABEL)  \
-                TRYFireOrAimAtTarget(TARGET_BOND, 0, GOTOLABEL)   
+                TRYFireOrAimAtTarget(TARGET_BOND, 0, GOTOLABEL)
 
 
- 
+
 # 1194 "src/aicommands.def"
-/******************************************************************************* 
-  Try making me aim/fire their weapon at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try making me aim/fire their weapon at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYAimAtBond(GOTOLABEL)  \
-                TRYFireOrAimAtTarget(TARGET_BOND | TARGET_AIM_ONLY, 0, GOTOLABEL)   
+                TRYFireOrAimAtTarget(TARGET_BOND | TARGET_AIM_ONLY, 0, GOTOLABEL)
 
 
- 
+
 # 1198 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY FIRE OR AIM AT TARGET KNEEL 
+//## GUARD TRY FIRE OR AIM AT TARGET KNEEL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try making me kneel and aim/fire at TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-  @param      BITFIELD: 16bit Target Type 
-  @exception: Use TARGET_# flags to set the target type (pad/Bond/chr) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try making me kneel and aim/fire at TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+  @param      BITFIELD: 16bit Target Type
+  @exception: Use TARGET_# flags to set the target type (pad/Bond/chr)
+*******************************************************************************/
 #define TRYFireOrAimAtTargetKneel(BITFIELD, TARGET, GOTOLABEL)  \
                     AI_TRYFireOrAimAtTargetKneel  ,  \
                     CharArrayFrom16(BITFIELD) , \
                     CharArrayFrom16(TARGET) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFireOrAimAtTargetKneel_LENGTH   (AICMDSIZE +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFireOrAimAtTargetKneel_LENGTH   (AICMDSIZE +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Make me kneel and aim/fire at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Make me kneel and aim/fire at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYFireAtPadKneeling(TARGET, GOTOLABEL)  \
-                TRYFireOrAimAtTargetKneel(TARGET_PAD, TARGET, GOTOLABEL)   
+                TRYFireOrAimAtTargetKneel(TARGET_PAD, TARGET, GOTOLABEL)
 
 
- 
+
 # 1258 "src/aicommands.def"
-/******************************************************************************* 
-  Make me kneel and aim/fire at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Make me kneel and aim/fire at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYAimAtPadKneeling(TARGET, GOTOLABEL)  \
-                TRYFireOrAimAtTargetKneel(TARGET_PAD | TARGET_AIM_ONLY, TARGET, GOTOLABEL)   
+                TRYFireOrAimAtTargetKneel(TARGET_PAD | TARGET_AIM_ONLY, TARGET, GOTOLABEL)
 
 
- 
+
 # 1262 "src/aicommands.def"
-/******************************************************************************* 
-  Make me kneel and aim/fire at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Make me kneel and aim/fire at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYFireAtBondKneeling(GOTOLABEL)  \
-                TRYFireOrAimAtTargetKneel(TARGET_BOND, 0, GOTOLABEL)   
+                TRYFireOrAimAtTargetKneel(TARGET_BOND, 0, GOTOLABEL)
 
 
- 
+
 # 1266 "src/aicommands.def"
-/******************************************************************************* 
-  Make me kneel and aim/fire at ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Make me kneel and aim/fire at ...
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+*******************************************************************************/
 #define TRYAimAtBondKneeling(GOTOLABEL)  \
-                TRYFireOrAimAtTargetKneel(TARGET_BOND | TARGET_AIM_ONLY, 0, GOTOLABEL)   
+                TRYFireOrAimAtTargetKneel(TARGET_BOND | TARGET_AIM_ONLY, 0, GOTOLABEL)
 
 
- 
+
 # 1270 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY FIRE OR AIM AT TARGET UPDATE 
+//## GUARD TRY FIRE OR AIM AT TARGET UPDATE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try updating my TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      BITFIELD: 16bit Target Type Use TARGET_# flags to set the 
-                        target type (pad/Bond/chr) 
-  @exception: Only works if guard is currently aiming at a target. 
-              Use TARGET_# flags to set the target type (pad/Bond/chr) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try updating my TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      BITFIELD: 16bit Target Type Use TARGET_# flags to set the
+                        target type (pad/Bond/chr)
+  @exception: Only works if guard is currently aiming at a target.
+              Use TARGET_# flags to set the target type (pad/Bond/chr)
+*******************************************************************************/
 #define TRYFireOrAimAtTargetUpdate(BITFIELD, TARGET, GOTOLABEL)  \
                     AI_TRYFireOrAimAtTargetUpdate  ,  \
                     CharArrayFrom16(BITFIELD) , \
                     CharArrayFrom16(TARGET) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFireOrAimAtTargetUpdate_LENGTH   (AICMDSIZE +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFireOrAimAtTargetUpdate_LENGTH   (AICMDSIZE +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Try updating my TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try updating my TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET 16bit ID
+*******************************************************************************/
 #define TRYFireAtPadUpdate(TARGET, GOTOLABEL)  \
-                TRYFireOrAimAtTargetUpdate(TARGET_PAD, TARGET, GOTOLABEL)   
+                TRYFireOrAimAtTargetUpdate(TARGET_PAD, TARGET, GOTOLABEL)
 
 
- 
+
 # 1331 "src/aicommands.def"
-/******************************************************************************* 
-  Try updating my TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try updating my TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET 16bit ID
+*******************************************************************************/
 #define TRYAimAtPadUpdate(TARGET, GOTOLABEL)  \
-                TRYFireOrAimAtTargetUpdate(TARGET_PAD | TARGET_AIM_ONLY, TARGET, GOTOLABEL)   
+                TRYFireOrAimAtTargetUpdate(TARGET_PAD | TARGET_AIM_ONLY, TARGET, GOTOLABEL)
 
 
- 
+
 # 1335 "src/aicommands.def"
-/******************************************************************************* 
-  Try updating my TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try updating my TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET 16bit ID
+*******************************************************************************/
 #define TRYFireAtBondUpdate(GOTOLABEL)  \
-                TRYFireOrAimAtTargetUpdate(TARGET_BOND, 0, GOTOLABEL)   
+                TRYFireOrAimAtTargetUpdate(TARGET_BOND, 0, GOTOLABEL)
 
 
- 
+
 # 1339 "src/aicommands.def"
-/******************************************************************************* 
-  Try updating my TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET 16bit ID 
-*******************************************************************************/  
+/*******************************************************************************
+  Try updating my TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET 16bit ID
+*******************************************************************************/
 #define TRYAimAtBondUpdate(GOTOLABEL)  \
-                TRYFireOrAimAtTargetUpdate(TARGET_BOND | TARGET_AIM_ONLY, 0, GOTOLABEL)   
+                TRYFireOrAimAtTargetUpdate(TARGET_BOND | TARGET_AIM_ONLY, 0, GOTOLABEL)
 
 
- 
+
 # 1343 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY FACING TARGET 
+//## GUARD TRY FACING TARGET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try making me continuously face TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-  @param      BITFIELD: 16bit Target Type 
-  @exception: If guard was shot while facing target, guard will snap out of facing 
-              state. 
-              Use TARGET_# flags to set the target type (pad/Bond/chr) 
-              Can NOT use TARGET_AIM_ONLY flag 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try making me continuously face TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+  @param      BITFIELD: 16bit Target Type
+  @exception: If guard was shot while facing target, guard will snap out of facing
+              state.
+              Use TARGET_# flags to set the target type (pad/Bond/chr)
+              Can NOT use TARGET_AIM_ONLY flag
+*******************************************************************************/
 #define TRYFacingTarget(BITFIELD, TARGET, GOTOLABEL)  \
                     AI_TRYFacingTarget  ,  \
                     CharArrayFrom16(BITFIELD) , \
                     CharArrayFrom16(TARGET) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFacingTarget_LENGTH   (AICMDSIZE +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFacingTarget_LENGTH   (AICMDSIZE +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Try making me continuously face TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-  @param      BITFIELD: 16bit Target Type 
-  @exception: If guard was shot while facing target, guard will snap out of facing 
-              state. 
-              Use TARGET_# flags to set the target type (pad/Bond/chr) 
-              Can NOT use TARGET_AIM_ONLY flag 
-*******************************************************************************/  
+/*******************************************************************************
+  Try making me continuously face TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+  @param      BITFIELD: 16bit Target Type
+  @exception: If guard was shot while facing target, guard will snap out of facing
+              state.
+              Use TARGET_# flags to set the target type (pad/Bond/chr)
+              Can NOT use TARGET_AIM_ONLY flag
+*******************************************************************************/
 #define TRYFacingPad(TARGET, GOTOLABEL)  \
-                TRYFacingTarget(TARGET_PAD, TARGET, GOTOLABEL)   
+                TRYFacingTarget(TARGET_PAD, TARGET, GOTOLABEL)
 
 
- 
+
 # 1397 "src/aicommands.def"
-/******************************************************************************* 
-  Try making me continuously face TARGET 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      TARGET: 16bit ID 
-  @param      BITFIELD: 16bit Target Type 
-  @exception: If guard was shot while facing target, guard will snap out of facing 
-              state. 
-              Use TARGET_# flags to set the target type (pad/Bond/chr) 
-              Can NOT use TARGET_AIM_ONLY flag 
-*******************************************************************************/  
+/*******************************************************************************
+  Try making me continuously face TARGET
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      TARGET: 16bit ID
+  @param      BITFIELD: 16bit Target Type
+  @exception: If guard was shot while facing target, guard will snap out of facing
+              state.
+              Use TARGET_# flags to set the target type (pad/Bond/chr)
+              Can NOT use TARGET_AIM_ONLY flag
+*******************************************************************************/
 #define TRYFacingBond(GOTOLABEL)  \
-                TRYFacingTarget(TARGET_BOND, 0, GOTOLABEL)   
+                TRYFacingTarget(TARGET_BOND, 0, GOTOLABEL)
 
 
- 
+
 # 1401 "src/aicommands.def"
 //==============================================================================
-//## CHR HIT BODY PART WITH ITEM DAMAGE 
+//## CHR HIT BODY PART WITH ITEM DAMAGE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Hit Chr body part with item damage, play reaction to hit location 
-******************************************************************************** 
-  @exception: Does NOT trigger items fireing sfx. 
-  @param ITEM_NUM: Item damage uses body part damage modifier. 
-  @param PART_NUM: Use HIT_# define for hit part number 
-  @param  CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Hit Chr body part with item damage, play reaction to hit location
+********************************************************************************
+  @exception: Does NOT trigger items fireing sfx.
+  @param ITEM_NUM: Item damage uses body part damage modifier.
+  @param PART_NUM: Use HIT_# define for hit part number
+  @param  CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define HitChrWithItem(CHR_NUM, PART_NUM, ITEM_NUM)  \
                     AI_HitChrWithItem  ,  \
                     CHR_NUM , \
                     PART_NUM , \
-                    ITEM_NUM ,   
- 
-#define AI_HitChrWithItem_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    ITEM_NUM ,
+
+#define AI_HitChrWithItem_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Hit Chr body part with item damage, play reaction to hit location 
-******************************************************************************** 
-  @exception: Does NOT trigger items fireing sfx. 
-  @param ITEM_NUM: Item damage uses body part damage modifier. 
-  @param PART_NUM: Use HIT_# define for hit part number 
-  @param  CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Hit Chr body part with item damage, play reaction to hit location
+********************************************************************************
+  @exception: Does NOT trigger items fireing sfx.
+  @param ITEM_NUM: Item damage uses body part damage modifier.
+  @param PART_NUM: Use HIT_# define for hit part number
+  @param  CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define HitMeWithItem(PART_NUM, ITEM_NUM)  \
-                HitChrWithItem(CHR_SELF, PART_NUM, ITEM_NUM)   
+                HitChrWithItem(CHR_SELF, PART_NUM, ITEM_NUM)
 
 
- 
+
 # 1449 "src/aicommands.def"
 //==============================================================================
-//## CHR HIT CHR BODY PART WITH HELD ITEM 
+//## CHR HIT CHR BODY PART WITH HELD ITEM
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Chr hits Target chrs body part with held item, play reaction to hit location 
-******************************************************************************** 
-  @exception: Does NOT trigger items fireing sfx or Chr's firing animation 
-  @param ITEM_NUM: Item damage uses body part damage modifier. 
-  @param PART_NUM: Use HIT_# define for hit part number 
-  @param  CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Chr hits Target chrs body part with held item, play reaction to hit location
+********************************************************************************
+  @exception: Does NOT trigger items fireing sfx or Chr's firing animation
+  @param ITEM_NUM: Item damage uses body part damage modifier.
+  @param PART_NUM: Use HIT_# define for hit part number
+  @param  CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define ChrHitChr(CHR_NUM, CHR_NUM_TARGET, PART_NUM)  \
                     AI_ChrHitChr  ,  \
                     CHR_NUM , \
                     CHR_NUM_TARGET , \
-                    PART_NUM ,   
- 
-#define AI_ChrHitChr_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    PART_NUM ,
+
+#define AI_ChrHitChr_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Chr hits Target chrs body part with held item, play reaction to hit location 
-******************************************************************************** 
-  @exception: Does NOT trigger items fireing sfx or Chr's firing animation 
-  @param ITEM_NUM: Item damage uses body part damage modifier. 
-  @param PART_NUM: Use HIT_# define for hit part number 
-  @param  CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Chr hits Target chrs body part with held item, play reaction to hit location
+********************************************************************************
+  @exception: Does NOT trigger items fireing sfx or Chr's firing animation
+  @param ITEM_NUM: Item damage uses body part damage modifier.
+  @param PART_NUM: Use HIT_# define for hit part number
+  @param  CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define ChrHitMe(CHR_NUM, PART_NUM)  \
-                ChrHitChr(CHR_NUM, CHR_SELF, PART_NUM)   
+                ChrHitChr(CHR_NUM, CHR_SELF, PART_NUM)
 
 
- 
+
 # 1515 "src/aicommands.def"
-/******************************************************************************* 
-  Chr hits Target chrs body part with held item, play reaction to hit location 
-******************************************************************************** 
-  @exception: Does NOT trigger items fireing sfx or Chr's firing animation 
-  @param ITEM_NUM: Item damage uses body part damage modifier. 
-  @param PART_NUM: Use HIT_# define for hit part number 
-  @param  CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Chr hits Target chrs body part with held item, play reaction to hit location
+********************************************************************************
+  @exception: Does NOT trigger items fireing sfx or Chr's firing animation
+  @param ITEM_NUM: Item damage uses body part damage modifier.
+  @param PART_NUM: Use HIT_# define for hit part number
+  @param  CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IHitChr(CHR_NUM_TARGET, PART_NUM)  \
-                ChrHitChr(CHR_SELF, CHR_NUM_TARGET, PART_NUM)   
+                ChrHitChr(CHR_SELF, CHR_NUM_TARGET, PART_NUM)
 
 
- 
+
 # 1519 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY THROWING GRENADE 
+//## GUARD TRY THROWING GRENADE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to throw a grenade at Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: A random number is generated and compared against chr->grenadeprob, 
-              if number is less than grenadeprob throw grenade and Goto LABEL, 
-              else do nothing. 
-              Chr->grenadeprob default is 0 - to change use setup 
-              object 12 or GUARD_SET_GRENADE_PROBABILITY 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to throw a grenade at Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: A random number is generated and compared against chr->grenadeprob,
+              if number is less than grenadeprob throw grenade and Goto LABEL,
+              else do nothing.
+              Chr->grenadeprob default is 0 - to change use setup
+              object 12 or GUARD_SET_GRENADE_PROBABILITY
+*******************************************************************************/
 #define TRYThrowingGrenade(GOTOLABEL)  \
                     AI_TRYThrowingGrenade  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYThrowingGrenade_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYThrowingGrenade_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY DROPPING ITEM 
+//## GUARD TRY DROPPING ITEM
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try spawning and drop item with Prop model 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Dropped item uses item type (08) with model number - 
-              They can be picked up. 
-              Grenade/Mines will be dropped live - this is used for cradle 
-              (ailist #0411) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try spawning and drop item with Prop model
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Dropped item uses item type (08) with model number -
+              They can be picked up.
+              Grenade/Mines will be dropped live - this is used for cradle
+              (ailist #0411)
+*******************************************************************************/
 #define TRYDroppingItem(PROP_NUM, ITEM_NUM, GOTOLABEL)  \
                     AI_TRYDroppingItem  ,  \
                     CharArrayFrom16(PROP_NUM) , \
                     ITEM_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYDroppingItem_LENGTH   (AICMDSIZE +2   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYDroppingItem_LENGTH   (AICMDSIZE +2   +1   +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD RUNS TO PAD 
+//## GUARD RUNS TO PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me Run to pad 
-******************************************************************************** 
-  @param 16bit PAD ID 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me Run to pad
+********************************************************************************
+  @param 16bit PAD ID
+*******************************************************************************/
 #define RunToPad(PAD)  \
                     AI_RunToPad  ,  \
-                    CharArrayFrom16(PAD) ,   
- 
-#define AI_RunToPad_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(PAD) ,
+
+#define AI_RunToPad_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
-//## GUARD RUNS TO PAD PRESET 
+//## GUARD RUNS TO PAD PRESET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me Run to my Preset Pad 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me Run to my Preset Pad
+*******************************************************************************/
 #define RunToPadPreset()  \
-                    AI_RunToPadPreset  ,     
- 
-#define AI_RunToPadPreset_LENGTH   (AICMDSIZE    ) 
+                    AI_RunToPadPreset  ,
+
+#define AI_RunToPadPreset_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 1686 "src/aicommands.def"
 //==============================================================================
-//## GUARD WALKS TO PAD 
+//## GUARD WALKS TO PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me walk to pad 
-******************************************************************************** 
-  @param 16bit PAD ID 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me walk to pad
+********************************************************************************
+  @param 16bit PAD ID
+*******************************************************************************/
 #define WalkToPad(PAD)  \
                     AI_WalkToPad  ,  \
-                    CharArrayFrom16(PAD) ,   
- 
-#define AI_WalkToPad_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(PAD) ,
+
+#define AI_WalkToPad_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
-//## GUARD SPRINTS TO PAD 
+//## GUARD SPRINTS TO PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me Sprint to pad - dont ask me to do this too long 
-******************************************************************************** 
-  @param 16bit PAD ID 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me Sprint to pad - dont ask me to do this too long
+********************************************************************************
+  @param 16bit PAD ID
+*******************************************************************************/
 #define SprintToPad(PAD)  \
                     AI_SprintToPad  ,  \
-                    CharArrayFrom16(PAD) ,   
- 
-#define AI_SprintToPad_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(PAD) ,
+
+#define AI_SprintToPad_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
-//## GUARD START PATROL 
+//## GUARD START PATROL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me walk a predefined path within setup 
-******************************************************************************** 
-  @exception: Usually paired with GAILIST_SIMPLE_GUARD_DEAF 
-              or GAILIST_SIMPLE_GUARD 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me walk a predefined path within setup
+********************************************************************************
+  @exception: Usually paired with GAILIST_SIMPLE_GUARD_DEAF
+              or GAILIST_SIMPLE_GUARD
+*******************************************************************************/
 #define StartPatrol(PATH_NUM)  \
                     AI_StartPatrol  ,  \
-                    PATH_NUM ,   
- 
-#define AI_StartPatrol_LENGTH   (AICMDSIZE +1    ) 
+                    PATH_NUM ,
+
+#define AI_StartPatrol_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD SURRENDERS 
+//## GUARD SURRENDERS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me surrender and drop all attached and held items 
-******************************************************************************** 
-  @exception: Will NOT drop items embedded within guard 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me surrender and drop all attached and held items
+********************************************************************************
+  @exception: Will NOT drop items embedded within guard
+*******************************************************************************/
 #define Surrender()  \
-                    AI_Surrender  ,     
- 
-#define AI_Surrender_LENGTH   (AICMDSIZE    ) 
+                    AI_Surrender  ,
+
+#define AI_Surrender_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 1829 "src/aicommands.def"
 //==============================================================================
-//## GUARD REMOVE FADE 
+//## GUARD REMOVE FADE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me fade away - fade time is 90 ticks (1.5 seconds). When 
-  the fade finishes, automatically remove guard 
-******************************************************************************** 
-  @exception: Guard collision is ignored during fade 
-              Will NOT drop items 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me fade away - fade time is 90 ticks (1.5 seconds). When
+  the fade finishes, automatically remove guard
+********************************************************************************
+  @exception: Guard collision is ignored during fade
+              Will NOT drop items
+*******************************************************************************/
 #define RemoveMe()  \
-                    AI_RemoveMe  ,     
- 
-#define AI_RemoveMe_LENGTH   (AICMDSIZE    ) 
+                    AI_RemoveMe  ,
+
+#define AI_RemoveMe_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 1865 "src/aicommands.def"
 //==============================================================================
-//## CHR REMOVE INSTANT 
+//## CHR REMOVE INSTANT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Instantly remove CHR_NUM unlike RemoveMe 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Will NOT drop items 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Instantly remove CHR_NUM unlike RemoveMe
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Will NOT drop items
+*******************************************************************************/
 #define ChrRemoveInstant(CHR_NUM)  \
                     AI_ChrRemoveInstant  ,  \
-                    CHR_NUM ,   
- 
-#define AI_ChrRemoveInstant_LENGTH   (AICMDSIZE +1    ) 
+                    CHR_NUM ,
+
+#define AI_ChrRemoveInstant_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Instantly remove me unlike RemoveMe 
-******************************************************************************** 
-  @exception: Will NOT drop items 
-*******************************************************************************/  
+/*******************************************************************************
+  Instantly remove me unlike RemoveMe
+********************************************************************************
+  @exception: Will NOT drop items
+*******************************************************************************/
 #define RemoveMeInstantly()  \
-                ChrRemoveInstant(CHR_SELF)   
+                ChrRemoveInstant(CHR_SELF)
 
 
- 
+
 # 1920 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY TRIGGERING ALARM AT PAD 
+//## GUARD TRY TRIGGERING ALARM AT PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try to activate alarm assigned to pad 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Does NOT care what object type is at pad, as long as the object 
-              is NOT destroyed. 
-              Checks if guard is alive before activating alarm. 
-              When triggering alarm, guard will be set to state ACT_STARTALARM 
-              and play animation 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try to activate alarm assigned to pad
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Does NOT care what object type is at pad, as long as the object
+              is NOT destroyed.
+              Checks if guard is alive before activating alarm.
+              When triggering alarm, guard will be set to state ACT_STARTALARM
+              and play animation
+*******************************************************************************/
 #define TRYTriggeringAlarmAtPad(PAD, GOTOLABEL)  \
                     AI_TRYTriggeringAlarmAtPad  ,  \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYTriggeringAlarmAtPad_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYTriggeringAlarmAtPad_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## ALARM ON 
+//## ALARM ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Activates alarm 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Activates alarm
+*******************************************************************************/
 #define AlarmOn()  \
-                    AI_AlarmOn  ,     
- 
-#define AI_AlarmOn_LENGTH   (AICMDSIZE    ) 
+                    AI_AlarmOn  ,
+
+#define AI_AlarmOn_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 1997 "src/aicommands.def"
 //==============================================================================
-//## ALARM OFF 
+//## ALARM OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Deactivates alarm 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Deactivates alarm
+*******************************************************************************/
 #define AlarmOff()  \
-                    AI_AlarmOff  ,     
- 
-#define AI_AlarmOff_LENGTH   (AICMDSIZE    ) 
+                    AI_AlarmOff  ,
+
+#define AI_AlarmOff_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 2027 "src/aicommands.def"
 //==============================================================================
-//## REMOVED COMMAND27 
+//## REMOVED COMMAND27
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try running from Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try running from Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+*******************************************************************************/
 #define TRYRunFromBond(GOTOLABEL)  \
                     AI_TRYRunFromBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYRunFromBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYRunFromBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY RUNNING TO BOND POSITION 
+//## GUARD TRY RUNNING TO BOND POSITION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to Run to Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Guard has died or Bond is at an unreachable area (no navigation 
-              pads in area) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to Run to Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Guard has died or Bond is at an unreachable area (no navigation
+              pads in area)
+*******************************************************************************/
 #define TRYRunToBond(GOTOLABEL)  \
                     AI_TRYRunToBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYRunToBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYRunToBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY WALKING TO BOND POSITION 
+//## GUARD TRY WALKING TO BOND POSITION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to walk to Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Guard has died or Bond is at an unreachable area (no navigation 
-              pads in area) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to walk to Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Guard has died or Bond is at an unreachable area (no navigation
+              pads in area)
+*******************************************************************************/
 #define TRYWalkToBond(GOTOLABEL)  \
                     AI_TRYWalkToBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYWalkToBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYWalkToBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY SPRINTNING TO BOND POSITION 
+//## GUARD TRY SPRINTNING TO BOND POSITION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to Sprint to Bond 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @exception: Guard has died or Bond is at an unreachable area (no navigation 
-              pads in area) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to Sprint to Bond
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @exception: Guard has died or Bond is at an unreachable area (no navigation
+              pads in area)
+*******************************************************************************/
 #define TRYSprintToBond(GOTOLABEL)  \
                     AI_TRYSprintToBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSprintToBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSprintToBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## REMOVED COMMAND2B 
+//## REMOVED COMMAND2B
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try finding cover 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try finding cover
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+*******************************************************************************/
 #define TRYFindCover(GOTOLABEL)  \
                     AI_TRYFindCover  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_TRYFindCover_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYFindCover_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY RUNNING TO CHR POSITION 
+//## GUARD TRY RUNNING TO CHR POSITION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to Run to CHR_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation 
-              pads in area) or CHR_NUM is dead 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to Run to CHR_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation
+              pads in area) or CHR_NUM is dead
+*******************************************************************************/
 #define TRYRunToChr(CHR_NUM, GOTOLABEL)  \
                     AI_TRYRunToChr  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYRunToChr_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYRunToChr_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Try getting me to Run to CHR_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation 
-              pads in area) or CHR_NUM is dead 
-*******************************************************************************/  
+/*******************************************************************************
+  Try getting me to Run to CHR_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation
+              pads in area) or CHR_NUM is dead
+*******************************************************************************/
 #define TRYRunToPresetChr(GOTOLABEL)  \
-                TRYRunToChr(CHR_PRESET, GOTOLABEL)   
+                TRYRunToChr(CHR_PRESET, GOTOLABEL)
 
 
- 
+
 # 2285 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY WALKING TO CHR POSITION 
+//## GUARD TRY WALKING TO CHR POSITION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to walk to CHR_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation 
-              pads in area) or CHR_NUM is dead 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to walk to CHR_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation
+              pads in area) or CHR_NUM is dead
+*******************************************************************************/
 #define TRYWalkToChr(CHR_NUM, GOTOLABEL)  \
                     AI_TRYWalkToChr  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYWalkToChr_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYWalkToChr_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Try getting me to walk to CHR_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation 
-              pads in area) or CHR_NUM is dead 
-*******************************************************************************/  
+/*******************************************************************************
+  Try getting me to walk to CHR_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation
+              pads in area) or CHR_NUM is dead
+*******************************************************************************/
 #define TRYWalkToPresetChr(GOTOLABEL)  \
-                TRYWalkToChr(CHR_PRESET, GOTOLABEL)   
+                TRYWalkToChr(CHR_PRESET, GOTOLABEL)
 
 
- 
+
 # 2334 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY SPRINTNING TO CHR POSITION 
+//## GUARD TRY SPRINTNING TO CHR POSITION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try getting me to Sprint to CHR_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation 
-              pads in area) or CHR_NUM is dead 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try getting me to Sprint to CHR_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation
+              pads in area) or CHR_NUM is dead
+*******************************************************************************/
 #define TRYSprintToChr(CHR_NUM, GOTOLABEL)  \
                     AI_TRYSprintToChr  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSprintToChr_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSprintToChr_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Try getting me to Sprint to CHR_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if successful 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation 
-              pads in area) or CHR_NUM is dead 
-*******************************************************************************/  
+/*******************************************************************************
+  Try getting me to Sprint to CHR_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if successful
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Guard has died or CHR_NUM is at an unreachable area (no navigation
+              pads in area) or CHR_NUM is dead
+*******************************************************************************/
 #define TRYSprintToPresetChr(GOTOLABEL)  \
-                TRYSprintToChr(CHR_PRESET, GOTOLABEL)   
+                TRYSprintToChr(CHR_PRESET, GOTOLABEL)
 
 
- 
+
 # 2383 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD HAS STOPPED MOVING 
+//## IF GUARD HAS STOPPED MOVING
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Have I stopped moving? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Check if guard is NOT looking for Bond or if guard has finished 
-              moving to destination 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Have I stopped moving?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Check if guard is NOT looking for Bond or if guard has finished
+              moving to destination
+*******************************************************************************/
 #define IFImOnPatrolOrStopped(GOTOLABEL)  \
                     AI_IFImOnPatrolOrStopped  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFImOnPatrolOrStopped_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFImOnPatrolOrStopped_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF CHR DYING OR DEAD 
+//## IF CHR DYING OR DEAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is CHR_NUM dying or dead? 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is CHR_NUM dying or dead?
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFChrDyingOrDead(CHR_NUM, GOTOLABEL)  \
                     AI_IFChrDyingOrDead  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrDyingOrDead_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrDyingOrDead_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is CHR_NUM dying or dead? 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  Is CHR_NUM dying or dead?
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFImDyingOrDead(GOTOLABEL)  \
-                IFChrDyingOrDead(CHR_SELF, GOTOLABEL)   
+                IFChrDyingOrDead(CHR_SELF, GOTOLABEL)
 
 
- 
+
 # 2475 "src/aicommands.def"
 //==============================================================================
-//## IF CHR DOES NOT EXIST 
+//## IF CHR DOES NOT EXIST
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Does CHR_NUM NOT exist? (died and faded/not spawned) 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: This command is used to check if chr has finished dying animation  
-              and faded away, or chr num is free 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Does CHR_NUM NOT exist? (died and faded/not spawned)
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @return     Continue execution from LABEL if TRUE
+  @exception: This command is used to check if chr has finished dying animation
+              and faded away, or chr num is free
+*******************************************************************************/
 #define IFChrDoesNotExist(CHR_NUM, GOTOLABEL)  \
                     AI_IFChrDoesNotExist  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrDoesNotExist_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrDoesNotExist_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Does CHR_NUM NOT exist? (died and faded/not spawned) 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: This command is used to check if chr has finished dying animation  
-              and faded away, or chr num is free 
-*******************************************************************************/  
+/*******************************************************************************
+  Does CHR_NUM NOT exist? (died and faded/not spawned)
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @return     Continue execution from LABEL if TRUE
+  @exception: This command is used to check if chr has finished dying animation
+              and faded away, or chr num is free
+*******************************************************************************/
 #define IFIDoNotExist(GOTOLABEL)  \
-                IFChrDoesNotExist(CHR_SELF, GOTOLABEL)   
+                IFChrDoesNotExist(CHR_SELF, GOTOLABEL)
 
 
- 
+
 # 2525 "src/aicommands.def"
-/******************************************************************************* 
-  Does CHR_NUM NOT exist? (died and faded/not spawned) 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: This command is used to check if chr has finished dying animation  
-              and faded away, or chr num is free 
-*******************************************************************************/  
+/*******************************************************************************
+  Does CHR_NUM NOT exist? (died and faded/not spawned)
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @return     Continue execution from LABEL if TRUE
+  @exception: This command is used to check if chr has finished dying animation
+              and faded away, or chr num is free
+*******************************************************************************/
 #define IFMyCloneDoesNotExist(GOTOLABEL)  \
-                IFChrDoesNotExist(CHR_CLONE, GOTOLABEL)   
+                IFChrDoesNotExist(CHR_CLONE, GOTOLABEL)
 
 
- 
+
 # 2530 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD SEES BOND 
+//## IF GUARD SEES BOND
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Can I see Bond? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Uses chr->visionrange while checking for Bond. Once Bond has been 
-              spotted, check if Bond and guard are within line of sight 
-              (ignores facing direction). 
-              injured guards will also set spotted Bond state (won't work with 
-              invincible/armored guards). 
-              If Bond breaks line of sight, do not Goto LABEL. If Bond has broken 
-              line of sight for more than 10 seconds, reset spotted bond state. 
-              When using with IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS, make 
-              sure IF_GUARD_SEES_BOND takes priority over 
-              IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Can I see Bond?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Uses chr->visionrange while checking for Bond. Once Bond has been
+              spotted, check if Bond and guard are within line of sight
+              (ignores facing direction).
+              injured guards will also set spotted Bond state (won't work with
+              invincible/armored guards).
+              If Bond breaks line of sight, do not Goto LABEL. If Bond has broken
+              line of sight for more than 10 seconds, reset spotted bond state.
+              When using with IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS, make
+              sure IF_GUARD_SEES_BOND takes priority over
+              IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS
+*******************************************************************************/
 #define IFISeeBond(GOTOLABEL)  \
                     AI_IFISeeBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFISeeBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFISeeBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## RANDOM GENERATE SEED 
+//## RANDOM GENERATE SEED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Generate a random byte and store to My/BG Random 
-******************************************************************************** 
-  @exception: Random byte range is 00-FF (unsigned) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Generate a random byte and store to My/BG Random
+********************************************************************************
+  @exception: Random byte range is 00-FF (unsigned)
+*******************************************************************************/
 #define SetNewRandom()  \
-                    AI_SetNewRandom  ,     
- 
-#define AI_SetNewRandom_LENGTH   (AICMDSIZE    ) 
+                    AI_SetNewRandom  ,
+
+#define AI_SetNewRandom_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 2613 "src/aicommands.def"
 //==============================================================================
-//## IF RANDOM SEED LESS THAN 
+//## IF RANDOM SEED LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is My/BG Random Less Than BYTE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Compare is unsigned 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is My/BG Random Less Than BYTE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Compare is unsigned
+*******************************************************************************/
 #define IFRandomLessThan(BYTE, GOTOLABEL)  \
                     AI_IFRandomLessThan  ,  \
                     BYTE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFRandomLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFRandomLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is My/BG Random Less Than BYTE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Compare is unsigned 
-*******************************************************************************/  
+/*******************************************************************************
+  Is My/BG Random Less Than BYTE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Compare is unsigned
+*******************************************************************************/
 #define IFNewRandomLessThan(BYTE, GOTOLABEL)  \
-                SetNewRandom()IFRandomLessThan(BYTE, GOTOLABEL)   
+                SetNewRandom()IFRandomLessThan(BYTE, GOTOLABEL)
 
 
- 
+
 # 2662 "src/aicommands.def"
 //==============================================================================
-//## IF RANDOM SEED GREATER THAN 
+//## IF RANDOM SEED GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is My/BG Random Greater Than BYTE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Compare is unsigned 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is My/BG Random Greater Than BYTE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Compare is unsigned
+*******************************************************************************/
 #define IFRandomGreaterThan(BYTE, GOTOLABEL)  \
                     AI_IFRandomGreaterThan  ,  \
                     BYTE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFRandomGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFRandomGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is My/BG Random Greater Than BYTE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Compare is unsigned 
-*******************************************************************************/  
+/*******************************************************************************
+  Is My/BG Random Greater Than BYTE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Compare is unsigned
+*******************************************************************************/
 #define IFNewRandomGreaterThan(BYTE, GOTOLABEL)  \
-                SetNewRandom()IFRandomGreaterThan(BYTE, GOTOLABEL)   
+                SetNewRandom()IFRandomGreaterThan(BYTE, GOTOLABEL)
 
 
- 
+
 # 2711 "src/aicommands.def"
 //==============================================================================
-//## IF ALARM IS ON UNUSED 
+//## IF ALARM IS ON UNUSED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is alarm is activated and in range? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: This command works but is unused in retail game, use IF_ALARM_IS_ON 
-              instead. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is alarm is activated and in range?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: This command works but is unused in retail game, use IF_ALARM_IS_ON
+              instead.
+*******************************************************************************/
 #define IFICanHearAlarm(GOTOLABEL)  \
                     AI_IFICanHearAlarm  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFICanHearAlarm_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFICanHearAlarm_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF ALARM IS ON 
+//## IF ALARM IS ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is alarm is activated? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is alarm is activated?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFAlarmIsOn(GOTOLABEL)  \
                     AI_IFAlarmIsOn  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFAlarmIsOn_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFAlarmIsOn_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GAS IS LEAKING 
+//## IF GAS IS LEAKING
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is gas leaking? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Once gas leak event has started, always Goto LABEL 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is gas leaking?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Once gas leak event has started, always Goto LABEL
+*******************************************************************************/
 #define IFGasIsLeaking(GOTOLABEL)  \
                     AI_IFGasIsLeaking  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFGasIsLeaking_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFGasIsLeaking_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD HEARD BOND 
+//## IF GUARD HEARD BOND
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Did I hear Bond fire a weapon? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Uses chr->hearingscale while listening for Bond. To check if Bond has 
-              shot within the last 10 seconds, use 
-              IFIHeardBondRecently 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Did I hear Bond fire a weapon?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Uses chr->hearingscale while listening for Bond. To check if Bond has
+              shot within the last 10 seconds, use
+              IFIHeardBondRecently
+*******************************************************************************/
 #define IFIHeardBond(GOTOLABEL)  \
                     AI_IFIHeardBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFIHeardBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFIHeardBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD SEE ANOTHER GUARD SHOT 
+//## IF GUARD SEE ANOTHER GUARD SHOT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Did I see another chr shot? (by anyone) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Guard friendly fire (if flagged) will also trigger Goto LABEL. 
-              Checks if chr->chrseeshot is set to valid chrnum (not -1). 
-              Does NOT work with shot invincible/armoured guards 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Did I see another chr shot? (by anyone)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Guard friendly fire (if flagged) will also trigger Goto LABEL.
+              Checks if chr->chrseeshot is set to valid chrnum (not -1).
+              Does NOT work with shot invincible/armoured guards
+*******************************************************************************/
 #define IFISeeSomeoneShot(GOTOLABEL)  \
                     AI_IFISeeSomeoneShot  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFISeeSomeoneShot_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFISeeSomeoneShot_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD SEE ANOTHER GUARD DIE 
+//## IF GUARD SEE ANOTHER GUARD DIE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Did I see another chr die? (for any reason) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: When a chr in sight switches to ACT_DIE/ACT_DEAD, Goto LABEL. 
-              Checks if chr->chrseedie is set to valid chrnum (not -1) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Did I see another chr die? (for any reason)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: When a chr in sight switches to ACT_DIE/ACT_DEAD, Goto LABEL.
+              Checks if chr->chrseedie is set to valid chrnum (not -1)
+*******************************************************************************/
 #define IFISeeSomeoneDie(GOTOLABEL)  \
                     AI_IFISeeSomeoneDie  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFISeeSomeoneDie_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFISeeSomeoneDie_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD AND BOND WITHIN LINE OF SIGHT 
+//## IF GUARD AND BOND WITHIN LINE OF SIGHT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If I looked at Bond, could I walk in a straight line to him? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Uses Stand Tiles & ignores facing direction of Bond/guard. 
-              If Prop/guard is in the way do not Goto LABEL. 
-              Does NOT use chr->visionrangefor line of sight check. 
-              Use IFISeeBond to check using chr->visionrange and 
-              IFImOnScreen to account for Bond's view 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If I looked at Bond, could I walk in a straight line to him?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Uses Stand Tiles & ignores facing direction of Bond/guard.
+              If Prop/guard is in the way do not Goto LABEL.
+              Does NOT use chr->visionrangefor line of sight check.
+              Use IFISeeBond to check using chr->visionrange and
+              IFImOnScreen to account for Bond's view
+*******************************************************************************/
 #define IFICouldSeeBond(GOTOLABEL)  \
                     AI_IFICouldSeeBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFICouldSeeBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFICouldSeeBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD AND BOND WITHIN PARTIAL LINE OF SIGHT 
+//## IF GUARD AND BOND WITHIN PARTIAL LINE OF SIGHT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If I looked at Bond, could I walk in a straight line to his Stan Tile? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Unused command, functions like above but only Goto LABEL if Bond is 
-              half occluded by Stand Tiles (Neither blocked or within full view) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If I looked at Bond, could I walk in a straight line to his Stan Tile?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Unused command, functions like above but only Goto LABEL if Bond is
+              half occluded by Stand Tiles (Neither blocked or within full view)
+*******************************************************************************/
 #define IFICouldSeeBondsStan(GOTOLABEL)  \
                     AI_IFICouldSeeBondsStan  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFICouldSeeBondsStan_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFICouldSeeBondsStan_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD WAS SHOT WITHIN LAST 10 SECS 
+//## IF GUARD WAS SHOT WITHIN LAST 10 SECS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Was I shot (by anyone) or seen Bond within the last 10 seconds? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: This will NOT count guard as shot if they are invincible/have armour. 
-              When using with IFISeeBond, make sure IFISeeBond takes 
-              priority over IFIWasShotRecently. 
-              To check if guard was hit/damaged use 
-              IFChrWasDamagedSinceLastCheck/IFIWasShotRecently 
-              instead, or check if flags CHRFLAG_WAS_DAMAGED/CHRFLAG_WAS_HIT are set 
-              using IFMyFlagsAreSet OR IFChrFlagsAreSet 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Was I shot (by anyone) or seen Bond within the last 10 seconds?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: This will NOT count guard as shot if they are invincible/have armour.
+              When using with IFISeeBond, make sure IFISeeBond takes
+              priority over IFIWasShotRecently.
+              To check if guard was hit/damaged use
+              IFChrWasDamagedSinceLastCheck/IFIWasShotRecently
+              instead, or check if flags CHRFLAG_WAS_DAMAGED/CHRFLAG_WAS_HIT are set
+              using IFMyFlagsAreSet OR IFChrFlagsAreSet
+*******************************************************************************/
 #define IFIWasShotRecently(GOTOLABEL)  \
                     AI_IFIWasShotRecently  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFIWasShotRecently_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFIWasShotRecently_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD HEARD BOND WITHIN LAST 10 SECS 
+//## IF GUARD HEARD BOND WITHIN LAST 10 SECS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Did I hear Bond fire weapon within the last 10 seconds? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Uses chr->hearingscale while listening for Bond. To check if Bond has 
-              now fired weapon instead of within the last 10 seconds, use 
-              IF_GUARD_HEARD_BOND 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Did I hear Bond fire weapon within the last 10 seconds?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Uses chr->hearingscale while listening for Bond. To check if Bond has
+              now fired weapon instead of within the last 10 seconds, use
+              IF_GUARD_HEARD_BOND
+*******************************************************************************/
 #define IFIHeardBondRecently(GOTOLABEL)  \
                     AI_IFIHeardBondRecently  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFIHeardBondRecently_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFIHeardBondRecently_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD IN ROOM WITH CHR 
+//## IF GUARD IN ROOM WITH CHR
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Am I in same room as chr? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Am I in same room as chr?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFImInRoomWithChr(CHR_NUM, GOTOLABEL)  \
                     AI_IFImInRoomWithChr  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFImInRoomWithChr_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFImInRoomWithChr_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD HAS NOT BEEN SEEN 
+//## IF GUARD HAS NOT BEEN SEEN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Have I been on-screen yet? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: When Bond has seen guard, it will add flag CHRFLAG_HAS_BEEN_ON_SCREEN 
-              to chr->chrflags. The seen flag will be set for duration of level 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Have I been on-screen yet?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: When Bond has seen guard, it will add flag CHRFLAG_HAS_BEEN_ON_SCREEN
+              to chr->chrflags. The seen flag will be set for duration of level
+*******************************************************************************/
 #define IFIveNotBeenSeen(GOTOLABEL)  \
                     AI_IFIveNotBeenSeen  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFIveNotBeenSeen_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFIveNotBeenSeen_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD IS ON SCREEN 
+//## IF GUARD IS ON SCREEN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Am I currently being rendered on screen? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Portals will affect this commands output. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Am I currently being rendered on screen?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Portals will affect this commands output.
+*******************************************************************************/
 #define IFImOnScreen(GOTOLABEL)  \
                     AI_IFImOnScreen  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFImOnScreen_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFImOnScreen_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD ROOM CONTAINING SELF IS ON SCREEN 
+//## IF GUARD ROOM CONTAINING SELF IS ON SCREEN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my room being rendered on screen? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Only checks if room is being rendered, not if Bond can see guard. 
-              To check if guard is being rendered use IF_GUARD_IS_ON_SCREEN  
-              instead. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my room being rendered on screen?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Only checks if room is being rendered, not if Bond can see guard.
+              To check if guard is being rendered use IF_GUARD_IS_ON_SCREEN
+              instead.
+*******************************************************************************/
 #define IFMyRoomIsOnScreen(GOTOLABEL)  \
                     AI_IFMyRoomIsOnScreen  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyRoomIsOnScreen_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyRoomIsOnScreen_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF ROOM CONTAINING PAD IS ON SCREEN 
+//## IF ROOM CONTAINING PAD IS ON SCREEN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is the room containing PAD being rendered on screen? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Only checks if room is being rendered, not if Bond can see inside  
-              room 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is the room containing PAD being rendered on screen?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Only checks if room is being rendered, not if Bond can see inside
+              room
+*******************************************************************************/
 #define IFRoomWithPadIsOnScreen(PAD, GOTOLABEL)  \
                     AI_IFRoomWithPadIsOnScreen  ,  \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFRoomWithPadIsOnScreen_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFRoomWithPadIsOnScreen_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD IS TARGETED BY BOND 
+//## IF GUARD IS TARGETED BY BOND
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is Bond looking/aiming at me? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Also checks if player's crosshair is aiming at guard 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is Bond looking/aiming at me?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Also checks if player's crosshair is aiming at guard
+*******************************************************************************/
 #define IFImTargetedByBond(GOTOLABEL)  \
                     AI_IFImTargetedByBond  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFImTargetedByBond_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFImTargetedByBond_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD SHOT FROM BOND MISSED 
+//## IF GUARD SHOT FROM BOND MISSED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Did Bond's shot miss/land near me? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Command will sometimes Goto LABEL if guard was shot - use 
-              IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS instead to check if 
-              guard was shot recently (more consistent) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Did Bond's shot miss/land near me?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Command will sometimes Goto LABEL if guard was shot - use
+              IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS instead to check if
+              guard was shot recently (more consistent)
+*******************************************************************************/
 #define IFBondMissedMe(GOTOLABEL)  \
                     AI_IFBondMissedMe  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondMissedMe_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondMissedMe_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND LESS THAN 
+//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND LESS THAN
 //==============================================================================
 // Alternative Names?
 // aiIfTargetInFovLeft or aiIfBondOutOfFov
 
- 
-/******************************************************************************* 
-  Is my counter-clockwise angle to Bond Less Than ANGLE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      ANGLE: 0 - 255 Unsigned Integer 
-  @exception: This is RAW byte command, use either Deg or Rad Varient 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my counter-clockwise angle to Bond Less Than ANGLE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      ANGLE: 0 - 255 Unsigned Integer
+  @exception: This is RAW byte command, use either Deg or Rad Varient
+*******************************************************************************/
 #define IFMyAngleToBondLessThan(ANGLE, GOTOLABEL)  \
                     AI_IFMyAngleToBondLessThan  ,  \
                     ANGLE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyAngleToBondLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyAngleToBondLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is my counter-clockwise angle to Bond Less Than DEG? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param DEG: Degrees 
-               00: Never TRUE, angle is always above 0 
-               90: Bond must be within my 9-to-12 o'clock 
-              180: Bond must be on my left-side 6-to-12 o'clock 
-              270: Bond must be within my 3-to-12 o'clock 
-              360: Always TRUE - angle is always Less Than 360 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle to Bond Less Than DEG?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param DEG: Degrees
+               00: Never TRUE, angle is always above 0
+               90: Bond must be within my 9-to-12 o'clock
+              180: Bond must be on my left-side 6-to-12 o'clock
+              270: Bond must be within my 3-to-12 o'clock
+              360: Always TRUE - angle is always Less Than 360
+*******************************************************************************/
 #define IFMyAngleToBondLessThanDeg(DEG, GOTOLABEL)  \
-                IFMyAngleToBondLessThan(DEG2BYTE(DEG), GOTOLABEL)   
+                IFMyAngleToBondLessThan(DEG2BYTE(DEG), GOTOLABEL)
 
 
- 
+
 # 3519 "src/aicommands.def"
-/******************************************************************************* 
-  Is my counter-clockwise angle to Bond Less Than RAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param RAD: Radians 
-               00: Never TRUE, angle is always above 0 
-               PI: Bond must be on my left-side 6-to-12 o'clock 
-              TAU: Always TRUE - angle is always Less Than TAU 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle to Bond Less Than RAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param RAD: Radians
+               00: Never TRUE, angle is always above 0
+               PI: Bond must be on my left-side 6-to-12 o'clock
+              TAU: Always TRUE - angle is always Less Than TAU
+*******************************************************************************/
 #define IFMyAngleToBondLessThanRad(RAD, GOTOLABEL)  \
-                IFMyAngleToBondLessThan(RAD2BYTE(RAD), GOTOLABEL)   
+                IFMyAngleToBondLessThan(RAD2BYTE(RAD), GOTOLABEL)
 
 
- 
+
 # 3536 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND GREATER THAN 
+//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my counter-clockwise angle to Bond Greater Than ANGLE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      ANGLE: 0 - 255 Unsigned Integer 
-  @exception: This is RAW byte command, use either Deg or Rad Varient 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my counter-clockwise angle to Bond Greater Than ANGLE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      ANGLE: 0 - 255 Unsigned Integer
+  @exception: This is RAW byte command, use either Deg or Rad Varient
+*******************************************************************************/
 #define IFMyAngleToBondGreaterThan(ANGLE, GOTOLABEL)  \
                     AI_IFMyAngleToBondGreaterThan  ,  \
                     ANGLE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyAngleToBondGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyAngleToBondGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is my counter-clockwise angle to Bond Greater Than DEG? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param DEG: Degrees 
-               00: Always TRUE, angle is always above 0 
-               90: Bond must be within my 12-to-9 o'clock 
-              180: Bond must be on my right-side 12-to-6 o'clock 
-              270: Bond must be within my 12-to-3 o'clock 
-              360: Never TRUE - angle is always Less Than 360 
-******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle to Bond Greater Than DEG?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param DEG: Degrees
+               00: Always TRUE, angle is always above 0
+               90: Bond must be within my 12-to-9 o'clock
+              180: Bond must be on my right-side 12-to-6 o'clock
+              270: Bond must be within my 12-to-3 o'clock
+              360: Never TRUE - angle is always Less Than 360
+******************************************************************************/
 #define IFMyAngleToBondGreaterThanDeg(DEG, GOTOLABEL)  \
-                IFMyAngleToBondGreaterThan(DEG2BYTE(DEG), GOTOLABEL)   
+                IFMyAngleToBondGreaterThan(DEG2BYTE(DEG), GOTOLABEL)
 
 
- 
+
 # 3599 "src/aicommands.def"
-/******************************************************************************* 
-  Is my counter-clockwise angle to Bond Greater Than RAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param RAD: Radians 
-               00: Always TRUE, angle is always above 0 
-               PI: Bond must be on my right-side 6-to-12 o'clock 
-              TAU: Never TRUE - angle is always Less Than TAU 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle to Bond Greater Than RAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param RAD: Radians
+               00: Always TRUE, angle is always above 0
+               PI: Bond must be on my right-side 6-to-12 o'clock
+              TAU: Never TRUE - angle is always Less Than TAU
+*******************************************************************************/
 #define IFMyAngleToBondGreaterThanRad(RAD, GOTOLABEL)  \
-                IFMyAngleToBondGreaterThan(RAD2BYTE(RAD), GOTOLABEL)   
+                IFMyAngleToBondGreaterThan(RAD2BYTE(RAD), GOTOLABEL)
 
 
- 
+
 # 3616 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE DIRECTION FROM BOND LESS THAN 
+//## IF GUARD COUNTER CLOCKWISE DIRECTION FROM BOND LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my counter-clockwise angle from Bond Less Than ANGLE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      ANGLE: 0 - 255 Unsigned Integer 
-  @exception: This is RAW byte command, use either Deg or Rad Varient 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my counter-clockwise angle from Bond Less Than ANGLE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      ANGLE: 0 - 255 Unsigned Integer
+  @exception: This is RAW byte command, use either Deg or Rad Varient
+*******************************************************************************/
 #define IFMyAngleFromBondLessThan(ANGLE, GOTOLABEL)  \
                     AI_IFMyAngleFromBondLessThan  ,  \
                     ANGLE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyAngleFromBondLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyAngleFromBondLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is my counter-clockwise angle from Bond Less Than DEG? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param DEG: Degrees 
-               00: Never TRUE, angle is always above 0 
-               90: I must be within Bond's 9-to-12 o'clock 
-              180: I must be on Bond's left-side 6-to-12 o'clock 
-              270: I must be within Bond's 3-to-12 o'clock 
-              360: Always TRUE - angle is always Less Than 360 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle from Bond Less Than DEG?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param DEG: Degrees
+               00: Never TRUE, angle is always above 0
+               90: I must be within Bond's 9-to-12 o'clock
+              180: I must be on Bond's left-side 6-to-12 o'clock
+              270: I must be within Bond's 3-to-12 o'clock
+              360: Always TRUE - angle is always Less Than 360
+*******************************************************************************/
 #define IFMyAngleFromBondLessThanDeg(DEG, GOTOLABEL)  \
-                IFMyAngleFromBondLessThan(DEG2BYTE(DEG), GOTOLABEL)   
+                IFMyAngleFromBondLessThan(DEG2BYTE(DEG), GOTOLABEL)
 
 
- 
+
 # 3677 "src/aicommands.def"
-/******************************************************************************* 
-  Is my counter-clockwise angle from Bond Less Than RAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param RAD: Radians 
-               00: Never TRUE, angle is always above 0 
-               PI: Bond must be on my left-side 6-to-12 o'clock 
-              TAU: Always TRUE - angle is always Less Than TAU 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle from Bond Less Than RAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param RAD: Radians
+               00: Never TRUE, angle is always above 0
+               PI: Bond must be on my left-side 6-to-12 o'clock
+              TAU: Always TRUE - angle is always Less Than TAU
+*******************************************************************************/
 #define IFMyAngleFromBondLessThanRad(ANGLE, GOTOLABEL)  \
-                IFMyAngleFromBondLessThan(RAD2BYTE(ANGLE), GOTOLABEL)   
+                IFMyAngleFromBondLessThan(RAD2BYTE(ANGLE), GOTOLABEL)
 
 
- 
+
 # 3694 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE ANGLE FROM BOND GREATER THAN 
+//## IF GUARD COUNTER CLOCKWISE ANGLE FROM BOND GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my counter-clockwise angle from Bond Greater Than ANGLE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      ANGLE: 0 - 255 Unsigned Integer 
-  @exception: This is RAW byte command, use either Deg or Rad Varient 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my counter-clockwise angle from Bond Greater Than ANGLE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      ANGLE: 0 - 255 Unsigned Integer
+  @exception: This is RAW byte command, use either Deg or Rad Varient
+*******************************************************************************/
 #define IFMyAngleFromBondGreaterThan(ANGLE, GOTOLABEL)  \
                     AI_IFMyAngleFromBondGreaterThan  ,  \
                     ANGLE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyAngleFromBondGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyAngleFromBondGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is my counter-clockwise angle from Bond Greater Than DEG? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param DEG: Degrees 
-               00: Always TRUE, angle is always above 0 
-               90: I must be within Bond's 12-to-9 o'clock 
-              180: I must be on Bond's right-side 12-to-6 o'clock 
-              270: I must be within Bond's 12-to-3 o'clock 
-              360: Never TRUE - angle is always Less Than 360 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle from Bond Greater Than DEG?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param DEG: Degrees
+               00: Always TRUE, angle is always above 0
+               90: I must be within Bond's 12-to-9 o'clock
+              180: I must be on Bond's right-side 12-to-6 o'clock
+              270: I must be within Bond's 12-to-3 o'clock
+              360: Never TRUE - angle is always Less Than 360
+*******************************************************************************/
 #define IFMyAngleFromBondGreaterThanDeg(DEG, GOTOLABEL)  \
-                IFMyAngleFromBondGreaterThan(DEG2BYTE(DEG), GOTOLABEL)   
+                IFMyAngleFromBondGreaterThan(DEG2BYTE(DEG), GOTOLABEL)
 
 
- 
+
 # 3755 "src/aicommands.def"
-/******************************************************************************* 
-  Is my counter-clockwise angle from Bond Greater Than RAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param RAD: Radians 
-               00: Always TRUE, angle is always above 0 
-               PI: I must be on Bond's right-side 12-to-6 o'clock 
-              TAU: Never TRUE - angle is always Less Than TAU 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my counter-clockwise angle from Bond Greater Than RAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param RAD: Radians
+               00: Always TRUE, angle is always above 0
+               PI: I must be on Bond's right-side 12-to-6 o'clock
+              TAU: Never TRUE - angle is always Less Than TAU
+*******************************************************************************/
 #define IFMyAngleFromBondGreaterThanRad(ANGLE, GOTOLABEL)  \
-                IFMyAngleFromBondGreaterThan(RAD2BYTE(ANGLE), GOTOLABEL)   
+                IFMyAngleFromBondGreaterThan(RAD2BYTE(ANGLE), GOTOLABEL)
 
 
- 
+
 # 3772 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD DISTANCE TO BOND LESS THAN 
+//## IF GUARD DISTANCE TO BOND LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my distance to Bond Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my distance to Bond Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+*******************************************************************************/
 #define IFMyDistanceToBondLessThanDecimeter(DISTANCE, GOTOLABEL)  \
                     AI_IFMyDistanceToBondLessThanDecimeter  ,  \
                     CharArrayFrom16(DISTANCE) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyDistanceToBondLessThanDecimeter_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyDistanceToBondLessThanDecimeter_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is my distance to Bond Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to bond 
-********************************************************************************/  
+/*******************************************************************************
+  Is my distance to Bond Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to bond
+********************************************************************************/
 #define IFMyDistanceToBondLessThanMeter(DISTANCE, GOTOLABEL)  \
-                IFMyDistanceToBondLessThanDecimeter((u16)(DISTANCE * 10), GOTOLABEL)   
+                IFMyDistanceToBondLessThanDecimeter((u16)(DISTANCE * 10), GOTOLABEL)
 
 
- 
+
 # 3827 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD DISTANCE TO BOND GREATER THAN 
+//## IF GUARD DISTANCE TO BOND GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my distance to Bond Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my distance to Bond Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+*******************************************************************************/
 #define IFMyDistanceToBondGreaterThanDecimeter(DISTANCE, GOTOLABEL)  \
                     AI_IFMyDistanceToBondGreaterThanDecimeter  ,  \
                     CharArrayFrom16(DISTANCE) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyDistanceToBondGreaterThanDecimeter_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyDistanceToBondGreaterThanDecimeter_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is My distance to Bond Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to Bond 
-********************************************************************************/  
+/*******************************************************************************
+  Is My distance to Bond Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to Bond
+********************************************************************************/
 #define IFMyDistanceToBondGreaterThanMeter(DISTANCE, GOTOLABEL)  \
-                IFMyDistanceToBondGreaterThanDecimeter((u16)(DISTANCE * 10), GOTOLABEL)   
+                IFMyDistanceToBondGreaterThanDecimeter((u16)(DISTANCE * 10), GOTOLABEL)
 
 
- 
+
 # 3883 "src/aicommands.def"
 //==============================================================================
-//## IF CHR DISTANCE TO PAD LESS THAN 
+//## IF CHR DISTANCE TO PAD LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is My/Chr distance to PAD Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is My/Chr distance to PAD Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFChrDistanceToPadLessThanDecimeter(CHR_NUM, DISTANCE, PAD, GOTOLABEL)  \
                     AI_IFChrDistanceToPadLessThanDecimeter  ,  \
                     CHR_NUM , \
                     CharArrayFrom16(DISTANCE) , \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrDistanceToPadLessThanDecimeter_LENGTH   (AICMDSIZE +1   +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrDistanceToPadLessThanDecimeter_LENGTH   (AICMDSIZE +1   +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is My/Chr distance to PAD Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Is My/Chr distance to PAD Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFMyDistanceToPadLessThanDecimeter(DISTANCE, PAD, GOTOLABEL)  \
-                IFChrDistanceToPadLessThanDecimeter(CHR_SELF, (DISTANCE), PAD, GOTOLABEL)   
+                IFChrDistanceToPadLessThanDecimeter(CHR_SELF, (DISTANCE), PAD, GOTOLABEL)
 
 
- 
+
 # 3934 "src/aicommands.def"
-/******************************************************************************* 
-  Is My/Chr distance to PAD Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to pad 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Is My/Chr distance to PAD Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to pad
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFChrDistanceToPadLessThanMeter(CHR_NUM, DISTANCE, PAD, GOTOLABEL)  \
-                IFChrDistanceToPadLessThanDecimeter(CHR_NUM, (u16)(DISTANCE * 10), PAD, GOTOLABEL)   
+                IFChrDistanceToPadLessThanDecimeter(CHR_NUM, (u16)(DISTANCE * 10), PAD, GOTOLABEL)
 
 
- 
+
 # 3949 "src/aicommands.def"
-/******************************************************************************* 
-  Is My/Chr distance to PAD Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to pad 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Is My/Chr distance to PAD Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to pad
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFMyDistanceToPadLessThanMeter(DISTANCE, PAD, GOTOLABEL)  \
-                IFChrDistanceToPadLessThanDecimeter(CHR_SELF, (u16)(DISTANCE * 10), PAD, GOTOLABEL)   
+                IFChrDistanceToPadLessThanDecimeter(CHR_SELF, (u16)(DISTANCE * 10), PAD, GOTOLABEL)
 
 
- 
+
 # 3953 "src/aicommands.def"
 //==============================================================================
-//## IF CHR DISTANCE TO PAD GREATER THAN 
+//## IF CHR DISTANCE TO PAD GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is My/Chr distance to PAD Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is My/Chr distance to PAD Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFChrDistanceToPadGreaterThanDecimeter(CHR_NUM, DISTANCE, PAD, GOTOLABEL)  \
                     AI_IFChrDistanceToPadGreaterThanDecimeter  ,  \
                     CHR_NUM , \
                     CharArrayFrom16(DISTANCE) , \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrDistanceToPadGreaterThanDecimeter_LENGTH   (AICMDSIZE +1   +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrDistanceToPadGreaterThanDecimeter_LENGTH   (AICMDSIZE +1   +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is My/Chr distance to PAD Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Is My/Chr distance to PAD Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFMyDistanceToPadGreaterThanDecimeter(DISTANCE, PAD, GOTOLABEL)  \
-                IFChrDistanceToPadGreaterThanDecimeter(CHR_SELF, (DISTANCE), PAD, GOTOLABEL)   
+                IFChrDistanceToPadGreaterThanDecimeter(CHR_SELF, (DISTANCE), PAD, GOTOLABEL)
 
 
- 
+
 # 4004 "src/aicommands.def"
-/******************************************************************************* 
-  Is My/Chr distance to PAD Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to pad 
-  @param      CHR_NUM: ID of Chr (0-255) 
-********************************************************************************/  
+/*******************************************************************************
+  Is My/Chr distance to PAD Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to pad
+  @param      CHR_NUM: ID of Chr (0-255)
+********************************************************************************/
 #define IFChrDistanceToPadGreaterThanMeter(CHR_NUM, DISTANCE, PAD, GOTOLABEL)  \
-                IFChrDistanceToPadGreaterThanDecimeter(CHR_NUM, (u16)(DISTANCE * 10), PAD, GOTOLABEL)   
+                IFChrDistanceToPadGreaterThanDecimeter(CHR_NUM, (u16)(DISTANCE * 10), PAD, GOTOLABEL)
 
 
- 
+
 # 4018 "src/aicommands.def"
-/******************************************************************************* 
-  Is My/Chr distance to PAD Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to pad 
-  @param      CHR_NUM: ID of Chr (0-255) 
-********************************************************************************/  
+/*******************************************************************************
+  Is My/Chr distance to PAD Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to pad
+  @param      CHR_NUM: ID of Chr (0-255)
+********************************************************************************/
 #define IFMyDistanceToPadGreaterThanMeter(DISTANCE, PAD, GOTOLABEL)  \
-                IFChrDistanceToPadGreaterThanDecimeter(CHR_SELF, (u16)(DISTANCE * 10), PAD, GOTOLABEL)   
+                IFChrDistanceToPadGreaterThanDecimeter(CHR_SELF, (u16)(DISTANCE * 10), PAD, GOTOLABEL)
 
 
- 
+
 # 4022 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD DISTANCE TO CHR LESS THAN 
+//## IF GUARD DISTANCE TO CHR LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my distance to CHR_NUM Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is my distance to CHR_NUM Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFMyDistanceToChrLessThanDecimeter(DISTANCE, CHR_NUM, GOTOLABEL)  \
                     AI_IFMyDistanceToChrLessThanDecimeter  ,  \
                     CharArrayFrom16(DISTANCE) , \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyDistanceToChrLessThanDecimeter_LENGTH   (AICMDSIZE +2   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyDistanceToChrLessThanDecimeter_LENGTH   (AICMDSIZE +2   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is my distance to CHR_NUM Less Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to chr 
-  @param      CHR_NUM: ID of Chr (0-255) 
-********************************************************************************/  
+/*******************************************************************************
+  Is my distance to CHR_NUM Less Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to chr
+  @param      CHR_NUM: ID of Chr (0-255)
+********************************************************************************/
 #define IFMyDistanceToChrLessThanMeter(DISTANCE, CHR_NUM, GOTOLABEL)  \
-                IFMyDistanceToChrLessThanDecimeter((u16)(DISTANCE * 10), CHR_NUM, GOTOLABEL)   
+                IFMyDistanceToChrLessThanDecimeter((u16)(DISTANCE * 10), CHR_NUM, GOTOLABEL)
 
 
- 
+
 # 4080 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD DISTANCE TO CHR GREATER THAN 
+//## IF GUARD DISTANCE TO CHR GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is my distance to CHR_NUM Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-  @param      CHR_NUM: ID of Chr (0-255) 
-********************************************************************************/   
+
+/*******************************************************************************
+  Is my distance to CHR_NUM Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+  @param      CHR_NUM: ID of Chr (0-255)
+********************************************************************************/
 #define IFMyDistanceToChrGreaterThanDecimeter(DISTANCE, CHR_NUM, GOTOLABEL)  \
                     AI_IFMyDistanceToChrGreaterThanDecimeter  ,  \
                     CharArrayFrom16(DISTANCE) , \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyDistanceToChrGreaterThanDecimeter_LENGTH   (AICMDSIZE +2   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyDistanceToChrGreaterThanDecimeter_LENGTH   (AICMDSIZE +2   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is my distance to CHR_NUM Greater Than DISTANCE? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to chr 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/  
+/*******************************************************************************
+  Is my distance to CHR_NUM Greater Than DISTANCE?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to chr
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFMyDistanceToChrGreaterThanMeters(DISTANCE, CHR_NUM, GOTOLABEL)  \
-                IFMyDistanceToChrGreaterThanDecimeter((u16)(DISTANCE * 10), CHR_NUM, GOTOLABEL)   
+                IFMyDistanceToChrGreaterThanDecimeter((u16)(DISTANCE * 10), CHR_NUM, GOTOLABEL)
 
 
- 
+
 # 4138 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY SETTING CHR PRESET TO GUARD WITHIN DISTANCE 
+//## GUARD TRY SETTING CHR PRESET TO GUARD WITHIN DISTANCE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Try setting my padpreset to the pad of the first Chr found within DISTANCE 
-******************************************************************************** 
-  @return     Continue execution from LABEL if a Chr is found 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-  @exception: Does NOT pick the closest found chr, but whoever was found first 
-              within the DISTANCE argument. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Try setting my padpreset to the pad of the first Chr found within DISTANCE
+********************************************************************************
+  @return     Continue execution from LABEL if a Chr is found
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+  @exception: Does NOT pick the closest found chr, but whoever was found first
+              within the DISTANCE argument.
+*******************************************************************************/
 #define TRYSettingMyPresetToChrWithinDistanceDecimeter(DISTANCE, GOTOLABEL)  \
                     AI_TRYSettingMyPresetToChrWithinDistanceDecimeter  ,  \
                     CharArrayFrom16(DISTANCE) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSettingMyPresetToChrWithinDistanceDecimeter_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSettingMyPresetToChrWithinDistanceDecimeter_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Try setting my padpreset to the pad of the first Chr found within DISTANCE 
-******************************************************************************** 
-  @return     Continue execution from LABEL if a Chr is found 
-  @param      DISTANCE: Float, meters to test 
-  @exception: Does NOT pick the closest found chr, but whoever was found first 
-              within the DISTANCE argument. 
-*******************************************************************************/  
+/*******************************************************************************
+  Try setting my padpreset to the pad of the first Chr found within DISTANCE
+********************************************************************************
+  @return     Continue execution from LABEL if a Chr is found
+  @param      DISTANCE: Float, meters to test
+  @exception: Does NOT pick the closest found chr, but whoever was found first
+              within the DISTANCE argument.
+*******************************************************************************/
 #define TRYSettingMyPresetToChrWithinDistanceMeters(DISTANCE,  GOTOLABEL)  \
-                TRYSettingMyPresetToChrWithinDistanceDecimeter((u16)(DISTANCE * 10), GOTOLABEL)   
+                TRYSettingMyPresetToChrWithinDistanceDecimeter((u16)(DISTANCE * 10), GOTOLABEL)
 
 
- 
+
 # 4198 "src/aicommands.def"
 //==============================================================================
-//## IF BOND DISTANCE TO PAD LESS THAN 
+//## IF BOND DISTANCE TO PAD LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is Bond within DISTANCE to PAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-********************************************************************************/   
+
+/*******************************************************************************
+  Is Bond within DISTANCE to PAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+********************************************************************************/
 #define IFBondDistanceToPadLessThanDecimeter(DISTANCE, PAD, GOTOLABEL)  \
                     AI_IFBondDistanceToPadLessThanDecimeter  ,  \
                     CharArrayFrom16(DISTANCE) , \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondDistanceToPadLessThanDecimeter_LENGTH   (AICMDSIZE +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondDistanceToPadLessThanDecimeter_LENGTH   (AICMDSIZE +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is Bond within DISTANCE to PAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to pad 
-********************************************************************************/  
+/*******************************************************************************
+  Is Bond within DISTANCE to PAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to pad
+********************************************************************************/
 #define IFBondDistanceToPadLessThanMeter(DISTANCE, PAD, GOTOLABEL)  \
-                IFBondDistanceToPadLessThanDecimeter((u16)(DISTANCE * 10), PAD, GOTOLABEL)   
+                IFBondDistanceToPadLessThanDecimeter((u16)(DISTANCE * 10), PAD, GOTOLABEL)
 
 
- 
+
 # 4255 "src/aicommands.def"
 //==============================================================================
-//## IF BOND DISTANCE TO PAD GREATER THAN 
+//## IF BOND DISTANCE TO PAD GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is Bond further than DISTANCE to PAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter) 
-********************************************************************************/   
+
+/*******************************************************************************
+  Is Bond further than DISTANCE to PAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+********************************************************************************/
 #define IFBondDistanceToPadGreaterThanDecimeter(DISTANCE, PAD, GOTOLABEL)  \
                     AI_IFBondDistanceToPadGreaterThanDecimeter  ,  \
                     CharArrayFrom16(DISTANCE) , \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondDistanceToPadGreaterThanDecimeter_LENGTH   (AICMDSIZE +2   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondDistanceToPadGreaterThanDecimeter_LENGTH   (AICMDSIZE +2   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Is Bond further than DISTANCE to PAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      DISTANCE: Float, meters to pad 
-********************************************************************************/  
+/*******************************************************************************
+  Is Bond further than DISTANCE to PAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      DISTANCE: Float, meters to pad
+********************************************************************************/
 #define IFBondDistanceToPadGreaterThanMeter(DISTANCE, PAD, GOTOLABEL)  \
-                IFBondDistanceToPadGreaterThanDecimeter((u16)(DISTANCE * 10), PAD, GOTOLABEL)   
+                IFBondDistanceToPadGreaterThanDecimeter((u16)(DISTANCE * 10), PAD, GOTOLABEL)
 
 
- 
+
 # 4312 "src/aicommands.def"
 //==============================================================================
-//## IF CHR IN ROOM WITH PAD 
+//## IF CHR IN ROOM WITH PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is CHR_NUM in room with PAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is CHR_NUM in room with PAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+*******************************************************************************/
 #define IFChrInRoomWithPad(CHR_NUM, PAD, GOTOLABEL)  \
                     AI_IFChrInRoomWithPad  ,  \
                     CHR_NUM , \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrInRoomWithPad_LENGTH   (AICMDSIZE +1   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrInRoomWithPad_LENGTH   (AICMDSIZE +1   +2   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Am I in room with PAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-********************************************************************************/  
+/*******************************************************************************
+  Am I in room with PAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+********************************************************************************/
 #define IFImInRoomWithPad(PAD, GOTOLABEL)  \
-                IFChrInRoomWithPad(CHR_SELF, PAD, GOTOLABEL)   
+                IFChrInRoomWithPad(CHR_SELF, PAD, GOTOLABEL)
 
 
- 
+
 # 4367 "src/aicommands.def"
 //==============================================================================
-//## IF BOND IN ROOM WITH PAD 
+//## IF BOND IN ROOM WITH PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is Bond in room with PAD? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Is Bond in room with PAD?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFBondInRoomWithPad(PAD, GOTOLABEL)  \
                     AI_IFBondInRoomWithPad  ,  \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondInRoomWithPad_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondInRoomWithPad_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## IF BOND COLLECTED OBJECT 
+//## IF BOND COLLECTED OBJECT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Did Bond collect Tagged Object OBJECT_TAG? 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Did Bond collect Tagged Object OBJECT_TAG?
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFBondCollectedObject(OBJECT_TAG, GOTOLABEL)  \
                     AI_IFBondCollectedObject  ,  \
                     OBJECT_TAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondCollectedObject_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondCollectedObject_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF ITEM IS STATIONARY WITHIN LEVEL 
+//## IF ITEM IS STATIONARY WITHIN LEVEL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Is item, if it exists, stationary? (not moving/in mid-air) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Used to check if Bond threw an item in level. Also checks if item  
-              was attached to an object (item is stationary within level). 
-              Make sure IF_ITEM_IS_ATTACHED_TO_OBJECT takes priority over 
-              IF_ITEM_IS_STATIONARY_WITHIN_LEVEL when using both commands 
-*******************************************************************************/   
-#define IFItemIsStationaryWithinLevel(ITEM_NUM, GOTOLABEL)  \
-                    AI_IFItemIsStationaryWithinLevel  ,  \
+
+/*******************************************************************************
+  Is item, if it exists, stationary? (not moving/in mid-air)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Used to check if Bond threw an item in level. Also checks if item
+              was attached to an object (item is stationary within level).
+              Make sure IF_ITEM_IS_ATTACHED_TO_OBJECT takes priority over
+              IF_ITEM_IS_STATIONARY_WITHIN_LEVEL when using both commands
+*******************************************************************************/
+#define IFKeyDropped(ITEM_NUM, GOTOLABEL)  \
+                    AI_IFKeyDropped  ,  \
                     ITEM_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFItemIsStationaryWithinLevel_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFKeyDropped_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF ITEM IS ATTACHED TO OBJECT 
+//## IF ITEM IS ATTACHED TO OBJECT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Was ITEM_NUM thrown onto Tagged Object  
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Used to check if Bond threw an item onto a tagged object. 
-              If used with IFItemIsStationaryWithinLevel, make sure 
-              IFItemIsAttachedToObject take priority over 
-              IFItemIsStationaryWithinLevel 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Was ITEM_NUM thrown onto Tagged Object
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Used to check if Bond threw an item onto a tagged object.
+              If used with IFItemIsStationaryWithinLevel, make sure
+              IFItemIsAttachedToObject take priority over
+              IFItemIsStationaryWithinLevel
+*******************************************************************************/
 #define IFItemIsAttachedToObject(ITEM_NUM, OBJECT_TAG, GOTOLABEL)  \
                     AI_IFItemIsAttachedToObject  ,  \
                     ITEM_NUM , \
                     OBJECT_TAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFItemIsAttachedToObject_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFItemIsAttachedToObject_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF BOND HAS ITEM EQUIPPED 
+//## IF BOND HAS ITEM EQUIPPED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond has an item equipped (currently held) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond has an item equipped (currently held)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFBondHasItemEquipped(ITEM_NUM, GOTOLABEL)  \
                     AI_IFBondHasItemEquipped  ,  \
                     ITEM_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondHasItemEquipped_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondHasItemEquipped_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECT EXISTS 
+//## IF OBJECT EXISTS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If tagged object exists in level 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If tagged object exists in level
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFObjectExists(OBJECT_TAG, GOTOLABEL)  \
                     AI_IFObjectExists  ,  \
                     OBJECT_TAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectExists_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectExists_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECT NOT DESTROYED 
+//## IF OBJECT NOT DESTROYED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If tagged object is not destroyed 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If tagged object is not destroyed
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFObjectNotDestroyed(OBJECT_TAG, GOTOLABEL)  \
                     AI_IFObjectNotDestroyed  ,  \
                     OBJECT_TAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectNotDestroyed_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectNotDestroyed_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECT WAS ACTIVATED 
+//## IF OBJECT WAS ACTIVATED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If tagged object was activated since last check 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: When executed, it will clear tagged objects activated flag. 
-              Only Bond and OBJECT_ACTIVATE can activate tagged objects. 
-              Bond can NOT activate destroyed objects 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If tagged object was activated since last check
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: When executed, it will clear tagged objects activated flag.
+              Only Bond and OBJECT_ACTIVATE can activate tagged objects.
+              Bond can NOT activate destroyed objects
+*******************************************************************************/
 #define IFObjectWasActivated(OBJECT_TAG, GOTOLABEL)  \
                     AI_IFObjectWasActivated  ,  \
                     OBJECT_TAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectWasActivated_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectWasActivated_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF BOND USED GADGET ON OBJECT 
+//## IF BOND USED GADGET ON OBJECT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond used a gadget item on a tagged object since last check 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Gadgets are a pre-defined list of items set to gadget flag: 
-                ITEM_BOMBDEFUSER 
-                ITEM_DATATHIEF 
-                ITEM_DOORDECODER 
-                ITEM_EXPLOSIVEFLOPPY 
-                ITEM_DATTAPE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond used a gadget item on a tagged object since last check
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Gadgets are a pre-defined list of items set to gadget flag:
+                ITEM_BOMBDEFUSER
+                ITEM_DATATHIEF
+                ITEM_DOORDECODER
+                ITEM_EXPLOSIVEFLOPPY
+                ITEM_DATTAPE
+*******************************************************************************/
 #define IFBondUsedGadgetOnObject(OBJECT_TAG, GOTOLABEL)  \
                     AI_IFBondUsedGadgetOnObject  ,  \
                     OBJECT_TAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondUsedGadgetOnObject_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondUsedGadgetOnObject_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## OBJECT ACTIVATE 
+//## OBJECT ACTIVATE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Activate a tagged object 
-******************************************************************************** 
-  @exception: Does NOT check if object has been destroyed 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Activate a tagged object
+********************************************************************************
+  @exception: Does NOT check if object has been destroyed
+*******************************************************************************/
 #define ActivateObject(OBJECT_TAG)  \
                     AI_ActivateObject  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_ActivateObject_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_ActivateObject_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//##  DESTROY OBJECT  
+//##  DESTROY OBJECT
 //==============================================================================
 // Canonical Name : destroyobj
 
- 
-/******************************************************************************* 
-  Destroy/explode a tagged object 
-******************************************************************************** 
-  @exception: Only works if object is not destroyed. 
-              Can NOT destroy invincible objects 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Destroy/explode a tagged object
+********************************************************************************
+  @exception: Only works if object is not destroyed.
+              Can NOT destroy invincible objects
+*******************************************************************************/
 #define DestroyObject(OBJECT_TAG)  \
                     AI_DestroyObject  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_DestroyObject_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_DestroyObject_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## OBJECT DROP FROM CHR 
+//## OBJECT DROP FROM CHR
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Drop tagged object held by/attached to chr 
-******************************************************************************** 
-  @exception: Item must be held by or attached to a chr. 
-              Embedded objects will not drop, only works with attached objects. 
-              Props can be damaged on drop 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Drop tagged object held by/attached to chr
+********************************************************************************
+  @exception: Item must be held by or attached to a chr.
+              Embedded objects will not drop, only works with attached objects.
+              Props can be damaged on drop
+*******************************************************************************/
 #define DropObject(OBJECT_TAG)  \
                     AI_DropObject  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_DropObject_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_DropObject_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## CHR DROP ALL CONCEALED ITEMS 
+//## CHR DROP ALL CONCEALED ITEMS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Make chr drop all concealed attachments 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Item must be attached to chr, to drop held items use 
-              ChrDropAllHeldItems. 
-              Embedded objects will not drop, only works with attached objects. 
-              Props can be damaged on drop 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Make chr drop all concealed attachments
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Item must be attached to chr, to drop held items use
+              ChrDropAllHeldItems.
+              Embedded objects will not drop, only works with attached objects.
+              Props can be damaged on drop
+*******************************************************************************/
 #define ChrDropAllConcealedItems(CHR_NUM)  \
                     AI_ChrDropAllConcealedItems  ,  \
-                    CHR_NUM ,   
- 
-#define AI_ChrDropAllConcealedItems_LENGTH   (AICMDSIZE +1    ) 
+                    CHR_NUM ,
+
+#define AI_ChrDropAllConcealedItems_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## CHR DROP ALL HELD ITEMS 
+//## CHR DROP ALL HELD ITEMS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Make chr drop all held items 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Items must be held by chr, to drop concealed attachments use 
-              ChrDropAllConcealedItems. 
-              Embedded objects will not drop, only works with attached objects 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Make chr drop all held items
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Items must be held by chr, to drop concealed attachments use
+              ChrDropAllConcealedItems.
+              Embedded objects will not drop, only works with attached objects
+*******************************************************************************/
 #define ChrDropAllHeldItems(CHR_NUM)  \
                     AI_ChrDropAllHeldItems  ,  \
-                    CHR_NUM ,   
- 
-#define AI_ChrDropAllHeldItems_LENGTH   (AICMDSIZE +1    ) 
+                    CHR_NUM ,
+
+#define AI_ChrDropAllHeldItems_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## BOND COLLECT OBJECT 
+//## BOND COLLECT OBJECT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Force Bond to instantly collect a tagged object 
-******************************************************************************** 
-  @exception: Does not trigger bottom text telling player they collected an item 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Force Bond to instantly collect a tagged object
+********************************************************************************
+  @exception: Does not trigger bottom text telling player they collected an item
+*******************************************************************************/
 #define BondCollectObject(OBJECT_TAG)  \
                     AI_BondCollectObject  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_BondCollectObject_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_BondCollectObject_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## CHR EQUIP OBJECT 
+//## CHR EQUIP OBJECT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes chr hold tagged object 
-******************************************************************************** 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: If chrs hands are occupied, object will be equipped as a concealed 
-              attachment, but if tagged object's GUNHAND flag is free on guard 
-              then guard will equip weapon. 
-              Tagged objects Prop MUST have a holding position command within 
-              the model file 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes chr hold tagged object
+********************************************************************************
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: If chrs hands are occupied, object will be equipped as a concealed
+              attachment, but if tagged object's GUNHAND flag is free on guard
+              then guard will equip weapon.
+              Tagged objects Prop MUST have a holding position command within
+              the model file
+*******************************************************************************/
 #define ChrEquipObject(OBJECT_TAG, CHR_NUM)  \
                     AI_ChrEquipObject  ,  \
                     OBJECT_TAG , \
-                    CHR_NUM ,   
- 
-#define AI_ChrEquipObject_LENGTH   (AICMDSIZE +1   +1    ) 
+                    CHR_NUM ,
+
+#define AI_ChrEquipObject_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## Move Object (Canonical Name) 
+//## Move Object (Canonical Name)
 //==============================================================================
 //Canonical Name: MoveObj
 
- 
-/******************************************************************************* 
-  Move object to PAD 
-******************************************************************************** 
-  @exception: If object is assigned to padextra type, then object scale will be  
-              lost after moving to target pad. 
-              Object will inherit rotation from target pad 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Move object to PAD
+********************************************************************************
+  @exception: If object is assigned to padextra type, then object scale will be
+              lost after moving to target pad.
+              Object will inherit rotation from target pad
+*******************************************************************************/
 #define MoveObject(OBJECT_TAG, PAD)  \
                     AI_MoveObject  ,  \
                     OBJECT_TAG , \
-                    CharArrayFrom16(PAD) ,   
- 
-#define AI_MoveObject_LENGTH   (AICMDSIZE +1   +2    ) 
+                    CharArrayFrom16(PAD) ,
+
+#define AI_MoveObject_LENGTH   (AICMDSIZE +1   +2    )
 
 
- 
+
 //==============================================================================
-//## DOOR OPEN 
+//## DOOR OPEN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Open tagged door even if locked 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Open tagged door even if locked
+*******************************************************************************/
 #define DoorOpen(OBJECT_TAG)  \
                     AI_DoorOpen  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_DoorOpen_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_DoorOpen_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## DOOR CLOSE 
+//## DOOR CLOSE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Close tagged door 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Close tagged door
+*******************************************************************************/
 #define DoorClose(OBJECT_TAG)  \
                     AI_DoorClose  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_DoorClose_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_DoorClose_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF DOOR STATE EQUAL 
+//## IF DOOR STATE EQUAL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If tagged door state matches any of bitfield 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Use DOOR_STATE_# flags for door state argument. 
-              Flags can be combined 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If tagged door state matches any of bitfield
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Use DOOR_STATE_# flags for door state argument.
+              Flags can be combined
+*******************************************************************************/
 #define IFDoorStateEqual(OBJECT_TAG, DOOR_STATE, GOTOLABEL)  \
                     AI_IFDoorStateEqual  ,  \
                     OBJECT_TAG , \
                     DOOR_STATE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFDoorStateEqual_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFDoorStateEqual_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorClosed(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_CLOSED, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_CLOSED, GOTOLABEL)
 
 
- 
+
 # 5306 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorOpen(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPEN, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPEN, GOTOLABEL)
 
 
- 
+
 # 5310 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorClosing(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_CLOSING, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_CLOSING, GOTOLABEL)
 
 
- 
+
 # 5314 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorOpening(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPENING, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPENING, GOTOLABEL)
 
 
- 
+
 # 5318 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorOpenOrClosed(GOTOLABEL)  \
-                IFDoorStateEqual(IFDOOR_STATE_OPEN | DOOR_STATE_CLOSED, GOTOLABEL)   
+                IFDoorStateEqual(IFAI_DOOR_STATE_OPEN | AI_DOOR_STATE_CLOSED, GOTOLABEL)
 
 
- 
+
 # 5322 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorOpeningOrClosing(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_CLOSING | DOOR_STATE_CLOSED, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_CLOSING | AI_DOOR_STATE_CLOSED, GOTOLABEL)
 
 
- 
+
 # 5326 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorOpenOrClosing(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPEN | DOOR_STATE_CLOSING, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPEN | AI_DOOR_STATE_CLOSING, GOTOLABEL)
 
 
- 
+
 # 5330 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorNotOpening(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPEN | DOOR_STATE_CLOSING | DOOR_STATE_CLOSED, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPEN | AI_DOOR_STATE_CLOSING | AI_DOOR_STATE_CLOSED, GOTOLABEL)
 
 
- 
+
 # 5334 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorClosedOrOpening(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_CLOSED | DOOR_STATE_OPENING, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_CLOSED | AI_DOOR_STATE_OPENING, GOTOLABEL)
 
 
- 
+
 # 5338 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorOpenOrOpening(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPEN | DOOR_STATE_OPENING, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPEN | AI_DOOR_STATE_OPENING, GOTOLABEL)
 
 
- 
+
 # 5342 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorNotClosing(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPEN | DOOR_STATE_OPENING | DOOR_STATE_CLOSED, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPEN | AI_DOOR_STATE_OPENING | AI_DOOR_STATE_CLOSED, GOTOLABEL)
 
 
- 
+
 # 5346 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorOpeningOrClosed(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPENING | DOOR_STATE_CLOSED, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPENING | AI_DOOR_STATE_CLOSED, GOTOLABEL)
 
 
- 
+
 # 5350 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorNotOpen(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPENING | DOOR_STATE_CLOSED | DOOR_STATE_CLOSING, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPENING | AI_DOOR_STATE_CLOSED | AI_DOOR_STATE_CLOSING, GOTOLABEL)
 
 
- 
+
 # 5354 "src/aicommands.def"
-/******************************************************************************* 
-  If tagged door state is ... 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If tagged door state is ...
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFDoorNotClosed(GOTOLABEL)  \
-                IFDoorStateEqual(DOOR_STATE_OPEN | DOOR_STATE_OPENING | DOOR_STATE_CLOSING, GOTOLABEL)   
+                IFDoorStateEqual(AI_DOOR_STATE_OPEN | AI_DOOR_STATE_OPENING | AI_DOOR_STATE_CLOSING, GOTOLABEL)
 
 
- 
+
 # 5358 "src/aicommands.def"
 //==============================================================================
-//## IF DOOR HAS BEEN OPENED BEFORE 
+//## IF DOOR HAS BEEN OPENED BEFORE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If tagged door has been opened before 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: If tagged door is open by default in setup, then it must be closed 
-        before it will check if opened again 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If tagged door has been opened before
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: If tagged door is open by default in setup, then it must be closed
+        before it will check if opened again
+*******************************************************************************/
 #define IFDoorHasBeenOpenedBefore(OBJECT_TAG, GOTOLABEL)  \
                     AI_IFDoorHasBeenOpenedBefore  ,  \
                     OBJECT_TAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFDoorHasBeenOpenedBefore_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFDoorHasBeenOpenedBefore_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## DOOR SET LOCK 
+//## DOOR SET LOCK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set tagged doors lock with flags 
-******************************************************************************** 
-  @exception: Use DOOR_LOCK_# flags for LOCK argument. 
-        Lock flags are same as used within setup for doors and keys 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set tagged doors lock with flags
+********************************************************************************
+  @exception: Use DOOR_LOCK_# flags for LOCK argument.
+        Lock flags are same as used within setup for doors and keys
+*******************************************************************************/
 #define DoorSetLock(OBJECT_TAG, LOCK_FLAG)  \
                     AI_DoorSetLock  ,  \
                     OBJECT_TAG , \
-                    LOCK_FLAG ,   
- 
-#define AI_DoorSetLock_LENGTH   (AICMDSIZE +1   +1    ) 
+                    LOCK_FLAG ,
+
+#define AI_DoorSetLock_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## DOOR UNSET LOCK 
+//## DOOR UNSET LOCK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unset tagged doors lock with flags 
-******************************************************************************** 
-  @exception: Use DOOR_LOCK_# flags for LOCK argument. 
-        Lock flags are same as used within setup for doors and keys 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unset tagged doors lock with flags
+********************************************************************************
+  @exception: Use DOOR_LOCK_# flags for LOCK argument.
+        Lock flags are same as used within setup for doors and keys
+*******************************************************************************/
 #define DoorUnsetLock(OBJECT_TAG, LOCK_FLAG)  \
                     AI_DoorUnsetLock  ,  \
                     OBJECT_TAG , \
-                    LOCK_FLAG ,   
- 
-#define AI_DoorUnsetLock_LENGTH   (AICMDSIZE +1   +1    ) 
+                    LOCK_FLAG ,
+
+#define AI_DoorUnsetLock_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF DOOR LOCK EQUAL 
+//## IF DOOR LOCK EQUAL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If tagged doors lock flags matches any lock flag argument 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Use DOOR_LOCK_# flags for LOCK argument. 
-        Lock flags are same as used within setup for doors and keys 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If tagged doors lock flags matches any lock flag argument
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Use DOOR_LOCK_# flags for LOCK argument.
+        Lock flags are same as used within setup for doors and keys
+*******************************************************************************/
 #define IFDoorLockEqual(OBJECT_TAG, LOCK_FLAG, GOTOLABEL)  \
                     AI_IFDoorLockEqual  ,  \
                     OBJECT_TAG , \
                     LOCK_FLAG , \
-                    GOTOLABEL ,   
- 
-#define AI_IFDoorLockEqual_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFDoorLockEqual_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECTIVE NUM COMPLETE 
+//## IF OBJECTIVE NUM COMPLETE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If objective ID completed 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Ignores difficulty settings. 
-              For example - if game on agent and player 
-                 completes an unlisted 00 agent objective, checking that  
-                 objective num will Goto LABEL 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If objective ID completed
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Ignores difficulty settings.
+              For example - if game on agent and player
+                 completes an unlisted 00 agent objective, checking that
+                 objective num will Goto LABEL
+*******************************************************************************/
 #define IFObjectiveNumComplete(OBJ_NUM, GOTOLABEL)  \
                     AI_IFObjectiveNumComplete  ,  \
                     OBJ_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectiveNumComplete_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectiveNumComplete_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY UNKNOWN6E 
+//## GUARD TRY UNKNOWN6E
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unknown command, Goto LABEL 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-  @exception: Sets chr->padpreset1 
-              BITFIELD (hex): 
-              0001: Sets to nearest pad to path to Bond 
-              0004: ??? 
-              0008: ??? 
-              0010: ??? 
-              0020: ??? 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unknown command, Goto LABEL
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @exception: Sets chr->padpreset1
+              BITFIELD (hex):
+              0001: Sets to nearest pad to path to Bond
+              0004: ???
+              0008: ???
+              0010: ???
+              0020: ???
+*******************************************************************************/
 #define TRYUnknown6e(UNKNOWN_FLAG, GOTOLABEL)  \
                     AI_TRYUnknown6e  ,  \
                     UNKNOWN_FLAG , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYUnknown6e_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYUnknown6e_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD TRY UNKNOWN6F 
+//## GUARD TRY UNKNOWN6F
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unknown command 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-  @exception: Sets chr->padpreset1 
-              BITFIELD (hex): 
-              0001: Sets to nearest pad to path to Bond 
-              0004: ??? 
-              0008: ??? 
-              0010: ??? 
-              0020: ??? 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unknown command
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @exception: Sets chr->padpreset1
+              BITFIELD (hex):
+              0001: Sets to nearest pad to path to Bond
+              0004: ???
+              0008: ???
+              0010: ???
+              0020: ???
+*******************************************************************************/
 #define TRYUnknown6f(UNKNOWN_FLAG, GOTOLABEL)  \
                     AI_TRYUnknown6f  ,  \
                     UNKNOWN_FLAG , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYUnknown6f_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYUnknown6f_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GAME DIFFICULTY LESS THAN 
+//## IF GAME DIFFICULTY LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If current difficulty is less than DIFFICULTY_ID 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param DIFICULTY_ID 
-                01: agent only 
-                02: agent/secret agent 
-                03: agent/secret agent/00 agent 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If current difficulty is less than DIFFICULTY_ID
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param DIFICULTY_ID
+                01: agent only
+                02: agent/secret agent
+                03: agent/secret agent/00 agent
+*******************************************************************************/
 #define IFGameDifficultyLessThan(DIFICULTY_ID, GOTOLABEL)  \
                     AI_IFGameDifficultyLessThan  ,  \
                     DIFICULTY_ID , \
-                    GOTOLABEL ,   
- 
-#define AI_IFGameDifficultyLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFGameDifficultyLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GAME DIFFICULTY GREATER THAN 
+//## IF GAME DIFFICULTY GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If current difficulty is greater than DIFFICULTY_ID 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param DIFICULTY_ID 
-                00: secret agent/00 agent/007 
-                01: 00 agent/007 
-                02: 007 only 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If current difficulty is greater than DIFFICULTY_ID
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param DIFICULTY_ID
+                00: secret agent/00 agent/007
+                01: 00 agent/007
+                02: 007 only
+*******************************************************************************/
 #define IFGameDifficultyGreaterThan(DIFICULTY_ID, GOTOLABEL)  \
                     AI_IFGameDifficultyGreaterThan  ,  \
                     DIFICULTY_ID , \
-                    GOTOLABEL ,   
- 
-#define AI_IFGameDifficultyGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFGameDifficultyGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF MISSION TIME LESS THAN 
+//## IF MISSION TIME LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If current mission time (in seconds) < SECONDS 
-******************************************************************************** 
-  @return         Continue execution from LABEL if TRUE 
-  @param SECONDS: Unsigned Integer seconds, compares against mission timer 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If current mission time (in seconds) < SECONDS
+********************************************************************************
+  @return         Continue execution from LABEL if TRUE
+  @param SECONDS: Unsigned Integer seconds, compares against mission timer
+*******************************************************************************/
 #define IFMissionTimeLessThan(SECONDS, GOTOLABEL)  \
                     AI_IFMissionTimeLessThan  ,  \
                     CharArrayFrom16(SECONDS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMissionTimeLessThan_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMissionTimeLessThan_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## IF MISSION TIME GREATER THAN 
+//## IF MISSION TIME GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If current mission time (in seconds) > SECONDS 
-******************************************************************************** 
-  @return         Continue execution from LABEL if TRUE 
-  @param SECONDS: Unsigned Integer seconds, compares against mission timer 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If current mission time (in seconds) > SECONDS
+********************************************************************************
+  @return         Continue execution from LABEL if TRUE
+  @param SECONDS: Unsigned Integer seconds, compares against mission timer
+*******************************************************************************/
 #define IFMissionTimeGreaterThan(SECONDS, GOTOLABEL)  \
                     AI_IFMissionTimeGreaterThan  ,  \
                     CharArrayFrom16(SECONDS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMissionTimeGreaterThan_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMissionTimeGreaterThan_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## IF SYSTEM POWER TIME LESS THAN 
+//## IF SYSTEM POWER TIME LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If system powered on time (in minutes) < MINUTES 
-******************************************************************************** 
-  @return         Continue execution from LABEL if TRUE 
-  @param MINUTES: Unsigned Integer minutes, compares against mission time 
-r*******************************************************************************/   
+
+/*******************************************************************************
+  If system powered on time (in minutes) < MINUTES
+********************************************************************************
+  @return         Continue execution from LABEL if TRUE
+  @param MINUTES: Unsigned Integer minutes, compares against mission time
+r*******************************************************************************/
 #define IFSystemPowerTimeLessThan(MINUTES, GOTOLABEL)  \
                     AI_IFSystemPowerTimeLessThan  ,  \
                     CharArrayFrom16(MINUTES) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFSystemPowerTimeLessThan_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFSystemPowerTimeLessThan_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## IF SYSTEM POWER TIME GREATER THAN 
+//## IF SYSTEM POWER TIME GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If system powered on time (in minutes) > MINUTES 
-******************************************************************************** 
-  @return         Continue execution from LABEL if TRUE 
-  @param MINUTES: Unsigned Integer minutes, compares against mission time 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If system powered on time (in minutes) > MINUTES
+********************************************************************************
+  @return         Continue execution from LABEL if TRUE
+  @param MINUTES: Unsigned Integer minutes, compares against mission time
+*******************************************************************************/
 #define IFSystemPowerTimeGreaterThan(MINUTES, GOTOLABEL)  \
                     AI_IFSystemPowerTimeGreaterThan  ,  \
                     CharArrayFrom16(MINUTES) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFSystemPowerTimeGreaterThan_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFSystemPowerTimeGreaterThan_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## IF LEVEL ID LESS THAN 
+//## IF LEVEL ID LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If current level id < LEVEL_ID 
-******************************************************************************** 
-  @return          Continue execution from LABEL if TRUE 
-  @param LEVEL_ID: Uses LEVELID enum values, not briefing menu stage number 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If current level id < LEVEL_ID
+********************************************************************************
+  @return          Continue execution from LABEL if TRUE
+  @param LEVEL_ID: Uses LEVELID enum values, not briefing menu stage number
+*******************************************************************************/
 #define IFLevelIdLessThan(LEVEL_ID, GOTOLABEL)  \
                     AI_IFLevelIdLessThan  ,  \
                     LEVEL_ID , \
-                    GOTOLABEL ,   
- 
-#define AI_IFLevelIdLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFLevelIdLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF LEVEL ID GREATER THAN 
+//## IF LEVEL ID GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If current level id > LEVEL_ID 
-******************************************************************************** 
-  @return          Continue execution from LABEL if TRUE 
-  @param LEVEL_ID: Uses LEVELID enum values, not briefing menu stage number 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If current level id > LEVEL_ID
+********************************************************************************
+  @return          Continue execution from LABEL if TRUE
+  @param LEVEL_ID: Uses LEVELID enum values, not briefing menu stage number
+*******************************************************************************/
 #define IFLevelIdGreaterThan(LEVEL_ID, GOTOLABEL)  \
                     AI_IFLevelIdGreaterThan  ,  \
                     LEVEL_ID , \
-                    GOTOLABEL ,   
- 
-#define AI_IFLevelIdGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFLevelIdGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD HITS LESS THAN 
+//## IF GUARD HITS LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If I have been hit less than HIT_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      HIT_NUM: Unsigned Integer to test against numarghs 
-  @exception: Hits count even if guard is invincible 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If I have been hit less than HIT_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      HIT_NUM: Unsigned Integer to test against numarghs
+  @exception: Hits count even if guard is invincible
+*******************************************************************************/
 #define IFMyNumArghsLessThan(HIT_NUM, GOTOLABEL)  \
                     AI_IFMyNumArghsLessThan  ,  \
                     HIT_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyNumArghsLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyNumArghsLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD HITS GREATER THAN 
+//## IF GUARD HITS GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If I have been Hit Greater Than HIT_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      HIT_NUM: Unsigned Integer to test against numarghs 
-  @exception: Hits count even if guard is invincible 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If I have been Hit Greater Than HIT_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      HIT_NUM: Unsigned Integer to test against numarghs
+  @exception: Hits count even if guard is invincible
+*******************************************************************************/
 #define IFMyNumArghsGreaterThan(HIT_NUM, GOTOLABEL)  \
                     AI_IFMyNumArghsGreaterThan  ,  \
                     HIT_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyNumArghsGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyNumArghsGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD HITS MISSED LESS THAN 
+//## IF GUARD HITS MISSED LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond's shots missed/landed near me less than MISSED_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      MISSED_NUM: Unsigned Integer to test against numclosearghs 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond's shots missed/landed near me less than MISSED_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      MISSED_NUM: Unsigned Integer to test against numclosearghs
+*******************************************************************************/
 #define IFMyNumCloseArghsLessThan(MISSED_NUM, GOTOLABEL)  \
                     AI_IFMyNumCloseArghsLessThan  ,  \
                     MISSED_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyNumCloseArghsLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyNumCloseArghsLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD HITS MISSED GREATER THAN 
+//## IF GUARD HITS MISSED GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond's shots missed/landed near me Greater Than MISSED_NUM 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      MISSED_NUM: Unsigned Integer to test against numclosearghs 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond's shots missed/landed near me Greater Than MISSED_NUM
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      MISSED_NUM: Unsigned Integer to test against numclosearghs
+*******************************************************************************/
 #define IFMyNumCloseArghsGreaterThan(MISSED_NUM, GOTOLABEL)  \
                     AI_IFMyNumCloseArghsGreaterThan  ,  \
                     MISSED_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyNumCloseArghsGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyNumCloseArghsGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF CHR HEALTH LESS THAN 
+//## IF CHR HEALTH LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My/chrs health < HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My/chrs health < HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFChrHealthLessThan(CHR_NUM, HEALTH, GOTOLABEL)  \
                     AI_IFChrHealthLessThan  ,  \
                     CHR_NUM , \
                     HEALTH , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrHealthLessThan_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrHealthLessThan_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If My/chrs health < HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/chrs health < HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFChrHealthLessThanF(CHR_NUM,HEALTH,GOTOLABEL)  \
-                IFChrHealthLessThan(CHR_NUM,(u8)(HEALTH*10), GOTOLABEL)   
+                IFChrHealthLessThan(CHR_NUM,(u8)(HEALTH*10), GOTOLABEL)
 
 
- 
+
 # 6217 "src/aicommands.def"
-/******************************************************************************* 
-  If My/chrs health < HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/chrs health < HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFMyHealthLessThan(HEALTH, GOTOLABEL)  \
-                IFChrHealthLessThan(CHR_SELF,HEALTH, GOTOLABEL)   
+                IFChrHealthLessThan(CHR_SELF,HEALTH, GOTOLABEL)
 
 
- 
+
 # 6221 "src/aicommands.def"
-/******************************************************************************* 
-  If My/chrs health < HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/chrs health < HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFMyHealthLessThanF(HEALTH,GOTOLABEL)  \
-                IFChrHealthLessThan(CHR_SELF, (u8)(HEALTH*10), GOTOLABEL)   
+                IFChrHealthLessThan(CHR_SELF, (u8)(HEALTH*10), GOTOLABEL)
 
 
- 
+
 # 6225 "src/aicommands.def"
 //==============================================================================
-//## IF CHR HEALTH GREATER THAN 
+//## IF CHR HEALTH GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My/chrs health > HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My/chrs health > HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFChrHealthGreaterThan(CHR_NUM, HEALTH, GOTOLABEL)  \
                     AI_IFChrHealthGreaterThan  ,  \
                     CHR_NUM , \
                     HEALTH , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrHealthGreaterThan_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrHealthGreaterThan_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If My/chrs health > HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/chrs health > HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFChrHealthGreaterThanF(CHR_NUM,HEALTH,GOTOLABEL)  \
-                IFChrHealthGreaterThan(CHR_NUM,(u8)(HEALTH*10), GOTOLABEL)   
+                IFChrHealthGreaterThan(CHR_NUM,(u8)(HEALTH*10), GOTOLABEL)
 
 
- 
+
 # 6277 "src/aicommands.def"
-/******************************************************************************* 
-  If My/chrs health > HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/chrs health > HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFMyHealthGreaterThan(HEALTH, GOTOLABEL)  \
-                IFChrHealthGreaterThan(CHR_SELF,HEALTH, GOTOLABEL)   
+                IFChrHealthGreaterThan(CHR_SELF,HEALTH, GOTOLABEL)
 
 
- 
+
 # 6281 "src/aicommands.def"
-/******************************************************************************* 
-  If My/chrs health > HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @param      HEALTH (Default = 40 (4.0f)) 
-  @exception: HEALTH is unsigned, converted to float and compares difference  
-              between chr->maxdamage - chr->damage. 
-              Armour is tested 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/chrs health > HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @param      HEALTH (Default = 40 (4.0f))
+  @exception: HEALTH is unsigned, converted to float and compares difference
+              between chr->maxdamage - chr->damage.
+              Armour is tested
+*******************************************************************************/
 #define IFMyHealthGreaterThanF(HEALTH,GOTOLABEL)  \
-                IFChrHealthGreaterThan(CHR_SELF, (u8)(HEALTH*10), GOTOLABEL)   
+                IFChrHealthGreaterThan(CHR_SELF, (u8)(HEALTH*10), GOTOLABEL)
 
 
- 
+
 # 6285 "src/aicommands.def"
 //==============================================================================
-//## IF CHR WAS DAMAGED SINCE LAST CHECK 
+//## IF CHR WAS DAMAGED SINCE LAST CHECK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If chr has taken damage since last check 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Checks chr->chrflags if CHRFLAG_WAS_DAMAGED is set. 
-              If true, unset flag and Goto LABEL. 
-              CHRFLAG_WAS_DAMAGED is set if guard took damage (not invincible) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If chr has taken damage since last check
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Checks chr->chrflags if CHRFLAG_WAS_DAMAGED is set.
+              If true, unset flag and Goto LABEL.
+              CHRFLAG_WAS_DAMAGED is set if guard took damage (not invincible)
+*******************************************************************************/
 #define IFChrWasDamagedSinceLastCheck(CHR_NUM, GOTOLABEL)  \
                     AI_IFChrWasDamagedSinceLastCheck  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrWasDamagedSinceLastCheck_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrWasDamagedSinceLastCheck_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If chr has taken damage since last check 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      CHR_NUM: ID of Chr (0-255) 
-  @exception: Checks chr->chrflags if CHRFLAG_WAS_DAMAGED is set. 
-              If true, unset flag and Goto LABEL. 
-              CHRFLAG_WAS_DAMAGED is set if guard took damage (not invincible) 
-*******************************************************************************/  
+/*******************************************************************************
+  If chr has taken damage since last check
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      CHR_NUM: ID of Chr (0-255)
+  @exception: Checks chr->chrflags if CHRFLAG_WAS_DAMAGED is set.
+              If true, unset flag and Goto LABEL.
+              CHRFLAG_WAS_DAMAGED is set if guard took damage (not invincible)
+*******************************************************************************/
 #define IFIWasDamagedSinceLastCheck(GOTOLABEL)  \
-                IFChrWasDamagedSinceLastCheck(CHR_SELF, GOTOLABEL)   
+                IFChrWasDamagedSinceLastCheck(CHR_SELF, GOTOLABEL)
 
 
- 
+
 # 6337 "src/aicommands.def"
 //==============================================================================
-//## IF BOND HEALTH LESS THAN 
+//## IF BOND HEALTH LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond's health < HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      HEALTH u8 where 255 equal to 100% health 
-  @exception: Does NOT check armour. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond's health < HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      HEALTH u8 where 255 equal to 100% health
+  @exception: Does NOT check armour.
+*******************************************************************************/
 #define IFBondHealthLessThan(HEALTH, GOTOLABEL)  \
                     AI_IFBondHealthLessThan  ,  \
                     HEALTH , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondHealthLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondHealthLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF BOND HEALTH GREATER THAN 
+//## IF BOND HEALTH GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond's health > HEALTH 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      HEALTH u8 where 255 equal to 100% health 
-  @exception: Does NOT check armour. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond's health > HEALTH
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      HEALTH u8 where 255 equal to 100% health
+  @exception: Does NOT check armour.
+*******************************************************************************/
 #define IFBondHealthGreaterThan(HEALTH, GOTOLABEL)  \
                     AI_IFBondHealthGreaterThan  ,  \
                     HEALTH , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondHealthGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondHealthGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## LOCAL BYTE 1 SET 
+//## LOCAL BYTE 1 SET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My Morale  
-******************************************************************************** 
-  @param      CHRBYTE is a value 0 - 255  
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My Morale
+********************************************************************************
+  @param      CHRBYTE is a value 0 - 255
+*******************************************************************************/
 #define SetMyMorale(CHRBYTE)  \
                     AI_SetMyMorale  ,  \
-                    CHRBYTE ,   
- 
-#define AI_SetMyMorale_LENGTH   (AICMDSIZE +1    ) 
+                    CHRBYTE ,
+
+#define AI_SetMyMorale_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 6454 "src/aicommands.def"
 //==============================================================================
-//## LOCAL BYTE 1 ADD 
+//## LOCAL BYTE 1 ADD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Add To My Morale - Make me Happier 
-******************************************************************************** 
-  @param      CHRBYTE is a value 0 - 255 
-  @exception Anything above 255 is clamped to 255 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Add To My Morale - Make me Happier
+********************************************************************************
+  @param      CHRBYTE is a value 0 - 255
+  @exception Anything above 255 is clamped to 255
+*******************************************************************************/
 #define AddToMyMorale(CHRBYTE)  \
                     AI_AddToMyMorale  ,  \
-                    CHRBYTE ,   
- 
-#define AI_AddToMyMorale_LENGTH   (AICMDSIZE +1    ) 
+                    CHRBYTE ,
+
+#define AI_AddToMyMorale_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## LOCAL BYTE 1 SUBTRACT 
+//## LOCAL BYTE 1 SUBTRACT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Subtract from My Morale - Make me Sad 
-******************************************************************************** 
-  @param      CHRBYTE is a value 0 - 255 
-  @exception Anything below 0 is clamped to 0 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Subtract from My Morale - Make me Sad
+********************************************************************************
+  @param      CHRBYTE is a value 0 - 255
+  @exception Anything below 0 is clamped to 0
+*******************************************************************************/
 #define SubtractFromMyMorale(CHRBYTE)  \
                     AI_SubtractFromMyMorale  ,  \
-                    CHRBYTE ,   
- 
-#define AI_SubtractFromMyMorale_LENGTH   (AICMDSIZE +1    ) 
+                    CHRBYTE ,
+
+#define AI_SubtractFromMyMorale_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF LOCAL BYTE 1 LESS THAN 
+//## IF LOCAL BYTE 1 LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My Morale Less Than 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My Morale Less Than
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFMyMoraleLessThan(CHRBYTE, GOTOLABEL)  \
                     AI_IFMyMoraleLessThan  ,  \
                     CHRBYTE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyMoraleLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyMoraleLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF LOCAL BYTE 1 LESS THAN RANDOM SEED 
+//## IF LOCAL BYTE 1 LESS THAN RANDOM SEED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My Morale is Less Than My Random (Use SetRandom) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My Morale is Less Than My Random (Use SetRandom)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFMyMoraleLessThanRandom(GOTOLABEL)  \
                     AI_IFMyMoraleLessThanRandom  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyMoraleLessThanRandom_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyMoraleLessThanRandom_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## LOCAL BYTE 2 SET 
+//## LOCAL BYTE 2 SET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My Morale  
-******************************************************************************** 
-  @param      CHRBYTE is a value 0 - 255  
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My Morale
+********************************************************************************
+  @param      CHRBYTE is a value 0 - 255
+*******************************************************************************/
 #define SetMyAlertness(CHRBYTE)  \
                     AI_SetMyAlertness  ,  \
-                    CHRBYTE ,   
- 
-#define AI_SetMyAlertness_LENGTH   (AICMDSIZE +1    ) 
+                    CHRBYTE ,
+
+#define AI_SetMyAlertness_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 6647 "src/aicommands.def"
 //==============================================================================
-//## LOCAL BYTE 2 ADD 
+//## LOCAL BYTE 2 ADD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Add To My Alertness - Make me See Things 
-******************************************************************************** 
-  @param      CHRBYTE is a value 0 - 255 
-  @exception Anything above 255 is clamped to 255 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Add To My Alertness - Make me See Things
+********************************************************************************
+  @param      CHRBYTE is a value 0 - 255
+  @exception Anything above 255 is clamped to 255
+*******************************************************************************/
 #define AddToMyAlertness(CHRBYTE)  \
                     AI_AddToMyAlertness  ,  \
-                    CHRBYTE ,   
- 
-#define AI_AddToMyAlertness_LENGTH   (AICMDSIZE +1    ) 
+                    CHRBYTE ,
+
+#define AI_AddToMyAlertness_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## LOCAL BYTE 2 SUBTRACT 
+//## LOCAL BYTE 2 SUBTRACT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Subtract from My Morale - Make me Blind 
-******************************************************************************** 
-  @param      CHRBYTE is a value 0 - 255 
-  @exception Anything below 0 is clamped to 0 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Subtract from My Morale - Make me Blind
+********************************************************************************
+  @param      CHRBYTE is a value 0 - 255
+  @exception Anything below 0 is clamped to 0
+*******************************************************************************/
 #define SubtractFromMyAlertness(CHRBYTE)  \
                     AI_SubtractFromMyAlertness  ,  \
-                    CHRBYTE ,   
- 
-#define AI_SubtractFromMyAlertness_LENGTH   (AICMDSIZE +1    ) 
+                    CHRBYTE ,
+
+#define AI_SubtractFromMyAlertness_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF LOCAL BYTE 2 LESS THAN 
+//## IF LOCAL BYTE 2 LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My Alertness is Less Than  
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My Alertness is Less Than
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFMyAlertnessLessThan(CHRBYTE, GOTOLABEL)  \
                     AI_IFMyAlertnessLessThan  ,  \
                     CHRBYTE , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyAlertnessLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyAlertnessLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF LOCAL BYTE 2 LESS THAN RANDOM SEED 
+//## IF LOCAL BYTE 2 LESS THAN RANDOM SEED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My Morale is Less Than My Random (Use SetRandom) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My Morale is Less Than My Random (Use SetRandom)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFMyAlertnessLessThanRandom(GOTOLABEL)  \
                     AI_IFMyAlertnessLessThanRandom  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyAlertnessLessThanRandom_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyAlertnessLessThanRandom_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD SET HEARING SCALE 
+//## GUARD SET HEARING SCALE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My hearing scale - the higher the value, the further away I 
-  can hear Bond's gunfire 
-******************************************************************************** 
-  @param      HEARING_SCALE 0.0 - 32.0 (Default = 1.0f) 
-  @exception: HEARING_SCALE is converted to float and divided by 1000 before setting 
-              to hearingscale 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My hearing scale - the higher the value, the further away I
+  can hear Bond's gunfire
+********************************************************************************
+  @param      HEARING_SCALE 0.0 - 32.0 (Default = 1.0f)
+  @exception: HEARING_SCALE is converted to float and divided by 1000 before setting
+              to hearingscale
+*******************************************************************************/
 #define SetMyHearingScale(HEARING_SCALE)  \
                     AI_SetMyHearingScale  ,  \
-                    CharArrayFrom16(HEARING_SCALE) ,   
- 
-#define AI_SetMyHearingScale_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(HEARING_SCALE) ,
+
+#define AI_SetMyHearingScale_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Set My hearing scale - the higher the value, the further away I 
-  can hear Bond's gunfire 
-******************************************************************************** 
-  @param      HEARING_SCALE 0.0 - 32.0 (Default = 1.0f) 
-  @exception: HEARING_SCALE is converted to float and divided by 1000 before setting 
-              to hearingscale 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My hearing scale - the higher the value, the further away I
+  can hear Bond's gunfire
+********************************************************************************
+  @param      HEARING_SCALE 0.0 - 32.0 (Default = 1.0f)
+  @exception: HEARING_SCALE is converted to float and divided by 1000 before setting
+              to hearingscale
+*******************************************************************************/
 #define SetMyHearingScaleF(HEARING_SCALE)  \
-                SetMyHearingScale((u16)(HEARING_SCALE * 1000))   
+                SetMyHearingScale((u16)(HEARING_SCALE * 1000))
 
 
- 
+
 # 6851 "src/aicommands.def"
 //==============================================================================
-//## GUARD SET VISION RANGE 
+//## GUARD SET VISION RANGE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My vision range - the smaller the value, the longer I 
-  take to detect Bond with IFISeeBond. 
-******************************************************************************** 
-  @param      VISION_RANGE 0-255 (Default = 100) 
-  @exception: Sets to chr->visionrange. 
-              Does NOT affect firing distance 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My vision range - the smaller the value, the longer I
+  take to detect Bond with IFISeeBond.
+********************************************************************************
+  @param      VISION_RANGE 0-255 (Default = 100)
+  @exception: Sets to chr->visionrange.
+              Does NOT affect firing distance
+*******************************************************************************/
 #define SetMyVisionRange(VISION_RANGE)  \
                     AI_SetMyVisionRange  ,  \
-                    VISION_RANGE ,   
- 
-#define AI_SetMyVisionRange_LENGTH   (AICMDSIZE +1    ) 
+                    VISION_RANGE ,
+
+#define AI_SetMyVisionRange_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 6887 "src/aicommands.def"
 //==============================================================================
-//## GUARD SET GRENADE PROBABILITY 
+//## GUARD SET GRENADE PROBABILITY
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My probability of lobbing a grenade  -  the higher the value, the  
-  more likely I will throw one when asked (TRYThrowingGrenade). 
-******************************************************************************** 
-  @exception: Sets to chr->grenadeprob - (Default = 0) 
-              The only way to make guards throw grenades is by using this  
-              command or assigning setup object 0x12 to chr 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My probability of lobbing a grenade  -  the higher the value, the
+  more likely I will throw one when asked (TRYThrowingGrenade).
+********************************************************************************
+  @exception: Sets to chr->grenadeprob - (Default = 0)
+              The only way to make guards throw grenades is by using this
+              command or assigning setup object 0x12 to chr
+*******************************************************************************/
 #define SetMyGrenadeProbability(GRENADE_PROB)  \
                     AI_SetMyGrenadeProbability  ,  \
-                    GRENADE_PROB ,   
- 
-#define AI_SetMyGrenadeProbability_LENGTH   (AICMDSIZE +1    ) 
+                    GRENADE_PROB ,
+
+#define AI_SetMyGrenadeProbability_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 6923 "src/aicommands.def"
 //==============================================================================
-//## GUARD SET CHR NUM 
+//## GUARD SET CHR NUM
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My Chr Number, or ID, for calling me later. eg respawn or clone. 
-******************************************************************************** 
-  @param CHR_NUM: Should be a unique Integer 0-240 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My Chr Number, or ID, for calling me later. eg respawn or clone.
+********************************************************************************
+  @param CHR_NUM: Should be a unique Integer 0-240
+*******************************************************************************/
 #define SetMyChrNum(CHR_NUM)  \
                     AI_SetMyChrNum  ,  \
-                    CHR_NUM ,   
- 
-#define AI_SetMyChrNum_LENGTH   (AICMDSIZE +1    ) 
+                    CHR_NUM ,
+
+#define AI_SetMyChrNum_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 6956 "src/aicommands.def"
 //==============================================================================
-//## GUARD SET HEALTH TOTAL 
+//## GUARD SET HEALTH TOTAL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My total HEALTH - the higher the value, the more shots needed 
-  to kill Me. 
-******************************************************************************** 
-  @param      HEALTH: unsigned float (Default = 4.0) -1 will be set to 6553.5f 
-  @exception: Sets to chr->maxdamage. 
-              HEALTH is converted to float and divided by 10 before setting to 
-              maxdamage. 
-              Will use 007 health modifier If difficulty mode 007 is active 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My total HEALTH - the higher the value, the more shots needed
+  to kill Me.
+********************************************************************************
+  @param      HEALTH: unsigned float (Default = 4.0) -1 will be set to 6553.5f
+  @exception: Sets to chr->maxdamage.
+              HEALTH is converted to float and divided by 10 before setting to
+              maxdamage.
+              Will use 007 health modifier If difficulty mode 007 is active
+*******************************************************************************/
 #define SetMyHealthTotal(HEALTH)  \
                     AI_SetMyHealthTotal  ,  \
-                    CharArrayFrom16(HEALTH) ,   
- 
-#define AI_SetMyHealthTotal_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(HEALTH) ,
+
+#define AI_SetMyHealthTotal_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Set My total HEALTH - the higher the value, the more shots needed 
-  to kill Me. 
-******************************************************************************** 
-  @param      HEALTH: unsigned float (Default = 4.0) -1 will be set to 6553.5f 
-  @exception: Sets to chr->maxdamage. 
-              HEALTH is converted to float and divided by 10 before setting to 
-              maxdamage. 
-              Will use 007 health modifier If difficulty mode 007 is active 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My total HEALTH - the higher the value, the more shots needed
+  to kill Me.
+********************************************************************************
+  @param      HEALTH: unsigned float (Default = 4.0) -1 will be set to 6553.5f
+  @exception: Sets to chr->maxdamage.
+              HEALTH is converted to float and divided by 10 before setting to
+              maxdamage.
+              Will use 007 health modifier If difficulty mode 007 is active
+*******************************************************************************/
 #define SetMyHealthTotalF(HEALTH)  \
-                SetMyHealthTotal((u16)(HEALTH*10))   
+                SetMyHealthTotal((u16)(HEALTH*10))
 
 
- 
+
 # 7002 "src/aicommands.def"
 //==============================================================================
-//## GUARD SET ARMOUR 
+//## GUARD SET ARMOUR
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My armour value - the higher the value, the higher the armour. 
-  Armoured guards will not show hit reactions. They also do NOT instantly die 
-  from explosions, instead taking damaged based on how close they are to 
-  explosions like Bond. To any setup designers reading this, please use armour 
-  sparingly! 
-******************************************************************************** 
-  @param      ARMOUR: Unsigned (Default = 0) 
-  @exception: Subtracts from chr->damage - negative damage means guard has armour. 
-              Instead of storing armour as a separate chr variable, we reuse the 
-              current damage and read negative damage as armour. 
-              Will use 007 health modifier if difficulty mode 007 is active. 
-              -1 will be set to 6553.5f armour, or -6553.5f damage (Invincible) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My armour value - the higher the value, the higher the armour.
+  Armoured guards will not show hit reactions. They also do NOT instantly die
+  from explosions, instead taking damaged based on how close they are to
+  explosions like Bond. To any setup designers reading this, please use armour
+  sparingly!
+********************************************************************************
+  @param      ARMOUR: Unsigned (Default = 0)
+  @exception: Subtracts from chr->damage - negative damage means guard has armour.
+              Instead of storing armour as a separate chr variable, we reuse the
+              current damage and read negative damage as armour.
+              Will use 007 health modifier if difficulty mode 007 is active.
+              -1 will be set to 6553.5f armour, or -6553.5f damage (Invincible)
+*******************************************************************************/
 #define SetMyArmour(AMOUNT)  \
                     AI_SetMyArmour  ,  \
-                    CharArrayFrom16(AMOUNT) ,   
- 
-#define AI_SetMyArmour_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(AMOUNT) ,
+
+#define AI_SetMyArmour_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Set My armour value - the higher the value, the higher the armour. 
-  Armoured guards will not show hit reactions. They also do NOT instantly die 
-  from explosions, instead taking damaged based on how close they are to 
-  explosions like Bond. To any setup designers reading this, please use armour 
-  sparingly! 
-******************************************************************************** 
-  @param      ARMOUR: Unsigned (Default = 0) 
-  @exception: Subtracts from chr->damage - negative damage means guard has armour. 
-              Instead of storing armour as a separate chr variable, we reuse the 
-              current damage and read negative damage as armour. 
-              Will use 007 health modifier if difficulty mode 007 is active. 
-              -1 will be set to 6553.5f armour, or -6553.5f damage (Invincible) 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My armour value - the higher the value, the higher the armour.
+  Armoured guards will not show hit reactions. They also do NOT instantly die
+  from explosions, instead taking damaged based on how close they are to
+  explosions like Bond. To any setup designers reading this, please use armour
+  sparingly!
+********************************************************************************
+  @param      ARMOUR: Unsigned (Default = 0)
+  @exception: Subtracts from chr->damage - negative damage means guard has armour.
+              Instead of storing armour as a separate chr variable, we reuse the
+              current damage and read negative damage as armour.
+              Will use 007 health modifier if difficulty mode 007 is active.
+              -1 will be set to 6553.5f armour, or -6553.5f damage (Invincible)
+*******************************************************************************/
 #define SetMyArmourF(AMOUNT)  \
-                SetMyArmour((u16)(AMOUNT*10))   
+                SetMyArmour((u16)(AMOUNT*10))
 
 
- 
+
 # 7051 "src/aicommands.def"
-/******************************************************************************* 
-  Remove All damage from me  
-******************************************************************************** 
-  @return     Continue execution from DONELABEL 
-  @param      LOOPLABEL: Private ID for internal loop 
-*******************************************************************************/  
+/*******************************************************************************
+  Remove All damage from me
+********************************************************************************
+  @return     Continue execution from DONELABEL
+  @param      LOOPLABEL: Private ID for internal loop
+*******************************************************************************/
 #define RemoveMyDamage(LOOPLABEL, DONELABEL)                    \
-                     DO(LOOPLABEL)         IFMyHealthGreaterThanF(3.5,DONELABEL)SetMyArmour(5)     LOOP(LOOPLABEL)   
+                     DO(LOOPLABEL)         IFMyHealthGreaterThanF(3.5,DONELABEL)SetMyArmour(5)     LOOP(LOOPLABEL)
 
 
- 
+
 # 7067 "src/aicommands.def"
 //==============================================================================
-//## GUARD SET SPEED RATING 
+//## GUARD SET SPEED RATING
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My speed rating - controls how quickly I animate. 
-******************************************************************************** 
-  @param      SPEED_RATING: Signed* 0 - 100 (Default = 0) 
-  @exception: Sets to chr->speedrating. 
-              Negative values will make guard animate slower - this affects  
-              firing animations. 
-              Does NOT use 007 reaction speed modifier. 
-              Do NOT use values above 100 or below 0 or it may crash 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My speed rating - controls how quickly I animate.
+********************************************************************************
+  @param      SPEED_RATING: Signed* 0 - 100 (Default = 0)
+  @exception: Sets to chr->speedrating.
+              Negative values will make guard animate slower - this affects
+              firing animations.
+              Does NOT use 007 reaction speed modifier.
+              Do NOT use values above 100 or below 0 or it may crash
+*******************************************************************************/
 #define SetMySpeedRating(SPEED_RATING)  \
                     AI_SetMySpeedRating  ,  \
-                    SPEED_RATING ,   
- 
-#define AI_SetMySpeedRating_LENGTH   (AICMDSIZE +1    ) 
+                    SPEED_RATING ,
+
+#define AI_SetMySpeedRating_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD SET ARGH RATING 
+//## GUARD SET ARGH RATING
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My argh rating - controls how quickly I recover from being shot. 
-******************************************************************************** 
-  @param      ARGH_RATING Signed* 0-100 (Default = 0) (100 is almost no hit  
-              reaction) 
-  @exception: Sets to chr->arghrating. 
-              Negative values will make guard animate slower - this affects  
-              firing animations. 
-              Does NOT use 007 reaction speed modifier 
-              Do NOT use values above 100 or below 0 or it may crash 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My argh rating - controls how quickly I recover from being shot.
+********************************************************************************
+  @param      ARGH_RATING Signed* 0-100 (Default = 0) (100 is almost no hit
+              reaction)
+  @exception: Sets to chr->arghrating.
+              Negative values will make guard animate slower - this affects
+              firing animations.
+              Does NOT use 007 reaction speed modifier
+              Do NOT use values above 100 or below 0 or it may crash
+*******************************************************************************/
 #define SetMyArghRating(ARGH_RATING)  \
                     AI_SetMyArghRating  ,  \
-                    ARGH_RATING ,   
- 
-#define AI_SetMyArghRating_LENGTH   (AICMDSIZE +1    ) 
+                    ARGH_RATING ,
+
+#define AI_SetMyArghRating_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD SET ACCURACY RATING 
+//## GUARD SET ACCURACY RATING
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My Accuracy Rating - controls how accurately I fire my weapon 
-******************************************************************************** 
-  @param      ACCURACY_RATING: Signed* 0 - 100 (Default = 0) 
-  @exception: Sets to chr->accuracyrating. 
-              Does NOT use 007 accuracy modifier 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My Accuracy Rating - controls how accurately I fire my weapon
+********************************************************************************
+  @param      ACCURACY_RATING: Signed* 0 - 100 (Default = 0)
+  @exception: Sets to chr->accuracyrating.
+              Does NOT use 007 accuracy modifier
+*******************************************************************************/
 #define SetMyAccuracyRating(ACCURACY_RATING)  \
                     AI_SetMyAccuracyRating  ,  \
-                    ACCURACY_RATING ,   
- 
-#define AI_SetMyAccuracyRating_LENGTH   (AICMDSIZE +1    ) 
+                    ACCURACY_RATING ,
+
+#define AI_SetMyAccuracyRating_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD FLAGS2 SET ON 
+//## GUARD FLAGS2 SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My/BG flags2 
-******************************************************************************** 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My/BG flags2
+********************************************************************************
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define SetMyFlags2(BITS)  \
                     AI_SetMyFlags2  ,  \
-                    BITS ,   
- 
-#define AI_SetMyFlags2_LENGTH   (AICMDSIZE +1    ) 
+                    BITS ,
+
+#define AI_SetMyFlags2_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 7227 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Set My/BG flags2 
-******************************************************************************** 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My/BG flags2
+********************************************************************************
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define SetBGFlags2(BITS)  \
-                SetMyFlags2(BITS)   
+                SetMyFlags2(BITS)
 
 
- 
+
 # 7234 "src/aicommands.def"
 //==============================================================================
-//## GUARD FLAGS2 SET OFF 
+//## GUARD FLAGS2 SET OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unset flags2 
-******************************************************************************** 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unset flags2
+********************************************************************************
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define UnsetMyFlags2(BITS)  \
                     AI_UnsetMyFlags2  ,  \
-                    BITS ,   
- 
-#define AI_UnsetMyFlags2_LENGTH   (AICMDSIZE +1    ) 
+                    BITS ,
+
+#define AI_UnsetMyFlags2_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 7272 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Unset flags2 
-******************************************************************************** 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/  
+/*******************************************************************************
+  Unset flags2
+********************************************************************************
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define UnsetBGFlags2(BITS)  \
-                UnsetMyFlags2(BITS)   
+                UnsetMyFlags2(BITS)
 
 
- 
+
 # 7279 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD FLAGS2 IS SET ON 
+//## IF GUARD FLAGS2 IS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If flags2 has BITS enabled  
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If flags2 has BITS enabled
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define IFMyFlags2Has(BITS, GOTOLABEL)  \
                     AI_IFMyFlags2Has  ,  \
                     BITS , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyFlags2Has_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyFlags2Has_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If flags2 has BITS enabled  
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/  
+/*******************************************************************************
+  If flags2 has BITS enabled
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define IFBGFlags2Has(BITS)  \
-                IFMyFlags2Has(BITS)   
+                IFMyFlags2Has(BITS)
 
 
- 
+
 # 7330 "src/aicommands.def"
 //==============================================================================
-//## CHR FLAGS2 SET ON 
+//## CHR FLAGS2 SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set flags2 for CHR_NUM 
-******************************************************************************** 
-  @param CHR_NUM: ID of Chr (0-240) 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set flags2 for CHR_NUM
+********************************************************************************
+  @param CHR_NUM: ID of Chr (0-240)
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define SetChrBitfield(CHR_NUM, BITS)  \
                     AI_SetChrBitfield  ,  \
                     CHR_NUM , \
-                    BITS ,   
- 
-#define AI_SetChrBitfield_LENGTH   (AICMDSIZE +1   +1    ) 
+                    BITS ,
+
+#define AI_SetChrBitfield_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 # 7368 "src/aicommands.def"
 //==============================================================================
-//## CHR FLAGS2 SET OFF 
+//## CHR FLAGS2 SET OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unet flags2 for CHR_NUM 
-******************************************************************************** 
-  @param CHR_NUM: ID of Chr (0-240) 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unet flags2 for CHR_NUM
+********************************************************************************
+  @param CHR_NUM: ID of Chr (0-240)
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define UnsetChrBitfield(CHR_NUM, BITS)  \
                     AI_UnsetChrBitfield  ,  \
                     CHR_NUM , \
-                    BITS ,   
- 
-#define AI_UnsetChrBitfield_LENGTH   (AICMDSIZE +1   +1    ) 
+                    BITS ,
+
+#define AI_UnsetChrBitfield_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 # 7406 "src/aicommands.def"
 //==============================================================================
-//## IF CHR FLAGS2 IS SET ON 
+//## IF CHR FLAGS2 IS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If flags2 has BITS enabled  
-******************************************************************************** 
-  @return         Continue execution from LABEL if TRUE 
-  @param CHR_NUM: ID of Chr (0-240) 
-  @param BITS: Can be used to store a custom flag per chr, useful for missions. 
-               Global Lists use flag 01, which is defined as 
-               FLAGS2_DONT_POINT_AT_BOND. 
-               Other bits are free to use for setups AI Lists. 
-               BG Lists are free to utilize the entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If flags2 has BITS enabled
+********************************************************************************
+  @return         Continue execution from LABEL if TRUE
+  @param CHR_NUM: ID of Chr (0-240)
+  @param BITS: Can be used to store a custom flag per chr, useful for missions.
+               Global Lists use flag 01, which is defined as
+               FLAGS2_DONT_POINT_AT_BOND.
+               Other bits are free to use for setups AI Lists.
+               BG Lists are free to utilize the entire spectrum of flags
+*******************************************************************************/
 #define IFChrBitfieldHas(CHR_NUM, BITS, GOTOLABEL)  \
                     AI_IFChrBitfieldHas  ,  \
                     CHR_NUM , \
                     BITS , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrBitfieldHas_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrBitfieldHas_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //==============================================================================
-//## OBJECTIVE BITFIELD SET ON 
+//## OBJECTIVE BITFIELD SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set bits in objective bitfield 
-******************************************************************************** 
-  @param      BITFIELD: 32 bits 
-  @exception: Can be used to store a mission unique objective flag, which can be 
-              linked to mission objectives. 
-              It can also be used to store miscellaneous flags used by other 
-              AI Lists 
-              If a mission objective is changed while in third person, it will  
-              not be updated on the briefing page - all mission objectives  
-              status are locked while in third person 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set bits in objective bitfield
+********************************************************************************
+  @param      BITFIELD: 32 bits
+  @exception: Can be used to store a mission unique objective flag, which can be
+              linked to mission objectives.
+              It can also be used to store miscellaneous flags used by other
+              AI Lists
+              If a mission objective is changed while in third person, it will
+              not be updated on the briefing page - all mission objectives
+              status are locked while in third person
+*******************************************************************************/
 #define SetObjectiveBitfield(BITFIELD)  \
                     AI_SetObjectiveBitfield  ,  \
-                    CharArrayFrom32(BITFIELD) ,   
- 
-#define AI_SetObjectiveBitfield_LENGTH   (AICMDSIZE +4    ) 
+                    CharArrayFrom32(BITFIELD) ,
+
+#define AI_SetObjectiveBitfield_LENGTH   (AICMDSIZE +4    )
 
 
- 
+
 //==============================================================================
-//## OBJECTIVE BITFIELD SET OFF 
+//## OBJECTIVE BITFIELD SET OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unset bits in objective bitfield 
-******************************************************************************** 
-  @param      BITFIELD: 32 bits 
-  @exception: Can be used to store a mission unique objective flag, which can be 
-              linked to mission objectives. 
-              It can also be used to store miscellaneous flags used by other 
-              AI Lists 
-              If a mission objective is changed while in third person, it will  
-              not be updated on the briefing page - all mission objectives  
-              status are locked while in third person 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unset bits in objective bitfield
+********************************************************************************
+  @param      BITFIELD: 32 bits
+  @exception: Can be used to store a mission unique objective flag, which can be
+              linked to mission objectives.
+              It can also be used to store miscellaneous flags used by other
+              AI Lists
+              If a mission objective is changed while in third person, it will
+              not be updated on the briefing page - all mission objectives
+              status are locked while in third person
+*******************************************************************************/
 #define UnsetObjectiveBitfield(BITFIELD)  \
                     AI_UnsetObjectiveBitfield  ,  \
-                    CharArrayFrom32(BITFIELD) ,   
- 
-#define AI_UnsetObjectiveBitfield_LENGTH   (AICMDSIZE +4    ) 
+                    CharArrayFrom32(BITFIELD) ,
+
+#define AI_UnsetObjectiveBitfield_LENGTH   (AICMDSIZE +4    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECTIVE BITFIELD IS SET ON 
+//## IF OBJECTIVE BITFIELD IS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If ObjectiveBitfield has BITS enabled  
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If ObjectiveBitfield has BITS enabled
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFObjectiveBitfieldHas(BITS, GOTOLABEL)  \
                     AI_IFObjectiveBitfieldHas  ,  \
                     CharArrayFrom32(BITS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectiveBitfieldHas_LENGTH   (AICMDSIZE +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectiveBitfieldHas_LENGTH   (AICMDSIZE +4   +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD FLAGS SET ON 
+//## GUARD FLAGS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My/BG chrflags 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-              Can be used by BG AI Lists, BG AI Lists are free to utilize the 
-              entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My/BG chrflags
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+              Can be used by BG AI Lists, BG AI Lists are free to utilize the
+              entire spectrum of flags
+*******************************************************************************/
 #define SetMychrflags(CHRFLAGS)  \
                     AI_SetMychrflags  ,  \
-                    CharArrayFrom32(CHRFLAGS) ,   
- 
-#define AI_SetMychrflags_LENGTH   (AICMDSIZE +4    ) 
+                    CharArrayFrom32(CHRFLAGS) ,
+
+#define AI_SetMychrflags_LENGTH   (AICMDSIZE +4    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Set My/BG chrflags 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-              Can be used by BG AI Lists, BG AI Lists are free to utilize the 
-              entire spectrum of flags 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My/BG chrflags
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+              Can be used by BG AI Lists, BG AI Lists are free to utilize the
+              entire spectrum of flags
+*******************************************************************************/
 #define SetBGchrflags(CHRFLAGS)  \
-                SetMychrflags(CHRFLAGS)   
+                SetMychrflags(CHRFLAGS)
 
 
- 
+
 # 7618 "src/aicommands.def"
 //==============================================================================
-//## GUARD FLAGS SET OFF 
+//## GUARD FLAGS SET OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My/BG chrflags 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-              Can be used by BG AI Lists, BG AI Lists are free to utilize the 
-              entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My/BG chrflags
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+              Can be used by BG AI Lists, BG AI Lists are free to utilize the
+              entire spectrum of flags
+*******************************************************************************/
 #define UnsetMychrflags(CHRFLAGS)  \
                     AI_UnsetMychrflags  ,  \
-                    CharArrayFrom32(CHRFLAGS) ,   
- 
-#define AI_UnsetMychrflags_LENGTH   (AICMDSIZE +4    ) 
+                    CharArrayFrom32(CHRFLAGS) ,
+
+#define AI_UnsetMychrflags_LENGTH   (AICMDSIZE +4    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Set My/BG chrflags 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-              Can be used by BG AI Lists, BG AI Lists are free to utilize the 
-              entire spectrum of flags 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My/BG chrflags
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+              Can be used by BG AI Lists, BG AI Lists are free to utilize the
+              entire spectrum of flags
+*******************************************************************************/
 #define UnsetBGchrflags(CHRFLAGS)  \
-                UnsetMychrflags(CHRFLAGS)   
+                UnsetMychrflags(CHRFLAGS)
 
 
- 
+
 # 7662 "src/aicommands.def"
 //==============================================================================
-//## IF GUARD FLAGS IS SET ON 
+//## IF GUARD FLAGS IS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My/BG chrflags has CHRFLAGS set 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-              Can be used by BG AI Lists, BG AI Lists are free to utilize the 
-              entire spectrum of flags 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My/BG chrflags has CHRFLAGS set
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @return     Continue execution from LABEL if TRUE
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+              Can be used by BG AI Lists, BG AI Lists are free to utilize the
+              entire spectrum of flags
+*******************************************************************************/
 #define IFMychrflagsHas(CHRFLAGS, GOTOLABEL)  \
                     AI_IFMychrflagsHas  ,  \
                     CharArrayFrom32(CHRFLAGS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMychrflagsHas_LENGTH   (AICMDSIZE +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMychrflagsHas_LENGTH   (AICMDSIZE +4   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If My/BG chrflags has CHRFLAGS set 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-              Can be used by BG AI Lists, BG AI Lists are free to utilize the 
-              entire spectrum of flags 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG chrflags has CHRFLAGS set
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @return     Continue execution from LABEL if TRUE
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+              Can be used by BG AI Lists, BG AI Lists are free to utilize the
+              entire spectrum of flags
+*******************************************************************************/
 #define IFBGchrflagsHas(CHRFLAGS)  \
-                IFMychrflagsHas(CHRFLAGS)   
+                IFMychrflagsHas(CHRFLAGS)
 
 
- 
+
 # 7714 "src/aicommands.def"
 //==============================================================================
-//## CHR FLAGS SET ON 
+//## CHR FLAGS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set chr chrflags 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set chr chrflags
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+*******************************************************************************/
 #define SetChrchrflags(CHR_NUM, CHRFLAGS)  \
                     AI_SetChrchrflags  ,  \
                     CHR_NUM , \
-                    CharArrayFrom32(CHRFLAGS) ,   
- 
-#define AI_SetChrchrflags_LENGTH   (AICMDSIZE +1   +4    ) 
+                    CharArrayFrom32(CHRFLAGS) ,
+
+#define AI_SetChrchrflags_LENGTH   (AICMDSIZE +1   +4    )
 
 
- 
+
 //==============================================================================
-//## CHR FLAGS SET OFF 
+//## CHR FLAGS SET OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unset chr chrflags 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unset chr chrflags
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+*******************************************************************************/
 #define UnsetChrchrflags(CHR_NUM, CHRFLAGS)  \
                     AI_UnsetChrchrflags  ,  \
                     CHR_NUM , \
-                    CharArrayFrom32(CHRFLAGS) ,   
- 
-#define AI_UnsetChrchrflags_LENGTH   (AICMDSIZE +1   +4    ) 
+                    CharArrayFrom32(CHRFLAGS) ,
+
+#define AI_UnsetChrchrflags_LENGTH   (AICMDSIZE +1   +4    )
 
 
- 
+
 //==============================================================================
-//## IF CHR FLAGS IS SET ON 
+//## IF CHR FLAGS IS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Chr chrflags has CHRFLAGS set 
-******************************************************************************** 
-  @param CHRFLAGS: uses CHRFLAG_# defines. 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Chr->chrflags are not AI List or setup exclusive, they are 
-              controlled by many parts of the engine. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Chr chrflags has CHRFLAGS set
+********************************************************************************
+  @param CHRFLAGS: uses CHRFLAG_# defines.
+  @return     Continue execution from LABEL if TRUE
+  @exception: Chr->chrflags are not AI List or setup exclusive, they are
+              controlled by many parts of the engine.
+*******************************************************************************/
 #define IFChrchrflagsHas(CHR_NUM, CHRFLAGS, GOTOLABEL)  \
                     AI_IFChrchrflagsHas  ,  \
                     CHR_NUM , \
                     CharArrayFrom32(CHRFLAGS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrchrflagsHas_LENGTH   (AICMDSIZE +1   +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrchrflagsHas_LENGTH   (AICMDSIZE +1   +4   +1    )
 
 
- 
+
 //==============================================================================
-//## OBJECT FLAGS 1 SET ON 
+//## OBJECT FLAGS 1 SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set object flags 
-******************************************************************************** 
-  @param BITFIELD uses PROPFLAG_# defines 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set object flags
+********************************************************************************
+  @param BITFIELD uses PROPFLAG_# defines
+*******************************************************************************/
 #define SetObjectFlags(OBJECT_TAG, BITFIELD)  \
                     AI_SetObjectFlags  ,  \
                     OBJECT_TAG , \
-                    CharArrayFrom32(BITFIELD) ,   
- 
-#define AI_SetObjectFlags_LENGTH   (AICMDSIZE +1   +4    ) 
+                    CharArrayFrom32(BITFIELD) ,
+
+#define AI_SetObjectFlags_LENGTH   (AICMDSIZE +1   +4    )
 
 
- 
+
 //==============================================================================
-//## OBJECT FLAGS 1 SET OFF 
+//## OBJECT FLAGS 1 SET OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unset object flags 
-******************************************************************************** 
-  @param BITFIELD uses PROPFLAG_# defines 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unset object flags
+********************************************************************************
+  @param BITFIELD uses PROPFLAG_# defines
+*******************************************************************************/
 #define UnsetObjectFlags(OBJECT_TAG, BITFIELD)  \
                     AI_UnsetObjectFlags  ,  \
                     OBJECT_TAG , \
-                    CharArrayFrom32(BITFIELD) ,   
- 
-#define AI_UnsetObjectFlags_LENGTH   (AICMDSIZE +1   +4    ) 
+                    CharArrayFrom32(BITFIELD) ,
+
+#define AI_UnsetObjectFlags_LENGTH   (AICMDSIZE +1   +4    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECT FLAGS 1 IS SET ON 
+//## IF OBJECT FLAGS 1 IS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If object flags has BITS 
-******************************************************************************** 
-  @param BITS: uses PROPFLAG_# defines 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If object flags has BITS
+********************************************************************************
+  @param BITS: uses PROPFLAG_# defines
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFObjectFlagsHas(OBJECT_TAG, BITS, GOTOLABEL)  \
                     AI_IFObjectFlagsHas  ,  \
                     OBJECT_TAG , \
                     CharArrayFrom32(BITS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectFlagsHas_LENGTH   (AICMDSIZE +1   +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectFlagsHas_LENGTH   (AICMDSIZE +1   +4   +1    )
 
 
- 
+
 //==============================================================================
-//## OBJECT FLAGS 2 SET ON 
+//## OBJECT FLAGS 2 SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set object flags2 
-******************************************************************************** 
-  @param BITS: uses PROPFLAG2_# defines 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set object flags2
+********************************************************************************
+  @param BITS: uses PROPFLAG2_# defines
+*******************************************************************************/
 #define SetObjectFlags2(OBJECT_TAG, BITS)  \
                     AI_SetObjectFlags2  ,  \
                     OBJECT_TAG , \
-                    CharArrayFrom32(BITS) ,   
- 
-#define AI_SetObjectFlags2_LENGTH   (AICMDSIZE +1   +4    ) 
+                    CharArrayFrom32(BITS) ,
+
+#define AI_SetObjectFlags2_LENGTH   (AICMDSIZE +1   +4    )
 
 
- 
+
 //==============================================================================
-//## OBJECT FLAGS 2 SET OFF 
+//## OBJECT FLAGS 2 SET OFF
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Unset object flags2  
-******************************************************************************** 
-  @param BITS: uses PROPFLAG2_# defines 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Unset object flags2
+********************************************************************************
+  @param BITS: uses PROPFLAG2_# defines
+*******************************************************************************/
 #define UnsetObjectFlags2(OBJECT_TAG, BITS)  \
                     AI_UnsetObjectFlags2  ,  \
                     OBJECT_TAG , \
-                    CharArrayFrom32(BITS) ,   
- 
-#define AI_UnsetObjectFlags2_LENGTH   (AICMDSIZE +1   +4    ) 
+                    CharArrayFrom32(BITS) ,
+
+#define AI_UnsetObjectFlags2_LENGTH   (AICMDSIZE +1   +4    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECT FLAGS 2 IS SET ON 
+//## IF OBJECT FLAGS 2 IS SET ON
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If object flags2 has BITS 
-******************************************************************************** 
-  @param BITS: uses PROPFLAG2_# defines 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If object flags2 has BITS
+********************************************************************************
+  @param BITS: uses PROPFLAG2_# defines
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFObjectFlags2Has(OBJECT_TAG, BITFIELD, GOTOLABEL)  \
                     AI_IFObjectFlags2Has  ,  \
                     OBJECT_TAG , \
                     CharArrayFrom32(BITFIELD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectFlags2Has_LENGTH   (AICMDSIZE +1   +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectFlags2Has_LENGTH   (AICMDSIZE +1   +4   +1    )
 
 
- 
+
 //==============================================================================
-//## GUARD SET CHR PRESET 
+//## GUARD SET CHR PRESET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My/BG Preset Chr to CHR_PRESET 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My/BG Preset Chr to CHR_PRESET
+*******************************************************************************/
 #define SetMyChrPreset(CHR_PRESET)  \
                     AI_SetMyChrPreset  ,  \
-                    CHR_PRESET ,   
- 
-#define AI_SetMyChrPreset_LENGTH   (AICMDSIZE +1    ) 
+                    CHR_PRESET ,
+
+#define AI_SetMyChrPreset_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 8105 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Set My/BG Preset Chr to CHR_PRESET 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My/BG Preset Chr to CHR_PRESET
+*******************************************************************************/
 #define SetBGChrPreset(CHRFLAGS)  \
-                SetMyChrPreset(CHRFLAGS)   
+                SetMyChrPreset(CHRFLAGS)
 
 
- 
+
 # 8112 "src/aicommands.def"
 //==============================================================================
-//## CHR SET CHR PRESET 
+//## CHR SET CHR PRESET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set Chr Preset Chr to CHR_PRESET 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set Chr Preset Chr to CHR_PRESET
+*******************************************************************************/
 #define SetChrChrPreset(CHR_NUM, CHR_PRESET)  \
                     AI_SetChrChrPreset  ,  \
                     CHR_NUM , \
-                    CHR_PRESET ,   
- 
-#define AI_SetChrChrPreset_LENGTH   (AICMDSIZE +1   +1    ) 
+                    CHR_PRESET ,
+
+#define AI_SetChrChrPreset_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 # 8143 "src/aicommands.def"
 //==============================================================================
-//## GUARD SET PAD PRESET 
+//## GUARD SET PAD PRESET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set My/BG Preset Pad to PAD_PRESET 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set My/BG Preset Pad to PAD_PRESET
+*******************************************************************************/
 #define SetMyPadPreset(PAD_PRESET)  \
                     AI_SetMyPadPreset  ,  \
-                    CharArrayFrom16(PAD_PRESET) ,   
- 
-#define AI_SetMyPadPreset_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(PAD_PRESET) ,
+
+#define AI_SetMyPadPreset_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Set My/BG Preset Pad to PAD_PRESET 
-*******************************************************************************/  
+/*******************************************************************************
+  Set My/BG Preset Pad to PAD_PRESET
+*******************************************************************************/
 #define SetBGPadPreset(CHRFLAGS)  \
-                SetMyPadPreset(CHRFLAGS)   
+                SetMyPadPreset(CHRFLAGS)
 
 
- 
+
 # 8189 "src/aicommands.def"
 //==============================================================================
-//## CHR SET PAD PRESET 
+//## CHR SET PAD PRESET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set Chr Preset Pad to PAD_PRESET 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set Chr Preset Pad to PAD_PRESET
+*******************************************************************************/
 #define SetChrPadPreset(CHR_NUM, PAD_PRESET)  \
                     AI_SetChrPadPreset  ,  \
                     CHR_NUM , \
-                    CharArrayFrom16(PAD_PRESET) ,   
- 
-#define AI_SetChrPadPreset_LENGTH   (AICMDSIZE +1   +2    ) 
+                    CharArrayFrom16(PAD_PRESET) ,
+
+#define AI_SetChrPadPreset_LENGTH   (AICMDSIZE +1   +2    )
 
 
- 
+
 # 8221 "src/aicommands.def"
 //==============================================================================
-//## Print (Canonical name) 
+//## Print (Canonical name)
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Debug Comment 
-******************************************************************************** 
-  @return: May have originally printed to stderr on host 1  devkit. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Debug Comment
+********************************************************************************
+  @return: May have originally printed to stderr on host 1  devkit.
+*******************************************************************************/
 #define PRINT(STRING)  \
-            AI_PRINT  ,  
+            AI_PRINT  ,
 
 
- 
+
 //==============================================================================
-//## LOCAL TIMER RESET START 
+//## LOCAL TIMER RESET START
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Start My/BG timer from 0. Counts up 60 times a second. 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Start My/BG timer from 0. Counts up 60 times a second.
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define MyTimerStart()  \
-                    AI_MyTimerStart  ,     
- 
-#define AI_MyTimerStart_LENGTH   (AICMDSIZE    ) 
+                    AI_MyTimerStart  ,
+
+#define AI_MyTimerStart_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8286 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Start My/BG timer from 0. Counts up 60 times a second. 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/  
+/*******************************************************************************
+  Start My/BG timer from 0. Counts up 60 times a second.
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define BGTimerResetStart()  \
-                MyTimerStart()   
+                MyTimerStart()
 
 
- 
+
 # 8293 "src/aicommands.def"
 //==============================================================================
-//## LOCAL TIMER RESET 
+//## LOCAL TIMER RESET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Reset My/BG timer to 0. Does Not start or stop timer. 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Reset My/BG timer to 0. Does Not start or stop timer.
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define MyTimerReset()  \
-                    AI_MyTimerReset  ,     
- 
-#define AI_MyTimerReset_LENGTH   (AICMDSIZE    ) 
+                    AI_MyTimerReset  ,
+
+#define AI_MyTimerReset_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8326 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Reset My/BG timer to 0. Does Not start or stop timer. 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/  
+/*******************************************************************************
+  Reset My/BG timer to 0. Does Not start or stop timer.
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define BGTimerReset()  \
-                MyTimerReset()   
+                MyTimerReset()
 
 
- 
+
 # 8333 "src/aicommands.def"
 //==============================================================================
-//## LOCAL TIMER STOP 
+//## LOCAL TIMER STOP
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Pause My/BG timer. 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Pause My/BG timer.
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define MyTimerPause()  \
-                    AI_MyTimerPause  ,     
- 
-#define AI_MyTimerPause_LENGTH   (AICMDSIZE    ) 
+                    AI_MyTimerPause  ,
+
+#define AI_MyTimerPause_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8366 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Pause My/BG timer. 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/  
+/*******************************************************************************
+  Pause My/BG timer.
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define BGTimerPause()  \
-                MyTimerPause()   
+                MyTimerPause()
 
 
- 
+
 # 8373 "src/aicommands.def"
 //==============================================================================
-//## LOCAL TIMER START 
+//## LOCAL TIMER START
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Resume My/BG timer. If you want to Start from 0, use MyTimerStart() 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Resume My/BG timer. If you want to Start from 0, use MyTimerStart()
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define MyTimerResume()  \
-                    AI_MyTimerResume  ,     
- 
-#define AI_MyTimerResume_LENGTH   (AICMDSIZE    ) 
+                    AI_MyTimerResume  ,
+
+#define AI_MyTimerResume_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8406 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Resume My/BG timer. If you want to Start from 0, use MyTimerStart() 
-******************************************************************************** 
-  @exception: Local timer is unique for each chr, while hud countdown is global  
-              for the entire mission. 
-*******************************************************************************/  
+/*******************************************************************************
+  Resume My/BG timer. If you want to Start from 0, use MyTimerStart()
+********************************************************************************
+  @exception: Local timer is unique for each chr, while hud countdown is global
+              for the entire mission.
+*******************************************************************************/
 #define BGTimerResume()  \
-                MyTimerResume()   
+                MyTimerResume()
 
 
- 
+
 # 8413 "src/aicommands.def"
 //==============================================================================
-//## IF LOCAL TIMER HAS STOPPED 
+//## IF LOCAL TIMER HAS STOPPED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My/BG timer is NOT running (paused) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: By default, timer is inactive 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My/BG timer is NOT running (paused)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: By default, timer is inactive
+*******************************************************************************/
 #define IFMyTimerIsNotRunning(GOTOLABEL)  \
                     AI_IFMyTimerIsNotRunning  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyTimerIsNotRunning_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyTimerIsNotRunning_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If My/BG timer is NOT running (paused) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: By default, timer is inactive 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG timer is NOT running (paused)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: By default, timer is inactive
+*******************************************************************************/
 #define IFBGTimerIsNotRunning(GOTOLABEL)  \
-                IFMyTimerIsNotRunning(GOTOLABEL)   
+                IFMyTimerIsNotRunning(GOTOLABEL)
 
 
- 
+
 # 8460 "src/aicommands.def"
 //==============================================================================
-//## IF LOCAL TIMER LESS THAN 
+//## IF LOCAL TIMER LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My/BG Timer is Less Than TICKS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      TICKS: Unsigned integer 1/60 or 1/50 Second  
-  @exception: TICKS is converted to float and compared. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My/BG Timer is Less Than TICKS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      TICKS: Unsigned integer 1/60 or 1/50 Second
+  @exception: TICKS is converted to float and compared.
+*******************************************************************************/
 #define IFMyTimerLessThanTicks(TICKS, GOTOLABEL)  \
                     AI_IFMyTimerLessThanTicks  ,  \
                     CharArrayFrom24(TICKS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyTimerLessThanTicks_LENGTH   (AICMDSIZE +3   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyTimerLessThanTicks_LENGTH   (AICMDSIZE +3   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If My/BG Timer is Less Than TICKS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      TICKS: Unsigned integer 1/60 or 1/50 Second  
-  @exception: TICKS is converted to float and compared. 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG Timer is Less Than TICKS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      TICKS: Unsigned integer 1/60 or 1/50 Second
+  @exception: TICKS is converted to float and compared.
+*******************************************************************************/
 #define IFBGTimerLessThanTicks(TICKS,GOTOLABEL)  \
-                IFMyTimerLessThanTicks(TICKS,GOTOLABEL)   
+                IFMyTimerLessThanTicks(TICKS,GOTOLABEL)
 
 
- 
+
 # 8509 "src/aicommands.def"
-/******************************************************************************* 
-  If My/BG Timer is Less Than SECONDS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      SECONDS: Unsigned integer 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG Timer is Less Than SECONDS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      SECONDS: Unsigned integer
+*******************************************************************************/
 #define IFMyTimerLessThanSeconds(SECONDS, GOTOLABEL)  \
-                IFMyTimerLessThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)   
+                IFMyTimerLessThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)
 
 
- 
+
 # 8522 "src/aicommands.def"
-/******************************************************************************* 
-  If My/BG Timer is Less Than SECONDS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      SECONDS: Unsigned integer 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG Timer is Less Than SECONDS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      SECONDS: Unsigned integer
+*******************************************************************************/
 #define IFBGTimerLessThanSeconds(SECONDS, GOTOLABEL)  \
-                IFMyTimerLessThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)   
+                IFMyTimerLessThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)
 
 
- 
+
 # 8526 "src/aicommands.def"
 //==============================================================================
-//## IF LOCAL TIMER GREATER THAN 
+//## IF LOCAL TIMER GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If My/BG Timer is Greater Than TICKS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      TICKS: Unsigned integer 1/60 or 1/50 Second  
-  @exception: TICKS is converted to float and compared. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If My/BG Timer is Greater Than TICKS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      TICKS: Unsigned integer 1/60 or 1/50 Second
+  @exception: TICKS is converted to float and compared.
+*******************************************************************************/
 #define IFMyTimerGreaterThanTicks(TICKS, GOTOLABEL)  \
                     AI_IFMyTimerGreaterThanTicks  ,  \
                     CharArrayFrom24(TICKS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFMyTimerGreaterThanTicks_LENGTH   (AICMDSIZE +3   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFMyTimerGreaterThanTicks_LENGTH   (AICMDSIZE +3   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If My/BG Timer is Greater Than TICKS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      TICKS: Unsigned integer 1/60 or 1/50 Second  
-  @exception: TICKS is converted to float and compared. 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG Timer is Greater Than TICKS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      TICKS: Unsigned integer 1/60 or 1/50 Second
+  @exception: TICKS is converted to float and compared.
+*******************************************************************************/
 #define IFBGTimerGreaterThanTicks(TICKS,GOTOLABEL)  \
-                IFMyTimerGreaterThanTicks(TICKS,GOTOLABEL)   
+                IFMyTimerGreaterThanTicks(TICKS,GOTOLABEL)
 
 
- 
+
 # 8576 "src/aicommands.def"
-/******************************************************************************* 
-  If My/BG Timer is Less Than SECONDS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      SECONDS: Unsigned integer 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG Timer is Less Than SECONDS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      SECONDS: Unsigned integer
+*******************************************************************************/
 #define IFMyTimerGreaterThanSeconds(SECONDS, GOTOLABEL)  \
-                IFMyTimerGreaterThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)   
+                IFMyTimerGreaterThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)
 
 
- 
+
 # 8589 "src/aicommands.def"
-/******************************************************************************* 
-  If My/BG Timer is Less Than SECONDS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      SECONDS: Unsigned integer 
-*******************************************************************************/  
+/*******************************************************************************
+  If My/BG Timer is Less Than SECONDS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      SECONDS: Unsigned integer
+*******************************************************************************/
 #define IFBGTimerGreaterThanSeconds(SECONDS, GOTOLABEL)  \
-                IFMyTimerGreaterThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)   
+                IFMyTimerGreaterThanTicks((SECS_TO_TIMER60(SECONDS)), GOTOLABEL)
 
 
- 
+
 # 8593 "src/aicommands.def"
 //==============================================================================
-//## HUD COUNTDOWN SHOW 
+//## HUD COUNTDOWN SHOW
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Shows the hud countdown 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Shows the hud countdown
+*******************************************************************************/
 #define HudCountdownShow()  \
-                    AI_HudCountdownShow  ,     
- 
-#define AI_HudCountdownShow_LENGTH   (AICMDSIZE    ) 
+                    AI_HudCountdownShow  ,
+
+#define AI_HudCountdownShow_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8622 "src/aicommands.def"
 //==============================================================================
-//## HUD COUNTDOWN HIDE 
+//## HUD COUNTDOWN HIDE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Hides the hud countdown 
-******************************************************************************** 
-  @exception: Can be used as a hidden global timer for objective logic 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Hides the hud countdown
+********************************************************************************
+  @exception: Can be used as a hidden global timer for objective logic
+*******************************************************************************/
 #define HudCountdownHide()  \
-                    AI_HudCountdownHide  ,     
- 
-#define AI_HudCountdownHide_LENGTH   (AICMDSIZE    ) 
+                    AI_HudCountdownHide  ,
+
+#define AI_HudCountdownHide_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8654 "src/aicommands.def"
 //==============================================================================
-//## HUD COUNTDOWN SET 
+//## HUD COUNTDOWN SET
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set the hud countdown 
-******************************************************************************** 
-  @exception: To make the timer count up, set to 0 and start timer 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set the hud countdown
+********************************************************************************
+  @exception: To make the timer count up, set to 0 and start timer
+*******************************************************************************/
 #define HudCountdownSet(SECONDS)  \
                     AI_HudCountdownSet  ,  \
-                    CharArrayFrom16(SECONDS) ,   
- 
-#define AI_HudCountdownSet_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(SECONDS) ,
+
+#define AI_HudCountdownSet_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
-//## HUD COUNTDOWN STOP 
+//## HUD COUNTDOWN STOP
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Stops the hud countdown 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Stops the hud countdown
+*******************************************************************************/
 #define HudCountdownStop()  \
-                    AI_HudCountdownStop  ,     
- 
-#define AI_HudCountdownStop_LENGTH   (AICMDSIZE    ) 
+                    AI_HudCountdownStop  ,
+
+#define AI_HudCountdownStop_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8718 "src/aicommands.def"
 //==============================================================================
-//## HUD COUNTDOWN START 
+//## HUD COUNTDOWN START
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Start the hud countdown 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Start the hud countdown
+*******************************************************************************/
 #define HudCountdownStart()  \
-                    AI_HudCountdownStart  ,     
- 
-#define AI_HudCountdownStart_LENGTH   (AICMDSIZE    ) 
+                    AI_HudCountdownStart  ,
+
+#define AI_HudCountdownStart_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 8748 "src/aicommands.def"
 //==============================================================================
-//## IF HUD COUNTDOWN HAS STOPPED 
+//## IF HUD COUNTDOWN HAS STOPPED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Hud Countdown is NOT running (paused) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: By default, timer is inactive 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Hud Countdown is NOT running (paused)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: By default, timer is inactive
+*******************************************************************************/
 #define IFHudCountdownIsNotRunning(GOTOLABEL)  \
                     AI_IFHudCountdownIsNotRunning  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFHudCountdownIsNotRunning_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFHudCountdownIsNotRunning_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF HUD COUNTDOWN LESS THAN 
+//## IF HUD COUNTDOWN LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  if hud countdown is Less Than SECONDS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      SECONDS: Unsigned Integer, 0 means TRUE on count-up only. 
-  @exception: SECONDS can NOT test negative values (counting up) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  if hud countdown is Less Than SECONDS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      SECONDS: Unsigned Integer, 0 means TRUE on count-up only.
+  @exception: SECONDS can NOT test negative values (counting up)
+*******************************************************************************/
 #define IFHudCountdownLessThan(SECONDS, GOTOLABEL)  \
                     AI_IFHudCountdownLessThan  ,  \
                     CharArrayFrom16(SECONDS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFHudCountdownLessThan_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFHudCountdownLessThan_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## IF HUD COUNTDOWN GREATER THAN 
+//## IF HUD COUNTDOWN GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  if hud countdown is Greater Than SECONDS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param      SECONDS: Unsigned Integer, 0 means TRUE on count-down only. 
-  @exception: SECONDS can NOT test negative values (counting up) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  if hud countdown is Greater Than SECONDS
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param      SECONDS: Unsigned Integer, 0 means TRUE on count-down only.
+  @exception: SECONDS can NOT test negative values (counting up)
+*******************************************************************************/
 #define IFHudCountdownGreaterThan(SECONDS, GOTOLABEL)  \
                     AI_IFHudCountdownGreaterThan  ,  \
                     CharArrayFrom16(SECONDS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFHudCountdownGreaterThan_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFHudCountdownGreaterThan_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## CHR TRY SPAWNING AT PAD 
+//## CHR TRY SPAWNING AT PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Spawn new chr at pad 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-  @param      BITFIELD: uses SPAWN_# defines 
-  @param      AI_LIST_ID: Assign this 16bit AI_LIST ID to Chr 
-  @exception: If out of memory chr can NOT spawn. 
-              If pad is blocked, attempt to spawn chr around pad. 
-              By default, guard will NOT spawn if target pad can be seen by Bond. 
-              However this is ignored if passed SPAWN_IGNORE_PAD_SIGHT_CHECK flag. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Spawn new chr at pad
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @param      BITFIELD: uses SPAWN_# defines
+  @param      AI_LIST_ID: Assign this 16bit AI_LIST ID to Chr
+  @exception: If out of memory chr can NOT spawn.
+              If pad is blocked, attempt to spawn chr around pad.
+              By default, guard will NOT spawn if target pad can be seen by Bond.
+              However this is ignored if passed SPAWN_IGNORE_PAD_SIGHT_CHECK flag.
+*******************************************************************************/
 #define TRYSpawningChrAtPad(BODY_NUM, HEAD_NUM, PAD, AI_LIST_ID, BITFIELD, GOTOLABEL)  \
                     AI_TRYSpawningChrAtPad  ,  \
                     BODY_NUM , \
@@ -5361,29 +5361,29 @@ r*******************************************************************************
                     CharArrayFrom16(PAD) , \
                     CharArrayFrom16(AI_LIST_ID) , \
                     CharArrayFrom32(BITFIELD) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSpawningChrAtPad_LENGTH   (AICMDSIZE +1   +1   +2   +2   +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSpawningChrAtPad_LENGTH   (AICMDSIZE +1   +1   +2   +2   +4   +1    )
 
 
- 
+
 # 8921 "src/aicommands.def"
 //==============================================================================
-//## CHR TRY SPAWNING NEXT TO UNSEEN CHR 
+//## CHR TRY SPAWNING NEXT TO UNSEEN CHR
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Spawn a chr next to another chr 
-******************************************************************************* 
-  @return     Continue execution from LABEL if Successful 
-  @param      BITFIELD: uses SPAWN_# defines 
-  @param      AI_LIST_ID: Assign this 16bit AI_LIST ID to Chr 
-  @exception: If out of memory or chr/pad is in view of Bond - chr can NOT spawn. 
-              Target chr must still exist in level or else command will crash. 
-              Will not spawn chr if target chr has been seen before 
-              (CHRFLAG_HAS_BEEN_ON_SCREEN) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Spawn a chr next to another chr
+*******************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @param      BITFIELD: uses SPAWN_# defines
+  @param      AI_LIST_ID: Assign this 16bit AI_LIST ID to Chr
+  @exception: If out of memory or chr/pad is in view of Bond - chr can NOT spawn.
+              Target chr must still exist in level or else command will crash.
+              Will not spawn chr if target chr has been seen before
+              (CHRFLAG_HAS_BEEN_ON_SCREEN)
+*******************************************************************************/
 #define TRYSpawningChrNextToChr(BODY_NUM, HEAD_NUM, CHR_NUM_TARGET, AI_LIST_ID, BITFIELD, GOTOLABEL)  \
                     AI_TRYSpawningChrNextToChr  ,  \
                     BODY_NUM , \
@@ -5391,332 +5391,332 @@ r*******************************************************************************
                     CHR_NUM_TARGET , \
                     CharArrayFrom16(AI_LIST_ID) , \
                     CharArrayFrom32(BITFIELD) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYSpawningChrNextToChr_LENGTH   (AICMDSIZE +1   +1   +1   +2   +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYSpawningChrNextToChr_LENGTH   (AICMDSIZE +1   +1   +1   +2   +4   +1    )
 
 
- 
+
 # 8969 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY SPAWNING ITEM 
+//## GUARD TRY SPAWNING ITEM
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Spawn Item/Weapon for Me 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-  @param      PROPFLAG uses PROPFLAG defines - NOT PROPFLAG2! 
-  @param      PROP_NUM: use PROP_xxx eg PROP_CHRWPPK for visible model 
-  @param      ITEM_NUM: use ITEM_xxx eg ITEM_WPPK for item type 
-  @exception: If out of memory or hands occupied - Item can NOT spawn. 
-              Spawned Prop must have a holding position command within the  
-              model file, else use conceal flag so guard does not attempt to   
-              hold Prop 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Spawn Item/Weapon for Me
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @param      PROPFLAG uses PROPFLAG defines - NOT PROPFLAG2!
+  @param      PROP_NUM: use PROP_xxx eg PROP_CHRWPPK for visible model
+  @param      ITEM_NUM: use ITEM_xxx eg ITEM_WPPK for item type
+  @exception: If out of memory or hands occupied - Item can NOT spawn.
+              Spawned Prop must have a holding position command within the
+              model file, else use conceal flag so guard does not attempt to
+              hold Prop
+*******************************************************************************/
 #define TRYGiveMeItem(PROP_NUM, ITEM_NUM, PROPFLAG, GOTOLABEL)  \
                     AI_TRYGiveMeItem  ,  \
                     CharArrayFrom16(PROP_NUM) , \
                     ITEM_NUM , \
                     CharArrayFrom32(PROPFLAG) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYGiveMeItem_LENGTH   (AICMDSIZE +2   +1   +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYGiveMeItem_LENGTH   (AICMDSIZE +2   +1   +4   +1    )
 
 
- 
+
 # 9072 "src/aicommands.def"
 //==============================================================================
-//## GUARD TRY SPAWNING HAT 
+//## GUARD TRY SPAWNING HAT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Spawn hat on Me 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-  @param      PROPFLAG uses PROPFLAG defines - NOT PROPFLAG2! 
-  @param      PROP_NUM: use PROP_xxx eg PROP_CHRWPPK for visible model 
-  @exception: If out of memory or already have hat - Item can NOT spawn. 
-              Spawned Prop must have a holding position command within the  
-              model file. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Spawn hat on Me
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @param      PROPFLAG uses PROPFLAG defines - NOT PROPFLAG2!
+  @param      PROP_NUM: use PROP_xxx eg PROP_CHRWPPK for visible model
+  @exception: If out of memory or already have hat - Item can NOT spawn.
+              Spawned Prop must have a holding position command within the
+              model file.
+*******************************************************************************/
 #define TRYGiveMeHat(PROP_NUM, PROP_BITFIELD, GOTOLABEL)  \
                     AI_TRYGiveMeHat  ,  \
                     CharArrayFrom16(PROP_NUM) , \
                     CharArrayFrom32(PROP_BITFIELD) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYGiveMeHat_LENGTH   (AICMDSIZE +2   +4   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYGiveMeHat_LENGTH   (AICMDSIZE +2   +4   +1    )
 
 
- 
+
 //==============================================================================
-//## CHR TRY SPAWNING CLONE 
+//## CHR TRY SPAWNING CLONE
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If CHR_NUM has clone flag on, spawn a clone 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-  @param      AI_LIST_ID Assign this 16bit AI_LIST ID to Clone 
-  @exception: Clone flag is stored in chr->chrflags which is assigned at setup  
-              Newly spawned clone is placed in front of original chr 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If CHR_NUM has clone flag on, spawn a clone
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @param      AI_LIST_ID Assign this 16bit AI_LIST ID to Clone
+  @exception: Clone flag is stored in chr->chrflags which is assigned at setup
+              Newly spawned clone is placed in front of original chr
+*******************************************************************************/
 #define TRYCloningChr(CHR_NUM, AI_LIST_ID, GOTOLABEL)  \
                     AI_TRYCloningChr  ,  \
                     CHR_NUM , \
                     CharArrayFrom16(AI_LIST_ID) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYCloningChr_LENGTH   (AICMDSIZE +1   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYCloningChr_LENGTH   (AICMDSIZE +1   +2   +1    )
 
 
- 
+
 # 9233 "src/aicommands.def"
-/******************************************************************************* 
-  If I have clone flag on, spawn a clone 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-  @param      AI_LIST_ID Assign this 16bit AI_LIST ID to Clone 
-  @exception: Clone flag is stored in chr->chrflags which is assigned at setup  
-              Newly spawned clone is placed in front of original chr 
-*******************************************************************************/  
+/*******************************************************************************
+  If I have clone flag on, spawn a clone
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+  @param      AI_LIST_ID Assign this 16bit AI_LIST ID to Clone
+  @exception: Clone flag is stored in chr->chrflags which is assigned at setup
+              Newly spawned clone is placed in front of original chr
+*******************************************************************************/
 #define TRYCloningMe(AI_LIST_ID, GOTOLABEL)  \
-                TRYCloningChr(CHR_SELF, AI_LIST_ID, GOTOLABEL)   
+                TRYCloningChr(CHR_SELF, AI_LIST_ID, GOTOLABEL)
 
 
- 
+
 # 9249 "src/aicommands.def"
 //==============================================================================
-//## TEXT PRINT BOTTOM 
+//## TEXT PRINT BOTTOM
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Print text slot to bottom left part of screen (where pickup text is located) 
-******************************************************************************** 
-  @exception: If text slot is not currently allocated in memory, game will softlock. 
-        Expects string to end with '\n' (LF) character 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Print text slot to bottom left part of screen (where pickup text is located)
+********************************************************************************
+  @exception: If text slot is not currently allocated in memory, game will softlock.
+        Expects string to end with '\n' (LF) character
+*******************************************************************************/
 #define TextPrintBottom(TEXT_SLOT)  \
                     AI_TextPrintBottom  ,  \
-                    CharArrayFrom16(TEXT_SLOT) ,   
- 
-#define AI_TextPrintBottom_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(TEXT_SLOT) ,
+
+#define AI_TextPrintBottom_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
-//## TEXT PRINT TOP 
+//## TEXT PRINT TOP
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Print text slot to top part of screen 
-******************************************************************************** 
-  @exception: If text slot is not currently allocated in memory, game will softlock. 
-        Expects string to end with '\n' (LF) character 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Print text slot to top part of screen
+********************************************************************************
+  @exception: If text slot is not currently allocated in memory, game will softlock.
+        Expects string to end with '\n' (LF) character
+*******************************************************************************/
 #define TextPrintTop(TEXT_SLOT)  \
                     AI_TextPrintTop  ,  \
-                    CharArrayFrom16(TEXT_SLOT) ,   
- 
-#define AI_TextPrintTop_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(TEXT_SLOT) ,
+
+#define AI_TextPrintTop_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
 //# SFX COMMANDS
 //==============================================================================
 //==============================================================================
-//## SFX PLAY 
+//## SFX PLAY
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Play a sound effect 
-******************************************************************************** 
-  @exception: Channel argument range is 0-7. 
-        Use a channel if you plan on modifying sfx volume with SFX Commands; 
-            SFX_EMIT_FROM_OBJECT 
-            SFX_EMIT_FROM_PAD 
-            SFX_SET_CHANNEL_VOLUME 
-            SFX_FADE_CHANNEL_VOLUME 
-            SFX_STOP_CHANNEL 
-            IF_SFX_CHANNEL_VOLUME_LESS_THAN 
-        If you do NOT plan on doing this, use an invalid channel such as -1. 
-        This will play the sfx but not bother initializing channel 
-        data for SFX Commands. 
-        If a sfx is already occupying channel, retriggering sfx will overwrite 
-        old sfx slot data and no longer can be used by SFX Commands 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Play a sound effect
+********************************************************************************
+  @exception: Channel argument range is 0-7.
+        Use a channel if you plan on modifying sfx volume with SFX Commands;
+            SFX_EMIT_FROM_OBJECT
+            SFX_EMIT_FROM_PAD
+            SFX_SET_CHANNEL_VOLUME
+            SFX_FADE_CHANNEL_VOLUME
+            SFX_STOP_CHANNEL
+            IF_SFX_CHANNEL_VOLUME_LESS_THAN
+        If you do NOT plan on doing this, use an invalid channel such as -1.
+        This will play the sfx but not bother initializing channel
+        data for SFX Commands.
+        If a sfx is already occupying channel, retriggering sfx will overwrite
+        old sfx slot data and no longer can be used by SFX Commands
+*******************************************************************************/
 #define SfxPlay(SOUND_NUM, CHANNEL_NUM)  \
                     AI_SfxPlay  ,  \
                     CharArrayFrom16(SOUND_NUM) , \
-                    CHANNEL_NUM ,   
- 
-#define AI_SfxPlay_LENGTH   (AICMDSIZE +2   +1    ) 
+                    CHANNEL_NUM ,
+
+#define AI_SfxPlay_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 # 9372 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Play a sound effect 
-******************************************************************************** 
-  @exception: Channel argument range is 0-7. 
-        Use a channel if you plan on modifying sfx volume with SFX Commands; 
-            SFX_EMIT_FROM_OBJECT 
-            SFX_EMIT_FROM_PAD 
-            SFX_SET_CHANNEL_VOLUME 
-            SFX_FADE_CHANNEL_VOLUME 
-            SFX_STOP_CHANNEL 
-            IF_SFX_CHANNEL_VOLUME_LESS_THAN 
-        If you do NOT plan on doing this, use an invalid channel such as -1. 
-        This will play the sfx but not bother initializing channel 
-        data for SFX Commands. 
-        If a sfx is already occupying channel, retriggering sfx will overwrite 
-        old sfx slot data and no longer can be used by SFX Commands 
-*******************************************************************************/  
+/*******************************************************************************
+  Play a sound effect
+********************************************************************************
+  @exception: Channel argument range is 0-7.
+        Use a channel if you plan on modifying sfx volume with SFX Commands;
+            SFX_EMIT_FROM_OBJECT
+            SFX_EMIT_FROM_PAD
+            SFX_SET_CHANNEL_VOLUME
+            SFX_FADE_CHANNEL_VOLUME
+            SFX_STOP_CHANNEL
+            IF_SFX_CHANNEL_VOLUME_LESS_THAN
+        If you do NOT plan on doing this, use an invalid channel such as -1.
+        This will play the sfx but not bother initializing channel
+        data for SFX Commands.
+        If a sfx is already occupying channel, retriggering sfx will overwrite
+        old sfx slot data and no longer can be used by SFX Commands
+*******************************************************************************/
 #define SFX_PLAY_SIMPLE(SOUND_NUM)  \
-                SfxPlay(SOUND_NUM, -1)   
+                SfxPlay(SOUND_NUM, -1)
 
 
- 
+
 # 9379 "src/aicommands.def"
 //==============================================================================
-//## SFX EMIT FROM OBJECT 
+//## SFX EMIT FROM OBJECT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Sets an occupied sfx channel to emit from a tagged object 
-******************************************************************************** 
-  @param      VOL_DECAY_TIME60: is number of ticks to fully transition from 
-              max volume to target volume 
-  @exception: Panning is not calculated (mono), only affects volume. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Sets an occupied sfx channel to emit from a tagged object
+********************************************************************************
+  @param      VOL_DECAY_TIME60: is number of ticks to fully transition from
+              max volume to target volume
+  @exception: Panning is not calculated (mono), only affects volume.
+*******************************************************************************/
 #define SfxEmitFromObject(CHANNEL_NUM, OBJECT_TAG, VOL_DECAY_TIME60)  \
                     AI_SfxEmitFromObject  ,  \
                     CHANNEL_NUM , \
                     OBJECT_TAG , \
-                    CharArrayFrom16(VOL_DECAY_TIME60) ,   
- 
-#define AI_SfxEmitFromObject_LENGTH   (AICMDSIZE +1   +1   +2    ) 
+                    CharArrayFrom16(VOL_DECAY_TIME60) ,
+
+#define AI_SfxEmitFromObject_LENGTH   (AICMDSIZE +1   +1   +2    )
 
 
- 
+
 //==============================================================================
-//## SFX EMIT FROM PAD 
+//## SFX EMIT FROM PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Sets an occupied sfx channel to emit from a pad 
-******************************************************************************** 
-  @param VOL_DECAY_TIME60 is number of ticks to fully transition from 
-                max volume to target volume 
-  @exception: Panning is not calculated (mono), only affects volume. 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Sets an occupied sfx channel to emit from a pad
+********************************************************************************
+  @param VOL_DECAY_TIME60 is number of ticks to fully transition from
+                max volume to target volume
+  @exception: Panning is not calculated (mono), only affects volume.
+*******************************************************************************/
 #define SfxEmitFromPad(CHANNEL_NUM, PAD, VOL_DECAY_TIME60)  \
                     AI_SfxEmitFromPad  ,  \
                     CHANNEL_NUM , \
                     CharArrayFrom16(PAD) , \
-                    CharArrayFrom16(VOL_DECAY_TIME60) ,   
- 
-#define AI_SfxEmitFromPad_LENGTH   (AICMDSIZE +1   +2   +2    ) 
+                    CharArrayFrom16(VOL_DECAY_TIME60) ,
+
+#define AI_SfxEmitFromPad_LENGTH   (AICMDSIZE +1   +2   +2    )
 
 
- 
+
 //==============================================================================
-//## SFX SET CHANNEL VOLUME 
+//## SFX SET CHANNEL VOLUME
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Sets an occupied sfx channel's volume 
-******************************************************************************** 
-  @param      TRANSITION_TIME60: is number of ticks to fade between current 
-              volume to TARGET_VOLUME 
-  param       TARGET_VOLUME: signed range 0 - 100% (0x0000-0x7FFF) 
-  @exception: TARGET_VOLUME can NOT be negative 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Sets an occupied sfx channel's volume
+********************************************************************************
+  @param      TRANSITION_TIME60: is number of ticks to fade between current
+              volume to TARGET_VOLUME
+  param       TARGET_VOLUME: signed range 0 - 100% (0x0000-0x7FFF)
+  @exception: TARGET_VOLUME can NOT be negative
+*******************************************************************************/
 #define SfxSetChannelVolume(CHANNEL_NUM, TARGET_VOLUME, TRANSITION_TIME60)  \
                     AI_SfxSetChannelVolume  ,  \
                     CHANNEL_NUM , \
                     CharArrayFrom16(TARGET_VOLUME) , \
-                    CharArrayFrom16(TRANSITION_TIME60) ,   
- 
-#define AI_SfxSetChannelVolume_LENGTH   (AICMDSIZE +1   +2   +2    ) 
+                    CharArrayFrom16(TRANSITION_TIME60) ,
+
+#define AI_SfxSetChannelVolume_LENGTH   (AICMDSIZE +1   +2   +2    )
 
 
- 
+
 //==============================================================================
-//## SFX FADE CHANNEL VOLUME 
+//## SFX FADE CHANNEL VOLUME
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Fade out an occupied sfx channel's volume by volume percent 
-******************************************************************************** 
-  @param TRANSITION_TIME60: is number of ticks to fade between current 
-                volume to TARGET_VOLUME 
-  @param TARGET_VOLUME: signed range 0 - 100% (0x0000-0x7FFF) 
-  @exception: TARGET_VOLUME can NOT be negative 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Fade out an occupied sfx channel's volume by volume percent
+********************************************************************************
+  @param TRANSITION_TIME60: is number of ticks to fade between current
+                volume to TARGET_VOLUME
+  @param TARGET_VOLUME: signed range 0 - 100% (0x0000-0x7FFF)
+  @exception: TARGET_VOLUME can NOT be negative
+*******************************************************************************/
 #define SfxFadeChannelVolume(CHANNEL_NUM, TARGET_VOLUME, TRANSITION_TIME60)  \
                     AI_SfxFadeChannelVolume  ,  \
                     CHANNEL_NUM , \
                     CharArrayFrom16(TARGET_VOLUME) , \
-                    CharArrayFrom16(TRANSITION_TIME60) ,   
- 
-#define AI_SfxFadeChannelVolume_LENGTH   (AICMDSIZE +1   +2   +2    ) 
+                    CharArrayFrom16(TRANSITION_TIME60) ,
+
+#define AI_SfxFadeChannelVolume_LENGTH   (AICMDSIZE +1   +2   +2    )
 
 
- 
+
 //==============================================================================
-//## SFX STOP CHANNEL 
+//## SFX STOP CHANNEL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Stop playing sfx in occupied sfx channel 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Stop playing sfx in occupied sfx channel
+*******************************************************************************/
 #define SfxStopChannel(CHANNEL_NUM)  \
                     AI_SfxStopChannel  ,  \
-                    CHANNEL_NUM ,   
- 
-#define AI_SfxStopChannel_LENGTH   (AICMDSIZE +1    ) 
+                    CHANNEL_NUM ,
+
+#define AI_SfxStopChannel_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 9627 "src/aicommands.def"
 //==============================================================================
-//## IF SFX CHANNEL VOLUME LESS THAN 
+//## IF SFX CHANNEL VOLUME LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If a sfx channel's volume is < volume argument 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param VOLUME signed range 0 - 100% (0x0000-0x7FFF) 
-  @exception: If sfx channel is free (no audio playing), Goto LABEL. 
-        VOLUME can NOT be negative 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If a sfx channel's volume is < volume argument
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param VOLUME signed range 0 - 100% (0x0000-0x7FFF)
+  @exception: If sfx channel is free (no audio playing), Goto LABEL.
+        VOLUME can NOT be negative
+*******************************************************************************/
 #define IFSfxChannelVolumeLessThan(CHANNEL_NUM, VOLUME, GOTOLABEL)  \
                     AI_IFSfxChannelVolumeLessThan  ,  \
                     CHANNEL_NUM , \
                     CharArrayFrom16(VOLUME) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFSfxChannelVolumeLessThan_LENGTH   (AICMDSIZE +1   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFSfxChannelVolumeLessThan_LENGTH   (AICMDSIZE +1   +2   +1    )
 
 
- 
+
 //==============================================================================
 //# SFX COMMANDS END
 //==============================================================================
@@ -5724,814 +5724,814 @@ r*******************************************************************************
 //# VEHICHLE COMMANDS
 //==============================================================================
 //==============================================================================
-//## VEHICLE START PATH 
+//## VEHICLE START PATH
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes vehicle follow a predefined path within setup 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes vehicle follow a predefined path within setup
+*******************************************************************************/
 #define VehicleStartPath(PATH_NUM)  \
                     AI_VehicleStartPath  ,  \
-                    PATH_NUM ,   
- 
-#define AI_VehicleStartPath_LENGTH   (AICMDSIZE +1    ) 
+                    PATH_NUM ,
+
+#define AI_VehicleStartPath_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## VEHICLE SPEED 
+//## VEHICLE SPEED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Sets vehicle speed, usually paired with VEHICLE_START_PATH 
-******************************************************************************** 
-  @param TOP_SPEED Unsigned (1000 = 1 meter per second) 
-              ACCELERATION_TIME60 is number of game ticks to reach top speed 
-              (lower = faster) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Sets vehicle speed, usually paired with VEHICLE_START_PATH
+********************************************************************************
+  @param TOP_SPEED Unsigned (1000 = 1 meter per second)
+              ACCELERATION_TIME60 is number of game ticks to reach top speed
+              (lower = faster)
+*******************************************************************************/
 #define VehicleSpeed(TOP_SPEED, ACCELERATION_TIME60)  \
                     AI_VehicleSpeed  ,  \
                     CharArrayFrom16(TOP_SPEED) , \
-                    CharArrayFrom16(ACCELERATION_TIME60) ,   
- 
-#define AI_VehicleSpeed_LENGTH   (AICMDSIZE +2   +2    ) 
+                    CharArrayFrom16(ACCELERATION_TIME60) ,
+
+#define AI_VehicleSpeed_LENGTH   (AICMDSIZE +2   +2    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Sets vehicle speed, usually paired with VEHICLE_START_PATH 
-******************************************************************************** 
-  @param TOP_SPEED Unsigned (1000 = 1 meter per second) 
-              ACCELERATION_TIME60 is number of game ticks to reach top speed 
-              (lower = faster) 
-*******************************************************************************/  
+/*******************************************************************************
+  Sets vehicle speed, usually paired with VEHICLE_START_PATH
+********************************************************************************
+  @param TOP_SPEED Unsigned (1000 = 1 meter per second)
+              ACCELERATION_TIME60 is number of game ticks to reach top speed
+              (lower = faster)
+*******************************************************************************/
 #define VEHICLE_SPEED_MPH(TOP_SPEED, MPH_PER_SECOND)  \
-                VehicleSpeed((TOP_SPEED * 447), TOP_SPEED*(60/MPH_PER_SECOND))   
+                VehicleSpeed((TOP_SPEED * 447), TOP_SPEED*(60/MPH_PER_SECOND))
 
 
- 
+
 # 9766 "src/aicommands.def"
-/******************************************************************************* 
-  Sets vehicle speed, usually paired with VEHICLE_START_PATH 
-******************************************************************************** 
-  @param TOP_SPEED Unsigned (1000 = 1 meter per second) 
-              ACCELERATION_TIME60 is number of game ticks to reach top speed 
-              (lower = faster) 
-*******************************************************************************/  
+/*******************************************************************************
+  Sets vehicle speed, usually paired with VEHICLE_START_PATH
+********************************************************************************
+  @param TOP_SPEED Unsigned (1000 = 1 meter per second)
+              ACCELERATION_TIME60 is number of game ticks to reach top speed
+              (lower = faster)
+*******************************************************************************/
 #define VEHICLE_SPEED_KPH(TOP_SPEED, KPH_PER_SECOND)  \
-                VehicleSpeed((TOP_SPEED * 278), TOP_SPEED*(60/KPH_PER_SECOND))   
+                VehicleSpeed((TOP_SPEED * 278), TOP_SPEED*(60/KPH_PER_SECOND))
 
 
- 
+
 # 9770 "src/aicommands.def"
-/******************************************************************************* 
-  Sets vehicle speed, usually paired with VEHICLE_START_PATH 
-******************************************************************************** 
-  @param TOP_SPEED Unsigned (1000 = 1 meter per second) 
-              ACCELERATION_TIME60 is number of game ticks to reach top speed 
-              (lower = faster) 
-*******************************************************************************/  
+/*******************************************************************************
+  Sets vehicle speed, usually paired with VEHICLE_START_PATH
+********************************************************************************
+  @param TOP_SPEED Unsigned (1000 = 1 meter per second)
+              ACCELERATION_TIME60 is number of game ticks to reach top speed
+              (lower = faster)
+*******************************************************************************/
 #define VEHICLE_SPEED_MS(TOP_SPEED, MSS)  \
-                VehicleSpeed((TOP_SPEED * 1000), TOP_SPEED*(60/MSS))   
+                VehicleSpeed((TOP_SPEED * 1000), TOP_SPEED*(60/MSS))
 
 
- 
+
 # 9774 "src/aicommands.def"
 //==============================================================================
-//## AIRCRAFT ROTOR SPEED 
+//## AIRCRAFT ROTOR SPEED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Sets aircrafts rotor speed 
-******************************************************************************** 
-  @param ROTOR_SPEED Unsigned Revolutions Per Minute (RPM) 
-              ACCELERATION_TIME60 is number of game ticks to reach top speed 
-              (lower = faster) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Sets aircrafts rotor speed
+********************************************************************************
+  @param ROTOR_SPEED Unsigned Revolutions Per Minute (RPM)
+              ACCELERATION_TIME60 is number of game ticks to reach top speed
+              (lower = faster)
+*******************************************************************************/
 #define AircraftRotorSpeed(ROTOR_SPEED, ACCELERATION_TIME60)  \
                     AI_AircraftRotorSpeed  ,  \
                     CharArrayFrom16(ROTOR_SPEED) , \
-                    CharArrayFrom16(ACCELERATION_TIME60) ,   
- 
-#define AI_AircraftRotorSpeed_LENGTH   (AICMDSIZE +2   +2    ) 
+                    CharArrayFrom16(ACCELERATION_TIME60) ,
+
+#define AI_AircraftRotorSpeed_LENGTH   (AICMDSIZE +2   +2    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Sets aircrafts rotor speed 
-******************************************************************************** 
-  @param ROTOR_SPEED Unsigned Revolutions Per Minute (RPM) 
-              ACCELERATION_TIME60 is number of game ticks to reach top speed 
-              (lower = faster) 
-*******************************************************************************/  
+/*******************************************************************************
+  Sets aircrafts rotor speed
+********************************************************************************
+  @param ROTOR_SPEED Unsigned Revolutions Per Minute (RPM)
+              ACCELERATION_TIME60 is number of game ticks to reach top speed
+              (lower = faster)
+*******************************************************************************/
 #define AIRCRAFT_ROTOR_SPEED_RPMS(ROTOR_SPEED, RPMS)  \
-                AircraftRotorSpeed(ROTOR_SPEED, ROTOR_SPEED*(60/RPMS))   
+                AircraftRotorSpeed(ROTOR_SPEED, ROTOR_SPEED*(60/RPMS))
 
 
- 
+
 # 9822 "src/aicommands.def"
 //==============================================================================
 //# VEHICHLE COMMANDS END
 //==============================================================================
 //==============================================================================
-//## IF CAMERA IS IN INTRO 
+//## IF CAMERA IS IN INTRO
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If camera mode equal to INTRO_CAM/FADESWIRL_CAM (viewing mission intro) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: If setup lacks intro camera structs, intro will be skipped 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If camera mode equal to INTRO_CAM/FADESWIRL_CAM (viewing mission intro)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: If setup lacks intro camera structs, intro will be skipped
+*******************************************************************************/
 #define IFCameraIsInIntro(GOTOLABEL)  \
                     AI_IFCameraIsInIntro  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFCameraIsInIntro_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFCameraIsInIntro_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF CAMERA IS IN BOND SWIRL 
+//## IF CAMERA IS IN BOND SWIRL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If camera mode equal to SWIRL_CAM (moving to back of Bond's head) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: If setup lacks swirl points, intro swirl will be skipped 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If camera mode equal to SWIRL_CAM (moving to back of Bond's head)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: If setup lacks swirl points, intro swirl will be skipped
+*******************************************************************************/
 #define IFCameraIsInBondSwirl(GOTOLABEL)  \
                     AI_IFCameraIsInBondSwirl  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFCameraIsInBondSwirl_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFCameraIsInBondSwirl_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## TV CHANGE SCREEN BANK 
+//## TV CHANGE SCREEN BANK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Change the screen bank of a tagged TV monitor 
-******************************************************************************** 
-  @exception: If tagged object has multiple screens, use SCREEN_INDEX to set. 
-        If tagged object has one screen, SCREEN_INDEX is ignored 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Change the screen bank of a tagged TV monitor
+********************************************************************************
+  @exception: If tagged object has multiple screens, use SCREEN_INDEX to set.
+        If tagged object has one screen, SCREEN_INDEX is ignored
+*******************************************************************************/
 #define TvChangeScreenBank(OBJECT_TAG, SCREEN_INDEX, SCREEN_BANK)  \
                     AI_TvChangeScreenBank  ,  \
                     OBJECT_TAG , \
                     SCREEN_INDEX , \
-                    SCREEN_BANK ,   
- 
-#define AI_TvChangeScreenBank_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    SCREEN_BANK ,
+
+#define AI_TvChangeScreenBank_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF BOND IN TANK 
+//## IF BOND IN TANK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond is controlling tank 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond is controlling tank
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFBondInTank(GOTOLABEL)  \
                     AI_IFBondInTank  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondInTank_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondInTank_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## END LEVEL 
+//## END LEVEL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Exits the level 
-******************************************************************************** 
-  @exception: Recommend not to use this command, instead use GAILIST_END_LEVEL for 
-        exit cutscene ailist. 
-        Retail game has a glitch with hires mode that needs to execute this 
-        command in a loop, check Cuba's 1000 List 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Exits the level
+********************************************************************************
+  @exception: Recommend not to use this command, instead use GAILIST_END_LEVEL for
+        exit cutscene ailist.
+        Retail game has a glitch with hires mode that needs to execute this
+        command in a loop, check Cuba's 1000 List
+*******************************************************************************/
 #define EndLevel()  \
-                    AI_EndLevel  ,     
- 
-#define AI_EndLevel_LENGTH   (AICMDSIZE    ) 
+                    AI_EndLevel  ,
+
+#define AI_EndLevel_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
 //# CINEMATICS
 //==============================================================================
-/******************************************************************************* 
-  Prepare to Transition to bond from Camera 
-*******************************************************************************/ 
-#define   CameraTransitionToBond()         Yield()        Yield()        Yield() 
+/*******************************************************************************
+  Prepare to Transition to bond from Camera
+*******************************************************************************/
+#define   CameraTransitionToBond()         Yield()        Yield()        Yield()
 
- 
-/******************************************************************************* 
-  Prepare to Transition from bond to Camera 
-*******************************************************************************/ 
-#define   CameraTransitionFromBond()         BondHideWeapons()        Yield()        Yield()        Yield() 
 
- 
+/*******************************************************************************
+  Prepare to Transition from bond to Camera
+*******************************************************************************/
+#define   CameraTransitionFromBond()         BondHideWeapons()        Yield()        Yield()        Yield()
+
+
 //==============================================================================
-//## CAMERA RETURN TO BOND 
+//## CAMERA RETURN TO BOND
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Switch back to first person view 
-******************************************************************************** 
-  @exception: Unused command, never used in retail game. 
-        Tagged items within inventory will become invalid after command - only 
-        weapons are safe. 
-        Must have 3 Yield commands before executing this command or else 
-        engine will crash on console (use CameraTransitionToBond). 
-        Mission time is resumed on return to first person view 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Switch back to first person view
+********************************************************************************
+  @exception: Unused command, never used in retail game.
+        Tagged items within inventory will become invalid after command - only
+        weapons are safe.
+        Must have 3 Yield commands before executing this command or else
+        engine will crash on console (use CameraTransitionToBond).
+        Mission time is resumed on return to first person view
+*******************************************************************************/
 #define CameraReturnToBond()  \
-                    AI_CameraReturnToBond  ,     
- 
-#define AI_CameraReturnToBond_LENGTH   (AICMDSIZE    ) 
+                    AI_CameraReturnToBond  ,
+
+#define AI_CameraReturnToBond_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 10102 "src/aicommands.def"
 //POLYMORPHS
 //==============================================================================
-//## CAMERA LOOK AT BOND FROM PAD 
+//## CAMERA LOOK AT BOND FROM PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Change view to PAD and look at Bond 
-******************************************************************************** 
-  @exception: Must have a BondHideWeapons and 3 Yield commands before executing 
-        or else engine will crash on console (use CameraTransitionFromBond). 
-        If camera mode is already in third person then you do NOT need to 
-        do the above. 
-        Mission time is paused while in third person 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Change view to PAD and look at Bond
+********************************************************************************
+  @exception: Must have a BondHideWeapons and 3 Yield commands before executing
+        or else engine will crash on console (use CameraTransitionFromBond).
+        If camera mode is already in third person then you do NOT need to
+        do the above.
+        Mission time is paused while in third person
+*******************************************************************************/
 #define CameraLookAtBondFromPad(PAD)  \
                     AI_CameraLookAtBondFromPad  ,  \
-                    CharArrayFrom16(PAD) ,   
- 
-#define AI_CameraLookAtBondFromPad_LENGTH   (AICMDSIZE +2    ) 
+                    CharArrayFrom16(PAD) ,
+
+#define AI_CameraLookAtBondFromPad_LENGTH   (AICMDSIZE +2    )
 
 
- 
+
 //==============================================================================
-//## CAMERA SWITCH 
+//## CAMERA SWITCH
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Change view to tagged cameras position and rotation 
-******************************************************************************** 
-  @exception: Must have a BondHideWeapons and 3 Yield commands before executing 
-        or else engine will crash on console (use CameraTransitionFromBond). 
-        If camera mode is already in third person then you do NOT need to 
-        do the above 
-        Only look at Bond if flag is set. 
-        Unused flag may have separated look at Bond as x/y flags instead of 
-        a single flag - for retail unused flag does nothing 
-        Mission time is paused while in third person 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Change view to tagged cameras position and rotation
+********************************************************************************
+  @exception: Must have a BondHideWeapons and 3 Yield commands before executing
+        or else engine will crash on console (use CameraTransitionFromBond).
+        If camera mode is already in third person then you do NOT need to
+        do the above
+        Only look at Bond if flag is set.
+        Unused flag may have separated look at Bond as x/y flags instead of
+        a single flag - for retail unused flag does nothing
+        Mission time is paused while in third person
+*******************************************************************************/
 #define CameraSwitch(OBJECT_TAG, LOOK_AT_BOND_FLAG, UNUSED_FLAG)  \
                     AI_CameraSwitch  ,  \
                     OBJECT_TAG , \
                     CharArrayFrom16(LOOK_AT_BOND_FLAG) , \
-                    CharArrayFrom16(UNUSED_FLAG) ,   
- 
-#define AI_CameraSwitch_LENGTH   (AICMDSIZE +1   +2   +2    ) 
+                    CharArrayFrom16(UNUSED_FLAG) ,
+
+#define AI_CameraSwitch_LENGTH   (AICMDSIZE +1   +2   +2    )
 
 
- 
+
 //==============================================================================
-//## IF BOND Y POS LESS THAN 
+//## IF BOND Y POS LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond's y axis position < Y_POS 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRYE 
-  @param Y_POS signed Integer 
-  @exception: Checks if Bond's y axis is below Y_POS. 
-        Uses world units. (scale is 1:1 to in-game position.) 
-        Bond's point of view is accounted for by command (like debug's manpos) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond's y axis position < Y_POS
+********************************************************************************
+  @return     Continue execution from LABEL if TRYE
+  @param Y_POS signed Integer
+  @exception: Checks if Bond's y axis is below Y_POS.
+        Uses world units. (scale is 1:1 to in-game position.)
+        Bond's point of view is accounted for by command (like debug's manpos)
+*******************************************************************************/
 #define IFBondYPosLessThan(Y_POS, GOTOLABEL)  \
                     AI_IFBondYPosLessThan  ,  \
                     CharArrayFrom16(Y_POS) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondYPosLessThan_LENGTH   (AICMDSIZE +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondYPosLessThan_LENGTH   (AICMDSIZE +2   +1    )
 
 
- 
+
 //==============================================================================
-//## HUD HIDE AND LOCK CONTROLS AND PAUSE MISSION TIME 
+//## HUD HIDE AND LOCK CONTROLS AND PAUSE MISSION TIME
 //==============================================================================
 
- 
-/******************************************************************************* 
-  hide hud elements, lock player controls and pause mission time 
-******************************************************************************** 
-  @param BITFIELD use HUD_# flags to hide indavidual Hud Elements 
-  @exception: Will not hide element on command execution. 
-        This is needed for dialog/HUD countdown while in cinema mode. 
-        Flags can be combined together to show multiple elements. 
-        Sequential executions of HUD_HIDE can be used to hide more elements, 
-        but once an element has been hidden it cannot be shown again until 
-        HUD_SHOW_ALL is executed. 
-        Bond can take damage while in locked state. 
-        Mission time is paused while in locked state 
-*******************************************************************************/   
+
+/*******************************************************************************
+  hide hud elements, lock player controls and pause mission time
+********************************************************************************
+  @param BITFIELD use HUD_# flags to hide indavidual Hud Elements
+  @exception: Will not hide element on command execution.
+        This is needed for dialog/HUD countdown while in cinema mode.
+        Flags can be combined together to show multiple elements.
+        Sequential executions of HUD_HIDE can be used to hide more elements,
+        but once an element has been hidden it cannot be shown again until
+        HUD_SHOW_ALL is executed.
+        Bond can take damage while in locked state.
+        Mission time is paused while in locked state
+*******************************************************************************/
 #define BondDisableControl(BITFIELD)  \
                     AI_BondDisableControl  ,  \
-                    BITFIELD ,   
- 
-#define AI_BondDisableControl_LENGTH   (AICMDSIZE +1    ) 
+                    BITFIELD ,
+
+#define AI_BondDisableControl_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## HUD SHOW ALL AND UNLOCK CONTROLS AND RESUME MISSION TIME 
+//## HUD SHOW ALL AND UNLOCK CONTROLS AND RESUME MISSION TIME
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Show all hud elements, unlock player control and resume mission time 
-******************************************************************************** 
-  @exception: Should only be executed after HUD_HIDE_AND_LOCK_CONTROLS 
-        Mission time is resumed 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Show all hud elements, unlock player control and resume mission time
+********************************************************************************
+  @exception: Should only be executed after HUD_HIDE_AND_LOCK_CONTROLS
+        Mission time is resumed
+*******************************************************************************/
 #define BondEnableControl()  \
-                    AI_BondEnableControl  ,     
- 
-#define AI_BondEnableControl_LENGTH   (AICMDSIZE    ) 
+                    AI_BondEnableControl  ,
+
+#define AI_BondEnableControl_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## CHR TRY TELEPORTING TO PAD 
+//## CHR TRY TELEPORTING TO PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Teleport chr to PAD 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Teleport chr to PAD
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+*******************************************************************************/
 #define TRYTeleportingChrToPad(CHR_NUM, PAD, GOTOLABEL)  \
                     AI_TRYTeleportingChrToPad  ,  \
                     CHR_NUM , \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_TRYTeleportingChrToPad_LENGTH   (AICMDSIZE +1   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_TRYTeleportingChrToPad_LENGTH   (AICMDSIZE +1   +2   +1    )
 
 
- 
+
 # 10426 "src/aicommands.def"
 //POLYMORPHS
-/******************************************************************************* 
-  Teleport chr to PAD 
-******************************************************************************** 
-  @return     Continue execution from LABEL if Successful 
-*******************************************************************************/  
+/*******************************************************************************
+  Teleport chr to PAD
+********************************************************************************
+  @return     Continue execution from LABEL if Successful
+*******************************************************************************/
 #define TRYTeleportingMeToPad(PAD, GOTOLABEL)  \
-                TRYTeleportingChrToPad(CHR_SELF, PAD, GOTOLABEL)   
+                TRYTeleportingChrToPad(CHR_SELF, PAD, GOTOLABEL)
 
 
- 
+
 # 10433 "src/aicommands.def"
 //==============================================================================
-//## SCREEN FADE TO BLACK 
+//## SCREEN FADE TO BLACK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Fades the screen out to black 
-******************************************************************************** 
-  @exception: Fade duration is 1 second 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Fades the screen out to black
+********************************************************************************
+  @exception: Fade duration is 1 second
+*******************************************************************************/
 #define ScreenFadeToBlack()  \
-                    AI_ScreenFadeToBlack  ,     
- 
-#define AI_ScreenFadeToBlack_LENGTH   (AICMDSIZE    ) 
+                    AI_ScreenFadeToBlack  ,
+
+#define AI_ScreenFadeToBlack_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## SCREEN FADE FROM BLACK 
+//## SCREEN FADE FROM BLACK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Fades the screen from black 
-******************************************************************************** 
-  @exception: Fade duration is 1 second 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Fades the screen from black
+********************************************************************************
+  @exception: Fade duration is 1 second
+*******************************************************************************/
 #define ScreenFadeFromBlack()  \
-                    AI_ScreenFadeFromBlack  ,     
- 
-#define AI_ScreenFadeFromBlack_LENGTH   (AICMDSIZE    ) 
+                    AI_ScreenFadeFromBlack  ,
+
+#define AI_ScreenFadeFromBlack_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## IF SCREEN FADE COMPLETED 
+//## IF SCREEN FADE COMPLETED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  When screen fade has completed (from/to black) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Fade duration is 1 second 
-*******************************************************************************/   
+
+/*******************************************************************************
+  When screen fade has completed (from/to black)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Fade duration is 1 second
+*******************************************************************************/
 #define IFScreenFadeCompleted(GOTOLABEL)  \
                     AI_IFScreenFadeCompleted  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFScreenFadeCompleted_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFScreenFadeCompleted_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## CHR HIDE ALL 
+//## CHR HIDE ALL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Hide all characters in level - including Bond's third person model. 
-******************************************************************************** 
-  @exception: Hidden characters will halt their AI List execution until unhidden 
-        Execute this before switching to exit camera or Bond will disappear 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Hide all characters in level - including Bond's third person model.
+********************************************************************************
+  @exception: Hidden characters will halt their AI List execution until unhidden
+        Execute this before switching to exit camera or Bond will disappear
+*******************************************************************************/
 #define HideAllChrs()  \
-                    AI_HideAllChrs  ,     
- 
-#define AI_HideAllChrs_LENGTH   (AICMDSIZE    ) 
+                    AI_HideAllChrs  ,
+
+#define AI_HideAllChrs_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## CHR SHOW ALL 
+//## CHR SHOW ALL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Show all characters previously hidden by HideAllChrs 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Show all characters previously hidden by HideAllChrs
+*******************************************************************************/
 #define ShowAllChrs()  \
-                    AI_ShowAllChrs  ,     
- 
-#define AI_ShowAllChrs_LENGTH   (AICMDSIZE    ) 
+                    AI_ShowAllChrs  ,
+
+#define AI_ShowAllChrs_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
 //# CINEMATICS END
 //==============================================================================
 //==============================================================================
-//## DOOR OPEN INSTANT 
+//## DOOR OPEN INSTANT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Instantly open tagged door 
-******************************************************************************** 
-  @exception: Mostly used for cutscenes, does NOT trigger door opening sfx. 
-        Open tagged door even if locked 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Instantly open tagged door
+********************************************************************************
+  @exception: Mostly used for cutscenes, does NOT trigger door opening sfx.
+        Open tagged door even if locked
+*******************************************************************************/
 #define DoorOpenInstant(OBJECT_TAG)  \
                     AI_DoorOpenInstant  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_DoorOpenInstant_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_DoorOpenInstant_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## CHR REMOVE ITEM IN HAND 
+//## CHR REMOVE ITEM IN HAND
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Remove the item held by HAND_INDEX 
-******************************************************************************** 
-  @exception: Does NOT drop item, instead clears holding item flag for HAND_INDEX 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Remove the item held by HAND_INDEX
+********************************************************************************
+  @exception: Does NOT drop item, instead clears holding item flag for HAND_INDEX
+*******************************************************************************/
 #define ChrRemoveItemInHand(CHR_NUM, HAND_INDEX)  \
                     AI_ChrRemoveItemInHand  ,  \
                     CHR_NUM , \
-                    HAND_INDEX ,   
- 
-#define AI_ChrRemoveItemInHand_LENGTH   (AICMDSIZE +1   +1    ) 
+                    HAND_INDEX ,
+
+#define AI_ChrRemoveItemInHand_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF NUMBER OF ACTIVE PLAYERS LESS THAN 
+//## IF NUMBER OF ACTIVE PLAYERS LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If the number of active players < NUMBER 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Single player always has a total of active players set to 1 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If the number of active players < NUMBER
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Single player always has a total of active players set to 1
+*******************************************************************************/
 #define IfNumberOfActivePlayersLessThan(NUMBER, GOTOLABEL)  \
                     AI_IfNumberOfActivePlayersLessThan  ,  \
                     NUMBER , \
-                    GOTOLABEL ,   
- 
-#define AI_IfNumberOfActivePlayersLessThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IfNumberOfActivePlayersLessThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  If Single Player 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/  
+/*******************************************************************************
+  If Single Player
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFSinglePlayer(GOTOLABEL)  \
-                IfNumberOfActivePlayersLessThan(2, GOTOLABEL)   
+                IfNumberOfActivePlayersLessThan(2, GOTOLABEL)
 
 
- 
+
 # 10765 "src/aicommands.def"
 //==============================================================================
-//## IF BOND ITEM TOTAL AMMO LESS THAN 
+//## IF BOND ITEM TOTAL AMMO LESS THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond's total ammo for item < AMMO_TOTAL 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @param AMMO_TOTAL singed char includes loaded gun + reserve 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond's total ammo for item < AMMO_TOTAL
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @param AMMO_TOTAL singed char includes loaded gun + reserve
+*******************************************************************************/
 #define IFBondItemTotalAmmoLessThan(ITEM_NUM, AMMO_TOTAL, GOTOLABEL)  \
                     AI_IFBondItemTotalAmmoLessThan  ,  \
                     ITEM_NUM , \
                     AMMO_TOTAL , \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondItemTotalAmmoLessThan_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondItemTotalAmmoLessThan_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 //==============================================================================
-//## BOND EQUIP ITEM 
+//## BOND EQUIP ITEM
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Forces Bond to equip an item - only works in first person 
-******************************************************************************** 
-  @exception: Can be used for any item, even if Bond does NOT have it in inventory 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Forces Bond to equip an item - only works in first person
+********************************************************************************
+  @exception: Can be used for any item, even if Bond does NOT have it in inventory
+*******************************************************************************/
 #define BondEquipItem(ITEM_NUM)  \
                     AI_BondEquipItem  ,  \
-                    ITEM_NUM ,   
- 
-#define AI_BondEquipItem_LENGTH   (AICMDSIZE +1    ) 
+                    ITEM_NUM ,
+
+#define AI_BondEquipItem_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## BOND EQUIP ITEM CINEMA 
+//## BOND EQUIP ITEM CINEMA
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Forces Bond to equip an item - only works in third person (cinema) 
-******************************************************************************** 
-  @exception: Can be used for any item, even if Bond does NOT have it in inventory 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Forces Bond to equip an item - only works in third person (cinema)
+********************************************************************************
+  @exception: Can be used for any item, even if Bond does NOT have it in inventory
+*******************************************************************************/
 #define BondEquipItemCinema(ITEM_NUM)  \
                     AI_BondEquipItemCinema  ,  \
-                    ITEM_NUM ,   
- 
-#define AI_BondEquipItemCinema_LENGTH   (AICMDSIZE +1    ) 
+                    ITEM_NUM ,
+
+#define AI_BondEquipItemCinema_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## BOND SET LOCKED VELOCITY 
+//## BOND SET LOCKED VELOCITY
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Forces Bond to move in X/Z direction 
-******************************************************************************** 
-  @param X/Z_SPEED60 is number of world units per tick (1 = 0.6m/s) 
-  @exception: Only works when Bond has been locked by HUD_HIDE_AND_LOCK_CONTROLS. 
-        Used for dam jump. 
-        Uses world units. (scale is 1:1 to in-game position.) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Forces Bond to move in X/Z direction
+********************************************************************************
+  @param X/Z_SPEED60 is number of world units per tick (1 = 0.6m/s)
+  @exception: Only works when Bond has been locked by HUD_HIDE_AND_LOCK_CONTROLS.
+        Used for dam jump.
+        Uses world units. (scale is 1:1 to in-game position.)
+*******************************************************************************/
 #define BondSetLockedVelocity(X_SPEED60, Z_SPEED60)  \
                     AI_BondSetLockedVelocity  ,  \
                     X_SPEED60 , \
-                    Z_SPEED60 ,   
- 
-#define AI_BondSetLockedVelocity_LENGTH   (AICMDSIZE +1   +1    ) 
+                    Z_SPEED60 ,
+
+#define AI_BondSetLockedVelocity_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 # 10911 "src/aicommands.def"
 //==============================================================================
-//## IF OBJECT IN ROOM WITH PAD 
+//## IF OBJECT IN ROOM WITH PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If tagged object in the same room with PAD 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If tagged object in the same room with PAD
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFObjectInRoomWithPad(OBJECT_TAG, PAD, GOTOLABEL)  \
                     AI_IFObjectInRoomWithPad  ,  \
                     OBJECT_TAG , \
                     CharArrayFrom16(PAD) , \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectInRoomWithPad_LENGTH   (AICMDSIZE +1   +2   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectInRoomWithPad_LENGTH   (AICMDSIZE +1   +2   +1    )
 
 
- 
+
 //==============================================================================
 //## IF GUARD IS FIRING AND LOCKED FORWARD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If guard is in firing state (ACT_ATTACK) and TARGET_180_RANGE is set 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If guard is in firing state (ACT_ATTACK) and TARGET_180_RANGE is set
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFImFiringAndLockedForward(GOTOLABEL)  \
                     AI_IFImFiringAndLockedForward  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFImFiringAndLockedForward_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFImFiringAndLockedForward_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF GUARD IS FIRING 
+//## IF GUARD IS FIRING
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If guard is in firing state (ACT_ATTACK) 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If guard is in firing state (ACT_ATTACK)
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFImFiring(GOTOLABEL)  \
                     AI_IFImFiring  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFImFiring_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFImFiring_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## SWITCH ENVIRONMENT 
+//## SWITCH ENVIRONMENT
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Instantly switch Sky to the Alternative Sky 
-******************************************************************************** 
-  @exception: Can NOT be stopped after executing. 
-        Level must have a Sky assigned or will crash! 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Instantly switch Sky to the Alternative Sky
+********************************************************************************
+  @exception: Can NOT be stopped after executing.
+        Level must have a Sky assigned or will crash!
+*******************************************************************************/
 #define SwitchSky()  \
-                    AI_SwitchSky  ,     
- 
-#define AI_SwitchSky_LENGTH   (AICMDSIZE    ) 
+                    AI_SwitchSky  ,
+
+#define AI_SwitchSky_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 11074 "src/aicommands.def"
 //==============================================================================
-//## TRIGGER FADE AND EXIT LEVEL ON BUTTON PRESS 
+//## TRIGGER FADE AND EXIT LEVEL ON BUTTON PRESS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If player pressed any button, fade to black and exit level 
-******************************************************************************** 
-  @exception: This command activates a state where game will fade to black when 
-        button input is detected from controller 1. 
-        Does NOT pause mission time 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If player pressed any button, fade to black and exit level
+********************************************************************************
+  @exception: This command activates a state where game will fade to black when
+        button input is detected from controller 1.
+        Does NOT pause mission time
+*******************************************************************************/
 #define TriggerFadeAndExitLevelOnButtonPress()  \
-                    AI_TriggerFadeAndExitLevelOnButtonPress  ,     
- 
-#define AI_TriggerFadeAndExitLevelOnButtonPress_LENGTH   (AICMDSIZE    ) 
+                    AI_TriggerFadeAndExitLevelOnButtonPress  ,
+
+#define AI_TriggerFadeAndExitLevelOnButtonPress_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## IF BOND IS DEAD 
+//## IF BOND IS DEAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond has died/been killed 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond has died/been killed
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFBondIsDead(GOTOLABEL)  \
                     AI_IFBondIsDead  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondIsDead_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondIsDead_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## BOND DISABLE DAMAGE AND PICKUPS 
+//## BOND DISABLE DAMAGE AND PICKUPS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Disables Bond damage and ability to pick up items 
-******************************************************************************** 
-  @exception: Commonly used for level exit AI Lists - prevents Bond dying after 
-        triggering exit cutscene. 
-        Use IF_BOND_DAMAGE_AND_PICKUPS_DISABLED to check if flag is set on 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Disables Bond damage and ability to pick up items
+********************************************************************************
+  @exception: Commonly used for level exit AI Lists - prevents Bond dying after
+        triggering exit cutscene.
+        Use IF_BOND_DAMAGE_AND_PICKUPS_DISABLED to check if flag is set on
+*******************************************************************************/
 #define BondDisableDamageAndPickups()  \
-                    AI_BondDisableDamageAndPickups  ,     
- 
-#define AI_BondDisableDamageAndPickups_LENGTH   (AICMDSIZE    ) 
+                    AI_BondDisableDamageAndPickups  ,
+
+#define AI_BondDisableDamageAndPickups_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 11184 "src/aicommands.def"
 //==============================================================================
-//## BOND HIDE WEAPONS 
+//## BOND HIDE WEAPONS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Set Bond's left/right weapons to be invisible 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Set Bond's left/right weapons to be invisible
+*******************************************************************************/
 #define BondHideWeapons()  \
-                    AI_BondHideWeapons  ,     
- 
-#define AI_BondHideWeapons_LENGTH   (AICMDSIZE    ) 
+                    AI_BondHideWeapons  ,
+
+#define AI_BondHideWeapons_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //==============================================================================
-//## CAMERA ORBIT PAD 
+//## CAMERA ORBIT PAD
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Change view to orbit a pad with set speed 
-******************************************************************************** 
-  @param LAT_DISTANCE: Unsigned camera distance from pad in centimeters 
-  @param VERT_DISTANCE: Signed camera distance from pad in centimeters 
-  @param ORBIT_SPEED: Normalised angle -0.5 - 0 - 0.5 (8000 - 7FFF) to rotate  
-                      per frame. Generally stick to a low range as it is used   
-                      for delta timing (FF00-0100) (-0.02 - 0 - 0.02) 
-  @param PAD: pad for camera to target and orbit around 
-  @param Y_POS_OFFSET: Signed offset the relative y position for pad 
-                       (boom/jib) 
-  @param INITIAL_ROTATION: Counter-clockwise normalised angle 0 - 1.0 (65535) 
-  @exception: Must have a BondHideWeapons and 3 Yield commands before executing 
-        or else engine will crash on console (use CameraTransitionFromBond). 
-        If camera mode is already in third person then you do NOT need to do 
-        the above. 
-        Mission time is paused while in third person 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Change view to orbit a pad with set speed
+********************************************************************************
+  @param LAT_DISTANCE: Unsigned camera distance from pad in centimeters
+  @param VERT_DISTANCE: Signed camera distance from pad in centimeters
+  @param ORBIT_SPEED: Normalised angle -0.5 - 0 - 0.5 (8000 - 7FFF) to rotate
+                      per frame. Generally stick to a low range as it is used
+                      for delta timing (FF00-0100) (-0.02 - 0 - 0.02)
+  @param PAD: pad for camera to target and orbit around
+  @param Y_POS_OFFSET: Signed offset the relative y position for pad
+                       (boom/jib)
+  @param INITIAL_ROTATION: Counter-clockwise normalised angle 0 - 1.0 (65535)
+  @exception: Must have a BondHideWeapons and 3 Yield commands before executing
+        or else engine will crash on console (use CameraTransitionFromBond).
+        If camera mode is already in third person then you do NOT need to do
+        the above.
+        Mission time is paused while in third person
+*******************************************************************************/
 #define CameraOrbitPad(LAT_DISTANCE, VERT_DISTANCE, ORBIT_SPEED60, PAD, Y_POS_OFFSET, INITIAL_ROTATION)  \
                     AI_CameraOrbitPad  ,  \
                     CharArrayFrom16(LAT_DISTANCE) , \
@@ -6539,332 +6539,332 @@ r*******************************************************************************
                     CharArrayFrom16(ORBIT_SPEED60) , \
                     CharArrayFrom16(PAD) , \
                     CharArrayFrom16(Y_POS_OFFSET) , \
-                    CharArrayFrom16(INITIAL_ROTATION) ,   
- 
-#define AI_CameraOrbitPad_LENGTH   (AICMDSIZE +2   +2   +2   +2   +2   +2    ) 
+                    CharArrayFrom16(INITIAL_ROTATION) ,
+
+#define AI_CameraOrbitPad_LENGTH   (AICMDSIZE +2   +2   +2   +2   +2   +2    )
 
 
- 
+
 //==============================================================================
-//## CREDITS ROLL 
+//## CREDITS ROLL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Trigger credits crawl 
-******************************************************************************** 
-  @exception: Credits text and positions are stored in setup intro struct 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Trigger credits crawl
+********************************************************************************
+  @exception: Credits text and positions are stored in setup intro struct
+*******************************************************************************/
 #define CreditsRoll()  \
-                    AI_CreditsRoll  ,     
- 
-#define AI_CreditsRoll_LENGTH   (AICMDSIZE    ) 
+                    AI_CreditsRoll  ,
+
+#define AI_CreditsRoll_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 11313 "src/aicommands.def"
 //==============================================================================
-//## IF CREDITS HAS COMPLETED 
+//## IF CREDITS HAS COMPLETED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If credits crawl has finished 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If credits crawl has finished
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+*******************************************************************************/
 #define IFCreditsHasCompleted(GOTOLABEL)  \
                     AI_IFCreditsHasCompleted  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFCreditsHasCompleted_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFCreditsHasCompleted_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF OBJECTIVE ALL COMPLETED 
+//## IF OBJECTIVE ALL COMPLETED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If all objectives for current difficulty has been completed 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Uses objective difficulty settings within setup, briefing file 
-        settings are not referenced. 
-        Ensure both setup and briefing files are consistent 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If all objectives for current difficulty has been completed
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Uses objective difficulty settings within setup, briefing file
+        settings are not referenced.
+        Ensure both setup and briefing files are consistent
+*******************************************************************************/
 #define IFObjectiveAllCompleted(GOTOLABEL)  \
                     AI_IFObjectiveAllCompleted  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFObjectiveAllCompleted_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFObjectiveAllCompleted_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## IF FOLDER ACTOR IS EQUAL 
+//## IF FOLDER ACTOR IS EQUAL
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If current Bond equal to folder actor index 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: In retail release only index 0 works. 
-        Originally this would have checked which Bond 
-        (Brosnan/Connery/Moore/Dalton) is currently used, with each briefing 
-        folder using a different Bond likeness in-game. However Rare didn't 
-        have the license to use the other actor's faces so this feature was 
-        removed. Command is only used for Cuba (credits) 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If current Bond equal to folder actor index
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: In retail release only index 0 works.
+        Originally this would have checked which Bond
+        (Brosnan/Connery/Moore/Dalton) is currently used, with each briefing
+        folder using a different Bond likeness in-game. However Rare didn't
+        have the license to use the other actor's faces so this feature was
+        removed. Command is only used for Cuba (credits)
+*******************************************************************************/
 #define IFFolderActorIsEqual(BOND_ACTOR_INDEX, GOTOLABEL)  \
                     AI_IFFolderActorIsEqual  ,  \
                     BOND_ACTOR_INDEX , \
-                    GOTOLABEL ,   
- 
-#define AI_IFFolderActorIsEqual_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFFolderActorIsEqual_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF BOND DAMAGE AND PICKUPS DISABLED 
+//## IF BOND DAMAGE AND PICKUPS DISABLED
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If Bond damage and ability to pick up items disabled 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Used to check when Bond has exited level, usually to stop guards from 
-        spawning during mission cinema. 
-        Use BOND_DISABLE_DAMAGE_AND_PICKUPS to set state on 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If Bond damage and ability to pick up items disabled
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Used to check when Bond has exited level, usually to stop guards from
+        spawning during mission cinema.
+        Use BOND_DISABLE_DAMAGE_AND_PICKUPS to set state on
+*******************************************************************************/
 #define IFBondDamageAndPickupsDisabled(GOTOLABEL)  \
                     AI_IFBondDamageAndPickupsDisabled  ,  \
-                    GOTOLABEL ,   
- 
-#define AI_IFBondDamageAndPickupsDisabled_LENGTH   (AICMDSIZE +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFBondDamageAndPickupsDisabled_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //==============================================================================
-//## MUSIC XTRACK PLAY 
+//## MUSIC XTRACK PLAY
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Play levels x track for duration 
-******************************************************************************** 
-  @param SECONDS unsigned 
-  @param MUSIC_SLOT available music slots range is 0-3 
-  @exception: SECONDS_STOPPED_DURATION is used by MUSIC_XTRACK_STOP 
-        When a slot is stopped, the xtrack will continue to play until 
-        this or SECONDS_TOTAL_DURATION reaches 0. 
-        If you do not want this to happen, set SECONDS_STOPPED_DURATION to 0 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Play levels x track for duration
+********************************************************************************
+  @param SECONDS unsigned
+  @param MUSIC_SLOT available music slots range is 0-3
+  @exception: SECONDS_STOPPED_DURATION is used by MUSIC_XTRACK_STOP
+        When a slot is stopped, the xtrack will continue to play until
+        this or SECONDS_TOTAL_DURATION reaches 0.
+        If you do not want this to happen, set SECONDS_STOPPED_DURATION to 0
+*******************************************************************************/
 #define MusicPlaySlot(MUSIC_SLOT, SECONDS_STOPPED_DURATION, SECONDS_TOTAL_DURATION)  \
                     AI_MusicPlaySlot  ,  \
                     MUSIC_SLOT , \
                     SECONDS_STOPPED_DURATION , \
-                    SECONDS_TOTAL_DURATION ,   
- 
-#define AI_MusicPlaySlot_LENGTH   (AICMDSIZE +1   +1   +1    ) 
+                    SECONDS_TOTAL_DURATION ,
+
+#define AI_MusicPlaySlot_LENGTH   (AICMDSIZE +1   +1   +1    )
 
 
- 
+
 # 11519 "src/aicommands.def"
 //==============================================================================
-//## MUSIC XTRACK STOP 
+//## MUSIC XTRACK STOP
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Stop currently playing x track in slot 
-******************************************************************************** 
-  @param MUSIC_SLOT available music slots range is 0-3 
-  @exception: Use slot -1 to stop all xtrack slots instantly. 
-        When stopping a music slot, it will let the track continue to play 
-        until the seconds stopped duration time or total time 
-        (set by MUSIC_XTRACK_PLAY) reaches zero. 
-        This is ignored when using music slot -1 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Stop currently playing x track in slot
+********************************************************************************
+  @param MUSIC_SLOT available music slots range is 0-3
+  @exception: Use slot -1 to stop all xtrack slots instantly.
+        When stopping a music slot, it will let the track continue to play
+        until the seconds stopped duration time or total time
+        (set by MUSIC_XTRACK_PLAY) reaches zero.
+        This is ignored when using music slot -1
+*******************************************************************************/
 #define MusicStopSlot(MUSIC_SLOT)  \
                     AI_MusicStopSlot  ,  \
-                    MUSIC_SLOT ,   
- 
-#define AI_MusicStopSlot_LENGTH   (AICMDSIZE +1    ) 
+                    MUSIC_SLOT ,
+
+#define AI_MusicStopSlot_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 # 11557 "src/aicommands.def"
 //==============================================================================
-//## TRIGGER EXPLOSIONS AROUND BOND 
+//## TRIGGER EXPLOSIONS AROUND BOND
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Triggers explosions around Bond, will continue forever 
-******************************************************************************** 
-  @exception: Does NOT trigger level exit or killed in action state 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Triggers explosions around Bond, will continue forever
+********************************************************************************
+  @exception: Does NOT trigger level exit or killed in action state
+*******************************************************************************/
 #define TriggerExplosionsAroundBond()  \
-                    AI_TriggerExplosionsAroundBond  ,     
- 
-#define AI_TriggerExplosionsAroundBond_LENGTH   (AICMDSIZE    ) 
+                    AI_TriggerExplosionsAroundBond  ,
+
+#define AI_TriggerExplosionsAroundBond_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 11589 "src/aicommands.def"
 //==============================================================================
-//## IF KILLED CIVILIANS GREATER THAN 
+//## IF KILLED CIVILIANS GREATER THAN
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If total civilians killed > CIVILIANS_KILLED 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Guards flagged with CHRFLAG_COUNT_DEATH_AS_CIVILIAN will count towards 
-        total when killed. 
-        Usually set for scientists/civilians/innocent NPCs 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If total civilians killed > CIVILIANS_KILLED
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Guards flagged with CHRFLAG_COUNT_DEATH_AS_CIVILIAN will count towards
+        total when killed.
+        Usually set for scientists/civilians/innocent NPCs
+*******************************************************************************/
 #define IFKilledCiviliansGreaterThan(CIVILIANS_KILLED, GOTOLABEL)  \
                     AI_IFKilledCiviliansGreaterThan  ,  \
                     CIVILIANS_KILLED , \
-                    GOTOLABEL ,   
- 
-#define AI_IFKilledCiviliansGreaterThan_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFKilledCiviliansGreaterThan_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## IF CHR WAS SHOT SINCE LAST CHECK 
+//## IF CHR WAS SHOT SINCE LAST CHECK
 //==============================================================================
 
- 
-/******************************************************************************* 
-  If chr was shot since last check 
-******************************************************************************** 
-  @return     Continue execution from LABEL if TRUE 
-  @exception: Checks chr->chrflags if CHRFLAG_WAS_HIT is set. 
-        If true, unset flag and Goto LABEL. 
-        CHRFLAG_WAS_HIT is set even if guard is invincible 
-*******************************************************************************/   
+
+/*******************************************************************************
+  If chr was shot since last check
+********************************************************************************
+  @return     Continue execution from LABEL if TRUE
+  @exception: Checks chr->chrflags if CHRFLAG_WAS_HIT is set.
+        If true, unset flag and Goto LABEL.
+        CHRFLAG_WAS_HIT is set even if guard is invincible
+*******************************************************************************/
 #define IFChrWasShotSinceLastCheck(CHR_NUM, GOTOLABEL)  \
                     AI_IFChrWasShotSinceLastCheck  ,  \
                     CHR_NUM , \
-                    GOTOLABEL ,   
- 
-#define AI_IFChrWasShotSinceLastCheck_LENGTH   (AICMDSIZE +1   +1    ) 
+                    GOTOLABEL ,
+
+#define AI_IFChrWasShotSinceLastCheck_LENGTH   (AICMDSIZE +1   +1    )
 
 
- 
+
 //==============================================================================
-//## BOND KILLED IN ACTION 
+//## BOND KILLED IN ACTION
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Sets briefing status to killed in action, automatic mission failure 
-******************************************************************************** 
-  @exception: Does NOT kill Bond, only changes the mission status 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Sets briefing status to killed in action, automatic mission failure
+********************************************************************************
+  @exception: Does NOT kill Bond, only changes the mission status
+*******************************************************************************/
 #define BondKilledInAction()  \
-                    AI_BondKilledInAction  ,     
- 
-#define AI_BondKilledInAction_LENGTH   (AICMDSIZE    ) 
+                    AI_BondKilledInAction  ,
+
+#define AI_BondKilledInAction_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 11707 "src/aicommands.def"
 //==============================================================================
-//## GUARD RAISES ARMS 
+//## GUARD RAISES ARMS
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Makes me raise my arms for half a second 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Makes me raise my arms for half a second
+*******************************************************************************/
 #define RaiseArms()  \
-                    AI_RaiseArms  ,     
- 
-#define AI_RaiseArms_LENGTH   (AICMDSIZE    ) 
+                    AI_RaiseArms  ,
+
+#define AI_RaiseArms_LENGTH   (AICMDSIZE    )
 
 
- 
+
 # 11737 "src/aicommands.def"
 //==============================================================================
-//## GAS LEAK AND FADE FOG 
+//## GAS LEAK AND FADE FOG
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Trigger gas leak event and slowly transition fog to the next fogs slot 
-******************************************************************************** 
-  @exception: This command triggers a gas leak. 
-        For the level egypt, this command will not trigger a gas leak, but 
-        instead will only transition the fog. 
-        Can NOT be stopped after executing. 
-        Level must have a fog assigned or will crash! 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Trigger gas leak event and slowly transition fog to the next fogs slot
+********************************************************************************
+  @exception: This command triggers a gas leak.
+        For the level egypt, this command will not trigger a gas leak, but
+        instead will only transition the fog.
+        Can NOT be stopped after executing.
+        Level must have a fog assigned or will crash!
+*******************************************************************************/
 #define GasLeakAndFadeFog()  \
-                    AI_GasLeakAndFadeFog  ,     
- 
-#define AI_GasLeakAndFadeFog_LENGTH   (AICMDSIZE    ) 
+                    AI_GasLeakAndFadeFog  ,
+
+#define AI_GasLeakAndFadeFog_LENGTH   (AICMDSIZE    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Trigger gas leak event and slowly transition fog to the next fogs slot 
-******************************************************************************** 
-  @exception: This command triggers a gas leak. 
-        For the level egypt, this command will not trigger a gas leak, but 
-        instead will only transition the fog. 
-        Can NOT be stopped after executing. 
-        Level must have a fog assigned or will crash! 
-        ONLY WORKS FOR LEVEL ID AZTEC 
-*******************************************************************************/  
+/*******************************************************************************
+  Trigger gas leak event and slowly transition fog to the next fogs slot
+********************************************************************************
+  @exception: This command triggers a gas leak.
+        For the level egypt, this command will not trigger a gas leak, but
+        instead will only transition the fog.
+        Can NOT be stopped after executing.
+        Level must have a fog assigned or will crash!
+        ONLY WORKS FOR LEVEL ID AZTEC
+*******************************************************************************/
 #define FADE_FOG()  \
-                GasLeakAndFadeFog()   
+                GasLeakAndFadeFog()
 
 
- 
+
 # 11790 "src/aicommands.def"
 //==============================================================================
-//## OBJECT ROCKET LAUNCH 
+//## OBJECT ROCKET LAUNCH
 //==============================================================================
 
- 
-/******************************************************************************* 
-  Launch a tagged object like a rocket 
-******************************************************************************** 
-  @exception: If tagged object can NOT be turned upright, object will be destroyed 
-        instead. 
-        Can be used to drop attached props 
-*******************************************************************************/   
+
+/*******************************************************************************
+  Launch a tagged object like a rocket
+********************************************************************************
+  @exception: If tagged object can NOT be turned upright, object will be destroyed
+        instead.
+        Can be used to drop attached props
+*******************************************************************************/
 #define ObjectRocketLaunch(OBJECT_TAG)  \
                     AI_ObjectRocketLaunch  ,  \
-                    OBJECT_TAG ,   
- 
-#define AI_ObjectRocketLaunch_LENGTH   (AICMDSIZE +1    ) 
+                    OBJECT_TAG ,
+
+#define AI_ObjectRocketLaunch_LENGTH   (AICMDSIZE +1    )
 
 
- 
+
 //POLYMORPHS
-/******************************************************************************* 
-  Launch a tagged object like a rocket 
-******************************************************************************** 
-  @exception: If tagged object can NOT be turned upright, object will be destroyed 
-        instead. 
-        Can be used to drop attached props 
-*******************************************************************************/  
+/*******************************************************************************
+  Launch a tagged object like a rocket
+********************************************************************************
+  @exception: If tagged object can NOT be turned upright, object will be destroyed
+        instead.
+        Can be used to drop attached props
+*******************************************************************************/
 #define PROP_DROP_FROM_ATTACHMENT(OBJECT_TAG)  \
-                ObjectRocketLaunch(OBJECT_TAG)   
+                ObjectRocketLaunch(OBJECT_TAG)
 
 
- 
+
 # 11846 "src/aicommands.def"
 //UNDEF CMDS
 # 195 "tools/cmdbuilder.c"

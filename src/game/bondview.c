@@ -71,8 +71,13 @@
 
 #endif
 
+/*cannonically these are both*/
 #define BONDVIEW_HUD_MSG_TOP_BUFFER_LENGTH 0x97
 #define BONDVIEW_HUD_MSG_BOTTOM_BUFFER_LENGTH 0x65
+/*these*/
+#define MAXTALKMESSLEN 150
+#define MAXMESSAGELEN 100
+
 
 
 #if defined(VERSION_US)
@@ -96,7 +101,7 @@
 
 
 #if defined(VERSION_EU)
-    #define TANKUPDATEROTATION_SCALE 0.904799997807f      
+    #define TANKUPDATEROTATION_SCALE 0.904799997807f
     #define TANKTURRETVERTICALANGLERELATED_SCALE 0.928399980068f
     #define TANK_UNKD0_SCALE 0.79960000515f
     #define CHR_OBJ_ACCEL_SPEED_FACTOR 0.6f
@@ -224,10 +229,11 @@ struct coord3d g_EnterTankCoord;
 
 //CODE.bss:800799DC
 f32 flt_CODE_bss_800799DC;
+
 //CODE.bss:800799E0
-s32 starting_right_weapon;
-//CODE.bss:800799E4
-s32 starting_left_weapon;
+//s32 starting_right_weapon;
+//s32 starting_left_weapon;
+ITEM_IDS starting_weapon[2];
 
 //CODE.bss:800799E8
 struct coord3d flt_CODE_bss_800799E8;
@@ -340,17 +346,17 @@ s32 g_bondviewForceDisarm = 0;
 //D:80036428
 s32 resolution = 0;
 //D:8003642C
-s32 camera_8003642C = 0;
+s32 cameraBufferToggle = 0;
 //D:80036430
-s32 camera_80036430 = 0;
+s32 cameraFrameCounter1 = 0;
 //D:80036434
-s32 camera_80036434 = 0;
+s32 cameraFrameCounter2 = 0;
 //D:80036438
 s32 camera_80036438 = 0;
 //D:8003643C
-s32 D_8003643C = 0;
+s32 credits_state = 0;
 //D:80036440
-CreditsEntry *D_80036440 = NULL;
+CreditsEntry *credits_pointer = NULL;
 //D:80036444
 s32 g_SurroundBondWithExplosionsFlag = 0;
 
@@ -360,7 +366,7 @@ s32 in_tank_flag = 0;
 //D:8003644C
 struct PropRecord *g_WorldTankProp = NULL;
 
-//D:80036450
+//D:80036450 cannonically bondonprop2
 struct PropRecord *g_PlayerTankProp = NULL;
 
 /**
@@ -386,11 +392,11 @@ f32 g_TankTurnSpeed = 0;
 f32 g_TankOrientationAngle = 0;
 
 //D:80036468
-f32 D_80036468 = 0.0f;
+f32 tank_turret_unused_angle = 0.0f;
 
 /**
  * Argument to sinf,cosf.
- * 
+ *
  * Address 0x8003646C.
  */
 f32 g_TankTurretVerticalAngle = 0;
@@ -406,10 +412,10 @@ f32 g_TankTurretVerticalAngleRelated = 0;
 f32 g_TankTurretOrientationAngleRad = 0;
 
 //D:80036478
-f32 D_80036478 = 0;
+f32 g_TankTurretOrientationAngleDeg = 0;
 
 //D:8003647C
-f32 D_8003647C = 0;
+f32 tank_turret_turn_speed = 0;
 
 /**
  * Can enter tank, remains set once Bond is in tank.
@@ -436,17 +442,17 @@ enum CAMERAMODE g_CameraMode = CAMERAMODE_NONE;
 //D:80036498
 enum CAMERAMODE g_CameraAfterCinema = CAMERAMODE_NONE;
 //D:8003649C
-s32 D_8003649C = 0;
+s32 camera_fade_active = 0;
 //D:800364A0
 s32 stop_time_flag = 0;
 //D:800364A4
-f32 D_800364A4 = 0;
+f32 camera_transition_timer = 0;
 //D:800364A8
-s32 D_800364A8 = 1;
+s32 intro_camera_index = 1;
 //D:800364AC
 struct SetupIntroSwirl *g_IntroSwirl = NULL;
 //D:800364B0
-s32 D_800364B0 = 1;
+s32 is_timer_active = 1;
 //D:800364B4
 s32 g_PlayerInvincible = 0;
 //D:800364B8
@@ -460,13 +466,13 @@ struct SetupIntroCamera *ptr_random06cam_entry = NULL;
  * Flag to toggle invisibility cheat.
  * 1 = visible to guards
  * 0 = not visible to guards
- * 
+ *
  * Address 0x800364C4.
  */
-s32 g_VisibleToGuardsFlag = 1;
+s32 g_VisibleToGuardsFlag = TRUE;
 
 //D:800364C8
-s32 obj_collision_flag = 1;
+s32 obj_collision_flag = TRUE;
 //D:800364CC
 f32 D_800364CC = 1.0;
 //D:800364D0
@@ -499,21 +505,21 @@ s32 g_bondviewBondDeathAnimations[] = {
 s32 g_bondviewBondDeathAnimationsCount = 0;
 
 //D:80036510
-enum CAMERAMODE D_80036510 = CAMERAMODE_NONE;
+enum CAMERAMODE camera_mode = CAMERAMODE_NONE;
 //D:80036514
 s32 g_IntroAnimationIndex = 0;
 
 //D:80036518
 struct struct_4 stage_intro_anim_table[] = {
-    {0x5744, 95.0, -1.0, 0.02},
-    {0x6254, 7.0, 40.0, 0.5},
-    {0x78C8, 0.0, -1.0, 0.5},
-    {0x7AA8, 0.0, -1.0, 0.5},
-    {0x7C4C, 0.0, -1.0, 0.5},
-    {0x7D04, 0.0, -1.0, 0.5},
-    {0x7F0C, 0.0, -1.0, 0.5},
-    {0x7FB4, 0.0, -1.0, 0.5},
-    {0xD89C, 0.0, -1.0, 0.5}
+    {PTR_ANIM_extending_left_hand, 95.0, -1.0, 0.02},
+    {PTR_ANIM_fire_standing_draw_one_handed_weapon_fast, 7.0, 40.0, 0.5},
+    {PTR_ANIM_draw_one_handed_weapon_and_look_around, 0.0, -1.0, 0.5},
+    {PTR_ANIM_draw_one_handed_weapon_and_stand_up, 0.0, -1.0, 0.5},
+    {PTR_ANIM_aim_one_handed_weapon_left_right, 0.0, -1.0, 0.5},
+    {PTR_ANIM_cock_one_handed_weapon_and_turn_around, 0.0, -1.0, 0.5},
+    {PTR_ANIM_cock_one_handed_weapon_turn_around_and_stand_up, 0.0, -1.0, 0.5},
+    {PTR_ANIM_draw_one_handed_weapon_and_turn_around, 0.0, -1.0, 0.5},
+    {PTR_ANIM_bond_eye_fire_alt, 0.0, -1.0, 0.5}
 };
 
 //D:800365A8
@@ -525,11 +531,11 @@ WeaponObjRecord dummy_08_pp7_obj[] = {
     0x00,
     0x08,
     PROP_CHRWPPK,
-    0x4000, 
-    0x00000000, 
+    0x4000,
     0x00000000,
-    NULL, 
-    NULL, 
+    0x00000000,
+    NULL,
+    NULL,
     {
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
@@ -538,9 +544,9 @@ WeaponObjRecord dummy_08_pp7_obj[] = {
     },
     {0.0f, 0.0f, 0.0f},
     {0x00000000},
-    NULL, 
     NULL,
-    0.0f, 
+    NULL,
+    0.0f,
     1000.0f,
     {0xff, 0xff, 0xff, 0x00},
     0xff,
@@ -616,7 +622,23 @@ s32 D_80036834 = 0;
 //D:80036838
 s32 D_80036838 = 0;
 //D:8003683C
-struct unk_joint_list D_8003683C = {NULL, 1, 3, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}, 0};
+ModelRenderData D_8003683C = {NULL,
+                              TRUE,
+                              0x00000003,
+                              NULL,
+                              NULL,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              {0, 0, 0, 0},
+                              {0, 0, 0, 0},
+                              CULLMODE_BOTH};
+
 //D:8003687C
 s32 D_8003687C = 0;
 
@@ -732,7 +754,7 @@ s32 bondviewTankCollisionStatus(struct coord3d *collision_position, StandTile *a
 s32 bondviewCallTankCollisionStatus(struct coord3d *arg0, struct StandTile *arg1, f32 arg2);
 s32 sub_GAME_7F07CDD4(struct coord3d *arg0, f32 arg1, struct StandTile **arg2);
 s32 bondviewTryMoveToStan(struct coord3d *arg0, struct StandTile **stan);
-s32 bondviewTestLineUnobstructed(StandTile **pTile, f32 p_x, f32 p_z, f32 dest_x, f32 dest_z, s32 objFlags, struct coord3d *coord_p, struct coord3d *coord_dest);
+s32 bondviewTestLineUnobstructed(StandTile **pTile, f32 p_x, f32 p_z, f32 dest_x, f32 dest_z, s32 cdtypes, struct coord3d *coord_p, struct coord3d *coord_dest);
 
 s32 bondviewTryFractionMovePlayerCollision(struct coord3d *next_pos, struct coord3d *collision1_pt0, struct coord3d *collision1_pt1, struct coord3d *collision2_pt0, struct coord3d *collision2_pt1);
 s32 bondviewTryEdgeMovePlayerCollision(struct coord3d *prior_next_pos, struct coord3d *collision_pt0, struct coord3d *collision_pt1);
@@ -753,6 +775,7 @@ void bondviewUpdateSpeedSideways(s32 arg0);
 void bondviewUpdateSpeedForwards(s32 arg0);
 void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, struct coord3d *pos2, struct coord3d *offset, struct StandTile **stan, struct coord3d *arg6);
 void sub_GAME_7F07B2A0(s32, f32, struct coord3d *, struct coord3d *);
+s32 pickDeathCameraAngles(struct PropRecord *, struct coord3d *, struct PropRecord *, struct coord3d *, struct StandTile *, f32);
 
 // end forward declarations
 
@@ -819,7 +842,15 @@ void currentPlayerSetCameraScale(void)
 	g_CurrentPlayer->c_cameraleftnorm.z = -fVar5 * fVar4;
 }
 
-void sub_GAME_7F077EEC(coord2d *in, coord3d *out, f32 value) {
+/**
+ * Transforms a 2D screen coordinate to a 3D world coordinate
+ *
+ * 'out' looks to be a vector which probably has the length 'length'
+ * It starts from the middle of the screen.
+ *
+ * Address 0x7F077EEC.
+ */
+void transformAndNormalizeByLength2Dto3D(coord2d *in, coord3d *out, f32 length) {
     f32 norm;
     f32 x;
     f32 y;
@@ -827,24 +858,24 @@ void sub_GAME_7F077EEC(coord2d *in, coord3d *out, f32 value) {
     y = (g_CurrentPlayer->c_halfheight - (in->y - g_CurrentPlayer->c_screentop)) * g_CurrentPlayer->c_scaley;
     x = ((in->x - g_CurrentPlayer->c_screenleft) - g_CurrentPlayer->c_halfwidth) * g_CurrentPlayer->c_scalex;
     z = -1.0f;
-    norm = value / sqrtf((x * x) + (y * y) + (z * z));
+    norm = length / sqrtf((x * x) + (y * y) + (z * z));
     out->x = (x * norm);
     out->y = (y * norm);
     out->z = (-1.0f * norm);
 }
 
-void sub_GAME_7F077FB4(coord3d *in, f32 value, coord3d *out) {
+void scale3DCoordinates(coord3d *in, f32 value, coord3d *out) {
     out->y = ((in->y * value) * g_CurrentPlayer->c_scaley);
     out->x = ((in->x * value) * g_CurrentPlayer->c_scalex);
 }
 
-void sub_GAME_7F077FF4(coord3d *in, coord3d *out) {
+void transform3Dto2DCoords(coord3d *in, coord2d *out) {
     f32 inv_z = (1.0f / in->z);
     out->y = (in->y * inv_z * g_CurrentPlayer->c_recipscaley) + (g_CurrentPlayer->c_screentop + g_CurrentPlayer->c_halfheight);
     out->x = (g_CurrentPlayer->c_screenleft + g_CurrentPlayer->c_halfwidth) - (in->x * inv_z * g_CurrentPlayer->c_recipscalex);
 }
 
-void sub_GAME_7F078060(coord3d *in, coord3d *out)
+void transform3Dto2DWithZScaling(coord3d *in, coord3d *out)
 {
 	f32 inv_z;
 
@@ -858,13 +889,13 @@ void sub_GAME_7F078060(coord3d *in, coord3d *out)
 	out->x = (g_CurrentPlayer->c_screenleft + g_CurrentPlayer->c_halfwidth) - in->x * inv_z * g_CurrentPlayer->c_recipscalex;
 }
 
-void sub_GAME_7F0780F0(coord3d *in, f32 divisor, coord3d *out)
+void divide3DCoordinates(coord3d *in, f32 divisor, coord3d *out)
 {
 	out->y = in->y * (1.0f / divisor) * g_CurrentPlayer->c_recipscaley;
 	out->x = in->x * (1.0f / divisor) * g_CurrentPlayer->c_recipscalex;
 }
 
-void sub_GAME_7F078140(coord3d *in, coord3d *out, f32 value1, f32 angle, f32 value2) {
+void transform3DCoordinatesWithAngle(coord3d *in, coord3d *out, f32 value1, f32 angle, f32 value2) {
     f32 var1;
     f32 x;
     f32 y;
@@ -882,10 +913,10 @@ void sub_GAME_7F078140(coord3d *in, coord3d *out, f32 value1, f32 angle, f32 val
 
 /**
  * Unreferenced.
- * 
+ *
  * Address 0x7F078258.
  */
-void sub_GAME_7F078258(coord3d *in, coord3d *out, f32 angle, f32 value)
+void transform3DCoordinatesWithAngleAndValue(coord3d *in, coord3d *out, f32 angle, f32 value)
 {
     f32 var1 = (cosf(mDegToHalfRad(angle)) * g_CurrentPlayer->c_halfheight) / (sinf(mDegToHalfRad(angle)) * in->f[2]);
     f32 var2 = (var1 * g_CurrentPlayer->c_halfwidth) / (value * g_CurrentPlayer->c_halfheight);
@@ -1142,40 +1173,42 @@ void sub_GAME_7F078A10(coord3d *arg0, f32 *arg1) {
 }
 
 /**
- * Takes dot product of some vectors and compares each to an associated scalar value.
+ * Check if the 3D coordinate is within the screen
+ *
+ * Takes dot product of some position and compares each to an associated scalar value.
  * Returns 0 if the dot product exceeds the scalar amount, 1 otherwise.
- * 
- * @param vec_scale: Applies dot product of this vector against g_CurrentPlayer->field_10D4
+ *
+ * @param pos: Applies dot product of this position against g_CurrentPlayer->field_10D4
  * and four coords starting at flt_CODE_bss_80079960.
- * 
- * @param norm_scale: Value added to flt_CODE_bss_80079980 to compare g_CurrentPlayer->field_10D4,
+ *
+ * @param margin: Value added to flt_CODE_bss_80079980 to compare g_CurrentPlayer->field_10D4,
  * and the four values starting at flt_CODE_bss_8007996C.
- * 
+ *
  * Address 0x7F078A58.
  */
-s32 sub_GAME_7F078A58(coord3d *vec_scale, f32 norm_scale)
+s32 camIsPosInScreen(coord3d *pos, f32 margin)
 {
-    if (flt_CODE_bss_80079980 + norm_scale < (g_CurrentPlayer->field_10D4->m[2][0] * vec_scale->f[0]) + (g_CurrentPlayer->field_10D4->m[2][1] * vec_scale->f[1]) + (g_CurrentPlayer->field_10D4->m[2][2] * vec_scale->f[2]))
+    if (flt_CODE_bss_80079980 + margin < (g_CurrentPlayer->field_10D4->m[2][0] * pos->f[0]) + (g_CurrentPlayer->field_10D4->m[2][1] * pos->f[1]) + (g_CurrentPlayer->field_10D4->m[2][2] * pos->f[2]))
     {
         return 0;
     }
 
-    if (flt_CODE_bss_8007996C + norm_scale < (flt_CODE_bss_80079960.f[0] * vec_scale->f[0]) + (flt_CODE_bss_80079960.f[1] * vec_scale->f[1]) + (flt_CODE_bss_80079960.f[2] * vec_scale->f[2]))
+    if (flt_CODE_bss_8007996C + margin < (flt_CODE_bss_80079960.f[0] * pos->f[0]) + (flt_CODE_bss_80079960.f[1] * pos->f[1]) + (flt_CODE_bss_80079960.f[2] * pos->f[2]))
     {
         return 0;
     }
 
-    if (flt_CODE_bss_8007997C + norm_scale < (flt_CODE_bss_80079970.f[0] * vec_scale->f[0]) + (flt_CODE_bss_80079970.f[1] * vec_scale->f[1]) + (flt_CODE_bss_80079970.f[2] * vec_scale->f[2]))
+    if (flt_CODE_bss_8007997C + margin < (flt_CODE_bss_80079970.f[0] * pos->f[0]) + (flt_CODE_bss_80079970.f[1] * pos->f[1]) + (flt_CODE_bss_80079970.f[2] * pos->f[2]))
     {
         return 0;
     }
 
-    if (flt_CODE_bss_8007994C + norm_scale < (flt_CODE_bss_80079940.f[0] * vec_scale->f[0]) + (flt_CODE_bss_80079940.f[1] * vec_scale->f[1]) + (flt_CODE_bss_80079940.f[2] * vec_scale->f[2]))
+    if (flt_CODE_bss_8007994C + margin < (flt_CODE_bss_80079940.f[0] * pos->f[0]) + (flt_CODE_bss_80079940.f[1] * pos->f[1]) + (flt_CODE_bss_80079940.f[2] * pos->f[2]))
     {
         return 0;
     }
 
-    if (flt_CODE_bss_8007995C + norm_scale < (flt_CODE_bss_80079950.f[0] * vec_scale->f[0]) + (flt_CODE_bss_80079950.f[1] * vec_scale->f[1]) + (flt_CODE_bss_80079950.f[2] * vec_scale->f[2]))
+    if (flt_CODE_bss_8007995C + margin < (flt_CODE_bss_80079950.f[0] * pos->f[0]) + (flt_CODE_bss_80079950.f[1] * pos->f[1]) + (flt_CODE_bss_80079950.f[2] * pos->f[2]))
     {
         return 0;
     }
@@ -1184,7 +1217,7 @@ s32 sub_GAME_7F078A58(coord3d *vec_scale, f32 norm_scale)
 }
 
 
-bool camIsPosInScreenBox(coord3d *pos, f32 arg1, bbox2d *arg2)
+bool camIsPosInScreenBox(coord3d *pos, f32 margin, bbox2d *box)
 {
     coord3d sp74;
     f32 sp70;
@@ -1205,12 +1238,12 @@ bool camIsPosInScreenBox(coord3d *pos, f32 arg1, bbox2d *arg2)
     f32 sp1c;
     f32 sp18;
 
-    if (flt_CODE_bss_80079980 + arg1 < g_CurrentPlayer->field_10D4->m[2][0] * pos->f[0] + g_CurrentPlayer->field_10D4->m[2][1] * pos->f[1] + g_CurrentPlayer->field_10D4->m[2][2] * pos->f[2])
+    if (flt_CODE_bss_80079980 + margin < g_CurrentPlayer->field_10D4->m[2][0] * pos->f[0] + g_CurrentPlayer->field_10D4->m[2][1] * pos->f[1] + g_CurrentPlayer->field_10D4->m[2][2] * pos->f[2])
     {
         return FALSE;
     }
 
-    sp38 = (arg2->min.x - g_CurrentPlayer->c_screenleft - g_CurrentPlayer->c_halfwidth) * g_CurrentPlayer->c_scalex;
+    sp38 = (box->min.x - g_CurrentPlayer->c_screenleft - g_CurrentPlayer->c_halfwidth) * g_CurrentPlayer->c_scalex;
 
     sp3c = 1.0f / sqrtf(sp38 * sp38 + 1.0f);
     sp38 *= sp3c;
@@ -1222,12 +1255,12 @@ bool camIsPosInScreenBox(coord3d *pos, f32 arg1, bbox2d *arg2)
 
     sp50 = sp54.f[0] * g_CurrentPlayer->field_10D4->m[3][0] + sp54.f[1] * g_CurrentPlayer->field_10D4->m[3][1] + sp54.f[2] * g_CurrentPlayer->field_10D4->m[3][2];
 
-    if (sp50 + arg1 < sp54.f[0] * pos->f[0] + sp54.f[1] * pos->f[1] + sp54.f[2] * pos->f[2])
+    if (sp50 + margin < sp54.f[0] * pos->f[0] + sp54.f[1] * pos->f[1] + sp54.f[2] * pos->f[2])
     {
         return FALSE;
     }
 
-    sp38 = -(arg2->max.x - g_CurrentPlayer->c_screenleft - g_CurrentPlayer->c_halfwidth) * g_CurrentPlayer->c_scalex;
+    sp38 = -(box->max.x - g_CurrentPlayer->c_screenleft - g_CurrentPlayer->c_halfwidth) * g_CurrentPlayer->c_scalex;
     sp30 = 1.0f / sqrtf(sp38 * sp38 + 1.0f);
     sp38 *= sp30;
     sp20 = -sp30;
@@ -1238,12 +1271,12 @@ bool camIsPosInScreenBox(coord3d *pos, f32 arg1, bbox2d *arg2)
 
     sp40 = sp44.f[0] * g_CurrentPlayer->field_10D4->m[3][0] + sp44.f[1] * g_CurrentPlayer->field_10D4->m[3][1] + sp44.f[2] * g_CurrentPlayer->field_10D4->m[3][2];
 
-    if (sp40 + arg1 < sp44.f[0] * pos->f[0] + sp44.f[1] * pos->f[1] + sp44.f[2] * pos->f[2])
+    if (sp40 + margin < sp44.f[0] * pos->f[0] + sp44.f[1] * pos->f[1] + sp44.f[2] * pos->f[2])
     {
         return FALSE;
     }
 
-    sp34 = (g_CurrentPlayer->c_halfheight - (arg2->min.y - g_CurrentPlayer->c_screentop)) * g_CurrentPlayer->c_scaley;
+    sp34 = (g_CurrentPlayer->c_halfheight - (box->min.y - g_CurrentPlayer->c_screentop)) * g_CurrentPlayer->c_scaley;
     sp2c = 1.0f / sqrtf(sp34 * sp34 + 1.0f);
     sp34 *= sp2c;
     sp1c = -sp2c;
@@ -1254,12 +1287,12 @@ bool camIsPosInScreenBox(coord3d *pos, f32 arg1, bbox2d *arg2)
 
     sp70 = sp74.f[0] * g_CurrentPlayer->field_10D4->m[3][0] + sp74.f[1] * g_CurrentPlayer->field_10D4->m[3][1] + sp74.f[2] * g_CurrentPlayer->field_10D4->m[3][2];
 
-    if (sp70 + arg1 < sp74.f[0] * pos->f[0] + sp74.f[1] * pos->f[1] + sp74.f[2] * pos->f[2])
+    if (sp70 + margin < sp74.f[0] * pos->f[0] + sp74.f[1] * pos->f[1] + sp74.f[2] * pos->f[2])
     {
         return FALSE;
     }
 
-    sp34 = -(g_CurrentPlayer->c_halfheight - (arg2->max.y - g_CurrentPlayer->c_screentop)) * g_CurrentPlayer->c_scaley;
+    sp34 = -(g_CurrentPlayer->c_halfheight - (box->max.y - g_CurrentPlayer->c_screentop)) * g_CurrentPlayer->c_scaley;
     sp28 = 1.0f / sqrtf(sp34 * sp34 + 1.0f);
     sp34 *= sp28;
     sp18 = -sp28;
@@ -1270,7 +1303,7 @@ bool camIsPosInScreenBox(coord3d *pos, f32 arg1, bbox2d *arg2)
 
     sp60 = sp64.f[0] * g_CurrentPlayer->field_10D4->m[3][0] + sp64.f[1] * g_CurrentPlayer->field_10D4->m[3][1] + sp64.f[2] * g_CurrentPlayer->field_10D4->m[3][2];
 
-    if (sp60 + arg1 < sp64.f[0] * pos->f[0] + sp64.f[1] * pos->f[1] + sp64.f[2] * pos->f[2])
+    if (sp60 + margin < sp64.f[0] * pos->f[0] + sp64.f[1] * pos->f[1] + sp64.f[2] * pos->f[2])
     {
         return FALSE;
     }
@@ -1278,7 +1311,7 @@ bool camIsPosInScreenBox(coord3d *pos, f32 arg1, bbox2d *arg2)
     return TRUE;
 }
 
-
+//split here makes sense to have the pd split make sense
 s32 bondviewGetRandomSpawnPadIndex(void)
 {
     PadRecord *pad;
@@ -1425,10 +1458,10 @@ void init_player_BONDdata(void)
     g_CurrentPlayer->damageshowtime = -1;
     g_CurrentPlayer->healthshowtime = -1;
     g_CurrentPlayer->watch_pause_time = 0;
-    g_CurrentPlayer->field_1C4 = 0;
+    g_CurrentPlayer->timer_1C4 = 0;
     g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x0;
-    g_CurrentPlayer->outside_watch_menu = 1;
-    g_CurrentPlayer->open_close_solo_watch_menu = 0;
+    g_CurrentPlayer->outside_watch_menu = TRUE;
+    g_CurrentPlayer->open_close_solo_watch_menu = FALSE;
     g_CurrentPlayer->field_1A0 = 0;
     g_CurrentPlayer->bondbreathing = 0.0f;
     g_CurrentPlayer->speedtheta = 0.0f;
@@ -1446,7 +1479,7 @@ void init_player_BONDdata(void)
     g_CurrentPlayer->speedsideways = 0.0f;
     g_CurrentPlayer->speedstrafe = 0.0f;
     g_CurrentPlayer->speedforwards = 0.0f;
-    g_CurrentPlayer->field_2A4C = 0.0f;
+    g_CurrentPlayer->speedgo = 0.0f;
     g_CurrentPlayer->speedboost = 1.0f;
     g_CurrentPlayer->speedmaxtime60 = 0;
     g_CurrentPlayer->bondshotspeed.x = 0.0f;
@@ -1455,17 +1488,17 @@ void init_player_BONDdata(void)
     g_CurrentPlayer->field_104 = 0;
     g_CurrentPlayer->field_108 = 0;
     g_CurrentPlayer->field_10C = 0;
-    g_CurrentPlayer->movecentrerelease = 0;
-    g_CurrentPlayer->lookaheadcentreenabled = 1;
-    g_CurrentPlayer->automovecentreenabled = 1;
-    g_CurrentPlayer->fastmovecentreenabled = 0;
-    g_CurrentPlayer->automovecentre = 1;
-    g_CurrentPlayer->insightaimmode = 0;
-    g_CurrentPlayer->autoyaimenabled = 1;
+    g_CurrentPlayer->movecentrerelease = FALSE;
+    g_CurrentPlayer->lookaheadcentreenabled = TRUE;
+    g_CurrentPlayer->automovecentreenabled = TRUE;
+    g_CurrentPlayer->fastmovecentreenabled = FALSE;
+    g_CurrentPlayer->automovecentre = TRUE;
+    g_CurrentPlayer->insightaimmode = FALSE;
+    g_CurrentPlayer->autoyaimenabled = TRUE;
     g_CurrentPlayer->autoaimy = 0.0f;
     g_CurrentPlayer->autoaim_target_y = NULL;
     g_CurrentPlayer->autoyaimtime60 = -1;
-    g_CurrentPlayer->autoxaimenabled = 1;
+    g_CurrentPlayer->autoxaimenabled = TRUE;
     g_CurrentPlayer->autoaimx = 0.0f;
     g_CurrentPlayer->autoaim_target_x = NULL;
     g_CurrentPlayer->autoxaimtime60 = -1;
@@ -1488,7 +1521,7 @@ void init_player_BONDdata(void)
     g_CurrentPlayer->bondfadefracold = 0.0f;
     g_CurrentPlayer->bondfadefracnew = 0.0f;
     g_CurrentPlayer->field_42c = 2;
-    g_CurrentPlayer->controldef = 0;
+    g_CurrentPlayer->controldef = CONTROLLER_CONFIG_HONEY;
     g_CurrentPlayer->pause_starting_angle = 0.0f;
     g_CurrentPlayer->pause_related = 0.0f;
     g_CurrentPlayer->pause_target_angle = 0.0f;
@@ -1497,7 +1530,7 @@ void init_player_BONDdata(void)
     g_CurrentPlayer->field_218 = 0;
     g_CurrentPlayer->step_in_view_watch_animation = 0;
     g_CurrentPlayer->pause_animation_counter = 0.0f;
-    g_CurrentPlayer->pausing_flag = 0;
+    g_CurrentPlayer->pausing_flag = FALSE;
     g_CurrentPlayer->buttons_pressed = (u16)0;
     g_CurrentPlayer->prev_buttons_pressed = (u16)0;
     g_CurrentPlayer->field_29C0 = 15.0f;
@@ -1522,8 +1555,8 @@ void bondviewPlayerSpawnRelated(void)
 
     if (getPlayerCount() >= 2)
     {
-        currentPlayerEquipWeaponWrapper(GUNLEFT, starting_left_weapon);
-        currentPlayerEquipWeaponWrapper(GUNRIGHT, starting_right_weapon);
+        currentPlayerEquipWeaponWrapper(GUNLEFT, starting_weapon[GUNLEFT]);
+        currentPlayerEquipWeaponWrapper(GUNRIGHT, starting_weapon[GUNRIGHT]);
 
         if (g_CurrentPlayer->ptr_char_objectinstance == NULL)
         {
@@ -1565,7 +1598,7 @@ void currentPlayerSetField00(s32 value) {
  * Compares current player position to parameters. If different, sets current
  * player position values to parameter values.
  * Also updates related room pointer.
- * 
+ *
  * Address 0x7F079A60.
  */
 void bondviewSetCurrentPlayerPosition(coord3d *pos, coord3d *pos2, coord3d *offset, StandTile *tile, coord3d *stan_walk_start)
@@ -1656,7 +1689,7 @@ void solo_char_load(void)
     ModelFileHeader *p_leftHeader;
     ModelFileHeader *bodyBuffer;
     ModelFileHeader *headBuffer;
-    s32 totalsize;
+    s32 totalsize; //canonically sizer
     s32 bodyBufSize;
     s32 headBufSize;
     WeaponObjRecord *p_rightHeader;
@@ -1700,7 +1733,7 @@ void solo_char_load(void)
         sub_GAME_7F07DE64(g_CurrentPlayer);
         if (getPlayerCount() == 1)
         {
-            folderBond = getSelectedFolderBond();
+            folderBond = fileGetBondForCurrentFolder();
             cuffId = g_CurrentPlayer->bondtype;
             switch (cuffId)                        /* switch 1 */
             {
@@ -1721,20 +1754,20 @@ void solo_char_load(void)
             case CUFF_FOLDER:                                 /* switch 1 */
                 switch (folderBond)                  /* switch 3; irregular */
                 {
-                case 0:                             /* switch 3 */
+                case BOND_BROSNAN:                             /* switch 3 */
                     body = BODY_Brosnan_Tuxedo; break;
-                case 1:                             /* switch 3 */
+                case BOND_CONNERY:                             /* switch 3 */
                     body = BODY_Brosnan_Tuxedo; break;
-                case 2:                             /* switch 3 */
+                case BOND_DALTON:                             /* switch 3 */
                     body = BODY_Brosnan_Tuxedo; break;
-                case 3:
+                case BOND_MOORE:
                     body = BODY_Brosnan_Tuxedo; break;
                 }
                 break;
             }
             switch (folderBond)                      /* switch 4; irregular */
             {
-            case 0:                                 /* switch 4 */
+            case BOND_BROSNAN:                                 /* switch 4 */
                 switch (cuffId)                    /* switch 2 */
                 {
                 case CUFF_BOILER:                             /* switch 2 */
@@ -1753,11 +1786,11 @@ void solo_char_load(void)
                     head = HEAD_Male_Brosnan_Tuxedo; break;
                 }
                 break;
-            case 1:                                 /* switch 4 */
+            case BOND_CONNERY:                                 /* switch 4 */
                 head = HEAD_Male_Brosnan_Tuxedo; break;
-            case 2:                                 /* switch 4 */
+            case BOND_DALTON:                                 /* switch 4 */
                 head = HEAD_Male_Brosnan_Tuxedo; break;
-            case 3:                                 /* switch 4 */
+            case BOND_MOORE:                                 /* switch 4 */
                 head = HEAD_Male_Brosnan_Tuxedo; break;
             }
         }
@@ -1772,6 +1805,11 @@ void solo_char_load(void)
         }
         if (getPlayerCount() == 1)
         {
+#ifdef DEBUG
+            assert(currentplayer->gunmemused[GUNRIGHT]==0 || currentplayer->gunmemtype[GUNRIGHT]==0);
+            assert(currentplayer->gunmemused[GUNLEFT]==0 || currentplayer->gunmemtype[GUNLEFT]==0); //j
+#endif
+
             remove_item_in_hand(GUNLEFT);
             remove_item_in_hand(GUNRIGHT);
             texInitPool(&texPool, headBuffer, headBufSize);
@@ -1781,7 +1819,7 @@ void solo_char_load(void)
             p_bodyEntryHeader = p_bodyEntry->header;
 
             pBody = p_bodyHeader;
-            
+
             p_bodyHeader->RootNode = p_bodyEntryHeader->RootNode;
             p_bodyHeader->Skeleton = p_bodyEntryHeader->Skeleton;
             p_bodyHeader->Switches = p_bodyEntryHeader->Switches;
@@ -1790,7 +1828,7 @@ void solo_char_load(void)
             p_bodyHeader->unk14 = p_bodyEntryHeader->unk14;
             p_bodyHeader->Textures = p_bodyEntryHeader->Textures;
             p_bodyHeader->isLoaded = p_bodyEntryHeader->isLoaded;
-            
+
             p_modelEntry = p_bodyEntry;
             load_object_fill_header(p_bodyHeader, p_bodyEntry->filename, bodyBuffer, bodyBufSize, &texPool);
 
@@ -1798,6 +1836,9 @@ void solo_char_load(void)
             p_headEntryHeader = p_headEntry->header;
 
             bufferSizeRemain = ALIGN64_V3(get_pc_buffer_remaining_value(p_modelEntry->filename) + 0x3F);
+#ifdef DEBUG
+            assert(sizer<=bondmemsizer);
+#endif
             p_headHeader = bodyBuffer + bufferSizeRemain;
             bodyalignedSizeRemainPlus0x5F = ALIGN64_V3(bufferSizeRemain + 0x5F);
 
@@ -1809,7 +1850,7 @@ void solo_char_load(void)
             p_headHeader->unk14 = p_headEntryHeader->unk14;
             p_headHeader->Textures = p_headEntryHeader->Textures;
             p_headHeader->isLoaded = p_headEntryHeader->isLoaded;
-            
+
             totalsize = bodyalignedSizeRemainPlus0x5F;
             pHead = p_headHeader;
             p_modelEntry = p_headEntry;
@@ -1822,9 +1863,12 @@ void solo_char_load(void)
             modelCalculateRwDataLen(pBody);
             modelCalculateRwDataLen(pHead);
             numRecords = pBody->numRecords + pHead->numRecords + 0xA;
-            
+
             totalsize = ALIGN64_V3((numRecords * 4) + totalsize + 0x3F);
-            
+            #ifdef DEBUG
+            assert(sizer<=bondmemsizer);
+            #endif
+
             animInit(model, pBody, bodyBuffer + totalsize);
             model->Type = numRecords; //???
             //goto block_46;
@@ -1845,7 +1889,10 @@ void solo_char_load(void)
 //            &c_item_entries[head]->header = pHead;
         }
         g_CurrentPlayer->ptr_char_objectinstance = makeonebody(body, head, pBody, &c_item_entries[head]->header/*pHead maybe?*/, 0, model);
-        
+        #ifdef DEBUG
+            assert(currentplayer->bondsub);
+        #endif
+
         modelSetScale((Model *) g_CurrentPlayer->ptr_char_objectinstance, g_CurrentPlayer->ptr_char_objectinstance->unk14 * 0.97f);
         init_GUARDdata_with_set_values(g_CurrentPlayer->prop, g_CurrentPlayer->ptr_char_objectinstance, &g_CurrentPlayer->prop->pos, hRot, g_CurrentPlayer->prop->stan, 0);
         g_CurrentPlayer->prop->type = VIEWER;
@@ -1859,6 +1906,9 @@ void solo_char_load(void)
             {
                 p_rightHeader = bodyBuffer + totalsize;
                 totalsize = ALIGN64_V3(totalsize + 0xC7);
+                #ifdef DEBUG
+                assert(sizer<=bondmemsizer);
+                #endif
                 p_lhandItemHeader = get_ptr_itemheader_in_hand(GUNLEFT);
                 p_rhandItemHeader = &PitemZ_entries[rhandPropID]->header;
                 p_leftHeader = p_lhandItemHeader;
@@ -1887,7 +1937,7 @@ void solo_char_load(void)
     }
     if (curChr->model->anim == NULL)
     {
-        curChr->chrflags |= 1;
+        curChr->chrflags |= CHRFLAG_INIT;
         chrlvIdleAnimationRelated7F023A94(curChr, 0.0f);
         setsuboffset(g_CurrentPlayer->ptr_char_objectinstance, &g_CurrentPlayer->prop->pos);
         setsubroty(g_CurrentPlayer->ptr_char_objectinstance, hRot);
@@ -1938,6 +1988,7 @@ glabel jpt_bondcuff
 .word cuff_6_moore
 .word cuff_7_dalton
 .word cuff_8_variable_bond_head
+.size jpt_bondcuff, . - jpt_bondcuff
 
 /*D:80055008*/
 glabel jpt_bondhead
@@ -2011,7 +2062,7 @@ glabel solo_char_load
 /* 0AE8F0 7F079DC0 24010001 */  li    $at, 1
 /* 0AE8F4 7F079DC4 14410066 */  bne   $v0, $at, .L7F079F60
 /* 0AE8F8 7F079DC8 00000000 */   nop
-/* 0AE8FC 7F079DCC 0FC0755B */  jal   getSelectedFolderBond
+/* 0AE8FC 7F079DCC 0FC0755B */  jal   fileGetBondForCurrentFolder
 /* 0AE900 7F079DD0 00000000 */   nop
 /* 0AE904 7F079DD4 3C0F8008 */  lui   $t7, %hi(g_CurrentPlayer)
 /* 0AE908 7F079DD8 8DEFA0B0 */  lw    $t7, %lo(g_CurrentPlayer)($t7)
@@ -2151,8 +2202,8 @@ variable_body_head:
 /* 0AEAB8 7F079F88 8DEF6494 */  lw    $t7, %lo(g_CameraMode)($t7)
 /* 0AEABC 7F079F8C 24010003 */  li    $at, 3
 /* 0AEAC0 7F079F90 15E10003 */  bne   $t7, $at, .L7F079FA0
-/* 0AEAC4 7F079F94 3C0B8008 */   lui   $t3, %hi(starting_right_weapon)
-/* 0AEAC8 7F079F98 8D6B99E0 */  lw    $t3, %lo(starting_right_weapon)($t3)
+/* 0AEAC4 7F079F94 3C0B8008 */   lui   $t3, %hi(starting_weapon)
+/* 0AEAC8 7F079F98 8D6B99E0 */  lw    $t3, %lo(starting_weapon)($t3)
 /* 0AEACC 7F079F9C AFAB0048 */  sw    $t3, 0x48($sp)
 .L7F079FA0:
 /* 0AEAD0 7F079FA0 0FC26919 */  jal   getPlayerCount
@@ -2530,6 +2581,7 @@ glabel jpt_bondcuff
 .word cuff_6_moore
 .word cuff_7_dalton
 .word cuff_8_variable_bond_head
+.size jpt_bondcuff, . - jpt_bondcuff
 
 /*D:80055008*/
 glabel jpt_bondhead
@@ -2603,7 +2655,7 @@ glabel solo_char_load
 /* 0AEF20 7F07A3B0 24010001 */  li    $at, 1
 /* 0AEF24 7F07A3B4 14410066 */  bne   $v0, $at, .Ljp7F07A550
 /* 0AEF28 7F07A3B8 00000000 */   nop
-/* 0AEF2C 7F07A3BC 0FC075C4 */  jal   getSelectedFolderBond
+/* 0AEF2C 7F07A3BC 0FC075C4 */  jal   fileGetBondForCurrentFolder
 /* 0AEF30 7F07A3C0 00000000 */   nop
 /* 0AEF34 7F07A3C4 3C0F8008 */  lui   $t7, %hi(g_CurrentPlayer) # $t7, 0x8008
 /* 0AEF38 7F07A3C8 8DEFA120 */  lw    $t7, %lo(g_CurrentPlayer)($t7)
@@ -2743,8 +2795,8 @@ variable_body_head:
 /* 0AF0E8 7F07A578 8DEF64D4 */  lw    $t7, %lo(g_CameraMode)($t7)
 /* 0AF0EC 7F07A57C 24010003 */  li    $at, 3
 /* 0AF0F0 7F07A580 15E10003 */  bne   $t7, $at, .Ljp7F07A590
-/* 0AF0F4 7F07A584 3C0B8008 */   lui   $t3, %hi(starting_right_weapon) # $t3, 0x8008
-/* 0AF0F8 7F07A588 8D6B9A20 */  lw    $t3, %lo(starting_right_weapon)($t3)
+/* 0AF0F4 7F07A584 3C0B8008 */   lui   $t3, %hi(starting_weapon) # $t3, 0x8008
+/* 0AF0F8 7F07A588 8D6B9A20 */  lw    $t3, %lo(starting_weapon)($t3)
 /* 0AF0FC 7F07A58C AFAB0048 */  sw    $t3, 0x48($sp)
 .Ljp7F07A590:
 /* 0AF100 7F07A590 0FC26C01 */  jal   getPlayerCount
@@ -3135,6 +3187,7 @@ glabel jpt_bondcuff
 .word cuff_6_moore
 .word cuff_7_dalton
 .word cuff_8_variable_bond_head
+.size jpt_bondcuff, . - jpt_bondcuff
 
 /*D:80055008*/
 glabel jpt_bondhead
@@ -3208,7 +3261,7 @@ glabel solo_char_load
 /* 0AC830 7F079E40 24010001 */  li    $at, 1
 /* 0AC834 7F079E44 14410066 */  bne   $v0, $at, .L7F079FE0
 /* 0AC838 7F079E48 00000000 */   nop
-/* 0AC83C 7F079E4C 0FC074F0 */  jal   getSelectedFolderBond
+/* 0AC83C 7F079E4C 0FC074F0 */  jal   fileGetBondForCurrentFolder
 /* 0AC840 7F079E50 00000000 */   nop
 /* 0AC844 7F079E54 3C0F8007 */  lui   $t7, %hi(g_CurrentPlayer) # $t7, 0x8007
 /* 0AC848 7F079E58 8DEF8BC0 */  lw    $t7, %lo(g_CurrentPlayer)($t7)
@@ -3350,8 +3403,8 @@ variable_body_head:
 /* 0AC9F8 7F07A008 8DEF19E4 */  lw    $t7, %lo(g_CameraMode)($t7)
 /* 0AC9FC 7F07A00C 24010003 */  li    $at, 3
 /* 0ACA00 7F07A010 15E10003 */  bne   $t7, $at, .L7F07A020
-/* 0ACA04 7F07A014 3C0B8007 */   lui   $t3, %hi(starting_right_weapon) # $t3, 0x8007
-/* 0ACA08 7F07A018 8D6B84C0 */  lw    $t3, %lo(starting_right_weapon)($t3)
+/* 0ACA04 7F07A014 3C0B8007 */   lui   $t3, %hi(starting_weapon) # $t3, 0x8007
+/* 0ACA08 7F07A018 8D6B84C0 */  lw    $t3, %lo(starting_weapon)($t3)
 /* 0ACA0C 7F07A01C AFAB0048 */  sw    $t3, 0x48($sp)
 .L7F07A020:
 /* 0ACA10 7F07A020 0FC26669 */  jal   getPlayerCount
@@ -3714,7 +3767,7 @@ void maybe_solo_intro_camera_handler(void)
 
 
 
-u32 get_camera_mode(void) {
+u32 bondviewGetCameraMode(void) {
     // Node 0
     return g_CameraMode;
 }
@@ -3725,7 +3778,7 @@ u32 get_camera_mode(void) {
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F07A534(void) {
+void pickDeathCameraAngles(void) {
 
 }
 #else
@@ -3742,7 +3795,7 @@ glabel D_8005503C
 glabel D_80055040
 .word 0x40c90fdb /*6.2831855*/
 .text
-glabel sub_GAME_7F07A534
+glabel pickDeathCameraAngles
 /* 0AF064 7F07A534 27BDFF20 */  addiu $sp, $sp, -0xe0
 /* 0AF068 7F07A538 3C018008 */  lui   $at, %hi(dword_CODE_bss_800799F4)
 /* 0AF06C 7F07A53C AC2499F4 */  sw    $a0, %lo(dword_CODE_bss_800799F4)($at)
@@ -4052,811 +4105,252 @@ glabel sub_GAME_7F07A534
 
 
 
-
-#ifdef NONMATCHING
-void set_camera_mode(s32 arg0)
+// Address 0x7F07A9B8 NTSC.
+void bondviewSetCameraMode(s32 arg0)
 {
-    f32 sp78;
-    void *sp64;
-    f32 sp60;
-    f32 sp5C;
-    f32 sp58;
-    f32 sp50;
-    f32 sp4C;
-    f32 sp48;
-    void *sp38;
-    f32 temp_f12;
-    s32 temp_s0;
-    s32 temp_v0;
-    s32 temp_v0_4;
-    void *temp_a0;
-    void *temp_a0_2;
-    void *temp_t8;
-    void *temp_t9;
-    void *temp_t9_2;
-    void *temp_v0_10;
-    void *temp_v0_11;
-    void *temp_v0_12;
-    void *temp_v0_2;
-    void *temp_v0_3;
-    void *temp_v0_5;
-    void *temp_v0_6;
-    void *temp_v0_7;
-    void *temp_v0_8;
-    void *temp_v0_9;
-    void *temp_v1;
-    void *phi_t8;
-    void *phi_t9;
-    s32 phi_v0;
-    void *phi_a2;
-    s32 phi_v1;
-    f32 phi_f0;
-    s32 phi_s0;
+    s32 padding;
+    s32 padding2;
 
-    g_CameraMode               = arg0;
+    g_CameraMode = arg0;
     g_CameraAfterCinema = 0;
-    temp_v0                  = g_CameraMode;
-    if (temp_v0 == 1)
+
+    if (g_CameraMode == CAMERAMODE_INTRO)
     {
-        if ((ptr_random06cam_entry != 0) && (get_recording_ramrom_flag() == 0) && (get_is_ramrom_flag() == 0))
+        if ((ptr_random06cam_entry != NULL) && (get_recording_ramrom_flag() == 0) && (get_is_ramrom_flag() == 0))
         {
-            D_800364A4 = 0.0f;
-            currentPlayerSetFadeColour(0, 0, 0, 0x3F800000);
-            currentPlayerSetFadeFrac(0x42700000, 0);
-            load_enviroment(bossGetStageNum(), 1);
-            pPlayer->unk34 = 0;
-            return;
+            camera_transition_timer = 0.0f;
+            currentPlayerSetFadeColour(0, 0, 0, 1.0f);
+            currentPlayerSetFadeFrac(60.0f, 0.0f);
+            fogLoadLevelEnvironment(bossGetStageNum(), 1);
+            g_CurrentPlayer->room_pointer = NULL;
         }
-        set_camera_mode(3);
-        return;
+        else
+        {
+            bondviewSetCameraMode(CAMERAMODE_SWIRL);
+        }
     }
-    if (temp_v0 == 2)
+    else if (g_CameraMode == CAMERAMODE_FADESWIRL)
     {
-        currentPlayerSetFadeColour(0, 0, 0, 0);
-        currentPlayerSetFadeFrac(0x42700000, 0x3F800000);
-        return;
+        currentPlayerSetFadeColour(0, 0, 0, 0.0f);
+        currentPlayerSetFadeFrac(60.0f, 1.0f);
     }
-    if (temp_v0 == 9)
+    else if (g_CameraMode == CAMERAMODE_MP)
     {
         g_MpSwirlRotateSpeed = 0.0f;
         g_MpSwirlAngleDegrees = -90.0f;
         g_MpSwirlForwardSpeed = 0.0f;
         g_MpSwirlDistance = 80.0f;
-        load_enviroment(bossGetStageNum(0), 0);
-        return;
+        fogLoadLevelEnvironment(bossGetStageNum(), 0);
     }
-    if (temp_v0 == 3)
+    else if (g_CameraMode == CAMERAMODE_SWIRL)
     {
-        D_8003649C = 0;
-        currentPlayerSetFadeColour(0, 0, 0, 0x3F800000);
-        currentPlayerSetFadeFrac(0x42700000, 0);
-        load_enviroment(bossGetStageNum(), 0);
+        struct ModelAnimation *sp38;
+        f32 sp78;
+        f32 ftemp_3;
+        f32 ftemp_1;
+        struct ChrRecord *temp_v1;
+
+        camera_fade_active = 0;
+        currentPlayerSetFadeColour(0, 0, 0, 1.0f);
+        currentPlayerSetFadeFrac(60.0f, 0.0f);
+        fogLoadLevelEnvironment(bossGetStageNum(), 0);
+
         if ((g_IntroSwirl != 0) && (get_recording_ramrom_flag() == 0) && (get_is_ramrom_flag() == 0))
         {
-            D_800364A4 = 0.0f;
-            D_800364A8 = 1;
-            currentPlayerStartChrFade(0.0f, 0x3F800000);
+            camera_transition_timer = 0.0f;
+            intro_camera_index = CAMERAMODE_INTRO;
+            currentPlayerStartChrFade(0.0f, 1.0f);
             solo_char_load();
-            temp_v0_2 = (g_IntroAnimationIndex * 0x10) + &stage_intro_anim_table;
-            temp_f12  = temp_v0_2->unk8;
-            sp78      = temp_f12;
-            modelSetAnimation(pPlayer->unkD4, temp_v0_2->unk0 + ptr_animation_table, 0, temp_v0_2->unk4, temp_v0_2->unkC, 0.0f);
-            if (temp_f12 > 0.0f)
+
+            // HACK: ptr_animation_table->data regalloc is backwards
+            sp38 = (struct ModelAnimation *)((s32)stage_intro_anim_table[g_IntroAnimationIndex].anonymous_0 + (s32)&ptr_animation_table->data);
+            sp78 = stage_intro_anim_table[g_IntroAnimationIndex].anonymous_2;
+            ftemp_1 = stage_intro_anim_table[g_IntroAnimationIndex].anonymous_1;
+            ftemp_3 = stage_intro_anim_table[g_IntroAnimationIndex].anonymous_3;
+
+            modelSetAnimation(
+                g_CurrentPlayer->ptr_char_objectinstance,
+                sp38,
+                0,
+                ftemp_1,
+                ftemp_3,
+                0.0f);
+
+            if (sp78 > 0.0f)
             {
-                modelSetAnimEndFrame(pPlayer->unkD4, temp_f12);
+                modelSetAnimEndFrame(g_CurrentPlayer->ptr_char_objectinstance, sp78);
             }
-            temp_v0_3       = pPlayer->unkA8->unk4;
-            temp_v0_3->unk7 = 0x17;
-            temp_v0_3->unk8 = 0;
-            pPlayer->unk34  = 0;
-            return;
-        }
-        set_camera_mode(4);
-        return;
-    }
-    if (temp_v0 == 4)
-    {
-        if (bossGetStageNum(0) == 0x36)
-        {
-            currentPlayerSetFadeColour(0, 0, 0, 0x3F800000);
-            currentPlayerSetFadeFrac(0, 0x3F800000);
-        }
-        else if (D_8003649C != 0)
-        {
-            currentPlayerSetFadeColour(0, 0, 0, 0x3F800000);
-            currentPlayerSetFadeFrac(0x42700000, 0);
-        }
-        if (getPlayerCount() >= 2)
-        {
-            load_enviroment(bossGetStageNum(), 0);
-        }
-        if (pPlayer->unk1C8 == 0)
-        {
-            currentPlayerEquipWeaponWrapper(1, starting_right_weapon.unk4);
-            currentPlayerEquipWeaponWrapper(0, starting_right_weapon.unk0);
-        }
-        stop_time_flag = 0;
-        return;
-    }
-    if (temp_v0 == 5)
-    {
-        D_800364A4 = 0.0f;
-        D_800364A8 = 1;
-        currentPlayerSetFadeColour(0, 0, 0, 0x3F800000);
-        currentPlayerSetFadeFrac(0x42700000, 0);
-        temp_v0_4 = g_ExplodeTankOnDeathFlag;
-        phi_v0    = temp_v0_4;
-        if ((temp_v0_4 != 0) && (g_PlayerTankProp != 0))
-        {
+
+            temp_v1 = g_CurrentPlayer->prop->chr;
+            temp_v1->actiontype = ACT_BONDINTRO;
+            temp_v1->sleep = 0;
+            g_CurrentPlayer->room_pointer = NULL;
         }
         else
         {
+            bondviewSetCameraMode(CAMERAMODE_FP);
+        }
+    }
+    else if (g_CameraMode == CAMERAMODE_FP)
+    {
+        if (bossGetStageNum() == LEVELID_CUBA)
+        {
+            currentPlayerSetFadeColour(0, 0, 0, 1.0f);
+            currentPlayerSetFadeFrac(0.0f, 1.0f);
+        }
+        else if (camera_fade_active != 0)
+        {
+            currentPlayerSetFadeColour(0, 0, 0, 1.0f);
+            currentPlayerSetFadeFrac(60.0f, 0.0f);
+        }
+
+        if (getPlayerCount() >= 2)
+        {
+            fogLoadLevelEnvironment(bossGetStageNum(), 0);
+        }
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0)
+        {
+            currentPlayerEquipWeaponWrapper(GUNLEFT, starting_weapon[GUNLEFT]);
+            currentPlayerEquipWeaponWrapper(GUNRIGHT, starting_weapon[GUNRIGHT]);
+        }
+
+        stop_time_flag = 0;
+    }
+    else if (g_CameraMode == CAMERAMODE_DEATH_CAM_SP)
+    {
+        f32 var_f0;
+        PropRecord *sp64;
+        struct coord3d sp58;
+        StandTile *var_v1;
+        struct coord3d sp48;
+        PropRecord *var_a2;
+        struct ChrRecord *temp_v1_2;
+
+        camera_transition_timer = 0.0f;
+        intro_camera_index = CAMERAMODE_INTRO;
+        currentPlayerSetFadeColour(0, 0, 0, 1.0f);
+        currentPlayerSetFadeFrac(60.0f, 0.0f);
+
+        if (g_ExplodeTankOnDeathFlag && (g_PlayerTankProp != NULL))
+        {
+            // removed
+        }
+        else
+        {
+            // This branch restarts Bond's death animation for his death replay
             in_tank_flag = 0;
-            temp_t9      = pPlayer;
-            phi_t8       = temp_t9;
-            phi_t9       = temp_t9;
-            do
-            {
-                temp_t8           = phi_t8 + 0xC;
-                temp_t9_2         = phi_t9 + 0xC;
-                temp_t9_2->unk47C = phi_t8->unk434;
-                temp_t9_2->unk480 = temp_t8->unk42C;
-                temp_t9_2->unk484 = temp_t8->unk430;
-                phi_t8            = temp_t8;
-                phi_t9            = temp_t9_2;
-            } while (temp_t8 != (temp_t9 + 0x54));
-            temp_v0_5                = pPlayer;
-            temp_v0_5->unk148        = temp_v0_5->unk414;
-            temp_v0_6                = pPlayer;
-            temp_v0_6->unk158        = temp_v0_6->unk418;
-            temp_v0_7                = pPlayer;
-            temp_v0_7->unkA8->unk8   = temp_v0_7->unk48C;
-            temp_v0_8                = pPlayer;
-            temp_v0_8->unkA8->unkC   = temp_v0_8->unk490;
-            temp_v0_9                = pPlayer;
-            temp_v0_9->unkA8->unk10  = temp_v0_9->unk494;
-            temp_v0_10               = pPlayer;
-            temp_v0_10->unkA8->unk14 = temp_v0_10->unk488;
+
+            // struct copy
+            g_CurrentPlayer->field_488 = g_CurrentPlayer->previous_collision_info;
+
+            g_CurrentPlayer->vv_theta = g_CurrentPlayer->thetadie;
+            g_CurrentPlayer->vv_verta = g_CurrentPlayer->vertadie;
+            g_CurrentPlayer->prop->pos.f[0] = g_CurrentPlayer->field_488.collision_position.f[0];
+            g_CurrentPlayer->prop->pos.f[1] = g_CurrentPlayer->field_488.collision_position.f[1];
+            g_CurrentPlayer->prop->pos.f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
+            g_CurrentPlayer->prop->stan = g_CurrentPlayer->field_488.current_tile_ptr;
+
             bondviewApplyVertaTheta();
             bondviewMoveAnimationTick(0, 0, 0);
             bondviewUpdatePlayerCollisionPositionFields();
-            currentPlayerStartChrFade(0.0f, 0x3F800000);
+            currentPlayerStartChrFade(0.0f, 1.0f);
             solo_char_load();
-            sp38 = sub_GAME_7F06F5AC(pPlayer + 0x598);
-            modelSetAnimation(pPlayer->unkD4, sp38, objecthandlerGetModelGunhand(pPlayer + 0x598), 0.0f, 0.5f, 0.0f);
-            temp_v1        = pPlayer->unkA8->unk4;
-            temp_v1->unk7  = 0x18;
-            temp_v1->unk8  = 0;
-            temp_v1->unk14 = temp_v1->unk14 | 1;
-            temp_v0_11     = pPlayer;
-            setsuboffset(temp_v0_11->unkD4, temp_v0_11->unkA8 + 8);
-            setsubroty(pPlayer->unkD4, get_curplay_horizontal_rotation_in_degrees());
-            phi_v0 = g_ExplodeTankOnDeathFlag;
+
+            modelSetAnimation(
+                g_CurrentPlayer->ptr_char_objectinstance,
+                objecthandlerGetModelAnim((Model *) &g_CurrentPlayer->model),
+                objecthandlerGetModelGunhand(&g_CurrentPlayer->model),
+                0.0f,
+                0.5f,
+                0.0f);
+
+            temp_v1_2 = g_CurrentPlayer->prop->chr;
+            temp_v1_2->actiontype = ACT_BONDDIE;
+            temp_v1_2->sleep = 0;
+            temp_v1_2->chrflags |= CHRFLAG_INIT;
+
+            setsuboffset(g_CurrentPlayer->ptr_char_objectinstance, &g_CurrentPlayer->prop->pos);
+            var_f0 = get_curplay_horizontal_rotation_in_degrees();
+            setsubroty(g_CurrentPlayer->ptr_char_objectinstance, var_f0);
         }
-        if ((phi_v0 != 0) && (temp_a0 = g_PlayerTankProp, (temp_a0 != 0)))
+
+        if (g_ExplodeTankOnDeathFlag && (g_PlayerTankProp != NULL))
         {
-            sp64   = temp_a0;
-            sp58   = temp_a0->unk8;
-            sp5C   = temp_a0->unkC;
-            sp60   = temp_a0->unk10;
-            sp48   = temp_a0->unk8;
-            sp4C   = temp_a0->unkC;
-            sp50   = temp_a0->unk10;
-            phi_a2 = temp_a0;
-            phi_v1 = temp_a0->unk14;
-            phi_f0 = 500.0f;
+            sp64 = g_PlayerTankProp;
+            var_f0 = 500.0f; // distance to place the camera
+            sp58.f[0] = g_PlayerTankProp->pos.f[0];
+            sp58.f[1] = g_PlayerTankProp->pos.f[1];
+            sp58.f[2] = g_PlayerTankProp->pos.f[2];
+            var_a2 = g_PlayerTankProp;
+            sp48.f[0] = g_PlayerTankProp->pos.f[0];
+            sp48.f[1] = g_PlayerTankProp->pos.f[1];
+            sp48.f[2] = g_PlayerTankProp->pos.f[2];
+            var_v1 = g_PlayerTankProp->stan;
         }
         else
         {
-            temp_v0_12 = pPlayer;
-            sp64       = temp_v0_12->unkA8;
-            sp58       = temp_v0_12->unk3C4;
-            sp5C       = temp_v0_12->unk3C8;
-            sp60       = temp_v0_12->unk3CC;
-            sp48       = temp_v0_12->unk48C;
-            sp4C       = temp_v0_12->unk490;
-            sp50       = temp_v0_12->unk494;
-            phi_a2     = temp_v0_12->unkA8;
-            phi_v1     = temp_v0_12->unk488;
-            phi_f0     = 200.0f;
+            var_f0 = 200.0f; // distance to place the camera
+            sp64 = g_CurrentPlayer->prop;
+            sp58.f[0] = g_CurrentPlayer->field_3C4;
+            sp58.f[1] = g_CurrentPlayer->field_3C8;
+            sp58.f[2] = g_CurrentPlayer->field_3CC;
+            var_a2 = g_CurrentPlayer->prop;
+            sp48.f[0] = g_CurrentPlayer->field_488.collision_position.f[0];
+            sp48.f[1] = g_CurrentPlayer->field_488.collision_position.f[1];
+            sp48.f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
+            var_v1 = g_CurrentPlayer->field_488.current_tile_ptr;
         }
-        if (sub_GAME_7F07A534(sp64, &sp58, phi_a2, &sp48, phi_v1, phi_f0) != 0)
+
+        if (pickDeathCameraAngles(sp64, &sp58, var_a2, &sp48, var_v1, var_f0) != 0)
         {
-            if (D_80036510 == CAMERAMODE_NONE)
+            if (camera_mode == 0)
             {
                 musicTrack1Play(M_INTROSWOOSH);
-                sndSetScalerApplyVolumeAllSfxSlot(0x3F000000);
+                sndSetScalerApplyVolumeAllSfxSlot(0.5f);
             }
-            if ((g_ExplodeTankOnDeathFlag != 0) && (g_PlayerTankProp != 0))
+
+            if ((g_ExplodeTankOnDeathFlag != 0) && (g_PlayerTankProp != NULL))
             {
-                temp_a0_2 = g_PlayerTankProp;
-                explosionCreate(temp_a0_2, temp_a0_2 + 8, temp_a0_2->unk14, 0xD, 0, get_cur_playernum(), temp_a0_2 + 0x2C, 0);
-                return;
+                explosionCreate(g_PlayerTankProp, &g_PlayerTankProp->pos, g_PlayerTankProp->stan, 0xD, 0, get_cur_playernum(), g_PlayerTankProp->rooms, 0);
             }
-            // Duplicate return node #56. Try simplifying control flow for better match
-            return;
         }
-        bossRunTitleStage();
-        return;
-    }
-    if (temp_v0 == 6)
-    {
-        currentPlayerSetFadeColour(0, 0, 0, 0);
-        currentPlayerSetFadeFrac(0x42700000, 0x3F800000);
-        return;
-    }
-    if (temp_v0 == 7)
-    {
-        solo_char_load(0);
-        pPlayer->unk34 = 0;
-        return;
-    }
-    if (temp_v0 == 8)
-    {
-        maybe_solo_intro_camera_handler(0);
-        g_CameraMode = CAMERAMODE_FP;
-        return;
-    }
-    if (temp_v0 == 0xA)
-    {
-        phi_s0 = 0;
-        if (getPlayerCount(0) > 0)
+        else
         {
-            do
-            {
-                set_cur_player(phi_s0);
-                currentPlayerSetFadeColour(0, 0, 0, 0);
-                currentPlayerSetFadeFrac(0x42700000, 0x3F800000);
-                temp_s0 = phi_s0 + 1;
-                phi_s0  = temp_s0;
-            } while (temp_s0 < getPlayerCount());
+            // pickDeathCameraAngles has returned 0. This happens when no possible angles were found
+            // to place the camera at the requested distance or when the three death replays are finished.
+            bossRunTitleStage();
         }
+    }
+    else if (g_CameraMode == CAMERAMODE_DEATH_CAM_MP)
+    {
+        currentPlayerSetFadeColour(0, 0, 0, 0.0f);
+        currentPlayerSetFadeFrac(60.0f, 1.0f);
+    }
+    else if (g_CameraMode == CAMERAMODE_POSEND)
+    {
+        solo_char_load();
+        g_CurrentPlayer->room_pointer = NULL;
+    }
+    else if (g_CameraMode == CAMERAMODE_FP_NOINPUT)
+    {
+        maybe_solo_intro_camera_handler();
+        g_CameraMode = CAMERAMODE_FP;
+    }
+    else if (g_CameraMode == CAMERAMODE_FADE_TO_TITLE)
+    {
+        s32 var_s0;
+
+        for (var_s0 = 0; var_s0 < getPlayerCount(); var_s0++)
+        {
+            set_cur_player(var_s0);
+            currentPlayerSetFadeColour(0, 0, 0, 0.0f);
+            currentPlayerSetFadeFrac(60.0f, 1.0f);
+        }
+
         set_cur_player(0);
     }
 }
-#else
-GLOBAL_ASM(
-.text
-glabel set_camera_mode
-/* 0AF4E8 7F07A9B8 27BDFF78 */  addiu $sp, $sp, -0x88
-/* 0AF4EC 7F07A9BC AFB00028 */  sw    $s0, 0x28($sp)
-/* 0AF4F0 7F07A9C0 3C108003 */  lui   $s0, %hi(g_CameraMode)
-/* 0AF4F4 7F07A9C4 26106494 */  addiu $s0, %lo(g_CameraMode) # addiu $s0, $s0, 0x6494
-/* 0AF4F8 7F07A9C8 AE040000 */  sw    $a0, ($s0)
-/* 0AF4FC 7F07A9CC 3C018003 */  lui   $at, %hi(g_CameraAfterCinema)
-/* 0AF500 7F07A9D0 AC206498 */  sw    $zero, %lo(g_CameraAfterCinema)($at)
-/* 0AF504 7F07A9D4 8E020000 */  lw    $v0, ($s0)
-/* 0AF508 7F07A9D8 24030001 */  li    $v1, 1
-/* 0AF50C 7F07A9DC AFBF002C */  sw    $ra, 0x2c($sp)
-/* 0AF510 7F07A9E0 14620027 */  bne   $v1, $v0, .L7F07AA80
-/* 0AF514 7F07A9E4 24010002 */   li    $at, 2
-/* 0AF518 7F07A9E8 3C0E8003 */  lui   $t6, %hi(ptr_random06cam_entry)
-/* 0AF51C 7F07A9EC 8DCE64C0 */  lw    $t6, %lo(ptr_random06cam_entry)($t6)
-/* 0AF520 7F07A9F0 11C0001F */  beqz  $t6, .L7F07AA70
-/* 0AF524 7F07A9F4 00000000 */   nop
-/* 0AF528 7F07A9F8 0FC2FF26 */  jal   get_recording_ramrom_flag
-/* 0AF52C 7F07A9FC 00000000 */   nop
-/* 0AF530 7F07AA00 1440001B */  bnez  $v0, .L7F07AA70
-/* 0AF534 7F07AA04 00000000 */   nop
-/* 0AF538 7F07AA08 0FC2FF23 */  jal   get_is_ramrom_flag
-/* 0AF53C 7F07AA0C 00000000 */   nop
-/* 0AF540 7F07AA10 14400017 */  bnez  $v0, .L7F07AA70
-/* 0AF544 7F07AA14 3C018003 */   lui   $at, %hi(D_800364A4)
-/* 0AF548 7F07AA18 44802000 */  mtc1  $zero, $f4
-/* 0AF54C 7F07AA1C 00002025 */  move  $a0, $zero
-/* 0AF550 7F07AA20 00002825 */  move  $a1, $zero
-/* 0AF554 7F07AA24 00003025 */  move  $a2, $zero
-/* 0AF558 7F07AA28 3C073F80 */  lui   $a3, 0x3f80
-/* 0AF55C 7F07AA2C 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AF560 7F07AA30 E42464A4 */   swc1  $f4, %lo(D_800364A4)($at)
-/* 0AF564 7F07AA34 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0AF568 7F07AA38 44816000 */  mtc1  $at, $f12
-/* 0AF56C 7F07AA3C 44807000 */  mtc1  $zero, $f14
-/* 0AF570 7F07AA40 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AF574 7F07AA44 00000000 */   nop
-/* 0AF578 7F07AA48 0C001A57 */  jal   bossGetStageNum
-/* 0AF57C 7F07AA4C 00000000 */   nop
-/* 0AF580 7F07AA50 00402025 */  move  $a0, $v0
-/* 0AF584 7F07AA54 0FC2EA99 */  jal   fogLoadLevelEnvironment
-/* 0AF588 7F07AA58 24050001 */   li    $a1, 1
-/* 0AF58C 7F07AA5C 3C108008 */  lui   $s0, %hi(g_CurrentPlayer)
-/* 0AF590 7F07AA60 2610A0B0 */  addiu $s0, %lo(g_CurrentPlayer) # addiu $s0, $s0, -0x5f50
-/* 0AF594 7F07AA64 8E0F0000 */  lw    $t7, ($s0)
-/* 0AF598 7F07AA68 100001C9 */  b     .L7F07B190
-/* 0AF59C 7F07AA6C ADE00034 */   sw    $zero, 0x34($t7)
-.L7F07AA70:
-/* 0AF5A0 7F07AA70 0FC1EA6E */  jal   set_camera_mode
-/* 0AF5A4 7F07AA74 24040003 */   li    $a0, 3
-/* 0AF5A8 7F07AA78 100001C6 */  b     .L7F07B194
-/* 0AF5AC 7F07AA7C 8FBF002C */   lw    $ra, 0x2c($sp)
-.L7F07AA80:
-/* 0AF5B0 7F07AA80 1441000D */  bne   $v0, $at, .L7F07AAB8
-/* 0AF5B4 7F07AA84 00002025 */   move  $a0, $zero
-/* 0AF5B8 7F07AA88 00002825 */  move  $a1, $zero
-/* 0AF5BC 7F07AA8C 00003025 */  move  $a2, $zero
-/* 0AF5C0 7F07AA90 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AF5C4 7F07AA94 24070000 */   li    $a3, 0
-/* 0AF5C8 7F07AA98 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0AF5CC 7F07AA9C 44816000 */  mtc1  $at, $f12
-/* 0AF5D0 7F07AAA0 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0AF5D4 7F07AAA4 44817000 */  mtc1  $at, $f14
-/* 0AF5D8 7F07AAA8 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AF5DC 7F07AAAC 00000000 */   nop
-/* 0AF5E0 7F07AAB0 100001B8 */  b     .L7F07B194
-/* 0AF5E4 7F07AAB4 8FBF002C */   lw    $ra, 0x2c($sp)
-.L7F07AAB8:
-/* 0AF5E8 7F07AAB8 24010009 */  li    $at, 9
-/* 0AF5EC 7F07AABC 54410015 */  bnel  $v0, $at, .L7F07AB14
-/* 0AF5F0 7F07AAC0 24010003 */   li    $at, 3
-/* 0AF5F4 7F07AAC4 44800000 */  mtc1  $zero, $f0
-/* 0AF5F8 7F07AAC8 3C018008 */  lui   $at, %hi(g_MpSwirlRotateSpeed)
-/* 0AF5FC 7F07AACC E4209E04 */  swc1  $f0, %lo(g_MpSwirlRotateSpeed)($at)
-/* 0AF600 7F07AAD0 3C01C2B4 */  li    $at, 0xC2B40000 # -90.000000
-/* 0AF604 7F07AAD4 44813000 */  mtc1  $at, $f6
-/* 0AF608 7F07AAD8 3C018008 */  lui   $at, %hi(g_MpSwirlAngleDegrees)
-/* 0AF60C 7F07AADC E4269E08 */  swc1  $f6, %lo(g_MpSwirlAngleDegrees)($at)
-/* 0AF610 7F07AAE0 3C018008 */  lui   $at, %hi(g_MpSwirlForwardSpeed)
-/* 0AF614 7F07AAE4 E4209E0C */  swc1  $f0, %lo(g_MpSwirlForwardSpeed)($at)
-/* 0AF618 7F07AAE8 3C0142A0 */  li    $at, 0x42A00000 # 80.000000
-/* 0AF61C 7F07AAEC 44814000 */  mtc1  $at, $f8
-/* 0AF620 7F07AAF0 3C018008 */  lui   $at, %hi(g_MpSwirlDistance)
-/* 0AF624 7F07AAF4 0C001A57 */  jal   bossGetStageNum
-/* 0AF628 7F07AAF8 E4289E10 */   swc1  $f8, %lo(g_MpSwirlDistance)($at)
-/* 0AF62C 7F07AAFC 00402025 */  move  $a0, $v0
-/* 0AF630 7F07AB00 0FC2EA99 */  jal   fogLoadLevelEnvironment
-/* 0AF634 7F07AB04 00002825 */   move  $a1, $zero
-/* 0AF638 7F07AB08 100001A2 */  b     .L7F07B194
-/* 0AF63C 7F07AB0C 8FBF002C */   lw    $ra, 0x2c($sp)
-/* 0AF640 7F07AB10 24010003 */  li    $at, 3
-.L7F07AB14:
-/* 0AF644 7F07AB14 14410059 */  bne   $v0, $at, .L7F07AC7C
-/* 0AF648 7F07AB18 00002025 */   move  $a0, $zero
-/* 0AF64C 7F07AB1C 3C018003 */  lui   $at, %hi(D_8003649C)
-/* 0AF650 7F07AB20 AC20649C */  sw    $zero, %lo(D_8003649C)($at)
-/* 0AF654 7F07AB24 00002825 */  move  $a1, $zero
-/* 0AF658 7F07AB28 00003025 */  move  $a2, $zero
-/* 0AF65C 7F07AB2C 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AF660 7F07AB30 3C073F80 */   lui   $a3, 0x3f80
-/* 0AF664 7F07AB34 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0AF668 7F07AB38 44816000 */  mtc1  $at, $f12
-/* 0AF66C 7F07AB3C 44807000 */  mtc1  $zero, $f14
-/* 0AF670 7F07AB40 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AF674 7F07AB44 00000000 */   nop
-/* 0AF678 7F07AB48 0C001A57 */  jal   bossGetStageNum
-/* 0AF67C 7F07AB4C 00000000 */   nop
-/* 0AF680 7F07AB50 00402025 */  move  $a0, $v0
-/* 0AF684 7F07AB54 0FC2EA99 */  jal   fogLoadLevelEnvironment
-/* 0AF688 7F07AB58 00002825 */   move  $a1, $zero
-/* 0AF68C 7F07AB5C 3C188003 */  lui   $t8, %hi(g_IntroSwirl)
-/* 0AF690 7F07AB60 8F1864AC */  lw    $t8, %lo(g_IntroSwirl)($t8)
-/* 0AF694 7F07AB64 13000041 */  beqz  $t8, .L7F07AC6C
-/* 0AF698 7F07AB68 00000000 */   nop
-/* 0AF69C 7F07AB6C 0FC2FF26 */  jal   get_recording_ramrom_flag
-/* 0AF6A0 7F07AB70 00000000 */   nop
-/* 0AF6A4 7F07AB74 1440003D */  bnez  $v0, .L7F07AC6C
-/* 0AF6A8 7F07AB78 00000000 */   nop
-/* 0AF6AC 7F07AB7C 0FC2FF23 */  jal   get_is_ramrom_flag
-/* 0AF6B0 7F07AB80 00000000 */   nop
-/* 0AF6B4 7F07AB84 14400039 */  bnez  $v0, .L7F07AC6C
-/* 0AF6B8 7F07AB88 00000000 */   nop
-/* 0AF6BC 7F07AB8C 44806000 */  mtc1  $zero, $f12
-/* 0AF6C0 7F07AB90 3C018003 */  lui   $at, %hi(D_800364A4)
-/* 0AF6C4 7F07AB94 24190001 */  li    $t9, 1
-/* 0AF6C8 7F07AB98 E42C64A4 */  swc1  $f12, %lo(D_800364A4)($at)
-/* 0AF6CC 7F07AB9C 3C018003 */  lui   $at, %hi(D_800364A8)
-/* 0AF6D0 7F07ABA0 AC3964A8 */  sw    $t9, %lo(D_800364A8)($at)
-/* 0AF6D4 7F07ABA4 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0AF6D8 7F07ABA8 44817000 */  mtc1  $at, $f14
-/* 0AF6DC 7F07ABAC 0FC20284 */  jal   currentPlayerStartChrFade
-/* 0AF6E0 7F07ABB0 00000000 */   nop
-/* 0AF6E4 7F07ABB4 0FC1E73C */  jal   solo_char_load
-/* 0AF6E8 7F07ABB8 00000000 */   nop
-/* 0AF6EC 7F07ABBC 3C088003 */  lui   $t0, %hi(g_IntroAnimationIndex)
-/* 0AF6F0 7F07ABC0 8D086514 */  lw    $t0, %lo(g_IntroAnimationIndex)($t0)
-/* 0AF6F4 7F07ABC4 3C0A8003 */  lui   $t2, %hi(stage_intro_anim_table)
-/* 0AF6F8 7F07ABC8 3C108008 */  lui   $s0, %hi(g_CurrentPlayer)
-/* 0AF6FC 7F07ABCC 254A6518 */  addiu $t2, %lo(stage_intro_anim_table) # addiu $t2, $t2, 0x6518
-/* 0AF700 7F07ABD0 00084900 */  sll   $t1, $t0, 4
-/* 0AF704 7F07ABD4 2610A0B0 */  addiu $s0, %lo(g_CurrentPlayer) # addiu $s0, $s0, -0x5f50
-/* 0AF708 7F07ABD8 012A1021 */  addu  $v0, $t1, $t2
-/* 0AF70C 7F07ABDC 8E0D0000 */  lw    $t5, ($s0)
-/* 0AF710 7F07ABE0 C4400004 */  lwc1  $f0, 4($v0)
-/* 0AF714 7F07ABE4 3C0C8007 */  lui   $t4, %hi(ptr_animation_table)
-/* 0AF718 7F07ABE8 8D8C9538 */  lw    $t4, %lo(ptr_animation_table)($t4)
-/* 0AF71C 7F07ABEC 8C4B0000 */  lw    $t3, ($v0)
-/* 0AF720 7F07ABF0 C44C0008 */  lwc1  $f12, 8($v0)
-/* 0AF724 7F07ABF4 C442000C */  lwc1  $f2, 0xc($v0)
-/* 0AF728 7F07ABF8 44805000 */  mtc1  $zero, $f10
-/* 0AF72C 7F07ABFC 8DA400D4 */  lw    $a0, 0xd4($t5)
-/* 0AF730 7F07AC00 44070000 */  mfc1  $a3, $f0
-/* 0AF734 7F07AC04 00003025 */  move  $a2, $zero
-/* 0AF738 7F07AC08 016C2821 */  addu  $a1, $t3, $t4
-/* 0AF73C 7F07AC0C E7AC0078 */  swc1  $f12, 0x78($sp)
-/* 0AF740 7F07AC10 E7A20010 */  swc1  $f2, 0x10($sp)
-/* 0AF744 7F07AC14 0FC1BF2A */  jal   modelSetAnimation
-/* 0AF748 7F07AC18 E7AA0014 */   swc1  $f10, 0x14($sp)
-/* 0AF74C 7F07AC1C C7AC0078 */  lwc1  $f12, 0x78($sp)
-/* 0AF750 7F07AC20 44808000 */  mtc1  $zero, $f16
-/* 0AF754 7F07AC24 00000000 */  nop
-/* 0AF758 7F07AC28 460C803C */  c.lt.s $f16, $f12
-/* 0AF75C 7F07AC2C 00000000 */  nop
-/* 0AF760 7F07AC30 45020006 */  bc1fl .L7F07AC4C
-/* 0AF764 7F07AC34 8E0F0000 */   lw    $t7, ($s0)
-/* 0AF768 7F07AC38 8E0E0000 */  lw    $t6, ($s0)
-/* 0AF76C 7F07AC3C 44056000 */  mfc1  $a1, $f12
-/* 0AF770 7F07AC40 0FC1BF7A */  jal   modelSetAnimEndFrame
-/* 0AF774 7F07AC44 8DC400D4 */   lw    $a0, 0xd4($t6)
-/* 0AF778 7F07AC48 8E0F0000 */  lw    $t7, ($s0)
-.L7F07AC4C:
-/* 0AF77C 7F07AC4C 24190017 */  li    $t9, 23
-/* 0AF780 7F07AC50 8DF800A8 */  lw    $t8, 0xa8($t7)
-/* 0AF784 7F07AC54 8F020004 */  lw    $v0, 4($t8)
-/* 0AF788 7F07AC58 A0590007 */  sb    $t9, 7($v0)
-/* 0AF78C 7F07AC5C A0400008 */  sb    $zero, 8($v0)
-/* 0AF790 7F07AC60 8E080000 */  lw    $t0, ($s0)
-/* 0AF794 7F07AC64 1000014A */  b     .L7F07B190
-/* 0AF798 7F07AC68 AD000034 */   sw    $zero, 0x34($t0)
-.L7F07AC6C:
-/* 0AF79C 7F07AC6C 0FC1EA6E */  jal   set_camera_mode
-/* 0AF7A0 7F07AC70 24040004 */   li    $a0, 4
-/* 0AF7A4 7F07AC74 10000147 */  b     .L7F07B194
-/* 0AF7A8 7F07AC78 8FBF002C */   lw    $ra, 0x2c($sp)
-.L7F07AC7C:
-/* 0AF7AC 7F07AC7C 24010004 */  li    $at, 4
-/* 0AF7B0 7F07AC80 5441003A */  bnel  $v0, $at, .L7F07AD6C
-/* 0AF7B4 7F07AC84 24010005 */   li    $at, 5
-/* 0AF7B8 7F07AC88 0C001A57 */  jal   bossGetStageNum
-/* 0AF7BC 7F07AC8C 00000000 */   nop
-/* 0AF7C0 7F07AC90 24010036 */  li    $at, 54
-/* 0AF7C4 7F07AC94 1441000D */  bne   $v0, $at, .L7F07ACCC
-/* 0AF7C8 7F07AC98 3C098003 */   lui   $t1, %hi(D_8003649C)
-/* 0AF7CC 7F07AC9C 00002025 */  move  $a0, $zero
-/* 0AF7D0 7F07ACA0 00002825 */  move  $a1, $zero
-/* 0AF7D4 7F07ACA4 00003025 */  move  $a2, $zero
-/* 0AF7D8 7F07ACA8 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AF7DC 7F07ACAC 3C073F80 */   lui   $a3, 0x3f80
-/* 0AF7E0 7F07ACB0 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0AF7E4 7F07ACB4 44817000 */  mtc1  $at, $f14
-/* 0AF7E8 7F07ACB8 44806000 */  mtc1  $zero, $f12
-/* 0AF7EC 7F07ACBC 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AF7F0 7F07ACC0 00000000 */   nop
-/* 0AF7F4 7F07ACC4 1000000D */  b     .L7F07ACFC
-/* 0AF7F8 7F07ACC8 00000000 */   nop
-.L7F07ACCC:
-/* 0AF7FC 7F07ACCC 8D29649C */  lw    $t1, %lo(D_8003649C)($t1)
-/* 0AF800 7F07ACD0 00002025 */  move  $a0, $zero
-/* 0AF804 7F07ACD4 00002825 */  move  $a1, $zero
-/* 0AF808 7F07ACD8 11200008 */  beqz  $t1, .L7F07ACFC
-/* 0AF80C 7F07ACDC 00003025 */   move  $a2, $zero
-/* 0AF810 7F07ACE0 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AF814 7F07ACE4 3C073F80 */   lui   $a3, 0x3f80
-/* 0AF818 7F07ACE8 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0AF81C 7F07ACEC 44816000 */  mtc1  $at, $f12
-/* 0AF820 7F07ACF0 44807000 */  mtc1  $zero, $f14
-/* 0AF824 7F07ACF4 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AF828 7F07ACF8 00000000 */   nop
-.L7F07ACFC:
-/* 0AF82C 7F07ACFC 0FC26919 */  jal   getPlayerCount
-/* 0AF830 7F07AD00 00000000 */   nop
-/* 0AF834 7F07AD04 28410002 */  slti  $at, $v0, 2
-/* 0AF838 7F07AD08 14200006 */  bnez  $at, .L7F07AD24
-/* 0AF83C 7F07AD0C 00000000 */   nop
-/* 0AF840 7F07AD10 0C001A57 */  jal   bossGetStageNum
-/* 0AF844 7F07AD14 00000000 */   nop
-/* 0AF848 7F07AD18 00402025 */  move  $a0, $v0
-/* 0AF84C 7F07AD1C 0FC2EA99 */  jal   fogLoadLevelEnvironment
-/* 0AF850 7F07AD20 00002825 */   move  $a1, $zero
-.L7F07AD24:
-/* 0AF854 7F07AD24 3C108008 */  lui   $s0, %hi(g_CurrentPlayer)
-/* 0AF858 7F07AD28 2610A0B0 */  addiu $s0, %lo(g_CurrentPlayer) # addiu $s0, $s0, -0x5f50
-/* 0AF85C 7F07AD2C 8E0A0000 */  lw    $t2, ($s0)
-/* 0AF860 7F07AD30 3C108008 */  lui   $s0, %hi(starting_right_weapon)
-/* 0AF864 7F07AD34 261099E0 */  addiu $s0, %lo(starting_right_weapon) # addiu $s0, $s0, -0x6620
-/* 0AF868 7F07AD38 8D4B01C8 */  lw    $t3, 0x1c8($t2)
-/* 0AF86C 7F07AD3C 24040001 */  li    $a0, 1
-/* 0AF870 7F07AD40 15600006 */  bnez  $t3, .L7F07AD5C
-/* 0AF874 7F07AD44 00000000 */   nop
-/* 0AF878 7F07AD48 0FC17645 */  jal   currentPlayerEquipWeaponWrapper
-/* 0AF87C 7F07AD4C 8E050004 */   lw    $a1, 4($s0)
-/* 0AF880 7F07AD50 00002025 */  move  $a0, $zero
-/* 0AF884 7F07AD54 0FC17645 */  jal   currentPlayerEquipWeaponWrapper
-/* 0AF888 7F07AD58 8E050000 */   lw    $a1, ($s0)
-.L7F07AD5C:
-/* 0AF88C 7F07AD5C 3C018003 */  lui   $at, %hi(stop_time_flag)
-/* 0AF890 7F07AD60 1000010B */  b     .L7F07B190
-/* 0AF894 7F07AD64 AC2064A0 */   sw    $zero, %lo(stop_time_flag)($at)
-/* 0AF898 7F07AD68 24010005 */  li    $at, 5
-.L7F07AD6C:
-/* 0AF89C 7F07AD6C 144100CC */  bne   $v0, $at, .L7F07B0A0
-/* 0AF8A0 7F07AD70 00002025 */   move  $a0, $zero
-/* 0AF8A4 7F07AD74 44809000 */  mtc1  $zero, $f18
-/* 0AF8A8 7F07AD78 3C018003 */  lui   $at, %hi(D_800364A4)
-/* 0AF8AC 7F07AD7C 00002825 */  move  $a1, $zero
-/* 0AF8B0 7F07AD80 E43264A4 */  swc1  $f18, %lo(D_800364A4)($at)
-/* 0AF8B4 7F07AD84 3C018003 */  lui   $at, %hi(D_800364A8)
-/* 0AF8B8 7F07AD88 AC2364A8 */  sw    $v1, %lo(D_800364A8)($at)
-/* 0AF8BC 7F07AD8C 00003025 */  move  $a2, $zero
-/* 0AF8C0 7F07AD90 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AF8C4 7F07AD94 3C073F80 */   lui   $a3, 0x3f80
-/* 0AF8C8 7F07AD98 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0AF8CC 7F07AD9C 44816000 */  mtc1  $at, $f12
-/* 0AF8D0 7F07ADA0 44807000 */  mtc1  $zero, $f14
-/* 0AF8D4 7F07ADA4 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AF8D8 7F07ADA8 00000000 */   nop
-/* 0AF8DC 7F07ADAC 3C028003 */  lui   $v0, %hi(g_ExplodeTankOnDeathFlag)
-/* 0AF8E0 7F07ADB0 8C42648C */  lw    $v0, %lo(g_ExplodeTankOnDeathFlag)($v0)
-/* 0AF8E4 7F07ADB4 3C108008 */  lui   $s0, %hi(g_CurrentPlayer)
-/* 0AF8E8 7F07ADB8 3C0C8003 */  lui   $t4, %hi(g_PlayerTankProp)
-/* 0AF8EC 7F07ADBC 10400007 */  beqz  $v0, .L7F07ADDC
-/* 0AF8F0 7F07ADC0 2610A0B0 */   addiu $s0, %lo(g_CurrentPlayer) # addiu $s0, $s0, -0x5f50
-/* 0AF8F4 7F07ADC4 8D8C6450 */  lw    $t4, %lo(g_PlayerTankProp)($t4)
-/* 0AF8F8 7F07ADC8 11800004 */  beqz  $t4, .L7F07ADDC
-/* 0AF8FC 7F07ADCC 00000000 */   nop
-/* 0AF900 7F07ADD0 3C108008 */  lui   $s0, %hi(g_CurrentPlayer)
-/* 0AF904 7F07ADD4 1000005C */  b     .L7F07AF48
-/* 0AF908 7F07ADD8 2610A0B0 */   addiu $s0, %lo(g_CurrentPlayer) # addiu $s0, $s0, -0x5f50
-.L7F07ADDC:
-/* 0AF90C 7F07ADDC 3C018003 */  lui   $at, %hi(in_tank_flag)
-/* 0AF910 7F07ADE0 AC206448 */  sw    $zero, %lo(in_tank_flag)($at)
-/* 0AF914 7F07ADE4 8E190000 */  lw    $t9, ($s0)
-/* 0AF918 7F07ADE8 0320C025 */  move  $t8, $t9
-/* 0AF91C 7F07ADEC 272F0054 */  addiu $t7, $t9, 0x54
-.L7F07ADF0:
-/* 0AF920 7F07ADF0 8F010434 */  lw    $at, 0x434($t8)
-/* 0AF924 7F07ADF4 2718000C */  addiu $t8, $t8, 0xc
-/* 0AF928 7F07ADF8 2739000C */  addiu $t9, $t9, 0xc
-/* 0AF92C 7F07ADFC AF21047C */  sw    $at, 0x47c($t9)
-/* 0AF930 7F07AE00 8F01042C */  lw    $at, 0x42c($t8)
-/* 0AF934 7F07AE04 AF210480 */  sw    $at, 0x480($t9)
-/* 0AF938 7F07AE08 8F010430 */  lw    $at, 0x430($t8)
-/* 0AF93C 7F07AE0C 170FFFF8 */  bne   $t8, $t7, .L7F07ADF0
-/* 0AF940 7F07AE10 AF210484 */   sw    $at, 0x484($t9)
-/* 0AF944 7F07AE14 8E020000 */  lw    $v0, ($s0)
-/* 0AF948 7F07AE18 C4440414 */  lwc1  $f4, 0x414($v0)
-/* 0AF94C 7F07AE1C E4440148 */  swc1  $f4, 0x148($v0)
-/* 0AF950 7F07AE20 8E020000 */  lw    $v0, ($s0)
-/* 0AF954 7F07AE24 C4460418 */  lwc1  $f6, 0x418($v0)
-/* 0AF958 7F07AE28 E4460158 */  swc1  $f6, 0x158($v0)
-/* 0AF95C 7F07AE2C 8E020000 */  lw    $v0, ($s0)
-/* 0AF960 7F07AE30 C448048C */  lwc1  $f8, 0x48c($v0)
-/* 0AF964 7F07AE34 8C4800A8 */  lw    $t0, 0xa8($v0)
-/* 0AF968 7F07AE38 E5080008 */  swc1  $f8, 8($t0)
-/* 0AF96C 7F07AE3C 8E020000 */  lw    $v0, ($s0)
-/* 0AF970 7F07AE40 C44A0490 */  lwc1  $f10, 0x490($v0)
-/* 0AF974 7F07AE44 8C4900A8 */  lw    $t1, 0xa8($v0)
-/* 0AF978 7F07AE48 E52A000C */  swc1  $f10, 0xc($t1)
-/* 0AF97C 7F07AE4C 8E020000 */  lw    $v0, ($s0)
-/* 0AF980 7F07AE50 C4500494 */  lwc1  $f16, 0x494($v0)
-/* 0AF984 7F07AE54 8C4A00A8 */  lw    $t2, 0xa8($v0)
-/* 0AF988 7F07AE58 E5500010 */  swc1  $f16, 0x10($t2)
-/* 0AF98C 7F07AE5C 8E020000 */  lw    $v0, ($s0)
-/* 0AF990 7F07AE60 8C4B0488 */  lw    $t3, 0x488($v0)
-/* 0AF994 7F07AE64 8C4C00A8 */  lw    $t4, 0xa8($v0)
-/* 0AF998 7F07AE68 0FC205E4 */  jal   bondviewApplyVertaTheta
-/* 0AF99C 7F07AE6C AD8B0014 */   sw    $t3, 0x14($t4)
-/* 0AF9A0 7F07AE70 44806000 */  mtc1  $zero, $f12
-/* 0AF9A4 7F07AE74 00000000 */  nop
-/* 0AF9A8 7F07AE78 44066000 */  mfc1  $a2, $f12
-/* 0AF9AC 7F07AE7C 0FC202CD */  jal   bondviewMoveAnimationTick
-/* 0AF9B0 7F07AE80 46006386 */   mov.s $f14, $f12
-/* 0AF9B4 7F07AE84 0FC2051E */  jal   bondviewUpdatePlayerCollisionPositionFields
-/* 0AF9B8 7F07AE88 00000000 */   nop
-/* 0AF9BC 7F07AE8C 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0AF9C0 7F07AE90 44817000 */  mtc1  $at, $f14
-/* 0AF9C4 7F07AE94 44806000 */  mtc1  $zero, $f12
-/* 0AF9C8 7F07AE98 0FC20284 */  jal   currentPlayerStartChrFade
-/* 0AF9CC 7F07AE9C 00000000 */   nop
-/* 0AF9D0 7F07AEA0 0FC1E73C */  jal   solo_char_load
-/* 0AF9D4 7F07AEA4 00000000 */   nop
-/* 0AF9D8 7F07AEA8 8E040000 */  lw    $a0, ($s0)
-/* 0AF9DC 7F07AEAC 0FC1BD6B */  jal   objecthandlerGetModelAnim
-/* 0AF9E0 7F07AEB0 24840598 */   addiu $a0, $a0, 0x598
-/* 0AF9E4 7F07AEB4 8E040000 */  lw    $a0, ($s0)
-/* 0AF9E8 7F07AEB8 AFA20038 */  sw    $v0, 0x38($sp)
-/* 0AF9EC 7F07AEBC 0FC1BD6D */  jal   objecthandlerGetModelGunhand
-/* 0AF9F0 7F07AEC0 24840598 */   addiu $a0, $a0, 0x598
-/* 0AF9F4 7F07AEC4 44800000 */  mtc1  $zero, $f0
-/* 0AF9F8 7F07AEC8 8E0E0000 */  lw    $t6, ($s0)
-/* 0AF9FC 7F07AECC 3C013F00 */  li    $at, 0x3F000000 # 0.500000
-/* 0AFA00 7F07AED0 44819000 */  mtc1  $at, $f18
-/* 0AFA04 7F07AED4 8DC400D4 */  lw    $a0, 0xd4($t6)
-/* 0AFA08 7F07AED8 44070000 */  mfc1  $a3, $f0
-/* 0AFA0C 7F07AEDC 8FA50038 */  lw    $a1, 0x38($sp)
-/* 0AFA10 7F07AEE0 00403025 */  move  $a2, $v0
-/* 0AFA14 7F07AEE4 E7A00014 */  swc1  $f0, 0x14($sp)
-/* 0AFA18 7F07AEE8 0FC1BF2A */  jal   modelSetAnimation
-/* 0AFA1C 7F07AEEC E7B20010 */   swc1  $f18, 0x10($sp)
-/* 0AFA20 7F07AEF0 8E0D0000 */  lw    $t5, ($s0)
-/* 0AFA24 7F07AEF4 24180018 */  li    $t8, 24
-/* 0AFA28 7F07AEF8 8DAF00A8 */  lw    $t7, 0xa8($t5)
-/* 0AFA2C 7F07AEFC 8DE30004 */  lw    $v1, 4($t7)
-/* 0AFA30 7F07AF00 8C790014 */  lw    $t9, 0x14($v1)
-/* 0AFA34 7F07AF04 A0780007 */  sb    $t8, 7($v1)
-/* 0AFA38 7F07AF08 A0600008 */  sb    $zero, 8($v1)
-/* 0AFA3C 7F07AF0C 37280001 */  ori   $t0, $t9, 1
-/* 0AFA40 7F07AF10 AC680014 */  sw    $t0, 0x14($v1)
-/* 0AFA44 7F07AF14 8E020000 */  lw    $v0, ($s0)
-/* 0AFA48 7F07AF18 8C4500A8 */  lw    $a1, 0xa8($v0)
-/* 0AFA4C 7F07AF1C 8C4400D4 */  lw    $a0, 0xd4($v0)
-/* 0AFA50 7F07AF20 0FC1B303 */  jal   setsuboffset
-/* 0AFA54 7F07AF24 24A50008 */   addiu $a1, $a1, 8
-/* 0AFA58 7F07AF28 0FC227B9 */  jal   get_curplay_horizontal_rotation_in_degrees
-/* 0AFA5C 7F07AF2C 00000000 */   nop
-/* 0AFA60 7F07AF30 8E090000 */  lw    $t1, ($s0)
-/* 0AFA64 7F07AF34 44050000 */  mfc1  $a1, $f0
-/* 0AFA68 7F07AF38 0FC1B34F */  jal   setsubroty
-/* 0AFA6C 7F07AF3C 8D2400D4 */   lw    $a0, 0xd4($t1)
-/* 0AFA70 7F07AF40 3C028003 */  lui   $v0, %hi(g_ExplodeTankOnDeathFlag)
-/* 0AFA74 7F07AF44 8C42648C */  lw    $v0, %lo(g_ExplodeTankOnDeathFlag)($v0)
-.L7F07AF48:
-/* 0AFA78 7F07AF48 10400017 */  beqz  $v0, .L7F07AFA8
-/* 0AFA7C 7F07AF4C 27A50058 */   addiu $a1, $sp, 0x58
-/* 0AFA80 7F07AF50 3C048003 */  lui   $a0, %hi(g_PlayerTankProp)
-/* 0AFA84 7F07AF54 8C846450 */  lw    $a0, %lo(g_PlayerTankProp)($a0)
-/* 0AFA88 7F07AF58 50800014 */  beql  $a0, $zero, .L7F07AFAC
-/* 0AFA8C 7F07AF5C 8E020000 */   lw    $v0, ($s0)
-/* 0AFA90 7F07AF60 AFA40064 */  sw    $a0, 0x64($sp)
-/* 0AFA94 7F07AF64 C4840008 */  lwc1  $f4, 8($a0)
-/* 0AFA98 7F07AF68 3C0143FA */  li    $at, 0x43FA0000 # 500.000000
-/* 0AFA9C 7F07AF6C 44810000 */  mtc1  $at, $f0
-/* 0AFAA0 7F07AF70 E7A40058 */  swc1  $f4, 0x58($sp)
-/* 0AFAA4 7F07AF74 C486000C */  lwc1  $f6, 0xc($a0)
-/* 0AFAA8 7F07AF78 00803025 */  move  $a2, $a0
-/* 0AFAAC 7F07AF7C E7A6005C */  swc1  $f6, 0x5c($sp)
-/* 0AFAB0 7F07AF80 C4880010 */  lwc1  $f8, 0x10($a0)
-/* 0AFAB4 7F07AF84 E7A80060 */  swc1  $f8, 0x60($sp)
-/* 0AFAB8 7F07AF88 C48A0008 */  lwc1  $f10, 8($a0)
-/* 0AFABC 7F07AF8C E7AA0048 */  swc1  $f10, 0x48($sp)
-/* 0AFAC0 7F07AF90 C490000C */  lwc1  $f16, 0xc($a0)
-/* 0AFAC4 7F07AF94 E7B0004C */  swc1  $f16, 0x4c($sp)
-/* 0AFAC8 7F07AF98 C4920010 */  lwc1  $f18, 0x10($a0)
-/* 0AFACC 7F07AF9C E7B20050 */  swc1  $f18, 0x50($sp)
-/* 0AFAD0 7F07AFA0 10000014 */  b     .L7F07AFF4
-/* 0AFAD4 7F07AFA4 8C830014 */   lw    $v1, 0x14($a0)
-.L7F07AFA8:
-/* 0AFAD8 7F07AFA8 8E020000 */  lw    $v0, ($s0)
-.L7F07AFAC:
-/* 0AFADC 7F07AFAC 3C014348 */  li    $at, 0x43480000 # 200.000000
-/* 0AFAE0 7F07AFB0 44810000 */  mtc1  $at, $f0
-/* 0AFAE4 7F07AFB4 8C4A00A8 */  lw    $t2, 0xa8($v0)
-/* 0AFAE8 7F07AFB8 AFAA0064 */  sw    $t2, 0x64($sp)
-/* 0AFAEC 7F07AFBC C44403C4 */  lwc1  $f4, 0x3c4($v0)
-/* 0AFAF0 7F07AFC0 E7A40058 */  swc1  $f4, 0x58($sp)
-/* 0AFAF4 7F07AFC4 C44603C8 */  lwc1  $f6, 0x3c8($v0)
-/* 0AFAF8 7F07AFC8 E7A6005C */  swc1  $f6, 0x5c($sp)
-/* 0AFAFC 7F07AFCC C44803CC */  lwc1  $f8, 0x3cc($v0)
-/* 0AFB00 7F07AFD0 E7A80060 */  swc1  $f8, 0x60($sp)
-/* 0AFB04 7F07AFD4 C44A048C */  lwc1  $f10, 0x48c($v0)
-/* 0AFB08 7F07AFD8 8C4600A8 */  lw    $a2, 0xa8($v0)
-/* 0AFB0C 7F07AFDC E7AA0048 */  swc1  $f10, 0x48($sp)
-/* 0AFB10 7F07AFE0 C4500490 */  lwc1  $f16, 0x490($v0)
-/* 0AFB14 7F07AFE4 E7B0004C */  swc1  $f16, 0x4c($sp)
-/* 0AFB18 7F07AFE8 C4520494 */  lwc1  $f18, 0x494($v0)
-/* 0AFB1C 7F07AFEC E7B20050 */  swc1  $f18, 0x50($sp)
-/* 0AFB20 7F07AFF0 8C430488 */  lw    $v1, 0x488($v0)
-.L7F07AFF4:
-/* 0AFB24 7F07AFF4 8FA40064 */  lw    $a0, 0x64($sp)
-/* 0AFB28 7F07AFF8 27A70048 */  addiu $a3, $sp, 0x48
-/* 0AFB2C 7F07AFFC AFA30010 */  sw    $v1, 0x10($sp)
-/* 0AFB30 7F07B000 0FC1E94D */  jal   sub_GAME_7F07A534
-/* 0AFB34 7F07B004 E7A00014 */   swc1  $f0, 0x14($sp)
-/* 0AFB38 7F07B008 10400021 */  beqz  $v0, .L7F07B090
-/* 0AFB3C 7F07B00C 3C0B8003 */   lui   $t3, %hi(D_80036510)
-/* 0AFB40 7F07B010 8D6B6510 */  lw    $t3, %lo(D_80036510)($t3)
-/* 0AFB44 7F07B014 15600007 */  bnez  $t3, .L7F07B034
-/* 0AFB48 7F07B018 00000000 */   nop
-/* 0AFB4C 7F07B01C 0C001B9F */  jal   musicTrack1Play
-/* 0AFB50 7F07B020 2404002C */   li    $a0, 44
-/* 0AFB54 7F07B024 3C013F00 */  li    $at, 0x3F000000 # 0.500000
-/* 0AFB58 7F07B028 44816000 */  mtc1  $at, $f12
-/* 0AFB5C 7F07B02C 0C00248E */  jal   sndSetScalerApplyVolumeAllSfxSlot
-/* 0AFB60 7F07B030 00000000 */   nop
-.L7F07B034:
-/* 0AFB64 7F07B034 3C0C8003 */  lui   $t4, %hi(g_ExplodeTankOnDeathFlag)
-/* 0AFB68 7F07B038 8D8C648C */  lw    $t4, %lo(g_ExplodeTankOnDeathFlag)($t4)
-/* 0AFB6C 7F07B03C 3C0E8003 */  lui   $t6, %hi(g_PlayerTankProp)
-/* 0AFB70 7F07B040 51800054 */  beql  $t4, $zero, .L7F07B194
-/* 0AFB74 7F07B044 8FBF002C */   lw    $ra, 0x2c($sp)
-/* 0AFB78 7F07B048 8DCE6450 */  lw    $t6, %lo(g_PlayerTankProp)($t6)
-/* 0AFB7C 7F07B04C 51C00051 */  beql  $t6, $zero, .L7F07B194
-/* 0AFB80 7F07B050 8FBF002C */   lw    $ra, 0x2c($sp)
-/* 0AFB84 7F07B054 0FC26C54 */  jal   get_cur_playernum
-/* 0AFB88 7F07B058 00000000 */   nop
-/* 0AFB8C 7F07B05C 3C048003 */  lui   $a0, %hi(g_PlayerTankProp)
-/* 0AFB90 7F07B060 8C846450 */  lw    $a0, %lo(g_PlayerTankProp)($a0)
-/* 0AFB94 7F07B064 2407000D */  li    $a3, 13
-/* 0AFB98 7F07B068 8C860014 */  lw    $a2, 0x14($a0)
-/* 0AFB9C 7F07B06C 248D002C */  addiu $t5, $a0, 0x2c
-/* 0AFBA0 7F07B070 AFAD0018 */  sw    $t5, 0x18($sp)
-/* 0AFBA4 7F07B074 AFA0001C */  sw    $zero, 0x1c($sp)
-/* 0AFBA8 7F07B078 AFA20014 */  sw    $v0, 0x14($sp)
-/* 0AFBAC 7F07B07C AFA00010 */  sw    $zero, 0x10($sp)
-/* 0AFBB0 7F07B080 0FC27094 */  jal   explosionCreate
-/* 0AFBB4 7F07B084 24850008 */   addiu $a1, $a0, 8
-/* 0AFBB8 7F07B088 10000042 */  b     .L7F07B194
-/* 0AFBBC 7F07B08C 8FBF002C */   lw    $ra, 0x2c($sp)
-.L7F07B090:
-/* 0AFBC0 7F07B090 0C001A4C */  jal   bossRunTitleStage
-/* 0AFBC4 7F07B094 00000000 */   nop
-/* 0AFBC8 7F07B098 1000003E */  b     .L7F07B194
-/* 0AFBCC 7F07B09C 8FBF002C */   lw    $ra, 0x2c($sp)
-.L7F07B0A0:
-/* 0AFBD0 7F07B0A0 24010006 */  li    $at, 6
-/* 0AFBD4 7F07B0A4 1441000D */  bne   $v0, $at, .L7F07B0DC
-/* 0AFBD8 7F07B0A8 00002025 */   move  $a0, $zero
-/* 0AFBDC 7F07B0AC 00002825 */  move  $a1, $zero
-/* 0AFBE0 7F07B0B0 00003025 */  move  $a2, $zero
-/* 0AFBE4 7F07B0B4 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AFBE8 7F07B0B8 24070000 */   li    $a3, 0
-/* 0AFBEC 7F07B0BC 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0AFBF0 7F07B0C0 44816000 */  mtc1  $at, $f12
-/* 0AFBF4 7F07B0C4 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0AFBF8 7F07B0C8 44817000 */  mtc1  $at, $f14
-/* 0AFBFC 7F07B0CC 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AFC00 7F07B0D0 00000000 */   nop
-/* 0AFC04 7F07B0D4 1000002F */  b     .L7F07B194
-/* 0AFC08 7F07B0D8 8FBF002C */   lw    $ra, 0x2c($sp)
-.L7F07B0DC:
-/* 0AFC0C 7F07B0DC 24010007 */  li    $at, 7
-/* 0AFC10 7F07B0E0 54410009 */  bnel  $v0, $at, .L7F07B108
-/* 0AFC14 7F07B0E4 24010008 */   li    $at, 8
-/* 0AFC18 7F07B0E8 0FC1E73C */  jal   solo_char_load
-/* 0AFC1C 7F07B0EC 00000000 */   nop
-/* 0AFC20 7F07B0F0 3C108008 */  lui   $s0, %hi(g_CurrentPlayer)
-/* 0AFC24 7F07B0F4 2610A0B0 */  addiu $s0, %lo(g_CurrentPlayer) # addiu $s0, $s0, -0x5f50
-/* 0AFC28 7F07B0F8 8E0F0000 */  lw    $t7, ($s0)
-/* 0AFC2C 7F07B0FC 10000024 */  b     .L7F07B190
-/* 0AFC30 7F07B100 ADE00034 */   sw    $zero, 0x34($t7)
-/* 0AFC34 7F07B104 24010008 */  li    $at, 8
-.L7F07B108:
-/* 0AFC38 7F07B108 54410007 */  bnel  $v0, $at, .L7F07B128
-/* 0AFC3C 7F07B10C 2401000A */   li    $at, 10
-/* 0AFC40 7F07B110 0FC1E928 */  jal   maybe_solo_intro_camera_handler
-/* 0AFC44 7F07B114 00000000 */   nop
-/* 0AFC48 7F07B118 24180004 */  li    $t8, 4
-/* 0AFC4C 7F07B11C 1000001C */  b     .L7F07B190
-/* 0AFC50 7F07B120 AE180000 */   sw    $t8, ($s0)
-/* 0AFC54 7F07B124 2401000A */  li    $at, 10
-.L7F07B128:
-/* 0AFC58 7F07B128 5441001A */  bnel  $v0, $at, .L7F07B194
-/* 0AFC5C 7F07B12C 8FBF002C */   lw    $ra, 0x2c($sp)
-/* 0AFC60 7F07B130 0FC26919 */  jal   getPlayerCount
-/* 0AFC64 7F07B134 00008025 */   move  $s0, $zero
-/* 0AFC68 7F07B138 18400013 */  blez  $v0, .L7F07B188
-/* 0AFC6C 7F07B13C 00000000 */   nop
-.L7F07B140:
-/* 0AFC70 7F07B140 0FC26C43 */  jal   set_cur_player
-/* 0AFC74 7F07B144 02002025 */   move  $a0, $s0
-/* 0AFC78 7F07B148 00002025 */  move  $a0, $zero
-/* 0AFC7C 7F07B14C 00002825 */  move  $a1, $zero
-/* 0AFC80 7F07B150 00003025 */  move  $a2, $zero
-/* 0AFC84 7F07B154 0FC201EC */  jal   currentPlayerSetFadeColour
-/* 0AFC88 7F07B158 24070000 */   li    $a3, 0
-/* 0AFC8C 7F07B15C 3C014270 */  li    $at, 0x42700000 # 60.000000
-/* 0AFC90 7F07B160 44816000 */  mtc1  $at, $f12
-/* 0AFC94 7F07B164 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0AFC98 7F07B168 44817000 */  mtc1  $at, $f14
-/* 0AFC9C 7F07B16C 0FC20216 */  jal   currentPlayerSetFadeFrac
-/* 0AFCA0 7F07B170 00000000 */   nop
-/* 0AFCA4 7F07B174 0FC26919 */  jal   getPlayerCount
-/* 0AFCA8 7F07B178 26100001 */   addiu $s0, $s0, 1
-/* 0AFCAC 7F07B17C 0202082A */  slt   $at, $s0, $v0
-/* 0AFCB0 7F07B180 1420FFEF */  bnez  $at, .L7F07B140
-/* 0AFCB4 7F07B184 00000000 */   nop
-.L7F07B188:
-/* 0AFCB8 7F07B188 0FC26C43 */  jal   set_cur_player
-/* 0AFCBC 7F07B18C 00002025 */   move  $a0, $zero
-.L7F07B190:
-/* 0AFCC0 7F07B190 8FBF002C */  lw    $ra, 0x2c($sp)
-.L7F07B194:
-/* 0AFCC4 7F07B194 8FB00028 */  lw    $s0, 0x28($sp)
-/* 0AFCC8 7F07B198 27BD0088 */  addiu $sp, $sp, 0x88
-/* 0AFCCC 7F07B19C 03E00008 */  jr    $ra
-/* 0AFCD0 7F07B1A0 00000000 */   nop
-)
-#endif
-
-
 
 
 
@@ -4878,7 +4372,7 @@ glabel sub_GAME_7F07B1A4
 /* 0AFCF0 7F07B1C0 24010001 */  li    $at, 1
 /* 0AFCF4 7F07B1C4 14410005 */  bne   $v0, $at, .L7F07B1DC
 /* 0AFCF8 7F07B1C8 AFBF0014 */   sw    $ra, 0x14($sp)
-/* 0AFCFC 7F07B1CC 0FC1EA6E */  jal   set_camera_mode
+/* 0AFCFC 7F07B1CC 0FC1EA6E */  jal   bondviewSetCameraMode
 /* 0AFD00 7F07B1D0 24040002 */   li    $a0, 2
 /* 0AFD04 7F07B1D4 1000002F */  b     .L7F07B294
 /* 0AFD08 7F07B1D8 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -4888,7 +4382,7 @@ glabel sub_GAME_7F07B1A4
 /* 0AFD14 7F07B1E4 24010009 */   li    $at, 9
 /* 0AFD18 7F07B1E8 0FC228CC */  jal   bondviewResetIntroCameraMessageDialogs
 /* 0AFD1C 7F07B1EC 00000000 */   nop
-/* 0AFD20 7F07B1F0 0FC1EA6E */  jal   set_camera_mode
+/* 0AFD20 7F07B1F0 0FC1EA6E */  jal   bondviewSetCameraMode
 /* 0AFD24 7F07B1F4 24040003 */   li    $a0, 3
 /* 0AFD28 7F07B1F8 10000026 */  b     .L7F07B294
 /* 0AFD2C 7F07B1FC 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -4905,7 +4399,7 @@ glabel sub_GAME_7F07B1A4
 /* 0AFD54 7F07B224 44806000 */  mtc1  $zero, $f12
 /* 0AFD58 7F07B228 0FC20284 */  jal   currentPlayerStartChrFade
 /* 0AFD5C 7F07B22C 00000000 */   nop
-/* 0AFD60 7F07B230 0FC1EA6E */  jal   set_camera_mode
+/* 0AFD60 7F07B230 0FC1EA6E */  jal   bondviewSetCameraMode
 /* 0AFD64 7F07B234 24040004 */   li    $a0, 4
 /* 0AFD68 7F07B238 10000016 */  b     .L7F07B294
 /* 0AFD6C 7F07B23C 8FBF0014 */   lw    $ra, 0x14($sp)
@@ -4915,21 +4409,21 @@ glabel sub_GAME_7F07B1A4
 /* 0AFD78 7F07B248 24010005 */   li    $at, 5
 /* 0AFD7C 7F07B24C 54410006 */  bnel  $v0, $at, .L7F07B268
 /* 0AFD80 7F07B250 24010006 */   li    $at, 6
-/* 0AFD84 7F07B254 0FC1EA6E */  jal   set_camera_mode
+/* 0AFD84 7F07B254 0FC1EA6E */  jal   bondviewSetCameraMode
 /* 0AFD88 7F07B258 24040006 */   li    $a0, 6
 /* 0AFD8C 7F07B25C 1000000D */  b     .L7F07B294
 /* 0AFD90 7F07B260 8FBF0014 */   lw    $ra, 0x14($sp)
 /* 0AFD94 7F07B264 24010006 */  li    $at, 6
 .L7F07B268:
 /* 0AFD98 7F07B268 14410009 */  bne   $v0, $at, .L7F07B290
-/* 0AFD9C 7F07B26C 3C028003 */   lui   $v0, %hi(D_80036510)
-/* 0AFDA0 7F07B270 24426510 */  addiu $v0, %lo(D_80036510) # addiu $v0, $v0, 0x6510
+/* 0AFD9C 7F07B26C 3C028003 */   lui   $v0, %hi(camera_mode)
+/* 0AFDA0 7F07B270 24426510 */  addiu $v0, %lo(camera_mode) # addiu $v0, $v0, 0x6510
 /* 0AFDA4 7F07B274 8C4E0000 */  lw    $t6, ($v0)
 /* 0AFDA8 7F07B278 25CF0001 */  addiu $t7, $t6, 1
 /* 0AFDAC 7F07B27C 29E10003 */  slti  $at, $t7, 3
 /* 0AFDB0 7F07B280 10200003 */  beqz  $at, .L7F07B290
 /* 0AFDB4 7F07B284 AC4F0000 */   sw    $t7, ($v0)
-/* 0AFDB8 7F07B288 0FC1EA6E */  jal   set_camera_mode
+/* 0AFDB8 7F07B288 0FC1EA6E */  jal   bondviewSetCameraMode
 /* 0AFDBC 7F07B28C 24040005 */   li    $a0, 5
 .L7F07B290:
 /* 0AFDC0 7F07B290 8FBF0014 */  lw    $ra, 0x14($sp)
@@ -5167,12 +4661,12 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
     f32 zero = 0.0f;
     void *p;
     struct PadRecord *setupPad;
-    
+
     if ((g_CameraMode == CAMERAMODE_INTRO) || (g_CameraMode == CAMERAMODE_FADESWIRL))
     {
         if (g_CameraMode == CAMERAMODE_INTRO)
         {
-            if ((D_800364A4 < 120.0f) && ((D_800364A4 + g_GlobalTimerDelta) >= 120.0f))
+            if ((camera_transition_timer < 120.0f) && ((camera_transition_timer + g_GlobalTimerDelta) >= 120.0f))
             {
 #if defined(VERSION_US)
                 setFontTables(ptrFontZurichBoldChars, ptrFontZurichBold);
@@ -5184,7 +4678,7 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
 
             if (ptr_random06cam_entry->lang20.lang_ptr != NULL)
             {
-                if ((D_800364A4 < 300.0f) && ((D_800364A4 + g_GlobalTimerDelta) >= 300.0f))
+                if ((camera_transition_timer < 300.0f) && ((camera_transition_timer + g_GlobalTimerDelta) >= 300.0f))
                 {
 #if defined(VERSION_US)
                     hudmsgBottomShow(ptr_random06cam_entry->lang20.lang_ptr);
@@ -5192,18 +4686,18 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
                     hudmsgBottomShow(ptr_random06cam_entry->lang20.lang_ptr, ptrFontZurichBoldChars, ptrFontZurichBold);
 #endif
                 }
-                
-                if (D_800364A4 > 480.0f)
+
+                if (camera_transition_timer > 480.0f)
                 {
                     g_CameraAfterCinema = CAMERAMODE_INTRO;
                 }
             }
-            else if (D_800364A4 > 300.0f)
+            else if (camera_transition_timer > 300.0f)
             {
                 g_CameraAfterCinema = CAMERAMODE_INTRO;
             }
 
-            D_800364A4 += g_GlobalTimerDelta;
+            camera_transition_timer += g_GlobalTimerDelta;
 
             if ((lvlGetControlsLockedFlag() == 0)
                 && (buttons & ~oldbuttons & (CONT_A | B_BUTTON | Z_TRIG | START_BUTTON | CONT_R | CONT_L)))
@@ -5223,11 +4717,11 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
         pos2->f[0] = pos->f[0] + (cosf(ptr_random06cam_entry->unk14.fval) * sinf(ptr_random06cam_entry->unk10.fval));
         pos2->f[1] = pos->f[1] + sinf(ptr_random06cam_entry->unk14.fval);
         pos2->f[2] = pos->f[2] - (cosf(ptr_random06cam_entry->unk14.fval) * cosf(ptr_random06cam_entry->unk10.fval));
-        
+
         p = &g_CurrentSetup.pads[ptr_random06cam_entry->unk18];
         setupPad = p;
         *stan = setupPad->stan;
-        
+
         arg6->f[0] = setupPad->pos.f[0];
         arg6->f[1] = setupPad->pos.f[1];
         arg6->f[2] = setupPad->pos.f[2];
@@ -5247,12 +4741,12 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
                     {
                         g_MpSwirlRotateSpeed += 0.1f;
                     }
-                    
+
                     if (g_MpSwirlAngleDegrees > 110.0f)
                     {
                         g_MpSwirlRotateSpeed -= 0.1f;
                     }
-                    
+
                     g_MpSwirlAngleDegrees += g_MpSwirlRotateSpeed;
                 }
 #if defined(VERSION_EU)
@@ -5263,7 +4757,7 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
                 {
                     g_MpSwirlAngleDegrees = 180.0f;
                 }
-            
+
                 if (g_MpSwirlAngleDegrees > 80.0f)
                 {
                     if (g_MpSwirlDistance > 60.0f)
@@ -5274,9 +4768,9 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
                     {
                         g_MpSwirlForwardSpeed += 0.015f;
                     }
-                    
+
                     g_MpSwirlDistance += g_MpSwirlForwardSpeed;
-                    
+
                     if (g_MpSwirlDistance < 1.0f)
                     {
                         g_MpSwirlDistance = 1.0f;
@@ -5286,7 +4780,7 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
         }
 
         sp38 = ((g_MpSwirlAngleDegrees - g_CurrentPlayer->vv_theta) * M_PI_F) / 180.0f;
-        
+
         pos->f[0] = g_CurrentPlayer->field_488.pos.f[0] + (sinf(sp38) * g_MpSwirlDistance);
         pos->f[1] = g_CurrentPlayer->field_488.pos.f[1] + (g_MpSwirlDistance * 0.08f);
         pos->f[2] = g_CurrentPlayer->field_488.pos.f[2] + (cosf(sp38) * g_MpSwirlDistance);
@@ -5294,9 +4788,9 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
         pos2->f[0] = g_CurrentPlayer->field_488.pos.f[0];
         pos2->f[1] = g_CurrentPlayer->field_488.pos.f[1];
         pos2->f[2] = g_CurrentPlayer->field_488.pos.f[2];
-        
+
         *stan = g_CurrentPlayer->prop->stan;
-        
+
         arg6->f[0] = g_CurrentPlayer->field_488.pos.f[0];
         arg6->f[1] = g_CurrentPlayer->field_488.pos.f[1] + (g_MpSwirlDistance * 0.08f);
         arg6->f[2] = g_CurrentPlayer->field_488.pos.f[2];
@@ -5315,26 +4809,26 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
     }
     else if (g_CameraMode == CAMERAMODE_SWIRL)
     {
-        D_800364A4 += g_GlobalTimerDelta;
-        
-        while (g_IntroSwirl[D_800364A8].unk18.fval <= D_800364A4)
+        camera_transition_timer += g_GlobalTimerDelta;
+
+        while (g_IntroSwirl[intro_camera_index].unk18.fval <= camera_transition_timer)
         {
-            if (!(g_IntroSwirl[D_800364A8 + 3].unk04 & 1))
+            if (!(g_IntroSwirl[intro_camera_index + 3].unk04 & 1))
             {
-                D_800364A4 -= g_IntroSwirl[D_800364A8].unk18.fval;
-                D_800364A8++;
+                camera_transition_timer -= g_IntroSwirl[intro_camera_index].unk18.fval;
+                intro_camera_index++;
             }
             else
             {
-                D_800364A4 = g_IntroSwirl[D_800364A8].unk18.fval;
+                camera_transition_timer = g_IntroSwirl[intro_camera_index].unk18.fval;
                 g_CameraAfterCinema = CAMERAMODE_INTRO;
                 break;
             }
         }
-        
-        sp30 += (g_IntroSwirl[D_800364A8].unk18.fval - D_800364A4);
 
-        for (i = D_800364A8 + 1; !(g_IntroSwirl[i+2].unk04 & 1); i++)
+        sp30 += (g_IntroSwirl[intro_camera_index].unk18.fval - camera_transition_timer);
+
+        for (i = intro_camera_index + 1; !(g_IntroSwirl[i+2].unk04 & 1); i++)
         {
             sp30 += g_IntroSwirl[i].unk18.fval;
         }
@@ -5344,7 +4838,7 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
             currentPlayerStartChrFade(30.0f, 0.0f);
         }
 
-        if (D_8003649C != 0)
+        if (camera_fade_active != 0)
         {
             if (currentPlayerIsFadeComplete() != 0)
             {
@@ -5352,14 +4846,14 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
             }
         }
 
-        if ((sp30 > 60.0f) && (D_8003649C == 0))
+        if ((sp30 > 60.0f) && (camera_fade_active == 0))
         {
-            if ((lvlGetControlsLockedFlag() == 0) 
+            if ((lvlGetControlsLockedFlag() == 0)
                 && (buttons & ~oldbuttons & (A_BUTTON | B_BUTTON | Z_TRIG | START_BUTTON | L_TRIG | R_TRIG)))
             {
-                D_8003649C = 1;
+                camera_fade_active = 1;
                 currentPlayerSetFadeColour(0, 0, 0, g_CurrentPlayer->colourscreenfrac);
-                        
+
                 if (currentPlayerIsFadeComplete() != 0)
                 {
                     currentPlayerSetFadeFrac(60.0f, 1.0f);
@@ -5371,14 +4865,14 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
             }
         }
 
-        sub_GAME_7F07B2A0(D_800364A8, D_800364A4, pos, pos2);
+        sub_GAME_7F07B2A0(intro_camera_index, camera_transition_timer, pos, pos2);
 
-        if (g_IntroSwirl[D_800364A8].unk1C >= 0)
+        if (g_IntroSwirl[intro_camera_index].unk1C >= 0)
         {
-            p = &g_CurrentSetup.pads[g_IntroSwirl[D_800364A8].unk1C];
+            p = &g_CurrentSetup.pads[g_IntroSwirl[intro_camera_index].unk1C];
             setupPad = p;
             *stan = setupPad->stan;
-            
+
             arg6->f[0] = setupPad->pos.f[0];
             arg6->f[1] = setupPad->pos.f[1];
             arg6->f[2] = setupPad->pos.f[2];
@@ -5391,12 +4885,12 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
             arg6->f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
         }
     }
-    else if ((g_CameraMode == CAMERAMODE_DEATH_CAM_FIRST) || (g_CameraMode == CAMERAMODE_DEATH_CAM_SECOND))
+    else if ((g_CameraMode == CAMERAMODE_DEATH_CAM_SP) || (g_CameraMode == CAMERAMODE_DEATH_CAM_MP))
     {
-        if (g_CameraMode == CAMERAMODE_DEATH_CAM_FIRST)
+        if (g_CameraMode == CAMERAMODE_DEATH_CAM_SP)
         {
-            D_800364A4 += g_GlobalTimerDelta;
-            
+            camera_transition_timer += g_GlobalTimerDelta;
+
             if (g_CurrentPlayer->ptr_char_objectinstance != NULL)
             {
                 if (objecthandlerGetModelField28((Model *) g_CurrentPlayer->ptr_char_objectinstance)
@@ -5405,42 +4899,42 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
                     g_CameraAfterCinema = CAMERAMODE_INTRO;
                 }
             }
-            else if (D_800364A4 >= 180.0f)
+            else if (camera_transition_timer >= 180.0f)
             {
                 g_CameraAfterCinema = CAMERAMODE_INTRO;
             }
-            
+
             if ((buttons & ~oldbuttons & (CONT_A | B_BUTTON | Z_TRIG | START_BUTTON))
-                && (g_CurrentPlayer->bonddead != 0)
-                && (g_CurrentPlayer->redbloodfinished != 0)
-                && (g_CurrentPlayer->deathanimfinished != 0))
+                && (g_CurrentPlayer->bonddead)
+                && (g_CurrentPlayer->redbloodfinished)
+                && (g_CurrentPlayer->deathanimfinished))
             {
                 g_CameraAfterCinema = CAMERAMODE_INTRO;
-                D_80036510 = CAMERAMODE_FADESWIRL;
+                camera_mode = CAMERAMODE_FADESWIRL;
             }
         }
-        else if (g_CameraMode == CAMERAMODE_DEATH_CAM_SECOND)
+        else if (g_CameraMode == CAMERAMODE_DEATH_CAM_MP)
         {
-            D_800364A4 += g_GlobalTimerDelta;
-            
+            camera_transition_timer += g_GlobalTimerDelta;
+
             if (g_CurrentPlayer->colourfadetimemax60 < 0.0f)
             {
                 g_CameraAfterCinema = CAMERAMODE_INTRO;
             }
-            
+
             if ((buttons & ~oldbuttons & (CONT_A | B_BUTTON | Z_TRIG | START_BUTTON))
-                && (g_CurrentPlayer->bonddead != 0)
-                && (g_CurrentPlayer->redbloodfinished != 0)
-                && (g_CurrentPlayer->deathanimfinished != 0))
+                && (g_CurrentPlayer->bonddead)
+                && (g_CurrentPlayer->redbloodfinished)
+                && (g_CurrentPlayer->deathanimfinished))
             {
-                D_80036510 = CAMERAMODE_FADESWIRL;
+                camera_mode = CAMERAMODE_FADESWIRL;
             }
         }
 
         pos->f[0] = flt_CODE_bss_800799E8.f[0];
         pos->f[1] = flt_CODE_bss_800799E8.f[1];
         pos->f[2] = flt_CODE_bss_800799E8.f[2];
-    
+
         if (dword_CODE_bss_800799F4 == g_CurrentPlayer->prop)
         {
             pos2->f[0] = g_CurrentPlayer->field_3C4;
@@ -5453,9 +4947,9 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
             pos2->f[1] = dword_CODE_bss_800799F4->pos.f[1];
             pos2->f[2] = dword_CODE_bss_800799F4->pos.f[2];
         }
-    
+
         *stan = g_CurrentPlayer->field_488.current_tile_ptr;
-    
+
         arg6->f[0] = g_CurrentPlayer->field_488.collision_position.f[0];
         arg6->f[1] = g_CurrentPlayer->field_488.collision_position.f[1];
         arg6->f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
@@ -5467,20 +4961,20 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
             pos->f[0] = dword_CODE_bss_800799F8->pos.f[0];
             pos->f[1] = dword_CODE_bss_800799F8->pos.f[1];
             pos->f[2] = dword_CODE_bss_800799F8->pos.f[2];
-            
+
             pos2->f[0] = g_CurrentPlayer->field_3C4;
             pos2->f[1] = g_CurrentPlayer->field_3C8;
             pos2->f[2] = g_CurrentPlayer->field_3CC;
-            
+
             *stan = dword_CODE_bss_800799F8->stan;
-            
+
             arg6->f[0] = dword_CODE_bss_800799F8->pos.f[0];
             arg6->f[1] = dword_CODE_bss_800799F8->pos.f[1];
             arg6->f[2] = dword_CODE_bss_800799F8->pos.f[2];
-            
+
             return;
         }
-        
+
         if (gBondViewCutscene != NULL)
         {
             if (isNotBoundPad(gBondViewCutscene->pad))
@@ -5491,18 +4985,18 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
             {
                 p = &g_CurrentSetup.boundpads[getBoundPadNum(gBondViewCutscene->pad)];
             }
-            
+
             pos->f[0] = gBondViewCutscene->pos.f[0];
             pos->f[1] = gBondViewCutscene->pos.f[1];
             pos->f[2] = gBondViewCutscene->pos.f[2];
-            
+
             setupPad = p;
             *stan = setupPad->stan;
-        
+
             arg6->f[0] = setupPad->pos.f[0];
             arg6->f[1] = setupPad->pos.f[1];
             arg6->f[2] = setupPad->pos.f[2];
-            
+
             if (dword_CODE_bss_80079A18 == CAMERAMODE_INTRO)
             {
                 pos2->f[0] = g_CurrentPlayer->field_3C4;
@@ -5515,7 +5009,7 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
                 pos2->f[1] = pos->f[1] + sinf(gBondViewCutscene->verta);
                 pos2->f[2] = pos->f[2] - (cosf(gBondViewCutscene->verta) * cosf(gBondViewCutscene->theta));
             }
-            
+
             return;
         }
 
@@ -5527,9 +5021,9 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
         {
             setupPad = (struct PadRecord*)&g_CurrentSetup.boundpads[getBoundPadNum(dword_CODE_bss_80079A14)];
         }
-        
+
         *stan = setupPad->stan;
-        
+
         arg6->f[0] = setupPad->pos.f[0];
         arg6->f[1] = setupPad->pos.f[1];
         arg6->f[2] = setupPad->pos.f[2];
@@ -5537,18 +5031,18 @@ void bondviewFrozenCameraTick(u16 buttons, u16 oldbuttons, struct coord3d *pos, 
         pos2->f[0] = setupPad->pos.f[0] + cosf(flt_CODE_bss_80079A00) * 0.0f;
         pos2->f[1] = setupPad->pos.f[1] + flt_CODE_bss_80079A10;
         pos2->f[2] = setupPad->pos.f[2] + sinf(flt_CODE_bss_80079A00) * 0.0f;
-        
+
         pos->f[0] = setupPad->pos.f[0] + (sinf(flt_CODE_bss_80079A00) * flt_CODE_bss_80079A08) + cosf(flt_CODE_bss_80079A00) * 0.0f;
         pos->f[1] = setupPad->pos.f[1] + flt_CODE_bss_80079A10 + flt_CODE_bss_80079A0C;
         pos->f[2] = setupPad->pos.f[2] + (cosf(flt_CODE_bss_80079A00) * flt_CODE_bss_80079A08) + sinf(flt_CODE_bss_80079A00) * 0.0f;
 
         flt_CODE_bss_80079A00 += flt_CODE_bss_80079A04 * g_GlobalTimerDelta;
-        
+
         while (flt_CODE_bss_80079A00 >= M_TAU_F)
         {
             flt_CODE_bss_80079A00 -= M_TAU_F;
         }
-        
+
         while (flt_CODE_bss_80079A00 < 0.0f)
         {
             flt_CODE_bss_80079A00 += M_TAU_F;
@@ -5617,7 +5111,7 @@ s32 get_BONDdata_is_aiming(void) {
 /**
  * Updates autoyaimtime60 by g_ClockTimer.
  * Will update player->autoaimy if new autoyaimtime60 < 0 or autoaim_target != g_CurrentPlayer->autoaim_target_y.
- * 
+ *
  * Address 0x7F07C5F0.
  */
 void bondviewUpdateYAutoAimTime(struct PropRecord *autoaim_target, f32 auto_aim_y)
@@ -5685,7 +5179,7 @@ int redirect_get_BONDdata_autoaim_x(void) {
 /**
  * Updates autoxaimtime60 by g_ClockTimer.
  * Will update player->autoaimx if new autoxaimtime60 < 0 or autoaim_target_x != g_CurrentPlayer->autoaim_target_x.
- * 
+ *
  * Address 0x7F07C6C8.
  */
 void bondviewUpdateXAutoAimTime(struct PropRecord *autoaim_target, f32 auto_aim_x)
@@ -5760,7 +5254,7 @@ void bondviewTankModelRotationRelated(void) {
     if (g_PlayerTankProp != NULL)
     {
         obj = g_PlayerTankProp->obj;
-        
+
         /// TODO: Fix Model struct Data type.
         temp_v0 = obj->model->obj->Switches;
         sp68 = (struct coord3d *)temp_v0[2]->Data;
@@ -5792,19 +5286,23 @@ void bondviewGetTankCollisionBounds(struct rect4f *tank_collision_bounds, struct
     f32 sp34;
     struct ModelRoData_BoundingBoxRecord *bbox;
 
+    #ifdef DEBUG
+        assert(bondonprop2);
+    #endif
+
     sp4C = g_PlayerTankProp->obj;
 
     bbox = chrobjGetBboxFromObjectRecord(sp4C);
 
     sp44 = bbox->Bounds.xmin - g_TankModelPositionOffset.f[0];
     sp40 = bbox->Bounds.xmax - g_TankModelPositionOffset.f[0];
-    
+
     sp3C = bbox->Bounds.zmin - g_TankModelPositionOffset.f[2];
     sp38 = bbox->Bounds.zmax - g_TankModelPositionOffset.f[2];
 
     sp34 = sp4C->model->scale * cosf(tank_orientation_angle);
     sp48 = sp4C->model->scale * sinf(tank_orientation_angle);
-    
+
     tank_collision_bounds->points[0].f[0] = collision_position->f[0] + (-sp3C * sp48) + (sp44 * sp34);
     tank_collision_bounds->points[0].f[1] = collision_position->f[2] + (sp3C * sp34) + (sp44 * sp48);
 
@@ -5813,7 +5311,7 @@ void bondviewGetTankCollisionBounds(struct rect4f *tank_collision_bounds, struct
 
     tank_collision_bounds->points[2].f[0] = collision_position->f[0] + (-sp38 * sp48) + (sp40 * sp34);
     tank_collision_bounds->points[2].f[1] = collision_position->f[2] + (sp38 * sp34) + (sp40 * sp48);
-    
+
     tank_collision_bounds->points[3].f[0] = collision_position->f[0] + (-sp38 * sp48) + (sp44 * sp34);
     tank_collision_bounds->points[3].f[1] = collision_position->f[2] + (sp38 * sp34) + (sp44 * sp48);
 }
@@ -5823,11 +5321,11 @@ void bondviewGetTankCollisionBounds(struct rect4f *tank_collision_bounds, struct
 /**
  * Address 0x7F07CA2C.
 */
-s32 bondviewTestLineUnobstructed(StandTile **pTile, f32 p_x, f32 p_z, f32 dest_x, f32 dest_z, s32 objFlags, struct coord3d *coord_p, struct coord3d *coord_dest)
+s32 bondviewTestLineUnobstructed(StandTile **pTile, f32 p_x, f32 p_z, f32 dest_x, f32 dest_z, s32 cdtypes, struct coord3d *coord_p, struct coord3d *coord_dest)
 {
     s32 temp_v0;
 
-    temp_v0 = stanTestLineUnobstructed(pTile, p_x, p_z, dest_x, dest_z, objFlags, 0.0f, 1.0f, 0.0f, 1.0f);
+    temp_v0 = stanTestLineUnobstructed(pTile, p_x, p_z, dest_x, dest_z, cdtypes, 0.0f, 1.0f, 0.0f, 1.0f);
     if ((temp_v0 == 0) && (coord_p != NULL))
     {
         coord_p->f[0] = p_x;
@@ -5855,7 +5353,7 @@ s32 bondviewTankCollisionStatus(struct coord3d *collision_position, StandTile *a
     struct rect4f tank_collision_bounds;
     s32 sp94;
     f32 temp_f0;
-    
+
     Model *sp8C;
 
     ModelNode **switches;
@@ -5869,17 +5367,17 @@ s32 bondviewTankCollisionStatus(struct coord3d *collision_position, StandTile *a
     sp94 = 0;
 
     bondviewGetTankCollisionBounds(&tank_collision_bounds, collision_position, tank_orientation_angle);
-    
+
     if (g_PlayerTankProp != NULL)
     {
         sub_GAME_7F03D058(g_PlayerTankProp, 0);
     }
 
-    if ((bondviewTestLineUnobstructed(&spBC, collision_position->f[0], collision_position->f[2], tank_collision_bounds.points[0].f[0], tank_collision_bounds.points[0].f[1], 0x213, arg3, arg4) != 0) 
-        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[0].f[0], tank_collision_bounds.points[0].f[1], tank_collision_bounds.points[1].f[0], tank_collision_bounds.points[1].f[1], 0x213, arg3, arg4) != 0) 
-        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[1].f[0], tank_collision_bounds.points[1].f[1], tank_collision_bounds.points[2].f[0], tank_collision_bounds.points[2].f[1], 0x213, arg3, arg4) != 0)
-        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[2].f[0], tank_collision_bounds.points[2].f[1], tank_collision_bounds.points[3].f[0], tank_collision_bounds.points[3].f[1], 0x213, arg3, arg4) != 0)
-        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[3].f[0], tank_collision_bounds.points[3].f[1], tank_collision_bounds.points[0].f[0], tank_collision_bounds.points[0].f[1], 0x213, arg3, arg4) != 0))
+    if ((bondviewTestLineUnobstructed(&spBC, collision_position->f[0], collision_position->f[2], tank_collision_bounds.points[0].f[0], tank_collision_bounds.points[0].f[1], CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PATHBLOCKER | CDTYPE_OBJSIMMUNETOEXPLOSIONS, arg3, arg4) != 0)
+        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[0].f[0], tank_collision_bounds.points[0].f[1], tank_collision_bounds.points[1].f[0], tank_collision_bounds.points[1].f[1], CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PATHBLOCKER | CDTYPE_OBJSIMMUNETOEXPLOSIONS, arg3, arg4) != 0)
+        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[1].f[0], tank_collision_bounds.points[1].f[1], tank_collision_bounds.points[2].f[0], tank_collision_bounds.points[2].f[1], CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PATHBLOCKER | CDTYPE_OBJSIMMUNETOEXPLOSIONS, arg3, arg4) != 0)
+        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[2].f[0], tank_collision_bounds.points[2].f[1], tank_collision_bounds.points[3].f[0], tank_collision_bounds.points[3].f[1], CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PATHBLOCKER | CDTYPE_OBJSIMMUNETOEXPLOSIONS, arg3, arg4) != 0)
+        && (bondviewTestLineUnobstructed(&spBC, tank_collision_bounds.points[3].f[0], tank_collision_bounds.points[3].f[1], tank_collision_bounds.points[0].f[0], tank_collision_bounds.points[0].f[1], CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PATHBLOCKER | CDTYPE_OBJSIMMUNETOEXPLOSIONS, arg3, arg4) != 0))
     {
         sp94 = 1;
 
@@ -5919,8 +5417,8 @@ s32 bondviewTankCollisionStatus(struct coord3d *collision_position, StandTile *a
             sp74.f[2] += collision_position->f[2];
 
             spBC = arg1;
-            
-            if (bondviewTestLineUnobstructed(&spBC, collision_position->f[0], collision_position->f[2], sp74.f[0], sp74.f[2], 0x213, arg3, arg4) == 0)
+
+            if (bondviewTestLineUnobstructed(&spBC, collision_position->f[0], collision_position->f[2], sp74.f[0], sp74.f[2], CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PATHBLOCKER | CDTYPE_OBJSIMMUNETOEXPLOSIONS, arg3, arg4) == 0)
             {
                 sp94 = 0;
             }
@@ -5965,7 +5463,7 @@ s32 sub_GAME_7F07CDD4(struct coord3d *arg0, f32 arg1, StandTile **arg2)
         stanTestLineUnobstructed(
             &sp3C,
             g_CurrentPlayer->field_488.collision_position.f[0],
-            g_CurrentPlayer->field_488.collision_position.f[2], 
+            g_CurrentPlayer->field_488.collision_position.f[2],
             arg0->f[0],
             arg0->f[2],
             0,
@@ -6012,7 +5510,7 @@ struct PropRecord *get_ptr_for_players_tank(void)
 
 /**
  * Sets paraameter position based on global variables g_TankOrientationAngle, g_TankTurretOrientationAngleRad, g_TankTurretVerticalAngle.
- * 
+ *
  * Address 0x7F07CEB0.
  */
 void bondviewSet3dCoord7F07CEB0(coord3d *arg0)
@@ -6043,9 +5541,9 @@ void bondviewSet3dCoord7F07CEB0(coord3d *arg0)
 
 /**
  * Unreferenced.
- * 
+ *
  * Returns global variable g_TankTurretVerticalAngle, which is in radians.
- * 
+ *
  * Address 0x7F07CF80.
  */
 f32 bondviewGet8003646CRad(void)
@@ -6062,7 +5560,7 @@ s32 bondviewTryMoveToStan(struct coord3d *arg0, StandTile **stan)
 {
     s32 sp94;
     StandTile *sp90;
-    s32 sp8C;
+    s32 cdtypes;
     f32 height;
     f32 always_30;
     f32 collision_radius;
@@ -6081,13 +5579,13 @@ s32 bondviewTryMoveToStan(struct coord3d *arg0, StandTile **stan)
     {
         sp90 = g_CurrentPlayer->field_488.current_tile_ptr;
 
-        if (obj_collision_flag != 0)
+        if (obj_collision_flag)
         {
-            sp8C = 0x1F;
+            cdtypes = CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PLAYERS | CDTYPE_CHRS | CDTYPE_PATHBLOCKER;
         }
         else
         {
-            sp8C = 0;
+            cdtypes = 0;
         }
 
         bondviewGetCollisionRadius(g_CurrentPlayer->prop, &collision_radius, &height, &always_30);
@@ -6099,10 +5597,10 @@ s32 bondviewTryMoveToStan(struct coord3d *arg0, StandTile **stan)
 
         sub_GAME_7F03D058(g_CurrentPlayer->prop, 0);
         sp7C = stanTileDistanceRelated(&sp90, arg0->f[0], arg0->f[2], collision_radius, &sp3C);
-        
+
         if (stanGetLocusField0(&sp3C) != 0)
         {
-            g_CurrentPlayer->autocrouchpos = 0;
+            g_CurrentPlayer->autocrouchpos = CROUCH_SQUAT;
         }
 
         if ((stanTestLineUnobstructed(
@@ -6111,12 +5609,12 @@ s32 bondviewTryMoveToStan(struct coord3d *arg0, StandTile **stan)
                 g_CurrentPlayer->field_488.collision_position.f[2],
                 arg0->f[0],
                 arg0->f[2],
-                sp8C,
+                cdtypes,
                 height,
                 always_30,
                 0.0f,
                 1.0f) != 0)
-            && stanTestVolume(&sp90, arg0->f[0], arg0->f[2], collision_radius, sp8C, height, always_30) < 0)
+            && stanTestVolume(&sp90, arg0->f[0], arg0->f[2], collision_radius, cdtypes, height, always_30) < 0)
         {
             if (g_CurrentPlayer->ducking_height_offset == FULL_CROUCH_OFFSET || sp7C < 0)
             {
@@ -6127,7 +5625,7 @@ s32 bondviewTryMoveToStan(struct coord3d *arg0, StandTile **stan)
                 else
                 {
                     *stan = sp90;
-                    sp94 = 1;                
+                    sp94 = 1;
                 }
             }
             else
@@ -6166,13 +5664,13 @@ block_20:
 
 /**
  * Calculates collision with current player.
- * 
+ *
  * @param next_pos: 3d coordinate to attempt to move to.
  * @param collision_pt0: Out parameter. Will set {x,0,z} position of first point (from line edge) if Bond is in collision, otherwise {0}.
  * @param collision_pt1: Out parameter. Will set {x,0,z} position of second point (from line edge) if Bond is in collision, otherwise ... Bond's look angle?
- * 
+ *
  * @return 1 if able to update stan and collision position, zero otherwise.
- * 
+ *
  * Address 0x7F07D234.
  */
 s32 bondviewTrySimpleMovePlayerCollision(coord3d *next_pos, coord3d *collision_pt0, coord3d *collision_pt1)
@@ -6200,16 +5698,16 @@ s32 bondviewTrySimpleMovePlayerCollision(coord3d *next_pos, coord3d *collision_p
 /**
  * This is a fallback method used when bondviewTrySimpleMovePlayerCollision fails.
  * Instead of moving to the full coordinate specified by `next_pos`, it will
- * scale the position using `unkGeometry7F0B33DC` and try to move to that position.
- * 
+ * scale the position using `calculateNormalizedLineIntersection` and try to move to that position.
+ *
  * @param next_pos: 3d coordinate to attempt to move to.
  * @param collision1_pt0: Prior collision point 0.
  * @param collision1_pt1: Prior collision point 1.
  * @param collision2_pt0: Out parameter. Will set {x,0,z} position of first point (from line edge) if Bond is in collision, otherwise {0}.
  * @param collision2_pt1: Out parameter. Will set {x,0,z} position of second point (from line edge) if Bond is in collision, otherwise ... Bond's look angle?
- * 
+ *
  * @return 1 if able to update stan and collision position, zero if still unable to move by failing on the same collision edge, -1 otherwise (still unable to move).
- * 
+ *
  * US address 7F07D2B4.
  * Perfect Dark, see bondwalk.c bwalk0f0c47d0, bondbike.c bbike0f0d36d4.
 */
@@ -6231,41 +5729,41 @@ s32 bondviewTryFractionMovePlayerCollision(
     struct coord2d sp38;
     f32 temp_f0;
     f32 collision_radius;
-    
+
     bondviewGetCollisionRadius(g_CurrentPlayer->prop, &collision_radius, &height, &always_30);
-    
+
     delta_pos.f[0] = next_pos->f[0] - g_CurrentPlayer->field_488.collision_position.f[0];
     delta_pos.f[2] = next_pos->f[2] - g_CurrentPlayer->field_488.collision_position.f[2];
-    
+
     sp50.f[0] = collision_radius;
     sp50.f[1] = g_CurrentPlayer->field_488.collision_position.f[0];
     sp50.f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
-    
+
     sp48.f[0] = collision1_pt0->f[0];
     sp48.f[1] = collision1_pt0->f[2];
-    
+
     sp40.f[0] = collision1_pt1->f[0];
     sp40.f[1] = collision1_pt1->f[2];
-    
+
     sp38.f[0] = delta_pos.f[0];
     sp38.f[1] = delta_pos.f[2];
-    
-    temp_f0 = unkGeometry7F0B33DC(&sp50, &sp48, &sp40, &sp38);
-    
+
+    temp_f0 = calculateNormalizedLineIntersection(&sp50, &sp48, &sp40, &sp38);
+
     try_next_pos.f[0] = g_CurrentPlayer->field_488.collision_position.f[0] + (delta_pos.f[0] * temp_f0 * 0.25f);
     try_next_pos.f[2] = g_CurrentPlayer->field_488.collision_position.f[2] + (delta_pos.f[2] * temp_f0 * 0.25f);
-    
+
     if (bondviewTryMoveToStan(&try_next_pos, &stan) != 0)
     {
         g_CurrentPlayer->field_488.current_tile_ptr = stan;
         g_CurrentPlayer->field_488.collision_position.f[0] = try_next_pos.f[0];
         g_CurrentPlayer->field_488.collision_position.f[2] = try_next_pos.f[2];
-        
+
         return 1;
     }
-    
+
     getCollisionEdge_maybe(collision2_pt0, collision2_pt1);
-    
+
     if (collision2_pt0->f[0] != collision1_pt0->f[0]
         || collision2_pt0->f[1] != collision1_pt0->f[1]
         || collision2_pt0->f[2] != collision1_pt0->f[2]
@@ -6275,7 +5773,7 @@ s32 bondviewTryFractionMovePlayerCollision(
     {
         return 0;
     }
-    
+
     return -1;
 }
 
@@ -6286,13 +5784,13 @@ s32 bondviewTryFractionMovePlayerCollision(
  * This is a fallback method used when bondviewTrySimpleMovePlayerCollision fails.
  * Instead of moving to the full coordinate specified by `next_pos`, it will
  * attempt to move along the collision edge.
- * 
+ *
  * @param prior_next_pos: Prior 3d coordinate that Bond failed to move to.
  * @param collision1_pt0: Prior collision point 0.
  * @param collision1_pt1: Prior collision point 1.
- * 
+ *
  * @return -1 if either x or z coordinates are the same for the collision points, 1 if able to update stan and collision position, zero otherwise.
- * 
+ *
  * US address 7F07D4C0.
  */
 s32 bondviewTryEdgeMovePlayerCollision(struct coord3d *prior_next_pos, struct coord3d *collision_pt0, struct coord3d *collision_pt1)
@@ -6331,7 +5829,7 @@ s32 bondviewTryEdgeMovePlayerCollision(struct coord3d *prior_next_pos, struct co
             g_CurrentPlayer->field_488.current_tile_ptr = stan;
             g_CurrentPlayer->field_488.collision_position.f[0] = try_next_pos.f[0];
             g_CurrentPlayer->field_488.collision_position.f[2] = try_next_pos.f[2];
-            
+
             return 1;
         }
 
@@ -6348,15 +5846,15 @@ s32 bondviewTryEdgeMovePlayerCollision(struct coord3d *prior_next_pos, struct co
  * If Bond previously failed to move because of a collision, this will check
  * if Bond is near the end point of the collision edge. If within the collision
  * radius of Bond to the edge endpoint, then allow movement.
- * 
+ *
  * @param prior_next_pos: Prior 3d coordinate that Bond failed to move to.
  * @param collision1_pt0: Prior collision point 0.
  * @param collision1_pt1: Prior collision point 1.
- * 
+ *
  * @return 1 if able to update stan and collision position, zero otherwise.
- * 
+ *
  * US address 7F07D61C.
- * 
+ *
  * Perfect Dark bwalk0f0c4a5c.
 */
 s32 bondviewTryEndHopPlayerCollision(struct coord3d *prior_next_pos, struct coord3d *collision_pt0, struct coord3d *collision_pt1)
@@ -6371,7 +5869,7 @@ s32 bondviewTryEndHopPlayerCollision(struct coord3d *prior_next_pos, struct coor
     f32 collision_radius;
 
     bondviewGetCollisionRadius(g_CurrentPlayer->prop, &collision_radius, &height, &always_30);
-    
+
     delta_pos.f[0] = prior_next_pos->f[0] - g_CurrentPlayer->field_488.collision_position.f[0];
     delta_pos.f[2] = prior_next_pos->f[2] - g_CurrentPlayer->field_488.collision_position.f[2];
 
@@ -6384,24 +5882,24 @@ s32 bondviewTryEndHopPlayerCollision(struct coord3d *prior_next_pos, struct coor
         {
             sp50.f[0] = -(collision_pt0->f[2] - g_CurrentPlayer->field_488.collision_position.f[2]);
             sp50.f[2] = collision_pt0->f[0] - g_CurrentPlayer->field_488.collision_position.f[0];
-    
+
             tempf = (sp50.f[0] * sp50.f[0]) + (sp50.f[2] * sp50.f[2]);
             tempf =  1.0f / sqrtf(tempf);
             sp50.f[0] *= tempf;
             sp50.f[2] *= tempf;
-    
+
             tempf = (delta_pos.f[0] * sp50.f[0]) + (delta_pos.f[2] * sp50.f[2]);
             sp50.f[0] *= tempf;
             sp50.f[2] *= tempf;
             try_next_pos.f[0] = g_CurrentPlayer->field_488.collision_position.f[0] + (sp50.f[0]);
             try_next_pos.f[2] = g_CurrentPlayer->field_488.collision_position.f[2] + (sp50.f[2]);
-    
+
             if (bondviewTryMoveToStan(&try_next_pos, &stan))
             {
                 g_CurrentPlayer->field_488.current_tile_ptr = stan;
                 g_CurrentPlayer->field_488.collision_position.f[0] = try_next_pos.f[0];
                 g_CurrentPlayer->field_488.collision_position.f[2] = try_next_pos.f[2];
-                
+
                 return 1;
             }
         }
@@ -6410,46 +5908,46 @@ s32 bondviewTryEndHopPlayerCollision(struct coord3d *prior_next_pos, struct coor
     {
         sp50.f[0] = collision_pt1->f[0] - prior_next_pos->f[0];
         sp50.f[2] = collision_pt1->f[2] - prior_next_pos->f[2];
-    
+
         if (((sp50.f[0] * sp50.f[0]) + (sp50.f[2] * sp50.f[2])) <= (collision_radius * collision_radius))
         {
             if (collision_pt1->f[0] != g_CurrentPlayer->field_488.collision_position.f[0] || collision_pt1->f[2] != g_CurrentPlayer->field_488.collision_position.f[2])
             {
                 sp50.f[0] = -(collision_pt1->f[2] - g_CurrentPlayer->field_488.collision_position.f[2]);
                 sp50.f[2] = collision_pt1->f[0] - g_CurrentPlayer->field_488.collision_position.f[0];
-        
+
                 tempf = (sp50.f[0] * sp50.f[0]) + (sp50.f[2] * sp50.f[2]);
                 tempf =  1.0f / sqrtf(tempf);
                 sp50.f[0] *= tempf;
                 sp50.f[2] *= tempf;
-        
+
                 tempf = (delta_pos.f[0] * sp50.f[0]) + (delta_pos.f[2] * sp50.f[2]);
                 sp50.f[0] *= tempf;
                 sp50.f[2] *= tempf;
                 try_next_pos.f[0] = g_CurrentPlayer->field_488.collision_position.f[0] + (sp50.f[0]);
                 try_next_pos.f[2] = g_CurrentPlayer->field_488.collision_position.f[2] + (sp50.f[2]);
-        
+
                 if (bondviewTryMoveToStan(&try_next_pos, &stan))
                 {
                     g_CurrentPlayer->field_488.current_tile_ptr = stan;
                     g_CurrentPlayer->field_488.collision_position.f[0] = try_next_pos.f[0];
                     g_CurrentPlayer->field_488.collision_position.f[2] = try_next_pos.f[2];
-                    
+
                     return 1;
                 }
             }
         }
     }
-    
+
     return 0;
 }
 
 
 /**
  * Unreferenced.
- * 
+ *
  * Bitwise convert 32bit int to float.
- * 
+ *
  * Address 0x7F07D954.
  */
 f32 bondviewBitconvertIntToFloat(s32 arg0)
@@ -6467,10 +5965,10 @@ struct dummy_struct {
 
 /**
  * Sets Bond bondprevpos, attempts to move by `offset`.
- * 
+ *
  * @param offset: Attempt to move Bond by {x,0,z} amount.
  * @param allow_scoot: If movement causes collision, when set will allow Bond to scoot along the collision edge and to bump around corner edges. Otherwise, any collision will stop movement.
- * 
+ *
  * US address 7F07D960.
  * JP address 7F07DA34 (maybe).
  */
@@ -6508,7 +6006,7 @@ void bondviewCalcUpdatePlayerCollision(struct coord3d *offset, s32 allow_scoot)
     g_BondCanEnterTank = 0;
 
     g_CurrentPlayer->autocrouchpos = CROUCH_STAND;
-    
+
     if (g_WorldTankProp != NULL)
     {
         chraiGetCollisionBoundsWithoutY(g_WorldTankProp, &sp98, &sp94);
@@ -6517,10 +6015,10 @@ void bondviewCalcUpdatePlayerCollision(struct coord3d *offset, s32 allow_scoot)
             || (chrpropTestPointInPolygon(&g_CurrentPlayer->field_488.collision_position, sp98, sp94) != 0)
             || ((chrobjTestPointPolygonCollision(&g_CurrentPlayer->field_488.collision_position, g_CurrentPlayer->field_488.collision_radius, sp98, sp94) != 0)))
         {
-            
+
             obj = g_WorldTankProp->obj;
             tank_objrecord = (struct TankRecord *)g_WorldTankProp->obj;
-            
+
             /// TODO: replace with ModelNode structs
             farr5 = (f32*)obj->model->obj->Switches[5]->Data;
             farr6 = (f32*)obj->model->obj->Switches[6]->Data;
@@ -6546,7 +6044,7 @@ void bondviewCalcUpdatePlayerCollision(struct coord3d *offset, s32 allow_scoot)
                 {
                     return;
                 }
-                
+
                 g_PlayerTankYOffset = temp_f2;
             }
             else
@@ -6585,7 +6083,7 @@ void bondviewCalcUpdatePlayerCollision(struct coord3d *offset, s32 allow_scoot)
         //   zero if still unable to move by failing on the same collision edge
         //   -1 otherwise (still unable to move).
         temp_v0_7 = bondviewTryFractionMovePlayerCollision(&next_pos, &collision1_pt0, &collision1_pt1, &collision2_pt0, &collision2_pt1);
-        
+
         if ((temp_v0_7 > 0) || (temp_v0_7 < 0))
         {
             if ((allow_scoot != 0)
@@ -6598,7 +6096,7 @@ void bondviewCalcUpdatePlayerCollision(struct coord3d *offset, s32 allow_scoot)
         else if (temp_v0_7 == 0)
         {
             bondviewTryFractionMovePlayerCollision(&next_pos, &collision2_pt0, &collision2_pt1, &collision3_pt0, &collision3_pt1);
-            
+
             if ((allow_scoot != 0)
                 && (bondviewTryEdgeMovePlayerCollision(&next_pos, &collision2_pt0, &collision2_pt1) <= 0)
                 && (bondviewTryEdgeMovePlayerCollision(&next_pos, &collision1_pt0, &collision1_pt1) <= 0)
@@ -6619,9 +6117,9 @@ void bondviewCalcUpdatePlayerCollision(struct coord3d *offset, s32 allow_scoot)
             g_CurrentPlayer->field_488.collision_position.f[2]) == 0)
     {
         if(1);
-        
+
         stan = g_CurrentPlayer->field_488.current_tile_ptr;
-        
+
         for (tile_count=0; tile_count<5; tile_count++)
         {
             /// TODO: fix the horrible casts below.
@@ -6654,7 +6152,7 @@ void bondviewCalcUpdatePlayerCollision(struct coord3d *offset, s32 allow_scoot)
                     phi_a0_3++;
                 }
             }
-            
+
             if(1);
 
             if (stanTestPointWithinTileBoundsMaybe(
@@ -6717,9 +6215,9 @@ void sub_GAME_7F07DEFC(void)
 
 /**
  * Pause angle related.
- * 
+ *
  * @param arg0: When set, pause_target_angle will be -40.0f, otherwise g_CurrentPlayer->vv_verta.
- * 
+ *
  * Address 0x7F07DF28.
  */
 f32 bondviewPauseAngleRelated(s32 arg0)
@@ -7041,9 +6539,9 @@ f32 bondviewGetWatchZoomFovy(void) {
 
 /**
  * Triggers watch zoom if new value.
- * 
+ *
  * @param zoominfovy: watch zoom fovy.
- * 
+ *
  * Address 0x7F07E46C.
  */
 void bondviewTriggerWatchZoom(f32 zoominfovy)
@@ -7064,7 +6562,7 @@ void bondviewTriggerWatchZoom(f32 zoominfovy)
 
 /**
  * Trigger watch zoom with default angle.
- * 
+ *
  * Address 0x7F07E504.
  */
 void bondviewTriggerWatchZoomDefault(void)
@@ -7096,7 +6594,7 @@ void bondviewZoomToWatchOnOpen(void)
 #else
     trigger_watch_zoom(5.9f, f);
 #endif
-    
+
 }
 
 
@@ -7140,7 +6638,7 @@ void bondviewUpdateWatchZoomIn(void)
         if ((g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x5) || (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xc))
         {
 #if defined(BUGFIX_R1)
-            g_CurrentPlayer->zoomintime = g_CurrentPlayer->zoomintime + (f32) jpD_800484D0;      
+            g_CurrentPlayer->zoomintime = g_CurrentPlayer->zoomintime + (f32) jpD_800484D0;
 #else
             g_CurrentPlayer->zoomintime = g_CurrentPlayer->zoomintime + (f32) speedgraphframes;
 #endif
@@ -7160,7 +6658,7 @@ void bondviewUpdateWatchZoomIn(void)
         }
 
         g_CurrentPlayer->zoominfovy =
-            g_CurrentPlayer->zoominfovyold + 
+            g_CurrentPlayer->zoominfovyold +
             (
                 (g_CurrentPlayer->zoomintime *
                     (g_CurrentPlayer->zoominfovynew - g_CurrentPlayer->zoominfovyold)
@@ -7449,7 +6947,7 @@ f32 bondviewGetPauseAnimationPercent(void)
     {
         return g_CurrentPlayer->pause_animation_counter / 20.0f;
     }
-    
+
     if (g_CurrentPlayer->step_in_view_watch_animation == 3)
     {
         return 1.0f;
@@ -7479,7 +6977,7 @@ void bondviewPlayerStopAudioForPause(void)
 	s32 i;
     ObjectRecord *obj;
     PropRecord *prop;
-    
+
     deactivate_alarm_sound_effect();
     check_deactivate_gas_sound();
 
@@ -7504,14 +7002,14 @@ void bondviewPlayerStopAudioForPause(void)
         if (prop->type != PROP_TYPE_DOOR && prop->type == PROP_TYPE_OBJ)
         {
             obj = prop->obj;
-            
+
             if (obj->type == PROPDEF_VEHICHLE)
             {
                 VehichleRecord *vehicle = (VehichleRecord *)prop->obj;
                 if (vehicle->Sound && sndGetPlayingState(vehicle->Sound) != AL_STOPPED) {
                     sndDeactivate(vehicle->Sound);
                 }
-            }            
+            }
             else if (obj->type == PROPDEF_AIRCRAFT)
             {
                 AircraftRecord *aircraft = (AircraftRecord *)prop->obj;
@@ -7519,7 +7017,7 @@ void bondviewPlayerStopAudioForPause(void)
                     sndDeactivate(aircraft->Sound);
                 }
             }
-            
+
             if(1);
         }
     }
@@ -7568,15 +7066,15 @@ void bondviewWatchAnimationTick(void)
 #else
         sp38 = (sp34) ? WATCH_VAR_UPPER : WATCH_VAR_LOWER;
 #endif
-        
-        g_CurrentPlayer->field_1C4 += g_ClockTimer;
-        g_CurrentPlayer->watch_pause_time += 1;
-        g_CurrentPlayer->pausing_flag = 0;
 
-        if (g_CurrentPlayer->watch_animation_state == 1)
+        g_CurrentPlayer->timer_1C4 += g_ClockTimer;
+        g_CurrentPlayer->watch_pause_time += 1;
+        g_CurrentPlayer->pausing_flag = FALSE;
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x1)
         {
-            g_CurrentPlayer->pausing_flag = 0;
-            
+            g_CurrentPlayer->pausing_flag = FALSE;
+
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
                 draw_item_in_hand(GUNLEFT, ITEM_SUIT_LF_HAND);
@@ -7598,19 +7096,19 @@ void bondviewWatchAnimationTick(void)
                         || (
                             (get_item_in_hand_or_watch_menu(0) == ITEM_UNARMED)
                             && (Gun_hand_without_item(GUNRIGHT) != ITEM_UNARMED)))
-                    && (g_CurrentPlayer->field_1C4 >= sp38))
+                    && (g_CurrentPlayer->timer_1C4 >= sp38))
                 {
-                    g_CurrentPlayer->watch_animation_state = 2;
+                    g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x2;
                     g_CurrentPlayer->watch_pause_time = 1;
-                    g_CurrentPlayer->field_1C4 = 0;
+                    g_CurrentPlayer->timer_1C4 = 0;
                 }
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 2)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x2)
         {
-            g_CurrentPlayer->pausing_flag = 0;
-            
+            g_CurrentPlayer->pausing_flag = FALSE;
+
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
                 gunSetSightVisible(GUNAMMOREASON_DAMAGE, FALSE);
@@ -7618,127 +7116,127 @@ void bondviewWatchAnimationTick(void)
                 hudmsgsSetOff(PLAYERFLAG_LOCKCONTROLS);
                 bondviewSetUpperTextDisplayFlag(PLAYERFLAG_LOCKCONTROLS);
                 countdownTimerSetVisible(4, 0);
-                
+
                 if ((g_CurrentPlayer->field_218 == 0) || (g_CurrentPlayer->field_218 == 2) || (g_CurrentPlayer->field_218 == 3))
                 {
                     sp20 = bondviewPauseAngleRelated(1);
-                    
+
                     if (sp20 < 30.0f)
                     {
                         sp20 = 30.0f;
                     }
-                    
+
                     sub_GAME_7F07E010(sp20);
                 }
             }
-            
+
             if ((g_CurrentPlayer->field_214 - g_CurrentPlayer->field_210) < 30.0f)
             {
-                g_CurrentPlayer->watch_animation_state = 3;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x3;
                 g_CurrentPlayer->watch_pause_time = 1;
-                g_CurrentPlayer->field_1C4 = 0;
-                
+                g_CurrentPlayer->timer_1C4 = 0;
+
                 sub_GAME_7F07E7CC();
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 3)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x3)
         {
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
                 sp30 = 40.0f;
-                
+
                 if ((g_CurrentPlayer->step_in_view_watch_animation != 0) && (g_CurrentPlayer->step_in_view_watch_animation != 3))
                 {
                     sp30 = ((20.0f - g_CurrentPlayer->pause_watch_related_adjust) * 40.0f) / 20.0f;
                 }
-                
+
                 if ((g_CurrentPlayer->field_218 == 0) || (g_CurrentPlayer->field_218 == 2) || (g_CurrentPlayer->field_218 == 3))
                 {
                     sp2c = bondviewPauseAngleRelated(1);
                     sp20 = sp30 - 10.0f;
-                    
+
                     if (sp2c < sp20)
                     {
                         sp2c = sp20;
                     }
-                    
+
                     sub_GAME_7F07E010(sp2c);
-                    
+
                     sp20 = sp2c + 10.0f;
-                    
+
                     if (sp30 < sp20)
                     {
                         sp30 = sp20;
                     }
                 }
-                
+
                 bondviewSetPauseWatchRelated(sp30);
             }
-            
+
             if (
                 ((g_CurrentPlayer->step_in_view_watch_animation != 0) && (g_CurrentPlayer->step_in_view_watch_animation != 3))
                 ||
                 sub_GAME_7F07E068() != 0
                 )
             {
-                g_CurrentPlayer->pausing_flag = 1;
+                g_CurrentPlayer->pausing_flag = TRUE;
             }
             else
             {
-                g_CurrentPlayer->watch_animation_state = 4;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x4;
                 g_CurrentPlayer->watch_pause_time = 1;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 4)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x4)
         {
             if ((g_CurrentPlayer->watch_pause_time == 1) && (g_CurrentPlayer->field_21C != 0))
             {
                 sndPlaySfx(g_musicSfxBufferPtr, 0xED, NULL);
                 g_CurrentPlayer->field_21C = 0;
             }
-            
+
             bondviewZoomToWatchOnOpen();
-            
+
             if (check_watch_page_transistion_running() != 0)
             {
-                g_CurrentPlayer->pausing_flag = 1;
+                g_CurrentPlayer->pausing_flag = TRUE;
             }
             else
             {
-                g_CurrentPlayer->watch_animation_state = 5;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x5;
                 g_CurrentPlayer->watch_pause_time = 1;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
                 g_CurrentPlayer->field_21C = 1;
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 5)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x5)
         {
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
                 sub_GAME_7F0C1310();
             }
-            
-            g_CurrentPlayer->pausing_flag = 1;
+
+            g_CurrentPlayer->pausing_flag = TRUE;
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 12)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xc)
         {
-            g_CurrentPlayer->pausing_flag = 1;
-            
+            g_CurrentPlayer->pausing_flag = TRUE;
+
             if (g_CurrentPlayer->watch_pause_time >= 3)
             {
-                g_CurrentPlayer->watch_animation_state = 6;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x6;
                 g_CurrentPlayer->watch_pause_time = 1;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
                 sndPlaySfx(g_musicSfxBufferPtr, 0xEE, NULL);
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 6)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x6)
         {
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
@@ -7754,64 +7252,64 @@ void bondviewWatchAnimationTick(void)
             }
             if (check_watch_page_transistion_running())
             {
-                g_CurrentPlayer->pausing_flag = 1;
+                g_CurrentPlayer->pausing_flag = TRUE;
             }
             else
             {
-                g_CurrentPlayer->watch_animation_state = 7;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x7;
                 g_CurrentPlayer->watch_pause_time = 1;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
                 g_CurrentPlayer->field_21C = 1;
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 7)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x7)
         {
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
                 sp28 = 40.0f;
                 sp24 = bondviewPauseAngleRelated(0);
-                
+
                 if ((g_CurrentPlayer->step_in_view_watch_animation != 0) && (g_CurrentPlayer->step_in_view_watch_animation != 3))
                 {
                     sp28 = (g_CurrentPlayer->pause_watch_related_adjust * 40.0f) / 20.0f;
                 }
-                
+
                 sp20 = sp28 + 20.0f;
-                
+
                 if (sp24 < sp20)
                 {
                     sp24 = sp20;
                 }
-                
+
                 sub_GAME_7F07E03C(sp24);
                 bondviewSetPauseWatchRelatedAlt(sp28);
             }
 
             if ((g_CurrentPlayer->step_in_view_watch_animation != 0) && (g_CurrentPlayer->step_in_view_watch_animation != 3))
             {
-                g_CurrentPlayer->pausing_flag = 1;
+                g_CurrentPlayer->pausing_flag = TRUE;
             }
             else
             {
-                g_CurrentPlayer->watch_animation_state = 8;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x8;
                 g_CurrentPlayer->watch_pause_time = 1;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 8)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x8)
         {
-            g_CurrentPlayer->pausing_flag = 0;
-            
+            g_CurrentPlayer->pausing_flag = FALSE;
+
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
-                
+
                 if ((get_item_in_hand_or_watch_menu(GUNLEFT) != getCurrentPlayerWeaponId(GUNLEFT)) && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED))
                 {
                     draw_item_in_hand(GUNLEFT, getCurrentPlayerWeaponId(GUNLEFT));
                 }
-                
+
                 if (sp3c)
                 {
                     if ((get_item_in_hand_or_watch_menu(GUNRIGHT) != getCurrentPlayerWeaponId(GUNRIGHT)) && (Gun_hand_without_item(GUNRIGHT) != ITEM_UNARMED))
@@ -7823,36 +7321,36 @@ void bondviewWatchAnimationTick(void)
             else if (sub_GAME_7F07E068() == 0)
             {
                 if (
-                    (get_item_in_hand_or_watch_menu(GUNLEFT) == getCurrentPlayerWeaponId(GUNLEFT)) 
-                    && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED) 
+                    (get_item_in_hand_or_watch_menu(GUNLEFT) == getCurrentPlayerWeaponId(GUNLEFT))
+                    && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED)
                     && (
-                        (sp3c == 0) 
+                        (sp3c == 0)
                         || (((get_item_in_hand_or_watch_menu(GUNRIGHT) == getCurrentPlayerWeaponId(GUNRIGHT))) && (Gun_hand_without_item(GUNRIGHT) != ITEM_UNARMED))))
                 {
                     sub_GAME_7F05DAE4(1);
-                    
+
                     if (sp3c)
                     {
                         sub_GAME_7F05DAE4(0);
                     }
-                    
+
                     gunSetSightVisible(GUNAMMOREASON_DAMAGE, TRUE);
                     gunSetGunAmmoVisible(GUNSIGHTREASON_NOCONTROL, TRUE);
                     hudmsgsSetOn(1);
                     bondviewClearUpperTextDisplayFlag(1);
                     countdownTimerSetVisible(4, 1);
-                    
-                    g_CurrentPlayer->watch_animation_state = 0;
+
+                    g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x0;
                     g_CurrentPlayer->watch_pause_time = 0;
-                    g_CurrentPlayer->field_1C4 = 0;
+                    g_CurrentPlayer->timer_1C4 = 0;
                 }
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 9)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x9)
         {
-            g_CurrentPlayer->pausing_flag = 0;
-            
+            g_CurrentPlayer->pausing_flag = FALSE;
+
             if (
                 (getCurrentPlayerWeaponId(GUNLEFT) != get_item_in_hand_or_watch_menu(GUNLEFT))
                 && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED)
@@ -7860,57 +7358,57 @@ void bondviewWatchAnimationTick(void)
                     (sp3c == 0)
                     || (((getCurrentPlayerWeaponId(GUNRIGHT) != get_item_in_hand_or_watch_menu(GUNRIGHT))) && (Gun_hand_without_item(GUNRIGHT) != ITEM_UNARMED))))
             {
-                g_CurrentPlayer->watch_animation_state = 8;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x8;
                 g_CurrentPlayer->watch_pause_time = 0;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 10)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xa)
         {
-            g_CurrentPlayer->pausing_flag = 0;
-            
+            g_CurrentPlayer->pausing_flag = FALSE;
+
             if (g_CurrentPlayer->watch_pause_time == 1)
             {
                 sub_GAME_7F07E03C(bondviewPauseAngleRelated(0));
             }
-            
+
             if (
-                (getCurrentPlayerWeaponId(GUNLEFT) != get_item_in_hand_or_watch_menu(GUNLEFT)) 
-                && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED) 
+                (getCurrentPlayerWeaponId(GUNLEFT) != get_item_in_hand_or_watch_menu(GUNLEFT))
+                && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED)
                 && (
                     (sp3c == 0)
                     || (((getCurrentPlayerWeaponId(GUNRIGHT) != get_item_in_hand_or_watch_menu(GUNRIGHT))) && (Gun_hand_without_item(GUNRIGHT) != ITEM_UNARMED))))
             {
-                g_CurrentPlayer->watch_animation_state = 8;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x8;
                 g_CurrentPlayer->watch_pause_time = 0;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 11)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xb)
         {
-            g_CurrentPlayer->pausing_flag = 0;
+            g_CurrentPlayer->pausing_flag = FALSE;
 
             if (
-                (getCurrentPlayerWeaponId(GUNLEFT) == get_item_in_hand_or_watch_menu(GUNLEFT)) 
-                && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED) 
+                (getCurrentPlayerWeaponId(GUNLEFT) == get_item_in_hand_or_watch_menu(GUNLEFT))
+                && (Gun_hand_without_item(GUNLEFT) != ITEM_UNARMED)
                 && (
-                    (sp3c == 0) 
+                    (sp3c == 0)
                     || (
-                        ( (getCurrentPlayerWeaponId(GUNRIGHT) == get_item_in_hand_or_watch_menu(GUNRIGHT))) 
+                        ( (getCurrentPlayerWeaponId(GUNRIGHT) == get_item_in_hand_or_watch_menu(GUNRIGHT)))
                         && (Gun_hand_without_item(GUNRIGHT) != ITEM_UNARMED))))
             {
-                g_CurrentPlayer->watch_animation_state = 1;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x1;
                 g_CurrentPlayer->watch_pause_time = 0;
-                g_CurrentPlayer->field_1C4 = 0;
+                g_CurrentPlayer->timer_1C4 = 0;
             }
         }
-        
-        if (g_CurrentPlayer->watch_animation_state == 13)
+
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xd)
         {
-            g_CurrentPlayer->pausing_flag = 0;
-            
+            g_CurrentPlayer->pausing_flag = FALSE;
+
             if (Gun_hand_without_item(GUNLEFT)
                 && Gun_hand_without_item(GUNRIGHT))
             {
@@ -7919,9 +7417,9 @@ void bondviewWatchAnimationTick(void)
                     && (g_CurrentPlayer->hands[1].when_detonating_mines_is_0 != 7)
                     && (g_CurrentPlayer->hands[1].when_detonating_mines_is_0 != 8))
                 {
-                    g_CurrentPlayer->watch_animation_state = 1;
+                    g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x1;
                     g_CurrentPlayer->watch_pause_time = 0;
-                    g_CurrentPlayer->field_1C4 = 0;
+                    g_CurrentPlayer->timer_1C4 = 0;
                 }
             }
         }
@@ -7931,12 +7429,12 @@ void bondviewWatchAnimationTick(void)
         bondviewUpdateWatchZoomIn();
     }
 
-    if (g_CurrentPlayer->watch_animation_state == 5)
+    if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x5)
     {
         lvlSetControlsLockedFlag(TRUE);
         sub_GAME_7F0A6A80();
     }
-    else if (g_CurrentPlayer->watch_animation_state == 12)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xc)
     {
         lvlSetControlsLockedFlag(TRUE);
     }
@@ -7952,7 +7450,7 @@ void bondviewWatchAnimationTick(void)
 
 
 void set_open_close_solo_watch_menu_to1(void) {
-    g_CurrentPlayer->open_close_solo_watch_menu = 1;
+    g_CurrentPlayer->open_close_solo_watch_menu = TRUE;
 }
 
 
@@ -7971,7 +7469,7 @@ void trigger_solo_watch_menu(s32 arg0)
     struct WatchVertex *ptr_copy;
     int i;
 
-    if (g_CurrentPlayer->watch_animation_state == 0)
+    if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0)
     {
         if (arg0 == 0)
         {
@@ -7988,25 +7486,25 @@ void trigger_solo_watch_menu(s32 arg0)
                 && (g_CurrentPlayer->hands[1].when_detonating_mines_is_0 != 7)
                 && (g_CurrentPlayer->hands[1].when_detonating_mines_is_0 != 8))
             {
-                g_CurrentPlayer->watch_animation_state = 1;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x1;
             }
             else
             {
-                g_CurrentPlayer->watch_animation_state = 0xD;
+                g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0xd;
             }
-            
+
             g_CurrentPlayer->watch_pause_time = 0;
-            g_CurrentPlayer->field_1C4 = 0;
-            
+            g_CurrentPlayer->timer_1C4 = 0;
+
             sub_GAME_7F07DEFC();
             bondviewTriggerWatchZoomDefault();
 
-            sub_GAME_7F0A2F30(&g_CurrentPlayer->healthdamagetype, 0x2E, 1, get_BONDdata_watch_armor());
-            sub_GAME_7F0A3330(&g_CurrentPlayer->watch_body_armor_bar_gdl, OS_K0_TO_PHYSICAL(&g_CurrentPlayer->healthdamagetype), 0x2E);
+            sub_GAME_7F0A2F30(&g_CurrentPlayer->armor_display_values, 0x2E, 1, get_BONDdata_watch_armor());
+            sub_GAME_7F0A3330(&g_CurrentPlayer->watch_body_armor_bar_gdl, OS_K0_TO_PHYSICAL(&g_CurrentPlayer->armor_display_values), 0x2E);
 
-            sub_GAME_7F0A2F30(&g_CurrentPlayer->related_to_health_display, 0x2E, -1, bondviewGetCurrentPlayerHealth());
-            sub_GAME_7F0A3330(&g_CurrentPlayer->watch_health_bar_gdl, OS_K0_TO_PHYSICAL(&g_CurrentPlayer->related_to_health_display), 0x2E);
-            
+            sub_GAME_7F0A2F30(&g_CurrentPlayer->health_display_values, 0x2E, -1, bondviewGetCurrentPlayerHealth());
+            sub_GAME_7F0A3330(&g_CurrentPlayer->watch_health_bar_gdl, OS_K0_TO_PHYSICAL(&g_CurrentPlayer->health_display_values), 0x2E);
+
             sub_GAME_7F0A69A8();
 
             /**
@@ -8047,100 +7545,100 @@ void trigger_solo_watch_menu(s32 arg0)
             */
         }
     }
-    else if (g_CurrentPlayer->watch_animation_state == 1)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x1)
     {
-        g_CurrentPlayer->watch_animation_state = 9;
+        g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x9;
         g_CurrentPlayer->watch_pause_time = 0;
-        g_CurrentPlayer->field_1C4 = 0;
+        g_CurrentPlayer->timer_1C4 = 0;
     }
-    else if (g_CurrentPlayer->watch_animation_state == 2)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x2)
     {
-        g_CurrentPlayer->watch_animation_state = 0xA;
+        g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0xa;
         g_CurrentPlayer->watch_pause_time = 0;
-        g_CurrentPlayer->field_1C4 = 0;
+        g_CurrentPlayer->timer_1C4 = 0;
     }
-    else if (g_CurrentPlayer->watch_animation_state == 3)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x3)
     {
-        g_CurrentPlayer->watch_animation_state = 7;
+        g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x7;
         g_CurrentPlayer->watch_pause_time = 0;
-        g_CurrentPlayer->field_1C4 = 0;
+        g_CurrentPlayer->timer_1C4 = 0;
     }
-    else if (g_CurrentPlayer->watch_animation_state == 4)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x4)
     {
-        g_CurrentPlayer->watch_animation_state = 6;
+        g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x6;
         g_CurrentPlayer->watch_pause_time = 0;
-        g_CurrentPlayer->field_1C4 = 0;
+        g_CurrentPlayer->timer_1C4 = 0;
     }
-    else if (g_CurrentPlayer->watch_animation_state == 5)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x5)
     {
         deleteCurrentSelectedFolder();
         sub_GAME_7F0C1340();
-        g_CurrentPlayer->watch_animation_state = 0xC;
+        g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0xc;
         g_CurrentPlayer->watch_pause_time = 0;
-        g_CurrentPlayer->field_1C4 = 0;
-        g_CurrentPlayer->open_close_solo_watch_menu = 0;
+        g_CurrentPlayer->timer_1C4 = 0;
+        g_CurrentPlayer->open_close_solo_watch_menu = FALSE;
     }
-    else if (g_CurrentPlayer->watch_animation_state == 12)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xc)
     {
         // removed
     }
-    else if (g_CurrentPlayer->watch_animation_state == 6)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x6)
     {
         if (arg0 == 0)
         {
-            g_CurrentPlayer->watch_animation_state = 4;
+            g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x4;
             g_CurrentPlayer->watch_pause_time = 0;
-            g_CurrentPlayer->field_1C4 = 0;
+            g_CurrentPlayer->timer_1C4 = 0;
             sub_GAME_7F0A69A8();
         }
     }
-    else if (g_CurrentPlayer->watch_animation_state == 7)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x7)
     {
         if (arg0 == 0)
         {
-            g_CurrentPlayer->watch_animation_state = 3;
+            g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x3;
             g_CurrentPlayer->watch_pause_time = 0;
-            g_CurrentPlayer->field_1C4 = 0;
+            g_CurrentPlayer->timer_1C4 = 0;
             sub_GAME_7F0A69A8();
         }
     }
-    else if (g_CurrentPlayer->watch_animation_state == 8)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x8)
     {
         if (arg0 == 0)
         {
-            g_CurrentPlayer->watch_animation_state = 0xB;
+            g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0xb;
             g_CurrentPlayer->watch_pause_time = 0;
-            g_CurrentPlayer->field_1C4 = 0;
+            g_CurrentPlayer->timer_1C4 = 0;
             sub_GAME_7F0A69A8();
         }
     }
-    else if (g_CurrentPlayer->watch_animation_state == 9)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x9)
     {
         if (arg0 == 0)
         {
-            g_CurrentPlayer->watch_animation_state = 1;
+            g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x1;
             g_CurrentPlayer->watch_pause_time = 0;
-            g_CurrentPlayer->field_1C4 = 0;
+            g_CurrentPlayer->timer_1C4 = 0;
         }
     }
-    else if (g_CurrentPlayer->watch_animation_state == 10)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xa)
     {
         if (arg0 == 0)
         {
-            g_CurrentPlayer->watch_animation_state = 1;
+            g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x1;
             g_CurrentPlayer->watch_pause_time = 0;
-            g_CurrentPlayer->field_1C4 = 0;
+            g_CurrentPlayer->timer_1C4 = 0;
         }
     }
-    else if (g_CurrentPlayer->watch_animation_state == 11)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xb)
     {
-        g_CurrentPlayer->watch_animation_state = 8;
+        g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x8;
         g_CurrentPlayer->watch_pause_time = 0;
-        g_CurrentPlayer->field_1C4 = 0;
+        g_CurrentPlayer->timer_1C4 = 0;
     }
-    else if (g_CurrentPlayer->watch_animation_state == 13)
+    else if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0xd)
     {
-        g_CurrentPlayer->watch_animation_state = 0;
+        g_CurrentPlayer->watch_animation_state = WATCH_ANIMATION_0x0;
     }
 }
 
@@ -8184,31 +7682,31 @@ void bondviewUpdateSpeedSideways(s32 arg0) {
 */
 void bondviewUpdateSpeedForwards(s32 arg0) {
     if (arg0 == 1) {
-        g_CurrentPlayer->field_2A4C = (g_CurrentPlayer->field_2A4C + g_GlobalTimerDelta);
-        if (1.0f < g_CurrentPlayer->field_2A4C) {
-            g_CurrentPlayer->field_2A4C = 1.0f;
+        g_CurrentPlayer->speedgo = (g_CurrentPlayer->speedgo + g_GlobalTimerDelta);
+        if (1.0f < g_CurrentPlayer->speedgo) {
+            g_CurrentPlayer->speedgo = 1.0f;
         }
     } else {
         if (arg0 == -1) {
-            g_CurrentPlayer->field_2A4C = (g_CurrentPlayer->field_2A4C - g_GlobalTimerDelta);
-            if (g_CurrentPlayer->field_2A4C < -1.0f) {
-                g_CurrentPlayer->field_2A4C = -1.0f;
+            g_CurrentPlayer->speedgo = (g_CurrentPlayer->speedgo - g_GlobalTimerDelta);
+            if (g_CurrentPlayer->speedgo < -1.0f) {
+                g_CurrentPlayer->speedgo = -1.0f;
             }
         } else {
-            if (0.0f < g_CurrentPlayer->field_2A4C) {
-                g_CurrentPlayer->field_2A4C = (g_CurrentPlayer->field_2A4C - g_GlobalTimerDelta);
-                if (g_CurrentPlayer->field_2A4C < 0.0f) {
-                    g_CurrentPlayer->field_2A4C = 0.0f;
+            if (0.0f < g_CurrentPlayer->speedgo) {
+                g_CurrentPlayer->speedgo = (g_CurrentPlayer->speedgo - g_GlobalTimerDelta);
+                if (g_CurrentPlayer->speedgo < 0.0f) {
+                    g_CurrentPlayer->speedgo = 0.0f;
                 }
             } else {
-                g_CurrentPlayer->field_2A4C = (g_CurrentPlayer->field_2A4C + g_GlobalTimerDelta);
-                if (0.0f < g_CurrentPlayer->field_2A4C) {
-                    g_CurrentPlayer->field_2A4C = 0.0f;
+                g_CurrentPlayer->speedgo = (g_CurrentPlayer->speedgo + g_GlobalTimerDelta);
+                if (0.0f < g_CurrentPlayer->speedgo) {
+                    g_CurrentPlayer->speedgo = 0.0f;
                 }
             }
         }
     }
-    g_CurrentPlayer->speedforwards = g_CurrentPlayer->field_2A4C;
+    g_CurrentPlayer->speedforwards = g_CurrentPlayer->speedgo;
 }
 
 /**
@@ -8235,7 +7733,7 @@ void bondviewCurrentPlayerUpdateSpeedVerta(f32 value)
 {
     f32 mult = viGetFovY() / FOV_Y_F;
     f32 limit = sub_GAME_7F07FF74(value);
-    
+
     if (value > 0.0f)
     {
         if (g_CurrentPlayer->speedverta > 0.0f)
@@ -8314,7 +7812,7 @@ void bondviewCurrentPlayerUpdateSpeedTheta(f32 value)
 {
     f32 mult = viGetFovY() / FOV_Y_F;
     f32 limit = sub_GAME_7F080228(value);
-    
+
     if (value > 0.0f)
     {
         if (g_CurrentPlayer->speedtheta > 0.0f)
@@ -8376,7 +7874,7 @@ Gfx *currentPlayerDrawFade(Gfx *gdl) {
     s32 r = g_CurrentPlayer->colourscreenred;
     s32 g = g_CurrentPlayer->colourscreengreen;
     s32 b = g_CurrentPlayer->colourscreenblue;
-    if ((camera_80036430 != 0) || (camera_80036434 != 0)) {
+    if ((cameraFrameCounter1 != 0) || (cameraFrameCounter2 != 0)) {
         frac = 1.0f;
         b = 0;
         g = 0;
@@ -8528,19 +8026,19 @@ void bondviewMoveAnimationTick(f32 speed, f32 speedforwards, f32 speedsideways)
     }
     else
     {
-        if (g_CurrentPlayer->startnewbonddie != 0)
+        if (g_CurrentPlayer->startnewbonddie)
         {
             // HACK: ptr_animation_table dereference addition is backwards.
             // this should be:
             // ptr_animation_table->data[g_bondviewBondDeathAnimations[((u32) randomGetNext() % (u32) g_bondviewBondDeathAnimationsCount)]]
             bheadStartDeathAnimation((struct ModelAnimation *) ((s32)g_bondviewBondDeathAnimations[((u32) randomGetNext() % (u32) g_bondviewBondDeathAnimationsCount)] + (s32)&ptr_animation_table->data[0]), randomGetNext() & 1, 0.0f, 1.0f);
-            g_CurrentPlayer->startnewbonddie = 0;
+            g_CurrentPlayer->startnewbonddie = FALSE;
         }
 
         bheadSetSpeed(0.5f);
         speedsideways = 0.0f;
     }
-    
+
     bheadUpdate(percent_speed, speedsideways);
 
     matrix_4x4_set_rotation_around_x((360.0f - g_CurrentPlayer->vv_verta360) * DegToRad1Fact(1), &sp8C);
@@ -8552,7 +8050,7 @@ void bondviewMoveAnimationTick(f32 speed, f32 speedforwards, f32 speedsideways)
     g_CurrentPlayer->field_488.applied_view.f[0] = sp8C.m[2][0];
     g_CurrentPlayer->field_488.applied_view.f[1] = sp8C.m[2][1];
     g_CurrentPlayer->field_488.applied_view.f[2] = sp8C.m[2][2];
-    
+
     g_CurrentPlayer->field_488.applied_view2.f[0] = sp8C.m[1][0];
     g_CurrentPlayer->field_488.applied_view2.f[1] = sp8C.m[1][1];
     g_CurrentPlayer->field_488.applied_view2.f[2] = sp8C.m[1][2];
@@ -8573,7 +8071,7 @@ f32 bondviewYPositionRelated(StandTile *arg0, f32 arg1, f32 arg2)
         PropRecord *p = obj->prop;
 
         ret = stanGetPositionYValue(p->stan, p->pos.x, p->pos.z);
-            
+
         ret += g_PlayerTankYOffset;
     }
     else
@@ -8640,7 +8138,7 @@ void bondviewUpdatePlayerY(s32 use_stanHeight, f32 stanHeight_offset)
                 g_CurrentPlayer->field_488.current_tile_ptr,
                 g_CurrentPlayer->field_488.collision_position.f[0],
                 g_CurrentPlayer->field_488.collision_position.f[2]);
-            
+
             if (g_CurrentPlayer->stanHeight < temp_f0)
             {
                 g_CurrentPlayer->stanHeight = temp_f0;
@@ -8651,7 +8149,7 @@ void bondviewUpdatePlayerY(s32 use_stanHeight, f32 stanHeight_offset)
             stan = g_CurrentPlayer->field_488.current_tile_ptr;
 
             bondviewGetCollisionRadius(g_CurrentPlayer->prop, &collision_radius, &height, &always_30);
-            
+
             sp64 = bondviewYPositionRelated(
                 g_CurrentPlayer->field_488.current_tile_ptr,
                 g_CurrentPlayer->field_488.collision_position.f[0],
@@ -8670,7 +8168,7 @@ void bondviewUpdatePlayerY(s32 use_stanHeight, f32 stanHeight_offset)
                     sp64 = g_CurrentPlayer->stanHeight;
                 }
             }
-            
+
             g_CurrentPlayer->stanHeight = sp64;
         }
 
@@ -8700,7 +8198,7 @@ void bondviewUpdatePlayerY(s32 use_stanHeight, f32 stanHeight_offset)
         {
             new_field_7c = g_CurrentPlayer->field_7C;
             new_field_70 = g_CurrentPlayer->field_70;
-            
+
             if ((get_debug_fast_bond_flag() != 0) && (g_ForceBondMoveOffset.f[0] == 0.0f) && (g_ForceBondMoveOffset.f[2] == 0.0f))
             {
                 sp40 = 1.388889f;
@@ -8709,7 +8207,7 @@ void bondviewUpdatePlayerY(s32 use_stanHeight, f32 stanHeight_offset)
             {
                 sp40 = 0.27777779f;
             }
-            
+
             ftemp2 = new_field_7c - (g_GlobalTimerDelta * sp40);
             new_field_70 += (g_GlobalTimerDelta * (new_field_7c + ftemp2) * 0.5f);
             new_field_7c = ftemp2;
@@ -8775,7 +8273,7 @@ void bondviewUpdatePlayerY(s32 use_stanHeight, f32 stanHeight_offset)
             if (g_CurrentPlayer->vertical_bounce_adjust < 0.0f)
             {
                 g_CurrentPlayer->vertical_bounce_adjust -= CLIPPING_FIELD90_VALUE;
-                
+
                 if (0.0f <= g_CurrentPlayer->vertical_bounce_adjust)
                 {
                     g_CurrentPlayer->vertical_bounce_adjust = 0.0f;
@@ -8806,25 +8304,25 @@ void bondviewUpdatePlayerCollisionPositionFields(void)
 
     g_CurrentPlayer->field_29BC = (g_CurrentPlayer->headpos.f[1] * g_playerPerm->player_perspective_height) + 7.0f;
 
-    phi_f0 = g_CurrentPlayer->field_29BC + 
+    phi_f0 = g_CurrentPlayer->field_29BC +
         ((g_CurrentPlayer->field_88 + g_CurrentPlayer->ducking_height_offset) * g_playerPerm->player_perspective_height);
-    
+
     if (phi_f0 < 30.0f)
     {
         phi_f0 = 30.0f;
     }
 
     g_CurrentPlayer->field_488.collision_position.f[1] = g_CurrentPlayer->field_70 + phi_f0;
-    
-    if (((g_CameraMode != CAMERAMODE_DEATH_CAM_FIRST) && (g_CameraMode != CAMERAMODE_DEATH_CAM_SECOND) && (g_CameraMode != CAMERAMODE_POSEND))
+
+    if (((g_CameraMode != CAMERAMODE_DEATH_CAM_SP) && (g_CameraMode != CAMERAMODE_DEATH_CAM_MP) && (g_CameraMode != CAMERAMODE_POSEND))
         || (g_CurrentPlayer->ptr_char_objectinstance == 0))
     {
         g_CurrentPlayer->field_488.pos.f[0] = g_CurrentPlayer->field_488.collision_position.f[0];
         g_CurrentPlayer->field_488.pos.f[1] = g_CurrentPlayer->field_488.collision_position.f[1];
         g_CurrentPlayer->field_488.pos.f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
     }
-    
-    if (g_CurrentPlayer->bonddead != 0)
+
+    if (g_CurrentPlayer->bonddead != FALSE)
     {
         if (g_CurrentPlayer->field_29C0 > 0.0f)
         {
@@ -8852,25 +8350,25 @@ void bondviewUpdatePlayerCollisionPositionFields(void)
         g_CurrentPlayer->field_488.collision_position.f[2],
         g_CurrentPlayer->field_488.pos.f[0],
         g_CurrentPlayer->field_488.pos.f[2]);
-    
+
     stanlinelog_flag = sp28;
-    
+
     g_CurrentPlayer->field_488.current_tile_ptr_for_portals = sp2C;
-    
+
     g_CurrentPlayer->field_488.pos3.f[0] = g_CurrentPlayer->field_488.pos.f[0];
     g_CurrentPlayer->field_488.pos3.f[2] = g_CurrentPlayer->field_488.pos.f[2];
-    
+
     g_CurrentPlayer->field_488.pos3.f[1] = bondviewYPositionRelated(
         g_CurrentPlayer->field_488.current_tile_ptr_for_portals,
         g_CurrentPlayer->field_488.pos.f[0],
         g_CurrentPlayer->field_488.pos.f[2]);
-    
+
     g_CurrentPlayer->prop->stan = g_CurrentPlayer->field_488.current_tile_ptr;
-    
+
     g_CurrentPlayer->prop->pos.f[0] = g_CurrentPlayer->field_488.collision_position.f[0];
     g_CurrentPlayer->prop->pos.f[1] = g_CurrentPlayer->field_488.collision_position.f[1];
     g_CurrentPlayer->prop->pos.f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
-    
+
 #if defined(VERSION_EU)
 #define S7F081478_FACTOR_1 0.881200015545f
 #else
@@ -8901,7 +8399,7 @@ void bondviewUpdatePlayerCollisionPositionFields(void)
  * Fixes vv_verta within -90 and +90.
  * Updates vv_costheta, vv_sintheta, vv_verta360, vv_cosverta, vv_sinverta, field_488.theta_transform.
  * Address 0x7F081790.
- * 
+ *
  * Perfect Dark function bmoveUpdateVerta.
 */
 void bondviewApplyVertaTheta(void)
@@ -8955,12 +8453,12 @@ void bondviewApplyVertaTheta(void)
 void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 {
     struct MoveData moveData; // sp120
-    
+
     s8 player_joyGetStickX; // sp11F
     s8 player_joyGetStickY; // sp11E
     u16 player_joyGetButtons; // sp11C
     u16 copy_prev_buttons_pressed; // sp11A
-    s32 tmpc2stickx;
+    s32 adjustedStickX;
     s32 tmpc2sticky;
     s32 sp10C;
     s32 sp108;
@@ -9019,7 +8517,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
     moveData.speedVertaDown = 0;
     moveData.speedVertaUp = 0;
     moveData.aimTurnLeftSpeed = 0;
-    moveData.aimTurnRightSpeed = 0;    
+    moveData.aimTurnRightSpeed = 0;
     moveData.weaponBackOffset = 0;
     moveData.weaponForwardOffset = 0;
     moveData.aiming = 0;
@@ -9053,20 +8551,20 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
     moveData.controlStickXRaw = (s32)stick_x;
     moveData.controlStickYRaw = (s32)stick_y;
-    
-    moveData.analogTurn = moveData.controlStickXSafe;    
+
+    moveData.analogTurn = moveData.controlStickXSafe;
     moveData.analogPitch = moveData.controlStickYSafe;
     moveData.analogStrafe = moveData.controlStickXSafe;
     moveData.analogWalk = moveData.controlStickYSafe;
 
-    if (g_CurrentPlayer->bonddead == 0
+    if (g_CurrentPlayer->bonddead == FALSE
         && g_bondviewForceDisarm <= 0
         && (
-            (g_CurrentPlayer->watch_animation_state != 5 
+            (g_CurrentPlayer->watch_animation_state != WATCH_ANIMATION_0x5
                 && ((buttons & ~oldbuttons) & START_BUTTON)
-            ) 
+            )
             ||
-            (g_CurrentPlayer->watch_animation_state == 5
+            (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x5
                 && g_CurrentPlayer->open_close_solo_watch_menu)
         )
         && (getPlayerCount() == 1))
@@ -9074,8 +8572,8 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         trigger_solo_watch_menu(0);
     }
 
-    if (g_CurrentPlayer->watch_animation_state == 0
-        && g_CurrentPlayer->bonddead == 0
+    if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0
+        && g_CurrentPlayer->bonddead == FALSE
         && (
             getPlayerCount() == 1
             || (
@@ -9093,20 +8591,20 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             player_joyGetButtons = joyGetButtons(get_cur_playernum() + getPlayerCount() , (u32)ANY_BUTTON);
 
             copy_prev_buttons_pressed = g_CurrentPlayer->prev_buttons_pressed;
-            
+
             if (player_joyGetStickX < -5)
             {
-                tmpc2stickx = player_joyGetStickX + 5;
+                adjustedStickX = player_joyGetStickX + 5;
             }
             else if (player_joyGetStickX > 5)
             {
-                tmpc2stickx = player_joyGetStickX - 5;
+                adjustedStickX = player_joyGetStickX - 5;
             }
             else
             {
-                tmpc2stickx = 0;
+                adjustedStickX = 0;
             }
-            
+
             if (player_joyGetStickY < -5)
             {
                 tmpc2sticky = player_joyGetStickY + 5;
@@ -9123,20 +8621,20 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             /* 2.1 and 2.3 */
             if (cur_player_get_control_type() == CONTROLLER_CONFIG_PLENTY || (cur_player_get_control_type() == CONTROLLER_CONFIG_DOMINO))
             {
-                moveData.analogStrafe = tmpc2stickx;
+                moveData.analogStrafe = adjustedStickX;
                 moveData.analogPitch = tmpc2sticky;
             }
             else
             {
                 if (in_tank_flag == 1 && !g_CurrentPlayer->insightaimmode)
                 {
-                    moveData.analogTurn = tmpc2stickx;
+                    moveData.analogTurn = adjustedStickX;
                 }
                 else
                 {
-                    moveData.analogStrafe = tmpc2stickx;
+                    moveData.analogStrafe = adjustedStickX;
                 }
-                
+
                 moveData.analogWalk = tmpc2sticky;
             }
 
@@ -9169,7 +8667,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
                 moveData.canSwivelGun = !g_CurrentPlayer->insightaimmode;
                 moveData.canAutoAim = !g_CurrentPlayer->insightaimmode;
-                
+
                 moveData.canManualAim = g_CurrentPlayer->insightaimmode;
 
                 moveData.btap = (
@@ -9177,7 +8675,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                     ||
                     ((((player_joyGetButtons & ~copy_prev_buttons_pressed) & B_BUTTON)) != 0)
                     );
-                
+
                 moveData.canLookAhead = !g_CurrentPlayer->insightaimmode;
                 moveData.canTurnTank = 1;
                 moveData.canNaturalTurn = !g_CurrentPlayer->insightaimmode;
@@ -9209,7 +8707,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                     //moveData.speedVertaUp = 0;
                 }
 
-                
+
                 if (g_CurrentPlayer->insightaimmode && (stick_x < -60))
                 {
                     moveData.aimTurnLeftSpeed = (f32) (-60 - stick_x) / FLOAT_TEN_B;
@@ -9222,7 +8720,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     //moveData.aimTurnLeftSpeed = 0;
                 }
-                
+
                 if (g_CurrentPlayer->insightaimmode && (stick_x > 60) )
                 {
                     moveData.aimTurnRightSpeed = (f32) (stick_x - 60) / FLOAT_TEN_B;
@@ -9235,14 +8733,14 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     //moveData.aimTurnRightSpeed = 0;
                 }
-                
+
                 moveData.weaponBackOffset = (
                         ((buttons & A_BUTTON) != 0)
                         ||
                         ((player_joyGetButtons & A_BUTTON) != 0)
                     )
                     && (sp108);
-                
+
                moveData.weaponForwardOffset = (
                     (
                        (((buttons & ~oldbuttons) & A_BUTTON) != 0)
@@ -9253,7 +8751,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
                 moveData.aiming = g_CurrentPlayer->insightaimmode;
                 moveData.zooming = g_CurrentPlayer->insightaimmode;
-                
+
                 if ((bondwalkItemCheckBitflags(getCurrentPlayerWeaponId(GUNRIGHT), WEAPONSTATBITFLAG_DISABLE_CROUCH))
                     && g_CurrentPlayer->insightaimmode)
                 {
@@ -9264,10 +8762,10 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         {
                             moveData.zoomOutFovPersec = 1.0f;
                         }
-                        
+
                         moveData.zoomOutFovPersec *= 2.0f;
                     }
-                    
+
                     if (tmpc2sticky > 0)
                     {
                         moveData.zoomInFovPersec = (f32) tmpc2sticky / 70.0f;
@@ -9275,11 +8773,11 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         {
                             moveData.zoomInFovPersec = 1.0f;
                         }
-                        
+
                         moveData.zoomInFovPersec *= 2.0f;
                     }
                 }
-                
+
                 moveData.crouchDown = (bondwalkItemCheckBitflags(getCurrentPlayerWeaponId(GUNRIGHT), WEAPONSTATBITFLAG_DISABLE_CROUCH) == 0)
                     && (g_CurrentPlayer->insightaimmode)
                     && (player_joyGetStickY < -30);
@@ -9300,13 +8798,13 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                     moveData.weaponForwardOffset = 0;
                     moveData.btap = 0;
                 }
-                
+
                 if (in_tank_flag == 1 && g_CurrentPlayer->insightaimmode)
                 {
                     if (getCurrentPlayerWeaponId(GUNRIGHT) == ITEM_TANKSHELLS)
                     {
                         moveData.controlStickXRaw = 0;
-                        
+
                         if (moveData.analogStrafe == 0)
                         {
                             moveData.analogStrafe = moveData.analogTurn;
@@ -9318,20 +8816,20 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         {
                             moveData.tankTurnLeftSpeed = moveData.aimTurnLeftSpeed;
                         }
-                        
+
                         if (moveData.aimTurnRightSpeed > 0)
                         {
                             moveData.tankTurnRightSpeed = moveData.aimTurnRightSpeed;
                         }
                     }
-                    
+
                     moveData.aimTurnLeftSpeed = 0;
                     moveData.aimTurnRightSpeed = 0;
                 }
             }
 
             moveData.triggerOn = (sp10C)
-                && (g_CurrentPlayer->watch_animation_state == 0)
+                && (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0)
                 && ((buttons & A_BUTTON) == 0)
                 && ((player_joyGetButtons & A_BUTTON) == 0);
 
@@ -9395,7 +8893,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                                 moveData.tankTurnLeftSpeed = 1.0f;
                             }
                         }
-                        
+
                         if ((buttons & (R_JPAD | R_CBUTTONS)) != 0)
                         {
                             if (!g_CurrentPlayer->insightaimmode)
@@ -9417,12 +8915,12 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
                         moveData.digitalStepForward = (!g_CurrentPlayer->insightaimmode)
                             && ((buttons & (U_JPAD | U_CBUTTONS)) );
-                        
+
                         moveData.digitalStepBack = (!g_CurrentPlayer->insightaimmode)
                             && ((buttons & (D_JPAD | D_CBUTTONS)));
 
                         moveData.canNaturalPitch = !g_CurrentPlayer->insightaimmode;
-                        
+
                         if (in_tank_flag == 1)
                         {
                             moveData.canTurnTank = !g_CurrentPlayer->insightaimmode;
@@ -9443,7 +8941,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         {
                             moveData.tankTurnLeftSpeed = 0;
                         }
-                        
+
                         if ((buttons & (s32)(R_JPAD | R_CBUTTONS)) != 0)
                         {
                             moveData.tankTurnRightSpeed = 1.0f;
@@ -9453,28 +8951,28 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         {
                             moveData.tankTurnRightSpeed = 0;
                         }
-                        
+
                         moveData.digitalStepLeft = (!g_CurrentPlayer->insightaimmode)
                             && ((buttons & (s32)(L_JPAD | L_CBUTTONS)) );
-                        
+
                         moveData.digitalStepRight = (!g_CurrentPlayer->insightaimmode)
                             && ((buttons & (s32)(R_JPAD | R_CBUTTONS)));
-                        
+
                         moveData.canLookAhead = !g_CurrentPlayer->insightaimmode;
 
                         if ((!g_CurrentPlayer->insightaimmode) && (buttons & (U_JPAD | U_CBUTTONS)) )
                         {
                             moveData.speedVertaDown = 1.0f;
                         }
-                        
+
                         if ((!g_CurrentPlayer->insightaimmode) && (buttons & (D_JPAD | D_CBUTTONS)))
                         {
                             moveData.speedVertaUp = 1.0f;
                         }
-                        
+
                         moveData.canNaturalTurn = !g_CurrentPlayer->insightaimmode;
                     }
-                    
+
                     if ((g_CurrentPlayer->insightaimmode) && (stick_y > 60))
                     {
                         moveData.speedVertaDown = (f32) (stick_y - 60) / FLOAT_TEN_B;
@@ -9491,7 +8989,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                             moveData.speedVertaUp = 1.0f;
                         }
                     }
-                    
+
                     if ((g_CurrentPlayer->insightaimmode) && (stick_x < -60))
                     {
                         moveData.aimTurnLeftSpeed = (f32) (-60 - stick_x) / FLOAT_TEN_B;
@@ -9500,7 +8998,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                             moveData.aimTurnLeftSpeed = 1.0f;
                         }
                     }
-                    
+
                     if ((g_CurrentPlayer->insightaimmode) && (stick_x > 60))
                     {
                         moveData.aimTurnRightSpeed = (f32) (stick_x - 60) / FLOAT_TEN_B;
@@ -9515,13 +9013,13 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         &&
                         (((buttons & ~oldbuttons) & shootButtons) != 0)
                         ;
-                    
-                    moveData.weaponForwardOffset = 
+
+                    moveData.weaponForwardOffset =
                         (((buttons & ~oldbuttons) & invButtons) != 0)
                         &&
                         ((buttons & shootButtons) == 0)
                         ;
-                    
+
                     moveData.aiming = g_CurrentPlayer->insightaimmode;
                     moveData.zooming = g_CurrentPlayer->insightaimmode;
 
@@ -9534,17 +9032,17 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         {
                             moveData.zoomOutFovPersec = 1.0f;
                         }
-                        
+
                         if ((buttons & (U_JPAD | U_CBUTTONS)) != 0)
                         {
                             moveData.zoomInFovPersec = 1.0f;
                         }
                     }
-                    
+
                     moveData.crouchDown = (bondwalkItemCheckBitflags(getCurrentPlayerWeaponId(GUNRIGHT), WEAPONSTATBITFLAG_DISABLE_CROUCH) == 0)
                         && (g_CurrentPlayer->insightaimmode)
                         && ((buttons & (D_JPAD | D_CBUTTONS)));
-                        
+
                     moveData.crouchUp = (bondwalkItemCheckBitflags(getCurrentPlayerWeaponId(GUNRIGHT), WEAPONSTATBITFLAG_DISABLE_CROUCH) == 0)
                         && (g_CurrentPlayer->insightaimmode)
                         && ((~buttons & (U_JPAD | U_CBUTTONS)));
@@ -9556,7 +9054,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         && ((buttons & (R_JPAD | R_CBUTTONS)));
 
                     if (
-                        ((((buttons & invButtons) != 0) && (((buttons & ~oldbuttons) & B_BUTTON) != 0)) 
+                        ((((buttons & invButtons) != 0) && (((buttons & ~oldbuttons) & B_BUTTON) != 0))
                             || ((buttons & B_BUTTON) && (((buttons & ~oldbuttons) & invButtons) != 0)))
                         && (getCurrentPlayerWeaponId(GUNRIGHT) == ITEM_REMOTEMINE))
                     {
@@ -9579,7 +9077,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                             {
                                 moveData.tankTurnLeftSpeed = moveData.aimTurnLeftSpeed;
                             }
-                            
+
                             if (moveData.aimTurnRightSpeed > 0)
                             {
                                 moveData.tankTurnRightSpeed = moveData.aimTurnRightSpeed;
@@ -9593,7 +9091,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             }
 
             moveData.triggerOn = ((buttons & shootButtons)  != 0)
-                && (g_CurrentPlayer->watch_animation_state == 0)
+                && (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0)
                 && ((buttons & invButtons) == 0);
 
             /* 1.2 and 1.4 */
@@ -9613,16 +9111,16 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             spF4 = (struct TankRecord *)g_PlayerTankProp->obj;
             spF4->unkD8 = get_ammo_count_for_weapon(ITEM_TANKSHELLS);
-            
+
             add_ammo_to_weapon(ITEM_TANKSHELLS, 0);
             bondinvRemoveItemByID(ITEM_TANKSHELLS);
-            
+
             if (getCurrentPlayerWeaponId(GUNRIGHT) == ITEM_TANKSHELLS)
             {
                 spF4->unkD8 += get_ammo_in_hands_magazine(GUNRIGHT);
                 autoadvance_on_deplete_all_ammo();
             }
-            
+
             spF4->is_firing_tank = 0;
             in_tank_flag = 0;
             g_CurrentPlayer->speedsideways = 0;
@@ -9633,8 +9131,8 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             {
                 g_CurrentPlayer->bondshotspeed.f[i_0] = 0;
             }
-            
-            g_CurrentPlayer->crouchpos = 2;
+
+            g_CurrentPlayer->crouchpos = CROUCH_STAND;
         }
         /* If Bond is standing on the tank and pressed B, enter the tank. */
         else if (g_PlayerTankProp != NULL
@@ -9643,7 +9141,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             && g_BondCanEnterTank)
         {
             spEC = (struct TankRecord *)g_PlayerTankProp->obj;
-            
+
             bondinvAddInvItem(ITEM_TANKSHELLS);
             add_ammo_to_weapon(ITEM_TANKSHELLS, spEC->unkD8);
             spEC->unkD8 = 0;
@@ -9651,8 +9149,8 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             g_TankTurretVerticalAngleRelated = g_TankTurretVerticalAngle / TANK_VERT_ANGLE_FACTOR;
             g_TankTurretAngle = spEC->turret_orientation_angle;
             g_TankTurretOrientationAngleRad = spEC->turret_orientation_angle;
-            D_80036478 = g_TankTurretOrientationAngleRad / TANK_VERT_ANGLE_RAD_FACTOR;
-            D_8003647C = 0;
+            g_TankTurretOrientationAngleDeg = g_TankTurretOrientationAngleRad / TANK_VERT_ANGLE_RAD_FACTOR;
+            tank_turret_turn_speed = 0;
             g_TankOrientationAngle = spEC->tank_orientation_angle;
             g_TankTurnSpeed = 0;
             in_tank_flag = 1;
@@ -9660,7 +9158,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             g_CurrentPlayer->speedsideways = 0;
             g_CurrentPlayer->speedforwards = 0;
             g_CurrentPlayer->speedtheta = 0;
-            g_CurrentPlayer->crouchpos = 1;
+            g_CurrentPlayer->crouchpos = CROUCH_HALF;
             g_TankEnteringSitHeight = 0;
             g_TankEnteringSitHeightRemain = 1.0f;
             g_TankEnterBondHorizAngleDeg = g_CurrentPlayer->vv_theta;
@@ -9669,7 +9167,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             g_EnterTankCoord.f[1] = g_CurrentPlayer->field_488.collision_position.f[1];
             g_EnterTankCoord.f[2] = g_CurrentPlayer->field_488.collision_position.f[2];
             g_TankDamagePenaltyTicks = 0;
-            
+
             bondviewTankModelRotationRelated();
         }
         else
@@ -9681,7 +9179,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
     if (moveData.invertPitch == 0)
     {
         f32 ftemp_nostack_spE8;
-        
+
         moveData.controlStickYRaw = (s32) -stick_y;
         moveData.analogPitch = -moveData.analogPitch;
         ftemp_nostack_spE8 = moveData.speedVertaDown;
@@ -9701,33 +9199,33 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             || get_hands_firing_status(GUNLEFT)))
     {
         noiseRadius = 0;
-        
+
         if (get_hands_firing_status(GUNRIGHT) && getCurrentPlayerNoise(GUNRIGHT) > noiseRadius)
         {
             noiseRadius = getCurrentPlayerNoise(GUNRIGHT);
         }
-        
+
         if (get_hands_firing_status(GUNLEFT) && noiseRadius < getCurrentPlayerNoise(GUNLEFT))
         {
             noiseRadius = getCurrentPlayerNoise(GUNLEFT);
         }
-        
+
         chrCheckGuardsHeardSound(noiseRadius);
     }
 
     gunSetSightVisible(GUNSIGHTREASON_NOTAIMING, moveData.aiming);
-    
+
     if (moveData.zoomOutFovPersec > 0)
     {
         camera_sniper_zoom_out(moveData.zoomOutFovPersec);
     }
-    
+
     if (moveData.zoomInFovPersec > 0)
     {
         camera_sniper_zoom_in(moveData.zoomInFovPersec);
     }
 
-    if (g_CurrentPlayer->watch_animation_state == 0)
+    if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0)
     {
         ftemp_nostack_spE0 = 60.0f;
 
@@ -9740,11 +9238,11 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 ftemp_nostack_spE0 = 60.0f;
             }
         }
-        
+
         bondviewTriggerWatchZoom(ftemp_nostack_spE0);
         bondviewUpdateWatchZoomIn();
     }
-    
+
     if (in_tank_flag == 1)
     {
         g_TankTurretTurn = 0;
@@ -9762,26 +9260,26 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             else if (moveData.canTurnTank)
             {
                 targetSpeed = (f32) moveData.analogStrafe / 70.0f;
-                
+
                 if (targetSpeed > 1.0f)
                 {
                     targetSpeed = 1.0f;
                 }
-                
+
                 if (targetSpeed < -1.0f)
                 {
                     targetSpeed = -1.0f;
                 }
-                
+
                 g_TankTurretTurn += DegToRad1Fact(1) * targetSpeed * g_GlobalTimerDelta;
             }
-            
+
             if (!g_CurrentPlayer->insightaimmode)
             {
                 ftemp_nostack_spD8 = 0;
                 targetSpeed = 1.0f;
                 ftemp_nostack_spE8 = 1.0f;
-                
+
                 if (moveData.canLookAhead)
                 {
                     ftemp_nostack_spD8 = (f32) moveData.analogWalk / 70.0f;
@@ -9794,7 +9292,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     ftemp_nostack_spD8 = -1.0f;
                 }
-                
+
                 if (ftemp_nostack_spD8 > 1.0f)
                 {
                     ftemp_nostack_spD8 = 1.0f;
@@ -9803,7 +9301,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     ftemp_nostack_spD8 = -1.0f;
                 }
-                
+
                 unadjustedTargetSpeed = ftemp_nostack_spD8 * TANK_MAX_SPEED;
                 targetSpeed = unadjustedTargetSpeed;
 
@@ -9821,7 +9319,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         unadjustedTargetSpeed = ((((((targetSpeed - g_CurrentPlayer->speedforwards) / 4.0f) / TANK_MAX_SPEED) + 0.5f) * ftemp_nostack_spE8 * FLOAT_TEN_A) / 60.0f);
 
                         g_CurrentPlayer->speedforwards += (unadjustedTargetSpeed) * g_GlobalTimerDelta;
-                        
+
                         if (targetSpeed < g_CurrentPlayer->speedforwards)
                         {
                             g_CurrentPlayer->speedforwards = targetSpeed;
@@ -9832,7 +9330,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         unadjustedTargetSpeed = ((((((g_CurrentPlayer->speedforwards - targetSpeed) / 4.0f) / TANK_MAX_SPEED) + 0.5f) * ftemp_nostack_spE8 * -FLOAT_TEN_A) / 60.0f);
 
                         g_CurrentPlayer->speedforwards += (unadjustedTargetSpeed) * g_GlobalTimerDelta;
-                        
+
                         if (g_CurrentPlayer->speedforwards < targetSpeed)
                         {
                             g_CurrentPlayer->speedforwards = targetSpeed;
@@ -9856,12 +9354,12 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             bondviewUpdateSpeedSideways(0);
         }
-        
+
         if (moveData.canTurnTank) // ?? not sure why this tank property is used here. Is the name wrong?
         {
             g_CurrentPlayer->speedsideways = (f32) moveData.analogStrafe / 70.0f;
         }
-        
+
         if (moveData.digitalStepForward)
         {
             bondviewUpdateSpeedForwards(1);
@@ -9875,11 +9373,11 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             bondviewUpdateSpeedForwards(0);
         }
-        
+
         if (moveData.canLookAhead)
         {
             g_CurrentPlayer->speedforwards = (f32) moveData.analogWalk / 70.0f;
-            
+
             if (moveData.analogWalk > 60)
             {
                 g_CurrentPlayer->speedmaxtime60 += g_ClockTimer;
@@ -9894,7 +9392,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             g_CurrentPlayer->speedforwards = 1;
         }
-        
+
         if (g_CurrentPlayer->speedforwards < -1.0f)
         {
             g_CurrentPlayer->speedforwards = -1.0f;
@@ -9904,20 +9402,20 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             g_CurrentPlayer->speedsideways = 1;
         }
-        
+
         if (g_CurrentPlayer->speedsideways < -1)
         {
             g_CurrentPlayer->speedsideways = -1;
         }
-        
+
         g_CurrentPlayer->speedforwards *= 1.08f;
         g_CurrentPlayer->speedforwards *= g_CurrentPlayer->speedboost;
-        
+
         if ((moveData.canLookAhead == 0) && (moveData.digitalStepForward == 0))
         {
             g_CurrentPlayer->speedmaxtime60 = 0;
         }
-        
+
         if (moveData.rLeanLeft)
         {
             currentPlayerSetSwayTarget(-1);
@@ -9930,7 +9428,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             currentPlayerSetSwayTarget(0);
         }
-        
+
         if (moveData.crouchDown)
         {
             currentPlayerAdjustCrouchPos(-2);
@@ -9947,7 +9445,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             g_CurrentPlayer->speedboost += (SPEED_TICK_ADJUST * g_GlobalTimerDelta);
         }
-        
+
         if (g_CurrentPlayer->speedboost > SPEED_RUN_MAX)
         {
             g_CurrentPlayer->speedboost = SPEED_RUN_MAX;
@@ -9959,32 +9457,32 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             g_CurrentPlayer->speedboost -= (SPEED_TICK_ADJUST * g_GlobalTimerDelta);
         }
-        
+
         if (g_CurrentPlayer->speedboost < SPEED_REGULAR_MAX)
         {
             g_CurrentPlayer->speedboost = SPEED_REGULAR_MAX;
         }
     }
 
-    if (g_CurrentPlayer->watch_animation_state == 0)
+    if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0)
     {
         spC4 = -4.0f;
-        
+
         if (g_CurrentPlayer->lookaheadcentreenabled)
         {
             spC0 = g_CurrentPlayer->field_488.current_tile_ptr;
             spBC = 300.0f;
-            
+
             // prop, f32 *collision_radius, f32 *height, f32 *always_30
             bondviewGetCollisionRadius(g_CurrentPlayer->prop, &spA0.f[0], &spA0.f[2], &spA0.f[1]);
-            
+
             spAC.f[0] = g_CurrentPlayer->field_488.collision_position.f[0] + (g_CurrentPlayer->field_488.theta_transform.f[0] * 300.0f);
             spAC.f[1] = g_CurrentPlayer->field_488.collision_position.f[1];
             spAC.f[2] = g_CurrentPlayer->field_488.collision_position.f[2] + (g_CurrentPlayer->field_488.theta_transform.f[2] * 300.0f);
-           
+
             sub_GAME_7F0B1CC4();
-            
-            if (stanTestLineUnobstructed(&spC0, g_CurrentPlayer->field_488.collision_position.f[0], g_CurrentPlayer->field_488.collision_position.f[2], spAC.f[0], spAC.f[2], 0x1000, spA0.f[2], spA0.f[1], 0, 1.0f))
+
+            if (stanTestLineUnobstructed(&spC0, g_CurrentPlayer->field_488.collision_position.f[0], g_CurrentPlayer->field_488.collision_position.f[2], spAC.f[0], spAC.f[2], CDTYPE_CLOSEDDOORS, spA0.f[2], spA0.f[1], 0, 1.0f))
             {
                 spAC.f[1] = bondviewYPositionRelated(spC0, spAC.f[0], spAC.f[2]);
             }
@@ -10000,7 +9498,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             if (spBC > 0)
             {
                 ftemp_nostack_spC8 = spAC.f[1] - g_CurrentPlayer->stanHeight;
-                
+
                 if ((ftemp_nostack_spC8 > -300.0f) && (ftemp_nostack_spC8 < 500.0f))
                 {
                     spC4 = ((atan2f(ftemp_nostack_spC8, spBC) * 360.0f) / M_TAU_F) + -4.0f;
@@ -10020,7 +9518,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
         if ((g_CurrentPlayer->movecentrerelease) && (moveData.analogWalk < 40) && (moveData.analogWalk > -40))
         {
-            g_CurrentPlayer->movecentrerelease = 0;
+            g_CurrentPlayer->movecentrerelease = FALSE;
         }
 
         if (in_tank_flag == 0)
@@ -10029,25 +9527,25 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             {
                 g_CurrentPlayer->field_104 = 0;
                 g_CurrentPlayer->field_10C = 1;
-                g_CurrentPlayer->automovecentre = 0;
+                g_CurrentPlayer->automovecentre = FALSE;
             }
             else
             {
                 if (moveData.disableLookAhead)
                 {
-                    g_CurrentPlayer->automovecentre = 0;
+                    g_CurrentPlayer->automovecentre = FALSE;
                 }
                 else if (g_CurrentPlayer->automovecentreenabled)
                 {
                     if ((moveData.canLookAhead) && ((moveData.analogWalk > 60) || (moveData.analogWalk < -60)))
                     {
-                        g_CurrentPlayer->automovecentre = 1;
+                        g_CurrentPlayer->automovecentre = TRUE;
                     }
-                    
+
                     if ((
                         g_CurrentPlayer->automovecentre)
                         && (( ((spC4 + 5.0f) < g_CurrentPlayer->vv_verta)) || (g_CurrentPlayer->vv_verta < (spC4 + -FLOAT_TEN_A)))
-                        && (g_CurrentPlayer->movecentrerelease == 0))
+                        && (g_CurrentPlayer->movecentrerelease == FALSE))
                     {
                         g_CurrentPlayer->field_104 = 1;
                     }
@@ -10060,11 +9558,11 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         || (moveData.analogWalk < -60)
                     ) && (
                         ( ((spC4 + 5.0f) < g_CurrentPlayer->vv_verta)) || (g_CurrentPlayer->vv_verta < (spC4 + -FLOAT_TEN_A))
-                    ) && (g_CurrentPlayer->movecentrerelease == 0))
+                    ) && (g_CurrentPlayer->movecentrerelease == FALSE))
                 {
                     g_CurrentPlayer->field_104 = 1;
                 }
-                
+
                 g_CurrentPlayer->field_10C = 0;
             }
         }
@@ -10074,7 +9572,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             if (in_tank_flag == 0)
             {
                 ftemp_nostack_spB8 = (g_CurrentPlayer->speedverta * g_CurrentPlayer->speedverta * 0.5f) / 0.05f;
-                
+
                 if ((spC4 + ftemp_nostack_spB8) < g_CurrentPlayer->vv_verta)
                 {
                     bondviewCurrentPlayerUpdateSpeedVerta(1.0f);
@@ -10087,9 +9585,9 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     bondviewCurrentPlayerUpdateSpeedVerta(0);
                 }
-                
+
                 ftemp_nostack_spB8 = g_CurrentPlayer->vv_verta + (2.0f * (g_CurrentPlayer->speedverta * g_GlobalTimerDelta));
-                
+
                 if ((spC4 < g_CurrentPlayer->vv_verta) && (spC4 < ftemp_nostack_spB8))
                 {
                     g_CurrentPlayer->vv_verta = ftemp_nostack_spB8;
@@ -10102,7 +9600,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     g_CurrentPlayer->vv_verta = spC4;
                     g_CurrentPlayer->speedverta = 0;
-                    
+
                     if (g_CurrentPlayer->field_10C == 0)
                     {
                         g_CurrentPlayer->field_104 = 0;
@@ -10116,7 +9614,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             {
                 ftemp_nostack_sp98 = viGetFovY() / 60.0f;
                 ftemp_nostack_sp94 = (f32) moveData.analogPitch / 70.0f;
-                
+
                 if (ftemp_nostack_sp94 > 1)
                 {
                     ftemp_nostack_sp94 = 1;
@@ -10125,7 +9623,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     ftemp_nostack_sp94 = -1;
                 }
-                
+
                 if (ftemp_nostack_sp94 >= 0)
                 {
                     ftemp_nostack_sp94 *= ftemp_nostack_sp94;
@@ -10134,34 +9632,34 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     ftemp_nostack_sp94 *= -ftemp_nostack_sp94;
                 }
-                
+
                 g_CurrentPlayer->speedverta = -ftemp_nostack_sp94 * ftemp_nostack_sp98;
             }
             else if (moveData.speedVertaDown > 0)
             {
                 bondviewCurrentPlayerUpdateSpeedVerta(moveData.speedVertaDown);
-                
+
                 if ((moveData.canLookAhead) && ((moveData.analogWalk > 60) || (moveData.analogWalk < 60)))
                 {
-                    g_CurrentPlayer->movecentrerelease = 1;
+                    g_CurrentPlayer->movecentrerelease = TRUE;
                 }
             }
             else if (moveData.speedVertaUp > 0)
             {
                 bondviewCurrentPlayerUpdateSpeedVerta(-moveData.speedVertaUp);
-                
+
                 if ((moveData.canLookAhead) && ((moveData.analogWalk > 60) || (moveData.analogWalk < 60)))
                 {
-                    g_CurrentPlayer->movecentrerelease = 1;
+                    g_CurrentPlayer->movecentrerelease = TRUE;
                 }
             }
             else
             {
                 bondviewCurrentPlayerUpdateSpeedVerta(0);
             }
-            
+
             g_CurrentPlayer->vv_verta += g_CurrentPlayer->speedverta * g_GlobalTimerDelta * 3.5f;
-            
+
             if ((in_tank_flag == 1) && (g_EnterTankAudioState == TANK_RUN_STATE_RUNNING) && (g_CurrentPlayer->vv_verta < -20.0f))
             {
                 g_CurrentPlayer->vv_verta = -20.0f;
@@ -10173,7 +9671,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
     {
         ftemp_nostack_sp8C = viGetFovY();
         ftemp_nostack_sp84 = (f32) moveData.analogTurn / 70.0f;
-        
+
         if (ftemp_nostack_sp84 > 1)
         {
             ftemp_nostack_sp84 = 1;
@@ -10182,7 +9680,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             ftemp_nostack_sp84 = -1;
         }
-        
+
         if (ftemp_nostack_sp84 >= 0)
         {
             ftemp_nostack_sp84 *= ftemp_nostack_sp84;
@@ -10248,7 +9746,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
     }
 
     canCycleWeapons = 1;
-    
+
     if ((getPlayerCount() >= 2) && (get_scenario() == 2) && (bondinvIsAliveWithFlag()))
     {
         canCycleWeapons = 0;
@@ -10269,17 +9767,17 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
     if (moveData.canSwivelGun)
     {
-        g_CurrentPlayer->controldef = 0;
+        g_CurrentPlayer->controldef = CONTROLLER_CONFIG_HONEY;
     }
     else if (moveData.canManualAim)
     {
-        g_CurrentPlayer->controldef = 2;
+        g_CurrentPlayer->controldef = CONTROLLER_CONFIG_KISSY;
     }
 
-    if (g_CurrentPlayer->controldef == 0)
+    if (g_CurrentPlayer->controldef == CONTROLLER_CONFIG_HONEY)
     {
         gunSetAimType(0);
-        
+
         if (moveData.canAutoAim
             && redirect_get_BONDdata_autoaim_x()
             && g_CurrentPlayer->autoaim_target_x
@@ -10306,7 +9804,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
         sub_GAME_7F067F58(sp70, ftemp_nostack_sp78, MAX_AIMLOCK_SPEED_DEFAULT);
     }
-    else if (g_CurrentPlayer->controldef == 2)
+    else if (g_CurrentPlayer->controldef == CONTROLLER_CONFIG_KISSY)
     {
         gunSetAimType(0);
         sub_GAME_7F067FBC(((f32) moveData.controlStickXRaw * 0.65f) / 80.0f, ((f32) moveData.controlStickYRaw * 0.65f) / 80.0f);
@@ -10318,7 +9816,7 @@ void bondviewProcessInput(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
 /**
  * Perfect Dark playerTickDamageAndHealth
- * 
+ *
  * NTSC address 7F083FC8.
  * NTSC-J address 7F0845D8.
  * EU address 7F08406C.
@@ -10338,7 +9836,7 @@ void bondviewPlayerTickDamageAndHealth(void)
             countdownTimerSetVisible(8, 0);
 
             g_CurrentPlayer->damagetype = (s32)(bondviewGetCurrentPlayerHealth() * 8.0f);
-            
+
             if (g_CurrentPlayer->damagetype >= 8)
             {
                 g_CurrentPlayer->damagetype = 7;
@@ -10354,7 +9852,7 @@ void bondviewPlayerTickDamageAndHealth(void)
 
 #ifdef VERSION_US
         if (
-            (g_DamageTypes[g_CurrentPlayer->damagetype].field_0x8 >= g_CurrentPlayer->damageshowtime) 
+            (g_DamageTypes[g_CurrentPlayer->damagetype].field_0x8 >= g_CurrentPlayer->damageshowtime)
             || (g_DamageTypes[g_CurrentPlayer->damagetype].flashEndFrame >= g_CurrentPlayer->damageshowtime))
         {
             if (!g_CurrentPlayer->bonddead)
@@ -10362,7 +9860,7 @@ void bondviewPlayerTickDamageAndHealth(void)
 #else
         if (!g_CurrentPlayer->bonddead
             && (
-                (g_DamageTypes[g_CurrentPlayer->damagetype].field_0x8 >= g_CurrentPlayer->damageshowtime) 
+                (g_DamageTypes[g_CurrentPlayer->damagetype].field_0x8 >= g_CurrentPlayer->damageshowtime)
                 || (g_DamageTypes[g_CurrentPlayer->damagetype].flashEndFrame >= g_CurrentPlayer->damageshowtime)))
         {
 #endif
@@ -10379,7 +9877,7 @@ void bondviewPlayerTickDamageAndHealth(void)
                 f32 totalframes;
                 f32 flashfullframe;
 #endif
-                
+
                 flashdoneframes = g_CurrentPlayer->damageshowtime - g_DamageTypes[g_CurrentPlayer->damagetype].flashStartFrame;
                 flashfullframe = g_DamageTypes[g_CurrentPlayer->damagetype].flashFullFrame;
                 totalframes = g_DamageTypes[g_CurrentPlayer->damagetype].flashEndFrame - g_DamageTypes[g_CurrentPlayer->damagetype].flashStartFrame;
@@ -10403,7 +9901,7 @@ void bondviewPlayerTickDamageAndHealth(void)
             }
 #endif
 
-            if (g_CurrentPlayer->watch_animation_state == 0)
+            if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x0)
             {
 #if defined(VERSION_US)
                 g_CurrentPlayer->damageshowtime += g_ClockTimer;
@@ -10424,7 +9922,7 @@ void bondviewPlayerTickDamageAndHealth(void)
         {
             g_CurrentPlayer->damageshowtime = -1;
             currentPlayerSetFadeColour(0xFF, 0xFF, 0xFF, 0);
-            
+
             if (!g_CurrentPlayer->bonddead)
             {
                 gunSetGunAmmoVisible(GUNAMMOREASON_DAMAGE, TRUE);
@@ -10443,7 +9941,7 @@ void bondviewPlayerTickDamageAndHealth(void)
         if (g_CurrentPlayer->healthshowtime == 0)
         {
             g_CurrentPlayer->healthDamageType = (s32)(bondviewGetCurrentPlayerHealth() * 8.0f);
-            
+
             if (g_CurrentPlayer->healthDamageType >= 8)
             {
                 g_CurrentPlayer->healthDamageType = 7;
@@ -10459,7 +9957,7 @@ void bondviewPlayerTickDamageAndHealth(void)
 
         if (!g_CurrentPlayer->bonddead)
         {
-            if ((g_CurrentPlayer->healthshowtime >= g_HealthDamageTypes[g_CurrentPlayer->healthDamageType].updateStartFrame) 
+            if ((g_CurrentPlayer->healthshowtime >= g_HealthDamageTypes[g_CurrentPlayer->healthDamageType].updateStartFrame)
                 && (g_HealthDamageTypes[g_CurrentPlayer->healthDamageType].updateEndFrame >= g_CurrentPlayer->healthshowtime))
             {
                 g_CurrentPlayer->apparenthealth = g_CurrentPlayer->oldhealth;
@@ -10483,7 +9981,7 @@ void bondviewPlayerTickDamageAndHealth(void)
             }
             else
             {
-                g_CurrentPlayer->healthshowtime = -1;                
+                g_CurrentPlayer->healthshowtime = -1;
             }
         }
         else
@@ -10534,23 +10032,23 @@ void bondviewPlayerTickExplode(void)
 /**
  * NTSC Address 0x7F084648.
  * NTSC-J address 0x7F084CF8.
- * 
+ *
  * Met by Saint Jon The Archangel in the writhing pits of hell, the beast was
  * pinned, prone on the floor. He had taken many forms throughout the ages.
  * From the creator of man to the far reaches of the universe, his perpetual
  * reincarnations reigned throughout space and time... until now. His form was
  * weak, the opposition strong. The time for atonement had finally come.
- * 
+ *
  * Battered, torn, exposed, the beast slacked his gaping maw.
- * 
+ *
  * "I'm sorry, Jon" he whispered.
- * 
+ *
  * The archangel raised his flaming blade.
- * 
+ *
  * "You are forgiven, Garfield"
- * 
+ *
  * And the beast exhaled his last.
- * 
+ *
  * 10 months of off and on work to match.
  * Thanks Trevor.
  * - Ben Burns
@@ -10600,7 +10098,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         bondviewPlayerStopAudioForPause();
     }
 
-    if (g_CurrentPlayer->watch_animation_state)
+    if (g_CurrentPlayer->watch_animation_state != WATCH_ANIMATION_0x0)
     {
         bondviewWatchAnimationTick();
     }
@@ -10626,12 +10124,12 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             // boost sideways
             f32 shotboost_sideways; // sp388
             f32 shotboost_norm; // sp384
-            
+
             // Assigning these two variables is done in Perfect Dark bmove0f0cba88.
-            shotboost_forward = 
+            shotboost_forward =
                 (-g_CurrentPlayer->bondshotspeed.f[0] * g_CurrentPlayer->vv_sintheta)
                 + (g_CurrentPlayer->bondshotspeed.f[2] * g_CurrentPlayer->vv_costheta);
-            shotboost_sideways = 
+            shotboost_sideways =
                 (-g_CurrentPlayer->bondshotspeed.f[0] * g_CurrentPlayer->vv_costheta)
                 - (g_CurrentPlayer->bondshotspeed.f[2] * g_CurrentPlayer->vv_sintheta);
 
@@ -10651,7 +10149,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                     {
                         g_CurrentPlayer->bondshotspeed.f[i] -=
                             ((0.06666667f * g_GlobalTimerDelta * g_CurrentPlayer->bondshotspeed.f[i]) / shotboost_norm);
-                        
+
                         if (g_CurrentPlayer->bondshotspeed.f[i] < 0.0f)
                         {
                             g_CurrentPlayer->bondshotspeed.f[i] = 0.0f;
@@ -10661,7 +10159,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                     {
                         g_CurrentPlayer->bondshotspeed.f[i] -=
                             ((0.06666667f * g_GlobalTimerDelta * g_CurrentPlayer->bondshotspeed.f[i]) / shotboost_norm);
-                        
+
                         if (g_CurrentPlayer->bondshotspeed.f[i] > 0.0f)
                         {
                             g_CurrentPlayer->bondshotspeed.f[i] = 0.0f;
@@ -10690,15 +10188,15 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         struct coord3d tank_collision_pt2;
         f32 tank_collision_dx;
         f32 tank_collision_dz;
-        
+
         tankChangeInAngle = DegToRad1Fact(g_CurrentPlayer->speedtheta * g_GlobalTimerDelta) * 3.5f;
         curTankAngleRad = g_TankOrientationAngle + tankChangeInAngle;
-        
+
         if (curTankAngleRad >= M_TAU_F)
         {
             curTankAngleRad -= M_TAU_F;
         }
-        
+
         if (curTankAngleRad < 0.0f)
         {
             curTankAngleRad += M_TAU_F;
@@ -10727,12 +10225,12 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             f32 sp30C;
             f32 sp308;
             f32 sp304;
-            
+
             sp31C = -1; //sp31C: scope within this block, used throughout
             sp304 = -1; //sp304: scope within this block, used throughout
 
             getCollisionEdge_maybe(&tank_collision_pt1, &tank_collision_pt2);
-            
+
             tank_collision_dx = (tank_collision_pt2.f[0] - tank_collision_pt1.f[0]);
             tank_collision_dz = (tank_collision_pt2.f[2] - tank_collision_pt1.f[2]);
 
@@ -10749,7 +10247,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             sp210 =
                 ((g_CurrentPlayer->field_488.collision_position.f[0] - check_collision_p2.f[0]) * sp324) +
                 ((g_CurrentPlayer->field_488.collision_position.f[2] - check_collision_p2.f[2]) * sp320);
-            
+
             if (sp210 < 0.0f)
             {
                 sp210 = -sp210;
@@ -10758,7 +10256,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             }
 
             // sp20C: very short lived variable
-            sp20C = 
+            sp20C =
                 ((g_CurrentPlayer->field_488.collision_position.f[0] - tank_collision_pt1.f[0]) * sp324) +
                 ((g_CurrentPlayer->field_488.collision_position.f[2] - tank_collision_pt1.f[2]) * sp320);
 
@@ -10766,7 +10264,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             {
                 sp31C = sp210 - sp20C;
             }
-            
+
             tank_collision_dx = check_collision_p2.f[0] - check_collision_p1.f[0];
             tank_collision_dz = check_collision_p2.f[2] - check_collision_p1.f[2];
 
@@ -10780,7 +10278,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             sp308 = -tank_collision_dx;
 
             // sp1F8 -> sp210: short lived variable
-            sp210 = 
+            sp210 =
                 ((g_CurrentPlayer->field_488.collision_position.f[0] - check_collision_p2.f[0]) * sp30C) +
                 ((g_CurrentPlayer->field_488.collision_position.f[2] - check_collision_p2.f[2]) * sp308);
 
@@ -10799,7 +10297,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             sp1E4 =
                 ((g_CurrentPlayer->field_488.collision_position.f[0] - tank_collision_pt2.f[0]) * sp30C) +
                 ((g_CurrentPlayer->field_488.collision_position.f[2] - tank_collision_pt2.f[2]) * sp308);
-        
+
             if (sp1E4 < sp1FC)
             {
                 sp1FC = sp1E4;
@@ -10809,21 +10307,21 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             {
                 sp304 = sp210 - sp1FC;
             }
-     
+
             if ((sp304 >= 0.0f) && ((sp304 < sp31C) || (sp31C < 0.0f)))
             {
                 sp324 = sp30C;
                 sp320 = sp308;
                 sp31C = sp304;
             }
-            
+
             if (sp31C >= 0.0f)
             {
                 move_offset.f[0] = sp31C * sp324 * 1.01f;
                 move_offset.f[2] = sp31C * sp320 * 1.01f;
-                
+
                 bondviewCalcUpdatePlayerCollision(&move_offset, 1);
-                
+
                 move_offset.f[0] = 0.0f;
                 move_offset.f[2] = 0.0f;
 
@@ -10860,12 +10358,12 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         }
 
         ftemp = (DegToRad1Fact(g_CurrentPlayer->speedtheta * 3.5f) * 4.0f) + g_TankTurretAngle;
-       
+
         if (ftemp < 0.0f)
         {
             ftemp += M_TAU_F;
         }
-        
+
         if (ftemp >= M_TAU_F)
         {
             ftemp -= M_TAU_F;
@@ -10882,30 +10380,30 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
         for (i_1=0; i_1<g_ClockTimer; i_1++)
         {
-            D_80036478 = ((TANKUPDATEROTATION_SCALE) * D_80036478) + ftemp;
+            g_TankTurretOrientationAngleDeg = ((TANKUPDATEROTATION_SCALE) * g_TankTurretOrientationAngleDeg) + ftemp;
         }
 
-        g_TankTurretOrientationAngleRad = D_80036478 * (1.0f - TANKUPDATEROTATION_SCALE);
+        g_TankTurretOrientationAngleRad = g_TankTurretOrientationAngleDeg * (1.0f - TANKUPDATEROTATION_SCALE);
 
         if (g_TankTurretOrientationAngleRad >= M_TAU_F)
         {
             g_TankTurretOrientationAngleRad -= M_TAU_F;
-            D_80036478 = g_TankTurretOrientationAngleRad / (1.0f - TANKUPDATEROTATION_SCALE);
+            g_TankTurretOrientationAngleDeg = g_TankTurretOrientationAngleRad / (1.0f - TANKUPDATEROTATION_SCALE);
         }
-        
+
         if (g_TankTurretOrientationAngleRad < 0.0f)
         {
             g_TankTurretOrientationAngleRad += M_TAU_F;
-            D_80036478 = g_TankTurretOrientationAngleRad / (1.0f - TANKUPDATEROTATION_SCALE);
+            g_TankTurretOrientationAngleDeg = g_TankTurretOrientationAngleRad / (1.0f - TANKUPDATEROTATION_SCALE);
         }
-        
+
         if (bondviewCallTankCollisionStatus(
             &g_CurrentPlayer->field_488.collision_position,
             g_CurrentPlayer->field_488.current_tile_ptr,
             g_TankOrientationAngle) == 0)
         {
             g_TankTurretOrientationAngleRad = sp354;
-            D_80036478 = g_TankTurretOrientationAngleRad / (1.0f - TANKUPDATEROTATION_SCALE);
+            g_TankTurretOrientationAngleDeg = g_TankTurretOrientationAngleRad / (1.0f - TANKUPDATEROTATION_SCALE);
             g_TankTurretAngle = sp354;
         }
 
@@ -10916,9 +10414,9 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             struct coord3d tank_move_offset;
             Mtxf sp2B4;
             f32 stack_padding_4;
-            
+
             temp_tank = (struct TankRecord *)g_PlayerTankProp->obj;
-            
+
             tank_move_offset.f[1] = 0.0f;
             tank_move_offset.f[0] = g_TankModelPositionOffset.f[0];
             tank_move_offset.f[2] = g_TankModelPositionOffset.f[2];
@@ -10926,9 +10424,9 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             matrix_4x4_set_rotation_around_y(tankChangeInAngle, &sp2B4);
             mtx4RotateVecInPlace(&sp2B4, &tank_move_offset);
             bondviewTankModelRotationRelated();
-            
+
             if (0) { }
-            
+
             tank_move_offset.f[1] = 0.0f;
             tank_move_offset.f[0] = g_TankModelPositionOffset.f[0] - tank_move_offset.f[0];
             tank_move_offset.f[2] = g_TankModelPositionOffset.f[2] - tank_move_offset.f[2];
@@ -10942,11 +10440,11 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         if (g_ClockTimer > 0) {
             for (i=0; i<g_ClockTimer; i++)
             {
-                D_8003647C = (TANKUPDATEROTATION_SCALE * D_8003647C) + (g_TankTurretTurn / g_GlobalTimerDelta);
+                tank_turret_turn_speed = (TANKUPDATEROTATION_SCALE * tank_turret_turn_speed) + (g_TankTurretTurn / g_GlobalTimerDelta);
             }
         }
 
-        ftemp = D_8003647C * (1.0f - TANKUPDATEROTATION_SCALE);
+        ftemp = tank_turret_turn_speed * (1.0f - TANKUPDATEROTATION_SCALE);
 
         g_CurrentPlayer->vv_theta = (
             g_TankOrientationAngle +
@@ -10987,7 +10485,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
     {
         f32 sp2AC;
         f32 stack_padding_15;
-        
+
         sp2AC = 0.0f;
         if (currentPlayerGetCrouchPos() == CROUCH_SQUAT)
         {
@@ -11013,7 +10511,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 CHR_OBJ_ACCEL_SPEED_FACTOR,
                 CHR_OBJ_MAXSPEED);
         }
-    
+
         if (sp2AC == g_CurrentPlayer->ducking_height_offset)
         {
             g_CurrentPlayer->field_A4 = 0.0f;
@@ -11051,12 +10549,12 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 tank_obj = g_PlayerTankProp->obj;
                 matrix_4x4_set_rotation_around_y(M_TAU_F - g_TankOrientationAngle, &sp268);
                 matrix_scalar_multiply(tank_obj->model->scale, &sp268);
-                
+
                 sp25C.f[0] = g_TankModelPositionOffset.f[0];
                 sp25C.f[1] = g_TankModelPositionOffset.f[1];
                 sp25C.f[2] = g_TankModelPositionOffset.f[2];
                 mtx4RotateVecInPlace(&sp268, (f32*)&sp25C);
-                
+
                 sp25C.f[0] += tank_obj->runtime_pos.f[0];
                 sp25C.f[1] += tank_obj->runtime_pos.f[1];
                 sp25C.f[2] += tank_obj->runtime_pos.f[2];
@@ -11076,9 +10574,9 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
                 g_TankEnteringSitHeightRemain = (cosf(g_TankEnteringSitHeight * M_TAU_F * 0.5f) + 1.0f) * 0.5f;
 
-                g_CurrentPlayer->vv_verta = 
-                    (g_TankEnteringSitHeightRemain * g_TankEnterBondVertAngleDeg) 
-                    + ((1.0f - g_TankEnteringSitHeightRemain) * sp254); 
+                g_CurrentPlayer->vv_verta =
+                    (g_TankEnteringSitHeightRemain * g_TankEnterBondVertAngleDeg)
+                    + ((1.0f - g_TankEnteringSitHeightRemain) * sp254);
 
                 ftemp_5 = sp258 - g_TankEnterBondHorizAngleDeg;
                 if (ftemp_5 > 180.0f)
@@ -11092,7 +10590,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
                 g_CurrentPlayer->vv_theta =
                     (g_TankEnteringSitHeightRemain * g_TankEnterBondHorizAngleDeg)
-                    + ((1.0f - g_TankEnteringSitHeightRemain) * sp258); 
+                    + ((1.0f - g_TankEnteringSitHeightRemain) * sp258);
 
                 if (g_CurrentPlayer->vv_theta >= 360.0f)
                 {
@@ -11105,9 +10603,9 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 }
 
                 move_offset.f[0] = (
-                        (g_TankEnteringSitHeightRemain * g_EnterTankCoord.f[0]) + 
+                        (g_TankEnteringSitHeightRemain * g_EnterTankCoord.f[0]) +
                         ((1.0f - g_TankEnteringSitHeightRemain) * sp25C.f[0])
-                    ) - 
+                    ) -
                     g_CurrentPlayer->field_488.collision_position.f[0];
 
                 move_offset.f[1] = 0.0f;
@@ -11115,7 +10613,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 move_offset.f[2] = (
                     (g_TankEnteringSitHeightRemain * g_EnterTankCoord.f[2]) +
                     ((1.0f - g_TankEnteringSitHeightRemain) * sp25C.f[2])
-                    ) - 
+                    ) -
                     g_CurrentPlayer->field_488.collision_position.f[2];
             }
 
@@ -11142,7 +10640,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 {
                     sndPlaySfx(g_musicSfxBufferPtr, TRUCK_START_SFX, &g_TankSfxState[0]);
                 }
-                
+
                 sndCreatePostEvent(g_TankSfxState[0], 8, 0x61A8);
                 g_TankEngineSfxVolume = 0x61A8;
             }
@@ -11156,10 +10654,10 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 f32 tank_scaled_speedforwards;
                 f32 tank_scaled_speedtheta;
                 f32 tank_vertical_angle;
-                
+
                 tank_scaled_speedforwards = g_CurrentPlayer->speedforwards / TANK_MAX_SPEED;
                 tank_scaled_speedtheta = g_CurrentPlayer->speedtheta / 0.3f;
-                
+
                 if (tank_scaled_speedforwards < 0.0f)
                 {
                     tank_scaled_speedforwards = -tank_scaled_speedforwards;
@@ -11181,7 +10679,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                     {
                         tank_engine_utilization_percent = 1.0f;
                     }
-                    
+
                     if (g_TankSfxState[1] == NULL)
                     {
                         if (lvlGetControlsLockedFlag() == 0)
@@ -11203,7 +10701,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         {
                             phi_a2 = (s32) ((((tank_engine_utilization_percent - 0.15f) * 12767.0f) / 0.75f) + 20000.0f);
                         }
-                        
+
                         sndCreatePostEvent(g_TankSfxState[1], 8, phi_a2);
                     }
                 }
@@ -11265,7 +10763,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
                 g_TankTurretVerticalAngle = g_TankTurretVerticalAngleRelated * (1.0f - TANKTURRETVERTICALANGLERELATED_SCALE);
             }
-            
+
         }
 
         g_CurrentPlayer->bondbreathing -= (0.750f * g_GlobalTimerDelta) / 2700.0f;
@@ -11274,14 +10772,14 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             g_CurrentPlayer->bondbreathing = 0.0f;
         }
-        
+
         bondviewMoveAnimationTick(0.0f, 0.0f, 0.0f);
 
         move_offset.f[0] += g_CurrentPlayer->speedforwards * sinf(M_TAU_F - g_TankOrientationAngle) * g_GlobalTimerDelta;
         move_offset.f[2] += g_CurrentPlayer->speedforwards * cosf(M_TAU_F - g_TankOrientationAngle) * g_GlobalTimerDelta;
 
         bondviewCalcUpdatePlayerCollision(&move_offset, 1);
-        
+
         if ((g_EnterTankAudioState == TANK_RUN_STATE_RUNNING) && (g_ClockTimer > 0))
         {
             f32 calc_x;
@@ -11298,16 +10796,16 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 #endif
             }
 #endif
-            
+
             calc_x = (g_CurrentPlayer->field_488.collision_position.f[0] - g_CurrentPlayer->bondprevpos.f[0]) / g_GlobalTimerDelta;
             calc_z = (g_CurrentPlayer->field_488.collision_position.f[2] - g_CurrentPlayer->bondprevpos.f[2]) / g_GlobalTimerDelta;
             calc_speedforwards = sqrtf((calc_x * calc_x) + (calc_z * calc_z));
-            
+
             if (g_CurrentPlayer->speedforwards < 0.0f)
             {
                 calc_speedforwards = -calc_speedforwards;
             }
-            
+
             g_CurrentPlayer->speedforwards = calc_speedforwards;
         }
     }
@@ -11375,19 +10873,19 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         }
 
 
-        ftemp_7 = (g_BondMoveAnimationSetup[1].unk0C * 0.5f  * g_GlobalTimerDelta);
+        ftemp_7 = (g_BondMoveAnimationSetup[1].speedMultiplier * 0.5f  * g_GlobalTimerDelta);
         sp3A0  = g_CurrentPlayer->speedsideways * ftemp_7;
 
         /*
             The following is similar to a block of Perfect Dark bwalk0f0c69b8.
         */
-        
+
         ftemp_26 = -g_CurrentPlayer->swaytarget * g_CurrentPlayer->field_488.theta_transform.f[2];
         ftemp_11 = g_CurrentPlayer->swaytarget * g_CurrentPlayer->field_488.theta_transform.f[0];
-        
+
         sp220 = (ftemp_26) - g_CurrentPlayer->swayoffset0;
         sp21C = (ftemp_11) - g_CurrentPlayer->swayoffset2;
-        
+
         dist = (sp220 * sp220) + (sp21C * sp21C);
 
         if (dist >= 100.0f)
@@ -11414,7 +10912,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         }
 
         maxspeed = speedforwards;
-        
+
 #if defined(VERSION_EU)
         if (maxspeed < speedsideways && 1)
 #else
@@ -11441,7 +10939,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             g_CurrentPlayer->bondbreathing -= (0.750f - maxspeed) * g_GlobalTimerDelta / 2700.0f;
         }
-        
+
         if (g_CurrentPlayer->bondbreathing < 0.0f)
         {
             g_CurrentPlayer->bondbreathing = 0.0f;
@@ -11450,48 +10948,48 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             g_CurrentPlayer->bondbreathing = 1.0f;
         }
-        
+
         // perfect dark call: bmove0f0cc654
         bondviewMoveAnimationTick(maxspeed, g_CurrentPlayer->speedforwards, sp3A0);
 
         headpos_x = g_CurrentPlayer->headpos.f[0];
         headpos_z = g_CurrentPlayer->headpos.f[2];
 
-        move_offset.f[0] += 
+        move_offset.f[0] +=
             (
                 (headpos_z * g_CurrentPlayer->field_488.theta_transform.f[0]) -
                 (headpos_x * g_CurrentPlayer->field_488.theta_transform.f[2])
             ) * g_GlobalTimerDelta;
 
-        move_offset.f[2] += 
+        move_offset.f[2] +=
             (
                 (headpos_z * g_CurrentPlayer->field_488.theta_transform.f[2]) +
                 (headpos_x * g_CurrentPlayer->field_488.theta_transform.f[0])
             ) * g_GlobalTimerDelta;
 
- 
+
         move_offset.f[0] += sp220;
         move_offset.f[2] += sp21C;
 
         start_collision_pos_x = g_CurrentPlayer->field_488.collision_position.f[0];
         start_collision_pos_z = g_CurrentPlayer->field_488.collision_position.f[2];
         sp200 = g_CurrentPlayer->field_488.current_tile_ptr;
-        
+
         if (get_debug_fast_bond_flag())
         {
-            move_offset.f[0] += 
+            move_offset.f[0] +=
                 (
                     (g_CurrentPlayer->field_488.theta_transform.f[0] * g_CurrentPlayer->speedforwards) -
                     (g_CurrentPlayer->field_488.theta_transform.f[2] * g_CurrentPlayer->speedsideways)
                 ) * g_GlobalTimerDelta * 10.0f;
 
-            move_offset.f[2] += 
+            move_offset.f[2] +=
                 (
                     (g_CurrentPlayer->field_488.theta_transform.f[2] * g_CurrentPlayer->speedforwards) +
                     (g_CurrentPlayer->field_488.theta_transform.f[0] * g_CurrentPlayer->speedsideways)
                 ) * g_GlobalTimerDelta * 10.0f;
         }
-        
+
         bondviewCalcUpdatePlayerCollision(&move_offset, (g_CurrentPlayer->swaytarget == 0.0f));
 
         stanTileDistanceRelated(
@@ -11500,7 +10998,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             start_collision_pos_z,
             g_CurrentPlayer->field_488.collision_radius * 1.16f,
             &curLocus);
-        
+
         /* almost never true */
         if (stanGetLocusCount(&curLocus) != 0)
         {
@@ -11526,7 +11024,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
             g_CurrentPlayer->field_488.collision_position.f[2],
             g_CurrentPlayer->field_488.collision_radius,
             &curLocus);
-        
+
         /* almost always true */
         if (stanGetLocusCount(&curLocus) == 0)
         {
@@ -11537,7 +11035,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 g_CurrentPlayer->field_488.collision_radius * 0.990099f,
                 &curLocus);
         }
-        
+
         /* almost never true */
         if (stanGetLocusCount(&curLocus))
         {
@@ -11551,23 +11049,23 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 f32 sp250;
                 f32 sp310;
                 f32 sp314;
-                
+
                 sp168 = bondCollision.bondCollision.f[0] - bondCollision.sp190.f[0];
                 sp16C = bondCollision.sp190.f[2] - bondCollision.bondCollision.f[2];
 
                 nd = sqrtf((sp16C * sp16C) + (sp168 * sp168));
-                
+
                 sp168 = sp168 / nd;
                 sp16C = sp16C / nd;
 
                 sp164 =
                     ((start_collision_pos_x - bondCollision.bondCollision.f[0]) * sp16C) +
                     ((start_collision_pos_z - bondCollision.bondCollision.f[2]) * sp168);
-                
-                sp2B0 = 
+
+                sp2B0 =
                     (((start_collision_pos_x + move_offset.f[0]) - bondCollision.bondCollision.f[0]) * sp16C) +
                     (((start_collision_pos_z + move_offset.f[2]) - bondCollision.bondCollision.f[2]) * sp168);
-                
+
                 if ((sp164 * sp2B0) <= 0.0f)
                 {
                     shorten = 0.0f;
@@ -11602,7 +11100,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 if (sp2A8 > 0.0f)
                 {
                     f32 sp318;
-                    
+
                     sp318 = (1.0f - shorten) * sp2A8;
                     sp390 = sp318 * 0.25f;
 
@@ -11631,7 +11129,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                 g_CurrentPlayer->field_488.collision_position.f[0] = start_collision_pos_x;
                 g_CurrentPlayer->field_488.collision_position.f[2] = start_collision_pos_z;
                 g_CurrentPlayer->field_488.current_tile_ptr = sp200;
-                
+
                 bondviewCalcUpdatePlayerCollision(&move_offset, (g_CurrentPlayer->swaytarget == 0.0f));
             }
         }
@@ -11653,17 +11151,17 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         f32 breathing;
         f32 sp14C_temp;
         f32 weapon_speed_verta;
-        
+
         sp14C_temp = g_CurrentPlayer->speedtheta;
         weapon_speed_verta =
             (g_CurrentPlayer->speedverta / 0.7f) +
             (g_CurrentPlayer->field_A4 / CHR_OBJ_MAXSPEED);
-    
+
         /*
         Following matches the end of Perfect Dark bwalk0f0c69b8
         */
-        breathing = bheadGetBreathingValue();    
-        
+        breathing = bheadGetBreathingValue();
+
         if (weapon_speed_verta > 1.0f)
         {
             weapon_speed_verta = 1.0f;
@@ -11672,12 +11170,12 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             weapon_speed_verta = -1.0f;
         }
-    
+
         if (g_CurrentPlayer->headanim == 1)
         {
             breathing *= 1.2f;
         }
-    
+
         // Perfect Dark call bgun0f09d8dc
         gunSetBondWeaponSway(breathing, maxspeed, weapon_speed_verta, sp14C_temp);
 
@@ -11701,20 +11199,20 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         struct ModelNode_BoundingBoxRecord *sp130;
         Mtxf spF0;
         struct coord3d spE4;
-        s32 stack_padding_13; 
-        s32 i_4; 
-        s32 stemp; 
-        void *stack_padding_8; 
+        s32 stack_padding_13;
+        s32 i_4;
+        s32 stemp;
+        void *stack_padding_8;
         struct rect4f spB4_tank_collision_bounds;
         // roomids
         s32 sp94[8];
         s32 stanlineret;
         s16 *lookup_index;
-        
+
         sp140_tank_as_TankRecord = ((struct TankRecord *)g_PlayerTankProp->obj);
         sp138_tank_as_ObjectRecord = (struct  ObjectRecord*)g_PlayerTankProp->obj;
         sp130 = (struct ModelNode_BoundingBoxRecord *)((struct ModelNode *)sp138_tank_as_ObjectRecord->model->obj->Switches)->Child->Data;
-        
+
         sp140_tank_as_TankRecord->is_firing_tank = (getCurrentPlayerWeaponId(GUNRIGHT) == ITEM_TANKSHELLS)
             && get_hands_firing_status(GUNRIGHT);
 
@@ -11728,7 +11226,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         spE4.f[0] = -g_TankModelPositionOffset.f[0];
         spE4.f[1] = -g_TankModelPositionOffset.f[1];
         spE4.f[2] = -g_TankModelPositionOffset.f[2];
-        
+
         mtx4RotateVecInPlace(&spF0, &spE4);
 
         spE4.f[0] += g_CurrentPlayer->field_488.collision_position.f[0];
@@ -11752,14 +11250,14 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         {
             sp140_tank_as_TankRecord->unkD0 = (sp140_tank_as_TankRecord->unkD0 * TANK_UNKD0_SCALE) + sp140_tank_as_TankRecord->stan_y;
         }
-        
+
         ftemp_12 = (sp140_tank_as_TankRecord->unkD0 * (1.0f - TANK_UNKD0_SCALE));
         spE4.f[1] = ftemp_12
             - (chrpropBBOXGetYmin(sp130) * sp138_tank_as_ObjectRecord->model->scale)
             + 4.0f;
 
         matrix_4x4_copy(&spF0,  &sp138_tank_as_ObjectRecord->mtx);
-        
+
         sp138_tank_as_ObjectRecord->runtime_pos.f[0] = sp138_tank_as_ObjectRecord->prop->pos.f[0] = spE4.f[0];
         sp138_tank_as_ObjectRecord->runtime_pos.f[1] = sp138_tank_as_ObjectRecord->prop->pos.f[1] = spE4.f[1];
         sp138_tank_as_ObjectRecord->runtime_pos.f[2] = sp138_tank_as_ObjectRecord->prop->pos.f[2] = spE4.f[2];
@@ -11768,7 +11266,7 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
         chrobjCollisionRelated(sp138_tank_as_ObjectRecord);
         bondviewGetTankCollisionBounds(&spB4_tank_collision_bounds, &g_CurrentPlayer->field_488.collision_position, g_TankOrientationAngle);
         chraiGetPropRoomIds(sp138_tank_as_ObjectRecord->prop, &sp94);
-        
+
         // update num_obj_position_data_entries
         roomGetProps(&sp94);
 
@@ -11786,11 +11284,11 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                     struct coord3d sp70;
                     struct ChrRecord *sp6C;
                     f32 stack_padding_28;
-                    
+
                     sp7C = 1;
                     sp6C = prop->chr;
                     chrpropGetCollisionBounds(prop, &sp80_collision_radius, &sp88_collision_bound_height, &sp84_collision_bound_z);
-                    
+
                     if (chrpropTestPointInPolygon(&prop->pos, &spB4_tank_collision_bounds, 4))
                     {
                         sp7C = 0;
@@ -11827,17 +11325,17 @@ void MoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
                         sp70.f[0] = sp138_tank_as_ObjectRecord->runtime_pos.f[0];
                         sp70.f[1] = prop->pos.f[1];
                         sp70.f[2] = sp138_tank_as_ObjectRecord->runtime_pos.f[2];
-                        
+
                         chrlvExplosionDamage(prop->chr, &sp70, 3.0f, 1);
-                    }                    
+                    }
                 }
                 else if (prop->type == PROP_TYPE_OBJ)
                 {
                     struct rect4f *sp64;
                     s32 sp60;
-                    
+
                     chraiGetCollisionBoundsWithoutY(prop, &sp64, &sp60);
-                    if ((sp60 > 0) && sub_GAME_7F0446B8(sp64, sp60, &spB4_tank_collision_bounds, 4))
+                    if ((sp60 > 0) && chrobjTestPolygonsTouchingOrOverlap2D(sp64, sp60, &spB4_tank_collision_bounds, 4))
                     {
                         // Explode destroyable props when the tank touches them
                         maybe_detonate_object_and_its_children(prop, 10000.0f, &prop->obj->runtime_pos, 0x20, get_cur_playernum());
@@ -11884,32 +11382,32 @@ void bondviewFrozenMoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
     property_pos2 = g_DefaultFrozenPlayerPos2;
     property_offset = g_DefaultFrozenPlayerOffset;
     offset = g_DefaultFrozenMoveOffset;
-    
+
     bondviewPlayerTickDamageAndHealth();
     bondviewPlayerTickExplode();
     bondviewProcessInput(0, 0, 0, 0);
     bondviewApplyVertaTheta();
     bondviewMoveAnimationTick(0, 0, 0);
-    
+
     if ((g_ForceBondMoveOffset.f[0] != 0.0f) || (g_ForceBondMoveOffset.f[2] != 0.0f))
     {
         offset.f[0] += g_ForceBondMoveOffset.f[0] * g_GlobalTimerDelta;
         offset.f[2] += g_ForceBondMoveOffset.f[2] * g_GlobalTimerDelta;
     }
-    
+
     offset.f[0] += ((g_CurrentPlayer->headpos.f[2] * g_CurrentPlayer->field_488.theta_transform.f[0]) - (g_CurrentPlayer->headpos.f[0] * g_CurrentPlayer->field_488.theta_transform.f[2])) * g_GlobalTimerDelta;
     offset.f[2] += ((g_CurrentPlayer->headpos.f[2] * g_CurrentPlayer->field_488.theta_transform.f[2]) + (g_CurrentPlayer->headpos.f[0] * g_CurrentPlayer->field_488.theta_transform.f[0])) * g_GlobalTimerDelta;
-    
+
     bondviewCalcUpdatePlayerCollision(&offset, 1);
     bondviewUpdatePlayerY(0, 0.0f);
     bondviewUpdatePlayerCollisionPositionFields();
-    
-    if ((g_CameraMode == CAMERAMODE_FP_NOINPUT) || (g_CameraMode == CAMERAMODE_FP) || (g_CameraMode == CAMERAMODE_UNK10))
+
+    if ((g_CameraMode == CAMERAMODE_FP_NOINPUT) || (g_CameraMode == CAMERAMODE_FP) || (g_CameraMode == CAMERAMODE_FADE_TO_TITLE))
     {
         currentPlayerSetField00(0);
         return;
     }
-    
+
     bondviewFrozenCameraTick(buttons, oldbuttons, &property_pos, &property_pos2, &property_offset, &room_pointer_tile, &stan_walk_start);
     currentPlayerSetField00(1);
     bondviewSetCurrentPlayerPosition(&property_pos, &property_pos2, &property_offset, room_pointer_tile, &stan_walk_start);
@@ -11919,7 +11417,7 @@ void bondviewFrozenMoveBond(s8 stick_x, s8 stick_y, u16 buttons, u16 oldbuttons)
 
 s16 getWidth320or440(void)
 {
-    if (camera_8003642C != 0)
+    if (cameraBufferToggle != 0)
     {
         return SCREEN_WIDTH_440;
     }
@@ -11929,7 +11427,7 @@ s16 getWidth320or440(void)
 
 s16 getHeight330or240(void)
 {
-    if (camera_8003642C != 0)
+    if (cameraBufferToggle != 0)
     {
         return SCREEN_HEIGHT_330;
     }
@@ -11944,7 +11442,7 @@ s16 bondviewGetCurrentPlayerViewportWidth(void)
         return VIEWPORT_WIDTH_4P;
     }
 
-    if (camera_8003642C != 0)
+    if (cameraBufferToggle != 0)
     {
         return SCREEN_WIDTH_440;
     }
@@ -11990,7 +11488,7 @@ s16 bondviewGetCurrentPlayerViewportHeight(void)
         return VIEWPORT_HEIGHT_4P;
     }
 
-    if (camera_8003642C != 0)
+    if (cameraBufferToggle != 0)
     {
         if (cur_player_get_screen_setting() == SCREEN_SIZE_WIDESCREEN)
         {
@@ -12059,7 +11557,7 @@ s16 bondviewGetCurrentPlayerViewportUly(void)
         return VIEWPORT_ULY_4P_PLAYER_34;
     }
 
-    if (camera_8003642C != 0)
+    if (cameraBufferToggle != 0)
     {
         if (cur_player_get_screen_setting() == SCREEN_SIZE_WIDESCREEN)
         {
@@ -12101,12 +11599,12 @@ s16 bondviewGetCurrentPlayerViewportUly(void)
  * Arguments are passed into MoveBond or bondviewFrozenMoveBond.
  * Checks if necessary to call bossReturnTitleStage.
  * Set player->buttons_pressed to arg2.
- * 
+ *
  * Address 0x7F086F9C (VERSION_US).
  * Address 0x7F0870BC (VERSION_EU).
  * Address 0x7F087668 (VERSION_JP).
  */
-void bondviewMovePlayerUpdateViewport(s8 arg0, s8 arg1, u16 arg2)
+void bondviewMovePlayerUpdateViewport(s8 stick_x, s8 stick_y, u16 buttons)
 {
 #ifdef VERSION_EU
     f32 faspect;
@@ -12120,35 +11618,35 @@ void bondviewMovePlayerUpdateViewport(s8 arg0, s8 arg1, u16 arg2)
     // the fov....
     viSetFovY(FOV_Y_F);
 
-    if (camera_80036430 != 0)
+    if (cameraFrameCounter1 != 0)
     {
-        if ((camera_80036430 >= 4) && (resolution != 0) && (viGetFrameBuf2() == (u8*)(cfb_16[1])))
+        if ((cameraFrameCounter1 >= 4) && (resolution != 0) && (viGetFrameBuf2() == (u8*)(cfb_16[1])))
         {
-            camera_8003642C = 1;
-            camera_80036430 = 0;
+            cameraBufferToggle = 1;
+            cameraFrameCounter1 = 0;
         }
         else
         {
-            camera_80036430 += 1;
+            cameraFrameCounter1 += 1;
         }
     }
     else
     {
-        if (camera_80036434 != 0)
+        if (cameraFrameCounter2 != 0)
         {
-            if ((camera_80036434 >= 4) && (viGetFrameBuf2() == (u8*)(cfb_16[0])))
+            if ((cameraFrameCounter2 >= 4) && (viGetFrameBuf2() == (u8*)(cfb_16[0])))
             {
-                camera_8003642C = 0;
-                camera_80036434 = 0;
+                cameraBufferToggle = 0;
+                cameraFrameCounter2 = 0;
             }
             else
             {
-                camera_80036434 += 1;
+                cameraFrameCounter2 += 1;
             }
         }
     }
 
-    if ((camera_8003642C != 0) && (viGetFrameBuf2() == (u8*)(cfb_16[1])))
+    if ((cameraBufferToggle != 0) && (viGetFrameBuf2() == (u8*)(cfb_16[1])))
     {
         viSetFrameBuf2((u8 *) resolution);
     }
@@ -12162,12 +11660,12 @@ void bondviewMovePlayerUpdateViewport(s8 arg0, s8 arg1, u16 arg2)
     {
         faspect = (f32) bondviewGetCurrentPlayerViewportWidth() / (f32) bondviewGetCurrentPlayerViewportHeight();
     }
-    
-    if (camera_8003642C == 0)
+
+    if (cameraBufferToggle == 0)
     {
         faspect *= EU_CAMERA_8003642C_ASPECT;
     }
-    
+
     set_cur_player_aspect(faspect);
     viSetAspect(faspect);
 
@@ -12208,30 +11706,30 @@ void bondviewMovePlayerUpdateViewport(s8 arg0, s8 arg1, u16 arg2)
     if (1);
 #endif
 
-    if ((g_CameraMode == CAMERAMODE_NONE) || ((g_CameraMode == CAMERAMODE_FP) && (D_800364B0 != 0)) || (g_CameraMode == CAMERAMODE_UNK10))
+    if ((g_CameraMode == CAMERAMODE_NONE) || ((g_CameraMode == CAMERAMODE_FP) && (is_timer_active != 0)) || (g_CameraMode == CAMERAMODE_FADE_TO_TITLE))
     {
         if (get_cur_playernum() == 0)
         {
             mission_timer += g_ClockTimer;
         }
 
-        MoveBond(arg0, arg1, arg2, (u16) g_CurrentPlayer->buttons_pressed);
+        MoveBond(stick_x, stick_y, buttons, (u16) g_CurrentPlayer->buttons_pressed);
     }
     else
     {
-        bondviewFrozenMoveBond(arg0, arg1, arg2, (u16) g_CurrentPlayer->buttons_pressed);
+        bondviewFrozenMoveBond(stick_x, stick_y, buttons, (u16) g_CurrentPlayer->buttons_pressed);
     }
-    
+
 #if defined(BUGFIX_R1)
     watch_time_0 += jpD_800484D0;
 #else
     // VERSION_US
     watch_time_0 += speedgraphframes;
 #endif
-    
+
     if (stop_time_flag != 0)
     {
-        if ((lvlGetControlsLockedFlag() == 0) && ((arg2 & ~(g_CurrentPlayer->buttons_pressed) & (CONT_A | B_BUTTON | Z_TRIG | START_BUTTON | CONT_R | CONT_L))))
+        if ((lvlGetControlsLockedFlag() == 0) && ((buttons & ~(g_CurrentPlayer->buttons_pressed) & (CONT_A | B_BUTTON | Z_TRIG | START_BUTTON | CONT_R | CONT_L))))
         {
             stop_time_flag = 2;
 
@@ -12257,15 +11755,15 @@ void bondviewMovePlayerUpdateViewport(s8 arg0, s8 arg1, u16 arg2)
             bossReturnTitleStage();
         }
     }
-    
+
     if (g_CameraAfterCinema)
     {
         sub_GAME_7F07B1A4();
     }
-    
+
     if (g_CurrentPlayer->bonddead)
     {
-        if (g_CurrentPlayer->redbloodfinished == 0)
+        if (g_CurrentPlayer->redbloodfinished == FALSE)
         {
             currentPlayerEquipWeaponWrapper(GUNLEFT, 0);
             currentPlayerEquipWeaponWrapper(GUNRIGHT, 0);
@@ -12276,18 +11774,18 @@ void bondviewMovePlayerUpdateViewport(s8 arg0, s8 arg1, u16 arg2)
             };
         }
 
-        if (g_CurrentPlayer->redbloodfinished && g_CurrentPlayer->deathanimfinished && (D_80036510 >= CAMERAMODE_SWIRL))
+        if (g_CurrentPlayer->redbloodfinished && g_CurrentPlayer->deathanimfinished && (camera_mode >= CAMERAMODE_SWIRL))
         {
             bossRunTitleStage();
         }
     }
 
-    if ((g_CameraMode == CAMERAMODE_UNK10) && currentPlayerIsFadeComplete())
+    if ((g_CameraMode == CAMERAMODE_FADE_TO_TITLE) && currentPlayerIsFadeComplete())
     {
         bossRunTitleStage();
     }
 
-    g_CurrentPlayer->buttons_pressed = arg2;
+    g_CurrentPlayer->buttons_pressed = buttons;
 }
 
 
@@ -12296,11 +11794,11 @@ void bondviewMovePlayerUpdateViewport(s8 arg0, s8 arg1, u16 arg2)
  */
 void bondviewUpdateCurrentRoomPosition(s32 arg0)
 {
-    sub_GAME_7F0BCA34(arg0, &g_CurrentPlayer->current_model_pos);
+    getRoomPositionScaledByIndex(arg0, &g_CurrentPlayer->current_model_pos);
     g_CurrentPlayer->current_room_pos.f[0] = g_CurrentPlayer->current_model_pos.f[0] * get_room_data_float1();
     g_CurrentPlayer->current_room_pos.f[1] = g_CurrentPlayer->current_model_pos.f[1] * get_room_data_float1();
     g_CurrentPlayer->current_room_pos.f[2] = g_CurrentPlayer->current_model_pos.f[2] * get_room_data_float1();
-    sub_GAME_7F0BC624(arg0);
+    setPlayerRoomField(arg0);
 }
 
 
@@ -12448,11 +11946,11 @@ s32 sub_GAME_7F087A08(s32 arg0) {
         temp_a1 = (temp_v1 + 0x38);
         sp4C.unk4 = (?32) D_80036830.unk4;
         sp4C.unk8 = (?32) D_80036830.unk8;
-        if (g_CurrentPlayer->bonddead == 0)
+        if (g_CurrentPlayer->bonddead == FALSE)
         {
             // Node 3
             sp58 = temp_v1;
-            sub_GAME_7F09C7C4(temp_a0, temp_a1, &sp4C);
+            explosionScreenShake(temp_a0, temp_a1, &sp4C);
         }
         else
         {
@@ -12560,7 +12058,7 @@ glabel sub_GAME_7F087A08
 /* 0BC5EC 7F087ABC 8C4900D8 */  lw    $t1, 0xd8($v0)
 /* 0BC5F0 7F087AC0 55200006 */  bnezl $t1, .L7F087ADC
 /* 0BC5F4 7F087AC4 44806000 */   mtc1  $zero, $f12
-/* 0BC5F8 7F087AC8 0FC271F1 */  jal   sub_GAME_7F09C7C4
+/* 0BC5F8 7F087AC8 0FC271F1 */  jal   explosionScreenShake
 /* 0BC5FC 7F087ACC AFA30058 */   sw    $v1, 0x58($sp)
 /* 0BC600 7F087AD0 10000005 */  b     .L7F087AE8
 /* 0BC604 7F087AD4 8FA30058 */   lw    $v1, 0x58($sp)
@@ -12753,7 +12251,7 @@ glabel sub_GAME_7F087A08
 /* 0BA60C 7F087C1C 8C4900D8 */  lw    $t1, 0xd8($v0)
 /* 0BA610 7F087C20 55200006 */  bnezl $t1, .L7F087C3C
 /* 0BA614 7F087C24 44806000 */   mtc1  $zero, $f12
-/* 0BA618 7F087C28 0FC26F36 */  jal   sub_GAME_7F09C7C4
+/* 0BA618 7F087C28 0FC26F36 */  jal   explosionScreenShake
 /* 0BA61C 7F087C2C AFA30058 */   sw    $v1, 0x58($sp)
 /* 0BA620 7F087C30 10000005 */  b     .L7F087C48
 /* 0BA624 7F087C34 8FA30058 */   lw    $v1, 0x58($sp)
@@ -12884,7 +12382,7 @@ s32 seems_to_load_cuff_microcode(s32 arg0, void *arg1, s32 arg2) {
     s32 phi_return;
 
     // Node 0
-    sp40 = getSelectedFolderBond();
+    sp40 = fileGetBondForCurrentFolder();
     temp_a3 = (arg2 * 4);
     temp_a0 = (arg1->unk8 + temp_a3);
     phi_a0 = temp_a0;
@@ -13013,7 +12511,7 @@ glabel seems_to_load_cuff_microcode
 /* 0BC748 7F087C18 AFBF0014 */  sw    $ra, 0x14($sp)
 /* 0BC74C 7F087C1C AFA40048 */  sw    $a0, 0x48($sp)
 /* 0BC750 7F087C20 AFA5004C */  sw    $a1, 0x4c($sp)
-/* 0BC754 7F087C24 0FC0755B */  jal   getSelectedFolderBond
+/* 0BC754 7F087C24 0FC0755B */  jal   fileGetBondForCurrentFolder
 /* 0BC758 7F087C28 AFA60050 */   sw    $a2, 0x50($sp)
 /* 0BC75C 7F087C2C 8FAE004C */  lw    $t6, 0x4c($sp)
 /* 0BC760 7F087C30 8FA30050 */  lw    $v1, 0x50($sp)
@@ -14361,9 +13859,9 @@ glabel sub_GAME_7F087E74
 /* 0BABB0 7F0881C0 460A2202 */  mul.s $f8, $f4, $f10
 /* 0BABB4 7F0881C4 44054000 */  mfc1  $a1, $f8
 /* 0BABB8 7F0881C8 0FC1625E */  jal   matrix_4x4_set_position_and_rotation_around_y
-/* 0BABBC 7F0881CC 00000000 */   nop   
+/* 0BABBC 7F0881CC 00000000 */   nop
 /* 0BABC0 7F0881D0 0FC1E111 */  jal   camGetWorldToScreenMtxf
-/* 0BABC4 7F0881D4 00000000 */   nop   
+/* 0BABC4 7F0881D4 00000000 */   nop
 /* 0BABC8 7F0881D8 00402025 */  move  $a0, $v0
 /* 0BABCC 7F0881DC 0FC16150 */  jal   matrix_4x4_multiply_homogeneous_in_place
 /* 0BABD0 7F0881E0 27A50178 */   addiu $a1, $sp, 0x178
@@ -14406,7 +13904,7 @@ glabel sub_GAME_7F087E74
 /* 0BAC64 7F088274 C44A0258 */  lwc1  $f10, 0x258($v0)
 /* 0BAC68 7F088278 46085383 */  div.s $f14, $f10, $f8
 /* 0BAC6C 7F08827C 460E003C */  c.lt.s $f0, $f14
-/* 0BAC70 7F088280 00000000 */  nop   
+/* 0BAC70 7F088280 00000000 */  nop
 /* 0BAC74 7F088284 45020003 */  bc1fl .L7F088294
 /* 0BAC78 7F088288 C4660000 */   lwc1  $f6, ($v1)
 /* 0BAC7C 7F08828C 46000386 */  mov.s $f14, $f0
@@ -14506,14 +14004,14 @@ glabel sub_GAME_7F087E74
 /* 0BADF0 7F088400 00006812 */  mflo  $t5
 /* 0BADF4 7F088404 468042A0 */  cvt.s.w $f10, $f8
 /* 0BADF8 7F088408 14600002 */  bnez  $v1, .L7F088414
-/* 0BADFC 7F08840C 00000000 */   nop   
+/* 0BADFC 7F08840C 00000000 */   nop
 /* 0BAE00 7F088410 0007000D */  break 7
 .L7F088414:
 /* 0BAE04 7F088414 2401FFFF */  li    $at, -1
 /* 0BAE08 7F088418 14610004 */  bne   $v1, $at, .L7F08842C
 /* 0BAE0C 7F08841C 3C018000 */   lui   $at, 0x8000
 /* 0BAE10 7F088420 14810002 */  bne   $a0, $at, .L7F08842C
-/* 0BAE14 7F088424 00000000 */   nop   
+/* 0BAE14 7F088424 00000000 */   nop
 /* 0BAE18 7F088428 0006000D */  break 6
 .L7F08842C:
 /* 0BAE1C 7F08842C 01A3001A */  div   $zero, $t5, $v1
@@ -14523,14 +14021,14 @@ glabel sub_GAME_7F087E74
 /* 0BAE2C 7F08843C 00007810 */  mfhi  $t7
 /* 0BAE30 7F088440 46065103 */  div.s $f4, $f10, $f6
 /* 0BAE34 7F088444 14600002 */  bnez  $v1, .L7F088450
-/* 0BAE38 7F088448 00000000 */   nop   
+/* 0BAE38 7F088448 00000000 */   nop
 /* 0BAE3C 7F08844C 0007000D */  break 7
 .L7F088450:
 /* 0BAE40 7F088450 2401FFFF */  li    $at, -1
 /* 0BAE44 7F088454 14610004 */  bne   $v1, $at, .L7F088468
 /* 0BAE48 7F088458 3C018000 */   li    $at, 0x80000000 # -0.000000
 /* 0BAE4C 7F08845C 14410002 */  bne   $v0, $at, .L7F088468
-/* 0BAE50 7F088460 00000000 */   nop   
+/* 0BAE50 7F088460 00000000 */   nop
 /* 0BAE54 7F088464 0006000D */  break 6
 .L7F088468:
 /* 0BAE58 7F088468 3C014270 */  li    $at, 0x42700000 # 60.000000
@@ -14548,14 +14046,14 @@ glabel sub_GAME_7F087E74
 /* 0BAE88 7F088498 4610903C */  c.lt.s $f18, $f16
 /* 0BAE8C 7F08849C 46009306 */  mov.s $f12, $f18
 /* 0BAE90 7F0884A0 14600002 */  bnez  $v1, .L7F0884AC
-/* 0BAE94 7F0884A4 00000000 */   nop   
+/* 0BAE94 7F0884A4 00000000 */   nop
 /* 0BAE98 7F0884A8 0007000D */  break 7
 .L7F0884AC:
 /* 0BAE9C 7F0884AC 2401FFFF */  li    $at, -1
 /* 0BAEA0 7F0884B0 14610004 */  bne   $v1, $at, .L7F0884C4
 /* 0BAEA4 7F0884B4 3C018000 */   li    $at, 0x80000000 # -0.000000
 /* 0BAEA8 7F0884B8 15A10002 */  bne   $t5, $at, .L7F0884C4
-/* 0BAEAC 7F0884BC 00000000 */   nop   
+/* 0BAEAC 7F0884BC 00000000 */   nop
 /* 0BAEB0 7F0884C0 0006000D */  break 6
 .L7F0884C4:
 /* 0BAEB4 7F0884C4 3C014270 */  li    $at, 0x42700000 # 60.000000
@@ -14594,29 +14092,29 @@ glabel sub_GAME_7F087E74
 /* 0BAF38 7F088548 46026300 */  add.s $f12, $f12, $f2
 .L7F08854C:
 /* 0BAF3C 7F08854C 4610603C */  c.lt.s $f12, $f16
-/* 0BAF40 7F088550 00000000 */  nop   
+/* 0BAF40 7F088550 00000000 */  nop
 /* 0BAF44 7F088554 4503FFFD */  bc1tl .L7F08854C
 /* 0BAF48 7F088558 46026300 */   add.s $f12, $f12, $f2
 .L7F08855C:
 /* 0BAF4C 7F08855C 4610503C */  c.lt.s $f10, $f16
-/* 0BAF50 7F088560 00000000 */  nop   
+/* 0BAF50 7F088560 00000000 */  nop
 /* 0BAF54 7F088564 45020007 */  bc1fl .L7F088584
 /* 0BAF58 7F088568 4610303C */   c.lt.s $f6, $f16
 /* 0BAF5C 7F08856C 46027380 */  add.s $f14, $f14, $f2
 .L7F088570:
 /* 0BAF60 7F088570 4610703C */  c.lt.s $f14, $f16
-/* 0BAF64 7F088574 00000000 */  nop   
+/* 0BAF64 7F088574 00000000 */  nop
 /* 0BAF68 7F088578 4503FFFD */  bc1tl .L7F088570
 /* 0BAF6C 7F08857C 46027380 */   add.s $f14, $f14, $f2
 /* 0BAF70 7F088580 4610303C */  c.lt.s $f6, $f16
 .L7F088584:
-/* 0BAF74 7F088584 00000000 */  nop   
+/* 0BAF74 7F088584 00000000 */  nop
 /* 0BAF78 7F088588 45020007 */  bc1fl .L7F0885A8
 /* 0BAF7C 7F08858C 8F380008 */   lw    $t8, 8($t9)
 /* 0BAF80 7F088590 46020000 */  add.s $f0, $f0, $f2
 .L7F088594:
 /* 0BAF84 7F088594 4610003C */  c.lt.s $f0, $f16
-/* 0BAF88 7F088598 00000000 */  nop   
+/* 0BAF88 7F088598 00000000 */  nop
 /* 0BAF8C 7F08859C 4503FFFD */  bc1tl .L7F088594
 /* 0BAF90 7F0885A0 46020000 */   add.s $f0, $f0, $f2
 /* 0BAF94 7F0885A4 8F380008 */  lw    $t8, 8($t9)
@@ -14709,12 +14207,12 @@ glabel sub_GAME_7F087E74
 /* 0BB0E0 7F0886F0 0FC16144 */  jal   matrix_4x4_multiply_in_place
 /* 0BB0E4 7F0886F4 27A5004C */   addiu $a1, $sp, 0x4c
 /* 0BB0E8 7F0886F8 0FC16443 */  jal   matrix_4x4_7F058C64
-/* 0BB0EC 7F0886FC 00000000 */   nop   
+/* 0BB0EC 7F0886FC 00000000 */   nop
 /* 0BB0F0 7F088700 27A4004C */  addiu $a0, $sp, 0x4c
 /* 0BB0F4 7F088704 0FC16451 */  jal   matrix_4x4_f32_to_s32
 /* 0BB0F8 7F088708 8FA50048 */   lw    $a1, 0x48($sp)
 /* 0BB0FC 7F08870C 0FC1644C */  jal   matrix_4x4_7F058C88
-/* 0BB100 7F088710 00000000 */   nop   
+/* 0BB100 7F088710 00000000 */   nop
 /* 0BB104 7F088714 3C0C8007 */  lui   $t4, %hi(g_CurrentPlayer) # $t4, 0x8007
 /* 0BB108 7F088718 8D8C8BC0 */  lw    $t4, %lo(g_CurrentPlayer)($t4)
 /* 0BB10C 7F08871C 8FA401F8 */  lw    $a0, 0x1f8($sp)
@@ -14722,7 +14220,7 @@ glabel sub_GAME_7F087E74
 /* 0BB114 7F088724 38660005 */  xori  $a2, $v1, 5
 /* 0BB118 7F088728 2CC60001 */  sltiu $a2, $a2, 1
 /* 0BB11C 7F08872C 14C00003 */  bnez  $a2, .L7F08873C
-/* 0BB120 7F088730 00000000 */   nop   
+/* 0BB120 7F088730 00000000 */   nop
 /* 0BB124 7F088734 3866000C */  xori  $a2, $v1, 0xc
 /* 0BB128 7F088738 2CC60001 */  sltiu $a2, $a2, 1
 .L7F08873C:
@@ -14737,14 +14235,14 @@ glabel sub_GAME_7F087E74
 /* 0BB14C 7F08875C 0FC2300F */  jal   bondviewTransformManyPosToViewMatrix
 /* 0BB150 7F088760 85E5000E */   lh    $a1, 0xe($t7)
 /* 0BB154 7F088764 0FC1644C */  jal   matrix_4x4_7F058C88
-/* 0BB158 7F088768 00000000 */   nop   
+/* 0BB158 7F088768 00000000 */   nop
 .L7F08876C:
 /* 0BB15C 7F08876C 8FBF002C */  lw    $ra, 0x2c($sp)
 .L7F088770:
 /* 0BB160 7F088770 8FA201F8 */  lw    $v0, 0x1f8($sp)
 /* 0BB164 7F088774 27BD01F8 */  addiu $sp, $sp, 0x1f8
 /* 0BB168 7F088778 03E00008 */  jr    $ra
-/* 0BB16C 7F08877C 00000000 */   nop   
+/* 0BB16C 7F08877C 00000000 */   nop
 )
 #endif
 
@@ -15048,7 +14546,7 @@ glabel sub_GAME_7F088618
 /* 0BB1F0 7F088800 0FC28A1C */  jal   sub_GAME_7F0A3330
 /* 0BB1F4 7F088804 26242120 */   addiu $a0, $s1, 0x2120
 /* 0BB1F8 7F088808 0FC2F2A4 */  jal   dynAllocateMatrix
-/* 0BB1FC 7F08880C 00000000 */   nop   
+/* 0BB1FC 7F08880C 00000000 */   nop
 /* 0BB200 7F088810 0FC2F2A4 */  jal   dynAllocateMatrix
 /* 0BB204 7F088814 AFA200BC */   sw    $v0, 0xbc($sp)
 /* 0BB208 7F088818 3C018003 */  lui   $at, %hi(D_800364CC) # $at, 0x8003
@@ -15226,6 +14724,7 @@ glabel jpt_mpspawntype
 .word mp_spawntype_intro_anim
 .word mp_spawntype_handcuff
 .word mp_spawntype_intro_camera
+.size jpt_mpspawntype, . - jpt_mpspawntype
 
 glabel D_800552AC
 .word 0xb8d1b717 /*-0.000099999997*/
@@ -15525,6 +15024,7 @@ glabel jpt_mpspawntype
 .word mp_spawntype_intro_anim
 .word mp_spawntype_handcuff
 .word mp_spawntype_intro_camera
+.size jpt_mpspawntype, . - jpt_mpspawntype
 
 glabel D_800552AC
 .word 0xb8d1b717 /*-0.000099999997*/
@@ -15547,7 +15047,7 @@ glabel mp_respawn_handler
 /* 0BB478 7F088A88 0FC1E51B */  jal   init_player_BONDdata
 /* 0BB47C 7F088A8C 8E104C48 */   lw    $s0, %lo(g_CurrentSetup+8)($s0)
 /* 0BB480 7F088A90 0FC1E64E */  jal   bondviewPlayerSpawnRelated
-/* 0BB484 7F088A94 00000000 */   nop   
+/* 0BB484 7F088A94 00000000 */   nop
 /* 0BB488 7F088A98 3C118007 */  lui   $s1, %hi(g_CurrentPlayer) # $s1, 0x8007
 /* 0BB48C 7F088A9C 26318BC0 */  addiu $s1, %lo(g_CurrentPlayer) # addiu $s1, $s1, -0x7440
 /* 0BB490 7F088AA0 8E290000 */  lw    $t1, ($s1)
@@ -15574,7 +15074,7 @@ glabel mp_respawn_handler
 /* 0BB4E4 7F088AF4 0FC22ADC */  jal   bondviewClearUpperTextDisplayFlag
 /* 0BB4E8 7F088AF8 2404FFFF */   li    $a0, -1
 /* 0BB4EC 7F088AFC 0FC26669 */  jal   getPlayerCount
-/* 0BB4F0 7F088B00 00000000 */   nop   
+/* 0BB4F0 7F088B00 00000000 */   nop
 /* 0BB4F4 7F088B04 28410002 */  slti  $at, $v0, 2
 /* 0BB4F8 7F088B08 14200008 */  bnez  $at, .L7F088B2C
 /* 0BB4FC 7F088B0C 3C098007 */   lui   $t1, %hi(startpadcount) # $t1, 0x8007
@@ -15582,7 +15082,7 @@ glabel mp_respawn_handler
 /* 0BB504 7F088B14 59200006 */  blezl $t1, .L7F088B30
 /* 0BB508 7F088B18 00001825 */   move  $v1, $zero
 /* 0BB50C 7F088B1C 0FC1E45C */  jal   bondviewGetRandomSpawnPadIndex
-/* 0BB510 7F088B20 00000000 */   nop   
+/* 0BB510 7F088B20 00000000 */   nop
 /* 0BB514 7F088B24 10000002 */  b     .L7F088B30
 /* 0BB518 7F088B28 00401825 */   move  $v1, $v0
 .L7F088B2C:
@@ -15616,7 +15116,7 @@ glabel mp_respawn_handler
 /* 0BB584 7F088B94 468084A0 */   cvt.s.w $f18, $f16
 /* 0BB588 7F088B98 3C014F80 */  li    $at, 0x4F800000 # 4294967296.000000
 /* 0BB58C 7F088B9C 44812000 */  mtc1  $at, $f4
-/* 0BB590 7F088BA0 00000000 */  nop   
+/* 0BB590 7F088BA0 00000000 */  nop
 /* 0BB594 7F088BA4 46049480 */  add.s $f18, $f18, $f4
 .L7F088BA8:
 /* 0BB598 7F088BA8 3C012F80 */  li    $at, 0x2F800000 # 0.000000
@@ -15628,7 +15128,7 @@ glabel mp_respawn_handler
 /* 0BB5B0 7F088BC0 3C018005 */  lui   $at, %hi(D_80055288) # $at, 0x8005
 /* 0BB5B4 7F088BC4 27A5004C */  addiu $a1, $sp, 0x4c
 /* 0BB5B8 7F088BC8 460C4002 */  mul.s $f0, $f8, $f12
-/* 0BB5BC 7F088BCC 00000000 */  nop   
+/* 0BB5BC 7F088BCC 00000000 */  nop
 /* 0BB5C0 7F088BD0 460A0402 */  mul.s $f16, $f0, $f10
 /* 0BB5C4 7F088BD4 E7A00048 */  swc1  $f0, 0x48($sp)
 /* 0BB5C8 7F088BD8 460C8103 */  div.s $f4, $f16, $f12
@@ -15726,19 +15226,19 @@ glabel mp_respawn_handler
 /* 0BB730 7F088D40 00290821 */  addu  $at, $at, $t1
 /* 0BB734 7F088D44 8C29AE64 */  lw    $t1, %lo(jpt_mpspawntype)($at)
 /* 0BB738 7F088D48 01200008 */  jr    $t1
-/* 0BB73C 7F088D4C 00000000 */   nop   
+/* 0BB73C 7F088D4C 00000000 */   nop
 mp_spawntype_spawn:
 /* 0BB740 7F088D50 10000024 */  b     .L7F088DE4
 /* 0BB744 7F088D54 2610000C */   addiu $s0, $s0, 0xc
 mp_spawntype_weapon:
 /* 0BB748 7F088D58 0FC2FFA8 */  jal   check_ramrom_flags
-/* 0BB74C 7F088D5C 00000000 */   nop   
+/* 0BB74C 7F088D5C 00000000 */   nop
 /* 0BB750 7F088D60 8E0A000C */  lw    $t2, 0xc($s0)
 /* 0BB754 7F088D64 144A000A */  bne   $v0, $t2, .L7F088D90
-/* 0BB758 7F088D68 00000000 */   nop   
+/* 0BB758 7F088D68 00000000 */   nop
 /* 0BB75C 7F088D6C 8E050008 */  lw    $a1, 8($s0)
 /* 0BB760 7F088D70 04A00005 */  bltz  $a1, .L7F088D88
-/* 0BB764 7F088D74 00000000 */   nop   
+/* 0BB764 7F088D74 00000000 */   nop
 /* 0BB768 7F088D78 0FC23221 */  jal   bondinvAddDoublesInvItem
 /* 0BB76C 7F088D7C 8E040004 */   lw    $a0, 4($s0)
 /* 0BB770 7F088D80 10000018 */  b     .L7F088DE4
@@ -15751,10 +15251,10 @@ mp_spawntype_weapon:
 /* 0BB784 7F088D94 26100010 */   addiu $s0, $s0, 0x10
 mp_spawntype_ammo:
 /* 0BB788 7F088D98 0FC2FFA8 */  jal   check_ramrom_flags
-/* 0BB78C 7F088D9C 00000000 */   nop   
+/* 0BB78C 7F088D9C 00000000 */   nop
 /* 0BB790 7F088DA0 8E0B000C */  lw    $t3, 0xc($s0)
 /* 0BB794 7F088DA4 144B0004 */  bne   $v0, $t3, .L7F088DB8
-/* 0BB798 7F088DA8 00000000 */   nop   
+/* 0BB798 7F088DA8 00000000 */   nop
 /* 0BB79C 7F088DAC 8E040004 */  lw    $a0, 4($s0)
 /* 0BB7A0 7F088DB0 0FC1A631 */  jal   give_cur_player_ammo
 /* 0BB7A4 7F088DB4 8E050008 */   lw    $a1, 8($s0)
@@ -15834,14 +15334,14 @@ glabel sub_GAME_7F088CD8
 /* 0BD838 7F088D08 AFB00038 */   sw    $s0, 0x38($sp)
 /* 0BD83C 7F088D0C 24010036 */  li    $at, 54
 /* 0BD840 7F088D10 14410130 */  bne   $v0, $at, .L7F0891D4
-/* 0BD844 7F088D14 3C108003 */   lui   $s0, %hi(D_8003643C)
-/* 0BD848 7F088D18 2610643C */  addiu $s0, %lo(D_8003643C) # addiu $s0, $s0, 0x643c
+/* 0BD844 7F088D14 3C108003 */   lui   $s0, %hi(credits_state)
+/* 0BD848 7F088D18 2610643C */  addiu $s0, %lo(credits_state) # addiu $s0, $s0, 0x643c
 /* 0BD84C 7F088D1C 8E0E0000 */  lw    $t6, ($s0)
 /* 0BD850 7F088D20 24010001 */  li    $at, 1
-/* 0BD854 7F088D24 3C0F8003 */  lui   $t7, %hi(D_80036440)
+/* 0BD854 7F088D24 3C0F8003 */  lui   $t7, %hi(credits_pointer)
 /* 0BD858 7F088D28 55C1012B */  bnel  $t6, $at, .L7F0891D8
 /* 0BD85C 7F088D2C 8FBF005C */   lw    $ra, 0x5c($sp)
-/* 0BD860 7F088D30 8DEF6440 */  lw    $t7, %lo(D_80036440)($t7)
+/* 0BD860 7F088D30 8DEF6440 */  lw    $t7, %lo(credits_pointer)($t7)
 /* 0BD864 7F088D34 3C028003 */  lui   $v0, %hi(camera_80036438)
 /* 0BD868 7F088D38 24426438 */  addiu $v0, %lo(camera_80036438) # addiu $v0, $v0, 0x6438
 /* 0BD86C 7F088D3C 11E00125 */  beqz  $t7, .L7F0891D4
@@ -15858,7 +15358,7 @@ glabel sub_GAME_7F088CD8
 /* 0BD898 7F088D68 0C00112B */  jal   viGetViewHeight
 /* 0BD89C 7F088D6C 0040A825 */   move  $s5, $v0
 /* 0BD8A0 7F088D70 8FAA00B4 */  lw    $t2, 0xb4($sp)
-/* 0BD8A4 7F088D74 3C048003 */  lui   $a0, %hi(D_80036440)
+/* 0BD8A4 7F088D74 3C048003 */  lui   $a0, %hi(credits_pointer)
 /* 0BD8A8 7F088D78 01421823 */  subu  $v1, $t2, $v0
 /* 0BD8AC 7F088D7C 04610003 */  bgez  $v1, .L7F088D8C
 /* 0BD8B0 7F088D80 00035903 */   sra   $t3, $v1, 4
@@ -15879,7 +15379,7 @@ glabel sub_GAME_7F088CD8
 .L7F088DB4:
 /* 0BD8E4 7F088DB4 18C00024 */  blez  $a2, .L7F088E48
 /* 0BD8E8 7F088DB8 00009825 */   move  $s3, $zero
-/* 0BD8EC 7F088DBC 8C846440 */  lw    $a0, %lo(D_80036440)($a0)
+/* 0BD8EC 7F088DBC 8C846440 */  lw    $a0, %lo(credits_pointer)($a0)
 .L7F088DC0:
 /* 0BD8F0 7F088DC0 94820000 */  lhu   $v0, ($a0)
 /* 0BD8F4 7F088DC4 24015011 */  li    $at, 20497
@@ -15929,8 +15429,8 @@ glabel sub_GAME_7F088CD8
 /* 0BD988 7F088E58 102000DB */  beqz  $at, .L7F0891C8
 /* 0BD98C 7F088E5C 00000000 */   nop
 /* 0BD990 7F088E60 00C50019 */  multu $a2, $a1
-/* 0BD994 7F088E64 3C038003 */  lui   $v1, %hi(D_80036440)
-/* 0BD998 7F088E68 8C636440 */  lw    $v1, %lo(D_80036440)($v1)
+/* 0BD994 7F088E64 3C038003 */  lui   $v1, %hi(credits_pointer)
+/* 0BD998 7F088E68 8C636440 */  lw    $v1, %lo(credits_pointer)($v1)
 /* 0BD99C 7F088E6C 0000A012 */  mflo  $s4
 /* 0BD9A0 7F088E70 00742021 */  addu  $a0, $v1, $s4
 /* 0BD9A4 7F088E74 94820000 */  lhu   $v0, ($a0)
@@ -15950,8 +15450,8 @@ glabel sub_GAME_7F088CD8
 /* 0BD9D8 7F088EA8 00402025 */  move  $a0, $v0
 /* 0BD9DC 7F088EAC 0FC30776 */  jal   langGet
 /* 0BD9E0 7F088EB0 00138900 */   sll   $s1, $s3, 4
-/* 0BD9E4 7F088EB4 3C0A8003 */  lui   $t2, %hi(D_80036440)
-/* 0BD9E8 7F088EB8 8D4A6440 */  lw    $t2, %lo(D_80036440)($t2)
+/* 0BD9E4 7F088EB4 3C0A8003 */  lui   $t2, %hi(credits_pointer)
+/* 0BD9E8 7F088EB8 8D4A6440 */  lw    $t2, %lo(credits_pointer)($t2)
 /* 0BD9EC 7F088EBC 00409025 */  move  $s2, $v0
 /* 0BD9F0 7F088EC0 01542021 */  addu  $a0, $t2, $s4
 /* 0BD9F4 7F088EC4 84830004 */  lh    $v1, 4($a0)
@@ -16041,8 +15541,8 @@ glabel sub_GAME_7F088CD8
 /* 0BDB30 7F089000 AFB90014 */  sw    $t9, 0x14($sp)
 /* 0BDB34 7F089004 0FC2B6AF */  jal   textRender
 /* 0BDB38 7F089008 AFB80010 */   sw    $t8, 0x10($sp)
-/* 0BDB3C 7F08900C 3C0B8003 */  lui   $t3, %hi(D_80036440)
-/* 0BDB40 7F089010 8D6B6440 */  lw    $t3, %lo(D_80036440)($t3)
+/* 0BDB3C 7F08900C 3C0B8003 */  lui   $t3, %hi(credits_pointer)
+/* 0BDB40 7F089010 8D6B6440 */  lw    $t3, %lo(credits_pointer)($t3)
 /* 0BDB44 7F089014 0040A825 */  move  $s5, $v0
 /* 0BDB48 7F089018 01742021 */  addu  $a0, $t3, $s4
 .L7F08901C:
@@ -16052,8 +15552,8 @@ glabel sub_GAME_7F088CD8
 /* 0BDB58 7F089028 00A02025 */   move  $a0, $a1
 /* 0BDB5C 7F08902C 0FC30776 */  jal   langGet
 /* 0BDB60 7F089030 00138900 */   sll   $s1, $s3, 4
-/* 0BDB64 7F089034 3C0A8003 */  lui   $t2, %hi(D_80036440)
-/* 0BDB68 7F089038 8D4A6440 */  lw    $t2, %lo(D_80036440)($t2)
+/* 0BDB64 7F089034 3C0A8003 */  lui   $t2, %hi(credits_pointer)
+/* 0BDB68 7F089038 8D4A6440 */  lw    $t2, %lo(credits_pointer)($t2)
 /* 0BDB6C 7F08903C 00409025 */  move  $s2, $v0
 /* 0BDB70 7F089040 01542021 */  addu  $a0, $t2, $s4
 /* 0BDB74 7F089044 84830008 */  lh    $v1, 8($a0)
@@ -16150,8 +15650,8 @@ glabel sub_GAME_7F088CD8
 /* 0BDCC8 7F089198 2694000C */  addiu $s4, $s4, 0xc
 /* 0BDCCC 7F08919C 026B082A */  slt   $at, $s3, $t3
 /* 0BDCD0 7F0891A0 10200009 */  beqz  $at, .L7F0891C8
-/* 0BDCD4 7F0891A4 3C0A8003 */   lui   $t2, %hi(D_80036440)
-/* 0BDCD8 7F0891A8 8D4A6440 */  lw    $t2, %lo(D_80036440)($t2)
+/* 0BDCD4 7F0891A4 3C0A8003 */   lui   $t2, %hi(credits_pointer)
+/* 0BDCD8 7F0891A8 8D4A6440 */  lw    $t2, %lo(credits_pointer)($t2)
 /* 0BDCDC 7F0891AC 01542021 */  addu  $a0, $t2, $s4
 /* 0BDCE0 7F0891B0 94820000 */  lhu   $v0, ($a0)
 /* 0BDCE4 7F0891B4 1440FF38 */  bnez  $v0, .L7F088E98
@@ -16443,7 +15943,7 @@ glabel maybe_mp_interface
 /* 0BE0D4 7F0895A4 24010001 */  li    $at, 1
 /* 0BE0D8 7F0895A8 14410005 */  bne   $v0, $at, .L7F0895C0
 /* 0BE0DC 7F0895AC 00000000 */   nop
-/* 0BE0E0 7F0895B0 0FC1EA6E */  jal   set_camera_mode
+/* 0BE0E0 7F0895B0 0FC1EA6E */  jal   bondviewSetCameraMode
 /* 0BE0E4 7F0895B4 24040005 */   li    $a0, 5
 /* 0BE0E8 7F0895B8 10000027 */  b     .L7F089658
 /* 0BE0EC 7F0895BC 00000000 */   nop
@@ -16532,9 +16032,9 @@ glabel maybe_mp_interface
 /* 0BBD74 7F089384 8DCF0000 */  lw    $t7, ($t6)
 /* 0BBD78 7F089388 24010001 */  li    $at, 1
 /* 0BBD7C 7F08938C 15E10014 */  bne   $t7, $at, .L7F0893E0
-/* 0BBD80 7F089390 00000000 */   nop   
+/* 0BBD80 7F089390 00000000 */   nop
 /* 0BBD84 7F089394 0FC229C0 */  jal   bondviewIntroCameraTextTick
-/* 0BBD88 7F089398 00000000 */   nop   
+/* 0BBD88 7F089398 00000000 */   nop
 /* 0BBD8C 7F08939C 0FC22A06 */  jal   sub_GAME_7F08A5FC
 /* 0BBD90 7F0893A0 8FA40058 */   lw    $a0, 0x58($sp)
 /* 0BBD94 7F0893A4 0FC22B10 */  jal   bondviewUpperTextWindowTimerTick
@@ -16554,7 +16054,7 @@ glabel maybe_mp_interface
 /* 0BBDCC 7F0893DC 8FBF001C */   lw    $ra, 0x1c($sp)
 .L7F0893E0:
 /* 0BBDD0 7F0893E0 0FC18779 */  jal   bondwalkFireBothHands
-/* 0BBDD4 7F0893E4 00000000 */   nop   
+/* 0BBDD4 7F0893E4 00000000 */   nop
 /* 0BBDD8 7F0893E8 0FC1A608 */  jal   sub_GAME_7F06908C
 /* 0BBDDC 7F0893EC 27A40058 */   addiu $a0, $sp, 0x58
 /* 0BBDE0 7F0893F0 0FC18C2A */  jal   sub_GAME_7F062BE4
@@ -16566,9 +16066,9 @@ glabel maybe_mp_interface
 /* 0BBDF8 7F089408 AFA20058 */  sw    $v0, 0x58($sp)
 /* 0BBDFC 7F08940C 8F1929BC */  lw    $t9, 0x29bc($t8)
 /* 0BBE00 7F089410 1320001F */  beqz  $t9, .L7F089490
-/* 0BBE04 7F089414 00000000 */   nop   
+/* 0BBE04 7F089414 00000000 */   nop
 /* 0BBE08 7F089418 0C000FD9 */  jal   viGetViewLeft
-/* 0BBE0C 7F08941C 00000000 */   nop   
+/* 0BBE0C 7F08941C 00000000 */   nop
 /* 0BBE10 7F089420 0C000FDD */  jal   viGetViewTop
 /* 0BBE14 7F089424 AFA20054 */   sw    $v0, 0x54($sp)
 /* 0BBE18 7F089428 0C000FD9 */  jal   viGetViewLeft
@@ -16599,22 +16099,22 @@ glabel maybe_mp_interface
 /* 0BBE7C 7F08948C AFA20058 */  sw    $v0, 0x58($sp)
 .L7F089490:
 /* 0BBE80 7F089490 0FC2281C */  jal   bondviewGetIfCurrentPlayerHealthShowTime
-/* 0BBE84 7F089494 00000000 */   nop   
+/* 0BBE84 7F089494 00000000 */   nop
 /* 0BBE88 7F089498 10400009 */  beqz  $v0, .L7F0894C0
 /* 0BBE8C 7F08949C 3C0E8007 */   lui   $t6, %hi(g_CurrentPlayer) # $t6, 0x8007
 /* 0BBE90 7F0894A0 8DCE8BC0 */  lw    $t6, %lo(g_CurrentPlayer)($t6)
 /* 0BBE94 7F0894A4 8DCF01C8 */  lw    $t7, 0x1c8($t6)
 /* 0BBE98 7F0894A8 15E00005 */  bnez  $t7, .L7F0894C0
-/* 0BBE9C 7F0894AC 00000000 */   nop   
+/* 0BBE9C 7F0894AC 00000000 */   nop
 /* 0BBEA0 7F0894B0 0FC221E0 */  jal   sub_GAME_7F088618
 /* 0BBEA4 7F0894B4 8FA40058 */   lw    $a0, 0x58($sp)
 /* 0BBEA8 7F0894B8 10000017 */  b     .L7F089518
 /* 0BBEAC 7F0894BC AFA20058 */   sw    $v0, 0x58($sp)
 .L7F0894C0:
 /* 0BBEB0 7F0894C0 0FC31557 */  jal   sub_GAME_7F0C6048
-/* 0BBEB4 7F0894C4 00000000 */   nop   
+/* 0BBEB4 7F0894C4 00000000 */   nop
 /* 0BBEB8 7F0894C8 10400013 */  beqz  $v0, .L7F089518
-/* 0BBEBC 7F0894CC 00000000 */   nop   
+/* 0BBEBC 7F0894CC 00000000 */   nop
 /* 0BBEC0 7F0894D0 0FC221E0 */  jal   sub_GAME_7F088618
 /* 0BBEC4 7F0894D4 8FA40058 */   lw    $a0, 0x58($sp)
 /* 0BBEC8 7F0894D8 3C038007 */  lui   $v1, %hi(g_CurrentPlayer) # $v1, 0x8007
@@ -16623,7 +16123,7 @@ glabel maybe_mp_interface
 /* 0BBED4 7F0894E4 3C188004 */  lui   $t8, %hi(g_ClockTimer) # $t8, 0x8004
 /* 0BBED8 7F0894E8 8C6429F8 */  lw    $a0, 0x29f8($v1)
 /* 0BBEDC 7F0894EC 18800007 */  blez  $a0, .L7F08950C
-/* 0BBEE0 7F0894F0 00000000 */   nop   
+/* 0BBEE0 7F0894F0 00000000 */   nop
 /* 0BBEE4 7F0894F4 8F180FF4 */  lw    $t8, %lo(g_ClockTimer)($t8)
 /* 0BBEE8 7F0894F8 0098C823 */  subu  $t9, $a0, $t8
 /* 0BBEEC 7F0894FC AC7929F8 */  sw    $t9, 0x29f8($v1)
@@ -16632,26 +16132,26 @@ glabel maybe_mp_interface
 /* 0BBEF8 7F089508 8C6429F8 */  lw    $a0, 0x29f8($v1)
 .L7F08950C:
 /* 0BBEFC 7F08950C 04810002 */  bgez  $a0, .L7F089518
-/* 0BBF00 7F089510 00000000 */   nop   
+/* 0BBF00 7F089510 00000000 */   nop
 /* 0BBF04 7F089514 AC6029F8 */  sw    $zero, 0x29f8($v1)
 .L7F089518:
 /* 0BBF08 7F089518 0FC26669 */  jal   getPlayerCount
-/* 0BBF0C 7F08951C 00000000 */   nop   
+/* 0BBF0C 7F08951C 00000000 */   nop
 /* 0BBF10 7F089520 24010001 */  li    $at, 1
 /* 0BBF14 7F089524 14410003 */  bne   $v0, $at, .L7F089534
-/* 0BBF18 7F089528 00000000 */   nop   
+/* 0BBF18 7F089528 00000000 */   nop
 /* 0BBF1C 7F08952C 0FC15E0C */  jal   display_objective_status_text_on_status_change
-/* 0BBF20 7F089530 00000000 */   nop   
+/* 0BBF20 7F089530 00000000 */   nop
 .L7F089534:
 /* 0BBF24 7F089534 3C038007 */  lui   $v1, %hi(g_CurrentPlayer) # $v1, 0x8007
 /* 0BBF28 7F089538 8C638BC0 */  lw    $v1, %lo(g_CurrentPlayer)($v1)
 /* 0BBF2C 7F08953C 8C6200D8 */  lw    $v0, 0xd8($v1)
 /* 0BBF30 7F089540 1040009F */  beqz  $v0, .L7F0897C0
-/* 0BBF34 7F089544 00000000 */   nop   
+/* 0BBF34 7F089544 00000000 */   nop
 /* 0BBF38 7F089548 8C680428 */  lw    $t0, 0x428($v1)
 /* 0BBF3C 7F08954C 24010001 */  li    $at, 1
 /* 0BBF40 7F089550 15000045 */  bnez  $t0, .L7F089668
-/* 0BBF44 7F089554 00000000 */   nop   
+/* 0BBF44 7F089554 00000000 */   nop
 /* 0BBF48 7F089558 14410004 */  bne   $v0, $at, .L7F08956C
 /* 0BBF4C 7F08955C 00002025 */   move  $a0, $zero
 /* 0BBF50 7F089560 24090002 */  li    $t1, 2
@@ -16663,16 +16163,16 @@ glabel maybe_mp_interface
 /* 0BBF64 7F089574 0FC07039 */  jal   die_blood_image_routine
 /* 0BBF68 7F089578 00002025 */   move  $a0, $zero
 /* 0BBF6C 7F08957C 0FC26669 */  jal   getPlayerCount
-/* 0BBF70 7F089580 00000000 */   nop   
+/* 0BBF70 7F089580 00000000 */   nop
 /* 0BBF74 7F089584 24010001 */  li    $at, 1
 /* 0BBF78 7F089588 14410013 */  bne   $v0, $at, .L7F0895D8
-/* 0BBF7C 7F08958C 00000000 */   nop   
+/* 0BBF7C 7F08958C 00000000 */   nop
 /* 0BBF80 7F089590 0FC3028E */  jal   musicStopSlot
 /* 0BBF84 7F089594 2404FFFF */   li    $a0, -1
 /* 0BBF88 7F089598 0FC3003F */  jal   set_missionstate
 /* 0BBF8C 7F08959C 00002025 */   move  $a0, $zero
 /* 0BBF90 7F0895A0 0FC3002C */  jal   sub_GAME_7F0C0BF0
-/* 0BBF94 7F0895A4 00000000 */   nop   
+/* 0BBF94 7F0895A4 00000000 */   nop
 /* 0BBF98 7F0895A8 0C001927 */  jal   musicTrack1ApplySeqpVol
 /* 0BBF9C 7F0895AC 3044FFFF */   andi  $a0, $v0, 0xffff
 /* 0BBFA0 7F0895B0 3C018002 */  lui   $at, %hi(g_musicXTrack1Fade) # $at, 0x8002
@@ -16684,7 +16184,7 @@ glabel maybe_mp_interface
 /* 0BBFB8 7F0895C8 0C0018B7 */  jal   musicTrack1Play
 /* 0BBFBC 7F0895CC 2404001B */   li    $a0, 27
 /* 0BBFC0 7F0895D0 10000003 */  b     .L7F0895E0
-/* 0BBFC4 7F0895D4 00000000 */   nop   
+/* 0BBFC4 7F0895D4 00000000 */   nop
 .L7F0895D8:
 /* 0BBFC8 7F0895D8 0FC3003F */  jal   set_missionstate
 /* 0BBFCC 7F0895DC 24040006 */   li    $a0, 6
@@ -16710,12 +16210,12 @@ glabel maybe_mp_interface
 /* 0BC010 7F089620 8D8C0FF4 */  lw    $t4, %lo(g_ClockTimer)($t4)
 /* 0BC014 7F089624 24040002 */  li    $a0, 2
 /* 0BC018 7F089628 19800003 */  blez  $t4, .L7F089638
-/* 0BC01C 7F08962C 00000000 */   nop   
+/* 0BC01C 7F08962C 00000000 */   nop
 /* 0BC020 7F089630 10000001 */  b     .L7F089638
 /* 0BC024 7F089634 24040001 */   li    $a0, 1
 .L7F089638:
 /* 0BC028 7F089638 0FC07039 */  jal   die_blood_image_routine
-/* 0BC02C 7F08963C 00000000 */   nop   
+/* 0BC02C 7F08963C 00000000 */   nop
 /* 0BC030 7F089640 10400004 */  beqz  $v0, .L7F089654
 /* 0BC034 7F089644 3C0E8007 */   lui   $t6, %hi(g_CurrentPlayer) # $t6, 0x8007
 /* 0BC038 7F089648 8DCE8BC0 */  lw    $t6, %lo(g_CurrentPlayer)($t6)
@@ -16738,13 +16238,13 @@ glabel maybe_mp_interface
 /* 0BC074 7F089684 C7A40024 */  lwc1  $f4, 0x24($sp)
 /* 0BC078 7F089688 3C038007 */  lui   $v1, %hi(g_CurrentPlayer) # $v1, 0x8007
 /* 0BC07C 7F08968C 4604003E */  c.le.s $f0, $f4
-/* 0BC080 7F089690 00000000 */  nop   
+/* 0BC080 7F089690 00000000 */  nop
 /* 0BC084 7F089694 4500004A */  bc1f  .L7F0897C0
-/* 0BC088 7F089698 00000000 */   nop   
+/* 0BC088 7F089698 00000000 */   nop
 /* 0BC08C 7F08969C 8C638BC0 */  lw    $v1, %lo(g_CurrentPlayer)($v1)
 /* 0BC090 7F0896A0 8C6F0424 */  lw    $t7, 0x424($v1)
 /* 0BC094 7F0896A4 11E00046 */  beqz  $t7, .L7F0897C0
-/* 0BC098 7F0896A8 00000000 */   nop   
+/* 0BC098 7F0896A8 00000000 */   nop
 /* 0BC09C 7F0896AC 8C780428 */  lw    $t8, 0x428($v1)
 /* 0BC0A0 7F0896B0 24190001 */  li    $t9, 1
 /* 0BC0A4 7F0896B4 3C014270 */  li    $at, 0x42700000 # 60.000000
@@ -16762,24 +16262,24 @@ glabel maybe_mp_interface
 /* 0BC0D4 7F0896E4 44816000 */  mtc1  $at, $f12
 /* 0BC0D8 7F0896E8 44807000 */  mtc1  $zero, $f14
 /* 0BC0DC 7F0896EC 0FC202AD */  jal   currentPlayerStartChrFade
-/* 0BC0E0 7F0896F0 00000000 */   nop   
+/* 0BC0E0 7F0896F0 00000000 */   nop
 .L7F0896F4:
 /* 0BC0E4 7F0896F4 0FC2024C */  jal   currentPlayerIsFadeComplete
-/* 0BC0E8 7F0896F8 00000000 */   nop   
+/* 0BC0E8 7F0896F8 00000000 */   nop
 /* 0BC0EC 7F0896FC 10400030 */  beqz  $v0, .L7F0897C0
-/* 0BC0F0 7F089700 00000000 */   nop   
+/* 0BC0F0 7F089700 00000000 */   nop
 /* 0BC0F4 7F089704 0FC26669 */  jal   getPlayerCount
-/* 0BC0F8 7F089708 00000000 */   nop   
+/* 0BC0F8 7F089708 00000000 */   nop
 /* 0BC0FC 7F08970C 24010001 */  li    $at, 1
 /* 0BC100 7F089710 14410005 */  bne   $v0, $at, .L7F089728
-/* 0BC104 7F089714 00000000 */   nop   
-/* 0BC108 7F089718 0FC1EA94 */  jal   set_camera_mode
+/* 0BC104 7F089714 00000000 */   nop
+/* 0BC108 7F089718 0FC1EA94 */  jal   bondviewSetCameraMode
 /* 0BC10C 7F08971C 24040005 */   li    $a0, 5
 /* 0BC110 7F089720 10000027 */  b     .L7F0897C0
-/* 0BC114 7F089724 00000000 */   nop   
+/* 0BC114 7F089724 00000000 */   nop
 .L7F089728:
 /* 0BC118 7F089728 0FC051B2 */  jal   get_scenario
-/* 0BC11C 7F08972C 00000000 */   nop   
+/* 0BC11C 7F08972C 00000000 */   nop
 /* 0BC120 7F089730 0FC269A4 */  jal   get_cur_playernum
 /* 0BC124 7F089734 AFA20040 */   sw    $v0, 0x40($sp)
 /* 0BC128 7F089738 0FC26669 */  jal   getPlayerCount
@@ -16806,22 +16306,22 @@ glabel maybe_mp_interface
 /* 0BC174 7F089784 15810003 */  bne   $t4, $at, .L7F089794
 /* 0BC178 7F089788 28810002 */   slti  $at, $a0, 2
 /* 0BC17C 7F08978C 1020000C */  beqz  $at, .L7F0897C0
-/* 0BC180 7F089790 00000000 */   nop   
+/* 0BC180 7F089790 00000000 */   nop
 .L7F089794:
 /* 0BC184 7F089794 0FC269A4 */  jal   get_cur_playernum
-/* 0BC188 7F089798 00000000 */   nop   
+/* 0BC188 7F089798 00000000 */   nop
 /* 0BC18C 7F08979C 00022600 */  sll   $a0, $v0, 0x18
 /* 0BC190 7F0897A0 00046E03 */  sra   $t5, $a0, 0x18
 /* 0BC194 7F0897A4 01A02025 */  move  $a0, $t5
 /* 0BC198 7F0897A8 0C002C20 */  jal   joyGetButtons
 /* 0BC19C 7F0897AC 3405B000 */   li    $a1, 45056
 /* 0BC1A0 7F0897B0 10400003 */  beqz  $v0, .L7F0897C0
-/* 0BC1A4 7F0897B4 00000000 */   nop   
+/* 0BC1A4 7F0897B4 00000000 */   nop
 /* 0BC1A8 7F0897B8 0FC22294 */  jal   mp_respawn_handler
-/* 0BC1AC 7F0897BC 00000000 */   nop   
+/* 0BC1AC 7F0897BC 00000000 */   nop
 .L7F0897C0:
 /* 0BC1B0 7F0897C0 0FC229C0 */  jal   bondviewIntroCameraTextTick
-/* 0BC1B4 7F0897C4 00000000 */   nop   
+/* 0BC1B4 7F0897C4 00000000 */   nop
 /* 0BC1B8 7F0897C8 0FC22A06 */  jal   sub_GAME_7F08A5FC
 /* 0BC1BC 7F0897CC 8FA40058 */   lw    $a0, 0x58($sp)
 /* 0BC1C0 7F0897D0 0FC22B10 */  jal   bondviewUpperTextWindowTimerTick
@@ -16846,7 +16346,7 @@ glabel maybe_mp_interface
 .L7F08981C:
 /* 0BC20C 7F08981C 27BD0058 */  addiu $sp, $sp, 0x58
 /* 0BC210 7F089820 03E00008 */  jr    $ra
-/* 0BC214 7F089824 00000000 */   nop   
+/* 0BC214 7F089824 00000000 */   nop
 )
 #endif
 #endif
@@ -16936,9 +16436,9 @@ PropRecord* get_curplayer_positiondata(void) {
  */
 void bondviewKillCurrentPlayer(void)
 {
-    if ((g_CurrentPlayer->bondinvincible == 0) && (g_CurrentPlayer->bonddead == 0))
+    if ((g_CurrentPlayer->bondinvincible == 0) && (g_CurrentPlayer->bonddead == FALSE))
     {
-        if (g_CurrentPlayer->watch_animation_state != 0)
+        if (g_CurrentPlayer->watch_animation_state != WATCH_ANIMATION_0x0)
         {
             trigger_solo_watch_menu(1);
         }
@@ -16973,7 +16473,7 @@ void bondviewKillCurrentPlayer(void)
 
 /**
  * Unreferenced.
- * 
+ *
  * Address 0x7F0898E8.
  */
 s32 sub_GAME_7F0898E8(void)
@@ -16984,1145 +16484,187 @@ s32 sub_GAME_7F0898E8(void)
 
 
 
+/**
+ * @param damage_amount: damage amount
+ * @param vectorx: damage source x coordinate
+ * @param vectorz: damage source y coordinate
+ * @param playerid: player index of player causing the damage
+ * @param arg4: boolean, does the damage apply to body armor (e.g. false when gas)
+ *
+ * Address US 7F08991C.
+ * Address EU 7F089A84.
+ * Address JP 7F089FF0.
+ */
+void record_damage_kills(f32 damage_amount, f32 vectorx, f32 vectorz, s32 playerid, s32 affects_armor) {
+    f32 damage_dealt = g_playerPerm->handicap * damage_amount;
+    s32 cur_player_num;
+    f32 angle;
+    s32 padding;
+    s32 sp2C;
+    s32 sp28;
 
+    if (g_CurrentPlayer->watch_animation_state != WATCH_ANIMATION_0x0)
+    {
+        sub_GAME_7F0A2F30(g_CurrentPlayer->armor_display_values, 0x2E, 1, get_BONDdata_watch_armor());
+        sub_GAME_7F0A2F30(g_CurrentPlayer->health_display_values, 0x2E, -1, bondviewGetCurrentPlayerHealth());
+    }
 
-#ifdef NONMATCHING
-void record_damage_kills(void) {
+    if (getPlayerCount() < 2 || (g_stopPlayFlag == 0 && g_gameOverFlag == 0))
+    {
+        if (in_tank_flag == 1)
+        {
+            damage_dealt *= 0.25f;
+        }
 
-}
+        if (g_CurrentPlayer->bonddead == FALSE && g_CurrentPlayer->bondinvincible == FALSE)
+        {
+            joyRumblePakStart(get_cur_playernum(), 0.25);
+            if (cur_player_get_control_type() >= 4)
+            {
+                // rumble second controller in 2.x
+                joyRumblePakStart(get_cur_playernum() + getPlayerCount(), 0.25);
+            }
+        }
+
+        if (getPlayerCount() >= 2 && get_scenario() == SCENARIO_LTK)
+        {
+            // the damage dealt is always equivalent to how much health and armor the player has
+            // the result of this is to always kill the player regardless of how much damage he can sustain
+            damage_dealt = (g_CurrentPlayer->bondhealth * g_CurrentPlayer->actual_health) + (g_CurrentPlayer->bondarmour * g_CurrentPlayer->actual_armor);
+        }
+
+        if (g_CurrentPlayer->bondinvincible == FALSE && g_CurrentPlayer->bonddead == FALSE && g_PlayerInvincible == FALSE &&
+            (g_CurrentPlayer->damageshowtime < 0 || (getPlayerCount() >= 2 && g_CurrentPlayer->damageshowtime == 0)))
+        {
+            if (g_CurrentPlayer->watch_animation_state != WATCH_ANIMATION_0x5 && g_CurrentPlayer->watch_animation_state != WATCH_ANIMATION_0xc)
+            {
+                g_CurrentPlayer->oldhealth = g_CurrentPlayer->bondhealth;
+                g_CurrentPlayer->oldarmour = g_CurrentPlayer->bondarmour;
+
+                if (getPlayerCount() >= 2)
+                {
+                    cur_player_num = get_cur_playernum();
+                    angle = g_playerPointers[cur_player_num]->vv_theta - (360.0f - ((atan2f(vectorx, vectorz) * 180.0f) / 3.1415927f));
+
+                    if (angle < 0.0f)
+                    {
+                        angle = -angle;
+                    }
+
+                    if (angle < 90.0f || angle > 270.0f)
+                    {
+                        // danger: if Bond could be damaged by toxic gas in multiplayer, playerid would be -1
+                        // thus causing an out of bounds access
+                        g_playerPlayerData[playerid].damage_to_backside++;
+                    }
+                }
+
+                if (affects_armor && damage_dealt <= g_CurrentPlayer->bondarmour * g_CurrentPlayer->actual_armor)
+                {
+                    g_CurrentPlayer->bondarmour = g_CurrentPlayer->bondarmour - (damage_dealt / g_CurrentPlayer->actual_armor);
+                }
+                else
+                {
+                    if (affects_armor)
+                    {
+                        damage_dealt -= g_CurrentPlayer->bondarmour / g_CurrentPlayer->actual_armor;
+                        g_CurrentPlayer->bondarmour = 0.0f;
+                        g_CurrentPlayer->actual_armor = 1.0f;
+                    }
+
+                    g_CurrentPlayer->bondhealth = g_CurrentPlayer->bondhealth - (damage_dealt / g_CurrentPlayer->actual_health);
+
+                    if (g_CurrentPlayer->bondhealth <= 0.0f)
+                    {
+                        if (getPlayerCount() >= 2)
+                        {
+                            sp2C = get_cur_playernum();
+                            sp28 = 0;
+
+                            if (get_scenario() == 3 && bondinvHasGoldenGun())
+                            {
+                                sp28 = 1;
+                            }
+
+#if defined(VERSION_EU) || defined(VERSION_JP)
+                            drop_inventory();
+#endif
+                            if (sp2C != playerid)
+                            {
+#if defined(VERSION_US)
+                                drop_inventory();
+#endif
+                                increment_num_deaths();
+                            }
+
+                            set_cur_player(playerid);
+
+                            if (sp2C == playerid)
+                            {
+                                increment_num_suicides_display_MP();
+                            }
+                            else
+                            {
+                                increment_num_kills_display_text_in_MP();
+
+                                if (sp28 != 0)
+                                {
+                                    increment_num_times_killed_MwtGC();
+                                }
+                            }
+
+                            set_cur_player(sp2C);
+
+                            if(1);
+
+                            g_playerPlayerData[playerid].kill_counts[sp2C]++;
+                        }
+
+                        bondviewKillCurrentPlayer();
+                    }
+                }
+
+#if defined(VERSION_EU) || defined(VERSION_JP)
+    #define ZERO_7F08991C 0.0f
 #else
-#ifdef VERSION_US
-GLOBAL_ASM(
-.late_rodata
-glabel pi_800552B0
-.word 0x40490fdb /*3.1415927*/
-.text
-glabel record_damage_kills
-/* 0BE44C 7F08991C 27BDFFC0 */  addiu $sp, $sp, -0x40
-/* 0BE450 7F089920 3C0E8008 */  lui   $t6, %hi(g_playerPerm)
-/* 0BE454 7F089924 8DCEA0B4 */  lw    $t6, %lo(g_playerPerm)($t6)
-/* 0BE458 7F089928 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0BE45C 7F08992C E7AE0044 */  swc1  $f14, 0x44($sp)
-/* 0BE460 7F089930 AFA60048 */  sw    $a2, 0x48($sp)
-/* 0BE464 7F089934 AFA7004C */  sw    $a3, 0x4c($sp)
-/* 0BE468 7F089938 C5C4005C */  lwc1  $f4, 0x5c($t6)
-/* 0BE46C 7F08993C 3C0F8008 */  lui   $t7, %hi(g_CurrentPlayer)
-/* 0BE470 7F089940 8DEFA0B0 */  lw    $t7, %lo(g_CurrentPlayer)($t7)
-/* 0BE474 7F089944 460C2182 */  mul.s $f6, $f4, $f12
-/* 0BE478 7F089948 E7A6003C */  swc1  $f6, 0x3c($sp)
-/* 0BE47C 7F08994C 8DF801C8 */  lw    $t8, 0x1c8($t7)
-/* 0BE480 7F089950 13000013 */  beqz  $t8, .L7F0899A0
-/* 0BE484 7F089954 00000000 */   nop
-/* 0BE488 7F089958 0FC228BF */  jal   get_BONDdata_watch_armor
-/* 0BE48C 7F08995C 00000000 */   nop
-/* 0BE490 7F089960 3C048008 */  lui   $a0, %hi(g_CurrentPlayer)
-/* 0BE494 7F089964 8C84A0B0 */  lw    $a0, %lo(g_CurrentPlayer)($a0)
-/* 0BE498 7F089968 44070000 */  mfc1  $a3, $f0
-/* 0BE49C 7F08996C 2405002E */  li    $a1, 46
-/* 0BE4A0 7F089970 24060001 */  li    $a2, 1
-/* 0BE4A4 7F089974 0FC28BCC */  jal   sub_GAME_7F0A2F30
-/* 0BE4A8 7F089978 248412B8 */   addiu $a0, $a0, 0x12b8
-/* 0BE4AC 7F08997C 0FC228BB */  jal   bondviewGetCurrentPlayerHealth
-/* 0BE4B0 7F089980 00000000 */   nop
-/* 0BE4B4 7F089984 3C048008 */  lui   $a0, %hi(g_CurrentPlayer)
-/* 0BE4B8 7F089988 8C84A0B0 */  lw    $a0, %lo(g_CurrentPlayer)($a0)
-/* 0BE4BC 7F08998C 44070000 */  mfc1  $a3, $f0
-/* 0BE4C0 7F089990 2405002E */  li    $a1, 46
-/* 0BE4C4 7F089994 2406FFFF */  li    $a2, -1
-/* 0BE4C8 7F089998 0FC28BCC */  jal   sub_GAME_7F0A2F30
-/* 0BE4CC 7F08999C 24841598 */   addiu $a0, $a0, 0x1598
-.L7F0899A0:
-/* 0BE4D0 7F0899A0 0FC26919 */  jal   getPlayerCount
-/* 0BE4D4 7F0899A4 00000000 */   nop
-/* 0BE4D8 7F0899A8 28410002 */  slti  $at, $v0, 2
-/* 0BE4DC 7F0899AC 14200007 */  bnez  $at, .L7F0899CC
-/* 0BE4E0 7F0899B0 3C198009 */   lui   $t9, %hi(g_stopPlayFlag)
-/* 0BE4E4 7F0899B4 8F39C700 */  lw    $t9, %lo(g_stopPlayFlag)($t9)
-/* 0BE4E8 7F0899B8 3C088009 */  lui   $t0, %hi(g_gameOverFlag)
-/* 0BE4EC 7F0899BC 57200120 */  bnezl $t9, .L7F089E40
-/* 0BE4F0 7F0899C0 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BE4F4 7F0899C4 8D08C704 */  lw    $t0, %lo(g_gameOverFlag)($t0)
-/* 0BE4F8 7F0899C8 1500011C */  bnez  $t0, .L7F089E3C
-.L7F0899CC:
-/* 0BE4FC 7F0899CC 3C098003 */   lui   $t1, %hi(in_tank_flag)
-/* 0BE500 7F0899D0 8D296448 */  lw    $t1, %lo(in_tank_flag)($t1)
-/* 0BE504 7F0899D4 24010001 */  li    $at, 1
-/* 0BE508 7F0899D8 C7A8003C */  lwc1  $f8, 0x3c($sp)
-/* 0BE50C 7F0899DC 15210006 */  bne   $t1, $at, .L7F0899F8
-/* 0BE510 7F0899E0 3C028008 */   lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE514 7F0899E4 3C013E80 */  li    $at, 0x3E800000 # 0.250000
-/* 0BE518 7F0899E8 44815000 */  mtc1  $at, $f10
-/* 0BE51C 7F0899EC 00000000 */  nop
-/* 0BE520 7F0899F0 460A4402 */  mul.s $f16, $f8, $f10
-/* 0BE524 7F0899F4 E7B0003C */  swc1  $f16, 0x3c($sp)
-.L7F0899F8:
-/* 0BE528 7F0899F8 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE52C 7F0899FC 8C4A00D8 */  lw    $t2, 0xd8($v0)
-/* 0BE530 7F089A00 15400016 */  bnez  $t2, .L7F089A5C
-/* 0BE534 7F089A04 00000000 */   nop
-/* 0BE538 7F089A08 904B12B6 */  lbu   $t3, 0x12b6($v0)
-/* 0BE53C 7F089A0C 15600013 */  bnez  $t3, .L7F089A5C
-/* 0BE540 7F089A10 00000000 */   nop
-/* 0BE544 7F089A14 0FC26C54 */  jal   get_cur_playernum
-/* 0BE548 7F089A18 00000000 */   nop
-/* 0BE54C 7F089A1C 00402025 */  move  $a0, $v0
-/* 0BE550 7F089A20 0C003215 */  jal   joyRumblePakStart
-/* 0BE554 7F089A24 3C053E80 */   lui   $a1, 0x3e80
-/* 0BE558 7F089A28 0FC29370 */  jal   cur_player_get_control_type
-/* 0BE55C 7F089A2C 00000000 */   nop
-/* 0BE560 7F089A30 28410004 */  slti  $at, $v0, 4
-/* 0BE564 7F089A34 14200009 */  bnez  $at, .L7F089A5C
-/* 0BE568 7F089A38 00000000 */   nop
-/* 0BE56C 7F089A3C 0FC26C54 */  jal   get_cur_playernum
-/* 0BE570 7F089A40 00000000 */   nop
-/* 0BE574 7F089A44 0FC26919 */  jal   getPlayerCount
-/* 0BE578 7F089A48 AFA2001C */   sw    $v0, 0x1c($sp)
-/* 0BE57C 7F089A4C 8FAC001C */  lw    $t4, 0x1c($sp)
-/* 0BE580 7F089A50 3C053E80 */  lui   $a1, 0x3e80
-/* 0BE584 7F089A54 0C003215 */  jal   joyRumblePakStart
-/* 0BE588 7F089A58 004C2021 */   addu  $a0, $v0, $t4
-.L7F089A5C:
-/* 0BE58C 7F089A5C 0FC26919 */  jal   getPlayerCount
-/* 0BE590 7F089A60 00000000 */   nop
-/* 0BE594 7F089A64 28410002 */  slti  $at, $v0, 2
-/* 0BE598 7F089A68 14200010 */  bnez  $at, .L7F089AAC
-/* 0BE59C 7F089A6C 00000000 */   nop
-/* 0BE5A0 7F089A70 0FC051D6 */  jal   get_scenario
-/* 0BE5A4 7F089A74 00000000 */   nop
-/* 0BE5A8 7F089A78 24010004 */  li    $at, 4
-/* 0BE5AC 7F089A7C 1441000B */  bne   $v0, $at, .L7F089AAC
-/* 0BE5B0 7F089A80 3C028008 */   lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE5B4 7F089A84 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE5B8 7F089A88 C45200DC */  lwc1  $f18, 0xdc($v0)
-/* 0BE5BC 7F089A8C C4442A3C */  lwc1  $f4, 0x2a3c($v0)
-/* 0BE5C0 7F089A90 C44800E0 */  lwc1  $f8, 0xe0($v0)
-/* 0BE5C4 7F089A94 C44A2A40 */  lwc1  $f10, 0x2a40($v0)
-/* 0BE5C8 7F089A98 46049182 */  mul.s $f6, $f18, $f4
-/* 0BE5CC 7F089A9C 00000000 */  nop
-/* 0BE5D0 7F089AA0 460A4402 */  mul.s $f16, $f8, $f10
-/* 0BE5D4 7F089AA4 46103480 */  add.s $f18, $f6, $f16
-/* 0BE5D8 7F089AA8 E7B2003C */  swc1  $f18, 0x3c($sp)
-.L7F089AAC:
-/* 0BE5DC 7F089AAC 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE5E0 7F089AB0 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE5E4 7F089AB4 904D12B6 */  lbu   $t5, 0x12b6($v0)
-/* 0BE5E8 7F089AB8 55A000E1 */  bnezl $t5, .L7F089E40
-/* 0BE5EC 7F089ABC 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BE5F0 7F089AC0 8C4E00D8 */  lw    $t6, 0xd8($v0)
-/* 0BE5F4 7F089AC4 3C0F8003 */  lui   $t7, %hi(g_PlayerInvincible)
-/* 0BE5F8 7F089AC8 55C000DD */  bnezl $t6, .L7F089E40
-/* 0BE5FC 7F089ACC 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BE600 7F089AD0 8DEF64B4 */  lw    $t7, %lo(g_PlayerInvincible)($t7)
-/* 0BE604 7F089AD4 55E000DA */  bnezl $t7, .L7F089E40
-/* 0BE608 7F089AD8 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BE60C 7F089ADC 8C5800F4 */  lw    $t8, 0xf4($v0)
-/* 0BE610 7F089AE0 0702000B */  bltzl $t8, .L7F089B10
-/* 0BE614 7F089AE4 8C4301C8 */   lw    $v1, 0x1c8($v0)
-/* 0BE618 7F089AE8 0FC26919 */  jal   getPlayerCount
-/* 0BE61C 7F089AEC 00000000 */   nop
-/* 0BE620 7F089AF0 28410002 */  slti  $at, $v0, 2
-/* 0BE624 7F089AF4 142000D1 */  bnez  $at, .L7F089E3C
-/* 0BE628 7F089AF8 3C028008 */   lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE62C 7F089AFC 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE630 7F089B00 8C5900F4 */  lw    $t9, 0xf4($v0)
-/* 0BE634 7F089B04 572000CE */  bnezl $t9, .L7F089E40
-/* 0BE638 7F089B08 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BE63C 7F089B0C 8C4301C8 */  lw    $v1, 0x1c8($v0)
-.L7F089B10:
-/* 0BE640 7F089B10 24010005 */  li    $at, 5
-/* 0BE644 7F089B14 106100C9 */  beq   $v1, $at, .L7F089E3C
-/* 0BE648 7F089B18 2401000C */   li    $at, 12
-/* 0BE64C 7F089B1C 506100C8 */  beql  $v1, $at, .L7F089E40
-/* 0BE650 7F089B20 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BE654 7F089B24 C44400DC */  lwc1  $f4, 0xdc($v0)
-/* 0BE658 7F089B28 E44400E4 */  swc1  $f4, 0xe4($v0)
-/* 0BE65C 7F089B2C 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE660 7F089B30 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE664 7F089B34 C44800E0 */  lwc1  $f8, 0xe0($v0)
-/* 0BE668 7F089B38 0FC26919 */  jal   getPlayerCount
-/* 0BE66C 7F089B3C E44800E8 */   swc1  $f8, 0xe8($v0)
-/* 0BE670 7F089B40 28410002 */  slti  $at, $v0, 2
-/* 0BE674 7F089B44 54200035 */  bnezl $at, .L7F089C1C
-/* 0BE678 7F089B48 8FA30050 */   lw    $v1, 0x50($sp)
-/* 0BE67C 7F089B4C 0FC26C54 */  jal   get_cur_playernum
-/* 0BE680 7F089B50 00000000 */   nop
-/* 0BE684 7F089B54 AFA20038 */  sw    $v0, 0x38($sp)
-/* 0BE688 7F089B58 C7AC0044 */  lwc1  $f12, 0x44($sp)
-/* 0BE68C 7F089B5C 0FC16A8C */  jal   atan2f
-/* 0BE690 7F089B60 C7AE0048 */   lwc1  $f14, 0x48($sp)
-/* 0BE694 7F089B64 3C014334 */  li    $at, 0x43340000 # 180.000000
-/* 0BE698 7F089B68 44815000 */  mtc1  $at, $f10
-/* 0BE69C 7F089B6C 3C018005 */  lui   $at, %hi(pi_800552B0)
-/* 0BE6A0 7F089B70 C43052B0 */  lwc1  $f16, %lo(pi_800552B0)($at)
-/* 0BE6A4 7F089B74 460A0182 */  mul.s $f6, $f0, $f10
-/* 0BE6A8 7F089B78 8FA80038 */  lw    $t0, 0x38($sp)
-/* 0BE6AC 7F089B7C 3C0143B4 */  li    $at, 0x43B40000 # 360.000000
-/* 0BE6B0 7F089B80 3C0A8008 */  lui   $t2, %hi(g_playerPointers)
-/* 0BE6B4 7F089B84 00084880 */  sll   $t1, $t0, 2
-/* 0BE6B8 7F089B88 44812000 */  mtc1  $at, $f4
-/* 0BE6BC 7F089B8C 01495021 */  addu  $t2, $t2, $t1
-/* 0BE6C0 7F089B90 46103483 */  div.s $f18, $f6, $f16
-/* 0BE6C4 7F089B94 8D4A9EE0 */  lw    $t2, %lo(g_playerPointers)($t2)
-/* 0BE6C8 7F089B98 44806000 */  mtc1  $zero, $f12
-/* 0BE6CC 7F089B9C 8FAB004C */  lw    $t3, 0x4c($sp)
-/* 0BE6D0 7F089BA0 C54A0148 */  lwc1  $f10, 0x148($t2)
-/* 0BE6D4 7F089BA4 3C0142B4 */  li    $at, 0x42B40000 # 90.000000
-/* 0BE6D8 7F089BA8 000B60C0 */  sll   $t4, $t3, 3
-/* 0BE6DC 7F089BAC 3C0D8008 */  lui   $t5, %hi(g_playerPlayerData)
-/* 0BE6E0 7F089BB0 018B6023 */  subu  $t4, $t4, $t3
-/* 0BE6E4 7F089BB4 44813000 */  mtc1  $at, $f6
-/* 0BE6E8 7F089BB8 000C6100 */  sll   $t4, $t4, 4
-/* 0BE6EC 7F089BBC 25AD9EF0 */  addiu $t5, %lo(g_playerPlayerData) # addiu $t5, $t5, -0x6110
-/* 0BE6F0 7F089BC0 3C014387 */  li    $at, 0x43870000 # 270.000000
-/* 0BE6F4 7F089BC4 018D1021 */  addu  $v0, $t4, $t5
-/* 0BE6F8 7F089BC8 46122201 */  sub.s $f8, $f4, $f18
-/* 0BE6FC 7F089BCC 46085081 */  sub.s $f2, $f10, $f8
-/* 0BE700 7F089BD0 460C103C */  c.lt.s $f2, $f12
-/* 0BE704 7F089BD4 00000000 */  nop
-/* 0BE708 7F089BD8 45020003 */  bc1fl .L7F089BE8
-/* 0BE70C 7F089BDC 4606103C */   c.lt.s $f2, $f6
-/* 0BE710 7F089BE0 46001087 */  neg.s $f2, $f2
-/* 0BE714 7F089BE4 4606103C */  c.lt.s $f2, $f6
-.L7F089BE8:
-/* 0BE718 7F089BE8 00000000 */  nop
-/* 0BE71C 7F089BEC 45030008 */  bc1tl .L7F089C10
-/* 0BE720 7F089BF0 8C4E003C */   lw    $t6, 0x3c($v0)
-/* 0BE724 7F089BF4 44818000 */  mtc1  $at, $f16
-/* 0BE728 7F089BF8 00000000 */  nop
-/* 0BE72C 7F089BFC 4602803C */  c.lt.s $f16, $f2
-/* 0BE730 7F089C00 00000000 */  nop
-/* 0BE734 7F089C04 45020005 */  bc1fl .L7F089C1C
-/* 0BE738 7F089C08 8FA30050 */   lw    $v1, 0x50($sp)
-/* 0BE73C 7F089C0C 8C4E003C */  lw    $t6, 0x3c($v0)
-.L7F089C10:
-/* 0BE740 7F089C10 25CF0001 */  addiu $t7, $t6, 1
-/* 0BE744 7F089C14 AC4F003C */  sw    $t7, 0x3c($v0)
-/* 0BE748 7F089C18 8FA30050 */  lw    $v1, 0x50($sp)
-.L7F089C1C:
-/* 0BE74C 7F089C1C 44806000 */  mtc1  $zero, $f12
-/* 0BE750 7F089C20 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE754 7F089C24 10600010 */  beqz  $v1, .L7F089C68
-/* 0BE758 7F089C28 00000000 */   nop
-/* 0BE75C 7F089C2C 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE760 7F089C30 C7B2003C */  lwc1  $f18, 0x3c($sp)
-/* 0BE764 7F089C34 C44000E0 */  lwc1  $f0, 0xe0($v0)
-/* 0BE768 7F089C38 C4422A40 */  lwc1  $f2, 0x2a40($v0)
-/* 0BE76C 7F089C3C 46020102 */  mul.s $f4, $f0, $f2
-/* 0BE770 7F089C40 4604903E */  c.le.s $f18, $f4
-/* 0BE774 7F089C44 00000000 */  nop
-/* 0BE778 7F089C48 45000007 */  bc1f  .L7F089C68
-/* 0BE77C 7F089C4C 00000000 */   nop
-/* 0BE780 7F089C50 46029283 */  div.s $f10, $f18, $f2
-/* 0BE784 7F089C54 460A0201 */  sub.s $f8, $f0, $f10
-/* 0BE788 7F089C58 E44800E0 */  swc1  $f8, 0xe0($v0)
-/* 0BE78C 7F089C5C 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE790 7F089C60 1000005D */  b     .L7F089DD8
-/* 0BE794 7F089C64 8C42A0B0 */   lw    $v0, %lo(g_CurrentPlayer)($v0)
-.L7F089C68:
-/* 0BE798 7F089C68 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE79C 7F089C6C 1060000F */  beqz  $v1, .L7F089CAC
-/* 0BE7A0 7F089C70 8C42A0B0 */   lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE7A4 7F089C74 C44600E0 */  lwc1  $f6, 0xe0($v0)
-/* 0BE7A8 7F089C78 C4502A40 */  lwc1  $f16, 0x2a40($v0)
-/* 0BE7AC 7F089C7C C7B2003C */  lwc1  $f18, 0x3c($sp)
-/* 0BE7B0 7F089C80 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0BE7B4 7F089C84 46103103 */  div.s $f4, $f6, $f16
-/* 0BE7B8 7F089C88 3C188008 */  lui   $t8, %hi(g_CurrentPlayer)
-/* 0BE7BC 7F089C8C 44814000 */  mtc1  $at, $f8
-/* 0BE7C0 7F089C90 46049281 */  sub.s $f10, $f18, $f4
-/* 0BE7C4 7F089C94 E7AA003C */  swc1  $f10, 0x3c($sp)
-/* 0BE7C8 7F089C98 E44C00E0 */  swc1  $f12, 0xe0($v0)
-/* 0BE7CC 7F089C9C 8F18A0B0 */  lw    $t8, %lo(g_CurrentPlayer)($t8)
-/* 0BE7D0 7F089CA0 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE7D4 7F089CA4 E7082A40 */  swc1  $f8, 0x2a40($t8)
-/* 0BE7D8 7F089CA8 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-.L7F089CAC:
-/* 0BE7DC 7F089CAC C7A6003C */  lwc1  $f6, 0x3c($sp)
-/* 0BE7E0 7F089CB0 C4502A3C */  lwc1  $f16, 0x2a3c($v0)
-/* 0BE7E4 7F089CB4 C44400DC */  lwc1  $f4, 0xdc($v0)
-/* 0BE7E8 7F089CB8 46103483 */  div.s $f18, $f6, $f16
-/* 0BE7EC 7F089CBC 46122281 */  sub.s $f10, $f4, $f18
-/* 0BE7F0 7F089CC0 E44A00DC */  swc1  $f10, 0xdc($v0)
-/* 0BE7F4 7F089CC4 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE7F8 7F089CC8 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE7FC 7F089CCC C44800DC */  lwc1  $f8, 0xdc($v0)
-/* 0BE800 7F089CD0 460C403E */  c.le.s $f8, $f12
-/* 0BE804 7F089CD4 00000000 */  nop
-/* 0BE808 7F089CD8 45020040 */  bc1fl .L7F089DDC
-/* 0BE80C 7F089CDC 8C4B00F4 */   lw    $t3, 0xf4($v0)
-/* 0BE810 7F089CE0 0FC26919 */  jal   getPlayerCount
-/* 0BE814 7F089CE4 00000000 */   nop
-/* 0BE818 7F089CE8 28410002 */  slti  $at, $v0, 2
-/* 0BE81C 7F089CEC 14200036 */  bnez  $at, .L7F089DC8
-/* 0BE820 7F089CF0 00000000 */   nop
-/* 0BE824 7F089CF4 0FC26C54 */  jal   get_cur_playernum
-/* 0BE828 7F089CF8 00000000 */   nop
-/* 0BE82C 7F089CFC AFA2002C */  sw    $v0, 0x2c($sp)
-/* 0BE830 7F089D00 0FC051D6 */  jal   get_scenario
-/* 0BE834 7F089D04 AFA00028 */   sw    $zero, 0x28($sp)
-/* 0BE838 7F089D08 24010003 */  li    $at, 3
-/* 0BE83C 7F089D0C 54410007 */  bnel  $v0, $at, .L7F089D2C
-/* 0BE840 7F089D10 8FA8002C */   lw    $t0, 0x2c($sp)
-/* 0BE844 7F089D14 0FC233F0 */  jal   bondinvHasGoldenGun
-/* 0BE848 7F089D18 00000000 */   nop
-/* 0BE84C 7F089D1C 10400002 */  beqz  $v0, .L7F089D28
-/* 0BE850 7F089D20 24190001 */   li    $t9, 1
-/* 0BE854 7F089D24 AFB90028 */  sw    $t9, 0x28($sp)
-.L7F089D28:
-/* 0BE858 7F089D28 8FA8002C */  lw    $t0, 0x2c($sp)
-.L7F089D2C:
-/* 0BE85C 7F089D2C 8FA9004C */  lw    $t1, 0x4c($sp)
-/* 0BE860 7F089D30 11090005 */  beq   $t0, $t1, .L7F089D48
-/* 0BE864 7F089D34 00000000 */   nop
-/* 0BE868 7F089D38 0FC159DF */  jal   drop_inventory
-/* 0BE86C 7F089D3C 00000000 */   nop
-/* 0BE870 7F089D40 0FC1AA57 */  jal   increment_num_deaths
-/* 0BE874 7F089D44 00000000 */   nop
-.L7F089D48:
-/* 0BE878 7F089D48 0FC26C43 */  jal   set_cur_player
-/* 0BE87C 7F089D4C 8FA4004C */   lw    $a0, 0x4c($sp)
-/* 0BE880 7F089D50 8FAA002C */  lw    $t2, 0x2c($sp)
-/* 0BE884 7F089D54 8FAB004C */  lw    $t3, 0x4c($sp)
-/* 0BE888 7F089D58 154B0005 */  bne   $t2, $t3, .L7F089D70
-/* 0BE88C 7F089D5C 00000000 */   nop
-/* 0BE890 7F089D60 0FC1AA86 */  jal   increment_num_suicides_display_MP
-/* 0BE894 7F089D64 00000000 */   nop
-/* 0BE898 7F089D68 10000008 */  b     .L7F089D8C
-/* 0BE89C 7F089D6C 00000000 */   nop
-.L7F089D70:
-/* 0BE8A0 7F089D70 0FC1A9E0 */  jal   increment_num_kills_display_text_in_MP
-/* 0BE8A4 7F089D74 00000000 */   nop
-/* 0BE8A8 7F089D78 8FAC0028 */  lw    $t4, 0x28($sp)
-/* 0BE8AC 7F089D7C 11800003 */  beqz  $t4, .L7F089D8C
-/* 0BE8B0 7F089D80 00000000 */   nop
-/* 0BE8B4 7F089D84 0FC1AA4D */  jal   increment_num_times_killed_MwtGC
-/* 0BE8B8 7F089D88 00000000 */   nop
-.L7F089D8C:
-/* 0BE8BC 7F089D8C 0FC26C43 */  jal   set_cur_player
-/* 0BE8C0 7F089D90 8FA4002C */   lw    $a0, 0x2c($sp)
-/* 0BE8C4 7F089D94 8FAD004C */  lw    $t5, 0x4c($sp)
-/* 0BE8C8 7F089D98 8FAF002C */  lw    $t7, 0x2c($sp)
-/* 0BE8CC 7F089D9C 3C088008 */  lui   $t0, %hi(g_playerPlayerData)
-/* 0BE8D0 7F089DA0 000D70C0 */  sll   $t6, $t5, 3
-/* 0BE8D4 7F089DA4 01CD7023 */  subu  $t6, $t6, $t5
-/* 0BE8D8 7F089DA8 000E7100 */  sll   $t6, $t6, 4
-/* 0BE8DC 7F089DAC 000FC080 */  sll   $t8, $t7, 2
-/* 0BE8E0 7F089DB0 01D8C821 */  addu  $t9, $t6, $t8
-/* 0BE8E4 7F089DB4 25089EF0 */  addiu $t0, %lo(g_playerPlayerData) # addiu $t0, $t0, -0x6110
-/* 0BE8E8 7F089DB8 03281021 */  addu  $v0, $t9, $t0
-/* 0BE8EC 7F089DBC 8C490024 */  lw    $t1, 0x24($v0)
-/* 0BE8F0 7F089DC0 252A0001 */  addiu $t2, $t1, 1
-/* 0BE8F4 7F089DC4 AC4A0024 */  sw    $t2, 0x24($v0)
-.L7F089DC8:
-/* 0BE8F8 7F089DC8 0FC225EA */  jal   bondviewKillCurrentPlayer
-/* 0BE8FC 7F089DCC 00000000 */   nop
-/* 0BE900 7F089DD0 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE904 7F089DD4 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-.L7F089DD8:
-/* 0BE908 7F089DD8 8C4B00F4 */  lw    $t3, 0xf4($v0)
-.L7F089DDC:
-/* 0BE90C 7F089DDC C7A60044 */  lwc1  $f6, 0x44($sp)
-/* 0BE910 7F089DE0 3C0C8008 */  lui   $t4, %hi(g_CurrentPlayer)
-/* 0BE914 7F089DE4 0561000E */  bgez  $t3, .L7F089E20
-/* 0BE918 7F089DE8 3C048006 */   lui   $a0, %hi(g_musicSfxBufferPtr)
-/* 0BE91C 7F089DEC 46063400 */  add.s $f16, $f6, $f6
-/* 0BE920 7F089DF0 C4440180 */  lwc1  $f4, 0x180($v0)
-/* 0BE924 7F089DF4 46102480 */  add.s $f18, $f4, $f16
-/* 0BE928 7F089DF8 E4520180 */  swc1  $f18, 0x180($v0)
-/* 0BE92C 7F089DFC C7AA0048 */  lwc1  $f10, 0x48($sp)
-/* 0BE930 7F089E00 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE934 7F089E04 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BE938 7F089E08 460A5200 */  add.s $f8, $f10, $f10
-/* 0BE93C 7F089E0C C4460188 */  lwc1  $f6, 0x188($v0)
-/* 0BE940 7F089E10 46083100 */  add.s $f4, $f6, $f8
-/* 0BE944 7F089E14 E4440188 */  swc1  $f4, 0x188($v0)
-/* 0BE948 7F089E18 3C028008 */  lui   $v0, %hi(g_CurrentPlayer)
-/* 0BE94C 7F089E1C 8C42A0B0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-.L7F089E20:
-/* 0BE950 7F089E20 AC4000F4 */  sw    $zero, 0xf4($v0)
-/* 0BE954 7F089E24 8D8CA0B0 */  lw    $t4, %lo(g_CurrentPlayer)($t4)
-/* 0BE958 7F089E28 24050044 */  li    $a1, 68
-/* 0BE95C 7F089E2C 00003025 */  move  $a2, $zero
-/* 0BE960 7F089E30 AD8000F8 */  sw    $zero, 0xf8($t4)
-/* 0BE964 7F089E34 0C002382 */  jal   sndPlaySfx
-/* 0BE968 7F089E38 8C843720 */   lw    $a0, %lo(g_musicSfxBufferPtr)($a0)
-.L7F089E3C:
-/* 0BE96C 7F089E3C 8FBF0014 */  lw    $ra, 0x14($sp)
-.L7F089E40:
-/* 0BE970 7F089E40 27BD0040 */  addiu $sp, $sp, 0x40
-/* 0BE974 7F089E44 03E00008 */  jr    $ra
-/* 0BE978 7F089E48 00000000 */   nop
-)
+    #define ZERO_7F08991C 0
 #endif
+                if (g_CurrentPlayer->damageshowtime < ZERO_7F08991C)
+                {
+                    g_CurrentPlayer->bondshotspeed.x = g_CurrentPlayer->bondshotspeed.x + 2.0f * vectorx;
+                    g_CurrentPlayer->bondshotspeed.z = g_CurrentPlayer->bondshotspeed.z + 2.0f * vectorz;
+                }
 
-#ifdef VERSION_JP
-GLOBAL_ASM(
-.late_rodata
-glabel pi_800552B0
-.word 0x40490fdb /*3.1415927*/
-.text
-glabel record_damage_kills
-/* 0BEB60 7F089FF0 27BDFFC0 */  addiu $sp, $sp, -0x40
-/* 0BEB64 7F089FF4 3C0E8008 */  lui   $t6, %hi(g_playerPerm) # $t6, 0x8008
-/* 0BEB68 7F089FF8 8DCEA124 */  lw    $t6, %lo(g_playerPerm)($t6)
-/* 0BEB6C 7F089FFC AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0BEB70 7F08A000 E7AE0044 */  swc1  $f14, 0x44($sp)
-/* 0BEB74 7F08A004 AFA60048 */  sw    $a2, 0x48($sp)
-/* 0BEB78 7F08A008 AFA7004C */  sw    $a3, 0x4c($sp)
-/* 0BEB7C 7F08A00C C5C4005C */  lwc1  $f4, 0x5c($t6)
-/* 0BEB80 7F08A010 3C0F8008 */  lui   $t7, %hi(g_CurrentPlayer) # $t7, 0x8008
-/* 0BEB84 7F08A014 8DEFA120 */  lw    $t7, %lo(g_CurrentPlayer)($t7)
-/* 0BEB88 7F08A018 460C2182 */  mul.s $f6, $f4, $f12
-/* 0BEB8C 7F08A01C E7A6003C */  swc1  $f6, 0x3c($sp)
-/* 0BEB90 7F08A020 8DF801C8 */  lw    $t8, 0x1c8($t7)
-/* 0BEB94 7F08A024 13000013 */  beqz  $t8, .Ljp7F08A074
-/* 0BEB98 7F08A028 00000000 */   nop
-/* 0BEB9C 7F08A02C 0FC22A8D */  jal   get_BONDdata_watch_armor
-/* 0BEBA0 7F08A030 00000000 */   nop
-/* 0BEBA4 7F08A034 3C048008 */  lui   $a0, %hi(g_CurrentPlayer) # $a0, 0x8008
-/* 0BEBA8 7F08A038 8C84A120 */  lw    $a0, %lo(g_CurrentPlayer)($a0)
-/* 0BEBAC 7F08A03C 44070000 */  mfc1  $a3, $f0
-/* 0BEBB0 7F08A040 2405002E */  li    $a1, 46
-/* 0BEBB4 7F08A044 24060001 */  li    $a2, 1
-/* 0BEBB8 7F08A048 0FC28EB4 */  jal   sub_GAME_7F0A2F30
-/* 0BEBBC 7F08A04C 248412B8 */   addiu $a0, $a0, 0x12b8
-/* 0BEBC0 7F08A050 0FC22A89 */  jal   bondviewGetCurrentPlayerHealth
-/* 0BEBC4 7F08A054 00000000 */   nop
-/* 0BEBC8 7F08A058 3C048008 */  lui   $a0, %hi(g_CurrentPlayer) # $a0, 0x8008
-/* 0BEBCC 7F08A05C 8C84A120 */  lw    $a0, %lo(g_CurrentPlayer)($a0)
-/* 0BEBD0 7F08A060 44070000 */  mfc1  $a3, $f0
-/* 0BEBD4 7F08A064 2405002E */  li    $a1, 46
-/* 0BEBD8 7F08A068 2406FFFF */  li    $a2, -1
-/* 0BEBDC 7F08A06C 0FC28EB4 */  jal   sub_GAME_7F0A2F30
-/* 0BEBE0 7F08A070 24841598 */   addiu $a0, $a0, 0x1598
-.Ljp7F08A074:
-/* 0BEBE4 7F08A074 0FC26C01 */  jal   getPlayerCount
-/* 0BEBE8 7F08A078 00000000 */   nop
-/* 0BEBEC 7F08A07C 28410002 */  slti  $at, $v0, 2
-/* 0BEBF0 7F08A080 14200007 */  bnez  $at, .Ljp7F08A0A0
-/* 0BEBF4 7F08A084 3C198009 */   lui   $t9, %hi(g_stopPlayFlag) # $t9, 0x8009
-/* 0BEBF8 7F08A088 8F39C770 */  lw    $t9, %lo(g_stopPlayFlag)($t9)
-/* 0BEBFC 7F08A08C 3C088009 */  lui   $t0, %hi(g_gameOverFlag) # $t0, 0x8009
-/* 0BEC00 7F08A090 5720012D */  bnezl $t9, .Ljp7F08A548
-/* 0BEC04 7F08A094 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BEC08 7F08A098 8D08C774 */  lw    $t0, %lo(g_gameOverFlag)($t0)
-/* 0BEC0C 7F08A09C 15000129 */  bnez  $t0, .Ljp7F08A544
-.Ljp7F08A0A0:
-/* 0BEC10 7F08A0A0 3C098003 */   lui   $t1, %hi(in_tank_flag) # $t1, 0x8003
-/* 0BEC14 7F08A0A4 8D296488 */  lw    $t1, %lo(in_tank_flag)($t1)
-/* 0BEC18 7F08A0A8 24010001 */  li    $at, 1
-/* 0BEC1C 7F08A0AC C7A8003C */  lwc1  $f8, 0x3c($sp)
-/* 0BEC20 7F08A0B0 15210006 */  bne   $t1, $at, .Ljp7F08A0CC
-/* 0BEC24 7F08A0B4 3C028008 */   lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BEC28 7F08A0B8 3C013E80 */  li    $at, 0x3E800000 # 0.250000
-/* 0BEC2C 7F08A0BC 44815000 */  mtc1  $at, $f10
-/* 0BEC30 7F08A0C0 00000000 */  nop
-/* 0BEC34 7F08A0C4 460A4402 */  mul.s $f16, $f8, $f10
-/* 0BEC38 7F08A0C8 E7B0003C */  swc1  $f16, 0x3c($sp)
-.Ljp7F08A0CC:
-/* 0BEC3C 7F08A0CC 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BEC40 7F08A0D0 8C4A00D8 */  lw    $t2, 0xd8($v0)
-/* 0BEC44 7F08A0D4 15400016 */  bnez  $t2, .Ljp7F08A130
-/* 0BEC48 7F08A0D8 00000000 */   nop
-/* 0BEC4C 7F08A0DC 904B12B6 */  lbu   $t3, 0x12b6($v0)
-/* 0BEC50 7F08A0E0 15600013 */  bnez  $t3, .Ljp7F08A130
-/* 0BEC54 7F08A0E4 00000000 */   nop
-/* 0BEC58 7F08A0E8 0FC26F3C */  jal   get_cur_playernum
-/* 0BEC5C 7F08A0EC 00000000 */   nop
-/* 0BEC60 7F08A0F0 00402025 */  move  $a0, $v0
-/* 0BEC64 7F08A0F4 0C00322E */  jal   joyRumblePakStart
-/* 0BEC68 7F08A0F8 3C053E80 */   lui   $a1, 0x3e80
-/* 0BEC6C 7F08A0FC 0FC29658 */  jal   cur_player_get_control_type
-/* 0BEC70 7F08A100 00000000 */   nop
-/* 0BEC74 7F08A104 28410004 */  slti  $at, $v0, 4
-/* 0BEC78 7F08A108 14200009 */  bnez  $at, .Ljp7F08A130
-/* 0BEC7C 7F08A10C 00000000 */   nop
-/* 0BEC80 7F08A110 0FC26F3C */  jal   get_cur_playernum
-/* 0BEC84 7F08A114 00000000 */   nop
-/* 0BEC88 7F08A118 0FC26C01 */  jal   getPlayerCount
-/* 0BEC8C 7F08A11C AFA2001C */   sw    $v0, 0x1c($sp)
-/* 0BEC90 7F08A120 8FAC001C */  lw    $t4, 0x1c($sp)
-/* 0BEC94 7F08A124 3C053E80 */  lui   $a1, 0x3e80
-/* 0BEC98 7F08A128 0C00322E */  jal   joyRumblePakStart
-/* 0BEC9C 7F08A12C 004C2021 */   addu  $a0, $v0, $t4
-.Ljp7F08A130:
-/* 0BECA0 7F08A130 0FC26C01 */  jal   getPlayerCount
-/* 0BECA4 7F08A134 00000000 */   nop
-/* 0BECA8 7F08A138 28410002 */  slti  $at, $v0, 2
-/* 0BECAC 7F08A13C 14200010 */  bnez  $at, .Ljp7F08A180
-/* 0BECB0 7F08A140 00000000 */   nop
-/* 0BECB4 7F08A144 0FC05202 */  jal   get_scenario
-/* 0BECB8 7F08A148 00000000 */   nop
-/* 0BECBC 7F08A14C 24010004 */  li    $at, 4
-/* 0BECC0 7F08A150 1441000B */  bne   $v0, $at, .Ljp7F08A180
-/* 0BECC4 7F08A154 3C028008 */   lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BECC8 7F08A158 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BECCC 7F08A15C C45200DC */  lwc1  $f18, 0xdc($v0)
-/* 0BECD0 7F08A160 C4442A3C */  lwc1  $f4, 0x2a3c($v0)
-/* 0BECD4 7F08A164 C44800E0 */  lwc1  $f8, 0xe0($v0)
-/* 0BECD8 7F08A168 C44A2A40 */  lwc1  $f10, 0x2a40($v0)
-/* 0BECDC 7F08A16C 46049182 */  mul.s $f6, $f18, $f4
-/* 0BECE0 7F08A170 00000000 */  nop
-/* 0BECE4 7F08A174 460A4402 */  mul.s $f16, $f8, $f10
-/* 0BECE8 7F08A178 46103480 */  add.s $f18, $f6, $f16
-/* 0BECEC 7F08A17C E7B2003C */  swc1  $f18, 0x3c($sp)
-.Ljp7F08A180:
-/* 0BECF0 7F08A180 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BECF4 7F08A184 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BECF8 7F08A188 904D12B6 */  lbu   $t5, 0x12b6($v0)
-/* 0BECFC 7F08A18C 55A000EE */  bnezl $t5, .Ljp7F08A548
-/* 0BED00 7F08A190 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BED04 7F08A194 8C4E00D8 */  lw    $t6, 0xd8($v0)
-/* 0BED08 7F08A198 3C0F8003 */  lui   $t7, %hi(g_PlayerInvincible) # $t7, 0x8003
-/* 0BED0C 7F08A19C 55C000EA */  bnezl $t6, .Ljp7F08A548
-/* 0BED10 7F08A1A0 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BED14 7F08A1A4 8DEF64F4 */  lw    $t7, %lo(g_PlayerInvincible)($t7)
-/* 0BED18 7F08A1A8 55E000E7 */  bnezl $t7, .Ljp7F08A548
-/* 0BED1C 7F08A1AC 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BED20 7F08A1B0 C44400F4 */  lwc1  $f4, 0xf4($v0)
-/* 0BED24 7F08A1B4 44804000 */  mtc1  $zero, $f8
-/* 0BED28 7F08A1B8 00000000 */  nop
-/* 0BED2C 7F08A1BC 4608203C */  c.lt.s $f4, $f8
-/* 0BED30 7F08A1C0 00000000 */  nop
-/* 0BED34 7F08A1C4 4503000E */  bc1tl .Ljp7F08A200
-/* 0BED38 7F08A1C8 8C4301C8 */   lw    $v1, 0x1c8($v0)
-/* 0BED3C 7F08A1CC 0FC26C01 */  jal   getPlayerCount
-/* 0BED40 7F08A1D0 00000000 */   nop
-/* 0BED44 7F08A1D4 28410002 */  slti  $at, $v0, 2
-/* 0BED48 7F08A1D8 142000DA */  bnez  $at, .Ljp7F08A544
-/* 0BED4C 7F08A1DC 3C028008 */   lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BED50 7F08A1E0 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BED54 7F08A1E4 44805000 */  mtc1  $zero, $f10
-/* 0BED58 7F08A1E8 C44600F4 */  lwc1  $f6, 0xf4($v0)
-/* 0BED5C 7F08A1EC 46065032 */  c.eq.s $f10, $f6
-/* 0BED60 7F08A1F0 00000000 */  nop
-/* 0BED64 7F08A1F4 450200D4 */  bc1fl .Ljp7F08A548
-/* 0BED68 7F08A1F8 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BED6C 7F08A1FC 8C4301C8 */  lw    $v1, 0x1c8($v0)
-.Ljp7F08A200:
-/* 0BED70 7F08A200 24010005 */  li    $at, 5
-/* 0BED74 7F08A204 106100CF */  beq   $v1, $at, .Ljp7F08A544
-/* 0BED78 7F08A208 2401000C */   li    $at, 12
-/* 0BED7C 7F08A20C 506100CE */  beql  $v1, $at, .Ljp7F08A548
-/* 0BED80 7F08A210 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BED84 7F08A214 C45000DC */  lwc1  $f16, 0xdc($v0)
-/* 0BED88 7F08A218 E45000E4 */  swc1  $f16, 0xe4($v0)
-/* 0BED8C 7F08A21C 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BED90 7F08A220 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BED94 7F08A224 C45200E0 */  lwc1  $f18, 0xe0($v0)
-/* 0BED98 7F08A228 0FC26C01 */  jal   getPlayerCount
-/* 0BED9C 7F08A22C E45200E8 */   swc1  $f18, 0xe8($v0)
-/* 0BEDA0 7F08A230 28410002 */  slti  $at, $v0, 2
-/* 0BEDA4 7F08A234 54200035 */  bnezl $at, .Ljp7F08A30C
-/* 0BEDA8 7F08A238 8FA30050 */   lw    $v1, 0x50($sp)
-/* 0BEDAC 7F08A23C 0FC26F3C */  jal   get_cur_playernum
-/* 0BEDB0 7F08A240 00000000 */   nop
-/* 0BEDB4 7F08A244 AFA20038 */  sw    $v0, 0x38($sp)
-/* 0BEDB8 7F08A248 C7AC0044 */  lwc1  $f12, 0x44($sp)
-/* 0BEDBC 7F08A24C 0FC16BD4 */  jal   atan2f
-/* 0BEDC0 7F08A250 C7AE0048 */   lwc1  $f14, 0x48($sp)
-/* 0BEDC4 7F08A254 3C014334 */  li    $at, 0x43340000 # 180.000000
-/* 0BEDC8 7F08A258 44812000 */  mtc1  $at, $f4
-/* 0BEDCC 7F08A25C 3C018005 */  lui   $at, %hi(pi_800552B0) # $at, 0x8005
-/* 0BEDD0 7F08A260 C42A52E0 */  lwc1  $f10, %lo(pi_800552B0)($at)
-/* 0BEDD4 7F08A264 46040202 */  mul.s $f8, $f0, $f4
-/* 0BEDD8 7F08A268 8FB80038 */  lw    $t8, 0x38($sp)
-/* 0BEDDC 7F08A26C 3C0143B4 */  li    $at, 0x43B40000 # 360.000000
-/* 0BEDE0 7F08A270 3C088008 */  lui   $t0, %hi(g_playerPointers)
-/* 0BEDE4 7F08A274 0018C880 */  sll   $t9, $t8, 2
-/* 0BEDE8 7F08A278 44818000 */  mtc1  $at, $f16
-/* 0BEDEC 7F08A27C 01194021 */  addu  $t0, $t0, $t9
-/* 0BEDF0 7F08A280 460A4183 */  div.s $f6, $f8, $f10
-/* 0BEDF4 7F08A284 8D089F50 */  lw    $t0, %lo(g_playerPointers)($t0)
-/* 0BEDF8 7F08A288 44806000 */  mtc1  $zero, $f12
-/* 0BEDFC 7F08A28C 8FA9004C */  lw    $t1, 0x4c($sp)
-/* 0BEE00 7F08A290 C5040148 */  lwc1  $f4, 0x148($t0)
-/* 0BEE04 7F08A294 3C0142B4 */  li    $at, 0x42B40000 # 90.000000
-/* 0BEE08 7F08A298 000950C0 */  sll   $t2, $t1, 3
-/* 0BEE0C 7F08A29C 3C0B8008 */  lui   $t3, %hi(g_playerPlayerData) # $t3, 0x8008
-/* 0BEE10 7F08A2A0 01495023 */  subu  $t2, $t2, $t1
-/* 0BEE14 7F08A2A4 44814000 */  mtc1  $at, $f8
-/* 0BEE18 7F08A2A8 000A5100 */  sll   $t2, $t2, 4
-/* 0BEE1C 7F08A2AC 256B9F60 */  addiu $t3, %lo(g_playerPlayerData) # addiu $t3, $t3, -0x60a0
-/* 0BEE20 7F08A2B0 3C014387 */  li    $at, 0x43870000 # 270.000000
-/* 0BEE24 7F08A2B4 014B1021 */  addu  $v0, $t2, $t3
-/* 0BEE28 7F08A2B8 46068481 */  sub.s $f18, $f16, $f6
-/* 0BEE2C 7F08A2BC 46122081 */  sub.s $f2, $f4, $f18
-/* 0BEE30 7F08A2C0 460C103C */  c.lt.s $f2, $f12
-/* 0BEE34 7F08A2C4 00000000 */  nop
-/* 0BEE38 7F08A2C8 45020003 */  bc1fl .Ljp7F08A2D8
-/* 0BEE3C 7F08A2CC 4608103C */   c.lt.s $f2, $f8
-/* 0BEE40 7F08A2D0 46001087 */  neg.s $f2, $f2
-/* 0BEE44 7F08A2D4 4608103C */  c.lt.s $f2, $f8
-.Ljp7F08A2D8:
-/* 0BEE48 7F08A2D8 00000000 */  nop
-/* 0BEE4C 7F08A2DC 45030008 */  bc1tl .Ljp7F08A300
-/* 0BEE50 7F08A2E0 8C4C003C */   lw    $t4, 0x3c($v0)
-/* 0BEE54 7F08A2E4 44815000 */  mtc1  $at, $f10
-/* 0BEE58 7F08A2E8 00000000 */  nop
-/* 0BEE5C 7F08A2EC 4602503C */  c.lt.s $f10, $f2
-/* 0BEE60 7F08A2F0 00000000 */  nop
-/* 0BEE64 7F08A2F4 45020005 */  bc1fl .Ljp7F08A30C
-/* 0BEE68 7F08A2F8 8FA30050 */   lw    $v1, 0x50($sp)
-/* 0BEE6C 7F08A2FC 8C4C003C */  lw    $t4, 0x3c($v0)
-.Ljp7F08A300:
-/* 0BEE70 7F08A300 258D0001 */  addiu $t5, $t4, 1
-/* 0BEE74 7F08A304 AC4D003C */  sw    $t5, 0x3c($v0)
-/* 0BEE78 7F08A308 8FA30050 */  lw    $v1, 0x50($sp)
-.Ljp7F08A30C:
-/* 0BEE7C 7F08A30C 44806000 */  mtc1  $zero, $f12
-/* 0BEE80 7F08A310 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BEE84 7F08A314 10600010 */  beqz  $v1, .Ljp7F08A358
-/* 0BEE88 7F08A318 00000000 */   nop
-/* 0BEE8C 7F08A31C 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BEE90 7F08A320 C7A6003C */  lwc1  $f6, 0x3c($sp)
-/* 0BEE94 7F08A324 C44000E0 */  lwc1  $f0, 0xe0($v0)
-/* 0BEE98 7F08A328 C4422A40 */  lwc1  $f2, 0x2a40($v0)
-/* 0BEE9C 7F08A32C 46020402 */  mul.s $f16, $f0, $f2
-/* 0BEEA0 7F08A330 4610303E */  c.le.s $f6, $f16
-/* 0BEEA4 7F08A334 00000000 */  nop
-/* 0BEEA8 7F08A338 45000007 */  bc1f  .Ljp7F08A358
-/* 0BEEAC 7F08A33C 00000000 */   nop
-/* 0BEEB0 7F08A340 46023103 */  div.s $f4, $f6, $f2
-/* 0BEEB4 7F08A344 46040481 */  sub.s $f18, $f0, $f4
-/* 0BEEB8 7F08A348 E45200E0 */  swc1  $f18, 0xe0($v0)
-/* 0BEEBC 7F08A34C 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BEEC0 7F08A350 1000005E */  b     .Ljp7F08A4CC
-/* 0BEEC4 7F08A354 8C42A120 */   lw    $v0, %lo(g_CurrentPlayer)($v0)
-.Ljp7F08A358:
-/* 0BEEC8 7F08A358 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BEECC 7F08A35C 1060000F */  beqz  $v1, .Ljp7F08A39C
-/* 0BEED0 7F08A360 8C42A120 */   lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BEED4 7F08A364 C44800E0 */  lwc1  $f8, 0xe0($v0)
-/* 0BEED8 7F08A368 C44A2A40 */  lwc1  $f10, 0x2a40($v0)
-/* 0BEEDC 7F08A36C C7A6003C */  lwc1  $f6, 0x3c($sp)
-/* 0BEEE0 7F08A370 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0BEEE4 7F08A374 460A4403 */  div.s $f16, $f8, $f10
-/* 0BEEE8 7F08A378 3C0E8008 */  lui   $t6, %hi(g_CurrentPlayer) # $t6, 0x8008
-/* 0BEEEC 7F08A37C 44819000 */  mtc1  $at, $f18
-/* 0BEEF0 7F08A380 46103101 */  sub.s $f4, $f6, $f16
-/* 0BEEF4 7F08A384 E7A4003C */  swc1  $f4, 0x3c($sp)
-/* 0BEEF8 7F08A388 E44C00E0 */  swc1  $f12, 0xe0($v0)
-/* 0BEEFC 7F08A38C 8DCEA120 */  lw    $t6, %lo(g_CurrentPlayer)($t6)
-/* 0BEF00 7F08A390 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BEF04 7F08A394 E5D22A40 */  swc1  $f18, 0x2a40($t6)
-/* 0BEF08 7F08A398 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-.Ljp7F08A39C:
-/* 0BEF0C 7F08A39C C7A8003C */  lwc1  $f8, 0x3c($sp)
-/* 0BEF10 7F08A3A0 C44A2A3C */  lwc1  $f10, 0x2a3c($v0)
-/* 0BEF14 7F08A3A4 C45000DC */  lwc1  $f16, 0xdc($v0)
-/* 0BEF18 7F08A3A8 460A4183 */  div.s $f6, $f8, $f10
-/* 0BEF1C 7F08A3AC 46068101 */  sub.s $f4, $f16, $f6
-/* 0BEF20 7F08A3B0 E44400DC */  swc1  $f4, 0xdc($v0)
-/* 0BEF24 7F08A3B4 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BEF28 7F08A3B8 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BEF2C 7F08A3BC C45200DC */  lwc1  $f18, 0xdc($v0)
-/* 0BEF30 7F08A3C0 460C903E */  c.le.s $f18, $f12
-/* 0BEF34 7F08A3C4 00000000 */  nop
-/* 0BEF38 7F08A3C8 45020041 */  bc1fl .Ljp7F08A4D0
-/* 0BEF3C 7F08A3CC C44800F4 */   lwc1  $f8, 0xf4($v0)
-/* 0BEF40 7F08A3D0 0FC26C01 */  jal   getPlayerCount
-/* 0BEF44 7F08A3D4 00000000 */   nop
-/* 0BEF48 7F08A3D8 28410002 */  slti  $at, $v0, 2
-/* 0BEF4C 7F08A3DC 14200036 */  bnez  $at, .Ljp7F08A4B8
-/* 0BEF50 7F08A3E0 00000000 */   nop
-/* 0BEF54 7F08A3E4 0FC26F3C */  jal   get_cur_playernum
-/* 0BEF58 7F08A3E8 00000000 */   nop
-/* 0BEF5C 7F08A3EC AFA2002C */  sw    $v0, 0x2c($sp)
-/* 0BEF60 7F08A3F0 0FC05202 */  jal   get_scenario
-/* 0BEF64 7F08A3F4 AFA00028 */   sw    $zero, 0x28($sp)
-/* 0BEF68 7F08A3F8 24010003 */  li    $at, 3
-/* 0BEF6C 7F08A3FC 14410006 */  bne   $v0, $at, .Ljp7F08A418
-/* 0BEF70 7F08A400 00000000 */   nop
-/* 0BEF74 7F08A404 0FC23649 */  jal   bondinvHasGoldenGun
-/* 0BEF78 7F08A408 00000000 */   nop
-/* 0BEF7C 7F08A40C 10400002 */  beqz  $v0, .Ljp7F08A418
-/* 0BEF80 7F08A410 240F0001 */   li    $t7, 1
-/* 0BEF84 7F08A414 AFAF0028 */  sw    $t7, 0x28($sp)
-.Ljp7F08A418:
-/* 0BEF88 7F08A418 0FC15B1E */  jal   drop_inventory
-/* 0BEF8C 7F08A41C 00000000 */   nop
-/* 0BEF90 7F08A420 8FB8002C */  lw    $t8, 0x2c($sp)
-/* 0BEF94 7F08A424 8FB9004C */  lw    $t9, 0x4c($sp)
-/* 0BEF98 7F08A428 13190003 */  beq   $t8, $t9, .Ljp7F08A438
-/* 0BEF9C 7F08A42C 00000000 */   nop
-/* 0BEFA0 7F08A430 0FC1ABD2 */  jal   increment_num_deaths
-/* 0BEFA4 7F08A434 00000000 */   nop
-.Ljp7F08A438:
-/* 0BEFA8 7F08A438 0FC26F2B */  jal   set_cur_player
-/* 0BEFAC 7F08A43C 8FA4004C */   lw    $a0, 0x4c($sp)
-/* 0BEFB0 7F08A440 8FA8002C */  lw    $t0, 0x2c($sp)
-/* 0BEFB4 7F08A444 8FA9004C */  lw    $t1, 0x4c($sp)
-/* 0BEFB8 7F08A448 15090005 */  bne   $t0, $t1, .Ljp7F08A460
-/* 0BEFBC 7F08A44C 00000000 */   nop
-/* 0BEFC0 7F08A450 0FC1AC01 */  jal   increment_num_suicides_display_MP
-/* 0BEFC4 7F08A454 00000000 */   nop
-/* 0BEFC8 7F08A458 10000008 */  b     .Ljp7F08A47C
-/* 0BEFCC 7F08A45C 00000000 */   nop
-.Ljp7F08A460:
-/* 0BEFD0 7F08A460 0FC1AB5B */  jal   increment_num_kills_display_text_in_MP
-/* 0BEFD4 7F08A464 00000000 */   nop
-/* 0BEFD8 7F08A468 8FAA0028 */  lw    $t2, 0x28($sp)
-/* 0BEFDC 7F08A46C 11400003 */  beqz  $t2, .Ljp7F08A47C
-/* 0BEFE0 7F08A470 00000000 */   nop
-/* 0BEFE4 7F08A474 0FC1ABC8 */  jal   increment_num_times_killed_MwtGC
-/* 0BEFE8 7F08A478 00000000 */   nop
-.Ljp7F08A47C:
-/* 0BEFEC 7F08A47C 0FC26F2B */  jal   set_cur_player
-/* 0BEFF0 7F08A480 8FA4002C */   lw    $a0, 0x2c($sp)
-/* 0BEFF4 7F08A484 8FAB004C */  lw    $t3, 0x4c($sp)
-/* 0BEFF8 7F08A488 8FAD002C */  lw    $t5, 0x2c($sp)
-/* 0BEFFC 7F08A48C 3C188008 */  lui   $t8, %hi(g_playerPlayerData) # $t8, 0x8008
-/* 0BF000 7F08A490 000B60C0 */  sll   $t4, $t3, 3
-/* 0BF004 7F08A494 018B6023 */  subu  $t4, $t4, $t3
-/* 0BF008 7F08A498 000C6100 */  sll   $t4, $t4, 4
-/* 0BF00C 7F08A49C 000D7080 */  sll   $t6, $t5, 2
-/* 0BF010 7F08A4A0 018E7821 */  addu  $t7, $t4, $t6
-/* 0BF014 7F08A4A4 27189F60 */  addiu $t8, %lo(g_playerPlayerData) # addiu $t8, $t8, -0x60a0
-/* 0BF018 7F08A4A8 01F81021 */  addu  $v0, $t7, $t8
-/* 0BF01C 7F08A4AC 8C590024 */  lw    $t9, 0x24($v0)
-/* 0BF020 7F08A4B0 27280001 */  addiu $t0, $t9, 1
-/* 0BF024 7F08A4B4 AC480024 */  sw    $t0, 0x24($v0)
-.Ljp7F08A4B8:
-/* 0BF028 7F08A4B8 0FC2279F */  jal   bondviewKillCurrentPlayer
-/* 0BF02C 7F08A4BC 00000000 */   nop
-/* 0BF030 7F08A4C0 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BF034 7F08A4C4 44806000 */  mtc1  $zero, $f12
-/* 0BF038 7F08A4C8 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-.Ljp7F08A4CC:
-/* 0BF03C 7F08A4CC C44800F4 */  lwc1  $f8, 0xf4($v0)
-.Ljp7F08A4D0:
-/* 0BF040 7F08A4D0 C7AA0044 */  lwc1  $f10, 0x44($sp)
-/* 0BF044 7F08A4D4 3C098008 */  lui   $t1, %hi(g_CurrentPlayer) # $t1, 0x8008
-/* 0BF048 7F08A4D8 460C403C */  c.lt.s $f8, $f12
-/* 0BF04C 7F08A4DC 00000000 */  nop
-/* 0BF050 7F08A4E0 4502000F */  bc1fl .Ljp7F08A520
-/* 0BF054 7F08A4E4 E44C00F4 */   swc1  $f12, 0xf4($v0)
-/* 0BF058 7F08A4E8 460A5400 */  add.s $f16, $f10, $f10
-/* 0BF05C 7F08A4EC C4460180 */  lwc1  $f6, 0x180($v0)
-/* 0BF060 7F08A4F0 46103100 */  add.s $f4, $f6, $f16
-/* 0BF064 7F08A4F4 E4440180 */  swc1  $f4, 0x180($v0)
-/* 0BF068 7F08A4F8 C7B20048 */  lwc1  $f18, 0x48($sp)
-/* 0BF06C 7F08A4FC 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BF070 7F08A500 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BF074 7F08A504 46129200 */  add.s $f8, $f18, $f18
-/* 0BF078 7F08A508 C44A0188 */  lwc1  $f10, 0x188($v0)
-/* 0BF07C 7F08A50C 46085180 */  add.s $f6, $f10, $f8
-/* 0BF080 7F08A510 E4460188 */  swc1  $f6, 0x188($v0)
-/* 0BF084 7F08A514 3C028008 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8008
-/* 0BF088 7F08A518 8C42A120 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BF08C 7F08A51C E44C00F4 */  swc1  $f12, 0xf4($v0)
-.Ljp7F08A520:
-/* 0BF090 7F08A520 8D29A120 */  lw    $t1, %lo(g_CurrentPlayer)($t1)
-/* 0BF094 7F08A524 0FC3021B */  jal   lvlGetControlsLockedFlag
-/* 0BF098 7F08A528 E52C00F8 */   swc1  $f12, 0xf8($t1)
-/* 0BF09C 7F08A52C 14400005 */  bnez  $v0, .Ljp7F08A544
-/* 0BF0A0 7F08A530 3C048006 */   lui   $a0, %hi(g_musicSfxBufferPtr) # $a0, 0x8006
-/* 0BF0A4 7F08A534 8C843760 */  lw    $a0, %lo(g_musicSfxBufferPtr)($a0)
-/* 0BF0A8 7F08A538 24050044 */  li    $a1, 68
-/* 0BF0AC 7F08A53C 0C002386 */  jal   sndPlaySfx
-/* 0BF0B0 7F08A540 00003025 */   move  $a2, $zero
-.Ljp7F08A544:
-/* 0BF0B4 7F08A544 8FBF0014 */  lw    $ra, 0x14($sp)
-.Ljp7F08A548:
-/* 0BF0B8 7F08A548 27BD0040 */  addiu $sp, $sp, 0x40
-/* 0BF0BC 7F08A54C 03E00008 */  jr    $ra
-/* 0BF0C0 7F08A550 00000000 */   nop
-)
+                g_CurrentPlayer->damageshowtime = ZERO_7F08991C;
+                g_CurrentPlayer->healthshowtime = ZERO_7F08991C;
+
+#undef ZERO_7F08991C
+
+#if defined(VERSION_EU) || defined(VERSION_JP)
+                if (!lvlGetControlsLockedFlag())
+                {
+                    sndPlaySfx(g_musicSfxBufferPtr, 0x44, 0);
+                }
+#else
+                sndPlaySfx(g_musicSfxBufferPtr, 0x44, 0);
 #endif
-
-#if defined(VERSION_EU)
-GLOBAL_ASM(
-.late_rodata
-glabel pi_800552B0
-.word 0x40490fdb /*3.1415927*/
-.text
-glabel record_damage_kills
-/* 0BC474 7F089A84 27BDFFC0 */  addiu $sp, $sp, -0x40
-/* 0BC478 7F089A88 3C0E8007 */  lui   $t6, %hi(g_playerPerm) # $t6, 0x8007
-/* 0BC47C 7F089A8C 8DCE8BC4 */  lw    $t6, %lo(g_playerPerm)($t6)
-/* 0BC480 7F089A90 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0BC484 7F089A94 E7AE0044 */  swc1  $f14, 0x44($sp)
-/* 0BC488 7F089A98 AFA60048 */  sw    $a2, 0x48($sp)
-/* 0BC48C 7F089A9C AFA7004C */  sw    $a3, 0x4c($sp)
-/* 0BC490 7F089AA0 C5C4005C */  lwc1  $f4, 0x5c($t6)
-/* 0BC494 7F089AA4 3C0F8007 */  lui   $t7, %hi(g_CurrentPlayer) # $t7, 0x8007
-/* 0BC498 7F089AA8 8DEF8BC0 */  lw    $t7, %lo(g_CurrentPlayer)($t7)
-/* 0BC49C 7F089AAC 460C2182 */  mul.s $f6, $f4, $f12
-/* 0BC4A0 7F089AB0 E7A6003C */  swc1  $f6, 0x3c($sp)
-/* 0BC4A4 7F089AB4 8DF801C8 */  lw    $t8, 0x1c8($t7)
-/* 0BC4A8 7F089AB8 13000013 */  beqz  $t8, .L7F089B08
-/* 0BC4AC 7F089ABC 00000000 */   nop   
-/* 0BC4B0 7F089AC0 0FC22932 */  jal   get_BONDdata_watch_armor
-/* 0BC4B4 7F089AC4 00000000 */   nop   
-/* 0BC4B8 7F089AC8 3C048007 */  lui   $a0, %hi(g_CurrentPlayer) # $a0, 0x8007
-/* 0BC4BC 7F089ACC 8C848BC0 */  lw    $a0, %lo(g_CurrentPlayer)($a0)
-/* 0BC4C0 7F089AD0 44070000 */  mfc1  $a3, $f0
-/* 0BC4C4 7F089AD4 2405002E */  li    $a1, 46
-/* 0BC4C8 7F089AD8 24060001 */  li    $a2, 1
-/* 0BC4CC 7F089ADC 0FC2891C */  jal   sub_GAME_7F0A2F30
-/* 0BC4D0 7F089AE0 248412B0 */   addiu $a0, $a0, 0x12b0
-/* 0BC4D4 7F089AE4 0FC2292E */  jal   bondviewGetCurrentPlayerHealth
-/* 0BC4D8 7F089AE8 00000000 */   nop   
-/* 0BC4DC 7F089AEC 3C048007 */  lui   $a0, %hi(g_CurrentPlayer) # $a0, 0x8007
-/* 0BC4E0 7F089AF0 8C848BC0 */  lw    $a0, %lo(g_CurrentPlayer)($a0)
-/* 0BC4E4 7F089AF4 44070000 */  mfc1  $a3, $f0
-/* 0BC4E8 7F089AF8 2405002E */  li    $a1, 46
-/* 0BC4EC 7F089AFC 2406FFFF */  li    $a2, -1
-/* 0BC4F0 7F089B00 0FC2891C */  jal   sub_GAME_7F0A2F30
-/* 0BC4F4 7F089B04 24841590 */   addiu $a0, $a0, 0x1590
-.L7F089B08:
-/* 0BC4F8 7F089B08 0FC26669 */  jal   getPlayerCount
-/* 0BC4FC 7F089B0C 00000000 */   nop   
-/* 0BC500 7F089B10 28410002 */  slti  $at, $v0, 2
-/* 0BC504 7F089B14 14200007 */  bnez  $at, .L7F089B34
-/* 0BC508 7F089B18 3C198007 */   lui   $t9, %hi(g_stopPlayFlag) # $t9, 0x8007
-/* 0BC50C 7F089B1C 8F393AE0 */  lw    $t9, %lo(g_stopPlayFlag)($t9)
-/* 0BC510 7F089B20 3C088007 */  lui   $t0, %hi(g_gameOverFlag) # $t0, 0x8007
-/* 0BC514 7F089B24 5720012D */  bnezl $t9, .L7F089FDC
-/* 0BC518 7F089B28 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BC51C 7F089B2C 8D083AE4 */  lw    $t0, %lo(g_gameOverFlag)($t0)
-/* 0BC520 7F089B30 15000129 */  bnez  $t0, .L7F089FD8
-.L7F089B34:
-/* 0BC524 7F089B34 3C098003 */   lui   $t1, %hi(in_tank_flag) # $t1, 0x8003
-/* 0BC528 7F089B38 8D291998 */  lw    $t1, %lo(in_tank_flag)($t1)
-/* 0BC52C 7F089B3C 24010001 */  li    $at, 1
-/* 0BC530 7F089B40 C7A8003C */  lwc1  $f8, 0x3c($sp)
-/* 0BC534 7F089B44 15210006 */  bne   $t1, $at, .L7F089B60
-/* 0BC538 7F089B48 3C028007 */   lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC53C 7F089B4C 3C013E80 */  li    $at, 0x3E800000 # 0.250000
-/* 0BC540 7F089B50 44815000 */  mtc1  $at, $f10
-/* 0BC544 7F089B54 00000000 */  nop   
-/* 0BC548 7F089B58 460A4402 */  mul.s $f16, $f8, $f10
-/* 0BC54C 7F089B5C E7B0003C */  swc1  $f16, 0x3c($sp)
-.L7F089B60:
-/* 0BC550 7F089B60 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC554 7F089B64 8C4A00D8 */  lw    $t2, 0xd8($v0)
-/* 0BC558 7F089B68 15400016 */  bnez  $t2, .L7F089BC4
-/* 0BC55C 7F089B6C 00000000 */   nop   
-/* 0BC560 7F089B70 904B12AE */  lbu   $t3, 0x12ae($v0)
-/* 0BC564 7F089B74 15600013 */  bnez  $t3, .L7F089BC4
-/* 0BC568 7F089B78 00000000 */   nop   
-/* 0BC56C 7F089B7C 0FC269A4 */  jal   get_cur_playernum
-/* 0BC570 7F089B80 00000000 */   nop   
-/* 0BC574 7F089B84 00402025 */  move  $a0, $v0
-/* 0BC578 7F089B88 0C002D72 */  jal   joyRumblePakStart
-/* 0BC57C 7F089B8C 3C053E80 */   lui   $a1, 0x3e80
-/* 0BC580 7F089B90 0FC29038 */  jal   cur_player_get_control_type
-/* 0BC584 7F089B94 00000000 */   nop   
-/* 0BC588 7F089B98 28410004 */  slti  $at, $v0, 4
-/* 0BC58C 7F089B9C 14200009 */  bnez  $at, .L7F089BC4
-/* 0BC590 7F089BA0 00000000 */   nop   
-/* 0BC594 7F089BA4 0FC269A4 */  jal   get_cur_playernum
-/* 0BC598 7F089BA8 00000000 */   nop   
-/* 0BC59C 7F089BAC 0FC26669 */  jal   getPlayerCount
-/* 0BC5A0 7F089BB0 AFA2001C */   sw    $v0, 0x1c($sp)
-/* 0BC5A4 7F089BB4 8FAC001C */  lw    $t4, 0x1c($sp)
-/* 0BC5A8 7F089BB8 3C053E80 */  lui   $a1, 0x3e80
-/* 0BC5AC 7F089BBC 0C002D72 */  jal   joyRumblePakStart
-/* 0BC5B0 7F089BC0 004C2021 */   addu  $a0, $v0, $t4
-.L7F089BC4:
-/* 0BC5B4 7F089BC4 0FC26669 */  jal   getPlayerCount
-/* 0BC5B8 7F089BC8 00000000 */   nop   
-/* 0BC5BC 7F089BCC 28410002 */  slti  $at, $v0, 2
-/* 0BC5C0 7F089BD0 14200010 */  bnez  $at, .L7F089C14
-/* 0BC5C4 7F089BD4 00000000 */   nop   
-/* 0BC5C8 7F089BD8 0FC051B2 */  jal   get_scenario
-/* 0BC5CC 7F089BDC 00000000 */   nop   
-/* 0BC5D0 7F089BE0 24010004 */  li    $at, 4
-/* 0BC5D4 7F089BE4 1441000B */  bne   $v0, $at, .L7F089C14
-/* 0BC5D8 7F089BE8 3C028007 */   lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC5DC 7F089BEC 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC5E0 7F089BF0 C45200DC */  lwc1  $f18, 0xdc($v0)
-/* 0BC5E4 7F089BF4 C4442A34 */  lwc1  $f4, 0x2a34($v0)
-/* 0BC5E8 7F089BF8 C44800E0 */  lwc1  $f8, 0xe0($v0)
-/* 0BC5EC 7F089BFC C44A2A38 */  lwc1  $f10, 0x2a38($v0)
-/* 0BC5F0 7F089C00 46049182 */  mul.s $f6, $f18, $f4
-/* 0BC5F4 7F089C04 00000000 */  nop   
-/* 0BC5F8 7F089C08 460A4402 */  mul.s $f16, $f8, $f10
-/* 0BC5FC 7F089C0C 46103480 */  add.s $f18, $f6, $f16
-/* 0BC600 7F089C10 E7B2003C */  swc1  $f18, 0x3c($sp)
-.L7F089C14:
-/* 0BC604 7F089C14 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC608 7F089C18 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC60C 7F089C1C 904D12AE */  lbu   $t5, 0x12ae($v0)
-/* 0BC610 7F089C20 55A000EE */  bnezl $t5, .L7F089FDC
-/* 0BC614 7F089C24 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BC618 7F089C28 8C4E00D8 */  lw    $t6, 0xd8($v0)
-/* 0BC61C 7F089C2C 3C0F8003 */  lui   $t7, %hi(g_PlayerInvincible) # $t7, 0x8003
-/* 0BC620 7F089C30 55C000EA */  bnezl $t6, .L7F089FDC
-/* 0BC624 7F089C34 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BC628 7F089C38 8DEF1A04 */  lw    $t7, %lo(g_PlayerInvincible)($t7)
-/* 0BC62C 7F089C3C 55E000E7 */  bnezl $t7, .L7F089FDC
-/* 0BC630 7F089C40 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BC634 7F089C44 C44400F4 */  lwc1  $f4, 0xf4($v0)
-/* 0BC638 7F089C48 44804000 */  mtc1  $zero, $f8
-/* 0BC63C 7F089C4C 00000000 */  nop   
-/* 0BC640 7F089C50 4608203C */  c.lt.s $f4, $f8
-/* 0BC644 7F089C54 00000000 */  nop   
-/* 0BC648 7F089C58 4503000E */  bc1tl .L7F089C94
-/* 0BC64C 7F089C5C 8C4301C8 */   lw    $v1, 0x1c8($v0)
-/* 0BC650 7F089C60 0FC26669 */  jal   getPlayerCount
-/* 0BC654 7F089C64 00000000 */   nop   
-/* 0BC658 7F089C68 28410002 */  slti  $at, $v0, 2
-/* 0BC65C 7F089C6C 142000DA */  bnez  $at, .L7F089FD8
-/* 0BC660 7F089C70 3C028007 */   lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC664 7F089C74 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC668 7F089C78 44805000 */  mtc1  $zero, $f10
-/* 0BC66C 7F089C7C C44600F4 */  lwc1  $f6, 0xf4($v0)
-/* 0BC670 7F089C80 46065032 */  c.eq.s $f10, $f6
-/* 0BC674 7F089C84 00000000 */  nop   
-/* 0BC678 7F089C88 450200D4 */  bc1fl .L7F089FDC
-/* 0BC67C 7F089C8C 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BC680 7F089C90 8C4301C8 */  lw    $v1, 0x1c8($v0)
-.L7F089C94:
-/* 0BC684 7F089C94 24010005 */  li    $at, 5
-/* 0BC688 7F089C98 106100CF */  beq   $v1, $at, .L7F089FD8
-/* 0BC68C 7F089C9C 2401000C */   li    $at, 12
-/* 0BC690 7F089CA0 506100CE */  beql  $v1, $at, .L7F089FDC
-/* 0BC694 7F089CA4 8FBF0014 */   lw    $ra, 0x14($sp)
-/* 0BC698 7F089CA8 C45000DC */  lwc1  $f16, 0xdc($v0)
-/* 0BC69C 7F089CAC E45000E4 */  swc1  $f16, 0xe4($v0)
-/* 0BC6A0 7F089CB0 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC6A4 7F089CB4 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC6A8 7F089CB8 C45200E0 */  lwc1  $f18, 0xe0($v0)
-/* 0BC6AC 7F089CBC 0FC26669 */  jal   getPlayerCount
-/* 0BC6B0 7F089CC0 E45200E8 */   swc1  $f18, 0xe8($v0)
-/* 0BC6B4 7F089CC4 28410002 */  slti  $at, $v0, 2
-/* 0BC6B8 7F089CC8 54200035 */  bnezl $at, .L7F089DA0
-/* 0BC6BC 7F089CCC 8FA30050 */   lw    $v1, 0x50($sp)
-/* 0BC6C0 7F089CD0 0FC269A4 */  jal   get_cur_playernum
-/* 0BC6C4 7F089CD4 00000000 */   nop   
-/* 0BC6C8 7F089CD8 AFA20038 */  sw    $v0, 0x38($sp)
-/* 0BC6CC 7F089CDC C7AC0044 */  lwc1  $f12, 0x44($sp)
-/* 0BC6D0 7F089CE0 0FC16BB8 */  jal   atan2f
-/* 0BC6D4 7F089CE4 C7AE0048 */   lwc1  $f14, 0x48($sp)
-/* 0BC6D8 7F089CE8 3C014334 */  li    $at, 0x43340000 # 180.000000
-/* 0BC6DC 7F089CEC 44812000 */  mtc1  $at, $f4
-/* 0BC6E0 7F089CF0 3C018005 */  lui   $at, %hi(pi_800552B0) # $at, 0x8005
-/* 0BC6E4 7F089CF4 C42AAE84 */  lwc1  $f10, %lo(pi_800552B0)($at)
-/* 0BC6E8 7F089CF8 46040202 */  mul.s $f8, $f0, $f4
-/* 0BC6EC 7F089CFC 8FB80038 */  lw    $t8, 0x38($sp)
-/* 0BC6F0 7F089D00 3C0143B4 */  li    $at, 0x43B40000 # 360.000000
-/* 0BC6F4 7F089D04 3C088007 */  lui   $t0, 0x8007
-/* 0BC6F8 7F089D08 0018C880 */  sll   $t9, $t8, 2
-/* 0BC6FC 7F089D0C 44818000 */  mtc1  $at, $f16
-/* 0BC700 7F089D10 01194021 */  addu  $t0, $t0, $t9
-/* 0BC704 7F089D14 460A4183 */  div.s $f6, $f8, $f10
-/* 0BC708 7F089D18 8D0889F0 */  lw    $t0, -0x7610($t0)
-/* 0BC70C 7F089D1C 44806000 */  mtc1  $zero, $f12
-/* 0BC710 7F089D20 8FA9004C */  lw    $t1, 0x4c($sp)
-/* 0BC714 7F089D24 C5040148 */  lwc1  $f4, 0x148($t0)
-/* 0BC718 7F089D28 3C0142B4 */  li    $at, 0x42B40000 # 90.000000
-/* 0BC71C 7F089D2C 000950C0 */  sll   $t2, $t1, 3
-/* 0BC720 7F089D30 3C0B8007 */  lui   $t3, %hi(g_playerPlayerData) # $t3, 0x8007
-/* 0BC724 7F089D34 01495023 */  subu  $t2, $t2, $t1
-/* 0BC728 7F089D38 44814000 */  mtc1  $at, $f8
-/* 0BC72C 7F089D3C 000A5100 */  sll   $t2, $t2, 4
-/* 0BC730 7F089D40 256B8A00 */  addiu $t3, %lo(g_playerPlayerData) # addiu $t3, $t3, -0x7600
-/* 0BC734 7F089D44 3C014387 */  li    $at, 0x43870000 # 270.000000
-/* 0BC738 7F089D48 014B1021 */  addu  $v0, $t2, $t3
-/* 0BC73C 7F089D4C 46068481 */  sub.s $f18, $f16, $f6
-/* 0BC740 7F089D50 46122081 */  sub.s $f2, $f4, $f18
-/* 0BC744 7F089D54 460C103C */  c.lt.s $f2, $f12
-/* 0BC748 7F089D58 00000000 */  nop   
-/* 0BC74C 7F089D5C 45020003 */  bc1fl .L7F089D6C
-/* 0BC750 7F089D60 4608103C */   c.lt.s $f2, $f8
-/* 0BC754 7F089D64 46001087 */  neg.s $f2, $f2
-/* 0BC758 7F089D68 4608103C */  c.lt.s $f2, $f8
-.L7F089D6C:
-/* 0BC75C 7F089D6C 00000000 */  nop   
-/* 0BC760 7F089D70 45030008 */  bc1tl .L7F089D94
-/* 0BC764 7F089D74 8C4C003C */   lw    $t4, 0x3c($v0)
-/* 0BC768 7F089D78 44815000 */  mtc1  $at, $f10
-/* 0BC76C 7F089D7C 00000000 */  nop   
-/* 0BC770 7F089D80 4602503C */  c.lt.s $f10, $f2
-/* 0BC774 7F089D84 00000000 */  nop   
-/* 0BC778 7F089D88 45020005 */  bc1fl .L7F089DA0
-/* 0BC77C 7F089D8C 8FA30050 */   lw    $v1, 0x50($sp)
-/* 0BC780 7F089D90 8C4C003C */  lw    $t4, 0x3c($v0)
-.L7F089D94:
-/* 0BC784 7F089D94 258D0001 */  addiu $t5, $t4, 1
-/* 0BC788 7F089D98 AC4D003C */  sw    $t5, 0x3c($v0)
-/* 0BC78C 7F089D9C 8FA30050 */  lw    $v1, 0x50($sp)
-.L7F089DA0:
-/* 0BC790 7F089DA0 44806000 */  mtc1  $zero, $f12
-/* 0BC794 7F089DA4 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC798 7F089DA8 10600010 */  beqz  $v1, .L7F089DEC
-/* 0BC79C 7F089DAC 00000000 */   nop   
-/* 0BC7A0 7F089DB0 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC7A4 7F089DB4 C7A6003C */  lwc1  $f6, 0x3c($sp)
-/* 0BC7A8 7F089DB8 C44000E0 */  lwc1  $f0, 0xe0($v0)
-/* 0BC7AC 7F089DBC C4422A38 */  lwc1  $f2, 0x2a38($v0)
-/* 0BC7B0 7F089DC0 46020402 */  mul.s $f16, $f0, $f2
-/* 0BC7B4 7F089DC4 4610303E */  c.le.s $f6, $f16
-/* 0BC7B8 7F089DC8 00000000 */  nop   
-/* 0BC7BC 7F089DCC 45000007 */  bc1f  .L7F089DEC
-/* 0BC7C0 7F089DD0 00000000 */   nop   
-/* 0BC7C4 7F089DD4 46023103 */  div.s $f4, $f6, $f2
-/* 0BC7C8 7F089DD8 46040481 */  sub.s $f18, $f0, $f4
-/* 0BC7CC 7F089DDC E45200E0 */  swc1  $f18, 0xe0($v0)
-/* 0BC7D0 7F089DE0 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC7D4 7F089DE4 1000005E */  b     .L7F089F60
-/* 0BC7D8 7F089DE8 8C428BC0 */   lw    $v0, %lo(g_CurrentPlayer)($v0)
-.L7F089DEC:
-/* 0BC7DC 7F089DEC 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC7E0 7F089DF0 1060000F */  beqz  $v1, .L7F089E30
-/* 0BC7E4 7F089DF4 8C428BC0 */   lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC7E8 7F089DF8 C44800E0 */  lwc1  $f8, 0xe0($v0)
-/* 0BC7EC 7F089DFC C44A2A38 */  lwc1  $f10, 0x2a38($v0)
-/* 0BC7F0 7F089E00 C7A6003C */  lwc1  $f6, 0x3c($sp)
-/* 0BC7F4 7F089E04 3C013F80 */  li    $at, 0x3F800000 # 1.000000
-/* 0BC7F8 7F089E08 460A4403 */  div.s $f16, $f8, $f10
-/* 0BC7FC 7F089E0C 3C0E8007 */  lui   $t6, %hi(g_CurrentPlayer) # $t6, 0x8007
-/* 0BC800 7F089E10 44819000 */  mtc1  $at, $f18
-/* 0BC804 7F089E14 46103101 */  sub.s $f4, $f6, $f16
-/* 0BC808 7F089E18 E7A4003C */  swc1  $f4, 0x3c($sp)
-/* 0BC80C 7F089E1C E44C00E0 */  swc1  $f12, 0xe0($v0)
-/* 0BC810 7F089E20 8DCE8BC0 */  lw    $t6, %lo(g_CurrentPlayer)($t6)
-/* 0BC814 7F089E24 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC818 7F089E28 E5D22A38 */  swc1  $f18, 0x2a38($t6)
-/* 0BC81C 7F089E2C 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-.L7F089E30:
-/* 0BC820 7F089E30 C7A8003C */  lwc1  $f8, 0x3c($sp)
-/* 0BC824 7F089E34 C44A2A34 */  lwc1  $f10, 0x2a34($v0)
-/* 0BC828 7F089E38 C45000DC */  lwc1  $f16, 0xdc($v0)
-/* 0BC82C 7F089E3C 460A4183 */  div.s $f6, $f8, $f10
-/* 0BC830 7F089E40 46068101 */  sub.s $f4, $f16, $f6
-/* 0BC834 7F089E44 E44400DC */  swc1  $f4, 0xdc($v0)
-/* 0BC838 7F089E48 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC83C 7F089E4C 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC840 7F089E50 C45200DC */  lwc1  $f18, 0xdc($v0)
-/* 0BC844 7F089E54 460C903E */  c.le.s $f18, $f12
-/* 0BC848 7F089E58 00000000 */  nop   
-/* 0BC84C 7F089E5C 45020041 */  bc1fl .L7F089F64
-/* 0BC850 7F089E60 C44800F4 */   lwc1  $f8, 0xf4($v0)
-/* 0BC854 7F089E64 0FC26669 */  jal   getPlayerCount
-/* 0BC858 7F089E68 00000000 */   nop   
-/* 0BC85C 7F089E6C 28410002 */  slti  $at, $v0, 2
-/* 0BC860 7F089E70 14200036 */  bnez  $at, .L7F089F4C
-/* 0BC864 7F089E74 00000000 */   nop   
-/* 0BC868 7F089E78 0FC269A4 */  jal   get_cur_playernum
-/* 0BC86C 7F089E7C 00000000 */   nop   
-/* 0BC870 7F089E80 AFA2002C */  sw    $v0, 0x2c($sp)
-/* 0BC874 7F089E84 0FC051B2 */  jal   get_scenario
-/* 0BC878 7F089E88 AFA00028 */   sw    $zero, 0x28($sp)
-/* 0BC87C 7F089E8C 24010003 */  li    $at, 3
-/* 0BC880 7F089E90 14410006 */  bne   $v0, $at, .L7F089EAC
-/* 0BC884 7F089E94 00000000 */   nop   
-/* 0BC888 7F089E98 0FC234E9 */  jal   bondinvHasGoldenGun
-/* 0BC88C 7F089E9C 00000000 */   nop   
-/* 0BC890 7F089EA0 10400002 */  beqz  $v0, .L7F089EAC
-/* 0BC894 7F089EA4 240F0001 */   li    $t7, 1
-/* 0BC898 7F089EA8 AFAF0028 */  sw    $t7, 0x28($sp)
-.L7F089EAC:
-/* 0BC89C 7F089EAC 0FC15A97 */  jal   drop_inventory
-/* 0BC8A0 7F089EB0 00000000 */   nop   
-/* 0BC8A4 7F089EB4 8FB8002C */  lw    $t8, 0x2c($sp)
-/* 0BC8A8 7F089EB8 8FB9004C */  lw    $t9, 0x4c($sp)
-/* 0BC8AC 7F089EBC 13190003 */  beq   $t8, $t9, .L7F089ECC
-/* 0BC8B0 7F089EC0 00000000 */   nop   
-/* 0BC8B4 7F089EC4 0FC1AC41 */  jal   increment_num_deaths
-/* 0BC8B8 7F089EC8 00000000 */   nop   
-.L7F089ECC:
-/* 0BC8BC 7F089ECC 0FC26993 */  jal   set_cur_player
-/* 0BC8C0 7F089ED0 8FA4004C */   lw    $a0, 0x4c($sp)
-/* 0BC8C4 7F089ED4 8FA8002C */  lw    $t0, 0x2c($sp)
-/* 0BC8C8 7F089ED8 8FA9004C */  lw    $t1, 0x4c($sp)
-/* 0BC8CC 7F089EDC 15090005 */  bne   $t0, $t1, .L7F089EF4
-/* 0BC8D0 7F089EE0 00000000 */   nop   
-/* 0BC8D4 7F089EE4 0FC1AC70 */  jal   increment_num_suicides_display_MP
-/* 0BC8D8 7F089EE8 00000000 */   nop   
-/* 0BC8DC 7F089EEC 10000008 */  b     .L7F089F10
-/* 0BC8E0 7F089EF0 00000000 */   nop   
-.L7F089EF4:
-/* 0BC8E4 7F089EF4 0FC1ABCA */  jal   increment_num_kills_display_text_in_MP
-/* 0BC8E8 7F089EF8 00000000 */   nop   
-/* 0BC8EC 7F089EFC 8FAA0028 */  lw    $t2, 0x28($sp)
-/* 0BC8F0 7F089F00 11400003 */  beqz  $t2, .L7F089F10
-/* 0BC8F4 7F089F04 00000000 */   nop   
-/* 0BC8F8 7F089F08 0FC1AC37 */  jal   increment_num_times_killed_MwtGC
-/* 0BC8FC 7F089F0C 00000000 */   nop   
-.L7F089F10:
-/* 0BC900 7F089F10 0FC26993 */  jal   set_cur_player
-/* 0BC904 7F089F14 8FA4002C */   lw    $a0, 0x2c($sp)
-/* 0BC908 7F089F18 8FAB004C */  lw    $t3, 0x4c($sp)
-/* 0BC90C 7F089F1C 8FAD002C */  lw    $t5, 0x2c($sp)
-/* 0BC910 7F089F20 3C188007 */  lui   $t8, %hi(g_playerPlayerData) # $t8, 0x8007
-/* 0BC914 7F089F24 000B60C0 */  sll   $t4, $t3, 3
-/* 0BC918 7F089F28 018B6023 */  subu  $t4, $t4, $t3
-/* 0BC91C 7F089F2C 000C6100 */  sll   $t4, $t4, 4
-/* 0BC920 7F089F30 000D7080 */  sll   $t6, $t5, 2
-/* 0BC924 7F089F34 018E7821 */  addu  $t7, $t4, $t6
-/* 0BC928 7F089F38 27188A00 */  addiu $t8, %lo(g_playerPlayerData) # addiu $t8, $t8, -0x7600
-/* 0BC92C 7F089F3C 01F81021 */  addu  $v0, $t7, $t8
-/* 0BC930 7F089F40 8C590024 */  lw    $t9, 0x24($v0)
-/* 0BC934 7F089F44 27280001 */  addiu $t0, $t9, 1
-/* 0BC938 7F089F48 AC480024 */  sw    $t0, 0x24($v0)
-.L7F089F4C:
-/* 0BC93C 7F089F4C 0FC22644 */  jal   bondviewKillCurrentPlayer
-/* 0BC940 7F089F50 00000000 */   nop   
-/* 0BC944 7F089F54 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC948 7F089F58 44806000 */  mtc1  $zero, $f12
-/* 0BC94C 7F089F5C 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-.L7F089F60:
-/* 0BC950 7F089F60 C44800F4 */  lwc1  $f8, 0xf4($v0)
-.L7F089F64:
-/* 0BC954 7F089F64 C7AA0044 */  lwc1  $f10, 0x44($sp)
-/* 0BC958 7F089F68 3C098007 */  lui   $t1, %hi(g_CurrentPlayer) # $t1, 0x8007
-/* 0BC95C 7F089F6C 460C403C */  c.lt.s $f8, $f12
-/* 0BC960 7F089F70 00000000 */  nop   
-/* 0BC964 7F089F74 4502000F */  bc1fl .L7F089FB4
-/* 0BC968 7F089F78 E44C00F4 */   swc1  $f12, 0xf4($v0)
-/* 0BC96C 7F089F7C 460A5400 */  add.s $f16, $f10, $f10
-/* 0BC970 7F089F80 C4460180 */  lwc1  $f6, 0x180($v0)
-/* 0BC974 7F089F84 46103100 */  add.s $f4, $f6, $f16
-/* 0BC978 7F089F88 E4440180 */  swc1  $f4, 0x180($v0)
-/* 0BC97C 7F089F8C C7B20048 */  lwc1  $f18, 0x48($sp)
-/* 0BC980 7F089F90 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC984 7F089F94 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC988 7F089F98 46129200 */  add.s $f8, $f18, $f18
-/* 0BC98C 7F089F9C C44A0188 */  lwc1  $f10, 0x188($v0)
-/* 0BC990 7F089FA0 46085180 */  add.s $f6, $f10, $f8
-/* 0BC994 7F089FA4 E4460188 */  swc1  $f6, 0x188($v0)
-/* 0BC998 7F089FA8 3C028007 */  lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
-/* 0BC99C 7F089FAC 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
-/* 0BC9A0 7F089FB0 E44C00F4 */  swc1  $f12, 0xf4($v0)
-.L7F089FB4:
-/* 0BC9A4 7F089FB4 8D298BC0 */  lw    $t1, %lo(g_CurrentPlayer)($t1)
-/* 0BC9A8 7F089FB8 0FC2FC1E */  jal   lvlGetControlsLockedFlag
-/* 0BC9AC 7F089FBC E52C00F8 */   swc1  $f12, 0xf8($t1)
-/* 0BC9B0 7F089FC0 14400005 */  bnez  $v0, .L7F089FD8
-/* 0BC9B4 7F089FC4 3C048005 */   lui   $a0, %hi(g_musicSfxBufferPtr) # $a0, 0x8005
-/* 0BC9B8 7F089FC8 8C846900 */  lw    $a0, %lo(g_musicSfxBufferPtr)($a0)
-/* 0BC9BC 7F089FCC 24050044 */  li    $a1, 68
-/* 0BC9C0 7F089FD0 0C00209A */  jal   sndPlaySfx
-/* 0BC9C4 7F089FD4 00003025 */   move  $a2, $zero
-.L7F089FD8:
-/* 0BC9C8 7F089FD8 8FBF0014 */  lw    $ra, 0x14($sp)
-.L7F089FDC:
-/* 0BC9CC 7F089FDC 27BD0040 */  addiu $sp, $sp, 0x40
-/* 0BC9D0 7F089FE0 03E00008 */  jr    $ra
-/* 0BC9D4 7F089FE4 00000000 */   nop   
-)
-#endif
-
-
-
-#endif
+            }
+        }
+    }
+}
 
 
 /**
- * @param arg0: unknown
- * @param rad: value in radians
- * @param arg2: unknown
- * @param arg3: unknown
- * 
+ * @param damage_amount: damage amount
+ * @param rad:  damage source angle
+ * @param player_id: player index of player causing the damage
+ * @param affects_armor: boolean, does the damage apply to body armor (e.g. false when gas)
+ *
  * Address 0x7F089E4C.
  */
-void bondviewCallRecordDamageKills(f32 arg0, f32 rad, s32 arg2, s32 arg3)
+void bondviewCallRecordDamageKills(f32 damage_amount, f32 angle, s32 playerid, s32 affects_armor)
 {
-    record_damage_kills(arg0, sinf(rad), cosf(rad), arg2, arg3);
+    record_damage_kills(damage_amount, sinf(angle), cosf(angle), playerid, affects_armor);
 }
 
 
@@ -18311,7 +16853,7 @@ void bondviewGetPropHeightRelatedValues(PropRecord *arg0, struct rect4f **field_
     temp_v0 = getPlayerPointerIndex(arg0);
     if (g_playerPointers[temp_v0]->field_AC != 0)
     {
-        if (getPlayerCount() == 1 || g_playerPointers[temp_v0]->bonddead == 0)
+        if (getPlayerCount() == 1 || g_playerPointers[temp_v0]->bonddead == FALSE)
         {
             if (g_playerPointers[temp_v0]->unknown != 1)
             {
@@ -18363,7 +16905,7 @@ void bondviewUpdatePlayerCollisionBounds(void)
  * @param width: out parameter, will be set to field_488.collision_radius
  * @param height: out parameter, will be set to character height - 30
  * @param always_30: out parameter, will be set to 30
- * 
+ *
  * Address 0x7F08A274.
  */
 void bondviewGetCollisionRadius(PropRecord* arg0, f32 *collision_radius, f32 *height, f32 *always_30)
@@ -18416,7 +16958,7 @@ void bondviewAddCurrentPlayerArmor(f32 arg0)
  */
 void bondviewResetIntroCameraMessageDialogs(void)
 {
-    g_CurrentPlayer->hudmessoff = 0;
+    g_CurrentPlayer->hudmessoff = FALSE;
     g_CurrentPlayer->bondmesscnt = -1;
     display_statusbar = 0;
     status_bar_text_buffer_index = 0;
@@ -18496,22 +17038,26 @@ void hudmsgBottomShow(char *string)
 {
     s32 abs_index;
     s32 index;
+    #ifdef DEBUG
+        assert(font);
+        assert(wcslen(mess)<=MAXMESSAGELEN);
+    #endif
     if (getPlayerCount() == 1)
     {
         if (display_statusbar < 5)
         {
             abs_index = status_bar_text_buffer_index + display_statusbar;
             index = abs_index % 5;
-            strncpy(stringbuffer_lowerleft[index], string, 0x64U);
+            strncpy(stringbuffer_lowerleft[index], string, MAXMESSAGELEN);
             display_statusbar++;
-            stringbuffer_lowerleft[index][0x64] = 0;
+            stringbuffer_lowerleft[index][MAXMESSAGELEN] = 0;
         }
     }
     else
     {
         index = get_cur_playernum();
-        strncpy(stringbuffer_lowerleft[index], string, 0x64U);
-        stringbuffer_lowerleft[index][0x64] = 0;
+        strncpy(stringbuffer_lowerleft[index], string, MAXMESSAGELEN);
+        stringbuffer_lowerleft[index][MAXMESSAGELEN] = 0;
         g_CurrentPlayer->bondmesscnt = 0x78;
     }
 }
@@ -18532,7 +17078,7 @@ void jp_hudmsgBottomShow(char *string)
  */
 void bondviewIntroCameraTextTick(void)
 {
-    if ((g_CurrentPlayer->hudmessoff == 0) && (g_CurrentPlayer->mpmenuon == 0))
+    if ((g_CurrentPlayer->hudmessoff == FALSE) && (g_CurrentPlayer->mpmenuon == FALSE))
     {
         if (g_CurrentPlayer->bondmesscnt >= 0)
         {
@@ -18576,7 +17122,7 @@ Gfx* sub_GAME_7F08A5FC(Gfx* arg0)
     s32 view_top_offset;
     s32 view_left_offset;
 
-    if ((g_CurrentPlayer->hudmessoff == 0) && (g_CurrentPlayer->bondmesscnt >= 0) && (g_CurrentPlayer->mpmenuon == 0))
+    if ((g_CurrentPlayer->hudmessoff == FALSE) && (g_CurrentPlayer->bondmesscnt >= 0) && (g_CurrentPlayer->mpmenuon == FALSE))
     {
         var_v1 = 0;
         if (getPlayerCount() == 1)
@@ -18676,7 +17222,9 @@ void bondviewSetUpperTextDisplayFlag(PLAYERFLAG flag)
 void hudmsgTopShow(char* string)
 {
     s32 index;
-
+    #ifdef DEBUG
+        assert(wcslen(mess)<=MAXTALKMESSLEN);
+    #endif
     if (display_upper_text_window >= 2) { return; }
 
     index = (upper_text_buffer_index + display_upper_text_window) % 2;
@@ -18697,7 +17245,7 @@ void hudmsgTopShow(char* string)
  */
 void bondviewUpperTextWindowTimerTick(void)
 {
-    if ((g_UpperTextDisplayFlag == 0) && (g_CurrentPlayer->mpmenuon == 0))
+    if ((g_UpperTextDisplayFlag == FALSE) && (g_CurrentPlayer->mpmenuon == FALSE))
     {
         if (upper_text_window_timer >= 0)
         {
@@ -18800,8 +17348,8 @@ glabel sub_GAME_7F08AAE8
 /* 0BF6E4 7F08ABB4 AFA00014 */  sw    $zero, 0x14($sp)
 /* 0BF6E8 7F08ABB8 0FC2BA63 */  jal   textMeasure
 /* 0BF6EC 7F08ABBC AFAE0010 */   sw    $t6, 0x10($sp)
-/* 0BF6F0 7F08ABC0 3C0F8003 */  lui   $t7, %hi(camera_8003642C)
-/* 0BF6F4 7F08ABC4 8DEF642C */  lw    $t7, %lo(camera_8003642C)($t7)
+/* 0BF6F0 7F08ABC0 3C0F8003 */  lui   $t7, %hi(cameraBufferToggle)
+/* 0BF6F4 7F08ABC4 8DEF642C */  lw    $t7, %lo(cameraBufferToggle)($t7)
 /* 0BF6F8 7F08ABC8 11E0001B */  beqz  $t7, .L7F08AC38
 /* 0BF6FC 7F08ABCC 00000000 */   nop
 /* 0BF700 7F08ABD0 0C001145 */  jal   viGetViewLeft
@@ -19202,8 +17750,8 @@ glabel sub_GAME_7F08AAE8
 /* 0BFF00 7F08B390 AFA00014 */  sw    $zero, 0x14($sp)
 /* 0BFF04 7F08B394 0FC2BD4F */  jal   textMeasure
 /* 0BFF08 7F08B398 AFAE0010 */   sw    $t6, 0x10($sp)
-/* 0BFF0C 7F08B39C 3C0F8003 */  lui   $t7, %hi(camera_8003642C) # $t7, 0x8003
-/* 0BFF10 7F08B3A0 8DEF646C */  lw    $t7, %lo(camera_8003642C)($t7)
+/* 0BFF0C 7F08B39C 3C0F8003 */  lui   $t7, %hi(cameraBufferToggle) # $t7, 0x8003
+/* 0BFF10 7F08B3A0 8DEF646C */  lw    $t7, %lo(cameraBufferToggle)($t7)
 /* 0BFF14 7F08B3A4 11E0001B */  beqz  $t7, .Ljp7F08B414
 /* 0BFF18 7F08B3A8 00000000 */   nop
 /* 0BFF1C 7F08B3AC 0C001145 */  jal   viGetViewLeft
@@ -19607,7 +18155,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BD740 7F08AD50 8DEF1DF8 */  lw    $t7, %lo(upper_text_window_timer)($t7)
 /* 0BD744 7F08AD54 3C188003 */  lui   $t8, %hi(upper_text_buffer_index) # $t8, 0x8003
 /* 0BD748 7F08AD58 05E000AD */  bltz  $t7, .L7F08B010
-/* 0BD74C 7F08AD5C 00000000 */   nop   
+/* 0BD74C 7F08AD5C 00000000 */   nop
 /* 0BD750 7F08AD60 8F181DF0 */  lw    $t8, %lo(upper_text_buffer_index)($t8)
 /* 0BD754 7F08AD64 3C088007 */  lui   $t0, %hi(dword_CODE_bss_80079DC8)
 /* 0BD758 7F08AD68 3C098007 */  lui   $t1, %hi(g_CurrentPlayer) # $t1, 0x8007
@@ -19620,13 +18168,13 @@ glabel sub_GAME_7F08AAE8
 /* 0BD774 7F08AD84 01194021 */  addu  $t0, $t0, $t9
 /* 0BD778 7F08AD88 910887A8 */  lbu   $t0, %lo(dword_CODE_bss_80079DC8)($t0)
 /* 0BD77C 7F08AD8C 110000A0 */  beqz  $t0, .L7F08B010
-/* 0BD780 7F08AD90 00000000 */   nop   
+/* 0BD780 7F08AD90 00000000 */   nop
 /* 0BD784 7F08AD94 8D298BC0 */  lw    $t1, %lo(g_CurrentPlayer)($t1)
 /* 0BD788 7F08AD98 8D2A29BC */  lw    $t2, 0x29bc($t1)
 /* 0BD78C 7F08AD9C 1540009C */  bnez  $t2, .L7F08B010
-/* 0BD790 7F08ADA0 00000000 */   nop   
+/* 0BD790 7F08ADA0 00000000 */   nop
 /* 0BD794 7F08ADA4 0FC2B016 */  jal   microcode_constructor
-/* 0BD798 7F08ADA8 00000000 */   nop   
+/* 0BD798 7F08ADA8 00000000 */   nop
 /* 0BD79C 7F08ADAC 3C0B8003 */  lui   $t3, %hi(upper_text_buffer_index) # $t3, 0x8003
 /* 0BD7A0 7F08ADB0 8D6B1DF0 */  lw    $t3, %lo(upper_text_buffer_index)($t3)
 /* 0BD7A4 7F08ADB4 3C0E8004 */  lui   $t6, %hi(ptrFontZurichBold) # $t6, 0x8004
@@ -19650,12 +18198,12 @@ glabel sub_GAME_7F08AAE8
 /* 0BD7EC 7F08ADFC AFA00014 */  sw    $zero, 0x14($sp)
 /* 0BD7F0 7F08AE00 0FC2B713 */  jal   textMeasure
 /* 0BD7F4 7F08AE04 AFAE0010 */   sw    $t6, 0x10($sp)
-/* 0BD7F8 7F08AE08 3C0F8003 */  lui   $t7, %hi(camera_8003642C) # $t7, 0x8003
-/* 0BD7FC 7F08AE0C 8DEF197C */  lw    $t7, %lo(camera_8003642C)($t7)
+/* 0BD7F8 7F08AE08 3C0F8003 */  lui   $t7, %hi(cameraBufferToggle) # $t7, 0x8003
+/* 0BD7FC 7F08AE0C 8DEF197C */  lw    $t7, %lo(cameraBufferToggle)($t7)
 /* 0BD800 7F08AE10 11E0001B */  beqz  $t7, .L7F08AE80
-/* 0BD804 7F08AE14 00000000 */   nop   
+/* 0BD804 7F08AE14 00000000 */   nop
 /* 0BD808 7F08AE18 0C000FD9 */  jal   viGetViewLeft
-/* 0BD80C 7F08AE1C 00000000 */   nop   
+/* 0BD80C 7F08AE1C 00000000 */   nop
 /* 0BD810 7F08AE20 24580046 */  addiu $t8, $v0, 0x46
 /* 0BD814 7F08AE24 0C000FDD */  jal   viGetViewTop
 /* 0BD818 7F08AE28 AFB800E4 */   sw    $t8, 0xe4($sp)
@@ -19664,19 +18212,19 @@ glabel sub_GAME_7F08AAE8
 /* 0BD824 7F08AE34 2404000B */  li    $a0, 11
 /* 0BD828 7F08AE38 0064001A */  div   $zero, $v1, $a0
 /* 0BD82C 7F08AE3C 14800002 */  bnez  $a0, .L7F08AE48
-/* 0BD830 7F08AE40 00000000 */   nop   
+/* 0BD830 7F08AE40 00000000 */   nop
 /* 0BD834 7F08AE44 0007000D */  break 7
 .L7F08AE48:
 /* 0BD838 7F08AE48 2401FFFF */  li    $at, -1
 /* 0BD83C 7F08AE4C 14810004 */  bne   $a0, $at, .L7F08AE60
 /* 0BD840 7F08AE50 3C018000 */   lui   $at, 0x8000
 /* 0BD844 7F08AE54 14610002 */  bne   $v1, $at, .L7F08AE60
-/* 0BD848 7F08AE58 00000000 */   nop   
+/* 0BD848 7F08AE58 00000000 */   nop
 /* 0BD84C 7F08AE5C 0006000D */  break 6
 .L7F08AE60:
 /* 0BD850 7F08AE60 00001812 */  mflo  $v1
-/* 0BD854 7F08AE64 00000000 */  nop   
-/* 0BD858 7F08AE68 00000000 */  nop   
+/* 0BD854 7F08AE64 00000000 */  nop
+/* 0BD858 7F08AE68 00000000 */  nop
 /* 0BD85C 7F08AE6C 00640019 */  multu $v1, $a0
 /* 0BD860 7F08AE70 00001812 */  mflo  $v1
 /* 0BD864 7F08AE74 2463FFFE */  addiu $v1, $v1, -2
@@ -19684,7 +18232,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BD86C 7F08AE7C 8FA800D8 */   lw    $t0, 0xd8($sp)
 .L7F08AE80:
 /* 0BD870 7F08AE80 0C000FD9 */  jal   viGetViewLeft
-/* 0BD874 7F08AE84 00000000 */   nop   
+/* 0BD874 7F08AE84 00000000 */   nop
 /* 0BD878 7F08AE88 2459001E */  addiu $t9, $v0, 0x1e
 /* 0BD87C 7F08AE8C 0C000FDD */  jal   viGetViewTop
 /* 0BD880 7F08AE90 AFB900E4 */   sw    $t9, 0xe4($sp)
@@ -19709,9 +18257,9 @@ glabel sub_GAME_7F08AAE8
 /* 0BD8C8 7F08AED8 8D8C1150 */  lw    $t4, %lo(j_text_trigger)($t4)
 /* 0BD8CC 7F08AEDC 00408025 */  move  $s0, $v0
 /* 0BD8D0 7F08AEE0 11800026 */  beqz  $t4, .L7F08AF7C
-/* 0BD8D4 7F08AEE4 00000000 */   nop   
+/* 0BD8D4 7F08AEE4 00000000 */   nop
 /* 0BD8D8 7F08AEE8 0C000F9B */  jal   viGetX
-/* 0BD8DC 7F08AEEC 00000000 */   nop   
+/* 0BD8DC 7F08AEEC 00000000 */   nop
 /* 0BD8E0 7F08AEF0 0C000F9F */  jal   viGetY
 /* 0BD8E4 7F08AEF4 A7A20048 */   sh    $v0, 0x48($sp)
 /* 0BD8E8 7F08AEF8 3C0D8003 */  lui   $t5, %hi(upper_text_buffer_index) # $t5, 0x8003
@@ -19749,7 +18297,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BD968 7F08AF78 00408025 */   move  $s0, $v0
 .L7F08AF7C:
 /* 0BD96C 7F08AF7C 0C000F9B */  jal   viGetX
-/* 0BD970 7F08AF80 00000000 */   nop   
+/* 0BD970 7F08AF80 00000000 */   nop
 /* 0BD974 7F08AF84 0C000F9F */  jal   viGetY
 /* 0BD978 7F08AF88 A7A20048 */   sh    $v0, 0x48($sp)
 /* 0BD97C 7F08AF8C 3C0B8003 */  lui   $t3, %hi(upper_text_buffer_index) # $t3, 0x8003
@@ -19788,7 +18336,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BD9FC 7F08B00C 00408025 */   move  $s0, $v0
 .L7F08B010:
 /* 0BDA00 7F08B010 0FC2410E */  jal   get_debug_testingmanpos_flag
-/* 0BDA04 7F08B014 00000000 */   nop   
+/* 0BDA04 7F08B014 00000000 */   nop
 /* 0BDA08 7F08B018 104000ED */  beqz  $v0, .L7F08B3D0
 /* 0BDA0C 7F08B01C 3C028007 */   lui   $v0, %hi(g_CurrentPlayer) # $v0, 0x8007
 /* 0BDA10 7F08B020 8C428BC0 */  lw    $v0, %lo(g_CurrentPlayer)($v0)
@@ -19808,7 +18356,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BDA48 7F08B058 46083283 */  div.s $f10, $f6, $f8
 /* 0BDA4C 7F08B05C 4600540D */  trunc.w.s $f16, $f10
 /* 0BDA50 7F08B060 44098000 */  mfc1  $t1, $f16
-/* 0BDA54 7F08B064 00000000 */  nop   
+/* 0BDA54 7F08B064 00000000 */  nop
 /* 0BDA58 7F08B068 AFA90068 */  sw    $t1, 0x68($sp)
 /* 0BDA5C 7F08B06C 8D610000 */  lw    $at, ($t3)
 /* 0BDA60 7F08B070 8D6E0004 */  lw    $t6, 4($t3)
@@ -19843,7 +18391,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BDAD4 7F08B0E4 44072000 */  mfc1  $a3, $f4
 /* 0BDAD8 7F08B0E8 44062800 */  mfc1  $a2, $f5
 /* 0BDADC 7F08B0EC 0C00283D */  jal   sprintf
-/* 0BDAE0 7F08B0F0 00000000 */   nop   
+/* 0BDAE0 7F08B0F0 00000000 */   nop
 /* 0BDAE4 7F08B0F4 3C088007 */  lui   $t0, %hi(g_CurrentPlayer) # $t0, 0x8007
 /* 0BDAE8 7F08B0F8 8D088BC0 */  lw    $t0, %lo(g_CurrentPlayer)($t0)
 /* 0BDAEC 7F08B0FC 3C058005 */  lui   $a1, %hi(aY4_0f) # $a1, 0x8005
@@ -19854,7 +18402,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BDB00 7F08B110 44074000 */  mfc1  $a3, $f8
 /* 0BDB04 7F08B114 44064800 */  mfc1  $a2, $f9
 /* 0BDB08 7F08B118 0C00283D */  jal   sprintf
-/* 0BDB0C 7F08B11C 00000000 */   nop   
+/* 0BDB0C 7F08B11C 00000000 */   nop
 /* 0BDB10 7F08B120 3C098007 */  lui   $t1, %hi(g_CurrentPlayer) # $t1, 0x8007
 /* 0BDB14 7F08B124 8D298BC0 */  lw    $t1, %lo(g_CurrentPlayer)($t1)
 /* 0BDB18 7F08B128 3C058005 */  lui   $a1, %hi(aZ4_0f) # $a1, 0x8005
@@ -19865,7 +18413,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BDB2C 7F08B13C 44078000 */  mfc1  $a3, $f16
 /* 0BDB30 7F08B140 44068800 */  mfc1  $a2, $f17
 /* 0BDB34 7F08B144 0C00283D */  jal   sprintf
-/* 0BDB38 7F08B148 00000000 */   nop   
+/* 0BDB38 7F08B148 00000000 */   nop
 /* 0BDB3C 7F08B14C 8FA70068 */  lw    $a3, 0x68($sp)
 /* 0BDB40 7F08B150 2401002D */  li    $at, 45
 /* 0BDB44 7F08B154 3C058005 */  lui   $a1, %hi(aS3d) # $a1, 0x8005
@@ -19880,7 +18428,7 @@ glabel sub_GAME_7F08AAE8
 /* 0BDB68 7F08B178 0C00283D */  jal   sprintf
 /* 0BDB6C 7F08B17C 27A40084 */   addiu $a0, $sp, 0x84
 /* 0BDB70 7F08B180 0C000FD9 */  jal   viGetViewLeft
-/* 0BDB74 7F08B184 00000000 */   nop   
+/* 0BDB74 7F08B184 00000000 */   nop
 /* 0BDB78 7F08B188 244E0011 */  addiu $t6, $v0, 0x11
 /* 0BDB7C 7F08B18C 0C000FDD */  jal   viGetViewTop
 /* 0BDB80 7F08B190 AFAE0080 */   sw    $t6, 0x80($sp)
@@ -20043,7 +18591,10 @@ glabel sub_GAME_7F08AAE8
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F08B0F0(void) {
+/*
+* Address: 0x7F08B0F0
+*/
+void playerTickBeams(void) {
 
 }
 #else
@@ -20062,7 +18613,7 @@ glabel D_800552CC
 glabel D_800552D0
 .word 0x40c90fdb /*6.2831855*/
 .text
-glabel sub_GAME_7F08B0F0
+glabel playerTickBeams
 /* 0BFC20 7F08B0F0 27BDFF08 */  addiu $sp, $sp, -0xf8
 /* 0BFC24 7F08B0F4 AFBF0024 */  sw    $ra, 0x24($sp)
 /* 0BFC28 7F08B0F8 AFB10020 */  sw    $s1, 0x20($sp)
@@ -20109,7 +18660,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BFCC4 7F08B194 8E390000 */  lw    $t9, ($s1)
 .L7F08B198:
 /* 0BFCC8 7F08B198 AF2000AC */  sw    $zero, 0xac($t9)
-/* 0BFCCC 7F08B19C 0FC083BC */  jal   sub_GAME_7F020EF0
+/* 0BFCCC 7F08B19C 0FC083BC */  jal   chrTickBeams
 /* 0BFCD0 7F08B1A0 8FA400F8 */   lw    $a0, 0xf8($sp)
 /* 0BFCD4 7F08B1A4 8E2A0000 */  lw    $t2, ($s1)
 /* 0BFCD8 7F08B1A8 AFA200E8 */  sw    $v0, 0xe8($sp)
@@ -20791,7 +19342,7 @@ glabel sub_GAME_7F08B0F0
 /* 0C0688 7F08BB58 24050001 */  li    $a1, 1
 /* 0C068C 7F08BB5C 0FC0B446 */  jal   chrSetFiring
 /* 0C0690 7F08BB60 81C60C25 */   lb    $a2, 0xc25($t6)
-/* 0C0694 7F08BB64 0FC083BC */  jal   sub_GAME_7F020EF0
+/* 0C0694 7F08BB64 0FC083BC */  jal   chrTickBeams
 /* 0C0698 7F08BB68 8FA400F8 */   lw    $a0, 0xf8($sp)
 /* 0C069C 7F08BB6C AFA200A0 */  sw    $v0, 0xa0($sp)
 /* 0C06A0 7F08BB70 00003825 */  move  $a3, $zero
@@ -20900,7 +19451,7 @@ glabel D_8004AEA4
 .word 0x40c90fdb
 
 .text
-glabel sub_GAME_7F08B0F0
+glabel playerTickBeams
 /* 0BDDD4 7F08B3E4 27BDFF08 */  addiu $sp, $sp, -0xf8
 /* 0BDDD8 7F08B3E8 AFBF0024 */  sw    $ra, 0x24($sp)
 /* 0BDDDC 7F08B3EC AFB10020 */  sw    $s1, 0x20($sp)
@@ -20913,7 +19464,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BDDF8 7F08B408 11E0000B */  beqz  $t7, .L7F08B438
 /* 0BDDFC 7F08B40C AFAF00F0 */   sw    $t7, 0xf0($sp)
 /* 0BDE00 7F08B410 0FC269A4 */  jal   get_cur_playernum
-/* 0BDE04 7F08B414 00000000 */   nop   
+/* 0BDE04 7F08B414 00000000 */   nop
 /* 0BDE08 7F08B418 0FC26A86 */  jal   sub_GAME_7F09B4D8
 /* 0BDE0C 7F08B41C 00402025 */   move  $a0, $v0
 /* 0BDE10 7F08B420 54400006 */  bnezl $v0, .L7F08B43C
@@ -20936,7 +19487,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BDE4C 7F08B45C 51C00048 */  beql  $t6, $zero, .L7F08B580
 /* 0BDE50 7F08B460 8FAF00F0 */   lw    $t7, 0xf0($sp)
 /* 0BDE54 7F08B464 0FC240F8 */  jal   get_debug_render_raster
-/* 0BDE58 7F08B468 00000000 */   nop   
+/* 0BDE58 7F08B468 00000000 */   nop
 /* 0BDE5C 7F08B46C 50400007 */  beql  $v0, $zero, .L7F08B48C
 /* 0BDE60 7F08B470 8E390000 */   lw    $t9, ($s1)
 /* 0BDE64 7F08B474 8E2F0000 */  lw    $t7, ($s1)
@@ -20947,7 +19498,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BDE78 7F08B488 8E390000 */  lw    $t9, ($s1)
 .L7F08B48C:
 /* 0BDE7C 7F08B48C AF2000AC */  sw    $zero, 0xac($t9)
-/* 0BDE80 7F08B490 0FC0839A */  jal   sub_GAME_7F020EF0
+/* 0BDE80 7F08B490 0FC0839A */  jal   chrTickBeams
 /* 0BDE84 7F08B494 8FA400F8 */   lw    $a0, 0xf8($sp)
 /* 0BDE88 7F08B498 8E2A0000 */  lw    $t2, ($s1)
 /* 0BDE8C 7F08B49C AFA200E8 */  sw    $v0, 0xe8($sp)
@@ -20975,7 +19526,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BDEE4 7F08B4F4 93190001 */  lbu   $t9, 1($t8)
 /* 0BDEE8 7F08B4F8 33290002 */  andi  $t1, $t9, 2
 /* 0BDEEC 7F08B4FC 1120001D */  beqz  $t1, .L7F08B574
-/* 0BDEF0 7F08B500 00000000 */   nop   
+/* 0BDEF0 7F08B500 00000000 */   nop
 /* 0BDEF4 7F08B504 8E2A0000 */  lw    $t2, ($s1)
 /* 0BDEF8 7F08B508 8D4B00D4 */  lw    $t3, 0xd4($t2)
 /* 0BDEFC 7F08B50C 0FC1E131 */  jal   currentPlayerGetMatrix10D4
@@ -21021,12 +19572,12 @@ glabel sub_GAME_7F08B0F0
 /* 0BDF90 7F08B5A0 51600279 */  beql  $t3, $zero, .L7F08BF88
 /* 0BDF94 7F08B5A4 8FAA00F8 */   lw    $t2, 0xf8($sp)
 /* 0BDF98 7F08B5A8 0FC26669 */  jal   getPlayerCount
-/* 0BDF9C 7F08B5AC 00000000 */   nop   
+/* 0BDF9C 7F08B5AC 00000000 */   nop
 /* 0BDFA0 7F08B5B0 28410002 */  slti  $at, $v0, 2
 /* 0BDFA4 7F08B5B4 54200274 */  bnezl $at, .L7F08BF88
 /* 0BDFA8 7F08B5B8 8FAA00F8 */   lw    $t2, 0xf8($sp)
 /* 0BDFAC 7F08B5BC 0FC269A4 */  jal   get_cur_playernum
-/* 0BDFB0 7F08B5C0 00000000 */   nop   
+/* 0BDFB0 7F08B5C0 00000000 */   nop
 /* 0BDFB4 7F08B5C4 8FAC00F4 */  lw    $t4, 0xf4($sp)
 /* 0BDFB8 7F08B5C8 3C01BF80 */  li    $at, 0xBF800000 # -1.000000
 /* 0BDFBC 7F08B5CC 24050001 */  li    $a1, 1
@@ -21103,7 +19654,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE0C8 7F08B6D8 0044082B */  sltu  $at, $v0, $a0
 /* 0BE0CC 7F08B6DC 01435821 */  addu  $t3, $t2, $v1
 /* 0BE0D0 7F08B6E0 14CB0002 */  bne   $a2, $t3, .L7F08B6EC
-/* 0BE0D4 7F08B6E4 00000000 */   nop   
+/* 0BE0D4 7F08B6E4 00000000 */   nop
 /* 0BE0D8 7F08B6E8 24050001 */  li    $a1, 1
 .L7F08B6EC:
 /* 0BE0DC 7F08B6EC 5420FFF9 */  bnezl $at, .L7F08B6D4
@@ -21135,28 +19686,28 @@ glabel sub_GAME_7F08B0F0
 /* 0BE13C 7F08B74C 44816000 */  mtc1  $at, $f12
 /* 0BE140 7F08B750 C7A20094 */  lwc1  $f2, 0x94($sp)
 /* 0BE144 7F08B754 15800002 */  bnez  $t4, .L7F08B760
-/* 0BE148 7F08B758 00000000 */   nop   
+/* 0BE148 7F08B758 00000000 */   nop
 /* 0BE14C 7F08B75C 0007000D */  break 7
 .L7F08B760:
 /* 0BE150 7F08B760 8D06127C */  lw    $a2, 0x127c($t0)
 .L7F08B764:
 /* 0BE154 7F08B764 44807000 */  mtc1  $zero, $f14
-/* 0BE158 7F08B768 00000000 */  nop   
+/* 0BE158 7F08B768 00000000 */  nop
 /* 0BE15C 7F08B76C E7AE008C */  swc1  $f14, 0x8c($sp)
 /* 0BE160 7F08B770 100000F6 */  b     .L7F08BB4C
 /* 0BE164 7F08B774 E7AE0088 */   swc1  $f14, 0x88($sp)
 .L7F08B778:
 /* 0BE168 7F08B778 12000005 */  beqz  $s0, .L7F08B790
-/* 0BE16C 7F08B77C 00000000 */   nop   
+/* 0BE16C 7F08B77C 00000000 */   nop
 /* 0BE170 7F08B780 10A00003 */  beqz  $a1, .L7F08B790
-/* 0BE174 7F08B784 00000000 */   nop   
+/* 0BE174 7F08B784 00000000 */   nop
 /* 0BE178 7F08B788 1000002E */  b     .L7F08B844
 /* 0BE17C 7F08B78C 24100003 */   li    $s0, 3
 .L7F08B790:
 /* 0BE180 7F08B790 16000005 */  bnez  $s0, .L7F08B7A8
-/* 0BE184 7F08B794 00000000 */   nop   
+/* 0BE184 7F08B794 00000000 */   nop
 /* 0BE188 7F08B798 14A00003 */  bnez  $a1, .L7F08B7A8
-/* 0BE18C 7F08B79C 00000000 */   nop   
+/* 0BE18C 7F08B79C 00000000 */   nop
 /* 0BE190 7F08B7A0 10000028 */  b     .L7F08B844
 /* 0BE194 7F08B7A4 24100002 */   li    $s0, 2
 .L7F08B7A8:
@@ -21173,7 +19724,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE1BC 7F08B7CC 8FA20058 */  lw    $v0, 0x58($sp)
 /* 0BE1C0 7F08B7D0 24050200 */  li    $a1, 512
 /* 0BE1C4 7F08B7D4 10400008 */  beqz  $v0, .L7F08B7F8
-/* 0BE1C8 7F08B7D8 00000000 */   nop   
+/* 0BE1C8 7F08B7D8 00000000 */   nop
 /* 0BE1CC 7F08B7DC 80440080 */  lb    $a0, 0x80($v0)
 /* 0BE1D0 7F08B7E0 0FC1795B */  jal   bondwalkItemCheckBitflags
 /* 0BE1D4 7F08B7E4 AFA3005C */   sw    $v1, 0x5c($sp)
@@ -21244,7 +19795,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE2C0 7F08B8D0 45020087 */  bc1fl .L7F08BAF0
 /* 0BE2C4 7F08B8D4 00107900 */   sll   $t7, $s0, 4
 /* 0BE2C8 7F08B8D8 44815000 */  mtc1  $at, $f10
-/* 0BE2CC 7F08B8DC 00000000 */  nop   
+/* 0BE2CC 7F08B8DC 00000000 */  nop
 /* 0BE2D0 7F08B8E0 460A0480 */  add.s $f18, $f0, $f10
 /* 0BE2D4 7F08B8E4 E5121278 */  swc1  $f18, 0x1278($t0)
 /* 0BE2D8 7F08B8E8 10000080 */  b     .L7F08BAEC
@@ -21270,7 +19821,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE324 7F08B934 4502006E */  bc1fl .L7F08BAF0
 /* 0BE328 7F08B938 00107900 */   sll   $t7, $s0, 4
 /* 0BE32C 7F08B93C 44813000 */  mtc1  $at, $f6
-/* 0BE330 7F08B940 00000000 */  nop   
+/* 0BE330 7F08B940 00000000 */  nop
 /* 0BE334 7F08B944 46060201 */  sub.s $f8, $f0, $f6
 /* 0BE338 7F08B948 E5081278 */  swc1  $f8, 0x1278($t0)
 /* 0BE33C 7F08B94C 10000067 */  b     .L7F08BAEC
@@ -21280,7 +19831,7 @@ glabel sub_GAME_7F08B0F0
 .L7F08B958:
 /* 0BE348 7F08B958 3C018005 */  lui   $at, %hi(D_8004AE94) # $at, 0x8005
 /* 0BE34C 7F08B95C 460E103C */  c.lt.s $f2, $f14
-/* 0BE350 7F08B960 00000000 */  nop   
+/* 0BE350 7F08B960 00000000 */  nop
 /* 0BE354 7F08B964 45020003 */  bc1fl .L7F08B974
 /* 0BE358 7F08B968 C5000174 */   lwc1  $f0, 0x174($t0)
 /* 0BE35C 7F08B96C 46001087 */  neg.s $f2, $f2
@@ -21289,13 +19840,13 @@ glabel sub_GAME_7F08B0F0
 /* 0BE364 7F08B974 C42AAE94 */  lwc1  $f10, %lo(D_8004AE94)($at)
 /* 0BE368 7F08B978 3C018005 */  lui   $at, %hi(D_8004AE9C)
 /* 0BE36C 7F08B97C 460A003C */  c.lt.s $f0, $f10
-/* 0BE370 7F08B980 00000000 */  nop   
+/* 0BE370 7F08B980 00000000 */  nop
 /* 0BE374 7F08B984 4500001D */  bc1f  .L7F08B9FC
-/* 0BE378 7F08B988 00000000 */   nop   
+/* 0BE378 7F08B988 00000000 */   nop
 /* 0BE37C 7F08B98C 46001087 */  neg.s $f2, $f2
 /* 0BE380 7F08B990 3C018005 */  lui   $at, %hi(D_8004AE9C) # $at, 0x8005
 /* 0BE384 7F08B994 4602003C */  c.lt.s $f0, $f2
-/* 0BE388 7F08B998 00000000 */  nop   
+/* 0BE388 7F08B998 00000000 */  nop
 /* 0BE38C 7F08B99C 45020003 */  bc1fl .L7F08B9AC
 /* 0BE390 7F08B9A0 8D0D04E8 */   lw    $t5, 0x4e8($t0)
 /* 0BE394 7F08B9A4 46000086 */  mov.s $f2, $f0
@@ -21306,16 +19857,16 @@ glabel sub_GAME_7F08B0F0
 /* 0BE3A4 7F08B9B4 C432AE98 */  lwc1  $f18, %lo(D_8004AE98)($at)
 /* 0BE3A8 7F08B9B8 24040002 */  li    $a0, 2
 /* 0BE3AC 7F08B9BC 4600903C */  c.lt.s $f18, $f0
-/* 0BE3B0 7F08B9C0 00000000 */  nop   
+/* 0BE3B0 7F08B9C0 00000000 */  nop
 /* 0BE3B4 7F08B9C4 4500000B */  bc1f  .L7F08B9F4
-/* 0BE3B8 7F08B9C8 00000000 */   nop   
+/* 0BE3B8 7F08B9C8 00000000 */   nop
 /* 0BE3BC 7F08B9CC 46021300 */  add.s $f12, $f2, $f2
 .L7F08B9D0:
 /* 0BE3C0 7F08B9D0 3C01BF80 */  li    $at, 0xBF800000 # -1.000000
 /* 0BE3C4 7F08B9D4 44818000 */  mtc1  $at, $f16
 /* 0BE3C8 7F08B9D8 24040001 */  li    $a0, 1
 /* 0BE3CC 7F08B9DC 4610603C */  c.lt.s $f12, $f16
-/* 0BE3D0 7F08B9E0 00000000 */  nop   
+/* 0BE3D0 7F08B9E0 00000000 */  nop
 /* 0BE3D4 7F08B9E4 4502002D */  bc1fl .L7F08BA9C
 /* 0BE3D8 7F08B9E8 C5001278 */   lwc1  $f0, 0x1278($t0)
 /* 0BE3DC 7F08B9EC 1000002A */  b     .L7F08BA98
@@ -21326,7 +19877,7 @@ glabel sub_GAME_7F08B0F0
 .L7F08B9FC:
 /* 0BE3EC 7F08B9FC C42CAE9C */  lwc1  $f12, %lo(D_8004AE9C)($at)
 /* 0BE3F0 7F08BA00 4600603C */  c.lt.s $f12, $f0
-/* 0BE3F4 7F08BA04 00000000 */  nop   
+/* 0BE3F4 7F08BA04 00000000 */  nop
 /* 0BE3F8 7F08BA08 45030006 */  bc1tl .L7F08BA24
 /* 0BE3FC 7F08BA0C 4600103C */   c.lt.s $f2, $f0
 /* 0BE400 7F08BA10 4602603C */  c.lt.s $f12, $f2
@@ -21346,9 +19897,9 @@ glabel sub_GAME_7F08B0F0
 /* 0BE430 7F08BA40 C424AEA0 */  lwc1  $f4, %lo(D_8004AEA0)($at)
 /* 0BE434 7F08BA44 24040002 */  li    $a0, 2
 /* 0BE438 7F08BA48 4604003C */  c.lt.s $f0, $f4
-/* 0BE43C 7F08BA4C 00000000 */  nop   
+/* 0BE43C 7F08BA4C 00000000 */  nop
 /* 0BE440 7F08BA50 4500000D */  bc1f  .L7F08BA88
-/* 0BE444 7F08BA54 00000000 */   nop   
+/* 0BE444 7F08BA54 00000000 */   nop
 /* 0BE448 7F08BA58 46021300 */  add.s $f12, $f2, $f2
 .L7F08BA5C:
 /* 0BE44C 7F08BA5C 3C013F80 */  li    $at, 0x3F800000 # 1.000000
@@ -21356,7 +19907,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE454 7F08BA64 24040001 */  li    $a0, 1
 /* 0BE458 7F08BA68 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0BE45C 7F08BA6C 460C303C */  c.lt.s $f6, $f12
-/* 0BE460 7F08BA70 00000000 */  nop   
+/* 0BE460 7F08BA70 00000000 */  nop
 /* 0BE464 7F08BA74 45020009 */  bc1fl .L7F08BA9C
 /* 0BE468 7F08BA78 C5001278 */   lwc1  $f0, 0x1278($t0)
 /* 0BE46C 7F08BA7C 44816000 */  mtc1  $at, $f12
@@ -21373,11 +19924,11 @@ glabel sub_GAME_7F08B0F0
 .L7F08BA9C:
 /* 0BE48C 7F08BA9C 3C014170 */  li    $at, 0x41700000 # 15.000000
 /* 0BE490 7F08BAA0 4600703C */  c.lt.s $f14, $f0
-/* 0BE494 7F08BAA4 00000000 */  nop   
+/* 0BE494 7F08BAA4 00000000 */  nop
 /* 0BE498 7F08BAA8 45020008 */  bc1fl .L7F08BACC
 /* 0BE49C 7F08BAAC 460E003C */   c.lt.s $f0, $f14
 /* 0BE4A0 7F08BAB0 44814000 */  mtc1  $at, $f8
-/* 0BE4A4 7F08BAB4 00000000 */  nop   
+/* 0BE4A4 7F08BAB4 00000000 */  nop
 /* 0BE4A8 7F08BAB8 46080281 */  sub.s $f10, $f0, $f8
 /* 0BE4AC 7F08BABC E50A1278 */  swc1  $f10, 0x1278($t0)
 /* 0BE4B0 7F08BAC0 8E280000 */  lw    $t0, ($s1)
@@ -21388,7 +19939,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE4C0 7F08BAD0 45020007 */  bc1fl .L7F08BAF0
 /* 0BE4C4 7F08BAD4 00107900 */   sll   $t7, $s0, 4
 /* 0BE4C8 7F08BAD8 44819000 */  mtc1  $at, $f18
-/* 0BE4CC 7F08BADC 00000000 */  nop   
+/* 0BE4CC 7F08BADC 00000000 */  nop
 /* 0BE4D0 7F08BAE0 46120100 */  add.s $f4, $f0, $f18
 /* 0BE4D4 7F08BAE4 E5041278 */  swc1  $f4, 0x1278($t0)
 /* 0BE4D8 7F08BAE8 8E280000 */  lw    $t0, ($s1)
@@ -21445,20 +19996,20 @@ glabel sub_GAME_7F08B0F0
 /* 0BE58C 7F08BB9C 24020001 */   li    $v0, 1
 /* 0BE590 7F08BBA0 C48A0090 */  lwc1  $f10, 0x90($a0)
 /* 0BE594 7F08BBA4 460A1032 */  c.eq.s $f2, $f10
-/* 0BE598 7F08BBA8 00000000 */  nop   
+/* 0BE598 7F08BBA8 00000000 */  nop
 /* 0BE59C 7F08BBAC 45030003 */  bc1tl .L7F08BBBC
 /* 0BE5A0 7F08BBB0 460E103C */   c.lt.s $f2, $f14
 /* 0BE5A4 7F08BBB4 24020001 */  li    $v0, 1
 .L7F08BBB8:
 /* 0BE5A8 7F08BBB8 460E103C */  c.lt.s $f2, $f14
 .L7F08BBBC:
-/* 0BE5AC 7F08BBBC 00000000 */  nop   
+/* 0BE5AC 7F08BBBC 00000000 */  nop
 /* 0BE5B0 7F08BBC0 45000006 */  bc1f  .L7F08BBDC
-/* 0BE5B4 7F08BBC4 00000000 */   nop   
+/* 0BE5B4 7F08BBC4 00000000 */   nop
 /* 0BE5B8 7F08BBC8 8D1900D4 */  lw    $t9, 0xd4($t0)
 /* 0BE5BC 7F08BBCC 832A0026 */  lb    $t2, 0x26($t9)
 /* 0BE5C0 7F08BBD0 11400002 */  beqz  $t2, .L7F08BBDC
-/* 0BE5C4 7F08BBD4 00000000 */   nop   
+/* 0BE5C4 7F08BBD4 00000000 */   nop
 /* 0BE5C8 7F08BBD8 24020001 */  li    $v0, 1
 .L7F08BBDC:
 /* 0BE5CC 7F08BBDC 50400035 */  beql  $v0, $zero, .L7F08BCB4
@@ -21500,11 +20051,11 @@ glabel sub_GAME_7F08B0F0
 /* 0BE658 7F08BC68 0FC1BFDB */  jal   modelSetAnimLooping
 /* 0BE65C 7F08BC6C 8DE400D4 */   lw    $a0, 0xd4($t7)
 /* 0BE660 7F08BC70 44807000 */  mtc1  $zero, $f14
-/* 0BE664 7F08BC74 00000000 */  nop   
+/* 0BE664 7F08BC74 00000000 */  nop
 .L7F08BC78:
 /* 0BE668 7F08BC78 C7A40090 */  lwc1  $f4, 0x90($sp)
 /* 0BE66C 7F08BC7C 4604703E */  c.le.s $f14, $f4
-/* 0BE670 7F08BC80 00000000 */  nop   
+/* 0BE670 7F08BC80 00000000 */  nop
 /* 0BE674 7F08BC84 45020008 */  bc1fl .L7F08BCA8
 /* 0BE678 7F08BC88 8E290000 */   lw    $t1, ($s1)
 /* 0BE67C 7F08BC8C 8E380000 */  lw    $t8, ($s1)
@@ -21512,7 +20063,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE684 7F08BC94 0FC1BFE2 */  jal   modelSetAnimEndFrame
 /* 0BE688 7F08BC98 8F0400D4 */   lw    $a0, 0xd4($t8)
 /* 0BE68C 7F08BC9C 44807000 */  mtc1  $zero, $f14
-/* 0BE690 7F08BCA0 00000000 */  nop   
+/* 0BE690 7F08BCA0 00000000 */  nop
 /* 0BE694 7F08BCA4 8E290000 */  lw    $t1, ($s1)
 .L7F08BCA8:
 /* 0BE698 7F08BCA8 10000011 */  b     .L7F08BCF0
@@ -21520,7 +20071,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE6A0 7F08BCB0 C5061280 */  lwc1  $f6, 0x1280($t0)
 .L7F08BCB4:
 /* 0BE6A4 7F08BCB4 46066032 */  c.eq.s $f12, $f6
-/* 0BE6A8 7F08BCB8 00000000 */  nop   
+/* 0BE6A8 7F08BCB8 00000000 */  nop
 /* 0BE6AC 7F08BCBC 4503000D */  bc1tl .L7F08BCF4
 /* 0BE6B0 7F08BCC0 8FAB009C */   lw    $t3, 0x9c($sp)
 /* 0BE6B4 7F08BCC4 8D0400D4 */  lw    $a0, 0xd4($t0)
@@ -21611,7 +20162,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE7F4 7F08BE04 46003103 */  div.s $f4, $f6, $f0
 /* 0BE7F8 7F08BE08 44052000 */  mfc1  $a1, $f4
 /* 0BE7FC 7F08BE0C 0FC1B49D */  jal   setsubroty
-/* 0BE800 7F08BE10 00000000 */   nop   
+/* 0BE800 7F08BE10 00000000 */   nop
 /* 0BE804 7F08BE14 8FA400F0 */  lw    $a0, 0xf0($sp)
 /* 0BE808 7F08BE18 240A0019 */  li    $t2, 25
 /* 0BE80C 7F08BE1C 00002825 */  move  $a1, $zero
@@ -21629,7 +20180,7 @@ glabel sub_GAME_7F08B0F0
 /* 0BE83C 7F08BE4C 24050001 */  li    $a1, 1
 /* 0BE840 7F08BE50 0FC0B453 */  jal   chrSetFiring
 /* 0BE844 7F08BE54 81C60C1D */   lb    $a2, 0xc1d($t6)
-/* 0BE848 7F08BE58 0FC0839A */  jal   sub_GAME_7F020EF0
+/* 0BE848 7F08BE58 0FC0839A */  jal   chrTickBeams
 /* 0BE84C 7F08BE5C 8FA400F8 */   lw    $a0, 0xf8($sp)
 /* 0BE850 7F08BE60 AFA200A0 */  sw    $v0, 0xa0($sp)
 /* 0BE854 7F08BE64 00003825 */  move  $a3, $zero
@@ -21778,7 +20329,7 @@ Gfx* bondviewGfxPlayerField5cMatrix(Gfx* gdl)
 
 /**
  * Unreferenced.
- * 
+ *
  * Address 0x7F08BD18.
  */
 void bondviewTransformPosToViewMatrix(RenderPosView *arg0)
@@ -21793,9 +20344,9 @@ void bondviewTransformPosToViewMatrix(RenderPosView *arg0)
 
 /**
  * Address 0x7F08BD48.
- * 
+ *
  * Notes: Similar to sub_GAME_7F08BE2C.
- * 
+ *
  */
 void bondviewTransformManyPosToViewMatrix(RenderPosView * arg0, s32 arg1)
 {
@@ -21821,7 +20372,7 @@ void bondviewTransformManyPosToViewMatrix(RenderPosView * arg0, s32 arg1)
 
 /**
  * Unreferenced.
- * 
+ *
  * Address 0x7F08BDC4.
  */
 void sub_GAME_7F08BDC4(Mtxf *arg0)
@@ -21836,6 +20387,11 @@ void sub_GAME_7F08BDC4(Mtxf *arg0)
 }
 
 
+/**
+ * Unreferenced.
+ *
+ * Address 0x7F08BE2C.
+ */
 void sub_GAME_7F08BE2C(Mtxf *matrices, s32 count)
 {
     Mtxf copy;

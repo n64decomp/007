@@ -6,7 +6,7 @@
 #include <bondtypes.h>
 #include "file.h"
 
-#define RAMROM_FOLDERNUM 0x64
+
 
 /* EEPROM masks for in-game settings */
 #define OPTION_INVERTLOOK    0x0001
@@ -26,13 +26,13 @@
 u8 fileGetBondForFolder(u32 folder);
 void fileValidateSaves(void);
 bool fileGetIsCheatUnlocked(save_data *save, s32 cheat);
-STAGESTATUS fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DIFFICULTY difficulty);
-void fileUnlockStageInFolderAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE stage, DIFFICULTY difficulty, s32 newtime);
-void sub_GAME_7F01E760(s32 foldernum, s32 cheat);
+STAGESTATUS fileIsStageUnlockedAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE levelid, DIFFICULTY difficulty);
+void fileUnlockStageInFolderAtDifficulty(s32 foldernum, LEVEL_SOLO_SEQUENCE levelid, DIFFICULTY difficulty, s32 newtime);
+void fileSaveFolderUnlockCheat(s32 foldernum, s32 cheat);
 void fileLoadSettingsForFolder(u32 folder);
 void fileDeleteSaveForFolder(s32 foldernum);
 
-void fileGetHighestStageDifficultyCompletedForFolder(s32 foldernum, LEVEL_SOLO_SEQUENCE *stage, DIFFICULTY *difficulty);
+void fileGetHighestStageDifficultyCompletedForFolder(s32 foldernum, LEVEL_SOLO_SEQUENCE *levelid, DIFFICULTY *difficulty);
 bool check_aztec_completed_any_folder_secret_00(void);
 bool fileIsEgyptCompletedOn00AnyFolder(void);
 LEVEL_SOLO_SEQUENCE fileGetHighestStageUnlockedAnyFolder(void);

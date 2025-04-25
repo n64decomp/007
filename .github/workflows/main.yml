@@ -33,10 +33,15 @@ jobs:
           echo "::set-output name=all::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
    
   buildus:
-    
     runs-on: ubuntu-20.04
-
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Bypass Cloudflare for GitHub Action
+        uses: xiaotianxt/bypass-cloudflare-for-github-action@v1.1.1
+        with:
+          cf_zone_id: ${{ secrets.CF_ZONE_ID }}
+          cf_api_token: ${{ secrets.CF_API_TOKEN }}
       - uses: actions/checkout@v2
       #  with:
       #    fetch-depth: 2
@@ -69,10 +74,10 @@ jobs:
 
       - name: Extract US Assets
         #if: steps.cache-assets.outputs.cache-hit != 'true'
-        run: ./extract_baserom.u.sh
+        run: ./scripts/extract_baserom.u.sh
       
       - name: Make US 
-        run: make -j IDO_RECOMP=YES VERSION=US VERBOSE=1
+        run: make all -j IDO_RECOMP=YES VERSION=US VERBOSE=1
           
       - name: Make report
         run: make -C tools/report
@@ -105,7 +110,7 @@ jobs:
       #    path: tools/report/index.html
       - name: Upload output files
 
-        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+        uses: AXDOOMER/copy_file_to_another_repo_action@e54ae5087212906dac7ef96dee19e31190913257
 
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}

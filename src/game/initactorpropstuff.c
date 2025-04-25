@@ -32,23 +32,16 @@ void reset_counter_rand_body_head(void)
 }
 
 
-u32 sub_GAME_7F0001F0(void *ani,int aniid,int param_3)
-{
-  short asStack8 [4];
-  u32 uVar1;
-  u32 i;
-  
-  
-  i = 0;
-  while (aniid < param_3) {
-      uVar1 = sub_GAME_7F06D2E4(0,0,&skeleton_guard,ani,aniid,asStack8);
-      i = i + uVar1 & 0xffff;
-      aniid=1+aniid;
-
-  }
-  return i;
+u32 sub_GAME_7F0001F0(void *ani, int aniid, int param_3) {
+    short asStack8[4];
+    u16 result = 0;
+    
+    while (aniid < param_3) {
+        result += sub_GAME_7F06D2E4(0, 0, &skeleton_guard, ani, aniid, asStack8);
+        aniid++;
+    }
+    return result;
 }
-
 
 
 #ifdef NONMATCHING

@@ -193,7 +193,7 @@ void debmenuResetPosition(void) {
 void debmenuReset(void) {
     #ifdef LEFTOVERDEBUG
     s32 x;
-    s32 y;  
+    s32 y;
     for (y = 0; y < 35; y++) {
         for (x = 0; x < 80; x++) {
             debmenuWriteCharAtPos(x, y, '\0');
@@ -236,13 +236,16 @@ void debmenu7000AF98(s32 height)
             for (x = 0; x != 80; x++)
             {
                 debmenuWriteCharAtPos(x, y, 0);
-            }            
+            }
         }
     }
 #endif
 }
 
 
+/*
+* Address: 0x7000b040
+*/
 void debmenuSetPos(s32 x, s32 y) {
     #ifdef LEFTOVERDEBUG
     x += g_DebugMenuTextStartX;
@@ -273,7 +276,7 @@ void debmenuWriteChar(unsigned char c) {
     }
     g_DebugMenuTextCurrentX++;
     if ((c == '\r') || (c == '\n') || (g_DebugMenuTextCurrentX >= width)) {
-        g_DebugMenuTextCurrentX = g_DebugMenuTextStartX;        
+        g_DebugMenuTextCurrentX = g_DebugMenuTextStartX;
         g_DebugMenuTextCurrentY++;
         if (g_DebugMenuTextCurrentY >= height) {
             g_DebugMenuTextCurrentY = g_DebugMenuTextStartY;
@@ -298,7 +301,7 @@ void debmenuPrintString(const unsigned char *str) {
     #endif
 }
 
-void debmenuSetPositionAndWriteString(s32 x, s32 y, const unsigned char *str) { 
+void debmenuSetPositionAndWriteString(s32 x, s32 y, const unsigned char *str) {
     #ifdef LEFTOVERDEBUG
     debmenuSetPos(x, y);
     while (*str != '\0') {
@@ -308,7 +311,9 @@ void debmenuSetPositionAndWriteString(s32 x, s32 y, const unsigned char *str) {
 }
 
 
-
+/*
+* Address: 0x7000b27c
+*/
 Gfx *debmenuDraw(Gfx *gdl)
 {
 #if defined(LEFTOVERDEBUG)
@@ -340,15 +345,15 @@ Gfx *debmenuDraw(Gfx *gdl)
 					gdl2 += 2;
 					appliedpaletteindex = paletteindex;
 				}
-                
+
 				if (1)
                 {
 				    gdl2 += 3;
-                }                
+                }
 			}
 		}
 	}
-    
+
 	// Make sure there'll be a least 256 GBI commands free (2KB)
 	available = dynGetFreeGfx(gdl) - 256 * sizeof(Gfx);
 	needed = (u32)gdl2 - (u32)gdl;
@@ -360,10 +365,10 @@ Gfx *debmenuDraw(Gfx *gdl)
     if(1)
 	{
 		s32 appliedpaletteindex = -1;
-        
+
 		// Write a "g_DebugMenuPercentage" (out of 255) into a global variable
 		// which shows how much of the displaylist will be committed,
-		// provided 2KB is kept free.        
+		// provided 2KB is kept free.
 		if (available <= 0)
         {
 			// There's already less than 2KB free in the display list
@@ -381,7 +386,7 @@ Gfx *debmenuDraw(Gfx *gdl)
 			// so the displaylist can be committed in full
 			g_DebugMenuPercentage = 256;
 		}
-        
+
 		gSPDisplayList(gdl++, g_DebugMenuTextureDisplayList);
 
         // Build the display list for real this time.
@@ -398,7 +403,7 @@ Gfx *debmenuDraw(Gfx *gdl)
 				s32 paletteindex = g_DebugMenuTextBuffer[x][y].color;
 
                 if(x == 80);
-                
+
                 if (c != '\0')
                 {
                     if (paletteindex != appliedpaletteindex)
@@ -440,8 +445,8 @@ Gfx *debmenuDraw(Gfx *gdl)
 			}
 		}
 	}
-    
+
 #endif // defined(LEFTOVERDEBUG)
-    
+
     return gdl;
 }

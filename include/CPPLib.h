@@ -21,10 +21,15 @@
 #define PLUS() +
 #define ZERO() 0
 #define ONE()  1
-
-#define EXPAND(a) a
-#define EAT(x)
 #define STR(n) #n
+
+#ifdef __sgi
+#    define EXPAND(a) a
+#    define EAT(x)
+#else
+#    define EXPAND(...) __VA_ARGS__
+#    define EAT(x, ...) __VA_ARGS__
+#endif
 
 
 /**
@@ -87,7 +92,11 @@
 #define EVAL8(a)   EVAL4(EVAL2(EVAL1(a)))
 #define EVAL4(a)   EVAL2(EVAL1(a))
 #define EVAL2(a)   EVAL1(a)
-#define EVAL1(VA)  IF_VA(EXPAND(DEFER(IS_PAREN)(VA)))(DEFER(EXPAND_ARGS_STACK)) VA
+#ifdef __sgi
+#    define EVAL1(VA) IF_VA(EXPAND(DEFER(IS_PAREN)(VA)))(DEFER(EXPAND_ARGS_STACK)) VA
+#else
+#    define EVAL1(...) __VA_ARGS__
+#endif
 
 /**
  * Causes a function-style macro to require an additional pass to be expanded.
@@ -181,15 +190,29 @@
 #define CAT(a, b)          PRIMITIVECAT(a, b)
 #define PRIMITIVECAT(a, b) a##b
 
-/**
- * Get the first argument and ignore the rest.
- */
-#define FIRST_PRE_VA(a) a
+#ifdef __sgi
+    /**
+     * Get the first argument and ignore the rest.
+     */
+    #define FIRST_PRE_VA(a) a
+#else
+    /**
+     * Get the first argument and ignore the rest.
+     */
+    #    define FIRST_PRE_VA(a,...) a
+#endif
 
-/**
- * Get the second argument and ignore the rest.
- */
-#define SECOND_PRE_VA(a, b) b
+#ifdef __sgi
+    /**
+     * Get the second argument and ignore the rest.
+     */
+    #    define SECOND_PRE_VA(a, b) b
+#else
+    /**
+     * Get the second argument and ignore the rest.
+     */
+    #    define SECOND_PRE_VA(a, b,...) b
+#endif
 
 /**
  * Expects a single input (not containing commas). Returns 1 if the input is
@@ -200,42 +223,54 @@
  * This macro abuses the fact that PROBE() contains a comma while other valid
  * inputs must not.
  */
-#define IS_PROBE(a) SECOND_PRE_VA(a, 0)
-#define PROBE()     ~, 1
-
-/**
- * Detect Parenthesis 
- * @return TRUE/FALSE
- */
-#define IS_PAREN(x)       IS_PROBE(IS_PAREN_PROBE x)
-#define IS_PAREN_PROBE(A) PROBE(~)
-
-#ifdef EXPAND_EXAMPLES
-    IS_PAREN((S)) // Expands to 1
-    IS_PAREN(xxx) // Expands to 0
+#ifdef __sgi
+#    define IS_PROBE(a) SECOND_PRE_VA(a, 0)
+#    define PROBE()  ~, 1
+#else
+#    define IS_PROBE(...) SECOND_PRE_VA(__VA_ARGS__,0)
+#    define PROBE(...)    ~, 1, __VA_ARGS__
 #endif
 
 /**
- * Detects if arg or macro is defined as nothing. 
+ * Detect Parenthesis
+ * @return TRUE/FALSE
+ */
+
+#ifdef __sgi
+#    define IS_PAREN(x)       IS_PROBE(IS_PAREN_PROBE x)
+#    define IS_PAREN_PROBE(A) PROBE(~)
+#else
+#        define IS_PAREN(...)       IS_PROBE(IS_PAREN_PROBE __VA_ARGS__)
+#        define IS_PAREN_PROBE(...) PROBE(~) __VA_ARGS__
+#endif
+
+#ifdef EXPAND_EXAMPLES
+    //IS PAREN
+    IS_PAREN((S)) // IS...((s)) Expands to 1
+    IS_PAREN(xxx) // IS...(xxx) Expands to 0
+#endif
+
+/**
+ * Detects if arg or macro is defined as nothing.
  */
 #define IS_EMPTY(x)  _IS_EMPTY(x)
 #define _IS_EMPTY(x) IS_PROBE(CAT(_IS_EMPTY, _##x##_))
 #define _IS_EMPTY__  PROBE(~) /*NULL*/
 
 /**
- * Detects if arg or macro is a Bool (1 or 0). 
+ * Detects if arg or macro is a Bool (1 or 0).
  * Use _IS_BOOL to prevent first expansion (TRUE/FALSE macro)
  * @return TRUE/FALSE
  */
 #define IS_BOOL(x)      _IS_BOOL(x)
 #define _IS_BOOL(x)     IS_PROBE(CAT(_IS_BOOL, _##x##_))
 #define _IS_BOOL_TRUE_  PROBE(~)
-#define _IS_BOOL_FALSE_ PROBE(~) 
+#define _IS_BOOL_FALSE_ PROBE(~)
 #define _IS_BOOL_1_     PROBE(~)
 #define _IS_BOOL_0_     PROBE(~)
 
     /**
- * Macro version of "defined" however its limited to 1/0/nothing. Any other value 
+ * Macro version of "defined" however its limited to 1/0/nothing. Any other value
  * is indistuiguishable from a random name
  * Certain pre-defined definitions can be "NOTDEFINED" eg THIS.
  * so checking IF(DEFINED(THIS)) is asking if THIS is NOT defined
@@ -268,6 +303,7 @@
 
 
 #ifdef EXPAND_EXAMPLES
+    //NOT
     NOT(1)                 // not 1
     NOT(0)                 // not 0
     NOT()                  // not
@@ -295,7 +331,7 @@
 #define _IF_VA_0(a)
 
 /**
- * _VA_ARGS_ for c89 
+ * _VA_ARGS_ for c89
  * Allows up to 32 Args on the stack
  */
 #define EXPAND_ARGS_STACK(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,ERROR) \
@@ -399,39 +435,63 @@ IF_VA(NOT(IS_EMPTY(A)))/*
 																																*/(/*
 																																	*/COMMA() undefinedlocal = 1/0 "_VA_ARGS Stack full"/*
 																																*/)/*
-*/)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	
+*/)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)	)
 /**
  * Push/Pop VA Args arrays
  */
-#define POP_ARG(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF) /* 
-    */(IF_VA(IS_PAREN(A))(_POP_ARG A) /*
-    ELSE*/IF_VA(NOT(IS_PAREN(A)))(EXPAND_ARGS_STACK(B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF)))
-#define _POP_ARG(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF) EXPAND_ARGS_STACK(B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF)
-#define PUSH_ARG(A,B)(A, TRY_EXPAND(B))
 
-/**
+#ifdef __sgi
+#    define POP_ARG(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF) /*
+         */(IF_VA(IS_PAREN(A))(_POP_ARG A) /*
+         ELSE*/IF_VA(NOT(IS_PAREN(A)))(EXPAND_ARGS_STACK(B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF)))
+#    define _POP_ARG(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA, AB, AC, AD, AE, AF) EXPAND_ARGS_STACK(B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, AA, AB, AC, AD, AE, AF)
+#else
+#    define POP_ARG(A, ...)   (IF_VA(IS_PAREN(A))(_POP_ARG A) IF_VA(NOT(IS_PAREN(A))) (_POP_ARG(A, __VA_ARGS__))
+#    define _POP_ARG(A, ...)     __VA_ARGS__
+#endif
+#    define PUSH_ARG(A,B)(A, TRY_EXPAND(B))
+
+ /**
  * TRY Expand If Array
  */
 #define TRY_EXPAND(c)     _TRY_EXPAND(IS_PAREN(c))(c)
 #define _TRY_EXPAND(c)    CAT(__TRY_EXPAND_, c)
-#define __TRY_EXPAND_1(a) EXPAND_ARGS_STACK a
+#ifdef __sgi
+#    define __TRY_EXPAND_1(a) EXPAND_ARGS_STACK a
+#else
+#    define __TRY_EXPAND_1(A)    __TRY_EXPAND_11 A
+#    define __TRY_EXPAND_11(...) __VA_ARGS__
+#endif
 #define __TRY_EXPAND_0(a) a
 
-/**
- * Get the first argument and ignore the rest.
- */
-#define FIRST(a) EXPAND(DEFER(FIRST_PRE_VA)(TRY_EXPAND(a)))
 
-/**
- * Get the second argument and ignore the rest.
- */
-#define SECOND(a, b) EXPAND(DEFER(SECOND_PRE_VA)(TRY_EXPAND(a), b))
+#ifdef __sgi
+    /**
+     * Get the first argument and ignore the rest.
+     */
+#    define FIRST(a)             EXPAND(DEFER(FIRST_PRE_VA)(TRY_EXPAND(a)))
+    /**
+     * Get the second argument and ignore the rest.
+     */
+#    define SECOND(a, b) EXPAND(DEFER(SECOND_PRE_VA)(TRY_EXPAND(a), b))
+
+#else
+    /**
+     * Get the first argument and ignore the rest.
+     */
+#    define FIRST(A,...)     EXPAND(DEFER(FIRST_PRE_VA)(TRY_EXPAND(a)))
+    /**
+     * Get the second argument and ignore the rest.
+     */
+#    define SECOND(a, b,...) EXPAND(DEFER(SECOND_PRE_VA)(TRY_EXPAND(a), b))
+#endif
+
 
 #ifdef EXPAND_EXAMPLES
-// POP ARG
+// POP ARG (THIS, IS, a, TEST, hy)
     POP_ARG(THIS, IS, a, TEST, hy)
-// push arg
-    PUSH_ARG(test, (this, is, a, test, with, a , is, so, is, a, test, with, a , is, so, is, a, test, with, a , is, so, is, a, test, with, a , is, so))
+// push arg test (this, is, a, test, with, a , is, so, is, a, test, with, a , is, so, is, a, test, with, a , is, so, is, a, test, with, a , is, so)
+    PUSH_ARG(test, (this, is, a, test, with, a2 , is2, so, is3, a3, test2, with2, a3 , is4, so4, is5, a4, test3, with3, a6 , is6, so5, is7, a7, test4, with5, a8 , is8, so8))
 #endif
 
 /**
@@ -453,14 +513,14 @@ IF_VA(NOT(IS_EMPTY(A)))/*
 /**
  * Logical AND. Simply performs a lookup.
  */
-#define AND(a, b) CAT(CAT(_AND_, a), b)
-#define _AND_00   0
-#define _AND_01   0
-#define _AND_10   0
-#define _AND_11   1
+#define AND_CPPLIB(a, b) CAT(CAT(_AND_CPPLIB_, a), b)
+#define _AND_CPPLIB_00   0
+#define _AND_CPPLIB_01   0
+#define _AND_CPPLIB_10   0
+#define _AND_CPPLIB_11   1
 
 /**
- * Macro if statement. 
+ * Macro if statement.
  * Usage:
  *   IF(condition)          \
  *   (                      \
@@ -474,16 +534,16 @@ IF_VA(NOT(IS_EMPTY(A)))/*
 #define _IF_1(a) TRY_EXPAND(a)
 #define _IF_0(a)
 
-/** 
- * Macro if/else statement. 
+/**
+ * Macro if/else statement.
  * Usage:
  *
- *   IF_ELSE(condition)     
- *   ((                     
- *     expansion when true  
- *   ))                     
- *   ((                     
- *     expansion when false 
+ *   IF_ELSE(condition)
+ *   ((
+ *     expansion when true
+ *   ))
+ *   ((
+ *     expansion when false
  *   ))
  * @param condition
  * @return TRUE/FALSE
@@ -496,10 +556,13 @@ IF_VA(NOT(IS_EMPTY(A)))/*
 
 
 #ifdef EXPAND_EXAMPLES
-    IF_ELSE(220)((it was, non - zero))(it was zero) // Expands to "non Zero"
+    //if else 220
+    IF_ELSE(220)((it was, non - zero))(it was zero) // Expands to "it was, non Zero"
+    //if 06
     IF(06)(NONZERO)
+#endif
 
-
+#if 0
 /*
  * When
  */
@@ -507,12 +570,16 @@ IF_VA(NOT(IS_EMPTY(A)))/*
 #endif
 /**
  * Macro which checks if it has any arguments. Returns '0' if there are no
- * arguments, '1' otherwise. 
+ * arguments, '1' otherwise.
  * Limitation: HAS_ARGS(,1,2,3) returns 0 -- this check essentially only checks
  * that the first argument exists.
  * @return TRUE/FALSE
  */
-#define HAS_ARGS(a)      BOOL(EXPAND(_END_OF_ARGUMENTS_ FIRST(a)()))
+#ifdef __sgi
+#    define HAS_ARGS(a) BOOL(EXPAND(_END_OF_ARGUMENTS_ FIRST(a)()))
+#else
+#    define HAS_ARGS(...) BOOL(FIRST(__VA_ARGS__))
+#endif
 #define _END_OF_ARGUMENTS_() 0
 
 /*
@@ -523,7 +590,7 @@ for_each(v.begin(), v.end(), [](int &number)
 */
 /**
  * foreach macro
- * @param 
+ * @param
  */
 #define foreach(var, collection) for (var = *collection; var; var++)
 
@@ -535,8 +602,9 @@ HAS_ARGS((a, b, c))
 //no
 HAS_ARGS()
 HAS_ARGS(())
-HAS_ARGS((      ()))
-
+HAS_ARGS((      ())) //this one has too many parens
+#endif
+#if 0
 #    define test() Im expanded
         DEFER8(test)() EVAL1(EVAL4(DEFER4(test)()))
 
@@ -545,7 +613,7 @@ HAS_ARGS((      ()))
     // RECURSE
     EVAL16(RECURSE((this, is, a, test, WITH, MANY, ARGS)))
 #endif
-
+#ifdef __sgi
 #define COUNTPARAMS(X) \
     IF_ELSE(IS_PAREN(X)) /*
     */( /*
@@ -563,22 +631,37 @@ HAS_ARGS((      ()))
         */COUNT /*
     */)
 #    define _COUNTPARMS() COUNTPARAMS_INNER
-
+#else
+#    define ELEVENTH_ARGUMENT(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, ...) a11
+#    define COUNTPARAMS(...)                                                     IF_ELSE(IS_PAREN(__VA_ARGS__))(_COUNTPARAMS __VA_ARGS__)(ELEVENTH_ARGUMENT(dummy, ##__VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))
+#    define _COUNTPARAMS(...)                                                    ELEVENTH_ARGUMENT(dummy, ##__VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#endif
 
 #ifdef EXPAND_EXAMPLES
     // COUNTPARAMS - IT WORKS!!!, THIS WILL BE GREAT FOR AI
+    //0
     COUNTPARAMS(())
+    //1
     COUNTPARAMS((A))
+    // 2
     COUNTPARAMS((A, B))
+    // 3
     COUNTPARAMS((A, B, C))
+    // 4
     COUNTPARAMS((A, B, C, D))
+    // 5
     COUNTPARAMS((A, B, C, D, E))
+    // 6
     COUNTPARAMS((A, B, C, D, E, F))
+    // 7
     COUNTPARAMS((A, B, C, D, E, F, G))
-    COUNTPARAMS((A, B, C, D, E, F,G,H))
-    COUNTPARAMS((A, B, C, D, E,  F,G,H,I))
+    // 8
+    COUNTPARAMS((A, B, C, D, E, F, G, H))
+    // 9
+    COUNTPARAMS((A, B, C, D, E, F, G, H, I))
 
-#enAdif
+#endif
+#if 0
 #define LIST_TO_TUPLE(list) \
     IF_ELSE(IS_PAREN(list))\
     (\
@@ -586,8 +669,8 @@ HAS_ARGS((      ()))
     )\
     (\
         list\
-    )	
-    	
+    )
+
 #define LIST_TO_TUPLE_INNER(list, listb)        \
     IF_ELSE(HAS_ARGS(list))      \
     (\
@@ -595,12 +678,14 @@ HAS_ARGS((      ()))
     )\
     (\
         0 listb\
-    )	
-#define _LIST_TO_TUPLE_INNER() LIST_TO_TUPLE_INNER	
-// list to tuple	
-LIST_TO_TUPLE((this, (is, (a, (li8st, (lots, (of, (test, (another, )))))))))	
-//SINGLE	
+    )
+#define _LIST_TO_TUPLE_INNER() LIST_TO_TUPLE_INNER
+// list to tuple
+LIST_TO_TUPLE((this, (is, (a, (li8st, (lots, (of, (test, (another, )))))))))
+//SINGLE
 LIST_TO_TUPLE((this,(is)))
+
+#endif
 
 #define REPEAT(count, macro, a)                        \
     IF_ELSE(DEC(count))                                \
@@ -608,12 +693,11 @@ LIST_TO_TUPLE((this,(is)))
         /* Do nothing, just terminate */) DEFER(macro)(DEC(count), a)
 
 #define REPEAT_INDIRECT() REPEAT
-
-#ifdAef EXPAND_EXAMPLES
-// An example of using this macro
+#ifdef EXPAND_EXAMPLES
+// An example of repeat 9
 #    define M(i, _) i
-        EVAL16(REPEAT(9, M, ~)) // 0 1 2 3 4 5 6 7
-#endiAf
+        EVAL16(REPEAT(9, M, ~)) // 0 1 2 3 4 5 6 7 8
+#endif
 
 #define WHILE(pred, op, a) \
     IF(pred(a))            \
@@ -649,4 +733,4 @@ LIST_TO_TUPLE((this,(is)))
 
 /*MAP(MAKE_HAPPY, COMMA, (1,2,3,A))*/
 #endif
-#endif
+

@@ -1,12 +1,333 @@
 #include <ultra64.h>
 #include "initpathtablelinks.h"
-
+#include "padhalllv.h"
 
 
 #ifdef NONMATCHING
-void init_path_table_links(void) {
 
+/***
+* Ryan spent a few minutes looking at this and left some notes about what this function does:
+*
+* var_s6 is an "error" variable. If set anywhere, the function goes into an infinite loop at the end.
+* The first outer loop appears to be verifying that the waypoints don't list themselves as their own neighbour.
+* The second outer loop appears to do the same but for waygroups. It also calls sub_GAME_7F08F438, which is a more simple version of PD's waypointFindSegmentIntoGroup, so it's likely verifying that there is a waypoint path between this group and each neighbour.
+* The third outer loop is iterating waygroups, then iterating each group's waypoints, and assigning each waypoint's groupNum if it's less than 0. If a value is stored and it's wrong, the error variable is set.
+* The fourth outer loop is checking that all waypoints have a groupNum assigned.
+* The fifth outer loop I'm not sure about without actually decompiling it and naming stuff. It appears to be using the waypoint->dist property temporary so it can validate something. If it doesn't like it then the error variable is set.
+* The final outer loop is the infinite loop which occurs if the error variable is true.
+*/
+
+/**
+ * NTSC address 0x7F006890.
+ * https://decomp.me/scratch/nSCDd 40.03%
+*/
+void init_path_table_links(void)
+{    
+    waypoint *spA0;
+    waypoint *sp9C;
+    
+    s32 var_s6;
+    waypoint *temp_s0;
+    waygroup *spD8;
+    
+    waypoint *var_t5;
+    s32 var_v0_2;
+    s32 var_s3;
+    s32 var_s1;
+    s32 *temp_a2;
+    s32 var_a1;
+    s32 var_a3;
+    s32 *temp_v0;
+    s32 var_a0;
+    s32 *temp_v1;
+    s32 var_t1;
+    s32 *var_v1_3;
+    waypoint *temp_a1_2;
+    s32 temp_a2_2;
+    waygroup *var_t3;
+    s32 *var_v0_4;
+    s32 var_a3_2;
+    waypoint *var_a2_2;
+    s32 var_t4;
+    s32 var_t0_2;
+    s32 var_t1_2;
+    s32 var_v0_5;
+    s32 var_v1_4;
+    s32 var_t1_3;
+    waypoint *temp_a2_3;
+    s32 var_v1_5;
+    s32 var_v0_6;
+
+    var_s6 = 0;
+
+    temp_s0 = g_CurrentSetup.pathwaypoints;
+    spD8 = g_CurrentSetup.waypointgroups;
+
+    if (temp_s0 != NULL)
+    {
+        var_a3 = 0;
+        
+        var_t5 = temp_s0;
+        while (var_t5->padID >= 0)
+        {
+            temp_v0 = var_t5->neighbours;
+
+            while (*temp_v0 >= 0)
+            {
+                if (*temp_v0 == var_a3)
+                {
+                    var_s6 = 1;
+                    if (g_CurrentSetup.padnames != NULL)
+                    {
+                        // removed
+                    }
+                }
+                else
+                {
+                    var_a0 = 0;
+
+                    temp_v1 = temp_s0[*temp_v0].neighbours;
+
+                    while (*temp_v1 >= 0)
+                    {
+                        var_a0++;
+                        
+                        if (var_a3 != *temp_v1)
+                        {
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    if (var_a3 != temp_s0[*temp_v0].neighbours[var_a0])
+                    {
+                        var_s6 = 1;
+                    }
+                }
+
+                temp_v0++;
+            }
+            
+            var_a3++;
+            var_t5 = &temp_s0[var_a3];
+        }
+    }
+
+    if (spD8 != NULL)
+    {
+        var_s1 = 0;
+        
+        var_s3 = 0;
+        var_v0_2 = spD8->neighbours[var_s3];
+        
+        while (var_v0_2 >= 0)
+        {
+            if (var_v0_2 == var_s1)
+            {
+                var_s6 = 1;
+                if (g_CurrentSetup.boundpadnames != NULL)
+                {
+                    // removed
+                }
+            }
+            else
+            {
+                var_a1 = 0;
+                temp_a2 = &spD8->neighbours[var_v0_2];
+
+                while (*temp_a2 >= 0)
+                {
+                    var_a1++;
+                    
+                    if (var_s1 != *temp_a2)
+                    {
+                        temp_a2++;
+                        continue;
+                    }
+
+                    break;
+                }
+
+                if (var_s1 != temp_a2[var_a1])
+                {
+                    var_s6 = 1;
+                    if (g_CurrentSetup.boundpadnames != NULL)
+                    {
+                        // removed
+                    }
+                }
+                else if (g_CurrentSetup.pathwaypoints != NULL)
+                {
+                    sub_GAME_7F08F438(spD8, &spD8[var_v0_2], &spA0, &sp9C);
+                    
+                    if (spA0 == NULL || sp9C == NULL)
+                    {
+                        var_s6 = 1;                    
+                    }
+                }
+            }
+            
+            var_s3++;
+            var_v0_2 = spD8->neighbours[var_s3];
+        }
+    }
+
+    if ((temp_s0 != NULL) && (spD8 != NULL))
+    {
+        var_t1 = 0;
+
+        var_t3 = spD8;
+        while (var_t3 != NULL)
+        {
+            if (var_t3->neighbours != NULL)
+            {
+                var_a3_2 = 0;
+                var_v1_3 = var_t3->waypoints;
+                while (*var_v1_3 >= 0)
+                {
+                    temp_a1_2 = &temp_s0[*var_v1_3];
+                    temp_a2_2 = temp_a1_2->groupNum;
+    
+                    if (temp_a2_2 < 0)
+                    {
+                        temp_a1_2->groupNum = var_t1;
+                        var_v0_4 = &var_t3->waypoints[var_a3_2];
+                    }
+                    else
+                    {
+                        var_v0_4 = &var_t3->waypoints[var_a3_2];
+                        if (var_t1 != temp_a2_2)
+                        {
+                            var_s6 = 1;
+                        }
+                    }
+
+                    var_a3_2++;         
+                    
+                    var_v1_3 = var_v0_4 + 1;
+                }
+    
+                var_t1 = 0;
+            }
+
+            var_t3++;
+        }
+
+        var_a2_2 = temp_s0;
+        while (var_a2_2->padID >= 0)
+        {
+            var_a2_2 = &temp_s0[var_t1];
+            if (var_a2_2->groupNum < 0)
+            {
+                var_s6 = 1;
+            }
+            var_t1++;
+        }
+
+        if (spD8->neighbours != NULL)
+        {
+            var_t3 = spD8;
+
+            
+            while (var_t3 != NULL)
+            {
+                var_v1_4 = 0;
+                var_t0_2 = 0;
+                var_t4 = 0;
+                var_t1_2 = 0;
+
+                var_v0_5 = *var_t3->waypoints;
+                while (var_v0_5 >= 0)
+                {
+                    if (var_t1_2 == 0)
+                    {
+                        temp_s0[var_v0_5].dist = 1;
+                    }
+                    else
+                    {
+                        temp_s0[var_v0_5].dist = 0;
+                    }
+
+                    var_v0_5 = var_t3->waypoints[var_t1_2];
+                    var_t1_2++;
+                }
+
+                // loop_57
+                var_t1_3 = 0;
+                var_v0_5 = var_t3->waypoints[var_t1_3];
+                while (var_v0_5 >= 0)
+                {
+                    temp_a2_3 = &temp_s0[var_v0_5];
+
+                    if (temp_a2_3->dist == 1)
+                    {
+                        var_v1_5 = 0;
+                        var_v0_6 = temp_a2_3->neighbours[var_v1_5];
+                        while (var_v0_6 >= 0) //var_v0_6 >= 0
+                        {
+                            if (temp_s0[var_v0_6].dist != 1)
+                            {
+                                temp_s0[var_v0_6].dist = 1;
+                                var_t0_2 = 1;
+                            }
+                            
+                            var_v1_5++;
+                            var_v0_6 = temp_a2_3->neighbours[var_v1_5];
+                        }
+                    }
+                    
+                    var_v0_5 = var_t3->waypoints[var_t1_3];
+                }
+                
+                // loop_67
+                var_v0_5 = *var_t3->waypoints;
+                while (var_v0_5 >= 0) // var_v0_5 >= 0
+                {
+                    var_v1_4++;
+                    if (temp_s0[var_v0_5].dist != 1)
+                    {
+                        var_t4 = 1;
+                        break;
+                    }
+
+                    var_v0_5 = var_t3->waypoints[var_v1_4];
+                }
+
+                //var_v1_4 = 0;
+                if (var_t0_2 != 0)
+                {
+                    //var_v0_5 = var_a1_2;
+                    if (var_t4 != 0)
+                    {
+                        //var_t0_2 = 0;
+                        //var_t4 = 0;
+                        
+                        continue;
+                    }
+                }
+
+                if (var_t4 != 0)
+                {
+                    var_s6 = 1;
+                    
+                    if (g_CurrentSetup.boundpadnames != NULL)
+                    {
+                        //
+                    }
+                }
+                
+                var_t3++;
+            }
+        }
+    }
+
+    if (var_s6 != 0)
+    {
+        while(1);
+    }
 }
+
 #else
 GLOBAL_ASM(
 .text

@@ -2,6 +2,8 @@
 #define _UNK_0CC4C0_H_
 #include <ultra64.h>
 
+#include "image.h"
+
 struct image_sound
 {
     /**
@@ -24,7 +26,7 @@ struct image_sound
 
 typedef struct s_bss_8008D148
 {
-    s32 unk_0;
+    s32 inuse;
     s32 unk_4;
     s32 unk_8;
     s32 unk_C;
@@ -39,7 +41,7 @@ typedef struct s_bss_8008D148
 
 typedef struct s_bss_8008D2A8
 {
-    s32 unk_0;
+    s32 inuse;
     s32 unk_4;
     s32 unk_8;
     s32 unk_C;
@@ -48,5 +50,10 @@ typedef struct s_bss_8008D2A8
 
 
 extern struct image_sound *D_8004E86C[];
+
+s32 texGetHeightAtLod(struct tex *tex, s32 lod);
+void texGetDepthAndSize(struct tex *tex, s32 *deptharg, s32 *lenarg);
+
+void texCopyGdls(Gfx *arg0, Gfx *arg1, s32 arg2);
 
 #endif

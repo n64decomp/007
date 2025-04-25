@@ -96,7 +96,7 @@ s32 g_ramromRecordFlag = 0;
 
 
 
-void ensureCameraModeA(void);
+void ramromFadeToTitle(void);
 s32 ramrom_replay_handler(struct contsample *arg0, s32 arg1);
 void record_player_input_as_packet(struct contsample *arg0, s32 arg1, s32 arg2);
 void copy_current_ingame_registers_before_ramrom_playback(ramromfilestructure *state);
@@ -460,21 +460,21 @@ s32 ramrom_replay_handler(struct contsample *arg0, s32 arg1)
 
     if (ramrom_blkbuf_2->randseed != (u8)g_randomSeed)
     {
-        ensureCameraModeA();
+        ramromFadeToTitle();
     }
 
     var_t0 += (u8)((u8)ramrom_blkbuf_2->speedframes + (u8)ramrom_blkbuf_2->count + ramrom_blkbuf_2->randseed);
     if (ramrom_blkbuf_2->check != var_t0)
     {
-        ensureCameraModeA();
+        ramromFadeToTitle();
     }
     
     joySetContDataIndex(0);
     
     if (joyGetButtonsPressedThisFrame(0, 0xFFFFU) != 0)
     {
-        ensureCameraModeA();
-        prev_keypresses = 1;
+        ramromFadeToTitle();
+        prev_keypresses = TRUE;
     }
     
     joySetContDataIndex(1);
@@ -504,7 +504,7 @@ void iterate_ramrom_entries_handle_camera_out(void)
     var_a3 = ramrom_blkbuf_2->count;
     if (var_a3 == 0 && ramrom_blkbuf_2->speedframes == 0)
     {
-        ensureCameraModeA();
+        ramromFadeToTitle();
     }
     else
     {
@@ -512,14 +512,14 @@ void iterate_ramrom_entries_handle_camera_out(void)
         address_demo_loaded += align_addr_even((ptr_active_demofile->size_cmds * sizeof(struct ramrom_blockbuf) * ramrom_blkbuf_2->count) + 5);
     }
 
-    sub_GAME_7F0C0AA0(ramrom_blkbuf_2->speedframes);
+    updateFrameCounters(ramrom_blkbuf_2->speedframes);
 
     // BUG? Does this need to be adjusted for PAL?
     temp_v1 = ptr_active_demofile->totaltime_ms - 0x3C;
     if(0);
     if ((g_GlobalTimer >= temp_v1) && ((g_GlobalTimer - g_ClockTimer) < temp_v1))
     {
-        ensureCameraModeA();
+        ramromFadeToTitle();
     }
 }
 
@@ -658,11 +658,11 @@ void replay_recorded_ramrom_from_indy(void)
     replay_recorded_ramrom_at_address(INDY_RAMROM_DEMO_ADDRESS);
 }
 
-void ensureCameraModeA(void)
+void ramromFadeToTitle(void)
 {
-    if (get_camera_mode() != CAMERAMODE_UNK10)
+    if (bondviewGetCameraMode() != CAMERAMODE_FADE_TO_TITLE)
     {
-        set_camera_mode(CAMERAMODE_UNK10);
+        bondviewSetCameraMode(CAMERAMODE_FADE_TO_TITLE);
     }
 }
 

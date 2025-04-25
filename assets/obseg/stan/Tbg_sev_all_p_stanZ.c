@@ -1,6 +1,6 @@
 /*
 * This file was automatically generated
-* 
+*
 * Wednesday, August 18, 2021 10:27:15 PM
 * Getools.Lib: 21.8.18.1
 */
@@ -11523,7 +11523,8 @@ StandTile tile_874 = {
 };
 
 StandTile tile_875 = {
-    0x026108, 0x06,
+    0x026108 /*p609b*/,
+    0x06,
     0x0,
     0xa, 0xa, 0xa,
     3,

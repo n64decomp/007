@@ -42,7 +42,7 @@ u8 dword_CODE_bss_8007B098[8];
 
 // data
 //D:80040940
-s32 D_80040940 = 0;
+s32 g_NextShardNum = 0;
 u32 D_80040944 = 0;
 u32 D_80040948 = 0;
 u32 D_8004094C = 0;
@@ -347,57 +347,57 @@ void sub_GAME_7F0A2160(coord3d* arg0, f32 arg1, f32 arg2)
     sp50 = (randomGetNext() * (1.0f / (f32)UINT_MAX) * 1.12f) - .12f;
     temp_v0 = randomGetNext();
 
-    ptr_shattered_window_pieces[D_80040940].piece = 1;
-    ptr_shattered_window_pieces[D_80040940].x = arg0->x;
-    ptr_shattered_window_pieces[D_80040940].y = arg0->y;
-    ptr_shattered_window_pieces[D_80040940].z = arg0->z;
+    ptr_shattered_window_pieces[g_NextShardNum].piece = 1;
+    ptr_shattered_window_pieces[g_NextShardNum].x = arg0->x;
+    ptr_shattered_window_pieces[g_NextShardNum].y = arg0->y;
+    ptr_shattered_window_pieces[g_NextShardNum].z = arg0->z;
 
-    ptr_shattered_window_pieces[D_80040940].field_0x1c = temp_f24 * SCALAR_1_7F0A2160;
-    ptr_shattered_window_pieces[D_80040940].field_0x20 = sp50 * SCALAR_2_7F0A2160;
-    ptr_shattered_window_pieces[D_80040940].field_0x24 = ((2.0f * (temp_v0 * (1.0f / (f32)UINT_MAX))) - 1.0f) * SCALAR_1_7F0A2160;
-    ptr_shattered_window_pieces[D_80040940].field_0x38 = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * arg2;
-    ptr_shattered_window_pieces[D_80040940].field_0x3a = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * arg2;
-    ptr_shattered_window_pieces[D_80040940].field_0x3c = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x48 = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * arg2;
-    ptr_shattered_window_pieces[D_80040940].field_0x4a = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * -arg2;
-    ptr_shattered_window_pieces[D_80040940].field_0x4c = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x58 = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * -arg2;
-    ptr_shattered_window_pieces[D_80040940].field_0x5a = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * -arg2;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x1c = temp_f24 * SCALAR_1_7F0A2160;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x20 = sp50 * SCALAR_2_7F0A2160;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x24 = ((2.0f * (temp_v0 * (1.0f / (f32)UINT_MAX))) - 1.0f) * SCALAR_1_7F0A2160;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x38 = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * arg2;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x3a = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * arg2;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x3c = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x48 = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * arg2;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x4a = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * -arg2;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x4c = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x58 = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * -arg2;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x5a = ((randomGetNext() * (1.0f / (f32)UINT_MAX) * 0.5f) + 1.0f) * -arg2;
 
-    ptr_shattered_window_pieces[D_80040940].field_0x5c = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x40 = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x42 = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x50 = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x52 = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x60 = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x62 = 0;
-    ptr_shattered_window_pieces[D_80040940].field_0x44 = 5;
-    ptr_shattered_window_pieces[D_80040940].field_0x45 = 5;
-    ptr_shattered_window_pieces[D_80040940].field_0x46 = 0x7E;
-    ptr_shattered_window_pieces[D_80040940].field_0x54 = 5;
-    ptr_shattered_window_pieces[D_80040940].field_0x55 = 0xFB;
-    ptr_shattered_window_pieces[D_80040940].field_0x56 = 0x7E;
-    ptr_shattered_window_pieces[D_80040940].field_0x64 = 0xFB;
-    ptr_shattered_window_pieces[D_80040940].field_0x65 = 0xFB;
-    ptr_shattered_window_pieces[D_80040940].field_0x66 = 0x7E;
-    ptr_shattered_window_pieces[D_80040940].field_0x67 = 0xFF;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x5c = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x40 = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x42 = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x50 = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x52 = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x60 = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x62 = 0;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x44 = 5;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x45 = 5;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x46 = 0x7E;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x54 = 5;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x55 = 0xFB;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x56 = 0x7E;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x64 = 0xFB;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x65 = 0xFB;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x66 = 0x7E;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x67 = 0xFF;
 
-    field67 = ptr_shattered_window_pieces[D_80040940].field_0x67;
-    ptr_shattered_window_pieces[D_80040940].field_0x57 = field67;
-    ptr_shattered_window_pieces[D_80040940].field_0x47 = field67;
+    field67 = ptr_shattered_window_pieces[g_NextShardNum].field_0x67;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x57 = field67;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x47 = field67;
 
-    ptr_shattered_window_pieces[D_80040940].field_0x10 = arg1;
-    ptr_shattered_window_pieces[D_80040940].field_0x14 = 0.0f;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x10 = arg1;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x14 = 0.0f;
 
-    ptr_shattered_window_pieces[D_80040940].field_0x18 = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * M_TAU_F;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x18 = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * M_TAU_F;
 
-    ptr_shattered_window_pieces[D_80040940].field_0x28 = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * SCALAR_3_7F0A2160;
-    ptr_shattered_window_pieces[D_80040940].field_0x2c = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * SCALAR_3_7F0A2160;
-    ptr_shattered_window_pieces[D_80040940].field_0x30 = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * SCALAR_3_7F0A2160;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x28 = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * SCALAR_3_7F0A2160;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x2c = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * SCALAR_3_7F0A2160;
+    ptr_shattered_window_pieces[g_NextShardNum].field_0x30 = (randomGetNext() * (1.0f / (f32)UINT_MAX)) * SCALAR_3_7F0A2160;
 
-    D_80040940++;
-    if (D_80040940 >= SHATTERED_WINDOW_PIECES_BUFFER_LEN) {
-        D_80040940 = 0;
+    g_NextShardNum++;
+    if (g_NextShardNum >= SHATTERED_WINDOW_PIECES_BUFFER_LEN) {
+        g_NextShardNum = 0;
     }
 }
 
@@ -944,7 +944,7 @@ glabel sub_GAME_7F0A2C44
 /* 0D77B4 7F0A2C84 27A400D0 */  addiu $a0, $sp, 0xd0
 /* 0D77B8 7F0A2C88 24060002 */  li    $a2, 2
 /* 0D77BC 7F0A2C8C 24070001 */  li    $a3, 1
-/* 0D77C0 7F0A2C90 0FC1DB5A */  jal   likely_generate_DL_for_image_declaration
+/* 0D77C0 7F0A2C90 0FC1DB5A */  jal   texSelect
 /* 0D77C4 7F0A2C94 24A5000C */   addiu $a1, $a1, 0xc
 /* 0D77C8 7F0A2C98 8FAF00D0 */  lw    $t7, 0xd0($sp)
 /* 0D77CC 7F0A2C9C 3C19BB00 */  lui   $t9, (0xBB001001 >> 16) # lui $t9, 0xbb00
@@ -1123,8 +1123,88 @@ glabel sub_GAME_7F0A2C44
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F0A2F30(void) {
+// https://decomp.me/scratch/68YEL 85.92%
+void sub_GAME_7F0A2F30(struct damage_display_parent *arg0, s32 arg1, s32 arg2, f32 arg3)
+{
+    s32 sp80;
+    f32 sp74;
+    s32 i;
+    s32 var_s4;
+    
+    f32 temp_f24; // is this real? (probably)
+    
+    f32 temp_f4; // is this real? (maybe not)
+    s16 temp_s1;  // is this real? (maybe not)
 
+    arg3 *= 8.0f;
+    sp74 = (f32) arg2;
+    sp80 = 0;
+
+    for (i=0; i<23; i++)
+    {
+        temp_f24 = ((f32) (s32) (142.5 - (f64) sp80) * 3.1415927f * 2.0f) / 360.0f;
+        
+        for (var_s4 = 0; var_s4 < 2; var_s4++)
+        {
+            temp_s1 = (s16) (s32) (((sinf(temp_f24) * 4.0f * 130.0f * (6 - var_s4)) / 5.0f) * sp74);
+            temp_f4 = cosf(temp_f24) * 4.0f;
+
+            arg0[i].items[var_s4].unk00 = (temp_s1 + 1);
+            arg0[i].items[var_s4].unk02 = 0;
+            arg0[i].items[var_s4].unk04 = (s16) -(s32) (((temp_f4) * 130.0f * (6 - var_s4)) / 5.0f);
+            arg0[i].items[var_s4].unk06 = 0;
+            arg0[i].items[var_s4].unk08 = 0;
+            arg0[i].items[var_s4].unk0A = 0;
+            arg0[i].items[var_s4].unk0C = 0xFF;
+            arg0[i].items[var_s4].unk0D = 0xFF;
+            arg0[i].items[var_s4].unk0E = 0xFF;
+
+            if (arg2 > 0)
+            {
+                arg0[i].items[var_s4].unk0C = 96.0f - (cosf(temp_f24) * 96.0f);
+                arg0[i].items[var_s4].unk0D = 127.0f - (cosf(temp_f24) * 127.0f);
+                arg0[i].items[var_s4].unk0E = 0xFF;
+            }
+            else if (arg2 < 0)
+            {
+                arg0[i].items[var_s4].unk0D = 127.0f - (cosf(temp_f24) * 127.0f);
+                arg0[i].items[var_s4].unk0E = 32.0f - (cosf(temp_f24) * 32.0f);
+            }
+
+            if (i < 10)
+            {
+                if ((((s32) arg3 * 2) - 1) >= i)
+                {
+                    arg0[i].items[var_s4].unk0F = 0xFF;
+                }
+                else if ((i < (s32) (2.0f * arg3)) && ((((s32) arg3 * 2) - 1) < i))
+                {
+                    arg0[i].items[var_s4].unk0F = (s8) ((s32) ((arg3 - (f32) (s32) arg3) * 207.0f) + 0x30);
+                }
+                else
+                {
+                    arg0[i].items[var_s4].unk0F = 0x30;
+                }
+            }
+            else if (i >= 10)
+            {
+                if ((f32) i <= (9.0f + ((arg3 - 5.0f) * 4.0f)))
+                {
+                    arg0[i].items[var_s4].unk0F = 0xFF;
+                }
+                else if ((((s32) (((arg3 - 5.0f) * 4.0f) + 0.5f) + 9) >= i) && ((((s32) (arg3 - 5.0f) * 2) + 8) < i))
+                {
+                    arg0[i].items[var_s4].unk0F = (s8) ((s32) ((arg3 - (f32) (s32) arg3) * 207.0f) + 0x30);
+                }
+                else
+                {
+                    arg0[i].items[var_s4].unk0F = 0x30;
+                }
+            }
+        }
+
+        sp80 += 5;
+    }
 }
 #else
 
@@ -3213,7 +3293,7 @@ glabel sub_GAME_7F0A3F04
 /* 0D8A64 7F0A3F34 24840010 */  addiu $a0, $a0, 0x10
 /* 0D8A68 7F0A3F38 05E20176 */  bltzl $t7, .L7F0A4514
 /* 0D8A6C 7F0A3F3C 8FBF002C */   lw    $ra, 0x2c($sp)
-/* 0D8A70 7F0A3F40 0FC1E296 */  jal   sub_GAME_7F078A58
+/* 0D8A70 7F0A3F40 0FC1E296 */  jal   camIsPosInScreen
 /* 0D8A74 7F0A3F44 8E050024 */   lw    $a1, 0x24($s0)
 /* 0D8A78 7F0A3F48 10400171 */  beqz  $v0, .L7F0A4510
 /* 0D8A7C 7F0A3F4C 3C198004 */   lui   $t9, %hi(D_80040980) 
@@ -3236,7 +3316,7 @@ glabel sub_GAME_7F0A3F04
 /* 0D8AC0 7F0A3F90 AFAB00A0 */   sw    $t3, 0xa0($sp)
 /* 0D8AC4 7F0A3F94 86040006 */  lh    $a0, 6($s0)
 /* 0D8AC8 7F0A3F98 00408825 */  move  $s1, $v0
-/* 0D8ACC 7F0A3F9C 0FC2F285 */  jal   getRoomIndexPOS
+/* 0D8ACC 7F0A3F9C 0FC2F285 */  jal   getRoomPositionByIndex
 /* 0D8AD0 7F0A3FA0 AFA40058 */   sw    $a0, 0x58($sp)
 /* 0D8AD4 7F0A3FA4 920C0028 */  lbu   $t4, 0x28($s0)
 /* 0D8AD8 7F0A3FA8 8FA300A4 */  lw    $v1, 0xa4($sp)
@@ -3543,7 +3623,7 @@ glabel sub_GAME_7F0A3F04
 /* 0D8F8C 7F0A445C 8FA9004C */  lw    $t1, 0x4c($sp)
 /* 0D8F90 7F0A4460 AD220004 */  sw    $v0, 4($t1)
 /* 0D8F94 7F0A4464 8FA50058 */  lw    $a1, 0x58($sp)
-/* 0D8F98 7F0A4468 0FC2F271 */  jal   sub_GAME_7F0BC9C4
+/* 0D8F98 7F0A4468 0FC2F271 */  jal   applyRoomMatrixToDisplayList
 /* 0D8F9C 7F0A446C 8FA400A0 */   lw    $a0, 0xa0($sp)
 /* 0D8FA0 7F0A4470 AFA200A0 */  sw    $v0, 0xa0($sp)
 /* 0D8FA4 7F0A4474 8E0B000C */  lw    $t3, 0xc($s0)
@@ -3553,7 +3633,7 @@ glabel sub_GAME_7F0A3F04
 /* 0D8FB4 7F0A4484 27A400A0 */  addiu $a0, $sp, 0xa0
 /* 0D8FB8 7F0A4488 24060004 */  li    $a2, 4
 /* 0D8FBC 7F0A448C 8FA700C0 */  lw    $a3, 0xc0($sp)
-/* 0D8FC0 7F0A4490 0FC1DB5A */  jal   likely_generate_DL_for_image_declaration
+/* 0D8FC0 7F0A4490 0FC1DB5A */  jal   texSelect
 /* 0D8FC4 7F0A4494 016D2821 */   addu  $a1, $t3, $t5
 /* 0D8FC8 7F0A4498 8FB000A0 */  lw    $s0, 0xa0($sp)
 /* 0D8FCC 7F0A449C 3C0F0430 */  lui   $t7, (0x04300040 >> 16) # lui $t7, 0x430

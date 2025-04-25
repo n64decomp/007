@@ -125,7 +125,7 @@
       build/OUTCODE/src/game/indy_commands.o (.text);
       build/OUTCODE/src/game/game_debug.o (.text);
       build/OUTCODE/src/game/compiletime.o (.text);
-      build/OUTCODE/src/game/unk_0D1AC0.o (.text);
+      build/OUTCODE/src/game/speedgraphrenderer.o (.text);
       build/OUTCODE/src/game/viewport.o (.text);
       build/OUTCODE/src/game/music_0D2720.o (.text);
 #ifndef VERSION_EU

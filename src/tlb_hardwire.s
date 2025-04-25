@@ -25,3 +25,4 @@ glabel initTLBPrepareContext
 /* 0027BC 70001BBC 40882000 */  mtc0  $t0, $4 #C0_CONTEXT
 /* 0027C0 70001BC0 03E00008 */  jr    $ra
 /* 0027C4 70001BC4 00000000 */   nop  
+.size initTLBPrepareContext, . - initTLBPrepareContext

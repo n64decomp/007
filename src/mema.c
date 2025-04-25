@@ -243,167 +243,79 @@ void memaSingleDefragPass(void)
 }
 
 
-#ifdef NONMATCHING
 // Attempt to free up some memory. Start by looking through the first 16 allocations
 // for a suitable one. If none is found, then look through the rest for any that are
 // large enough. If this also fails, then do 8 merge iterations and then look through
 // entire buffer again. If successful, return the address to the freed memory, otherwise 0.
-s32 memaAlloc(u32 amount) {
+void *memaAlloc(u32 amount) {
     s32 addr;
     u32 diff;
     s32 i;
-    memaspace *curr = &g_MemoryAllocations[2];
-    memaspace *best = NULL;
+
+    struct memaspace *curr;
+	u32 bestdiff;
+	struct memaspace *best;
+
+    if(1);
+
+	curr = &g_MemoryAllocations.spaces[0];
+	bestdiff = 0xffffffff;
+	best = NULL;
+
     for (i = 0; i < 16; i++, curr++) {
-        if (curr->size >= amount) {
-            if (curr->addr == -1) {
+        if (curr->size < amount) {
+            continue;
+        }
+
+        if (curr->addr == 0xffffffff) {
+            break;
+        }
+
+        diff = (curr->size - amount);
+
+        if (diff < bestdiff) {
+            bestdiff = diff;
+            best = curr;
+            if ((diff < 64) || (diff < (amount / 4))) {
                 break;
             }
-            diff = (curr->size - amount);
-            if (diff < 0xFFFFFFFF) {
-                best = curr;
-                if ((diff < 64) || (diff < (amount / 4))) {
-                    break;
-                }
-            }            
         }
     }
+
     if (best == NULL) {
         while (curr->size < amount) {
             curr++;
         }
-        if (curr->addr == -1) {
+
+        if (curr->addr == 0xffffffff) {
             for (i = 0; i < 8; i++) {
-                memaDefragPass(g_MemoryAllocations);
+                memaDefragPass(&g_MemoryAllocations);
             }
-            curr = &g_MemoryAllocations[2];
+
+            curr = &g_MemoryAllocations.spaces[0];
+
             while (curr->size < amount) {
                 curr++;
             }
-            if (curr->addr == -1) {
-                return 0;
+
+            if (curr->addr == 0xffffffff) {
+                return NULL;
             }
         }
+
+        best = curr;
     }
-    addr = curr->addr;
-    curr->addr += amount;
-    curr->size -= amount;
-    if (curr->size == 0) {
-        curr->addr = 0;
+
+    addr = best->addr;
+    best->addr += amount;
+    best->size -= amount;
+
+    if (best->size == 0) {
+        best->addr = 0;
     }
-    return addr;
+
+    return (void*)addr;
 }
-#else
-GLOBAL_ASM(
-.text
-glabel memaAlloc
-/* 00AA34 70009E34 27BDFFD0 */  addiu $sp, $sp, -0x30
-/* 00AA38 70009E38 AFB2001C */  sw    $s2, 0x1c($sp)
-/* 00AA3C 70009E3C AFB10018 */  sw    $s1, 0x18($sp)
-/* 00AA40 70009E40 00809025 */  move  $s2, $a0
-/* 00AA44 70009E44 AFB50028 */  sw    $s5, 0x28($sp)
-/* 00AA48 70009E48 AFB00014 */  sw    $s0, 0x14($sp)
-/* 00AA4C 70009E4C 3C118006 */  lui   $s1, %hi(g_MemoryAllocations + 0x10)
-/* 00AA50 70009E50 AFBF002C */  sw    $ra, 0x2c($sp)
-/* 00AA54 70009E54 AFB40024 */  sw    $s4, 0x24($sp)
-/* 00AA58 70009E58 AFB30020 */  sw    $s3, 0x20($sp)
-/* 00AA5C 70009E5C 26313C38 */  addiu $s1, %lo(g_MemoryAllocations + 0x10) # addiu $s1, $s1, 0x3c38
-/* 00AA60 70009E60 2404FFFF */  li    $a0, -1
-/* 00AA64 70009E64 00002825 */  move  $a1, $zero
-/* 00AA68 70009E68 00008025 */  move  $s0, $zero
-/* 00AA6C 70009E6C 2415FFFF */  li    $s5, -1
-/* 00AA70 70009E70 24060010 */  li    $a2, 16
-.L70009E74:
-/* 00AA74 70009E74 8E230004 */  lw    $v1, 4($s1)
-/* 00AA78 70009E78 26100001 */  addiu $s0, $s0, 1
-/* 00AA7C 70009E7C 0072082B */  sltu  $at, $v1, $s2
-/* 00AA80 70009E80 1420000E */  bnez  $at, .L70009EBC
-/* 00AA84 70009E84 00721023 */   subu  $v0, $v1, $s2
-/* 00AA88 70009E88 8E2E0000 */  lw    $t6, ($s1)
-/* 00AA8C 70009E8C 0044082B */  sltu  $at, $v0, $a0
-/* 00AA90 70009E90 00127882 */  srl   $t7, $s2, 2
-/* 00AA94 70009E94 12AE000B */  beq   $s5, $t6, .L70009EC4
-/* 00AA98 70009E98 00000000 */   nop   
-/* 00AA9C 70009E9C 10200007 */  beqz  $at, .L70009EBC
-/* 00AAA0 70009EA0 2C410040 */   sltiu $at, $v0, 0x40
-/* 00AAA4 70009EA4 00402025 */  move  $a0, $v0
-/* 00AAA8 70009EA8 14200006 */  bnez  $at, .L70009EC4
-/* 00AAAC 70009EAC 02202825 */   move  $a1, $s1
-/* 00AAB0 70009EB0 004F082B */  sltu  $at, $v0, $t7
-/* 00AAB4 70009EB4 14200003 */  bnez  $at, .L70009EC4
-/* 00AAB8 70009EB8 00000000 */   nop   
-.L70009EBC:
-/* 00AABC 70009EBC 1606FFED */  bne   $s0, $a2, .L70009E74
-/* 00AAC0 70009EC0 26310008 */   addiu $s1, $s1, 8
-.L70009EC4:
-/* 00AAC4 70009EC4 54A00027 */  bnezl $a1, .L70009F64
-/* 00AAC8 70009EC8 8CA30000 */   lw    $v1, ($a1)
-/* 00AACC 70009ECC 8E380004 */  lw    $t8, 4($s1)
-/* 00AAD0 70009ED0 00008025 */  move  $s0, $zero
-/* 00AAD4 70009ED4 24140008 */  li    $s4, 8
-/* 00AAD8 70009ED8 0312082B */  sltu  $at, $t8, $s2
-/* 00AADC 70009EDC 10200006 */  beqz  $at, .L70009EF8
-/* 00AAE0 70009EE0 3C138006 */   lui   $s3, %hi(g_MemoryAllocations)
-/* 00AAE4 70009EE4 8E39000C */  lw    $t9, 0xc($s1)
-.L70009EE8:
-/* 00AAE8 70009EE8 26310008 */  addiu $s1, $s1, 8
-/* 00AAEC 70009EEC 0332082B */  sltu  $at, $t9, $s2
-/* 00AAF0 70009EF0 5420FFFD */  bnezl $at, .L70009EE8
-/* 00AAF4 70009EF4 8E39000C */   lw    $t9, 0xc($s1)
-.L70009EF8:
-/* 00AAF8 70009EF8 8E280000 */  lw    $t0, ($s1)
-/* 00AAFC 70009EFC 26733C28 */  addiu $s3, %lo(g_MemoryAllocations) # addiu $s3, $s3, 0x3c28
-/* 00AB00 70009F00 56A80017 */  bnel  $s5, $t0, .L70009F60
-/* 00AB04 70009F04 02202825 */   move  $a1, $s1
-/* 00AB08 70009F08 3C118006 */  lui   $s1, %hi(g_MemoryAllocations + 0x10)
-/* 00AB0C 70009F0C 26313C38 */  addiu $s1, %lo(g_MemoryAllocations + 0x10) # addiu $s1, $s1, 0x3c38
-.L70009F10:
-/* 00AB10 70009F10 0C002694 */  jal   memaDefragPass
-/* 00AB14 70009F14 02602025 */   move  $a0, $s3
-/* 00AB18 70009F18 26100001 */  addiu $s0, $s0, 1
-/* 00AB1C 70009F1C 1614FFFC */  bne   $s0, $s4, .L70009F10
-/* 00AB20 70009F20 00000000 */   nop   
-/* 00AB24 70009F24 8E690014 */  lw    $t1, 0x14($s3)
-/* 00AB28 70009F28 0132082B */  sltu  $at, $t1, $s2
-/* 00AB2C 70009F2C 50200007 */  beql  $at, $zero, .L70009F4C
-/* 00AB30 70009F30 8E2B0000 */   lw    $t3, ($s1)
-/* 00AB34 70009F34 8E2A000C */  lw    $t2, 0xc($s1)
-.L70009F38:
-/* 00AB38 70009F38 26310008 */  addiu $s1, $s1, 8
-/* 00AB3C 70009F3C 0152082B */  sltu  $at, $t2, $s2
-/* 00AB40 70009F40 5420FFFD */  bnezl $at, .L70009F38
-/* 00AB44 70009F44 8E2A000C */   lw    $t2, 0xc($s1)
-/* 00AB48 70009F48 8E2B0000 */  lw    $t3, ($s1)
-.L70009F4C:
-/* 00AB4C 70009F4C 56AB0004 */  bnel  $s5, $t3, .L70009F60
-/* 00AB50 70009F50 02202825 */   move  $a1, $s1
-/* 00AB54 70009F54 1000000B */  b     .L70009F84
-/* 00AB58 70009F58 00001025 */   move  $v0, $zero
-/* 00AB5C 70009F5C 02202825 */  move  $a1, $s1
-.L70009F60:
-/* 00AB60 70009F60 8CA30000 */  lw    $v1, ($a1)
-.L70009F64:
-/* 00AB64 70009F64 8CAD0004 */  lw    $t5, 4($a1)
-/* 00AB68 70009F68 00726021 */  addu  $t4, $v1, $s2
-/* 00AB6C 70009F6C 01B27023 */  subu  $t6, $t5, $s2
-/* 00AB70 70009F70 ACAC0000 */  sw    $t4, ($a1)
-/* 00AB74 70009F74 15C00002 */  bnez  $t6, .L70009F80
-/* 00AB78 70009F78 ACAE0004 */   sw    $t6, 4($a1)
-/* 00AB7C 70009F7C ACA00000 */  sw    $zero, ($a1)
-.L70009F80:
-/* 00AB80 70009F80 00601025 */  move  $v0, $v1
-.L70009F84:
-/* 00AB84 70009F84 8FBF002C */  lw    $ra, 0x2c($sp)
-/* 00AB88 70009F88 8FB00014 */  lw    $s0, 0x14($sp)
-/* 00AB8C 70009F8C 8FB10018 */  lw    $s1, 0x18($sp)
-/* 00AB90 70009F90 8FB2001C */  lw    $s2, 0x1c($sp)
-/* 00AB94 70009F94 8FB30020 */  lw    $s3, 0x20($sp)
-/* 00AB98 70009F98 8FB40024 */  lw    $s4, 0x24($sp)
-/* 00AB9C 70009F9C 8FB50028 */  lw    $s5, 0x28($sp)
-/* 00ABA0 70009FA0 03E00008 */  jr    $ra
-/* 00ABA4 70009FA4 27BD0030 */   addiu $sp, $sp, 0x30
-)
-#endif
 
 
 #ifdef NONMATCHING

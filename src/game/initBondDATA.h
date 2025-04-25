@@ -117,7 +117,7 @@ struct BONDdata_item_control_blocks {
     int field_1B8;
     int field_1BC;
     int field_1C0;
-    int field_1C4;
+    int timer_1C4;
     int field_1C8;
     int field_1CC;
     float field_1D0;

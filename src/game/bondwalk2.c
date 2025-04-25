@@ -1,9 +1,21 @@
 #include <ultra64.h>
 
-
-void sub_GAME_7F06ABB0(Gfx **gdlptr, f32 *arg1, f32 *arg2, s32 width, s32 height, s32 arg5, s32 arg6, s32 arg7)
+/**
+ * Draws a textured rectangle on the screen.
+ * 
+ * @param gdlptr    Pointer to the display list.
+ * @param position  Position coordinates (center) of the rectangle.
+ * @param size      Size (half-width and half-height) of the rectangle.
+ * @param width     Texture width.
+ * @param height    Texture height.
+ * @param flipXY    Flip X and Y flag.
+ * @param flipX     Flip X-axis flag.
+ * @param flipY     Flip Y-axis flag.
+ */
+void draw_textured_rectangle(Gfx **gdlptr, f32 *position, f32 *size, s32 width, s32 height, s32 flipXY, s32 flipX, s32 flipY)
 {
-    if (arg2[0] > 0.0f && arg2[1] > 0.0f)
+    // Only proceed if the size values are positive
+    if (size[0] > 0.0f && size[1] > 0.0f)
     {
         Gfx *gdl = *gdlptr;
         s32 xl;
@@ -15,18 +27,22 @@ void sub_GAME_7F06ABB0(Gfx **gdlptr, f32 *arg1, f32 *arg2, s32 width, s32 height
         s32 dsdx;
         s32 dtdy;
 
+        // Disable texture perspective correction
         gDPSetTexturePersp(gdl++, G_TP_NONE);
 
-        xl = (arg1[0] - arg2[0]) * 4.0f;
-        yl = (arg1[1] - arg2[1]) * 4.0f;
-        xh = (arg1[0] + arg2[0]) * 4.0f;
-        yh = (arg1[1] + arg2[1]) * 4.0f;
+        // Compute rectangle coordinates
+        xl = (position[0] - size[0]) * 4.0f;
+        yl = (position[1] - size[1]) * 4.0f;
+        xh = (position[0] + size[0]) * 4.0f;
+        yh = (position[1] + size[1]) * 4.0f;
 
+        // Proceed if the rectangle is within screen bounds
         if (xh >= 0 && yh >= 0)
         {
+            // Handle X coordinate adjustment
             if (xl < 0)
             {
-                if (arg5)
+                if (flipXY)
                 {
                     t += ((-xl * height) << 5) / (xh - xl);
                 }
@@ -38,9 +54,10 @@ void sub_GAME_7F06ABB0(Gfx **gdlptr, f32 *arg1, f32 *arg2, s32 width, s32 height
                 xl = 0;
             }
 
+            // Handle Y coordinate adjustment
             if (yl < 0)
             {
-                if (arg5)
+                if (flipXY)
                 {
                     s += ((-yl * width) << 5) / (yh - yl);
                 }
@@ -52,30 +69,34 @@ void sub_GAME_7F06ABB0(Gfx **gdlptr, f32 *arg1, f32 *arg2, s32 width, s32 height
                 yl = 0;
             }
 
-            if (arg5)
+            // Calculate texture scaling based on flipXY flag
+            if (flipXY)
             {
-                dsdx = width / (2.0f * arg2[1]) * 1024.0f;
-                dtdy = height / (2.0f * arg2[0]) * 1024.0f;
+                dsdx = width / (2.0f * size[1]) * 1024.0f;
+                dtdy = height / (2.0f * size[0]) * 1024.0f;
             }
             else
             {
-                dsdx = width / (2.0f * arg2[0]) * 1024.0f;
-                dtdy = height / (2.0f * arg2[1]) * 1024.0f;
+                dsdx = width / (2.0f * size[0]) * 1024.0f;
+                dtdy = height / (2.0f * size[1]) * 1024.0f;
             }
-
-            if (arg6)
+            
+            // Flip texture horizontally if needed
+            if (flipX)
             {
                 dsdx = 0x10000 - dsdx;
                 s = ((width - 1) << 5) - s;
             }
 
-            if (arg7)
+            // Flip texture vertically if needed
+            if (flipY)
             {
                 dtdy = 0x10000 - dtdy;
                 t = ((height - 1) << 5) - t;
             }
 
-            if (arg5)
+            // Draw the textured rectangle with optional flipping
+            if (flipXY)
             {
                 gSPTextureRectangleFlip(gdl++, xl, yl, xh, yh, G_TX_RENDERTILE, s, t, dsdx, dtdy);
             }
@@ -85,36 +106,57 @@ void sub_GAME_7F06ABB0(Gfx **gdlptr, f32 *arg1, f32 *arg2, s32 width, s32 height
             }
         }
 
+        // Re-enable texture perspective correction
         gDPSetTexturePersp(gdl++, G_TP_PERSP);
 
         *gdlptr = gdl;
     }
 }
 
+#define G_CC_MODULATEIA_ENV        COMBINED, 0, ENVIRONMENT, 0, COMBINED, 0, ENVIRONMENT, 0
 
-void display_image_at_on_screen_coord(Gfx **gdlptr, f32 *arg1, f32 *arg2, s32 twidth, u32 theight, u32 arg5, u32 arg6, u32 arg7, u32 r, u32 g, u32 b, u32 alpha, u32 arg12, u32 arg13)
+/**
+ * Displays an image at a specific on-screen position with color tinting and optional texture flips.
+ * 
+ * @param gdl       Pointer to the display list.
+ * @param position  Position of the image.
+ * @param size      Size (half-width and half-height) of the image.
+ * @param twidth    Texture width.
+ * @param theight   Texture height.
+ * @param flipXY    Flip X and Y flag.
+ * @param flipX     Flip X-axis flag.
+ * @param flipY     Flip Y-axis flag.
+ * @param r         Red tint value.
+ * @param g         Green tint value.
+ * @param b         Blue tint value.
+ * @param alpha     Alpha (transparency) value.
+ * @param mipmapped_texture  Mipmapped rendering mode flag.
+ * @param highlight_mode     Highlight rendering mode flag.
+ */
+void display_image_at_position(Gfx **gdlptr, f32 *position, f32 *size, s32 twidth, u32 theight, u32 flipXY, u32 flipX, u32 flipY, u32 r, u32 g, u32 b, u32 alpha, u32 mipmapped_texture, u32 highlight_mode)
 {
-    if (arg2[0] > 0.0f && arg2[1] > 0.0f)
+    
+    if (size[0] > 0.0f && size[1] > 0.0f)
     {
         Gfx *gdl = *gdlptr;
 
         gDPSetEnvColor(gdl++, r, g, b, alpha);
 
-        if (arg12)
+        if (mipmapped_texture)
         {
-            gDPSetCombineLERP(gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, COMBINED, 0, ENVIRONMENT, 0, COMBINED, 0, ENVIRONMENT, 0);
+            gDPSetCombineMode(gdl++, G_CC_TRILERP, G_CC_MODULATEIA_ENV);
         }
-        else if (arg13)
-        {
-            gDPSetCombineLERP(gdl++, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED);
+        else if (highlight_mode)
+        {   
+            gDPSetCombineMode(gdl++, G_CC_FADEA, G_CC_PASS2);
         }
         else
         {
-            gDPSetCombineLERP(gdl++, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0);
+            gDPSetCombineMode(gdl++, G_CC_FADEA, G_CC_FADEA);
         }
 
         *gdlptr = gdl;
 
-        sub_GAME_7F06ABB0(gdlptr, arg1, arg2, twidth, theight, arg5, arg6, arg7);
+        draw_textured_rectangle(gdlptr, position, size, twidth, theight, flipXY, flipX, flipY);
     }
 }

@@ -19,7 +19,7 @@ s32 ob_c_debug_notice_list_entry = 0;
 
 
 #include <assets/obseg/file_resource_table.inc.c>
-/* struct fileentry file_resource_table[] = 
+/* struct fileentry file_resource_table[] =
    {
        blah;
     };
@@ -37,7 +37,7 @@ void load_resource(u8 *ptrdata, s32 bytes,  fileentry *srcfile,  resource_lookup
     u8 *source;
     u8  buffer[0x2100];
     s32 unused;
-    
+
 
     if (bytes == 0)
     {
@@ -113,7 +113,7 @@ void resource_load_from_indy(u8 *ptrdata, s32 bytes,  fileentry *srcfile,  resou
 void obInit(void)
 {
     s32 i;
- 
+
     debTryAdd(&ob_c_debug_notice_list_entry,"ob_c_debug");
     for (i = file_entry_max-1; i > 1 ; i--)
     {
@@ -150,7 +150,7 @@ glabel obInit
 /* 0F1790 7F0BCC60 3C028009 */   lui   $v0, %hi(resource_lookup_data_array+0x14)
 /* 0F1794 7F0BCC64 00037080 */  sll   $t6, $v1, 2
 /* 0F1798 7F0BCC68 01C37021 */  addu  $t6, $t6, $v1
-/* 0F179C 7F0BCC6C 3C0F8009 */  lui   $t7, %hi(resource_lookup_data_array) 
+/* 0F179C 7F0BCC6C 3C0F8009 */  lui   $t7, %hi(resource_lookup_data_array)
 /* 0F17A0 7F0BCC70 25EF88B0 */  addiu $t7, %lo(resource_lookup_data_array) # addiu $t7, $t7, -0x7750
 /* 0F17A4 7F0BCC74 000E7080 */  sll   $t6, $t6, 2
 /* 0F17A8 7F0BCC78 01CF2821 */  addu  $a1, $t6, $t7
@@ -171,7 +171,7 @@ glabel obInit
 /* 0F17DC 7F0BCCAC 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0F17E0 7F0BCCB0 27BD0018 */  addiu $sp, $sp, 0x18
 /* 0F17E4 7F0BCCB4 03E00008 */  jr    $ra
-/* 0F17E8 7F0BCCB8 00000000 */   nop   
+/* 0F17E8 7F0BCCB8 00000000 */   nop
 )
 #endif
 
@@ -186,7 +186,7 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
 
   index = fileGetIndex(bgname);
   fileentry = &file_resource_table[index];
-  
+
   if (resource_lookup_data_array[index].rom_size != 0)
   {
     //if the size of offset data would exceed file size, loop forever
@@ -239,7 +239,7 @@ void obLoadBGFileBytesAtOffset(u8 *bgname, u8 *target, s32 offset, s32 len)
 
   index = fileGetIndex(bgname);
   fileentry = &file_resource_table[index];
-  
+
   if (resource_lookup_data_array[index].rom_size != 0)
   {
     //if the size of offset data would exceed file size, loop forever
@@ -272,10 +272,10 @@ void *fileIndexLoadToBank(s32 index, FILELOADMETHOD loadMethod, s32 size, u8 ban
             // info->poolRemaining = bytes;
         }
         // bytes = info->poolRemaining;
-        ptrdata             = mempAllocBytesInBank(info->poolRemaining, bank); // get pointer to allocated space
+        ptrdata             = mempAllocBytesInBank(info->poolRemaining, bank); // get pointer to allocated space in bank
         info->rom_remaining = info->poolRemaining;
 
-        if (file_resource_table[index].hw_address == 0)
+        if (file_resource_table[index].hw_address == 0) //IF NULL, check indy
         {
             resource_load_from_indy(ptrdata, info->poolRemaining, &file_resource_table[index], info);
         }
@@ -392,7 +392,7 @@ void fileSetSize(s32 filenum, u8* ptr, u32 size, s32 reallocate)
     resource_lookup_data_array[filenum].rom_remaining = size;
     if (reallocate != 0)
     {
-        mempAddEntryOfSizeToBank(ptr, resource_lookup_data_array[filenum].poolRemaining, 4U);
+        mempAddEntryOfSizeToBank(ptr, resource_lookup_data_array[filenum].poolRemaining, MEMPOOL_STAGE);
     }
 }
 
@@ -400,7 +400,7 @@ void fileSetSize(s32 filenum, u8* ptr, u32 size, s32 reallocate)
 s32 get_pc_buffer_remaining_value(u8 *name)
 {
     int index;
-    
+
     index = fileGetIndex(name);
     return resource_lookup_data_array[index].poolRemaining;
 }
@@ -436,7 +436,7 @@ int fileGetIndex(u8 *resname)
     //if file exists, return index
     for (i = 1; i < file_entry_max; i++)
     {
-        if ((file_resource_table[i].filename) && 
+        if ((file_resource_table[i].filename) &&
             (strcmp(resname,file_resource_table[i].filename) == 0));
         {
             return i;
@@ -519,13 +519,13 @@ glabel fileGetIndex
 /* 0F1E30 7F0BD300 00001025 */   move  $v0, $zero
 .L7F0BD304:
 /* 0F1E34 7F0BD304 01F17823 */  subu  $t7, $t7, $s1
-/* 0F1E38 7F0BD308 3C188004 */  lui   $t8, %hi(file_resource_table) 
+/* 0F1E38 7F0BD308 3C188004 */  lui   $t8, %hi(file_resource_table)
 /* 0F1E3C 7F0BD30C 27186054 */  addiu $t8, %lo(file_resource_table) # addiu $t8, $t8, 0x6054
 /* 0F1E40 7F0BD310 000F7880 */  sll   $t7, $t7, 2
 /* 0F1E44 7F0BD314 0011C880 */  sll   $t9, $s1, 2
 /* 0F1E48 7F0BD318 01F88021 */  addu  $s0, $t7, $t8
 /* 0F1E4C 7F0BD31C 0331C821 */  addu  $t9, $t9, $s1
-/* 0F1E50 7F0BD320 3C088009 */  lui   $t0, %hi(resource_lookup_data_array) 
+/* 0F1E50 7F0BD320 3C088009 */  lui   $t0, %hi(resource_lookup_data_array)
 /* 0F1E54 7F0BD324 250888B0 */  addiu $t0, %lo(resource_lookup_data_array) # addiu $t0, $t0, -0x7750
 /* 0F1E58 7F0BD328 0019C880 */  sll   $t9, $t9, 2
 /* 0F1E5C 7F0BD32C AE110000 */  sw    $s1, ($s0)
@@ -665,7 +665,7 @@ void removed_loop_handle_filetable_entries(void)
 void removed_loop_filetableentries(void)
 {
     int i;
-    
+
     for (i = 1; (i < file_entry_max); i++)
     {
         ;
@@ -681,8 +681,8 @@ void removed_loop_filetableentries(void)
 void sub_GAME_7F0BD410(void)
 {
   struct resource_lookup_data_entry *entry= &resource_lookup_data_array[1];
-  
-    if (file_entry_max > 1) 
+
+    if (file_entry_max > 1)
     {
         for (;&resource_lookup_data_array[file_entry_max] > entry;entry++)
         {
@@ -703,7 +703,7 @@ glabel sub_GAME_7F0BD410
 /* 0F1F54 7F0BD424 1420000A */  bnez  $at, .L7F0BD450
 /* 0F1F58 7F0BD428 00037080 */   sll   $t6, $v1, 2
 /* 0F1F5C 7F0BD42C 01C37021 */  addu  $t6, $t6, $v1
-/* 0F1F60 7F0BD430 3C0F8009 */  lui   $t7, %hi(resource_lookup_data_array) 
+/* 0F1F60 7F0BD430 3C0F8009 */  lui   $t7, %hi(resource_lookup_data_array)
 /* 0F1F64 7F0BD434 25EF88B0 */  addiu $t7, %lo(resource_lookup_data_array) # addiu $t7, $t7, -0x7750
 /* 0F1F68 7F0BD438 000E7080 */  sll   $t6, $t6, 2
 /* 0F1F6C 7F0BD43C 01CF2021 */  addu  $a0, $t6, $t7
@@ -714,9 +714,9 @@ glabel sub_GAME_7F0BD410
 /* 0F1F7C 7F0BD44C 24420014 */   addiu $v0, $v0, 0x14
 .L7F0BD450:
 /* 0F1F80 7F0BD450 03E00008 */  jr    $ra
-/* 0F1F84 7F0BD454 00000000 */   nop   
+/* 0F1F84 7F0BD454 00000000 */   nop
 )
 #endif
 
 
- 
+

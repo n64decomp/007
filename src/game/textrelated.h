@@ -3,6 +3,11 @@
 #include <ultra64.h>
 #include "bondtypes.h"
 
+enum TEXT_ORIENTATION {
+    ROT_NORMAL = 0,
+    ROT_90CW
+};
+
 extern s32 ptrFontBankGothic;
 extern s32 ptrFontBankGothicChars;
 extern s32 ptrFontZurichBold;

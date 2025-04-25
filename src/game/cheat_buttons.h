@@ -2,6 +2,9 @@
 #define _CHEAT_BUTTONS_H_
 #include <ultra64.h>
 
+// This shows up a lot but not quite sure what it represents.
+#define CHEAT_20    20
+
 enum CHEAT_MASK {
     CHEAT_MASK_0 = 0,
 

@@ -287,12 +287,12 @@ char *LtitleE[] = {
  "Select Control Style\n", //TITLE_STR_285
  "Control Style\n", //TITLE_STR_286
  #ifdef LANG_US 
- 0 //TITLE_STR_287
+ 0 //TITLE_STR_287_RUSSIANSOLDIER
  #endif
  #ifdef LANG_JP
- "Russian Soldier\n", //TITLE_STR_287
- "Russian Infantry\n", //TITLE_STR_288
- "Scientist\n", //TITLE_STR_289
+ "Russian Soldier\n", //TITLE_STR_287_RUSSIANSOLDIER
+ "Russian Infantry\n", //TITLE_STR_288_RUSSIANINFANTRY
+ "Scientist\n", //TITLE_STR_289_SCIENTIST
  "Russian Commandant\n", //TITLE_STR_290
  "Janus Marine\n", //TITLE_STR_291
  "Naval Officer\n", //TITLE_STR_292

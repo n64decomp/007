@@ -1,9 +1,31 @@
-
+// gcc -o build/aiparse tools/aiParse.c
+// ./build/aiparse
+//#include <arpa/inet.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
+#define _LANGUAGE_C
+#define TARGET_N64
+#include "../include/PR/ultratypes.h"
 
-#define CharArrayTo16(val, index) (val[index + 1] | val[index] << 8)
-#define CharArrayTo24(val, index) (val[index + 1] << 8 | val[index + 2] | val[index] << 16)
-#define CharArrayTo32(val, index) (val[index + 1] << 16 | val[index + 2] << 8 | val[index + 3] | val[index] << 24)
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wint-conversion"
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#pragma GCC diagnostic ignored "-Wformat="
+
+//odd, I though this would differ on L-Endian
+// Ahh, figured it out, this "makes" a number and the cpu stores it in a reg in its own endianness
+#    define CharArrayTo16(val, index) (                                              val[index + 1]      | val[index] << 8)
+#    define CharArrayTo24(val, index) (                       val[index + 1] << 8  | val[index + 2]      | val[index] << 16)
+#    define CharArrayTo32(val, index) (val[index + 1] << 16 | val[index + 2] << 8  | val[index + 3]      | val[index] << 24)
+
+#define ntohl(var)          CharArrayTo32(((unsigned char *)(&(var))), 0)
+#define ntohs(var)          CharArrayTo16(((unsigned char *)(&(var))), 0)
+#define btol(var)           *(unsigned int *)&(var) = ntohl(var)
+#define btos(var)           *(unsigned int *)&(var) = ntohs(var)
 
 #define isNotBoundPad(pad)  pad < 10000
 #define getBoundPadNum(pad) pad - 10000
@@ -21,12 +43,216 @@
 #define TARGET_AIM_ONLY     0x0020 /* Aim at target instead of firing*/
 #define TARGET_DONTTURN     0x0040 /* Limits target to 180 degrees in front of guard (cannot be used with TARGET_BOND flag)*/
 
-// command 68 - door states
+char *HITTARGET_ToString[] = {
+    "HIT_NULL_PART",         /* Null part, no reaction - 1x damage*/
+    "HIT_LEFT_FOOT",         /* Left foot              - 1x damage*/
+    "HIT_LEFT_LEG",          /* Left leg               - 1x damage*/
+    "HIT_LEFT_THIGH",        /* Left thigh             - 1x damage*/
+    "HIT_RIGHT_FOOT",        /* Right foot             - 1x damage*/
+    "HIT_RIGHT_LEG",         /* Right leg              - 1x damage*/
+    "HIT_RIGHT_THIGH",       /* Right thigh            - 1x damage*/
+    "HIT_PELVIS",            /* Pelvis                 - 1x damage*/
+    "HIT_HEAD",              /* Head                   - 4x damage*/
+    "HIT_LEFT_HAND",         /* Left hand              - 1x damage*/
+    "HIT_LEFT_ARM",          /* Left arm               - 1x damage*/
+    "HIT_LEFT_SHOULDER",     /* Left shoulder          - 1x damage*/
+    "HIT_RIGHT_HAND",        /* Right hand             - 1x damage*/
+    "HIT_RIGHT_ARM",         /* Right arm              - 1x damage*/
+    "HIT_RIGHT_SHOULDER",    /* Right shoulder         - 1x damage*/
+    "HIT_CHEST",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51",
+    "52",
+    "53",
+    "54",
+    "55",
+    "56",
+    "57",
+    "58",
+    "59",
+    "60",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "66",
+    "67",
+    "68",
+    "69",
+    "70",
+    "71",
+    "72",
+    "73",
+    "74",
+    "75",
+    "76",
+    "77",
+    "78",
+    "79",
+    "80",
+    "81",
+    "82",
+    "83",
+    "84",
+    "85",
+    "86",
+    "87",
+    "88",
+    "89",
+    "90",
+    "91",
+    "92",
+    "93",
+    "94",
+    "95",
+    "96",
+    "97",
+    "98",
+    "99",
+    "HIT_GUN",               /* GUN                    - 0x damage*/
+    "101",
+    "102",
+    "103",
+    "104",
+    "105",
+    "106",
+    "107",
+    "108",
+    "109",
+    "HIT_HAT",               /* HAT                    - 0x damage*/
+    "111",
+    "112",
+    "113",
+    "114",
+    "115",
+    "116",
+    "117",
+    "118",
+    "119",
+    "120",
+    "121",
+    "122",
+    "123",
+    "124",
+    "125",
+    "126",
+    "127",
+    "128",
+    "129",
+    "130",
+    "131",
+    "132",
+    "133",
+    "134",
+    "135",
+    "136",
+    "137",
+    "138",
+    "139",
+    "140",
+    "141",
+    "142",
+    "143",
+    "144",
+    "145",
+    "146",
+    "147",
+    "148",
+    "149",
+    "150",
+    "151",
+    "152",
+    "153",
+    "154",
+    "155",
+    "156",
+    "157",
+    "158",
+    "159",
+    "160",
+    "161",
+    "162",
+    "163",
+    "164",
+    "165",
+    "166",
+    "167",
+    "168",
+    "169",
+    "170",
+    "171",
+    "172",
+    "173",
+    "174",
+    "175",
+    "176",
+    "177",
+    "178",
+    "179",
+    "180",
+    "181",
+    "182",
+    "183",
+    "184",
+    "185",
+    "186",
+    "187",
+    "188",
+    "189",
+    "190",
+    "191",
+    "192",
+    "193",
+    "194",
+    "195",
+    "196",
+    "197",
+    "198",
+    "199",
+    "HIT_GENERAL",
+    "HIT_GENERALHALF"};
+
+    // command 68 - door states
 char *DOORSTATE_ToString[] = {
-    " DOOR_STATE_CLOSED",  /* Closed*/
-    " DOOR_STATE_OPEN",    /* Opened*/
-    " DOOR_STATE_CLOSING", /* Closing*/
-    " DOOR_STATE_OPENING" /* Opening*/};
+    " AI_DOOR_STATE_CLOSED",  /* Closed*/
+    " AI_DOOR_STATE_OPEN",    /* Opened*/
+    " AI_DOOR_STATE_CLOSING", /* Closing*/
+    " AI_DOOR_STATE_OPENING" /* Opening*/};
 
 // command D7 - hud flags
 #define HUD_HIDE_ALL           0x00 /* Hide all*/
@@ -45,20 +271,34 @@ char *DOORSTATE_ToString[] = {
 /* private chr ID, cannot be accessed with ai commands */
 #define CHR_OBJECTIVE        -2    /* objective ai list chr ID */
 #define CHR_FREE             -1    /* chr IDs when free'd (killed or removed from level) */
+
+char *CHR_ToString[] = {
+    "",
+    "CHR_FREE",
+    "CHR_OBJECTIVE",
+    "CHR_SELF",
+    "CHR_PRESET",
+    "CHR_SEE_DIE",
+    "CHR_SEE_SHOT",
+    "CHR_CLONE",
+    "CHR_BOND_CINEMA"
+};
+
+
 #define CHR_SPAWN_NUM_START  5000  /* default chr num for spawned guards with ai command BD/BE */
-#define CHR_CLONED_NUM_START 10000 /* default chr num for cloed guards with ai command C1 */
+#define CHR_CLONED_NUM_START 10000 /* default chr num for cloned guards with ai command C1 */
 /* Special ID for selecting PadPreset in AI list */
 #define PAD_PRESET1          9000 /* stored as chr->padpreset1 */
 
-#define isGlobalAIListID(ID)  ((ID) < 18)
-#define isBGAIListID(ID)      ((ID) > 4097)
+#define isGlobalAIListID(ID)  ((ID) <= 1024)
+#define isBGAIListID(ID)      ((ID) >= 4096)
 #define isChrAIListID(ID)     (!isGlobalAIListID(ID) && !isBGAIListID(ID))
 #define setGlobalAIListID(ID) ((ID) + 0)
 #define setChrAIListID(ID)    ((ID) + 1025)
-#define setBGAIListID(ID)     ((ID) + 4097)
+#define setBGAIListID(ID)     ((ID) + 4096)
 #define getGlobalAIListID(ID) ((ID)-0)
 #define getChrAIListID(ID)    ((ID)-1025)
-#define getBGAIListID(ID)     ((ID)-4097)
+#define getBGAIListID(ID)     ((ID)-4096)
 
 char *ANIMATIONS_ToString[] = {
     "ANIM_idle",
@@ -125,7 +365,7 @@ char *ANIMATIONS_ToString[] = {
     "ANIM_extending_left_hand",
     "ANIM_fire_throw_grenade",
     "ANIM_spotting_bond", /* used by chr ai command guard_points_at_bond */
-    "ANIM_look_around",   /* used by chr ai command GUARD_ANIM_LOOKS_AROUND_SELF  */
+    "ANIM_look_around",   /* used by chr ai command GUARD_ANIM_LOOKS_AROUND_SELF */
     "ANIM_fire_standing_one_handed_weapon",
     "ANIM_fire_standing_draw_one_handed_weapon_fast",
     "ANIM_fire_standing_draw_one_handed_weapon_slow",
@@ -352,398 +592,398 @@ char *ITEM_IDS_ToString[] = {
     "ITEM_IDS_MAX"};
 
 char *PROPDEF_TYPE_ToString[] = {
-        "PROPDEF_NOTHING",
-        "PROPDEF_DOOR",
-        "PROPDEF_DOOR_SCALE",
-        "PROPDEF_PROP",
-        "PROPDEF_KEY",
-        "PROPDEF_ALARM",
-        "PROPDEF_CCTV",
-        "PROPDEF_MAGAZINE",
-        "PROPDEF_COLLECTABLE",
-        "PROPDEF_GUARD",
-        "PROPDEF_MONITOR",
-        "PROPDEF_MULTI_MONITOR",
-        "PROPDEF_RACK",
-        "PROPDEF_AUTOGUN",
-        "PROPDEF_LINK",
-        "PROPDEF_UNK15",
-        "PROPDEF_UNK16",
-        "PROPDEF_HAT",
-        "PROPDEF_GUARD_ATTRIBUTE",
-        "PROPDEF_SWITCH",
-        "PROPDEF_AMMO",
-        "PROPDEF_ARMOUR",
-        "PROPDEF_TAG",
-        "PROPDEF_OBJECTIVE_START",
-        "PROPDEF_OBJECTIVE_END",
-        "PROPDEF_OBJECTIVE_DESTROY_OBJECT",
-        "PROPDEF_OBJECTIVE_COMPLETE_CONDITION",
-        "PROPDEF_OBJECTIVE_FAIL_CONDITION",
-        "PROPDEF_OBJECTIVE_COLLECT_OBJECT",
-        "PROPDEF_OBJECTIVE_DEPOSIT_OBJECT",
-        "PROPDEF_OBJECTIVE_PHOTOGRAPH",
-        "PROPDEF_OBJECTIVE_NULL",
-        "PROPDEF_OBJECTIVE_ENTER_ROOM",
-        "PROPDEF_OBJECTIVE_DEPOSIT_OBJECT_IN_ROOM",
-        "PROPDEF_OBJECTIVE_COPY_ITEM",
-        "PROPDEF_WATCH_MENU_OBJECTIVE_TEXT",
-        "PROPDEF_GAS_RELEASING",
-        "PROPDEF_RENAME",
-        "PROPDEF_LOCK_DOOR",
-        "PROPDEF_VEHICHLE",
-        "PROPDEF_AIRCRAFT",
-        "PROPDEF_UNK41",
-        "PROPDEF_GLASS",
-        "PROPDEF_SAFE",
-        "PROPDEF_SAFE_ITEM",
-        "PROPDEF_TANK",
-        "PROPDEF_CAMERAPOS", // canonical name
-        "PROPDEF_TINTED_GLASS",
-        "PROPDEF_END",
+    "PROPDEF_NOTHING",
+    "PROPDEF_DOOR",
+    "PROPDEF_DOOR_SCALE",
+    "PROPDEF_PROP",
+    "PROPDEF_KEY",
+    "PROPDEF_ALARM",
+    "PROPDEF_CCTV",
+    "PROPDEF_MAGAZINE",
+    "PROPDEF_COLLECTABLE",
+    "PROPDEF_GUARD",
+    "PROPDEF_MONITOR",
+    "PROPDEF_MULTI_MONITOR",
+    "PROPDEF_RACK",
+    "PROPDEF_AUTOGUN",
+    "PROPDEF_LINK",
+    "PROPDEF_DEBRIS",
+    "PROPDEF_UNK16",
+    "PROPDEF_HAT",
+    "PROPDEF_GUARD_ATTRIBUTE",
+    "PROPDEF_SWITCH",
+    "PROPDEF_AMMO",
+    "PROPDEF_ARMOUR",
+    "PROPDEF_TAG",
+    "PROPDEF_OBJECTIVE_START",
+    "PROPDEF_OBJECTIVE_END",
+    "PROPDEF_OBJECTIVE_DESTROY_OBJECT",
+    "PROPDEF_OBJECTIVE_COMPLETE_CONDITION",
+    "PROPDEF_OBJECTIVE_FAIL_CONDITION",
+    "PROPDEF_OBJECTIVE_COLLECT_OBJECT",
+    "PROPDEF_OBJECTIVE_DEPOSIT_OBJECT",
+    "PROPDEF_OBJECTIVE_PHOTOGRAPH",
+    "PROPDEF_OBJECTIVE_NULL",
+    "PROPDEF_OBJECTIVE_ENTER_ROOM",
+    "PROPDEF_OBJECTIVE_DEPOSIT_OBJECT_IN_ROOM",
+    "PROPDEF_OBJECTIVE_COPY_ITEM",
+    "PROPDEF_WATCH_MENU_OBJECTIVE_TEXT",
+    "PROPDEF_GAS_RELEASING",
+    "PROPDEF_RENAME",
+    "PROPDEF_LOCK_DOOR",
+    "PROPDEF_VEHICHLE",
+    "PROPDEF_AIRCRAFT",
+    "PROPDEF_UNK41",
+    "PROPDEF_GLASS",
+    "PROPDEF_SAFE",
+    "PROPDEF_SAFE_ITEM",
+    "PROPDEF_TANK",
+    "PROPDEF_CAMERAPOS", // canonical name
+    "PROPDEF_TINTED_GLASS",
+    "PROPDEF_END",
 };
 
 char *PROP_ToString[] = {
-    "PROP_ALARM1",              /* Beta Alarm / Default Multi Weapon                                  */
-    "PROP_ALARM2",              /* Alarm                                                              */
-    "PROP_EXPLOSIONBIT",        /* White Pyramid (Explosion Bit)                                      */
-    "PROP_AMMO_CRATE1",         /* Ammo Crate (Brown w/ Edge Brace", 6x240 Black)                      */
-    "PROP_AMMO_CRATE2",         /* Ammo Crate (Brown w/ Center Brace", 12x8 Black)                     */
-    "PROP_AMMO_CRATE3",         /* Ammo Crate (Green w/ Center Brace", 12x8 Brown)                     */
-    "PROP_AMMO_CRATE4",         /* Ammo Crate (Green w/ Edge Brace", 6x8 White)                        */
-    "PROP_AMMO_CRATE5",         /* Ammo Crate (Green w/ Double Brace", 24x60 Black)                    */
-    "PROP_BIN1",                /* Rusted Trash Bin                                                   */
-    "PROP_BLOTTER1",            /* Desk Blotter                                                       */
-    "PROP_BOOK1",               /* Red Book                                                           */
-    "PROP_BOOKSHELF1",          /* Bookshelf                                                          */
-    "PROP_BRIDGE_CONSOLE1A",    /* Bridge Console w/ Monitor", Navigation + Keyboard 1A                */
-    "PROP_BRIDGE_CONSOLE1B",    /* Bridge Console w/ Navigation 1B                                    */
-    "PROP_BRIDGE_CONSOLE2A",    /* Bridge Console w/ Navigation", Monitor + Keyboard 2A                */
-    "PROP_BRIDGE_CONSOLE2B",    /* Bridge Console w/ Various Controls 2B                              */
-    "PROP_BRIDGE_CONSOLE3A",    /* Bridge Console w/ Monitor", Navigation + Keyboard 3A                */
-    "PROP_BRIDGE_CONSOLE3B",    /* Bridge Console w/ Monitor", Keyboard + Navigation 3B                */
-    "PROP_CARD_BOX1",           /* Cardboard Box", Kapto|Enb                                           */
-    "PROP_CARD_BOX2",           /* Cardboard Box", Red Arrow", Bahko                                    */
-    "PROP_CARD_BOX3",           /* Cardboard Box", Scrawled Text", Bahah                                */
-    "PROP_CARD_BOX4_LG",        /* Cardboard Box", Three Seams                                         */
-    "PROP_CARD_BOX5_LG",        /* Cardboard Box", Two Seams", Bahah                                    */
-    "PROP_CARD_BOX6_LG",        /* Cardboard Box", Bahko                                               */
-    "PROP_CCTV",                /* Surveillance Camera                                                */
-    "PROP_CONSOLE1",            /* Double Screen Consoles w/ Keyboards                                */
-    "PROP_CONSOLE2",            /* Double Screen Consoles w/ Left Keyboard                            */
-    "PROP_CONSOLE3",            /* Double Screen Consoles w/ Right Keyboard                           */
-    "PROP_CONSOLE_SEVA",        /* Console w/ Keyboard                                                */
-    "PROP_CONSOLE_SEVB",        /* Console w/ Monitor + Keyboard                                      */
-    "PROP_CONSOLE_SEVC",        /* Console w/ Switches                                                */
-    "PROP_CONSOLE_SEVD",        /* Console w/ Five Gauges                                             */
-    "PROP_CONSOLE_SEV2A",       /* Console w/ Four Faders                                             */
-    "PROP_CONSOLE_SEV2B",       /* Console w/ Monitor", Keyboard + Switches                            */
-    "PROP_CONSOLE_SEV2C",       /* Console w/ Three Gauges                                            */
-    "PROP_CONSOLE_SEV2D",       /* Console w/ Pressure Gauge                                          */
-    "PROP_CONSOLE_SEV_GEA",     /* Console w/ GoldenEye Key Slot                                      */
-    "PROP_CONSOLE_SEV_GEB",     /* Console w/ Faders + Pressure Gauge                                 */
-    "PROP_DESK1",               /* Desk w/ Kickplate                                                  */
-    "PROP_DESK2",               /* Desk                                                               */
-    "PROP_DESK_LAMP2",          /* Desk Lamp                                                          */
-    "PROP_DISC_READER",         /* External Hard Drive                                                */
-    "PROP_DISK_DRIVE1",         /* Floppy Disc Drive                                                  */
-    "PROP_FILING_CABINET1",     /* Filing Cabinet                                                     */
-    "PROP_JERRY_CAN1",          /* Jerrycan (Fuel Container)                                          */
-    "PROP_KEYBOARD1",           /* Computer Keyboard                                                  */
-    "PROP_KIT_UNITS1",          /* Kitchen Cabinets                                                   */
-    "PROP_LETTER_TRAY1",        /* Letter Tray                                                        */
-    "PROP_MAINFRAME1",          /* Mainframe", Basic                                                   */
-    "PROP_MAINFRAME2",          /* Mainframe", Advanced                                                */
-    "PROP_METAL_CHAIR1",        /* Chair (Metal)                                                      */
-    "PROP_METAL_CRATE1",        /* Metal Crate", 6 Top Corner                                          */
-    "PROP_METAL_CRATE2",        /* Metal Crate", 6 Bottom Corner                                       */
-    "PROP_METAL_CRATE3",        /* Metal Crate", Toxic Materials                                       */
-    "PROP_METAL_CRATE4",        /* Metal Crate", Double Stripe - Class D1 Hazard                       */
-    "PROP_MISSILE_RACK",        /* Naval Harpoon Missile in Containment Rack                          */
-    "PROP_MISSILE_RACK2",       /* Naval Harpoon Missiles in Containment Racks x4                     */
-    "PROP_OIL_DRUM1",           /* Oil Drum", Single Stripe", Ribbed                                    */
-    "PROP_OIL_DRUM2",           /* Oil Drum", Single Stripe", Ribbed - Class D1 Hazard                  */
-    "PROP_OIL_DRUM3",           /* Oil Drum", Single Stripe", Ribbed - Toxic Materials                  */
-    "PROP_OIL_DRUM5",           /* Oil Drum", Double Stripe - Toxic Materials                          */
-    "PROP_OIL_DRUM6",           /* Oil Drum - Toxic Materials                                         */
-    "PROP_OIL_DRUM7",           /* Oil Drum", Double Dashes - Class D1 Hazard                          */
-    "PROP_PADLOCK",             /* Padlock                                                            */
-    "PROP_PHONE1",              /* Telephone                                                          */
-    "PROP_RADIO_UNIT1",         /* Radio Tuner w/ 1 Knob + 2 Gauges                                   */
-    "PROP_RADIO_UNIT2",         /* Radio Tuner w/ 1 Knob + 5 Gauges                                   */
-    "PROP_RADIO_UNIT3",         /* Radio Tuner w/ 3 Knobs + 5 Gauges                                  */
-    "PROP_RADIO_UNIT4",         /* Radio Tuner w/ 3 Knobs + 2 Gauges                                  */
-    "PROP_SAT1_REFLECT",        /* GoldenEye Satellite                                                */
-    "PROP_SATDISH",             /* Satellite Dish (Arkangelsk)                                        */
-    "PROP_SATBOX",              /* Uplink Box                                                         */
-    "PROP_STOOL1",              /* Wooden Stool                                                       */
-    "PROP_SWIVEL_CHAIR1",       /* Swivel Chair                                                       */
-    "PROP_TORPEDO_RACK",        /* Naval Torpedo Rack x3                                              */
-    "PROP_TV1",                 /* Television Monitor                                                 */
-    "PROP_TV_HOLDER",           /* Hanging Monitor Rack                                               */
-    "PROP_TVSCREEN",            /* Wall Monitor Screen                                                */
-    "PROP_TV4SCREEN",           /* Wall Monitor Screens", 4-in-1                                       */
-    "PROP_WOOD_LG_CRATE1",      /* Wooden Crate w/ #4 Label", Bahah                                    */
-    "PROP_WOOD_LG_CRATE2",      /* Wooden Crate", Darker Shading", Kapto|Enb                            */
-    "PROP_WOOD_MD_CRATE3",      /* Wooden Crates x8", Bahko                                            */
-    "PROP_WOOD_SM_CRATE4",      /* Wooden Crate w/ #2 Label", Bahko                                    */
-    "PROP_WOOD_SM_CRATE5",      /* Wooden Crate w/ #4 Label", Darker Shading", Bahah                    */
-    "PROP_WOOD_SM_CRATE6",      /* Wooden Crate w/ UP Arrow", Kapto|Enb                                */
-    "PROP_WOODEN_TABLE1",       /* Wooden Table                                                       */
-    "PROP_SWIPE_CARD2",         /* Keycard                                                            */
-    "PROP_BORG_CRATE",          /* Blue and Gold Printed Circuit Cube (Borg Crate)                    */
-    "PROP_BOXES4X4",            /* Metal Crate Stack", 4x4                                             */
-    "PROP_BOXES3X4",            /* Metal Crate Stack", 3x4                                             */
-    "PROP_BOXES2X4",            /* Metal Crate Stack", 2x4                                             */
-    "PROP_SEC_PANEL",           /* Security Card Panel                                                */
-    "PROP_ICBM_NOSE",           /* Silo Missile (ICBM)", Nose Cone Only                                */
-    "PROP_ICBM",                /* Silo Missile (ICBM)                                                */
-    "PROP_TUNING_CONSOLE1",     /* Dual Consoles on Castors                                           */
-    "PROP_DESK_ARECIBO1",       /* Computer Work Desk                                                 */
-    "PROP_LOCKER3",             /* Lockers", Single Venting                                            */
-    "PROP_LOCKER4",             /* Lockers", Double Venting                                            */
-    "PROP_ROOFGUN",             /* Ceiling Mounted Drone Gun                                          */
-    "PROP_DEST_ENGINE",         /* Frigate Engine                                                     */
-    "PROP_DEST_EXOCET",         /* Naval MK 29 Missile Launcher (Exocet)                              */
-    "PROP_DEST_GUN",            /* Naval 100 mm Gun Turret (TR 100)                                   */
-    "PROP_DEST_HARPOON",        /* Naval MK 141 Launch Canisters (Harpoon)                            */
-    "PROP_DEST_SEAWOLF",        /* Naval MK 26 Dual Missile Launcher (Seawolf)                        */
-    "PROP_WINDOW",              /* Window Glass                                                       */
-    "PROP_WINDOW_LIB_LG1",      /* Window Glass", Lattice Frame", 4x10 (single-sided)                   */
-    "PROP_WINDOW_LIB_SM1",      /* Window Glass", Lattice Frame", 4x3 (double-sided)                    */
-    "PROP_WINDOW_COR11",        /* Window Glass", Lattice Frame", 4x4 (single-sided)                    */
-    "PROP_JUNGLE3_TREE",        /* Jungle Large Tree                                                  */
-    "PROP_PALM",                /* Jungle Palm Tree                                                   */
-    "PROP_PALMTREE",            /* Jungle Palm Tree", Resprouting After Loss of Fronds                 */
-    "PROP_PLANT2B",             /* Jungle Plant", Low Shrub                                            */
-    "PROP_LABBENCH",            /* Laboratory Table w/ Sink Drains                                    */
-    "PROP_GASBARREL",           /* White Bin                                                          */
-    "PROP_GASBARRELS",          /* White Bins x4                                                      */
-    "PROP_BODYARMOUR",          /* Body Armor                                                         */
-    "PROP_BODYARMOURVEST",      /* Body Armor (Vest)                                                  */
-    "PROP_GASTANK",             /* Bottling Tank                                                      */
-    "PROP_GLASSWARE1",          /* Glass Cup                                                          */
-    "PROP_HATCHBOLT",           /* Metallic Securing Strip (Hatch Bolt)                               */
-    "PROP_BRAKEUNIT",           /* Train Brake Controller                                             */
-    "PROP_AK47MAG",             /* Gun Magazine (KF7 Soviet)                                          */
-    "PROP_M16MAG",              /* Gun Magazine (AR33 Assault Rifle)                                  */
-    "PROP_MP5KMAG",             /* Gun Magazine (D5K Deutsche)                                        */
-    "PROP_SKORPIONMAG",         /* Gun Magazine (Klobb)                                               */
-    "PROP_SPECTREMAG",          /* Gun Magazine (Phantom)                                             */
-    "PROP_UZIMAG",              /* Gun Magazine (ZMG (9mm))                                           */
-    "PROP_SILENCER",            /* Silencer                                                           */
-    "PROP_CHREXTINGUISHER",     /* Fire Extinguisher                                                  */
-    "PROP_BOXCARTRIDGES",       /* Box of Shells (Shotgun Cartridges)                                 */
-    "PROP_FNP90MAG",            /* Gun Magazine (RC-P90)                                              */
-    "PROP_GOLDENSHELLS",        /* Box of Shells (Golden Gun Bullets)                                 */
-    "PROP_MAGNUMSHELLS",        /* Box of Shells (Magnum Rounds)                                      */
-    "PROP_WPPKMAG",             /* Gun Magazine (PP7)                                                 */
-    "PROP_TT33MAG",             /* Gun Magazine (DD44 Dostovei)                                       */
-    "PROP_SEV_DOOR",            /* Grey Containment Door w/ Caution Stripes and Window                */
-    "PROP_SEV_DOOR3",           /* Grey Electronic Door w/ LEFT Arrow                                 */
-    "PROP_SEV_DOOR3_WIND",      /* BETA Electronic Door w/ LEFT Arrow and Fake Window                 */
-    "PROP_SEV_DOOR4_WIND",      /* Grey Electronic Door w/ LEFT Arrow and Window                      */
-    "PROP_SEV_TRISLIDE",        /* Glass Door w/ Stone Frame                                          */
-    "PROP_SEV_DOOR_V1",         /* Grey Electronic Door w/ UP Arrow                                   */
-    "PROP_STEEL_DOOR1",         /* Silver Corrugated Door w/ Caution Stripes                          */
-    "PROP_STEEL_DOOR2",         /* Rusty Door w/ Handle                                               */
-    "PROP_STEEL_DOOR3",         /* Double Cross Brace Door                                            */
-    "PROP_SILO_LIFT_DOOR",      /* Elevator Door                                                      */
-    "PROP_STEEL_DOOR2B",        /* Rusty Door w/o Handle                                              */
-    "PROP_DOOR_ROLLER1",        /* Blue Bay Door w/ Caution Stripes                                   */
-    "PROP_DOOR_ROLLER2",        /* Blue Bay Door w/ Venting and Caution Stripes                       */
-    "PROP_DOOR_ROLLER3",        /* Blue Bay Door w/ Venting and Caution Stripes                       */
-    "PROP_DOOR_ROLLER4",        /* Cargo Bay Door w/ UP Arrow and Transportation Stripes              */
-    "PROP_DOOR_ST_AREC1",       /* Blue Corrugated Door w/ Transportation Stripes                     */
-    "PROP_DOOR_ST_AREC2",       /* Blue Reversed Corrugated Door w/ Transportation Stripes            */
-    "PROP_DOOR_DEST1",          /* Grey Frigate Door w/ Indents and Caution Stripes                   */
+    "PROP_ALARM1",              /* Beta Alarm / Default Multi Weapon         */
+    "PROP_ALARM2",              /* Alarm                */
+    "PROP_EXPLOSIONBIT",        /* White Pyramid (Explosion Bit)          */
+    "PROP_AMMO_CRATE1",         /* Ammo Crate (Brown w/ Edge Brace", 6x240 Black)      */
+    "PROP_AMMO_CRATE2",         /* Ammo Crate (Brown w/ Center Brace", 12x8 Black)      */
+    "PROP_AMMO_CRATE3",         /* Ammo Crate (Green w/ Center Brace", 12x8 Brown)      */
+    "PROP_AMMO_CRATE4",         /* Ammo Crate (Green w/ Edge Brace", 6x8 White)      */
+    "PROP_AMMO_CRATE5",         /* Ammo Crate (Green w/ Double Brace", 24x60 Black)     */
+    "PROP_BIN1",                /* Rusted Trash Bin             */
+    "PROP_BLOTTER1",            /* Desk Blotter              */
+    "PROP_BOOK1",               /* Red Book               */
+    "PROP_BOOKSHELF1",          /* Bookshelf               */
+    "PROP_BRIDGE_CONSOLE1A",    /* Bridge Console w/ Monitor", Navigation + Keyboard 1A    */
+    "PROP_BRIDGE_CONSOLE1B",    /* Bridge Console w/ Navigation 1B         */
+    "PROP_BRIDGE_CONSOLE2A",    /* Bridge Console w/ Navigation", Monitor + Keyboard 2A    */
+    "PROP_BRIDGE_CONSOLE2B",    /* Bridge Console w/ Various Controls 2B        */
+    "PROP_BRIDGE_CONSOLE3A",    /* Bridge Console w/ Monitor", Navigation + Keyboard 3A    */
+    "PROP_BRIDGE_CONSOLE3B",    /* Bridge Console w/ Monitor", Keyboard + Navigation 3B    */
+    "PROP_CARD_BOX1",           /* Cardboard Box", Kapto|Enb           */
+    "PROP_CARD_BOX2",           /* Cardboard Box", Red Arrow", Bahko         */
+    "PROP_CARD_BOX3",           /* Cardboard Box", Scrawled Text", Bahah        */
+    "PROP_CARD_BOX4_LG",        /* Cardboard Box", Three Seams           */
+    "PROP_CARD_BOX5_LG",        /* Cardboard Box", Two Seams", Bahah         */
+    "PROP_CARD_BOX6_LG",        /* Cardboard Box", Bahko            */
+    "PROP_CCTV",                /* Surveillance Camera            */
+    "PROP_CONSOLE1",            /* Double Screen Consoles w/ Keyboards        */
+    "PROP_CONSOLE2",            /* Double Screen Consoles w/ Left Keyboard       */
+    "PROP_CONSOLE3",            /* Double Screen Consoles w/ Right Keyboard       */
+    "PROP_CONSOLE_SEVA",        /* Console w/ Keyboard            */
+    "PROP_CONSOLE_SEVB",        /* Console w/ Monitor + Keyboard          */
+    "PROP_CONSOLE_SEVC",        /* Console w/ Switches            */
+    "PROP_CONSOLE_SEVD",        /* Console w/ Five Gauges            */
+    "PROP_CONSOLE_SEV2A",       /* Console w/ Four Faders            */
+    "PROP_CONSOLE_SEV2B",       /* Console w/ Monitor", Keyboard + Switches       */
+    "PROP_CONSOLE_SEV2C",       /* Console w/ Three Gauges           */
+    "PROP_CONSOLE_SEV2D",       /* Console w/ Pressure Gauge           */
+    "PROP_CONSOLE_SEV_GEA",     /* Console w/ GoldenEye Key Slot          */
+    "PROP_CONSOLE_SEV_GEB",     /* Console w/ Faders + Pressure Gauge         */
+    "PROP_DESK1",               /* Desk w/ Kickplate             */
+    "PROP_DESK2",               /* Desk                */
+    "PROP_DESK_LAMP2",          /* Desk Lamp               */
+    "PROP_DISC_READER",         /* External Hard Drive            */
+    "PROP_DISK_DRIVE1",         /* Floppy Disc Drive             */
+    "PROP_FILING_CABINET1",     /* Filing Cabinet              */
+    "PROP_JERRY_CAN1",          /* Jerrycan (Fuel Container)           */
+    "PROP_KEYBOARD1",           /* Computer Keyboard             */
+    "PROP_KIT_UNITS1",          /* Kitchen Cabinets             */
+    "PROP_LETTER_TRAY1",        /* Letter Tray              */
+    "PROP_MAINFRAME1",          /* Mainframe", Basic             */
+    "PROP_MAINFRAME2",          /* Mainframe", Advanced            */
+    "PROP_METAL_CHAIR1",        /* Chair (Metal)              */
+    "PROP_METAL_CRATE1",        /* Metal Crate", 6 Top Corner           */
+    "PROP_METAL_CRATE2",        /* Metal Crate", 6 Bottom Corner          */
+    "PROP_METAL_CRATE3",        /* Metal Crate", Toxic Materials          */
+    "PROP_METAL_CRATE4",        /* Metal Crate", Double Stripe - Class D1 Hazard      */
+    "PROP_MISSILE_RACK",        /* Naval Harpoon Missile in Containment Rack       */
+    "PROP_MISSILE_RACK2",       /* Naval Harpoon Missiles in Containment Racks x4      */
+    "PROP_OIL_DRUM1",           /* Oil Drum", Single Stripe", Ribbed         */
+    "PROP_OIL_DRUM2",           /* Oil Drum", Single Stripe", Ribbed - Class D1 Hazard     */
+    "PROP_OIL_DRUM3",           /* Oil Drum", Single Stripe", Ribbed - Toxic Materials     */
+    "PROP_OIL_DRUM5",           /* Oil Drum", Double Stripe - Toxic Materials       */
+    "PROP_OIL_DRUM6",           /* Oil Drum - Toxic Materials           */
+    "PROP_OIL_DRUM7",           /* Oil Drum", Double Dashes - Class D1 Hazard       */
+    "PROP_PADLOCK",             /* Padlock               */
+    "PROP_PHONE1",              /* Telephone               */
+    "PROP_RADIO_UNIT1",         /* Radio Tuner w/ 1 Knob + 2 Gauges         */
+    "PROP_RADIO_UNIT2",         /* Radio Tuner w/ 1 Knob + 5 Gauges         */
+    "PROP_RADIO_UNIT3",         /* Radio Tuner w/ 3 Knobs + 5 Gauges         */
+    "PROP_RADIO_UNIT4",         /* Radio Tuner w/ 3 Knobs + 2 Gauges         */
+    "PROP_SAT1_REFLECT",        /* GoldenEye Satellite            */
+    "PROP_SATDISH",             /* Satellite Dish (Arkangelsk)          */
+    "PROP_SATBOX",              /* Uplink Box               */
+    "PROP_STOOL1",              /* Wooden Stool              */
+    "PROP_SWIVEL_CHAIR1",       /* Swivel Chair              */
+    "PROP_TORPEDO_RACK",        /* Naval Torpedo Rack x3            */
+    "PROP_TV1",                 /* Television Monitor             */
+    "PROP_TV_HOLDER",           /* Hanging Monitor Rack            */
+    "PROP_TVSCREEN",            /* Wall Monitor Screen            */
+    "PROP_TV4SCREEN",           /* Wall Monitor Screens", 4-in-1          */
+    "PROP_WOOD_LG_CRATE1",      /* Wooden Crate w/ #4 Label", Bahah         */
+    "PROP_WOOD_LG_CRATE2",      /* Wooden Crate", Darker Shading", Kapto|Enb       */
+    "PROP_WOOD_MD_CRATE3",      /* Wooden Crates x8", Bahko           */
+    "PROP_WOOD_SM_CRATE4",      /* Wooden Crate w/ #2 Label", Bahko         */
+    "PROP_WOOD_SM_CRATE5",      /* Wooden Crate w/ #4 Label", Darker Shading", Bahah     */
+    "PROP_WOOD_SM_CRATE6",      /* Wooden Crate w/ UP Arrow", Kapto|Enb        */
+    "PROP_WOODEN_TABLE1",       /* Wooden Table              */
+    "PROP_SWIPE_CARD2",         /* Keycard               */
+    "PROP_BORG_CRATE",          /* Blue and Gold Printed Circuit Cube (Borg Crate)     */
+    "PROP_BOXES4X4",            /* Metal Crate Stack", 4x4            */
+    "PROP_BOXES3X4",            /* Metal Crate Stack", 3x4            */
+    "PROP_BOXES2X4",            /* Metal Crate Stack", 2x4            */
+    "PROP_SEC_PANEL",           /* Security Card Panel            */
+    "PROP_ICBM_NOSE",           /* Silo Missile (ICBM)", Nose Cone Only        */
+    "PROP_ICBM",                /* Silo Missile (ICBM)            */
+    "PROP_TUNING_CONSOLE1",     /* Dual Consoles on Castors           */
+    "PROP_DESK_ARECIBO1",       /* Computer Work Desk             */
+    "PROP_LOCKER3",             /* Lockers", Single Venting           */
+    "PROP_LOCKER4",             /* Lockers", Double Venting           */
+    "PROP_ROOFGUN",             /* Ceiling Mounted Drone Gun           */
+    "PROP_DEST_ENGINE",         /* Frigate Engine              */
+    "PROP_DEST_EXOCET",         /* Naval MK 29 Missile Launcher (Exocet)        */
+    "PROP_DEST_GUN",            /* Naval 100 mm Gun Turret (TR 100)         */
+    "PROP_DEST_HARPOON",        /* Naval MK 141 Launch Canisters (Harpoon)       */
+    "PROP_DEST_SEAWOLF",        /* Naval MK 26 Dual Missile Launcher (Seawolf)      */
+    "PROP_WINDOW",              /* Window Glass              */
+    "PROP_WINDOW_LIB_LG1",      /* Window Glass", Lattice Frame", 4x10 (single-sided)     */
+    "PROP_WINDOW_LIB_SM1",      /* Window Glass", Lattice Frame", 4x3 (double-sided)     */
+    "PROP_WINDOW_COR11",        /* Window Glass", Lattice Frame", 4x4 (single-sided)     */
+    "PROP_JUNGLE3_TREE",        /* Jungle Large Tree             */
+    "PROP_PALM",                /* Jungle Palm Tree             */
+    "PROP_PALMTREE",            /* Jungle Palm Tree", Resprouting After Loss of Fronds     */
+    "PROP_PLANT2B",             /* Jungle Plant", Low Shrub           */
+    "PROP_LABBENCH",            /* Laboratory Table w/ Sink Drains         */
+    "PROP_GASBARREL",           /* White Bin               */
+    "PROP_GASBARRELS",          /* White Bins x4              */
+    "PROP_BODYARMOUR",          /* Body Armor               */
+    "PROP_BODYARMOURVEST",      /* Body Armor (Vest)             */
+    "PROP_GASTANK",             /* Bottling Tank              */
+    "PROP_GLASSWARE1",          /* Glass Cup               */
+    "PROP_HATCHBOLT",           /* Metallic Securing Strip (Hatch Bolt)        */
+    "PROP_BRAKEUNIT",           /* Train Brake Controller            */
+    "PROP_AK47MAG",             /* Gun Magazine (KF7 Soviet)           */
+    "PROP_M16MAG",              /* Gun Magazine (AR33 Assault Rifle)         */
+    "PROP_MP5KMAG",             /* Gun Magazine (D5K Deutsche)          */
+    "PROP_SKORPIONMAG",         /* Gun Magazine (Klobb)            */
+    "PROP_SPECTREMAG",          /* Gun Magazine (Phantom)            */
+    "PROP_UZIMAG",              /* Gun Magazine (ZMG (9mm))           */
+    "PROP_SILENCER",            /* Silencer               */
+    "PROP_CHREXTINGUISHER",     /* Fire Extinguisher             */
+    "PROP_BOXCARTRIDGES",       /* Box of Shells (Shotgun Cartridges)         */
+    "PROP_FNP90MAG",            /* Gun Magazine (RC-P90)            */
+    "PROP_GOLDENSHELLS",        /* Box of Shells (Golden Gun Bullets)         */
+    "PROP_MAGNUMSHELLS",        /* Box of Shells (Magnum Rounds)          */
+    "PROP_WPPKMAG",             /* Gun Magazine (PP7)             */
+    "PROP_TT33MAG",             /* Gun Magazine (DD44 Dostovei)          */
+    "PROP_SEV_DOOR",            /* Grey Containment Door w/ Caution Stripes and Window    */
+    "PROP_SEV_DOOR3",           /* Grey Electronic Door w/ LEFT Arrow         */
+    "PROP_SEV_DOOR3_WIND",      /* BETA Electronic Door w/ LEFT Arrow and Fake Window     */
+    "PROP_SEV_DOOR4_WIND",      /* Grey Electronic Door w/ LEFT Arrow and Window      */
+    "PROP_SEV_TRISLIDE",        /* Glass Door w/ Stone Frame           */
+    "PROP_SEV_DOOR_V1",         /* Grey Electronic Door w/ UP Arrow         */
+    "PROP_STEEL_DOOR1",         /* Silver Corrugated Door w/ Caution Stripes       */
+    "PROP_STEEL_DOOR2",         /* Rusty Door w/ Handle            */
+    "PROP_STEEL_DOOR3",         /* Double Cross Brace Door           */
+    "PROP_SILO_LIFT_DOOR",      /* Elevator Door              */
+    "PROP_STEEL_DOOR2B",        /* Rusty Door w/o Handle            */
+    "PROP_DOOR_ROLLER1",        /* Blue Bay Door w/ Caution Stripes         */
+    "PROP_DOOR_ROLLER2",        /* Blue Bay Door w/ Venting and Caution Stripes      */
+    "PROP_DOOR_ROLLER3",        /* Blue Bay Door w/ Venting and Caution Stripes      */
+    "PROP_DOOR_ROLLER4",        /* Cargo Bay Door w/ UP Arrow and Transportation Stripes    */
+    "PROP_DOOR_ST_AREC1",       /* Blue Corrugated Door w/ Transportation Stripes      */
+    "PROP_DOOR_ST_AREC2",       /* Blue Reversed Corrugated Door w/ Transportation Stripes   */
+    "PROP_DOOR_DEST1",          /* Grey Frigate Door w/ Indents and Caution Stripes     */
     "PROP_DOOR_DEST2",          /* Grey Frigate Door w/ Indents", Caution Stripes and KEEP CLEAR Label */
-    "PROP_GAS_PLANT_SW_DO1",    /* Grey Swinging Door w/ Blue Stripe                                  */
-    "PROP_GAS_PLANT_SW2_DO1",   /* Grey Swinging Door", Darker                                         */
-    "PROP_GAS_PLANT_SW3_DO1",   /* Grey Swinging Door", Lighter                                        */
-    "PROP_GAS_PLANT_SW4_DO1",   /* Light Wooden Door (Looks Like Sand)                                */
-    "PROP_GAS_PLANT_MET1_DO1",  /* Brown Electronic Door                                              */
-    "PROP_GAS_PLANT_WC_CUB1",   /* Bathroom Stall Door                                                */
-    "PROP_GASPLANT_CLEAR_DOOR", /* Laboratory Glass Door                                              */
-    "PROP_TRAIN_DOOR",          /* Dark Wooden Door                                                   */
-    "PROP_TRAIN_DOOR2",         /* Dark Wooden Door w/ Window                                         */
-    "PROP_TRAIN_DOOR3",         /* Dark Wooden Door w/ Window + Shutter                               */
-    "PROP_DOOR_EYELID",         /* Eyelid Door                                                        */
-    "PROP_DOOR_IRIS",           /* Iris Door                                                          */
-    "PROP_SEVDOORWOOD",         /* Cabin Door                                                         */
-    "PROP_SEVDOORWIND",         /* Weathered Swinging Door w/ Window                                  */
-    "PROP_SEVDOORNOWIND",       /* Weathered Swinging Door                                            */
-    "PROP_SEVDOORMETSLIDE",     /* Brown Corrugated Electronic Door                                   */
-    "PROP_CRYPTDOOR1A",         /* Stone Door w/ Prints (Set A)                                       */
-    "PROP_CRYPTDOOR1B",         /* Sand Door w/ Damage (Set A)                                        */
-    "PROP_CRYPTDOOR2A",         /* Stone Door w/ Prints", Darker (Set B)                               */
-    "PROP_CRYPTDOOR2B",         /* Sand Door w/ Damage", Darker (Set B)                                */
-    "PROP_CRYPTDOOR3",          /* Egyptian Moving Wall                                               */
-    "PROP_CRYPTDOOR4",          /* Brown Sand Door (Temple)                                           */
-    "PROP_VERTDOOR",            /* Blast Door (Control)                                               */
-    "PROP_HATCHDOOR",           /* Train Floor Hatch                                                  */
-    "PROP_DAMGATEDOOR",         /* Security Gate (Dam)                                                */
-    "PROP_DAMTUNDOOR",          /* Tunnel Flood Door (Dam)                                            */
-    "PROP_DAMCHAINDOOR",        /* Mesh Gate                                                          */
-    "PROP_SILOTOPDOOR",         /* Launch Tube Ceiling Shutter (Silo)                                 */
-    "PROP_DOORPRISON1",         /* Cell Door                                                          */
-    "PROP_DOORSTATGATE",        /* Park Gate                                                          */
-    "PROP_CHRKALASH",           /* KF7 Soviet                                                         */
-    "PROP_CHRGRENADELAUNCH",    /* Grenade Launcher                                                   */
-    "PROP_CHRKNIFE",            /* Hunting Knife                                                      */
-    "PROP_CHRLASER",            /* Moonraker Laser                                                    */
-    "PROP_CHRM16",              /* AR33 Assault Rifle                                                 */
-    "PROP_CHRMP5K",             /* D5K Deutsche                                                       */
-    "PROP_CHRRUGER",            /* Cougar Magnum                                                      */
-    "PROP_CHRWPPK",             /* PP7 Special Issue                                                  */
-    "PROP_CHRSHOTGUN",          /* Shotgun                                                            */
-    "PROP_CHRSKORPION",         /* Klobb                                                              */
-    "PROP_CHRSPECTRE",          /* Phantom                                                            */
-    "PROP_CHRUZI",              /* ZMG (9mm)                                                          */
-    "PROP_CHRGRENADE",          /* Hand Grenade                                                       */
-    "PROP_CHRFNP90",            /* RC-P90                                                             */
-    "PROP_CHRBRIEFCASE",        /* Briefcase                                                          */
-    "PROP_CHRREMOTEMINE",       /* Remote Mine                                                        */
-    "PROP_CHRPROXIMITYMINE",    /* Proximity Mine                                                     */
-    "PROP_CHRTIMEDMINE",        /* Timed Mine                                                         */
-    "PROP_CHRROCKET",           /* Rocket                                                             */
-    "PROP_CHRGRENADEROUND",     /* Grenade Round                                                      */
-    "PROP_CHRWPPKSIL",          /* PP7 (Silenced)                                                     */
-    "PROP_CHRTT33",             /* DD44 Dostovei                                                      */
-    "PROP_CHRMP5KSIL",          /* D5K (Silenced)                                                     */
-    "PROP_CHRAUTOSHOT",         /* Automatic Shotgun                                                  */
-    "PROP_CHRGOLDEN",           /* Golden Gun                                                         */
-    "PROP_CHRTHROWKNIFE",       /* Throwing Knife                                                     */
-    "PROP_CHRSNIPERRIFLE",      /* Sniper Rifle                                                       */
-    "PROP_CHRROCKETLAUNCH",     /* Rocket Launcher                                                    */
-    "PROP_HATFURRY",            /* Fur Hat", Blue                                                      */
-    "PROP_HATFURRYBROWN",       /* Fur Hat", Brown                                                     */
-    "PROP_HATFURRYBLACK",       /* Fur Hat", Black                                                     */
-    "PROP_HATTBIRD",            /* Side Cap", Light Green                                              */
-    "PROP_HATTBIRDBROWN",       /* Side Cap", Dark Green                                               */
-    "PROP_HATHELMET",           /* Combat Helmet", Green                                               */
-    "PROP_HATHELMETGREY",       /* Combat Helmet", Grey                                                */
-    "PROP_HATMOON",             /* Elite Headgear                                                     */
-    "PROP_HATBERET",            /* Special Forces Beret", Black                                        */
-    "PROP_HATBERETBLUE",        /* Special Forces Beret", Navy                                         */
-    "PROP_HATBERETRED",         /* Special Forces Beret", Burgundy                                     */
-    "PROP_HATPEAKED",           /* Officer's Peaked Visor Cap                                         */
-    "PROP_CHRWRISTDART",        /* Pchrwristdart (BETA)                                               */
-    "PROP_CHREXPLOSIVEPEN",     /* Pchrexplosivepen (BETA)                                            */
-    "PROP_CHRBOMBCASE",         /* Bomb Case (Briefcase Laying Down)                                  */
-    "PROP_CHRFLAREPISTOL",      /* Pchrflarepistol (BETA Pickup)                                      */
-    "PROP_CHRPITONGUN",         /* Pchrpitongun (BETA Pickup)                                         */
-    "PROP_CHRFINGERGUN",        /* Pchrfingergun (BETA Pickup)                                        */
-    "PROP_CHRSILVERWPPK",       /* Pchrsilverwppk (BETA Pickup)                                       */
-    "PROP_CHRGOLDWPPK",         /* Pchrgoldwppk (BETA Pickup)                                         */
-    "PROP_CHRDYNAMITE",         /* Pchrdynamite (BETA Pickup)                                         */
-    "PROP_CHRBUNGEE",           /* Pchrbungee (BETA Pickup)                                           */
-    "PROP_CHRDOORDECODER",      /* Door Decoder                                                       */
-    "PROP_CHRBOMBDEFUSER",      /* Bomb Defuser                                                       */
-    "PROP_CHRBUGDETECTOR",      /* Pchrbugdetector (BETA Pickup)                                      */
-    "PROP_CHRSAFECRACKERCASE",  /* Safe Cracker Case (Briefcase Laying Down)                          */
-    "PROP_CHRCAMERA",           /* Photo Camera (007)                                                 */
-    "PROP_CHRLOCKEXPLODER",     /* Pchrlockexploder (BETA Pickup)                                     */
-    "PROP_CHRDOOREXPLODER",     /* Pchrdoorexploder (BETA Pickup)                                     */
-    "PROP_CHRKEYANALYSERCASE",  /* Key Analyzer Case (Briefcase Laying Down)                          */
-    "PROP_CHRWEAPONCASE",       /* Weapon Case (Briefcase Standing Up)                                */
-    "PROP_CHRKEYYALE",          /* Yale Key                                                           */
-    "PROP_CHRKEYBOLT",          /* Bolt Key                                                           */
-    "PROP_CHRBUG",              /* Covert Modem / Tracker Bug                                         */
-    "PROP_CHRMICROCAMERA",      /* Micro Camera                                                       */
-    "PROP_FLOPPY",              /* Floppy Disc                                                        */
-    "PROP_CHRGOLDENEYEKEY",     /* GoldenEye Key                                                      */
-    "PROP_CHRPOLARIZEDGLASSES", /* Polarized Glasses                                                  */
-    "PROP_CHRCREDITCARD",       /* Pchrcreditcard (BETA Pickup)                                       */
-    "PROP_CHRDARKGLASSES",      /* Pchrdarkglasses (BETA Pickup)                                      */
-    "PROP_CHRGASKEYRING",       /* Gas Keyring                                                        */
-    "PROP_CHRDATATHIEF",        /* Datathief                                                          */
-    "PROP_SAFE",                /* Safe Body                                                          */
-    "PROP_BOMB",                /* Pbomb (BETA Pickup)                                                */
-    "PROP_CHRPLANS",            /* Plans (Briefing Folder)                                            */
-    "PROP_CHRSPYFILE",          /* Pchrspyfile (BETA Pickup)                                          */
-    "PROP_CHRBLUEPRINTS",       /* Pirate Blueprints                                                  */
-    "PROP_CHRCIRCUITBOARD",     /* Circuitboard                                                       */
-    "PROP_CHRMAP",              /* Bunker Expansion Plans                                             */
-    "PROP_CHRSPOOLTAPE",        /* Pchrspooltape (BETA Pickup)                                        */
-    "PROP_CHRAUDIOTAPE",        /* Audiotape                                                          */
-    "PROP_CHRMICROFILM",        /* Pchrmicrofilm (BETA Pickup)                                        */
-    "PROP_CHRMICROCODE",        /* Pchrmicrocode (BETA Pickup)                                        */
-    "PROP_CHRLECTRE",           /* Pchrlectre (BETA Pickup)                                           */
-    "PROP_CHRMONEY",            /* Pchrmoney (BETA Pickup)                                            */
-    "PROP_CHRGOLDBAR",          /* Pchrgoldbar (BETA Pickup)                                          */
-    "PROP_CHRHEROIN",           /* Pchrheroin (BETA Pickup)                                           */
-    "PROP_CHRCLIPBOARD",        /* Clipboard                                                          */
-    "PROP_CHRDOSSIERRED",       /* Red Dossier                                                        */
-    "PROP_CHRSTAFFLIST",        /* Staff List                                                         */
-    "PROP_CHRDATTAPE",          /* DAT                                                                */
-    "PROP_CHRPLASTIQUE",        /* Plastique                                                          */
-    "PROP_CHRBLACKBOX",         /* Black Box (Orange Flight Recorder)                                 */
-    "PROP_CHRVIDEOTAPE",        /* CCTV Tape (GoldenEye VHS)                                          */
-    "PROP_NINTENDOLOGO",        /* Nintendo Logo                                                      */
-    "PROP_GOLDENEYELOGO",       /* GoldenEye Logo                                                     */
-    "PROP_WALLETBOND",          /* Classified Folder w/ Royal Crest (Folder Menus)                    */
-    "PROP_MILTRUCK",            /* Supply Truck                                                       */
-    "PROP_JEEP",                /* Military Jeep                                                      */
-    "PROP_ARTIC",               /* Red Prime Mover                                                    */
-    "PROP_HELICOPTER",          /* Transport Helicopter w/ Natalya                                    */
-    "PROP_TIGER",               /* Pirate Euro Chopper                                                */
-    "PROP_MILCOPTER",           /* Hound Helicopter                                                   */
-    "PROP_HIND",                /* Soviet Camouflage Chopper                                          */
-    "PROP_ARTICTRAILER",        /* Black Trailer                                                      */
-    "PROP_MOTORBIKE",           /* Motorbike                                                          */
-    "PROP_TANK",                /* Tank                                                               */
-    "PROP_APC",                 /* Armored Personnel Carrier                                          */
-    "PROP_SPEEDBOAT",           /* Speedboat                                                          */
-    "PROP_PLANE",               /* Aeroplane                                                          */
-    "PROP_GUN_RUNWAY1",         /* Heavy Gun Emplacement                                              */
-    "PROP_SAFEDOOR",            /* Safe Door                                                          */
-    "PROP_KEY_HOLDER",          /* Key Rack                                                           */
-    "PROP_HATCHSEVX",           /* Grating (Ventshaft Hatch)                                          */
-    "PROP_SEVDISH",             /* Satellite Dish (Severnaya)                                         */
-    "PROP_ARCHSECDOOR1",        /* Archives Moving Wall (Dark)                                        */
-    "PROP_ARCHSECDOOR2",        /* Archives Moving Wall (Light)                                       */
-    "PROP_GROUNDGUN",           /* Free Standing Drone Gun                                            */
-    "PROP_TRAINEXTDOOR",        /* Train Exterior Door                                                */
-    "PROP_CARBMW",              /* White Car #1 (BMW)                                                 */
-    "PROP_CARESCORT",           /* White Car #2 (Escort)                                              */
-    "PROP_CARGOLF",             /* White Car #3 (Golf)                                                */
-    "PROP_CARWEIRD",            /* Red Car (Cadillac)                                                 */
-    "PROP_CARZIL",              /* Ourumov's Car (ZIL)                                                */
-    "PROP_SHUTTLE_DOOR_L",      /* Exhaust Bay Doors", Left Side                                       */
-    "PROP_SHUTTLE_DOOR_R",      /* Exhaust Bay Doors", Right Side                                      */
-    "PROP_DEPOT_GATE_ENTRY",    /* Metallic Gate w/ Red Star                                          */
-    "PROP_DEPOT_DOOR_STEEL",    /* Rusty Door w/ Handle (Lo-Res)                                      */
-    "PROP_GLASSWARE2",          /* Beaker w/ Blue Topper                                              */
-    "PROP_GLASSWARE3",          /* Erlenmeyer Flask                                                   */
-    "PROP_GLASSWARE4",          /* Set of Five Beakers                                                */
-    "PROP_LANDMINE",            /* Land Mine                                                          */
-    "PROP_PLANT1",              /* Jungle Plant", Withered and Dying                                   */
-    "PROP_PLANT11",             /* Jungle Plant", Turning Colour                                       */
-    "PROP_PLANT2",              /* Jungle Plant", Healthy and Thick                                    */
-    "PROP_PLANT3",              /* Jungle Plant", Tall Leaves                                          */
-    "PROP_JUNGLE5_TREE",        /* Jungle Tree", Moss Covered                                          */
-    "PROP_LEGALPAGE",           /* GoldenEye Certification Screen                                     */
-    "PROP_ST_PETE_ROOM_1I",     /* Roads and Buildings #1 (stretch of road)                           */
-    "PROP_ST_PETE_ROOM_2I",     /* Roads and Buildings #2 (stretch of road)                           */
-    "PROP_ST_PETE_ROOM_3T",     /* Roads and Buildings #3 (intersection)                              */
-    "PROP_ST_PETE_ROOM_5C",     /* Roads and Buildings #4 (street corner)                             */
-    "PROP_ST_PETE_ROOM_6C",     /* Roads and Buildings #5 (street corner)                             */
-    "PROP_DOOR_ROLLERTRAIN",    /* Roller Door                                                        */
-    "PROP_DOOR_WIN",            /* Glass Sliding Door (Aztec)                                         */
-    "PROP_DOOR_AZTEC",          /* Stone Sliding Door (Aztec)                                         */
-    "PROP_SHUTTLE",             /* Moonraker Shuttle                                                  */
-    "PROP_DOOR_AZT_DESK",       /* Boardroom Table (Aztec Exhaust Bay)                                */
-    "PROP_DOOR_AZT_DESK_TOP",   /* Boardroom Table Extension (Aztec Exhaust Bay)                      */
-    "PROP_DOOR_AZT_CHAIR",      /* Boardroom Chair (Aztec Exhaust Bay)                                */
-    "PROP_DOOR_MF",             /* Mainframe Door                                                     */
-    "PROP_FLAG",                /* Flag Tag Token                                                     */
-    "PROP_BARRICADE",           /* Road Barricade                                                     */
-    "PROP_MODEMBOX",            /* Covert Modem Connection Screen                                     */
-    "PROP_DOORPANEL",           /* Sliding Door Activation Switch                                     */
-    "PROP_DOORCONSOLE",         /* Console w/ Activation Light                                        */
-    "PROP_CHRTESTTUBE",         /* Glass Test Tube                                                    */
-    "PROP_BOLLARD",             /* Bollard                                                            */
+    "PROP_GAS_PLANT_SW_DO1",    /* Grey Swinging Door w/ Blue Stripe         */
+    "PROP_GAS_PLANT_SW2_DO1",   /* Grey Swinging Door", Darker           */
+    "PROP_GAS_PLANT_SW3_DO1",   /* Grey Swinging Door", Lighter          */
+    "PROP_GAS_PLANT_SW4_DO1",   /* Light Wooden Door (Looks Like Sand)        */
+    "PROP_GAS_PLANT_MET1_DO1",  /* Brown Electronic Door            */
+    "PROP_GAS_PLANT_WC_CUB1",   /* Bathroom Stall Door            */
+    "PROP_GASPLANT_CLEAR_DOOR", /* Laboratory Glass Door            */
+    "PROP_TRAIN_DOOR",          /* Dark Wooden Door             */
+    "PROP_TRAIN_DOOR2",         /* Dark Wooden Door w/ Window           */
+    "PROP_TRAIN_DOOR3",         /* Dark Wooden Door w/ Window + Shutter        */
+    "PROP_DOOR_EYELID",         /* Eyelid Door              */
+    "PROP_DOOR_IRIS",           /* Iris Door               */
+    "PROP_SEVDOORWOOD",         /* Cabin Door               */
+    "PROP_SEVDOORWIND",         /* Weathered Swinging Door w/ Window         */
+    "PROP_SEVDOORNOWIND",       /* Weathered Swinging Door           */
+    "PROP_SEVDOORMETSLIDE",     /* Brown Corrugated Electronic Door         */
+    "PROP_CRYPTDOOR1A",         /* Stone Door w/ Prints (Set A)          */
+    "PROP_CRYPTDOOR1B",         /* Sand Door w/ Damage (Set A)          */
+    "PROP_CRYPTDOOR2A",         /* Stone Door w/ Prints", Darker (Set B)        */
+    "PROP_CRYPTDOOR2B",         /* Sand Door w/ Damage", Darker (Set B)        */
+    "PROP_CRYPTDOOR3",          /* Egyptian Moving Wall            */
+    "PROP_CRYPTDOOR4",          /* Brown Sand Door (Temple)           */
+    "PROP_VERTDOOR",            /* Blast Door (Control)            */
+    "PROP_HATCHDOOR",           /* Train Floor Hatch             */
+    "PROP_DAMGATEDOOR",         /* Security Gate (Dam)            */
+    "PROP_DAMTUNDOOR",          /* Tunnel Flood Door (Dam)           */
+    "PROP_DAMCHAINDOOR",        /* Mesh Gate               */
+    "PROP_SILOTOPDOOR",         /* Launch Tube Ceiling Shutter (Silo)         */
+    "PROP_DOORPRISON1",         /* Cell Door               */
+    "PROP_DOORSTATGATE",        /* Park Gate               */
+    "PROP_CHRKALASH",           /* KF7 Soviet               */
+    "PROP_CHRGRENADELAUNCH",    /* Grenade Launcher             */
+    "PROP_CHRKNIFE",            /* Hunting Knife              */
+    "PROP_CHRLASER",            /* Moonraker Laser             */
+    "PROP_CHRM16",              /* AR33 Assault Rifle             */
+    "PROP_CHRMP5K",             /* D5K Deutsche              */
+    "PROP_CHRRUGER",            /* Cougar Magnum              */
+    "PROP_CHRWPPK",             /* PP7 Special Issue             */
+    "PROP_CHRSHOTGUN",          /* Shotgun               */
+    "PROP_CHRSKORPION",         /* Klobb                */
+    "PROP_CHRSPECTRE",          /* Phantom               */
+    "PROP_CHRUZI",              /* ZMG (9mm)               */
+    "PROP_CHRGRENADE",          /* Hand Grenade              */
+    "PROP_CHRFNP90",            /* RC-P90                */
+    "PROP_CHRBRIEFCASE",        /* Briefcase               */
+    "PROP_CHRREMOTEMINE",       /* Remote Mine              */
+    "PROP_CHRPROXIMITYMINE",    /* Proximity Mine              */
+    "PROP_CHRTIMEDMINE",        /* Timed Mine               */
+    "PROP_CHRROCKET",           /* Rocket                */
+    "PROP_CHRGRENADEROUND",     /* Grenade Round              */
+    "PROP_CHRWPPKSIL",          /* PP7 (Silenced)              */
+    "PROP_CHRTT33",             /* DD44 Dostovei              */
+    "PROP_CHRMP5KSIL",          /* D5K (Silenced)              */
+    "PROP_CHRAUTOSHOT",         /* Automatic Shotgun             */
+    "PROP_CHRGOLDEN",           /* Golden Gun               */
+    "PROP_CHRTHROWKNIFE",       /* Throwing Knife              */
+    "PROP_CHRSNIPERRIFLE",      /* Sniper Rifle              */
+    "PROP_CHRROCKETLAUNCH",     /* Rocket Launcher             */
+    "PROP_HATFURRY",            /* Fur Hat", Blue              */
+    "PROP_HATFURRYBROWN",       /* Fur Hat", Brown              */
+    "PROP_HATFURRYBLACK",       /* Fur Hat", Black              */
+    "PROP_HATTBIRD",            /* Side Cap", Light Green            */
+    "PROP_HATTBIRDBROWN",       /* Side Cap", Dark Green            */
+    "PROP_HATHELMET",           /* Combat Helmet", Green            */
+    "PROP_HATHELMETGREY",       /* Combat Helmet", Grey            */
+    "PROP_HATMOON",             /* Elite Headgear              */
+    "PROP_HATBERET",            /* Special Forces Beret", Black          */
+    "PROP_HATBERETBLUE",        /* Special Forces Beret", Navy           */
+    "PROP_HATBERETRED",         /* Special Forces Beret", Burgundy          */
+    "PROP_HATPEAKED",           /* Officer's Peaked Visor Cap           */
+    "PROP_CHRWRISTDART",        /* Pchrwristdart (BETA)            */
+    "PROP_CHREXPLOSIVEPEN",     /* Pchrexplosivepen (BETA)           */
+    "PROP_CHRBOMBCASE",         /* Bomb Case (Briefcase Laying Down)         */
+    "PROP_CHRFLAREPISTOL",      /* Pchrflarepistol (BETA Pickup)          */
+    "PROP_CHRPITONGUN",         /* Pchrpitongun (BETA Pickup)           */
+    "PROP_CHRFINGERGUN",        /* Pchrfingergun (BETA Pickup)          */
+    "PROP_CHRSILVERWPPK",       /* Pchrsilverwppk (BETA Pickup)          */
+    "PROP_CHRGOLDWPPK",         /* Pchrgoldwppk (BETA Pickup)           */
+    "PROP_CHRDYNAMITE",         /* Pchrdynamite (BETA Pickup)           */
+    "PROP_CHRBUNGEE",           /* Pchrbungee (BETA Pickup)           */
+    "PROP_CHRDOORDECODER",      /* Door Decoder              */
+    "PROP_CHRBOMBDEFUSER",      /* Bomb Defuser              */
+    "PROP_CHRBUGDETECTOR",      /* Pchrbugdetector (BETA Pickup)          */
+    "PROP_CHRSAFECRACKERCASE",  /* Safe Cracker Case (Briefcase Laying Down)       */
+    "PROP_CHRCAMERA",           /* Photo Camera (007)             */
+    "PROP_CHRLOCKEXPLODER",     /* Pchrlockexploder (BETA Pickup)          */
+    "PROP_CHRDOOREXPLODER",     /* Pchrdoorexploder (BETA Pickup)          */
+    "PROP_CHRKEYANALYSERCASE",  /* Key Analyzer Case (Briefcase Laying Down)       */
+    "PROP_CHRWEAPONCASE",       /* Weapon Case (Briefcase Standing Up)        */
+    "PROP_CHRKEYYALE",          /* Yale Key               */
+    "PROP_CHRKEYBOLT",          /* Bolt Key               */
+    "PROP_CHRBUG",              /* Covert Modem / Tracker Bug           */
+    "PROP_CHRMICROCAMERA",      /* Micro Camera              */
+    "PROP_FLOPPY",              /* Floppy Disc              */
+    "PROP_CHRGOLDENEYEKEY",     /* GoldenEye Key              */
+    "PROP_CHRPOLARIZEDGLASSES", /* Polarized Glasses             */
+    "PROP_CHRCREDITCARD",       /* Pchrcreditcard (BETA Pickup)          */
+    "PROP_CHRDARKGLASSES",      /* Pchrdarkglasses (BETA Pickup)          */
+    "PROP_CHRGASKEYRING",       /* Gas Keyring              */
+    "PROP_CHRDATATHIEF",        /* Datathief               */
+    "PROP_SAFE",                /* Safe Body               */
+    "PROP_BOMB",                /* Pbomb (BETA Pickup)            */
+    "PROP_CHRPLANS",            /* Plans (Briefing Folder)           */
+    "PROP_CHRSPYFILE",          /* Pchrspyfile (BETA Pickup)           */
+    "PROP_CHRBLUEPRINTS",       /* Pirate Blueprints             */
+    "PROP_CHRCIRCUITBOARD",     /* Circuitboard              */
+    "PROP_CHRMAP",              /* Bunker Expansion Plans            */
+    "PROP_CHRSPOOLTAPE",        /* Pchrspooltape (BETA Pickup)          */
+    "PROP_CHRAUDIOTAPE",        /* Audiotape               */
+    "PROP_CHRMICROFILM",        /* Pchrmicrofilm (BETA Pickup)          */
+    "PROP_CHRMICROCODE",        /* Pchrmicrocode (BETA Pickup)          */
+    "PROP_CHRLECTRE",           /* Pchrlectre (BETA Pickup)           */
+    "PROP_CHRMONEY",            /* Pchrmoney (BETA Pickup)           */
+    "PROP_CHRGOLDBAR",          /* Pchrgoldbar (BETA Pickup)           */
+    "PROP_CHRHEROIN",           /* Pchrheroin (BETA Pickup)           */
+    "PROP_CHRCLIPBOARD",        /* Clipboard               */
+    "PROP_CHRDOSSIERRED",       /* Red Dossier              */
+    "PROP_CHRSTAFFLIST",        /* Staff List               */
+    "PROP_CHRDATTAPE",          /* DAT                */
+    "PROP_CHRPLASTIQUE",        /* Plastique               */
+    "PROP_CHRBLACKBOX",         /* Black Box (Orange Flight Recorder)         */
+    "PROP_CHRVIDEOTAPE",        /* CCTV Tape (GoldenEye VHS)           */
+    "PROP_NINTENDOLOGO",        /* Nintendo Logo              */
+    "PROP_GOLDENEYELOGO",       /* GoldenEye Logo              */
+    "PROP_WALLETBOND",          /* Classified Folder w/ Royal Crest (Folder Menus)     */
+    "PROP_MILTRUCK",            /* Supply Truck              */
+    "PROP_JEEP",                /* Military Jeep              */
+    "PROP_ARTIC",               /* Red Prime Mover             */
+    "PROP_HELICOPTER",          /* Transport Helicopter w/ Natalya         */
+    "PROP_TIGER",               /* Pirate Euro Chopper            */
+    "PROP_MILCOPTER",           /* Hound Helicopter             */
+    "PROP_HIND",                /* Soviet Camouflage Chopper           */
+    "PROP_ARTICTRAILER",        /* Black Trailer              */
+    "PROP_MOTORBIKE",           /* Motorbike               */
+    "PROP_TANK",                /* Tank                */
+    "PROP_APC",                 /* Armored Personnel Carrier           */
+    "PROP_SPEEDBOAT",           /* Speedboat               */
+    "PROP_PLANE",               /* Aeroplane               */
+    "PROP_GUN_RUNWAY1",         /* Heavy Gun Emplacement            */
+    "PROP_SAFEDOOR",            /* Safe Door               */
+    "PROP_KEY_HOLDER",          /* Key Rack               */
+    "PROP_HATCHSEVX",           /* Grating (Ventshaft Hatch)           */
+    "PROP_SEVDISH",             /* Satellite Dish (Severnaya)           */
+    "PROP_ARCHSECDOOR1",        /* Archives Moving Wall (Dark)          */
+    "PROP_ARCHSECDOOR2",        /* Archives Moving Wall (Light)          */
+    "PROP_GROUNDGUN",           /* Free Standing Drone Gun           */
+    "PROP_TRAINEXTDOOR",        /* Train Exterior Door            */
+    "PROP_CARBMW",              /* White Car #1 (BMW)             */
+    "PROP_CARESCORT",           /* White Car #2 (Escort)            */
+    "PROP_CARGOLF",             /* White Car #3 (Golf)            */
+    "PROP_CARWEIRD",            /* Red Car (Cadillac)             */
+    "PROP_CARZIL",              /* Ourumov's Car (ZIL)            */
+    "PROP_SHUTTLE_DOOR_L",      /* Exhaust Bay Doors", Left Side          */
+    "PROP_SHUTTLE_DOOR_R",      /* Exhaust Bay Doors", Right Side          */
+    "PROP_DEPOT_GATE_ENTRY",    /* Metallic Gate w/ Red Star           */
+    "PROP_DEPOT_DOOR_STEEL",    /* Rusty Door w/ Handle (Lo-Res)          */
+    "PROP_GLASSWARE2",          /* Beaker w/ Blue Topper            */
+    "PROP_GLASSWARE3",          /* Erlenmeyer Flask             */
+    "PROP_GLASSWARE4",          /* Set of Five Beakers            */
+    "PROP_LANDMINE",            /* Land Mine               */
+    "PROP_PLANT1",              /* Jungle Plant", Withered and Dying         */
+    "PROP_PLANT11",             /* Jungle Plant", Turning Colour          */
+    "PROP_PLANT2",              /* Jungle Plant", Healthy and Thick         */
+    "PROP_PLANT3",              /* Jungle Plant", Tall Leaves           */
+    "PROP_JUNGLE5_TREE",        /* Jungle Tree", Moss Covered           */
+    "PROP_LEGALPAGE",           /* GoldenEye Certification Screen          */
+    "PROP_ST_PETE_ROOM_1I",     /* Roads and Buildings #1 (stretch of road)       */
+    "PROP_ST_PETE_ROOM_2I",     /* Roads and Buildings #2 (stretch of road)       */
+    "PROP_ST_PETE_ROOM_3T",     /* Roads and Buildings #3 (intersection)        */
+    "PROP_ST_PETE_ROOM_5C",     /* Roads and Buildings #4 (street corner)        */
+    "PROP_ST_PETE_ROOM_6C",     /* Roads and Buildings #5 (street corner)        */
+    "PROP_DOOR_ROLLERTRAIN",    /* Roller Door              */
+    "PROP_DOOR_WIN",            /* Glass Sliding Door (Aztec)           */
+    "PROP_DOOR_AZTEC",          /* Stone Sliding Door (Aztec)           */
+    "PROP_SHUTTLE",             /* Moonraker Shuttle             */
+    "PROP_DOOR_AZT_DESK",       /* Boardroom Table (Aztec Exhaust Bay)        */
+    "PROP_DOOR_AZT_DESK_TOP",   /* Boardroom Table Extension (Aztec Exhaust Bay)      */
+    "PROP_DOOR_AZT_CHAIR",      /* Boardroom Chair (Aztec Exhaust Bay)        */
+    "PROP_DOOR_MF",             /* Mainframe Door              */
+    "PROP_FLAG",                /* Flag Tag Token              */
+    "PROP_BARRICADE",           /* Road Barricade              */
+    "PROP_MODEMBOX",            /* Covert Modem Connection Screen          */
+    "PROP_DOORPANEL",           /* Sliding Door Activation Switch          */
+    "PROP_DOORCONSOLE",         /* Console w/ Activation Light          */
+    "PROP_CHRTESTTUBE",         /* Glass Test Tube             */
+    "PROP_BOLLARD",             /* Bollard               */
 };
 
 char *CAMERAMODE_ToString[] = {
@@ -752,12 +992,12 @@ char *CAMERAMODE_ToString[] = {
     "CAMERAMODE_FADESWIRL",
     "CAMERAMODE_SWIRL",
     "CAMERAMODE_FP",
-    "CAMERAMODE_DEATH_CAM_FIRST",
-    "CAMERAMODE_DEATH_CAM_SECOND",
+    "CAMERAMODE_DEATH_CAM_SP",
+    "CAMERAMODE_DEATH_CAM_MP",
     "CAMERAMODE_POSEND",
     "CAMERAMODE_FP_NOINPUT",
     "CAMERAMODE_MP",
-    "CAMERAMODE_UNK10",
+    "CAMERAMODE_FADE_TO_TITLE",
 };
 
 char *INTRO_TYPE_ToString[] = {
@@ -780,14 +1020,12 @@ char *MISSION_STATE_IDS_ToString[] = {
     "MISSION_STATE_3",
     "MISSION_STATE_4",
     "MISSION_STATE_5",
-    "MISSION_STATE_6"
-};
+    "MISSION_STATE_6"};
 
 char *OBJECTIVESTATUS_ToString[] = {
     "OBJECTIVESTATUS_INCOMPLETE",
     "OBJECTIVESTATUS_COMPLETE",
-    "OBJECTIVESTATUS_FAILED"
-};
+    "OBJECTIVESTATUS_FAILED"};
 
 char *GAILIST_ToString[] = {
     "GAILIST_AIM_AT_BOND",
@@ -809,6 +1047,148 @@ char *GAILIST_ToString[] = {
     "GAILIST_DRAW_TT33_AND_ATTCK_BOND",
     "GAILIST_REMOVE_CHR"};
 
+char *LEVELID_ToString[] = {
+    "LEVELID_NONE",
+    "LEVELID_DEFAULT",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "LEVELID_BUNKER1",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "LEVELID_SILO",
+    "",
+    "LEVELID_STATUE",
+    "LEVELID_CONTROL",
+    "LEVELID_ARCHIVES",
+    "LEVELID_TRAIN",
+    "LEVELID_FRIGATE",
+    "LEVELID_BUNKER2",
+    "LEVELID_AZTEC",
+    "LEVELID_STREETS",
+    "LEVELID_DEPOT",
+    "LEVELID_COMPLEX",
+    "LEVELID_EGYPT",
+    "LEVELID_DAM",
+    "LEVELID_FACILITY",
+    "LEVELID_RUNWAY",
+    "LEVELID_SURFACE",
+    "LEVELID_JUNGLE",
+    "LEVELID_TEMPLE",
+    "LEVELID_CAVERNS",
+    "LEVELID_CITADEL",
+    "LEVELID_CRADLE",
+    "LEVELID_SHO",
+    "LEVELID_SURFACE2",
+    "LEVELID_ELD",
+    "LEVELID_BASEMENT",
+    "LEVELID_STACK",
+    "LEVELID_LUE",
+    "LEVELID_LIBRARY",
+    "LEVELID_RIT",
+    "LEVELID_CAVES",
+    "LEVELID_EAR",
+    "LEVELID_LEE",
+    "LEVELID_LIP",
+    "LEVELID_CUBA",
+    "LEVELID_WAX",
+    "LEVELID_PAM",
+    "LEVELID_MAX",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "LEVELID_TITLE"};
+
+char *TEXTBANK_LEVEL_INDEX_ToString[] =
+    {
+        "LNULL",      /* Null (unused) */
+        "LAME",       /* Library (multi) */
+        "LARCH",      /* Archives */
+        "LARK",       /* Facility */
+        "LASH",       /* Stack (multi) */
+        "LAZT",       /* Aztec */
+        "LCAT",       /* Citadel (multi) */
+        "LCAVE",      /* Caverns */
+        "LAREC",      /* Control */
+        "LCRAD",      /* Cradle */
+        "LCRYP",      /* Egypt */
+        "LDAM",       /* Dam */
+        "LDEPO",      /* Depot */
+        "LDEST",      /* Frigate */
+        "LDISH",      /* Temple (multi) */
+        "LEAR",       /* Ear (unused) */
+        "LELD",       /* Eld (unused) */
+        "LIMP",       /* Basement (multi) */
+        "LJUN",       /* Jungle */
+        "LLEE",       /* Lee (unused) */
+        "LLEN",       /* Cuba */
+        "LLIP",       /* Lip (unused) */
+        "LLUE",       /* Lue (unused) */
+        "LOAT",       /* Cave (multi) */
+        "LPAM",       /* Pam (unused) */
+        "LPETE",      /* Streets */
+        "LREF",       /* Complex (multi) */
+        "LRIT",       /* Rit (unused) */
+        "LRUN",       /* Runway */
+        "LSEVB",      /* Bunker 2 */
+        "LSEV",       /* Bunker 1 */
+        "LSEVX",      /* Surface 1 */
+        "LSEVXB",     /* Surface 2 */
+        "LSHO",       /* Sho (unused) */
+        "LSILO",      /* Silo */
+        "LSTAT",      /* Statue */
+        "LTRA",       /* Train */
+        "LWAX",       /* Wax (unused) */
+        "LGUN",       /* Guns */
+        "LTITLE",     /* Stage and menu titles */
+        "LMPMENU",    /* Multi menus */
+        "LPROPOBJ",   /* In-game pickups */
+        "LMPWEAPONS", /* Multi weapon select */
+        "LOPTIONS",   /* Solo in-game menus */
+        "LMISC"       /* Cheat options */
+};
 #pragma region lengths
 #define AI_GotoNext_LENGTH                                       2
 #define AI_GotoFirst_LENGTH                                      2
@@ -899,7 +1279,7 @@ char *GAILIST_ToString[] = {
 #define AI_IFChrInRoomWithPad_LENGTH                             5
 #define AI_IFBondInRoomWithPad_LENGTH                            4
 #define AI_IFBondCollectedObject_LENGTH                          3
-#define AI_IFItemIsStationaryWithinLevel_LENGTH                  3
+#define AI_IFKeyDropped_LENGTH                                   3
 #define AI_IFItemIsAttachedToObject_LENGTH                       4
 #define AI_IFBondHasItemEquipped_LENGTH                          3
 #define AI_IFObjectExists_LENGTH                                 3
@@ -908,7 +1288,7 @@ char *GAILIST_ToString[] = {
 #define AI_IFBondUsedGadgetOnObject_LENGTH                       3
 #define AI_ActivateObject_LENGTH                                 2
 #define AI_DestroyObject_LENGTH                                  2
-#define AI_DropObject_LENGTH                              2
+#define AI_DropObject_LENGTH                                     2
 #define AI_ChrDropAllConcealedItems_LENGTH                       2
 #define AI_ChrDropAllHeldItems_LENGTH                            2
 #define AI_BondCollectObject_LENGTH                              2
@@ -1062,7 +1442,7 @@ char *GAILIST_ToString[] = {
 #define AI_RaiseArms_LENGTH                                      1
 #define AI_GasLeakAndFadeFog_LENGTH                              1
 #define AI_ObjectRocketLaunch_LENGTH                             2
-#pragma endregion
+#pragma endregion //w
 
 int AI_CMD_LENGTHS_ToInt[] = {
     AI_GotoNext_LENGTH,
@@ -1152,7 +1532,7 @@ int AI_CMD_LENGTHS_ToInt[] = {
     AI_IFChrInRoomWithPad_LENGTH,
     AI_IFBondInRoomWithPad_LENGTH,
     AI_IFBondCollectedObject_LENGTH,
-    AI_IFItemIsStationaryWithinLevel_LENGTH,
+    AI_IFKeyDropped_LENGTH,
     AI_IFItemIsAttachedToObject_LENGTH,
     AI_IFBondHasItemEquipped_LENGTH,
     AI_IFObjectExists_LENGTH,
@@ -1408,7 +1788,7 @@ typedef enum AI_CMD
     AI_IFChrInRoomWithPad,
     AI_IFBondInRoomWithPad,
     AI_IFBondCollectedObject,
-    AI_IFItemIsStationaryWithinLevel,
+    AI_IFKeyDropped,
     AI_IFItemIsAttachedToObject,
     AI_IFBondHasItemEquipped,
     AI_IFObjectExists,
@@ -1665,7 +2045,7 @@ char *AI_CMD_ToString[] = {
     "IFChrInRoomWithPad",
     "IFBondInRoomWithPad",
     "IFBondCollectedObject",
-    "IFItemIsStationaryWithinLevel",
+    "IFKeyDropped",
     "IFItemIsAttachedToObject",
     "IFBondHasItemEquipped",
     "IFObjectExists",
@@ -1833,13 +2213,1800 @@ char *AI_CMD_ToString[] = {
     "ObjectRocketLaunch"};
 
 
+#pragma pack(1)
+
+typedef struct AiGotoNextRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiGotoNextRecord;
+
+typedef struct AiGotoFirstRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiGotoFirstRecord;
+
+typedef struct AiLabelRecord
+{
+    u8 cmd;
+    u8 ID;
+} AiLabelRecord;
+
+typedef struct AiYieldRecord
+{
+    u8 cmd;
+} AiYieldRecord;
+
+typedef struct AiEndListRecord
+{
+    u8 cmd;
+} AiEndListRecord;
+
+typedef struct AiSetChrAiListRecord
+{
+    u8  cmd;
+    s8  CHR_NUM;
+    s16 AI_LIST_ID;
+} AiSetChrAiListRecord;
+
+typedef struct AiSetReturnAiListRecord
+{
+    u8  cmd;
+    s16 AI_LIST_ID;
+} AiSetReturnAiListRecord;
+
+typedef struct AiReturnRecord
+{
+    u8 cmd;
+} AiReturnRecord;
+
+typedef struct AiStopRecord
+{
+    u8 cmd;
+} AiStopRecord;
+
+typedef struct AiKneelRecord
+{
+    u8 cmd;
+} AiKneelRecord;
+
+typedef struct AiPlayAnimationRecord
+{
+    u8  cmd;
+    s16 ANIMATION_ID;
+    s16 START_TIME30;
+    s16 END_TIME30;
+    u8  BITFIELD;
+    u8  INTERPOL_TIME60;
+} AiPlayAnimationRecord;
+
+typedef struct AiIFPlayingAnimationRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFPlayingAnimationRecord;
+
+typedef struct AiPointAtBondRecord
+{
+    u8 cmd;
+} AiPointAtBondRecord;
+
+typedef struct AiLookSurprisedRecord
+{
+    u8 cmd;
+} AiLookSurprisedRecord;
+
+typedef struct AiTRYSidesteppingRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYSidesteppingRecord;
+
+typedef struct AiTRYSideHoppingRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYSideHoppingRecord;
+
+typedef struct AiTRYSideRunningRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYSideRunningRecord;
+
+typedef struct AiTRYFiringWalkRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYFiringWalkRecord;
+
+typedef struct AiTRYFiringRunRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYFiringRunRecord;
+
+typedef struct AiTRYFiringRollRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYFiringRollRecord;
+
+typedef struct AiTRYFireOrAimAtTargetRecord
+{
+    u8  cmd;
+    s16 BITFIELD;
+    s16 TARGET;
+    u8  GOTOLABEL;
+} AiTRYFireOrAimAtTargetRecord;
+
+typedef struct AiTRYFireOrAimAtTargetKneelRecord
+{
+    u8  cmd;
+    s16 BITFIELD;
+    s16 TARGET;
+    u8  GOTOLABEL;
+} AiTRYFireOrAimAtTargetKneelRecord;
+
+typedef struct AiTRYFireOrAimAtTargetUpdateRecord
+{
+    u8  cmd;
+    s16 BITFIELD;
+    s16 TARGET;
+    u8  GOTOLABEL;
+} AiTRYFireOrAimAtTargetUpdateRecord;
+
+typedef struct AiTRYFacingTargetRecord
+{
+    u8  cmd;
+    s16 BITFIELD;
+    s16 TARGET;
+    u8  GOTOLABEL;
+} AiTRYFacingTargetRecord;
+
+typedef struct AiHitChrWithItemRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    s8 PART_NUM;
+    u8 ITEM_NUM;
+} AiHitChrWithItemRecord;
+
+typedef struct AiChrHitChrRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 CHR_NUM_TARGET;
+    s8 PART_NUM;
+} AiChrHitChrRecord;
+
+typedef struct AiTRYThrowingGrenadeRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYThrowingGrenadeRecord;
+
+typedef struct AiTRYDroppingItemRecord
+{
+    u8  cmd;
+    s16 PROP_NUM;
+    u8  ITEM_NUM;
+    u8  GOTOLABEL;
+} AiTRYDroppingItemRecord;
+
+typedef struct AiRunToPadRecord
+{
+    u8  cmd;
+    s16 PAD;
+} AiRunToPadRecord;
+
+typedef struct AiRunToPadPresetRecord
+{
+    u8 cmd;
+} AiRunToPadPresetRecord;
+
+typedef struct AiWalkToPadRecord
+{
+    u8  cmd;
+    s16 PAD;
+} AiWalkToPadRecord;
+
+typedef struct AiSprintToPadRecord
+{
+    u8  cmd;
+    s16 PAD;
+} AiSprintToPadRecord;
+
+typedef struct AiStartPatrolRecord
+{
+    u8 cmd;
+    u8 PATH_NUM;
+} AiStartPatrolRecord;
+
+typedef struct AiSurrenderRecord
+{
+    u8 cmd;
+} AiSurrenderRecord;
+
+typedef struct AiRemoveMeRecord
+{
+    u8 cmd;
+} AiRemoveMeRecord;
+
+typedef struct AiChrRemoveInstantRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+} AiChrRemoveInstantRecord;
+
+typedef struct AiTRYTriggeringAlarmAtPadRecord
+{
+    u8  cmd;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiTRYTriggeringAlarmAtPadRecord;
+
+typedef struct AiAlarmOnRecord
+{
+    u8 cmd;
+} AiAlarmOnRecord;
+
+typedef struct AiAlarmOffRecord
+{
+    u8 cmd;
+} AiAlarmOffRecord;
+
+typedef struct AiTRYRunFromBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYRunFromBondRecord;
+
+typedef struct AiTRYRunToBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYRunToBondRecord;
+
+typedef struct AiTRYWalkToBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYWalkToBondRecord;
+
+typedef struct AiTRYSprintToBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYSprintToBondRecord;
+
+typedef struct AiTRYFindCoverRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiTRYFindCoverRecord;
+
+typedef struct AiTRYRunToChrRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiTRYRunToChrRecord;
+
+typedef struct AiTRYWalkToChrRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiTRYWalkToChrRecord;
+
+typedef struct AiTRYSprintToChrRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiTRYSprintToChrRecord;
+
+typedef struct AiIFImOnPatrolOrStoppedRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFImOnPatrolOrStoppedRecord;
+
+typedef struct AiIFChrDyingOrDeadRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiIFChrDyingOrDeadRecord;
+
+typedef struct AiIFChrDoesNotExistRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiIFChrDoesNotExistRecord;
+
+typedef struct AiIFISeeBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFISeeBondRecord;
+
+typedef struct AiSetNewRandomRecord
+{
+    u8 cmd;
+} AiSetNewRandomRecord;
+
+typedef struct AiIFRandomLessThanRecord
+{
+    u8 cmd;
+    u8 BYTE;
+    u8 GOTOLABEL;
+} AiIFRandomLessThanRecord;
+
+typedef struct AiIFRandomGreaterThanRecord
+{
+    u8 cmd;
+    u8 BYTE;
+    u8 GOTOLABEL;
+} AiIFRandomGreaterThanRecord;
+
+typedef struct AiIFICanHearAlarmRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFICanHearAlarmRecord;
+
+typedef struct AiIFAlarmIsOnRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFAlarmIsOnRecord;
+
+typedef struct AiIFGasIsLeakingRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFGasIsLeakingRecord;
+
+typedef struct AiIFIHeardBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFIHeardBondRecord;
+
+typedef struct AiIFISeeSomeoneShotRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFISeeSomeoneShotRecord;
+
+typedef struct AiIFISeeSomeoneDieRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFISeeSomeoneDieRecord;
+
+typedef struct AiIFICouldSeeBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFICouldSeeBondRecord;
+
+typedef struct AiIFICouldSeeBondsStanRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFICouldSeeBondsStanRecord;
+
+typedef struct AiIFIWasShotRecentlyRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFIWasShotRecentlyRecord;
+
+typedef struct AiIFIHeardBondRecentlyRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFIHeardBondRecentlyRecord;
+
+typedef struct AiIFImInRoomWithChrRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiIFImInRoomWithChrRecord;
+
+typedef struct AiIFIveNotBeenSeenRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFIveNotBeenSeenRecord;
+
+typedef struct AiIFImOnScreenRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFImOnScreenRecord;
+
+typedef struct AiIFMyRoomIsOnScreenRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFMyRoomIsOnScreenRecord;
+
+typedef struct AiIFRoomWithPadIsOnScreenRecord
+{
+    u8  cmd;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFRoomWithPadIsOnScreenRecord;
+
+typedef struct AiIFImTargetedByBondRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFImTargetedByBondRecord;
+
+typedef struct AiIFBondMissedMeRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFBondMissedMeRecord;
+
+typedef struct AiIFMyAngleToBondLessThanRecord
+{
+    u8 cmd;
+    u8 ANGLE;
+    u8 GOTOLABEL;
+} AiIFMyAngleToBondLessThanRecord;
+
+typedef struct AiIFMyAngleToBondGreaterThanRecord
+{
+    u8 cmd;
+    u8 ANGLE;
+    u8 GOTOLABEL;
+} AiIFMyAngleToBondGreaterThanRecord;
+
+typedef struct AiIFMyAngleFromBondLessThanRecord
+{
+    u8 cmd;
+    u8 ANGLE;
+    u8 GOTOLABEL;
+} AiIFMyAngleFromBondLessThanRecord;
+
+typedef struct AiIFMyAngleFromBondGreaterThanRecord
+{
+    u8 cmd;
+    u8 ANGLE;
+    u8 GOTOLABEL;
+} AiIFMyAngleFromBondGreaterThanRecord;
+
+typedef struct AiIFMyDistanceToBondLessThanDecimeterRecord
+{
+    u8  cmd;
+    s16 DISTANCE;
+    u8  GOTOLABEL;
+} AiIFMyDistanceToBondLessThanDecimeterRecord;
+
+typedef struct AiIFMyDistanceToBondGreaterThanDecimeterRecord
+{
+    u8  cmd;
+    s16 DISTANCE;
+    u8  GOTOLABEL;
+} AiIFMyDistanceToBondGreaterThanDecimeterRecord;
+
+typedef struct AiIFChrDistanceToPadLessThanDecimeterRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s16 DISTANCE;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFChrDistanceToPadLessThanDecimeterRecord;
+
+typedef struct AiIFChrDistanceToPadGreaterThanDecimeterRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s16 DISTANCE;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFChrDistanceToPadGreaterThanDecimeterRecord;
+
+typedef struct AiIFMyDistanceToChrLessThanDecimeterRecord
+{
+    u8  cmd;
+    s16 DISTANCE;
+    u8  CHR_NUM;
+    u8  GOTOLABEL;
+} AiIFMyDistanceToChrLessThanDecimeterRecord;
+
+typedef struct AiIFMyDistanceToChrGreaterThanDecimeterRecord
+{
+    u8  cmd;
+    s16 DISTANCE;
+    u8  CHR_NUM;
+    u8  GOTOLABEL;
+} AiIFMyDistanceToChrGreaterThanDecimeterRecord;
+
+typedef struct AiTRYSettingMyPresetToChrWithinDistanceDecimeterRecord
+{
+    u8  cmd;
+    s16 DISTANCE;
+    u8  GOTOLABEL;
+} AiTRYSettingMyPresetToChrWithinDistanceDecimeterRecord;
+
+typedef struct AiIFBondDistanceToPadLessThanDecimeterRecord
+{
+    u8  cmd;
+    s16 DISTANCE;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFBondDistanceToPadLessThanDecimeterRecord;
+
+typedef struct AiIFBondDistanceToPadGreaterThanDecimeterRecord
+{
+    u8  cmd;
+    s16 DISTANCE;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFBondDistanceToPadGreaterThanDecimeterRecord;
+
+typedef struct AiIFChrInRoomWithPadRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFChrInRoomWithPadRecord;
+
+typedef struct AiIFBondInRoomWithPadRecord
+{
+    u8  cmd;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFBondInRoomWithPadRecord;
+
+typedef struct AiIFBondCollectedObjectRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 GOTOLABEL;
+} AiIFBondCollectedObjectRecord;
+
+typedef struct AiIFKeyDroppedRecord
+{
+    u8 cmd;
+    u8 KEY_ID;
+    u8 GOTOLABEL;
+} AiIFKeyDroppedRecord;
+
+typedef struct AiIFItemIsAttachedToObjectRecord
+{
+    u8 cmd;
+    u8 ITEM_NUM;
+    u8 OBJECT_TAG;
+    u8 GOTOLABEL;
+} AiIFItemIsAttachedToObjectRecord;
+
+typedef struct AiIFBondHasItemEquippedRecord
+{
+    u8 cmd;
+    u8 ITEM_NUM;
+    u8 GOTOLABEL;
+} AiIFBondHasItemEquippedRecord;
+
+typedef struct AiIFObjectExistsRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 GOTOLABEL;
+} AiIFObjectExistsRecord;
+
+typedef struct AiIFObjectNotDestroyedRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 GOTOLABEL;
+} AiIFObjectNotDestroyedRecord;
+
+typedef struct AiIFObjectWasActivatedRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 GOTOLABEL;
+} AiIFObjectWasActivatedRecord;
+
+typedef struct AiIFBondUsedGadgetOnObjectRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 GOTOLABEL;
+} AiIFBondUsedGadgetOnObjectRecord;
+
+typedef struct AiActivateObjectRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiActivateObjectRecord;
+
+typedef struct AiDestroyObjectRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiDestroyObjectRecord;
+
+typedef struct AiDropObjectRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiDropObjectRecord;
+
+typedef struct AiChrDropAllConcealedItemsRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+} AiChrDropAllConcealedItemsRecord;
+
+typedef struct AiChrDropAllHeldItemsRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+} AiChrDropAllHeldItemsRecord;
+
+typedef struct AiBondCollectObjectRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiBondCollectObjectRecord;
+
+typedef struct AiChrEquipObjectRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 CHR_NUM;
+} AiChrEquipObjectRecord;
+
+typedef struct AiMoveObjectRecord
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s16 PAD;
+} AiMoveObjectRecord;
+
+typedef struct AiDoorOpenRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiDoorOpenRecord;
+
+typedef struct AiDoorCloseRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiDoorCloseRecord;
+
+typedef struct AiIFDoorStateEqualRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 DOOR_STATE;
+    u8 GOTOLABEL;
+} AiIFDoorStateEqualRecord;
+
+typedef struct AiIFDoorHasBeenOpenedBeforeRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 GOTOLABEL;
+} AiIFDoorHasBeenOpenedBeforeRecord;
+
+typedef struct AiDoorSetLockRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 LOCK_FLAG;
+} AiDoorSetLockRecord;
+
+typedef struct AiDoorUnsetLockRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 LOCK_FLAG;
+} AiDoorUnsetLockRecord;
+
+typedef struct AiIFDoorLockEqualRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 LOCK_FLAG;
+    u8 GOTOLABEL;
+} AiIFDoorLockEqualRecord;
+
+typedef struct AiIFObjectiveNumCompleteRecord
+{
+    u8 cmd;
+    u8 OBJ_NUM;
+    u8 GOTOLABEL;
+} AiIFObjectiveNumCompleteRecord;
+
+typedef struct AiTRYUnknown6eRecord
+{
+    u8 cmd;
+    u8 val;
+    u8 GOTOLABEL;
+} AiTRYUnknown6eRecord;
+
+typedef struct AiTRYUnknown6fRecord
+{
+    u8 cmd;
+    u8 val;
+    u8 GOTOLABEL;
+} AiTRYUnknown6fRecord;
+
+typedef struct AiIFGameDifficultyLessThanRecord
+{
+    u8 cmd;
+    u8 DIFICULTY_ID;
+    u8 GOTOLABEL;
+} AiIFGameDifficultyLessThanRecord;
+
+typedef struct AiIFGameDifficultyGreaterThanRecord
+{
+    u8 cmd;
+    u8 DIFICULTY_ID;
+    u8 GOTOLABEL;
+} AiIFGameDifficultyGreaterThanRecord;
+
+typedef struct AiIFMissionTimeLessThanRecord
+{
+    u8  cmd;
+    s16 SECONDS;
+    u8  GOTOLABEL;
+} AiIFMissionTimeLessThanRecord;
+
+typedef struct AiIFMissionTimeGreaterThanRecord
+{
+    u8  cmd;
+    s16 SECONDS;
+    u8  GOTOLABEL;
+} AiIFMissionTimeGreaterThanRecord;
+
+typedef struct AiIFSystemPowerTimeLessThanRecord
+{
+    u8  cmd;
+    s16 MINUTES;
+    u8  GOTOLABEL;
+} AiIFSystemPowerTimeLessThanRecord;
+
+typedef struct AiIFSystemPowerTimeGreaterThanRecord
+{
+    u8  cmd;
+    s16 MINUTES;
+    u8  GOTOLABEL;
+} AiIFSystemPowerTimeGreaterThanRecord;
+
+typedef struct AiIFLevelIdLessThanRecord
+{
+    u8 cmd;
+    u8 LEVEL_ID;
+    u8 GOTOLABEL;
+} AiIFLevelIdLessThanRecord;
+
+typedef struct AiIFLevelIdGreaterThanRecord
+{
+    u8 cmd;
+    u8 LEVEL_ID;
+    u8 GOTOLABEL;
+} AiIFLevelIdGreaterThanRecord;
+
+typedef struct AiIFMyNumArghsLessThanRecord
+{
+    u8 cmd;
+    u8 val;
+    u8 GOTOLABEL;
+} AiIFMyNumArghsLessThanRecord;
+
+typedef struct AiIFMyNumArghsGreaterThanRecord
+{
+    u8 cmd;
+    u8 val;
+    u8 GOTOLABEL;
+} AiIFMyNumArghsGreaterThanRecord;
+
+typedef struct AiIFMyNumCloseArghsLessThanRecord
+{
+    u8 cmd;
+    u8 val;
+    u8 GOTOLABEL;
+} AiIFMyNumCloseArghsLessThanRecord;
+
+typedef struct AiIFMyNumCloseArghsGreaterThanRecord
+{
+    u8 cmd;
+    u8 val;
+    u8 GOTOLABEL;
+} AiIFMyNumCloseArghsGreaterThanRecord;
+
+typedef struct AiIFChrHealthLessThanRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 HEALTH;
+    u8 GOTOLABEL;
+} AiIFChrHealthLessThanRecord;
+
+typedef struct AiIFChrHealthGreaterThanRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 HEALTH;
+    u8 GOTOLABEL;
+} AiIFChrHealthGreaterThanRecord;
+
+typedef struct AiIFChrWasDamagedSinceLastCheckRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiIFChrWasDamagedSinceLastCheckRecord;
+
+typedef struct AiIFBondHealthLessThanRecord
+{
+    u8 cmd;
+    u8 HEALTH;
+    u8 GOTOLABEL;
+} AiIFBondHealthLessThanRecord;
+
+typedef struct AiIFBondHealthGreaterThanRecord
+{
+    u8 cmd;
+    u8 HEALTH;
+    u8 GOTOLABEL;
+} AiIFBondHealthGreaterThanRecord;
+
+typedef struct AiSetMyMoraleRecord
+{
+    u8 cmd;
+    u8 val;
+} AiSetMyMoraleRecord;
+
+typedef struct AiAddToMyMoraleRecord
+{
+    u8 cmd;
+    u8 val;
+} AiAddToMyMoraleRecord;
+
+typedef struct AiSubtractFromMyMoraleRecord
+{
+    u8 cmd;
+    u8 val;
+} AiSubtractFromMyMoraleRecord;
+
+typedef struct AiIFMyMoraleLessThanRecord
+{
+    u8 cmd;
+    u8 val;
+    u8 GOTOLABEL;
+} AiIFMyMoraleLessThanRecord;
+
+typedef struct AiIFMyMoraleLessThanRandomRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFMyMoraleLessThanRandomRecord;
+
+typedef struct AiSetMyAlertnessRecord
+{
+    u8 cmd;
+    u8 val;
+} AiSetMyAlertnessRecord;
+
+typedef struct AiAddToMyAlertnessRecord
+{
+    u8 cmd;
+    u8 val;
+} AiAddToMyAlertnessRecord;
+
+typedef struct AiSubtractFromMyAlertnessRecord
+{
+    u8 cmd;
+    u8 val;
+} AiSubtractFromMyAlertnessRecord;
+
+typedef struct AiIFMyAlertnessLessThanRecord
+{
+    u8 cmd;
+    u8 CHRBYTE;
+    u8 GOTOLABEL;
+} AiIFMyAlertnessLessThanRecord;
+
+typedef struct AiIFMyAlertnessLessThanRandomRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFMyAlertnessLessThanRandomRecord;
+
+typedef struct AiSetMyHearingScaleRecord
+{
+    u8  cmd;
+    s16 HEARING_SCALE;
+} AiSetMyHearingScaleRecord;
+
+typedef struct AiSetMyVisionRangeRecord
+{
+    u8 cmd;
+    u8 VISION_RANGE;
+} AiSetMyVisionRangeRecord;
+
+typedef struct AiSetMyGrenadeProbabilityRecord
+{
+    u8 cmd;
+    u8 GRENADE_PROB;
+} AiSetMyGrenadeProbabilityRecord;
+
+typedef struct AiSetMyChrNumRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+} AiSetMyChrNumRecord;
+
+typedef struct AiSetMyHealthTotalRecord
+{
+    u8  cmd;
+    s16 HEALTH;
+} AiSetMyHealthTotalRecord;
+
+typedef struct AiSetMyArmourRecord
+{
+    u8  cmd;
+    s16 AMOUNT;
+} AiSetMyArmourRecord;
+
+typedef struct AiSetMySpeedRatingRecord
+{
+    u8 cmd;
+    s8 val;
+} AiSetMySpeedRatingRecord;
+
+typedef struct AiSetMyArghRatingRecord
+{
+    u8 cmd;
+    s8 val;
+} AiSetMyArghRatingRecord;
+
+typedef struct AiSetMyAccuracyRatingRecord
+{
+    u8 cmd;
+    s8 val;
+} AiSetMyAccuracyRatingRecord;
+
+typedef struct AiSetMyFlags2Record
+{
+    u8 cmd;
+    u8 BITS;
+} AiSetMyFlags2Record;
+
+typedef struct AiUnsetMyFlags2Record
+{
+    u8 cmd;
+    u8 BITS;
+} AiUnsetMyFlags2Record;
+
+typedef struct AiIFMyFlags2HasRecord
+{
+    u8 cmd;
+    u8 BITS;
+    u8 GOTOLABEL;
+} AiIFMyFlags2HasRecord;
+
+typedef struct AiSetChrBitfieldRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 BITS;
+} AiSetChrBitfieldRecord;
+
+typedef struct AiUnsetChrBitfieldRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 BITS;
+} AiUnsetChrBitfieldRecord;
+
+typedef struct AiIFChrBitfieldHasRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 BITS;
+    u8 GOTOLABEL;
+} AiIFChrBitfieldHasRecord;
+
+typedef struct AiSetObjectiveBitfieldRecord
+{
+    u8  cmd;
+    s32 BITFIELD;
+} AiSetObjectiveBitfieldRecord;
+
+typedef struct AiUnsetObjectiveBitfieldRecord
+{
+    u8  cmd;
+    s32 BITFIELD;
+} AiUnsetObjectiveBitfieldRecord;
+
+typedef struct AiIFObjectiveBitfieldHasRecord
+{
+    u8  cmd;
+    s32 BITS;
+    u8  GOTOLABEL;
+} AiIFObjectiveBitfieldHasRecord;
+
+typedef struct AiSetMychrflagsRecord
+{
+    u8  cmd;
+    s32 CHRFLAGS;
+} AiSetMychrflagsRecord;
+
+typedef struct AiUnsetMychrflagsRecord
+{
+    u8  cmd;
+    s32 CHRFLAGS;
+} AiUnsetMychrflagsRecord;
+
+typedef struct AiIFMychrflagsHasRecord
+{
+    u8  cmd;
+    s32 CHRFLAGS;
+    u8  GOTOLABEL;
+} AiIFMychrflagsHasRecord;
+
+typedef struct AiSetChrchrflagsRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s32 CHRFLAGS;
+} AiSetChrchrflagsRecord;
+
+typedef struct AiUnsetChrchrflagsRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s32 CHRFLAGS;
+} AiUnsetChrchrflagsRecord;
+
+typedef struct AiIFChrchrflagsHasRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s32 CHRFLAGS;
+    u8  GOTOLABEL;
+} AiIFChrchrflagsHasRecord;
+
+typedef struct AiSetObjectFlagsRecord
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s32 BITFIELD;
+} AiSetObjectFlagsRecord;
+
+typedef struct AiUnsetObjectFlagsRecord
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s32 BITFIELD;
+} AiUnsetObjectFlagsRecord;
+
+typedef struct AiIFObjectFlagsHasRecord
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s32 BITS;
+    u8  GOTOLABEL;
+} AiIFObjectFlagsHasRecord;
+
+typedef struct AiSetObjectFlags2Record
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s32 BITS;
+} AiSetObjectFlags2Record;
+
+typedef struct AiUnsetObjectFlags2Record
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s32 BITS;
+} AiUnsetObjectFlags2Record;
+
+typedef struct AiIFObjectFlags2HasRecord
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s32 BITFIELD;
+    u8  GOTOLABEL;
+} AiIFObjectFlags2HasRecord;
+
+typedef struct AiSetMyChrPresetRecord
+{
+    u8 cmd;
+    u8 PRESET;
+} AiSetMyChrPresetRecord;
+
+typedef struct AiSetChrChrPresetRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 PRESET;
+} AiSetChrChrPresetRecord;
+
+typedef struct AiSetMyPadPresetRecord
+{
+    u8  cmd;
+    s16 PAD_PRESET;
+} AiSetMyPadPresetRecord;
+
+typedef struct AiSetChrPadPresetRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s16 PAD_PRESET;
+} AiSetChrPadPresetRecord;
+
+typedef struct AiPRINTRecord
+{
+    u8 cmd;
+    u8 val[];
+} AiPRINTRecord;
+
+typedef struct AiMyTimerStartRecord
+{
+    u8 cmd;
+} AiMyTimerStartRecord;
+
+typedef struct AiMyTimerResetRecord
+{
+    u8 cmd;
+} AiMyTimerResetRecord;
+
+typedef struct AiMyTimerPauseRecord
+{
+    u8 cmd;
+} AiMyTimerPauseRecord;
+
+typedef struct AiMyTimerResumeRecord
+{
+    u8 cmd;
+} AiMyTimerResumeRecord;
+
+typedef struct AiIFMyTimerIsNotRunningRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFMyTimerIsNotRunningRecord;
+
+typedef struct AiIFMyTimerLessThanTicksRecord
+{
+    u8 cmd;
+    u8 TICKS[3];
+    u8 GOTOLABEL;
+} AiIFMyTimerLessThanTicksRecord;
+
+typedef struct AiIFMyTimerGreaterThanTicksRecord
+{
+    u8 cmd;
+    u8 TICKS[3];
+    u8 GOTOLABEL;
+} AiIFMyTimerGreaterThanTicksRecord;
+
+typedef struct AiHudCountdownShowRecord
+{
+    u8 cmd;
+} AiHudCountdownShowRecord;
+
+typedef struct AiHudCountdownHideRecord
+{
+    u8 cmd;
+} AiHudCountdownHideRecord;
+
+typedef struct AiHudCountdownSetRecord
+{
+    u8  cmd;
+    s16 SECONDS;
+} AiHudCountdownSetRecord;
+
+typedef struct AiHudCountdownStopRecord
+{
+    u8 cmd;
+} AiHudCountdownStopRecord;
+
+typedef struct AiHudCountdownStartRecord
+{
+    u8 cmd;
+} AiHudCountdownStartRecord;
+
+typedef struct AiIFHudCountdownIsNotRunningRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFHudCountdownIsNotRunningRecord;
+
+typedef struct AiIFHudCountdownLessThanRecord
+{
+    u8  cmd;
+    s16 SECONDS;
+    u8  GOTOLABEL;
+} AiIFHudCountdownLessThanRecord;
+
+typedef struct AiIFHudCountdownGreaterThanRecord
+{
+    u8  cmd;
+    s16 SECONDS;
+    u8  GOTOLABEL;
+} AiIFHudCountdownGreaterThanRecord;
+
+typedef struct AiTRYSpawningChrAtPadRecord
+{
+    u8  cmd;
+    u8  BODY_NUM;
+    s8  HEAD_NUM;
+    s16 PAD;
+    s16 AI_LIST_ID;
+    s32 BITFIELD;
+    u8  GOTOLABEL;
+} AiTRYSpawningChrAtPadRecord;
+
+typedef struct AiTRYSpawningChrNextToChrRecord
+{
+    u8  cmd;
+    u8  BODY_NUM;
+    s8  HEAD_NUM;
+    u8  CHR_NUM_TARGET;
+    s16 AI_LIST_ID;
+    s32 BITFIELD;
+    u8  GOTOLABEL;
+} AiTRYSpawningChrNextToChrRecord;
+
+typedef struct AiTRYGiveMeItemRecord
+{
+    u8  cmd;
+    s16 PROP_NUM;
+    u8  ITEM_NUM;
+    s32 PROPFLAG;
+    u8  GOTOLABEL;
+} AiTRYGiveMeItemRecord;
+
+typedef struct AiTRYGiveMeHatRecord
+{
+    u8  cmd;
+    s16 PROP_NUM;
+    s32 PROP_BITFIELD;
+    u8  GOTOLABEL;
+} AiTRYGiveMeHatRecord;
+
+typedef struct AiTRYCloningChrRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s16 AI_LIST_ID;
+    u8  GOTOLABEL;
+} AiTRYCloningChrRecord;
+
+typedef struct AiTextPrintBottomRecord
+{
+    u8  cmd;
+    s16 txt;
+} AiTextPrintBottomRecord;
+
+typedef struct AiTextPrintTopRecord
+{
+    u8  cmd;
+    s16 txt;
+} AiTextPrintTopRecord;
+
+typedef struct AiSfxPlayRecord
+{
+    u8  cmd;
+    s16 SOUND_NUM;
+    s8  CHANNEL_NUM;
+} AiSfxPlayRecord;
+
+typedef struct AiSfxEmitFromObjectRecord
+{
+    u8  cmd;
+    s8  slotID;
+    u8  OBJECT_TAG;
+    s16 sfxID;
+} AiSfxEmitFromObjectRecord;
+
+typedef struct AiSfxEmitFromPadRecord
+{
+    u8  cmd;
+    s8  slotID;
+    s16 PAD;
+    s16 sfxID;
+} AiSfxEmitFromPadRecord;
+
+typedef struct AiSfxSetChannelVolumeRecord
+{
+    u8  cmd;
+    s8  slotID;
+    s16 TARGET_VOLUME;
+    s16 sfxID;
+} AiSfxSetChannelVolumeRecord;
+
+typedef struct AiSfxFadeChannelVolumeRecord
+{
+    u8  cmd;
+    s8  slotID;
+    s16 TARGET_VOLUME;
+    s16 sfxID;
+} AiSfxFadeChannelVolumeRecord;
+
+typedef struct AiSfxStopChannelRecord
+{
+    u8 cmd;
+    s8 CHANNEL_NUM;
+} AiSfxStopChannelRecord;
+
+typedef struct AiIFSfxChannelVolumeLessThanRecord
+{
+    u8  cmd;
+    s8  slotID;
+    s16 VOLUME;
+    u8  GOTOLABEL;
+} AiIFSfxChannelVolumeLessThanRecord;
+
+typedef struct AiVehicleStartPathRecord
+{
+    u8 cmd;
+    u8 PATH_NUM;
+} AiVehicleStartPathRecord;
+
+typedef struct AiVehicleSpeedRecord
+{
+    u8  cmd;
+    s16 TOP_SPEED;
+    s16 ACCELERATION_TIME60;
+} AiVehicleSpeedRecord;
+
+typedef struct AiAircraftRotorSpeedRecord
+{
+    u8  cmd;
+    s16 ROTOR_SPEED;
+    s16 ACCELERATION_TIME60;
+} AiAircraftRotorSpeedRecord;
+
+typedef struct AiIFCameraIsInIntroRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFCameraIsInIntroRecord;
+
+typedef struct AiIFCameraIsInBondSwirlRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFCameraIsInBondSwirlRecord;
+
+typedef struct AiTvChangeScreenBankRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+    u8 SCREEN_INDEX;
+    u8 SCREEN_BANK;
+} AiTvChangeScreenBankRecord;
+
+typedef struct AiIFBondInTankRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFBondInTankRecord;
+
+typedef struct AiEndLevelRecord
+{
+    u8 cmd;
+} AiEndLevelRecord;
+
+typedef struct AiCameraReturnToBondRecord
+{
+    u8 cmd;
+} AiCameraReturnToBondRecord;
+
+typedef struct AiCameraLookAtBondFromPadRecord
+{
+    u8  cmd;
+    s16 PAD;
+} AiCameraLookAtBondFromPadRecord;
+
+typedef struct AiCameraSwitchRecord
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s16 LOOK_AT_BOND_FLAG;
+    s16 UNUSED_FLAG;
+} AiCameraSwitchRecord;
+
+typedef struct AiIFBondYPosLessThanRecord
+{
+    u8  cmd;
+    s16 Y_POS;
+    u8  GOTOLABEL;
+} AiIFBondYPosLessThanRecord;
+
+typedef struct AiBondDisableControlRecord
+{
+    u8 cmd;
+    u8 val;
+} AiBondDisableControlRecord;
+
+typedef struct AiBondEnableControlRecord
+{
+    u8 cmd;
+} AiBondEnableControlRecord;
+
+typedef struct AiTRYTeleportingChrToPadRecord
+{
+    u8  cmd;
+    u8  CHR_NUM;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiTRYTeleportingChrToPadRecord;
+
+typedef struct AiScreenFadeToBlackRecord
+{
+    u8 cmd;
+} AiScreenFadeToBlackRecord;
+
+typedef struct AiScreenFadeFromBlackRecord
+{
+    u8 cmd;
+} AiScreenFadeFromBlackRecord;
+
+typedef struct AiIFScreenFadeCompletedRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFScreenFadeCompletedRecord;
+
+typedef struct AiHideAllChrsRecord
+{
+    u8 cmd;
+} AiHideAllChrsRecord;
+
+typedef struct AiShowAllChrsRecord
+{
+    u8 cmd;
+} AiShowAllChrsRecord;
+
+typedef struct AiDoorOpenInstantRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiDoorOpenInstantRecord;
+
+typedef struct AiChrRemoveItemInHandRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 HAND_INDEX;
+} AiChrRemoveItemInHandRecord;
+
+typedef struct AiIfNumberOfActivePlayersLessThanRecord
+{
+    u8 cmd;
+    s8 NUMBER;
+    u8 GOTOLABEL;
+} AiIfNumberOfActivePlayersLessThanRecord;
+
+typedef struct AiIFBondItemTotalAmmoLessThanRecord
+{
+    u8 cmd;
+    s8 ITEM_NUM;
+    s8 AMMO_TOTAL;
+    u8 GOTOLABEL;
+} AiIFBondItemTotalAmmoLessThanRecord;
+
+typedef struct AiBondEquipItemRecord
+{
+    u8 cmd;
+    s8 ITEM_NUM;
+} AiBondEquipItemRecord;
+
+typedef struct AiBondEquipItemCinemaRecord
+{
+    u8 cmd;
+    s8 ITEM_NUM;
+} AiBondEquipItemCinemaRecord;
+
+typedef struct AiBondSetLockedVelocityRecord
+{
+    u8 cmd;
+    s8 X_SPEED60;
+    s8 Z_SPEED60;
+} AiBondSetLockedVelocityRecord;
+
+typedef struct AiIFObjectInRoomWithPadRecord
+{
+    u8  cmd;
+    u8  OBJECT_TAG;
+    s16 PAD;
+    u8  GOTOLABEL;
+} AiIFObjectInRoomWithPadRecord;
+
+typedef struct AiIFImFiringAndLockedForwardRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFImFiringAndLockedForwardRecord;
+
+typedef struct AiIFImFiringRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFImFiringRecord;
+
+typedef struct AiSwitchSkyRecord
+{
+    u8 cmd;
+} AiSwitchSkyRecord;
+
+typedef struct AiTriggerFadeAndExitLevelOnButtonPressRecord
+{
+    u8 cmd;
+} AiTriggerFadeAndExitLevelOnButtonPressRecord;
+
+typedef struct AiIFBondIsDeadRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFBondIsDeadRecord;
+
+typedef struct AiBondDisableDamageAndPickupsRecord
+{
+    u8 cmd;
+} AiBondDisableDamageAndPickupsRecord;
+
+typedef struct AiBondHideWeaponsRecord
+{
+    u8 cmd;
+} AiBondHideWeaponsRecord;
+
+typedef struct AiCameraOrbitPadRecord
+{
+    u8  cmd;
+    s16 LAT_DISTANCE;
+    s16 VERT_DISTANCE;
+    s16 ORBIT_SPEED60;
+    s16 PAD;
+    s16 Y_POS_OFFSET;
+    s16 INITIAL_ROTATION;
+} AiCameraOrbitPadRecord;
+
+typedef struct AiCreditsRollRecord
+{
+    u8 cmd;
+} AiCreditsRollRecord;
+
+typedef struct AiIFCreditsHasCompletedRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFCreditsHasCompletedRecord;
+
+typedef struct AiIFObjectiveAllCompletedRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFObjectiveAllCompletedRecord;
+
+typedef struct AiIFFolderActorIsEqualRecord
+{
+    u8 cmd;
+    s8 BOND_ACTOR_INDEX;
+    u8 GOTOLABEL;
+} AiIFFolderActorIsEqualRecord;
+
+typedef struct AiIFBondDamageAndPickupsDisabledRecord
+{
+    u8 cmd;
+    u8 GOTOLABEL;
+} AiIFBondDamageAndPickupsDisabledRecord;
+
+typedef struct AiMusicPlaySlotRecord
+{
+    u8 cmd;
+    s8 MUSIC_SLOT;
+    u8 SECONDS_STOPPED_DURATION;
+    u8 SECONDS_TOTAL_DURATION;
+} AiMusicPlaySlotRecord;
+
+typedef struct AiMusicStopSlotRecord
+{
+    u8 cmd;
+    s8 MUSIC_SLOT;
+} AiMusicStopSlotRecord;
+
+typedef struct AiTriggerExplosionsAroundBondRecord
+{
+    u8 cmd;
+} AiTriggerExplosionsAroundBondRecord;
+
+typedef struct AiIFKilledCiviliansGreaterThanRecord
+{
+    u8 cmd;
+    u8 CIVILIANS_KILLED;
+    u8 GOTOLABEL;
+} AiIFKilledCiviliansGreaterThanRecord;
+
+typedef struct AiIFChrWasShotSinceLastCheckRecord
+{
+    u8 cmd;
+    u8 CHR_NUM;
+    u8 GOTOLABEL;
+} AiIFChrWasShotSinceLastCheckRecord;
+
+typedef struct AiBondKilledInActionRecord
+{
+    u8 cmd;
+} AiBondKilledInActionRecord;
+
+typedef struct AiRaiseArmsRecord
+{
+    u8 cmd;
+} AiRaiseArmsRecord;
+
+typedef struct AiGasLeakAndFadeFogRecord
+{
+    u8 cmd;
+} AiGasLeakAndFadeFogRecord;
+
+typedef struct AiObjectRocketLaunchRecord
+{
+    u8 cmd;
+    u8 OBJECT_TAG;
+} AiObjectRocketLaunchRecord;
+
+#pragma pack(0)
+
+typedef struct coord3d
+{
+    union
+    {
+        struct
+        {
+            float x;
+            float y;
+            float z;
+        };
+        float AsArray[3];
+    };
+} coord3d;
+
+typedef struct bbox
+{
+    union
+    {
+        struct
+        {
+            float xmin;
+            float xmax;
+            float ymin;
+            float ymax;
+            float zmin;
+            float zmax;
+        };
+        float AsArray[6];
+    };
+} bbox;
+
+typedef struct PropDefHeaderRecord
+{
+    unsigned short extrascale; /*0x0 Fixed-Point format char.8 eg: 0x03.80 = 3.5*/
+    char           state;
+    char           type; /*0x3*/
+} PropDefHeaderRecord;
+
+typedef struct AIListRecord
+{
+    char *ailist;
+    int   ID;
+} AIListRecord;
+typedef struct PadRecord /*0x2c (44) long confirmed*/
+{
+    coord3d pos;   /*0x00*/
+    coord3d up;    /*0x0c*/
+    coord3d look;  /*0x18*/
+    char   *plink; /*0x24 canonical name */
+    void   *stan;  /*0x28 canonical name */
+} PadRecord;
+
+/**
+ * Bound Pads hold an extra Bounding Box which any prop assigned will try to
+ * fill (non-uniform scaling).
+ */
+typedef struct BoundPadRecord /*0x44 (68) long confirmed*/
+{
+    // inherits PadRecord; /*0x00 confirmed*/
+    coord3d pos;   /*0x00*/
+    coord3d up;    /*0x0c*/
+    coord3d look;  /*0x18*/
+    char   *plink; /*0x24 canonical name */
+    void   *stan;  /*0x28 canonical name */
+    // temporary fix for no inheritance support by glibtools
+    bbox    bbox; /*0x2c - 0x40 confirmed*/
+} BoundPadRecord;
+typedef struct waypoint
+{
+    int  padID;      // Pad ID to anchor waypoint to.
+    int *neighbours; // Array of neighbouring (connected) waypoint IDs (ending in -1)
+    int  groupNum;   // index entry in the waygroup table that contains this path entry
+    int  dist;       // Initialise to 0, used by engine for pathfinding Heuristics between waypoints within a set.
+} waypoint;
+
+/**
+ * The Subset waygroup table which lists the IDs of the waypoints that
+ * belong to each group as well as any connected groups
+ */
+typedef struct waygroup
+{
+    int *neighbours; // Array of neighbouring (connected) waygroup IDs (ending in -1)
+    int *waypoints;  // Array of waypoint IDs (ending in -1)
+    int  dist;       // Initialise to 0, used by engine for pathfinding Heuristics between sets
+} waygroup;
+
+/**
+ * Path for guard to patrol (loop) or get from A to B (linear)
+ */
+typedef struct PathRecord
+{
+    int  *waypoints; // array of waypoint IDs in path (ending in -1)
+    char  ID;        // path ID
+    char  isLoop;    // 0x05 Path loops
+    short len;       /*0x06 unused*/
+} PathRecord;
+
+typedef struct stagesetup
+{
+    waypoint            *pathwaypoints;
+    waygroup            *waypointgroups;
+    void                *intro;
+    PropDefHeaderRecord *propDefs;
+    PathRecord          *patrolpaths;
+    AIListRecord        *ailists;
+    PadRecord           *pads;
+    BoundPadRecord      *boundpads;
+    char               **padnames;
+    char               **boundpadnames;
+} stagesetup;
+
 #define MAX 10
 
 int  top = -1;
 char stack[MAX];
 
+typedef struct
+{
+    int id;
+    int used;
+    int num0s;
+} LLEnum;
+LLEnum labels[100];
+LLEnum tags[100];
+LLEnum keys[100];
+LLEnum chrs[100];
+LLEnum pads[1000];
+LLEnum SubIDs[100];
+
+char *hasName;
+
+
+
 /*PUSH FUNCTION*/
-int  push(int item)
+int    push(int item)
 {
     if (top == (MAX - 1))
     {
@@ -1879,7 +4046,36 @@ int sniff()
         return stack[top];
     }
 }
-
+int stackFind(int find)
+{
+    int i;
+    if (top == -1)
+    {
+        return -1;
+    }
+    else
+    {
+        for (i = top; i >= 0; --i)
+        {
+            if (stack[i] == find) return i;
+        }
+    }
+    return -1;
+}
+int stackFindAndremove(int find)
+{
+    int i = stackFind(find);
+    if (i >= 0)
+    {
+        for (; i <= top; i++)
+        {
+            stack[i] = i < MAX ? stack[i + 1] : 0;
+        }
+        top--;
+        return 1;
+    }
+    return 0;
+}
 void displayStack()
 {
     int i;
@@ -1900,7 +4096,653 @@ void displayStack()
 
     printf("\n---------------\n\n");
 }
+void _AddLabel(int lbl, void *ptr)
+{
+    int     i      = 0;
+    int     found  = 0;
+    LLEnum *labels = ptr;
+    if (lbl == 0)
+    {
+        labels[0].num0s++;
+        return;
+    }
 
+    while (labels[i].id != 0)
+    {
+        if (lbl == labels[i].id)
+        {
+            found = 1;
+            labels[i].used++;
+        }
+        i++;
+    }
+
+    if (!found)
+    {
+        labels[i].id = lbl;
+        labels[i].used++;
+    }
+}
+void AddLabel(char lbl)
+{
+    _AddLabel(lbl, labels);
+}
+void AddTag(char lbl)
+{
+    _AddLabel(lbl, tags);
+}
+void AddKey(char lbl)
+{
+    _AddLabel(lbl, keys);
+}
+void AddChr(char lbl)
+{
+    _AddLabel(lbl, chrs);
+}
+void AddPad(short lbl)
+{
+    _AddLabel(lbl, pads);
+}
+void AddSubID(int lbl)
+{
+    _AddLabel(lbl, SubIDs);
+}
+
+void SortEnums(LLEnum *labels)
+{
+    int i, j, tempid, tempnum;
+
+    for (i = 0; i < 100; ++i)
+    {
+        if (labels[i].id != 0)
+        {
+            for (j = i + 1; j < 100; ++j)
+            {
+                if (labels[j].id != 0)
+                {
+                    if (labels[i].id > labels[j].id)
+                    {
+                        tempid         = labels[i].id;
+                        tempnum        = labels[i].used;
+                        labels[i].id   = labels[j].id;
+                        labels[i].used = labels[j].used;
+                        labels[j].id   = tempid;
+                        labels[j].used = tempnum;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void printenum(LLEnum labels[], char *enumname)
+{
+    int i = 0;
+    if (labels[0].num0s || labels[i].id)
+    {
+        printf("    enum %s\n    {\n", enumname);
+        if (labels[0].num0s) printf("        %s0, //used %d times\n", enumname, labels[0].num0s);
+        while (labels[i].id != 0)
+        {
+            if (!(enumname == "chr" && ((signed char)labels[i].id < 0 && (signed char)labels[i].id > -9)))
+            {
+                if ((i > 0 && labels[i - 1].id == labels[i].id - 1)||(i==0 && labels[0].num0s && labels[0].id ==1))
+                {
+                    printf("        %s%u, //Used %d times\n", enumname, labels[i].id, labels[i].used);
+                }
+                else
+                {
+                    printf("        %s%u = %u, //Used %d times\n", enumname, labels[i].id, labels[i].id, labels[i].used);
+                }
+            }
+            i++;
+        }
+        printf("    };\n");
+    }
+}
+
+int getDataSize(FILE *pfile ,void *pointer, int endtag)
+{
+    int i = 0;
+
+    fseek(pfile, (int)pointer, SEEK_SET);
+
+    // scan for end of Record (NULL or -1)
+    do
+    {
+        fread(&i, 4, 1, pfile);
+
+    } while (i != endtag);
+
+    return  (ftell(pfile) ) - (int)pointer;
+}
+
+int chraiitemsize(unsigned char *AIList, int offset)
+{
+    switch (AIList[offset])
+    {
+        case AI_GotoNext:
+            return sizeof(AiGotoNextRecord);
+        case AI_GotoFirst:
+            return sizeof(AiGotoFirstRecord);
+        case AI_Label:
+            return sizeof(AiLabelRecord);
+        case AI_Yield:
+            return sizeof(AiYieldRecord);
+        case AI_EndList:
+            return sizeof(AiEndListRecord);
+        case AI_SetChrAiList:
+            return sizeof(AiSetChrAiListRecord);
+        case AI_SetReturnAiList:
+            return sizeof(AiSetReturnAiListRecord);
+        case AI_Return:
+            return sizeof(AiReturnRecord);
+        case AI_Stop:
+            return sizeof(AiStopRecord);
+        case AI_Kneel:
+            return sizeof(AiKneelRecord);
+        case AI_PlayAnimation:
+            return sizeof(AiPlayAnimationRecord);
+        case AI_IFPlayingAnimation:
+            return sizeof(AiIFPlayingAnimationRecord);
+        case AI_PointAtBond:
+            return sizeof(AiPointAtBondRecord);
+        case AI_LookSurprised:
+            return sizeof(AiLookSurprisedRecord);
+        case AI_TRYSidestepping:
+            return sizeof(AiTRYSidesteppingRecord);
+        case AI_TRYSideHopping:
+            return sizeof(AiTRYSideHoppingRecord);
+        case AI_TRYSideRunning:
+            return sizeof(AiTRYSideRunningRecord);
+        case AI_TRYFiringWalk:
+            return sizeof(AiTRYFiringWalkRecord);
+        case AI_TRYFiringRun:
+            return sizeof(AiTRYFiringRunRecord);
+        case AI_TRYFiringRoll:
+            return sizeof(AiTRYFiringRollRecord);
+        case AI_TRYFireOrAimAtTarget:
+            return sizeof(AiTRYFireOrAimAtTargetRecord);
+        case AI_TRYFireOrAimAtTargetKneel:
+            return sizeof(AiTRYFireOrAimAtTargetKneelRecord);
+        case AI_IFImFiring:
+            return sizeof(AiIFImFiringRecord);
+        case AI_IFImFiringAndLockedForward:
+            return sizeof(AiIFImFiringAndLockedForwardRecord);
+        case AI_TRYFireOrAimAtTargetUpdate:
+            return sizeof(AiTRYFireOrAimAtTargetUpdateRecord);
+        case AI_TRYFacingTarget:
+            return sizeof(AiTRYFacingTargetRecord);
+        case AI_HitChrWithItem:
+            return sizeof(AiHitChrWithItemRecord);
+        case AI_ChrHitChr:
+            return sizeof(AiChrHitChrRecord);
+        case AI_TRYThrowingGrenade:
+            return sizeof(AiTRYThrowingGrenadeRecord);
+        case AI_TRYDroppingItem:
+            return sizeof(AiTRYDroppingItemRecord);
+        case AI_RunToPad:
+            return sizeof(AiRunToPadRecord);
+        case AI_RunToPadPreset:
+            return sizeof(AiRunToPadPresetRecord);
+        case AI_WalkToPad:
+            return sizeof(AiWalkToPadRecord);
+        case AI_SprintToPad:
+            return sizeof(AiSprintToPadRecord);
+        case AI_StartPatrol:
+            return sizeof(AiStartPatrolRecord);
+        case AI_Surrender:
+            return sizeof(AiSurrenderRecord);
+        case AI_RemoveMe:
+            return sizeof(AiRemoveMeRecord);
+        case AI_ChrRemoveInstant:
+            return sizeof(AiChrRemoveInstantRecord);
+        case AI_TRYTriggeringAlarmAtPad:
+            return sizeof(AiTRYTriggeringAlarmAtPadRecord);
+        case AI_AlarmOn:
+            return sizeof(AiAlarmOnRecord);
+        case AI_AlarmOff:
+            return sizeof(AiAlarmOffRecord);
+        case AI_TRYRunFromBond:
+            return sizeof(AiTRYRunFromBondRecord);
+        case AI_TRYRunToBond:
+            return sizeof(AiTRYRunToBondRecord);
+        case AI_TRYWalkToBond:
+            return sizeof(AiTRYWalkToBondRecord);
+        case AI_TRYSprintToBond:
+            return sizeof(AiTRYSprintToBondRecord);
+        case AI_TRYFindCover:
+            return sizeof(AiTRYFindCoverRecord);
+        case AI_TRYRunToChr:
+            return sizeof(AiTRYRunToChrRecord);
+        case AI_TRYWalkToChr:
+            return sizeof(AiTRYWalkToChrRecord);
+        case AI_TRYSprintToChr:
+            return sizeof(AiTRYSprintToChrRecord);
+        case AI_IFImOnPatrolOrStopped:
+            return sizeof(AiIFImOnPatrolOrStoppedRecord);
+        case AI_IFChrDyingOrDead:
+            return sizeof(AiIFChrDyingOrDeadRecord);
+        case AI_IFChrDoesNotExist:
+            return sizeof(AiIFChrDoesNotExistRecord);
+        case AI_IFISeeBond:
+            return sizeof(AiIFISeeBondRecord);
+        case AI_SetNewRandom:
+            return sizeof(AiSetNewRandomRecord);
+        case AI_IFRandomLessThan:
+            return sizeof(AiIFRandomLessThanRecord);
+        case AI_IFRandomGreaterThan:
+            return sizeof(AiIFRandomGreaterThanRecord);
+        case AI_IFICanHearAlarm:
+            return sizeof(AiIFICanHearAlarmRecord);
+        case AI_IFAlarmIsOn:
+            return sizeof(AiIFAlarmIsOnRecord);
+        case AI_IFGasIsLeaking:
+            return sizeof(AiIFGasIsLeakingRecord);
+        case AI_IFIHeardBond:
+            return sizeof(AiIFIHeardBondRecord);
+        case AI_IFISeeSomeoneShot:
+            return sizeof(AiIFISeeSomeoneShotRecord);
+        case AI_IFISeeSomeoneDie:
+            return sizeof(AiIFISeeSomeoneDieRecord);
+        case AI_IFICouldSeeBond:
+            return sizeof(AiIFICouldSeeBondRecord);
+        case AI_IFICouldSeeBondsStan:
+            return sizeof(AiIFICouldSeeBondsStanRecord);
+        case AI_IFIWasShotRecently:
+            return sizeof(AiIFIWasShotRecentlyRecord);
+        case AI_IFIHeardBondRecently:
+            return sizeof(AiIFIHeardBondRecentlyRecord);
+        case AI_IFImInRoomWithChr:
+            return sizeof(AiIFImInRoomWithChrRecord);
+        case AI_IFIveNotBeenSeen:
+            return sizeof(AiIFIveNotBeenSeenRecord);
+        case AI_IFImOnScreen:
+            return sizeof(AiIFImOnScreenRecord);
+        case AI_IFMyRoomIsOnScreen:
+            return sizeof(AiIFMyRoomIsOnScreenRecord);
+        case AI_IFRoomWithPadIsOnScreen:
+            return sizeof(AiIFRoomWithPadIsOnScreenRecord);
+        case AI_IFImTargetedByBond:
+            return sizeof(AiIFImTargetedByBondRecord);
+        case AI_IFBondMissedMe:
+            return sizeof(AiIFBondMissedMeRecord);
+        case AI_IFMyAngleToBondLessThan:
+            return sizeof(AiIFMyAngleToBondLessThanRecord);
+        case AI_IFMyAngleToBondGreaterThan:
+            return sizeof(AiIFMyAngleToBondGreaterThanRecord);
+        case AI_IFMyAngleFromBondLessThan:
+            return sizeof(AiIFMyAngleFromBondLessThanRecord);
+        case AI_IFMyAngleFromBondGreaterThan:
+            return sizeof(AiIFMyAngleFromBondGreaterThanRecord);
+        case AI_IFMyDistanceToBondLessThanDecimeter:
+            return sizeof(AiIFMyDistanceToBondLessThanDecimeterRecord);
+        case AI_IFMyDistanceToBondGreaterThanDecimeter:
+            return sizeof(AiIFMyDistanceToBondGreaterThanDecimeterRecord);
+        case AI_IFChrDistanceToPadLessThanDecimeter:
+            return sizeof(AiIFChrDistanceToPadLessThanDecimeterRecord);
+        case AI_IFChrDistanceToPadGreaterThanDecimeter:
+            return sizeof(AiIFChrDistanceToPadGreaterThanDecimeterRecord);
+        case AI_IFMyDistanceToChrLessThanDecimeter:
+            return sizeof(AiIFMyDistanceToChrLessThanDecimeterRecord);
+        case AI_IFMyDistanceToChrGreaterThanDecimeter:
+            return sizeof(AiIFMyDistanceToChrGreaterThanDecimeterRecord);
+        case AI_TRYSettingMyPresetToChrWithinDistanceDecimeter:
+            return sizeof(AiTRYSettingMyPresetToChrWithinDistanceDecimeterRecord);
+        case AI_IFBondDistanceToPadLessThanDecimeter:
+            return sizeof(AiIFBondDistanceToPadLessThanDecimeterRecord);
+        case AI_IFBondDistanceToPadGreaterThanDecimeter:
+            return sizeof(AiIFBondDistanceToPadGreaterThanDecimeterRecord);
+        case AI_IFChrInRoomWithPad:
+            return sizeof(AiIFChrInRoomWithPadRecord);
+        case AI_IFBondInRoomWithPad:
+            return sizeof(AiIFBondInRoomWithPadRecord);
+        case AI_IFBondCollectedObject:
+            return sizeof(AiIFBondCollectedObjectRecord);
+        case AI_IFKeyDropped:
+            return sizeof(AiIFKeyDroppedRecord);
+        case AI_IFItemIsAttachedToObject:
+            return sizeof(AiIFItemIsAttachedToObjectRecord);
+        case AI_IFBondHasItemEquipped:
+            return sizeof(AiIFBondHasItemEquippedRecord);
+        case AI_IFObjectExists:
+            return sizeof(AiIFObjectExistsRecord);
+        case AI_IFObjectNotDestroyed:
+            return sizeof(AiIFObjectNotDestroyedRecord);
+        case AI_IFObjectWasActivated:
+            return sizeof(AiIFObjectWasActivatedRecord);
+        case AI_IFBondUsedGadgetOnObject:
+            return sizeof(AiIFBondUsedGadgetOnObjectRecord);
+        case AI_ActivateObject:
+            return sizeof(AiActivateObjectRecord);
+        case AI_DestroyObject:
+            return sizeof(AiDestroyObjectRecord);
+        case AI_DropObject:
+            return sizeof(AiDropObjectRecord);
+        case AI_ChrDropAllConcealedItems:
+            return sizeof(AiChrDropAllConcealedItemsRecord);
+        case AI_ChrDropAllHeldItems:
+            return sizeof(AiChrDropAllHeldItemsRecord);
+        case AI_BondCollectObject:
+            return sizeof(AiBondCollectObjectRecord);
+        case AI_ChrEquipObject:
+            return sizeof(AiChrEquipObjectRecord);
+        case AI_MoveObject:
+            return sizeof(AiMoveObjectRecord);
+        case AI_DoorOpen:
+            return sizeof(AiDoorOpenRecord);
+        case AI_DoorClose:
+            return sizeof(AiDoorCloseRecord);
+        case AI_IFDoorStateEqual:
+            return sizeof(AiIFDoorStateEqualRecord);
+        case AI_IFDoorHasBeenOpenedBefore:
+            return sizeof(AiIFDoorHasBeenOpenedBeforeRecord);
+        case AI_DoorSetLock:
+            return sizeof(AiDoorSetLockRecord);
+        case AI_DoorUnsetLock:
+            return sizeof(AiDoorUnsetLockRecord);
+        case AI_IFDoorLockEqual:
+            return sizeof(AiIFDoorLockEqualRecord);
+        case AI_IFObjectiveNumComplete:
+            return sizeof(AiIFObjectiveNumCompleteRecord);
+        case AI_TRYUnknown6e:
+            return sizeof(AiTRYUnknown6eRecord);
+        case AI_TRYUnknown6f:
+            return sizeof(AiTRYUnknown6fRecord);
+        case AI_IFGameDifficultyLessThan:
+            return sizeof(AiIFGameDifficultyLessThanRecord);
+        case AI_IFGameDifficultyGreaterThan:
+            return sizeof(AiIFGameDifficultyGreaterThanRecord);
+        case AI_IFMissionTimeLessThan:
+            return sizeof(AiIFMissionTimeLessThanRecord);
+        case AI_IFMissionTimeGreaterThan:
+            return sizeof(AiIFMissionTimeGreaterThanRecord);
+        case AI_IFSystemPowerTimeLessThan:
+            return sizeof(AiIFSystemPowerTimeLessThanRecord);
+        case AI_IFSystemPowerTimeGreaterThan:
+            return sizeof(AiIFSystemPowerTimeGreaterThanRecord);
+        case AI_IFLevelIdLessThan:
+            return sizeof(AiIFLevelIdLessThanRecord);
+        case AI_IFLevelIdGreaterThan:
+            return sizeof(AiIFLevelIdGreaterThanRecord);
+        case AI_IFMyNumArghsLessThan:
+            return sizeof(AiIFMyNumArghsLessThanRecord);
+        case AI_IFMyNumArghsGreaterThan:
+            return sizeof(AiIFMyNumArghsGreaterThanRecord);
+        case AI_IFMyNumCloseArghsLessThan:
+            return sizeof(AiIFMyNumCloseArghsLessThanRecord);
+        case AI_IFMyNumCloseArghsGreaterThan:
+            return sizeof(AiIFMyNumCloseArghsGreaterThanRecord);
+        case AI_IFChrHealthLessThan:
+            return sizeof(AiIFChrHealthLessThanRecord);
+        case AI_IFChrHealthGreaterThan:
+            return sizeof(AiIFChrHealthGreaterThanRecord);
+        case AI_IFChrWasDamagedSinceLastCheck:
+            return sizeof(AiIFChrWasDamagedSinceLastCheckRecord);
+        case AI_IFBondHealthLessThan:
+            return sizeof(AiIFBondHealthLessThanRecord);
+        case AI_IFBondHealthGreaterThan:
+            return sizeof(AiIFBondHealthGreaterThanRecord);
+        case AI_SetMyMorale:
+            return sizeof(AiSetMyMoraleRecord);
+        case AI_AddToMyMorale:
+            return sizeof(AiAddToMyMoraleRecord);
+        case AI_SubtractFromMyMorale:
+            return sizeof(AiSubtractFromMyMoraleRecord);
+        case AI_IFMyMoraleLessThan:
+            return sizeof(AiIFMyMoraleLessThanRecord);
+        case AI_IFMyMoraleLessThanRandom:
+            return sizeof(AiIFMyMoraleLessThanRandomRecord);
+        case AI_SetMyAlertness:
+            return sizeof(AiSetMyAlertnessRecord);
+        case AI_AddToMyAlertness:
+            return sizeof(AiAddToMyAlertnessRecord);
+        case AI_SubtractFromMyAlertness:
+            return sizeof(AiSubtractFromMyAlertnessRecord);
+        case AI_IFMyAlertnessLessThan:
+            return sizeof(AiIFMyAlertnessLessThanRecord);
+        case AI_IFMyAlertnessLessThanRandom:
+            return sizeof(AiIFMyAlertnessLessThanRandomRecord);
+        case AI_SetMyHearingScale:
+            return sizeof(AiSetMyHearingScaleRecord);
+        case AI_SetMyVisionRange:
+            return sizeof(AiSetMyVisionRangeRecord);
+        case AI_SetMyGrenadeProbability:
+            return sizeof(AiSetMyGrenadeProbabilityRecord);
+        case AI_SetMyChrNum:
+            return sizeof(AiSetMyChrNumRecord);
+        case AI_SetMyHealthTotal:
+            return sizeof(AiSetMyHealthTotalRecord);
+        case AI_SetMyArmour:
+            return sizeof(AiSetMyArmourRecord);
+        case AI_SetMySpeedRating:
+            return sizeof(AiSetMySpeedRatingRecord);
+        case AI_SetMyArghRating:
+            return sizeof(AiSetMyArghRatingRecord);
+        case AI_SetMyAccuracyRating:
+            return sizeof(AiSetMyAccuracyRatingRecord);
+        case AI_SetMyFlags2:
+            return sizeof(AiSetMyFlags2Record);
+        case AI_UnsetMyFlags2:
+            return sizeof(AiUnsetMyFlags2Record);
+        case AI_IFMyFlags2Has:
+            return sizeof(AiIFMyFlags2HasRecord);
+        case AI_SetChrBitfield:
+            return sizeof(AiSetChrBitfieldRecord);
+        case AI_UnsetChrBitfield:
+            return sizeof(AiUnsetChrBitfieldRecord);
+        case AI_IFChrBitfieldHas:
+            return sizeof(AiIFChrBitfieldHasRecord);
+        case AI_SetObjectiveBitfield:
+            return sizeof(AiSetObjectiveBitfieldRecord);
+        case AI_UnsetObjectiveBitfield:
+            return sizeof(AiUnsetObjectiveBitfieldRecord);
+        case AI_IFObjectiveBitfieldHas:
+            return sizeof(AiIFObjectiveBitfieldHasRecord);
+        case AI_SetMychrflags:
+            return sizeof(AiSetMychrflagsRecord);
+        case AI_UnsetMychrflags:
+            return sizeof(AiUnsetMychrflagsRecord);
+        case AI_IFMychrflagsHas:
+            return sizeof(AiIFMychrflagsHasRecord);
+        case AI_SetChrchrflags:
+            return sizeof(AiSetChrchrflagsRecord);
+        case AI_UnsetChrchrflags:
+            return sizeof(AiUnsetChrchrflagsRecord);
+        case AI_IFChrchrflagsHas:
+            return sizeof(AiIFChrchrflagsHasRecord);
+        case AI_SetObjectFlags:
+            return sizeof(AiSetObjectFlagsRecord);
+        case AI_UnsetObjectFlags:
+            return sizeof(AiUnsetObjectFlagsRecord);
+        case AI_IFObjectFlagsHas:
+            return sizeof(AiIFObjectFlagsHasRecord);
+        case AI_SetObjectFlags2:
+            return sizeof(AiSetObjectFlags2Record);
+        case AI_UnsetObjectFlags2:
+            return sizeof(AiUnsetObjectFlags2Record);
+        case AI_IFObjectFlags2Has:
+            return sizeof(AiIFObjectFlags2HasRecord);
+        case AI_SetMyChrPreset:
+            return sizeof(AiSetMyChrPresetRecord);
+        case AI_SetChrChrPreset:
+            return sizeof(AiSetChrChrPresetRecord);
+        case AI_SetMyPadPreset:
+            return sizeof(AiSetMyPadPresetRecord);
+        case AI_SetChrPadPreset:
+            return sizeof(AiSetChrPadPresetRecord);
+        case AI_MyTimerStart:
+            return sizeof(AiMyTimerStartRecord);
+        case AI_MyTimerReset:
+            return sizeof(AiMyTimerResetRecord);
+        case AI_MyTimerPause:
+            return sizeof(AiMyTimerPauseRecord);
+        case AI_MyTimerResume:
+            return sizeof(AiMyTimerResumeRecord);
+        case AI_IFMyTimerIsNotRunning:
+            return sizeof(AiIFMyTimerIsNotRunningRecord);
+        case AI_IFMyTimerLessThanTicks:
+            return sizeof(AiIFMyTimerLessThanTicksRecord);
+        case AI_IFMyTimerGreaterThanTicks:
+            return sizeof(AiIFMyTimerGreaterThanTicksRecord);
+        case AI_HudCountdownShow:
+            return sizeof(AiHudCountdownShowRecord);
+        case AI_HudCountdownHide:
+            return sizeof(AiHudCountdownHideRecord);
+        case AI_HudCountdownSet:
+            return sizeof(AiHudCountdownSetRecord);
+        case AI_HudCountdownStop:
+            return sizeof(AiHudCountdownStopRecord);
+        case AI_HudCountdownStart:
+            return sizeof(AiHudCountdownStartRecord);
+        case AI_IFHudCountdownIsNotRunning:
+            return sizeof(AiIFHudCountdownIsNotRunningRecord);
+        case AI_IFHudCountdownLessThan:
+            return sizeof(AiIFHudCountdownLessThanRecord);
+        case AI_IFHudCountdownGreaterThan:
+            return sizeof(AiIFHudCountdownGreaterThanRecord);
+        case AI_TRYSpawningChrAtPad:
+            return sizeof(AiTRYSpawningChrAtPadRecord);
+        case AI_TRYSpawningChrNextToChr:
+            return sizeof(AiTRYSpawningChrNextToChrRecord);
+        case AI_TRYGiveMeItem:
+            return sizeof(AiTRYGiveMeItemRecord);
+        case AI_TRYGiveMeHat:
+            return sizeof(AiTRYGiveMeHatRecord);
+        case AI_TRYCloningChr:
+            return sizeof(AiTRYCloningChrRecord);
+        case AI_TextPrintBottom:
+            return sizeof(AiTextPrintBottomRecord);
+        case AI_TextPrintTop:
+            return sizeof(AiTextPrintTopRecord);
+        case AI_SfxPlay:
+            return sizeof(AiSfxPlayRecord);
+        case AI_SfxEmitFromObject:
+            return sizeof(AiSfxEmitFromObjectRecord);
+        case AI_SfxEmitFromPad:
+            return sizeof(AiSfxEmitFromPadRecord);
+        case AI_SfxSetChannelVolume:
+            return sizeof(AiSfxSetChannelVolumeRecord);
+        case AI_SfxFadeChannelVolume:
+            return sizeof(AiSfxFadeChannelVolumeRecord);
+        case AI_SfxStopChannel:
+            return sizeof(AiSfxStopChannelRecord);
+        case AI_IFSfxChannelVolumeLessThan:
+            return sizeof(AiIFSfxChannelVolumeLessThanRecord);
+        case AI_VehicleStartPath:
+            return sizeof(AiVehicleStartPathRecord);
+        case AI_VehicleSpeed:
+            return sizeof(AiVehicleSpeedRecord);
+        case AI_AircraftRotorSpeed:
+            return sizeof(AiAircraftRotorSpeedRecord);
+        case AI_IFCameraIsInIntro:
+            return sizeof(AiIFCameraIsInIntroRecord);
+        case AI_IFCameraIsInBondSwirl:
+            return sizeof(AiIFCameraIsInBondSwirlRecord);
+        case AI_TvChangeScreenBank:
+            return sizeof(AiTvChangeScreenBankRecord);
+        case AI_IFBondInTank:
+            return sizeof(AiIFBondInTankRecord);
+        case AI_EndLevel:
+            return sizeof(AiEndLevelRecord);
+        case AI_CameraReturnToBond:
+            return sizeof(AiCameraReturnToBondRecord);
+        case AI_CameraLookAtBondFromPad:
+            return sizeof(AiCameraLookAtBondFromPadRecord);
+        case AI_CameraSwitch:
+            return sizeof(AiCameraSwitchRecord);
+        case AI_IFBondYPosLessThan:
+            return sizeof(AiIFBondYPosLessThanRecord);
+        case AI_BondDisableControl:
+            return sizeof(AiBondDisableControlRecord);
+        case AI_BondEnableControl:
+            return sizeof(AiBondEnableControlRecord);
+        case AI_TRYTeleportingChrToPad:
+            return sizeof(AiTRYTeleportingChrToPadRecord);
+        case AI_ScreenFadeToBlack:
+            return sizeof(AiScreenFadeToBlackRecord);
+        case AI_ScreenFadeFromBlack:
+            return sizeof(AiScreenFadeFromBlackRecord);
+        case AI_IFScreenFadeCompleted:
+            return sizeof(AiIFScreenFadeCompletedRecord);
+        case AI_HideAllChrs:
+            return sizeof(AiHideAllChrsRecord);
+        case AI_ShowAllChrs:
+            return sizeof(AiShowAllChrsRecord);
+        case AI_DoorOpenInstant:
+            return sizeof(AiDoorOpenInstantRecord);
+        case AI_ChrRemoveItemInHand:
+            return sizeof(AiChrRemoveItemInHandRecord);
+        case AI_IfNumberOfActivePlayersLessThan:
+            return sizeof(AiIfNumberOfActivePlayersLessThanRecord);
+        case AI_IFBondItemTotalAmmoLessThan:
+            return sizeof(AiIFBondItemTotalAmmoLessThanRecord);
+        case AI_BondEquipItem:
+            return sizeof(AiBondEquipItemRecord);
+        case AI_BondEquipItemCinema:
+            return sizeof(AiBondEquipItemCinemaRecord);
+        case AI_BondSetLockedVelocity:
+            return sizeof(AiBondSetLockedVelocityRecord);
+        case AI_IFObjectInRoomWithPad:
+            return sizeof(AiIFObjectInRoomWithPadRecord);
+        case AI_SwitchSky:
+            return sizeof(AiSwitchSkyRecord);
+        case AI_TriggerFadeAndExitLevelOnButtonPress:
+            return sizeof(AiTriggerFadeAndExitLevelOnButtonPressRecord);
+        case AI_IFBondIsDead:
+            return sizeof(AiIFBondIsDeadRecord);
+        case AI_BondDisableDamageAndPickups:
+            return sizeof(AiBondDisableDamageAndPickupsRecord);
+        case AI_BondHideWeapons:
+            return sizeof(AiBondHideWeaponsRecord);
+        case AI_CameraOrbitPad:
+            return sizeof(AiCameraOrbitPadRecord);
+        case AI_CreditsRoll:
+            return sizeof(AiCreditsRollRecord);
+        case AI_IFCreditsHasCompleted:
+            return sizeof(AiIFCreditsHasCompletedRecord);
+        case AI_IFObjectiveAllCompleted:
+            return sizeof(AiIFObjectiveAllCompletedRecord);
+        case AI_IFFolderActorIsEqual:
+            return sizeof(AiIFFolderActorIsEqualRecord);
+        case AI_IFBondDamageAndPickupsDisabled:
+            return sizeof(AiIFBondDamageAndPickupsDisabledRecord);
+        case AI_MusicPlaySlot:
+            return sizeof(AiMusicPlaySlotRecord);
+        case AI_MusicStopSlot:
+            return sizeof(AiMusicStopSlotRecord);
+        case AI_TriggerExplosionsAroundBond:
+            return sizeof(AiTriggerExplosionsAroundBondRecord);
+        case AI_IFKilledCiviliansGreaterThan:
+            return sizeof(AiIFKilledCiviliansGreaterThanRecord);
+        case AI_IFChrWasShotSinceLastCheck:
+            return sizeof(AiIFChrWasShotSinceLastCheckRecord);
+        case AI_BondKilledInAction:
+            return sizeof(AiBondKilledInActionRecord);
+        case AI_RaiseArms:
+            return sizeof(AiRaiseArmsRecord);
+        case AI_GasLeakAndFadeFog:
+            return sizeof(AiGasLeakAndFadeFogRecord);
+        case AI_ObjectRocketLaunch:
+            return sizeof(AiObjectRocketLaunchRecord);
+        case AI_PRINT:
+        {
+            int pos = offset + 1;
+            while (AIList[pos] != 0)
+            {
+                ++pos;
+            }
+            return (pos - offset) + 1;
+        }
+        default:
+            printf("chraiitemsize: unknown type %d!\n", AIList[offset]);
+            printf("%d,%d,%d,[%d],%d,%d,%d\n", AIList[offset - 3], AIList[offset - 2], AIList[offset - 1], AIList[offset ], AIList[offset +1], AIList[offset + 2], AIList[offset +3]);
+            return 1;
+    }
+}
+
+#define EraseCommand printf("\r%*s\r", (int)strlen(AI_CMD_ToString[AiList[Offset]]) + ((int)strlen((char *)tabs) + 1), "")
+//#define NOMACROS
 /**
  * @brief Parse AI list and print out C Macros
  * @param AiList: Bytestream for ai
@@ -1910,112 +4752,168 @@ void ai(unsigned char *AiList, short ID)
 {
     for (int Offset = 0;;)
     {
-        char tabs[MAX + 1];
-        for (int k = 0; k < MAX; k++)
+        int hasClosingBrace = FALSE;
+        int hasLabel        = FALSE;
+        int hasMacro        = FALSE;
+        int tabs[MAX + 1]; // 4 char wide string
+        int i;
+        for ( i = 0; i < MAX; i++)
         {
-            tabs[k] = 0;
+            tabs[i] = 0;
         }
-        for (int k = 0; k < top + 2 && k < MAX; k++)
+        for ( i = 0; i < top + 2 && i < MAX; i++)
         {
-            tabs[k] = '\t';
+            tabs[i] = 0x20202020; // 4 spaces
         }
+
+        printf("%s%s(", (char *)tabs, AI_CMD_ToString[AiList[Offset]]);
 
         switch (AiList[Offset])
         {
-            case AI_GotoNext: // BYTE(LABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n\n");
-                Offset += AI_GotoNext_LENGTH;
-                break;
-            }
             case AI_GotoFirst: // BYTE(LABEL)
             {
-                if (AiList[Offset + 1] == sniff())
+                 AiGotoFirstRecord *ai = &AiList+Offset;
+                int lbl = AiList[Offset + 1];
+                #ifndef NOMACROS
+                if (lbl == sniff()) //either contnue or loop
                 {
-                    pop();
-                    for (int k = top + 2; k < MAX; k++)
+                    int found = 0;
+                    for (i = Offset; AiList[i] != AI_EndList; i += chraiitemsize(AiList, i))
                     {
-                        tabs[k] = 0;
+                        if (AiList[i] == AI_GotoFirst && AiList[i+1] == lbl) found++;
                     }
-                    printf("%sLOOP(", tabs);
-                }
-                else
-                {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                }
 
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n\n");
-                Offset += AI_GotoFirst_LENGTH;
+                    EraseCommand;
+                    if (found ==1)
+                    {
+                        pop();
+                        for ( i = top + 2; i < MAX; i++)
+                        {
+                            tabs[i] = 0;
+                        }
+                        printf("%sLOOP(", (char *)tabs);
+                    }
+                    else
+                    {
+                        printf("%sCONTINUE(", (char *)tabs);
+                    }
+                }
+                #endif
+                printf("lbl%d)\n\n",lbl);
+                AddLabel(lbl);
+                hasClosingBrace = TRUE;
                 break;
             }
             case AI_Label: // BYTE(ID)
             {
-                if (AiList[Offset + 2] == AI_Yield)
+                 AiLabelRecord *ai = &AiList+Offset;
+
+                int lbl = AiList[Offset + 1];
+#ifndef NOMACROS
+                Offset += AI_Label_LENGTH;
+                hasMacro = TRUE;
+                if (AiList[Offset] == AI_Yield)
                 {
-                    if (AiList[Offset + 3] != AI_GotoFirst)
+                    int hasLoop = FALSE;
+                    Offset += AI_Yield_LENGTH;
+                    for (i = Offset; AiList[i] != AI_EndList; i += chraiitemsize(AiList, i))
                     {
-                        push(AiList[Offset + 1]);
-                        printf("\n%sDO(", tabs);
-                        printf("lbl%d", AiList[Offset + 1]);
-                        Offset += AI_Yield_LENGTH;
+                        if (AiList[i] == AI_GotoFirst && AiList[i + 1] == lbl) hasLoop = TRUE;
+                    }
+                    if (hasLoop)
+                    {
+                        EraseCommand;
+                        if (AiList[Offset] != AI_GotoFirst)
+                        {
+                            push(lbl);
+
+                            printf("\n%sDO(", (char *)tabs);
+                        }
+                        else
+                        {
+                            printf("\n%sYIELD_FOREVER( lbl%d )\n\n", (char *)tabs, lbl);
+                            Offset += AI_GotoFirst_LENGTH;
+                            hasClosingBrace = TRUE;
+                        }
                     }
                     else
                     {
-                        printf("\n%sYIELD_FOREVER(", tabs);
-                        printf("lbl%d", AiList[Offset + 1]);
-                        Offset += AI_Yield_LENGTH + AI_GotoFirst_LENGTH;
+                        Offset -= AI_Yield_LENGTH;
                     }
                 }
-                else
-                {
-                    printf("\n%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("lbl%d", AiList[Offset + 1]);
-                }
-                printf(")\n");
-                Offset += AI_Label_LENGTH;
+                #endif
+
+                if(!hasClosingBrace) printf(" lbl%d ", lbl);
+                AddLabel(lbl);
                 break;
             }
-            case AI_Yield: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_Yield_LENGTH;
-                break;
-            }
+
             case AI_EndList /*canonical name*/: // /*NONE*/
             {
-                printf("\n%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiEndListRecord *ai = &AiList+Offset;
                 printf(")\n\n");
+
                 return;
             }
             case AI_SetChrAiList: // BYTE(CHR_NUM), DBYTE(AI_LIST_ID)
             {
-                unsigned short AI_LIST_ID = CharArrayTo16(AiList, (Offset + 1 + 1)); /* This is the only way to match despite assetrs below */
+                 AiSetChrAiListRecord *ai = &AiList+Offset;
+                unsigned short AI_LIST_ID = CharArrayTo16(AiList, (Offset + 1 + 1));
                 signed char    CHR_NUM    = AiList[Offset + 1];
 
-                if (CHR_NUM == CHR_SELF)
+                if (CHR_NUM < 0 && CHR_NUM > -10)
                 {
-                    if (AiList[Offset - AI_SetReturnAiList_LENGTH] == AI_SetReturnAiList &&
-                        CharArrayTo16(AiList, Offset + 1 - AI_SetReturnAiList_LENGTH) == ID)
+                    EraseCommand;
+
+                    switch (CHR_NUM)
                     {
-                        printf("%sCALL(", tabs);
+                        case CHR_SELF:
+                        {
+                            int found = 0;
+                            i         = Offset;
+                            while (i > 0)
+                            {
+                                if (AiList[i] == AI_SetReturnAiList &&
+                                    CharArrayTo16(AiList, i + 1) == ID)
+                                {
+                                    found = 1;
+                                    if (i < Offset - AI_SetReturnAiList_LENGTH) printf("// tentative, Please confirm\n");
+                                    break;
+                                }
+                                i --;
+                            }
+                            if (found)
+                            {
+                                printf("%s%s(", (char *)tabs, "CALL");
+                            }
+                            else
+                            {
+                                printf("%s%s(", (char *)tabs, "JumpTo");
+                            }
+                            break;
+                        }
+                        case CHR_BOND_CINEMA:
+                        {
+                            printf("%s%s(", (char *)tabs, "SetBondsAiList");
+                            break;
+                        }
+                        case CHR_CLONE:
+                        {
+                            printf("%s%s(", (char *)tabs, "SetMyClonesAiList");
+                            break;
+                        }
                     }
-                    else
-                    {
-                        printf("%sJumpTo(", tabs);
-                    }
-                }
-                else if (CHR_NUM == CHR_BOND_CINEMA)
-                {
-                    printf("%sSetBondsAiList(", tabs);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,", CHR_NUM);
+                    if (CHR_NUM < 0 && CHR_NUM > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(CHR_NUM)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", CHR_NUM);
+                    }
                 }
 
                 if (isGlobalAIListID(AI_LIST_ID))
@@ -2024,429 +4922,417 @@ void ai(unsigned char *AiList, short ID)
                 }
                 else if (isBGAIListID(AI_LIST_ID))
                 {
-                    printf("setBGAIListID(%d)", getBGAIListID(AI_LIST_ID));
+                    printf("bgai_%hd", getBGAIListID(AI_LIST_ID));
                 }
                 else
                 {
-                    printf("setChrAIListID(%d)", getChrAIListID(AI_LIST_ID));
+                    printf("chrai_%hd", getChrAIListID(AI_LIST_ID));
                 }
-                printf(")\n");
-                Offset += AI_SetChrAiList_LENGTH;
+
+                if (hasClosingBrace) printf(")\n\n");
+
                 break;
             }
             case AI_SetReturnAiList: // DBYTE(AI_LIST_ID)
             {
+                 AiSetReturnAiListRecord *ai = &AiList+Offset;
                 unsigned short AI_LIST_ID = CharArrayTo16(AiList, (Offset + 1));
 
                 if (!(AiList[Offset + AI_SetReturnAiList_LENGTH] == AI_SetChrAiList &&
                       AI_LIST_ID == ID &&
                       (signed char)AiList[Offset + AI_SetReturnAiList_LENGTH + 1] == CHR_SELF))
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d", AI_LIST_ID);
-                    printf(")\n");
+                    if (isGlobalAIListID(AI_LIST_ID))
+                    {
+                        printf("%s", GAILIST_ToString[AI_LIST_ID]);
+                    }
+                    else if (isBGAIListID(AI_LIST_ID))
+                    {
+                        printf("bgai_%hd", getBGAIListID(AI_LIST_ID));
+                    }
+                    else
+                    {
+                        printf("chrai_%hd", getChrAIListID(AI_LIST_ID));
+                    }
                 }
-                Offset += AI_SetReturnAiList_LENGTH;
+                else
+                {
+                    EraseCommand; // CALL should already be printed
+                    hasClosingBrace = TRUE;
+                }
+
                 break;
             }
             case AI_Return: // /*NONE*/
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_Return_LENGTH;
-                ;
+                 AiReturnRecord *ai = &AiList+Offset;
+                AddSubID(ID);
                 break;
             }
-            case AI_Stop: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_Stop_LENGTH;
-                break;
-            }
-            case AI_Kneel: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_Kneel_LENGTH;
-                break;
-            }
+
             case AI_PlayAnimation: // DBYTE(ANIMATION_ID), DBYTE(START_TIME30),DBYTE(END_TIME30), BYTE(BITFIELD), BYTE(INTERPOL_TIME60)
             {
-                int startframe, anim_id, zero, endframe;
-
+                 AiPlayAnimationRecord *ai = &AiList+Offset;
+                int  anim_id, zero ;
+                 short startframe, endframe;
                 anim_id    = CharArrayTo16(AiList, Offset + 1 + 0);
                 startframe = CharArrayTo16(AiList, Offset + 1 + 2);
                 endframe   = CharArrayTo16(AiList, Offset + 1 + 4);
                 if (startframe == -1 && endframe == -1 && AiList[Offset + 1 + 6] == 6 && AiList[Offset + 1 + 7] == 16)
                 {
-                    printf("%sPlayAnimationSimple(", tabs);
-                    printf("%d", anim_id);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "PlayAnimationSimple");
+                    printf("%s", ANIMATIONS_ToString[anim_id]);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,%d,%d,%d,%d", anim_id, startframe, endframe, AiList[Offset + 1 + 6], AiList[Offset + 1 + 7]);
+                    printf("%s,%d,%d,0x%02X,%d", ANIMATIONS_ToString[anim_id], startframe, endframe, AiList[Offset + 1 + 6], AiList[Offset + 1 + 7]);
                 }
-                printf(")\n");
-                Offset += AI_PlayAnimation_LENGTH;
-                break;
-            }
-            case AI_IFPlayingAnimation: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFPlayingAnimation_LENGTH;
-                break;
-            }
-            case AI_PointAtBond: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_PointAtBond_LENGTH;
-                break;
-            }
-            case AI_LookSurprised: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_LookSurprised_LENGTH;
-                break;
-            }
-            case AI_IFImOnPatrolOrStopped: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFImOnPatrolOrStopped_LENGTH;
+
                 break;
             }
             case AI_IFChrDyingOrDead: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
+                 AiIFChrDyingOrDeadRecord *ai = &AiList+Offset;
                 signed char chr = AiList[Offset + 1];
                 if (chr == CHR_SELF)
                 {
-                    printf("%sIFImDyingOrDead(", tabs);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "IFImDyingOrDead");
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,", chr);
+                    if (chr < 0 && chr > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(chr)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", chr);
+                        AddChr(chr);
+                    }
                 }
-                printf("lbl%d", AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFChrDyingOrDead_LENGTH;
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFChrDoesNotExist: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
+                 AiIFChrDoesNotExistRecord *ai = &AiList+Offset;
                 signed char chr = AiList[Offset + 1];
-                if (chr == CHR_SELF)
+                switch (chr)
                 {
-                    printf("%sIFIDoNotExist(", tabs);
+                    case CHR_SELF:
+                    {
+                        EraseCommand;
+                        printf("%s%s(", (char *)tabs, "IFIDoNotExist");
+                        break;
+                    }
+                    case CHR_CLONE:
+                    {
+                        EraseCommand;
+                        printf("%s%s(", (char *)tabs, "IFMyCloneDoesNotExist");
+                        break;
+                    }
+                    default:
+                    {
+                        if (chr < 0 && chr > -10)
+                        {
+                                printf("%s,", CHR_ToString[abs(chr)]);
+                        }
+                        else
+                        {
+                                printf("chr%hd,", chr);
+                                AddChr(chr);
+                        }
+                    }
                 }
-                else
-                {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,", chr);
-                }
-                printf("lbl%d", AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFChrDoesNotExist_LENGTH;
-                break;
-            }
-            case AI_IFISeeBond: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFISeeBond_LENGTH;
-                break;
-            }
-            case AI_TRYSidestepping: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYSidestepping_LENGTH;
-                break;
-            }
-            case AI_TRYSideHopping: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYSideHopping_LENGTH;
 
+                hasLabel = TRUE;
                 break;
             }
-            case AI_TRYSideRunning: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYSideRunning_LENGTH;
-                break;
-            }
-            case AI_TRYFiringWalk: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYFiringWalk_LENGTH;
-                break;
-            }
-            case AI_TRYFiringRun: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYFiringRun_LENGTH;
-                break;
-            }
-            case AI_TRYFiringRoll: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYFiringRoll_LENGTH;
-                break;
-            }
+
             case AI_TRYFireOrAimAtTarget: // DBYTE(BITFIELD), DBYTE(TARGET), BYTE(GOTOLABEL)
             {
+                 AiTRYFireOrAimAtTargetRecord *ai = &AiList+Offset;
                 int targetid   = CharArrayTo16(AiList, Offset + 1 + 2);
                 int targettype = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                if (targettype == 1)
+                if (targettype == TARGET_BOND)
                 {
-                    printf("%sTRYFireAtBond(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "TRYFireAtBond");
                 }
-                else if (targettype == 4)
+                else if (targettype == TARGET_PAD)
                 {
-                    printf("%sTRYFireAtPad(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "TRYFireAtPad");
+                    printf("%d", targetid);
                 }
-                else if (targettype == 33)
+                else if (targettype == TARGET_AIM_ONLY | TARGET_BOND)
                 {
-                    printf("%sTRYAimAtBond(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "TRYAimAtBond");
                 }
-                else if (targettype == 36)
+                else if (targettype == TARGET_AIM_ONLY | TARGET_PAD)
                 {
-                    printf("%sTRYAimAtPad(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "TRYAimAtPad");
+                    printf("%d", targetid);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,%d,lbl%d", targettype, targetid, AiList[Offset + 5]);
+                    printf("%04X,", targettype);
+                    printf("chr%d", targetid);
+                    AddChr(targetid);
                 }
-                printf(")\n");
-                Offset += AI_TRYFireOrAimAtTarget_LENGTH;
+                hasLabel = TRUE;
                 break;
             }
             case AI_TRYFireOrAimAtTargetKneel: // DBYTE(BITFIELD), DBYTE(TARGET), BYTE(GOTOLABEL)
             {
+                 AiTRYFireOrAimAtTargetKneelRecord *ai = &AiList+Offset;
                 int targetid   = CharArrayTo16(AiList, Offset + 1 + 2);
                 int targettype = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                if (targettype == 1)
+                if (targettype == TARGET_BOND)
                 {
-                    printf("%sTRYFireAtBondKneeling(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYFireAtBondKneeling");
                 }
-                else if (targettype == 4)
+                else if (targettype == TARGET_PAD)
                 {
-                    printf("%sTRYFireAtPadKneeling(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYFireAtPadKneeling");
+                    printf("%d", targetid);
                 }
-                else if (targettype == 33)
+                else if (targettype == TARGET_AIM_ONLY | TARGET_BOND)
                 {
-                    printf("%sTRYAimAtBondKneeling(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYAimAtBondKneeling");
                 }
-                else if (targettype == 36)
+                else if (targettype == TARGET_AIM_ONLY | TARGET_PAD)
                 {
-                    printf("%sTRYAimAtPadKneeling(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYAimAtPadKneeling");
+                    printf("%d", targetid);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,%d,lbl%d", targettype, targetid, AiList[Offset + 5]);
+                    printf("%04X,", targettype);
+                    printf("chr%d", targetid);
+                    AddChr(targetid);
                 }
-                printf(")\n");
-                Offset += AI_TRYFireOrAimAtTargetKneel_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
-            case AI_IFImFiringAndLockedForward: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFImFiringAndLockedForward_LENGTH;
-                break;
-            }
-            case AI_IFImFiring: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFImFiring_LENGTH;
-                break;
-            }
+
             case AI_TRYFireOrAimAtTargetUpdate: // DBYTE(BITFIELD), DBYTE(TARGET), BYTE(GOTOLABEL)
             {
+                 AiTRYFireOrAimAtTargetUpdateRecord *ai = &AiList+Offset;
                 int targetid   = CharArrayTo16(AiList, Offset + 1 + 2);
                 int targettype = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                if (targettype == 1)
+                if (targettype == TARGET_BOND)
                 {
-                    printf("%sTRYFireAtBondUpdate(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYFireAtBondUpdate");
                 }
-                else if (targettype == 4)
+                else if (targettype == TARGET_PAD)
                 {
-                    printf("%sTRYFireAtPadUpdate(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYFireAtPadUpdate");
+                    printf("%d", targetid);
                 }
-                else if (targettype == 33)
+                else if (targettype == TARGET_AIM_ONLY | TARGET_BOND)
                 {
-                    printf("%sTRYAimAtBondUpdate(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYAimAtBondUpdate");
                 }
-                else if (targettype == 36)
+                else if (targettype == TARGET_AIM_ONLY | TARGET_PAD)
                 {
-                    printf("%sTRYAimAtPadUpdate(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYAimAtPadUpdate");
+                    printf("%d", targetid);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,%d,lbl%d", targettype, targetid, AiList[Offset + 5]);
+                    printf("%04X,", targettype);
+                    printf("chr%d", targetid);
+                    AddChr(targetid);
                 }
-                printf(")\n");
-                Offset += AI_TRYFireOrAimAtTargetUpdate_LENGTH;
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_TRYFacingTarget: // DBYTE(BITFIELD),DBYTE(TARGET),BYTE(GOTOLABEL)
             {
+                 AiTRYFacingTargetRecord *ai = &AiList+Offset;
                 int targetid   = CharArrayTo16(AiList, Offset + 1 + 2);
                 int targettype = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                if (targettype == 1)
+                if (targettype == TARGET_BOND)
                 {
-                    printf("%sTRYFacingBond(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYFacingBond");
                 }
-                else if (targettype == 4)
+                else if (targettype == TARGET_PAD)
                 {
-                    printf("%sTRYFacingPad(", tabs);
-                    printf("lbl%d", AiList[Offset + 5]);
+                    EraseCommand;
+
+                    printf("%s%s(", (char *)tabs, "TRYFacingPad");
+                    printf("%d", targetid);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,%d,lbl%d", targettype, targetid, AiList[Offset + 5]);
+                    printf("%04X,", targettype);
+                    printf("chr%d", targetid);
+                    AddChr(targetid);
                 }
-                printf(")\n");
-                Offset += AI_TRYFacingTarget_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_HitChrWithItem: // BYTE(CHR_NUM),BYTE(PART_NUM),BYTE(ITEM_NUM)
             {
-                if (AiList[Offset + 1] == CHR_SELF)
+                 AiHitChrWithItemRecord *ai = &AiList+Offset;
+                signed char CHR_NUM = AiList[Offset + 1];
+
+                if (CHR_NUM == CHR_SELF)
                 {
-                    printf("%sHitMeWithItem(", tabs);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "HitMeWithItem");
                     printf("%d,%d", AiList[Offset + 2], AiList[Offset + 1 + 2]);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,%d,%d", AiList[Offset + 1], AiList[Offset + 1 + 1], AiList[Offset + 1 + 2]);
+                    if (CHR_NUM<0 && CHR_NUM> - 10)
+                    {
+                        printf("%s,", CHR_ToString[abs(CHR_NUM)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", CHR_NUM);
+                        AddChr(CHR_NUM);
+                    }
+                    printf("%s,%s",  HITTARGET_ToString[AiList[Offset + 1 + 1]], ITEM_IDS_ToString[AiList[Offset + 1 + 2]]);
                 }
-                printf(")\n");
 
-                Offset += AI_HitChrWithItem_LENGTH;
                 break;
             }
             case AI_ChrHitChr: // BYTE(CHR_NUM),BYTE(CHR_NUM_TARGET),BYTE(PART_NUM)
             {
-                if ((signed char)AiList[Offset + 1] == CHR_SELF)
+                 AiChrHitChrRecord *ai = &AiList+Offset;
+                signed char CHR_NUM = AiList[Offset + 1];
+                signed char CHR_NUM2 = AiList[Offset + 2];
+                char        PART_NUM = AiList[Offset + 3];
+
+                if (CHR_NUM == CHR_SELF)
                 {
-                    printf("%sIHitChr(", tabs);
-                    printf("%d,%d", AiList[Offset + 2], AiList[Offset + 1 + 2]);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "IHitChr");
+                    if (CHR_NUM2 < 0 && CHR_NUM2 > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(CHR_NUM2)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", CHR_NUM2);
+                        AddChr(CHR_NUM2);
+                    }
                 }
-                else if ((signed char)AiList[Offset + 2] == CHR_SELF)
+                else if (CHR_NUM2 == CHR_SELF)
                 {
-                    printf("%sChrHitMe(", tabs);
-                    printf("%d,%d", AiList[Offset + 1], AiList[Offset + 1 + 2]);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "ChrHitMe");
+                    if (CHR_NUM < 0 && CHR_NUM > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(CHR_NUM)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", CHR_NUM);
+                        AddChr(CHR_NUM);
+                    }
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,%d,%d", AiList[Offset + 1], AiList[Offset + 1 + 1], AiList[Offset + 1 + 2]);
+                    if (CHR_NUM < 0 && CHR_NUM > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(CHR_NUM)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", CHR_NUM);
+                        AddChr(CHR_NUM);
+                    }
+                    if (CHR_NUM2 < 0 && CHR_NUM2 > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(CHR_NUM2)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", CHR_NUM2);
+                        AddChr(CHR_NUM2);
+                    }
                 }
-                printf(")\n");
-
-                Offset += AI_ChrHitChr_LENGTH;
+                printf("%s", HITTARGET_ToString[PART_NUM]);
                 break;
             }
-            case AI_TRYThrowingGrenade: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
 
-                Offset += AI_TRYThrowingGrenade_LENGTH;
-                break;
-            }
             case AI_TRYDroppingItem: // DBYTE(PROP_NUM),BYTE(ITEM_NUM),BYTE(GOTOLABEL)
             {
+                 AiTRYDroppingItemRecord *ai = &AiList+Offset;
                 unsigned short modelnum = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,lbl%d", modelnum, AiList[Offset + 1 + 2], AiList[Offset + 1 + 3]);
-                printf(")\n");
-                Offset += AI_TRYDroppingItem_LENGTH;
-                break;
-            }
-            case AI_Surrender: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_Surrender_LENGTH;
-                break;
-            }
-            case AI_RemoveMe: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_RemoveMe_LENGTH;
+                printf("%s,%s", PROP_ToString[modelnum], ITEM_IDS_ToString[AiList[Offset + 1 + 2]]);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_ChrRemoveInstant: // BYTE(CHR_NUM)
             {
-                if ((signed char)AiList[Offset + 1] == CHR_SELF)
+                AiChrRemoveInstantRecord *ai  = AiList[Offset];
+                signed char               chr = AiList[Offset + 1];
+
+                if (chr == CHR_SELF)
                 {
-                    printf("%sRemoveMeInstantly(", tabs);
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "RemoveMeInstantly");
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d", AiList[Offset + 1]);
+                    if (chr < 0 && chr > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(chr)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", chr);
+                        AddChr(chr);
+                    }
                 }
-                printf(")\n");
-                Offset += AI_ChrRemoveInstant_LENGTH;
+
                 break;
             }
             case AI_TRYTriggeringAlarmAtPad: // DBYTE(PAD),BYTE(GOTOLABEL)
             {
+                 AiTRYTriggeringAlarmAtPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d,", pad);
@@ -2455,119 +5341,127 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d", AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_TRYTriggeringAlarmAtPad_LENGTH;
-                break;
-            }
-            case AI_AlarmOn:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_AlarmOn_LENGTH;
-                break;
-            }
-            case AI_AlarmOff:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_AlarmOff_LENGTH;
-                break;
-            }
-            case AI_TRYRunFromBond: // BYTE(GOTOLABEL)
-            {                       // run from bond
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYRunFromBond_LENGTH;
+                hasLabel = TRUE;
                 break;
             }
-            case AI_TRYRunToBond: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYRunToBond_LENGTH;
-                break;
-            }
-            case AI_TRYWalkToBond: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
 
-                Offset += AI_TRYWalkToBond_LENGTH;
-                break;
-            }
-            case AI_TRYSprintToBond: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYSprintToBond_LENGTH;
-                break;
-            }
-            case AI_TRYFindCover: // BYTE(GOTOLABEL)
-            {                     // Find Cover
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_TRYFindCover_LENGTH;
-                break;
-            }
             case AI_TRYRunToChr: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_TRYRunToChr_LENGTH;
+                 AiTRYRunToChrRecord *ai = &AiList+Offset;
+                signed char          chr = AiList[Offset + 1];
+
+                if (chr == CHR_PRESET)
+                {
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "TRYRunToPresetChr");
+                }
+                else
+                {
+                    if (chr < 0 && chr > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(chr)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", chr);
+                        AddChr(chr);
+                    }
+                }
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_TRYWalkToChr: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_TRYWalkToChr_LENGTH;
+                 AiTRYWalkToChrRecord *ai = &AiList+Offset;
+                signed char           chr = AiList[Offset + 1];
+
+                if (chr == CHR_PRESET)
+                {
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "TRYWalkToPresetChr");
+                }
+                else
+                {
+                    if (chr < 0 && chr > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(chr)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", chr);
+                        AddChr(chr);
+                    }
+                }
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_TRYSprintToChr: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_TRYSprintToChr_LENGTH;
+                 AiTRYSprintToChrRecord *ai = &AiList+Offset;
+                signed char             chr = AiList[Offset + 1];
+
+                if (chr == CHR_PRESET)
+                {
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "TRYSprintToPresetChr");
+                }
+                else
+                {
+                    if (chr < 0 && chr > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(chr)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", chr);
+                        AddChr(chr);
+                    }
+                }
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_SetNewRandom:
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_SetNewRandom_LENGTH;
+                 AiSetNewRandomRecord *ai = &AiList+Offset;
+                if (AiList[Offset + 1] == AI_IFRandomLessThan || AiList[Offset + 1] == AI_IFRandomGreaterThan)
+                {
+                    EraseCommand;
+                    hasClosingBrace = TRUE;
+                }
                 break;
             }
             case AI_IFRandomLessThan: // BYTE(BYTE), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFRandomLessThan_LENGTH;
+                 AiIFRandomLessThanRecord *ai = &AiList+Offset;
+                if (AiList[Offset - 1] == AI_SetNewRandom)
+                {
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "IFNewRandomLessThan");
+                }
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFRandomGreaterThan: // BYTE(BYTE), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFRandomGreaterThan_LENGTH;
+                 AiIFRandomGreaterThanRecord *ai = &AiList+Offset;
+                if (AiList[Offset - 1] == AI_SetNewRandom)
+                {
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "IFNewRandomGreaterThan");
+                }
+                hasLabel = TRUE;
                 break;
             }
             case AI_RunToPad: // DBYTE(PAD)
             {
+                 AiRunToPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d", pad);
@@ -2576,22 +5470,15 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d)", getBoundPadNum(pad));
                 }
-                printf(")\n");
-                Offset += AI_RunToPad_LENGTH;
+
                 break;
             }
-            case AI_RunToPadPreset: // /*NONE*/
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_RunToPadPreset_LENGTH;
-                break;
-            }
+
             case AI_WalkToPad: // DBYTE(PAD)
             {
+                 AiWalkToPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d", pad);
@@ -2600,15 +5487,14 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d)", getBoundPadNum(pad));
                 }
-                printf(")\n");
-                Offset += AI_WalkToPad_LENGTH;
+
                 break;
             }
             case AI_SprintToPad: // DBYTE(PAD)
             {
+                 AiSprintToPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d", pad);
@@ -2617,135 +5503,40 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d)", getBoundPadNum(pad));
                 }
-                printf(")\n");
-                Offset += AI_SprintToPad_LENGTH;
+
                 break;
             }
             case AI_StartPatrol: // BYTE(PATH_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiStartPatrolRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_StartPatrol_LENGTH;
+
                 break;
             }
-            case AI_IFICanHearAlarm: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFICanHearAlarm_LENGTH;
-                break;
-            }
-            case AI_IFAlarmIsOn: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFAlarmIsOn_LENGTH;
-                break;
-            }
-            case AI_IFGasIsLeaking: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFGasIsLeaking_LENGTH;
-                break;
-            }
-            case AI_IFIHeardBond: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFIHeardBond_LENGTH;
-                break;
-            }
-            case AI_IFISeeSomeoneShot: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFISeeSomeoneShot_LENGTH;
-                break;
-            }
-            case AI_IFISeeSomeoneDie: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFISeeSomeoneDie_LENGTH;
-                break;
-            }
-            case AI_IFICouldSeeBond: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFICouldSeeBond_LENGTH;
-                break;
-            }
-            case AI_IFICouldSeeBondsStan: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFICouldSeeBondsStan_LENGTH;
-                break;
-            }
-            case AI_IFIWasShotRecently: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFIWasShotRecently_LENGTH;
-                break;
-            }
-            case AI_IFIHeardBondRecently: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFIHeardBondRecently_LENGTH;
-                break;
-            }
+
             case AI_IFImInRoomWithChr: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFImInRoomWithChr_LENGTH;
+                 AiIFImInRoomWithChrRecord *ai = &AiList+Offset;
+                signed char                chr = AiList[Offset + 1];
+
+                if (chr < 0 && chr > -10)
+                {
+                    printf("%s,", CHR_ToString[abs(chr)]);
+                }
+                else
+                {
+                    printf("chr%hd,", chr);
+                    AddChr(chr);
+                }
+                hasLabel = TRUE;
                 break;
             }
-            case AI_IFIveNotBeenSeen:// BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFIveNotBeenSeen_LENGTH;
-                break;
-            }
-            case AI_IFImOnScreen:// BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFImOnScreen_LENGTH;
-                break;
-            }
-            case AI_IFMyRoomIsOnScreen:// BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFMyRoomIsOnScreen_LENGTH;
-                break;
-            }
+
             case AI_IFRoomWithPadIsOnScreen: // DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFRoomWithPadIsOnScreenRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d,", pad);
@@ -2754,94 +5545,106 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d)\n", AiList[Offset + 3]);
-                Offset += AI_IFRoomWithPadIsOnScreen_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
-            case AI_IFImTargetedByBond: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFImTargetedByBond_LENGTH;
-                break;
-            }
-            case AI_IFBondMissedMe: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFBondMissedMe_LENGTH;
-                break;
-            }
+
             case AI_IFMyAngleToBondLessThan: // BYTE(ANGLE), BYTE(GOTOLABEL)
             {
-                printf("%s%sDeg(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))), AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyAngleToBondLessThan_LENGTH;
+                 AiIFMyAngleToBondLessThanRecord *ai = &AiList+Offset;
+                EraseCommand;
+                printf("%s%sDeg(", (char *)tabs, AI_CMD_ToString[AiList[Offset]]);
+                printf("%f,", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))));
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFMyAngleToBondGreaterThan: // BYTE(ANGLE), BYTE(GOTOLABEL)
             {
-                printf("%s%sDeg(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))), AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyAngleToBondGreaterThan_LENGTH;
+                 AiIFMyAngleToBondGreaterThanRecord *ai = &AiList+Offset;
+                EraseCommand;
+
+                printf("%s%sDeg(", (char *)tabs, AI_CMD_ToString[AiList[Offset]]);
+                printf("%f,", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))));
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFMyAngleFromBondLessThan: // BYTE(ANGLE), BYTE(GOTOLABEL)
             {
-                printf("%s%sDeg(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))), AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyAngleFromBondLessThan_LENGTH;
+                 AiIFMyAngleFromBondLessThanRecord *ai = &AiList+Offset;
+                EraseCommand;
+
+                printf("%s%sDeg(", (char *)tabs, AI_CMD_ToString[AiList[Offset]]);
+                printf("%f,", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))));
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFMyAngleFromBondGreaterThan: // BYTE(ANGLE), BYTE(GOTOLABEL)
             {
-                printf("%s%sDeg(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))), AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyAngleFromBondGreaterThan_LENGTH;
+                 AiIFMyAngleFromBondGreaterThanRecord *ai = &AiList+Offset;
+                EraseCommand;
+
+                printf("%s%sDeg(", (char *)tabs, AI_CMD_ToString[AiList[Offset]]);
+                printf("%f,", RadToDeg(ByteToRadian((AiList[Offset + 1 + 0]))));
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMyDistanceToBondLessThanDecimeter: // DBYTE(DISTANCE), BYTE(GOTOLABEL)
             {
+                 AiIFMyDistanceToBondLessThanDecimeterRecord *ai = &AiList+Offset;
                 float distance = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                EraseCommand;
 
-                printf("%s%s(", tabs, "IFMyDistanceToBondLessThanMeter");
-                printf("%f,lbl%d", distance / 100, AiList[Offset + 3]);
-                printf(")\n");
+                printf("%s%s(", (char *)tabs, "IFMyDistanceToBondLessThanMeter");
+                printf("%f,", distance / 100);
+                hasLabel = TRUE;
 
-                Offset += AI_IFMyDistanceToBondLessThanDecimeter_LENGTH;
                 break;
             }
             case AI_IFMyDistanceToBondGreaterThanDecimeter: // DBYTE(DISTANCE), BYTE(GOTOLABEL)
             {
+                 AiIFMyDistanceToBondGreaterThanDecimeterRecord *ai = &AiList+Offset;
                 float distance = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                EraseCommand;
 
-                printf("%s%s(", tabs, "IFMyDistanceToBondGreaterThanMeter");
-                printf("%f,lbl%d", distance / 100, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFMyDistanceToBondGreaterThanDecimeter_LENGTH;
+                printf("%s%s(", (char *)tabs, "IFMyDistanceToBondGreaterThanMeter");
+                printf("%f,", distance / 100);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFChrDistanceToPadLessThanDecimeter: // BYTE(CHR_NUM), DBYTE(DISTANCE), DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFChrDistanceToPadLessThanDecimeterRecord *ai = &AiList+Offset;
                 unsigned short pad   = CharArrayTo16(AiList, Offset + 1 + 3);
                 float          value = CharArrayTo16(AiList, Offset + 1 + 1) * 10.0f;
+                signed char                                   chr   = AiList[Offset + 1];
 
-                if ((signed char)AiList[Offset + 1 + 0] == CHR_SELF)
+                EraseCommand;
+
+                if (chr == CHR_SELF)
                 {
-                    printf("%sIFMyDistanceToPadLessThanMeter(", tabs);
-                    printf("%f,", value / 100);
+                    printf("%s%s(", (char *)tabs, "IFMyDistanceToPadLessThanMeter");
                 }
                 else
                 {
-                    printf("%sIFChrDistanceToPadLessThanMeter(", tabs);
-                    printf("%d,%f,", AiList[Offset + 1 + 0], value / 100);
+                    printf("%s%s(", (char *)tabs, "IFChrDistanceToPadLessThanMeter");
+                    if (chr < 0 && chr > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(chr)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", chr);
+                        AddChr(chr);
+                    }
                 }
+                    printf("%f,", value / 100);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d,", pad);
@@ -2850,26 +5653,37 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d", AiList[Offset + 6]);
-                printf(")\n");
-                Offset += AI_IFChrDistanceToPadLessThanDecimeter_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFChrDistanceToPadGreaterThanDecimeter: // BYTE(CHR_NUM), DBYTE(DISTANCE), DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFChrDistanceToPadGreaterThanDecimeterRecord *ai = &AiList+Offset;
                 unsigned short pad   = CharArrayTo16(AiList, Offset + 1 + 3);
-                float          value = CharArrayTo16(AiList, Offset + 1 + 1) * 10.0f;
+                 float                                           value = CharArrayTo16(AiList, Offset + 1 + 1) * 10.0f;
+                 signed char                                     chr   = AiList[Offset + 1];
+
+                EraseCommand;
 
                 if ((signed char)AiList[Offset + 1 + 0] == CHR_SELF)
                 {
-                    printf("%sIFMyDistanceToPadGreaterThanMeter(", tabs);
-                    printf("%f,", value / 100);
+                    printf("%s%s(", (char *)tabs, "IFMyDistanceToPadGreaterThanMeter");
                 }
                 else
                 {
-                    printf("%sIFChrDistanceToPadGreaterThanMeter(", tabs);
-                    printf("%d,%f,", AiList[Offset + 1 + 0], value / 100);
+                    printf("%s%s(", (char *)tabs, "IFChrDistanceToPadGreaterThanMeter");
+                    if (chr < 0 && chr > -10)
+                    {
+                        printf("%s,", CHR_ToString[abs(chr)]);
+                    }
+                    else
+                    {
+                        printf("chr%hd,", chr);
+                        AddChr(chr);
+                    }
                 }
+                    printf("%f,", value / 100);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d,", pad);
@@ -2878,47 +5692,75 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d", AiList[Offset + 6]);
-                printf(")\n");
-                Offset += AI_IFChrDistanceToPadGreaterThanDecimeter_LENGTH;
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMyDistanceToChrLessThanDecimeter: // DBYTE(DISTANCE), BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
+                 AiIFMyDistanceToChrLessThanDecimeterRecord *ai = &AiList+Offset;
                 float cutoff = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                 signed char                                 chr    = AiList[Offset + 3];
+                 EraseCommand;
 
-                printf("%s%s(", tabs, "AIFMyDistanceToChrLessThanMeter");
-                printf("%f,%d,lbl%d", cutoff / 100, AiList[Offset + 3], AiList[Offset + 4]);
-                printf(")\n");
-                Offset += AI_IFMyDistanceToChrLessThanDecimeter_LENGTH;
+                printf("%s%s(", (char *)tabs, "AIFMyDistanceToChrLessThanMeter");
+                printf("%f,", cutoff / 100 );
+                if (chr < 0 && chr > -10)
+                {
+                    printf("%s,", CHR_ToString[abs(chr)]);
+                }
+                else
+                {
+                    printf("chr%hd,", chr);
+                    AddChr(chr);
+                }
+
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMyDistanceToChrGreaterThanDecimeter: // DBYTE(DISTANCE), BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
-                float cutoff = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                 AiIFMyDistanceToChrGreaterThanDecimeterRecord *ai = &AiList+Offset;
+                float                                          cutoff = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                signed char                                    chr    = AiList[Offset + 3];
 
-                printf("%s%s(", tabs, "AIFMyDistanceToChrGreaterThanMeter");
-                printf("%f,%d,lbl%d", cutoff / 100, AiList[Offset + 3], AiList[Offset + 4]);
-                printf(")\n");
-                Offset += AI_IFMyDistanceToChrGreaterThanDecimeter_LENGTH;
+                EraseCommand;
+
+                printf("%s%s(", (char *)tabs, "AIFMyDistanceToChrGreaterThanMeter");
+                printf("%f,", cutoff / 100);
+                if (chr < 0 && chr > -10)
+                {
+                    printf("%s,", CHR_ToString[abs(chr)]);
+                }
+                else
+                {
+                    printf("chr%hd,", chr);
+                    AddChr(chr);
+                }
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_TRYSettingMyPresetToChrWithinDistanceDecimeter: // DBYTE(DISTANCE), BYTE(GOTOLABEL)
             {
+                 AiTRYSettingMyPresetToChrWithinDistanceDecimeterRecord *ai = &AiList+Offset;
                 float distance = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                EraseCommand;
 
-                printf("%s%s(", tabs, "TRYSettingMyPresetToChrWithinDistanceMeter");
-                printf("%f,lbl%d", distance / 100, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_TRYSettingMyPresetToChrWithinDistanceDecimeter_LENGTH;
+                printf("%s%s(", (char *)tabs, "TRYSettingMyPresetToChrWithinDistanceMeter");
+                printf("%f,", distance / 100);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFBondDistanceToPadLessThanDecimeter: // DBYTE(DISTANCE), DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFBondDistanceToPadLessThanDecimeterRecord *ai = &AiList+Offset;
                 unsigned short pad   = CharArrayTo16(AiList, Offset + 1 + 2);
                 float          value = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                EraseCommand;
 
-                printf("%s%s(", tabs, "IFBondDistanceToPadLessThanMeter");
+                printf("%s%s(", (char *)tabs, "IFBondDistanceToPadLessThanMeter");
                 printf("%f,", value / 100);
 
                 if (isNotBoundPad(pad))
@@ -2929,16 +5771,18 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d)\n", AiList[Offset + 5]);
-                Offset += AI_IFBondDistanceToPadLessThanDecimeter_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFBondDistanceToPadGreaterThanDecimeter: // DBYTE(DISTANCE), DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFBondDistanceToPadGreaterThanDecimeterRecord *ai = &AiList+Offset;
                 unsigned short pad   = CharArrayTo16(AiList, Offset + 1 + 2);
                 float          value = CharArrayTo16(AiList, Offset + 1 + 0) * 10.0f;
+                EraseCommand;
 
-                printf("%s%s(", tabs, "IFBondDistanceToPadGreaterThanMeter");
+                printf("%s%s(", (char *)tabs, "IFBondDistanceToPadGreaterThanMeter");
                 printf("%f,", value / 100);
 
                 if (isNotBoundPad(pad))
@@ -2949,16 +5793,23 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d)\n", AiList[Offset + 5]);
-                Offset += AI_IFBondDistanceToPadGreaterThanDecimeter_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFChrInRoomWithPad: // BYTE(CHR_NUM), DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFChrInRoomWithPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 1);
-
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,", AiList[Offset + 1 + 0]);
+                if ((signed char)AiList[Offset + 1 + 0] == CHR_SELF)
+                {
+                    EraseCommand;
+                    printf("%s%s(", (char *)tabs, "IFImInRoomWithPad");
+                }
+                else
+                {
+                    printf("%d,", AiList[Offset + 1 + 0]);
+                }
                 if (isNotBoundPad(pad))
                 {
                     printf("%d,", pad);
@@ -2967,15 +5818,15 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d)\n", AiList[Offset + 4]);
-                Offset += AI_IFChrInRoomWithPad_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFBondInRoomWithPad: // DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFBondInRoomWithPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d,", pad);
@@ -2984,145 +5835,151 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf("lbl%d)\n", AiList[Offset + 3]);
-                Offset += AI_IFBondInRoomWithPad_LENGTH;
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFBondCollectedObject: // BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFBondCollectedObject_LENGTH;
+                 AiIFBondCollectedObjectRecord *ai = &AiList+Offset;
+                printf("tag%d,", AiList[Offset + 1]);
+
+                AddTag(AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_IFItemIsStationaryWithinLevel: // BYTE(ITEM_NUM), BYTE(GOTOLABEL)
+            case AI_IFKeyDropped: // BYTE(KEY_ID), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFItemIsStationaryWithinLevel_LENGTH;
+                 AiIFKeyDroppedRecord *ai = &AiList+Offset;
+                printf("key%d,", AiList[Offset + 1]);
+
+                AddKey(AiList[Offset + 1]);
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFItemIsAttachedToObject: // BYTE(ITEM_NUM), BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2], AiList[Offset + 3]);
-                printf(")\n");
+                 AiIFItemIsAttachedToObjectRecord *ai = &AiList+Offset;
+                printf("%s,tag%d,", ITEM_IDS_ToString[AiList[Offset + 1]], AiList[Offset + 2]);
 
-                Offset += AI_IFItemIsAttachedToObject_LENGTH;
+                hasLabel = TRUE;
+                AddTag(AiList[Offset + 2]);
+
                 break;
             }
             case AI_IFBondHasItemEquipped: // BYTE(ITEM_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFBondHasItemEquipped_LENGTH;
+                 AiIFBondHasItemEquippedRecord *ai = &AiList+Offset;
+                printf("%s,", ITEM_IDS_ToString[AiList[Offset + 1]]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFObjectExists: // BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFObjectExists_LENGTH;
+                 AiIFObjectExistsRecord *ai = &AiList+Offset;
+                printf("tag%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+                AddTag(AiList[Offset + 1]);
                 break;
             }
-            case AI_IFObjectNotDestroyed:// BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
+            case AI_IFObjectNotDestroyed: // BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
+                 AiIFObjectNotDestroyedRecord *ai = &AiList+Offset;
+                printf("tag%d,", AiList[Offset + 1]);
 
-                Offset += AI_IFObjectNotDestroyed_LENGTH;
+                hasLabel = TRUE;
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
-            case AI_IFObjectWasActivated:// BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
+            case AI_IFObjectWasActivated: // BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
+                 AiIFObjectWasActivatedRecord *ai = &AiList+Offset;
+                printf("tag%d,", AiList[Offset + 1]);
 
-                Offset += AI_IFObjectWasActivated_LENGTH;
+                hasLabel = TRUE;
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
-            case AI_IFBondUsedGadgetOnObject:// BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
+            case AI_IFBondUsedGadgetOnObject: // BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
+                 AiIFBondUsedGadgetOnObjectRecord *ai = &AiList+Offset;
+                printf("tag%d,", AiList[Offset + 1]);
 
-                Offset += AI_IFBondUsedGadgetOnObject_LENGTH;
+                hasLabel = TRUE;
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_ActivateObject: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
+                 AiActivateObjectRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
 
-                Offset += AI_ActivateObject_LENGTH;
                 break;
             }
-            case AI_DestroyObject:  // BYTE(OBJECT_TAG)
+            case AI_DestroyObject: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
+                 AiDestroyObjectRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
 
-                Offset += AI_DestroyObject_LENGTH;
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_DropObject: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_DropObject_LENGTH;
+                 AiDropObjectRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_ChrDropAllConcealedItems: // BYTE(CHR_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_ChrDropAllConcealedItems_LENGTH;
+                 AiChrDropAllConcealedItemsRecord *ai = &AiList+Offset;
+                printf("chr%d", AiList[Offset + 1]);
+                AddChr(AiList[Offset + 1]);
+
                 break;
             }
             case AI_ChrDropAllHeldItems: // BYTE(CHR_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
+                 AiChrDropAllHeldItemsRecord *ai = &AiList+Offset;
+                printf("chr%d", AiList[Offset + 1]);
+                AddChr(AiList[Offset + 1]);
 
-                Offset += AI_ChrDropAllHeldItems_LENGTH;
                 break;
             }
             case AI_BondCollectObject: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
+                 AiBondCollectObjectRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
+                AddTag(AiList[Offset + 1]);
 
-                Offset += AI_BondCollectObject_LENGTH;
                 break;
             }
             case AI_ChrEquipObject: // BYTE(OBJECT_TAG), BYTE(CHR_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
+                 AiChrEquipObjectRecord *ai = &AiList+Offset;
+                printf("tag%d,chr%d", AiList[Offset + 1], AiList[Offset + 2]);
+                AddTag(AiList[Offset + 1]);
+                AddChr(AiList[Offset + 2]);
 
-                Offset += AI_ChrEquipObject_LENGTH;
                 break;
             }
             case AI_MoveObject: // BYTE(OBJECT_TAG), DBYTE(PAD)
             {
+                 AiMoveObjectRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,", AiList[Offset + 1]);
+                printf("tag%d,", AiList[Offset + 1]);
 
                 if (isNotBoundPad(pad))
                 {
@@ -3132,622 +5989,591 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d)", getBoundPadNum(pad));
                 }
-                Offset += AI_MoveObject_LENGTH;
+                AddTag(AiList[Offset + 1]);
+                AddPad(pad);
+
                 break;
             }
             case AI_DoorOpen: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_DoorOpen_LENGTH;
+                 AiDoorOpenRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_DoorClose: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_DoorClose_LENGTH;
+                 AiDoorCloseRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_IFDoorStateEqual: // BYTE(OBJECT_TAG), BYTE(DOOR_STATE), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%s,lbl%d", AiList[Offset + 1], DOORSTATE_ToString[AiList[Offset + 2] >> 1], AiList[Offset + 3]);
-                printf(")\n");
+                 AiIFDoorStateEqualRecord *ai = &AiList+Offset;
+                printf("tag%d,%s,", AiList[Offset + 1], DOORSTATE_ToString[AiList[Offset + 2] >> 1]);
 
-                Offset += AI_IFDoorStateEqual_LENGTH;
+                hasLabel = TRUE;
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_IFDoorHasBeenOpenedBefore: // BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFDoorHasBeenOpenedBefore_LENGTH;
+                 AiIFDoorHasBeenOpenedBeforeRecord *ai = &AiList+Offset;
+                printf("tag%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_DoorSetLock: // BYTE(OBJECT_TAG), BYTE(LOCK_FLAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_DoorSetLock_LENGTH;
+                 AiDoorSetLockRecord *ai = &AiList+Offset;
+                printf("tag%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_DoorUnsetLock: // BYTE(OBJECT_TAG), BYTE(LOCK_FLAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_DoorUnsetLock_LENGTH;
+                 AiDoorUnsetLockRecord *ai = &AiList+Offset;
+                printf("tag%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
+                AddTag(AiList[Offset + 1]);
+
                 break;
             }
             case AI_IFDoorLockEqual: // BYTE(OBJECT_TAG), BYTE(LOCK_FLAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,%d", AiList[Offset + 1], AiList[Offset + 2], AiList[Offset + 3]);
-                printf(")\n");
+                 AiIFDoorLockEqualRecord *ai = &AiList+Offset;
+                printf("tag%d,%d,%d", AiList[Offset + 1], AiList[Offset + 2], AiList[Offset + 3]);
+                AddTag(AiList[Offset + 1]);
 
-                Offset += AI_IFDoorLockEqual_LENGTH;
                 break;
             }
             case AI_IFObjectiveNumComplete: // BYTE(OBJ_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFObjectiveNumComplete_LENGTH;
+                 AiIFObjectiveNumCompleteRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_TRYUnknown6e: // BYTE(UNKNOWN_FLAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_TRYUnknown6e_LENGTH;
+                 AiTRYUnknown6eRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_TRYUnknown6f: // BYTE(UNKNOWN_FLAG), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_TRYUnknown6f_LENGTH;
+                 AiTRYUnknown6fRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMyNumArghsLessThan: // BYTE(HIT_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyNumArghsLessThan_LENGTH;
+                 AiIFMyNumArghsLessThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMyNumArghsGreaterThan: // BYTE(HIT_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyNumArghsGreaterThan_LENGTH;
+                 AiIFMyNumArghsGreaterThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMyNumCloseArghsLessThan: // BYTE(MISSED_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyNumCloseArghsLessThan_LENGTH;
+                 AiIFMyNumCloseArghsLessThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMyNumCloseArghsGreaterThan: // BYTE(MISSED_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyNumCloseArghsGreaterThan_LENGTH;
+                 AiIFMyNumCloseArghsGreaterThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFChrHealthLessThan: // BYTE(CHR_NUM), BYTE(HEALTH), BYTE(GOTOLABEL)
             {
+                 AiIFChrHealthLessThanRecord *ai = &AiList+Offset;
                 float value = (AiList[Offset + 1 + 1]) * 0.1f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%f,lbl%d", AiList[Offset + 1], value * 10, AiList[Offset + 3]);
-                printf(")\n");
+                printf("%d,%f,", AiList[Offset + 1], value * 10);
 
-                Offset += AI_IFChrHealthLessThan_LENGTH;
+                hasLabel = TRUE;
+                AddChr(AiList[Offset + 1]);
+
                 break;
             }
             case AI_IFChrHealthGreaterThan: // BYTE(CHR_NUM), BYTE(HEALTH), BYTE(GOTOLABEL)
             {
+                 AiIFChrHealthGreaterThanRecord *ai = &AiList+Offset;
                 float value = (AiList[Offset + 1 + 1]) * 0.1f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%f,lbl%d", AiList[Offset + 1], value * 10, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFChrHealthGreaterThan_LENGTH;
+                printf("%d,%f,", AiList[Offset + 1], value * 10);
+
+                hasLabel = TRUE;
+                AddChr(AiList[Offset + 1]);
+
                 break;
             }
             case AI_IFChrWasDamagedSinceLastCheck: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFChrWasDamagedSinceLastCheck_LENGTH;
+                 AiIFChrWasDamagedSinceLastCheckRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+                AddChr(AiList[Offset + 1]);
+
                 break;
             }
             case AI_IFBondHealthLessThan: // BYTE(HEALTH), BYTE(GOTOLABEL)
             {
+                 AiIFBondHealthLessThanRecord *ai = &AiList+Offset;
                 float val = (AiList[Offset + 1 + 0]) / 255.0f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", val * 255, AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFBondHealthLessThan_LENGTH;
+                printf("%f,", val * 255);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFBondHealthGreaterThan: // BYTE(HEALTH), BYTE(GOTOLABEL)
             {
+                 AiIFBondHealthGreaterThanRecord *ai = &AiList+Offset;
                 float val = (AiList[Offset + 1 + 0]) / 255.0f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", val * 255, AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFBondHealthGreaterThan_LENGTH;
+                printf("%f,", val * 255);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFGameDifficultyLessThan: // BYTE(DIFICULTY_ID), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFGameDifficultyLessThan_LENGTH;
+                 AiIFGameDifficultyLessThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFGameDifficultyGreaterThan: // BYTE(DIFICULTY_ID), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFGameDifficultyGreaterThan_LENGTH;
+                 AiIFGameDifficultyGreaterThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMissionTimeLessThan: // DBYTE(SECONDS), BYTE(GOTOLABEL)
             {
+                 AiIFMissionTimeLessThanRecord *ai = &AiList+Offset;
                 float target = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", target, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFMissionTimeLessThan_LENGTH;
+                printf("%f,", target);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFMissionTimeGreaterThan: // DBYTE(SECONDS), BYTE(GOTOLABEL)
             {
+                 AiIFMissionTimeGreaterThanRecord *ai = &AiList+Offset;
                 float target = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", target, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFMissionTimeGreaterThan_LENGTH;
+                printf("%f,", target);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFSystemPowerTimeLessThan: // DBYTE(MINUTES), BYTE(GOTOLABEL)
             {
+                 AiIFSystemPowerTimeLessThanRecord *ai = &AiList+Offset;
                 float target = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,%d", target, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFSystemPowerTimeLessThan_LENGTH;
+                printf("%f,", target);
+
                 break;
             }
             case AI_IFSystemPowerTimeGreaterThan: // DBYTE(MINUTES), BYTE(GOTOLABEL)
             {
+                 AiIFSystemPowerTimeGreaterThanRecord *ai = &AiList+Offset;
                 float target = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", target, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFSystemPowerTimeGreaterThan_LENGTH;
+                printf("%f,", target);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFLevelIdLessThan: // BYTE(LEVEL_ID), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFLevelIdLessThan_LENGTH;
+                 AiIFLevelIdLessThanRecord *ai = &AiList+Offset;
+                printf("%s,", LEVELID_ToString[AiList[Offset + 1] + 1]);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_IFLevelIdGreaterThan: // BYTE(LEVEL_ID), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFLevelIdGreaterThan_LENGTH;
-                break;
-            }
-            case AI_SetMyMorale:// BYTE(CHRBYTE)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyMorale_LENGTH;
-                break;
-            }
-            case AI_AddToMyMorale:// BYTE(CHRBYTE)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
+                 AiIFLevelIdGreaterThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
 
-                Offset += AI_AddToMyMorale_LENGTH;
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_SubtractFromMyMorale:// BYTE(CHRBYTE)
+            case AI_SetMyMorale: // BYTE(CHRBYTE)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyMoraleRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SubtractFromMyMorale_LENGTH;
+
+                break;
+            }
+            case AI_AddToMyMorale: // BYTE(CHRBYTE)
+            {
+                 AiAddToMyMoraleRecord *ai = &AiList+Offset;
+                printf("%d", AiList[Offset + 1]);
+
+                break;
+            }
+            case AI_SubtractFromMyMorale: // BYTE(CHRBYTE)
+            {
+                 AiSubtractFromMyMoraleRecord *ai = &AiList+Offset;
+                printf("%d", AiList[Offset + 1]);
+
                 break;
             }
             case AI_IFMyMoraleLessThan: // BYTE(CHRBYTE), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
+                 AiIFMyMoraleLessThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
 
-                Offset += AI_IFMyMoraleLessThan_LENGTH;
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_IFMyMoraleLessThanRandom:// BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFMyMoraleLessThanRandom_LENGTH;
-                break;
-            }
+
             case AI_SetMyAlertness: // BYTE(CHRBYTE)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyAlertnessRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyAlertness_LENGTH;
+
                 break;
             }
             case AI_AddToMyAlertness: // BYTE(CHRBYTE)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiAddToMyAlertnessRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_AddToMyAlertness_LENGTH;
+
                 break;
             }
             case AI_SubtractFromMyAlertness: // BYTE(CHRBYTE)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSubtractFromMyAlertnessRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SubtractFromMyAlertness_LENGTH;
+
                 break;
             }
             case AI_IFMyAlertnessLessThan: // BYTE(CHRBYTE), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyAlertnessLessThan_LENGTH;
-                break;
-            }
-            case AI_IFMyAlertnessLessThanRandom: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFMyAlertnessLessThanRandom_LENGTH;
+                 AiIFMyAlertnessLessThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_SetMyHearingScale: // DBYTE(HEARING_SCALE)
             {
+                 AiSetMyHearingScaleRecord *ai = &AiList+Offset;
                 float distance = CharArrayTo16(AiList, Offset + 1 + 0) / 1000.0f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%f", distance * 1000);
-                printf(")\n");
-                Offset += AI_SetMyHearingScale_LENGTH;
+
                 break;
             }
-            case AI_SetMyVisionRange:// BYTE(VISION_RANGE)
+            case AI_SetMyVisionRange: // BYTE(VISION_RANGE)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyVisionRangeRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyVisionRange_LENGTH;
+
                 break;
             }
             case AI_SetMyGrenadeProbability: // BYTE(GRENADE_PROB)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyGrenadeProbabilityRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyGrenadeProbability_LENGTH;
+
                 break;
             }
             case AI_SetMyChrNum: // BYTE(CHR_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyChrNumRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyChrNum_LENGTH;
+
                 break;
             }
             case AI_SetMyHealthTotal: // DBYTE(HEALTH)
             {
+                 AiSetMyHealthTotalRecord *ai = &AiList+Offset;
                 float amount = CharArrayTo16(AiList, Offset + 1 + 0) * 0.1f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%f", amount * 10);
-                printf(")\n");
-                Offset += AI_SetMyHealthTotal_LENGTH;
+
                 break;
             }
             case AI_SetMyArmour: // DBYTE(AMOUNT)
             {
+                 AiSetMyArmourRecord *ai = &AiList+Offset;
                 float amount = CharArrayTo16(AiList, Offset + 1 + 0) * 0.1f; /*if (cheatIsActive(CHEAT_ENEMYSHIELDS)) { amount = amount < 8 ? 8 : amount; } */
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%f", amount * 10);
-                printf(")\n");
-                Offset += AI_SetMyArmour_LENGTH;
+
                 break;
             }
             case AI_SetMySpeedRating: // BYTE(SPEED_RATING)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMySpeedRatingRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMySpeedRating_LENGTH;
+
                 break;
             }
             case AI_SetMyArghRating: // BYTE(ARGH_RATING)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyArghRatingRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyArghRating_LENGTH;
+
                 break;
             }
             case AI_SetMyAccuracyRating: // BYTE(ACCURACY_RATING)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyAccuracyRatingRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyAccuracyRating_LENGTH;
+
                 break;
             }
-            case AI_SetMyFlags2:// BYTE(BITS)
+            case AI_SetMyFlags2: // BYTE(BITS)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyFlags2Record *ai = &AiList+Offset;
                 printf("0x%x", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyFlags2_LENGTH;
+
                 break;
             }
-            case AI_UnsetMyFlags2:// BYTE(BITS)
+            case AI_UnsetMyFlags2: // BYTE(BITS)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiUnsetMyFlags2Record *ai = &AiList+Offset;
                 printf("0x%x", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_UnsetMyFlags2_LENGTH;
+
                 break;
             }
-            case AI_IFMyFlags2Has:// BYTE(BITS) BYTE(GOTOLABEL)
+            case AI_IFMyFlags2Has: // BYTE(BITS) BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("0x%x,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFMyFlags2Has_LENGTH;
+                 AiIFMyFlags2HasRecord *ai = &AiList+Offset;
+                printf("0x%x,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_SetChrBitfield:// BYTE(CHR_NUM), BYTE(BITS)
+            case AI_SetChrBitfield: // BYTE(CHR_NUM), BYTE(BITS)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetChrBitfieldRecord *ai = &AiList+Offset;
                 printf("%d,0x%x", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_SetChrBitfield_LENGTH;
+
                 break;
             }
-            case AI_UnsetChrBitfield:// BYTE(CHR_NUM), BYTE(BITS)
+            case AI_UnsetChrBitfield: // BYTE(CHR_NUM), BYTE(BITS)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiUnsetChrBitfieldRecord *ai = &AiList+Offset;
                 printf("%d,0x%x", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_UnsetChrBitfield_LENGTH;
+
                 break;
             }
             case AI_IFChrBitfieldHas: // BYTE(CHR_NUM), BYTE(BITS), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,0x%x,lbl%d", AiList[Offset + 1], AiList[Offset + 2], AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFChrBitfieldHas_LENGTH;
+                 AiIFChrBitfieldHasRecord *ai = &AiList+Offset;
+                printf("%d,0x%x,", AiList[Offset + 1], AiList[Offset + 2]);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_SetObjectiveBitfield: // QBYTE(BITFIELD)
             {
+                 AiSetObjectiveBitfieldRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("0x%x", flags);
-                printf(")\n");
-                Offset += AI_SetObjectiveBitfield_LENGTH;
+
                 break;
             }
             case AI_UnsetObjectiveBitfield: // QBYTE(BITFIELD)
             {
+                 AiUnsetObjectiveBitfieldRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("0x%x", flags);
-                printf(")\n");
-                Offset += AI_UnsetObjectiveBitfield_LENGTH;
+
                 break;
             }
-            case AI_IFObjectiveBitfieldHas:// QBYTE(BITS), BYTE(GOTOLABEL)
+            case AI_IFObjectiveBitfieldHas: // QBYTE(BITS), BYTE(GOTOLABEL)
             {
-                int flags = CharArrayTo32(AiList, Offset + 1 + 0);
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("0x%x,lbl%d", flags, AiList[Offset + 5]);
-                printf(")\n");
-                Offset += AI_IFObjectiveBitfieldHas_LENGTH;
-                break;
-            }
-            case AI_SetMychrflags:// QBYTE(CHRFLAGS)
-            {
+                 AiIFObjectiveBitfieldHasRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("0x%x", flags);
-                printf(")\n");
-                Offset += AI_SetMychrflags_LENGTH;
+                printf("0x%x,", flags);
+
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_UnsetMychrflags:// QBYTE(CHRFLAGS)
+            case AI_SetMychrflags: // QBYTE(CHRFLAGS)
             {
+                 AiSetMychrflagsRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("0x%x", flags);
-                printf(")\n");
-                Offset += AI_UnsetMychrflags_LENGTH;
+
+                break;
+            }
+            case AI_UnsetMychrflags: // QBYTE(CHRFLAGS)
+            {
+                 AiUnsetMychrflagsRecord *ai = &AiList+Offset;
+                int flags = CharArrayTo32(AiList, Offset + 1 + 0);
+
+                printf("0x%x", flags);
+
                 break;
             }
             case AI_IFMychrflagsHas: // QBYTE(CHRFLAGS), BYTE(GOTOLABEL)
             {
+                 AiIFMychrflagsHasRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("0x%x,lbl%d", flags, AiList[Offset + 5]);
-                printf(")\n");
-                Offset += AI_IFMychrflagsHas_LENGTH;
+                printf("0x%x,", flags);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_SetChrchrflags: // BYTE(CHR_NUM), QBYTE(CHRFLAGS)
             {
+                 AiSetChrchrflagsRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,0x%x", AiList[Offset + 1], flags);
-                printf(")\n");
-                Offset += AI_SetChrchrflags_LENGTH;
+
                 break;
             }
             case AI_UnsetChrchrflags: // BYTE(CHR_NUM), QBYTE(CHRFLAGS)
             {
+                 AiUnsetChrchrflagsRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,0x%x", AiList[Offset + 1], flags);
-                printf(")\n");
-                Offset += AI_UnsetChrchrflags_LENGTH;
+
                 break;
             }
             case AI_IFChrchrflagsHas: // BYTE(CHR_NUM), QBYTE(CHRFLAGS), BYTE(GOTOLABEL)
             {
+                 AiIFChrchrflagsHasRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,0x%x,lbl%d", AiList[Offset + 1], flags, AiList[Offset + 6]);
-                printf(")\n");
-                Offset += AI_IFChrchrflagsHas_LENGTH;
+                printf("%d,0x%x,", AiList[Offset + 1], flags);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_SetObjectFlags: // BYTE(OBJECT_TAG), QBYTE(BITFIELD)
             {
+                 AiSetObjectFlagsRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,0x%x", AiList[Offset + 1], flags);
-                printf(")\n");
-                Offset += AI_SetObjectFlags_LENGTH;
+
                 break;
             }
             case AI_UnsetObjectFlags: // BYTE(OBJECT_TAG), QBYTE(BITFIELD)
             {
+                 AiUnsetObjectFlagsRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,0x%x", AiList[Offset + 1], flags);
-                printf(")\n");
-                Offset += AI_UnsetObjectFlags_LENGTH;
+
                 break;
             }
             case AI_IFObjectFlagsHas: // BYTE(OBJECT_TAG), QBYTE(BITS), BYTE(GOTOLABEL)
             {
+                 AiIFObjectFlagsHasRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,0x%x,lbl%d", AiList[Offset + 1], flags, AiList[Offset + 6]);
-                printf(")\n");
-                Offset += AI_IFObjectFlagsHas_LENGTH;
+                printf("%d,0x%x,", AiList[Offset + 1], flags);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_SetObjectFlags2: // BYTE(OBJECT_TAG), QBYTE(BITS)
             {
+                 AiSetObjectFlags2Record *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,0x%x", AiList[Offset + 1], flags);
-                printf(")\n");
-                Offset += AI_SetObjectFlags2_LENGTH;
+
                 break;
             }
             case AI_UnsetObjectFlags2: // BYTE(OBJECT_TAG), QBYTE(BITS)
             {
+                 AiUnsetObjectFlags2Record *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,0x%x", AiList[Offset + 1], flags);
-                printf(")\n");
-                Offset += AI_UnsetObjectFlags2_LENGTH;
+
                 break;
             }
             case AI_IFObjectFlags2Has: // BYTE(OBJECT_TAG), QBYTE(BITFIELD), BYTE(GOTOLABEL)
             {
+                 AiIFObjectFlags2HasRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,0x%x,lbl%d", AiList[Offset + 1], flags, AiList[Offset + 6]);
-                printf(")\n");
-                Offset += AI_IFObjectFlags2Has_LENGTH;
+                printf("%d,0x%x,", AiList[Offset + 1], flags);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_SetMyChrPreset: // BYTE(CHR_PRESET)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetMyChrPresetRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_SetMyChrPreset_LENGTH;
+
                 break;
             }
             case AI_SetChrChrPreset: // BYTE(CHR_NUM), BYTE(CHR_PRESET)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSetChrChrPresetRecord *ai = &AiList+Offset;
                 printf("%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_SetChrChrPreset_LENGTH;
+
                 break;
             }
             case AI_SetMyPadPreset: // DBYTE(PAD_PRESET)
             {
+                 AiSetMyPadPresetRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
-
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
 
                 if (isNotBoundPad(pad))
                 {
@@ -3757,12 +6583,12 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d)", getBoundPadNum(pad));
                 }
-                printf(")\n");
-                Offset += AI_SetMyPadPreset_LENGTH;
+
                 break;
             }
             case AI_SetChrPadPreset: // BYTE(CHR_NUM), DBYTE(PAD_PRESET)
             {
+                 AiSetChrPadPresetRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 1);
 
                 printf("%s(%d,", AI_CMD_ToString[AiList[Offset]], AiList[Offset + 1]);
@@ -3775,15 +6601,14 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d)", getBoundPadNum(pad));
                 }
-                printf(")\n");
-                Offset += AI_SetChrPadPreset_LENGTH;
+
                 break;
             }
             case AI_PRINT:
             {
+                 AiPRINTRecord *ai = &AiList+Offset;
                 int j = 1;
-                printf("%sPRINT(\"", tabs);
-
+                printf("\"");
                 for (; AiList[Offset + j] != 0; j++)
                 {
                     if (AiList[Offset + j] == '\n')
@@ -3795,139 +6620,78 @@ void ai(unsigned char *AiList, short ID)
                         printf("%c", AiList[Offset + j]);
                     }
                 }
-                Offset += j + 1;
-                printf("\")\n");
+                if (!hasName)
+                {
+                    hasName = malloc(j);
+                    hasName = &AiList[Offset + 1];
+                }
+
+                printf("\"");
                 break;
             }
-            case AI_MyTimerStart:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_MyTimerStart_LENGTH;
-                break;
-            }
-            case AI_MyTimerReset:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_MyTimerReset_LENGTH;
-                break;
-            }
-            case AI_MyTimerPause:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_MyTimerPause_LENGTH;
-                break;
-            }
-            case AI_MyTimerResume:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_MyTimerResume_LENGTH;
-                break;
-            }
-            case AI_IFMyTimerIsNotRunning: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFMyTimerIsNotRunning_LENGTH;
-                break;
-            }
+
             case AI_IFMyTimerLessThanTicks: // TBYTE(TICKS), BYTE(GOTOLABEL)
             {
+                 AiIFMyTimerLessThanTicksRecord *ai = &AiList+Offset;
                 float valf = ((unsigned)CharArrayTo24(AiList, Offset + 1 + 0));
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", valf, AiList[Offset + 4]);
-                printf(")\n");
-                Offset += AI_IFMyTimerLessThanTicks_LENGTH;
+                printf("%f,", valf);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFMyTimerGreaterThanTicks: // TBYTE(TICKS), BYTE(GOTOLABEL)
             {
+                 AiIFMyTimerGreaterThanTicksRecord *ai = &AiList+Offset;
                 float valf = ((unsigned)CharArrayTo24(AiList, Offset + 1 + 0));
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", valf, AiList[Offset + 4]);
-                printf(")\n");
-                Offset += AI_IFMyTimerGreaterThanTicks_LENGTH;
+                printf("%f,", valf);
+
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_HudCountdownShow:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_HudCountdownShow_LENGTH;
-                break;
-            }
-            case AI_HudCountdownHide:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_HudCountdownHide_LENGTH;
-                break;
-            }
+
             case AI_HudCountdownSet: // DBYTE(SECONDS)
             {
+                 AiHudCountdownSetRecord *ai = &AiList+Offset;
                 float seconds = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%f", seconds);
-                printf(")\n");
-                Offset += AI_HudCountdownSet_LENGTH;
+
                 break;
             }
-            case AI_HudCountdownStop:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_HudCountdownStop_LENGTH;
-                break;
-            }
-            case AI_HudCountdownStart:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_HudCountdownStart_LENGTH;
-                break;
-            }
-            case AI_IFHudCountdownIsNotRunning: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFHudCountdownIsNotRunning_LENGTH;
-                break;
-            }
+
             case AI_IFHudCountdownLessThan: // DBYTE(SECONDS), BYTE(GOTOLABEL)
             {
+                 AiIFHudCountdownLessThanRecord *ai = &AiList+Offset;
                 float value = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", value, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFHudCountdownLessThan_LENGTH;
+                printf("%f,", value);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFHudCountdownGreaterThan: // DBYTE(SECONDS), BYTE(GOTOLABEL)
             {
+                 AiIFHudCountdownGreaterThanRecord *ai = &AiList+Offset;
                 float value = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,lbl%d", value, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFHudCountdownGreaterThan_LENGTH;
+                printf("%f,", value);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_TRYSpawningChrAtPad: // BYTE(BODY_NUM), BYTE(HEAD_NUM), DBYTE(PAD), DBYTE(AI_LIST_ID), QBYTE(BITFIELD), BYTE(GOTOLABEL)
             {
+                 AiTRYSpawningChrAtPadRecord *ai = &AiList+Offset;
                 unsigned short pad      = CharArrayTo16(AiList, Offset + 1 + 2);
                 int            flags    = CharArrayTo32(AiList, Offset + 1 + 6);
                 unsigned short ailistid = CharArrayTo16(AiList, Offset + 1 + 4);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,", AiList[Offset + 1]);
                 if (isNotBoundPad(pad))
                 {
@@ -3938,129 +6702,125 @@ void ai(unsigned char *AiList, short ID)
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
 
-                printf("%d,0x%x,%d,lbl%d", ailistid, flags, AiList[Offset + 10], AiList[Offset + 11]);
-                printf(")\n");
-                Offset += AI_TRYSpawningChrAtPad_LENGTH;
+                printf("%d,0x%x,%d,", ailistid, flags, AiList[Offset + 10]);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_TRYSpawningChrNextToChr: // BYTE(BODY_NUM), BYTE(HEAD_NUM), BYTE(CHR_NUM_TARGET), DBYTE(AI_LIST_ID), QBYTE(BITFIELD), BYTE(GOTOLABEL)
             {
+                 AiTRYSpawningChrNextToChrRecord *ai = &AiList+Offset;
                 int            flags    = CharArrayTo32(AiList, Offset + 1 + 5);
                 unsigned short ailistid = CharArrayTo16(AiList, Offset + 1 + 3);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,%d,%d,0x%x,lbl%d", AiList[Offset + 1], AiList[Offset + 1 + 1], AiList[Offset + 1 + 2], ailistid, flags, AiList[Offset + 10]);
-                printf(")\n");
-                Offset += AI_TRYSpawningChrNextToChr_LENGTH;
+                printf("%d,%d,%d,%d,0x%x,", AiList[Offset + 1], AiList[Offset + 1 + 1], AiList[Offset + 1 + 2], ailistid, flags);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_TRYGiveMeItem: // DBYTE(PROP_NUM), BYTE(ITEM_NUM), QBYTE(PROPFLAG), BYTE(GOTOLABEL)
             {
+                 AiTRYGiveMeItemRecord *ai = &AiList+Offset;
                 int flags = CharArrayTo32(AiList, Offset + 1 + 3);
                 int model = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,0x%x,lbl%d", model, AiList[Offset + 1 + 2], flags, AiList[Offset + 8]);
-                printf(")\n");
-                Offset += AI_TRYGiveMeItem_LENGTH;
+                printf("%d,%d,0x%x,", model, AiList[Offset + 1 + 2], flags);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_TRYGiveMeHat: // DBYTE(PROP_NUM), QBYTE(PROP_BITFIELD), BYTE(GOTOLABEL)
             {
+                 AiTRYGiveMeHatRecord *ai = &AiList+Offset;
                 int flags    = CharArrayTo32(AiList, Offset + 1 + 2);
                 int modelnum = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,0x%x,lbl%d", modelnum, flags, AiList[Offset + 7]);
-                printf(")\n");
-                Offset += AI_TRYGiveMeHat_LENGTH;
+                printf("%d,0x%x,", modelnum, flags);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_TRYCloningChr: // BYTE(CHR_NUM), DBYTE(AI_LIST_ID), BYTE(GOTOLABEL)
             {
+                 AiTRYCloningChrRecord *ai = &AiList+Offset;
                 unsigned short ailistid = CharArrayTo16(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,lbl%d", AiList[Offset + 4], ailistid, AiList[Offset + 4]);
-                printf(")\n");
-                Offset += AI_TRYCloningChr_LENGTH;
+                printf("%d,%d,", AiList[Offset + 4], ailistid);
+
+                hasLabel = TRUE;
                 break;
             }
-            case AI_TextPrintBottom:// DBYTE(TEXT_SLOT)
+            case AI_TextPrintBottom: // DBYTE(TEXT_SLOT)
             {
-                printf("//USING HUD MESSAGE Stringy = %d, ai->txt = %d\n", 0, CharArrayTo16(AiList, Offset + 1 + 0));
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("TEXT(%d,%d)", (CharArrayTo16(AiList, Offset + 1 + 0)) / 1024, (CharArrayTo16(AiList, Offset + 1 + 0)) % 1024);
-                printf(")\n");
-                Offset += AI_TextPrintBottom_LENGTH;
+                 AiTextPrintBottomRecord *ai = &AiList+Offset;
+                // printf("//USING HUD MESSAGE Stringy = %d, ai->txt = %d\n", 0, CharArrayTo16(AiList, Offset + 1 + 0));
+
+                printf("TEXT(%s,%d)", TEXTBANK_LEVEL_INDEX_ToString[(CharArrayTo16(AiList, Offset + 1 + 0)) / 1024], (CharArrayTo16(AiList, Offset + 1 + 0)) % 1024);
+
                 break;
             }
-            case AI_TextPrintTop:// DBYTE(TEXT_SLOT)
+            case AI_TextPrintTop: // DBYTE(TEXT_SLOT)
             {
-                printf("//USING HUD MESSAGE Stringy = %d, ai->txt = %d\n", 0, CharArrayTo16(AiList, Offset + 1 + 0));
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("TEXT(%d,%d)", (CharArrayTo16(AiList, Offset + 1 + 0)) / 1024, (CharArrayTo16(AiList, Offset + 1 + 0)) % 1024);
-                printf(")\n");
-                Offset += AI_TextPrintTop_LENGTH;
+                 AiTextPrintTopRecord *ai = &AiList+Offset;
+                // printf("//USING HUD MESSAGE Stringy = %d, ai->txt = %d\n", 0, CharArrayTo16(AiList, Offset + 1 + 0));
+
+                printf("TEXT(%s,%d)", TEXTBANK_LEVEL_INDEX_ToString[(CharArrayTo16(AiList, Offset + 1 + 0)) / 1024], (CharArrayTo16(AiList, Offset + 1 + 0)) % 1024);
+
                 break;
             }
             case AI_SfxPlay: // DBYTE(SOUND_NUM), BYTE(CHANNEL_NUM)
             {
+                 AiSfxPlayRecord *ai = &AiList+Offset;
                 short audio_id = CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,%d", audio_id, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_SfxPlay_LENGTH;
+
                 break;
             }
             case AI_SfxStopChannel: // BYTE(CHANNEL_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiSfxStopChannelRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_SfxStopChannel_LENGTH;
+
                 break;
             }
             case AI_SfxSetChannelVolume: // BYTE(CHANNEL_NUM), DBYTE(TARGET_VOLUME), DBYTE(TRANSITION_TIME60)
             {
+                 AiSfxSetChannelVolumeRecord *ai = &AiList+Offset;
                 short          vol   = CharArrayTo16(AiList, Offset + 2 + 0);
                 unsigned short sfxID = CharArrayTo16(AiList, Offset + 2 + 2);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d, %d,%d", AiList[Offset + 1], vol, sfxID);
-                printf(")\n");
-                Offset += AI_SfxSetChannelVolume_LENGTH;
+
                 break;
             }
             case AI_SfxFadeChannelVolume: // BYTE(CHANNEL_NUM), DBYTE(TARGET_VOLUME), DBYTE(TRANSITION_TIME60)
             {
+                 AiSfxFadeChannelVolumeRecord *ai = &AiList+Offset;
                 short          vol   = CharArrayTo16(AiList, Offset + 2 + 0);
                 unsigned short sfxID = CharArrayTo16(AiList, Offset + 2 + 2);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d, %d,%d", AiList[Offset + 1], vol, sfxID);
-                printf(")\n");
 
-                Offset += AI_SfxFadeChannelVolume_LENGTH;
                 break;
             }
             case AI_SfxEmitFromObject: // BYTE(CHANNEL_NUM), BYTE(OBJECT_TAG), DBYTE(VOL_DECAY_TIME60)
             {
+                 AiSfxEmitFromObjectRecord *ai = &AiList+Offset;
                 unsigned short sfxID = CharArrayTo16(AiList, Offset + 2 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d, %d,%d", AiList[Offset + 1], AiList[Offset + 2], sfxID);
-                printf(")\n");
-                Offset += AI_SfxEmitFromObject_LENGTH;
+
                 break;
             }
             case AI_SfxEmitFromPad: // BYTE(CHANNEL_NUM), DBYTE(PAD), DBYTE(VOL_DECAY_TIME60)
             {
+                 AiSfxEmitFromPadRecord *ai = &AiList+Offset;
                 unsigned short pad   = CharArrayTo16(AiList, Offset + 2 + 0);
                 unsigned short sfxID = CharArrayTo16(AiList, Offset + 2 + 2);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,", AiList[Offset + 1]);
 
                 if (isNotBoundPad(pad))
@@ -4072,102 +6832,58 @@ void ai(unsigned char *AiList, short ID)
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
                 printf("%d", sfxID);
-                printf(")\n");
-                Offset += AI_SfxEmitFromPad_LENGTH;
+
                 break;
             }
             case AI_IFSfxChannelVolumeLessThan: // BYTE(CHANNEL_NUM), DBYTE(VOLUME), BYTE(GOTOLABEL)
             {
+                 AiIFSfxChannelVolumeLessThanRecord *ai = &AiList+Offset;
                 short vol = CharArrayTo16(AiList, Offset + 2 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d, %d,lbl%d", AiList[Offset + 1], vol, AiList[Offset + 4]);
-                printf(")\n");
-                Offset += AI_IFSfxChannelVolumeLessThan_LENGTH;
+                printf("%d, %d,", AiList[Offset + 1], vol);
+
+                hasLabel = TRUE;
                 break;
             }
             case AI_VehicleStartPath: // BYTE(PATH_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiVehicleStartPathRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1 + 0]);
-                printf(")\n");
-                Offset += AI_VehicleStartPath_LENGTH;
+
                 break;
             }
             case AI_VehicleSpeed: // DBYTE(TOP_SPEED), DBYTE(ACCELERATION_TIME60)
             {
+                 AiVehicleSpeedRecord *ai = &AiList+Offset;
                 float speedtime = CharArrayTo16(AiList, Offset + 1 + 2);
                 float speedaim  = CharArrayTo16(AiList, Offset + 1 + 0) * 100.0f / 15360.0f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,%f", CharArrayTo16(AiList, Offset + 1 + 0), speedtime);
-                printf(")\n");
-                Offset += AI_VehicleSpeed_LENGTH;
+
                 break;
             }
             case AI_AircraftRotorSpeed: // DBYTE(ROTOR_SPEED), DBYTE(ACCELERATION_TIME60)
             {
+                 AiAircraftRotorSpeedRecord *ai = &AiList+Offset;
                 float speedtime = CharArrayTo16(AiList, Offset + 1 + 2);
                 float speedaim  = CharArrayTo16(AiList, Offset + 1 + 0) * M_TAU_F / 3600.0f;
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,%f", CharArrayTo16(AiList, Offset + 1 + 0), speedtime);
-                printf(")\n");
-                Offset += AI_AircraftRotorSpeed_LENGTH;
-                break;
-            }
-            case AI_IFCameraIsInIntro: // BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1 + 0]);
-                printf(")\n");
-                Offset += AI_IFCameraIsInIntro_LENGTH;
-                break;
-            }
-            case AI_IFCameraIsInBondSwirl:// BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1 + 0]);
-                printf(")\n");
-                Offset += AI_IFCameraIsInBondSwirl_LENGTH;
+
                 break;
             }
             case AI_TvChangeScreenBank: // BYTE(OBJECT_TAG), BYTE(SCREEN_INDEX), BYTE(SCREEN_BANK)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,$d", AiList[Offset + 1], AiList[Offset + 2], AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_TvChangeScreenBank_LENGTH;
-                break;
-            }
-            case AI_IFBondInTank: // canonical name
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1 + 0]);
-                printf(")\n");
+                 AiTvChangeScreenBankRecord *ai = &AiList+Offset;
+                printf("%d,%d,%d", AiList[Offset + 1], AiList[Offset + 2], AiList[Offset + 3]);
 
-                Offset += AI_IFBondInTank_LENGTH;
                 break;
             }
-            case AI_EndLevel: // canonical name
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_EndLevel_LENGTH;
-                break;
-            }
-            case AI_CameraReturnToBond:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_CameraReturnToBond_LENGTH;
-                break;
-            }
+
             case AI_CameraLookAtBondFromPad: // DBYTE(PAD)
             {
+                 AiCameraLookAtBondFromPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 0);
-
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
 
                 if (isNotBoundPad(pad))
                 {
@@ -4177,47 +6893,39 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
-                printf(")\n");
-                Offset += AI_CameraLookAtBondFromPad_LENGTH;
+
                 break;
             }
             case AI_CameraSwitch: // BYTE(OBJECT_TAG), DBYTE(LOOK_AT_BOND_FLAG), DBYTE(UNUSED_FLAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiCameraSwitchRecord *ai = &AiList+Offset;
                 printf("%d,%d,%d", AiList[Offset + 1 + 0], CharArrayTo16(AiList, Offset + 1 + 1), CharArrayTo16(AiList, Offset + 1 + 3));
-                printf(")\n");
-                Offset += AI_CameraSwitch_LENGTH;
+
                 break;
             }
             case AI_IFBondYPosLessThan: // DBYTE(Y_POS), BYTE(GOTOLABEL)
             {
+                 AiIFBondYPosLessThanRecord *ai = &AiList+Offset;
                 float bondpos = (short)CharArrayTo16(AiList, Offset + 1 + 0);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%f,%d", bondpos, AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFBondYPosLessThan_LENGTH;
+                printf("%f,", bondpos );
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_BondDisableControl: // BYTE(BITFIELD)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiBondDisableControlRecord *ai = &AiList+Offset;
                 printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_BondDisableControl_LENGTH;
+
                 break;
             }
-            case AI_BondEnableControl:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_BondEnableControl_LENGTH;
-                break;
-            }
+
             case AI_TRYTeleportingChrToPad: // BYTE(CHR_NUM), DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiTRYTeleportingChrToPadRecord *ai = &AiList+Offset;
                 int pad = CharArrayTo16(AiList, Offset + 1 + 1);
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+
                 printf("%d,", AiList[Offset + 1]);
                 if (isNotBoundPad(pad))
                 {
@@ -4227,119 +6935,77 @@ void ai(unsigned char *AiList, short ID)
                 {
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
+                hasLabel = TRUE;
 
-                printf("lbl%d", AiList[Offset + 4]);
-                printf(")\n");
+                break;
+            }
 
-                Offset += AI_TRYTeleportingChrToPad_LENGTH;
-                break;
-            }
-            case AI_ScreenFadeToBlack:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_ScreenFadeToBlack_LENGTH;
-                break;
-            }
-            case AI_ScreenFadeFromBlack:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_ScreenFadeFromBlack_LENGTH;
-                break;
-            }
-            case AI_IFScreenFadeCompleted:// BYTE(GOTOLABEL)
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFScreenFadeCompleted_LENGTH;
-                break;
-            }
-            case AI_HideAllChrs:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_HideAllChrs_LENGTH;
-                break;
-            }
-            case AI_ShowAllChrs:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_ShowAllChrs_LENGTH;
-                break;
-            }
             case AI_DoorOpenInstant: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_DoorOpenInstant_LENGTH;
+                 AiDoorOpenInstantRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
+
                 break;
             }
             case AI_ChrRemoveItemInHand: // BYTE(CHR_NUM), BYTE(HAND_INDEX)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%s", AiList[Offset + 1], AiList[Offset + 2] == 0 ? "GUNRIGHT" : "GUNLEFT");
-                printf(")\n");
-                Offset += AI_ChrRemoveItemInHand_LENGTH;
+                 AiChrRemoveItemInHandRecord *ai = &AiList+Offset;
+                printf("chr%d,%s", AiList[Offset + 1], AiList[Offset + 2] == 0 ? "GUNRIGHT" : "GUNLEFT");
+
                 break;
             }
             case AI_IfNumberOfActivePlayersLessThan: // BYTE(NUMBER), BYTE(GOTOLABEL)
             {
+                 AiIfNumberOfActivePlayersLessThanRecord *ai = &AiList+Offset;
                 if (AiList[Offset + 1] == 2)
                 {
-                    printf("%sIFSinglePlayer(", tabs);
-                    printf("lbl%d", AiList[Offset + 2]);
+                    printf("%sIFSinglePlayer(", (char *)tabs);
                 }
                 else
                 {
-                    printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                    printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
+                    printf("%d,", AiList[Offset + 1]);
                 }
-                printf(")\n");
-                Offset += AI_IfNumberOfActivePlayersLessThan_LENGTH;
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFBondItemTotalAmmoLessThan: // BYTE(ITEM_NUM), BYTE(AMMO_TOTAL), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2], AiList[Offset + 3]);
-                printf(")\n");
-                Offset += AI_IFBondItemTotalAmmoLessThan_LENGTH;
+                 AiIFBondItemTotalAmmoLessThanRecord *ai = &AiList+Offset;
+                printf("%s,%d,", ITEM_IDS_ToString[AiList[Offset + 1]], AiList[Offset + 2]);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_BondEquipItem: // BYTE(ITEM_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_BondEquipItem_LENGTH;
+                 AiBondEquipItemRecord *ai = &AiList+Offset;
+                printf("%s", ITEM_IDS_ToString[AiList[Offset + 1]]);
+
                 break;
             }
             case AI_BondEquipItemCinema: // BYTE(ITEM_NUM)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_BondEquipItemCinema_LENGTH;
+                 AiBondEquipItemCinemaRecord *ai = &AiList+Offset;
+                printf("%s", ITEM_IDS_ToString[ AiList[Offset + 1]]);
+
                 break;
             }
             case AI_BondSetLockedVelocity: // BYTE(X_SPEED60), BYTE(Z_SPEED60)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiBondSetLockedVelocityRecord *ai = &AiList+Offset;
                 printf("%d,%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_BondSetLockedVelocity_LENGTH;
+
                 break;
             }
             case AI_IFObjectInRoomWithPad: // BYTE(OBJECT_TAG), DBYTE(PAD), BYTE(GOTOLABEL)
             {
+                 AiIFObjectInRoomWithPadRecord *ai = &AiList+Offset;
                 unsigned short pad = CharArrayTo16(AiList, Offset + 1 + 1);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,", AiList[Offset + 1]);
+                printf("tag%d,", AiList[Offset + 1]);
                 if (isNotBoundPad(pad))
                 {
                     printf("%d,", pad);
@@ -4349,49 +7015,14 @@ void ai(unsigned char *AiList, short ID)
                     printf("setBoundPadNum(%d),", getBoundPadNum(pad));
                 }
 
-                printf("lbl%d", AiList[Offset + 4]);
-                printf(")\n");
-                Offset += AI_IFObjectInRoomWithPad_LENGTH;
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_SwitchSky:
-            { // SWITCHENVIRONMENT
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_SwitchSky_LENGTH;
-                break;
-            }
-            case AI_TriggerFadeAndExitLevelOnButtonPress:
+
+            case AI_CameraOrbitPad:
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_TriggerFadeAndExitLevelOnButtonPress_LENGTH;
-                break;
-            }
-            case AI_IFBondIsDead:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFBondIsDead_LENGTH;
-                break;
-            }
-            case AI_BondDisableDamageAndPickups:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_BondDisableDamageAndPickups_LENGTH;
-                break;
-            }
-            case AI_BondHideWeapons:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_BondHideWeapons_LENGTH;
-                break;
-            }
-            case AI_CameraOrbitPad: 
-            {
+                 AiCameraOrbitPadRecord *ai = &AiList+Offset;
                 int pad;
                 int speed60;
                 int camDististance;
@@ -4405,7 +7036,6 @@ void ai(unsigned char *AiList, short ID)
                 targetHeight   = (short)CharArrayTo16(AiList, Offset + 1 + 8);
                 start          = CharArrayTo16(AiList, Offset + 1 + 10);
 
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
                 printf("%d,%d,%d,", camDististance, camHeight, speed60);
                 if (isNotBoundPad(pad))
                 {
@@ -4417,182 +7047,673 @@ void ai(unsigned char *AiList, short ID)
                 }
 
                 printf("%d,%d", targetHeight, start);
-                printf(")\n");
-                Offset += AI_CameraOrbitPad_LENGTH;
+
                 break;
             }
-            case AI_CreditsRoll:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_CreditsRoll_LENGTH;
-                break;
-            }
-            case AI_IFCreditsHasCompleted:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFCreditsHasCompleted_LENGTH;
-                break;
-            }
-            case AI_IFObjectiveAllCompleted:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFObjectiveAllCompleted_LENGTH;
-                break;
-            }
+
             case AI_IFFolderActorIsEqual: // BYTE(BOND_ACTOR_INDEX), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFFolderActorIsEqual_LENGTH;
+                 AiIFFolderActorIsEqualRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+
                 break;
             }
-            case AI_IFBondDamageAndPickupsDisabled:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("lbl%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_IFBondDamageAndPickupsDisabled_LENGTH;
-                break;
-            }
+
             case AI_MusicPlaySlot: // BYTE(MUSIC_SLOT), BYTE(SECONDS_STOPPED_DURATION), BYTE(SECONDS_TOTAL_DURATION)
             {
-                printf("//ai: enery tune on (%d, %d, %d)\n", AiList[Offset + 1 + 0], AiList[Offset + 1 + 1], AiList[Offset + 1 + 2]);
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiMusicPlaySlotRecord *ai = &AiList+Offset;
+                // printf("/*ai: enery tune on (%d, %d, %d)*/", AiList[Offset + 1 + 0], AiList[Offset + 1 + 1], AiList[Offset + 1 + 2]);
+
                 printf("%d,%d,%d", AiList[Offset + 1 + 0], AiList[Offset + 1 + 1], AiList[Offset + 1 + 2]);
-                printf(")\n");
-                Offset += AI_MusicPlaySlot_LENGTH;
+
                 break;
             }
             case AI_MusicStopSlot:
             {
-                printf("//ai: enery tune off (%d)\n", AiList[Offset + 1 + 0]);
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
+                 AiMusicStopSlotRecord *ai = &AiList+Offset;
+                // printf("/*ai: enery tune off (%d)*/", AiList[Offset + 1 + 0]);
+
                 printf("%d", AiList[Offset + 1 + 0]);
-                printf(")\n");
-                Offset += AI_MusicStopSlot_LENGTH;
-                break;
-            }
-            case AI_TriggerExplosionsAroundBond:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_TriggerExplosionsAroundBond_LENGTH;
+
                 break;
             }
             case AI_IFKilledCiviliansGreaterThan:
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFKilledCiviliansGreaterThan_LENGTH;
+                 AiIFKilledCiviliansGreaterThanRecord *ai = &AiList+Offset;
+                printf("%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_IFChrWasShotSinceLastCheck: // BYTE(CHR_NUM), BYTE(GOTOLABEL)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d,lbl%d", AiList[Offset + 1], AiList[Offset + 2]);
-                printf(")\n");
-                Offset += AI_IFChrWasShotSinceLastCheck_LENGTH;
-                break;
-            }
-            case AI_BondKilledInAction:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_BondKilledInAction_LENGTH;
-                break;
-            }
-            case AI_RaiseArms:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_RaiseArms_LENGTH;
-                break;
-            }
-            case AI_GasLeakAndFadeFog:
-            {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf(")\n");
-                Offset += AI_GasLeakAndFadeFog_LENGTH;
+                 AiIFChrWasShotSinceLastCheckRecord *ai = &AiList+Offset;
+                printf("chr%d,", AiList[Offset + 1]);
+
+                hasLabel = TRUE;
+
                 break;
             }
             case AI_ObjectRocketLaunch: // BYTE(OBJECT_TAG)
             {
-                printf("%s%s(", tabs, AI_CMD_ToString[AiList[Offset]]);
-                printf("%d", AiList[Offset + 1]);
-                printf(")\n");
-                Offset += AI_ObjectRocketLaunch_LENGTH;
-                break;
-            } //============================================================================================================
+                 AiObjectRocketLaunchRecord *ai = &AiList+Offset;
+                printf("tag%d", AiList[Offset + 1]);
 
+                break;
+            }
+            case AI_GotoNext:                    // BYTE(LABEL)
+            case AI_IFPlayingAnimation:          // BYTE(GOTOLABEL)
+            case AI_IFImOnPatrolOrStopped:       // BYTE(GOTOLABEL)
+            case AI_IFISeeBond:                  // BYTE(GOTOLABEL)
+            case AI_TRYSidestepping:             // BYTE(GOTOLABEL)
+            case AI_TRYSideHopping:              // BYTE(GOTOLABEL)
+            case AI_TRYSideRunning:              // BYTE(GOTOLABEL)
+            case AI_TRYFiringWalk:               // BYTE(GOTOLABEL)
+            case AI_TRYFiringRun:                // BYTE(GOTOLABEL)
+            case AI_TRYFiringRoll:               // BYTE(GOTOLABEL)
+            case AI_IFImFiringAndLockedForward:  // BYTE(GOTOLABEL)
+            case AI_IFImFiring:                  // BYTE(GOTOLABEL)
+            case AI_TRYThrowingGrenade:          // BYTE(GOTOLABEL)
+            case AI_TRYRunFromBond:              // BYTE(GOTOLABEL)
+            case AI_TRYRunToBond:                // BYTE(GOTOLABEL)
+            case AI_TRYWalkToBond:               // BYTE(GOTOLABEL)
+            case AI_TRYSprintToBond:             // BYTE(GOTOLABEL)
+            case AI_TRYFindCover:                // BYTE(GOTOLABEL)
+            case AI_IFICanHearAlarm:             // BYTE(GOTOLABEL)
+            case AI_IFAlarmIsOn:                 // BYTE(GOTOLABEL)
+            case AI_IFGasIsLeaking:              // BYTE(GOTOLABEL)
+            case AI_IFIHeardBond:                // BYTE(GOTOLABEL)
+            case AI_IFISeeSomeoneShot:           // BYTE(GOTOLABEL)
+            case AI_IFISeeSomeoneDie:            // BYTE(GOTOLABEL)
+            case AI_IFICouldSeeBond:             // BYTE(GOTOLABEL)
+            case AI_IFICouldSeeBondsStan:        // BYTE(GOTOLABEL)
+            case AI_IFIWasShotRecently:          // BYTE(GOTOLABEL)
+            case AI_IFIHeardBondRecently:        // BYTE(GOTOLABEL)
+            case AI_IFIveNotBeenSeen:            // BYTE(GOTOLABEL)
+            case AI_IFImOnScreen:                // BYTE(GOTOLABEL)
+            case AI_IFMyRoomIsOnScreen:          // BYTE(GOTOLABEL)
+            case AI_IFImTargetedByBond:          // BYTE(GOTOLABEL)
+            case AI_IFBondMissedMe:              // BYTE(GOTOLABEL)
+            case AI_IFMyMoraleLessThanRandom:    // BYTE(GOTOLABEL)
+            case AI_IFMyAlertnessLessThanRandom: // BYTE(GOTOLABEL)
+            case AI_IFMyTimerIsNotRunning:       // BYTE(GOTOLABEL)
+            case AI_IFHudCountdownIsNotRunning:  // BYTE(GOTOLABEL)
+            case AI_IFCameraIsInIntro:           // BYTE(GOTOLABEL)
+            case AI_IFCameraIsInBondSwirl:       // BYTE(GOTOLABEL)
+            case AI_IFBondInTank:                // canonical name
+            case AI_IFScreenFadeCompleted:       // BYTE(GOTOLABEL)
+            case AI_IFBondIsDead:
+            case AI_IFCreditsHasCompleted:
+            case AI_IFObjectiveAllCompleted:
+            case AI_IFBondDamageAndPickupsDisabled:
+            {
+                 AiIFBondDamageAndPickupsDisabledRecord *ai = &AiList+Offset;
+                hasLabel = TRUE;
+                break;
+            }
+            case AI_Yield:         // /*NONE*/
+            case AI_Stop:          // /*NONE*/
+            case AI_Kneel:         // /*NONE*/
+            case AI_PointAtBond:   // /*NONE*/
+            case AI_LookSurprised: // /*NONE*/
+            case AI_Surrender:     // /*NONE*/
+            case AI_RemoveMe:      // /*NONE*/
+            case AI_AlarmOn:
+            case AI_AlarmOff:
+            case AI_RunToPadPreset: // /*NONE*/
+            case AI_MyTimerStart:
+            case AI_MyTimerReset:
+            case AI_MyTimerPause:
+            case AI_MyTimerResume:
+            case AI_HudCountdownShow:
+            case AI_HudCountdownHide:
+            case AI_HudCountdownStop:
+            case AI_HudCountdownStart:
+            case AI_EndLevel: // canonical name
+            case AI_CameraReturnToBond:
+            case AI_BondEnableControl:
+            case AI_ScreenFadeToBlack:
+            case AI_ScreenFadeFromBlack:
+            case AI_HideAllChrs:
+            case AI_ShowAllChrs:
+            case AI_TriggerFadeAndExitLevelOnButtonPress:
+            case AI_BondDisableDamageAndPickups:
+            case AI_BondHideWeapons:
+            case AI_CreditsRoll:
+            case AI_SwitchSky:
+            case AI_BondKilledInAction:
+            case AI_RaiseArms:
+            case AI_TriggerExplosionsAroundBond:
+            case AI_GasLeakAndFadeFog:
             default:
-                /*
-                 * No Command found, advance ailist by 1.
-                 * This is attempting to handle situations where the command
-                 * type is invalid by passing over them and continuing
-                 * execution.
-                 * chraiitemsize returns 1 which is pointless really
-                 * could have done it here without a jump
-                 *
-                 * Outcome:crash
-                 */
-                {
-                    Offset++;
-                }
+            {
+                break;
+            }
+
         } // switch
+        if(!hasMacro)Offset += chraiitemsize(AiList, Offset);
+        if (hasLabel)
+        {
+            printf(" lbl%d ", AiList[Offset - 1]);
+            AddLabel(AiList[Offset - 1]);
+        }
+        if (!hasClosingBrace) printf(")\n");
     }
 }
-enum chrAIListIDs
-{
-    chrai_0 = setChrAIListID(0),
-    chrai_1,
-    chrai_2,
-    chrai_3,
-    chrai_4,
-    chrai_5,
-    chrai_6,
-    chrai_7,
-    chrai_8,
-    chrai_9,
-    chrai_10,
-    chrai_11,
-    chrai_12,
-    chrai_13,
-    chrai_14,
-    chrai_15,
-    chrai_16,
-    chrai_17,
-    chrai_18
-};
-int main()
-{
-    unsigned char
-          ai_0[] = {0x02, 0x03, 0x03, 0xeb, 0x36, 0x55, 0x00, 0xd0, 0x2a, 0x01, 0x03, 0x02, 0x2a, 0xec, 0xd7, 0x00, 0xda, 0x02, 0x08, 0x03, 0xdc, 0x2a, 0x01, 0x08, 0x02, 0x2a, 0xf1, 0x2a, 0x05, 0xfd, 0x00, 0x0f, 0x02, 0x2a, 0xdd, 0xea, 0x59, 0x18, 0x2a, 0x59, 0x19, 0x2a, 0x59, 0x04, 0x2a, 0x59, 0x05, 0x2a, 0x59, 0x06, 0x2a, 0x59, 0x07, 0x2a, 0x59, 0x08, 0x2a, 0x59, 0x09, 0x2a, 0x59, 0x0a, 0x2a, 0x59, 0x0b, 0x2a, 0x59, 0x0c, 0x2a, 0x59, 0x0d, 0x2a, 0x59, 0x0e, 0x2a, 0x59, 0x0f, 0x2a, 0x59, 0x10, 0x2a, 0x59, 0x11, 0x2a, 0x59, 0x12, 0x2a, 0x59, 0x13, 0x2a, 0x59, 0x16, 0x2a, 0x59, 0x14, 0x2a, 0x59, 0x15, 0x2a, 0xe4, 0x04, 0x02, 0x2a, 0xed, 0x03, 0x03, 0x03, 0xd5, 0x05, 0x00, 0x02, 0x00, 0x00, 0xd9, 0xf8, 0x00, 0xab, 0x2a, 0x02, 0x2a, 0x05, 0xf8, 0x04, 0x12, 0xa1, 0x00, 0x00, 0x00, 0x04, 0x00, 0xd9, 0x00, 0x00, 0xaa, 0x2a, 0x02, 0x2a, 0x05, 0x00, 0x04, 0x13, 0xdb, 0xf4, 0x00, 0x00, 0xff, 0x05, 0xfd, 0x00, 0x01, 0x02, 0x36, 0x05, 0xfd, 0x00, 0x01, 0x04, 0x00, 0x00, 0x00};
-    short ID     = 1;
 
-    // char          str[999];
-    // printf("Enter a string: ");
-    // gets(str);
+void hexDump(char *desc, void *addr, int len)
+{
+    int            i;
+    unsigned char  buff[17];
+    unsigned char *pc = (unsigned char *)addr;
 
-    if (isChrAIListID(ID))
+    // Output description if given.
+    if (desc != NULL)
+        printf("%s:\n", desc);
+
+    // Process every byte in the data.
+    for (i = 0; i < len; i++)
     {
-        printf("u8 chrAI_%d[] = {\n #define THIS chrai_%d\n", getChrAIListID(ID), getChrAIListID(ID));
+        // Multiple of 16 means new line (with line offset).
+
+        if ((i % 16) == 0)
+        {
+            // Just don't print ASCII for the zeroth line.
+            if (i != 0)
+                printf("  %s\n", buff);
+
+            // Output the offset.
+            printf("  %04x ", i);
+        }
+
+        // Now the hex code for the specific character.
+        printf(" %02x", pc[i]);
+
+        // And store a printable ASCII character for later.
+        if ((pc[i] < 0x20) || (pc[i] > 0x7e))
+        {
+            buff[i % 16] = '.';
+        }
+        else
+        {
+            buff[i % 16] = pc[i];
+        }
+
+        buff[(i % 16) + 1] = '\0';
+    }
+
+    // Pad out last line if not exactly 16 characters.
+    while ((i % 16) != 0)
+    {
+        printf("   ");
+        i++;
+    }
+
+    // And print the final ASCII bit.
+    printf("  %s\n", buff);
+}
+
+int main(int argc, char *argv[])
+{
+#define PRINTDEBUG
+    char                    fname[1000];
+    FILE                   *pfile;
+    char                    cwd[1000];
+    void                   *g_ptrStageSetupFile, *lastAddr;
+    int                     fsize;
+
+
+    int                     i,j;
+    time_t                  current_time;
+    time(&current_time);
+
+    getcwd(cwd, sizeof(cwd));
+
+    if (argc > 1)
+    {
+        strcat(cwd, "/");
+        strcat(cwd, argv[1]);
+        strcpy(fname,argv[1]);
     }
     else
     {
-        printf("u8 bgAi_%d[] = {\n #define THIS bgai_%d\n", getBGAIListID(ID), getBGAIListID(ID));
+        printf("Enter a filename:\n");
+        scanf("%99s", fname);
+        strcat(cwd, "/");
+        strcat(cwd, fname);
     }
-    ai(ai_0, ID);
-    // un-closed loops
-    if (top != -1) displayStack();
 
-    printf("#undef THIS \n};\n");
+    for (i=strlen(fname); i>0; i-- )
+    {
+        j = i+1;
+        if (fname[i] == '/')  break;
+    }
+
+    for (i = 0; i < strlen(fname); i++, j++)
+    {
+        if (fname[j] == '.')
+        {
+            fname[i] = 0;
+            break;
+        }
+        fname[i] = fname[j];
+    }
+    pfile = fopen(cwd, "rb");
+
+    if (!pfile)
+    {
+        printf("Error! opening file: %s\n", cwd);
+        // exit from program if file pointer returns NULL.
+        return 0;
+    }
+
+    // Get file size
+    fseek(pfile, 0, SEEK_END);
+    fsize = ftell(pfile);
+    rewind(pfile);
+
+    //allocate setup file
+    g_ptrStageSetupFile = malloc(fsize);
+    rewind(pfile);
+
+    //Load setup file
+    if (1 != fread(g_ptrStageSetupFile, fsize, 1, pfile))
+    {
+        fclose(pfile);
+        free(g_ptrStageSetupFile);
+        printf("entire read fails\n");
+        return 0;
+    }
+    fclose(pfile);
+
+    {
+        stagesetup g_chraiCurrentSetup = *(stagesetup *)g_ptrStageSetupFile;
+
+        // convert to host endian and turn file pointer to RAM pointer
+        g_chraiCurrentSetup.pathwaypoints  = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.pathwaypoints);
+        g_chraiCurrentSetup.waypointgroups = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.waypointgroups);
+        g_chraiCurrentSetup.intro          = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.intro);
+        g_chraiCurrentSetup.propDefs       = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.propDefs);
+        g_chraiCurrentSetup.patrolpaths    = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.patrolpaths);
+        g_chraiCurrentSetup.ailists        = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.ailists);
+        g_chraiCurrentSetup.pads           = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.pads);
+        g_chraiCurrentSetup.boundpads      = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.boundpads);
+        g_chraiCurrentSetup.padnames       = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.padnames);
+        g_chraiCurrentSetup.boundpadnames  = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.boundpadnames);
+
+        // iterate over all items and sub-items converting from file to ram pointer
+#pragma region "foreach item in setupheader"
+        if (g_chraiCurrentSetup.pathwaypoints)
+        {
+            // NAV Points - use Pads as NavPoints
+            for (i = 0; g_chraiCurrentSetup.pathwaypoints[i].padID >= 0; i++)
+            {
+                btol(g_chraiCurrentSetup.pathwaypoints[i].padID);
+                g_chraiCurrentSetup.pathwaypoints[i].neighbours = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.pathwaypoints[i].neighbours);
+                btol(g_chraiCurrentSetup.pathwaypoints[i].groupNum);
+                btol(g_chraiCurrentSetup.pathwaypoints[i].dist);
+#ifdef PRINTDEBUG
+                printf("\nwaypoint %d: pad %d, nb %X, GN %d, dst%d\n", i, g_chraiCurrentSetup.pathwaypoints[i].padID, g_chraiCurrentSetup.pathwaypoints[i].neighbours, g_chraiCurrentSetup.pathwaypoints[i].groupNum, g_chraiCurrentSetup.pathwaypoints[i].dist);
+#endif
+                for (j = 0; g_chraiCurrentSetup.pathwaypoints[i].neighbours[j] >= 0; j++)
+                {
+                    btol(g_chraiCurrentSetup.pathwaypoints[i].neighbours[j]);
+#ifdef PRINTDEBUG
+                    printf("%d, ", g_chraiCurrentSetup.pathwaypoints[i].neighbours[j]);
+#endif
+                }
+            }
+        }
+
+        if (g_chraiCurrentSetup.waypointgroups)
+        {
+            // NAV Mesh, make a mesh from NAV Points
+            for (i = 0; g_chraiCurrentSetup.waypointgroups[i].neighbours; i++)
+            {
+                g_chraiCurrentSetup.waypointgroups[i].neighbours = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.waypointgroups[i].neighbours);
+                g_chraiCurrentSetup.waypointgroups[i].waypoints  = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.waypointgroups[i].waypoints);
+#ifdef PRINTDEBUG
+                printf("\nwaygrp %d: nb %X, wp%X, dst%d\n", i, g_chraiCurrentSetup.waypointgroups[i].neighbours, g_chraiCurrentSetup.waypointgroups[i].waypoints, g_chraiCurrentSetup.waypointgroups[i].dist);
+#endif
+                for (j = 0; g_chraiCurrentSetup.waypointgroups[i].neighbours[j] >= 0; j++)
+                {
+                    btol(g_chraiCurrentSetup.waypointgroups[i].neighbours[j]);
+#ifdef PRINTDEBUG
+                    printf("%d, ", g_chraiCurrentSetup.waypointgroups[i].neighbours[j]);
+#endif
+                }
+#ifdef PRINTDEBUG
+                printf("\n");
+#endif
+                for (j = 0; g_chraiCurrentSetup.waypointgroups[i].waypoints[j] >= 0; j++)
+                {
+                    btol(g_chraiCurrentSetup.waypointgroups[i].waypoints[j]);
+#ifdef PRINTDEBUG
+                    printf("%d, ", g_chraiCurrentSetup.waypointgroups[i].waypoints[j]);
+#endif
+                }
+            }
+        }
+
+        if (g_chraiCurrentSetup.intro)
+        {
+            //g_chraiCurrentSetup.intro = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.intro);
+#ifdef PRINTDEBUG
+            printf("\nintro %X: \n", g_chraiCurrentSetup.intro);
+#endif
+        }
+
+        if (g_chraiCurrentSetup.propDefs)
+        {
+           // g_chraiCurrentSetup.propDefs = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.propDefs);
+#ifdef PRINTDEBUG
+            printf("\npropDefs %X: \n", g_chraiCurrentSetup.propDefs);
+#endif
+        }
+
+        if (g_chraiCurrentSetup.patrolpaths)
+        {
+            for (i = 0; g_chraiCurrentSetup.patrolpaths[i].waypoints; i++)
+            {
+                g_chraiCurrentSetup.patrolpaths[i].waypoints = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.patrolpaths[i].waypoints);
+
+#ifdef PRINTDEBUG
+                printf("path %d: wp %X, ID%d, isLoop %d, len %d\n", i, g_chraiCurrentSetup.patrolpaths[i].waypoints, g_chraiCurrentSetup.patrolpaths[i].ID, g_chraiCurrentSetup.patrolpaths[i].isLoop, g_chraiCurrentSetup.patrolpaths[i].len);
+#endif
+                for (j = 0; g_chraiCurrentSetup.patrolpaths[i].waypoints[j] > -1; j++)
+                {
+                    g_chraiCurrentSetup.patrolpaths[i].waypoints[j] = ntohl(g_chraiCurrentSetup.patrolpaths[i].waypoints[j]);
+#ifdef PRINTDEBUG
+                    printf("wp %d: %d\n", j, g_chraiCurrentSetup.patrolpaths[i].waypoints[j]);
+#endif
+                }
+                g_chraiCurrentSetup.patrolpaths[i].len = j;
+            }
+        }
+
+        if (g_chraiCurrentSetup.ailists)
+        {
+            for (i = 0; g_chraiCurrentSetup.ailists[i].ailist; i++)
+            {
+                g_chraiCurrentSetup.ailists[i].ailist = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.ailists[i].ailist);
+                btol(g_chraiCurrentSetup.ailists[i].ID);
+#ifdef PRINTDEBUG
+                printf("\nAI %d: Lst %X, ID%d\n", i, g_chraiCurrentSetup.ailists[i].ailist, g_chraiCurrentSetup.ailists[i].ID);
+#endif
+            }
+        }
+
+        if (g_chraiCurrentSetup.pads)
+        {
+            for (i = 0; g_chraiCurrentSetup.pads[i].plink; i++)
+            {
+
+                for (j = 0; j < 3; j++)
+                {
+                    btol(g_chraiCurrentSetup.pads[i].pos.AsArray[j]);
+                    btol(g_chraiCurrentSetup.pads[i].up.AsArray[j]);
+                    btol(g_chraiCurrentSetup.pads[i].look.AsArray[j]);
+                }
+
+                g_chraiCurrentSetup.pads[i].plink = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.pads[i].plink);
+
+                if (g_chraiCurrentSetup.pads[i].plink == 0)
+                {
+                    printf("pad number %d has no stan! (%s)\n", i, g_chraiCurrentSetup.pads[i].plink);
+                }
+
+            }
+        }
+        if (g_chraiCurrentSetup.boundpads)
+        {
+            for (i = 0; g_chraiCurrentSetup.boundpads[i].plink; i++)
+            {
+
+                for (j = 0; j < 6; j++)
+                {
+                    if (j < 3)
+                    {
+                        btol(g_chraiCurrentSetup.boundpads[i].pos.AsArray[j]);
+                        btol(g_chraiCurrentSetup.boundpads[i].up.AsArray[j]);
+                        btol(g_chraiCurrentSetup.boundpads[i].look.AsArray[j]);
+                    }
+                    btol(g_chraiCurrentSetup.boundpads[i].bbox.AsArray[j]);
+                }
+                g_chraiCurrentSetup.boundpads[i].plink = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.boundpads[i].plink);
+
+                if (g_chraiCurrentSetup.boundpads[i].plink == 0)
+                {
+                    printf("vol number %d has no stan! (%s)\n", i, g_chraiCurrentSetup.boundpads[i].plink);
+                }
+            }
+        }
+
+        if (g_chraiCurrentSetup.padnames)
+        {
+            for (i = 0; g_chraiCurrentSetup.padnames[i]; i++)
+            {
+                g_chraiCurrentSetup.padnames[i] = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.padnames[i]);
+#ifdef PRINTDEBUG
+                printf("\nNAVPoint %d: %s\n", i, g_chraiCurrentSetup.padnames[i]);
+#endif
+            }
+        }
+
+        if (g_chraiCurrentSetup.boundpadnames)
+        {
+            for (i = 0; g_chraiCurrentSetup.boundpadnames[i]; i++)
+            {
+                g_chraiCurrentSetup.boundpadnames[i] = g_ptrStageSetupFile + ntohl(g_chraiCurrentSetup.boundpadnames[i]);
+#ifdef PRINTDEBUG
+                printf("\nNAVMesh %d: %s\n", i, g_chraiCurrentSetup.boundpadnames[i]);
+#endif
+            }
+        }
+
+#pragma endregion // foreach item in setupheader
+
+        printf("/*\n* This file was automatically generated from %s\n*\n* $Date: %s*/\n\n#include <bondtypes.h>\n#include <bondaicommands.h>\n\n// forward declarations\nwaypoint       pathwaypoints[];\nwaygroup       pathsets[];\ns32            intro[];\ns32            propDefs[];\nPathRecord     patrolpaths[];\nAIListRecord   ailists[];\nPadRecord      pads[];\nBoundPadRecord vols[];\nchar          *NAVPADs[];\nchar          *NAVnames[];\n\nstagesetup %s = {\n    &pathwaypoints,\n    &pathsets,\n    &intro,\n    &propDefs,\n    &patrolpaths,\n    &ailists,\n    &pads,\n    &vols,\n    &NAVPADs,\n    &NAVnames\n};\n\n", fname, ctime(&current_time), fname);
+
+        //retain file-order
+        for (lastAddr = g_ptrStageSetupFile; lastAddr < g_ptrStageSetupFile + fsize; lastAddr += 4)
+        {
+            if (g_chraiCurrentSetup.pathwaypoints && lastAddr == &g_chraiCurrentSetup.pathwaypoints[0])
+            {
+                printf("char propDefs[] = {\n");
+
+                printf("   };\n //nothing to see here yet");
+            }
+            if (g_chraiCurrentSetup.waypointgroups && lastAddr == &g_chraiCurrentSetup.waypointgroups[0])
+            {
+                printf("char propDefs[] = {\n");
+
+                printf("   };\n //nothing to see here yet");
+            }
+            if (g_chraiCurrentSetup.intro && lastAddr == &g_chraiCurrentSetup.intro[0])
+            {
+                printf("char intro[] = {\n");
+                
+                printf("   };\n //nothing to see here yet");
+            }
+            if (g_chraiCurrentSetup.propDefs && lastAddr == &g_chraiCurrentSetup.propDefs[0])
+            {
+                printf("char propDefs[] = {\n");
+
+                printf("   };\n //nothing to see here yet");
+            }
+            if (g_chraiCurrentSetup.patrolpaths && lastAddr == &g_chraiCurrentSetup.patrolpaths[0])
+            {
+                printf("char propDefs[] = {\n");
+
+                printf("   };\n //nothing to see here yet");
+            }
+
+            if (g_chraiCurrentSetup.ailists)
+            {
+                for (i = 0; g_chraiCurrentSetup.ailists[i].ailist; i++)
+                {
+                    if (lastAddr == g_chraiCurrentSetup.ailists[i].ailist)
+                    {
+                        if (isChrAIListID(g_chraiCurrentSetup.ailists[i].ID))
+                        {
+                                printf("u8 chrAI_%hd[] = {\n    #define THIS chrai_%hd\n\n", getChrAIListID(g_chraiCurrentSetup.ailists[i].ID), getChrAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                        }
+                        else
+                        {
+                                printf("u8 bgAi_%hd[] = {\n    #define THIS bgai_%hd\n\n", getBGAIListID(g_chraiCurrentSetup.ailists[i].ID), getBGAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                        }
+                        hasName = 0;
+                        ai(g_chraiCurrentSetup.ailists[i].ailist, g_chraiCurrentSetup.ailists[i].ID);
+
+                        // un-closed loops
+                        if (top != -1) printf("\nUnused Labels Found!"), displayStack();
+                        top = -1;
+
+                        printf("    #undef THIS \n};%s%s\n\n", hasName ? " //Possible Name " : "", hasName ? hasName : "");
+                    }
+                }
+            }
+
+            if (g_chraiCurrentSetup.ailists && lastAddr == &g_chraiCurrentSetup.ailists[0])
+            {
+                printf("AIListRecord ailists[] = {\n");
+                for (i = 0; g_chraiCurrentSetup.ailists[i].ailist; i++)
+                {
+                    if (isChrAIListID(g_chraiCurrentSetup.ailists[i].ID))
+                    {
+                        printf("    { &chrAI_%hd, chrai_%hd }, \n", getChrAIListID(g_chraiCurrentSetup.ailists[i].ID), getChrAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                    }
+                    else if (isBGAIListID(g_chraiCurrentSetup.ailists[i].ID))
+                    {
+                        printf("    { &bgAi_%hd, bgai_%hd },\n", getBGAIListID(g_chraiCurrentSetup.ailists[i].ID), getBGAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                    }
+                    else
+                    {
+                        printf("    /*Invalid ID*/{ &Ai_%hd, %hd }, //index %d\n", g_chraiCurrentSetup.ailists[i].ID, g_chraiCurrentSetup.ailists[i].ID, i);
+                    }
+                }
+                printf("    { NULL, 0 }\n};\n");
+            }
+
+            if (g_chraiCurrentSetup.pads && lastAddr == &g_chraiCurrentSetup.pads[0])
+            {
+                printf("PadRecord pads[] = {\n    //%30s%30s%40s%40s\tstan\n", "pos", "up", "look", "plink");
+                for (i = 0; g_chraiCurrentSetup.pads[i].plink; i++)
+                {
+                    printf("    {{%# 10gf, %# 10gf, %# 10gf},\t{%# 10gf, %# 10gf, %# 10gf},\t{%# 10gf, %# 10gf, %# 10gf}, \t\"%#s\", NULL }, \n", g_chraiCurrentSetup.pads[i].pos.x, g_chraiCurrentSetup.pads[i].pos.y, g_chraiCurrentSetup.pads[i].pos.z, g_chraiCurrentSetup.pads[i].up.x, g_chraiCurrentSetup.pads[i].up.y, g_chraiCurrentSetup.pads[i].up.z, g_chraiCurrentSetup.pads[i].look.x, g_chraiCurrentSetup.pads[i].look.y, g_chraiCurrentSetup.pads[i].look.z, g_chraiCurrentSetup.pads[i].plink);
+                }
+                printf("    {  0 }\n};\n");
+            }
+            if (g_chraiCurrentSetup.boundpads && lastAddr == &g_chraiCurrentSetup.boundpads[0])
+            {
+                printf("BoundPadRecord boundpads[] = {\n    //%30s%30s%40s%40s\tstan\tbbox\n", "pos", "up", "look", "plink");
+                for (i = 0; g_chraiCurrentSetup.boundpads[i].plink; i++)
+                {
+                    printf("    {{%# 10gf, %# 10gf, %# 10gf},\t{%# 10gf, %# 10gf, %# 10gf},\t{%# 10gf, %# 10gf, %# 10gf}, \t\"%#s\", NULL, {%# 10gf, %# 10gf, %# 10gf, %# 10gf, %# 10gf, %# 10gf} }, \n", g_chraiCurrentSetup.boundpads[i].pos.x, g_chraiCurrentSetup.boundpads[i].pos.y, g_chraiCurrentSetup.boundpads[i].pos.z, g_chraiCurrentSetup.boundpads[i].up.x, g_chraiCurrentSetup.boundpads[i].up.y, g_chraiCurrentSetup.boundpads[i].up.z, g_chraiCurrentSetup.boundpads[i].look.x, g_chraiCurrentSetup.boundpads[i].look.y, g_chraiCurrentSetup.boundpads[i].look.z, g_chraiCurrentSetup.boundpads[i].plink, g_chraiCurrentSetup.boundpads[i].bbox.AsArray[0], g_chraiCurrentSetup.boundpads[i].bbox.AsArray[1], g_chraiCurrentSetup.boundpads[i].bbox.AsArray[2], g_chraiCurrentSetup.boundpads[i].bbox.AsArray[3], g_chraiCurrentSetup.boundpads[i].bbox.AsArray[4], g_chraiCurrentSetup.boundpads[i].bbox.AsArray[5]);
+                }
+                printf("    {  0 }\n};\n");
+            }
+            if (g_chraiCurrentSetup.padnames && lastAddr == &g_chraiCurrentSetup.padnames[0])
+            {
+                printf("char propDefs[] = {\n");
+
+                printf("   };\n //nothing to see here yet");
+            }
+            if (g_chraiCurrentSetup.boundpadnames && lastAddr == &g_chraiCurrentSetup.boundpadnames[0])
+            {
+                printf("char propDefs[] = {\n");
+
+                printf("   };\n //nothing to see here yet");
+            }
+
+        }
+
+
+        printf("#pragma region Enums \n //Move the following Enums to the top of file\n");
+
+        if (g_chraiCurrentSetup.ailists)
+        {
+            printf("    enum chrAilist\n    {\n");
+            for (i = 0; g_chraiCurrentSetup.ailists[i].ailist; i++)
+            {
+                if (g_chraiCurrentSetup.ailists[i].ID)
+                {
+                    if (isChrAIListID(g_chraiCurrentSetup.ailists[i].ID))
+                    {
+                        if (getChrAIListID(g_chraiCurrentSetup.ailists[i].ID))
+                        {
+                                printf("        chrai_%hd,\n", getChrAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                        }
+                        else
+                        {
+                                printf("        chrai_%hd = setChrAIListID(%hd),\n", getChrAIListID(g_chraiCurrentSetup.ailists[i].ID), getChrAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                        }
+                    }
+                }
+            }
+            printf("    };\n");
+        }
+        if (g_chraiCurrentSetup.ailists)
+        {
+            printf("    enum bgAilist\n    {\n");
+            for (i = 0; g_chraiCurrentSetup.ailists[i].ailist; i++)
+            {
+                if (g_chraiCurrentSetup.ailists[i].ID)
+                {
+                    if (isBGAIListID(g_chraiCurrentSetup.ailists[i].ID))
+                    {
+                        if (getBGAIListID(g_chraiCurrentSetup.ailists[i].ID))
+                        {
+                                printf("        bgai_%hd,\n", getBGAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                        }
+                        else
+                        {
+                                printf("        bgai_%hd = setBGAIListID(%hd),\n", getBGAIListID(g_chraiCurrentSetup.ailists[i].ID), getBGAIListID(g_chraiCurrentSetup.ailists[i].ID));
+                        }
+                    }
+                }
+            }
+            printf("    };\n");
+        }
+
+        SortEnums(labels);
+        SortEnums(keys);
+        SortEnums(tags);
+        SortEnums(chrs);
+        SortEnums(pads);
+
+        printenum(labels, "lbl");
+        printenum(tags, "tag");
+        printenum(keys, "key");
+        printenum(chrs, "chr");
+        printenum(pads, "pad");
+        i = 0;
+
+        if (SubIDs[i].id)
+        {
+            printf("    #define SETUPSUBROUTINES(ID) ");
+            while (SubIDs[i].id != 0)
+            {
+                if (isBGAIListID(SubIDs[i].id))
+                {
+                    printf("        (ID == bgai_%hd)", getBGAIListID(SubIDs[i].id));
+                }
+                else
+                {
+                    printf("        (ID == chrai_%hd)", getChrAIListID(SubIDs[i].id));
+                }
+                i++;
+                if (SubIDs[i].id) printf(" | \\\n");
+            }
+            printf("\n");
+        }
+        printf("#pragma endregion\n");
+    }
+
+    free(g_ptrStageSetupFile);
 
     return 0;
 }

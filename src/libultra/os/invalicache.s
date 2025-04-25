@@ -44,3 +44,4 @@ glabel osInvalICache
 /* 00DFB8 7000D3B8 25080020 */   addiu $t0, $t0, 0x20
 /* 00DFBC 7000D3BC 03E00008 */  jr    $ra
 /* 00DFC0 7000D3C0 00000000 */   nop   
+.size osInvalICache, . - osInvalICache

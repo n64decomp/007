@@ -25,6 +25,7 @@ glabel _ldexpf
 .L7001A920:
 /* 01B520 7001A920 03E00008 */  jr    $ra
 /* 01B524 7001A924 46206006 */   mov.d $f0, $f12
+.size _ldexpf, . - _ldexpf
 
 glabel _frexpf
 /* 01B528 7001A928 44801800 */  mtc1  $zero, $f3
@@ -37,7 +38,6 @@ glabel _frexpf
 /* 01B544 7001A944 462C103C */   c.lt.d $f2, $f12
 /* 01B548 7001A948 03E00008 */  jr    $ra
 /* 01B54C 7001A94C 46206006 */   mov.d $f0, $f12
-
 /* 01B550 7001A950 462C103C */  c.lt.d $f2, $f12
 .L7001A954:
 /* 01B554 7001A954 44817800 */  mtc1  $at, $f15
@@ -94,6 +94,7 @@ glabel _frexpf
 /* 01B608 7001AA08 46201006 */  mov.d $f0, $f2
 /* 01B60C 7001AA0C 03E00008 */  jr    $ra
 /* 01B610 7001AA10 00000000 */   nop   
+.size _frexpf, . - _frexpf
 
 glabel alEnvmixerParam
 /* 01B614 7001AA14 27BDFFE8 */  addiu $sp, $sp, -0x18
@@ -160,6 +161,7 @@ glabel alEnvmixerParam
 /* 01B6E8 7001AAE8 00001025 */  move  $v0, $zero
 /* 01B6EC 7001AAEC 03E00008 */  jr    $ra
 /* 01B6F0 7001AAF0 00000000 */   nop   
+.size alEnvmixerParam, . - alEnvmixerParam
 
 glabel ultra_7001AAF4
 /* 01B6F4 7001AAF4 5480000C */  bnezl $a0, .L7001AB28
@@ -172,11 +174,9 @@ glabel ultra_7001AAF4
 /* 01B710 7001AB10 A4AE0000 */  sh    $t6, ($a1)
 /* 01B714 7001AB14 03E00008 */  jr    $ra
 /* 01B718 7001AB18 24027FFF */   li    $v0, 32767
-
 .L7001AB1C:
 /* 01B71C 7001AB1C 03E00008 */  jr    $ra
 /* 01B720 7001AB20 A4A00000 */   sh    $zero, ($a1)
-
 /* 01B724 7001AB24 44843000 */  mtc1  $a0, $f6
 .L7001AB28:
 /* 01B728 7001AB28 460E6101 */  sub.s $f4, $f12, $f14
@@ -214,7 +214,8 @@ glabel ultra_7001AAF4
 /* 01B7A4 7001ABA4 00000000 */  nop   
 /* 01B7A8 7001ABA8 A4AF0000 */  sh    $t7, ($a1)
 /* 01B7AC 7001ABAC 03E00008 */  jr    $ra
-/* 01B7B0 7001ABB0 00000000 */   nop   
+/* 01B7B0 7001ABB0 00000000 */   nop  
+.size ultra_7001AAF4, . - ultra_7001AAF4 
 
 glabel ultra_7001ABB4
 /* 01B7B4 7001ABB4 27BDFFE0 */  addiu $sp, $sp, -0x20
@@ -390,6 +391,7 @@ glabel ultra_7001ABB4
 /* 01BA48 7001AE48 27BD0020 */  addiu $sp, $sp, 0x20
 /* 01BA4C 7001AE4C 03E00008 */  jr    $ra
 /* 01BA50 7001AE50 00000000 */   nop   
+.size ultra_7001ABB4, . - ultra_7001ABB4
 
 /* 01BA54 7001AE54 03E00008 */  jr    $ra
 /* 01BA58 7001AE58 00000000 */   nop   
@@ -839,7 +841,7 @@ glabel alEnvmixerPull
 /* 01C0CC 7001B4CC 8FBE0050 */  lw    $fp, 0x50($sp)
 /* 01C0D0 7001B4D0 03E00008 */  jr    $ra
 /* 01C0D4 7001B4D4 27BD00D8 */   addiu $sp, $sp, 0xd8
-
+.size alEnvmixerPull, . - alEnvmixerPull
 /* 01C0D8 7001B4D8 00000000 */  nop   
 /* 01C0DC 7001B4DC 00000000 */  nop
 
@@ -861,6 +863,7 @@ glabel eqpower
 .half  9196, 8806, 8415, 8023, 7630, 7235, 6839, 6442
 .half  6044, 5646, 5246, 4845, 4444, 4042, 3640, 3237
 .half  2833, 2429, 2025, 1620, 1216,  810,  405,    0
+.size eqpower, . - eqpower
 
 .section .rodata
 glabel aAssertionFaultSSLineD

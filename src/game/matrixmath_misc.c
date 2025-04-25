@@ -68,9 +68,11 @@ void sub_GAME_7F05AEFC(coord3d *arg0, coord3d *arg1, coord3d *arg2, coord3d *arg
  * - stack resize: fail
  * - identical instructions: fail
  * - identical registers: fail
+ * 
+ * https://decomp.me/scratch/EHA1A 74.55 %
  */
 #ifdef NONMATCHING
-void sub_GAME_7F05B024(f32 *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg4, f32 arg5, f32 *result)
+void sub_GAME_7F05B024(coord3d *arg0, coord3d *arg1, coord3d *arg2, coord3d *arg3, f32 arg4, f32 arg5, coord3d *result)
 {
     f32 square;
     f32 cube;
@@ -86,9 +88,9 @@ void sub_GAME_7F05B024(f32 *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg4, f32
     temp_f18 = ((2.0f - arg5) * cube) + (square * (arg5 - 3.0f)) + 1.0f;
     temp_f8 = ((arg5 - 2.0f) * cube) + (square * (3.0f - (2.0f * arg5))) + (arg4 * arg5);
 
-    result[0] = (arg3[0] * temp_f6) + ((temp_f16 * arg0[0]) + (temp_f18 * arg1[0]) + (temp_f8 * arg2[0]));
-    result[1] = (arg3[1] * temp_f6) + ((temp_f16 * arg0[1]) + (temp_f18 * arg1[1]) + (temp_f8 * arg2[1]));
-    result[2] = (arg3[2] * temp_f6) + ((temp_f16 * arg0[2]) + (temp_f18 * arg1[2]) + (temp_f8 * arg2[2]));
+    result->f[0] = temp_f16 * arg0->f[0] + temp_f18 * arg1->f[0] + temp_f8 * arg2->f[0] + temp_f6 * arg3->f[0];
+    result->f[1] = temp_f16 * arg0->f[1] + temp_f18 * arg1->f[1] + temp_f8 * arg2->f[1] + temp_f6 * arg3->f[1];
+    result->f[2] = temp_f16 * arg0->f[2] + temp_f18 * arg1->f[2] + temp_f8 * arg2->f[2] + temp_f6 * arg3->f[2];
 }
 #else
 GLOBAL_ASM(

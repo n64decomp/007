@@ -11,7 +11,26 @@
 
 
 //data
-struct unk_joint_list D_8002A790 = {NULL, 1, 3, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}, 0};
+ModelRenderData D_8002A790 = {
+    NULL,
+    TRUE,
+    0x00000003,
+    NULL,
+
+    NULL,
+    0,
+    0,
+    0,
+
+    0,
+    0,
+    0,
+    0,
+
+    0,
+    {0,0,0,0},
+    {0,0,0,0},
+    CULLMODE_BOTH};
 
 // forward declarations
 
@@ -28,7 +47,7 @@ void sub_GAME_7F0062C0(void *anim, s32 arg1, s32 arg2, s32 *arg3);
  * @param arg1:
  * @param arg2:
  * @param arg3: unknown type.
- * 
+ *
  * Address 0x7F0062C0.
 */
 void sub_GAME_7F0062C0(void *anim, s32 arg1, s32 arg2, s32 *arg3)
@@ -66,7 +85,7 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
 {
     s32 i;
     s32 spD0[3];
-    struct unk_joint_list sp90;
+    ModelRenderData sp90;
     Mtxf sp50;
 
 #ifdef LEFTOVERDEBUG
@@ -110,9 +129,9 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
     g_CurrentPlayer->headupsum.f[0] = 0.0f;
     g_CurrentPlayer->headupsum.f[1] = HEADSUM;
     g_CurrentPlayer->headupsum.f[2] = 0.0f;
-    g_CurrentPlayer->resetheadpos = 1;
-    g_CurrentPlayer->resetheadrot = 1;
-    g_CurrentPlayer->resetheadtick = 1;
+    g_CurrentPlayer->resetheadpos = TRUE;
+    g_CurrentPlayer->resetheadrot = TRUE;
+    g_CurrentPlayer->resetheadtick = TRUE;
     g_CurrentPlayer->headbodyoffset.f[0] = 0.0f;
     g_CurrentPlayer->headbodyoffset.f[1] = 0.0f;
     g_CurrentPlayer->headbodyoffset.f[2] = 0.0f;
@@ -144,7 +163,7 @@ void sets_a_bunch_of_BONDdata_values_to_default(void)
             (s32)g_BondMoveAnimationSetup[i].endframe,
             &spD0);
 
-        g_BondMoveAnimationSetup[i].unk0C = (f32) (((f32) spD0[2] * IDO_POINT_ONE) / (g_BondMoveAnimationSetup[i].endframe - g_BondMoveAnimationSetup[i].loopframe));
+        g_BondMoveAnimationSetup[i].speedMultiplier = (f32) (((f32) spD0[2] * IDO_POINT_ONE) / (g_BondMoveAnimationSetup[i].endframe - g_BondMoveAnimationSetup[i].loopframe));
     }
 
     sp90 = D_8002A790;

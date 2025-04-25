@@ -125,7 +125,7 @@
       build/OUTCODE/src/game/indy_commands.o (.rodata);
       build/OUTCODE/src/game/game_debug.o (.rodata);
       build/OUTCODE/src/game/compiletime.o (.rodata);
-      build/OUTCODE/src/game/unk_0D1AC0.o (.rodata);
+      build/OUTCODE/src/game/speedgraphrenderer.o (.rodata);
       build/OUTCODE/src/game/viewport.o (.rodata);
       build/OUTCODE/src/game/music_0D2720.o (.rodata);
 #ifndef VERSION_EU

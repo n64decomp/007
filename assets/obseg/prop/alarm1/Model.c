@@ -1,17 +1,31 @@
 #include <bondtypes.h>
+#include "assets/image_externs.h"
+
 #define TEXTURECOUNT 2
+
 #define VERTEXGROUPCOUNT0 12
 #define COLLISIONVERTEXCOUNT0 12
+
+extern ModelRoData_GroupRecord GroupRecord_0x060;
+extern ModelRoData_BoundingBoxRecord BoundingBoxRecord_0x07c;
+extern Vertex Vertex_ARRAY_0x098[VERTEXGROUPCOUNT0];
+extern Vertex Collision_Vertex_ARRAY_0x158[COLLISIONVERTEXCOUNT0];
+extern s16 POINT_USAGE_ARRAY_0x218[VERTEXGROUPCOUNT0];
+extern ModelRoData_DisplayList_CollisionRecord DLCollisionRecord_0x230[];
+extern Gfx GFX_ARRAY_PRIMARY_0x250[];
+extern Gfx GFX_ARRAY_SECONDARY_0x2B0[];
+
 //base address is 0x05000000
 ModelFileTextures proptextures[TEXTURECOUNT] = 
 {
-    {_image29_ID, 32, 32, 0x06, 0x0, 0x02, 0x0, 0x0},
-    {_image31_ID, 32, 32, 0x06, 0x0, 0x02, 0x0, 0x0}
+    {IMAGE_BUZZERSWITCH, 32, 32, 0x06, 0x0, 0x02, 0x0, 0x0},
+    {IMAGE_BELL, 32, 32, 0x06, 0x0, 0x02, 0x0, 0x0}
 };
-                        //  {opcode,                                            data,          parent, next, prev,           child}
-ModelNode ModelNode_0x018 = {        MODELNODE_OPCODE_GROUP,       GroupRecord_0x060,             0x0,  0x0,  0x0, ModelNode_0x030};
-ModelNode ModelNode_0x030 = {         MODELNODE_OPCODE_BBOX, BoundingBoxRecord_0x07c, ModelNode_0x018,  0x0,  0x0, ModelNode_0x048};
-ModelNode ModelNode_0x048 = {  MODELNODE_OPCODE_DLCOLLISION, DLCollisionRecord_0x230, ModelNode_0x030,  0x0,  0x0,             0x0};
+
+                        //  {                        opcode,                     data,           parent,  next,  prev,            child}
+ModelNode ModelNode_0x018 = {        MODELNODE_OPCODE_GROUP,       &GroupRecord_0x060,             NULL,  NULL,  NULL, &ModelNode_0x030};
+ModelNode ModelNode_0x030 = {         MODELNODE_OPCODE_BBOX, &BoundingBoxRecord_0x07c, &ModelNode_0x018,  NULL,  NULL, &ModelNode_0x048};
+ModelNode ModelNode_0x048 = {  MODELNODE_OPCODE_DLCOLLISION, &DLCollisionRecord_0x230, &ModelNode_0x030,  NULL,  NULL,             NULL};
 
 ModelRoData_GroupRecord GroupRecord_0x060 = 
 {
@@ -20,7 +34,7 @@ ModelRoData_GroupRecord GroupRecord_0x060 =
     0x0, //MatrixID0
     0xFFFF, //MatrixID1
     0xFFFF, //MatrixID2
-    0x0, //ChildGroup
+    NULL, //ChildGroup
     304.6402 //BoundingVolumeRadius
 };
 
@@ -71,31 +85,32 @@ s16 POINT_USAGE_ARRAY_0x218[VERTEXGROUPCOUNT0] =
 
 ModelRoData_DisplayList_CollisionRecord DLCollisionRecord_0x230 = 
 {
-    GFX_ARRAY_PRIMARY_0x250, 
-    GFX_ARRAY_SECONDARY_0x2B0, 
-    Vertex_ARRAY_0x098, VERTEXGROUPCOUNT0, 
-    COLLISIONVERTEXCOUNT0, Collision_Vertex_ARRAY_0x158, 
-    POINT_USAGE_ARRAY_0x218, 
-    0x4, 0x0, 0x0, 0x0
+    GFX_ARRAY_PRIMARY_0x250, //primary
+    GFX_ARRAY_SECONDARY_0x2B0, //secondary
+    Vertex_ARRAY_0x098, VERTEXGROUPCOUNT0, //vertices,vcount 
+    COLLISIONVERTEXCOUNT0, Collision_Vertex_ARRAY_0x158,  //ncolvtx,collision vertices
+    POINT_USAGE_ARRAY_0x218, //point usage
+    0x4, 0x0, //type, index
+    0x0 //baseaddr
 };
 
-Gfx GFX_ARRAY_PRIMARY_0x250 = 
+Gfx GFX_ARRAY_PRIMARY_0x250[] = 
 {
     gsDPSetTextureLOD(G_TL_LOD),
-    gsSPTexture(0xFFFF, 0xFFFF, 6, 0, true),
+    gsSPTexture(0xFFFF, 0xFFFF, 6, 0, TRUE),
     gsDPLoadSync(),
     gsDPSetTextureLOD(G_TL_LOD),
-    gsSPTexture(0xFFFF, 0xFFFF, 6, 0, true),
+    gsSPTexture(0xFFFF, 0xFFFF, 6, 0, TRUE),
     gsDPSetTextureDetail(G_TD_CLAMP),
     gsDPSetTextureFilter(G_TF_BILERP),
     gsSPEndDisplayList(),
 };
 
-Gfx GFX_ARRAY_SECONDARY_0x2B0 =
+Gfx GFX_ARRAY_SECONDARY_0x2B0[] =
 {
     gsDPLoadSync(),
     gsDPSetTextureLOD(G_TL_LOD),
-    gsSPTexture(0xFFFF, 0xFFFF, 6, 0, true),
+    gsSPTexture(0xFFFF, 0xFFFF, 6, 0, TRUE),
     gsDPSetTextureDetail(G_TD_CLAMP),
     gsDPSetTextureFilter(G_TF_BILERP),
     gsSPEndDisplayList(),

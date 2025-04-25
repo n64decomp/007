@@ -113,17 +113,17 @@ struct game_options {
 
 extern struct game_options game_options_entries[];
 
-void reset_controller_options_index();
+void reset_controller_options_index(void);
 
-void reset_game_options_index();
+void reset_game_options_index(void);
 
-void zero_D_800409A4();
+void zero_D_800409A4(void);
 
 f32 watchWrapAroundPI(f32 arg0);
 
 f32 sub_GAME_7F0A95C4(f32 param_1, f32 param_2, f32 param_3);
 
-SCREEN_RATIO_OPTION get_screen_ratio();
+SCREEN_RATIO_OPTION get_screen_ratio(void);
 
 void set_screen_ratio(SCREEN_RATIO_OPTION ratio_option);
 
@@ -131,7 +131,7 @@ s32 cur_player_get_autoaim(void);
 u32 cur_player_get_lookahead(void);
 void cur_player_set_autoaim(u32 param_1);
 int cur_player_get_control_type(void);
-u32 cur_player_get_sight_onscreen_control();
+u32 cur_player_get_sight_onscreen_control(void);
 u32 cur_player_get_ammo_onscreen_setting(void);
 u32 cur_player_get_aim_control(void);
 u32 cur_player_get_screen_setting(void);

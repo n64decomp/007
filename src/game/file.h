@@ -29,23 +29,8 @@ typedef struct smallSave
 } smallSave;
 
 extern save_data saves[6];
-extern save_data D_8002C520;
-extern save_data D_8002C580;
-extern save_data D_8002C5E0;
-extern smallSave blankSmallSave;
-extern save_data D_8002C660;
-extern save_data D_8002C6C0;
-extern save_data D_8002C720;
-extern save_data D_8002C780;
-extern save_data D_8002C7E0;
-extern save_data D_8002C840;
-extern save_data blank_eeprom;
 
 extern s32 save_selected_bond[];
-
-void set_selected_folder_num(u32 foldernum);
-void set_selected_difficulty(DIFFICULTY difficulty);
-void set_solo_and_ptr_briefing(LEVELID stage);
 
 f32 get_007_reaction_speed(void);
 f32 get_007_health_mod(void);
@@ -54,9 +39,9 @@ f32 get_007_accuracy_mod(void);
 void end_of_mission_briefing(void);
 void fileLoadSaveSettingsForSelectedFolder(int stage);
 void deleteCurrentSelectedFolder(void);
-void copyCurrentEEPROMtoStack(void);
-s32 getSelectedFolderBond(void);
-void set_selected_folder_num(u32 foldernum);
+void fileUpdateBondInCurrentFolder(void);
+s32 fileGetBondForCurrentFolder(void);
+void fileSetCurrentFolder(u32 foldernum);
 void set_selected_difficulty(DIFFICULTY difficulty);
 void set_solo_and_ptr_briefing(LEVELID stage);
 void sub_GAME_7F01D61C(struct save_data *savefile);

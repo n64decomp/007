@@ -10,11 +10,11 @@
 
 .section .text, "ax"
 glabel aspMainTextStart
-.incbin "/bin/aspboot.text.bin"
+.incbin "bin/aspboot.text.bin"
 glabel aspMainTextEnd
 
 .section .data
 glabel aspMainDataStart
-.incbin "/bin/aspboot.data.bin"
+.incbin "bin/aspboot.data.bin"
 glabel aspMainDataEnd
 

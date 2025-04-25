@@ -2,6 +2,7 @@
 #define _IMAGE_H_
 #include <ultra64.h>
 #include <bondconstants.h>
+#include <bondtypes.h>
 
 #define TEXFORMAT_RGBA32     0x00 // 32-bit RGBA (8/8/8/8)
 #define TEXFORMAT_RGBA16     0x01 // 16-bit RGBA (5/5/5/1)
@@ -92,5 +93,6 @@ s32 texInflateZlib(u8 *src, u8 *dst, s32 arg2, s32 forcenumimages, struct texpoo
 void texLoad(s32 *updateword, struct texpool *pool);
 void texInitPool(struct texpool *arg0, u8 *arg1, s32 arg2);
 void texLoadFromTextureNum(s32 texturenum, struct texpool *arg1);
+void texLoadFromModelFileHeader(ModelFileHeader* arg0, struct texpool* arg1);
 
 #endif

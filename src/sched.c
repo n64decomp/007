@@ -315,7 +315,7 @@ void __scHandleRetrace(OSSched *sc) {
     s32         state;
     OSScTask    *sp = 0;
     OSScTask    *dp = 0;
-    speedGraphVideoRelated_1();
+    speedgraphMarkerUpdate();
     sc->frameCount++;
     viVsyncRelated();
     joyPoll();
@@ -343,11 +343,8 @@ void __scHandleRSP(OSSched *sc) {
     s32 state;
     t = sc->curRSPTask;
     sc->curRSPTask = 0;
-#if defined(VERSION_EU)
-    speedGraphDisplay(0x10001);
-#else
-    profileSetMarker(0x10001);
-#endif
+
+    speedgraphMarkerHandler(0x10001);
     if ((t->state & OS_SC_YIELD) && osSpTaskYielded(&t->list)) {
         t->state |= OS_SC_YIELDED;
         if ((t->flags & OS_SC_TYPE_MASK) == OS_SC_XBUS) {
@@ -377,11 +374,7 @@ void __scHandleRDP(OSSched *sc)
     OSScTask *t, *sp = NULL, *dp = NULL; 
     s32 state;
     if (sc->curRDPTask != NULL) {
-#if defined(VERSION_EU)
-    speedGraphDisplay(0x10002);
-#else
-    profileSetMarker(0x10002);
-#endif
+        speedgraphMarkerHandler(0x10002);
         osDpGetCounters(g_DisplayPerformanceCounters);
         t = sc->curRDPTask;
         sc->curRDPTask = NULL;
@@ -481,21 +474,12 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp)
         
         if (sp->list.t.type == 2)
         {
-#if defined(VERSION_EU)
-            speedGraphDisplay(0x30001);
-#else
-            profileSetMarker(0x30001);
-#endif
+            speedgraphMarkerHandler(0x30001);
         }
         else
         {
-#if defined(VERSION_EU)
-            speedGraphDisplay(0x40001);
-            speedGraphDisplay(0x20002);
-#else
-            profileSetMarker(0x40001);
-            profileSetMarker(0x20002);
-#endif
+            speedgraphMarkerHandler(0x40001);
+            speedgraphMarkerHandler(0x20002);
         }
         sp->state &= ~(OS_SC_YIELD | OS_SC_YIELDED); 
         osSpTaskLoad(&sp->list);

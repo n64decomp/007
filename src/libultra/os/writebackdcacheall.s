@@ -21,3 +21,4 @@ glabel osWritebackDCacheAll
 /* 00DF3C 7000D33C 25080010 */   addiu $t0, $t0, 0x10
 /* 00DF40 7000D340 03E00008 */  jr    $ra
 /* 00DF44 7000D344 00000000 */   nop   
+.size osWritebackDCacheAll, . - osWritebackDCacheAll

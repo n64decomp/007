@@ -39,6 +39,9 @@ void nullsub_32(void) {
 #endif
 
 
+/*
+* Address: 0x7f08fe08
+*/
 void debmenuSetScaleIndex(s32 param_1) {
 #if defined(LEFTOVERDEBUG)
     g_DMenuScaleIndex = param_1;
@@ -46,7 +49,9 @@ void debmenuSetScaleIndex(s32 param_1) {
 }
 
 
-
+/*
+* Address: 0x7f08fe14
+*/
 void debmenuSetMenu(char **labels, s32 (*positions)[2], s32 *offsets)
 {
     #if defined(LEFTOVERDEBUG)
@@ -63,7 +68,9 @@ void debmenuSetMenu(char **labels, s32 (*positions)[2], s32 *offsets)
     #endif
 }
 
-
+/*
+* Address: 0x7f08fe74
+*/
 Gfx *debugmenuRender(Gfx *gdl)
 {
     #if defined (LEFTOVERDEBUG)
@@ -86,7 +93,9 @@ Gfx *debugmenuRender(Gfx *gdl)
 	return gdl;
 }
 
-
+/*
+* Address: 0x7f09000c
+*/
 void sub_GAME_7F09000C(int a0,int a1,int a2)
 {
     #if defined (LEFTOVERDEBUG)
@@ -110,7 +119,9 @@ void sub_GAME_7F09000C(int a0,int a1,int a2)
 
 
 
-
+/*
+* Address: 0x7f0901b0
+*/
 s32 get_highlighted_debug_option(void) {
 #if defined(LEFTOVERDEBUG)
     return g_DMenuSelectedOption;
@@ -119,14 +130,18 @@ s32 get_highlighted_debug_option(void) {
 #endif
 }
 
-
+/*
+* Address: 0x7f0901bc
+*/
 void set_highlighted_debug_option(s32 value) {
 #if defined(LEFTOVERDEBUG)
     g_DMenuSelectedOption = value;
 #endif
 }
 
-
+/*
+* Address: 0x7f0901c8
+*/
 void gotoAboveDebugOption(void)
 {
     #if defined(LEFTOVERDEBUG)
@@ -152,7 +167,9 @@ void gotoAboveDebugOption(void)
     #endif
 }
 
-
+/*
+* Address: 0x7f090248
+*/
 void gotoBelowDebugOption(void)
 {
     #if defined(LEFTOVERDEBUG)
@@ -181,6 +198,9 @@ void gotoBelowDebugOption(void)
 
 
 
+/*
+* Address: 0x7f0902c0
+*/
 #if defined(LEFTOVERDEBUG)
 void gotoRightDebugOption(void)
 {
@@ -233,7 +253,9 @@ void gotoRightDebugOption(void)
 #endif
 
 
-
+/*
+* Address: 0x7f09039c
+*/
 #if defined(LEFTOVERDEBUG)
 void gotoLeftDebugOption(void)
 {

@@ -13,7 +13,7 @@ void init_guards(void) {
     D_8002C90C = 0;
     D_8002C910 = 0;
     D_8002CC58 = 0;
-    show_patrols_flag = 0;
+    show_patrols_flag = FALSE;
     player1_guardID = 0x1388;
     g_ChrSlots = 0;
     g_NumChrSlots = 0;
@@ -27,9 +27,9 @@ void alloc_init_GUARDdata_entries(s32 count)
 {
     s32 i;
     
-    g_NumChrSlots = count + 0xA;
+    g_NumChrSlots = count + 10; //special guards?
 
-    g_ChrSlots = mempAllocBytesInBank(align_addr_zero(g_NumChrSlots*sizeof(ChrRecord)), 4);
+    g_ChrSlots = mempAllocBytesInBank(align_addr_zero(g_NumChrSlots * sizeof(ChrRecord)), MEMPOOL_STAGE);
     for(i = 0; g_NumChrSlots > i; i++)
     {
         g_ChrSlots[i].model = 0;

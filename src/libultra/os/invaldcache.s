@@ -59,3 +59,4 @@ glabel osInvalDCache
 /* 0117C0 70010BC0 25080010 */   addiu $t0, $t0, 0x10
 /* 0117C4 70010BC4 03E00008 */  jr    $ra
 /* 0117C8 70010BC8 00000000 */   nop   
+.size osInvalDCache, . - osInvalDCache

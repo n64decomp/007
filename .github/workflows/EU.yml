@@ -21,6 +21,13 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Bypass Cloudflare for GitHub Action
+        uses: xiaotianxt/bypass-cloudflare-for-github-action@v1.1.1
+        with:
+          cf_zone_id: ${{ secrets.CF_ZONE_ID }}
+          cf_api_token: ${{ secrets.CF_API_TOKEN }}
       - uses: actions/checkout@v2
 
       - name: Install Depedencies
@@ -48,13 +55,13 @@ jobs:
         run: wget -O baserom.e.z64 $FILE_EU
 
       - name: Extract US Assets
-        run: ./extract_baserom.u.sh
+        run: ./scripts/extract_baserom.u.sh
 
       - name: Extract EU Assets
-        run: ./extract_diff.e.sh
+        run: ./scripts/extract_diff.e.sh
 
       - name: Make EU 
-        run: make -j IDO_RECOMP=YES VERSION=EU VERBOSE=1
+        run: make all -j IDO_RECOMP=YES VERSION=EU VERBOSE=1
           
       - name: Make report
         run: make -C tools/report
@@ -64,7 +71,7 @@ jobs:
      
       - name: Upload output files
 
-        uses: dmnemec/copy_file_to_another_repo_action@v1.0.4
+        uses: AXDOOMER/copy_file_to_another_repo_action@e54ae5087212906dac7ef96dee19e31190913257
 
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
@@ -75,7 +82,6 @@ jobs:
           destination_repo: 'kholdfuzion/goldeneyestatus'
           user_email: $API_TOKEN_EMAIL
           user_name: $API_TOKEN_USER
-          source_file: |
-            tools/report/EU.htm
+          source_file: tools/report/EU.htm
       
 #need way of telling report that EU passed/failed

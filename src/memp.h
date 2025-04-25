@@ -15,27 +15,28 @@ typedef struct MemoryPool {
     s32 prevpos;
 } MemoryPool;
 
-typedef struct s_mempMVALS {
-    u32 var1;
+typedef struct s_mempMVALS { //mempSizes
+    u32 mfIndex;
     u32 mf;
-    u32 var3;
+    u32 mlIndex;
     u32 ml;
-    u32 stage;
+    u32 meIndex;
     u32 me;
-    u32 permanent;
-    u32 var8;
+    u32 EndIndex;
+    u32 EndPool;
 } s_mempMVALS;
 
+// Pool Names
 enum MEMPOOL
 {
-    MEMPOOL_0,
+    MEMPOOL_TOTAL, // the mempool starts at _bssSegmentEnd and ends at _stacksSegmentStart
     MEMPOOL_MF,
     MEMPOOL_2,
     MEMPOOL_ML,
     MEMPOOL_STAGE,
     MEMPOOL_ME,
     MEMPOOL_PERMANENT,
-    MEMPOOL_7
+    MEMPOOL_COUNT
 };
 
 void mempInit(void);

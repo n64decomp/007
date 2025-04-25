@@ -4,7 +4,7 @@
 
 /**
  * @file ramrom.c
- * This file contains code to handle reading and writing rom addresses. 
+ * This file contains code to handle reading and writing rom addresses.
  */
 
 
@@ -26,22 +26,22 @@ void romCreateMesgQueue(void)
 /**
  * 6790	70005B90
  * doRomCopy
- * invalidate cache and do pi dma 
+ * invalidate cache and do pi dma
  */
 void doRomCopy(void *target, void *source, u32 size)
 {
     osInvalDCache(target, size);
-    osPiStartDma(&memoryMesgMB, 0, 0, source, target, size, &memoryMesgQueue);
+    osPiStartDma(&memoryMesgMB, OS_MESG_PRI_NORMAL, OS_READ, source, target, size, &memoryMesgQueue);
 }
 
 /**
  * 67F0	70005BF0
- * romReceiveMesg 
- * receives a message queue 
+ * romReceiveMesg
+ * receives a message queue
  */
 void romReceiveMesg(void)
 {
-    osRecvMesg(&memoryMesgQueue, 0, 1);
+    osRecvMesg(&memoryMesgQueue, NULL, OS_MESG_BLOCK);
 }
 
 /**
@@ -80,12 +80,12 @@ s32 romCopyAligned(void *target, void *source, s32 length)
 /**
  * 68A8	70005CA8
  * doRomWrite
- * actually writes to rom (buffer on Indy) 
+ * actually writes to rom (buffer on Indy)
  */
 void doRomWrite(void *source, void *target, u32 size)
 {
     osWritebackDCache(source, size);
-    osPiStartDma(&memoryMesgMB, 0, 1, target, source, size, &memoryMesgQueue);
+    osPiStartDma(&memoryMesgMB, OS_MESG_PRI_NORMAL, OS_WRITE, target, source, size, &memoryMesgQueue);
 }
 
 /**

@@ -16,10 +16,18 @@ struct levelentry
 };
 
 typedef struct s_room_info {
-    u8 bitflags0;
-    u8 bitflags1;
+    // is room being rendered? boolean
+    u8 room_rendered;
+
+    // is the room a neighbor to a room being rendered? boolean
+    u8 room_neighbor_to_rendered;
+
     u8 model_bin_loaded;
-    u8 bitflags2;
+
+    // number of portals in between the player's room and this room.
+    // is 0 if the room is not visible or if the player is standing in this room.
+    u8 portals_to_room_count;
+
     Vtx * ptr_point_index;
     void * ptr_expanded_mapping_info;
     void * ptr_secondary_expanded_mapping_info;
@@ -102,11 +110,13 @@ typedef struct unk_portalstruct
 } unk_portalstruct;
 
 extern struct unk_portalstruct table_for_portals[200];
-extern s32 MaxNumRooms;
+extern s32 g_MaxNumRooms;
 extern f32 room_data_float2;
 
 extern bg_room_data * ptr_bgdata_room_fileposition_list;
-extern s_room_info array_room_info[];
+extern s_room_info g_BgRoomInfo[];
+extern Gfx *ptrDynamic_CC_RM_LUT[];
+extern Gfx DL_LUT_PRIMARY_ADDFOG[];
 
 
 void bgInit(void);
@@ -129,19 +139,19 @@ void bgClearDataPortalsControlBytes1Low2Bits(s32 index);
 void bgSetDataPortalsControlBytes1Bit2(s32 index);
 s32 sub_GAME_7F0B9A7C(s32 arg0);
 s32 sub_GAME_7F0B9A2C(s32 arg0);
-void sub_GAME_7F0B4884(void);
+void bgRoomVisibilityRelated(void);
 Gfx* bgLevelRender(Gfx *arg0);
 Gfx *bgScissorCurrentPlayerView(Gfx *arg0, s32 left, s32 top, s32 width, s32 height);
 Gfx* bgScissorCurrentPlayerViewDefault(Gfx* arg0);
 Gfx* bgScissorCurrentPlayerViewF(Gfx* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
 f32 get_room_data_float1(void);
-u8 getROOMID_Bitflags(int roomID);
+u8 getROOMID_isRendered(int roomID);
 s32 bgGet2dBboxByRoomId(s32 room_id, struct bbox2d *result);
 f32 bgGetLevelVisibilityScale(void);
 void sub_GAME_7F0B5CC0(struct bbox2d *a, struct bbox2d *b);
 f32 get_room_data_float2(void);
 s32 sub_GAME_7F0B9CC8(s32 arg0, s32 arg1, struct coord3d *arg2, struct coord3d *arg3);
 void sub_GAME_7F0B96CC(s32 arg0, struct PortalMetric *arg1);
-void bgLoadFromDynamicCCRMLUT(s32 arg0, s32 arg1, s32 arg2);
+void bgLoadFromDynamicCCRMLUT(Gfx *arg0, Gfx *arg1, enum CCRMLUT arg2);
 
 #endif

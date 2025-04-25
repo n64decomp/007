@@ -65,4 +65,4 @@ glabel memset
 /* 0188D8 70017CD8 00000000 */   nop   
 
 /* 0188DC 70017CDC 00000000 */  nop   
-
+.size bzero, . - bzero

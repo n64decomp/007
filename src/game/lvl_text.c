@@ -11,7 +11,7 @@ s32 g_LangBanks[45];
 
 //CODE.bss:8008C6F4
 struct jpncharpixels* g_JpnCharCachePixels;
-//CODE.bss:8008C6F8
+//CODE.bss:8008C6F8 canonically  jloaddata
 struct  jpncacheitem *g_JpnCacheCacheItems;
 
 
@@ -125,6 +125,7 @@ void *LnameX_lookuptable[45][2] = {
     {"LmiscP", "LmiscJ"}};           /* Cheat options */
 #endif
 
+// cannonically gettextloadnum
 LEVELID langGetLangBankIndexFromStagenum(LEVELID level)
 {
     LEVELID return_id;
@@ -214,6 +215,9 @@ LEVELID langGetLangBankIndexFromStagenum(LEVELID level)
             break;
         default:
         {
+            #ifdef DEBUG
+                osSyncPrintf("gettextloadnum: level %d unknown. (HANG now.)\n",level);
+            #endif
             /* infinite loop on invalid text bank */
             while(1) {};
         }
@@ -248,15 +252,22 @@ void langInit(void) {
 }
 
 
-
-void langTick(void) {
+//assert here reveals this file is language.c
+void langTick(void)
+{
     s32 i;
 
-    if (j_text_trigger) {
-		for (i = 0; i < 0x7c; i++) {
-		if (g_JpnCacheCacheItems[i].ttl) {
-			g_JpnCacheCacheItems[i].ttl--;
-		}
+    if (j_text_trigger)
+    {
+        for (i = 0; i < 0x7c; i++)
+        {
+		    if (g_JpnCacheCacheItems[i].ttl)
+            {
+			    g_JpnCacheCacheItems[i].ttl--;
+		    }
+            #ifdef DEBUG
+            assert(jloaddata[i].timeleft<=3);
+            #endif
 		}
     }
 }
@@ -356,7 +367,11 @@ void langClearBank(s32 textBank) {
     g_LangBanks[textBank] = 0;
 }
 
-
+/**
+ * Get pointer of a string based on language of game (E/J)
+ * @param slotID: UniqueID of string (a combination of Bank ID and string index)
+ * @return char* string.
+ */
 u8 * langGet(s32 slotID)
 {
     u32 * textbank_ptr = g_LangBanks[slotID >> 10]; /* get the text file bank ID index the text ptr table */
@@ -364,5 +379,8 @@ u8 * langGet(s32 slotID)
 
     u32 output_slot = textslot_offset; /* add the text slot offset to the base ptr to get the ptr to text file's slot */
     output_slot += (u32)textbank_ptr;
+    #ifdef DEBUG
+    return (textslot_offset != 0) ? (u8 *)output_slot : "Sorry, string not loaded.";
+    #endif
     return (textslot_offset != 0) ? (u8*)output_slot : NULL;
 }

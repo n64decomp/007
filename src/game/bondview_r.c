@@ -20,7 +20,7 @@
 /**
  * Address 0x8002A780.
 */
-struct coord3d D_8002A780 = { 0 };
+struct coord3d default_start_position = { 0 };
 
 u32 weaponLoadProjectileModels(ITEM_IDS modelid)
 {
@@ -107,28 +107,28 @@ void bondviewLoadSetupIntroSection(void)
 
     // done with declarations
 
-    start_pos = D_8002A780;
+    start_pos = default_start_position;
 
     intro_record = (struct SetupIntroEmpty *)g_CurrentSetup.intro;
     g_isBondKIA = 0;
     g_bondviewForceDisarm = 0;
     resolution = 0;
-    camera_8003642C = 0;
-    camera_80036430 = 0;
+    cameraBufferToggle = 0;
+    cameraFrameCounter1 = 0;
     set_starting_weapon = 0;
-    camera_80036434 = 0;
+    cameraFrameCounter2 = 0;
     start_look_angle = FLOAT_INIT;
     
     if (bossGetStageNum() == LEVELID_CUBA)
     {
-        resolution = (s32)mempAllocBytesInBank(0x46EA0, 4);
+        resolution = (s32)mempAllocBytesInBank(0x46EA0, MEMPOOL_STAGE);
         resolution = (resolution + 0x3f) & ~0x3F;
-        camera_80036430 = 1;
+        cameraFrameCounter1 = 1;
     }
 
     camera_80036438 = 0;
-    D_8003643C = 0;
-    D_80036440 = NULL;
+    credits_state = 0;
+    credits_pointer = NULL;
     g_ForceBondMoveOffset.f[0] = FLOAT_INIT;
     g_ForceBondMoveOffset.f[1] = FLOAT_INIT;
     g_ForceBondMoveOffset.f[2] = FLOAT_INIT;
@@ -142,24 +142,24 @@ void bondviewLoadSetupIntroSection(void)
     g_TankSfxState[1] = NULL;
     g_TankTurnSpeed = FLOAT_INIT;
     g_TankOrientationAngle = FLOAT_INIT;
-    D_80036468 = FLOAT_INIT;
+    tank_turret_unused_angle = FLOAT_INIT;
     g_TankTurretVerticalAngle = FLOAT_INIT;
     g_TankTurretVerticalAngleRelated = FLOAT_INIT;
     g_TankTurretOrientationAngleRad = FLOAT_INIT;
-    D_80036478 = FLOAT_INIT;
-    D_8003647C = FLOAT_INIT;
+    g_TankTurretOrientationAngleDeg = FLOAT_INIT;
+    tank_turret_turn_speed = FLOAT_INIT;
     g_BondCanEnterTank = 0;
     g_TankTurretAngle = FLOAT_INIT;
     g_TankTurretTurn = FLOAT_INIT;
     g_ExplodeTankOnDeathFlag = 0;
-    D_800364B0 = 1;
+    is_timer_active = 1;
     g_PlayerInvincible = 0;
     g_CameraMode = 0;
     g_CameraAfterCinema = 0;
-    D_8003649C = 0;
+    camera_fade_active = 0;
     stop_time_flag = 0;
-    D_800364A4 = FLOAT_INIT;
-    D_800364A8 = 1;
+    camera_transition_timer = FLOAT_INIT;
+    intro_camera_index = CAMERAMODE_INTRO;
     g_IntroSwirl = NULL;
     ptr_random06cam_entry = NULL;
     g_CurrentSetupIntroCamera = NULL;
@@ -168,8 +168,8 @@ void bondviewLoadSetupIntroSection(void)
     watch_time_0 = 0;
     g_IntroAnimationIndex = 0;
     watch_transition_time = 0.9090909f;
-    starting_left_weapon = ITEM_UNARMED;
-    starting_right_weapon = ITEM_UNARMED;
+    starting_weapon[GUNLEFT] = ITEM_UNARMED;
+    starting_weapon[GUNRIGHT] = ITEM_UNARMED;
     
     if (intro_record != NULL)
     {
@@ -210,7 +210,7 @@ void bondviewLoadSetupIntroSection(void)
 
                         if (set_starting_weapon == 0)
                         {
-                            starting_right_weapon = intro_item->item_right;
+                            starting_weapon[GUNRIGHT] = intro_item->item_right;
 
                             if(intro_item->item_left);
 
@@ -218,7 +218,7 @@ void bondviewLoadSetupIntroSection(void)
                             
                             if (intro_item->item_left >= 0)
                             {
-                                starting_left_weapon = intro_item->item_left;
+                                starting_weapon[GUNLEFT] = intro_item->item_left;
                             }
                         }
                     }
@@ -327,7 +327,7 @@ void bondviewLoadSetupIntroSection(void)
                     
                     // hack: bad address math
                     credits = (CreditsEntry*)((s32)g_ptrStageSetupFile + (s32)intro_credits->unk04);
-                    D_80036440 = credits;
+                    credits_pointer = credits;
 
                     // what is the point of this?
                     while (credits->TextId1 != 0 || credits->TextId2 != 0)
@@ -341,6 +341,9 @@ void bondviewLoadSetupIntroSection(void)
 
                 default:
                 {
+                    #ifdef DEBUG
+                        ossyncprintf("unknown bondstart type %d!\n",intro_record->type);
+                    #endif
                     intro_record = (struct SetupIntroEmpty*)((s32)intro_record + sizeof(struct SetupIntroEmpty));
                 }
                 break;
@@ -364,7 +367,7 @@ void bondviewLoadSetupIntroSection(void)
 
     if (set_starting_weapon == 0)
     {
-        starting_right_weapon = ITEM_FIST;
+        starting_weapon[GUNRIGHT] = ITEM_FIST;
     }
 
     g_CurrentPlayer->field_78 = FLOAT_INIT;
@@ -427,7 +430,7 @@ void bondviewLoadSetupIntroSection(void)
 
     bondviewResetIntroCameraMessageDialogs();
     bondviewResetUpperTextDisplay();
-    g_CurrentPlayer->prop = propAllocate();
+    g_CurrentPlayer->prop = chrpropAllocate();
     g_CurrentPlayer->prop->obj = NULL;
     g_CurrentPlayer->prop->type = PROP_TYPE_VIEWER;
     
@@ -450,11 +453,11 @@ void bondviewLoadSetupIntroSection(void)
     
     if (getPlayerCount() == 1)
     {
-        set_camera_mode(CAMERAMODE_INTRO);
+        bondviewSetCameraMode(CAMERAMODE_INTRO);
     }
     else
     {
-        set_camera_mode(CAMERAMODE_MP);
+        bondviewSetCameraMode(CAMERAMODE_MP);
     }
 
     g_bondviewBondDeathAnimationsCount = 0;
@@ -463,8 +466,8 @@ void bondviewLoadSetupIntroSection(void)
         g_bondviewBondDeathAnimationsCount++;
     }
     
-    g_CurrentPlayer->startnewbonddie = 1;
-    g_CurrentPlayer->redbloodfinished = 0;
-    g_CurrentPlayer->deathanimfinished = 0;
-    D_80036510 = CAMERAMODE_NONE;
+    g_CurrentPlayer->startnewbonddie = TRUE;
+    g_CurrentPlayer->redbloodfinished = FALSE;
+    g_CurrentPlayer->deathanimfinished = FALSE;
+    camera_mode = CAMERAMODE_NONE;
 }

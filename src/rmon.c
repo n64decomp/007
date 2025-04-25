@@ -156,7 +156,7 @@ void osReadHost(void * buffer, u32 size)
 #endif
     if (buffer);
 	if (size);
-#ifdef ENABLE_USB 
+#ifdef ENABLE_USB
     //flesh out a proper pc side tool still
     osSyncPrintf("USB: Waiting for data\n");
     while(1)
@@ -232,7 +232,7 @@ void rmonPrintf(void)
 }
 
 /*
- * ----------------------------------------------------------------- 
+ * -----------------------------------------------------------------
  * This is a new file (PR/libultra/libc/syncprintf.c)
 */
 
@@ -252,7 +252,7 @@ void *proutSyncPrintf(void *str, const char *buf, size_t n)
         sent += __osRdbSend((u8 *)&buf[sent], n - sent, RDB_TYPE_GtoH_PRINT);
 #    endif
         crashAppendChar(buf[sent++]);
-    }    
+    }
 #endif
     return ((void *)1); /* return a fake pointer so that it's not NULL */
 }
@@ -264,7 +264,7 @@ void *proutSyncPrintf(void *str, const char *buf, size_t n)
  */
 void osSyncPrintf(const char *fmt, ...)
 {
-    
+
 #ifdef ENABLE_USB
     u8 buffer[100];
 #endif

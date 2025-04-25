@@ -31,19 +31,12 @@ s32 who_paused;
 
 // data
 u16 g_AwardNames[] = {
-    TEXT(LMPMENU, MPMENU_STR_00),TEXT(LMPMENU, MPMENU_STR_01),TEXT(LMPMENU, MPMENU_STR_02),TEXT(LMPMENU, MPMENU_STR_03),TEXT(LMPMENU, MPMENU_STR_04),TEXT(LMPMENU, MPMENU_STR_05),
-    TEXT(LMPMENU, MPMENU_STR_06),TEXT(LMPMENU, MPMENU_STR_07),TEXT(LMPMENU, MPMENU_STR_08),TEXT(LMPMENU, MPMENU_STR_09),TEXT(LMPMENU, MPMENU_STR_0A),TEXT(LMPMENU, MPMENU_STR_0B),
-    TEXT(LMPMENU, MPMENU_STR_0C),TEXT(LMPMENU, MPMENU_STR_0D),TEXT(LMPMENU, MPMENU_STR_0E),TEXT(LMPMENU, MPMENU_STR_0F),TEXT(LMPMENU, MPMENU_STR_10)
+    getStringID(LMPMENU, MPMENU_STR_00_LEMMINGAWARD),getStringID(LMPMENU, MPMENU_STR_01_WHERESTHEAMMO),getStringID(LMPMENU, MPMENU_STR_02_WHERESTHEARMOR),getStringID(LMPMENU, MPMENU_STR_03_AC10AWARD),getStringID(LMPMENU, MPMENU_STR_04_MARKSMANSHIPAWARD),getStringID(LMPMENU, MPMENU_STR_05_MOSTPROFESSIONAL),
+    getStringID(LMPMENU, MPMENU_STR_06_MOSTDEADLY),getStringID(LMPMENU, MPMENU_STR_07_MOSTLYHARMLESS),getStringID(LMPMENU, MPMENU_STR_08_MOSTCOWARD),getStringID(LMPMENU, MPMENU_STR_09_MOSTFRANTIC),getStringID(LMPMENU, MPMENU_STR_0A_MOSTHONORABLE),getStringID(LMPMENU, MPMENU_STR_0B_MOSTDISHONORABLE),
+    getStringID(LMPMENU, MPMENU_STR_0C_SHORTESTINNINGS),getStringID(LMPMENU, MPMENU_STR_0D_LONGESTINNINGS),getStringID(LMPMENU, MPMENU_STR_0E_DOUBLEKILL),getStringID(LMPMENU, MPMENU_STR_0F_TRIPLEKILL),getStringID(LMPMENU, MPMENU_STR_10_QUADKILL)
 };
 
-//rodata
-/*8005BC20*/
-const char ascii_MP_watch_menu_percentd[] = "%d";
-const char ascii_MP_watch_menu_BLANK[] = "";
-const char ascii_MP_watch_menu_left_chevron[] = "<";
-const char ascii_MP_watch_menu_right_chevron[] = ">";
-const char ascii_pnum_KILLS[] = "%s%d %s";
-const char ascii_pnum_LOSSES[] = "%s%d %s";
+
 
 // rodata
 
@@ -268,7 +261,7 @@ s32 mpFindMinFloat(s32 numplayers, f32 arg1, f32 arg2, f32 arg3, f32 arg4)
 
 void pauseAndLockControls(void) {
     lvlSetControlsLockedFlag(1);
-    g_pausedFlag = 1;
+    g_pausedFlag = TRUE;
 }
 
 
@@ -276,26 +269,26 @@ s32 disablePlayerActionsWhenPausedOrInMpMenu(void)
 {
     if (getPlayerCount() == 1)
     {
-        return 1;
+        return TRUE;
     }
 
     if (g_stopPlayFlag)
     {
-        return 0;
+        return FALSE;
     }
     
     if (g_CurrentPlayer->mpmenuon)
     {
-        return 0;
+        return FALSE;
     }
     
-    return 1;
+    return TRUE;
 }
 
 
 void mpwatchSetStopPlayFlag(void)
 {
-    g_stopPlayFlag = 1;
+    g_stopPlayFlag = TRUE;
 }
 
 
@@ -346,7 +339,7 @@ void mpCalculateAwards(s32 arg0)
 
         set_cur_player(i);
 
-        g_CurrentPlayer->mpmenuon = 1;
+        g_CurrentPlayer->mpmenuon = TRUE;
         g_CurrentPlayer->mpmenumode = 3;
         g_CurrentPlayer->ptr_text_first_mp_award = 0;
         g_CurrentPlayer->ptr_text_second_mp_award = 0;
@@ -405,7 +398,7 @@ void mpCalculateAwards(s32 arg0)
 
     if (metrics[i].body_armor_pickups <= 2.0f)
     {
-        metrics[i].awards |= AWARD_WHERESTHEARMOR;
+        metrics[i].awards |= AWARD_WHERESTHEARMOUR;
     }
 
     i = mpFindMaxFloat(player_count, metrics[0].body_armor_pickups, metrics[1].body_armor_pickups, metrics[2].body_armor_pickups, metrics[3].body_armor_pickups);
@@ -556,9 +549,9 @@ void sub_GAME_7F0C2E80(void)
 
     if (player_count != 1)
     {
-        if ((g_CurrentPlayer->bonddead != 0) && (g_gameOverFlag == 0))
+        if ((g_CurrentPlayer->bonddead != FALSE) && (g_gameOverFlag == FALSE))
         {
-            g_CurrentPlayer->mpmenuon = 0;
+            g_CurrentPlayer->mpmenuon = FALSE;
             g_CurrentPlayer->healthdisplaytime = 0;
             return;
         }
@@ -593,7 +586,7 @@ void sub_GAME_7F0C2E80(void)
                 g_playerPerm->longest_inning = getMissiontimer() - g_CurrentPlayer->field_29F4;
             }
 
-            if (g_CurrentPlayer->mpmenuon != 0)
+            if (g_CurrentPlayer->mpmenuon != FALSE)
             {
                 if (mpwatchIsPlayerPressingRight(player_num) && mpwatchMenuCanGoRight())
                 {
@@ -635,7 +628,7 @@ void sub_GAME_7F0C2E80(void)
                     if (joyGetButtonsPressedThisFrame(player_num, 0x4000U))
                     {
                         mpwatchPlayBeep();
-                        g_CurrentPlayer->mpmenuon = 1;
+                        g_CurrentPlayer->mpmenuon = TRUE;
                         g_CurrentPlayer->mpmenumode = 3;
                     }
                 }
@@ -662,7 +655,7 @@ void sub_GAME_7F0C2E80(void)
                     }
                     else
                     {
-                        g_CurrentPlayer->mpmenuon = 0;
+                        g_CurrentPlayer->mpmenuon = FALSE;
                         g_CurrentPlayer->healthdisplaytime = (PAL ? 0x32 : 0x3C);
                         if (get_cur_playernum() == who_paused)
                         {
@@ -682,7 +675,7 @@ void sub_GAME_7F0C2E80(void)
                     if ((g_CurrentPlayer->mpmenumode == 6) && (g_CurrentPlayer->mpquitconfirm == 1))
                     {
                         mpwatchPlayBeep();
-                        g_CurrentPlayer->mpmenuon = 0;
+                        g_CurrentPlayer->mpmenuon = FALSE;
                         g_CurrentPlayer->healthdisplaytime = 0;
                         mpCalculateAwards(0);
                     }
@@ -701,7 +694,7 @@ void sub_GAME_7F0C2E80(void)
             if (joyGetButtonsPressedThisFrame(player_num, 0x1000U) != 0)
             {
                 mpwatchPlayBeep();
-                g_CurrentPlayer->mpmenuon = 1;
+                g_CurrentPlayer->mpmenuon = TRUE;
                 g_CurrentPlayer->mpmenumode = 3;
                 g_CurrentPlayer->mpjoywascentre = 1;
                 g_CurrentPlayer->apparenthealth = g_CurrentPlayer->bondhealth;
@@ -710,6 +703,7 @@ void sub_GAME_7F0C2E80(void)
         }
     }
 }
+
 
 
 Gfx *display_text_for_playerdata_on_MP_menu(Gfx *gdl, s32 x, s32 y, u16* arg3, TEXTCOLORS text_color) {
@@ -723,7 +717,7 @@ Gfx *display_text_for_playerdata_on_MP_menu(Gfx *gdl, s32 x, s32 y, u16* arg3, T
     s16 viX;
     s32 viY;
 
-    sprintf(&sp48, &ascii_MP_watch_menu_percentd, arg3);
+    sprintf(&sp48, "%d", arg3);
 
     textMeasure(&sp50, &sp54, &sp48, ptrFontBankGothicChars, ptrFontBankGothic, 0);
     
@@ -773,7 +767,13 @@ Gfx *display_text_for_playerdata_on_MP_menu(Gfx *gdl, s32 x, s32 y, u16* arg3, T
 }
 
 
-
+//rodata
+/*8005BC20*/
+const char ascii_MP_watch_menu_BLANK[] = "";
+const char ascii_MP_watch_menu_left_chevron[] = "<";
+const char ascii_MP_watch_menu_right_chevron[] = ">";
+const char ascii_pnum_KILLS[] = "%s%d %s";
+const char ascii_pnum_LOSSES[] = "%s%d %s";
 
 
 #ifdef NONMATCHING
@@ -793,6 +793,7 @@ glabel jpt_MP_overlays_scoring
 .word team_player_kills
 .word team_player_kills
 .word team_player_kills
+.size jpt_MP_overlays_scoring, . - jpt_MP_overlays_scoring
 
 .text
 glabel get_points_for_mp_player
@@ -1306,7 +1307,6 @@ s32 mpwatchShouldDisplayRank(s32 param_1)
       return param_1 ? 0 : 1;
     default:
       do {
-        /* WARNING: Do nothing block with infinite loop */
       } while(1);
   }
 }
@@ -1329,7 +1329,6 @@ s32 mpwatchShouldDisplayScore(s32 param_1)
       break;
     default:
       do {
-        /* WARNING: Do nothing block with infinite loop */             
       } while(1);
   }
 }
@@ -1355,6 +1354,7 @@ glabel jpt_MP_menu_window_text
 .word text_exit
 .word text_exit
 .word text_blank
+.size jpt_MP_menu_window_text, . - jpt_MP_menu_window_text
 
 .text
 glabel mp_watch_menu_display
@@ -3003,7 +3003,7 @@ def_7F0C40C0:
 /* 0FA3B8 7F0C5888 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0FA3BC 7F0C588C 00408825 */  move  $s1, $v0
 /* 0FA3C0 7F0C5890 8FA400D4 */  lw    $a0, 0xd4($sp)
-/* 0FA3C4 7F0C5894 0FC026D4 */  jal   getplayerfavoredweapon
+/* 0FA3C4 7F0C5894 0FC026D4 */  jal   frontGetPlayersFavoriteWeaponInHand
 /* 0FA3C8 7F0C5898 00002825 */   move  $a1, $zero
 /* 0FA3CC 7F0C589C 3C188004 */  lui   $t8, %hi(ptrFontBankGothic) 
 /* 0FA3D0 7F0C58A0 8F180EAC */  lw    $t8, %lo(ptrFontBankGothic)($t8)
@@ -3513,6 +3513,7 @@ def_7F0C40C0:
 /* 0FAB6C 7F0C603C 8FB10038 */  lw    $s1, 0x38($sp)
 /* 0FAB70 7F0C6040 03E00008 */  jr    $ra
 /* 0FAB74 7F0C6044 27BD00D8 */   addiu $sp, $sp, 0xd8
+.size mp_watch_menu_display, . - mp_watch_menu_display
 )
 #endif
 
@@ -5178,7 +5179,7 @@ def_7F0C40C0:
 /* 0FB0A8 7F0C6538 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0FB0AC 7F0C653C 00408825 */  move  $s1, $v0
 /* 0FB0B0 7F0C6540 8FA400D4 */  lw    $a0, 0xd4($sp)
-/* 0FB0B4 7F0C6544 0FC026DC */  jal   getplayerfavoredweapon
+/* 0FB0B4 7F0C6544 0FC026DC */  jal   frontGetPlayersFavoriteWeaponInHand
 /* 0FB0B8 7F0C6548 00002825 */   move  $a1, $zero
 /* 0FB0BC 7F0C654C 3C198004 */  lui   $t9, %hi(ptrFontBankGothic) # $t9, 0x8004
 /* 0FB0C0 7F0C6550 8F390EDC */  lw    $t9, %lo(ptrFontBankGothic)($t9)
@@ -7365,7 +7366,7 @@ text_exit:
 /* 0F7758 7F0C4D68 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0F775C 7F0C4D6C 00408825 */  move  $s1, $v0
 /* 0F7760 7F0C4D70 8FA400D4 */  lw    $a0, 0xd4($sp)
-/* 0F7764 7F0C4D74 0FC02694 */  jal   getplayerfavoredweapon
+/* 0F7764 7F0C4D74 0FC02694 */  jal   frontGetPlayersFavoriteWeaponInHand
 /* 0F7768 7F0C4D78 00002825 */   move  $a1, $zero
 /* 0F776C 7F0C4D7C 3C198004 */  lui   $t9, %hi(ptrFontBankGothic) # $t9, 0x8004
 /* 0F7770 7F0C4D80 8F39AAFC */  lw    $t9, %lo(ptrFontBankGothic)($t9)
@@ -7896,7 +7897,7 @@ text_exit:
 
 s32 sub_GAME_7F0C6048(void)
 {
-    return g_gameOverFlag ? 0 : (g_CurrentPlayer->mpmenuon | (g_CurrentPlayer->healthdisplaytime > 0));
+    return g_gameOverFlag ? FALSE : (g_CurrentPlayer->mpmenuon | (g_CurrentPlayer->healthdisplaytime > 0));
 }
 
 s32 checkGamePaused(void) {

@@ -518,7 +518,7 @@ const u32 *crashGetParentStackFrame(const u32 *origptr, const u32 *minaddr, cons
  *     V0=TRUE if opcode that set RA A0 was a JAL or JALR type within bounds (70000450,70020D90)
  *     accepts: A0=p->70-mapped TLB function, presumably from RA
  */
-s32 crashIsReturnAddress(u32 *instruction)
+bool crashIsReturnAddress(u32 *instruction)
 {
     u32 prevop;
 
@@ -527,14 +527,14 @@ s32 crashIsReturnAddress(u32 *instruction)
         prevop = instruction[-2];
         if ((prevop & 0xFC00003C) == 9)
         {
-            return 1;
+            return TRUE;
         }
         if ((prevop & 0xFC000000) == 0xC000000)
         {
-            return 1;
+            return TRUE;
         }
     }
-    return 0;
+    return FALSE;
 }
 
 /**

@@ -27,25 +27,25 @@ typedef union ALSndpEvent_u {
         // offset 4
         ALSoundState    *state;
     } common;
-    
+
     struct {
         u16             type;
         ALSoundState    *state;
         s32             vol;
     } vol;
-    
+
     struct {
         u16             type;
         ALSoundState    *state;
         f32             pitch;
     } pitch;
-    
+
     struct {
         u16             type;
         ALSoundState    *state;
         s32           pan32;
     } pan32;
-    
+
     struct {
         u16             type;
         ALSoundState    *state;
@@ -72,7 +72,7 @@ typedef union ALSndpEvent_u {
         s32 unk8;
         s32 unkC;
     } align_size;
-    
+
 } ALSndpEvent;
 
 union ALSndpSmallEvent_u {
@@ -144,7 +144,7 @@ void sndSetSfxSlotVolume(u8 arg0, u16 arg1);
 
 /**
  * 8720    70007B20
- * 
+ *
  * Mostly identical to n64devkit\ultra\usr\src\pr\libsrc\libultra\audio\sndplayer.c
  * method alSndpNew.
  */
@@ -209,7 +209,7 @@ void sndNewPlayerInit(ALSeqpSfxConfig *sfxSeqpConfig)
 
 /**
  * 89DC    70007DDC
- * 
+ *
  * Almost identical to \n64devkit\ultra\usr\src\pr\libsrc\libultra\audio\sndplayer.c
  * method ALMicroTime _sndpVoiceHandler(void *node).
  */
@@ -233,7 +233,7 @@ ALMicroTime sndPlayerVoiceHandler(void *node)
         }
 
         sndp->nextDelta = alEvtqNextEvent(&sndp->evtq, &sndp->nextEvent);
-        
+
     } while (sndp->nextDelta == 0);
 
     sndp->curTime += sndp->nextDelta;
@@ -244,16 +244,16 @@ ALMicroTime sndPlayerVoiceHandler(void *node)
 
 /**
  * 8A80    70007E80
- * 
+ *
  * Draws inspiration from n64devkit\ultra\usr\src\pr\libsrc\libultra\audio\sndplayer.c
  * method _handleEvent
- * 
+ *
  * decomp status:
  * - compiles: yes
  * - stack resize: ok
  * - identical instructions: yes
  * - identical registers: fail
- * 
+ *
  * Notes:
  * - all floating point registers match
  * - there's a few places with temp variables and MIN,MAX macros, stuffing it all into one
@@ -271,7 +271,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
 {
     // declarations
 
-                                        //// 
+                                        ////
                                         //// "..." means not explicitly referenced by stack offset
                                         ////
     ALVoiceConfig vc;                   // sp 0xc8; priority=200, fxBus=202, unityPitch=204
@@ -292,7 +292,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
     ALPan pan;                          // ...
     s32 done_state;                     // sp 0x80 = 128
     s32 allocVoiceSuccess;              // sp 0x7c = 124
-    ALSoundState *prevState;            // sp 0x78 = 120        
+    ALSoundState *prevState;            // sp 0x78 = 120
     ALSoundState *nextState;            // sp 0x74 = 116 ; could also be ALLink (with sp78)
     s16 sp72;                           // sp 0x72 = 114
     s16 sp70;                           // sp 0x70 = 112
@@ -360,7 +360,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
 
                             return;
                         }
-                        
+
                         if (compare_result)
                         {
                             tstate = (ALSoundState*)D_800243E4.node.prev;
@@ -376,9 +376,9 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                                     tstate->playingState = AL_UNKOWN_3;
                                     compare_result = 0;
                                     loopCheckVar[0] = tstate;
-                                    
+
                                     alEvtqPostEvent(&sndp->evtq, (ALEvent *)&playAllocEvent, DELTA_1_MS);
-                                    
+
                                     tstate = loopCheckVar[0];
                                     //voice = &tstate->voice;
                                     alSynSetVol(sndp->drvr, (ALVoice*)&tstate->voice, 0, DELTA_1_MS);
@@ -400,7 +400,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                             sndDisposeSound(state);
                             return;
                         }
-                        
+
                         sndDisposeSound(state);
                         return;
                     }
@@ -420,14 +420,14 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                     vtmp = vtmp / 0x7fff;
                     vtmp = MAX(0, vtmp - 1);
 
-                    // vtmp = MAX(0, (vol * (snd->envelope->attackVolume * snd->sampleVolume) 
+                    // vtmp = MAX(0, (vol * (snd->envelope->attackVolume * snd->sampleVolume)
                     //     / (AL_VOL_FULL * AL_VOL_FULL)
                     //     * tmp
                     //     / 0x7fff) - 1);
-                    
+
                     alSynSetVol(sndp->drvr, &state->voice, 0, 0);
                     alSynSetVol(sndp->drvr, &state->voice, vtmp, delta);
-                    
+
                     vtmp = state->pan - AL_PAN_CENTER + snd->samplePan;
                     pan = (ALPan) MIN(MAX(vtmp, AL_PAN_LEFT), AL_PAN_RIGHT);
                     //pan = (ALPan) MIN(MAX(state->pan - AL_PAN_CENTER + snd->samplePan, AL_PAN_LEFT), AL_PAN_RIGHT);
@@ -451,7 +451,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             case (AL_SNDP_DEACTIVATE_EVT): // fallthrough
             case (AL_SNDP_UNKNOWN_12_EVT): // fallthrough
             case (AL_SNDP_STOP_EVT):
@@ -502,7 +502,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             case (AL_SNDP_PAN_EVT):
             {
                 state->pan = event->pan32.pan32;
@@ -517,7 +517,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             case (AL_SNDP_PITCH_EVT):
             {
                 state->pitch_2c = event->pitch.pitch;
@@ -533,7 +533,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             case (AL_SNDP_FX_EVT):
             {
                 state->fxMix = event->fx32.mix32;
@@ -548,7 +548,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             case (AL_SNDP_VOL_EVT):
             {
                 state->vol = event->vol.vol;
@@ -556,14 +556,14 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 {
                     tmp = g_sndSfxSlotVolume[keyMap->keyMin & 0x3f];
                     vol = state->vol;
-                    vtmp = 
-                        vol * (snd->envelope->decayVolume * snd->sampleVolume) 
+                    vtmp =
+                        vol * (snd->envelope->decayVolume * snd->sampleVolume)
                         / (AL_VOL_FULL * AL_VOL_FULL)
                         * tmp
                         / 0x7fff;
                     vtmp = MAX(0, vtmp - 1);
-                    
-                    // vtmp = MAX(0, (vol * (snd->envelope->decayVolume * snd->sampleVolume) 
+
+                    // vtmp = MAX(0, (vol * (snd->envelope->decayVolume * snd->sampleVolume)
                     //     / (AL_VOL_FULL * AL_VOL_FULL)
                     //     * tmp
                     //     / 0x7fff) - 1);
@@ -575,7 +575,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
 
             // case 0x20 (AL_SNDP_API_EVT)
             // handled in sndPlayerVoiceHandler
-            
+
             case (AL_SNDP_RELEASE_EVT):
             {
                 if (state->playingState == AL_PLAYING)
@@ -584,14 +584,14 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
 
                     tmp = g_sndSfxSlotVolume[keyMap->keyMin & 0x3f];
                     vol = state->vol;
-                    vtmp = 
-                        vol * (snd->envelope->decayVolume * snd->sampleVolume) 
+                    vtmp =
+                        vol * (snd->envelope->decayVolume * snd->sampleVolume)
                         / (AL_VOL_FULL * AL_VOL_FULL)
                         * tmp
                         / 0x7fff;
                     vtmp = MAX(0, vtmp - 1);
-                    
-                    // vtmp = MAX(0, (vol * (snd->envelope->decayVolume * snd->sampleVolume) 
+
+                    // vtmp = MAX(0, (vol * (snd->envelope->decayVolume * snd->sampleVolume)
                     //     / (AL_VOL_FULL * AL_VOL_FULL)
                     //     * tmp
                     //     / 0x7fff) - 1);
@@ -600,19 +600,19 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             case (AL_SNDP_DECAY_EVT):
             {
                 if ((state->unk3e & 2) == 0)
                 {
                     tmp = g_sndSfxSlotVolume[keyMap->keyMin & 0x3f];
                     vol = state->vol;
-                    vtmp = 
-                        (vol * (snd->envelope->decayVolume * snd->sampleVolume) 
+                    vtmp =
+                        (vol * (snd->envelope->decayVolume * snd->sampleVolume)
                         / (AL_VOL_FULL * AL_VOL_FULL))
                         * tmp
                         / 0x7fff;
-                    
+
                     vtmp = MAX(0, vtmp - 1);
 
                     // can't seem to combine this volume computation into one line with the macro.
@@ -631,13 +631,13 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             case (AL_SNDP_END_EVT):
             {
                 sndDisposeSound(state);
             }
             break;
-            
+
             case (AL_SNDP_PLAY_SFX_EVT):
             {
                 if ((state->unk3e & 0x10) != 0)
@@ -646,7 +646,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
                 }
             }
             break;
-            
+
             default:
                 // not supported
             break;
@@ -661,7 +661,7 @@ void sndHandleEvent(ALSndPlayer *sndp, ALSndpEvent *event)
         }
         else
         {
-            done_state = 
+            done_state =
                 // best guess at cast to get offset 0x3e ...
                 ((ALSoundState*)event)->unk3e & 0x1;
         }
@@ -778,7 +778,7 @@ glabel sndHandleEvent
 glabel .L70007FBC
 /* 008BBC 70007FBC 9222003F */  lbu   $v0, 0x3f($s1)
 /* 008BC0 70007FC0 24010005 */  li    $at, 5
-/* 008BC4 70007FC4 3C0B8002 */  lui   $t3, %hi(g_sndAllocatedVoicesCount) 
+/* 008BC4 70007FC4 3C0B8002 */  lui   $t3, %hi(g_sndAllocatedVoicesCount)
 /* 008BC8 70007FC8 10410003 */  beq   $v0, $at, .L70007FD8
 /* 008BCC 70007FCC 24010004 */   li    $at, 4
 /* 008BD0 70007FD0 54410252 */  bnel  $v0, $at, .L7000891C
@@ -795,7 +795,7 @@ glabel .L70007FBC
 /* 008BF8 70007FF8 016C802A */  slt   $s0, $t3, $t4
 /* 008BFC 70007FFC 3A100001 */  xori  $s0, $s0, 1
 /* 008C00 70008000 12000005 */  beqz  $s0, .L70008018
-/* 008C04 70008004 00000000 */   nop   
+/* 008C04 70008004 00000000 */   nop
 /* 008C08 70008008 9223003E */  lbu   $v1, 0x3e($s1)
 /* 008C0C 7000800C 306D0010 */  andi  $t5, $v1, 0x10
 /* 008C10 70008010 51A00006 */  beql  $t5, $zero, .L7000802C
@@ -816,7 +816,7 @@ glabel .L70007FBC
 /* 008C44 70008044 24190004 */   li    $t9, 4
 /* 008C48 70008048 8E380038 */  lw    $t8, 0x38($s1)
 /* 008C4C 7000804C 1B00000B */  blez  $t8, .L7000807C
-/* 008C50 70008050 00000000 */   nop   
+/* 008C50 70008050 00000000 */   nop
 .L70008054:
 /* 008C54 70008054 8E280038 */  lw    $t0, 0x38($s1)
 /* 008C58 70008058 A239003F */  sb    $t9, 0x3f($s1)
@@ -841,7 +841,7 @@ glabel .L70007FBC
 /* 008C9C 7000809C 15400016 */  bnez  $t2, .L700080F8
 /* 008CA0 700080A0 306B0004 */   andi  $t3, $v1, 4
 /* 008CA4 700080A4 11600014 */  beqz  $t3, .L700080F8
-/* 008CA8 700080A8 00000000 */   nop   
+/* 008CA8 700080A8 00000000 */   nop
 /* 008CAC 700080AC 904C003F */  lbu   $t4, 0x3f($v0)
 /* 008CB0 700080B0 240D0080 */  li    $t5, 128
 /* 008CB4 700080B4 26E40014 */  addiu $a0, $s7, 0x14
@@ -894,10 +894,10 @@ glabel .L70007FBC
 /* 008D5C 7000815C 26F40014 */   addiu $s4, $s7, 0x14
 /* 008D60 70008160 24180001 */  li    $t8, 1
 /* 008D64 70008164 A238003F */  sb    $t8, 0x3f($s1)
-/* 008D68 70008168 3C198002 */  lui   $t9, %hi(g_sndAllocatedVoicesCount) 
+/* 008D68 70008168 3C198002 */  lui   $t9, %hi(g_sndAllocatedVoicesCount)
 /* 008D6C 7000816C 873943F4 */  lh    $t9, %lo(g_sndAllocatedVoicesCount)($t9)
 /* 008D70 70008170 3C018002 */  lui   $at, %hi(g_sndAllocatedVoicesCount)
-/* 008D74 70008174 3C0B8006 */  lui   $t3, %hi(g_sndSfxSlotVolume) 
+/* 008D74 70008174 3C0B8006 */  lui   $t3, %hi(g_sndSfxSlotVolume)
 /* 008D78 70008178 27280001 */  addiu $t0, $t9, 1
 /* 008D7C 7000817C A42843F4 */  sh    $t0, %lo(g_sndAllocatedVoicesCount)($at)
 /* 008D80 70008180 8E420000 */  lw    $v0, ($s2)
@@ -924,16 +924,16 @@ glabel .L70007FBC
 /* 008DD4 700081D4 00003025 */  move  $a2, $zero
 /* 008DD8 700081D8 00003825 */  move  $a3, $zero
 /* 008DDC 700081DC 00006012 */  mflo  $t4
-/* 008DE0 700081E0 00000000 */  nop   
-/* 008DE4 700081E4 00000000 */  nop   
+/* 008DE0 700081E0 00000000 */  nop
+/* 008DE4 700081E4 00000000 */  nop
 /* 008DE8 700081E8 0181001A */  div   $zero, $t4, $at
 /* 008DEC 700081EC 00006812 */  mflo  $t5
 /* 008DF0 700081F0 24017FFF */  li    $at, 32767
 /* 008DF4 700081F4 46105483 */  div.s $f18, $f10, $f16
 /* 008DF8 700081F8 030D0019 */  multu $t8, $t5
 /* 008DFC 700081FC 00002012 */  mflo  $a0
-/* 008E00 70008200 00000000 */  nop   
-/* 008E04 70008204 00000000 */  nop   
+/* 008E00 70008200 00000000 */  nop
+/* 008E04 70008204 00000000 */  nop
 /* 008E08 70008208 0081001A */  div   $zero, $a0, $at
 /* 008E0C 7000820C 4600910D */  trunc.w.s $f4, $f18
 /* 008E10 70008210 00005812 */  mflo  $t3
@@ -941,7 +941,7 @@ glabel .L70007FBC
 /* 008E18 70008218 00801825 */  move  $v1, $a0
 /* 008E1C 7000821C 44102000 */  mfc1  $s0, $f4
 /* 008E20 70008220 04810003 */  bgez  $a0, .L70008230
-/* 008E24 70008224 00000000 */   nop   
+/* 008E24 70008224 00000000 */   nop
 /* 008E28 70008228 10000001 */  b     .L70008230
 /* 008E2C 7000822C 00001825 */   move  $v1, $zero
 .L70008230:
@@ -969,7 +969,7 @@ glabel .L70007FBC
 .L70008284:
 /* 008E84 70008284 2841007F */  slti  $at, $v0, 0x7f
 /* 008E88 70008288 10200007 */  beqz  $at, .L700082A8
-/* 008E8C 7000828C 00000000 */   nop   
+/* 008E8C 7000828C 00000000 */   nop
 /* 008E90 70008290 18600003 */  blez  $v1, .L700082A0
 /* 008E94 70008294 00001025 */   move  $v0, $zero
 /* 008E98 70008298 10000003 */  b     .L700082A8
@@ -987,7 +987,7 @@ glabel .L70007FBC
 /* 008EC0 700082C0 46083282 */  mul.s $f10, $f6, $f8
 /* 008EC4 700082C4 44065000 */  mfc1  $a2, $f10
 /* 008EC8 700082C8 0C004D58 */  jal   alSynSetPitch
-/* 008ECC 700082CC 00000000 */   nop   
+/* 008ECC 700082CC 00000000 */   nop
 /* 008ED0 700082D0 92C90003 */  lbu   $t1, 3($s6)
 /* 008ED4 700082D4 9228003D */  lbu   $t0, 0x3d($s1)
 /* 008ED8 700082D8 02602825 */  move  $a1, $s3
@@ -1003,7 +1003,7 @@ glabel .L70007FBC
 .L700082FC:
 /* 008EFC 700082FC 28410080 */  slti  $at, $v0, 0x80
 /* 008F00 70008300 14200003 */  bnez  $at, .L70008310
-/* 008F04 70008304 00000000 */   nop   
+/* 008F04 70008304 00000000 */   nop
 /* 008F08 70008308 10000006 */  b     .L70008324
 /* 008F0C 7000830C 2403007F */   li    $v1, 127
 .L70008310:
@@ -1027,14 +1027,14 @@ glabel .L70007FBC
 /* 008F4C 7000834C 02802025 */  move  $a0, $s4
 /* 008F50 70008350 27A500AC */  addiu $a1, $sp, 0xac
 /* 008F54 70008354 448B8000 */  mtc1  $t3, $f16
-/* 008F58 70008358 00000000 */  nop   
+/* 008F58 70008358 00000000 */  nop
 /* 008F5C 7000835C 468084A0 */  cvt.s.w $f18, $f16
 /* 008F60 70008360 46049183 */  div.s $f6, $f18, $f4
 /* 008F64 70008364 46083283 */  div.s $f10, $f6, $f8
 /* 008F68 70008368 4600540D */  trunc.w.s $f16, $f10
 /* 008F6C 7000836C 44068000 */  mfc1  $a2, $f16
 /* 008F70 70008370 0C004BBF */  jal   alEvtqPostEvent
-/* 008F74 70008374 00000000 */   nop   
+/* 008F74 70008374 00000000 */   nop
 /* 008F78 70008378 96A20000 */  lhu   $v0, ($s5)
 /* 008F7C 7000837C 304F02D1 */  andi  $t7, $v0, 0x2d1
 /* 008F80 70008380 10000155 */  b     .L700088D8
@@ -1047,7 +1047,7 @@ glabel .L70008388
 /* 008F94 70008394 9239003E */  lbu   $t9, 0x3e($s1)
 /* 008F98 70008398 33290002 */  andi  $t1, $t9, 2
 /* 008F9C 7000839C 11200035 */  beqz  $t1, .L70008474
-/* 008FA0 700083A0 00000000 */   nop   
+/* 008FA0 700083A0 00000000 */   nop
 /* 008FA4 700083A4 9222003F */  lbu   $v0, 0x3f($s1)
 .L700083A8:
 /* 008FA8 700083A8 26F40014 */  addiu $s4, $s7, 0x14
@@ -1058,7 +1058,7 @@ glabel .L70008388
 /* 008FBC 700083BC 10410025 */  beq   $v0, $at, .L70008454
 /* 008FC0 700083C0 24010005 */   li    $at, 5
 /* 008FC4 700083C4 10410023 */  beq   $v0, $at, .L70008454
-/* 008FC8 700083C8 00000000 */   nop   
+/* 008FC8 700083C8 00000000 */   nop
 /* 008FCC 700083CC 10000025 */  b     .L70008464
 /* 008FD0 700083D0 24010002 */   li    $at, 2
 .L700083D4:
@@ -1128,7 +1128,7 @@ glabel .L7000847C
 .L700084B4:
 /* 0090B4 700084B4 2841007F */  slti  $at, $v0, 0x7f
 /* 0090B8 700084B8 10200007 */  beqz  $at, .L700084D8
-/* 0090BC 700084BC 00000000 */   nop   
+/* 0090BC 700084BC 00000000 */   nop
 /* 0090C0 700084C0 18600003 */  blez  $v1, .L700084D0
 /* 0090C4 700084C4 00001025 */   move  $v0, $zero
 /* 0090C8 700084C8 10000003 */  b     .L700084D8
@@ -1156,7 +1156,7 @@ glabel .L700084F0
 /* 009110 70008510 46083282 */  mul.s $f10, $f6, $f8
 /* 009114 70008514 44065000 */  mfc1  $a2, $f10
 /* 009118 70008518 0C004D58 */  jal   alSynSetPitch
-/* 00911C 7000851C 00000000 */   nop   
+/* 00911C 7000851C 00000000 */   nop
 /* 009120 70008520 922C003E */  lbu   $t4, 0x3e($s1)
 /* 009124 70008524 31980020 */  andi  $t8, $t4, 0x20
 /* 009128 70008528 53000004 */  beql  $t8, $zero, .L7000853C
@@ -1189,7 +1189,7 @@ glabel .L700084F0
 .L70008584:
 /* 009184 70008584 28410080 */  slti  $at, $v0, 0x80
 /* 009188 70008588 14200003 */  bnez  $at, .L70008598
-/* 00918C 7000858C 00000000 */   nop   
+/* 00918C 7000858C 00000000 */   nop
 /* 009190 70008590 10000006 */  b     .L700085AC
 /* 009194 70008594 2403007F */   li    $v1, 127
 .L70008598:
@@ -1223,26 +1223,26 @@ glabel .L700085C8
 /* 0091F4 700085F4 014C0019 */  multu $t2, $t4
 /* 0091F8 700085F8 924B000D */  lbu   $t3, 0xd($s2)
 /* 0091FC 700085FC 000EC840 */  sll   $t9, $t6, 1
-/* 009200 70008600 3C0D8006 */  lui   $t5, %hi(g_sndSfxSlotVolume) 
+/* 009200 70008600 3C0D8006 */  lui   $t5, %hi(g_sndSfxSlotVolume)
 /* 009204 70008604 8DAD3BA4 */  lw    $t5, %lo(g_sndSfxSlotVolume)($t5)
 /* 009208 70008608 240703E8 */  li    $a3, 1000
 /* 00920C 7000860C 01B97821 */  addu  $t7, $t5, $t9
 /* 009210 70008610 85E90000 */  lh    $t1, ($t7)
 /* 009214 70008614 0000C012 */  mflo  $t8
-/* 009218 70008618 00000000 */  nop   
-/* 00921C 7000861C 00000000 */  nop   
+/* 009218 70008618 00000000 */  nop
+/* 00921C 7000861C 00000000 */  nop
 /* 009220 70008620 030B0019 */  multu $t8, $t3
 /* 009224 70008624 00007012 */  mflo  $t6
-/* 009228 70008628 00000000 */  nop   
-/* 00922C 7000862C 00000000 */  nop   
+/* 009228 70008628 00000000 */  nop
+/* 00922C 7000862C 00000000 */  nop
 /* 009230 70008630 01C1001A */  div   $zero, $t6, $at
 /* 009234 70008634 00006812 */  mflo  $t5
 /* 009238 70008638 24017FFF */  li    $at, 32767
-/* 00923C 7000863C 00000000 */  nop   
+/* 00923C 7000863C 00000000 */  nop
 /* 009240 70008640 012D0019 */  multu $t1, $t5
 /* 009244 70008644 00002012 */  mflo  $a0
-/* 009248 70008648 00000000 */  nop   
-/* 00924C 7000864C 00000000 */  nop   
+/* 009248 70008648 00000000 */  nop
+/* 00924C 7000864C 00000000 */  nop
 /* 009250 70008650 0081001A */  div   $zero, $a0, $at
 /* 009254 70008654 0000C812 */  mflo  $t9
 /* 009258 70008658 2724FFFF */  addiu $a0, $t9, -1
@@ -1265,7 +1265,7 @@ glabel .L700085C8
 /* 009290 70008690 922A003F */  lbu   $t2, 0x3f($s1)
 /* 009294 70008694 2625000C */  addiu $a1, $s1, 0xc
 /* 009298 70008698 17CA0032 */  bne   $fp, $t2, .L70008764
-/* 00929C 7000869C 00000000 */   nop   
+/* 00929C 7000869C 00000000 */   nop
 /* 0092A0 700086A0 8E420000 */  lw    $v0, ($s2)
 /* 0092A4 700086A4 862A0034 */  lh    $t2, 0x34($s1)
 /* 0092A8 700086A8 9258000D */  lbu   $t8, 0xd($s2)
@@ -1276,7 +1276,7 @@ glabel .L700085C8
 /* 0092BC 700086BC 448C8000 */  mtc1  $t4, $f16
 /* 0092C0 700086C0 31C9003F */  andi  $t1, $t6, 0x3f
 /* 0092C4 700086C4 24013F01 */  li    $at, 16129
-/* 0092C8 700086C8 3C0B8006 */  lui   $t3, %hi(g_sndSfxSlotVolume) 
+/* 0092C8 700086C8 3C0B8006 */  lui   $t3, %hi(g_sndSfxSlotVolume)
 /* 0092CC 700086CC 8D6B3BA4 */  lw    $t3, %lo(g_sndSfxSlotVolume)($t3)
 /* 0092D0 700086D0 00096840 */  sll   $t5, $t1, 1
 /* 0092D4 700086D4 468084A0 */  cvt.s.w $f18, $f16
@@ -1288,16 +1288,16 @@ glabel .L700085C8
 /* 0092EC 700086EC 01980019 */  multu $t4, $t8
 /* 0092F0 700086F0 46049183 */  div.s $f6, $f18, $f4
 /* 0092F4 700086F4 00007012 */  mflo  $t6
-/* 0092F8 700086F8 00000000 */  nop   
-/* 0092FC 700086FC 00000000 */  nop   
+/* 0092F8 700086F8 00000000 */  nop
+/* 0092FC 700086FC 00000000 */  nop
 /* 009300 70008700 01C1001A */  div   $zero, $t6, $at
 /* 009304 70008704 00004812 */  mflo  $t1
 /* 009308 70008708 24017FFF */  li    $at, 32767
 /* 00930C 7000870C 46083283 */  div.s $f10, $f6, $f8
 /* 009310 70008710 01E90019 */  multu $t7, $t1
 /* 009314 70008714 00002012 */  mflo  $a0
-/* 009318 70008718 00000000 */  nop   
-/* 00931C 7000871C 00000000 */  nop   
+/* 009318 70008718 00000000 */  nop
+/* 00931C 7000871C 00000000 */  nop
 /* 009320 70008720 0081001A */  div   $zero, $a0, $at
 /* 009324 70008724 4600540D */  trunc.w.s $f16, $f10
 /* 009328 70008728 00005812 */  mflo  $t3
@@ -1305,7 +1305,7 @@ glabel .L700085C8
 /* 009330 70008730 00801825 */  move  $v1, $a0
 /* 009334 70008734 44108000 */  mfc1  $s0, $f16
 /* 009338 70008738 04810003 */  bgez  $a0, .L70008748
-/* 00933C 7000873C 00000000 */   nop   
+/* 00933C 7000873C 00000000 */   nop
 /* 009340 70008740 10000001 */  b     .L70008748
 /* 009344 70008744 00001825 */   move  $v1, $zero
 .L70008748:
@@ -1332,27 +1332,27 @@ glabel .L700085C8
 /* 009390 70008790 24013F01 */  li    $at, 16129
 /* 009394 70008794 016D0019 */  multu $t3, $t5
 /* 009398 70008798 3198003F */  andi  $t8, $t4, 0x3f
-/* 00939C 7000879C 3C0A8006 */  lui   $t2, %hi(g_sndSfxSlotVolume) 
+/* 00939C 7000879C 3C0A8006 */  lui   $t2, %hi(g_sndSfxSlotVolume)
 /* 0093A0 700087A0 8D4A3BA4 */  lw    $t2, %lo(g_sndSfxSlotVolume)($t2)
 /* 0093A4 700087A4 00187040 */  sll   $t6, $t8, 1
 /* 0093A8 700087A8 26F40014 */  addiu $s4, $s7, 0x14
 /* 0093AC 700087AC 014E7821 */  addu  $t7, $t2, $t6
 /* 0093B0 700087B0 85E90000 */  lh    $t1, ($t7)
 /* 0093B4 700087B4 0000C812 */  mflo  $t9
-/* 0093B8 700087B8 00000000 */  nop   
-/* 0093BC 700087BC 00000000 */  nop   
+/* 0093B8 700087B8 00000000 */  nop
+/* 0093BC 700087BC 00000000 */  nop
 /* 0093C0 700087C0 03280019 */  multu $t9, $t0
 /* 0093C4 700087C4 00006012 */  mflo  $t4
-/* 0093C8 700087C8 00000000 */  nop   
-/* 0093CC 700087CC 00000000 */  nop   
+/* 0093C8 700087C8 00000000 */  nop
+/* 0093CC 700087CC 00000000 */  nop
 /* 0093D0 700087D0 0181001A */  div   $zero, $t4, $at
 /* 0093D4 700087D4 0000C012 */  mflo  $t8
 /* 0093D8 700087D8 24017FFF */  li    $at, 32767
-/* 0093DC 700087DC 00000000 */  nop   
+/* 0093DC 700087DC 00000000 */  nop
 /* 0093E0 700087E0 01380019 */  multu $t1, $t8
 /* 0093E4 700087E4 00002012 */  mflo  $a0
-/* 0093E8 700087E8 00000000 */  nop   
-/* 0093EC 700087EC 00000000 */  nop   
+/* 0093E8 700087E8 00000000 */  nop
+/* 0093EC 700087EC 00000000 */  nop
 /* 0093F0 700087F0 0081001A */  div   $zero, $a0, $at
 /* 0093F4 700087F4 00005012 */  mflo  $t2
 /* 0093F8 700087F8 2544FFFF */  addiu $a0, $t2, -1
@@ -1406,7 +1406,7 @@ glabel .L700085C8
 /* 0094A8 700088A8 9238003E */  lbu   $t8, 0x3e($s1)
 /* 0094AC 700088AC 330A0010 */  andi  $t2, $t8, 0x10
 /* 0094B0 700088B0 11400006 */  beqz  $t2, .L700088CC
-/* 0094B4 700088B4 00000000 */   nop   
+/* 0094B4 700088B4 00000000 */   nop
 /* 0094B8 700088B8 8EA4000C */  lw    $a0, 0xc($s5)
 /* 0094BC 700088BC 86A5000A */  lh    $a1, 0xa($s5)
 /* 0094C0 700088C0 0C002382 */  jal   sndPlaySfx
@@ -1468,9 +1468,10 @@ glabel jpt_80029160
  .word .L700088D4
  .word .L700088D4
  .word .L700084F0
+ .size jpt_80029160, . - jpt_80029160
 )
 #endif
- 
+
 
 /**
  * 9548    70008948
@@ -1544,7 +1545,7 @@ void sndRemoveEvents(ALEventQueue *evtq, ALSoundState *state, u16 eventType)
 
 	    thisNode = nextNode;
     }
-    
+
     osSetIntMask(mask);
 }
 
@@ -1553,7 +1554,7 @@ void sndRemoveEvents(ALEventQueue *evtq, ALSoundState *state, u16 eventType)
  * Has similarities to
  * void alEvtqPrintEvtQueue(ALEventQueue *evtq)
  * from n64devkit\ultra\usr\src\pr\libsrc\libultra\audio\event.c
- * 
+ *
  * @param allocListCount Out param. Will contain the number of (next) nodes in the D_800243E4 allocList.
  * @param freeListCount Out param. Will contain the number of (next) nodes in the D_800243E4 freeList.
  * @return Number of (prev) nodes in the D_800243E4 freeList.
@@ -1595,7 +1596,7 @@ s32 sndCountAllocList(s16 *allocListCount, s16 *freeListCount)
  * 9770    70008B70
  * initializes soundstate to sound based on global g_sndPlayerSoundStatePtr.
  *     accepts: A0=sound data offset?, A1=sample address?
- * 
+ *
  * @param soundBank unused.
  * @param sound sound to use.
  */
@@ -1639,7 +1640,7 @@ ALSoundState *sndSetupSound(struct ALBankAlt_s *soundBank, ALSound* sound)
         state->pitch_2c = 1.0f;
         state->unk3e = (keymap->keyMax & (u8)0xf0);
         state->state = NULL;
-        
+
         if ((state->unk3e & 0x20) != 0)
         {
             state->pitch_28 = alCents2Ratio(((keymap->keyBase * 100) + DEFAULT_SETUP_PITCH_SHIFT));
@@ -1741,12 +1742,16 @@ u8 sndGetPlayingState(ALSoundState *state)
     return AL_STOPPED;
 }
 
+#ifdef DEBUG
+#    define _sndPlaySfx(sbank, id, state) sndPlaySfx(sbank, id, state, g_sndSfxVolume, __FILE__, __LINE__)
+ALSoundState *sndPlaySfx(struct ALBankAlt_s *soundBank, s16 soundIndex, ALSoundState *pendingState, f32 volume, char*file, int line)
+#else
 /**
  * 9A08    70008E08
  *     sets sound effect; used by sound effect routines
- * 
+ *
  * Old comments:
- * 
+ *
  *     accepts: A0=p->SE buffer, A1=SE #, A2=p->data
  *          data:    0x0    4    p->SE entry
  *              0x4    4    target volume
@@ -1754,18 +1759,19 @@ u8 sndGetPlayingState(ALSoundState *state)
  *              0xC    4    initial volume
  *              0x10    4    p->preset emitting sound
  *              0x14    4    p->object emitting sound
- * 
+ *
  * // end old comments.
- * 
+ *
  * @param soundBank sound bank
  * @param soundIndex index into sound bank: soundBank->instArray[0]->soundArray[soundIndex]
  * @param pendingState Optional pointer. If provided, its link.next pointer will be
  * to the newly created soundState.
  */
 ALSoundState *sndPlaySfx(struct ALBankAlt_s *soundBank, s16 soundIndex, ALSoundState *pendingState)
+#endif
 {
     // declarations
-    
+
     // declaration order doesn't seem to matter for these.
 
     ALMicroTime deltaTotal;
@@ -1779,7 +1785,7 @@ ALSoundState *sndPlaySfx(struct ALBankAlt_s *soundBank, s16 soundIndex, ALSoundS
     s16 unused_sp6c;           // 108(sp)
     ALMicroTime playSfxDelta;  // 104(sp)
     ALMicroTime deltaLoop; // 100(sp)
-    
+
     // end declarations
 
     nextState = NULL;
@@ -1854,7 +1860,7 @@ ALSoundState *sndPlaySfx(struct ALBankAlt_s *soundBank, s16 soundIndex, ALSoundS
         if (eventSoundIndex != 0)
         {
             ALSndpEvent playSfxEvent;
-    
+
             nextState->unk3e |= 0x10;
 
             playSfxEvent.playSfx.type = AL_SNDP_PLAY_SFX_EVT;
@@ -1898,7 +1904,7 @@ void sndDeactivate(ALSoundState *state)
  * 9C6C    7000906C
  * Similar to sndDeactivate, but iterates the global list and deactivates
  * items with the same unk3e flag.
- * 
+ *
  * @param flag flag bitmask to match item on.
  */
 void sndDeactivateAllSfxByFlag(u8 flag)
@@ -1923,7 +1929,7 @@ void sndDeactivateAllSfxByFlag(u8 flag)
 
         item = (ALSoundState *)item->link.next;
     }
-    
+
     osSetIntMask(mask);
 }
 
@@ -1957,7 +1963,7 @@ void sndDeactivateAllSfxByFlag_3(void)
 /**
  * 9D84    70009184
  * Calls alEvtqPostEvent with the method parameters and delta=0.
- * 
+ *
  * @param state sound state.
  * @param eventType type of event to post.
  * @param arg2 event data value (interpretation depends on eventType).
@@ -1965,7 +1971,7 @@ void sndDeactivateAllSfxByFlag_3(void)
 void sndCreatePostEvent(ALSoundState *state, s16 eventType, s32 arg2)
 {
     ALSndpEvent evt;
-    
+
     evt.common.type = eventType;
     evt.common.state = state;
     evt.unks32.val8 = arg2;
@@ -2028,7 +2034,7 @@ void sndSetSfxSlotVolume(u8 sfxIndex, u16 volume)
     ALSoundState *item;
 
     item = (ALSoundState *)D_800243E4.node.next;
-    
+
     g_sndSfxSlotNaturalVolume[sfxIndex] = volume;
     g_sndSfxSlotVolume[sfxIndex] = (s16) ((f32) volume * g_sndSfxVolumeScale);
 

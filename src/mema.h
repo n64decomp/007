@@ -6,7 +6,7 @@
 void memaInit(void);
 void memaReset(void *heapaddr, u32 heapsize);
 void memaSingleDefragPass(void);
-s32 memaAlloc(u32 size);
+void *memaAlloc(u32 size);
 void memaFree(void *addr, s32 size);
 void memaDumpPrePostMerge(void);
 s32 memaGetLongestFree(void);

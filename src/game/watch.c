@@ -64,25 +64,25 @@ f32 D_800409D4 = 0.0f;
 s32 D_800409D8 = 8;
 //D:800409DC
 u16 D_800409DC[] = {
-    /*1.1 honey*/    TEXT(LOPTIONS, OPTION_STR_09), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*action*/TEXT(LOPTIONS, OPTION_STR_02), /*fire*/TEXT(LOPTIONS, OPTION_STR_00),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*move*/TEXT(LOPTIONS, OPTION_STR_05),
-    /*1.2 solitaire*/TEXT(LOPTIONS, OPTION_STR_0A), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*action*/TEXT(LOPTIONS, OPTION_STR_02), /*fire*/TEXT(LOPTIONS, OPTION_STR_00),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01),    /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*look*/TEXT(LOPTIONS, OPTION_STR_06),
-    /*1.3 kissy*/    TEXT(LOPTIONS, OPTION_STR_0B),   /*fire*/TEXT(LOPTIONS, OPTION_STR_00), /*action*/TEXT(LOPTIONS, OPTION_STR_02),  /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*look*/TEXT(LOPTIONS, OPTION_STR_06), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*move*/TEXT(LOPTIONS, OPTION_STR_05),
-    /*1.4 goodnight*/TEXT(LOPTIONS, OPTION_STR_0C),   /*fire*/TEXT(LOPTIONS, OPTION_STR_00), /*action*/TEXT(LOPTIONS, OPTION_STR_02),  /*aim*/TEXT(LOPTIONS, OPTION_STR_01), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*weapon*/TEXT(LOPTIONS, OPTION_STR_03), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*move*/TEXT(LOPTIONS, OPTION_STR_05), /*pause*/TEXT(LOPTIONS, OPTION_STR_04), /*look*/TEXT(LOPTIONS, OPTION_STR_06),
-    /*2.1 plenty*/   TEXT(LOPTIONS, OPTION_STR_0D),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),
-    /*2.2 galore*/   TEXT(LOPTIONS, OPTION_STR_0E),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),
-    /*2.3 domino*/   TEXT(LOPTIONS, OPTION_STR_0F),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),
-    /*2.4 goodhead*/ TEXT(LOPTIONS, OPTION_STR_10),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),      /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07),     /*?*/TEXT(LOPTIONS, OPTION_STR_07),    /*?*/TEXT(LOPTIONS, OPTION_STR_07)
+    /*1.1 honey*/    getStringID(LOPTIONS, OPTION_STR_09_11HONEY_LF), /*weapon*/getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF), /*action*/getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF), /*fire*/getStringID(LOPTIONS, OPTION_STR_00_FIRE_LF),    /*aim*/getStringID(LOPTIONS, OPTION_STR_01_AIM_LF),    /*aim*/getStringID(LOPTIONS, OPTION_STR_01_AIM_LF), /*look*/getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF), /*look*/getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF), /*pause*/getStringID(LOPTIONS, OPTION_STR_04_PAUSE_LF), /*move*/getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF),
+    /*1.2 solitaire*/getStringID(LOPTIONS, OPTION_STR_0A_12SOLITAIRE_LF), /*weapon*/getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF), /*action*/getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF), /*fire*/getStringID(LOPTIONS, OPTION_STR_00_FIRE_LF),    /*aim*/getStringID(LOPTIONS, OPTION_STR_01_AIM_LF),    /*aim*/getStringID(LOPTIONS, OPTION_STR_01_AIM_LF), /*move*/getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF), /*move*/getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF), /*pause*/getStringID(LOPTIONS, OPTION_STR_04_PAUSE_LF), /*look*/getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF),
+    /*1.3 kissy*/    getStringID(LOPTIONS, OPTION_STR_0B_13KISSY_LF),   /*fire*/getStringID(LOPTIONS, OPTION_STR_00_FIRE_LF), /*action*/getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF),  /*aim*/getStringID(LOPTIONS, OPTION_STR_01_AIM_LF), /*weapon*/getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF), /*weapon*/getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF), /*look*/getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF), /*look*/getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF), /*pause*/getStringID(LOPTIONS, OPTION_STR_04_PAUSE_LF), /*move*/getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF),
+    /*1.4 goodnight*/getStringID(LOPTIONS, OPTION_STR_0C_14GOODNIGHT_LF),   /*fire*/getStringID(LOPTIONS, OPTION_STR_00_FIRE_LF), /*action*/getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF),  /*aim*/getStringID(LOPTIONS, OPTION_STR_01_AIM_LF), /*weapon*/getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF), /*weapon*/getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF), /*move*/getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF), /*move*/getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF), /*pause*/getStringID(LOPTIONS, OPTION_STR_04_PAUSE_LF), /*look*/getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF),
+    /*2.1 plenty*/   getStringID(LOPTIONS, OPTION_STR_0D_21PLENTY_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),     /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),
+    /*2.2 galore*/   getStringID(LOPTIONS, OPTION_STR_0E_22GALORE_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),     /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),
+    /*2.3 domino*/   getStringID(LOPTIONS, OPTION_STR_0F_23DOMINO_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),     /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),
+    /*2.4 goodhead*/ getStringID(LOPTIONS, OPTION_STR_10_24GOODHEAD_LF),     /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),      /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),     /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF),    /*?*/getStringID(LOPTIONS, OPTION_STR_07_QUESTION_LF)
 };
 
 struct game_options game_options_entries[] = {
-    { {TEXT(LOPTIONS, OPTION_STR_11), TEXT(LOPTIONS, OPTION_STR_1C), TEXT(LOPTIONS, OPTION_STR_1B), 0}, 0}, //look up/down, reverse, upright
-    { {TEXT(LOPTIONS, OPTION_STR_12), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //autoaim, off, on
-    { {TEXT(LOPTIONS, OPTION_STR_14), TEXT(LOPTIONS, OPTION_STR_1E), TEXT(LOPTIONS, OPTION_STR_1D), 0}, 0}, //aim control, hold, toggle
-    { {TEXT(LOPTIONS, OPTION_STR_15), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //sight on screen, off, on
-    { {TEXT(LOPTIONS, OPTION_STR_13), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //look ahead, off, on
-    { {TEXT(LOPTIONS, OPTION_STR_16), TEXT(LOPTIONS, OPTION_STR_1A), TEXT(LOPTIONS, OPTION_STR_19), 0}, 1}, //ammo on screen, off, on
-    { {TEXT(LOPTIONS, OPTION_STR_17), TEXT(LOPTIONS, OPTION_STR_1F), TEXT(LOPTIONS, OPTION_STR_20), TEXT(LOPTIONS, OPTION_STR_21)}, 0}, //screen, full, wide, cinema
-    { {TEXT(LOPTIONS, OPTION_STR_18), TEXT(LOPTIONS, OPTION_STR_22), TEXT(LOPTIONS, OPTION_STR_23), 0}, 0} //ratio, normal, 16:9
+    { {getStringID(LOPTIONS, OPTION_STR_11_LOOKUPDOWN_LF), getStringID(LOPTIONS, OPTION_STR_1C_REVERSE_LF), getStringID(LOPTIONS, OPTION_STR_1B_UPRIGHT_LF), 0}, 0}, //look up/down, reverse, upright
+    { {getStringID(LOPTIONS, OPTION_STR_12_AUTOAIM_LF), getStringID(LOPTIONS, OPTION_STR_1A_OFF_LF), getStringID(LOPTIONS, OPTION_STR_19_ON_LF), 0}, 1}, //autoaim, off, on
+    { {getStringID(LOPTIONS, OPTION_STR_14_AIMCONTROL_LF), getStringID(LOPTIONS, OPTION_STR_1E_HOLD_LF), getStringID(LOPTIONS, OPTION_STR_1D_TOGGLE_LF), 0}, 0}, //aim control, hold, toggle
+    { {getStringID(LOPTIONS, OPTION_STR_15_SIGHTONSCREEN_LF), getStringID(LOPTIONS, OPTION_STR_1A_OFF_LF), getStringID(LOPTIONS, OPTION_STR_19_ON_LF), 0}, 1}, //sight on screen, off, on
+    { {getStringID(LOPTIONS, OPTION_STR_13_LOOKAHEAD_LF), getStringID(LOPTIONS, OPTION_STR_1A_OFF_LF), getStringID(LOPTIONS, OPTION_STR_19_ON_LF), 0}, 1}, //look ahead, off, on
+    { {getStringID(LOPTIONS, OPTION_STR_16_AMMOONSCREEN_LF), getStringID(LOPTIONS, OPTION_STR_1A_OFF_LF), getStringID(LOPTIONS, OPTION_STR_19_ON_LF), 0}, 1}, //ammo on screen, off, on
+    { {getStringID(LOPTIONS, OPTION_STR_17_SCREEN_LF), getStringID(LOPTIONS, OPTION_STR_1F_FULL_LF), getStringID(LOPTIONS, OPTION_STR_20_WIDE_LF), getStringID(LOPTIONS, OPTION_STR_21_CINEMA_LF)}, 0}, //screen, full, wide, cinema
+    { {getStringID(LOPTIONS, OPTION_STR_18_RATIO_LF), getStringID(LOPTIONS, OPTION_STR_22_NORMAL_LF), getStringID(LOPTIONS, OPTION_STR_23_169_LF), 0}, 0} //ratio, normal, 16:9
 };
 
 //D:80040ADC
@@ -164,13 +164,13 @@ f32 D_80040B64 = -200.0f;
 
 //D:80040B68
 f32 D_80040B68[] = {
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f,
     -900.0f, 200.0f, -45.0f,
     715.0f, 200.0f, 393.0f,
     -875.0f, 200.0f, -210.0f,
@@ -187,42 +187,42 @@ f32 D_80040B68[] = {
 
 //D:80040C44
 f32 D_80040C44[] = {
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 
-    0.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 
-    2000.0f, -600.0f, 200.0f, 
-    500.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 
-    2000.0f, -600.0f, 200.0f, 
-    240.0f, -600.0f, 200.0f, 
-    110.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 
-    2000.0f, -600.0f, 200.0f, 
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f,
+    2000.0f, -600.0f, 200.0f,
+    500.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f,
+    2000.0f, -600.0f, 200.0f,
+    240.0f, -600.0f, 200.0f,
+    110.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f,
+    2000.0f, -600.0f, 200.0f,
     320.0f
 };
 
 //D:80040D20
 f32 D_80040D20[] = {
-    0.0f, 0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 0.0f, 
-    0.0f, 0.0f, 0.0f, 0.0f, 
-    2000.0f, 0.0f, 2000.0f, 2000.0f, 
-    0.0f, 2000.0f, 600.0f, 200.0f, 
-    500.0f, 2000.0f, 0.0f, 2000.0f, 
-    2000.0f, 0.0f, 2000.0f, 2000.0f, 
-    0.0f, 2000.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 2000.0f, 
-    600.0f, 200.0f, 240.0f, 600.0f, 
-    200.0f, 110.0f, 2000.0f, 0.0f, 
-    2000.0f, 2000.0f, 0.0f, 2000.0f, 
+    0.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 0.0f,
+    2000.0f, 0.0f, 2000.0f, 2000.0f,
+    0.0f, 2000.0f, 600.0f, 200.0f,
+    500.0f, 2000.0f, 0.0f, 2000.0f,
+    2000.0f, 0.0f, 2000.0f, 2000.0f,
+    0.0f, 2000.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f, 2000.0f,
+    600.0f, 200.0f, 240.0f, 600.0f,
+    200.0f, 110.0f, 2000.0f, 0.0f,
+    2000.0f, 2000.0f, 0.0f, 2000.0f,
     600.0f, 200.0f, 320.0f
 };
 
@@ -259,7 +259,7 @@ void game_option_select_value(u32 *param_1, u32 param_2);
 
 
 
-void nullsub_7F0A4860(void) 
+void nullsub_7F0A4860(void)
 {
 
 }
@@ -290,10 +290,10 @@ void init_watch_at_start_of_stage(int stage)
     }
 
     g_CurrentPlayer->neg_vspacing_for_control_type_entry = 0;
-    g_CurrentPlayer->cur_player_control_type_1 = 0;
-    g_CurrentPlayer->cur_player_control_type_0 = 0;
+    g_CurrentPlayer->cur_player_control_type_1 = CONTROLLER_CONFIG_HONEY;
+    g_CurrentPlayer->cur_player_control_type_0 = CONTROLLER_CONFIG_HONEY;
     g_CurrentPlayer->cur_player_control_type_2 = 0.0f;
-    g_CurrentPlayer->has_set_control_type_data = 1;
+    g_CurrentPlayer->has_set_control_type_data = TRUE;
     D_800409D8 = 8;
 
     controlstick_lr_enabled = 0;
@@ -378,7 +378,7 @@ Gfx * sub_GAME_7F0A4B40(Gfx *DL)
     {
         D_80040B4C += 1;
     }
-    
+
     gDPSetRenderMode(DL++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
     gDPSetCombineMode(DL++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     gDPSetPrimColor(DL++, 0, 0, 0xFF, 0x00, 0x00, 0xFF);
@@ -390,11 +390,11 @@ Gfx * sub_GAME_7F0A4B40(Gfx *DL)
         struct fontchar * pFontChars;
         s32 y;
         s32 x;
-        
+
         pFontFile = ptrFontBankGothic;
         pFontChars = ptrFontBankGothicChars;
         sprintf(buffer,"%d, %d\n",D_80040B48,D_80040B4C);
-    
+
         DL = microcode_constructor(DL++);
 
         textMeasure(&x, &y, buffer, pFontChars, pFontFile, 0);
@@ -402,7 +402,7 @@ Gfx * sub_GAME_7F0A4B40(Gfx *DL)
         // HACK: what is this: ((s32*)pFontChars)[0x224]
         D_80040B4C = (D_80040B4C - ((s32*)pFontChars)[0x224]) + 1;
     }
-    
+
     return DL;
 }
 
@@ -439,7 +439,7 @@ void cur_player_set_control_type(int type)
     langsize = j_text_trigger ? 14 : 10;
 
     g_CurrentPlayer->neg_vspacing_for_control_type_entry = -(langsize * type);
-    g_CurrentPlayer->has_set_control_type_data = 1;
+    g_CurrentPlayer->has_set_control_type_data = TRUE;
 
 }
 
@@ -663,6 +663,12 @@ void watch_screen0_navigation(void)
                 goto_watch_screen_index_1 = TRUE;
             }
         }
+        #ifdef DEBUG
+        else
+        {
+            osSyncPrintf("gun watch pos x=%f[CL,CR] y=%f[CD,CU] z=%f[TL,TR] ");
+        }
+        #endif
 
         if ((joyGetButtonsPressedThisFrame(PLAYER_1, L_JPAD)) || (sub_GAME_7F0A4FB0()))
         {
@@ -694,7 +700,7 @@ void watch_screen0_navigation(void)
         D_800409A4 = 0;
         set_missionstate(MISSION_STATE_0);
         bossRunTitleStage();
-        mission_failed_or_aborted = 1;
+        mission_failed_or_aborted = TRUE;
         deleteCurrentSelectedFolder();
     }
 }
@@ -967,11 +973,11 @@ void sub_GAME_7F0A5B80(void)
     f32 fVar1;
     int invItems;
     int watchDebugFlag;
-    
+
     invItems = bondinvCountTotalItemsInInv();
     watchDebugFlag = get_debug_gunwatchpos_flag();
     if (watchDebugFlag == 0)
-    {    
+    {
         if ((joyGetButtonsPressedThisFrame(PLAYER_1,U_CBUTTONS|U_JPAD) != 0) && (joyGetStickY(PLAYER_1) >= 0x47))
         {
             if ((D_800409BC > 0) && (watch_item_is_actively_selected == 0))
@@ -986,7 +992,7 @@ void sub_GAME_7F0A5B80(void)
                 D_800409BC += 1.0f;
             }
         }
-        
+
 
         if (joyGetButtons(PLAYER_1,U_CBUTTONS|U_JPAD) != 0)
         {
@@ -1003,7 +1009,7 @@ void sub_GAME_7F0A5B80(void)
             }
         }
     }
-    
+
 
 
     if ((joyGetStickY(PLAYER_1) >= 0x1F) && (joyGetStickY(PLAYER_1) < 0x46) && (g_curWatchItemIndex > 0) && (watch_item_is_actively_selected == 0))
@@ -1069,9 +1075,9 @@ void sub_GAME_7F0A5B80(void)
             D_800409C0 = 1;
         }
     }
-    if ((D_800409BC <= g_curWatchItemIndex + 0.55f) || (joyGetButtons(PLAYER_1,ANY_BUTTON) != 0)) 
+    if ((D_800409BC <= g_curWatchItemIndex + 0.55f) || (joyGetButtons(PLAYER_1,ANY_BUTTON) != 0))
     {
-        if ((D_800409BC <= g_curWatchItemIndex + 0.45f) && (joyGetButtons(PLAYER_1,ANY_BUTTON) == 0)) 
+        if ((D_800409BC <= g_curWatchItemIndex + 0.45f) && (joyGetButtons(PLAYER_1,ANY_BUTTON) == 0))
         {
             D_800409BC = D_800409BC + 0.1f;
         }
@@ -2348,9 +2354,9 @@ Gfx *draw_background_health_and_armor(Gfx *gdl, Mtx *arg1, s32 zoom_squish)
     struct WatchVertex *sp44;
     Gfx *sp40;
     Gfx *sp3C;
-    
+
     s32 stack_pad[6];
-    
+
     f32 scale;
 
     sp48 = dynAllocate7F0BD6C4(WATCH_BACKGROUND_VERTEX_COUNT);
@@ -2378,7 +2384,7 @@ Gfx *draw_background_health_and_armor(Gfx *gdl, Mtx *arg1, s32 zoom_squish)
 
     if (check_watch_page_transistion_running())
     {
-        scale = (g_CurrentPlayer->zoomintime * (g_CurrentPlayer->zoominfovynew - g_CurrentPlayer->zoominfovyold)) 
+        scale = (g_CurrentPlayer->zoomintime * (g_CurrentPlayer->zoominfovynew - g_CurrentPlayer->zoominfovyold))
             / g_CurrentPlayer->zoomintimemax;
 
         if (scale < 0.0f)
@@ -2399,12 +2405,12 @@ Gfx *draw_background_health_and_armor(Gfx *gdl, Mtx *arg1, s32 zoom_squish)
         scale = 0.05f;
         g_WatchBackgroundGreen = 0xE0;
 
-        if (g_CurrentPlayer->watch_animation_state == 4 || g_CurrentPlayer->watch_animation_state == 6)
+        if (g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x4 || g_CurrentPlayer->watch_animation_state == WATCH_ANIMATION_0x6)
         {
             scale = bondviewWatchAnimationRelated();
         }
     }
-    
+
     guScale(&gfx_background_8007B0A0, 0.25f, 0.25f, 0.25f);
 
     gSPMatrix(gdl++, &gfx_background_8007B0A0, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW);
@@ -2461,7 +2467,7 @@ Gfx *draw_background_health_and_armor(Gfx *gdl, Mtx *arg1, s32 zoom_squish)
     {
         sub_GAME_7F0A33F8(sp48, WATCH_BACKGROUND_VERTEX_COUNT, 0.899999976158f, 1);
         /*sp40 = */sub_GAME_7F0A3978(sp40, OS_PHYSICAL_TO_K0(sp48), WATCH_BACKGROUND_VERTEX_COUNT, 1);
-        
+
         gDPSetRenderMode(gdl++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
     }
 
@@ -2524,15 +2530,15 @@ Gfx *draw_abort_cancel_confirm(Gfx *gdl)
 
     pFontFile = ptrFontBankGothic;
     pFontChars = ptrFontBankGothicChars;
-    sp54 = langGet(TEXT(LOPTIONS, OPTION_STR_24)); //abort:
-    sp50 = langGet(TEXT(LOPTIONS, OPTION_STR_25)); //confirm
-    sp4C = langGet(TEXT(LOPTIONS, OPTION_STR_26)); //cancel
+    sp54 = langGet(getStringID(LOPTIONS, OPTION_STR_24_ABORT_LF)); //abort:
+    sp50 = langGet(getStringID(LOPTIONS, OPTION_STR_25_CONFIRM_LF)); //confirm
+    sp4C = langGet(getStringID(LOPTIONS, OPTION_STR_26_CANCEL_LF)); //cancel
     sp7C = 0x51;
 
     sp78 = (j_text_trigger ? 0xF : 0) + 0xBD;
-    
+
     sp74 = (j_text_trigger ? 0xA : 0) + 0x88;
-    
+
     sp70 = sp6C = sp68 = (j_text_trigger ? 3 : 0) + (PAL ? 0x4E : 0x4C);
 
     if (watch_item_is_actively_selected != 0)
@@ -2601,19 +2607,19 @@ Gfx *draw_text_mission_status(Gfx *gdl)
     s32 sp4C;
     s32 joffset;
 
-    txtptr_1 = langGet(TEXT(LOPTIONS, OPTION_STR_27)); //mission status:
+    txtptr_1 = langGet(getStringID(LOPTIONS, OPTION_STR_27_MISSIONSTATUS_LF)); //mission status:
     pFontFile = ptrFontBankGothic;
     pFontChars = ptrFontBankGothicChars;
 
     if (objectiveIsAllComplete())
     {
         sp4C = 0xFF00B0;
-        txtptr_2 = langGet(TEXT(LOPTIONS, OPTION_STR_28)); //complete
+        txtptr_2 = langGet(getStringID(LOPTIONS, OPTION_STR_28_COMPLETE_LF)); //complete
     }
     else
     {
         sp4C = D_80040AF4;
-        txtptr_2 = langGet(TEXT(LOPTIONS, OPTION_STR_29)); //incomplete
+        txtptr_2 = langGet(getStringID(LOPTIONS, OPTION_STR_29_INCOMPLETE_LF)); //incomplete
     }
 
     gdl = microcode_constructor(gdl);
@@ -2657,7 +2663,7 @@ Gfx *draw_text_q_watch_v201_beta(Gfx *gdl)
     s32 pFontChars;
     s32 joffset;
 
-    txtptr = langGet(TEXT(LOPTIONS, OPTION_STR_2B)); //q watch v2.01 beta
+    txtptr = langGet(getStringID(LOPTIONS, OPTION_STR_2B_QWATCHVERSION_LF)); //q watch v2.01 beta
 
     if (j_text_trigger)
     {
@@ -3319,7 +3325,7 @@ glabel draw_current_hand_item_and_ammo
 /* 0DA004 7F0A7614 8FB00038 */  lw    $s0, 0x38($sp)
 /* 0DA008 7F0A7618 27BD0118 */  addiu $sp, $sp, 0x118
 /* 0DA00C 7F0A761C 03E00008 */  jr    $ra
-/* 0DA010 7F0A7620 00000000 */   nop   
+/* 0DA010 7F0A7620 00000000 */   nop
 )
 #endif
 #endif
@@ -4367,7 +4373,7 @@ glabel draw_watch_inventory_page
 /* 0DA14C 7F0A775C 504101B8 */  beql  $v0, $at, .L7F0A7E40
 /* 0DA150 7F0A7760 8FBF003C */   lw    $ra, 0x3c($sp)
 /* 0DA154 7F0A7764 0FC2F2A4 */  jal   dynAllocateMatrix
-/* 0DA158 7F0A7768 00000000 */   nop   
+/* 0DA158 7F0A7768 00000000 */   nop
 /* 0DA15C 7F0A776C 3C048004 */  lui   $a0, %hi(g_curWatchItemIndex) # $a0, 0x8004
 /* 0DA160 7F0A7770 AFA2092C */  sw    $v0, 0x92c($sp)
 /* 0DA164 7F0A7774 0FC23684 */  jal   bondinvGet45AngleForIndex
@@ -4581,7 +4587,7 @@ glabel draw_watch_inventory_page
 /* 0DA480 7F0A7A90 0FC23507 */  jal   bondinvCountTotalItemsInInv
 /* 0DA484 7F0A7A94 00008025 */   move  $s0, $zero
 /* 0DA488 7F0A7A98 1840000B */  blez  $v0, .L7F0A7AC8
-/* 0DA48C 7F0A7A9C 00000000 */   nop   
+/* 0DA48C 7F0A7A9C 00000000 */   nop
 .L7F0A7AA0:
 /* 0DA490 7F0A7AA0 0FC235EA */  jal   bondinvGetNameByIndex
 /* 0DA494 7F0A7AA4 02002025 */   move  $a0, $s0
@@ -4592,7 +4598,7 @@ glabel draw_watch_inventory_page
 /* 0DA4A8 7F0A7AB8 26100001 */   addiu $s0, $s0, 1
 /* 0DA4AC 7F0A7ABC 0202082A */  slt   $at, $s0, $v0
 /* 0DA4B0 7F0A7AC0 1420FFF7 */  bnez  $at, .L7F0A7AA0
-/* 0DA4B4 7F0A7AC4 00000000 */   nop   
+/* 0DA4B4 7F0A7AC4 00000000 */   nop
 .L7F0A7AC8:
 /* 0DA4B8 7F0A7AC8 3C038004 */  lui   $v1, %hi(D_800409C4) # $v1, 0x8004
 /* 0DA4BC 7F0A7ACC 2463A614 */  addiu $v1, %lo(D_800409C4) # addiu $v1, $v1, -0x59ec
@@ -4602,7 +4608,7 @@ glabel draw_watch_inventory_page
 /* 0DA4CC 7F0A7ADC AC6E0000 */  sw    $t6, ($v1)
 .L7F0A7AE0:
 /* 0DA4D0 7F0A7AE0 0FC293A8 */  jal   sub_GAME_7F0A5B80
-/* 0DA4D4 7F0A7AE4 00000000 */   nop   
+/* 0DA4D4 7F0A7AE4 00000000 */   nop
 /* 0DA4D8 7F0A7AE8 3C188004 */  lui   $t8, %hi(j_text_trigger) # $t8, 0x8004
 /* 0DA4DC 7F0A7AEC 8F181150 */  lw    $t8, %lo(j_text_trigger)($t8)
 /* 0DA4E0 7F0A7AF0 8FA30084 */  lw    $v1, 0x84($sp)
@@ -4836,7 +4842,7 @@ glabel draw_watch_inventory_page
 /* 0DA820 7F0A7E30 AFA20930 */  sw    $v0, 0x930($sp)
 .L7F0A7E34:
 /* 0DA824 7F0A7E34 0FC29DA4 */  jal   sub_GAME_7F0A8378
-/* 0DA828 7F0A7E38 00000000 */   nop   
+/* 0DA828 7F0A7E38 00000000 */   nop
 .L7F0A7E3C:
 /* 0DA82C 7F0A7E3C 8FBF003C */  lw    $ra, 0x3c($sp)
 .L7F0A7E40:
@@ -4857,7 +4863,7 @@ Gfx *unused_draw_watch_inventory_page(Gfx *gdl, Mtx *param_2) {
     s32 sp64,sp68; //unused?
 
     s32 sp60;
-    s32 sp5C;    
+    s32 sp5C;
     s32 sp58;
     s32 sp54;
     s32 pFontFile;
@@ -5042,7 +5048,7 @@ void sub_GAME_7F0A8ED0(u16* arg0) {
 
     sp1C = joyGetStickX(PLAYER_1);
     temp_v1 = *arg0;
-    
+
     if (joyGetButtons(PLAYER_1, R_CBUTTONS|R_TRIG|R_JPAD)) {
         temp_v1 = temp_v1 + 0x400;
     } else if (joyGetButtons(PLAYER_1, L_CBUTTONS|L_TRIG|L_JPAD)) {
@@ -5877,13 +5883,13 @@ glabel sub_GAME_7F0A97D0
 /* 0DB570 7F0A8B80 26310014 */  addiu $s1, $s1, 0x14
 /* 0DB574 7F0A8B84 0206082A */  slt   $at, $s0, $a2
 /* 0DB578 7F0A8B88 1420FFF5 */  bnez  $at, .L7F0A8B60
-/* 0DB57C 7F0A8B8C 00000000 */   nop   
+/* 0DB57C 7F0A8B8C 00000000 */   nop
 .L7F0A8B90:
 /* 0DB580 7F0A8B90 3C188004 */  lui   $t8, %hi(watch_item_is_actively_selected) # $t8, 0x8004
 /* 0DB584 7F0A8B94 8F18A5F8 */  lw    $t8, %lo(watch_item_is_actively_selected)($t8)
 /* 0DB588 7F0A8B98 3C198004 */  lui   $t9, %hi(controller_options_index) # $t9, 0x8004
 /* 0DB58C 7F0A8B9C 13000019 */  beqz  $t8, .L7F0A8C04
-/* 0DB590 7F0A8BA0 00000000 */   nop   
+/* 0DB590 7F0A8BA0 00000000 */   nop
 /* 0DB594 7F0A8BA4 8F39A5E8 */  lw    $t9, %lo(controller_options_index)($t9)
 /* 0DB598 7F0A8BA8 3C118004 */  lui   $s1, %hi(j_text_trigger) # $s1, 0x8004
 /* 0DB59C 7F0A8BAC 26311150 */  addiu $s1, %lo(j_text_trigger) # addiu $s1, $s1, 0x1150
@@ -5893,7 +5899,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DB5AC 7F0A8BBC 240B0001 */  li    $t3, 1
 /* 0DB5B0 7F0A8BC0 2402000A */  li    $v0, 10
 /* 0DB5B4 7F0A8BC4 11000003 */  beqz  $t0, .L7F0A8BD4
-/* 0DB5B8 7F0A8BC8 00000000 */   nop   
+/* 0DB5B8 7F0A8BC8 00000000 */   nop
 /* 0DB5BC 7F0A8BCC 10000001 */  b     .L7F0A8BD4
 /* 0DB5C0 7F0A8BD0 2402000E */   li    $v0, 14
 .L7F0A8BD4:
@@ -6000,7 +6006,7 @@ glabel sub_GAME_7F0A97D0
 /* 0DB730 7F0A8D40 13200003 */  beqz  $t9, .L7F0A8D50
 /* 0DB734 7F0A8D44 3C098007 */   lui   $t1, %hi(g_CurrentPlayer) # $t1, 0x8007
 /* 0DB738 7F0A8D48 10000001 */  b     .L7F0A8D50
-/* 0DB73C 7F0A8D4C 00000000 */   nop   
+/* 0DB73C 7F0A8D4C 00000000 */   nop
 .L7F0A8D50:
 /* 0DB740 7F0A8D50 8D298BC0 */  lw    $t1, %lo(g_CurrentPlayer)($t1)
 /* 0DB744 7F0A8D54 2408001A */  li    $t0, 26
@@ -6081,7 +6087,7 @@ const char a3d[] =  "(3D)\n";
 
 #if defined(LEFTOVERDEBUG)
 GLOBAL_ASM(
-    
+
 .text
 glabel sub_GAME_7F0A9AB8
 /* 0DE5E8 7F0A9AB8 3C0E8004 */  lui   $t6, %hi(game_options_entries)
@@ -7099,7 +7105,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DB9F0 7F0A9000 01495021 */  addu  $t2, $t2, $t1
 /* 0DB9F4 7F0A9004 954AA634 */  lhu   $t2, %lo(D_800409DC+8)($t2)
 /* 0DB9F8 7F0A9008 1541001F */  bne   $t2, $at, .L7F0A9088
-/* 0DB9FC 7F0A900C 00000000 */   nop   
+/* 0DB9FC 7F0A900C 00000000 */   nop
 /* 0DBA00 7F0A9010 1000001D */  b     .L7F0A9088
 /* 0DBA04 7F0A9014 AFAB0050 */   sw    $t3, 0x50($sp)
 .L7F0A9018:
@@ -7142,7 +7148,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DBA94 7F0A90A4 8D4AA5F8 */  lw    $t2, %lo(watch_item_is_actively_selected)($t2)
 /* 0DBA98 7F0A90A8 00002025 */  move  $a0, $zero
 /* 0DBA9C 7F0A90AC 11400005 */  beqz  $t2, .L7F0A90C4
-/* 0DBAA0 7F0A90B0 00000000 */   nop   
+/* 0DBAA0 7F0A90B0 00000000 */   nop
 /* 0DBAA4 7F0A90B4 0C002C20 */  jal   joyGetButtons
 /* 0DBAA8 7F0A90B8 24050F00 */   li    $a1, 3840
 /* 0DBAAC 7F0A90BC 1440001E */  bnez  $v0, .L7F0A9138
@@ -7194,7 +7200,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DBB5C 7F0A916C 01495021 */  addu  $t2, $t2, $t1
 /* 0DBB60 7F0A9170 954AA63A */  lhu   $t2, %lo(D_800409DC+14)($t2)
 /* 0DBB64 7F0A9174 15410005 */  bne   $t2, $at, .L7F0A918C
-/* 0DBB68 7F0A9178 00000000 */   nop   
+/* 0DBB68 7F0A9178 00000000 */   nop
 /* 0DBB6C 7F0A917C 0FC304AE */  jal   langGet
 /* 0DBB70 7F0A9180 3404AC30 */   li    $a0, 44080
 /* 0DBB74 7F0A9184 10000001 */  b     .L7F0A918C
@@ -7219,7 +7225,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DBBB8 7F0A91C8 01CD7021 */  addu  $t6, $t6, $t5
 /* 0DBBBC 7F0A91CC 95CEA63A */  lhu   $t6, %lo(D_800409DC+14)($t6)
 /* 0DBBC0 7F0A91D0 15C10005 */  bne   $t6, $at, .L7F0A91E8
-/* 0DBBC4 7F0A91D4 00000000 */   nop   
+/* 0DBBC4 7F0A91D4 00000000 */   nop
 /* 0DBBC8 7F0A91D8 0FC304AE */  jal   langGet
 /* 0DBBCC 7F0A91DC 3404AC31 */   li    $a0, 44081
 /* 0DBBD0 7F0A91E0 10000001 */  b     .L7F0A91E8
@@ -7474,7 +7480,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DBF84 7F0A9594 8D8CA5F8 */  lw    $t4, %lo(watch_item_is_actively_selected)($t4)
 /* 0DBF88 7F0A9598 00002025 */  move  $a0, $zero
 /* 0DBF8C 7F0A959C 11800005 */  beqz  $t4, .L7F0A95B4
-/* 0DBF90 7F0A95A0 00000000 */   nop   
+/* 0DBF90 7F0A95A0 00000000 */   nop
 /* 0DBF94 7F0A95A4 0C002C20 */  jal   joyGetButtons
 /* 0DBF98 7F0A95A8 2405000F */   li    $a1, 15
 /* 0DBF9C 7F0A95AC 1440001F */  bnez  $v0, .L7F0A962C
@@ -7534,7 +7540,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DC06C 7F0A967C 010E4021 */  addu  $t0, $t0, $t6
 /* 0DC070 7F0A9680 9508A638 */  lhu   $t0, %lo(D_800409DC+12)($t0)
 /* 0DC074 7F0A9684 15010005 */  bne   $t0, $at, .L7F0A969C
-/* 0DC078 7F0A9688 00000000 */   nop   
+/* 0DC078 7F0A9688 00000000 */   nop
 /* 0DC07C 7F0A968C 0FC304AE */  jal   langGet
 /* 0DC080 7F0A9690 3404AC30 */   li    $a0, 44080
 /* 0DC084 7F0A9694 10000001 */  b     .L7F0A969C
@@ -7559,7 +7565,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DC0C8 7F0A96D8 01384821 */  addu  $t1, $t1, $t8
 /* 0DC0CC 7F0A96DC 9529A638 */  lhu   $t1, %lo(D_800409DC+12)($t1)
 /* 0DC0D0 7F0A96E0 15210005 */  bne   $t1, $at, .L7F0A96F8
-/* 0DC0D4 7F0A96E4 00000000 */   nop   
+/* 0DC0D4 7F0A96E4 00000000 */   nop
 /* 0DC0D8 7F0A96E8 0FC304AE */  jal   langGet
 /* 0DC0DC 7F0A96EC 3404AC31 */   li    $a0, 44081
 /* 0DC0E0 7F0A96F0 10000001 */  b     .L7F0A96F8
@@ -7778,7 +7784,7 @@ glabel sub_GAME_7F0A9AB8
 /* 0DC408 7F0A9A18 8FB90050 */  lw    $t9, 0x50($sp)
 /* 0DC40C 7F0A9A1C 3C0C8007 */  lui   $t4, %hi(g_CurrentPlayer) # $t4, 0x8007
 /* 0DC410 7F0A9A20 13200018 */  beqz  $t9, .L7F0A9A84
-/* 0DC414 7F0A9A24 00000000 */   nop   
+/* 0DC414 7F0A9A24 00000000 */   nop
 /* 0DC418 7F0A9A28 0FC304AE */  jal   langGet
 /* 0DC41C 7F0A9A2C 3404AC08 */   li    $a0, 44040
 /* 0DC420 7F0A9A30 3C090070 */  lui   $t1, (0x007000A0 >> 16) # lui $t1, 0x70
@@ -7851,29 +7857,29 @@ Gfx *display_text_buttons_dual_control(Gfx *gdl)
 
     if (joyGetButtons(PLAYER_1, A_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //weapon
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_WEAPTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //weapon
     }
 
     if (joyGetButtons(PLAYER_1, B_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 0); //action
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_ACTIONTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0); //action
     }
 
-    if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 5))
+    if ((g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_PLENTY) || (g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_GALORE))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_00)); //fire
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_00_FIRE_LF)); //fire
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_01)); //aim
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_01_AIM_LF)); //aim
     }
 
     if (joyGetButtons(PLAYER_1, Z_TRIG))
@@ -7885,42 +7891,42 @@ Gfx *display_text_buttons_dual_control(Gfx *gdl)
         gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_5, textptr_aux, 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0);
     }
 
-    if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 6))
+    if ((g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_PLENTY) || (g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_DOMINO))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_05)); //move
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF)); //move
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_06)); //look
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF)); //look
     }
 
     gdl = sub_GAME_7F0A9398(gdl, 0x5A, YOFFSET_4, textptr_aux, 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 0);
 
     if (joyGetButtons(1, A_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //weapon
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_03)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //weapon
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_WEAPTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_03_WEAPON_LF)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //weapon
     }
 
     if (joyGetButtons(1, B_BUTTON))
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF)), -1, 1, 0x7000A0, 0, 0, 0x3000B0, 1); //action
     }
     else
     {
-        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(TEXT(LOPTIONS, OPTION_STR_02)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //action
+        gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_ACTIONTEXT, langGet(getStringID(LOPTIONS, OPTION_STR_02_ACTION_LF)), 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1); //action
     }
 
-    if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 5))
+    if ((g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_PLENTY) || (g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_GALORE))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_01)); //aim
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_01_AIM_LF)); //aim
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_00)); //fire
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_00_FIRE_LF)); //fire
     }
 
     if (joyGetButtons(1, Z_TRIG))
@@ -7932,13 +7938,13 @@ Gfx *display_text_buttons_dual_control(Gfx *gdl)
         gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_5, textptr_aux, 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1);
     }
 
-    if ((g_CurrentPlayer->cur_player_control_type_0 == 4) || (g_CurrentPlayer->cur_player_control_type_0 == 6))
+    if ((g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_PLENTY) || (g_CurrentPlayer->cur_player_control_type_0 == CONTROLLER_CONFIG_DOMINO))
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_06)); //look
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_06_LOOK_LF)); //look
     }
     else
     {
-        textptr_aux = langGet(TEXT(LOPTIONS, OPTION_STR_05)); //move
+        textptr_aux = langGet(getStringID(LOPTIONS, OPTION_STR_05_MOVE_LF)); //move
     }
 
     gdl = sub_GAME_7F0A9398(gdl, 0xE6, YOFFSET_4, textptr_aux, 0xAA00B0, 0, -1, 0, 0, 0x3000B0, 1);
@@ -9019,7 +9025,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DCC74 7F0AA284 8DEFA5E8 */  lw    $t7, %lo(controller_options_index)($t7)
 /* 0DCC78 7F0AA288 24010001 */  li    $at, 1
 /* 0DCC7C 7F0AA28C 15E10012 */  bne   $t7, $at, .L7F0AA2D8
-/* 0DCC80 7F0AA290 00000000 */   nop   
+/* 0DCC80 7F0AA290 00000000 */   nop
 /* 0DCC84 7F0AA294 0C002BDC */  jal   joyGetStickY
 /* 0DCC88 7F0AA298 00002025 */   move  $a0, $zero
 /* 0DCC8C 7F0AA29C 44823000 */  mtc1  $v0, $f6
@@ -9070,7 +9076,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DCD38 7F0AA348 0FC1615C */  jal   matrix_4x4_multiply
 /* 0DCD3C 7F0AA34C 27A603BC */   addiu $a2, $sp, 0x3bc
 /* 0DCD40 7F0AA350 0FC29025 */  jal   controllerCheckDualControllerTypesAllowed
-/* 0DCD44 7F0AA354 00000000 */   nop   
+/* 0DCD44 7F0AA354 00000000 */   nop
 /* 0DCD48 7F0AA358 10400018 */  beqz  $v0, .L7F0AA3BC
 /* 0DCD4C 7F0AA35C 3C01C0A0 */   lui   $at, 0xc0a0
 /* 0DCD50 7F0AA360 3C018005 */  li    $at, 0x80050000 # -0.000000
@@ -9177,7 +9183,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DCED8 7F0AA4E8 00408025 */  move  $s0, $v0
 .L7F0AA4EC:
 /* 0DCEDC 7F0AA4EC 0FC29025 */  jal   controllerCheckDualControllerTypesAllowed
-/* 0DCEE0 7F0AA4F0 00000000 */   nop   
+/* 0DCEE0 7F0AA4F0 00000000 */   nop
 /* 0DCEE4 7F0AA4F4 1040009F */  beqz  $v0, .L7F0AA774
 /* 0DCEE8 7F0AA4F8 24040001 */   li    $a0, 1
 /* 0DCEEC 7F0AA4FC 3C058004 */  lui   $a1, %hi(D_80040B3C) # $a1, 0x8004
@@ -9216,7 +9222,7 @@ glabel sub_GAME_7F0AADC0
 /* 0DCF70 7F0AA580 8DADA5E8 */  lw    $t5, %lo(controller_options_index)($t5)
 /* 0DCF74 7F0AA584 24010001 */  li    $at, 1
 /* 0DCF78 7F0AA588 15A10012 */  bne   $t5, $at, .L7F0AA5D4
-/* 0DCF7C 7F0AA58C 00000000 */   nop   
+/* 0DCF7C 7F0AA58C 00000000 */   nop
 /* 0DCF80 7F0AA590 0C002BDC */  jal   joyGetStickY
 /* 0DCF84 7F0AA594 24040001 */   li    $a0, 1
 /* 0DCF88 7F0AA598 44822000 */  mtc1  $v0, $f4
@@ -9343,9 +9349,9 @@ glabel sub_GAME_7F0AADC0
 /* 0DD160 7F0AA770 00408025 */  move  $s0, $v0
 .L7F0AA774:
 /* 0DD164 7F0AA774 0FC29025 */  jal   controllerCheckDualControllerTypesAllowed
-/* 0DD168 7F0AA778 00000000 */   nop   
+/* 0DD168 7F0AA778 00000000 */   nop
 /* 0DD16C 7F0AA77C 10400005 */  beqz  $v0, .L7F0AA794
-/* 0DD170 7F0AA780 00000000 */   nop   
+/* 0DD170 7F0AA780 00000000 */   nop
 /* 0DD174 7F0AA784 0FC2A6C2 */  jal   display_text_buttons_dual_control
 /* 0DD178 7F0AA788 02002025 */   move  $a0, $s0
 /* 0DD17C 7F0AA78C 10000004 */  b     .L7F0AA7A0
@@ -9400,16 +9406,16 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
     s32 pFontChars;
 
     gdl = draw_background_health_and_armor(gdl, param_2, 0);
-    
+
     if (check_watch_page_transistion_running() != 1) {
-        
+
         gdl = sub_GAME_7F0AADC0(gdl);
         pFontFile = ptrFontBankGothic;
         pFontChars = ptrFontBankGothicChars;
-        
+
         gdl = microcode_constructor(gdl);
-        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_32)); //control style
-    
+        textptr = langGet(getStringID(LOPTIONS, OPTION_STR_32_CONTROLSTYLE_LF)); //control style
+
         sp5C = XOFFSET_1;
         sp58 = 0x1A;
         phi_s1 = 0xFF00B0;
@@ -9421,9 +9427,9 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
                 phi_s1 = -1;
             }
         }
-        
+
         textMeasure(&sp50, &sp54, textptr, pFontChars, pFontFile, 0);
-        
+
         if ((watch_item_is_actively_selected != 0) && (controller_options_index == 0))
         {
             gdl = textRenderGlow(gdl, &sp5C, &sp58, textptr, pFontChars, pFontFile, phi_s1, 0x7000A0, sp54 + 1, sp50, 0, 0);
@@ -9431,19 +9437,19 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
         {
             gdl = textRender(gdl, &sp5C, &sp58, textptr, pFontChars, pFontFile, phi_s1, sp54, sp50, 0, 0);
         }
-        
+
         gdl = sub_GAME_7F0A97D0(gdl);
-        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_33)); //controller;
-        
+        textptr = langGet(getStringID(LOPTIONS, OPTION_STR_33_CONTROLLER_LF)); //controller;
+
         phi_s1 = 0xFF00B0;
-        
+
         if (controllerCheckDualControllerTypesAllowed())
         {
-            textptr = langGet(TEXT(LOPTIONS, OPTION_STR_34)); //controllers;
+            textptr = langGet(getStringID(LOPTIONS, OPTION_STR_34_CONTROLLERS_LF)); //controllers;
         }
         sp5C = XOFFSET_1;
         sp58 = 0x2B;
-        
+
         if (controller_options_index == 1)
         {
             phi_s1 = 0xA0FFA0F0;
@@ -9452,7 +9458,7 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
                 phi_s1 = -1;
             }
         }
-        
+
         textMeasure(&sp50, &sp54, textptr, pFontChars, pFontFile, 0);
 
         if ((watch_item_is_actively_selected != 0) && (controller_options_index == 1))
@@ -9462,7 +9468,7 @@ Gfx *draw_watch_control_options_page(Gfx *gdl, Mtx *param_2) {
         {
             gdl = textRender(gdl, &sp5C, &sp58, textptr, pFontChars, pFontFile, phi_s1, sp54, sp50, 0, 0);
         }
-        
+
     }
     return gdl;
 }
@@ -9926,7 +9932,7 @@ Gfx *draw_watch_game_options_page(Gfx *gdl, Mtx *param_2) {
 
     s32 pFontFile;
     s32 pFontChars;
-    
+
     gdl = draw_background_health_and_armor(gdl, param_2, 0);
 
     if (check_watch_page_transistion_running() != 1)
@@ -9937,11 +9943,11 @@ Gfx *draw_watch_game_options_page(Gfx *gdl, Mtx *param_2) {
         pFontChars = ptrFontBankGothicChars;
         gdl = microcode_constructor(gdl);
 
-        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_35)); //music
+        textptr = langGet(getStringID(LOPTIONS, OPTION_STR_35_MUSIC_LF)); //music
 
         sp54 = XOFFSET_1;
         sp50 = YOFFSET_8;
-        
+
         sp5C = 0xFF00B0;
 
         if (game_options_index == 0)
@@ -9965,7 +9971,7 @@ Gfx *draw_watch_game_options_page(Gfx *gdl, Mtx *param_2) {
         }
 
         sp5C = 0xFF00B0;
-        textptr = langGet(TEXT(LOPTIONS, OPTION_STR_36)); //fx
+        textptr = langGet(getStringID(LOPTIONS, OPTION_STR_36_FX_LF)); //fx
 
         sp54 = XOFFSET_1;
         sp50 = YOFFSET_9;
@@ -10031,7 +10037,7 @@ u8 *sub_GAME_7F0AC120(u8 *arg)
         {
             if (*++arg != 0)
             {
-                ret = arg;                
+                ret = arg;
             }
         }
 #if defined(VERSION_EU)
@@ -10882,7 +10888,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE0A0 7F0AB6B0 002B0821 */  addu  $at, $at, $t3
 /* 0DE0A4 7F0AB6B4 8C2BCFC4 */  lw    $t3, %lo(jpt_80058570)($at)
 /* 0DE0A8 7F0AB6B8 01600008 */  jr    $t3
-/* 0DE0AC 7F0AB6BC 00000000 */   nop   
+/* 0DE0AC 7F0AB6BC 00000000 */   nop
 .L7F0AC3B8:
 /* 0DE0B0 7F0AB6C0 0FC304AE */  jal   langGet
 /* 0DE0B4 7F0AB6C4 3404AC38 */   li    $a0, 44088
@@ -10899,7 +10905,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE0E0 7F0AB6F0 0FC2B789 */  jal   sub_GAME_7F0AEB64
 /* 0DE0E4 7F0AB6F4 AFB80010 */   sw    $t8, 0x10($sp)
 /* 0DE0E8 7F0AB6F8 0FC2964E */  jal   mission_brief_background_navigation
-/* 0DE0EC 7F0AB6FC 00000000 */   nop   
+/* 0DE0EC 7F0AB6FC 00000000 */   nop
 /* 0DE0F0 7F0AB700 1000012B */  b     .L7F0ABBB0
 /* 0DE0F4 7F0AB704 8FB80D4C */   lw    $t8, 0xd4c($sp)
 .L7F0AC400:
@@ -10918,7 +10924,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE128 7F0AB738 0FC2B789 */  jal   sub_GAME_7F0AEB64
 /* 0DE12C 7F0AB73C AFB90010 */   sw    $t9, 0x10($sp)
 /* 0DE130 7F0AB740 0FC29670 */  jal   mission_brief_m_briefing_navigation
-/* 0DE134 7F0AB744 00000000 */   nop   
+/* 0DE134 7F0AB744 00000000 */   nop
 /* 0DE138 7F0AB748 10000119 */  b     .L7F0ABBB0
 /* 0DE13C 7F0AB74C 8FB80D4C */   lw    $t8, 0xd4c($sp)
 .L7F0AC448:
@@ -10937,7 +10943,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE170 7F0AB780 0FC2B789 */  jal   sub_GAME_7F0AEB64
 /* 0DE174 7F0AB784 AFAD0010 */   sw    $t5, 0x10($sp)
 /* 0DE178 7F0AB788 0FC29693 */  jal   mission_brief_q_branch_navigation
-/* 0DE17C 7F0AB78C 00000000 */   nop   
+/* 0DE17C 7F0AB78C 00000000 */   nop
 /* 0DE180 7F0AB790 10000107 */  b     .L7F0ABBB0
 /* 0DE184 7F0AB794 8FB80D4C */   lw    $t8, 0xd4c($sp)
 .L7F0AC490:
@@ -10956,7 +10962,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE1B8 7F0AB7C8 0FC2B789 */  jal   sub_GAME_7F0AEB64
 /* 0DE1BC 7F0AB7CC AFAC0010 */   sw    $t4, 0x10($sp)
 /* 0DE1C0 7F0AB7D0 0FC296B7 */  jal   mission_brief_moneypenny_navigation
-/* 0DE1C4 7F0AB7D4 00000000 */   nop   
+/* 0DE1C4 7F0AB7D4 00000000 */   nop
 /* 0DE1C8 7F0AB7D8 100000F5 */  b     .L7F0ABBB0
 /* 0DE1CC 7F0AB7DC 8FB80D4C */   lw    $t8, 0xd4c($sp)
 .L7F0AC4D8:
@@ -10972,7 +10978,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE1F0 7F0AB800 24040005 */  li    $a0, 5
 .L7F0AB804:
 /* 0DE1F4 7F0AB804 0FC2AF98 */  jal   setTextOverlapCorrection
-/* 0DE1F8 7F0AB808 00000000 */   nop   
+/* 0DE1F8 7F0AB808 00000000 */   nop
 /* 0DE1FC 7F0AB80C 0FC304AE */  jal   langGet
 /* 0DE200 7F0AB810 3404AC3C */   li    $a0, 44092
 /* 0DE204 7F0AB814 27A40170 */  addiu $a0, $sp, 0x170
@@ -11084,7 +11090,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE394 7F0AB9A4 0FC2B713 */  jal   textMeasure
 /* 0DE398 7F0AB9A8 AFAF0010 */   sw    $t7, 0x10($sp)
 /* 0DE39C 7F0AB9AC 0C000F9B */  jal   viGetX
-/* 0DE3A0 7F0AB9B0 00000000 */   nop   
+/* 0DE3A0 7F0AB9B0 00000000 */   nop
 /* 0DE3A4 7F0AB9B4 8FA80D50 */  lw    $t0, 0xd50($sp)
 /* 0DE3A8 7F0AB9B8 04410003 */  bgez  $v0, .L7F0AB9C8
 /* 0DE3AC 7F0AB9BC 00025043 */   sra   $t2, $v0, 1
@@ -11094,7 +11100,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE3B8 7F0AB9C8 2509003C */  addiu $t1, $t0, 0x3c
 /* 0DE3BC 7F0AB9CC 012A082A */  slt   $at, $t1, $t2
 /* 0DE3C0 7F0AB9D0 10200002 */  beqz  $at, .L7F0AB9DC
-/* 0DE3C4 7F0AB9D4 00000000 */   nop   
+/* 0DE3C4 7F0AB9D4 00000000 */   nop
 /* 0DE3C8 7F0AB9D8 2652FFFF */  addiu $s2, $s2, -1
 .L7F0AB9DC:
 /* 0DE3CC 7F0AB9DC 1A400008 */  blez  $s2, .L7F0ABA00
@@ -11194,7 +11200,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE514 7F0ABB24 AFAC0150 */  sw    $t4, 0x150($sp)
 .L7F0ABB28:
 /* 0DE518 7F0ABB28 0C000F9F */  jal   viGetY
-/* 0DE51C 7F0ABB2C 00000000 */   nop   
+/* 0DE51C 7F0ABB2C 00000000 */   nop
 /* 0DE520 7F0ABB30 8FAF0D48 */  lw    $t7, 0xd48($sp)
 /* 0DE524 7F0ABB34 8FAE0D4C */  lw    $t6, 0xd4c($sp)
 /* 0DE528 7F0ABB38 8FA80084 */  lw    $t0, 0x84($sp)
@@ -11222,12 +11228,12 @@ glabel draw_watch_mission_briefing_page
 /* 0DE57C 7F0ABB8C 27DE0001 */   addiu $fp, $fp, 1
 /* 0DE580 7F0ABB90 03C2082A */  slt   $at, $fp, $v0
 /* 0DE584 7F0ABB94 1420FF2E */  bnez  $at, .L7F0AB850
-/* 0DE588 7F0ABB98 00000000 */   nop   
+/* 0DE588 7F0ABB98 00000000 */   nop
 .L7F0ABB9C:
 /* 0DE58C 7F0ABB9C 0FC2AF98 */  jal   setTextOverlapCorrection
 /* 0DE590 7F0ABBA0 2404FFFF */   li    $a0, -1
 /* 0DE594 7F0ABBA4 0FC296DB */  jal   mission_brief_objectives_navigation
-/* 0DE598 7F0ABBA8 00000000 */   nop   
+/* 0DE598 7F0ABBA8 00000000 */   nop
 .L7F0ABBAC:
 /* 0DE59C 7F0ABBAC 8FB80D4C */  lw    $t8, 0xd4c($sp)
 .L7F0ABBB0:
@@ -11274,7 +11280,7 @@ glabel draw_watch_mission_briefing_page
 /* 0DE640 7F0ABC50 0FC2B713 */  jal   textMeasure
 /* 0DE644 7F0ABC54 AFB80010 */   sw    $t8, 0x10($sp)
 /* 0DE648 7F0ABC58 0C000F9B */  jal   viGetX
-/* 0DE64C 7F0ABC5C 00000000 */   nop   
+/* 0DE64C 7F0ABC5C 00000000 */   nop
 /* 0DE650 7F0ABC60 0C000F9F */  jal   viGetY
 /* 0DE654 7F0ABC64 A7A20064 */   sh    $v0, 0x64($sp)
 /* 0DE658 7F0ABC68 8FAC0D48 */  lw    $t4, 0xd48($sp)
@@ -11322,7 +11328,7 @@ Gfx *sub_GAME_7F0ACA28(Gfx *gdl, Mtx *arg1, s32 watch_transitioning)
 
     if (watch_transitioning == TRUE)
     {
-        set_BONDdata_outside_watch_menu_flag(0);
+        set_BONDdata_outside_watch_menu_flag(FALSE);
         sub_GAME_7F0BD8FC(0);
 
         // Handle A or Z button click when in any page but inventory page
@@ -11352,7 +11358,7 @@ Gfx *sub_GAME_7F0ACA28(Gfx *gdl, Mtx *arg1, s32 watch_transitioning)
     else if (watch_transitioning == FALSE)
     {
         sub_GAME_7F0BD8FC(1);
-        set_BONDdata_outside_watch_menu_flag(1);
+        set_BONDdata_outside_watch_menu_flag(TRUE);
         gdl = draw_background_health_and_armor_transitioning(gdl, arg1);
     }
 

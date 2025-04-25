@@ -1,5 +1,5 @@
 #!/bin/bash
-MAPFILE="./build/ge007."$2".map"
+MAPFILE="./build/"$2"/ge007."$2".map"
 #this script is a hacky mess that can most definately be improved
 #fixme as I will fail if vaddr of data gets moved!!!
 DATASEG_START=$(printf "%d\n" 0x$(grep ${MAPFILE} -e '__csegtempPos =' | cut -d "x" -f3))

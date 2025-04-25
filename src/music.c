@@ -650,7 +650,7 @@ void musicSeqPlayerInit(void)
         return;
     }
 
-    p = (u8 *)mempAllocBytesInBank(MUSIC_ALLOCATION_BYTES, MUSIC_MEMP_BANK);
+    p = (u8 *)mempAllocBytesInBank(MUSIC_ALLOCATION_BYTES, MEMPOOL_PERMANENT);
 
     mempAddress = p;
     do

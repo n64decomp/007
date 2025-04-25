@@ -2,19 +2,26 @@
 #include <memp.h>
 #include "initanitable.h"
 #include "objecthandler.h"
+#include "bondgame.h"
 
 //bss
-char dword_CODE_bss_80069170[0x2D0];
+
+// Where animation frames are saved. Can possibly hold as much as nine, but the game will ever store four at maximum.
+char animations_frame_buffer[0x2D0];
+
+// Msg Queue stuff (unused)
 OSMesgQueue animMsgQ;
-char dword_CODE_bss_80069458[0xC0];
+char dword_CODE_bss_80069458[0xC0]; // Unused. Possibly meant for unused message queue.
 OSMesg animMesg[8];
+
+// Animation table ptr
 struct animation_table_data * ptr_animation_table;
 
 //data
 struct bondstruct_unk_animation_related D_80029D60 = {
     NULL,
-    &dword_CODE_bss_80069170,
-    &dword_CODE_bss_80069170
+    &animations_frame_buffer, // Two pointers. One always points to the start of the buffer, the other can be modified.
+    &animations_frame_buffer
 };
 
 s32 animation_table_ptrs1[] = {
@@ -213,8 +220,47 @@ struct ModelAnimation *animation_table_ptrs2[] = {
 
 
 #ifdef NONMATCHING
-void expand_ani_table_entries(void) {
+struct anim_data_entry
+{
+    void *unk00;
+    s32 unk04;
+    void *unk08;
+    s32 unk0C;
+    void *unk10;
+};
+/**
+ * https://decomp.me/scratch/n0qGM 82.91%
+*/
+void expand_ani_table_entries(s32** arg0)
+{
+    s32 **var_v0;
+    struct anim_data_entry *temp_t7;
+    s32 intval;
+    
+    for (var_v0 = arg0; *var_v0 != 0; var_v0++)
+    {
+        //var_v1 = *var_v0;
+        if (*var_v0 != (s32*)1)
+        {
+            temp_t7 = (struct anim_data_entry *)(&ptr_animation_table->data[(s32)*var_v0]);
+            //temp_t7->unk00 = (s32*)temp_t7;
+            //*var_v0 = (s32*)temp_t7;
 
+            intval = *(s32*)temp_t7->unk08;
+            temp_t7->unk08 = &ptr_animation_table->data[intval];
+            intval = *(s32*)temp_t7->unk10;
+            temp_t7->unk10 = &ptr_animation_table->data[intval];
+        }
+    }
+
+    for (var_v0 = arg0; *var_v0 != 0; var_v0++)
+    {
+        //var_v1 = *var_v0;
+        if (*var_v0 != (s32*)1)
+        {
+            **var_v0 += (s32)&_animation_entriesSegmentRomStart;
+        }
+    }
 }
 #else
 GLOBAL_ASM(
@@ -272,71 +318,18 @@ glabel expand_ani_table_entries
 )
 #endif
 
-extern u8* _animation_dataSegmentRomStart;
-extern u8* _animation_dataSegmentStart;
-extern u8* _animation_dataSegmentEnd;
-#ifdef NONMATCHING
-void alloc_load_expand_ani_table(void) {
-    //u32 sp18;
-    u32 size;
-    //void *temp_v0;
-
-    osCreateMesgQueue(&animMsgQ, &animMesg, 8);
+void alloc_load_expand_ani_table(void)
+{
+    s32 animsDataSegmentSize;
+    
+    osCreateMesgQueue(&animMsgQ, animMesg, 8);
     sub_GAME_7F0009E0(&D_80029D60, &animMsgQ, &dword_CODE_bss_80069458);
-    size = ((u32)_animation_dataSegmentEnd - (u32)_animation_dataSegmentStart);
-    //sp18 = size;
-    //temp_v0 = mempAllocBytesInBank(size, 6U);
-    ptr_animation_table =  mempAllocBytesInBank(size, 6U);
-    romCopy(ptr_animation_table, &_animation_dataSegmentRomStart, size);
-    expand_ani_table_entries(&animation_table_ptrs1);
-    expand_ani_table_entries(&animation_table_ptrs2);
-}
-#else
-GLOBAL_ASM(
-.text
-glabel alloc_load_expand_ani_table
-/* 0355DC 7F000AAC 27BDFFE0 */  addiu $sp, $sp, -0x20
-/* 0355E0 7F000AB0 AFBF0014 */  sw    $ra, 0x14($sp)
-/* 0355E4 7F000AB4 3C048007 */  lui   $a0, %hi(animMsgQ)
-/* 0355E8 7F000AB8 3C058007 */  lui   $a1, %hi(animMesg)
-/* 0355EC 7F000ABC 24A59518 */  addiu $a1, %lo(animMesg) # addiu $a1, $a1, -0x6ae8
-/* 0355F0 7F000AC0 24849440 */  addiu $a0, %lo(animMsgQ) # addiu $a0, $a0, -0x6bc0
-/* 0355F4 7F000AC4 0C0035B4 */  jal   osCreateMesgQueue
-/* 0355F8 7F000AC8 24060008 */   li    $a2, 8
-/* 0355FC 7F000ACC 3C048003 */  lui   $a0, %hi(D_80029D60)
-/* 035600 7F000AD0 3C058007 */  lui   $a1, %hi(animMsgQ)
-/* 035604 7F000AD4 3C068007 */  lui   $a2, %hi(dword_CODE_bss_80069458)
-/* 035608 7F000AD8 24C69458 */  addiu $a2, %lo(dword_CODE_bss_80069458) # addiu $a2, $a2, -0x6ba8
-/* 03560C 7F000ADC 24A59440 */  addiu $a1, %lo(animMsgQ) # addiu $a1, $a1, -0x6bc0
-/* 035610 7F000AE0 0FC00278 */  jal   sub_GAME_7F0009E0
-/* 035614 7F000AE4 24849D60 */   addiu $a0, %lo(D_80029D60) # addiu $a0, $a0, -0x62a0
-/* 035618 7F000AE8 3C0E0001 */  lui   $t6, %hi(0x0000E7E0) # $t6, 1
-/* 03561C 7F000AEC 3C0F0000 */  lui   $t7, 0
-/* 035620 7F000AF0 25EF0000 */  addiu $t7, $t7, 0
-/* 035624 7F000AF4 25CEE7E0 */  addiu $t6, %lo(0x0000E7E0) # addiu $t6, $t6, -0x1820
-/* 035628 7F000AF8 01CF3023 */  subu  $a2, $t6, $t7
-/* 03562C 7F000AFC 00C02025 */  move  $a0, $a2
-/* 035630 7F000B00 AFA60018 */  sw    $a2, 0x18($sp)
-/* 035634 7F000B04 0C0025C8 */  jal   mempAllocBytesInBank
-/* 035638 7F000B08 24050006 */   li    $a1, 6
-/* 03563C 7F000B0C 3C038007 */  lui   $v1, %hi(ptr_animation_table)
-/* 035640 7F000B10 24639538 */  addiu $v1, %lo(ptr_animation_table) # addiu $v1, $v1, -0x6ac8
-/* 035644 7F000B14 3C050029 */  lui   $a1, %hi(_animation_dataSegmentRomStart) # $a1, 0x29
-/* 035648 7F000B18 AC620000 */  sw    $v0, ($v1)
-/* 03564C 7F000B1C 8FA60018 */  lw    $a2, 0x18($sp)
-/* 035650 7F000B20 24A5E980 */  addiu $a1, %lo(_animation_dataSegmentRomStart) # addiu $a1, $a1, -0x1680
-/* 035654 7F000B24 0C001707 */  jal   romCopy
-/* 035658 7F000B28 00402025 */   move  $a0, $v0
-/* 03565C 7F000B2C 3C048003 */  lui   $a0, %hi(animation_table_ptrs1)
-/* 035660 7F000B30 0FC00280 */  jal   expand_ani_table_entries
-/* 035664 7F000B34 24849D6C */   addiu $a0, %lo(animation_table_ptrs1) # addiu $a0, $a0, -0x6294
-/* 035668 7F000B38 3C048003 */  lui   $a0, %hi(animation_table_ptrs2)
-/* 03566C 7F000B3C 0FC00280 */  jal   expand_ani_table_entries
-/* 035670 7F000B40 2484A04C */   addiu $a0, %lo(animation_table_ptrs2) # addiu $a0, $a0, -0x5fb4
-/* 035674 7F000B44 8FBF0014 */  lw    $ra, 0x14($sp)
-/* 035678 7F000B48 27BD0020 */  addiu $sp, $sp, 0x20
-/* 03567C 7F000B4C 03E00008 */  jr    $ra
-/* 035680 7F000B50 00000000 */   nop   
-)
-#endif
+    
+    animsDataSegmentSize = (s32)&_animation_dataSegmentEnd - (s32)&_animation_dataSegmentStart;
+    
+    ptr_animation_table = mempAllocBytesInBank(animsDataSegmentSize, MEMPOOL_PERMANENT);
 
+    romCopy(ptr_animation_table, &_animation_dataSegmentRomStart, animsDataSegmentSize);
+    expand_ani_table_entries((s32*)&animation_table_ptrs1);
+    expand_ani_table_entries((s32*)&animation_table_ptrs2);
+}

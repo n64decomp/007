@@ -8,31 +8,38 @@
 
 /**
  * Address 0x7F056850.
+ * @brief getposstan
 */
-s32 sub_GAME_7F056850(PadRecord *arg0, StandTile *arg1, f32 arg2, PadRecord *arg3, StandTile **arg4)
+s32 sub_GAME_7F056850(struct coord3d *arg0, StandTile *arg1, f32 arg2, struct coord3d *arg3, StandTile **arg4)
 {
-    arg3->pos.f[0] = arg0->pos.f[0];
-    arg3->pos.f[1] = arg0->pos.f[1];
-    arg3->pos.f[2] = arg0->pos.f[2];
-    
+    arg3->f[0] = arg0->f[0];
+    arg3->f[1] = arg0->f[1];
+    arg3->f[2] = arg0->f[2];
+
     *arg4 = arg1;
-    
+
     if (arg1 == 0)
     {
+        #ifdef DEBUG
+        osSyncPrintf("getposstan: no stan!\n");
+        #endif
         return 0;
     }
-    
-    if ((arg2 > 0.0f) && (stanTestVolume(arg4, arg3->pos.f[0], arg3->pos.f[2], arg2, 0x1F, 0.0f, 1.0f) >= 0))
+
+    if ((arg2 > 0.0f) && (stanTestVolume(arg4, arg3->f[0], arg3->f[2], arg2, CDTYPE_OBJS | CDTYPE_DOORS | CDTYPE_PLAYERS | CDTYPE_CHRS | CDTYPE_PATHBLOCKER, 0.0f, 1.0f) >= 0))
     {
+        #ifdef DEBUG
+        osSyncPrintf("getposstan: circle not legal!\n");
+        #endif
         return 0;
     }
-    
+
     return 1;
 }
 
 //Todo: finish this func
 /**
- * Get Size of Prop Definition 
+ * Get Size of Prop Definition
  * @param pdef:  Prop Defenition to get size of
  * @return Size of prop in Words (32bit)
 */
@@ -129,6 +136,9 @@ s32 sizepropdef(PropDefHeaderRecord *pdef)
         case PROPDEF_CAMERAPOS:
             return 7;//return sizeof(GlassRecord) / 4;
         default:
+            #ifdef DEBUG
+            osSyncPrintf("sizepropdef: unknown prop def type %d!!\n",pdef->type);
+            #endif
             return sizeof(PropDefHeaderRecord) / 4;;
     }
 }
@@ -222,9 +232,9 @@ s32 setupGetCommandIndexByProp(struct PropRecord *prop)
 
 s32 modelLoad(s32 modelid)
 {
-    if (PitemZ_entries[modelid].header->RootNode == NULL) 
+    if (PitemZ_entries[modelid].header->RootNode == NULL)
     {
-        fileLoad(PitemZ_entries[modelid].header,PitemZ_entries[modelid].filename);
+        fileLoad(PitemZ_entries[modelid].header,PitemZ_entries[modelid].filename/*, "prop"*/);
         modelCalculateRwDataLen(PitemZ_entries[modelid].header);
         return TRUE;
     }
@@ -315,9 +325,9 @@ void setupUpdateObjectRoomPosition(ObjectRecord *obj)
 /**
  * Address 0x7F056EA0.
 */
-struct ObjectRecord *setupCommandGetObject(s32 stageID, s32 index)
+ ObjectRecord *setupCommandGetObject(s32 stageID, s32 index)
 {
-    struct PropDefHeaderRecord *obj;
+     PropDefHeaderRecord *obj;
 
     obj = setupGetPtrToCommandByIndex(index);
 
@@ -377,7 +387,7 @@ struct ObjectRecord *setupCommandGetObject(s32 stageID, s32 index)
             break;
 
             // not included:
-            //case PROPDEF_UNK15: //15:
+            //case PROPDEF_DEBRIS: //15:
             //case PROPDEF_UNK16: //16:
             // return ???
         }

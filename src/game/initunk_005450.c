@@ -6,8 +6,41 @@
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F005450(void) {
+struct unk_7F005450
+{
+    s32 unk00;
+    s32 unk04;
+    s32 unk08;
+    s32 unk0c; // prev struct unk_7F005450 ?
+    
+    s32 unk10; // next struct unk_7F005450 ?
+};
 
+#define D80076A50_LEN 600
+
+extern struct unk_7F005450 *D_80036060;
+
+struct unk_7F005450 dword_CODE_bss_80076A50[D80076A50_LEN];
+
+// There's some loop unrolling, and the type for D_80036060 / dword_CODE_bss_80076A50 isn't known.
+//
+// https://decomp.me/scratch/W8anf 69%
+void sub_GAME_7F005450(void)
+{
+    s32 i;
+    
+    D_80036060 = dword_CODE_bss_80076A50;
+
+    for (i = 0; i < D80076A50_LEN - 2; i++)
+    {
+        dword_CODE_bss_80076A50[i].unk04 = &dword_CODE_bss_80076A50[i+2].unk00;
+        dword_CODE_bss_80076A50[i].unk0c = &dword_CODE_bss_80076A50[i+2].unk00;
+        dword_CODE_bss_80076A50[i].unk10 = &dword_CODE_bss_80076A50[i+2].unk00;
+    }
+
+    // target: t8,t8,%lo(dword_CODE_bss_80079908)
+    // current: t7,t7,%lo(dword_CODE_bss_80076A50+0x2eb8) ----> 0x80076A50 + 0x2eb8 == 0x80079908
+    dword_CODE_bss_80076A50[599].unk10 = &dword_CODE_bss_80076A50[598].unk00;
 }
 #else
 GLOBAL_ASM(

@@ -2337,7 +2337,7 @@ u8 chrAI_7[] = {
 	        IFMyAngleToBondLessThanDeg(90.000000,lbl30)
 	        IFMyAngleToBondGreaterThanDeg(270.000000,lbl30)
         //USING HUD MESSAGE Stringy = 0, ai->txt = 2057
-	        TextPrintTop(TEXT(LARCH,9))
+	        TextPrintTop(getStringID(LARCH,9))
 	        LookSurprised()
 	        GotoNext(lbl10)
 
@@ -2346,13 +2346,13 @@ u8 chrAI_7[] = {
 	        IFObjectiveBitfieldHas(0x800,lbl42)
 	        IFChrDoesNotExist(1,lbl42)
         //USING HUD MESSAGE Stringy = 0, ai->txt = 2082
-	        TextPrintTop(TEXT(LARCH,34))
+	        TextPrintTop(getStringID(LARCH,34))
 	        GotoNext(lbl43)
 
 
 	        Label(lbl42)
         //USING HUD MESSAGE Stringy = 0, ai->txt = 2058
-	        TextPrintTop(TEXT(LARCH,10))
+	        TextPrintTop(getStringID(LARCH,10))
 
 	        Label(lbl43)
 	        RaiseArms()
@@ -2371,7 +2371,7 @@ u8 chrAI_7[] = {
 	    Label(lbl27)
 	    UnsetObjectiveBitfield(0x400)
     //USING HUD MESSAGE Stringy = 0, ai->txt = 2059
-	    TextPrintTop(TEXT(LARCH,11))
+	    TextPrintTop(getStringID(LARCH,11))
 	    SetReturnAiList(1032)
 	    SetNewRandom()
 	    IFRandomGreaterThan(128,lbl26)
@@ -2390,7 +2390,7 @@ u8 chrAI_7[] = {
 
 	Label(lbl48)
 //USING HUD MESSAGE Stringy = 0, ai->txt = 2060
-	TextPrintTop(TEXT(LARCH,12))
+	TextPrintTop(getStringID(LARCH,12))
 
 	YIELD_FOREVER(lbl12)
 
@@ -2477,7 +2477,7 @@ u8 chrAI_8[] = {
 	Label(lbl5)
     PRINT("saw bond\n")
     //USING HUD MESSAGE Stringy = 0, ai->txt = 2056
-	TextPrintTop(TEXT(LARCH,8))
+	TextPrintTop(getStringID(LARCH,8))
 	RaiseArms()
 	SetObjectiveBitfield(0x100)
 	SetMyFlags2(0x80)

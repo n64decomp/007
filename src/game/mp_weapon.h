@@ -16,11 +16,19 @@ struct s_mp_weapon_set
      * enum PROP
     */
     s16 propID;
-    s8 size;
-    /**
-     * Decimal portion of size, normalized to one byte. That is, 0x80 means 0.5.
-    */
-    s8 size_frac;
+    union
+    {
+        struct
+        {
+            s8 size;
+            /**
+             * Decimal portion of size, normalized to one byte. That is, 0x80 means 0.5.
+            */
+            s8 size_frac;
+        };
+
+        s16 size16;
+    };
 #else
     /**
      * enum ITEM_IDS

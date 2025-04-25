@@ -47,7 +47,7 @@ void end_of_mission_briefing(void)
         {
             if (!fileGetIsCheatUnlocked(fileGetSaveForFoldernum(selected_folder_num), mission_folder_setup_entries[briefingpage].mission_num))
             {
-                sub_GAME_7F01E760(selected_folder_num, mission_folder_setup_entries[briefingpage].mission_num);
+                fileSaveFolderUnlockCheat(selected_folder_num, mission_folder_setup_entries[briefingpage].mission_num);
                 g_NewCheatUnlocked = TRUE;
                 return;
             }
@@ -60,7 +60,11 @@ void end_of_mission_briefing(void)
 
 void fileLoadSaveSettingsForSelectedFolder(int stage)
 {
-    if(stage){}
+    if(stage){
+        #ifdef DEBUG
+
+        #endif
+    }
     fileLoadSettingsForFolder(selected_folder_num);
 }
 
@@ -69,17 +73,17 @@ void deleteCurrentSelectedFolder(void)
   fileClearSavefileForFolder(selected_folder_num);
 }
 
-void copyCurrentEEPROMtoStack(void)
+void fileUpdateBondInCurrentFolder(void)
 {
-  fileCopySaveIfSelectedBondDifferent(selected_folder_num);
+  fileUpdateSelectedBondInSave(selected_folder_num);
 }
 
-s32 getSelectedFolderBond(void)
+s32 fileGetBondForCurrentFolder(void)
 {
   return fileGetBondForFolder(selected_folder_num);
 }
 
-void set_selected_folder_num(u32 foldernum)
+void fileSetCurrentFolder(u32 foldernum)
 {
   selected_folder_num = foldernum;
 }

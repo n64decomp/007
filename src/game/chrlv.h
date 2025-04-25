@@ -132,7 +132,7 @@ void chrSetChrPreset2(ChrRecord *self, s32 id, s32 id2);
 void chrSetPadPreset( ChrRecord *self, s32 padid);
 void chrSetPadPresetByChrnum(ChrRecord *self, s32 chrid, s32 padid);
 s32 chrIsTargetNearlyInSight(ChrRecord *arg0);
-bool sub_GAME_7F033F48(coord3d *pos, StandTile **arg1, f32 facing, bool b);
+bool chrAdjustPosForSpawn(coord3d *pos, StandTile **arg1, f32 facing, bool b);
 PropRecord *chrSpawnAtPad(ChrRecord *self, s32 bodynum, s32 headnum, s32 padid, AIListRecord *ailist, s32 flags);
 PropRecord *chrSpawnAtChr(ChrRecord *self, s32 bodynum, s32 headnum, s32 chrnum, AIListRecord *ailist, s32 flags);
 bool chrIfInPadRoom(ChrRecord *self, s32 chrnum, s32 padnum);

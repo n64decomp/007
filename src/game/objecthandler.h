@@ -2,11 +2,12 @@
 #define _OBJECTHANDLER_
 #include <ultra64.h>
 #include <bondtypes.h>
+#include <image.h>
 
 struct bondstruct_unk_animation_related {
-    char* unk00;
-    char* unk04;
-    char* unk08;
+    char* uselessPointer; // Is incremented like a count when an animation is copied from ROM to RAM but it's never read
+    char* animBufferPtr1; 
+    char* animBufferPtr2; 
 };
 
 struct bondstruct_unk_op07_related {
@@ -14,6 +15,75 @@ struct bondstruct_unk_op07_related {
     s32 unk04;
     s32 unk0C;
 };
+
+struct ptr_0_s {
+    s16 unk00;
+    s16 unk02;
+    s32 unk04;
+    s32 unk08;
+    s32 unk0c;
+    void *unk10;
+    s32 unk14;
+    s32 unk18;
+    s32 unk1c;
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2c;
+    s32 unk30;
+    s32 unk34;
+    s32 unk38;
+    s32 unk3c;
+    s32 unk40;
+    s32 unk44;
+    s32 unk48;
+    s32 unk4c;
+    s32 unk50;
+    s32 unk54;
+    s32 unk58;
+    s32 unk5c;
+    s32 unk60;
+    s32 unk64;
+    s32 unk68;
+    s32 unk6c;
+    s32 unk70;
+    s32 unk74;
+    s32 unk78;
+    s32 unk7c;
+    s32 unk80;
+    s32 unk84;
+    s32 unk88;
+    s32 unk8c;
+    s32 unk90;
+    s32 unk94;
+    s32 unk98;
+    s32 unk9c;
+    s32 unka0;
+    s32 unka4;
+    s32 unka8;
+    s32 unkac;
+    s32 unkb0;
+    s32 unkb4;
+    s32 unkb8;
+
+    // is this struct size 0xbc or 0xc0 ?
+    //s32 unkbc;
+};
+
+struct ptr_1_s {
+    s16 unk00;
+    s16 unk02;
+    s32 unk04;
+    s32 unk08;
+    s32 unk0c;
+    void *unk10;
+    s32 unk14;
+    s32 unk18;
+    s32 unk1c;
+};
+
+extern struct ptr_0_s *ptr_allocation_0;
+extern struct ptr_1_s *ptr_allocation_1;
 
 extern s32 g_ModelDistanceDisabled;
 extern f32 g_ModelDistanceScale;
@@ -81,7 +151,7 @@ Mtxf* modelFindNodeMtx(Model *arg0, ModelNode *arg1, s32 arg2);
 
 // called with struct ChrRecord->field_20
 void sub_GAME_7F06B248(void *arg0);
-void drawjointlist(struct unk_joint_list *arg0, void* arg1);
+void drawjointlist(ModelRenderData *arg0, void* arg1);
 void sub_GAME_7F073FC8(s32);
 void modelSetAnimMergingEnabled(s32 arg0);
 u32 modelIsAnimMergingEnabled(void);
@@ -92,11 +162,11 @@ void sub_GAME_7F06D2E4(s32, s32, ModelSkeleton*, void* anim, s32, s16*);
 void modelInit(struct Model *, struct ModelFileHeader *, u32 *);
 void animInit(struct Model *, struct ModelFileHeader *, u32 *);
 void modelSetAnimFlipFunction(Model *, void *);
-void subcalcmatrices(struct unk_joint_list *, Model *);
-void instcalcmatrices(struct unk_joint_list *arg0, Model *arg1);
-void load_object_fill_header(struct ModelFileHeader *objheader, u8 *name, void *targetloc, s32 sizeleft, struct texpool * buffer);
+void subcalcmatrices(ModelRenderData *, Model *);
+void instcalcmatrices(ModelRenderData *arg0, Model *arg1);
+void load_object_fill_header(struct ModelFileHeader *objheader, u8 *name, u8* dst, s32 size, struct texpool * buffer);
 void* get_obj_instance_controller_for_header(struct ModelFileHeader* arg0);
-void subdraw(struct unk_joint_list *arg0, struct Model *);
+void subdraw(ModelRenderData *arg0, struct Model *);
 void sub_GAME_7F06EFC4(struct Model *);
 void modelAttachPart(Model *pmodel, ModelFileHeader *pmodeldef, ModelNode *pnode, ModelFileHeader *cmodeldef);
 void modelInitRwData(Model *model, ModelNode *startnode);
@@ -107,5 +177,9 @@ void modelApplyToggleRelations(Model* model, ModelNode* node);
 #ifndef VERSION_EU
 void return_null(void);
 #endif
+
+void modelIterateDisplayLists(ModelFileHeader *fileheader, ModelNode **nodeptr, Gfx **gdlptr);
+void modelNodeReplaceGdl(u32 arg0, ModelNode *node, Gfx *find, Gfx *replacement);
+
 
 #endif

@@ -95,7 +95,7 @@ class SourceFileContent:
     def __repr__(self):
         return self.path
 
-    def __eq__(self, other): 
+    def __eq__(self, other):
         if not isinstance(other, SourceFileContent):
             # don't attempt to compare against unrelated types
             return NotImplemented
@@ -153,7 +153,7 @@ class SearchDir:
     def __repr__(self):
         return self.path
 
-    def __eq__(self, other): 
+    def __eq__(self, other):
         if not isinstance(other, SearchDir):
             # don't attempt to compare against unrelated types
             return NotImplemented
@@ -279,7 +279,7 @@ def apply_build_map(stats: StatResults, version: str):
     until a new section is encountered.
     """
     version_code = version[0]
-    map_file_path = 'build' + os.path.sep + 'ge007.' + version_code + '.map'
+    map_file_path = 'build' + os.path.sep + version_code  + os.path.sep + 'ge007.' + version_code + '.map'
 
     infile = False
     prevromaddr = 0
@@ -378,7 +378,7 @@ def apply_build_map(stats: StatResults, version: str):
                     current_sfc.all_functions.append(current_fi)
                 else:
                     current_fi.length = (filestart + filelen) - prevromaddr
-                
+
                 if current_fi.length > __invalid_func_length_size:
                     raise ValueError("function length too large: " + str(funcname) + " len = " + str(current_fi.length))
 
@@ -391,7 +391,7 @@ def percent_complete(num, den):
         return 1
 
     frac = num / den
-    
+
     if frac <= 0:
         return 0
     elif frac > 0 and frac < 0.01:
@@ -400,7 +400,7 @@ def percent_complete(num, den):
         return frac
     elif frac >= 0.99 and frac < 1:
         return 0.99
-    
+
     raise ValueError("Can't compute percent complete: " + str(num) + " / " + str(den))
 
 
@@ -410,10 +410,10 @@ def generate_default_stats(stats: StatResults):
     the total bytes/functions/files in each searchdir, and sum
     the totals for the entire search.
     """
-    
+
     # track unique modification times
     seen_mtime = set()
-    
+
     for file in stats.source_files:
         # if this file comes from the .map file and does not have the
         # parent association setup then it should be ignored.
@@ -422,7 +422,7 @@ def generate_default_stats(stats: StatResults):
 
         if stats.last_modified_file is None or stats.last_modified_file.mtime < file.mtime:
             stats.last_modified_file = file
-        
+
         seen_mtime.add(file.mtime)
 
         for func in file.all_functions:
@@ -436,13 +436,13 @@ def generate_default_stats(stats: StatResults):
                 file.parent.nonmatching_byte_count += func.length
                 stats.total_nonmatching_count += 1
                 stats.total_nonmatching_byte_count += func.length
-        
+
         file.parent.file_count += 1
 
         if len(file.asm_functions) == 0:
             file.parent.completed_file_count += 1
             stats.total_completed_file_count += 1
-            
+
     # More hacks to check for valid modification times.
     # 10 is an arbitrary number, but this says that if there are
     # at least 10 unique modification times, assume the timestamps
@@ -529,7 +529,7 @@ def generate_report(stats: StatResults, version):
     """
     Send values over to the c report app.
     Arguments must be added in the following order:
-    
+
         note: changing from "libultra" to "libultrare"
 
         SRC_DIR:              int, size in 32-bit words of completed functions, in src/ directory
@@ -610,7 +610,7 @@ def generate_report(stats: StatResults, version):
         stats.last_modified_file.path + ' ' + \
         '0'
 
-    subprocess.Popen(printstring.split()) 
+    subprocess.Popen(printstring.split())
 
 
 def print_help():
@@ -619,7 +619,7 @@ def print_help():
     print('Example: python3 ge-stats2.py --version us')
     print(' ')
     print('  This script expects to be run from the root directory. There must be')
-    print('  a map file in ./build/ge007.u.map (or equivalent version). Source files')
+    print('  a map file in ./build/u/ge007.u.map (or equivalent version). Source files')
     print('  must be located in a folder in the root directory.')
     print(' ')
     print('  This script does not attempt to parse preprocessor definitions and')
@@ -693,7 +693,7 @@ def main():
                     mtime_resolver = mtime_git
             except:
                 pass
-    
+
     # files to count as complete, in src/ directory
     src_completed_list = [
         '_start.s',

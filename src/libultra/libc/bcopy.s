@@ -230,4 +230,4 @@ glabel bcopy
 /* 010868 7000FC68 24C6FFFC */  addiu $a2, $a2, -4
 /* 01086C 7000FC6C 1000FFF8 */  b     .L7000FC50
 /* 010870 7000FC70 ACA20000 */   sw    $v0, ($a1)
-
+.size bcopy, . - bcopy

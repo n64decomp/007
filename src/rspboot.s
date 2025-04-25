@@ -22,6 +22,9 @@ glabel rspbootTextStart
 .ifdef VERSION_DEBUG
 .incbin "build/d/rsp/rspboot.bin"
 .endif
+.ifdef VERSION_USB
+.incbin "build/usb/rsp/rspboot.bin"
+.endif
 glabel rspbootTextEnd
 .section .data
 .section .rodata

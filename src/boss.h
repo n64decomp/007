@@ -9,7 +9,7 @@ struct memallocstring
   void *string;
 };
 
-LEVELID bossGetStageNum();
+LEVELID bossGetStageNum(void);
 void bossSetLoadedStage(LEVELID stage);
 void bossInit(void);
 void bossEnableShowMemUseFlag(void);

@@ -436,7 +436,7 @@ void joyPoll(void)
     s32 index;
     s8 i_s8;
     s32 i;
-    
+
     // Check if there are any disable requests
     if (osRecvMesg(&g_ContDisablePollSendMessageQueue, &msg, OS_MESG_NOBLOCK) == 0)
     {
@@ -458,7 +458,7 @@ void joyPoll(void)
         osContStartReadData(&g_ContInputMessageQueue);
         g_ContBusy = TRUE;
         osSendMesg(&g_ContEnablePollReceiveMessageQueue, &msg, OS_MESG_NOBLOCK);
-   
+
         g_ContPollDisableCount--;
 
         return;
@@ -489,12 +489,12 @@ void joyPoll(void)
             }
 
             for (i_s8 = 0; i_s8 < MAXCONTROLLERS; i_s8++)
-            {                
+            {
                 if (((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i_s8].errno == 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i_s8].errno != 0)) ||
                     ((g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextlast].pads[i_s8].errno != 0) && (g_ContData[CONTDATA_REGULAR].samples[g_ContData[CONTDATA_REGULAR].nextsecondlast].pads[i_s8].errno == 0)))
                 {
                     joyCheckStatus();
-                    
+
                     break;
                 }
             }
@@ -516,7 +516,7 @@ void joyPoll(void)
                         g_ContBadReadsButtonsPressed[i] = 0;
                     }
                 }
-                
+
                 count = 0;
             }
         }
@@ -767,6 +767,11 @@ glabel joyPoll
 
 s8 joyGetStickX(s8 contpadnum)
 {
+    //this assert is on ALL stick functions below
+#ifdef DEBUG
+    assert(contpadnum > 0); //j
+#endif
+
     if ((g_ContDataPtr->playbackcontcount < 0) && ((g_ConnectedControllers >> contpadnum & 1) == 0))
     {
         g_ContBadReadsStickX[contpadnum]++;
@@ -775,7 +780,7 @@ s8 joyGetStickX(s8 contpadnum)
 
     return g_ContDataPtr->samples[g_ContDataPtr->curlast].pads[contpadnum].stick_x;
 }
-
+//duplicate?
 s8 joy7000C174(s8 contpadnum)
 {
     if ((g_ContDataPtr->playbackcontcount < 0) && ((g_ConnectedControllers >> contpadnum & 1) == 0))
@@ -853,11 +858,11 @@ void joy7000C470(void)
  * Reads controller joystick x value. JOY_CLAMP_OFFSET is first
  * added to the raw value, then it is clamped between JOY_CLAMP_MIN
  * and JOY_CLAMP_MAX. The value is then normalized against supplied range parameters.
- * 
+ *
  * @param contpadnum controller to read.
  * @param rangemin min value of range to normalize against.
  * @param rangemax max value of range to normalize against.
- * 
+ *
  * @return returns normalized value between range, as an s32.
  */
 s32 joyGetStickXInRange(s8 contpadnum, s32 rangemin, s32 rangemax)
@@ -883,11 +888,11 @@ s32 joyGetStickXInRange(s8 contpadnum, s32 rangemin, s32 rangemax)
  * Reads controller joystick y value. JOY_CLAMP_OFFSET is first
  * added to the raw value, then it is clamped between JOY_CLAMP_MIN
  * and JOY_CLAMP_MAX. The value is then normalized against supplied range parameters.
- * 
+ *
  * @param contpadnum controller to read.
  * @param rangemin min value of range to normalize against.
  * @param rangemax max value of range to normalize against.
- * 
+ *
  * @return returns normalized value between range, as an s32.
  */
 s32 joyGetStickYInRange(s8 contpadnum, s32 rangemin, s32 rangemax)
@@ -913,11 +918,11 @@ s32 joyGetStickYInRange(s8 contpadnum, s32 rangemin, s32 rangemax)
  * Reads controller joystick x value. JOY_CLAMP_OFFSET is first
  * added to the raw value, then it is clamped between JOY_CLAMP_MIN
  * and JOY_CLAMP_MAX. The value is then normalized against supplied range parameters.
- * 
+ *
  * @param contpadnum controller to read.
  * @param rangemin min value of range to normalize against.
  * @param rangemax max value of range to normalize against.
- * 
+ *
  * @return returns normalized value between range, as a float.
  */
 f32 joyGetStickXInRangef(s8 contpadnum, f32 rangemin, f32 rangemax)
@@ -943,11 +948,11 @@ f32 joyGetStickXInRangef(s8 contpadnum, f32 rangemin, f32 rangemax)
  * Reads controller joystick y value. JOY_CLAMP_OFFSET is first
  * added to the raw value, then it is clamped between JOY_CLAMP_MIN
  * and JOY_CLAMP_MAX. The value is then normalized against supplied range parameters.
- * 
+ *
  * @param contpadnum controller to read.
  * @param rangemin min value of range to normalize against.
  * @param rangemax max value of range to normalize against.
- * 
+ *
  * @return returns normalized value between range, as a float.
  */
 f32 joyGetStickYInRangef(s8 contpadnum, f32 rangemin, f32 rangemax)

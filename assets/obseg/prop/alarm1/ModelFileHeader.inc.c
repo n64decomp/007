@@ -1,5 +1,11 @@
-              //NAME, ROOTNODE,                   SKELETON, SWITCHES, NUMSWITCHES, NUMMATRICES, BOUNDINGRADIUS, NUMRECORDS, NUMTEXTURES
-MODELFILEHEADER(   alarm1,        0, &SKELETON(standard_object),   0,           0,           1,       304.6402,          0, 2)
+//included by propModelFileHeaders.inc.c to pobjdata.c
+//touch pobjdata.c to recompile
+
+
+              //     NAME, ROOTNODE,                   SKELETON, SWITCHES, NUMSWITCHES, NUMMATRICES, BOUNDINGRADIUS, NUMRECORDS, NUMTEXTURES
+MODELFILEHEADER(   alarm1,        0, &SKELETON(standard_object),        0,           0,           1,       304.6402,          0,           2)
+
+
 
 /*                   NAME    SKEL NAME       BOUNDRAD SW HASNAMES?
 New_ModelFileHeader(alarm1, standard_object, 304.6402, 0, FALSE)

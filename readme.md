@@ -44,7 +44,7 @@ If you don't have host development tools already installed then you will also ne
 sudo apt-get install build-essential
 ```
 
-Optionally [qemu-irix](https://github.com/n64decomp/qemu-irix/releases) is needed. Download the package to a desired location and install with:
+Additionally [qemu-irix](https://github.com/n64decomp/qemu-irix/releases) is needed. Download the package to a desired location and install with:
 
 ```bash
 sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
@@ -73,7 +73,7 @@ Place an unmodified copy of your existing NTSC (US) ROM inside the root of this 
 To extract the baserom assets run:
 
 ```bash
-./extract_baserom.u.sh
+./scripts/extract_baserom.u.sh
 ```
 
 For JP and PAL (EU) versions support, place each existing ROM in the root of this repository with the name `baserom.<VERSION>.z64` (where `<VERSION>` is the country code, `j`, or `e`).
@@ -83,29 +83,45 @@ Extracting NTSC (US) baserom assets is mandatory before extracting JP or PAL ass
 To extract JP assets run:
 
 ```bash
-./extract_baserom.u.sh && ./extract_diff.j.sh
+./scripts/extract_baserom.u.sh && ./scripts/extract_diff.j.sh
 ```
 
 To extract PAL assets run:
 
 ```bash
-./extract_baserom.u.sh && ./extract_diff.e.sh
+./scripts/extract_baserom.u.sh && ./scripts/extract_diff.e.sh
 ```
 
 Other options to extract baserom assets or extract diff:
 
 ```bash
-./extract_baserom.u.sh /path_to/rom.n64 # ROM in another directory
-./extract_baserom.u.sh /mnt/e/Goldeneye.n64 # ROM located on EverDrive
-./extract_baserom.u.sh files # Extract files only
-./extract_baserom.u.sh images # Extract images only
+./scripts/extract_baserom.u.sh /path_to/rom.n64 # ROM in another directory
+./scripts/extract_baserom.u.sh /mnt/e/Goldeneye.n64 # ROM located on EverDrive
+./scripts/extract_baserom.u.sh files # Extract files only
+./scripts/extract_baserom.u.sh images # Extract images only
 ```
 
 Note: If you are upgrading from an old repository, run:
 
 ```bash
-./clean_baserom.sh && ./extract_baserom.u.sh && make clean
+./scripts/clean_baserom.sh && ./scripts/extract_baserom.u.sh && make clean
 ```
+
+### Install using Docker (compatible with Apple silicon Macs)
+
+Once the Docker service is running on your computer (you must have Docker installed), clone the GoldenEye repo where you'd like to have it (Step 2 of the previous section).
+
+Build the image: `docker build -t goldeneye .`
+
+`cd` to your cloned `goldeneye_src` repo's directory. You can change `$(pwd)` below to the absolute path of your directory if you don't want to do this.
+
+Connect to the container: `docker run --rm -it -v $(pwd):/home/dev goldeneye`
+
+All what's left is to go through Steps 3 and 4 of the previous section.
+
+Be careful! If you previously compiled GoldenEye on another system (differente OS or CPU architecture), the binaries (gzip, n64cksum) that were compiled will be incompatible. You must delete them.
+
+There may be a "dubious ownership" error from Git and it may say it fails to detect the Git repository. Running `git status`, it should tell you how to fix it.
 
 ## Build the ROM
 

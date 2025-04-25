@@ -9227,6 +9227,7 @@ glabel jpt_8005C62C
 .word spectrum_op_SET_x_L
 .word spectrum_op_SET_x_HL
 .word spectrum_op_SET_x_A
+.size jpt_8005C62C, . - jpt_8005C62C
 
 /*D:8005C64C*/
 glabel jpt_8005C64C
@@ -9238,6 +9239,7 @@ glabel jpt_8005C64C
 .word spectrum_op_RES_x_L
 .word spectrum_op_RES_x_HL
 .word spectrum_op_RES_x_A
+.size jpt_8005C64C, . - jpt_8005C64C
 
 /*D:8005C66C*/
 glabel jpt_8005C66C
@@ -9249,6 +9251,7 @@ glabel jpt_8005C66C
 .word spectrum_op_BIT_x_L
 .word spectrum_op_BIT_x_HL
 .word spectrum_op_BIT_x_A
+.size jpt_8005C66C, . - jpt_8005C66C
 
 /*D:8005C68C*/
 glabel jpt_8005C68C
@@ -9260,6 +9263,7 @@ glabel jpt_8005C68C
 .word .L7F0DC5EC
 .word .L7F0E27FC
 .word .L7F0DC5F4
+.size jpt_8005C68C, . - jpt_8005C68C
 
 /*D:8005C6AC*/
 glabel jpt_8005C6AC
@@ -9291,6 +9295,7 @@ glabel jpt_8005C6AC
 .word spectrum_op_ED_B9
 .word spectrum_op_ED_BA
 .word spectrum_op_ED_BB
+.size jpt_8005C6AC, . - jpt_8005C6AC
 
 /*D:8005C71C*/
 glabel jpt_8005C71C
@@ -9357,6 +9362,7 @@ glabel jpt_8005C71C
 .word spectrum_op_ED_7C
 .word spectrum_op_ED_7D
 .word spectrum_op_ED_7E
+.size jpt_8005C71C, . - jpt_8005C71C
 
 .text
 glabel spectrum_hw_emulation

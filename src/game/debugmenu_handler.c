@@ -194,13 +194,13 @@ char *mcm_strings[] = {
 };
 
 //D:80036F64
-s32 debug_render_raster = 2;
+s32 debug_render_raster = DEB_BOND_VIEW;
 //D:80036F68
-s32 debug_freeze_processing = 2;
+s32 debug_freeze_processing = DEB_BOND_VIEW;
 //D:80036F6C
-s32 g_DebugMode = 2;
+s32 g_DebugMode = DEB_BOND_VIEW;
 //D:80036F70
-s32 g_DebugHighlightedOption = 2;
+s32 g_DebugHighlightedOption = DEB_BOND_VIEW;
 //D:80036F74
 s32 memusage_display_flag = FALSE;
 //D:80036F78
@@ -304,6 +304,9 @@ coord3d player_pos_x = {0};
 #endif
 
 
+/*
+* Address: 0x7f090490
+*/
 void debugmenuUpdate(void)
 {
     #if defined(LEFTOVERDEBUG)
@@ -312,15 +315,21 @@ void debugmenuUpdate(void)
 }
 
 #if defined(LEFTOVERDEBUG)
+/*
+* Address: 0x7f0904c4
+*/
 void debmenuHandleMoveView(void)
 {
-    sub_GAME_7F0916F4();
+    resetDebugCameraToPlayerPosition();
     g_DebugHighlightedOption = get_highlighted_debug_option();
     debug_render_raster = debug_freeze_processing = g_DebugHighlightedOption;
 }
 #endif
 
 #if defined(LEFTOVERDEBUG)
+/*
+* Address: 0x7f090508
+*/
 void debmenuHandleStanView(void)
 {
     maybe_solo_intro_camera_handler();
@@ -330,6 +339,9 @@ void debmenuHandleStanView(void)
 #endif
 
 #if defined(LEFTOVERDEBUG)
+/*
+* Address: 0x7f09054c
+*/
 void debmenuHandleBondView(void)
 {
     maybe_solo_intro_camera_handler();
@@ -339,12 +351,18 @@ void debmenuHandleBondView(void)
 #endif
 
 #if defined(LEFTOVERDEBUG)
+/*
+* Address: 0x7f090590
+*/
 void removed_do_debug_profile_flag_false(void) {
     return;
 }
 #endif
 
 #if defined(LEFTOVERDEBUG)
+/*
+* Address: 0x7f090598
+*/
 void removed_do_debug_profile_flag_true(void) {
     return;
 }
@@ -444,124 +462,124 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
         {
             switch (get_highlighted_debug_option()) {
                 
-            case 0: // move view
+            case DEB_MOVE_VIEW: // move view
                 debmenuHandleMoveView();
                 break;
                 
-            case 1: // stan view
+            case DEB_STAN_VIEW: // stan view
                 debmenuHandleStanView();
                 break;
                 
-            case 2: // bond view
+            case DEB_BOND_VIEW: // bond view
                 debmenuHandleBondView();
                 break;
                 
-            case 3: // level
+            case DEB_LEVEL: // level
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 4: // region
+            case DEB_REGION: // region
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 5: // scale
+            case DEB_SCALE: // scale
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 8: // select anim
+            case DEB_SELANIM: // select anim
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 9: // gun pos
+            case DEB_GUNPOS: // gun pos
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 10: // flash colour
+            case DEB_FLASHCOLOR: // flash colour
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 11: // hit colour
+            case DEB_HITCOLOR: // hit colour
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
 
 #ifdef XBLADEBUG
-            case 50: //marg top
+            case DEB_MARGTOP: //marg top
             /*
                 printf("Margins: %5.2f.0F %5.2f.0F %5.2f.0F %5.2f.0F\n",
-                    Function_82395958(1.0,0.0,0),
-                    Function_82395958(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,1),
-                    Function_82395958(1.0,0.0,2),
-                    Function_82395958(1.0,0.0,3));
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,0),
+                    bgTimesAddViewRelatedMaybe(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,1),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,2),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,3));
             //*/
-            case 51: //marg bot
+            case DEB_MARGBOT: //marg bot
             /*
                 printf("Margins: %5.2f.0F %5.2f.0F %5.2f.0F %5.2f.0F\n",
-                    Function_82395958(1.0,0.0,0),
-                    Function_82395958(1.0,0.0,1),
-                    Function_82395958(1.0,0.0,2),
-                    Function_82395958(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,3));
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,0),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,1),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,2),
+                    bgTimesAddViewRelatedMaybe(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,3));
             //*/
-            case 52: //marg left
+            case DEB_MARGLEFT: //marg left
             /*
                 printf("Margins: %5.2f.0F %5.2f.0F %5.2f.0F %5.2f.0F\n",
-                    Function_82395958(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,0),
-                    Function_82395958(1.0,0.0,1),
-                    Function_82395958(1.0,0.0,2),
-                    Function_82395958(1.0,0.0,3));
+                    bgTimesAddViewRelatedMaybe(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,0),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,1),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,2),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,3));
             //*/
-            case 53: //marg right
+            case DEB_MARGRIGHT: //marg right
             /*
                 printf("Margins: %5.2f.0F %5.2f.0F %5.2f.0F %5.2f.0F\n",
-                    Function_82395958(1.0,0.0,0),
-                    Function_82395958(1.0,0.0,1),
-                    Function_82395958(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,2),
-                    Function_82395958(1.0,0.0,3));
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,0),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,1),
+                    bgTimesAddViewRelatedMaybe(1.0,(((button_pressed & 1) >> 5 & 1 ^ 1) - ((button_pressed & 2) >> 5 & 1 ^ 1)) * 4.0,2),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,3));
             //*/
-            case 54: //marg reset
+            case DEB_MARGRESET: //marg reset
             /*
                 printf("Margins: %5.2f.0F %5.2f.0F %5.2f.0F %5.2f.0F\n",
-                    Function_82395958(1.0,0.0,0),
-                    Function_82395958(1.0,0.0,1),
-                    Function_82395958(1.0,0.0,2),
-                    Function_82395958(1.0,0.0,3));
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,0),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,1),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,2),
+                    bgTimesAddViewRelatedMaybe(1.0,0.0,3));
             //*/
                 break;
 #endif
-            case 55: // screen size
+            case DEB_SCREENSIZE: // screen size
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 56: // screen pos
+            case DEB_SCREENPOS: // screen pos
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 12: // music
+            case DEB_MUSIC: // music
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 26: // port close
-            case 27: // port inf
-            case 28: // port approx
+            case DEB_PORTCLOSE: // port close   
+            case DEB_PORT_INF: // port inf
+            case DEB_PORT_APPROX: // port approx
                 debug_portal_flag ^= 1;
                 break;
                 
-            case 13: // sfx
+            case DEB_SFX: // sfx
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 14: // invincible
+            case DEB_INVINCIBLE: // invincible
                 set_bondata_invincible_flag(get_bondata_invincible_flag() == 0);
                 break;
                 
-            case 15: // visible
+            case DEB_VISIBILE: // visible
                 bondviewSetVisibleToGuardsFlag(bondviewGetVisibleToGuardsFlag() == 0);
                 break;
                 
-            case 16: // collisions
-                set_obj_collision_flag(get_obj_collision_flag() == 0);
+            case DEB_COLLISIONS: // collisions
+                set_obj_collision_flag(get_obj_collision_flag() == FALSE);
                 break;
                 
-            case 17: // all guns
+            case DEB_ALLGUNS: // all guns
             {
                 for (i1 = 0; i1 < getPlayerCount(); i1++)
                 {
@@ -571,7 +589,7 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
                 break;
             }
                 
-            case 18: // max ammo
+            case DEB_MAXAMMO: // max ammo
             {
                 sp54 = get_cur_playernum();
                 for (i2 = 0; i2 < getPlayerCount(); i2++)
@@ -583,7 +601,7 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
                 break;
             }
                 
-            case 19: // display speed
+            case DEB_DISPSPEED: // display speed
                 memusage_display_flag ^= 1;
                 if (memusage_display_flag == 0)
                 {
@@ -591,148 +609,148 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
                 }
                 break;
                 
-            case 20: // background
+            case DEB_BG: // background
                 debug_do_draw_bg ^= 1;
                 break;
                 
-            case 21: // props
+            case DEB_PROPS: // props
                 debug_do_draw_obj ^= 1;
                 break;
                 
-            case 22: // stan hit
+            case DEB_STANHIT: // stan hit
                 debug_stanhit_flag ^= 1;
                 break;
                 
-            case 23: // stan region
+            case DEB_STANREGION: // stan region
                 debug_stanregion_flag ^= 1;
                 break;
                 
-            case 24: // stan problems
+            case DEB_STANPROBLEMS: // stan problems
                 debug_stan_problems_flag ^= 1;
                 break;
                 
-            case 25: // print man pos
+            case DEB_PRTMANPOS: // print man pos
                 debug_man_pos_flag ^= 1;
                 break;
                 
-            case 75: // testing man pos
+            case DEB_TESTINGMANPOS: // testing man pos
                 g_DebugManPos ^= 1;
                 break;
                 
-            case 6: // play title
+            case DEB_PLAYTITLE: // play title
                 bossSetLoadedStage(LEVELID_TITLE);
                 break;
                 
-            case 7: // bond die
+            case DEB_BONDDIE: // bond die
                 bondviewKillCurrentPlayer();
                 break;
                 
-            case 29: // pr room loads
+            case DEB_PRROOMLOADS: // pr room loads
                 debug_prroomloads_flag ^= 1;
                 break;
                 
-            case 30: // show mem use
+            case DEB_SHOWMEMUSE: // show mem use
                 bossEnableShowMemUseFlag();
                 break;
                 
-            case 31: // show mem bars
+            case DEB_SHOWMEMBARS: // show mem bars
                 bossMemBarsFlagToggle();
                 break;
                 
-            case 32: // grab rgb
+            case DEB_GRABRGB: // grab rgb
                 pscreehshotFlagRgb->flag = 1;
                 osViBlack(1);
                 viSetColorMode32Bit();
                 break;
                 
-            case 33: // grab jpeg
+            case DEB_GRABJPG: // grab jpeg
                 pscreehshotFlagJpg->flag = 1;
                 osViBlack(1);
                 viSetColorMode32Bit();
                 break;
                 
-            case 34: // grab task
+            case DEB_TASKGRAB: // grab task
                 debug_enable_taskgrab_flag ^= 1;
                 break;
                 
-            case 35: //rnd walk
+            case DEB_RNDWALK: //rnd walk
               break;
                 
-            case 36: // record ramrom
+            case DEB_RECRAMROM: // record ramrom
                 setRamRomRecordSlot(0);
                 break;
                 
-            case 37: // record 1
+            case DEB_RECORD1: // record 1
                 setRamRomRecordSlot(1);
                 break;
                 
-            case 38: // record 2
+            case DEB_RECORD2: // record 2
                 setRamRomRecordSlot(2);
                 break;
                 
-            case 39: // record 3
+            case DEB_RECORD3: // record 3
                 setRamRomRecordSlot(3);
                 break;
                 
-            case 40: // replay ramrom
+            case DEB_REPLAYRAMROM: // replay ramrom
                 replay_recorded_ramrom_from_indy();
                 break;
                 
-            case 41: // save ramrom
+            case DEB_SAVERAMROM: // save ramrom
                 save_ramrom_to_devtool();
                 break;
                 
-            case 42: // load ramrom
+            case DEB_LOADRAMROM: // load ramrom
                 load_ramrom_from_devtool();
                 break;
                 
-            case 43: // auto y aim
+            case DEB_AUTOAIMY: // auto y aim
                 set_BONDdata_autoaim_y(get_BONDdata_autoaim_y() == 0);
                 break;
                 
-            case 44: // auto x aim
+            case DEB_AUTOAIMX: // auto x aim
                 set_BONDdata_autoaim_x(get_BONDdata_autoaim_x() == 0);
                 break;
                 
-            case 45: // 007
+            case DEB_007: // 007
                 debug_007_unlock_flag ^= 1;
                 break;
                 
-            case 46: // agent
+            case DEB_AGENT: // agent
                 debug_enable_agent_levels_flag ^= 1;
                 break;
                 
-            case 47: // all
+            case DEB_ALL: // all
                 debug_enable_all_levels_flag ^= 1;
                 break;
                 
-            case 48: // fast
+            case DEB_FAST: // fast
                 debug_fast_bond_flag ^= 1;
                 break;
                 
-            case 49: // objectives
+            case DEB_OBJECTIVES: // objectives
                 debug_all_obj_complete_flag ^= 1;
                 break;
                 
-            case 57: // show patrols
-                set_show_patrols_flag(get_show_patrols_flag() == 0);
+            case DEB_SHOWPATROLS: // show patrols
+                set_show_patrols_flag(get_show_patrols_flag() == FALSE);
                 break;
                 
-            case 58: // intro
-                set_camera_mode(CAMERAMODE_SWIRL);
+            case DEB_INTRO: // intro
+                bondviewSetCameraMode(CAMERAMODE_SWIRL);
                 break;
                 
-            case 60: // intro pos
-                if (debug_render_raster == 0)
+            case DEB_INTRO_POS: // intro pos
+                if (debug_render_raster == DEB_MOVE_VIEW)
                 {
-                    handle_debug_intropos();
+                    initializeDebugCameraPosition();
                 }
                 break;
                 
-            case 61: // world pos
-                if (debug_render_raster == 0)
+            case DEB_WORLD_POS: // world pos
+                if (debug_render_raster == DEB_MOVE_VIEW)
                 {
-                    debugSetWorldPos();
+                    updateDebugCameraWorldPosition();
                 }
                 else
                 {
@@ -765,51 +783,51 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
                 }
                 break;
                 
-            case 62: // gun key pos
+            case DEB_GUNKEYPOS: // gun key pos
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 64: // chr num
+            case DEB_CHRNUM: // chr num
                 debug_chrnum_flag ^= 1;
                 break;
                 
-            case 63: // vis cvg
+            case DEB_VISCVG: // vis cvg
                 debug_VisCVG_flag ^= 1;
                 break;
                 
-            case 69: // joy2 sky edit
+            case DEB_JOY2SKYEDIT: // joy2 sky edit
                 debug_joy2skyedit_flag ^= 1;
                 break;
                 
-            case 70: // joy2 hits edit
+            case DEB_JOY2HITSEDIT: // joy2 hits edit
                 debug_joy2hitsedit_flag ^= 1;
                 break;
                 
-            case 71: // joy2 detail edit
+            case DEB_JOY2DETAILEDIT: // joy2 detail edit
                 debug_joy2detailedit_flag ^= 1;
                 break;
                 
-            case 72: // explosion info
+            case DEB_EXPLOSIONINFO: // explosion info
                 debug_explosioninfo_flag ^= 1;
                 break;
                 
-            case 73: // magic fog
+            case DEB_MAGICFOG: // magic fog
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 76: // fog
+            case DEB_FOG: // fog
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
                 
-            case 74: // gun watch pos
+            case DEB_GUNWATCHPOS: // gun watch pos
                 debug_gunwatchpos_flags ^= 1;
                 break;
                 
-            case 65: // room blocks
+            case DEB_ROOMBLOCKS: // room blocks
                 removed_debug_roomblocks_feature();
                 break;
                 
-            case 66: // profile
+            case DEB_PROFILE: // profile
             {
                 debug_profile_flag ^= 1;
                 if (debug_profile_flag)
@@ -823,15 +841,15 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
                 break;
             }
                 
-            case 67: // obj load
+            case DEB_OBJLOAD: // obj load
                 debug_object_load_all_models();
                 break;
                 
-            case 68: // weapon load
+            case DEB_WEAPONLOAD: // weapon load
                 debug_weapon_load_table();
                 break;
                 
-            case 59: // intro edit
+            case DEB_INTRO_EDIT: // intro edit
                 g_DebugHighlightedOption = get_highlighted_debug_option();
                 break;
             }
@@ -841,11 +859,11 @@ s32 debug_menu_processor(s8 stick_h, s8 stick_v, u16 button_held, u16 button_pre
         {
             switch (get_highlighted_debug_option()) // switch 2; jump table: jpt_80055830
             {
-                case 50: // marg top
-                case 51: // marg bot
-                case 52: // marg left
-                case 53: // marg right
-                case 54: // marg reset
+                case DEB_MARGTOP: // marg top
+                case DEB_MARGBOT: // marg bot
+                case DEB_MARGLEFT: // marg left
+                case DEB_MARGRIGHT: // marg right
+                case DEB_MARGRESET: // marg reset
                     break;
             }
         }

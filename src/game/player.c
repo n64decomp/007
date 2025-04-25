@@ -44,7 +44,7 @@ void sub_GAME_7F093880(f32 offset_x, f32 offset_y, coord3d* out) {
     coords.x = getPlayer_c_screenleft() + offset_x;
     screen_top = getPlayer_c_screentop();
     coords.y = fogGetCurrentEnvironmentp()->WaterConcavity + (offset_y + screen_top);
-    sub_GAME_7F077EEC(&coords, out, 100.0f);
+    transformAndNormalizeByLength2Dto3D(&coords, out, 100.0f);
     mtx4RotateVecInPlace(player_mtxf, out->f);
 }
 
@@ -840,7 +840,7 @@ Gfx *skyRender(Gfx *gdl)
         {
             gDPPipeSync(gdl++);
 
-            likely_generate_DL_for_image_declaration(&gdl, &skywaterimages[fogGetCurrentEnvironmentp()->WaterImageId], 1, 0, 2);
+            texSelect(&gdl, &skywaterimages[fogGetCurrentEnvironmentp()->WaterImageId], 1, 0, 2);
             gdl = sub_GAME_7F09343C(gdl, 0); // ???
             gDPSetRenderMode(gdl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
 
@@ -1259,7 +1259,7 @@ Gfx *skyRender(Gfx *gdl)
 
     gDPPipeSync(gdl++);
 
-    likely_generate_DL_for_image_declaration(&gdl, &skywaterimages[fogGetCurrentEnvironmentp()->SkyImageId], 1, 0, 2);
+    texSelect(&gdl, &skywaterimages[fogGetCurrentEnvironmentp()->SkyImageId], 1, 0, 2);
 
     if (1);
 

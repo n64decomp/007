@@ -45,5 +45,9 @@ void *_fileIndexLoadToBank(s32 index, FILELOADMETHOD param_2, s32 size, u8 bank)
 #endif
 
 s32 get_pc_buffer_remaining_value(u8 *name);
+s32 get_rom_remaining_buffer_for_index(s32 index);
+s32 get_pc_remaining_buffer_for_index(s32 index);
+s32 fileGetIndex(char *resname);
+s32 get_pc_remaining_buffer_for_index(s32 index);
 
 #endif

@@ -2,8 +2,41 @@
 
 
 #ifdef NONMATCHING
-void sub_GAME_7F092890(void) {
+struct unk_bg_struct {
+    f32 unk00;
+    f32 unk04;
+    f32 unk08;
+    
+    f32 unk0c;
+    f32 unk10;
+    f32 unk14;
+    
+    f32 unk18;
+    f32 unk1c;
+    f32 unk20;
+    
+    f32 unk24;
+    
+    s16 unk28;
+    s16 unk2a;
+    s16 unk2c;
+    s16 unk2e;
+};
 
+struct coord3d64 {
+    f64 f[3];
+};
+
+/**
+ * Not close to matching, but the logic in the method is very close.
+ * Seems to be almost all f64 math.
+ * Very similar to Perfect Dark func0002f490.
+ * https://decomp.me/scratch/8EjDL 24.30%
+ * 
+ * Address: 0x7F092890
+*/
+s32 intersectLineTriangle(Vtx *arg0, Vtx *arg1, Vtx *arg2, struct coord3d *arg3, struct coord3d *arg4, struct coord3d *arg5, struct coord3d *arg6, struct unk_bg_struct *arg7)
+{
     f64 sp150;
     f64 sp148;
     f64 sp140;
@@ -32,142 +65,155 @@ void sub_GAME_7F092890(void) {
     f64 sp70;
     f64 sp68;
     f64 sp60;
-    f64 sp58;
-    f64 sp50;
-    f64 sp48;
-    f64 sp40;
-    f64 sp38;
-    f64 temp_f10;
-    f64 temp_f10_2;
-    f64 temp_f12;
-    f64 temp_f12_2;
-    f64 temp_f14;
-    f64 temp_f16;
-    f64 temp_f18;
-    f64 temp_f20;
-    f64 temp_f22;
-    f64 temp_f24;
-    f64 temp_f26;
-    f64 temp_f28;
+    //f64 sp50;
+    //f64 sp48;
+    //f64 sp40;
+    //f64 sp38;
+    //f64 temp_f18;
+    //f64 temp_f20;
+    //f64 temp_f22;
+    //f64 temp_f24;
+    //f64 temp_f26;
+    //f64 temp_f28;
     f64 temp_f2;
-    f64 temp_f30;
-    f64 temp_f4;
-    f64 temp_f4_2;
-    f64 temp_f6;
-    f64 temp_f6_2;
-    f64 temp_f6_3;
-    f64 temp_f6_4;
-    f64 temp_f8;
-    f64 temp_f8_2;
-    f64 temp_f8_3;
-    f64 temp_f8_4;
-    f64 temp_f8_5;
-    f64 phi_f0;
-    f64 phi_f2;
+    f64 var_f0;
+    f64 var_f2;
 
-    sp90 = (f64) arg3->unk0;
-    temp_f6 = (f64) arg3->unk4;
-    sp98 = temp_f6;
-    temp_f8 = (f64) arg3->unk8;
-    spA0 = temp_f8;
-    temp_f6_2 = (f64) arg6->unk0;
-    sp78 = temp_f6_2;
-    temp_f8_2 = (f64) arg6->unk4;
-    sp80 = temp_f8_2;
-    temp_f4 = (f64) arg6->unk8;
-    sp88 = temp_f4;
-    sp60 = (f64) arg5->unk0;
-    sp68 = (f64) arg5->unk4;
-    sp70 = (f64) arg5->unk8;
-    temp_f10 = (f64) (arg1->unk0 - arg0->unk0);
-    sp140 = temp_f10;
-    sp38 = temp_f6_2;
-    temp_f6_3 = (f64) (arg2->unk0 - arg1->unk0);
-    sp128 = temp_f6_3;
-    sp40 = temp_f8_2;
-    temp_f8_3 = (f64) (arg1->unk2 - arg0->unk2);
-    sp148 = temp_f8_3;
-    temp_f8_4 = (f64) (arg2->unk2 - arg1->unk2);
-    sp130 = temp_f8_4;
-    temp_f8_5 = (f64) (arg1->unk4 - arg0->unk4);
-    sp150 = temp_f8_5;
-    sp138 = (f64) (arg2->unk4 - arg1->unk4);
-    sp110 = (f64) (arg2->unk0 - arg0->unk0);
-    sp118 = (f64) (arg2->unk2 - arg0->unk2);
-    sp48 = temp_f4;
-    sp120 = (f64) (arg2->unk4 - arg0->unk4);
-    temp_f18 = temp_f8_3 * sp138;
-    temp_f20 = temp_f8_5 * sp130;
-    temp_f22 = temp_f8_5 * temp_f6_3;
-    temp_f24 = temp_f10 * sp138;
-    temp_f12 = temp_f18 - temp_f20;
-    temp_f26 = temp_f10 * temp_f8_4;
-    temp_f28 = sp148 * temp_f6_3;
-    temp_f14 = temp_f22 - temp_f24;
-    temp_f16 = temp_f26 - temp_f28;
-    spF8 = temp_f16;
-    sp100 = temp_f14;
-    sp108 = temp_f12;
-    spF0 = ((temp_f8 + (f64) arg0->unk4) * temp_f16) + ((temp_f12 * ((f64) arg0->unk0 + sp90)) + (temp_f14 * ((f64) arg0->unk2 + temp_f6)));
-    if (((sp48 * temp_f16) + ((temp_f12 * sp38) + (temp_f14 * sp40))) == 0.0) {
+    sp90 = (f64) arg3->f[0];
+    sp98 = (f64) arg3->f[1]; 
+    spA0 = (f64) arg3->f[2];
+    
+    sp78 = (f64) arg6->f[0];
+    sp80 = (f64) arg6->f[1];
+    sp88 = (f64) arg6->f[2];
+    
+    sp60 = (f64) arg5->f[0];
+    sp68 = (f64) arg5->f[1];
+    sp70 = (f64) arg5->f[2];
+    
+    sp140 = (f64) (arg1->v.ob[0] - arg0->v.ob[0]);
+    sp128 = (f64) (arg2->v.ob[0] - arg1->v.ob[0]);
+
+    sp148 = (f64) (arg1->v.ob[1] - arg0->v.ob[1]);
+    sp130 = (f64) (arg2->v.ob[1] - arg1->v.ob[1]);
+
+    sp150 = (f64) (arg1->v.ob[2] - arg0->v.ob[2]);
+    sp138 = (f64) (arg2->v.ob[2] - arg1->v.ob[2]);
+
+    sp110 = (f64) (arg2->v.ob[0] - arg0->v.ob[0]);
+    sp118 = (f64) (arg2->v.ob[1] - arg0->v.ob[1]);
+    sp120 = (f64) (arg2->v.ob[2] - arg0->v.ob[2]);
+
+    /*
+    temp_f18 = sp148 * sp138;
+    temp_f20 = sp150 * sp130;
+    temp_f22 = sp150 * sp128;
+    temp_f24 = sp140 * sp138;
+    temp_f26 = sp140 * sp130;
+    temp_f28 = sp148 * sp128;
+    */
+
+    #define temp_f18 (sp148 * sp138)
+    #define temp_f20 (sp150 * sp130)
+    #define temp_f22 (sp150 * sp128)
+    #define temp_f24 (sp140 * sp138)
+    #define temp_f26 (sp140 * sp130)
+    #define temp_f28 (sp148 * sp128)
+
+    sp108 = temp_f18 - temp_f20;
+    sp100 = temp_f22 - temp_f24;
+    spF8 = temp_f26 - temp_f28;
+
+    // why would this happen before the next early return when it's only used later?
+    spF0 = 
+        (spF8 * ((f64) arg0->v.ob[2] + spA0))
+        +
+        (sp100 * ((f64) arg0->v.ob[1] + sp98))
+        +
+        (sp108 * ((f64) arg0->v.ob[0] + sp90))
+        ;
+    
+    // this is a dot product check that when 0.0, means the line is parallel to the
+    // plane of the triangle indicating an intersection is not possible
+    if ((sp108 * sp78) + (sp100 * sp80) + (spF8 * sp88) == 0.0)
+    {
         return 0;
     }
-    sp48 = sp60;
-    temp_f30 = temp_f28 - temp_f26;
-    sp40 = sp68;
-    sp38 = sp70;
-    sp50 = ((spF0 - (temp_f12 * sp60)) - (temp_f14 * sp68)) - (sp70 * temp_f16);
-    sp58 = sp78;
-    temp_f2 = sp50 / ((sp88 * temp_f16) + ((temp_f12 * sp78) + (temp_f14 * sp80)));
-    temp_f6_4 = (sp58 * temp_f2) + sp48;
-    spC8 = temp_f6_4;
-    temp_f10_2 = (sp80 * temp_f2) + sp40;
-    spD0 = temp_f10_2;
-    temp_f4_2 = (sp88 * temp_f2) + sp38;
-    spD8 = temp_f4_2;
-    sp58 = temp_f10_2;
-    spB0 = temp_f6_4 - (sp90 + (f64) arg0->unk0);
-    spB8 = sp58 - (sp98 + (f64) arg0->unk2);
-    spC0 = temp_f4_2 - (spA0 + (f64) arg0->unk4);
-    if (temp_f30 != 0.0) {
-        phi_f2 = ((spB0 * sp148) - (sp140 * spB8)) / temp_f30;
-    } else {
-        temp_f12_2 = temp_f20 - temp_f18;
-        if (temp_f12_2 != 0.0) {
-            phi_f2 = ((spB8 * sp150) - (sp148 * spC0)) / temp_f12_2;
-        } else {
-            phi_f2 = ((spC0 * sp140) - (sp150 * spB0)) / (temp_f24 - temp_f22);
+    
+    //sp50 = ((spF0 - (sp108 * sp60)) - (sp100 * sp68)) - (sp70 * spF8);
+    temp_f2 = ((spF0 - (sp108 * sp60)) - (sp100 * sp68) - (spF8 * sp70)) 
+        / ((sp108 * sp78) + (sp100 * sp80) + (spF8 * sp88));
+    
+    spC8 = (sp78 * temp_f2) + sp60;
+    spD0 = (sp80 * temp_f2) + sp68;
+    spD8 = (sp88 * temp_f2) + sp70;
+    
+    spB0 = spC8 - (sp90 + (f64) arg0->v.ob[0]);
+    spB8 = spD0 - (sp98 + (f64) arg0->v.ob[1]);
+    spC0 = spD8 - (spA0 + (f64) arg0->v.ob[2]);
+    
+    if ((temp_f28 - temp_f26) != 0.0)
+    {
+        var_f2 = ((spB0 * sp148) - (sp140 * spB8)) / (temp_f28 - temp_f26);
+    }
+    else
+    {
+        if ((temp_f20 - temp_f18) != 0.0)
+        {
+            var_f2 = ((spB8 * sp150) - (sp148 * spC0)) / (temp_f20 - temp_f18);
+        }
+        else
+        {
+            var_f2 = ((spC0 * sp140) - (sp150 * spB0)) / (temp_f24 - temp_f22);
         }
     }
-    if (sp140 != 0.0) {
-        phi_f0 = (spB0 - (phi_f2 * sp110)) / sp140;
-    } else if (sp148 != 0.0) {
-        phi_f0 = (spB8 - (phi_f2 * sp118)) / sp148;
-    } else {
-        phi_f0 = (spC0 - (phi_f2 * sp120)) / sp150;
+    
+    if (sp140 != 0.0)
+    {
+        var_f0 = (spB0 - (var_f2 * sp110)) / sp140;
     }
-    if ((phi_f0 >= 0.0) && (phi_f2 >= 0.0) && ((phi_f0 + phi_f2) <= 1.0)) {
-        if ((((spD8 - (f64) arg4->unk8) * sp88) + ((sp78 * (spC8 - (f64) arg4->unk0)) + (sp80 * (spD0 - (f64) arg4->unk4)))) >= 0.0) {
-            arg7->unk0 = (f32) spC8;
-            arg7->unk4 = (f32) spD0;
-            arg7->unk8 = (f32) spD8;
-            arg7->unkC = (f32) sp108;
+    else if (sp148 != 0.0)
+    {
+        var_f0 = (spB8 - (var_f2 * sp118)) / sp148;
+    }
+    else
+    {
+        var_f0 = (spC0 - (var_f2 * sp120)) / sp150;
+    }
+    
+    // checks if the impact point is within the triangle?
+    if ((var_f0 >= 0.0) && (var_f2 >= 0.0) && ((var_f0 + var_f2) <= 1.0))
+    {
+        // what's this doing?
+        if ((
+            (sp78 * (spC8 - (f64) arg4->f[0]))
+            +
+            (sp80 * (spD0 - (f64) arg4->f[1]))
+            +
+            (sp88 * (spD8 - (f64) arg4->f[2]))
+            ) >= 0.0)
+        {
+            arg7->unk00 = (f32) spC8;
+            arg7->unk04 = (f32) spD0;
+            arg7->unk08 = (f32) spD8;
+            arg7->unk0c = (f32) sp108;
             arg7->unk10 = (f32) sp100;
-            arg7->unk2A = 0;
             arg7->unk14 = (f32) spF8;
+            arg7->unk2a = 0;
+            
             return 1;
         }
-        /* Duplicate return node #18. Try simplifying control flow for better match */
+
         return 0;
     }
+    
     return 0;
-
-
 }
+
 #else
 GLOBAL_ASM(
 .text
-glabel sub_GAME_7F092890
+glabel intersectLineTriangle
 /* 0C73C0 7F092890 27BDFEA8 */  addiu $sp, $sp, -0x158
 /* 0C73C4 7F092894 F7BE0030 */  sdc1  $f30, 0x30($sp)
 /* 0C73C8 7F092898 F7BC0028 */  sdc1  $f28, 0x28($sp)

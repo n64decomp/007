@@ -69,13 +69,13 @@ void alloc_lookup_buffers(void)
     s32 j;
     s32 i;
 
-    ptr_list_object_lookup_indices = (s16*)mempAllocBytesInBank(PTR_LIST_OBJECT_LOOKUP_INDICES_LEN * sizeof(s16), 4);
-    RoomPropListChunkIndexes = (s16*)mempAllocBytesInBank((((MaxNumRooms * 4) + 0xF) | 0xF) ^ 0xF, 4);
-    RoomPropListChunks = (s16*)mempAllocBytesInBank(BSS_8007161C_LEN * sizeof(struct roomproplistchunk), 4);
+    ptr_list_object_lookup_indices = (s16 *)mempAllocBytesInBank(PTR_LIST_OBJECT_LOOKUP_INDICES_LEN * sizeof(s16), MEMPOOL_STAGE);
+    RoomPropListChunkIndexes       = (s16 *)mempAllocBytesInBank((((g_MaxNumRooms * 4) + 0xF) | 0xF) ^ 0xF, MEMPOOL_STAGE);
+    RoomPropListChunks             = (s16 *)mempAllocBytesInBank(BSS_8007161C_LEN * sizeof(struct roomproplistchunk), MEMPOOL_STAGE);
 
     ptr_list_object_lookup_indices[0] = -1;
 
-    for (i=0; i<MaxNumRooms; i++)
+    for (i=0; i<g_MaxNumRooms; i++)
     {
         RoomPropListChunkIndexes[i] = -1;
     }
@@ -165,9 +165,9 @@ void reinit_between_menus(void)
  * Called from proplvreset2 when PROPDEF type is PROPDEF_SWITCH.
  * Address 0x7F001910.
 */
-void initSetLevelLoadPropSwitch(struct ObjectRecord *arg0)
+void initSetLevelLoadPropSwitch(struct LinkRecord *arg0)
 {
-    *((struct ObjectRecord **)&arg0->flags2) = g_LevelLoadPropSwitch;
+    arg0->next = g_LevelLoadPropSwitch;
     g_LevelLoadPropSwitch = arg0;
 }
 
@@ -176,9 +176,9 @@ void initSetLevelLoadPropSwitch(struct ObjectRecord *arg0)
  * Called from proplvreset2 when PROPDEF type is PROPDEF_LOCK_DOOR.
  * Address 0x7F001928.
 */
-void initSetLevelLoadPropLockDoor(struct ObjectRecord *arg0)
+void initSetLevelLoadPropLockDoor(struct LockDoorRecord *arg0)
 {
-    *((struct ObjectRecord **)&arg0->flags2) = g_LevelLoadPropLockDoor;
+    arg0->next = g_LevelLoadPropLockDoor;
     g_LevelLoadPropLockDoor = arg0;
 }
 

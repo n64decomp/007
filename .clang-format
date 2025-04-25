@@ -54,7 +54,7 @@ AllowShortLambdasOnASingleLine: All
 # allman should be used, but if no brace supplied dont break
 AllowShortLoopsOnASingleLine: true
 
-# deprecated 
+# deprecated
 AlwaysBreakAfterDefinitionReturnType: None
 
 # no extra breaks after return
@@ -66,7 +66,7 @@ AlwaysBreakBeforeMultilineStrings: true
 # N/A to C
 AlwaysBreakTemplateDeclarations: No
 
-# 
+#
 # AttributeMacros:
 
 # if args broken, place each on new line
@@ -75,7 +75,7 @@ BinPackParameters: false
 
 BitFieldColonSpacing: Both
 
-BraceWrapping: 
+BraceWrapping:
   AfterCaseLabel:  true
   AfterClass:      true
   AfterControlStatement: Always
@@ -124,7 +124,6 @@ Cpp11BracedListStyle: true
 
 # use specified line ending and pointer allignment
 DeriveLineEnding: false
-DerivePointerAlignment: false
 
 DisableFormat: false
 
@@ -142,7 +141,7 @@ ForEachMacros:   ['FOREACH', 'BOOST_FOREACH']
 
 # dont resort includes
 IncludeBlocks: Preserve
-IncludeCategories: 
+IncludeCategories:
   - Regex:           ^"(llvm|llvm-c|clang|clang-c)/
     Priority:        2
   - Regex:           ^(<|"(gtest|gmock|isl|json)/)
@@ -156,7 +155,7 @@ IndentCaseBlocks: false
 IndentCaseLabels: true
 IndentExternBlock: AfterExternBlock
 IndentGotoLabels: false
-IndentPPDirectives: AfterHash
+IndentPPDirectives: BeforeHash
 IndentWrappedFunctionNames: true
 
 # remove empty lines

@@ -530,9 +530,113 @@ s32 texShrinkPaletted(u8 *src, u8 *dst, s32 srcwidth, s32 srcheight, s32 format,
 
 
 #ifdef NONMATCHING
-void texFindClosestColourIndexRGBA(void) {
+// https://decomp.me/scratch/m2ol7 79.87%
+s32 texFindClosestColourIndexRGBA(u16 *palette, s32 numcolours, s32 r, s32 g, s32 b, s32 a)
+{
+    s32 var_v1;
+    u16 temp_t6;
+    s32 temp_t0;
+    s32 var_a1;
+    s32 temp_a0;
 
+    s32 loop_start;
+    s32 loop_end;
+
+    s32 bestindex;
+    s32 bestvalue;
+    
+    u16 local_color;
+    s32 local_r;
+    s32 local_g;
+    s32 local_b;
+    s32 local_a;
+    s32 temp_s4;
+
+    temp_t6 = ((r << 11) | (g << 6) | (b << 1) | a);
+    
+    for (var_v1 = 0; var_v1 < numcolours; var_v1++)
+    {
+        if (temp_t6 == palette[var_v1])
+        {
+            return var_v1;
+        }
+    }
+
+    temp_t0 = (r * r) + (g * g) + (b * b) + (a * 0x3C1);
+    var_v1 = numcolours - 1;
+    var_a1 = 0;
+
+    // binary search for a region
+    while (var_v1 - var_a1 >= 2)
+    {
+        temp_a0 = (s32) (var_v1 + var_a1) >> 1;
+
+        local_color = palette[temp_a0 * 4];
+        local_r = ((s32) local_color >> 0xB) & 0x1F;
+        local_g = ((s32) local_color >> 0x6) & 0x1F;
+        local_b = ((s32) local_color >> 0x1) & 0x1F;
+        local_a = local_color & 1;
+
+        temp_s4 = (local_r * local_r) + (local_g * local_g) + (local_b * local_b) + (local_a * 0x3C1);
+
+        if (temp_s4 < temp_t0)
+        {
+            var_a1 = temp_a0;
+        }
+        else
+        {
+            if (temp_t0 < temp_s4)
+            {
+                var_v1 = temp_a0;
+            }
+            else
+            {
+                var_v1 = temp_a0;
+                var_a1 = temp_a0;
+            }            
+        }
+    }
+
+    loop_start = var_v1 - 4;
+    if (loop_start < 0)
+    {
+        loop_start = 0;
+    }
+
+    loop_end = var_v1 + 4;
+    if (loop_end >= numcolours)
+    {
+        loop_end = numcolours - 1;
+    }
+
+    bestindex = 0;
+    bestvalue = 999999;
+
+    // search for best within the region
+    for (var_v1 = loop_start; var_v1 < loop_end; var_v1++)
+    {
+        local_color = palette[var_v1 * 4];
+        local_r = (((s32) local_color >> 0xB) & 0x1F) - r;
+        local_g = (((s32) local_color >> 0x6) & 0x1F) - g;
+        local_b = (((s32) local_color >> 0x1) & 0x1F) - b;
+        local_a = 0x3C1;
+        if (a == (local_color & 1))
+        {
+            local_a = 0;
+        }
+
+        temp_s4 = (local_r * local_r) + (local_g * local_g) + (local_b * local_b) + (local_a);
+
+        if (temp_s4 < bestvalue)
+        {
+            bestindex = var_v1;
+            bestvalue = temp_s4;
+        }
+    }
+
+    return bestindex;
 }
+
 #else
 GLOBAL_ASM(
 .text
@@ -839,103 +943,104 @@ glabel texFindClosestColourIndexRGBA
 
 
 #ifdef NONMATCHING
-// 99.38% : regalloc problems
-
+// https://decomp.me/scratch/tmXxj 99.64%
 s32 texFindClosestColourIndexIA(u16 *palette, s32 numcolours, s32 intensity, s32 alpha)
 {
     s32 loop_start;
     s32 loop_end;
+    s32 i;
+    s32 j;
+
+    s32 bestindex;
+    s32 bestvalue;
+
+    s32 low;
+    s32 colour;
+
+    s32 value;
+    s32 a;
+    s32 b;
+    s32 sum;
+
+    u32 sum2; // is this real?
 
     // check palette for existing color
+    colour = (intensity << 8) | alpha;
+    for (i = 0; i < numcolours; i++)
     {
-        s32 i;
-        s32 colour;
-        colour = (intensity << 8) | alpha;
-        for (i = 0; i < numcolours; i++)
+        if (palette[i] == (colour & 0xFFFFU))
         {
-            if (palette[i] == (colour & 0xFFFFU))
-            {
-                return i;
-            }
+            return i;
         }
     }
 
     // binary search for a region
+    low = 0;
+    loop_end = numcolours - 1;
+    colour = (intensity * intensity) + (alpha * alpha);
+
+    while ((loop_end - low) >= 2)
     {
-        s32 low;
-        s32 colour;
-        s32 a;
-        s32 b;
-        s32 sum;
         s32 index;
-        s32 value;
-
-        low = 0;
-        loop_end = numcolours - 1;
-        colour = (intensity * intensity) + (alpha * alpha);
-
-        while ((loop_end - low) >= 2)
+        
+        index = (loop_end + low) >> 1;
+        value = palette[index];
+        a = (((s32) value) >> 8) & 0xFF;
+        b = value & 0xFF;
+        sum = (a * a) + (b * b);
+        if (sum < colour)
         {
-            index = (loop_end + low) >> 1;
-            value = palette[index];
-            a = (((s32) value) >> 8) & 0xFF;
-            b = value & 0xFF;
-            sum = (a * a) + (b * b);
-            if (sum < colour)
-            {
-                low = index;
-                continue;
-            }
-            if (colour < sum)
-            {
-                loop_end = index;
-            }
-            else
-            {
-                low = index;
-                loop_end = index;
-            }
+            low = index;
+            continue;
         }
+        if (colour < sum)
+        {
+            loop_end = index;
+        }
+        else
+        {
+            low = index;
+            loop_end = index;
+        }
+    }
 
-        loop_start = loop_end - 4;
-        if (loop_start < 0) { loop_start = 0; }
+    loop_start = loop_end - 4;
+    if (loop_start < 0)
+    {
+        loop_start = 0;
+    }
 
-        loop_end += 4;
-        if (loop_end >= numcolours) { loop_end = numcolours - 1; }
+    loop_end += 4;
+    if (loop_end >= numcolours)
+    {
+        loop_end = numcolours - 1;
     }
 
     // search for best within the region
+    bestindex = 0;
+    bestvalue = 999999;
+
+    for (j = loop_start; j <= loop_end; j++)
     {
-        s32 bestindex;
-        s32 bestvalue;
-        s32 value;
-        s32 a;
-        s32 b;
-        u32 sum2;
-        s32 sum;
-        s32 index;
+        value = palette[j];
+        a = ((value >> 8) & 0xff) - intensity;
+        b = (value & 0xff) - alpha;
+        sum = (a * a) + (b * b);
 
-        bestindex = 0;
-        bestvalue = 999999;
+        sum2 = sum; 
 
-        for (index = loop_start; index <= loop_end; index++)
+        if (sum < bestvalue)
         {
-            value = palette[index];
-            a = ((value >> 8) & 0xff) - intensity;
-            b = (value & 0xff) - alpha;
-            sum2 = (a * a) + (b * b);
-            sum = sum2;
-            if (sum < bestvalue)
-            {
-                bestindex = index;
-                bestvalue = sum;
-            }
+            bestindex = j;
+            bestvalue = sum;
         }
 
-        return bestindex;
+        // Seems to need to be any variable used in the loop here?
+        if (j);
     }
-}
 
+    return bestindex;
+}
 #else
 GLOBAL_ASM(
 .text

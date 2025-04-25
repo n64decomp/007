@@ -3,6 +3,11 @@
 #include <ultra64.h>
 #include "bondview.h"
 
-void likely_generate_DL_for_image_declaration(Gfx**, struct sImageTableEntry*, s32, s32, s32);
+#include "bondtypes.h"
+
+
+#define NUM_TEXTURES  0xBB9U
+
+void texSelect(Gfx **gdlptr, struct sImageTableEntry *tconfig, u32 arg2, s32 arg3, u32 ulst);
 
 #endif

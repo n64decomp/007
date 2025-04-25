@@ -195,6 +195,12 @@
     _g->words.w0 = _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL((a), 14, 10) | _SHIFTL((b), 2, 10); \
     _g->words.w1 = _SHIFTL(0x06, 24, 8) | _SHIFTL((c), 14, 10) | _SHIFTL((d), 2, 10);       \
 }
+#define	gDPLoadTLUT07(pkt, a, b, c, d)				                                        \
+{                                                                                           \
+    Gfx *_g = (Gfx *)pkt;                                                                   \
+    _g->words.w0 = _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL((a), 14, 10) | _SHIFTL((b), 2, 10); \
+    _g->words.w1 = _SHIFTL(0x07, 24, 8) | _SHIFTL((c), 14, 10) | _SHIFTL((d), 2, 10);       \
+}
 
 #define	gDPLoadTLUTCmd2(pkt, tile, count)				\
 {									\

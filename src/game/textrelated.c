@@ -52,8 +52,14 @@ s32 D_80040F28 = 0;
 
 
 
-void textrelatedInit_REMOVED(void) {
-
+void textrelatedInit_REMOVED(void /*, char* asset */)
+{
+    #ifdef DEBUG
+    if (asset == 0)
+    {
+        osSyncPrintf("\n--- ASSERTION FAULT - %s - %s, line %d\n\n", "textInitText: NULL void* asset", ".\\text.cpp", 0x38 );
+    }
+    #endif
 }
 
 void setTextSpacingInverted(s32 spacing) {
@@ -105,7 +111,7 @@ void load_font_tables(void)
     text_s = 0;
     MACROSIZE = 0x24b0 - 0;
     text_t = 0;
-    ptrFontBankGothic = mempAllocBytesInBank(MACROSIZE, 4);
+    ptrFontBankGothic      = mempAllocBytesInBank(MACROSIZE, MEMPOOL_STAGE);
     ptrFontBankGothicChars = (s32) (ptrFontBankGothic + 0x2a4);
     romCopy(&ptrFontBankGothic, &_fontbankgothicSegmentRomStart, MACROSIZE);
     i = 0;
@@ -119,7 +125,7 @@ loop_1:
         goto loop_1;
     }
     MACROSIZE = 0x3540 - 0;
-    ptrFontZurichBold = mempAllocBytesInBank(MACROSIZE, 4);
+    ptrFontZurichBold      = mempAllocBytesInBank(MACROSIZE, MEMPOOL_STAGE);
     ptrFontZurichBoldChars = (s32) (ptrFontZurichBold + 0x2a4);
     romCopy(&ptrFontZurichBold, &_fontzurichboldSegmentRomStart, MACROSIZE);
     ptrFontZurichBoldChars->unk14 = (s32) (ptrFontZurichBoldChars->unk14 + ptrFontZurichBold);
@@ -176,7 +182,7 @@ glabel load_font_tables
 /* 0E174C 7F0ACC1C 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0E1750 7F0ACC20 24050004 */   li    $a1, 4
 /* 0E1754 7F0ACC24 3C078004 */  lui   $a3, %hi(ptrFontBankGothic)
-/* 0E1758 7F0ACC28 3C088004 */  lui   $t0, %hi(ptrFontBankGothicChars) 
+/* 0E1758 7F0ACC28 3C088004 */  lui   $t0, %hi(ptrFontBankGothicChars)
 /* 0E175C 7F0ACC2C 25080EB0 */  addiu $t0, %lo(ptrFontBankGothicChars) # addiu $t0, $t0, 0xeb0
 /* 0E1760 7F0ACC30 24E70EAC */  addiu $a3, %lo(ptrFontBankGothic) # addiu $a3, $a3, 0xeac
 /* 0E1764 7F0ACC34 245902A4 */  addiu $t9, $v0, 0x2a4
@@ -188,7 +194,7 @@ glabel load_font_tables
 /* 0E177C 7F0ACC4C 0C001707 */  jal   romCopy
 /* 0E1780 7F0ACC50 24A563F0 */   addiu $a1, %lo(_fontbankgothicSegmentRomStart) # addiu $a1, $a1, 0x63f0
 /* 0E1784 7F0ACC54 3C078004 */  lui   $a3, %hi(ptrFontBankGothic)
-/* 0E1788 7F0ACC58 3C088004 */  lui   $t0, %hi(ptrFontBankGothicChars) 
+/* 0E1788 7F0ACC58 3C088004 */  lui   $t0, %hi(ptrFontBankGothicChars)
 /* 0E178C 7F0ACC5C 25080EB0 */  addiu $t0, %lo(ptrFontBankGothicChars) # addiu $t0, $t0, 0xeb0
 /* 0E1790 7F0ACC60 24E70EAC */  addiu $a3, %lo(ptrFontBankGothic) # addiu $a3, $a3, 0xeac
 /* 0E1794 7F0ACC64 00001825 */  move  $v1, $zero
@@ -212,7 +218,7 @@ glabel load_font_tables
 /* 0E17D8 7F0ACCA8 0C0025C8 */  jal   mempAllocBytesInBank
 /* 0E17DC 7F0ACCAC 24050004 */   li    $a1, 4
 /* 0E17E0 7F0ACCB0 3C078004 */  lui   $a3, %hi(ptrFontZurichBold)
-/* 0E17E4 7F0ACCB4 3C088004 */  lui   $t0, %hi(ptrFontZurichBoldChars) 
+/* 0E17E4 7F0ACCB4 3C088004 */  lui   $t0, %hi(ptrFontZurichBoldChars)
 /* 0E17E8 7F0ACCB8 25080EB8 */  addiu $t0, %lo(ptrFontZurichBoldChars) # addiu $t0, $t0, 0xeb8
 /* 0E17EC 7F0ACCBC 24E70EB4 */  addiu $a3, %lo(ptrFontZurichBold) # addiu $a3, $a3, 0xeb4
 /* 0E17F0 7F0ACCC0 244F02A4 */  addiu $t7, $v0, 0x2a4
@@ -223,7 +229,7 @@ glabel load_font_tables
 /* 0E1804 7F0ACCD4 00402025 */  move  $a0, $v0
 /* 0E1808 7F0ACCD8 0C001707 */  jal   romCopy
 /* 0E180C 7F0ACCDC 24A588A0 */   addiu $a1, %lo(_fontzurichboldSegmentRomStart) # addiu $a1, $a1, -0x7760
-/* 0E1810 7F0ACCE0 3C088004 */  lui   $t0, %hi(ptrFontZurichBoldChars) 
+/* 0E1810 7F0ACCE0 3C088004 */  lui   $t0, %hi(ptrFontZurichBoldChars)
 /* 0E1814 7F0ACCE4 25080EB8 */  addiu $t0, %lo(ptrFontZurichBoldChars) # addiu $t0, $t0, 0xeb8
 /* 0E1818 7F0ACCE8 8D020000 */  lw    $v0, ($t0)
 /* 0E181C 7F0ACCEC 3C078004 */  lui   $a3, %hi(ptrFontZurichBold)
@@ -269,7 +275,7 @@ glabel load_font_tables
 /* 0E18B8 7F0ACD88 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0E18BC 7F0ACD8C 27BD0028 */  addiu $sp, $sp, 0x28
 /* 0E18C0 7F0ACD90 03E00008 */  jr    $ra
-/* 0E18C4 7F0ACD94 00000000 */   nop   
+/* 0E18C4 7F0ACD94 00000000 */   nop
 )
 #endif
 
@@ -487,7 +493,7 @@ glabel construct_fontchar_microcode
 /* 0E1C6C 7F0AD13C 030E7821 */  addu  $t7, $t8, $t6
 /* 0E1C70 7F0AD140 00196080 */  sll   $t4, $t9, 2
 /* 0E1C74 7F0AD144 01EC6821 */  addu  $t5, $t7, $t4
-/* 0E1C78 7F0AD148 3C0E8004 */  lui   $t6, %hi(text_spacing) 
+/* 0E1C78 7F0AD148 3C0E8004 */  lui   $t6, %hi(text_spacing)
 /* 0E1C7C 7F0AD14C 8DCE0E84 */  lw    $t6, %lo(text_spacing)($t6)
 /* 0E1C80 7F0AD150 8DB80000 */  lw    $t8, ($t5)
 /* 0E1C84 7F0AD154 8CAF0000 */  lw    $t7, ($a1)
@@ -496,7 +502,7 @@ glabel construct_fontchar_microcode
 /* 0E1C90 7F0AD160 01E26023 */  subu  $t4, $t7, $v0
 /* 0E1C94 7F0AD164 258D0001 */  addiu $t5, $t4, 1
 /* 0E1C98 7F0AD168 ACAD0000 */  sw    $t5, ($a1)
-/* 0E1C9C 7F0AD16C 3C188004 */  lui   $t8, %hi(text_orientation) 
+/* 0E1C9C 7F0AD16C 3C188004 */  lui   $t8, %hi(text_orientation)
 /* 0E1CA0 7F0AD170 8F180E88 */  lw    $t8, %lo(text_orientation)($t8)
 /* 0E1CA4 7F0AD174 00E08825 */  move  $s1, $a3
 /* 0E1CA8 7F0AD178 57000014 */  bnezl $t8, .L7F0AD1CC
@@ -590,7 +596,7 @@ glabel construct_fontchar_microcode
 /* 0E1E04 7F0AD2D4 2702FFFF */  addiu $v0, $t8, -1
 /* 0E1E08 7F0AD2D8 284107FF */  slti  $at, $v0, 0x7ff
 /* 0E1E0C 7F0AD2DC 10200003 */  beqz  $at, .L7F0AD2EC
-/* 0E1E10 7F0AD2E0 00000000 */   nop   
+/* 0E1E10 7F0AD2E0 00000000 */   nop
 /* 0E1E14 7F0AD2E4 10000001 */  b     .L7F0AD2EC
 /* 0E1E18 7F0AD2E8 00403025 */   move  $a2, $v0
 .L7F0AD2EC:
@@ -615,14 +621,14 @@ glabel construct_fontchar_microcode
 .L7F0AD324:
 /* 0E1E54 7F0AD324 01A5001A */  div   $zero, $t5, $a1
 /* 0E1E58 7F0AD328 14A00002 */  bnez  $a1, .L7F0AD334
-/* 0E1E5C 7F0AD32C 00000000 */   nop   
+/* 0E1E5C 7F0AD32C 00000000 */   nop
 /* 0E1E60 7F0AD330 0007000D */  break 7
 .L7F0AD334:
 /* 0E1E64 7F0AD334 2401FFFF */  li    $at, -1
 /* 0E1E68 7F0AD338 14A10004 */  bne   $a1, $at, .L7F0AD34C
 /* 0E1E6C 7F0AD33C 3C018000 */   lui   $at, 0x8000
 /* 0E1E70 7F0AD340 15A10002 */  bne   $t5, $at, .L7F0AD34C
-/* 0E1E74 7F0AD344 00000000 */   nop   
+/* 0E1E74 7F0AD344 00000000 */   nop
 /* 0E1E78 7F0AD348 0006000D */  break 6
 .L7F0AD34C:
 /* 0E1E7C 7F0AD34C 00007012 */  mflo  $t6
@@ -858,7 +864,7 @@ glabel construct_fontchar_microcode
 /* 0E2200 7F0AD6D0 542000B4 */  bnezl $at, .L7F0AD9A4
 /* 0E2204 7F0AD6D4 8E2E0008 */   lw    $t6, 8($s1)
 /* 0E2208 7F0AD6D8 8E2C0008 */  lw    $t4, 8($s1)
-/* 0E220C 7F0AD6DC 3C0D8004 */  lui   $t5, %hi(text_orientation) 
+/* 0E220C 7F0AD6DC 3C0D8004 */  lui   $t5, %hi(text_orientation)
 /* 0E2210 7F0AD6E0 006C1021 */  addu  $v0, $v1, $t4
 /* 0E2214 7F0AD6E4 0162082A */  slt   $at, $t3, $v0
 /* 0E2218 7F0AD6E8 54200077 */  bnezl $at, .L7F0AD8C8
@@ -909,11 +915,11 @@ glabel construct_fontchar_microcode
 /* 0E22CC 7F0AD79C 3C0FB400 */  lui   $t7, 0xb400
 /* 0E22D0 7F0AD7A0 AC6F0000 */  sw    $t7, ($v1)
 /* 0E22D4 7F0AD7A4 8E380008 */  lw    $t8, 8($s1)
-/* 0E22D8 7F0AD7A8 3C0C8004 */  lui   $t4, %hi(text_s) 
+/* 0E22D8 7F0AD7A8 3C0C8004 */  lui   $t4, %hi(text_s)
 /* 0E22DC 7F0AD7AC 8D8C0EA0 */  lw    $t4, %lo(text_s)($t4)
 /* 0E22E0 7F0AD7B0 2719FFFF */  addiu $t9, $t8, -1
 /* 0E22E4 7F0AD7B4 00197140 */  sll   $t6, $t9, 5
-/* 0E22E8 7F0AD7B8 3C188004 */  lui   $t8, %hi(text_t) 
+/* 0E22E8 7F0AD7B8 3C188004 */  lui   $t8, %hi(text_t)
 /* 0E22EC 7F0AD7BC 8F190EA4 */  lw    $t9, %lo(text_t)($t8)
 /* 0E22F0 7F0AD7C0 01CC6821 */  addu  $t5, $t6, $t4
 /* 0E22F4 7F0AD7C4 31AFFFFF */  andi  $t7, $t5, 0xffff
@@ -965,9 +971,9 @@ glabel construct_fontchar_microcode
 /* 0E23A8 7F0AD878 AC6F0004 */  sw    $t7, 4($v1)
 /* 0E23AC 7F0AD87C 3C18B400 */  lui   $t8, 0xb400
 /* 0E23B0 7F0AD880 AC980000 */  sw    $t8, ($a0)
-/* 0E23B4 7F0AD884 3C0C8004 */  lui   $t4, %hi(text_s) 
+/* 0E23B4 7F0AD884 3C0C8004 */  lui   $t4, %hi(text_s)
 /* 0E23B8 7F0AD888 8D8D0EA0 */  lw    $t5, %lo(text_s)($t4)
-/* 0E23BC 7F0AD88C 3C0E8004 */  lui   $t6, %hi(text_t) 
+/* 0E23BC 7F0AD88C 3C0E8004 */  lui   $t6, %hi(text_t)
 /* 0E23C0 7F0AD890 8DCE0EA4 */  lw    $t6, %lo(text_t)($t6)
 /* 0E23C4 7F0AD894 000DCC00 */  sll   $t9, $t5, 0x10
 /* 0E23C8 7F0AD898 3C0D0400 */  lui   $t5, (0x04000400 >> 16) # lui $t5, 0x400
@@ -1021,9 +1027,9 @@ glabel construct_fontchar_microcode
 /* 0E2484 7F0AD954 AC590004 */  sw    $t9, 4($v0)
 /* 0E2488 7F0AD958 3C0DB400 */  lui   $t5, 0xb400
 /* 0E248C 7F0AD95C AC6D0000 */  sw    $t5, ($v1)
-/* 0E2490 7F0AD960 3C0F8004 */  lui   $t7, %hi(text_s) 
+/* 0E2490 7F0AD960 3C0F8004 */  lui   $t7, %hi(text_s)
 /* 0E2494 7F0AD964 8DF80EA0 */  lw    $t8, %lo(text_s)($t7)
-/* 0E2498 7F0AD968 3C0E8004 */  lui   $t6, %hi(text_t) 
+/* 0E2498 7F0AD968 3C0E8004 */  lui   $t6, %hi(text_t)
 /* 0E249C 7F0AD96C 8DCE0EA4 */  lw    $t6, %lo(text_t)($t6)
 /* 0E24A0 7F0AD970 00186400 */  sll   $t4, $t8, 0x10
 /* 0E24A4 7F0AD974 3C180400 */  lui   $t8, (0x04000400 >> 16) # lui $t8, 0x400
@@ -1080,11 +1086,11 @@ glabel construct_fontchar_microcode
 /* 0E256C 7F0ADA3C AC990000 */  sw    $t9, ($a0)
 /* 0E2570 7F0ADA40 8E2E0004 */  lw    $t6, 4($s1)
 /* 0E2574 7F0ADA44 01496823 */  subu  $t5, $t2, $t1
-/* 0E2578 7F0ADA48 3C188004 */  lui   $t8, %hi(text_t) 
+/* 0E2578 7F0ADA48 3C188004 */  lui   $t8, %hi(text_t)
 /* 0E257C 7F0ADA4C 01AE6023 */  subu  $t4, $t5, $t6
 /* 0E2580 7F0ADA50 8F180EA4 */  lw    $t8, %lo(text_t)($t8)
 /* 0E2584 7F0ADA54 000C7940 */  sll   $t7, $t4, 5
-/* 0E2588 7F0ADA58 3C0E8004 */  lui   $t6, %hi(text_s) 
+/* 0E2588 7F0ADA58 3C0E8004 */  lui   $t6, %hi(text_s)
 /* 0E258C 7F0ADA5C 8DCC0EA0 */  lw    $t4, %lo(text_s)($t6)
 /* 0E2590 7F0ADA60 01F8C821 */  addu  $t9, $t7, $t8
 /* 0E2594 7F0ADA64 332DFFFF */  andi  $t5, $t9, 0xffff
@@ -1157,7 +1163,7 @@ glabel textRender
 /* 0E2658 7F0ADB28 01095021 */  addu  $t2, $t0, $t1
 /* 0E265C 7F0ADB2C AFAA00D0 */  sw    $t2, 0xd0($sp)
 .L7F0ADB30:
-/* 0E2660 7F0ADB30 3C0B8005 */  lui   $t3, %hi(j_text_trigger) 
+/* 0E2660 7F0ADB30 3C0B8005 */  lui   $t3, %hi(j_text_trigger)
 /* 0E2664 7F0ADB34 8D6B84D0 */  lw    $t3, %lo(j_text_trigger)($t3)
 /* 0E2668 7F0ADB38 8FAC00D0 */  lw    $t4, 0xd0($sp)
 /* 0E266C 7F0ADB3C 02602025 */  move  $a0, $s3
@@ -1364,7 +1370,7 @@ glabel textRender
 /* 0E2658 7F0ADB28 01095021 */  addu  $t2, $t0, $t1
 /* 0E265C 7F0ADB2C AFAA00D0 */  sw    $t2, 0xd0($sp)
 .L7F0ADB30:
-/* 0E2660 7F0ADB30 3C0B8005 */  lui   $t3, %hi(j_text_trigger) 
+/* 0E2660 7F0ADB30 3C0B8005 */  lui   $t3, %hi(j_text_trigger)
 /* 0E2664 7F0ADB34 8D6B84D0 */  lw    $t3, %lo(j_text_trigger)($t3)
 /* 0E2668 7F0ADB38 8FAC00D0 */  lw    $t4, 0xd0($sp)
 /* 0E266C 7F0ADB3C 02602025 */  move  $a0, $s3
@@ -1787,7 +1793,7 @@ glabel sub_GAME_7F0ADDAC
 /* 0E2940 7F0ADE10 032C6821 */  addu  $t5, $t9, $t4
 /* 0E2944 7F0ADE14 000E7880 */  sll   $t7, $t6, 2
 /* 0E2948 7F0ADE18 01AFC021 */  addu  $t8, $t5, $t7
-/* 0E294C 7F0ADE1C 3C0A8004 */  lui   $t2, %hi(text_spacing) 
+/* 0E294C 7F0ADE1C 3C0A8004 */  lui   $t2, %hi(text_spacing)
 /* 0E2950 7F0ADE20 8D4A0E84 */  lw    $t2, %lo(text_spacing)($t2)
 /* 0E2954 7F0ADE24 8F090000 */  lw    $t1, ($t8)
 /* 0E2958 7F0ADE28 8CAB0000 */  lw    $t3, ($a1)
@@ -1808,7 +1814,7 @@ glabel sub_GAME_7F0ADDAC
 /* 0E2994 7F0ADE64 5420016C */  bnezl $at, .L7F0AE418
 /* 0E2998 7F0ADE68 8FA50064 */   lw    $a1, 0x64($sp)
 /* 0E299C 7F0ADE6C 0C00110B */  jal   viGetY
-/* 0E29A0 7F0ADE70 00000000 */   nop   
+/* 0E29A0 7F0ADE70 00000000 */   nop
 /* 0E29A4 7F0ADE74 8FB80050 */  lw    $t8, 0x50($sp)
 /* 0E29A8 7F0ADE78 8FC90004 */  lw    $t1, 4($fp)
 /* 0E29AC 7F0ADE7C 8FAA0064 */  lw    $t2, 0x64($sp)
@@ -1882,7 +1888,7 @@ glabel sub_GAME_7F0ADDAC
 /* 0E2ABC 7F0ADF8C 25A2FFFF */  addiu $v0, $t5, -1
 /* 0E2AC0 7F0ADF90 284107FF */  slti  $at, $v0, 0x7ff
 /* 0E2AC4 7F0ADF94 10200003 */  beqz  $at, .L7F0ADFA4
-/* 0E2AC8 7F0ADF98 00000000 */   nop   
+/* 0E2AC8 7F0ADF98 00000000 */   nop
 /* 0E2ACC 7F0ADF9C 10000001 */  b     .L7F0ADFA4
 /* 0E2AD0 7F0ADFA0 00403025 */   move  $a2, $v0
 .L7F0ADFA4:
@@ -1917,14 +1923,14 @@ glabel sub_GAME_7F0ADDAC
 /* 0E2B30 7F0AE000 AC400004 */  sw    $zero, 4($v0)
 /* 0E2B34 7F0AE004 8FCE000C */  lw    $t6, 0xc($fp)
 /* 0E2B38 7F0AE008 14A00002 */  bnez  $a1, .L7F0AE014
-/* 0E2B3C 7F0AE00C 00000000 */   nop   
+/* 0E2B3C 7F0AE00C 00000000 */   nop
 /* 0E2B40 7F0AE010 0007000D */  break 7
 .L7F0AE014:
 /* 0E2B44 7F0AE014 2401FFFF */  li    $at, -1
 /* 0E2B48 7F0AE018 14A10004 */  bne   $a1, $at, .L7F0AE02C
 /* 0E2B4C 7F0AE01C 3C018000 */   lui   $at, 0x8000
 /* 0E2B50 7F0AE020 15E10002 */  bne   $t7, $at, .L7F0AE02C
-/* 0E2B54 7F0AE024 00000000 */   nop   
+/* 0E2B54 7F0AE024 00000000 */   nop
 /* 0E2B58 7F0AE028 0006000D */  break 6
 .L7F0AE02C:
 /* 0E2B5C 7F0AE02C 25CD0007 */  addiu $t5, $t6, 7
@@ -2155,7 +2161,7 @@ glabel sub_GAME_7F0ADDAC
 /* 0E2EC4 7F0AE394 26100001 */  addiu $s0, $s0, 1
 .L7F0AE398:
 /* 0E2EC8 7F0AE398 1612FFEE */  bne   $s0, $s2, .L7F0AE354
-/* 0E2ECC 7F0AE39C 00000000 */   nop   
+/* 0E2ECC 7F0AE39C 00000000 */   nop
 /* 0E2ED0 7F0AE3A0 26310001 */  addiu $s1, $s1, 1
 /* 0E2ED4 7F0AE3A4 5632FFEB */  bnel  $s1, $s2, .L7F0AE354
 /* 0E2ED8 7F0AE3A8 2410FFFF */   li    $s0, -1
@@ -2227,7 +2233,7 @@ glabel sub_GAME_7F0AE45C
 /* 0E2F9C 7F0AE46C 01F8C821 */  addu  $t9, $t7, $t8
 /* 0E2FA0 7F0AE470 0322082A */  slt   $at, $t9, $v0
 /* 0E2FA4 7F0AE474 1420009B */  bnez  $at, .L7F0AE6E4
-/* 0E2FA8 7F0AE478 00000000 */   nop   
+/* 0E2FA8 7F0AE478 00000000 */   nop
 /* 0E2FAC 7F0AE47C 8CE30004 */  lw    $v1, 4($a3)
 /* 0E2FB0 7F0AE480 8FA90014 */  lw    $t1, 0x14($sp)
 /* 0E2FB4 7F0AE484 8FAC001C */  lw    $t4, 0x1c($sp)
@@ -2237,7 +2243,7 @@ glabel sub_GAME_7F0AE45C
 /* 0E2FC4 7F0AE494 8CEF0008 */   lw    $t7, 8($a3)
 /* 0E2FC8 7F0AE498 8CED0008 */  lw    $t5, 8($a3)
 /* 0E2FCC 7F0AE49C 012C5021 */  addu  $t2, $t1, $t4
-/* 0E2FD0 7F0AE4A0 3C0E8004 */  lui   $t6, %hi(text_orientation) 
+/* 0E2FD0 7F0AE4A0 3C0E8004 */  lui   $t6, %hi(text_orientation)
 /* 0E2FD4 7F0AE4A4 010D5821 */  addu  $t3, $t0, $t5
 /* 0E2FD8 7F0AE4A8 014B082A */  slt   $at, $t2, $t3
 /* 0E2FDC 7F0AE4AC 54200047 */  bnezl $at, .L7F0AE5CC
@@ -2437,7 +2443,7 @@ glabel textRenderGlow
 /* 0E3288 7F0AE758 01095021 */  addu  $t2, $t0, $t1
 /* 0E328C 7F0AE75C AFAA00C4 */  sw    $t2, 0xc4($sp)
 .L7F0AE760:
-/* 0E3290 7F0AE760 3C0B8005 */  lui   $t3, %hi(j_text_trigger) 
+/* 0E3290 7F0AE760 3C0B8005 */  lui   $t3, %hi(j_text_trigger)
 /* 0E3294 7F0AE764 8D6B84D0 */  lw    $t3, %lo(j_text_trigger)($t3)
 /* 0E3298 7F0AE768 8FAC00C4 */  lw    $t4, 0xc4($sp)
 /* 0E329C 7F0AE76C 27B20074 */  addiu $s2, $sp, 0x74
@@ -2621,7 +2627,7 @@ glabel textRenderGlow
 /* 0E3288 7F0AE758 01095021 */  addu  $t2, $t0, $t1
 /* 0E328C 7F0AE75C AFAA00C4 */  sw    $t2, 0xc4($sp)
 .L7F0AE760:
-/* 0E3290 7F0AE760 3C0B8005 */  lui   $t3, %hi(j_text_trigger) 
+/* 0E3290 7F0AE760 3C0B8005 */  lui   $t3, %hi(j_text_trigger)
 /* 0E3294 7F0AE764 8D6B84D0 */  lw    $t3, %lo(j_text_trigger)($t3)
 /* 0E3298 7F0AE768 8FAC00C4 */  lw    $t4, 0xc4($sp)
 /* 0E329C 7F0AE76C 27B20074 */  addiu $s2, $sp, 0x74
@@ -3059,7 +3065,7 @@ glabel textMeasure
 /* 0E34EC 7F0AE9BC 8CEF088C */  lw    $t7, 0x88c($a3)
 /* 0E34F0 7F0AE9C0 01CF8021 */  addu  $s0, $t6, $t7
 .L7F0AE9C4:
-/* 0E34F4 7F0AE9C4 3C188005 */  lui   $t8, %hi(j_text_trigger) 
+/* 0E34F4 7F0AE9C4 3C188005 */  lui   $t8, %hi(j_text_trigger)
 /* 0E34F8 7F0AE9C8 8F1884D0 */  lw    $t8, %lo(j_text_trigger)($t8)
 /* 0E34FC 7F0AE9CC 3C138004 */  lui   $s3, %hi(text_spacing)
 /* 0E3500 7F0AE9D0 2A01000E */  slti  $at, $s0, 0xe
@@ -3079,11 +3085,11 @@ glabel textMeasure
 /* 0E3530 7F0AEA00 8FAA0028 */  lw    $t2, 0x28($sp)
 .L7F0AEA04:
 /* 0E3534 7F0AEA04 1589000A */  bne   $t4, $t1, .L7F0AEA30
-/* 0E3538 7F0AEA08 00000000 */   nop   
+/* 0E3538 7F0AEA08 00000000 */   nop
 /* 0E353C 7F0AEA0C 90D90001 */  lbu   $t9, 1($a2)
 /* 0E3540 7F0AEA10 24020048 */  li    $v0, 72
 /* 0E3544 7F0AEA14 11B90004 */  beq   $t5, $t9, .L7F0AEA28
-/* 0E3548 7F0AEA18 00000000 */   nop   
+/* 0E3548 7F0AEA18 00000000 */   nop
 /* 0E354C 7F0AEA1C 8CAE0000 */  lw    $t6, ($a1)
 /* 0E3550 7F0AEA20 25CF0005 */  addiu $t7, $t6, 5
 /* 0E3554 7F0AEA24 ACAF0000 */  sw    $t7, ($a1)
@@ -3161,7 +3167,7 @@ glabel textMeasure
 .L7F0AEB2C:
 /* 0E365C 7F0AEB2C 90C90000 */  lbu   $t1, ($a2)
 /* 0E3660 7F0AEB30 1520FFB4 */  bnez  $t1, .L7F0AEA04
-/* 0E3664 7F0AEB34 00000000 */   nop   
+/* 0E3664 7F0AEB34 00000000 */   nop
 .L7F0AEB38:
 /* 0E3668 7F0AEB38 8CAE0000 */  lw    $t6, ($a1)
 /* 0E366C 7F0AEB3C 01C8082A */  slt   $at, $t6, $t0
@@ -3260,7 +3266,7 @@ glabel sub_GAME_7F0AEB64
 /* 0E3790 7F0AEC60 8FAB008C */  lw    $t3, 0x8c($sp)
 /* 0E3794 7F0AEC64 8FAE0080 */  lw    $t6, 0x80($sp)
 /* 0E3798 7F0AEC68 8FAF0090 */  lw    $t7, 0x90($sp)
-/* 0E379C 7F0AEC6C 3C088004 */  lui   $t0, %hi(text_wordwrap) 
+/* 0E379C 7F0AEC6C 3C088004 */  lui   $t0, %hi(text_wordwrap)
 /* 0E37A0 7F0AEC70 016E5821 */  addu  $t3, $t3, $t6
 /* 0E37A4 7F0AEC74 01EB082A */  slt   $at, $t7, $t3
 /* 0E37A8 7F0AEC78 25080E8C */  addiu $t0, %lo(text_wordwrap) # addiu $t0, $t0, 0xe8c
@@ -3284,7 +3290,7 @@ glabel sub_GAME_7F0AEB64
 /* 0E37E8 7F0AECB8 8D180000 */  lw    $t8, ($t0)
 /* 0E37EC 7F0AECBC 26100001 */  addiu $s0, $s0, 1
 /* 0E37F0 7F0AECC0 1B000009 */  blez  $t8, .L7F0AECE8
-/* 0E37F4 7F0AECC4 00000000 */   nop   
+/* 0E37F4 7F0AECC4 00000000 */   nop
 /* 0E37F8 7F0AECC8 A2090000 */  sb    $t1, ($s0)
 .L7F0AECCC:
 /* 0E37FC 7F0AECCC 8D190000 */  lw    $t9, ($t0)
@@ -3332,7 +3338,7 @@ glabel sub_GAME_7F0AEB64
 /* 0E3890 7F0AED60 24010020 */  li    $at, 32
 .L7F0AED64:
 /* 0E3894 7F0AED64 14410032 */  bne   $v0, $at, .L7F0AEE30
-/* 0E3898 7F0AED68 00000000 */   nop   
+/* 0E3898 7F0AED68 00000000 */   nop
 /* 0E389C 7F0AED6C 14800012 */  bnez  $a0, .L7F0AEDB8
 /* 0E38A0 7F0AED70 00001825 */   move  $v1, $zero
 /* 0E38A4 7F0AED74 A20C0000 */  sb    $t4, ($s0)
@@ -3398,7 +3404,7 @@ glabel sub_GAME_7F0AEB64
 /* 0E3974 7F0AEE44 8D180000 */  lw    $t8, ($t0)
 /* 0E3978 7F0AEE48 26100001 */  addiu $s0, $s0, 1
 /* 0E397C 7F0AEE4C 1B000009 */  blez  $t8, .L7F0AEE74
-/* 0E3980 7F0AEE50 00000000 */   nop   
+/* 0E3980 7F0AEE50 00000000 */   nop
 /* 0E3984 7F0AEE54 A2090000 */  sb    $t1, ($s0)
 .L7F0AEE58:
 /* 0E3988 7F0AEE58 8D190000 */  lw    $t9, ($t0)

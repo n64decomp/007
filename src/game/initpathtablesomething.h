@@ -2,6 +2,6 @@
 #define _INITPATHTABLESOMETHING_H_
 #include <ultra64.h>
 
-void init_pathtable_something(void);
+s32 init_pathtable_something(struct PadRecord *pad, char *tilename, struct StandTile **tile_stack);
 
 #endif

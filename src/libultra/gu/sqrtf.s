@@ -16,4 +16,4 @@
 glabel sqrtf
 /* 0203E0 7001F7E0 03E00008 */  jr    $ra
 /* 0203E4 7001F7E4 46006004 */   sqrt.s $f0, $f12
-
+.size sqrtf, . - sqrtf

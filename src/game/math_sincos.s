@@ -46,7 +46,7 @@ glabel cosf
 /* 08C9D0 7F057EA0 3C018005 */  lui   $at, %hi(D_800536C0)
 /* 08C9D4 7F057EA4 C42A36C0 */  lwc1  $f10, %lo(D_800536C0)($at)
 /* 08C9D8 7F057EA8 460A6300 */  add.s $f12, $f12, $f10
-
+.size cosf, . - cosf
 
 # ################################################################
 glabel sinf
@@ -125,4 +125,4 @@ glabel sinf
 .L7F057FC4:
 /* 08CAF4 7F057FC4 03E00008 */  jr    $ra
 /* 08CAF8 7F057FC8 00000000 */   nop   
-
+.size sinf, . - sinf

@@ -15,7 +15,7 @@ def parse_map(version):
     if version not in ("us", "jp"):
         print('fatal: version', version, 'not supported!')
         sys.exit(2)
-    
+
     version_code = version[0]
 
     infile = False
@@ -25,7 +25,7 @@ def parse_map(version):
     p1 = re.compile(r"^ \.text\s+0x00000000([0-9a-f]{8})\s+0x([0-9a-f]+)\s+build\/" + re.escape(version_code) + r"\/(.*)\/\S+.\w$")
     p2 = re.compile(r"\s+0x00000000([0-9a-f]{8})\s+(\S+)$")
 
-    map_file = open('build/ge007.' + version_code + '.map', 'r')
+    map_file = open('build/' + version_code + 'ge007.' + version_code + '.map', 'r')
     lines = map_file.readlines()
 
     for line in lines:
@@ -65,11 +65,11 @@ def parse_map(version):
 # --------------------------
 # Find and return all
 # ASM Function names that still
-# exists in Source Files 
+# exists in Source Files
 # Only scans for C and S files
 # --------------------------
 def find_asm_functions(version):
-    
+
     p1 = re.compile(r"^glabel (\S+)$")
     p2 = re.compile(r"^#ifdef VERSION_(\S+)$")
     p3 = re.compile(r"^#endif$")
@@ -83,14 +83,14 @@ def find_asm_functions(version):
             if file.endswith(".c") or file.endswith(".s"):
                 func_version = None
                 with open(os.path.join(root, file)) as _file:
-                    for i, line in enumerate(_file.readlines()):  
-                        
+                    for i, line in enumerate(_file.readlines()):
+
                         m1 = p1.findall(line)
                         m2 = p2.findall(line)
                         m3 = p3.findall(line)
 
                         # Found an #endif command
-                        if m3: 
+                        if m3:
                             func_version = None
 
                         # Found a version definition
@@ -101,7 +101,7 @@ def find_asm_functions(version):
                         elif m1:
                             if not func_version or (func_version == version):
                                 asm_functions.append(m1[0])
-                            
+
                             func_version = None
 
     return asm_functions
@@ -111,7 +111,7 @@ def find_asm_functions(version):
 # Only scans for C and S files
 # --------------------------
 def find_files_completed():
-    
+
     p = re.compile(r"^glabel (\S+)$")
     files_complete = {}
 
@@ -122,15 +122,15 @@ def find_files_completed():
         for file in files:
             if file.endswith(".c") or file.endswith(".s"):
                 with open(os.path.join(root, file)) as _file:
-                    
+
                     completed = True
                     files_complete['total'] += 1
-                    
+
                     for i, line in enumerate(_file.readlines()):
                         if p.findall(line):
                             completed = False
                             break
-                    
+
                     if completed:
                         files_complete['completed'] += 1
 
@@ -175,7 +175,7 @@ def do_stats(version, map_file, analyse_folders):
         segments[folder]['done'] = 0
         segments[folder]['left'] = 0
         segments[folder]['total'] = 0
-        
+
         num_done = 0
         num_left = 0
 
@@ -184,7 +184,7 @@ def do_stats(version, map_file, analyse_folders):
                 num_left += map_file[folder][function]
             else:
                 num_done += map_file[folder][function]
-        
+
         segments[folder]['done'] = num_done / 4
         segments[folder]['left'] = num_left / 4
         segments[folder]['total'] = segments[folder]['done'] + segments[folder]['left']
@@ -212,7 +212,7 @@ def generate_report(segments, files_completed, last_modified_file, Ver):
         printstring = printstring + './tools/report/JPN.htm ' + last_modified_file + ' 0'
     else:
         printstring = printstring + './tools/report/index.html ' + last_modified_file + ' 0'
-    subprocess.Popen(printstring.split()) 
+    subprocess.Popen(printstring.split())
 
 def print_stats(version, segments, files_completed, last_modified_file):
     totals = {}
@@ -227,7 +227,7 @@ def print_stats(version, segments, files_completed, last_modified_file):
     print('FILES')
     print('\tlast modified file\t' + last_modified_file )
     print('\ttotal files\t{:10,} / {:,} \t{:.2f}%'.format(int(files_completed['completed']), int(files_completed['total']), (files_completed['completed'] / files_completed['total'] * 100)))
-    
+
     print('__________________________________________________________________')
     print()
 
@@ -272,11 +272,11 @@ def main():
     files_completed = find_files_completed()
 
     last_modified_file = find_last_modified_file()
-    
+
     map_file = parse_map(version)
-    
+
     folders = ['src', 'src/game', 'src/inflate', 'src/libultra']
-    
+
     segments = do_stats(version, map_file, folders)
 
     print_stats(version, segments, files_completed, last_modified_file)

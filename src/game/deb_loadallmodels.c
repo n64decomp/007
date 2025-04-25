@@ -146,7 +146,12 @@ void debug_weapon_load_table(void)
 
     for (i = 0; tmp.array[i] >= 0; i++)
     {
+        /*if(*/
         modelLoad(tmp.array[i]);
+        /*){break;}*/
         if (1);
+        #ifdef DEBUG
+        osSyncPrintf("loaded weapon obj=%d", tmp.array[i]);
+        #endif
     }
 }

@@ -5,41 +5,41 @@
 
     Each AI command uses a series of defines, and each define MUST be used.
         #define CMDNAME     COMMAND_NAME
-        
+
         #define DESCRIPTION \
         / *
           *  Description  *See Documentation*
           * /
-        
+
         #define PARAMS BYTE(FirstParam), BYTE(secondParam)
-        
+
         _AI_CMD(
             {
-                Code           //Pute Code here (newlines supported within {})
+                Code           //Put Code here (newlines supported within {})
             })
-            
+
     Each command is responsible for undefining its own macros
-    
+
     You may define up to 8 unsigned parameters.
     Parameter Types:    BYTE(NAME) Most parameters are single bytes
                         DBYTE(NAME) Most Floats are 2 bytes
                         TBYTE(NAME) Some times are 3 bytes
-                        QBYTE(NAME) Most bitflags are 4 bytes
-                        
+                        QBYTE(NAME) Most bit masks are 4 bytes
+
     Code:   inline comments / / are NOT allowed.
-    
-    
+
+
     _AI_CMD_POLYMORPH(
-        Commands before base command, // (Do NOT seperate by comma)
+        Commands before base command, // (Do NOT separate by comma)
         POLYMORPH NAME,
         (CMD PARAM NAMES OR VALUES),
         (POLY PARAM NAMES))
-        
+
     Parameter Types: N/A - Polymorphs are Non-Typed.
-    
+
     CMD PARAMS: These MUST follow the same order as the base command.
                 Params not included in Polymorph must have a value.
-                    
+
     POLY PARAMS: Parameters for Polymorph.
 
     Polymorph example:
@@ -52,7 +52,7 @@
     Explanation:    Cmd takes CHR_ID, NUM, LABEL
                     Poly Takes LABEL
                     CHR_ID and NUM must have values
-    
+
     //##HACKS:
         //###Extending Polymorph child commands:
             Extra Commands after CMDNAME can be added to the 3rd Parameter
@@ -61,31 +61,31 @@
                     Where (GOTOLABEL) is the param and
                     SLEEP and GOTO_FIRST are extra commands.
             See DO LOOP and RANDOM_GENERATE_LESS_THAN
-            
+
     //##Documentation:
-    Description Format: Opening and closing / * * / MUST have 2 asterixes
+    Description Format: Opening and closing / * * / MUST have 2 asterisks
                         after/before slash.( / * * ... * * /)
-                        Importiant Notess are indicated by Exception tags.
-                        
+                        Important Notes are indicated by Exception tags.
+
     Comments:           Ordinary comments NOT for output MUST NOT have
-                        2 asterixes after/before slash.
-                        
+                        2 asterisks after/before slash.
+
     Inline Comments:    Inline comments that use / / ARE included in output
                         If you do NOT want the comment included in output
-                        use multiline comment tags.(/ * * /)
+                        use multi-line comment tags.(/ * * /)
                         HACK: To include an inline comment within a parameter
                               of Command Builder or to otherwise break a
-                              single line use a multiline comment tag with
+                              single line use a multi-line comment tag with
                               a new line inside, e.g. \ * \ n
                                                       * /
-                                                      
+
 **************************************************************************** */
 /*Visual Studio syntax highlighter Assistant,
-(FIXED 20/02/2020) if problems occur break this asterix! --> */
-
+(FIXED 20/02/2020) if problems occur break this asterisk! --> */
+#ifndef __GNUC__
 #include <CPPLib.h>
-
-#if 1
+#endif
+#if 0
 #ifndef _AI_CMD
     #define _SYNHILITE
     #include <bondgame.h>
@@ -102,14 +102,14 @@
 #endif
 #endif
 /*
-//#Usefull Regex:
+//#Useful Regex:
 /(^\*.{78,78}?)(.*)(\*$)/  $1$3  regex for long comments trimming
 (^_.*?\()(.*?,)(.*$)             Matches command name replace with $1CMDNAME,$3
 
-//##Changelog:
-//!FIXED! 02/02/2020 Use of CMDNAME mandantory for Polymorph
+//##Change log:
+//!FIXED! 02/02/2020 Use of CMDNAME mandatory for Polymorph
 //!FIXED! 05/11/2020 No longer need Number of Params, they are calculated.
-//!BUG!   11/11/2020 Attempt at more automated All-in-One command that did away
+//BUG!   11/11/2020 Attempt at more automated All-in-One command that did away
                   with defines worked except for polymorph description...
                   Syntax was as below:
                   (command, description, params, code,(polymorphs))
@@ -119,9 +119,9 @@
 
 
 //==============================================================================
-//## GOTO NEXT 
+//## GOTO NEXT
 //==============================================================================
-#if 0 /*//!BUG All-in-One command failed on description inclusion during loop (newlines)*/
+#if 0 /*//BUG All-in-One command failed on description inclusion during loop (newlines)*/
 _AI_CMD(GONEXT,
     /*******************************************************************************
     * Skips a22ll commands between this command and LABEL then continues
@@ -183,7 +183,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GOTO FIRST 
+//## GOTO FIRST
 //==============================================================================
 
 /* #define CMDNAME GOTO_FIRST */
@@ -191,12 +191,12 @@ _AI_CMD_POLYMORPH(,
 
 #define DESCRIPTION \
 /*******************************************************************************
- Starting from the beginning, Skips all commands until LABEL - continues
- executing after found LABEL
+* Starting from the beginning, Skips all commands until LABEL - continues
+* executing after found LABEL
 ********************************************************************************
- @param     LABEL: 8bit Integer/enum ID of label to Go To
- @return    Continue execution from LABEL or End
- @exception None
+* @param     LABEL: 8bit Integer/enum ID of label to Go To
+* @return    Continue execution from LABEL or End
+* @exception None
 *******************************************************************************/
 
 #define PARAMS BYTE(LABEL)
@@ -249,7 +249,7 @@ _AI_CMD_POLYMORPH( ,
 
 
 //==============================================================================
-//## LABEL 
+//## LABEL
 //==============================================================================
 
 /* #define CMDNAME LABEL */
@@ -261,7 +261,7 @@ _AI_CMD_POLYMORPH( ,
 ********************************************************************************
 * @param     ID: 8bit Integer/enum ID
 * @return    Nothing
-* @exception None 
+* @exception None
 *******************************************************************************/
 
 #define PARAMS BYTE(ID)
@@ -271,7 +271,7 @@ _AI_CMD(
         Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
         break;
     })
-    
+
 //ALIAS FOR SYNTAX SUGER
 
 #undef DESCRIPTION
@@ -303,7 +303,7 @@ _AI_CMD_POLYMORPH(,
 ********************************************************************************
 * @param     ID: 8bit Integer/enum ID of LOOP
 * @return    Nothing
-* @exception Must have uniqe ID
+* @exception Must have unique ID
 *******************************************************************************/
 
 _AI_CMD_POLYMORPH(,
@@ -323,7 +323,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## Yield 
+//## Yield
 //==============================================================================
 
 /* #define CMDNAME SLEEP */
@@ -331,11 +331,11 @@ _AI_CMD_POLYMORPH(,
 
 #define DESCRIPTION\
 /*******************************************************************************
-* Halt the AI List - frees engine to start executing next AI List until all 
+* Halt the AI List - frees engine to start executing next AI List until all
 * Lists have been executed for game tick.
 ********************************************************************************
-* @return    Current Ai List Position
-* @exception Offscreen/idle guard's will take 14 game ticks instead of 1 tick
+* @return    Current AI List Position
+* @exception Off-screen/idle guard's will take 14 game ticks instead of 1 tick
 *******************************************************************************/
 
 #define PARAMS /*NONE*/
@@ -370,7 +370,7 @@ _AI_CMD({ /*83% Match*/
 
 
 //==============================================================================
-//## END 
+//## END
 //==============================================================================
 
 /* #define CMDNAME ENDLIST */
@@ -399,7 +399,7 @@ _AI_CMD({return;}/*Match*/)
 
 
 //==============================================================================
-//## JUMP TO AI LIST 
+//## JUMP TO AI LIST
 //==============================================================================
 
 /* #define CMDNAME JUMP_TO_AI_LIST */
@@ -408,11 +408,11 @@ _AI_CMD({return;}/*Match*/)
 #define DESCRIPTION\
 /******************************************************************************
 * Set Chr's current AI List to beginning of AI_LIST_ID and execute at
-* next opertunity.
+* next opportunity.
 *******************************************************************************
 * @param      CHR_NUM: ID of Chr (0-255)
 * @param      AI_LIST_ID: 16bit pointer to AI List within Chr/Global
-* @exception: Not recommended to Goto a BG List (10XX)
+* @exception: Not recommended to Go to a BG List (10XX)
 ******************************************************************************/
 
 #define PARAMS BYTE(CHR_NUM), DBYTE(AI_LIST_ID)
@@ -439,7 +439,8 @@ _AI_CMD(
             Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
         }
         break;
-    })
+    }
+)
 
 //POLYMORPHS
 
@@ -448,9 +449,9 @@ _AI_CMD(
 /******************************************************************************
 * Jump my AI to AI_LIST_ID then return to Standard Guard
 *******************************************************************************
-  @return     Continue execution from begginning of Standard Guard 
-  @param      AI_LIST_ID: AI List to execute 
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX) 
+* @return     None - Will continue as "Standard Guard"
+* @param      AI_LIST_ID: AI List to execute
+* @exception: AI_LIST_ID Must NOT be a BG List (10XX)
 ******************************************************************************/
 
 _AI_CMD_POLYMORPH(SetReturnAiList(GAILIST_STANDARD_GUARD),
@@ -463,9 +464,9 @@ _AI_CMD_POLYMORPH(SetReturnAiList(GAILIST_STANDARD_GUARD),
 /******************************************************************************
 * Jump my AI to AI_LIST_ID and loop
 *******************************************************************************
-  @return     Continue execution from begginning of AI_LIST_ID
-  @param      AI_LIST_ID: AI List to execute 
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX) 
+* @return     None - Will Loop the New AI List
+* @param      AI_LIST_ID: AI List to execute
+* @exception: AI_LIST_ID Must NOT be a BG List (10XX)
 ******************************************************************************/
 
 _AI_CMD_POLYMORPH(SetReturnAiList(AI_LIST_ID),
@@ -476,11 +477,11 @@ _AI_CMD_POLYMORPH(SetReturnAiList(AI_LIST_ID),
 #undef DESCRIPTION
 #define DESCRIPTION \
 /******************************************************************************
-* Set my AI List program counter to beginning of a List and execute
+* Jump To Another AI List
 *******************************************************************************
-  @return     Continue execution from begginning of AI_LIST_ID 
-  @param      AI_LIST_ID: AI List to execute 
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX) 
+* @return     None
+* @param      AI_LIST_ID: AI List to execute
+* @exception: AI_LIST_ID Must NOT be a BG List (10XX)
 ******************************************************************************/
 
 _AI_CMD_POLYMORPH(,
@@ -491,11 +492,11 @@ _AI_CMD_POLYMORPH(,
 #undef DESCRIPTION
 #define DESCRIPTION \
 /******************************************************************************
-* Set Bond's AI List program counter to beginning of a List
+* Set Bond's Cinema AI List
 *******************************************************************************
-  @param      AI_LIST_ID: AI List for Bond to execute during cinema
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX) 
-              Only use when Bond has a 3rd person model (cutscenes) 
+* @param      AI_LIST_ID: AI List for Bond to execute during cinema
+* @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+*             Only use when Bond has a 3rd person model (cutscenes)
 ******************************************************************************/
 
 _AI_CMD_POLYMORPH(,
@@ -505,13 +506,27 @@ _AI_CMD_POLYMORPH(,
 
 #undef DESCRIPTION
 #define DESCRIPTION \
-/******************************************************************************  
+/******************************************************************************
+* Set my Clone's AI List
+*******************************************************************************
+*   @param      AI_LIST_ID: AI List for Bond to execute during cinema
+*   @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+******************************************************************************/
+
+_AI_CMD_POLYMORPH(,
+                  SetMyClonesAiList,
+                  (CHR_CLONE, (!isBGAIListID(AI_LIST_ID) ? AI_LIST_ID : AI_ERR_NOTCHR)),
+                  (AI_LIST_ID))
+
+#undef DESCRIPTION
+#define DESCRIPTION \
+/******************************************************************************
 * Call AI Subroutine with AI_LIST_ID and return (If subroutine allows)
-******************************************************************************* 
-  @return     Restart execution on Return              
-  @param      AI_LIST_ID: AI List to execute (Must be a subroutine/have return)
-  @exception: AI_LIST_ID Must NOT be a BG List (10XX)
-              THIS must be defined for this function to be able to return
+*******************************************************************************
+* @return     Restart Calling AI list on Return
+* @param      AI_LIST_ID: AI List to execute (Must be a subroutine/have return)
+* @exception: AI_LIST_ID Must NOT be a BG List (10XX)
+*             "THIS" must be defined for this function to be able to return
 ******************************************************************************/
 
 _AI_CMD_POLYMORPH(\
@@ -533,7 +548,7 @@ _AI_CMD_POLYMORPH(\
 
 
 //==============================================================================
-//## SET RETURN AI LIST 
+//## SET RETURN AI LIST
 //==============================================================================
 
 /* #define CMDNAME SET_RETURN_AI_LIST */
@@ -543,7 +558,7 @@ _AI_CMD_POLYMORPH(\
 /*******************************************************************************
 * Set the Return AI List - used by aiReturn
 ********************************************************************************
-* @param      AI_LIST_ID to be abale to return to
+* @param      AI_LIST_ID to be able to return to
 * @exception: Not recommended to set stored List to a BG List (10XX)
 *******************************************************************************/
 
@@ -581,7 +596,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## JUMP TO RETURN AI LIST 
+//## JUMP TO RETURN AI LIST
 //==============================================================================
 
 /* #define CMDNAME JUMP_TO_RETURN_AI_LIST */
@@ -592,7 +607,7 @@ _AI_CMD(
 * Jump the return AI List set in chr struct - pointer set by SetReturnAiList
 * Used for subroutine Lists.
 ********************************************************************************
-* @return     Continue execution from begginning of stored return list ID
+* @return     Continue execution from beginning of stored return list ID
 * @exception: If stored return List pointer is not set, game will crash
 *******************************************************************************/
 
@@ -629,7 +644,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD ANIMATION STOP 
+//## GUARD ANIMATION STOP
 //==============================================================================
 
 /* #define CMDNAME GUARD_ANIMATION_STOP */
@@ -637,7 +652,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Imediatly Reset me back to idle pose
+* Immediately Reset me back to idle pose
 *******************************************************************************/
 
 #define PARAMS /*NONE*/
@@ -661,7 +676,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD KNEEL 
+//## GUARD KNEEL
 //==============================================================================
 
 /* #define CMDNAME GUARD_KNEEL */
@@ -693,7 +708,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## PLAY ANIMATION 
+//## PLAY ANIMATION
 //==============================================================================
 
 /* #define CMDNAME GUARD_PLAY_ANIMATION */
@@ -707,7 +722,7 @@ _AI_CMD(
 * @param      INTERPOL_TIME: will set how long it will take to transition
 *                            from the previous state.
 * @param      ANIMATION_ID: Use ANIM_# enum
-* @param      BITFIELD: Use ANIM_# Bitflags
+* @param      BITFIELD: Use ANIM_# Bit flags
 * @exception: If interpolation time is too low it may crash! - use 16 if unsure.
 *             Start/End Keyframe 30 tick units.
 *             Interpolation use 60 tick units.
@@ -736,7 +751,7 @@ _AI_CMD(
         }
         else if (AircraftEntityp)
         {
-            zero = 0; 
+            zero = 0;
             modelSetAnimation(AircraftEntityp->model, animation_table_ptrs2[anim_id], zero, startframe, 0.5f, (s32)ai->val[7]);
             if (endframe >= 0)
             {
@@ -772,7 +787,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD PLAYING ANIMATION 
+//## IF GUARD PLAYING ANIMATION
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_PLAYING_ANIMATION */
@@ -813,7 +828,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD POINTS AT BOND 
+//## GUARD POINTS AT BOND
 //==============================================================================
 
 /* #define CMDNAME GUARD_POINTS_AT_BOND */
@@ -825,7 +840,7 @@ _AI_CMD(
 * ignored
 ********************************************************************************
 * @exception: Global AI List GAILIST_ATTACK_BOND skips this command
-*             if bitfield flag FLAGS2_DONT_POINT_AT_BOND is on
+*             if bit field flag FLAGS2_DONT_POINT_AT_BOND is on
 *******************************************************************************/
 
 #define PARAMS /*NONE*/
@@ -849,7 +864,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD LOOKS AROUND SELF 
+//## GUARD LOOKS AROUND SELF
 //==============================================================================
 
 /* #define CMDNAME GUARD_LOOKS_AROUND_SELF */
@@ -881,7 +896,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY SIDESTEPPING 
+//## GUARD TRY SIDESTEPPING
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_SIDESTEPPING */
@@ -923,7 +938,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY HOPPING SIDEWAYS 
+//## GUARD TRY HOPPING SIDEWAYS
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_HOPPING_SIDEWAYS */
@@ -965,7 +980,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY RUNNING TO SIDE 
+//## GUARD TRY RUNNING TO SIDE
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_RUNNING_TO_SIDE */
@@ -1007,7 +1022,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY FIRING WALK 
+//## GUARD TRY FIRING WALK
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_FIRING_WALK */
@@ -1049,7 +1064,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY FIRING RUN 
+//## GUARD TRY FIRING RUN
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_FIRING_RUN */
@@ -1091,7 +1106,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY FIRING ROLL 
+//## GUARD TRY FIRING ROLL
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_FIRING_ROLL */
@@ -1133,7 +1148,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY FIRE OR AIM AT TARGET 
+//## GUARD TRY FIRE OR AIM AT TARGET
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_FIRE_OR_AIM_AT_TARGET */
@@ -1147,7 +1162,7 @@ _AI_CMD(
 * @param      TARGET: 16bit ID
 * @param      BITFIELD: 16bit Target Type
 * @exception: Use TARGET_# flags to set the target type (pad/Bond/chr) or use
-*             Seperated commands eg GUARD_TRYFIRE_AT_PAD
+*             Separated commands e.g. GUARD_TRYFIRE_AT_PAD
 *******************************************************************************/
 
 #define PARAMS DBYTE(BITFIELD), DBYTE(TARGET), BYTE(GOTOLABEL)
@@ -1167,7 +1182,7 @@ _AI_CMD(
         }
         break;
     })
-    
+
 //POLYMORPHS
 
 #undef DESCRIPTION
@@ -1206,7 +1221,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY FIRE OR AIM AT TARGET KNEEL 
+//## GUARD TRY FIRE OR AIM AT TARGET KNEEL
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_FIRE_OR_AIM_AT_TARGET_KNEEL */
@@ -1241,7 +1256,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 #undef DESCRIPTION
 #define DESCRIPTION \
 /*******************************************************************************
@@ -1278,7 +1293,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY FIRE OR AIM AT TARGET UPDATE 
+//## GUARD TRY FIRE OR AIM AT TARGET UPDATE
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_FIRE_OR_AIM_AT_TARGET_UPDATE */
@@ -1351,7 +1366,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY FACING TARGET 
+//## GUARD TRY FACING TARGET
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_FACING_TARGET */
@@ -1409,7 +1424,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## CHR HIT BODY PART WITH ITEM DAMAGE 
+//## CHR HIT BODY PART WITH ITEM DAMAGE
 //==============================================================================
 
 /* #define CMDNAME CHR_HIT_BODY_PART_WITH_ITEM_DAMAGE */
@@ -1419,7 +1434,7 @@ _AI_CMD_POLYMORPH(,
 /*******************************************************************************
 * Hit Chr body part with item damage, play reaction to hit location
 ********************************************************************************
-* @exception: Does NOT trigger items fireing sfx.
+* @exception: Does NOT trigger items firing sfx.
 * @param ITEM_NUM: Item damage uses body part damage modifier.
 * @param PART_NUM: Use HIT_# define for hit part number
 * @param  CHR_NUM: ID of Chr (0-255)
@@ -1457,7 +1472,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## CHR HIT CHR BODY PART WITH HELD ITEM 
+//## CHR HIT CHR BODY PART WITH HELD ITEM
 //==============================================================================
 
 /* #define CMDNAME CHR_HIT_CHR_BODY_PART_WITH_HELD_ITEM */
@@ -1467,7 +1482,7 @@ _AI_CMD_POLYMORPH(,
 /*******************************************************************************
 * Chr hits Target chrs body part with held item, play reaction to hit location
 ********************************************************************************
-* @exception: Does NOT trigger items fireing sfx or Chr's firing animation
+* @exception: Does NOT trigger items firing sfx or Chr's firing animation
 * @param ITEM_NUM: Item damage uses body part damage modifier.
 * @param PART_NUM: Use HIT_# define for hit part number
 * @param  CHR_NUM: ID of Chr (0-255)
@@ -1507,7 +1522,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 _AI_CMD_POLYMORPH(,
                     ChrHitMe,
                     (CHR_NUM, CHR_SELF, PART_NUM),
@@ -1527,7 +1542,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY THROWING GRENADE 
+//## GUARD TRY THROWING GRENADE
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_THROWING_GRENADE */
@@ -1539,7 +1554,7 @@ _AI_CMD_POLYMORPH(,
 ********************************************************************************
 * @return     Continue execution from LABEL if successful
 * @exception: A random number is generated and compared against chr->grenadeprob,
-*             if number is less than grenadeprob throw grenade and Goto LABEL,
+*             if number is less than grenadeprob throw grenade and Go to LABEL,
 *             else do nothing.
 *             Chr->grenadeprob default is 0 - to change use setup
 *             object 12 or GUARD_SET_GRENADE_PROBABILITY
@@ -1573,7 +1588,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY DROPPING ITEM 
+//## GUARD TRY DROPPING ITEM
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_DROPPING_ITEM */
@@ -1619,7 +1634,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD RUNS TO PAD 
+//## GUARD RUNS TO PAD
 //==============================================================================
 
 /* #define CMDNAME GUARD_RUNS_TO_PAD */
@@ -1655,7 +1670,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD RUNS TO PAD PRESET 
+//## GUARD RUNS TO PAD PRESET
 //==============================================================================
 
 /* #define CMDNAME GUARD_RUNS_TO_PAD_PRESET */
@@ -1669,7 +1684,7 @@ _AI_CMD(
 #define PARAMS /*NONE*/
 
 /* PD uses GoTo Pad (speed) which seems better
-switch (ai->val[0])
+switch (AI->val[0])
 {
     case SPEED_WALK:
         chrGoToPad(ChrEntityp, ChrEntityp->padpreset1, SPEED_WALK);
@@ -1696,7 +1711,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD WALKS TO PAD 
+//## GUARD WALKS TO PAD
 //==============================================================================
 
 /* #define CMDNAME GUARD_WALKS_TO_PAD */
@@ -1732,7 +1747,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SPRINTS TO PAD 
+//## GUARD SPRINTS TO PAD
 //==============================================================================
 
 /* #define CMDNAME GUARD_SPRINTS_TO_PAD */
@@ -1740,7 +1755,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Makes me Sprint to pad - dont ask me to do this too long
+* Makes me Sprint to pad - don't ask me to do this too long
 ********************************************************************************
 * @param 16bit PAD ID
 *******************************************************************************/
@@ -1768,7 +1783,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD START PATROL 
+//## GUARD START PATROL
 //==============================================================================
 
 /* #define CMDNAME GUARD_START_PATROL */
@@ -1805,7 +1820,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SURRENDERS 
+//## GUARD SURRENDERS
 //==============================================================================
 
 /* #define CMDNAME GUARD_SURRENDERS */
@@ -1839,7 +1854,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD REMOVE FADE 
+//## GUARD REMOVE FADE
 //==============================================================================
 
 /* #define CMDNAME GUARD_REMOVE_FADE */
@@ -1875,7 +1890,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR REMOVE INSTANT 
+//## CHR REMOVE INSTANT
 //==============================================================================
 
 /* #define CMDNAME CHR_REMOVE_INSTANT */
@@ -1905,7 +1920,7 @@ _AI_CMD(
 
 //POLYMORPHS
 
-#undef DESCRIPTION 
+#undef DESCRIPTION
 #define DESCRIPTION \
 /*******************************************************************************
 * Instantly remove me unlike RemoveMe
@@ -1928,7 +1943,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY TRIGGERING ALARM AT PAD 
+//## GUARD TRY TRIGGERING ALARM AT PAD
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_TRIGGERING_ALARM_AT_PAD */
@@ -1975,7 +1990,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## ALARM ON 
+//## ALARM ON
 //==============================================================================
 
 /* #define CMDNAME ALARM_ON */
@@ -2005,7 +2020,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## ALARM OFF 
+//## ALARM OFF
 //==============================================================================
 
 /* #define CMDNAME ALARM_OFF */
@@ -2035,7 +2050,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## REMOVED COMMAND27 
+//## REMOVED COMMAND27
 //==============================================================================
 
 /* #define CMDNAME REMOVED_COMMAND27 */
@@ -2074,7 +2089,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY RUNNING TO BOND POSITION 
+//## GUARD TRY RUNNING TO BOND POSITION
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_RUNNING_TO_BOND_POSITION */
@@ -2117,7 +2132,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY WALKING TO BOND POSITION 
+//## GUARD TRY WALKING TO BOND POSITION
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_WALKING_TO_BOND_POSITION */
@@ -2160,7 +2175,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY SPRINTNING TO BOND POSITION 
+//## GUARD TRY SPRINTNING TO BOND POSITION
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_SPRINTNING_TO_BOND_POSITION */
@@ -2203,7 +2218,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## REMOVED COMMAND2B 
+//## REMOVED COMMAND2B
 //==============================================================================
 
 /* #define CMDNAME REMOVED_COMMAND2B */
@@ -2244,7 +2259,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY RUNNING TO CHR POSITION 
+//## GUARD TRY RUNNING TO CHR POSITION
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_RUNNING_TO_CHR_POSITION */
@@ -2277,7 +2292,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 _AI_CMD_POLYMORPH(,
                     TRYRunToPresetChr,
                     (CHR_PRESET, GOTOLABEL),
@@ -2293,7 +2308,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY WALKING TO CHR POSITION 
+//## GUARD TRY WALKING TO CHR POSITION
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_WALKING_TO_CHR_POSITION */
@@ -2342,7 +2357,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY SPRINTNING TO CHR POSITION 
+//## GUARD TRY SPRINTNING TO CHR POSITION
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_SPRINTNING_TO_CHR_POSITION */
@@ -2392,7 +2407,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD HAS STOPPED MOVING 
+//## IF GUARD HAS STOPPED MOVING
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HAS_STOPPED_MOVING */
@@ -2435,7 +2450,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF CHR DYING OR DEAD 
+//## IF CHR DYING OR DEAD
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_DYING_OR_DEAD */
@@ -2467,7 +2482,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 _AI_CMD_POLYMORPH(,
                     IFImDyingOrDead,
                     (CHR_SELF, GOTOLABEL),
@@ -2483,7 +2498,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF CHR DOES NOT EXIST 
+//## IF CHR DOES NOT EXIST
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_DOES_NOT_EXIST */
@@ -2495,7 +2510,7 @@ _AI_CMD_POLYMORPH(,
 ********************************************************************************
 * @param      CHR_NUM: ID of Chr (0-255)
 * @return     Continue execution from LABEL if TRUE
-* @exception: This command is used to check if chr has finished dying animation 
+* @exception: This command is used to check if chr has finished dying animation
 *             and faded away, or chr num is free
 *******************************************************************************/
 
@@ -2538,7 +2553,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD SEES BOND 
+//## IF GUARD SEES BOND
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_SEES_BOND */
@@ -2553,8 +2568,8 @@ _AI_CMD_POLYMORPH(,
 *             spotted, check if Bond and guard are within line of sight
 *             (ignores facing direction).
 *             injured guards will also set spotted Bond state (won't work with
-*             invincible/armored guards).
-*             If Bond breaks line of sight, do not Goto LABEL. If Bond has broken
+*             invincible/armoured guards).
+*             If Bond breaks line of sight, do not Go to LABEL. If Bond has broken
 *             line of sight for more than 10 seconds, reset spotted bond state.
 *             When using with IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS, make
 *             sure IF_GUARD_SEES_BOND takes priority over
@@ -2589,7 +2604,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## RANDOM GENERATE SEED 
+//## RANDOM GENERATE SEED
 //==============================================================================
 
 /* #define CMDNAME RANDOM_GENERATE_SEED */
@@ -2623,7 +2638,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF RANDOM SEED LESS THAN 
+//## IF RANDOM SEED LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_RANDOM_SEED_LESS_THAN */
@@ -2672,7 +2687,7 @@ _AI_CMD_POLYMORPH(SetNewRandom(),
 
 
 //==============================================================================
-//## IF RANDOM SEED GREATER THAN 
+//## IF RANDOM SEED GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_RANDOM_SEED_GREATER_THAN */
@@ -2722,7 +2737,7 @@ _AI_CMD_POLYMORPH(SetNewRandom(),
 
 
 //==============================================================================
-//## IF ALARM IS ON UNUSED 
+//## IF ALARM IS ON UNUSED
 //==============================================================================
 
 /* #define CMDNAME IF_ALARM_IS_ON_UNUSED */
@@ -2765,7 +2780,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF ALARM IS ON 
+//## IF ALARM IS ON
 //==============================================================================
 
 /* #define CMDNAME IF_ALARM_IS_ON */
@@ -2806,7 +2821,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GAS IS LEAKING 
+//## IF GAS IS LEAKING
 //==============================================================================
 
 /* #define CMDNAME IF_GAS_IS_LEAKING */
@@ -2817,7 +2832,7 @@ _AI_CMD(
 * Is gas leaking?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: Once gas leak event has started, always Goto LABEL
+* @exception: Once gas leak event has started, always Go to LABEL
 *******************************************************************************/
 
 #define PARAMS BYTE(GOTOLABEL)
@@ -2848,7 +2863,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD HEARD BOND 
+//## IF GUARD HEARD BOND
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HEARD_BOND */
@@ -2892,7 +2907,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD SEE ANOTHER GUARD SHOT 
+//## IF GUARD SEE ANOTHER GUARD SHOT
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_SEE_ANOTHER_GUARD_SHOT */
@@ -2903,7 +2918,7 @@ _AI_CMD(
 * Did I see another chr shot? (by anyone)
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: Guard friendly fire (if flagged) will also trigger Goto LABEL.
+* @exception: Guard friendly fire (if flagged) will also trigger Go to LABEL.
 *             Checks if chr->chrseeshot is set to valid chrnum (not -1).
 *             Does NOT work with shot invincible/armoured guards
 *******************************************************************************/
@@ -2936,7 +2951,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD SEE ANOTHER GUARD DIE 
+//## IF GUARD SEE ANOTHER GUARD DIE
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_SEE_ANOTHER_GUARD_DIE */
@@ -2947,7 +2962,7 @@ _AI_CMD(
 * Did I see another chr die? (for any reason)
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: When a chr in sight switches to ACT_DIE/ACT_DEAD, Goto LABEL.
+* @exception: When a chr in sight switches to ACT_DIE/ACT_DEAD, Go to LABEL.
 *             Checks if chr->chrseedie is set to valid chrnum (not -1)
 *******************************************************************************/
 
@@ -2979,7 +2994,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD AND BOND WITHIN LINE OF SIGHT 
+//## IF GUARD AND BOND WITHIN LINE OF SIGHT
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_AND_BOND_WITHIN_LINE_OF_SIGHT */
@@ -2991,7 +3006,7 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @exception: Uses Stand Tiles & ignores facing direction of Bond/guard.
-*             If Prop/guard is in the way do not Goto LABEL.
+*             If Prop/guard is in the way do not Go to LABEL.
 *             Does NOT use chr->visionrangefor line of sight check.
 *             Use IFISeeBond to check using chr->visionrange and
 *             IFImOnScreen to account for Bond's view
@@ -3025,7 +3040,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD AND BOND WITHIN PARTIAL LINE OF SIGHT 
+//## IF GUARD AND BOND WITHIN PARTIAL LINE OF SIGHT
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_AND_BOND_WITHIN_PARTIAL_LINE_OF_SIGHT */
@@ -3036,7 +3051,7 @@ _AI_CMD(
 * If I looked at Bond, could I walk in a straight line to his Stan Tile?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: Unused command, functions like above but only Goto LABEL if Bond is
+* @exception: Unused command, functions like above but only Go to LABEL if Bond is
 *             half occluded by Stand Tiles (Neither blocked or within full view)
 *******************************************************************************/
 
@@ -3068,7 +3083,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD WAS SHOT WITHIN LAST 10 SECS 
+//## IF GUARD WAS SHOT WITHIN LAST 10 SECS
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS */
@@ -3116,7 +3131,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD HEARD BOND WITHIN LAST 10 SECS 
+//## IF GUARD HEARD BOND WITHIN LAST 10 SECS
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HEARD_BOND_WITHIN_LAST_10_SECS */
@@ -3160,7 +3175,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD IN ROOM WITH CHR 
+//## IF GUARD IN ROOM WITH CHR
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_IN_ROOM_WITH_CHR */
@@ -3203,7 +3218,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD HAS NOT BEEN SEEN 
+//## IF GUARD HAS NOT BEEN SEEN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HAS_NOT_BEEN_SEEN */
@@ -3246,7 +3261,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD IS ON SCREEN 
+//## IF GUARD IS ON SCREEN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_IS_ON_SCREEN */
@@ -3288,7 +3303,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD ROOM CONTAINING SELF IS ON SCREEN 
+//## IF GUARD ROOM CONTAINING SELF IS ON SCREEN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_ROOM_CONTAINING_SELF_IS_ON_SCREEN */
@@ -3300,7 +3315,7 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @exception: Only checks if room is being rendered, not if Bond can see guard.
-*             To check if guard is being rendered use IF_GUARD_IS_ON_SCREEN 
+*             To check if guard is being rendered use IF_GUARD_IS_ON_SCREEN
 *             instead.
 *******************************************************************************/
 
@@ -3309,7 +3324,7 @@ _AI_CMD(
 _AI_CMD(
     {
         AIRecord *ai = AiListp + Offset;
-        if (getROOMID_Bitflags(getTileRoom(ChrEntityp->prop->stan)))
+        if (getROOMID_isRendered(getTileRoom(ChrEntityp->prop->stan)))
         {
             Offset = chraiGoToLabel(AiListp, Offset, ai->val[0]);
         }
@@ -3332,7 +3347,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF ROOM CONTAINING PAD IS ON SCREEN 
+//## IF ROOM CONTAINING PAD IS ON SCREEN
 //==============================================================================
 
 /* #define CMDNAME IF_ROOM_CONTAINING_PAD_IS_ON_SCREEN */
@@ -3343,7 +3358,7 @@ _AI_CMD(
 * Is the room containing PAD being rendered on screen?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: Only checks if room is being rendered, not if Bond can see inside 
+* @exception: Only checks if room is being rendered, not if Bond can see inside
 *             room
 *******************************************************************************/
 
@@ -3376,7 +3391,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD IS TARGETED BY BOND 
+//## IF GUARD IS TARGETED BY BOND
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_IS_TARGETED_BY_BOND */
@@ -3387,7 +3402,7 @@ _AI_CMD(
 * Is Bond looking/aiming at me?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: Also checks if player's crosshair is aiming at guard
+* @exception: Also checks if player's cross-hair is aiming at guard
 *******************************************************************************/
 
 #define PARAMS BYTE(GOTOLABEL)
@@ -3418,7 +3433,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD SHOT FROM BOND MISSED 
+//## IF GUARD SHOT FROM BOND MISSED
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_SHOT_FROM_BOND_MISSED */
@@ -3429,7 +3444,7 @@ _AI_CMD(
 * Did Bond's shot miss/land near me?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: Command will sometimes Goto LABEL if guard was shot - use
+* @exception: Command will sometimes Go to LABEL if guard was shot - use
 *             IF_GUARD_WAS_SHOT_OR_SEEN_WITHIN_LAST_10_SECS instead to check if
 *             guard was shot recently (more consistent)
 *******************************************************************************/
@@ -3462,7 +3477,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND LESS THAN 
+//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_COUNTER_CLOCKWISE_DIRECTION_TO_BOND_LESS_THAN */
@@ -3476,7 +3491,7 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @param      ANGLE: 0 - 255 Unsigned Integer
-* @exception: This is RAW byte command, use either Deg or Rad Varient
+* @exception: This is RAW byte command, use either Deg or Rad Variant
 *******************************************************************************/
 
 #define PARAMS BYTE(ANGLE), BYTE(GOTOLABEL)
@@ -3544,7 +3559,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND GREATER THAN 
+//## IF GUARD COUNTER CLOCKWISE DIRECTION TO BOND GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_COUNTER_CLOCKWISE_DIRECTION_TO_BOND_GREATER_THAN */
@@ -3556,7 +3571,7 @@ _AI_CMD_POLYMORPH(,
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @param      ANGLE: 0 - 255 Unsigned Integer
-* @exception: This is RAW byte command, use either Deg or Rad Varient
+* @exception: This is RAW byte command, use either Deg or Rad Variant
 *******************************************************************************/
 
 #define PARAMS BYTE(ANGLE), BYTE(GOTOLABEL)
@@ -3623,7 +3638,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE DIRECTION FROM BOND LESS THAN 
+//## IF GUARD COUNTER CLOCKWISE DIRECTION FROM BOND LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_COUNTER_CLOCKWISE_DIRECTION_FROM_BOND_LESS_THAN */
@@ -3635,7 +3650,7 @@ _AI_CMD_POLYMORPH(,
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @param      ANGLE: 0 - 255 Unsigned Integer
-* @exception: This is RAW byte command, use either Deg or Rad Varient
+* @exception: This is RAW byte command, use either Deg or Rad Variant
 *******************************************************************************/
 #define PARAMS BYTE(ANGLE), BYTE(GOTOLABEL)
 
@@ -3701,7 +3716,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD COUNTER CLOCKWISE ANGLE FROM BOND GREATER THAN 
+//## IF GUARD COUNTER CLOCKWISE ANGLE FROM BOND GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_COUNTER_CLOCKWISE_DIRECTION_FROM_BOND_GREATER_THAN */
@@ -3713,7 +3728,7 @@ _AI_CMD_POLYMORPH(,
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @param      ANGLE: 0 - 255 Unsigned Integer
-* @exception: This is RAW byte command, use either Deg or Rad Varient
+* @exception: This is RAW byte command, use either Deg or Rad Variant
 *******************************************************************************/
 #define PARAMS BYTE(ANGLE), BYTE(GOTOLABEL)
 
@@ -3779,7 +3794,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD DISTANCE TO BOND LESS THAN 
+//## IF GUARD DISTANCE TO BOND LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_DISTANCE_TO_BOND_LESS_THAN */
@@ -3790,7 +3805,7 @@ _AI_CMD_POLYMORPH(,
 * Is my distance to Bond Less Than DISTANCE?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+* @param      DISTANCE: Integer, scale is 10 units per meter (decimetre)
 *******************************************************************************/
 
 #define PARAMS DBYTE(DISTANCE), BYTE(GOTOLABEL)
@@ -3835,7 +3850,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD DISTANCE TO BOND GREATER THAN 
+//## IF GUARD DISTANCE TO BOND GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_DISTANCE_TO_BOND_GREATER_THAN */
@@ -3846,7 +3861,7 @@ _AI_CMD_POLYMORPH(,
 * Is my distance to Bond Greater Than DISTANCE?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+* @param      DISTANCE: Integer, scale is 10 units per meter (decimetre)
 *******************************************************************************/
 
 #define PARAMS DBYTE(DISTANCE), BYTE(GOTOLABEL)
@@ -3891,7 +3906,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF CHR DISTANCE TO PAD LESS THAN 
+//## IF CHR DISTANCE TO PAD LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_DISTANCE_TO_PAD_LESS_THAN */
@@ -3902,7 +3917,7 @@ _AI_CMD_POLYMORPH(,
 * Is My/Chr distance to PAD Less Than DISTANCE?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+* @param      DISTANCE: Integer, scale is 10 units per meter (decimetre)
 * @param      CHR_NUM: ID of Chr (0-255)
 *******************************************************************************/
 
@@ -3961,7 +3976,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF CHR DISTANCE TO PAD GREATER THAN 
+//## IF CHR DISTANCE TO PAD GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_DISTANCE_TO_PAD_GREATER_THAN */
@@ -3972,7 +3987,7 @@ _AI_CMD_POLYMORPH(,
 * Is My/Chr distance to PAD Greater Than DISTANCE?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+* @param      DISTANCE: Integer, scale is 10 units per meter (decimetre)
 * @param      CHR_NUM: ID of Chr (0-255)
 *******************************************************************************/
 
@@ -4030,7 +4045,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD DISTANCE TO CHR LESS THAN 
+//## IF GUARD DISTANCE TO CHR LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_DISTANCE_TO_CHR_LESS_THAN */
@@ -4041,7 +4056,7 @@ _AI_CMD_POLYMORPH(,
 * Is my distance to CHR_NUM Less Than DISTANCE?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+* @param      DISTANCE: Integer, scale is 10 units per meter (decimetre)
 * @param      CHR_NUM: ID of Chr (0-255)
 *******************************************************************************/
 
@@ -4088,7 +4103,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD DISTANCE TO CHR GREATER THAN 
+//## IF GUARD DISTANCE TO CHR GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_DISTANCE_TO_CHR_GREATER_THAN */
@@ -4099,7 +4114,7 @@ _AI_CMD_POLYMORPH(,
 * Is my distance to CHR_NUM Greater Than DISTANCE?
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      DISTANCE: Integer, scale is 10 units per meter (decimeter)
+* @param      DISTANCE: Integer, scale is 10 units per meter (decimetre)
 * @param      CHR_NUM: ID of Chr (0-255)
 ********************************************************************************/
 
@@ -4146,7 +4161,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD TRY SETTING CHR PRESET TO GUARD WITHIN DISTANCE 
+//## GUARD TRY SETTING CHR PRESET TO GUARD WITHIN DISTANCE
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_SETTING_CHR_PRESET_TO_GUARD_WITHIN_DISTANCE */
@@ -4206,7 +4221,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF BOND DISTANCE TO PAD LESS THAN 
+//## IF BOND DISTANCE TO PAD LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_DISTANCE_TO_PAD_LESS_THAN */
@@ -4263,7 +4278,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF BOND DISTANCE TO PAD GREATER THAN 
+//## IF BOND DISTANCE TO PAD GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_DISTANCE_TO_PAD_GREATER_THAN */
@@ -4320,7 +4335,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF CHR IN ROOM WITH PAD 
+//## IF CHR IN ROOM WITH PAD
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_IN_ROOM_WITH_PAD */
@@ -4375,7 +4390,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF BOND IN ROOM WITH PAD 
+//## IF BOND IN ROOM WITH PAD
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_IN_ROOM_WITH_PAD */
@@ -4417,7 +4432,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND COLLECTED OBJECT 
+//## IF BOND COLLECTED OBJECT
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_COLLECTED_OBJECT */
@@ -4459,24 +4474,23 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF ITEM IS STATIONARY WITHIN LEVEL 
+//## IF KEY DROPPED
 //==============================================================================
 
-/* #define CMDNAME IF_ITEM_IS_STATIONARY_WITHIN_LEVEL */
-#define CMDNAME IFItemIsStationaryWithinLevel
+/* #define CMDNAME IF_KEY_DROPPED */
+#define CMDNAME IFKeyDropped
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Is item, if it exists, stationary? (not moving/in mid-air)
+* Is Key, if it exists, "Dropped"? (not moving/in mid-air)
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @exception: Used to check if Bond threw an item in level. Also checks if item 
-*             was attached to an object (item is stationary within level).
-*             Make sure IF_ITEM_IS_ATTACHED_TO_OBJECT takes priority over
-*             IF_ITEM_IS_STATIONARY_WITHIN_LEVEL when using both commands
+* @exception: Used to check if a Key with ID has been "Dropped" (RUNTIMEBITFLAG_DEPOSIT)
+*             Make sure IFItemIsAttachedToObject takes priority over
+*             IFKeyDropped when using both commands
 *******************************************************************************/
 
-#define PARAMS BYTE(ITEM_NUM), BYTE(GOTOLABEL)
+#define PARAMS BYTE(KEY_ID), BYTE(GOTOLABEL)
 
 _AI_CMD(
     {
@@ -4504,7 +4518,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF ITEM IS ATTACHED TO OBJECT 
+//## IF ITEM IS ATTACHED TO OBJECT
 //==============================================================================
 
 /* #define CMDNAME IF_ITEM_IS_ATTACHED_TO_OBJECT */
@@ -4512,13 +4526,13 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Was ITEM_NUM thrown onto Tagged Object 
+* Was ITEM_NUM thrown onto Tagged Object
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @exception: Used to check if Bond threw an item onto a tagged object.
-*             If used with IFItemIsStationaryWithinLevel, make sure
+*             If used with IFKeyDropped, make sure
 *             IFItemIsAttachedToObject take priority over
-*             IFItemIsStationaryWithinLevel
+*             IFKeyDropped
 *******************************************************************************/
 
 #define PARAMS BYTE(ITEM_NUM), BYTE(OBJECT_TAG), BYTE(GOTOLABEL)
@@ -4574,7 +4588,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND HAS ITEM EQUIPPED 
+//## IF BOND HAS ITEM EQUIPPED
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_HAS_ITEM_EQUIPPED */
@@ -4615,7 +4629,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECT EXISTS 
+//## IF OBJECT EXISTS
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECT_EXISTS */
@@ -4657,7 +4671,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECT NOT DESTROYED 
+//## IF OBJECT NOT DESTROYED
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECT_NOT_DESTROYED */
@@ -4699,7 +4713,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECT WAS ACTIVATED 
+//## IF OBJECT WAS ACTIVATED
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECT_WAS_ACTIVATED */
@@ -4745,7 +4759,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND USED GADGET ON OBJECT 
+//## IF BOND USED GADGET ON OBJECT
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_USED_GADGET_ON_OBJECT */
@@ -4794,7 +4808,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECT ACTIVATE 
+//## OBJECT ACTIVATE
 //==============================================================================
 
 /* #define CMDNAME OBJECT_ACTIVATE */
@@ -4840,7 +4854,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//##  DESTROY OBJECT  
+//##  DESTROY OBJECT
 //==============================================================================
 // Canonical Name : destroyobj
 /* #define CMDNAME OBJECT_DESTROY */
@@ -4882,7 +4896,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECT DROP FROM CHR 
+//## OBJECT DROP FROM CHR
 //==============================================================================
 
 /* #define CMDNAME OBJECT_DROP_FROM_CHR */
@@ -4923,7 +4937,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR DROP ALL CONCEALED ITEMS 
+//## CHR DROP ALL CONCEALED ITEMS
 //==============================================================================
 
 /* #define CMDNAME CHR_DROP_ALL_CONCEALED_ITEMS */
@@ -4971,7 +4985,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## CHR DROP ALL HELD ITEMS 
+//## CHR DROP ALL HELD ITEMS
 //==============================================================================
 
 /* #define CMDNAME CHR_DROP_ALL_HELD_ITEMS */
@@ -5027,7 +5041,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## BOND COLLECT OBJECT 
+//## BOND COLLECT OBJECT
 //==============================================================================
 
 /* #define CMDNAME BOND_COLLECT_OBJECT */
@@ -5065,7 +5079,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR EQUIP OBJECT 
+//## CHR EQUIP OBJECT
 //==============================================================================
 
 /* #define CMDNAME CHR_EQUIP_OBJECT */
@@ -5121,7 +5135,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## Move Object (Canonical Name) 
+//## Move Object (Canonical Name)
 //==============================================================================
 //Canonical Name: MoveObj
 /* #define CMDNAME OBJECT_MOVE_TO_PAD */
@@ -5131,7 +5145,7 @@ _AI_CMD(
 /*******************************************************************************
 * Move object to PAD
 ********************************************************************************
-* @exception: If object is assigned to padextra type, then object scale will be 
+* @exception: If object is assigned to padextra type, then object scale will be
 *             lost after moving to target pad.
 *             Object will inherit rotation from target pad
 *******************************************************************************/
@@ -5177,7 +5191,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## DOOR OPEN 
+//## DOOR OPEN
 //==============================================================================
 
 /* #define CMDNAME DOOR_OPEN */
@@ -5212,7 +5226,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## DOOR CLOSE 
+//## DOOR CLOSE
 //==============================================================================
 
 /* #define CMDNAME DOOR_CLOSE */
@@ -5247,7 +5261,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF DOOR STATE EQUAL 
+//## IF DOOR STATE EQUAL
 //==============================================================================
 
 /* #define CMDNAME IF_DOOR_STATE_EQUAL */
@@ -5255,7 +5269,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* If tagged door state matches any of bitfield
+* If tagged door state matches any of bit field
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @exception: Use DOOR_STATE_# flags for door state argument.
@@ -5304,7 +5318,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 #undef DESCRIPTION
 #define DESCRIPTION \
 /*******************************************************************************
@@ -5380,7 +5394,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF DOOR HAS BEEN OPENED BEFORE 
+//## IF DOOR HAS BEEN OPENED BEFORE
 //==============================================================================
 
 /* #define CMDNAME IF_DOOR_HAS_BEEN_OPENED_BEFORE */
@@ -5422,7 +5436,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## DOOR SET LOCK 
+//## DOOR SET LOCK
 //==============================================================================
 
 /* #define CMDNAME DOOR_SET_LOCK */
@@ -5462,7 +5476,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## DOOR UNSET LOCK 
+//## DOOR UNSET LOCK
 //==============================================================================
 
 /* #define CMDNAME DOOR_UNSET_LOCK */
@@ -5502,7 +5516,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF DOOR LOCK EQUAL 
+//## IF DOOR LOCK EQUAL
 //==============================================================================
 
 /* #define CMDNAME IF_DOOR_LOCK_EQUAL */
@@ -5554,7 +5568,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECTIVE NUM COMPLETE 
+//## IF OBJECTIVE NUM COMPLETE
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECTIVE_NUM_COMPLETE */
@@ -5567,8 +5581,8 @@ _AI_CMD(
 * @return     Continue execution from LABEL if TRUE
 * @exception: Ignores difficulty settings.
 *             For example - if game on agent and player
-*                completes an unlisted 00 agent objective, checking that 
-*                objective num will Goto LABEL
+*                completes an unlisted 00 agent objective, checking that
+*                objective num will Go to LABEL
 *******************************************************************************/
 
 #define PARAMS BYTE(OBJ_NUM), BYTE(GOTOLABEL)
@@ -5602,7 +5616,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY UNKNOWN6E 
+//## GUARD TRY UNKNOWN6E
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_UNKNOWN6E */
@@ -5610,7 +5624,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Unknown command, Goto LABEL
+* Unknown command, Go to LABEL
 ********************************************************************************
 * @return     Continue execution from LABEL if Successful
 * @exception: Sets chr->padpreset1
@@ -5648,7 +5662,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY UNKNOWN6F 
+//## GUARD TRY UNKNOWN6F
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_UNKNOWN6F */
@@ -5694,7 +5708,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GAME DIFFICULTY LESS THAN 
+//## IF GAME DIFFICULTY LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GAME_DIFFICULTY_LESS_THAN */
@@ -5737,7 +5751,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GAME DIFFICULTY GREATER THAN 
+//## IF GAME DIFFICULTY GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GAME_DIFFICULTY_GREATER_THAN */
@@ -5780,7 +5794,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF MISSION TIME LESS THAN 
+//## IF MISSION TIME LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_MISSION_TIME_LESS_THAN */
@@ -5821,7 +5835,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF MISSION TIME GREATER THAN 
+//## IF MISSION TIME GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_MISSION_TIME_GREATER_THAN */
@@ -5862,7 +5876,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF SYSTEM POWER TIME LESS THAN 
+//## IF SYSTEM POWER TIME LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_SYSTEM_POWER_TIME_LESS_THAN */
@@ -5903,7 +5917,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF SYSTEM POWER TIME GREATER THAN 
+//## IF SYSTEM POWER TIME GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_SYSTEM_POWER_TIME_GREATER_THAN */
@@ -5944,7 +5958,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF LEVEL ID LESS THAN 
+//## IF LEVEL ID LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_LEVEL_ID_LESS_THAN */
@@ -5984,7 +5998,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF LEVEL ID GREATER THAN 
+//## IF LEVEL ID GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_LEVEL_ID_GREATER_THAN */
@@ -6024,7 +6038,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD HITS LESS THAN 
+//## IF GUARD HITS LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HITS_LESS_THAN */
@@ -6065,7 +6079,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD HITS GREATER THAN 
+//## IF GUARD HITS GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HITS_GREATER_THAN */
@@ -6106,7 +6120,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD HITS MISSED LESS THAN 
+//## IF GUARD HITS MISSED LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HITS_MISSED_LESS_THAN */
@@ -6146,7 +6160,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD HITS MISSED GREATER THAN 
+//## IF GUARD HITS MISSED GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_HITS_MISSED_GREATER_THAN */
@@ -6186,7 +6200,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF CHR HEALTH LESS THAN 
+//## IF CHR HEALTH LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_HEALTH_LESS_THAN */
@@ -6199,7 +6213,7 @@ _AI_CMD(
 * @return     Continue execution from LABEL if TRUE
 * @param      CHR_NUM: ID of Chr (0-255)
 * @param      HEALTH (Default = 40 (4.0f))
-* @exception: HEALTH is unsigned, converted to float and compares difference 
+* @exception: HEALTH is unsigned, converted to float and compares difference
 *             between chr->maxdamage - chr->damage.
 *             Armour is tested
 *******************************************************************************/
@@ -6246,7 +6260,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF CHR HEALTH GREATER THAN 
+//## IF CHR HEALTH GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_HEALTH_GREATER_THAN */
@@ -6259,7 +6273,7 @@ _AI_CMD_POLYMORPH(,
 * @return     Continue execution from LABEL if TRUE
 * @param      CHR_NUM: ID of Chr (0-255)
 * @param      HEALTH (Default = 40 (4.0f))
-* @exception: HEALTH is unsigned, converted to float and compares difference 
+* @exception: HEALTH is unsigned, converted to float and compares difference
 *             between chr->maxdamage - chr->damage.
 *             Armour is tested
 *******************************************************************************/
@@ -6307,7 +6321,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF CHR WAS DAMAGED SINCE LAST CHECK 
+//## IF CHR WAS DAMAGED SINCE LAST CHECK
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_WAS_DAMAGED_SINCE_LAST_CHECK */
@@ -6320,7 +6334,7 @@ _AI_CMD_POLYMORPH(,
 * @return     Continue execution from LABEL if TRUE
 * @param      CHR_NUM: ID of Chr (0-255)
 * @exception: Checks chr->chrflags if CHRFLAG_WAS_DAMAGED is set.
-*             If true, unset flag and Goto LABEL.
+*             If true, unset flag and Go to LABEL.
 *             CHRFLAG_WAS_DAMAGED is set if guard took damage (not invincible)
 *******************************************************************************/
 
@@ -6359,7 +6373,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF BOND HEALTH LESS THAN 
+//## IF BOND HEALTH LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_HEALTH_LESS_THAN */
@@ -6401,7 +6415,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND HEALTH GREATER THAN 
+//## IF BOND HEALTH GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_HEALTH_GREATER_THAN */
@@ -6443,7 +6457,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## LOCAL BYTE 1 SET 
+//## LOCAL BYTE 1 SET
 //==============================================================================
 
 /* #define CMDNAME LOCAL_BYTE_1_SET */
@@ -6451,9 +6465,9 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Set My Morale 
+* Set My Morale
 ********************************************************************************
-* @param      CHRBYTE is a value 0 - 255 
+* @param      CHRBYTE is a value 0 - 255
 *******************************************************************************/
 
 #define PARAMS BYTE(CHRBYTE)
@@ -6476,7 +6490,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## LOCAL BYTE 1 ADD 
+//## LOCAL BYTE 1 ADD
 //==============================================================================
 
 /* #define CMDNAME LOCAL_BYTE_1_ADD */
@@ -6517,7 +6531,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## LOCAL BYTE 1 SUBTRACT 
+//## LOCAL BYTE 1 SUBTRACT
 //==============================================================================
 
 /* #define CMDNAME LOCAL_BYTE_1_SUBTRACT */
@@ -6558,7 +6572,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF LOCAL BYTE 1 LESS THAN 
+//## IF LOCAL BYTE 1 LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_LOCAL_BYTE_1_LESS_THAN */
@@ -6597,7 +6611,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF LOCAL BYTE 1 LESS THAN RANDOM SEED 
+//## IF LOCAL BYTE 1 LESS THAN RANDOM SEED
 //==============================================================================
 
 /* #define CMDNAME IF_LOCAL_BYTE_1_LESS_THAN_RANDOM_SEED */
@@ -6636,7 +6650,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## LOCAL BYTE 2 SET 
+//## LOCAL BYTE 2 SET
 //==============================================================================
 
 /* #define CMDNAME LOCAL_BYTE_2_SET */
@@ -6644,9 +6658,9 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Set My Morale 
+* Set My Morale
 ********************************************************************************
-* @param      CHRBYTE is a value 0 - 255 
+* @param      CHRBYTE is a value 0 - 255
 *******************************************************************************/
 
 #define PARAMS BYTE(CHRBYTE)
@@ -6669,7 +6683,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## LOCAL BYTE 2 ADD 
+//## LOCAL BYTE 2 ADD
 //==============================================================================
 
 /* #define CMDNAME LOCAL_BYTE_2_ADD */
@@ -6710,7 +6724,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## LOCAL BYTE 2 SUBTRACT 
+//## LOCAL BYTE 2 SUBTRACT
 //==============================================================================
 
 /* #define CMDNAME LOCAL_BYTE_2_SUBTRACT */
@@ -6751,7 +6765,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF LOCAL BYTE 2 LESS THAN 
+//## IF LOCAL BYTE 2 LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_LOCAL_BYTE_2_LESS_THAN */
@@ -6759,7 +6773,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* If My Alertness is Less Than 
+* If My Alertness is Less Than
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 *******************************************************************************/
@@ -6790,7 +6804,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF LOCAL BYTE 2 LESS THAN RANDOM SEED 
+//## IF LOCAL BYTE 2 LESS THAN RANDOM SEED
 //==============================================================================
 
 /* #define CMDNAME IF_LOCAL_BYTE_2_LESS_THAN_RANDOM_SEED */
@@ -6829,7 +6843,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET HEARING SCALE 
+//## GUARD SET HEARING SCALE
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_HEARING_SCALE */
@@ -6873,7 +6887,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD SET VISION RANGE 
+//## GUARD SET VISION RANGE
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_VISION_RANGE */
@@ -6909,7 +6923,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET GRENADE PROBABILITY 
+//## GUARD SET GRENADE PROBABILITY
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_GRENADE_PROBABILITY */
@@ -6917,11 +6931,11 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Set My probability of lobbing a grenade  -  the higher the value, the 
+* Set My probability of lobbing a grenade  -  the higher the value, the
 * more likely I will throw one when asked (TRYThrowingGrenade).
 ********************************************************************************
 * @exception: Sets to chr->grenadeprob - (Default = 0)
-*             The only way to make guards throw grenades is by using this 
+*             The only way to make guards throw grenades is by using this
 *             command or assigning setup object 0x12 to chr
 *******************************************************************************/
 
@@ -6945,7 +6959,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET CHR NUM 
+//## GUARD SET CHR NUM
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_CHR_NUM */
@@ -6953,7 +6967,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Set My Chr Number, or ID, for calling me later. eg respawn or clone.
+* Set My Chr Number, or ID, for calling me later. e.g. respawn or clone.
 ********************************************************************************
 * @param CHR_NUM: Should be a unique Integer 0-240
 *******************************************************************************/
@@ -6978,7 +6992,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET HEALTH TOTAL 
+//## GUARD SET HEALTH TOTAL
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_HEALTH_TOTAL */
@@ -7023,7 +7037,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD SET ARMOUR 
+//## GUARD SET ARMOUR
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_ARMOUR */
@@ -7066,7 +7080,7 @@ _AI_CMD_POLYMORPH(,
 #undef DESCRIPTION
 #define DESCRIPTION \
 /*******************************************************************************
-* Remove All damage from me 
+* Remove All damage from me
 ********************************************************************************
 * @return     Continue execution from DONELABEL
 * @param      LOOPLABEL: Private ID for internal loop
@@ -7088,7 +7102,7 @@ _AI_CMD_POLYMORPH( \
 
 
 //==============================================================================
-//## GUARD SET SPEED RATING 
+//## GUARD SET SPEED RATING
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_SPEED_RATING */
@@ -7100,7 +7114,7 @@ _AI_CMD_POLYMORPH( \
 ********************************************************************************
 * @param      SPEED_RATING: Signed* 0 - 100 (Default = 0)
 * @exception: Sets to chr->speedrating.
-*             Negative values will make guard animate slower - this affects 
+*             Negative values will make guard animate slower - this affects
 *             firing animations.
 *             Does NOT use 007 reaction speed modifier.
 *             Do NOT use values above 100 or below 0 or it may crash
@@ -7130,7 +7144,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET ARGH RATING 
+//## GUARD SET ARGH RATING
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_ARGH_RATING */
@@ -7140,10 +7154,10 @@ _AI_CMD(
 /*******************************************************************************
 * Set My argh rating - controls how quickly I recover from being shot.
 ********************************************************************************
-* @param      ARGH_RATING Signed* 0-100 (Default = 0) (100 is almost no hit 
+* @param      ARGH_RATING Signed* 0-100 (Default = 0) (100 is almost no hit
 *             reaction)
 * @exception: Sets to chr->arghrating.
-*             Negative values will make guard animate slower - this affects 
+*             Negative values will make guard animate slower - this affects
 *             firing animations.
 *             Does NOT use 007 reaction speed modifier
 *             Do NOT use values above 100 or below 0 or it may crash
@@ -7173,7 +7187,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET ACCURACY RATING 
+//## GUARD SET ACCURACY RATING
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_ACCURACY_RATING */
@@ -7212,7 +7226,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD FLAGS2 SET ON 
+//## GUARD FLAGS2 SET ON
 //==============================================================================
 
 /* #define CMDNAME GUARD_BITFIELD_SET_ON */
@@ -7257,7 +7271,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD FLAGS2 SET OFF 
+//## GUARD FLAGS2 SET OFF
 //==============================================================================
 
 /* #define CMDNAME GUARD_BITFIELD_SET_OFF */
@@ -7301,7 +7315,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD FLAGS2 IS SET ON 
+//## IF GUARD FLAGS2 IS SET ON
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_BITFIELD_IS_SET_ON */
@@ -7309,7 +7323,7 @@ _AI_CMD_POLYMORPH(,
 
 #define DESCRIPTION \
 /*******************************************************************************
-* If flags2 has BITS enabled 
+* If flags2 has BITS enabled
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @param BITS: Can be used to store a custom flag per chr, useful for missions.
@@ -7352,7 +7366,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## CHR FLAGS2 SET ON 
+//## CHR FLAGS2 SET ON
 //==============================================================================
 
 /* #define CMDNAME CHR_BITFIELD_SET_ON */
@@ -7390,7 +7404,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR FLAGS2 SET OFF 
+//## CHR FLAGS2 SET OFF
 //==============================================================================
 
 /* #define CMDNAME CHR_BITFIELD_SET_OFF */
@@ -7398,7 +7412,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Unet flags2 for CHR_NUM
+* Unset flags2 for CHR_NUM
 ********************************************************************************
 * @param CHR_NUM: ID of Chr (0-240)
 * @param BITS: Can be used to store a custom flag per chr, useful for missions.
@@ -7428,7 +7442,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF CHR FLAGS2 IS SET ON 
+//## IF CHR FLAGS2 IS SET ON
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_BITFIELD_IS_SET_ON */
@@ -7436,7 +7450,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* If flags2 has BITS enabled 
+* If flags2 has BITS enabled
 ********************************************************************************
 * @return         Continue execution from LABEL if TRUE
 * @param CHR_NUM: ID of Chr (0-240)
@@ -7473,7 +7487,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECTIVE BITFIELD SET ON 
+//## OBJECTIVE BITFIELD SET ON
 //==============================================================================
 
 /* #define CMDNAME OBJECTIVE_BITFIELD_SET_ON */
@@ -7481,15 +7495,15 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Set bits in objective bitfield
+* Set bits in objective bit field
 ********************************************************************************
 * @param      BITFIELD: 32 bits
 * @exception: Can be used to store a mission unique objective flag, which can be
 *             linked to mission objectives.
 *             It can also be used to store miscellaneous flags used by other
 *             AI Lists
-*             If a mission objective is changed while in third person, it will 
-*             not be updated on the briefing page - all mission objectives 
+*             If a mission objective is changed while in third person, it will
+*             not be updated on the briefing page - all mission objectives
 *             status are locked while in third person
 *******************************************************************************/
 
@@ -7514,7 +7528,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECTIVE BITFIELD SET OFF 
+//## OBJECTIVE BITFIELD SET OFF
 //==============================================================================
 
 /* #define CMDNAME OBJECTIVE_BITFIELD_SET_OFF */
@@ -7522,15 +7536,15 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Unset bits in objective bitfield
+* Unset bits in objective bit field
 ********************************************************************************
 * @param      BITFIELD: 32 bits
 * @exception: Can be used to store a mission unique objective flag, which can be
 *             linked to mission objectives.
 *             It can also be used to store miscellaneous flags used by other
 *             AI Lists
-*             If a mission objective is changed while in third person, it will 
-*             not be updated on the briefing page - all mission objectives 
+*             If a mission objective is changed while in third person, it will
+*             not be updated on the briefing page - all mission objectives
 *             status are locked while in third person
 *******************************************************************************/
 
@@ -7555,7 +7569,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECTIVE BITFIELD IS SET ON 
+//## IF OBJECTIVE BITFIELD IS SET ON
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECTIVE_BITFIELD_IS_SET_ON */
@@ -7563,7 +7577,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* If ObjectiveBitfield has BITS enabled 
+* If ObjectiveBitfield has BITS enabled
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 *******************************************************************************/
@@ -7595,7 +7609,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD FLAGS SET ON 
+//## GUARD FLAGS SET ON
 //==============================================================================
 
 /* #define CMDNAME GUARD_FLAGS_SET_ON */
@@ -7624,7 +7638,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 _AI_CMD_POLYMORPH(,
                     SetBGchrflags,
                     (CHRFLAGS),
@@ -7639,7 +7653,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## GUARD FLAGS SET OFF 
+//## GUARD FLAGS SET OFF
 //==============================================================================
 
 /* #define CMDNAME GUARD_FLAGS_SET_OFF */
@@ -7684,7 +7698,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF GUARD FLAGS IS SET ON 
+//## IF GUARD FLAGS IS SET ON
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_FLAGS_IS_SET_ON */
@@ -7720,7 +7734,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 _AI_CMD_POLYMORPH(,
                     IFBGchrflagsHas,
                     (CHRFLAGS),
@@ -7736,7 +7750,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## CHR FLAGS SET ON 
+//## CHR FLAGS SET ON
 //==============================================================================
 
 /* #define CMDNAME CHR_FLAGS_SET_ON */
@@ -7776,7 +7790,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR FLAGS SET OFF 
+//## CHR FLAGS SET OFF
 //==============================================================================
 
 /* #define CMDNAME CHR_FLAGS_SET_OFF */
@@ -7816,7 +7830,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF CHR FLAGS IS SET ON 
+//## IF CHR FLAGS IS SET ON
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_FLAGS_IS_SET_ON */
@@ -7860,7 +7874,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECT FLAGS 1 SET ON 
+//## OBJECT FLAGS 1 SET ON
 //==============================================================================
 
 /* #define CMDNAME OBJECT_FLAGS_1_SET_ON */
@@ -7898,7 +7912,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECT FLAGS 1 SET OFF 
+//## OBJECT FLAGS 1 SET OFF
 //==============================================================================
 
 /* #define CMDNAME OBJECT_FLAGS_1_SET_OFF */
@@ -7936,7 +7950,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECT FLAGS 1 IS SET ON 
+//## IF OBJECT FLAGS 1 IS SET ON
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECT_FLAGS_1_IS_SET_ON */
@@ -7978,7 +7992,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECT FLAGS 2 SET ON 
+//## OBJECT FLAGS 2 SET ON
 //==============================================================================
 
 /* #define CMDNAME OBJECT_FLAGS_2_SET_ON */
@@ -8016,7 +8030,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## OBJECT FLAGS 2 SET OFF 
+//## OBJECT FLAGS 2 SET OFF
 //==============================================================================
 
 /* #define CMDNAME OBJECT_FLAGS_2_SET_OFF */
@@ -8024,7 +8038,7 @@ _AI_CMD(
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Unset object flags2 
+* Unset object flags2
 ********************************************************************************
 * @param BITS: uses PROPFLAG2_# defines
 *******************************************************************************/
@@ -8054,7 +8068,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECT FLAGS 2 IS SET ON 
+//## IF OBJECT FLAGS 2 IS SET ON
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECT_FLAGS_2_IS_SET_ON */
@@ -8096,7 +8110,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET CHR PRESET 
+//## GUARD SET CHR PRESET
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_CHR_PRESET */
@@ -8118,7 +8132,7 @@ _AI_CMD(
     })
 
 //POLYMORPHS
-    
+
 _AI_CMD_POLYMORPH(,
                     SetBGChrPreset,
                     (CHRFLAGS),
@@ -8134,7 +8148,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## CHR SET CHR PRESET 
+//## CHR SET CHR PRESET
 //==============================================================================
 
 /* #define CMDNAME CHR_SET_CHR_PRESET */
@@ -8165,7 +8179,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD SET PAD PRESET 
+//## GUARD SET PAD PRESET
 //==============================================================================
 
 /* #define CMDNAME GUARD_SET_PAD_PRESET */
@@ -8211,7 +8225,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## CHR SET PAD PRESET 
+//## CHR SET PAD PRESET
 //==============================================================================
 
 /* #define CMDNAME CHR_SET_PAD_PRESET */
@@ -8243,10 +8257,10 @@ _AI_CMD(
 
 
 //==============================================================================
-//## Print (Canonical name) 
+//## Print (Canonical name)
 //==============================================================================
-/* 
-pre-process comments into bytestrings
+/*
+pre-process comments into byte strings
 sed -e ':loop' -e 's/PRINT\("(..*?)(\\n|\s|\S)"/PRINT("$1",\'$2\'/g' -e 't loop'
 sed -e 's/PRINT\("(.)"(.*)\)/PRINT,\'$1\'$2,\'\0\',/g'
 */
@@ -8275,7 +8289,7 @@ _AI_DEBUG(
 
 
 //==============================================================================
-//## LOCAL TIMER RESET START 
+//## LOCAL TIMER RESET START
 //==============================================================================
 
 /* #define CMDNAME LOCAL_TIMER_RESET_START */
@@ -8285,7 +8299,7 @@ _AI_DEBUG(
 /*******************************************************************************
 * Start My/BG timer from 0. Counts up 60 times a second.
 ********************************************************************************
-* @exception: Local timer is unique for each chr, while hud countdown is global 
+* @exception: Local timer is unique for each chr, while hud countdown is global
 *             for the entire mission.
 *******************************************************************************/
 
@@ -8315,7 +8329,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## LOCAL TIMER RESET 
+//## LOCAL TIMER RESET
 //==============================================================================
 
 /* #define CMDNAME LOCAL_TIMER_RESET */
@@ -8325,7 +8339,7 @@ _AI_CMD_POLYMORPH(,
 /*******************************************************************************
 * Reset My/BG timer to 0. Does Not start or stop timer.
 ********************************************************************************
-* @exception: Local timer is unique for each chr, while hud countdown is global 
+* @exception: Local timer is unique for each chr, while hud countdown is global
 *             for the entire mission.
 *******************************************************************************/
 
@@ -8355,7 +8369,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## LOCAL TIMER STOP 
+//## LOCAL TIMER STOP
 //==============================================================================
 
 /* #define CMDNAME LOCAL_TIMER_STOP */
@@ -8365,7 +8379,7 @@ _AI_CMD_POLYMORPH(,
 /*******************************************************************************
 * Pause My/BG timer.
 ********************************************************************************
-* @exception: Local timer is unique for each chr, while hud countdown is global 
+* @exception: Local timer is unique for each chr, while hud countdown is global
 *             for the entire mission.
 *******************************************************************************/
 
@@ -8395,7 +8409,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## LOCAL TIMER START 
+//## LOCAL TIMER START
 //==============================================================================
 
 /* #define CMDNAME LOCAL_TIMER_START */
@@ -8405,7 +8419,7 @@ _AI_CMD_POLYMORPH(,
 /*******************************************************************************
 * Resume My/BG timer. If you want to Start from 0, use MyTimerStart()
 ********************************************************************************
-* @exception: Local timer is unique for each chr, while hud countdown is global 
+* @exception: Local timer is unique for each chr, while hud countdown is global
 *             for the entire mission.
 *******************************************************************************/
 
@@ -8435,7 +8449,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF LOCAL TIMER HAS STOPPED 
+//## IF LOCAL TIMER HAS STOPPED
 //==============================================================================
 
 /* #define CMDNAME IF_LOCAL_TIMER_HAS_STOPPED */
@@ -8482,7 +8496,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF LOCAL TIMER LESS THAN 
+//## IF LOCAL TIMER LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_LOCAL_TIMER_LESS_THAN */
@@ -8493,7 +8507,7 @@ _AI_CMD_POLYMORPH(,
 * If My/BG Timer is Less Than TICKS
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      TICKS: Unsigned integer 1/60 or 1/50 Second 
+* @param      TICKS: Unsigned integer 1/60 or 1/50 Second
 * @exception: TICKS is converted to float and compared.
 *******************************************************************************/
 
@@ -8549,7 +8563,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF LOCAL TIMER GREATER THAN 
+//## IF LOCAL TIMER GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_LOCAL_TIMER_GREATER_THAN */
@@ -8560,7 +8574,7 @@ _AI_CMD_POLYMORPH(,
 * If My/BG Timer is Greater Than TICKS
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
-* @param      TICKS: Unsigned integer 1/60 or 1/50 Second 
+* @param      TICKS: Unsigned integer 1/60 or 1/50 Second
 * @exception: TICKS is converted to float and compared.
 *******************************************************************************/
 
@@ -8614,7 +8628,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## HUD COUNTDOWN SHOW 
+//## HUD COUNTDOWN SHOW
 //==============================================================================
 
 /* #define CMDNAME HUD_COUNTDOWN_SHOW */
@@ -8644,7 +8658,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## HUD COUNTDOWN HIDE 
+//## HUD COUNTDOWN HIDE
 //==============================================================================
 
 /* #define CMDNAME HUD_COUNTDOWN_HIDE */
@@ -8676,7 +8690,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## HUD COUNTDOWN SET 
+//## HUD COUNTDOWN SET
 //==============================================================================
 
 /* #define CMDNAME HUD_COUNTDOWN_SET */
@@ -8710,7 +8724,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## HUD COUNTDOWN STOP 
+//## HUD COUNTDOWN STOP
 //==============================================================================
 
 /* #define CMDNAME HUD_COUNTDOWN_STOP */
@@ -8740,7 +8754,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## HUD COUNTDOWN START 
+//## HUD COUNTDOWN START
 //==============================================================================
 
 /* #define CMDNAME HUD_COUNTDOWN_START */
@@ -8770,7 +8784,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF HUD COUNTDOWN HAS STOPPED 
+//## IF HUD COUNTDOWN HAS STOPPED
 //==============================================================================
 
 /* #define CMDNAME IF_HUD_COUNTDOWN_HAS_STOPPED */
@@ -8810,7 +8824,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF HUD COUNTDOWN LESS THAN 
+//## IF HUD COUNTDOWN LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_HUD_COUNTDOWN_LESS_THAN */
@@ -8852,7 +8866,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF HUD COUNTDOWN GREATER THAN 
+//## IF HUD COUNTDOWN GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_HUD_COUNTDOWN_GREATER_THAN */
@@ -8894,7 +8908,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR TRY SPAWNING AT PAD 
+//## CHR TRY SPAWNING AT PAD
 //==============================================================================
 
 /* #define CMDNAME CHR_TRY_SPAWNING_AT_PAD */
@@ -8943,7 +8957,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR TRY SPAWNING NEXT TO UNSEEN CHR 
+//## CHR TRY SPAWNING NEXT TO UNSEEN CHR
 //==============================================================================
 
 /* #define CMDNAME CHR_TRY_SPAWNING_NEXT_TO_UNSEEN_CHR */
@@ -8991,7 +9005,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY SPAWNING ITEM 
+//## GUARD TRY SPAWNING ITEM
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_SPAWNING_ITEM */
@@ -9003,11 +9017,11 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if Successful
 * @param      PROPFLAG uses PROPFLAG defines - NOT PROPFLAG2!
-* @param      PROP_NUM: use PROP_xxx eg PROP_CHRWPPK for visible model
-* @param      ITEM_NUM: use ITEM_xxx eg ITEM_WPPK for item type
+* @param      PROP_NUM: use PROP_xxx e.g. PROP_CHRWPPK for visible model
+* @param      ITEM_NUM: use ITEM_xxx e.g. ITEM_WPPK for item type
 * @exception: If out of memory or hands occupied - Item can NOT spawn.
-*             Spawned Prop must have a holding position command within the 
-*             model file, else use conceal flag so guard does not attempt to  
+*             Spawned Prop must have a holding position command within the
+*             model file, else use conceal flag so guard does not attempt to
 *             hold Prop
 *******************************************************************************/
 
@@ -9021,7 +9035,7 @@ _AI_CMD(
         PropRecord *prop = NULL;
         if (ChrEntityp && ChrEntityp->prop && ChrEntityp->model)
         {
-            /* more nice PD code that might be usefull in future
+            /* more nice PD code that might be useful in future
             if (cheatIsActive(CHEAT_MARQUIS))
             {
                 flags &= ~0x10000000;
@@ -9094,7 +9108,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD TRY SPAWNING HAT 
+//## GUARD TRY SPAWNING HAT
 //==============================================================================
 
 /* #define CMDNAME GUARD_TRY_SPAWNING_HAT */
@@ -9106,9 +9120,9 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if Successful
 * @param      PROPFLAG uses PROPFLAG defines - NOT PROPFLAG2!
-* @param      PROP_NUM: use PROP_xxx eg PROP_CHRWPPK for visible model
+* @param      PROP_NUM: use PROP_xxx e.g. PROP_CHRWPPK for visible model
 * @exception: If out of memory or already have hat - Item can NOT spawn.
-*             Spawned Prop must have a holding position command within the 
+*             Spawned Prop must have a holding position command within the
 *             model file.
 *******************************************************************************/
 
@@ -9145,7 +9159,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR TRY SPAWNING CLONE 
+//## CHR TRY SPAWNING CLONE
 //==============================================================================
 
 /* #define CMDNAME CHR_TRY_SPAWNING_CLONE */
@@ -9157,7 +9171,7 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if Successful
 * @param      AI_LIST_ID Assign this 16bit AI_LIST ID to Clone
-* @exception: Clone flag is stored in chr->chrflags which is assigned at setup 
+* @exception: Clone flag is stored in chr->chrflags which is assigned at setup
 *             Newly spawned clone is placed in front of original chr
 *******************************************************************************/
 
@@ -9252,7 +9266,7 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if Successful
 * @param      AI_LIST_ID Assign this 16bit AI_LIST ID to Clone
-* @exception: Clone flag is stored in chr->chrflags which is assigned at setup 
+* @exception: Clone flag is stored in chr->chrflags which is assigned at setup
 *             Newly spawned clone is placed in front of original chr
 *******************************************************************************/
 
@@ -9271,7 +9285,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## TEXT PRINT BOTTOM 
+//## TEXT PRINT BOTTOM
 //==============================================================================
 
 /* #define CMDNAME TEXT_PRINT_BOTTOM */
@@ -9279,9 +9293,9 @@ _AI_CMD_POLYMORPH(,
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Print text slot to bottom left part of screen (where pickup text is located)
+* Print text slot to bottom left part of screen (where pick-up text is located)
 ********************************************************************************
-* @exception: If text slot is not currently allocated in memory, game will softlock.
+* @exception: If text slot is not currently allocated in memory, game will soft-lock.
 *       Expects string to end with '\n' (LF) character
 *******************************************************************************/
 
@@ -9306,7 +9320,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## TEXT PRINT TOP 
+//## TEXT PRINT TOP
 //==============================================================================
 
 /* #define CMDNAME TEXT_PRINT_TOP */
@@ -9316,7 +9330,7 @@ _AI_CMD(
 /*******************************************************************************
 * Print text slot to top part of screen
 ********************************************************************************
-* @exception: If text slot is not currently allocated in memory, game will softlock.
+* @exception: If text slot is not currently allocated in memory, game will soft-lock.
 *       Expects string to end with '\n' (LF) character
 *******************************************************************************/
 
@@ -9348,7 +9362,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## SFX PLAY 
+//## SFX PLAY
 //==============================================================================
 
 /* #define CMDNAME SFX_PLAY */
@@ -9401,7 +9415,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## SFX EMIT FROM OBJECT 
+//## SFX EMIT FROM OBJECT
 //==============================================================================
 
 /* #define CMDNAME SFX_EMIT_FROM_OBJECT */
@@ -9452,7 +9466,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## SFX EMIT FROM PAD 
+//## SFX EMIT FROM PAD
 //==============================================================================
 
 /* #define CMDNAME SFX_EMIT_FROM_PAD */
@@ -9512,7 +9526,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## SFX SET CHANNEL VOLUME 
+//## SFX SET CHANNEL VOLUME
 //==============================================================================
 
 /* #define CMDNAME SFX_SET_CHANNEL_VOLUME */
@@ -9565,7 +9579,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## SFX FADE CHANNEL VOLUME 
+//## SFX FADE CHANNEL VOLUME
 //==============================================================================
 
 /* #define CMDNAME SFX_FADE_CHANNEL_VOLUME */
@@ -9618,7 +9632,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## SFX STOP CHANNEL 
+//## SFX STOP CHANNEL
 //==============================================================================
 
 /* #define CMDNAME SFX_STOP_CHANNEL */
@@ -9638,7 +9652,7 @@ _AI_CMD(
         Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
         break;
     })
-    
+
 #undef PARAMS
 #undef CMDNAME
 #undef DESCRIPTION
@@ -9649,7 +9663,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF SFX CHANNEL VOLUME LESS THAN 
+//## IF SFX CHANNEL VOLUME LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_SFX_CHANNEL_VOLUME_LESS_THAN */
@@ -9661,7 +9675,7 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @param VOLUME signed range 0 - 100% (0x0000-0x7FFF)
-* @exception: If sfx channel is free (no audio playing), Goto LABEL.
+* @exception: If sfx channel is free (no audio playing), Go to LABEL.
 *       VOLUME can NOT be negative
 *******************************************************************************/
 
@@ -9704,7 +9718,7 @@ _AI_CMD(
 //==============================================================================
 
 //==============================================================================
-//## VEHICLE START PATH 
+//## VEHICLE START PATH
 //==============================================================================
 
 /* #define CMDNAME VEHICLE_START_PATH */
@@ -9740,7 +9754,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## VEHICLE SPEED 
+//## VEHICLE SPEED
 //==============================================================================
 
 /* #define CMDNAME VEHICLE_SPEED */
@@ -9796,7 +9810,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## AIRCRAFT ROTOR SPEED 
+//## AIRCRAFT ROTOR SPEED
 //==============================================================================
 
 /* #define CMDNAME AIRCRAFT_ROTOR_SPEED */
@@ -9804,7 +9818,7 @@ _AI_CMD_POLYMORPH(,
 
 #define DESCRIPTION \
 /*******************************************************************************
-* Sets aircrafts rotor speed
+* Sets aircraft's rotor speed
 ********************************************************************************
 * @param ROTOR_SPEED Unsigned Revolutions Per Minute (RPM)
 *             ACCELERATION_TIME60 is number of game ticks to reach top speed
@@ -9847,7 +9861,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF CAMERA IS IN INTRO 
+//## IF CAMERA IS IN INTRO
 //==============================================================================
 
 /* #define CMDNAME IF_CAMERA_IS_IN_INTRO */
@@ -9887,7 +9901,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF CAMERA IS IN BOND SWIRL 
+//## IF CAMERA IS IN BOND SWIRL
 //==============================================================================
 
 /* #define CMDNAME IF_CAMERA_IS_IN_BOND_SWIRL */
@@ -9927,7 +9941,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## TV CHANGE SCREEN BANK 
+//## TV CHANGE SCREEN BANK
 //==============================================================================
 
 /* #define CMDNAME TV_CHANGE_SCREEN_BANK */
@@ -9978,7 +9992,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND IN TANK 
+//## IF BOND IN TANK
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_IN_TANK */
@@ -10017,7 +10031,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## END LEVEL 
+//## END LEVEL
 //==============================================================================
 
 /* #define CMDNAME EXIT_LEVEL */
@@ -10037,11 +10051,11 @@ _AI_CMD(
 
 _AI_CMD(
     {
-        if (camera_8003642C)
+        if (cameraBufferToggle)
         {
-            if (camera_80036434 == FALSE)
+            if (cameraFrameCounter2 == FALSE)
             {
-                camera_80036434 = TRUE;
+                cameraFrameCounter2 = TRUE;
             }
         }
         else
@@ -10068,26 +10082,26 @@ _AI_CMD(
 /*******************************************************************************
 * Prepare to Transition to bond from Camera
 *******************************************************************************/
-DEFINE(CameraTransitionToBond() 
+DEFINE(CameraTransitionToBond()
        Yield()
        Yield()
        Yield())
-                    
+
 /*******************************************************************************
 * Prepare to Transition from bond to Camera
 *******************************************************************************/
-DEFINE(CameraTransitionFromBond() 
+DEFINE(CameraTransitionFromBond()
        BondHideWeapons()
        Yield()
        Yield()
        Yield())
-                    
+
 
 
 
 
 //==============================================================================
-//## CAMERA RETURN TO BOND 
+//## CAMERA RETURN TO BOND
 //==============================================================================
 
 /* #define CMDNAME CAMERA_RETURN_TO_BOND */
@@ -10126,7 +10140,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CAMERA LOOK AT BOND FROM PAD 
+//## CAMERA LOOK AT BOND FROM PAD
 //==============================================================================
 
 /* #define CMDNAME CAMERA_LOOK_AT_BOND_FROM_PAD */
@@ -10172,7 +10186,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CAMERA SWITCH 
+//## CAMERA SWITCH
 //==============================================================================
 
 /* #define CMDNAME CAMERA_SWITCH */
@@ -10225,7 +10239,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND Y POS LESS THAN 
+//## IF BOND Y POS LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_Y_POS_LESS_THAN */
@@ -10269,7 +10283,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## HUD HIDE AND LOCK CONTROLS AND PAUSE MISSION TIME 
+//## HUD HIDE AND LOCK CONTROLS AND PAUSE MISSION TIME
 //==============================================================================
 
 /* #define CMDNAME HUD_HIDE_AND_LOCK_CONTROLS_AND_PAUSE_MISSION_TIME */
@@ -10279,9 +10293,9 @@ _AI_CMD(
 /*******************************************************************************
 * hide hud elements, lock player controls and pause mission time
 ********************************************************************************
-* @param BITFIELD use HUD_# flags to hide indavidual Hud Elements
+* @param BITFIELD use HUD_# flags to hide individual Hud Elements
 * @exception: Will not hide element on command execution.
-*       This is needed for dialog/HUD countdown while in cinema mode.
+*       This is needed for dialogue/HUD countdown while in cinema mode.
 *       Flags can be combined together to show multiple elements.
 *       Sequential executions of HUD_HIDE can be used to hide more elements,
 *       but once an element has been hidden it cannot be shown again until
@@ -10309,7 +10323,7 @@ _AI_CMD(
         {
             countdownTimerSetVisible(16, FALSE);
         }
-        D_800364B0 = FALSE;
+        is_timer_active = FALSE;
         Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
         break;
     })
@@ -10324,7 +10338,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## HUD SHOW ALL AND UNLOCK CONTROLS AND RESUME MISSION TIME 
+//## HUD SHOW ALL AND UNLOCK CONTROLS AND RESUME MISSION TIME
 //==============================================================================
 
 /* #define CMDNAME HUD_SHOW_ALL_AND_UNLOCK_CONTROLS_AND_RESUME_MISSION_TIME */
@@ -10347,7 +10361,7 @@ _AI_CMD(
         hudmsgsSetOn(PLAYERFLAG_NOCONTROL);
         bondviewClearUpperTextDisplayFlag(2);
         countdownTimerSetVisible(16, TRUE);
-        D_800364B0 = TRUE;
+        is_timer_active = TRUE;
         Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
         break;
     })
@@ -10362,7 +10376,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR TRY TELEPORTING TO PAD 
+//## CHR TRY TELEPORTING TO PAD
 //==============================================================================
 
 /* #define CMDNAME CHR_TRY_TELEPORTING_TO_PAD */
@@ -10404,7 +10418,7 @@ _AI_CMD(
             pos.z = pad->pos.z;
             stan = pad->stan;
             sub_GAME_7F03D058(chr->prop, FALSE);
-            if (sub_GAME_7F033F48(&pos, &stan, FacingDirection, TRUE))
+            if (chrAdjustPosForSpawn(&pos, &stan, FacingDirection, TRUE))
             {
                 {
                     chr->prop->pos.x = pos.x;
@@ -10455,7 +10469,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## SCREEN FADE TO BLACK 
+//## SCREEN FADE TO BLACK
 //==============================================================================
 
 /* #define CMDNAME SCREEN_FADE_TO_BLACK */
@@ -10491,7 +10505,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## SCREEN FADE FROM BLACK 
+//## SCREEN FADE FROM BLACK
 //==============================================================================
 
 /* #define CMDNAME SCREEN_FADE_FROM_BLACK */
@@ -10527,7 +10541,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF SCREEN FADE COMPLETED 
+//## IF SCREEN FADE COMPLETED
 //==============================================================================
 
 /* #define CMDNAME IF_SCREEN_FADE_COMPLETED */
@@ -10567,7 +10581,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR HIDE ALL 
+//## CHR HIDE ALL
 //==============================================================================
 
 /* #define CMDNAME CHR_HIDE_ALL */
@@ -10607,7 +10621,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR SHOW ALL 
+//## CHR SHOW ALL
 //==============================================================================
 
 /* #define CMDNAME CHR_SHOW_ALL */
@@ -10646,7 +10660,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## DOOR OPEN INSTANT 
+//## DOOR OPEN INSTANT
 //==============================================================================
 
 /* #define CMDNAME DOOR_OPEN_INSTANT */
@@ -10690,7 +10704,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CHR REMOVE ITEM IN HAND 
+//## CHR REMOVE ITEM IN HAND
 //==============================================================================
 
 /* #define CMDNAME CHR_REMOVE_ITEM_IN_HAND */
@@ -10727,7 +10741,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF NUMBER OF ACTIVE PLAYERS LESS THAN 
+//## IF NUMBER OF ACTIVE PLAYERS LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_NUMBER_OF_ACTIVE_PLAYERS_LESS_THAN */
@@ -10787,7 +10801,7 @@ _AI_CMD_POLYMORPH(,
 
 
 //==============================================================================
-//## IF BOND ITEM TOTAL AMMO LESS THAN 
+//## IF BOND ITEM TOTAL AMMO LESS THAN
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_ITEM_TOTAL_AMMO_LESS_THAN */
@@ -10827,7 +10841,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## BOND EQUIP ITEM 
+//## BOND EQUIP ITEM
 //==============================================================================
 
 /* #define CMDNAME BOND_EQUIP_ITEM */
@@ -10861,7 +10875,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## BOND EQUIP ITEM CINEMA 
+//## BOND EQUIP ITEM CINEMA
 //==============================================================================
 
 /* #define CMDNAME BOND_EQUIP_ITEM_CINEMA */
@@ -10895,7 +10909,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## BOND SET LOCKED VELOCITY 
+//## BOND SET LOCKED VELOCITY
 //==============================================================================
 
 /* #define CMDNAME BOND_SET_LOCKED_VELOCITY */
@@ -10933,7 +10947,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECT IN ROOM WITH PAD 
+//## IF OBJECT IN ROOM WITH PAD
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECT_IN_ROOM_WITH_PAD */
@@ -11024,7 +11038,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF GUARD IS FIRING 
+//## IF GUARD IS FIRING
 //==============================================================================
 
 /* #define CMDNAME IF_GUARD_IS_FIRING */
@@ -11063,7 +11077,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## SWITCH ENVIRONMENT 
+//## SWITCH ENVIRONMENT
 //==============================================================================
 
 /* #define CMDNAME SWITCH_SKY */
@@ -11096,7 +11110,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## TRIGGER FADE AND EXIT LEVEL ON BUTTON PRESS 
+//## TRIGGER FADE AND EXIT LEVEL ON BUTTON PRESS
 //==============================================================================
 
 /* #define CMDNAME TRIGGER_FADE_AND_EXIT_LEVEL_ON_BUTTON_PRESS */
@@ -11133,7 +11147,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND IS DEAD 
+//## IF BOND IS DEAD
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_IS_DEAD */
@@ -11172,7 +11186,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## BOND DISABLE DAMAGE AND PICKUPS 
+//## BOND DISABLE DAMAGE AND PICKUPS
 //==============================================================================
 
 /* #define CMDNAME BOND_DISABLE_DAMAGE_AND_PICKUPS */
@@ -11206,7 +11220,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## BOND HIDE WEAPONS 
+//## BOND HIDE WEAPONS
 //==============================================================================
 
 /* #define CMDNAME BOND_HIDE_WEAPONS */
@@ -11237,7 +11251,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CAMERA ORBIT PAD 
+//## CAMERA ORBIT PAD
 //==============================================================================
 
 /* #define CMDNAME CAMERA_ORBIT_PAD */
@@ -11249,8 +11263,8 @@ _AI_CMD(
 ********************************************************************************
 * @param LAT_DISTANCE: Unsigned camera distance from pad in centimeters
 * @param VERT_DISTANCE: Signed camera distance from pad in centimeters
-* @param ORBIT_SPEED: Normalised angle -0.5 - 0 - 0.5 (8000 - 7FFF) to rotate 
-*                     per frame. Generally stick to a low range as it is used  
+* @param ORBIT_SPEED: Normalised angle -0.5 - 0 - 0.5 (8000 - 7FFF) to rotate
+*                     per frame. Generally stick to a low range as it is used
 *                     for delta timing (FF00-0100) (-0.02 - 0 - 0.02)
 * @param PAD: pad for camera to target and orbit around
 * @param Y_POS_OFFSET: Signed offset the relative y position for pad
@@ -11303,7 +11317,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## CREDITS ROLL 
+//## CREDITS ROLL
 //==============================================================================
 
 /* #define CMDNAME CREDITS_ROLL */
@@ -11320,7 +11334,7 @@ _AI_CMD(
 
 _AI_CMD(
     {
-        D_8003643C = TRUE;
+        credits_state = TRUE;
         Offset += CAT(CAT(AI_, CMDNAME), _LENGTH);
         break;
     })
@@ -11335,7 +11349,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF CREDITS HAS COMPLETED 
+//## IF CREDITS HAS COMPLETED
 //==============================================================================
 
 /* #define CMDNAME IF_CREDITS_HAS_COMPLETED */
@@ -11353,7 +11367,7 @@ _AI_CMD(
 _AI_CMD(
     {
         AIRecord *ai = AiListp + Offset;
-        if (D_8003643C == 2)
+        if (credits_state == 2)
         {
             Offset = chraiGoToLabel(AiListp, Offset, ai->val[0]);
         }
@@ -11374,7 +11388,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF OBJECTIVE ALL COMPLETED 
+//## IF OBJECTIVE ALL COMPLETED
 //==============================================================================
 
 /* #define CMDNAME IF_OBJECTIVE_ALL_COMPLETED */
@@ -11416,7 +11430,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF FOLDER ACTOR IS EQUAL 
+//## IF FOLDER ACTOR IS EQUAL
 //==============================================================================
 
 /* #define CMDNAME IF_FOLDER_ACTOR_IS_EQUAL */
@@ -11440,7 +11454,7 @@ _AI_CMD(
 _AI_CMD(
     {
         AIRecord *ai = AiListp + Offset;
-        if (getSelectedFolderBond() == (s8)ai->val[0])
+        if (fileGetBondForCurrentFolder() == (s8)ai->val[0])
         {
             Offset = chraiGoToLabel(AiListp, Offset, ai->val[1]);
         }
@@ -11461,7 +11475,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF BOND DAMAGE AND PICKUPS DISABLED 
+//## IF BOND DAMAGE AND PICKUPS DISABLED
 //==============================================================================
 
 /* #define CMDNAME IF_BOND_DAMAGE_AND_PICKUPS_DISABLED */
@@ -11503,7 +11517,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## MUSIC XTRACK PLAY 
+//## MUSIC XTRACK PLAY
 //==============================================================================
 
 /* #define CMDNAME MUSIC_XTRACK_PLAY */
@@ -11541,7 +11555,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## MUSIC XTRACK STOP 
+//## MUSIC XTRACK STOP
 //==============================================================================
 
 /* #define CMDNAME MUSIC_XTRACK_STOP */
@@ -11579,7 +11593,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## TRIGGER EXPLOSIONS AROUND BOND 
+//## TRIGGER EXPLOSIONS AROUND BOND
 //==============================================================================
 
 /* #define CMDNAME TRIGGER_EXPLOSIONS_AROUND_BOND */
@@ -11611,7 +11625,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF KILLED CIVILIANS GREATER THAN 
+//## IF KILLED CIVILIANS GREATER THAN
 //==============================================================================
 
 /* #define CMDNAME IF_KILLED_CIVILIANS_GREATER_THAN */
@@ -11653,7 +11667,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## IF CHR WAS SHOT SINCE LAST CHECK 
+//## IF CHR WAS SHOT SINCE LAST CHECK
 //==============================================================================
 
 /* #define CMDNAME IF_CHR_WAS_SHOT_SINCE_LAST_CHECK */
@@ -11665,7 +11679,7 @@ _AI_CMD(
 ********************************************************************************
 * @return     Continue execution from LABEL if TRUE
 * @exception: Checks chr->chrflags if CHRFLAG_WAS_HIT is set.
-*       If true, unset flag and Goto LABEL.
+*       If true, unset flag and Go to LABEL.
 *       CHRFLAG_WAS_HIT is set even if guard is invincible
 *******************************************************************************/
 
@@ -11697,7 +11711,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## BOND KILLED IN ACTION 
+//## BOND KILLED IN ACTION
 //==============================================================================
 
 /* #define CMDNAME BOND_KILLED_IN_ACTION */
@@ -11729,7 +11743,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GUARD RAISES ARMS 
+//## GUARD RAISES ARMS
 //==============================================================================
 
 /* #define CMDNAME GUARD_RAISES_ARMS */
@@ -11759,7 +11773,7 @@ _AI_CMD(
 
 
 //==============================================================================
-//## GAS LEAK AND FADE FOG 
+//## GAS LEAK AND FADE FOG
 //==============================================================================
 
 /* #define CMDNAME GAS_LEAK_AND_FADE_FOG */
@@ -11794,7 +11808,7 @@ _AI_CMD(
 * Trigger gas leak event and slowly transition fog to the next fogs slot
 ********************************************************************************
 * @exception: This command triggers a gas leak.
-*       For the level egypt, this command will not trigger a gas leak, but
+*       For the level Egypt, this command will not trigger a gas leak, but
 *       instead will only transition the fog.
 *       Can NOT be stopped after executing.
 *       Level must have a fog assigned or will crash!
@@ -11812,7 +11826,7 @@ _AI_CMD_POLYMORPH( , FADE_FOG, (), ())
 
 
 //==============================================================================
-//## OBJECT ROCKET LAUNCH 
+//## OBJECT ROCKET LAUNCH
 //==============================================================================
 
 /* #define CMDNAME OBJECT_ROCKET_LAUNCH */

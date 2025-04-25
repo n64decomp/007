@@ -4,6 +4,7 @@
 #include "audi.h"
 #include "thread_config.h"
 #include "bondgame.h"
+#include "speed_graph.h"
 
 /**
  * EU .data, offset from start of data_seg : 0x23A0
@@ -431,18 +432,10 @@ void amMain(void* arg)
 		switch (*msg) {
 		case OS_SC_RETRACE_MSG:
 			g_StartTime = osGetTime();
-#if defined(LEFTOVERDEBUG)
-		    profileSetMarker(0x30000);
-#else
-            speedGraphDisplay(0x30000);
-#endif
+		    speedgraphMarkerHandler(0x30000);
 			amHandleFrameMessage(g_AudioManager.audioInfo[g_AudioFrameCount % 3], info);
 			count++;
-#if defined(LEFTOVERDEBUG)
-			profileSetMarker(0x60000);
-#else
-            speedGraphDisplay(0x60000);
-#endif
+            speedgraphMarkerHandler(0x60000);
 
 			g_EndTime = osGetTime();
 			g_DeltaTime = g_EndTime - g_StartTime;

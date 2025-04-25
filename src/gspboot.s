@@ -10,12 +10,12 @@
 
 .section .text, "ax"
 glabel gsp3DTextStart
-.incbin "/bin/gspboot.text.bin"
+.incbin "bin/gspboot.text.bin"
 glabel gsp3DTextEnd
 
 .section .data
 glabel gsp3DDataStart
-.incbin "/bin/gspboot.data.bin"
+.incbin "bin/gspboot.data.bin"
 glabel gsp3DDataEnd
 .section .rodata
 .section .bss

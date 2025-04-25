@@ -76,11 +76,12 @@ struct Model *makeonebody(s32 body, s32 head, struct ModelFileHeader *bodyHeader
     {
         model = get_aircraft_obj_instance_controller(bodyHeader);
     }
-
+    #ifdef DEBUG
+    assert(chrsub->inst.savesize>=bodyobj->savesize); //bodyHeader = chrsub, model = bodyobj
+    #endif
 #ifdef XBLADEBUG
     #error fix XBLADEBUG
   //
-  //        if (*&pMStack0000003c->field_0x2 < pMStack00000024->numRecords) {
   //        assertPrint_8291E690
   //                  (".\\ported\\chrlv.cpp",0xc4,
   //                   "Assertion failed: chrsub->inst.savesize>=bodyobj->savesize");

@@ -33,23 +33,23 @@
 #include "game/debugmenu_handler.h"
 #include "game/lvl.h"
 #include "game/ramromreplay.h"
-#include "game/room_model_buffer.h"
 #include "game/rsp.h"
 #include "game/stan.h"
 #include "game/textrelated.h"
 #include "game/player.h"
 #include "game/unk_0C0A70.h"
-
-/**
- * EU .data, offset from start of data_seg : 0x33e0
-*/
+#include "PR/R4300.h"
 
 /**
  * @file boss.c
- * This file contains the main game loop code.
+ * @brief Main game loop and initialization functions.
+ * 
+ * This file contains the core functions that drive the game loop, manage stages, and handle debug operations.
  */
+
+
 #ifdef REFRESH_PAL
-#define MAIN_LOOP_TICK_INTERVAL D_800484B4 * 0xe34ea - 0x71a75U
+#define MAIN_LOOP_TICK_INTERVAL frameDelay * 0xe34ea - 0x71a75U
 #else
 #define MAIN_LOOP_TICK_INTERVAL 0x5eb61U
 #endif
@@ -76,12 +76,12 @@ void bossMainloop(void);
 
 /* data */
 u32 g_BossDebugNoticeEntry = 0;
-s32 g_DebugAndUpdateStageFlag = 0;
+s32 g_DebugAndUpdateStageFlag = FALSE;
 s32 g_StageNum = LEVELID_TITLE;
 u32 g_CurentMMallocValue = 0x234800;
 u32 g_CurentMaMallocValue = 0x4B000;
-s32 g_ShowMemUseFlag = 0;
-s32 g_ShowMemBarsFlag = 0;
+s32 g_ShowMemUseFlag = FALSE;
+s32 g_ShowMemBarsFlag = FALSE;
 
 struct memallocstring memallocstringtable[] = {
 { LEVELID_DAM,          "-ml0 -me0 -mgfx70  -mvtx50 -mt625 -ma275"},
@@ -120,14 +120,14 @@ struct memallocstring memallocstringtable[] = {
 { LEVELID_CAVERNS_MP ,  "-ml0 -me0 -mgfx130 -mvtx100 -mt440 -ma220"},
 { LEVELID_FACILITY_MP , "-ml0 -me0 -mgfx90  -mvtx100 -mt550 -ma230"},
 { LEVELID_EGYPT_MP ,    "-ml0 -me0 -mgfx110 -mvtx100 -mt350 -ma400"},
-{ 0x0,                  "-ml0 -me0 -mgfx100 -mvtx50 -mt700 -ma400"},
+{ LEVELID_DEFAULT,      "-ml0 -me0 -mgfx100 -mvtx50 -mt700 -ma400"},
 { 0x0, },
 { 0x0, },
 { 0x0, }
 };
 
 s32 g_MainStageNum = LEVELID_NONE;
-s32 g_BossIsDebugMenuOpen = 0;
+s32 g_BossIsDebugMenuOpen = FALSE;
 
 OSScMsg g_bossGfxDoneMsg = { OS_SC_DONE_MSG };
 
@@ -146,7 +146,7 @@ void bossInitMainthreadData(void)
     OSMesg bossmsg;
     OSTimer bosstimer;
     OSMesgQueue bossmq;
-    u32 temp_s0;
+    u32 start;
     u32 unused;
     s32 i;
 
@@ -199,8 +199,8 @@ void bossInitMainthreadData(void)
         g_CurentMMallocValue = (s32) (strtol(tokenFind(1, "-m"), 0, 0) << 0xa);
     }
 
-    temp_s0 = (osVirtualToPhysical(&room_model_buffer) | 0x80000000);
-    mempCheckMemflagTokens(temp_s0, ((u32)tlbmanageGetTlbAllocatedBlock() - (u32)temp_s0));
+    start = (PHYS_TO_K0(osVirtualToPhysical(&_bssSegmentEnd)));
+    mempCheckMemflagTokens(start, ((u32)tlbmanageGetTlbAllocatedBlock() - (u32)start));
     mempResetBank(MEMPOOL_PERMANENT);
     langInit();
     lvInit();
@@ -210,7 +210,7 @@ void bossInitMainthreadData(void)
     default_player_perspective_and_height();
     store_osgetcount();
     null_init_main_1();
-    speedGraphDisplayListRelated();
+    speedgraphInit();
     set_gu_scale();
     null_init_main_2();
     sub_GAME_7F000980();
@@ -327,7 +327,7 @@ void bossMainloop(void)
     if (g_StageNum != LEVELID_TITLE)
     {
         fileValidateSaves();
-        set_selected_folder_num(0);
+        fileSetCurrentFolder(FOLDER1);
         set_selected_difficulty(DIFFICULTY_AGENT);
         set_solo_and_ptr_briefing(g_StageNum);
 
@@ -424,8 +424,8 @@ void bossMainloop(void)
         lvlStageLoad(g_StageNum);
         viInitBuffers();
         debmenuInit();
-        sub_GAME_7F0C0B4C();
-        speedGraphVideoRelated_2();
+        waitForNextFrame();
+        speedgraphMarkerCommit();
 
         if(1); // regalloc
         if(1);
@@ -468,18 +468,12 @@ void bossMainloop(void)
                             }
                             else
                             {
-                                sub_GAME_7F0C0B4C();
+                                waitForNextFrame();
                             }
 
-#if defined(VERSION_EU)
-                            profileSetMarker();
-                            speedGraphVideoRelated_2();
-                            speedGraphDisplay(0x20000);
-#else
-                            video_DL_related_4();
-                            speedGraphVideoRelated_2();
-                            profileSetMarker(0x20000);
-#endif
+                            speedgraphRenderGraph();
+                            speedgraphMarkerCommit();
+                            speedgraphMarkerHandler(0x20000);
                             joyConsumeSamplesWrapper();
                             permit_stderr(0);
 
@@ -495,7 +489,7 @@ void bossMainloop(void)
 			                	g_BossIsDebugMenuOpen = debug_menu_processor(joyStickXPos, joyStickYPos, joyButtons, joyGetButtonsPressedThisFrame(0, ANY_BUTTON));
 			                } else if (joyGetButtons(0, START_BUTTON) == 0) {
                                 g_DebugMode = g_DebugHighlightedOption;
-			                } else 
+			                } else
 #endif
 #ifndef DEBUGMENU
                             if (g_BossIsDebugMenuOpen)
@@ -545,11 +539,7 @@ void bossMainloop(void)
 
                             if (get_memusage_display_flag())
                             {
-#if defined(VERSION_EU)
-                                gdl = video_DL_related_4(gdl);
-#else
-                                gdl = speedGraphDisplay(gdl);
-#endif
+                                gdl = speedgraphDisplayMetrics(gdl);
                             }
 
                             if (g_BossIsDebugMenuOpen)
@@ -613,12 +603,8 @@ void bossMainloop(void)
 #endif
                             toggleFlag ^= 1;
 
-#if defined(VERSION_EU)
-                            speedGraphDisplay(0x10000);
+                            speedgraphMarkerHandler(0x10000);
                             if(1);
-#else
-                            profileSetMarker(0x10000);
-#endif
                         }
                     }
                 }
@@ -633,7 +619,7 @@ void bossMainloop(void)
                     break;
             }
         }
-        
+
         lvlUnloadStageTextData();
         stop_demo_playback();
         mempNullNextEntryInBank(MEMPOOL_STAGE);

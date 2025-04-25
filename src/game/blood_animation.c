@@ -203,8 +203,8 @@ Gfx *insert_imageDL(Gfx *gdl) {
 }
 
 Gfx *sub_GAME_7F01C1A4(Gfx *gdl) {
-   gSPMatrix(gdl++, osVirtualToPhysical(matrix_buffer_gunbarrel_0), (G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION));
-   gSPMatrix(gdl++, osVirtualToPhysical(&matrix_buffer_rarelogo_2[D_8002A7D0]), (G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW));
+   gSPMatrix(gdl++, osVirtualToPhysical(matrixBufferGunbarrel0), (G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION));
+   gSPMatrix(gdl++, osVirtualToPhysical(&matrixBufferRareLogo2[D_8002A7D0]), (G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW));
    gDPPipeSync(gdl++);
    gDPSetCycleType(gdl++, G_CYC_1CYCLE);
    gDPSetRenderMode(gdl++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);

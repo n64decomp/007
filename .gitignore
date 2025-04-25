@@ -18,7 +18,7 @@ branchdiff_report.txt
 021990.bin
 0219D0.bin
 
-# Assets 
+# Assets
 assets/animationtable_data.bin
 assets/animationtable_entries.bin
 assets/font/*.bin
@@ -61,7 +61,7 @@ assets/obseg/text/[eju]/*.bin
 assets/obseg/text/[eju]/*.c
 assets/ramrom/*.bin
 assets/ramrom/[eju]/*.bin
-# bin is required, but lets prevent accidental deletion 
+# bin is required, but lets prevent accidental deletion
 bin/*
 build/*
 build-*/*
@@ -107,3 +107,6 @@ assets/obseg/em/data/pssst.seg
 assets/obseg/em/data/sabre.seg
 assets/obseg/em/data/spec_rom.seg
 assets/obseg/em/data/under.seg
+
+scripts/local/
+scripts/make/local/

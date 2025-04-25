@@ -23,7 +23,7 @@ void crashMain(void* arg0);
 
 void crashAppendChar(unsigned char c);
 void crashScroll(s32 numlines);
-void crashInitBuffers();
+void crashInitBuffers(void);
 void crashRenderFrame(u16 *buffer);
 
 

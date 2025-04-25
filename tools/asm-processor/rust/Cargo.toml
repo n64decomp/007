@@ -1,0 +1,24 @@
+[package]
+name = "asm-processor"
+version = "1.0.0"
+edition = "2021"
+description = "Pre-process .c files and post-process .o files to enable embedding MIPS assembly into IDO-compiled C."
+license = "Unlicense"
+repository = "https://github.com/simonlindholm/asm-processor"
+readme = "../README.md"
+keywords = ["decompilation", "ido", "mips", "asm"]
+
+[dependencies]
+anyhow = "1.0"
+binrw = "0.14.1"
+encoding_rs = "0.8.35"
+enum-map = "2.7.3"
+regex-lite = "0.1.6"
+shlex = "1.3.0"
+temp-dir = "0.1.14"
+argp = "0.4.0"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"

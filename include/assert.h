@@ -29,7 +29,7 @@ extern "C" {
  *   standard header ARE SPECIFIED BY ANSI!  CONFORMANCE WILL BE ALTERED
  *   IF ANY NEW IDENTIFIERS ARE ADDED TO THIS AREA UNLESS THEY ARE IN ANSI's
  *   RESERVED NAMESPACE. (i.e., unless they are prefixed by __[a-z] or
- *   _[A-Z].  For external objects, identifiers with the prefix _[a-z] 
+ *   _[A-Z].  For external objects, identifiers with the prefix _[a-z]
  *   are also reserved.)
  */
 
@@ -41,6 +41,8 @@ extern "C" {
 
 extern void		osSyncPrintf(const char *fmt, ...);
 #define assert(EX)  if(!(EX))osSyncPrintf("\n--- ASSERTION FAULT - %s - %s, line %d\n\n", # EX , __FILE__, __LINE__)
+
+#define assertmsg(EX, MSG) if (!(EX)) osSyncPrintf(MSG)
 
 // extern void __assert(const char *, const char *, int);
 // #ifdef __ANSI_CPP__

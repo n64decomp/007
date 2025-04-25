@@ -27,7 +27,7 @@ typedef struct invitem_dual
 /** unknown struct, used in `strut player`.
  * We know this is a struct from the compiler auto-generated
  * code to copy structs in bondview.c bondviewKillCurrentPlayer.
- * 
+ *
  * sizeof == 84 (0x54)
  */
 struct collision434 {
@@ -45,8 +45,8 @@ struct collision434 {
     /**
      * This affects Bond's movement, but not the viewport.
      * This does not affect boost direction.
-     * 
-     * f[0]: forward component (sin theta) in radians 
+     *
+     * f[0]: forward component (sin theta) in radians
      * f[1]: zero
      * f[2]: sideways component (cos theta) in radians.
      * Offset 0x10.
@@ -142,18 +142,18 @@ struct hand
   s32 field_938;
   s32 field_93C;
   s32 field_940;
-  s32 field_944;
+  f32 field_944;
   s32 field_948;
-  s32 field_94C;
+  f32 field_94C;
   s32 field_950;
   s32 field_954;
   s32 field_958;
   s32 field_95C;
   s32 field_960;
   s32 field_964;
-  s32 field_968;
+  f32 field_968;
   s32 field_96C;
-  s32 field_970;
+  f32 field_970;
   s32 field_974;
   coord3d blendpos[4];
   coord3d blendlook[4];
@@ -203,7 +203,7 @@ struct hand
 
   // offset 0xad8
   Mtxf throw_item_pos_related;
-  
+
   s32 field_B18;
   s32 field_B1C;
   s32 field_B20;
@@ -286,10 +286,10 @@ typedef struct textoverride {
   /*0x00*/ u32 unk1;
 	/*0x04*/ s32 objoffset;
 	/*0x08*/ s32 weapon;
-	/*0x0c*/ u32 unk4;
-	/*0x10*/ u32 unk5;
-	/*0x14*/ u32 unk6;
-	/*0x18*/ u32 unk7;
+	/*0x0c*/ u32 titletext1; //1st title
+	/*0x10*/ u32 titletext2;//2nd title
+	/*0x14*/ u32 shorttext;
+	/*0x18*/ u32 longtext; //longname
 	/*0x1c*/ u32 pickuptext;
 	/*0x20*/ struct textoverride *next;
 	/*0x24*/ struct ObjectRecord *obj;
@@ -381,7 +381,7 @@ struct player
    * Offset 0x007c.
    */
   /* 0x007c */ f32 field_7C;
-  
+
   /* 0x0080 */ f32 field_80;
 
   /**
@@ -406,13 +406,13 @@ struct player
    * Collision / clipping related.
    * When Bond falls off a ladder or similar, will "overshoot" vertical default.
    * Current offset is stored in this field.
-   * 
+   *
    * Offset 0x0090.
    */
   /* 0x0090 */ f32 vertical_bounce_adjust;
   /* 0x0094 */ s32 field_94;
   /* 0x0098 */ f32 field_98;
-  
+
   /**
    * Flag: 0, 1, 2
   */
@@ -437,7 +437,7 @@ struct player
   struct rect4f collision_bounds;
 
   /* 0x00d0 */ s32 field_D0;
-  /* 0x00d4 */ s32 *ptr_char_objectinstance;
+  /* 0x00d4 */ struct Model *ptr_char_objectinstance; //canonically bondsub
   /* 0x00d8 */ s32 bonddead;
   /* 0x00dc */ f32 bondhealth;
   /* 0x00e0 */ f32 bondarmour;
@@ -458,7 +458,7 @@ struct player
     * 0x00f4
     **/
     f32 damageshowtime;
-    
+
     /**
      * When a non-negative integer:
      * - Show health and body armor overlay if Bond isn't dead.
@@ -501,25 +501,25 @@ struct player
   /* 0x0144 */ s32 autoxaimtime60;
   /* 0x0148 */ f32 vv_theta;
   /* 0x014c */ f32 speedtheta;
-  
+
   /**
    * Computed value from vv_theta, used to calculate boost direction.
    * 0x0150
    **/
   f32 vv_costheta;
-  
+
   /**
    * Computed value from vv_theta, used to calculate boost direction.
    * 0x0154
    **/
   f32 vv_sintheta;
-  
+
   /**
    * Vertical look angle.
    * 0x0158
    **/
   f32 vv_verta;
-  
+
   /**
    * Vertical look angle. Computed value from vv_verta, should always be between 0 and 360 degrees.
    * 0x015c
@@ -527,13 +527,13 @@ struct player
   f32 vv_verta360;
 
   /* 0x0160 */ f32 speedverta;
-  
+
   /**
    * Computed value from vv_verta360, but otherwise unused?
    * 0x0164
    **/
   f32 vv_cosverta;
-  
+
   /**
    * Computed value from vv_verta360, but otherwise unused?
    * 0x0168
@@ -555,7 +555,7 @@ struct player
    * How long Bond has been running
   */
   /* 0x017c */ s32 speedmaxtime60;
-  
+
   coord3d bondshotspeed; //0x180
 
   // offset 0x18c
@@ -572,7 +572,7 @@ struct player
 
   // offset 0x19c
   f32 bondbreathing;
-  
+
   s32 field_1A0;
   s32 field_1A4;
   s32 field_1A8;
@@ -589,8 +589,8 @@ struct player
   */
   s32 watch_pause_time;
 
-  s32 field_1C4;
-  s32 watch_animation_state;
+  /* 0x01c4 */ s32 timer_1C4;
+  /* 0x01c8 */ s32 watch_animation_state;
 
   /**
    * 1 = level is active
@@ -638,7 +638,7 @@ struct player
    * Offset 0x022c.
    */
   f32 pause_watch_related_scaled;
-  
+
   s32 something_with_watch_object_instance;
 
   s32 field_234;
@@ -779,10 +779,10 @@ struct player
   * Offset 0x408.
   */
   coord3d bondprevpos; //0x408
-  
+
   f32 thetadie; //0x414
   f32 vertadie; //0x418
-  s32 bondtype; 
+  s32 bondtype;
   s32 startnewbonddie; //0x420
 
   /**
@@ -796,7 +796,7 @@ struct player
    * Offset 0x428.
    */
   s32 deathanimfinished;
-  s32 field_42c;
+  s32 field_42c; 
   s32 controldef; //0x430
 
   struct collision434 previous_collision_info;
@@ -848,11 +848,11 @@ struct player
   s32 field_5B0;
   s32 field_5B4;
   s32 field_5B8;
-  s8 field_5BC;
+  s8 animFlipFlag;
   s8 field_5BD;
   s8 field_5BE;
   s8 field_5BF;
-  
+
   f32 field_5C0;
 
   s32 field_5C4;
@@ -946,16 +946,16 @@ struct player
    * Offset 0x7f6.
    */
   s16 viewtop;
-  
+
   s32 hand_invisible[2]; /* 0x7f8*/
   ITEM_IDS hand_item[2]; /* 0x800 */
   ModelFileHeader *ptr_hand_weapon_buffer[2]; /* 0x808 */
-  
+
   /**
    * Offset 0x810.
    */
   ModelFileHeader copy_of_body_obj_header[2];
-  
+
   struct texpool item_related[2]; /* 0x850 */
 
   /**
@@ -972,7 +972,7 @@ struct player
    * Offset 0xfcc.
    */
   s32 field_FCC;
-  
+
   // Seems to be copy of field_FCC
   s32 field_FD0;
 
@@ -1010,7 +1010,7 @@ struct player
   f32 field_1080;
   f32 sniper_zoom;
   f32 camera_zoom;
-  s32 field_108C;
+  s32 curRoomIndex;
 
   /**
    * Offset 0x1090.
@@ -1118,7 +1118,7 @@ struct player
    * Used during level.
    * 0x2: no crosshair
    * 0x0: cross hair shown on screen.
-   * 
+   *
    * Offset 0x1128.
    */
   s32 gunsightmode;
@@ -1163,378 +1163,12 @@ struct player
   /**
    * Offset 0x12b4.
    */
-  u8 something_with_cheat_text;
-  u8 can_display_cheat_text;
-  u8 bondinvincible;
-  u8 field_12B7;
-  s32 healthdamagetype;
-  s32 field_12BC;
-  s32 field_12C0;
-  s32 field_12C4;
-  s32 field_12C8;
-  s32 field_12CC;
-  s32 field_12D0;
-  s32 field_12D4;
-  s32 field_12D8;
-  s32 field_12DC;
-  s32 field_12E0;
-  s32 field_12E4;
-  s32 field_12E8;
-  s32 field_12EC;
-  s32 field_12F0;
-  s32 field_12F4;
-  s32 field_12F8;
-  s32 field_12FC;
-  s32 field_1300;
-  s32 field_1304;
-  s32 field_1308;
-  s32 field_130C;
-  s32 field_1310;
-  s32 field_1314;
-  s32 field_1318;
-  s32 field_131C;
-  s32 field_1320;
-  s32 field_1324;
-  s32 field_1328;
-  s32 field_132C;
-  s32 field_1330;
-  s32 field_1334;
-  s32 field_1338;
-  s32 field_133C;
-  s32 field_1340;
-  s32 field_1344;
-  s32 field_1348;
-  s32 field_134C;
-  s32 field_1350;
-  s32 field_1354;
-  s32 field_1358;
-  s32 field_135C;
-  s32 field_1360;
-  s32 field_1364;
-  s32 field_1368;
-  s32 field_136C;
-  s32 field_1370;
-  s32 field_1374;
-  s32 field_1378;
-  s32 field_137C;
-  s32 field_1380;
-  s32 field_1384;
-  s32 field_1388;
-  s32 field_138C;
-  s32 field_1390;
-  s32 field_1394;
-  s32 field_1398;
-  s32 field_139C;
-  s32 field_13A0;
-  s32 field_13A4;
-  s32 field_13A8;
-  s32 field_13AC;
-  s32 field_13B0;
-  s32 field_13B4;
-  s32 field_13B8;
-  s32 field_13BC;
-  s32 field_13C0;
-  s32 field_13C4;
-  s32 field_13C8;
-  s32 field_13CC;
-  s32 field_13D0;
-  s32 field_13D4;
-  s32 field_13D8;
-  s32 field_13DC;
-  s32 field_13E0;
-  s32 field_13E4;
-  s32 field_13E8;
-  s32 field_13EC;
-  s32 field_13F0;
-  s32 field_13F4;
-  s32 field_13F8;
-  s32 field_13FC;
-  s32 field_1400;
-  s32 field_1404;
-  s32 field_1408;
-  s32 field_140C;
-  s32 field_1410;
-  s32 field_1414;
-  s32 field_1418;
-  s32 field_141C;
-  s32 field_1420;
-  s32 field_1424;
-  s32 field_1428;
-  s32 field_142C;
-  s32 field_1430;
-  s32 field_1434;
-  s32 field_1438;
-  s32 field_143C;
-  s32 field_1440;
-  s32 field_1444;
-  s32 field_1448;
-  s32 field_144C;
-  s32 field_1450;
-  s32 field_1454;
-  s32 field_1458;
-  s32 field_145C;
-  s32 field_1460;
-  s32 field_1464;
-  s32 field_1468;
-  s32 field_146C;
-  s32 field_1470;
-  s32 field_1474;
-  s32 field_1478;
-  s32 field_147C;
-  s32 field_1480;
-  s32 field_1484;
-  s32 field_1488;
-  s32 field_148C;
-  s32 field_1490;
-  s32 field_1494;
-  s32 field_1498;
-  s32 field_149C;
-  s32 field_14A0;
-  s32 field_14A4;
-  s32 field_14A8;
-  s32 field_14AC;
-  s32 field_14B0;
-  s32 field_14B4;
-  s32 field_14B8;
-  s32 field_14BC;
-  s32 field_14C0;
-  s32 field_14C4;
-  s32 field_14C8;
-  s32 field_14CC;
-  s32 field_14D0;
-  s32 field_14D4;
-  s32 field_14D8;
-  s32 field_14DC;
-  s32 field_14E0;
-  s32 field_14E4;
-  s32 field_14E8;
-  s32 field_14EC;
-  s32 field_14F0;
-  s32 field_14F4;
-  s32 field_14F8;
-  s32 field_14FC;
-  s32 field_1500;
-  s32 field_1504;
-  s32 field_1508;
-  s32 field_150C;
-  s32 field_1510;
-  s32 field_1514;
-  s32 field_1518;
-  s32 field_151C;
-  s32 field_1520;
-  s32 field_1524;
-  s32 field_1528;
-  s32 field_152C;
-  s32 field_1530;
-  s32 field_1534;
-  s32 field_1538;
-  s32 field_153C;
-  s32 field_1540;
-  s32 field_1544;
-  s32 field_1548;
-  s32 field_154C;
-  s32 field_1550;
-  s32 field_1554;
-  s32 field_1558;
-  s32 field_155C;
-  s32 field_1560;
-  s32 field_1564;
-  s32 field_1568;
-  s32 field_156C;
-  s32 field_1570;
-  s32 field_1574;
-  s32 field_1578;
-  s32 field_157C;
-  s32 field_1580;
-  s32 field_1584;
-  s32 field_1588;
-  s32 field_158C;
-  s32 field_1590;
-  s32 field_1594;
-  s32 related_to_health_display;
-  s32 field_159C;
-  s32 field_15A0;
-  s32 field_15A4;
-  s32 field_15A8;
-  s32 field_15AC;
-  s32 field_15B0;
-  s32 field_15B4;
-  s32 field_15B8;
-  s32 field_15BC;
-  s32 field_15C0;
-  s32 field_15C4;
-  s32 field_15C8;
-  s32 field_15CC;
-  s32 field_15D0;
-  s32 field_15D4;
-  s32 field_15D8;
-  s32 field_15DC;
-  s32 field_15E0;
-  s32 field_15E4;
-  s32 field_15E8;
-  s32 field_15EC;
-  s32 field_15F0;
-  s32 field_15F4;
-  s32 field_15F8;
-  s32 field_15FC;
-  s32 field_1600;
-  s32 field_1604;
-  s32 field_1608;
-  s32 field_160C;
-  s32 field_1610;
-  s32 field_1614;
-  s32 field_1618;
-  s32 field_161C;
-  s32 field_1620;
-  s32 field_1624;
-  s32 field_1628;
-  s32 field_162C;
-  s32 field_1630;
-  s32 field_1634;
-  s32 field_1638;
-  s32 field_163C;
-  s32 field_1640;
-  s32 field_1644;
-  s32 field_1648;
-  s32 field_164C;
-  s32 field_1650;
-  s32 field_1654;
-  s32 field_1658;
-  s32 field_165C;
-  s32 field_1660;
-  s32 field_1664;
-  s32 field_1668;
-  s32 field_166C;
-  s32 field_1670;
-  s32 field_1674;
-  s32 field_1678;
-  s32 field_167C;
-  s32 field_1680;
-  s32 field_1684;
-  s32 field_1688;
-  s32 field_168C;
-  s32 field_1690;
-  s32 field_1694;
-  s32 field_1698;
-  s32 field_169C;
-  s32 field_16A0;
-  s32 field_16A4;
-  s32 field_16A8;
-  s32 field_16AC;
-  s32 field_16B0;
-  s32 field_16B4;
-  s32 field_16B8;
-  s32 field_16BC;
-  s32 field_16C0;
-  s32 field_16C4;
-  s32 field_16C8;
-  s32 field_16CC;
-  s32 field_16D0;
-  s32 field_16D4;
-  s32 field_16D8;
-  s32 field_16DC;
-  s32 field_16E0;
-  s32 field_16E4;
-  s32 field_16E8;
-  s32 field_16EC;
-  s32 field_16F0;
-  s32 field_16F4;
-  s32 field_16F8;
-  s32 field_16FC;
-  s32 field_1700;
-  s32 field_1704;
-  s32 field_1708;
-  s32 field_170C;
-  s32 field_1710;
-  s32 field_1714;
-  s32 field_1718;
-  s32 field_171C;
-  s32 field_1720;
-  s32 field_1724;
-  s32 field_1728;
-  s32 field_172C;
-  s32 field_1730;
-  s32 field_1734;
-  s32 field_1738;
-  s32 field_173C;
-  s32 field_1740;
-  s32 field_1744;
-  s32 field_1748;
-  s32 field_174C;
-  s32 field_1750;
-  s32 field_1754;
-  s32 field_1758;
-  s32 field_175C;
-  s32 field_1760;
-  s32 field_1764;
-  s32 field_1768;
-  s32 field_176C;
-  s32 field_1770;
-  s32 field_1774;
-  s32 field_1778;
-  s32 field_177C;
-  s32 field_1780;
-  s32 field_1784;
-  s32 field_1788;
-  s32 field_178C;
-  s32 field_1790;
-  s32 field_1794;
-  s32 field_1798;
-  s32 field_179C;
-  s32 field_17A0;
-  s32 field_17A4;
-  s32 field_17A8;
-  s32 field_17AC;
-  s32 field_17B0;
-  s32 field_17B4;
-  s32 field_17B8;
-  s32 field_17BC;
-  s32 field_17C0;
-  s32 field_17C4;
-  s32 field_17C8;
-  s32 field_17CC;
-  s32 field_17D0;
-  s32 field_17D4;
-  s32 field_17D8;
-  s32 field_17DC;
-  s32 field_17E0;
-  s32 field_17E4;
-  s32 field_17E8;
-  s32 field_17EC;
-  s32 field_17F0;
-  s32 field_17F4;
-  s32 field_17F8;
-  s32 field_17FC;
-  s32 field_1800;
-  s32 field_1804;
-  s32 field_1808;
-  s32 field_180C;
-  s32 field_1810;
-  s32 field_1814;
-  s32 field_1818;
-  s32 field_181C;
-  s32 field_1820;
-  s32 field_1824;
-  s32 field_1828;
-  s32 field_182C;
-  s32 field_1830;
-  s32 field_1834;
-  s32 field_1838;
-  s32 field_183C;
-  s32 field_1840;
-  s32 field_1844;
-  s32 field_1848;
-  s32 field_184C;
-  s32 field_1850;
-  s32 field_1854;
-  s32 field_1858;
-  s32 field_185C;
-  s32 field_1860;
-  s32 field_1864;
-  s32 field_1868;
-  s32 field_186C;
-  s32 field_1870;
-  s32 field_1874;
+  /* 0x12B4 */ u8 something_with_cheat_text;
+  /* 0x12B5 */ u8 can_display_cheat_text;
+  /* 0x12B6 */ u8 bondinvincible;
+  /* 0x12B7 */ u8 field_12B7;
+  /* 0x12B8 */ struct damage_display_parent armor_display_values[23];
+  /* 0x1598 */ struct damage_display_parent health_display_values[23];
 
   /**
    * Offset 0x1878
@@ -1546,12 +1180,12 @@ struct player
    * Offset 0x19b8.
   */
   struct WatchRectangle buffer_for_watch_static_vertices[1];
-  
+
   /**
    * Offset 0x19f8
   */
   s32 watch_body_armor_bar_gdl; // used in watch
-  
+
   s32 field_19FC;
   s32 field_1A00;
   s32 field_1A04;
@@ -2481,7 +2115,7 @@ struct player
    * Offset 0x2858
   */
   Gfx buffer_for_watch_greenbackdrop_DL[WATCH_NUMBER_SCREENS];
-  
+
   s32 field_2880;
   s32 field_2884;
   s32 field_2888;
@@ -2552,7 +2186,7 @@ struct player
   s32 field_298C;
   s32 field_2990;
   s32 field_2994;
-  
+
   /**
    * Watch static, not "static DL".
    * Offset 0x2998
@@ -2598,7 +2232,7 @@ struct player
 
   /**
    * Current tile pointer -> room.
-   * 
+   *
    * Offset 0x2a04.
    */
   s16 field_2A04;
@@ -2610,10 +2244,10 @@ struct player
   s32 field_2A30;
   s32 field_2A34;
   s32 cur_item_weapon_getname;
-  f32 actual_health;
-  f32 actual_armor;
+  /* 0x2a3c */ f32 actual_health;
+  /* 0x2a40 */ f32 actual_armor;
   ITEM_IDS field_2A44[2];
-  f32 field_2A4C;
+  f32 speedgo;
   s32 lock_hand_model[2];
   s32 cur_player_control_type_0;
   s32 cur_player_control_type_1;
@@ -2710,17 +2344,17 @@ extern s32 g_bondviewForceDisarm;
 //D:80036428
 extern s32 resolution;
 //D:8003642C
-extern s32 camera_8003642C;
+extern s32 cameraBufferToggle;
 //D:80036430
-extern s32 camera_80036430;
+extern s32 cameraFrameCounter1;
 //D:80036434
-extern s32 camera_80036434;
+extern s32 cameraFrameCounter2;
 //D:80036438
 extern s32 camera_80036438;
 //D:8003643C
-extern s32 D_8003643C;
+extern s32 credits_state;
 //D:80036440
-extern CreditsEntry *D_80036440;
+extern CreditsEntry *credits_pointer;
 //D:80036444
 extern s32 g_SurroundBondWithExplosionsFlag;
 //D:80036448
@@ -2745,7 +2379,7 @@ extern f32 g_TankTurnSpeed;
 //D:80036464
 extern f32 g_TankOrientationAngle;
 //D:80036468
-extern f32 D_80036468;
+extern f32 tank_turret_unused_angle;
 //D:8003646C
 extern f32 g_TankTurretVerticalAngle;
 //D:80036470
@@ -2753,9 +2387,9 @@ extern f32 g_TankTurretVerticalAngleRelated;
 //D:80036474
 extern f32 g_TankTurretOrientationAngleRad;
 //D:80036478
-extern f32 D_80036478;
+extern f32 g_TankTurretOrientationAngleDeg;
 //D:8003647C
-extern f32 D_8003647C;
+extern f32 tank_turret_turn_speed;
 //D:80036480
 extern s32 g_BondCanEnterTank;
 //D:80036484
@@ -2771,17 +2405,17 @@ extern enum CAMERAMODE g_CameraMode;
 //D:80036498
 extern enum CAMERAMODE g_CameraAfterCinema;
 //D:8003649C
-extern s32 D_8003649C;
+extern s32 camera_fade_active;
 //D:800364A0
 extern s32 stop_time_flag;
 //D:800364A4
-extern f32 D_800364A4;
+extern f32 camera_transition_timer;
 //D:800364A8
-extern s32 D_800364A8;
+extern s32 intro_camera_index;
 //D:800364AC
 extern struct SetupIntroSwirl *g_IntroSwirl;
 //D:800364B0
-extern s32 D_800364B0;
+extern s32 is_timer_active;
 //D:800364B4
 extern s32 g_PlayerInvincible;
 //D:800364B8
@@ -2806,7 +2440,7 @@ extern s32 g_bondviewBondDeathAnimations[];
 //D:8003650C
 extern s32 g_bondviewBondDeathAnimationsCount;
 //D:80036510
-extern enum CAMERAMODE D_80036510;
+extern enum CAMERAMODE camera_mode;
 //D:80036514
 extern s32 g_IntroAnimationIndex;
 /*
@@ -2921,7 +2555,7 @@ extern s32 D_80036834;
 //D:80036838
 extern s32 D_80036838;
 //D:8003683C
-extern struct unk_joint_list D_8003683C;
+extern ModelRenderData D_8003683C;
 
 //D:8003687C
 extern s32 D_8003687C;
@@ -2999,8 +2633,8 @@ extern s32 watch_time_0;
 #endif
 
 extern f32 watch_transition_time;
-extern s32 starting_right_weapon;
-extern s32 starting_left_weapon;
+// ITEM_IDS
+extern ITEM_IDS starting_weapon[2];
 extern PadRecord *g_Startpad[];
 extern s32 startpadcount;
 extern StandTilePoint *dword_CODE_bss_80079DA0;
@@ -3010,7 +2644,7 @@ extern StandTilePoint *dword_CODE_bss_80079DA4;
 extern s32 dword_CODE_bss_80079DA8[];
 
 
-u32 get_camera_mode(void);
+u32 bondviewGetCameraMode(void);
 
 void bondviewTriggerWatchZoom(f32 zoominfovy);
 
@@ -3059,7 +2693,7 @@ s32 bond_pressed_reload_activate(void);
 Gfx* write_stan_tiles_in_yellow(Gfx *arg0);
 Gfx * maybe_mp_interface(Gfx *arg0);
 Gfx * bondviewRemoved7F08BCB8(Gfx *arg0);
-s32 sub_GAME_7F078A58(coord3d *vec_scale, f32 norm_scale);
+s32 camIsPosInScreen(coord3d *vec_scale, f32 norm_scale);
 s32 getMissiontimer(void);
 void solo_char_load(void);
 void bondviewUpdateYAutoAimTime(struct PropRecord *autoaim_target, f32 auto_aim_y);
@@ -3099,7 +2733,7 @@ void bondviewSetVisibleToGuardsFlag(s32 param_1);
 Mtxf *currentPlayerGetMatrix10EC(void);
 f32 get_curplay_horizontal_rotation_in_degrees(void);
 Mtxf *camGetWorldToScreenMtxf(void);
-void sub_GAME_7F077EEC(struct coord2d *in, coord3d *out, f32 value);
+void transformAndNormalizeByLength2Dto3D(struct coord2d *in, coord3d *out, f32 value);
 s32 camIsPosInScreenBox(coord3d *, f32, struct bbox2d *);
 
 void bondviewTransformManyPosToViewMatrix(RenderPosView *arg0, s32 arg1);
@@ -3112,7 +2746,7 @@ f32 bondviewGetBondBreathing(void);
 void     bondviewClearUpperTextDisplayFlag(int param_1);
 
 void     bondviewSetUpperTextDisplayFlag(PLAYERFLAG flag);
-void     set_camera_mode(s32 arg0);
+void     bondviewSetCameraMode(s32 arg0);
 bool     isBondInTank(void);
 void     hudmsgTopShow(char* string);
 void     SurroundWithExplosions(int delay);
@@ -3127,6 +2761,7 @@ void bondviewResetUpperTextDisplay(void);
 Mtxf *currentPlayerGetProjectionMatrixF(void);
 int redirect_get_BONDdata_autoaim_x(void);
 int redirect_get_BONDdata_autoaim_y(void);
-void sub_GAME_7F077FF4(coord3d *in, coord3d *out);
+void transform3Dto2DCoords(coord3d *in, coord2d *out);
+void maybe_solo_intro_camera_handler(void);
 
 #endif

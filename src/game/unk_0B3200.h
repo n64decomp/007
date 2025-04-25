@@ -3,8 +3,8 @@
 #include <ultra64.h>
 #include "bondtypes.h"
 
-f32 unkGeometry7F0B3200(coord2d *arg0, coord2d *arg1, coord2d *arg2, coord2d *arg3);
-f32 sub_GAME_7F0B32D8(struct coord3d *arg0, coord2d *arg1, coord2d *arg2);
-f32 unkGeometry7F0B33DC(coord3d *arg0, coord2d *arg1, coord2d *arg2,coord2d *arg3);
+f32 calculateLineIntersectionFactor(coord2d *start1, coord2d *end1, coord2d *start2, coord2d *end2);
+f32 calculatePointToLineDistance(struct coord3d *point3D, coord2d *lineStart, coord2d *lineEnd);
+f32 calculateNormalizedLineIntersection(coord3d *point3D, coord2d *lineStart, coord2d *lineEnd, coord2d *direction);
 
 #endif

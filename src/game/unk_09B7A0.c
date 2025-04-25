@@ -2,6 +2,7 @@
 #include <memp.h>
 #include "bondtypes.h"
 #include "unk_09B7A0.h"
+#include "chrobjhandler.h"
 
 // unsure if these structs are defined as something else, elsewhere
 struct unk_09B7A0_struct_child {
@@ -103,10 +104,10 @@ void sub_GAME_7F09B820(void)
     }
 
     tmp = 0x14;
-    dword_CODE_bss_8007A0E8 = mempAllocBytesInBank(dword_CODE_bss_8007A0D4 * tmp, 4U);
-    dword_CODE_bss_8007A0E0 = mempAllocBytesInBank(dword_CODE_bss_8007A0D0 * 0x10, 4U);
-    dword_CODE_bss_8007A0EC = mempAllocBytesInBank(dword_CODE_bss_8007A0DC * tmp, 4U);
-    dword_CODE_bss_8007A0E4 = mempAllocBytesInBank(dword_CODE_bss_8007A0D8 * 0x10, 4U);
+    dword_CODE_bss_8007A0E8 = mempAllocBytesInBank(dword_CODE_bss_8007A0D4 * tmp, MEMPOOL_STAGE);
+    dword_CODE_bss_8007A0E0 = mempAllocBytesInBank(dword_CODE_bss_8007A0D0 * 0x10, MEMPOOL_STAGE);
+    dword_CODE_bss_8007A0EC = mempAllocBytesInBank(dword_CODE_bss_8007A0DC * tmp, MEMPOOL_STAGE);
+    dword_CODE_bss_8007A0E4 = mempAllocBytesInBank(dword_CODE_bss_8007A0D8 * 0x10, MEMPOOL_STAGE);
 
     word_CODE_bss_8007A0F0 = (s16) dword_CODE_bss_8007A0D0;
     dword_CODE_bss_8007A0E8->unk00 = (struct unk_09B7A0_struct_child *) dword_CODE_bss_8007A0E0;

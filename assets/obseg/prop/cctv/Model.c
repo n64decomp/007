@@ -10,38 +10,82 @@
 #define VERTEXGROUPCOUNT2 24
 #define COLLISIONVERTEXCOUNT2 12
 
-ModelNode* ModelNode1 = ModelNodeGroup_1;
-ModelNode* ModelNode2 = ModelNodeDL_Lens;
-ModelNode* ModelNode3 = ModelNodeBB_Lens;
-ModelNode* ModelNode4 = ModelNodeSwitch_0;
+
+extern ModelNode ModelNode1;
+extern ModelNode ModelNode2;
+extern ModelNode ModelNode3;
+extern ModelNode ModelNode4;
+
+extern ModelFileTextures proptextures[TEXTURECOUNT];
+
+extern ModelNode ModelNodeGroup_0;
+extern ModelNode ModelNodeBB_0;
+extern ModelNode ModelNodeDL_Mount;
+extern ModelNode ModelNodeGroup_1;
+extern ModelNode ModelNodeSwitch_0;
+extern ModelNode ModelNodeBB_Lens;
+extern ModelNode ModelNodeDL_Lens;
+extern ModelNode ModelNodeDL_Housing;
+
+
+extern ModelRoData_GroupRecord GroupRecord_0x118;
+extern ModelRoData_GroupRecord GroupRecord_0x118;
+extern ModelRoData_BoundingBoxRecord BBoxRecord_0x134;
+extern Vertex Vertex_ARRAY_0x150[VERTEXGROUPCOUNT0];
+extern Vertex Collision_Vertex_ARRAY_0x250[COLLISIONVERTEXCOUNT0];
+extern s16 POINT_USAGE_ARRAY_0x320[VERTEXGROUPCOUNT0];
+extern ModelRoData_DisplayList_CollisionRecord DL_Mount;
+extern ModelRoData_GroupRecord GroupRecord_0x360;
+extern ModelRoData_SwitchRecord Switch_0x37c;
+extern ModelRoData_BoundingBoxRecord BBox_Lens;
+extern Vertex Vertex_ARRAY_0x3a0[VERTEXGROUPCOUNT1];
+extern Vertex Collision_Vertex_ARRAY_0x3e0[COLLISIONVERTEXCOUNT1];
+extern s16 POINT_USAGE_ARRAY_0x420[VERTEXGROUPCOUNT1];
+extern ModelRoData_DisplayList_CollisionRecord DL_Lens;
+extern Vertex Vertex_ARRAY_0x448[VERTEXGROUPCOUNT2];
+extern Vertex Collision_Vertex_ARRAY_0x5c8[COLLISIONVERTEXCOUNT2];
+extern s16 POINT_USAGE_ARRAY_0x688[VERTEXGROUPCOUNT2];
+extern ModelRoData_DisplayList_CollisionRecord DL_Housing;
+extern Gfx GFX_ARRAY_PRIMARY_0x6d8[];
+extern Gfx GFX_ARRAY_SECONDARY_0x738[];
+extern Gfx GFX_ARRAY_PRIMARY_0x790[];
+extern Gfx GFX_ARRAY_SECONDARY_0x7a8[];
+extern Gfx GFX_ARRAY_PRIMARY_0x810[];
+
+
+ModelNode* ModelNode1 = &ModelNodeGroup_1;
+ModelNode* ModelNode2 = &ModelNodeDL_Lens;
+ModelNode* ModelNode3 = &ModelNodeBB_Lens;
+ModelNode* ModelNode4 = &ModelNodeSwitch_0;
 
 ModelFileTextures proptextures[TEXTURECOUNT] = 
 {
-    {_image247_ID, 0x20, 0x40, 0x07, 0x00, 0x01, 0x00, 0x0000},
-    {_image265_ID, 0x40, 0x20, 0x07, 0x00, 0x01, 0x00, 0x0000},
-    {_image511_ID, 0x80, 0x20, 0x07, 0x00, 0x00, 0x00, 0x0000},
-    {_image856_ID, 0x40, 0x40, 0x07, 0x00, 0x00, 0x00, 0x0000},
+    {IMAGE_247, 0x20, 0x40, 0x07, 0x00, 0x01, 0x00, 0x0000},
+    {IMAGE_265, 0x40, 0x20, 0x07, 0x00, 0x01, 0x00, 0x0000},
+    {IMAGE_511, 0x80, 0x20, 0x07, 0x00, 0x00, 0x00, 0x0000},
+    {IMAGE_856, 0x40, 0x40, 0x07, 0x00, 0x00, 0x00, 0x0000},
     {IMAGE_GLASS3, 0x36, 0x36, 0x03, 0x00, 0x01, 0x02, 0x0200},
-    {_image1514_ID, 0x01, 0x01, 0x01, 0x00, 0x02, 0x00, 0x0000},
+    {IMAGE_1514, 0x01, 0x01, 0x01, 0x00, 0x02, 0x00, 0x0000},
 };
-                            //  {                       opcode,              data,            parent,                 next,               prev,             child}
-ModelNode ModelNodeGroup_0    = {       MODELNODE_OPCODE_GROUP, GroupRecord_0x118,               0x0,                  0x0,                0x0,     ModelNodeBB_0};
-ModelNode ModelNodeBB_0       = {        MODELNODE_OPCODE_BBOX,  BBoxRecord_0x134,  ModelNodeGroup_0,                  0x0,                0x0, ModelNodeDL_Mount};
-ModelNode ModelNodeDL_Mount   = { MODELNODE_OPCODE_DLCOLLISION,          DL_Mount,     ModelNodeBB_0,     ModelNodeGroup_1,                0x0,               0x0};
-ModelNode ModelNodeGroup_1    = {       MODELNODE_OPCODE_GROUP, GroupRecord_0x360,     ModelNodeBB_0,                  0x0,  ModelNodeDL_Mount, ModelNodeSwitch_0};
-ModelNode ModelNodeSwitch_0   = {      MODELNODE_OPCODE_SWITCH,      Switch_0x37c,  ModelNodeGroup_1,  ModelNodeDL_Housing,                0x0,  ModelNodeBB_Lens};
-ModelNode ModelNodeBB_Lens    = {        MODELNODE_OPCODE_BBOX,         BBox_Lens, ModelNodeSwitch_0,                  0x0,                0x0,  ModelNodeDL_Lens};
-ModelNode ModelNodeDL_Lens    = { MODELNODE_OPCODE_DLCOLLISION,           DL_Lens,  ModelNodeBB_Lens,                  0x0,                0x0,               0x0};
-ModelNode ModelNodeDL_Housing = { MODELNODE_OPCODE_DLCOLLISION,        DL_Housing,  ModelNodeGroup_1,                  0x0,  ModelNodeSwitch_0,               0x0};
+
+                            //  {                       opcode,               data,             parent,                  next,                prev,              child}
+ModelNode ModelNodeGroup_0    = {       MODELNODE_OPCODE_GROUP, &GroupRecord_0x118,               NULL,                  NULL,                NULL,     &ModelNodeBB_0};
+ModelNode ModelNodeBB_0       = {        MODELNODE_OPCODE_BBOX,  &BBoxRecord_0x134,  &ModelNodeGroup_0,                  NULL,                NULL, &ModelNodeDL_Mount};
+ModelNode ModelNodeDL_Mount   = { MODELNODE_OPCODE_DLCOLLISION,          &DL_Mount,     &ModelNodeBB_0,     &ModelNodeGroup_1,                NULL,               NULL};
+ModelNode ModelNodeGroup_1    = {       MODELNODE_OPCODE_GROUP, &GroupRecord_0x360,     &ModelNodeBB_0,                  NULL,  &ModelNodeDL_Mount, &ModelNodeSwitch_0};
+ModelNode ModelNodeSwitch_0   = {      MODELNODE_OPCODE_SWITCH,      &Switch_0x37c,  &ModelNodeGroup_1,  &ModelNodeDL_Housing,                NULL,  &ModelNodeBB_Lens};
+ModelNode ModelNodeBB_Lens    = {        MODELNODE_OPCODE_BBOX,         &BBox_Lens, &ModelNodeSwitch_0,                  NULL,                NULL,  &ModelNodeDL_Lens};
+ModelNode ModelNodeDL_Lens    = { MODELNODE_OPCODE_DLCOLLISION,           &DL_Lens,  &ModelNodeBB_Lens,                  NULL,                NULL,               NULL};
+ModelNode ModelNodeDL_Housing = { MODELNODE_OPCODE_DLCOLLISION,        &DL_Housing,  &ModelNodeGroup_1,                  NULL,  &ModelNodeSwitch_0,               NULL};
 
 ModelRoData_GroupRecord GroupRecord_0x118 =
 {
     {0.005449, -773.8468, -200.64182},
     0x0,
     0x0,
-    0xFFFF,
-    0xFFFF,
-    ModelNodeGroup_1,
+     -1,
+     -1,
+    &ModelNodeGroup_1,
     291.0673
 };
 
@@ -88,12 +132,12 @@ Vertex Collision_Vertex_ARRAY_0x250[COLLISIONVERTEXCOUNT0] =
     {{    -25,     77,     35}, 0x000f, 0x0000, 0x0000, {0xff, 0xff, 0x00, 0x00} }
 };
 
-s16 POINT_USAGE_ARRAY_0x320[] =
+s16 POINT_USAGE_ARRAY_0x320[VERTEXGROUPCOUNT0] =
 {
-       0x6,    0x3,    0x5, 0xFFFF,
-    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
-    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
-    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
+       0x6,    0x3,    0x5,     -1,
+        -1,     -1,     -1,     -1,
+        -1,     -1,     -1,     -1,
+        -1,     -1,     -1,     -1
 };
 
 ModelRoData_DisplayList_CollisionRecord DL_Mount = 
@@ -103,9 +147,10 @@ ModelRoData_DisplayList_CollisionRecord DL_Mount =
     Vertex_ARRAY_0x150,
     VERTEXGROUPCOUNT0,
     COLLISIONVERTEXCOUNT0,
-    Collision_Vertex_ARRAY,
+    Collision_Vertex_ARRAY_0x250,
     POINT_USAGE_ARRAY_0x320,
-    4,    0,    0,    0
+    4,    0,
+    0x0
 };
 
 
@@ -114,15 +159,15 @@ ModelRoData_GroupRecord GroupRecord_0x360 =
     {0.0, 70.36643, 31.983679},
     1,
     1,
-    0xFFFF,
-    0xFFFF,
+    -1,
+    -1,
     NULL,
     481.60675
 };
 
 ModelRoData_SwitchRecord Switch_0x37c = 
 {
-    ModelNodeBB_Lens,
+    &ModelNodeBB_Lens,
     0
 };
 
@@ -150,7 +195,7 @@ Vertex Collision_Vertex_ARRAY_0x3e0[COLLISIONVERTEXCOUNT1] =
 
 s16 POINT_USAGE_ARRAY_0x420[VERTEXGROUPCOUNT1] = 
 {
-    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
+        -1,     -1,     -1,     -1
 };
 
 ModelRoData_DisplayList_CollisionRecord DL_Lens =
@@ -160,9 +205,10 @@ ModelRoData_DisplayList_CollisionRecord DL_Lens =
     Vertex_ARRAY_0x3a0,
     VERTEXGROUPCOUNT1,
     COLLISIONVERTEXCOUNT1,
-    Collision_Vertex_ARRAY,
+    Collision_Vertex_ARRAY_0x3e0,
     POINT_USAGE_ARRAY_0x420,
-    4,    0,    0,    0
+    4,    0,
+    0x0
 };
 
 Vertex Vertex_ARRAY_0x448[VERTEXGROUPCOUNT2] =
@@ -211,11 +257,11 @@ Vertex Collision_Vertex_ARRAY_0x5c8[COLLISIONVERTEXCOUNT2] =
 s16 POINT_USAGE_ARRAY_0x688[VERTEXGROUPCOUNT2] = 
 {
        0x9,     0xE,     0xD,     0xA,
-    0xFFFF,  0xFFFF,  0xFFFF,  0xFFFF,
+        -1,      -1,      -1,      -1,
       0x11,    0x10,    0x17,    0x14,
       0x15,    0x16,    0x13,    0x12,
-    0xFFFF,  0xFFFF,  0xFFFF,  0xFFFF,
-    0xFFFF,  0xFFFF,  0xFFFF,  0xFFFF
+        -1,      -1,      -1,      -1,
+        -1,      -1,      -1,      -1,
 };
 
 ModelRoData_DisplayList_CollisionRecord DL_Housing =
@@ -225,9 +271,10 @@ ModelRoData_DisplayList_CollisionRecord DL_Housing =
     Vertex_ARRAY_0x448,
     VERTEXGROUPCOUNT2,
     COLLISIONVERTEXCOUNT2,
-    Collision_Vertex_ARRAY,
+    Collision_Vertex_ARRAY_0x5c8,
     POINT_USAGE_ARRAY_0x688,
-    4,    0,    0,    0
+    4,    0,
+    0x0
 };
 
 Gfx GFX_ARRAY_PRIMARY_0x6d8[] =
@@ -235,13 +282,13 @@ Gfx GFX_ARRAY_PRIMARY_0x6d8[] =
     gsDPPipeSync(),
     gsDPSetTextureLOD(G_TL_LOD),
     gsSPTexture(0xFFFF, 0xFFFF, 6, G_TX_RENDERTILE, G_ON),
-    gsDPNoOpTag(0x000000F7),
+    gsDPNoOpTag(IMAGE_247),
     gsDPSetTextureDetail(G_TD_CLAMP),
     gsDPSetTextureFilter(G_TF_BILERP),
     gsSPMatrix(0x03000000, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW),
     gsSPVertex(0x04000000, 8, 0),
     gsSP1Triangle(0, 1, 2, 0),
-    gsDPNoOpTag(0x000001FF),
+    gsDPNoOpTag(IMAGE_511),
     0xB1000035, 0x00007643,
     gsSPEndDisplayList(),
 };
@@ -251,13 +298,13 @@ Gfx GFX_ARRAY_SECONDARY_0x738[] =
     gsDPPipeSync(),
     gsDPSetTextureLOD(G_TL_LOD),
     gsSPTexture(0xFFFF, 0xFFFF, 6, G_TX_RENDERTILE, G_ON),
-    gsDPNoOpTag(0x00000109),
+    gsDPNoOpTag(IMAGE_265),
     gsDPSetTextureDetail(G_TD_CLAMP),
     gsDPSetTextureFilter(G_TF_BILERP),
     gsSPClearGeometryMode(G_CULL_BOTH),
     gsSPMatrix(0x03000000, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW),
     gsSPVertex(0x04000080, 8, 0),
-    0xB1007632, 0x64542010,
+    gsSP2Triangles(0, 59, 25, 0, 42, 16, 8, 0),
     gsSPEndDisplayList(),
 };
 
@@ -273,14 +320,14 @@ Gfx GFX_ARRAY_SECONDARY_0x7a8[] =
     gsDPPipeSync(),
     gsDPSetTextureLOD(G_TL_LOD),
     gsSPTexture(3456, 3456, 2, G_TX_RENDERTILE, G_ON),
-    gsDPNoOpTag(0x0000028E),
+    gsDPNoOpTag(IMAGE_GLASS3),
     gsDPSetTextureDetail(G_TD_CLAMP),
     gsDPSetTextureFilter(G_TF_BILERP),
     gsSPSetGeometryMode(G_LIGHTING | G_TEXTURE_GEN),
     gsSPClearGeometryMode(G_CULL_BOTH),
     gsSPMatrix(0x03000040, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW),
     gsSPVertex(0x04000000, 4, 0),
-    0xB1000032, 0x00002010,
+    gsSP2Triangles(0, 0, 25, 0, 0, 16, 8, 0),
     gsSPClearGeometryMode(G_LIGHTING | G_TEXTURE_GEN),
     gsSPEndDisplayList(),
 };
@@ -291,22 +338,22 @@ Gfx GFX_ARRAY_PRIMARY_0x810[] =
     gsDPPipeSync(),
     gsDPSetTextureLOD(G_TL_LOD),
     gsSPTexture(0xFFFF, 0xFFFF, 6, G_TX_RENDERTILE, G_ON),
-    gsDPNoOpTag(0x000001FF),
+    gsDPNoOpTag(IMAGE_511),
     gsDPSetTextureDetail(G_TD_CLAMP),
     gsDPSetTextureFilter(G_TF_BILERP),
     gsSPMatrix(0x03000040, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW),
     gsSPVertex(0x04000000, 16, 0),
-    0xB1000032, 0x00002010,
-    gsDPNoOpTag(0x00000358),
-    0xB1000076, 0x00006454,
-    gsDPNoOpTag(0x000000F7),
+    gsSP2Triangles(0, 0, 25, 0, 0, 16, 8, 0),
+    gsDPNoOpTag(IMAGE_856),
+    gsSP2Triangles(0, 0, 59, 0, 0, 50, 42, 0),
+    gsDPNoOpTag(IMAGE_247),
     gsSPClearGeometryMode(G_CULL_BOTH),
-    0xB100FEBA, 0xECDCA898,
-    gsDPNoOpTag(0x000001FF),
+    gsSP2Triangles(0, 127, 93, 0, 110, 84, 76, 0),
+    gsDPNoOpTag(IMAGE_511),
     gsSPVertex(0x04000100, 8, 0),
-    0xB1000032, 0x00002010,
+    gsSP2Triangles(0, 0, 25, 0, 0, 16, 8, 0),
     gsSPTexture(0xFFFF, 0xFFFF, 1, G_TX_RENDERTILE, G_ON),
-    gsDPNoOpTag(0x000005EA),
-    0xB1000076, 0x00006454,
+    gsDPNoOpTag(IMAGE_1514),
+    gsSP2Triangles(0, 0, 59, 0, 0, 50, 42, 0),
     gsSPEndDisplayList(),
 };

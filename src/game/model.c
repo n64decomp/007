@@ -17,7 +17,7 @@
 
 void sub_GAME_7F06D490(struct Model *arg0, struct ModelNode *arg1);
 void sub_GAME_7F0755B0(void);
-s32 sub_GAME_7F0754BC(struct ModelAnimation *, s32, struct ModelSkeleton*);
+s32 loadAnimationFrame(struct ModelAnimation *, s32, struct ModelSkeleton*);
 
 // end forward declarations
 
@@ -28,22 +28,24 @@ s32 sub_GAME_7F0754BC(struct ModelAnimation *, s32, struct ModelSkeleton*);
 //newfile per EU
 bool modelmgrCanSlotFitRwdata(Model *modelslot, ModelFileHeader *modeldef)
 {
-	return modeldef->numRecords <= 0
-		|| (modelslot->datas != NULL && modelslot->Type >= modeldef->numRecords);
+    return modeldef->numRecords <= 0
+        || (modelslot->datas != NULL && modelslot->Type >= modeldef->numRecords);
 }
 
 
 #ifdef NONMATCHING
 struct PropRecord * get_obj_instance_controller_for_header(struct ModelFileHeader* arg0)
 {
-
+    #ifdef DEBUG
+    if (arg0 + 5 > 19) osSyncPrintf("WARNING: increase OISAVESIZE to %d!\n", *(arg0 + 5));
+    #endif
 }
 #else
 GLOBAL_ASM(
 .text
 glabel get_obj_instance_controller_for_header
 /* 0A0BC4 7F06C094 27BDFFB8 */  addiu $sp, $sp, -0x48
-/* 0A0BC8 7F06C098 3C0F8003 */  lui   $t7, %hi(D_80036078) 
+/* 0A0BC8 7F06C098 3C0F8003 */  lui   $t7, %hi(D_80036078)
 /* 0A0BCC 7F06C09C 8DEF6078 */  lw    $t7, %lo(D_80036078)($t7)
 /* 0A0BD0 7F06C0A0 AFB60030 */  sw    $s6, 0x30($sp)
 /* 0A0BD4 7F06C0A4 AFB5002C */  sw    $s5, 0x2c($sp)
@@ -167,13 +169,15 @@ void clear_model_obj(Model* model)
 
 #ifdef NONMATCHING
 void get_aircraft_obj_instance_controller(void) {
-
+    #ifdef DEBUG
+    if (arg0 + 0x14 > 140) osSyncPrintf("WARNING: increase OISAVESIZE to %d!\n", *(arg0 + 0x14));
+    #endif
 }
 #else
 GLOBAL_ASM(
 .text
 glabel get_aircraft_obj_instance_controller
-/* 0A0D6C 7F06C23C 3C0E8003 */  lui   $t6, %hi(D_80036078) 
+/* 0A0D6C 7F06C23C 3C0E8003 */  lui   $t6, %hi(D_80036078)
 /* 0A0D70 7F06C240 8DCE6078 */  lw    $t6, %lo(D_80036078)($t6)
 /* 0A0D74 7F06C244 27BDFFD0 */  addiu $sp, $sp, -0x30
 /* 0A0D78 7F06C248 AFB00018 */  sw    $s0, 0x18($sp)
@@ -189,7 +193,7 @@ glabel get_aircraft_obj_instance_controller
 /* 0A0DA0 7F06C270 3C078008 */  lui   $a3, %hi(ptr_allocation_0)
 /* 0A0DA4 7F06C274 24A5FFF6 */  addiu $a1, $a1, -0xa
 /* 0A0DA8 7F06C278 18A0000D */  blez  $a1, .L7F06C2B0
-/* 0A0DAC 7F06C27C 00000000 */   nop   
+/* 0A0DAC 7F06C27C 00000000 */   nop
 /* 0A0DB0 7F06C280 8CE79930 */  lw    $a3, %lo(ptr_allocation_0)($a3)
 /* 0A0DB4 7F06C284 00002025 */  move  $a0, $zero
 /* 0A0DB8 7F06C288 00E01825 */  move  $v1, $a3
@@ -288,6 +292,10 @@ glabel get_aircraft_obj_instance_controller
 void modelAttachHead(Model *model, ModelNode *node,  ModelFileHeader *head)
 {
     modelAttachPart(model,model->obj,node,head);
+#ifdef DEBUG
+    if (model + 0x14 > 140 && g_ModelDistanceScale == 0) osSyncPrintf("WARNING: increase OASAVESIZE to %d!\n", *(model + 0x14));
+#endif
+
     modelInitRwData(model,head->RootNode);
 }
 
@@ -337,7 +345,7 @@ glabel sub_GAME_7F06C418
 /* 0A0F80 7F06C450 1444FFF5 */  bne   $v0, $a0, .L7F06C428
 /* 0A0F84 7F06C454 AC79FFFC */   sw    $t9, -4($v1)
 /* 0A0F88 7F06C458 03E00008 */  jr    $ra
-/* 0A0F8C 7F06C45C 00000000 */   nop   
+/* 0A0F8C 7F06C45C 00000000 */   nop
 )
 #endif
 
@@ -556,7 +564,7 @@ union ModelRwData* modelGetNodeRwData(Model *Objinst, ModelNode *root)
         root = root->Parent;
         if ((root->Opcode & 0xFF) == MODELNODE_OPCODE_HEAD)
         {
-			ModelRwData_HeadPlaceholderRecord *tmp = modelGetNodeRwData(Objinst, root);
+            ModelRwData_HeadPlaceholderRecord *tmp = modelGetNodeRwData(Objinst, root);
             data = tmp->RwDatas;
             break;
         }
@@ -739,7 +747,7 @@ void setsuboffset(Model *objinst, coord3d *offset) //#MATCH
 f32 getsubroty(Model *objinst)
 {
     ModelNode *root;
-    
+
     #if defined(LEFTOVERDEBUG)
     if(0)
     {
@@ -839,9 +847,9 @@ void modelSetScale(Model *objinst, f32 scale)
 }
 
 
-void sub_GAME_7F06CE84(Model* arg0, f32 arg1)
+void sub_GAME_7F06CE84(Model* self, f32 arg1)
 {
-    arg0->unkb8 = arg1;
+    self->unkb8 = arg1;
 }
 
 
@@ -937,14 +945,14 @@ f32 getinstsize(Model *arg0)
         osSyncPrintf("getinstsize: no objinst!\n");
         return_null();
     }
-    
+
     if (arg0->obj == NULL)
     {
         osSyncPrintf("getinstsize: no objdesc!\n");
         return_null();
     }
     #endif
-    
+
     return arg0->obj->BoundingVolumeRadius * arg0->scale;
 }
 
@@ -1201,24 +1209,24 @@ glabel sub_GAME_7F06D3F4
 /* 0A1F44 7F06D414 8FA30044 */  lw    $v1, 0x44($sp)
 /* 0A1F48 7F06D418 3C014F80 */  li    $at, 0x4F800000 # 4294967296.000000
 /* 0A1F4C 7F06D41C 44982000 */  mtc1  $t8, $f4
-/* 0A1F50 7F06D420 00000000 */  nop   
+/* 0A1F50 7F06D420 00000000 */  nop
 /* 0A1F54 7F06D424 468021A0 */  cvt.s.w $f6, $f4
 /* 0A1F58 7F06D428 44822000 */  mtc1  $v0, $f4
 /* 0A1F5C 7F06D42C E4660000 */  swc1  $f6, ($v1)
 /* 0A1F60 7F06D430 87B9002A */  lh    $t9, 0x2a($sp)
 /* 0A1F64 7F06D434 468021A0 */  cvt.s.w $f6, $f4
 /* 0A1F68 7F06D438 44994000 */  mtc1  $t9, $f8
-/* 0A1F6C 7F06D43C 00000000 */  nop   
+/* 0A1F6C 7F06D43C 00000000 */  nop
 /* 0A1F70 7F06D440 468042A0 */  cvt.s.w $f10, $f8
 /* 0A1F74 7F06D444 E46A0004 */  swc1  $f10, 4($v1)
 /* 0A1F78 7F06D448 87A8002C */  lh    $t0, 0x2c($sp)
 /* 0A1F7C 7F06D44C 44888000 */  mtc1  $t0, $f16
-/* 0A1F80 7F06D450 00000000 */  nop   
+/* 0A1F80 7F06D450 00000000 */  nop
 /* 0A1F84 7F06D454 468084A0 */  cvt.s.w $f18, $f16
 /* 0A1F88 7F06D458 04410004 */  bgez  $v0, .L7F06D46C
 /* 0A1F8C 7F06D45C E4720008 */   swc1  $f18, 8($v1)
 /* 0A1F90 7F06D460 44814000 */  mtc1  $at, $f8
-/* 0A1F94 7F06D464 00000000 */  nop   
+/* 0A1F94 7F06D464 00000000 */  nop
 /* 0A1F98 7F06D468 46083180 */  add.s $f6, $f6, $f8
 .L7F06D46C:
 /* 0A1F9C 7F06D46C 3C018005 */  lui   $at, %hi(D_80054BC0)
@@ -1266,7 +1274,7 @@ glabel sub_GAME_7F06D490
 /* 0A2008 7F06D4D8 E44A0014 */  swc1  $f10, 0x14($v0)
 /* 0A200C 7F06D4DC C620002C */  lwc1  $f0, 0x2c($s1)
 /* 0A2010 7F06D4E0 46007032 */  c.eq.s $f14, $f0
-/* 0A2014 7F06D4E4 00000000 */  nop   
+/* 0A2014 7F06D4E4 00000000 */  nop
 /* 0A2018 7F06D4E8 4503000F */  bc1tl .L7F06D528
 /* 0A201C 7F06D4EC 8E380054 */   lw    $t8, 0x54($s1)
 /* 0A2020 7F06D4F0 804F0001 */  lb    $t7, 1($v0)
@@ -1290,7 +1298,7 @@ glabel sub_GAME_7F06D490
 /* 0A2064 7F06D534 27A6002C */   addiu $a2, $sp, 0x2c
 /* 0A2068 7F06D538 C6300084 */  lwc1  $f16, 0x84($s1)
 /* 0A206C 7F06D53C 46107032 */  c.eq.s $f14, $f16
-/* 0A2070 7F06D540 00000000 */  nop   
+/* 0A2070 7F06D540 00000000 */  nop
 /* 0A2074 7F06D544 45030015 */  bc1tl .L7F06D59C
 /* 0A2078 7F06D548 C7A40038 */   lwc1  $f4, 0x38($sp)
 .L7F06D54C:
@@ -1302,7 +1310,7 @@ glabel sub_GAME_7F06D490
 /* 0A2090 7F06D560 C6000050 */  lwc1  $f0, 0x50($s0)
 /* 0A2094 7F06D564 C62C0084 */  lwc1  $f12, 0x84($s1)
 /* 0A2098 7F06D568 46027032 */  c.eq.s $f14, $f2
-/* 0A209C 7F06D56C 00000000 */  nop   
+/* 0A209C 7F06D56C 00000000 */  nop
 /* 0A20A0 7F06D570 45030006 */  bc1tl .L7F06D58C
 /* 0A20A4 7F06D574 46080281 */   sub.s $f10, $f0, $f8
 /* 0A20A8 7F06D578 C6120044 */  lwc1  $f18, 0x44($s0)
@@ -1450,7 +1458,7 @@ void process_01_group_heading(ModelRenderData* renderdata, Model* model, ModelNo
     }
     else
     {
-        var_a3 = renderdata->unk00;
+        var_a3 = renderdata->unk_matrix;
     }
 
     if (rwdata->Header.unk18 != 0.0f)
@@ -1620,15 +1628,15 @@ glabel sub_GAME_7F06D8B0
 /* 0A2590 7F06DA60 3C018005 */  lui   $at, %hi(D_80054BC8)
 /* 0A2594 7F06DA64 8FA50028 */  lw    $a1, 0x28($sp)
 /* 0A2598 7F06DA68 4604603C */  c.lt.s $f12, $f4
-/* 0A259C 7F06DA6C 00000000 */  nop   
+/* 0A259C 7F06DA6C 00000000 */  nop
 /* 0A25A0 7F06DA70 45000007 */  bc1f  .L7F06DA90
-/* 0A25A4 7F06DA74 00000000 */   nop   
+/* 0A25A4 7F06DA74 00000000 */   nop
 /* 0A25A8 7F06DA78 3C013F00 */  li    $at, 0x3F000000 # 0.500000
 /* 0A25AC 7F06DA7C 44813000 */  mtc1  $at, $f6
-/* 0A25B0 7F06DA80 00000000 */  nop   
+/* 0A25B0 7F06DA80 00000000 */  nop
 /* 0A25B4 7F06DA84 46066302 */  mul.s $f12, $f12, $f6
 /* 0A25B8 7F06DA88 10000009 */  b     .L7F06DAB0
-/* 0A25BC 7F06DA8C 00000000 */   nop   
+/* 0A25BC 7F06DA8C 00000000 */   nop
 .L7F06DA90:
 /* 0A25C0 7F06DA90 C4284BC8 */  lwc1  $f8, %lo(D_80054BC8)($at)
 /* 0A25C4 7F06DA94 3C013F00 */  li    $at, 0x3F000000 # 0.500000
@@ -1646,9 +1654,9 @@ glabel sub_GAME_7F06D8B0
 /* 0A25F0 7F06DAC0 C4264BD0 */  lwc1  $f6, %lo(D_80054BD0)($at)
 /* 0A25F4 7F06DAC4 3C018005 */  lui   $at, %hi(D_80054BD4)
 /* 0A25F8 7F06DAC8 460C303E */  c.le.s $f6, $f12
-/* 0A25FC 7F06DACC 00000000 */  nop   
+/* 0A25FC 7F06DACC 00000000 */  nop
 /* 0A2600 7F06DAD0 45000003 */  bc1f  .L7F06DAE0
-/* 0A2604 7F06DAD4 00000000 */   nop   
+/* 0A2604 7F06DAD4 00000000 */   nop
 /* 0A2608 7F06DAD8 C4284BD4 */  lwc1  $f8, %lo(D_80054BD4)($at)
 /* 0A260C 7F06DADC 460C4301 */  sub.s $f12, $f8, $f12
 .L7F06DAE0:
@@ -1656,16 +1664,16 @@ glabel sub_GAME_7F06D8B0
 /* 0A2614 7F06DAE4 C42A4BD8 */  lwc1  $f10, %lo(D_80054BD8)($at)
 /* 0A2618 7F06DAE8 3C013FC0 */  li    $at, 0x3FC00000 # 1.500000
 /* 0A261C 7F06DAEC 460A603C */  c.lt.s $f12, $f10
-/* 0A2620 7F06DAF0 00000000 */  nop   
+/* 0A2620 7F06DAF0 00000000 */  nop
 /* 0A2624 7F06DAF4 45020006 */  bc1fl .L7F06DB10
 /* 0A2628 7F06DAF8 44816000 */   mtc1  $at, $f12
 /* 0A262C 7F06DAFC 0FC16A78 */  jal   sub_GAME_7F05A9E0
-/* 0A2630 7F06DB00 00000000 */   nop   
+/* 0A2630 7F06DB00 00000000 */   nop
 /* 0A2634 7F06DB04 10000003 */  b     .L7F06DB14
 /* 0A2638 7F06DB08 46000306 */   mov.s $f12, $f0
 /* 0A263C 7F06DB0C 44816000 */  mtc1  $at, $f12
 .L7F06DB10:
-/* 0A2640 7F06DB10 00000000 */  nop   
+/* 0A2640 7F06DB10 00000000 */  nop
 .L7F06DB14:
 /* 0A2644 7F06DB14 0FC16293 */  jal   matrix_column_3_scalar_multiply_2
 /* 0A2648 7F06DB18 8FA50028 */   lw    $a1, 0x28($sp)
@@ -1686,7 +1694,7 @@ glabel sub_GAME_7F06D8B0
 .L7F06DB50:
 /* 0A2680 7F06DB50 27BD00B8 */  addiu $sp, $sp, 0xb8
 /* 0A2684 7F06DB54 03E00008 */  jr    $ra
-/* 0A2688 7F06DB58 00000000 */   nop   
+/* 0A2688 7F06DB58 00000000 */   nop
 )
 #endif
 
@@ -1833,15 +1841,15 @@ glabel sub_GAME_7F06DB5C
 /* 0A2838 7F06DD08 3C018005 */  lui   $at, %hi(D_80054BE0)
 /* 0A283C 7F06DD0C 8FA50028 */  lw    $a1, 0x28($sp)
 /* 0A2840 7F06DD10 4604103C */  c.lt.s $f2, $f4
-/* 0A2844 7F06DD14 00000000 */  nop   
+/* 0A2844 7F06DD14 00000000 */  nop
 /* 0A2848 7F06DD18 45000007 */  bc1f  .L7F06DD38
-/* 0A284C 7F06DD1C 00000000 */   nop   
+/* 0A284C 7F06DD1C 00000000 */   nop
 /* 0A2850 7F06DD20 3C013F00 */  li    $at, 0x3F000000 # 0.500000
 /* 0A2854 7F06DD24 44813000 */  mtc1  $at, $f6
-/* 0A2858 7F06DD28 00000000 */  nop   
+/* 0A2858 7F06DD28 00000000 */  nop
 /* 0A285C 7F06DD2C 46061302 */  mul.s $f12, $f2, $f6
 /* 0A2860 7F06DD30 10000009 */  b     .L7F06DD58
-/* 0A2864 7F06DD34 00000000 */   nop   
+/* 0A2864 7F06DD34 00000000 */   nop
 .L7F06DD38:
 /* 0A2868 7F06DD38 C4284BE0 */  lwc1  $f8, %lo(D_80054BE0)($at)
 /* 0A286C 7F06DD3C 3C013F00 */  li    $at, 0x3F000000 # 0.500000
@@ -1859,9 +1867,9 @@ glabel sub_GAME_7F06DB5C
 /* 0A2898 7F06DD68 C4264BE8 */  lwc1  $f6, %lo(D_80054BE8)($at)
 /* 0A289C 7F06DD6C 3C018005 */  lui   $at, %hi(D_80054BEC)
 /* 0A28A0 7F06DD70 460C303E */  c.le.s $f6, $f12
-/* 0A28A4 7F06DD74 00000000 */  nop   
+/* 0A28A4 7F06DD74 00000000 */  nop
 /* 0A28A8 7F06DD78 45000003 */  bc1f  .L7F06DD88
-/* 0A28AC 7F06DD7C 00000000 */   nop   
+/* 0A28AC 7F06DD7C 00000000 */   nop
 /* 0A28B0 7F06DD80 C4284BEC */  lwc1  $f8, %lo(D_80054BEC)($at)
 /* 0A28B4 7F06DD84 460C4301 */  sub.s $f12, $f8, $f12
 .L7F06DD88:
@@ -1869,16 +1877,16 @@ glabel sub_GAME_7F06DB5C
 /* 0A28BC 7F06DD8C C42A4BF0 */  lwc1  $f10, %lo(D_80054BF0)($at)
 /* 0A28C0 7F06DD90 3C013FC0 */  li    $at, 0x3FC00000 # 1.500000
 /* 0A28C4 7F06DD94 460A603C */  c.lt.s $f12, $f10
-/* 0A28C8 7F06DD98 00000000 */  nop   
+/* 0A28C8 7F06DD98 00000000 */  nop
 /* 0A28CC 7F06DD9C 45020006 */  bc1fl .L7F06DDB8
 /* 0A28D0 7F06DDA0 44816000 */   mtc1  $at, $f12
 /* 0A28D4 7F06DDA4 0FC16A78 */  jal   sub_GAME_7F05A9E0
-/* 0A28D8 7F06DDA8 00000000 */   nop   
+/* 0A28D8 7F06DDA8 00000000 */   nop
 /* 0A28DC 7F06DDAC 10000003 */  b     .L7F06DDBC
 /* 0A28E0 7F06DDB0 46000306 */   mov.s $f12, $f0
 /* 0A28E4 7F06DDB4 44816000 */  mtc1  $at, $f12
 .L7F06DDB8:
-/* 0A28E8 7F06DDB8 00000000 */  nop   
+/* 0A28E8 7F06DDB8 00000000 */  nop
 .L7F06DDBC:
 /* 0A28EC 7F06DDBC 0FC16293 */  jal   matrix_column_3_scalar_multiply_2
 /* 0A28F0 7F06DDC0 8FA50028 */   lw    $a1, 0x28($sp)
@@ -1899,7 +1907,7 @@ glabel sub_GAME_7F06DB5C
 .L7F06DDF8:
 /* 0A2928 7F06DDF8 27BD00A8 */  addiu $sp, $sp, 0xa8
 /* 0A292C 7F06DDFC 03E00008 */  jr    $ra
-/* 0A2930 7F06DE00 00000000 */   nop   
+/* 0A2930 7F06DE00 00000000 */   nop
 )
 #endif
 
@@ -2010,8 +2018,8 @@ glabel sub_GAME_7F06DEC0
 /* 0A2A4C 7F06DF1C 95AE0002 */  lhu   $t6, 2($t5)
 /* 0A2A50 7F06DF20 01D00019 */  multu $t6, $s0
 /* 0A2A54 7F06DF24 00003012 */  mflo  $a2
-/* 0A2A58 7F06DF28 00000000 */  nop   
-/* 0A2A5C 7F06DF2C 00000000 */  nop   
+/* 0A2A58 7F06DF28 00000000 */  nop
+/* 0A2A5C 7F06DF2C 00000000 */  nop
 /* 0A2A60 7F06DF30 8FA40040 */  lw    $a0, 0x40($sp)
 .L7F06DF34:
 /* 0A2A64 7F06DF34 320500FF */  andi  $a1, $s0, 0xff
@@ -2042,7 +2050,7 @@ glabel sub_GAME_7F06DEC0
 /* 0A2AC8 7F06DF98 468021A0 */   cvt.s.w $f6, $f4
 /* 0A2ACC 7F06DF9C 3C014F80 */  li    $at, 0x4F800000 # 4294967296.000000
 /* 0A2AD0 7F06DFA0 44814000 */  mtc1  $at, $f8
-/* 0A2AD4 7F06DFA4 00000000 */  nop   
+/* 0A2AD4 7F06DFA4 00000000 */  nop
 /* 0A2AD8 7F06DFA8 46083180 */  add.s $f6, $f6, $f8
 .L7F06DFAC:
 /* 0A2ADC 7F06DFAC 46003282 */  mul.s $f10, $f6, $f0
@@ -2057,7 +2065,7 @@ glabel sub_GAME_7F06DEC0
 /* 0A2B00 7F06DFD0 3C190001 */   lui   $t9, 1
 /* 0A2B04 7F06DFD4 03224023 */  subu  $t0, $t9, $v0
 /* 0A2B08 7F06DFD8 44889000 */  mtc1  $t0, $f18
-/* 0A2B0C 7F06DFDC 00000000 */  nop   
+/* 0A2B0C 7F06DFDC 00000000 */  nop
 /* 0A2B10 7F06DFE0 46809120 */  cvt.s.w $f4, $f18
 /* 0A2B14 7F06DFE4 46002202 */  mul.s $f8, $f4, $f0
 /* 0A2B18 7F06DFE8 46024183 */  div.s $f6, $f8, $f2
@@ -2065,7 +2073,7 @@ glabel sub_GAME_7F06DEC0
 /* 0A2B20 7F06DFF0 E4660004 */   swc1  $f6, 4($v1)
 .L7F06DFF4:
 /* 0A2B24 7F06DFF4 44805000 */  mtc1  $zero, $f10
-/* 0A2B28 7F06DFF8 00000000 */  nop   
+/* 0A2B28 7F06DFF8 00000000 */  nop
 /* 0A2B2C 7F06DFFC E46A0004 */  swc1  $f10, 4($v1)
 .L7F06E000:
 /* 0A2B30 7F06E000 97A20028 */  lhu   $v0, 0x28($sp)
@@ -2073,7 +2081,7 @@ glabel sub_GAME_7F06DEC0
 /* 0A2B38 7F06E008 10400008 */  beqz  $v0, .L7F06E02C
 /* 0A2B3C 7F06E00C 01225023 */   subu  $t2, $t1, $v0
 /* 0A2B40 7F06E010 448A8000 */  mtc1  $t2, $f16
-/* 0A2B44 7F06E014 00000000 */  nop   
+/* 0A2B44 7F06E014 00000000 */  nop
 /* 0A2B48 7F06E018 468084A0 */  cvt.s.w $f18, $f16
 /* 0A2B4C 7F06E01C 46009102 */  mul.s $f4, $f18, $f0
 /* 0A2B50 7F06E020 46022203 */  div.s $f8, $f4, $f2
@@ -2089,7 +2097,7 @@ glabel sub_GAME_7F06DEC0
 /* 0A2B70 7F06E040 05610004 */  bgez  $t3, .L7F06E054
 /* 0A2B74 7F06E044 46805420 */   cvt.s.w $f16, $f10
 /* 0A2B78 7F06E048 44819000 */  mtc1  $at, $f18
-/* 0A2B7C 7F06E04C 00000000 */  nop   
+/* 0A2B7C 7F06E04C 00000000 */  nop
 /* 0A2B80 7F06E050 46128400 */  add.s $f16, $f16, $f18
 .L7F06E054:
 /* 0A2B84 7F06E054 46008102 */  mul.s $f4, $f16, $f0
@@ -2101,7 +2109,7 @@ glabel sub_GAME_7F06DEC0
 /* 0A2B9C 7F06E06C 05810004 */  bgez  $t4, .L7F06E080
 /* 0A2BA0 7F06E070 468032A0 */   cvt.s.w $f10, $f6
 /* 0A2BA4 7F06E074 44819000 */  mtc1  $at, $f18
-/* 0A2BA8 7F06E078 00000000 */  nop   
+/* 0A2BA8 7F06E078 00000000 */  nop
 /* 0A2BAC 7F06E07C 46125280 */  add.s $f10, $f10, $f18
 .L7F06E080:
 /* 0A2BB0 7F06E080 46005402 */  mul.s $f16, $f10, $f0
@@ -2112,7 +2120,7 @@ glabel sub_GAME_7F06DEC0
 /* 0A2BC0 7F06E090 8FB00018 */  lw    $s0, 0x18($sp)
 /* 0A2BC4 7F06E094 27BD0030 */  addiu $sp, $sp, 0x30
 /* 0A2BC8 7F06E098 03E00008 */  jr    $ra
-/* 0A2BCC 7F06E09C 00000000 */   nop   
+/* 0A2BCC 7F06E09C 00000000 */   nop
 )
 #endif
 
@@ -2134,7 +2142,7 @@ glabel process_02_position
 /* 0A2BD8 7F06E0A8 AFB00020 */  sw    $s0, 0x20($sp)
 /* 0A2BDC 7F06E0AC AFA40098 */  sw    $a0, 0x98($sp)
 /* 0A2BE0 7F06E0B0 AFA600A0 */  sw    $a2, 0xa0($sp)
-/* 0A2BE4 7F06E0B4 3C188003 */  lui   $t8, %hi(D_80036094) 
+/* 0A2BE4 7F06E0B4 3C188003 */  lui   $t8, %hi(D_80036094)
 /* 0A2BE8 7F06E0B8 8CC20004 */  lw    $v0, 4($a2)
 /* 0A2BEC 7F06E0BC 8CAF0008 */  lw    $t7, 8($a1)
 /* 0A2BF0 7F06E0C0 27186094 */  addiu $t8, %lo(D_80036094) # addiu $t8, $t8, 0x6094
@@ -2158,10 +2166,10 @@ glabel process_02_position
 /* 0A2C38 7F06E108 AFAA0010 */   sw    $t2, 0x10($sp)
 /* 0A2C3C 7F06E10C 44802000 */  mtc1  $zero, $f4
 /* 0A2C40 7F06E110 C606002C */  lwc1  $f6, 0x2c($s0)
-/* 0A2C44 7F06E114 3C0B8003 */  lui   $t3, %hi(D_800360A0) 
+/* 0A2C44 7F06E114 3C0B8003 */  lui   $t3, %hi(D_800360A0)
 /* 0A2C48 7F06E118 256B60A0 */  addiu $t3, %lo(D_800360A0) # addiu $t3, $t3, 0x60a0
 /* 0A2C4C 7F06E11C 46062032 */  c.eq.s $f4, $f6
-/* 0A2C50 7F06E120 00000000 */  nop   
+/* 0A2C50 7F06E120 00000000 */  nop
 /* 0A2C54 7F06E124 45030015 */  bc1tl .L7F06E17C
 /* 0A2C58 7F06E128 44804000 */   mtc1  $zero, $f8
 /* 0A2C5C 7F06E12C 8D610000 */  lw    $at, ($t3)
@@ -2186,14 +2194,14 @@ glabel process_02_position
 /* 0A2CA8 7F06E178 44804000 */  mtc1  $zero, $f8
 .L7F06E17C:
 /* 0A2CAC 7F06E17C C60A0084 */  lwc1  $f10, 0x84($s0)
-/* 0A2CB0 7F06E180 3C0F8003 */  lui   $t7, %hi(D_800360AC) 
+/* 0A2CB0 7F06E180 3C0F8003 */  lui   $t7, %hi(D_800360AC)
 /* 0A2CB4 7F06E184 25EF60AC */  addiu $t7, %lo(D_800360AC) # addiu $t7, $t7, 0x60ac
 /* 0A2CB8 7F06E188 460A4032 */  c.eq.s $f8, $f10
 /* 0A2CBC 7F06E18C 8FA40098 */  lw    $a0, 0x98($sp)
 /* 0A2CC0 7F06E190 02002825 */  move  $a1, $s0
 /* 0A2CC4 7F06E194 8FA600A0 */  lw    $a2, 0xa0($sp)
 /* 0A2CC8 7F06E198 45010040 */  bc1t  .L7F06E29C
-/* 0A2CCC 7F06E19C 00000000 */   nop   
+/* 0A2CCC 7F06E19C 00000000 */   nop
 /* 0A2CD0 7F06E1A0 8DE10000 */  lw    $at, ($t7)
 /* 0A2CD4 7F06E1A4 27A20068 */  addiu $v0, $sp, 0x68
 /* 0A2CD8 7F06E1A8 AC410000 */  sw    $at, ($v0)
@@ -2211,10 +2219,10 @@ glabel process_02_position
 /* 0A2D08 7F06E1D8 AFB80010 */   sw    $t8, 0x10($sp)
 /* 0A2D0C 7F06E1DC 44808000 */  mtc1  $zero, $f16
 /* 0A2D10 7F06E1E0 C612005C */  lwc1  $f18, 0x5c($s0)
-/* 0A2D14 7F06E1E4 3C098003 */  lui   $t1, %hi(D_800360B8) 
+/* 0A2D14 7F06E1E4 3C098003 */  lui   $t1, %hi(D_800360B8)
 /* 0A2D18 7F06E1E8 252960B8 */  addiu $t1, %lo(D_800360B8) # addiu $t1, $t1, 0x60b8
 /* 0A2D1C 7F06E1EC 46128032 */  c.eq.s $f16, $f18
-/* 0A2D20 7F06E1F0 00000000 */  nop   
+/* 0A2D20 7F06E1F0 00000000 */  nop
 /* 0A2D24 7F06E1F4 45030015 */  bc1tl .L7F06E24C
 /* 0A2D28 7F06E1F8 27A40080 */   addiu $a0, $sp, 0x80
 /* 0A2D2C 7F06E1FC 8D210000 */  lw    $at, ($t1)
@@ -2266,7 +2274,7 @@ glabel process_02_position
 /* 0A2DD8 7F06E2A8 8FB00020 */  lw    $s0, 0x20($sp)
 /* 0A2DDC 7F06E2AC 27BD0098 */  addiu $sp, $sp, 0x98
 /* 0A2DE0 7F06E2B0 03E00008 */  jr    $ra
-/* 0A2DE4 7F06E2B4 00000000 */   nop   
+/* 0A2DE4 7F06E2B4 00000000 */   nop
 )
 #endif
 
@@ -2357,7 +2365,7 @@ glabel sub_GAME_7F06E2B8
 /* 0A2EC4 7F06E394 14400003 */  bnez  $v0, .L7F06E3A4
 /* 0A2EC8 7F06E398 33030200 */   andi  $v1, $t8, 0x200
 /* 0A2ECC 7F06E39C 10600017 */  beqz  $v1, .L7F06E3FC
-/* 0A2ED0 7F06E3A0 00000000 */   nop   
+/* 0A2ED0 7F06E3A0 00000000 */   nop
 .L7F06E3A4:
 /* 0A2ED4 7F06E3A4 C4244BF8 */  lwc1  $f4, %lo(D_80054BF8)($at)
 /* 0A2ED8 7F06E3A8 8FA3009C */  lw    $v1, 0x9c($sp)
@@ -2366,13 +2374,13 @@ glabel sub_GAME_7F06E2B8
 /* 0A2EE4 7F06E3B4 30680200 */  andi  $t0, $v1, 0x200
 /* 0A2EE8 7F06E3B8 01001825 */  move  $v1, $t0
 /* 0A2EEC 7F06E3BC 45000007 */  bc1f  .L7F06E3DC
-/* 0A2EF0 7F06E3C0 00000000 */   nop   
+/* 0A2EF0 7F06E3C0 00000000 */   nop
 /* 0A2EF4 7F06E3C4 3C013F00 */  li    $at, 0x3F000000 # 0.500000
 /* 0A2EF8 7F06E3C8 44813000 */  mtc1  $at, $f6
-/* 0A2EFC 7F06E3CC 00000000 */  nop   
+/* 0A2EFC 7F06E3CC 00000000 */  nop
 /* 0A2F00 7F06E3D0 4606A502 */  mul.s $f20, $f20, $f6
 /* 0A2F04 7F06E3D4 10000009 */  b     .L7F06E3FC
-/* 0A2F08 7F06E3D8 00000000 */   nop   
+/* 0A2F08 7F06E3D8 00000000 */   nop
 .L7F06E3DC:
 /* 0A2F0C 7F06E3DC C4284BFC */  lwc1  $f8, %lo(D_80054BFC)($at)
 /* 0A2F10 7F06E3E0 3C013F00 */  li    $at, 0x3F000000 # 0.500000
@@ -2384,7 +2392,7 @@ glabel sub_GAME_7F06E2B8
 /* 0A2F28 7F06E3F8 46122501 */  sub.s $f20, $f4, $f18
 .L7F06E3FC:
 /* 0A2F2C 7F06E3FC 10400019 */  beqz  $v0, .L7F06E464
-/* 0A2F30 7F06E400 00000000 */   nop   
+/* 0A2F30 7F06E400 00000000 */   nop
 /* 0A2F34 7F06E404 1140000F */  beqz  $t2, .L7F06E444
 /* 0A2F38 7F06E408 8FA40098 */   lw    $a0, 0x98($sp)
 /* 0A2F3C 7F06E40C 4405A000 */  mfc1  $a1, $f20
@@ -2431,9 +2439,9 @@ glabel sub_GAME_7F06E2B8
 /* 0A2FD0 7F06E4A0 C4264C04 */  lwc1  $f6, %lo(D_80054C04)($at)
 /* 0A2FD4 7F06E4A4 3C018005 */  lui   $at, %hi(D_80054C08)
 /* 0A2FD8 7F06E4A8 4614303E */  c.le.s $f6, $f20
-/* 0A2FDC 7F06E4AC 00000000 */  nop   
+/* 0A2FDC 7F06E4AC 00000000 */  nop
 /* 0A2FE0 7F06E4B0 45000003 */  bc1f  .L7F06E4C0
-/* 0A2FE4 7F06E4B4 00000000 */   nop   
+/* 0A2FE4 7F06E4B4 00000000 */   nop
 /* 0A2FE8 7F06E4B8 C4284C08 */  lwc1  $f8, %lo(D_80054C08)($at)
 /* 0A2FEC 7F06E4BC 46144501 */  sub.s $f20, $f8, $f20
 .L7F06E4C0:
@@ -2441,7 +2449,7 @@ glabel sub_GAME_7F06E2B8
 /* 0A2FF4 7F06E4C4 C42A4C0C */  lwc1  $f10, %lo(D_80054C0C)($at)
 /* 0A2FF8 7F06E4C8 3C013FC0 */  li    $at, 0x3FC00000 # 1.500000
 /* 0A2FFC 7F06E4CC 460AA03C */  c.lt.s $f20, $f10
-/* 0A3000 7F06E4D0 00000000 */  nop   
+/* 0A3000 7F06E4D0 00000000 */  nop
 /* 0A3004 7F06E4D4 45020006 */  bc1fl .L7F06E4F0
 /* 0A3008 7F06E4D8 44816000 */   mtc1  $at, $f12
 /* 0A300C 7F06E4DC 0FC16A78 */  jal   sub_GAME_7F05A9E0
@@ -2450,7 +2458,7 @@ glabel sub_GAME_7F06E2B8
 /* 0A3018 7F06E4E8 46000306 */   mov.s $f12, $f0
 /* 0A301C 7F06E4EC 44816000 */  mtc1  $at, $f12
 .L7F06E4F0:
-/* 0A3020 7F06E4F0 00000000 */  nop   
+/* 0A3020 7F06E4F0 00000000 */  nop
 .L7F06E4F4:
 /* 0A3024 7F06E4F4 0FC16293 */  jal   matrix_column_3_scalar_multiply_2
 /* 0A3028 7F06E4F8 8FA50030 */   lw    $a1, 0x30($sp)
@@ -2471,7 +2479,7 @@ glabel sub_GAME_7F06E2B8
 /* 0A3060 7F06E530 D7B40010 */  ldc1  $f20, 0x10($sp)
 /* 0A3064 7F06E534 27BD00A0 */  addiu $sp, $sp, 0xa0
 /* 0A3068 7F06E538 03E00008 */  jr    $ra
-/* 0A306C 7F06E53C 00000000 */   nop   
+/* 0A306C 7F06E53C 00000000 */   nop
 )
 #endif
 
@@ -2522,8 +2530,8 @@ glabel sub_GAME_7F06E540
 /* 0A30D8 7F06E5A8 95F80002 */  lhu   $t8, 2($t7)
 /* 0A30DC 7F06E5AC 03190019 */  multu $t8, $t9
 /* 0A30E0 7F06E5B0 00003012 */  mflo  $a2
-/* 0A30E4 7F06E5B4 00000000 */  nop   
-/* 0A30E8 7F06E5B8 00000000 */  nop   
+/* 0A30E4 7F06E5B4 00000000 */  nop
+/* 0A30E8 7F06E5B8 00000000 */  nop
 /* 0A30EC 7F06E5BC 8FA40038 */  lw    $a0, 0x38($sp)
 .L7F06E5C0:
 /* 0A30F0 7F06E5C0 93A5001F */  lbu   $a1, 0x1f($sp)
@@ -2552,7 +2560,7 @@ glabel sub_GAME_7F06E540
 /* 0A3148 7F06E618 04410004 */  bgez  $v0, .L7F06E62C
 /* 0A314C 7F06E61C 46809120 */   cvt.s.w $f4, $f18
 /* 0A3150 7F06E620 44813000 */  mtc1  $at, $f6
-/* 0A3154 7F06E624 00000000 */  nop   
+/* 0A3154 7F06E624 00000000 */  nop
 /* 0A3158 7F06E628 46062100 */  add.s $f4, $f4, $f6
 .L7F06E62C:
 /* 0A315C 7F06E62C 3C018005 */  lui   $at, %hi(D_80054C14)
@@ -2624,7 +2632,7 @@ glabel process_03_unknown
 /* 0A321C 7F06E6EC 02202025 */  move  $a0, $s1
 /* 0A3220 7F06E6F0 02403025 */  move  $a2, $s2
 /* 0A3224 7F06E6F4 460A4032 */  c.eq.s $f8, $f10
-/* 0A3228 7F06E6F8 00000000 */  nop   
+/* 0A3228 7F06E6F8 00000000 */  nop
 /* 0A322C 7F06E6FC 4503001F */  bc1tl .L7F06E77C
 /* 0A3230 7F06E700 4407A000 */   mfc1  $a3, $f20
 /* 0A3234 7F06E704 8E080064 */  lw    $t0, 0x64($s0)
@@ -2638,7 +2646,7 @@ glabel process_03_unknown
 /* 0A3254 7F06E724 02202025 */  move  $a0, $s1
 /* 0A3258 7F06E728 02403025 */  move  $a2, $s2
 /* 0A325C 7F06E72C 46128032 */  c.eq.s $f16, $f18
-/* 0A3260 7F06E730 00000000 */  nop   
+/* 0A3260 7F06E730 00000000 */  nop
 /* 0A3264 7F06E734 4503000C */  bc1tl .L7F06E768
 /* 0A3268 7F06E738 4600A306 */   mov.s $f12, $f20
 /* 0A326C 7F06E73C 8E090068 */  lw    $t1, 0x68($s0)
@@ -2688,7 +2696,7 @@ void process_15_subposition(ModelRenderData* arg0, Model *model, ModelNode *node
     }
     else
     {
-        sp68 = arg0->unk00;
+        sp68 = arg0->unk_matrix;
     }
 
     if (sp68)
@@ -3155,7 +3163,7 @@ void modelUpdateMatrices(ModelRenderData *arg0, Model *model)
 }
 
 
-void instcalcmatrices(struct unk_joint_list* arg0, Model* arg1)
+void instcalcmatrices(ModelRenderData* arg0, Model* arg1)
 {
 #if defined(LEFTOVERDEBUG)
     if (arg1 == NULL)
@@ -3186,7 +3194,7 @@ void instcalcmatrices(struct unk_joint_list* arg0, Model* arg1)
  * Address 0x7F06F2F8 (VERSION_US, VERSION_JP)
  * Address 0x7F06F670 (VERSION_EU)
 */
-void subcalcmatrices(struct unk_joint_list *arg0, struct Model *arg1)
+void subcalcmatrices(ModelRenderData *arg0, struct Model *arg1)
 {
 #if defined(LEFTOVERDEBUG)
     if (arg1 == NULL)
@@ -3253,7 +3261,7 @@ void subcalcmatrices(struct unk_joint_list *arg0, struct Model *arg1)
         }
 
         if (
-            (arg1->anim2 == NULL) 
+            (arg1->anim2 == NULL)
             || (
                 (arg1->anim2 != NULL)
                  && (arg1->frame2b >= 0)
@@ -3270,20 +3278,20 @@ void subcalcmatrices(struct unk_joint_list *arg0, struct Model *arg1)
         }
 #endif
 
-        arg1->unk34 = sub_GAME_7F0754BC(arg1->anim, arg1->framea, arg1->obj->Skeleton);
+        arg1->unk34 = loadAnimationFrame(arg1->anim, arg1->framea, arg1->obj->Skeleton);
 
         if (arg1->unk2c != 0.0f)
         {
-            arg1->unk38 = sub_GAME_7F0754BC(arg1->anim, arg1->frameb, arg1->obj->Skeleton);
+            arg1->unk38 = loadAnimationFrame(arg1->anim, arg1->frameb, arg1->obj->Skeleton);
         }
 
         if (arg1->anim2 != NULL)
         {
-            arg1->unk64 = sub_GAME_7F0754BC(arg1->anim2, arg1->frame2a, arg1->obj->Skeleton);
+            arg1->unk64 = loadAnimationFrame(arg1->anim2, arg1->frame2a, arg1->obj->Skeleton);
 
             if (arg1->unk5c != 0.0f)
             {
-                arg1->unk68 = sub_GAME_7F0754BC(arg1->anim2, arg1->frame2b, arg1->obj->Skeleton);
+                arg1->unk68 = loadAnimationFrame(arg1->anim2, arg1->frame2b, arg1->obj->Skeleton);
             }
         }
 
@@ -3324,7 +3332,7 @@ f32 sub_GAME_7F06F5C4(Model *model)
     }
 
     modelAnimation = model->anim;
-    
+
     if (modelAnimation != NULL)
     {
         return modelAnimation->unk04 - 1;
@@ -3348,12 +3356,12 @@ f32 modelGetAbsAnimSpeed(Model *model)
     f32 speed;
 
     speed = model->speed;
-    
+
     if (speed < 0.0f)
     {
         speed = -speed;
     }
-    
+
     return speed;
 }
 
@@ -3418,21 +3426,21 @@ glabel modelConstrainOrWrapAnimFrame
 /* 0A41AC 7F06F67C 90AE0007 */  lbu   $t6, 7($a1)
 /* 0A41B0 7F06F680 31CF0001 */  andi  $t7, $t6, 1
 /* 0A41B4 7F06F684 11E00011 */  beqz  $t7, .L7F06F6CC
-/* 0A41B8 7F06F688 00000000 */   nop   
+/* 0A41B8 7F06F688 00000000 */   nop
 /* 0A41BC 7F06F68C 94A20004 */  lhu   $v0, 4($a1)
 /* 0A41C0 7F06F690 0004C023 */  negu  $t8, $a0
 /* 0A41C4 7F06F694 0302001A */  div   $zero, $t8, $v0
 /* 0A41C8 7F06F698 0000C810 */  mfhi  $t9
 /* 0A41CC 7F06F69C 00592023 */  subu  $a0, $v0, $t9
 /* 0A41D0 7F06F6A0 14400002 */  bnez  $v0, .L7F06F6AC
-/* 0A41D4 7F06F6A4 00000000 */   nop   
+/* 0A41D4 7F06F6A4 00000000 */   nop
 /* 0A41D8 7F06F6A8 0007000D */  break 7
 .L7F06F6AC:
 /* 0A41DC 7F06F6AC 2401FFFF */  li    $at, -1
 /* 0A41E0 7F06F6B0 14410004 */  bne   $v0, $at, .L7F06F6C4
 /* 0A41E4 7F06F6B4 3C018000 */   lui   $at, 0x8000
 /* 0A41E8 7F06F6B8 17010002 */  bne   $t8, $at, .L7F06F6C4
-/* 0A41EC 7F06F6BC 00000000 */   nop   
+/* 0A41EC 7F06F6BC 00000000 */   nop
 /* 0A41F0 7F06F6C0 0006000D */  break 6
 .L7F06F6C4:
 /* 0A41F4 7F06F6C4 1000002A */  b     .L7F06F770
@@ -3442,19 +3450,19 @@ glabel modelConstrainOrWrapAnimFrame
 /* 0A4200 7F06F6D0 00002025 */   move  $a0, $zero
 .L7F06F6D4:
 /* 0A4204 7F06F6D4 44802000 */  mtc1  $zero, $f4
-/* 0A4208 7F06F6D8 00000000 */  nop   
+/* 0A4208 7F06F6D8 00000000 */  nop
 /* 0A420C 7F06F6DC 460C203E */  c.le.s $f4, $f12
-/* 0A4210 7F06F6E0 00000000 */  nop   
+/* 0A4210 7F06F6E0 00000000 */  nop
 /* 0A4214 7F06F6E4 4502000C */  bc1fl .L7F06F718
 /* 0A4218 7F06F6E8 94A20004 */   lhu   $v0, 4($a1)
 /* 0A421C 7F06F6EC 4600618D */  trunc.w.s $f6, $f12
 /* 0A4220 7F06F6F0 44093000 */  mfc1  $t1, $f6
-/* 0A4224 7F06F6F4 00000000 */  nop   
+/* 0A4224 7F06F6F4 00000000 */  nop
 /* 0A4228 7F06F6F8 0124082A */  slt   $at, $t1, $a0
 /* 0A422C 7F06F6FC 50200006 */  beql  $at, $zero, .L7F06F718
 /* 0A4230 7F06F700 94A20004 */   lhu   $v0, 4($a1)
 /* 0A4234 7F06F704 0FC1712E */  jal   ceilFloatToInt
-/* 0A4238 7F06F708 00000000 */   nop   
+/* 0A4238 7F06F708 00000000 */   nop
 /* 0A423C 7F06F70C 10000017 */  b     .L7F06F76C
 /* 0A4240 7F06F710 00402025 */   move  $a0, $v0
 /* 0A4244 7F06F714 94A20004 */  lhu   $v0, 4($a1)
@@ -3468,14 +3476,14 @@ glabel modelConstrainOrWrapAnimFrame
 /* 0A4260 7F06F730 2444FFFF */   addiu $a0, $v0, -1
 /* 0A4264 7F06F734 0082001A */  div   $zero, $a0, $v0
 /* 0A4268 7F06F738 14400002 */  bnez  $v0, .L7F06F744
-/* 0A426C 7F06F73C 00000000 */   nop   
+/* 0A426C 7F06F73C 00000000 */   nop
 /* 0A4270 7F06F740 0007000D */  break 7
 .L7F06F744:
 /* 0A4274 7F06F744 2401FFFF */  li    $at, -1
 /* 0A4278 7F06F748 14410004 */  bne   $v0, $at, .L7F06F75C
 /* 0A427C 7F06F74C 3C018000 */   lui   $at, 0x8000
 /* 0A4280 7F06F750 14810002 */  bne   $a0, $at, .L7F06F75C
-/* 0A4284 7F06F754 00000000 */   nop   
+/* 0A4284 7F06F754 00000000 */   nop
 /* 0A4288 7F06F758 0006000D */  break 6
 .L7F06F75C:
 /* 0A428C 7F06F75C 00002010 */  mfhi  $a0
@@ -3488,7 +3496,7 @@ glabel modelConstrainOrWrapAnimFrame
 /* 0A42A0 7F06F770 27BD0018 */  addiu $sp, $sp, 0x18
 /* 0A42A4 7F06F774 00801025 */  move  $v0, $a0
 /* 0A42A8 7F06F778 03E00008 */  jr    $ra
-/* 0A42AC 7F06F77C 00000000 */   nop   
+/* 0A42AC 7F06F77C 00000000 */   nop
 )
 #endif
 
@@ -3507,7 +3515,7 @@ void modelCopyAnimForMerge(Model *model, f32 arg1)
     f32             temp_f6;
     f32             temp_f8;
     modeldata_root *temp_v0_2;
-    
+
     if ((arg1 > 0.0f) && (model->anim != 0))
     {
         temp_a1      = model->obj->RootNode;
@@ -3555,7 +3563,7 @@ glabel modelCopyAnimForMerge
 /* 0A42B8 7F06F788 27BDFFE8 */  addiu $sp, $sp, -0x18
 /* 0A42BC 7F06F78C AFBF0014 */  sw    $ra, 0x14($sp)
 /* 0A42C0 7F06F790 460C203C */  c.lt.s $f4, $f12
-/* 0A42C4 7F06F794 00000000 */  nop   
+/* 0A42C4 7F06F794 00000000 */  nop
 /* 0A42C8 7F06F798 45020033 */  bc1fl .L7F06F868
 /* 0A42CC 7F06F79C AC800054 */   sw    $zero, 0x54($a0)
 /* 0A42D0 7F06F7A0 8C820020 */  lw    $v0, 0x20($a0)
@@ -3591,7 +3599,7 @@ glabel modelCopyAnimForMerge
 /* 0A4348 7F06F818 15E10013 */  bne   $t7, $at, .L7F06F868
 /* 0A434C 7F06F81C E488006C */   swc1  $f8, 0x6c($a0)
 /* 0A4350 7F06F820 0FC1B1E7 */  jal   modelGetNodeRwData
-/* 0A4354 7F06F824 00000000 */   nop   
+/* 0A4354 7F06F824 00000000 */   nop
 /* 0A4358 7F06F828 C44A0034 */  lwc1  $f10, 0x34($v0)
 /* 0A435C 7F06F82C C4500038 */  lwc1  $f16, 0x38($v0)
 /* 0A4360 7F06F830 C452003C */  lwc1  $f18, 0x3c($v0)
@@ -3612,7 +3620,7 @@ glabel modelCopyAnimForMerge
 /* 0A4398 7F06F868 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0A439C 7F06F86C 27BD0018 */  addiu $sp, $sp, 0x18
 /* 0A43A0 7F06F870 03E00008 */  jr    $ra
-/* 0A43A4 7F06F874 00000000 */   nop   
+/* 0A43A4 7F06F874 00000000 */   nop
 )
 #endif
 
@@ -3824,7 +3832,7 @@ glabel modelSetAnimation2
 /* 0A4460 7F06F930 02202025 */  move  $a0, $s1
 /* 0A4464 7F06F934 0FC1B1E7 */  jal   modelGetNodeRwData
 /* 0A4468 7F06F938 AFA90080 */   sw    $t1, 0x80($sp)
-/* 0A446C 7F06F93C 3C0C8003 */  lui   $t4, %hi(D_80036244) 
+/* 0A446C 7F06F93C 3C0C8003 */  lui   $t4, %hi(D_80036244)
 /* 0A4470 7F06F940 8FAA0080 */  lw    $t2, 0x80($sp)
 /* 0A4474 7F06F944 8E2B0008 */  lw    $t3, 8($s1)
 /* 0A4478 7F06F948 258C6244 */  addiu $t4, %lo(D_80036244) # addiu $t4, $t4, 0x6244
@@ -3854,9 +3862,9 @@ glabel modelSetAnimation2
 /* 0A44D8 7F06F9A8 E7A00058 */  swc1  $f0, 0x58($sp)
 /* 0A44DC 7F06F9AC C7AA005C */  lwc1  $f10, 0x5c($sp)
 /* 0A44E0 7F06F9B0 46081032 */  c.eq.s $f2, $f8
-/* 0A44E4 7F06F9B4 00000000 */  nop   
+/* 0A44E4 7F06F9B4 00000000 */  nop
 /* 0A44E8 7F06F9B8 45010009 */  bc1t  .L7F06F9E0
-/* 0A44EC 7F06F9BC 00000000 */   nop   
+/* 0A44EC 7F06F9BC 00000000 */   nop
 /* 0A44F0 7F06F9C0 46025102 */  mul.s $f4, $f10, $f2
 /* 0A44F4 7F06F9C4 C7A60060 */  lwc1  $f6, 0x60($sp)
 /* 0A44F8 7F06F9C8 C7AA0064 */  lwc1  $f10, 0x64($sp)
@@ -3879,7 +3887,7 @@ glabel modelSetAnimation2
 /* 0A4538 7F06FA08 C7A60064 */  lwc1  $f6, 0x64($sp)
 /* 0A453C 7F06FA0C C7AA005C */  lwc1  $f10, 0x5c($sp)
 /* 0A4540 7F06FA10 45000032 */  bc1f  .L7F06FADC
-/* 0A4544 7F06FA14 00000000 */   nop   
+/* 0A4544 7F06FA14 00000000 */   nop
 /* 0A4548 7F06FA18 C608000C */  lwc1  $f8, 0xc($s0)
 /* 0A454C 7F06FA1C C60A0004 */  lwc1  $f10, 4($s0)
 /* 0A4550 7F06FA20 C6020008 */  lwc1  $f2, 8($s0)
@@ -3893,7 +3901,7 @@ glabel modelSetAnimation2
 /* 0A4570 7F06FA40 C7AA0064 */  lwc1  $f10, 0x64($sp)
 /* 0A4574 7F06FA44 C7A6005C */  lwc1  $f6, 0x5c($sp)
 /* 0A4578 7F06FA48 46005102 */  mul.s $f4, $f10, $f0
-/* 0A457C 7F06FA4C 00000000 */  nop   
+/* 0A457C 7F06FA4C 00000000 */  nop
 /* 0A4580 7F06FA50 46123202 */  mul.s $f8, $f6, $f18
 /* 0A4584 7F06FA54 46081200 */  add.s $f8, $f2, $f8
 /* 0A4588 7F06FA58 46003182 */  mul.s $f6, $f6, $f0
@@ -3923,7 +3931,7 @@ glabel modelSetAnimation2
 /* 0A45E8 7F06FAB8 4600103E */  c.le.s $f2, $f0
 /* 0A45EC 7F06FABC E6000020 */  swc1  $f0, 0x20($s0)
 /* 0A45F0 7F06FAC0 45000004 */  bc1f  .L7F06FAD4
-/* 0A45F4 7F06FAC4 00000000 */   nop   
+/* 0A45F4 7F06FAC4 00000000 */   nop
 /* 0A45F8 7F06FAC8 C60A0020 */  lwc1  $f10, 0x20($s0)
 /* 0A45FC 7F06FACC 46025101 */  sub.s $f4, $f10, $f2
 /* 0A4600 7F06FAD0 E6040020 */  swc1  $f4, 0x20($s0)
@@ -3941,7 +3949,7 @@ glabel modelSetAnimation2
 /* 0A4628 7F06FAF8 46002182 */  mul.s $f6, $f4, $f0
 /* 0A462C 7F06FAFC 46064280 */  add.s $f10, $f8, $f6
 /* 0A4630 7F06FB00 44814000 */  mtc1  $at, $f8
-/* 0A4634 7F06FB04 00000000 */  nop   
+/* 0A4634 7F06FB04 00000000 */  nop
 /* 0A4638 7F06FB08 46024181 */  sub.s $f6, $f8, $f2
 /* 0A463C 7F06FB0C E7AA0030 */  swc1  $f10, 0x30($sp)
 /* 0A4640 7F06FB10 C6040008 */  lwc1  $f4, 8($s0)
@@ -3986,9 +3994,9 @@ glabel modelSetAnimation2
 /* 0A46DC 7F06FBAC C7A80058 */  lwc1  $f8, 0x58($sp)
 /* 0A46E0 7F06FBB0 46086381 */  sub.s $f14, $f12, $f8
 /* 0A46E4 7F06FBB4 4606703C */  c.lt.s $f14, $f6
-/* 0A46E8 7F06FBB8 00000000 */  nop   
+/* 0A46E8 7F06FBB8 00000000 */  nop
 /* 0A46EC 7F06FBBC 45000003 */  bc1f  .L7F06FBCC
-/* 0A46F0 7F06FBC0 00000000 */   nop   
+/* 0A46F0 7F06FBC0 00000000 */   nop
 /* 0A46F4 7F06FBC4 C4244D44 */  lwc1  $f4, %lo(D_80054D44)($at)
 /* 0A46F8 7F06FBC8 46047380 */  add.s $f14, $f14, $f4
 .L7F06FBCC:
@@ -4123,7 +4131,7 @@ void modelSetAnimLooping(Model *model, f32 loopframe, f32 loopmerge) {
 
 void modelSetAnimEndFrame(Model *model, f32 endframe) {
     ModelAnimation *modelAnimation = model->anim;
-    
+
     if ((modelAnimation != NULL) && (endframe < (modelAnimation->unk04 - 1))) {
         model->endframe = endframe;
     } else {
@@ -4144,7 +4152,7 @@ void sub_GAME_7F06FE44(Model *model, s32 arg1) {
 }
 
 void modelSetAnimSpeed(Model *model, f32 anim_speed, f32 startframe) {
-    
+
     if (startframe > 0.0f) {
         model->timespeed = startframe;
         model->newspeed = anim_speed;
@@ -4161,7 +4169,7 @@ void modelSetAnimSpeed(Model *model, f32 anim_speed, f32 startframe) {
  * @param arg0:
  * @param arg1:
  * @param arg2: must be non-zero.
- * 
+ *
  * Address 0x7F06FE90.
 */
 void sub_GAME_7F06FE90(Model *model, f32 arg1, f32 arg2)
@@ -4171,7 +4179,7 @@ void sub_GAME_7F06FE90(Model *model, f32 arg1, f32 arg2)
     f32 t;
 
     temp_f0 = model->unk28;
-    
+
     if (temp_f0 <= arg1)
     {
         phi_f2 = arg1 - temp_f0;
@@ -4180,7 +4188,7 @@ void sub_GAME_7F06FE90(Model *model, f32 arg1, f32 arg2)
     {
         phi_f2 = ( (f32)model->anim->unk04 - temp_f0) + arg1;
     }
-    
+
     t = model->speed + ((2.0f * phi_f2) / arg2);
     modelSetAnimSpeed(model, t, arg2);
 }
@@ -4337,7 +4345,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A4D88 7F070258 5700020A */  bnezl $t8, .L7F070A84
 /* 0A4D8C 7F07025C C7B40108 */   lwc1  $f20, 0x108($sp)
 /* 0A4D90 7F070260 96590000 */  lhu   $t9, ($s2)
-/* 0A4D94 7F070264 3C0B8003 */  lui   $t3, %hi(D_80036254) 
+/* 0A4D94 7F070264 3C0B8003 */  lui   $t3, %hi(D_80036254)
 /* 0A4D98 7F070268 256B6254 */  addiu $t3, %lo(D_80036254) # addiu $t3, $t3, 0x6254
 /* 0A4D9C 7F07026C AFB900E4 */  sw    $t9, 0xe4($sp)
 /* 0A4DA0 7F070270 8E280008 */  lw    $t0, 8($s1)
@@ -4375,14 +4383,14 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A4E20 7F0702F0 AFAF0094 */  sw    $t7, 0x94($sp)
 /* 0A4E24 7F0702F4 C63E0040 */  lwc1  $f30, 0x40($s1)
 /* 0A4E28 7F0702F8 4618F03C */  c.lt.s $f30, $f24
-/* 0A4E2C 7F0702FC 00000000 */  nop   
+/* 0A4E2C 7F0702FC 00000000 */  nop
 /* 0A4E30 7F070300 45020003 */  bc1fl .L7F070310
 /* 0A4E34 7F070304 C6200070 */   lwc1  $f0, 0x70($s1)
 /* 0A4E38 7F070308 4600F787 */  neg.s $f30, $f30
 /* 0A4E3C 7F07030C C6200070 */  lwc1  $f0, 0x70($s1)
 .L7F070310:
 /* 0A4E40 7F070310 4618003C */  c.lt.s $f0, $f24
-/* 0A4E44 7F070314 00000000 */  nop   
+/* 0A4E44 7F070314 00000000 */  nop
 /* 0A4E48 7F070318 45020003 */  bc1fl .L7F070328
 /* 0A4E4C 7F07031C 4610A03E */   c.le.s $f20, $f16
 /* 0A4E50 7F070320 46000007 */  neg.s $f0, $f0
@@ -4390,7 +4398,7 @@ glabel modelSetAnimFrame2WithChrStuff
 .L7F070328:
 /* 0A4E58 7F070328 00009825 */  move  $s3, $zero
 /* 0A4E5C 7F07032C 45000002 */  bc1f  .L7F070338
-/* 0A4E60 7F070330 00000000 */   nop   
+/* 0A4E60 7F070330 00000000 */   nop
 /* 0A4E64 7F070334 24130001 */  li    $s3, 1
 .L7F070338:
 /* 0A4E68 7F070338 5260000A */  beql  $s3, $zero, .L7F070364
@@ -4446,9 +4454,9 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A4F1C 7F0703EC E7A600B4 */  swc1  $f6, 0xb4($sp)
 /* 0A4F20 7F0703F0 C6080018 */  lwc1  $f8, 0x18($s0)
 /* 0A4F24 7F0703F4 4608C032 */  c.eq.s $f24, $f8
-/* 0A4F28 7F0703F8 00000000 */  nop   
+/* 0A4F28 7F0703F8 00000000 */  nop
 /* 0A4F2C 7F0703FC 45000046 */  bc1f  .L7F070518
-/* 0A4F30 7F070400 00000000 */   nop   
+/* 0A4F30 7F070400 00000000 */   nop
 /* 0A4F34 7F070404 10000044 */  b     .L7F070518
 /* 0A4F38 7F070408 C7BC0098 */   lwc1  $f28, 0x98($sp)
 .L7F07040C:
@@ -4470,7 +4478,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A4F78 7F070448 460A1082 */  mul.s $f2, $f2, $f10
 /* 0A4F7C 7F07044C C7AC00D0 */  lwc1  $f12, 0xd0($sp)
 /* 0A4F80 7F070450 460A9102 */  mul.s $f4, $f18, $f10
-/* 0A4F84 7F070454 00000000 */  nop   
+/* 0A4F84 7F070454 00000000 */  nop
 /* 0A4F88 7F070458 460A6302 */  mul.s $f12, $f12, $f10
 /* 0A4F8C 7F07045C E7A200C8 */  swc1  $f2, 0xc8($sp)
 /* 0A4F90 7F070460 E7A400CC */  swc1  $f4, 0xcc($sp)
@@ -4496,7 +4504,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A4FD8 7F0704A8 C7B000D0 */  lwc1  $f16, 0xd0($sp)
 /* 0A4FDC 7F0704AC C7AA00AC */  lwc1  $f10, 0xac($sp)
 /* 0A4FE0 7F0704B0 46143202 */  mul.s $f8, $f6, $f20
-/* 0A4FE4 7F0704B4 00000000 */  nop   
+/* 0A4FE4 7F0704B4 00000000 */  nop
 /* 0A4FE8 7F0704B8 46008482 */  mul.s $f18, $f16, $f0
 /* 0A4FEC 7F0704BC 46124100 */  add.s $f4, $f8, $f18
 /* 0A4FF0 7F0704C0 C7B200CC */  lwc1  $f18, 0xcc($sp)
@@ -4512,14 +4520,14 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5018 7F0704E8 E7AA00B4 */  swc1  $f10, 0xb4($sp)
 /* 0A501C 7F0704EC C6100018 */  lwc1  $f16, 0x18($s0)
 /* 0A5020 7F0704F0 4610C032 */  c.eq.s $f24, $f16
-/* 0A5024 7F0704F4 00000000 */  nop   
+/* 0A5024 7F0704F4 00000000 */  nop
 /* 0A5028 7F0704F8 45000007 */  bc1f  .L7F070518
-/* 0A502C 7F0704FC 00000000 */   nop   
+/* 0A502C 7F0704FC 00000000 */   nop
 /* 0A5030 7F070500 4616E700 */  add.s $f28, $f28, $f22
 /* 0A5034 7F070504 461CD03E */  c.le.s $f26, $f28
-/* 0A5038 7F070508 00000000 */  nop   
+/* 0A5038 7F070508 00000000 */  nop
 /* 0A503C 7F07050C 45000002 */  bc1f  .L7F070518
-/* 0A5040 7F070510 00000000 */   nop   
+/* 0A5040 7F070510 00000000 */   nop
 /* 0A5044 7F070514 461AE701 */  sub.s $f28, $f28, $f26
 .L7F070518:
 /* 0A5048 7F070518 52600004 */  beql  $s3, $zero, .L7F07052C
@@ -4558,7 +4566,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A50C8 7F070598 46041082 */  mul.s $f2, $f2, $f4
 /* 0A50CC 7F07059C C7AC00D0 */  lwc1  $f12, 0xd0($sp)
 /* 0A50D0 7F0705A0 46043482 */  mul.s $f18, $f6, $f4
-/* 0A50D4 7F0705A4 00000000 */  nop   
+/* 0A50D4 7F0705A4 00000000 */  nop
 /* 0A50D8 7F0705A8 46046302 */  mul.s $f12, $f12, $f4
 /* 0A50DC 7F0705AC E7A200C8 */  swc1  $f2, 0xc8($sp)
 /* 0A50E0 7F0705B0 E7B200CC */  swc1  $f18, 0xcc($sp)
@@ -4580,15 +4588,15 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5118 7F0705E8 46000506 */  mov.s $f20, $f0
 /* 0A511C 7F0705EC 0FC15FAB */  jal   sinf
 /* 0A5120 7F0705F0 C60C0030 */   lwc1  $f12, 0x30($s0)
-/* 0A5124 7F0705F4 3C0A8003 */  lui   $t2, %hi(g_ModelAnimMergingEnabled) 
+/* 0A5124 7F0705F4 3C0A8003 */  lui   $t2, %hi(g_ModelAnimMergingEnabled)
 /* 0A5128 7F0705F8 8D4A6250 */  lw    $t2, %lo(g_ModelAnimMergingEnabled)($t2)
 /* 0A512C 7F0705FC C7A200C8 */  lwc1  $f2, 0xc8($sp)
 /* 0A5130 7F070600 C7AC00D0 */  lwc1  $f12, 0xd0($sp)
 /* 0A5134 7F070604 11400056 */  beqz  $t2, .L7F070760
-/* 0A5138 7F070608 00000000 */   nop   
+/* 0A5138 7F070608 00000000 */   nop
 /* 0A513C 7F07060C 8E2B0054 */  lw    $t3, 0x54($s1)
 /* 0A5140 7F070610 11600053 */  beqz  $t3, .L7F070760
-/* 0A5144 7F070614 00000000 */   nop   
+/* 0A5144 7F070614 00000000 */   nop
 /* 0A5148 7F070618 C7AC00D0 */  lwc1  $f12, 0xd0($sp)
 /* 0A514C 7F07061C C7A200C8 */  lwc1  $f2, 0xc8($sp)
 /* 0A5150 7F070620 461EC03C */  c.lt.s $f24, $f30
@@ -4596,9 +4604,9 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5158 7F070628 46001187 */  neg.s $f6, $f2
 /* 0A515C 7F07062C 3C013F00 */  li    $at, 0x3F000000 # 0.500000
 /* 0A5160 7F070630 46141402 */  mul.s $f16, $f2, $f20
-/* 0A5164 7F070634 00000000 */  nop   
+/* 0A5164 7F070634 00000000 */  nop
 /* 0A5168 7F070638 46146102 */  mul.s $f4, $f12, $f20
-/* 0A516C 7F07063C 00000000 */  nop   
+/* 0A516C 7F07063C 00000000 */  nop
 /* 0A5170 7F070640 46003482 */  mul.s $f18, $f6, $f0
 /* 0A5174 7F070644 46105200 */  add.s $f8, $f10, $f16
 /* 0A5178 7F070648 E7A8009C */  swc1  $f8, 0x9c($sp)
@@ -4612,7 +4620,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5198 7F070668 46068103 */  div.s $f4, $f16, $f6
 /* 0A519C 7F07066C 46041001 */  sub.s $f0, $f2, $f4
 /* 0A51A0 7F070670 4618003C */  c.lt.s $f0, $f24
-/* 0A51A4 7F070674 00000000 */  nop   
+/* 0A51A4 7F070674 00000000 */  nop
 /* 0A51A8 7F070678 45020003 */  bc1fl .L7F070688
 /* 0A51AC 7F07067C 46001480 */   add.s $f18, $f2, $f0
 /* 0A51B0 7F070680 4600C006 */  mov.s $f0, $f24
@@ -4624,7 +4632,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A51C4 7F070694 C7A40088 */  lwc1  $f4, 0x88($sp)
 /* 0A51C8 7F070698 46104181 */  sub.s $f6, $f8, $f16
 /* 0A51CC 7F07069C 460A9002 */  mul.s $f0, $f18, $f10
-/* 0A51D0 7F0706A0 00000000 */  nop   
+/* 0A51D0 7F0706A0 00000000 */  nop
 /* 0A51D4 7F0706A4 46043482 */  mul.s $f18, $f6, $f4
 /* 0A51D8 7F0706A8 461E9283 */  div.s $f10, $f18, $f30
 /* 0A51DC 7F0706AC E7AA007C */  swc1  $f10, 0x7c($sp)
@@ -4692,7 +4700,7 @@ glabel modelSetAnimFrame2WithChrStuff
 .L7F070798:
 /* 0A52C8 7F070798 C600005C */  lwc1  $f0, 0x5c($s0)
 /* 0A52CC 7F07079C 4600C03C */  c.lt.s $f24, $f0
-/* 0A52D0 7F0707A0 00000000 */  nop   
+/* 0A52D0 7F0707A0 00000000 */  nop
 /* 0A52D4 7F0707A4 45020020 */  bc1fl .L7F070828
 /* 0A52D8 7F0707A8 C6100018 */   lwc1  $f16, 0x18($s0)
 /* 0A52DC 7F0707AC 461EC03C */  c.lt.s $f24, $f30
@@ -4700,7 +4708,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A52E4 7F0707B4 4502001C */  bc1fl .L7F070828
 /* 0A52E8 7F0707B8 C6100018 */   lwc1  $f16, 0x18($s0)
 /* 0A52EC 7F0707BC 44813000 */  mtc1  $at, $f6
-/* 0A52F0 7F0707C0 00000000 */  nop   
+/* 0A52F0 7F0707C0 00000000 */  nop
 /* 0A52F4 7F0707C4 461E3083 */  div.s $f2, $f6, $f30
 /* 0A52F8 7F0707C8 4602003C */  c.lt.s $f0, $f2
 /* 0A52FC 7F0707CC 46001306 */  mov.s $f12, $f2
@@ -4717,14 +4725,14 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5320 7F0707F0 460C2482 */  mul.s $f18, $f4, $f12
 /* 0A5324 7F0707F4 4612B580 */  add.s $f22, $f22, $f18
 /* 0A5328 7F0707F8 4618B03C */  c.lt.s $f22, $f24
-/* 0A532C 7F0707FC 00000000 */  nop   
+/* 0A532C 7F0707FC 00000000 */  nop
 /* 0A5330 7F070800 45020004 */  bc1fl .L7F070814
 /* 0A5334 7F070804 4616D03E */   c.le.s $f26, $f22
 /* 0A5338 7F070808 10000006 */  b     .L7F070824
 /* 0A533C 7F07080C 461AB580 */   add.s $f22, $f22, $f26
 /* 0A5340 7F070810 4616D03E */  c.le.s $f26, $f22
 .L7F070814:
-/* 0A5344 7F070814 00000000 */  nop   
+/* 0A5344 7F070814 00000000 */  nop
 /* 0A5348 7F070818 45020003 */  bc1fl .L7F070828
 /* 0A534C 7F07081C C6100018 */   lwc1  $f16, 0x18($s0)
 /* 0A5350 7F070820 461AB581 */  sub.s $f22, $f22, $f26
@@ -4732,14 +4740,14 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5354 7F070824 C6100018 */  lwc1  $f16, 0x18($s0)
 .L7F070828:
 /* 0A5358 7F070828 4610C032 */  c.eq.s $f24, $f16
-/* 0A535C 7F07082C 00000000 */  nop   
+/* 0A535C 7F07082C 00000000 */  nop
 /* 0A5360 7F070830 45000008 */  bc1f  .L7F070854
-/* 0A5364 7F070834 00000000 */   nop   
+/* 0A5364 7F070834 00000000 */   nop
 /* 0A5368 7F070838 4616E000 */  add.s $f0, $f28, $f22
 /* 0A536C 7F07083C 4600D03E */  c.le.s $f26, $f0
 /* 0A5370 7F070840 E7A00098 */  swc1  $f0, 0x98($sp)
 /* 0A5374 7F070844 45000003 */  bc1f  .L7F070854
-/* 0A5378 7F070848 00000000 */   nop   
+/* 0A5378 7F070848 00000000 */   nop
 /* 0A537C 7F07084C 461A0201 */  sub.s $f8, $f0, $f26
 /* 0A5380 7F070850 E7A80098 */  swc1  $f8, 0x98($sp)
 .L7F070854:
@@ -4764,7 +4772,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A53C8 7F070898 86220030 */  lh    $v0, 0x30($s1)
 /* 0A53CC 7F07089C 86230032 */  lh    $v1, 0x32($s1)
 /* 0A53D0 7F0708A0 14620006 */  bne   $v1, $v0, .L7F0708BC
-/* 0A53D4 7F0708A4 00000000 */   nop   
+/* 0A53D4 7F0708A4 00000000 */   nop
 /* 0A53D8 7F0708A8 44825000 */  mtc1  $v0, $f10
 /* 0A53DC 7F0708AC E638002C */  swc1  $f24, 0x2c($s1)
 /* 0A53E0 7F0708B0 46805120 */  cvt.s.w $f4, $f10
@@ -4799,7 +4807,7 @@ glabel modelSetAnimFrame2WithChrStuff
 .L7F07091C:
 /* 0A544C 7F07091C 8E2E0054 */  lw    $t6, 0x54($s1)
 /* 0A5450 7F070920 11C00055 */  beqz  $t6, .L7F070A78
-/* 0A5454 7F070924 00000000 */   nop   
+/* 0A5454 7F070924 00000000 */   nop
 /* 0A5458 7F070928 0FC170F6 */  jal   floorFloatToInt
 /* 0A545C 7F07092C C7AC0104 */   lwc1  $f12, 0x104($sp)
 /* 0A5460 7F070930 C7B40108 */  lwc1  $f20, 0x108($sp)
@@ -4851,7 +4859,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5508 7F0709D8 C7AC00DC */  lwc1  $f12, 0xdc($sp)
 /* 0A550C 7F0709DC C7A400CC */  lwc1  $f4, 0xcc($sp)
 /* 0A5510 7F0709E0 46026032 */  c.eq.s $f12, $f2
-/* 0A5514 7F0709E4 00000000 */  nop   
+/* 0A5514 7F0709E4 00000000 */  nop
 /* 0A5518 7F0709E8 45030004 */  bc1tl .L7F0709FC
 /* 0A551C 7F0709EC C7B000CC */   lwc1  $f16, 0xcc($sp)
 /* 0A5520 7F0709F0 460C2282 */  mul.s $f10, $f4, $f12
@@ -4883,7 +4891,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A5578 7F070A48 862C0062 */  lh    $t4, 0x62($s1)
 /* 0A557C 7F070A4C 468084A0 */  cvt.s.w $f18, $f16
 /* 0A5580 7F070A50 448C3000 */  mtc1  $t4, $f6
-/* 0A5584 7F070A54 00000000 */  nop   
+/* 0A5584 7F070A54 00000000 */  nop
 /* 0A5588 7F070A58 46803120 */  cvt.s.w $f4, $f6
 /* 0A558C 7F070A5C 4612A201 */  sub.s $f8, $f20, $f18
 /* 0A5590 7F070A60 46081001 */  sub.s $f0, $f2, $f8
@@ -4901,7 +4909,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A55B8 7F070A88 8FA50100 */  lw    $a1, 0x100($sp)
 /* 0A55BC 7F070A8C 4406A000 */  mfc1  $a2, $f20
 /* 0A55C0 7F070A90 0FC1C024 */  jal   modelSetAnimFrame2
-/* 0A55C4 7F070A94 00000000 */   nop   
+/* 0A55C4 7F070A94 00000000 */   nop
 /* 0A55C8 7F070A98 10000008 */  b     .L7F070ABC
 /* 0A55CC 7F070A9C 8FBF005C */   lw    $ra, 0x5c($sp)
 /* 0A55D0 7F070AA0 C7B40108 */  lwc1  $f20, 0x108($sp)
@@ -4910,7 +4918,7 @@ glabel modelSetAnimFrame2WithChrStuff
 /* 0A55D8 7F070AA8 8FA50100 */  lw    $a1, 0x100($sp)
 /* 0A55DC 7F070AAC 4406A000 */  mfc1  $a2, $f20
 /* 0A55E0 7F070AB0 0FC1C024 */  jal   modelSetAnimFrame2
-/* 0A55E4 7F070AB4 00000000 */   nop   
+/* 0A55E4 7F070AB4 00000000 */   nop
 .L7F070AB8:
 /* 0A55E8 7F070AB8 8FBF005C */  lw    $ra, 0x5c($sp)
 .L7F070ABC:
@@ -4961,22 +4969,22 @@ glabel modelTickAnimQuarterSpeed
 /* 0A5660 7F070B30 58A000E6 */  blezl $a1, .L7F070ECC
 /* 0A5664 7F070B34 8FAB0090 */   lw    $t3, 0x90($sp)
 /* 0A5668 7F070B38 4480C000 */  mtc1  $zero, $f24
-/* 0A566C 7F070B3C 00000000 */  nop   
+/* 0A566C 7F070B3C 00000000 */  nop
 /* 0A5670 7F070B40 C60200B0 */  lwc1  $f2, 0xb0($s0)
 .L7F070B44:
 /* 0A5674 7F070B44 3C013F80 */  li    $at, 0x3F800000 # 1.000000
 /* 0A5678 7F070B48 4602C03C */  c.lt.s $f24, $f2
-/* 0A567C 7F070B4C 00000000 */  nop   
+/* 0A567C 7F070B4C 00000000 */  nop
 /* 0A5680 7F070B50 45020017 */  bc1fl .L7F070BB0
 /* 0A5684 7F070B54 C6080088 */   lwc1  $f8, 0x88($s0)
 /* 0A5688 7F070B58 C60600B4 */  lwc1  $f6, 0xb4($s0)
 /* 0A568C 7F070B5C 44814000 */  mtc1  $at, $f8
-/* 0A5690 7F070B60 00000000 */  nop   
+/* 0A5690 7F070B60 00000000 */  nop
 /* 0A5694 7F070B64 46083280 */  add.s $f10, $f6, $f8
 /* 0A5698 7F070B68 E60A00B4 */  swc1  $f10, 0xb4($s0)
 /* 0A569C 7F070B6C C60C00B4 */  lwc1  $f12, 0xb4($s0)
 /* 0A56A0 7F070B70 4602603C */  c.lt.s $f12, $f2
-/* 0A56A4 7F070B74 00000000 */  nop   
+/* 0A56A4 7F070B74 00000000 */  nop
 /* 0A56A8 7F070B78 4502000A */  bc1fl .L7F070BA4
 /* 0A56AC 7F070B7C C60600A8 */   lwc1  $f6, 0xa8($s0)
 /* 0A56B0 7F070B80 C60000AC */  lwc1  $f0, 0xac($s0)
@@ -4996,7 +5004,7 @@ glabel modelTickAnimQuarterSpeed
 .L7F070BB0:
 /* 0A56E0 7F070BB0 C60200A4 */  lwc1  $f2, 0xa4($s0)
 /* 0A56E4 7F070BB4 4608C03C */  c.lt.s $f24, $f8
-/* 0A56E8 7F070BB8 00000000 */  nop   
+/* 0A56E8 7F070BB8 00000000 */  nop
 /* 0A56EC 7F070BBC 4502001D */  bc1fl .L7F070C34
 /* 0A56F0 7F070BC0 C60C004C */   lwc1  $f12, 0x4c($s0)
 /* 0A56F4 7F070BC4 C60A008C */  lwc1  $f10, 0x8c($s0)
@@ -5005,7 +5013,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A5700 7F070BD0 E604008C */  swc1  $f4, 0x8c($s0)
 /* 0A5704 7F070BD4 C60C008C */  lwc1  $f12, 0x8c($s0)
 /* 0A5708 7F070BD8 460CC032 */  c.eq.s $f24, $f12
-/* 0A570C 7F070BDC 00000000 */  nop   
+/* 0A570C 7F070BDC 00000000 */  nop
 /* 0A5710 7F070BE0 45020006 */  bc1fl .L7F070BFC
 /* 0A5714 7F070BE4 C6000088 */   lwc1  $f0, 0x88($s0)
 /* 0A5718 7F070BE8 44813000 */  mtc1  $at, $f6
@@ -5015,7 +5023,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A5728 7F070BF8 C6000088 */  lwc1  $f0, 0x88($s0)
 .L7F070BFC:
 /* 0A572C 7F070BFC 4600603C */  c.lt.s $f12, $f0
-/* 0A5730 7F070C00 00000000 */  nop   
+/* 0A5730 7F070C00 00000000 */  nop
 /* 0A5734 7F070C04 45020007 */  bc1fl .L7F070C24
 /* 0A5738 7F070C08 E6180088 */   swc1  $f24, 0x88($s0)
 /* 0A573C 7F070C0C 460C0201 */  sub.s $f8, $f0, $f12
@@ -5032,7 +5040,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A5760 7F070C30 C60C004C */  lwc1  $f12, 0x4c($s0)
 .L7F070C34:
 /* 0A5764 7F070C34 460CC03C */  c.lt.s $f24, $f12
-/* 0A5768 7F070C38 00000000 */  nop   
+/* 0A5768 7F070C38 00000000 */  nop
 /* 0A576C 7F070C3C 45020017 */  bc1fl .L7F070C9C
 /* 0A5770 7F070C40 C6100040 */   lwc1  $f16, 0x40($s0)
 /* 0A5774 7F070C44 C6040050 */  lwc1  $f4, 0x50($s0)
@@ -5040,7 +5048,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A577C 7F070C4C E6060050 */  swc1  $f6, 0x50($s0)
 /* 0A5780 7F070C50 C60E0050 */  lwc1  $f14, 0x50($s0)
 /* 0A5784 7F070C54 460C703C */  c.lt.s $f14, $f12
-/* 0A5788 7F070C58 00000000 */  nop   
+/* 0A5788 7F070C58 00000000 */  nop
 /* 0A578C 7F070C5C 4502000B */  bc1fl .L7F070C8C
 /* 0A5790 7F070C60 C60A0044 */   lwc1  $f10, 0x44($s0)
 /* 0A5794 7F070C64 C6000048 */  lwc1  $f0, 0x48($s0)
@@ -5066,7 +5074,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A57D8 7F070CA8 46049480 */   add.s $f18, $f18, $f4
 /* 0A57DC 7F070CAC C60C007C */  lwc1  $f12, 0x7c($s0)
 /* 0A57E0 7F070CB0 460CC03C */  c.lt.s $f24, $f12
-/* 0A57E4 7F070CB4 00000000 */  nop   
+/* 0A57E4 7F070CB4 00000000 */  nop
 /* 0A57E8 7F070CB8 45020017 */  bc1fl .L7F070D18
 /* 0A57EC 7F070CBC C6000070 */   lwc1  $f0, 0x70($s0)
 /* 0A57F0 7F070CC0 C6060080 */  lwc1  $f6, 0x80($s0)
@@ -5074,7 +5082,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A57F8 7F070CC8 E6080080 */  swc1  $f8, 0x80($s0)
 /* 0A57FC 7F070CCC C60E0080 */  lwc1  $f14, 0x80($s0)
 /* 0A5800 7F070CD0 460C703C */  c.lt.s $f14, $f12
-/* 0A5804 7F070CD4 00000000 */  nop   
+/* 0A5804 7F070CD4 00000000 */  nop
 /* 0A5808 7F070CD8 4502000B */  bc1fl .L7F070D08
 /* 0A580C 7F070CDC C6040074 */   lwc1  $f4, 0x74($s0)
 /* 0A5810 7F070CE0 C6000078 */  lwc1  $f0, 0x78($s0)
@@ -5117,7 +5125,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A5894 7F070D64 45020012 */  bc1fl .L7F070DB0
 /* 0A5898 7F070D68 4610C03E */   c.le.s $f24, $f16
 /* 0A589C 7F070D6C 4600B03C */  c.lt.s $f22, $f0
-/* 0A58A0 7F070D70 00000000 */  nop   
+/* 0A58A0 7F070D70 00000000 */  nop
 /* 0A58A4 7F070D74 4502000E */  bc1fl .L7F070DB0
 /* 0A58A8 7F070D78 4610C03E */   c.le.s $f24, $f16
 /* 0A58AC 7F070D7C 1000000B */  b     .L7F070DAC
@@ -5129,27 +5137,27 @@ glabel modelTickAnimQuarterSpeed
 /* 0A58C0 7F070D90 45020007 */  bc1fl .L7F070DB0
 /* 0A58C4 7F070D94 4610C03E */   c.le.s $f24, $f16
 /* 0A58C8 7F070D98 4600B03C */  c.lt.s $f22, $f0
-/* 0A58CC 7F070D9C 00000000 */  nop   
+/* 0A58CC 7F070D9C 00000000 */  nop
 /* 0A58D0 7F070DA0 45020003 */  bc1fl .L7F070DB0
 /* 0A58D4 7F070DA4 4610C03E */   c.le.s $f24, $f16
 /* 0A58D8 7F070DA8 4600B686 */  mov.s $f26, $f22
 .L7F070DAC:
 /* 0A58DC 7F070DAC 4610C03E */  c.le.s $f24, $f16
 .L7F070DB0:
-/* 0A58E0 7F070DB0 00000000 */  nop   
+/* 0A58E0 7F070DB0 00000000 */  nop
 /* 0A58E4 7F070DB4 45020006 */  bc1fl .L7F070DD0
 /* 0A58E8 7F070DB8 4618803C */   c.lt.s $f16, $f24
 /* 0A58EC 7F070DBC 4612A03E */  c.le.s $f20, $f18
-/* 0A58F0 7F070DC0 00000000 */  nop   
+/* 0A58F0 7F070DC0 00000000 */  nop
 /* 0A58F4 7F070DC4 4503000A */  bc1tl .L7F070DF0
 /* 0A58F8 7F070DC8 C606004C */   lwc1  $f6, 0x4c($s0)
 /* 0A58FC 7F070DCC 4618803C */  c.lt.s $f16, $f24
 .L7F070DD0:
-/* 0A5900 7F070DD0 00000000 */  nop   
+/* 0A5900 7F070DD0 00000000 */  nop
 /* 0A5904 7F070DD4 4502003A */  bc1fl .L7F070EC0
 /* 0A5908 7F070DD8 2631FFFF */   addiu $s1, $s1, -1
 /* 0A590C 7F070DDC 4614903E */  c.le.s $f18, $f20
-/* 0A5910 7F070DE0 00000000 */  nop   
+/* 0A5910 7F070DE0 00000000 */  nop
 /* 0A5914 7F070DE4 45020036 */  bc1fl .L7F070EC0
 /* 0A5918 7F070DE8 2631FFFF */   addiu $s1, $s1, -1
 /* 0A591C 7F070DEC C606004C */  lwc1  $f6, 0x4c($s0)
@@ -5216,7 +5224,7 @@ glabel modelTickAnimQuarterSpeed
 /* 0A59FC 7F070ECC 4480C000 */  mtc1  $zero, $f24
 /* 0A5A00 7F070ED0 8E020054 */  lw    $v0, 0x54($s0)
 /* 0A5A04 7F070ED4 11600014 */  beqz  $t3, .L7F070F28
-/* 0A5A08 7F070ED8 00000000 */   nop   
+/* 0A5A08 7F070ED8 00000000 */   nop
 /* 0A5A0C 7F070EDC 1040000A */  beqz  $v0, .L7F070F08
 /* 0A5A10 7F070EE0 C6000028 */   lwc1  $f0, 0x28($s0)
 /* 0A5A14 7F070EE4 C7A40080 */  lwc1  $f4, 0x80($sp)
@@ -5266,7 +5274,10 @@ glabel modelTickAnimQuarterSpeed
 )
 #endif
 
-
+/**
+ * @brief Model Type 1: 1Cycle No Secondary
+ * @param[in,out] renderdata append cycle, CC and RM to display List
+ */
 void modelApplyRenderModeType1(ModelRenderData *renderdata)
 {
     gDPPipeSync(renderdata->gdl++);
@@ -5284,161 +5295,31 @@ void modelApplyRenderModeType1(ModelRenderData *renderdata)
     gDPSetCombineMode(renderdata->gdl++, G_CC_MODULATEIA, G_CC_MODULATEIA);
 }
 
-
-/*
---Copy/Paste from Doc
-DisplayList Setups Depend on Object Type, Prop Guard or Gun. 
-These are applied to each part of an object at runtime and can be overridden. loading the next part will use these values once more.
-GeometryMode is not in setup and is persistent accross parts.
-
-
-7F072A0C Read Displaylist 18 Model Type
-7F072A1C Read Displaylist 18 Model Type
-7F072A24 Check model type 1
-7F072A2C Call to do model type 1 7F070F80
-7F072A40 Check model type 3
-7F072A48 Call to do model type 3 7F071030
-7F072A5C Check model type 4
-7F072A64 Call to do model type 4 7F071B44
-7F072A78 Check model type 2
-7F072A80 Call to do model type 2 7F072644
-
-7F0727F8 Read Displaylist 04 Model Type
-
-A1 is primary = 1, secondary = 0
-Inside the T8 or whatever temporary register indicates gun or not gun (0 = gun, or UseZ = 1), for different render mode
-
-Bool UseZ //guns = false
-Bool 
-
-
-Model Type 0: NoSetup.
-    type 0 Has No DL Setup and will use whaterver is currently set. 
-
-Model Type 1: 1Cycle No Sec
-    E700000000000000 pipesync()
-    BA00140200000000 CycleType(1c)
-    if UseZ
-      B900031D00552078 SetRendermode(AA_ZB_OPA_1) //cin ain cmem amem
-    else
-      B900031D00552048 SetRendermode(AA_OPA_1) //cin ain cmem amem
-    end if
-    FC121824FF33FFFF SetCombine(MODULATERGBA)
-    No Secondary
-
-Model Type 2: 2Cycle No Sec
-    E700000000000000 pipesync()
-    BA00140200100000 CycleType(2c)
-    if UseZ
-      B900031D0C192078 SetRendermode(AA_ZB_OPA_2) // cin 0 cin 1 //colour only
-    else
-      B900031D0C192048 SetRendermode(AA_OPA_2) // cin 0 cin 1 //colour only
-    end if
-    FC26A0041F1093FF SetCombine(TRILERP, MODULATERGBA)
-    No Secondary
-Model Type 3: GunLighting - Reduced Secondary Commands (guns)
-    This Type Uses Vertex Alpha for Secondary Surfaces and uses the FOG Alpha value for applying Fog/"Lighting". 
-    Primary
-    E700000000000000 pipesync()
-    BA00140200100000 CycleType(2c)
-    F800000000000026 SetFogColor(0,0,0,38)
-    if dltype = full
-      if guard
-        FB0000005A0000FF SetEnvColor(90,0,0,255)
-        FC1598045FFEDBF8 SetCombine(((Texel0-Env)*ShadeA+Env) 
-                         ((Texel0-Env)*Shade+Env), 
-                         MODULATERGB_DECALA)
-      else if prop
-        FB000000FFFFFFFF SetEnvColor(255,255,255,255)
-        FA00000000000000 SetPrimColor(0,0,0,0)
-        FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
-      endif
-    else
-      FC26A0041F1093FF SetCombine(TRILERP, MODULATERGBA)
-    endif
-    if UseZ
-      B900031DC4112078 SetRendermode(AA_ZB_OPA_StanFOG_2)
-    else
-      B900031DC4112048 SetRendermode(AA_OPA_StanFOG_2) //acvg
-    endif
-
-    Secondary
-    if UseZ
-      B900031DC41049D8 SetRendermode(AA_Zcmp_XLU_StanFOG_2)
-    else
-      B900031DC41041C8 SetRendermode(AA_OPA_StanFOG_2)//FcBl ClrOnCvg
-    endif
-    
-Model Type 4: Normal Fog/Lighting object
-    This Type Uses Vertex Alpha for Secondary Surfaces and uses the FOG Alpha value for applying Fog/"Lighting". 
-    Primary
-    E700000000000000 pipesync()
-    BA00140200100000 CycleType(2c)
-    F800000000000026 SetFogColor(0,0,0,38)
-    if dltype = full
-      if guard
-        FB0000005A0000FF SetEnvColor(90,0,0,255)
-        FC1598045FFEDBF8 SetCombine(((Texel0-Env)*ShadeA+Env) 
-                         ((Texel0-Env)*Shade+Env), 
-                         MODULATERGB_DECALA)
-      else if prop
-        FB000000FFFFFFFF SetEnvColor(255,255,255,255)
-        FA00000000000000 SetPrimColor(0,0,0,0)
-        FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
-      endif
-    else
-      FC26A0041F1093FF SetCombine(TRILERP, MODULATERGBA)
-    endif
-    if UseZ
-      B900031DC4112078 SetRendermode(AA_ZB_OPA_StanFOG_2)
-    else
-      B900031DC4112048 SetRendermode(AA_OPA_StanFOG_2) //acvg
-    endif
-
-    Secondary
-    E700000000000000 pipesync()
-    BA00140200100000 CycleType(2c)
-    F800000000000026 SetFogColor(0,0,0,38)
-    if dltype = full
-      if guard
-        FB0000005A0000FF SetEnvColor(90,0,0,255)
-        FC1598045FFEDBF8 SetCombine(((Texel0-Env)*ShadeA+Env) 
-                         ((Texel0-Env)*Shade+Env), 
-                         MODULATERGB_DECALA)
-      else if prop
-        FB000000FFFFFFFF SetEnvColor(255,255,255,255)
-        FA00000000000000 SetPrimColor(0,0,0,0)
-        FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
-      endif
-    else
-      FA00000000000000 SetPrimColor(0,0,0,0)
-      FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
-    endif
-    if UseZ
-      B900031DC41049D8 SetRendermode(AA_Zcmp_XLU_StanFOG_2)
-    else
-      B900031DC41041C8 SetRendermode(AA_OPA_StanFOG_2)//FcBl ClrOnCvg
-    endif
-*/
-void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
+/**
+ * @brief Model Type 3: GunLighting - Reduced Secondary Commands (guns)
+    This Type Uses Vertex Alpha for Secondary Surfaces and uses the FOG Alpha value for applying Fog/"Lighting".
+ * @param renderdata
+ * @param isPrimary
+ */
+void modelApplyRenderModeType3(ModelRenderData *renderdata, bool isPrimary)
 {
-    if (renderdata->unk30 == 7)
+    if (renderdata->PropType == PROP_TYPE_VIEWER+1)
     {
-        if (arg1)
+        if (isPrimary)
         {
             u8 r, g, b, a;
             gDPPipeSync(renderdata->gdl++);
             gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
 
-            r = _SHIFTR(renderdata->fogcolour, 24, 8);
-            g = _SHIFTR(renderdata->fogcolour, 16, 8);
-            b = _SHIFTR(renderdata->fogcolour, 8, 8);
-            a = _SHIFTR(renderdata->fogcolour, 0, 8);
+            r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+            g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+            b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+            a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
             gDPSetFogColor(renderdata->gdl++, r, g, b, a);
 
-            r = _SHIFTR(renderdata->envcolour, 24, 8);
-            g = _SHIFTR(renderdata->envcolour, 16, 8);
-            b = _SHIFTR(renderdata->envcolour, 8, 8);
+            r = _SHIFTR(renderdata->envcolour.word, 24, 8);
+            g = _SHIFTR(renderdata->envcolour.word, 16, 8);
+            b = _SHIFTR(renderdata->envcolour.word, 8, 8);
             a = 0xFF;
             gDPSetEnvColor(renderdata->gdl++, r, g, b, a);
 
@@ -5465,24 +5346,24 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
             }
         }
     }
-    else if (renderdata->unk30 == 8)
+    else if (renderdata->PropType == PROP_TYPE_EXPLOSION+1)
     {
-        if (arg1)
+        if (isPrimary)
         {
             u8 r, g, b, a;
             gDPPipeSync(renderdata->gdl++);
             gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
 
-            r = _SHIFTR(renderdata->fogcolour, 24, 8);
-            g = _SHIFTR(renderdata->fogcolour, 16, 8);
-            b = _SHIFTR(renderdata->fogcolour, 8, 8);
-            a = _SHIFTR(renderdata->fogcolour, 0, 8);
+            r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+            g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+            b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+            a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
             gDPSetFogColor(renderdata->gdl++, r, g, b, a);
 
-            r = _SHIFTR(renderdata->envcolour, 24, 8);
-            g = _SHIFTR(renderdata->envcolour, 16, 8);
-            b = _SHIFTR(renderdata->envcolour, 8, 8);
-            a = _SHIFTR(renderdata->envcolour, 0, 8);
+            r = _SHIFTR(renderdata->envcolour.word, 24, 8);
+            g = _SHIFTR(renderdata->envcolour.word, 16, 8);
+            b = _SHIFTR(renderdata->envcolour.word, 8, 8);
+            a = _SHIFTR(renderdata->envcolour.word, 0, 8);
             gDPSetEnvColor(renderdata->gdl++, r, g, b, a);
 
             gDPSetCombineLERP(renderdata->gdl++, TEXEL0, ENVIRONMENT, SHADE_ALPHA, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0, COMBINED, 0, SHADE, 0, 0, 0, 0, COMBINED);
@@ -5497,22 +5378,22 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
             }
         }
     }
-    else if (renderdata->unk30 == 9)
+    else if (renderdata->PropType == PROP_TYPE_SMOKE+1)
     {
-        if ((renderdata->envcolour & 0xFF) == 0)
+        if ((renderdata->envcolour.word & 0xFF) == 0)
         {
-            if (arg1)
+            if (isPrimary)
             {
-                u8 r = _SHIFTR(renderdata->fogcolour, 24, 8);
-                u8 g = _SHIFTR(renderdata->fogcolour, 16, 8);
-                u8 b = _SHIFTR(renderdata->fogcolour, 8, 8);
-                u8 a = _SHIFTR(renderdata->fogcolour, 0, 8);
+                u8 r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+                u8 g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+                u8 b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+                u8 a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
 
                 gDPPipeSync(renderdata->gdl++);
                 gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
                 gDPSetFogColor(renderdata->gdl++, r, g, b, a);
                 gDPSetEnvColor(renderdata->gdl++, 0xFF, 0xFF, 0xFF, 0xFF);
-                gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, (renderdata->envcolour >> 8) & 0xFF);
+                gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, (renderdata->envcolour.word >> 8) & 0xFF);
 
                 gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, COMBINED, 0, SHADE, 0, COMBINED, 0, SHADE, PRIMITIVE);
 
@@ -5539,17 +5420,17 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
         }
         else
         {
-            if (arg1)
+            if (isPrimary)
             {
-                u8 r = _SHIFTR(renderdata->fogcolour, 24, 8);
-                u8 g = _SHIFTR(renderdata->fogcolour, 16, 8);
-                u8 b = _SHIFTR(renderdata->fogcolour, 8, 8);
-                u8 a = _SHIFTR(renderdata->fogcolour, 0, 8);
+                u8 r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+                u8 g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+                u8 b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+                u8 a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
 
                 gDPPipeSync(renderdata->gdl++);
                 gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
                 gDPSetFogColor(renderdata->gdl++, r, g, b, a);
-                gDPSetEnvColor(renderdata->gdl++, 0, 0, 0, renderdata->envcolour & 0xFF);
+                gDPSetEnvColor(renderdata->gdl++, 0, 0, 0, renderdata->envcolour.word & 0xFF);
 
                 gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, 1, 0, SHADE, ENVIRONMENT, COMBINED, 0, SHADE, 0, 0, 0, 0, COMBINED);
 
@@ -5564,7 +5445,7 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
             }
             else
             {
-                gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, (renderdata->envcolour >> 8) & 0xFF);
+                gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, (renderdata->envcolour.word >> 8) & 0xFF);
                 gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, SHADE, ENVIRONMENT, TEXEL0, 0, COMBINED, 0, SHADE, 0, 1, 0, PRIMITIVE, COMBINED);
 
                 if (renderdata->zbufferenabled)
@@ -5578,14 +5459,14 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
             }
         }
     }
-    else if (renderdata->unk30 == 4)
+    else if (renderdata->PropType == PROP_TYPE_CHR+1)
     {
-        if (arg1)
+        if (isPrimary)
         {
-            u8 r = _SHIFTR(renderdata->envcolour, 24, 8);
-            u8 g = _SHIFTR(renderdata->envcolour, 16, 8);
-            u8 b = _SHIFTR(renderdata->envcolour, 8, 8);
-            u8 a = _SHIFTR(renderdata->envcolour, 0, 8);
+            u8 r = _SHIFTR(renderdata->envcolour.word, 24, 8);
+            u8 g = _SHIFTR(renderdata->envcolour.word, 16, 8);
+            u8 b = _SHIFTR(renderdata->envcolour.word, 8, 8);
+            u8 a = _SHIFTR(renderdata->envcolour.word, 0, 8);
 
             gDPPipeSync(renderdata->gdl++);
             gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
@@ -5614,27 +5495,27 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
             }
         }
     }
-    else if (renderdata->unk30 == 5)
+    else if (renderdata->PropType == PROP_TYPE_WEAPON+1)
     {
         u8 r, g, b, a;
-        if (arg1)
+        if (isPrimary)
         {
             gDPPipeSync(renderdata->gdl++);
             gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
 
-            r = _SHIFTR(renderdata->fogcolour, 24, 8);
-            g = _SHIFTR(renderdata->fogcolour, 16, 8);
-            b = _SHIFTR(renderdata->fogcolour, 8, 8);
-            a = _SHIFTR(renderdata->fogcolour, 0, 8);
+            r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+            g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+            b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+            a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
             gDPSetFogColor(renderdata->gdl++, r, g, b, a);
 
-            a = renderdata->envcolour & 0xFF;
+            a = renderdata->envcolour.word & 0xFF;
 
             if (a < 255)
             {
                 gDPSetEnvColor(renderdata->gdl++, 0xFF, 0xFF, 0xFF, a);
 
-                if (renderdata->envcolour & 0xFF00)
+                if (renderdata->envcolour.word & 0xFF00)
                 {
                     gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, 1, SHADE, ENVIRONMENT, 0, COMBINED, 0, SHADE, 0, COMBINED, 0, SHADE, 0);
                 }
@@ -5659,7 +5540,7 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
         }
         else
         {
-            a = renderdata->envcolour & 0xFF;
+            a = renderdata->envcolour.word & 0xFF;
 
             if (a < 255)
             {
@@ -5673,7 +5554,7 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
     }
     else
     {
-        if (arg1)
+        if (isPrimary)
         {
             gDPPipeSync(renderdata->gdl++);
             gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
@@ -5702,30 +5583,35 @@ void modelApplyRenderModeType3(ModelRenderData *renderdata, bool arg1)
     }
 }
 
-
-void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
+/**
+ * @brief Model Type 4: Normal Fog/Lighting object
+    This Type Uses Vertex Alpha for Secondary Surfaces and uses the FOG Alpha value for applying Fog/"Lighting".
+ * @param renderdata
+ * @param isPrimary Type of DisplayList
+ */
+void modelApplyRenderModeType4(ModelRenderData *renderdata, bool isPrimary)
 {
-    if (renderdata->unk30 == 7)
+    if (renderdata->PropType == PROP_TYPE_VIEWER+1)
     {
         u8 r, g, b, a;
         gDPPipeSync(renderdata->gdl++);
         gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
 
-        r = _SHIFTR(renderdata->fogcolour, 24, 8);
-        g = _SHIFTR(renderdata->fogcolour, 16, 8);
-        b = _SHIFTR(renderdata->fogcolour, 8, 8);
-        a = _SHIFTR(renderdata->fogcolour, 0, 8);
+        r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+        g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+        b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+        a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
         gDPSetFogColor(renderdata->gdl++, r, g, b, a);
 
-        r = _SHIFTR(renderdata->envcolour, 24, 8);
-        g = _SHIFTR(renderdata->envcolour, 16, 8);
-        b = _SHIFTR(renderdata->envcolour, 8, 8);
+        r = _SHIFTR(renderdata->envcolour.word, 24, 8);
+        g = _SHIFTR(renderdata->envcolour.word, 16, 8);
+        b = _SHIFTR(renderdata->envcolour.word, 8, 8);
         a = 0xFF;
         gDPSetEnvColor(renderdata->gdl++, r, g, b, a);
 
         gDPSetCombineLERP(renderdata->gdl++, TEXEL0, ENVIRONMENT, SHADE_ALPHA, ENVIRONMENT, TEXEL0, ENVIRONMENT, SHADE, ENVIRONMENT, COMBINED, 0, SHADE, 0, 0, 0, 0, COMBINED);
 
-        if (arg1)
+        if (isPrimary)
         {
             if (renderdata->zbufferenabled)
             {
@@ -5748,22 +5634,22 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
             }
         }
     }
-    else if (renderdata->unk30 == 8)
+    else if (renderdata->PropType == PROP_TYPE_EXPLOSION+1)
     {
         u8 r, g, b, a;
         gDPPipeSync(renderdata->gdl++);
         gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
 
-        r = _SHIFTR(renderdata->fogcolour, 24, 8);
-        g = _SHIFTR(renderdata->fogcolour, 16, 8);
-        b = _SHIFTR(renderdata->fogcolour, 8, 8);
-        a = _SHIFTR(renderdata->fogcolour, 0, 8);
+        r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+        g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+        b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+        a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
         gDPSetFogColor(renderdata->gdl++, r, g, b, a);
 
-        r = _SHIFTR(renderdata->envcolour, 24, 8);
-        g = _SHIFTR(renderdata->envcolour, 16, 8);
-        b = _SHIFTR(renderdata->envcolour, 8, 8);
-        a = _SHIFTR(renderdata->envcolour, 0, 8);
+        r = _SHIFTR(renderdata->envcolour.word, 24, 8);
+        g = _SHIFTR(renderdata->envcolour.word, 16, 8);
+        b = _SHIFTR(renderdata->envcolour.word, 8, 8);
+        a = _SHIFTR(renderdata->envcolour.word, 0, 8);
         gDPSetEnvColor(renderdata->gdl++, r, g, b, a);
 
         gDPSetCombineLERP(renderdata->gdl++, TEXEL0, ENVIRONMENT, SHADE_ALPHA, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0, COMBINED, 0, SHADE, 0, 0, 0, 0, COMBINED);
@@ -5777,22 +5663,22 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
             gDPSetRenderMode(renderdata->gdl++, G_RM_FOG_PRIM_A, G_RM_AA_XLU_SURF2);
         }
     }
-    else if (renderdata->unk30 == 9)
+    else if (renderdata->PropType == PROP_TYPE_SMOKE+1)
     {
-        if ((renderdata->envcolour & 0xFF) == 0)
+        if ((renderdata->envcolour.word & 0xFF) == 0)
         {
-            u8 r = _SHIFTR(renderdata->fogcolour, 24, 8);
-            u8 g = _SHIFTR(renderdata->fogcolour, 16, 8);
-            u8 b = _SHIFTR(renderdata->fogcolour, 8, 8);
-            u8 a = _SHIFTR(renderdata->fogcolour, 0, 8);
+            u8 r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+            u8 g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+            u8 b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+            u8 a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
 
             gDPPipeSync(renderdata->gdl++);
             gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
             gDPSetFogColor(renderdata->gdl++, r, g, b, a);
             gDPSetEnvColor(renderdata->gdl++, 0xFF, 0xFF, 0xFF, 0xFF);
-            gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, (renderdata->envcolour >> 8) & 0xFF);
+            gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, ((renderdata->envcolour.word >> 8 ) & 0xFF));
 
-            if (arg1)
+            if (isPrimary)
             {
                 gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, COMBINED, 0, SHADE, 0, COMBINED, 0, SHADE, PRIMITIVE);
 
@@ -5821,17 +5707,17 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
         }
         else
         {
-            u8 r = _SHIFTR(renderdata->fogcolour, 24, 8);
-            u8 g = _SHIFTR(renderdata->fogcolour, 16, 8);
-            u8 b = _SHIFTR(renderdata->fogcolour, 8, 8);
-            u8 a = _SHIFTR(renderdata->fogcolour, 0, 8);
+            u8 r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+            u8 g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+            u8 b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+            u8 a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
 
             gDPPipeSync(renderdata->gdl++);
             gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
             gDPSetFogColor(renderdata->gdl++, r, g, b, a);
-            gDPSetEnvColor(renderdata->gdl++, 0, 0, 0, renderdata->envcolour & 0xFF);
+            gDPSetEnvColor(renderdata->gdl++, 0, 0, 0, renderdata->envcolour.word & 0xFF);
 
-            if (arg1)
+            if (isPrimary)
             {
                 gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, 1, 0, SHADE, ENVIRONMENT, COMBINED, 0, SHADE, 0, 0, 0, 0, COMBINED);
 
@@ -5846,7 +5732,7 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
             }
             else
             {
-                gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, (renderdata->envcolour >> 8) & 0xFF);
+                gDPSetPrimColor(renderdata->gdl++, 0, 0, 0, 0, 0, (renderdata->envcolour.word >> 8) & 0xFF);
                 gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, SHADE, ENVIRONMENT, TEXEL0, 0, COMBINED, 0, SHADE, 0, 1, 0, PRIMITIVE, COMBINED);
 
                 if (renderdata->zbufferenabled)
@@ -5860,12 +5746,12 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
             }
         }
     }
-    else if (renderdata->unk30 == 4)
+    else if (renderdata->PropType == PROP_TYPE_CHR+1)
     {
-        u8 r = _SHIFTR(renderdata->envcolour, 24, 8);
-        u8 g = _SHIFTR(renderdata->envcolour, 16, 8);
-        u8 b = _SHIFTR(renderdata->envcolour, 8, 8);
-        u8 a = _SHIFTR(renderdata->envcolour, 0, 8);
+        u8 r = _SHIFTR(renderdata->envcolour.word, 24, 8);
+        u8 g = _SHIFTR(renderdata->envcolour.word, 16, 8);
+        u8 b = _SHIFTR(renderdata->envcolour.word, 8, 8);
+        u8 a = _SHIFTR(renderdata->envcolour.word, 0, 8);
 
         gDPPipeSync(renderdata->gdl++);
         gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
@@ -5873,7 +5759,7 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
 
         gDPSetCombineMode(renderdata->gdl++, G_CC_TRILERP, G_CC_MODULATEIA2);
 
-        if (arg1)
+        if (isPrimary)
         {
             if (renderdata->zbufferenabled)
             {
@@ -5896,28 +5782,28 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
             }
         }
     }
-    else if (renderdata->unk30 == 5)
+    else if (renderdata->PropType == PROP_TYPE_WEAPON+1)
     {
         u8 r, g, b, a;
 
         gDPPipeSync(renderdata->gdl++);
         gDPSetCycleType(renderdata->gdl++, G_CYC_2CYCLE);
 
-        r = _SHIFTR(renderdata->fogcolour, 24, 8);
-        g = _SHIFTR(renderdata->fogcolour, 16, 8);
-        b = _SHIFTR(renderdata->fogcolour, 8, 8);
-        a = _SHIFTR(renderdata->fogcolour, 0, 8);
+        r = _SHIFTR(renderdata->fogcolour.word, 24, 8);
+        g = _SHIFTR(renderdata->fogcolour.word, 16, 8);
+        b = _SHIFTR(renderdata->fogcolour.word, 8, 8);
+        a = _SHIFTR(renderdata->fogcolour.word, 0, 8);
         gDPSetFogColor(renderdata->gdl++, r, g, b, a);
 
-        a = renderdata->envcolour & 0xFF;
+        a = renderdata->envcolour.word & 0xFF;
 
         if (a < 255)
         {
             gDPSetEnvColor(renderdata->gdl++, 0xFF, 0xFF, 0xFF, a);
 
-            if (arg1)
+            if (isPrimary)
             {
-                if (renderdata->envcolour & 0xFF00)
+                if (renderdata->envcolour.word & 0xFF00) //apply inverse vertex alpha if any
                 {
                     gDPSetCombineLERP(renderdata->gdl++, TEXEL1, TEXEL0, LOD_FRACTION, TEXEL0, 1, SHADE, ENVIRONMENT, 0, COMBINED, 0, SHADE, 0, COMBINED, 0, SHADE, 0);
                 }
@@ -5952,7 +5838,7 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
         gDPSetFogColor(renderdata->gdl++, 0xFF, 0xFF, 0xFF, 0x00);
         gDPSetCombineMode(renderdata->gdl++, G_CC_TRILERP, G_CC_MODULATEIA2);
 
-        if (arg1)
+        if (isPrimary)
         {
             if (renderdata->zbufferenabled)
             {
@@ -5977,7 +5863,10 @@ void modelApplyRenderModeType4(ModelRenderData *renderdata, bool arg1)
     }
 }
 
-
+/**
+ * @brief Model Type 2: 2Cycle No Secondary
+ * @param[in,out] renderdata append cycle, CC and RM to display List
+ */
 void modelApplyRenderModeType2(ModelRenderData *renderdata)
 {
     gDPPipeSync(renderdata->gdl++);
@@ -6069,7 +5958,130 @@ void modelRenderNodeGundl(ModelRenderData* renderdata, ModelNode* arg1)
     }
 }
 
+/*
 
+A1 is primary = 1, secondary = 0
+Inside the T8 or whatever temporary register indicates gun or not gun (0 = gun, or UseZ = 1), for different render mode
+
+Bool UseZ //guns = false
+Bool
+
+
+Model Type 0: NoSetup.
+    type 0 Has No DL Setup and will use whaterver is currently set.
+
+Model Type 1: 1Cycle No Sec
+    E700000000000000 pipesync()
+    BA00140200000000 CycleType(1c)
+    if UseZ
+      B900031D00552078 SetRendermode(AA_ZB_OPA_1) //cin ain cmem amem
+    else
+      B900031D00552048 SetRendermode(AA_OPA_1) //cin ain cmem amem
+    end if
+    FC121824FF33FFFF SetCombine(MODULATERGBA)
+    No Secondary
+
+Model Type 2: 2Cycle No Sec
+    E700000000000000 pipesync()
+    BA00140200100000 CycleType(2c)
+    if UseZ
+      B900031D0C192078 SetRendermode(AA_ZB_OPA_2) // cin 0 cin 1 //colour only
+    else
+      B900031D0C192048 SetRendermode(AA_OPA_2) // cin 0 cin 1 //colour only
+    end if
+    FC26A0041F1093FF SetCombine(TRILERP, MODULATERGBA)
+    No Secondary
+Model Type 3: GunLighting - Reduced Secondary Commands (guns)
+    This Type Uses Vertex Alpha for Secondary Surfaces and uses the FOG Alpha value for applying Fog/"Lighting".
+    Primary
+    E700000000000000 pipesync()
+    BA00140200100000 CycleType(2c)
+    F800000000000026 SetFogColor(0,0,0,38)
+    if dltype = full
+      if guard
+        FB0000005A0000FF SetEnvColor(90,0,0,255)
+        FC1598045FFEDBF8 SetCombine(((Texel0-Env)*ShadeA+Env)
+                         ((Texel0-Env)*Shade+Env),
+                         MODULATERGB_DECALA)
+      else if prop
+        FB000000FFFFFFFF SetEnvColor(255,255,255,255)
+        FA00000000000000 SetPrimColor(0,0,0,0)
+        FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
+      endif
+    else
+      FC26A0041F1093FF SetCombine(TRILERP, MODULATERGBA)
+    endif
+    if UseZ
+      B900031DC4112078 SetRendermode(AA_ZB_OPA_StanFOG_2)
+    else
+      B900031DC4112048 SetRendermode(AA_OPA_StanFOG_2) //acvg
+    endif
+
+    Secondary
+    if UseZ
+      B900031DC41049D8 SetRendermode(AA_Zcmp_XLU_StanFOG_2)
+    else
+      B900031DC41041C8 SetRendermode(AA_OPA_StanFOG_2)//FcBl ClrOnCvg
+    endif
+
+Model Type 4: Normal Fog/Lighting object
+    This Type Uses Vertex Alpha for Secondary Surfaces and uses the FOG Alpha value for applying Fog/"Lighting".
+    Primary
+    E700000000000000 pipesync()
+    BA00140200100000 CycleType(2c)
+    F800000000000026 SetFogColor(0,0,0,38)
+    if dltype = full
+      if guard
+        FB0000005A0000FF SetEnvColor(90,0,0,255)
+        FC1598045FFEDBF8 SetCombine(((Texel0-Env)*ShadeA+Env)
+                         ((Texel0-Env)*Shade+Env),
+                         MODULATERGB_DECALA)
+      else if prop
+        FB000000FFFFFFFF SetEnvColor(255,255,255,255)
+        FA00000000000000 SetPrimColor(0,0,0,0)
+        FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
+      endif
+    else
+      FC26A0041F1093FF SetCombine(TRILERP, MODULATERGBA)
+    endif
+    if UseZ
+      B900031DC4112078 SetRendermode(AA_ZB_OPA_StanFOG_2)
+    else
+      B900031DC4112048 SetRendermode(AA_OPA_StanFOG_2) //acvg
+    endif
+
+    Secondary
+    E700000000000000 pipesync()
+    BA00140200100000 CycleType(2c)
+    F800000000000026 SetFogColor(0,0,0,38)
+    if dltype = full
+      if guard
+        FB0000005A0000FF SetEnvColor(90,0,0,255)
+        FC1598045FFEDBF8 SetCombine(((Texel0-Env)*ShadeA+Env)
+                         ((Texel0-Env)*Shade+Env),
+                         MODULATERGB_DECALA)
+      else if prop
+        FB000000FFFFFFFF SetEnvColor(255,255,255,255)
+        FA00000000000000 SetPrimColor(0,0,0,0)
+        FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
+      endif
+    else
+      FA00000000000000 SetPrimColor(0,0,0,0)
+      FC26A0041F1093FB SetCombine(TRILERP, MODULATERGB_ADDPRIM_A)
+    endif
+    if UseZ
+      B900031DC41049D8 SetRendermode(AA_Zcmp_XLU_StanFOG_2)
+    else
+      B900031DC41041C8 SetRendermode(AA_OPA_StanFOG_2)//FcBl ClrOnCvg
+    endif
+*/
+
+/**
+* 7F072A0C
+* DisplayList Setups Depend on Object Type, Prop Guard or Gun.
+These are applied to each part of an object at runtime and can be overridden. loading the next part will use these values once more.
+GeometryMode is not in setup and is persistent accross parts.
+*/
 void modelRenderNodeDl(ModelRenderData *renderdata, Model *model, ModelNode *node)
 {
     union ModelRoData *rodata = node->Data;
@@ -6240,7 +6252,7 @@ void dorottex(ModelRenderData *renderdata, ModelNode *node)
 
 void sub_GAME_7F073038(ModelRenderData *renderdata, struct sImageTableEntry *tconfig, s32 arg2)
 {
-	likely_generate_DL_for_image_declaration(&renderdata->gdl, tconfig, arg2, renderdata->zbufferenabled, 2);
+    texSelect(&renderdata->gdl, tconfig, arg2, renderdata->zbufferenabled, 2);
 }
 
 
@@ -6711,7 +6723,7 @@ glabel doshadow
 /* 0A8B20 7F073FF0 AFA60080 */  sw    $a2, 0x80($sp)
 /* 0A8B24 7F073FF4 19C00142 */  blez  $t6, .L7F074500
 /* 0A8B28 7F073FF8 00A03825 */   move  $a3, $a1
-/* 0A8B2C 7F073FFC 3C198003 */  lui   $t9, %hi(D_800363F8) 
+/* 0A8B2C 7F073FFC 3C198003 */  lui   $t9, %hi(D_800363F8)
 /* 0A8B30 7F074000 273963F8 */  addiu $t9, %lo(D_800363F8) # addiu $t9, $t9, 0x63f8
 /* 0A8B34 7F074004 8F210000 */  lw    $at, ($t9)
 /* 0A8B38 7F074008 8F290004 */  lw    $t1, 4($t9)
@@ -6754,8 +6766,8 @@ glabel doshadow
 /* 0A8BC8 7F074098 318D00FF */  andi  $t5, $t4, 0xff
 /* 0A8BCC 7F07409C 01AE0019 */  multu $t5, $t6
 /* 0A8BD0 7F0740A0 00001012 */  mflo  $v0
-/* 0A8BD4 7F0740A4 00000000 */  nop   
-/* 0A8BD8 7F0740A8 00000000 */  nop   
+/* 0A8BD4 7F0740A4 00000000 */  nop
+/* 0A8BD8 7F0740A8 00000000 */  nop
 /* 0A8BDC 7F0740AC 0041001B */  divu  $zero, $v0, $at
 /* 0A8BE0 7F0740B0 00004012 */  mflo  $t0
 /* 0A8BE4 7F0740B4 A3A80067 */  sb    $t0, 0x67($sp)
@@ -6791,7 +6803,7 @@ glabel doshadow
 /* 0A8C54 7F074124 46125103 */  div.s $f4, $f10, $f18
 /* 0A8C58 7F074128 4600218D */  trunc.w.s $f6, $f4
 /* 0A8C5C 7F07412C 44033000 */  mfc1  $v1, $f6
-/* 0A8C60 7F074130 00000000 */  nop   
+/* 0A8C60 7F074130 00000000 */  nop
 /* 0A8C64 7F074134 00036C00 */  sll   $t5, $v1, 0x10
 /* 0A8C68 7F074138 10000009 */  b     .L7F074160
 /* 0A8C6C 7F07413C 000D1C03 */   sra   $v1, $t5, 0x10
@@ -6801,7 +6813,7 @@ glabel doshadow
 /* 0A8C78 7F074148 460A4483 */  div.s $f18, $f8, $f10
 /* 0A8C7C 7F07414C 4600910D */  trunc.w.s $f4, $f18
 /* 0A8C80 7F074150 44032000 */  mfc1  $v1, $f4
-/* 0A8C84 7F074154 00000000 */  nop   
+/* 0A8C84 7F074154 00000000 */  nop
 /* 0A8C88 7F074158 00034400 */  sll   $t0, $v1, 0x10
 /* 0A8C8C 7F07415C 00081C03 */  sra   $v1, $t0, 0x10
 .L7F074160:
@@ -6815,17 +6827,17 @@ glabel doshadow
 /* 0A8CAC 7F07417C 44818000 */   mtc1  $at, $f16
 /* 0A8CB0 7F074180 3C013FA0 */  li    $at, 0x3FA00000 # 1.250000
 /* 0A8CB4 7F074184 44810000 */  mtc1  $at, $f0
-/* 0A8CB8 7F074188 00000000 */  nop   
+/* 0A8CB8 7F074188 00000000 */  nop
 /* 0A8CBC 7F07418C 46006302 */  mul.s $f12, $f12, $f0
-/* 0A8CC0 7F074190 00000000 */  nop   
+/* 0A8CC0 7F074190 00000000 */  nop
 /* 0A8CC4 7F074194 46007382 */  mul.s $f14, $f14, $f0
 /* 0A8CC8 7F074198 10000012 */  b     .L7F0741E4
-/* 0A8CCC 7F07419C 00000000 */   nop   
+/* 0A8CCC 7F07419C 00000000 */   nop
 /* 0A8CD0 7F0741A0 44818000 */  mtc1  $at, $f16
 .L7F0741A4:
 /* 0A8CD4 7F0741A4 3C014348 */  li    $at, 0x43480000 # 200.000000
 /* 0A8CD8 7F0741A8 4602803C */  c.lt.s $f16, $f2
-/* 0A8CDC 7F0741AC 00000000 */  nop   
+/* 0A8CDC 7F0741AC 00000000 */  nop
 /* 0A8CE0 7F0741B0 45020005 */  bc1fl .L7F0741C8
 /* 0A8CE4 7F0741B4 46028201 */   sub.s $f8, $f16, $f2
 /* 0A8CE8 7F0741B8 44807000 */  mtc1  $zero, $f14
@@ -6834,12 +6846,12 @@ glabel doshadow
 /* 0A8CF4 7F0741C4 46028201 */  sub.s $f8, $f16, $f2
 .L7F0741C8:
 /* 0A8CF8 7F0741C8 44815000 */  mtc1  $at, $f10
-/* 0A8CFC 7F0741CC 00000000 */  nop   
+/* 0A8CFC 7F0741CC 00000000 */  nop
 /* 0A8D00 7F0741D0 460A4003 */  div.s $f0, $f8, $f10
 /* 0A8D04 7F0741D4 46006302 */  mul.s $f12, $f12, $f0
-/* 0A8D08 7F0741D8 00000000 */  nop   
+/* 0A8D08 7F0741D8 00000000 */  nop
 /* 0A8D0C 7F0741DC 46007382 */  mul.s $f14, $f14, $f0
-/* 0A8D10 7F0741E0 00000000 */  nop   
+/* 0A8D10 7F0741E0 00000000 */  nop
 .L7F0741E4:
 /* 0A8D14 7F0741E4 8C42608C */  lw    $v0, %lo(vtxallocator)($v0)
 /* 0A8D18 7F0741E8 5440000F */  bnezl $v0, .L7F074228
@@ -6850,7 +6862,7 @@ glabel doshadow
 /* 0A8D2C 7F0741FC 0C0033D1 */  jal   osSyncPrintf
 /* 0A8D30 7F074200 E7AE0044 */   swc1  $f14, 0x44($sp)
 /* 0A8D34 7F074204 0FC1B11B */  jal   return_null
-/* 0A8D38 7F074208 00000000 */   nop   
+/* 0A8D38 7F074208 00000000 */   nop
 /* 0A8D3C 7F07420C 3C028003 */  lui   $v0, %hi(vtxallocator)
 /* 0A8D40 7F074210 8C42608C */  lw    $v0, %lo(vtxallocator)($v0)
 /* 0A8D44 7F074214 87A30052 */  lh    $v1, 0x52($sp)
@@ -6906,26 +6918,26 @@ glabel doshadow
 /* 0A8E08 7F0742D8 460C9101 */  sub.s $f4, $f18, $f12
 /* 0A8E0C 7F0742DC 4600218D */  trunc.w.s $f6, $f4
 /* 0A8E10 7F0742E0 440C3000 */  mfc1  $t4, $f6
-/* 0A8E14 7F0742E4 00000000 */  nop   
+/* 0A8E14 7F0742E4 00000000 */  nop
 /* 0A8E18 7F0742E8 A44C0000 */  sh    $t4, ($v0)
 /* 0A8E1C 7F0742EC C4C80004 */  lwc1  $f8, 4($a2)
 /* 0A8E20 7F0742F0 460E4281 */  sub.s $f10, $f8, $f14
 /* 0A8E24 7F0742F4 4600548D */  trunc.w.s $f18, $f10
 /* 0A8E28 7F0742F8 440D9000 */  mfc1  $t5, $f18
-/* 0A8E2C 7F0742FC 00000000 */  nop   
+/* 0A8E2C 7F0742FC 00000000 */  nop
 /* 0A8E30 7F074300 A44D0004 */  sh    $t5, 4($v0)
 /* 0A8E34 7F074304 C4C40000 */  lwc1  $f4, ($a2)
 /* 0A8E38 7F074308 A4430012 */  sh    $v1, 0x12($v0)
 /* 0A8E3C 7F07430C 460C2181 */  sub.s $f6, $f4, $f12
 /* 0A8E40 7F074310 4600320D */  trunc.w.s $f8, $f6
 /* 0A8E44 7F074314 440E4000 */  mfc1  $t6, $f8
-/* 0A8E48 7F074318 00000000 */  nop   
+/* 0A8E48 7F074318 00000000 */  nop
 /* 0A8E4C 7F07431C A44E0010 */  sh    $t6, 0x10($v0)
 /* 0A8E50 7F074320 C4CA0004 */  lwc1  $f10, 4($a2)
 /* 0A8E54 7F074324 460E5480 */  add.s $f18, $f10, $f14
 /* 0A8E58 7F074328 4600910D */  trunc.w.s $f4, $f18
 /* 0A8E5C 7F07432C 44092000 */  mfc1  $t1, $f4
-/* 0A8E60 7F074330 00000000 */  nop   
+/* 0A8E60 7F074330 00000000 */  nop
 /* 0A8E64 7F074334 A4490014 */  sh    $t1, 0x14($v0)
 /* 0A8E68 7F074338 C4C60000 */  lwc1  $f6, ($a2)
 /* 0A8E6C 7F07433C A4430022 */  sh    $v1, 0x22($v0)
@@ -6934,26 +6946,26 @@ glabel doshadow
 /* 0A8E78 7F074348 35291406 */  ori   $t1, (0xBC001406 & 0xFFFF) # ori $t1, $t1, 0x1406
 /* 0A8E7C 7F07434C 4600428D */  trunc.w.s $f10, $f8
 /* 0A8E80 7F074350 44195000 */  mfc1  $t9, $f10
-/* 0A8E84 7F074354 00000000 */  nop   
+/* 0A8E84 7F074354 00000000 */  nop
 /* 0A8E88 7F074358 A4590020 */  sh    $t9, 0x20($v0)
 /* 0A8E8C 7F07435C C4D20004 */  lwc1  $f18, 4($a2)
 /* 0A8E90 7F074360 460E9100 */  add.s $f4, $f18, $f14
 /* 0A8E94 7F074364 4600218D */  trunc.w.s $f6, $f4
 /* 0A8E98 7F074368 440C3000 */  mfc1  $t4, $f6
-/* 0A8E9C 7F07436C 00000000 */  nop   
+/* 0A8E9C 7F07436C 00000000 */  nop
 /* 0A8EA0 7F074370 A44C0024 */  sh    $t4, 0x24($v0)
 /* 0A8EA4 7F074374 C4C80000 */  lwc1  $f8, ($a2)
 /* 0A8EA8 7F074378 A4430032 */  sh    $v1, 0x32($v0)
 /* 0A8EAC 7F07437C 460C4280 */  add.s $f10, $f8, $f12
 /* 0A8EB0 7F074380 4600548D */  trunc.w.s $f18, $f10
 /* 0A8EB4 7F074384 440D9000 */  mfc1  $t5, $f18
-/* 0A8EB8 7F074388 00000000 */  nop   
+/* 0A8EB8 7F074388 00000000 */  nop
 /* 0A8EBC 7F07438C A44D0030 */  sh    $t5, 0x30($v0)
 /* 0A8EC0 7F074390 C4C40004 */  lwc1  $f4, 4($a2)
 /* 0A8EC4 7F074394 460E2181 */  sub.s $f6, $f4, $f14
 /* 0A8EC8 7F074398 4600320D */  trunc.w.s $f8, $f6
 /* 0A8ECC 7F07439C 440E4000 */  mfc1  $t6, $f8
-/* 0A8ED0 7F0743A0 00000000 */  nop   
+/* 0A8ED0 7F0743A0 00000000 */  nop
 /* 0A8ED4 7F0743A4 A44E0034 */  sh    $t6, 0x34($v0)
 /* 0A8ED8 7F0743A8 8E03000C */  lw    $v1, 0xc($s0)
 /* 0A8EDC 7F0743AC 24680008 */  addiu $t0, $v1, 8
@@ -7048,7 +7060,7 @@ glabel doshadow
 /* 0A9034 7F074504 8FB00018 */  lw    $s0, 0x18($sp)
 /* 0A9038 7F074508 27BD0078 */  addiu $sp, $sp, 0x78
 /* 0A903C 7F07450C 03E00008 */  jr    $ra
-/* 0A9040 7F074510 00000000 */   nop   
+/* 0A9040 7F074510 00000000 */   nop
 )
 #endif
 #ifdef VERSION_EU
@@ -7108,8 +7120,8 @@ glabel doshadow
 /* 0A6B9C 7F0741AC 31AE00FF */  andi  $t6, $t5, 0xff
 /* 0A6BA0 7F0741B0 01CF0019 */  multu $t6, $t7
 /* 0A6BA4 7F0741B4 00001012 */  mflo  $v0
-/* 0A6BA8 7F0741B8 00000000 */  nop   
-/* 0A6BAC 7F0741BC 00000000 */  nop   
+/* 0A6BA8 7F0741B8 00000000 */  nop
+/* 0A6BAC 7F0741BC 00000000 */  nop
 /* 0A6BB0 7F0741C0 0041001B */  divu  $zero, $v0, $at
 /* 0A6BB4 7F0741C4 0000C012 */  mflo  $t8
 /* 0A6BB8 7F0741C8 A3B80067 */  sb    $t8, 0x67($sp)
@@ -7145,7 +7157,7 @@ glabel doshadow
 /* 0A6C28 7F074238 46125103 */  div.s $f4, $f10, $f18
 /* 0A6C2C 7F07423C 4600218D */  trunc.w.s $f6, $f4
 /* 0A6C30 7F074240 44033000 */  mfc1  $v1, $f6
-/* 0A6C34 7F074244 00000000 */  nop   
+/* 0A6C34 7F074244 00000000 */  nop
 /* 0A6C38 7F074248 00037C00 */  sll   $t7, $v1, 0x10
 /* 0A6C3C 7F07424C 10000009 */  b     .L7F074274
 /* 0A6C40 7F074250 000F1C03 */   sra   $v1, $t7, 0x10
@@ -7155,7 +7167,7 @@ glabel doshadow
 /* 0A6C4C 7F07425C 460A4483 */  div.s $f18, $f8, $f10
 /* 0A6C50 7F074260 4600910D */  trunc.w.s $f4, $f18
 /* 0A6C54 7F074264 44032000 */  mfc1  $v1, $f4
-/* 0A6C58 7F074268 00000000 */  nop   
+/* 0A6C58 7F074268 00000000 */  nop
 /* 0A6C5C 7F07426C 0003CC00 */  sll   $t9, $v1, 0x10
 /* 0A6C60 7F074270 00191C03 */  sra   $v1, $t9, 0x10
 .L7F074274:
@@ -7164,22 +7176,22 @@ glabel doshadow
 /* 0A6C6C 7F07427C 3C014396 */  li    $at, 0x43960000 # 300.000000
 /* 0A6C70 7F074280 3C198003 */  lui   $t9, %hi(vtxallocator) # $t9, 0x8003
 /* 0A6C74 7F074284 4606703C */  c.lt.s $f14, $f6
-/* 0A6C78 7F074288 00000000 */  nop   
+/* 0A6C78 7F074288 00000000 */  nop
 /* 0A6C7C 7F07428C 4502000A */  bc1fl .L7F0742B8
 /* 0A6C80 7F074290 44818000 */   mtc1  $at, $f16
 /* 0A6C84 7F074294 3C013FA0 */  li    $at, 0x3FA00000 # 1.250000
 /* 0A6C88 7F074298 44810000 */  mtc1  $at, $f0
-/* 0A6C8C 7F07429C 00000000 */  nop   
+/* 0A6C8C 7F07429C 00000000 */  nop
 /* 0A6C90 7F0742A0 46001082 */  mul.s $f2, $f2, $f0
-/* 0A6C94 7F0742A4 00000000 */  nop   
+/* 0A6C94 7F0742A4 00000000 */  nop
 /* 0A6C98 7F0742A8 46006302 */  mul.s $f12, $f12, $f0
 /* 0A6C9C 7F0742AC 10000012 */  b     .L7F0742F8
-/* 0A6CA0 7F0742B0 00000000 */   nop   
+/* 0A6CA0 7F0742B0 00000000 */   nop
 /* 0A6CA4 7F0742B4 44818000 */  mtc1  $at, $f16
 .L7F0742B8:
 /* 0A6CA8 7F0742B8 3C014348 */  li    $at, 0x43480000 # 200.000000
 /* 0A6CAC 7F0742BC 460E803C */  c.lt.s $f16, $f14
-/* 0A6CB0 7F0742C0 00000000 */  nop   
+/* 0A6CB0 7F0742C0 00000000 */  nop
 /* 0A6CB4 7F0742C4 45020005 */  bc1fl .L7F0742DC
 /* 0A6CB8 7F0742C8 460E8201 */   sub.s $f8, $f16, $f14
 /* 0A6CBC 7F0742CC 44806000 */  mtc1  $zero, $f12
@@ -7188,12 +7200,12 @@ glabel doshadow
 /* 0A6CC8 7F0742D8 460E8201 */  sub.s $f8, $f16, $f14
 .L7F0742DC:
 /* 0A6CCC 7F0742DC 44815000 */  mtc1  $at, $f10
-/* 0A6CD0 7F0742E0 00000000 */  nop   
+/* 0A6CD0 7F0742E0 00000000 */  nop
 /* 0A6CD4 7F0742E4 460A4003 */  div.s $f0, $f8, $f10
 /* 0A6CD8 7F0742E8 46001082 */  mul.s $f2, $f2, $f0
-/* 0A6CDC 7F0742EC 00000000 */  nop   
+/* 0A6CDC 7F0742EC 00000000 */  nop
 /* 0A6CE0 7F0742F0 46006302 */  mul.s $f12, $f12, $f0
-/* 0A6CE4 7F0742F4 00000000 */  nop   
+/* 0A6CE4 7F0742F4 00000000 */  nop
 .L7F0742F8:
 /* 0A6CE8 7F0742F8 8F3915DC */  lw    $t9, %lo(vtxallocator)($t9)
 /* 0A6CEC 7F0742FC A7A30052 */  sh    $v1, 0x52($sp)
@@ -7245,52 +7257,52 @@ glabel doshadow
 /* 0A6DA4 7F0743B4 35AD1406 */  ori   $t5, (0xBC001406 & 0xFFFF) # ori $t5, $t5, 0x1406
 /* 0A6DA8 7F0743B8 4600218D */  trunc.w.s $f6, $f4
 /* 0A6DAC 7F0743BC 440E3000 */  mfc1  $t6, $f6
-/* 0A6DB0 7F0743C0 00000000 */  nop   
+/* 0A6DB0 7F0743C0 00000000 */  nop
 /* 0A6DB4 7F0743C4 A44E0000 */  sh    $t6, ($v0)
 /* 0A6DB8 7F0743C8 C4C80004 */  lwc1  $f8, 4($a2)
 /* 0A6DBC 7F0743CC 460C4281 */  sub.s $f10, $f8, $f12
 /* 0A6DC0 7F0743D0 4600548D */  trunc.w.s $f18, $f10
 /* 0A6DC4 7F0743D4 440A9000 */  mfc1  $t2, $f18
-/* 0A6DC8 7F0743D8 00000000 */  nop   
+/* 0A6DC8 7F0743D8 00000000 */  nop
 /* 0A6DCC 7F0743DC A44A0004 */  sh    $t2, 4($v0)
 /* 0A6DD0 7F0743E0 C4C40000 */  lwc1  $f4, ($a2)
 /* 0A6DD4 7F0743E4 A4430012 */  sh    $v1, 0x12($v0)
 /* 0A6DD8 7F0743E8 46022181 */  sub.s $f6, $f4, $f2
 /* 0A6DDC 7F0743EC 4600320D */  trunc.w.s $f8, $f6
 /* 0A6DE0 7F0743F0 44194000 */  mfc1  $t9, $f8
-/* 0A6DE4 7F0743F4 00000000 */  nop   
+/* 0A6DE4 7F0743F4 00000000 */  nop
 /* 0A6DE8 7F0743F8 A4590010 */  sh    $t9, 0x10($v0)
 /* 0A6DEC 7F0743FC C4CA0004 */  lwc1  $f10, 4($a2)
 /* 0A6DF0 7F074400 460C5480 */  add.s $f18, $f10, $f12
 /* 0A6DF4 7F074404 4600910D */  trunc.w.s $f4, $f18
 /* 0A6DF8 7F074408 440C2000 */  mfc1  $t4, $f4
-/* 0A6DFC 7F07440C 00000000 */  nop   
+/* 0A6DFC 7F07440C 00000000 */  nop
 /* 0A6E00 7F074410 A44C0014 */  sh    $t4, 0x14($v0)
 /* 0A6E04 7F074414 C4C60000 */  lwc1  $f6, ($a2)
 /* 0A6E08 7F074418 A4430022 */  sh    $v1, 0x22($v0)
 /* 0A6E0C 7F07441C 46023200 */  add.s $f8, $f6, $f2
 /* 0A6E10 7F074420 4600428D */  trunc.w.s $f10, $f8
 /* 0A6E14 7F074424 440F5000 */  mfc1  $t7, $f10
-/* 0A6E18 7F074428 00000000 */  nop   
+/* 0A6E18 7F074428 00000000 */  nop
 /* 0A6E1C 7F07442C A44F0020 */  sh    $t7, 0x20($v0)
 /* 0A6E20 7F074430 C4D20004 */  lwc1  $f18, 4($a2)
 /* 0A6E24 7F074434 460C9100 */  add.s $f4, $f18, $f12
 /* 0A6E28 7F074438 4600218D */  trunc.w.s $f6, $f4
 /* 0A6E2C 7F07443C 44093000 */  mfc1  $t1, $f6
-/* 0A6E30 7F074440 00000000 */  nop   
+/* 0A6E30 7F074440 00000000 */  nop
 /* 0A6E34 7F074444 A4490024 */  sh    $t1, 0x24($v0)
 /* 0A6E38 7F074448 C4C80000 */  lwc1  $f8, ($a2)
 /* 0A6E3C 7F07444C A4430032 */  sh    $v1, 0x32($v0)
 /* 0A6E40 7F074450 46024280 */  add.s $f10, $f8, $f2
 /* 0A6E44 7F074454 4600548D */  trunc.w.s $f18, $f10
 /* 0A6E48 7F074458 44189000 */  mfc1  $t8, $f18
-/* 0A6E4C 7F07445C 00000000 */  nop   
+/* 0A6E4C 7F07445C 00000000 */  nop
 /* 0A6E50 7F074460 A4580030 */  sh    $t8, 0x30($v0)
 /* 0A6E54 7F074464 C4C40004 */  lwc1  $f4, 4($a2)
 /* 0A6E58 7F074468 460C2181 */  sub.s $f6, $f4, $f12
 /* 0A6E5C 7F07446C 4600320D */  trunc.w.s $f8, $f6
 /* 0A6E60 7F074470 440B4000 */  mfc1  $t3, $f8
-/* 0A6E64 7F074474 00000000 */  nop   
+/* 0A6E64 7F074474 00000000 */  nop
 /* 0A6E68 7F074478 A44B0034 */  sh    $t3, 0x34($v0)
 /* 0A6E6C 7F07447C 8E03000C */  lw    $v1, 0xc($s0)
 /* 0A6E70 7F074480 246C0008 */  addiu $t4, $v1, 8
@@ -7385,7 +7397,7 @@ glabel doshadow
 /* 0A6FC8 7F0745D8 8FB00018 */  lw    $s0, 0x18($sp)
 /* 0A6FCC 7F0745DC 27BD0078 */  addiu $sp, $sp, 0x78
 /* 0A6FD0 7F0745E0 03E00008 */  jr    $ra
-/* 0A6FD4 7F0745E4 00000000 */   nop   
+/* 0A6FD4 7F0745E4 00000000 */   nop
 )
 #endif
 #endif
@@ -7506,21 +7518,21 @@ glabel subdraw
 /* 0A91E4 7F0746B4 0C0033D1 */  jal   osSyncPrintf
 /* 0A91E8 7F0746B8 24844AB4 */   addiu $a0, %lo(aSubdrawNoGfxlist) # addiu $a0, $a0, 0x4ab4
 /* 0A91EC 7F0746BC 0FC1B11B */  jal   return_null
-/* 0A91F0 7F0746C0 00000000 */   nop   
+/* 0A91F0 7F0746C0 00000000 */   nop
 /* 0A91F4 7F0746C4 8E420008 */  lw    $v0, 8($s2)
 .L7F0746C8:
 /* 0A91F8 7F0746C8 8C4F001C */  lw    $t7, 0x1c($v0)
 /* 0A91FC 7F0746CC 3C048005 */  lui   $a0, %hi(aSubdrawObjectNotInitialised0xX)
 /* 0A9200 7F0746D0 24844ACC */  addiu $a0, %lo(aSubdrawObjectNotInitialised0xX) # addiu $a0, $a0, 0x4acc
 /* 0A9204 7F0746D4 11E00003 */  beqz  $t7, .L7F0746E4
-/* 0A9208 7F0746D8 00000000 */   nop   
+/* 0A9208 7F0746D8 00000000 */   nop
 /* 0A920C 7F0746DC 10000006 */  b     .L7F0746F8
 /* 0A9210 7F0746E0 8E22000C */   lw    $v0, 0xc($s1)
 .L7F0746E4:
 /* 0A9214 7F0746E4 0C0033D1 */  jal   osSyncPrintf
 /* 0A9218 7F0746E8 00402825 */   move  $a1, $v0
 /* 0A921C 7F0746EC 0FC1B11B */  jal   return_null
-/* 0A9220 7F0746F0 00000000 */   nop   
+/* 0A9220 7F0746F0 00000000 */   nop
 /* 0A9224 7F0746F4 8E22000C */  lw    $v0, 0xc($s1)
 .L7F0746F8:
 /* 0A9228 7F0746F8 24580008 */  addiu $t8, $v0, 8
@@ -7541,12 +7553,12 @@ glabel subdraw
 /* 0A9260 7F074730 02003025 */   move  $a2, $s0
 /* 0A9264 7F074734 8E020014 */  lw    $v0, 0x14($s0)
 /* 0A9268 7F074738 10400003 */  beqz  $v0, .L7F074748
-/* 0A926C 7F07473C 00000000 */   nop   
+/* 0A926C 7F07473C 00000000 */   nop
 /* 0A9270 7F074740 1000000B */  b     .L7F074770
 /* 0A9274 7F074744 00408025 */   move  $s0, $v0
 .L7F074748:
 /* 0A9278 7F074748 12000009 */  beqz  $s0, .L7F074770
-/* 0A927C 7F07474C 00000000 */   nop   
+/* 0A927C 7F07474C 00000000 */   nop
 /* 0A9280 7F074750 8E02000C */  lw    $v0, 0xc($s0)
 .L7F074754:
 /* 0A9284 7F074754 50400004 */  beql  $v0, $zero, .L7F074768
@@ -7601,12 +7613,12 @@ glabel subdraw
 /* 0A71A8 7F0747B8 02003025 */   move  $a2, $s0
 /* 0A71AC 7F0747BC 8E020014 */  lw    $v0, 0x14($s0)
 /* 0A71B0 7F0747C0 10400003 */  beqz  $v0, .L7F0747D0
-/* 0A71B4 7F0747C4 00000000 */   nop   
+/* 0A71B4 7F0747C4 00000000 */   nop
 /* 0A71B8 7F0747C8 1000000B */  b     .L7F0747F8
 /* 0A71BC 7F0747CC 00408025 */   move  $s0, $v0
 .L7F0747D0:
 /* 0A71C0 7F0747D0 12000009 */  beqz  $s0, .L7F0747F8
-/* 0A71C4 7F0747D4 00000000 */   nop   
+/* 0A71C4 7F0747D4 00000000 */   nop
 /* 0A71C8 7F0747D8 8E02000C */  lw    $v0, 0xc($s0)
 .L7F0747DC:
 /* 0A71CC 7F0747DC 50400004 */  beql  $v0, $zero, .L7F0747F0
@@ -7632,7 +7644,7 @@ glabel subdraw
 #endif
 
 
-void sub_GAME_7F074790(struct unk_joint_list* arg0, Model* arg1)
+void sub_GAME_7F074790(ModelRenderData* arg0, Model* arg1)
 {
     subcalcpos(arg1);
     subcalcmatrices(arg0, arg1);
@@ -7652,7 +7664,7 @@ glabel sub_GAME_7F0747D0
 /* 0A9304 7F0747D4 C4A20004 */  lwc1  $f2, 4($a1)
 /* 0A9308 7F0747D8 27BDFF48 */  addiu $sp, $sp, -0xb8
 /* 0A930C 7F0747DC 46000402 */  mul.s $f16, $f0, $f0
-/* 0A9310 7F0747E0 00000000 */  nop   
+/* 0A9310 7F0747E0 00000000 */  nop
 /* 0A9314 7F0747E4 46021102 */  mul.s $f4, $f2, $f2
 /* 0A9318 7F0747E8 E7A400B0 */  swc1  $f4, 0xb0($sp)
 /* 0A931C 7F0747EC C4AC0008 */  lwc1  $f12, 8($a1)
@@ -7719,11 +7731,11 @@ glabel sub_GAME_7F0747D0
 /* 0A9410 7F0748E0 46000007 */  neg.s $f0, $f0
 .L7F0748E4:
 /* 0A9414 7F0748E4 460C903C */  c.lt.s $f18, $f12
-/* 0A9418 7F0748E8 00000000 */  nop   
+/* 0A9418 7F0748E8 00000000 */  nop
 /* 0A941C 7F0748EC 45020008 */  bc1fl .L7F074910
 /* 0A9420 7F0748F0 4612003C */   c.lt.s $f0, $f18
 /* 0A9424 7F0748F4 460C003C */  c.lt.s $f0, $f12
-/* 0A9428 7F0748F8 00000000 */  nop   
+/* 0A9428 7F0748F8 00000000 */  nop
 /* 0A942C 7F0748FC 45020004 */  bc1fl .L7F074910
 /* 0A9430 7F074900 4612003C */   c.lt.s $f0, $f18
 /* 0A9434 7F074904 100000D6 */  b     .L7F074C60
@@ -7791,11 +7803,11 @@ glabel sub_GAME_7F0747D0
 /* 0A9524 7F0749F4 46000007 */  neg.s $f0, $f0
 .L7F0749F8:
 /* 0A9528 7F0749F8 460C803C */  c.lt.s $f16, $f12
-/* 0A952C 7F0749FC 00000000 */  nop   
+/* 0A952C 7F0749FC 00000000 */  nop
 /* 0A9530 7F074A00 45020008 */  bc1fl .L7F074A24
 /* 0A9534 7F074A04 4610003C */   c.lt.s $f0, $f16
 /* 0A9538 7F074A08 460C003C */  c.lt.s $f0, $f12
-/* 0A953C 7F074A0C 00000000 */  nop   
+/* 0A953C 7F074A0C 00000000 */  nop
 /* 0A9540 7F074A10 45020004 */  bc1fl .L7F074A24
 /* 0A9544 7F074A14 4610003C */   c.lt.s $f0, $f16
 /* 0A9548 7F074A18 10000091 */  b     .L7F074C60
@@ -7804,21 +7816,21 @@ glabel sub_GAME_7F0747D0
 .L7F074A24:
 /* 0A9554 7F074A24 C7A80094 */  lwc1  $f8, 0x94($sp)
 /* 0A9558 7F074A28 45000004 */  bc1f  .L7F074A3C
-/* 0A955C 7F074A2C 00000000 */   nop   
+/* 0A955C 7F074A2C 00000000 */   nop
 /* 0A9560 7F074A30 46008086 */  mov.s $f2, $f16
 /* 0A9564 7F074A34 46000406 */  mov.s $f16, $f0
 /* 0A9568 7F074A38 46001006 */  mov.s $f0, $f2
 .L7F074A3C:
 /* 0A956C 7F074A3C 46048302 */  mul.s $f12, $f16, $f4
-/* 0A9570 7F074A40 00000000 */  nop   
+/* 0A9570 7F074A40 00000000 */  nop
 /* 0A9574 7F074A44 460E9082 */  mul.s $f2, $f18, $f14
 /* 0A9578 7F074A48 4602603C */  c.lt.s $f12, $f2
-/* 0A957C 7F074A4C 00000000 */  nop   
+/* 0A957C 7F074A4C 00000000 */  nop
 /* 0A9580 7F074A50 4500000E */  bc1f  .L7F074A8C
-/* 0A9584 7F074A54 00000000 */   nop   
+/* 0A9584 7F074A54 00000000 */   nop
 /* 0A9588 7F074A58 46040302 */  mul.s $f12, $f0, $f4
 /* 0A958C 7F074A5C 4602603C */  c.lt.s $f12, $f2
-/* 0A9590 7F074A60 00000000 */  nop   
+/* 0A9590 7F074A60 00000000 */  nop
 /* 0A9594 7F074A64 45020004 */  bc1fl .L7F074A78
 /* 0A9598 7F074A68 C7A60094 */   lwc1  $f6, 0x94($sp)
 /* 0A959C 7F074A6C 1000007C */  b     .L7F074C60
@@ -7833,7 +7845,7 @@ glabel sub_GAME_7F0747D0
 .L7F074A8C:
 /* 0A95BC 7F074A8C 460E4082 */  mul.s $f2, $f8, $f14
 /* 0A95C0 7F074A90 460C103C */  c.lt.s $f2, $f12
-/* 0A95C4 7F074A94 00000000 */  nop   
+/* 0A95C4 7F074A94 00000000 */  nop
 /* 0A95C8 7F074A98 45020004 */  bc1fl .L7F074AAC
 /* 0A95CC 7F074A9C C7A4009C */   lwc1  $f4, 0x9c($sp)
 /* 0A95D0 7F074AA0 1000006F */  b     .L7F074C60
@@ -7843,7 +7855,7 @@ glabel sub_GAME_7F0747D0
 /* 0A95DC 7F074AAC E7B0005C */  swc1  $f16, 0x5c($sp)
 /* 0A95E0 7F074AB0 E7AE0058 */  swc1  $f14, 0x58($sp)
 /* 0A95E4 7F074AB4 46040302 */  mul.s $f12, $f0, $f4
-/* 0A95E8 7F074AB8 00000000 */  nop   
+/* 0A95E8 7F074AB8 00000000 */  nop
 .L7F074ABC:
 /* 0A95EC 7F074ABC 460C103C */  c.lt.s $f2, $f12
 /* 0A95F0 7F074AC0 C7AA0094 */  lwc1  $f10, 0x94($sp)
@@ -7860,7 +7872,7 @@ glabel sub_GAME_7F0747D0
 /* 0A9614 7F074AE4 C4A00020 */  lwc1  $f0, 0x20($a1)
 /* 0A9618 7F074AE8 C4A20024 */  lwc1  $f2, 0x24($a1)
 /* 0A961C 7F074AEC 46000482 */  mul.s $f18, $f0, $f0
-/* 0A9620 7F074AF0 00000000 */  nop   
+/* 0A9620 7F074AF0 00000000 */  nop
 /* 0A9624 7F074AF4 46021202 */  mul.s $f8, $f2, $f2
 /* 0A9628 7F074AF8 E7A80040 */  swc1  $f8, 0x40($sp)
 /* 0A962C 7F074AFC C4AC0028 */  lwc1  $f12, 0x28($a1)
@@ -7891,7 +7903,7 @@ glabel sub_GAME_7F0747D0
 /* 0A9690 7F074B60 E7A8002C */  swc1  $f8, 0x2c($sp)
 /* 0A9694 7F074B64 46041182 */  mul.s $f6, $f2, $f4
 /* 0A9698 7F074B68 44801000 */  mtc1  $zero, $f2
-/* 0A969C 7F074B6C 00000000 */  nop   
+/* 0A969C 7F074B6C 00000000 */  nop
 /* 0A96A0 7F074B70 4602403C */  c.lt.s $f8, $f2
 /* 0A96A4 7F074B74 46065100 */  add.s $f4, $f10, $f6
 /* 0A96A8 7F074B78 C7AA0008 */  lwc1  $f10, 8($sp)
@@ -7915,7 +7927,7 @@ glabel sub_GAME_7F0747D0
 /* 0A96EC 7F074BBC 45020008 */  bc1fl .L7F074BE0
 /* 0A96F0 7F074BC0 460E003C */   c.lt.s $f0, $f14
 /* 0A96F4 7F074BC4 4602003C */  c.lt.s $f0, $f2
-/* 0A96F8 7F074BC8 00000000 */  nop   
+/* 0A96F8 7F074BC8 00000000 */  nop
 /* 0A96FC 7F074BCC 45020004 */  bc1fl .L7F074BE0
 /* 0A9700 7F074BD0 460E003C */   c.lt.s $f0, $f14
 /* 0A9704 7F074BD4 10000022 */  b     .L7F074C60
@@ -7924,33 +7936,33 @@ glabel sub_GAME_7F0747D0
 .L7F074BE0:
 /* 0A9710 7F074BE0 C7A60058 */  lwc1  $f6, 0x58($sp)
 /* 0A9714 7F074BE4 45000004 */  bc1f  .L7F074BF8
-/* 0A9718 7F074BE8 00000000 */   nop   
+/* 0A9718 7F074BE8 00000000 */   nop
 /* 0A971C 7F074BEC 46007086 */  mov.s $f2, $f14
 /* 0A9720 7F074BF0 46000386 */  mov.s $f14, $f0
 /* 0A9724 7F074BF4 46001006 */  mov.s $f0, $f2
 .L7F074BF8:
 /* 0A9728 7F074BF8 460C2082 */  mul.s $f2, $f4, $f12
-/* 0A972C 7F074BFC 00000000 */  nop   
+/* 0A972C 7F074BFC 00000000 */  nop
 /* 0A9730 7F074C00 46087282 */  mul.s $f10, $f14, $f8
 /* 0A9734 7F074C04 460A103C */  c.lt.s $f2, $f10
-/* 0A9738 7F074C08 00000000 */  nop   
+/* 0A9738 7F074C08 00000000 */  nop
 /* 0A973C 7F074C0C 4500000C */  bc1f  .L7F074C40
-/* 0A9740 7F074C10 00000000 */   nop   
+/* 0A9740 7F074C10 00000000 */   nop
 /* 0A9744 7F074C14 C7A60054 */  lwc1  $f6, 0x54($sp)
 /* 0A9748 7F074C18 C7A80050 */  lwc1  $f8, 0x50($sp)
 /* 0A974C 7F074C1C 460C3102 */  mul.s $f4, $f6, $f12
-/* 0A9750 7F074C20 00000000 */  nop   
+/* 0A9750 7F074C20 00000000 */  nop
 /* 0A9754 7F074C24 46087282 */  mul.s $f10, $f14, $f8
 /* 0A9758 7F074C28 460A203C */  c.lt.s $f4, $f10
-/* 0A975C 7F074C2C 00000000 */  nop   
+/* 0A975C 7F074C2C 00000000 */  nop
 /* 0A9760 7F074C30 4500000A */  bc1f  .L7F074C5C
-/* 0A9764 7F074C34 00000000 */   nop   
+/* 0A9764 7F074C34 00000000 */   nop
 /* 0A9768 7F074C38 10000009 */  b     .L7F074C60
 /* 0A976C 7F074C3C 00001025 */   move  $v0, $zero
 .L7F074C40:
 /* 0A9770 7F074C40 46060202 */  mul.s $f8, $f0, $f6
 /* 0A9774 7F074C44 4602403C */  c.lt.s $f8, $f2
-/* 0A9778 7F074C48 00000000 */  nop   
+/* 0A9778 7F074C48 00000000 */  nop
 /* 0A977C 7F074C4C 45020004 */  bc1fl .L7F074C60
 /* 0A9780 7F074C50 24020001 */   li    $v0, 1
 /* 0A9784 7F074C54 10000002 */  b     .L7F074C60
@@ -7991,7 +8003,7 @@ glabel sub_GAME_7F074C68
 /* 0A97CC 7F074C9C 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0A97D0 7F074CA0 27BD0020 */  addiu $sp, $sp, 0x20
 /* 0A97D4 7F074CA4 03E00008 */  jr    $ra
-/* 0A97D8 7F074CA8 00000000 */   nop   
+/* 0A97D8 7F074CA8 00000000 */   nop
 )
 #endif
 
@@ -8018,7 +8030,7 @@ glabel sub_GAME_7F074CAC
 /* 0A97FC 7F074CCC AFA500B4 */  sw    $a1, 0xb4($sp)
 /* 0A9800 7F074CD0 0FC1B198 */  jal   modelFindNodeMtx
 /* 0A9804 7F074CD4 AFA800AC */   sw    $t0, 0xac($sp)
-/* 0A9808 7F074CD8 3C0B8003 */  lui   $t3, %hi(D_80036408) 
+/* 0A9808 7F074CD8 3C0B8003 */  lui   $t3, %hi(D_80036408)
 /* 0A980C 7F074CDC 256B6408 */  addiu $t3, %lo(D_80036408) # addiu $t3, $t3, 0x6408
 /* 0A9810 7F074CE0 8D610000 */  lw    $at, ($t3)
 /* 0A9814 7F074CE4 8FA700BC */  lw    $a3, 0xbc($sp)
@@ -8189,7 +8201,7 @@ glabel sub_GAME_7F074CAC
 /* 0A9A98 7F074F68 C7AA0020 */  lwc1  $f10, 0x20($sp)
 /* 0A9A9C 7F074F6C 46085280 */  add.s $f10, $f10, $f8
 /* 0A9AA0 7F074F70 460C5082 */  mul.s $f2, $f10, $f12
-/* 0A9AA4 7F074F74 00000000 */  nop   
+/* 0A9AA4 7F074F74 00000000 */  nop
 /* 0A9AA8 7F074F78 46020202 */  mul.s $f8, $f0, $f2
 /* 0A9AAC 7F074F7C 46044280 */  add.s $f10, $f8, $f4
 /* 0A9AB0 7F074F80 E7AA009C */  swc1  $f10, 0x9c($sp)
@@ -8220,7 +8232,7 @@ glabel sub_GAME_7F074CAC
 /* 0A9B14 7F074FE4 C7A60030 */  lwc1  $f6, 0x30($sp)
 /* 0A9B18 7F074FE8 46043180 */  add.s $f6, $f6, $f4
 /* 0A9B1C 7F074FEC 460C3382 */  mul.s $f14, $f6, $f12
-/* 0A9B20 7F074FF0 00000000 */  nop   
+/* 0A9B20 7F074FF0 00000000 */  nop
 /* 0A9B24 7F074FF4 460E0102 */  mul.s $f4, $f0, $f14
 /* 0A9B28 7F074FF8 460A2180 */  add.s $f6, $f4, $f10
 /* 0A9B2C 7F074FFC E7A60090 */  swc1  $f6, 0x90($sp)
@@ -8250,7 +8262,7 @@ glabel sub_GAME_7F074CAC
 /* 0A9B8C 7F07505C 46065280 */  add.s $f10, $f10, $f6
 /* 0A9B90 7F075060 C7A60028 */  lwc1  $f6, 0x28($sp)
 /* 0A9B94 7F075064 46105082 */  mul.s $f2, $f10, $f16
-/* 0A9B98 7F075068 00000000 */  nop   
+/* 0A9B98 7F075068 00000000 */  nop
 /* 0A9B9C 7F07506C 46020282 */  mul.s $f10, $f0, $f2
 /* 0A9BA0 7F075070 46065280 */  add.s $f10, $f10, $f6
 /* 0A9BA4 7F075074 E7AA009C */  swc1  $f10, 0x9c($sp)
@@ -8276,7 +8288,7 @@ glabel sub_GAME_7F074CAC
 /* 0A9BF4 7F0750C4 46045280 */  add.s $f10, $f10, $f4
 /* 0A9BF8 7F0750C8 C7A40030 */  lwc1  $f4, 0x30($sp)
 /* 0A9BFC 7F0750CC 46105302 */  mul.s $f12, $f10, $f16
-/* 0A9C00 7F0750D0 00000000 */  nop   
+/* 0A9C00 7F0750D0 00000000 */  nop
 /* 0A9C04 7F0750D4 460C0282 */  mul.s $f10, $f0, $f12
 /* 0A9C08 7F0750D8 46045280 */  add.s $f10, $f10, $f4
 /* 0A9C0C 7F0750DC E7AA0090 */  swc1  $f10, 0x90($sp)
@@ -8390,20 +8402,20 @@ glabel sub_GAME_7F074CAC
 /* 0A9D9C 7F07526C 46105102 */  mul.s $f4, $f10, $f16
 /* 0A9DA0 7F075270 46062080 */  add.s $f2, $f4, $f6
 /* 0A9DA4 7F075274 44802000 */  mtc1  $zero, $f4
-/* 0A9DA8 7F075278 00000000 */  nop   
+/* 0A9DA8 7F075278 00000000 */  nop
 /* 0A9DAC 7F07527C 4602203C */  c.lt.s $f4, $f2
-/* 0A9DB0 7F075280 00000000 */  nop   
+/* 0A9DB0 7F075280 00000000 */  nop
 /* 0A9DB4 7F075284 4500001A */  bc1f  .L7F0752F0
-/* 0A9DB8 7F075288 00000000 */   nop   
+/* 0A9DB8 7F075288 00000000 */   nop
 /* 0A9DBC 7F07528C 46129182 */  mul.s $f6, $f18, $f18
-/* 0A9DC0 7F075290 00000000 */  nop   
+/* 0A9DC0 7F075290 00000000 */  nop
 /* 0A9DC4 7F075294 460E7102 */  mul.s $f4, $f14, $f14
 /* 0A9DC8 7F075298 46043180 */  add.s $f6, $f6, $f4
 /* 0A9DCC 7F07529C 46108102 */  mul.s $f4, $f16, $f16
 /* 0A9DD0 7F0752A0 46062000 */  add.s $f0, $f4, $f6
 /* 0A9DD4 7F0752A4 C7A40030 */  lwc1  $f4, 0x30($sp)
 /* 0A9DD8 7F0752A8 46042182 */  mul.s $f6, $f4, $f4
-/* 0A9DDC 7F0752AC 00000000 */  nop   
+/* 0A9DDC 7F0752AC 00000000 */  nop
 /* 0A9DE0 7F0752B0 46084102 */  mul.s $f4, $f8, $f8
 /* 0A9DE4 7F0752B4 46043200 */  add.s $f8, $f6, $f4
 /* 0A9DE8 7F0752B8 460A5182 */  mul.s $f6, $f10, $f10
@@ -8413,9 +8425,9 @@ glabel sub_GAME_7F074CAC
 /* 0A9DF8 7F0752C8 460A6181 */  sub.s $f6, $f12, $f10
 /* 0A9DFC 7F0752CC 46003202 */  mul.s $f8, $f6, $f0
 /* 0A9E00 7F0752D0 4604403E */  c.le.s $f8, $f4
-/* 0A9E04 7F0752D4 00000000 */  nop   
+/* 0A9E04 7F0752D4 00000000 */  nop
 /* 0A9E08 7F0752D8 45000003 */  bc1f  .L7F0752E8
-/* 0A9E0C 7F0752DC 00000000 */   nop   
+/* 0A9E0C 7F0752DC 00000000 */   nop
 /* 0A9E10 7F0752E0 10000003 */  b     .L7F0752F0
 /* 0A9E14 7F0752E4 24020001 */   li    $v0, 1
 .L7F0752E8:
@@ -8493,15 +8505,15 @@ glabel sub_GAME_7F0752FC
 /* 0A9E7C 7F07534C 00001025 */   move  $v0, $zero
 .L7F075350:
 /* 0A9E80 7F075350 12200006 */  beqz  $s1, .L7F07536C
-/* 0A9E84 7F075354 00000000 */   nop   
+/* 0A9E84 7F075354 00000000 */   nop
 /* 0A9E88 7F075358 8E020014 */  lw    $v0, 0x14($s0)
 /* 0A9E8C 7F07535C 10400003 */  beqz  $v0, .L7F07536C
-/* 0A9E90 7F075360 00000000 */   nop   
+/* 0A9E90 7F075360 00000000 */   nop
 /* 0A9E94 7F075364 1000000D */  b     .L7F07539C
 /* 0A9E98 7F075368 00408025 */   move  $s0, $v0
 .L7F07536C:
 /* 0A9E9C 7F07536C 12000009 */  beqz  $s0, .L7F075394
-/* 0A9EA0 7F075370 00000000 */   nop   
+/* 0A9EA0 7F075370 00000000 */   nop
 /* 0A9EA4 7F075374 8E02000C */  lw    $v0, 0xc($s0)
 .L7F075378:
 /* 0A9EA8 7F075378 50400004 */  beql  $v0, $zero, .L7F07538C
@@ -8528,7 +8540,7 @@ glabel sub_GAME_7F0752FC
 /* 0A9EF0 7F0753C0 8C394DB4 */  lw    $t9, %lo(jpt_80054DB4)($at)
 .L7F0753C4:
 /* 0A9EF4 7F0753C4 03200008 */  jr    $t9
-/* 0A9EF8 7F0753C8 00000000 */   nop   
+/* 0A9EF8 7F0753C8 00000000 */   nop
 .L7F0753CC:
 /* 0A9EFC 7F0753CC 02402025 */  move  $a0, $s2
 /* 0A9F00 7F0753D0 02002825 */  move  $a1, $s0
@@ -8536,7 +8548,7 @@ glabel sub_GAME_7F0752FC
 /* 0A9F08 7F0753D8 0FC1D31A */  jal   sub_GAME_7F074C68
 /* 0A9F0C 7F0753DC 02803825 */   move  $a3, $s4
 /* 0A9F10 7F0753E0 10400006 */  beqz  $v0, .L7F0753FC
-/* 0A9F14 7F0753E4 00000000 */   nop   
+/* 0A9F14 7F0753E4 00000000 */   nop
 /* 0A9F18 7F0753E8 8FA8003C */  lw    $t0, 0x3c($sp)
 /* 0A9F1C 7F0753EC AD100000 */  sw    $s0, ($t0)
 /* 0A9F20 7F0753F0 8E090004 */  lw    $t1, 4($s0)
@@ -8552,7 +8564,7 @@ glabel sub_GAME_7F0752FC
 /* 0A9F40 7F075410 0FC1D32B */  jal   sub_GAME_7F074CAC
 /* 0A9F44 7F075414 02803825 */   move  $a3, $s4
 /* 0A9F48 7F075418 10400006 */  beqz  $v0, .L7F075434
-/* 0A9F4C 7F07541C 00000000 */   nop   
+/* 0A9F4C 7F07541C 00000000 */   nop
 /* 0A9F50 7F075420 8FAA003C */  lw    $t2, 0x3c($sp)
 /* 0A9F54 7F075424 AD500000 */  sw    $s0, ($t2)
 /* 0A9F58 7F075428 8E0B0004 */  lw    $t3, 4($s0)
@@ -8566,13 +8578,13 @@ glabel sub_GAME_7F0752FC
 /* 0A9F70 7F075440 0FC1BA5C */  jal   modelApplyDistanceRelations
 /* 0A9F74 7F075444 02002825 */   move  $a1, $s0
 /* 0A9F78 7F075448 10000009 */  b     .L7F075470
-/* 0A9F7C 7F07544C 00000000 */   nop   
+/* 0A9F7C 7F07544C 00000000 */   nop
 .L7F075450:
 /* 0A9F80 7F075450 02402025 */  move  $a0, $s2
 /* 0A9F84 7F075454 0FC1BA6F */  jal   modelApplyToggleRelations
 /* 0A9F88 7F075458 02002825 */   move  $a1, $s0
 /* 0A9F8C 7F07545C 10000004 */  b     .L7F075470
-/* 0A9F90 7F075460 00000000 */   nop   
+/* 0A9F90 7F075460 00000000 */   nop
 .L7F075464:
 /* 0A9F94 7F075464 02402025 */  move  $a0, $s2
 /* 0A9F98 7F075468 0FC1BA82 */  jal   modelApplyHeadRelations
@@ -8580,7 +8592,7 @@ glabel sub_GAME_7F0752FC
 def_7F0753C4:
 .L7F075470:
 /* 0A9FA0 7F075470 1600FFB7 */  bnez  $s0, .L7F075350
-/* 0A9FA4 7F075474 00000000 */   nop   
+/* 0A9FA4 7F075474 00000000 */   nop
 /* 0A9FA8 7F075478 00001025 */  move  $v0, $zero
 .L7F07547C:
 /* 0A9FAC 7F07547C 8FBF002C */  lw    $ra, 0x2c($sp)
@@ -8616,52 +8628,73 @@ glabel sub_GAME_7F07549C
 /* 0A9FDC 7F0754AC 8FBF0014 */  lw    $ra, 0x14($sp)
 /* 0A9FE0 7F0754B0 27BD0018 */  addiu $sp, $sp, 0x18
 /* 0A9FE4 7F0754B4 03E00008 */  jr    $ra
-/* 0A9FE8 7F0754B8 00000000 */   nop   
+/* 0A9FE8 7F0754B8 00000000 */   nop
 )
 #endif
 
 
-s32 sub_GAME_7F0754BC(ModelAnimation* arg0, s32 arg1, ModelSkeleton* arg2)
+/**
+ * Address 7F0754BC.
+ * Copy animation from ROM to RAM
+*/
+s32 loadAnimationFrame(ModelAnimation* anim, s32 frame, ModelSkeleton* unused)
 {
     s32 ret;
-    s32 var_a1;
-    s32 shiftede;
-    u32 tmp;
-    u32 temp_a2_2;
+    s32 source;
+    s32 frameSize;
+    u32 dest;
+    u32 size;
 
     ret = 0;
-    shiftede = arg0->unk0E >> 3;
+    frameSize = anim->unk0E >> 3; // divide by 8
 
-    if (arg0->unk00 & 0x80000000)
+    if (anim->address & 0x80000000) // If animation's address is in RAM
     {
-        ret = arg0->unk00 + (arg1 * shiftede);
+        // Load that frame from RAM
+        ret = anim->address + (frame * frameSize);
     }
-    else if (D_80036414 != NULL)
+    else if (D_80036414 != NULL) // should never be NULL after sub_GAME_7F0009E0 is called
     {
-        tmp = ((u32) (D_80036414->unk08 + 0xF) >> 4) * 0x10;
-        ret = tmp;
-        var_a1 = arg0->unk00 + (arg1 * shiftede);
-        if (var_a1 & 1)
+        // Get dest from this D_80036414 which points to an array. Align to 16 bytes.
+        dest = ((u32) (D_80036414->animBufferPtr2 + 15) >> 4) * 16;
+        ret = dest;
+
+        // Get source of this animation in ROM with the offset of the frame we'll load
+        source = anim->address + (frame * frameSize);
+        if (source & 1)
         {
-            var_a1--;
-            shiftede++;
+            source--;
+            frameSize++;
             ret++;
         }
-        temp_a2_2 = ((u32) (shiftede + 0xF) >> 4) * 0x10;
-        romCopy((void* ) tmp, (void* ) var_a1, temp_a2_2);
-        D_80036414->unk00 += 1;
-        D_80036414->unk08 = tmp + temp_a2_2;
+
+        // Size of frame but 16-bytes aligned. Observed to be 80 bytes. Might differ for non-guards.
+        size = ((u32) (frameSize + 15) >> 4) * 16;
+
+        // This copies one animation frame from ROM to the destination in RAM
+        romCopy((void* ) dest, (void* ) source, size);
+
+        // Increment this which serves nothing
+        D_80036414->uselessPointer += 1;
+
+        // Set this to point to the end of the copied frame
+        // This allows to copy another frame after this one
+        D_80036414->animBufferPtr2 = dest + size; 
     }
     return ret;
 }
 
 
+/**
+ * Address 7F0755B0.
+*/
 void sub_GAME_7F0755B0(void)
 {
-    if (D_80036414 != NULL)
+    if (D_80036414 != NULL) // should never be NULL after sub_GAME_7F0009E0 is called
     {
-        D_80036414->unk08 = D_80036414->unk04;
-        D_80036414->unk00 = NULL;
+        // Reset the pointer to point to the start of the array
+        D_80036414->animBufferPtr2 = D_80036414->animBufferPtr1;
+        D_80036414->uselessPointer = NULL;
     }
 }
 
@@ -8867,7 +8900,9 @@ void modelPromoteNodeOffsetsToPointers(ModelNode *node, u32 vma, u32 fileramaddr
     }
 }
 
-
+/**
+ * Address 7F075A90.
+*/
 void sub_GAME_7F075A90(ModelFileHeader *header, s32 vma, u32 addr) {
     s32 diff = addr - vma;
     s32 i;
@@ -8879,6 +8914,9 @@ void sub_GAME_7F075A90(ModelFileHeader *header, s32 vma, u32 addr) {
     modelPromoteNodeOffsetsToPointers(header->RootNode, vma, addr);
 }
 
+/**
+ * Address 7F075B08.
+*/
 void REMOVED_sub_GAME_7F075B08(s32 param_1,s32 param_2,s32 param_3,s32 param_4)
 {
     return;
@@ -9178,7 +9216,7 @@ void modelInit(struct Model *objinst, struct ModelFileHeader *header, u32 *data)
 
 // PD: animInit
 void animInit(struct Model *objinst, struct ModelFileHeader *header, u32 *data)
-{    
+{
     modelInit(objinst, header, data);
     objinst->anim = NULL;
     objinst->anim2 = NULL;

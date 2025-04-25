@@ -169,6 +169,10 @@ InvItem *bondinvGetNextAvailItem(void)
         }
     }
 
+    #ifdef DEBUG
+    osSyncPrintf("equipgetfreeitem: No free equip items!!!!\n");
+    #endif
+
     return NULL;
 }
 
@@ -1075,9 +1079,9 @@ u16 *bondinvGetNameByIndex(s32 index)
 
             if (override)
             {
-                if (override->unk6)
+                if (override->shorttext)
                 {
-                    return langGet(override->unk6);
+                    return langGet(override->shorttext);
                 }
 
                 weaponnum = override->weapon;
@@ -1088,9 +1092,9 @@ u16 *bondinvGetNameByIndex(s32 index)
             weaponnum = item->type_inv_item.type_weap.weapon;
             override  = bondinvGetTextbyWeaponID(weaponnum);
 
-            if (override && override->unk6)
+            if (override && override->shorttext)
             {
-                return langGet(override->unk6);
+                return langGet(override->shorttext);
             }
         }
     }
@@ -1135,9 +1139,9 @@ u16 *bondinvGetLongNameByIndex(s32 index)
 
             if (override)
             {
-                if (override->unk7)
+                if (override->longtext)
                 {
-                    return langGet(override->unk7);
+                    return langGet(override->longtext);
                 }
 
                 weaponnum = override->weapon;
@@ -1148,9 +1152,9 @@ u16 *bondinvGetLongNameByIndex(s32 index)
             weaponnum = item->type_inv_item.type_weap.weapon;
             override  = bondinvGetTextbyWeaponID(weaponnum);
 
-            if (override && override->unk7)
+            if (override && override->longtext)
             {
-                return langGet(override->unk7);
+                return langGet(override->longtext);
             }
         }
     }
@@ -1215,9 +1219,9 @@ u16 *bondinvGetFirstTitlebyIndex(s32 index)
 
             if (override)
             {
-                if (override->unk4)
+                if (override->titletext1)
                 {
-                    return langGet(override->unk4);
+                    return langGet(override->titletext1);
                 }
 
                 weaponnum = override->weapon;
@@ -1228,9 +1232,9 @@ u16 *bondinvGetFirstTitlebyIndex(s32 index)
             weaponnum = item->type_inv_item.type_weap.weapon;
             override  = bondinvGetTextbyWeaponID(weaponnum);
 
-            if (override && override->unk4)
+            if (override && override->titletext1)
             {
-                return langGet(override->unk4);
+                return langGet(override->titletext1);
             }
         }
     }
@@ -1275,9 +1279,9 @@ u16 *bondinvGetSecondTitlebyIndex(s32 index)
 
             if (override)
             {
-                if (override->unk5)
+                if (override->titletext2)
                 {
-                    return langGet(override->unk5);
+                    return langGet(override->titletext2);
                 }
 
                 weaponnum = override->weapon;
@@ -1288,9 +1292,9 @@ u16 *bondinvGetSecondTitlebyIndex(s32 index)
             weaponnum = item->type_inv_item.type_weap.weapon;
             override  = bondinvGetTextbyWeaponID(weaponnum);
 
-            if (override && override->unk5)
+            if (override && override->titletext2)
             {
-                return langGet(override->unk5);
+                return langGet(override->titletext2);
             }
         }
     }

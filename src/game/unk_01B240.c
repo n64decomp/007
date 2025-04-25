@@ -26,7 +26,9 @@ s32 D_8002BB2C = 0;
 
 
 #ifdef NONMATCHING
-
+/*
+* Address: 0x7F01B240
+*/
 void sub_GAME_7F01B240(void) {
 
 }

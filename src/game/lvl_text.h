@@ -10,13 +10,14 @@ struct jpncharpixels {
 };
 
 struct jpncacheitem {
-	u16 ttl : 2;
+	u16 ttl : 2; //cannonically timeleft
 	u16 codepoint : 14;
 };
 
 
 extern s32 j_text_trigger;
 
+void langLoadToAddr(u32 id);
 void langTick(void);
 u8 * langGet(s32 slotID);
 void langLoadToBank(int id, u8 *target, int size);

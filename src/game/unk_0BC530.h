@@ -2,9 +2,10 @@
 #define _UNK_0BC530_H_
 #include <ultra64.h>
 
-void sub_GAME_7F0BC624(s32 param_1);
-void sub_GAME_7F0BC7D4(void);
-void sub_GAME_7F0BCA34(s32 index, coord3d *param_2);
-Gfx * sub_GAME_7F0BC9C4(Gfx *DL,int index);
+void setPlayerRoomField(s32 param_1);
+void updateRoomStatusFlags(void);
+void getRoomPositionScaledByIndex(s32 index, coord3d *param_2);
+Gfx * applyRoomMatrixToDisplayList(Gfx *DL,int index);
+struct coord3d* getRoomPositionByIndex(s32 index);
 
 #endif

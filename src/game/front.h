@@ -4,6 +4,36 @@
 #include <bondgame.h>
 #include <bondconstants.h>
 
+
+#define TABS_LEFT_EDGE 390.0f
+#define TABS_RIGHT_EDGE 411
+
+#define NEXTTAB_CURSOR_HPOS 399.0f
+#define NEXTTAB_CURSOR_VPOS 144.0f
+
+#define STARTTAB_TAB_TOP 40.0f
+#define STARTTAB_TEXT_TOP 51
+//#define STARTTAB_TEXT_HALF 84
+#define STARTTAB_TEXT_HALF (STARTTAB_TEXT_TOP + ((STARTTAB_TEXT_BOTTOM-STARTTAB_TEXT_TOP)/2))
+#define STARTTAB_TEXT_BOTTOM 117
+#define STARTTAB_TAB_BOTTOM 130.5f
+
+#define NEXTTAB_TAB_TOP 130.5f
+#define NEXTTAB_TEXT_TOP 144
+//#define NEXTTAB_TEXT_HALF 177
+#define NEXTTAB_TEXT_HALF (NEXTTAB_TEXT_TOP + ((NEXTTAB_TEXT_BOTTOM-NEXTTAB_TEXT_TOP)/2))
+#define NEXTTAB_TEXT_BOTTOM 210
+#define NEXTTAB_TAB_BOTTOM 223.0f
+
+#define PREVTAB_TAB_TOP 223.0f
+#define PREVTAB_TEXT_TOP 236
+//#define PREVTAB_TEXT_HALF 269
+#define PREVTAB_TEXT_HALF (PREVTAB_TEXT_TOP + ((PREVTAB_TEXT_BOTTOM-PREVTAB_TEXT_TOP)/2))
+#define PREVTAB_TEXT_BOTTOM 302
+#define PREVTAB_TAB_BOTTOM 315.0f
+
+
+
 struct legal_screen_text {
     s32 h_pos;
     s32 v_pos;
@@ -311,7 +341,7 @@ int get_mp_timelimit(void);
 int get_mp_pointlimit(void);
 void reset_mp_options_for_scenario(MPSCENARIOS scenarioid);
 void copy_aim_settings_to_playerdata(void);
-void menu_init();
+void menu_init(void);
 Gfx * menu_jump_constructor_handler(Gfx *DL);
 void unlock_all_mp_chars(void);
 u8 get_player_mp_char_gender(int player);
