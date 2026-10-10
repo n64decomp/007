@@ -625,6 +625,9 @@ struct fileentry file_resource_table[] = {
     {MP_SETUPREF, "Ump_setuprefZ", &Ump_setuprefZ},
     {MP_SETUPSEVB, "Ump_setupsevbZ", &Ump_setupsevbZ},
     {MP_SETUPSTATUE, "Ump_setupstatueZ", &Ump_setupstatueZ},
+#ifdef MP_SURFACE
+    {MP_SETUPSEVX, "Ump_setupsevxZ", &Ump_setupsevxZ},
+#endif
 
     {SETUPARCH, "UsetuparchZ", &UsetuparchZ},
     {SETUPARK, "UsetuparkZ", &UsetuparkZ},

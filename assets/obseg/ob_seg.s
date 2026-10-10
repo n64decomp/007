@@ -684,6 +684,9 @@ obseg_file_Z setup, Ump_setupoatZ
 obseg_file_Z setup, Ump_setuprefZ
 obseg_file_Z setup, Ump_setupsevbZ
 obseg_file_Z setup, Ump_setupstatueZ
+.ifdef MP_SURFACE
+obseg_file_Z setup, Ump_setupsevxZ
+.endif
 obseg_file_Z setup, UsetuparchZ
 obseg_file_Z setup, UsetuparkZ
 obseg_file_Z setup, UsetupaztZ

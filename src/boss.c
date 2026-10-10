@@ -135,6 +135,9 @@ struct memallocstring memallocstringtable[] = {
 { LEVELID_CAVERNS_MP ,  "-ml0 -me0 -mgfx130 -mvtx100 -mt440 -ma220"},
 { LEVELID_FACILITY_MP , "-ml0 -me0 -mgfx90  -mvtx100 -mt550 -ma230"},
 { LEVELID_EGYPT_MP ,    "-ml0 -me0 -mgfx110 -mvtx100 -mt350 -ma400"},
+#ifdef MP_SURFACE
+{ LEVELID_SURFACE_MP ,  "-ml0 -me0 -mgfx110 -mvtx90  -mt580 -ma240"},
+#endif
 { LEVELID_DEFAULT,      "-ml0 -me0 -mgfx100 -mvtx50 -mt700 -ma400"},
 { 0x0, },
 { 0x0, },

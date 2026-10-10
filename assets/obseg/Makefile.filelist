@@ -166,6 +166,7 @@ MPSETUPNAMELIST := mp_setupame \
 				mp_setupref \
 				mp_setuprun \
 				mp_setupsevb \
+				mp_setupsevx \
 				mp_setupstatue
 
 CHRNAMELIST = armourguard \

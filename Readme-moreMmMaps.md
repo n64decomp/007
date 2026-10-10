@@ -1,0 +1,2 @@
+build with:
+make VERSION=EU COMPARE=0 MP_SURFACE=1

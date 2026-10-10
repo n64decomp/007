@@ -114,6 +114,15 @@ ifeq ($(VERSION), USB)
  LDFILEOPTS := -DVERSION_$(LANG) -DOUTCODE=$(OUTCODE) -DENABLE_USB
 endif
 
+# Non-matching mod: Surface (1) playable in multiplayer, replacing Stack on the stage select.
+# Build with MP_SURFACE=1
+MP_SURFACE ?= 0
+ifeq ($(MP_SURFACE), 1)
+ LCDEFS += -DMP_SURFACE
+ ASMDEFS += --defsym MP_SURFACE=1
+ COMPARE := 0
+endif
+
 ALLOWED_VERSIONS := US EU JP DEBUG USB
 ALLOWED_COUNTRYCODE := u e j
 

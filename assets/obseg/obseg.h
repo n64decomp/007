@@ -614,6 +614,9 @@ extern u8 Ump_setupoatZ[];
 extern u8 Ump_setuprefZ[];
 extern u8 Ump_setupsevbZ[];
 extern u8 Ump_setupstatueZ[];
+#ifdef MP_SURFACE
+extern u8 Ump_setupsevxZ[];
+#endif
 
 extern u8 UsetuparchZ[];
 extern u8 UsetuparkZ[];

@@ -625,6 +625,9 @@ typedef enum FILEINDEXID
     MP_SETUPREF,
     MP_SETUPSEVB,
     MP_SETUPSTATUE,
+#ifdef MP_SURFACE
+    MP_SETUPSEVX,
+#endif
     
     SETUPARCH,
     SETUPARK,
