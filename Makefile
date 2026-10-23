@@ -13,6 +13,21 @@ VERBOSE := 2
 # then compare ELF sections to known md5 checksums.
 COMPARE := 1
 
+# Options are compared as exact strings, so a mistyped value (VERSION=us,
+# IDO_RECOMP=no) silently takes the default path instead of failing. Reject them.
+ALLOWED_VERSIONS := US EU JP DEBUG USB
+ifeq ($(filter $(ALLOWED_VERSIONS),$(VERSION)),)
+  $(error VERSION=$(VERSION) is not supported. Use one of: $(ALLOWED_VERSIONS))
+endif
+define check-option
+  ifeq ($$(filter $(2),$$($(1))),)
+    $$(error $(1)=$$($(1)) is not supported. Use one of: $(2))
+  endif
+endef
+$(eval $(call check-option,FINAL,YES NO))
+$(eval $(call check-option,IDO_RECOMP,YES NO))
+$(eval $(call check-option,COMPARE,0 1))
+
 # Include Terminal Codes for colourising text.
 include include/make/VT100Codes.make
 include include/make/Gui.make
@@ -114,7 +129,6 @@ ifeq ($(VERSION), USB)
  LDFILEOPTS := -DVERSION_$(LANG) -DOUTCODE=$(OUTCODE) -DENABLE_USB
 endif
 
-ALLOWED_VERSIONS := US EU JP DEBUG USB
 ALLOWED_COUNTRYCODE := u e j
 
 BUILD_DIR_BASE := build
@@ -232,17 +246,13 @@ OBJCOPY := $(TOOLCHAIN)objcopy
 
 ## Build Recipes ##
 
-# Don't delete intermediate files from these targets on make completion.
-.SECONDARY:
-	$(APPELF) $(APPROM) $(APPBIN) $(ULTRAOBJECTS) $(BUILD_DIR)/ge007.$(OUTCODE).map \
-	$(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) \
-	$(OBSEG_OBJECTS) $(OBSEG_RZ) $(ROMOBJECTS) $(RAMROM_OBJECTS) $(FONTOBJECTS) $(MUSIC_OBJECTS) $(IMAGE_OBJS) $(MUSIC_RZ_FILES)
-
-# Don't delete these intermediate targets on make cancellation.
-.PRECIOUS: %.bin  %.o
-
-# Run the following targets sequentially in this order (unnamed targets will still run in parallel)
-.NOTPARALLEL: print_info create_directories $(APPROM) checksum
+# Don't delete intermediate files on make completion or cancellation.
+#
+# This used to be a `.SECONDARY:` whose file list was on tab-indented lines
+# below it, which makes them a recipe rather than prerequisites. A bare
+# .SECONDARY marks every target as intermediate, and make does not rebuild a
+# missing intermediate file, so deleting a .o did not rebuild it.
+.PRECIOUS: %.bin %.o %.rz %.elf %.seg %/Model.c $(APPELF) $(APPROM) $(APPBIN) $(BUILD_DIR)/ge007.$(OUTCODE).map
 
 # Phony Recipes - These targets are not files, Get Make to do something
 .PHONY: print_info create_directories build_tools prerequisites checksum all_p1 all default commonclean setupclean stanclean dataclean libultraclean codeclean clean nuke help cmdbuidler test  context extractassets forceextractassets textures convert_props convert_chrs convert_guns extract_u extract_e extract_j force_extract_u force_extract_e force_extract_j extract_rsp
@@ -283,9 +293,37 @@ $(BUILD_DIR)/assets/images/combined/%.o: assets/images/combined/combined.bin
 $(BUILD_DIR)/$(OBSEGMENT): $(OBSEG_RZ) $(IMAGE_OBJS)
 
 
+# IDO cannot write dependency files, so editing a header did not rebuild the
+# objects that include it. gcc is already required for tools/, and `gcc -MM`
+# only preprocesses, so it cannot affect the compiled output. It writes a .d
+# file beside each object, which is included at the end of this file.
+#   -MP adds a phony target per header, so deleting a header doesn't break the build.
+#   -MG treats a missing header as generated rather than failing.
+# Failure is ignored: without a .d file the build behaves as it did before.
+DEPGEN := $(shell command -v gcc 2>/dev/null)
+ifneq ($(DEPGEN),)
+  GENDEPS = @$(DEPGEN) -MM -MP -MG -nostdinc -MT $@ -MF $(@:.o=.d) $(INCLUDE) $(LCDEFS) -DTARGET_N64 $< 2>/dev/null || :
+else
+  GENDEPS = @:
+endif
+
+# Changing a build flag (e.g. FINAL=NO, or CFLAGS on the command line) without
+# changing VERSION reuses the same BUILD_DIR, and nothing rebuilt the objects
+# compiled with the old flags. Record the flags in a file that is rewritten
+# only when they change, and make every compiled object depend on it.
+BUILD_FLAGS_FILE := $(BUILD_DIR)/build_flags.txt
+BUILD_FLAGS := $(CC) $(CFLAGS) $(OPTIMIZATION) | $(AS) $(ASFLAGS) | $(LDFILEOPTS)
+$(shell mkdir -p $(BUILD_DIR) && \
+        [ "$$(cat $(BUILD_FLAGS_FILE) 2>/dev/null)" = '$(BUILD_FLAGS)' ] || \
+        printf '%s' '$(BUILD_FLAGS)' > $(BUILD_FLAGS_FILE))
+$(ULTRAOBJECTS) $(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) \
+$(RZOBJECTS) $(ROMOBJECTS) $(ROMOBJECTS2) $(ASSET_DATAOBJECTS) $(RAMROM_OBJECTS) \
+$(FONTOBJECTS) $(MUSIC_OBJECTS) $(OBSEG_OBJECTS): $(BUILD_FLAGS_FILE)
+
 #Build C files in src/
 # convert AI_PRINT commands from readable to byte-array
 $(BUILD_DIR)/src/%.o: src/%.c
+	$(GENDEPS)
 	@if [ "$$(basename $<)" = "chraidata.c" ]; then \
 		$(ConvertAIPRINT) $< | $(CC) -c $(CFLAGS) tools/include-stdin.c -o $@ $(OPTIMIZATION); \
 	else \
@@ -363,7 +401,21 @@ ifeq ($(COMPARE), 1)
 endif
 
 all_p1: prerequisites
-all: all_p1 $(APPROM) checksum
+
+# The stages run as ordered sub-makes. `all: all_p1 $(APPROM) checksum` states
+# no order between them, so under -j make could start compiling before
+# build_tools had built the compiler. This used to be held together by
+# .NOTPARALLEL, but GNU make before 4.4 ignores its target list and serialises
+# the whole makefile, so -j had no effect at all.
+#
+# A sub-make also sees the files extractassets produced, so a fresh clone
+# builds in one `make` instead of two. extractassets runs with -j1 because its
+# steps depend on each other without saying so.
+all:
+	$(MAKE) --no-print-directory print_info create_directories
+	$(MAKE) --no-print-directory build_tools
+	$(MAKE) --no-print-directory -j1 extractassets
+	$(MAKE) --no-print-directory $(APPROM) checksum
 	@echo "Rom File Generated in Build Directory."
 
 commonclean:
@@ -384,6 +436,7 @@ libultraclean: commonclean
 
 codeclean: commonclean libultraclean
 	rm -f $(HEADEROBJECTS) $(BOOTOBJECTS) $(CODEOBJECTS) $(GAMEOBJECTS) $(RZOBJECTS) $(RSPOBJECTS)
+	rm -f $(CODEOBJECTS:.o=.d) $(GAMEOBJECTS:.o=.d)
 
 clean: codeclean dataclean
 	@echo "\nAll Code and Asset Binaries Cleared! Make will Re-Build these next time.\n"
@@ -575,3 +628,8 @@ tools/mktex/build/tex2png:
 		echo "Building tex2png..."; \
 		cd tools/mktex && $(MAKE); \
 	fi
+
+
+# Header dependencies written by $(GENDEPS). Missing files are fine: a fresh
+# build has none, and they appear as objects are compiled.
+-include $(CODEOBJECTS:.o=.d) $(GAMEOBJECTS:.o=.d)

@@ -25,7 +25,4 @@ BRIEF_RZ_NAMES = $(foreach lvl,$(BRIEFNAMELIST),Ubrief$(lvl)Z)
 # Use BRIEF_RZ_NAMES to generate the list of .rz files
 BRIEF_RZ_FILES = $(addprefix $(BUILD_DIR)/$(OBSEG_DIR)/brief/, $(addsuffix .rz, $(BRIEF_RZ_NAMES)))
 
-# Default target
-all: $(BRIEF_RZ_FILES)
-
 .PHONY: all

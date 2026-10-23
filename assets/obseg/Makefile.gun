@@ -45,7 +45,4 @@ GUN_RZ_NAMES = $(foreach gun,$(GUNNAMELIST),G$(gun)Z)
 # Use GUN_RZ_NAMES to generate the list of .rz files
 GUN_RZ_FILES = $(addprefix $(BUILD_DIR)/$(OBSEG_DIR)/gun/, $(addsuffix .rz, $(GUN_RZ_NAMES)))
 
-# Default target
-all: $(GUN_RZ_FILES)
-
 .PHONY: all

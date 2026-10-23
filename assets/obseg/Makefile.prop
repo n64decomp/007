@@ -49,7 +49,4 @@ PROP_RZ_NAMES = $(foreach prop,$(PROPNAMELIST),P$(prop)Z)
 # Use PROP_RZ_NAMES to generate the list of .rz files
 PROP_RZ_FILES = $(addprefix $(BUILD_DIR)/$(OBSEG_DIR)/prop/, $(addsuffix .rz, $(PROP_RZ_NAMES)))
 
-# Default target
-all: $(PROP_RZ_FILES)
-
 .PHONY: all

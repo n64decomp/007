@@ -37,7 +37,4 @@ TEXT_RZ_FILES := \
 	$(foreach lang,J E P,$(foreach name,$(TEXTNAMELIST),$(BUILD_DIR)/$(OBSEG_DIR)/text/L$(name)$(lang).rz))
 endif
 
-# Default target
-all: $(TEXT_RZ_FILES)
-
 .PHONY: all
