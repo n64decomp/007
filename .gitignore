@@ -1,3 +1,6 @@
+# Platform the tools/ binaries were built for (scripts/make/build_tools.sh)
+tools/.toolchain-arch
+
 #Git and VS files
 .*~
 __pycache__/*
