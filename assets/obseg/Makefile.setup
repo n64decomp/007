@@ -39,7 +39,4 @@ SETUP_RZ_FILES := $(foreach name,$(SETUP_NAMES),$(BUILD_DIR)/$(OBSEG_DIR)/setup/
 
 SETUP_BUILD_FILES := $(SETUP_O_FILES) $(SETUP_BIN_FILES) $(SETUP_ELF_FILES) $(SETUP_RZ_FILES)
 
-# Default target
-all: $(SETUP_RZ_FILES)
-
 .PHONY: all

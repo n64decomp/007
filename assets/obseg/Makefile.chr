@@ -49,7 +49,4 @@ CHR_RZ_NAMES = $(foreach chr,$(CHRNAMELIST),C$(chr)Z)
 # Use CHR_RZ_NAMES to generate the list of .rz files
 CHR_RZ_FILES = $(addprefix $(BUILD_DIR)/$(OBSEG_DIR)/chr/, $(addsuffix .rz, $(CHR_RZ_NAMES)))
 
-# Default target
-all: $(CHR_RZ_FILES)
-
 .PHONY: all

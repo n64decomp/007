@@ -28,7 +28,4 @@ STAN_RZ_FILES := $(foreach name,$(STAN_NAMES),$(BUILD_DIR)/$(OBSEG_DIR)/stan/$(n
 
 STAN_BUILD_FILES := $(STAN_O_FILES) $(STAN_BIN_FILES) $(STAN_ELF_FILES) $(STAN_RZ_FILES)
 
-# Default target
-all: $(STAN_RZ_FILES)
-
 .PHONY: all

@@ -36,7 +36,4 @@ BG_SEG_FILES := $(foreach name,$(BG_SEG_NAMES),$(BUILD_DIR)/$(OBSEG_DIR)/bg/$(na
 
 BG_BUILD_FILES := $(BG_O_FILES) $(BG_BIN_FILES) $(BG_ELF_FILES) $(BG_SEG_FILES)
 
-# Default target
-all: $(BG_SEG_FILES)
-
 .PHONY: all
