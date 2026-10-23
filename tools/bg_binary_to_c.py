@@ -46,8 +46,10 @@ class Portal4Point:
 class BGBinaryParser:
     def __init__(self, binary_path: str, output_path: str = None):
         self.binary_path = binary_path
-        self.output_path = output_path or binary_path.replace('.bin', '.c')
-        self.header_path = output_path.replace('.c', '.h') if output_path else binary_path.replace('.bin', '.h')
+        # Swap the extension only: str.replace('.c', '.h') also hits a ".c"
+        # anywhere in the directory path (e.g. /home/me/.config/ -> .honfig/).
+        self.output_path = output_path or os.path.splitext(binary_path)[0] + '.c'
+        self.header_path = os.path.splitext(self.output_path)[0] + '.h'
         self.binary_data = b''
         self.header = None
         self.room_entries = []
@@ -75,6 +77,15 @@ class BGBinaryParser:
             return 0
         return n64_addr - N64_BASE_ADDRESS
     
+    def is_valid_address(self, n64_addr: int) -> bool:
+        """Whether a word looks like a pointer into this bg file.
+
+        Used to tell a table row from the data that follows it: a portal
+        table can end where the next word is 0x04000000 -- float geometry,
+        not an address.
+        """
+        return N64_BASE_ADDRESS <= n64_addr < N64_BASE_ADDRESS + len(self.binary_data)
+
     def read_u32(self, offset: int) -> int:
         """Read big-endian u32 at offset"""
         return struct.unpack('>I', self.binary_data[offset:offset+4])[0]
@@ -163,11 +174,22 @@ class BGBinaryParser:
             room2 = self.read_u8(offset + 5)
             control = self.read_u16(offset + 6)
             
-            # Check for terminator
+            # A null pointer is a terminator row, but NOT necessarily the last
+            # row: Cradle's table is two null rows, and stopping at the first
+            # emitted one 8-byte entry too few. Every pointer after it then sat
+            # 8 bytes low, so the file was the right size, compiled, and was
+            # wrong throughout. Consume null rows and keep going; the table
+            # really ends where the pointer is neither null nor a plausible
+            # in-range address -- Cradle's next word is 0x04000000, the start
+            # of float geometry data.
             if portal_offset_raw == 0 and room1 == 0 and room2 == 0:
                 self.portal_entries.append(PortalDataEntry(0, 0, 0, 0))
+                offset += entry_size
+                nxt = self.read_u32(offset)
+                if nxt == 0 or self.is_valid_address(nxt):
+                    continue
                 break
-            
+
             # Convert N64 address to file offset
             portal_offset = self.to_file_offset(portal_offset_raw)
             
@@ -402,8 +424,12 @@ class BGBinaryParser:
         if self.header:
             portal_lines = ['struct portal_data_table_entry portal_data_table[] = {']
             for i, entry in enumerate(self.portal_entries):
+                # Comma on every row but the last. The null row used to omit it
+                # unconditionally, which was fine only while a table could hold
+                # exactly one; Cradle has two and the pair would not compile.
+                last = (i == len(self.portal_entries) - 1)
                 if entry.portal_offset == 0:
-                    portal_lines.append('    {0, 0, 0, 0}')
+                    portal_lines.append('    {0, 0, 0, 0}' + ('' if last else ','))
                 else:
                     # Find which portal index to reference (the first one at this offset)
                     portal_idx = offset_to_portal_idx.get(entry.portal_offset, i)
