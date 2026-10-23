@@ -1,9 +1,20 @@
 services:
+    # The platform defaults to linux/amd64. On an arm64 host (e.g. Apple
+    # Silicon) put this in a .env file next to this one to build natively,
+    # which is several times faster than emulating amd64:
+    #
+    #     GE007_PLATFORM=linux/arm64
+    #
+    # Both platforms produce the same ROM. Only IDO_RECOMP=NO is amd64-only,
+    # because qemu-irix has no arm64 build.
     ge007:
+        platform: ${GE007_PLATFORM:-linux/amd64}
         restart: unless-stopped
         build:
             context: ./
             dockerfile: ./Dockerfile
+            platforms:
+                - ${GE007_PLATFORM:-linux/amd64}
         volumes:
             - ./:/home/dev/project
         hostname: ge007

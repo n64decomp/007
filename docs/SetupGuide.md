@@ -71,6 +71,9 @@ sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
 ### C. Docker Compose
 
 * run and connect to shell in project root: `docker-compose run ge007 bash`
+* on an arm64 host (e.g. Apple Silicon), create a `.env` file in the project root containing
+  `GE007_PLATFORM=linux/arm64` to build a native image instead of emulating amd64. It is several times faster and
+  builds the same ROM. `IDO_RECOMP=NO` is not available there, because qemu-irix is only published for amd64.
 
 Alternatively, you can start the container with `docker compose up` and connect to the container in e.g. docker desktop
 
@@ -101,8 +104,9 @@ make
 For what this toolchain actually *is*, where it comes from upstream, and how to update it to a newer version, see
 [`tools/ido5.3_recomp/README.md`](../tools/ido5.3_recomp/README.md).
 
-Be careful! If you previously compiled GoldenEye on a different operating system or CPU architecture, the binaries (gzip, n64cksum) that were compiled will be incompatible.
-You must delete them.
+The tools under `tools/` are native binaries for the machine that built them. If you switch the same checkout to a
+different operating system or CPU architecture (for example between the amd64 and arm64 Docker images),
+`scripts/make/build_tools.sh` notices from `tools/.toolchain-arch` and rebuilds them on the next `make`.
 
 There may be a "dubious ownership" error from Git, and it may say it fails to detect the Git repository.
 Run `git status` to see how to fix it.

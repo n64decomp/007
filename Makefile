@@ -345,6 +345,7 @@ $(APPROM):	$(APPBIN)
 print_info:
 	$(info VERSION=$(VERSION))
 	$(info Building $(VERSION) ROM...)
+	@scripts/make/toolchain-manifest.sh "$(BUILD_DIR)"
 
 create_directories:
 	scripts/make/create_directories.sh "$(BUILD_DIR)" "$(COUNTRYCODE)"
